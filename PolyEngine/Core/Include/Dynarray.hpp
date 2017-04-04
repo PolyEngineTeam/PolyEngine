@@ -1,18 +1,19 @@
 #pragma once
 
-#include <Core.hpp>
+#include "Defines.hpp"
+#include "Allocator.hpp"
 
 namespace Poly {
 
 	namespace ObjectLifetimeHelper
 	{
 		template<class T>
-		void Create(void* ptr, typename std::enable_if<std::is_trivially_default_constructible<T>::value>::type* = 0)
+		void Create(T* ptr, typename std::enable_if<std::is_trivially_default_constructible<T>::value>::type* = 0)
 		{
 		}
 
 		template<class T>
-		void Create(void* ptr, typename std::enable_if<!std::is_trivially_default_constructible<T>::value>::type* = 0)
+		void Create(T* ptr, typename std::enable_if<!std::is_trivially_default_constructible<T>::value>::type* = 0)
 		{
 			new (ptr)T;
 		}
@@ -163,8 +164,8 @@ namespace Poly {
 		const T* GetData() const { return Data; }
 
 		//------------------------------------------------------------------------------
-		const T& operator[](size_t idx) { return Data[idx]; }
-		const T& operator[](size_t idx) const { return Data[idx]; }
+		T& operator[](size_t idx) { HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!"); return Data[idx]; }
+		const T& operator[](size_t idx) const { HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!"); return Data[idx]; }
 
 		//------------------------------------------------------------------------------
 		void Clear() {
@@ -176,6 +177,7 @@ namespace Poly {
 		//------------------------------------------------------------------------------
 		void Insert(size_t idx, const T& obj)
 		{
+			HEAVY_ASSERTE(idx <= GetSize(), "Index out of bounds!");
 			if (Size == GetCapacity())
 				Enlarge();
 			memmove(Data + idx + 1, Data + idx, (GetSize() - idx) * sizeof(T));
@@ -186,6 +188,7 @@ namespace Poly {
 		//------------------------------------------------------------------------------
 		void Remove(size_t idx)
 		{
+			HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!");
 			ObjectLifetimeHelper::Destroy(Data + idx);
 			memmove(Data + idx, Data + idx + 1, (GetSize() - idx - 1) * sizeof(T));
 			--Size;
@@ -213,7 +216,7 @@ namespace Poly {
 			{
 				Reserve(size);
 				for (size_t idx = GetSize(); idx < size; ++idx)
-					ObjectLifetimeHelper::Construct(Data + idx);
+					ObjectLifetimeHelper::Create(Data + idx);
 			}
 			Size = size;
 		}

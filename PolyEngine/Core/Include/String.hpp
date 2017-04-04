@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Core.hpp>
+#include "Defines.hpp"
+#include "Dynarray.hpp"
 
 namespace Poly {
 
@@ -12,18 +13,17 @@ namespace Poly {
 		return len;
 	}
 
-	//TODO rewrite this with dynarray
 	template<typename T>
 	class StringBase : BaseObject<> {
 	public:
-		StringBase() = default;
+		StringBase() { Data.Resize(1); Data[0] = 0; }
 
 		//------------------------------------------------------------------------------
 		StringBase(const T* data) {
-			Length = StrLen(data);
-			Data = (T*)default_alloc(sizeof(T) * (Length + 1));
-			memcpy(Data, data, sizeof(T) * Length);
-			Data[Length] = 0;
+			size_t length = StrLen(data);
+			Data.Resize(length + 1);
+			memcpy(Data.GetData(), data, sizeof(T) * length);
+			Data[length] = 0;
 		}
 
 		//------------------------------------------------------------------------------
@@ -32,29 +32,17 @@ namespace Poly {
 
 		//------------------------------------------------------------------------------
 		StringBase& operator=(const StringBase<T>& rhs) {
-			Length = rhs.GetLength();
-			Data = (T*)default_alloc(sizeof(T) * (Length + 1));
-			memcpy(Data, rhs.Data, sizeof(T) * Length);
-			Data[Length] = 0;
+			Data = rhs.Data;
 		}
 
 		//------------------------------------------------------------------------------
 		StringBase& operator=(StringBase<T>&& rhs) {
-			Data = rhs.Data;
-			rhs.Data = nullptr;
-			Length = rhs.Length;
-			rhs.Length = 0;
-		}
-
-		//------------------------------------------------------------------------------
-		virtual ~StringBase() {
-			if (Data)
-				default_free(Data);
+			Data = std::move(rhs.Data);
 		}
 
 		//------------------------------------------------------------------------------
 		bool operator==(const T* str) {
-			if (Length != StrLen(str))
+			if (GetLength() != StrLen(str))
 				return false;
 			for (size_t k = 0; k < Length; ++k)
 				if (Data[k] != str[k])
@@ -64,35 +52,29 @@ namespace Poly {
 
 		//------------------------------------------------------------------------------
 		bool operator==(const StringBase<T>& str) {
-			if (Length != str.Length)
-				return false;
-			for (size_t k = 0; k < Length; ++k)
-				if (Data[k] != str.Data[k])
-					return false;
-			return true;
+			return Data == str.Data;
 		}
 
 		//------------------------------------------------------------------------------
 		StringBase<T> operator+(const StringBase<T> rhs) const {
 			StringBase<T> ret;
-			ret.Length = Length + rhs.Length;
-			ret.Data = (T*)default_alloc(sizeof(T) * (Length + 1));
-			memcpy(ret.Data, Data, sizeof(T) * Length);
-			memcpy(ret.Data + rhs.Length, rhs.Data, sizeof(T) * rhs.Length);
-			ret.Data[Length] = 0;
+			size_t totalLength = GetLength() + rhs.GetLength();
+			ret.Data.Resize(totalLength + 1);
+			memcpy(ret.Data.GetData(), Data.GetData(), sizeof(T) * GetLength());
+			memcpy(ret.Data.GetData() + GetLength(), rhs.Data.GetData(), sizeof(T) * rhs.GetLength());
+			ret.Data[totalLength] = 0;
 			return ret;
 		}
 
 		//------------------------------------------------------------------------------
 		const T& operator[](int idx) const { HEAVY_ASSERTE(idx <= Length, "Index out of bounds!"); return Data[idx]; }
-		size_t GetLength() const { return Length; }
-		const T* GetCStr() const { return Data; }
+		size_t GetLength() const { return Data.GetSize() - 1; }
+		const T* GetCStr() const { return Data.GetData(); }
 
 		DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const StringBase<T>& rhs) { return stream << rhs.GetCStr(); }
 
 	private:
-		T* Data = nullptr;
-		size_t Length = 0;
+		Dynarray<T> Data;
 	};
 
 	typedef StringBase<char> String;
