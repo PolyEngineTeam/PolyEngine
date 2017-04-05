@@ -2,8 +2,10 @@
 #include <windows.h>
 #include <windowsx.h>
 
+#include <gl\/glew.h>
+
 #include <Engine.hpp>
-#include <DX11Renderer.hpp>
+#include <OpenGLRenderer.hpp>
 #include <TestGame.hpp>
 
 static Poly::Engine* gEngine = nullptr;
@@ -51,10 +53,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	RECT windowRect = viewportRect;    // set the size, but not the position
 	AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
 
-	// create the window and use the result as the handle
+																  // create the window and use the result as the handle
 	hWnd = CreateWindowEx(NULL,
 		"WindowClass1",    // name of the window class
-		" Standalone - dx11",   // title of the window
+		" Standalone - OpenGL",   // title of the window
 		WS_OVERLAPPEDWINDOW,    // window style
 		300,    // x-position of the window
 		300,    // y-position of the window
@@ -74,7 +76,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	MSG msg;
 
 	TestGame Game;
-	Poly::DX11RenderingContext Context(hWnd, viewportRect);
+	Poly::OpenGLRenderingContext Context(hInstance, hWnd, viewportRect);
 	Poly::Engine Engine(&Game);
 	gEngine = &Engine;
 	Engine.Init(&Context);

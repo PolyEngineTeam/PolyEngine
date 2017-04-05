@@ -12,8 +12,8 @@
     <Filter Include="Source Files\Rendering">
       <UniqueIdentifier>{f48851b3-7ccb-4799-8ac7-243375d24468}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Rendering\DX11">
-      <UniqueIdentifier>{e587a51a-a2ff-44d6-be3d-8eadcc5c291b}</UniqueIdentifier>
+    <Filter Include="Source Files\Rendering\OpenGL">
+      <UniqueIdentifier>{50231bcb-f6f7-40a2-960c-e9a4c44f55dc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -23,16 +23,16 @@
     <ClInclude Include="Include\Renderer.hpp">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DX11Renderer.hpp">
-      <Filter>Source Files\Rendering\DX11</Filter>
+    <ClInclude Include="Include\OpenGLRenderer.hpp">
+      <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\DX11Renderer.cpp">
-      <Filter>Source Files\Rendering\DX11</Filter>
+    <ClCompile Include="Src\OpenGLRenderer.cpp">
+      <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

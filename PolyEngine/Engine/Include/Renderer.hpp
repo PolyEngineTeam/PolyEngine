@@ -8,7 +8,7 @@ namespace Poly {
 
 	class IRenderer : public BaseObject<> {
 	public:
-		virtual void Init(const IRenderingContext* context) = 0;
+		virtual bool Init(const IRenderingContext* context) = 0;
 		virtual void Deinit() = 0;
 		virtual void Update(float dt) = 0;
 
