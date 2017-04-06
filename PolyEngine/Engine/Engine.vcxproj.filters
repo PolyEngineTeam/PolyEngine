@@ -23,7 +23,7 @@
     <ClInclude Include="Include\Renderer.hpp">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Include\OpenGLRenderer.hpp">
+    <ClInclude Include="Include\OpenGLRenderingContext.hpp">
       <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
@@ -31,7 +31,7 @@
     <ClCompile Include="Src\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\OpenGLRenderer.cpp">
+    <ClCompile Include="Src\OpenGLRenderingContext.cpp">
       <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>

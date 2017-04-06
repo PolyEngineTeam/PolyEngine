@@ -1,4 +1,4 @@
-#include "OpenGLRenderer.hpp"
+#include "OpenGLRenderingContext.hpp"
 
 #include <gl/glew.h>
 #include <gl/wglew.h>
@@ -7,17 +7,19 @@
 using namespace Poly;
 
 namespace Poly {
-	IRenderer* CreateRenderer() { return new OpenGLRenderer; }
+	IRenderingContext* CreateRenderingContext() { return new OpenGLRenderingContext; }
 }
 
-OpenGLRenderingContext::OpenGLRenderingContext(HWND hwnd, RECT rect)
+//------------------------------------------------------------------------------
+OpenGLRenderingContextParams::OpenGLRenderingContextParams(HWND hwnd, RECT rect)
 	: HWnd(hwnd), Rect(rect)
 {
 }
 
-bool OpenGLRenderer::Init(const IRenderingContext * context)
+//------------------------------------------------------------------------------
+bool OpenGLRenderingContext::Init(const IRenderingContextParams * context)
 {
-	const OpenGLRenderingContext* openGLContext = static_cast<const OpenGLRenderingContext*>(context);
+	const OpenGLRenderingContextParams* openGLContext = static_cast<const OpenGLRenderingContextParams*>(context);
 	hWnd = openGLContext->HWnd; // Set the HWND for our window  
 	hDC = GetDC(hWnd); // Get the device context for our window  
 
@@ -83,10 +85,13 @@ bool OpenGLRenderer::Init(const IRenderingContext * context)
 	}
 
 	gConsole.LogInfo("OpenGL context succesfully setup. [{}]", glGetString(GL_VERSION));
-	return true; // We have successfully created a context, return true  
+	
+	// We have successfully created a context, return true 
+	return true;  
 }
 
-void OpenGLRenderer::Deinit()
+//------------------------------------------------------------------------------
+void OpenGLRenderingContext::Deinit()
 {
 	wglMakeCurrent(nullptr, nullptr);
 	if (hRC)
@@ -96,20 +101,8 @@ void OpenGLRenderer::Deinit()
 	}
 }
 
-void OpenGLRenderer::Update(float dt)
+//------------------------------------------------------------------------------
+void OpenGLRenderingContext::EndFrame()
 {
-	// very simple temporary loop
-	glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	SwapBuffers(hDC);
-}
-
-void OpenGLRenderer::DrawPoint(const Vector & pos, const Color & color)
-{
-}
-void OpenGLRenderer::DrawLine(const Vector & pos1, const Vector & pos2, const Color & color1, const Color & color2)
-{
-}
-void OpenGLRenderer::DrawTraingle(const Vector & pos1, const Vector & pos2, const Vector & pos3, const Color & color1, const Color & color2, const Color & color3)
-{
 }

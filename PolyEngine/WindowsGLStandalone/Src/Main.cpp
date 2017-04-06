@@ -3,7 +3,7 @@
 #include <windowsx.h>
 
 #include <Engine.hpp>
-#include <OpenGLRenderer.hpp>
+#include <OpenGLRenderingContext.hpp>
 #include <TestGame.hpp>
 
 static Poly::Engine* gEngine = nullptr;
@@ -74,12 +74,17 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	MSG msg;
 
 	TestGame Game;
-	Poly::OpenGLRenderingContext Context(hWnd, viewportRect);
+	Poly::OpenGLRenderingContextParams Context(hWnd, viewportRect);
 	Poly::Engine Engine(&Game);
 	gEngine = &Engine;
-	Engine.Init(&Context);
+	bool result = Engine.Init(&Context);
+	if (!result)
+	{
+		Poly::gConsole.LogError("Engine load failed!");
+		exit(-1);
+	}
 
-	Poly::gConsole.LogDebug("Engine loaded");
+	Poly::gConsole.LogDebug("Engine loaded successfully");
 
 	// wait for the next message in the queue, store the result in 'msg'
 	while (true)

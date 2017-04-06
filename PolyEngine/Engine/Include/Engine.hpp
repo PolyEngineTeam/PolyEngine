@@ -16,13 +16,13 @@ namespace Poly {
 	class ENGINE_DLLEXPORT Engine : public BaseObject<> {
 	public:
 		Engine(IGame* game);
-		void Init(const IRenderingContext* context);
+		bool Init(const IRenderingContextParams* context);
 		void Deinit();
 
 		void Update(float dt);
 
 	private:
 		IGame* Game;
-		IRenderer* Renderer;
+		IRenderingContext* Renderer;
 	};
 }
