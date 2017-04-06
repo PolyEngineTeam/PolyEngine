@@ -1,4 +1,3 @@
-
 # User-specific files
 *.suo
 *.user
@@ -30,3 +29,6 @@ ipch/
 *.cachefile
 *.VC.db
 *.VC.VC.opendb
+
+# Exculdes from ignore
+!**/ThirdParty/**
