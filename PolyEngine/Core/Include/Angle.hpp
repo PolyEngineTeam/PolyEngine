@@ -10,7 +10,7 @@ namespace Poly {
 	/// This class provides abstraction for angle measurement units such as degrees and radians.
 	/// All functions that require angle as an input should be using this class in order to ensure maximum compatibility.
 	/// It has very little overhead and most of the implementation is constexpr. Angle value is stored in radians.
-	class DLLEXPORT Angle : public BaseObjectLiteralType<>
+	class CORE_DLLEXPORT Angle : public BaseObjectLiteralType<>
 	{
 	public:
 		/// Explicit static method for creating Angle class instance with initial value provided in degrees.

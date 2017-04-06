@@ -3,7 +3,7 @@
 #include <Core.hpp>
 #include <Engine.hpp>
 
-class DLLEXPORT TestGame : public Poly::IGame {
+class GAME_DLLEXPORT TestGame : public Poly::IGame {
 public:
 	void RegisterEngine(Poly::Engine* engine) override { Engine = engine; }
 	void Init() override {};

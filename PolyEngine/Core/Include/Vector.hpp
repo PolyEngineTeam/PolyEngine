@@ -7,7 +7,7 @@
 
 namespace Poly {
 
-	class ALIGN_16 DLLEXPORT Vector : public BaseObject<>{
+	class ALIGN_16 CORE_DLLEXPORT Vector : public BaseObject<>{
 	public:
 
 		// Constructors
@@ -51,7 +51,7 @@ namespace Poly {
 		Vector& Normalize();
 		Vector GetNormalized() const;
 
-		DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Vector& vec);
+		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Vector& vec);
 
 		// This structure allows to access vector elements by index or name.
 		union {

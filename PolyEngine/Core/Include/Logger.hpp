@@ -51,7 +51,7 @@ namespace Poly {
 			stream << std::endl;
 	}
 
-	class DLLEXPORT Console {
+	class CORE_DLLEXPORT Console {
 	public:
 
 		/**
@@ -99,5 +99,5 @@ namespace Poly {
 		}
 	};
 
-	extern DLLEXPORT Console gConsole;
+	CORE_DLLEXPORT extern Console gConsole;
 }

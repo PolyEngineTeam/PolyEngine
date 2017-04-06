@@ -10,7 +10,7 @@ namespace Poly {
 #if DISABLE_SIMD 
 	typedef float Scalar;
 #else
-	class ALIGN_16 DLLEXPORT Scalar : public BaseObject<>
+	class ALIGN_16 CORE_DLLEXPORT Scalar : public BaseObject<>
 	{
 	public:
 		// create from float, implicit

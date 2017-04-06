@@ -25,15 +25,29 @@
 	#define ALIGN_16 __attribute__ ((aligned(16)))
 #endif
 
-// DLLEXPORT
+// CORE_DLLEXPORT
 #if defined(_WIN32)
-	#if defined(_WINDLL)
-		#define DLLEXPORT __declspec(dllexport)
+	#if defined(_WINDLL) && defined(_CORE)
+		#define CORE_DLLEXPORT __declspec(dllexport)
 	#else
-		#define DLLEXPORT __declspec(dllimport)
+		#define CORE_DLLEXPORT __declspec(dllimport)
+	#endif
+
+	#if defined(_WINDLL) && defined(_ENGINE)
+		#define ENGINE_DLLEXPORT __declspec(dllexport)
+	#else
+		#define ENGINE_DLLEXPORT __declspec(dllimport)
+	#endif
+
+	#if defined(_WINDLL) && defined(_GAME)
+		#define GAME_DLLEXPORT __declspec(dllexport)
+	#else
+		#define GAME_DLLEXPORT __declspec(dllimport)
 	#endif
 #else
-	#define DLLEXPORT
+	#define CORE_DLLEXPORT
+	#define ENGINE_DLLEXPORT
+	#define GAME_DLLEXPORT
 #endif
 
 #ifndef DISABLE_SIMD

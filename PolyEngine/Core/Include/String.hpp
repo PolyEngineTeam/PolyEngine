@@ -71,7 +71,7 @@ namespace Poly {
 		size_t GetLength() const { return Data.GetSize() - 1; }
 		const T* GetCStr() const { return Data.GetData(); }
 
-		DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const StringBase<T>& rhs) { return stream << rhs.GetCStr(); }
+		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const StringBase<T>& rhs) { return stream << rhs.GetCStr(); }
 
 	private:
 		Dynarray<T> Data;

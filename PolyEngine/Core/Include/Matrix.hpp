@@ -9,7 +9,7 @@
 
 namespace Poly {
 
-	class ALIGN_16 DLLEXPORT Matrix : public BaseObject<>{
+	class ALIGN_16 CORE_DLLEXPORT Matrix : public BaseObject<>{
 	public:
 	  Matrix();
 	  Matrix(const float data[16], bool rowOrder = true);
@@ -115,7 +115,7 @@ namespace Poly {
 	   */
 	  Matrix GetTransposed() const;
 
-	  DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Matrix& mat);
+	  CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Matrix& mat);
 
 	  // This structure allows to access vector elements by index or name.
 	  union {

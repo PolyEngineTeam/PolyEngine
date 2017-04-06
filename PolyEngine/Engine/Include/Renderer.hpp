@@ -4,7 +4,7 @@
 
 namespace Poly {
 
-	struct DLLEXPORT IRenderingContext : public BaseObject<> {};
+	struct ENGINE_DLLEXPORT IRenderingContext : public BaseObject<> {};
 
 	class IRenderer : public BaseObject<> {
 	public:

@@ -2,8 +2,6 @@
 #include <windows.h>
 #include <windowsx.h>
 
-#include <gl\/glew.h>
-
 #include <Engine.hpp>
 #include <OpenGLRenderer.hpp>
 #include <TestGame.hpp>
@@ -76,7 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	MSG msg;
 
 	TestGame Game;
-	Poly::OpenGLRenderingContext Context(hInstance, hWnd, viewportRect);
+	Poly::OpenGLRenderingContext Context(hWnd, viewportRect);
 	Poly::Engine Engine(&Game);
 	gEngine = &Engine;
 	Engine.Init(&Context);

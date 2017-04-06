@@ -5,13 +5,13 @@
 
 namespace Poly {
 
-	class DLLEXPORT Color : public BaseObject<>
+	class CORE_DLLEXPORT Color : public BaseObject<>
 	{
 	public:
 		Color();
 		Color(float r, float g, float b, float a = 1.0f);
 
-		DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Color& color);
+		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Color& color);
 
 		union {
 			float Data[4];

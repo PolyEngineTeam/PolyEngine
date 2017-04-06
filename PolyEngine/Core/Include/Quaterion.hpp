@@ -8,9 +8,9 @@
 
 namespace Poly {
 
-	struct DLLEXPORT EulerAngles { Angle X, Y, Z; };
+	struct CORE_DLLEXPORT EulerAngles { Angle X, Y, Z; };
 
-	class ALIGN_16 DLLEXPORT Quaterion : public BaseObject<>{
+	class ALIGN_16 CORE_DLLEXPORT Quaterion : public BaseObject<>{
 	public:
 	  constexpr Quaterion() : X(0), Y(0), Z(0), W(1) {}
 	  Quaterion(const Vector& axis, const Angle& angle);
