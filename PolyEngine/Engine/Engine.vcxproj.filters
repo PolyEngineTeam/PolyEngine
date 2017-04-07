@@ -17,22 +17,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\Engine.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Renderer.hpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\OpenGLRenderingContext.hpp">
-      <Filter>Source Files\Rendering\OpenGL</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\OpenGLRenderingContext.cpp">
       <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Src\Engine.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\OpenGLRenderingContext.hpp">
+      <Filter>Source Files\Rendering\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Renderer.hpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

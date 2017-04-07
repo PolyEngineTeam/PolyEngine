@@ -74,7 +74,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CORE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -83,7 +84,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CORE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -94,7 +96,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CORE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -109,7 +112,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CORE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -127,22 +131,22 @@
     <ClCompile Include="Src\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\Allocator.hpp" />
-    <ClInclude Include="Include\Angle.hpp" />
-    <ClInclude Include="Include\BaseObject.hpp" />
-    <ClInclude Include="Include\BasicMath.hpp" />
-    <ClInclude Include="Include\Color.hpp" />
-    <ClInclude Include="Include\Core.hpp" />
-    <ClInclude Include="Include\Defines.hpp" />
-    <ClInclude Include="Include\Dynarray.hpp" />
-    <ClInclude Include="Include\FileIO.hpp" />
-    <ClInclude Include="Include\Logger.hpp" />
-    <ClInclude Include="Include\Matrix.hpp" />
-    <ClInclude Include="Include\Quaterion.hpp" />
-    <ClInclude Include="Include\Scalar.hpp" />
-    <ClInclude Include="Include\SimdMath.hpp" />
-    <ClInclude Include="Include\String.hpp" />
-    <ClInclude Include="Include\Vector.hpp" />
+    <ClInclude Include="Src\Allocator.hpp" />
+    <ClInclude Include="Src\Angle.hpp" />
+    <ClInclude Include="Src\BaseObject.hpp" />
+    <ClInclude Include="Src\BasicMath.hpp" />
+    <ClInclude Include="Src\Color.hpp" />
+    <ClInclude Include="Src\Core.hpp" />
+    <ClInclude Include="Src\Defines.hpp" />
+    <ClInclude Include="Src\Dynarray.hpp" />
+    <ClInclude Include="Src\FileIO.hpp" />
+    <ClInclude Include="Src\Logger.hpp" />
+    <ClInclude Include="Src\Matrix.hpp" />
+    <ClInclude Include="Src\Quaterion.hpp" />
+    <ClInclude Include="Src\Scalar.hpp" />
+    <ClInclude Include="Src\SimdMath.hpp" />
+    <ClInclude Include="Src\String.hpp" />
+    <ClInclude Include="Src\Vector.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

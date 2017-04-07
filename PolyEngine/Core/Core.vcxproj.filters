@@ -42,53 +42,53 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\Core.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Defines.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Angle.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\BasicMath.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Matrix.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Quaterion.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Scalar.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\SimdMath.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Vector.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Color.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\String.hpp">
+    <ClInclude Include="Src\Dynarray.hpp">
       <Filter>Source Files\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Allocator.hpp">
+    <ClInclude Include="Src\String.hpp">
+      <Filter>Source Files\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Allocator.hpp">
       <Filter>Source Files\Memory</Filter>
     </ClInclude>
-    <ClInclude Include="Include\FileIO.hpp">
+    <ClInclude Include="Src\BaseObject.hpp">
+      <Filter>Source Files\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BasicMath.hpp">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Matrix.hpp">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Quaterion.hpp">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Scalar.hpp">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SimdMath.hpp">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Angle.hpp">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Color.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Core.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Defines.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Logger.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Vector.hpp">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\FileIO.hpp">
       <Filter>Source Files\FileIO</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Logger.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Dynarray.hpp">
-      <Filter>Source Files\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\BaseObject.hpp">
-      <Filter>Source Files\Memory</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
