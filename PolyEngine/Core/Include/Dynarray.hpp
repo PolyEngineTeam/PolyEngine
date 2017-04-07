@@ -7,9 +7,11 @@ namespace Poly {
 
 	namespace ObjectLifetimeHelper
 	{
+		// Not really sure if this is needed
 		template<class T>
 		void Create(T* ptr, typename std::enable_if<std::is_trivially_default_constructible<T>::value>::type* = 0)
 		{
+			new (ptr)T;
 		}
 
 		template<class T>
@@ -21,6 +23,7 @@ namespace Poly {
 		template<class T>
 		void Destroy(T* t, typename std::enable_if<std::is_trivially_destructible<T>::value>::type* = 0)
 		{
+			t->~T();
 		}
 
 		template<class T>

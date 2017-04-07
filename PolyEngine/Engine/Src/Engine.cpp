@@ -11,6 +11,7 @@ bool Engine::Init(const IRenderingContextParams* context) {
 	if (!Renderer->Init(context))
 		return false;
 	Game->Init();
+	return true;
 }
 
 void Poly::Engine::Deinit()
