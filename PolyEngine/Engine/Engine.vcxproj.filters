@@ -31,7 +31,7 @@
     <ClInclude Include="Src\OpenGLRenderingContext.hpp">
       <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Renderer.hpp">
+    <ClInclude Include="Src\RenderingContext.hpp">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>

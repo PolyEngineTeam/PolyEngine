@@ -168,7 +168,7 @@
   <ItemGroup>
     <ClInclude Include="Src\Engine.hpp" />
     <ClInclude Include="Src\OpenGLRenderingContext.hpp" />
-    <ClInclude Include="Src\Renderer.hpp" />
+    <ClInclude Include="Src\RenderingContext.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

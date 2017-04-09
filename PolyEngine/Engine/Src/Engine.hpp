@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Core.hpp>
-#include "Renderer.hpp"
+#include "RenderingContext.hpp"
 
 namespace Poly {
 	class Engine;

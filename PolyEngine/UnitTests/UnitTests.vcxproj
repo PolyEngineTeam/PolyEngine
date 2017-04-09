@@ -122,6 +122,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\AllocatorTests.cpp" />
     <ClCompile Include="Src\AngleTests.cpp" />
     <ClCompile Include="Src\BasicMathTests.cpp" />
     <ClCompile Include="Src\DynarrayTests.cpp" />
