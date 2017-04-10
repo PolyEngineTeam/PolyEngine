@@ -11,55 +11,75 @@ namespace Poly {
 
 
 
-	// Very inefficient pool allocator
+	// Fast pool allocator, https://www.thinkmind.org/download.php?articleid=computation_tools_2012_1_10_80006
 	template<typename T>
 	class PoolAllocator
 	{
 	public:
 		PoolAllocator(size_t count)
-			: Capacity(count)
+			: Capacity(count), FreeBlockCount(count)
 		{
-			Memory = static_cast<T*>(default_alloc(sizeof(T) * count));
-			MemoryMap = static_cast<bool*>(default_alloc(sizeof(bool) * count));
-			memset(MemoryMap, false, sizeof(bool) * count);
+			Data = (T*)default_alloc(sizeof(T) * Capacity);
+			Next = Data;
 		}
 
 		virtual ~PoolAllocator()
 		{
-			if (Memory) default_free(Memory);
-			if (MemoryMap) default_free(MemoryMap);
+			if (Data)
+			{
+				default_free(Data);
+				Data = nullptr;
+			}
 		}
 
 		T* Alloc()
 		{
-			for (size_t i = 0; i < Capacity; ++i)
+			if (InitializedBlockCount < Capacity)
 			{
-				if (!MemoryMap[i])
+				size_t* p = (size_t*)AddrFromIndex(InitializedBlockCount);
+				*p = InitializedBlockCount + 1;
+				InitializedBlockCount++;
+			}
+			T* ret = nullptr;
+			if (FreeBlockCount > 0)
+			{
+				ret = Next;
+				--FreeBlockCount;
+				if (FreeBlockCount != 0)
 				{
-					MemoryMap[i] = true;
-					++Size;
-					return Memory + i;
+					Next = AddrFromIndex(*((size_t*)Next));
+				}
+				else
+				{
+					Next = nullptr;
 				}
 			}
-			return nullptr;
+			return ret;
 		}
 
-		void Free(const T* obj)
+		void Free(const T* p)
 		{
-			size_t offset = obj - Memory;
-			HEAVY_ASSERTE(offset >= 0 && offset < Capacity, "Address out of bounds");
-			MemoryMap[offset] = false;
-			--Size;
-#if defined(_DEBUG)
-			memset(Memory + offset, 0, sizeof(T)); // zero memory
-#endif
+			if (Next != nullptr)
+			{
+				(*(size_t*)p) = IndexFromAddr(Next);
+				Next = (T*)p;
+			}
+			else
+			{
+				*((size_t*)p) = Capacity;
+				Next = (T*)p;
+			}
+			++FreeBlockCount;
 		}
 
-		size_t GetSize() const { return Size; }
+		size_t GetSize() const { return Capacity - FreeBlockCount; }
 	private:
-		size_t Size = 0;
+		T* AddrFromIndex(size_t i) const { return Data + i; }
+		size_t IndexFromAddr(const T* p) const { return p - Data; }
+
 		const size_t Capacity = 0;
-		T* Memory = nullptr;
-		bool* MemoryMap = nullptr;
+		size_t FreeBlockCount = 0;
+		size_t InitializedBlockCount = 0;
+		T* Data = nullptr;		T* Next = nullptr;
 	};
 }
