@@ -8,18 +8,18 @@ namespace Poly {
 
 	class World;
 
-	inline unsigned long GetUniqueEntityID() { static unsigned long counter = 0; return ++counter; }
+	//TODO finish implementation of this class
 
 	class ENGINE_DLLEXPORT Entity : public BaseObject<>
 	{
 	public:
-		unsigned long GetID() const { HEAVY_ASSERTE(EntityID != 0, "Entity was not properly initialized");  return EntityID; }
-		const World* GetWorld() const { HEAVY_ASSERTE(EntityID != 0, "Entity was not properly initialized");  return EntityWorld; }
+		const UniqueID& GetID() const { HEAVY_ASSERTE(EntityID, "Entity was not properly initialized");  return EntityID; }
+		const World* GetWorld() const { HEAVY_ASSERTE(EntityID, "Entity was not properly initialized");  return EntityWorld; }
 
 	private:
 		Entity(const World* world);
 
-		unsigned long EntityID = 0;
+		UniqueID EntityID;
 		const World* EntityWorld = nullptr;
 
 		ComponentBase* Components[MAX_COMPONENTS_COUNT];

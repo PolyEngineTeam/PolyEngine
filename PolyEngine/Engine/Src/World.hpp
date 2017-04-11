@@ -9,13 +9,13 @@ namespace Poly {
 	class ENGINE_DLLEXPORT World : public BaseObject<>
 	{
 	public:
-		Entity* SpawnEntity();
-		void DestroyEntity(const Entity* ent);
-
-		const Dynarray<Entity>& GetEntities() const { return Entities; }
+		//TODO implement world
+		//Entity* SpawnEntity();
+		//void DestroyEntity(const Entity* ent);
 		
 	private:
-		Dynarray<Entity> Entities;
+		PoolAllocator<Entity> Entities;
+		// TODO implement registered component storage here using IterablePoolAllocators
 	};
 
 }

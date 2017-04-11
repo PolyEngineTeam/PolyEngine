@@ -128,6 +128,7 @@
     <ClCompile Include="Src\Matrix.cpp" />
     <ClCompile Include="Src\Quaternion.cpp" />
     <ClCompile Include="Src\SimdMath.cpp" />
+    <ClCompile Include="Src\UniqueID.cpp" />
     <ClCompile Include="Src\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -140,12 +141,15 @@
     <ClInclude Include="Src\Defines.hpp" />
     <ClInclude Include="Src\Dynarray.hpp" />
     <ClInclude Include="Src\FileIO.hpp" />
+    <ClInclude Include="Src\IterablePoolAllocator.hpp" />
     <ClInclude Include="Src\Logger.hpp" />
     <ClInclude Include="Src\Matrix.hpp" />
+    <ClInclude Include="Src\PoolAllocator.hpp" />
     <ClInclude Include="Src\Quaterion.hpp" />
     <ClInclude Include="Src\Scalar.hpp" />
     <ClInclude Include="Src\SimdMath.hpp" />
     <ClInclude Include="Src\String.hpp" />
+    <ClInclude Include="Src\UniqueID.hpp" />
     <ClInclude Include="Src\Vector.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

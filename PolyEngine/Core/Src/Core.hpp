@@ -13,6 +13,8 @@
 // Memory
 #include "BaseObject.hpp"
 #include "Allocator.hpp"
+#include "PoolAllocator.hpp"
+#include "IterablePoolAllocator.hpp"
 
 // Containers
 #include "String.hpp"
@@ -21,3 +23,4 @@
 #include "Color.hpp"
 #include "FileIO.hpp"
 #include "Logger.hpp"
+#include "UniqueID.hpp"

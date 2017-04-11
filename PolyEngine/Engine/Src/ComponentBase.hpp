@@ -6,8 +6,9 @@ namespace Poly {
 
 	class Entity;
 
+	//TODO implement component reqistrtation
+
 	constexpr unsigned int MAX_COMPONENTS_COUNT = 64;
-	constexpr unsigned int MAX_ENTITY_COUNT = 1024;
 
 	class ENGINE_DLLEXPORT ComponentBase : public BaseObject<>
 	{
@@ -15,17 +16,5 @@ namespace Poly {
 
 	private:
 		Entity* Owner = nullptr;
-	};
-
-
-	template<typename T>
-	class ENGINE_DLLEXPORT ComponentManager : public BaseObject<>
-	{
-	private:
-		static T* CreateComponent() { return ComponentsData.Alloc(); }
-		static void RemoveComponent(T* cmp) { ComponentsData.Free(cmp); }
-		static PoolAllocator<T> ComponentsData;
-
-		friend class World;
 	};
 }

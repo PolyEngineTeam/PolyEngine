@@ -40,6 +40,9 @@
     <ClCompile Include="Src\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Src\UniqueID.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Dynarray.hpp">
@@ -89,6 +92,15 @@
     </ClInclude>
     <ClInclude Include="Src\FileIO.hpp">
       <Filter>Source Files\FileIO</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\IterablePoolAllocator.hpp">
+      <Filter>Source Files\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PoolAllocator.hpp">
+      <Filter>Source Files\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\UniqueID.hpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -6,6 +6,8 @@ namespace Poly {
 
 	class World;
 
+	//TODO implement system reqistrtation
+
 	class ENGINE_DLLEXPORT SystemBase : public BaseObject<>
 	{
 	public:
