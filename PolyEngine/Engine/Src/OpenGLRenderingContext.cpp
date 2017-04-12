@@ -76,6 +76,12 @@ bool OpenGLRenderingContext::Init(const IRenderingContextParams * context)
 		hRC = wglCreateContextAttribsARB(hDC, 0, attribs);
 		wglMakeCurrent(nullptr, nullptr);
 		wglDeleteContext(tempContext);
+		
+		if (!hRC)
+		{
+			gConsole.LogError("OpenGL context creation failed for version {}.{}. Platform not supported.", attribs[1], attribs[3]);
+			return false;
+		}
 		wglMakeCurrent(hDC, hRC);
 	}
 	else
