@@ -2,6 +2,7 @@
 
 #include <Core.hpp>
 #include "RenderingContext.hpp"
+#include "World.hpp"
 
 namespace Poly {
 	class Engine;
@@ -21,7 +22,9 @@ namespace Poly {
 
 		void Update(float dt);
 
+		World& GetWorld() { return BaseWorld; }
 	private:
+		World BaseWorld;
 		IGame* Game;
 		IRenderingContext* Renderer;
 	};

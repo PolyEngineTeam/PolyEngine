@@ -4,10 +4,17 @@
 #include "Allocator.hpp"
 
 namespace Poly {
+
+	class IterablePoolAllocatorBase : public BaseObject<>
+	{
+	public:
+		virtual void Free(void* ptr) = 0;
+	};
+
 	//------------------------------------------------------------------------------
 	// Fast pool allocator, that enables iteration
 	template<typename T>
-	class IterablePoolAllocator : public BaseObject<>
+	class IterablePoolAllocator : public IterablePoolAllocatorBase
 	{
 		struct Cell
 		{
@@ -26,8 +33,8 @@ namespace Poly {
 			bool operator==(const Iterator& rhs) const { return CurrentCell == rhs.CurrentCell; }
 			bool operator!=(const Iterator& rhs) const { return !(*this == rhs); }
 
-			T& operator*() const { return *((T*)CurrentCell->Data); }
-			T& operator->() const { return *((T*)CurrentCell->Data); }
+			T& operator*() const { return *reinterpret_cast<T*>(CurrentCell->Data); }
+			T& operator->() const { return *reinterpret_cast<T*>(CurrentCell->Data); }
 
 			Iterator& operator++() { CurrentCell = CurrentCell->Next; return *this; }
 			Iterator operator++(int) { Iterator ret(CurrentCell); CurrentCell = CurrentCell->Next; return ret; }
@@ -48,8 +55,8 @@ namespace Poly {
 			bool operator==(const ConstIterator& rhs) const { return CurrentCell == rhs.CurrentCell; }
 			bool operator!=(const ConstIterator& rhs) const { return !(*this == rhs); }
 
-			const T& operator*() const { return *((T*)CurrentCell->Data); }
-			const T& operator->() const { return *((T*)CurrentCell->Data); }
+			const T& operator*() const { return *reinterpret_cast<T*>(CurrentCell->Data); }
+			const T& operator->() const { return *reinterpret_cast<T*>(CurrentCell->Data); }
 
 			ConstIterator& operator++() { CurrentCell = CurrentCell->Next; return *this; }
 			ConstIterator operator++(int) { ConstIterator ret(CurrentCell); CurrentCell = CurrentCell->Next; return ret; }
@@ -74,7 +81,7 @@ namespace Poly {
 			: Capacity(count), FreeBlockCount(count)
 		{
 			ASSERTE(count > 0, "Cell count cannot be lower than 1.");
-			Data = (Cell*)default_alloc(sizeof(Cell) * (Capacity + 1));
+			Data = reinterpret_cast<Cell*>(default_alloc(sizeof(Cell) * (Capacity + 1)));
 			Next = Data;
 			Head = Tail = Data + Capacity;
 			Head->Next = nullptr;
@@ -95,9 +102,8 @@ namespace Poly {
 			// initialize new block
 			if (InitializedBlockCount < Capacity)
 			{
-				size_t* p = (size_t*)AddrFromIndex(InitializedBlockCount);
-				*p = InitializedBlockCount + 1;
-				InitializedBlockCount++;
+				size_t* p = reinterpret_cast<size_t*>(AddrFromIndex(InitializedBlockCount));
+				*p = ++InitializedBlockCount;
 			}
 
 			// find first suitable place for data
@@ -125,23 +131,24 @@ namespace Poly {
 				--FreeBlockCount;
 				if (FreeBlockCount != 0)
 				{
-					Next = AddrFromIndex(*((size_t*)Next));
+					Next = AddrFromIndex(*reinterpret_cast<size_t*>(Next));
 				}
 				else
 				{
 					Next = nullptr;
 				}
 
-				return (T*)ret->Data;
+				return reinterpret_cast<T*>(ret->Data);
 			}
 			return nullptr;
 		}
 
 		//------------------------------------------------------------------------------
-		void Free(const T* p)
+		void Free(void* p) override { Free(reinterpret_cast<T*>(p)); }
+		void Free(T* p)
 		{
 			// get cell addr
-			Cell* cell = (Cell*)p;
+			Cell* cell = reinterpret_cast<Cell*>(p);
 
 			// keep the linked list valid
 			if (Head == cell)
@@ -156,13 +163,13 @@ namespace Poly {
 			// Calculate the value of Next
 			if (Next != nullptr)
 			{
-				(*(size_t*)p) = IndexFromAddr(Next);
-				Next = (Cell*)p;
+				*reinterpret_cast<size_t*>(p) = IndexFromAddr(Next);
+				Next = cell;
 			}
 			else
 			{
-				*((size_t*)p) = Capacity;
-				Next = (Cell*)p;
+				*reinterpret_cast<size_t*>(p) = Capacity;
+				Next = cell;
 			}
 			++FreeBlockCount;
 		}

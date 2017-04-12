@@ -17,7 +17,7 @@ namespace Poly {
 			: Capacity(count), FreeBlockCount(count)
 		{
 			ASSERTE(count > 0, "Cell count cannot be lower than 1.");
-			Data = (T*)default_alloc(sizeof(T) * Capacity);
+			Data = reinterpret_cast<T*>(default_alloc(sizeof(T) * Capacity));
 			Next = Data;
 		}
 
@@ -34,9 +34,8 @@ namespace Poly {
 		{
 			if (InitializedBlockCount < Capacity)
 			{
-				size_t* p = (size_t*)AddrFromIndex(InitializedBlockCount);
-				*p = InitializedBlockCount + 1;
-				InitializedBlockCount++;
+				size_t* p = reinterpret_cast<size_t*>(AddrFromIndex(InitializedBlockCount));
+				*p = ++InitializedBlockCount;
 			}
 
 			if (FreeBlockCount > 0)
@@ -45,7 +44,7 @@ namespace Poly {
 				--FreeBlockCount;
 				if (FreeBlockCount != 0)
 				{
-					Next = AddrFromIndex(*((size_t*)Next));
+					Next = AddrFromIndex(*reinterpret_cast<size_t*>(Next));
 				}
 				else
 				{
@@ -57,17 +56,17 @@ namespace Poly {
 		}
 
 		//------------------------------------------------------------------------------
-		void Free(const T* p)
+		void Free(T* p)
 		{
 			if (Next != nullptr)
 			{
-				(*(size_t*)p) = IndexFromAddr(Next);
-				Next = (T*)p;
+				*reinterpret_cast<size_t*>(p) = IndexFromAddr(Next);
+				Next = p;
 			}
 			else
 			{
-				*((size_t*)p) = Capacity;
-				Next = (T*)p;
+				*reinterpret_cast<size_t*>(p) = Capacity;
+				Next = p;
 			}
 			++FreeBlockCount;
 		}
