@@ -63,4 +63,8 @@
 #define HEAVY_ASSERTE(expr, msg) assert(expr && #msg)
 #define STATIC_ASSERTE(expr, msg) static_assert(expr, msg)
 
+// Struct/class member offset
+// According to standard this is actually undefined behaviour (due to nullptr member dereference), but it works on all supported platforms.
+#define OFFSET_OF(obj, member) ((size_t)&(((obj *)nullptr)->member))
+
 #include "BaseObject.hpp"

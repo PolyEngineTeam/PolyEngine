@@ -17,6 +17,7 @@ namespace Poly {
 		};
 
 		STATIC_ASSERTE(sizeof(Cell) >= sizeof(size_t), "Type size is too small for allocator");
+		STATIC_ASSERTE(OFFSET_OF(Cell, Data) == 0, "Data has to be the first member of Cell struct. It must have no offset.");
 	public:
 		//------------------------------------------------------------------------------
 		class Iterator
