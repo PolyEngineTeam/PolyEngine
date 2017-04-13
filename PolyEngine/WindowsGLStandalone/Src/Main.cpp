@@ -8,6 +8,8 @@
 
 static Poly::Engine* gEngine = nullptr;
 
+
+
 // the WindowProc function prototype
 LRESULT CALLBACK WindowProc(HWND hWnd,
 	UINT message,
@@ -121,6 +123,32 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	// sort through and find what code to run for the message given
 	switch (message)
 	{
+	// input
+	case WM_KEYDOWN:{
+		gEngine->KeyDown(static_cast<Poly::eKey>((unsigned int)wParam));
+		return 0;
+	}
+
+	case WM_KEYUP:{
+		gEngine->KeyUp(static_cast<Poly::eKey>((unsigned int)wParam));
+		return 0;
+	}
+
+	case WM_MOUSEMOVE:{
+		POINT pointPos;
+		GetCursorPos(&pointPos);
+		gEngine->UpdateMousePos(Poly::Vector(static_cast<float>(pointPos.x), static_cast<float>(pointPos.y), 0));
+		return 0;
+	}
+
+	case WM_MOUSEWHEEL:{
+		int xPos = GET_X_LPARAM(lParam); 
+		int yPos = GET_Y_LPARAM(lParam); 
+		gEngine->UpdateWheelPos(Poly::Vector(static_cast<float>(xPos), static_cast<float>(yPos), 0));
+		return 0;
+	}
+	// end of input
+
 		// this message is read when the window is closed
 	case WM_DESTROY:
 	{

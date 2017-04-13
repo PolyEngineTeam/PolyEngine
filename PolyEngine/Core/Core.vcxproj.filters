@@ -102,5 +102,8 @@
     <ClInclude Include="Src\UniqueID.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Queue.hpp">
+      <Filter>Source Files\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
