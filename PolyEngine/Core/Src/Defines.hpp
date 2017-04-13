@@ -15,7 +15,7 @@
 
 // TODO suport more platforms.
 #if !defined(_WIN32)
-	#error [ERROR] Unsupported platform! You are rying to compile for unsupported platform. This won't work.'
+	#error [ERROR] Unsupported platform! You are trying to compile for unsupported platform. This won't work.'
 #endif
 
 // ALIGN_16

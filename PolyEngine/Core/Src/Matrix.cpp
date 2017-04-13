@@ -34,8 +34,8 @@ Matrix& Matrix::operator=(const Matrix& rhs) {
 bool Matrix::operator==(const Matrix& rhs) const {
 #if DISABLE_SIMD
   bool result = true;
-  for(int i=0; i<4 && result; ++i)
-    result = result && Row[i] == rhs.Row[i];
+  for(int i=0; i<16 && result; ++i)
+    result = result && Cmpf(Data[i], rhs.Data[i]);
   return result;
 #else
   __m128 result0 = _mm_cmpf_ps(SimdRow[0], rhs.SimdRow[0]);

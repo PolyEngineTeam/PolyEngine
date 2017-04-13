@@ -1,10 +1,10 @@
-#include "Quaterion.hpp"
+#include "Quaternion.hpp"
 #include "SimdMath.hpp"
 
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-Quaterion::Quaterion(const Vector& axis, const Angle& angle) {
+Quaternion::Quaternion(const Vector& axis, const Angle& angle) {
   Angle halfAngle = angle * 0.5f;
   float s = Sin(halfAngle);
   
@@ -15,7 +15,7 @@ Quaterion::Quaterion(const Vector& axis, const Angle& angle) {
 }
 
 //------------------------------------------------------------------------------
-Quaterion::Quaterion(const EulerAngles& euler) {
+Quaternion::Quaternion(const EulerAngles& euler) {
 
   float c1 = Cos(euler.Y * 0.5f);
   float s1 = Sin(euler.Y * 0.5f);
@@ -33,7 +33,7 @@ Quaterion::Quaterion(const EulerAngles& euler) {
 }
 
 //------------------------------------------------------------------------------
-bool Quaterion::operator==(const Quaterion& rhs) {
+bool Quaternion::operator==(const Quaternion& rhs) {
 #if DISABLE_SIMD
   return Cmpf(X, rhs.X) && Cmpf(Y, rhs.Y) && Cmpf(Z, rhs.Z) && Cmpf(W, rhs.W);
 #else
@@ -42,8 +42,8 @@ bool Quaterion::operator==(const Quaterion& rhs) {
 }
 
 //------------------------------------------------------------------------------
-Quaterion Quaterion::operator*(const Quaterion& rhs) const {
-  Quaterion ret;
+Quaternion Quaternion::operator*(const Quaternion& rhs) const {
+  Quaternion ret;
   ret.W = W * rhs.W - X * rhs.X - Y * rhs.Y - Z * rhs.Z;
   ret.X = W * rhs.X + X * rhs.W + Y * rhs.Z - Z * rhs.Y;
   ret.Y = W * rhs.Y - X * rhs.Z + Y * rhs.W + Z * rhs.X;
@@ -52,7 +52,7 @@ Quaterion Quaterion::operator*(const Quaterion& rhs) const {
 }
 
 //------------------------------------------------------------------------------
-Vector Quaterion::operator*(const Vector& rhs) const {
+Vector Quaternion::operator*(const Vector& rhs) const {
   HEAVY_ASSERTE(Cmpf(Length2(), 1.0f), "Non unit quaterion");
   Vector tmp(X, Y, Z);
   Vector t = tmp.Cross(rhs) * 2;
@@ -60,23 +60,23 @@ Vector Quaterion::operator*(const Vector& rhs) const {
 }
 
 //------------------------------------------------------------------------------
-float Quaterion::Length() const { return sqrt(Length2()); }
+float Quaternion::Length() const { return sqrt(Length2()); }
 
 //------------------------------------------------------------------------------
-float Quaterion::Length2() const { return W * W + X * X + Y * Y + Z * Z; }
+float Quaternion::Length2() const { return W * W + X * X + Y * Y + Z * Z; }
 
 //------------------------------------------------------------------------------
-Quaterion& Quaterion::Conjugate() { X = -X; Y = -Y; Z = -Z; return *this; }
+Quaternion& Quaternion::Conjugate() { X = -X; Y = -Y; Z = -Z; return *this; }
 
 //------------------------------------------------------------------------------
-Quaterion Quaterion::GetConjugated() const {
-  Quaterion ret = *this;
+Quaternion Quaternion::GetConjugated() const {
+  Quaternion ret = *this;
   ret.Conjugate();
   return ret;
 }
 
 //------------------------------------------------------------------------------
-Quaterion& Quaterion::Normalize() {
+Quaternion& Quaternion::Normalize() {
   float iLen = 1.0f / Length();
   W *= iLen;
   X *= iLen;
@@ -86,14 +86,14 @@ Quaterion& Quaterion::Normalize() {
 }
 
 //------------------------------------------------------------------------------
-Quaterion Quaterion::GetNormalized() const {
-  Quaterion ret = *this;
+Quaternion Quaternion::GetNormalized() const {
+  Quaternion ret = *this;
   ret.Normalize();
   return ret;
 }
 
 //------------------------------------------------------------------------------
-Quaterion::operator Matrix() const {
+Quaternion::operator Matrix() const {
   Matrix ret;
   
   ret.m00 = 1 - 2 * Y * Y - 2 * Z * Z;  // W*W + X*X - Y*Y - Z*Z;
@@ -112,7 +112,7 @@ Quaterion::operator Matrix() const {
 }
 
 //------------------------------------------------------------------------------
-EulerAngles Quaterion::ToEulerAngles() const {
+EulerAngles Quaternion::ToEulerAngles() const {
   
   float sinus = 2 * (W * Y - X * Z);
   HEAVY_ASSERTE(IsInRange(sinus, -1.0f, 1.0f), "Sinus not is sinus range?!");
@@ -125,7 +125,7 @@ EulerAngles Quaterion::ToEulerAngles() const {
 
 namespace Poly {
 	//------------------------------------------------------------------------------
-	std::ostream& operator<< (std::ostream& stream, const Quaterion& quat) {
+	std::ostream& operator<< (std::ostream& stream, const Quaternion& quat) {
 		EulerAngles euler = quat.ToEulerAngles();
 		return stream << "Quat[ " << euler.X << " " << euler.Y << " " << euler.Z << " ]";
 	}

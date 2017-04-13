@@ -7,7 +7,7 @@
 #include "Angle.hpp"
 #include "Vector.hpp"
 #include "Matrix.hpp"
-#include "Quaterion.hpp"
+#include "Quaternion.hpp"
 #include "Scalar.hpp"
 
 // Memory

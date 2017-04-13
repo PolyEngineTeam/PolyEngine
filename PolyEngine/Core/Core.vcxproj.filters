@@ -63,9 +63,6 @@
     <ClInclude Include="Src\Matrix.hpp">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Quaterion.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Scalar.hpp">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
@@ -101,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="Src\UniqueID.hpp">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Quaternion.hpp">
+      <Filter>Source Files\Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

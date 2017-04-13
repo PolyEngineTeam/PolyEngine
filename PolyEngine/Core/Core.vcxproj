@@ -145,7 +145,7 @@
     <ClInclude Include="Src\Logger.hpp" />
     <ClInclude Include="Src\Matrix.hpp" />
     <ClInclude Include="Src\PoolAllocator.hpp" />
-    <ClInclude Include="Src\Quaterion.hpp" />
+    <ClInclude Include="Src\Quaternion.hpp" />
     <ClInclude Include="Src\Scalar.hpp" />
     <ClInclude Include="Src\SimdMath.hpp" />
     <ClInclude Include="Src\String.hpp" />
