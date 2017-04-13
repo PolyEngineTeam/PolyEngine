@@ -36,9 +36,12 @@ namespace Poly {
 	  // cast to matrix
 	  explicit operator Matrix() const;
 
-	  EulerAngles ToEulerAngles() const;
+	  Quaternion& SetRotation(const Vector& axis, const Angle& angle);
 
-	  friend std::ostream& operator<< (std::ostream& stream, const Quaternion& quat);
+	  EulerAngles ToEulerAngles() const;
+	  inline Matrix ToRotationMatrix() const { return static_cast<Matrix>(*this); }
+
+	  CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Quaternion& quat);
 
 	  union {
 	#if !DISABLE_SIMD
