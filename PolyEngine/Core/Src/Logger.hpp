@@ -51,7 +51,7 @@ namespace Poly {
 			stream << std::endl;
 	}
 
-	class CORE_DLLEXPORT Console {
+	class CORE_DLLEXPORT Console : public BaseObject<> {
 	public:
 
 		/**

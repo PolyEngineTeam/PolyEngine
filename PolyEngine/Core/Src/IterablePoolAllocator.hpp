@@ -24,7 +24,7 @@ namespace Poly {
 		};
 
 		STATIC_ASSERTE(sizeof(Cell) >= sizeof(size_t), "Type size is too small for allocator");
-		STATIC_ASSERTE(OFFSET_OF(Cell, Data) == 0, "Data has to be the first member of Cell struct. It must have no offset.");
+		STATIC_ASSERTE(offsetof(Cell, Data) == 0, "Data has to be the first member of Cell struct. It must have no offset.");
 	public:
 		//------------------------------------------------------------------------------
 		class Iterator
@@ -81,7 +81,7 @@ namespace Poly {
 			: Capacity(count), FreeBlockCount(count)
 		{
 			ASSERTE(count > 0, "Cell count cannot be lower than 1.");
-			Data = reinterpret_cast<Cell*>(default_alloc(sizeof(Cell) * (Capacity + 1)));
+			Data = reinterpret_cast<Cell*>(DefaultAlloc(sizeof(Cell) * (Capacity + 1)));
 			Next = Data;
 			Head = Tail = Data + Capacity;
 			Head->Next = nullptr;
@@ -92,7 +92,7 @@ namespace Poly {
 		virtual ~IterablePoolAllocator()
 		{
 			ASSERTE(Data, "Allocator is invalid");
-			default_free(Data);
+			DefaultFree(Data);
 			Data = nullptr;
 		}
 

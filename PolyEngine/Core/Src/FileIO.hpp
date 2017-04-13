@@ -14,7 +14,7 @@ namespace Poly {
 			long fsize = ftell(f);
 			fseek(f, 0, SEEK_SET);  //same as rewind(f);
 
-			char* string = (char*)default_alloc(fsize + 1);
+			char* string = (char*)DefaultAlloc(fsize + 1);
 			fread(string, fsize, 1, f);
 			fclose(f);
 			string[fsize] = 0;

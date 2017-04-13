@@ -4,7 +4,8 @@
 
 namespace Poly {
 
-	inline void* default_alloc(size_t size) { return malloc(size); }
-	inline void* default_realloc(void* ptr, size_t size) { return realloc(ptr, size); }
-	inline void default_free(void* ptr) { free(ptr); }
+	//FIXME _aligned_malloc is Visual Studio only
+	inline void* DefaultAlloc(size_t size) { return _aligned_malloc(size, 16); }
+	inline void* DefaultRealloc(void* ptr, size_t size) { return _aligned_realloc(ptr, size, 16); }
+	inline void DefaultFree(void* ptr) { _aligned_free(ptr); }
 }

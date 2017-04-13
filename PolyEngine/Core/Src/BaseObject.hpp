@@ -4,7 +4,7 @@
 
 namespace Poly {
 
-	enum class eBaseObjectType
+	enum class CORE_DLLEXPORT eBaseObjectType
 	{
 		DEFAULT,
 		_COUNT
@@ -35,7 +35,7 @@ namespace Poly {
 	// Version without virtual destructor. Can be used only for constexpr classes and other PODs that prohibit virtual methods in base classes.
 	// USE THIS ONLY WHEN YOU KNOW WHAT YOU'RE DOING!!!
 	template<eBaseObjectType ObjType = eBaseObjectType::DEFAULT>
-	class BaseObjectLiteralType
+	class CORE_DLLEXPORT BaseObjectLiteralType
 	{
 	public:
 		void* operator new(size_t size)

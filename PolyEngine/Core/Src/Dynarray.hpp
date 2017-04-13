@@ -242,11 +242,11 @@ namespace Poly {
 		//------------------------------------------------------------------------------
 		void Realloc(size_t capacity)
 		{
-			Data = static_cast<T*>(default_realloc(Data, capacity * sizeof(T)));
+			Data = static_cast<T*>(DefaultRealloc(Data, capacity * sizeof(T)));
 			Capacity = capacity;
 		}
 
-		void Free() { if (Data) default_free(Data); }
+		void Free() { if (Data) DefaultFree(Data); }
 
 		//------------------------------------------------------------------------------
 		void Copy(const Dynarray<T>& rhs)

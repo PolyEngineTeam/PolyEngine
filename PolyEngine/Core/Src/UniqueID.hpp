@@ -5,7 +5,7 @@
 namespace Poly {
 
 	//TODO write propper UniqueID
-	class CORE_DLLEXPORT UniqueID
+	class CORE_DLLEXPORT UniqueID : public BaseObject<>
 	{
 	public:
 		UniqueID();
@@ -16,7 +16,7 @@ namespace Poly {
 
 		operator bool() const;
 
-		size_t operator()() const { return ID; }
+		size_t GetHash() const { return ID; }
 	private:
 		UniqueID(size_t id);
 
@@ -24,15 +24,7 @@ namespace Poly {
 	};
 }
 
+// hasher for UniqueID
 namespace std {
-
-	template <>
-	struct hash<Poly::UniqueID>
-	{
-		std::size_t operator()(const Poly::UniqueID& k) const
-		{
-			return k();
-		}
-	};
-
+	template <> struct hash<Poly::UniqueID> { std::size_t operator()(const Poly::UniqueID& k) const { return k.GetHash(); } };
 }
