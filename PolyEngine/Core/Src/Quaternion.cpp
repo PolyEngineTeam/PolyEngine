@@ -5,13 +5,7 @@ using namespace Poly;
 
 //------------------------------------------------------------------------------
 Quaternion::Quaternion(const Vector& axis, const Angle& angle) {
-  Angle halfAngle = angle * 0.5f;
-  float s = Sin(halfAngle);
-  
-  W = Cos(halfAngle);
-  X = axis.X * s;
-  Y = axis.Y * s;
-  Z = axis.Z * s;
+	SetRotation(axis, angle);
 }
 
 //------------------------------------------------------------------------------
@@ -35,9 +29,11 @@ Quaternion::Quaternion(const EulerAngles& euler) {
 //------------------------------------------------------------------------------
 bool Quaternion::operator==(const Quaternion& rhs) {
 #if DISABLE_SIMD
-  return Cmpf(X, rhs.X) && Cmpf(Y, rhs.Y) && Cmpf(Z, rhs.Z) && Cmpf(W, rhs.W);
+	return Cmpf(X, rhs.X) && Cmpf(Y, rhs.Y) && Cmpf(Z, rhs.Z) && Cmpf(W, rhs.W)
+		|| Cmpf(X, -rhs.X) && Cmpf(Y, -rhs.Y) && Cmpf(Z, -rhs.Z) && Cmpf(W, -rhs.W);
 #else
-  return _mm_movemask_ps(_mm_cmpf_ps(SimdData, rhs.SimdData)) == 0xf;
+	return _mm_movemask_ps(_mm_cmpf_ps(SimdData, rhs.SimdData)) == 0xf
+		|| _mm_movemask_ps(_mm_cmpf_ps(SimdData, _mm_mul_ps(rhs.SimdData, _mm_set_ps1(-1)))) == 0xf;
 #endif
 }
 
@@ -111,6 +107,18 @@ Quaternion::operator Matrix() const {
   return ret;
 }
 
+Quaternion & Poly::Quaternion::SetRotation(const Vector & axis, const Angle & angle)
+{
+	Angle halfAngle = angle * 0.5f;
+	float s = Sin(halfAngle);
+
+	W = Cos(halfAngle);
+	X = axis.X * s;
+	Y = axis.Y * s;
+	Z = axis.Z * s;
+	return *this;
+}
+
 //------------------------------------------------------------------------------
 EulerAngles Quaternion::ToEulerAngles() const {
   
@@ -126,7 +134,9 @@ EulerAngles Quaternion::ToEulerAngles() const {
 namespace Poly {
 	//------------------------------------------------------------------------------
 	std::ostream& operator<< (std::ostream& stream, const Quaternion& quat) {
-		EulerAngles euler = quat.ToEulerAngles();
-		return stream << "Quat[ " << euler.X << " " << euler.Y << " " << euler.Z << " ]";
+		return stream << "Quat[ " << quat.X << " " << quat.Y << " " << quat.Z << " " << quat.W << " ]";
+		
+		//EulerAngles euler = quat.ToEulerAngles();
+		//return stream << "Quat[ " << euler.X << " " << euler.Y << " " << euler.Z << " ]";
 	}
 }
