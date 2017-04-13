@@ -64,5 +64,11 @@
     <ClInclude Include="Src\ComponentBase.hpp">
       <Filter>Source Files\ECS</Filter>
     </ClInclude>
+    <ClInclude Include="Src\InputQueue.hpp">
+      <Filter>Source Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\KeyBindings.hpp">
+      <Filter>Source Files\Input</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
