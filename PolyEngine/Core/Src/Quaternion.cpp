@@ -33,7 +33,7 @@ bool Quaternion::operator==(const Quaternion& rhs) {
 		|| Cmpf(X, -rhs.X) && Cmpf(Y, -rhs.Y) && Cmpf(Z, -rhs.Z) && Cmpf(W, -rhs.W);
 #else
 	return _mm_movemask_ps(_mm_cmpf_ps(SimdData, rhs.SimdData)) == 0xf
-		|| _mm_movemask_ps(_mm_cmpf_ps(SimdData, _mm_mul_ps(rhs.SimdData, _mm_set_ps1(-1)))) == 0xf;
+		|| _mm_movemask_ps(_mm_cmpf_ps(SimdData, _mm_sub_ps(_mm_set1_ps(0.0), rhs.SimdData))) == 0xf;
 #endif
 }
 
