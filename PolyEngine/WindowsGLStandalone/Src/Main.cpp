@@ -121,7 +121,28 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	// sort through and find what code to run for the message given
 	switch (message)
 	{
+
 	// input
+	// I use separate case's for mouse buttons because otherwise mouse buttons aren't checked
+	case WM_LBUTTONDOWN:{
+		gEngine->KeyDown(Poly::eKey::LBUTTON);
+	}
+	case WM_LBUTTONUP:{
+		gEngine->KeyUp(Poly::eKey::LBUTTON);
+	}
+	case WM_RBUTTONDOWN:{
+		gEngine->KeyDown(Poly::eKey::RBUTTON);
+	}
+	case WM_RBUTTONUP:{
+		gEngine->KeyUp(Poly::eKey::RBUTTON);
+	}
+	case WM_MBUTTONDOWN:{
+		gEngine->KeyDown(Poly::eKey::MBUTTON);
+	}
+	case WM_MBUTTONUP:{
+		gEngine->KeyUp(Poly::eKey::MBUTTON);
+	}
+	
 	case WM_KEYDOWN:{
 		gEngine->KeyDown(static_cast<Poly::eKey>((unsigned int)wParam));
 		return 0;

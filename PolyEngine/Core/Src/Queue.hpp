@@ -13,8 +13,10 @@ namespace Poly
 
 		bool Empty() { return Data.IsEmpty(); }
 		size_t Size() { return Data.GetSize(); }
-		T Front() { return Data.GetData()[0]; }
-		T Back() { return Data.GetData()[Data.GetSize() - 1]; };
+		const T& Front() const { return Data.GetData()[0]; }
+		const T& Back() const { return Data.GetData()[Data.GetSize() - 1]; };
+		T& Front() { return Data.GetData()[0]; }
+		T& Back() { return Data.GetData()[Data.GetSize() - 1]; };
 		void Push(const T &obj) { Data.PushBack(obj); }
 		void Pop() { Data.PopFront(); }
 

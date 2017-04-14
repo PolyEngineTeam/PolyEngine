@@ -14,15 +14,15 @@ namespace Poly
 		WHEELMOVE
 	};
 
-	struct Event
+	struct InputEvent
 	{	
-		Event() {}
-		Event(const Event &src) : Type(src.Type), Pos(src.Pos) {}
-		Event(eEventType type, eKey key) : Type(type), Key(key) {}
-		Event(eEventType type, Vector pos) : Type(type), Pos(pos) {}
-		~Event() {}
+		InputEvent() {}
+		InputEvent(const InputEvent &src) : Type(src.Type), Pos(src.Pos) {}
+		InputEvent(eEventType type, eKey key) : Type(type), Key(key) {}
+		InputEvent(eEventType type, Vector pos) : Type(type), Pos(pos) {}
+		~InputEvent() {}
 
-		Event& operator=(const Event& src) { Type = src.Type; Pos = src.Pos; return *this; }
+		InputEvent& operator=(const InputEvent& src) { Type = src.Type; Pos = src.Pos; return *this; }
 
 		eEventType Type;
 		union
@@ -32,5 +32,5 @@ namespace Poly
 		};
 	};
 
-	typedef Queue<Event> InputQueue;
+	typedef Queue<InputEvent> InputQueue;
 }
