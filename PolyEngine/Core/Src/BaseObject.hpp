@@ -12,7 +12,7 @@ namespace Poly {
 	};
 
 	template<eBaseObjectType ObjType = eBaseObjectType::DEFAULT>
-	class CORE_DLLEXPORT BaseObject
+	class BaseObject
 	{
 	public:
 		void* operator new(size_t size)
