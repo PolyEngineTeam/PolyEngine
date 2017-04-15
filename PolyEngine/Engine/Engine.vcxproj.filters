@@ -18,6 +18,9 @@
     <Filter Include="Source Files\ECS">
       <UniqueIdentifier>{a91a3841-1dfa-487a-8c5f-0f2bdb72b027}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{5e279a35-87e8-4562-a7a7-33c911d78d8b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -60,6 +63,12 @@
     </ClInclude>
     <ClInclude Include="Src\ComponentBase.hpp">
       <Filter>Source Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\InputQueue.hpp">
+      <Filter>Source Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\KeyBindings.hpp">
+      <Filter>Source Files\Input</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

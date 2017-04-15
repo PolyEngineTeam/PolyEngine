@@ -102,5 +102,8 @@
     <ClInclude Include="Src\Quaternion.hpp">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Queue.hpp">
+      <Filter>Source Files\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

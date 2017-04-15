@@ -129,6 +129,7 @@
     <ClCompile Include="Src\main.cpp" />
     <ClCompile Include="Src\MatrixTests.cpp" />
     <ClCompile Include="Src\QuaternionTests.cpp" />
+    <ClCompile Include="Src\QueueTests.cpp" />
     <ClCompile Include="Src\VectorTests.cpp" />
   </ItemGroup>
   <ItemGroup>

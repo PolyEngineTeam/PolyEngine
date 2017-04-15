@@ -3,6 +3,7 @@
 #include <Core.hpp>
 #include "RenderingContext.hpp"
 #include "World.hpp"
+#include "InputQueue.hpp"
 
 namespace Poly {
 	class Engine;
@@ -22,10 +23,17 @@ namespace Poly {
 
 		void Update(float dt);
 
+		void KeyDown(const eKey& key) { InputEventsQueue.Push({eEventType::KEYDOWN, key}); }
+		void KeyUp(const eKey& key) { InputEventsQueue.Push({eEventType::KEYUP, key}); }
+		void UpdateMousePos(const Vector& pos) { InputEventsQueue.Push({eEventType::MOUSEMOVE, pos}); }
+		void UpdateWheelPos(const Vector& pos) { InputEventsQueue.Push({eEventType::WHEELMOVE, pos}); }
+
 		World& GetWorld() { return BaseWorld; }
 	private:
 		World BaseWorld;
 		IGame* Game;
 		IRenderingContext* Renderer;
+
+		InputQueue InputEventsQueue;
 	};
 }
