@@ -5,6 +5,7 @@
 #include "RenderingContext.hpp"
 #include "World.hpp"
 #include "SystemBase.hpp"
+#include "InputQueue.hpp"
 
 namespace Poly 
 {
@@ -56,6 +57,11 @@ namespace Poly
 
 		void Update(float dt);
 
+		void KeyDown(const eKey& key) { InputEventsQueue.Push({eEventType::KEYDOWN, key}); }
+		void KeyUp(const eKey& key) { InputEventsQueue.Push({eEventType::KEYUP, key}); }
+		void UpdateMousePos(const Vector& pos) { InputEventsQueue.Push({eEventType::MOUSEMOVE, pos}); }
+		void UpdateWheelPos(const Vector& pos) { InputEventsQueue.Push({eEventType::WHEELMOVE, pos}); }
+
 		World& GetWorld() { return BaseWorld; }
 	private:
 		inline void PreupdatePhases();
@@ -65,8 +71,11 @@ namespace Poly
 		World BaseWorld;
 		IGame* Game;
 		IRenderingContext* Renderer;
+
 		Dynarray< PhaseUpdateFunction > GamePreupdatePhases;
 		Dynarray< PhaseUpdateFunction > GameUpdatePhases;
 		Dynarray< PhaseUpdateFunction > GamePostupdatePhases;
+
+		InputQueue InputEventsQueue;
 	};
 }

@@ -121,6 +121,53 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	// sort through and find what code to run for the message given
 	switch (message)
 	{
+
+	// input
+	// Use separate case's for mouse buttons because otherwise mouse buttons aren't checked
+	case WM_LBUTTONDOWN:
+		gEngine->KeyDown(Poly::eKey::LBUTTON);
+		return 0;
+	case WM_LBUTTONUP:
+		gEngine->KeyUp(Poly::eKey::LBUTTON);
+		return 0;
+
+	case WM_RBUTTONDOWN:
+		gEngine->KeyDown(Poly::eKey::RBUTTON);
+		return 0;
+	case WM_RBUTTONUP:
+		gEngine->KeyUp(Poly::eKey::RBUTTON);
+		return 0;
+
+	case WM_MBUTTONDOWN:
+		gEngine->KeyDown(Poly::eKey::MBUTTON);
+		return 0;
+	case WM_MBUTTONUP:
+		gEngine->KeyUp(Poly::eKey::MBUTTON);
+		return 0;
+
+	case WM_KEYDOWN:
+		gEngine->KeyDown(static_cast<Poly::eKey>((unsigned int)wParam));
+		return 0;
+	case WM_KEYUP:
+		gEngine->KeyUp(static_cast<Poly::eKey>((unsigned int)wParam));
+		return 0;
+
+	case WM_MOUSEMOVE:
+	{
+		POINT pointPos;
+		GetCursorPos(&pointPos);
+		gEngine->UpdateMousePos(Poly::Vector(static_cast<float>(pointPos.x), static_cast<float>(pointPos.y), 0));
+		return 0;
+	}
+	case WM_MOUSEWHEEL:
+	{
+		int xPos = GET_X_LPARAM(lParam); 
+		int yPos = GET_Y_LPARAM(lParam); 
+		gEngine->UpdateWheelPos(Poly::Vector(static_cast<float>(xPos), static_cast<float>(yPos), 0));
+		return 0;
+	}
+	// end of input
+
 		// this message is read when the window is closed
 	case WM_DESTROY:
 	{

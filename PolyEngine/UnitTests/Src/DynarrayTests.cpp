@@ -150,3 +150,26 @@ TEST_CASE("Dynarray basics", "[Dynarray]")
 	a.PopBack();
 	REQUIRE(a[0] == a[1]);
 }
+
+TEST_CASE("Dynarray with BaseObject", "[Dynarray]")
+{
+
+	class Test : BaseObject<>
+	{
+	public:
+		Test() {}
+		~Test() {}
+
+	private:
+		int i;
+
+	};
+
+	Dynarray<Test> q;
+
+	REQUIRE(q.IsEmpty() == true);
+
+	q.PushBack(Test());
+	q.PopFront();
+
+}
