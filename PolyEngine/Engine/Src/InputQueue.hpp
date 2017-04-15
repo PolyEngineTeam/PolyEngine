@@ -19,7 +19,7 @@ namespace Poly
 		InputEvent() {}
 		InputEvent(const InputEvent &src) : Type(src.Type), Pos(src.Pos) {}
 		InputEvent(eEventType type, eKey key) : Type(type), Key(key) {}
-		InputEvent(eEventType type, Vector pos) : Type(type), Pos(pos) {}
+		InputEvent(eEventType type, const Vector& pos) : Type(type), Pos(pos) {}
 		~InputEvent() {}
 
 		InputEvent& operator=(const InputEvent& src) { Type = src.Type; Pos = src.Pos; return *this; }
