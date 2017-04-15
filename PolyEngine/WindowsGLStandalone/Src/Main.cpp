@@ -123,44 +123,44 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	{
 
 	// input
-	// I use separate case's for mouse buttons because otherwise mouse buttons aren't checked
-	case WM_LBUTTONDOWN:{
+	// Use separate case's for mouse buttons because otherwise mouse buttons aren't checked
+	case WM_LBUTTONDOWN:
 		gEngine->KeyDown(Poly::eKey::LBUTTON);
-	}
-	case WM_LBUTTONUP:{
+		return 0;
+	case WM_LBUTTONUP:
 		gEngine->KeyUp(Poly::eKey::LBUTTON);
-	}
-	case WM_RBUTTONDOWN:{
+		return 0;
+
+	case WM_RBUTTONDOWN:
 		gEngine->KeyDown(Poly::eKey::RBUTTON);
-	}
-	case WM_RBUTTONUP:{
+		return 0;
+	case WM_RBUTTONUP:
 		gEngine->KeyUp(Poly::eKey::RBUTTON);
-	}
-	case WM_MBUTTONDOWN:{
+		return 0;
+
+	case WM_MBUTTONDOWN:
 		gEngine->KeyDown(Poly::eKey::MBUTTON);
-	}
-	case WM_MBUTTONUP:{
+		return 0;
+	case WM_MBUTTONUP:
 		gEngine->KeyUp(Poly::eKey::MBUTTON);
-	}
-	
-	case WM_KEYDOWN:{
+		return 0;
+
+	case WM_KEYDOWN:
 		gEngine->KeyDown(static_cast<Poly::eKey>((unsigned int)wParam));
 		return 0;
-	}
-
-	case WM_KEYUP:{
+	case WM_KEYUP:
 		gEngine->KeyUp(static_cast<Poly::eKey>((unsigned int)wParam));
 		return 0;
-	}
 
-	case WM_MOUSEMOVE:{
+	case WM_MOUSEMOVE:
+	{
 		POINT pointPos;
 		GetCursorPos(&pointPos);
 		gEngine->UpdateMousePos(Poly::Vector(static_cast<float>(pointPos.x), static_cast<float>(pointPos.y), 0));
 		return 0;
 	}
-
-	case WM_MOUSEWHEEL:{
+	case WM_MOUSEWHEEL:
+	{
 		int xPos = GET_X_LPARAM(lParam); 
 		int yPos = GET_Y_LPARAM(lParam); 
 		gEngine->UpdateWheelPos(Poly::Vector(static_cast<float>(xPos), static_cast<float>(yPos), 0));

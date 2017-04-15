@@ -53,3 +53,28 @@ TEST_CASE("Queue tests", "[Queue]")
 	REQUIRE(q.Front() == 2);
 
 }
+
+TEST_CASE("Queue tests (with BaseObject)", "[Queue]")
+{
+
+	class Test : BaseObject<>
+	{
+	public:
+		Test() {}
+		~Test() {}
+
+	private:
+		int i;
+
+	};
+
+	Queue<Test> q;
+	Queue<Test> r(q);
+
+	REQUIRE(q.Empty() == true);
+	REQUIRE(r.Empty() == true);
+
+	q.Push(Test());
+	q.Pop();
+
+}

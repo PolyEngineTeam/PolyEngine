@@ -28,17 +28,16 @@ void Engine::Update(float dt) {
 	Game->Update(dt);
 
 	// quite stupid test for input :P
-	for(int i = 0; i < InputBase.Size(); i++){
-		//gConsole.LogDebug("Event");
-		if(InputBase.Front().Type == eEventType::KEYDOWN)
+	while(InputEventsQueue.Size() > 0){
+		if(InputEventsQueue.Front().Type == eEventType::KEYDOWN)
 			gConsole.LogDebug("KEYDOWN");
-		if(InputBase.Front().Type == eEventType::KEYUP)
+		else if(InputEventsQueue.Front().Type == eEventType::KEYUP)
 			gConsole.LogDebug("KEYUP");
-		if(InputBase.Front().Type == eEventType::MOUSEMOVE)
+		else if(InputEventsQueue.Front().Type == eEventType::MOUSEMOVE)
 			gConsole.LogDebug("MOUSEMOVE");
-		if(InputBase.Front().Type == eEventType::WHEELMOVE)
+		else if(InputEventsQueue.Front().Type == eEventType::WHEELMOVE)
 			gConsole.LogDebug("WHEELMOVE");
-		InputBase.Pop();
+		InputEventsQueue.Pop();
 	}
 
 	// very simple temporary loop, this should be moved somwhere else

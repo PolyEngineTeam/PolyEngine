@@ -14,7 +14,7 @@ namespace Poly
 		WHEELMOVE
 	};
 
-	struct InputEvent
+	struct InputEvent : public BaseObject<>
 	{	
 		InputEvent() {}
 		InputEvent(const InputEvent &src) : Type(src.Type), Pos(src.Pos) {}

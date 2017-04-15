@@ -23,10 +23,10 @@ namespace Poly {
 
 		void Update(float dt);
 
-		void KeyDown(eKey key) { InputBase.Push({eEventType::KEYDOWN, key}); }
-		void KeyUp(eKey key) { InputBase.Push({eEventType::KEYUP, key}); }
-		void UpdateMousePos(Vector pos) { InputBase.Push({eEventType::MOUSEMOVE, pos}); }
-		void UpdateWheelPos(Vector pos) { InputBase.Push({eEventType::WHEELMOVE, pos}); }
+		void KeyDown(const eKey& key) { InputEventsQueue.Push({eEventType::KEYDOWN, key}); }
+		void KeyUp(const eKey& key) { InputEventsQueue.Push({eEventType::KEYUP, key}); }
+		void UpdateMousePos(const Vector& pos) { InputEventsQueue.Push({eEventType::MOUSEMOVE, pos}); }
+		void UpdateWheelPos(const Vector& pos) { InputEventsQueue.Push({eEventType::WHEELMOVE, pos}); }
 
 		World& GetWorld() { return BaseWorld; }
 	private:
@@ -34,6 +34,6 @@ namespace Poly {
 		IGame* Game;
 		IRenderingContext* Renderer;
 
-		InputQueue InputBase;
+		InputQueue InputEventsQueue;
 	};
 }
