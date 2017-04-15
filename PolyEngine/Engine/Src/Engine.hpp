@@ -28,32 +28,25 @@ namespace Poly
 		void Deinit();
 
 		//////////////////////////////
-		/// Registers a PhaseUpdateFunction to be executed in the Preupdate 
-		/// part of a single frame in the same order as they were passed in.
+		/// Enum used to specify the part of update to which a given phase is registered.
 		/// @see RegisterUpdatePhase()
-		/// @see RegisterPostupdatePhase()
-		/// @param phaseFunction - void function(World*)
 		//////////////////////////////
-		void RegisterPreupdatePhase(PhaseUpdateFunction phaseFunction);
+		enum class eUpdatePhaseOrder 
+		{
+			Preupdate,
+			Update,
+			Postupdate,
+			_Count
+		};
 
 		//////////////////////////////
-		/// Registers a PhaseUpdateFunction to be executed in the main update 
+		/// Registers a PhaseUpdateFunction to be executed in the update
 		/// part of a single frame in the same order as they were passed in.
-		/// @see RegisterPreupdatePhase()
-		/// @see RegisterPostupdatePhase()
 		/// @param phaseFunction - void function(World*)
+		/// @param order - enum eUpdatePhaseOrder value
+		/// @see eUpdatePhaseOrder
 		//////////////////////////////
-		void RegisterUpdatePhase(PhaseUpdateFunction phaseFunction);
-
-		//////////////////////////////
-		/// Registers a PhaseUpdateFunction to be executed in the Postupdate 
-		/// part of a single frame in the same order as they were passed in.
-		/// @see RegisterPreupdatePhase()
-		/// @see RegisterUpdatePhase()
-		/// @param phaseFunction - void function(World*)
-		//////////////////////////////
-		void RegisterPostupdatePhase(PhaseUpdateFunction phaseFunction);
-
+		void RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order);
 
 		void Update(float dt);
 
@@ -64,17 +57,18 @@ namespace Poly
 
 		World& GetWorld() { return BaseWorld; }
 	private:
-		inline void PreupdatePhases();
-		inline void UpdatePhases();
-		inline void PostupdatePhases();
+		inline void UpdatePhases(eUpdatePhaseOrder order)
+		{
+			HEAVY_ASSERTE(order != eUpdatePhaseOrder::_Count, "Count enum value passed to UpdatePhases(), which is an invalid value");
+			for (auto& update : GameUpdatePhases[static_cast<int>(order)])
+				update(&GetWorld());
+		}
 
 		World BaseWorld;
 		IGame* Game;
 		IRenderingContext* Renderer;
 
-		Dynarray< PhaseUpdateFunction > GamePreupdatePhases;
-		Dynarray< PhaseUpdateFunction > GameUpdatePhases;
-		Dynarray< PhaseUpdateFunction > GamePostupdatePhases;
+		Dynarray< PhaseUpdateFunction > GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_Count)];
 
 		InputQueue InputEventsQueue;
 	};

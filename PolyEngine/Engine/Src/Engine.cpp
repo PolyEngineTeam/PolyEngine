@@ -23,34 +23,16 @@ void Engine::Deinit()
 	Renderer = nullptr;
 }
 
-void Engine::RegisterPreupdatePhase(PhaseUpdateFunction phaseFunction)
+void Engine::RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order)
 {
-	for (auto& iter : GamePreupdatePhases)
+	HEAVY_ASSERTE(order != eUpdatePhaseOrder::_Count, "_Count enum value passed to RegisterUpdatePhase(), which is an invalid value");
+	Dynarray<PhaseUpdateFunction>& UpdatePhases = GameUpdatePhases[static_cast<int>(order)];
+	for (auto& iter : UpdatePhases)
 	{
 		if (iter.target<PhaseUpdateFunction>() == phaseFunction.target<PhaseUpdateFunction>())
 			return;
 	}
-	GamePreupdatePhases.PushBack(phaseFunction);
-}
-
-void Engine::RegisterUpdatePhase(PhaseUpdateFunction phaseFunction)
-{
-	for (auto& iter : GameUpdatePhases)
-	{
-		if (iter.target<PhaseUpdateFunction>() == phaseFunction.target<PhaseUpdateFunction>())
-			return;
-	}
-	GameUpdatePhases.PushBack(phaseFunction);
-}
-
-void Engine::RegisterPostupdatePhase(PhaseUpdateFunction phaseFunction)
-{
-	for (auto& iter : GamePostupdatePhases)
-	{
-		if (iter.target<PhaseUpdateFunction>() == phaseFunction.target<PhaseUpdateFunction>())
-			return;
-	}
-	GamePostupdatePhases.PushBack(phaseFunction);
+	UpdatePhases.PushBack(phaseFunction);
 }
 
 // temporary include, remove this ASAP
@@ -58,11 +40,11 @@ void Engine::RegisterPostupdatePhase(PhaseUpdateFunction phaseFunction)
 
 void Engine::Update(float dt)
 {
-	PreupdatePhases();
+	UpdatePhases(eUpdatePhaseOrder::Preupdate);
 
-	UpdatePhases();
+	UpdatePhases(eUpdatePhaseOrder::Update);
 
-	PostupdatePhases();
+	UpdatePhases(eUpdatePhaseOrder::Postupdate);
 
 	// quite stupid test for input :P
 	while(InputEventsQueue.Size() > 0){
@@ -82,22 +64,4 @@ void Engine::Update(float dt)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	Renderer->EndFrame();
-}
-
-void Engine::PreupdatePhases()
-{
-	for (auto& update : GamePreupdatePhases)
-		update(&GetWorld());
-}
-
-void Engine::UpdatePhases()
-{
-	for (auto& update : GameUpdatePhases)
-		update(&GetWorld());
-}
-
-void Engine::PostupdatePhases()
-{
-	for (auto& update : GamePostupdatePhases)
-		update(&GetWorld());
 }
