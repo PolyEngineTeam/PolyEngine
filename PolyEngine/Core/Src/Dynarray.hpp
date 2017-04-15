@@ -9,21 +9,33 @@ namespace Poly {
 	{
 		// Not really sure if this is needed
 		template<class T>
-		void Create(T* ptr, typename std::enable_if<std::is_trivially_default_constructible<T>::value>::type* = 0)
+		void DefaultCreate(T* ptr, typename std::enable_if<std::is_trivially_default_constructible<T>::value>::type* = 0)
 		{
-			new (ptr)T;
+			::new (ptr)T; // TODO use memcpy here
 		}
 
 		template<class T>
-		void Create(T* ptr, typename std::enable_if<!std::is_trivially_default_constructible<T>::value>::type* = 0)
+		void DefaultCreate(T* ptr, typename std::enable_if<!std::is_trivially_default_constructible<T>::value>::type* = 0)
 		{
-			new (ptr)T;
+			::new (ptr)T;
+		}
+
+		template<class T>
+		void CopyCreate(T* ptr, const T& obj, typename std::enable_if<std::is_trivially_copy_constructible<T>::value>::type* = 0)
+		{
+			::new (ptr)T(obj); // TODO use memcpy here
+		}
+
+		template<class T>
+		void CopyCreate(T* ptr, const T& obj, typename std::enable_if<!std::is_trivially_copy_constructible<T>::value>::type* = 0)
+		{
+			::new (ptr)T(obj);
 		}
 
 		template<class T>
 		void Destroy(T* t, typename std::enable_if<std::is_trivially_destructible<T>::value>::type* = 0)
 		{
-			t->~T();
+			t->~T(); // calling destructor here is unnecessary
 		}
 
 		template<class T>
@@ -184,7 +196,7 @@ namespace Poly {
 			if (Size == GetCapacity())
 				Enlarge();
 			memmove(Data + idx + 1, Data + idx, (GetSize() - idx) * sizeof(T));
-			Data[idx] = obj;
+			ObjectLifetimeHelper::CopyCreate(Data + idx, obj);
 			++Size;
 		}
 
@@ -219,7 +231,7 @@ namespace Poly {
 			{
 				Reserve(size);
 				for (size_t idx = GetSize(); idx < size; ++idx)
-					ObjectLifetimeHelper::Create(Data + idx);
+					ObjectLifetimeHelper::DefaultCreate(Data + idx);
 			}
 			Size = size;
 		}
