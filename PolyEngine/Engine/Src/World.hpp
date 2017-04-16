@@ -28,6 +28,8 @@ namespace Poly {
 			::new(ptr)(std::forward<Args>(args)...);
 			Entity* ent = IDToEntityMap[entityId];
 			HEAVY_ASSERTE(ent, "Invalid entity ID");
+			HEAVY_ASSERTE(ent->HasComponent(GET_COMPONENT_ID(T)), "Failed at AddComponent() - a component of a given UniqueID already exists!");
+			ent->ComponentPosessionFlags.set(GET_COMPONENT_ID(T), true);
 			ent->Components[GET_COMPONENT_ID(T)] = ptr;
 			ptr->Owner = ent;
 		}
@@ -38,6 +40,8 @@ namespace Poly {
 		{
 			Entity* ent = IDToEntityMap[entityId];
 			HEAVY_ASSERTE(ent, "Invalid entity ID");
+			HEAVY_ASSERTE(!ent->HasComponent(GET_COMPONENT_ID(T)), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
+			ent->ComponentPosessionFlags.set(GET_COMPONENT_ID(T), false);
 			T* component = ent->Components[GET_COMPONENT_ID(T)];
 			ent->Components[GET_COMPONENT_ID(T)] = nullptr;
 			component->~T();
@@ -53,6 +57,24 @@ namespace Poly {
 			if (ComponentAllocators[componentID] == nullptr)
 				ComponentAllocators[componentID] = new IterablePoolAllocator<T>(MAX_ENTITY_COUNT);
 			return static_cast<IterablePoolAllocator<T>*>(ComponentAllocators[componentID]);
+		}
+
+		//------------------------------------------------------------------------------
+		//////////////////////////////
+		/// Gets a component of a specified type and UniqueID.
+		/// @tparam T - component type to get
+		/// @param entityId - UniqueID of a component to get
+		/// @return pointer to a specified component or a nullptr, if none was found
+		/// @see AddComponent()
+		/// @see RemoveComponent()
+		//////////////////////////////
+		template<typename T>
+		T* GetComponent(const UniqueID& entityId)
+		{
+			HEAVY_ASSERTE(entityId < MAX_COMPONENTS_COUNT, "Invalid component ID");
+			auto iter = IDToEntityMap.find(entityId);
+			HEAVY_ASSERTE(iter != IDToEntityMap.end(), "Invalid entityId - entity with that ID does not exist!");
+			return iter->second->GetComponent<T>();
 		}
 
 	private:

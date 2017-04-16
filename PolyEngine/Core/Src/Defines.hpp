@@ -63,4 +63,7 @@
 #define HEAVY_ASSERTE(expr, msg) assert(expr && #msg)
 #define STATIC_ASSERTE(expr, msg) static_assert(expr, msg)
 
+// Utilities
+#define BIT(x) 1u<<x
+
 #include "BaseObject.hpp"
