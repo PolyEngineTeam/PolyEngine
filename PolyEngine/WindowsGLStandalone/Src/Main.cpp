@@ -112,7 +112,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Engine.Deinit();
 
 	// return this part of the WM_QUIT message to Windows
-	return msg.wParam;
+	return static_cast<int>(msg.wParam);
 }
 
 // this is the main message handler for the program

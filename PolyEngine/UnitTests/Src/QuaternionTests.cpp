@@ -111,9 +111,9 @@ TEST_CASE("Quaternion algerbraic methods", "[Quaternion]") {
 		REQUIRE(q1.Length2() == Approx(1.0f));
 		REQUIRE(q2.Length2() == Approx(1.0f));
 
-		q3.X *= sqrt(3);
-		q3.Y *= sqrt(3);
-		q3.Z *= sqrt(3);
+		q3.X *= sqrtf(3);
+		q3.Y *= sqrtf(3);
+		q3.Z *= sqrtf(3);
 		REQUIRE(q3.Length2() == Approx(2.0f));
 
 		REQUIRE(q1.Length() == Approx(1.0f));

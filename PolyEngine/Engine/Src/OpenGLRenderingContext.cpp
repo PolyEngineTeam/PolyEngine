@@ -42,7 +42,7 @@ bool OpenGLRenderingContext::Init(const IRenderingContextParams * context)
 	}
 
 	// Try and set the pixel format based on our PFD
-	bool bResult = SetPixelFormat(hDC, nPixelFormat, &pfd);   
+	bool bResult = SetPixelFormat(hDC, nPixelFormat, &pfd) != 0;   
 	if (!bResult)
 	{
 		gConsole.LogError("Setting PixelFormat failed!");
