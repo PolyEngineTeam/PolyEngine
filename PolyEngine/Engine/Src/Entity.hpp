@@ -36,6 +36,8 @@ namespace Poly
 		//////////////////////////////
 		inline bool HasComponents(unsigned long int IDs) const
 		{
+			//TODO This bit field has to be reimplemented - it will not work for MAX_COMPONENTS_COUNT greater than 64 in its current state.
+			STATIC_ASSERTE(MAX_COMPONENTS_COUNT <= 64, "MAX_COMPONENTS_COUNT greater than 64.");
 			return ComponentPosessionFlags.to_ullong() & IDs;
 		}
 
