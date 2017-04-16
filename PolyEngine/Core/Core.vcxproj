@@ -140,6 +140,7 @@
     <ClInclude Include="Src\Core.hpp" />
     <ClInclude Include="Src\Defines.hpp" />
     <ClInclude Include="Src\Dynarray.hpp" />
+    <ClInclude Include="Src\EnumUtils.hpp" />
     <ClInclude Include="Src\FileIO.hpp" />
     <ClInclude Include="Src\IterablePoolAllocator.hpp" />
     <ClInclude Include="Src\Logger.hpp" />

@@ -126,6 +126,7 @@
     <ClCompile Include="Src\AngleTests.cpp" />
     <ClCompile Include="Src\BasicMathTests.cpp" />
     <ClCompile Include="Src\DynarrayTests.cpp" />
+    <ClCompile Include="Src\EnumUtilsTests.cpp" />
     <ClCompile Include="Src\main.cpp" />
     <ClCompile Include="Src\MatrixTests.cpp" />
     <ClCompile Include="Src\QuaternionTests.cpp" />

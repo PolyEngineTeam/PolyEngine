@@ -4,14 +4,16 @@
 #include <string>
 
 #include "Defines.hpp"
+#include "EnumUtils.hpp"
 
 namespace Poly {
 
 	/**
 	*  Enum describing possible levels of logging
 	*/
-	enum class eLogLevel { LVL_DEBUG, LVL_INFO, LVL_WARNING, LVL_ERROR };
-	constexpr char* LOG_LVL_NAMES[] = { "[DEBUG] ", "[INFO] ", "[WARNING] ", "[ERROR] " };
+	enum class eLogLevel { LVL_DEBUG, LVL_INFO, LVL_WARNING, LVL_ERROR, _COUNT };
+	REGISTER_ENUM_NAMES(eLogLevel, "DEBUG", "INFO", "WARNING", "ERROR");
+
 	constexpr eLogLevel LOG_LEVEL_FILTER = eLogLevel::LVL_DEBUG;
 
 	/**
@@ -69,7 +71,7 @@ namespace Poly {
 		*  - Arguments that do not have coresponding markers will be ignored.
 		*/
 		template <typename... Args>
-		void Log(eLogLevel lvl, const std::string& fmt, Args&&... args) { LogImpl(lvl, LOG_LVL_NAMES[(int)lvl], fmt, std::forward<Args>(args)...); }
+		void Log(eLogLevel lvl, const std::string& fmt, Args&&... args) { LogImpl(lvl, GetEnumName(lvl), fmt, std::forward<Args>(args)...); }
 
 		template <typename... Args>
 		void LogDebug(const std::string& fmt, Args&&... args) { Log(eLogLevel::LVL_DEBUG, fmt, std::forward<Args>(args)...); }
@@ -95,7 +97,7 @@ namespace Poly {
 		void LogImpl(eLogLevel level, const std::string& levelStr, const std::string& fmt,
 			Args&&... args) {
 			if (level >= LOG_LEVEL_FILTER)
-				sprint(std::cout, level, levelStr + fmt, args...);
+				sprint(std::cout, level, "[" + levelStr + "] " + fmt, args...);
 		}
 	};
 
