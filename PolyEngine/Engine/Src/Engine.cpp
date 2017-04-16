@@ -25,12 +25,11 @@ void Engine::Deinit()
 
 void Engine::RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order)
 {
-	HEAVY_ASSERTE(order != eUpdatePhaseOrder::_Count, "_Count enum value passed to RegisterUpdatePhase(), which is an invalid value");
+	HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "_COUNT enum value passed to RegisterUpdatePhase(), which is an invalid value");
 	Dynarray<PhaseUpdateFunction>& UpdatePhases = GameUpdatePhases[static_cast<int>(order)];
 	for (auto& iter : UpdatePhases)
 	{
-		if (iter.target<PhaseUpdateFunction>() == phaseFunction.target<PhaseUpdateFunction>())
-			return;
+		HEAVY_ASSERTE(iter.target<PhaseUpdateFunction>() != phaseFunction.target<PhaseUpdateFunction>(), "Failed at RegisterUpdatePhase() - passed function is already registered as a phase in this update stage.");
 	}
 	UpdatePhases.PushBack(phaseFunction);
 }
@@ -40,11 +39,11 @@ void Engine::RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpda
 
 void Engine::Update(float dt)
 {
-	UpdatePhases(eUpdatePhaseOrder::Preupdate);
+	UpdatePhases(eUpdatePhaseOrder::PREUPDATE);
 
-	UpdatePhases(eUpdatePhaseOrder::Update);
+	UpdatePhases(eUpdatePhaseOrder::UPDATE);
 
-	UpdatePhases(eUpdatePhaseOrder::Postupdate);
+	UpdatePhases(eUpdatePhaseOrder::POSTUPDATE);
 
 	// quite stupid test for input :P
 	while(InputEventsQueue.Size() > 0){

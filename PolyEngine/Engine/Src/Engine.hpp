@@ -17,7 +17,6 @@ namespace Poly
 	public:
 		virtual void RegisterEngine(Engine* engine) = 0;
 		virtual void Init() = 0;
-		virtual void Update(float dt) = 0;
 	};
 
 	class ENGINE_DLLEXPORT Engine : public BaseObject<> 
@@ -33,10 +32,10 @@ namespace Poly
 		//////////////////////////////
 		enum class eUpdatePhaseOrder 
 		{
-			Preupdate,
-			Update,
-			Postupdate,
-			_Count
+			PREUPDATE,
+			UPDATE,
+			POSTUPDATE,
+			_COUNT
 		};
 
 		//////////////////////////////
@@ -59,7 +58,7 @@ namespace Poly
 	private:
 		inline void UpdatePhases(eUpdatePhaseOrder order)
 		{
-			HEAVY_ASSERTE(order != eUpdatePhaseOrder::_Count, "Count enum value passed to UpdatePhases(), which is an invalid value");
+			HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "Count enum value passed to UpdatePhases(), which is an invalid value");
 			for (auto& update : GameUpdatePhases[static_cast<int>(order)])
 				update(&GetWorld());
 		}
@@ -68,7 +67,7 @@ namespace Poly
 		IGame* Game;
 		IRenderingContext* Renderer;
 
-		Dynarray< PhaseUpdateFunction > GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_Count)];
+		Dynarray< PhaseUpdateFunction > GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];
 
 		InputQueue InputEventsQueue;
 	};
