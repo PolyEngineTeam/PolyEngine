@@ -2,30 +2,48 @@
 
 using namespace Poly;
 
-Engine::Engine(IGame* game) : Game(game) {
+Engine::Engine(IGame* game) : Game(game) 
+{
 	Game->RegisterEngine(this);
 	Renderer = CreateRenderingContext();
 }
 
-bool Engine::Init(const IRenderingContextParams* context) {
+bool Engine::Init(const IRenderingContextParams* context) 
+{
 	if (!Renderer->Init(context))
 		return false;
 	Game->Init();
 	return true;
 }
 
-void Poly::Engine::Deinit()
+void Engine::Deinit()
 {
 	Renderer->Deinit();
 	delete Renderer;
 	Renderer = nullptr;
 }
 
+void Engine::RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order)
+{
+	HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "_COUNT enum value passed to RegisterUpdatePhase(), which is an invalid value");
+	Dynarray<PhaseUpdateFunction>& UpdatePhases = GameUpdatePhases[static_cast<int>(order)];
+	for (auto& iter : UpdatePhases)
+	{
+		HEAVY_ASSERTE(iter.target<PhaseUpdateFunction>() != phaseFunction.target<PhaseUpdateFunction>(), "Failed at RegisterUpdatePhase() - passed function is already registered as a phase in this update stage.");
+	}
+	UpdatePhases.PushBack(phaseFunction);
+}
+
 // temporary include, remove this ASAP
 #include <gl/glew.h>
 
-void Engine::Update(float dt) {
-	Game->Update(dt);
+void Engine::Update(float dt)
+{
+	UpdatePhases(eUpdatePhaseOrder::PREUPDATE);
+
+	UpdatePhases(eUpdatePhaseOrder::UPDATE);
+
+	UpdatePhases(eUpdatePhaseOrder::POSTUPDATE);
 
 	// quite stupid test for input :P
 	while(InputEventsQueue.Size() > 0){
