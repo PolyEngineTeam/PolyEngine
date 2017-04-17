@@ -4,7 +4,6 @@
 #include <Core.hpp>
 #include "RenderingContext.hpp"
 #include "World.hpp"
-#include "SystemBase.hpp"
 #include "InputQueue.hpp"
 
 namespace Poly 

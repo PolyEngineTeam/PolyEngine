@@ -32,9 +32,6 @@
     <ClCompile Include="Src\Entity.cpp">
       <Filter>Source Files\ECS</Filter>
     </ClCompile>
-    <ClCompile Include="Src\SystemBase.cpp">
-      <Filter>Source Files\ECS</Filter>
-    </ClCompile>
     <ClCompile Include="Src\World.cpp">
       <Filter>Source Files\ECS</Filter>
     </ClCompile>
@@ -53,9 +50,6 @@
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Src\Entity.hpp">
-      <Filter>Source Files\ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\SystemBase.hpp">
       <Filter>Source Files\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Src\World.hpp">
