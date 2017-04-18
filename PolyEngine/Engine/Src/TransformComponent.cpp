@@ -3,13 +3,30 @@
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-TransformComponent::TransformComponent(const Vector& direction)
-{
-	SetPosition(direction);
+void TransformComponent::SetLocalTranslation(Vector position) {
+	LocalTranslation = position;
+	Dirty = true;
 }
 
 //------------------------------------------------------------------------------
-void TransformComponent::SetPosition(const Vector& direction)
-{
-	Matrix.SetTranslation(direction);
+void TransformComponent::SetLocalRotation(EulerAngles angles) { 
+	LocalRotation = Quaternion(angles); 
+}
+
+//------------------------------------------------------------------------------
+void TransformComponent::SetLocalScale(Vector scale) {
+	LocalScale = scale;
+	Dirty = true;
+}
+
+//------------------------------------------------------------------------------
+Matrix TransformComponent::GetLocalTransformationMatrix() {
+	Matrix rotation = LocalRotation.ToRotationMatrix();
+	Matrix translation;
+	Matrix scale;
+	translation.SetTranslation(LocalTranslation);
+	scale.SetScale(LocalScale);
+	LocalTransform = rotation * translation * scale;
+	Dirty = false;
+	return LocalTransform;
 }

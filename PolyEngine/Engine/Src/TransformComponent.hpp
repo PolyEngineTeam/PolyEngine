@@ -7,13 +7,28 @@ namespace Poly {
 	{
 	public:
 		TransformComponent() {};
-		TransformComponent(const Vector& direction);
-		TransformComponent(float x, float y, float z) : TransformComponent(Vector(x, y, z)) {};
-		Vector GetPosition() { return Vector(Matrix.m03, Matrix.m13, Matrix.m23); };
-		void SetPosition(const Vector& direction);
-		void SetPosition(float x, float y, float z) { SetPosition(Vector(x, y, z)); };
+
+		Vector GetLocalTranslation() { return LocalTranslation; };
+		void SetLocalTranslation(Vector position);
+		void SetLocalTranslation(float x, float y, float z) { SetLocalTranslation(Vector(x, y, z)); };
+
+		Quaternion GetLocalRotation() { return LocalRotation; };
+		void SetLocalRotation(EulerAngles angles);
+		
+		Vector GetLocalScale() { return LocalScale; };
+		void SetLocalScale(Vector scale);
+		void SetLocalScale(float x, float y, float z) { SetLocalScale(Vector(x, y, z)); };
+
+		Matrix GetLocalTransformationMatrix();
 		
 	private:
-		Matrix Matrix;
+		TransformComponent* Parent = nullptr;
+
+		Vector LocalTranslation;
+		Quaternion LocalRotation;
+		Vector LocalScale = Vector(1.f, 1.f, 1.f);
+		Matrix LocalTransform;
+
+		bool Dirty = false;
 	};
 }
