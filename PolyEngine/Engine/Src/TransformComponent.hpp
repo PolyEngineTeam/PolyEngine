@@ -6,20 +6,17 @@ namespace Poly {
 	class TransformComponent : public ComponentBase
 	{
 	public:
-		TransformComponent() {};
+		const Vector& GetLocalTranslation() const { return LocalTranslation; };
+		void SetLocalTranslation(const Vector& position);
 
-		Vector GetLocalTranslation() { return LocalTranslation; };
-		void SetLocalTranslation(Vector position);
-		void SetLocalTranslation(float x, float y, float z) { SetLocalTranslation(Vector(x, y, z)); };
-
-		Quaternion GetLocalRotation() { return LocalRotation; };
-		void SetLocalRotation(EulerAngles angles);
+		const Quaternion& GetLocalRotation() const { return LocalRotation; };
+		void SetLocalRotation(const Quaternion& quaternion);
 		
-		Vector GetLocalScale() { return LocalScale; };
-		void SetLocalScale(Vector scale);
-		void SetLocalScale(float x, float y, float z) { SetLocalScale(Vector(x, y, z)); };
+		const Vector& GetLocalScale() const { return LocalScale; };
+		void SetLocalScale(const Vector& scale);
+		void SetLocalScale(float scale) { SetLocalScale(Vector(scale, scale, scale)); };
 
-		Matrix GetLocalTransformationMatrix();
+		const Matrix& GetLocalTransformationMatrix() const;
 		
 	private:
 		TransformComponent* Parent = nullptr;
@@ -27,8 +24,8 @@ namespace Poly {
 		Vector LocalTranslation;
 		Quaternion LocalRotation;
 		Vector LocalScale = Vector(1.f, 1.f, 1.f);
-		Matrix LocalTransform;
+		mutable Matrix LocalTransform;
 
-		bool Dirty = false;
+		mutable bool Dirty = false;
 	};
 }
