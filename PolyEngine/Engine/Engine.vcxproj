@@ -160,7 +160,7 @@
     <ClCompile Include="Src\ComponentBase.cpp" />
     <ClCompile Include="Src\Engine.cpp" />
     <ClCompile Include="Src\Entity.cpp" />
-    <ClCompile Include="Src\InputPhase.cpp" />
+    <ClCompile Include="Src\InputSystem.cpp" />
     <ClCompile Include="Src\OpenGLRenderingContext.cpp" />
     <ClCompile Include="Src\SystemBase.cpp" />
     <ClCompile Include="Src\World.cpp" />
@@ -174,7 +174,7 @@
     <ClInclude Include="Src\ComponentBase.hpp" />
     <ClInclude Include="Src\Engine.hpp" />
     <ClInclude Include="Src\Entity.hpp" />
-    <ClInclude Include="Src\InputPhase.hpp" />
+    <ClInclude Include="Src\InputSystem.hpp" />
     <ClInclude Include="Src\InputQueue.hpp" />
     <ClInclude Include="Src\InputWorldComponent.hpp" />
     <ClInclude Include="Src\KeyBindings.hpp" />

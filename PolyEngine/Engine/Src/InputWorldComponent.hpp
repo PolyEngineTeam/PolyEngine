@@ -6,10 +6,13 @@
 
 namespace Poly
 {
+	namespace InputSystem
+	{
+
 	class InputWorldComponent : public ComponentBase
 	{
+	friend void InputPhase(World*);
 	public:
-		friend void InputPhase::Input(World*);
 		bool GetPressed(eKey key)						 { return CurrKey[static_cast<int>(key)]; }
 		bool GetPressed(eKey key1, eKey key2)			 { return (CurrKey[static_cast<int>(key1)] && CurrKey[static_cast<int>(key2)]) ? true : false; }
 		bool GetPressed(eKey key1, eKey key2, eKey key3) { return (CurrKey[static_cast<int>(key1)] && CurrKey[static_cast<int>(key2)] && CurrKey[static_cast<int>(key3)]) ? true : false; }
@@ -27,4 +30,6 @@ namespace Poly
 		Vector CurrWheel;
 		Vector PrevWheel;
 	};
+
+	}
 }

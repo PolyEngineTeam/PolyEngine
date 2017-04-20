@@ -46,16 +46,16 @@ void Engine::Update(float dt)
 	UpdatePhases(eUpdatePhaseOrder::POSTUPDATE);
 
 	// quite stupid test for input :P
-	while(InputEventsQueue.Size() > 0){
-		if(InputEventsQueue.Front().Type == eEventType::KEYDOWN)
+	while(InputEventsQueue->Size() > 0){
+		if(InputEventsQueue->Front().Type == eInputEventType::KEYDOWN)
 			gConsole.LogDebug("KEYDOWN");
-		else if(InputEventsQueue.Front().Type == eEventType::KEYUP)
+		else if(InputEventsQueue->Front().Type == eInputEventType::KEYUP)
 			gConsole.LogDebug("KEYUP");
-		else if(InputEventsQueue.Front().Type == eEventType::MOUSEMOVE)
+		else if(InputEventsQueue->Front().Type == eInputEventType::MOUSEMOVE)
 			gConsole.LogDebug("MOUSEMOVE");
-		else if(InputEventsQueue.Front().Type == eEventType::WHEELMOVE)
+		else if(InputEventsQueue->Front().Type == eInputEventType::WHEELMOVE)
 			gConsole.LogDebug("WHEELMOVE");
-		InputEventsQueue.Pop();
+		InputEventsQueue->Pop();
 	}
 
 	// very simple temporary loop, this should be moved somwhere else

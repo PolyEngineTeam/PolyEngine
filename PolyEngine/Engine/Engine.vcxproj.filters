@@ -41,7 +41,7 @@
     <ClCompile Include="Src\ComponentBase.cpp">
       <Filter>Source Files\ECS</Filter>
     </ClCompile>
-    <ClCompile Include="Src\InputPhase.cpp">
+    <ClCompile Include="Src\InputSystem.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
   </ItemGroup>
@@ -73,10 +73,10 @@
     <ClInclude Include="Src\KeyBindings.hpp">
       <Filter>Source Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Src\InputPhase.hpp">
+    <ClInclude Include="Src\InputWorldComponent.hpp">
       <Filter>Source Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Src\InputWorldComponent.hpp">
+    <ClInclude Include="Src\InputSystem.hpp">
       <Filter>Source Files\Input</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,7 +6,7 @@
 
 namespace Poly
 {
-	enum class eEventType
+	enum class eInputEventType
 	{
 		KEYDOWN,
 		KEYUP,
@@ -18,13 +18,13 @@ namespace Poly
 	{	
 		InputEvent() {}
 		InputEvent(const InputEvent &src) : Type(src.Type), Pos(src.Pos) {}
-		InputEvent(eEventType type, eKey key) : Type(type), Key(key) {}
-		InputEvent(eEventType type, const Vector& pos) : Type(type), Pos(pos) {}
+		InputEvent(eInputEventType type, eKey key) : Type(type), Key(key) {}
+		InputEvent(eInputEventType type, const Vector& pos) : Type(type), Pos(pos) {}
 		~InputEvent() {}
 
 		InputEvent& operator=(const InputEvent& src) { Type = src.Type; Pos = src.Pos; return *this; }
 
-		eEventType Type;
+		eInputEventType Type;
 		union
 		{
 			eKey Key;

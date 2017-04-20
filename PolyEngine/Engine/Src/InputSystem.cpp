@@ -1,14 +1,18 @@
-#include "InputPhase.hpp"
+#include "InputSystem.hpp"
+
+#include "World.hpp"
+#include "InputWorldComponent.hpp"
 
 using namespace Poly;
 
-void InputPhase::Input(World* world)
+void InputSystem::InputPhase(World* world)
 {
-	InputWorldComponent* com = nullptr;//world->GetComponent(InputWorldComponentID);
-
+	InputWorldComponent* com = world->GetInputWorldComponent();
 
 	for (int i = 0; i < 256; i++)
 		com->PrevKey[i] = com->CurrKey[i];
+
+	//memcpy(&com->PrevKey, &com->CurrKey, 256 * sizeof(bool));
 
 	com->PrevMouse = com->CurrMouse;
 	com->PrevWheel = com->CurrWheel;

@@ -4,6 +4,8 @@
 
 #include "Entity.hpp"
 
+#include "InputWorldComponent.hpp"
+
 #include <unordered_map>
 
 namespace Poly {
@@ -77,6 +79,8 @@ namespace Poly {
 			return iter->second->GetComponent<T>();
 		}
 
+		InputSystem::InputWorldComponent* GetInputWorldComponent() { return &InputCom; };
+
 	private:
 		std::unordered_map<UniqueID, Entity*> IDToEntityMap;
 
@@ -85,6 +89,9 @@ namespace Poly {
 		// Allocators
 		PoolAllocator<Entity> EntitiesAllocator;
 		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
+	
+		InputSystem::InputWorldComponent InputCom;
 	};
+
 
 }
