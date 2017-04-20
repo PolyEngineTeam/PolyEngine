@@ -12,6 +12,8 @@ namespace Poly
 	class Engine;
 	typedef std::function<void(World*)> PhaseUpdateFunction;
 
+	InputQueue* InputEventsQueue;
+
 	class ENGINE_DLLEXPORT IGame : public BaseObject<> 
 	{
 	public:

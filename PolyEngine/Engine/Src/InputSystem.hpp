@@ -4,7 +4,7 @@
 
 namespace Poly
 {
-	InputQueue* InputEventsQueue;
+	extern InputQueue* InputEventsQueue;
 
 	class World;
 

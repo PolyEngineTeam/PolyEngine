@@ -11,7 +11,8 @@ namespace Poly
 		KEYDOWN,
 		KEYUP,
 		MOUSEMOVE,
-		WHEELMOVE
+		WHEELMOVE,
+		_COUNT
 	};
 
 	struct InputEvent : public BaseObject<>
