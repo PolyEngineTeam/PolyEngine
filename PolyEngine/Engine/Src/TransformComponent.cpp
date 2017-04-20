@@ -60,15 +60,11 @@ const bool TransformComponent::UpdateGlobalTransformationCache() const {
 		}
 	}
 	else {
-		bool tmp = Parent->UpdateGlobalTransformationCache();
-		gConsole.LogDebug("tmp: {}", tmp);
-		if (tmp || Dirty) {
+		if (Parent->UpdateGlobalTransformationCache() || Dirty) {
 			GlobalTransform = Parent->GetGlobalTransformationMatrix() * GetLocalTransformationMatrix();
 			return true;
 		} else {
-			//GlobalTransform = Parent->GetGlobalTransformationMatrix() * GetLocalTransformationMatrix();
 			return false;
 		}
-
 	}
 }
