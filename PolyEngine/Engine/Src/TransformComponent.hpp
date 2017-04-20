@@ -31,7 +31,7 @@ namespace Poly {
 		mutable Matrix LocalTransform;
 		mutable Matrix GlobalTransform;
 
-		mutable bool Dirty = false;
+		mutable bool Dirty = true;
 
 		const bool UpdateGlobalTransformationCache() const;
 	};

@@ -37,6 +37,7 @@ const Matrix& TransformComponent::GetLocalTransformationMatrix() const {
 		scale.SetScale(LocalScale);
 		LocalTransform = translation * rotation * scale;
 		Dirty = false;
+		UpdateGlobalTransformationCache();
 	}
 	return LocalTransform;
 }
@@ -59,11 +60,13 @@ const bool TransformComponent::UpdateGlobalTransformationCache() const {
 		}
 	}
 	else {
-		if (Parent->UpdateGlobalTransformationCache() || Dirty) {
+		bool tmp = Parent->UpdateGlobalTransformationCache();
+		gConsole.LogDebug("tmp: {}", tmp);
+		if (tmp || Dirty) {
 			GlobalTransform = Parent->GetGlobalTransformationMatrix() * GetLocalTransformationMatrix();
 			return true;
 		} else {
-			GlobalTransform = Parent->GetGlobalTransformationMatrix() * GetLocalTransformationMatrix();
+			//GlobalTransform = Parent->GetGlobalTransformationMatrix() * GetLocalTransformationMatrix();
 			return false;
 		}
 
