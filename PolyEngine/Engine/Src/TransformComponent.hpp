@@ -6,6 +6,9 @@ namespace Poly {
 	class TransformComponent : public ComponentBase
 	{
 	public:
+		const TransformComponent* GetParent() const { return Parent; }
+		void SetParent(TransformComponent* parent);
+
 		const Vector& GetLocalTranslation() const { return LocalTranslation; };
 		void SetLocalTranslation(const Vector& position);
 
@@ -17,6 +20,7 @@ namespace Poly {
 		void SetLocalScale(float scale) { SetLocalScale(Vector(scale, scale, scale)); };
 
 		const Matrix& GetLocalTransformationMatrix() const;
+		const Matrix& GetGlobalTransformationMatrix() const;
 		
 	private:
 		TransformComponent* Parent = nullptr;
@@ -25,7 +29,10 @@ namespace Poly {
 		Quaternion LocalRotation;
 		Vector LocalScale = Vector(1.f, 1.f, 1.f);
 		mutable Matrix LocalTransform;
+		mutable Matrix GlobalTransform;
 
 		mutable bool Dirty = false;
+
+		const bool UpdateGlobalTransformationCache() const;
 	};
 }

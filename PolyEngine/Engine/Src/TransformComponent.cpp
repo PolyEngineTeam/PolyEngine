@@ -2,6 +2,13 @@
 
 using namespace Poly;
 
+//-----------------------------------------------------------------------------
+void TransformComponent::SetParent(TransformComponent* parent) {
+	Parent = parent;
+	//TODO calculate new LocalTransformation based on parent GlobalTransformation
+	Dirty = true;
+}
+
 //------------------------------------------------------------------------------
 void TransformComponent::SetLocalTranslation(const Vector& position) {
 	LocalTranslation = position;
@@ -22,7 +29,7 @@ void TransformComponent::SetLocalScale(const Vector& scale) {
 
 //------------------------------------------------------------------------------
 const Matrix& TransformComponent::GetLocalTransformationMatrix() const {
-	if(Dirty) {
+	if (Dirty) {
 		Matrix translation;
 		Matrix rotation = LocalRotation.ToRotationMatrix();
 		Matrix scale;
@@ -32,4 +39,33 @@ const Matrix& TransformComponent::GetLocalTransformationMatrix() const {
 		Dirty = false;
 	}
 	return LocalTransform;
+}
+
+//------------------------------------------------------------------------------
+const Matrix& TransformComponent::GetGlobalTransformationMatrix() const {
+	UpdateGlobalTransformationCache();
+	return GlobalTransform;
+}
+
+//------------------------------------------------------------------------------
+const bool TransformComponent::UpdateGlobalTransformationCache() const {
+	if (Parent == nullptr) {
+		if (Dirty) {
+			GlobalTransform = GetLocalTransformationMatrix();
+			return true;
+		} else {
+			GlobalTransform = GetLocalTransformationMatrix();
+			return false;
+		}
+	}
+	else {
+		if (Parent->UpdateGlobalTransformationCache() || Dirty) {
+			GlobalTransform = Parent->GetGlobalTransformationMatrix() * GetLocalTransformationMatrix();
+			return true;
+		} else {
+			GlobalTransform = Parent->GetGlobalTransformationMatrix() * GetLocalTransformationMatrix();
+			return false;
+		}
+
+	}
 }
