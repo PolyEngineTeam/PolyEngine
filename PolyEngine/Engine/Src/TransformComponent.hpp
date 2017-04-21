@@ -6,6 +6,9 @@ namespace Poly {
 	class ENGINE_DLLEXPORT TransformComponent : public ComponentBase
 	{
 	public:
+		TransformComponent(TransformComponent* parent = nullptr) { SetParent(parent); };
+		~TransformComponent();
+
 		const TransformComponent* GetParent() const { return Parent; }
 		void SetParent(TransformComponent* parent);
 
@@ -24,13 +27,14 @@ namespace Poly {
 		
 	private:
 		TransformComponent* Parent = nullptr;
+		Dynarray<TransformComponent*> Children;
 
 		Vector LocalTranslation;
 		Quaternion LocalRotation;
 		Vector LocalScale = Vector(1.f, 1.f, 1.f);
+
 		mutable Matrix LocalTransform;
 		mutable Matrix GlobalTransform;
-
 		mutable bool LocalDirty = false;
 		mutable bool GlobalDirty = false;
 

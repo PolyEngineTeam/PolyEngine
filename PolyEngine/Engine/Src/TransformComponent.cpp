@@ -3,12 +3,38 @@
 using namespace Poly;
 
 //-----------------------------------------------------------------------------
+TransformComponent::~TransformComponent() {
+	if (Parent != nullptr)
+	{
+		//TODO should be replaced with something like
+		//Parent->Children.Remove(this);
+		for (int i = 0; i < Parent->Children.GetSize(); ++i)
+		{
+			if (Parent->Children[i] == this)
+			{
+				Parent->Children.Remove(i);
+				break;
+			}
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
 void TransformComponent::SetParent(TransformComponent* parent) 
 {
-	Parent = parent;
-	//TODO calculate new LocalTransformation based on parent GlobalTransformation
-	LocalDirty = true;
-	GlobalDirty = true;
+	if (parent != nullptr)
+	{
+		Parent = parent;
+		Parent->Children.PushBack(this);
+		//TODO calculate new LocalTransformation based on parent GlobalTransformation
+		LocalDirty = true;
+		GlobalDirty = true;
+	}
+	else 
+	{ 
+		//remove parent?
+		//recalculate GlobalTransform?
+	}
 }
 
 //------------------------------------------------------------------------------
