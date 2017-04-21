@@ -23,7 +23,7 @@ namespace Poly {
 		const Matrix& GetGlobalTransformationMatrix() const;
 		
 	private:
-		const TransformComponent* Parent = nullptr;
+		TransformComponent* Parent = nullptr;
 
 		Vector LocalTranslation;
 		Quaternion LocalRotation;
