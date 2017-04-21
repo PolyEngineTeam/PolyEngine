@@ -3,7 +3,7 @@
 #include "ComponentBase.hpp"
 
 namespace Poly {
-	class TransformComponent : public ComponentBase
+	class ENGINE_DLLEXPORT TransformComponent : public ComponentBase
 	{
 	public:
 		const TransformComponent* GetParent() const { return Parent; }
@@ -23,7 +23,7 @@ namespace Poly {
 		const Matrix& GetGlobalTransformationMatrix() const;
 		
 	private:
-		TransformComponent* Parent = nullptr;
+		const TransformComponent* Parent = nullptr;
 
 		Vector LocalTranslation;
 		Quaternion LocalRotation;
@@ -31,7 +31,8 @@ namespace Poly {
 		mutable Matrix LocalTransform;
 		mutable Matrix GlobalTransform;
 
-		mutable bool Dirty = false;
+		mutable bool LocalDirty = false;
+		mutable bool GlobalDirty = false;
 
 		const bool UpdateGlobalTransformationCache() const;
 	};
