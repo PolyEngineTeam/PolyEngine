@@ -9,6 +9,13 @@
 
 namespace Poly {
 
+	class Quaternion;
+
+	struct CORE_DLLEXPORT MatrixSkew : public BaseObject<>
+	{
+		float XY = 0, XZ = 0, YZ = 0;
+	};
+
 	class ALIGN_16 CORE_DLLEXPORT Matrix : public BaseObject<>{
 	public:
 	  Matrix();
@@ -114,6 +121,9 @@ namespace Poly {
 	   *  @return New, transposed matrix object.
 	   */
 	  Matrix GetTransposed() const;
+
+	  bool Decompose(Vector& translation, Quaternion& rotation, Vector& scale) const;
+	  bool Decompose(Vector& translation, Quaternion& rotation, Vector& scale, MatrixSkew& skew, Vector& perspectivePoint) const;
 
 	  CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Matrix& mat);
 

@@ -1,6 +1,7 @@
 #include <catch.hpp>
 
 #include <Matrix.hpp>
+#include <Quaternion.hpp>
 
 using namespace Poly;
 
@@ -233,4 +234,113 @@ TEST_CASE("Matrix set methods","[Matrix]") {
     m1.SetScale(Vector(2,3,4));
     REQUIRE(m1 == m2);
   }
+}
+
+TEST_CASE("Matrix decomposition", "[Matrix]") {
+	Vector trans(1, 2, 3);
+	Quaternion rot(Vector(1,1,1).GetNormalized(), 45_deg);
+	Vector scale(2, 3, 4);
+	
+	Matrix tMat, rMat, sMat;
+	tMat.SetTranslation(trans);
+	rMat = (Matrix)rot;
+	sMat.SetScale(scale);
+
+	// result fields
+	Vector t;
+	Quaternion r;
+	Vector s;
+	MatrixSkew skew;
+	Vector p;
+
+	SECTION("Translation decomposition") {
+		tMat.Decompose(t, r, s, skew, p);
+		REQUIRE(t == trans);
+		REQUIRE(r == Quaternion());
+		REQUIRE(s == Vector(1,1,1));
+		
+		// check if zero skew and zero perspective
+		REQUIRE(Cmpf(skew.XY, 0.f));
+		REQUIRE(Cmpf(skew.XZ, 0.f));
+		REQUIRE(Cmpf(skew.YZ, 0.f));
+		REQUIRE(p == Vector());
+	}
+
+	SECTION("Rotation decomposition") {
+		rMat.Decompose(t, r, s, skew, p);
+		REQUIRE(t == Vector(0,0,0));
+		REQUIRE(r == rot);
+		REQUIRE(s == Vector(1, 1, 1));
+
+		// check if zero skew and zero perspective
+		REQUIRE(Cmpf(skew.XY, 0.f));
+		REQUIRE(Cmpf(skew.XZ, 0.f));
+		REQUIRE(Cmpf(skew.YZ, 0.f));
+		REQUIRE(p == Vector());
+	}
+
+	SECTION("Scale decomposition") {
+		sMat.Decompose(t, r, s, skew, p);
+		REQUIRE(t == Vector(0, 0, 0));
+		REQUIRE(r == Quaternion());
+		REQUIRE(s == scale);
+
+		// check if zero skew and zero perspective
+		REQUIRE(Cmpf(skew.XY, 0.f));
+		REQUIRE(Cmpf(skew.XZ, 0.f));
+		REQUIRE(Cmpf(skew.YZ, 0.f));
+		REQUIRE(p == Vector());
+	}
+
+	SECTION("Translation-Rot decomposition") {
+		(tMat*rMat).Decompose(t, r, s, skew, p);
+		REQUIRE(t == trans);
+		REQUIRE(r == rot);
+		REQUIRE(s == Vector(1, 1, 1));
+
+		// check if zero skew and zero perspective
+		REQUIRE(Cmpf(skew.XY, 0.f));
+		REQUIRE(Cmpf(skew.XZ, 0.f));
+		REQUIRE(Cmpf(skew.YZ, 0.f));
+		REQUIRE(p == Vector());
+	}
+
+	SECTION("Translation-Scale decomposition") {
+		(tMat*sMat).Decompose(t, r, s, skew, p);
+		REQUIRE(t == trans);
+		REQUIRE(r == Quaternion());
+		REQUIRE(s == scale);
+
+		// check if zero skew and zero perspective
+		REQUIRE(Cmpf(skew.XY, 0.f));
+		REQUIRE(Cmpf(skew.XZ, 0.f));
+		REQUIRE(Cmpf(skew.YZ, 0.f));
+		REQUIRE(p == Vector());
+	}
+
+	SECTION("Rotation-Scale decomposition") {
+		(rMat*sMat).Decompose(t, r, s, skew, p);
+		REQUIRE(t == Vector(0, 0, 0));
+		REQUIRE(r == rot);
+		REQUIRE(s == scale);
+
+		// check if zero skew and zero perspective
+		REQUIRE(Cmpf(skew.XY, 0.f));
+		REQUIRE(Cmpf(skew.XZ, 0.f));
+		REQUIRE(Cmpf(skew.YZ, 0.f));
+		REQUIRE(p == Vector());
+	}
+
+	SECTION("Translation-Rotation-Scale decomposition") {
+		(tMat * (rMat * sMat)).Decompose(t, r, s, skew, p);
+		REQUIRE(t == trans);
+		REQUIRE(r == rot);
+		REQUIRE(s == scale);
+
+		// check if zero skew and zero perspective
+		REQUIRE(Cmpf(skew.XY, 0.f));
+		REQUIRE(Cmpf(skew.XZ, 0.f));
+		REQUIRE(Cmpf(skew.YZ, 0.f));
+		REQUIRE(p == Vector());
+	}
 }
