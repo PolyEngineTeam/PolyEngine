@@ -201,7 +201,7 @@ namespace Poly {
 		}
 
 		//------------------------------------------------------------------------------
-		void Remove(size_t idx)
+		void RemoveByIdx(size_t idx)
 		{
 			HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!");
 			ObjectLifetimeHelper::Destroy(Data + idx);
@@ -210,10 +210,21 @@ namespace Poly {
 		}
 
 		//------------------------------------------------------------------------------
+		size_t FindIdx(const T& rhs) const
+		{
+			for (size_t idx = 0; idx < GetSize(); ++idx)
+			{
+				if (Data[idx] == rhs)
+					return idx;
+			}
+			return GetSize();
+		}
+
+		//------------------------------------------------------------------------------
 		void PushBack(const T& obj) { Insert(GetSize(), obj); }
-		void PopBack() { Remove(GetSize() - 1); }
+		void PopBack() { RemoveByIdx(GetSize() - 1); }
 		void PushFront(const T& obj) { Insert(0, obj); }
-		void PopFront() { Remove(0); }
+		void PopFront() { RemoveByIdx(0); }
 
 		//------------------------------------------------------------------------------
 		void Resize(size_t size)
@@ -249,6 +260,24 @@ namespace Poly {
 		Iterator End() { return Iterator(Data, GetSize()); }
 		ConstIterator Begin() const { return ConstIterator(Data, 0); }
 		ConstIterator End() const { return ConstIterator(Data, GetSize()); }
+
+		//------------------------------------------------------------------------------
+		Iterator Find(const T& rhs) { return Iterator(Data, FindIdx(rhs)); }
+		ConstIterator Find(const T& rhs) const { return ConstIterator(Data, FindIdx(rhs)); }
+
+		//------------------------------------------------------------------------------
+		bool Contains(const T& rhs) const { return FindIdx(rhs) < GetSize(); }
+		void Remove(const T& rhs) { RemoveByIdx(FindIdx(rhs)); }
+		bool TryRemove(const T& rhs)
+		{
+			size_t idx = FindIdx(rhs);
+			if (idx < GetSize())
+			{
+				RemoveByIdx(idx);
+				return true;
+			}
+			return false;
+		}
 
 	private:
 		//------------------------------------------------------------------------------
