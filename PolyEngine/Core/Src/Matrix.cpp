@@ -368,6 +368,7 @@ bool Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& scale)
 {
 	MatrixSkew skew;
 	Vector perspPoint;
+	//TODO optimize this!
 	bool result = Decompose(translation, rotation, scale, skew, perspPoint);
 	ASSERTE(!result || (Cmpf(skew.XY, 0) && Cmpf(skew.XZ, 0) && Cmpf(skew.YZ, 0)), "Non zero skew, use the other overload of the method!");
 	ASSERTE(!result || perspPoint != Vector(0,0,0), "Non zero perspective, use the other overload of the method!");
