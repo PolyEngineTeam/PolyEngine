@@ -6,22 +6,21 @@
 
 namespace Poly
 {
-	enum class eEventType
+	enum class eInputEventType
 	{
 		KEYDOWN,
 		KEYUP,
 		MOUSEMOVE,
-		WHEELMOVE,
-		_COUNT
+		WHEELMOVE
 	};
 
 	struct InputEvent : public BaseObject<>
 	{	
 		InputEvent() = default;
-		InputEvent(eEventType type, eKey key) : Type(type), Key(key) {}
-		InputEvent(eEventType type, const Vector& pos) : Type(type), Pos(pos) {}
+		InputEvent(eInputEventType type, eKey key) : Type(type), Key(key) {}
+		InputEvent(eInputEventType type, const Vector& pos) : Type(type), Pos(pos) {}
 
-		eEventType Type = eEventType::_COUNT;
+		eInputEventType Type = eInputEventType::_COUNT;
 		eKey Key;
 		Vector Pos;
 	};

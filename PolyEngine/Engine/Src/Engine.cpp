@@ -6,6 +6,7 @@ Engine::Engine(IGame* game) : Game(game)
 {
 	Game->RegisterEngine(this);
 	Renderer = CreateRenderingContext();
+	InputEventsQueue = new InputQueue;
 }
 
 bool Engine::Init(const IRenderingContextParams* context) 
@@ -47,13 +48,13 @@ void Engine::Update(float dt)
 
 	// quite stupid test for input :P
 	while(InputEventsQueue.Size() > 0){
-		if(InputEventsQueue.Front().Type == eEventType::KEYDOWN)
+		if(InputEventsQueue.Front().Type == eInputEventType::KEYDOWN)
 			gConsole.LogDebug("Keydown: {}", (unsigned)InputEventsQueue.Front().Key);
-		else if(InputEventsQueue.Front().Type == eEventType::KEYUP)
+		else if(InputEventsQueue.Front().Type == eInputEventType::KEYUP)
 			gConsole.LogDebug("Keyup: {}", (unsigned)InputEventsQueue.Front().Key);
-		else if(InputEventsQueue.Front().Type == eEventType::MOUSEMOVE)
+		else if(InputEventsQueue.Front().Type == eInputEventType::MOUSEMOVE)
 			gConsole.LogDebug("Mousemove: {}", InputEventsQueue.Front().Pos);
-		else if(InputEventsQueue.Front().Type == eEventType::WHEELMOVE)
+		else if(InputEventsQueue.Front().Type == eInputEventType::WHEELMOVE)
 			gConsole.LogDebug("Wheelmoove: {}", InputEventsQueue.Front().Pos);
 		InputEventsQueue.Pop();
 	}
