@@ -6,16 +6,7 @@ using namespace Poly;
 TransformComponent::~TransformComponent() {
 	if (Parent != nullptr)
 	{
-		//TODO should be replaced with something like
-		//Parent->Children.Remove(this);
-		for (int i = 0; i < Parent->Children.GetSize(); ++i)
-		{
-			if (Parent->Children[i] == this)
-			{
-				Parent->Children.Remove(i);
-				break;
-			}
-		}
+		Parent->Children.Remove(this);
 	}
 }
 
@@ -24,17 +15,41 @@ void TransformComponent::SetParent(TransformComponent* parent)
 {
 	if (parent != nullptr)
 	{
+		parent->UpdateGlobalTransformationCache();
+		LocalTranslation = LocalTranslation - parent->GlobalTranslation;
+		LocalRotation = LocalRotation * parent->GlobalRotation.GetConjugated();
+		Vector parentGlobalScale = parent->GlobalScale;
+		LocalScale.X = LocalScale.X / parentGlobalScale.X;
+		LocalScale.Y = LocalScale.Y / parentGlobalScale.Y;
+		LocalScale.Z = LocalScale.Z / parentGlobalScale.Z;
+		GetLocalTransformationMatrix();
+
 		Parent = parent;
 		Parent->Children.PushBack(this);
-		//TODO calculate new LocalTransformation based on parent GlobalTransformation
-		LocalDirty = true;
-		GlobalDirty = true;
 	}
 	else 
 	{ 
-		//remove parent?
-		//recalculate GlobalTransform?
+		ResetParent();
 	}
+}
+
+//-----------------------------------------------------------------------------
+void TransformComponent::ResetParent()
+{
+	if (Parent != nullptr)
+	{
+		Matrix globalTransform = GetGlobalTransformationMatrix();
+		Parent->Children.Remove(this);
+		Parent = nullptr;
+		SetLocalTransformationMatrix(globalTransform);
+	}
+}
+
+//------------------------------------------------------------------------------
+const Vector& TransformComponent::GetGlobalTranslation() const
+{
+	UpdateGlobalTransformationCache();
+	return GlobalTranslation;
 }
 
 //------------------------------------------------------------------------------
@@ -46,11 +61,25 @@ void TransformComponent::SetLocalTranslation(const Vector& position)
 }
 
 //------------------------------------------------------------------------------
+const Quaternion& TransformComponent::GetGlobalRotation() const
+{
+	UpdateGlobalTransformationCache();
+	return GlobalRotation;
+}
+
+//------------------------------------------------------------------------------
 void TransformComponent::SetLocalRotation(const Quaternion& quaternion) 
 { 
 	LocalRotation = quaternion;
 	LocalDirty = true;
 	GlobalDirty = true;
+}
+
+//------------------------------------------------------------------------------
+const Vector& TransformComponent::GetGlobalScale() const
+{
+	UpdateGlobalTransformationCache();
+	return GlobalScale;
 }
 
 //------------------------------------------------------------------------------
@@ -64,16 +93,7 @@ void TransformComponent::SetLocalScale(const Vector& scale)
 //------------------------------------------------------------------------------
 const Matrix& TransformComponent::GetLocalTransformationMatrix() const 
 {
-	if (LocalDirty) 
-	{
-		Matrix translation;
-		Matrix rotation = LocalRotation.ToRotationMatrix();
-		Matrix scale;
-		translation.SetTranslation(LocalTranslation);
-		scale.SetScale(LocalScale);
-		LocalTransform = translation * rotation * scale;
-		LocalDirty = false;
-	}
+	UpdateLocalTransformationCache();
 	return LocalTransform;
 }
 
@@ -85,12 +105,38 @@ const Matrix& TransformComponent::GetGlobalTransformationMatrix() const
 }
 
 //------------------------------------------------------------------------------
+void TransformComponent::SetLocalTransformationMatrix(const Matrix& localTransformation)
+{
+	LocalTransform = localTransformation;
+	localTransformation.Decompose(LocalTranslation, LocalRotation, LocalScale);
+	GlobalDirty = true;
+}
+
+//------------------------------------------------------------------------------
+const bool TransformComponent::UpdateLocalTransformationCache() const
+{
+	if (LocalDirty)
+	{
+		Matrix translation;
+		Matrix rotation = LocalRotation.ToRotationMatrix();
+		Matrix scale;
+		translation.SetTranslation(LocalTranslation);
+		scale.SetScale(LocalScale);
+		LocalTransform = translation * rotation * scale;
+		LocalDirty = false;
+		return true;
+	}
+	return false;
+}
+
+//------------------------------------------------------------------------------
 const bool TransformComponent::UpdateGlobalTransformationCache() const 
 {
 	if (Parent == nullptr) 
 	{
 		if (GlobalDirty) {
 			GlobalTransform = GetLocalTransformationMatrix();
+			GlobalTransform.Decompose(GlobalTranslation, GlobalRotation, GlobalScale);
 			GlobalDirty = false;
 			return true;
 		} 
@@ -102,6 +148,7 @@ const bool TransformComponent::UpdateGlobalTransformationCache() const
 		if (Parent->UpdateGlobalTransformationCache() || GlobalDirty) 
 		{
 			GlobalTransform = Parent->GlobalTransform * GetLocalTransformationMatrix();
+			GlobalTransform.Decompose(GlobalTranslation, GlobalRotation, GlobalScale);
 			GlobalDirty = false;
 			return true;
 		} 
