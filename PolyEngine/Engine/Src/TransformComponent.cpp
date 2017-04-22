@@ -22,7 +22,7 @@ void TransformComponent::SetParent(TransformComponent* parent)
 		LocalScale.X = LocalScale.X / parentGlobalScale.X;
 		LocalScale.Y = LocalScale.Y / parentGlobalScale.Y;
 		LocalScale.Z = LocalScale.Z / parentGlobalScale.Z;
-		GetLocalTransformationMatrix();
+		UpdateLocalTransformationCache();
 
 		Parent = parent;
 		Parent->Children.PushBack(this);
@@ -36,13 +36,11 @@ void TransformComponent::SetParent(TransformComponent* parent)
 //-----------------------------------------------------------------------------
 void TransformComponent::ResetParent()
 {
-	if (Parent != nullptr)
-	{
-		Matrix globalTransform = GetGlobalTransformationMatrix();
-		Parent->Children.Remove(this);
-		Parent = nullptr;
-		SetLocalTransformationMatrix(globalTransform);
-	}
+	ASSERTE(Parent, "ResetParent() called with parent == nullptr");
+	Matrix globalTransform = GetGlobalTransformationMatrix();
+	Parent->Children.Remove(this);
+	Parent = nullptr;
+	SetLocalTransformationMatrix(globalTransform);
 }
 
 //------------------------------------------------------------------------------
@@ -109,6 +107,7 @@ void TransformComponent::SetLocalTransformationMatrix(const Matrix& localTransfo
 {
 	LocalTransform = localTransformation;
 	localTransformation.Decompose(LocalTranslation, LocalRotation, LocalScale);
+	LocalDirty = false;
 	GlobalDirty = true;
 }
 
