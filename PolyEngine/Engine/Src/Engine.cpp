@@ -6,6 +6,7 @@ Engine::Engine(IGame* game) : Game(game)
 {
 	Game->RegisterEngine(this);
 	Renderer = CreateRenderingContext();
+	InputEventsQueue = new InputQueue;
 }
 
 bool Engine::Init(const IRenderingContextParams* context) 
