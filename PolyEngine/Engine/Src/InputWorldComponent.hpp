@@ -19,15 +19,15 @@ namespace Poly
 			bool GetReleased(eKey key) { return (!CurrKey[static_cast<int>(key)] && PrevKey[static_cast<int>(key)]) ? true : false; }
 			const Vector& GetMousePos() { return CurrMouse; }
 			const Vector& GetMouseDiff() { return CurrMouse - PrevMouse; }
-			const Vector& GetWheelPos() { return CurrWheel; }
-			const Vector& GetWheelDiff() { return CurrWheel - PrevWheel; }
+			const int& GetWheelPos() { return CurrWheel; }
+			const int& GetWheelDiff() { return CurrWheel - PrevWheel; }
 		private:
 			bool CurrKey[256];
 			bool PrevKey[256];
 			Vector CurrMouse;
 			Vector PrevMouse;
-			Vector CurrWheel;
-			Vector PrevWheel;
+			int CurrWheel;
+			int PrevWheel;
 		};
 	}
 }

@@ -31,7 +31,7 @@ void InputSystem::InputPhase(World* world)
 			com->CurrMouse = InputEventsQueue->Front().Pos;
 			break;
 		case eInputEventType::WHEELMOVE:
-			com->CurrWheel = InputEventsQueue->Front().Pos;
+			com->CurrWheel += InputEventsQueue->Front().Pos.X;
 			break;
 		}
 		InputEventsQueue->Pop();

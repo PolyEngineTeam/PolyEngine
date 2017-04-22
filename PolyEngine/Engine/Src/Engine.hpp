@@ -69,7 +69,5 @@ namespace Poly
 		IRenderingContext* Renderer;
 
 		Dynarray< PhaseUpdateFunction > GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];
-
-		InputQueue InputEventsQueue;
 	};
 }
