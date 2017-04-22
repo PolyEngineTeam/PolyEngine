@@ -6,6 +6,25 @@ using namespace Poly;
 
 TEST_CASE("Queue tests", "[Queue]")
 {
+	Queue<int> a(5);
+
+	REQUIRE(a.Empty() == true);
+
+	a.Push(1);
+	a.Push(2);
+	a.Push(3);
+	a.Push(4);
+	a.Push(5);
+
+	REQUIRE(a.Front() == 1);
+	REQUIRE(a.Back() == 5);
+
+	a.Push(6);
+	a.Push(7);
+		
+	REQUIRE(a.Front() == 1);
+	REQUIRE(a.Back() == 7);
+
 	Queue<int> q;
 	Queue<int> r(q);
 
@@ -44,8 +63,9 @@ TEST_CASE("Queue tests", "[Queue]")
 	q.Push(4);
 	q.Push(5);
 
-	REQUIRE(q.Back() == 5);
 	REQUIRE(q.Front() == 1);
+	REQUIRE(q.Back() == 5);
+	
 
 	q.Pop();
 
@@ -76,5 +96,7 @@ TEST_CASE("Queue tests (with BaseObject)", "[Queue]")
 
 	q.Push(Test());
 	q.Pop();
+
+	REQUIRE(q.Empty() == true);
 
 }
