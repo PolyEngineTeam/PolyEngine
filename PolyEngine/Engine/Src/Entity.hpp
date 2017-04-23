@@ -4,6 +4,7 @@
 #include <bitset>
 
 #include "ComponentBase.hpp"
+#include "Engine.hpp"
 
 namespace Poly 
 {
@@ -49,8 +50,8 @@ namespace Poly
 		template<class T>
 		T* GetComponent()
 		{
-			if (HasComponent(GET_COMPONENT_ID(T)))
-				return static_cast<T*>(Components[GET_COMPONENT_ID(T)]);
+			if (HasComponent(GET_COMPONENT_ID(EntityWorld->GetEngine(), T)))
+				return static_cast<T*>(Components[GET_COMPONENT_ID(EntityWorld->GetEngine(), T)]);
 			else
 				return nullptr;
 		}

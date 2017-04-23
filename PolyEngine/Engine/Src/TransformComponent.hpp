@@ -6,7 +6,7 @@ namespace Poly {
 	class ENGINE_DLLEXPORT TransformComponent : public ComponentBase
 	{
 	public:
-		TransformComponent(TransformComponent* parent = nullptr) { SetParent(parent); };
+		TransformComponent(TransformComponent* parent = nullptr) { if(parent) SetParent(parent); };
 		~TransformComponent();
 
 		const TransformComponent* GetParent() const { return Parent; }

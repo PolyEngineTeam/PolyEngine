@@ -24,6 +24,9 @@
     <Filter Include="Source Files\ECS\Components">
       <UniqueIdentifier>{4953f608-4d6d-49c7-83d2-972aeb278924}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Rendering\Camera">
+      <UniqueIdentifier>{3b018cb8-bb36-428d-9263-6dd1c140381c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -43,6 +46,12 @@
     </ClCompile>
     <ClCompile Include="Src\TransformComponent.cpp">
       <Filter>Source Files\ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\CameraComponent.cpp">
+      <Filter>Source Files\Rendering\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\CameraSystem.cpp">
+      <Filter>Source Files\Rendering\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -72,6 +81,12 @@
     </ClInclude>
     <ClInclude Include="Src\TransformComponent.hpp">
       <Filter>Source Files\ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\CameraComponent.hpp">
+      <Filter>Source Files\Rendering\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\CameraSystem.hpp">
+      <Filter>Source Files\Rendering\Camera</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -214,6 +214,34 @@ Matrix& Matrix::SetScale(const Vector& scale) {
 }
 
 //------------------------------------------------------------------------------
+Matrix& Poly::Matrix::SetPerspective(float fov, float aspect, float near, float far)
+{
+	float tanHalfFOV = tan(fov / 2);
+
+	Data[0] = 1.0f / (tanHalfFOV * aspect);
+	Data[1] = 0;
+	Data[2] = 0;
+	Data[3] = 0;
+	
+	Data[4] = 0;
+	Data[5] = 1.0f / tanHalfFOV;
+	Data[6] = 0;
+	Data[7] = 0;
+	
+	Data[8] = 0;
+	Data[9] = 0;
+	Data[10] = -(far + near) / (far - near);
+	Data[11] = -(2.0f * far * near) / (far - near);
+	
+	Data[12] = 0;
+	Data[13] = 0;
+	Data[14] = -1;
+	Data[15] = 0;
+	
+	return *this;
+}
+
+//------------------------------------------------------------------------------
 Matrix& Matrix::Inverse() {
   //TODO vectorize
   Matrix cpy = *this;

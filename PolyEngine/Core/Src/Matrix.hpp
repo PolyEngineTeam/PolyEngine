@@ -95,6 +95,17 @@ namespace Poly {
 	  Matrix& SetScale(const Vector& scale);
 
 	  /**
+	  *  Initializes matrix with perspective.
+	  *
+	  *  @param[in] fov Field of view.
+	  *  @param[in] aspect Aspect ratio.
+	  *  @param[in] near Near Z plane.
+	  *  @param[in] far Far Z plane.
+	  *  @return Reference to itself.
+	  */
+	  Matrix& SetPerspective(float fov, float aspect, float near, float far);
+
+	  /**
 	   *  Inverses the matrix.
 	   *
 	   *  @return Reference to itself after the inversion.

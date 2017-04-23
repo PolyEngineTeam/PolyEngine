@@ -2,10 +2,8 @@
 
 using namespace Poly;
 
-constexpr size_t MAX_ENTITY_COUNT = 65536;
-
-World::World()
-: EntitiesAllocator(MAX_ENTITY_COUNT)
+World::World(Poly::Engine* engine)
+: EnginePtr(engine), EntitiesAllocator(MAX_ENTITY_COUNT)
 {
 	memset(ComponentAllocators, 0, sizeof(IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
 }
@@ -25,6 +23,7 @@ UniqueID World::SpawnEntity()
 {
 	Entity* ent = EntitiesAllocator.Alloc();
 	::new(ent) Entity(this);
+	IDToEntityMap[ent->EntityID] = ent;
 	return ent->EntityID;
 }
 
@@ -38,6 +37,7 @@ void World::DestroyEntity(const UniqueID& entityId)
 		if (ent->Components[i])
 			RemoveComponentById(ent, i);
 	}
+	IDToEntityMap.erase(entityId);
 	ent->~Entity();
 	EntitiesAllocator.Free(ent);
 }

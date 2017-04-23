@@ -1,21 +1,43 @@
 #include "Engine.hpp"
 
+#include "TransformComponent.hpp"
+#include "CameraSystem.hpp"
+#include "CameraComponent.hpp"
+#include "World.hpp"
+
 using namespace Poly;
 
-Engine::Engine(IGame* game) : Game(game) 
+//------------------------------------------------------------------------------
+Engine::Engine(IGame* game) : Game(game)
 {
+	BaseWorld = new World(this);
 	Game->RegisterEngine(this);
 	Renderer = CreateRenderingContext();
 }
 
+//------------------------------------------------------------------------------
+Poly::Engine::~Engine()
+{
+	delete BaseWorld;
+}
+
+//------------------------------------------------------------------------------
 bool Engine::Init(const IRenderingContextParams* context) 
 {
+	// Engine Components
+	REGISTER_COMPONENT(this, TransformComponent, (size_t)eEngineComponents::TRANSFORM);
+	REGISTER_COMPONENT(this, BaseCameraComponent, (size_t)eEngineComponents::BASE_CAMERA);
+
+	// Engine update phases
+	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
+	
 	if (!Renderer->Init(context))
 		return false;
 	Game->Init();
 	return true;
 }
 
+//------------------------------------------------------------------------------
 void Engine::Deinit()
 {
 	Renderer->Deinit();
@@ -23,6 +45,7 @@ void Engine::Deinit()
 	Renderer = nullptr;
 }
 
+//------------------------------------------------------------------------------
 void Engine::RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order)
 {
 	HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "_COUNT enum value passed to RegisterUpdatePhase(), which is an invalid value");
@@ -37,14 +60,9 @@ void Engine::RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpda
 // temporary include, remove this ASAP
 #include <gl/glew.h>
 
+//------------------------------------------------------------------------------
 void Engine::Update(float dt)
 {
-	UpdatePhases(eUpdatePhaseOrder::PREUPDATE);
-
-	UpdatePhases(eUpdatePhaseOrder::UPDATE);
-
-	UpdatePhases(eUpdatePhaseOrder::POSTUPDATE);
-
 	// quite stupid test for input :P
 	while(InputEventsQueue.Size() > 0){
 		if(InputEventsQueue.Front().Type == eEventType::KEYDOWN)
@@ -57,6 +75,10 @@ void Engine::Update(float dt)
 			gConsole.LogDebug("Wheelmoove: {}", InputEventsQueue.Front().Pos);
 		InputEventsQueue.Pop();
 	}
+
+	UpdatePhases(eUpdatePhaseOrder::PREUPDATE);
+	UpdatePhases(eUpdatePhaseOrder::UPDATE);
+	UpdatePhases(eUpdatePhaseOrder::POSTUPDATE);
 
 	// very simple temporary loop, this should be moved somwhere else
 	glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
