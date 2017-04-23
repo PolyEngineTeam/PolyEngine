@@ -1,9 +1,14 @@
 #include "Engine.hpp"
 
-#include "TransformComponent.hpp"
-#include "CameraSystem.hpp"
-#include "CameraComponent.hpp"
+
 #include "World.hpp"
+
+#include "TransformComponent.hpp"
+#include "CameraComponent.hpp"
+#include "MeshRenderingComponent.hpp"
+
+#include "CameraSystem.hpp"
+#include "RenderingSystem.hpp"
 
 using namespace Poly;
 
@@ -25,11 +30,13 @@ Poly::Engine::~Engine()
 bool Engine::Init(const IRenderingContextParams* context) 
 {
 	// Engine Components
-	REGISTER_COMPONENT(this, TransformComponent, (size_t)eEngineComponents::TRANSFORM);
-	REGISTER_COMPONENT(this, BaseCameraComponent, (size_t)eEngineComponents::BASE_CAMERA);
+	REGISTER_COMPONENT(this, TransformComponent, eEngineComponents::TRANSFORM);
+	REGISTER_COMPONENT(this, BaseCameraComponent, eEngineComponents::BASE_CAMERA);
+	REGISTER_COMPONENT(this, MeshRenderingComponent, eEngineComponents::MESH_RENDERING);
 
 	// Engine update phases
 	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
+	RegisterUpdatePhase(RenderingSystem::RenderingPhase, eUpdatePhaseOrder::POSTUPDATE);
 	
 	if (!Renderer->Init(context))
 		return false;
@@ -50,20 +57,13 @@ void Engine::RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpda
 {
 	HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "_COUNT enum value passed to RegisterUpdatePhase(), which is an invalid value");
 	Dynarray<PhaseUpdateFunction>& UpdatePhases = GameUpdatePhases[static_cast<int>(order)];
-	for (auto& iter : UpdatePhases)
-	{
-		HEAVY_ASSERTE(iter.target<PhaseUpdateFunction>() != phaseFunction.target<PhaseUpdateFunction>(), "Failed at RegisterUpdatePhase() - passed function is already registered as a phase in this update stage.");
-	}
 	UpdatePhases.PushBack(phaseFunction);
 }
-
-// temporary include, remove this ASAP
-#include <gl/glew.h>
 
 //------------------------------------------------------------------------------
 void Engine::Update(float dt)
 {
-	// quite stupid test for input :P
+	// quite stupid test for input, this should be removed ASAP
 	while(InputEventsQueue.Size() > 0){
 		if(InputEventsQueue.Front().Type == eEventType::KEYDOWN)
 			gConsole.LogDebug("Keydown: {}", (unsigned)InputEventsQueue.Front().Key);
@@ -79,10 +79,4 @@ void Engine::Update(float dt)
 	UpdatePhases(eUpdatePhaseOrder::PREUPDATE);
 	UpdatePhases(eUpdatePhaseOrder::UPDATE);
 	UpdatePhases(eUpdatePhaseOrder::POSTUPDATE);
-
-	// very simple temporary loop, this should be moved somwhere else
-	glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	Renderer->EndFrame();
 }

@@ -27,6 +27,9 @@
     <Filter Include="Source Files\Rendering\Camera">
       <UniqueIdentifier>{3b018cb8-bb36-428d-9263-6dd1c140381c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Rendering\MeshRendering">
+      <UniqueIdentifier>{0a50528e-4ed6-482a-91cd-f3c7e36090b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -52,6 +55,15 @@
     </ClCompile>
     <ClCompile Include="Src\CameraSystem.cpp">
       <Filter>Source Files\Rendering\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\MeshRenderingComponent.cpp">
+      <Filter>Source Files\Rendering\MeshRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\RenderingSystem.cpp">
+      <Filter>Source Files\Rendering\MeshRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ShaderProgram.cpp">
+      <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -87,6 +99,15 @@
     </ClInclude>
     <ClInclude Include="Src\CameraSystem.hpp">
       <Filter>Source Files\Rendering\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\MeshRenderingComponent.hpp">
+      <Filter>Source Files\Rendering\MeshRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\RenderingSystem.hpp">
+      <Filter>Source Files\Rendering\MeshRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ShaderProgram.hpp">
+      <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

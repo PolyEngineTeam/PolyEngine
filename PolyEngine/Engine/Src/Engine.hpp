@@ -21,6 +21,7 @@ namespace Poly
 	{
 		TRANSFORM,
 		BASE_CAMERA,
+		MESH_RENDERING,
 		_COUNT
 	};
 
@@ -84,6 +85,9 @@ namespace Poly
 			ASSERTE(ComponentTypeMap.find(typeid(T)) != ComponentTypeMap.end(), "Component type was not requstered!");
 			return ComponentTypeMap.at(typeid(T));
 		}
+
+		IRenderingContext* GetRenderingContext() const { return Renderer; }
+
 	private:
 		//------------------------------------------------------------------------------
 		inline void UpdatePhases(eUpdatePhaseOrder order)
