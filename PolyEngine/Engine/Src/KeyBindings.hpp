@@ -177,6 +177,7 @@ namespace Poly
 		PLAY =					VK_PLAY,
 		ZOOM =					VK_ZOOM,
 		PA1 =					VK_PA1,
-		OEM_CLEAR =				VK_OEM_CLEAR
+		OEM_CLEAR =				VK_OEM_CLEAR,
+		_COUNT
 	};
 }

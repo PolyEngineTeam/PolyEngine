@@ -67,10 +67,10 @@ namespace Poly
 
 		void Update(float dt);
 
-		void KeyDown(eKey key) { InputEventsQueue->Push({eInputEventType::KEYDOWN, key}); }
-		void KeyUp(eKey key) { InputEventsQueue->Push({eInputEventType::KEYUP, key}); }
-		void UpdateMousePos(const Vector& pos) { InputEventsQueue->Push({eInputEventType::MOUSEMOVE, pos}); }
-		void UpdateWheelPos(const Vector& pos) { InputEventsQueue->Push({eInputEventType::WHEELMOVE, pos}); }
+		void KeyDown(eKey key) { InputEventsQueue.Push({eInputEventType::KEYDOWN, key}); }
+		void KeyUp(eKey key) { InputEventsQueue.Push({eInputEventType::KEYUP, key}); }
+		void UpdateMousePos(const Vector& pos) { InputEventsQueue.Push({eInputEventType::MOUSEMOVE, pos}); }
+		void UpdateWheelPos(const Vector& pos) { InputEventsQueue.Push({eInputEventType::WHEELMOVE, pos}); }
 
 		World& GetWorld() { return *BaseWorld; }
 
@@ -89,7 +89,7 @@ namespace Poly
 		}
 
 		IRenderingContext* GetRenderingContext() const { return Renderer; }
-		InputQueue* GetInputQueue() { return InputEventsQueue; }
+		InputQueue& GetInputQueue() { return InputEventsQueue; }
 
 	private:
 		//------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ namespace Poly
 		World* BaseWorld;
 		IGame* Game;
 		IRenderingContext* Renderer;
-		InputQueue* InputEventsQueue;
+		InputQueue InputEventsQueue;
 
 		Dynarray< PhaseUpdateFunction > GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];
 

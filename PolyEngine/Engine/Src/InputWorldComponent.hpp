@@ -1,33 +1,37 @@
 #pragma once
 
+#include <initializer_list>
 #include <Vector.hpp>
+#include <EnumUtils.hpp>
 #include "ComponentBase.hpp"
 #include "KeyBindings.hpp"
 
 namespace Poly
 {
-	namespace InputSystem
+	class ENGINE_DLLEXPORT InputWorldComponent : public ComponentBase
 	{
-		class InputWorldComponent : public ComponentBase
+	friend void InputSystem::InputPhase(World*);
+	public:
+		const bool IsPressed(const std::initializer_list<eKey>& list)	
 		{
-		friend void InputPhase(World*);
-		public:
-			bool GetPressed(eKey key)						 { return CurrKey[static_cast<int>(key)]; }
-			bool GetPressed(eKey key1, eKey key2)			 { return (CurrKey[static_cast<int>(key1)] && CurrKey[static_cast<int>(key2)]) ? true : false; }
-			bool GetPressed(eKey key1, eKey key2, eKey key3) { return (CurrKey[static_cast<int>(key1)] && CurrKey[static_cast<int>(key2)] && CurrKey[static_cast<int>(key3)]) ? true : false; }
-			bool GetClicked(eKey key)  { return (CurrKey[static_cast<int>(key)] && !PrevKey[static_cast<int>(key)]) ? true : false; }
-			bool GetReleased(eKey key) { return (!CurrKey[static_cast<int>(key)] && PrevKey[static_cast<int>(key)]) ? true : false; }
-			const Vector& GetMousePos() { return CurrMouse; }
-			const Vector& GetMouseDiff() { return CurrMouse - PrevMouse; }
-			const int& GetWheelPos() { return CurrWheel; }
-			const int& GetWheelDiff() { return CurrWheel - PrevWheel; }
-		private:
-			bool CurrKey[256];
-			bool PrevKey[256];
-			Vector CurrMouse;
-			Vector PrevMouse;
-			int CurrWheel;
-			int PrevWheel;
-		};
-	}
+			bool result = true;
+			for (const eKey& i : list)
+				result = result && CurrKey[i];
+			return result;
+		}
+
+		const bool IsClicked(eKey key) { return (CurrKey[key] && !PrevKey[key]) ? true : false; }
+		const bool IsReleased(eKey key) { return (!CurrKey[key] && PrevKey[key]) ? true : false; }
+		const Vector& GetMousePos() { return CurrMouse; }
+		const Vector GetMouseDiff() { return CurrMouse - PrevMouse; }
+		const int& GetWheelPos() { return CurrWheel; }
+		const int GetWheelDiff() { return CurrWheel - PrevWheel; }
+	private:
+		EnumArray<bool, eKey> CurrKey;
+		EnumArray<bool, eKey> PrevKey;
+		Vector CurrMouse;
+		Vector PrevMouse;
+		int CurrWheel;
+		int PrevWheel;
+	};
 }

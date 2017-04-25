@@ -18,7 +18,6 @@ Engine::Engine(IGame* game) : Game(game)
 	BaseWorld = new World(this);
 	Game->RegisterEngine(this);
 	Renderer = CreateRenderingContext();
-	InputEventsQueue = new InputQueue;
 }
 
 //------------------------------------------------------------------------------
