@@ -36,9 +36,9 @@ bool Engine::Init(const IRenderingContextParams* context)
 	REGISTER_COMPONENT(this, MeshRenderingComponent, eEngineComponents::MESH_RENDERING);
 
 	// Engine update phases
+	RegisterUpdatePhase(InputSystem::InputPhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(RenderingSystem::RenderingPhase, eUpdatePhaseOrder::POSTUPDATE);
-	RegisterUpdatePhase(InputSystem::InputPhase, eUpdatePhaseOrder::PREUPDATE);
 	
 	if (!Renderer->Init(context))
 		return false;
