@@ -8,11 +8,17 @@
 
 void TestGame::Init() 
 {
-	auto camera = Engine->GetWorld().SpawnEntity();
-	Engine->GetWorld().AddComponent<Poly::TransformComponent>(camera);
-	Engine->GetWorld().AddComponent<Poly::BaseCameraComponent>(camera, 45.0f, 1.0f, 1000.f);
+	Camera = Engine->GetWorld().SpawnEntity();
+	Engine->GetWorld().AddComponent<Poly::TransformComponent>(Camera);
+	Engine->GetWorld().AddComponent<Poly::BaseCameraComponent>(Camera, 45.0f, 1.0f, 1000.f);
 
-	auto entity = Engine->GetWorld().SpawnEntity();
-	Engine->GetWorld().AddComponent<Poly::TransformComponent>(entity);
-	Engine->GetWorld().AddComponent<Poly::MeshRenderingComponent>(entity);
+	TestEnt = Engine->GetWorld().SpawnEntity();
+	Engine->GetWorld().AddComponent<Poly::TransformComponent>(TestEnt);
+	Engine->GetWorld().AddComponent<Poly::MeshRenderingComponent>(TestEnt);
+};
+
+void TestGame::Deinit()
+{
+	Engine->GetWorld().DestroyEntity(Camera);
+	Engine->GetWorld().DestroyEntity(TestEnt);
 };

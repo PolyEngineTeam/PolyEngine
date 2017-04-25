@@ -48,6 +48,7 @@ bool Engine::Init(const IRenderingContextParams* context)
 //------------------------------------------------------------------------------
 void Engine::Deinit()
 {
+	Game->Deinit();
 	Renderer->Deinit();
 	delete Renderer;
 	Renderer = nullptr;

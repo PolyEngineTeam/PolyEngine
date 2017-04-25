@@ -33,6 +33,7 @@ namespace Poly
 	public:
 		virtual void RegisterEngine(Engine* engine) = 0;
 		virtual void Init() = 0;
+		virtual void Deinit() = 0;
 	};
 
 	//------------------------------------------------------------------------------

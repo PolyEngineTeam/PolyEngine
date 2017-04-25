@@ -7,8 +7,12 @@
 class GAME_DLLEXPORT TestGame : public Poly::IGame {
 public:
 	void RegisterEngine(Poly::Engine* engine) override { Engine = engine; }
+	
 	void Init() override;
+	void Deinit() override;
 
 private:
+	Poly::UniqueID Camera, TestEnt;
+
 	Poly::Engine* Engine;
 };
