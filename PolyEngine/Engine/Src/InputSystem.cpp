@@ -9,7 +9,7 @@ void InputSystem::InputPhase(World* world)
 {
 	InputWorldComponent com = world->GetInputWorldComponent();
 
-	memcpy(&com.PrevKey, &com.CurrKey, static_cast<int>(eKey::_COUNT) * sizeof(bool));
+	com.PrevKey = com.CurrKey;
 
 	com.PrevMouse = com.CurrMouse;
 	com.PrevWheel = com.CurrWheel;

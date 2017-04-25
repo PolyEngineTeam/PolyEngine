@@ -162,6 +162,7 @@
     <ClCompile Include="Src\ComponentBase.cpp" />
     <ClCompile Include="Src\Engine.cpp" />
     <ClCompile Include="Src\Entity.cpp" />
+    <ClCompile Include="Src\InputWorldComponent.cpp" />
     <ClCompile Include="Src\MeshRenderingComponent.cpp" />
     <ClCompile Include="Src\InputSystem.cpp" />
     <ClCompile Include="Src\OpenGLRenderingContext.cpp" />

@@ -178,6 +178,6 @@ namespace Poly
 		ZOOM =					VK_ZOOM,
 		PA1 =					VK_PA1,
 		OEM_CLEAR =				VK_OEM_CLEAR,
-		_COUNT
+		_COUNT =				0xff
 	};
 }
