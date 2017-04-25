@@ -35,6 +35,7 @@ bool Engine::Init(const IRenderingContextParams* context)
 	REGISTER_COMPONENT(this, MeshRenderingComponent, eEngineComponents::MESH_RENDERING);
 
 	// Engine update phases
+	RegisterUpdatePhase(InputSystem::InputPhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(RenderingSystem::RenderingPhase, eUpdatePhaseOrder::POSTUPDATE);
 	
@@ -63,19 +64,6 @@ void Engine::RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpda
 //------------------------------------------------------------------------------
 void Engine::Update(float dt)
 {
-	// quite stupid test for input, this should be removed ASAP
-	while(InputEventsQueue.Size() > 0){
-		if(InputEventsQueue.Front().Type == eEventType::KEYDOWN)
-			gConsole.LogDebug("Keydown: {}", (unsigned)InputEventsQueue.Front().Key);
-		else if(InputEventsQueue.Front().Type == eEventType::KEYUP)
-			gConsole.LogDebug("Keyup: {}", (unsigned)InputEventsQueue.Front().Key);
-		else if(InputEventsQueue.Front().Type == eEventType::MOUSEMOVE)
-			gConsole.LogDebug("Mousemove: {}", InputEventsQueue.Front().Pos);
-		else if(InputEventsQueue.Front().Type == eEventType::WHEELMOVE)
-			gConsole.LogDebug("Wheelmoove: {}", InputEventsQueue.Front().Pos);
-		InputEventsQueue.Pop();
-	}
-
 	UpdatePhases(eUpdatePhaseOrder::PREUPDATE);
 	UpdatePhases(eUpdatePhaseOrder::UPDATE);
 	UpdatePhases(eUpdatePhaseOrder::POSTUPDATE);

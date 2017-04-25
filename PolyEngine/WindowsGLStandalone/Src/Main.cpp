@@ -125,24 +125,33 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	// input
 	// Use separate case's for mouse buttons because otherwise mouse buttons aren't checked
 	case WM_LBUTTONDOWN:
-		gEngine->KeyDown(Poly::eKey::LBUTTON);
+		gEngine->KeyDown(Poly::eKey::MLBUTTON);
 		return 0;
 	case WM_LBUTTONUP:
-		gEngine->KeyUp(Poly::eKey::LBUTTON);
+		gEngine->KeyUp(Poly::eKey::MLBUTTON);
 		return 0;
 
 	case WM_RBUTTONDOWN:
-		gEngine->KeyDown(Poly::eKey::RBUTTON);
+		gEngine->KeyDown(Poly::eKey::MRBUTTON);
 		return 0;
 	case WM_RBUTTONUP:
-		gEngine->KeyUp(Poly::eKey::RBUTTON);
+		gEngine->KeyUp(Poly::eKey::MRBUTTON);
 		return 0;
 
 	case WM_MBUTTONDOWN:
-		gEngine->KeyDown(Poly::eKey::MBUTTON);
+		gEngine->KeyDown(Poly::eKey::MMBUTTON);
 		return 0;
 	case WM_MBUTTONUP:
-		gEngine->KeyUp(Poly::eKey::MBUTTON);
+		gEngine->KeyUp(Poly::eKey::MMBUTTON);
+		return 0;
+
+	case WM_XBUTTONDOWN:
+		if(GET_Y_LPARAM(wParam) == XBUTTON1) gEngine->KeyDown(Poly::eKey::MBUTTON1);
+		else gEngine->KeyDown(Poly::eKey::MBUTTON2);
+		return 0;
+	case WM_XBUTTONUP:
+		if(GET_Y_LPARAM(wParam) == XBUTTON1) gEngine->KeyUp(Poly::eKey::MBUTTON1);
+		else gEngine->KeyUp(Poly::eKey::MBUTTON2);
 		return 0;
 
 	case WM_KEYDOWN:
@@ -156,14 +165,14 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	{
 		POINT pointPos;
 		GetCursorPos(&pointPos);
+		ScreenToClient(hWnd, &pointPos);
 		gEngine->UpdateMousePos(Poly::Vector(static_cast<float>(pointPos.x), static_cast<float>(pointPos.y), 0));
 		return 0;
 	}
 	case WM_MOUSEWHEEL:
 	{
-		int xPos = GET_X_LPARAM(lParam); 
-		int yPos = GET_Y_LPARAM(lParam); 
-		gEngine->UpdateWheelPos(Poly::Vector(static_cast<float>(xPos), static_cast<float>(yPos), 0));
+		int xPos = GET_WHEEL_DELTA_WPARAM(wParam);
+		gEngine->UpdateWheelPos(Poly::Vector(static_cast<float>(xPos), 0, 0));
 		return 0;
 	}
 	// end of input

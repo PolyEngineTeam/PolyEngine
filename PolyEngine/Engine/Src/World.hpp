@@ -6,6 +6,8 @@
 #include "Entity.hpp"
 #include "Engine.hpp"
 
+#include "InputWorldComponent.hpp"
+
 namespace Poly {
 
 	constexpr size_t MAX_ENTITY_COUNT = 65536;
@@ -80,6 +82,8 @@ namespace Poly {
 		}
 
 		Engine* GetEngine() const { return EnginePtr; }
+		InputWorldComponent& GetInputWorldComponent() { return InputCom; };
+
 	private:
 		std::unordered_map<UniqueID, Entity*> IDToEntityMap;
 
@@ -89,6 +93,8 @@ namespace Poly {
 		PoolAllocator<Entity> EntitiesAllocator;
 		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
 		Engine* EnginePtr;
+	
+		InputWorldComponent InputCom;
 	};
 
 }

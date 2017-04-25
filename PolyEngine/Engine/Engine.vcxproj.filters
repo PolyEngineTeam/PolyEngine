@@ -65,6 +65,12 @@
     <ClCompile Include="Src\ShaderProgram.cpp">
       <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="Src\InputSystem.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\InputWorldComponent.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine.hpp">
@@ -108,6 +114,12 @@
     </ClInclude>
     <ClInclude Include="Src\ShaderProgram.hpp">
       <Filter>Source Files\Rendering\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\InputWorldComponent.hpp">
+      <Filter>Source Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\InputSystem.hpp">
+      <Filter>Source Files\Input</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
