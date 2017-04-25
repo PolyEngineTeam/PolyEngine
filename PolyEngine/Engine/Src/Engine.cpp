@@ -38,6 +38,7 @@ bool Engine::Init(const IRenderingContextParams* context)
 	// Engine update phases
 	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(RenderingSystem::RenderingPhase, eUpdatePhaseOrder::POSTUPDATE);
+	RegisterUpdatePhase(InputSystem::InputPhase, eUpdatePhaseOrder::PREUPDATE);
 	
 	if (!Renderer->Init(context))
 		return false;
@@ -64,25 +65,6 @@ void Engine::RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpda
 //------------------------------------------------------------------------------
 void Engine::Update(float dt)
 {
-	UpdatePhases(eUpdatePhaseOrder::PREUPDATE);
-
-	UpdatePhases(eUpdatePhaseOrder::UPDATE);
-
-	UpdatePhases(eUpdatePhaseOrder::POSTUPDATE);
-
-	// quite stupid test for input :P
-	while(InputEventsQueue->Size() > 0){
-		if(InputEventsQueue->Front().Type == eInputEventType::KEYDOWN)
-			gConsole.LogDebug("Keydown: {}", (unsigned)InputEventsQueue->Front().Key);
-		else if(InputEventsQueue->Front().Type == eInputEventType::KEYUP)
-			gConsole.LogDebug("Keyup: {}", (unsigned)InputEventsQueue->Front().Key);
-		else if(InputEventsQueue->Front().Type == eInputEventType::MOUSEMOVE)
-			gConsole.LogDebug("Mousemove: {}", InputEventsQueue->Front().Pos);
-		else if(InputEventsQueue->Front().Type == eInputEventType::WHEELMOVE)
-			gConsole.LogDebug("Wheelmoove: {}", InputEventsQueue->Front().Pos);
-		InputEventsQueue->Pop();
-	}
-
 	UpdatePhases(eUpdatePhaseOrder::PREUPDATE);
 	UpdatePhases(eUpdatePhaseOrder::UPDATE);
 	UpdatePhases(eUpdatePhaseOrder::POSTUPDATE);

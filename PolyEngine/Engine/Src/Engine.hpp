@@ -8,7 +8,8 @@
 
 #include <Core.hpp>
 #include "RenderingContext.hpp"
-#include "InputQueue.hpp"
+
+#include "InputSystem.hpp"
 
 namespace Poly 
 {
@@ -26,7 +27,6 @@ namespace Poly
 	};
 
 	//------------------------------------------------------------------------------
-	InputQueue* InputEventsQueue;
 
 	class ENGINE_DLLEXPORT IGame : public BaseObject<> 
 	{
@@ -89,6 +89,7 @@ namespace Poly
 		}
 
 		IRenderingContext* GetRenderingContext() const { return Renderer; }
+		InputQueue* GetInputQueue() { return InputEventsQueue; }
 
 	private:
 		//------------------------------------------------------------------------------
@@ -102,6 +103,7 @@ namespace Poly
 		World* BaseWorld;
 		IGame* Game;
 		IRenderingContext* Renderer;
+		InputQueue* InputEventsQueue;
 
 		Dynarray< PhaseUpdateFunction > GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];
 
