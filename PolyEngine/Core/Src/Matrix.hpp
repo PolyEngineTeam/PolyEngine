@@ -9,6 +9,13 @@
 
 namespace Poly {
 
+	class Quaternion;
+
+	struct CORE_DLLEXPORT MatrixSkew : public BaseObject<>
+	{
+		float XY = 0, XZ = 0, YZ = 0;
+	};
+
 	class ALIGN_16 CORE_DLLEXPORT Matrix : public BaseObject<>{
 	public:
 	  Matrix();
@@ -88,6 +95,17 @@ namespace Poly {
 	  Matrix& SetScale(const Vector& scale);
 
 	  /**
+	  *  Initializes matrix with perspective.
+	  *
+	  *  @param[in] fov Field of view.
+	  *  @param[in] aspect Aspect ratio.
+	  *  @param[in] near Near Z plane.
+	  *  @param[in] far Far Z plane.
+	  *  @return Reference to itself.
+	  */
+	  Matrix& SetPerspective(float fov, float aspect, float near, float far);
+
+	  /**
 	   *  Inverses the matrix.
 	   *
 	   *  @return Reference to itself after the inversion.
@@ -114,6 +132,9 @@ namespace Poly {
 	   *  @return New, transposed matrix object.
 	   */
 	  Matrix GetTransposed() const;
+
+	  bool Decompose(Vector& translation, Quaternion& rotation, Vector& scale) const;
+	  bool Decompose(Vector& translation, Quaternion& rotation, Vector& scale, MatrixSkew& skew, Vector& perspectivePoint) const;
 
 	  CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Matrix& mat);
 

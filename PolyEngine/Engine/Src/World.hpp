@@ -1,21 +1,23 @@
 #pragma once
 
+#include <unordered_map>
 #include <Core.hpp>
 
 #include "Entity.hpp"
+#include "Engine.hpp"
 
 #include "InputWorldComponent.hpp"
 
-#include <unordered_map>
-
 namespace Poly {
+
+	constexpr size_t MAX_ENTITY_COUNT = 65536;
 
 	struct InputState;
 
 	class ENGINE_DLLEXPORT World : public BaseObject<>
 	{
 	public:
-		World();
+		World(Engine* engine);
 		virtual ~World();
 
 		//TODO implement world
@@ -27,12 +29,12 @@ namespace Poly {
 		void AddComponent(const UniqueID& entityId, Args&&... args)
 		{
 			T* ptr = GetComponentAllocator<T>()->Alloc();
-			::new(ptr)(std::forward<Args>(args)...);
+			::new(ptr) T(std::forward<Args>(args)...);
 			Entity* ent = IDToEntityMap[entityId];
 			HEAVY_ASSERTE(ent, "Invalid entity ID");
-			HEAVY_ASSERTE(ent->HasComponent(GET_COMPONENT_ID(T)), "Failed at AddComponent() - a component of a given UniqueID already exists!");
-			ent->ComponentPosessionFlags.set(GET_COMPONENT_ID(T), true);
-			ent->Components[GET_COMPONENT_ID(T)] = ptr;
+			HEAVY_ASSERTE(!ent->HasComponent(GET_COMPONENT_ID(EnginePtr, T)), "Failed at AddComponent() - a component of a given UniqueID already exists!");
+			ent->ComponentPosessionFlags.set(GET_COMPONENT_ID(EnginePtr, T), true);
+			ent->Components[GET_COMPONENT_ID(EnginePtr, T)] = ptr;
 			ptr->Owner = ent;
 		}
 
@@ -42,10 +44,10 @@ namespace Poly {
 		{
 			Entity* ent = IDToEntityMap[entityId];
 			HEAVY_ASSERTE(ent, "Invalid entity ID");
-			HEAVY_ASSERTE(!ent->HasComponent(GET_COMPONENT_ID(T)), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
-			ent->ComponentPosessionFlags.set(GET_COMPONENT_ID(T), false);
-			T* component = ent->Components[GET_COMPONENT_ID(T)];
-			ent->Components[GET_COMPONENT_ID(T)] = nullptr;
+			HEAVY_ASSERTE(ent->HasComponent(GET_COMPONENT_ID(EnginePtr, T)), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
+			ent->ComponentPosessionFlags.set(GET_COMPONENT_ID(EnginePtr, T), false);
+			T* component = ent->Components[GET_COMPONENT_ID(EnginePtr, T)];
+			ent->Components[GET_COMPONENT_ID(EnginePtr, T)] = nullptr;
 			component->~T();
 			GetComponentAllocator<T>()->Free(component);
 		}
@@ -54,7 +56,7 @@ namespace Poly {
 		template<typename T>
 		IterablePoolAllocator<T>* GetComponentAllocator()
 		{
-			size_t componentID = GET_COMPONENT_ID(T);
+			size_t componentID = GET_COMPONENT_ID(EnginePtr, T);
 			HEAVY_ASSERTE(componentID < MAX_COMPONENTS_COUNT, "Invalid component ID");
 			if (ComponentAllocators[componentID] == nullptr)
 				ComponentAllocators[componentID] = new IterablePoolAllocator<T>(MAX_ENTITY_COUNT);
@@ -79,6 +81,7 @@ namespace Poly {
 			return iter->second->GetComponent<T>();
 		}
 
+		Engine* GetEngine() const { return EnginePtr; }
 		InputSystem::InputWorldComponent* GetInputWorldComponent() { return &InputCom; };
 
 	private:
@@ -89,9 +92,9 @@ namespace Poly {
 		// Allocators
 		PoolAllocator<Entity> EntitiesAllocator;
 		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
+		Engine* EnginePtr;
 	
 		InputSystem::InputWorldComponent InputCom;
 	};
-
 
 }

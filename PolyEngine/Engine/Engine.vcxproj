@@ -90,7 +90,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_ENGINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_ENGINE;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -106,7 +106,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_ENGINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_ENGINE;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -157,11 +157,17 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\CameraComponent.cpp" />
+    <ClCompile Include="Src\CameraSystem.cpp" />
     <ClCompile Include="Src\ComponentBase.cpp" />
     <ClCompile Include="Src\Engine.cpp" />
     <ClCompile Include="Src\Entity.cpp" />
+    <ClCompile Include="Src\MeshRenderingComponent.cpp" />
     <ClCompile Include="Src\InputSystem.cpp" />
     <ClCompile Include="Src\OpenGLRenderingContext.cpp" />
+    <ClCompile Include="Src\RenderingSystem.cpp" />
+    <ClCompile Include="Src\ShaderProgram.cpp" />
+    <ClCompile Include="Src\TransformComponent.cpp" />
     <ClCompile Include="Src\World.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +176,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\CameraComponent.hpp" />
+    <ClInclude Include="Src\CameraSystem.hpp" />
     <ClInclude Include="Src\ComponentBase.hpp" />
     <ClInclude Include="Src\Engine.hpp" />
     <ClInclude Include="Src\Entity.hpp" />
@@ -177,8 +185,12 @@
     <ClInclude Include="Src\InputQueue.hpp" />
     <ClInclude Include="Src\InputWorldComponent.hpp" />
     <ClInclude Include="Src\KeyBindings.hpp" />
+    <ClInclude Include="Src\MeshRenderingComponent.hpp" />
     <ClInclude Include="Src\OpenGLRenderingContext.hpp" />
     <ClInclude Include="Src\RenderingContext.hpp" />
+    <ClInclude Include="Src\RenderingSystem.hpp" />
+    <ClInclude Include="Src\ShaderProgram.hpp" />
+    <ClInclude Include="Src\TransformComponent.hpp" />
     <ClInclude Include="Src\World.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

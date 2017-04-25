@@ -45,16 +45,19 @@ namespace Poly {
 		}
 	}
 
-
 	template<typename T>
 	class Dynarray : public BaseObject<>
 	{
 	public:
-		class Iterator : public BaseObject<>
+		class Iterator : public BaseObject<>, public std::iterator<std::random_access_iterator_tag, T>
 		{
 		public:
 			bool operator==(const Iterator& rhs) const { return Data == rhs.Data && Idx == rhs.Idx; }
 			bool operator!=(const Iterator& rhs) const { return !(*this == rhs); }
+			bool operator<(const Iterator& rhs) const { HEAVY_ASSERTE(Data == rhs.Data, "Not valid iterator pair");  return Idx < rhs.Idx; }
+			bool operator<=(const Iterator& rhs) const { HEAVY_ASSERTE(Data == rhs.Data, "Not valid iterator pair");  return Idx <= rhs.Idx; }
+			bool operator>(const Iterator& rhs) const { HEAVY_ASSERTE(Data == rhs.Data, "Not valid iterator pair");  return Idx > rhs.Idx; }
+			bool operator>=(const Iterator& rhs) const { HEAVY_ASSERTE(Data == rhs.Data, "Not valid iterator pair");  return Idx >= rhs.Idx; }
 
 			T& operator*() const { return Data[Idx]; }
 			T& operator->() const { return Data[Idx]; }
@@ -68,6 +71,8 @@ namespace Poly {
 			Iterator operator-(size_t val) const { return Iterator(Data, Idx - val); }
 			Iterator& operator+=(size_t val) { Idx += val; return *this; }
 			Iterator& operator-=(size_t val) { Idx -= val; return *this; }
+
+			size_t operator-(const Iterator& rhs) const { HEAVY_ASSERTE(Data == rhs.Data, "Not valid iterator pair"); return Idx - rhs.Idx; }
 		private:
 			Iterator(T* data, size_t idx) : Data(data), Idx(idx) {}
 
@@ -76,11 +81,15 @@ namespace Poly {
 			friend class Dynarray<T>;
 		};
 
-		class ConstIterator : public BaseObject<>
+		class ConstIterator : public BaseObject<>, public std::iterator<std::random_access_iterator_tag, T>
 		{
 		public:
 			bool operator==(const ConstIterator& rhs) const { return Data == rhs.Data && Idx == rhs.Idx; }
 			bool operator!=(const ConstIterator& rhs) const { return !(*this == rhs); }
+			bool operator<(const ConstIterator& rhs) const { HEAVY_ASSERTE(Data == rhs.Data, "Not valid iterator pair");  return Idx < rhs.Idx; }
+			bool operator<=(const ConstIterator& rhs) const { HEAVY_ASSERTE(Data == rhs.Data, "Not valid iterator pair");  return Idx <= rhs.Idx; }
+			bool operator>(const ConstIterator& rhs) const { HEAVY_ASSERTE(Data == rhs.Data, "Not valid iterator pair");  return Idx > rhs.Idx; }
+			bool operator>=(const ConstIterator& rhs) const { HEAVY_ASSERTE(Data == rhs.Data, "Not valid iterator pair");  return Idx >= rhs.Idx; }
 
 			const T& operator*() const { return Data[Idx]; }
 			const T& operator->() const { return Data[Idx]; }
@@ -94,6 +103,8 @@ namespace Poly {
 			ConstIterator operator-(size_t val) const { return ConstIterator(Data, Idx - val); }
 			ConstIterator& operator+=(size_t val) { Idx += val; return *this; }
 			ConstIterator& operator-=(size_t val) { Idx -= val; return *this; }
+
+			size_t operator-(const ConstIterator& rhs) const { HEAVY_ASSERTE(Data == rhs.Data, "Not valid iterator pair"); return Idx - rhs.Idx; }
 		private:
 			ConstIterator(const T* data, size_t idx) : Data(data), Idx(idx) {}
 
@@ -195,25 +206,36 @@ namespace Poly {
 			HEAVY_ASSERTE(idx <= GetSize(), "Index out of bounds!");
 			if (Size == GetCapacity())
 				Enlarge();
-			memmove(Data + idx + 1, Data + idx, (GetSize() - idx) * sizeof(T));
+			std::move_backward(Begin() + idx, End(), End() + 1);
 			ObjectLifetimeHelper::CopyCreate(Data + idx, obj);
 			++Size;
 		}
 
 		//------------------------------------------------------------------------------
-		void Remove(size_t idx)
+		void RemoveByIdx(size_t idx)
 		{
 			HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!");
 			ObjectLifetimeHelper::Destroy(Data + idx);
-			memmove(Data + idx, Data + idx + 1, (GetSize() - idx - 1) * sizeof(T));
+			std::move(Begin() + idx + 1, End(), Begin() + idx);
 			--Size;
 		}
 
 		//------------------------------------------------------------------------------
+		size_t FindIdx(const T& rhs) const
+		{
+			for (size_t idx = 0; idx < GetSize(); ++idx)
+			{
+				if (Data[idx] == rhs)
+					return idx;
+			}
+			return GetSize();
+		}
+
+		//------------------------------------------------------------------------------
 		void PushBack(const T& obj) { Insert(GetSize(), obj); }
-		void PopBack() { Remove(GetSize() - 1); }
+		void PopBack() { RemoveByIdx(GetSize() - 1); }
 		void PushFront(const T& obj) { Insert(0, obj); }
-		void PopFront() { Remove(0); }
+		void PopFront() { RemoveByIdx(0); }
 
 		//------------------------------------------------------------------------------
 		void Resize(size_t size)
@@ -249,6 +271,24 @@ namespace Poly {
 		Iterator End() { return Iterator(Data, GetSize()); }
 		ConstIterator Begin() const { return ConstIterator(Data, 0); }
 		ConstIterator End() const { return ConstIterator(Data, GetSize()); }
+
+		//------------------------------------------------------------------------------
+		Iterator Find(const T& rhs) { return Iterator(Data, FindIdx(rhs)); }
+		ConstIterator Find(const T& rhs) const { return ConstIterator(Data, FindIdx(rhs)); }
+
+		//------------------------------------------------------------------------------
+		bool Contains(const T& rhs) const { return FindIdx(rhs) < GetSize(); }
+		void Remove(const T& rhs) { RemoveByIdx(FindIdx(rhs)); }
+		bool TryRemove(const T& rhs)
+		{
+			size_t idx = FindIdx(rhs);
+			if (idx < GetSize())
+			{
+				RemoveByIdx(idx);
+				return true;
+			}
+			return false;
+		}
 
 	private:
 		//------------------------------------------------------------------------------

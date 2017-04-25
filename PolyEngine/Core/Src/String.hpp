@@ -33,11 +33,13 @@ namespace Poly {
 		//------------------------------------------------------------------------------
 		StringBase& operator=(const StringBase<T>& rhs) {
 			Data = rhs.Data;
+			return *this;
 		}
 
 		//------------------------------------------------------------------------------
 		StringBase& operator=(StringBase<T>&& rhs) {
 			Data = std::move(rhs.Data);
+			return *this;
 		}
 
 		//------------------------------------------------------------------------------
@@ -56,6 +58,23 @@ namespace Poly {
 		}
 
 		//------------------------------------------------------------------------------
+		bool operator<(const StringBase<T>& rhs) const {
+			if (GetLength() < rhs.GetLength())
+				return true;
+			else if (GetLength() > rhs.GetLength())
+				return false;
+			
+			for (size_t i = 0; i < GetLength(); ++i)
+			{
+				if(Data[i] < rhs.Data[i])
+					return true;
+				else if (Data[i] > rhs.Data[i])
+					return false;
+			}
+			return false;
+		}
+
+		//------------------------------------------------------------------------------
 		StringBase<T> operator+(const StringBase<T> rhs) const {
 			StringBase<T> ret;
 			size_t totalLength = GetLength() + rhs.GetLength();
@@ -71,7 +90,7 @@ namespace Poly {
 		size_t GetLength() const { return Data.GetSize() - 1; }
 		const T* GetCStr() const { return Data.GetData(); }
 
-		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const StringBase<T>& rhs) { return stream << rhs.GetCStr(); }
+		/*CORE_DLLEXPORT*/ friend std::ostream& operator<< (std::ostream& stream, const StringBase<T>& rhs) { return stream << rhs.GetCStr(); }
 
 	private:
 		Dynarray<T> Data;

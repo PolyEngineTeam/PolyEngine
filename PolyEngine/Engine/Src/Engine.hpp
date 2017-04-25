@@ -1,16 +1,31 @@
 #pragma once
 
 #include <functional>
+#include <typeindex>
+#include <typeinfo>
+#include <unordered_map>
+#include <memory>
+
 #include <Core.hpp>
 #include "RenderingContext.hpp"
-#include "World.hpp"
-#include "InputSystem.hpp"
+#include "InputQueue.hpp"
 
 namespace Poly 
 {
+	class World;
 	class Engine;
 	typedef std::function<void(World*)> PhaseUpdateFunction;
 
+	//------------------------------------------------------------------------------
+	enum class eEngineComponents
+	{
+		TRANSFORM,
+		BASE_CAMERA,
+		MESH_RENDERING,
+		_COUNT
+	};
+
+	//------------------------------------------------------------------------------
 	InputQueue* InputEventsQueue;
 
 	class ENGINE_DLLEXPORT IGame : public BaseObject<> 
@@ -20,10 +35,12 @@ namespace Poly
 		virtual void Init() = 0;
 	};
 
+	//------------------------------------------------------------------------------
 	class ENGINE_DLLEXPORT Engine : public BaseObject<> 
 	{
 	public:
 		Engine(IGame* game);
+		~Engine();
 		bool Init(const IRenderingContextParams* context);
 		void Deinit();
 
@@ -55,8 +72,26 @@ namespace Poly
 		void UpdateMousePos(const Vector& pos) { InputEventsQueue->Push({eInputEventType::MOUSEMOVE, pos}); }
 		void UpdateWheelPos(const Vector& pos) { InputEventsQueue->Push({eInputEventType::WHEELMOVE, pos}); }
 
-		World& GetWorld() { return BaseWorld; }
+		World& GetWorld() { return *BaseWorld; }
+
+		//------------------------------------------------------------------------------
+		template<typename T> void RegisterComponent(size_t id) 
+		{ 
+			ASSERTE(ComponentTypeMap.find(typeid(T)) == ComponentTypeMap.end(), "Component type was requstered twice!");
+			ComponentTypeMap[typeid(T)] = id;
+		}
+
+		//------------------------------------------------------------------------------
+		template<typename T> size_t GetComponentID() const 
+		{
+			ASSERTE(ComponentTypeMap.find(typeid(T)) != ComponentTypeMap.end(), "Component type was not requstered!");
+			return ComponentTypeMap.at(typeid(T));
+		}
+
+		IRenderingContext* GetRenderingContext() const { return Renderer; }
+
 	private:
+		//------------------------------------------------------------------------------
 		inline void UpdatePhases(eUpdatePhaseOrder order)
 		{
 			HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "Count enum value passed to UpdatePhases(), which is an invalid value");
@@ -64,10 +99,15 @@ namespace Poly
 				update(&GetWorld());
 		}
 
-		World BaseWorld;
+		World* BaseWorld;
 		IGame* Game;
 		IRenderingContext* Renderer;
 
 		Dynarray< PhaseUpdateFunction > GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];
+
+		std::unordered_map<std::type_index, size_t> ComponentTypeMap;
 	};
 }
+
+#define REGISTER_COMPONENT(engine, type, id) engine->RegisterComponent<type>((size_t)id)
+#define GET_COMPONENT_ID(engine, type) engine->GetComponentID<type>()

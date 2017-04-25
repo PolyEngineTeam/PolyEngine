@@ -27,7 +27,7 @@ namespace Poly {
 		STATIC_ASSERTE(offsetof(Cell, Data) == 0, "Data has to be the first member of Cell struct. It must have no offset.");
 	public:
 		//------------------------------------------------------------------------------
-		class Iterator
+		class Iterator : public BaseObject<>, public std::iterator<std::bidirectional_iterator_tag, T>
 		{
 		public:
 			bool operator==(const Iterator& rhs) const { return CurrentCell == rhs.CurrentCell; }
@@ -49,7 +49,7 @@ namespace Poly {
 		};
 
 		//------------------------------------------------------------------------------
-		class ConstIterator
+		class ConstIterator : public BaseObject<>, public std::iterator<std::bidirectional_iterator_tag, T>
 		{
 		public:
 			bool operator==(const ConstIterator& rhs) const { return CurrentCell == rhs.CurrentCell; }

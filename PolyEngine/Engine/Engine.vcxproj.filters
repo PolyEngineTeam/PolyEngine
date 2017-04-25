@@ -21,6 +21,15 @@
     <Filter Include="Source Files\Input">
       <UniqueIdentifier>{5e279a35-87e8-4562-a7a7-33c911d78d8b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ECS\Components">
+      <UniqueIdentifier>{4953f608-4d6d-49c7-83d2-972aeb278924}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering\Camera">
+      <UniqueIdentifier>{3b018cb8-bb36-428d-9263-6dd1c140381c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering\MeshRendering">
+      <UniqueIdentifier>{0a50528e-4ed6-482a-91cd-f3c7e36090b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -37,6 +46,24 @@
     </ClCompile>
     <ClCompile Include="Src\ComponentBase.cpp">
       <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\TransformComponent.cpp">
+      <Filter>Source Files\ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\CameraComponent.cpp">
+      <Filter>Source Files\Rendering\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\CameraSystem.cpp">
+      <Filter>Source Files\Rendering\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\MeshRenderingComponent.cpp">
+      <Filter>Source Files\Rendering\MeshRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\RenderingSystem.cpp">
+      <Filter>Source Files\Rendering\MeshRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ShaderProgram.cpp">
+      <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Src\InputSystem.cpp">
       <Filter>Source Files\Input</Filter>
@@ -66,6 +93,24 @@
     </ClInclude>
     <ClInclude Include="Src\KeyBindings.hpp">
       <Filter>Source Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\TransformComponent.hpp">
+      <Filter>Source Files\ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\CameraComponent.hpp">
+      <Filter>Source Files\Rendering\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\CameraSystem.hpp">
+      <Filter>Source Files\Rendering\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\MeshRenderingComponent.hpp">
+      <Filter>Source Files\Rendering\MeshRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\RenderingSystem.hpp">
+      <Filter>Source Files\Rendering\MeshRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ShaderProgram.hpp">
+      <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="Src\InputWorldComponent.hpp">
       <Filter>Source Files\Input</Filter>

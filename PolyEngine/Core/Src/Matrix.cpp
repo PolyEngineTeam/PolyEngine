@@ -1,6 +1,7 @@
 #include "Matrix.hpp"
 #include "BasicMath.hpp"
 #include "SimdMath.hpp"
+#include "Quaternion.hpp"
 
 using namespace Poly;
 
@@ -213,6 +214,34 @@ Matrix& Matrix::SetScale(const Vector& scale) {
 }
 
 //------------------------------------------------------------------------------
+Matrix& Poly::Matrix::SetPerspective(float fov, float aspect, float near, float far)
+{
+	float tanHalfFOV = tan(fov / 2);
+
+	Data[0] = 1.0f / (tanHalfFOV * aspect);
+	Data[1] = 0;
+	Data[2] = 0;
+	Data[3] = 0;
+	
+	Data[4] = 0;
+	Data[5] = 1.0f / tanHalfFOV;
+	Data[6] = 0;
+	Data[7] = 0;
+	
+	Data[8] = 0;
+	Data[9] = 0;
+	Data[10] = -(far + near) / (far - near);
+	Data[11] = -(2.0f * far * near) / (far - near);
+	
+	Data[12] = 0;
+	Data[13] = 0;
+	Data[14] = -1;
+	Data[15] = 0;
+	
+	return *this;
+}
+
+//------------------------------------------------------------------------------
 Matrix& Matrix::Inverse() {
   //TODO vectorize
   Matrix cpy = *this;
@@ -360,6 +389,182 @@ Matrix& Matrix::Transpose() {
 Matrix Matrix::GetTransposed() const {
   Matrix ret = *this;
   return ret.Transpose();
+}
+
+//------------------------------------------------------------------------------
+bool Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& scale) const
+{
+	MatrixSkew skew;
+	Vector perspPoint;
+	//TODO optimize this!
+	bool result = Decompose(translation, rotation, scale, skew, perspPoint);
+	ASSERTE(!result || (Cmpf(skew.XY, 0) && Cmpf(skew.XZ, 0) && Cmpf(skew.YZ, 0)), "Non zero skew, use the other overload of the method!");
+	ASSERTE(!result || perspPoint != Vector(0,0,0), "Non zero perspective, use the other overload of the method!");
+	return result;
+}
+
+//------------------------------------------------------------------------------
+bool Poly::Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& scale, MatrixSkew& skew, Vector& perspectivePoint) const
+{
+	if (m33 == 0)
+	{
+		ASSERTE(false, "This matrix cannot be normalized!");
+		return false;
+	}
+
+	Matrix local(*this);
+
+	//Normalize matrix
+	for (int i = 0; i < 4; ++i)
+		for (int j = 0; j < 4; ++j)
+			local.Data[i * 4 + j] /= local.Data[15];
+
+	// perspectiveMatrix is used to solve for perspective, but it also provides
+	// an easy way to test for singularity of the upper 3x3 component.
+	Matrix perspective = local;
+	perspective.m30 = 0;
+	perspective.m31 = 0;
+	perspective.m32 = 0;
+	perspective.m33 = 1;
+
+	if (perspective.Det() == 0)
+	{
+		ASSERTE(false, "Determinant of perspective matrix is 0!");
+		return false;
+	}
+
+	// First, isolate perspective.  This is the messiest.
+	if (local.m30 != 0 || local.m31 != 0 || local.m32 != 0) {
+		// rightHandSide is the right hand side of the equation.
+		Vector rightHandSide;
+		rightHandSide.X = local.m30;
+		rightHandSide.Y = local.m31;
+		rightHandSide.Z = local.m32;
+		rightHandSide.W = local.m33;
+
+		// Solve the equation by inverting perspectiveMatrix and multiplying
+		// rightHandSide by the inverse.  (This is the easiest way, not
+		// necessarily the best.)
+		Matrix inversePerspectiveMatrix(perspective.GetInversed());
+		Matrix transposedInversePerspectiveMatrix(inversePerspectiveMatrix.GetTransposed());
+
+		perspectivePoint = transposedInversePerspectiveMatrix * rightHandSide;
+
+		// Clear the perspective partition
+		local.m30 = 0;
+		local.m31 = 0;
+		local.m32 = 0;
+		local.m33 = 1;
+	}
+	else {
+		// No perspective.
+		perspectivePoint = Vector(0, 0, 0);
+	}
+
+	// Next take care of translation (easy).
+	translation.X = local.m03;
+	translation.Y = local.m13;
+	translation.Z = local.m23;
+	translation.W = 1;
+	local.m03 = 0;
+	local.m13 = 0;
+	local.m23 = 0;
+	
+	// Vector4 type and functions need to be added to the common set.
+	Vector row[3], pdum3;
+
+	// Now get scale and shear.
+	for (int i = 0; i < 3; i++) {
+		row[i].X = local.Data[i];
+		row[i].Y = local.Data[4 + i];
+		row[i].Z = local.Data[8 + i];
+	}
+
+	// Compute X scale factor and normalize first row.
+	scale.X = row[0].Length();
+	row[0].Normalize();
+
+	// Compute XY shear factor and make 2nd row orthogonal to 1st.
+	//combine: result = (a * ascl) + (b * bscl)
+	skew.XY = row[0].Dot(row[1]);
+	row[1] += (row[0] * -skew.XY);
+
+	// Now, compute Y scale and normalize 2nd row.
+	scale.Y = row[1].Length();
+	row[1].Normalize();
+	skew.XY /= scale.Y;
+
+	// Compute XZ and YZ shears, orthogonalize 3rd row.
+	skew.XZ = row[0].Dot(row[2]);
+	row[2] += (row[0] * -skew.XZ);
+	
+	skew.YZ = row[1].Dot(row[2]);
+	row[2] += (row[1] * -skew.YZ);
+
+	// Next, get Z scale and normalize 3rd row.
+	scale.Z = row[2].Length();
+	row[2].Normalize();
+	skew.XZ /= scale.Z;
+	skew.YZ /= scale.Z;
+
+	// At this point, the matrix (in rows[]) is orthonormal.
+	// Check for a coordinate system flip.  If the determinant
+	// is -1, then negate the matrix and the scaling factors.
+	pdum3 = row[1].Cross(row[2]);
+
+	if (row[0].Dot(pdum3) < 0) {
+		for (int i = 0; i < 3; i++) {
+			scale.X *= -1;
+			row[i].X *= -1;
+			row[i].Y *= -1;
+			row[i].Z *= -1;
+		}
+	}
+
+	// Now, get the rotations out, as described in the gem.
+	float s, t, x, y, z, w;
+
+	t = row[0].X + row[1].Y + row[2].Z;
+
+	if (t > 0.f) {
+		s = 0.5f / sqrtf(t + 1.0f);
+		w = 0.25f / s;
+		x = (row[2].Y - row[1].Z) * s;
+		y = (row[0].Z - row[2].X) * s;
+		z = (row[1].X - row[0].Y) * s;
+	}
+	else if (row[0].X > row[1].Y && row[0].X > row[2].Z)
+	{
+		s = sqrtf(1.0f + row[0].X - row[1].Y - row[2].Z) * 2.0f; // S=4*qx
+		x = 0.25f * s;
+		y = (row[0].Y + row[1].X) / s;
+		z = (row[0].Z + row[2].X) / s;
+		w = (row[2].Y - row[1].Z) / s;
+	}
+	else if (row[1].Y > row[2].Z)
+	{
+		s = sqrtf(1.0f + row[1].Y - row[0].X - row[2].Z) * 2.0f; // S=4*qy
+		x = (row[0].Y + row[1].X) / s;
+		y = 0.25 * s;
+		z = (row[1].Z + row[2].Y) / s;
+		w = (row[0].Z - row[2].X) / s;
+	}
+	else
+	{
+		s = sqrtf(1.0f + row[2].Z - row[0].X - row[1].Y) * 2.0f; // S=4*qz
+		x = (row[0].Z + row[2].X) / s;
+		y = (row[1].Z + row[2].Y) / s;
+		z = 0.25f * s;
+		w = (row[1].X - row[0].Y) / s;
+	}
+
+	//FIXME: Why the rotation have to be reversed? Maybe this is different coordinate result? Investigate this!
+	rotation.X = -x;
+	rotation.Y = -y;
+	rotation.Z = -z;
+	rotation.W = w;
+
+	return true;
 }
 
 namespace Poly {
