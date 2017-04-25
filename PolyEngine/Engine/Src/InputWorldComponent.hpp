@@ -13,13 +13,16 @@ namespace Poly
 	{
 	friend void InputSystem::InputPhase(World*);
 	public:
+		bool IsPressed(eKey key) const { return CurrKey[key]; }
 		bool IsPressed(const std::initializer_list<eKey>& list) const;
 		bool IsClicked(eKey key) const { return (CurrKey[key] && !PrevKey[key]); }
 		bool IsReleased(eKey key) const { return (!CurrKey[key] && PrevKey[key]); }
+
 		const Vector& GetMousePos() const { return CurrMouse; }
-		Vector GetMouseDiff() const  { return CurrMouse - PrevMouse; }
-		const int& GetWheelPos() const { return CurrWheel; }
-		int GetWheelDiff() const { return CurrWheel - PrevWheel; }
+		Vector GetMousePosDelta() const  { return CurrMouse - PrevMouse; }
+
+		int GetWheelPos() const { return CurrWheel; }
+		int GetWheelPosDelta() const { return CurrWheel - PrevWheel; }
 	private:
 		EnumArray<bool, eKey> CurrKey;
 		EnumArray<bool, eKey> PrevKey;
