@@ -30,6 +30,9 @@
     <Filter Include="Source Files\Rendering\MeshRendering">
       <UniqueIdentifier>{0a50528e-4ed6-482a-91cd-f3c7e36090b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Viewport">
+      <UniqueIdentifier>{22c76440-d7f2-4aea-bfd0-5271c4396e83}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -73,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="Src\EnginePCH.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ViewportWorldComponent.cpp">
+      <Filter>Source Files\Viewport</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +132,12 @@
     </ClInclude>
     <ClInclude Include="Src\EnginePCH.hpp">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Viewport.hpp">
+      <Filter>Source Files\Viewport</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ViewportWorldComponent.hpp">
+      <Filter>Source Files\Viewport</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
