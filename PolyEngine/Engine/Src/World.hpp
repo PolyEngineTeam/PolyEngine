@@ -7,6 +7,7 @@
 #include "Engine.hpp"
 
 #include "InputWorldComponent.hpp"
+#include "ViewportWorldComponent.hpp"
 
 namespace Poly {
 
@@ -17,7 +18,7 @@ namespace Poly {
 	class ENGINE_DLLEXPORT World : public BaseObject<>
 	{
 	public:
-		World(Engine* engine);
+		World(Engine* engine, const std::initializer_list<Viewport>&);
 		virtual ~World();
 
 		//TODO implement world
@@ -95,6 +96,7 @@ namespace Poly {
 		Engine* EnginePtr;
 	
 		InputWorldComponent InputCom;
+		ViewportWorldComponent ViewportCom;
 	};
 
 }

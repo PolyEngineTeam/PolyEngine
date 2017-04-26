@@ -4,8 +4,8 @@
 
 using namespace Poly;
 
-World::World(Poly::Engine* engine)
-: EnginePtr(engine), EntitiesAllocator(MAX_ENTITY_COUNT)
+World::World(Poly::Engine* engine, const std::initializer_list<Viewport> &ViewportsList)
+: EnginePtr(engine), EntitiesAllocator(MAX_ENTITY_COUNT), ViewportCom(ViewportsList)
 {
 	memset(ComponentAllocators, 0, sizeof(IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
 }
