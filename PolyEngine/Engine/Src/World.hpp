@@ -83,7 +83,8 @@ namespace Poly {
 		}
 
 		Engine* GetEngine() const { return EnginePtr; }
-		InputWorldComponent& GetInputWorldComponent() { return InputCom; };
+		InputWorldComponent& GetInputWorldComponent() { return InputComponent; };
+		ViewportWorldComponent& GetViewportWorldComponent() { return ViewportComponent; };
 
 	private:
 		std::unordered_map<UniqueID, Entity*> IDToEntityMap;
@@ -95,8 +96,8 @@ namespace Poly {
 		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
 		Engine* EnginePtr;
 	
-		InputWorldComponent InputCom;
-		ViewportWorldComponent ViewportCom;
+		InputWorldComponent InputComponent;
+		ViewportWorldComponent ViewportComponent;
 	};
 
 }
