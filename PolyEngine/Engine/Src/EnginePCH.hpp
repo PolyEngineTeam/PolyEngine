@@ -22,6 +22,7 @@
 #include "TransformComponent.hpp"
 #include "CameraComponent.hpp"
 #include "MeshRenderingComponent.hpp"
+#include "ViewportWorldComponent.hpp"
 
 // World Components
 #include "InputWorldComponent.hpp"

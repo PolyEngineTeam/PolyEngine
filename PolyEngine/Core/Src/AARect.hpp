@@ -6,12 +6,12 @@
 
 namespace Poly {
 
-	class CORE_DLLEXPORT Rectangle : public BaseObject<>
+	class CORE_DLLEXPORT AARect : public BaseObject<>
 	{
 	public:
-		Rectangle(const Vector& position, const Vector& size);
+		AARect(const Vector& position, const Vector& size);
 
-		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Rectangle& color);
+		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const AARect& color);
 
 		Vector GetCenter() const { return Pos + (Size * 0.5f); }
 		const Vector& GetMin() const { return Pos; }

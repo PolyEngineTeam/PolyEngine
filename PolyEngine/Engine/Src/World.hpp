@@ -18,7 +18,7 @@ namespace Poly {
 	class ENGINE_DLLEXPORT World : public BaseObject<>
 	{
 	public:
-		World(Engine* engine, const std::initializer_list<Viewport>&);
+		World(Engine* engine);
 		virtual ~World();
 
 		//TODO implement world

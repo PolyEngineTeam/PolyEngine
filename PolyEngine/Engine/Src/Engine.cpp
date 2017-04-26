@@ -10,8 +10,7 @@ using namespace Poly;
 //------------------------------------------------------------------------------
 Engine::Engine(IGame* game) : Game(game)
 {
-	std::initializer_list<Viewport> dupa;
-	BaseWorld = new World(this, dupa);
+	BaseWorld = new World(this);
 	Game->RegisterEngine(this);
 	Renderer = CreateRenderingContext();
 }
