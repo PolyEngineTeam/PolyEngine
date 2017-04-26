@@ -1,7 +1,6 @@
-#include "CameraComponent.hpp"
+#include "EnginePCH.hpp"
+
 #include "CameraSystem.hpp"
-#include "World.hpp"
-#include "TransformComponent.hpp"
 
 void Poly::CameraSystem::CameraUpdatePhase(World* world)
 {

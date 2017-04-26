@@ -1,3 +1,5 @@
+#include "CorePCH.hpp"
+
 #include "SimdMath.hpp"
 #include "BasicMath.hpp"
 

@@ -1,3 +1,5 @@
+#include "CorePCH.hpp"
+
 #include "Quaternion.hpp"
 #include "SimdMath.hpp"
 

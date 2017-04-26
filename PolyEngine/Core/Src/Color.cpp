@@ -1,3 +1,5 @@
+#include "CorePCH.hpp"
+
 #include "Color.hpp"
 
 using namespace Poly;

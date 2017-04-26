@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Defines.hpp"
-#include "Scalar.hpp"
+
 
 #if !DISABLE_SIMD
 

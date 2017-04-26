@@ -8,6 +8,7 @@
 #include "Vector.hpp"
 #include "Matrix.hpp"
 #include "Quaternion.hpp"
+#include "SimdMath.hpp"
 
 // Memory
 #include "BaseObject.hpp"
@@ -17,9 +18,12 @@
 
 // Containers
 #include "String.hpp"
+#include "Dynarray.hpp"
+#include "Queue.hpp"
 
 // Other
 #include "Color.hpp"
 #include "FileIO.hpp"
 #include "Logger.hpp"
 #include "UniqueID.hpp"
+#include "EnumUtils.hpp"

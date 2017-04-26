@@ -1,12 +1,10 @@
-#include "CameraComponent.hpp"
+#include "EnginePCH.hpp"
+
 #include "RenderingSystem.hpp"
-#include "World.hpp"
-#include "TransformComponent.hpp"
-#include "MeshRenderingComponent.hpp"
+#include "ShaderProgram.hpp"
 
 #include <gl/glew.h>
 
-#include "ShaderProgram.hpp"
 
 using namespace Poly;
 

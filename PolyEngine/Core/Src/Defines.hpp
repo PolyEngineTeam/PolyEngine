@@ -9,6 +9,8 @@
 #include <type_traits>
 #include <limits>
 #include <algorithm>
+#include <iostream>
+#include <string>
 
 // stupid warning in MSVC about template specialization exporting, according to https://msdn.microsoft.com/en-US/library/esew7y1w.aspx it can be ignored
 #if defined(_WIN32)

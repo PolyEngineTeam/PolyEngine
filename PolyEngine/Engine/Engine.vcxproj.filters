@@ -71,6 +71,9 @@
     <ClCompile Include="Src\InputWorldComponent.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Src\EnginePCH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine.hpp">
@@ -120,6 +123,9 @@
     </ClInclude>
     <ClInclude Include="Src\InputSystem.hpp">
       <Filter>Source Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EnginePCH.hpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-#pragma once
+#include "CorePCH.hpp"
 
 #include "UniqueID.hpp"
 

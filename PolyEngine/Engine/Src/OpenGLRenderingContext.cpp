@@ -1,8 +1,9 @@
+#include "EnginePCH.hpp"
+
 #include "OpenGLRenderingContext.hpp"
 
 #include <gl/glew.h>
 #include <gl/wglew.h>
-#include <Core.hpp>
 
 using namespace Poly;
 

@@ -1,11 +1,6 @@
+#include "EnginePCH.hpp"
+
 #include "Engine.hpp"
-
-
-#include "World.hpp"
-
-#include "TransformComponent.hpp"
-#include "CameraComponent.hpp"
-#include "MeshRenderingComponent.hpp"
 
 #include "CameraSystem.hpp"
 #include "RenderingSystem.hpp"
