@@ -122,7 +122,17 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	switch (message)
 	{
 
-	// input
+	case WM_SIZE:
+	{
+		Poly::ScreenSize screenSize;
+		screenSize.Width = GET_X_LPARAM(lParam);
+		screenSize.Height = GET_Y_LPARAM(lParam);
+		if(gEngine)
+			gEngine->ResizeScreen(screenSize);
+		return 0;
+	}
+		
+		// input
 	// Use separate case's for mouse buttons because otherwise mouse buttons aren't checked
 	case WM_LBUTTONDOWN:
 		gEngine->KeyDown(Poly::eKey::MLBUTTON);

@@ -23,6 +23,8 @@ bool OpenGLRenderingContext::Init(const IRenderingContextParams * context)
 	const OpenGLRenderingContextParams* openGLContext = static_cast<const OpenGLRenderingContextParams*>(context);
 	hWnd = openGLContext->HWnd; // Set the HWND for our window  
 	hDC = GetDC(hWnd); // Get the device context for our window  
+	ScreenDim.Width = openGLContext->Rect.right - openGLContext->Rect.left;
+	ScreenDim.Height = openGLContext->Rect.top - openGLContext->Rect.bottom;
 
 	// Create a new PIXELFORMATDESCRIPTOR (PFD)  
 	PIXELFORMATDESCRIPTOR pfd; 
@@ -112,4 +114,16 @@ void OpenGLRenderingContext::Deinit()
 void OpenGLRenderingContext::EndFrame()
 {
 	SwapBuffers(hDC);
+}
+
+//------------------------------------------------------------------------------
+void Poly::OpenGLRenderingContext::Resize(const ScreenSize & size)
+{
+	ScreenDim = size;
+}
+
+//------------------------------------------------------------------------------
+const ScreenSize& Poly::OpenGLRenderingContext::GetScreenSize() const
+{
+	return ScreenDim;
 }

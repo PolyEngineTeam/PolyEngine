@@ -18,10 +18,14 @@ namespace Poly {
 		void Deinit() override;
 
 		void EndFrame() override;
+
+		void Resize(const ScreenSize& size) override;
+		const ScreenSize& GetScreenSize() const override;
 	private:
 		HDC hDC;
 		HWND hWnd;
 		HGLRC hRC;
+		ScreenSize ScreenDim;
 	};
 
 }

@@ -64,3 +64,10 @@ void Engine::Update(float dt)
 	UpdatePhases(eUpdatePhaseOrder::UPDATE);
 	UpdatePhases(eUpdatePhaseOrder::POSTUPDATE);
 }
+
+//------------------------------------------------------------------------------
+void Poly::Engine::ResizeScreen(const ScreenSize & size)
+{
+	gConsole.LogDebug("{} {}", size.Width, size.Height);
+	GetRenderingContext()->Resize(size);
+}

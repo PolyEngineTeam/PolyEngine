@@ -92,6 +92,7 @@ namespace Poly
 		IRenderingContext* GetRenderingContext() const { return Renderer; }
 		InputQueue& GetInputQueue() { return InputEventsQueue; }
 
+		void ResizeScreen(const ScreenSize& size);
 	private:
 		//------------------------------------------------------------------------------
 		inline void UpdatePhases(eUpdatePhaseOrder order)
