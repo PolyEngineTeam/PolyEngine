@@ -17,6 +17,9 @@
     <Filter Include="Source Files\Containers">
       <UniqueIdentifier>{e8e2d5b0-dbb7-44a9-8edc-6ac56295ecf8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Geometry">
+      <UniqueIdentifier>{f002524e-61e4-441f-82eb-eb9005fee855}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Matrix.cpp">
@@ -45,6 +48,9 @@
     </ClCompile>
     <ClCompile Include="Src\CorePCH.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Rectangle.cpp">
+      <Filter>Source Files\Geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -110,6 +116,9 @@
     </ClInclude>
     <ClInclude Include="Src\CorePCH.hpp">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Rectangle.hpp">
+      <Filter>Source Files\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
