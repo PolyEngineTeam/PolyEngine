@@ -1,21 +1,32 @@
 #pragma once
 
+// Core
 #include <CorePCH.hpp>
 
+// Engine
 #include "Engine.hpp"
+
+// ECS
 #include "ComponentBase.hpp"
 #include "Entity.hpp"
 #include "World.hpp"
 
-#include "TransformComponent.hpp"
+// Rendering
+#include "RenderingContext.hpp"
 
+// Utils
 #include "InputQueue.hpp"
-#include "InputSystem.hpp"
-#include "InputWorldComponent.hpp"
 #include "KeyBindings.hpp"
 
+// Components
+#include "TransformComponent.hpp"
 #include "CameraComponent.hpp"
 #include "MeshRenderingComponent.hpp"
 
-#include "RenderingContext.hpp"
+// World Components
+#include "InputWorldComponent.hpp"
+
+// PLEASE DON'T INCLUDE SYSTEMS HERE!!!
+
+
 
