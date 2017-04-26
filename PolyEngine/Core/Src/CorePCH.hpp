@@ -10,6 +10,9 @@
 #include "Quaternion.hpp"
 #include "SimdMath.hpp"
 
+// Geometry
+#include "Rectangle.hpp"
+
 // Memory
 #include "BaseObject.hpp"
 #include "Allocator.hpp"
