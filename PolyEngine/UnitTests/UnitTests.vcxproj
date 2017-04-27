@@ -134,6 +134,7 @@
     <ClCompile Include="Src\QuaternionTests.cpp" />
     <ClCompile Include="Src\QueueTests.cpp" />
     <ClCompile Include="Src\VectorTests.cpp" />
+    <ClCompile Include="Src\TransformComponentTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.vcxproj">
