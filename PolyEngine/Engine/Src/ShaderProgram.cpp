@@ -11,8 +11,7 @@ ShaderProgram::ShaderProgram(const String & vertex, const String & fragment)
 	gConsole.LogDebug("Creating shader program {} {}", vertex, fragment);
 	m_program = glCreateProgram();
 	if (m_program == 0) {
-		gConsole.LogError("Creation of shader program failed! Exiting...");
-		std::exit(-1);
+		ASSERTE(false, "Creation of shader program failed! Exiting...");
 	}
 	LoadShader(GL_VERTEX_SHADER, vertex);
 	LoadShader(GL_FRAGMENT_SHADER, fragment);
@@ -38,7 +37,7 @@ void ShaderProgram::CompileProgram()
 		errorMessage.Resize(infoLogLength + 1);
 		glGetProgramInfoLog(m_program, infoLogLength, NULL, &errorMessage[0]);
 		gConsole.LogError("Program linking: {}", std::string(&errorMessage[0]));
-		std::exit(-1);
+		ASSERTE(false, "Program linking failed!");
 	}
 }
 
@@ -55,7 +54,7 @@ void ShaderProgram::Validate()
 		errorMessage.Resize(infoLogLength + 1);
 		glGetProgramInfoLog(m_program, infoLogLength, NULL, &errorMessage[0]);
 		gConsole.LogError("Program validation: {}", std::string(&errorMessage[0]));
-		std::exit(-1);
+		ASSERTE(false, "Program validation failed!");
 	}
 }
 
@@ -63,8 +62,7 @@ void ShaderProgram::LoadShader(int type, const String& shaderName)
 {
 	int shader = glCreateShader(type);
 	if (shader == 0) {
-		gConsole.LogError("Creation of shader failed! Exiting...");
-		std::exit(-1);
+		ASSERTE(false, "Creation of shader failed!");
 	}
 
 	String shaderCode = LoadTextFile(shaderName);
@@ -83,7 +81,7 @@ void ShaderProgram::LoadShader(int type, const String& shaderName)
 		errorMessage.Resize(infoLogLength + 1);
 		glGetShaderInfoLog(shader, infoLogLength, NULL, &errorMessage[0]);
 		gConsole.LogError("Shader compilation: {}", std::string(&errorMessage[0]));
-		std::exit(-1);
+		ASSERTE(false, "Shader compilation failed!");
 	}
 
 	glAttachShader(m_program, shader);

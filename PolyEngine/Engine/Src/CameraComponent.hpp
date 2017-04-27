@@ -5,12 +5,12 @@
 
 namespace Poly {
 
-	class ENGINE_DLLEXPORT BaseCameraComponent : public ComponentBase
+	class ENGINE_DLLEXPORT CameraComponent : public ComponentBase
 	{
 		friend void CameraSystem::CameraUpdatePhase(World*);
 	public:
-		BaseCameraComponent(float fov, float near, float far);
-		BaseCameraComponent(float top, float bottom, float near, float far);
+		CameraComponent(float fov, float zNear, float zFar);
+		CameraComponent(float top, float bottom, float zNear, float zFar);
 
 		const Matrix& GetProjectionMatrix() const { return Projection; }
 		const Matrix& GetModelViewMatrix() const { return ModelView; }

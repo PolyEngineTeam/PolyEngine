@@ -26,7 +26,7 @@ bool Engine::Init(const IRenderingContextParams* context)
 {
 	// Engine Components
 	REGISTER_COMPONENT(this, TransformComponent, eEngineComponents::TRANSFORM);
-	REGISTER_COMPONENT(this, BaseCameraComponent, eEngineComponents::BASE_CAMERA);
+	REGISTER_COMPONENT(this, CameraComponent, eEngineComponents::BASE_CAMERA);
 	REGISTER_COMPONENT(this, MeshRenderingComponent, eEngineComponents::MESH_RENDERING);
 
 	// Engine update phases
@@ -68,6 +68,6 @@ void Engine::Update(float dt)
 //------------------------------------------------------------------------------
 void Poly::Engine::ResizeScreen(const ScreenSize & size)
 {
-	gConsole.LogDebug("{} {}", size.Width, size.Height);
+	gConsole.LogDebug("Screen resize: {} {}", size.Width, size.Height);
 	GetRenderingContext()->Resize(size);
 }

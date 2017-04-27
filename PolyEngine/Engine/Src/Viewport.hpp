@@ -12,7 +12,7 @@ namespace Poly
 	public:
 		Viewport(const AARect& rect) : Rect(rect) {}
 		void Resize(const AARect& rect) {Rect = rect; }
-		const AARect& GetRect() { return Rect; }
+		const AARect& GetRect() const { return Rect; }
 		void SetCamera(CameraComponent* cam) { ASSERTE(cam, "Null camera is not allowed."); Camera = cam; }
 		CameraComponent* GetCamera() const { return Camera; }
 	private:

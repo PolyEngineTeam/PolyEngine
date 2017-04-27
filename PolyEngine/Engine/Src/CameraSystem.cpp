@@ -1,32 +1,37 @@
 #include "EnginePCH.hpp"
 
+#include <set>
+
 #include "CameraSystem.hpp"
 
 void Poly::CameraSystem::CameraUpdatePhase(World* world)
 {
-	// TODO Temporary aspect, this should be replaced with propper viewport aspect
-	const float aspect = 800.f / 600.f;
-	auto allocator = world->GetComponentAllocator<BaseCameraComponent>();
-	for (BaseCameraComponent& baseCameraCmp : *allocator)
+	ScreenSize screen = world->GetEngine()->GetRenderingContext()->GetScreenSize();
+	for (auto& kv : world->GetViewportWorldComponent().GetViewports())
 	{
-		TransformComponent* transformCmp = baseCameraCmp.GetSibling<TransformComponent>();
+		const AARect& rect = kv.second.GetRect();
+		float aspect = (rect.GetSize().X * screen.Width) / (rect.GetSize().Y * screen.Height);
+
+		CameraComponent* cameraCmp = kv.second.GetCamera();
+		ASSERTE(cameraCmp, "Viewport without camera?");
+		TransformComponent* transformCmp = cameraCmp->GetSibling<TransformComponent>();
 		if (transformCmp)
 		{
 			// reinit perspective
-			if (baseCameraCmp.NeedsInit || baseCameraCmp.Aspect != aspect)
+			if (cameraCmp->NeedsInit || cameraCmp->Aspect != aspect)
 			{
-				baseCameraCmp.NeedsInit = false;
-				baseCameraCmp.Aspect = aspect;
-				if (baseCameraCmp.IsPerspective)
-					baseCameraCmp.Projection.SetPerspective(baseCameraCmp.Fov, baseCameraCmp.Aspect, baseCameraCmp.Near, baseCameraCmp.Far);
+				cameraCmp->NeedsInit = false;
+				cameraCmp->Aspect = aspect;
+				if (cameraCmp->IsPerspective)
+					cameraCmp->Projection.SetPerspective(cameraCmp->Fov, cameraCmp->Aspect, cameraCmp->Near, cameraCmp->Far);
 				else
 				{
 					//TODO implement orthographic projection
 				}
 			}
 
-			baseCameraCmp.ModelView = transformCmp->GetGlobalTransformationMatrix().GetInversed();
-			baseCameraCmp.MVP = baseCameraCmp.Projection * baseCameraCmp.ModelView;
+			cameraCmp->ModelView = transformCmp->GetGlobalTransformationMatrix().GetInversed();
+			cameraCmp->MVP = cameraCmp->Projection * cameraCmp->ModelView;
 		}
 		else
 			gConsole.LogError("Entity has camera component but no transform component!");

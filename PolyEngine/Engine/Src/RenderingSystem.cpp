@@ -8,7 +8,7 @@
 
 using namespace Poly;
 
-void TestDraw() {
+void TestDraw(const Matrix& MVP) {
 	static ShaderProgram testProgram("Res/test.vsh", "Res/test.fsh");
 	static const GLfloat g_vertex_buffer_data[] = {
 		-1.0f, -1.0f, 0.0f,
@@ -30,6 +30,7 @@ void TestDraw() {
 		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 		// Give our vertices to OpenGL.
 		glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+		testProgram.RegisterUniform("uMVP");
 	}
 
 	testProgram.BindProgram();
@@ -46,6 +47,9 @@ void TestDraw() {
 		0,                  // stride
 		(void*)0            // array buffer offset
 	);
+
+	testProgram.SetUniform("uMVP", MVP);
+
 	// Draw the triangle !
 	glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
 	glDisableVertexAttribArray(0);
@@ -56,37 +60,19 @@ void RenderingSystem::RenderingPhase(World* world)
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
+	ScreenSize screen = world->GetEngine()->GetRenderingContext()->GetScreenSize();
 	for (auto& kv : world->GetViewportWorldComponent().GetViewports())
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
+		const AARect& rect = kv.second.GetRect();
+		glViewport((int)(rect.GetMin().X * screen.Width), (int)(rect.GetMin().Y * screen.Height),
+			(int)(rect.GetSize().X * screen.Width), (int)(rect.GetSize().Y * screen.Height));
 
-
-
-		//glViewport()
-
+		TestDraw(kv.second.GetCamera()->GetMVP());
 	}
-
-	
-	// get camera projections
-	auto allocator1 = world->GetComponentAllocator<BaseCameraComponent>();
-	Matrix mvp;
-	Matrix modelView;
-	for (BaseCameraComponent& baseCameraCmp : *allocator1)
-	{
-		mvp = baseCameraCmp.GetMVP();
-		modelView = baseCameraCmp.GetModelViewMatrix();
-	}
-	
-	// clear framebuffer
-	glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	//TODO remove this
-	TestDraw();
 
 	// render objects
-	auto allocator2 = world->GetComponentAllocator<MeshRenderingComponent>();
+	/*auto allocator2 = world->GetComponentAllocator<MeshRenderingComponent>();
 	for (MeshRenderingComponent& meshRenderingCmp : *allocator2)
 	{
 		Matrix transformation;
@@ -99,7 +85,7 @@ void RenderingSystem::RenderingPhase(World* world)
 			gConsole.LogError("Entity has mesh component but no transform component!");
 
 		//TODO render meshes
-	}
+	}*/
 
 	world->GetEngine()->GetRenderingContext()->EndFrame();
 }

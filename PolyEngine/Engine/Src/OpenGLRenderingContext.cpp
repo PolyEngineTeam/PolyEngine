@@ -24,7 +24,7 @@ bool OpenGLRenderingContext::Init(const IRenderingContextParams * context)
 	hWnd = openGLContext->HWnd; // Set the HWND for our window  
 	hDC = GetDC(hWnd); // Get the device context for our window  
 	ScreenDim.Width = openGLContext->Rect.right - openGLContext->Rect.left;
-	ScreenDim.Height = openGLContext->Rect.top - openGLContext->Rect.bottom;
+	ScreenDim.Height = openGLContext->Rect.bottom - openGLContext->Rect.top;
 
 	// Create a new PIXELFORMATDESCRIPTOR (PFD)  
 	PIXELFORMATDESCRIPTOR pfd; 

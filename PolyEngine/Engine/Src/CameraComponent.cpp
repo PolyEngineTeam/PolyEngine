@@ -4,13 +4,13 @@
 
 using namespace Poly;
 
-BaseCameraComponent::BaseCameraComponent(float fov,  float near, float far)
-	: IsPerspective(true), Fov(fov), Near(near), Far(far) 
+CameraComponent::CameraComponent(float fov,  float zNear, float zFar)
+	: IsPerspective(true), Fov(fov), Near(zNear), Far(zFar)
 {
 }
 
-BaseCameraComponent::BaseCameraComponent(float top, float bottom, float near, float far)
-	: IsPerspective(false), Top(top), Bottom(bottom), Near(near), Far(far)
+CameraComponent::CameraComponent(float top, float bottom, float zNear, float zFar)
+	: IsPerspective(false), Top(top), Bottom(bottom), Near(zNear), Far(zFar)
 {
 	ASSERTE(false, "Orthographics projection is not yet implemented");
 }
