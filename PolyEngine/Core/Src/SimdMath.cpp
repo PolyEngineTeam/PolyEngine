@@ -1,8 +1,5 @@
 #include "CorePCH.hpp"
 
-#include "SimdMath.hpp"
-#include "BasicMath.hpp"
-
 using namespace Poly;
 
 #if !DISABLE_SIMD

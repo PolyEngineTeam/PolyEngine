@@ -2,17 +2,18 @@
 
 #include <map>
 #include <Core.hpp>
+#include <GL/glew.h>
 
 namespace Poly {
 	class ShaderProgram : public BaseObject<>
 	{
 	public:
 		ShaderProgram(const String& vertex, const String& fragment);
-		
+
 		void BindProgram() const;
 		void CompileProgram();
 		void Validate();
-		void LoadShader(int type, const String &shaderName);
+		void LoadShader(GLenum type, const String &shaderName);
 
 		size_t GetProgramHandle() const;
 
@@ -24,6 +25,6 @@ namespace Poly {
 
 	private:
 		std::map<String, int> m_uniforms;
-		size_t m_program;
+		GLuint m_program;
 	};
 }

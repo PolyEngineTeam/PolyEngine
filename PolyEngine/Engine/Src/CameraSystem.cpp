@@ -1,9 +1,5 @@
 #include "EnginePCH.hpp"
 
-#include <set>
-
-#include "CameraSystem.hpp"
-
 void Poly::CameraSystem::CameraUpdatePhase(World* world)
 {
 	ScreenSize screen = world->GetEngine()->GetRenderingContext()->GetScreenSize();

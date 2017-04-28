@@ -1,10 +1,5 @@
 #include "CorePCH.hpp"
 
-#include "Matrix.hpp"
-#include "BasicMath.hpp"
-#include "SimdMath.hpp"
-#include "Quaternion.hpp"
-
 using namespace Poly;
 
 //------------------------------------------------------------------------------
@@ -12,7 +7,7 @@ Matrix::Matrix() { SetIdentity(); }
 
 //------------------------------------------------------------------------------
 Matrix::Matrix(const float data[16], bool rowOrder) {
-  memmove(Data, data, sizeof(float)*16);
+  memmove(Data.data(), data, sizeof(float)*16);
   if(!rowOrder) //TODO this is slow, but good enough for now
     Transpose();
 }
@@ -22,9 +17,10 @@ Matrix::Matrix(const Matrix& rhs) { *this = rhs; }
 
 //------------------------------------------------------------------------------
 Matrix& Matrix::operator=(const Matrix& rhs) {
+  if (&rhs == this) return *this;
 #if DISABLE_SIMD
-  for(int i=0; i<16; ++i) { //row
-      Data[i] = rhs.Data[i];
+  for(int row=0; row<16; ++i) {
+      Data[row] = rhs.Data[row];
   }
 #else
   for(int i=0; i<4; ++i)
@@ -45,7 +41,7 @@ bool Matrix::operator==(const Matrix& rhs) const {
   __m128 result1 = _mm_cmpf_ps(SimdRow[1], rhs.SimdRow[1]);
   __m128 result2 = _mm_cmpf_ps(SimdRow[2], rhs.SimdRow[2]);
   __m128 result3 = _mm_cmpf_ps(SimdRow[3], rhs.SimdRow[3]);
-  
+
   __m128 and0 = _mm_and_ps(result0, result1);
   __m128 and1 = _mm_and_ps(result2, result3);
   __m128 and2 = _mm_and_ps(and0, and1);
@@ -57,9 +53,9 @@ bool Matrix::operator==(const Matrix& rhs) const {
 Matrix Matrix::operator*(const Matrix& rhs) const {
   Matrix ret;
 #if DISABLE_SIMD
-  for(int i=0; i<4; ++i) { //row
-    for(int j=0; j<4; ++j) { //column
-      ret.Data[4*i + j] = Data[4*i]*rhs.Data[j] + Data[4*i + 1]*rhs.Data[4 + j] + Data[4*i +2]*rhs.Data[8 + j] + Data[4*i + 3]*rhs.Data[12 + j] ;
+  for(int row=0; row<4; ++row) {
+    for(int col=0; col<4; ++col) {
+      ret.Data[4*row + col] = Data[4*row]*rhs.Data[col] + Data[4*row + 1]*rhs.Data[4 + col] + Data[4*row +2]*rhs.Data[8 + col] + Data[4*row + 3]*rhs.Data[12 + col] ;
     }
   }
 #else
@@ -83,8 +79,8 @@ Matrix& Matrix::operator*=(const Matrix& rhs) { return *this = *this * rhs; }
 Vector Matrix::operator*(const Vector& rhs) const {
   Vector ret;
 #if DISABLE_SIMD
-  for(int i=0; i<4; ++i) { //row
-      ret.Data[i] = Data[4*i]*rhs.Data[0] + Data[4*i + 1]*rhs.Data[1] + Data[4*i +2]*rhs.Data[2] + Data[4*i + 3]*rhs.Data[3];
+  for(int row=0; row<4; ++row) {
+      ret.Data[row] = Data[4*row]*rhs.Data[0] + Data[4*row + 1]*rhs.Data[1] + Data[4*row +2]*rhs.Data[2] + Data[4*row + 3]*rhs.Data[3];
   }
 #else
   for (int i = 0; i < 4; ++i) {
@@ -101,41 +97,41 @@ Vector Matrix::operator*(const Vector& rhs) const {
 float Matrix::Det() const {
   //TODO vectorize
   float minor[4] = {0,0,0,0};
-  
+
   minor[0] = Data[5]  * Data[10] * Data[15] -
   Data[5]  * Data[11] * Data[14] -
   Data[9]  * Data[6]  * Data[15] +
   Data[9]  * Data[7]  * Data[14] +
   Data[13] * Data[6]  * Data[11] -
   Data[13] * Data[7]  * Data[10];
-  
+
   minor[1] = -Data[4]  * Data[10] * Data[15] +
   Data[4]  * Data[11] * Data[14] +
   Data[8]  * Data[6]  * Data[15] -
   Data[8]  * Data[7]  * Data[14] -
   Data[12] * Data[6]  * Data[11] +
   Data[12] * Data[7]  * Data[10];
-  
+
   minor[2] = Data[4]  * Data[9] * Data[15] -
   Data[4]  * Data[11] * Data[13] -
   Data[8]  * Data[5] * Data[15] +
   Data[8]  * Data[7] * Data[13] +
   Data[12] * Data[5] * Data[11] -
   Data[12] * Data[7] * Data[9];
-  
+
   minor[3] = -Data[4]  * Data[9] * Data[14] +
   Data[4]  * Data[10] * Data[13] +
   Data[8]  * Data[5] * Data[14] -
   Data[8]  * Data[6] * Data[13] -
   Data[12] * Data[5] * Data[10] +
   Data[12] * Data[6] * Data[9];
-  
+
   return Data[0] * minor[0] + Data[1] * minor[1] + Data[2] * minor[2] + Data[3] * minor[3];
 }
 
 //------------------------------------------------------------------------------
 Matrix& Matrix::SetIdentity() {
-  memset(this, 0, sizeof(Matrix));
+  Data.fill(0);
   Data[0] = 1.0f;
   Data[5] = 1.0f;
   Data[10] = 1.0f;
@@ -148,12 +144,12 @@ Matrix& Matrix::SetRotationX(Angle angle) {
   SetIdentity();
   float s = Sin(angle);
   float c = Cos(angle);
-  
+
   Data[5] = c;
   Data[6] = -s;
   Data[9] = s;
   Data[10] = c;
-  
+
   return *this;
 }
 
@@ -162,12 +158,12 @@ Matrix& Matrix::SetRotationY(Angle angle) {
   SetIdentity();
   float s = Sin(angle);
   float c = Cos(angle);
-  
+
   Data[0] = c;
   Data[2] = s;
   Data[8] = -s;
   Data[10] = c;
-  
+
   return *this;
 }
 
@@ -176,12 +172,12 @@ Matrix& Matrix::SetRotationZ(Angle angle) {
   SetIdentity();
   float s = Sin(angle);
   float c = Cos(angle);
-  
+
   Data[0] = c;
   Data[1] = -s;
   Data[4] = s;
   Data[5] = c;
-  
+
   return *this;
 }
 
@@ -191,13 +187,13 @@ Matrix& Matrix::SetTranslation(const Vector& direction) {
   Data[3] = direction.X;
   Data[7] = direction.Y;
   Data[11] = direction.Z;
-  
+
   return *this;
 }
 
 //------------------------------------------------------------------------------
 Matrix& Matrix::SetScale(float scale) {
-  memset(this, 0, sizeof(Matrix));
+  Data.fill(0);
   Data[0] = scale;
   Data[5] = scale;
   Data[10] = scale;
@@ -207,7 +203,7 @@ Matrix& Matrix::SetScale(float scale) {
 
 //------------------------------------------------------------------------------
 Matrix& Matrix::SetScale(const Vector& scale) {
-  memset(this, 0, sizeof(Matrix));
+  Data.fill(0);
   Data[0] = scale.X;
   Data[5] = scale.Y;
   Data[10] = scale.Z;
@@ -224,22 +220,22 @@ Matrix& Poly::Matrix::SetPerspective(float fov, float aspect, float near, float 
 	Data[1] = 0;
 	Data[2] = 0;
 	Data[3] = 0;
-	
+
 	Data[4] = 0;
 	Data[5] = 1.0f / tanHalfFOV;
 	Data[6] = 0;
 	Data[7] = 0;
-	
+
 	Data[8] = 0;
 	Data[9] = 0;
 	Data[10] = -(far + near) / (far - near);
 	Data[11] = -(2.0f * far * near) / (far - near);
-	
+
 	Data[12] = 0;
 	Data[13] = 0;
 	Data[14] = -1;
 	Data[15] = 0;
-	
+
 	return *this;
 }
 
@@ -247,123 +243,123 @@ Matrix& Poly::Matrix::SetPerspective(float fov, float aspect, float near, float 
 Matrix& Matrix::Inverse() {
   //TODO vectorize
   Matrix cpy = *this;
-  
+
   Data[0] = cpy.Data[5]  * cpy.Data[10] * cpy.Data[15] -
   cpy.Data[5]  * cpy.Data[11] * cpy.Data[14] -
   cpy.Data[9]  * cpy.Data[6]  * cpy.Data[15] +
   cpy.Data[9]  * cpy.Data[7]  * cpy.Data[14] +
   cpy.Data[13] * cpy.Data[6]  * cpy.Data[11] -
   cpy.Data[13] * cpy.Data[7]  * cpy.Data[10];
-  
+
   Data[4] = -cpy.Data[4]  * cpy.Data[10] * cpy.Data[15] +
   cpy.Data[4]  * cpy.Data[11] * cpy.Data[14] +
   cpy.Data[8]  * cpy.Data[6]  * cpy.Data[15] -
   cpy.Data[8]  * cpy.Data[7]  * cpy.Data[14] -
   cpy.Data[12] * cpy.Data[6]  * cpy.Data[11] +
   cpy.Data[12] * cpy.Data[7]  * cpy.Data[10];
-  
+
   Data[8] = cpy.Data[4]  * cpy.Data[9] * cpy.Data[15] -
   cpy.Data[4]  * cpy.Data[11] * cpy.Data[13] -
   cpy.Data[8]  * cpy.Data[5] * cpy.Data[15] +
   cpy.Data[8]  * cpy.Data[7] * cpy.Data[13] +
   cpy.Data[12] * cpy.Data[5] * cpy.Data[11] -
   cpy.Data[12] * cpy.Data[7] * cpy.Data[9];
-  
+
   Data[12] = -cpy.Data[4]  * cpy.Data[9] * cpy.Data[14] +
   cpy.Data[4]  * cpy.Data[10] * cpy.Data[13] +
   cpy.Data[8]  * cpy.Data[5] * cpy.Data[14] -
   cpy.Data[8]  * cpy.Data[6] * cpy.Data[13] -
   cpy.Data[12] * cpy.Data[5] * cpy.Data[10] +
   cpy.Data[12] * cpy.Data[6] * cpy.Data[9];
-  
+
   Data[1] = -cpy.Data[1]  * cpy.Data[10] * cpy.Data[15] +
   cpy.Data[1]  * cpy.Data[11] * cpy.Data[14] +
   cpy.Data[9]  * cpy.Data[2] * cpy.Data[15] -
   cpy.Data[9]  * cpy.Data[3] * cpy.Data[14] -
   cpy.Data[13] * cpy.Data[2] * cpy.Data[11] +
   cpy.Data[13] * cpy.Data[3] * cpy.Data[10];
-  
+
   Data[5] = cpy.Data[0]  * cpy.Data[10] * cpy.Data[15] -
   cpy.Data[0]  * cpy.Data[11] * cpy.Data[14] -
   cpy.Data[8]  * cpy.Data[2] * cpy.Data[15] +
   cpy.Data[8]  * cpy.Data[3] * cpy.Data[14] +
   cpy.Data[12] * cpy.Data[2] * cpy.Data[11] -
   cpy.Data[12] * cpy.Data[3] * cpy.Data[10];
-  
+
   Data[9] = -cpy.Data[0]  * cpy.Data[9] * cpy.Data[15] +
   cpy.Data[0]  * cpy.Data[11] * cpy.Data[13] +
   cpy.Data[8]  * cpy.Data[1] * cpy.Data[15] -
   cpy.Data[8]  * cpy.Data[3] * cpy.Data[13] -
   cpy.Data[12] * cpy.Data[1] * cpy.Data[11] +
   cpy.Data[12] * cpy.Data[3] * cpy.Data[9];
-  
+
   Data[13] = cpy.Data[0]  * cpy.Data[9] * cpy.Data[14] -
   cpy.Data[0]  * cpy.Data[10] * cpy.Data[13] -
   cpy.Data[8]  * cpy.Data[1] * cpy.Data[14] +
   cpy.Data[8]  * cpy.Data[2] * cpy.Data[13] +
   cpy.Data[12] * cpy.Data[1] * cpy.Data[10] -
   cpy.Data[12] * cpy.Data[2] * cpy.Data[9];
-  
+
   Data[2] = cpy.Data[1]  * cpy.Data[6] * cpy.Data[15] -
   cpy.Data[1]  * cpy.Data[7] * cpy.Data[14] -
   cpy.Data[5]  * cpy.Data[2] * cpy.Data[15] +
   cpy.Data[5]  * cpy.Data[3] * cpy.Data[14] +
   cpy.Data[13] * cpy.Data[2] * cpy.Data[7] -
   cpy.Data[13] * cpy.Data[3] * cpy.Data[6];
-  
+
   Data[6] = -cpy.Data[0]  * cpy.Data[6] * cpy.Data[15] +
   cpy.Data[0]  * cpy.Data[7] * cpy.Data[14] +
   cpy.Data[4]  * cpy.Data[2] * cpy.Data[15] -
   cpy.Data[4]  * cpy.Data[3] * cpy.Data[14] -
   cpy.Data[12] * cpy.Data[2] * cpy.Data[7] +
   cpy.Data[12] * cpy.Data[3] * cpy.Data[6];
-  
+
   Data[10] = cpy.Data[0]  * cpy.Data[5] * cpy.Data[15] -
   cpy.Data[0]  * cpy.Data[7] * cpy.Data[13] -
   cpy.Data[4]  * cpy.Data[1] * cpy.Data[15] +
   cpy.Data[4]  * cpy.Data[3] * cpy.Data[13] +
   cpy.Data[12] * cpy.Data[1] * cpy.Data[7] -
   cpy.Data[12] * cpy.Data[3] * cpy.Data[5];
-  
+
   Data[14] = -cpy.Data[0]  * cpy.Data[5] * cpy.Data[14] +
   cpy.Data[0]  * cpy.Data[6] * cpy.Data[13] +
   cpy.Data[4]  * cpy.Data[1] * cpy.Data[14] -
   cpy.Data[4]  * cpy.Data[2] * cpy.Data[13] -
   cpy.Data[12] * cpy.Data[1] * cpy.Data[6] +
   cpy.Data[12] * cpy.Data[2] * cpy.Data[5];
-  
+
   Data[3] = -cpy.Data[1] * cpy.Data[6] * cpy.Data[11] +
   cpy.Data[1] * cpy.Data[7] * cpy.Data[10] +
   cpy.Data[5] * cpy.Data[2] * cpy.Data[11] -
   cpy.Data[5] * cpy.Data[3] * cpy.Data[10] -
   cpy.Data[9] * cpy.Data[2] * cpy.Data[7] +
   cpy.Data[9] * cpy.Data[3] * cpy.Data[6];
-  
+
   Data[7] = cpy.Data[0] * cpy.Data[6] * cpy.Data[11] -
   cpy.Data[0] * cpy.Data[7] * cpy.Data[10] -
   cpy.Data[4] * cpy.Data[2] * cpy.Data[11] +
   cpy.Data[4] * cpy.Data[3] * cpy.Data[10] +
   cpy.Data[8] * cpy.Data[2] * cpy.Data[7] -
   cpy.Data[8] * cpy.Data[3] * cpy.Data[6];
-  
+
   Data[11] = -cpy.Data[0] * cpy.Data[5] * cpy.Data[11] +
   cpy.Data[0] * cpy.Data[7] * cpy.Data[9] +
   cpy.Data[4] * cpy.Data[1] * cpy.Data[11] -
   cpy.Data[4] * cpy.Data[3] * cpy.Data[9] -
   cpy.Data[8] * cpy.Data[1] * cpy.Data[7] +
   cpy.Data[8] * cpy.Data[3] * cpy.Data[5];
-  
+
   Data[15] = cpy.Data[0] * cpy.Data[5] * cpy.Data[10] -
   cpy.Data[0] * cpy.Data[6] * cpy.Data[9] -
   cpy.Data[4] * cpy.Data[1] * cpy.Data[10] +
   cpy.Data[4] * cpy.Data[2] * cpy.Data[9] +
   cpy.Data[8] * cpy.Data[1] * cpy.Data[6] -
   cpy.Data[8] * cpy.Data[2] * cpy.Data[5];
-  
+
   float det = cpy.Data[0] * Data[0] + cpy.Data[1] * Data[4] + cpy.Data[2] * Data[8] + cpy.Data[3] * Data[12];
-  
+
   HEAVY_ASSERTE(det != 0, "Determinant is equal to 0!");
-  
+
   float idet = 1.0f/det;
   for(int i=0; i<16; ++i)
     Data[i] *= idet;
@@ -379,9 +375,9 @@ Matrix Matrix::GetInversed() const {
 
 //------------------------------------------------------------------------------
 Matrix& Matrix::Transpose() {
-  for (int i = 0; i < 4; ++i) { //row
-    for (int j = i + 1; j < 4; ++j) { //column
-      Swap(Data[4*i + j], Data[4*j + i]);
+  for (int row = 0; row < 4; ++row) {
+    for (int col = row + 1; col < 4; ++col) {
+      Swap(Data[4*row + col], Data[4*col + row]);
     }
   }
   return *this;
@@ -471,7 +467,7 @@ bool Poly::Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& 
 	local.m03 = 0;
 	local.m13 = 0;
 	local.m23 = 0;
-	
+
 	// Vector4 type and functions need to be added to the common set.
 	Vector row[3], pdum3;
 
@@ -499,7 +495,7 @@ bool Poly::Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& 
 	// Compute XZ and YZ shears, orthogonalize 3rd row.
 	skew.XZ = row[0].Dot(row[2]);
 	row[2] += (row[0] * -skew.XZ);
-	
+
 	skew.YZ = row[1].Dot(row[2]);
 	row[2] += (row[1] * -skew.YZ);
 

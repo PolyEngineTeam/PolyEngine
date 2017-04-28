@@ -1,11 +1,12 @@
 #pragma once
 
+#if defined(_WIN32)
 #include <Windows.h>
 
 namespace Poly
 {
-	enum class eKey
-	{	
+	enum class eKey : uint8_t
+	{
 		UNDEFINED =		0x00,
 		MLBUTTON =		VK_LBUTTON,
 		MRBUTTON =		VK_RBUTTON,
@@ -181,3 +182,185 @@ namespace Poly
 		_COUNT =				0xff
 	};
 }
+#elif defined(__linux__)
+namespace Poly
+{
+	enum class eKey : uint8_t
+	{
+		UNDEFINED              = 0x00,
+		LBUTTON                = 0x01,
+		RBUTTON                = 0x03,
+		CANCEL                 = UNDEFINED,
+		MBUTTON                = 0x02,
+		BUTTON1                = 0x06,
+		BUTTON2                = 0x07,
+		TAB                    = 0x17,
+		CLEAR                  = UNDEFINED,
+		ENTER                  = 0x24, //Return key, not the NumPad Enter
+		SHIFT                  = UNDEFINED, //FIXME(vuko): no such key on X11
+		CTRL                   = UNDEFINED, //FIXME(vuko): same here
+		ALT                    = UNDEFINED, //FIXME(vuko): this makes me sad :(
+		PAUSE                  = 0x7F,
+		CAPS_LOCK              = 0x42,
+		IME_KANA               = 0x65, //FIXME(vuko): rip the asian linux market
+		IME_HANGUL             = 0x82,
+		IME_JUNJA              = UNDEFINED,
+		IME_FINAL              = UNDEFINED,
+		IME_HANJE              = 0x83,
+		IME_KENJI              = UNDEFINED,
+		ESCAPE                 = 0x09,
+		IME_CONVERT            = UNDEFINED, //FIXME(vuko): don't have a CJK keyboard, sorry
+		IME_NONCONVERT         = UNDEFINED,
+		IME_ACCEPT             = UNDEFINED,
+		IME_MODECHANGE         = 0xCB,
+		SPACE                  = 0x41,
+		PAGE_UP                = 0x70,
+		PAGE_DOWN              = 0x75,
+		END                    = 0x73,
+		HOME                   = 0x6E,
+		LEFT                   = 0x71,
+		UP                     = 0x6F,
+		RIGHT                  = 0x72,
+		DOWN                   = 0x74,
+		SELECT                 = UNDEFINED, //wtf is this, even
+		PRINT                  = UNDEFINED,
+		EXECUTE                = UNDEFINED, //???
+		SNAPSHOT               = 0x6B, //that's Print Screen/SysRq, yo
+		INS                    = 0x76,
+		DEL                    = 0x77,
+		HELP                   = UNDEFINED, //help!
+		KEY_0                  = 0x13,
+		KEY_1                  = 0x0A,
+		KEY_2                  = 0x0B,
+		KEY_3                  = 0x0C,
+		KEY_4                  = 0x0D,
+		KEY_5                  = 0x0E,
+		KEY_6                  = 0x0F,
+		KEY_7                  = 0x10,
+		KEY_8                  = 0x11,
+		KEY_9                  = 0x12,
+		KEY_A                  = 0x26,
+		KEY_B                  = 0x38,
+		KEY_C                  = 0x36,
+		KEY_D                  = 0x28,
+		KEY_E                  = 0x1A,
+		KEY_F                  = 0x29,
+		KEY_G                  = 0x2A,
+		KEY_H                  = 0x2B,
+		KEY_I                  = 0x1F,
+		KEY_J                  = 0x2C,
+		KEY_K                  = 0x2D,
+		KEY_L                  = 0x2E,
+		KEY_M                  = 0x3A,
+		KEY_N                  = 0x39,
+		KEY_O                  = 0x20,
+		KEY_P                  = 0x21,
+		KEY_Q                  = 0x18,
+		KEY_R                  = 0x1B,
+		KEY_S                  = 0x27,
+		KEY_T                  = 0x1C,
+		KEY_U                  = 0x1E,
+		KEY_V                  = 0x37,
+		KEY_W                  = 0x19,
+		KEY_X                  = 0x35,
+		KEY_Y                  = 0x1D,
+		KEY_Z                  = 0x34,
+		LWIN                   = 0x85,
+		RWIN                   = 0x86,
+		APPS                   = 0x87,
+		SLEEP                  = 0x96,
+		NUM_0                  = 0x5A,
+		NUM_1                  = 0x57,
+		NUM_2                  = 0x58,
+		NUM_3                  = 0x59,
+		NUM_4                  = 0x53,
+		NUM_5                  = 0x54,
+		NUM_6                  = 0x55,
+		NUM_7                  = 0x4F,
+		NUM_8                  = 0x50,
+		NUM_9                  = 0x51,
+		NUM_MULTIPLY           = 0x3F,
+		NUM_ADD                = 0x56,
+		NUM_SEPARATOR          = UNDEFINED, //?
+		NUM_SUBTRACT           = 0x52,
+		NUM_DECIMAL            = 0x5B,
+		NUM_DIVIDE             = 0x6A,
+		F1                     = 0x43,
+		F2                     = 0x44,
+		F3                     = 0x45,
+		F4                     = 0x46,
+		F5                     = 0x47,
+		F6                     = 0x48,
+		F7                     = 0x49,
+		F8                     = 0x4A,
+		F9                     = 0x4B,
+		F10                    = 0x4C,
+		F11                    = 0x5F,
+		F12                    = 0x60,
+		F13                    = 0xBF, //these could be off by one for some keyboards...?
+		F14                    = 0xC0,
+		F15                    = 0xC1,
+		F16                    = 0xC2,
+		F17                    = 0xC3,
+		F18                    = UNDEFINED, //FIXME(vuko): I'm assuming they go on incrementing by one, but I can't be sure
+		F19                    = UNDEFINED,
+		F20                    = UNDEFINED,
+		F21                    = UNDEFINED,
+		F22                    = UNDEFINED,
+		F23                    = UNDEFINED,
+		F24                    = UNDEFINED,
+		NUM_LOCK               = 0x4D,
+		SCROLL_LOCK            = 0x4E,
+		LSHIFT                 = 0x32,
+		RSHIFT                 = 0x3E,
+		LCTRL                  = 0x25,
+		RCTRL                  = 0x69,
+		LMENU                  = UNDEFINED, //wut
+		RMENU                  = APPS,
+		BROWSER_BACK           = 0xA6,
+		BROWSER_FORWARD        = 0xA7,
+		BROWSER_REFRESH        = 0xB5,
+		BROWSER_STOP           = UNDEFINED, //nope
+		BROWSER_SEARCH         = 0xE1,
+		BROWSER_FAVORITES      = 0xA4,
+		BROWSER_HOME           = 0xB4,
+		VOLUME_MUTE            = 0x79,
+		VOLUME_DOWN            = 0x7A,
+		VOLUME_UP              = 0x7B,
+		MEDIA_NEXT             = 0xAB,
+		MEDIA_PREV             = 0xAD,
+		MEDIA_STOP             = 0xAE,
+		MEDIA_PLAY_PAUSE       = 0xAC,
+		LAUNCH_MAIL            = UNDEFINED, //:(
+		LAUNCH_MEDIA_SELECT    = UNDEFINED,
+		LAUNCH_APP1            = UNDEFINED,
+		LAUNCH_AP2             = UNDEFINED,
+		SEMICOLON_COLON        = 0x2F,
+		PLUS                   = 0x15,
+		COMMA                  = 0x3B,
+		MINUS                  = 0x14,
+		PERIOD                 = 0x3C,
+		SLASH_QUESTION         = 0x3D,
+		TILDE                  = 0x31,
+		OPEN_SQUARE_CURLY      = 0x22,
+		BACKSLASH_VERTICAL_BAR = 0x33,
+		CLOSE_SQUARE_CURLY     = 0x23,
+		QUOTE_SINGLE_DOUBLE    = 0x30,
+		OEM_8                  = UNDEFINED, //?
+		OEM_102                = UNDEFINED,
+		IME_PROCESS            = UNDEFINED,
+		PACKET                 = UNDEFINED,
+		ATTN                   = UNDEFINED,
+		CRSEL                  = UNDEFINED,
+		EXSEL                  = UNDEFINED,
+		EREOF                  = UNDEFINED,
+		PLAY                   = UNDEFINED,
+		ZOOM                   = UNDEFINED,
+		PA1                    = UNDEFINED,
+		OEM_CLEAR              = UNDEFINED,
+		_COUNT                 = 0xFF
+	};
+}
+#else
+	#error [ERROR] Unsupported platform! You are trying to compile for unsupported platform. This won't work.'
+#endif

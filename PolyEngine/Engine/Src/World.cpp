@@ -1,11 +1,9 @@
 #include "EnginePCH.hpp"
 
-#include "World.hpp"
-
 using namespace Poly;
 
 World::World(Poly::Engine* engine)
-: EnginePtr(engine), EntitiesAllocator(MAX_ENTITY_COUNT)
+: EntitiesAllocator(MAX_ENTITY_COUNT), EnginePtr(engine)
 {
 	memset(ComponentAllocators, 0, sizeof(IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
 }

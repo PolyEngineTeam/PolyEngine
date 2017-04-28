@@ -74,16 +74,16 @@ namespace Poly {
 	constexpr Angle operator""_deg(unsigned long long int value) { return Angle::FromDegrees(static_cast<float>(value)); }
 
 	// Trigonometry with Angle
-	inline float Sin(Angle angle) { return std::sinf(angle.AsRadians()); }
-	inline float Cos(Angle angle) { return std::cosf(angle.AsRadians()); }
-	inline float Tan(Angle angle) { return std::tanf(angle.AsRadians()); }
-	inline float Ctan(Angle angle) { return 1.0f / std::tanf(angle.AsRadians()); }
+	inline float Sin(Angle angle) { return std::sin(angle.AsRadians()); }
+	inline float Cos(Angle angle) { return std::cos(angle.AsRadians()); }
+	inline float Tan(Angle angle) { return std::tan(angle.AsRadians()); }
+	inline float Ctan(Angle angle) { return 1.0f / std::tan(angle.AsRadians()); }
 
-	inline Angle Asin(float val) { return Angle::FromRadians(std::asinf(val)); }
-	inline Angle Acos(float val) { return Angle::FromRadians(std::acosf(val)); }
-	inline Angle Atan(float val) { return Angle::FromRadians(std::atanf(val)); }
-	inline Angle Atan2(float val1, float val2) { return Angle::FromRadians(std::atan2f(val1, val2)); }
-	inline Angle Actan(float val) { HEAVY_ASSERTE(!Cmpf(val, 0), "Value cannot be 0."); return Angle::FromRadians(std::atanf(1.0f / val)); }
-	inline Angle Actan2(float val1, float val2) { return Angle::FromRadians(std::atan2f(val2, val1)); }
+	inline Angle Asin(float val) { return Angle::FromRadians(std::asin(val)); }
+	inline Angle Acos(float val) { return Angle::FromRadians(std::acos(val)); }
+	inline Angle Atan(float val) { return Angle::FromRadians(std::atan(val)); }
+	inline Angle Atan2(float val1, float val2) { return Angle::FromRadians(std::atan2(val1, val2)); }
+	inline Angle Actan(float val) { HEAVY_ASSERTE(!Cmpf(val, 0), "Value cannot be 0."); return Angle::FromRadians(std::atan(1.0f / val)); }
+	inline Angle Actan2(float val1, float val2) { return Angle::FromRadians(std::atan2(val2, val1)); }
 
 }

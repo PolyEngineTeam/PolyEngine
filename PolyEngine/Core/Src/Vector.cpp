@@ -1,9 +1,5 @@
 #include "CorePCH.hpp"
 
-#include "Vector.hpp"
-#include "BasicMath.hpp"
-#include "SimdMath.hpp"
-
 using namespace Poly;
 
 //------------------------------------------------------------------------------
@@ -101,7 +97,7 @@ Vector& Vector::operator/=(float rhs) {
 
 //------------------------------------------------------------------------------
 //TODO maybe inline this?
-float Vector::Length() const { return sqrt(Length2()); }
+float Vector::Length() const { return std::sqrt(Length2()); }
 float Vector::Length2() const { return Dot(*this); }
 
 //------------------------------------------------------------------------------
@@ -135,7 +131,7 @@ Vector Vector::Cross(const Vector& rhs) const {
   tmp_zxy = _mm_shuffle_ps(SimdData, SimdData, ZXYMask);
   tmp_yzx = _mm_shuffle_ps(rhs.SimdData, rhs.SimdData, YZXMask);
   __m128 mult2 = _mm_mul_ps(tmp_zxy, tmp_yzx);
-  
+
   return Vector(_mm_sub_ps(mult1, mult2));
 #endif
 }

@@ -141,10 +141,13 @@ namespace Poly {
 	  // This structure allows to access vector elements by index or name.
 	  union {
 	#if !DISABLE_SIMD
-		__m128 SimdRow[4];
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wignored-attributes"
+		alignas(16) std::array<__m128, 4> SimdRow;
+	#pragma GCC diagnostic pop
 	#endif
-		float Data[16];
-		struct {
+		alignas(16) std::array<float, 16> Data;
+		struct alignas(16) {
 		  float m00, m01, m02, m03;
 		  float m10, m11, m12, m13;
 		  float m20, m21, m22, m23;

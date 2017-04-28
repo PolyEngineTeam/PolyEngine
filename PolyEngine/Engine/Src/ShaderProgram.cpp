@@ -2,7 +2,7 @@
 
 #include "ShaderProgram.hpp"
 
-#include <gl/glew.h>
+#include <GL/glew.h>
 
 using namespace Poly;
 
@@ -31,10 +31,10 @@ void ShaderProgram::CompileProgram()
 	glGetProgramiv(m_program, GL_LINK_STATUS, &linkStatus);
 
 	if (linkStatus == 0) {
-		int infoLogLength = 0;
+		GLint infoLogLength = 0;
 		glGetProgramiv(m_program, GL_INFO_LOG_LENGTH, &infoLogLength);
 		Dynarray<char> errorMessage;
-		errorMessage.Resize(infoLogLength + 1);
+		errorMessage.Resize(static_cast<size_t>(infoLogLength + 1));
 		glGetProgramInfoLog(m_program, infoLogLength, NULL, &errorMessage[0]);
 		gConsole.LogError("Program linking: {}", std::string(&errorMessage[0]));
 		ASSERTE(false, "Program linking failed!");
@@ -48,19 +48,19 @@ void ShaderProgram::Validate()
 
 	glGetProgramiv(m_program, GL_VALIDATE_STATUS, &status);
 	if (status == 0) {
-		int infoLogLength = 0;
+		GLint infoLogLength = 0;
 		glGetProgramiv(m_program, GL_INFO_LOG_LENGTH, &infoLogLength);
 		Dynarray<char> errorMessage;
-		errorMessage.Resize(infoLogLength + 1);
+		errorMessage.Resize(static_cast<size_t>(infoLogLength + 1));
 		glGetProgramInfoLog(m_program, infoLogLength, NULL, &errorMessage[0]);
 		gConsole.LogError("Program validation: {}", std::string(&errorMessage[0]));
 		ASSERTE(false, "Program validation failed!");
 	}
 }
 
-void ShaderProgram::LoadShader(int type, const String& shaderName)
+void ShaderProgram::LoadShader(GLenum type, const String& shaderName)
 {
-	int shader = glCreateShader(type);
+	GLuint shader = glCreateShader(type);
 	if (shader == 0) {
 		ASSERTE(false, "Creation of shader failed!");
 	}
@@ -78,7 +78,7 @@ void ShaderProgram::LoadShader(int type, const String& shaderName)
 		int infoLogLength = 0;
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
 		Dynarray<char> errorMessage;
-		errorMessage.Resize(infoLogLength + 1);
+		errorMessage.Resize(static_cast<size_t>(infoLogLength + 1));
 		glGetShaderInfoLog(shader, infoLogLength, NULL, &errorMessage[0]);
 		gConsole.LogError("Shader compilation: {}", std::string(&errorMessage[0]));
 		ASSERTE(false, "Shader compilation failed!");
@@ -123,5 +123,5 @@ void ShaderProgram::SetUniform(const String& name, const Vector& val)
 
 void ShaderProgram::SetUniform(const String& name, const Matrix& val)
 {
-	glUniformMatrix4fv(m_uniforms[name], 1, GL_FALSE, val.GetTransposed().Data);
+	glUniformMatrix4fv(m_uniforms[name], 1, GL_FALSE, val.GetTransposed().Data.data());
 }

@@ -47,9 +47,6 @@
     <ClCompile Include="Src\World.cpp">
       <Filter>Source Files\ECS</Filter>
     </ClCompile>
-    <ClCompile Include="Src\ComponentBase.cpp">
-      <Filter>Source Files\ECS</Filter>
-    </ClCompile>
     <ClCompile Include="Src\TransformComponent.cpp">
       <Filter>Source Files\ECS\Components</Filter>
     </ClCompile>
@@ -73,9 +70,6 @@
     </ClCompile>
     <ClCompile Include="Src\InputWorldComponent.cpp">
       <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\EnginePCH.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\ViewportWorldComponent.cpp">
       <Filter>Source Files\Viewport</Filter>

@@ -6,10 +6,11 @@ namespace Poly {
 	template<typename T, typename E, size_t SIZE = static_cast<typename std::underlying_type<E>::type>(E::_COUNT)>
 	class EnumArray : public BaseObject<>
 	{
-		typedef typename std::underlying_type<E>::type IndexType;
-		
+		using IndexType = typename std::underlying_type<E>::type;
+
 		STATIC_ASSERTE(std::is_enum<E>::value, "Provided EnumArray key is not an enum!");
 		STATIC_ASSERTE(std::is_integral<IndexType>::value, "Underlying enum value type is not integral!");
+		STATIC_ASSERTE(std::is_unsigned<IndexType>::value, "Underlying enum value type is not unsigned!");
 		STATIC_ASSERTE(SIZE > 0, "Zero size enum array is prohibited");
 	public:
 		class Iterator : public BaseObject<>
@@ -64,7 +65,8 @@ namespace Poly {
 			friend class EnumArray<T, E, SIZE>;
 		};
 
-		EnumArray() = default;
+		//EnumArray() = default;
+		EnumArray() : Data{} {}
 
 		//------------------------------------------------------------------------------
 		EnumArray(const std::initializer_list<T>& list)
@@ -126,18 +128,22 @@ namespace Poly {
 
 	namespace Impl {
 		template<typename T>
-		struct EnumInfo {
-		};
+		struct EnumInfo {};
 	}
 
 	template<typename T>
 	const char* GetEnumName(T val)
 	{
-		return Poly::Impl::EnumInfo<T>::Get().Names[val];
+		return Impl::EnumInfo<T>::Get().Names[val];
 	}
 }
 
-
-#define REGISTER_ENUM_NAMES(type, ...) template<> struct Poly::Impl::EnumInfo<type> { \
-	static Poly::Impl::EnumInfo<type>& Get() {static Poly::Impl::EnumInfo<type> instance; return instance; } \
-	const Poly::EnumArray<const char*, type> Names = {__VA_ARGS__}; }
+//NOTE(vuko): apparently defining specializations in a namespace from global/other namespace is illegal C++ and GCC complains
+//Unfortunately being compliant causes problems when using the macro in a namespace. If you run into problems, close the namespace, use the macro, then open it again
+#define REGISTER_ENUM_NAMES(type, ...)                                                    \
+	namespace Poly { namespace Impl {                                                     \
+	template<> struct EnumInfo<type> {                                                    \
+		static EnumInfo<type>& Get() { static EnumInfo<type> instance; return instance; } \
+		const EnumArray<const char*, type> Names = {__VA_ARGS__};                         \
+	};                                                                                    \
+	}} //namespace Poly::Impl

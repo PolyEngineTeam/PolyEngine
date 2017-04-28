@@ -11,9 +11,8 @@
 
 #include "InputSystem.hpp"
 
-namespace Poly 
+namespace Poly
 {
-	class World;
 	class Engine;
 	typedef std::function<void(World*)> PhaseUpdateFunction;
 
@@ -28,7 +27,7 @@ namespace Poly
 
 	//------------------------------------------------------------------------------
 
-	class ENGINE_DLLEXPORT IGame : public BaseObject<> 
+	class ENGINE_DLLEXPORT IGame : public BaseObject<>
 	{
 	public:
 		virtual void RegisterEngine(Engine* engine) = 0;
@@ -37,7 +36,7 @@ namespace Poly
 	};
 
 	//------------------------------------------------------------------------------
-	class ENGINE_DLLEXPORT Engine : public BaseObject<> 
+	class ENGINE_DLLEXPORT Engine : public BaseObject<>
 	{
 	public:
 		Engine(IGame* game);
@@ -49,7 +48,7 @@ namespace Poly
 		/// Enum used to specify the part of update to which a given phase is registered.
 		/// @see RegisterUpdatePhase()
 		//////////////////////////////
-		enum class eUpdatePhaseOrder 
+		enum class eUpdatePhaseOrder
 		{
 			PREUPDATE,
 			UPDATE,
@@ -76,14 +75,14 @@ namespace Poly
 		World& GetWorld() { return *BaseWorld; }
 
 		//------------------------------------------------------------------------------
-		template<typename T> void RegisterComponent(size_t id) 
-		{ 
+		template<typename T> void RegisterComponent(size_t id)
+		{
 			ASSERTE(ComponentTypeMap.find(typeid(T)) == ComponentTypeMap.end(), "Component type was requstered twice!");
 			ComponentTypeMap[typeid(T)] = id;
 		}
 
 		//------------------------------------------------------------------------------
-		template<typename T> size_t GetComponentID() const 
+		template<typename T> size_t GetComponentID() const
 		{
 			ASSERTE(ComponentTypeMap.find(typeid(T)) != ComponentTypeMap.end(), "Component type was not requstered!");
 			return ComponentTypeMap.at(typeid(T));
@@ -97,7 +96,7 @@ namespace Poly
 		//------------------------------------------------------------------------------
 		inline void UpdatePhases(eUpdatePhaseOrder order)
 		{
-			HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "Count enum value passed to UpdatePhases(), which is an invalid value");
+			HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "_COUNT enum value passed to UpdatePhases(), which is an invalid value");
 			for (auto& update : GameUpdatePhases[static_cast<int>(order)])
 				update(&GetWorld());
 		}
@@ -112,6 +111,3 @@ namespace Poly
 		std::unordered_map<std::type_index, size_t> ComponentTypeMap;
 	};
 }
-
-#define REGISTER_COMPONENT(engine, type, id) engine->RegisterComponent<type>((size_t)id)
-#define GET_COMPONENT_ID(engine, type) engine->GetComponentID<type>()

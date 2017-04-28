@@ -5,14 +5,16 @@
 
 using namespace Poly;
 
-enum class eTestEnum
+enum class eTestEnum : uint8_t
 {
 	VAL_1,
 	VAL_2,
 	VAL_3,
 	_COUNT
 };
+
 REGISTER_ENUM_NAMES(eTestEnum, "Val1", "Val2", "Val3" );
+
 
 TEST_CASE("EnumArray tests", "[EnumArray]")
 {

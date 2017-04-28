@@ -1,7 +1,5 @@
 #include "EnginePCH.hpp"
 
-#include "TransformComponent.hpp"
-
 using namespace Poly;
 
 //-----------------------------------------------------------------------------
@@ -13,7 +11,7 @@ TransformComponent::~TransformComponent() {
 }
 
 //-----------------------------------------------------------------------------
-void TransformComponent::SetParent(TransformComponent* parent) 
+void TransformComponent::SetParent(TransformComponent* parent)
 {
 	if (parent != nullptr)
 	{
@@ -29,8 +27,8 @@ void TransformComponent::SetParent(TransformComponent* parent)
 		Parent = parent;
 		Parent->Children.PushBack(this);
 	}
-	else 
-	{ 
+	else
+	{
 		ResetParent();
 	}
 }
@@ -53,7 +51,7 @@ const Vector& TransformComponent::GetGlobalTranslation() const
 }
 
 //------------------------------------------------------------------------------
-void TransformComponent::SetLocalTranslation(const Vector& position) 
+void TransformComponent::SetLocalTranslation(const Vector& position)
 {
 	LocalTranslation = position;
 	LocalDirty = true;
@@ -68,8 +66,8 @@ const Quaternion& TransformComponent::GetGlobalRotation() const
 }
 
 //------------------------------------------------------------------------------
-void TransformComponent::SetLocalRotation(const Quaternion& quaternion) 
-{ 
+void TransformComponent::SetLocalRotation(const Quaternion& quaternion)
+{
 	LocalRotation = quaternion;
 	LocalDirty = true;
 	GlobalDirty = true;
@@ -83,7 +81,7 @@ const Vector& TransformComponent::GetGlobalScale() const
 }
 
 //------------------------------------------------------------------------------
-void TransformComponent::SetLocalScale(const Vector& scale) 
+void TransformComponent::SetLocalScale(const Vector& scale)
 {
 	LocalScale = scale;
 	LocalDirty = true;
@@ -91,14 +89,14 @@ void TransformComponent::SetLocalScale(const Vector& scale)
 }
 
 //------------------------------------------------------------------------------
-const Matrix& TransformComponent::GetLocalTransformationMatrix() const 
+const Matrix& TransformComponent::GetLocalTransformationMatrix() const
 {
 	UpdateLocalTransformationCache();
 	return LocalTransform;
 }
 
 //------------------------------------------------------------------------------
-const Matrix& TransformComponent::GetGlobalTransformationMatrix() const 
+const Matrix& TransformComponent::GetGlobalTransformationMatrix() const
 {
 	UpdateGlobalTransformationCache();
 	return GlobalTransform;
@@ -114,7 +112,7 @@ void TransformComponent::SetLocalTransformationMatrix(const Matrix& localTransfo
 }
 
 //------------------------------------------------------------------------------
-const bool TransformComponent::UpdateLocalTransformationCache() const
+bool TransformComponent::UpdateLocalTransformationCache() const
 {
 	if (LocalDirty)
 	{
@@ -131,29 +129,29 @@ const bool TransformComponent::UpdateLocalTransformationCache() const
 }
 
 //------------------------------------------------------------------------------
-const bool TransformComponent::UpdateGlobalTransformationCache() const 
+bool TransformComponent::UpdateGlobalTransformationCache() const
 {
-	if (Parent == nullptr) 
+	if (Parent == nullptr)
 	{
 		if (GlobalDirty) {
 			GlobalTransform = GetLocalTransformationMatrix();
 			GlobalTransform.Decompose(GlobalTranslation, GlobalRotation, GlobalScale);
 			GlobalDirty = false;
 			return true;
-		} 
-		else 
+		}
+		else
 			return false;
 	}
-	else 
+	else
 	{
-		if (Parent->UpdateGlobalTransformationCache() || GlobalDirty) 
+		if (Parent->UpdateGlobalTransformationCache() || GlobalDirty)
 		{
 			GlobalTransform = Parent->GlobalTransform * GetLocalTransformationMatrix();
 			GlobalTransform.Decompose(GlobalTranslation, GlobalRotation, GlobalScale);
 			GlobalDirty = false;
 			return true;
-		} 
-		else 
+		}
+		else
 			return false;
 	}
 }

@@ -37,16 +37,10 @@
     <ClCompile Include="Src\Color.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\BaseObject.cpp">
-      <Filter>Source Files\Memory</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\UniqueID.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\CorePCH.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\AARect.cpp">

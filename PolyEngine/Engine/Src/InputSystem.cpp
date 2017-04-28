@@ -1,7 +1,5 @@
 #include "EnginePCH.hpp"
 
-#include "InputSystem.hpp"
-
 using namespace Poly;
 
 void InputSystem::InputPhase(World* world)
@@ -34,6 +32,9 @@ void InputSystem::InputPhase(World* world)
 		case eInputEventType::WHEELMOVE:
 			gConsole.LogDebug("MouseWheelMove: {}", InputEventsQueue.Front().Pos.X);
 			com.CurrWheel += InputEventsQueue.Front().Pos.X;
+			break;
+		case eInputEventType::_COUNT:
+			HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::Push(), which is an invalid value");
 			break;
 		}
 		InputEventsQueue.Pop();

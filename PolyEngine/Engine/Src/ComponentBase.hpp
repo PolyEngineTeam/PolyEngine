@@ -1,12 +1,9 @@
 #pragma once
 
 #include <Core.hpp>
+#include "Entity.hpp"
 
 namespace Poly {
-
-	class Entity;
-	constexpr unsigned int MAX_COMPONENTS_COUNT = 64;
-
 	class ENGINE_DLLEXPORT ComponentBase : public BaseObject<>
 	{
 	public:

@@ -5,6 +5,14 @@
 
 namespace Poly {
 
+	#if defined(__GNUC__) || defined(__clang__)
+	inline int fopen_s(FILE *__restrict__ *__restrict__ streamptr, const char *__restrict__ filename, const char *__restrict__ mode) {
+		FILE* f = fopen(filename, mode);
+		*streamptr = f;
+		return f == nullptr ? errno : 0;
+	}
+	#endif
+
 	inline String LoadTextFile(const String& path) {
 		FILE *f;
 		fopen_s(&f, path.GetCStr(), "rb");

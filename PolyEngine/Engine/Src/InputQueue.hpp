@@ -16,7 +16,7 @@ namespace Poly
 	};
 
 	struct InputEvent : public BaseObject<>
-	{	
+	{
 		InputEvent() = default;
 		InputEvent(eInputEventType type, eKey key) : Type(type), Key(key) {}
 		InputEvent(eInputEventType type, const Vector& pos) : Type(type), Pos(pos) {}
@@ -26,5 +26,5 @@ namespace Poly
 		Vector Pos;
 	};
 
-	typedef Queue<InputEvent> InputQueue;
+	using InputQueue = Queue<InputEvent>;
 }

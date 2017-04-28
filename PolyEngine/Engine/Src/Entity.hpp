@@ -3,13 +3,12 @@
 #include <Core.hpp>
 #include <bitset>
 
-#include "ComponentBase.hpp"
 #include "Engine.hpp"
 
-namespace Poly 
+namespace Poly
 {
-
-	class World;
+	class ComponentBase;
+	constexpr unsigned int MAX_COMPONENTS_COUNT = 64;
 
 	//TODO finish implementation of this class
 
@@ -27,7 +26,7 @@ namespace Poly
 		/// @see HasComponents()
 		//////////////////////////////
 		bool HasComponent(size_t ID) const;
-		
+
 		//////////////////////////////
 		/// Note: This function should only be accessed by engine's internal logic.
 		/// Checks whether there are all of the specified components under this Entity's ID.
@@ -48,13 +47,7 @@ namespace Poly
 		/// @return A pointer to a component or nullptr if it does not exist.
 		//////////////////////////////
 		template<class T>
-		T* GetComponent()
-		{
-			if (HasComponent(GET_COMPONENT_ID(EntityWorld->GetEngine(), T)))
-				return static_cast<T*>(Components[GET_COMPONENT_ID(EntityWorld->GetEngine(), T)]);
-			else
-				return nullptr;
-		}
+		T* GetComponent(); //defined in World.hpp due to circular inclusion problem
 
 	private:
 		Entity(const World* world);
@@ -67,4 +60,4 @@ namespace Poly
 
 		friend class World;
 	};
-}
+} //namespace Poly
