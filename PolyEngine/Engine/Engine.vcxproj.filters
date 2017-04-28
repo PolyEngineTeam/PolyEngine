@@ -151,21 +151,14 @@
     <ClInclude Include="Src\ViewportWorldComponent.hpp">
       <Filter>Source Files\Viewport</Filter>
     </ClInclude>
-<<<<<<< HEAD
-<<<<<<< HEAD
     <ClInclude Include="Src\ResourceManager.hpp">
       <Filter>Source Files\Resources</Filter>
-=======
-    <ClInclude Include="TimeSystem.hpp">
-      <Filter>Source Files\TimeSystem</Filter>
->>>>>>> added Pause to TimeSystem
-=======
+    </ClInclude>
     <ClInclude Include="Src\Timers.hpp">
       <Filter>Source Files\Time</Filter>
     </ClInclude>
     <ClInclude Include="Src\TimeWorldComponent.hpp">
       <Filter>Source Files\Time</Filter>
->>>>>>> split TimeSystem into timers and TimeWorldComponent, fixed files placement in project
     </ClInclude>
   </ItemGroup>
 </Project>
