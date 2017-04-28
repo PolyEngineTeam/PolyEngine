@@ -17,11 +17,11 @@ namespace Poly
 		void Pause() { Paused = true; };
 		void Unpause() { Paused = false; };
 
-		bool IsPaused() { return Paused; };
+		bool IsPaused() const { return Paused; };
 
 		float Update();
-		float GetPausableTimer() { return PausableTimer.count(); };
-		float GetTimer() { return Timer.count(); }
+		float GetPausableTimer() const { return PausableTimer.count(); };
+		float GetTimer() const { return Timer.count(); }
 
 	private:
 		steady_clock Clock;
