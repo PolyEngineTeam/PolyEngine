@@ -6,24 +6,34 @@ using namespace Poly;
 Poly::TimeSystem::TimeSystem()
 {
 	WorldStartTime = LastFrameTime = Clock.now();
+<<<<<<< HEAD
 	Timer = PausableTimer = duration<float>::zero();
+=======
+	Timer = PausableTimer = std::chrono::duration<float>::zero();
+	Paused = false;
+>>>>>>> Added possibility to get delta time out of update
 }
 //------------------------------------------------------------------------------
 float TimeSystem::Update()
 {
-	steady_clock::time_point frameTime = Clock.now();
-	duration<float> deltaTime = duration_cast<duration<float>>(frameTime - LastFrameTime);
+	std::chrono::steady_clock::time_point frameTime = Clock.now();
+	DeltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(frameTime - LastFrameTime);
 #ifdef DEBUG
-	const milliseconds MIN_TIME_STEP_MS = milliseconds(60);
-	deltaTime = deltaTime > duration_cast<duration<float>>(MIN_TIME_STEP_MS) ? MIN_TIME_STEP_MS : deltaTime;
+	const std::chrono::milliseconds MIN_TIME_STEP_MS = std::chrono::milliseconds(60);
+	deltaTime = deltaTime > std::chrono::duration_cast<std::chrono::duration<float>>(MIN_TIME_STEP_MS) ? MIN_TIME_STEP_MS : deltaTime;
 #endif // DEBUG
 	LastFrameTime = frameTime;
-	Timer += deltaTime;
-	//TODO: Add Timer Pausing functionality
-	if (1 /*!isGamePaused*/)
-		PausableTimer += deltaTime;
+	Timer += DeltaTime;
+	if (!Paused)
+	{
+		PausableTimer += DeltaTime;
+		return DeltaTime.count();
+	}
+	else
+	{
+		return 0.0f;
+	}
 
-	return deltaTime.count();
 }
 
 
