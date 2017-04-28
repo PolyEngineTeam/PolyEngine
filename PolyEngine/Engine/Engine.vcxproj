@@ -185,6 +185,7 @@
     <ClCompile Include="Src\TransformComponent.cpp" />
     <ClCompile Include="Src\ViewportWorldComponent.cpp" />
     <ClCompile Include="Src\World.cpp" />
+    <ClCompile Include="TimeSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.vcxproj">
@@ -212,6 +213,7 @@
     <ClInclude Include="Src\Viewport.hpp" />
     <ClInclude Include="Src\ViewportWorldComponent.hpp" />
     <ClInclude Include="Src\World.hpp" />
+    <ClInclude Include="TimeSystem.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

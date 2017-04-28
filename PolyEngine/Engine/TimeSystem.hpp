@@ -13,7 +13,12 @@ namespace Poly
 
 		TimeSystem();
 		~TimeSystem() {};
-		
+
+		void Pause() { Paused = true; };
+		void Unpause() { Paused = false; };
+
+		bool IsPaused() { return Paused; };
+
 		float Update();
 		float GetPausableTimer() { return PausableTimer.count(); };
 		float GetTimer() { return Timer.count(); }
@@ -24,5 +29,6 @@ namespace Poly
 		steady_clock::time_point LastFrameTime;
 		duration<float> PausableTimer;
 		duration<float> Timer;	
+		bool Paused;
 	};
 }
