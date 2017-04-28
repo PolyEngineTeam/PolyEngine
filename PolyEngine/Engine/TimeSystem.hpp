@@ -13,10 +13,10 @@ namespace Poly
 
 		TimeSystem();
 		~TimeSystem() {};
-		
+
 		float Update();
-		float GetPausableTimer() { return PausableTimer.count(); };
-		float GetTimer() { return Timer.count(); }
+		float GetPausableTimer() const { return PausableTimer.count(); };
+		float GetTimer() const { return Timer.count(); }
 
 	private:
 		steady_clock Clock;
