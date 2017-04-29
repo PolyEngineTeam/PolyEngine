@@ -263,7 +263,7 @@ namespace Poly {
 		{
 			if (capacity <= Capacity)
 				return;
-			Realloc(capacity * sizeof(T));
+			Realloc(capacity);
 		}
 
 		//------------------------------------------------------------------------------
