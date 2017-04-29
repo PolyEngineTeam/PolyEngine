@@ -74,7 +74,7 @@ namespace Poly {
 
 			size_t operator-(const Iterator& rhs) const { HEAVY_ASSERTE(Data == rhs.Data, "Not valid iterator pair"); return Idx - rhs.Idx; }
 		private:
-			Iterator(T* data, size_t idx) : Data(data), Idx(idx) {}
+			Iterator(T* data, size_t idx) : Idx(idx), Data(data) {}
 
 			size_t Idx = 0;
 			T* Data = nullptr;
@@ -106,7 +106,7 @@ namespace Poly {
 
 			size_t operator-(const ConstIterator& rhs) const { HEAVY_ASSERTE(Data == rhs.Data, "Not valid iterator pair"); return Idx - rhs.Idx; }
 		private:
-			ConstIterator(const T* data, size_t idx) : Data(data), Idx(idx) {}
+			ConstIterator(const T* data, size_t idx) : Idx(idx), Data(data) {}
 
 			size_t Idx = 0;
 			const T* Data = nullptr;

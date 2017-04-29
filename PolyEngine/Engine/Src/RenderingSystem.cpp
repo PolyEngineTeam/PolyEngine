@@ -1,9 +1,8 @@
 #include "EnginePCH.hpp"
 
-#include "RenderingSystem.hpp"
 #include "ShaderProgram.hpp"
 
-#include <gl/glew.h>
+#include <GL/glew.h>
 
 
 using namespace Poly;
@@ -56,7 +55,7 @@ void TestDraw(const Matrix& MVP) {
 }
 
 void RenderingSystem::RenderingPhase(World* world)
-{	
+{
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

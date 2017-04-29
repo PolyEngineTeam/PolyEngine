@@ -12,7 +12,9 @@ enum class eTestEnum
 	VAL_3,
 	_COUNT
 };
+
 REGISTER_ENUM_NAMES(eTestEnum, "Val1", "Val2", "Val3" );
+
 
 TEST_CASE("EnumArray tests", "[EnumArray]")
 {

@@ -105,7 +105,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		else
 		{
 			// Run game code here
-			Engine.Update(0.016f);
+			Engine.Update();
 		}
 	}
 
@@ -131,7 +131,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			gEngine->ResizeScreen(screenSize);
 		return 0;
 	}
-		
+
 		// input
 	// Use separate case's for mouse buttons because otherwise mouse buttons aren't checked
 	case WM_LBUTTONDOWN:

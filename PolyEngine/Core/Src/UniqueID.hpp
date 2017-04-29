@@ -14,7 +14,7 @@ namespace Poly {
 		bool operator==(const UniqueID& rhs) const;
 		bool operator!=(const UniqueID& rhs) const;
 
-		operator bool() const;
+		explicit operator bool() const;
 
 		size_t GetHash() const { return ID; }
 	private:

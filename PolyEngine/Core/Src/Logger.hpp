@@ -9,8 +9,7 @@ namespace Poly {
 	*  Enum describing possible levels of logging
 	*/
 	enum class eLogLevel { LVL_DEBUG, LVL_INFO, LVL_WARNING, LVL_ERROR, _COUNT };
-	REGISTER_ENUM_NAMES(eLogLevel, "DEBUG", "INFO", "WARNING", "ERROR");
-
+	REGISTER_ENUM_NAMES_IN_POLY(Poly::eLogLevel, "DEBUG", "INFO", "WARNING", "ERROR");
 	constexpr eLogLevel LOG_LEVEL_FILTER = eLogLevel::LVL_DEBUG;
 
 	/**
@@ -99,4 +98,4 @@ namespace Poly {
 	};
 
 	CORE_DLLEXPORT extern Console gConsole;
-}
+} //namespace Poly

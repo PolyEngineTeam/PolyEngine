@@ -1,12 +1,10 @@
 #include "TestGame.hpp"
 
-#include <Core.hpp>
-
 #include <CameraComponent.hpp>
 #include <TransformComponent.hpp>
 #include <MeshRenderingComponent.hpp>
 
-void TestGame::Init() 
+void TestGame::Init()
 {
 	Camera = Engine->GetWorld().SpawnEntity();
 	Engine->GetWorld().AddComponent<Poly::TransformComponent>(Camera);
@@ -35,11 +33,11 @@ void GameMainSystem::GameUpdate(Poly::World * world)
 	val += 0.001f;
 	float y = sinf(val);
 	float x = cosf(val);
-	
+
 	auto allocator = world->GetComponentAllocator<Poly::CameraComponent>();
 	for (Poly::CameraComponent& cameraCmp : *allocator)
 	{
 		Poly::TransformComponent* transform = cameraCmp.GetSibling<Poly::TransformComponent>();
-		transform->SetLocalTranslation(Poly::Vector(x, y * 1.5, 5));
+		transform->SetLocalTranslation(Poly::Vector(x, y * 1.5f, 5));
 	}
 }

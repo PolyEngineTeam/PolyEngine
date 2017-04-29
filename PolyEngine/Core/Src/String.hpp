@@ -13,6 +13,11 @@ namespace Poly {
 		return len;
 	}
 
+	template<>
+	inline size_t StrLen<char>(const char* str) {
+		return std::strlen(str);
+	}
+
 	template<typename T>
 	class StringBase : BaseObject<> {
 	public:
@@ -46,7 +51,7 @@ namespace Poly {
 		bool operator==(const T* str) {
 			if (GetLength() != StrLen(str))
 				return false;
-			for (size_t k = 0; k < Length; ++k)
+			for (size_t k = 0; k < GetLength(); ++k)
 				if (Data[k] != str[k])
 					return false;
 			return true;
@@ -63,7 +68,7 @@ namespace Poly {
 				return true;
 			else if (GetLength() > rhs.GetLength())
 				return false;
-			
+
 			for (size_t i = 0; i < GetLength(); ++i)
 			{
 				if(Data[i] < rhs.Data[i])
@@ -86,7 +91,7 @@ namespace Poly {
 		}
 
 		//------------------------------------------------------------------------------
-		const T& operator[](int idx) const { HEAVY_ASSERTE(idx <= Length, "Index out of bounds!"); return Data[idx]; }
+		const T& operator[](int idx) const { HEAVY_ASSERTE(idx <= GetLength(), "Index out of bounds!"); return Data[idx]; }
 		size_t GetLength() const { return Data.GetSize() - 1; }
 		const T* GetCStr() const { return Data.GetData(); }
 

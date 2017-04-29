@@ -35,6 +35,9 @@ void InputSystem::InputPhase(World* world)
 			gConsole.LogDebug("MouseWheelMove: {}", InputEventsQueue.Front().Pos.X);
 			com.CurrWheel += InputEventsQueue.Front().Pos.X;
 			break;
+		case eInputEventType::_COUNT:
+			HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::Push(), which is an invalid value");
+			break;
 		}
 		InputEventsQueue.Pop();
 	}

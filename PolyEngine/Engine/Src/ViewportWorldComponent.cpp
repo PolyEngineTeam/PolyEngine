@@ -1,7 +1,5 @@
 #include "EnginePCH.hpp"
 
-#include "ViewportWorldComponent.hpp"
-
 using namespace Poly;
 
 ViewportWorldComponent::ViewportWorldComponent()

@@ -8,6 +8,9 @@
 #include <cstring>
 #include <type_traits>
 #include <limits>
+#include <array>
+#include <cstddef>
+#include <memory>
 #include <algorithm>
 #include <iostream>
 #include <string>
@@ -17,20 +20,33 @@
 	#pragma warning(disable: 4251)
 #endif
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
+#ifdef __GNUC__
+	#define IMPL_SAVE_WARNING_SETTINGS _Pragma("GCC diagnostic push")
+	#define IMPL_SILENCE_WARNING(w) _Pragma(#w)
+	#define SILENCE_GCC_WARNING(w)                     \
+		IMPL_SAVE_WARNING_SETTINGS                     \
+		IMPL_SILENCE_WARNING(GCC diagnostic ignored #w)
+	#define UNSILENCE_GCC_WARNING() _Pragma("GCC diagnostic pop")
+#else
+	#define SILENCE_GCC_WARNING(unused)
+	#define UNSILENCE_GCC_WARNING()
 #endif
 
-// TODO suport more platforms.
-#if !defined(_WIN32)
-	#error [ERROR] Unsupported platform! You are trying to compile for unsupported platform. This won't work.'
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
 #endif
 
 // ALIGN_16
 #if defined(_WIN32)
 	#define ALIGN_16 __declspec(align(16))
-#elif defined(_LINUX) || defined(_MAC)
+#elif defined(__GNUC__) || defined(__clang__)
 	#define ALIGN_16 __attribute__ ((aligned(16)))
+#else
+	#define ALIGN_16 alignas(16)
+#endif
+
+#if defined(__GNUC__) && !defined(offsetof)
+	#define offsetof(type, member) __builtin_offsetof(type, member)
 #endif
 
 // CORE_DLLEXPORT
@@ -52,6 +68,11 @@
 	#else
 		#define GAME_DLLEXPORT __declspec(dllimport)
 	#endif
+#elif defined(__GNUC__) || defined(__clang__)
+	//NOTE(vuko): dllexport and dllimport are the same as far as GCC and Clang are concerned
+	#define CORE_DLLEXPORT __attribute__ ((visibility ("default")))
+	#define ENGINE_DLLEXPORT __attribute__ ((visibility ("default")))
+	#define GAME_DLLEXPORT __attribute__ ((visibility ("default")))
 #else
 	#define CORE_DLLEXPORT
 	#define ENGINE_DLLEXPORT
@@ -63,15 +84,15 @@
 #endif
 
 // limits
-#define MAX_FLOAT std::numeric_limits<float>::max()
-#define MIN_FLOAT std::numeric_limits<float>::min()
+constexpr auto MAX_FLOAT = (std::numeric_limits<float>::max)(); //the parentheses are there to prevent WinAPI macros from breaking this
+constexpr auto MIN_FLOAT = (std::numeric_limits<float>::min)();
 
 // Assertions
-#define ASSERTE(expr, msg) assert(expr && #msg)
-#define HEAVY_ASSERTE(expr, msg) assert(expr && #msg)
+#define ASSERTE(expr, msg) assert((expr) && #msg)
+#define HEAVY_ASSERTE(expr, msg) assert((expr) && #msg)
 #define STATIC_ASSERTE(expr, msg) static_assert(expr, msg)
 
 // Utilities
-#define BIT(x) 1u<<x
+#define BIT(x) (1u<<x)
 
 #include "BaseObject.hpp"

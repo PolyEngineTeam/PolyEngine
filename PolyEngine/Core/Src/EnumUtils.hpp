@@ -6,8 +6,8 @@ namespace Poly {
 	template<typename T, typename E, size_t SIZE = static_cast<typename std::underlying_type<E>::type>(E::_COUNT)>
 	class EnumArray : public BaseObject<>
 	{
-		typedef typename std::underlying_type<E>::type IndexType;
-		
+		using IndexType = typename std::underlying_type<E>::type;
+
 		STATIC_ASSERTE(std::is_enum<E>::value, "Provided EnumArray key is not an enum!");
 		STATIC_ASSERTE(std::is_integral<IndexType>::value, "Underlying enum value type is not integral!");
 		STATIC_ASSERTE(SIZE > 0, "Zero size enum array is prohibited");
@@ -64,7 +64,7 @@ namespace Poly {
 			friend class EnumArray<T, E, SIZE>;
 		};
 
-		EnumArray() = default;
+		EnumArray() : Data{} {}
 
 		//------------------------------------------------------------------------------
 		EnumArray(const std::initializer_list<T>& list)
@@ -97,8 +97,14 @@ namespace Poly {
 		const T* GetData() const { return Data; }
 
 		//------------------------------------------------------------------------------
-		T& operator[](E idx) { HEAVY_ASSERTE(static_cast<IndexType>(idx) < GetSize(), "Index out of bounds!"); return Data[static_cast<IndexType>(idx)]; }
-		const T& operator[](E idx) const { HEAVY_ASSERTE(static_cast<IndexType>(idx) < GetSize(), "Index out of bounds!"); return Data[static_cast<IndexType>(idx)]; }
+		T& operator[](E enumValue) {
+			return const_cast<T&>(const_cast<const EnumArray&>(*this)[enumValue]); //as advised by Effective C++
+		}
+		const T& operator[](E enumValue) const {
+			auto idx = static_cast<IndexType>(enumValue);
+			HEAVY_ASSERTE(idx >= 0 && static_cast<size_t>(idx) < GetSize(), "Index out of bounds!");
+			return Data[idx];
+		}
 
 		//------------------------------------------------------------------------------
 		Iterator Begin() { return Iterator(Data, 0); }
@@ -126,18 +132,30 @@ namespace Poly {
 
 	namespace Impl {
 		template<typename T>
-		struct EnumInfo {
-		};
+		struct EnumInfo {};
 	}
 
 	template<typename T>
 	const char* GetEnumName(T val)
 	{
-		return Poly::Impl::EnumInfo<T>::Get().Names[val];
+		return Impl::EnumInfo<T>::Get().Names[val];
 	}
 }
 
+//NOTE(vuko): apparently defining specializations in a namespace from global/other namespace is illegal C++ and GCC complains
+//Unfortunately being compliant causes problems when using the macro in a namespace. Use _IN_POLY variant then.
+#define REGISTER_ENUM_NAMES(type, ...)                                                    \
+	namespace Poly { namespace Impl {                                                     \
+	template<> struct EnumInfo<type> {                                                    \
+		static EnumInfo<type>& Get() { static EnumInfo<type> instance; return instance; } \
+		const EnumArray<const char*, type> Names = {__VA_ARGS__};                         \
+	};                                                                                    \
+	}} //namespace Poly::Impl
 
-#define REGISTER_ENUM_NAMES(type, ...) template<> struct Poly::Impl::EnumInfo<type> { \
-	static Poly::Impl::EnumInfo<type>& Get() {static Poly::Impl::EnumInfo<type> instance; return instance; } \
-	const Poly::EnumArray<const char*, type> Names = {__VA_ARGS__}; }
+#define REGISTER_ENUM_NAMES_IN_POLY(type, ...)                                            \
+	namespace Impl {                                                                      \
+	template<> struct EnumInfo<type> {                                                    \
+		static EnumInfo<type>& Get() { static EnumInfo<type> instance; return instance; } \
+		const EnumArray<const char*, type> Names = {__VA_ARGS__};                         \
+	};                                                                                    \
+	} //namespace Impl
