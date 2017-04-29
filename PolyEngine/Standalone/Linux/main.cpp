@@ -131,7 +131,7 @@ int main() {
 				break;
 			}
 		} else {
-			engine.Update(0.016f);
+			engine.Update();
 		}
 	}
 	Poly::gConsole.LogDebug("Game loop interrupted");

@@ -1,5 +1,7 @@
 #include "EnginePCH.hpp"
 
+#include "InputSystem.hpp"
+
 using namespace Poly;
 
 void InputSystem::InputPhase(World* world)

@@ -43,6 +43,9 @@
     <ClCompile Include="Src\UniqueID.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Src\CorePCH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Src\AARect.cpp">
       <Filter>Source Files\Geometry</Filter>
     </ClCompile>

@@ -1,5 +1,7 @@
 #include "CorePCH.hpp"
 
+#include "Vector.hpp"
+
 using namespace Poly;
 
 //------------------------------------------------------------------------------

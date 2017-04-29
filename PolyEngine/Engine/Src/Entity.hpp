@@ -47,7 +47,7 @@ namespace Poly
 		/// @return A pointer to a component or nullptr if it does not exist.
 		//////////////////////////////
 		template<class T>
-		T* GetComponent(); //defined in World.hpp due to circular inclusion problem
+		T* GetComponent(); //defined in World.hpp due to circular inclusion problem; FIXME: circular inclusion
 
 	private:
 		Entity(const World* world);

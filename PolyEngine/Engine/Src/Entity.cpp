@@ -1,5 +1,7 @@
 #include "EnginePCH.hpp"
 
+#include "Entity.hpp"
+
 using namespace Poly;
 
 Entity::Entity(const World * world)

@@ -6,13 +6,26 @@
 namespace Poly {
 
 	template<typename T>
+	size_t StrLen(const T* str) {
+		size_t len = 0;
+		while (str[len] != 0)
+			++len;
+		return len;
+	}
+
+	template<>
+	inline size_t StrLen<char>(const char* str) {
+		return std::strlen(str);
+	}
+
+	template<typename T>
 	class StringBase : BaseObject<> {
 	public:
 		StringBase() { Data.Resize(1); Data[0] = 0; }
 
 		//------------------------------------------------------------------------------
 		StringBase(const T* data) {
-			size_t length = std::strlen(data);
+			size_t length = StrLen(data);
 			Data.Resize(length + 1);
 			memcpy(Data.GetData(), data, sizeof(T) * length);
 			Data[length] = 0;
@@ -36,7 +49,7 @@ namespace Poly {
 
 		//------------------------------------------------------------------------------
 		bool operator==(const T* str) {
-			if (GetLength() != std::strlen(str))
+			if (GetLength() != StrLen(str))
 				return false;
 			for (size_t k = 0; k < GetLength(); ++k)
 				if (Data[k] != str[k])
@@ -55,7 +68,7 @@ namespace Poly {
 				return true;
 			else if (GetLength() > rhs.GetLength())
 				return false;
-			
+
 			for (size_t i = 0; i < GetLength(); ++i)
 			{
 				if(Data[i] < rhs.Data[i])

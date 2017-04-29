@@ -1,5 +1,7 @@
 #include "CorePCH.hpp"
 
+#include "SimdMath.hpp"
+
 using namespace Poly;
 
 #if !DISABLE_SIMD

@@ -133,6 +133,14 @@ namespace Poly {
 	   */
 	  Matrix GetTransposed() const;
 
+	  /**
+	   *  Returns internal data pointer for processing in functions
+	   *  that need it (for example OpenGL frequently does)
+	   *
+	   *  @return Internal data pointer to float array of 16
+	   */
+	  const float* GetDataPtr() const;
+
 	  bool Decompose(Vector& translation, Quaternion& rotation, Vector& scale) const;
 	  bool Decompose(Vector& translation, Quaternion& rotation, Vector& scale, MatrixSkew& skew, Vector& perspectivePoint) const;
 
@@ -141,11 +149,10 @@ namespace Poly {
 	  // This structure allows to access vector elements by index or name.
 	  union {
 	#if !DISABLE_SIMD
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wignored-attributes"
+		SILENCE_GCC_WARNING(-Wignored-attributes)
 		alignas(16) std::array<__m128, 4> SimdRow;
-	#pragma GCC diagnostic pop
-	#endif
+		UNSILENCE_GCC_WARNING()
+	#endif //!DISABLE_SIMD
 		alignas(16) std::array<float, 16> Data;
 		struct alignas(16) {
 		  float m00, m01, m02, m03;

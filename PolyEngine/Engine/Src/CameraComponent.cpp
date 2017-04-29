@@ -1,5 +1,7 @@
 #include "EnginePCH.hpp"
 
+#include "CameraComponent.hpp"
+
 using namespace Poly;
 
 CameraComponent::CameraComponent(float fov,  float zNear, float zFar)

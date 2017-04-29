@@ -1,5 +1,7 @@
 #include "CorePCH.hpp"
 
+#include "Matrix.hpp"
+
 using namespace Poly;
 
 //------------------------------------------------------------------------------
@@ -388,6 +390,9 @@ Matrix Matrix::GetTransposed() const {
   Matrix ret = *this;
   return ret.Transpose();
 }
+
+//------------------------------------------------------------------------------
+const float* Matrix::GetDataPtr() const { return Data.data(); }
 
 //------------------------------------------------------------------------------
 bool Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& scale) const

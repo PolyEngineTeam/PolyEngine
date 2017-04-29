@@ -8,13 +8,8 @@ namespace Poly {
 	/**
 	*  Enum describing possible levels of logging
 	*/
-	enum class eLogLevel : uint8_t { LVL_DEBUG, LVL_INFO, LVL_WARNING, LVL_ERROR, _COUNT };
-} //namespace Poly
-
-//WORKAROUND(vuko): namespaces specializations problem, see EnumUtils.hpp
-REGISTER_ENUM_NAMES(Poly::eLogLevel, "DEBUG", "INFO", "WARNING", "ERROR");
-
-namespace Poly {
+	enum class eLogLevel { LVL_DEBUG, LVL_INFO, LVL_WARNING, LVL_ERROR, _COUNT };
+	REGISTER_ENUM_NAMES_IN_POLY(Poly::eLogLevel, "DEBUG", "INFO", "WARNING", "ERROR");
 	constexpr eLogLevel LOG_LEVEL_FILTER = eLogLevel::LVL_DEBUG;
 
 	/**

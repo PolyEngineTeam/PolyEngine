@@ -123,5 +123,5 @@ void ShaderProgram::SetUniform(const String& name, const Vector& val)
 
 void ShaderProgram::SetUniform(const String& name, const Matrix& val)
 {
-	glUniformMatrix4fv(m_uniforms[name], 1, GL_FALSE, val.GetTransposed().Data.data());
+	glUniformMatrix4fv(m_uniforms[name], 1, GL_FALSE, val.GetTransposed().GetDataPtr());
 }

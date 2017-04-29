@@ -5,7 +5,7 @@
 
 using namespace Poly;
 
-enum class eTestEnum : uint8_t
+enum class eTestEnum
 {
 	VAL_1,
 	VAL_2,

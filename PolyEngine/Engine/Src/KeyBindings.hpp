@@ -5,7 +5,7 @@
 
 namespace Poly
 {
-	enum class eKey : uint8_t
+	enum class eKey
 	{
 		UNDEFINED =		0x00,
 		MLBUTTON =		VK_LBUTTON,
@@ -185,7 +185,7 @@ namespace Poly
 #elif defined(__linux__)
 namespace Poly
 {
-	enum class eKey : uint8_t
+	enum class eKey
 	{
 		UNDEFINED              = 0x00,
 		LBUTTON                = 0x01,

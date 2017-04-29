@@ -71,6 +71,9 @@
     <ClCompile Include="Src\InputWorldComponent.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Src\EnginePCH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Src\ViewportWorldComponent.cpp">
       <Filter>Source Files\Viewport</Filter>
     </ClCompile>

@@ -20,9 +20,9 @@ Poly::Engine::~Engine()
 bool Engine::Init(const IRenderingContextParams* context)
 {
 	// Engine Components
-	this->RegisterComponent<TransformComponent>((size_t) eEngineComponents::TRANSFORM);
-	this->RegisterComponent<CameraComponent>((size_t) eEngineComponents::BASE_CAMERA);
-	this->RegisterComponent<MeshRenderingComponent>((size_t) eEngineComponents::MESH_RENDERING);
+	RegisterComponent<TransformComponent>((size_t) eEngineComponents::TRANSFORM);
+	RegisterComponent<CameraComponent>((size_t) eEngineComponents::BASE_CAMERA);
+	RegisterComponent<MeshRenderingComponent>((size_t) eEngineComponents::MESH_RENDERING);
 
 	// Engine update phases
 	RegisterUpdatePhase(InputSystem::InputPhase, eUpdatePhaseOrder::PREUPDATE);
@@ -53,7 +53,7 @@ void Engine::RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpda
 }
 
 //------------------------------------------------------------------------------
-void Engine::Update(float /*dt*/)
+void Engine::Update()
 {
 	UpdatePhases(eUpdatePhaseOrder::PREUPDATE);
 	UpdatePhases(eUpdatePhaseOrder::UPDATE);

@@ -13,6 +13,7 @@
 
 namespace Poly
 {
+	class World;
 	class Engine;
 	typedef std::function<void(World*)> PhaseUpdateFunction;
 
@@ -65,7 +66,7 @@ namespace Poly
 		//////////////////////////////
 		void RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order);
 
-		void Update(float dt);
+		void Update();
 
 		void KeyDown(eKey key) { InputEventsQueue.Push({eInputEventType::KEYDOWN, key}); }
 		void KeyUp(eKey key) { InputEventsQueue.Push({eInputEventType::KEYUP, key}); }

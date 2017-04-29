@@ -27,8 +27,8 @@ OpenGLRenderingContextParams::OpenGLRenderingContextParams(HWND hwnd, RECT rect)
 bool OpenGLRenderingContext::Init(const IRenderingContextParams * context)
 {
 	const OpenGLRenderingContextParams* openGLContext = static_cast<const OpenGLRenderingContextParams*>(context);
-	hWnd = openGLContext->HWnd; // Set the HWND for our window  
-	hDC = GetDC(hWnd); // Get the device context for our window  ScreenDim.Width = openGLContext->Rect.right - openGLContext->Rect.left;
+	hWnd = openGLContext->HWnd; // Set the HWND for our window
+	hDC = GetDC(hWnd); // Get the device context for our window
 	ScreenDim.Width = openGLContext->Rect.right - openGLContext->Rect.left;
 	ScreenDim.Height = openGLContext->Rect.bottom - openGLContext->Rect.top;
 
@@ -143,11 +143,11 @@ bool OpenGLRenderingContext::Init(const IRenderingContextParams* ictxParams) {
 	this->display = ctxParams->display;
 	this->window = ctxParams->window;
 
-	//what the fuck, GLEW
+	//create a temporary context to make GLEW happy, then immediately destroy it (it has wrong parameters)
 	{
 		GLXContext makeGlewHappy = glXCreateNewContext(this->display, ctxParams->fbConfig, GLX_RGBA_TYPE, /*share list*/ nullptr, /*direct*/ True);
 		glXMakeCurrent(this->display, this->window, makeGlewHappy);
-		Poly::gConsole.LogDebug("Temporary GL context for GLEW created.");
+		gConsole.LogDebug("Temporary GL context for GLEW created.");
 
 		//initialize GLEW
 		GLenum err = glewInit();
@@ -157,7 +157,7 @@ bool OpenGLRenderingContext::Init(const IRenderingContextParams* ictxParams) {
 		}
 		glXMakeCurrent(this->display, None, nullptr);
 		glXDestroyContext(this->display, makeGlewHappy);
-		Poly::gConsole.LogDebug("GLEW initialized.");
+		gConsole.LogDebug("GLEW initialized.");
 	}
 
 	//create GLX OpenGL context
@@ -188,10 +188,10 @@ bool OpenGLRenderingContext::Init(const IRenderingContextParams* ictxParams) {
 	}
 	glXMakeCurrent(this->display, this->window, this->context);
 
-	Poly::gConsole.LogInfo("OpenGL context set up succesfully");
-	Poly::gConsole.LogInfo("GL Renderer: {}", glGetString(GL_RENDERER));
-	Poly::gConsole.LogInfo("GL Version: {}", glGetString(GL_VERSION));
-	Poly::gConsole.LogInfo("GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	gConsole.LogInfo("OpenGL context set up successfully");
+	gConsole.LogInfo("GL Renderer: {}", glGetString(GL_RENDERER));
+	gConsole.LogInfo("GL Version: {}", glGetString(GL_VERSION));
+	gConsole.LogInfo("GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
 	return true; //success!
 }

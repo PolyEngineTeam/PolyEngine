@@ -20,6 +20,18 @@
 	#pragma warning(disable: 4251)
 #endif
 
+#ifdef __GNUC__
+	#define IMPL_SAVE_WARNING_SETTINGS _Pragma("GCC diagnostic push")
+	#define IMPL_SILENCE_WARNING(w) _Pragma(#w)
+	#define SILENCE_GCC_WARNING(w)                     \
+		IMPL_SAVE_WARNING_SETTINGS                     \
+		IMPL_SILENCE_WARNING(GCC diagnostic ignored #w)
+	#define UNSILENCE_GCC_WARNING() _Pragma("GCC diagnostic pop")
+#else
+	#define SILENCE_GCC_WARNING(unused)
+	#define UNSILENCE_GCC_WARNING()
+#endif
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -57,23 +69,10 @@
 		#define GAME_DLLEXPORT __declspec(dllimport)
 	#endif
 #elif defined(__GNUC__) || defined(__clang__)
-	#if defined(_DLL) && defined(_CORE)
-		#define CORE_DLLEXPORT __attribute__ ((visibility ("default")))
-	#else
-		#define CORE_DLLEXPORT __attribute__ ((visibility ("default")))
-	#endif
-
-	#if defined(_DLL) && defined(_ENGINE)
-		#define ENGINE_DLLEXPORT __attribute__ ((visibility ("default")))
-	#else
-		#define ENGINE_DLLEXPORT __attribute__ ((visibility ("default")))
-	#endif
-
-	#if defined(_DLL) && defined(_GAME)
-		#define GAME_DLLEXPORT __attribute__ ((visibility ("default")))
-	#else
-		#define GAME_DLLEXPORT __attribute__ ((visibility ("default")))
-	#endif
+	//NOTE(vuko): dllexport and dllimport are the same as far as GCC and Clang are concerned
+	#define CORE_DLLEXPORT __attribute__ ((visibility ("default")))
+	#define ENGINE_DLLEXPORT __attribute__ ((visibility ("default")))
+	#define GAME_DLLEXPORT __attribute__ ((visibility ("default")))
 #else
 	#define CORE_DLLEXPORT
 	#define ENGINE_DLLEXPORT
@@ -85,8 +84,8 @@
 #endif
 
 // limits
-constexpr auto MAX_FLOAT = std::numeric_limits<float>::max();
-constexpr auto MIN_FLOAT = std::numeric_limits<float>::min();
+constexpr auto MAX_FLOAT = (std::numeric_limits<float>::max)(); //the parentheses are there to prevent WinAPI macros from breaking this
+constexpr auto MIN_FLOAT = (std::numeric_limits<float>::min)();
 
 // Assertions
 #define ASSERTE(expr, msg) assert((expr) && #msg)

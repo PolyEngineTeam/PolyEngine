@@ -76,7 +76,7 @@ namespace Poly {
 		template<typename T>
 		T* GetComponent(const UniqueID& entityId)
 		{
-			HEAVY_ASSERTE(!!entityId, "Invalid component ID");
+			HEAVY_ASSERTE(!!entityId, "Invalid entity ID");
 			auto iter = IDToEntityMap.find(entityId);
 			HEAVY_ASSERTE(iter != IDToEntityMap.end(), "Invalid entityId - entity with that ID does not exist!");
 			return iter->second->GetComponent<T>();
@@ -100,6 +100,7 @@ namespace Poly {
 		ViewportWorldComponent ViewportComponent;
 	};
 
+	//defined here due to circular inclusion problem; FIXME: circular inclusion
 	template<typename T>
 	T* Entity::GetComponent()
 	{

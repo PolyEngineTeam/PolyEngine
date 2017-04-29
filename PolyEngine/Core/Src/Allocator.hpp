@@ -2,6 +2,8 @@
 
 #include "Defines.hpp"
 
+//TODO(vuko): possibly replace with std::aligned_storage for portability and soundness guarantee
+
 namespace Poly {
 
 #if defined(_WIN32)
@@ -10,14 +12,14 @@ namespace Poly {
 	inline void DefaultFree(void* ptr) { _aligned_free(ptr); }
 #elif defined(__GNUC__) || defined(__clang__)
 	namespace Impl {
-		constexpr size_t alignment = 16;
+		constexpr size_t MEM_ALIGNMENT = 16;
 	}
 
 #include <malloc.h>
 
 	inline void* DefaultAlloc(size_t size) {
 		using namespace Impl;
-		void* fresh = aligned_alloc(alignment, size);
+		void* fresh = aligned_alloc(MEM_ALIGNMENT, size);
 
 #ifdef __has_feature
 #if __has_feature(memory_sanitizer)
@@ -29,6 +31,10 @@ namespace Poly {
 		return fresh;
 	}
 
+	inline void DefaultFree(void* ptr) {
+		free(ptr); //NOTE(vuko): aligned_alloc'd pointers can be safely freed by free()
+	}
+
 	inline void* DefaultRealloc(void* ptr, size_t size) {
 		using namespace Impl;
 		//POSIX provides no aligned_realloc, so always do a fresh allocation, then copy :(
@@ -36,53 +42,11 @@ namespace Poly {
 
 		if (ptr) {
 			memcpy(fresh, ptr, malloc_usable_size(ptr));
-			free(ptr);
+			DefaultFree(ptr);
 		}
 
 		return fresh;
 	}
-
-	inline void DefaultFree(void* ptr) {
-		free(ptr);
-	}
-
-#if 0
-	inline void* ManualBookkeeping_DefaultAlloc(size_t size) {
-		using namespace Impl;
-		static_assert(sizeof(size) <= alignment);
-		void* fresh = aligned_alloc(alignment, alignment + size);
-		if (fresh == nullptr) {
-			return fresh;
-		}
-
-		memcpy(fresh, &size, sizeof(size)); //will be needed by realloc
-
-		return static_cast<uint8_t*>(fresh) + alignment;
-	}
-
-	inline void* ManualBookkeeping_DefaultRealloc(void* ptr, size_t size) {
-		using namespace Impl;
-		static_assert(sizeof(size) <= alignment);
-		//POSIX provides no aligned_realloc, so always do a memcpy :(
-		void* fresh = ManualBookkeeping_DefaultAlloc(size);
-
-		if (ptr) {
-			decltype(size) old_size;
-			memcpy(&old_size, static_cast<uint8_t*>(ptr) - alignment, sizeof(size));
-
-			//copy stuff over
-			memcpy(fresh, ptr, old_size);
-		}
-
-		return fresh;
-
-	}
-
-	inline void ManualBookkeeping_DefaultFree(void* ptr) {
-		using namespace Impl;
-		free(static_cast<uint8_t*>(ptr) - alignment);
-	}
-#endif
 
 #else
 	#error [ERROR] Unsupported platform! You are trying to compile for unsupported platform. This won't work.'

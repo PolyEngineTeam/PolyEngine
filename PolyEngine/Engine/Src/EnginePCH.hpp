@@ -7,8 +7,8 @@
 #include "Engine.hpp"
 
 // ECS
-#include "Entity.hpp"
 #include "ComponentBase.hpp"
+#include "Entity.hpp"
 #include "World.hpp"
 
 // Rendering
