@@ -11,13 +11,11 @@ TEST_CASE("TransformComponent with no parent", "[TransformCompoent]")
 	TransformComponent tc;
 	Vector translationVector = Vector(1, 2, 3);
 	Vector scaleVector = Vector(4, 5, 6);
+	Matrix identity;
 	SECTION("Empty constructor")
 	{
-		for (int i = 0; i < 16; ++i)
-		{
-			REQUIRE(tc.GetLocalTransformationMatrix().Data[i] == (i % 5 == 0 ? 1 : 0));
-			REQUIRE(tc.GetGlobalTransformationMatrix().Data[i] == (i % 5 == 0 ? 1 : 0));
-		}
+		REQUIRE(tc.GetLocalTransformationMatrix() == identity);
+		REQUIRE(tc.GetGlobalTransformationMatrix() == identity);
 	}
 
 	// basic transform setting
@@ -64,8 +62,8 @@ TEST_CASE("TransformComponent with no parent", "[TransformCompoent]")
 			  0,0,0,1};
 		for (int i = 0; i < 16; i++)
 		{
-			REQUIRE(tc2.GetLocalTransformationMatrix().Data[i] - data[i] < 0.000001);
-			REQUIRE(tc2.GetGlobalTransformationMatrix().Data[i] - data[i] < 0.000001);
+			REQUIRE(Cmpf(tc2.GetLocalTransformationMatrix().Data[i], data[i]));
+			REQUIRE(Cmpf(tc2.GetGlobalTransformationMatrix().Data[i], data[i]));
 		}
 	}
 }
@@ -97,15 +95,13 @@ TEST_CASE("TransformComponent with parent", "[TransformComponent]")
 
 	SECTION("Rotation")
 	{
-		EulerAngles angles1 = { Angle::FromDegrees(10),
-			Angle::FromDegrees(20),
-			Angle::FromDegrees(30) };
+		EulerAngles angles1 = { 10_deg, 20_deg, 30_deg };
 		Quaternion rotation1(angles1);
 		parent.SetLocalRotation(rotation1);
-		REQUIRE(child.GetGlobalRotation().W - rotation1.W < 0.000001);
-		REQUIRE(child.GetGlobalRotation().X - rotation1.X < 0.000001);
-		REQUIRE(child.GetGlobalRotation().Y - rotation1.Y < 0.000001);
-		REQUIRE(child.GetGlobalRotation().Z - rotation1.Z < 0.000001);
+		REQUIRE(Cmpf(child.GetGlobalRotation().X, rotation1.X));
+		REQUIRE(Cmpf(child.GetGlobalRotation().Y, rotation1.Y));
+		REQUIRE(Cmpf(child.GetGlobalRotation().Z, rotation1.Z));
+		REQUIRE(Cmpf(child.GetGlobalRotation().W, rotation1.W));
 	}
 }
 
@@ -119,9 +115,7 @@ TEST_CASE("Multi-layer hierarchy", "[TransformComponent]")
 	tc6.SetParent(&tc5);
 
 	Vector translation = Vector(1, 2, 3);
-	EulerAngles angles = { Angle::FromDegrees(10),
-		Angle::FromDegrees(20),
-		Angle::FromDegrees(30) };
+	EulerAngles angles = { 10_deg, 20_deg, 30_deg };
 	Quaternion rotation(angles);
 	Vector scale = Vector(4, 5, 6);
 
@@ -130,9 +124,9 @@ TEST_CASE("Multi-layer hierarchy", "[TransformComponent]")
 	tc5.SetLocalScale(scale);
 
 	REQUIRE(tc6.GetGlobalTranslation() == translation);
-	REQUIRE(tc6.GetGlobalRotation().W - rotation.W < 0.000001);
-	REQUIRE(tc6.GetGlobalRotation().X - rotation.X < 0.000001);
-	REQUIRE(tc6.GetGlobalRotation().Y - rotation.Y < 0.000001);
-	REQUIRE(tc6.GetGlobalRotation().Z - rotation.Z < 0.000001);
+	REQUIRE(Cmpf(tc6.GetGlobalRotation().X, rotation.X));
+	REQUIRE(Cmpf(tc6.GetGlobalRotation().Y, rotation.Y));
+	REQUIRE(Cmpf(tc6.GetGlobalRotation().Z, rotation.Z));
+	REQUIRE(Cmpf(tc6.GetGlobalRotation().W, rotation.W));
 	REQUIRE(tc6.GetGlobalScale() == scale);
 }
