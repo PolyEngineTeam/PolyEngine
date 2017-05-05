@@ -4,10 +4,9 @@
 
 
 //------------------------------------------------------------------------------
-
 Poly::TimeWorldComponent::TimeWorldComponent()
 {
-	LastFrameTime = std::chrono::steady_clock::now();
-	AbsoluteTime = PausableTime = std::chrono::duration<float>::zero();
+	LastFrameTime = steady_clock::now();
+	SystemTime = GameplayTime = duration<float>::zero();
 	IsPaused = false;
 }

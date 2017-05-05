@@ -4,7 +4,9 @@
 #include "TimeSystem.hpp"
 #include "ComponentBase.hpp"
 
-
+using std::chrono::duration;
+using std::chrono::steady_clock;
+using std::chrono::duration_cast;
 
 namespace Poly
 {
@@ -16,18 +18,18 @@ namespace Poly
 		~TimeWorldComponent() {};
 
 		float GetDeltaTime() const { return DeltaTime.count(); };
-		float GetAbsoluteTime() const { return AbsoluteTime.count(); };
-		float GetPausableTime() const { return PausableTime.count(); };
+		float GetSystemTime() const { return SystemTime.count(); };
+		float GetGameplayTime() const { return GameplayTime.count(); };
 
 		void SetPaused(bool isPaused) { IsPaused = isPaused; };
 
 	private:
 		const std::chrono::milliseconds MIN_TIME_STEP_MS = std::chrono::milliseconds(60);
 
-		std::chrono::steady_clock::time_point LastFrameTime;
-		std::chrono::duration<float> DeltaTime;
-		std::chrono::duration<float> AbsoluteTime;
-		std::chrono::duration<float> PausableTime;
+		steady_clock::time_point LastFrameTime;
+		duration<float> DeltaTime;
+		duration<float> SystemTime;
+		duration<float> GameplayTime;
 
 		bool IsPaused;
 
