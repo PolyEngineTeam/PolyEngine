@@ -26,7 +26,7 @@ Quaternion::Quaternion(const EulerAngles& euler) {
 }
 
 //------------------------------------------------------------------------------
-bool Quaternion::operator==(const Quaternion& rhs) {
+bool Quaternion::operator==(const Quaternion& rhs) const {
 #if DISABLE_SIMD
 	return Cmpf(X, rhs.X) && Cmpf(Y, rhs.Y) && Cmpf(Z, rhs.Z) && Cmpf(W, rhs.W)
 		|| Cmpf(X, -rhs.X) && Cmpf(Y, -rhs.Y) && Cmpf(Z, -rhs.Z) && Cmpf(W, -rhs.W);

@@ -16,8 +16,8 @@ namespace Poly {
 	  Quaternion(const Vector& axis, const Angle& angle);
 	  Quaternion(const EulerAngles& euler);
 
-	  bool operator==(const Quaternion& rhs);
-	  inline bool operator!=(const Quaternion& rhs) { return !(*this == rhs); }
+	  bool operator==(const Quaternion& rhs) const;
+	  inline bool operator!=(const Quaternion& rhs) const { return !(*this == rhs); }
 
 	  Quaternion operator*(const Quaternion& rhs) const;
 	  inline Quaternion& operator*=(const Quaternion& rhs) { *this = *this * rhs; return *this; }
