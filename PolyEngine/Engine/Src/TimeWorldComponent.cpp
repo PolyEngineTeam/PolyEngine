@@ -4,7 +4,10 @@
 
 
 //------------------------------------------------------------------------------
-void Poly::TimeWorldComponent::Update()
+
+Poly::TimeWorldComponent::TimeWorldComponent()
 {
-	DeltaTime = Time.Update();
+	LastFrameTime = std::chrono::steady_clock::now();
+	AbsoluteTime = PausableTime = std::chrono::duration<float>::zero();
+	IsPaused = false;
 }

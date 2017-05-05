@@ -183,6 +183,7 @@
     <ClCompile Include="Src\ResourceManager.cpp" />
     <ClCompile Include="Src\ShaderProgram.cpp" />
     <ClCompile Include="Src\Timers.cpp" />
+    <ClCompile Include="Src\TimeSystem.cpp" />
     <ClCompile Include="Src\TimeWorldComponent.cpp" />
     <ClCompile Include="Src\TransformComponent.cpp" />
     <ClCompile Include="Src\ViewportWorldComponent.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="Src\ResourceManager.hpp" />
     <ClInclude Include="Src\ShaderProgram.hpp" />
     <ClInclude Include="Src\Timers.hpp" />
+    <ClInclude Include="Src\TimeSystem.hpp" />
     <ClInclude Include="Src\TimeWorldComponent.hpp" />
     <ClInclude Include="Src\TransformComponent.hpp" />
     <ClInclude Include="Src\Viewport.hpp" />

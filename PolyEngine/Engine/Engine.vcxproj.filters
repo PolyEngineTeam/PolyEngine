@@ -92,6 +92,9 @@
     <ClCompile Include="Src\TimeWorldComponent.cpp">
       <Filter>Source Files\Time</Filter>
     </ClCompile>
+    <ClCompile Include="Src\TimeSystem.cpp">
+      <Filter>Source Files\Time</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine.hpp">
@@ -158,6 +161,9 @@
       <Filter>Source Files\Time</Filter>
     </ClInclude>
     <ClInclude Include="Src\TimeWorldComponent.hpp">
+      <Filter>Source Files\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\TimeSystem.hpp">
       <Filter>Source Files\Time</Filter>
     </ClInclude>
   </ItemGroup>
