@@ -18,6 +18,7 @@
 #include "Allocator.hpp"
 #include "PoolAllocator.hpp"
 #include "IterablePoolAllocator.hpp"
+#include "RefCountedBase.hpp"
 
 // Containers
 #include "String.hpp"

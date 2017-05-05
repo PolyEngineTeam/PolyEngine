@@ -18,6 +18,9 @@
 #include "InputQueue.hpp"
 #include "KeyBindings.hpp"
 
+// Resources
+#include "ResourceManager.hpp"
+
 // Components
 #include "TransformComponent.hpp"
 #include "CameraComponent.hpp"

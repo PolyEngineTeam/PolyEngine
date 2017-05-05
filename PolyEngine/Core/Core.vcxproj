@@ -130,6 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\BaseObject.cpp" />
     <ClCompile Include="Src\Color.cpp" />
     <ClCompile Include="Src\CorePCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -141,6 +142,7 @@
     <ClCompile Include="Src\Matrix.cpp" />
     <ClCompile Include="Src\Quaternion.cpp" />
     <ClCompile Include="Src\AARect.cpp" />
+    <ClCompile Include="Src\RefCountedBase.cpp" />
     <ClCompile Include="Src\SimdMath.cpp" />
     <ClCompile Include="Src\UniqueID.cpp" />
     <ClCompile Include="Src\Vector.cpp" />
@@ -164,6 +166,7 @@
     <ClInclude Include="Src\Quaternion.hpp" />
     <ClInclude Include="Src\Queue.hpp" />
     <ClInclude Include="Src\AARect.hpp" />
+    <ClInclude Include="Src\RefCountedBase.hpp" />
     <ClInclude Include="Src\SimdMath.hpp" />
     <ClInclude Include="Src\String.hpp" />
     <ClInclude Include="Src\UniqueID.hpp" />

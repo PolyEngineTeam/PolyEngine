@@ -33,6 +33,9 @@
     <Filter Include="Source Files\Viewport">
       <UniqueIdentifier>{22c76440-d7f2-4aea-bfd0-5271c4396e83}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Resources">
+      <UniqueIdentifier>{3ef76f39-e705-4066-93a8-18ed628b2a2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -76,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="Src\ViewportWorldComponent.cpp">
       <Filter>Source Files\Viewport</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ResourceManager.cpp">
+      <Filter>Source Files\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -135,6 +141,9 @@
     </ClInclude>
     <ClInclude Include="Src\ViewportWorldComponent.hpp">
       <Filter>Source Files\Viewport</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ResourceManager.hpp">
+      <Filter>Source Files\Resources</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
