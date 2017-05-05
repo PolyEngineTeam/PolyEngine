@@ -2,11 +2,11 @@
 
 #include <chrono>
 #include "TimeSystem.hpp"
+#include "Timer.hpp"
 #include "ComponentBase.hpp"
 
-using std::chrono::duration;
 using std::chrono::steady_clock;
-using std::chrono::duration_cast;
+using std::chrono::milliseconds;
 
 namespace Poly
 {
@@ -15,21 +15,22 @@ namespace Poly
 		friend void TimeSystem::TimeUpdatePhase(World * world);
 	public:	
 		TimeWorldComponent();
-		~TimeWorldComponent() {};
+		~TimeWorldComponent();
 
-		float GetDeltaTime() const { return DeltaTime.count(); };
-		float GetSystemTime() const { return SystemTime.count(); };
-		float GetGameplayTime() const { return GameplayTime.count(); };
+		float GetDeltaTime() const { return DeltaTime; };
+		float GetSystemTime() const { return SystemTime->GetTime(); };
+		float GetGameplayTime() const { return GameplayTime->GetTime(); };
 
 		void SetPaused(bool isPaused) { IsPaused = isPaused; };
 
 	private:
-		const std::chrono::milliseconds MIN_TIME_STEP_MS = std::chrono::milliseconds(60);
+		const milliseconds MIN_TIME_STEP_MS = milliseconds(60);
 
 		steady_clock::time_point LastFrameTime;
-		duration<float> DeltaTime;
-		duration<float> SystemTime;
-		duration<float> GameplayTime;
+		Timer* SystemTime;
+		Timer* GameplayTime;
+
+		float DeltaTime;
 
 		bool IsPaused;
 
