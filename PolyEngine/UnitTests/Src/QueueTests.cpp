@@ -64,7 +64,7 @@ TEST_CASE("Queue tests (with BaseObject)", "[Queue]")
 		~Test() {}
 
 	private:
-		int i;
+		int i = 0;
 
 	};
 

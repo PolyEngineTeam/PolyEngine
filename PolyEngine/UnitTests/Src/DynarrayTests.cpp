@@ -161,7 +161,7 @@ TEST_CASE("Dynarray with BaseObject", "[Dynarray]")
 		~Test() {}
 
 	private:
-		int i;
+		int i = 0;
 
 	};
 

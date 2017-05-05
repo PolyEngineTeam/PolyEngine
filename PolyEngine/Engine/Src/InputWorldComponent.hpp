@@ -13,6 +13,8 @@ namespace Poly
 	{
 	friend void InputSystem::InputPhase(World*);
 	public:
+		InputWorldComponent() = default;
+
 		bool IsPressed(eKey key) const { return CurrKey[key]; }
 		bool IsPressed(const std::initializer_list<eKey>& list) const;
 		bool IsClicked(eKey key) const { return (CurrKey[key] && !PrevKey[key]); }
@@ -28,7 +30,7 @@ namespace Poly
 		EnumArray<bool, eKey> PrevKey;
 		Vector CurrMouse;
 		Vector PrevMouse;
-		int CurrWheel;
-		int PrevWheel;
+		int CurrWheel = 0;
+		int PrevWheel = 0;
 	};
 }

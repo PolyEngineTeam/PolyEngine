@@ -80,7 +80,7 @@ namespace Poly {
 		}
 
 		//------------------------------------------------------------------------------
-		StringBase<T> operator+(const StringBase<T> rhs) const {
+		StringBase<T> operator+(const StringBase<T>& rhs) const {
 			StringBase<T> ret;
 			size_t totalLength = GetLength() + rhs.GetLength();
 			ret.Data.Resize(totalLength + 1);

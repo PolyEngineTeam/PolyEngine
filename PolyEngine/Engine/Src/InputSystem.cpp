@@ -17,23 +17,24 @@ void InputSystem::InputPhase(World* world)
 
 	while (!InputEventsQueue.Empty())
 	{
-		switch (InputEventsQueue.Front().Type)
+		InputEvent& ev = InputEventsQueue.Front();
+		switch (ev.Type)
 		{
 		case eInputEventType::KEYDOWN:
-			gConsole.LogDebug("Keydown: {}", (size_t)InputEventsQueue.Front().Key);
-			com.CurrKey[InputEventsQueue.Front().Key] = true;
+			gConsole.LogDebug("Keydown: {}", (size_t)ev.Key);
+			com.CurrKey[ev.Key] = true;
 			break;
 		case eInputEventType::KEYUP:
-			gConsole.LogDebug("Keyup {}", (size_t)InputEventsQueue.Front().Key);
-			com.CurrKey[InputEventsQueue.Front().Key] = false;
+			gConsole.LogDebug("Keyup {}", (size_t)ev.Key);
+			com.CurrKey[ev.Key] = false;
 			break;
 		case eInputEventType::MOUSEMOVE:
-			gConsole.LogDebug("MousePosition: {}", InputEventsQueue.Front().Pos);
-			com.CurrMouse = InputEventsQueue.Front().Pos;
+			gConsole.LogDebug("MousePosition: {}", ev.Pos);
+			com.CurrMouse = ev.Pos;
 			break;
 		case eInputEventType::WHEELMOVE:
-			gConsole.LogDebug("MouseWheelMove: {}", InputEventsQueue.Front().Pos.X);
-			com.CurrWheel += InputEventsQueue.Front().Pos.X;
+			gConsole.LogDebug("MouseWheelMove: {}", ev.Pos.X);
+			com.CurrWheel += ev.Pos.X;
 			break;
 		case eInputEventType::_COUNT:
 			HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::Push(), which is an invalid value");

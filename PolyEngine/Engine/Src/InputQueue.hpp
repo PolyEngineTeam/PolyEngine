@@ -22,7 +22,7 @@ namespace Poly
 		InputEvent(eInputEventType type, const Vector& pos) : Type(type), Pos(pos) {}
 
 		eInputEventType Type = eInputEventType::_COUNT;
-		eKey Key;
+		eKey Key = eKey::_COUNT;
 		Vector Pos;
 	};
 

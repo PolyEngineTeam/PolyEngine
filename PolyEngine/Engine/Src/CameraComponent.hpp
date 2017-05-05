@@ -23,15 +23,15 @@ namespace Poly {
 		bool IsPerspective = false;
 		bool NeedsInit = true;
 		// Prerpective
-		float Fov;
+		float Fov = 0.f;
 
 		// Orthographic
-		float Top;
-		float Bottom;
+		float Top = 0.f;
+		float Bottom = 0.f;
 
 		//Common
-		float Near;
-		float Far;
+		float Near = 0.f;
+		float Far = 0.f;
 		float Aspect = 1.f;
 	};
 }
