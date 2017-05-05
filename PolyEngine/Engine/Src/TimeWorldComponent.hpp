@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chrono>
+#include <unordered_map>
 #include "TimeSystem.hpp"
 #include "Timer.hpp"
 #include "ComponentBase.hpp"
@@ -12,14 +13,16 @@ namespace Poly
 {
 	class ENGINE_DLLEXPORT TimeWorldComponent : public ComponentBase
 	{
-		friend void TimeSystem::TimeUpdatePhase(World * world);
+		friend void TimeSystem::TimeUpdatePhase(World* world);
+		friend void TimeSystem::RegisterTimer(World* world, size_t id, bool isPausable);
+		friend float TimeSystem::GetTimerTime(World* world, size_t id);
 	public:	
 		TimeWorldComponent();
-		~TimeWorldComponent();
+		~TimeWorldComponent() {};
 
 		float GetDeltaTime() const { return DeltaTime; };
-		float GetSystemTime() const { return SystemTime->GetTime(); };
-		float GetGameplayTime() const { return GameplayTime->GetTime(); };
+		float GetSystemTime() const { return SystemTime.GetTime(); };
+		float GetGameplayTime() const { return GameplayTime.GetTime(); };
 
 		void SetPaused(bool isPaused) { IsPaused = isPaused; };
 
@@ -27,12 +30,14 @@ namespace Poly
 		const milliseconds MIN_TIME_STEP_MS = milliseconds(60);
 
 		steady_clock::time_point LastFrameTime;
-		Timer* SystemTime;
-		Timer* GameplayTime;
+
+		Timer SystemTime;
+		Timer GameplayTime;
+
+		std::unordered_map<size_t, Timer> Timers;
 
 		float DeltaTime;
 
 		bool IsPaused;
-
 	};
 }

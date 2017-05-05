@@ -15,7 +15,7 @@ namespace Poly
 	{
 		friend void TimeSystem::TimeUpdatePhase(World * world);
 	public:
-		Timer(bool isPausable);
+		Timer(bool isPausable = false);
 
 		float GetTime() const { return Time.count(); };
 

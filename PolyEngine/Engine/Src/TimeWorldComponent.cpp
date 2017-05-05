@@ -7,12 +7,7 @@
 Poly::TimeWorldComponent::TimeWorldComponent()
 {
 	LastFrameTime = steady_clock::now();
-	SystemTime = new Timer(false);
-	GameplayTime = new Timer(true);
+	SystemTime = Timer(false);
+	GameplayTime = Timer(true);
 }
 
-Poly::TimeWorldComponent::~TimeWorldComponent()
-{
-	delete SystemTime;
-	delete GameplayTime;
-}
