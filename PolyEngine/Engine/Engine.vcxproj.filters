@@ -83,7 +83,7 @@
     <ClCompile Include="Src\ResourceManager.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Texture.cpp">
+    <ClCompile Include="Src\GLTextureResource.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -148,7 +148,7 @@
     <ClInclude Include="Src\ResourceManager.hpp">
       <Filter>Source Files\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Texture.hpp">
+    <ClInclude Include="Src\GLTextureResource.hpp">
       <Filter>Source Files\Resources</Filter>
     </ClInclude>
   </ItemGroup>
