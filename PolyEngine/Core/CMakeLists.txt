@@ -1,9 +1,11 @@
 set(POLYCORE_SRCS
 	Src/AARect.cpp
+	Src/BaseObject.cpp
 	Src/Color.cpp
 	Src/Logger.cpp
 	Src/Matrix.cpp
 	Src/Quaternion.cpp
+	Src/RefCountedBase.cpp
 	Src/SimdMath.cpp
 	Src/UniqueID.cpp
 	Src/Vector.cpp
@@ -28,6 +30,7 @@ set(POLYCORE_H_FOR_IDE
 	Src/Logger.hpp
 	Src/Matrix.hpp
 	Src/PoolAllocator.hpp
+	Src/RefCountedBase.hpp
 	Src/Quaternion.hpp
 	Src/Queue.hpp
 	Src/SimdMath.hpp
@@ -43,3 +46,16 @@ else(SIMD)
 	target_compile_definitions(polycore PRIVATE DISABLE_SIMD=true)
 endif(SIMD)
 target_include_directories(polycore INTERFACE ${POLYCORE_INCLUDE})
+if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
+	target_compile_options(polycore PRIVATE --coverage -fprofile-arcs -ftest-coverage)
+	target_link_libraries(polycore PRIVATE -fprofile-arcs -ftest-coverage)
+	file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/gcov)
+	add_custom_target(coverage_core
+	                  COMMAND ${GCOV_COMMAND} -r -o "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/polycore.dir/Src" -s ${CMAKE_CURRENT_SOURCE_DIR} ${POLYCORE_SRCS}
+	                  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/gcov
+	                  COMMENT "Collecting gcov coverage information for polycore"
+	)
+endif(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
+
+set_target_properties(polycore PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "Src/CorePCH.hpp")
+cotire(polycore)

@@ -1,10 +1,10 @@
 find_package(OpenGL REQUIRED)
 if(WIN32)
-	find_package(GLEW REQUIRED PATHS ThirdParty/glew/lib/Release/ PATH_SUFFIXES Win32 x64) #FIXME(vuko): see Engine/CMakeLists.txt
+	list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/ThirdParty/glew")
 else(WIN32)
-	find_package(GLEW REQUIRED)
 	find_package(X11 REQUIRED)
 endif(WIN32)
+find_package(GLEW REQUIRED)
 
 
 if(WIN32)
@@ -19,18 +19,21 @@ endif(WIN32)
 
 add_executable(standalone ${STANDALONE_SRCS})
 if(WIN32)
-	target_include_directories(standalone BEFORE PRIVATE ThirdParty/glew/include)
+	target_include_directories(standalone BEFORE PRIVATE "${CMAKE_SOURCE_DIR}/ThirdParty/glew")
 
-	if(WIN32_X64)
+	if(ARCH_X64)
 		add_custom_command(TARGET standalone POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PROJECT_SOURCE_DIR}/ThirdParty/glew/bin/Release/x64/glew32.dll" $<TARGET_FILE_DIR:standalone>)
-	else(WIN32_X64)
+	else(ARCH_X64)
 		add_custom_command(TARGET standalone POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PROJECT_SOURCE_DIR}/ThirdParty/glew/bin/Release/Win32/glew32.dll" $<TARGET_FILE_DIR:standalone>)
-	endif(WIN32_X64)
+	endif(ARCH_X64)
 
-	target_link_libraries(standalone polycore polyengine testgame GL GLEW)
+	target_link_libraries(standalone polycore polyengine testgame OpenGL GLEW)
 
 else(WIN32)
 	add_custom_command(TARGET standalone POST_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink "${PROJECT_SOURCE_DIR}/WindowsGLStandalone/Res" $<TARGET_FILE_DIR:standalone>/Res)
-	target_link_libraries(standalone polycore polyengine testgame GL GLEW X11)
+	target_link_libraries(standalone polycore polyengine testgame OpenGL GLEW X11 GLX)
 endif(WIN32)
 
+cotire(standalone)
+
+#install(TARGETS standalone RUNTIME DESTINATION ".")
