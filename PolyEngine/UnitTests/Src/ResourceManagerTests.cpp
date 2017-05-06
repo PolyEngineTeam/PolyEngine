@@ -7,7 +7,7 @@ using namespace Poly;
 class DummyResource : public Poly::ResourceBase
 {
 public:
-	DummyResource(const String& path) {}
+	DummyResource(const String& /*path*/) {}
 };
 
 TEST_CASE("ResourceManager loading/freeing", "[ResourceManager]")
@@ -24,7 +24,7 @@ TEST_CASE("ResourceManager loading/freeing", "[ResourceManager]")
 	REQUIRE(res2->GetRefCount() == 2);
 	REQUIRE(res3->GetRefCount() == 1);
 	REQUIRE(res4->GetRefCount() == 1);
-	
+
 	ResourceManager<DummyResource>::Release(res2);
 	res2 = nullptr;
 	REQUIRE(res1->GetRefCount() == 1);
