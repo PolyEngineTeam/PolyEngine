@@ -66,6 +66,7 @@ add_test(NAME "Vector-comparison-operators"                   COMMAND polytests 
 add_test(NAME "Vector-Vector-operators"                       COMMAND polytests "Vector-Vector operators")
 add_test(NAME "Vector-scalar-operators"                       COMMAND polytests "Vector-scalar operators")
 add_test(NAME "Vector-algebraic-methods"                      COMMAND polytests "Vector algebraic methods")
+add_test(NAME "Floating-point-equality-comparisons"           COMMAND polytests "Floating-point equality comparisons")
 
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")) #TODO(vuko): clean this up, merge coverage-core and coverage-engine maybe?
 	target_compile_options(polycore PRIVATE --coverage -fprofile-arcs -ftest-coverage)
