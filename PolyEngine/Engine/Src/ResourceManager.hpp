@@ -15,6 +15,7 @@ namespace Poly
 	//------------------------------------------------------------------------------
 	class ENGINE_DLLEXPORT ResourceLoadFailedException : public std::exception
 	{
+	public:
 		ResourceLoadFailedException() {}
 	};
 	
