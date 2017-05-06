@@ -5,6 +5,7 @@
 #include <Engine.hpp>
 #include <OpenGLRenderingContext.hpp>
 #include <TestGame.hpp>
+#include <string>
 
 static Poly::Engine* gEngine = nullptr;
 
@@ -106,6 +107,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		{
 			// Run game code here
 			Engine.Update();
+
+			// Temporary visualisation of delta time in window title
+			float dTime = Engine.GetWorld().GetTimeWorldComponent().GetDeltaTime();
+			std::string windowText = "DeltaTime = " + std::to_string(dTime);
+			SetWindowText(hWnd, windowText.c_str());
 		}
 	}
 

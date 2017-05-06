@@ -9,10 +9,10 @@ namespace Poly
 	{
 		void TimeUpdatePhase(World* world);
 
-		void RegisterTimer(World* world, size_t id, bool isPausable);
+		void RegisterTimer(World* world, const size_t id, const bool isPausable);
 
 		float GetDeltaTime(World* world);
 
-		float GetTimerTime(World* world, size_t id);
+		float GetTimerTime(World* world, const size_t id);
 	}
 }

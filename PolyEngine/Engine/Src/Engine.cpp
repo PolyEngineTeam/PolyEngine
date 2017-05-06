@@ -25,6 +25,7 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterComponent<MeshRenderingComponent>((size_t) eEngineComponents::MESH_RENDERING);
 
 	// Engine update phases
+	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(InputSystem::InputPhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(RenderingSystem::RenderingPhase, eUpdatePhaseOrder::POSTUPDATE);

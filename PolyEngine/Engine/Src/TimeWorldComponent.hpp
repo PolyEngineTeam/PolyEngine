@@ -14,8 +14,8 @@ namespace Poly
 	class ENGINE_DLLEXPORT TimeWorldComponent : public ComponentBase
 	{
 		friend void TimeSystem::TimeUpdatePhase(World* world);
-		friend void TimeSystem::RegisterTimer(World* world, size_t id, bool isPausable);
-		friend float TimeSystem::GetTimerTime(World* world, size_t id);
+		friend void TimeSystem::RegisterTimer(World* world, const size_t id, const bool isPausable);
+		friend float TimeSystem::GetTimerTime(World* world, const size_t id);
 	public:	
 		TimeWorldComponent();
 		~TimeWorldComponent() {};
