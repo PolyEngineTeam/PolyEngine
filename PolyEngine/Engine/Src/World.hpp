@@ -54,17 +54,6 @@ namespace Poly {
 		}
 
 		//------------------------------------------------------------------------------
-		template<typename T>
-		IterablePoolAllocator<T>* GetComponentAllocator()
-		{
-			size_t componentID = EnginePtr->GetComponentID<T>();
-			HEAVY_ASSERTE(componentID < MAX_COMPONENTS_COUNT, "Invalid component ID");
-			if (ComponentAllocators[componentID] == nullptr)
-				ComponentAllocators[componentID] = new IterablePoolAllocator<T>(MAX_ENTITY_COUNT);
-			return static_cast<IterablePoolAllocator<T>*>(ComponentAllocators[componentID]);
-		}
-
-		//------------------------------------------------------------------------------
 		//////////////////////////////
 		/// Gets a component of a specified type and UniqueID.
 		/// @tparam T - component type to get
@@ -86,7 +75,93 @@ namespace Poly {
 		InputWorldComponent& GetInputWorldComponent() { return InputComponent; };
 		ViewportWorldComponent& GetViewportWorldComponent() { return ViewportComponent; };
 
+		//------------------------------------------------------------------------------
+		template<typename PrimaryComponent, typename... SecondaryComponents>
+		struct IteratorProxy;
+
+		/**
+		 * Allows iteration over multiple component types
+		 * Iterator dereferences to a tuple of component pointers
+		 *
+		 * To get the component out of the tuple use std::get()
+		 * e.g. `std::get<YourComponentType*>(components)`
+		 * If you have a C++17-compliant compiler, you can use structured bindings
+		 * e.g. `for(auto [a, b] : world->IterateComponents<ComponentA, ComponentB>())`
+		 *
+		 * @tparam PrimaryComponent At least one component type must be specified
+		 * @tparam SecondaryComponents Additional component types (warning: returned pointers might be null!)
+		 * @return A proxy object that can be used in a range-for loop.
+		 */
+		template<typename PrimaryComponent, typename... SecondaryComponents>
+		IteratorProxy<PrimaryComponent, SecondaryComponents...> IterateComponents()
+		{
+			return {this};
+		}
+
+		//------------------------------------------------------------------------------
+		/**
+		 * An implementation detail
+		 */
+		template<typename PrimaryComponent, typename... SecondaryComponents>
+		class ComponentIterator : public BaseObject<>,
+		                          public std::iterator<std::bidirectional_iterator_tag, std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...>>
+		{
+			public:
+			bool operator==(const ComponentIterator& rhs) const { return primary_iter == rhs.primary_iter; }
+			bool operator!=(const ComponentIterator& rhs) const { return !(*this == rhs); }
+
+			std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...> operator*() const
+			{
+				PrimaryComponent* primary = &*primary_iter;
+				return std::make_tuple(primary, primary->template GetSibling<SecondaryComponents>()...);
+			}
+			std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...> operator->() const
+			{
+				return **this;
+			}
+
+			ComponentIterator& operator++() { ++primary_iter; return *this; }
+			ComponentIterator operator++(int) { ComponentIterator ret(primary_iter); ++primary_iter; return ret; }
+			ComponentIterator& operator--() { --primary_iter; return *this; }
+			ComponentIterator operator--(int) { ComponentIterator ret(primary_iter); --primary_iter; return ret; }
+
+			private:
+			explicit ComponentIterator(typename IterablePoolAllocator<PrimaryComponent>::Iterator parent) : primary_iter(parent) {}
+			friend struct IteratorProxy<PrimaryComponent, SecondaryComponents...>;
+
+			typename IterablePoolAllocator<PrimaryComponent>::Iterator primary_iter;
+		};
+
+		/**
+		 * An implementation detail
+		 */
+		template<typename PrimaryComponent, typename... SecondaryComponents>
+		struct IteratorProxy {
+			World::ComponentIterator<PrimaryComponent, SecondaryComponents...> Begin() {
+				auto alloc = static_cast<IterablePoolAllocator<PrimaryComponent>*>(w->ComponentAllocators[w->EnginePtr->GetComponentID<PrimaryComponent>()]);
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(alloc->Begin());
+			}
+			World::ComponentIterator<PrimaryComponent, SecondaryComponents...> End() {
+				auto alloc = static_cast<IterablePoolAllocator<PrimaryComponent>*>(w->ComponentAllocators[w->EnginePtr->GetComponentID<PrimaryComponent>()]);
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(alloc->End());
+			}
+			auto begin() { return Begin(); }
+			auto end() { return End(); }
+			const World* w;
+		};
+
 	private:
+		//------------------------------------------------------------------------------
+		template<typename T>
+		IterablePoolAllocator<T>* GetComponentAllocator()
+		{
+			size_t componentID = EnginePtr->GetComponentID<T>();
+			HEAVY_ASSERTE(componentID < MAX_COMPONENTS_COUNT, "Invalid component ID");
+			if (ComponentAllocators[componentID] == nullptr)
+				ComponentAllocators[componentID] = new IterablePoolAllocator<T>(MAX_ENTITY_COUNT);
+			return static_cast<IterablePoolAllocator<T>*>(ComponentAllocators[componentID]);
+		}
+
 		std::unordered_map<UniqueID, Entity*> IDToEntityMap;
 
 		void RemoveComponentById(Entity* ent, size_t id);
@@ -111,3 +186,6 @@ namespace Poly {
 	}
 
 } //namespace Poly
+
+template <typename... Ts> typename Poly::World::ComponentIterator<Ts...> begin(Poly::World::IteratorProxy<Ts...>& rhs) { return rhs.Begin(); }
+template <typename... Ts> typename Poly::World::ComponentIterator<Ts...> end(Poly::World::IteratorProxy<Ts...>& rhs) { return rhs.End(); }
