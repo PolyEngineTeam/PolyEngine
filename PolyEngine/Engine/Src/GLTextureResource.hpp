@@ -10,12 +10,14 @@ namespace Poly
 		GLTextureResource(const std::string& path);
 		~GLTextureResource() override;
 
-		GLuint GetID() { return TextureID; }
-		int GetWidth() { return Width; }
-		int GetHeight() { return Height; }
+		GLuint GetID() const { return TextureID; }
+		unsigned char* GetImage() const { return Image; }
+		int GetWidth() const { return Width; }
+		int GetHeight() const { return Height; }
 
 	private:
-		GLuint TextureID;
+		GLuint TextureID; 
+		unsigned char* Image;
 		int Width;
 		int Height;
 	};
