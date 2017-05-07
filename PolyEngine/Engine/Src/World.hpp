@@ -136,18 +136,20 @@ namespace Poly {
 		 * An implementation detail
 		 */
 		template<typename PrimaryComponent, typename... SecondaryComponents>
-		struct IteratorProxy {
-			World::ComponentIterator<PrimaryComponent, SecondaryComponents...> Begin() {
-				auto alloc = static_cast<IterablePoolAllocator<PrimaryComponent>*>(W->ComponentAllocators[W->EnginePtr->GetComponentID<PrimaryComponent>()]);
-				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(alloc->Begin());
+		struct IteratorProxy : BaseObject<>
+		{
+			IteratorProxy(World* w) : W(w) {}
+			World::ComponentIterator<PrimaryComponent, SecondaryComponents...> Begin()
+			{
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(W->GetComponentAllocator<PrimaryComponent>()->Begin());
 			}
-			World::ComponentIterator<PrimaryComponent, SecondaryComponents...> End() {
-				auto alloc = static_cast<IterablePoolAllocator<PrimaryComponent>*>(W->ComponentAllocators[W->EnginePtr->GetComponentID<PrimaryComponent>()]);
-				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(alloc->End());
+			World::ComponentIterator<PrimaryComponent, SecondaryComponents...> End()
+			{
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(W->GetComponentAllocator<PrimaryComponent>()->End());
 			}
 			auto begin() { return Begin(); }
 			auto end() { return End(); }
-			const World* W;
+			World* const W;
 		};
 
 	private:
