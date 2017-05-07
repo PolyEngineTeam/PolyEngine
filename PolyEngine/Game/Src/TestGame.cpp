@@ -27,17 +27,19 @@ void TestGame::Deinit()
 	Engine->GetWorld().DestroyEntity(TestEnt);
 };
 
-void GameMainSystem::GameUpdate(Poly::World * world)
+void GameMainSystem::GameUpdate(Poly::World* world)
 {
 	static float val = 0;
 	val += 0.001f;
 	float y = sinf(val);
 	float x = cosf(val);
 
-	auto allocator = world->GetComponentAllocator<Poly::CameraComponent>();
-	for (Poly::CameraComponent& cameraCmp : *allocator)
+	for(auto components : world->IterateComponents<Poly::CameraComponent, Poly::TransformComponent>())
 	{
-		Poly::TransformComponent* transform = cameraCmp.GetSibling<Poly::TransformComponent>();
-		transform->SetLocalTranslation(Poly::Vector(x, y * 1.5f, 5));
+		auto transform = std::get<Poly::TransformComponent*>(components);
+		if (transform)
+		{
+			transform->SetLocalTranslation(Poly::Vector(x, y * 1.5f, 5));
+		}
 	}
 }
