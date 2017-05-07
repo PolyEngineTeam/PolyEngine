@@ -6,7 +6,7 @@
 
 using namespace Poly;
 
-TEST_CASE("TransformComponent with no parent", "[TransformCompoent]") 
+TEST_CASE("TransformComponent with no parent", "[TransformComponent]")
 {
 	TransformComponent tc;
 	Vector translationVector = Vector(1, 2, 3);
@@ -34,7 +34,7 @@ TEST_CASE("TransformComponent with no parent", "[TransformCompoent]")
 		REQUIRE(tc.GetLocalScale() == scaleVector);
 		REQUIRE(tc.GetLocalTranslation() == translationVector);
 	}
-	
+
 	SECTION("Global transformation")
 	{
 		Matrix tcg = tc.GetGlobalTransformationMatrix();
@@ -51,7 +51,7 @@ TEST_CASE("TransformComponent with no parent", "[TransformCompoent]")
 	SECTION("Rotation")
 	{
 		TransformComponent tc2;
-		EulerAngles angles = { Angle::FromDegrees(0), 
+		EulerAngles angles = { Angle::FromDegrees(0),
 			Angle::FromDegrees(0),
 			Angle::FromDegrees(90) };
 		Quaternion rotation(angles);

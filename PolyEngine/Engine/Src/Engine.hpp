@@ -78,14 +78,14 @@ namespace Poly
 		//------------------------------------------------------------------------------
 		template<typename T> void RegisterComponent(size_t id)
 		{
-			ASSERTE(ComponentTypeMap.find(typeid(T)) == ComponentTypeMap.end(), "Component type was requstered twice!");
+			ASSERTE(ComponentTypeMap.find(typeid(T)) == ComponentTypeMap.end(), "Component type was registered twice!");
 			ComponentTypeMap[typeid(T)] = id;
 		}
 
 		//------------------------------------------------------------------------------
 		template<typename T> size_t GetComponentID() const
 		{
-			ASSERTE(ComponentTypeMap.find(typeid(T)) != ComponentTypeMap.end(), "Component type was not requstered!");
+			ASSERTE(ComponentTypeMap.find(typeid(T)) != ComponentTypeMap.end(), "Component type was not registered!");
 			return ComponentTypeMap.at(typeid(T));
 		}
 

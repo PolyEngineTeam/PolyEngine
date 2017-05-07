@@ -11,13 +11,13 @@
 namespace Poly
 {
 	ENGINE_DLLEXPORT const String& GetResourcesAbsolutePath();
-	
+
 	//------------------------------------------------------------------------------
 	class ENGINE_DLLEXPORT ResourceLoadFailedException : public std::exception
 	{
 		ResourceLoadFailedException() {}
 	};
-	
+
 	//------------------------------------------------------------------------------
 	class ENGINE_DLLEXPORT ResourceBase : public RefCountedBase
 	{
@@ -30,7 +30,7 @@ namespace Poly
 
 	protected:
 		virtual ~ResourceBase() {}
-	
+
 	private:
 		String Path;
 
@@ -46,7 +46,7 @@ namespace Poly
 		static T* Load(const String& relativePath)
 		{
 			auto it = GetResources().find(relativePath);
-			
+
 			// Check if it is already loaded
 			if (it != GetResources().end())
 			{
@@ -71,7 +71,7 @@ namespace Poly
 				HEAVY_ASSERTE(false, "Resource creation failed for unknown reason!");
 				return nullptr;
 			}
-			
+
 			GetResources().insert(std::make_pair(relativePath, std::unique_ptr<T>(resource)));
 			resource->Path = relativePath;
 			resource->AddRef();
