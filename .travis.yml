@@ -2,10 +2,43 @@
 sudo: required
 dist: trusty
 language: cpp
-# Compiler selection
-compiler:
-  - clang
-  - gcc
+
+matrix:
+  include:
+
+    # 1/ Linux Clang Builds
+    - os: linux
+      compiler: clang
+      addons: &clang37
+        apt:
+          sources: ['llvm-toolchain-precise-3.7', 'ubuntu-toolchain-r-test']
+          packages: ['clang-3.7']
+      env: COMPILER='clang++-3.7'
+
+    - os: linux
+      compiler: clang
+      addons: &clang38
+        apt:
+          sources: ['llvm-toolchain-precise-3.8', 'ubuntu-toolchain-r-test']
+          packages: ['clang-3.8']
+      env: COMPILER='clang++-3.8'
+
+    # 2/ Linux GCC Builds
+    - os: linux
+      compiler: gcc
+      addons: &gcc5
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-5']
+     env: COMPILER='g++-5'
+
+    - os: linux
+      compiler: gcc
+      addons: &gcc6
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-6']
+      env: COMPILER='g++-6'
 
 before_install:
   - sudo apt-get update -qq
@@ -32,6 +65,7 @@ install:
 
 
 before_script:
+  - export CXX=${COMPILER}
   ############################################################################
   # Go back to the root of the project and setup the build directory
   ############################################################################
