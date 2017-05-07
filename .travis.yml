@@ -1,44 +1,43 @@
-# Enable C++ support
 sudo: required
 dist: precise
 language: cpp
 
 matrix:
   include:
-
-    # 1/ Linux Clang Builds
-    - os: linux
-      compiler: clang
-      addons: &clang37
+    - compiler: gcc
+      addons:
         apt:
-          sources: ['llvm-toolchain-precise-3.7', 'ubuntu-toolchain-r-test']
-          packages: ['clang-3.7']
-      env: COMPILER='clang++-3.7'
-
-    - os: linux
-      compiler: clang
-      addons: &clang38
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+      env: COMPILER=g++-4.9
+    - compiler: gcc
+      addons:
         apt:
-          sources: ['llvm-toolchain-precise-3.8', 'ubuntu-toolchain-r-test']
-          packages: ['clang-3.8']
-      env: COMPILER='clang++-3.8'
-
-    # 2/ Linux GCC Builds
-    - os: linux
-      compiler: gcc
-      addons: &gcc5
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+      env: COMPILER=g++-5
+    - compiler: clang
+      addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-5']
-     env: COMPILER='g++-5'
-
-    - os: linux
-      compiler: gcc
-      addons: &gcc6
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+          packages:
+            - clang-3.6
+      env: COMPILER=clang++-3.6
+    - compiler: clang
+      addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-6']
-      env: COMPILER='g++-6'
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+          packages:
+            - clang-3.7
+      env: COMPILER=clang++-3.7
 
 before_install:
   - sudo apt-get update -qq
