@@ -12,8 +12,7 @@ GLTextureResource::GLTextureResource(const std::string& path)
 	glGenTextures(1, &TextureID);
 	glBindTexture(GL_TEXTURE_2D, TextureID);
 	Image = SOIL_load_image(path.c_str(), &Width, &Height, 0, SOIL_LOAD_RGBA);
-	ASSERTE(0 != Image, SOIL_last_result());
-	if (0 == Image)
+	if (Image == nullptr)
 	{
 		throw ResourceLoadFailedException();
 	}
