@@ -86,6 +86,9 @@
     <ClCompile Include="Src\GLTextureResource.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="Src\GLMeshResource.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine.hpp">
@@ -149,6 +152,12 @@
       <Filter>Source Files\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Src\GLTextureResource.hpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ResourceBase.hpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GLMeshResource.hpp">
       <Filter>Source Files\Resources</Filter>
     </ClInclude>
   </ItemGroup>

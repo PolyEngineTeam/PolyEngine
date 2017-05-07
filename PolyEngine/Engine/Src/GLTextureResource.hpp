@@ -1,13 +1,15 @@
 #pragma once
 
-#include <GL/glew.h>
+#include "ResourceBase.hpp"
+
+typedef unsigned int GLuint;
 
 namespace Poly 
 {
 	class ENGINE_DLLEXPORT GLTextureResource : public ResourceBase
 	{
 	public:
-		GLTextureResource(const std::string& path);
+		GLTextureResource(const String& path);
 		~GLTextureResource() override;
 
 		GLuint GetID() const { return TextureID; }

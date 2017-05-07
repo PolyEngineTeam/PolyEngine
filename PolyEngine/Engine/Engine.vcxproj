@@ -89,17 +89,18 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_ENGINE;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\SOIL\lib\Release\Win32;$(SolutionDir)ThirdParty\glew\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\glew\lib\Release\Win32;$(SolutionDir)ThirdParty\SOIL\lib\Release\Win32;$(SolutionDir)ThirdParty\assimp\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d $(SolutionDir)ThirdParty\glew\bin\Release\Win32\glew32.dll $(OutDir)</Command>
+      <Command>xcopy /y /d $(SolutionDir)ThirdParty\glew\bin\Release\Win32\glew32.dll $(OutDir)
+xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\Win32\assimp-vc140-mt.dll $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -107,17 +108,18 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_ENGINE;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\SOIL\lib\Release\x64;$(SolutionDir)ThirdParty\glew\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\glew\lib\Release\x64;$(SolutionDir)ThirdParty\SOIL\lib\Release\x64;$(SolutionDir)ThirdParty\assimp\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d $(SolutionDir)ThirdParty\glew\bin\Release\x64\glew32.dll $(OutDir)</Command>
+      <Command>xcopy /y /d $(SolutionDir)ThirdParty\glew\bin\Release\x64\glew32.dll $(OutDir)
+xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -127,7 +129,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_ENGINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.hpp</PrecompiledHeaderFile>
@@ -135,11 +137,12 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\SOIL\lib\Release\Win32;$(SolutionDir)ThirdParty\glew\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\glew\lib\Release\Win32;$(SolutionDir)ThirdParty\SOIL\lib\Release\Win32;$(SolutionDir)ThirdParty\assimp\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d $(SolutionDir)ThirdParty\glew\bin\Release\Win32\glew32.dll $(OutDir)</Command>
+      <Command>xcopy /y /d $(SolutionDir)ThirdParty\glew\bin\Release\Win32\glew32.dll $(OutDir)
+xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\Win32\assimp-vc140-mt.dll $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -149,7 +152,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_ENGINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.hpp</PrecompiledHeaderFile>
@@ -157,11 +160,12 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\SOIL\lib\Release\x64;$(SolutionDir)ThirdParty\glew\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\glew\lib\Release\x64;$(SolutionDir)ThirdParty\SOIL\lib\Release\x64;$(SolutionDir)ThirdParty\assimp\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d $(SolutionDir)ThirdParty\glew\bin\Release\x64\glew32.dll $(OutDir)</Command>
+      <Command>xcopy /y /d $(SolutionDir)ThirdParty\glew\bin\Release\x64\glew32.dll $(OutDir)
+xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -178,6 +182,7 @@
     <ClCompile Include="Src\InputWorldComponent.cpp" />
     <ClCompile Include="Src\MeshRenderingComponent.cpp" />
     <ClCompile Include="Src\InputSystem.cpp" />
+    <ClCompile Include="Src\GLMeshResource.cpp" />
     <ClCompile Include="Src\OpenGLRenderingContext.cpp" />
     <ClCompile Include="Src\RenderingSystem.cpp" />
     <ClCompile Include="Src\ResourceManager.cpp" />
@@ -204,9 +209,11 @@
     <ClInclude Include="Src\InputWorldComponent.hpp" />
     <ClInclude Include="Src\KeyBindings.hpp" />
     <ClInclude Include="Src\MeshRenderingComponent.hpp" />
+    <ClInclude Include="Src\GLMeshResource.hpp" />
     <ClInclude Include="Src\OpenGLRenderingContext.hpp" />
     <ClInclude Include="Src\RenderingContext.hpp" />
     <ClInclude Include="Src\RenderingSystem.hpp" />
+    <ClInclude Include="Src\ResourceBase.hpp" />
     <ClInclude Include="Src\ResourceManager.hpp" />
     <ClInclude Include="Src\ShaderProgram.hpp" />
     <ClInclude Include="Src\TransformComponent.hpp" />

@@ -4,6 +4,9 @@
 #include <TransformComponent.hpp>
 #include <MeshRenderingComponent.hpp>
 
+#include <ResourceManager.hpp>
+#include <GLMeshResource.hpp>
+
 void TestGame::Init()
 {
 	Camera = Engine->GetWorld().SpawnEntity();
@@ -19,6 +22,10 @@ void TestGame::Init()
 	Engine->GetWorld().GetViewportWorldComponent().SetCamera(0, Engine->GetWorld().GetComponent<Poly::CameraComponent>(Camera));
 
 	Engine->RegisterUpdatePhase(GameMainSystem::GameUpdate, Poly::Engine::eUpdatePhaseOrder::UPDATE);
+	
+	// testing mesh loading
+	Poly::GLMeshResource* mesh = Poly::ResourceManager<Poly::GLMeshResource>::Load("Res/model-tank/tank.fbx");
+	Poly::ResourceManager<Poly::GLMeshResource>::Release(mesh);
 };
 
 void TestGame::Deinit()

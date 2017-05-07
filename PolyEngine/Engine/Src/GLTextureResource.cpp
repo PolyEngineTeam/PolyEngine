@@ -4,14 +4,17 @@
 #include "ResourceManager.hpp"
 #include "SOIL\SOIL.h"
 
+#include <GL/glew.h>
+
+
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-GLTextureResource::GLTextureResource(const std::string& path)
+GLTextureResource::GLTextureResource(const String& path)
 {
 	glGenTextures(1, &TextureID);
 	glBindTexture(GL_TEXTURE_2D, TextureID);
-	Image = SOIL_load_image(path.c_str(), &Width, &Height, 0, SOIL_LOAD_RGBA);
+	Image = SOIL_load_image(path.GetCStr(), &Width, &Height, 0, SOIL_LOAD_RGBA);
 	if (Image == nullptr)
 	{
 		throw ResourceLoadFailedException();

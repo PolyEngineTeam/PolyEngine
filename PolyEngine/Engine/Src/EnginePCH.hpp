@@ -19,7 +19,10 @@
 #include "KeyBindings.hpp"
 
 // Resources
+#include "ResourceBase.hpp"
 #include "ResourceManager.hpp"
+#include "GLTextureResource.hpp"
+#include "GLMeshResource.hpp"
 
 // Components
 #include "TransformComponent.hpp"
