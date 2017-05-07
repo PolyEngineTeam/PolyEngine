@@ -20,6 +20,22 @@ matrix:
           packages:
             - g++-5
       env: COMPILER=g++-5
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env: COMPILER=g++-6
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env: COMPILER=g++-7
     - compiler: clang
       addons:
         apt:
@@ -38,6 +54,15 @@ matrix:
           packages:
             - clang-3.7
       env: COMPILER=clang++-3.7
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-4.0
+          packages:
+            - clang-4.0
+      env: COMPILER=clang++-4.0
 
 before_install:
   - sudo apt-get update -qq
