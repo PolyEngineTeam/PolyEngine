@@ -138,16 +138,16 @@ namespace Poly {
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		struct IteratorProxy {
 			World::ComponentIterator<PrimaryComponent, SecondaryComponents...> Begin() {
-				auto alloc = static_cast<IterablePoolAllocator<PrimaryComponent>*>(w->ComponentAllocators[w->EnginePtr->GetComponentID<PrimaryComponent>()]);
+				auto alloc = static_cast<IterablePoolAllocator<PrimaryComponent>*>(W->ComponentAllocators[W->EnginePtr->GetComponentID<PrimaryComponent>()]);
 				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(alloc->Begin());
 			}
 			World::ComponentIterator<PrimaryComponent, SecondaryComponents...> End() {
-				auto alloc = static_cast<IterablePoolAllocator<PrimaryComponent>*>(w->ComponentAllocators[w->EnginePtr->GetComponentID<PrimaryComponent>()]);
+				auto alloc = static_cast<IterablePoolAllocator<PrimaryComponent>*>(W->ComponentAllocators[W->EnginePtr->GetComponentID<PrimaryComponent>()]);
 				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(alloc->End());
 			}
 			auto begin() { return Begin(); }
 			auto end() { return End(); }
-			const World* w;
+			const World* W;
 		};
 
 	private:
@@ -186,6 +186,3 @@ namespace Poly {
 	}
 
 } //namespace Poly
-
-template <typename... Ts> typename Poly::World::ComponentIterator<Ts...> begin(Poly::World::IteratorProxy<Ts...>& rhs) { return rhs.Begin(); }
-template <typename... Ts> typename Poly::World::ComponentIterator<Ts...> end(Poly::World::IteratorProxy<Ts...>& rhs) { return rhs.End(); }
