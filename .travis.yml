@@ -1,3 +1,7 @@
+notifications:
+  email: false
+  slack: polyengine:Fah16tvbyOphIl7FGHAVVhaB
+
 # Enable C++ support
 language: cpp
 # Compiler selection
