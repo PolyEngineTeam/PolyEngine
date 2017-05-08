@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdlib>
+
 #include "Defines.hpp"
 
 //TODO(vuko): possibly replace with std::aligned_storage for portability and soundness guarantee
