@@ -134,22 +134,23 @@ Poly::GLMeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMater
 		mesh->HasNormals() ? "on" : "off", mesh->HasFaces() ? "on" : "off");
 
 	// Material loading
-
 	aiString texPath;
-	if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS) {
+	if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS)
+	{
 		//TODO load textures, this requires Path class
-		/*std::string fullPath = path + std::string(texPath.C_Str());
+		// temporary code for extracting path
+		std::string tmpPath = std::string(path.GetCStr());
+		std::replace(tmpPath.begin(), tmpPath.end(), '\\', '/'); // replace all '\' to '/', fix for linux machines
+		std::string fullPath = tmpPath.substr(0, tmpPath.rfind('/')+1) + std::string(texPath.C_Str());
+		std::replace(fullPath.begin(), fullPath.end(), '\\', '/'); // replace all '\' to '/', fix for linux machines
+		String textPath(fullPath.c_str());
+		// end temporary code for extracting path
 
-		// replace all '\' to '/', fix for linux machines
-		std::replace(fullPath.begin(), fullPath.end(), '\\', '/');
-
-		texID = create_texture(fullPath.c_str());
-		if (!texID) {
-			LOGE("Failed to load: {}", fullPath);
-		}
-		else {
-			LOGD("Succeded to load: {}", fullPath);
-		}*/
+		DiffuseTexture = ResourceManager<GLTextureResource>::Load(textPath);
+		if (!DiffuseTexture)
+			gConsole.LogError("Failed to load diffuse texture: {}", fullPath);
+		else
+			gConsole.LogDebug("Succeded to load diffuse texture: {}", fullPath);
 	}
 
 	// Material params loading
@@ -166,21 +167,20 @@ Poly::GLMeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMater
 
 Poly::GLMeshResource::SubMesh::~SubMesh()
 {
-	if (VBO[eBufferType::VERTEX_BUFFER]) {
+	if (VBO[eBufferType::VERTEX_BUFFER])
 		glDeleteBuffers(1, &VBO[eBufferType::VERTEX_BUFFER]);
-	}
 
-	if (VBO[eBufferType::TEXCOORD_BUFFER]) {
+	if (VBO[eBufferType::TEXCOORD_BUFFER])
 		glDeleteBuffers(1, &VBO[eBufferType::TEXCOORD_BUFFER]);
-	}
 
-	if (VBO[eBufferType::NORMAL_BUFFER]) {
+	if (VBO[eBufferType::NORMAL_BUFFER])
 		glDeleteBuffers(1, &VBO[eBufferType::NORMAL_BUFFER]);
-	}
 
-	if (VBO[eBufferType::INDEX_BUFFER]) {
+	if (VBO[eBufferType::INDEX_BUFFER])
 		glDeleteBuffers(1, &VBO[eBufferType::INDEX_BUFFER]);
-	}
 
+	if (DiffuseTexture)
+		ResourceManager<GLTextureResource>::Release(DiffuseTexture);
+	
 	glDeleteVertexArrays(1, &VAO);
 }

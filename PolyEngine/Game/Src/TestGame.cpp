@@ -44,7 +44,16 @@ void GameMainSystem::GameUpdate(Poly::World* world)
 		auto transform = std::get<Poly::TransformComponent*>(components);
 		if (transform)
 		{
-			transform->SetLocalTranslation(Poly::Vector(x, y * 3.f, 15));
+			transform->SetLocalTranslation(Poly::Vector(x, y * 3.f, 12));
+		}
+	}
+
+	for (auto components : world->IterateComponents<Poly::MeshRenderingComponent, Poly::TransformComponent>())
+	{
+		auto transform = std::get<Poly::TransformComponent*>(components);
+		if (transform)
+		{
+			transform->SetLocalRotation(Poly::Quaternion(Poly::Vector(0, 1, 0), Poly::Angle::FromDegrees(val * 300)));
 		}
 	}
 }

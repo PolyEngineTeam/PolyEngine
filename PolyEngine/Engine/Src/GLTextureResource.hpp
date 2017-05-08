@@ -16,12 +16,14 @@ namespace Poly
 		unsigned char* GetImage() const { return Image; }
 		int GetWidth() const { return Width; }
 		int GetHeight() const { return Height; }
+		int GetChannels() const { return Channels; }
 
 	private:
 		GLuint TextureID; 
 		unsigned char* Image;
 		int Width;
 		int Height;
+		int Channels;
 	};
 }
 

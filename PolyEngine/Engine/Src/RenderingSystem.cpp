@@ -44,21 +44,23 @@ void RenderingSystem::RenderingPhase(World* world)
 			const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
 			Matrix screenTransform = mvp * objTransform;
 			testProgram.SetUniform("uTransform", screenTransform);
-			CHECK_GL_ERR();
 			for (const GLMeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 			{
 				glBindVertexArray(subMesh->GetVAO());
-				CHECK_GL_ERR();
-				//glActiveTexture(GL_TEXTURE0);
-				//glBindTexture(GL_TEXTURE_2D, texID);
+				
+				if (subMesh->GetDiffTexture())
+				{
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, subMesh->GetDiffTexture()->GetID());
+				}
+				
 				glDrawElements(GL_TRIANGLES, subMesh->GetVertexCount(), GL_UNSIGNED_INT, NULL);
-				CHECK_GL_ERR();
-				//glBindTexture(GL_TEXTURE_2D, 0);
+				glBindTexture(GL_TEXTURE_2D, 0);
 				glBindVertexArray(0);
-				CHECK_GL_ERR();
 			}
 		}
 
+		CHECK_GL_ERR();
 		glDepthMask(GL_FALSE);
 		glDisable(GL_DEPTH_TEST);
 	}
