@@ -21,7 +21,7 @@ namespace Poly {
 
 	inline void* DefaultAlloc(size_t size) {
 		using namespace Impl;
-		void* fresh = aligned_alloc(MEM_ALIGNMENT, size);
+		void* fresh = memalign(MEM_ALIGNMENT, size);
 
 #ifdef __has_feature
 #if __has_feature(memory_sanitizer)
