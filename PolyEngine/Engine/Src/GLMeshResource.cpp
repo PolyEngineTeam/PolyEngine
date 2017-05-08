@@ -23,7 +23,15 @@ GLMeshResource::GLMeshResource(const String& path)
 
 	gConsole.LogDebug("Loading model {} sucessfull.", path);
 	for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
-		SubMeshes.PushBack(SubMesh(path, scene->mMeshes[i], scene->mMaterials[i]));
+		SubMeshes.PushBack(new SubMesh(path, scene->mMeshes[i], scene->mMaterials[i]));
+	}
+}
+
+Poly::GLMeshResource::~GLMeshResource()
+{
+	for (SubMesh* subMesh : SubMeshes)
+	{
+		delete subMesh;
 	}
 }
 
@@ -56,7 +64,7 @@ Poly::GLMeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMater
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 		glEnableVertexAttribArray(0);
 	}
-	//CHECK_GL_ERR();
+	CHECK_GL_ERR();
 
 	if (mesh->HasTextureCoords(0)) {
 		Dynarray<float> texCoords;
@@ -74,7 +82,7 @@ Poly::GLMeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMater
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 		glEnableVertexAttribArray(1);
 	}
-	//CHECK_GL_ERR();
+	CHECK_GL_ERR();
 
 	if (mesh->HasNormals()) {
 		Dynarray<float> normals;
@@ -93,7 +101,7 @@ Poly::GLMeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMater
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 		glEnableVertexAttribArray(2);
 	}
-	//CHECK_GL_ERR();
+	CHECK_GL_ERR();
 
 	if (mesh->HasFaces()) {
 		Dynarray<unsigned int> indices;
@@ -112,7 +120,7 @@ Poly::GLMeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMater
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 		glEnableVertexAttribArray(3);
 	}
-	//CHECK_GL_ERR();
+	CHECK_GL_ERR();
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);

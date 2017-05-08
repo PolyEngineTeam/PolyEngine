@@ -17,6 +17,7 @@
 // Utils
 #include "InputQueue.hpp"
 #include "KeyBindings.hpp"
+#include "OpenGLUtils.hpp"
 
 // Resources
 #include "ResourceBase.hpp"

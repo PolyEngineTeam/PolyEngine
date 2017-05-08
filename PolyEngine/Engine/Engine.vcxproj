@@ -211,6 +211,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\MeshRenderingComponent.hpp" />
     <ClInclude Include="Src\GLMeshResource.hpp" />
     <ClInclude Include="Src\OpenGLRenderingContext.hpp" />
+    <ClInclude Include="Src\OpenGLUtils.hpp" />
     <ClInclude Include="Src\RenderingContext.hpp" />
     <ClInclude Include="Src\RenderingSystem.hpp" />
     <ClInclude Include="Src\ResourceBase.hpp" />

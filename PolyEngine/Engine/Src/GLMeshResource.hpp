@@ -52,10 +52,11 @@ namespace Poly
 		};
 
 		GLMeshResource(const String& path);
+		virtual ~GLMeshResource();
 
 
-		const Dynarray<SubMesh>& GetSubMeshes() const { return SubMeshes; }
+		const Dynarray<SubMesh*>& GetSubMeshes() const { return SubMeshes; }
 	private:
-		Dynarray<SubMesh> SubMeshes;
+		Dynarray<SubMesh*> SubMeshes;
 	};
 }

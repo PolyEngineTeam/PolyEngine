@@ -160,5 +160,8 @@
     <ClInclude Include="Src\GLMeshResource.hpp">
       <Filter>Source Files\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Src\OpenGLUtils.hpp">
+      <Filter>Source Files\Rendering\OpenGL</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

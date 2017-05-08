@@ -3,9 +3,9 @@
 #include <CameraComponent.hpp>
 #include <TransformComponent.hpp>
 #include <MeshRenderingComponent.hpp>
+#include <Core.hpp>
 
-#include <ResourceManager.hpp>
-#include <GLMeshResource.hpp>
+using namespace Poly;
 
 void TestGame::Init()
 {
@@ -15,17 +15,15 @@ void TestGame::Init()
 
 	TestEnt = Engine->GetWorld().SpawnEntity();
 	Engine->GetWorld().AddComponent<Poly::TransformComponent>(TestEnt);
-	Engine->GetWorld().AddComponent<Poly::MeshRenderingComponent>(TestEnt);
+	Engine->GetWorld().AddComponent<Poly::MeshRenderingComponent>(TestEnt, "Res/model-tank/tank.fbx");
+	Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(TestEnt);
+	entTransform->SetLocalRotation(Poly::Quaternion(Poly::Vector(0, 1, 0), 90_deg));
 
 	Poly::TransformComponent* transform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(Camera);
 	transform->SetLocalTranslation(Poly::Vector(0, 0, 5));
 	Engine->GetWorld().GetViewportWorldComponent().SetCamera(0, Engine->GetWorld().GetComponent<Poly::CameraComponent>(Camera));
 
 	Engine->RegisterUpdatePhase(GameMainSystem::GameUpdate, Poly::Engine::eUpdatePhaseOrder::UPDATE);
-	
-	// testing mesh loading
-	Poly::GLMeshResource* mesh = Poly::ResourceManager<Poly::GLMeshResource>::Load("Res/model-tank/tank.fbx");
-	Poly::ResourceManager<Poly::GLMeshResource>::Release(mesh);
 };
 
 void TestGame::Deinit()
@@ -46,7 +44,7 @@ void GameMainSystem::GameUpdate(Poly::World* world)
 		auto transform = std::get<Poly::TransformComponent*>(components);
 		if (transform)
 		{
-			transform->SetLocalTranslation(Poly::Vector(x, y * 1.5f, 5));
+			transform->SetLocalTranslation(Poly::Vector(x, y * 3.f, 15));
 		}
 	}
 }
