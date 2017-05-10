@@ -6,7 +6,7 @@ using namespace Poly;
 
 void InputSystem::InputPhase(World* world)
 {
-	InputWorldComponent com = world->GetInputWorldComponent();
+	InputWorldComponent& com = world->GetInputWorldComponent();
 
 	com.PrevKey = com.CurrKey;
 

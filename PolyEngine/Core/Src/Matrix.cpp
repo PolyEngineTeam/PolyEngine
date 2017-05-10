@@ -461,7 +461,7 @@ bool Poly::Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& 
 	}
 	else {
 		// No perspective.
-		perspectivePoint = Vector(0, 0, 0);
+		perspectivePoint = Vector::ZERO;
 	}
 
 	// Next take care of translation (easy).

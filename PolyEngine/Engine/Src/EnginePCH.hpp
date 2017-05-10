@@ -30,6 +30,7 @@
 #include "CameraComponent.hpp"
 #include "MeshRenderingComponent.hpp"
 #include "ViewportWorldComponent.hpp"
+#include "FreeFloatMovementComponent.hpp"
 
 // World Components
 #include "InputWorldComponent.hpp"

@@ -3,6 +3,7 @@
 #include <CameraComponent.hpp>
 #include <TransformComponent.hpp>
 #include <MeshRenderingComponent.hpp>
+#include <FreeFloatMovementComponent.hpp>
 #include <Core.hpp>
 
 using namespace Poly;
@@ -12,48 +13,45 @@ void TestGame::Init()
 	Camera = Engine->GetWorld().SpawnEntity();
 	Engine->GetWorld().AddComponent<Poly::TransformComponent>(Camera);
 	Engine->GetWorld().AddComponent<Poly::CameraComponent>(Camera, 45.0f, 1.0f, 1000.f);
+	Engine->GetWorld().AddComponent<Poly::FreeFloatMovementComponent>(Camera, 10.0f, 0.003f);
 
-	TestEnt = Engine->GetWorld().SpawnEntity();
-	Engine->GetWorld().AddComponent<Poly::TransformComponent>(TestEnt);
-	Engine->GetWorld().AddComponent<Poly::MeshRenderingComponent>(TestEnt, "Res/model-tank/tank.fbx");
-	Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(TestEnt);
-	entTransform->SetLocalRotation(Poly::Quaternion(Poly::Vector(0, 1, 0), 90_deg));
+	// Set some camera position
+	Poly::TransformComponent* cameraTrans = Engine->GetWorld().GetComponent<Poly::TransformComponent>(Camera);
+	cameraTrans->SetLocalTranslation(Vector(-23.1327, 13.9473, -25.7297));
+	cameraTrans->SetLocalRotation(Quaternion(EulerAngles{ 152.154_deg, 52.1159_deg, -180_deg }));
 
-	Poly::TransformComponent* transform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(Camera);
-	transform->SetLocalTranslation(Poly::Vector(0, 0, 5));
+	for (int i = -2; i < 2; ++i)
+	{
+		for (int j = -2; j < 2; ++j)
+		{
+			auto ent = Engine->GetWorld().SpawnEntity();
+			Engine->GetWorld().AddComponent<Poly::TransformComponent>(ent);
+			Engine->GetWorld().AddComponent<Poly::MeshRenderingComponent>(ent, "Res/model-tank/tank.fbx");
+			Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(ent);
+			entTransform->SetLocalTranslation(Vector(i * 5, 0, j * 10));
+			GameEntities.PushBack(ent);
+		}
+	}
+
 	Engine->GetWorld().GetViewportWorldComponent().SetCamera(0, Engine->GetWorld().GetComponent<Poly::CameraComponent>(Camera));
-
 	Engine->RegisterUpdatePhase(GameMainSystem::GameUpdate, Poly::Engine::eUpdatePhaseOrder::UPDATE);
 };
 
 void TestGame::Deinit()
 {
 	Engine->GetWorld().DestroyEntity(Camera);
-	Engine->GetWorld().DestroyEntity(TestEnt);
+	for(auto ent : GameEntities)
+		Engine->GetWorld().DestroyEntity(ent);
 };
 
 void GameMainSystem::GameUpdate(Poly::World* world)
 {
-	static float val = 0;
-	val += 0.001f;
-	float y = sinf(val);
-	float x = cosf(val);
-
-	for(auto components : world->IterateComponents<Poly::CameraComponent, Poly::TransformComponent>())
+	/*for (auto components : world->IterateComponents<Poly::MeshRenderingComponent, Poly::TransformComponent>())
 	{
 		auto transform = std::get<Poly::TransformComponent*>(components);
 		if (transform)
 		{
-			transform->SetLocalTranslation(Poly::Vector(x, y * 3.f, 12));
+			transform->SetLocalRotation(Poly::Quaternion(Poly::Vector::UNIT_Y, Poly::Angle::FromDegrees(val * 300)));
 		}
-	}
-
-	for (auto components : world->IterateComponents<Poly::MeshRenderingComponent, Poly::TransformComponent>())
-	{
-		auto transform = std::get<Poly::TransformComponent*>(components);
-		if (transform)
-		{
-			transform->SetLocalRotation(Poly::Quaternion(Poly::Vector(0, 1, 0), Poly::Angle::FromDegrees(val * 300)));
-		}
-	}
+	}*/
 }
