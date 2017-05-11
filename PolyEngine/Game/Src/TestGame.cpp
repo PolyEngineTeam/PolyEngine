@@ -26,7 +26,7 @@ void TestGame::Init()
 		{
 			auto ent = Engine->GetWorld().SpawnEntity();
 			Engine->GetWorld().AddComponent<Poly::TransformComponent>(ent);
-			Engine->GetWorld().AddComponent<Poly::MeshRenderingComponent>(ent, "Res/model-tank/tank.fbx");
+			Engine->GetWorld().AddComponent<Poly::MeshRenderingComponent>(ent, "model-tank/tank.fbx");
 			Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(ent);
 			entTransform->SetLocalTranslation(Vector(i * 5, 0, j * 10));
 			GameEntities.PushBack(ent);

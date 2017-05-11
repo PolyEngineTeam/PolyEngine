@@ -9,7 +9,7 @@ using namespace Poly;
 void RenderingSystem::RenderingPhase(World* world)
 {
 	// TODO get rid of this "once" code
-	static ShaderProgram testProgram("Res/test.vsh", "Res/test.fsh");
+	static ShaderProgram testProgram("test.vsh", "test.fsh");
 	static bool Once = true;
 	if (Once)
 	{

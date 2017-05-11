@@ -10,27 +10,21 @@ using namespace Poly;
 const String& Poly::GetResourcesAbsolutePath()
 {
 	static String PATH;
+	static String defaultPath("../Engine/Res/");
+	static String assetsPath("AssetsPath.txt");
 
-	//TODO temporary implementation. should use some JSON config file
-	String defaultPath("C:\\Polyengine\\Resources");
-	std::string tmpConfigPath = "tmp_config.txt";
-
-	std::ifstream file;
-	file.open(tmpConfigPath);
-	if (file.good())
+	if (PATH.GetLength() == 0)
 	{
-		file.close();
-		PATH = LoadTextFile(String(tmpConfigPath.c_str()));
+		try
+		{
+			PATH = LoadTextFile(assetsPath);
+		}
+		catch (FileIOException)
+		{
+			PATH = defaultPath;
+			SaveTextFile(assetsPath, defaultPath);
+		}
 	}
-	else
-	{
-		file.close();
-		std::ofstream ofile;
-		ofile.open(tmpConfigPath);
-		ofile << defaultPath;
-		PATH = defaultPath;
-	}
-	file.close();
 
 	return PATH;
 }
