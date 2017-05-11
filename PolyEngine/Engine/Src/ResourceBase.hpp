@@ -9,7 +9,7 @@
 namespace Poly
 {
 	//------------------------------------------------------------------------------
-	class ENGINE_DLLEXPORT ResourceLoadFailedException : public std::exception
+	class ENGINE_DLLEXPORT ResourceLoadFailedException : public BaseObject<>, public std::exception
 	{
 	public:
 		ResourceLoadFailedException() {}
