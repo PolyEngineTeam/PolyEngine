@@ -23,7 +23,7 @@ GLMeshResource::GLMeshResource(const String& path)
 
 	gConsole.LogDebug("Loading model {} sucessfull.", path);
 	for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
-		SubMeshes.PushBack(new SubMesh(path, scene->mMeshes[i], scene->mMaterials[i]));
+		SubMeshes.PushBack(new SubMesh(path, scene->mMeshes[i], scene->mMaterials[scene->mMeshes[i]->mMaterialIndex]));
 	}
 }
 
