@@ -18,7 +18,7 @@ namespace Poly
 	{
 	public:
 		//------------------------------------------------------------------------------
-		static T* Load(const String& relativePath)
+		static T* Load(const String& relativePath, bool absolute = true)
 		{
 			auto it = GetResources().find(relativePath);
 
@@ -34,7 +34,14 @@ namespace Poly
 			T* resource = nullptr;
 			try {
 				//TODO create wrapper for path
-				resource = new T(GetResourcesAbsolutePath() + relativePath);
+				if (absolute)
+				{
+					resource = new T(GetResourcesAbsolutePath() + relativePath);
+				}
+				else
+				{
+					resource = new T(relativePath);
+				}
 			}
 			catch (const ResourceLoadFailedException& e)
 			{
