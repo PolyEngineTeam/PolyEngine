@@ -18,7 +18,7 @@ namespace Poly
 	{
 	public:
 		//------------------------------------------------------------------------------
-		static T* Load(const String& relativePath, bool absolute=true)
+		static T* Load(const String& relativePath, bool absolute = true)
 		{
 			auto it = GetResources().find(relativePath);
 

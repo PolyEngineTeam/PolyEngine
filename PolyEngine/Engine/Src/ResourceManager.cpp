@@ -10,8 +10,8 @@ using namespace Poly;
 const String& Poly::GetResourcesAbsolutePath()
 {
 	static String PATH;
-	static String defaultPath("../Engine/Res/");
-	static String assetsPath("AssetsPath.txt");
+	static const String defaultPath("../Engine/Res/");
+	static const String assetsPath("AssetsPath.txt");
 
 	if (PATH.GetLength() == 0)
 	{
