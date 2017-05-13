@@ -90,23 +90,21 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	while (true)
 	{
 		// Check to see if any messages are waiting in the queue
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != 0)
 		{
 			// translate keystroke messages into the right format
 			TranslateMessage(&msg);
 
 			// send the message to the WindowProc function
 			DispatchMessage(&msg);
+		}
+		
+		// check to see if it's time to quit
+		if (msg.message == WM_QUIT)
+			break;
 
-			// check to see if it's time to quit
-			if (msg.message == WM_QUIT)
-				break;
-		}
-		else
-		{
-			// Run game code here
-			Engine.Update();
-		}
+		// Run game code here
+		Engine.Update();
 	}
 
 	Engine.Deinit();

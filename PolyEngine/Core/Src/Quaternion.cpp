@@ -8,8 +8,8 @@ Quaternion::Quaternion(const Vector& axis, const Angle& angle) {
 }
 
 //------------------------------------------------------------------------------
-Quaternion::Quaternion(const EulerAngles& euler) {
-
+Quaternion::Quaternion(const EulerAngles& euler)
+{
   float c1 = Cos(euler.Y * 0.5f);
   float s1 = Sin(euler.Y * 0.5f);
   float c2 = Cos(euler.Z * 0.5f);
@@ -131,6 +131,12 @@ EulerAngles Quaternion::ToEulerAngles() const {
 }
 
 namespace Poly {
+
+	std::ostream& operator<<(std::ostream& stream, const EulerAngles& angles)
+	{
+		return stream << "Euler[ " << angles.X << " " << angles.Y << " " << angles.Z << " ]";
+	}
+
 	//------------------------------------------------------------------------------
 	std::ostream& operator<< (std::ostream& stream, const Quaternion& quat) {
 		return stream << "Quat[ " << quat.X << " " << quat.Y << " " << quat.Z << " " << quat.W << " ]";
