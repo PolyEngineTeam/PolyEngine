@@ -4,15 +4,18 @@
 namespace Poly
 {
 	class World;
+	enum class eEngineTimer { SYSTEM, GAMEPLAY, _COUNT };
 
 	namespace TimeSystem
 	{
 		void TimeUpdatePhase(World* world);
 
-		void RegisterTimer(World* world, const size_t id, const bool isPausable);
+		void ENGINE_DLLEXPORT RegisterTimer(World* world, size_t id, bool isPausable);
 
-		float GetDeltaTime(World* world);
+		double ENGINE_DLLEXPORT GetTimerDeltaTime(World* world, size_t timerId);
 
-		float GetTimerTime(World* world, const size_t id);
+		double ENGINE_DLLEXPORT GetTimerDeltaTime(World* world, eEngineTimer timerType);
+
+		double ENGINE_DLLEXPORT GetTimerElapsedTime(World* world, size_t timerId);
 	}
 }

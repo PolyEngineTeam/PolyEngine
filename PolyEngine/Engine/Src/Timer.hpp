@@ -4,10 +4,6 @@
 #include <Core.hpp>
 #include "TimeSystem.hpp"
 
-using std::chrono::duration;
-using std::chrono::steady_clock;
-using std::chrono::duration_cast;
-
 namespace Poly
 {
 
@@ -17,10 +13,12 @@ namespace Poly
 	public:
 		Timer(bool isPausable = false);
 
-		float GetTime() const { return Time.count(); };
+		double GetTime() const { return Time.count(); };
+		double GetDeltaTime() const { return DeltaTime; };
 
 	private:
-		duration<float> Time;
+		double DeltaTime;
+		std::chrono::duration<double> Time;
 
 		bool IsPausable;
 

@@ -6,8 +6,8 @@
 //------------------------------------------------------------------------------
 Poly::TimeWorldComponent::TimeWorldComponent()
 {
-	LastFrameTime = steady_clock::now();
-	SystemTime = Timer(false);
-	GameplayTime = Timer(true);
+	LastFrameTime = std::chrono::steady_clock::now();
+	Timers[(size_t) eEngineTimer::SYSTEM] = Timer(false);
+	Timers[(size_t) eEngineTimer::GAMEPLAY] = Timer(true);
 }
 

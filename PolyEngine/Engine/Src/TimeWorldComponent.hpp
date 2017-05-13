@@ -6,37 +6,32 @@
 #include "Timer.hpp"
 #include "ComponentBase.hpp"
 
-using std::chrono::steady_clock;
-using std::chrono::milliseconds;
 
 namespace Poly
 {
 	class ENGINE_DLLEXPORT TimeWorldComponent : public ComponentBase
 	{
 		friend void TimeSystem::TimeUpdatePhase(World* world);
-		friend void TimeSystem::RegisterTimer(World* world, const size_t id, const bool isPausable);
-		friend float TimeSystem::GetTimerTime(World* world, const size_t id);
+		friend void TimeSystem::RegisterTimer(World* world, size_t id, bool isPausable);
+		friend double TimeSystem::GetTimerDeltaTime(World* world, size_t timerId);
+		friend double TimeSystem::GetTimerDeltaTime(World* world, eEngineTimer timerType);
+		friend double TimeSystem::GetTimerElapsedTime(World* world, size_t timerId);
 	public:	
 		TimeWorldComponent();
-		~TimeWorldComponent() {};
 
-		float GetDeltaTime() const { return DeltaTime; };
-		float GetSystemTime() const { return SystemTime.GetTime(); };
-		float GetGameplayTime() const { return GameplayTime.GetTime(); };
+		double GetSystemTime() const { return Timers.at((size_t) eEngineTimer::SYSTEM).GetTime(); };
+		double GetGameplayTime() const { return Timers.at((size_t) eEngineTimer::GAMEPLAY).GetTime(); };
+
+		bool GetIsPaused() const { return IsPaused; };
 
 		void SetPaused(bool isPaused) { IsPaused = isPaused; };
 
 	private:
-		const milliseconds MIN_TIME_STEP_MS = milliseconds(60);
+		const std::chrono::milliseconds MIN_TIME_STEP_MS = std::chrono::milliseconds(60);
 
-		steady_clock::time_point LastFrameTime;
-
-		Timer SystemTime;
-		Timer GameplayTime;
+		std::chrono::steady_clock::time_point LastFrameTime;
 
 		std::unordered_map<size_t, Timer> Timers;
-
-		float DeltaTime;
 
 		bool IsPaused;
 	};

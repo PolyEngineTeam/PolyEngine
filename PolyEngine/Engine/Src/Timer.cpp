@@ -6,5 +6,5 @@
 Poly::Timer::Timer(bool isPausable) 
 	: IsPausable(isPausable)
 {
-	Time = std::chrono::duration<float>::zero();
+	Time = std::chrono::duration<double>::zero();
 }

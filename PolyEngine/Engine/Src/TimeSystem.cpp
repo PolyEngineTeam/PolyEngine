@@ -10,51 +10,54 @@ using std::chrono::duration;
 //------------------------------------------------------------------------------
 void Poly::TimeSystem::TimeUpdatePhase(World * world)
 {
-	TimeWorldComponent* timeComponent = &world->GetTimeWorldComponent();
+	TimeWorldComponent& timeComponent = world->GetTimeWorldComponent();
 
 	//Get new delta time
 	std::chrono::steady_clock::time_point frameTime = steady_clock::now();
-	duration<float> deltaTime = duration_cast<duration<float>>(frameTime - timeComponent->LastFrameTime);
-#ifdef DEBUG
-	deltaTime = deltaTime > duration_cast<duration<float>>(timeComponent.MIN_TIME_STEP_MS) ? timeComponent.MIN_TIME_STEP_MS : deltaTime;
-#endif // DEBUG
-	timeComponent->DeltaTime = deltaTime.count();
-	timeComponent->LastFrameTime = frameTime;
+	duration<double> deltaTime = duration_cast<duration<double>>(frameTime - timeComponent.LastFrameTime);
+
+	//In future this should be surrounded by #ifndef FINAL
+	deltaTime = deltaTime > duration_cast<duration<double>>(timeComponent.MIN_TIME_STEP_MS) ? timeComponent.MIN_TIME_STEP_MS : deltaTime;
+	//#endif
+
+	timeComponent.LastFrameTime = frameTime;
 
 	//Update timers
-	timeComponent->SystemTime.Time += deltaTime;
-	if (!timeComponent->IsPaused)
+	for (auto& timer : timeComponent.Timers)
 	{
-		timeComponent->GameplayTime.Time += deltaTime;
-	}
-	for (auto& timer : timeComponent->Timers)
-	{
-		if (timeComponent->IsPaused && timer.second.IsPausable)
+		if (timeComponent.IsPaused && timer.second.IsPausable)
+		{
+			timer.second.DeltaTime = 0.0;
 			continue;
+		}
 		timer.second.Time += deltaTime;
+		timer.second.DeltaTime = deltaTime.count();
 	}
 }
 
 //------------------------------------------------------------------------------
-void Poly::TimeSystem::RegisterTimer(World * world, const size_t id, const bool isPausable)
+void Poly::TimeSystem::RegisterTimer(World * world, size_t timerId, bool isPausable)
 {
-	TimeWorldComponent* timeComponent = &world->GetTimeWorldComponent();
-	//if timer with that id exists, do nothing (for now)
-	if (timeComponent->Timers.count(id) == 0)
-	{
-		timeComponent->Timers[id] = Timer(isPausable);
-	}
+	TimeWorldComponent& timeComponent = world->GetTimeWorldComponent();
+	ASSERTE(timeComponent.Timers.count(timerId) == 0, "Same timer id provided twice!");
+	timeComponent.Timers[timerId] = Timer(isPausable);
 }
 
 //------------------------------------------------------------------------------
-float Poly::TimeSystem::GetDeltaTime(World * world)
+double Poly::TimeSystem::GetTimerDeltaTime(World * world, size_t timerId)
 {
-	return world->GetTimeWorldComponent().GetDeltaTime();
+	return world->GetTimeWorldComponent().Timers.at(timerId).GetDeltaTime();
 }
 
 //------------------------------------------------------------------------------
-float Poly::TimeSystem::GetTimerTime(World * world, const size_t id)
+double Poly::TimeSystem::GetTimerDeltaTime(World * world, eEngineTimer timerType)
 {
-	TimeWorldComponent* timeComponent = &world->GetTimeWorldComponent();
-	return timeComponent->Timers.count(id) == 0 ? 0.0f : timeComponent->Timers[id].GetTime();
+	return world->GetTimeWorldComponent().Timers.at((size_t)timerType).GetDeltaTime();
+}
+
+//------------------------------------------------------------------------------
+double Poly::TimeSystem::GetTimerElapsedTime(World * world, size_t id)
+{
+	TimeWorldComponent& timeComponent = world->GetTimeWorldComponent();
+	return timeComponent.Timers.count(id) == 0 ? 0.0f : timeComponent.Timers[id].GetTime();
 }
