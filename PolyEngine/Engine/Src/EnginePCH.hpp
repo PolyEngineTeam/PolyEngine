@@ -17,15 +17,20 @@
 // Utils
 #include "InputQueue.hpp"
 #include "KeyBindings.hpp"
+#include "OpenGLUtils.hpp"
 
 // Resources
+#include "ResourceBase.hpp"
 #include "ResourceManager.hpp"
+#include "GLTextureResource.hpp"
+#include "GLMeshResource.hpp"
 
 // Components
 #include "TransformComponent.hpp"
 #include "CameraComponent.hpp"
 #include "MeshRenderingComponent.hpp"
 #include "ViewportWorldComponent.hpp"
+#include "FreeFloatMovementComponent.hpp"
 
 // World Components
 #include "InputWorldComponent.hpp"

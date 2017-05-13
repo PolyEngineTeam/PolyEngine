@@ -64,8 +64,8 @@ void ShaderProgram::LoadShader(GLenum type, const String& shaderName)
 	if (shader == 0) {
 		ASSERTE(false, "Creation of shader failed!");
 	}
-
-	String shaderCode = LoadTextFile(shaderName);
+	
+	String shaderCode = LoadTextFile(GetResourcesAbsolutePath() + shaderName);
 
 	const char *code = shaderCode.GetCStr();
 	glShaderSource(shader, 1, &code, NULL);

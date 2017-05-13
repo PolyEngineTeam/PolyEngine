@@ -27,7 +27,7 @@ namespace Poly {
 		StringBase(const T* data) {
 			size_t length = StrLen(data);
 			Data.Resize(length + 1);
-			memcpy(Data.GetData(), data, sizeof(T) * length);
+			std::memcpy(Data.GetData(), data, sizeof(T) * length);
 			Data[length] = 0;
 		}
 
@@ -101,6 +101,6 @@ namespace Poly {
 		Dynarray<T> Data;
 	};
 
-	typedef StringBase<char> String;
+	using String = StringBase<char>;
 
 }

@@ -39,6 +39,9 @@
     <Filter Include="Source Files\Time">
       <UniqueIdentifier>{7ff56e66-ac0d-4f46-88dd-73a53f54c1da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Movement">
+      <UniqueIdentifier>{ce34e806-09b8-412f-8c29-e5e45348fe3b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -94,6 +97,18 @@
     </ClCompile>
     <ClCompile Include="Src\Timer.cpp">
       <Filter>Source Files\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GLTextureResource.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GLMeshResource.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\MovementSystem.cpp">
+      <Filter>Source Files\Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\FreeFloatMovementComponent.cpp">
+      <Filter>Source Files\Movement</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +180,24 @@
     </ClInclude>
     <ClInclude Include="Src\Timer.hpp">
       <Filter>Source Files\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GLTextureResource.hpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ResourceBase.hpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GLMeshResource.hpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\OpenGLUtils.hpp">
+      <Filter>Source Files\Rendering\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\MovementSystem.hpp">
+      <Filter>Source Files\Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\FreeFloatMovementComponent.hpp">
+      <Filter>Source Files\Movement</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
