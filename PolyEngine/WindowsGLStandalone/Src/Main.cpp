@@ -5,6 +5,7 @@
 #include <Engine.hpp>
 #include <OpenGLRenderingContext.hpp>
 #include <TestGame.hpp>
+#include <sstream>
 
 static Poly::Engine* gEngine = nullptr;
 
@@ -97,6 +98,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 			// send the message to the WindowProc function
 			DispatchMessage(&msg);
+
 		}
 		
 		// check to see if it's time to quit
@@ -105,6 +107,12 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		// Run game code here
 		Engine.Update();
+    // Temporary visualisation of delta time in window title
+    std::stringstream ss;
+    ss << Poly::TimeSystem::GetTimerDeltaTime(&Engine.GetWorld(), Poly::eEngineTimer::SYSTEM);
+    Poly::String windText("DeltaTime = ");
+    windText = windText + ss.str().c_str();
+    SetWindowText(hWnd, windText.GetCStr());
 	}
 
 	Engine.Deinit();
