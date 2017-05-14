@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdlib>
-
 #include "Defines.hpp"
 
 //TODO(vuko): possibly replace with std::aligned_storage for portability and soundness guarantee
@@ -17,12 +15,12 @@ namespace Poly {
 		constexpr size_t MEM_ALIGNMENT = 16;
 	}
 
+#include <cstdlib>
 #include <malloc.h>
 
 	inline void* DefaultAlloc(size_t size) {
 		using namespace Impl;
 		void* fresh = memalign(MEM_ALIGNMENT, size);
-
 #ifdef __has_feature
 #if __has_feature(memory_sanitizer)
 		//we'll be possibly reading this memory later during reallocation, so write over it to avoid triggering unitialized reads detection

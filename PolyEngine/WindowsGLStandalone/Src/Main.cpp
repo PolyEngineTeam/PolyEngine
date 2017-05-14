@@ -5,6 +5,7 @@
 #include <Engine.hpp>
 #include <OpenGLRenderingContext.hpp>
 #include <TestGame.hpp>
+#include <sstream>
 
 static Poly::Engine* gEngine = nullptr;
 
@@ -90,7 +91,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	while (true)
 	{
 		// Check to see if any messages are waiting in the queue
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != 0)
 		{
 			// translate keystroke messages into the right format
 			TranslateMessage(&msg);
@@ -98,15 +99,20 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			// send the message to the WindowProc function
 			DispatchMessage(&msg);
 
-			// check to see if it's time to quit
-			if (msg.message == WM_QUIT)
-				break;
 		}
-		else
-		{
-			// Run game code here
-			Engine.Update();
-		}
+		
+		// check to see if it's time to quit
+		if (msg.message == WM_QUIT)
+			break;
+
+		// Run game code here
+		Engine.Update();
+    // Temporary visualisation of delta time in window title
+    std::stringstream ss;
+    ss << Poly::TimeSystem::GetTimerDeltaTime(&Engine.GetWorld(), Poly::eEngineTimer::SYSTEM);
+    Poly::String windText("DeltaTime = ");
+    windText = windText + ss.str().c_str();
+    SetWindowText(hWnd, windText.GetCStr());
 	}
 
 	Engine.Deinit();

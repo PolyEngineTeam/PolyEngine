@@ -4,60 +4,24 @@
 
 #include <GL/glew.h>
 
-
 using namespace Poly;
-
-void TestDraw(const Matrix& MVP) {
-	static ShaderProgram testProgram("Res/test.vsh", "Res/test.fsh");
-	static const GLfloat g_vertex_buffer_data[] = {
-		-1.0f, -1.0f, 0.0f,
-		1.0f, -1.0f, 0.0f,
-		0.0f,  1.0f, 0.0f,
-	};
-	static bool Once = true;
-	static GLuint vertexbuffer = 0;
-	static GLuint VertexArrayID = 0;
-	if (Once)
-	{
-		Once = false;
-		glGenVertexArrays(1, &VertexArrayID);
-		glBindVertexArray(VertexArrayID);
-
-		// Generate 1 buffer, put the resulting identifier in vertexbuffer
-		glGenBuffers(1, &vertexbuffer);
-		// The following commands will talk about our 'vertexbuffer' buffer
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		// Give our vertices to OpenGL.
-		glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-		testProgram.RegisterUniform("uMVP");
-	}
-
-	testProgram.BindProgram();
-
-	// Test Draw
-	glBindVertexArray(VertexArrayID);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glVertexAttribPointer(
-		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-		3,                  // size
-		GL_FLOAT,           // type
-		GL_FALSE,           // normalized?
-		0,                  // stride
-		(void*)0            // array buffer offset
-	);
-
-	testProgram.SetUniform("uMVP", MVP);
-
-	// Draw the triangle !
-	glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
-	glDisableVertexAttribArray(0);
-}
 
 void RenderingSystem::RenderingPhase(World* world)
 {
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	// TODO get rid of this "once" code
+	static ShaderProgram testProgram("test.vsh", "test.fsh");
+	static bool Once = true;
+	if (Once)
+	{
+		Once = false;
+		//testProgram.RegisterUniform("uMVP");
+		testProgram.RegisterUniform("uTransform");
+	}
+	
+	glDepthMask(GL_TRUE);
+	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
 
 	ScreenSize screen = world->GetEngine()->GetRenderingContext()->GetScreenSize();
 	for (auto& kv : world->GetViewportWorldComponent().GetViewports())
@@ -67,24 +31,39 @@ void RenderingSystem::RenderingPhase(World* world)
 		glViewport((int)(rect.GetMin().X * screen.Width), (int)(rect.GetMin().Y * screen.Height),
 			(int)(rect.GetSize().X * screen.Width), (int)(rect.GetSize().Y * screen.Height));
 
-		TestDraw(kv.second.GetCamera()->GetMVP());
-	}
-
-	// render objects
-	/*auto allocator2 = world->GetComponentAllocator<MeshRenderingComponent>();
-	for (MeshRenderingComponent& meshRenderingCmp : *allocator2)
-	{
-		Matrix transformation;
-		TransformComponent* transformCmp = meshRenderingCmp.GetSibling<TransformComponent>();
-		if (transformCmp)
+		testProgram.BindProgram();
+		const Matrix& mvp = kv.second.GetCamera()->GetMVP();
+		//testProgram.SetUniform("uMVP", mvp);
+		
+		// Render objects
+		for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
 		{
-			transformation = transformCmp->GetGlobalTransformationMatrix();
-		}
-		else
-			gConsole.LogError("Entity has mesh component but no transform component!");
+			const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
+			const TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
 
-		//TODO render meshes
-	}*/
+			const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
+			Matrix screenTransform = mvp * objTransform;
+			testProgram.SetUniform("uTransform", screenTransform);
+			for (const GLMeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
+			{
+				glBindVertexArray(subMesh->GetVAO());
+				
+				if (subMesh->GetDiffTexture())
+				{
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, subMesh->GetDiffTexture()->GetID());
+				}
+				
+				glDrawElements(GL_TRIANGLES, subMesh->GetVertexCount(), GL_UNSIGNED_INT, NULL);
+				glBindTexture(GL_TEXTURE_2D, 0);
+				glBindVertexArray(0);
+			}
+		}
+
+		CHECK_GL_ERR();
+		glDepthMask(GL_FALSE);
+		glDisable(GL_DEPTH_TEST);
+	}
 
 	world->GetEngine()->GetRenderingContext()->EndFrame();
 }

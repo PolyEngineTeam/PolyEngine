@@ -76,6 +76,7 @@ add_test(NAME "Vector-comparison-operators"                   COMMAND polytests 
 add_test(NAME "Vector-Vector-operators"                       COMMAND polytests "Vector-Vector operators")
 add_test(NAME "Vector-scalar-operators"                       COMMAND polytests "Vector-scalar operators")
 add_test(NAME "Vector-algebraic-methods"                      COMMAND polytests "Vector algebraic methods")
+add_test(NAME "Floating-point-equality-comparisons"           COMMAND polytests "Floating-point equality comparisons")
 add_test(NAME "TransformComponent-with-no-parent"             COMMAND polytests "TransformComponent with no parent")
 add_test(NAME "TransformComponent-with-parent"                COMMAND polytests "TransformComponent with parent")
 add_test(NAME "Multi-layer-hierarchy"                         COMMAND polytests "Multi-layer hierarchy")

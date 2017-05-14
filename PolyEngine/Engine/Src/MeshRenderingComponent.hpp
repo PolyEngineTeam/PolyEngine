@@ -2,6 +2,7 @@
 
 #include "ComponentBase.hpp"
 #include "RenderingSystem.hpp"
+#include "GLMeshResource.hpp"
 
 namespace Poly {
 
@@ -9,9 +10,11 @@ namespace Poly {
 	{
 		friend void RenderingSystem::RenderingPhase(World*);
 	public:
-		MeshRenderingComponent();
-		
+		MeshRenderingComponent(const String& meshPath);
+		virtual ~MeshRenderingComponent();
+
+		const GLMeshResource* GetMesh() const { return Mesh; }
 	private:
-		//TODO add mesh
+		GLMeshResource* Mesh = nullptr;
 	};
 }

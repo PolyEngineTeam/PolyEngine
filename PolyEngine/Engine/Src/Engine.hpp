@@ -23,6 +23,7 @@ namespace Poly
 		TRANSFORM,
 		BASE_CAMERA,
 		MESH_RENDERING,
+		FREE_FLOAT_MOVEMENT,
 		_COUNT
 	};
 

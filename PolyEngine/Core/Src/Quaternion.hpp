@@ -8,7 +8,11 @@
 
 namespace Poly {
 
-	struct CORE_DLLEXPORT EulerAngles { Angle X, Y, Z; };
+	struct CORE_DLLEXPORT EulerAngles { 
+		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const EulerAngles& angles);
+
+		Angle X, Y, Z; 
+	};
 
 	class ALIGN_16 CORE_DLLEXPORT Quaternion : public BaseObject<>{
 	public:

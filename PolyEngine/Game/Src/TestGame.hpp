@@ -17,7 +17,8 @@ public:
 	void Deinit() override;
 
 private:
-	Poly::UniqueID Camera, TestEnt;
+	Poly::UniqueID Camera;
 
+	Poly::Dynarray<Poly::UniqueID> GameEntities;
 	Poly::Engine* Engine;
 };

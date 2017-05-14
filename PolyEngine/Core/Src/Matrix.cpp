@@ -379,7 +379,7 @@ Matrix Matrix::GetInversed() const {
 Matrix& Matrix::Transpose() {
   for (int row = 0; row < 4; ++row) {
     for (int col = row + 1; col < 4; ++col) {
-      Swap(Data[4*row + col], Data[4*col + row]);
+      std::swap(Data[4*row + col], Data[4*col + row]);
     }
   }
   return *this;
@@ -461,7 +461,7 @@ bool Poly::Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& 
 	}
 	else {
 		// No perspective.
-		perspectivePoint = Vector(0, 0, 0);
+		perspectivePoint = Vector::ZERO;
 	}
 
 	// Next take care of translation (easy).

@@ -13,10 +13,18 @@ namespace Poly {
 	}
 	#endif
 
-	inline String LoadTextFile(const String& path) {
+	//------------------------------------------------------------------------------
+	class ENGINE_DLLEXPORT FileIOException : public BaseObject<>, public std::exception
+	{
+	public:
+		FileIOException() {}
+	};
+
+	//------------------------------------------------------------------------------
+	inline String LoadTextFile(const String& path)
+	{
 		FILE *f;
 		fopen_s(&f, path.GetCStr(), "rb");
-		ASSERTE(f, "Cannot open file!");
 		if (f) {
 			fseek(f, 0, SEEK_END);
 			long fsize = ftell(f);
@@ -28,6 +36,20 @@ namespace Poly {
 			string[fsize] = 0;
 			return String(string);
 		}
-		return String();
+		else
+			throw FileIOException();
+	}
+
+	//------------------------------------------------------------------------------
+	inline void SaveTextFile(const String& path, const String& data)
+	{
+		FILE *f;
+		fopen_s(&f, path.GetCStr(), "w");
+		if (f) {
+			fprintf(f, "%s", data.GetCStr());
+			fclose(f);
+		}
+		else
+			throw FileIOException();
 	}
 }

@@ -3,6 +3,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+*AssetsPath.txt
 
 # Build results
 [Dd]ebug/

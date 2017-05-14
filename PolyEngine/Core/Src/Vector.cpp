@@ -4,6 +4,11 @@
 
 using namespace Poly;
 
+const Vector Vector::ZERO = Vector(0, 0, 0);
+const Vector Vector::UNIT_X = Vector(1, 0, 0);
+const Vector Vector::UNIT_Y = Vector(0, 1, 0);
+const Vector Vector::UNIT_Z = Vector(0, 0, 1);
+
 //------------------------------------------------------------------------------
 bool Vector::operator==(const Vector& rhs) const {
 #if DISABLE_SIMD

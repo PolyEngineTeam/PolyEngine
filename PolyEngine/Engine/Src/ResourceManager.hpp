@@ -3,40 +3,14 @@
 #include <Defines.hpp>
 #include <Logger.hpp>
 #include <String.hpp>
-#include <RefCountedBase.hpp>
+
+#include "ResourceBase.hpp"
 
 #include <map>
-#include <exception>
 
 namespace Poly
 {
 	ENGINE_DLLEXPORT const String& GetResourcesAbsolutePath();
-
-	//------------------------------------------------------------------------------
-	class ENGINE_DLLEXPORT ResourceLoadFailedException : public std::exception
-	{
-	public:
-		ResourceLoadFailedException() {}
-	};
-
-	//------------------------------------------------------------------------------
-	class ENGINE_DLLEXPORT ResourceBase : public RefCountedBase
-	{
-	public:
-		const String& GetPath() const { return Path; }
-
-		ResourceBase() = default;
-		ResourceBase(const ResourceBase&) = delete;
-		ResourceBase& operator=(const ResourceBase&) = delete;
-
-	protected:
-		virtual ~ResourceBase() {}
-
-	private:
-		String Path;
-
-		template<typename T> friend class ResourceManager;
-	};
 
 	//------------------------------------------------------------------------------
 	template<typename T>
@@ -44,7 +18,7 @@ namespace Poly
 	{
 	public:
 		//------------------------------------------------------------------------------
-		static T* Load(const String& relativePath)
+		static T* Load(const String& relativePath, bool absolute = true)
 		{
 			auto it = GetResources().find(relativePath);
 
@@ -60,7 +34,14 @@ namespace Poly
 			T* resource = nullptr;
 			try {
 				//TODO create wrapper for path
-				resource = new T(GetResourcesAbsolutePath() + relativePath);
+				if (absolute)
+				{
+					resource = new T(GetResourcesAbsolutePath() + relativePath);
+				}
+				else
+				{
+					resource = new T(relativePath);
+				}
 			}
 			catch (const ResourceLoadFailedException& e)
 			{

@@ -9,6 +9,10 @@ namespace Poly {
 
 	class ALIGN_16 CORE_DLLEXPORT Vector : public BaseObject<>{
 	public:
+		static const Vector ZERO;
+		static const Vector UNIT_X;
+		static const Vector UNIT_Y;
+		static const Vector UNIT_Z;
 
 		// Constructors
 		constexpr Vector() : X(0.f), Y(0.f), Z(0.f), W(1.f) {}

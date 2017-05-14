@@ -1,12 +1,6 @@
-set(TESTGAME_SRCS
-	Src/TestGame.cpp
-)
-set(TESTGAME_INCLUDE
-	Src
-)
-set(TESTGAME_H_FOR_IDE
-	Src/TestGame.hpp
-)
+set(TESTGAME_SRCS Src/TestGame.cpp)
+set(TESTGAME_INCLUDE Src)
+set(TESTGAME_H_FOR_IDE Src/TestGame.hpp)
 
 add_library(testgame SHARED ${TESTGAME_SRCS} ${TESTGAME_H_FOR_IDE})
 target_compile_definitions(testgame PRIVATE _GAME)

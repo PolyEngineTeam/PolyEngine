@@ -8,6 +8,7 @@
 
 #include "InputWorldComponent.hpp"
 #include "ViewportWorldComponent.hpp"
+#include "TimeWorldComponent.hpp"
 
 namespace Poly {
 
@@ -74,6 +75,7 @@ namespace Poly {
 		Engine* GetEngine() const { return EnginePtr; }
 		InputWorldComponent& GetInputWorldComponent() { return InputComponent; };
 		ViewportWorldComponent& GetViewportWorldComponent() { return ViewportComponent; };
+		TimeWorldComponent& GetTimeWorldComponent() { return TimeComponent; };
 
 		//------------------------------------------------------------------------------
 		template<typename PrimaryComponent, typename... SecondaryComponents>
@@ -175,6 +177,7 @@ namespace Poly {
 
 		InputWorldComponent InputComponent;
 		ViewportWorldComponent ViewportComponent;
+		TimeWorldComponent TimeComponent;
 	};
 
 	//defined here due to circular inclusion problem; FIXME: circular inclusion
