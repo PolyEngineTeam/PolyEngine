@@ -188,12 +188,13 @@ namespace Poly
 	enum class eKey
 	{
 		UNDEFINED              = 0x00,
-		LBUTTON                = 0x01,
-		RBUTTON                = 0x03,
+		MLBUTTON               = 0x01,
+		MRBUTTON               = 0x03,
 		CANCEL                 = UNDEFINED,
-		MBUTTON                = 0x02,
-		BUTTON1                = 0x06,
-		BUTTON2                = 0x07,
+		MMBUTTON               = 0x02,
+		MBUTTON1               = 0x06,
+		MBUTTON2               = 0x07,
+		BACKSPACE              = 0x16,
 		TAB                    = 0x17,
 		CLEAR                  = UNDEFINED,
 		ENTER                  = 0x24, //Return key, not the NumPad Enter

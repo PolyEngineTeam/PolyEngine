@@ -17,7 +17,7 @@ void TestGame::Init()
 
 	// Set some camera position
 	Poly::TransformComponent* cameraTrans = Engine->GetWorld().GetComponent<Poly::TransformComponent>(Camera);
-	cameraTrans->SetLocalTranslation(Vector(-23.1327, 13.9473, -25.7297));
+	cameraTrans->SetLocalTranslation(Vector(-23.1327f, 13.9473f, -25.7297f));
 	cameraTrans->SetLocalRotation(Quaternion(EulerAngles{ 152.154_deg, 52.1159_deg, -180_deg }));
 
 	for (int i = -2; i < 2; ++i)
@@ -44,7 +44,7 @@ void TestGame::Deinit()
 		Engine->GetWorld().DestroyEntity(ent);
 };
 
-void GameMainSystem::GameUpdate(Poly::World* world)
+void GameMainSystem::GameUpdate(Poly::World* /*world*/)
 {
 	/*for (auto components : world->IterateComponents<Poly::MeshRenderingComponent, Poly::TransformComponent>())
 	{

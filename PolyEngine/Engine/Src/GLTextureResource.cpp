@@ -2,7 +2,7 @@
 
 #include "GLTextureResource.hpp"
 #include "ResourceManager.hpp"
-#include "SOIL\SOIL.h"
+#include "SOIL/SOIL.h"
 
 #include <GL/glew.h>
 

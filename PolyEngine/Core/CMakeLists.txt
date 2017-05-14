@@ -10,9 +10,7 @@ set(POLYCORE_SRCS
 	Src/UniqueID.cpp
 	Src/Vector.cpp
 )
-set(POLYCORE_INCLUDE
-	Src
-)
+set(POLYCORE_INCLUDE Src)
 set(POLYCORE_H_FOR_IDE
 	Src/AARect.hpp
 	Src/Allocator.hpp
@@ -38,21 +36,18 @@ set(POLYCORE_H_FOR_IDE
 	Src/UniqueID.hpp
 	Src/Vector.hpp
 )
+
 add_library(polycore SHARED ${POLYCORE_SRCS} ${POLYCORE_H_FOR_IDE})
-target_compile_definitions(polycore PRIVATE _CORE)
-if (SIMD)
-	target_compile_definitions(polycore PRIVATE DISABLE_SIMD=false)
-else(SIMD)
-	target_compile_definitions(polycore PRIVATE DISABLE_SIMD=true)
-endif(SIMD)
+target_compile_options(polycore PRIVATE $<$<BOOL:${SIMD}>:-msse4.2>)
+target_compile_definitions(polycore PRIVATE _CORE DISABLE_SIMD=$<NOT:$<BOOL:${SIMD}>>)
 target_include_directories(polycore INTERFACE ${POLYCORE_INCLUDE})
+
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	target_compile_options(polycore PRIVATE --coverage -fprofile-arcs -ftest-coverage)
 	target_link_libraries(polycore PRIVATE -fprofile-arcs -ftest-coverage)
-	file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/gcov)
 	add_custom_target(coverage_core
 	                  COMMAND ${GCOV_COMMAND} -r -o "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/polycore.dir/Src" -s ${CMAKE_CURRENT_SOURCE_DIR} ${POLYCORE_SRCS}
-	                  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/gcov
+	                  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 	                  COMMENT "Collecting gcov coverage information for polycore"
 	)
 endif(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
