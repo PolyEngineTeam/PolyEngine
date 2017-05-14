@@ -1,5 +1,5 @@
 sudo: required
-dist: precise
+dist: trusty
 
 notifications:
   email: false
@@ -74,7 +74,7 @@ before_install:
   - export CXX=${COMPILER}
   - sudo apt-get update -qq
   - sudo apt-get install -qq mesa-common-dev libx11-dev
-  - sudo apt-get install -qq libglew-dev libsoil-dev libassimp3.0-r1264-dev
+  - sudo apt-get install -qq libglew-dev libsoil-dev libassimp-dev
 
 install:  
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
