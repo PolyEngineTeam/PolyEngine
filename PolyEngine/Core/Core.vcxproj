@@ -140,6 +140,7 @@
     </ClCompile>
     <ClCompile Include="Src\Logger.cpp" />
     <ClCompile Include="Src\Matrix.cpp" />
+    <ClCompile Include="Src\Path.cpp" />
     <ClCompile Include="Src\Quaternion.cpp" />
     <ClCompile Include="Src\AARect.cpp" />
     <ClCompile Include="Src\RefCountedBase.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Src\IterablePoolAllocator.hpp" />
     <ClInclude Include="Src\Logger.hpp" />
     <ClInclude Include="Src\Matrix.hpp" />
+    <ClInclude Include="Src\Path.hpp" />
     <ClInclude Include="Src\PoolAllocator.hpp" />
     <ClInclude Include="Src\Quaternion.hpp" />
     <ClInclude Include="Src\Queue.hpp" />
