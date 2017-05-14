@@ -26,6 +26,9 @@ set(POLYENGINE_SRCS
 	Src/RenderingSystem.cpp
 	Src/ResourceManager.cpp
 	Src/ShaderProgram.cpp
+	Src/TimeSystem.cpp
+	Src/TimeWorldComponent.cpp
+	Src/Timer.cpp
 	Src/TransformComponent.cpp
 	Src/ViewportWorldComponent.cpp
 	Src/World.cpp
@@ -54,6 +57,9 @@ set(POLYENGINE_H_FOR_IDE
 	Src/ResourceBase.hpp
 	Src/ResourceManager.hpp
 	Src/ShaderProgram.hpp
+	Src/TimeSystem.hpp
+	Src/TimeWorldComponent.hpp
+	Src/Timer.hpp
 	Src/TransformComponent.hpp
 	Src/Viewport.hpp
 	Src/ViewportWorldComponent.hpp
