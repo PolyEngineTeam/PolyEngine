@@ -33,6 +33,18 @@ namespace Poly {
 		}
 
 		template<class T>
+		void MoveCreate(T* ptr, T&& obj, typename std::enable_if<std::is_trivially_move_constructible<T>::value>::type* = 0)
+		{
+			::new (ptr)T(std::move(obj)); // TODO use memcpy here
+		}
+
+		template<class T>
+		void MoveCreate(T* ptr, T&& obj, typename std::enable_if<!std::is_trivially_move_constructible<T>::value>::type* = 0)
+		{
+			::new (ptr)T(std::move(obj));
+		}
+
+		template<class T>
 		void Destroy(T* t, typename std::enable_if<std::is_trivially_destructible<T>::value>::type* = 0)
 		{
 			t->~T(); // calling destructor here is unnecessary
@@ -294,7 +306,18 @@ namespace Poly {
 		//------------------------------------------------------------------------------
 		void Realloc(size_t capacity)
 		{
-			Data = static_cast<T*>(DefaultRealloc(Data, capacity * sizeof(T)));
+			HEAVY_ASSERTE(Size <= capacity, "Invalid resize capacity!");
+			T* newData = static_cast<T*>(DefaultAlloc(capacity * sizeof(T)));
+
+			// move all elements
+			for (size_t i = 0; i < Size; ++i)
+			{
+				ObjectLifetimeHelper::MoveCreate(newData + i, std::move(Data[i]));
+				ObjectLifetimeHelper::Destroy(Data + i);
+			}
+
+			DefaultFree(Data);
+			Data = newData;
 			Capacity = capacity;
 		}
 

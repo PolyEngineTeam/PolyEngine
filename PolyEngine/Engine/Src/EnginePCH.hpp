@@ -34,6 +34,7 @@
 
 // World Components
 #include "InputWorldComponent.hpp"
+#include "TimeWorldComponent.hpp"
 
 // PLEASE DON'T INCLUDE SYSTEMS HERE!!!
 
