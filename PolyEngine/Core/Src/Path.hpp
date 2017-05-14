@@ -15,8 +15,8 @@ namespace Poly {
 		Path& Dir(const String& dir);
 		Path& File(const String& file);
 
-		bool IsAbsolute() { return Root.GetLength(); }
-		bool IsDir() { return !Filename.GetLength(); }
+		bool IsAbsolute() const { return Root.GetLength(); }
+		bool IsDir() const { return !Filename.GetLength(); }
 
 		String Get();
 

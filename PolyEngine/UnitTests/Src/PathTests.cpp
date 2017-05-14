@@ -4,7 +4,7 @@
 
 using namespace Poly;
 
-TEST_CASE("Path daisychain", "[PATH]")
+TEST_CASE("Path building", "[PATH]")
 {
 	Path p = Path::Build()->RootAt("C:").Dir("Dir1").Dir("Dir2").File("File.ext");
 	REQUIRE(p.Get() == "C:\\Dir1\\Dir2\\File.ext");
