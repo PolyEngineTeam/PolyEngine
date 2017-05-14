@@ -34,6 +34,8 @@ namespace Poly {
 		void Resize(const ScreenSize& size) override;
 		const ScreenSize& GetScreenSize() const override;
 	private:
+		bool InitPrograms();
+
 		HDC hDC;
 		HWND hWnd;
 		HGLRC hRC;
@@ -57,6 +59,8 @@ namespace Poly {
 		void Resize(const ScreenSize& size) override;
 		const ScreenSize& GetScreenSize() const override;
 	private:
+		bool InitPrograms();
+
 		Display* display;
 		Window window;
 		GLXContext context;
