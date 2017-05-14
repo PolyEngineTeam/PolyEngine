@@ -5,8 +5,23 @@
 using namespace Poly;
 
 //------------------------------------------------------------------------------
+Path* Path::Build()
+{
+	return new Path();
+}
+
+//------------------------------------------------------------------------------
+Path& Path::RootAt(const String& root)
+{
+	//TODO assertions
+	Root = root;
+	return *this;
+}
+
+//------------------------------------------------------------------------------
 Path& Path::Dir(const String& dir)
 {
+	//TODO assertions
 	ASSERTE(Filename.GetLength() == 0, "Filename already set, cannot change path");
 	Dirs.PushBack(dir);
 	return *this;
@@ -15,6 +30,7 @@ Path& Path::Dir(const String& dir)
 //------------------------------------------------------------------------------
 Path& Path::File(const String& file)
 {
+	//TODO assertions
 	Filename = file;
 	return *this;
 }
@@ -22,20 +38,25 @@ Path& Path::File(const String& file)
 //------------------------------------------------------------------------------
 String Path::Get()
 {
-	String dirs;
+	String dirsTmp;
 	for (String s : Dirs)
 	{
-		if (dirs.GetLength() == 0)
+		if (dirsTmp.GetLength())
 		{
-			dirs = s;
+			dirsTmp = dirsTmp + DELIMITER + s;
 		}
 		else
 		{
-			dirs = dirs + DELIMITER + s;
+			dirsTmp = s;
 		}
 	}
 
-	return Root + DELIMITER + dirs + DELIMITER + Filename;
+	String rootTmp;
+	if (Root.GetLength())
+	{
+		rootTmp = Root + DELIMITER;
+	}
+	return rootTmp + dirsTmp + DELIMITER + Filename;
 }
 
 //------------------------------------------------------------------------------

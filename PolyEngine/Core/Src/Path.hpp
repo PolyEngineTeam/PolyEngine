@@ -9,18 +9,21 @@ namespace Poly {
 	class CORE_DLLEXPORT Path
 	{
 	public:
-		Path();
-		Path(const String& root) : Root(root) {};
+		static Path* Build();
 
+		Path& RootAt(const String& root);
 		Path& Dir(const String& dir);
 		Path& File(const String& file);
 
-		bool IsAbsolute() { return !Root.GetLength(); }
+		bool IsAbsolute() { return Root.GetLength(); }
+		bool IsDir() { return !Filename.GetLength(); }
+
 		String Get();
 
 		static const String DELIMITER;
 
 	private:
+		Path() {};
 		String Root;
 		Dynarray<String> Dirs;
 		String Filename;
