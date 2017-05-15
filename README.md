@@ -1,7 +1,13 @@
 # PolyEngine
 [![license](https://img.shields.io/github/license/KNTGPolygon/PolyEngine.svg)](LICENSE)
+
+Stable (master):
+[![build status](https://travis-ci.org/KNTGPolygon/PolyEngine.svg?branch=master)](https://travis-ci.org/KNTGPolygon/PolyEngine)
+[![build status](https://ci.appveyor.com/api/projects/status/wa9par5pe99sow82/branch/master?svg=true)](https://ci.appveyor.com/project/MuniuDev/polyengine)
+
+Nightly (dev):
 [![build status](https://travis-ci.org/KNTGPolygon/PolyEngine.svg?branch=dev)](https://travis-ci.org/KNTGPolygon/PolyEngine)
-[![build status](https://ci.appveyor.com/api/projects/status/wa9par5pe99sow82?svg=true)](https://ci.appveyor.com/project/MuniuDev/polyengine)
+[![build status](https://ci.appveyor.com/api/projects/status/wa9par5pe99sow82/branch/dev?svg=true)](https://ci.appveyor.com/project/MuniuDev/polyengine)
 
 Game engine study project developed by [**KNTG Polygon**](http://polygon.pw.edu.pl/), licensed under a very permissive MIT license.  
 Currently it is in a very early stage of development, thus backwards compatibility is not guaranteed.
