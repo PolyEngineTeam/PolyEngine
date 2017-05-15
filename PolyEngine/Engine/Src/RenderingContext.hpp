@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Core.hpp>
+#include "ShaderProgram.hpp"
 
 namespace Poly {
 
@@ -9,6 +10,11 @@ namespace Poly {
 	struct ScreenSize
 	{
 		int Width = 0, Height = 0;
+	};
+
+	enum class eShaderProgramType {
+		TEST,
+		_COUNT
 	};
 
 	class IRenderingContext : public BaseObject<> {
@@ -20,6 +26,10 @@ namespace Poly {
 
 		virtual void Resize(const ScreenSize& size) = 0;
 		virtual const ScreenSize& GetScreenSize() const = 0;
+
+		virtual ShaderProgram& GetProgram(eShaderProgramType type) { return *ShaderPrograms[type]; }
+	protected:
+		EnumArray<ShaderProgram*, eShaderProgramType> ShaderPrograms;
 	};
 
 	IRenderingContext* CreateRenderingContext();

@@ -7,16 +7,8 @@
 using namespace Poly;
 
 void RenderingSystem::RenderingPhase(World* world)
-{
-	// TODO get rid of this "once" code
-	static ShaderProgram testProgram("test.vsh", "test.fsh");
-	static bool Once = true;
-	if (Once)
-	{
-		Once = false;
-		//testProgram.RegisterUniform("uMVP");
-		testProgram.RegisterUniform("uTransform");
-	}
+{	
+	IRenderingContext* context = world->GetEngine()->GetRenderingContext();
 	
 	glDepthMask(GL_TRUE);
 	glClearColor(0, 0, 0, 0);
@@ -31,7 +23,7 @@ void RenderingSystem::RenderingPhase(World* world)
 		glViewport((int)(rect.GetMin().X * screen.Width), (int)(rect.GetMin().Y * screen.Height),
 			(int)(rect.GetSize().X * screen.Width), (int)(rect.GetSize().Y * screen.Height));
 
-		testProgram.BindProgram();
+		context->GetProgram(eShaderProgramType::TEST).BindProgram();
 		const Matrix& mvp = kv.second.GetCamera()->GetMVP();
 		//testProgram.SetUniform("uMVP", mvp);
 		
@@ -43,7 +35,7 @@ void RenderingSystem::RenderingPhase(World* world)
 
 			const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
 			Matrix screenTransform = mvp * objTransform;
-			testProgram.SetUniform("uTransform", screenTransform);
+			context->GetProgram(eShaderProgramType::TEST).SetUniform("uTransform", screenTransform);
 			for (const GLMeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 			{
 				glBindVertexArray(subMesh->GetVAO());
@@ -65,5 +57,5 @@ void RenderingSystem::RenderingPhase(World* world)
 		glDisable(GL_DEPTH_TEST);
 	}
 
-	world->GetEngine()->GetRenderingContext()->EndFrame();
+	context->EndFrame();
 }

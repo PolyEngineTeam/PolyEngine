@@ -16,6 +16,17 @@ namespace Poly {
 	IRenderingContext* CreateRenderingContext() { return new OpenGLRenderingContext; }
 }
 
+//------------------------------------------------------------------------------
+bool Poly::OpenGLRenderingContext::InitPrograms()
+{
+	ShaderPrograms[eShaderProgramType::TEST] = new ShaderProgram("test.vsh", "test.fsh");
+	//ShaderPrograms[eShaderProgramType::TEST].RegisterUniform("uMVP");
+	ShaderPrograms[eShaderProgramType::TEST]->RegisterUniform("uTransform");
+
+	// TODO error handling
+	return true;
+}
+
 #if defined(_WIN32)
 //------------------------------------------------------------------------------
 OpenGLRenderingContextParams::OpenGLRenderingContextParams(HWND hwnd, RECT rect)
@@ -102,7 +113,7 @@ bool OpenGLRenderingContext::Init(const IRenderingContextParams * context)
 	gConsole.LogInfo("OpenGL context succesfully setup. [{}]", glGetString(GL_VERSION));
 
 	// We have successfully created a context, return true
-	return true;
+	return InitPrograms();
 }
 
 //------------------------------------------------------------------------------

@@ -2,7 +2,9 @@
 
 #include <map>
 #include <Core.hpp>
-#include <GL/glew.h>
+
+typedef unsigned int GLuint;
+typedef unsigned int GLenum;
 
 namespace Poly {
 	class ShaderProgram : public BaseObject<>
