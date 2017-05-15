@@ -54,5 +54,5 @@ script:
   - mkdir build
   - cd build
   - cmake -DCMAKE_CXX_COMPILER=$COMPILER .. && make polytests
-  - cd $TRAVIS_BUILD_DIR
-  - ./PolyEngine/build/UnitTests/polycore
+  - cd $TRAVIS_BUILD_DIR/PolyEngine/build/UnitTests
+  - ./polytests
