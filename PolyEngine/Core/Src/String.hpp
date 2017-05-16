@@ -48,7 +48,7 @@ namespace Poly {
 		}
 
 		//------------------------------------------------------------------------------
-		bool operator==(const T* str) {
+		bool operator==(const T* str) const {
 			if (GetLength() != StrLen(str))
 				return false;
 			for (size_t k = 0; k < GetLength(); ++k)
@@ -58,7 +58,7 @@ namespace Poly {
 		}
 
 		//------------------------------------------------------------------------------
-		bool operator==(const StringBase<T>& str) {
+		bool operator==(const StringBase<T>& str) const {
 			return Data == str.Data;
 		}
 
