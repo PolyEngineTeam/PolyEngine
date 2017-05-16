@@ -1,4 +1,4 @@
-#include "TestGame.hpp"
+#include "InvadersGame.hpp"
 
 #include <CameraComponent.hpp>
 #include <TransformComponent.hpp>
@@ -28,7 +28,7 @@ void InvadersGame::Init()
 			Engine->GetWorld().AddComponent<Poly::TransformComponent>(ent);
 			Engine->GetWorld().AddComponent<Poly::MeshRenderingComponent>(ent, "model-tank/tank.fbx");
 			Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(ent);
-			entTransform->SetLocalTranslation(Vector(i * 5, 0, j * 10));
+			entTransform->SetLocalTranslation(Vector(i * 2, 0, j * 5));
 			GameEntities.PushBack(ent);
 		}
 	}

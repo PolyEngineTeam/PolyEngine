@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.10
+VisualStudioVersion = 15.0.26228.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "Core\Core.vcxproj", "{CAD95E91-98A5-497A-9726-09C897EDB267}"
 EndProject
@@ -27,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowsGLStandalone", "Wind
 		{CAD95E91-98A5-497A-9726-09C897EDB267} = {CAD95E91-98A5-497A-9726-09C897EDB267}
 		{D8D95DE1-B758-451D-B6D1-CE8C3801892C} = {D8D95DE1-B758-451D-B6D1-CE8C3801892C}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CzolgInvaders", "CzolgInvaders\CzolgInvaders.vcxproj", "{9E07320D-7814-43FA-BB66-7A66754060C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,6 +78,14 @@ Global
 		{7E4BFB6C-BC95-4F9E-AD85-F6097A00B6A8}.Release|x64.Build.0 = Release|x64
 		{7E4BFB6C-BC95-4F9E-AD85-F6097A00B6A8}.Release|x86.ActiveCfg = Release|Win32
 		{7E4BFB6C-BC95-4F9E-AD85-F6097A00B6A8}.Release|x86.Build.0 = Release|Win32
+		{9E07320D-7814-43FA-BB66-7A66754060C5}.Debug|x64.ActiveCfg = Debug|x64
+		{9E07320D-7814-43FA-BB66-7A66754060C5}.Debug|x64.Build.0 = Debug|x64
+		{9E07320D-7814-43FA-BB66-7A66754060C5}.Debug|x86.ActiveCfg = Debug|Win32
+		{9E07320D-7814-43FA-BB66-7A66754060C5}.Debug|x86.Build.0 = Debug|Win32
+		{9E07320D-7814-43FA-BB66-7A66754060C5}.Release|x64.ActiveCfg = Release|x64
+		{9E07320D-7814-43FA-BB66-7A66754060C5}.Release|x64.Build.0 = Release|x64
+		{9E07320D-7814-43FA-BB66-7A66754060C5}.Release|x86.ActiveCfg = Release|Win32
+		{9E07320D-7814-43FA-BB66-7A66754060C5}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
