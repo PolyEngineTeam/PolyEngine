@@ -74,7 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	// this struct holds Windows event messages
 	MSG msg;
 
-	TestGame Game;
+	InvadersGame Game;
 	Poly::OpenGLRenderingContextParams Context(hWnd, viewportRect);
 	Poly::Engine Engine(&Game);
 	gEngine = &Engine;

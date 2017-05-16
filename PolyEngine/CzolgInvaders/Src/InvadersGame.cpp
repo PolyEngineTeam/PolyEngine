@@ -1,4 +1,4 @@
-#include "TestGame.hpp"
+#include "InvadersGame.hpp"
 
 #include <CameraComponent.hpp>
 #include <TransformComponent.hpp>
@@ -8,7 +8,7 @@
 
 using namespace Poly;
 
-void TestGame::Init()
+void InvadersGame::Init()
 {
 	Camera = Engine->GetWorld().SpawnEntity();
 	Engine->GetWorld().AddComponent<Poly::TransformComponent>(Camera);
@@ -37,7 +37,7 @@ void TestGame::Init()
 	Engine->RegisterUpdatePhase(GameMainSystem::GameUpdate, Poly::Engine::eUpdatePhaseOrder::UPDATE);
 };
 
-void TestGame::Deinit()
+void InvadersGame::Deinit()
 {
 	Engine->GetWorld().DestroyEntity(Camera);
 	for(auto ent : GameEntities)
