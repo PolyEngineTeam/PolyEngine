@@ -5,7 +5,7 @@
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-Path* Path::Build()
+Path* Path::Init()
 {
 	return new Path();
 }
@@ -13,51 +13,66 @@ Path* Path::Build()
 //------------------------------------------------------------------------------
 Path& Path::RootAt(const String& root)
 {
-	//TODO assertions
+	//TODO check if given root is valid with given system?
+	//eg. check if root is 'X:' when on windows
+	ASSERTE(Dirs.GetSize() == 0, "Directories already set, cannot change root");
+	ASSERTE(Filename.GetLength() == 0, "Filename already set, cannot change root");
 	Root = root;
+	dirty = true;
 	return *this;
 }
 
 //------------------------------------------------------------------------------
 Path& Path::Dir(const String& dir)
 {
-	//TODO assertions
 	ASSERTE(Filename.GetLength() == 0, "Filename already set, cannot change path");
 	Dirs.PushBack(dir);
+	dirty = true;
 	return *this;
 }
 
 //------------------------------------------------------------------------------
 Path& Path::File(const String& file)
 {
-	//TODO assertions
 	Filename = file;
+	dirty = true;
 	return *this;
 }
 
 //------------------------------------------------------------------------------
-String Path::Get()
+const String& Path::Get()
 {
-	String dirsTmp;
-	for (String s : Dirs)
+	if (dirty)
 	{
-		if (dirsTmp.GetLength())
+		String dirsTmp;
+		for (String s : Dirs)
 		{
-			dirsTmp = dirsTmp + DELIMITER + s;
+			if (dirsTmp.GetLength())
+			{
+				dirsTmp = dirsTmp + DELIMITER + s;
+			}
+			else
+			{
+				dirsTmp = s;
+			}
 		}
-		else
+
+		String rootTmp;
+		if (Root.GetLength())
 		{
-			dirsTmp = s;
+			rootTmp = Root + DELIMITER;
 		}
+
+		dirty = false;
+		cache = rootTmp + dirsTmp + DELIMITER + Filename;
 	}
 
-	String rootTmp;
-	if (Root.GetLength())
-	{
-		rootTmp = Root + DELIMITER;
-	}
-	return rootTmp + dirsTmp + DELIMITER + Filename;
+	return cache;
 }
 
 //------------------------------------------------------------------------------
-const String Path::DELIMITER("\\");
+#ifdef _WIN32
+	const String Path::DELIMITER("\\");
+#elif defined(__linux__)
+	const String Path::DELIMITER("/");
+#endif

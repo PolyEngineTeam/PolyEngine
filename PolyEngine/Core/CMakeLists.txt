@@ -4,6 +4,7 @@ set(POLYCORE_SRCS
 	Src/Color.cpp
 	Src/Logger.cpp
 	Src/Matrix.cpp
+	Src/Path.cpp
 	Src/Quaternion.cpp
 	Src/RefCountedBase.cpp
 	Src/SimdMath.cpp
@@ -27,6 +28,7 @@ set(POLYCORE_H_FOR_IDE
 	Src/IterablePoolAllocator.hpp
 	Src/Logger.hpp
 	Src/Matrix.hpp
+	Src/Path.hpp
 	Src/PoolAllocator.hpp
 	Src/RefCountedBase.hpp
 	Src/Quaternion.hpp
