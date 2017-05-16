@@ -9,6 +9,11 @@ namespace GameMainSystem
 	void GameUpdate(Poly::World* world);
 }
 
+enum class eGameComponents
+{
+	PLAYERCONTROLLER = (int)Poly::eEngineComponents::_COUNT
+};
+
 class GAME_DLLEXPORT InvadersGame : public Poly::IGame {
 public:
 	void RegisterEngine(Poly::Engine* engine) override { Engine = engine; }
