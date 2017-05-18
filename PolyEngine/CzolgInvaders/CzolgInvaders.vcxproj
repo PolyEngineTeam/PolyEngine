@@ -126,6 +126,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\BulletMovementComponent.cpp" />
     <ClCompile Include="Src\ControlSystem.cpp" />
     <ClCompile Include="Src\PlayerControllerComponent.cpp" />
     <ClCompile Include="Src\InvadersGame.cpp" />
@@ -139,6 +140,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\BulletMovementComponent.hpp" />
     <ClInclude Include="Src\ControlSystem.hpp" />
     <ClInclude Include="Src\PlayerControllerComponent.hpp" />
     <ClInclude Include="Src\InvadersGame.hpp" />

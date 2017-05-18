@@ -20,6 +20,9 @@
     <ClInclude Include="Src\ControlSystem.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Src\BulletMovementComponent.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\InvadersGame.cpp">
@@ -29,6 +32,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\ControlSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BulletMovementComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

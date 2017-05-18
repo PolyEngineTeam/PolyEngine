@@ -1,18 +1,12 @@
 #include "InvadersGame.hpp"
-#include "PlayerControllerComponent.hpp"
-#include "ControlSystem.hpp"
 
-#include <CameraComponent.hpp>
-#include <TransformComponent.hpp>
-#include <MeshRenderingComponent.hpp>
-#include <FreeFloatMovementComponent.hpp>
-#include <Core.hpp>
 
 using namespace Poly;
 
 void InvadersGame::Init()
 {
 	Engine->RegisterComponent<PlayerControllerComponent>((int)eGameComponents::PLAYERCONTROLLER);
+	Engine->RegisterComponent<BulletMovementComponent>((int)eGameComponents::BULLETMOVEMENT);
 	Camera = Engine->GetWorld().SpawnEntity();
 	Engine->GetWorld().AddComponent<Poly::TransformComponent>(Camera);
 	Engine->GetWorld().AddComponent<Poly::CameraComponent>(Camera, 45.0f, 1.0f, 1000.f);

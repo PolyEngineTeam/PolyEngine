@@ -11,13 +11,17 @@ namespace Poly {
 		PlayerControllerComponent(float movementSpeed = 1.0f);
 
 		float GetMovementSpeed() const { return MovementSpeed; }
-		Poly::eKey GetLeftKey() const { return left_key; }
-		Poly::eKey GetRightKey() const { return right_key; }
+		float GetBulletSpeed() const { return BulletSpeed; }
+		Poly::eKey GetLeftKey() const { return LeftKey; }
+		Poly::eKey GetRightKey() const { return RightKey; }
+		Poly::eKey GetShootKey() const { return ShootKey; }
 
 
 	private:
 		float MovementSpeed = 1.0f;
-		Poly::eKey left_key = Poly::eKey::LEFT;
-		Poly::eKey right_key = Poly::eKey::RIGHT;
+		float BulletSpeed = 1.0f;
+		Poly::eKey LeftKey = Poly::eKey::LEFT;
+		Poly::eKey RightKey = Poly::eKey::RIGHT;
+		Poly::eKey ShootKey = Poly::eKey::SPACE;
 	};
 }
