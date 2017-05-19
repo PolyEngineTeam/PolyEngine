@@ -51,6 +51,27 @@ void RenderingSystem::RenderingPhase(World* world)
 				glBindVertexArray(0);
 			}
 		}
+		if (CoreConfig::DebugNormalsFlag) {
+			const Matrix& mModelView = kv.second.GetCamera()->GetModelViewMatrix();
+			const Matrix& mProjection = kv.second.GetCamera()->GetProjectionMatrix();
+
+			context->GetProgram(eShaderProgramType::DEBUG_NORMALS).BindProgram();
+			context->GetProgram(eShaderProgramType::DEBUG_NORMALS).SetUniform("projection", mProjection);
+
+			for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())	{
+				const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
+				const TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
+
+				const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
+				Matrix screenTransform = mModelView * objTransform;
+				context->GetProgram(eShaderProgramType::DEBUG_NORMALS).SetUniform("viewModel", screenTransform);
+				for (const GLMeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes()){
+					glBindVertexArray(subMesh->GetVAO());
+					glDrawElements(GL_TRIANGLES, subMesh->GetVertexCount(), GL_UNSIGNED_INT, NULL);
+					glBindVertexArray(0);
+				}
+			}
+		}
 
 		CHECK_GL_ERR();
 		glDepthMask(GL_FALSE);

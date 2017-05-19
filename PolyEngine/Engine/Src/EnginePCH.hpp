@@ -36,6 +36,9 @@
 #include "InputWorldComponent.hpp"
 #include "TimeWorldComponent.hpp"
 
+//Config
+#include "CoreConfig.hpp"
+
 // PLEASE DON'T INCLUDE SYSTEMS HERE!!!
 
 

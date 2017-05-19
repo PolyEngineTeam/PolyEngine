@@ -23,6 +23,10 @@ bool Poly::OpenGLRenderingContext::InitPrograms()
 	//ShaderPrograms[eShaderProgramType::TEST].RegisterUniform("uMVP");
 	ShaderPrograms[eShaderProgramType::TEST]->RegisterUniform("uTransform");
 
+	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS] = new ShaderProgram("debugVertSh.shader", "debugGeomSh.shader","debugFragSh.shader");
+	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS]->RegisterUniform("projection");
+	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS]->RegisterUniform("viewModel");
+
 	// TODO error handling
 	return true;
 }
