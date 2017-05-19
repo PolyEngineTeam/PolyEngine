@@ -46,7 +46,7 @@ void RenderingSystem::RenderingPhase(World* world)
 					glBindTexture(GL_TEXTURE_2D, subMesh->GetDiffTexture()->GetID());
 				}
 				
-				glDrawElements(GL_TRIANGLES, subMesh->GetVertexCount(), GL_UNSIGNED_INT, NULL);
+				glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetVertexCount(), GL_UNSIGNED_INT, NULL);
 				glBindTexture(GL_TEXTURE_2D, 0);
 				glBindVertexArray(0);
 			}

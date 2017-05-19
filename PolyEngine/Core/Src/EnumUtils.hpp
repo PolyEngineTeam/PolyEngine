@@ -219,8 +219,8 @@ namespace Poly {
 
 	//------------------------------------------------------------------------------
 	template <typename E> EnumIteratorProxy<E> IterateEnum() { return EnumIteratorProxy<E>{}; }
-	template <typename E> typename Poly::EnumIterator<E> begin(Poly::EnumIteratorProxy<E>& rhs) { return rhs.Begin(); }
-	template <typename E> typename Poly::EnumIterator<E> end(Poly::EnumIteratorProxy<E>& rhs) { return rhs.End(); }
+	template <typename E> typename Poly::EnumIterator<E> begin(const Poly::EnumIteratorProxy<E>& rhs) { return rhs.Begin(); }
+	template <typename E> typename Poly::EnumIterator<E> end(const Poly::EnumIteratorProxy<E>& rhs) { return rhs.End(); }
 
 	//------------------------------------------------------------------------------
 	namespace Impl {
