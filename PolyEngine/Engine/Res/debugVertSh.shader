@@ -7,12 +7,12 @@ out VS_OUT {
 } vs_out;
 
 uniform mat4 u_projection;
-uniform mat4 u_viewModel;
 uniform mat4 u_MVP;
+uniform mat4 u_normalMatrix4x4;
 
 void main()
 {
 	gl_Position = u_MVP * vec4(a_position, 1.0f); 
-    mat3 normalMatrix = mat3(transpose(inverse(u_viewModel)));
+    mat3 normalMatrix = mat3(u_normalMatrix4x4);
     vs_out.normal = normalize(vec3(u_projection * vec4(normalMatrix * a_normal, 1.0)));
 }
