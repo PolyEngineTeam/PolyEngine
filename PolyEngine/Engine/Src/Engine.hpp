@@ -90,8 +90,6 @@ namespace Poly
 			return ComponentTypeMap.at(typeid(T));
 		}
 
-		//template<typename T> T GetComponentType() const // todo
-
 		IRenderingContext* GetRenderingContext() const { return Renderer; }
 		InputQueue& GetInputQueue() { return InputEventsQueue; }
 

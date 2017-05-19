@@ -16,7 +16,6 @@
 
 // Utils
 #include "InputQueue.hpp"
-//#include "HeavyTaskQueue.hpp"
 #include "KeyBindings.hpp"
 #include "OpenGLUtils.hpp"
 
@@ -37,7 +36,5 @@
 #include "InputWorldComponent.hpp"
 #include "TimeWorldComponent.hpp"
 
-// PLEASE DON'T INCLUDE SYSTEMS HERE!!!
-
-
-
+// Systems
+#include "HeavyTaskSystem.hpp"

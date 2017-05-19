@@ -1,10 +1,7 @@
 #pragma once
 
-#include <Core.hpp>
-
 #include "HeavyTaskBase.hpp"
 #include "World.hpp"
-
 
 namespace HeavyTaskHelper
 {
