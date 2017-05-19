@@ -45,12 +45,12 @@ void InvadersGame::Deinit()
 		Engine->GetWorld().DestroyEntity(ent);
 };
 
-void GameMainSystem::GameUpdate(Poly::World* /*world*/)
+void GameMainSystem::GameUpdate(Poly::World* world)
 {
-	/*auto sth = world->SpawnEntity();//test purpuoses, for HeavyTaskSystem
+	auto sth = world->SpawnEntity();//test purpuoses, for HeavyTaskSystem
 	HeavyTaskSystem::AddComponent<Poly::TransformComponent>(world, sth);
 	HeavyTaskSystem::RemoveComponent<Poly::TransformComponent>(world, sth);
-	HeavyTaskSystem::DestroyEntity(world, sth);*/	
+	HeavyTaskSystem::DestroyEntity(world, sth);
 
 	/*for (auto components : world->IterateComponents<Poly::MeshRenderingComponent, Poly::TransformComponent>())
 	{

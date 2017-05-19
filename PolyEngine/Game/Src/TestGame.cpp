@@ -5,6 +5,7 @@
 #include <MeshRenderingComponent.hpp>
 #include <FreeFloatMovementComponent.hpp>
 #include <Core.hpp>
+#include <HeavyTaskSystem.hpp>
 
 using namespace Poly;
 

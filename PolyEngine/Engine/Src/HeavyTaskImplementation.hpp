@@ -65,10 +65,9 @@ namespace Poly
 		const UniqueID *Id;
 		std::tuple<Args...> arguments;
 	public:
-		AddComponentHeavyTask(const UniqueID &entityID, Args&&... args)
+		AddComponentHeavyTask(const UniqueID &entityID, Args&&... args) : arguments(std::make_tuple(std::forward<Args>(args)...))
 		{
 			Id = new UniqueID(entityID);
-			arguments = (std::make_tuple(std::forward<Args>(args)...));
 		}
 		~AddComponentHeavyTask()
 		{
