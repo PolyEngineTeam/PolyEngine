@@ -130,6 +130,40 @@ namespace Poly {
 		T Data[SIZE];
 	};
 
+	//------------------------------------------------------------------------------
+	template<typename E>
+	class EnumFlags : public BaseObjectLiteralType<>
+	{
+		using FlagType = typename std::underlying_type<E>::type;
+
+		STATIC_ASSERTE(std::is_enum<E>::value, "Provided EnumArray key is not an enum!");
+		STATIC_ASSERTE(std::is_integral<FlagType>::value, "Underlying enum value type is not integral!");
+	public:
+		constexpr EnumFlags() {}
+		constexpr EnumFlags(E enumValue) : Flags(static_cast<FlagType>(enumValue)) {}
+		
+		constexpr bool operator==(const EnumFlags& rhs) const { return Flags == rhs.Flags; }
+		constexpr bool operator!=(const EnumFlags& rhs) const { return !(*this == rhs); }
+		constexpr EnumFlags operator|(const EnumFlags& rhs) const { return EnumFlags(Flags | rhs.Flags); }
+		constexpr EnumFlags operator&(const EnumFlags& rhs) const { return EnumFlags(Flags & rhs.Flags); }
+		constexpr EnumFlags operator~() const { return EnumFlags(~Flags); }
+
+		constexpr bool IsSet(E enumValue) { return (*this & enumValue) == enumValue; }
+
+		constexpr explicit operator E() const { return static_cast<E>(Flags); }
+		constexpr explicit operator FlagType() const { return Flags; }
+	private:
+		constexpr EnumFlags(FlagType flagsValue) : Flags(flagsValue) {}
+
+		FlagType Flags = 0;
+	};
+
+	//------------------------------------------------------------------------------
+	template <typename E, typename = std::enable_if_t<std::is_enum<E>::value> > constexpr E operator|(E lhs, E rhs) { return static_cast<E>(EnumFlags<E>(lhs) | EnumFlags<E>(rhs)); }
+	template <typename E, typename = std::enable_if_t<std::is_enum<E>::value> > constexpr E operator&(E lhs, E rhs) { return static_cast<E>(EnumFlags<E>(lhs) & EnumFlags<E>(rhs)); }
+	template <typename E, typename = std::enable_if_t<std::is_enum<E>::value> > constexpr E operator~(E rhs) { return static_cast<E>(~EnumFlags<E>(rhs)); }
+
+	//------------------------------------------------------------------------------
 	namespace Impl {
 		template<typename T>
 		struct EnumInfo {};
