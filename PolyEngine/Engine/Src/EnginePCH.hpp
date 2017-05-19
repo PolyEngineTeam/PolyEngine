@@ -38,7 +38,6 @@
 
 //Config
 #include "CoreConfig.hpp"
-extern CoreConfig gCoreConfig;
 
 // PLEASE DON'T INCLUDE SYSTEMS HERE!!!
 

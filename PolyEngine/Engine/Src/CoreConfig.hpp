@@ -6,4 +6,4 @@ public:
 	CoreConfig() {}
 	static bool DebugNormalsFlag;
 };
-CoreConfig gCoreConfig;
+extern CoreConfig gCoreConfig;
