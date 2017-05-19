@@ -2,7 +2,6 @@
 
 namespace Poly
 {
-
 	class ENGINE_DLLEXPORT CoreConfig
 	{
 	public:

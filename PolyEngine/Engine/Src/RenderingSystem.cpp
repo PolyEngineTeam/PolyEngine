@@ -57,7 +57,7 @@ void RenderingSystem::RenderingPhase(World* world)
 			const Matrix& mProjection = kv.second.GetCamera()->GetProjectionMatrix();
 
 			context->GetProgram(eShaderProgramType::DEBUG_NORMALS).BindProgram();
-			context->GetProgram(eShaderProgramType::DEBUG_NORMALS).SetUniform("projection", mProjection);
+			context->GetProgram(eShaderProgramType::DEBUG_NORMALS).SetUniform("u_projection", mProjection);
 
 			for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())	
 			{
@@ -65,8 +65,10 @@ void RenderingSystem::RenderingPhase(World* world)
 				const TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
 
 				const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
-				Matrix screenTransform = mModelView * objTransform;
-				context->GetProgram(eShaderProgramType::DEBUG_NORMALS).SetUniform("viewModel", screenTransform);
+				Matrix MVTransform = mModelView * objTransform;
+				Matrix MVPTransform = mvp * objTransform;
+				context->GetProgram(eShaderProgramType::DEBUG_NORMALS).SetUniform("u_viewModel", MVTransform);
+				context->GetProgram(eShaderProgramType::DEBUG_NORMALS).SetUniform("u_MVP", MVPTransform);
 				for (const GLMeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 				{
 					glBindVertexArray(subMesh->GetVAO());
