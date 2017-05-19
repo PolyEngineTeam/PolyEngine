@@ -1,3 +1,3 @@
-#include "EnginePCH.hpp"
+#include"EnginePCH.hpp"
 
-bool CoreConfig::DebugNormalsFlag = false;
+CoreConfig gCoreConfig;

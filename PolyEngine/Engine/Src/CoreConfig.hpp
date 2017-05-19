@@ -1,9 +1,7 @@
 #pragma once
 
-class CoreConfig
-{	
+class CoreConfig {	
 public:
-	CoreConfig() {}
-	static bool DebugNormalsFlag;
+	bool DebugNormalsFlag = false;
 };
 extern CoreConfig gCoreConfig;
