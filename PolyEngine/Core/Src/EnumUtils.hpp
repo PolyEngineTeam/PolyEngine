@@ -204,7 +204,7 @@ namespace Poly {
 		EnumIterator(ValueType value) : Value(value) {}
 
 		ValueType Value;
-		template<typename E> friend class EnumIteratorProxy;
+		template<typename T> friend class EnumIteratorProxy;
 	};
 
 	//------------------------------------------------------------------------------
