@@ -1,3 +1,6 @@
 #include"EnginePCH.hpp"
 
-CoreConfig gCoreConfig;
+namespace Poly
+{
+	CoreConfig gCoreConfig;
+}

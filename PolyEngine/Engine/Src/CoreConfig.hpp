@@ -1,7 +1,12 @@
 #pragma once
 
-class CoreConfig {	
-public:
-	bool DebugNormalsFlag = false;
-};
-extern CoreConfig gCoreConfig;
+namespace Poly
+{
+
+	class ENGINE_DLLEXPORT CoreConfig
+	{
+	public:
+		bool DebugNormalsFlag = false;
+	};
+	ENGINE_DLLEXPORT extern CoreConfig gCoreConfig;
+}
