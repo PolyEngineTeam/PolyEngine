@@ -42,7 +42,7 @@
     <Filter Include="Source Files\Movement">
       <UniqueIdentifier>{ce34e806-09b8-412f-8c29-e5e45348fe3b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Config">
+    <Filter Include="Source Files\Config">
       <UniqueIdentifier>{e435be88-e4b2-40bb-9cff-9c8a9f54ab46}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -114,7 +114,7 @@
       <Filter>Source Files\Movement</Filter>
     </ClCompile>
     <ClCompile Include="Src\CoreConfig.cpp">
-      <Filter>Config</Filter>
+      <Filter>Source Files\Config</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -206,7 +206,7 @@
       <Filter>Source Files\Movement</Filter>
     </ClInclude>
     <ClInclude Include="Src\CoreConfig.hpp">
-      <Filter>Config</Filter>
+      <Filter>Source Files\Config</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

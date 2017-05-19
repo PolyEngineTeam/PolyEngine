@@ -66,9 +66,9 @@ void RenderingSystem::RenderingPhase(World* world)
 
 				const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
 				Matrix MVPTransform = mvp * objTransform;
-				Matrix mNoramlMatrix = (mModelView * objTransform).GetInversed().GetTransposed();
+				Matrix mNormalMatrix = (mModelView * objTransform).GetInversed().GetTransposed();
 				context->GetProgram(eShaderProgramType::DEBUG_NORMALS).SetUniform("u_MVP", MVPTransform);
-				context->GetProgram(eShaderProgramType::DEBUG_NORMALS).SetUniform("u_normalMatrix4x4", mNoramlMatrix);
+				context->GetProgram(eShaderProgramType::DEBUG_NORMALS).SetUniform("u_normalMatrix4x4", mNormalMatrix);
 				for (const GLMeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 				{
 					glBindVertexArray(subMesh->GetVAO());
