@@ -15,6 +15,11 @@ void RenderingSystem::RenderingPhase(World* world)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
+	if (gCoreConfig.WireframeRendering)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	else
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 	ScreenSize screen = world->GetEngine()->GetRenderingContext()->GetScreenSize();
 	for (auto& kv : world->GetViewportWorldComponent().GetViewports())
 	{
@@ -26,7 +31,6 @@ void RenderingSystem::RenderingPhase(World* world)
 		context->GetProgram(eShaderProgramType::TEST).BindProgram();
 		const Matrix& mvp = kv.second.GetCamera()->GetMVP();
 		//testProgram.SetUniform("uMVP", mvp);
-		
 		// Render objects
 		for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
 		{
