@@ -153,6 +153,8 @@ namespace Poly {
 		EnumFlags& operator&=(const EnumFlags& rhs) { Flags &= rhs.Flags; return *this; }
 
 		constexpr bool IsSet(E enumValue) { return (*this & enumValue) == enumValue; }
+		constexpr bool AnySet(E enumValue) { return (*this & enumValue).Flags != 0; }
+		constexpr bool NoneSet(E enumValue) { return (*this & enumValue).Flags == 0; }
 
 		constexpr explicit operator E() const { return static_cast<E>(Flags); }
 		constexpr explicit operator FlagType() const { return Flags; }

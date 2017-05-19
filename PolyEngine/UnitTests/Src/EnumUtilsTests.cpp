@@ -62,6 +62,10 @@ TEST_CASE("EnumFlags tests", "[EnumFlags]")
 	REQUIRE(a2.IsSet(eTestFlagsEnum::FLAG_3) == false);
 	REQUIRE(a2.IsSet(eTestFlagsEnum::FLAG_1 | eTestFlagsEnum::FLAG_2) == true);
 	REQUIRE(a2.IsSet(eTestFlagsEnum::FLAG_1 | eTestFlagsEnum::FLAG_2 | eTestFlagsEnum::FLAG_3) == false);
+	REQUIRE(a2.AnySet(eTestFlagsEnum::FLAG_1 | eTestFlagsEnum::FLAG_3) == true);
+	REQUIRE(a2.AnySet(eTestFlagsEnum::FLAG_3) == false);
+	REQUIRE(a2.NoneSet(eTestFlagsEnum::FLAG_1 | eTestFlagsEnum::FLAG_3) == false);
+	REQUIRE(a2.NoneSet(eTestFlagsEnum::FLAG_3) == true);
 
 	a2 |= eTestFlagsEnum::FLAG_3;
 	REQUIRE(a2.IsSet(eTestFlagsEnum::FLAG_1 | eTestFlagsEnum::FLAG_2 | eTestFlagsEnum::FLAG_3) == true);
