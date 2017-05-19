@@ -1,9 +1,9 @@
 #pragma once
 
 class CoreConfig
-{
-	// Disallow creating an instance of this object, private constructor
-	CoreConfig() {} 
+{	
 public:
+	CoreConfig() {}
 	static bool DebugNormalsFlag;
 };
+CoreConfig gCoreConfig;

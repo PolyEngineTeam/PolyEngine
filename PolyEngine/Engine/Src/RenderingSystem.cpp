@@ -51,7 +51,7 @@ void RenderingSystem::RenderingPhase(World* world)
 				glBindVertexArray(0);
 			}
 		}
-		if (CoreConfig::DebugNormalsFlag) {
+		if (gCoreConfig.DebugNormalsFlag) {
 			const Matrix& mModelView = kv.second.GetCamera()->GetModelViewMatrix();
 			const Matrix& mProjection = kv.second.GetCamera()->GetProjectionMatrix();
 
