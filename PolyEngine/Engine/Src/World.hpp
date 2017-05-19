@@ -10,6 +10,8 @@
 #include "ViewportWorldComponent.hpp"
 #include "TimeWorldComponent.hpp"
 
+#include "HeavyTaskBase.hpp"
+
 namespace Poly {
 
 	constexpr size_t MAX_ENTITY_COUNT = 65536;
@@ -48,7 +50,7 @@ namespace Poly {
 			HEAVY_ASSERTE(ent, "Invalid entity ID");
 			HEAVY_ASSERTE(ent->HasComponent(EnginePtr->GetComponentID<T>()), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
 			ent->ComponentPosessionFlags.set(EnginePtr->GetComponentID<T>(), false);
-			T* component = ent->Components[EnginePtr->GetComponentID<T>()];
+			T* component = static_cast<T*>(ent->Components[EnginePtr->GetComponentID<T>()]);
 			ent->Components[EnginePtr->GetComponentID<T>()] = nullptr;
 			component->~T();
 			GetComponentAllocator<T>()->Free(component);
@@ -154,6 +156,8 @@ namespace Poly {
 			World* const W;
 		};
 
+		HeavyTaskQueue& GetHeavyTaskQueue() { return HeavyTasksQueue; }
+
 	private:
 		//------------------------------------------------------------------------------
 		template<typename T>
@@ -178,6 +182,8 @@ namespace Poly {
 		InputWorldComponent InputComponent;
 		ViewportWorldComponent ViewportComponent;
 		TimeWorldComponent TimeComponent;
+
+		HeavyTaskQueue HeavyTasksQueue;
 	};
 
 	//defined here due to circular inclusion problem; FIXME: circular inclusion

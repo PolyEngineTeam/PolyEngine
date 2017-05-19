@@ -6,6 +6,8 @@
 #include <FreeFloatMovementComponent.hpp>
 #include <Core.hpp>
 
+#include "HeavyTaskSystem.hpp"
+
 using namespace Poly;
 
 void InvadersGame::Init()
@@ -44,8 +46,13 @@ void InvadersGame::Deinit()
 		Engine->GetWorld().DestroyEntity(ent);
 };
 
-void GameMainSystem::GameUpdate(Poly::World* /*world*/)
+void GameMainSystem::GameUpdate(Poly::World* world)//tmp
 {
+	auto sth = world->SpawnEntity();//tmp
+	HeavyTaskSystem::AddComponent<Poly::TransformComponent>(world, sth);//tmp
+	HeavyTaskSystem::RemoveComponent<Poly::TransformComponent>(world, sth);//tmp
+	HeavyTaskSystem::DestroyEntity(world, sth);//tmp
+
 	/*for (auto components : world->IterateComponents<Poly::MeshRenderingComponent, Poly::TransformComponent>())
 	{
 		auto transform = std::get<Poly::TransformComponent*>(components);

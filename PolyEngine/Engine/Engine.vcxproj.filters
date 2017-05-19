@@ -199,5 +199,14 @@
     <ClInclude Include="Src\FreeFloatMovementComponent.hpp">
       <Filter>Source Files\Movement</Filter>
     </ClInclude>
+    <ClInclude Include="Src\HeavyTaskSystem.hpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\HeavyTaskBase.hpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\HeavyTaskImplementation.hpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

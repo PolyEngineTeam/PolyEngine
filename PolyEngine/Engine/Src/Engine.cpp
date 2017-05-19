@@ -1,4 +1,5 @@
 #include "EnginePCH.hpp"
+#include "HeavyTaskSystem.hpp"
 
 using namespace Poly;
 
@@ -34,7 +35,10 @@ bool Engine::Init(const IRenderingContextParams* context)
 
 	if (!Renderer->Init(context))
 		return false;
+
+	RegisterUpdatePhase(HeavyTaskSystem::HeavyTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
 	Game->Init();
+
 	return true;
 }
 
