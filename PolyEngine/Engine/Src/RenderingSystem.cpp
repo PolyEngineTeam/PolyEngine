@@ -51,6 +51,32 @@ void RenderingSystem::RenderingPhase(World* world)
 				glBindVertexArray(0);
 			}
 		}
+		if (gCoreConfig.DebugNormalsFlag) 
+		{
+			const Matrix& mModelView = kv.second.GetCamera()->GetModelViewMatrix();
+			const Matrix& mProjection = kv.second.GetCamera()->GetProjectionMatrix();
+
+			context->GetProgram(eShaderProgramType::DEBUG_NORMALS).BindProgram();
+			context->GetProgram(eShaderProgramType::DEBUG_NORMALS).SetUniform("u_projection", mProjection);
+
+			for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())	
+			{
+				const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
+				const TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
+
+				const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
+				Matrix MVPTransform = mvp * objTransform;
+				Matrix mNoramlMatrix = (mModelView * objTransform).GetInversed().GetTransposed();
+				context->GetProgram(eShaderProgramType::DEBUG_NORMALS).SetUniform("u_MVP", MVPTransform);
+				context->GetProgram(eShaderProgramType::DEBUG_NORMALS).SetUniform("u_normalMatrix4x4", mNoramlMatrix);
+				for (const GLMeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
+				{
+					glBindVertexArray(subMesh->GetVAO());
+					glDrawElements(GL_TRIANGLES, subMesh->GetVertexCount(), GL_UNSIGNED_INT, NULL);
+					glBindVertexArray(0);
+				}
+			}
+		}
 
 		CHECK_GL_ERR();
 		glDepthMask(GL_FALSE);

@@ -14,6 +14,7 @@ namespace Poly {
 
 	enum class eShaderProgramType {
 		TEST,
+		DEBUG_NORMALS,
 		_COUNT
 	};
 
