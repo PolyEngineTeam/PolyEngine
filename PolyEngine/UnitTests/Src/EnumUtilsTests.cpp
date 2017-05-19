@@ -70,3 +70,13 @@ TEST_CASE("EnumFlags tests", "[EnumFlags]")
 	a2 |= eTestFlagsEnum::FLAG_3;
 	REQUIRE(a2.IsSet(eTestFlagsEnum::FLAG_1 | eTestFlagsEnum::FLAG_2 | eTestFlagsEnum::FLAG_3) == true);
 }
+
+TEST_CASE("EnumIterator tests", "[EnumIterator]")
+{
+	int i = 0;
+	for (auto e : IterateEnum<eTestEnum>())
+	{
+		REQUIRE(i++ == (int)e);
+	}
+	REQUIRE(i == (int)eTestEnum::_COUNT);
+}
