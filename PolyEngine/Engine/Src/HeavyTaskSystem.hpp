@@ -18,7 +18,7 @@ namespace Poly
 		template<typename T, typename ...Args>
 		void AddComponent(World* w, const UniqueID & entityId, Args && ...args)
 		{
-			HeavyTaskBase *task = new AddComponentHeavyTask<T>(entityId, args...);
+			HeavyTaskBase *task = new AddComponentHeavyTask<T,Args...>(entityId, std::forward<Args>(args)...);
 			w->GetHeavyTaskQueue().Push(task);
 		}
 
