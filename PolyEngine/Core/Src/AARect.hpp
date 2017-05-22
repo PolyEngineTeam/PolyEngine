@@ -42,5 +42,7 @@ namespace Poly {
 	private:
 		Vector Pos;
 		Vector Size;
+
+		bool IsCollidingWithInternal(const AARect& otherRect) const;
 	};
 }

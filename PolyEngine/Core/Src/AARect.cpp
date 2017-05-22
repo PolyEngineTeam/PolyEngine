@@ -16,6 +16,11 @@ namespace Poly {
 
 	bool AARect::IsCollidingWith(const AARect& otherRect) const
 	{
+		return IsCollidingWithInternal(otherRect) || otherRect.IsCollidingWithInternal(*this);
+	}
+
+	bool AARect::IsCollidingWithInternal(const AARect& otherRect) const
+	{
 		const Vector vertexes[8] = {
 			Pos,
 			Vector(Pos.X, Pos.Y + Size.Y, Pos.Z),
