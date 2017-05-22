@@ -37,7 +37,6 @@ namespace Poly {
 		const float interBottom = std::min(r1MaxY, r2MaxY);
 		const float interDown = std::min(r1MaxZ, r2MaxZ);
 
-		//jak ciê nie interesuje intersekcja, to mo¿na uproœciæ do zwyk³ego return
 		if ((interLeft < interRight) && (interTop < interBottom) && (interUp < interDown))
 		{
 			if (intersection)
