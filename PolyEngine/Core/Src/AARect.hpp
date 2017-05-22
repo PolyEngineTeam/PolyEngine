@@ -22,6 +22,23 @@ namespace Poly {
 		void SetPosition(const Vector& pos) { Pos = pos; }
 		void SetSize(const Vector& size) { Size = size; }
 
+		//////////////////////////////
+		/// Checks whether this AARect contains a given point.
+		/// @param point to be checked
+		/// @see IsCollidingWith()
+		//////////////////////////////
+		inline bool Contains(const Vector& point) const 
+		{ return point.X >= Pos.X && point.X <= (Pos.X + Size.X) 
+			&& point.Y >= Pos.Y && point.Y <= (Pos.Y + Size.Y) 
+			&& point.Z >= Pos.Z && point.Z <= (Pos.Z + Size.Z); }
+
+		//////////////////////////////
+		/// Checks whether a given AARect is colliding with this AARect.
+		/// @param otherRect
+		/// @see Contains()
+		//////////////////////////////
+		bool IsCollidingWith(const AARect& otherRect) const;
+
 	private:
 		Vector Pos;
 		Vector Size;
