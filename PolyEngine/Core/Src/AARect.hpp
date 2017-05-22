@@ -35,14 +35,13 @@ namespace Poly {
 		//////////////////////////////
 		/// Checks whether a given AARect is colliding with this AARect.
 		/// @param otherRect
+		/// @param intersection (optional) will be set to the intersection of the two tested AARects
 		/// @see Contains()
 		//////////////////////////////
-		bool IsCollidingWith(const AARect& otherRect) const;
+		bool IsCollidingWith(const AARect* otherRect, AARect* intersection = nullptr) const;
 
 	private:
 		Vector Pos;
 		Vector Size;
-
-		bool IsCollidingWithInternal(const AARect& otherRect) const;
 	};
 }
