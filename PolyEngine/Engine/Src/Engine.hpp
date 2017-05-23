@@ -69,10 +69,10 @@ namespace Poly
 
 		void Update();
 
-		void KeyDown(eKey key) { InputEventsQueue.Push({eInputEventType::KEYDOWN, key}); }
-		void KeyUp(eKey key) { InputEventsQueue.Push({eInputEventType::KEYUP, key}); }
-		void UpdateMousePos(const Vector& pos) { InputEventsQueue.Push({eInputEventType::MOUSEMOVE, pos}); }
-		void UpdateWheelPos(const Vector& pos) { InputEventsQueue.Push({eInputEventType::WHEELMOVE, pos}); }
+		void KeyDown(eKey key) { InputEventsQueue.PushBack({eInputEventType::KEYDOWN, key}); }
+		void KeyUp(eKey key) { InputEventsQueue.PushBack({eInputEventType::KEYUP, key}); }
+		void UpdateMousePos(const Vector& pos) { InputEventsQueue.PushBack({eInputEventType::MOUSEMOVE, pos}); }
+		void UpdateWheelPos(const Vector& pos) { InputEventsQueue.PushBack({eInputEventType::WHEELMOVE, pos}); }
 
 		World& GetWorld() { return *BaseWorld; }
 

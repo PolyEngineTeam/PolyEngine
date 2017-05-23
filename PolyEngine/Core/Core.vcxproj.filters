@@ -126,5 +126,8 @@
     <ClInclude Include="Src\RefCountedBase.hpp">
       <Filter>Source Files\Memory</Filter>
     </ClInclude>
+    <ClInclude Include="Src\ObjectLifetimeHelpers.hpp">
+      <Filter>Source Files\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
