@@ -4,10 +4,8 @@
 
 using namespace Poly;
 
-void Poly::MovementSystem::MovementUpdatePhase(World* world)
+void MovementSystem::MovementUpdatePhase(World* world)
 {
-	
-	
 	for (auto freeFloatTuple : world->IterateComponents<FreeFloatMovementComponent, TransformComponent>())
 	{
 		TransformComponent* transCmp = std::get<TransformComponent*>(freeFloatTuple);
@@ -46,32 +44,32 @@ void Poly::MovementSystem::MovementUpdatePhase(World* world)
 	}
 }
 
-Vector Poly::MovementSystem::GetLocalForward(const TransformComponent* transform)
+Vector MovementSystem::GetLocalForward(const TransformComponent* transform)
 {
 	return transform->GetLocalRotation() * -Vector::UNIT_Z;
 }
 
-Vector Poly::MovementSystem::GetLocalRight(const TransformComponent* transform)
+Vector MovementSystem::GetLocalRight(const TransformComponent* transform)
 {
 	return transform->GetLocalRotation() * Vector::UNIT_X;
 }
 
-Vector Poly::MovementSystem::GetLocalUp(const TransformComponent* transform)
+Vector MovementSystem::GetLocalUp(const TransformComponent* transform)
 {
 	return transform->GetLocalRotation() * Vector::UNIT_Y;
 }
 
-Vector Poly::MovementSystem::GetGlobalForward(const TransformComponent* transform)
+Vector MovementSystem::GetGlobalForward(const TransformComponent* transform)
 {
 	return transform->GetGlobalRotation() * -Vector::UNIT_Z;
 }
 
-Vector Poly::MovementSystem::GetGlobalRight(const TransformComponent* transform)
+Vector MovementSystem::GetGlobalRight(const TransformComponent* transform)
 {
 	return transform->GetGlobalRotation() * Vector::UNIT_X;
 }
 
-Vector Poly::MovementSystem::GetGlobalUp(const TransformComponent* transform)
+Vector MovementSystem::GetGlobalUp(const TransformComponent* transform)
 {
 	return transform->GetGlobalRotation() * Vector::UNIT_Y;
 }
