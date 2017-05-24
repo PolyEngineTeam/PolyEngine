@@ -11,6 +11,7 @@ namespace Poly {
 	{
 	public:
 		ShaderProgram(const String& vertex, const String& fragment);
+		ShaderProgram(const String& vertex, const String& geometry, const String& fragment);
 
 		void BindProgram() const;
 		void CompileProgram();

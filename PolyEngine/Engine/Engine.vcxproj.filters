@@ -42,6 +42,9 @@
     <Filter Include="Source Files\Movement">
       <UniqueIdentifier>{ce34e806-09b8-412f-8c29-e5e45348fe3b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Config">
+      <UniqueIdentifier>{e435be88-e4b2-40bb-9cff-9c8a9f54ab46}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -112,6 +115,9 @@
     </ClCompile>
     <ClCompile Include="Src\HeavyTaskSystem.cpp">
       <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\CoreConfig.cpp">
+      <Filter>Source Files\Config</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -210,6 +216,9 @@
     </ClInclude>
     <ClInclude Include="Src\HeavyTaskImplementation.hpp">
       <Filter>Source Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\CoreConfig.hpp">
+      <Filter>Source Files\Config</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

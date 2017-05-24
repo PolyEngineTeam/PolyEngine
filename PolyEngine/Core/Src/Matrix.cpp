@@ -548,7 +548,7 @@ bool Poly::Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& 
 	{
 		s = sqrtf(1.0f + row[1].Y - row[0].X - row[2].Z) * 2.0f; // S=4*qy
 		x = (row[0].Y + row[1].X) / s;
-		y = 0.25 * s;
+		y = 0.25f * s;
 		z = (row[1].Z + row[2].Y) / s;
 		w = (row[0].Z - row[2].X) / s;
 	}

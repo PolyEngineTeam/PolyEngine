@@ -18,6 +18,19 @@ ShaderProgram::ShaderProgram(const String & vertex, const String & fragment)
 	CompileProgram();
 }
 
+ShaderProgram::ShaderProgram(const String& vertex, const String& geometry, const String& fragment)
+{
+	gConsole.LogDebug("Creating shader program {} {} {}", vertex, geometry, fragment);
+	m_program = glCreateProgram();
+	if (m_program == 0) {
+		ASSERTE(false, "Creation of shader program failed! Exiting...");
+	}
+	LoadShader(GL_VERTEX_SHADER, vertex);
+	LoadShader(GL_GEOMETRY_SHADER, geometry);
+	LoadShader(GL_FRAGMENT_SHADER, fragment);
+	CompileProgram();
+}
+
 void ShaderProgram::BindProgram() const
 {
 	glUseProgram(m_program);

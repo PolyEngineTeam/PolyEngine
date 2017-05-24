@@ -130,6 +130,99 @@ namespace Poly {
 		T Data[SIZE];
 	};
 
+	//------------------------------------------------------------------------------
+	template<typename E>
+	class EnumFlags : public BaseObjectLiteralType<>
+	{
+		using FlagType = typename std::underlying_type<E>::type;
+
+		STATIC_ASSERTE(std::is_enum<E>::value, "Provided EnumFlags type is not an enum!");
+		STATIC_ASSERTE(std::is_integral<FlagType>::value, "Underlying enum value type is not integral!");
+	public:
+		constexpr EnumFlags() {}
+		constexpr EnumFlags(E enumValue) : Flags(static_cast<FlagType>(enumValue)) {}
+		
+		constexpr bool operator==(const EnumFlags& rhs) const { return Flags == rhs.Flags; }
+		constexpr bool operator!=(const EnumFlags& rhs) const { return !(*this == rhs); }
+
+		constexpr EnumFlags operator|(const EnumFlags& rhs) const { return EnumFlags(Flags | rhs.Flags); }
+		constexpr EnumFlags operator&(const EnumFlags& rhs) const { return EnumFlags(Flags & rhs.Flags); }
+		constexpr EnumFlags operator~() const { return EnumFlags(~Flags); }
+
+		EnumFlags& operator|=(const EnumFlags& rhs) { Flags |= rhs.Flags; return *this; }
+		EnumFlags& operator&=(const EnumFlags& rhs) { Flags &= rhs.Flags; return *this; }
+
+		constexpr bool IsSet(E enumValue) const { return (*this & enumValue) == enumValue; }
+		constexpr bool AnySet(E enumValue) const { return (*this & enumValue).Flags != 0; }
+		constexpr bool NoneSet(E enumValue) const { return (*this & enumValue).Flags == 0; }
+
+		constexpr explicit operator E() const { return static_cast<E>(Flags); }
+		constexpr explicit operator FlagType() const { return Flags; }
+	private:
+		constexpr EnumFlags(FlagType flagsValue) : Flags(flagsValue) {}
+
+		FlagType Flags = 0;
+	};
+
+	//------------------------------------------------------------------------------
+	template <typename E, typename = std::enable_if_t<std::is_enum<E>::value> > constexpr E operator|(E lhs, E rhs) { return static_cast<E>(EnumFlags<E>(lhs) | EnumFlags<E>(rhs)); }
+	template <typename E, typename = std::enable_if_t<std::is_enum<E>::value> > constexpr E operator&(E lhs, E rhs) { return static_cast<E>(EnumFlags<E>(lhs) & EnumFlags<E>(rhs)); }
+	template <typename E, typename = std::enable_if_t<std::is_enum<E>::value> > constexpr E operator~(E rhs) { return static_cast<E>(~EnumFlags<E>(rhs)); }
+
+	//------------------------------------------------------------------------------
+	template <typename E>
+	class EnumIterator : public BaseObject<>, public std::iterator<std::random_access_iterator_tag, E>
+	{
+		using ValueType = typename std::underlying_type<E>::type;
+
+		STATIC_ASSERTE(std::is_enum<E>::value, "Provided EnumIterator type is not an enum!");
+		STATIC_ASSERTE(std::is_integral<ValueType>::value, "Underlying enum value type is not integral!");
+
+	public:
+		bool operator==(const EnumIterator& rhs) const { return Value == rhs.Value; }
+		bool operator!=(const EnumIterator& rhs) const { return !(*this == rhs); }
+		bool operator<(const EnumIterator& rhs) const { return Value < rhs.Value; }
+		bool operator<=(const EnumIterator& rhs) const { return Value <= rhs.Value; }
+		bool operator>(const EnumIterator& rhs) const { return Value > rhs.Value; }
+		bool operator>=(const EnumIterator& rhs) const { return Value >= rhs.Value; }
+
+		E operator*() const { return static_cast<E>(Value); }
+
+		EnumIterator& operator++() { ++Value; return *this; }
+		EnumIterator operator++(int) { EnumIterator ret(Value); ++Value; return ret; }
+		EnumIterator& operator--() { --Value; return *this; }
+		EnumIterator operator--(int) { EnumIterator ret(Value); --Value; return ret; }
+
+		EnumIterator operator+(ValueType val) const { return EnumIterator(Value + val); }
+		EnumIterator operator-(ValueType val) const { return EnumIterator(Value - val); }
+		EnumIterator& operator+=(ValueType val) { Value += val; return *this; }
+		EnumIterator& operator-=(ValueType val) { Value -= val; return *this; }
+
+		ValueType operator-(const EnumIterator& rhs) const { return Value - rhs.Value; }
+	private:
+		EnumIterator(E enumValue) : Value(static_cast<ValueType>(enumValue)) {}
+		EnumIterator(ValueType value) : Value(value) {}
+
+		ValueType Value;
+		template<typename T> friend class EnumIteratorProxy;
+	};
+
+	//------------------------------------------------------------------------------
+	template <typename E>
+	class EnumIteratorProxy
+	{
+		STATIC_ASSERTE(std::is_enum<E>::value, "Provided EnumIteratorProxy type is not an enum!");
+	public:
+		EnumIterator<E> Begin() const { return EnumIterator<E>(0); }
+		EnumIterator<E> End() const { return EnumIterator<E>(E::_COUNT); }
+	};
+
+	//------------------------------------------------------------------------------
+	template <typename E> EnumIteratorProxy<E> IterateEnum() { return EnumIteratorProxy<E>{}; }
+	template <typename E> typename Poly::EnumIterator<E> begin(const Poly::EnumIteratorProxy<E>& rhs) { return rhs.Begin(); }
+	template <typename E> typename Poly::EnumIterator<E> end(const Poly::EnumIteratorProxy<E>& rhs) { return rhs.End(); }
+
+	//------------------------------------------------------------------------------
 	namespace Impl {
 		template<typename T>
 		struct EnumInfo {};
