@@ -24,6 +24,7 @@
 #include "ResourceManager.hpp"
 #include "GLTextureResource.hpp"
 #include "GLMeshResource.hpp"
+#include "FontResource.hpp"
 
 // Components
 #include "TransformComponent.hpp"

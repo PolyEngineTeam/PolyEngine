@@ -116,6 +116,9 @@
     <ClCompile Include="Src\CoreConfig.cpp">
       <Filter>Source Files\Config</Filter>
     </ClCompile>
+    <ClCompile Include="Src\FontResource.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine.hpp">
@@ -207,6 +210,9 @@
     </ClInclude>
     <ClInclude Include="Src\CoreConfig.hpp">
       <Filter>Source Files\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\FontResource.hpp">
+      <Filter>Source Files\Resources</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -32,6 +32,11 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(RenderingSystem::RenderingPhase, eUpdatePhaseOrder::POSTUPDATE);
 
+	// Temporary test code
+	FontResource* font = ResourceManager<FontResource>::Load("Fonts/Raleway/Raleway-Regular.ttf");
+	font->LoadFaces({16,32,64,128});
+	ResourceManager<FontResource>::Release(font);
+
 	if (!Renderer->Init(context))
 		return false;
 	Game->Init();
