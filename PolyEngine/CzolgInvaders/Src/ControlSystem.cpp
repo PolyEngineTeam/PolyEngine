@@ -21,11 +21,20 @@ void ControlSystem::ControlSystemPhase(World* world)
 			move *= 0.016f;
 			TransformComponent* player_transform = player->GetSibling<TransformComponent>();
 			Vector prev_location = player_transform->GetLocalTranslation();
-			player_transform->SetLocalTranslation(prev_location + move);
+			if (Abs(prev_location.X + move.X) <= player->GetMaxAbsXPosition())
+				player_transform->SetLocalTranslation(prev_location + move);
+			/*if (prev_location.X > player->GetMaxAbsXPosition())
+				player_transform->SetLocalTranslation(Vector(player->GetMaxAbsXPosition(), prev_location.Y, prev_location.Z));
+			else if (prev_location.X < -(player->GetMaxAbsXPosition()))
+				player_transform->SetLocalTranslation(Vector(-(player->GetMaxAbsXPosition()), prev_location.Y, prev_location.Z));*/
 		}
 
-		if (world->GetInputWorldComponent().IsPressed(player->GetShootKey()))
-			SpawnBullet(world, player->GetSibling<TransformComponent>()->GetLocalTranslation(), Vector(0.0f, 0.0f, -1.0f),player->GetBulletSpeed());
+		if (world->GetInputWorldComponent().IsPressed(player->GetShootKey()) && (world->GetTimeWorldComponent().GetGameplayTime() - player->GetLastShoot() >= player->GetShootInterval()))
+		{
+			SpawnBullet(world, player->GetSibling<TransformComponent>()->GetLocalTranslation(), Vector(0.0f, 0.0f, -1.0f), player->GetBulletSpeed());
+			player->SetLastShoot(world->GetTimeWorldComponent().GetGameplayTime());
+		}
+			
 	}
 	for (auto bulletMovementTuple : world->IterateComponents<BulletMovementComponent>())
 	{
