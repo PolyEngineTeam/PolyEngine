@@ -60,7 +60,7 @@ void GameMainSystem::GameUpdate(Poly::World* world)
 		deg += 3.0f; pos++;
 		HeavyTaskSystem::AddComponent<Poly::CameraComponent>(world, sth, 45.0f, 1.0f, 1000.f);
 		HeavyTaskSystem::AddComponent<Poly::FreeFloatMovementComponent>(world, sth, 10.0f, 0.003f);
-		HeavyTaskSystem::AddComponent<Poly::MeshRenderingComponent>(world, sth, (const char*)"model-tank/tank.fbx");
+		HeavyTaskSystem::AddComponent<Poly::MeshRenderingComponent>(world, sth, "model-tank/tank.fbx");//(const char*)"model-tank/tank.fbx");
 		HeavyTaskSystem::RemoveComponent<Poly::FreeFloatMovementComponent>(world, sth);//just testing remove
 		HeavyTaskSystem::RemoveComponent<Poly::CameraComponent>(world, sth);
 		//HeavyTaskSystem::DestroyEntity(world, sth);
