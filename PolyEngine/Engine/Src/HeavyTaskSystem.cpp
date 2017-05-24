@@ -15,7 +15,10 @@ void HeavyTaskSystem::HeavyTaskPhase(World* w)
 		HeavyTaskBase *task = queue.Front();
 
 		if (task)
+		{
+			gConsole.LogDebug("Executing task: {}", task->GetDescription());
 			task->Execute(w);
+		}
 
 		queue.Pop();
 		

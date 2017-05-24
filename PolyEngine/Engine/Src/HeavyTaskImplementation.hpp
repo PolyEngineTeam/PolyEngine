@@ -35,6 +35,8 @@ namespace Poly
 		{
 			w->DestroyEntity(*Id);
 		}
+
+		virtual String GetDescription() { return String("Destroy entity"); }
 	};
 	//---------------------------------------------------------------
 	template<typename T>
@@ -56,6 +58,7 @@ namespace Poly
 		{
 			w->RemoveComponent<T>(*Id);
 		}
+		virtual String GetDescription() { return String("Remove component"); }
 	};
 
 	template<typename T, typename... Args>
@@ -90,5 +93,6 @@ namespace Poly
 		{
 			func(w, tup, HeavyTaskHelper::gen_seq<sizeof...(ARG)>{});
 		}
+		virtual String GetDescription() { return String("Add component"); }
 	};
 }
