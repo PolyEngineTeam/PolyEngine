@@ -15,7 +15,7 @@ void InputSystem::InputPhase(World* world)
 
 	InputQueue& InputEventsQueue = world->GetEngine()->GetInputQueue();
 
-	while (!InputEventsQueue.IsEmpty())
+	while (!InputEventsQueue.Empty())
 	{
 		InputEvent& ev = InputEventsQueue.Front();
 		switch (ev.Type)

@@ -11,7 +11,7 @@ namespace Poly
 	{
 	public:
 		//------------------------------------------------------------------------------
-		Queue() { Reserve(Capacity); }
+		Queue() { }
 		Queue(size_t capacity) { Reserve(capacity); }
 		//------------------------------------------------------------------------------
 		Queue(const Queue<T>& rhs)
@@ -79,7 +79,7 @@ namespace Poly
 		bool operator!=(const Queue<T>& rhs) const { return !(*this == rhs); };
 
 		//------------------------------------------------------------------------------
-		bool IsEmpty() const { return GetSize() == 0; }
+		bool Empty() const { return GetSize() == 0; }
 		size_t GetSize() const { return Size; }
 		size_t GetCapacity() const { return Capacity; }
 
@@ -96,25 +96,25 @@ namespace Poly
 		//------------------------------------------------------------------------------
 		void PushBack(const T& obj)
 		{
+			if (Empty() || Head == GetNextIdx(Tail))
+				Enlarge();
 			ObjectLifetimeHelper::CopyCreate(Data + Tail, obj);
 			AdvanceIdx(Tail);
 			Size++;
-			if (Head == Tail)
-				Enlarge();
 		}
 
 		void PushFront(const T& obj)
 		{
+			if (Empty() || GetPrevIdx(Head) == Tail) // equivalent to (Head == GetNextIdx(Tail)) but it's more readable this way
+				Enlarge();
 			DecreaseIdx(Head);
 			ObjectLifetimeHelper::CopyCreate(Data + Head, obj);
 			Size++;
-			if (Head == Tail)
-				Enlarge();
 		}
 
 		void PopBack()
 		{
-			HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!");
+			HEAVY_ASSERTE(!Empty(), "Trying to access empty queue!");
 			DecreaseIdx(Tail);
 			ObjectLifetimeHelper::Destroy(Data + Tail);
 			--Size;
@@ -122,7 +122,7 @@ namespace Poly
 
 		void PopFront()
 		{
-			HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!");
+			HEAVY_ASSERTE(!Empty(), "Trying to access empty queue!");
 			ObjectLifetimeHelper::Destroy(Data + Head);
 			AdvanceIdx(Head);
 			--Size;
@@ -130,8 +130,8 @@ namespace Poly
 
 
 		//------------------------------------------------------------------------------
-		T& Front() const { HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!"); return Data[Head]; };
-		T& Back() const { HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!"); return Data[GetPrevIdx(Tail)]; };
+		T& Front() const { HEAVY_ASSERTE(!Empty(), "Trying to access empty queue!"); return Data[Head]; };
+		T& Back() const { HEAVY_ASSERTE(!Empty(), "Trying to access empty queue!"); return Data[GetPrevIdx(Tail)]; };
 
 		//------------------------------------------------------------------------------
 		void Reserve(size_t capacity)
@@ -220,7 +220,7 @@ namespace Poly
 		size_t Head = 0;
 		size_t Tail = 0;
 		size_t Size = 0;
-		size_t Capacity = 1;
+		size_t Capacity = 0;
 		T* Data = nullptr;
 	};
 }
