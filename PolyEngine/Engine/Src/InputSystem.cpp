@@ -15,7 +15,7 @@ void InputSystem::InputPhase(World* world)
 
 	InputQueue& InputEventsQueue = world->GetEngine()->GetInputQueue();
 
-	while (!InputEventsQueue.Empty())
+	while (!InputEventsQueue.IsEmpty())
 	{
 		InputEvent& ev = InputEventsQueue.Front();
 		switch (ev.Type)
@@ -40,7 +40,7 @@ void InputSystem::InputPhase(World* world)
 			HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::Push(), which is an invalid value");
 			break;
 		}
-		InputEventsQueue.Pop();
+		InputEventsQueue.PopBack();
 	}
 
 

@@ -162,6 +162,7 @@
     <ClInclude Include="Src\IterablePoolAllocator.hpp" />
     <ClInclude Include="Src\Logger.hpp" />
     <ClInclude Include="Src\Matrix.hpp" />
+    <ClInclude Include="Src\ObjectLifetimeHelpers.hpp" />
     <ClInclude Include="Src\PoolAllocator.hpp" />
     <ClInclude Include="Src\Quaternion.hpp" />
     <ClInclude Include="Src\Queue.hpp" />
