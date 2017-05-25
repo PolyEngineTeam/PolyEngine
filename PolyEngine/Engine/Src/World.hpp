@@ -26,35 +26,6 @@ namespace Poly {
 
 		//TODO implement world
 		UniqueID SpawnEntity();
-		void DestroyEntity(const UniqueID& entityId);
-
-		//------------------------------------------------------------------------------
-		template<typename T, typename... Args>
-		void AddComponent(const UniqueID& entityId, Args&&... args)
-		{
-			T* ptr = GetComponentAllocator<T>()->Alloc();
-			::new(ptr) T(std::forward<Args>(args)...);
-			Entity* ent = IDToEntityMap[entityId];
-			HEAVY_ASSERTE(ent, "Invalid entity ID");
-			HEAVY_ASSERTE(!ent->HasComponent(EnginePtr->GetComponentID<T>()), "Failed at AddComponent() - a component of a given UniqueID already exists!");
-			ent->ComponentPosessionFlags.set(EnginePtr->GetComponentID<T>(), true);
-			ent->Components[EnginePtr->GetComponentID<T>()] = ptr;
-			ptr->Owner = ent;
-		}
-
-		//------------------------------------------------------------------------------
-		template<typename T>
-		void RemoveComponent(const UniqueID& entityId)
-		{
-			Entity* ent = IDToEntityMap[entityId];
-			HEAVY_ASSERTE(ent, "Invalid entity ID");
-			HEAVY_ASSERTE(ent->HasComponent(EnginePtr->GetComponentID<T>()), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
-			ent->ComponentPosessionFlags.set(EnginePtr->GetComponentID<T>(), false);
-			T* component = static_cast<T*>(ent->Components[EnginePtr->GetComponentID<T>()]);
-			ent->Components[EnginePtr->GetComponentID<T>()] = nullptr;
-			component->~T();
-			GetComponentAllocator<T>()->Free(component);
-		}
 
 		//------------------------------------------------------------------------------
 		//////////////////////////////
@@ -159,6 +130,39 @@ namespace Poly {
 		HeavyTaskQueue& GetHeavyTaskQueue() { return HeavyTasksQueue; }
 
 	private:
+		friend class DestroyEntityHeavyTask;
+		template<typename T,typename... Args> friend class AddComponentHeavyTask;
+		template<typename T> friend class RemoveComponentHeavyTask;
+		//------------------------------------------------------------------------------
+		void DestroyEntity(const UniqueID& entityId);
+
+		//------------------------------------------------------------------------------
+		template<typename T, typename... Args>
+		void AddComponent(const UniqueID& entityId, Args&&... args)
+		{
+			T* ptr = GetComponentAllocator<T>()->Alloc();
+			::new(ptr) T(std::forward<Args>(args)...);
+			Entity* ent = IDToEntityMap[entityId];
+			HEAVY_ASSERTE(ent, "Invalid entity ID");
+			HEAVY_ASSERTE(!ent->HasComponent(EnginePtr->GetComponentID<T>()), "Failed at AddComponent() - a component of a given UniqueID already exists!");
+			ent->ComponentPosessionFlags.set(EnginePtr->GetComponentID<T>(), true);
+			ent->Components[EnginePtr->GetComponentID<T>()] = ptr;
+			ptr->Owner = ent;
+		}
+
+		//------------------------------------------------------------------------------
+		template<typename T>
+		void RemoveComponent(const UniqueID& entityId)
+		{
+			Entity* ent = IDToEntityMap[entityId];
+			HEAVY_ASSERTE(ent, "Invalid entity ID");
+			HEAVY_ASSERTE(ent->HasComponent(EnginePtr->GetComponentID<T>()), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
+			ent->ComponentPosessionFlags.set(EnginePtr->GetComponentID<T>(), false);
+			T* component = static_cast<T*>(ent->Components[EnginePtr->GetComponentID<T>()]);
+			ent->Components[EnginePtr->GetComponentID<T>()] = nullptr;
+			component->~T();
+			GetComponentAllocator<T>()->Free(component);
+		}
 		//------------------------------------------------------------------------------
 		template<typename T>
 		IterablePoolAllocator<T>* GetComponentAllocator()

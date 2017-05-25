@@ -31,11 +31,11 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterUpdatePhase(MovementSystem::MovementUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(RenderingSystem::RenderingPhase, eUpdatePhaseOrder::POSTUPDATE);
+	RegisterUpdatePhase(HeavyTaskSystem::HeavyTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
 
 	if (!Renderer->Init(context))
 		return false;
 
-	RegisterUpdatePhase(HeavyTaskSystem::HeavyTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
 	Game->Init();
 
 	return true;
