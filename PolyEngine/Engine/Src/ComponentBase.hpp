@@ -7,7 +7,6 @@ namespace Poly {
 
 	enum class eComponentBaseFlags
 	{
-		NONE = 0x00,
 		ABOUT_TO_BE_CREATED = 0x01,
 		NEWLY_CREATED = 0x02,
 		ABOUT_TO_BE_REMOVED = 0x04,
@@ -29,8 +28,8 @@ namespace Poly {
 			return Owner->GetComponent<T>();
 		}
 
-		void SetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags = rhs; }
-		void ClearFlags() { Flags = eComponentBaseFlags::NONE; }
+		void SetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags |= rhs; }
+		void ResetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags &= ~rhs; }
 		const EnumFlags<eComponentBaseFlags>& GetFlags() { return Flags; }
 
 	private:
