@@ -11,7 +11,7 @@ namespace Poly
 	{
 	public:
 		//------------------------------------------------------------------------------
-		Queue() { }
+		Queue() = default;
 		Queue(size_t capacity) { Reserve(capacity); }
 		//------------------------------------------------------------------------------
 		Queue(const Queue<T>& rhs)
@@ -32,7 +32,7 @@ namespace Poly
 		}
 
 		//------------------------------------------------------------------------------
-		~Queue()
+		~Queue() override
 		{
 			Clear();
 			Free();
@@ -79,15 +79,15 @@ namespace Poly
 		bool operator!=(const Queue<T>& rhs) const { return !(*this == rhs); };
 
 		//------------------------------------------------------------------------------
-		bool Empty() const { return GetSize() == 0; }
+		bool IsEmpty() const { return GetSize() == 0; }
 		size_t GetSize() const { return Size; }
 		size_t GetCapacity() const { return Capacity; }
 
 		//------------------------------------------------------------------------------
 		void Clear()
 		{
-			for (size_t idx = Head; idx != Tail; AdvanceIdx(idx))
-				ObjectLifetimeHelper::Destroy(Data + idx);
+			for (size_t i = 0; i < Size; ++i)
+				ObjectLifetimeHelper::Destroy(Data + GetNthIdx(i));
 			Size = 0;
 			Head = 0;
 			Tail = 0;
@@ -96,7 +96,7 @@ namespace Poly
 		//------------------------------------------------------------------------------
 		void PushBack(const T& obj)
 		{
-			if (Capacity == 0 || Head == GetNextIdx(Tail))
+			if (GetSize() >= GetCapacity())
 				Enlarge();
 			ObjectLifetimeHelper::CopyCreate(Data + Tail, obj);
 			AdvanceIdx(Tail);
@@ -105,7 +105,7 @@ namespace Poly
 
 		void PushFront(const T& obj)
 		{
-			if (Capacity == 0 || GetPrevIdx(Head) == Tail) // equivalent to (Head == GetNextIdx(Tail)) but it's more readable this way
+			if (GetSize() >= GetCapacity())
 				Enlarge();
 			DecreaseIdx(Head);
 			ObjectLifetimeHelper::CopyCreate(Data + Head, obj);
@@ -114,7 +114,7 @@ namespace Poly
 
 		void PopBack()
 		{
-			HEAVY_ASSERTE(!Empty(), "Trying to access empty queue!");
+			HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!");
 			DecreaseIdx(Tail);
 			ObjectLifetimeHelper::Destroy(Data + Tail);
 			--Size;
@@ -122,7 +122,7 @@ namespace Poly
 
 		void PopFront()
 		{
-			HEAVY_ASSERTE(!Empty(), "Trying to access empty queue!");
+			HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!");
 			ObjectLifetimeHelper::Destroy(Data + Head);
 			AdvanceIdx(Head);
 			--Size;
@@ -130,8 +130,8 @@ namespace Poly
 
 
 		//------------------------------------------------------------------------------
-		T& Front() const { HEAVY_ASSERTE(!Empty(), "Trying to access empty queue!"); return Data[Head]; };
-		T& Back() const { HEAVY_ASSERTE(!Empty(), "Trying to access empty queue!"); return Data[GetPrevIdx(Tail)]; };
+		T& Front() const { HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!"); return Data[Head]; };
+		T& Back() const { HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!"); return Data[GetPrevIdx(Tail)]; };
 
 		//------------------------------------------------------------------------------
 		void Reserve(size_t capacity)
@@ -154,10 +154,10 @@ namespace Poly
 		//------------------------------------------------------------------------------
 		size_t FindIdx(const T& rhs) const
 		{
-			for (size_t idx = Head; idx != Tail; AdvanceIdx(idx))
-				if (Data[idx] == rhs)
-					return idx;
-
+			for (size_t i = 0; i < Size; ++i)
+				if (Data[GetNthIdx(i)] == rhs)
+					return GetNthIdx(i);
+			
 			return GetSize();
 		}
 
@@ -187,9 +187,11 @@ namespace Poly
 		//------------------------------------------------------------------------------
 		void Copy(const Queue<T>& rhs)
 		{
-			Reserve(rhs.GetSize() + 1);
-			for (size_t idx = rhs.Head; idx != rhs.Tail; rhs.AdvanceIdx(idx))
-				PushBack(rhs.Data[idx]);
+			Reserve(rhs.GetSize());
+			for (size_t i = 0; i < rhs.Size; ++i)
+			{
+				PushBack(rhs.Data[rhs.GetNthIdx(i)]);
+			}
 		}
 
 		//------------------------------------------------------------------------------
