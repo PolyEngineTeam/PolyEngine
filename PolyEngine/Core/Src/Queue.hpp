@@ -96,7 +96,7 @@ namespace Poly
 		//------------------------------------------------------------------------------
 		void PushBack(const T& obj)
 		{
-			if (Empty() || Head == GetNextIdx(Tail))
+			if (Capacity == 0 || Head == GetNextIdx(Tail))
 				Enlarge();
 			ObjectLifetimeHelper::CopyCreate(Data + Tail, obj);
 			AdvanceIdx(Tail);
@@ -105,7 +105,7 @@ namespace Poly
 
 		void PushFront(const T& obj)
 		{
-			if (Empty() || GetPrevIdx(Head) == Tail) // equivalent to (Head == GetNextIdx(Tail)) but it's more readable this way
+			if (Capacity == 0 || GetPrevIdx(Head) == Tail) // equivalent to (Head == GetNextIdx(Tail)) but it's more readable this way
 				Enlarge();
 			DecreaseIdx(Head);
 			ObjectLifetimeHelper::CopyCreate(Data + Head, obj);
