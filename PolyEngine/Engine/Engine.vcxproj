@@ -171,6 +171,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
   <ItemGroup>
     <ClCompile Include="Src\CameraComponent.cpp" />
     <ClCompile Include="Src\CameraSystem.cpp" />
+    <ClCompile Include="Src\CoreConfig.cpp" />
     <ClCompile Include="Src\Engine.cpp" />
     <ClCompile Include="Src\EnginePCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -207,6 +208,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\CameraComponent.hpp" />
     <ClInclude Include="Src\CameraSystem.hpp" />
     <ClInclude Include="Src\ComponentBase.hpp" />
+    <ClInclude Include="Src\CoreConfig.hpp" />
     <ClInclude Include="Src\Engine.hpp" />
     <ClInclude Include="Src\EnginePCH.hpp" />
     <ClInclude Include="Src\Entity.hpp" />

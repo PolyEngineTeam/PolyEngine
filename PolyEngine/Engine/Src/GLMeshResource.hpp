@@ -7,8 +7,8 @@
 #include "ResourceBase.hpp"
 #include "GLTextureResource.hpp"
 
-class aiMesh;
-class aiMaterial;
+struct aiMesh;
+struct aiMaterial;
 
 typedef unsigned int GLuint;
  

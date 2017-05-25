@@ -13,6 +13,7 @@ find_package(assimp REQUIRED)
 set(POLYENGINE_SRCS
 	Src/CameraComponent.cpp
 	Src/CameraSystem.cpp
+	Src/CoreConfig.cpp
 	Src/Engine.cpp
 	Src/Entity.cpp
 	Src/FreeFloatMovementComponent.cpp
@@ -38,6 +39,7 @@ set(POLYENGINE_H_FOR_IDE
 	Src/CameraComponent.hpp
 	Src/CameraSystem.hpp
 	Src/ComponentBase.hpp
+	Src/CoreConfig.hpp
 	Src/Engine.hpp
 	Src/EnginePCH.hpp
 	Src/Entity.hpp
