@@ -134,11 +134,6 @@ void Poly::FontResource::LoadFace(size_t height) const
 	size_t currTextureHeight = 0;
 	for (const GlyphSize& glyphSize : glyphSizes)
 	{		
-		if (glyphSize.Glyph == 'a' || glyphSize.Glyph == '2')
-		{
-			gConsole.LogError("");
-		}
-		
 		FT_Error err = FT_Load_Char(face.FTFace, glyphSize.Glyph, FT_LOAD_RENDER);
 		ASSERTE(err == FT_Err_Ok, "Glyph loading failed!");
 
