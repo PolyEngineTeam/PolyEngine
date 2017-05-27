@@ -1,10 +1,12 @@
-#include "EnginePCH.hpp"
+﻿#include "EnginePCH.hpp"
 
 #include "FontResource.hpp"
 
 using namespace Poly;
 
 static FT_Library gFreeTypeLibrary = nullptr;
+
+static const size_t GLYPH_PADDING = 8;
 
 FontResource::FontResource(const String& path)
 {
@@ -117,6 +119,7 @@ void Poly::FontResource::LoadFace(size_t height) const
 	ASSERTE(estimatedTextureHeight > 0, "Texture packing for font failed!");
 
 	// Create texture 2D for the face
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glGenTextures(1, &face.TextureID);
 	glBindTexture(GL_TEXTURE_2D, face.TextureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, TEXTURE_WIDTH, estimatedTextureHeight, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
@@ -131,44 +134,46 @@ void Poly::FontResource::LoadFace(size_t height) const
 	size_t currTextureHeight = 0;
 	for (const GlyphSize& glyphSize : glyphSizes)
 	{		
+		if (glyphSize.Glyph == 'a' || glyphSize.Glyph == '2')
+		{
+			gConsole.LogError("");
+		}
+		
 		FT_Error err = FT_Load_Char(face.FTFace, glyphSize.Glyph, FT_LOAD_RENDER);
 		ASSERTE(err == FT_Err_Ok, "Glyph loading failed!");
 
-		size_t glyphW = face.FTFace->glyph->bitmap.width;
-		size_t glyphH = face.FTFace->glyph->bitmap.rows;
-
-		currRowLen += glyphW;
+		currRowLen += glyphSize.width + GLYPH_PADDING;
 		
 		size_t xoffset = 0;
 		size_t yoffset = 0;
 		if (currRowLen <= TEXTURE_WIDTH)
 		{
 			//Fits
-			if (maxLastRowHeight < glyphH)
-				maxLastRowHeight = glyphH;
+			if (maxLastRowHeight < glyphSize.height + GLYPH_PADDING)
+				maxLastRowHeight = glyphSize.height + GLYPH_PADDING;
 
-			xoffset = currRowLen - glyphW;
+			xoffset = currRowLen - glyphSize.width - GLYPH_PADDING;
 		}
 		else
 		{
 			//Next row
-			currRowLen = 0;
+			currRowLen = glyphSize.width;
 			currTextureHeight += maxLastRowHeight;
-			maxLastRowHeight = 0;
+			maxLastRowHeight = glyphSize.height;
 			xoffset = 0;
 		}
 		yoffset = currTextureHeight;
 
 		FontFace::FontGlyph glyph;
 		glyph.TextureUV[0] = Vector((float)xoffset / (float)TEXTURE_WIDTH, (float)yoffset / (float)estimatedTextureHeight, 0);
-		glyph.TextureUV[1] = Vector((float)(xoffset + glyphW) / (float)TEXTURE_WIDTH, (float)(yoffset + glyphH) / (float)estimatedTextureHeight, 0);
-		glyph.Size = Vector(glyphW, glyphH, 0);
+		glyph.TextureUV[1] = Vector((float)(xoffset + glyphSize.width) / (float)TEXTURE_WIDTH, (float)(yoffset + glyphSize.height) / (float)estimatedTextureHeight, 0);
+		glyph.Size = Vector(glyphSize.width, glyphSize.height, 0);
 		glyph.Bearing = Vector(face.FTFace->glyph->bitmap_left, face.FTFace->glyph->bitmap_top, 0);
 		glyph.Advance = (float)face.FTFace->glyph->advance.x / 64.0f;
 
 		face.Characters.insert(std::pair<char, FontFace::FontGlyph>(glyphSize.Glyph, glyph));
 		ASSERTE(face.FTFace->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY, "");
-		glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, glyphW, glyphH, GL_RED, GL_UNSIGNED_BYTE, face.FTFace->glyph->bitmap.buffer);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, glyphSize.width, glyphSize.height, GL_RED, GL_UNSIGNED_BYTE, face.FTFace->glyph->bitmap.buffer);
 	}
 
 	gConsole.LogDebug("Face of size {} for font {} loaded sucessfully! Texture size: {} x {}", height, FontPath, TEXTURE_WIDTH, estimatedTextureHeight);

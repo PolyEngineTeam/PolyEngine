@@ -34,31 +34,31 @@ void DrawText2D(ShaderProgram& program, const FontResource::FontFace& face, cons
 	const char* textData = text.GetCStr();
 	float x = pos.X;
 	float y = pos.Y;
-	float scale = 10;
+	float scale = 0.1;
 	Dynarray<float> vboData;
-	for (size_t i = 0; i < 1; /*text.GetLength();*/ ++i)
+	for (size_t i = 0; i < text.GetLength(); ++i)
 	{
 		char c = text[i];
 		auto it = face.Characters.find(c);
 		FontResource::FontFace::FontGlyph ch = it->second;
 
-		GLfloat xpos = 0;// x + ch.Bearing.X * scale;
-		GLfloat ypos = 0;// y - (ch.Size.Y - ch.Bearing.Y) * scale;
+		GLfloat xpos = x + ch.Bearing.X * scale;
+		GLfloat ypos = y - (ch.Size.Y - ch.Bearing.Y) * scale;
 
-		GLfloat w = 10;// ch.Size.X * scale;
-		GLfloat h = 10;// ch.Size.Y * scale;
+		GLfloat w = ch.Size.X * scale;
+		GLfloat h = ch.Size.Y * scale;
 		// Update VBO for each character
 
 		float vertices[36] = {
 			// tri1 (pos + uv)
-			xpos, ypos + h, 0.0f, 1.0f,		0, 0,//ch.TextureUV[0].X, ch.TextureUV[0].Y,
-			xpos, ypos, 0.0f, 1.0f,			0, 1,//ch.TextureUV[0].X, ch.TextureUV[1].Y,
-			xpos + w, ypos, 0.0f, 1.0f,     1, 1,//ch.TextureUV[1].X, ch.TextureUV[1].Y,
+			xpos, ypos + h, 0.0f, 1.0f,		ch.TextureUV[0].X, ch.TextureUV[0].Y,
+			xpos, ypos, 0.0f, 1.0f,			ch.TextureUV[0].X, ch.TextureUV[1].Y,
+			xpos + w, ypos, 0.0f, 1.0f,     ch.TextureUV[1].X, ch.TextureUV[1].Y,
 
 			// tri2
-			xpos, ypos + h, 0.0f, 1.0f,		0, 0,//ch.TextureUV[0].X, ch.TextureUV[0].Y,
-			xpos + w, ypos, 0.0f, 1.0f,    1,1,// ch.TextureUV[1].X, ch.TextureUV[1].Y,
-			xpos + w, ypos + h, 0.0f, 1.0f, 1,0//ch.TextureUV[1].X, ch.TextureUV[0].Y
+			xpos, ypos + h, 0.0f, 1.0f,		ch.TextureUV[0].X, ch.TextureUV[0].Y,
+			xpos + w, ypos, 0.0f, 1.0f,     ch.TextureUV[1].X, ch.TextureUV[1].Y,
+			xpos + w, ypos + h, 0.0f, 1.0f, ch.TextureUV[1].X, ch.TextureUV[0].Y
 		};
 
 		for (int k = 0; k < 36; ++k)
