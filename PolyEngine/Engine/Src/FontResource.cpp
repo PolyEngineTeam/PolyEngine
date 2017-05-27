@@ -167,7 +167,8 @@ void Poly::FontResource::LoadFace(size_t height) const
 		glyph.Advance = (float)face.FTFace->glyph->advance.x / 64.0f;
 
 		face.Characters.insert(std::pair<char, FontFace::FontGlyph>(glyphSize.Glyph, glyph));
-		ASSERTE(face.FTFace->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY, "");
+		ASSERTE(face.FTFace->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY, "Unsupported pixel mode!");
+		ASSERTE(face.FTFace->glyph->bitmap.pitch >= 0 , "Negative pitch is not supported!");
 		glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, glyphSize.width, glyphSize.height, GL_RED, GL_UNSIGNED_BYTE, face.FTFace->glyph->bitmap.buffer);
 	}
 
