@@ -25,7 +25,6 @@ namespace Poly {
 		virtual ~World();
 
 		//TODO implement world
-		UniqueID SpawnEntity();
 
 		//------------------------------------------------------------------------------
 		//////////////////////////////
@@ -130,12 +129,14 @@ namespace Poly {
 		HeavyTaskQueue& GetHeavyTaskQueue() { return HeavyTasksQueue; }
 
 	private:
+		friend class SpawnEntityHeavyTask;
 		friend class DestroyEntityHeavyTask;
 		template<typename T,typename... Args> friend class AddComponentHeavyTask;
 		template<typename T> friend class RemoveComponentHeavyTask;
-		//------------------------------------------------------------------------------
-		void DestroyEntity(const UniqueID& entityId);
 
+		//------------------------------------------------------------------------------
+		UniqueID SpawnEntity();
+		void DestroyEntity(const UniqueID& entityId);
 		//------------------------------------------------------------------------------
 		template<typename T, typename... Args>
 		void AddComponent(const UniqueID& entityId, Args&&... args)

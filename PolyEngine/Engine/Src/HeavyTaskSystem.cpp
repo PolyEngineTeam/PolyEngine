@@ -9,9 +9,6 @@ void HeavyTaskSystem::HeavyTaskPhase(World* w)
 
 	while (!queue.Empty())
 	{
-		//todo - scan the queue and if object is deleted, delete all other tasks associated with this object
-		//todo - private AddComp, RemoveComp, DestroyEntity in world.hpp
-		//todo - smart pointers
 		HeavyTaskBase *task = queue.Front();
 
 		if (task)

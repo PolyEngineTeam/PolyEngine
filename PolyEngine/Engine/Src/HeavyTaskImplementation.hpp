@@ -17,6 +17,26 @@ namespace HeavyTaskHelper
 
 namespace Poly
 {
+	class SpawnEntityHeavyTask : public HeavyTaskBase
+	{
+	private:
+		UniqueID Id;
+	public:
+		SpawnEntityHeavyTask() {}
+
+		virtual void Execute(World* w)
+		{
+			Id = w->SpawnEntity();
+		}
+
+		UniqueID GetID()
+		{
+			return Id;
+		}
+
+		virtual String GetDescription() const { return String("Spawn entity"); }
+	};
+
 	class DestroyEntityHeavyTask : public HeavyTaskBase
 	{
 	private:
