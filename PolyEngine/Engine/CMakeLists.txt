@@ -19,6 +19,7 @@ set(POLYENGINE_SRCS
 	Src/FreeFloatMovementComponent.cpp
 	Src/GLMeshResource.cpp
 	Src/GLTextureResource.cpp
+	Src/HeavyTaskSystem.cpp
 	Src/InputSystem.cpp
 	Src/InputWorldComponent.cpp
 	Src/MeshRenderingComponent.cpp
@@ -46,6 +47,9 @@ set(POLYENGINE_H_FOR_IDE
 	Src/FreeFloatMovementComponent.hpp
 	Src/GLMeshResource.hpp
 	Src/GLTextureResource.hpp
+	Src/HeavyTaskBase.hpp
+	Src/HeavyTaskImplementation.hpp
+	Src/HeavyTaskSystem.hpp
 	Src/InputQueue.hpp
 	Src/InputSystem.hpp
 	Src/InputWorldComponent.hpp
