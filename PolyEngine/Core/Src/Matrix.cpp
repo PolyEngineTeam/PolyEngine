@@ -242,6 +242,50 @@ Matrix& Poly::Matrix::SetPerspective(float fov, float aspect, float near, float 
 }
 
 //------------------------------------------------------------------------------
+Matrix& Poly::Matrix::SetOrthographic(float top, float bottom, float left, float right, float near, float far)
+{
+	/*
+	mat<4, 4, T, defaultp> Result(1);
+		Result[0][0] = static_cast<T>(2) / (right - left);
+		Result[1][1] = static_cast<T>(2) / (top - bottom);
+		Result[3][0] = - (right + left) / (right - left);
+		Result[3][1] = - (top + bottom) / (top - bottom);
+
+#		if GLM_DEPTH_CLIP_SPACE == GLM_DEPTH_ZERO_TO_ONE
+			Result[2][2] = static_cast<T>(1) / (zFar - zNear);
+			Result[3][2] = - zNear / (zFar - zNear);
+#		else
+			Result[2][2] = static_cast<T>(2) / (zFar - zNear);
+			Result[3][2] = - (zFar + zNear) / (zFar - zNear);
+#		endif
+
+		return Result;
+	*/
+	
+	Data[0] = 2.0f / (right - left);
+	Data[1] = 0;
+	Data[2] = 0;
+	Data[3] = 0;
+
+	Data[4] = 0;
+	Data[5] = 2.0f / (top - bottom);
+	Data[6] = 0;
+	Data[7] = 0;
+
+	Data[8] = 0;
+	Data[9] = 0;
+	Data[10] = 2.0f / (far - near);
+	Data[11] = 0;
+
+	Data[12] = -(right + left) / (right - left);
+	Data[13] = -(top + bottom) / (top - bottom);
+	Data[14] = -(far + near) / (far - near);
+	Data[15] = 1;
+
+	return *this;
+}
+
+//------------------------------------------------------------------------------
 Matrix& Matrix::Inverse() {
   //TODO vectorize
   Matrix cpy = *this;

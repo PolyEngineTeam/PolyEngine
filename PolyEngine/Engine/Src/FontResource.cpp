@@ -76,7 +76,7 @@ void Poly::FontResource::LoadFace(size_t height) const
 			continue;
 		}
 
-		if(face.FTFace->glyph->bitmap.width > 0 && face.FTFace->glyph->bitmap.rows > 0)
+		//if(face.FTFace->glyph->bitmap.width > 0 && face.FTFace->glyph->bitmap.rows > 0)
 			glyphSizes.PushBack(GlyphSize{(char)c, face.FTFace->glyph->bitmap.width, face.FTFace->glyph->bitmap.rows });
 	}
 
@@ -130,21 +130,24 @@ void Poly::FontResource::LoadFace(size_t height) const
 	maxLastRowHeight = 0;
 	size_t currTextureHeight = 0;
 	for (const GlyphSize& glyphSize : glyphSizes)
-	{
-		
+	{		
 		FT_Error err = FT_Load_Char(face.FTFace, glyphSize.Glyph, FT_LOAD_RENDER);
 		ASSERTE(err == FT_Err_Ok, "Glyph loading failed!");
-		currRowLen += glyphSize.width;
+
+		size_t glyphW = face.FTFace->glyph->bitmap.width;
+		size_t glyphH = face.FTFace->glyph->bitmap.rows;
+
+		currRowLen += glyphW;
 		
 		size_t xoffset = 0;
 		size_t yoffset = 0;
 		if (currRowLen <= TEXTURE_WIDTH)
 		{
 			//Fits
-			if (maxLastRowHeight < glyphSize.height)
-				maxLastRowHeight = glyphSize.height;
+			if (maxLastRowHeight < glyphH)
+				maxLastRowHeight = glyphH;
 
-			xoffset = currRowLen - glyphSize.width;
+			xoffset = currRowLen - glyphW;
 		}
 		else
 		{
@@ -158,13 +161,14 @@ void Poly::FontResource::LoadFace(size_t height) const
 
 		FontFace::FontGlyph glyph;
 		glyph.TextureUV[0] = Vector((float)xoffset / (float)TEXTURE_WIDTH, (float)yoffset / (float)estimatedTextureHeight, 0);
-		glyph.TextureUV[1] = Vector((float)(xoffset + glyphSize.width) / (float)TEXTURE_WIDTH, (float)(yoffset + glyphSize.height) / (float)estimatedTextureHeight, 0);
-		glyph.Size = Vector(glyphSize.width, glyphSize.height, 0);
+		glyph.TextureUV[1] = Vector((float)(xoffset + glyphW) / (float)TEXTURE_WIDTH, (float)(yoffset + glyphH) / (float)estimatedTextureHeight, 0);
+		glyph.Size = Vector(glyphW, glyphH, 0);
 		glyph.Bearing = Vector(face.FTFace->glyph->bitmap_left, face.FTFace->glyph->bitmap_top, 0);
 		glyph.Advance = (float)face.FTFace->glyph->advance.x / 64.0f;
 
 		face.Characters.insert(std::pair<char, FontFace::FontGlyph>(glyphSize.Glyph, glyph));
-		glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, glyphSize.width, glyphSize.height, GL_RED, GL_UNSIGNED_BYTE, face.FTFace->glyph->bitmap.buffer);
+		ASSERTE(face.FTFace->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY, "");
+		glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, glyphW, glyphH, GL_RED, GL_UNSIGNED_BYTE, face.FTFace->glyph->bitmap.buffer);
 	}
 
 	gConsole.LogDebug("Face of size {} for font {} loaded sucessfully! Texture size: {} x {}", height, FontPath, TEXTURE_WIDTH, estimatedTextureHeight);

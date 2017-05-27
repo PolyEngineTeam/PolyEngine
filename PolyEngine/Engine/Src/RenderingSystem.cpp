@@ -6,6 +6,92 @@
 
 using namespace Poly;
 
+void DrawText2D(ShaderProgram& program, const FontResource::FontFace& face, const String& text, const Vector& pos, const Color& color)
+{
+	static bool once = true;
+	
+	static GLuint VAO, VBO;
+
+	if (once)
+	{
+		once = false;
+		glGenVertexArrays(1, &VAO);
+		glGenBuffers(1, &VBO);
+		glBindVertexArray(VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), 0);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(4 * sizeof(GLfloat)));
+
+		//glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+		CHECK_GL_ERR();
+	}
+
+	// Iterate through all characters
+	const char* textData = text.GetCStr();
+	float x = pos.X;
+	float y = pos.Y;
+	float scale = 10;
+	Dynarray<float> vboData;
+	for (size_t i = 0; i < 1; /*text.GetLength();*/ ++i)
+	{
+		char c = text[i];
+		auto it = face.Characters.find(c);
+		FontResource::FontFace::FontGlyph ch = it->second;
+
+		GLfloat xpos = 0;// x + ch.Bearing.X * scale;
+		GLfloat ypos = 0;// y - (ch.Size.Y - ch.Bearing.Y) * scale;
+
+		GLfloat w = 10;// ch.Size.X * scale;
+		GLfloat h = 10;// ch.Size.Y * scale;
+		// Update VBO for each character
+
+		float vertices[36] = {
+			// tri1 (pos + uv)
+			xpos, ypos + h, 0.0f, 1.0f,		0, 0,//ch.TextureUV[0].X, ch.TextureUV[0].Y,
+			xpos, ypos, 0.0f, 1.0f,			0, 1,//ch.TextureUV[0].X, ch.TextureUV[1].Y,
+			xpos + w, ypos, 0.0f, 1.0f,     1, 1,//ch.TextureUV[1].X, ch.TextureUV[1].Y,
+
+			// tri2
+			xpos, ypos + h, 0.0f, 1.0f,		0, 0,//ch.TextureUV[0].X, ch.TextureUV[0].Y,
+			xpos + w, ypos, 0.0f, 1.0f,    1,1,// ch.TextureUV[1].X, ch.TextureUV[1].Y,
+			xpos + w, ypos + h, 0.0f, 1.0f, 1,0//ch.TextureUV[1].X, ch.TextureUV[0].Y
+		};
+
+		for (int k = 0; k < 36; ++k)
+			vboData.PushBack(vertices[k]);
+
+		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+		x += ch.Advance * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
+	}
+
+	program.SetUniform("u_textColor", color);
+	
+	glBindVertexArray(VAO);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, face.TextureID);
+	CHECK_GL_ERR();
+
+	// Render glyph texture over quad
+	
+	CHECK_GL_ERR();
+	// Update content of VBO memory
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vboData.GetSize(), vboData.GetData(), GL_DYNAMIC_DRAW);
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+	CHECK_GL_ERR();
+	// Render quad
+	glDrawArrays(GL_TRIANGLES, 0, 6 * text.GetLength());
+
+	
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindVertexArray(0);
+	CHECK_GL_ERR();
+}
+
 void RenderingSystem::RenderingPhase(World* world)
 {	
 	IRenderingContext* context = world->GetEngine()->GetRenderingContext();
@@ -83,8 +169,24 @@ void RenderingSystem::RenderingPhase(World* world)
 		}
 
 		CHECK_GL_ERR();
+		
 		glDepthMask(GL_FALSE);
 		glDisable(GL_DEPTH_TEST);
+
+		// tmp draw text
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		CHECK_GL_ERR();
+
+		Matrix ortho;
+		//ortho.SetOrthographic(rect.GetMax().Y, rect.GetMin().Y, rect.GetMin().X, rect.GetMax().X, -1, 1);
+		context->GetProgram(eShaderProgramType::TEXT_2D).BindProgram();
+		context->GetProgram(eShaderProgramType::TEXT_2D).SetUniform("u_projection", mvp);// ortho.GetTransposed());
+
+		FontResource* font = ResourceManager<FontResource>::Load("Fonts/Raleway/Raleway-Regular.ttf");
+		DrawText2D(context->GetProgram(eShaderProgramType::TEXT_2D), font->GetFace(64), "test", Vector(0, 0, 0), Color(1,1,1));
+		CHECK_GL_ERR();
+		glDisable(GL_BLEND);
 	}
 
 	context->EndFrame();
