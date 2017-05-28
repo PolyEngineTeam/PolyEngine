@@ -38,13 +38,9 @@ bool Engine::Init(const IRenderingContextParams* context)
 	if (!Renderer->Init(context))
 		return false;
 
-	// Temporary test code
-	FontResource* font = ResourceManager<FontResource>::Load("Fonts/Raleway/Raleway-Regular.ttf");
-	font->LoadFaces({ 64 });
-	//ResourceManager<FontResource>::Release(font);
-
 	Game->Init();
 
+	// Setup FPS display
 	if (gCoreConfig.DisplayFPS)
 	{
 		UniqueID id = GetWorld().SpawnEntity();
