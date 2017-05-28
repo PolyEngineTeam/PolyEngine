@@ -23,7 +23,9 @@ namespace Poly {
 		void RegisterUniform(const String &name);
 		void SetUniform(const String& name, int val);
 		void SetUniform(const String& name, float val);
+		void SetUniform(const String& name, float val1, float val2);
 		void SetUniform(const String& name, const Vector& val);
+		void SetUniform(const String& name, const Color& val);
 		void SetUniform(const String& name, const Matrix& val);
 
 	private:
