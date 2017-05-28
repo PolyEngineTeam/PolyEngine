@@ -10,16 +10,12 @@ void HeavyTaskSystem::HeavyTaskPhase(World* w)
 	while (!queue.IsEmpty())
 	{
 		HeavyTaskBase *task = queue.Front();
+		ASSERTE(task, "The task doesn't exist!");
 
-		if (task)
-		{
-			gConsole.LogDebug("Executing task: {}", task->GetDescription());
-			task->Execute(w);
-		}
+		gConsole.LogDebug("Executing task: {}", task->GetDescription());
+		task->Execute(w);
 
 		queue.PopFront();
-		
-		if (task)
-			delete task;
+		delete task;
 	}
 }

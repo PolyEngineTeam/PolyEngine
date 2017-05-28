@@ -40,9 +40,9 @@ void InvadersGame::Init()
 
 void InvadersGame::Deinit()
 {
-	HeavyTaskSystem::DestroyEntity(&Engine->GetWorld(), Camera);
+	HeavyTaskSystem::DestroyEntityImmediate(&Engine->GetWorld(), Camera);
 	for(auto ent : GameEntities)
-		HeavyTaskSystem::DestroyEntity(&Engine->GetWorld(), ent);
+		HeavyTaskSystem::DestroyEntityImmediate(&Engine->GetWorld(), ent);
 };
 
 void GameMainSystem::GameUpdate(Poly::World* world)
