@@ -14,6 +14,9 @@ Text2D::~Text2D()
 
 	if(VAO)
 		glDeleteVertexArrays(1, &VAO);
+
+	if(Font)
+		ResourceManager<FontResource>::Release(Font);
 }
 
 void Text2D::SetFont(const String& fontName)
@@ -21,7 +24,24 @@ void Text2D::SetFont(const String& fontName)
 	Font = ResourceManager<FontResource>::Load(fontName);
 }
 
-void Text2D::UpdateDeviceBuffers()
+void Poly::Text2D::Draw() const
+{
+	UpdateDeviceBuffers();
+	
+	glBindVertexArray(VAO);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, Font->GetFace(FontSize).TextureID);
+	CHECK_GL_ERR();
+
+	// Render glyph texture over quad
+	glDrawArrays(GL_TRIANGLES, 0, 6 * Text.GetLength());
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindVertexArray(0);
+	CHECK_GL_ERR();
+}
+
+void Text2D::UpdateDeviceBuffers() const
 {
 	if (!Dirty)
 		return;
@@ -43,6 +63,9 @@ void Text2D::UpdateDeviceBuffers()
 		glBindVertexArray(0);
 		CHECK_GL_ERR();
 	}
+
+	if(!Font)
+		Font = ResourceManager<FontResource>::Load(FontName);
 
 	const FontResource::FontFace& face = Font->GetFace(FontSize);
 

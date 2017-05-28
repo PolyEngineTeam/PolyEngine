@@ -94,20 +94,20 @@ void Poly::FontResource::LoadFace(size_t height) const
 	{
 
 		
-		currRowLen += glyphSize.width;
+		currRowLen += glyphSize.width + GLYPH_PADDING;
 		if (currRowLen <= TEXTURE_WIDTH)
 		{
 			//Fits
-			if (maxLastRowHeight < glyphSize.height)
-				maxLastRowHeight = glyphSize.height;
+			if (maxLastRowHeight < glyphSize.height + GLYPH_PADDING)
+				maxLastRowHeight = glyphSize.height + GLYPH_PADDING;
 		}
 		else
 		{
 			//Next row
 			ASSERTE(maxLastRowHeight > 0, "Texture packing for font failed!");
-			currRowLen = 0;
+			currRowLen = glyphSize.width;
 			estimatedTextureHeight += maxLastRowHeight;
-			maxLastRowHeight = 0;
+			maxLastRowHeight = glyphSize.height;
 		}
 	}
 
@@ -165,6 +165,11 @@ void Poly::FontResource::LoadFace(size_t height) const
 		glyph.Size = Vector(glyphSize.width, glyphSize.height, 0);
 		glyph.Bearing = Vector(face.FTFace->glyph->bitmap_left, face.FTFace->glyph->bitmap_top, 0);
 		glyph.Advance = (float)face.FTFace->glyph->advance.x / 64.0f;
+
+		if (face.FTFace->glyph->format != FT_GLYPH_FORMAT_BITMAP)
+		{
+			FT_Render_Glyph(face.FTFace->glyph, FT_RENDER_MODE_NORMAL);
+		}
 
 		face.Characters.insert(std::pair<char, FontFace::FontGlyph>(glyphSize.Glyph, glyph));
 		ASSERTE(face.FTFace->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY, "Unsupported pixel mode!");

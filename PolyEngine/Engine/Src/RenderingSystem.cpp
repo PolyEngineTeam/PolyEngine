@@ -1,6 +1,7 @@
 #include "EnginePCH.hpp"
 
 #include "ShaderProgram.hpp"
+#include "ScreenSpaceTextComponent.hpp"
 
 #include <GL/glew.h>
 
@@ -173,7 +174,7 @@ void RenderingSystem::RenderingPhase(World* world)
 		glDepthMask(GL_FALSE);
 		glDisable(GL_DEPTH_TEST);
 
-		// tmp draw text
+		// Text drawing
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		CHECK_GL_ERR();
@@ -183,9 +184,14 @@ void RenderingSystem::RenderingPhase(World* world)
 		context->GetProgram(eShaderProgramType::TEXT_2D).BindProgram();
 		context->GetProgram(eShaderProgramType::TEXT_2D).SetUniform("u_projection", ortho);
 
-		FontResource* font = ResourceManager<FontResource>::Load("Fonts/Raleway/Raleway-Regular.ttf");
-		DrawText2D(context->GetProgram(eShaderProgramType::TEXT_2D), font->GetFace(64), "test", Vector(0, screen.Height - 100, 0), Color(1,1,1));
-		CHECK_GL_ERR();
+		for (auto componentsTuple : world->IterateComponents<ScreenSpaceTextComponent>())
+		{
+			ScreenSpaceTextComponent* textCmp = std::get<ScreenSpaceTextComponent*>(componentsTuple);
+			Text2D& text = textCmp->GetText();
+			context->GetProgram(eShaderProgramType::TEXT_2D).SetUniform("u_textColor", text.GetFontColor());
+			text.Draw();
+		}
+
 		glDisable(GL_BLEND);
 	}
 

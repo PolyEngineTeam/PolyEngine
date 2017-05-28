@@ -45,6 +45,9 @@
     <Filter Include="Source Files\Config">
       <UniqueIdentifier>{e435be88-e4b2-40bb-9cff-9c8a9f54ab46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{cfd9396b-2e45-48e5-84dc-b7c15f3b901b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -118,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="Src\FontResource.cpp">
       <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Text2D.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -213,6 +219,12 @@
     </ClInclude>
     <ClInclude Include="Src\FontResource.hpp">
       <Filter>Source Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Text2D.hpp">
+      <Filter>Source Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ScreenSpaceTextComponent.hpp">
+      <Filter>Source Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
