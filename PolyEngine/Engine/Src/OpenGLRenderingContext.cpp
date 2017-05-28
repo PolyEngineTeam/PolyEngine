@@ -31,6 +31,7 @@ bool Poly::OpenGLRenderingContext::InitPrograms()
 	ShaderPrograms[eShaderProgramType::TEXT_2D] = new ShaderProgram("Shaders/text2DVert.shader", "Shaders/text2DFrag.shader");
 	ShaderPrograms[eShaderProgramType::TEXT_2D]->RegisterUniform("u_projection");
 	ShaderPrograms[eShaderProgramType::TEXT_2D]->RegisterUniform("u_textColor");
+	ShaderPrograms[eShaderProgramType::TEXT_2D]->RegisterUniform("u_position");
 
 	// TODO error handling
 	return true;

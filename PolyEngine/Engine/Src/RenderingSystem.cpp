@@ -189,6 +189,7 @@ void RenderingSystem::RenderingPhase(World* world)
 			ScreenSpaceTextComponent* textCmp = std::get<ScreenSpaceTextComponent*>(componentsTuple);
 			Text2D& text = textCmp->GetText();
 			context->GetProgram(eShaderProgramType::TEXT_2D).SetUniform("u_textColor", text.GetFontColor());
+			context->GetProgram(eShaderProgramType::TEXT_2D).SetUniform("u_position", textCmp->GetScreenPosition());
 			text.Draw();
 		}
 

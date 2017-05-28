@@ -10,7 +10,6 @@ namespace Poly {
 	// This is temporary class
 	class ENGINE_DLLEXPORT ScreenSpaceTextComponent : public ComponentBase
 	{
-		friend void RenderingSystem::RenderingPhase(World*);
 	public:
 		ScreenSpaceTextComponent(const Vector& pos, const String& fontName, size_t fontSize, const String& text = "", const Color& fontColor = Color(1, 1, 1))
 			: Text(fontName, fontSize, text, fontColor), ScreenPosition(pos) {}
@@ -19,6 +18,7 @@ namespace Poly {
 		const Text2D& GetText() const { return Text; }
 
 		void SetScreenPosition(const Vector& pos) { ScreenPosition = pos; }
+		const Vector& GetScreenPosition() const { return ScreenPosition; }
 	private:
 		Text2D Text;
 		Vector ScreenPosition;

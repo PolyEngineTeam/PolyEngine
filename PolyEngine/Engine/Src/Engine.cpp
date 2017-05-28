@@ -44,7 +44,7 @@ bool Engine::Init(const IRenderingContextParams* context)
 	if (gCoreConfig.DisplayFPS)
 	{
 		UniqueID id = GetWorld().SpawnEntity();
-		GetWorld().AddComponent<ScreenSpaceTextComponent>(id, Vector(), "Fonts/Raleway/Raleway-Regular.ttf", 16, "FPS: 60");
+		GetWorld().AddComponent<ScreenSpaceTextComponent>(id, Vector(0, 0, 0), "Fonts/Raleway/Raleway-Regular.ttf", 32, "FPS: 60");
 		//TODO FPS compnent and system
 	}
 
