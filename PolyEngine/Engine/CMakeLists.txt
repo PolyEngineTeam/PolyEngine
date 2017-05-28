@@ -9,7 +9,7 @@ endif()
 find_package(GLEW REQUIRED)
 find_package(SOIL REQUIRED)
 find_package(assimp REQUIRED)
-find_package(FREETYPE)
+find_package(Freetype REQUIRED)
 
 set(POLYENGINE_SRCS
 	Src/CameraComponent.cpp
