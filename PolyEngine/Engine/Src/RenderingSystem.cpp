@@ -34,7 +34,7 @@ void DrawText2D(ShaderProgram& program, const FontResource::FontFace& face, cons
 	const char* textData = text.GetCStr();
 	float x = pos.X;
 	float y = pos.Y;
-	float scale = 0.1;
+	float scale = 1;
 	Dynarray<float> vboData;
 	for (size_t i = 0; i < text.GetLength(); ++i)
 	{
@@ -179,12 +179,12 @@ void RenderingSystem::RenderingPhase(World* world)
 		CHECK_GL_ERR();
 
 		Matrix ortho;
-		//ortho.SetOrthographic(rect.GetMax().Y, rect.GetMin().Y, rect.GetMin().X, rect.GetMax().X, -1, 1);
+		ortho.SetOrthographic(rect.GetMin().Y * screen.Height, rect.GetMax().Y * screen.Height, rect.GetMin().X * screen.Width, rect.GetMax().X * screen.Width, -1, 1);
 		context->GetProgram(eShaderProgramType::TEXT_2D).BindProgram();
-		context->GetProgram(eShaderProgramType::TEXT_2D).SetUniform("u_projection", mvp);// ortho.GetTransposed());
+		context->GetProgram(eShaderProgramType::TEXT_2D).SetUniform("u_projection", ortho);
 
 		FontResource* font = ResourceManager<FontResource>::Load("Fonts/Raleway/Raleway-Regular.ttf");
-		DrawText2D(context->GetProgram(eShaderProgramType::TEXT_2D), font->GetFace(64), "test", Vector(0, 0, 0), Color(1,1,1));
+		DrawText2D(context->GetProgram(eShaderProgramType::TEXT_2D), font->GetFace(64), "test", Vector(0, screen.Height - 100, 0), Color(1,1,1));
 		CHECK_GL_ERR();
 		glDisable(GL_BLEND);
 	}
