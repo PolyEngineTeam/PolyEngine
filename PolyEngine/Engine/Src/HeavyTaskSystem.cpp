@@ -7,7 +7,7 @@ void HeavyTaskSystem::HeavyTaskPhase(World* w)
 {
 	HeavyTaskQueue& queue = w->GetHeavyTaskQueue();
 
-	while (!queue.Empty())
+	while (!queue.IsEmpty())
 	{
 		HeavyTaskBase *task = queue.Front();
 
@@ -17,7 +17,7 @@ void HeavyTaskSystem::HeavyTaskPhase(World* w)
 			task->Execute(w);
 		}
 
-		queue.Pop();
+		queue.PopFront();
 		
 		if (task)
 			delete task;
