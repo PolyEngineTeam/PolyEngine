@@ -7,9 +7,9 @@ namespace Poly {
 
 	enum class eComponentBaseFlags
 	{
-		ABOUT_TO_BE_CREATED = 0x01,
-		NEWLY_CREATED = 0x02,
-		ABOUT_TO_BE_REMOVED = 0x04,
+		NONE = 0x00,
+		NEWLY_CREATED = 0x01,
+		ABOUT_TO_BE_REMOVED = 0x02,
 	};
 
 	class ENGINE_DLLEXPORT ComponentBase : public BaseObject<>

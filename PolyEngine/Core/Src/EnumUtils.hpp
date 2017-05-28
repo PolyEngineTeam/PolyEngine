@@ -145,7 +145,7 @@ namespace Poly {
 		constexpr bool operator==(const EnumFlags& rhs) const { return Flags == rhs.Flags; }
 		constexpr bool operator!=(const EnumFlags& rhs) const { return !(*this == rhs); }
 
-		EnumFlags<E>& operator=(E& rhs) { Flags |= rhs; return *this; }
+		EnumFlags<E>& operator=(E rhs) { Flags |= rhs; return *this; }
 
 		constexpr EnumFlags operator|(const EnumFlags& rhs) const { return EnumFlags(Flags | rhs.Flags); }
 		constexpr EnumFlags operator&(const EnumFlags& rhs) const { return EnumFlags(Flags & rhs.Flags); }
