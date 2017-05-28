@@ -17,6 +17,7 @@ set(POLYENGINE_SRCS
 	Src/Engine.cpp
 	Src/Entity.cpp
 	Src/FreeFloatMovementComponent.cpp
+	Src/FontResource.cpp
 	Src/GLMeshResource.cpp
 	Src/GLTextureResource.cpp
 	Src/InputSystem.cpp
@@ -27,6 +28,7 @@ set(POLYENGINE_SRCS
 	Src/RenderingSystem.cpp
 	Src/ResourceManager.cpp
 	Src/ShaderProgram.cpp
+	Src/Text2D.cpp
 	Src/TimeSystem.cpp
 	Src/TimeWorldComponent.cpp
 	Src/Timer.cpp
@@ -44,6 +46,7 @@ set(POLYENGINE_H_FOR_IDE
 	Src/EnginePCH.hpp
 	Src/Entity.hpp
 	Src/FreeFloatMovementComponent.hpp
+	Src/FontResource.hpp
 	Src/GLMeshResource.hpp
 	Src/GLTextureResource.hpp
 	Src/InputQueue.hpp
@@ -58,7 +61,9 @@ set(POLYENGINE_H_FOR_IDE
 	Src/RenderingSystem.hpp
 	Src/ResourceBase.hpp
 	Src/ResourceManager.hpp
+	Src/ScreenSpaceTextComponent.hpp
 	Src/ShaderProgram.hpp
+	Src/Text2D.hpp
 	Src/TimeSystem.hpp
 	Src/TimeWorldComponent.hpp
 	Src/Timer.hpp
