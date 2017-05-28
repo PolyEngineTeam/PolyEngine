@@ -28,7 +28,7 @@ namespace Poly
 		{
 			DestroyEntityHeavyTask *task = new DestroyEntityHeavyTask(entityId);
 			task->Execute(w);
-			gConsole.LogDebug("New immediate task executed: {}", w->GetHeavyTaskQueue().Back()->GetDescription());
+			gConsole.LogDebug("New immediate task executed: {}", task->GetDescription());
 			delete task;
 		}
 
