@@ -11,13 +11,15 @@ namespace Poly
 	{
 		friend void TimeSystem::TimeUpdatePhase(World * world);
 	public:
-		Timer(bool isPausable = false);
+		Timer(bool isPausable = false, double multiplier = 1);
 
-		double GetTime() const { return Time.count(); };
-		double GetDeltaTime() const { return DeltaTime; };
+		double GetTime() const { return Time.count(); }
+		double GetMultiplier() const { return Multiplier; }
+		double GetDeltaTime() const { return DeltaTime; }
 
 	private:
 		double DeltaTime;
+		double Multiplier;
 		std::chrono::duration<double> Time;
 
 		bool IsPausable;
