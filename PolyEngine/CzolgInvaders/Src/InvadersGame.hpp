@@ -2,8 +2,10 @@
 
 
 #include "PlayerControllerComponent.hpp"
-#include "BulletMovementComponent.hpp"
+#include "BulletComponent.hpp"
 #include "ControlSystem.hpp"
+#include "GameManagerComponent.hpp"
+#include "EnemyMovementComponent.hpp"
 
 #include <CameraComponent.hpp>
 #include <TransformComponent.hpp>
@@ -21,7 +23,10 @@ namespace GameMainSystem
 enum class eGameComponents
 {
 	PLAYERCONTROLLER = (int)Poly::eEngineComponents::_COUNT,
-	BULLETMOVEMENT
+	BULLET,
+	GAMEMANAGER,
+	ENEMYMOVEMENT
+
 };
 
 class GAME_DLLEXPORT InvadersGame : public Poly::IGame {
@@ -33,6 +38,7 @@ public:
 
 private:
 	Poly::UniqueID Camera;
+	Poly::UniqueID GameManager;
 
 	Poly::Dynarray<Poly::UniqueID> GameEntities;
 	Poly::Engine* Engine;

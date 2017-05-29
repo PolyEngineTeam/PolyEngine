@@ -5,7 +5,9 @@
 #include <MeshRenderingComponent.hpp>
 #include <Timer.hpp>
 #include "PlayerControllerComponent.hpp"
-#include "BulletMovementComponent.hpp"
+#include "BulletComponent.hpp"
+#include "EnemyMovementComponent.hpp"
+#include "GameManagerComponent.hpp"
 
 namespace Poly
 {
@@ -17,7 +19,8 @@ namespace Poly
 
 		void ControlSystemPhase(World*);
 
-		void SpawnBullet(World* world, Vector pos, Vector direction, float speed);
+		void SpawnBullet(GameManagerComponent* gameManager, World* world, Vector pos, Vector direction, float speed);
+		void CleanUpEnitites(GameManagerComponent* gameManager, World* world);
 	}
 }
 	

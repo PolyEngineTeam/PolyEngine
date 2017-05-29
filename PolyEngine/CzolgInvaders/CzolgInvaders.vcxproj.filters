@@ -20,11 +20,20 @@
     <ClInclude Include="Src\ControlSystem.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Src\BulletMovementComponent.hpp">
-      <Filter>Source Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Src\PlayerControllerComponent.hpp">
       <Filter>Source Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BulletComponent.hpp">
+      <Filter>Source Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EnemyMovementComponent.hpp">
+      <Filter>Source Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GameManagerComponent.hpp">
+      <Filter>Source Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GameManagerSystem.hpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -34,11 +43,20 @@
     <ClCompile Include="Src\ControlSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\BulletMovementComponent.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
     <ClCompile Include="Src\PlayerControllerComponent.cpp">
       <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BulletComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EnemyMovementComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GameManagerComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GameManagerSystem.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
