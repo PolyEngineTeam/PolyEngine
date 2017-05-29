@@ -35,6 +35,6 @@ namespace Poly {
 	private:
 		Entity* Owner = nullptr;
 
-		EnumFlags<eComponentBaseFlags> Flags = eComponentBaseFlags::ABOUT_TO_BE_CREATED;
+		EnumFlags<eComponentBaseFlags> Flags = eComponentBaseFlags::NEWLY_CREATED;
 	};
 }
