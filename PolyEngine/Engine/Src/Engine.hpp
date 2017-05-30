@@ -29,6 +29,15 @@ namespace Poly
 	};
 
 	//------------------------------------------------------------------------------
+	enum class eEngineWorldComponents
+	{
+		INPUT,
+		VIEWPORT,
+		TIME,
+		_COUNT
+	};
+
+	//------------------------------------------------------------------------------
 
 	class ENGINE_DLLEXPORT IGame : public BaseObject<>
 	{
@@ -80,15 +89,42 @@ namespace Poly
 		//------------------------------------------------------------------------------
 		template<typename T> void RegisterComponent(size_t id)
 		{
-			ASSERTE(ComponentTypeMap.find(typeid(T)) == ComponentTypeMap.end(), "Component type was registered twice!");
+			ASSERTE(
+				([this, &id] () ->bool 
+				{ 
+					for(auto it = ComponentTypeMap.begin(); it != ComponentTypeMap.end(); ++it) 
+						if(it->first == typeid(T) || it->second == id) return false;
+					return true;
+				})(),
+				"Component type or id was registered twice!");
+
 			ComponentTypeMap[typeid(T)] = id;
 		}
-
 		//------------------------------------------------------------------------------
 		template<typename T> size_t GetComponentID() const
 		{
-			ASSERTE(ComponentTypeMap.find(typeid(T)) != ComponentTypeMap.end(), "Component type was not registered!");
+			ASSERTE(ComponentTypeMap.find(typeid(T)) != ComponentTypeMap.end(), "World component type was not registered!");
 			return ComponentTypeMap.at(typeid(T));
+		}
+		//------------------------------------------------------------------------------
+		template<typename T> void RegisterWorldComponent(size_t id)
+		{
+			ASSERTE(
+				([this, &id] () ->bool 
+				{ 
+					for(auto it = WorldComponentTypeMap.begin(); it != WorldComponentTypeMap.end(); ++it) 
+						if(it->first == typeid(T) || it->second == id) return false;
+					return true;
+				})(),
+				"World component type or id was registered twice!");			
+				
+			WorldComponentTypeMap[typeid(T)] = id;
+		}
+		//------------------------------------------------------------------------------
+		template<typename T> size_t GetWorldComponentID() const
+		{
+			ASSERTE(WorldComponentTypeMap.find(typeid(T)) != WorldComponentTypeMap.end(), "World component type was not registered!");
+			return WorldComponentTypeMap.at(typeid(T));
 		}
 
 		IRenderingContext* GetRenderingContext() const { return Renderer; }
@@ -112,5 +148,6 @@ namespace Poly
 		Dynarray< PhaseUpdateFunction > GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];
 
 		std::unordered_map<std::type_index, size_t> ComponentTypeMap;
+		std::unordered_map<std::type_index, size_t> WorldComponentTypeMap;
 	};
 }

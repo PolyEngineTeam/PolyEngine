@@ -7,7 +7,7 @@ using namespace Poly;
 //------------------------------------------------------------------------------
 Engine::Engine(IGame* game) : Game(game)
 {
-	BaseWorld = new World(this);
+	BaseWorld = new World(this, true);
 	Game->RegisterEngine(this);
 	Renderer = CreateRenderingContext();
 }
@@ -27,6 +27,16 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterComponent<MeshRenderingComponent>((size_t) eEngineComponents::MESH_RENDERING);
 	RegisterComponent<FreeFloatMovementComponent>((size_t)eEngineComponents::FREE_FLOAT_MOVEMENT);
 	RegisterComponent<ScreenSpaceTextComponent>((size_t)eEngineComponents::SCREEN_SPACE_TEXT);
+
+	// Engine World Components
+	RegisterWorldComponent<InputWorldComponent>((size_t) eEngineWorldComponents::INPUT);
+	RegisterWorldComponent<ViewportWorldComponent>((size_t) eEngineWorldComponents::VIEWPORT);
+	RegisterWorldComponent<TimeWorldComponent>((size_t) eEngineWorldComponents::TIME);
+
+	// Add WorldComponents
+	BaseWorld->AddWorldComponent<InputWorldComponent>();
+	BaseWorld->AddWorldComponent<ViewportWorldComponent>();
+	BaseWorld->AddWorldComponent<TimeWorldComponent>();
 
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);

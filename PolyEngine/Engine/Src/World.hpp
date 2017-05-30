@@ -11,16 +11,19 @@
 #include "TimeWorldComponent.hpp"
 
 namespace Poly {
+	class ComponentBase;
+	struct InputState;
 
 	constexpr size_t MAX_ENTITY_COUNT = 65536;
-
-	struct InputState;
+	constexpr size_t MAX_WORLD_COMPONENTS_COUNT = 64;
 
 	class ENGINE_DLLEXPORT World : public BaseObject<>
 	{
 	public:
-		World(Engine* engine);
+		World(Engine* engine, bool base = false);
 		virtual ~World();
+
+		Engine* GetEngine() const { return EnginePtr; }
 
 		//TODO implement world
 		UniqueID SpawnEntity();
@@ -72,10 +75,50 @@ namespace Poly {
 			return iter->second->GetComponent<T>();
 		}
 
-		Engine* GetEngine() const { return EnginePtr; }
-		InputWorldComponent& GetInputWorldComponent() { return InputComponent; };
-		ViewportWorldComponent& GetViewportWorldComponent() { return ViewportComponent; };
-		TimeWorldComponent& GetTimeWorldComponent() { return TimeComponent; };
+		//------------------------------------------------------------------------------
+		template<typename T, typename... Args>
+		void AddWorldComponent()
+		{			
+			HEAVY_ASSERTE(!HasWorldComponent(EnginePtr->GetWorldComponentID<T>()), "Failed at AddWorldComponent() - a world component of a given type already exists!");
+			T* ptr = GetWorldComponentAllocator<T>()->Alloc();
+			::new(ptr) T(std::forward<Args>(args)...);
+			ComponentPosessionFlags.set(EnginePtr->GetWorldComponentID<T>(), true);
+			Components[EnginePtr->GetWorldComponentID<T>()] = ptr;
+			ptr->SetFlags(eComponentBaseFlags::WORLD_COMPONENT);
+		}
+
+		//------------------------------------------------------------------------------
+		template<class T>
+		void RemoveWorldComponent()
+		{
+			HEAVY_ASSERTE(HasWorldComponent(EnginePtr->GetWorldComponentID<T>()), "Failed at RemoveWorldComponent() - a component of a given type does not exist!");
+			ComponentPosessionFlags.set(EnginePtr->GetWorldComponentID<T>(), false);
+			T* component = Components[EnginePtr->GetWorldComponentID<T>()];
+			Components[EnginePtr->GetWorldComponentID<T>()] = nullptr;
+			component->~T();
+			GetWorldComponentAllocator<T>()->Free(component);
+		}
+
+		//------------------------------------------------------------------------------
+		template<class T>
+		T* GetWorldComponent()
+		{
+			if (HasWorldComponent(EnginePtr->GetWorldComponentID<T>()))
+				return reinterpret_cast<T*>(Components[EnginePtr->GetWorldComponentID<T>()]);
+			else
+				return nullptr;
+		}
+
+		//------------------------------------------------------------------------------
+		bool HasWorldComponent(size_t ID) const;
+
+		//------------------------------------------------------------------------------
+		inline bool HasWorldComponents(unsigned long int IDs) const
+		{
+			//TODO This bit field has to be reimplemented - it will not work for MAX_COMPONENTS_COUNT greater than 64 in its current state.
+			STATIC_ASSERTE(MAX_COMPONENTS_COUNT <= 64, "MAX_COMPONENTS_COUNT greater than 64.");
+			return (ComponentPosessionFlags.to_ullong() & IDs) == IDs;
+		}
 
 		//------------------------------------------------------------------------------
 		template<typename PrimaryComponent, typename... SecondaryComponents>
@@ -166,6 +209,17 @@ namespace Poly {
 			return static_cast<IterablePoolAllocator<T>*>(ComponentAllocators[componentID]);
 		}
 
+		//------------------------------------------------------------------------------
+		template<typename T>
+		IterablePoolAllocator<T>* GetWorldComponentAllocator()
+		{
+			size_t componentID = EnginePtr->GetWorldComponentID<T>();
+			HEAVY_ASSERTE(componentID < MAX_WORLD_COMPONENTS_COUNT, "Invalid world component ID");
+			if (WorldComponentAllocators[componentID] == nullptr)
+				WorldComponentAllocators[componentID] = new IterablePoolAllocator<T>(1);
+			return static_cast<IterablePoolAllocator<T>*>(WorldComponentAllocators[componentID]);
+		}
+
 		std::unordered_map<UniqueID, Entity*> IDToEntityMap;
 
 		void RemoveComponentById(Entity* ent, size_t id);
@@ -173,11 +227,11 @@ namespace Poly {
 		// Allocators
 		PoolAllocator<Entity> EntitiesAllocator;
 		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
+		IterablePoolAllocatorBase* WorldComponentAllocators[MAX_WORLD_COMPONENTS_COUNT];
 		Engine* EnginePtr;
 
-		InputWorldComponent InputComponent;
-		ViewportWorldComponent ViewportComponent;
-		TimeWorldComponent TimeComponent;
+		std::bitset<MAX_WORLD_COMPONENTS_COUNT> ComponentPosessionFlags;
+		ComponentBase* Components[MAX_WORLD_COMPONENTS_COUNT];
 	};
 
 	//defined here due to circular inclusion problem; FIXME: circular inclusion
