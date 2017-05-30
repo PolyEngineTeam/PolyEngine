@@ -20,7 +20,7 @@
 	#pragma warning(disable: 4251)
 #endif
 
-#ifdef __GNUC__
+#ifdef __GNUC__ //todo(vuko): add a reason parameter to the warning-silencing macro
 	#define IMPL_SAVE_WARNING_SETTINGS _Pragma("GCC diagnostic push")
 	#define IMPL_SILENCE_WARNING(w) _Pragma(#w)
 	#define SILENCE_GCC_WARNING(w)                     \
@@ -88,9 +88,18 @@ constexpr auto MAX_FLOAT = (std::numeric_limits<float>::max)(); //the parenthese
 constexpr auto MIN_FLOAT = (std::numeric_limits<float>::min)();
 
 // Assertions
-#define ASSERTE(expr, msg) assert((expr) && #msg)
-#define HEAVY_ASSERTE(expr, msg) assert((expr) && #msg)
+#define ASSERTE(expr, msg) assert((expr) && #msg) //note(muniu): enabled in all builds except Release
+#define HEAVY_ASSERTE(expr, msg) assert((expr) && #msg) //todo(muniu): enabled only in Debug
 #define STATIC_ASSERTE(expr, msg) static_assert(expr, msg)
+
+// `Unreachable code` compiler intrinsic
+#if defined(FINAL) && defined(_WIN32)
+#define UNREACHABLE() __assume(0);
+#elif defined(FINAL) && (defined(__GNUC__) || defined(__clang__))
+#define UNREACHABLE() __builtin_unreachable();
+#else
+#define UNREACHABLE() assert("Unreachable code reached!" && false);
+#endif
 
 // Utilities
 #define BIT(x) (1u<<x)

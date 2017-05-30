@@ -105,7 +105,7 @@ int main() {
 	std::unique_ptr<Window, decltype(windowCleanup)> windowCleanupGuard(&window, windowCleanup);
 
 	//engine init (creates context)
-	TestGame game;
+	InvadersGame game;
 	Poly::OpenGLRenderingContextParams ctxParams{display.get(), window, fbConfig};
 	Poly::Engine engine(&game);
 	gEngine = &engine;
