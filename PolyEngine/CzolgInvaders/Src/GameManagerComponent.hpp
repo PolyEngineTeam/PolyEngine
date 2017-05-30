@@ -12,10 +12,12 @@ namespace Poly {
 	public:
 		Poly::Dynarray<Poly::UniqueID>* GetGameEntities() { return &GameEntities; }
 		Poly::Dynarray<Poly::UniqueID>* GetDeadGameEntities() { return &DeadGameEntities; }
+		Poly::Dynarray<Poly::UniqueID>* GetSpawnGameEntities() { return &SpawnGameEntities; }
 
 	private:
 		Poly::Dynarray<Poly::UniqueID> GameEntities;
 		Poly::Dynarray<Poly::UniqueID> DeadGameEntities;
+		Poly::Dynarray<Poly::UniqueID> SpawnGameEntities;
 
 	};
 }

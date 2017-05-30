@@ -21,6 +21,7 @@ namespace Poly
 
 		void SpawnBullet(GameManagerComponent* gameManager, World* world, Vector pos, Vector direction, float speed);
 		void CleanUpEnitites(GameManagerComponent* gameManager, World* world);
+		void SpawnEnitites(GameManagerComponent* gameManager, World* world);
 	}
 }
 	

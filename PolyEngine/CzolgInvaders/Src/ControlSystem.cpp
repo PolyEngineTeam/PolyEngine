@@ -72,8 +72,8 @@ void ControlSystem::ControlSystemPhase(World* world)
 			enemy_transform->SetLocalTranslation(prev_location + move);
 		}
 	}
-
 	CleanUpEnitites(gameManager, world);
+	SpawnEnitites(gameManager, world);
 }
 
 void ControlSystem::SpawnBullet(GameManagerComponent* gameManager, World* world, Vector pos, Vector direction, float speed)
@@ -87,8 +87,7 @@ void ControlSystem::SpawnBullet(GameManagerComponent* gameManager, World* world,
 	Poly::TransformComponent* transform = world->GetComponent<Poly::TransformComponent>(bullet);
 	transform->SetLocalScale(Vector(0.25f, 0.25f, 0.25f));
 	transform->SetLocalTranslation(pos);
-	gameManager->GetGameEntities()->PushBack(bullet);
-	//transform->SetLocalRotation(Quaternion(direction));
+	gameManager->GetSpawnGameEntities()->PushBack(bullet);
 }
 void ControlSystem::CleanUpEnitites(GameManagerComponent* gameManager, World* world)
 {
@@ -97,6 +96,14 @@ void ControlSystem::CleanUpEnitites(GameManagerComponent* gameManager, World* wo
 		world->DestroyEntity(ent);
 		gameManager->GetGameEntities()->Remove(ent);
 	}
-	gameManager->GetDeadGameEntities()->Clear();
-	
+	gameManager->GetDeadGameEntities()->Clear();	
+}
+void ControlSystem::SpawnEnitites(GameManagerComponent* gameManager, World* world)
+{
+	for (Poly::UniqueID ent : *(gameManager->GetSpawnGameEntities()))
+	{
+		gameManager->GetGameEntities()->PushBack(ent);
+	}
+	gameManager->GetSpawnGameEntities()->Clear();
+
 }
