@@ -45,11 +45,13 @@ namespace Poly
 			}
 			catch (const ResourceLoadFailedException& e)
 			{
+				UNUSED(e);
 				gConsole.LogError("Resource loading failed! {}", relativePath);
 				return nullptr;
 			}
 			catch (const std::exception& e)
 			{
+				UNUSED(e);
 				HEAVY_ASSERTE(false, "Resource creation failed for unknown reason!");
 				return nullptr;
 			}

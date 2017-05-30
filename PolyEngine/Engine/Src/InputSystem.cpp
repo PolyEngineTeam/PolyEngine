@@ -15,7 +15,7 @@ void InputSystem::InputPhase(World* world)
 
 	InputQueue& InputEventsQueue = world->GetEngine()->GetInputQueue();
 
-	while (!InputEventsQueue.Empty())
+	while (!InputEventsQueue.IsEmpty())
 	{
 		InputEvent& ev = InputEventsQueue.Front();
 		switch (ev.Type)
@@ -34,13 +34,13 @@ void InputSystem::InputPhase(World* world)
 			break;
 		case eInputEventType::WHEELMOVE:
 			//gConsole.LogDebug("MouseWheelMove: {}", ev.Pos.X);
-			com.CurrWheel += ev.Pos.X;
+			com.CurrWheel += (int)ev.Pos.X;
 			break;
 		case eInputEventType::_COUNT:
 			HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::Push(), which is an invalid value");
 			break;
 		}
-		InputEventsQueue.Pop();
+		InputEventsQueue.PopFront();
 	}
 
 

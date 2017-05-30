@@ -123,7 +123,7 @@ TEST_CASE("Floating-point equality comparisons", "[FloatCmp]") {
 		CHECK_FALSE(Cmpft(1.0f, -1.000000001f));
 		CHECK(Cmpft(10.0f * LOW_FLOAT, 10.0f * -LOW_FLOAT));
 		CHECK(Cmpft(10000.0f * LOW_FLOAT, 10000.0f * -LOW_FLOAT));
-		CHECK_FALSE(Cmpft(-0.00001, 0.00003));
+		CHECK_FALSE(Cmpft(-0.00001f, 0.00003f));
 	}
 
 	SECTION("Numbers very close to 0.0f") {

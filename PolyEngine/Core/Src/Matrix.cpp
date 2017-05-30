@@ -242,6 +242,32 @@ Matrix& Poly::Matrix::SetPerspective(float fov, float aspect, float near, float 
 }
 
 //------------------------------------------------------------------------------
+Matrix& Poly::Matrix::SetOrthographic(float bottom, float top,  float left, float right, float near, float far)
+{
+	Data[0] = 2.0f / (right - left);
+	Data[1] = 0;
+	Data[2] = 0;
+	Data[3] = -(right + left) / (right - left);
+
+	Data[4] = 0;
+	Data[5] = 2.0f / (top - bottom);
+	Data[6] = 0;
+	Data[7] = -(top + bottom) / (top - bottom);
+
+	Data[8] = 0;
+	Data[9] = 0;
+	Data[10] = 2.0f / (far - near);
+	Data[11] = -(far + near) / (far - near);
+
+	Data[12] = 0;
+	Data[13] = 0;
+	Data[14] = 0;
+	Data[15] = 1;
+
+	return *this;
+}
+
+//------------------------------------------------------------------------------
 Matrix& Matrix::Inverse() {
   //TODO vectorize
   Matrix cpy = *this;
@@ -548,7 +574,7 @@ bool Poly::Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& 
 	{
 		s = sqrtf(1.0f + row[1].Y - row[0].X - row[2].Z) * 2.0f; // S=4*qy
 		x = (row[0].Y + row[1].X) / s;
-		y = 0.25 * s;
+		y = 0.25f * s;
 		z = (row[1].Z + row[2].Y) / s;
 		w = (row[0].Z - row[2].X) / s;
 	}

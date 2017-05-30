@@ -11,6 +11,13 @@ World::World(Poly::Engine* engine)
 //------------------------------------------------------------------------------
 Poly::World::~World()
 {
+	// copy entities
+	auto entityMap = IDToEntityMap;
+	for (auto& kv : entityMap)
+	{
+		DestroyEntity(kv.second->EntityID);
+	}
+	
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT; ++i)
 	{
 		if (ComponentAllocators[i])

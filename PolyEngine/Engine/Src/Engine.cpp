@@ -1,5 +1,7 @@
 #include "EnginePCH.hpp"
 
+#include "ScreenSpaceTextComponent.hpp"
+
 using namespace Poly;
 
 //------------------------------------------------------------------------------
@@ -24,6 +26,7 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterComponent<CameraComponent>((size_t) eEngineComponents::BASE_CAMERA);
 	RegisterComponent<MeshRenderingComponent>((size_t) eEngineComponents::MESH_RENDERING);
 	RegisterComponent<FreeFloatMovementComponent>((size_t)eEngineComponents::FREE_FLOAT_MOVEMENT);
+	RegisterComponent<ScreenSpaceTextComponent>((size_t)eEngineComponents::SCREEN_SPACE_TEXT);
 
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
@@ -34,7 +37,17 @@ bool Engine::Init(const IRenderingContextParams* context)
 
 	if (!Renderer->Init(context))
 		return false;
+
 	Game->Init();
+
+	// Setup FPS display
+	if (gCoreConfig.DisplayFPS)
+	{
+		UniqueID id = GetWorld().SpawnEntity();
+		GetWorld().AddComponent<ScreenSpaceTextComponent>(id, Vector(0, 0, 0), "Fonts/Raleway/Raleway-Regular.ttf", 32, "FPS: 60");
+		//TODO FPS compnent and system
+	}
+
 	return true;
 }
 

@@ -9,24 +9,25 @@ TEST_CASE("Queue tests", "[Queue]")
 	Queue<int> q;
 	Queue<int> r(q);
 
-	REQUIRE(q.Empty() == true);
-	REQUIRE(r.Empty() == true);
+	REQUIRE(q.IsEmpty() == true);
+	REQUIRE(r.IsEmpty() == true);
 
-	q.Push(5);
+	q.PushBack(5);
+	REQUIRE(q.IsEmpty() == false);
 	Queue<int> s(q);
 
-	REQUIRE(r.Empty() == true);
-	REQUIRE(q.Empty() == false);
-	REQUIRE(s.Empty() == false);
+	REQUIRE(r.IsEmpty() == true);
+	REQUIRE(q.IsEmpty() == false);
+	REQUIRE(s.IsEmpty() == false);
 	REQUIRE(q.Back() == 5);
 	REQUIRE(s.Back() == 5);
 	REQUIRE(q.Front() == 5);
 	REQUIRE(s.Front() == 5);
 
-	q.Push(8);
+	q.PushBack(8);
 	Queue<int> t(q);
 
-	REQUIRE(t.Empty() == false);
+	REQUIRE(t.IsEmpty() == false);
 	REQUIRE(q.Back() == 8);
 	REQUIRE(t.Back() == 8);
 	REQUIRE(s.Back() == 5);
@@ -34,22 +35,23 @@ TEST_CASE("Queue tests", "[Queue]")
 	REQUIRE(t.Front() == 5);
 	REQUIRE(s.Front() == 5);
 
-	q.Pop();
-	q.Pop();
-	REQUIRE(q.Empty() == true);
+	q.PopBack();
+	q.PopBack();
+	REQUIRE(q.IsEmpty() == true);
 
-	q.Push(1);
-	q.Push(2);
-	q.Push(3);
-	q.Push(4);
-	q.Push(5);
+	q.PushBack(1);
+	q.PushBack(2);
+	q.PushBack(3);
+	q.PushBack(4);
+	q.PushBack(5);
 
 	REQUIRE(q.Back() == 5);
 	REQUIRE(q.Front() == 1);
 
-	q.Pop();
+	q.PopBack();
+	q.PopFront();
 
-	REQUIRE(q.Back() == 5);
+	REQUIRE(q.Back() == 4);
 	REQUIRE(q.Front() == 2);
 
 }
@@ -71,10 +73,14 @@ TEST_CASE("Queue tests (with BaseObject)", "[Queue]")
 	Queue<Test> q;
 	Queue<Test> r(q);
 
-	REQUIRE(q.Empty() == true);
-	REQUIRE(r.Empty() == true);
+	REQUIRE(q.IsEmpty() == true);
+	REQUIRE(r.IsEmpty() == true);
 
-	q.Push(Test());
-	q.Pop();
+	Test a = Test();
+	q.PushBack(a);
+	q.PushBack(a);
+	q.PushBack(a);
+	q.PushBack(Test());
+	q.PopBack();
 
 }

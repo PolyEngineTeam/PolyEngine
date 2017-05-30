@@ -105,6 +105,10 @@ namespace Poly {
 	  */
 	  Matrix& SetPerspective(float fov, float aspect, float near, float far);
 
+
+	  /// Initializes matrix with orthographics projection
+	  Matrix& SetOrthographic(float top, float bottom, float left, float right, float near, float far);
+
 	  /**
 	   *  Inverses the matrix.
 	   *

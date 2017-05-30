@@ -9,13 +9,16 @@ endif()
 find_package(GLEW REQUIRED)
 find_package(SOIL REQUIRED)
 find_package(assimp REQUIRED)
+find_package(Freetype REQUIRED)
 
 set(POLYENGINE_SRCS
 	Src/CameraComponent.cpp
 	Src/CameraSystem.cpp
+	Src/CoreConfig.cpp
 	Src/Engine.cpp
 	Src/Entity.cpp
 	Src/FreeFloatMovementComponent.cpp
+	Src/FontResource.cpp
 	Src/GLMeshResource.cpp
 	Src/GLTextureResource.cpp
 	Src/InputSystem.cpp
@@ -26,6 +29,7 @@ set(POLYENGINE_SRCS
 	Src/RenderingSystem.cpp
 	Src/ResourceManager.cpp
 	Src/ShaderProgram.cpp
+	Src/Text2D.cpp
 	Src/TimeSystem.cpp
 	Src/TimeWorldComponent.cpp
 	Src/Timer.cpp
@@ -38,10 +42,12 @@ set(POLYENGINE_H_FOR_IDE
 	Src/CameraComponent.hpp
 	Src/CameraSystem.hpp
 	Src/ComponentBase.hpp
+	Src/CoreConfig.hpp
 	Src/Engine.hpp
 	Src/EnginePCH.hpp
 	Src/Entity.hpp
 	Src/FreeFloatMovementComponent.hpp
+	Src/FontResource.hpp
 	Src/GLMeshResource.hpp
 	Src/GLTextureResource.hpp
 	Src/InputQueue.hpp
@@ -56,7 +62,9 @@ set(POLYENGINE_H_FOR_IDE
 	Src/RenderingSystem.hpp
 	Src/ResourceBase.hpp
 	Src/ResourceManager.hpp
+	Src/ScreenSpaceTextComponent.hpp
 	Src/ShaderProgram.hpp
+	Src/Text2D.hpp
 	Src/TimeSystem.hpp
 	Src/TimeWorldComponent.hpp
 	Src/Timer.hpp
@@ -68,8 +76,8 @@ set(POLYENGINE_H_FOR_IDE
 
 add_library(polyengine SHARED ${POLYENGINE_SRCS} ${POLYENGINE_H_FOR_IDE})
 target_compile_definitions(polyengine PRIVATE _ENGINE)
-target_include_directories(polyengine INTERFACE ${POLYENGINE_INCLUDE} PRIVATE ${OPENGL_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIRS})
-target_link_libraries(polyengine PRIVATE polycore ${OPENGL_LIBRARIES} GLEW::GLEW SOIL::SOIL ${ASSIMP_LIBRARIES})
+target_include_directories(polyengine INTERFACE ${POLYENGINE_INCLUDE} PRIVATE ${OPENGL_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS})
+target_link_libraries(polyengine PRIVATE polycore ${OPENGL_LIBRARIES} GLEW::GLEW SOIL::SOIL ${ASSIMP_LIBRARIES} ${FREETYPE_LIBRARIES})
 
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	target_compile_options(polyengine PRIVATE --coverage -fprofile-arcs -ftest-coverage)

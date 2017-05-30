@@ -4,8 +4,17 @@
 #include "Entity.hpp"
 
 namespace Poly {
+
+	enum class eComponentBaseFlags
+	{
+		NONE = 0x00,
+		NEWLY_CREATED = 0x01,
+		ABOUT_TO_BE_REMOVED = 0x02,
+	};
+
 	class ENGINE_DLLEXPORT ComponentBase : public BaseObject<>
 	{
+	friend class World;
 	public:
 		//////////////////////////////
 		/// Getter for a component of a specified type that shares UniqueID with this one.
@@ -19,9 +28,13 @@ namespace Poly {
 			return Owner->GetComponent<T>();
 		}
 
+		void SetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags |= rhs; }
+		void ResetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags &= ~rhs; }
+		const EnumFlags<eComponentBaseFlags>& GetFlags() { return Flags; }
+
 	private:
 		Entity* Owner = nullptr;
 
-		friend class World;
+		EnumFlags<eComponentBaseFlags> Flags = eComponentBaseFlags::NEWLY_CREATED;
 	};
 }

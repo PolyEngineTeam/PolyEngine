@@ -18,6 +18,19 @@ ShaderProgram::ShaderProgram(const String & vertex, const String & fragment)
 	CompileProgram();
 }
 
+ShaderProgram::ShaderProgram(const String& vertex, const String& geometry, const String& fragment)
+{
+	gConsole.LogDebug("Creating shader program {} {} {}", vertex, geometry, fragment);
+	m_program = glCreateProgram();
+	if (m_program == 0) {
+		ASSERTE(false, "Creation of shader program failed! Exiting...");
+	}
+	LoadShader(GL_VERTEX_SHADER, vertex);
+	LoadShader(GL_GEOMETRY_SHADER, geometry);
+	LoadShader(GL_FRAGMENT_SHADER, fragment);
+	CompileProgram();
+}
+
 void ShaderProgram::BindProgram() const
 {
 	glUseProgram(m_program);
@@ -116,9 +129,19 @@ void ShaderProgram::SetUniform(const String& name, float val)
 	glUniform1f(m_uniforms[name], val);
 }
 
+void ShaderProgram::SetUniform(const String & name, float val1, float val2)
+{
+	glUniform2f(m_uniforms[name], val1, val2);
+}
+
 void ShaderProgram::SetUniform(const String& name, const Vector& val)
 {
 	glUniform4f(m_uniforms[name], val.X, val.Y, val.Z, val.W);
+}
+
+void ShaderProgram::SetUniform(const String& name, const Color& val)
+{
+	glUniform4f(m_uniforms[name], val.R, val.G, val.B, val.A);
 }
 
 void ShaderProgram::SetUniform(const String& name, const Matrix& val)

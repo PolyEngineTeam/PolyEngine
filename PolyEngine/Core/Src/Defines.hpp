@@ -95,4 +95,6 @@ constexpr auto MIN_FLOAT = (std::numeric_limits<float>::min)();
 // Utilities
 #define BIT(x) (1u<<x)
 
+#define UNUSED(expr) do { (void)(expr); } while (0)
+
 #include "BaseObject.hpp"
