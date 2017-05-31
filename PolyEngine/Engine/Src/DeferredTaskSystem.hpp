@@ -9,8 +9,6 @@ namespace Poly
 	{
 		void DeferredTaskPhase(World* w);
 
-		UniqueID ENGINE_DLLEXPORT SpawnEntityImmediate(World* w);
-
 		void ENGINE_DLLEXPORT DestroyEntity(World* w, const UniqueID& entityId);
 		void ENGINE_DLLEXPORT DestroyEntityImmediate(World* w, const UniqueID& entityId);
 

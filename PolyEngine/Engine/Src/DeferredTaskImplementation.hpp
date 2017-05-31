@@ -16,20 +16,6 @@ namespace Poly
 	template <std::size_t... T>
 	struct gen_seq<0, T...> : index<T...> {};
 	//---------------------------------------------------------------
-	class SpawnEntityDeferredTask : public DeferredTaskBase
-	{
-	public:
-		SpawnEntityDeferredTask() {}
-
-		virtual void Execute(World* w) { Id = w->SpawnEntity(); }
-
-		virtual String GetDescription() const { return String("Spawn entity"); }
-
-		UniqueID GetID() { return Id; }
-	private:
-		UniqueID Id;
-	};
-
 	class DestroyEntityDeferredTask : public DeferredTaskBase
 	{
 	public:

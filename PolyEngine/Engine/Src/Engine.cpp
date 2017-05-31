@@ -44,7 +44,7 @@ bool Engine::Init(const IRenderingContextParams* context)
 	// Setup FPS display
 	if (gCoreConfig.DisplayFPS)
 	{
-		UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(&GetWorld());
+		UniqueID id = GetWorld().SpawnEntity();
 		DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(&GetWorld(),  id, Vector(0, 0, 0), "Fonts/Raleway/Raleway-Regular.ttf", 32, "FPS: 60");
 		//TODO FPS compnent and system
 	}

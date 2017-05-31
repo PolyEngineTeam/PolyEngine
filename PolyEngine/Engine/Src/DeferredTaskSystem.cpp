@@ -20,13 +20,6 @@ void DeferredTaskSystem::DeferredTaskPhase(World* w)
 	}
 }
 
-UniqueID DeferredTaskSystem::SpawnEntityImmediate(World* w)
-{
-	UniqueID id = w->SpawnEntity();
-	gConsole.LogDebug("New immediate task executed: Spawn entity");
-	return id;
-}
-
 void DeferredTaskSystem::DestroyEntity(World* w, const UniqueID& entityId)
 {
 	w->GetDeferredTaskQueue().PushBack(new DestroyEntityDeferredTask(entityId));

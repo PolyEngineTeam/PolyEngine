@@ -11,7 +11,7 @@ using namespace Poly;
 
 void InvadersGame::Init()
 {
-	Camera = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
+	Camera = Engine->GetWorld().SpawnEntity();
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), Camera);
 	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(&Engine->GetWorld(), Camera, 45.0f, 1.0f, 1000.f);
 	DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(&Engine->GetWorld(), Camera, 10.0f, 0.003f);
@@ -25,7 +25,7 @@ void InvadersGame::Init()
 	{
 		for (int j = -2; j < 2; ++j)
 		{
-			auto ent = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
+			auto ent = Engine->GetWorld().SpawnEntity();
 			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), ent);
 			DeferredTaskSystem::AddComponent<Poly::MeshRenderingComponent>(&Engine->GetWorld(), ent, (const char*)"model-tank/tank.fbx");
 			Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(ent);

@@ -11,7 +11,7 @@ using namespace Poly;
 
 void InvadersGame::Init()
 {
-	Camera = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
+	Camera = Engine->GetWorld().SpawnEntity();
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), Camera);
 	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(&Engine->GetWorld(), Camera, 45.0f, 1.0f, 1000.f);
 	DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(&Engine->GetWorld(), Camera, 10.0f, 0.003f);
@@ -52,7 +52,7 @@ void GameMainSystem::GameUpdate(Poly::World* world)
 	static float deg = 0;
 	if (pos < 400)
 	{
-		auto sth = DeferredTaskSystem::SpawnEntityImmediate(world);
+		auto sth = world->SpawnEntity();
 		DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, sth);
 		Poly::TransformComponent* entTransform = world->GetComponent<Poly::TransformComponent>(sth);
 		entTransform->SetLocalTranslation(Vector(cos(deg)*10.0f, -10.0f + deg/20.0f, sin(deg)*10.0f));
@@ -62,7 +62,7 @@ void GameMainSystem::GameUpdate(Poly::World* world)
 		DeferredTaskSystem::AddComponent<Poly::MeshRenderingComponent>(world, sth, (const char *)"model-tank/tank.fbx");//(const char*)"model-tank/tank.fbx");
 		DeferredTaskSystem::RemoveComponent<Poly::FreeFloatMovementComponent>(world, sth);//just testing remove
 		DeferredTaskSystem::RemoveComponent<Poly::CameraComponent>(world, sth);
-		DeferredTaskSystem::DestroyEntity(world, sth);
+		//DeferredTaskSystem::DestroyEntity(world, sth);
 	}
 
 	/*for (auto components : world->IterateComponents<Poly::MeshRenderingComponent, Poly::TransformComponent>())
