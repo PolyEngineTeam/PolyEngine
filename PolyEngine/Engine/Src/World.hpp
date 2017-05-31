@@ -77,7 +77,7 @@ namespace Poly {
 
 		//------------------------------------------------------------------------------
 		template<typename T, typename... Args>
-		void AddWorldComponent()
+		void AddWorldComponent(Args&&... args)
 		{			
 			HEAVY_ASSERTE(!HasWorldComponent(EnginePtr->GetWorldComponentID<T>()), "Failed at AddWorldComponent() - a world component of a given type already exists!");
 			T* ptr = GetWorldComponentAllocator<T>()->Alloc();
