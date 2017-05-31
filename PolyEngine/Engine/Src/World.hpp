@@ -92,7 +92,7 @@ namespace Poly {
 			T* component = Components[EnginePtr->GetWorldComponentID<T>()];
 			Components[EnginePtr->GetWorldComponentID<T>()] = nullptr;
 			component->~T();
-			GetWorldComponentAllocator<T>()->Free(component);
+			delete component;
 		}
 
 		//------------------------------------------------------------------------------

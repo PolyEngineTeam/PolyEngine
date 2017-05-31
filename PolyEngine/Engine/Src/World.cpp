@@ -32,6 +32,10 @@ World::~World()
 		if (ComponentAllocators[i])
 			delete ComponentAllocators[i];
 	}
+
+	for (size_t i = 0; i < MAX_WORLD_COMPONENTS_COUNT; i++)
+		if (Components[i])
+			delete (Components[i]);
 }
 
 //------------------------------------------------------------------------------
