@@ -131,7 +131,7 @@ TEST_CASE("Multi-layer hierarchy", "[TransformComponent]")
 	REQUIRE(tc6.GetGlobalScale() == scale);
 }
 
-TEST_CASE("Multiple transformation changes", "[TransformComponent]")
+TEST_CASE("Get parent globals before getting children globals", "[TransformComponent]")
 {
 	TransformComponent tc1, tc2;
 	Vector v1 = Vector(1, 1, 1);
@@ -143,13 +143,10 @@ TEST_CASE("Multiple transformation changes", "[TransformComponent]")
 	tc1.SetLocalTranslation(v1);
 	tc1.GetGlobalTranslation();
 	REQUIRE(tc2.GetGlobalTranslation() == v1);
-	REQUIRE(tc2.GetGlobalTransformationMatrix().Data[3] == v1.X);
 	tc1.SetLocalTranslation(v2);
 	tc1.GetGlobalTransformationMatrix();
 	REQUIRE(tc2.GetGlobalTranslation() == v2);
-	REQUIRE(tc2.GetGlobalTransformationMatrix().Data[3] == v2.X);
 	tc1.SetLocalTranslation(v3);
 	tc1.GetGlobalTransformationMatrix();
 	REQUIRE(tc2.GetGlobalTranslation() == v3);
-	REQUIRE(tc2.GetGlobalTransformationMatrix().Data[3] == v3.X);
 }

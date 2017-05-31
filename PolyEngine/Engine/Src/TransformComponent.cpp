@@ -140,8 +140,6 @@ void TransformComponent::UpdateGlobalTransformationCache() const
 			GlobalDirty = false;
 			return;
 		}
-		else
-			return;
 	}
 	else
 	{
@@ -152,8 +150,6 @@ void TransformComponent::UpdateGlobalTransformationCache() const
 			GlobalDirty = false;
 			return;
 		}
-		else
-			return;
 	}
 }
 
