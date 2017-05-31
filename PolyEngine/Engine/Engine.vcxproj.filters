@@ -120,15 +120,24 @@
       <Filter>Source Files\Config</Filter>
     </ClCompile>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <ClCompile Include="Src\DeferredTaskSystem.cpp">
       <Filter>Source Files\ECS</Filter>
 =======
+=======
+    <ClCompile Include="Src\DeferredTaskSystem.cpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+>>>>>>> 39953fd42a82d9b60293e7fc5ab6acbd3aef54e5
     <ClCompile Include="Src\FontResource.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Src\Text2D.cpp">
       <Filter>Source Files\UI</Filter>
+<<<<<<< HEAD
 >>>>>>> 148c0bf996bd16a46495e03a00fe77bf166a0953
+=======
+>>>>>>> 39953fd42a82d9b60293e7fc5ab6acbd3aef54e5
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +232,9 @@
       <Filter>Source Files\Config</Filter>
     </ClInclude>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 39953fd42a82d9b60293e7fc5ab6acbd3aef54e5
     <ClInclude Include="Src\DeferredTaskBase.hpp">
       <Filter>Source Files\ECS</Filter>
     </ClInclude>
@@ -231,7 +243,11 @@
     </ClInclude>
     <ClInclude Include="Src\DeferredTaskSystem.hpp">
       <Filter>Source Files\ECS</Filter>
+<<<<<<< HEAD
 =======
+=======
+    </ClInclude>
+>>>>>>> 39953fd42a82d9b60293e7fc5ab6acbd3aef54e5
     <ClInclude Include="Src\FontResource.hpp">
       <Filter>Source Files\Resources</Filter>
     </ClInclude>
@@ -240,7 +256,10 @@
     </ClInclude>
     <ClInclude Include="Src\ScreenSpaceTextComponent.hpp">
       <Filter>Source Files\UI</Filter>
+<<<<<<< HEAD
 >>>>>>> 148c0bf996bd16a46495e03a00fe77bf166a0953
+=======
+>>>>>>> 39953fd42a82d9b60293e7fc5ab6acbd3aef54e5
     </ClInclude>
   </ItemGroup>
 </Project>
