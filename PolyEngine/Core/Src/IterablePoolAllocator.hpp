@@ -113,11 +113,19 @@ namespace Poly {
 
 				// setup linked list
 				if (GetSize() > 0) {
-					Cell* prev = ret - 1;
-					ret->Prev = prev;
-					ret->Next = prev->Next;
-					prev->Next->Prev = ret;
-					prev->Next = ret;
+					if (ret > Data) {
+						Cell* prev = ret - 1;
+						ret->Prev = prev;
+						ret->Next = prev->Next;
+						prev->Next->Prev = ret;
+						prev->Next = ret;
+					}
+					else // Corner case when we're placing new element at first position
+					{
+						ret->Prev = nullptr;
+						ret->Next = Head;
+						Head = ret;
+					}
 				}
 				else
 				{
@@ -152,7 +160,7 @@ namespace Poly {
 
 			// keep the linked list valid
 			if (Head == cell)
-				Head = Tail;
+				Head = cell->Next;
 			else
 			{
 				Cell* prev = cell->Prev;
