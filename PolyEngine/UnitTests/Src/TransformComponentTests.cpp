@@ -130,3 +130,23 @@ TEST_CASE("Multi-layer hierarchy", "[TransformComponent]")
 	REQUIRE(Cmpf(tc6.GetGlobalRotation().W, rotation.W));
 	REQUIRE(tc6.GetGlobalScale() == scale);
 }
+
+TEST_CASE("Get parent globals before getting children globals", "[TransformComponent]")
+{
+	TransformComponent tc1, tc2;
+	Vector v1 = Vector(1, 1, 1);
+	Vector v2 = Vector(2, 2, 2);
+	Vector v3 = Vector(3, 3, 3);
+
+	tc2.SetParent(&tc1);
+
+	tc1.SetLocalTranslation(v1);
+	tc1.GetGlobalTranslation();
+	REQUIRE(tc2.GetGlobalTranslation() == v1);
+	tc1.SetLocalTranslation(v2);
+	tc1.GetGlobalTransformationMatrix();
+	REQUIRE(tc2.GetGlobalTranslation() == v2);
+	tc1.SetLocalTranslation(v3);
+	tc1.GetGlobalTransformationMatrix();
+	REQUIRE(tc2.GetGlobalTranslation() == v3);
+}
