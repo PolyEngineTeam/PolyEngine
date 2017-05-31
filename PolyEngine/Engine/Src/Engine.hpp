@@ -103,7 +103,7 @@ namespace Poly
 		//------------------------------------------------------------------------------
 		template<typename T> size_t GetComponentID() const
 		{
-			ASSERTE(ComponentTypeMap.find(typeid(T)) != ComponentTypeMap.end(), "World component type was not registered!");
+			ASSERTE(ComponentTypeMap.find(typeid(T)) != ComponentTypeMap.end(), "Component was not registered!");
 			return ComponentTypeMap.at(typeid(T));
 		}
 		//------------------------------------------------------------------------------
@@ -123,7 +123,7 @@ namespace Poly
 		//------------------------------------------------------------------------------
 		template<typename T> size_t GetWorldComponentID() const
 		{
-			ASSERTE(WorldComponentTypeMap.find(typeid(T)) != WorldComponentTypeMap.end(), "World component type was not registered!");
+			ASSERTE(WorldComponentTypeMap.find(typeid(T)) != WorldComponentTypeMap.end(), "World component was not registered!");
 			return WorldComponentTypeMap.at(typeid(T));
 		}
 
