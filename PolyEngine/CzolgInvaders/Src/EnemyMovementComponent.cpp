@@ -2,7 +2,9 @@
 
 using namespace Poly;
 
-EnemyMovementComponent::EnemyMovementComponent(float movementSpeed) : MovementSpeed(movementSpeed)
+EnemyMovementComponent::EnemyMovementComponent(AARect collision, float movementSpeed) : 
+	CollisionBox(collision),
+	MovementSpeed(movementSpeed)
 {
 
 }

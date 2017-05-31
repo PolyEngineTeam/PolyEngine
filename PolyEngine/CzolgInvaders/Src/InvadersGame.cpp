@@ -24,18 +24,18 @@ void InvadersGame::Init()
 	cameraTrans->SetLocalTranslation(Vector(-23.1327f, 13.9473f, -25.7297f));
 	cameraTrans->SetLocalRotation(Quaternion(EulerAngles{ 152.154_deg, 52.1159_deg, -180_deg }));
 
-	for (int i = -2; i < 2; ++i)
+	for (int i = -1; i < 1; ++i)
 	{
 		for (int j = -2; j < 2; ++j)
 		{
 			auto ent = Engine->GetWorld().SpawnEntity();
 			Engine->GetWorld().AddComponent<Poly::TransformComponent>(ent);
-			Engine->GetWorld().AddComponent<Poly::EnemyMovementComponent>(ent);
+			Engine->GetWorld().AddComponent<Poly::EnemyMovementComponent>(ent, AARect(Vector(i * 6, 0, j * 8), Vector(10.0f, 10.0f, 10.0f)));
 			Engine->GetWorld().AddComponent<Poly::MeshRenderingComponent>(ent, "model-tank/tank.fbx");
 			Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(ent);
-			entTransform->SetLocalTranslation(Vector(i * 6, 0, j * 8));
+			entTransform->SetLocalTranslation(Vector(i * 8, 0, j * 10));
 			entTransform->SetLocalRotation(Quaternion(EulerAngles{ 0.0_deg, 180.0_deg, 0.0_deg }));
-			GameEntities.PushBack(ent);
+			gameManagerComponent->GetGameEntities()->PushBack(ent);
 		}
 	}
 	auto player = Engine->GetWorld().SpawnEntity();

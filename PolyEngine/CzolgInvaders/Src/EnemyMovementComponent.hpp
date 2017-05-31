@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ComponentBase.hpp"
+#include <AARect.hpp>
 
 namespace Poly {
 
@@ -8,11 +9,13 @@ namespace Poly {
 	{
 
 	public:
-		EnemyMovementComponent(float movementSpeed = 2.0f);
+		EnemyMovementComponent(AARect collision, float movementSpeed = 2.0f);
 
 		float GetMovementSpeed() const { return MovementSpeed; }
+		AARect& GetCollisionBox() { return CollisionBox; }
 
 	private:
 		float MovementSpeed = 2.0f;
+		AARect CollisionBox;
 	};
 }

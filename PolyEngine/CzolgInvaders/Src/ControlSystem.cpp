@@ -4,6 +4,7 @@ using namespace Poly;
 
 void ControlSystem::ControlSystemPhase(World* world)
 {
+
 	GameManagerComponent* gameManager = nullptr;
 	for (auto gameManagerTuple : world->IterateComponents<GameManagerComponent>())
 	{
@@ -11,6 +12,12 @@ void ControlSystem::ControlSystemPhase(World* world)
 	}
 	Poly::Dynarray<Poly::UniqueID>* gameEntities = gameManager->GetGameEntities();
 	double time = world->GetTimeWorldComponent().GetGameplayTime();
+
+
+	if (world->GetInputWorldComponent().IsReleased(gameManager->GetQuitKey()))
+	{
+		//quit game
+	}
 
 	for (Poly::UniqueID ent : *gameEntities)
 	{
@@ -23,6 +30,7 @@ void ControlSystem::ControlSystemPhase(World* world)
 				Vector move = bullet->GetDirection();
 				move *= bullet->GetMovementSpeed();
 				transform->SetLocalTranslation(transform->GetLocalTranslation() + move);
+				bullet->GetCollisionBox().SetPosition(transform->GetLocalTranslation() + move);
 			}
 			else
 			{
@@ -54,25 +62,26 @@ void ControlSystem::ControlSystemPhase(World* world)
 				SpawnBullet(gameManager, world, player->GetSibling<TransformComponent>()->GetLocalTranslation(), Vector(0.0f, 0.0f, -1.0f), player->GetBulletSpeed());
 				player->SetLastShoot(world->GetTimeWorldComponent().GetGameplayTime());
 			}
-		}			
-	}
-	for (auto enemyMovementTuple : world->IterateComponents<EnemyMovementComponent>())
-	{
-		EnemyMovementComponent* enemy = std::get<EnemyMovementComponent*>(enemyMovementTuple);
-		Vector move(0, 0, 1.0f);
-
-
-		if (move.Length() > 0)
+		}
+		else if (world->GetComponent<EnemyMovementComponent>(ent) != nullptr)
 		{
-			move.Normalize();
-			move *= enemy->GetMovementSpeed();
-			move *= 0.016f;
-			TransformComponent* enemy_transform = enemy->GetSibling<TransformComponent>();
-			Vector prev_location = enemy_transform->GetLocalTranslation();
-			enemy_transform->SetLocalTranslation(prev_location + move);
+			EnemyMovementComponent* enemy = world->GetComponent<EnemyMovementComponent>(ent);
+			Vector move(0, 0, 1.0f);
+
+
+			if (move.Length() > 0)
+			{
+				move.Normalize();
+				move *= enemy->GetMovementSpeed();
+				move *= 0.016f;
+				TransformComponent* enemy_transform = enemy->GetSibling<TransformComponent>();
+				Vector prev_location = enemy_transform->GetLocalTranslation();
+				enemy_transform->SetLocalTranslation(prev_location + move);
+				enemy->GetCollisionBox().SetPosition(enemy_transform->GetLocalTranslation() + move);
+			}
 		}
 	}
-	CleanUpEnitites(gameManager, world);
+	//CleanUpEnitites(gameManager, world);
 	SpawnEnitites(gameManager, world);
 }
 
@@ -83,7 +92,8 @@ void ControlSystem::SpawnBullet(GameManagerComponent* gameManager, World* world,
 	world->AddComponent<Poly::MeshRenderingComponent>(bullet, "model-tank/tank.fbx");
 	if (direction.Length() > 0)
 		direction.Normalize();
-	world->AddComponent<BulletComponent>(bullet, speed, direction, world->GetTimeWorldComponent().GetGameplayTime());
+	world->AddComponent<BulletComponent>(bullet, speed, direction, 
+		AARect(world->GetComponent<Poly::TransformComponent>(bullet)->GetLocalTranslation(), Vector(10.0f,10.0f,10.0f)), world->GetTimeWorldComponent().GetGameplayTime());
 	Poly::TransformComponent* transform = world->GetComponent<Poly::TransformComponent>(bullet);
 	transform->SetLocalScale(Vector(0.25f, 0.25f, 0.25f));
 	transform->SetLocalTranslation(pos);
@@ -106,4 +116,39 @@ void ControlSystem::SpawnEnitites(GameManagerComponent* gameManager, World* worl
 	}
 	gameManager->GetSpawnGameEntities()->Clear();
 
+}
+
+void ControlSystem::CheckBulletCollisions(World* world, GameManagerComponent* gameManager, const UniqueID other)
+{
+	//todo : Collsioncomponent
+	/*AARect& rect1 = other
+	bool to_delete = false;
+	Poly::Dynarray<Poly::UniqueID>* gameEntities = gameManager->GetGameEntities();
+	for (Poly::UniqueID ent : *gameEntities)
+	{
+		if (to_delete)
+			break;
+		if (world->GetComponent<BulletComponent>(ent) != nullptr)
+		{
+			BulletComponent* bullet = world->GetComponent<BulletComponent>(ent);
+			to_delete = CheckCollision(rect1, bullet->GetCollisionBox());
+			if (to_delete)
+				gameManager->GetDeadGameEntities()->PushBack(ent);
+		}
+
+	}
+	if (to_delete)
+		gameManager->GetDeadGameEntities()->PushBack(ent);*/
+
+
+}
+
+bool ControlSystem::CheckCollision(const AARect& rect1, const AARect& rect2)
+{
+	return(rect1.GetMax().X > rect2.GetMin().X &&
+		rect1.GetMin().X < rect2.GetMax().X &&
+		rect1.GetMax().Y > rect2.GetMin().Y &&
+		rect1.GetMin().Y < rect2.GetMax().Y &&
+		rect1.GetMax().Z > rect2.GetMin().Z &&
+		rect1.GetMin().Z < rect2.GetMax().Z);
 }
