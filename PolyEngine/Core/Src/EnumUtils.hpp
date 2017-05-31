@@ -145,12 +145,16 @@ namespace Poly {
 		constexpr bool operator==(const EnumFlags& rhs) const { return Flags == rhs.Flags; }
 		constexpr bool operator!=(const EnumFlags& rhs) const { return !(*this == rhs); }
 
+		EnumFlags<E>& operator=(E rhs) { Flags |= rhs; return *this; }
+
 		constexpr EnumFlags operator|(const EnumFlags& rhs) const { return EnumFlags(Flags | rhs.Flags); }
 		constexpr EnumFlags operator&(const EnumFlags& rhs) const { return EnumFlags(Flags & rhs.Flags); }
 		constexpr EnumFlags operator~() const { return EnumFlags(~Flags); }
 
 		EnumFlags& operator|=(const EnumFlags& rhs) { Flags |= rhs.Flags; return *this; }
 		EnumFlags& operator&=(const EnumFlags& rhs) { Flags &= rhs.Flags; return *this; }
+
+		void Clear() { Flags = 0; }
 
 		constexpr bool IsSet(E enumValue) const { return (*this & enumValue) == enumValue; }
 		constexpr bool AnySet(E enumValue) const { return (*this & enumValue).Flags != 0; }

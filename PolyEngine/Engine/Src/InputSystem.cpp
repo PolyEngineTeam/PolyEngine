@@ -40,7 +40,7 @@ void InputSystem::InputPhase(World* world)
 			HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::Push(), which is an invalid value");
 			break;
 		}
-		InputEventsQueue.PopBack();
+		InputEventsQueue.PopFront();
 	}
 
 
