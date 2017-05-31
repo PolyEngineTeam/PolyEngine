@@ -10,9 +10,16 @@
 #include "ViewportWorldComponent.hpp"
 #include "TimeWorldComponent.hpp"
 
-#include "HeavyTaskBase.hpp"
+#include "DeferredTaskBase.hpp"
 
 namespace Poly {
+
+	namespace DeferredTaskSystem
+	{
+		UniqueID ENGINE_DLLEXPORT SpawnEntityImmediate(World* w);
+		void ENGINE_DLLEXPORT DestroyEntityImmediate(World* w, const UniqueID& entityId);
+		template<typename T, typename ...Args> void AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args);
+	}
 
 	constexpr size_t MAX_ENTITY_COUNT = 65536;
 
@@ -126,13 +133,17 @@ namespace Poly {
 			World* const W;
 		};
 
-		HeavyTaskQueue& GetHeavyTaskQueue() { return HeavyTasksQueue; }
+		DeferredTaskQueue& GetDeferredTaskQueue() { return DeferredTasksQueue; }
 
 	private:
-		friend class SpawnEntityHeavyTask;
-		friend class DestroyEntityHeavyTask;
-		template<typename T,typename... Args> friend class AddComponentHeavyTask;
-		template<typename T> friend class RemoveComponentHeavyTask;
+		friend class SpawnEntityDeferredTask;
+		friend class DestroyEntityDeferredTask;
+		template<typename T,typename... Args> friend class AddComponentDeferredTask;
+		template<typename T> friend class RemoveComponentDeferredTask;
+
+		friend UniqueID DeferredTaskSystem::SpawnEntityImmediate(World*);
+		friend void DeferredTaskSystem::DestroyEntityImmediate(World* w, const UniqueID& entityId);
+		template<typename T, typename ...Args> friend void DeferredTaskSystem::AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args);
 
 		//------------------------------------------------------------------------------
 		UniqueID SpawnEntity();
@@ -188,7 +199,7 @@ namespace Poly {
 		ViewportWorldComponent ViewportComponent;
 		TimeWorldComponent TimeComponent;
 
-		HeavyTaskQueue HeavyTasksQueue;
+		DeferredTaskQueue DeferredTasksQueue;
 	};
 
 	//defined here due to circular inclusion problem; FIXME: circular inclusion

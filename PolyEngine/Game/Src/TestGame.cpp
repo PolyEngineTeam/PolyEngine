@@ -5,16 +5,16 @@
 #include <MeshRenderingComponent.hpp>
 #include <FreeFloatMovementComponent.hpp>
 #include <Core.hpp>
-#include <HeavyTaskSystem.hpp>
+#include <DeferredTaskSystem.hpp>
 
 using namespace Poly;
 
 void InvadersGame::Init()
 {
-	Camera = HeavyTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
-	HeavyTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), Camera);
-	HeavyTaskSystem::AddComponentImmediate<Poly::CameraComponent>(&Engine->GetWorld(), Camera, 45.0f, 1.0f, 1000.f);
-	HeavyTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(&Engine->GetWorld(), Camera, 10.0f, 0.003f);
+	Camera = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), Camera);
+	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(&Engine->GetWorld(), Camera, 45.0f, 1.0f, 1000.f);
+	DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(&Engine->GetWorld(), Camera, 10.0f, 0.003f);
 
 	// Set some camera position
 	Poly::TransformComponent* cameraTrans = Engine->GetWorld().GetComponent<Poly::TransformComponent>(Camera);
@@ -25,9 +25,9 @@ void InvadersGame::Init()
 	{
 		for (int j = -2; j < 2; ++j)
 		{
-			auto ent = HeavyTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
-			HeavyTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), ent);
-			HeavyTaskSystem::AddComponent<Poly::MeshRenderingComponent>(&Engine->GetWorld(), ent, (const char*)"model-tank/tank.fbx");
+			auto ent = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
+			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), ent);
+			DeferredTaskSystem::AddComponent<Poly::MeshRenderingComponent>(&Engine->GetWorld(), ent, (const char*)"model-tank/tank.fbx");
 			Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(ent);
 			entTransform->SetLocalTranslation(Vector(i * 2, 0, j * 5));
 			GameEntities.PushBack(ent);
@@ -40,9 +40,9 @@ void InvadersGame::Init()
 
 void InvadersGame::Deinit()
 {
-	HeavyTaskSystem::DestroyEntityImmediate(&Engine->GetWorld(), Camera);
+	DeferredTaskSystem::DestroyEntityImmediate(&Engine->GetWorld(), Camera);
 	for (auto ent : GameEntities)
-		HeavyTaskSystem::DestroyEntityImmediate(&Engine->GetWorld(), ent);
+		DeferredTaskSystem::DestroyEntityImmediate(&Engine->GetWorld(), ent);
 };
 
 void GameMainSystem::GameUpdate(Poly::World* /*world*/)

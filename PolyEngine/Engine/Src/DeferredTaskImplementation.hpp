@@ -1,12 +1,11 @@
 #pragma once
 
-#include "HeavyTaskBase.hpp"
+#include "DeferredTaskBase.hpp"
 #include "World.hpp"
-
 
 namespace Poly
 {
-	//Helper structs. Used in AddComponentHeavyTask.
+	//Helper structs. Used in AddComponentDeferredTask.
 	//These are needed to store 'args...' in std::tuple for later use (in Execute(...) method)
 	template <std::size_t... T>
 	struct index {};
@@ -17,10 +16,10 @@ namespace Poly
 	template <std::size_t... T>
 	struct gen_seq<0, T...> : index<T...> {};
 	//---------------------------------------------------------------
-	class SpawnEntityHeavyTask : public HeavyTaskBase
+	class SpawnEntityDeferredTask : public DeferredTaskBase
 	{
 	public:
-		SpawnEntityHeavyTask() {}
+		SpawnEntityDeferredTask() {}
 
 		virtual void Execute(World* w) { Id = w->SpawnEntity(); }
 
@@ -31,10 +30,10 @@ namespace Poly
 		UniqueID Id;
 	};
 
-	class DestroyEntityHeavyTask : public HeavyTaskBase
+	class DestroyEntityDeferredTask : public DeferredTaskBase
 	{
 	public:
-		DestroyEntityHeavyTask(const UniqueID &entityID) : Id(entityID) {}
+		DestroyEntityDeferredTask(const UniqueID &entityID) : Id(entityID) {}
 
 		virtual void Execute(World* w) { w->DestroyEntity(Id); }
 
@@ -44,10 +43,10 @@ namespace Poly
 	};
 	
 	template<typename T, typename... Args>
-	class AddComponentHeavyTask : public HeavyTaskBase
+	class AddComponentDeferredTask : public DeferredTaskBase
 	{
 	public:
-		AddComponentHeavyTask(const UniqueID &entityID, Args&&... args) : arguments(std::make_tuple(std::forward<Args>(args)...)), Id(entityID) {}
+		AddComponentDeferredTask(const UniqueID &entityID, Args&&... args) : arguments(std::make_tuple(std::forward<Args>(args)...)), Id(entityID) {}
 
 		virtual void Execute(World* w) { func(w, arguments); }
 
@@ -61,10 +60,10 @@ namespace Poly
 	};
 
 	template<typename T>
-	class RemoveComponentHeavyTask : public HeavyTaskBase
+	class RemoveComponentDeferredTask : public DeferredTaskBase
 	{
 	public:
-		RemoveComponentHeavyTask(const UniqueID &entityID) : Id(entityID) {}
+		RemoveComponentDeferredTask(const UniqueID &entityID) : Id(entityID) {}
 
 		virtual void Execute(World* w) { w->RemoveComponent<T>(Id); }
 

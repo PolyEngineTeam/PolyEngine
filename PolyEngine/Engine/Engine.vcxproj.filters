@@ -113,11 +113,11 @@
     <ClCompile Include="Src\FreeFloatMovementComponent.cpp">
       <Filter>Source Files\Movement</Filter>
     </ClCompile>
-    <ClCompile Include="Src\HeavyTaskSystem.cpp">
-      <Filter>Source Files\ECS</Filter>
-    </ClCompile>
     <ClCompile Include="Src\CoreConfig.cpp">
       <Filter>Source Files\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DeferredTaskSystem.cpp">
+      <Filter>Source Files\ECS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -208,17 +208,17 @@
     <ClInclude Include="Src\FreeFloatMovementComponent.hpp">
       <Filter>Source Files\Movement</Filter>
     </ClInclude>
-    <ClInclude Include="Src\HeavyTaskSystem.hpp">
-      <Filter>Source Files\ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\HeavyTaskBase.hpp">
-      <Filter>Source Files\ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\HeavyTaskImplementation.hpp">
-      <Filter>Source Files\ECS</Filter>
-    </ClInclude>
     <ClInclude Include="Src\CoreConfig.hpp">
       <Filter>Source Files\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DeferredTaskBase.hpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DeferredTaskImplementation.hpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DeferredTaskSystem.hpp">
+      <Filter>Source Files\ECS</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
