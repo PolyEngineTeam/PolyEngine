@@ -148,6 +148,7 @@ void ControlSystem::CheckBulletCollisions(World* world, GameManagerComponent* ga
 		}
 		if (to_delete)
 		{
+			gameManager->SetKillCount(gameManager->GetKillCount() + 1);
 			if (!gameManager->GetDeadGameEntities()->Contains(tank->GetTurret()))
 				gameManager->GetDeadGameEntities()->PushBack(tank->GetTurret());
 			if (!gameManager->GetDeadGameEntities()->Contains(other))
