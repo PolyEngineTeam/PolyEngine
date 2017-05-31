@@ -124,35 +124,36 @@ void ControlSystem::SpawnEnitites(GameManagerComponent* gameManager, World* worl
 void ControlSystem::CheckBulletCollisions(World* world, GameManagerComponent* gameManager, const UniqueID other)
 {
 	//todo : Collsioncomponent
-	AARect& rect1 = world->GetComponent<EnemyMovementComponent>(other)->GetCollisionBox();
-	bool to_delete = false;
-	Poly::Dynarray<Poly::UniqueID>* gameEntities = gameManager->GetGameEntities();
-	for (Poly::UniqueID ent : *gameEntities)
+	if (world->GetComponent<EnemyMovementComponent>(other) != nullptr)
 	{
-		if (to_delete)
-			break;
-		if (world->GetComponent<BulletComponent>(ent) != nullptr)
+		EnemyMovementComponent* tank = world->GetComponent<EnemyMovementComponent>(other);
+		AARect& rect1 = tank->GetCollisionBox();
+		bool to_delete = false;
+		Poly::Dynarray<Poly::UniqueID>* gameEntities = gameManager->GetGameEntities();
+		for (Poly::UniqueID ent : *gameEntities)
 		{
-			BulletComponent* bullet = world->GetComponent<BulletComponent>(ent);
-			to_delete = CheckCollision(rect1, bullet->GetCollisionBox());
 			if (to_delete)
+				break;
+			if (world->GetComponent<BulletComponent>(ent) != nullptr)
 			{
-				gConsole.LogInfo("Collision!");
-				if (!gameManager->GetDeadGameEntities()->Contains(ent))
-					gameManager->GetDeadGameEntities()->PushBack(ent);
+				BulletComponent* bullet = world->GetComponent<BulletComponent>(ent);
+				to_delete = CheckCollision(rect1, bullet->GetCollisionBox());
+				if (to_delete)
+				{
+					gConsole.LogInfo("Collision!");
+					if (!gameManager->GetDeadGameEntities()->Contains(ent))
+						gameManager->GetDeadGameEntities()->PushBack(ent); 
+				}
 			}
-				
 		}
-
+		if (to_delete)
+		{
+			if (!gameManager->GetDeadGameEntities()->Contains(tank->GetTurret()))
+				gameManager->GetDeadGameEntities()->PushBack(tank->GetTurret());
+			if (!gameManager->GetDeadGameEntities()->Contains(other))
+				gameManager->GetDeadGameEntities()->PushBack(other);
+		}
 	}
-	if (to_delete)
-	{
-		if(!gameManager->GetDeadGameEntities()->Contains(other))
-			gameManager->GetDeadGameEntities()->PushBack(other);
-	}
-		
-
-
 }
 
 bool ControlSystem::CheckCollision(const AARect& rect1, const AARect& rect2)

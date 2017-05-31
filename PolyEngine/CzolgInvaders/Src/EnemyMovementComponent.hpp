@@ -9,13 +9,15 @@ namespace Poly {
 	{
 
 	public:
-		EnemyMovementComponent(AARect collision, float movementSpeed = 2.0f);
+		EnemyMovementComponent(AARect collision, UniqueID& turret, float movementSpeed = 2.0f);
 
 		float GetMovementSpeed() const { return MovementSpeed; }
 		AARect& GetCollisionBox() { return CollisionBox; }
+		UniqueID GetTurret() { return Turret; }
 
 	private:
 		float MovementSpeed = 2.0f;
 		AARect CollisionBox;
+		UniqueID Turret;
 	};
 }
