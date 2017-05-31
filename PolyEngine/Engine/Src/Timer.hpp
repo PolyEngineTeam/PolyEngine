@@ -16,6 +16,7 @@ namespace Poly
 			IsPausable(isPausable),
 			Multiplier(multiplier){}
 
+		void SetMultiplier(double multiplier) { Multiplier = multiplier; }
 		double GetTime() const { return Time.count(); }
 		double GetMultiplier() const { return Multiplier; }
 		double GetDeltaTime() const { return DeltaTime; }
