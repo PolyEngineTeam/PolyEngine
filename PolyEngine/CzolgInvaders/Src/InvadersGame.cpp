@@ -21,8 +21,8 @@ void InvadersGame::Init()
 
 	// Set some camera position
 	Poly::TransformComponent* cameraTrans = Engine->GetWorld().GetComponent<Poly::TransformComponent>(Camera);
-	cameraTrans->SetLocalTranslation(Vector(-23.1327f, 13.9473f, -25.7297f));
-	cameraTrans->SetLocalRotation(Quaternion(EulerAngles{ 152.154_deg, 52.1159_deg, -180_deg }));
+	cameraTrans->SetLocalTranslation(Vector(0.0f, 20.0f, 60.0f));
+	cameraTrans->SetLocalRotation(Quaternion(EulerAngles{ -30_deg, 0_deg, 0_deg }));
 
 	for (int i = -1; i < 1; ++i)
 	{
@@ -30,7 +30,7 @@ void InvadersGame::Init()
 		{
 			auto ent = Engine->GetWorld().SpawnEntity();
 			Engine->GetWorld().AddComponent<Poly::TransformComponent>(ent);
-			Engine->GetWorld().AddComponent<Poly::EnemyMovementComponent>(ent, AARect(Vector(i * 6, 0, j * 8), Vector(10.0f, 10.0f, 10.0f)));
+			Engine->GetWorld().AddComponent<Poly::EnemyMovementComponent>(ent, AARect(Vector(i * 6, 0, j * 8), Vector(5.0f, 5.0f, 5.0f)));
 			Engine->GetWorld().AddComponent<Poly::MeshRenderingComponent>(ent, "model-tank/tank.fbx");
 			Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(ent);
 			entTransform->SetLocalTranslation(Vector(i * 8, 0, j * 10));
@@ -43,7 +43,7 @@ void InvadersGame::Init()
 	Engine->GetWorld().AddComponent<Poly::MeshRenderingComponent>(player, "model-tank/tank.fbx");
 	Engine->GetWorld().AddComponent<PlayerControllerComponent>(player, 10.0f);
 	Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(player);
-	entTransform->SetLocalTranslation(Vector(0, 0, 30));
+	entTransform->SetLocalTranslation(Vector(0, 0, 50));
 	gameManagerComponent->GetGameEntities()->PushBack(player);
 
 	Engine->GetWorld().GetViewportWorldComponent().SetCamera(0, Engine->GetWorld().GetComponent<Poly::CameraComponent>(Camera));

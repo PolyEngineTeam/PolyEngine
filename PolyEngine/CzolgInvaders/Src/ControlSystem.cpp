@@ -34,7 +34,8 @@ void ControlSystem::ControlSystemPhase(World* world)
 			}
 			else
 			{
-				gameManager->GetDeadGameEntities()->PushBack(ent);
+				if (!gameManager->GetDeadGameEntities()->Contains(ent))
+					gameManager->GetDeadGameEntities()->PushBack(ent);
 			}
 		}
 		else if (world->GetComponent<PlayerControllerComponent>(ent) != nullptr)
@@ -79,9 +80,10 @@ void ControlSystem::ControlSystemPhase(World* world)
 				enemy_transform->SetLocalTranslation(prev_location + move);
 				enemy->GetCollisionBox().SetPosition(enemy_transform->GetLocalTranslation() + move);
 			}
+			CheckBulletCollisions(world, gameManager, ent);
 		}
 	}
-	//CleanUpEnitites(gameManager, world);
+	CleanUpEnitites(gameManager, world);
 	SpawnEnitites(gameManager, world);
 }
 
@@ -93,10 +95,11 @@ void ControlSystem::SpawnBullet(GameManagerComponent* gameManager, World* world,
 	if (direction.Length() > 0)
 		direction.Normalize();
 	world->AddComponent<BulletComponent>(bullet, speed, direction, 
-		AARect(world->GetComponent<Poly::TransformComponent>(bullet)->GetLocalTranslation(), Vector(10.0f,10.0f,10.0f)), world->GetTimeWorldComponent().GetGameplayTime());
+		AARect(world->GetComponent<Poly::TransformComponent>(bullet)->GetLocalTranslation(), Vector(2.0f,2.0f,2.0f)), world->GetTimeWorldComponent().GetGameplayTime());
 	Poly::TransformComponent* transform = world->GetComponent<Poly::TransformComponent>(bullet);
 	transform->SetLocalScale(Vector(0.25f, 0.25f, 0.25f));
 	transform->SetLocalTranslation(pos);
+	gConsole.LogInfo("Spawning Bullet!", std::to_string(bullet.GetHash()));
 	gameManager->GetSpawnGameEntities()->PushBack(bullet);
 }
 void ControlSystem::CleanUpEnitites(GameManagerComponent* gameManager, World* world)
@@ -121,7 +124,7 @@ void ControlSystem::SpawnEnitites(GameManagerComponent* gameManager, World* worl
 void ControlSystem::CheckBulletCollisions(World* world, GameManagerComponent* gameManager, const UniqueID other)
 {
 	//todo : Collsioncomponent
-	/*AARect& rect1 = other
+	AARect& rect1 = world->GetComponent<EnemyMovementComponent>(other)->GetCollisionBox();
 	bool to_delete = false;
 	Poly::Dynarray<Poly::UniqueID>* gameEntities = gameManager->GetGameEntities();
 	for (Poly::UniqueID ent : *gameEntities)
@@ -133,12 +136,21 @@ void ControlSystem::CheckBulletCollisions(World* world, GameManagerComponent* ga
 			BulletComponent* bullet = world->GetComponent<BulletComponent>(ent);
 			to_delete = CheckCollision(rect1, bullet->GetCollisionBox());
 			if (to_delete)
-				gameManager->GetDeadGameEntities()->PushBack(ent);
+			{
+				gConsole.LogInfo("Collision!");
+				if (!gameManager->GetDeadGameEntities()->Contains(ent))
+					gameManager->GetDeadGameEntities()->PushBack(ent);
+			}
+				
 		}
 
 	}
 	if (to_delete)
-		gameManager->GetDeadGameEntities()->PushBack(ent);*/
+	{
+		if(!gameManager->GetDeadGameEntities()->Contains(other))
+			gameManager->GetDeadGameEntities()->PushBack(other);
+	}
+		
 
 
 }
