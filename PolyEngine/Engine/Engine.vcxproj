@@ -192,7 +192,6 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\ResourceManager.cpp" />
     <ClCompile Include="Src\ShaderProgram.cpp" />
     <ClCompile Include="Src\Text2D.cpp" />
-    <ClCompile Include="Src\Timer.cpp" />
     <ClCompile Include="Src\TimeSystem.cpp" />
     <ClCompile Include="Src\TimeWorldComponent.cpp" />
     <ClCompile Include="Src\TransformComponent.cpp" />
