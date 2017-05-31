@@ -80,11 +80,8 @@ namespace Poly {
 		void AddWorldComponent(Args&&... args)
 		{			
 			HEAVY_ASSERTE(!HasWorldComponent(EnginePtr->GetWorldComponentID<T>()), "Failed at AddWorldComponent() - a world component of a given type already exists!");
-			T* ptr = GetWorldComponentAllocator<T>()->Alloc();
-			::new(ptr) T(std::forward<Args>(args)...);
-			ComponentPosessionFlags.set(EnginePtr->GetWorldComponentID<T>(), true);
-			Components[EnginePtr->GetWorldComponentID<T>()] = ptr;
-			ptr->SetFlags(eComponentBaseFlags::WORLD_COMPONENT);
+			Components[EnginePtr->GetWorldComponentID<T>()] = new T(std::forward<Args>(args)...);
+			Components[EnginePtr->GetWorldComponentID<T>()]->SetFlags(eComponentBaseFlags::WORLD_COMPONENT);
 		}
 
 		//------------------------------------------------------------------------------
@@ -92,7 +89,6 @@ namespace Poly {
 		void RemoveWorldComponent()
 		{
 			HEAVY_ASSERTE(HasWorldComponent(EnginePtr->GetWorldComponentID<T>()), "Failed at RemoveWorldComponent() - a component of a given type does not exist!");
-			ComponentPosessionFlags.set(EnginePtr->GetWorldComponentID<T>(), false);
 			T* component = Components[EnginePtr->GetWorldComponentID<T>()];
 			Components[EnginePtr->GetWorldComponentID<T>()] = nullptr;
 			component->~T();
@@ -111,14 +107,6 @@ namespace Poly {
 
 		//------------------------------------------------------------------------------
 		bool HasWorldComponent(size_t ID) const;
-
-		//------------------------------------------------------------------------------
-		inline bool HasWorldComponents(unsigned long int IDs) const
-		{
-			//TODO This bit field has to be reimplemented - it will not work for MAX_COMPONENTS_COUNT greater than 64 in its current state.
-			STATIC_ASSERTE(MAX_COMPONENTS_COUNT <= 64, "MAX_COMPONENTS_COUNT greater than 64.");
-			return (ComponentPosessionFlags.to_ullong() & IDs) == IDs;
-		}
 
 		//------------------------------------------------------------------------------
 		template<typename PrimaryComponent, typename... SecondaryComponents>
@@ -209,17 +197,6 @@ namespace Poly {
 			return static_cast<IterablePoolAllocator<T>*>(ComponentAllocators[componentID]);
 		}
 
-		//------------------------------------------------------------------------------
-		template<typename T>
-		IterablePoolAllocator<T>* GetWorldComponentAllocator()
-		{
-			size_t componentID = EnginePtr->GetWorldComponentID<T>();
-			HEAVY_ASSERTE(componentID < MAX_WORLD_COMPONENTS_COUNT, "Invalid world component ID");
-			if (WorldComponentAllocators[componentID] == nullptr)
-				WorldComponentAllocators[componentID] = new IterablePoolAllocator<T>(1);
-			return static_cast<IterablePoolAllocator<T>*>(WorldComponentAllocators[componentID]);
-		}
-
 		std::unordered_map<UniqueID, Entity*> IDToEntityMap;
 
 		void RemoveComponentById(Entity* ent, size_t id);
@@ -227,10 +204,8 @@ namespace Poly {
 		// Allocators
 		PoolAllocator<Entity> EntitiesAllocator;
 		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
-		IterablePoolAllocatorBase* WorldComponentAllocators[MAX_WORLD_COMPONENTS_COUNT];
 		Engine* EnginePtr;
 
-		std::bitset<MAX_WORLD_COMPONENTS_COUNT> ComponentPosessionFlags;
 		ComponentBase* Components[MAX_WORLD_COMPONENTS_COUNT];
 	};
 
