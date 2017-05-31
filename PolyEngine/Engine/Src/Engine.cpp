@@ -7,7 +7,7 @@ using namespace Poly;
 //------------------------------------------------------------------------------
 Engine::Engine(IGame* game) : Game(game)
 {
-	BaseWorld = new World(this, true);
+	BaseWorld = new World(this);
 	Game->RegisterEngine(this);
 	Renderer = CreateRenderingContext();
 }

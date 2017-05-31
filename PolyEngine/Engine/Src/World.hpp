@@ -20,7 +20,7 @@ namespace Poly {
 	class ENGINE_DLLEXPORT World : public BaseObject<>
 	{
 	public:
-		World(Engine* engine, bool base = false);
+		World(Engine* engine);
 		virtual ~World();
 
 		Engine* GetEngine() const { return EnginePtr; }

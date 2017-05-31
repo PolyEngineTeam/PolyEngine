@@ -2,18 +2,11 @@
 
 using namespace Poly;
 
-World::World(Engine* engine, bool base)
+World::World(Engine* engine)
 	: EntitiesAllocator(MAX_ENTITY_COUNT), EnginePtr(engine)
 {
 	memset(ComponentAllocators, 0, sizeof(IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
 	memset(Components, 0, sizeof(ComponentBase*) * MAX_WORLD_COMPONENTS_COUNT);
-
-	if (!base)
-	{
-		AddWorldComponent<InputWorldComponent>();
-		AddWorldComponent<ViewportWorldComponent>();
-		AddWorldComponent<TimeWorldComponent>();
-	}
 }
 
 
