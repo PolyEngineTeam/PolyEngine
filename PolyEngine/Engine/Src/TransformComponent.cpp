@@ -134,23 +134,14 @@ void TransformComponent::UpdateGlobalTransformationCache() const
 	if (!GlobalDirty) return;
 	if (Parent == nullptr)
 	{
-		if (GlobalDirty) {
-			GlobalTransform = GetLocalTransformationMatrix();
-			GlobalTransform.Decompose(GlobalTranslation, GlobalRotation, GlobalScale);
-			GlobalDirty = false;
-			return;
-		}
+		GlobalTransform = GetLocalTransformationMatrix();
 	}
 	else
 	{
-		if (GlobalDirty)
-		{
-			GlobalTransform = Parent->GetGlobalTransformationMatrix() * GetLocalTransformationMatrix();
-			GlobalTransform.Decompose(GlobalTranslation, GlobalRotation, GlobalScale);
-			GlobalDirty = false;
-			return;
-		}
+		GlobalTransform = Parent->GetGlobalTransformationMatrix() * GetLocalTransformationMatrix();
 	}
+	GlobalTransform.Decompose(GlobalTranslation, GlobalRotation, GlobalScale);
+	GlobalDirty = false;
 }
 
 //------------------------------------------------------------------------------
