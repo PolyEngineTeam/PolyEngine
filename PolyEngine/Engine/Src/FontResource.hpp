@@ -1,0 +1,51 @@
+#pragma once
+
+#include <Dynarray.hpp>
+#include <EnumUtils.hpp>
+#include <Color.hpp>
+
+#include "ResourceBase.hpp"
+#include "GLTextureResource.hpp"
+
+#include <ft2build.h>
+#include FT_FREETYPE_H  
+
+typedef unsigned int GLuint;
+
+namespace Poly
+{
+	class ENGINE_DLLEXPORT FontResource : public ResourceBase
+	{
+	public:
+		class FontFace
+		{
+		public:
+			struct FontGlyph
+			{
+				Vector TextureUV[2];  // texture uv-s
+				Vector Size;		  // Size of glyph
+				Vector Bearing;       // Offset from baseline to left/top of glyph
+				float Advance;       // Offset to advance to next glyph
+			};
+			
+			GLuint TextureID;
+			FT_Face FTFace;
+			std::map<char, FontGlyph> Characters;
+		};
+
+		FontResource(const String& path);
+		virtual ~FontResource();
+
+		const FontFace& GetFace(size_t height) const;
+
+		void LoadFace(size_t height) const;
+		void LoadFaces(std::initializer_list<size_t> list) const
+		{
+			for (size_t height : list)
+				LoadFace(height);
+		}
+	private:
+		String FontPath;
+		mutable std::unordered_map<size_t, FontFace> Faces;
+	};
+}

@@ -129,9 +129,19 @@ void ShaderProgram::SetUniform(const String& name, float val)
 	glUniform1f(m_uniforms[name], val);
 }
 
+void ShaderProgram::SetUniform(const String & name, float val1, float val2)
+{
+	glUniform2f(m_uniforms[name], val1, val2);
+}
+
 void ShaderProgram::SetUniform(const String& name, const Vector& val)
 {
 	glUniform4f(m_uniforms[name], val.X, val.Y, val.Z, val.W);
+}
+
+void ShaderProgram::SetUniform(const String& name, const Color& val)
+{
+	glUniform4f(m_uniforms[name], val.R, val.G, val.B, val.A);
 }
 
 void ShaderProgram::SetUniform(const String& name, const Matrix& val)

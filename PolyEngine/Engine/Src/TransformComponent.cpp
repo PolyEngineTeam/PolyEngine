@@ -55,7 +55,7 @@ void TransformComponent::SetLocalTranslation(const Vector& position)
 {
 	LocalTranslation = position;
 	LocalDirty = true;
-	GlobalDirty = true;
+	SetGlobalDirty();
 }
 
 //------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ void TransformComponent::SetLocalRotation(const Quaternion& quaternion)
 {
 	LocalRotation = quaternion;
 	LocalDirty = true;
-	GlobalDirty = true;
+	SetGlobalDirty();
 }
 
 //------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ void TransformComponent::SetLocalScale(const Vector& scale)
 {
 	LocalScale = scale;
 	LocalDirty = true;
-	GlobalDirty = true;
+	SetGlobalDirty();
 }
 
 //------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ void TransformComponent::SetLocalTransformationMatrix(const Matrix& localTransfo
 	LocalTransform = localTransformation;
 	localTransformation.Decompose(LocalTranslation, LocalRotation, LocalScale);
 	LocalDirty = false;
-	GlobalDirty = true;
+	SetGlobalDirty();
 }
 
 //------------------------------------------------------------------------------
@@ -129,29 +129,27 @@ bool TransformComponent::UpdateLocalTransformationCache() const
 }
 
 //------------------------------------------------------------------------------
-bool TransformComponent::UpdateGlobalTransformationCache() const
+void TransformComponent::UpdateGlobalTransformationCache() const
 {
+	if (!GlobalDirty) return;
 	if (Parent == nullptr)
 	{
-		if (GlobalDirty) {
-			GlobalTransform = GetLocalTransformationMatrix();
-			GlobalTransform.Decompose(GlobalTranslation, GlobalRotation, GlobalScale);
-			GlobalDirty = false;
-			return true;
-		}
-		else
-			return false;
+		GlobalTransform = GetLocalTransformationMatrix();
 	}
 	else
 	{
-		if (Parent->UpdateGlobalTransformationCache() || GlobalDirty)
-		{
-			GlobalTransform = Parent->GlobalTransform * GetLocalTransformationMatrix();
-			GlobalTransform.Decompose(GlobalTranslation, GlobalRotation, GlobalScale);
-			GlobalDirty = false;
-			return true;
-		}
-		else
-			return false;
+		GlobalTransform = Parent->GetGlobalTransformationMatrix() * GetLocalTransformationMatrix();
+	}
+	GlobalTransform.Decompose(GlobalTranslation, GlobalRotation, GlobalScale);
+	GlobalDirty = false;
+}
+
+//------------------------------------------------------------------------------
+void TransformComponent::SetGlobalDirty() const
+{
+	GlobalDirty = true;
+	for (TransformComponent* c : Children)
+	{
+		c->SetGlobalDirty();
 	}
 }

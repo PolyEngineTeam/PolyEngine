@@ -95,7 +95,7 @@
       <PrecompiledHeaderFile>EnginePCH.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;freetype28.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\glew\lib\Release\Win32;$(SolutionDir)ThirdParty\SOIL\lib\Release\Win32;$(SolutionDir)ThirdParty\assimp\lib\Release\Win32;$(SolutionDir)ThirdParty\freetype\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -114,7 +114,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\Win32\assimp-vc140-mt.dl
       <PrecompiledHeaderFile>EnginePCH.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;freetype28.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\glew\lib\Release\x64;$(SolutionDir)ThirdParty\SOIL\lib\Release\x64;$(SolutionDir)ThirdParty\assimp\lib\Release\x64;$(SolutionDir)ThirdParty\freetype\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -137,7 +137,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;freetype28.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\glew\lib\Release\Win32;$(SolutionDir)ThirdParty\SOIL\lib\Release\Win32;$(SolutionDir)ThirdParty\assimp\lib\Release\Win32;$(SolutionDir)ThirdParty\freetype\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -160,7 +160,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\Win32\assimp-vc140-mt.dl
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;freetype28.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\glew\lib\Release\x64;$(SolutionDir)ThirdParty\SOIL\lib\Release\x64;$(SolutionDir)ThirdParty\assimp\lib\Release\x64;$(SolutionDir)ThirdParty\freetype\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -180,6 +180,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Src\Entity.cpp" />
+    <ClCompile Include="Src\FontResource.cpp" />
     <ClCompile Include="Src\FreeFloatMovementComponent.cpp" />
     <ClCompile Include="Src\DeferredTaskSystem.cpp" />
     <ClCompile Include="Src\InputWorldComponent.cpp" />
@@ -191,6 +192,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\RenderingSystem.cpp" />
     <ClCompile Include="Src\ResourceManager.cpp" />
     <ClCompile Include="Src\ShaderProgram.cpp" />
+    <ClCompile Include="Src\Text2D.cpp" />
     <ClCompile Include="Src\Timer.cpp" />
     <ClCompile Include="Src\TimeSystem.cpp" />
     <ClCompile Include="Src\TimeWorldComponent.cpp" />
@@ -212,6 +214,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\Engine.hpp" />
     <ClInclude Include="Src\EnginePCH.hpp" />
     <ClInclude Include="Src\Entity.hpp" />
+    <ClInclude Include="Src\FontResource.hpp" />
     <ClInclude Include="Src\FreeFloatMovementComponent.hpp" />
     <ClInclude Include="Src\DeferredTaskBase.hpp" />
     <ClInclude Include="Src\DeferredTaskImplementation.hpp" />
@@ -229,7 +232,9 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\RenderingSystem.hpp" />
     <ClInclude Include="Src\ResourceBase.hpp" />
     <ClInclude Include="Src\ResourceManager.hpp" />
+    <ClInclude Include="Src\ScreenSpaceTextComponent.hpp" />
     <ClInclude Include="Src\ShaderProgram.hpp" />
+    <ClInclude Include="Src\Text2D.hpp" />
     <ClInclude Include="Src\Timer.hpp" />
     <ClInclude Include="Src\TimeSystem.hpp" />
     <ClInclude Include="Src\TimeWorldComponent.hpp" />

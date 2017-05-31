@@ -1,10 +1,97 @@
 #include "EnginePCH.hpp"
 
 #include "ShaderProgram.hpp"
+#include "ScreenSpaceTextComponent.hpp"
 
 #include <GL/glew.h>
 
 using namespace Poly;
+
+void DrawText2D(ShaderProgram& program, const FontResource::FontFace& face, const String& text, const Vector& pos, const Color& color)
+{
+	static bool once = true;
+	
+	static GLuint VAO, VBO;
+
+	if (once)
+	{
+		once = false;
+		glGenVertexArrays(1, &VAO);
+		glGenBuffers(1, &VBO);
+		glBindVertexArray(VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), 0);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(4 * sizeof(GLfloat)));
+
+		//glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+		CHECK_GL_ERR();
+	}
+
+	// Iterate through all characters
+	const char* textData = text.GetCStr();
+	float x = pos.X;
+	float y = pos.Y;
+	float scale = 1;
+	Dynarray<float> vboData;
+	for (size_t i = 0; i < text.GetLength(); ++i)
+	{
+		char c = text[i];
+		auto it = face.Characters.find(c);
+		FontResource::FontFace::FontGlyph ch = it->second;
+
+		GLfloat xpos = x + ch.Bearing.X * scale;
+		GLfloat ypos = y - (ch.Size.Y - ch.Bearing.Y) * scale;
+
+		GLfloat w = ch.Size.X * scale;
+		GLfloat h = ch.Size.Y * scale;
+		// Update VBO for each character
+
+		float vertices[36] = {
+			// tri1 (pos + uv)
+			xpos, ypos + h, 0.0f, 1.0f,		ch.TextureUV[0].X, ch.TextureUV[0].Y,
+			xpos, ypos, 0.0f, 1.0f,			ch.TextureUV[0].X, ch.TextureUV[1].Y,
+			xpos + w, ypos, 0.0f, 1.0f,     ch.TextureUV[1].X, ch.TextureUV[1].Y,
+
+			// tri2
+			xpos, ypos + h, 0.0f, 1.0f,		ch.TextureUV[0].X, ch.TextureUV[0].Y,
+			xpos + w, ypos, 0.0f, 1.0f,     ch.TextureUV[1].X, ch.TextureUV[1].Y,
+			xpos + w, ypos + h, 0.0f, 1.0f, ch.TextureUV[1].X, ch.TextureUV[0].Y
+		};
+
+		for (int k = 0; k < 36; ++k)
+			vboData.PushBack(vertices[k]);
+
+		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+		x += ch.Advance * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
+	}
+
+	program.SetUniform("u_textColor", color);
+	
+	glBindVertexArray(VAO);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, face.TextureID);
+	CHECK_GL_ERR();
+
+	// Render glyph texture over quad
+	
+	CHECK_GL_ERR();
+	// Update content of VBO memory
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vboData.GetSize(), vboData.GetData(), GL_DYNAMIC_DRAW);
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+	CHECK_GL_ERR();
+	// Render quad
+	glDrawArrays(GL_TRIANGLES, 0, 6 * text.GetLength());
+
+	
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindVertexArray(0);
+	CHECK_GL_ERR();
+}
 
 void RenderingSystem::RenderingPhase(World* world)
 {	
@@ -83,8 +170,30 @@ void RenderingSystem::RenderingPhase(World* world)
 		}
 
 		CHECK_GL_ERR();
+		
 		glDepthMask(GL_FALSE);
 		glDisable(GL_DEPTH_TEST);
+
+		// Text drawing
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		CHECK_GL_ERR();
+
+		Matrix ortho;
+		ortho.SetOrthographic(rect.GetMin().Y * screen.Height, rect.GetMax().Y * screen.Height, rect.GetMin().X * screen.Width, rect.GetMax().X * screen.Width, -1, 1);
+		context->GetProgram(eShaderProgramType::TEXT_2D).BindProgram();
+		context->GetProgram(eShaderProgramType::TEXT_2D).SetUniform("u_projection", ortho);
+
+		for (auto componentsTuple : world->IterateComponents<ScreenSpaceTextComponent>())
+		{
+			ScreenSpaceTextComponent* textCmp = std::get<ScreenSpaceTextComponent*>(componentsTuple);
+			Text2D& text = textCmp->GetText();
+			context->GetProgram(eShaderProgramType::TEXT_2D).SetUniform("u_textColor", text.GetFontColor());
+			context->GetProgram(eShaderProgramType::TEXT_2D).SetUniform("u_position", textCmp->GetScreenPosition());
+			text.Draw();
+		}
+
+		glDisable(GL_BLEND);
 	}
 
 	context->EndFrame();

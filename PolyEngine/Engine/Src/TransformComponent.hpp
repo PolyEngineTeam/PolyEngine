@@ -47,6 +47,7 @@ namespace Poly {
 		mutable bool GlobalDirty = false;
 
 		bool UpdateLocalTransformationCache() const;
-		bool UpdateGlobalTransformationCache() const;
+		void UpdateGlobalTransformationCache() const;
+		void SetGlobalDirty() const;
 	};
 }
