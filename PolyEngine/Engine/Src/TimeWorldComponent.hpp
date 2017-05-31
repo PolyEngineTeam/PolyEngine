@@ -36,6 +36,6 @@ namespace Poly
 
 		std::unordered_map<size_t, Timer> Timers;
 
-		bool Paused;
+		bool Paused = false;
 	};
 }
