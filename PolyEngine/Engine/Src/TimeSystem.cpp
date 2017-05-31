@@ -50,7 +50,10 @@ void TimeSystem::RegisterTimer(World * world, size_t id, bool isPausable, double
 double TimeSystem::GetTimerDeltaTime(World * world, size_t id)
 {
 	TimeWorldComponent& timeComponent = world->GetTimeWorldComponent();
-	return timeComponent.Timers.count(id) == 0 ? 0.0f : timeComponent.Timers[id].GetDeltaTime();
+	if(timeComponent.Timers.count(id) == 0)
+		throw std::invalid_argument("Timer with given id does not exist.");
+	else 
+		return timeComponent.Timers[id].GetDeltaTime();
 }
 
 //------------------------------------------------------------------------------
@@ -63,7 +66,10 @@ double TimeSystem::GetTimerDeltaTime(World * world, eEngineTimer timerType)
 double TimeSystem::GetTimerElapsedTime(World * world, size_t id)
 {
 	TimeWorldComponent& timeComponent = world->GetTimeWorldComponent();
-	return timeComponent.Timers.count(id) == 0 ? 0.0f : timeComponent.Timers[id].GetTime();
+	if(timeComponent.Timers.count(id) == 0)
+		throw std::invalid_argument("Timer with given id does not exist.");
+	else 
+		return timeComponent.Timers[id].GetTime();
 }
 
 //------------------------------------------------------------------------------
@@ -76,7 +82,10 @@ double TimeSystem::GetTimerElapsedTime(World * world, eEngineTimer timerType)
 double TimeSystem::GetTimerMultiplier(World * world, size_t id)
 {
 	TimeWorldComponent& timeComponent = world->GetTimeWorldComponent();
-	return timeComponent.Timers.count(id) == 0 ? 0.0f : timeComponent.Timers[id].GetMultiplier();
+	if(timeComponent.Timers.count(id) == 0)
+		throw std::invalid_argument("Timer with given id does not exist.");
+	else 
+		return timeComponent.Timers[id].GetMultiplier();
 }
 
 //------------------------------------------------------------------------------
