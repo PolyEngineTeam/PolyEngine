@@ -24,26 +24,25 @@ void InvadersGame::Init()
 	cameraTrans->SetLocalTranslation(Vector(0.0f, 20.0f, 60.0f));
 	cameraTrans->SetLocalRotation(Quaternion(EulerAngles{ -30_deg, 0_deg, 0_deg }));
 
-	for (int i = -1; i < 1; ++i)
+	for (int i = -3; i < 3; ++i)
 	{
-		for (int j = -2; j < 2; ++j)
+		for (int j = -1; j < 1; ++j)
 		{
 			auto base = Engine->GetWorld().SpawnEntity();
 			Engine->GetWorld().AddComponent<Poly::TransformComponent>(base);
 			Engine->GetWorld().AddComponent<Poly::EnemyMovementComponent>(base, AARect(Vector(i * 6, 0, j * 8), Vector(5.0f, 5.0f, 5.0f)));
 			Engine->GetWorld().AddComponent<Poly::MeshRenderingComponent>(base, "model-tank/base.fbx");
 			Poly::TransformComponent* baseTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(base);
-			baseTransform->SetLocalTranslation(Vector(i * 8, 0, j * 10));
-			baseTransform->SetLocalRotation(Quaternion(EulerAngles{ 0.0_deg, 180.0_deg, 0.0_deg }));
+			baseTransform->SetLocalTranslation(Vector(i * 12, 0, j * 8));
+			baseTransform->SetLocalRotation(Quaternion(EulerAngles{ 0.0_deg, -90.0_deg, 0.0_deg }));
 			gameManagerComponent->GetGameEntities()->PushBack(base);
 
 			auto ent = Engine->GetWorld().SpawnEntity();
 			Engine->GetWorld().AddComponent<Poly::TransformComponent>(ent);
 			Engine->GetWorld().AddComponent<Poly::MeshRenderingComponent>(ent, "model-tank/turret.fbx");
 			Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(ent);
-			entTransform->SetLocalTranslation(Vector(i * 8, 0, j * 10));
-			entTransform->SetLocalRotation(Quaternion(EulerAngles{ 0.0_deg, 180.0_deg, 0.0_deg }));
 			entTransform->SetParent(baseTransform);
+			entTransform->SetLocalRotation(Quaternion(EulerAngles{ 0.0_deg, -90.0_deg, 0.0_deg }));
 			gameManagerComponent->GetGameEntities()->PushBack(ent);
 		}
 	}

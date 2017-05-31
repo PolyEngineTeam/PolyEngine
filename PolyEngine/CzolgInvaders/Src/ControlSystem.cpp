@@ -67,7 +67,7 @@ void ControlSystem::ControlSystemPhase(World* world)
 		else if (world->GetComponent<EnemyMovementComponent>(ent) != nullptr)
 		{
 			EnemyMovementComponent* enemy = world->GetComponent<EnemyMovementComponent>(ent);
-			Vector move(0, 0, 1.0f);
+			Vector move(1.0f, 0, 0);
 
 
 			if (move.Length() > 0)
