@@ -35,10 +35,21 @@ namespace Poly {
 		//////////////////////////////
 		/// Checks whether a given AARect is colliding with this AARect.
 		/// @param otherRect
-		/// @param intersection (optional) will be set to the intersection of the two tested AARects
 		/// @see Contains()
 		//////////////////////////////
-		bool IsCollidingWith(const AARect* otherRect, AARect* intersection = nullptr) const;
+		inline bool DoesIntersect(const AARect* otherRect) const
+		{	ASSERTE(otherRect != nullptr, "AARect::DoesIntersect() called with otherRect == nullptr.");
+			return (abs(Pos.X - otherRect->Pos.X) * 2 < (Size.X + otherRect->Size.X))
+			&& (abs(Pos.Y - otherRect->Pos.Y) * 2 < (Size.Y + otherRect->Size.Y))
+			&& (abs(Pos.Z - otherRect->Pos.Z) * 2 < (Size.Z + otherRect->Size.Z)); }
+
+		//////////////////////////////
+		/// Calculates the intersection of 2 AARects.
+		/// @param otherRect to calculate intersection with
+		/// @return AARect intersection
+		/// @see DoesIntersect()
+		//////////////////////////////
+		AARect GetIntersection(const AARect* otherRect) const;
 
 	private:
 		Vector Pos;

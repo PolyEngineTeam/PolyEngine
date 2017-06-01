@@ -14,8 +14,10 @@ namespace Poly {
 		return stream << "AARect[Pos: " << rect.Pos << " Size: " << rect.Size << " ]";
 	}
 
-	bool AARect::IsCollidingWith(const AARect* otherRect, AARect* intersection) const
+	AARect AARect::GetIntersection(const AARect* otherRect) const
 	{
+		ASSERTE(otherRect != nullptr, "AARect::GetIntersection() called with otherRect == nullptr.");
+
 		const float r1MinX = std::min(Pos.X, Pos.X + Size.X);
 		const float r1MaxX = std::max(Pos.X, Pos.X + Size.X);
 		const float r1MinY = std::min(Pos.Y, Pos.Y + Size.Y);
@@ -32,18 +34,16 @@ namespace Poly {
 
 		const float interLeft = std::max(r1MinX, r2MinX);
 		const float interTop = std::max(r1MinY, r2MinY);
-		const float interUp = std::min(r1MinZ, r2MinZ);
+		const float interUp = std::max(r1MinZ, r2MinZ);
 		const float interRight = std::min(r1MaxX, r2MaxX);
 		const float interBottom = std::min(r1MaxY, r2MaxY);
 		const float interDown = std::min(r1MaxZ, r2MaxZ);
 
 		if ((interLeft < interRight) && (interTop < interBottom) && (interUp < interDown))
 		{
-			if (intersection)
-				*intersection = AARect(Vector(interLeft, interTop, interUp), Vector(interRight - interLeft, interBottom - interTop, interDown - interUp));
-			return true;
+			return AARect(Vector(interLeft, interTop, interUp), Vector(interRight - interLeft, interBottom - interTop, interDown - interUp));
 		}
-
-		return false;
+		else
+			return AARect(Vector::ZERO, Vector::ZERO);
 	}
 }
