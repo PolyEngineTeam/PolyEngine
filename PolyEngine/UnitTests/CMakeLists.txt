@@ -50,6 +50,7 @@ add_test(NAME "BUILD_TESTS"                                   COMMAND "${CMAKE_C
 #TODO(vuko): one has to manually add a case here every time you add a new test to Catch... Maybe grep the files looking for TEST_CASE then generate?
 add_test(NAME "AARect-contains"                               COMMAND polytests "AARect contains")
 add_test(NAME "AARect-collisions-with-other-AARect"           COMMAND polytests "AARect collisions with other AARect")
+add_test(NAME "AARect-intersection-calculation"               COMMAND polytests "AARect intersection calculation")
 add_test(NAME "Pool-allocator"                                COMMAND polytests "Pool allocator")
 add_test(NAME "Iterable-pool-allocator"                       COMMAND polytests "Iterable pool allocator")
 add_test(NAME "Angle-constructors"                            COMMAND polytests "Angle constructors")
