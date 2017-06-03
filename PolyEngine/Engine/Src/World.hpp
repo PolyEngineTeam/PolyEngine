@@ -16,6 +16,7 @@ namespace Poly {
 
 	namespace DeferredTaskSystem
 	{
+		UniqueID ENGINE_DLLEXPORT SpawnEntityImmediate(World* w);
 		void ENGINE_DLLEXPORT DestroyEntityImmediate(World* w, const UniqueID& entityId);
 		template<typename T, typename ...Args> void AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args);
 	}
@@ -31,7 +32,6 @@ namespace Poly {
 		virtual ~World();
 
 		//TODO implement world
-		UniqueID SpawnEntity();
 		//------------------------------------------------------------------------------
 		//////////////////////////////
 		/// Gets a component of a specified type and UniqueID.
@@ -140,9 +140,12 @@ namespace Poly {
 		template<typename T,typename... Args> friend class AddComponentDeferredTask;
 		template<typename T> friend class RemoveComponentDeferredTask;
 
+		friend UniqueID DeferredTaskSystem::SpawnEntityImmediate(World*);
 		friend void DeferredTaskSystem::DestroyEntityImmediate(World* w, const UniqueID& entityId);
 		template<typename T, typename ...Args> friend void DeferredTaskSystem::AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args);
 
+		//------------------------------------------------------------------------------
+		UniqueID SpawnEntity();
 		//------------------------------------------------------------------------------
 		void DestroyEntity(const UniqueID& entityId);
 		//------------------------------------------------------------------------------

@@ -3,6 +3,13 @@
 
 using namespace Poly;
 
+UniqueID DeferredTaskSystem::SpawnEntityImmediate(World* w)
+{
+	UniqueID id = w->SpawnEntity();
+	gConsole.LogDebug("New immediate task executed: Spawn entity");
+	return id;
+}
+
 void DeferredTaskSystem::DeferredTaskPhase(World* w)
 {
 	DeferredTaskQueue& queue = w->GetDeferredTaskQueue();

@@ -122,9 +122,6 @@
     <ClCompile Include="Src\DeferredTaskSystem.cpp">
       <Filter>Source Files\ECS</Filter>
     </ClCompile>
-    <ClCompile Include="Src\DeferredTaskSystem.cpp">
-      <Filter>Source Files\ECS</Filter>
-    </ClCompile>
     <ClCompile Include="Src\FontResource.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
