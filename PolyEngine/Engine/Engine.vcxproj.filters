@@ -101,9 +101,6 @@
     <ClCompile Include="Src\TimeSystem.cpp">
       <Filter>Source Files\Time</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Timer.cpp">
-      <Filter>Source Files\Time</Filter>
-    </ClCompile>
     <ClCompile Include="Src\GLTextureResource.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
@@ -118,6 +115,9 @@
     </ClCompile>
     <ClCompile Include="Src\CoreConfig.cpp">
       <Filter>Source Files\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DeferredTaskSystem.cpp">
+      <Filter>Source Files\ECS</Filter>
     </ClCompile>
     <ClCompile Include="Src\FontResource.cpp">
       <Filter>Source Files\Resources</Filter>
@@ -216,6 +216,15 @@
     </ClInclude>
     <ClInclude Include="Src\CoreConfig.hpp">
       <Filter>Source Files\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DeferredTaskBase.hpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DeferredTaskImplementation.hpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DeferredTaskSystem.hpp">
+      <Filter>Source Files\ECS</Filter>
     </ClInclude>
     <ClInclude Include="Src\FontResource.hpp">
       <Filter>Source Files\Resources</Filter>

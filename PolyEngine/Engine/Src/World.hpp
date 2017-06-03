@@ -10,12 +10,20 @@
 #include "ViewportWorldComponent.hpp"
 #include "TimeWorldComponent.hpp"
 
+#include "DeferredTaskBase.hpp"
+
 namespace Poly {
-	class ComponentBase;
-	struct InputState;
+
+	namespace DeferredTaskSystem
+	{
+		UniqueID ENGINE_DLLEXPORT SpawnEntityImmediate(World* w);
+		void ENGINE_DLLEXPORT DestroyEntityImmediate(World* w, const UniqueID& entityId);
+		template<typename T, typename ...Args> void AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args);
+	}
 
 	constexpr size_t MAX_ENTITY_COUNT = 65536;
-	constexpr size_t MAX_WORLD_COMPONENTS_COUNT = 64;
+
+	struct InputState;
 
 	class ENGINE_DLLEXPORT World : public BaseObject<>
 	{
@@ -23,40 +31,7 @@ namespace Poly {
 		World(Engine* engine);
 		virtual ~World();
 
-		Engine* GetEngine() const { return EnginePtr; }
-
 		//TODO implement world
-		UniqueID SpawnEntity();
-		void DestroyEntity(const UniqueID& entityId);
-
-		//------------------------------------------------------------------------------
-		template<typename T, typename... Args>
-		void AddComponent(const UniqueID& entityId, Args&&... args)
-		{
-			T* ptr = GetComponentAllocator<T>()->Alloc();
-			::new(ptr) T(std::forward<Args>(args)...);
-			Entity* ent = IDToEntityMap[entityId];
-			HEAVY_ASSERTE(ent, "Invalid entity ID");
-			HEAVY_ASSERTE(!ent->HasComponent(EnginePtr->GetComponentID<T>()), "Failed at AddComponent() - a component of a given UniqueID already exists!");
-			ent->ComponentPosessionFlags.set(EnginePtr->GetComponentID<T>(), true);
-			ent->Components[EnginePtr->GetComponentID<T>()] = ptr;
-			ptr->Owner = ent;
-		}
-
-		//------------------------------------------------------------------------------
-		template<typename T>
-		void RemoveComponent(const UniqueID& entityId)
-		{
-			Entity* ent = IDToEntityMap[entityId];
-			HEAVY_ASSERTE(ent, "Invalid entity ID");
-			HEAVY_ASSERTE(ent->HasComponent(EnginePtr->GetComponentID<T>()), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
-			ent->ComponentPosessionFlags.set(EnginePtr->GetComponentID<T>(), false);
-			T* component = ent->Components[EnginePtr->GetComponentID<T>()];
-			ent->Components[EnginePtr->GetComponentID<T>()] = nullptr;
-			component->~T();
-			GetComponentAllocator<T>()->Free(component);
-		}
-
 		//------------------------------------------------------------------------------
 		//////////////////////////////
 		/// Gets a component of a specified type and UniqueID.
@@ -75,38 +50,10 @@ namespace Poly {
 			return iter->second->GetComponent<T>();
 		}
 
-		//------------------------------------------------------------------------------
-		template<typename T, typename... Args>
-		void AddWorldComponent(Args&&... args)
-		{			
-			HEAVY_ASSERTE(!HasWorldComponent(EnginePtr->GetWorldComponentID<T>()), "Failed at AddWorldComponent() - a world component of a given type already exists!");
-			Components[EnginePtr->GetWorldComponentID<T>()] = new T(std::forward<Args>(args)...);
-			Components[EnginePtr->GetWorldComponentID<T>()]->SetFlags(eComponentBaseFlags::WORLD_COMPONENT);
-		}
-
-		//------------------------------------------------------------------------------
-		template<class T>
-		void RemoveWorldComponent()
-		{
-			HEAVY_ASSERTE(HasWorldComponent(EnginePtr->GetWorldComponentID<T>()), "Failed at RemoveWorldComponent() - a component of a given type does not exist!");
-			T* component = Components[EnginePtr->GetWorldComponentID<T>()];
-			Components[EnginePtr->GetWorldComponentID<T>()] = nullptr;
-			component->~T();
-			delete component;
-		}
-
-		//------------------------------------------------------------------------------
-		template<class T>
-		T* GetWorldComponent()
-		{
-			if (HasWorldComponent(EnginePtr->GetWorldComponentID<T>()))
-				return reinterpret_cast<T*>(Components[EnginePtr->GetWorldComponentID<T>()]);
-			else
-				return nullptr;
-		}
-
-		//------------------------------------------------------------------------------
-		bool HasWorldComponent(size_t ID) const;
+		Engine* GetEngine() const { return EnginePtr; }
+		InputWorldComponent& GetInputWorldComponent() { return InputComponent; };
+		ViewportWorldComponent& GetViewportWorldComponent() { return ViewportComponent; };
+		TimeWorldComponent& GetTimeWorldComponent() { return TimeComponent; };
 
 		//------------------------------------------------------------------------------
 		template<typename PrimaryComponent, typename... SecondaryComponents>
@@ -185,7 +132,49 @@ namespace Poly {
 			World* const W;
 		};
 
+		DeferredTaskQueue& GetDeferredTaskQueue() { return DeferredTasksQueue; }
+
 	private:
+		friend class SpawnEntityDeferredTask;
+		friend class DestroyEntityDeferredTask;
+		template<typename T,typename... Args> friend class AddComponentDeferredTask;
+		template<typename T> friend class RemoveComponentDeferredTask;
+
+		friend UniqueID DeferredTaskSystem::SpawnEntityImmediate(World*);
+		friend void DeferredTaskSystem::DestroyEntityImmediate(World* w, const UniqueID& entityId);
+		template<typename T, typename ...Args> friend void DeferredTaskSystem::AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args);
+
+		//------------------------------------------------------------------------------
+		UniqueID SpawnEntity();
+		//------------------------------------------------------------------------------
+		void DestroyEntity(const UniqueID& entityId);
+		//------------------------------------------------------------------------------
+		template<typename T, typename... Args>
+		void AddComponent(const UniqueID& entityId, Args&&... args)
+		{
+			T* ptr = GetComponentAllocator<T>()->Alloc();
+			::new(ptr) T(std::forward<Args>(args)...);
+			Entity* ent = IDToEntityMap[entityId];
+			HEAVY_ASSERTE(ent, "Invalid entity ID");
+			HEAVY_ASSERTE(!ent->HasComponent(EnginePtr->GetComponentID<T>()), "Failed at AddComponent() - a component of a given UniqueID already exists!");
+			ent->ComponentPosessionFlags.set(EnginePtr->GetComponentID<T>(), true);
+			ent->Components[EnginePtr->GetComponentID<T>()] = ptr;
+			ptr->Owner = ent;
+		}
+
+		//------------------------------------------------------------------------------
+		template<typename T>
+		void RemoveComponent(const UniqueID& entityId)
+		{
+			Entity* ent = IDToEntityMap[entityId];
+			HEAVY_ASSERTE(ent, "Invalid entity ID");
+			HEAVY_ASSERTE(ent->HasComponent(EnginePtr->GetComponentID<T>()), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
+			ent->ComponentPosessionFlags.set(EnginePtr->GetComponentID<T>(), false);
+			T* component = static_cast<T*>(ent->Components[EnginePtr->GetComponentID<T>()]);
+			ent->Components[EnginePtr->GetComponentID<T>()] = nullptr;
+			component->~T();
+			GetComponentAllocator<T>()->Free(component);
+		}
 		//------------------------------------------------------------------------------
 		template<typename T>
 		IterablePoolAllocator<T>* GetComponentAllocator()
@@ -206,7 +195,11 @@ namespace Poly {
 		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
 		Engine* EnginePtr;
 
-		ComponentBase* Components[MAX_WORLD_COMPONENTS_COUNT];
+		InputWorldComponent InputComponent;
+		ViewportWorldComponent ViewportComponent;
+		TimeWorldComponent TimeComponent;
+
+		DeferredTaskQueue DeferredTasksQueue;
 	};
 
 	//defined here due to circular inclusion problem; FIXME: circular inclusion

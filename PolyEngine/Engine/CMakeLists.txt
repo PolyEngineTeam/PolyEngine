@@ -21,6 +21,7 @@ set(POLYENGINE_SRCS
 	Src/FontResource.cpp
 	Src/GLMeshResource.cpp
 	Src/GLTextureResource.cpp
+	Src/DeferredTaskSystem.cpp
 	Src/InputSystem.cpp
 	Src/InputWorldComponent.cpp
 	Src/MeshRenderingComponent.cpp
@@ -32,7 +33,6 @@ set(POLYENGINE_SRCS
 	Src/Text2D.cpp
 	Src/TimeSystem.cpp
 	Src/TimeWorldComponent.cpp
-	Src/Timer.cpp
 	Src/TransformComponent.cpp
 	Src/ViewportWorldComponent.cpp
 	Src/World.cpp
@@ -50,6 +50,9 @@ set(POLYENGINE_H_FOR_IDE
 	Src/FontResource.hpp
 	Src/GLMeshResource.hpp
 	Src/GLTextureResource.hpp
+	Src/DeferredTaskBase.hpp
+	Src/DeferredTaskImplementation.hpp
+	Src/DeferredTaskSystem.hpp
 	Src/InputQueue.hpp
 	Src/InputSystem.hpp
 	Src/InputWorldComponent.hpp

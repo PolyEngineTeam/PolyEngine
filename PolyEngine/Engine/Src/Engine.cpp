@@ -44,6 +44,7 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterUpdatePhase(MovementSystem::MovementUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(RenderingSystem::RenderingPhase, eUpdatePhaseOrder::POSTUPDATE);
+	RegisterUpdatePhase(DeferredTaskSystem::DeferredTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
 
 	if (!Renderer->Init(context))
 		return false;
@@ -53,8 +54,8 @@ bool Engine::Init(const IRenderingContextParams* context)
 	// Setup FPS display
 	if (gCoreConfig.DisplayFPS)
 	{
-		UniqueID id = GetWorld().SpawnEntity();
-		GetWorld().AddComponent<ScreenSpaceTextComponent>(id, Vector(0, 0, 0), "Fonts/Raleway/Raleway-Regular.ttf", 32, "FPS: 60");
+		UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(&GetWorld());
+		DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(&GetWorld(),  id, Vector(0, 0, 0), "Fonts/Raleway/Raleway-Regular.ttf", 32, "FPS: 60");
 		//TODO FPS compnent and system
 	}
 
