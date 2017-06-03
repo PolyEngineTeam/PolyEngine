@@ -101,9 +101,6 @@
     <ClCompile Include="Src\TimeSystem.cpp">
       <Filter>Source Files\Time</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Timer.cpp">
-      <Filter>Source Files\Time</Filter>
-    </ClCompile>
     <ClCompile Include="Src\GLTextureResource.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>

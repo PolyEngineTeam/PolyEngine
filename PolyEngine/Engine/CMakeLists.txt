@@ -33,7 +33,6 @@ set(POLYENGINE_SRCS
 	Src/Text2D.cpp
 	Src/TimeSystem.cpp
 	Src/TimeWorldComponent.cpp
-	Src/Timer.cpp
 	Src/TransformComponent.cpp
 	Src/ViewportWorldComponent.cpp
 	Src/World.cpp
