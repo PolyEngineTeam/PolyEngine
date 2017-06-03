@@ -5,15 +5,16 @@
 #include <MeshRenderingComponent.hpp>
 #include <FreeFloatMovementComponent.hpp>
 #include <Core.hpp>
+#include <DeferredTaskSystem.hpp>
 
 using namespace Poly;
 
 void InvadersGame::Init()
 {
-	Camera = Engine->GetWorld().SpawnEntity();
-	Engine->GetWorld().AddComponent<Poly::TransformComponent>(Camera);
-	Engine->GetWorld().AddComponent<Poly::CameraComponent>(Camera, 45.0f, 1.0f, 1000.f);
-	Engine->GetWorld().AddComponent<Poly::FreeFloatMovementComponent>(Camera, 10.0f, 0.003f);
+	Camera = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), Camera);
+	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(&Engine->GetWorld(), Camera, 45.0f, 1.0f, 1000.f);
+	DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(&Engine->GetWorld(), Camera, 10.0f, 0.003f);
 
 	// Set some camera position
 	Poly::TransformComponent* cameraTrans = Engine->GetWorld().GetComponent<Poly::TransformComponent>(Camera);
@@ -24,11 +25,11 @@ void InvadersGame::Init()
 	{
 		for (int j = -2; j < 2; ++j)
 		{
-			auto ent = Engine->GetWorld().SpawnEntity();
-			Engine->GetWorld().AddComponent<Poly::TransformComponent>(ent);
-			Engine->GetWorld().AddComponent<Poly::MeshRenderingComponent>(ent, "model-tank/tank.fbx");
+			auto ent = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
+			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), ent);
+			DeferredTaskSystem::AddComponent<Poly::MeshRenderingComponent>(&Engine->GetWorld(), ent, (const char*)"model-tank/tank.fbx");
 			Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(ent);
-			entTransform->SetLocalTranslation(Vector(i * 5.f, 0.f, j * 10.f));
+			entTransform->SetLocalTranslation(Vector(i * 2, 0, j * 5));
 			GameEntities.PushBack(ent);
 		}
 	}
@@ -39,9 +40,9 @@ void InvadersGame::Init()
 
 void InvadersGame::Deinit()
 {
-	Engine->GetWorld().DestroyEntity(Camera);
-	for(auto ent : GameEntities)
-		Engine->GetWorld().DestroyEntity(ent);
+	DeferredTaskSystem::DestroyEntityImmediate(&Engine->GetWorld(), Camera);
+	for (auto ent : GameEntities)
+		DeferredTaskSystem::DestroyEntityImmediate(&Engine->GetWorld(), ent);
 };
 
 void GameMainSystem::GameUpdate(Poly::World* /*world*/)
