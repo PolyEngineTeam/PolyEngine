@@ -1,4 +1,5 @@
 #include "ControlSystem.hpp"
+#include <DeferredTaskSystem.hpp>
 
 using namespace Poly;
 
@@ -89,12 +90,12 @@ void ControlSystem::ControlSystemPhase(World* world)
 
 void ControlSystem::SpawnBullet(GameManagerComponent* gameManager, World* world, Vector pos, Vector direction, float speed)
 {
-	auto bullet = world->SpawnEntity();
-	world->AddComponent<Poly::TransformComponent>(bullet);
-	world->AddComponent<Poly::MeshRenderingComponent>(bullet, "model-tank/tank.fbx");
+	auto bullet = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, bullet);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, bullet, "model-tank/tank.fbx");
 	if (direction.Length() > 0)
 		direction.Normalize();
-	world->AddComponent<BulletComponent>(bullet, speed, direction, 
+	DeferredTaskSystem::AddComponentImmediate<BulletComponent>(world, bullet, speed, direction,
 		AARect(world->GetComponent<Poly::TransformComponent>(bullet)->GetLocalTranslation(), Vector(2.0f,2.0f,2.0f)), world->GetTimeWorldComponent().GetGameplayTime());
 	Poly::TransformComponent* transform = world->GetComponent<Poly::TransformComponent>(bullet);
 	transform->SetLocalScale(Vector(0.25f, 0.25f, 0.25f));
@@ -106,7 +107,7 @@ void ControlSystem::CleanUpEnitites(GameManagerComponent* gameManager, World* wo
 {
 	for (Poly::UniqueID ent : *(gameManager->GetDeadGameEntities()))
 	{
-		world->DestroyEntity(ent);
+		DeferredTaskSystem::DestroyEntityImmediate(world, ent);
 		gameManager->GetGameEntities()->Remove(ent);
 	}
 	gameManager->GetDeadGameEntities()->Clear();	
