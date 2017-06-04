@@ -160,6 +160,7 @@ namespace Poly {
 			ent->ComponentPosessionFlags.set(EnginePtr->GetComponentID<T>(), true);
 			ent->Components[EnginePtr->GetComponentID<T>()] = ptr;
 			ptr->Owner = ent;
+			HEAVY_ASSERTE(ent->HasComponent(EnginePtr->GetComponentID<T>()), "Failed at AddComponent() - the component was not added!");
 		}
 
 		//------------------------------------------------------------------------------
@@ -174,6 +175,7 @@ namespace Poly {
 			ent->Components[EnginePtr->GetComponentID<T>()] = nullptr;
 			component->~T();
 			GetComponentAllocator<T>()->Free(component);
+			HEAVY_ASSERTE(!ent->HasComponent(EnginePtr->GetComponentID<T>()), "Failed at AddComponent() - the component was not removed!");
 		}
 		//------------------------------------------------------------------------------
 		template<typename T>

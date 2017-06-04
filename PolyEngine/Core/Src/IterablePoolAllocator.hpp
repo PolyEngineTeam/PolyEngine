@@ -23,7 +23,7 @@ namespace Poly {
 			Cell* Next = nullptr;
 		};
 
-		STATIC_ASSERTE(sizeof(Cell) >= sizeof(size_t), "Type size is too small for allocator");
+		STATIC_ASSERTE(sizeof(T) >= sizeof(size_t), "Type size is too small for allocator");
 		STATIC_ASSERTE(offsetof(Cell, Data) == 0, "Data has to be the first member of Cell struct. It must have no offset.");
 	public:
 		//------------------------------------------------------------------------------
@@ -82,10 +82,12 @@ namespace Poly {
 		{
 			ASSERTE(count > 0, "Cell count cannot be lower than 1.");
 			Data = reinterpret_cast<Cell*>(DefaultAlloc(sizeof(Cell) * (Capacity + 1)));
-			Next = Data;
-			Head = Tail = Data + Capacity;
-			Head->Next = nullptr;
+			NextFree = Data;
+			Head = Tail = Data + Capacity; // Head and tail point to the last element from pool which is reserved for linked list.
+			Head->Next = nullptr; // Reset next and prev pointers
 			Tail->Prev = nullptr;
+			NextFree->Next = nullptr;
+			NextFree->Prev = nullptr;
 		}
 
 		//------------------------------------------------------------------------------
@@ -109,12 +111,19 @@ namespace Poly {
 			// find first suitable place for data
 			if (FreeBlockCount > 0)
 			{
-				Cell* ret = Next;
+				Cell* ret = NextFree;
 
 				// setup linked list
-				if (GetSize() > 0) {
-					if (ret > Data) {
-						Cell* prev = ret - 1;
+				if (Tail->Prev != nullptr) { // list is not empty
+					if (ret > Head) {
+
+						Cell* prev = Head;
+						while (prev->Next && prev->Next < ret)
+							prev = prev->Next;
+
+						//Cell* prev = ret - 1;
+						HEAVY_ASSERTE(prev->Next != nullptr, "prev is null");
+						
 						ret->Prev = prev;
 						ret->Next = prev->Next;
 						prev->Next->Prev = ret;
@@ -124,10 +133,11 @@ namespace Poly {
 					{
 						ret->Prev = nullptr;
 						ret->Next = Head;
+						Head->Prev = ret;
 						Head = ret;
 					}
 				}
-				else
+				else // list is empty
 				{
 					ret->Prev = nullptr;
 					ret->Next = Tail;
@@ -139,11 +149,13 @@ namespace Poly {
 				--FreeBlockCount;
 				if (FreeBlockCount != 0)
 				{
-					Next = AddrFromIndex(*reinterpret_cast<size_t*>(Next));
+					NextFree = AddrFromIndex(*reinterpret_cast<size_t*>(NextFree));
+					NextFree->Next = nullptr;
+					NextFree->Prev = nullptr;
 				}
 				else
 				{
-					Next = nullptr;
+					NextFree = nullptr;
 				}
 
 				return reinterpret_cast<T*>(ret->Data);
@@ -160,24 +172,34 @@ namespace Poly {
 
 			// keep the linked list valid
 			if (Head == cell)
+			{
 				Head = cell->Next;
+				Head->Prev = nullptr;
+			}
 			else
 			{
 				Cell* prev = cell->Prev;
-				cell->Prev->Next = cell->Next;
+				prev->Next = cell->Next;
 				cell->Next->Prev = prev;
 			}
 
+			cell->Next = nullptr;
+			cell->Prev = nullptr;
+
 			// Calculate the value of Next
-			if (Next != nullptr)
+			if (NextFree != nullptr)
 			{
-				*reinterpret_cast<size_t*>(p) = IndexFromAddr(Next);
-				Next = cell;
+				*reinterpret_cast<size_t*>(p) = IndexFromAddr(NextFree);
+				NextFree = cell;
+				NextFree->Next = nullptr;
+				NextFree->Prev = nullptr;
 			}
 			else
 			{
 				*reinterpret_cast<size_t*>(p) = Capacity;
-				Next = cell;
+				NextFree = cell;
+				NextFree->Next = nullptr;
+				NextFree->Prev = nullptr;
 			}
 			++FreeBlockCount;
 		}
@@ -193,7 +215,7 @@ namespace Poly {
 		size_t FreeBlockCount = 0;
 		size_t InitializedBlockCount = 0;
 		Cell* Data = nullptr;
-		Cell* Next = nullptr;
+		Cell* NextFree = nullptr;
 		Cell* Head = nullptr;
 		Cell* Tail = nullptr;
 	};
