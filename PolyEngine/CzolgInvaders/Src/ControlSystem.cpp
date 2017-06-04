@@ -107,7 +107,7 @@ void ControlSystem::CleanUpEnitites(GameManagerComponent* gameManager, World* wo
 {
 	for (Poly::UniqueID ent : *(gameManager->GetDeadGameEntities()))
 	{
-		DeferredTaskSystem::DestroyEntityImmediate(world, ent);
+		DeferredTaskSystem::DestroyEntity(world, ent);
 		gameManager->GetGameEntities()->Remove(ent);
 	}
 	gameManager->GetDeadGameEntities()->Clear();	
