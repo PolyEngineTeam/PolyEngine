@@ -1,22 +1,22 @@
 #include "CorePCH.hpp"
-#include "AARect.hpp"
+#include "AABox.hpp"
 
 using namespace Poly;
 
-AARect::AARect(const Vector& position, const Vector& size)
+AABox::AABox(const Vector& position, const Vector& size)
 	: Pos(position), Size(size)
 {
 }
 
 namespace Poly {
-	std::ostream & operator<<(std::ostream& stream, const AARect& rect)
+	std::ostream & operator<<(std::ostream& stream, const AABox& rect)
 	{
-		return stream << "AARect[Pos: " << rect.Pos << " Size: " << rect.Size << " ]";
+		return stream << "AABox[Pos: " << rect.Pos << " Size: " << rect.Size << " ]";
 	}
 
-	AARect AARect::GetIntersection(const AARect* otherRect) const
+	AABox AABox::GetIntersection(const AABox* otherRect) const
 	{
-		ASSERTE(otherRect != nullptr, "AARect::GetIntersection() called with otherRect == nullptr.");
+		ASSERTE(otherRect != nullptr, "AABox::GetIntersection() called with otherRect == nullptr.");
 
 		const float r1MinX = std::min(Pos.X, Pos.X + Size.X);
 		const float r1MaxX = std::max(Pos.X, Pos.X + Size.X);
@@ -41,9 +41,9 @@ namespace Poly {
 
 		if ((interLeft < interRight) && (interTop < interBottom) && (interUp < interDown))
 		{
-			return AARect(Vector(interLeft, interTop, interUp), Vector(interRight - interLeft, interBottom - interTop, interDown - interUp));
+			return AABox(Vector(interLeft, interTop, interUp), Vector(interRight - interLeft, interBottom - interTop, interDown - interUp));
 		}
 		else
-			return AARect(Vector::ZERO, Vector::ZERO);
+			return AABox(Vector::ZERO, Vector::ZERO);
 	}
 }

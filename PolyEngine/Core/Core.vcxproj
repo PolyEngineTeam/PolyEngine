@@ -141,7 +141,7 @@
     <ClCompile Include="Src\Logger.cpp" />
     <ClCompile Include="Src\Matrix.cpp" />
     <ClCompile Include="Src\Quaternion.cpp" />
-    <ClCompile Include="Src\AARect.cpp" />
+    <ClCompile Include="Src\AABox.cpp" />
     <ClCompile Include="Src\RefCountedBase.cpp" />
     <ClCompile Include="Src\SimdMath.cpp" />
     <ClCompile Include="Src\UniqueID.cpp" />
@@ -166,7 +166,7 @@
     <ClInclude Include="Src\PoolAllocator.hpp" />
     <ClInclude Include="Src\Quaternion.hpp" />
     <ClInclude Include="Src\Queue.hpp" />
-    <ClInclude Include="Src\AARect.hpp" />
+    <ClInclude Include="Src\AABox.hpp" />
     <ClInclude Include="Src\RefCountedBase.hpp" />
     <ClInclude Include="Src\SimdMath.hpp" />
     <ClInclude Include="Src\String.hpp" />

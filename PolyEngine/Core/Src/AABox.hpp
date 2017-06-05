@@ -6,12 +6,12 @@
 
 namespace Poly {
 
-	class CORE_DLLEXPORT AARect : public BaseObject<>
+	class CORE_DLLEXPORT AABox : public BaseObject<>
 	{
 	public:
-		AARect(const Vector& position, const Vector& size);
+		AABox(const Vector& position, const Vector& size);
 
-		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const AARect& color);
+		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const AABox& color);
 
 		Vector GetCenter() const { return Pos + (Size * 0.5f); }
 		const Vector& GetMin() const { return Pos; }
@@ -23,7 +23,7 @@ namespace Poly {
 		void SetSize(const Vector& size) { Size = size; }
 
 		//////////////////////////////
-		/// Checks whether this AARect contains a given point.
+		/// Checks whether this AABox contains a given point.
 		/// @param point to be checked
 		/// @see IsCollidingWith()
 		//////////////////////////////
@@ -33,23 +33,23 @@ namespace Poly {
 			&& point.Z >= Pos.Z && point.Z <= (Pos.Z + Size.Z); }
 
 		//////////////////////////////
-		/// Checks whether a given AARect is colliding with this AARect.
+		/// Checks whether a given AABox is colliding with this AABox.
 		/// @param otherRect
 		/// @see Contains()
 		//////////////////////////////
-		inline bool DoesIntersect(const AARect* otherRect) const
-		{	ASSERTE(otherRect != nullptr, "AARect::DoesIntersect() called with otherRect == nullptr.");
+		inline bool Intersects(const AABox* otherRect) const
+		{	ASSERTE(otherRect != nullptr, "AABox::Intersects() called with otherRect == nullptr.");
 			return (abs(Pos.X - otherRect->Pos.X) * 2 < (Size.X + otherRect->Size.X))
 			&& (abs(Pos.Y - otherRect->Pos.Y) * 2 < (Size.Y + otherRect->Size.Y))
 			&& (abs(Pos.Z - otherRect->Pos.Z) * 2 < (Size.Z + otherRect->Size.Z)); }
 
 		//////////////////////////////
-		/// Calculates the intersection of 2 AARects.
+		/// Calculates the intersection of 2 AABoxs.
 		/// @param otherRect to calculate intersection with
-		/// @return AARect intersection
-		/// @see DoesIntersect()
+		/// @return AABox intersection
+		/// @see Intersects()
 		//////////////////////////////
-		AARect GetIntersection(const AARect* otherRect) const;
+		AABox GetIntersection(const AABox* otherRect) const;
 
 	private:
 		Vector Pos;

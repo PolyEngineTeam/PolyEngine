@@ -43,7 +43,7 @@
     <ClCompile Include="Src\ResourceManagerTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\AARectTests.cpp">
+    <ClCompile Include="Src\AABoxTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

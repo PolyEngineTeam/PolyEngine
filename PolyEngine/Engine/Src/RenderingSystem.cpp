@@ -111,7 +111,7 @@ void RenderingSystem::RenderingPhase(World* world)
 	for (auto& kv : world->GetViewportWorldComponent().GetViewports())
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
-		const AARect& rect = kv.second.GetRect();
+		const AABox& rect = kv.second.GetRect();
 		glViewport((int)(rect.GetMin().X * screen.Width), (int)(rect.GetMin().Y * screen.Height),
 			(int)(rect.GetSize().X * screen.Width), (int)(rect.GetSize().Y * screen.Height));
 
