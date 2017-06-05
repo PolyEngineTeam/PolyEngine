@@ -23,10 +23,10 @@ namespace Poly
 
 	private:
 		double DeltaTime = 0;
-		double Multiplier;
+		double Multiplier = 1;
 		std::chrono::duration<double> Time = std::chrono::duration<double>::zero();
 
-		bool IsPausable;
+		bool IsPausable = false;
 
 	};
 }
