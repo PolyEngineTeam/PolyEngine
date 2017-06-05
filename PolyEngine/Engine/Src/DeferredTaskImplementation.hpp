@@ -82,9 +82,9 @@ namespace Poly
 	class RemoveWorldComponentDeferredTask : public DeferredTaskBase
 	{
 	public:
-		RemoveWorldComponentDeferredTask() : Id() {}
+		RemoveWorldComponentDeferredTask(){}
 
-		virtual void Execute(World* w) { w->RemoveWorldComponent<T>(Id); }
+		virtual void Execute(World* w) { w->RemoveWorldComponent<T>(); }
 
 		virtual String GetDescription() const { return String("Remove world component"); }
 	};
