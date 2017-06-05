@@ -8,7 +8,7 @@
 
 namespace Poly
 {
-	class AARect;
+	class AABox;
 	typedef size_t ViewportID;
 
 	class ENGINE_DLLEXPORT ViewportWorldComponent : public ComponentBase
@@ -17,9 +17,9 @@ namespace Poly
 	public:
 		ViewportWorldComponent();
 
-		ViewportID AddViewport(const AARect&);
+		ViewportID AddViewport(const AABox&);
 		void RemoveViewport(ViewportID);
-		void ResizeViewport(ViewportID, const AARect&);
+		void ResizeViewport(ViewportID, const AABox&);
 		void SetCamera(ViewportID, CameraComponent*);
 
 		const std::unordered_map<size_t, Viewport>& GetViewports() const { return Viewports; }
