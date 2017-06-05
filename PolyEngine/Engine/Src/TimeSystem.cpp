@@ -12,22 +12,22 @@ using namespace Poly;
 //------------------------------------------------------------------------------
 void TimeSystem::TimeUpdatePhase(World * world)
 {
-	TimeWorldComponent& timeComponent = world->GetTimeWorldComponent();
+	TimeWorldComponent* timeComponent = world->GetWorldComponent<TimeWorldComponent>();
 
 	//Get new delta time
 	std::chrono::steady_clock::time_point frameTime = steady_clock::now();
-	duration<double> deltaTime = duration_cast<duration<double>>(frameTime - timeComponent.LastFrameTime);
+	duration<double> deltaTime = duration_cast<duration<double>>(frameTime - timeComponent->LastFrameTime);
 
 	//In future this should be surrounded by #ifndef FINAL
-	deltaTime = deltaTime > duration_cast<duration<double>>(timeComponent.MIN_TIME_STEP_MS) ? timeComponent.MIN_TIME_STEP_MS : deltaTime;
+	deltaTime = deltaTime > duration_cast<duration<double>>(timeComponent->MIN_TIME_STEP_MS) ? timeComponent->MIN_TIME_STEP_MS : deltaTime;
 	//#endif
 
-	timeComponent.LastFrameTime = frameTime;
+	timeComponent->LastFrameTime = frameTime;
 
 	//Update timers
-	for (auto& timer : timeComponent.Timers)
+	for (auto& timer : timeComponent->Timers)
 	{
-		if (timeComponent.Paused && timer.second.IsPausable)
+		if (timeComponent->Paused && timer.second.IsPausable)
 		{
 			timer.second.DeltaTime = 0.0;
 			continue;
@@ -41,55 +41,55 @@ void TimeSystem::TimeUpdatePhase(World * world)
 //------------------------------------------------------------------------------
 void TimeSystem::RegisterTimer(World * world, size_t id, bool isPausable, double multiplier)
 {
-	TimeWorldComponent& timeComponent = world->GetTimeWorldComponent();
-	ASSERTE(timeComponent.Timers.count(id) == 0, "Same timer id provided twice!");
-	timeComponent.Timers[id] = Timer(isPausable, multiplier);
+	TimeWorldComponent* timeComponent = world->GetWorldComponent<TimeWorldComponent>();
+	ASSERTE(timeComponent->Timers.count(id) == 0, "Same timer id provided twice!");
+	timeComponent->Timers[id] = Timer(isPausable, multiplier);
 }
 
 //------------------------------------------------------------------------------
 double TimeSystem::GetTimerDeltaTime(World * world, size_t id)
 {
-	TimeWorldComponent& timeComponent = world->GetTimeWorldComponent();
-	if(timeComponent.Timers.count(id) == 0)
+	TimeWorldComponent* timeComponent = world->GetWorldComponent<TimeWorldComponent>();
+	if(timeComponent->Timers.count(id) == 0)
 		throw std::invalid_argument("Timer with given id does not exist.");
 	else 
-		return timeComponent.Timers[id].GetDeltaTime();
+		return timeComponent->Timers[id].GetDeltaTime();
 }
 
 //------------------------------------------------------------------------------
 double TimeSystem::GetTimerDeltaTime(World * world, eEngineTimer timerType)
 {
-	return world->GetTimeWorldComponent().Timers.at((size_t)timerType).GetDeltaTime();
+	return world->GetWorldComponent<TimeWorldComponent>()->Timers.at((size_t)timerType).GetDeltaTime();
 }
 
 //------------------------------------------------------------------------------
 double TimeSystem::GetTimerElapsedTime(World * world, size_t id)
 {
-	TimeWorldComponent& timeComponent = world->GetTimeWorldComponent();
-	if(timeComponent.Timers.count(id) == 0)
+	TimeWorldComponent* timeComponent = world->GetWorldComponent<TimeWorldComponent>();
+	if(timeComponent->Timers.count(id) == 0)
 		throw std::invalid_argument("Timer with given id does not exist.");
 	else 
-		return timeComponent.Timers[id].GetTime();
+		return timeComponent->Timers[id].GetTime();
 }
 
 //------------------------------------------------------------------------------
 double TimeSystem::GetTimerElapsedTime(World * world, eEngineTimer timerType)
 {
-	return world->GetTimeWorldComponent().Timers.at((size_t)timerType).GetTime();
+	return world->GetWorldComponent<TimeWorldComponent>()->Timers.at((size_t)timerType).GetTime();
 }
 
 //------------------------------------------------------------------------------
 double TimeSystem::GetTimerMultiplier(World * world, size_t id)
 {
-	TimeWorldComponent& timeComponent = world->GetTimeWorldComponent();
-	if(timeComponent.Timers.count(id) == 0)
+	TimeWorldComponent* timeComponent = world->GetWorldComponent<TimeWorldComponent>();
+	if(timeComponent->Timers.count(id) == 0)
 		throw std::invalid_argument("Timer with given id does not exist.");
 	else 
-		return timeComponent.Timers[id].GetMultiplier();
+		return timeComponent->Timers[id].GetMultiplier();
 }
 
 //------------------------------------------------------------------------------
 double TimeSystem::GetTimerMultiplier(World * world, eEngineTimer timerType)
 {
-	return world->GetTimeWorldComponent().Timers.at((size_t)timerType).GetMultiplier();
+	return world->GetWorldComponent<TimeWorldComponent>()->Timers.at((size_t)timerType).GetMultiplier();
 }

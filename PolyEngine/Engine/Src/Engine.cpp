@@ -34,9 +34,9 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterWorldComponent<TimeWorldComponent>((size_t) eEngineWorldComponents::TIME);
 
 	// Add WorldComponents
-	BaseWorld->AddWorldComponent<InputWorldComponent>();
-	BaseWorld->AddWorldComponent<ViewportWorldComponent>();
-	BaseWorld->AddWorldComponent<TimeWorldComponent>();
+	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(BaseWorld);
+	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(BaseWorld);
+	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(BaseWorld);
 
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);

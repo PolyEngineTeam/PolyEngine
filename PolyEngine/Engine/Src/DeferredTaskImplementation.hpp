@@ -27,7 +27,8 @@ namespace Poly
 	private:
 		const UniqueID Id;
 	};
-	
+
+	//---------------------------------------------------------------
 	template<typename T, typename... Args>
 	class AddComponentDeferredTask : public DeferredTaskBase
 	{
@@ -45,6 +46,7 @@ namespace Poly
 		std::tuple<Args...> arguments;
 	};
 
+	//---------------------------------------------------------------
 	template<typename T>
 	class RemoveComponentDeferredTask : public DeferredTaskBase
 	{
@@ -56,5 +58,34 @@ namespace Poly
 		virtual String GetDescription() const { return String("Remove component"); }
 	private:
 		const UniqueID Id;
+	};
+
+	//---------------------------------------------------------------
+	template <typename T, typename... Args>
+	class AddWorldComponentDeferredTask : public DeferredTaskBase
+	{
+	public:
+		AddWorldComponentDeferredTask(Args&&... args) : arguments(std::make_tuple(std::forward<Args>(args)...)) {}
+
+		virtual void Execute(World* w) { func(w, arguments); }
+
+		virtual String GetDescription() const { return String("Add world component"); }
+
+		template <typename... ARG, std::size_t... Is> void func(World* w, std::tuple<ARG...>& tup, index<Is...>) { w->AddWorldComponent<T>(std::get<Is>(tup)...); }
+		template <typename... ARG> void func(World* w, std::tuple<ARG...>& tup) { func(w, tup, gen_seq<sizeof...(ARG)>{}); }
+	private:
+		std::tuple<Args...> arguments;
+	};
+
+	//---------------------------------------------------------------
+	template<typename T>
+	class RemoveWorldComponentDeferredTask : public DeferredTaskBase
+	{
+	public:
+		RemoveWorldComponentDeferredTask() : Id() {}
+
+		virtual void Execute(World* w) { w->RemoveWorldComponent<T>(Id); }
+
+		virtual String GetDescription() const { return String("Remove world component"); }
 	};
 }
