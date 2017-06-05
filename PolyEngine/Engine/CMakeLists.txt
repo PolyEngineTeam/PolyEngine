@@ -15,10 +15,12 @@ set(POLYENGINE_SRCS
 	Src/CameraComponent.cpp
 	Src/CameraSystem.cpp
 	Src/CoreConfig.cpp
+	Src/DebugWorldComponent.cpp
 	Src/Engine.cpp
 	Src/Entity.cpp
 	Src/FreeFloatMovementComponent.cpp
 	Src/FontResource.cpp
+	Src/FPSSystem.cpp
 	Src/GLMeshResource.cpp
 	Src/GLTextureResource.cpp
 	Src/DeferredTaskSystem.cpp
@@ -43,11 +45,13 @@ set(POLYENGINE_H_FOR_IDE
 	Src/CameraSystem.hpp
 	Src/ComponentBase.hpp
 	Src/CoreConfig.hpp
+	Src/DebugWorldComponent.hpp
 	Src/Engine.hpp
 	Src/EnginePCH.hpp
 	Src/Entity.hpp
 	Src/FreeFloatMovementComponent.hpp
 	Src/FontResource.hpp
+	Src/FPSSystem.hpp
 	Src/GLMeshResource.hpp
 	Src/GLTextureResource.hpp
 	Src/DeferredTaskBase.hpp
