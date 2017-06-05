@@ -1,20 +1,41 @@
 #include "EnginePCH.hpp"
 
 #include "FPSSystem.hpp"
+#include "DeferredTaskSystem.hpp"
 
 #include "DebugWorldComponent.hpp"
 #include "TimeSystem.hpp"
+#include "ScreenSpaceTextComponent.hpp"
+
+
 
 void Poly::FPSSystem::FPSUpdatePhase(World* world)
 {
 	DebugWorldComponent* com = world->GetWorldComponent<DebugWorldComponent>();
-	
-	com->FPSData.FPS = 1 / TimeSystem::GetTimerDeltaTime(world, eEngineTimer::SYSTEM);
 
-	if (gCoreConfig.DisplayFPS && com->FPSData.FPS)
+	if (gCoreConfig.DisplayFPS && !com->FPSData.DisplayingFPS)
 	{
-
+		UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(world);
+		DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(world,  id, Vector(0, 0, 0), "Fonts/Raleway/Raleway-Regular.ttf", 32);
+		com->FPSData.DisplayingFPS = true;
 	}
+		
+	
+	if (TimeSystem::GetTimerElapsedTime(world, eEngineTimer::SYSTEM) - com->FPSData.ElapsedTime > 1)
+	{
+		com->FPSData.ElapsedTime = TimeSystem::GetTimerElapsedTime(world, eEngineTimer::SYSTEM);
+
+		ScreenSpaceTextComponent* textCom;
+		for (auto tuple : world->IterateComponents<ScreenSpaceTextComponent>())
+		{
+				textCom = std::get<ScreenSpaceTextComponent*>(tuple);
+				textCom->SetText(&std::to_string(com->FPSData.FPS)[0]);
+		}
+
+		com->FPSData.FPS = 0;
+	}
+
+	com->FPSData.FPS++;
 }
 
 float Poly::FPSSystem::GetFPS(World * world)

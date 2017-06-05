@@ -2,6 +2,7 @@
 
 #include "ComponentBase.hpp"
 #include "FPSSystem.hpp"
+#include "TimeSystem.hpp"
 
 namespace Poly
 {
@@ -11,8 +12,9 @@ namespace Poly
 	{
 		struct FPSData
 		{
-			double FPS;
-			bool displayingFPS;
+			int FPS;
+			double ElapsedTime;
+			bool DisplayingFPS;
 		};
 	}
 

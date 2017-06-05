@@ -38,6 +38,7 @@ bool Engine::Init(const IRenderingContextParams* context)
 	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(BaseWorld);
 	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(BaseWorld);
 	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(BaseWorld);
+	DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(BaseWorld);
 
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
@@ -46,6 +47,7 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(RenderingSystem::RenderingPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(DeferredTaskSystem::DeferredTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
+	RegisterUpdatePhase(FPSSystem::FPSUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 
 	if (!Renderer->Init(context))
 		return false;
@@ -53,12 +55,12 @@ bool Engine::Init(const IRenderingContextParams* context)
 	Game->Init();
 
 	// Setup FPS display
-	if (gCoreConfig.DisplayFPS)
+	/*if (gCoreConfig.DisplayFPS)
 	{
 		UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(&GetWorld());
 		DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(&GetWorld(),  id, Vector(0, 0, 0), "Fonts/Raleway/Raleway-Regular.ttf", 32, "FPS: 60");
 		//TODO FPS compnent and system
-	}
+	}*/
 
 	return true;
 }
