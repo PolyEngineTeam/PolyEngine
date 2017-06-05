@@ -22,7 +22,7 @@ namespace Poly {
 	private:
 		double LifeTime = 2;
 		double SpawnTime = 0.0f;
-		float MovementSpeed = 1.0f;
+		float MovementSpeed = 100.0f;
 		Vector Direction = { 0.0f, 0.0f, 0.0f };
 		AARect CollisionBox;
 	};

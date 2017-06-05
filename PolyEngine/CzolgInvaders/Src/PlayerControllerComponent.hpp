@@ -23,7 +23,7 @@ namespace Poly {
 
 	private:
 		float MovementSpeed = 2.0f;
-		float BulletSpeed = 1.0f;
+		float BulletSpeed = 30.0f;
 		double LastShot = 0;
 		double ShootInterval = 0.25; // in seconds
 		float MaxAbsXPosition = 10.0f;
