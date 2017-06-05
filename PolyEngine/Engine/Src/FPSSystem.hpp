@@ -6,8 +6,8 @@ namespace Poly
 
 	namespace FPSSystem
 	{
-		void FPSUpdatePhase(World*);
+		void ENGINE_DLLEXPORT FPSUpdatePhase(World*);
 
-		float GetFPS(World* world);
+		float ENGINE_DLLEXPORT GetFPS(World* world);
 	}
 }
