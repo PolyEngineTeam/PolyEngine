@@ -34,6 +34,7 @@ namespace Poly
 		INPUT,
 		VIEWPORT,
 		TIME,
+		DEBUG,
 		_COUNT
 	};
 

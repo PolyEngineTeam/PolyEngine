@@ -6,10 +6,6 @@
 #include "Entity.hpp"
 #include "Engine.hpp"
 
-#include "InputWorldComponent.hpp"
-#include "ViewportWorldComponent.hpp"
-#include "TimeWorldComponent.hpp"
-
 #include "DeferredTaskBase.hpp"
 
 namespace Poly {

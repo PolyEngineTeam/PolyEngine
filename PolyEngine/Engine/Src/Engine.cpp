@@ -32,6 +32,7 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterWorldComponent<InputWorldComponent>((size_t) eEngineWorldComponents::INPUT);
 	RegisterWorldComponent<ViewportWorldComponent>((size_t) eEngineWorldComponents::VIEWPORT);
 	RegisterWorldComponent<TimeWorldComponent>((size_t) eEngineWorldComponents::TIME);
+	RegisterWorldComponent<DebugWorldComponent>((size_t) eEngineWorldComponents::DEBUG);
 
 	// Add WorldComponents
 	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(BaseWorld);

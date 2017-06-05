@@ -30,12 +30,13 @@
 #include "TransformComponent.hpp"
 #include "CameraComponent.hpp"
 #include "MeshRenderingComponent.hpp"
-#include "ViewportWorldComponent.hpp"
 #include "FreeFloatMovementComponent.hpp"
 
 // World Components
 #include "InputWorldComponent.hpp"
 #include "TimeWorldComponent.hpp"
+#include "ViewportWorldComponent.hpp"
+#include "DebugWorldComponent.hpp"
 
 //Config
 #include "CoreConfig.hpp"
