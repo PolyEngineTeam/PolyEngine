@@ -28,6 +28,16 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterComponent<FreeFloatMovementComponent>((size_t)eEngineComponents::FREE_FLOAT_MOVEMENT);
 	RegisterComponent<ScreenSpaceTextComponent>((size_t)eEngineComponents::SCREEN_SPACE_TEXT);
 
+	// Engine World Components
+	RegisterWorldComponent<InputWorldComponent>((size_t) eEngineWorldComponents::INPUT);
+	RegisterWorldComponent<ViewportWorldComponent>((size_t) eEngineWorldComponents::VIEWPORT);
+	RegisterWorldComponent<TimeWorldComponent>((size_t) eEngineWorldComponents::TIME);
+
+	// Add WorldComponents
+	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(BaseWorld);
+	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(BaseWorld);
+	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(BaseWorld);
+
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(InputSystem::InputPhase, eUpdatePhaseOrder::PREUPDATE);

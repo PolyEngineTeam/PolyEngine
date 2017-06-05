@@ -19,9 +19,11 @@ namespace Poly {
 		UniqueID ENGINE_DLLEXPORT SpawnEntityImmediate(World* w);
 		void ENGINE_DLLEXPORT DestroyEntityImmediate(World* w, const UniqueID& entityId);
 		template<typename T, typename ...Args> void AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args);
+		template<typename T, typename ...Args> void AddWorldComponentImmediate(World* w, Args && ...args);
 	}
 
 	constexpr size_t MAX_ENTITY_COUNT = 65536;
+	constexpr size_t MAX_WORLD_COMPONENTS_COUNT = 64;
 
 	struct InputState;
 
@@ -50,12 +52,19 @@ namespace Poly {
 			return iter->second->GetComponent<T>();
 		}
 
-		Engine* GetEngine() const { return EnginePtr; }
-		InputWorldComponent& GetInputWorldComponent() { return InputComponent; };
-		ViewportWorldComponent& GetViewportWorldComponent() { return ViewportComponent; };
-		TimeWorldComponent& GetTimeWorldComponent() { return TimeComponent; };
+		//------------------------------------------------------------------------------
+		bool HasWorldComponent(size_t ID) const;
 
 		//------------------------------------------------------------------------------
+		template<typename T>
+		T* GetWorldComponent()
+		{			
+			ASSERTE(HasWorldComponent(EnginePtr->GetWorldComponentID<T>()), "dupa");
+			return reinterpret_cast<T*>(Components[EnginePtr->GetWorldComponentID<T>()]);
+		}
+
+		Engine* GetEngine() const { return EnginePtr; }
+
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		struct IteratorProxy;
 
@@ -139,10 +148,13 @@ namespace Poly {
 		friend class DestroyEntityDeferredTask;
 		template<typename T,typename... Args> friend class AddComponentDeferredTask;
 		template<typename T> friend class RemoveComponentDeferredTask;
+		template<typename T,typename... Args> friend class AddWorldComponentDeferredTask;
+		template<typename T> friend class RemoveWorldComponentDeferredTask;
 
 		friend UniqueID DeferredTaskSystem::SpawnEntityImmediate(World*);
 		friend void DeferredTaskSystem::DestroyEntityImmediate(World* w, const UniqueID& entityId);
 		template<typename T, typename ...Args> friend void DeferredTaskSystem::AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args);
+		template<typename T, typename ...Args> friend void DeferredTaskSystem::AddWorldComponentImmediate(World* w, Args && ...args);
 
 		//------------------------------------------------------------------------------
 		UniqueID SpawnEntity();
@@ -177,6 +189,7 @@ namespace Poly {
 			GetComponentAllocator<T>()->Free(component);
 			HEAVY_ASSERTE(!ent->HasComponent(EnginePtr->GetComponentID<T>()), "Failed at AddComponent() - the component was not removed!");
 		}
+
 		//------------------------------------------------------------------------------
 		template<typename T>
 		IterablePoolAllocator<T>* GetComponentAllocator()
@@ -188,6 +201,24 @@ namespace Poly {
 			return static_cast<IterablePoolAllocator<T>*>(ComponentAllocators[componentID]);
 		}
 
+		template<typename T, typename... Args>
+		void AddWorldComponent(Args&&... args)
+		{
+			HEAVY_ASSERTE(!HasWorldComponent(EnginePtr->GetWorldComponentID<T>()), "Failed at AddWorldComponent() - a world component of a given type already exists!");
+			Components[EnginePtr->GetWorldComponentID<T>()] = new T(std::forward<Args>(args)...);
+			Components[EnginePtr->GetWorldComponentID<T>()]->SetFlags(eComponentBaseFlags::WORLD_COMPONENT);
+		}
+
+		//------------------------------------------------------------------------------
+		template<typename T>
+		void RemoveWorldComponent()
+		{
+			HEAVY_ASSERTE(HasWorldComponent(EnginePtr->GetWorldComponentID<T>()), "Failed at RemoveWorldComponent() - a component of a given type does not exist!");
+			T* component = reinterpret_cast<T*>(Components[EnginePtr->GetWorldComponentID<T>()]);
+			Components[EnginePtr->GetWorldComponentID<T>()] = nullptr;
+			component->~T();
+		}
+
 		std::unordered_map<UniqueID, Entity*> IDToEntityMap;
 
 		void RemoveComponentById(Entity* ent, size_t id);
@@ -197,9 +228,7 @@ namespace Poly {
 		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
 		Engine* EnginePtr;
 
-		InputWorldComponent InputComponent;
-		ViewportWorldComponent ViewportComponent;
-		TimeWorldComponent TimeComponent;
+		ComponentBase* Components[MAX_COMPONENTS_COUNT];
 
 		DeferredTaskQueue DeferredTasksQueue;
 	};

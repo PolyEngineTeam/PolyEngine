@@ -2,14 +2,16 @@
 
 using namespace Poly;
 
-World::World(Poly::Engine* engine)
-: EntitiesAllocator(MAX_ENTITY_COUNT), EnginePtr(engine)
+World::World(Engine* engine)
+	: EntitiesAllocator(MAX_ENTITY_COUNT), EnginePtr(engine)
 {
 	memset(ComponentAllocators, 0, sizeof(IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
+	memset(Components, 0, sizeof(ComponentBase*) * MAX_WORLD_COMPONENTS_COUNT);
 }
 
+
 //------------------------------------------------------------------------------
-Poly::World::~World()
+World::~World()
 {
 	// copy entities
 	auto entityMap = IDToEntityMap;
@@ -23,6 +25,10 @@ Poly::World::~World()
 		if (ComponentAllocators[i])
 			delete ComponentAllocators[i];
 	}
+
+	for (size_t i = 0; i < MAX_WORLD_COMPONENTS_COUNT; i++)
+		if (Components[i])
+			delete (Components[i]);
 }
 
 //------------------------------------------------------------------------------
@@ -49,8 +55,14 @@ void World::DestroyEntity(const UniqueID& entityId)
 	EntitiesAllocator.Free(ent);
 }
 
+bool World::HasWorldComponent(size_t ID) const
+{
+	HEAVY_ASSERTE(ID < MAX_WORLD_COMPONENTS_COUNT, "Invalid component ID - greater than MAX_WORLD_COMPONENTS_COUNT.");
+	return static_cast<bool>(Components[ID]);
+}
+
 //------------------------------------------------------------------------------
-void Poly::World::RemoveComponentById(Entity* ent, size_t id)
+void World::RemoveComponentById(Entity* ent, size_t id)
 {
 	HEAVY_ASSERTE(ent->Components[id], "Removing not present component");
 	ent->Components[id]->~ComponentBase();
