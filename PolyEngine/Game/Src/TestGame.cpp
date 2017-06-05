@@ -6,6 +6,7 @@
 #include <FreeFloatMovementComponent.hpp>
 #include <Core.hpp>
 #include <DeferredTaskSystem.hpp>
+#include "ViewportWorldComponent.hpp"
 
 using namespace Poly;
 
@@ -34,7 +35,7 @@ void InvadersGame::Init()
 		}
 	}
 
-	Engine->GetWorld().GetViewportWorldComponent().SetCamera(0, Engine->GetWorld().GetComponent<Poly::CameraComponent>(Camera));
+	Engine->GetWorld().GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, Engine->GetWorld().GetComponent<Poly::CameraComponent>(Camera));
 	Engine->RegisterUpdatePhase(GameMainSystem::GameUpdate, Poly::Engine::eUpdatePhaseOrder::UPDATE);
 };
 

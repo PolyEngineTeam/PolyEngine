@@ -1,5 +1,13 @@
 #include "InvadersGame.hpp"
+
 #include "DeferredTaskSystem.hpp"
+#include <CameraComponent.hpp>
+#include <TransformComponent.hpp>
+#include <MeshRenderingComponent.hpp>
+#include <FreeFloatMovementComponent.hpp>
+#include <Core.hpp>
+#include <DeferredTaskSystem.hpp>
+#include "ViewportWorldComponent.hpp"
 
 using namespace Poly;
 
@@ -37,7 +45,7 @@ void InvadersGame::Init()
 
 			auto base = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
 			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), base);
-			DeferredTaskSystem::AddComponentImmediate<Poly::EnemyMovementComponent>(&Engine->GetWorld(), base, AARect(Vector(i * 6, 0, j * 8), Vector(5.0f, 5.0f, 5.0f)), ent);
+			DeferredTaskSystem::AddComponentImmediate<Poly::EnemyMovementComponent>(&Engine->GetWorld(), base, AABox(Vector(i * 6, 0, j * 8), Vector(5.0f, 5.0f, 5.0f)), ent);
 			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(&Engine->GetWorld(), base, "model-tank/base.fbx");
 			Poly::TransformComponent* baseTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(base);
 			baseTransform->SetLocalTranslation(Vector(i * 12, 0, j * 8));
@@ -54,7 +62,8 @@ void InvadersGame::Init()
 	DeferredTaskSystem::AddComponentImmediate<PlayerControllerComponent>(&Engine->GetWorld(), player, 10.0f);
 	Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(player);
 	entTransform->SetLocalTranslation(Vector(0, 0, 50));
-	Engine->GetWorld().GetViewportWorldComponent().SetCamera(0, Engine->GetWorld().GetComponent<Poly::CameraComponent>(Camera));
+	
+	Engine->GetWorld().GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, Engine->GetWorld().GetComponent<Poly::CameraComponent>(Camera));
 	Engine->RegisterUpdatePhase(GameMainSystem::GameUpdate, Poly::Engine::eUpdatePhaseOrder::UPDATE);
 	Engine->RegisterUpdatePhase(ControlSystem::ControlSystemPhase, Poly::Engine::eUpdatePhaseOrder::UPDATE);
 };

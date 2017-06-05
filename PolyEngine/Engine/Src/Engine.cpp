@@ -28,6 +28,18 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterComponent<FreeFloatMovementComponent>((size_t)eEngineComponents::FREE_FLOAT_MOVEMENT);
 	RegisterComponent<ScreenSpaceTextComponent>((size_t)eEngineComponents::SCREEN_SPACE_TEXT);
 
+	// Engine World Components
+	RegisterWorldComponent<InputWorldComponent>((size_t) eEngineWorldComponents::INPUT);
+	RegisterWorldComponent<ViewportWorldComponent>((size_t) eEngineWorldComponents::VIEWPORT);
+	RegisterWorldComponent<TimeWorldComponent>((size_t) eEngineWorldComponents::TIME);
+	RegisterWorldComponent<DebugWorldComponent>((size_t) eEngineWorldComponents::DEBUG);
+
+	// Add WorldComponents
+	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(BaseWorld);
+	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(BaseWorld);
+	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(BaseWorld);
+	DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(BaseWorld);
+
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(InputSystem::InputPhase, eUpdatePhaseOrder::PREUPDATE);
@@ -35,6 +47,7 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(RenderingSystem::RenderingPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(DeferredTaskSystem::DeferredTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
+	RegisterUpdatePhase(FPSSystem::FPSUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 
 	if (!Renderer->Init(context))
 		return false;
@@ -42,12 +55,12 @@ bool Engine::Init(const IRenderingContextParams* context)
 	Game->Init();
 
 	// Setup FPS display
-	if (gCoreConfig.DisplayFPS)
+	/*if (gCoreConfig.DisplayFPS)
 	{
 		UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(&GetWorld());
 		DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(&GetWorld(),  id, Vector(0, 0, 0), "Fonts/Raleway/Raleway-Regular.ttf", 32, "FPS: 60");
 		//TODO FPS compnent and system
-	}
+	}*/
 
 	return true;
 }

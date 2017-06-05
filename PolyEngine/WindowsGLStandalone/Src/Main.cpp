@@ -6,6 +6,7 @@
 #include <OpenGLRenderingContext.hpp>
 #include <InvadersGame.hpp>
 #include <sstream>
+#include "TimeSystem.hpp"
 
 static Poly::Engine* gEngine = nullptr;
 

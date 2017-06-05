@@ -11,7 +11,7 @@
 #include "SimdMath.hpp"
 
 // Geometry
-#include "AARect.hpp"
+#include "AABox.hpp"
 
 // Memory
 #include "BaseObject.hpp"

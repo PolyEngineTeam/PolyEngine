@@ -46,14 +46,14 @@
     <ClCompile Include="Src\CorePCH.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\AARect.cpp">
-      <Filter>Source Files\Geometry</Filter>
-    </ClCompile>
     <ClCompile Include="Src\RefCountedBase.cpp">
       <Filter>Source Files\Memory</Filter>
     </ClCompile>
     <ClCompile Include="Src\BaseObject.cpp">
       <Filter>Source Files\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\AABox.cpp">
+      <Filter>Source Files\Geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -120,14 +120,14 @@
     <ClInclude Include="Src\CorePCH.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Src\AARect.hpp">
-      <Filter>Source Files\Geometry</Filter>
-    </ClInclude>
     <ClInclude Include="Src\RefCountedBase.hpp">
       <Filter>Source Files\Memory</Filter>
     </ClInclude>
     <ClInclude Include="Src\ObjectLifetimeHelpers.hpp">
       <Filter>Source Files\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\AABox.hpp">
+      <Filter>Source Files\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

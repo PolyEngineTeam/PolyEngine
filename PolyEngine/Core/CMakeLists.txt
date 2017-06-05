@@ -1,5 +1,5 @@
 set(POLYCORE_SRCS
-	Src/AARect.cpp
+	Src/AABox.cpp
 	Src/BaseObject.cpp
 	Src/Color.cpp
 	Src/Logger.cpp
@@ -12,7 +12,7 @@ set(POLYCORE_SRCS
 )
 set(POLYCORE_INCLUDE Src)
 set(POLYCORE_H_FOR_IDE
-	Src/AARect.hpp
+	Src/AABox.hpp
 	Src/Allocator.hpp
 	Src/Angle.hpp
 	Src/BaseObject.hpp

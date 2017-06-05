@@ -1,5 +1,7 @@
 #include "ControlSystem.hpp"
 #include <DeferredTaskSystem.hpp>
+#include <TimeWorldComponent.hpp>
+#include <InputWorldComponent.hpp>
 
 using namespace Poly;
 
@@ -7,7 +9,7 @@ void ControlSystem::ControlSystemPhase(World* world)
 {
 
 	GameManagerComponent* gameManager = nullptr;
-	double time = world->GetTimeWorldComponent().GetGameplayTime();
+	double time = world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime();
 	for (auto componentTuple : world->IterateComponents<GameManagerComponent>())
 	{
 		gameManager = std::get<GameManagerComponent*>(componentTuple);
@@ -16,9 +18,9 @@ void ControlSystem::ControlSystemPhase(World* world)
 	{
 		PlayerControllerComponent* player = std::get<PlayerControllerComponent*>(componentTuple);
 		Vector move(0, 0, 0);
-		if (world->GetInputWorldComponent().IsPressed(player->GetLeftKey()))
+		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(player->GetLeftKey()))
 			move -= Vector::UNIT_X;
-		else if (world->GetInputWorldComponent().IsPressed(player->GetRightKey()))
+		else if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(player->GetRightKey()))
 			move += Vector::UNIT_X;
 
 
@@ -32,10 +34,10 @@ void ControlSystem::ControlSystemPhase(World* world)
 			if (Abs(prev_location.X + move.X) <= player->GetMaxAbsXPosition())
 				player_transform->SetLocalTranslation(prev_location + move);
 		}
-		if (world->GetInputWorldComponent().IsPressed(player->GetShootKey()) && (world->GetTimeWorldComponent().GetGameplayTime() - player->GetLastShoot() >= player->GetShootInterval()))
+		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(player->GetShootKey()) && (world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime() - player->GetLastShoot() >= player->GetShootInterval()))
 		{
 			SpawnBullet(gameManager, world, player->GetSibling<TransformComponent>()->GetLocalTranslation(), Vector(0.0f, 0.0f, -1.0f), player->GetBulletSpeed());
-			player->SetLastShoot(world->GetTimeWorldComponent().GetGameplayTime());
+			player->SetLastShoot(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 		}
 	}
 	for (auto componentTuple : world->IterateComponents<BulletComponent, TransformComponent>())
@@ -75,7 +77,7 @@ void ControlSystem::ControlSystemPhase(World* world)
 		CheckBulletCollisions(world, gameManager, enemy->GetOwnerID());
 	}
 
-	if (world->GetInputWorldComponent().IsReleased(gameManager->GetQuitKey()))
+	if (world->GetWorldComponent<InputWorldComponent>()->IsReleased(gameManager->GetQuitKey()))
 	{
 		//quit game
 	}
@@ -91,7 +93,7 @@ void ControlSystem::SpawnBullet(GameManagerComponent* gameManager, World* world,
 	if (direction.Length() > 0)
 		direction.Normalize();
 	DeferredTaskSystem::AddComponentImmediate<BulletComponent>(world, bullet, speed, direction,
-		AARect(world->GetComponent<Poly::TransformComponent>(bullet)->GetLocalTranslation(), Vector(2.0f,2.0f,2.0f)), world->GetTimeWorldComponent().GetGameplayTime());
+		AABox(world->GetComponent<Poly::TransformComponent>(bullet)->GetLocalTranslation(), Vector(2.0f,2.0f,2.0f)), world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 	Poly::TransformComponent* transform = world->GetComponent<Poly::TransformComponent>(bullet);
 	transform->SetLocalScale(Vector(0.25f, 0.25f, 0.25f));
 	transform->SetLocalRotation(Quaternion(Vector::UNIT_Y, 180_deg));
@@ -114,7 +116,7 @@ void ControlSystem::CheckBulletCollisions(World* world, GameManagerComponent* ga
 	if (world->GetComponent<EnemyMovementComponent>(other) != nullptr)
 	{
 		EnemyMovementComponent* tank = world->GetComponent<EnemyMovementComponent>(other);
-		AARect& rect1 = tank->GetCollisionBox();
+		AABox& rect1 = tank->GetCollisionBox();
 		bool to_delete = false;
 		for (auto componentTuple : world->IterateComponents<BulletComponent>())
 		{
@@ -140,7 +142,7 @@ void ControlSystem::CheckBulletCollisions(World* world, GameManagerComponent* ga
 	}
 }
 
-bool ControlSystem::CheckCollision(const AARect& rect1, const AARect& rect2)
+bool ControlSystem::CheckCollision(const AABox& rect1, const AABox& rect2)
 {
 	return(rect1.GetMax().X > rect2.GetMin().X &&
 		rect1.GetMin().X < rect2.GetMax().X &&

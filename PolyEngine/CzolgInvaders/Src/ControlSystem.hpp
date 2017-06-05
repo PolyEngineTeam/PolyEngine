@@ -5,7 +5,7 @@
 #include <MeshRenderingComponent.hpp>
 #include <Timer.hpp>
 #include <TimeSystem.hpp>
-#include <AARect.hpp>
+#include <AABox.hpp>
 #include "PlayerControllerComponent.hpp"
 #include "BulletComponent.hpp"
 #include "EnemyMovementComponent.hpp"
@@ -23,7 +23,7 @@ namespace Poly
 
 		void SpawnBullet(GameManagerComponent* gameManager, World* world, Vector pos, Vector direction, float speed);
 		void CleanUpEnitites(GameManagerComponent* gameManager, World* world);
-		bool CheckCollision(const AARect& rect1, const AARect& rect2);
+		bool CheckCollision(const AABox& rect1, const AABox& rect2);
 		void CheckBulletCollisions(World* world, GameManagerComponent* gameManager, const UniqueID other);
 	}
 }
