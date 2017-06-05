@@ -48,6 +48,12 @@
     <Filter Include="Source Files\UI">
       <UniqueIdentifier>{cfd9396b-2e45-48e5-84dc-b7c15f3b901b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Debug">
+      <UniqueIdentifier>{89663781-9c46-4bf8-9934-92efb95fe622}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Debug\FPS">
+      <UniqueIdentifier>{17b587c1-a616-4199-9dc5-9d610ecdad4c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -124,6 +130,12 @@
     </ClCompile>
     <ClCompile Include="Src\Text2D.cpp">
       <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DebugWorldComponent.cpp">
+      <Filter>Source Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\FPSSystem.cpp">
+      <Filter>Source Files\Debug\FPS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -234,6 +246,12 @@
     </ClInclude>
     <ClInclude Include="Src\ScreenSpaceTextComponent.hpp">
       <Filter>Source Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DebugWorldComponent.hpp">
+      <Filter>Source Files\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\FPSSystem.hpp">
+      <Filter>Source Files\Debug\FPS</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

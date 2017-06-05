@@ -6,6 +6,7 @@
 #include <FreeFloatMovementComponent.hpp>
 #include <Core.hpp>
 #include <DeferredTaskSystem.hpp>
+#include "ViewportWorldComponent.hpp"
 
 using namespace Poly;
 

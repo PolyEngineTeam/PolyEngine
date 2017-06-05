@@ -17,6 +17,8 @@ namespace Poly {
 		Text2D& GetText() { return Text; }
 		const Text2D& GetText() const { return Text; }
 
+		void SetText(const String& text) { Text.SetText(text); }
+
 		void SetScreenPosition(const Vector& pos) { ScreenPosition = pos; }
 		const Vector& GetScreenPosition() const { return ScreenPosition; }
 	private:
