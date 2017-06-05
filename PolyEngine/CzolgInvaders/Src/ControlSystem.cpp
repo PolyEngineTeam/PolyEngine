@@ -92,7 +92,7 @@ void ControlSystem::SpawnBullet(GameManagerComponent* gameManager, World* world,
 {
 	auto bullet = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, bullet);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, bullet, "model-tank/tank.fbx");
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, bullet, "Models/bullet/lowpolybullet.obj");
 	if (direction.Length() > 0)
 		direction.Normalize();
 	DeferredTaskSystem::AddComponentImmediate<BulletComponent>(world, bullet, speed, direction,
