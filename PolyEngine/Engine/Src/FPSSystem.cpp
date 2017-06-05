@@ -16,7 +16,7 @@ void Poly::FPSSystem::FPSUpdatePhase(World* world)
 	if (gCoreConfig.DisplayFPS && !com->FPSData.DisplayingFPS)
 	{
 		UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(world);
-		DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(world,  id, Vector(0, 0, 0), "Fonts/Raleway/Raleway-Regular.ttf", 32);
+		DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(world,  id, Vector(0, 10, 0), "Fonts/Raleway/Raleway-Regular.ttf", 32);
 		com->FPSData.DisplayingFPS = true;
 	}
 		
@@ -29,7 +29,7 @@ void Poly::FPSSystem::FPSUpdatePhase(World* world)
 		for (auto tuple : world->IterateComponents<ScreenSpaceTextComponent>())
 		{
 				textCom = std::get<ScreenSpaceTextComponent*>(tuple);
-				textCom->SetText(&std::to_string(com->FPSData.FPS)[0]);
+				textCom->SetText(&std::string("FPS: " + std::to_string(com->FPSData.FPS))[0]);
 		}
 
 		com->FPSData.FPS = 0;
