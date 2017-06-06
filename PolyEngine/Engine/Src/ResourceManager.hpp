@@ -10,7 +10,25 @@
 
 namespace Poly
 {
+	class GLMeshResource;
+	class GLTextureResource;
+	class FontResource;
+
 	ENGINE_DLLEXPORT const String& GetResourcesAbsolutePath();
+
+	namespace Impl { template<typename T> std::map<String, std::unique_ptr<T>>& GetResources(); }
+
+#define DECLARE_RESOURCE(type, map_name) \
+	namespace Impl { \
+		ENGINE_DLLEXPORT extern std::map<String, std::unique_ptr<type>> map_name; \
+		template<> inline std::map<String, std::unique_ptr<type>>& GetResources<type>() { return map_name; } \
+	}
+
+#define DEFINE_RESOURCE(type, map_name) namespace Poly { namespace Impl { std::map<String, std::unique_ptr<type>> map_name = {}; }}
+
+	DECLARE_RESOURCE(GLMeshResource, gGLMeshResourcesMap)
+	DECLARE_RESOURCE(GLTextureResource, gGLTextureResourcesMap)
+	DECLARE_RESOURCE(FontResource, gFontResourcesMap)
 
 	//------------------------------------------------------------------------------
 	template<typename T>
@@ -20,10 +38,10 @@ namespace Poly
 		//------------------------------------------------------------------------------
 		static T* Load(const String& relativePath, bool absolute = true)
 		{
-			auto it = GetResources().find(relativePath);
+			auto it = Impl::GetResources<T>().find(relativePath);
 
 			// Check if it is already loaded
-			if (it != GetResources().end())
+			if (it != Impl::GetResources<T>().end())
 			{
 				T* resource = it->second.get();
 				resource->AddRef();
@@ -56,7 +74,7 @@ namespace Poly
 				return nullptr;
 			}
 
-			GetResources().insert(std::make_pair(relativePath, std::unique_ptr<T>(resource)));
+			Impl::GetResources<T>().insert(std::make_pair(relativePath, std::unique_ptr<T>(resource)));
 			resource->Path = relativePath;
 			resource->AddRef();
 			return resource;
@@ -67,17 +85,10 @@ namespace Poly
 		{
 			if (resource->RemoveRef())
 			{
-				auto it = GetResources().find(resource->GetPath());
-				HEAVY_ASSERTE(it != GetResources().end(), "Resource creation failed!");
-				GetResources().erase(it);
+				auto it = Impl::GetResources<T>().find(resource->GetPath());
+				HEAVY_ASSERTE(it != Impl::GetResources<T>().end(), "Resource creation failed!");
+				Impl::GetResources<T>().erase(it);
 			}
 		}
-	private:
-		// This is hack for static std::map ...
-		static std::map<String, std::unique_ptr<T>>& GetResources()
-		{
-			static std::map<String, std::unique_ptr<T>> Resources;
-			return Resources;
-		}
-	};
+	};	
 }
