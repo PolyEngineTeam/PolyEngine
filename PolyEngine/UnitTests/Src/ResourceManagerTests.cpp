@@ -10,6 +10,11 @@ public:
 	DummyResource(const String& /*path*/) {}
 };
 
+namespace Poly {
+	DECLARE_RESOURCE(DummyResource, gDummyResourcesMap)
+}
+DEFINE_RESOURCE(DummyResource, gDummyResourcesMap)
+
 TEST_CASE("ResourceManager loading/freeing", "[ResourceManager]")
 {
 	DummyResource* res1 = ResourceManager<DummyResource>::Load("a");
