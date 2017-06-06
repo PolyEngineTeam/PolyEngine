@@ -27,11 +27,10 @@ void Text2D::SetFont(const String& fontName)
 void Poly::Text2D::Draw() const
 {
 	UpdateDeviceBuffers();
-	
+
 	glBindVertexArray(VAO);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, Font->GetFace(FontSize).TextureID);
-	CHECK_GL_ERR();
 
 	// Render glyph texture over quad
 	glDrawArrays(GL_TRIANGLES, 0, 6 * Text.GetLength());
@@ -60,6 +59,7 @@ void Text2D::UpdateDeviceBuffers() const
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), 0);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(4 * sizeof(GLfloat)));
 
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 		CHECK_GL_ERR();
 	}
@@ -106,33 +106,8 @@ void Text2D::UpdateDeviceBuffers() const
 		x += ch.Advance * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
 
-	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vboData.GetSize(), vboData.GetData(), GL_DYNAMIC_DRAW);
-	glBindVertexArray(0);
-
-	/*
-	//RENDERING
-	
-	glBindVertexArray(VAO);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, face.TextureID);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	CHECK_GL_ERR();
-
-	// Render glyph texture over quad
-
-	CHECK_GL_ERR();
-	// Update content of VBO memory
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vboData.GetSize(), vboData.GetData(), GL_DYNAMIC_DRAW);
-	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-	CHECK_GL_ERR();
-	// Render quad
-	glDrawArrays(GL_TRIANGLES, 0, 6 * Text.GetLength());
-
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindVertexArray(0);
-	CHECK_GL_ERR();
-	*/
-
 }
