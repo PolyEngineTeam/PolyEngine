@@ -73,6 +73,22 @@ void InvadersGame::Init()
 	Engine->RegisterUpdatePhase(GameMainSystem::GameUpdate, Poly::Engine::eUpdatePhaseOrder::UPDATE);
 	Engine->RegisterUpdatePhase(ControlSystem::ControlSystemPhase, Poly::Engine::eUpdatePhaseOrder::UPDATE);
 
+	for(int x = -1; x <= 1; ++x)
+		for (int z = -1; z <= 1; ++z)
+		{
+			const float SCALE = 4.0f;
+			const float SIZE = 40.0f;
+
+			auto ground = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
+			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), ground);
+			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(&Engine->GetWorld(), ground, "Models/ground/ground.fbx");
+			Poly::TransformComponent* groundTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(ground);
+			groundTransform->SetLocalTranslation(Vector(x * SCALE * SIZE, 0, z * SCALE * SIZE));
+			groundTransform->SetLocalScale(SCALE);
+		}
+
+	
+
 	// Precache bullet mesh
 	BulletMesh = Poly::ResourceManager<GLMeshResource>::Load("Models/bullet/lowpolybullet.obj");
 };
