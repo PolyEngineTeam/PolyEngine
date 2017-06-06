@@ -1,6 +1,6 @@
 #include "InvadersGame.hpp"
 
-#include "DeferredTaskSystem.hpp"
+#include <DeferredTaskSystem.hpp>
 #include <CameraComponent.hpp>
 #include <TransformComponent.hpp>
 #include <MeshRenderingComponent.hpp>
@@ -8,7 +8,8 @@
 #include <ScreenSpaceTextComponent.hpp>
 #include <Core.hpp>
 #include <DeferredTaskSystem.hpp>
-#include "ViewportWorldComponent.hpp"
+#include <ViewportWorldComponent.hpp>
+#include <ResourceManager.hpp>
 
 using namespace Poly;
 
@@ -61,14 +62,19 @@ void InvadersGame::Init()
 	}
 	auto player = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), player);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(&Engine->GetWorld(), player, "model-tank/tank.fbx");
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(&Engine->GetWorld(), player, "Models/tank2/bradle.3ds");
 	DeferredTaskSystem::AddComponentImmediate<PlayerControllerComponent>(&Engine->GetWorld(), player, 10.0f);
 	Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(player);
 	entTransform->SetLocalTranslation(Vector(0, 0, 50));
+	entTransform->SetLocalScale(10);
+	entTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -90_deg) * Quaternion(Vector::UNIT_X, -90_deg));
 	
 	Engine->GetWorld().GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, Engine->GetWorld().GetComponent<Poly::CameraComponent>(Camera));
 	Engine->RegisterUpdatePhase(GameMainSystem::GameUpdate, Poly::Engine::eUpdatePhaseOrder::UPDATE);
 	Engine->RegisterUpdatePhase(ControlSystem::ControlSystemPhase, Poly::Engine::eUpdatePhaseOrder::UPDATE);
+
+	// Precache bullet mesh
+	BulletMesh = Poly::ResourceManager<GLMeshResource>::Load("Models/bullet/lowpolybullet.obj");
 };
 
 void InvadersGame::Deinit()
@@ -76,6 +82,7 @@ void InvadersGame::Deinit()
 	DeferredTaskSystem::DestroyEntityImmediate(&Engine->GetWorld(), Camera);
 	for(auto ent : GameEntities)
 		DeferredTaskSystem::DestroyEntityImmediate(&Engine->GetWorld(), ent);
+	Poly::ResourceManager<GLMeshResource>::Release(BulletMesh);
 };
 
 void GameMainSystem::GameUpdate(Poly::World* /*world*/)
