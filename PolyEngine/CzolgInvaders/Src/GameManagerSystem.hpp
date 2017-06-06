@@ -2,6 +2,7 @@
 
 #include <World.hpp>
 #include "GameManagerComponent.hpp"
+#include <ScreenSpaceTextComponent.hpp>
 
 
 namespace Poly
@@ -13,9 +14,6 @@ namespace Poly
 	{
 
 		void GameManagerSystemPhase(World*);
-
-		void AddEntity(World*, UniqueID);
-		void RemoveEntity(World*, UniqueID);
 	}
 }
 

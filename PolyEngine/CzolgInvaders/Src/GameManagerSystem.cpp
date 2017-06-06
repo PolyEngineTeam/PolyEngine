@@ -5,23 +5,19 @@ using namespace Poly;
 void GameManagerSystem::GameManagerSystemPhase(World* world)
 {
 
+	GameManagerComponent* gameManager = nullptr;
+	for (auto componentTuple : world->IterateComponents<GameManagerComponent>())
+	{
+		gameManager = std::get<GameManagerComponent*>(componentTuple);
+	}
+
+	/*for (auto componentTuple : world->IterateComponents<ScreenSpaceTextComponent>())
+	{
+		ScreenSpaceTextComponent* textComponent  = std::get<ScreenSpaceTextComponent*>(componentTuple);
+		std::string text = "Kill count: ";
+		text = text + std::to_string(gameManager->GetKillCount());
+		textComponent->SetText(&text[0]);
+	}*/
 }
 
-void GameManagerSystem::AddEntity(World* world, UniqueID ent)
-{
-	for (auto gameManagerTuple : world->IterateComponents<GameManagerComponent>())
-	{
-		GameManagerComponent* gameManager = std::get<GameManagerComponent*>(gameManagerTuple);
-		//gameManager->GetGameEntities()->push_back(ent);
-	}
-}
-
-void GameManagerSystem::RemoveEntity(World* world, UniqueID ent)
-{
-	for (auto gameManagerTuple : world->IterateComponents<GameManagerComponent>())
-	{
-		GameManagerComponent* gameManager = std::get<GameManagerComponent*>(gameManagerTuple);
-		//gameManager->GetGameEntities()->erase(ent);
-	}
-}
 

@@ -20,6 +20,5 @@ namespace Poly {
 		Poly::Dynarray<Poly::UniqueID> DeadGameEntities;
 		Poly::eKey QuitKey = Poly::eKey::ESCAPE;
 		size_t KillCount = 0;
-
 	};
 }
