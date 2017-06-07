@@ -47,6 +47,21 @@ void ControlSystem::ControlSystemPhase(World* world)
 			player->SetLastShoot(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 		}
 	}
+
+	for (auto tuple : world->IterateComponents<Invaders::MovementSystem::MovementComponent, Invaders::TankComponent>())
+	{
+		Invaders::MovementSystem::MovementComponent* transform = std::get<Invaders::MovementSystem::MovementComponent*>(tuple);
+		Invaders::TankComponent* tank = std::get<Invaders::TankComponent*>(tuple);
+
+		if (tank->MovedDistance > 100)
+		{
+			Invaders::MovementSystem::SetLinearVelocity(world, transform->GetOwnerID(), -Invaders::MovementSystem::GetLinearVelocity(world, transform->GetOwnerID()));
+			tank->MovedDistance = 0;
+		}
+
+		tank->MovedDistance += std::fabs(Invaders::MovementSystem::GetLinearVelocity(world, transform->GetOwnerID()).X * deltaTime);
+		
+	}
 	
 	for (auto componentTuple : world->IterateComponents<Invaders::TankComponent, TransformComponent>())
 	{

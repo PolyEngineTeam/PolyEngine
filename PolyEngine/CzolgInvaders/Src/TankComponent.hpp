@@ -14,5 +14,6 @@ namespace Invaders
 		Poly::UniqueID Turret;
 		float NextRotTime = 0.0f;
 		Poly::Angle Degree;
+		float MovedDistance = 0;
 	};
 }
