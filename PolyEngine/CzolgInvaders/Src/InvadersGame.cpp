@@ -35,9 +35,9 @@ void InvadersGame::Init()
 	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(&Engine->GetWorld(), Camera, 45.0f, 1.0f, 1000.f);
 	DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(&Engine->GetWorld(), Camera, 10.0f, 0.003f);
 
-	float x_pos = 100;
+	float y_pos = Engine->GetRenderingContext()->GetScreenSize().Height;
 	auto textDispaly = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
-	DeferredTaskSystem::AddComponentImmediate<Poly::ScreenSpaceTextComponent>(&Engine->GetWorld(), textDispaly, Vector{ x_pos, 0.0f ,0.0f }, "Fonts/Raleway/Raleway-Light.ttf", 32, "Kill count: 0");
+	DeferredTaskSystem::AddComponentImmediate<Poly::ScreenSpaceTextComponent>(&Engine->GetWorld(), textDispaly, Vector{ 0.0f, y_pos ,0.0f }, "Fonts/Raleway/Raleway-Heavy.ttf", 32, "Kill count: 0");
 	
 	GameManager = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<GameManagerComponent>(&Engine->GetWorld(), GameManager, textDispaly);
@@ -49,9 +49,9 @@ void InvadersGame::Init()
 	cameraTrans->SetLocalTranslation(Vector(0.0f, 20.0f, 60.0f));
 	cameraTrans->SetLocalRotation(Quaternion({ 1, 0, 0 }, -30_deg));
 
-	for (int i = -6; i < 0; ++i)
+	for (int i = -10; i < 0; ++i)
 	{
-		for (int j = -1; j < 1; ++j)
+		for (int j = -2; j < 1; ++j)
 		{
 			auto ent = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
 			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), ent);
@@ -63,13 +63,13 @@ void InvadersGame::Init()
 			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(&Engine->GetWorld(), base, "model-tank/base.fbx");
 			DeferredTaskSystem::AddComponentImmediate<Invaders::MovementSystem::MovementComponent>(&Engine->GetWorld(), base, Vector(1, 0, 0), Vector(0, 0, 0), Quaternion(Vector(0, 0, 0), 0_deg), Quaternion(Vector(0, 0, 0), 0_deg));
 			DeferredTaskSystem::AddComponentImmediate<Invaders::CollisionSystem::CollisionComponent>(&Engine->GetWorld(), base,  Vector(0, 0, 0), Vector(5.0f, 5.0f, 5.0f));
-			DeferredTaskSystem::AddComponentImmediate<Invaders::TankComponent>(&Engine->GetWorld(), base,  ent);
+			DeferredTaskSystem::AddComponentImmediate<Invaders::TankComponent>(&Engine->GetWorld(), base,  ent, 12.0_deg, (i * j)%5 );
 			Poly::TransformComponent* baseTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(base);
 			
 			entTransform->SetParent(baseTransform);
 			baseTransform->SetLocalTranslation(Vector(i * 12, 0, j * 8));
 			baseTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -90.0_deg));
-			entTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -90.0_deg));
+			entTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -60.0_deg));
 		}
 	}
 	auto player = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());

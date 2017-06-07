@@ -14,6 +14,7 @@ void ControlSystem::ControlSystemPhase(World* world)
 
 	GameManagerComponent* gameManager = nullptr;
 	double time = world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime();
+	double deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
 	for (auto componentTuple : world->IterateComponents<GameManagerComponent>())
 	{
 		gameManager = std::get<GameManagerComponent*>(componentTuple);
@@ -32,7 +33,7 @@ void ControlSystem::ControlSystemPhase(World* world)
 		{
 			move.Normalize();
 			move *= player->GetMovementSpeed();
-			move *= TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
+			move *= deltaTime;
 			TransformComponent* player_transform = player->GetSibling<TransformComponent>();
 			Vector prev_location = player_transform->GetLocalTranslation();
 			if (Abs(prev_location.X + move.X) <= player->GetMaxAbsXPosition())
@@ -40,10 +41,30 @@ void ControlSystem::ControlSystemPhase(World* world)
 		}
 		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(player->GetShootKey()) && (world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime() - player->GetLastShoot() >= player->GetShootInterval()))
 		{
-			SpawnBullet(gameManager, world, player->GetSibling<TransformComponent>()->GetLocalTranslation(), Vector(0.0f, 0.0f, -1.0f), player->GetBulletSpeed());
+			Vector pos = player->GetSibling<TransformComponent>()->GetLocalTranslation();
+
+			SpawnBullet(gameManager, world, pos, Vector(0.0f, 0.0f, -1.0f), player->GetBulletSpeed());
 			player->SetLastShoot(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 		}
 	}
+	
+	for (auto componentTuple : world->IterateComponents<Invaders::TankComponent, TransformComponent>())
+	{
+		TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
+		Invaders::TankComponent* tank = std::get<Invaders::TankComponent*>(componentTuple);
+		TransformComponent* transformTurret = world->GetComponent<TransformComponent>(tank->Turret);
+ 
+		if (tank->NextRotTime < time)
+		{
+			tank->NextRotTime = time + 5.0f;
+			tank->Degree *= -1;
+		}
+		Quaternion rotaton(Vector::UNIT_Y, tank->Degree * deltaTime);
+		rotaton *= transformTurret->GetLocalRotation();
+		transformTurret->SetLocalRotation(rotaton);
+
+	}
+
 	for (auto componentTuple : world->IterateComponents<BulletComponent, TransformComponent>())
 	{
 		BulletComponent* bullet = std::get<BulletComponent*>(componentTuple);
@@ -70,11 +91,14 @@ void ControlSystem::ControlSystemPhase(World* world)
 		collider = std::get<Invaders::CollisionSystem::CollisionComponent*>(tuple);
 		if (collider->IsColliding())
 		{
-			/*gameManager->SetKillCount(gameManager->GetKillCount() + 1);
-			if (!gameManager->GetDeadGameEntities()->Contains(collider->GetSibling<Invaders::TankComponent>()->Turret))
-				gameManager->GetDeadGameEntities()->PushBack(collider->GetSibling<Invaders::TankComponent>()->Turret);
+			if (collider->GetSibling<Invaders::TankComponent>() != nullptr)
+			{
+				gameManager->SetKillCount(gameManager->GetKillCount() + 1);
+				if (!gameManager->GetDeadGameEntities()->Contains(collider->GetSibling<Invaders::TankComponent>()->Turret))
+					gameManager->GetDeadGameEntities()->PushBack(collider->GetSibling<Invaders::TankComponent>()->Turret);
+			}
 			if (!gameManager->GetDeadGameEntities()->Contains(collider->GetOwnerID()))
-				gameManager->GetDeadGameEntities()->PushBack(collider->GetOwnerID());*/
+				gameManager->GetDeadGameEntities()->PushBack(collider->GetOwnerID());
 		}
 	}
 
