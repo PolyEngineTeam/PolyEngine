@@ -89,7 +89,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Poly::gConsole.LogDebug("Engine loaded successfully");
 
 	// wait for the next message in the queue, store the result in 'msg'
-	while (true)
+	bool quitRequested = false;
+	while (!quitRequested)
 	{
 		// Check to see if any messages are waiting in the queue
 		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != 0)
@@ -100,20 +101,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			// send the message to the WindowProc function
 			DispatchMessage(&msg);
 
+			// check to see if it's time to quit
+			if (msg.message == WM_QUIT)
+				quitRequested = true;
 		}
-		
-		// check to see if it's time to quit
-		if (msg.message == WM_QUIT)
-			break;
 
 		// Run game code here
 		Engine.Update();
-    // Temporary visualisation of delta time in window title
-    std::stringstream ss;
-    ss << Poly::TimeSystem::GetTimerDeltaTime(&Engine.GetWorld(), Poly::eEngineTimer::SYSTEM);
-    Poly::String windText("DeltaTime = ");
-    windText = windText + ss.str().c_str();
-    SetWindowText(hWnd, windText.GetCStr());
 	}
 
 	Engine.Deinit();
