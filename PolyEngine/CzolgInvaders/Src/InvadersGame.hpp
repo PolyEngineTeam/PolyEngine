@@ -25,8 +25,9 @@ enum class eGameComponents
 	PLAYERCONTROLLER = (int)Poly::eEngineComponents::_COUNT,
 	BULLET,
 	GAMEMANAGER,
-	ENEMYMOVEMENT
-
+	ENEMYMOVEMENT,
+	MOVEMENT,
+	COLLISION
 };
 
 class GAME_DLLEXPORT InvadersGame : public Poly::IGame {
