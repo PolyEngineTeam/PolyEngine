@@ -10,6 +10,7 @@ namespace Poly {
 		~TransformComponent();
 
 		const TransformComponent* GetParent() const { return Parent; }
+		Dynarray<TransformComponent*>& GetChildren() { return Children; }
 		void SetParent(TransformComponent* parent);
 		void ResetParent();
 

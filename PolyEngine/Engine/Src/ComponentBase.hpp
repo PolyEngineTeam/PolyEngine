@@ -29,6 +29,12 @@ namespace Poly {
 			return Owner->GetComponent<T>();
 		}
 
+		UniqueID GetOwnerID() const
+		{
+			HEAVY_ASSERTE(Owner, "Component was not properly initialized.");
+			return Owner->GetID();
+		}
+
 		void SetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags |= rhs; }
 		void ResetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags &= ~rhs; }
 		const EnumFlags<eComponentBaseFlags>& GetFlags() { return Flags; }
