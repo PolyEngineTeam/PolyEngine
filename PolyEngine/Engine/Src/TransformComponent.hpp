@@ -5,6 +5,7 @@
 namespace Poly {
 	class ENGINE_DLLEXPORT TransformComponent : public ComponentBase
 	{
+	friend void World::DestroyEntity(const UniqueID&);
 	public:
 		TransformComponent(TransformComponent* parent = nullptr) { if(parent) SetParent(parent); };
 		~TransformComponent();

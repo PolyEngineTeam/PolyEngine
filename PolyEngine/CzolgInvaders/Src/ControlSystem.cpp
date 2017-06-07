@@ -70,11 +70,8 @@ void ControlSystem::ControlSystemPhase(World* world)
 		collider = std::get<Invaders::CollisionSystem::CollisionComponent*>(tuple);
 		if (collider->IsColliding())
 		{
-			/*gameManager->SetKillCount(gameManager->GetKillCount() + 1);
-			if (!gameManager->GetDeadGameEntities()->Contains(collider->GetSibling<Invaders::TankComponent>()->Turret))
-				gameManager->GetDeadGameEntities()->PushBack(collider->GetSibling<Invaders::TankComponent>()->Turret);
-			if (!gameManager->GetDeadGameEntities()->Contains(collider->GetOwnerID()))
-				gameManager->GetDeadGameEntities()->PushBack(collider->GetOwnerID());*/
+			gameManager->SetKillCount(gameManager->GetKillCount() + 1);
+			DeferredTaskSystem::DestroyEntity(world, collider->GetOwnerID());
 		}
 	}
 

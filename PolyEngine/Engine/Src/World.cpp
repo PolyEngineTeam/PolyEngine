@@ -45,6 +45,14 @@ void World::DestroyEntity(const UniqueID& entityId)
 {
 	Entity* ent = IDToEntityMap[entityId];
 	HEAVY_ASSERTE(ent, "Invalid entity ID");
+
+	TransformComponent* transform = ent->GetComponent<TransformComponent>();
+	if (transform)
+	{
+		for (auto it : transform->Children) DestroyEntity(it->GetOwnerID());
+		transform->Children.Clear();
+	}
+
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT; ++i)
 	{
 		if (ent->Components[i])
