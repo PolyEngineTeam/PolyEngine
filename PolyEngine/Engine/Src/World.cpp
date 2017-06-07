@@ -50,8 +50,8 @@ void World::DestroyEntity(const UniqueID& entityId)
 	TransformComponent* transform = ent->GetComponent<TransformComponent>();
 	if (transform)
 	{
-		for (auto it : transform->Children) DestroyEntity(it->GetOwnerID());
-		transform->Children.Clear();
+		for (auto it : transform->GetChildren())
+			DestroyEntity(it->GetOwnerID());
 	}
 
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT; ++i)

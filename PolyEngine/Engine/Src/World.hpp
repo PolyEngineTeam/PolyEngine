@@ -139,7 +139,6 @@ namespace Poly {
 
 		DeferredTaskQueue& GetDeferredTaskQueue() { return DeferredTasksQueue; }
 
-		void DestroyEntity(const UniqueID& entityId);
 	private:
 		friend class SpawnEntityDeferredTask;
 		friend class DestroyEntityDeferredTask;
@@ -155,6 +154,7 @@ namespace Poly {
 
 		//------------------------------------------------------------------------------
 		UniqueID SpawnEntity();
+		void DestroyEntity(const UniqueID& entityId);
 		//------------------------------------------------------------------------------
 		//------------------------------------------------------------------------------
 		template<typename T, typename... Args>

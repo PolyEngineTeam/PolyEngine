@@ -5,7 +5,6 @@
 namespace Poly {
 	class ENGINE_DLLEXPORT TransformComponent : public ComponentBase
 	{
-	friend void World::DestroyEntity(const UniqueID&);
 	public:
 		TransformComponent(TransformComponent* parent = nullptr) { if(parent) SetParent(parent); };
 		~TransformComponent();
@@ -31,6 +30,7 @@ namespace Poly {
 		const Matrix& GetGlobalTransformationMatrix() const;
 		void SetLocalTransformationMatrix(const Matrix& localTransformation);
 		
+		const Dynarray<TransformComponent*>& GetChildren() const { return Children; }
 	private:
 		TransformComponent* Parent = nullptr;
 		Dynarray<TransformComponent*> Children;
