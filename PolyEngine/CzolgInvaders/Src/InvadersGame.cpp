@@ -11,6 +11,7 @@
 #include <ViewportWorldComponent.hpp>
 #include <ResourceManager.hpp>
 
+#include "GameManagerSystem.hpp"
 #include "MovementComponent.hpp"
 #include "MovementSystem.hpp"
 #include "CollisionComponent.hpp"
@@ -34,12 +35,12 @@ void InvadersGame::Init()
 	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(&Engine->GetWorld(), Camera, 45.0f, 1.0f, 1000.f);
 	DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(&Engine->GetWorld(), Camera, 10.0f, 0.003f);
 
-	//float x_pos = 100;
-	//auto textDispaly = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
-	//DeferredTaskSystem::AddComponentImmediate<Poly::ScreenSpaceTextComponent>(&Engine->GetWorld(), textDispaly, Vector{ x_pos, 0.0f ,0.0f }, "Fonts/Raleway/Raleway-Light.ttf", 32, "Kill count: 0");
+	float x_pos = 100;
+	auto textDispaly = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
+	DeferredTaskSystem::AddComponentImmediate<Poly::ScreenSpaceTextComponent>(&Engine->GetWorld(), textDispaly, Vector{ x_pos, 0.0f ,0.0f }, "Fonts/Raleway/Raleway-Light.ttf", 32, "Kill count: 0");
 	
 	GameManager = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
-	DeferredTaskSystem::AddComponentImmediate<GameManagerComponent>(&Engine->GetWorld(), GameManager);
+	DeferredTaskSystem::AddComponentImmediate<GameManagerComponent>(&Engine->GetWorld(), GameManager, textDispaly);
 	GameManagerComponent* gameManagerComponent = Engine->GetWorld().GetComponent<GameManagerComponent>(GameManager);
 	
 
@@ -85,6 +86,7 @@ void InvadersGame::Init()
 	Engine->RegisterUpdatePhase(Invaders::CollisionSystem::CollisionUpdatePhase, Poly::Engine::eUpdatePhaseOrder::UPDATE);
 	Engine->RegisterUpdatePhase(GameMainSystem::GameUpdate, Poly::Engine::eUpdatePhaseOrder::UPDATE);
 	Engine->RegisterUpdatePhase(ControlSystem::ControlSystemPhase, Poly::Engine::eUpdatePhaseOrder::UPDATE);
+	Engine->RegisterUpdatePhase(GameManagerSystem::GameManagerSystemPhase, Poly::Engine::eUpdatePhaseOrder::UPDATE);
 
 	for(int x = -1; x <= 1; ++x)
 		for (int z = -1; z <= 1; ++z)
