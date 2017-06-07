@@ -11,6 +11,11 @@
 #include <ViewportWorldComponent.hpp>
 #include <ResourceManager.hpp>
 
+#include "MovementComponent.hpp"
+#include "MovementSystem.hpp"
+#include "CollisionComponent.hpp"
+#include "CollisionSystem.hpp"
+
 using namespace Poly;
 
 void InvadersGame::Init()
@@ -19,6 +24,8 @@ void InvadersGame::Init()
 	Engine->RegisterComponent<BulletComponent>((int)eGameComponents::BULLET);
 	Engine->RegisterComponent<GameManagerComponent>((int)eGameComponents::GAMEMANAGER);
 	Engine->RegisterComponent<EnemyMovementComponent>((int)eGameComponents::ENEMYMOVEMENT);
+	Engine->RegisterComponent<Invaders::MovementSystem::MovementComponent>((int)eGameComponents::MOVEMENT);
+	Engine->RegisterComponent<Invaders::CollisionSystem::CollisionComponent>((int)eGameComponents::COLLISION);
 	
 	Camera = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), Camera);
@@ -51,7 +58,8 @@ void InvadersGame::Init()
 			auto base = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
 			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), base);
 			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(&Engine->GetWorld(), base, "model-tank/base.fbx");
-			DeferredTaskSystem::AddComponentImmediate<Poly::EnemyMovementComponent>(&Engine->GetWorld(), base, AABox(Vector(i * 6, 0, j * 8), Vector(5.0f, 5.0f, 5.0f)), ent);
+			DeferredTaskSystem::AddComponentImmediate<Invaders::MovementSystem::MovementComponent>(&Engine->GetWorld(), base, Vector(0, 0, 0), Vector(0, 0, 0), Quaternion(Vector(0, 0, 0), 0_deg), Quaternion(Vector(0, 0, 0), 0_deg));
+			DeferredTaskSystem::AddComponentImmediate<Invaders::CollisionSystem::CollisionComponent>(&Engine->GetWorld(), base,  Vector(0, 0, 0), Vector(5.0f, 5.0f, 5.0f));
 			Poly::TransformComponent* baseTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(base);
 			
 			entTransform->SetParent(baseTransform);
@@ -70,6 +78,8 @@ void InvadersGame::Init()
 	entTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -90_deg) * Quaternion(Vector::UNIT_X, -90_deg));
 	
 	Engine->GetWorld().GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, Engine->GetWorld().GetComponent<Poly::CameraComponent>(Camera));
+	Engine->RegisterUpdatePhase(Invaders::MovementSystem::MovementUpdatePhase, Poly::Engine::eUpdatePhaseOrder::UPDATE);
+	Engine->RegisterUpdatePhase(Invaders::CollisionSystem::CollisionUpdatePhase, Poly::Engine::eUpdatePhaseOrder::UPDATE);
 	Engine->RegisterUpdatePhase(GameMainSystem::GameUpdate, Poly::Engine::eUpdatePhaseOrder::UPDATE);
 	Engine->RegisterUpdatePhase(ControlSystem::ControlSystemPhase, Poly::Engine::eUpdatePhaseOrder::UPDATE);
 

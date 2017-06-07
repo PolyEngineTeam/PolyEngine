@@ -3,6 +3,9 @@
 #include <TimeWorldComponent.hpp>
 #include <InputWorldComponent.hpp>
 
+#include "MovementComponent.hpp"
+#include "CollisionComponent.hpp"
+
 using namespace Poly;
 
 void ControlSystem::ControlSystemPhase(World* world)
@@ -58,23 +61,20 @@ void ControlSystem::ControlSystemPhase(World* world)
 				gameManager->GetDeadGameEntities()->PushBack(bullet->GetOwnerID());
 		}
 	}
-	for (auto componentTuple : world->IterateComponents<EnemyMovementComponent>())
+
+	Invaders::CollisionSystem::CollisionComponent* collider;
+	
+	for (auto tuple : world->IterateComponents<Invaders::CollisionSystem::CollisionComponent>())
 	{
-		EnemyMovementComponent* enemy = std::get<EnemyMovementComponent*>(componentTuple);
-		Vector move(1.0f, 0, 0);
-
-
-		if (move.Length() > 0)
+		collider = std::get<Invaders::CollisionSystem::CollisionComponent*>(tuple);
+		if (collider->IsColliding())
 		{
-			move.Normalize();
-			move *= enemy->GetMovementSpeed();
-			move *= TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
-			TransformComponent* enemy_transform = enemy->GetSibling<TransformComponent>();
-			Vector prev_location = enemy_transform->GetLocalTranslation();
-			enemy_transform->SetLocalTranslation(prev_location + move);
-			enemy->GetCollisionBox().SetPosition(enemy_transform->GetLocalTranslation() + move);
+			/*gameManager->SetKillCount(gameManager->GetKillCount() + 1);
+			if (!gameManager->GetDeadGameEntities()->Contains(tank->GetTurret()))
+				gameManager->GetDeadGameEntities()->PushBack(tank->GetTurret());
+			if (!gameManager->GetDeadGameEntities()->Contains(other))
+				gameManager->GetDeadGameEntities()->PushBack(other);*/
 		}
-		CheckBulletCollisions(world, gameManager, enemy->GetOwnerID());
 	}
 
 	if (world->GetWorldComponent<InputWorldComponent>()->IsReleased(gameManager->GetQuitKey()))
@@ -88,8 +88,11 @@ void ControlSystem::ControlSystemPhase(World* world)
 void ControlSystem::SpawnBullet(GameManagerComponent* gameManager, World* world, Vector pos, Vector direction, float speed)
 {
 	auto bullet = DeferredTaskSystem::SpawnEntityImmediate(world);
+
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, bullet);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, bullet, "Models/bullet/lowpolybullet.obj");
+	DeferredTaskSystem::AddComponentImmediate<Invaders::CollisionSystem::CollisionComponent>(world, bullet,  Vector(0, 0, 0), Vector(2.0f,2.0f,2.0f));
+
 	if (direction.Length() > 0)
 		direction.Normalize();
 	DeferredTaskSystem::AddComponentImmediate<BulletComponent>(world, bullet, speed, direction,
@@ -107,47 +110,4 @@ void ControlSystem::CleanUpEnitites(GameManagerComponent* gameManager, World* wo
 		DeferredTaskSystem::DestroyEntity(world, ent);
 	}
 	gameManager->GetDeadGameEntities()->Clear();	
-}
-
-
-void ControlSystem::CheckBulletCollisions(World* world, GameManagerComponent* gameManager, const UniqueID other)
-{
-	//todo : Collsioncomponent
-	if (world->GetComponent<EnemyMovementComponent>(other) != nullptr)
-	{
-		EnemyMovementComponent* tank = world->GetComponent<EnemyMovementComponent>(other);
-		AABox& rect1 = tank->GetCollisionBox();
-		bool to_delete = false;
-		for (auto componentTuple : world->IterateComponents<BulletComponent>())
-		{
-			BulletComponent* bullet = std::get<BulletComponent*>(componentTuple);
-			if (to_delete)
-				break;
-			to_delete = CheckCollision(rect1, bullet->GetCollisionBox());
-			if (to_delete)
-			{
-				gConsole.LogInfo("Collision!");
-				if (!gameManager->GetDeadGameEntities()->Contains(bullet->GetOwnerID()))
-					gameManager->GetDeadGameEntities()->PushBack(bullet->GetOwnerID());
-			}
-		}
-		if (to_delete)
-		{
-			gameManager->SetKillCount(gameManager->GetKillCount() + 1);
-			if (!gameManager->GetDeadGameEntities()->Contains(tank->GetTurret()))
-				gameManager->GetDeadGameEntities()->PushBack(tank->GetTurret());
-			if (!gameManager->GetDeadGameEntities()->Contains(other))
-				gameManager->GetDeadGameEntities()->PushBack(other);
-		}
-	}
-}
-
-bool ControlSystem::CheckCollision(const AABox& rect1, const AABox& rect2)
-{
-	return(rect1.GetMax().X > rect2.GetMin().X &&
-		rect1.GetMin().X < rect2.GetMax().X &&
-		rect1.GetMax().Y > rect2.GetMin().Y &&
-		rect1.GetMin().Y < rect2.GetMax().Y &&
-		rect1.GetMax().Z > rect2.GetMin().Z &&
-		rect1.GetMin().Z < rect2.GetMax().Z);
 }
