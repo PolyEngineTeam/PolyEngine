@@ -17,7 +17,8 @@ World::~World()
 	auto entityMap = IDToEntityMap;
 	for (auto& kv : entityMap)
 	{
-		DestroyEntity(kv.second->EntityID);
+		if(IDToEntityMap.find(kv.second->EntityID) != IDToEntityMap.end())
+			DestroyEntity(kv.second->EntityID);
 	}
 	
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT; ++i)
