@@ -20,7 +20,7 @@ namespace Poly {
 		AABox& GetCollisionBox() { return CollisionBox; }
 
 	private:
-		double LifeTime = 2;
+		double LifeTime = 4;
 		double SpawnTime = 0.0f;
 		float MovementSpeed = 100.0f;
 		Vector Direction = { 0.0f, 0.0f, 0.0f };
