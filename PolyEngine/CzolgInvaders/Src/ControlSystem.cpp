@@ -5,6 +5,7 @@
 
 #include "MovementComponent.hpp"
 #include "CollisionComponent.hpp"
+#include "TankComponent.hpp"
 
 using namespace Poly;
 
@@ -70,10 +71,10 @@ void ControlSystem::ControlSystemPhase(World* world)
 		if (collider->IsColliding())
 		{
 			/*gameManager->SetKillCount(gameManager->GetKillCount() + 1);
-			if (!gameManager->GetDeadGameEntities()->Contains(tank->GetTurret()))
-				gameManager->GetDeadGameEntities()->PushBack(tank->GetTurret());
-			if (!gameManager->GetDeadGameEntities()->Contains(other))
-				gameManager->GetDeadGameEntities()->PushBack(other);*/
+			if (!gameManager->GetDeadGameEntities()->Contains(collider->GetSibling<Invaders::TankComponent>()->Turret))
+				gameManager->GetDeadGameEntities()->PushBack(collider->GetSibling<Invaders::TankComponent>()->Turret);
+			if (!gameManager->GetDeadGameEntities()->Contains(collider->GetOwnerID()))
+				gameManager->GetDeadGameEntities()->PushBack(collider->GetOwnerID());*/
 		}
 	}
 

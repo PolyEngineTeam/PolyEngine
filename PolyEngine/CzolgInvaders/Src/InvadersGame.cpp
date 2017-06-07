@@ -15,6 +15,7 @@
 #include "MovementSystem.hpp"
 #include "CollisionComponent.hpp"
 #include "CollisionSystem.hpp"
+#include "TankComponent.hpp"
 
 using namespace Poly;
 
@@ -26,6 +27,7 @@ void InvadersGame::Init()
 	Engine->RegisterComponent<EnemyMovementComponent>((int)eGameComponents::ENEMYMOVEMENT);
 	Engine->RegisterComponent<Invaders::MovementSystem::MovementComponent>((int)eGameComponents::MOVEMENT);
 	Engine->RegisterComponent<Invaders::CollisionSystem::CollisionComponent>((int)eGameComponents::COLLISION);
+	Engine->RegisterComponent<Invaders::TankComponent>((int)eGameComponents::TANK);
 	
 	Camera = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), Camera);
@@ -58,8 +60,9 @@ void InvadersGame::Init()
 			auto base = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
 			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), base);
 			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(&Engine->GetWorld(), base, "model-tank/base.fbx");
-			DeferredTaskSystem::AddComponentImmediate<Invaders::MovementSystem::MovementComponent>(&Engine->GetWorld(), base, Vector(0, 0, 0), Vector(0, 0, 0), Quaternion(Vector(0, 0, 0), 0_deg), Quaternion(Vector(0, 0, 0), 0_deg));
+			DeferredTaskSystem::AddComponentImmediate<Invaders::MovementSystem::MovementComponent>(&Engine->GetWorld(), base, Vector(1, 0, 0), Vector(0, 0, 0), Quaternion(Vector(0, 0, 0), 0_deg), Quaternion(Vector(0, 0, 0), 0_deg));
 			DeferredTaskSystem::AddComponentImmediate<Invaders::CollisionSystem::CollisionComponent>(&Engine->GetWorld(), base,  Vector(0, 0, 0), Vector(5.0f, 5.0f, 5.0f));
+			DeferredTaskSystem::AddComponentImmediate<Invaders::TankComponent>(&Engine->GetWorld(), base,  ent);
 			Poly::TransformComponent* baseTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(base);
 			
 			entTransform->SetParent(baseTransform);

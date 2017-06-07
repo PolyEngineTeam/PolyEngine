@@ -19,7 +19,7 @@ namespace Invaders
 		private:
 			Poly::AABox Collider;
 			// TODO: implement collection of colliding entities' ID's
-			bool Colliding;
+			bool Colliding = false;
 		};
 	}
 }

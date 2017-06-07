@@ -27,7 +27,8 @@ enum class eGameComponents
 	GAMEMANAGER,
 	ENEMYMOVEMENT,
 	MOVEMENT,
-	COLLISION
+	COLLISION,
+	TANK
 };
 
 class GAME_DLLEXPORT InvadersGame : public Poly::IGame {

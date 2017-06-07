@@ -53,6 +53,9 @@
     <ClInclude Include="Src\CollisionComponent.hpp">
       <Filter>Source Files\CollisionSystem</Filter>
     </ClInclude>
+    <ClInclude Include="Src\TankComponent.hpp">
+      <Filter>Source Files\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\InvadersGame.cpp">

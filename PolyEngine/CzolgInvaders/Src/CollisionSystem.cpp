@@ -22,7 +22,7 @@ void Invaders::CollisionSystem::CollisionUpdatePhase(Poly::World* world)
 			collider2->Collider.SetPosition(std::get<Poly::TransformComponent*>(tuple2)->GetGlobalTranslation());
 
 			// TODO: if there aren't any collisions colliding = false 
-			if (collider1->Collider.Intersects(&collider2->Collider)) collider1->Colliding = collider2->Colliding = true;
+			if (collider1->Collider.Intersects(&collider2->Collider)) { collider1->Colliding = collider2->Colliding = true; Poly::gConsole.LogDebug("collision detected"); }
 		}
 	
 }

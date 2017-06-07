@@ -156,6 +156,7 @@
     <ClInclude Include="Src\MovementSystem.hpp" />
     <ClInclude Include="Src\PlayerControllerComponent.hpp" />
     <ClInclude Include="Src\InvadersGame.hpp" />
+    <ClInclude Include="Src\TankComponent.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
