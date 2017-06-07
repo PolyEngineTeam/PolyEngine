@@ -17,7 +17,8 @@ World::~World()
 	auto entityMap = IDToEntityMap;
 	for (auto& kv : entityMap)
 	{
-		DestroyEntity(kv.second->EntityID);
+		if(IDToEntityMap.find(kv.second->EntityID) != IDToEntityMap.end())
+			DestroyEntity(kv.second->EntityID);
 	}
 	
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT; ++i)
@@ -45,6 +46,14 @@ void World::DestroyEntity(const UniqueID& entityId)
 {
 	Entity* ent = IDToEntityMap[entityId];
 	HEAVY_ASSERTE(ent, "Invalid entity ID");
+
+	TransformComponent* transform = ent->GetComponent<TransformComponent>();
+	if (transform)
+	{
+		for (auto it : transform->GetChildren())
+			DestroyEntity(it->GetOwnerID());
+	}
+
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT; ++i)
 	{
 		if (ent->Components[i])

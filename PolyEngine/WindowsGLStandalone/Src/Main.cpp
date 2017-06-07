@@ -4,7 +4,7 @@
 
 #include <Engine.hpp>
 #include <OpenGLRenderingContext.hpp>
-#include <TestGame.hpp>
+#include <InvadersGame.hpp>
 #include <sstream>
 #include "TimeSystem.hpp"
 

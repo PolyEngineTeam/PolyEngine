@@ -30,6 +30,7 @@ namespace Poly {
 		const Matrix& GetGlobalTransformationMatrix() const;
 		void SetLocalTransformationMatrix(const Matrix& localTransformation);
 		
+		const Dynarray<TransformComponent*>& GetChildren() const { return Children; }
 	private:
 		TransformComponent* Parent = nullptr;
 		Dynarray<TransformComponent*> Children;
