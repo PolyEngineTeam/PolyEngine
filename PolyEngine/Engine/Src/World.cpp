@@ -49,7 +49,7 @@ void World::DestroyEntity(const UniqueID& entityId)
 	TransformComponent* transform = ent->GetComponent<TransformComponent>();
 	if (transform)
 	{
-		for (auto it : transform->GetChildren()) DestroyEntity(it->GetOwnerID());
+		for (auto it : transform->GetChildren()) DeferredTaskSystem::DestroyEntityImmediate(this, it->GetOwnerID());
 		transform->GetChildren().Clear();
 	}
 
