@@ -68,15 +68,23 @@
 	#else
 		#define GAME_DLLEXPORT __declspec(dllimport)
 	#endif
+
+	#if defined(_WINDLL) && defined(_DEVICE)
+		#define DEVICE_DLLEXPORT __declspec(dllexport)
+	#else
+		#define DEVICE_DLLEXPORT __declspec(dllimport)
+	#endif
 #elif defined(__GNUC__) || defined(__clang__)
 	//NOTE(vuko): dllexport and dllimport are the same as far as GCC and Clang are concerned
 	#define CORE_DLLEXPORT __attribute__ ((visibility ("default")))
 	#define ENGINE_DLLEXPORT __attribute__ ((visibility ("default")))
 	#define GAME_DLLEXPORT __attribute__ ((visibility ("default")))
+	#define DEVICE_DLLEXPORT __attribute__ ((visibility ("default")))
 #else
 	#define CORE_DLLEXPORT
 	#define ENGINE_DLLEXPORT
 	#define GAME_DLLEXPORT
+	#define DEVICE_DLLEXPORT
 #endif
 
 #ifndef DISABLE_SIMD

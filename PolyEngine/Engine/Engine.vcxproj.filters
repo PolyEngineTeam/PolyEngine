@@ -12,9 +12,6 @@
     <Filter Include="Source Files\Rendering">
       <UniqueIdentifier>{f48851b3-7ccb-4799-8ac7-243375d24468}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Rendering\OpenGL">
-      <UniqueIdentifier>{50231bcb-f6f7-40a2-960c-e9a4c44f55dc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\ECS">
       <UniqueIdentifier>{a91a3841-1dfa-487a-8c5f-0f2bdb72b027}</UniqueIdentifier>
     </Filter>
@@ -59,9 +56,6 @@
     <ClCompile Include="Src\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\OpenGLRenderingContext.cpp">
-      <Filter>Source Files\Rendering\OpenGL</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Entity.cpp">
       <Filter>Source Files\ECS</Filter>
     </ClCompile>
@@ -82,9 +76,6 @@
     </ClCompile>
     <ClCompile Include="Src\RenderingSystem.cpp">
       <Filter>Source Files\Rendering\MeshRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ShaderProgram.cpp">
-      <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Src\InputSystem.cpp">
       <Filter>Source Files\Input</Filter>
@@ -142,12 +133,6 @@
     <ClInclude Include="Src\Engine.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Src\OpenGLRenderingContext.hpp">
-      <Filter>Source Files\Rendering\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\RenderingContext.hpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Entity.hpp">
       <Filter>Source Files\ECS</Filter>
     </ClInclude>
@@ -177,9 +162,6 @@
     </ClInclude>
     <ClInclude Include="Src\RenderingSystem.hpp">
       <Filter>Source Files\Rendering\MeshRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ShaderProgram.hpp">
-      <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="Src\InputWorldComponent.hpp">
       <Filter>Source Files\Input</Filter>
@@ -217,9 +199,6 @@
     <ClInclude Include="Src\GLMeshResource.hpp">
       <Filter>Source Files\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Src\OpenGLUtils.hpp">
-      <Filter>Source Files\Rendering\OpenGL</Filter>
-    </ClInclude>
     <ClInclude Include="Src\MovementSystem.hpp">
       <Filter>Source Files\Movement</Filter>
     </ClInclude>
@@ -252,6 +231,12 @@
     </ClInclude>
     <ClInclude Include="Src\FPSSystem.hpp">
       <Filter>Source Files\Debug\FPS</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\IRenderingDevice.hpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\OpenGLUtils.hpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

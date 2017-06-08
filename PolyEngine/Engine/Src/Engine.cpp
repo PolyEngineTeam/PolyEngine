@@ -4,11 +4,11 @@
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-Engine::Engine(IGame* game) : Game(game)
+Engine::Engine(IGame* game, IRenderingDevice* device) : Game(game)
 {
 	BaseWorld = new World(this);
 	Game->RegisterEngine(this);
-	Renderer = CreateRenderingContext();
+	Renderer = device;
 }
 
 //------------------------------------------------------------------------------
@@ -18,7 +18,7 @@ Engine::~Engine()
 }
 
 //------------------------------------------------------------------------------
-bool Engine::Init(const IRenderingContextParams* context)
+bool Engine::Init()
 {
 	// Engine Components
 	RegisterComponent<TransformComponent>((size_t) eEngineComponents::TRANSFORM);
@@ -48,8 +48,8 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterUpdatePhase(DeferredTaskSystem::DeferredTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(FPSSystem::FPSUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 
-	if (!Renderer->Init(context))
-		return false;
+	//if (!Renderer->Init(context))
+	//	return false;
 
 	Game->Init();
 
@@ -60,7 +60,6 @@ bool Engine::Init(const IRenderingContextParams* context)
 void Engine::Deinit()
 {
 	Game->Deinit();
-	Renderer->Deinit();
 	delete Renderer;
 	Renderer = nullptr;
 }

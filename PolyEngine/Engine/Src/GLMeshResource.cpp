@@ -8,6 +8,7 @@
 #include <assimp/Importer.hpp>
 
 #include <GL/glew.h>
+#include "OpenGLUtils.hpp"
 
 using namespace Poly;
 

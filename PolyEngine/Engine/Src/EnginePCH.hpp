@@ -12,12 +12,11 @@
 #include "World.hpp"
 
 // Rendering
-#include "RenderingContext.hpp"
+#include "IRenderingDevice.hpp"
 
 // Utils
 #include "InputQueue.hpp"
 #include "KeyBindings.hpp"
-#include "OpenGLUtils.hpp"
 
 // Resources
 #include "ResourceBase.hpp"

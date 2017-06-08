@@ -7,8 +7,10 @@
 #include "ResourceBase.hpp"
 #include "GLTextureResource.hpp"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H  
+#include "OpenGLUtils.hpp"
+
+typedef struct  FT_FaceRec_;
+typedef struct FT_FaceRec_*  FT_Face;
 
 typedef unsigned int GLuint;
 

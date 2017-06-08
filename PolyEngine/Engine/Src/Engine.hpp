@@ -7,7 +7,7 @@
 #include <memory>
 
 #include <Core.hpp>
-#include "RenderingContext.hpp"
+#include "IRenderingDevice.hpp"
 
 #include "InputSystem.hpp"
 
@@ -64,7 +64,7 @@ namespace Poly
 		/// It also causes pointers exchange between engine and game.
 		/// @param game - pointer to IGame instance
 		/// @see IGame::RegisterEngine()
-		Engine(IGame* game);
+		Engine(IGame* game, IRenderingDevice* device);
 
 		/// Deletes world instance
 		/// @see Engine()
@@ -77,7 +77,7 @@ namespace Poly
 		/// @see RegisterUpdatePhase()
 		/// @see RegisterComponent()
 		/// @see RegisterWorldComponent()
-		bool Init(const IRenderingContextParams* context);
+		bool Init();
 
 		/// Deinitializes game and renderer.
 		/// Also deletes Renderer.
@@ -210,7 +210,7 @@ namespace Poly
 		/// Returns pointer to renderer
 		/// @return Renderer - pointer to IRenderingContext instance.
 		/// @see IRenderingContext
-		IRenderingContext* GetRenderingContext() const { return Renderer; }
+		IRenderingDevice* GetRenderingContext() const { return Renderer; }
 
 		/// Returns refference to input queue needed by InputPhase.
 		/// @see InputSystem::InputPhase()
@@ -234,7 +234,7 @@ namespace Poly
 
 		World* BaseWorld;
 		IGame* Game;
-		IRenderingContext* Renderer;
+		IRenderingDevice* Renderer;
 		InputQueue InputEventsQueue;
 
 		Dynarray<PhaseUpdateFunction> GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];

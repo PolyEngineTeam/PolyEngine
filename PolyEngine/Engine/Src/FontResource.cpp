@@ -2,6 +2,11 @@
 
 #include "FontResource.hpp"
 
+#include <GL/glew.h>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H  
+
 using namespace Poly;
 
 static FT_Library gFreeTypeLibrary = nullptr;
