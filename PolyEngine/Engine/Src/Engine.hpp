@@ -17,7 +17,10 @@ namespace Poly
 	class Engine;
 	typedef std::function<void(World*)> PhaseUpdateFunction;
 
-	//------------------------------------------------------------------------------
+	//////////////////////////////
+	/// Enum used to identify components.
+	/// @see RegisterComponent()
+	//////////////////////////////
 	enum class eEngineComponents
 	{
 		TRANSFORM,
@@ -28,7 +31,10 @@ namespace Poly
 		_COUNT
 	};
 
-	//------------------------------------------------------------------------------
+	//////////////////////////////
+	/// Enum used to identify world components.
+	/// @see RegisterWorldComponent()
+	//////////////////////////////
 	enum class eEngineWorldComponents
 	{
 		INPUT,
@@ -39,7 +45,6 @@ namespace Poly
 	};
 
 	//------------------------------------------------------------------------------
-
 	class ENGINE_DLLEXPORT IGame : public BaseObject<>
 	{
 	public:
@@ -48,13 +53,46 @@ namespace Poly
 		virtual void Deinit() = 0;
 	};
 
-	//------------------------------------------------------------------------------
+	//////////////////////////////
+	/// Central part of engine.
+	/// It provides elementary functions such as GetWorld() or RegisterUpdatePhase()
+	/// Every update phase registered with RegisterUpdatePhase() is executed from here in Update().
+	/// @see IGame
+	//////////////////////////////
 	class ENGINE_DLLEXPORT Engine : public BaseObject<>
 	{
 	public:
+		//////////////////////////////
+		/// Creates default world and renderer.
+		/// It also causes pointers exchange between engine and game.
+		/// @param game - pointer to IGame instance
+		/// @see IGame::RegisterEngine()
+		//////////////////////////////
 		Engine(IGame* game);
+
+		//////////////////////////////
+		/// Deletes world instance
+		/// @see Engine()
+		//////////////////////////////
 		~Engine();
+
+		//////////////////////////////
+		/// Registers engine components. Registers and creates world components.
+		///	Also registers engine update phases and initializes renderer object as well as game dbject. 
+		/// @param context - pointer to structure with rendering context parameters.
+		/// @return true when engine initialized succesfully.
+		/// @see RegisterUpdatePhase()
+		/// @see RegisterComponent()
+		/// @see RegisterWorldComponent()
+		//////////////////////////////
 		bool Init(const IRenderingContextParams* context);
+
+		//////////////////////////////
+		/// Deinitializes game and renderer.
+		/// Also deletes Renderer.
+		/// @see IGame::Deinit();
+		/// @see IRenderingContext::Deinit();
+		//////////////////////////////
 		void Deinit();
 
 		//////////////////////////////
@@ -70,7 +108,7 @@ namespace Poly
 		};
 
 		//////////////////////////////
-		/// Registers a PhaseUpdateFunction to be executed in the update
+		/// Registers a PhaseUpdateFunction to be executed in the update.
 		/// part of a single frame in the same order as they were passed in.
 		/// @param phaseFunction - void function(World*)
 		/// @param order - enum eUpdatePhaseOrder value
@@ -78,16 +116,70 @@ namespace Poly
 		//////////////////////////////
 		void RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order);
 
+		//////////////////////////////
+		/// Executes update phases functions that were registered in RegisterUpdatePhase().
+		/// Functions are executrd with given order and with given update phase order.
+		/// @see RegisterUpdatePhase()
+		/// @see eUpdatePhaseOrder
+		//////////////////////////////
 		void Update();
 
+		//////////////////////////////
+		/// Pushes input event to an input queue with specified event type and key code.
+		/// One of four functions handling incoming input events.
+		/// @param key - key code
+		/// @see KeyDown()
+		/// @see UpdateMousePos()
+		/// @see UpdateWheelPos()
+		/// @see eKey
+		//////////////////////////////
 		void KeyDown(eKey key) { InputEventsQueue.PushBack({eInputEventType::KEYDOWN, key}); }
+
+		//////////////////////////////
+		/// Pushes input event to an input queue with specified event type and key code.
+		/// One of four functions handling incoming input events.
+		/// @param key - key code
+		/// @see KeyUp()
+		/// @see UpdateMousePos()
+		/// @see UpdateWheelPos()
+		/// @see eKey
+		//////////////////////////////
 		void KeyUp(eKey key) { InputEventsQueue.PushBack({eInputEventType::KEYUP, key}); }
+
+		//////////////////////////////
+		/// Pushes input event to an input queue with specified event type and key code.
+		/// One of four functions handling incoming input events.
+		/// @param pos - new mouse position
+		/// @see KeyUp()
+		/// @see KeyDown()
+		/// @see UpdateWheelPos()
+		//////////////////////////////
 		void UpdateMousePos(const Vector& pos) { InputEventsQueue.PushBack({eInputEventType::MOUSEMOVE, pos}); }
+
+		//////////////////////////////
+		/// Pushes input event to an input queue with specified event type and key code.
+		/// One of four functions handling incoming input events.
+		/// @param pos - new wheel position
+		/// @see KeyDown()
+		/// @see KeyDown()
+		/// @see UpdateMousePos()
+		//////////////////////////////
 		void UpdateWheelPos(const Vector& pos) { InputEventsQueue.PushBack({eInputEventType::WHEELMOVE, pos}); }
 
+		//////////////////////////////
+		/// Returns current base world refference.
+		/// @return BaseWorld - current base world
+		/// @see World
+		//////////////////////////////
 		World& GetWorld() { return *BaseWorld; }
 
-		//------------------------------------------------------------------------------
+		//////////////////////////////
+		/// Registers component tyoe for further use.
+		/// Registered class must inherit from ComponentBase class.
+		/// @tparam T - component typename
+		/// @param id - specifies what id should be associated to registered component
+		/// @see eEngineComponents
+		//////////////////////////////
 		template<typename T> void RegisterComponent(size_t id)
 		{
 			ASSERTE(
@@ -101,13 +193,27 @@ namespace Poly
 
 			ComponentTypeMap[typeid(T)] = id;
 		}
-		//------------------------------------------------------------------------------
+
+		//////////////////////////////
+		/// If given component is registered function returns associated ID.
+		/// @tparam T - typename which ID is requested
+		/// @return ID - associated ID
+		/// @see RegisterComponent()
+		/// @see eEngineComponents
+		//////////////////////////////
 		template<typename T> size_t GetComponentID() const
 		{
 			ASSERTE(ComponentTypeMap.find(typeid(T)) != ComponentTypeMap.end(), "Component was not registered!");
 			return ComponentTypeMap.at(typeid(T));
 		}
-		//------------------------------------------------------------------------------
+
+		//////////////////////////////
+		/// Registers world component tyoe for further use.
+		/// Registered class must inherit from ComponentBase class.
+		/// @tparam T - component typename
+		/// @param id - specifies what id should be associated to registered component
+		/// @see eEngineWorldComponents
+		//////////////////////////////
 		template<typename T> void RegisterWorldComponent(size_t id)
 		{
 			ASSERTE(
@@ -121,19 +227,46 @@ namespace Poly
 				
 			WorldComponentTypeMap[typeid(T)] = id;
 		}
-		//------------------------------------------------------------------------------
+
+		//////////////////////////////
+		/// If given world component is registered function returns associated ID.
+		/// @tparam T - typename which ID is requested
+		/// @return ID - associated ID
+		/// @see RegisterWorldComponent()
+		/// @see eEngineWorldComponents
+		//////////////////////////////
 		template<typename T> size_t GetWorldComponentID() const
 		{
 			ASSERTE(WorldComponentTypeMap.find(typeid(T)) != WorldComponentTypeMap.end(), "World component was not registered!");
 			return WorldComponentTypeMap.at(typeid(T));
 		}
 
+		//////////////////////////////
+		/// Returns pointer to renderer
+		/// @return Renderer - pointer to IRenderingContext instance.
+		/// @see IRenderingContext
+		//////////////////////////////
 		IRenderingContext* GetRenderingContext() const { return Renderer; }
+
+		//////////////////////////////
+		/// Returns refference to input queue needed by InputPhase.
+		/// @see InputSystem::InputPhase()
+		//////////////////////////////
 		InputQueue& GetInputQueue() { return InputEventsQueue; }
 
+		//////////////////////////////
+		/// Makes renderer resizes its context.
+		/// @param size - new screen size
+		/// @see IRenderingContext::Resize()
+		//////////////////////////////
 		void ResizeScreen(const ScreenSize& size);
+
 	private:
-		//------------------------------------------------------------------------------
+		//////////////////////////////
+		/// Executes all phases registered in given order.
+		/// @see RegisterUpdatePhase()
+		/// @see eUpdatePhaseOrder
+		//////////////////////////////
 		inline void UpdatePhases(eUpdatePhaseOrder order)
 		{
 			HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "_COUNT enum value passed to UpdatePhases(), which is an invalid value");
@@ -146,7 +279,7 @@ namespace Poly
 		IRenderingContext* Renderer;
 		InputQueue InputEventsQueue;
 
-		Dynarray< PhaseUpdateFunction > GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];
+		Dynarray<PhaseUpdateFunction> GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];
 
 		std::unordered_map<std::type_index, size_t> ComponentTypeMap;
 		std::unordered_map<std::type_index, size_t> WorldComponentTypeMap;

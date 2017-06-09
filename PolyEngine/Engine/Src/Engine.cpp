@@ -1,6 +1,5 @@
 #include "EnginePCH.hpp"
 
-#include "ScreenSpaceTextComponent.hpp"
 
 using namespace Poly;
 
@@ -13,7 +12,7 @@ Engine::Engine(IGame* game) : Game(game)
 }
 
 //------------------------------------------------------------------------------
-Poly::Engine::~Engine()
+Engine::~Engine()
 {
 	delete BaseWorld;
 }
@@ -83,7 +82,7 @@ void Engine::Update()
 }
 
 //------------------------------------------------------------------------------
-void Poly::Engine::ResizeScreen(const ScreenSize & size)
+void Engine::ResizeScreen(const ScreenSize & size)
 {
 	gConsole.LogDebug("Screen resize: {} {}", size.Width, size.Height);
 	GetRenderingContext()->Resize(size);

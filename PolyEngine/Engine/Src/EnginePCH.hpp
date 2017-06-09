@@ -27,16 +27,17 @@
 #include "FontResource.hpp"
 
 // Components
-#include "TransformComponent.hpp"
 #include "CameraComponent.hpp"
-#include "MeshRenderingComponent.hpp"
 #include "FreeFloatMovementComponent.hpp"
+#include "MeshRenderingComponent.hpp"
+#include "ScreenSpaceTextComponent.hpp"
+#include "TransformComponent.hpp"
 
 // World Components
+#include "DebugWorldComponent.hpp"
 #include "InputWorldComponent.hpp"
 #include "TimeWorldComponent.hpp"
 #include "ViewportWorldComponent.hpp"
-#include "DebugWorldComponent.hpp"
 
 //Config
 #include "CoreConfig.hpp"

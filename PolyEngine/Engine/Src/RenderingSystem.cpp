@@ -1,7 +1,6 @@
 #include "EnginePCH.hpp"
 
 #include "ShaderProgram.hpp"
-#include "ScreenSpaceTextComponent.hpp"
 
 #include <GL/glew.h>
 
