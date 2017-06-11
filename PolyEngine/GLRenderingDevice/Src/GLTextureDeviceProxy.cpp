@@ -8,8 +8,8 @@ GLenum GetGLDataFormat(eTextureDataFormat format)
 {
 	switch (format)
 	{
-	case Poly::eTextureDataFormat::R:
-		return GL_R;
+	case Poly::eTextureDataFormat::RED:
+		return GL_RED;
 	case Poly::eTextureDataFormat::RGB:
 		return GL_RGB;
 	case Poly::eTextureDataFormat::RGBA:
@@ -27,7 +27,7 @@ GLenum GetGLInternalFormat(eTextureUsageType usage)
 	case Poly::eTextureUsageType::DIFFUSE:
 		return GL_RGBA;
 	case Poly::eTextureUsageType::FONT:
-		return GL_R;
+		return GL_RED;
 	default:
 		ASSERTE(false, "Invalid usage!");
 	}

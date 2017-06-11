@@ -14,7 +14,7 @@ namespace Poly
 	//------------------------------------------------------------------------------
 	enum class eTextureDataFormat
 	{
-		R,
+		RED,
 		RGB,
 		RGBA,
 		_COUNT
