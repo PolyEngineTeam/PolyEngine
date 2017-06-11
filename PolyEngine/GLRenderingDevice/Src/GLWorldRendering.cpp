@@ -7,7 +7,7 @@
 #include <GL/glxew.h>
 #endif
 
-#include "OpenGLUtils.hpp"
+#include "GLUtils.hpp"
 
 #include <World.hpp>
 #include <CoreConfig.hpp>

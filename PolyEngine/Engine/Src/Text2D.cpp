@@ -1,7 +1,6 @@
 #include "EnginePCH.hpp"
 #include "Text2D.hpp"
 
-#include "OpenGLUtils.hpp"
 #include "FontResource.hpp"
 #include "ResourceManager.hpp"
 
