@@ -12,28 +12,51 @@ namespace Poly
 	};
 
 	//------------------------------------------------------------------------------
+	enum class eTextureDataFormat
+	{
+		R,
+		RGB,
+		RGBA,
+		_COUNT
+	};
+
+	//------------------------------------------------------------------------------
+	enum class eTextureUsageType
+	{
+		DIFFUSE,
+		FONT,
+		_COUNT
+	};
+
+	//------------------------------------------------------------------------------
 	class ENGINE_DLLEXPORT RenderingDeviceSetupFailedException : public BaseObject<>, public std::exception
 	{
 	public:
 		RenderingDeviceSetupFailedException() {}
 	};
 
-	class ENGINE_DLLEXPORT ITextureDeviceProxy : public BaseObject<>
+	//------------------------------------------------------------------------------
+	class ENGINE_DLLEXPORT RenderingDeviceProxyCreationFailedException : public BaseObject<>, public std::exception
 	{
-
+	public:
+		RenderingDeviceProxyCreationFailedException() {}
 	};
 
+	//------------------------------------------------------------------------------
+	class ENGINE_DLLEXPORT ITextureDeviceProxy : public BaseObject<>
+	{
+	public:
+		virtual void SetContent(eTextureDataFormat format, unsigned char* data) = 0;
+		virtual void SetSubContent(size_t width, size_t height, size_t offsetX, size_t offsetY, eTextureDataFormat format, unsigned char* data) = 0;
+	};
+
+	//------------------------------------------------------------------------------
 	class ENGINE_DLLEXPORT IMeshDeviceProxy : public BaseObject<>
 	{
 
 	};
 
-	class ENGINE_DLLEXPORT IFontDeviceProxy : public BaseObject<>
-	{
-
-	};
-
-
+	//------------------------------------------------------------------------------
 	class ENGINE_DLLEXPORT IRenderingDevice : public BaseObject<>
 	{
 	public:
@@ -42,9 +65,8 @@ namespace Poly
 
 		virtual void RenderWorld(World* world) = 0;
 
-		//virtual ITextureDeviceProxy* CreateTexture() = 0;
+		virtual std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) = 0;
 		//virtual IMeshDeviceProxy* CreateMesh() = 0;
-		//virtual IFontDeviceProxy* CreateFont() = 0;
 	protected:
 	};
 }

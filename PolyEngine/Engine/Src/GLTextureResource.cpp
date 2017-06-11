@@ -4,24 +4,12 @@
 #include "ResourceManager.hpp"
 #include "SOIL/SOIL.h"
 
-#include <GL/glew.h>
-
 
 using namespace Poly;
 
 //------------------------------------------------------------------------------
 GLTextureResource::GLTextureResource(const String& path)
 {
-
-	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &TextureID);
-	glBindTexture(GL_TEXTURE_2D, TextureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 16);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
 	Image = SOIL_load_image(path.GetCStr(), &Width, &Height, &Channels, SOIL_LOAD_RGBA);
 	if (Image == nullptr)
 	{
@@ -38,14 +26,12 @@ GLTextureResource::GLTextureResource(const String& path)
 		memcpy(Image + (i * Width*Channels), row.GetData(), sizeof(unsigned char) * rowSize);
 	}
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Image);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	TextureProxy = gEngine->GetRenderingContext()->CreateTexture(Width, Height, eTextureUsageType::DIFFUSE); //HACK, remove deffise from here
+	TextureProxy->SetContent(eTextureDataFormat::RGBA, Image);
 }
 
 //-----------------------------------------------------------------------------
 GLTextureResource::~GLTextureResource()
 {
 	SOIL_free_image_data(Image);
-	glDeleteTextures(1, &TextureID);
 }

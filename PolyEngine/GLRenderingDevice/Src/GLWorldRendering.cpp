@@ -20,6 +20,8 @@
 #include <Viewport.hpp>
 #include <CameraComponent.hpp>
 
+#include "GLTextureDeviceProxy.hpp"
+
 
 
 void Poly::GLRenderingDevice::RenderWorld(World * world)
@@ -61,7 +63,7 @@ void Poly::GLRenderingDevice::RenderWorld(World * world)
 				if (subMesh->GetDiffTexture())
 				{
 					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, subMesh->GetDiffTexture()->GetID());
+					glBindTexture(GL_TEXTURE_2D, static_cast<const GLTextureDeviceProxy*>(subMesh->GetDiffTexture()->GetTextureProxy())->TextureID);
 				}
 
 				glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetVertexCount(), GL_UNSIGNED_INT, NULL);
@@ -125,3 +127,4 @@ void Poly::GLRenderingDevice::RenderWorld(World * world)
 
 	EndFrame();
 }
+

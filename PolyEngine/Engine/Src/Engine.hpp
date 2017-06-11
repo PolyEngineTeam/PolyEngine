@@ -242,4 +242,6 @@ namespace Poly
 		std::unordered_map<std::type_index, size_t> ComponentTypeMap;
 		std::unordered_map<std::type_index, size_t> WorldComponentTypeMap;
 	};
+
+	ENGINE_DLLEXPORT extern Engine* gEngine;
 }

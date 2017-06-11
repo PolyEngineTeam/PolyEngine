@@ -2,12 +2,15 @@
 
 #include <Logger.hpp>
 
-#include <GL/glew.h>
+#include "GLUtils.hpp"
+
 #ifdef _WIN32
 	#include <GL/wglew.h>
 #elif defined(__linux__)
 	#include <GL/glxew.h>
 #endif
+
+#include "GLTextureDeviceProxy.hpp"
 
 
 using namespace Poly;
@@ -135,4 +138,9 @@ using namespace Poly;
 void Poly::GLRenderingDevice::Resize(const ScreenSize & size)
 {
 	ScreenDim = size;
+}
+
+std::unique_ptr<ITextureDeviceProxy> Poly::GLRenderingDevice::CreateTexture(size_t width, size_t height, eTextureUsageType usage)
+{
+	return std::make_unique<GLTextureDeviceProxy>(width, height, usage);
 }

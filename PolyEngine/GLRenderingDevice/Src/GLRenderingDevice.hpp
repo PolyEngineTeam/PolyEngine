@@ -41,6 +41,8 @@ namespace Poly
 		const ScreenSize& GetScreenSize() const override { return ScreenDim; }
 	
 		void RenderWorld(World* world) override;
+
+		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) override;
 	private:
 		virtual ShaderProgram& GetProgram(eShaderProgramType type) { return *ShaderPrograms[type]; }
 		void EndFrame();

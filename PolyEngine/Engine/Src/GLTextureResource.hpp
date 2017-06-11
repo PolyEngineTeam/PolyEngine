@@ -12,14 +12,16 @@ namespace Poly
 		GLTextureResource(const String& path);
 		~GLTextureResource() override;
 
-		GLuint GetID() const { return TextureID; }
 		unsigned char* GetImage() const { return Image; }
 		int GetWidth() const { return Width; }
 		int GetHeight() const { return Height; }
 		int GetChannels() const { return Channels; }
 
+		ITextureDeviceProxy* GetTextureProxy() { return TextureProxy.get(); }
+		const ITextureDeviceProxy* GetTextureProxy() const { return TextureProxy.get(); }
+
 	private:
-		GLuint TextureID; 
+		std::unique_ptr<ITextureDeviceProxy> TextureProxy;
 		unsigned char* Image;
 		int Width;
 		int Height;

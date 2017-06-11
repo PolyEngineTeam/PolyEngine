@@ -3,9 +3,13 @@
 
 using namespace Poly;
 
+Engine* Poly::gEngine = nullptr;
+
 //------------------------------------------------------------------------------
 Engine::Engine(IGame* game, IRenderingDevice* device) : Game(game)
 {
+	ASSERTE(gEngine == nullptr, "Creating engine twice?");
+	gEngine = this;
 	BaseWorld = new World(this);
 	Game->RegisterEngine(this);
 	Renderer = device;
@@ -14,6 +18,7 @@ Engine::Engine(IGame* game, IRenderingDevice* device) : Game(game)
 //------------------------------------------------------------------------------
 Engine::~Engine()
 {
+	gEngine = nullptr;
 	delete BaseWorld;
 }
 
