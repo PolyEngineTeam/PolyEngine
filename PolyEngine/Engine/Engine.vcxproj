@@ -198,7 +198,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\TransformComponent.cpp" />
     <ClCompile Include="Src\ViewportWorldComponent.cpp" />
     <ClCompile Include="Src\World.cpp" />
-    <ClCompile Include="Src\GLTextureResource.cpp" />
+    <ClCompile Include="Src\TextureResource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.vcxproj">
@@ -241,7 +241,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\Viewport.hpp" />
     <ClInclude Include="Src\ViewportWorldComponent.hpp" />
     <ClInclude Include="Src\World.hpp" />
-    <ClInclude Include="Src\GLTextureResource.hpp" />
+    <ClInclude Include="Src\TextureResource.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

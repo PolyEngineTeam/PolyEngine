@@ -6,11 +6,11 @@ typedef unsigned int GLuint;
 
 namespace Poly 
 {
-	class ENGINE_DLLEXPORT GLTextureResource : public ResourceBase
+	class ENGINE_DLLEXPORT TextureResource : public ResourceBase
 	{
 	public:
-		GLTextureResource(const String& path);
-		~GLTextureResource() override;
+		TextureResource(const String& path);
+		~TextureResource() override;
 
 		unsigned char* GetImage() const { return Image; }
 		int GetWidth() const { return Width; }

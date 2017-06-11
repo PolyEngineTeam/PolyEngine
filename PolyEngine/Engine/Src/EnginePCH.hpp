@@ -21,7 +21,7 @@
 // Resources
 #include "ResourceBase.hpp"
 #include "ResourceManager.hpp"
-#include "GLTextureResource.hpp"
+#include "TextureResource.hpp"
 #include "GLMeshResource.hpp"
 #include "FontResource.hpp"
 

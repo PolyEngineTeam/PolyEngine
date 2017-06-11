@@ -5,7 +5,7 @@
 #include <Color.hpp>
 
 #include "ResourceBase.hpp"
-#include "GLTextureResource.hpp"
+#include "TextureResource.hpp"
 
 struct aiMesh;
 struct aiMaterial;
@@ -39,14 +39,14 @@ namespace Poly
 
 			GLuint GetVAO() const { return VAO; }
 			GLuint GetVBO(eBufferType type) const { return VBO[type]; }
-			const GLTextureResource* GetDiffTexture() const { return DiffuseTexture; }
+			const TextureResource* GetDiffTexture() const { return DiffuseTexture; }
 			size_t GetVertexCount() const { return VertexCount; }
 			const Material& GetMaterial() { return Mtl; }
 
 		private:
 			GLuint VAO;
 			EnumArray<GLuint, eBufferType> VBO;
-			GLTextureResource* DiffuseTexture = nullptr; // only diffuse texture for now
+			TextureResource* DiffuseTexture = nullptr; // only diffuse texture for now
 			size_t VertexCount;
 			Material Mtl;
 		};

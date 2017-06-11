@@ -11,7 +11,7 @@
 namespace Poly
 {
 	class GLMeshResource;
-	class GLTextureResource;
+	class TextureResource;
 	class FontResource;
 
 	ENGINE_DLLEXPORT const String& GetResourcesAbsolutePath();
@@ -27,7 +27,7 @@ namespace Poly
 #define DEFINE_RESOURCE(type, map_name) namespace Poly { namespace Impl { std::map<String, std::unique_ptr<type>> map_name = {}; }}
 
 	DECLARE_RESOURCE(GLMeshResource, gGLMeshResourcesMap)
-	DECLARE_RESOURCE(GLTextureResource, gGLTextureResourcesMap)
+	DECLARE_RESOURCE(TextureResource, gGLTextureResourcesMap)
 	DECLARE_RESOURCE(FontResource, gFontResourcesMap)
 
 	//------------------------------------------------------------------------------

@@ -147,7 +147,7 @@ Poly::GLMeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMater
 		String textPath(fullPath.c_str());
 		// end temporary code for extracting path
 
-		DiffuseTexture = ResourceManager<GLTextureResource>::Load(textPath, false);
+		DiffuseTexture = ResourceManager<TextureResource>::Load(textPath, false);
 		if (!DiffuseTexture)
 			gConsole.LogError("Failed to load diffuse texture: {}", fullPath);
 		else
@@ -181,7 +181,7 @@ Poly::GLMeshResource::SubMesh::~SubMesh()
 		glDeleteBuffers(1, &VBO[eBufferType::INDEX_BUFFER]);
 
 	if (DiffuseTexture)
-		ResourceManager<GLTextureResource>::Release(DiffuseTexture);
+		ResourceManager<TextureResource>::Release(DiffuseTexture);
 	
 	glDeleteVertexArrays(1, &VAO);
 }

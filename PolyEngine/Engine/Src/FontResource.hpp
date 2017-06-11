@@ -5,7 +5,7 @@
 #include <Color.hpp>
 
 #include "ResourceBase.hpp"
-#include "GLTextureResource.hpp"
+#include "TextureResource.hpp"
 
 #include "OpenGLUtils.hpp"
 

@@ -98,9 +98,6 @@
     <ClCompile Include="Src\TimeSystem.cpp">
       <Filter>Source Files\Time</Filter>
     </ClCompile>
-    <ClCompile Include="Src\GLTextureResource.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
     <ClCompile Include="Src\GLMeshResource.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
@@ -127,6 +124,9 @@
     </ClCompile>
     <ClCompile Include="Src\FPSSystem.cpp">
       <Filter>Source Files\Debug\FPS</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\TextureResource.cpp">
+      <Filter>Source Files\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -190,9 +190,6 @@
     <ClInclude Include="Src\Timer.hpp">
       <Filter>Source Files\Time</Filter>
     </ClInclude>
-    <ClInclude Include="Src\GLTextureResource.hpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Src\ResourceBase.hpp">
       <Filter>Source Files\Resources</Filter>
     </ClInclude>
@@ -237,6 +234,9 @@
     </ClInclude>
     <ClInclude Include="Src\OpenGLUtils.hpp">
       <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\TextureResource.hpp">
+      <Filter>Source Files\Resources</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

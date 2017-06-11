@@ -1,6 +1,6 @@
 #include "EnginePCH.hpp"
 
-#include "GLTextureResource.hpp"
+#include "TextureResource.hpp"
 #include "ResourceManager.hpp"
 #include "SOIL/SOIL.h"
 
@@ -8,7 +8,7 @@
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-GLTextureResource::GLTextureResource(const String& path)
+TextureResource::TextureResource(const String& path)
 {
 	Image = SOIL_load_image(path.GetCStr(), &Width, &Height, &Channels, SOIL_LOAD_RGBA);
 	if (Image == nullptr)
@@ -31,7 +31,7 @@ GLTextureResource::GLTextureResource(const String& path)
 }
 
 //-----------------------------------------------------------------------------
-GLTextureResource::~GLTextureResource()
+TextureResource::~TextureResource()
 {
 	SOIL_free_image_data(Image);
 }
