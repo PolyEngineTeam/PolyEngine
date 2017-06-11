@@ -2,13 +2,13 @@
 
 using namespace Poly;
 
+//------------------------------------------------------------------------------
 World::World(Engine* engine)
 	: EntitiesAllocator(MAX_ENTITY_COUNT), EnginePtr(engine)
 {
 	memset(ComponentAllocators, 0, sizeof(IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
 	memset(Components, 0, sizeof(ComponentBase*) * MAX_WORLD_COMPONENTS_COUNT);
 }
-
 
 //------------------------------------------------------------------------------
 World::~World()
@@ -64,6 +64,7 @@ void World::DestroyEntity(const UniqueID& entityId)
 	EntitiesAllocator.Free(ent);
 }
 
+//------------------------------------------------------------------------------
 bool World::HasWorldComponent(size_t ID) const
 {
 	HEAVY_ASSERTE(ID < MAX_WORLD_COMPONENTS_COUNT, "Invalid component ID - greater than MAX_WORLD_COMPONENTS_COUNT.");

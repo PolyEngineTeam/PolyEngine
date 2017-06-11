@@ -18,27 +18,38 @@ namespace Poly {
 		template<typename T, typename ...Args> void AddWorldComponentImmediate(World* w, Args && ...args);
 	}
 
+	/// Entities per world limit.
 	constexpr size_t MAX_ENTITY_COUNT = 65536;
+
+	/// World components in limit.
 	constexpr size_t MAX_WORLD_COMPONENTS_COUNT = 64;
 
 	struct InputState;
 
+	/// World represents world/scene/level in engine.
+	/// It only contains entities and its components.
+	/// Also it is the argument for update phases.
 	class ENGINE_DLLEXPORT World : public BaseObject<>
 	{
 	public:
+		/// Allocates memory for entities, world components and components allocators
+		/// Also saves pointer to an engine.
+		/// @param engine - pointer to an engine
 		World(Engine* engine);
+
+		/// Allocates memory for entities, world components and components allocators
+		/// Also saves pointer to an engine.
+		/// @param engine - pointer to an engine
 		virtual ~World();
 
 		//TODO implement world
-		//------------------------------------------------------------------------------
-		//////////////////////////////
-		/// Gets a component of a specified type and UniqueID.
+
+		/// Gets a component of a specified type from entity with given UniqueID.
 		/// @tparam T - component type to get
 		/// @param entityId - UniqueID of a component to get
 		/// @return pointer to a specified component or a nullptr, if none was found
 		/// @see AddComponent()
 		/// @see RemoveComponent()
-		//////////////////////////////
 		template<typename T>
 		T* GetComponent(const UniqueID& entityId)
 		{
@@ -48,45 +59,48 @@ namespace Poly {
 			return iter->second->GetComponent<T>();
 		}
 
-		//------------------------------------------------------------------------------
+		/// Checks whether world has component of given ID.
+		/// @param ID - registered component ID
+		/// @return has - true when world has component of given ID
 		bool HasWorldComponent(size_t ID) const;
 
-		//------------------------------------------------------------------------------
+		/// Returns world component of given type.
+		/// @tparam T - requested component type
+		/// @return T* - pointer to world component
 		template<typename T>
 		T* GetWorldComponent()
 		{			
-			ASSERTE(HasWorldComponent(EnginePtr->GetWorldComponentID<T>()), "dupa");
+			ASSERTE(HasWorldComponent(EnginePtr->GetWorldComponentID<T>()), "Invalid type - world component of given type does not exist!");
 			return reinterpret_cast<T*>(Components[EnginePtr->GetWorldComponentID<T>()]);
 		}
 
+		/// Returns pointer to an engine.
+		/// @return EnginePtr - pointer to an engine
+		/// @see Engine
 		Engine* GetEngine() const { return EnginePtr; }
 
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		struct IteratorProxy;
 
-		/**
-		 * Allows iteration over multiple component types
-		 * Iterator dereferences to a tuple of component pointers
-		 *
-		 * To get the component out of the tuple use std::get()
-		 * e.g. `std::get<YourComponentType*>(components)`
-		 * If you have a C++17-compliant compiler, you can use structured bindings
-		 * e.g. `for(auto [a, b] : world->IterateComponents<ComponentA, ComponentB>())`
-		 *
-		 * @tparam PrimaryComponent At least one component type must be specified
-		 * @tparam SecondaryComponents Additional component types (warning: returned pointers might be null!)
-		 * @return A proxy object that can be used in a range-for loop.
-		 */
+		/// Allows iteration over multiple component types
+		/// Iterator dereferences to a tuple of component pointers
+		///
+		/// To get the component out of the tuple use std::get()
+		/// e.g. `std::get<YourComponentType*>(components)`
+		/// If you have a C++17-compliant compiler, you can use structured bindings
+		/// e.g. `for(auto [a, b] : world->IterateComponents<ComponentA, ComponentB>())`
+		///
+		/// @tparam PrimaryComponent At least one component type must be specified
+		/// @tparam SecondaryComponents Additional component types (warning: returned pointers might be null!)
+		/// @return A proxy object that can be used in a range-for loop.
+		/// @see ComponentIterator
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		IteratorProxy<PrimaryComponent, SecondaryComponents...> IterateComponents()
 		{
 			return {this};
 		}
 
-		//------------------------------------------------------------------------------
-		/**
-		 * An implementation detail
-		 */
+		/// Component iterator.
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		class ComponentIterator : public BaseObject<>,
 		                          public std::iterator<std::bidirectional_iterator_tag, std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...>>
@@ -117,9 +131,7 @@ namespace Poly {
 			typename IterablePoolAllocator<PrimaryComponent>::Iterator primary_iter;
 		};
 
-		/**
-		 * An implementation detail
-		 */
+		/// Iterator proxy
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		struct IteratorProxy : BaseObject<>
 		{
@@ -137,6 +149,12 @@ namespace Poly {
 			World* const W;
 		};
 
+		/// Returns refference to deffered task queue.
+		/// Mainly used by deferred task system to execute heavy tasks that needs do be executed after the update.
+		/// @return DeferredTasksQueue - queue containing deferred tasks.
+		/// @see DeferredTaskPhase()
+		/// @see DeferredTaskBase
+		/// @see DeferredTaskImplementation.hpp 
 		DeferredTaskQueue& GetDeferredTaskQueue() { return DeferredTasksQueue; }
 
 	private:
@@ -154,8 +172,10 @@ namespace Poly {
 
 		//------------------------------------------------------------------------------
 		UniqueID SpawnEntity();
-		void DestroyEntity(const UniqueID& entityId);
+
 		//------------------------------------------------------------------------------
+		void DestroyEntity(const UniqueID& entityId);
+
 		//------------------------------------------------------------------------------
 		template<typename T, typename... Args>
 		void AddComponent(const UniqueID& entityId, Args&&... args)
@@ -197,6 +217,7 @@ namespace Poly {
 			return static_cast<IterablePoolAllocator<T>*>(ComponentAllocators[componentID]);
 		}
 
+		//------------------------------------------------------------------------------
 		template<typename T, typename... Args>
 		void AddWorldComponent(Args&&... args)
 		{
