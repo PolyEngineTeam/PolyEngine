@@ -17,9 +17,7 @@ namespace Poly
 		int GetHeight() const { return Height; }
 		int GetChannels() const { return Channels; }
 
-		ITextureDeviceProxy* GetTextureProxy() { return TextureProxy.get(); }
 		const ITextureDeviceProxy* GetTextureProxy() const { return TextureProxy.get(); }
-
 	private:
 		std::unique_ptr<ITextureDeviceProxy> TextureProxy;
 		unsigned char* Image;

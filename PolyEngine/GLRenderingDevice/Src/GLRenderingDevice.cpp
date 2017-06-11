@@ -11,6 +11,7 @@
 #endif
 
 #include "GLTextureDeviceProxy.hpp"
+#include "GLTextFieldBufferDeviceProxy.hpp"
 
 
 using namespace Poly;
@@ -140,7 +141,12 @@ void Poly::GLRenderingDevice::Resize(const ScreenSize & size)
 	ScreenDim = size;
 }
 
-std::unique_ptr<ITextureDeviceProxy> Poly::GLRenderingDevice::CreateTexture(size_t width, size_t height, eTextureUsageType usage)
+std::unique_ptr<ITextureDeviceProxy> GLRenderingDevice::CreateTexture(size_t width, size_t height, eTextureUsageType usage)
 {
 	return std::make_unique<GLTextureDeviceProxy>(width, height, usage);
+}
+
+std::unique_ptr<ITextFieldBufferDeviceProxy> GLRenderingDevice::CreateTextFieldBuffer()
+{
+	return std::make_unique<GLTextFieldBufferDeviceProxy>();
 }

@@ -7,8 +7,6 @@
 #include "ResourceBase.hpp"
 #include "TextureResource.hpp"
 
-#include "OpenGLUtils.hpp"
-
 typedef struct  FT_FaceRec_;
 typedef struct FT_FaceRec_*  FT_Face;
 
@@ -30,7 +28,7 @@ namespace Poly
 				float Advance;       // Offset to advance to next glyph
 			};
 			
-			GLuint TextureID;
+			std::unique_ptr<ITextureDeviceProxy> TextureProxy;
 			FT_Face FTFace;
 			std::map<char, FontGlyph> Characters;
 		};

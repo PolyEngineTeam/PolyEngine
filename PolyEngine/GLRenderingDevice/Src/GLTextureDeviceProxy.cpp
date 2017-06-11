@@ -79,7 +79,7 @@ Poly::GLTextureDeviceProxy::~GLTextureDeviceProxy()
 		glDeleteTextures(1, &TextureID);
 }
 
-void GLTextureDeviceProxy::SetContent(eTextureDataFormat format, unsigned char* data)
+void GLTextureDeviceProxy::SetContent(eTextureDataFormat format, const unsigned char* data)
 {
 	ASSERTE(Width > 0 && Height > 0, "Invalid arguments!");
 	ASSERTE(TextureID > 0 , "Texture is invalid!");
@@ -98,7 +98,7 @@ void GLTextureDeviceProxy::SetContent(eTextureDataFormat format, unsigned char* 
 	CHECK_GL_ERR();
 }
 
-void GLTextureDeviceProxy::SetSubContent(size_t width, size_t height, size_t offsetX, size_t offsetY, eTextureDataFormat format, unsigned char* data)
+void GLTextureDeviceProxy::SetSubContent(size_t width, size_t height, size_t offsetX, size_t offsetY, eTextureDataFormat format, const unsigned char* data)
 {
 	ASSERTE(width + offsetX <= Width && height + offsetY <= Height && width > 0 && height > 0, "Invalid arguments!");
 	ASSERTE(data, "Data pointer is nullptr!");

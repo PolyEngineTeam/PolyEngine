@@ -20,6 +20,7 @@
 #include <Viewport.hpp>
 #include <CameraComponent.hpp>
 
+#include "GLTextFieldBufferDeviceProxy.hpp"
 #include "GLTextureDeviceProxy.hpp"
 
 
@@ -119,7 +120,19 @@ void Poly::GLRenderingDevice::RenderWorld(World * world)
 			Text2D& text = textCmp->GetText();
 			GetProgram(eShaderProgramType::TEXT_2D).SetUniform("u_textColor", text.GetFontColor());
 			GetProgram(eShaderProgramType::TEXT_2D).SetUniform("u_position", textCmp->GetScreenPosition());
-			text.Draw();
+			text.UpdateDeviceBuffers();
+
+			const GLTextFieldBufferDeviceProxy* textFieldBuffer = static_cast<const GLTextFieldBufferDeviceProxy*>(text.GetTextFieldBuffer());
+
+			glBindVertexArray(textFieldBuffer->VAO);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, static_cast<const GLTextureDeviceProxy*>(text.GetFontTextureProxy())->TextureID);
+
+			// Render glyph texture over quad
+			glDrawArrays(GL_TRIANGLES, 0, 6 * textFieldBuffer->Size);
+
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glBindVertexArray(0);
 		}
 
 		glDisable(GL_BLEND);

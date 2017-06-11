@@ -30,6 +30,9 @@
     <ClInclude Include="Src\GLUtils.hpp">
       <Filter>Header Files\Impl</Filter>
     </ClInclude>
+    <ClInclude Include="Src\GLTextFieldBufferDeviceProxy.hpp">
+      <Filter>Header Files\Impl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\GLRenderingDevice.cpp">
@@ -42,6 +45,9 @@
       <Filter>Header Files\Impl</Filter>
     </ClCompile>
     <ClCompile Include="Src\ShaderProgram.cpp">
+      <Filter>Header Files\Impl</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GLTextFieldBufferDeviceProxy.cpp">
       <Filter>Header Files\Impl</Filter>
     </ClCompile>
   </ItemGroup>
