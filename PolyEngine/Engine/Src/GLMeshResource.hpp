@@ -6,6 +6,7 @@
 
 #include "ResourceBase.hpp"
 #include "TextureResource.hpp"
+#include "Mesh.hpp"
 
 struct aiMesh;
 struct aiMaterial;
@@ -20,35 +21,13 @@ namespace Poly
 		class ENGINE_DLLEXPORT SubMesh : public BaseObject<>
 		{
 		public:
-			enum class eBufferType {
-				VERTEX_BUFFER,
-				TEXCOORD_BUFFER,
-				NORMAL_BUFFER,
-				INDEX_BUFFER,
-				_COUNT
-			};
-
-			struct Material {
-				float SpecularIntensity;
-				float SpecularPower;
-				Color SpecularColor;
-			};
-			
 			SubMesh(const String& path, aiMesh* mesh, aiMaterial* material);
-			virtual ~SubMesh();
 
-			GLuint GetVAO() const { return VAO; }
-			GLuint GetVBO(eBufferType type) const { return VBO[type]; }
-			const TextureResource* GetDiffTexture() const { return DiffuseTexture; }
-			size_t GetVertexCount() const { return VertexCount; }
-			const Material& GetMaterial() { return Mtl; }
-
+			const Mesh& GetMeshData() const { return MeshData; }
+			const IMeshDeviceProxy* GetMeshProxy() const { return MeshProxy.get(); }
 		private:
-			GLuint VAO;
-			EnumArray<GLuint, eBufferType> VBO;
-			TextureResource* DiffuseTexture = nullptr; // only diffuse texture for now
-			size_t VertexCount;
-			Material Mtl;
+			Mesh MeshData;
+			std::unique_ptr<IMeshDeviceProxy> MeshProxy;
 		};
 
 		GLMeshResource(const String& path);

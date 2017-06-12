@@ -7,9 +7,6 @@
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 
-#include <GL/glew.h>
-#include "OpenGLUtils.hpp"
-
 using namespace Poly;
 
 GLMeshResource::GLMeshResource(const String& path)
@@ -38,98 +35,48 @@ Poly::GLMeshResource::~GLMeshResource()
 
 Poly::GLMeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* material)
 {
-	VBO[eBufferType::VERTEX_BUFFER] = 0;
-	VBO[eBufferType::TEXCOORD_BUFFER] = 0;
-	VBO[eBufferType::NORMAL_BUFFER] = 0;
-	VBO[eBufferType::INDEX_BUFFER] = 0;
-
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-
-	VertexCount = mesh->mNumFaces * 3;
-
 	if (mesh->HasPositions()) {
-		Dynarray<float> vertices;
-		vertices.Resize(mesh->mNumVertices * 3);
+		MeshData.Positions.Resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-			vertices[i * 3] = mesh->mVertices[i].x;
-			vertices[i * 3 + 1] = mesh->mVertices[i].y;
-			vertices[i * 3 + 2] = mesh->mVertices[i].z;
+			MeshData.Positions[i].X = mesh->mVertices[i].x;
+			MeshData.Positions[i].Y = mesh->mVertices[i].y;
+			MeshData.Positions[i].Z = mesh->mVertices[i].z;
 		}
-
-		glGenBuffers(1, &VBO[eBufferType::VERTEX_BUFFER]);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO[eBufferType::VERTEX_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, 3 * mesh->mNumVertices * sizeof(GLfloat),
-			&vertices[0], GL_STATIC_DRAW);
-
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-		glEnableVertexAttribArray(0);
 	}
-	CHECK_GL_ERR();
 
 	if (mesh->HasTextureCoords(0)) {
-		Dynarray<float> texCoords;
-		texCoords.Resize(mesh->mNumVertices * 2);
+		MeshData.TextCoords.Resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-			texCoords[i * 2] = mesh->mTextureCoords[0][i].x;
-			texCoords[i * 2 + 1] = mesh->mTextureCoords[0][i].y;
+			MeshData.TextCoords[i].U = mesh->mTextureCoords[0][i].x;
+			MeshData.TextCoords[i].V = mesh->mTextureCoords[0][i].y;
 		}
-
-		glGenBuffers(1, &VBO[eBufferType::TEXCOORD_BUFFER]);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO[eBufferType::TEXCOORD_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, 2 * mesh->mNumVertices * sizeof(GLfloat),
-			&texCoords[0], GL_STATIC_DRAW);
-
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-		glEnableVertexAttribArray(1);
 	}
-	CHECK_GL_ERR();
 
 	if (mesh->HasNormals()) {
-		Dynarray<float> normals;
-		normals.Resize(mesh->mNumVertices * 3);
+		MeshData.Normals.Resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-			normals[i * 3] = mesh->mNormals[i].x;
-			normals[i * 3 + 1] = mesh->mNormals[i].y;
-			normals[i * 3 + 2] = mesh->mNormals[i].z;
+			MeshData.Normals[i].X = mesh->mNormals[i].x;
+			MeshData.Normals[i].Y = mesh->mNormals[i].y;
+			MeshData.Normals[i].Z = mesh->mNormals[i].z;
 		}
-
-		glGenBuffers(1, &VBO[eBufferType::NORMAL_BUFFER]);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO[eBufferType::NORMAL_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, 3 * mesh->mNumVertices * sizeof(GLfloat),
-			&normals[0], GL_STATIC_DRAW);
-
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-		glEnableVertexAttribArray(2);
 	}
-	CHECK_GL_ERR();
 
 	if (mesh->HasFaces()) {
-		Dynarray<unsigned int> indices;
-		indices.Resize(mesh->mNumFaces * 3);
+		MeshData.Indices.Resize(mesh->mNumFaces * 3);
 		for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
-			indices[i * 3] = mesh->mFaces[i].mIndices[0];
-			indices[i * 3 + 1] = mesh->mFaces[i].mIndices[1];
-			indices[i * 3 + 2] = mesh->mFaces[i].mIndices[2];
+			MeshData.Indices[i * 3] = mesh->mFaces[i].mIndices[0];
+			MeshData.Indices[i * 3 + 1] = mesh->mFaces[i].mIndices[1];
+			MeshData.Indices[i * 3 + 2] = mesh->mFaces[i].mIndices[2];
 		}
-
-		glGenBuffers(1, &VBO[eBufferType::INDEX_BUFFER]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO[eBufferType::INDEX_BUFFER]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * mesh->mNumFaces * sizeof(GLuint),
-			&indices[0], GL_STATIC_DRAW);
-
-		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-		glEnableVertexAttribArray(3);
 	}
-	CHECK_GL_ERR();
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	MeshProxy = gEngine->GetRenderingContext()->CreateMesh();
+	MeshProxy->SetContent(MeshData);
 
 	gConsole.LogDebug(
 		"Loaded mesh entry: {} with {} vertices, {} faces and parameters: "
 		"pos[{}], tex_coord[{}], norm[{}], faces[{}]",
-		mesh->mName.C_Str(), VertexCount, mesh->mNumFaces,
+		mesh->mName.C_Str(), MeshData.Positions.GetSize(), mesh->mNumFaces,
 		mesh->HasPositions() ? "on" : "off",
 		mesh->HasTextureCoords(0) ? "on" : "off",
 		mesh->HasNormals() ? "on" : "off", mesh->HasFaces() ? "on" : "off");
@@ -147,41 +94,23 @@ Poly::GLMeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMater
 		String textPath(fullPath.c_str());
 		// end temporary code for extracting path
 
-		DiffuseTexture = ResourceManager<TextureResource>::Load(textPath, false);
-		if (!DiffuseTexture)
+		MeshData.DiffuseTexture = ResourceManager<TextureResource>::Load(textPath, false);
+		if (!MeshData.DiffuseTexture)
 			gConsole.LogError("Failed to load diffuse texture: {}", fullPath);
 		else
 			gConsole.LogDebug("Succeded to load diffuse texture: {}", fullPath);
 	}
 
 	// Material params loading
-	material->Get(AI_MATKEY_SHININESS_STRENGTH, Mtl.SpecularIntensity);
-	material->Get(AI_MATKEY_SHININESS, Mtl.SpecularPower);
+	material->Get(AI_MATKEY_SHININESS_STRENGTH, MeshData.Mtl.SpecularIntensity);
+	material->Get(AI_MATKEY_SHININESS, MeshData.Mtl.SpecularPower);
 	aiColor3D color;
 	material->Get(AI_MATKEY_COLOR_SPECULAR, color);
-	Mtl.SpecularColor = Color(color.r, color.b, color.g);
+	MeshData.Mtl.SpecularColor = Color(color.r, color.b, color.g);
 
-	gConsole.LogDebug("Specular params: {}, {}, [{},{},{}]", Mtl.SpecularIntensity,
-		Mtl.SpecularPower, Mtl.SpecularColor.R, Mtl.SpecularColor.G,
-		Mtl.SpecularColor.B);
-}
+	gConsole.LogDebug("Specular params: {}, {}, [{},{},{}]", MeshData.Mtl.SpecularIntensity,
+		MeshData.Mtl.SpecularPower, MeshData.Mtl.SpecularColor.R, MeshData.Mtl.SpecularColor.G,
+		MeshData.Mtl.SpecularColor.B);
 
-Poly::GLMeshResource::SubMesh::~SubMesh()
-{
-	if (VBO[eBufferType::VERTEX_BUFFER])
-		glDeleteBuffers(1, &VBO[eBufferType::VERTEX_BUFFER]);
 
-	if (VBO[eBufferType::TEXCOORD_BUFFER])
-		glDeleteBuffers(1, &VBO[eBufferType::TEXCOORD_BUFFER]);
-
-	if (VBO[eBufferType::NORMAL_BUFFER])
-		glDeleteBuffers(1, &VBO[eBufferType::NORMAL_BUFFER]);
-
-	if (VBO[eBufferType::INDEX_BUFFER])
-		glDeleteBuffers(1, &VBO[eBufferType::INDEX_BUFFER]);
-
-	if (DiffuseTexture)
-		ResourceManager<TextureResource>::Release(DiffuseTexture);
-	
-	glDeleteVertexArrays(1, &VAO);
 }

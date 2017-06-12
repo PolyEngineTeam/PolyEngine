@@ -2,6 +2,8 @@
 
 #include <BaseObject.hpp>
 
+#include "Mesh.hpp"
+
 namespace Poly
 {
 	class World;
@@ -68,7 +70,8 @@ namespace Poly
 	//------------------------------------------------------------------------------
 	class ENGINE_DLLEXPORT IMeshDeviceProxy : public BaseObject<>
 	{
-
+	public:
+		virtual void SetContent(const Mesh& mesh) = 0;
 	};
 
 	//------------------------------------------------------------------------------
@@ -82,7 +85,7 @@ namespace Poly
 
 		virtual std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) = 0;
 		virtual std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() = 0;
-		//virtual IMeshDeviceProxy* CreateMesh() = 0;
+		virtual std::unique_ptr<IMeshDeviceProxy> CreateMesh() = 0;
 	protected:
 	};
 }

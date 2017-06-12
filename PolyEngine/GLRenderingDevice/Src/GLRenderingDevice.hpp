@@ -44,6 +44,7 @@ namespace Poly
 
 		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) override;
 		std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() override;
+		std::unique_ptr<IMeshDeviceProxy> CreateMesh() override;
 	private:
 		virtual ShaderProgram& GetProgram(eShaderProgramType type) { return *ShaderPrograms[type]; }
 		void EndFrame();

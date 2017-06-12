@@ -22,9 +22,9 @@
 
 #include "GLTextFieldBufferDeviceProxy.hpp"
 #include "GLTextureDeviceProxy.hpp"
+#include "GLMeshDeviceProxy.hpp"
 
-
-
+//------------------------------------------------------------------------------
 void Poly::GLRenderingDevice::RenderWorld(World * world)
 {
 	glDepthMask(GL_TRUE);
@@ -59,15 +59,17 @@ void Poly::GLRenderingDevice::RenderWorld(World * world)
 			GetProgram(eShaderProgramType::TEST).SetUniform("uTransform", screenTransform);
 			for (const GLMeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 			{
-				glBindVertexArray(subMesh->GetVAO());
+				const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 
-				if (subMesh->GetDiffTexture())
+				glBindVertexArray(meshProxy->VAO);
+
+				if (subMesh->GetMeshData().GetDiffTexture())
 				{
 					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, static_cast<const GLTextureDeviceProxy*>(subMesh->GetDiffTexture()->GetTextureProxy())->TextureID);
+					glBindTexture(GL_TEXTURE_2D, static_cast<const GLTextureDeviceProxy*>(subMesh->GetMeshData().GetDiffTexture()->GetTextureProxy())->TextureID);
 				}
 
-				glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetVertexCount(), GL_UNSIGNED_INT, NULL);
+				glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 				glBindTexture(GL_TEXTURE_2D, 0);
 				glBindVertexArray(0);
 			}
@@ -92,8 +94,9 @@ void Poly::GLRenderingDevice::RenderWorld(World * world)
 				GetProgram(eShaderProgramType::DEBUG_NORMALS).SetUniform("u_normalMatrix4x4", mNormalMatrix);
 				for (const GLMeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 				{
-					glBindVertexArray(subMesh->GetVAO());
-					glDrawElements(GL_TRIANGLES, subMesh->GetVertexCount(), GL_UNSIGNED_INT, NULL);
+					const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
+					glBindVertexArray(meshProxy->VAO);
+					glDrawElements(GL_TRIANGLES, subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 					glBindVertexArray(0);
 				}
 			}

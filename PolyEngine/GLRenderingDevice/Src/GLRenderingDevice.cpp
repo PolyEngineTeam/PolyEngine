@@ -12,6 +12,7 @@
 
 #include "GLTextureDeviceProxy.hpp"
 #include "GLTextFieldBufferDeviceProxy.hpp"
+#include "GLMeshDeviceProxy.hpp"
 
 
 using namespace Poly;
@@ -149,4 +150,9 @@ std::unique_ptr<ITextureDeviceProxy> GLRenderingDevice::CreateTexture(size_t wid
 std::unique_ptr<ITextFieldBufferDeviceProxy> GLRenderingDevice::CreateTextFieldBuffer()
 {
 	return std::make_unique<GLTextFieldBufferDeviceProxy>();
+}
+
+std::unique_ptr<IMeshDeviceProxy> Poly::GLRenderingDevice::CreateMesh()
+{
+	return std::make_unique<GLMeshDeviceProxy>();
 }
