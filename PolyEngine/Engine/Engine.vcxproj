@@ -189,7 +189,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\Mesh.cpp" />
     <ClCompile Include="Src\MeshRenderingComponent.cpp" />
     <ClCompile Include="Src\InputSystem.cpp" />
-    <ClCompile Include="Src\GLMeshResource.cpp" />
+    <ClCompile Include="Src\MeshResource.cpp" />
     <ClCompile Include="Src\MovementSystem.cpp" />
     <ClCompile Include="Src\RenderingSystem.cpp" />
     <ClCompile Include="Src\ResourceManager.cpp" />
@@ -228,7 +228,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\KeyBindings.hpp" />
     <ClInclude Include="Src\Mesh.hpp" />
     <ClInclude Include="Src\MeshRenderingComponent.hpp" />
-    <ClInclude Include="Src\GLMeshResource.hpp" />
+    <ClInclude Include="Src\MeshResource.hpp" />
     <ClInclude Include="Src\MovementSystem.hpp" />
     <ClInclude Include="Src\RenderingSystem.hpp" />
     <ClInclude Include="Src\ResourceBase.hpp" />

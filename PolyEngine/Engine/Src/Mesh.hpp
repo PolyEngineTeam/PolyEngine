@@ -47,7 +47,7 @@ namespace Poly
 		Dynarray<TextCoord> TextCoords;
 		Dynarray<uint32_t> Indices;
 
-		friend class GLMeshResource;
+		friend class MeshResource;
 		friend class SubMesh;
 	};
 }

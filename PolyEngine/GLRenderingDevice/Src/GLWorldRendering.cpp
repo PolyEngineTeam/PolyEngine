@@ -57,7 +57,7 @@ void Poly::GLRenderingDevice::RenderWorld(World * world)
 			const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
 			Matrix screenTransform = mvp * objTransform;
 			GetProgram(eShaderProgramType::TEST).SetUniform("uTransform", screenTransform);
-			for (const GLMeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
+			for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 			{
 				const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 
@@ -92,7 +92,7 @@ void Poly::GLRenderingDevice::RenderWorld(World * world)
 				Matrix mNormalMatrix = (mModelView * objTransform).GetInversed().GetTransposed();
 				GetProgram(eShaderProgramType::DEBUG_NORMALS).SetUniform("u_MVP", MVPTransform);
 				GetProgram(eShaderProgramType::DEBUG_NORMALS).SetUniform("u_normalMatrix4x4", mNormalMatrix);
-				for (const GLMeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
+				for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 				{
 					const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 					glBindVertexArray(meshProxy->VAO);

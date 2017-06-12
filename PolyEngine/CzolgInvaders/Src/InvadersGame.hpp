@@ -44,5 +44,5 @@ private:
 
 	Poly::Dynarray<Poly::UniqueID> GameEntities;
 	Poly::Engine* Engine;
-	Poly::GLMeshResource* BulletMesh;
+	Poly::MeshResource* BulletMesh;
 };

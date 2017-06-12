@@ -1,6 +1,6 @@
 #include "EnginePCH.hpp"
 
-#include "GLMeshResource.hpp"
+#include "MeshResource.hpp"
 
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
@@ -9,7 +9,7 @@
 
 using namespace Poly;
 
-GLMeshResource::GLMeshResource(const String& path)
+MeshResource::MeshResource(const String& path)
 {
 	Assimp::Importer importer;
 	const aiScene *scene = importer.ReadFile(path.GetCStr(), aiProcessPreset_TargetRealtime_Fast);
@@ -25,7 +25,7 @@ GLMeshResource::GLMeshResource(const String& path)
 	}
 }
 
-Poly::GLMeshResource::~GLMeshResource()
+Poly::MeshResource::~MeshResource()
 {
 	for (SubMesh* subMesh : SubMeshes)
 	{
@@ -33,7 +33,7 @@ Poly::GLMeshResource::~GLMeshResource()
 	}
 }
 
-Poly::GLMeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* material)
+Poly::MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* material)
 {
 	if (mesh->HasPositions()) {
 		MeshData.Positions.Resize(mesh->mNumVertices);

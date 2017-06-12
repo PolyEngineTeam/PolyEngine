@@ -10,7 +10,7 @@
 
 namespace Poly
 {
-	class GLMeshResource;
+	class MeshResource;
 	class TextureResource;
 	class FontResource;
 
@@ -26,8 +26,8 @@ namespace Poly
 
 #define DEFINE_RESOURCE(type, map_name) namespace Poly { namespace Impl { std::map<String, std::unique_ptr<type>> map_name = {}; }}
 
-	DECLARE_RESOURCE(GLMeshResource, gGLMeshResourcesMap)
-	DECLARE_RESOURCE(TextureResource, gGLTextureResourcesMap)
+	DECLARE_RESOURCE(MeshResource, gMeshResourcesMap)
+	DECLARE_RESOURCE(TextureResource, gTextureResourcesMap)
 	DECLARE_RESOURCE(FontResource, gFontResourcesMap)
 
 	//------------------------------------------------------------------------------

@@ -23,7 +23,7 @@
 #include "ResourceBase.hpp"
 #include "ResourceManager.hpp"
 #include "TextureResource.hpp"
-#include "GLMeshResource.hpp"
+#include "MeshResource.hpp"
 #include "FontResource.hpp"
 
 // Components

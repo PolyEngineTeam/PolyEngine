@@ -15,7 +15,7 @@ typedef unsigned int GLuint;
  
 namespace Poly
 {
-	class ENGINE_DLLEXPORT GLMeshResource : public ResourceBase
+	class ENGINE_DLLEXPORT MeshResource : public ResourceBase
 	{
 	public:
 		class ENGINE_DLLEXPORT SubMesh : public BaseObject<>
@@ -30,8 +30,8 @@ namespace Poly
 			std::unique_ptr<IMeshDeviceProxy> MeshProxy;
 		};
 
-		GLMeshResource(const String& path);
-		virtual ~GLMeshResource();
+		MeshResource(const String& path);
+		virtual ~MeshResource();
 
 
 		const Dynarray<SubMesh*>& GetSubMeshes() const { return SubMeshes; }
