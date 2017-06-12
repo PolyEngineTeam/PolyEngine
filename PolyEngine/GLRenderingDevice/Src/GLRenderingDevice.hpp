@@ -3,7 +3,11 @@
 #if defined(_WIN32)
 	#include <Windows.h>
 #elif defined(__linux__)
-	#error "Unsupported platform :("
+	#include <X11/Xlib.h>
+	#include <X11/Xutil.h>
+	#include <GL/glew.h>
+	#include <GL/glxew.h>
+	#include <GL/glx.h>
 #else
 	#error "Unsupported platform :("
 #endif
@@ -30,6 +34,7 @@ namespace Poly
 #if defined(_WIN32)
 		GLRenderingDevice(HWND HWnd, RECT Rect);
 #elif defined(__linux__)
+		GLRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig);
 #error "Unsupported platform :("
 #else
 #error "Unsupported platform :("
@@ -54,7 +59,9 @@ namespace Poly
 		HWND hWnd;
 		HGLRC hRC;
 #elif defined(__linux__)
-#error "Unsupported platform :("
+		Display* const display;
+		const Window window;
+		const GLXFBConfig fbConfig;
 #else
 #error "Unsupported platform :("
 #endif
@@ -67,7 +74,7 @@ namespace Poly
 #if defined(_WIN32)
 	DEVICE_DLLEXPORT IRenderingDevice* CreateRenderingDevice(HWND hwnd, RECT rect);
 #elif defined(__linux__)
-#error "Unsupported platform :("
+	DEVICE_DLLEXPORT IRenderingDevice* CreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig);
 #else
 #error "Unsupported platform :("
 #endif
