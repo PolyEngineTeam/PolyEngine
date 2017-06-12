@@ -19,7 +19,7 @@ using namespace Poly;
 
 #if defined(_WIN32)
 
-	IRenderingDevice* CreateRenderingDevice(HWND hwnd, RECT rect) { return new GLRenderingDevice(hwnd, rect); }
+	IRenderingDevice* Poly::CreateRenderingDevice(HWND hwnd, RECT rect) { return new GLRenderingDevice(hwnd, rect); }
 
 	GLRenderingDevice::GLRenderingDevice(HWND hwnd, RECT rect)
 		: hWnd(hwnd)
@@ -132,17 +132,14 @@ using namespace Poly;
 	}
 
 #elif defined(__linux__)
-	IRenderingDevice* CreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig) { return new GLRenderingDevice(display, window, fbConfig); }
+	IRenderingDevice* Poly::CreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig) { return new GLRenderingDevice(display, window, fbConfig); }
 
 	GLRenderingDevice::GLRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig)
+	 : display(display), window(window)
 	{
-		auto ctxParams = static_cast<const OpenGLRenderingContextParams*>(ictxParams);
-		this->display = ctxParams->display;
-		this->window = ctxParams->window;
-
 		//create a temporary context to make GLEW happy, then immediately destroy it (it has wrong parameters)
 		{
-			GLXContext makeGlewHappy = glXCreateNewContext(this->display, ctxParams->fbConfig, GLX_RGBA_TYPE, /*share list*/ nullptr, /*direct*/ True);
+			GLXContext makeGlewHappy = glXCreateNewContext(this->display, fbConfig, GLX_RGBA_TYPE, /*share list*/ nullptr, /*direct*/ True);
 			glXMakeCurrent(this->display, this->window, makeGlewHappy);
 			gConsole.LogDebug("Temporary GL context for GLEW created.");
 
@@ -150,7 +147,7 @@ using namespace Poly;
 			GLenum err = glewInit();
 			if (err != GLEW_OK) {
 				gConsole.LogError("GLEW init failed, code: {}, status: {}", err, glewGetErrorString(err));
-				return false;
+				throw RenderingDeviceSetupFailedException();
 			}
 			glXMakeCurrent(this->display, None, nullptr);
 			glXDestroyContext(this->display, makeGlewHappy);
@@ -166,17 +163,17 @@ using namespace Poly;
 			None
 		};
 		if (GLXEW_ARB_create_context) {
-			this->context = glXCreateContextAttribsARB(this->display, ctxParams->fbConfig, /*share context*/ nullptr, /*direct*/ True, context_attribs);
+			this->context = glXCreateContextAttribsARB(this->display, fbConfig, /*share context*/ nullptr, /*direct*/ True, context_attribs);
 		}
 		else {
 			gConsole.LogError("GLX_ARB_create_context extension not found. This platform does not support OpenGL {}.{}+", context_attribs[1], context_attribs[3]);
-			return false;
+			throw RenderingDeviceSetupFailedException();
 		}
 		XSync(display, /*discard events*/ False); //sync to ensure any errors generated are processed
 
 		if (!this->context) {
 			gConsole.LogError("OpenGL context creation failed for version {}.{}. Platform not supported.", context_attribs[1], context_attribs[3]);
-			return false;
+			throw RenderingDeviceSetupFailedException();
 		}
 
 		if (glXIsDirect(this->display, this->context)) {
@@ -191,8 +188,6 @@ using namespace Poly;
 		gConsole.LogInfo("GL Renderer: {}", glGetString(GL_RENDERER));
 		gConsole.LogInfo("GL Version: {}", glGetString(GL_VERSION));
 		gConsole.LogInfo("GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-		return true; //success!
 	}
 
 	GLRenderingDevice::~GLRenderingDevice()

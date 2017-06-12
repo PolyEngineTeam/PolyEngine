@@ -35,7 +35,6 @@ namespace Poly
 		GLRenderingDevice(HWND HWnd, RECT Rect);
 #elif defined(__linux__)
 		GLRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig);
-#error "Unsupported platform :("
 #else
 #error "Unsupported platform :("
 #endif
@@ -59,9 +58,9 @@ namespace Poly
 		HWND hWnd;
 		HGLRC hRC;
 #elif defined(__linux__)
-		Display* const display;
-		const Window window;
-		const GLXFBConfig fbConfig;
+		Display* display;
+		Window window;
+		GLXContext context;
 #else
 #error "Unsupported platform :("
 #endif
