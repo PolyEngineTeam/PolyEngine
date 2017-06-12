@@ -5,7 +5,6 @@
 
 #include "DebugWorldComponent.hpp"
 #include "TimeSystem.hpp"
-#include "ScreenSpaceTextComponent.hpp"
 
 
 
