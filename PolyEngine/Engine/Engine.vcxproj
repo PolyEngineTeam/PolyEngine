@@ -108,14 +108,14 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\Win32\assimp-vc140-mt.dl
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_ENGINE;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;freetype28.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\glew\lib\Release\x64;$(SolutionDir)ThirdParty\SOIL\lib\Release\x64;$(SolutionDir)ThirdParty\assimp\lib\Release\x64;$(SolutionDir)ThirdParty\freetype\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;OpenAL32.lib;SOIL.lib;assimp-vc140-mt.lib;freetype28.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\OpenAL\libs\Win64;$(SolutionDir)ThirdParty\glew\lib\Release\x64;$(SolutionDir)ThirdParty\SOIL\lib\Release\x64;$(SolutionDir)ThirdParty\assimp\lib\Release\x64;$(SolutionDir)ThirdParty\freetype\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d $(SolutionDir)ThirdParty\glew\bin\Release\x64\glew32.dll $(OutDir)
@@ -160,8 +160,8 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\Win32\assimp-vc140-mt.dl
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;freetype28.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\glew\lib\Release\x64;$(SolutionDir)ThirdParty\SOIL\lib\Release\x64;$(SolutionDir)ThirdParty\assimp\lib\Release\x64;$(SolutionDir)ThirdParty\freetype\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;OpenAL32.lib;SOIL.lib;assimp-vc140-mt.lib;freetype28.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\OpenAL\libs\Win64;$(SolutionDir)ThirdParty\glew\lib\Release\x64;$(SolutionDir)ThirdParty\SOIL\lib\Release\x64;$(SolutionDir)ThirdParty\assimp\lib\Release\x64;$(SolutionDir)ThirdParty\freetype\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d $(SolutionDir)ThirdParty\glew\bin\Release\x64\glew32.dll $(OutDir)
@@ -186,6 +186,8 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\FreeFloatMovementComponent.cpp" />
     <ClCompile Include="Src\DeferredTaskSystem.cpp" />
     <ClCompile Include="Src\InputWorldComponent.cpp" />
+    <ClCompile Include="Src\OpenALRenderingContext.cpp" />
+    <ClCompile Include="Src\SoundListenerComponent.cpp" />
     <ClCompile Include="Src\MeshRenderingComponent.cpp" />
     <ClCompile Include="Src\InputSystem.cpp" />
     <ClCompile Include="Src\GLMeshResource.cpp" />
@@ -194,6 +196,10 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\RenderingSystem.cpp" />
     <ClCompile Include="Src\ResourceManager.cpp" />
     <ClCompile Include="Src\ShaderProgram.cpp" />
+    <ClCompile Include="Src\SoundListenerSystem.cpp" />
+    <ClCompile Include="Src\SoundResource.cpp" />
+    <ClCompile Include="Src\SoundSystem.cpp" />
+    <ClCompile Include="Src\SoundEmitterComponent.cpp" />
     <ClCompile Include="Src\Text2D.cpp" />
     <ClCompile Include="Src\TimeSystem.cpp" />
     <ClCompile Include="Src\TimeWorldComponent.cpp" />
@@ -226,6 +232,8 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\InputQueue.hpp" />
     <ClInclude Include="Src\InputWorldComponent.hpp" />
     <ClInclude Include="Src\KeyBindings.hpp" />
+    <ClInclude Include="Src\OpenALRenderingContext.hpp" />
+    <ClInclude Include="Src\SoundListenerComponent.hpp" />
     <ClInclude Include="Src\MeshRenderingComponent.hpp" />
     <ClInclude Include="Src\GLMeshResource.hpp" />
     <ClInclude Include="Src\MovementSystem.hpp" />
@@ -237,6 +245,10 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\ResourceManager.hpp" />
     <ClInclude Include="Src\ScreenSpaceTextComponent.hpp" />
     <ClInclude Include="Src\ShaderProgram.hpp" />
+    <ClInclude Include="Src\SoundListenerSystem.hpp" />
+    <ClInclude Include="Src\SoundResource.hpp" />
+    <ClInclude Include="Src\SoundSystem.hpp" />
+    <ClInclude Include="Src\SoundEmitterComponent.hpp" />
     <ClInclude Include="Src\Text2D.hpp" />
     <ClInclude Include="Src\Timer.hpp" />
     <ClInclude Include="Src\TimeSystem.hpp" />

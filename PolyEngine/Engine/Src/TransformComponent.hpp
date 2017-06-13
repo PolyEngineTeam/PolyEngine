@@ -2,7 +2,8 @@
 
 #include "ComponentBase.hpp"
 
-namespace Poly {
+namespace Poly 
+{
 	class ENGINE_DLLEXPORT TransformComponent : public ComponentBase
 	{
 	public:

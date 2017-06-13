@@ -26,6 +26,8 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterComponent<MeshRenderingComponent>((size_t) eEngineComponents::MESH_RENDERING);
 	RegisterComponent<FreeFloatMovementComponent>((size_t)eEngineComponents::FREE_FLOAT_MOVEMENT);
 	RegisterComponent<ScreenSpaceTextComponent>((size_t)eEngineComponents::SCREEN_SPACE_TEXT);
+	RegisterComponent<SoundEmitterComponent>((size_t)eEngineComponents::SOUND_EMMITER);
+	RegisterComponent<SoundListenerComponent>((size_t)eEngineComponents::SOUND_LISTENER);
 
 	// Engine World Components
 	RegisterWorldComponent<InputWorldComponent>((size_t) eEngineWorldComponents::INPUT);
@@ -45,6 +47,7 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterUpdatePhase(MovementSystem::MovementUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(RenderingSystem::RenderingPhase, eUpdatePhaseOrder::POSTUPDATE);
+	RegisterUpdatePhase(SoundSystem::SoundUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(DeferredTaskSystem::DeferredTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(FPSSystem::FPSUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 

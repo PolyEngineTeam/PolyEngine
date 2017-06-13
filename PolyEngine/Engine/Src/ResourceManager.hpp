@@ -13,6 +13,7 @@ namespace Poly
 	class GLMeshResource;
 	class GLTextureResource;
 	class FontResource;
+	class SoundResource;
 
 	ENGINE_DLLEXPORT const String& GetResourcesAbsolutePath();
 
@@ -29,6 +30,7 @@ namespace Poly
 	DECLARE_RESOURCE(GLMeshResource, gGLMeshResourcesMap)
 	DECLARE_RESOURCE(GLTextureResource, gGLTextureResourcesMap)
 	DECLARE_RESOURCE(FontResource, gFontResourcesMap)
+	DECLARE_RESOURCE(SoundResource, gALSoundResourcesMap)
 
 	//------------------------------------------------------------------------------
 	template<typename T>

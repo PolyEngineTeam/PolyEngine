@@ -14,6 +14,9 @@
 // Rendering
 #include "RenderingContext.hpp"
 
+// Audio
+#include "OpenALRenderingContext.hpp"
+
 // Utils
 #include "InputQueue.hpp"
 #include "KeyBindings.hpp"
@@ -31,6 +34,8 @@
 #include "FreeFloatMovementComponent.hpp"
 #include "MeshRenderingComponent.hpp"
 #include "ScreenSpaceTextComponent.hpp"
+#include "SoundEmitterComponent.hpp"
+#include "SoundListenerComponent.hpp"
 #include "TransformComponent.hpp"
 
 // World Components

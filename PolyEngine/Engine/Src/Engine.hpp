@@ -28,6 +28,8 @@ namespace Poly
 		MESH_RENDERING,
 		FREE_FLOAT_MOVEMENT,
 		SCREEN_SPACE_TEXT,
+		SOUND_EMMITER,
+		SOUND_LISTENER,
 		_COUNT
 	};
 
@@ -235,6 +237,7 @@ namespace Poly
 		World* BaseWorld;
 		IGame* Game;
 		IRenderingContext* Renderer;
+		OpenALRenderingContext* AudioRenderer;
 		InputQueue InputEventsQueue;
 
 		Dynarray<PhaseUpdateFunction> GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];
