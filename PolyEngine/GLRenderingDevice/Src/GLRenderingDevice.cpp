@@ -100,20 +100,7 @@ using namespace Poly;
 
 		// We have successfully created a context, return true
 		
-		//Init programs
-		ShaderPrograms[eShaderProgramType::TEST] = new ShaderProgram("test.vsh", "test.fsh");
-		//ShaderPrograms[eShaderProgramType::TEST].RegisterUniform("uMVP");
-		ShaderPrograms[eShaderProgramType::TEST]->RegisterUniform("uTransform");
-
-		ShaderPrograms[eShaderProgramType::DEBUG_NORMALS] = new ShaderProgram("debugVertSh.shader", "debugGeomSh.shader", "debugFragSh.shader");
-		ShaderPrograms[eShaderProgramType::DEBUG_NORMALS]->RegisterUniform("u_projection");
-		ShaderPrograms[eShaderProgramType::DEBUG_NORMALS]->RegisterUniform("u_MVP");
-		ShaderPrograms[eShaderProgramType::DEBUG_NORMALS]->RegisterUniform("u_normalMatrix4x4");
-
-		ShaderPrograms[eShaderProgramType::TEXT_2D] = new ShaderProgram("Shaders/text2DVert.shader", "Shaders/text2DFrag.shader");
-		ShaderPrograms[eShaderProgramType::TEXT_2D]->RegisterUniform("u_projection");
-		ShaderPrograms[eShaderProgramType::TEXT_2D]->RegisterUniform("u_textColor");
-		ShaderPrograms[eShaderProgramType::TEXT_2D]->RegisterUniform("u_position");
+		InitPrograms();
 	}
 
 	Poly::GLRenderingDevice::~GLRenderingDevice()
@@ -188,6 +175,8 @@ using namespace Poly;
 		gConsole.LogInfo("GL Renderer: {}", glGetString(GL_RENDERER));
 		gConsole.LogInfo("GL Version: {}", glGetString(GL_VERSION));
 		gConsole.LogInfo("GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+		InitPrograms();
 	}
 
 	GLRenderingDevice::~GLRenderingDevice()
@@ -207,9 +196,27 @@ using namespace Poly;
 #error "Unsupported platform :("
 #endif
 
-void Poly::GLRenderingDevice::Resize(const ScreenSize & size)
+void GLRenderingDevice::Resize(const ScreenSize & size)
 {
 	ScreenDim = size;
+}
+
+void GLRenderingDevice::InitPrograms()
+{
+	//Init programs
+	ShaderPrograms[eShaderProgramType::TEST] = new ShaderProgram("test.vsh", "test.fsh");
+	//ShaderPrograms[eShaderProgramType::TEST].RegisterUniform("uMVP");
+	ShaderPrograms[eShaderProgramType::TEST]->RegisterUniform("uTransform");
+
+	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS] = new ShaderProgram("debugVertSh.shader", "debugGeomSh.shader", "debugFragSh.shader");
+	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS]->RegisterUniform("u_projection");
+	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS]->RegisterUniform("u_MVP");
+	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS]->RegisterUniform("u_normalMatrix4x4");
+
+	ShaderPrograms[eShaderProgramType::TEXT_2D] = new ShaderProgram("Shaders/text2DVert.shader", "Shaders/text2DFrag.shader");
+	ShaderPrograms[eShaderProgramType::TEXT_2D]->RegisterUniform("u_projection");
+	ShaderPrograms[eShaderProgramType::TEXT_2D]->RegisterUniform("u_textColor");
+	ShaderPrograms[eShaderProgramType::TEXT_2D]->RegisterUniform("u_position");
 }
 
 std::unique_ptr<ITextureDeviceProxy> GLRenderingDevice::CreateTexture(size_t width, size_t height, eTextureUsageType usage)
