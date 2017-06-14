@@ -2,6 +2,7 @@
 
 #include "ResourceManager.hpp"
 #include "GLMeshResource.hpp"
+#include "SoundResource.hpp"
 
 #include <fstream>
 
@@ -10,6 +11,7 @@ using namespace Poly;
 DEFINE_RESOURCE(GLMeshResource, gGLMeshResourcesMap)
 DEFINE_RESOURCE(GLTextureResource, gGLTextureResourcesMap)
 DEFINE_RESOURCE(FontResource, gFontResourcesMap)
+DEFINE_RESOURCE(SoundResource, gALSoundResourcesMap)
 
 
 const String& Poly::GetResourcesAbsolutePath()

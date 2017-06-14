@@ -41,6 +41,7 @@
 // World Components
 #include "DebugWorldComponent.hpp"
 #include "InputWorldComponent.hpp"
+#include "SoundWorldComponent.hpp"
 #include "TimeWorldComponent.hpp"
 #include "ViewportWorldComponent.hpp"
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <al.h>
-
 #include "ResourceBase.hpp"
+
+typedef unsigned int ALuint;
 
 namespace Poly 
 {

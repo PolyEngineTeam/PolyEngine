@@ -2,19 +2,23 @@
 
 #include "OpenALRenderingContext.hpp"
 
+#include <al.h> 
+#include <alc.h>
+
 using namespace Poly;
 
-namespace Poly {
-	IRenderingContext* CreateRenderingContext() { return new OpenGLRenderingContext; }
+OpenALRenderingContext::OpenALRenderingContext()
+{
 }
 
-bool OpenALRenderingContext::Init()
+OpenALRenderingContext::~OpenALRenderingContext()
 {
-	return false;
+	alcCloseDevice(Device);
 }
 
-void OpenALRenderingContext::Deinit()
+void OpenALRenderingContext::Init()
 {
+	Device = alcOpenDevice(NULL);
 }
 
 void OpenALRenderingContext::EndFrame()

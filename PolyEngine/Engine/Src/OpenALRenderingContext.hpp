@@ -1,23 +1,27 @@
 #pragma once
 
-#include <BaseObject.hpp>
+//struct ALCdevice;
+typedef struct ALCdevice_struct ALCdevice;
 
-#include <al.h> 
-#include <alc.h>
+#include <BaseObject.hpp>
+#include "SoundSystem.hpp"
 
 namespace Poly {
 
 	class OpenALRenderingContext : public BaseObject<>  
 	{
+	friend void SoundSystem::SoundPhase(World*);
 	public:
-		bool Init();
-		void Deinit();
+		OpenALRenderingContext();
+		~OpenALRenderingContext();
 
+		void Init();
 		void EndFrame();
+
+		ALCdevice* GetDevice() { return Device; };
 
 	private:
 		ALCdevice* Device;
-		ALCcontext* Context;
 	};
 
 } //namespace Poly

@@ -9,8 +9,10 @@ namespace Poly
 
 	namespace SoundSystem
 	{
-		void SoundUpdatePhase(World*);
+		void SoundPhase(World*);
 
+		void CreateContext(World*);
+		void SetCurrentWorld(World*);
 		void BindSoundResourceToEmitter(World*, UniqueID, SoundResource*);
 	}
 }

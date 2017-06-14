@@ -187,6 +187,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\DeferredTaskSystem.cpp" />
     <ClCompile Include="Src\InputWorldComponent.cpp" />
     <ClCompile Include="Src\OpenALRenderingContext.cpp" />
+    <ClCompile Include="Src\SoundEmitterComponent.cpp" />
     <ClCompile Include="Src\SoundListenerComponent.cpp" />
     <ClCompile Include="Src\MeshRenderingComponent.cpp" />
     <ClCompile Include="Src\InputSystem.cpp" />
@@ -199,7 +200,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\SoundListenerSystem.cpp" />
     <ClCompile Include="Src\SoundResource.cpp" />
     <ClCompile Include="Src\SoundSystem.cpp" />
-    <ClCompile Include="Src\SoundEmitterComponent.cpp" />
+    <ClCompile Include="Src\SoundWorldComponent.cpp" />
     <ClCompile Include="Src\Text2D.cpp" />
     <ClCompile Include="Src\TimeSystem.cpp" />
     <ClCompile Include="Src\TimeWorldComponent.cpp" />
@@ -249,6 +250,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\SoundResource.hpp" />
     <ClInclude Include="Src\SoundSystem.hpp" />
     <ClInclude Include="Src\SoundEmitterComponent.hpp" />
+    <ClInclude Include="Src\SoundWorldComponent.hpp" />
     <ClInclude Include="Src\Text2D.hpp" />
     <ClInclude Include="Src\Timer.hpp" />
     <ClInclude Include="Src\TimeSystem.hpp" />

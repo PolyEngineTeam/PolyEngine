@@ -34,12 +34,14 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterWorldComponent<ViewportWorldComponent>((size_t) eEngineWorldComponents::VIEWPORT);
 	RegisterWorldComponent<TimeWorldComponent>((size_t) eEngineWorldComponents::TIME);
 	RegisterWorldComponent<DebugWorldComponent>((size_t) eEngineWorldComponents::DEBUG);
+	RegisterWorldComponent<SoundWorldComponent>((size_t) eEngineWorldComponents::SOUND);
 
 	// Add WorldComponents
 	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(BaseWorld);
 	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(BaseWorld);
 	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(BaseWorld);
 	DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(BaseWorld);
+	DeferredTaskSystem::AddWorldComponentImmediate<SoundWorldComponent>(BaseWorld);
 
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
@@ -47,12 +49,15 @@ bool Engine::Init(const IRenderingContextParams* context)
 	RegisterUpdatePhase(MovementSystem::MovementUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(RenderingSystem::RenderingPhase, eUpdatePhaseOrder::POSTUPDATE);
-	RegisterUpdatePhase(SoundSystem::SoundUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
+	RegisterUpdatePhase(SoundSystem::SoundPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(DeferredTaskSystem::DeferredTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(FPSSystem::FPSUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 
 	if (!Renderer->Init(context))
 		return false;
+	AudioRenderer.Init();
+	SoundSystem::CreateContext(BaseWorld);
+	SoundSystem::SetCurrentWorld(BaseWorld);
 
 	Game->Init();
 

@@ -8,6 +8,7 @@
 
 #include <Core.hpp>
 #include "RenderingContext.hpp"
+#include "OpenALRenderingContext.hpp"
 
 #include "InputSystem.hpp"
 
@@ -43,6 +44,7 @@ namespace Poly
 		VIEWPORT,
 		TIME,
 		DEBUG,
+		SOUND,
 		_COUNT
 	};
 
@@ -214,6 +216,11 @@ namespace Poly
 		/// @see IRenderingContext
 		IRenderingContext* GetRenderingContext() const { return Renderer; }
 
+		/// Returns referrence to audio renderer
+		/// @return AudioRenderer - pointer to IRenderingContext instance.
+		/// @see IRenderingContext
+		OpenALRenderingContext& GetAudioRenderingContext() { return AudioRenderer; }
+
 		/// Returns refference to input queue needed by InputPhase.
 		/// @see InputSystem::InputPhase()
 		InputQueue& GetInputQueue() { return InputEventsQueue; }
@@ -237,7 +244,7 @@ namespace Poly
 		World* BaseWorld;
 		IGame* Game;
 		IRenderingContext* Renderer;
-		OpenALRenderingContext* AudioRenderer;
+		OpenALRenderingContext AudioRenderer;
 		InputQueue InputEventsQueue;
 
 		Dynarray<PhaseUpdateFunction> GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];
