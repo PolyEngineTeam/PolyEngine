@@ -28,7 +28,7 @@
 void Poly::GLRenderingDevice::RenderWorld(World * world)
 {
 	glDepthMask(GL_TRUE);
-	glClearColor(0.5, 0.8, 0.9, 1);  //Hack for game, revert to: glClearColor(0.2, 0.2, 0.2, 1);
+	glClearColor(0.2, 0.2, 0.2, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
