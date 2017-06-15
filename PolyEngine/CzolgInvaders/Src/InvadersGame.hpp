@@ -31,6 +31,7 @@ enum class eGameComponents
 	TANK
 };
 
+DECLARE_GAME()
 class GAME_DLLEXPORT InvadersGame : public Poly::IGame {
 public:
 	void RegisterEngine(Poly::Engine* engine) override { Engine = engine; }
