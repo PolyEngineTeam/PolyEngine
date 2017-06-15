@@ -10,7 +10,9 @@
 
 using namespace Poly;
 
-void InvadersGame::Init()
+DEFINE_GAME(TestGame)
+
+void TestGame::Init()
 {
 	Camera = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), Camera);
@@ -39,7 +41,7 @@ void InvadersGame::Init()
 	Engine->RegisterUpdatePhase(GameMainSystem::GameUpdate, Poly::Engine::eUpdatePhaseOrder::UPDATE);
 };
 
-void InvadersGame::Deinit()
+void TestGame::Deinit()
 {
 	DeferredTaskSystem::DestroyEntityImmediate(&Engine->GetWorld(), Camera);
 	for (auto ent : GameEntities)

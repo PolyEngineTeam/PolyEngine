@@ -20,6 +20,8 @@
 
 using namespace Poly;
 
+DEFINE_GAME(InvadersGame)
+
 void InvadersGame::Init()
 {
 	Engine->RegisterComponent<PlayerControllerComponent>((int)eGameComponents::PLAYERCONTROLLER);

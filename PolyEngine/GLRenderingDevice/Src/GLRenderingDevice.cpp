@@ -19,7 +19,7 @@ using namespace Poly;
 
 #if defined(_WIN32)
 
-	IRenderingDevice* Poly::CreateRenderingDevice(HWND hwnd, RECT rect) { return new GLRenderingDevice(hwnd, rect); }
+	IRenderingDevice* PolyCreateRenderingDevice(HWND hwnd, RECT rect) { return new GLRenderingDevice(hwnd, rect); }
 
 	GLRenderingDevice::GLRenderingDevice(HWND hwnd, RECT rect)
 		: hWnd(hwnd)
@@ -119,7 +119,7 @@ using namespace Poly;
 	}
 
 #elif defined(__linux__)
-	IRenderingDevice* Poly::CreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig) { return new GLRenderingDevice(display, window, fbConfig); }
+	IRenderingDevice* PolyCreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig) { return new GLRenderingDevice(display, window, fbConfig); }
 
 	GLRenderingDevice::GLRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig)
 	 : display(display), window(window)

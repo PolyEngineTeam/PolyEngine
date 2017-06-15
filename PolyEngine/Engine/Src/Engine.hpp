@@ -245,3 +245,6 @@ namespace Poly
 
 	ENGINE_DLLEXPORT extern Engine* gEngine;
 }
+
+#define DECLARE_GAME() extern "C" { DEVICE_DLLEXPORT Poly::IGame* __stdcall CreateGame(); }
+#define DEFINE_GAME(type) Poly::IGame* CreateGame() { return new type(); }

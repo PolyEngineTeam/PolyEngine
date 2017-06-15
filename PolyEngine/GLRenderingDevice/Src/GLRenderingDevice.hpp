@@ -70,13 +70,15 @@ namespace Poly
 
 		EnumArray<ShaderProgram*, eShaderProgramType> ShaderPrograms;
 	};
+}
 
+extern "C"
+{
 #if defined(_WIN32)
-	DEVICE_DLLEXPORT IRenderingDevice* CreateRenderingDevice(HWND hwnd, RECT rect);
+	DEVICE_DLLEXPORT Poly::IRenderingDevice* __stdcall PolyCreateRenderingDevice(HWND hwnd, RECT rect);
 #elif defined(__linux__)
-	DEVICE_DLLEXPORT IRenderingDevice* CreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig);
+	DEVICE_DLLEXPORT Poly::IRenderingDevice* PolyCreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig);
 #else
 #error "Unsupported platform :("
 #endif
-	
 }
