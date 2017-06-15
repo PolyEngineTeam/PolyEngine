@@ -16,7 +16,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd,
 
 Poly::IRenderingDevice* LoadRenderingDevice(HWND hwnd, RECT rect)
 {
-	typedef Poly::IRenderingDevice*(__stdcall *RenderingDeviceGetter_t)(HWND, RECT);
+	typedef Poly::IRenderingDevice* (__stdcall *RenderingDeviceGetter_t)(HWND, RECT);
 
 	HINSTANCE hGetProcIDDLL = LoadLibrary("libRenderingDevice.dll");
 	ASSERTE(hGetProcIDDLL, "could not load the dynamic library");
@@ -99,9 +99,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	// this struct holds Windows event messages
 	MSG msg;
 
-	Poly::IGame* Game = LoadGame();
+	Poly::IGame* game = LoadGame();
 	Poly::IRenderingDevice* device = LoadRenderingDevice(hWnd, viewportRect);
-	Poly::Engine Engine(Game, device);
+	Poly::Engine Engine(game, device);
 	gEngine = &Engine;
 	bool result = Engine.Init();
 	if (!result)
@@ -134,7 +134,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		Engine.Update();
 	}
 
+	// clean up
 	Engine.Deinit();
+
+	delete game;
+	delete device;
 
 	// return this part of the WM_QUIT message to Windows
 	return static_cast<int>(msg.wParam);

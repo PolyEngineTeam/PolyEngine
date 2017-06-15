@@ -65,7 +65,6 @@ bool Engine::Init()
 void Engine::Deinit()
 {
 	Game->Deinit();
-	delete Renderer;
 	Renderer = nullptr;
 }
 
