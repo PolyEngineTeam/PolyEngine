@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ComponentBase.hpp"
-
 #include "SoundSystem.hpp"
 
 typedef float ALfloat;

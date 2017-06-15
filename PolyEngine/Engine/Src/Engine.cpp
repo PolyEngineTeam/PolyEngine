@@ -55,7 +55,6 @@ bool Engine::Init(const IRenderingContextParams* context)
 
 	if (!Renderer->Init(context))
 		return false;
-	AudioRenderer.Init();
 	SoundSystem::CreateContext(BaseWorld);
 	SoundSystem::SetCurrentWorld(BaseWorld);
 

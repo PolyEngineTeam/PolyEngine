@@ -17,6 +17,8 @@ SoundEmitterComponent::SoundEmitterComponent(const String& path)
 
 SoundEmitterComponent::~SoundEmitterComponent()
 {
+	alDeleteSources(1, &SourceID);
+
 	if (Resource) 
 		ResourceManager<SoundResource>::Release(Resource);
 }

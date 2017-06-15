@@ -1,10 +1,10 @@
 #pragma once
 
-typedef unsigned int ALuint;
-
 #include "ComponentBase.hpp"
 #include "SoundSystem.hpp"
 #include "SoundResource.hpp"
+
+typedef unsigned int ALuint;
 
 namespace Poly
 {
@@ -14,9 +14,6 @@ namespace Poly
 	public:
 		SoundEmitterComponent(const String&);
 		~SoundEmitterComponent();
-
-		ALuint GetSourceID() const { return SourceID; }
-		SoundResource* GetResource() const { return Resource; }
 	private:
 		ALuint SourceID;
 		SoundResource* Resource;

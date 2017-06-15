@@ -9,18 +9,10 @@ using namespace Poly;
 
 OpenALRenderingContext::OpenALRenderingContext()
 {
+	Device = alcOpenDevice(NULL);
 }
 
 OpenALRenderingContext::~OpenALRenderingContext()
 {
 	alcCloseDevice(Device);
-}
-
-void OpenALRenderingContext::Init()
-{
-	Device = alcOpenDevice(NULL);
-}
-
-void OpenALRenderingContext::EndFrame()
-{
 }
