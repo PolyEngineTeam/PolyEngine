@@ -5,10 +5,10 @@
 #include <Color.hpp>
 
 #include "ResourceBase.hpp"
-#include "GLTextureResource.hpp"
+#include "TextureResource.hpp"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H  
+typedef struct  FT_FaceRec_;
+typedef struct FT_FaceRec_*  FT_Face;
 
 typedef unsigned int GLuint;
 
@@ -28,7 +28,7 @@ namespace Poly
 				float Advance;       // Offset to advance to next glyph
 			};
 			
-			GLuint TextureID;
+			std::unique_ptr<ITextureDeviceProxy> TextureProxy;
 			FT_Face FTFace;
 			std::map<char, FontGlyph> Characters;
 		};

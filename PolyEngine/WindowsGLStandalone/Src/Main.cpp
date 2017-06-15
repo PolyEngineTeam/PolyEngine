@@ -3,7 +3,7 @@
 #include <windowsx.h>
 
 #include <Engine.hpp>
-#include <OpenGLRenderingContext.hpp>
+#include <GLRenderingDevice.hpp>
 #include <InvadersGame.hpp>
 #include <sstream>
 #include "TimeSystem.hpp"
@@ -76,10 +76,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	MSG msg;
 
 	InvadersGame Game;
-	Poly::OpenGLRenderingContextParams Context(hWnd, viewportRect);
-	Poly::Engine Engine(&Game);
+	Poly::IRenderingDevice* device = Poly::CreateRenderingDevice(hWnd, viewportRect);
+	Poly::Engine Engine(&Game, device);
 	gEngine = &Engine;
-	bool result = Engine.Init(&Context);
+	bool result = Engine.Init();
 	if (!result)
 	{
 		Poly::gConsole.LogError("Engine load failed!");

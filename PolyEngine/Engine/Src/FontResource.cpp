@@ -2,6 +2,11 @@
 
 #include "FontResource.hpp"
 
+#include <GL/glew.h>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H  
+
 using namespace Poly;
 
 static FT_Library gFreeTypeLibrary = nullptr;
@@ -22,10 +27,9 @@ FontResource::FontResource(const String& path)
 
 FontResource::~FontResource()
 {
-	for (auto kv : Faces)
+	for (auto& kv : Faces)
 	{
 		FT_Done_Face(kv.second.FTFace);
-		glDeleteTextures(1, &kv.second.TextureID);
 	}
 	//TODO release freetype library?
 }
@@ -119,14 +123,7 @@ void Poly::FontResource::LoadFace(size_t height) const
 	ASSERTE(estimatedTextureHeight > 0, "Texture packing for font failed!");
 
 	// Create texture 2D for the face
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glGenTextures(1, &face.TextureID);
-	glBindTexture(GL_TEXTURE_2D, face.TextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, TEXTURE_WIDTH, estimatedTextureHeight, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	face.TextureProxy = gEngine->GetRenderingContext()->CreateTexture(TEXTURE_WIDTH, estimatedTextureHeight, eTextureUsageType::FONT);
 
 	// Store all glyphs in it and maintain the references in Characters map
 	currRowLen = 0;
@@ -174,7 +171,9 @@ void Poly::FontResource::LoadFace(size_t height) const
 		face.Characters.insert(std::pair<char, FontFace::FontGlyph>(glyphSize.Glyph, glyph));
 		ASSERTE(face.FTFace->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY, "Unsupported pixel mode!");
 		ASSERTE(face.FTFace->glyph->bitmap.pitch >= 0 , "Negative pitch is not supported!");
-		glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, glyphSize.width, glyphSize.height, GL_RED, GL_UNSIGNED_BYTE, face.FTFace->glyph->bitmap.buffer);
+
+		if(glyphSize.width > 0 && glyphSize.height > 0)
+			face.TextureProxy->SetSubContent(glyphSize.width, glyphSize.height, xoffset, yoffset, eTextureDataFormat::RED, face.FTFace->glyph->bitmap.buffer);
 	}
 
 	gConsole.LogDebug("Face of size {} for font {} loaded sucessfully! Texture size: {} x {}", height, FontPath, TEXTURE_WIDTH, estimatedTextureHeight);

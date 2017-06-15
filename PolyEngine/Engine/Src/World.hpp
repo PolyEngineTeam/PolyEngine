@@ -7,6 +7,7 @@
 #include "Engine.hpp"
 
 #include "DeferredTaskBase.hpp"
+#include "ComponentBase.hpp"
 
 namespace Poly {
 

@@ -21,17 +21,16 @@ set(POLYENGINE_SRCS
 	Src/FreeFloatMovementComponent.cpp
 	Src/FontResource.cpp
 	Src/FPSSystem.cpp
-	Src/GLMeshResource.cpp
-	Src/GLTextureResource.cpp
+	Src/Mesh.cpp
+	Src/MeshResource.cpp
+	Src/TextureResource.cpp
 	Src/DeferredTaskSystem.cpp
 	Src/InputSystem.cpp
 	Src/InputWorldComponent.cpp
 	Src/MeshRenderingComponent.cpp
 	Src/MovementSystem.cpp
-	Src/OpenGLRenderingContext.cpp
 	Src/RenderingSystem.cpp
 	Src/ResourceManager.cpp
-	Src/ShaderProgram.cpp
 	Src/Text2D.cpp
 	Src/TimeSystem.cpp
 	Src/TimeWorldComponent.cpp
@@ -52,8 +51,10 @@ set(POLYENGINE_H_FOR_IDE
 	Src/FreeFloatMovementComponent.hpp
 	Src/FontResource.hpp
 	Src/FPSSystem.hpp
-	Src/GLMeshResource.hpp
-	Src/GLTextureResource.hpp
+	Src/IRenderingDevice.hpp
+	Src/Mesh.hpp
+	Src/MeshResource.hpp
+	Src/TextureResource.hpp
 	Src/DeferredTaskBase.hpp
 	Src/DeferredTaskImplementation.hpp
 	Src/DeferredTaskSystem.hpp
@@ -63,14 +64,10 @@ set(POLYENGINE_H_FOR_IDE
 	Src/KeyBindings.hpp
 	Src/MeshRenderingComponent.hpp
 	Src/MovementSystem.hpp
-	Src/OpenGLRenderingContext.hpp
-	Src/OpenGLUtils.hpp
-	Src/RenderingContext.hpp
 	Src/RenderingSystem.hpp
 	Src/ResourceBase.hpp
 	Src/ResourceManager.hpp
 	Src/ScreenSpaceTextComponent.hpp
-	Src/ShaderProgram.hpp
 	Src/Text2D.hpp
 	Src/TimeSystem.hpp
 	Src/TimeWorldComponent.hpp

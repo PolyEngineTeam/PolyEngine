@@ -6,20 +6,20 @@ typedef unsigned int GLuint;
 
 namespace Poly 
 {
-	class ENGINE_DLLEXPORT GLTextureResource : public ResourceBase
+	class ENGINE_DLLEXPORT TextureResource : public ResourceBase
 	{
 	public:
-		GLTextureResource(const String& path);
-		~GLTextureResource() override;
+		TextureResource(const String& path);
+		~TextureResource() override;
 
-		GLuint GetID() const { return TextureID; }
 		unsigned char* GetImage() const { return Image; }
 		int GetWidth() const { return Width; }
 		int GetHeight() const { return Height; }
 		int GetChannels() const { return Channels; }
 
+		const ITextureDeviceProxy* GetTextureProxy() const { return TextureProxy.get(); }
 	private:
-		GLuint TextureID; 
+		std::unique_ptr<ITextureDeviceProxy> TextureProxy;
 		unsigned char* Image;
 		int Width;
 		int Height;
