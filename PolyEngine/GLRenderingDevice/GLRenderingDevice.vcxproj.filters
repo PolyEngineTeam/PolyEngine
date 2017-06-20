@@ -5,56 +5,52 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Impl">
+    <Filter Include="Source Files\Impl">
       <UniqueIdentifier>{904335d2-5c41-4c10-96f4-58692e8e0e5c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\GLRenderingDevice.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\GLTextureDeviceProxy.hpp">
-      <Filter>Header Files\Impl</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ShaderProgram.hpp">
-      <Filter>Header Files\Impl</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\GLUtils.hpp">
-      <Filter>Header Files\Impl</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\GLTextFieldBufferDeviceProxy.hpp">
-      <Filter>Header Files\Impl</Filter>
+      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Src\GLMeshDeviceProxy.hpp">
-      <Filter>Header Files\Impl</Filter>
+      <Filter>Source Files\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GLTextFieldBufferDeviceProxy.hpp">
+      <Filter>Source Files\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GLTextureDeviceProxy.hpp">
+      <Filter>Source Files\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GLUtils.hpp">
+      <Filter>Source Files\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GLShaderProgram.hpp">
+      <Filter>Source Files\Impl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\GLRenderingDevice.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\GLWorldRendering.cpp">
-      <Filter>Header Files\Impl</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\GLTextureDeviceProxy.cpp">
-      <Filter>Header Files\Impl</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ShaderProgram.cpp">
-      <Filter>Header Files\Impl</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\GLTextFieldBufferDeviceProxy.cpp">
-      <Filter>Header Files\Impl</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\GLMeshDeviceProxy.cpp">
-      <Filter>Header Files\Impl</Filter>
+      <Filter>Source Files\Impl</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GLTextFieldBufferDeviceProxy.cpp">
+      <Filter>Source Files\Impl</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GLTextureDeviceProxy.cpp">
+      <Filter>Source Files\Impl</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GLWorldRendering.cpp">
+      <Filter>Source Files\Impl</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GLShaderProgram.cpp">
+      <Filter>Source Files\Impl</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

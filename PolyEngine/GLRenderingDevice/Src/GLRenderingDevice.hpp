@@ -14,22 +14,24 @@
 
 #include <IRenderingDevice.hpp>
 
-#include "ShaderProgram.hpp"
+#include "GLShaderProgram.hpp"
 
 
 namespace Poly
 {
 	class World;
 
-	enum class eShaderProgramType {
-		TEST,
-		DEBUG_NORMALS,
-		TEXT_2D,
-		_COUNT
-	};
-
 	class DEVICE_DLLEXPORT GLRenderingDevice : public IRenderingDevice
 	{
+	private:
+		enum class eShaderProgramType
+		{
+			TEST,
+			DEBUG_NORMALS,
+			TEXT_2D,
+			_COUNT
+		};
+
 	public:
 #if defined(_WIN32)
 		GLRenderingDevice(HWND HWnd, RECT Rect);
@@ -49,9 +51,10 @@ namespace Poly
 		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) override;
 		std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() override;
 		std::unique_ptr<IMeshDeviceProxy> CreateMesh() override;
+	
 	private:
 		void InitPrograms();
-		virtual ShaderProgram& GetProgram(eShaderProgramType type) { return *ShaderPrograms[type]; }
+		virtual GLShaderProgram& GetProgram(eShaderProgramType type) { return *ShaderPrograms[type]; }
 		void EndFrame();
 
 #if defined(_WIN32)
@@ -67,8 +70,7 @@ namespace Poly
 #endif
 
 		ScreenSize ScreenDim;
-
-		EnumArray<ShaderProgram*, eShaderProgramType> ShaderPrograms;
+		EnumArray<GLShaderProgram*, eShaderProgramType> ShaderPrograms;
 	};
 }
 

@@ -1,54 +1,54 @@
 #include "GLRenderingDevice.hpp"
 
-#include <GL/glew.h>
-#ifdef _WIN32
-#include <GL/wglew.h>
-#elif defined(__linux__)
-#include <GL/glxew.h>
-#endif
-
-#include "GLUtils.hpp"
-
 #include <World.hpp>
 #include <CoreConfig.hpp>
+#include <Viewport.hpp>
 
+#include <CameraComponent.hpp>
 #include <MeshRenderingComponent.hpp>
 #include <TransformComponent.hpp>
 #include <ScreenSpaceTextComponent.hpp>
 #include <ViewportWorldComponent.hpp>
 
-#include <Viewport.hpp>
-#include <CameraComponent.hpp>
-
 #include "GLTextFieldBufferDeviceProxy.hpp"
 #include "GLTextureDeviceProxy.hpp"
 #include "GLMeshDeviceProxy.hpp"
+#include "GLUtils.hpp"
+
+using namespace Poly;
 
 //------------------------------------------------------------------------------
-void Poly::GLRenderingDevice::RenderWorld(World * world)
+void GLRenderingDevice::RenderWorld(World * world)
 {
+	// Prepare frame buffer
 	glDepthMask(GL_TRUE);
 	glClearColor(0.2, 0.2, 0.2, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
+	// Choose correct rendering mode
 	if (gCoreConfig.WireframeRendering)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	ScreenSize screen = world->GetEngine()->GetRenderingContext()->GetScreenSize();
+
+	// For each visible viewport draw it
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
 	{
-		glClear(GL_DEPTH_BUFFER_BIT);
+		// Get viewport rect (TOOO change it to propper rect, not box)
 		const AABox& rect = kv.second.GetRect();
 		glViewport((int)(rect.GetMin().X * screen.Width), (int)(rect.GetMin().Y * screen.Height),
 			(int)(rect.GetSize().X * screen.Width), (int)(rect.GetSize().Y * screen.Height));
 
+		// Bind default drawing program (it's test for now)
 		GetProgram(eShaderProgramType::TEST).BindProgram();
+
+		// Get camera MVP matrix
 		const Matrix& mvp = kv.second.GetCamera()->GetMVP();
-		//testProgram.SetUniform("uMVP", mvp);
-		// Render objects
+
+		// Render meshes
 		for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
 		{
 			const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
@@ -74,6 +74,9 @@ void Poly::GLRenderingDevice::RenderWorld(World * world)
 				glBindVertexArray(0);
 			}
 		}
+		CHECK_GL_ERR();
+
+		// Draw debug normals
 		if (gCoreConfig.DebugNormalsFlag)
 		{
 			const Matrix& mModelView = kv.second.GetCamera()->GetModelViewMatrix();
@@ -101,7 +104,6 @@ void Poly::GLRenderingDevice::RenderWorld(World * world)
 				}
 			}
 		}
-
 		CHECK_GL_ERR();
 
 		glDepthMask(GL_FALSE);
@@ -110,7 +112,6 @@ void Poly::GLRenderingDevice::RenderWorld(World * world)
 		// Text drawing
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		CHECK_GL_ERR();
 
 		Matrix ortho;
 		ortho.SetOrthographic(rect.GetMin().Y * screen.Height, rect.GetMax().Y * screen.Height, rect.GetMin().X * screen.Width, rect.GetMax().X * screen.Width, -1, 1);
@@ -137,10 +138,12 @@ void Poly::GLRenderingDevice::RenderWorld(World * world)
 			glBindTexture(GL_TEXTURE_2D, 0);
 			glBindVertexArray(0);
 		}
+		CHECK_GL_ERR();
 
 		glDisable(GL_BLEND);
 	}
 
+	// Signal frame end
 	EndFrame();
 }
 

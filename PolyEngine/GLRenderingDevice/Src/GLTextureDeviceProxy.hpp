@@ -1,7 +1,7 @@
 #pragma once
 
 #include <IRenderingDevice.hpp>
-#include <GL/glew.h>
+#include "GLUtils.hpp"
 
 namespace Poly
 {
