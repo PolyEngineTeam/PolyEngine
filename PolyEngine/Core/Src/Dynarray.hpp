@@ -6,10 +6,14 @@
 
 namespace Poly 
 {
+	/// Dynarray is a vector based container thet allocates its memory in one, continous block.
+	/// This should be the goto container for all general purpose usage.
 	template<typename T>
 	class Dynarray : public BaseObject<>
 	{
 	public:
+
+		/// Dynarray's Iterator class provides basic random access mutable iterator API for traversing dynarray memory
 		class Iterator : public BaseObject<>, public std::iterator<std::random_access_iterator_tag, T>
 		{
 		public:
@@ -42,6 +46,7 @@ namespace Poly
 			friend class Dynarray<T>;
 		};
 
+		/// Dynarray's ConstIterator class provides basic random access const iterator API for traversing dynarray memory
 		class ConstIterator : public BaseObject<>, public std::iterator<std::random_access_iterator_tag, T>
 		{
 		public:
