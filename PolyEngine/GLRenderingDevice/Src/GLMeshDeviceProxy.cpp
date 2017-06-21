@@ -1,9 +1,9 @@
 #include "GLMeshDeviceProxy.hpp"
-
 #include "GLUtils.hpp"
 
 using namespace Poly;
 
+//---------------------------------------------------------------
 GLMeshDeviceProxy::GLMeshDeviceProxy()
 {
 	VBO[eBufferType::VERTEX_BUFFER] = 0;
@@ -12,6 +12,7 @@ GLMeshDeviceProxy::GLMeshDeviceProxy()
 	VBO[eBufferType::INDEX_BUFFER] = 0;
 }
 
+//---------------------------------------------------------------
 GLMeshDeviceProxy::~GLMeshDeviceProxy()
 {
 	if (VBO[eBufferType::VERTEX_BUFFER])
@@ -30,6 +31,7 @@ GLMeshDeviceProxy::~GLMeshDeviceProxy()
 		glDeleteVertexArrays(1, &VAO);
 }
 
+//---------------------------------------------------------------
 void GLMeshDeviceProxy::SetContent(const Mesh& mesh)
 {
 	if (!VAO)
@@ -85,6 +87,7 @@ void GLMeshDeviceProxy::SetContent(const Mesh& mesh)
 	glBindVertexArray(0);
 }
 
+//---------------------------------------------------------------
 void GLMeshDeviceProxy::EnsureVBOCreated(eBufferType type)
 {
 	if (!VBO[type])

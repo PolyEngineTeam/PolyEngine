@@ -1,10 +1,10 @@
 #include "GLTextFieldBufferDeviceProxy.hpp"
-
 #include "GLUtils.hpp"
 
 using namespace Poly;
 
-Poly::GLTextFieldBufferDeviceProxy::GLTextFieldBufferDeviceProxy()
+//---------------------------------------------------------------
+GLTextFieldBufferDeviceProxy::GLTextFieldBufferDeviceProxy()
 {
 	glGenVertexArrays(1, &VAO);
 	if(VAO <= 0)
@@ -27,7 +27,8 @@ Poly::GLTextFieldBufferDeviceProxy::GLTextFieldBufferDeviceProxy()
 	CHECK_GL_ERR();
 }
 
-Poly::GLTextFieldBufferDeviceProxy::~GLTextFieldBufferDeviceProxy()
+//---------------------------------------------------------------
+GLTextFieldBufferDeviceProxy::~GLTextFieldBufferDeviceProxy()
 {
 	if (VBO)
 		glDeleteBuffers(1, &VBO);
@@ -36,6 +37,7 @@ Poly::GLTextFieldBufferDeviceProxy::~GLTextFieldBufferDeviceProxy()
 		glDeleteVertexArrays(1, &VAO);
 }
 
+//---------------------------------------------------------------
 void GLTextFieldBufferDeviceProxy::SetContent(size_t count, const TextFieldLetter* letters)
 {
 	ASSERTE(count > 0 && letters != nullptr, "Invalid arguments");

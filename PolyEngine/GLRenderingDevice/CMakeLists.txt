@@ -11,7 +11,7 @@ set(POLYGLDEVICE_SRCS
 	Src/GLTextFieldBufferDeviceProxy.cpp
 	Src/GLTextureDeviceProxy.cpp
 	Src/GLWorldRendering.cpp
-	Src/ShaderProgram.cpp
+	Src/GLShaderProgram.cpp
 )
 set(POLYGLDEVICE_INCLUDE Src)
 set(POLYGLDEVICE_H_FOR_IDE
@@ -20,7 +20,7 @@ set(POLYGLDEVICE_H_FOR_IDE
 	Src/GLTextFieldBufferDeviceProxy.hpp
 	Src/GLTextureDeviceProxy.hpp
 	Src/GLUtils.hpp
-	Src/ShaderProgram.hpp
+	Src/GLShaderProgram.hpp
 )
 
 add_library(polygldevice SHARED ${POLYGLDEVICE_SRCS} ${POLYGLDEVICE_H_FOR_IDE})

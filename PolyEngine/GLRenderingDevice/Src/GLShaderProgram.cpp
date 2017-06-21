@@ -1,12 +1,12 @@
-#include "EnginePCH.hpp"
+#include "GLShaderProgram.hpp"
+#include "GLUtils.hpp"
 
-#include "ShaderProgram.hpp"
-
-#include <GL/glew.h>
+#include <ResourceManager.hpp>
 
 using namespace Poly;
 
-ShaderProgram::ShaderProgram(const String & vertex, const String & fragment)
+//------------------------------------------------------------------------------
+GLShaderProgram::GLShaderProgram(const String & vertex, const String & fragment)
 {
 	gConsole.LogDebug("Creating shader program {} {}", vertex, fragment);
 	m_program = glCreateProgram();
@@ -18,7 +18,8 @@ ShaderProgram::ShaderProgram(const String & vertex, const String & fragment)
 	CompileProgram();
 }
 
-ShaderProgram::ShaderProgram(const String& vertex, const String& geometry, const String& fragment)
+//------------------------------------------------------------------------------
+GLShaderProgram::GLShaderProgram(const String& vertex, const String& geometry, const String& fragment)
 {
 	gConsole.LogDebug("Creating shader program {} {} {}", vertex, geometry, fragment);
 	m_program = glCreateProgram();
@@ -31,12 +32,14 @@ ShaderProgram::ShaderProgram(const String& vertex, const String& geometry, const
 	CompileProgram();
 }
 
-void ShaderProgram::BindProgram() const
+//------------------------------------------------------------------------------
+void GLShaderProgram::BindProgram() const
 {
 	glUseProgram(m_program);
 }
 
-void ShaderProgram::CompileProgram()
+//------------------------------------------------------------------------------
+void GLShaderProgram::CompileProgram()
 {
 	glLinkProgram(m_program);
 	int linkStatus = 0;
@@ -54,7 +57,8 @@ void ShaderProgram::CompileProgram()
 	}
 }
 
-void ShaderProgram::Validate()
+//------------------------------------------------------------------------------
+void GLShaderProgram::Validate()
 {
 	int status = 0;
 	glValidateProgram(m_program);
@@ -71,7 +75,8 @@ void ShaderProgram::Validate()
 	}
 }
 
-void ShaderProgram::LoadShader(GLenum type, const String& shaderName)
+//------------------------------------------------------------------------------
+void GLShaderProgram::LoadShader(GLenum type, const String& shaderName)
 {
 	GLuint shader = glCreateShader(type);
 	if (shader == 0) {
@@ -99,15 +104,17 @@ void ShaderProgram::LoadShader(GLenum type, const String& shaderName)
 
 	glAttachShader(m_program, shader);
 	glDeleteShader(shader);  // is it ok to do it here?
-	//CHECK_GL_ERR();
+	CHECK_GL_ERR();
 }
 
-size_t ShaderProgram::GetProgramHandle() const
+//------------------------------------------------------------------------------
+size_t GLShaderProgram::GetProgramHandle() const
 {
 	return m_program;
 }
 
-void ShaderProgram::RegisterUniform(const String& name)
+//------------------------------------------------------------------------------
+void GLShaderProgram::RegisterUniform(const String& name)
 {
 	GLint tmp = 0;
 	tmp = glGetUniformLocation(m_program, name.GetCStr());
@@ -116,35 +123,13 @@ void ShaderProgram::RegisterUniform(const String& name)
 		return;
 	}
 	m_uniforms[name] = tmp;
-	//CHECK_GL_ERR();
+	CHECK_GL_ERR();
 }
 
-void ShaderProgram::SetUniform(const String& name, int val)
-{
-	glUniform1i(m_uniforms[name], val);
-}
-
-void ShaderProgram::SetUniform(const String& name, float val)
-{
-	glUniform1f(m_uniforms[name], val);
-}
-
-void ShaderProgram::SetUniform(const String & name, float val1, float val2)
-{
-	glUniform2f(m_uniforms[name], val1, val2);
-}
-
-void ShaderProgram::SetUniform(const String& name, const Vector& val)
-{
-	glUniform4f(m_uniforms[name], val.X, val.Y, val.Z, val.W);
-}
-
-void ShaderProgram::SetUniform(const String& name, const Color& val)
-{
-	glUniform4f(m_uniforms[name], val.R, val.G, val.B, val.A);
-}
-
-void ShaderProgram::SetUniform(const String& name, const Matrix& val)
-{
-	glUniformMatrix4fv(m_uniforms[name], 1, GL_FALSE, val.GetTransposed().GetDataPtr());
-}
+//------------------------------------------------------------------------------
+void GLShaderProgram::SetUniform(const String& name, int val) { glUniform1i(m_uniforms[name], val); }
+void GLShaderProgram::SetUniform(const String& name, float val) { glUniform1f(m_uniforms[name], val); }
+void GLShaderProgram::SetUniform(const String & name, float val1, float val2) { glUniform2f(m_uniforms[name], val1, val2); }
+void GLShaderProgram::SetUniform(const String& name, const Vector& val) { glUniform4f(m_uniforms[name], val.X, val.Y, val.Z, val.W); }
+void GLShaderProgram::SetUniform(const String& name, const Color& val) { glUniform4f(m_uniforms[name], val.R, val.G, val.B, val.A); }
+void GLShaderProgram::SetUniform(const String& name, const Matrix& val) { glUniformMatrix4fv(m_uniforms[name], 1, GL_FALSE, val.GetTransposed().GetDataPtr()); }

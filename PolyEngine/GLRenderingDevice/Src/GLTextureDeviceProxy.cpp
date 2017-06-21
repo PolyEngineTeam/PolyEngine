@@ -1,10 +1,10 @@
 #include "GLTextureDeviceProxy.hpp"
-
 #include "GLUtils.hpp"
 
 using namespace Poly;
 
-GLenum GetGLDataFormat(eTextureDataFormat format)
+//---------------------------------------------------------------
+static GLenum GetGLDataFormat(eTextureDataFormat format) noexcept
 {
 	switch (format)
 	{
@@ -20,7 +20,8 @@ GLenum GetGLDataFormat(eTextureDataFormat format)
 	return 0;
 }
 
-GLenum GetGLInternalFormat(eTextureUsageType usage)
+//---------------------------------------------------------------
+static GLenum GetGLInternalFormat(eTextureUsageType usage) noexcept
 {
 	switch (usage)
 	{
@@ -34,7 +35,8 @@ GLenum GetGLInternalFormat(eTextureUsageType usage)
 	return 0;
 }
 
-Poly::GLTextureDeviceProxy::GLTextureDeviceProxy(size_t width, size_t height, eTextureUsageType usage)
+//---------------------------------------------------------------
+GLTextureDeviceProxy::GLTextureDeviceProxy(size_t width, size_t height, eTextureUsageType usage)
 	: Width(width), Height(height), Usage(usage)
 {
 	ASSERTE(Width > 0 && Height > 0, "Invalid arguments!");
@@ -73,12 +75,14 @@ Poly::GLTextureDeviceProxy::GLTextureDeviceProxy(size_t width, size_t height, eT
 	CHECK_GL_ERR();
 }
 
-Poly::GLTextureDeviceProxy::~GLTextureDeviceProxy()
+//---------------------------------------------------------------
+GLTextureDeviceProxy::~GLTextureDeviceProxy()
 {
 	if(TextureID > 0)
 		glDeleteTextures(1, &TextureID);
 }
 
+//---------------------------------------------------------------
 void GLTextureDeviceProxy::SetContent(eTextureDataFormat format, const unsigned char* data)
 {
 	ASSERTE(Width > 0 && Height > 0, "Invalid arguments!");
@@ -98,7 +102,9 @@ void GLTextureDeviceProxy::SetContent(eTextureDataFormat format, const unsigned 
 	CHECK_GL_ERR();
 }
 
-void GLTextureDeviceProxy::SetSubContent(size_t width, size_t height, size_t offsetX, size_t offsetY, eTextureDataFormat format, const unsigned char* data)
+//---------------------------------------------------------------
+void GLTextureDeviceProxy::SetSubContent(size_t width, size_t height, 
+	size_t offsetX, size_t offsetY, eTextureDataFormat format, const unsigned char* data)
 {
 	ASSERTE(width + offsetX <= Width && height + offsetY <= Height && width > 0 && height > 0, "Invalid arguments!");
 	ASSERTE(data, "Data pointer is nullptr!");
