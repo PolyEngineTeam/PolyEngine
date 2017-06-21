@@ -184,14 +184,18 @@ namespace Poly
 		/// @return const T& Const reference to object under provided index.
 		const T& operator[](size_t idx) const { HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!"); return Data[idx]; }
 
-		//------------------------------------------------------------------------------
+		/// Clears contents of the container. This does not release aquired memory.
 		void Clear() {
 			for (size_t idx = 0; idx < GetSize(); ++idx)
 				ObjectLifetimeHelper::Destroy(Data + idx);
 			Size = 0;
 		}
 
-		//------------------------------------------------------------------------------
+		/// Copies provided object to the specified location in the dynarray.
+		/// Objects already present that are in position >= idx will be moved one position to the right.
+		/// Insertion with idx > size results in undefined behaviour.
+		/// @param[in] size_t idx Index in which object should be created.
+		/// @param[in] const T& obj Const reference to object that should be copied to the container.
 		void Insert(size_t idx, const T& obj)
 		{
 			HEAVY_ASSERTE(idx <= GetSize(), "Index out of bounds!");
@@ -202,7 +206,10 @@ namespace Poly
 			++Size;
 		}
 
-		//------------------------------------------------------------------------------
+		/// Removes element from the collection with specified index.
+		/// Objects in position > idx will be moved one position to the left.
+		/// Removal of object in idx >= size results in undefined behavour.
+		/// @param[in] size_t idx Index from which object should be removed.
 		void RemoveByIdx(size_t idx)
 		{
 			HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!");
@@ -211,7 +218,9 @@ namespace Poly
 			--Size;
 		}
 
-		//------------------------------------------------------------------------------
+		/// Finds index of the first encountered object from the container that is equal to provided object.
+		/// @param[in] const T& rhs Searched object.
+		/// @return size_t Index of searched object or container size if object was not found.
 		size_t FindIdx(const T& rhs) const
 		{
 			for (size_t idx = 0; idx < GetSize(); ++idx)
@@ -222,13 +231,24 @@ namespace Poly
 			return GetSize();
 		}
 
-		//------------------------------------------------------------------------------
+		/// Performs insertion to the back of the container.
+		/// @param[in] const T& obj Const reference to object that should be copied to the container.
 		void PushBack(const T& obj) { Insert(GetSize(), obj); }
+
+		/// Performs removal from the back of the container.
 		void PopBack() { RemoveByIdx(GetSize() - 1); }
+
+		/// Performs insertion to the front of the container.
+		/// @param[in] const T& obj Const reference to object that should be copied to the container.
 		void PushFront(const T& obj) { Insert(0, obj); }
+
+		/// Performs removal from the front of the container.
 		void PopFront() { RemoveByIdx(0); }
 
-		//------------------------------------------------------------------------------
+		/// Forces resizing of the collection to the specified value.
+		/// If necessary this will create new object via default empty construction.
+		/// This can also shrink the collection in which case, excessive objects will be destroyed.
+		/// @param[in] size_t Requested size of the collection.
 		void Resize(size_t size)
 		{
 			if (size == GetSize())
@@ -249,7 +269,9 @@ namespace Poly
 			Size = size;
 		}
 
-		//------------------------------------------------------------------------------
+		/// Ensures that enought space is available in the collection.
+		/// In case there is not enought the container gets reallocated to new, bigger memory block.
+		/// @param[in] size_t Requested capacity of the collection.
 		void Reserve(size_t capacity)
 		{
 			if (capacity <= Capacity)
@@ -257,19 +279,43 @@ namespace Poly
 			Realloc(capacity);
 		}
 
-		//------------------------------------------------------------------------------
+		/// Getter for the iterator to the element in front of the collection.
 		Iterator Begin() { return Iterator(Data, 0); }
+
+		/// Getter for the iterator to the location after last element in the collection.
 		Iterator End() { return Iterator(Data, GetSize()); }
+
+		/// Getter for the const iterator to the element in front of the collection.
 		ConstIterator Begin() const { return ConstIterator(Data, 0); }
+
+		/// Getter for the const iterator to the location after last element in the collection.
 		ConstIterator End() const { return ConstIterator(Data, GetSize()); }
 
-		//------------------------------------------------------------------------------
+		/// Getter for the iterator that points to the first encountered searched element in collection.
+		/// @param[in] const T& rhs Searched object.
+		/// @return Iterator Iterator to the searched object or End().
 		Iterator Find(const T& rhs) { return Iterator(Data, FindIdx(rhs)); }
+
+		/// Getter for the const iterator that points to the first encountered searched element in collection.
+		/// @param[in] const T& rhs Searched object.
+		/// @return ConstIterator Const iterator to the searched object or End().
 		ConstIterator Find(const T& rhs) const { return ConstIterator(Data, FindIdx(rhs)); }
 
-		//------------------------------------------------------------------------------
+		/// Checks whether provided object is present in the collection at least once.
+		/// @param[in] const T& rhs Searched object.
+		/// @return bool True if present, false otherwise.
 		bool Contains(const T& rhs) const { return FindIdx(rhs) < GetSize(); }
+
+		/// Remove the first encountered object of provided value from the collection.
+		/// This will cause undefined behaviour when the value is not present in the collection.
+		/// Use TryRemove if not sure about object existence.
+		/// @param[in] const T& rhs Object to be removed.
 		void Remove(const T& rhs) { RemoveByIdx(FindIdx(rhs)); }
+
+		/// Try to remove the first encountered object of provided value from the collection.
+		/// When value is not found in collection this method does nothing.
+		/// @param[in] const T& rhs Object to be removed.
+		/// @return bool True if removal succeded, false if value was not found.
 		bool TryRemove(const T& rhs)
 		{
 			size_t idx = FindIdx(rhs);
