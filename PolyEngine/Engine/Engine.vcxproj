@@ -189,14 +189,13 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\OpenALRenderingContext.cpp" />
     <ClCompile Include="Src\SoundEmitterComponent.cpp" />
     <ClCompile Include="Src\SoundListenerComponent.cpp" />
+    <ClCompile Include="Src\Mesh.cpp" />
     <ClCompile Include="Src\MeshRenderingComponent.cpp" />
     <ClCompile Include="Src\InputSystem.cpp" />
-    <ClCompile Include="Src\GLMeshResource.cpp" />
+    <ClCompile Include="Src\MeshResource.cpp" />
     <ClCompile Include="Src\MovementSystem.cpp" />
-    <ClCompile Include="Src\OpenGLRenderingContext.cpp" />
     <ClCompile Include="Src\RenderingSystem.cpp" />
     <ClCompile Include="Src\ResourceManager.cpp" />
-    <ClCompile Include="Src\ShaderProgram.cpp" />
     <ClCompile Include="Src\SoundListenerSystem.cpp" />
     <ClCompile Include="Src\SoundResource.cpp" />
     <ClCompile Include="Src\SoundSystem.cpp" />
@@ -207,7 +206,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\TransformComponent.cpp" />
     <ClCompile Include="Src\ViewportWorldComponent.cpp" />
     <ClCompile Include="Src\World.cpp" />
-    <ClCompile Include="Src\GLTextureResource.cpp" />
+    <ClCompile Include="Src\TextureResource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.vcxproj">
@@ -232,20 +231,18 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\InputSystem.hpp" />
     <ClInclude Include="Src\InputQueue.hpp" />
     <ClInclude Include="Src\InputWorldComponent.hpp" />
+    <ClInclude Include="Src\IRenderingDevice.hpp" />
     <ClInclude Include="Src\KeyBindings.hpp" />
     <ClInclude Include="Src\OpenALRenderingContext.hpp" />
     <ClInclude Include="Src\SoundListenerComponent.hpp" />
+    <ClInclude Include="Src\Mesh.hpp" />
     <ClInclude Include="Src\MeshRenderingComponent.hpp" />
-    <ClInclude Include="Src\GLMeshResource.hpp" />
+    <ClInclude Include="Src\MeshResource.hpp" />
     <ClInclude Include="Src\MovementSystem.hpp" />
-    <ClInclude Include="Src\OpenGLRenderingContext.hpp" />
-    <ClInclude Include="Src\OpenGLUtils.hpp" />
-    <ClInclude Include="Src\RenderingContext.hpp" />
     <ClInclude Include="Src\RenderingSystem.hpp" />
     <ClInclude Include="Src\ResourceBase.hpp" />
     <ClInclude Include="Src\ResourceManager.hpp" />
     <ClInclude Include="Src\ScreenSpaceTextComponent.hpp" />
-    <ClInclude Include="Src\ShaderProgram.hpp" />
     <ClInclude Include="Src\SoundListenerSystem.hpp" />
     <ClInclude Include="Src\SoundResource.hpp" />
     <ClInclude Include="Src\SoundSystem.hpp" />
@@ -259,7 +256,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\Viewport.hpp" />
     <ClInclude Include="Src\ViewportWorldComponent.hpp" />
     <ClInclude Include="Src\World.hpp" />
-    <ClInclude Include="Src\GLTextureResource.hpp" />
+    <ClInclude Include="Src\TextureResource.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

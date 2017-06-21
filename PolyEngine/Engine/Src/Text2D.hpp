@@ -25,13 +25,12 @@ namespace Poly
 		const size_t& GetFontSize() const { return FontSize; }
 		const Color& GetFontColor() const { return FontColor;  }
 
-		GLuint GetVAO() const { return VAO; }
-		GLuint GetVBO() const { return VBO; }
-		GLuint GetTextureID();
 
-		void Draw() const;
-	private:
 		void UpdateDeviceBuffers() const;
+
+		const ITextFieldBufferDeviceProxy* GetTextFieldBuffer() const { return TextFieldBufferProxy.get(); }
+		const ITextureDeviceProxy* GetFontTextureProxy() const;
+	private:
 
 		String Text;
 		String FontName;
@@ -39,7 +38,8 @@ namespace Poly
 		Color FontColor;
 
 		mutable bool Dirty = true;
-		mutable GLuint VAO = 0, VBO = 0;
+
+		mutable std::unique_ptr<ITextFieldBufferDeviceProxy> TextFieldBufferProxy;
 		mutable FontResource* Font = nullptr;
 	};
 }

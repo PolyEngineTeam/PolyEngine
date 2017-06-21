@@ -3,10 +3,8 @@
 #include <windowsx.h>
 
 #include <Engine.hpp>
-#include <OpenGLRenderingContext.hpp>
-#include <InvadersGame.hpp>
 #include <sstream>
-#include "TimeSystem.hpp"
+#include <TimeSystem.hpp>
 
 static Poly::Engine* gEngine = nullptr;
 
@@ -15,6 +13,32 @@ LRESULT CALLBACK WindowProc(HWND hWnd,
 	UINT message,
 	WPARAM wParam,
 	LPARAM lParam);
+
+Poly::IRenderingDevice* LoadRenderingDevice(HWND hwnd, RECT rect)
+{
+	typedef Poly::IRenderingDevice* (__stdcall *RenderingDeviceGetter_t)(HWND, RECT);
+
+	HINSTANCE hGetProcIDDLL = LoadLibrary("libRenderingDevice.dll");
+	ASSERTE(hGetProcIDDLL, "could not load the dynamic library");
+
+	RenderingDeviceGetter_t getRenderingDevice = (RenderingDeviceGetter_t)GetProcAddress(hGetProcIDDLL, "PolyCreateRenderingDevice");
+	ASSERTE(getRenderingDevice, "could not locate the function");
+	
+	return getRenderingDevice(hwnd, rect);
+}
+
+Poly::IGame* LoadGame()
+{
+	typedef Poly::IGame* (__stdcall *GameGetter_t)();
+
+	HINSTANCE hGetProcIDDLL = LoadLibrary("libGame.dll");
+	ASSERTE(hGetProcIDDLL, "could not load the dynamic library");
+
+	GameGetter_t getGame = (GameGetter_t)GetProcAddress(hGetProcIDDLL, "CreateGame");
+	ASSERTE(getGame, "could not locate the function");
+
+	return getGame();
+}
 
 // the entry point for any Windows program
 int WINAPI WinMain(HINSTANCE hInstance,
@@ -75,11 +99,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	// this struct holds Windows event messages
 	MSG msg;
 
-	InvadersGame Game;
-	Poly::OpenGLRenderingContextParams Context(hWnd, viewportRect);
-	Poly::Engine Engine(&Game);
+	Poly::IGame* game = LoadGame();
+	Poly::IRenderingDevice* device = LoadRenderingDevice(hWnd, viewportRect);
+	Poly::Engine Engine(game, device);
 	gEngine = &Engine;
-	bool result = Engine.Init(&Context);
+	bool result = Engine.Init();
 	if (!result)
 	{
 		Poly::gConsole.LogError("Engine load failed!");
@@ -110,7 +134,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		Engine.Update();
 	}
 
+	// clean up
 	Engine.Deinit();
+
+	delete game;
+	delete device;
 
 	// return this part of the WM_QUIT message to Windows
 	return static_cast<int>(msg.wParam);

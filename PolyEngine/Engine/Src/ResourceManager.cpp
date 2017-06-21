@@ -1,15 +1,16 @@
 #include "EnginePCH.hpp"
 
 #include "ResourceManager.hpp"
-#include "GLMeshResource.hpp"
+#include "MeshResource.hpp"
 #include "SoundResource.hpp"
+
 
 #include <fstream>
 
 using namespace Poly;
 
-DEFINE_RESOURCE(GLMeshResource, gGLMeshResourcesMap)
-DEFINE_RESOURCE(GLTextureResource, gGLTextureResourcesMap)
+DEFINE_RESOURCE(MeshResource, gMeshResourcesMap)
+DEFINE_RESOURCE(TextureResource, gTextureResourcesMap)
 DEFINE_RESOURCE(FontResource, gFontResourcesMap)
 DEFINE_RESOURCE(SoundResource, gALSoundResourcesMap)
 

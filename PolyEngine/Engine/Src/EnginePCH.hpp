@@ -12,7 +12,7 @@
 #include "World.hpp"
 
 // Rendering
-#include "RenderingContext.hpp"
+#include "IRenderingDevice.hpp"
 
 // Audio
 #include "OpenALRenderingContext.hpp"
@@ -20,13 +20,13 @@
 // Utils
 #include "InputQueue.hpp"
 #include "KeyBindings.hpp"
-#include "OpenGLUtils.hpp"
+#include "Mesh.hpp"
 
 // Resources
 #include "ResourceBase.hpp"
 #include "ResourceManager.hpp"
-#include "GLTextureResource.hpp"
-#include "GLMeshResource.hpp"
+#include "TextureResource.hpp"
+#include "MeshResource.hpp"
 #include "FontResource.hpp"
 
 // Components

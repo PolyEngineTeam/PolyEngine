@@ -21,6 +21,8 @@
 
 using namespace Poly;
 
+DEFINE_GAME(InvadersGame)
+
 void InvadersGame::Init()
 {
 	Engine->RegisterComponent<PlayerControllerComponent>((int)eGameComponents::PLAYERCONTROLLER);
@@ -108,7 +110,7 @@ void InvadersGame::Init()
 	
 
 	// Precache bullet mesh
-	BulletMesh = Poly::ResourceManager<GLMeshResource>::Load("Models/bullet/lowpolybullet.obj");
+	BulletMesh = Poly::ResourceManager<MeshResource>::Load("Models/bullet/lowpolybullet.obj");
 };
 
 void InvadersGame::Deinit()
@@ -116,7 +118,7 @@ void InvadersGame::Deinit()
 	DeferredTaskSystem::DestroyEntityImmediate(&Engine->GetWorld(), Camera);
 	for(auto ent : GameEntities)
 		DeferredTaskSystem::DestroyEntityImmediate(&Engine->GetWorld(), ent);
-	Poly::ResourceManager<GLMeshResource>::Release(BulletMesh);
+	Poly::ResourceManager<MeshResource>::Release(BulletMesh);
 };
 
 void GameMainSystem::GameUpdate(Poly::World* /*world*/)

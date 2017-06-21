@@ -1,9 +1,10 @@
 #pragma once
 
-#include <alc.h>
-
 #include "ComponentBase.hpp"
 #include "SoundSystem.hpp"
+
+struct ALCcontext_struct;
+typedef struct ALCcontext_struct ALCcontext;
 
 namespace Poly
 {

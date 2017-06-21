@@ -1,6 +1,6 @@
 #include <Engine.hpp>
-#include <OpenGLRenderingContext.hpp>
-#include <TestGame.hpp>
+#include <GLRenderingDevice.hpp>
+#include <InvadersGame.hpp>
 
 static Poly::Engine* gEngine = nullptr;
 
@@ -105,11 +105,12 @@ int main() {
 	std::unique_ptr<Window, decltype(windowCleanup)> windowCleanupGuard(&window, windowCleanup);
 
 	//engine init (creates context)
-	TestGame game;
-	Poly::OpenGLRenderingContextParams ctxParams{display.get(), window, fbConfig};
-	Poly::Engine engine(&game);
+	InvadersGame game;
+
+	Poly::IRenderingDevice* device = Poly::CreateRenderingDevice(display.get(), window, fbConfig);
+	Poly::Engine engine(&game, device);
 	gEngine = &engine;
-	if (!engine.Init(&ctxParams)) {
+	if (!engine.Init()) {
 		Poly::gConsole.LogError("Engine load failed!");
 		return 1;
 	}
