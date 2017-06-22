@@ -186,7 +186,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\FreeFloatMovementComponent.cpp" />
     <ClCompile Include="Src\DeferredTaskSystem.cpp" />
     <ClCompile Include="Src\InputWorldComponent.cpp" />
-    <ClCompile Include="Src\OpenALRenderingContext.cpp" />
+    <ClCompile Include="Src\OpenALRenderingDevice.cpp" />
     <ClCompile Include="Src\SoundEmitterComponent.cpp" />
     <ClCompile Include="Src\SoundListenerComponent.cpp" />
     <ClCompile Include="Src\Mesh.cpp" />
@@ -196,7 +196,6 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\MovementSystem.cpp" />
     <ClCompile Include="Src\RenderingSystem.cpp" />
     <ClCompile Include="Src\ResourceManager.cpp" />
-    <ClCompile Include="Src\SoundListenerSystem.cpp" />
     <ClCompile Include="Src\SoundResource.cpp" />
     <ClCompile Include="Src\SoundSystem.cpp" />
     <ClCompile Include="Src\SoundWorldComponent.cpp" />
@@ -233,7 +232,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\InputWorldComponent.hpp" />
     <ClInclude Include="Src\IRenderingDevice.hpp" />
     <ClInclude Include="Src\KeyBindings.hpp" />
-    <ClInclude Include="Src\OpenALRenderingContext.hpp" />
+    <ClInclude Include="Src\OpenALRenderingDevice.hpp" />
     <ClInclude Include="Src\SoundListenerComponent.hpp" />
     <ClInclude Include="Src\Mesh.hpp" />
     <ClInclude Include="Src\MeshRenderingComponent.hpp" />
@@ -243,7 +242,6 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\ResourceBase.hpp" />
     <ClInclude Include="Src\ResourceManager.hpp" />
     <ClInclude Include="Src\ScreenSpaceTextComponent.hpp" />
-    <ClInclude Include="Src\SoundListenerSystem.hpp" />
     <ClInclude Include="Src\SoundResource.hpp" />
     <ClInclude Include="Src\SoundSystem.hpp" />
     <ClInclude Include="Src\SoundEmitterComponent.hpp" />

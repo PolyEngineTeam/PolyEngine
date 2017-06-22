@@ -6,8 +6,9 @@
 
 using namespace Poly;
 
-SoundWorldComponent::SoundWorldComponent()
+SoundWorldComponent::SoundWorldComponent(World* world)
 {
+	Context = alcCreateContext(world->GetEngine()->GetAudioRenderingDevice().Device, NULL);
 }
 
 SoundWorldComponent::~SoundWorldComponent()

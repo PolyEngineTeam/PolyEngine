@@ -8,7 +8,7 @@
 
 #include <Core.hpp>
 #include "IRenderingDevice.hpp"
-#include "OpenALRenderingContext.hpp"
+#include "OpenALRenderingDevice.hpp"
 
 
 #include "InputSystem.hpp"
@@ -220,7 +220,7 @@ namespace Poly
 		/// Returns referrence to audio renderer
 		/// @return AudioRenderer - pointer to IRenderingContext instance.
 		/// @see IRenderingContext
-		OpenALRenderingContext& GetAudioRenderingContext() { return AudioRenderer; }
+		OpenALRenderingDevice& GetAudioRenderingDevice() { return AudioRenderer; }
 
 		/// Returns refference to input queue needed by InputPhase.
 		/// @see InputSystem::InputPhase()
@@ -245,7 +245,7 @@ namespace Poly
 		World* BaseWorld;
 		IGame* Game;
 		IRenderingDevice* Renderer;
-		OpenALRenderingContext AudioRenderer;
+		OpenALRenderingDevice AudioRenderer;
 
 		InputQueue InputEventsQueue;
 

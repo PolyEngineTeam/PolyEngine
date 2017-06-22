@@ -1,7 +1,5 @@
 #pragma once
 
-#include "UniqueID.hpp"
-
 namespace Poly
 {
 	class World;
@@ -11,8 +9,6 @@ namespace Poly
 	{
 		void SoundPhase(World*);
 
-		void CreateContext(World*);
 		void SetCurrentWorld(World*);
-		void BindSoundResourceToEmitter(World*, UniqueID, SoundResource*);
 	}
 }

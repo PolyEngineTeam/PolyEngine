@@ -63,6 +63,9 @@
     <Filter Include="Source Files\Sound\SoundEmitter">
       <UniqueIdentifier>{829be843-8f0a-4092-a0f4-b547d54569eb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Sound\WorldComponent">
+      <UniqueIdentifier>{110f2084-3c9a-4697-a4f6-4b7fd47a3cf5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -143,15 +146,6 @@
     <ClCompile Include="Src\SoundListenerComponent.cpp">
       <Filter>Source Files\Sound\SoundListener</Filter>
     </ClCompile>
-    <ClCompile Include="Src\OpenALRenderingContext.cpp">
-      <Filter>Source Files\Sound\OpenAL</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\SoundListenerSystem.cpp">
-      <Filter>Source Files\Sound\SoundListener</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\SoundWorldComponent.cpp">
-      <Filter>Source Files\Sound</Filter>
-    </ClCompile>
     <ClCompile Include="Src\SoundEmitterComponent.cpp">
       <Filter>Source Files\Sound\SoundEmitter</Filter>
     </ClCompile>
@@ -163,6 +157,12 @@
     </ClCompile>
     <ClCompile Include="Src\MeshResource.cpp">
       <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\OpenALRenderingDevice.cpp">
+      <Filter>Source Files\Sound\OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SoundWorldComponent.cpp">
+      <Filter>Source Files\Sound\WorldComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -274,15 +274,6 @@
     <ClInclude Include="Src\SoundEmitterComponent.hpp">
       <Filter>Source Files\Sound\SoundEmitter</Filter>
     </ClInclude>
-    <ClInclude Include="Src\OpenALRenderingContext.hpp">
-      <Filter>Source Files\Sound\OpenAL</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\SoundListenerSystem.hpp">
-      <Filter>Source Files\Sound\SoundListener</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\SoundWorldComponent.hpp">
-      <Filter>Source Files\Sound</Filter>
-    </ClInclude>
     <ClInclude Include="Src\IRenderingDevice.hpp">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
@@ -294,6 +285,12 @@
     </ClInclude>
     <ClInclude Include="Src\MeshResource.hpp">
       <Filter>Source Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\OpenALRenderingDevice.hpp">
+      <Filter>Source Files\Sound\OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SoundWorldComponent.hpp">
+      <Filter>Source Files\Sound\WorldComponent</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

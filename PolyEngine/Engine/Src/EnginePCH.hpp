@@ -15,7 +15,7 @@
 #include "IRenderingDevice.hpp"
 
 // Audio
-#include "OpenALRenderingContext.hpp"
+#include "OpenALRenderingDevice.hpp"
 
 // Utils
 #include "InputQueue.hpp"
@@ -50,3 +50,4 @@
 
 // Systems
 #include "DeferredTaskSystem.hpp"
+#include "SoundSystem.hpp"

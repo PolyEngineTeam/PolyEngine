@@ -46,7 +46,7 @@ bool Engine::Init()
 	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(BaseWorld);
 	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(BaseWorld);
 	DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(BaseWorld);
-	DeferredTaskSystem::AddWorldComponentImmediate<SoundWorldComponent>(BaseWorld);
+	DeferredTaskSystem::AddWorldComponentImmediate<SoundWorldComponent>(BaseWorld, BaseWorld);
 
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
@@ -58,7 +58,6 @@ bool Engine::Init()
 	RegisterUpdatePhase(DeferredTaskSystem::DeferredTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(FPSSystem::FPSUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 
-	SoundSystem::CreateContext(BaseWorld);
 	SoundSystem::SetCurrentWorld(BaseWorld);
 
 	Game->Init();

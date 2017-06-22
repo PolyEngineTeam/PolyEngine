@@ -15,25 +15,15 @@ void SoundSystem::SoundPhase(World* world)
 	for (auto it : world->IterateComponents<SoundEmitterComponent>())
 	{
 		emitter = std::get<SoundEmitterComponent*>(it);
-		alGetSourcei(emitter->SourceID, AL_SOURCE_STATE, &state);
+		alGetSourcei(emitter->GetEmitterID(), AL_SOURCE_STATE, &state);
 
 		if (state != AL_PLAYING)
-			alSourcePlay(emitter->SourceID);
+			alSourcePlay(emitter->GetEmitterID());
 	}
 }
 
-void SoundSystem::CreateContext(World* world)
-{
-	world->GetWorldComponent<SoundWorldComponent>()->Context = alcCreateContext(world->GetEngine()->GetAudioRenderingContext().Device, NULL);
-}
 
 void SoundSystem::SetCurrentWorld(World* world)
 {
-	ALCcontext *context;
-	context = world->GetWorldComponent<SoundWorldComponent>()->Context;
-	alcMakeContextCurrent(context);
-}
-
-void SoundSystem::BindSoundResourceToEmitter(World *, UniqueID, SoundResource *)
-{
+	alcMakeContextCurrent(world->GetWorldComponent<SoundWorldComponent>()->Context);
 }
