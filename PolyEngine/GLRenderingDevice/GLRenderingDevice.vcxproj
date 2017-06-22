@@ -147,7 +147,7 @@
     <ClInclude Include="Src\GLTextFieldBufferDeviceProxy.hpp" />
     <ClInclude Include="Src\GLTextureDeviceProxy.hpp" />
     <ClInclude Include="Src\GLUtils.hpp" />
-    <ClInclude Include="Src\ShaderProgram.hpp" />
+    <ClInclude Include="Src\GLShaderProgram.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.vcxproj">
@@ -163,7 +163,7 @@
     <ClCompile Include="Src\GLTextFieldBufferDeviceProxy.cpp" />
     <ClCompile Include="Src\GLTextureDeviceProxy.cpp" />
     <ClCompile Include="Src\GLWorldRendering.cpp" />
-    <ClCompile Include="Src\ShaderProgram.cpp" />
+    <ClCompile Include="Src\GLShaderProgram.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

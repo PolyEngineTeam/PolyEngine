@@ -21,8 +21,8 @@ Matrix::Matrix(const Matrix& rhs) { *this = rhs; }
 Matrix& Matrix::operator=(const Matrix& rhs) {
   if (&rhs == this) return *this;
 #if DISABLE_SIMD
-  for(int row=0; row<16; ++i) {
-      Data[row] = rhs.Data[row];
+  for(int i=0; i<16; ++i) {
+      Data[i] = rhs.Data[i];
   }
 #else
   for(int i=0; i<4; ++i)

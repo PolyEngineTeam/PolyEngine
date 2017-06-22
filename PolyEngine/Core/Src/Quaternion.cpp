@@ -101,7 +101,7 @@ Quaternion::operator Matrix() const {
 
   ret.m20 = 2 * X * Z - 2 * W * Y;
   ret.m21 = 2 * Y * Z + 2 * W * X;
-  ret.m22 = 1 - 2 * Y * Y - 2 * X * X;  // W*w - X*X - Y*Y + Z*Z;
+  ret.m22 = 1 - 2 * Y * Y - 2 * X * X;  // W*W - X*X - Y*Y + Z*Z;
 
   return ret;
 }

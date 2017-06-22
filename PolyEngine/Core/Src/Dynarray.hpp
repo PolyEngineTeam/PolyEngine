@@ -6,10 +6,14 @@
 
 namespace Poly 
 {
+	/// Dynarray is a vector based container thet allocates its memory in one, continous block.
+	/// This should be the goto container for all general purpose usage.
 	template<typename T>
 	class Dynarray : public BaseObject<>
 	{
 	public:
+
+		/// Dynarray's Iterator class provides basic random access mutable iterator API for traversing dynarray memory
 		class Iterator : public BaseObject<>, public std::iterator<std::random_access_iterator_tag, T>
 		{
 		public:
@@ -42,6 +46,7 @@ namespace Poly
 			friend class Dynarray<T>;
 		};
 
+		/// Dynarray's ConstIterator class provides basic random access const iterator API for traversing dynarray memory
 		class ConstIterator : public BaseObject<>, public std::iterator<std::random_access_iterator_tag, T>
 		{
 		public:
@@ -74,36 +79,34 @@ namespace Poly
 			friend class Dynarray<T>;
 		};
 
-		//------------------------------------------------------------------------------
+		/// Base dynarray constructor that creates empty object with capacity == 0.
 		Dynarray() = default;
+
+		/// Creates dynarray instance with provided capacity.
+		/// @param[in] size_t capcity
 		Dynarray(size_t capacity) { Reserve(capacity); }
 
-		//------------------------------------------------------------------------------
-		Dynarray(const Dynarray<T>& rhs)
-		{
-			Copy(rhs);
-		}
+		/// Creates dynarray instance from initializer list.
+		/// @param[in] const std::initializer_list<T>& list
+		Dynarray(const std::initializer_list<T>& list) { PopulateFromInitializerList(list); }
 
-		//------------------------------------------------------------------------------
-		Dynarray(Dynarray<T>&& rhs)
-		{
-			Move(std::forward<Dynarray<T>>(rhs));
-		}
+		/// Basic copy constructor
+		/// @param[in] const Dynarray<T>& rhs Reference to Dynarray instance which state should be copied.
+		Dynarray(const Dynarray<T>& rhs) { Copy(rhs); }
 
-		//------------------------------------------------------------------------------
-		Dynarray(const std::initializer_list<T>& list)
-		{
-			PopulateFromInitializerList(list);
-		}
+		/// Basic move constructor
+		/// @param[in] Dynarray<T>&& rhs R-value reference to Dynarray instance which state should be moved.
+		Dynarray(Dynarray<T>&& rhs) { Move(std::forward<Dynarray<T>>(rhs)); }
 
-		//------------------------------------------------------------------------------
+		/// Basic destructor.
 		~Dynarray()
 		{
 			Clear();
 			Free();
 		}
 
-		//------------------------------------------------------------------------------
+		/// Basic copy operator
+		/// @param[in] const Dynarray<T>& rhs Reference to Dynarray instance which state should be copied.
 		Dynarray<T>& operator=(const Dynarray<T>& rhs)
 		{
 			Clear();
@@ -111,7 +114,8 @@ namespace Poly
 			return *this;
 		}
 
-		//------------------------------------------------------------------------------
+		/// Basic move operator
+		/// @param[in] Dynarray<T>&& rhs R-value reference to Dynarray instance which state should be moved.
 		Dynarray<T>& operator=(Dynarray<T>&& rhs)
 		{
 			Clear();
@@ -120,7 +124,8 @@ namespace Poly
 			return *this;
 		}
 
-		//------------------------------------------------------------------------------
+		/// Clears current dynarray content and populates it with content from initializer list.
+		/// @param[in] const std::initializer_list<T>& list
 		Dynarray<T>& operator=(const std::initializer_list<T>& list)
 		{
 			Clear();
@@ -128,7 +133,9 @@ namespace Poly
 			return *this;
 		}
 
-		//------------------------------------------------------------------------------
+		/// Equal comparison operator with other dynarray
+		/// @return bool True if size of the containers match and objects represented by both containers
+		/// are identical and in the same order, false otherwise.
 		bool operator==(const Dynarray<T>& rhs) const
 		{
 			if (GetSize() != rhs.GetSize())
@@ -141,17 +148,40 @@ namespace Poly
 			return true;
 		}
 
+		/// Not-equal comparison operator with other dynarray
+		/// @return bool True when equal operator returns false, false otherwise.
 		bool operator!=(const Dynarray<T>& rhs) const { return !(*this == rhs); };
+		
 
-		//------------------------------------------------------------------------------
+		/// Checks whether dynarray is empty
+		/// @return bool True if is empty, false otherwise.
 		bool IsEmpty() const { return GetSize() == 0; }
+
+		/// Returns current size of the container
+		/// @return size_t Size of the container in objects count.
 		size_t GetSize() const { return Size; }
+
+		/// Returns current maximum capacity of the container.
+		/// If the capacity is exceeded the container will expand
+		/// @return size_t Capacity of the container in objects count.
 		size_t GetCapacity() const { return Capacity; }
+
+		/// Returns pointer to raw data which is a continous memory block of size == capacity.
+		/// @return T* Pointer to raw container data.
 		T* GetData() { return Data; }
+
+		/// Returns const pointer to raw data which is a continous memory block of size == capacity.
+		/// @return const T* Const pointer to raw container data.
 		const T* GetData() const { return Data; }
 
-		//------------------------------------------------------------------------------
+		/// Element access operator for dynarray content.
+		/// @param[in] size_t idx Index of the element to access. Out of bounds values will cause UB.
+		/// @return T& Reference to object under provided index.
 		T& operator[](size_t idx) { HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!"); return Data[idx]; }
+
+		/// Element access operator for const dynarray content.
+		/// @param[in] size_t idx Index of the element to access. Out of bounds values will cause UB.
+		/// @return const T& Const reference to object under provided index.
 		const T& operator[](size_t idx) const { HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!"); return Data[idx]; }
 
 		//------------------------------------------------------------------------------

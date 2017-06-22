@@ -8,7 +8,7 @@ namespace Poly
 {
 	class GLMeshDeviceProxy : public IMeshDeviceProxy
 	{
-	public:
+	private:
 		enum class eBufferType {
 			VERTEX_BUFFER,
 			TEXCOORD_BUFFER,
@@ -17,6 +17,7 @@ namespace Poly
 			_COUNT
 		};
 
+	public:
 		GLMeshDeviceProxy();
 		virtual ~GLMeshDeviceProxy();
 

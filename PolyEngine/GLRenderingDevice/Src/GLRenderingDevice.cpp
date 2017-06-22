@@ -3,24 +3,18 @@
 #include <Logger.hpp>
 
 #include "GLUtils.hpp"
-
-#ifdef _WIN32
-	#include <GL/wglew.h>
-#elif defined(__linux__)
-	#include <GL/glxew.h>
-#endif
-
 #include "GLTextureDeviceProxy.hpp"
 #include "GLTextFieldBufferDeviceProxy.hpp"
 #include "GLMeshDeviceProxy.hpp"
-
 
 using namespace Poly;
 
 #if defined(_WIN32)
 
+	//------------------------------------------------------------------------------
 	IRenderingDevice* PolyCreateRenderingDevice(HWND hwnd, RECT rect) { return new GLRenderingDevice(hwnd, rect); }
 
+	//------------------------------------------------------------------------------
 	GLRenderingDevice::GLRenderingDevice(HWND hwnd, RECT rect)
 		: hWnd(hwnd)
 	{
@@ -103,7 +97,8 @@ using namespace Poly;
 		InitPrograms();
 	}
 
-	Poly::GLRenderingDevice::~GLRenderingDevice()
+	//------------------------------------------------------------------------------
+	GLRenderingDevice::~GLRenderingDevice()
 	{
 		wglMakeCurrent(nullptr, nullptr);
 		if (hRC)
@@ -113,14 +108,18 @@ using namespace Poly;
 		}
 	}
 
-	void Poly::GLRenderingDevice::EndFrame()
+	//------------------------------------------------------------------------------
+	void GLRenderingDevice::EndFrame()
 	{
 		SwapBuffers(hDC);
 	}
 
 #elif defined(__linux__)
+
+	//------------------------------------------------------------------------------
 	IRenderingDevice* PolyCreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig) { return new GLRenderingDevice(display, window, fbConfig); }
 
+	//------------------------------------------------------------------------------
 	GLRenderingDevice::GLRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig)
 	 : display(display), window(window)
 	{
@@ -179,6 +178,7 @@ using namespace Poly;
 		InitPrograms();
 	}
 
+	//------------------------------------------------------------------------------
 	GLRenderingDevice::~GLRenderingDevice()
 	{
 		if (this->display && this->context) {
@@ -188,48 +188,53 @@ using namespace Poly;
 		}
 	}
 
+	//------------------------------------------------------------------------------
 	void GLRenderingDevice::EndFrame()
 	{
 		glXSwapBuffers(this->display, this->window);
 	}
 #else
-#error "Unsupported platform :("
+	#error "Unsupported platform :("
 #endif
 
+//------------------------------------------------------------------------------
 void GLRenderingDevice::Resize(const ScreenSize & size)
 {
 	ScreenDim = size;
 }
 
+//------------------------------------------------------------------------------
 void GLRenderingDevice::InitPrograms()
 {
-	//Init programs
-	ShaderPrograms[eShaderProgramType::TEST] = new ShaderProgram("test.vsh", "test.fsh");
-	//ShaderPrograms[eShaderProgramType::TEST].RegisterUniform("uMVP");
+	// Init programs
+	ShaderPrograms[eShaderProgramType::TEST] = new GLShaderProgram("test.vsh", "test.fsh");
 	ShaderPrograms[eShaderProgramType::TEST]->RegisterUniform("uTransform");
 
-	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS] = new ShaderProgram("debugVertSh.shader", "debugGeomSh.shader", "debugFragSh.shader");
+	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS] = new GLShaderProgram("debugVertSh.shader", "debugGeomSh.shader", "debugFragSh.shader");
 	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS]->RegisterUniform("u_projection");
 	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS]->RegisterUniform("u_MVP");
 	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS]->RegisterUniform("u_normalMatrix4x4");
 
-	ShaderPrograms[eShaderProgramType::TEXT_2D] = new ShaderProgram("Shaders/text2DVert.shader", "Shaders/text2DFrag.shader");
+	ShaderPrograms[eShaderProgramType::TEXT_2D] = new GLShaderProgram("Shaders/text2DVert.shader", "Shaders/text2DFrag.shader");
 	ShaderPrograms[eShaderProgramType::TEXT_2D]->RegisterUniform("u_projection");
 	ShaderPrograms[eShaderProgramType::TEXT_2D]->RegisterUniform("u_textColor");
 	ShaderPrograms[eShaderProgramType::TEXT_2D]->RegisterUniform("u_position");
 }
 
+//------------------------------------------------------------------------------
 std::unique_ptr<ITextureDeviceProxy> GLRenderingDevice::CreateTexture(size_t width, size_t height, eTextureUsageType usage)
 {
 	return std::make_unique<GLTextureDeviceProxy>(width, height, usage);
 }
 
+//------------------------------------------------------------------------------
 std::unique_ptr<ITextFieldBufferDeviceProxy> GLRenderingDevice::CreateTextFieldBuffer()
 {
 	return std::make_unique<GLTextFieldBufferDeviceProxy>();
 }
 
-std::unique_ptr<IMeshDeviceProxy> Poly::GLRenderingDevice::CreateMesh()
+//------------------------------------------------------------------------------
+std::unique_ptr<IMeshDeviceProxy> GLRenderingDevice::CreateMesh()
 {
 	return std::make_unique<GLMeshDeviceProxy>();
 }

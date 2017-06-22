@@ -7,11 +7,11 @@ typedef unsigned int GLuint;
 typedef unsigned int GLenum;
 
 namespace Poly {
-	class ShaderProgram : public BaseObject<>
+	class GLShaderProgram : public BaseObject<>
 	{
 	public:
-		ShaderProgram(const String& vertex, const String& fragment);
-		ShaderProgram(const String& vertex, const String& geometry, const String& fragment);
+		GLShaderProgram(const String& vertex, const String& fragment);
+		GLShaderProgram(const String& vertex, const String& geometry, const String& fragment);
 
 		void BindProgram() const;
 		void CompileProgram();
