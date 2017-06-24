@@ -41,5 +41,5 @@ TEST_CASE("AABox intersection calculation", "[AABox]") {
 	const AABox ar(pos1, size1);
 	const AABox ar2(pos2, size2);
 
-	REQUIRE(ar.GetIntersection(&ar2).GetSize() == Vector(1.f, 1.f, 1.f));
+	REQUIRE(ar.GetIntersectionVolume(&ar2).GetSize() == Vector(1.f, 1.f, 1.f));
 }

@@ -6,14 +6,16 @@
 
 namespace Poly 
 {
+	/// <summary>
 	/// Dynarray is a vector based container thet allocates its memory in one, continous block.
 	/// This should be the goto container for all general purpose usage.
+	/// </summary>
 	template<typename T>
 	class Dynarray : public BaseObject<>
 	{
 	public:
 
-		/// Dynarray's Iterator class provides basic random access mutable iterator API for traversing dynarray memory
+		/// <summary>Dynarray's Iterator class provides basic random access mutable iterator API for traversing dynarray memory</summary>
 		class Iterator : public BaseObject<>, public std::iterator<std::random_access_iterator_tag, T>
 		{
 		public:
@@ -46,7 +48,7 @@ namespace Poly
 			friend class Dynarray<T>;
 		};
 
-		/// Dynarray's ConstIterator class provides basic random access const iterator API for traversing dynarray memory
+		/// <summary>Dynarray's ConstIterator class provides basic random access const iterator API for traversing dynarray memory</summary>
 		class ConstIterator : public BaseObject<>, public std::iterator<std::random_access_iterator_tag, T>
 		{
 		public:
@@ -79,34 +81,34 @@ namespace Poly
 			friend class Dynarray<T>;
 		};
 
-		/// Base dynarray constructor that creates empty object with capacity == 0.
+		/// <summary>Base dynarray constructor that creates empty object with capacity == 0.</summary>
 		Dynarray() = default;
 
-		/// Creates dynarray instance with provided capacity.
-		/// @param[in] size_t capcity
+		/// <summary>Creates dynarray instance with provided capacity.</summary>
+		/// <param name="capacity"></param>
 		Dynarray(size_t capacity) { Reserve(capacity); }
 
-		/// Creates dynarray instance from initializer list.
-		/// @param[in] const std::initializer_list<T>& list
+		/// <summary>Creates dynarray instance from initializer list.</summary>
+		/// <param name="list"></param>
 		Dynarray(const std::initializer_list<T>& list) { PopulateFromInitializerList(list); }
 
-		/// Basic copy constructor
-		/// @param[in] const Dynarray<T>& rhs Reference to Dynarray instance which state should be copied.
+		/// <summary>Basic copy constructor</summary>
+		/// <param name="rhs">Reference to Dynarray instance which state should be copied.</param>
 		Dynarray(const Dynarray<T>& rhs) { Copy(rhs); }
 
-		/// Basic move constructor
-		/// @param[in] Dynarray<T>&& rhs R-value reference to Dynarray instance which state should be moved.
+		/// <summary>Basic move constructor</summary>
+		/// <param name="rhs">R-value reference to Dynarray instance which state should be moved.</param>
 		Dynarray(Dynarray<T>&& rhs) { Move(std::forward<Dynarray<T>>(rhs)); }
 
-		/// Basic destructor.
+		/// <summary>Basic destructor.</summary>
 		~Dynarray()
 		{
 			Clear();
 			Free();
 		}
 
-		/// Basic copy operator
-		/// @param[in] const Dynarray<T>& rhs Reference to Dynarray instance which state should be copied.
+		/// <summary>Basic copy operator</summary>
+		/// <param name="rhs">Reference to Dynarray instance which state should be copied.</param>
 		Dynarray<T>& operator=(const Dynarray<T>& rhs)
 		{
 			Clear();
@@ -114,8 +116,8 @@ namespace Poly
 			return *this;
 		}
 
-		/// Basic move operator
-		/// @param[in] Dynarray<T>&& rhs R-value reference to Dynarray instance which state should be moved.
+		/// <summary>Basic move operator</summary>
+		/// <param name="rhs">R-value reference to Dynarray instance which state should be moved.</param>
 		Dynarray<T>& operator=(Dynarray<T>&& rhs)
 		{
 			Clear();
@@ -124,8 +126,8 @@ namespace Poly
 			return *this;
 		}
 
-		/// Clears current dynarray content and populates it with content from initializer list.
-		/// @param[in] const std::initializer_list<T>& list
+		/// <summary>Clears current dynarray content and populates it with content from initializer list.</summary>
+		/// <param name="list"></param>
 		Dynarray<T>& operator=(const std::initializer_list<T>& list)
 		{
 			Clear();
@@ -133,9 +135,9 @@ namespace Poly
 			return *this;
 		}
 
-		/// Equal comparison operator with other dynarray
-		/// @return bool True if size of the containers match and objects represented by both containers
-		/// are identical and in the same order, false otherwise.
+		/// <summary>Equal comparison operator with other dynarray.</summary>
+		/// <returns>True if size of the containers match and objects represented by both containers
+		/// are identical and in the same order, false otherwise.</returns>
 		bool operator==(const Dynarray<T>& rhs) const
 		{
 			if (GetSize() != rhs.GetSize())
@@ -148,54 +150,57 @@ namespace Poly
 			return true;
 		}
 
-		/// Not-equal comparison operator with other dynarray
-		/// @return bool True when equal operator returns false, false otherwise.
+		/// <summary>Not-equal comparison operator with other dynarray.</summary>
+		/// <returns>bool True when equal operator returns false, false otherwise.</returns>
 		bool operator!=(const Dynarray<T>& rhs) const { return !(*this == rhs); };
 		
-
-		/// Checks whether dynarray is empty
-		/// @return bool True if is empty, false otherwise.
+		/// <summary>Checks whether dynarray is empty.</summary>
+		/// <returns>True if is empty, false otherwise.</returns>
 		bool IsEmpty() const { return GetSize() == 0; }
 
-		/// Returns current size of the container
-		/// @return size_t Size of the container in objects count.
+		/// <summary>Returns current size of the container</summary>
+		/// <returns>Size of the container in objects count.</returns>
 		size_t GetSize() const { return Size; }
 
+		/// <summary>
 		/// Returns current maximum capacity of the container.
 		/// If the capacity is exceeded the container will have to expand.
-		/// @return size_t Capacity of the container in objects count.
+		/// </summary>
+		/// <returns>Capacity of the container in objects count.</returns>
 		size_t GetCapacity() const { return Capacity; }
 
-		/// Returns pointer to raw data which is a continous memory block of size == capacity.
-		/// @return T* Pointer to raw container data.
+		/// <summary>Returns pointer to raw data which is a continous memory block of size == capacity.</summary>
+		/// <returns>Pointer to raw container data.</returns>
 		T* GetData() { return Data; }
 
-		/// Returns const pointer to raw data which is a continous memory block of size == capacity.
-		/// @return const T* Const pointer to raw container data.
+		/// <summary>Returns const pointer to raw data which is a continous memory block of size == capacity.</summary>
+		/// <returns>Const pointer to raw container data.</returns>
 		const T* GetData() const { return Data; }
 
-		/// Element access operator for dynarray content.
-		/// @param[in] size_t idx Index of the element to access. Out of bounds values will cause UB.
-		/// @return T& Reference to object under provided index.
+		/// <summary>Element access operator for dynarray content.</summary>
+		/// <param name="idx">Index of the element to access. Out of bounds values will cause UB.</param>
+		/// <returns>Reference to object under provided index.</returns>
 		T& operator[](size_t idx) { HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!"); return Data[idx]; }
 
-		/// Element access operator for const dynarray content.
-		/// @param[in] size_t idx Index of the element to access. Out of bounds values will cause UB.
-		/// @return const T& Const reference to object under provided index.
+		/// <summary>Element access operator for const dynarray content.</summary>
+		/// <param name="idx">Index of the element to access. Out of bounds values will cause UB.</param>
+		/// <returns>Const reference to object under provided index.</returns>
 		const T& operator[](size_t idx) const { HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!"); return Data[idx]; }
 
-		/// Clears contents of the container. This does not release aquired memory.
+		/// <summary>Clears contents of the container. This does not release aquired memory.</summary>
 		void Clear() {
 			for (size_t idx = 0; idx < GetSize(); ++idx)
 				ObjectLifetimeHelper::Destroy(Data + idx);
 			Size = 0;
 		}
 
+		/// <summary>
 		/// Copies provided object to the specified location in the dynarray.
 		/// Objects already present that are in position >= idx will be moved one position to the right.
 		/// Insertion with idx > size results in undefined behaviour.
-		/// @param[in] size_t idx Index in which object should be created.
-		/// @param[in] const T& obj Const reference to object that should be copied to the container.
+		/// </summary>
+		/// <param name="idx">Index in which object should be created.</param>
+		/// <param name="obj">Const reference to object that should be copied to the container.</param>
 		void Insert(size_t idx, const T& obj)
 		{
 			HEAVY_ASSERTE(idx <= GetSize(), "Index out of bounds!");
@@ -206,10 +211,12 @@ namespace Poly
 			++Size;
 		}
 
+		/// <summary>
 		/// Removes element from the collection with specified index.
 		/// Objects in position > idx will be moved one position to the left.
 		/// Removal of object in idx >= size results in undefined behavour.
-		/// @param[in] size_t idx Index from which object should be removed.
+		/// </summary>
+		/// <param name="idx">Index from which object should be removed.</param>
 		void RemoveByIdx(size_t idx)
 		{
 			HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!");
@@ -218,9 +225,9 @@ namespace Poly
 			--Size;
 		}
 
-		/// Finds index of the first encountered object from the container that is equal to provided object.
-		/// @param[in] const T& rhs Searched object.
-		/// @return size_t Index of searched object or container size if object was not found.
+		/// <summary>Finds index of the first encountered object from the container that is equal to provided object.</summary>
+		/// <param name="rhs">Searched object.</param>
+		/// <returns>Index of searched object or container size if object was not found.</returns>
 		size_t FindIdx(const T& rhs) const
 		{
 			for (size_t idx = 0; idx < GetSize(); ++idx)
@@ -231,24 +238,26 @@ namespace Poly
 			return GetSize();
 		}
 
-		/// Performs insertion to the back of the container.
-		/// @param[in] const T& obj Const reference to object that should be copied to the container.
+		/// <summary>Performs insertion to the back of the container.</summary>
+		/// <param name="obj">Const reference to object that should be copied to the container.</param>
 		void PushBack(const T& obj) { Insert(GetSize(), obj); }
 
-		/// Performs removal from the back of the container.
+		/// <summary>Performs removal from the back of the container.</summary>
 		void PopBack() { RemoveByIdx(GetSize() - 1); }
 
-		/// Performs insertion to the front of the container.
-		/// @param[in] const T& obj Const reference to object that should be copied to the container.
+		/// <summary>Performs insertion to the front of the container.</summary>
+		/// <param name="obj">Const reference to object that should be copied to the container.</param>
 		void PushFront(const T& obj) { Insert(0, obj); }
 
-		/// Performs removal from the front of the container.
+		/// <summary>Performs removal from the front of the container.</summary>
 		void PopFront() { RemoveByIdx(0); }
 
+		/// <summary>
 		/// Forces resizing of the collection to the specified value.
 		/// If necessary this will create new object via default empty construction.
 		/// This can also shrink the collection in which case, excessive objects will be destroyed.
-		/// @param[in] size_t Requested size of the collection.
+		/// </summary>
+		/// <param name="size">Requested size of the collection.</param>
 		void Resize(size_t size)
 		{
 			if (size == GetSize())
@@ -269,9 +278,11 @@ namespace Poly
 			Size = size;
 		}
 
+		/// <summary>
 		/// Ensures that enough space is available in the collection.
 		/// In case there is not enought the container gets reallocated to new, bigger memory block.
-		/// @param[in] size_t Requested capacity of the collection.
+		/// </summary>
+		/// <param name="capacity">Requested capacity of the collection.</param>
 		void Reserve(size_t capacity)
 		{
 			if (capacity <= Capacity)
@@ -279,43 +290,47 @@ namespace Poly
 			Realloc(capacity);
 		}
 
-		/// Getter for the iterator to the element in front of the collection.
+		/// <summary>Getter for the iterator to the element in front of the collection.</summary>
 		Iterator Begin() { return Iterator(Data, 0); }
 
-		/// Getter for the iterator to the location after last element in the collection.
+		/// <summary>Getter for the iterator to the location after last element in the collection.</summary>
 		Iterator End() { return Iterator(Data, GetSize()); }
 
-		/// Getter for the const iterator to the element in front of the collection.
+		/// <summary>Getter for the const iterator to the element in front of the collection.</summary>
 		ConstIterator Begin() const { return ConstIterator(Data, 0); }
 
-		/// Getter for the const iterator to the location after last element in the collection.
+		/// <summary>Getter for the const iterator to the location after last element in the collection.</summary>
 		ConstIterator End() const { return ConstIterator(Data, GetSize()); }
 
-		/// Getter for the iterator that points to the first encountered searched element in collection.
-		/// @param[in] const T& rhs Searched object.
-		/// @return Iterator Iterator to the searched object or End().
+		/// <summary>Getter for the iterator that points to the first encountered searched element in collection.</summary>
+		/// <param name="rhs">Searched object.</param>
+		/// <returns>Iterator Iterator to the searched object or End().</returns>
 		Iterator Find(const T& rhs) { return Iterator(Data, FindIdx(rhs)); }
 
-		/// Getter for the const iterator that points to the first encountered searched element in collection.
-		/// @param[in] const T& rhs Searched object.
-		/// @return ConstIterator Const iterator to the searched object or End().
+		/// <summary>Getter for the const iterator that points to the first encountered searched element in collection.</summary>
+		/// <param name="rhs">Searched object.</param>
+		/// <returns>ConstIterator Const iterator to the searched object or End().</returns>
 		ConstIterator Find(const T& rhs) const { return ConstIterator(Data, FindIdx(rhs)); }
 
-		/// Checks whether provided object is present in the collection at least once.
-		/// @param[in] const T& rhs Searched object.
-		/// @return bool True if present, false otherwise.
+		/// <summary>Checks whether provided object is present in the collection at least once.</summary>
+		/// <param name="rhs">Searched object.</param>
+		/// <returns>True if present, false otherwise.</returns>
 		bool Contains(const T& rhs) const { return FindIdx(rhs) < GetSize(); }
 
+		/// <summary>
 		/// Remove the first encountered object of provided value from the collection.
 		/// This will cause undefined behaviour when the value is not present in the collection.
 		/// Use TryRemove if not sure about object existence.
-		/// @param[in] const T& rhs Object to be removed.
+		/// </summary>
+		/// <param name="rhs">Object to be removed.</param>
 		void Remove(const T& rhs) { RemoveByIdx(FindIdx(rhs)); }
 
+		/// <summary>
 		/// Try to remove the first encountered object of provided value from the collection.
 		/// When value is not found in collection this method does nothing.
-		/// @param[in] const T& rhs Object to be removed.
-		/// @return bool True if removal succeded, false if value was not found.
+		/// </summary>
+		/// <param name="rhs">Object to be removed.</param>
+		/// <returns>True if removal succeded, false if value was not found.</returns>
 		bool TryRemove(const T& rhs)
 		{
 			size_t idx = FindIdx(rhs);

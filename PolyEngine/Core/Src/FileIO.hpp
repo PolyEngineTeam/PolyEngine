@@ -17,7 +17,10 @@ namespace Poly {
 	class ENGINE_DLLEXPORT FileIOException : public BaseObject<>, public std::exception
 	{
 	public:
-		FileIOException() {}
+		FileIOException(const String& msg) : Msg(msg) {}
+		const char* what() const override { return Msg.GetCStr(); }
+	protected:
+		String Msg;
 	};
 
 	//------------------------------------------------------------------------------
@@ -37,7 +40,7 @@ namespace Poly {
 			return String(string);
 		}
 		else
-			throw FileIOException();
+			throw FileIOException("File open failed!");
 	}
 
 	//------------------------------------------------------------------------------
@@ -50,6 +53,6 @@ namespace Poly {
 			fclose(f);
 		}
 		else
-			throw FileIOException();
+			throw FileIOException("File save failed");
 	}
 }

@@ -6,42 +6,44 @@
 
 namespace Poly
 {
+	/// <summary>
 	/// Queue is a vector based container thet allocates its memory in one, continous block and provides
-	/// API that is very fast when instering/popping from back/front
-	/// This should be the goto container for any queueing purposes, like FIFO or LIFO. 
-	/// It does not provide API for insertion in any position.
+	/// API that is very fast when instering/popping from back/front.
+	/// <para>This should be the goto container for any queueing purposes, like FIFO or LIFO.
+	/// It does not provide API for insertion in any position.</para>
+	/// </summary>
 	template<typename T>
 	class Queue : public BaseObject<>
 	{
 	public:
-		/// Base queue constructor that creates empty object with capacity == 0.
+		/// <summary>Base queue constructor that creates empty object with capacity == 0.</summary>
 		Queue() = default;
 
-		/// Creates queue instance with provided capacity.
-		/// @param[in] size_t capcity
+		/// <summary>Creates queue instance with provided capacity.</summary>
+		/// <param name="capacity"></param>
 		Queue(size_t capacity) { Reserve(capacity); }
 		
-		/// Basic copy constructor
-		/// @param[in] const Queue<T>& rhs Reference to Queue instance which state should be copied.
+		/// <summary>Basic copy constructor</summary>
+		/// <param name="rhs">Reference to Queue instance which state should be copied.</param>
 		Queue(const Queue<T>& rhs) { Copy(rhs); }
 
-		/// Basic move constructor
-		/// @param[in] Queue<T>&& rhs R-value reference to Queue instance which state should be moved.
+		/// <summary>Basic move constructor</summary>
+		/// <param name="rhs">R-value reference to Queue instance which state should be moved.</param>
 		Queue(Queue<T>&& rhs) { Move(std::forward<Queue<T>>(rhs)); }
 
-		/// Creates queue instance from initializer list.
-		/// @param[in] const std::initializer_list<T>& list
+		/// <summary>Creates queue instance from initializer list.</summary>
+		/// <param name="list"></param>
 		Queue(const std::initializer_list<T>& list) { PopulateFromInitializerList(list); }
 
-		/// Basic destructor.
+		/// <summary>Basic destructor.</summary>
 		~Queue() override
 		{
 			Clear();
 			Free();
 		}
 
-		/// Basic copy operator
-		/// @param[in] const Queue<T>& rhs Reference to Queue instance which state should be copied.
+		/// <summary>Basic copy operator</summary>
+		/// <param name="rhs">Reference to Queue instance which state should be copied.</param>
 		Queue<T>& operator=(const Queue<T>& rhs)
 		{
 			Clear();
@@ -49,8 +51,8 @@ namespace Poly
 			return *this;
 		}
 
-		/// Basic move operator
-		/// @param[in] Queue<T>&& rhs R-value reference to Queue instance which state should be moved.
+		/// <summary>Basic move operator</summary>
+		/// <param name="rhs">R-value reference to Queue instance which state should be moved.</param>
 		Queue<T>& operator=(Queue<T>&& rhs)
 		{
 			Clear();
@@ -59,8 +61,8 @@ namespace Poly
 			return *this;
 		}
 
-		/// Clears current queue content and populates it with content from initializer list.
-		/// @param[in] const std::initializer_list<T>& list
+		/// <summary>Clears current queue content and populates it with content from initializer list.</summary>
+		/// <param name="list"></param>
 		Queue<T>& operator=(const std::initializer_list<T>& list)
 		{
 			Clear();
@@ -68,9 +70,11 @@ namespace Poly
 			return *this;
 		}
 
-		/// Equal comparison operator with other queue
-		/// @return bool True if size of the queues match and objects represented by both of them
+		/// <summary>Equal comparison operator with other queue</summary>
+		/// <returns>
+		/// True if size of the queues match and objects represented by both of them
 		/// are identical and in the same order, false otherwise.
+		/// </returns>
 		bool operator==(const Queue<T>& rhs) const
 		{
 			if (GetSize() != rhs.GetSize())
@@ -83,24 +87,26 @@ namespace Poly
 			return true;
 		}
 
-		/// Not-equal comparison operator with other queue
-		/// @return bool True when equal operator returns false, false otherwise.
+		/// <summary>Not-equal comparison operator with other queue</summary>
+		/// @<returns>True when equal operator returns false, false otherwise.</returns>
 		bool operator!=(const Queue<T>& rhs) const { return !(*this == rhs); };
 
-		/// Checks whether queue is empty
-		/// @return bool True if is empty, false otherwise.
+		/// <summary>Checks whether queue is empty</summary>
+		/// <returns>True if is empty, false otherwise.</returns>
 		bool IsEmpty() const { return GetSize() == 0; }
 		
-		/// Returns current size of the queue
-		/// @return size_t Size of the queue in objects count.
+		/// <summary>Returns current size of the queue</summary>
+		/// <returns>Size of the queue in objects count.</returns>
 		size_t GetSize() const { return Size; }
 		
+		/// <summary>
 		/// Returns current maximum capacity of the queue.
 		/// If the capacity is exceeded the queue will have to expand.
-		/// @return size_t Capacity of the queue in objects count.
+		/// </summary>
+		/// <returns>Capacity of the queue in objects count.</returns>
 		size_t GetCapacity() const { return Capacity; }
 
-		/// Clears contents of the queue. This does not release aquired memory.
+		/// <summary>Clears contents of the queue. This does not release aquired memory.</summary>
 		void Clear()
 		{
 			for (size_t i = 0; i < Size; ++i)
@@ -110,8 +116,8 @@ namespace Poly
 			Tail = 0;
 		}
 
-		/// Performs insertion to the back of the queue.
-		/// @param[in] const T& obj Const reference to object that should be copied to the queue.
+		/// <summary>Performs insertion to the back of the queue.</summary>
+		/// <param name="obj">Const reference to object that should be copied to the queue.</param>
 		void PushBack(const T& obj)
 		{
 			if (GetSize() >= GetCapacity())
@@ -121,8 +127,8 @@ namespace Poly
 			Size++;
 		}
 
-		/// Performs insertion to the front of the queue.
-		/// @param[in] const T& obj Const reference to object that should be copied to the queue.
+		/// <summary>Performs insertion to the front of the queue.</summary>
+		/// <param name="obj">Const reference to object that should be copied to the queue.</param>
 		void PushFront(const T& obj)
 		{
 			if (GetSize() >= GetCapacity())
@@ -132,7 +138,7 @@ namespace Poly
 			Size++;
 		}
 
-		/// Performs removal from the back of the queue.
+		/// <summary>Performs removal from the back of the queue.</summary>
 		void PopBack()
 		{
 			HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!");
@@ -141,7 +147,7 @@ namespace Poly
 			--Size;
 		}
 
-		/// Performs removal from the front of the queue.
+		/// <summary>Performs removal from the front of the queue.</summary>
 		void PopFront()
 		{
 			HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!");
@@ -151,34 +157,36 @@ namespace Poly
 		}
 
 
-		/// Returns reference to the first element in queue.
-		/// @return T& Reference to the first element in queue.
+		/// <summary>Returns reference to the first element in queue.</summary>
+		/// <returns>Reference to the first element in queue.</returns>
 		T& Front() { HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!"); return Data[Head]; };
 
-		/// Returns reference to the last element in queue.
-		/// @return T& Reference to the last element in queue.
+		/// <summary>Returns reference to the last element in queue.</summary>
+		/// <returns>Reference to the last element in queue.</returns>
 		T& Back() { HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!"); return Data[GetPrevIdx(Tail)]; };
 		
-		/// Returns const reference to the first element in queue.
-		/// @return const T& Const reference to the first element in queue.
+		/// <summary>Returns const reference to the first element in queue.</summary>
+		/// <returns>Const reference to the first element in queue.</returns>
 		const T& Front() const { HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!"); return Data[Head]; };
 
-		/// Returns const reference to the last element in queue.
-		/// @return const T& Const reference to the last element in queue.
+		/// <summary>Returns const reference to the last element in queue.</summary>
+		/// <returns>Const reference to the last element in queue.</returns>
 		const T& Back() const { HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!"); return Data[GetPrevIdx(Tail)]; };
 
+		/// <summary>
 		/// Ensures that enough space is available in the queue.
 		/// In case there is not enought the queue gets reallocated to new, bigger memory block.
-		/// @param[in] size_t Requested capacity of the queue.
+		/// </summary>
+		/// <param name="capacity">Requested capacity of the queue.</param>
 		void Reserve(size_t capacity)
 		{
 			HEAVY_ASSERTE(capacity >= Capacity, "Capacity too small!");
 			Realloc(capacity);
 		}
 
-		/// Checks whether provided object is present in the queue at least once.
-		/// @param[in] const T& rhs Searched object.
-		/// @return bool True if present, false otherwise.
+		/// <summary>Checks whether provided object is present in the queue at least once.</summary>
+		/// <param name="rhs">Searched object.</param>
+		/// <returns>True if present, false otherwise.</returns>
 		bool Contains(const T& rhs) const { return FindIdx(rhs) < GetSize(); }
 
 	private:
