@@ -23,13 +23,13 @@ TEST_CASE("AABox collisions with other AABox", "[AABox]") {
 
 	const AABox ar(position, size);
 	const AABox ar2(position + Vector(0.5f, 0.5f, 0.5f), size * 0.5f);
-	REQUIRE(ar.Intersects(&ar2) == true);
-	REQUIRE(ar2.Intersects(&ar) == true);
+	REQUIRE(ar.Intersects(ar2) == true);
+	REQUIRE(ar2.Intersects(ar) == true);
 
 	//No collision
 	const AABox ar3(position * 3.f, size * 0.5f);
-	REQUIRE(ar.Intersects(&ar3) == false);
-	REQUIRE(ar2.Intersects(&ar3) == false);
+	REQUIRE(ar.Intersects(ar3) == false);
+	REQUIRE(ar2.Intersects(ar3) == false);
 }
 
 TEST_CASE("AABox intersection calculation", "[AABox]") {
@@ -41,5 +41,5 @@ TEST_CASE("AABox intersection calculation", "[AABox]") {
 	const AABox ar(pos1, size1);
 	const AABox ar2(pos2, size2);
 
-	REQUIRE(ar.GetIntersectionVolume(&ar2).GetSize() == Vector(1.f, 1.f, 1.f));
+	REQUIRE(ar.GetIntersectionVolume(ar2).GetSize() == Vector(1.f, 1.f, 1.f));
 }
