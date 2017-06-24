@@ -162,7 +162,7 @@ namespace Poly
 		size_t GetSize() const { return Size; }
 
 		/// Returns current maximum capacity of the container.
-		/// If the capacity is exceeded the container will expand
+		/// If the capacity is exceeded the container will have to expand.
 		/// @return size_t Capacity of the container in objects count.
 		size_t GetCapacity() const { return Capacity; }
 
@@ -269,7 +269,7 @@ namespace Poly
 			Size = size;
 		}
 
-		/// Ensures that enought space is available in the collection.
+		/// Ensures that enough space is available in the collection.
 		/// In case there is not enought the container gets reallocated to new, bigger memory block.
 		/// @param[in] size_t Requested capacity of the collection.
 		void Reserve(size_t capacity)
