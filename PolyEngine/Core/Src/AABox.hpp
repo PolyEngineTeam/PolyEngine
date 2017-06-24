@@ -66,7 +66,6 @@ namespace Poly {
 		/// <see cref="AABox.Intersects()"/>
 		AABox GetIntersectionVolume(const AABox& rhs) const;
 
-		/// Stream output freind operator that enables conversion to string.
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const AABox& color);
 	private:
 		Vector Pos;

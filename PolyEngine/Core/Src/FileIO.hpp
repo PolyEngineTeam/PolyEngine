@@ -18,7 +18,7 @@ namespace Poly {
 	{
 	public:
 		FileIOException(const String& msg) : Msg(msg) {}
-		const char* what() const override { return Msg.GetCStr(); }
+		const char* what() const noexcept override { return Msg.GetCStr(); }
 	protected:
 		String Msg;
 	};
