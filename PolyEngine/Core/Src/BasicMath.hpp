@@ -12,10 +12,7 @@ namespace Poly {
 	//WORKAROUND(vuko): MSVC std::max{} is not constexpr
 	template<class T> static constexpr const T& max3(const T& a, const T& b, const T& c) { return (std::max)((std::max)(a, b), c); };
 
-	/**
-	 * Default epsilon value for @see[Cmpf]
-	 * Determines precision of comparison
-	 */
+	/// <summary>Default epsilon value for <see cref="Cmpf"/>. Determines precision of comparison.</summary>
 	constexpr float CMPF_EPS = 1e-4f;
 
 	/// <summary>Checks if given float value is in usable range (not Inf, NaN, etc.).</summary>
