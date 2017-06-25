@@ -2,8 +2,6 @@
 
 #include "Defines.hpp"
 
-#define IS_VALID(val) std::isfinite(val)
-
 namespace Poly {
 
 	//cmath std::abs is not constexpr
@@ -20,14 +18,16 @@ namespace Poly {
 	 */
 	constexpr float CMPF_EPS = 1e-4f;
 
-	/**
-	 *  Checks if given single-precision floating-point
-	 *  numbers are roughly equal
-	 *
-	 *  @param[in] epsilon the smallest unit of difference that can be ignored
-	 *  @param[in] handle_infinities determines if we should care about infinite values
-	 *  @return Rough equality test result
-	 */
+	/// <summary>Checks if given float value is in usable range (not Inf, NaN, etc.).</summary>
+	/// <param name="val"></param>
+	/// <returns>True if float is valid, false otherwise.</returns>
+	inline bool IsValidf(float val) { return std::isfinite(val); }
+
+	
+	 /// <summary>Checks if given single-precision floating-point numbers are roughly equal</summary>
+	 /// <param name="epsilon">The smallest unit of difference that can be ignored (by default == CMPF_EPS).</param>
+	 /// <param name="handle_infinities">Determines if we should care about infinite values (by default == false).</param>
+	 /// <returns>Rough equality test result</returns>
 #ifdef _MSC_VER //WORKAROUND(vuko): MSVC does not support extended constexpr yet
 	constexpr bool Cmpf(const float a, const float b, const float epsilon = CMPF_EPS, const bool handle_infinities = false) {
 	    return (handle_infinities && a == b) ||

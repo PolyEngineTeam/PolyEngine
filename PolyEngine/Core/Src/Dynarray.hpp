@@ -86,7 +86,7 @@ namespace Poly
 
 		/// <summary>Creates dynarray instance with provided capacity.</summary>
 		/// <param name="capacity"></param>
-		Dynarray(size_t capacity) { Reserve(capacity); }
+		explicit Dynarray(size_t capacity) { Reserve(capacity); }
 
 		/// <summary>Creates dynarray instance from initializer list.</summary>
 		/// <param name="list"></param>

@@ -21,7 +21,7 @@ namespace Poly
 
 		/// <summary>Creates queue instance with provided capacity.</summary>
 		/// <param name="capacity"></param>
-		Queue(size_t capacity) { Reserve(capacity); }
+		explicit Queue(size_t capacity) { Reserve(capacity); }
 		
 		/// <summary>Basic copy constructor</summary>
 		/// <param name="rhs">Reference to Queue instance which state should be copied.</param>
