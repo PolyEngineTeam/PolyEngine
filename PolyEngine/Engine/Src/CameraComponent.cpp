@@ -4,7 +4,7 @@
 
 using namespace Poly;
 
-CameraComponent::CameraComponent(float fov,  float zNear, float zFar)
+CameraComponent::CameraComponent(Angle fov,  float zNear, float zFar)
 	: IsPerspective(true), Fov(fov), Near(zNear), Far(zFar)
 {
 }

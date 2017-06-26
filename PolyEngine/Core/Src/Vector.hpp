@@ -7,6 +7,7 @@
 
 namespace Poly {
 
+	/// <summary>Class representing 3D vector that takes advantage of SIMD (if possible).</summary>
 	class ALIGN_16 CORE_DLLEXPORT Vector : public BaseObject<>{
 	public:
 		static const Vector ZERO;
@@ -14,17 +15,25 @@ namespace Poly {
 		static const Vector UNIT_Y;
 		static const Vector UNIT_Z;
 
-		// Constructors
+		/// <summary>Creates zero vector.</summary>
 		constexpr Vector() : X(0.f), Y(0.f), Z(0.f), W(1.f) {}
-		constexpr Vector(float x, float y, float z) : X(x), Y(y), Z(z), W(1.f) {}
-		inline Vector(const Vector& rhs) : X(rhs.X), Y(rhs.Y), Z(rhs.Z), W(rhs.W) {}
-	  #if !DISABLE_SIMD
-		inline Vector& operator=(const Vector& rhs) { SimdData = rhs.SimdData; return *this; }
-	  #else
-		inline Vector& operator=(const Vector& rhs) { X = rhs.X; Y = rhs.Y; Z = rhs.Z; W = rhs.W; return *this; }
-	  #endif
 
-		// Negation
+		/// <summary>Creates vector from float values.</summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		/// <param name="w">Default value is 1.0f.</param>
+		constexpr Vector(float x, float y, float z, float w = 1.0f) : X(x), Y(y), Z(z), W(w) {}
+
+
+		inline Vector(const Vector& rhs) : X(rhs.X), Y(rhs.Y), Z(rhs.Z), W(rhs.W) {}
+	#if !DISABLE_SIMD
+		inline Vector& operator=(const Vector& rhs) { SimdData = rhs.SimdData; return *this; }
+	#else
+		inline Vector& operator=(const Vector& rhs) { X = rhs.X; Y = rhs.Y; Z = rhs.Z; W = rhs.W; return *this; }
+	#endif
+
+		/// <summary>Negation operator</summary>
 		inline Vector operator-() const { return Vector(-X, -Y, -Z); }
 
 		// Comparisons
@@ -43,32 +52,44 @@ namespace Poly {
 		Vector& operator*=(float rhs);
 		Vector& operator/=(float rhs);
 
-		// Lengths
+		/// <summary>Returns length of the vector.</summary>
+		/// <returns>Length of the vector.</returns>
 		float Length() const;
+
+		/// <summary>Returns square length of the vector.</summary>
+		/// <returns>Square length of the vector.</returns>
 		float Length2() const;
 
-		// Dot and cross products
+		/// <summary>Calculates dot product of two vectors.</summary>
+		/// <param name="rhs">The other vector.</param>
+		/// <returns>Dot product of the two vectors.</returns>
 		float Dot(const Vector& rhs) const;
+
+		/// <summary>Calculates cross product of two vectors.</summary>
+		/// <param name="rhs">The other vector (right).</param>
+		/// <returns>Cross product of the two vectors.</returns>
 		Vector Cross(const Vector& rhs) const;
 
-		// Normalization
+		/// <summary>Normalizes the vector.</summary>
+		/// <returns>Reference to itself.</returns>
 		Vector& Normalize();
+
+		/// <summary>Creates normalized vector.</summary>
+		/// <returns>Normalized vector.</returns>
 		Vector GetNormalized() const;
 
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Vector& vec);
 
 		// This structure allows to access vector elements by index or name.
 		union {
-	  #if !DISABLE_SIMD
+		#if !DISABLE_SIMD
 		  __m128 SimdData;
-	  #endif
+		#endif
 		  float Data[4];
-		  struct {
-			float X,Y,Z,W;
-		  };
+		  struct { float X,Y,Z,W; };
 		};
 
-	  private:
+	private:
 	  #if !DISABLE_SIMD
 		inline Vector(__m128 simd) : SimdData(simd) { W = 1.0f; }
 	  #endif

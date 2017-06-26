@@ -7,164 +7,147 @@
 #include "Vector.hpp"
 #include "Angle.hpp"
 
-namespace Poly {
-
+namespace Poly
+{
 	class Quaternion;
 
+	/// <summary>Class representing skew in 3 dimensions of a matrix transformation.</summary>
 	struct CORE_DLLEXPORT MatrixSkew : public BaseObject<>
 	{
 		float XY = 0, XZ = 0, YZ = 0;
 	};
 
+	/// <summary>Class representing 4x4 matrix in row-major order. It takes advantage of SIMD (if possible).</summary>
 	class ALIGN_16 CORE_DLLEXPORT Matrix : public BaseObject<>{
 	public:
-	  Matrix();
-	  Matrix(const float data[16], bool rowOrder = true);
+		Matrix();
+		Matrix(const float data[16], bool rowOrder = true);
+		Matrix(const Matrix& rhs);
+		Matrix& operator=(const Matrix& rhs);
 
-	  Matrix(const Matrix& rhs);
-	  Matrix& operator=(const Matrix& rhs);
+		bool operator==(const Matrix& rhs) const;
+		inline bool operator!=(const Matrix& rhs) const { return !(*this == rhs); }
 
-	  bool operator==(const Matrix& rhs) const;
-	  inline bool operator!=(const Matrix& rhs) const { return !(*this == rhs); }
+		/// <summary>Matrix-Matrix multiplication operator.</summary>
+		Matrix operator*(const Matrix& rhs) const;
 
-	  Matrix operator*(const Matrix& rhs) const;
-	  Matrix& operator*=(const Matrix& rhs);
+		/// <summary>Matrix-Matrix multiplication (with store) operator.</summary>
+		Matrix& operator*=(const Matrix& rhs);
 
-	  Vector operator*(const Vector& rhs) const;
+		/// <summary>Matrix-Vector multiplication operator.</summary>
+		Vector operator*(const Vector& rhs) const;
 
-	  /**
-	   *  Calculates the determinant of the matrix.
-	   *
-	   *  @return Determinant of the matrix.
-	   */
-	  float Det() const;
+		/// <summary>Calculates the determinant of the matrix.</summary>
+		/// <returns>Determinant of the matrix.</returns>
+		float Det() const;
 
-	  /**
-	   *  Initializes matrix as identity matrix.
-	   *
-	   *  @return Reference to itself.
-	   */
-	  Matrix& SetIdentity();
+		/// <summary>Initializes matrix as identity matrix.</summary>
+		/// <returns>Reference to itself.</returns>
+		Matrix& SetIdentity();
 
-	  /**
-	   *  Initializes matrix with rotation about X axis.
-	   *
-	   *  @param[in] angle Angle in degrees.
-	   *  @return Reference to itself.
-	   */
-	  Matrix& SetRotationX(Angle angle);
+		/// <summary>Initializes matrix with rotation about X axis.</summary>
+		/// <param name="angle"></param>
+		/// <returns>Reference to itself.</returns>
+		Matrix& SetRotationX(Angle angle);
 
-	  /**
-	   *  Initializes matrix with rotation about Y axis.
-	   *
-	   *  @param[in] angle Angle in degrees.
-	   *  @return Reference to itself.
-	   */
-	  Matrix& SetRotationY(Angle angle);
+		/// <summary>Initializes matrix with rotation about Y axis.</summary>
+		/// <param name="angle"></param>
+		/// <returns>Reference to itself.</returns>
+		Matrix& SetRotationY(Angle angle);
 
-	  /**
-	   *  Initializes matrix with rotation about Z axis.
-	   *
-	   *  @param[in] angle Angle in degrees.
-	   *  @return Reference to itself.
-	   */
-	  Matrix& SetRotationZ(Angle angle);
+		/// <summary>Initializes matrix with rotation about Z axis.</summary>
+		/// <param name="angle"></param>
+		/// <returns>Reference to itself.</returns>
+		Matrix& SetRotationZ(Angle angle);
 
-	  /**
-	   *  Initializes matrix with translation by the desired vector.
-	   *
-	   *  @param[in] direction Vector describing the translation.
-	   *  @return Reference to itself.
-	   */
-	  Matrix& SetTranslation(const Vector& direction);
+		/// <summary>Initializes matrix with translation by the desired vector.</summary>
+		/// <param name="direction">Vector describing the translation.</param>
+		/// <returns>Reference to itself.</returns>
+		Matrix& SetTranslation(const Vector& direction);
 
-	  /**
-	   *  Initializes matrix with proportional scaling.
-	   *
-	   *  @param[in] scale Scale for all three dimensions.
-	   *  @return Reference to itself.
-	   */
-	  Matrix& SetScale(float scale);
+		/// <summary>Initializes matrix with uniform scaling.</summary>
+		/// <param name="scale">Scale for all three dimensions.</param>
+		/// <returns>Reference to itself.</returns>
+		Matrix& SetScale(float scale);
 
-	  /**
-	   *  Initializes matrix with scaling.
-	   *
-	   *  @param[in] scale Scale vector for each of the three dimensions.
-	   *  @return Reference to itself.
-	   */
-	  Matrix& SetScale(const Vector& scale);
+		/// <summary>Initializes matrix with scaling.</summary>
+		/// <param name="scale">Scale vector for each of the three dimensions.</param>
+		/// <returns>Reference to itself.</returns>
+		Matrix& SetScale(const Vector& scale);
 
-	  /**
-	  *  Initializes matrix with perspective.
-	  *
-	  *  @param[in] fov Field of view.
-	  *  @param[in] aspect Aspect ratio.
-	  *  @param[in] near Near Z plane.
-	  *  @param[in] far Far Z plane.
-	  *  @return Reference to itself.
-	  */
-	  Matrix& SetPerspective(float fov, float aspect, float near, float far);
+		/// <summary>Initializes matrix with perspective projection.</summary>
+		/// <param name="fov">Field of view angle.</param>
+		/// <param name="aspect">Aspect ratio.</param>
+		/// <param name="near">Near Z plane.</param>
+		/// <param name="far">Far Z plane.</param>
+		/// <returns>Reference to itself.</returns>
+		Matrix& SetPerspective(Angle fov, float aspect, float near, float far);
 
 
-	  /// Initializes matrix with orthographics projection
-	  Matrix& SetOrthographic(float top, float bottom, float left, float right, float near, float far);
+		/// <summary>Initializes matrix with orthographics projection</summary>
+		/// <param name="top">Top dimension.</param>
+		/// <param name="bottom">Bottom dimension.</param>
+		/// <param name="left">Left dimension.</param>
+		/// <param name="right">Right dimension</param>
+		/// <param name="near">Near Z plane.</param>
+		/// <param name="far">Far Z plane.</param>
+		/// <returns>Reference to itself.</returns>
+		Matrix& SetOrthographic(float top, float bottom, float left, float right, float near, float far);
 
-	  /**
-	   *  Inverses the matrix.
-	   *
-	   *  @return Reference to itself after the inversion.
-	   */
-	  Matrix& Inverse();
+		/// <summary>Inverses the matrix.</summary>
+		/// <returns>Reference to itself after the inversion.</returns>
+		Matrix& Inverse();
 
-	  /**
-	   *  Creates inversed matrix from this one.
-	   *
-	   *  @return New, inversed matrix object.
-	   */
-	  Matrix GetInversed() const;
+		/// <summary>Creates inversed matrix from this one.</summary>
+		/// <returns>New, inversed matrix object.</returns>
+		Matrix GetInversed() const;
 
-	  /**
-	   *  Transposes the matrix.
-	   *
-	   *  @return Reference to itself after the transposition.
-	   */
-	  Matrix& Transpose();
+		/// <summary>Transposes the matrix.</summary>
+		/// <returns>Reference to itself after the transposition.</returns>
+		Matrix& Transpose();
 
-	  /**
-	   *  Creates transposed matrix from this one.
-	   *
-	   *  @return New, transposed matrix object.
-	   */
-	  Matrix GetTransposed() const;
+		/// <summary>Creates transposed matrix from this one.</summary>
+		/// <returns>New, transposed matrix object.</returns>
+		Matrix GetTransposed() const;
 
-	  /**
-	   *  Returns internal data pointer for processing in functions
-	   *  that need it (for example OpenGL frequently does)
-	   *
-	   *  @return Internal data pointer to float array of 16
-	   */
-	  const float* GetDataPtr() const;
+		/// <summary>Returns internal data pointer which is organized in row-major order.</summary>
+		/// <returns>Internal data pointer to float array of 16 values.</returns>
+		const float* GetDataPtr() const;
 
-	  bool Decompose(Vector& translation, Quaternion& rotation, Vector& scale) const;
-	  bool Decompose(Vector& translation, Quaternion& rotation, Vector& scale, MatrixSkew& skew, Vector& perspectivePoint) const;
+		/// <summary>Performs decomposition of the matrix to separate translation, rotation and scale.</summary>
+		/// <remarks>This method will assert if the decomposed matrix contains non-linear factors (like projection or skew). In such case, use the other overload.</remarks>
+		/// <param name="translation">Mutable reference to a vector that will be set to the decomposed transaltion value.</param>
+		/// <param name="rotation">Mutable reference to a quaternion that will be set to the decomposed rotation value.</param>
+		/// <param name="scale">Mutable reference to a vector that will be set to the decomposed scale value.</param>
+		/// <returns>True if decomposition was sucesfull, false otherwise.</returns>
+		bool Decompose(Vector& translation, Quaternion& rotation, Vector& scale) const;
+
+		/// <summary>Performs decomposition of the matrix to separate translation, rotation, scale, skew and perspective.</summary>
+		/// <param name="translation">Mutable reference to a vector that will be set to the decomposed transaltion value.</param>
+		/// <param name="rotation">Mutable reference to a quaternion that will be set to the decomposed rotation value.</param>
+		/// <param name="scale">Mutable reference to a vector that will be set to the decomposed scale value.</param>
+		/// <param name="skew">Mutable reference to a MatrixSkew that will be set to the decomposed skew value.</param>
+		/// <param name="perspectivePoint">Mutable reference to a vector that will be set to the decomposed perspective point value.</param>
+		/// <returns>True if decomposition was sucesfull, false otherwise.</returns>
+		bool Decompose(Vector& translation, Quaternion& rotation, Vector& scale, MatrixSkew& skew, Vector& perspectivePoint) const;
 
 	  CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Matrix& mat);
 
 	  // This structure allows to access vector elements by index or name.
-	  union {
-	#if !DISABLE_SIMD
-		SILENCE_GCC_WARNING(-Wignored-attributes)
-		alignas(16) std::array<__m128, 4> SimdRow;
-		UNSILENCE_GCC_WARNING()
-	#endif //!DISABLE_SIMD
-		alignas(16) std::array<float, 16> Data;
-		struct alignas(16) {
-		  float m00, m01, m02, m03;
-		  float m10, m11, m12, m13;
-		  float m20, m21, m22, m23;
-		  float m30, m31, m32, m33;
+		union {
+		#if !DISABLE_SIMD
+			SILENCE_GCC_WARNING(-Wignored-attributes)
+			alignas(16) std::array<__m128, 4> SimdRow;
+			UNSILENCE_GCC_WARNING()
+		#endif //!DISABLE_SIMD
+			alignas(16) std::array<float, 16> Data;
+			struct alignas(16) {
+				float m00, m01, m02, m03;
+				float m10, m11, m12, m13;
+				float m20, m21, m22, m23;
+				float m30, m31, m32, m33;
+			};
 		};
-	  };
 	};
 
 }
