@@ -53,7 +53,7 @@ namespace Poly
 	public:
 		RemoveComponentDeferredTask(const UniqueID &entityID) : Id(entityID) {}
 
-		virtual void Execute(World* w) { DeferredTaskSystem::RemoveComponentImmediate<T>(w, Id); }
+		virtual void Execute(World* w) { w->RemoveComponent<T>(Id); }
 
 		virtual const char* GetDescription() const { return "Remove component"; }
 	private:
