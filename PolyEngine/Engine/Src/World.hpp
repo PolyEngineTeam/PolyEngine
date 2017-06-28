@@ -36,7 +36,7 @@ namespace Poly {
 		/// Allocates memory for entities, world components and components allocators
 		/// Also saves pointer to an engine.
 		/// @param engine - pointer to an engine
-		World(Engine* engine);
+		World();
 
 		/// Allocates memory for entities, world components and components allocators
 		/// Also saves pointer to an engine.

@@ -74,9 +74,6 @@
     <ClCompile Include="Src\MeshRenderingComponent.cpp">
       <Filter>Source Files\Rendering\MeshRendering</Filter>
     </ClCompile>
-    <ClCompile Include="Src\RenderingSystem.cpp">
-      <Filter>Source Files\Rendering\MeshRendering</Filter>
-    </ClCompile>
     <ClCompile Include="Src\InputSystem.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
@@ -134,6 +131,9 @@
     <ClCompile Include="Src\DeferredTaskSystem.cpp">
       <Filter>Source Files\DeferredTasks</Filter>
     </ClCompile>
+    <ClCompile Include="Src\RenderingSystem.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine.hpp">
@@ -161,9 +161,6 @@
       <Filter>Source Files\Rendering\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Src\MeshRenderingComponent.hpp">
-      <Filter>Source Files\Rendering\MeshRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\RenderingSystem.hpp">
       <Filter>Source Files\Rendering\MeshRendering</Filter>
     </ClInclude>
     <ClInclude Include="Src\InputWorldComponent.hpp">
@@ -246,6 +243,9 @@
     </ClInclude>
     <ClInclude Include="Src\DeferredTaskWorldComponent.hpp">
       <Filter>Source Files\DeferredTasks</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\RenderingSystem.hpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

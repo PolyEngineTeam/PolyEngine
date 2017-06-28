@@ -36,6 +36,7 @@ namespace Poly {
 		void SetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags |= rhs; }
 		void ResetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags &= ~rhs; }
 		const EnumFlags<eComponentBaseFlags>& GetFlags() { return Flags; }
+		bool CheckFlags(const EnumFlags<eComponentBaseFlags>& rhs) const { return (Flags & rhs) == rhs; }
 
 	private:
 		Entity* Owner = nullptr;

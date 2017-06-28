@@ -16,16 +16,13 @@ void Poly::CameraSystem::CameraUpdatePhase(World* world)
 		if (transformCmp)
 		{
 			// reinit perspective
-			if (cameraCmp->NeedsInit || cameraCmp->Aspect != aspect)
+			if (cameraCmp->CheckFlags(eComponentBaseFlags::NEWLY_CREATED) || cameraCmp->Aspect != aspect)
 			{
-				cameraCmp->NeedsInit = false;
 				cameraCmp->Aspect = aspect;
 				if (cameraCmp->IsPerspective)
 					cameraCmp->Projection.SetPerspective(cameraCmp->Fov, cameraCmp->Aspect, cameraCmp->Near, cameraCmp->Far);
 				else
-				{
-					//TODO implement orthographic projection
-				}
+					cameraCmp->Projection.SetOrthographic(cameraCmp->Top, cameraCmp->Bottom, cameraCmp->Left, cameraCmp->Right, cameraCmp->Near, cameraCmp->Far);
 			}
 
 			cameraCmp->ModelView = transformCmp->GetGlobalTransformationMatrix().GetInversed();

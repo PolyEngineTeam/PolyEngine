@@ -10,7 +10,7 @@ namespace Poly {
 		friend void CameraSystem::CameraUpdatePhase(World*);
 	public:
 		CameraComponent(Angle fov, float zNear, float zFar);
-		CameraComponent(float top, float bottom, float zNear, float zFar);
+		CameraComponent(float top, float bottom, float left, float right, float zNear, float zFar);
 
 		const Matrix& GetProjectionMatrix() const { return Projection; }
 		const Matrix& GetModelViewMatrix() const { return ModelView; }
@@ -21,13 +21,14 @@ namespace Poly {
 		Matrix MVP;
 
 		bool IsPerspective = false;
-		bool NeedsInit = true;
 		// Prerpective
 		Angle Fov = 0_deg;
 
 		// Orthographic
 		float Top = 0.f;
 		float Bottom = 0.f;
+		float Left = 0.f;
+		float Right = 0.f;
 
 		//Common
 		float Near = 0.f;

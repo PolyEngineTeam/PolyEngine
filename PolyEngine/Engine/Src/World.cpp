@@ -3,7 +3,7 @@
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-World::World(Engine* engine)
+World::World()
 	: EntitiesAllocator(MAX_ENTITY_COUNT)
 {
 	memset(ComponentAllocators, 0, sizeof(IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
