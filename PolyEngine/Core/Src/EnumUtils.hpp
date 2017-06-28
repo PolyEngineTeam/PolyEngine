@@ -3,6 +3,7 @@
 #include "Defines.hpp"
 namespace Poly {
 
+	/// <summary> Class that enables creation of arrays that are indexed by enum.</summary>
 	template<typename T, typename E, size_t SIZE = static_cast<typename std::underlying_type<E>::type>(E::_COUNT)>
 	class EnumArray : public BaseObject<>
 	{
@@ -130,7 +131,7 @@ namespace Poly {
 		T Data[SIZE];
 	};
 
-	//------------------------------------------------------------------------------
+	/// <summary> Class that enables creation of bit field flags that are based on enum.</summary>
 	template<typename E>
 	class EnumFlags : public BaseObjectLiteralType<>
 	{
@@ -173,7 +174,7 @@ namespace Poly {
 	template <typename E, typename = std::enable_if_t<std::is_enum<E>::value> > constexpr E operator&(E lhs, E rhs) { return static_cast<E>(EnumFlags<E>(lhs) & EnumFlags<E>(rhs)); }
 	template <typename E, typename = std::enable_if_t<std::is_enum<E>::value> > constexpr E operator~(E rhs) { return static_cast<E>(~EnumFlags<E>(rhs)); }
 
-	//------------------------------------------------------------------------------
+	/// <summary>Class that enables iteration of enum values.</summary>
 	template <typename E>
 	class EnumIterator : public BaseObject<>, public std::iterator<std::random_access_iterator_tag, E>
 	{
@@ -222,6 +223,8 @@ namespace Poly {
 	};
 
 	//------------------------------------------------------------------------------
+
+	/// <summary>Function that allows foreach call with enum.</summary>
 	template <typename E> EnumIteratorProxy<E> IterateEnum() { return EnumIteratorProxy<E>{}; }
 	template <typename E> typename Poly::EnumIterator<E> begin(const Poly::EnumIteratorProxy<E>& rhs) { return rhs.Begin(); }
 	template <typename E> typename Poly::EnumIterator<E> end(const Poly::EnumIteratorProxy<E>& rhs) { return rhs.End(); }

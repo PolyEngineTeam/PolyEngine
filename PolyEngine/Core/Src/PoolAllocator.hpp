@@ -5,14 +5,14 @@
 
 
 namespace Poly {
-	//------------------------------------------------------------------------------
-	// Fast pool allocator, https://www.thinkmind.org/download.php?articleid=computation_tools_2012_1_10_80006
+	/// <summary>Fast pool allocator, based on: https://www.thinkmind.org/download.php?articleid=computation_tools_2012_1_10_80006 </summary>
 	template<typename T>
 	class PoolAllocator : public BaseObject<>
 	{
 		STATIC_ASSERTE(sizeof(T) >= sizeof(size_t), "Pool allocator is invalid for types that are smaller than size_t");
 	public:
-		//------------------------------------------------------------------------------
+		/// <summary>Constuctor that allocates memory for provided amount of objects. </summary>
+		/// <param name="count"></param>
 		explicit PoolAllocator(size_t count)
 			: Capacity(count), FreeBlockCount(count)
 		{
@@ -29,7 +29,8 @@ namespace Poly {
 			Data = nullptr;
 		}
 
-		//------------------------------------------------------------------------------
+		/// <summary>Allocation method</summary>
+		/// <returns>Pointer to uninitialized memory for object of type T.</returns>
 		T* Alloc()
 		{
 			if (InitializedBlockCount < Capacity)
@@ -55,7 +56,8 @@ namespace Poly {
 			return nullptr;
 		}
 
-		//------------------------------------------------------------------------------
+		/// <summary>Method for freeing allocated memory. Allocator does not call any object destructors!</summary>
+		/// <param name="p">Pointer to memory to free.</param>
 		void Free(T* p)
 		{
 			if (Next != nullptr)
@@ -71,7 +73,8 @@ namespace Poly {
 			++FreeBlockCount;
 		}
 
-		//------------------------------------------------------------------------------
+		/// <summary>Gets current size of the allocator.</summary>
+		/// <returns>Count of allocated objects.</returns>
 		size_t GetSize() const { return Capacity - FreeBlockCount; }
 	private:
 		T* AddrFromIndex(size_t i) const { return Data + i; }

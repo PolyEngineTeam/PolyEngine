@@ -11,8 +11,7 @@ namespace Poly {
 		virtual void Free(void* ptr) = 0;
 	};
 
-	//------------------------------------------------------------------------------
-	// Fast pool allocator, that enables iteration
+	/// <summary>Fast pool allocator, that enables iteration.</summary>
 	template<typename T>
 	class IterablePoolAllocator : public IterablePoolAllocatorBase
 	{
@@ -76,7 +75,8 @@ namespace Poly {
 		ConstIterator Begin() const { return ConstIterator(Head); }
 		ConstIterator End() const { return ConstIterator(Tail); }
 
-		//------------------------------------------------------------------------------
+		/// <summary>Constuctor that allocates memory for provided amount of objects. </summary>
+		/// <param name="count"></param>
 		explicit IterablePoolAllocator(size_t count)
 			: Capacity(count), FreeBlockCount(count)
 		{
@@ -98,7 +98,8 @@ namespace Poly {
 			Data = nullptr;
 		}
 
-		//------------------------------------------------------------------------------
+		/// <summary>Allocation method</summary>
+		/// <returns>Pointer to uninitialized memory for object of type T.</returns>
 		T* Alloc()
 		{
 			// initialize new block
@@ -165,6 +166,9 @@ namespace Poly {
 
 		//------------------------------------------------------------------------------
 		void Free(void* p) override { Free(reinterpret_cast<T*>(p)); }
+
+		/// <summary>Method for freeing allocated memory. Allocator does not call any object destructors!</summary>
+		/// <param name="p">Pointer to memory to free.</param>
 		void Free(T* p)
 		{
 			// get cell addr
@@ -204,7 +208,8 @@ namespace Poly {
 			++FreeBlockCount;
 		}
 
-		//------------------------------------------------------------------------------
+		/// <summary>Gets current size of the allocator.</summary>
+		/// <returns>Count of allocated objects.</returns>
 		size_t GetSize() const { return Capacity - FreeBlockCount; }
 
 	private:
