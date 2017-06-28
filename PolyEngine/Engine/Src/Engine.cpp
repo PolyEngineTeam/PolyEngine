@@ -18,8 +18,8 @@ Engine::Engine(IGame* game, IRenderingDevice* device) : Game(game)
 //------------------------------------------------------------------------------
 Engine::~Engine()
 {
-	gEngine = nullptr;
 	delete BaseWorld;
+	gEngine = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -37,12 +37,14 @@ bool Engine::Init()
 	RegisterWorldComponent<ViewportWorldComponent>((size_t) eEngineWorldComponents::VIEWPORT);
 	RegisterWorldComponent<TimeWorldComponent>((size_t) eEngineWorldComponents::TIME);
 	RegisterWorldComponent<DebugWorldComponent>((size_t) eEngineWorldComponents::DEBUG);
+	RegisterWorldComponent<DeferredTaskWorldComponent>((size_t)eEngineWorldComponents::DEFERRED_TASK);
 
 	// Add WorldComponents
 	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(BaseWorld);
 	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(BaseWorld);
 	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(BaseWorld);
 	DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(BaseWorld);
+	DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(BaseWorld);
 
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);

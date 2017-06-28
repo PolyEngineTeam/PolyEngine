@@ -18,9 +18,6 @@
     <Filter Include="Source Files\Input">
       <UniqueIdentifier>{5e279a35-87e8-4562-a7a7-33c911d78d8b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\ECS\Components">
-      <UniqueIdentifier>{4953f608-4d6d-49c7-83d2-972aeb278924}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Rendering\Camera">
       <UniqueIdentifier>{3b018cb8-bb36-428d-9263-6dd1c140381c}</UniqueIdentifier>
     </Filter>
@@ -51,6 +48,12 @@
     <Filter Include="Source Files\Debug\FPS">
       <UniqueIdentifier>{17b587c1-a616-4199-9dc5-9d610ecdad4c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\DeferredTasks">
+      <UniqueIdentifier>{21bac9b2-ecb8-4fef-bdb4-2ba17695b4db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Transform">
+      <UniqueIdentifier>{6817a596-ae56-4935-a63c-29ba8139d6f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -61,9 +64,6 @@
     </ClCompile>
     <ClCompile Include="Src\World.cpp">
       <Filter>Source Files\ECS</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\TransformComponent.cpp">
-      <Filter>Source Files\ECS\Components</Filter>
     </ClCompile>
     <ClCompile Include="Src\CameraComponent.cpp">
       <Filter>Source Files\Rendering\Camera</Filter>
@@ -107,9 +107,6 @@
     <ClCompile Include="Src\CoreConfig.cpp">
       <Filter>Source Files\Config</Filter>
     </ClCompile>
-    <ClCompile Include="Src\DeferredTaskSystem.cpp">
-      <Filter>Source Files\ECS</Filter>
-    </ClCompile>
     <ClCompile Include="Src\FontResource.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
@@ -131,6 +128,12 @@
     <ClCompile Include="Src\MeshResource.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="Src\TransformComponent.cpp">
+      <Filter>Source Files\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DeferredTaskSystem.cpp">
+      <Filter>Source Files\DeferredTasks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine.hpp">
@@ -150,9 +153,6 @@
     </ClInclude>
     <ClInclude Include="Src\KeyBindings.hpp">
       <Filter>Source Files\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\TransformComponent.hpp">
-      <Filter>Source Files\ECS\Components</Filter>
     </ClInclude>
     <ClInclude Include="Src\CameraComponent.hpp">
       <Filter>Source Files\Rendering\Camera</Filter>
@@ -205,15 +205,6 @@
     <ClInclude Include="Src\CoreConfig.hpp">
       <Filter>Source Files\Config</Filter>
     </ClInclude>
-    <ClInclude Include="Src\DeferredTaskBase.hpp">
-      <Filter>Source Files\ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\DeferredTaskImplementation.hpp">
-      <Filter>Source Files\ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\DeferredTaskSystem.hpp">
-      <Filter>Source Files\ECS</Filter>
-    </ClInclude>
     <ClInclude Include="Src\FontResource.hpp">
       <Filter>Source Files\Resources</Filter>
     </ClInclude>
@@ -240,6 +231,21 @@
     </ClInclude>
     <ClInclude Include="Src\MeshResource.hpp">
       <Filter>Source Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\TransformComponent.hpp">
+      <Filter>Source Files\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DeferredTaskBase.hpp">
+      <Filter>Source Files\DeferredTasks</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DeferredTaskImplementation.hpp">
+      <Filter>Source Files\DeferredTasks</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DeferredTaskSystem.hpp">
+      <Filter>Source Files\DeferredTasks</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DeferredTaskWorldComponent.hpp">
+      <Filter>Source Files\DeferredTasks</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

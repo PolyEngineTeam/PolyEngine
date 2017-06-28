@@ -212,6 +212,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\ComponentBase.hpp" />
     <ClInclude Include="Src\CoreConfig.hpp" />
     <ClInclude Include="Src\DebugWorldComponent.hpp" />
+    <ClInclude Include="Src\DeferredTaskWorldComponent.hpp" />
     <ClInclude Include="Src\Engine.hpp" />
     <ClInclude Include="Src\EnginePCH.hpp" />
     <ClInclude Include="Src\Entity.hpp" />

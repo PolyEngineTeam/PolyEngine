@@ -38,9 +38,10 @@
 #include "InputWorldComponent.hpp"
 #include "TimeWorldComponent.hpp"
 #include "ViewportWorldComponent.hpp"
-
-//Config
-#include "CoreConfig.hpp"
+#include "DeferredTaskWorldComponent.hpp"
 
 // Systems
 #include "DeferredTaskSystem.hpp"
+
+// Config
+#include "CoreConfig.hpp"

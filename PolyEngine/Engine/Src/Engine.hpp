@@ -41,6 +41,7 @@ namespace Poly
 		VIEWPORT,
 		TIME,
 		DEBUG,
+		DEFERRED_TASK,
 		_COUNT
 	};
 
