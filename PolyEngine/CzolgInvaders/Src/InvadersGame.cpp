@@ -67,6 +67,7 @@ void InvadersGame::Init()
 			DeferredTaskSystem::AddComponentImmediate<Invaders::MovementSystem::MovementComponent>(&Engine->GetWorld(), base, Vector(5, 0, 0), Vector(0, 0, 0), Quaternion(Vector(0, 0, 0), 0_deg), Quaternion(Vector(0, 0, 0), 0_deg));
 			DeferredTaskSystem::AddComponentImmediate<Invaders::CollisionSystem::CollisionComponent>(&Engine->GetWorld(), base,  Vector(0, 0, 0), Vector(5.0f, 5.0f, 5.0f));
 			DeferredTaskSystem::AddComponentImmediate<Invaders::TankComponent>(&Engine->GetWorld(), base,  ent, 12.0_deg, (i * j)%5 );
+			//DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(&Engine->GetWorld(), base, "Wilhelm_Scream.ogg");
 			Poly::TransformComponent* baseTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(base);
 			
 			entTransform->SetParent(baseTransform);
@@ -79,6 +80,7 @@ void InvadersGame::Init()
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), player);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(&Engine->GetWorld(), player, "Models/tank2/bradle.3ds");
 	DeferredTaskSystem::AddComponentImmediate<PlayerControllerComponent>(&Engine->GetWorld(), player, 10.0f);
+	//DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(&Engine->GetWorld(), player, "ACDC_-_Back_In_Black-sample.ogg");
 	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(&Engine->GetWorld(), player, "Wilhelm_Scream.ogg");
 
 	Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(player);
