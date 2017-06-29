@@ -77,7 +77,7 @@ namespace Poly {
 			return data;
 		}
 		else
-			throw FileIOException();
+			throw FileIOException(path);
 
 	}
 }
