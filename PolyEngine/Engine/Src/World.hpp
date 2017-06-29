@@ -6,7 +6,6 @@
 #include "Entity.hpp"
 #include "Engine.hpp"
 
-#include "DeferredTaskBase.hpp"
 #include "ComponentBase.hpp"
 
 namespace Poly {
@@ -17,6 +16,7 @@ namespace Poly {
 		void ENGINE_DLLEXPORT DestroyEntityImmediate(World* w, const UniqueID& entityId);
 		template<typename T, typename ...Args> void AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args);
 		template<typename T, typename ...Args> void AddWorldComponentImmediate(World* w, Args && ...args);
+		template<typename T> void RemoveWorldComponentImmediate(World* w);
 	}
 
 	/// Entities per world limit.
@@ -36,14 +36,12 @@ namespace Poly {
 		/// Allocates memory for entities, world components and components allocators
 		/// Also saves pointer to an engine.
 		/// @param engine - pointer to an engine
-		World(Engine* engine);
+		World();
 
 		/// Allocates memory for entities, world components and components allocators
 		/// Also saves pointer to an engine.
 		/// @param engine - pointer to an engine
 		virtual ~World();
-
-		//TODO implement world
 
 		/// Gets a component of a specified type from entity with given UniqueID.
 		/// @tparam T - component type to get
@@ -71,14 +69,9 @@ namespace Poly {
 		template<typename T>
 		T* GetWorldComponent()
 		{			
-			ASSERTE(HasWorldComponent(EnginePtr->GetWorldComponentID<T>()), "Invalid type - world component of given type does not exist!");
-			return reinterpret_cast<T*>(Components[EnginePtr->GetWorldComponentID<T>()]);
+			ASSERTE(HasWorldComponent(gEngine->GetWorldComponentID<T>()), "Invalid type - world component of given type does not exist!");
+			return reinterpret_cast<T*>(WorldComponents[gEngine->GetWorldComponentID<T>()]);
 		}
-
-		/// Returns pointer to an engine.
-		/// @return EnginePtr - pointer to an engine
-		/// @see Engine
-		Engine* GetEngine() const { return EnginePtr; }
 
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		struct IteratorProxy;
@@ -150,26 +143,17 @@ namespace Poly {
 			World* const W;
 		};
 
-		/// Returns refference to deffered task queue.
-		/// Mainly used by deferred task system to execute heavy tasks that needs do be executed after the update.
-		/// @return DeferredTasksQueue - queue containing deferred tasks.
-		/// @see DeferredTaskPhase()
-		/// @see DeferredTaskBase
-		/// @see DeferredTaskImplementation.hpp 
-		DeferredTaskQueue& GetDeferredTaskQueue() { return DeferredTasksQueue; }
-
 	private:
 		friend class SpawnEntityDeferredTask;
 		friend class DestroyEntityDeferredTask;
 		template<typename T,typename... Args> friend class AddComponentDeferredTask;
 		template<typename T> friend class RemoveComponentDeferredTask;
-		template<typename T,typename... Args> friend class AddWorldComponentDeferredTask;
-		template<typename T> friend class RemoveWorldComponentDeferredTask;
 
 		friend UniqueID DeferredTaskSystem::SpawnEntityImmediate(World*);
 		friend void DeferredTaskSystem::DestroyEntityImmediate(World* w, const UniqueID& entityId);
 		template<typename T, typename ...Args> friend void DeferredTaskSystem::AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args);
 		template<typename T, typename ...Args> friend void DeferredTaskSystem::AddWorldComponentImmediate(World* w, Args && ...args);
+		template<typename T> friend void DeferredTaskSystem::RemoveWorldComponentImmediate(World* w);
 
 		//------------------------------------------------------------------------------
 		UniqueID SpawnEntity();
@@ -185,11 +169,11 @@ namespace Poly {
 			::new(ptr) T(std::forward<Args>(args)...);
 			Entity* ent = IDToEntityMap[entityId];
 			HEAVY_ASSERTE(ent, "Invalid entity ID");
-			HEAVY_ASSERTE(!ent->HasComponent(EnginePtr->GetComponentID<T>()), "Failed at AddComponent() - a component of a given UniqueID already exists!");
-			ent->ComponentPosessionFlags.set(EnginePtr->GetComponentID<T>(), true);
-			ent->Components[EnginePtr->GetComponentID<T>()] = ptr;
+			HEAVY_ASSERTE(!ent->HasComponent(gEngine->GetComponentID<T>()), "Failed at AddComponent() - a component of a given UniqueID already exists!");
+			ent->ComponentPosessionFlags.set(gEngine->GetComponentID<T>(), true);
+			ent->Components[gEngine->GetComponentID<T>()] = ptr;
 			ptr->Owner = ent;
-			HEAVY_ASSERTE(ent->HasComponent(EnginePtr->GetComponentID<T>()), "Failed at AddComponent() - the component was not added!");
+			HEAVY_ASSERTE(ent->HasComponent(gEngine->GetComponentID<T>()), "Failed at AddComponent() - the component was not added!");
 		}
 
 		//------------------------------------------------------------------------------
@@ -198,20 +182,20 @@ namespace Poly {
 		{
 			Entity* ent = IDToEntityMap[entityId];
 			HEAVY_ASSERTE(ent, "Invalid entity ID");
-			HEAVY_ASSERTE(ent->HasComponent(EnginePtr->GetComponentID<T>()), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
-			ent->ComponentPosessionFlags.set(EnginePtr->GetComponentID<T>(), false);
-			T* component = static_cast<T*>(ent->Components[EnginePtr->GetComponentID<T>()]);
-			ent->Components[EnginePtr->GetComponentID<T>()] = nullptr;
+			HEAVY_ASSERTE(ent->HasComponent(gEngine->GetComponentID<T>()), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
+			ent->ComponentPosessionFlags.set(gEngine->GetComponentID<T>(), false);
+			T* component = static_cast<T*>(ent->Components[gEngine->GetComponentID<T>()]);
+			ent->Components[gEngine->GetComponentID<T>()] = nullptr;
 			component->~T();
 			GetComponentAllocator<T>()->Free(component);
-			HEAVY_ASSERTE(!ent->HasComponent(EnginePtr->GetComponentID<T>()), "Failed at AddComponent() - the component was not removed!");
+			HEAVY_ASSERTE(!ent->HasComponent(gEngine->GetComponentID<T>()), "Failed at AddComponent() - the component was not removed!");
 		}
 
 		//------------------------------------------------------------------------------
 		template<typename T>
 		IterablePoolAllocator<T>* GetComponentAllocator()
 		{
-			size_t componentID = EnginePtr->GetComponentID<T>();
+			size_t componentID = gEngine->GetComponentID<T>();
 			HEAVY_ASSERTE(componentID < MAX_COMPONENTS_COUNT, "Invalid component ID");
 			if (ComponentAllocators[componentID] == nullptr)
 				ComponentAllocators[componentID] = new IterablePoolAllocator<T>(MAX_ENTITY_COUNT);
@@ -222,18 +206,17 @@ namespace Poly {
 		template<typename T, typename... Args>
 		void AddWorldComponent(Args&&... args)
 		{
-			HEAVY_ASSERTE(!HasWorldComponent(EnginePtr->GetWorldComponentID<T>()), "Failed at AddWorldComponent() - a world component of a given type already exists!");
-			Components[EnginePtr->GetWorldComponentID<T>()] = new T(std::forward<Args>(args)...);
-			Components[EnginePtr->GetWorldComponentID<T>()]->SetFlags(eComponentBaseFlags::WORLD_COMPONENT);
+			HEAVY_ASSERTE(!HasWorldComponent(gEngine->GetWorldComponentID<T>()), "Failed at AddWorldComponent() - a world component of a given type already exists!");
+			WorldComponents[gEngine->GetWorldComponentID<T>()] = new T(std::forward<Args>(args)...);
 		}
 
 		//------------------------------------------------------------------------------
 		template<typename T>
 		void RemoveWorldComponent()
 		{
-			HEAVY_ASSERTE(HasWorldComponent(EnginePtr->GetWorldComponentID<T>()), "Failed at RemoveWorldComponent() - a component of a given type does not exist!");
-			T* component = reinterpret_cast<T*>(Components[EnginePtr->GetWorldComponentID<T>()]);
-			Components[EnginePtr->GetWorldComponentID<T>()] = nullptr;
+			HEAVY_ASSERTE(HasWorldComponent(gEngine->GetWorldComponentID<T>()), "Failed at RemoveWorldComponent() - a component of a given type does not exist!");
+			T* component = reinterpret_cast<T*>(WorldComponents[gEngine->GetWorldComponentID<T>()]);
+			WorldComponents[gEngine->GetWorldComponentID<T>()] = nullptr;
 			component->~T();
 		}
 
@@ -244,19 +227,16 @@ namespace Poly {
 		// Allocators
 		PoolAllocator<Entity> EntitiesAllocator;
 		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
-		Engine* EnginePtr;
 
-		ComponentBase* Components[MAX_COMPONENTS_COUNT];
-
-		DeferredTaskQueue DeferredTasksQueue;
+		ComponentBase* WorldComponents[MAX_COMPONENTS_COUNT];
 	};
 
 	//defined here due to circular inclusion problem; FIXME: circular inclusion
 	template<typename T>
 	T* Entity::GetComponent()
 	{
-		if (HasComponent(EntityWorld->GetEngine()->GetComponentID<T>()))
-			return static_cast<T*>(Components[EntityWorld->GetEngine()->GetComponentID<T>()]);
+		if (HasComponent(gEngine->GetComponentID<T>()))
+			return static_cast<T*>(Components[gEngine->GetComponentID<T>()]);
 		else
 			return nullptr;
 	}

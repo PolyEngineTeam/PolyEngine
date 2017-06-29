@@ -13,7 +13,7 @@ void InputSystem::InputPhase(World* world)
 	com->PrevMouse = com->CurrMouse;
 	com->PrevWheel = com->CurrWheel;
 
-	InputQueue& InputEventsQueue = world->GetEngine()->GetInputQueue();
+	InputQueue& InputEventsQueue = gEngine->GetInputQueue();
 
 	while (!InputEventsQueue.IsEmpty())
 	{
@@ -21,19 +21,15 @@ void InputSystem::InputPhase(World* world)
 		switch (ev.Type)
 		{
 		case eInputEventType::KEYDOWN:
-			//gConsole.LogDebug("Keydown: {}", (size_t)ev.Key);
 			com->CurrKey[ev.Key] = true;
 			break;
 		case eInputEventType::KEYUP:
-			//gConsole.LogDebug("Keyup {}", (size_t)ev.Key);
 			com->CurrKey[ev.Key] = false;
 			break;
 		case eInputEventType::MOUSEMOVE:
-			//gConsole.LogDebug("MousePosition: {}", ev.Pos);
 			com->CurrMouse = ev.Pos;
 			break;
 		case eInputEventType::WHEELMOVE:
-			//gConsole.LogDebug("MouseWheelMove: {}", ev.Pos.X);
 			com->CurrWheel += (int)ev.Pos.X;
 			break;
 		case eInputEventType::_COUNT:

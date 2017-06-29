@@ -8,8 +8,6 @@ namespace Poly
 	{
 	public:
 		virtual void Execute(World* w) = 0;
-		virtual String GetDescription() const = 0;
+		virtual const char* GetDescription() const = 0;
 	};
-
-	using DeferredTaskQueue = Queue<DeferredTaskBase*>;
 }

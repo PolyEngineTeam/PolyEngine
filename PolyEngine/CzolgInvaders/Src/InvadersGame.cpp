@@ -35,7 +35,7 @@ void InvadersGame::Init()
 	
 	Camera = DeferredTaskSystem::SpawnEntityImmediate(&Engine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), Camera);
-	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(&Engine->GetWorld(), Camera, 45.0f, 1.0f, 1000.f);
+	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(&Engine->GetWorld(), Camera, 60_deg, 1.0f, 1000.f);
 	DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(&Engine->GetWorld(), Camera, 10.0f, 0.003f);
 
 	float y_pos = Engine->GetRenderingContext()->GetScreenSize().Height;

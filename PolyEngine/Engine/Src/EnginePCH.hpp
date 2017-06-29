@@ -44,10 +44,12 @@
 #include "SoundWorldComponent.hpp"
 #include "TimeWorldComponent.hpp"
 #include "ViewportWorldComponent.hpp"
-
-//Config
-#include "CoreConfig.hpp"
+#include "DeferredTaskWorldComponent.hpp"
 
 // Systems
 #include "DeferredTaskSystem.hpp"
 #include "SoundSystem.hpp"
+#include "DeferredTaskSystem.hpp"
+
+// Config
+#include "CoreConfig.hpp"

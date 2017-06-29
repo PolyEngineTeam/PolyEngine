@@ -214,9 +214,9 @@ Matrix& Matrix::SetScale(const Vector& scale) {
 }
 
 //------------------------------------------------------------------------------
-Matrix& Poly::Matrix::SetPerspective(float fov, float aspect, float near, float far)
+Matrix& Poly::Matrix::SetPerspective(Angle fov, float aspect, float near, float far)
 {
-	float tanHalfFOV = tan(fov / 2);
+	float tanHalfFOV = Tan(fov / 2);
 
 	Data[0] = 1.0f / (tanHalfFOV * aspect);
 	Data[1] = 0;

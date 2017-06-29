@@ -4,7 +4,8 @@
 #include "BasicMath.hpp"
 
 namespace Poly {
-
+	
+	/// <summary>Class representing RGBA color.</summary>
 	class CORE_DLLEXPORT Color : public BaseObject<>
 	{
 	public:

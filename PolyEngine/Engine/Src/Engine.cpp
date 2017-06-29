@@ -10,16 +10,16 @@ Engine::Engine(IGame* game, IRenderingDevice* device) : Game(game)
 {
 	ASSERTE(gEngine == nullptr, "Creating engine twice?");
 	gEngine = this;
-	BaseWorld = new World(this);
-	Game->RegisterEngine(this);
+	BaseWorld = new World();
 	Renderer = device;
+	Game->RegisterEngine(this);
 }
 
 //------------------------------------------------------------------------------
 Engine::~Engine()
 {
-	gEngine = nullptr;
 	delete BaseWorld;
+	gEngine = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -39,6 +39,7 @@ bool Engine::Init()
 	RegisterWorldComponent<ViewportWorldComponent>((size_t) eEngineWorldComponents::VIEWPORT);
 	RegisterWorldComponent<TimeWorldComponent>((size_t) eEngineWorldComponents::TIME);
 	RegisterWorldComponent<DebugWorldComponent>((size_t) eEngineWorldComponents::DEBUG);
+	RegisterWorldComponent<DeferredTaskWorldComponent>((size_t)eEngineWorldComponents::DEFERRED_TASK);
 	RegisterWorldComponent<SoundWorldComponent>((size_t) eEngineWorldComponents::SOUND);
 
 	// Add WorldComponents
@@ -47,6 +48,7 @@ bool Engine::Init()
 	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(BaseWorld);
 	DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(BaseWorld);
 	DeferredTaskSystem::AddWorldComponentImmediate<SoundWorldComponent>(BaseWorld, BaseWorld);
+	DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(BaseWorld);
 
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);

@@ -3,38 +3,46 @@
 
 using namespace Poly;
 
+//------------------------------------------------------------------------------
 UniqueID DeferredTaskSystem::SpawnEntityImmediate(World* w)
 {
-	UniqueID id = w->SpawnEntity();
-	gConsole.LogDebug("New immediate task executed: Spawn entity");
-	return id;
+	return w->SpawnEntity();
 }
 
+//------------------------------------------------------------------------------
+void DeferredTaskSystem::DestroyEntityImmediate(World* w, const UniqueID& entityId)
+{
+	w->DestroyEntity(entityId);
+}
+
+//------------------------------------------------------------------------------
+void DeferredTaskSystem::DestroyEntity(World* w, const UniqueID& entityId)
+{
+	DeferredTaskWorldComponent* cmp = w->GetWorldComponent<DeferredTaskWorldComponent>();
+	cmp->ScheduleTask(new DestroyEntityDeferredTask(entityId));
+}
+
+//------------------------------------------------------------------------------
 void DeferredTaskSystem::DeferredTaskPhase(World* w)
 {
-	DeferredTaskQueue& queue = w->GetDeferredTaskQueue();
+	DeferredTaskWorldComponent* cmp = w->GetWorldComponent<DeferredTaskWorldComponent>();
 
-	while (!queue.IsEmpty())
+	// clear newly created flags after one tic.
+	for (ComponentBase* cmp : cmp->NewlyCreatedComponents)
+		cmp->ResetFlags(eComponentBaseFlags::NEWLY_CREATED);
+	cmp->NewlyCreatedComponents.Clear();
+
+	// execute tasks from queue
+	while (!cmp->TasksQueue.IsEmpty())
 	{
-		DeferredTaskBase *task = queue.Front();
+		DeferredTaskBase *task = cmp->TasksQueue.Front();
 		ASSERTE(task, "The task doesn't exist!");
 
 		gConsole.LogDebug("Executing task: {}", task->GetDescription());
 		task->Execute(w);
 
-		queue.PopFront();
+		cmp->TasksQueue.PopFront();
 		delete task;
 	}
 }
 
-void DeferredTaskSystem::DestroyEntity(World* w, const UniqueID& entityId)
-{
-	w->GetDeferredTaskQueue().PushBack(new DestroyEntityDeferredTask(entityId));
-	gConsole.LogDebug("New task scheduled: {}", w->GetDeferredTaskQueue().Back()->GetDescription());
-}
-
-void DeferredTaskSystem::DestroyEntityImmediate(World* w, const UniqueID& entityId)
-{
-	w->DestroyEntity(entityId);
-	gConsole.LogDebug("New immediate task executed: Destroy entity");
-}

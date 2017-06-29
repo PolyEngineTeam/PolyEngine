@@ -3,11 +3,11 @@
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-World::World(Engine* engine)
-	: EntitiesAllocator(MAX_ENTITY_COUNT), EnginePtr(engine)
+World::World()
+	: EntitiesAllocator(MAX_ENTITY_COUNT)
 {
 	memset(ComponentAllocators, 0, sizeof(IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
-	memset(Components, 0, sizeof(ComponentBase*) * MAX_WORLD_COMPONENTS_COUNT);
+	memset(WorldComponents, 0, sizeof(ComponentBase*) * MAX_WORLD_COMPONENTS_COUNT);
 }
 
 //------------------------------------------------------------------------------
@@ -28,8 +28,8 @@ World::~World()
 	}
 
 	for (size_t i = 0; i < MAX_WORLD_COMPONENTS_COUNT; i++)
-		if (Components[i])
-			delete (Components[i]);
+		if (WorldComponents[i])
+			delete (WorldComponents[i]);
 }
 
 //------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ void World::DestroyEntity(const UniqueID& entityId)
 bool World::HasWorldComponent(size_t ID) const
 {
 	HEAVY_ASSERTE(ID < MAX_WORLD_COMPONENTS_COUNT, "Invalid component ID - greater than MAX_WORLD_COMPONENTS_COUNT.");
-	return static_cast<bool>(Components[ID]);
+	return static_cast<bool>(WorldComponents[ID]);
 }
 
 //------------------------------------------------------------------------------

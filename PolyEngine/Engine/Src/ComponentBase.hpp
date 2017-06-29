@@ -9,19 +9,17 @@ namespace Poly {
 	{
 		NONE = 0x00,
 		NEWLY_CREATED = 0x01,
-		ABOUT_TO_BE_REMOVED = 0x02,
-		WORLD_COMPONENT = 0x04,
+		ABOUT_TO_BE_REMOVED = 0x02
 	};
 
+	/// <summary>Base type for every component type</summary>
 	class ENGINE_DLLEXPORT ComponentBase : public BaseObject<>
 	{
 	friend class World;
 	public:
 		
-		/// Getter for a component of a specified type that shares UniqueID with this one.
-		/// @tparam T is a type of a component to get.
-		/// @return pointer to a component of a specified type or a nullptr, if it does not exist.
-		
+		/// <summary>Getter for a component of a specified type that shares UniqueID with this one.</summary>
+		/// <returns>Pointer to a component of a specified type or a nullptr, if it does not exist.</returns>
 		template<typename T>
 		T* GetSibling()
 		{
@@ -38,10 +36,11 @@ namespace Poly {
 		void SetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags |= rhs; }
 		void ResetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags &= ~rhs; }
 		const EnumFlags<eComponentBaseFlags>& GetFlags() { return Flags; }
+		bool CheckFlags(const EnumFlags<eComponentBaseFlags>& rhs) const { return (Flags & rhs) == rhs; }
 
 	private:
 		Entity* Owner = nullptr;
 
-		EnumFlags<eComponentBaseFlags> Flags = eComponentBaseFlags::NEWLY_CREATED;
+		EnumFlags<eComponentBaseFlags> Flags;
 	};
 }

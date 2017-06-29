@@ -58,6 +58,7 @@ set(POLYENGINE_H_FOR_IDE
 	Src/DeferredTaskBase.hpp
 	Src/DeferredTaskImplementation.hpp
 	Src/DeferredTaskSystem.hpp
+	Src/DeferredTaskWorldComponent.hpp
 	Src/InputQueue.hpp
 	Src/InputSystem.hpp
 	Src/InputWorldComponent.hpp

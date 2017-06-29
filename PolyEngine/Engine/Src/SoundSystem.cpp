@@ -9,12 +9,10 @@ using namespace Poly;
 
 void SoundSystem::SoundPhase(World* world)
 {
-	SoundEmitterComponent* emitter;
-	ALint state;
-
 	for (auto it : world->IterateComponents<SoundEmitterComponent>())
 	{
-		emitter = std::get<SoundEmitterComponent*>(it);
+		ALint state;
+		SoundEmitterComponent* emitter = std::get<SoundEmitterComponent*>(it);
 		alGetSourcei(emitter->GetEmitterID(), AL_SOURCE_STATE, &state);
 
 		if (state != AL_PLAYING)
