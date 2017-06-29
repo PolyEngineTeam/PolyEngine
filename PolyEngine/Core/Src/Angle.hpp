@@ -5,33 +5,34 @@
 
 namespace Poly {
 
+	/// <summary>
 	/// Wrapper class for angle expressed in any unit of measurement.
-	///
-	/// This class provides abstraction for angle measurement units such as degrees and radians.
-	/// All functions that require angle as an input should be using this class in order to ensure maximum compatibility.
-	/// It has very little overhead and most of the implementation is constexpr. Angle value is stored in radians.
+	/// <para>This class provides abstraction for angle measurement units such as degrees and radians.</para>
+	/// <para>All functions that require angle as an input should be using this class in order to ensure maximum compatibility.</para>
+	/// <para>It has very little overhead and most of the implementation is constexpr. Angle value is stored internally in radians.</para>
+	/// </summary>
 	class CORE_DLLEXPORT Angle : public BaseObjectLiteralType<>
 	{
 	public:
-		/// Explicit static method for creating Angle class instance with initial value provided in degrees.
-		/// Warning, when creating instance from degrees there is possible loss of accuracy due to underlying conversion to radian representation.
-		/// This method can be also called via usage of literal "_deg", i.e. "90_deg" will create Angle class instance with 90 degrees angle value.
-		/// @param float Value in degrees.
-		/// @return Angle Instance of Angle class.
+		/// <summary>Explicit static method for creating Angle class instance with initial value provided in degrees.</summary>
+		/// <remarks>Warning, when creating instance from degrees there is possible loss of accuracy due to underlying conversion to radian representation.
+		/// This method can be also called via usage of literal "_deg", i.e. "90_deg" will create Angle class instance with 90 degrees angle value.</remarks>
+		/// <param name ="deg">Value in degrees.</param>
+		/// <returns>Instance of Angle class.</returns>
 		static constexpr Angle FromDegrees(float deg) { return Angle(deg * kDeg2Rad); }
 
-		/// Explicit static method for creating Angle class instance with initial value provided in radians.
-		/// This method can be also called via usage of literal "_rad", i.e. "3.1415_rad" will create Angle class instance with 3.1415 radians angle value.
-		/// @param float Value in radians.
-		/// @return Angle Instance of Angle class.
+		/// <summary>Explicit static method for creating Angle class instance with initial value provided in radians.</summary>
+		/// <remarks>This method can be also called via usage of literal "_rad", i.e. "3.1415_rad" will create Angle class instance with 3.1415 radians angle value.</remarks>
+		/// <param name ="rad">Value in radians.</param>
+		/// <returns>Instance of Angle class.</returns>
 		static constexpr Angle FromRadians(float rad) { return Angle(rad); }
 
-		/// Returns angle value expressed in radians.
-		/// @return float Angle value in radians.
+		/// <summary>Returns angle value expressed in radians.</summary>
+		/// <returns>Angle value in radians.</returns>
 		constexpr float AsRadians() const { return Radians; }
 
-		/// Returns angle value expressed in degrees.
-		/// @return float Angle value in degrees.
+		/// <summary>Returns angle value expressed in degrees.</summary>
+		/// <returns>Angle value in degrees.</returns>
 		constexpr float AsDegrees() const { return kRad2Deg * Radians; }
 
 		// Negation

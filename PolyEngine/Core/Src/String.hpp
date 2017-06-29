@@ -18,6 +18,7 @@ namespace Poly {
 		return std::strlen(str);
 	}
 
+	// TODO String class needs total refactor!
 	template<typename T>
 	class StringBase : BaseObject<> {
 	public:
