@@ -80,8 +80,8 @@ void InvadersGame::Init()
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), player);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(&Engine->GetWorld(), player, "Models/tank2/bradle.3ds");
 	DeferredTaskSystem::AddComponentImmediate<PlayerControllerComponent>(&Engine->GetWorld(), player, 10.0f);
-	//DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(&Engine->GetWorld(), player, "ACDC_-_Back_In_Black-sample.ogg");
-	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(&Engine->GetWorld(), player, "Wilhelm_Scream.ogg");
+	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(&Engine->GetWorld(), player, "ACDC_-_Back_In_Black-sample.ogg");
+	//DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(&Engine->GetWorld(), player, "Wilhelm_Scream.ogg");
 
 	Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(player);
 	entTransform->SetLocalTranslation(Vector(0, 0, 50));

@@ -14,7 +14,7 @@ namespace Poly
 	};
 	
 	/// Resource that stores sound resource
-	/// For now is designed only for opening ogg files
+	/// For now is designed only for opening ogg files (and not too large (tested on 188KB sample))
 	class ENGINE_DLLEXPORT SoundResource : public ResourceBase
 	{
 	public:
