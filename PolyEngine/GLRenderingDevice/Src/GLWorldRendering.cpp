@@ -32,7 +32,7 @@ void GLRenderingDevice::RenderWorld(World * world)
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	ScreenSize screen = gEngine->GetRenderingContext()->GetScreenSize();
+	ScreenSize screen = gEngine->GetRenderingDevice()->GetScreenSize();
 
 	// For each visible viewport draw it
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())

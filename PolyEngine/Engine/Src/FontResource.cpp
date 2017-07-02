@@ -123,7 +123,7 @@ void Poly::FontResource::LoadFace(size_t height) const
 	ASSERTE(estimatedTextureHeight > 0, "Texture packing for font failed!");
 
 	// Create texture 2D for the face
-	face.TextureProxy = gEngine->GetRenderingContext()->CreateTexture(TEXTURE_WIDTH, estimatedTextureHeight, eTextureUsageType::FONT);
+	face.TextureProxy = gEngine->GetRenderingDevice()->CreateTexture(TEXTURE_WIDTH, estimatedTextureHeight, eTextureUsageType::FONT);
 
 	// Store all glyphs in it and maintain the references in Characters map
 	currRowLen = 0;

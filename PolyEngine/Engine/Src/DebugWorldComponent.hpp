@@ -8,22 +8,11 @@ namespace Poly
 {
 	class World;
 
-	namespace FPSSystem
-	{
-		struct FPSData
-		{
-			int FPS;
-			double ElapsedTime;
-			bool DisplayingFPS;
-		};
-	}
-
+	/// <summary>WorldComponent that holds data for debug system.</summary>
 	class ENGINE_DLLEXPORT DebugWorldComponent : public ComponentBase
 	{
 	friend void FPSSystem::FPSUpdatePhase(World*);
 	friend float FPSSystem::GetFPS(World*);
-	public:
-		DebugWorldComponent() {};
 
 	private:
 		FPSSystem::FPSData FPSData;

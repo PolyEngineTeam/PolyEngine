@@ -26,7 +26,7 @@ TextureResource::TextureResource(const String& path)
 		memcpy(Image + (i * Width*Channels), row.GetData(), sizeof(unsigned char) * rowSize);
 	}
 
-	TextureProxy = gEngine->GetRenderingContext()->CreateTexture(Width, Height, eTextureUsageType::DIFFUSE); //HACK, remove deffise from here
+	TextureProxy = gEngine->GetRenderingDevice()->CreateTexture(Width, Height, eTextureUsageType::DIFFUSE); //HACK, remove deffise from here
 	TextureProxy->SetContent(eTextureDataFormat::RGBA, Image);
 }
 

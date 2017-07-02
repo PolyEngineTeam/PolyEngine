@@ -9,6 +9,7 @@
 
 namespace Poly
 {
+	/// <summary>World component that holds input data.</summary>
 	class ENGINE_DLLEXPORT InputWorldComponent : public ComponentBase
 	{
 	friend void InputSystem::InputPhase(World*);

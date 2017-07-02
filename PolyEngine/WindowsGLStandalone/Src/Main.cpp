@@ -6,8 +6,6 @@
 #include <sstream>
 #include <TimeSystem.hpp>
 
-static Poly::Engine* gEngine = nullptr;
-
 // the WindowProc function prototype
 LRESULT CALLBACK WindowProc(HWND hWnd,
 	UINT message,
@@ -99,17 +97,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	// this struct holds Windows event messages
 	MSG msg;
 
-	Poly::IGame* game = LoadGame();
-	Poly::IRenderingDevice* device = LoadRenderingDevice(hWnd, viewportRect);
-	Poly::Engine Engine(game, device);
-	gEngine = &Engine;
-	bool result = Engine.Init();
-	if (!result)
-	{
-		Poly::gConsole.LogError("Engine load failed!");
-		exit(-1);
-	}
+	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(LoadGame());
+	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(hWnd, viewportRect));
 
+	Poly::Engine Engine(std::move(game), std::move(device));
 	Poly::gConsole.LogDebug("Engine loaded successfully");
 
 	// wait for the next message in the queue, store the result in 'msg'
@@ -134,12 +125,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		Engine.Update();
 	}
 
-	// clean up
-	Engine.Deinit();
-
-	delete game;
-	delete device;
-
 	// return this part of the WM_QUIT message to Windows
 	return static_cast<int>(msg.wParam);
 }
@@ -156,48 +141,48 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		Poly::ScreenSize screenSize;
 		screenSize.Width = GET_X_LPARAM(lParam);
 		screenSize.Height = GET_Y_LPARAM(lParam);
-		if(gEngine)
-			gEngine->ResizeScreen(screenSize);
+		if(Poly::gEngine)
+			Poly::gEngine->ResizeScreen(screenSize);
 		return 0;
 	}
 
 		// input
 	// Use separate case's for mouse buttons because otherwise mouse buttons aren't checked
 	case WM_LBUTTONDOWN:
-		gEngine->KeyDown(Poly::eKey::MLBUTTON);
+		Poly::gEngine->KeyDown(Poly::eKey::MLBUTTON);
 		return 0;
 	case WM_LBUTTONUP:
-		gEngine->KeyUp(Poly::eKey::MLBUTTON);
+		Poly::gEngine->KeyUp(Poly::eKey::MLBUTTON);
 		return 0;
 
 	case WM_RBUTTONDOWN:
-		gEngine->KeyDown(Poly::eKey::MRBUTTON);
+		Poly::gEngine->KeyDown(Poly::eKey::MRBUTTON);
 		return 0;
 	case WM_RBUTTONUP:
-		gEngine->KeyUp(Poly::eKey::MRBUTTON);
+		Poly::gEngine->KeyUp(Poly::eKey::MRBUTTON);
 		return 0;
 
 	case WM_MBUTTONDOWN:
-		gEngine->KeyDown(Poly::eKey::MMBUTTON);
+		Poly::gEngine->KeyDown(Poly::eKey::MMBUTTON);
 		return 0;
 	case WM_MBUTTONUP:
-		gEngine->KeyUp(Poly::eKey::MMBUTTON);
+		Poly::gEngine->KeyUp(Poly::eKey::MMBUTTON);
 		return 0;
 
 	case WM_XBUTTONDOWN:
-		if(GET_Y_LPARAM(wParam) == XBUTTON1) gEngine->KeyDown(Poly::eKey::MBUTTON1);
-		else gEngine->KeyDown(Poly::eKey::MBUTTON2);
+		if(GET_Y_LPARAM(wParam) == XBUTTON1) Poly::gEngine->KeyDown(Poly::eKey::MBUTTON1);
+		else Poly::gEngine->KeyDown(Poly::eKey::MBUTTON2);
 		return 0;
 	case WM_XBUTTONUP:
-		if(GET_Y_LPARAM(wParam) == XBUTTON1) gEngine->KeyUp(Poly::eKey::MBUTTON1);
-		else gEngine->KeyUp(Poly::eKey::MBUTTON2);
+		if(GET_Y_LPARAM(wParam) == XBUTTON1) Poly::gEngine->KeyUp(Poly::eKey::MBUTTON1);
+		else Poly::gEngine->KeyUp(Poly::eKey::MBUTTON2);
 		return 0;
 
 	case WM_KEYDOWN:
-		gEngine->KeyDown(static_cast<Poly::eKey>((unsigned int)wParam));
+		Poly::gEngine->KeyDown(static_cast<Poly::eKey>((unsigned int)wParam));
 		return 0;
 	case WM_KEYUP:
-		gEngine->KeyUp(static_cast<Poly::eKey>((unsigned int)wParam));
+		Poly::gEngine->KeyUp(static_cast<Poly::eKey>((unsigned int)wParam));
 		return 0;
 
 	case WM_MOUSEMOVE:
@@ -205,13 +190,13 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		POINT pointPos;
 		GetCursorPos(&pointPos);
 		ScreenToClient(hWnd, &pointPos);
-		gEngine->UpdateMousePos(Poly::Vector(static_cast<float>(pointPos.x), static_cast<float>(pointPos.y), 0));
+		Poly::gEngine->UpdateMousePos(Poly::Vector(static_cast<float>(pointPos.x), static_cast<float>(pointPos.y), 0));
 		return 0;
 	}
 	case WM_MOUSEWHEEL:
 	{
 		int xPos = GET_WHEEL_DELTA_WPARAM(wParam);
-		gEngine->UpdateWheelPos(Poly::Vector(static_cast<float>(xPos), 0, 0));
+		Poly::gEngine->UpdateWheelPos(Poly::Vector(static_cast<float>(xPos), 0, 0));
 		return 0;
 	}
 	// end of input

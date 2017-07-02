@@ -4,6 +4,6 @@ using namespace Poly;
 
 void RenderingSystem::RenderingPhase(World* world)
 {	
-	IRenderingDevice* device = gEngine->GetRenderingContext();
+	IRenderingDevice* device = gEngine->GetRenderingDevice();
 	device->RenderWorld(world);
 }

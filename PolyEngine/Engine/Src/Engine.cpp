@@ -6,45 +6,34 @@ using namespace Poly;
 Engine* Poly::gEngine = nullptr;
 
 //------------------------------------------------------------------------------
-Engine::Engine(IGame* game, IRenderingDevice* device) : Game(game)
+Engine::Engine(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device) 
+	: Game(std::move(game)), RenderingDevice(std::move(device))
 {
 	ASSERTE(gEngine == nullptr, "Creating engine twice?");
 	gEngine = this;
-	BaseWorld = new World();
-	Renderer = device;
+	BaseWorld = std::make_unique<World>();
 	Game->RegisterEngine(this);
-}
 
-//------------------------------------------------------------------------------
-Engine::~Engine()
-{
-	delete BaseWorld;
-	gEngine = nullptr;
-}
-
-//------------------------------------------------------------------------------
-bool Engine::Init()
-{
 	// Engine Components
-	RegisterComponent<TransformComponent>((size_t) eEngineComponents::TRANSFORM);
-	RegisterComponent<CameraComponent>((size_t) eEngineComponents::BASE_CAMERA);
-	RegisterComponent<MeshRenderingComponent>((size_t) eEngineComponents::MESH_RENDERING);
+	RegisterComponent<TransformComponent>((size_t)eEngineComponents::TRANSFORM);
+	RegisterComponent<CameraComponent>((size_t)eEngineComponents::BASE_CAMERA);
+	RegisterComponent<MeshRenderingComponent>((size_t)eEngineComponents::MESH_RENDERING);
 	RegisterComponent<FreeFloatMovementComponent>((size_t)eEngineComponents::FREE_FLOAT_MOVEMENT);
 	RegisterComponent<ScreenSpaceTextComponent>((size_t)eEngineComponents::SCREEN_SPACE_TEXT);
 
 	// Engine World Components
-	RegisterWorldComponent<InputWorldComponent>((size_t) eEngineWorldComponents::INPUT);
-	RegisterWorldComponent<ViewportWorldComponent>((size_t) eEngineWorldComponents::VIEWPORT);
-	RegisterWorldComponent<TimeWorldComponent>((size_t) eEngineWorldComponents::TIME);
-	RegisterWorldComponent<DebugWorldComponent>((size_t) eEngineWorldComponents::DEBUG);
+	RegisterWorldComponent<InputWorldComponent>((size_t)eEngineWorldComponents::INPUT);
+	RegisterWorldComponent<ViewportWorldComponent>((size_t)eEngineWorldComponents::VIEWPORT);
+	RegisterWorldComponent<TimeWorldComponent>((size_t)eEngineWorldComponents::TIME);
+	RegisterWorldComponent<DebugWorldComponent>((size_t)eEngineWorldComponents::DEBUG);
 	RegisterWorldComponent<DeferredTaskWorldComponent>((size_t)eEngineWorldComponents::DEFERRED_TASK);
 
 	// Add WorldComponents
-	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(BaseWorld);
-	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(BaseWorld);
-	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(BaseWorld);
-	DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(BaseWorld);
-	DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(BaseWorld);
+	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(BaseWorld.get());
+	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(BaseWorld.get());
+	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(BaseWorld.get());
+	DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(BaseWorld.get());
+	DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(BaseWorld.get());
 
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
@@ -55,19 +44,18 @@ bool Engine::Init()
 	RegisterUpdatePhase(DeferredTaskSystem::DeferredTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(FPSSystem::FPSUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 
-	//if (!Renderer->Init(context))
-	//	return false;
-
+	// Init game
 	Game->Init();
-
-	return true;
 }
 
 //------------------------------------------------------------------------------
-void Engine::Deinit()
+Engine::~Engine()
 {
 	Game->Deinit();
-	Renderer = nullptr;
+	BaseWorld.reset();
+	Game.reset();
+	RenderingDevice.reset();
+	gEngine = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -90,5 +78,5 @@ void Engine::Update()
 void Engine::ResizeScreen(const ScreenSize & size)
 {
 	gConsole.LogDebug("Screen resize: {} {}", size.Width, size.Height);
-	GetRenderingContext()->Resize(size);
+	GetRenderingDevice()->Resize(size);
 }

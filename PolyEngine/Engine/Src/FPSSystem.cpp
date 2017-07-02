@@ -6,9 +6,9 @@
 #include "DebugWorldComponent.hpp"
 #include "TimeSystem.hpp"
 
+using namespace Poly;
 
-
-void Poly::FPSSystem::FPSUpdatePhase(World* world)
+void FPSSystem::FPSUpdatePhase(World* world)
 {
 	DebugWorldComponent* com = world->GetWorldComponent<DebugWorldComponent>();
 
@@ -37,7 +37,7 @@ void Poly::FPSSystem::FPSUpdatePhase(World* world)
 	com->FPSData.FPS++;
 }
 
-float Poly::FPSSystem::GetFPS(World * world)
+float FPSSystem::GetFPS(World * world)
 {
 	return world->GetWorldComponent<DebugWorldComponent>()->FPSData.FPS;
 }
