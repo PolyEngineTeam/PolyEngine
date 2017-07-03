@@ -15,18 +15,15 @@ namespace Poly
 	/// @see SoundSystem
 	class ENGINE_DLLEXPORT SoundWorldComponent : public ComponentBase
 	{
-	friend void SoundSystem::SetCurrentWorld(World* world);
+	friend void SoundSystem::SetWorldCurrent(World* world);
 	public:
 		/// Creates context from current device (stored in engine).
 		/// @param world - world which will  be associated with just created context.
-		/// @see OpenALRenderingDevice
+		/// @see OpenALDevice
 		SoundWorldComponent(World* world);
 
 		/// Releases stored context.
 		~SoundWorldComponent();
-
-		const ALCcontext* GetContext() const { return Context; }
-
 	private:
 		ALCcontext* Context;
 	};

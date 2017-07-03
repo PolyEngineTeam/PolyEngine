@@ -11,6 +11,7 @@
 #include <ViewportWorldComponent.hpp>
 #include <ResourceManager.hpp>
 #include <SoundEmitterComponent.hpp>
+#include <SoundSystem.hpp>
 
 #include "GameManagerSystem.hpp"
 #include "MovementComponent.hpp"
@@ -82,6 +83,10 @@ void InvadersGame::Init()
 	DeferredTaskSystem::AddComponentImmediate<PlayerControllerComponent>(&Engine->GetWorld(), player, 10.0f);
 	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(&Engine->GetWorld(), player, "ACDC_-_Back_In_Black-sample.ogg");
 	//DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(&Engine->GetWorld(), player, "Wilhelm_Scream.ogg");
+
+	SoundSystem::PlayEmitter(&Engine->GetWorld(), player);
+	SoundSystem::LoopEmitter(&Engine->GetWorld(), player);
+
 
 	Poly::TransformComponent* entTransform = Engine->GetWorld().GetComponent<Poly::TransformComponent>(player);
 	entTransform->SetLocalTranslation(Vector(0, 0, 50));

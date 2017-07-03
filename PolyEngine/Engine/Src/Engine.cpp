@@ -60,7 +60,7 @@ bool Engine::Init()
 	RegisterUpdatePhase(DeferredTaskSystem::DeferredTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(FPSSystem::FPSUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 
-	SoundSystem::SetCurrentWorld(BaseWorld);
+	SoundSystem::SetWorldCurrent(BaseWorld);
 
 	Game->Init();
 

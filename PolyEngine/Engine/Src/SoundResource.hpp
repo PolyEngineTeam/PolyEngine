@@ -2,8 +2,6 @@
 
 #include "ResourceBase.hpp"
 
-typedef unsigned int ALuint;
-
 namespace Poly 
 {
 
@@ -21,10 +19,10 @@ namespace Poly
 		SoundResource(const String& path);
 		~SoundResource();
 
-		ALuint GetBufferID() const { return BufferID; }
+		unsigned int GetBufferID() const { return BufferID; }
 
 	private:
-		ALuint BufferID;
+		unsigned int BufferID;
 	};
 
 } // namespace Poly

@@ -8,7 +8,8 @@
 
 using namespace Poly;
 
-SoundEmitterComponent::SoundEmitterComponent(const String& path)
+SoundEmitterComponent::SoundEmitterComponent(const String& path, bool relative) :
+	Background(relative)
 {
 	Resource = ResourceManager<SoundResource>::Load(path);
 

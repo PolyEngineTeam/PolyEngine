@@ -186,7 +186,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\FreeFloatMovementComponent.cpp" />
     <ClCompile Include="Src\DeferredTaskSystem.cpp" />
     <ClCompile Include="Src\InputWorldComponent.cpp" />
-    <ClCompile Include="Src\OpenALRenderingDevice.cpp" />
+    <ClCompile Include="Src\OpenALDevice.cpp" />
     <ClCompile Include="Src\SoundEmitterComponent.cpp" />
     <ClCompile Include="Src\SoundListenerComponent.cpp" />
     <ClCompile Include="Src\Mesh.cpp" />
@@ -233,7 +233,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\InputWorldComponent.hpp" />
     <ClInclude Include="Src\IRenderingDevice.hpp" />
     <ClInclude Include="Src\KeyBindings.hpp" />
-    <ClInclude Include="Src\OpenALRenderingDevice.hpp" />
+    <ClInclude Include="Src\OpenALDevice.hpp" />
     <ClInclude Include="Src\SoundListenerComponent.hpp" />
     <ClInclude Include="Src\Mesh.hpp" />
     <ClInclude Include="Src\MeshRenderingComponent.hpp" />

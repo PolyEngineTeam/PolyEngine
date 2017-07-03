@@ -1,8 +1,7 @@
 #pragma once
 
 #include "ComponentBase.hpp"
-
-typedef unsigned int ALuint;
+#include "SoundSystem.hpp"
 
 namespace Poly
 {
@@ -16,19 +15,22 @@ namespace Poly
 	/// @see SoundSystem 
 	class ENGINE_DLLEXPORT SoundEmitterComponent : public ComponentBase
 	{
+	friend void SoundSystem::SoundPhase(World* world);
+	friend void SoundSystem::SetEmitterSource(World*, const UniqueID&, const String&);
 	public:
 		/// Loads resource from given path (optimized by resource manager).
-		/// @param path - path to sound resource
+		/// @param path path to sound resource
 		/// @see SoundListenerComponent
-		SoundEmitterComponent(const String& path);
+		SoundEmitterComponent(const String& path, bool background = false);
 
 		/// Releases resource (optimized by resource manager).
 		~SoundEmitterComponent();
 
-		const ALuint GetEmitterID() const { return EmitterID; }
+		unsigned int GetEmitterID() const { return EmitterID; }
 
-	private:
-		ALuint EmitterID;
+	protected:
+		unsigned int EmitterID;
+		bool Background = false;
 		SoundResource* Resource;
 	};
 

@@ -15,7 +15,7 @@
 #include "IRenderingDevice.hpp"
 
 // Audio
-#include "OpenALRenderingDevice.hpp"
+#include "OpenALDevice.hpp"
 
 // Utils
 #include "InputQueue.hpp"
@@ -28,6 +28,7 @@
 #include "TextureResource.hpp"
 #include "MeshResource.hpp"
 #include "FontResource.hpp"
+#include "SoundResource.hpp"
 
 // Components
 #include "CameraComponent.hpp"
