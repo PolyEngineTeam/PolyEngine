@@ -173,3 +173,18 @@ TEST_CASE("Dynarray with BaseObject", "[Dynarray]")
 	q.PopFront();
 
 }
+
+TEST_CASE("Dynarray iterators dereferencing operators tests", "[Dynarray]")
+{
+	struct Test { bool GetVal() const { return true; } };
+	
+	// degree constructor
+	Dynarray<Test> a;
+	a.PushBack(Test());
+	REQUIRE(a.Begin()->GetVal() == true);
+	REQUIRE((*a.Begin()).GetVal() == true);
+
+	const Dynarray<Test>& b = a;
+	REQUIRE(b.Begin()->GetVal() == true);
+	REQUIRE((*b.Begin()).GetVal() == true);
+}
