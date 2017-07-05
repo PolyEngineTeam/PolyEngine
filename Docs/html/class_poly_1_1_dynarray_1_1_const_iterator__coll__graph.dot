@@ -1,0 +1,12 @@
+digraph "Poly::Dynarray&lt; T &gt;::ConstIterator"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node4 [label="Poly::Dynarray\< T \>\l::ConstIterator",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node5 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="Poly::BaseObject\<\>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_poly_1_1_base_object.html"];
+  Node6 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="Poly::CustomAlocatedObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_poly_1_1_custom_alocated_object.html"];
+  Node7 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="std::iterator\< std\l::random_access_iterator\l_tag, T \>",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+}

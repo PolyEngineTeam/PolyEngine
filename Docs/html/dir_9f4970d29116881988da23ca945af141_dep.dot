@@ -1,0 +1,20 @@
+digraph "C:/Users/Michal/Documents/PolyEngine/PolyEngine" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_9f4970d29116881988da23ca945af141 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_9f4970d29116881988da23ca945af141.html"];
+    dir_9f4970d29116881988da23ca945af141 [shape=plaintext label="PolyEngine"];
+    dir_5294531d4a0bf03c22ac9f2318eb671c [shape=box label="Core" color="red" fillcolor="white" style="filled" URL="dir_5294531d4a0bf03c22ac9f2318eb671c.html"];
+    dir_33785fa01b50d8145935135959563aad [shape=box label="Engine" color="red" fillcolor="white" style="filled" URL="dir_33785fa01b50d8145935135959563aad.html"];
+    dir_a9f058496a2bbae47c0bc8ee6a72b4ee [shape=box label="GLRenderingDevice" color="red" fillcolor="white" style="filled" URL="dir_a9f058496a2bbae47c0bc8ee6a72b4ee.html"];
+    dir_772330ebda633c7fe14a668146a77522 [shape=box label="Standalone" color="red" fillcolor="white" style="filled" URL="dir_772330ebda633c7fe14a668146a77522.html"];
+    dir_cc41bd4854055a2cb9291e4412b8a871 [shape=box label="WindowsGLStandalone" color="red" fillcolor="white" style="filled" URL="dir_cc41bd4854055a2cb9291e4412b8a871.html"];
+  }
+  dir_772330ebda633c7fe14a668146a77522->dir_33785fa01b50d8145935135959563aad [headlabel="1", labeldistance=1.5 headhref="dir_000007_000003.html"];
+  dir_772330ebda633c7fe14a668146a77522->dir_a9f058496a2bbae47c0bc8ee6a72b4ee [headlabel="1", labeldistance=1.5 headhref="dir_000007_000005.html"];
+  dir_cc41bd4854055a2cb9291e4412b8a871->dir_33785fa01b50d8145935135959563aad [headlabel="2", labeldistance=1.5 headhref="dir_000009_000003.html"];
+  dir_33785fa01b50d8145935135959563aad->dir_5294531d4a0bf03c22ac9f2318eb671c [headlabel="32", labeldistance=1.5 headhref="dir_000003_000001.html"];
+  dir_a9f058496a2bbae47c0bc8ee6a72b4ee->dir_5294531d4a0bf03c22ac9f2318eb671c [headlabel="4", labeldistance=1.5 headhref="dir_000005_000001.html"];
+  dir_a9f058496a2bbae47c0bc8ee6a72b4ee->dir_33785fa01b50d8145935135959563aad [headlabel="13", labeldistance=1.5 headhref="dir_000005_000003.html"];
+}

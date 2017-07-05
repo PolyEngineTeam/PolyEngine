@@ -1,0 +1,11 @@
+digraph "C:/Users/Michal/Documents/PolyEngine/PolyEngine/WindowsGLStandalone/Src" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_cc41bd4854055a2cb9291e4412b8a871 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="WindowsGLStandalone" fontname="Helvetica", fontsize="10", URL="dir_cc41bd4854055a2cb9291e4412b8a871.html"]
+  dir_bdad6a72f975b229f18e4e0a57663938 [shape=box, label="Src", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_bdad6a72f975b229f18e4e0a57663938.html"];
+  }
+  dir_33785fa01b50d8145935135959563aad [shape=box label="Engine" fillcolor="white" style="filled" color="red" URL="dir_33785fa01b50d8145935135959563aad.html"];
+  dir_bdad6a72f975b229f18e4e0a57663938->dir_33785fa01b50d8145935135959563aad [headlabel="2", labeldistance=1.5 headhref="dir_000010_000003.html"];
+}

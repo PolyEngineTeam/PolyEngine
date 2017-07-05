@@ -1,0 +1,18 @@
+digraph "C:/Users/Michal/Documents/PolyEngine/PolyEngine/Standalone" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_9f4970d29116881988da23ca945af141 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="PolyEngine" fontname="Helvetica", fontsize="10", URL="dir_9f4970d29116881988da23ca945af141.html"]
+  subgraph clusterdir_772330ebda633c7fe14a668146a77522 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_772330ebda633c7fe14a668146a77522.html"];
+    dir_772330ebda633c7fe14a668146a77522 [shape=plaintext label="Standalone"];
+    dir_509ec4521ee26ee19314ee71285bf727 [shape=box label="Linux" color="black" fillcolor="white" style="filled" URL="dir_509ec4521ee26ee19314ee71285bf727.html"];
+  }
+  }
+  dir_33785fa01b50d8145935135959563aad [shape=box label="Engine" fillcolor="white" style="filled" color="red" URL="dir_33785fa01b50d8145935135959563aad.html"];
+  dir_a9f058496a2bbae47c0bc8ee6a72b4ee [shape=box label="GLRenderingDevice" fillcolor="white" style="filled" color="red" URL="dir_a9f058496a2bbae47c0bc8ee6a72b4ee.html"];
+  dir_a9f058496a2bbae47c0bc8ee6a72b4ee->dir_33785fa01b50d8145935135959563aad [headlabel="13", labeldistance=1.5 headhref="dir_000005_000003.html"];
+  dir_509ec4521ee26ee19314ee71285bf727->dir_33785fa01b50d8145935135959563aad [headlabel="1", labeldistance=1.5 headhref="dir_000008_000003.html"];
+  dir_509ec4521ee26ee19314ee71285bf727->dir_a9f058496a2bbae47c0bc8ee6a72b4ee [headlabel="1", labeldistance=1.5 headhref="dir_000008_000005.html"];
+}

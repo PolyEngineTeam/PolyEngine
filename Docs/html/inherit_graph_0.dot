@@ -1,0 +1,7 @@
+digraph "Graphical Class Hierarchy"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node0 [label="Poly::CoreConfig",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_poly_1_1_core_config.html",tooltip="This is class where all core configuration variables are placed"];
+}
