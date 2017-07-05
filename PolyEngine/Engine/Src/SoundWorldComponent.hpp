@@ -2,6 +2,8 @@
 
 #include "ComponentBase.hpp"
 #include "SoundSystem.hpp"
+#include "Dynarray.hpp"
+#include "SoundListenerComponent.hpp"
 
 typedef struct ALCcontext_struct ALCcontext;
 
@@ -24,8 +26,12 @@ namespace Poly
 
 		/// Releases stored context.
 		~SoundWorldComponent();
+
+		const Dynarray<SoundListenerComponent>& GetListeners() const { return Listeners; };
+
 	private:
 		ALCcontext* Context;
+		Dynarray<SoundListenerComponent> Listeners;
 	};
 
 } // namespace Poly

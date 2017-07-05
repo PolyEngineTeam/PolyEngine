@@ -101,16 +101,6 @@ void SoundSystem::SetEmitterFrequency(World* world, const UniqueID& id, float fr
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::PlayEmitterInBackground(World* world, const UniqueID& id)
-{
-}
-
-//---------------------------------------------------------------------------------------------------
-void SoundSystem::SetEmitterRelative(World* world, const UniqueID& id)
-{
-}
-
-//---------------------------------------------------------------------------------------------------
 void SoundSystem::SetEmitterOffsetInSeconds(World* world, const UniqueID& id, float offset)
 {
 	alSourcef(world->GetComponent<SoundEmitterComponent>(id)->GetEmitterID(), AL_SEC_OFFSET, static_cast<float>(offset));

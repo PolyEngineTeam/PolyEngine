@@ -1,8 +1,9 @@
 #pragma once
 
 #include "ComponentBase.hpp"
-
-typedef float ALfloat;
+#include "Vector.hpp"
+#include "Dynarray.hpp"
+#include "SoundEmitterComponent.hpp"
 
 namespace Poly
 {
@@ -15,15 +16,17 @@ namespace Poly
 	class ENGINE_DLLEXPORT SoundListenerComponent : public ComponentBase
 	{
 	public:
-		/// Sets everything to 0 and copies SourcesArray from SoundWoeldComponent
+		/// Sets everything to 0 and copies SourcesArray from SoundWorldComponent
 		SoundListenerComponent(SoundWorldComponent* worldComponent);
 		~SoundListenerComponent();
 
+		float GetGain() const { return Gain; }
+
 	private:
-		ALfloat Gain;
-		ALfloat Position[3];
-		ALfloat Velocity[3];
-		ALfloat Orientation[3];
+		float Gain = 1;
+		Vector Position;
+		Vector Velocity;
+		Dynarray<SoundEmitterComponent*> Emitters;
 	};
 
 } // namespace Poly

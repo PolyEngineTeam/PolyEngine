@@ -29,8 +29,6 @@ namespace Poly
 		void ENGINE_DLLEXPORT UnLoopEmitter(World*, const UniqueID&);
 		void ENGINE_DLLEXPORT SetEmitterGain(World*, const UniqueID&, float);
 		void ENGINE_DLLEXPORT SetEmitterFrequency(World*, const UniqueID&, float);
-		void ENGINE_DLLEXPORT PlayEmitterInBackground(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT SetEmitterRelative(World*, const UniqueID&);
 		void ENGINE_DLLEXPORT SetEmitterOffsetInSeconds(World*, const UniqueID&, float);
 		void ENGINE_DLLEXPORT SetEmitterOffsetInSamples(World*, const UniqueID&, size_t);
 		void ENGINE_DLLEXPORT SetEmitterOffsetInBytes(World*, const UniqueID&, size_t);

@@ -151,6 +151,26 @@ TEST_CASE("Dynarray basics", "[Dynarray]")
 	REQUIRE(a[0] == a[1]);
 }
 
+TEST_CASE("Dynarray iterator operators -> ", "[Dynarray]")
+{
+	// degree constructor
+	Dynarray<int> a;
+	a.PushBack(1);
+	a.PushBack(1);
+	a.PushBack(2);
+	REQUIRE(a[0] == a[1]);
+	REQUIRE(a[0] != a[2]);
+	a.PushFront(2);
+	REQUIRE(a[0] == a[3]);
+	REQUIRE(a[1] == a[2]);
+	REQUIRE(a[0] != a[1]);
+	a.PopFront();
+	REQUIRE(a[0] == a[1]);
+	REQUIRE(a[0] != a[2]);
+	a.PopBack();
+	REQUIRE(a[0] == a[1]);
+}
+
 TEST_CASE("Dynarray with BaseObject", "[Dynarray]")
 {
 
