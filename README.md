@@ -28,7 +28,7 @@ PolyEngine currently uses OpenGL 3.3+ only, but might gain support for other gra
 APIs (DirectX, Vulkan, Metal) in the future.
 
 ## Documentation
-Documentation in doxygen html format is available [here](Docs/html/index.html "PolyEngine docs").
+Documentation in doxygen html format is available [here](https://kntgpolygon.github.io/PolyEngine/Docs/html/index.html "PolyEngine docs").
 
 ## Branch description:
 * master - main branch of the project, it's intended for stable, tested versions of the engine. Releases will be additionally tagged. This branch is guaranteed to be rebase/force push free.

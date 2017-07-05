@@ -1,4 +1,0 @@
-var searchData=
-[
-  ['operator_3c_3c',['operator&lt;&lt;',['../class_poly_1_1_a_a_box.html#ace723ef4cbc3af8653d9d54d2fb203ad',1,'Poly::AABox::operator&lt;&lt;()'],['../class_poly_1_1_angle.html#a5c45344913ffedf2d07e12dcd1031ad2',1,'Poly::Angle::operator&lt;&lt;()'],['../class_poly_1_1_color.html#ae80bc4487a4637e516fc38585140d028',1,'Poly::Color::operator&lt;&lt;()'],['../class_poly_1_1_matrix.html#a8f8b15aaf3e96d81b977443b2f0364b7',1,'Poly::Matrix::operator&lt;&lt;()'],['../struct_poly_1_1_euler_angles.html#a89e2e95018ae55c12c6425d72105ab53',1,'Poly::EulerAngles::operator&lt;&lt;()'],['../class_poly_1_1_quaternion.html#af135af13d4340877365a570f57cef1fd',1,'Poly::Quaternion::operator&lt;&lt;()'],['../class_poly_1_1_string_base.html#a47203ece3827005172d528107727afd0',1,'Poly::StringBase::operator&lt;&lt;()'],['../class_poly_1_1_vector.html#a564a0496b386c611984cac1e48d1ce43',1,'Poly::Vector::operator&lt;&lt;()']]]
-];

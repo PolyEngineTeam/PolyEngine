@@ -1,4 +1,0 @@
-var searchData=
-[
-  ['_5fcount',['_COUNT',['../class_poly_1_1_engine.html#a340d59c97b593c94cbb7caf106798d82af3351ee60ccc810690817d90739bf103',1,'Poly::Engine::_COUNT()'],['../namespace_poly.html#a5d61ec08ebc0427493ecbbcfe86a5ea5af3351ee60ccc810690817d90739bf103',1,'Poly::_COUNT()'],['../namespace_poly.html#aa1b933876c399339cee2406aa6f0f809af3351ee60ccc810690817d90739bf103',1,'Poly::_COUNT()'],['../namespace_poly.html#aa46beddb1b260584209639161661fd20af3351ee60ccc810690817d90739bf103',1,'Poly::_COUNT()'],['../namespace_poly.html#aa0d3b3330288b6a2e7d4be2bad657f56af3351ee60ccc810690817d90739bf103',1,'Poly::_COUNT()'],['../namespace_poly.html#a50a23fff7611d0ab25c047b347984996af3351ee60ccc810690817d90739bf103',1,'Poly::_COUNT()'],['../namespace_poly.html#aaba3ba88719f7a5188fd912b8b140a5faf3351ee60ccc810690817d90739bf103',1,'Poly::_COUNT()'],['../namespace_poly.html#a4fd84de79e13d869535d0101a13d1a85af3351ee60ccc810690817d90739bf103',1,'Poly::_COUNT()']]]
-];
