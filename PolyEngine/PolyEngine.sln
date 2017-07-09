@@ -21,7 +21,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj",
 		{D8D95DE1-B758-451D-B6D1-CE8C3801892C} = {D8D95DE1-B758-451D-B6D1-CE8C3801892C}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowsGLStandalone", "WindowsGLStandalone\WindowsGLStandalone.vcxproj", "{7E4BFB6C-BC95-4F9E-AD85-F6097A00B6A8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowsStandalone", "Standalone\Windows\WindowsStandalone.vcxproj", "{7E4BFB6C-BC95-4F9E-AD85-F6097A00B6A8}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1FFE2400-7129-41DC-9EFB-08CDEAD7F66A} = {1FFE2400-7129-41DC-9EFB-08CDEAD7F66A}
 		{9E07320D-7814-43FA-BB66-7A66754060C5} = {9E07320D-7814-43FA-BB66-7A66754060C5}
@@ -34,7 +34,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CzolgInvaders", "CzolgInvad
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RenderingDevices", "RenderingDevices", "{73B76588-D587-410D-B6A0-2FB50324456D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLRenderingDevice", "GLRenderingDevice\GLRenderingDevice.vcxproj", "{65ACF8FD-853F-4F27-AB59-EF2E13268720}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLRenderingDevice", "RenderingDevice\OpenGL\GLRenderingDevice.vcxproj", "{65ACF8FD-853F-4F27-AB59-EF2E13268720}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Games", "Games", "{37ED4269-2B2C-49CB-82B0-E1F8C4313E6C}"
 EndProject

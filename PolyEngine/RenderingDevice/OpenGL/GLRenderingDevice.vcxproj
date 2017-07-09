@@ -150,20 +150,20 @@
     <ClInclude Include="Src\GLShaderProgram.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.vcxproj">
-      <Project>{cad95e91-98a5-497a-9726-09c897edb267}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Engine\Engine.vcxproj">
-      <Project>{d8d95de1-b758-451d-b6d1-ce8c3801892c}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Src\GLMeshDeviceProxy.cpp" />
     <ClCompile Include="Src\GLRenderingDevice.cpp" />
     <ClCompile Include="Src\GLTextFieldBufferDeviceProxy.cpp" />
     <ClCompile Include="Src\GLTextureDeviceProxy.cpp" />
     <ClCompile Include="Src\GLWorldRendering.cpp" />
     <ClCompile Include="Src\GLShaderProgram.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Core.vcxproj">
+      <Project>{cad95e91-98a5-497a-9726-09c897edb267}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Engine\Engine.vcxproj">
+      <Project>{d8d95de1-b758-451d-b6d1-ce8c3801892c}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
