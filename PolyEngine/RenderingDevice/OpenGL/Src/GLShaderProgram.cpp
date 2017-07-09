@@ -1,6 +1,8 @@
 #include "GLShaderProgram.hpp"
 #include "GLUtils.hpp"
 
+#include <regex>
+
 #include <ResourceManager.hpp>
 
 using namespace Poly;
@@ -84,6 +86,7 @@ void GLShaderProgram::LoadShader(GLenum type, const String& shaderName)
 	}
 	
 	String shaderCode = LoadTextFile(GetResourcesAbsolutePath() + shaderName);
+	AnalyzeShaderCode(shaderCode);
 
 	const char *code = shaderCode.GetCStr();
 	glShaderSource(shader, 1, &code, NULL);
@@ -133,3 +136,18 @@ void GLShaderProgram::SetUniform(const String & name, float val1, float val2) { 
 void GLShaderProgram::SetUniform(const String& name, const Vector& val) { glUniform4f(m_uniforms[name], val.X, val.Y, val.Z, val.W); }
 void GLShaderProgram::SetUniform(const String& name, const Color& val) { glUniform4f(m_uniforms[name], val.R, val.G, val.B, val.A); }
 void GLShaderProgram::SetUniform(const String& name, const Matrix& val) { glUniformMatrix4fv(m_uniforms[name], 1, GL_FALSE, val.GetTransposed().GetDataPtr()); }
+
+//------------------------------------------------------------------------------
+void Poly::GLShaderProgram::AnalyzeShaderCode(const String& code)
+{
+	std::regex uniformRegex("uniform\s(?:\w+)\s(\w+);", std::regex::ECMAScript);
+
+	auto words_begin = std::cregex_iterator(code.GetCStr(), code.GetCStr() + code.GetLength(), uniformRegex);
+	auto words_end = std::cregex_iterator();
+
+	for (std::cregex_iterator i = words_begin; i != words_end; ++i)
+	{
+		const std::cmatch& match = *i;
+		gConsole.LogDebug("Unform found: {}", match[1].str());
+	}
+}

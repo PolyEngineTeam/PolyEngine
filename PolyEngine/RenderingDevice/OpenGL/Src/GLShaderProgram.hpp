@@ -29,6 +29,8 @@ namespace Poly {
 		void SetUniform(const String& name, const Matrix& val);
 
 	private:
+		void AnalyzeShaderCode(const String &code);
+
 		std::map<String, int> m_uniforms;
 		GLuint m_program;
 	};
