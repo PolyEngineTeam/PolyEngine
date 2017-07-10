@@ -118,9 +118,9 @@ namespace Poly
 		template<typename T> void RegisterComponent(size_t id)
 		{
 			ASSERTE(
-				([this, &id] () ->bool 
-				{ 
-					for(auto it = ComponentTypeMap.begin(); it != ComponentTypeMap.end(); ++it) 
+				([this, &id] () ->bool
+				{
+					for(auto it = ComponentTypeMap.begin(); it != ComponentTypeMap.end(); ++it)
 						if(it->first == typeid(T) || it->second == id) return false;
 					return true;
 				})(),
@@ -145,14 +145,14 @@ namespace Poly
 		template<typename T> void RegisterWorldComponent(size_t id)
 		{
 			ASSERTE(
-				([this, &id] () ->bool 
-				{ 
-					for(auto it = WorldComponentTypeMap.begin(); it != WorldComponentTypeMap.end(); ++it) 
+				([this, &id] () ->bool
+				{
+					for(auto it = WorldComponentTypeMap.begin(); it != WorldComponentTypeMap.end(); ++it)
 						if(it->first == typeid(T) || it->second == id) return false;
 					return true;
 				})(),
-				"World component type or id was registered twice!");			
-				
+				"World component type or id was registered twice!");
+
 			WorldComponentTypeMap[typeid(T)] = id;
 		}
 
@@ -206,5 +206,5 @@ namespace Poly
 	ENGINE_DLLEXPORT extern Engine* gEngine;
 }
 
-#define DECLARE_GAME() extern "C" { DEVICE_DLLEXPORT Poly::IGame* __stdcall CreateGame(); }
+#define DECLARE_GAME() extern "C" { DEVICE_DLLEXPORT Poly::IGame* POLY_STD_CALL CreateGame(); }
 #define DEFINE_GAME(type) Poly::IGame* CreateGame() { return new type(); }

@@ -87,6 +87,13 @@
 	#define DEVICE_DLLEXPORT
 #endif
 
+// WIN API
+#if defined(_WIN32)
+	#define POLY_STD_CALL __stdcall
+#else
+	#define POLY_STD_CALL
+#endif
+
 #ifndef DISABLE_SIMD
 #define DISABLE_SIMD false
 #endif
