@@ -140,7 +140,7 @@ void GLShaderProgram::SetUniform(const String& name, const Matrix& val) { glUnif
 //------------------------------------------------------------------------------
 void Poly::GLShaderProgram::AnalyzeShaderCode(const String& code)
 {
-	std::regex uniformRegex("uniform\s(?:\w+)\s(\w+);", std::regex::ECMAScript);
+	std::regex uniformRegex(R"(uniform\s+(\w+)\s+(\w+)\s*;)", std::regex::ECMAScript);
 
 	auto words_begin = std::cregex_iterator(code.GetCStr(), code.GetCStr() + code.GetLength(), uniformRegex);
 	auto words_end = std::cregex_iterator();
@@ -148,6 +148,6 @@ void Poly::GLShaderProgram::AnalyzeShaderCode(const String& code)
 	for (std::cregex_iterator i = words_begin; i != words_end; ++i)
 	{
 		const std::cmatch& match = *i;
-		gConsole.LogDebug("Unform found: {}", match[1].str());
+		gConsole.LogDebug("Uniform {} of type {} found.", match[2].str(), match[1].str());
 	}
 }
