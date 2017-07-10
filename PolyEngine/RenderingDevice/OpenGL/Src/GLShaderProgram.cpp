@@ -11,8 +11,8 @@ using namespace Poly;
 GLShaderProgram::GLShaderProgram(const String & vertex, const String & fragment)
 {
 	gConsole.LogDebug("Creating shader program {} {}", vertex, fragment);
-	m_program = glCreateProgram();
-	if (m_program == 0) {
+	ProgramHandle = glCreateProgram();
+	if (ProgramHandle == 0) {
 		ASSERTE(false, "Creation of shader program failed! Exiting...");
 	}
 	LoadShader(eShaderUnitType::VERTEX, vertex);
@@ -20,16 +20,15 @@ GLShaderProgram::GLShaderProgram(const String & vertex, const String & fragment)
 	CompileProgram();
 
 	for (eShaderUnitType type : IterateEnum<eShaderUnitType>())
-		if (ShaderCode[type].GetLength() > 0)
-			AnalyzeShaderCode(ShaderCode[type]);
+		AnalyzeShaderCode(type);
 }
 
 //------------------------------------------------------------------------------
 GLShaderProgram::GLShaderProgram(const String& vertex, const String& geometry, const String& fragment)
 {
 	gConsole.LogDebug("Creating shader program {} {} {}", vertex, geometry, fragment);
-	m_program = glCreateProgram();
-	if (m_program == 0) {
+	ProgramHandle = glCreateProgram();
+	if (ProgramHandle == 0) {
 		ASSERTE(false, "Creation of shader program failed! Exiting...");
 	}
 	LoadShader(eShaderUnitType::VERTEX, vertex);
@@ -38,30 +37,29 @@ GLShaderProgram::GLShaderProgram(const String& vertex, const String& geometry, c
 	CompileProgram();
 
 	for(eShaderUnitType type : IterateEnum<eShaderUnitType>())
-		if(ShaderCode[type].GetLength() > 0)
-			AnalyzeShaderCode(ShaderCode[type]);
+			AnalyzeShaderCode(type);
 }
 
 //------------------------------------------------------------------------------
 void GLShaderProgram::BindProgram() const
 {
-	glUseProgram(m_program);
+	glUseProgram(ProgramHandle);
 }
 
 //------------------------------------------------------------------------------
 void GLShaderProgram::CompileProgram()
 {
-	glLinkProgram(m_program);
+	glLinkProgram(ProgramHandle);
 	int linkStatus = 0;
 
-	glGetProgramiv(m_program, GL_LINK_STATUS, &linkStatus);
+	glGetProgramiv(ProgramHandle, GL_LINK_STATUS, &linkStatus);
 
 	if (linkStatus == 0) {
 		GLint infoLogLength = 0;
-		glGetProgramiv(m_program, GL_INFO_LOG_LENGTH, &infoLogLength);
+		glGetProgramiv(ProgramHandle, GL_INFO_LOG_LENGTH, &infoLogLength);
 		Dynarray<char> errorMessage;
 		errorMessage.Resize(static_cast<size_t>(infoLogLength + 1));
-		glGetProgramInfoLog(m_program, infoLogLength, NULL, &errorMessage[0]);
+		glGetProgramInfoLog(ProgramHandle, infoLogLength, NULL, &errorMessage[0]);
 		gConsole.LogError("Program linking: {}", std::string(&errorMessage[0]));
 		ASSERTE(false, "Program linking failed!");
 	}
@@ -71,15 +69,15 @@ void GLShaderProgram::CompileProgram()
 void GLShaderProgram::Validate()
 {
 	int status = 0;
-	glValidateProgram(m_program);
+	glValidateProgram(ProgramHandle);
 
-	glGetProgramiv(m_program, GL_VALIDATE_STATUS, &status);
+	glGetProgramiv(ProgramHandle, GL_VALIDATE_STATUS, &status);
 	if (status == 0) {
 		GLint infoLogLength = 0;
-		glGetProgramiv(m_program, GL_INFO_LOG_LENGTH, &infoLogLength);
+		glGetProgramiv(ProgramHandle, GL_INFO_LOG_LENGTH, &infoLogLength);
 		Dynarray<char> errorMessage;
 		errorMessage.Resize(static_cast<size_t>(infoLogLength + 1));
-		glGetProgramInfoLog(m_program, infoLogLength, NULL, &errorMessage[0]);
+		glGetProgramInfoLog(ProgramHandle, infoLogLength, NULL, &errorMessage[0]);
 		gConsole.LogError("Program validation: {}", std::string(&errorMessage[0]));
 		ASSERTE(false, "Program validation failed!");
 	}
@@ -112,7 +110,7 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 		ASSERTE(false, "Shader compilation failed!");
 	}
 
-	glAttachShader(m_program, shader);
+	glAttachShader(ProgramHandle, shader);
 	glDeleteShader(shader);  // is it ok to do it here?
 	CHECK_GL_ERR();
 }
@@ -120,65 +118,65 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 //------------------------------------------------------------------------------
 size_t GLShaderProgram::GetProgramHandle() const
 {
-	return m_program;
+	return ProgramHandle;
 }
 
 //------------------------------------------------------------------------------
 void GLShaderProgram::RegisterUniform(const String& type, const String& name)
 {
-	if (m_uniforms.find(name) != m_uniforms.end())
+	if (Uniforms.find(name) != Uniforms.end())
 		return;
 
 	GLint location = 0;
-	location = glGetUniformLocation(m_program, name.GetCStr());
+	location = glGetUniformLocation(ProgramHandle, name.GetCStr());
 	if (location == -1)
 	{
 		gConsole.LogError("Invalid uniform location for {}. Probably optimized out.", name);
 		return;
 	}
-	m_uniforms[name] = UniformInfo(type, location);
+	Uniforms[name] = UniformInfo(type, location);
 	CHECK_GL_ERR();
 }
 
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, int val)
 { 
-	HEAVY_ASSERTE(m_uniforms[name].TypeName == "int", "Invalid uniform type!");
-	glUniform1i(m_uniforms[name].Location, val);
+	HEAVY_ASSERTE(Uniforms[name].TypeName == "int", "Invalid uniform type!");
+	glUniform1i(Uniforms[name].Location, val);
 }
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, float val)
 {
-	HEAVY_ASSERTE(m_uniforms[name].TypeName == "float", "Invalid uniform type!");
-	glUniform1f(m_uniforms[name].Location, val);
+	HEAVY_ASSERTE(Uniforms[name].TypeName == "float", "Invalid uniform type!");
+	glUniform1f(Uniforms[name].Location, val);
 }
 
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String & name, float val1, float val2)
 {
-	HEAVY_ASSERTE(m_uniforms[name].TypeName == "vec2", "Invalid uniform type!");
-	glUniform2f(m_uniforms[name].Location, val1, val2);
+	HEAVY_ASSERTE(Uniforms[name].TypeName == "vec2", "Invalid uniform type!");
+	glUniform2f(Uniforms[name].Location, val1, val2);
 }
 
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, const Vector& val)
 {
-	HEAVY_ASSERTE(m_uniforms[name].TypeName == "vec4", "Invalid uniform type!");
-	glUniform4f(m_uniforms[name].Location, val.X, val.Y, val.Z, val.W);
+	HEAVY_ASSERTE(Uniforms[name].TypeName == "vec4", "Invalid uniform type!");
+	glUniform4f(Uniforms[name].Location, val.X, val.Y, val.Z, val.W);
 }
 
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, const Color& val)
 {
-	HEAVY_ASSERTE(m_uniforms[name].TypeName == "vec4", "Invalid uniform type!");
-	glUniform4f(m_uniforms[name].Location, val.R, val.G, val.B, val.A);
+	HEAVY_ASSERTE(Uniforms[name].TypeName == "vec4", "Invalid uniform type!");
+	glUniform4f(Uniforms[name].Location, val.R, val.G, val.B, val.A);
 }
 
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, const Matrix& val)
 {
-	HEAVY_ASSERTE(m_uniforms[name].TypeName == "mat4", "Invalid uniform type!");
-	glUniformMatrix4fv(m_uniforms[name].Location, 1, GL_FALSE, val.GetTransposed().GetDataPtr());
+	HEAVY_ASSERTE(Uniforms[name].TypeName == "mat4", "Invalid uniform type!");
+	glUniformMatrix4fv(Uniforms[name].Location, 1, GL_FALSE, val.GetTransposed().GetDataPtr());
 }
 
 //------------------------------------------------------------------------------
@@ -196,20 +194,45 @@ GLenum GLShaderProgram::GetEnumFromShaderUnitType(eShaderUnitType type)
 }
 
 //------------------------------------------------------------------------------
-void Poly::GLShaderProgram::AnalyzeShaderCode(const String& code)
+void Poly::GLShaderProgram::AnalyzeShaderCode(eShaderUnitType type)
 {
-	std::regex uniformRegex(R"(uniform\s+(\w+)\s+(\w+)\s*;)", std::regex::ECMAScript);
+	static const std::regex uniformRegex(R"(uniform\s+(\w+)\s+(\w+)\s*;)", std::regex::ECMAScript);
+	static const std::regex outRegex(R"(out\s+(\w+)\s+(\w+)\s*;)", std::regex::ECMAScript);
+	//TODO parse attributes for sanity checks
 
-	auto regex_begin = std::cregex_iterator(code.GetCStr(), code.GetCStr() + code.GetLength(), uniformRegex);
-	auto regex_end = std::cregex_iterator();
+	if (ShaderCode[type].GetLength() == 0)
+		return;
 
-	for (std::cregex_iterator i = regex_begin; i != regex_end; ++i)
+	// Parse uniforms
 	{
-		const std::cmatch& match = *i;
-		ASSERTE(match.size() == 3, "Invalid regex result when parsing uniforms!");
-		gConsole.LogDebug("Uniform {} of type {} found.", match[2].str(), match[1].str());
+		auto regex_begin = std::cregex_iterator(ShaderCode[type].GetCStr(), ShaderCode[type].GetCStr() + ShaderCode[type].GetLength(), uniformRegex);
+		auto regex_end = std::cregex_iterator();
 
-		//TODO remove unnecessary string copy
-		RegisterUniform(String(match[1].str().c_str()), String(match[2].str().c_str()));
+		for (std::cregex_iterator i = regex_begin; i != regex_end; ++i)
+		{
+			const std::cmatch& match = *i;
+			ASSERTE(match.size() == 3, "Invalid regex result when parsing uniforms!");
+			gConsole.LogDebug("Uniform {} of type {} found.", match[2].str(), match[1].str());
+
+			//TODO remove unnecessary string copy
+			RegisterUniform(String(match[1].str().c_str()), String(match[2].str().c_str()));
+		}
+	}
+
+	// Parse outputs
+	if (type == eShaderUnitType::FRAGMENT)
+	{
+		auto regex_begin = std::cregex_iterator(ShaderCode[type].GetCStr(), ShaderCode[type].GetCStr() + ShaderCode[type].GetLength(), outRegex);
+		auto regex_end = std::cregex_iterator();
+
+		for (std::cregex_iterator i = regex_begin; i != regex_end; ++i)
+		{
+			const std::cmatch& match = *i;
+			ASSERTE(match.size() == 3, "Invalid regex result when parsing outs!");
+			gConsole.LogDebug("Out {} of type {} found.", match[2].str(), match[1].str());
+
+			//TODO remove unnecessary string copy
+			Outputs.PushBack(OutputInfo(String(match[1].str().c_str()), String(match[2].str().c_str())));
+		}
 	}
 }

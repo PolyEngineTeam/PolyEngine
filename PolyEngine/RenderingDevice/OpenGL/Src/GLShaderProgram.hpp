@@ -20,22 +20,28 @@ namespace Poly {
 		struct UniformInfo
 		{
 			UniformInfo() {}
-			UniformInfo(const String& name, int location) : TypeName(name), Location(location) {}
+			UniformInfo(const String& type, int location) : TypeName(type), Location(location) {}
 
 			String TypeName;
 			int Location = 0;
+		};
+
+		struct OutputInfo
+		{
+			OutputInfo() {}
+			OutputInfo(const String& type, const String& name) : Name(name), TypeName(type) {}
+
+			String Name;
+			String TypeName;
 		};
 	public:
 		GLShaderProgram(const String& vertex, const String& fragment);
 		GLShaderProgram(const String& vertex, const String& geometry, const String& fragment);
 
 		void BindProgram() const;
-		void CompileProgram();
-		void Validate();
 
 		size_t GetProgramHandle() const;
 
-		
 		void SetUniform(const String& name, int val);
 		void SetUniform(const String& name, float val);
 		void SetUniform(const String& name, float val1, float val2);
@@ -43,16 +49,21 @@ namespace Poly {
 		void SetUniform(const String& name, const Color& val);
 		void SetUniform(const String& name, const Matrix& val);
 
+		const Dynarray<OutputInfo>& GetOutputsInfo() const { return Outputs; }
+		const std::map<String, UniformInfo>& GetUniformsInfo() const { return Uniforms; }
 	private:
+		void CompileProgram();
+		void Validate();
 		void LoadShader(eShaderUnitType type, const String &shaderName);
 
 		static GLenum GetEnumFromShaderUnitType(eShaderUnitType type);
 
 		void RegisterUniform(const String& type, const String& name);
-		void AnalyzeShaderCode(const String &code);
+		void AnalyzeShaderCode(eShaderUnitType type);
 
-		std::map<String, UniformInfo> m_uniforms;
-		GLuint m_program;
+		std::map<String, UniformInfo> Uniforms;
+		Dynarray<OutputInfo> Outputs;
+		GLuint ProgramHandle;
 		EnumArray<String, eShaderUnitType> ShaderCode;
 	};
 }
