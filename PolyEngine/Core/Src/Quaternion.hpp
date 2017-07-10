@@ -55,7 +55,7 @@ namespace Poly {
 
 		/// <summary>Returns square length of the quaternion.</summary>
 		/// <returns>Square length of the quaternion.</returns>
-		float Length2() const;
+		float LengthSquared() const;
 
 		/// <summary>Conjugates the quaternion (inverses the rotation).</summary>
 		/// <returns>Reference to itself.</returns>
