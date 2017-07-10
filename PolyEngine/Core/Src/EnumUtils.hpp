@@ -239,8 +239,16 @@ namespace Poly {
 	}
 }
 
+#if defined(__GNUC__) 
+#define REGISTER_ENUM_NAMES(type, ...)                                                    \
+	template<> struct < ::Poly >::Impl::EnumInfo<type> {                                                    \
+		static < ::Poly >::Impl::EnumInfo<type>& Get() { static ::Poly::Impl::EnumInfo<type> instance; return instance; } \
+		const < ::Poly >::EnumArray<const char*, type> Names = {__VA_ARGS__};                         \
+	};
+#else
 #define REGISTER_ENUM_NAMES(type, ...)                                                    \
 	template<> struct ::Poly::Impl::EnumInfo<type> {                                                    \
 		static ::Poly::Impl::EnumInfo<type>& Get() { static ::Poly::Impl::EnumInfo<type> instance; return instance; } \
 		const ::Poly::EnumArray<const char*, type> Names = {__VA_ARGS__};                         \
 	};
+#endif
