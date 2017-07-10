@@ -39,5 +39,5 @@ void FPSSystem::FPSUpdatePhase(World* world)
 
 float FPSSystem::GetFPS(World * world)
 {
-	return world->GetWorldComponent<DebugWorldComponent>()->FPSData.FPS;
+	return (float)world->GetWorldComponent<DebugWorldComponent>()->FPSData.FPS;
 }

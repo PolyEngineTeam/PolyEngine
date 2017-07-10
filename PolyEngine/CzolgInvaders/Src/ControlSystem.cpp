@@ -33,7 +33,7 @@ void ControlSystem::ControlSystemPhase(World* world)
 		{
 			move.Normalize();
 			move *= player->GetMovementSpeed();
-			move *= deltaTime;
+			move *= (float)deltaTime;
 			TransformComponent* player_transform = player->GetSibling<TransformComponent>();
 			Vector prev_location = player_transform->GetLocalTranslation();
 			if (Abs(prev_location.X + move.X) <= player->GetMaxAbsXPosition())
@@ -59,7 +59,7 @@ void ControlSystem::ControlSystemPhase(World* world)
 			tank->MovedDistance = 0;
 		}
 
-		tank->MovedDistance += std::fabs(Invaders::MovementSystem::GetLinearVelocity(world, transform->GetOwnerID()).X * deltaTime);
+		tank->MovedDistance += std::fabs(Invaders::MovementSystem::GetLinearVelocity(world, transform->GetOwnerID()).X * (float)deltaTime);
 		
 	}
 	
@@ -71,10 +71,10 @@ void ControlSystem::ControlSystemPhase(World* world)
  
 		if (tank->NextRotTime < time)
 		{
-			tank->NextRotTime = time + 5.0f;
+			tank->NextRotTime = (float)time + 5.0f;
 			tank->Degree *= -1;
 		}
-		Quaternion rotaton(Vector::UNIT_Y, tank->Degree * deltaTime);
+		Quaternion rotaton(Vector::UNIT_Y, tank->Degree * (float)deltaTime);
 		rotaton *= transformTurret->GetLocalRotation();
 		transformTurret->SetLocalRotation(rotaton);
 
@@ -88,7 +88,7 @@ void ControlSystem::ControlSystemPhase(World* world)
 		{
 			Vector move = bullet->GetDirection();
 			move *= bullet->GetMovementSpeed();
-			move *= TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
+			move *= (float)TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
 			transform->SetLocalTranslation(transform->GetLocalTranslation() + move);
 			bullet->GetCollisionBox().SetPosition(transform->GetLocalTranslation() + move);
 		}

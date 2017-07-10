@@ -32,7 +32,7 @@ void TestGame::Init()
 			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(Engine->GetWorld(), ent);
 			DeferredTaskSystem::AddComponent<Poly::MeshRenderingComponent>(Engine->GetWorld(), ent, (const char*)"model-tank/tank.fbx");
 			Poly::TransformComponent* entTransform = Engine->GetWorld()->GetComponent<Poly::TransformComponent>(ent);
-			entTransform->SetLocalTranslation(Vector(i * 2, 0, j * 5));
+			entTransform->SetLocalTranslation(Vector(i * 2.f, 0.f, j * 5.f));
 			GameEntities.PushBack(ent);
 		}
 	}

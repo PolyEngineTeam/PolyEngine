@@ -53,7 +53,7 @@ GLTextureDeviceProxy::GLTextureDeviceProxy(size_t width, size_t height, eTexture
 	}
 
 	glBindTexture(GL_TEXTURE_2D, TextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GetGLInternalFormat(Usage), Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, GetGLInternalFormat(Usage), (GLsizei)Width, (GLsizei)Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
 	if (Usage == eTextureUsageType::FONT)
 	{
@@ -91,7 +91,7 @@ void GLTextureDeviceProxy::SetContent(eTextureDataFormat format, const unsigned 
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, TextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GetGLInternalFormat(Usage), Width, Height, 0, GetGLDataFormat(format), GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GetGLInternalFormat(Usage), (GLsizei)Width, (GLsizei)Height, 0, GetGLDataFormat(format), GL_UNSIGNED_BYTE, data);
 
 	if (Usage != eTextureUsageType::FONT)
 	{
@@ -111,7 +111,7 @@ void GLTextureDeviceProxy::SetSubContent(size_t width, size_t height,
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, TextureID);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, offsetX, offsetY, width, height, GetGLDataFormat(format), GL_UNSIGNED_BYTE, data);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, (GLint)offsetX, (GLint)offsetY, (GLsizei)width, (GLsizei)height, GetGLDataFormat(format), GL_UNSIGNED_BYTE, data);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	CHECK_GL_ERR();
 }

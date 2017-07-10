@@ -22,7 +22,7 @@ void GLRenderingDevice::RenderWorld(World * world)
 {
 	// Prepare frame buffer
 	glDepthMask(GL_TRUE);
-	glClearColor(0.2, 0.2, 0.2, 1);
+	glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
@@ -99,7 +99,7 @@ void GLRenderingDevice::RenderWorld(World * world)
 				{
 					const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 					glBindVertexArray(meshProxy->VAO);
-					glDrawElements(GL_TRIANGLES, subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
+					glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 					glBindVertexArray(0);
 				}
 			}
@@ -133,7 +133,7 @@ void GLRenderingDevice::RenderWorld(World * world)
 			glBindTexture(GL_TEXTURE_2D, static_cast<const GLTextureDeviceProxy*>(text.GetFontTextureProxy())->TextureID);
 
 			// Render glyph texture over quad
-			glDrawArrays(GL_TRIANGLES, 0, 6 * textFieldBuffer->Size);
+			glDrawArrays(GL_TRIANGLES, 0, (GLsizei)(6 * textFieldBuffer->Size));
 
 			glBindTexture(GL_TEXTURE_2D, 0);
 			glBindVertexArray(0);
