@@ -45,13 +45,13 @@ namespace Poly
 
 		void Resize(const ScreenSize& size) override;
 		const ScreenSize& GetScreenSize() const override { return ScreenDim; }
-	
+
 		void RenderWorld(World* world) override;
 
 		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) override;
 		std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() override;
 		std::unique_ptr<IMeshDeviceProxy> CreateMesh() override;
-	
+
 	private:
 		void InitPrograms();
 		virtual GLShaderProgram& GetProgram(eShaderProgramType type) { return *ShaderPrograms[type]; }
