@@ -13,6 +13,7 @@ set(POLYTESTS_SRCS
 	Src/QueueTests.cpp
 	Src/VectorTests.cpp
 	Src/Vector2fTests.cpp
+	Src/Vector2iTests.cpp
 )
 
 if(NOT TARGET Catch) #TODO(vuko): falling back to bundled Catch after failing the download doesn't seem to be possible... or is it?
@@ -86,6 +87,10 @@ add_test(NAME "Vector2f-comparison-operators"                 COMMAND polytests 
 add_test(NAME "Vector2f-Vector2f-operators"                   COMMAND polytests "Vector2f-Vector2f operators")
 add_test(NAME "Vector2f-scalar-operators"                     COMMAND polytests "Vector2f-scalar operators")
 add_test(NAME "Vector2f-algebraic-methods"                    COMMAND polytests "Vector2f algebraic methods")
+add_test(NAME "Vector2i-comparison-operators"                 COMMAND polytests "Vector2i comparison operators")
+add_test(NAME "Vector2i-Vector2i-operators"                   COMMAND polytests "Vector2i-Vector2i operators")
+add_test(NAME "Vector2i-scalar-operators"                     COMMAND polytests "Vector2i-scalar operators")
+add_test(NAME "Vector2i-algebraic-methods"                    COMMAND polytests "Vector2i algebraic methods")
 add_test(NAME "Floating-point-equality-comparisons"           COMMAND polytests "Floating-point equality comparisons")
 add_test(NAME "TransformComponent-with-no-parent"             COMMAND polytests "TransformComponent with no parent")
 add_test(NAME "TransformComponent-with-parent"                COMMAND polytests "TransformComponent with parent")
