@@ -81,7 +81,8 @@ void InvadersGame::Init()
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(&Engine->GetWorld(), player);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(&Engine->GetWorld(), player, "Models/tank2/bradle.3ds");
 	DeferredTaskSystem::AddComponentImmediate<PlayerControllerComponent>(&Engine->GetWorld(), player, 10.0f);
-	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(&Engine->GetWorld(), player, "ACDC_-_Back_In_Black-sample.ogg");
+	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(&Engine->GetWorld(), player, "Tank.ogg");
+	//DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(&Engine->GetWorld(), player, "ACDC_-_Back_In_Black-sample.ogg");
 	//DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(&Engine->GetWorld(), player, "Wilhelm_Scream.ogg");
 
 	SoundSystem::PlayEmitter(&Engine->GetWorld(), player);

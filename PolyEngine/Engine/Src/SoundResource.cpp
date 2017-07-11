@@ -16,7 +16,7 @@ SoundResource::SoundResource(const String& path)
 	// Declarations and loading file to buffer.
 
 	BinaryBuffer* data = LoadBinaryFile(path);
-	BinaryBuffer* dupa = new BinaryBuffer(0);
+	Dynarray<char> rawData;
 
 	ogg_sync_state   syncState;		/* sync and verify incoming physical bitstream */
 	ogg_stream_state streamState;	/* take physical pages, weld into a logicalstream of packets */
@@ -130,6 +130,8 @@ SoundResource::SoundResource(const String& path)
 			gConsole.LogDebug("Encoded by: {}", vorbisComment.vendor);
 		}
 
+		gConsole.LogDebug("blocksize: {}", vorbis_info_blocksize(&vorbisInfo, 1));
+
 		// vorbis headers checked; time to initialize "vorbis data -> PCM" decoder
 
 		convsize = 4096 / vorbisInfo.channels;
@@ -198,7 +200,15 @@ SoundResource::SoundResource(const String& path)
 									if (clipflag)
 										gConsole.LogDebug("Clipping in frame {}", (long)(vorbisDSPState.sequence));
 
-									dupa->AddData(convbuffer, 2 * vorbisInfo.channels * bout);
+									const size_t newBlocksize = 2 * vorbisInfo.channels * bout;
+									const size_t oldDataSize = rawData.GetSize();
+									if(oldDataSize + newBlocksize > rawData.GetCapacity())
+									{
+										const size_t newCap = max(rawData.GetCapacity(), newBlocksize);
+										rawData.Reserve(newCap * 2);
+									}
+									rawData.Resize(oldDataSize + newBlocksize);
+									memcpy(rawData.GetData() + oldDataSize, convbuffer, newBlocksize);
 
 									vorbis_synthesis_read(&vorbisDSPState, bout); 
 								}            
@@ -232,7 +242,7 @@ SoundResource::SoundResource(const String& path)
 		else gConsole.LogDebug("Error: Corrupt header during playback initialization.");
 
 		// TODO: loading chained sounds;
-		alBufferData(BufferID, AL_FORMAT_STEREO16, dupa->GetBegin(), dupa->GetSize(), vorbisInfo.rate);
+		alBufferData(BufferID, AL_FORMAT_STEREO16, rawData.GetData(), rawData.GetSize(), vorbisInfo.rate);
 
 		ogg_stream_clear(&streamState);
 		vorbis_comment_clear(&vorbisComment);
@@ -243,7 +253,6 @@ SoundResource::SoundResource(const String& path)
 
 	ogg_sync_clear(&syncState);
 
-	delete dupa;
 	delete data;
 }
 

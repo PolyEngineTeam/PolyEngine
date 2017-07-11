@@ -69,6 +69,9 @@
     <Filter Include="Source Files\Transform">
       <UniqueIdentifier>{6817a596-ae56-4935-a63c-29ba8139d6f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Sound\Loaders">
+      <UniqueIdentifier>{725b4a09-2c76-47ae-ac48-dbbe8dbae207}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
