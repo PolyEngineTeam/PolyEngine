@@ -9,6 +9,7 @@ set(POLYCORE_SRCS
 	Src/SimdMath.cpp
 	Src/UniqueID.cpp
 	Src/Vector.cpp
+	Src/Vector2f.cpp
 )
 set(POLYCORE_INCLUDE Src)
 set(POLYCORE_H_FOR_IDE
@@ -35,6 +36,7 @@ set(POLYCORE_H_FOR_IDE
 	Src/String.hpp
 	Src/UniqueID.hpp
 	Src/Vector.hpp
+	Src/Vector2f.hpp
 )
 
 add_library(polycore SHARED ${POLYCORE_SRCS} ${POLYCORE_H_FOR_IDE})
