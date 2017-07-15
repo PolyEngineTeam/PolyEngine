@@ -12,6 +12,9 @@
     <Filter Include="Source Files\Impl">
       <UniqueIdentifier>{904335d2-5c41-4c10-96f4-58692e8e0e5c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\RenderingPhases">
+      <UniqueIdentifier>{826d17ac-3499-45fb-b848-b8f449afa1e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\GLRenderingDevice.hpp">
@@ -32,6 +35,18 @@
     <ClInclude Include="Src\GLShaderProgram.hpp">
       <Filter>Source Files\Impl</Filter>
     </ClInclude>
+    <ClInclude Include="Src\RenderingPassBase.hpp">
+      <Filter>Source Files\RenderingPhases</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BlinnPhongRenderingPass.hpp">
+      <Filter>Source Files\RenderingPhases</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Text2DRenderingPass.hpp">
+      <Filter>Source Files\RenderingPhases</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DebugNormalsRenderingPass.hpp">
+      <Filter>Source Files\RenderingPhases</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\GLRenderingDevice.cpp">
@@ -51,6 +66,18 @@
     </ClCompile>
     <ClCompile Include="Src\GLShaderProgram.cpp">
       <Filter>Source Files\Impl</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\RenderingPassBase.cpp">
+      <Filter>Source Files\RenderingPhases</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BlinnPhongRenderingPass.cpp">
+      <Filter>Source Files\RenderingPhases</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Text2DRenderingPass.cpp">
+      <Filter>Source Files\RenderingPhases</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DebugNormalsRenderingPass.cpp">
+      <Filter>Source Files\RenderingPhases</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

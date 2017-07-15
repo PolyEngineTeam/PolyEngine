@@ -16,6 +16,7 @@
 
 #include "GLShaderProgram.hpp"
 
+#include "RenderingPassBase.hpp"
 
 namespace Poly
 {
@@ -24,9 +25,9 @@ namespace Poly
 	class DEVICE_DLLEXPORT GLRenderingDevice : public IRenderingDevice
 	{
 	private:
-		enum class eShaderProgramType
+		enum class eRootRenderPassType
 		{
-			TEST,
+			BLINN_PHONG,
 			DEBUG_NORMALS,
 			TEXT_2D,
 			_COUNT
@@ -43,6 +44,9 @@ namespace Poly
 
 		~GLRenderingDevice();
 
+		GLRenderingDevice(const GLRenderingDevice&) = delete;
+		void operator=(const GLRenderingDevice&) = delete;
+
 		void Resize(const ScreenSize& size) override;
 		const ScreenSize& GetScreenSize() const override { return ScreenDim; }
 
@@ -54,7 +58,6 @@ namespace Poly
 
 	private:
 		void InitPrograms();
-		virtual GLShaderProgram& GetProgram(eShaderProgramType type) { return *ShaderPrograms[type]; }
 		void EndFrame();
 
 #if defined(_WIN32)
@@ -69,8 +72,12 @@ namespace Poly
 #error "Unsupported platform :("
 #endif
 
+		Dynarray<std::unique_ptr<RenderingTargetBase>> RenderingTargets;
+		Dynarray<std::unique_ptr<RenderingPassBase>> RenderingPasses;
+
+		EnumArray<RenderingPassBase*, eRootRenderPassType> RootRenderingPasses;
+
 		ScreenSize ScreenDim;
-		EnumArray<GLShaderProgram*, eShaderProgramType> ShaderPrograms;
 	};
 }
 

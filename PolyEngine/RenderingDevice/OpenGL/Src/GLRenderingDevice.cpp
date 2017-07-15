@@ -7,6 +7,10 @@
 #include "GLTextFieldBufferDeviceProxy.hpp"
 #include "GLMeshDeviceProxy.hpp"
 
+#include "BlinnPhongRenderingPass.hpp"
+#include "Text2DRenderingPass.hpp"
+#include "DebugNormalsRenderingPass.hpp"
+
 using namespace Poly;
 
 #if defined(_WIN32)
@@ -207,9 +211,23 @@ void GLRenderingDevice::Resize(const ScreenSize & size)
 void GLRenderingDevice::InitPrograms()
 {
 	// Init programs
-	ShaderPrograms[eShaderProgramType::TEST] = new GLShaderProgram("test.vsh", "test.fsh");
-	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS] = new GLShaderProgram("debugVertSh.shader", "debugGeomSh.shader", "debugFragSh.shader");
-	ShaderPrograms[eShaderProgramType::TEXT_2D] = new GLShaderProgram("Shaders/text2DVert.shader", "Shaders/text2DFrag.shader");
+	ScreenBufferRenderingTarget* screen = new ScreenBufferRenderingTarget();
+	RenderingTargets.PushBack(std::unique_ptr<RenderingTargetBase>(screen));
+	
+	BlinnPhongRenderingPass* pass = new BlinnPhongRenderingPass();
+	pass->BindOutput("color", screen);
+	RootRenderingPasses[eRootRenderPassType::BLINN_PHONG] = pass;
+	RenderingPasses.PushBack(std::unique_ptr<RenderingPassBase>(pass));
+
+	DebugNormalsRenderingPass* pass2 = new DebugNormalsRenderingPass();
+	pass2->BindOutput("color", screen);
+	RootRenderingPasses[eRootRenderPassType::DEBUG_NORMALS] = pass2;
+	RenderingPasses.PushBack(std::unique_ptr<RenderingPassBase>(pass2));
+
+	Text2DRenderingPass* pass3 = new Text2DRenderingPass();
+	pass3->BindOutput("color", screen);
+	RootRenderingPasses[eRootRenderPassType::TEXT_2D] = pass3;
+	RenderingPasses.PushBack(std::unique_ptr<RenderingPassBase>(pass3));
 }
 
 //------------------------------------------------------------------------------
