@@ -1,19 +1,41 @@
 #pragma once
 
-#include "Defines.hpp"
 #include "Dynarray.hpp"
+#include "Defines.hpp"
 
 namespace Poly {
 
+	size_t StrLen(const char* str);
 
-	class String : BaseObject<> {
+	class CORE_DLLEXPORT String : BaseObject<> {
 	public:
-		String();
+		String() {};
 		String(const char* data);
+		String(const std::string& data);
 		String(const String& rhs);
 		String(String&& rhs);
 
-		static String& From(int a);
+		static String* From(int var);
+		static String* From(float var);
+		static String* From(double var);
+		static String* From(char var); //??
+		static String* From(const char* var);
+		static String* From(const std::string& var);
+
+		bool Contains(const String& var) const;
+		String& ToLower();
+		String& ToUpper();
+		bool IsEmpty() const;
+		String& Replace(char a, char b) const;
+		String& Replace(const String& a, const String& b) const;
+		String* Split(String& splitBy) const;
+		static String& Join(const String* vars, size_t size, const String& separator);
+		bool StartsWith(char var) const;
+		bool EndsWith(char var) const;
+		String& Substring(int end) const;
+		String& Substring(int start, int end) const;
+		String& GetTrimmed() const;
+
 
 		String& operator=(const String& rhs);
 		String& operator=(String&& rhs);

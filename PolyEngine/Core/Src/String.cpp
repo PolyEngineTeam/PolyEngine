@@ -1,21 +1,16 @@
+#include"CorePCH.hpp"
+
 #include"String.hpp"
 
 using namespace Poly;
 
-size_t StrLen(const char* str) {
+size_t Poly::StrLen(const char* str) {
 	size_t len = 0;
 	while (str[len] != 0)
 		++len;
 	return len;
 }
 
-String& String::From(int a) {
-	return String(std::to_string(a).c_str());
-}
-
-String::String() {
-	Data.Resize(1); Data[0] = 0;
-}
 
 String::String(const char* data) {
 	size_t length = StrLen(data);
@@ -29,9 +24,33 @@ String::String(const String& rhs) {
 }
 
 String::String(String&& rhs) {
-	*this = rhs;
+	*this = String(std::move(rhs));
 }
 
+
+String* String::From(int var) {
+	return new String(std::to_string(var).c_str());
+}
+
+String* String::From(float var) {
+	return new String(std::to_string(var).c_str());
+}
+
+String* String::From(double var) {
+	return new String(std::to_string(var).c_str());
+}
+
+String* String::From(char var) {
+	return From(std::string(1, var));
+}
+
+String* String::From(const char* var) {
+	return new String(var);
+}
+
+String* String::From(const std::string& var) {
+	return new String(var.c_str());
+}
 
 
 String& String::operator=(const String& rhs) {
@@ -77,12 +96,11 @@ String String::operator+(const String& rhs) const {
 	String ret;
 	size_t totalLength = GetLength() + rhs.GetLength();
 	ret.Data.Resize(totalLength + 1);
-	memcpy(ret.Data.GetData(), Data.GetData(), sizeof(T) * GetLength());
-	memcpy(ret.Data.GetData() + GetLength(), rhs.Data.GetData(), sizeof(T) * rhs.GetLength());
+	memcpy(ret.Data.GetData(), Data.GetData(), sizeof(char) * GetLength());
+	memcpy(ret.Data.GetData() + GetLength(), rhs.Data.GetData(), sizeof(char) * rhs.GetLength());
 	ret.Data[totalLength] = 0;
 	return ret;
 }
-
 
 const char& String::operator[](int idx) const { 
 	HEAVY_ASSERTE(idx <= GetLength(), "Index out of bounds!"); 
