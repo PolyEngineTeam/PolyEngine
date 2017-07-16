@@ -28,5 +28,28 @@ TEST_CASE("String.From", "[String]") {
 	String sCstr = String("aSdf_ 15");
 	String* sCstr2 = String::From("aSdf_ 15");
 	REQUIRE(sCstr == *sCstr2);
+}
 
+TEST_CASE("String operations", "[STRING]") {
+	String test = String("@ALZ[allz'{");
+
+	String lower = String("@alz[allz'{");
+	String upper = String("@ALZ[ALLZ'{");
+	String* lowerTest = test.ToLower();
+	String* upperTest = test.ToUpper();
+	REQUIRE(lower == *lowerTest);
+	REQUIRE(upper == *upperTest);
+
+	String empty = String("");
+	REQUIRE(test.IsEmpty());
+	REQUIRE(!empty.IsEmpty());
+
+	String replace = String("@ALZ[aWWzD{");
+	String* replaced = test.Replace('l', 'W')->Replace('\'', 'D');
+	REQUIRE(replace == *replaced);
+
+	REQUIRE(test.StartsWith('@'));
+	REQUIRE(!test.StartsWith('!'));
+	REQUIRE(test.EndsWith('{'));
+	REQUIRE(!test.EndsWith('!'));
 }

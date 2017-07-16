@@ -53,6 +53,83 @@ String* String::From(const std::string& var) {
 }
 
 
+bool String::Contains(const String& var) const {
+	//TODO Substing
+	return false;
+}
+
+String* String::ToLower() const {
+	Dynarray<char> d = Dynarray<char>(this->Data.GetSize());
+	for (int i = 0; i < this->Data.GetSize(); i++) {
+		char c = this->Data[i];
+		if (c > 64 && c < 91) {
+			c += 32;
+		}
+		d.PushBack(c);
+	}
+	return new String(d.GetData());
+}
+
+String* String::ToUpper() const {
+	Dynarray<char> d = Dynarray<char>(this->Data.GetSize());
+	for (int i = 0; i < this->Data.GetSize(); i++) {
+		char c = this->Data[i];
+		if (c > 96 && c < 123) {
+			c -= 32;
+		}
+		d.PushBack(c);
+	}
+	return new String(d.GetData());
+}
+
+bool String::IsEmpty() const {
+	return (bool)GetLength();
+}
+
+String* String::Replace(char a, char b) const {
+	Dynarray<char> d = Dynarray<char>(this->Data.GetSize());
+	for (int i = 0; i < this->Data.GetSize(); i++) {
+		char c = this->Data[i];
+		if (c == a) {
+			c = b;
+		}
+		d.PushBack(c);
+	}
+	return new String(d.GetData());
+}
+
+String* String::Replace(const String& a, const String& b) const {
+	//TODO substring
+	return nullptr;
+}
+
+String* String::Split(String& splitBy) const {
+	//TODO substring
+	return nullptr;
+}
+
+String* String::Join(const String& vars, size_t size, const String& separator) {
+	//TODO stringbuilder
+	return nullptr;
+}
+
+bool String::StartsWith(char var) const {
+	return (Data[0] == var);
+}
+
+bool String::EndsWith(char var) const {
+	return (Data[Data.GetSize()-2] == var);
+}
+
+//TODO substrings
+
+
+String* String::GetTrimmed() const {
+	//TODO substrings
+	return nullptr;
+}
+
+
 String& String::operator=(const String& rhs) {
 	Data = rhs.Data;
 	return *this;

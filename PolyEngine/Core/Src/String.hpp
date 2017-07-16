@@ -23,18 +23,18 @@ namespace Poly {
 		static String* From(const std::string& var);
 
 		bool Contains(const String& var) const;
-		String& ToLower();
-		String& ToUpper();
+		String* ToLower() const;
+		String* ToUpper() const;
 		bool IsEmpty() const;
-		String& Replace(char a, char b) const;
-		String& Replace(const String& a, const String& b) const;
+		String* Replace(char a, char b) const;
+		String* Replace(const String& a, const String& b) const;
 		String* Split(String& splitBy) const;
-		static String& Join(const String* vars, size_t size, const String& separator);
+		static String* Join(const String& vars, size_t size, const String& separator);
 		bool StartsWith(char var) const;
 		bool EndsWith(char var) const;
 		String& Substring(int end) const;
 		String& Substring(int start, int end) const;
-		String& GetTrimmed() const;
+		String* GetTrimmed() const;
 
 
 		String& operator=(const String& rhs);
