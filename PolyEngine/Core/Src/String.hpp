@@ -27,7 +27,7 @@ namespace Poly {
 		bool IsEmpty() const;
 		String* Replace(char a, char b) const;
 		String* Replace(const String& a, const String& b) const;
-		String* Split(String& splitBy) const;
+		String* Split(char delimiter) const;
 		static String* Join(const String& vars, size_t size, const String& separator);
 		bool StartsWith(char var) const;
 		bool EndsWith(char var) const;
