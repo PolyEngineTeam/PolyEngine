@@ -52,4 +52,13 @@ TEST_CASE("String operations", "[STRING]") {
 	REQUIRE(!test.StartsWith('!'));
 	REQUIRE(test.EndsWith('{'));
 	REQUIRE(!test.EndsWith('!'));
+
+	String substring1 = String("@ALZ");
+	String substring2 = String("LZ[all");
+	REQUIRE(*(test.Substring(4)) == substring1);
+	REQUIRE(*(test.Substring(2, 8)) == substring2);
+
+	String trimTest = String(" \nsda\t \r");
+	String trimmed = String("sda");
+	REQUIRE(*(trimTest.GetTrimmed()) == trimmed);
 }

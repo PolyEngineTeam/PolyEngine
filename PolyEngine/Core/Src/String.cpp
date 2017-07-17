@@ -54,7 +54,7 @@ String* String::From(const std::string& var) {
 
 
 bool String::Contains(const String& var) const {
-	//TODO Substing
+	//TODO Dynarray.Contains(Dynarray<T> rhs)
 	return false;
 }
 
@@ -99,12 +99,12 @@ String* String::Replace(char a, char b) const {
 }
 
 String* String::Replace(const String& a, const String& b) const {
-	//TODO substring
+	//TODO Dynarray.Contains(Dynarray<T> rhs)
 	return nullptr;
 }
 
-String* String::Split(String& splitBy) const {
-	//TODO substring
+String* String::Split(char delimiter) const {
+	//TODO Dynarray.FindAllIdx(T rhs)
 	return nullptr;
 }
 
@@ -121,12 +121,34 @@ bool String::EndsWith(char var) const {
 	return (Data[Data.GetSize()-2] == var);
 }
 
-//TODO substrings
+String* String::Substring(int end) const {
+	return Substring(0, end);
+}
+
+String* String::Substring(int start, int end) const {
+	//TODO dynarray constructor?
+	Dynarray<char> d = Dynarray<char>(end - start + 1);
+	for (int i = start; i < end; i++) {
+		d.PushBack(this->Data[i]);
+	}
+	d.PushBack(0); //why is this needed? constructor should do that
+	return new String(d.GetData());
+}
 
 
 String* String::GetTrimmed() const {
 	//TODO substrings
-	return nullptr;
+	Dynarray<char> d = this->Data;
+	while (d[0] == ' ' || d[0] == '\n' || d[0] == '\r' || d[0] == '\t') { //convert whitespaces to String and use Contains(d[0])?
+		d.PopFront();
+	}
+	d.PopBack(); //pop 0
+	while (d[d.GetSize()-1] == ' ' || d[d.GetSize()-1] == '\n' || d[d.GetSize()-1] == '\r' || d[d.GetSize()-1] == '\t') {
+		d.PopBack();
+	}
+	d.PushBack(0);
+
+	return new String(d.GetData());
 }
 
 

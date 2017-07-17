@@ -11,7 +11,6 @@ namespace Poly {
 	public:
 		String() {};
 		String(const char* data);
-		String(const std::string& data);
 		String(const String& rhs);
 		String(String&& rhs);
 
@@ -32,8 +31,8 @@ namespace Poly {
 		static String* Join(const String& vars, size_t size, const String& separator);
 		bool StartsWith(char var) const;
 		bool EndsWith(char var) const;
-		String& Substring(int end) const;
-		String& Substring(int start, int end) const;
+		String* Substring(int end) const;
+		String* Substring(int start, int end) const;
 		String* GetTrimmed() const;
 
 
