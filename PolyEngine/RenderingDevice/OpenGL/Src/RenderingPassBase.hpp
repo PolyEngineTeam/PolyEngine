@@ -4,6 +4,7 @@
 #include <String.hpp>
 #include <map>
 #include "GLUtils.hpp"
+#include "GLShaderProgram.hpp"
 
 namespace Poly
 {
@@ -12,6 +13,7 @@ namespace Poly
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
 	class AABox;
+	enum class eInternalTextureUsageType;
 
 	//------------------------------------------------------------------------------
 	class RenderingPassBase : public BaseObject<>
@@ -23,26 +25,37 @@ namespace Poly
 		};
 
 	public:
-		virtual void Run(World* world, const CameraComponent* camera, const AABox& rect) = 0;
+		RenderingPassBase(const String& vertex, const String& fragment);
+		RenderingPassBase(const String& vertex, const String& geometry, const String& fragment);
+
+		void Run(World* world, const CameraComponent* camera, const AABox& rect);
+		void Finalize();
 
 		void BindOutput(const String& outputName, RenderingTargetBase* target);
 		void BindInput(const String& inputName, RenderingTargetBase* target);
-
 	protected:
+		virtual void OnRun(World* world, const CameraComponent* camera, const AABox& rect) = 0;
+
 		RenderingTargetBase* GetInputTarget(const String& name);
 		RenderingTargetBase* GetOutputTarget(const String& name);
 
+		const std::map<String, RenderingTargetBase*>& GetInputs() const { return Inputs; }
+		const std::map<String, RenderingTargetBase*>& GetOutputs() const { return Outputs; }
+		GLShaderProgram& GetProgram() { return Program; }
 	private:
 		std::map<String, RenderingTargetBase*> Inputs;
 		std::map<String, RenderingTargetBase*> Outputs;
+
+		GLShaderProgram Program;
+		GLuint FBO = 0;
 	};
 
 	//------------------------------------------------------------------------------
 	enum class eRenderingTargetType
 	{
-		TEXTURE,
+		TEXTURE_2D,
 		DEPTH,
-		FRAMEBUFFER,
+		SCREENBUFFER,
 		_COUNT
 	};
 
@@ -57,22 +70,24 @@ namespace Poly
 	};
 
 	//------------------------------------------------------------------------------
-	class TextureRenderingTarget : public RenderingTargetBase
+	class Texture2DRenderingTarget : public RenderingTargetBase
 	{
 	public:
-		TextureRenderingTarget(GLuint format);
+		Texture2DRenderingTarget(GLuint format);
+		Texture2DRenderingTarget(GLuint format, eInternalTextureUsageType internalUsage);
 
-		eRenderingTargetType GetType() const override { return eRenderingTargetType::TEXTURE; }
+		eRenderingTargetType GetType() const override { return eRenderingTargetType::TEXTURE_2D; }
 		void Resize(size_t width, size_t height) override;
 
 		GLuint GetTextureID();
 	private:
 		GLuint Format;
+		eInternalTextureUsageType InternalUsage = eInternalTextureUsageType(0);
 		std::unique_ptr<GLTextureDeviceProxy> Texture;
 	};
 
 	//------------------------------------------------------------------------------
-	class DepthRenderingTarget : public TextureRenderingTarget
+	class DepthRenderingTarget : public Texture2DRenderingTarget
 	{
 	public:
 		DepthRenderingTarget();
@@ -84,7 +99,7 @@ namespace Poly
 	class ScreenBufferRenderingTarget : public RenderingTargetBase
 	{
 	public:
-		eRenderingTargetType GetType() const override { return eRenderingTargetType::FRAMEBUFFER; }
+		eRenderingTargetType GetType() const override { return eRenderingTargetType::SCREENBUFFER; }
 	
 		void Bind();
 	};

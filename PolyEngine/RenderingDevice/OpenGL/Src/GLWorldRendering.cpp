@@ -45,6 +45,13 @@ void GLRenderingDevice::RenderWorld(World * world)
 		// Render meshes
 		RootRenderingPasses[eRootRenderPassType::BLINN_PHONG]->Run(world, kv.second.GetCamera(), rect);
 
+		//HACK calling postprocess in this way is ultra hack!
+		glDepthMask(GL_FALSE);
+		glDisable(GL_DEPTH_TEST);
+		RenderingPasses[1]->Run(world, kv.second.GetCamera(), rect);
+		glDepthMask(GL_TRUE);
+		glEnable(GL_DEPTH_TEST);
+
 		// Draw debug normals
 		if (gCoreConfig.DebugNormalsFlag)
 		{
@@ -53,7 +60,7 @@ void GLRenderingDevice::RenderWorld(World * world)
 
 		glDepthMask(GL_FALSE);
 		glDisable(GL_DEPTH_TEST);
-
+		
 		RootRenderingPasses[eRootRenderPassType::TEXT_2D]->Run(world, kv.second.GetCamera(), rect);
 	}
 

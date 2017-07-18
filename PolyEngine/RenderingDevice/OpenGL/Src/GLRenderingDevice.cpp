@@ -10,8 +10,11 @@
 #include "BlinnPhongRenderingPass.hpp"
 #include "Text2DRenderingPass.hpp"
 #include "DebugNormalsRenderingPass.hpp"
+#include "PostprocessRenderingPassBase.hpp"
 
 using namespace Poly;
+
+GLRenderingDevice* Poly::gRenderingDevice = nullptr;
 
 #if defined(_WIN32)
 
@@ -22,6 +25,9 @@ using namespace Poly;
 	GLRenderingDevice::GLRenderingDevice(HWND hwnd, RECT rect)
 		: hWnd(hwnd)
 	{
+		ASSERTE(gRenderingDevice == nullptr, "Creating device twice?");
+		gRenderingDevice = this;
+		
 		hDC = GetDC(hWnd);
 
 		ScreenDim.Width = rect.right - rect.left;
@@ -110,6 +116,7 @@ using namespace Poly;
 			wglDeleteContext(hRC);
 			hRC = nullptr;
 		}
+		gRenderingDevice = nullptr;
 	}
 
 	//------------------------------------------------------------------------------
@@ -127,6 +134,9 @@ using namespace Poly;
 	GLRenderingDevice::GLRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig)
 	 : display(display), window(window)
 	{
+		ASSERTE(gRenderingDevice == nullptr, "Creating device twice?");
+		gRenderingDevice = this;
+		
 		//create a temporary context to make GLEW happy, then immediately destroy it (it has wrong parameters)
 		{
 			GLXContext makeGlewHappy = glXCreateNewContext(this->display, fbConfig, GLX_RGBA_TYPE, /*share list*/ nullptr, /*direct*/ True);
@@ -190,6 +200,7 @@ using namespace Poly;
 			glXDestroyContext(this->display, this->context);
 			this->context = nullptr;
 		}
+		gRenderingDevice = nullptr;
 	}
 
 	//------------------------------------------------------------------------------
@@ -213,21 +224,37 @@ void GLRenderingDevice::InitPrograms()
 	// Init programs
 	ScreenBufferRenderingTarget* screen = new ScreenBufferRenderingTarget();
 	RenderingTargets.PushBack(std::unique_ptr<RenderingTargetBase>(screen));
+
+	Texture2DRenderingTarget* texture = new Texture2DRenderingTarget(GL_RGBA32F);
+	RenderingTargets.PushBack(std::unique_ptr<RenderingTargetBase>(texture));
+
+	DepthRenderingTarget* depth = new DepthRenderingTarget();
+	RenderingTargets.PushBack(std::unique_ptr<RenderingTargetBase>(depth));
 	
 	BlinnPhongRenderingPass* pass = new BlinnPhongRenderingPass();
-	pass->BindOutput("color", screen);
+	pass->BindOutput("color", texture);
+	pass->BindOutput("depth", depth);
 	RootRenderingPasses[eRootRenderPassType::BLINN_PHONG] = pass;
 	RenderingPasses.PushBack(std::unique_ptr<RenderingPassBase>(pass));
+	pass->Finalize();
+
+	PostprocessRenderingPassBase* postpass = new PostprocessRenderingPassBase("Shaders/colorShiftFrag.shader");
+	postpass->BindInput("i_color", texture);
+	postpass->BindOutput("color", screen);
+	RenderingPasses.PushBack(std::unique_ptr<RenderingPassBase>(postpass));
+	postpass->Finalize();
 
 	DebugNormalsRenderingPass* pass2 = new DebugNormalsRenderingPass();
 	pass2->BindOutput("color", screen);
 	RootRenderingPasses[eRootRenderPassType::DEBUG_NORMALS] = pass2;
 	RenderingPasses.PushBack(std::unique_ptr<RenderingPassBase>(pass2));
+	pass2->Finalize();
 
 	Text2DRenderingPass* pass3 = new Text2DRenderingPass();
 	pass3->BindOutput("color", screen);
 	RootRenderingPasses[eRootRenderPassType::TEXT_2D] = pass3;
 	RenderingPasses.PushBack(std::unique_ptr<RenderingPassBase>(pass3));
+	pass3->Finalize();
 }
 
 //------------------------------------------------------------------------------

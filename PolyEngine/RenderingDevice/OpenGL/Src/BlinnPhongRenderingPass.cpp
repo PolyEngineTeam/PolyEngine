@@ -11,14 +11,14 @@
 using namespace Poly;
 
 BlinnPhongRenderingPass::BlinnPhongRenderingPass()
-: Program("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
+: RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
 {
 
 }
 
-void BlinnPhongRenderingPass::Run(World* world, const CameraComponent* camera, const AABox& rect)
+void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera, const AABox& rect)
 {
-	Program.BindProgram();
+	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
@@ -28,7 +28,7 @@ void BlinnPhongRenderingPass::Run(World* world, const CameraComponent* camera, c
 
 		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
 		Matrix screenTransform = mvp * objTransform;
-		Program.SetUniform("uTransform", screenTransform);
+		GetProgram().SetUniform("uTransform", screenTransform);
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());

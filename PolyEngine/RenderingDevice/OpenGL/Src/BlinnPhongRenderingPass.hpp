@@ -16,9 +16,7 @@ namespace Poly
 	public:
 		BlinnPhongRenderingPass();
 
-		void Run(World* world, const CameraComponent* camera, const AABox& rect) override;
-
-	private:
-		GLShaderProgram Program;
+	protected:
+		void OnRun(World* world, const CameraComponent* camera, const AABox& rect) override;
 	};
 }

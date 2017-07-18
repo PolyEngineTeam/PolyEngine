@@ -26,12 +26,12 @@
 using namespace Poly;
 
 Text2DRenderingPass::Text2DRenderingPass()
-: Program("Shaders/text2DVert.shader", "Shaders/text2DFrag.shader")
+: RenderingPassBase("Shaders/text2DVert.shader", "Shaders/text2DFrag.shader")
 {
 
 }
 
-void Text2DRenderingPass::Run(World* world, const CameraComponent* camera, const AABox& rect)
+void Text2DRenderingPass::OnRun(World* world, const CameraComponent* camera, const AABox& rect)
 {
 	// Text drawing
 	glEnable(GL_BLEND);
@@ -41,15 +41,15 @@ void Text2DRenderingPass::Run(World* world, const CameraComponent* camera, const
 	
 	Matrix ortho;
 	ortho.SetOrthographic(rect.GetMin().Y * screen.Height, rect.GetMax().Y * screen.Height, rect.GetMin().X * screen.Width, rect.GetMax().X * screen.Width, -1, 1);
-	Program.BindProgram();
-	Program.SetUniform("u_projection", ortho);
+	GetProgram().BindProgram();
+	GetProgram().SetUniform("u_projection", ortho);
 
 	for (auto componentsTuple : world->IterateComponents<ScreenSpaceTextComponent>())
 	{
 		ScreenSpaceTextComponent* textCmp = std::get<ScreenSpaceTextComponent*>(componentsTuple);
 		Text2D& text = textCmp->GetText();
-		Program.SetUniform("u_textColor", text.GetFontColor());
-		Program.SetUniform("u_position", textCmp->GetScreenPosition());
+		GetProgram().SetUniform("u_textColor", text.GetFontColor());
+		GetProgram().SetUniform("u_position", textCmp->GetScreenPosition());
 		text.UpdateDeviceBuffers();
 
 		const GLTextFieldBufferDeviceProxy* textFieldBuffer = static_cast<const GLTextFieldBufferDeviceProxy*>(text.GetTextFieldBuffer());

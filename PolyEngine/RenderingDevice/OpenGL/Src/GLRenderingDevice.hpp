@@ -79,6 +79,8 @@ namespace Poly
 
 		ScreenSize ScreenDim;
 	};
+
+	extern GLRenderingDevice* gRenderingDevice;
 }
 
 extern "C"

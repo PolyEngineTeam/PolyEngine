@@ -11,18 +11,18 @@
 using namespace Poly;
 
 DebugNormalsRenderingPass::DebugNormalsRenderingPass()
-: Program("Shaders/debugNormalsVert.shader", "Shaders/debugNormalsGeom.shader", "Shaders/debugNormalsFrag.shader")
+: RenderingPassBase("Shaders/debugNormalsVert.shader", "Shaders/debugNormalsGeom.shader", "Shaders/debugNormalsFrag.shader")
 {
 
 }
 
-void DebugNormalsRenderingPass::Run(World* world, const CameraComponent* camera, const AABox& rect)
+void DebugNormalsRenderingPass::OnRun(World* world, const CameraComponent* camera, const AABox& rect)
 {
 	const Matrix& mModelView = camera->GetMVP();
 	const Matrix& mProjection = camera->GetProjectionMatrix();
 
-	Program.BindProgram();
-	Program.SetUniform("u_projection", mProjection);
+	GetProgram().BindProgram();
+	GetProgram().SetUniform("u_projection", mProjection);
 
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
 	{
@@ -32,8 +32,8 @@ void DebugNormalsRenderingPass::Run(World* world, const CameraComponent* camera,
 		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
 		Matrix MVPTransform = mModelView * objTransform;
 		Matrix mNormalMatrix = (mModelView * objTransform).GetInversed().GetTransposed();
-		Program.SetUniform("u_MVP", MVPTransform);
-		Program.SetUniform("u_normalMatrix4x4", mNormalMatrix);
+		GetProgram().SetUniform("u_MVP", MVPTransform);
+		GetProgram().SetUniform("u_normalMatrix4x4", mNormalMatrix);
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
