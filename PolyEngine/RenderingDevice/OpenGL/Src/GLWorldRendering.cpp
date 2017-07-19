@@ -22,8 +22,6 @@ void GLRenderingDevice::RenderWorld(World * world)
 {
 	// Prepare frame buffer
 	glDepthMask(GL_TRUE);
-	glClearColor(0.2f, 0.2f, 0.2f, 1.f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
 	// Choose correct rendering mode
@@ -45,21 +43,16 @@ void GLRenderingDevice::RenderWorld(World * world)
 		// Render meshes
 		RootRenderingPasses[eRootRenderPassType::BLINN_PHONG]->Run(world, kv.second.GetCamera(), rect);
 
-		//HACK calling postprocess in this way is ultra hack!
+		
 		glDepthMask(GL_FALSE);
 		glDisable(GL_DEPTH_TEST);
+
+		//HACK calling postprocess in this way is ultra hack!
 		RenderingPasses[1]->Run(world, kv.second.GetCamera(), rect);
-		glDepthMask(GL_TRUE);
-		glEnable(GL_DEPTH_TEST);
 
 		// Draw debug normals
 		if (gCoreConfig.DebugNormalsFlag)
-		{
 			RootRenderingPasses[eRootRenderPassType::DEBUG_NORMALS]->Run(world, kv.second.GetCamera(), rect);
-		}
-
-		glDepthMask(GL_FALSE);
-		glDisable(GL_DEPTH_TEST);
 		
 		RootRenderingPasses[eRootRenderPassType::TEXT_2D]->Run(world, kv.second.GetCamera(), rect);
 	}

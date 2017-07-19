@@ -33,6 +33,8 @@ namespace Poly
 
 		void BindOutput(const String& outputName, RenderingTargetBase* target);
 		void BindInput(const String& inputName, RenderingTargetBase* target);
+
+		void DebugDraw();
 	protected:
 		virtual void OnRun(World* world, const CameraComponent* camera, const AABox& rect) = 0;
 

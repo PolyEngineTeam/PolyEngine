@@ -36,6 +36,45 @@ void RenderingPassBase::BindInput(const String& inputName, RenderingTargetBase* 
 	}
 }
 
+void Poly::RenderingPassBase::DebugDraw()
+{
+	if (FBO > 0)
+	{
+		size_t attachmentsCount = 0;
+		for (auto& kv : GetOutputs())
+		{
+			if (kv.second->GetType() == eRenderingTargetType::TEXTURE_2D)
+				++attachmentsCount;
+		}
+
+		if (attachmentsCount == 0)
+			return;
+
+		size_t drawDivisor = max(3, attachmentsCount);
+		ScreenSize screenSize = gRenderingDevice->GetScreenSize();
+		size_t divH = screenSize.Height / drawDivisor;
+
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, FBO);
+
+		size_t count = 0;
+		for (auto& kv : GetOutputs())
+		{
+			RenderingTargetBase* target = kv.second;
+
+			if (target->GetType() == eRenderingTargetType::TEXTURE_2D)
+			{
+				glReadBuffer(GL_COLOR_ATTACHMENT0 + count);
+				glBlitFramebuffer(0, 0, screenSize.Width, screenSize.Height, 0, 
+					count * divH, screenSize.Width / drawDivisor, (count + 1) * divH, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+				++count;
+			}
+		}
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+		CHECK_GL_ERR();
+	}
+}
+
 //------------------------------------------------------------------------------
 Poly::RenderingPassBase::RenderingPassBase(const String& vertex, const String& fragment)
 	: Program(vertex, fragment)
@@ -54,6 +93,7 @@ void RenderingPassBase::Run(World* world, const CameraComponent* camera, const A
 	// Bind inputs
 	Program.BindProgram();
 	size_t samplerCount = 0;
+	GLuint tmp = 0;
 	for (auto& kv : GetInputs())
 	{
 		const String& name = kv.first;
@@ -68,6 +108,7 @@ void RenderingPassBase::Run(World* world, const CameraComponent* camera, const A
 			glActiveTexture(GL_TEXTURE0 + idx);
 			glBindTexture(GL_TEXTURE_2D, textureID);
 			Program.SetUniform(name, (int)idx);
+			tmp = textureID;
 			break;
 		}
 		case eRenderingTargetType::DEPTH:
@@ -81,6 +122,9 @@ void RenderingPassBase::Run(World* world, const CameraComponent* camera, const A
 	// bind outputs (by binding fbo)
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO);
 
+	if (FBO > 0) //HACK
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
 	// call run implementation
 	OnRun(world, camera, rect);
 }
@@ -95,7 +139,7 @@ void RenderingPassBase::Finalize()
 	ASSERTE(FBO == 0, "Calling finalize twice!");
 	glGenFramebuffers(1, &FBO);
 	ASSERTE(FBO > 0, "Failed to create FBO!");
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
 	bool foundDepth = false;
 	
@@ -113,7 +157,7 @@ void RenderingPassBase::Finalize()
 			size_t idx = Program.GetOutputsInfo().at(name).Index;
 			GLenum attachementIdx = GL_COLOR_ATTACHMENT0 + idx;
 			glBindTexture(GL_TEXTURE_2D, textureID);
-			glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, attachementIdx, GL_TEXTURE_2D, textureID, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, attachementIdx, GL_TEXTURE_2D, textureID, 0);
 			colorAttachements.PushBack(attachementIdx);
 			CHECK_FBO_STATUS();
 			break;
@@ -122,7 +166,7 @@ void RenderingPassBase::Finalize()
 		{
 			GLuint textureID = static_cast<DepthRenderingTarget*>(target)->GetTextureID();
 			glBindTexture(GL_TEXTURE_2D, textureID);
-			glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureID, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureID, 0);
 			foundDepth = true;
 			CHECK_FBO_STATUS();
 			break;
@@ -139,7 +183,7 @@ void RenderingPassBase::Finalize()
 	CHECK_FBO_STATUS();
 
 	// restore default FBO
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 //------------------------------------------------------------------------------

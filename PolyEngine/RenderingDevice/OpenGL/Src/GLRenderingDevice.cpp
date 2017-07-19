@@ -102,6 +102,8 @@ GLRenderingDevice* Poly::gRenderingDevice = nullptr;
 
 		gConsole.LogInfo("OpenGL context succesfully setup. [{}]", glGetString(GL_VERSION));
 
+		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
+
 		// We have successfully created a context, return true
 		
 		InitPrograms();
