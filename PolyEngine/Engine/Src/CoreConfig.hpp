@@ -8,7 +8,7 @@ namespace Poly
 	public:
 
 		// Rendering
-		bool DebugNormalsFlag = true;
+		bool DebugNormalsFlag = false;
 		bool WireframeRendering = false;
 		bool DisplayFPS = true;
 	};

@@ -240,7 +240,7 @@ void GLRenderingDevice::InitPrograms()
 	RenderingPasses.PushBack(std::unique_ptr<RenderingPassBase>(pass));
 	pass->Finalize();
 
-	PostprocessRenderingPassBase* postpass = new PostprocessRenderingPassBase("Shaders/colorShiftFrag.shader");
+	PostprocessRenderingPassBase* postpass = new PostprocessRenderingPassBase("Shaders/vinetteFrag.shader");
 	postpass->BindInput("i_color", texture);
 	postpass->BindOutput("color", screen);
 	RenderingPasses.PushBack(std::unique_ptr<RenderingPassBase>(postpass));
