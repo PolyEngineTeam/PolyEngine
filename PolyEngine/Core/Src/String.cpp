@@ -1,6 +1,8 @@
-#include"CorePCH.hpp"
+#include "CorePCH.hpp"
 
-#include"String.hpp"
+#include "String.hpp"
+#include <iomanip>
+#include <sstream>
 
 using namespace Poly;
 
@@ -24,93 +26,136 @@ String::String(const String& rhs) {
 }
 
 String::String(String&& rhs) {
-	*this = String(std::move(rhs));
+	Data = std::move(rhs.Data);
 }
 
 
-String* String::From(int var) {
-	return new String(std::to_string(var).c_str());
+String String::From(int var) {
+	return String(std::to_string(var).c_str());
 }
 
-String* String::From(float var) {
-	return new String(std::to_string(var).c_str());
+String String::From(float var, int precision) {
+	std::stringstream stream;
+	stream << std::fixed << std::setprecision(precision) << var;
+	return String(stream.str().c_str());
 }
 
-String* String::From(double var) {
-	return new String(std::to_string(var).c_str());
+String String::From(double var, int precision) {
+	std::stringstream stream;
+	stream << std::fixed << std::setprecision(precision) << var;
+	return String(stream.str().c_str());
 }
 
-String* String::From(char var) {
+String String::From(char var) {
 	return From(std::string(1, var));
 }
 
-String* String::From(const char* var) {
-	return new String(var);
+String String::From(const char* var) {
+	return String(var);
 }
 
-String* String::From(const std::string& var) {
-	return new String(var.c_str());
+String String::From(const std::string& var) {
+	return String(var.c_str());
 }
 
 
 bool String::Contains(const String& var) const {
-	//TODO Dynarray.Contains(Dynarray<T> rhs)
+	//TODO Dynarray.FindAllIdx()
+	//for all this.Data.FindAllIdx()
+	//	if var == this->Substring(idx, idx+var.Data.GetSize()
+	//		return true
 	return false;
 }
 
-String* String::ToLower() const {
-	Dynarray<char> d = Dynarray<char>(this->Data.GetSize());
+bool String::Contains(char var) const {
+	return this->Data.FindIdx(var) != this->Data.GetSize();
+}
+
+String String::ToLower() const {
+	String s = String();
+	s.Data.Resize(this->Data.GetSize());
+
 	for (int i = 0; i < this->Data.GetSize(); i++) {
 		char c = this->Data[i];
 		if (c > 64 && c < 91) {
 			c += 32;
 		}
-		d.PushBack(c);
+		s.Data[i] = c;
 	}
-	return new String(d.GetData());
+	return s;
 }
 
-String* String::ToUpper() const {
-	Dynarray<char> d = Dynarray<char>(this->Data.GetSize());
+String String::ToUpper() const {
+	String s = String();
+	s.Data.Resize(this->Data.GetSize());
+
 	for (int i = 0; i < this->Data.GetSize(); i++) {
 		char c = this->Data[i];
 		if (c > 96 && c < 123) {
 			c -= 32;
 		}
-		d.PushBack(c);
+		s.Data[i] = c;
 	}
-	return new String(d.GetData());
+	return s;
 }
 
 bool String::IsEmpty() const {
-	return (bool)GetLength();
+	return GetLength() == 0;
 }
 
-String* String::Replace(char a, char b) const {
-	Dynarray<char> d = Dynarray<char>(this->Data.GetSize());
+String String::Replace(char a, char b) const {
+	String s = String(*this);
+	s.Data.Resize(this->Data.GetSize());
 	for (int i = 0; i < this->Data.GetSize(); i++) {
-		char c = this->Data[i];
-		if (c == a) {
-			c = b;
+		if (this->Data[i] == a) {
+			s.Data[i] = b;
 		}
-		d.PushBack(c);
 	}
-	return new String(d.GetData());
+	return s;
 }
 
-String* String::Replace(const String& a, const String& b) const {
-	//TODO Dynarray.Contains(Dynarray<T> rhs)
-	return nullptr;
+String String::Replace(const String& a, const String& b) const {
+	//split source by delimiter a
+	//return string joined with separator b
+	return NULL;
 }
 
-String* String::Split(char delimiter) const {
+String String::Split(char delimiter) const {
 	//TODO Dynarray.FindAllIdx(T rhs)
-	return nullptr;
+	//for all indexes get substring
+	//and return an array of these substrings
+	return NULL;
 }
 
-String* String::Join(const String& vars, size_t size, const String& separator) {
-	//TODO stringbuilder
-	return nullptr;
+String String::Split(const String& delimiter) const {
+	//TODO Dynarray.FindAllIdx(T rhs)
+	//for all indexes remove delimiter strings from source
+	//return an array of whats left (using Substring)
+	return NULL;
+}
+
+String String::Join(const String* vars, size_t size, const String& separator) {
+	//TODO replace using stringbuilder
+	String s = String("");
+	for (int i = 0; i < size; i++) {
+		s = s + vars[i];
+		if (i != size - 1) {
+			s = s + separator;
+		}
+	}
+	return s;
+}
+
+String String::Join(const String* vars, size_t size, char separator) {
+	//TODO replace using stringbuilder
+	String s = String("");
+	for (int i = 0; i < size; i++) {
+		s = s + vars[i];
+		if (i != size - 1) {
+			s = s + separator;
+		}
+	}
+	return s;
 }
 
 bool String::StartsWith(char var) const {
@@ -121,34 +166,37 @@ bool String::EndsWith(char var) const {
 	return (Data[Data.GetSize()-2] == var);
 }
 
-String* String::Substring(int end) const {
+String String::Substring(int end) const {
 	return Substring(0, end);
 }
 
-String* String::Substring(int start, int end) const {
-	//TODO dynarray constructor?
-	Dynarray<char> d = Dynarray<char>(end - start + 1);
+String String::Substring(int start, int end) const {
+	ASSERTE(start >= 0 && end >= 0, "Start and end parameters cannot be negative");
+	ASSERTE(start <= end && end <= this->Data.GetSize(), "Invalid start or end parameter");
+	String s = String();
+	s.Data.Resize(end - start + 1);
 	for (int i = start; i < end; i++) {
-		d.PushBack(this->Data[i]);
+		s.Data[i-start] = this->Data[i];
 	}
-	d.PushBack(0); //why is this needed? constructor should do that
-	return new String(d.GetData());
+	s.Data[end - start] = 0;
+	return s;
 }
 
 
-String* String::GetTrimmed() const {
-	//TODO substrings
-	Dynarray<char> d = this->Data;
-	while (d[0] == ' ' || d[0] == '\n' || d[0] == '\r' || d[0] == '\t') { //convert whitespaces to String and use Contains(d[0])?
-		d.PopFront();
-	}
-	d.PopBack(); //pop 0
-	while (d[d.GetSize()-1] == ' ' || d[d.GetSize()-1] == '\n' || d[d.GetSize()-1] == '\r' || d[d.GetSize()-1] == '\t') {
-		d.PopBack();
-	}
-	d.PushBack(0);
+String String::GetTrimmed() const {
+	int start = 0;
+	int end = this->GetLength();
 
-	return new String(d.GetData());
+	String whitespaces = String(" \n\t\r");
+
+	while (whitespaces.Contains(this->Data[start])) {
+		++start;
+	}	
+	while (whitespaces.Contains(this->Data[end])) {
+		--end;
+	}
+
+	return this->Substring(start, end + 1);
 }
 
 
@@ -162,7 +210,7 @@ String& String::operator=(String&& rhs) {
 	return *this;
 }
 
-bool String::operator==(const char* str) {
+bool String::operator==(const char* str) const {
 	if (GetLength() != StrLen(str))
 		return false;
 	for (size_t k = 0; k < GetLength(); ++k)
@@ -171,7 +219,7 @@ bool String::operator==(const char* str) {
 	return true;
 }
 
-bool String::operator==(const String& str) {
+bool String::operator==(const String& str) const {
 	return Data == str.Data;
 }
 
@@ -201,7 +249,17 @@ String String::operator+(const String& rhs) const {
 	return ret;
 }
 
-const char& String::operator[](int idx) const { 
+String String::operator+(char rhs) const {
+	String ret;
+	size_t totalLength = GetLength() + 1;
+	ret.Data.Resize(totalLength + 1);
+	memcpy(ret.Data.GetData(), Data.GetData(), sizeof(char) * GetLength());
+	memcpy(ret.Data.GetData() + GetLength(), &rhs, sizeof(char));
+	ret.Data[totalLength] = 0;
+	return ret;
+}
+
+char String::operator[](int idx) const { 
 	HEAVY_ASSERTE(idx <= GetLength(), "Index out of bounds!"); 
 	return Data[idx];
 }
