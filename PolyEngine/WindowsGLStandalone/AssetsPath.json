@@ -1,0 +1,7 @@
+{
+	"AssetsPath" : [
+		"../Engine/Res/"
+		"foo/"
+		""
+	]	
+}
