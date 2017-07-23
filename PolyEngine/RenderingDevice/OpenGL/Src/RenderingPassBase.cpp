@@ -65,14 +65,23 @@ void Poly::RenderingPassBase::DebugDraw()
 			if (target->GetType() == eRenderingTargetType::TEXTURE_2D)
 			{
 				glReadBuffer(GL_COLOR_ATTACHMENT0 + count);
-				glBlitFramebuffer(0, 0, screenSize.Width, screenSize.Height, 0, 
-					count * divH, screenSize.Width / drawDivisor, (count + 1) * divH, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+				glBlitFramebuffer(0, 0, screenSize.Width, screenSize.Height,
+					0, count * divH, screenSize.Width / drawDivisor, (count + 1) * divH, 
+					GL_COLOR_BUFFER_BIT, GL_LINEAR);
 				++count;
 			}
 		}
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 		CHECK_GL_ERR();
 	}
+}
+
+//------------------------------------------------------------------------------
+void Poly::RenderingPassBase::ClearFBO(GLenum flags)
+{
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO);
+	glClear(flags);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -101,6 +110,7 @@ void RenderingPassBase::Run(World* world, const CameraComponent* camera, const A
 
 		switch (target->GetType())
 		{
+		case eRenderingTargetType::DEPTH:
 		case eRenderingTargetType::TEXTURE_2D:
 		{
 			GLuint textureID = static_cast<Texture2DRenderingTarget*>(target)->GetTextureID();
@@ -111,8 +121,6 @@ void RenderingPassBase::Run(World* world, const CameraComponent* camera, const A
 			tmp = textureID;
 			break;
 		}
-		case eRenderingTargetType::DEPTH:
-		case eRenderingTargetType::SCREENBUFFER:
 		default:
 			ASSERTE(false, "Unhandled target type!");
 		}
@@ -121,9 +129,6 @@ void RenderingPassBase::Run(World* world, const CameraComponent* camera, const A
 
 	// bind outputs (by binding fbo)
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO);
-
-	if (FBO > 0) //HACK
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	// call run implementation
 	OnRun(world, camera, rect);
@@ -132,8 +137,7 @@ void RenderingPassBase::Run(World* world, const CameraComponent* camera, const A
 //------------------------------------------------------------------------------
 void RenderingPassBase::Finalize()
 {
-	ASSERTE(GetOutputs().size() > 0, "No outputs from rendering pass!");
-	if (GetOutputs().size() == 1)
+	if (GetOutputs().size() == 0)
 		return; // we want the default FBO == 0, which is the screen buffer
 	
 	ASSERTE(FBO == 0, "Calling finalize twice!");
@@ -171,7 +175,6 @@ void RenderingPassBase::Finalize()
 			CHECK_FBO_STATUS();
 			break;
 		}
-		case eRenderingTargetType::SCREENBUFFER:
 		default:
 			ASSERTE(false, "Unhandled target type!");
 		}
@@ -204,12 +207,6 @@ RenderingTargetBase* RenderingPassBase::GetOutputTarget(const String& name)
 	return nullptr;
 }
 
-
-void ScreenBufferRenderingTarget::Bind()
-{
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-}
-
 Poly::Texture2DRenderingTarget::Texture2DRenderingTarget(GLuint format)
 	: Texture2DRenderingTarget(format, eInternalTextureUsageType::COLOR_ATTACHEMENT)
 {
@@ -222,9 +219,9 @@ Poly::Texture2DRenderingTarget::Texture2DRenderingTarget(GLuint format, eInterna
 	Texture = std::make_unique<GLTextureDeviceProxy>(size.Width, size.Height, InternalUsage, format);
 }
 
-void Poly::Texture2DRenderingTarget::Resize(size_t width, size_t height)
+void Poly::Texture2DRenderingTarget::Resize(const ScreenSize& size)
 {
-	Texture = std::make_unique<GLTextureDeviceProxy>(width, height, InternalUsage, Format);
+	Texture->Resize(size);
 }
 
 GLuint Poly::Texture2DRenderingTarget::GetTextureID()

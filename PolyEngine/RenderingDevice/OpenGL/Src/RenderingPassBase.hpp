@@ -13,6 +13,7 @@ namespace Poly
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
 	class AABox;
+	struct ScreenSize;
 	enum class eInternalTextureUsageType;
 
 	//------------------------------------------------------------------------------
@@ -35,6 +36,8 @@ namespace Poly
 		void BindInput(const String& inputName, RenderingTargetBase* target);
 
 		void DebugDraw();
+
+		void ClearFBO(GLenum flags = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	protected:
 		virtual void OnRun(World* world, const CameraComponent* camera, const AABox& rect) = 0;
 
@@ -57,7 +60,6 @@ namespace Poly
 	{
 		TEXTURE_2D,
 		DEPTH,
-		SCREENBUFFER,
 		_COUNT
 	};
 
@@ -68,7 +70,7 @@ namespace Poly
 	public:	
 		virtual eRenderingTargetType GetType() const = 0;
 
-		virtual void Resize(size_t width, size_t height) {}
+		virtual void Resize(const ScreenSize& size) {}
 	};
 
 	//------------------------------------------------------------------------------
@@ -79,7 +81,7 @@ namespace Poly
 		Texture2DRenderingTarget(GLuint format, eInternalTextureUsageType internalUsage);
 
 		eRenderingTargetType GetType() const override { return eRenderingTargetType::TEXTURE_2D; }
-		void Resize(size_t width, size_t height) override;
+		void Resize(const ScreenSize& size) override;
 
 		GLuint GetTextureID();
 	private:
@@ -95,14 +97,5 @@ namespace Poly
 		DepthRenderingTarget();
 
 		eRenderingTargetType GetType() const override { return eRenderingTargetType::DEPTH; }
-	};
-
-	//------------------------------------------------------------------------------
-	class ScreenBufferRenderingTarget : public RenderingTargetBase
-	{
-	public:
-		eRenderingTargetType GetType() const override { return eRenderingTargetType::SCREENBUFFER; }
-	
-		void Bind();
 	};
 }

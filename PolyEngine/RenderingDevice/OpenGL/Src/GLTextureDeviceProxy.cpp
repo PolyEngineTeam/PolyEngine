@@ -91,6 +91,25 @@ void GLTextureDeviceProxy::SetSubContent(size_t width, size_t height,
 	CHECK_GL_ERR();
 }
 
+void Poly::GLTextureDeviceProxy::Resize(const ScreenSize& size)
+{
+	Width = size.Width;
+	Height = size.Height;
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, TextureID);
+
+	if (InternalUsage == eInternalTextureUsageType::DEPTH_ATTACHEMENT)
+		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+	if (InternalUsage == eInternalTextureUsageType::COLOR_ATTACHEMENT)
+		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_RGBA, GL_FLOAT, nullptr);
+	else
+		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	CHECK_GL_ERR();
+}
+
 void Poly::GLTextureDeviceProxy::InitTextureParams()
 {
 	ASSERTE(Width > 0 && Height > 0, "Invalid arguments!");

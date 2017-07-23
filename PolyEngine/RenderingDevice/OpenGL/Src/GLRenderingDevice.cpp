@@ -215,18 +215,17 @@ GLRenderingDevice* Poly::gRenderingDevice = nullptr;
 #endif
 
 //------------------------------------------------------------------------------
-void GLRenderingDevice::Resize(const ScreenSize & size)
+void GLRenderingDevice::Resize(const ScreenSize& size)
 {
 	ScreenDim = size;
+	for (auto& target : RenderingTargets)
+		target->Resize(size);
 }
 
 //------------------------------------------------------------------------------
 void GLRenderingDevice::InitPrograms()
 {
 	// Init programs
-	ScreenBufferRenderingTarget* screen = new ScreenBufferRenderingTarget();
-	RenderingTargets.PushBack(std::unique_ptr<RenderingTargetBase>(screen));
-
 	Texture2DRenderingTarget* texture = new Texture2DRenderingTarget(GL_RGBA32F);
 	RenderingTargets.PushBack(std::unique_ptr<RenderingTargetBase>(texture));
 
@@ -242,18 +241,15 @@ void GLRenderingDevice::InitPrograms()
 
 	PostprocessRenderingPassBase* postpass = new PostprocessRenderingPassBase("Shaders/vinetteFrag.shader");
 	postpass->BindInput("i_color", texture);
-	postpass->BindOutput("color", screen);
 	RenderingPasses.PushBack(std::unique_ptr<RenderingPassBase>(postpass));
 	postpass->Finalize();
 
 	DebugNormalsRenderingPass* pass2 = new DebugNormalsRenderingPass();
-	pass2->BindOutput("color", screen);
 	RootRenderingPasses[eRootRenderPassType::DEBUG_NORMALS] = pass2;
 	RenderingPasses.PushBack(std::unique_ptr<RenderingPassBase>(pass2));
 	pass2->Finalize();
 
 	Text2DRenderingPass* pass3 = new Text2DRenderingPass();
-	pass3->BindOutput("color", screen);
 	RootRenderingPasses[eRootRenderPassType::TEXT_2D] = pass3;
 	RenderingPasses.PushBack(std::unique_ptr<RenderingPassBase>(pass3));
 	pass3->Finalize();

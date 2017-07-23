@@ -32,6 +32,9 @@ void GLRenderingDevice::RenderWorld(World * world)
 
 	ScreenSize screen = gEngine->GetRenderingDevice()->GetScreenSize();
 
+	for (auto& pass : RenderingPasses)
+		pass->ClearFBO();
+
 	// For each visible viewport draw it
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
 	{
@@ -56,6 +59,8 @@ void GLRenderingDevice::RenderWorld(World * world)
 		
 		RootRenderingPasses[eRootRenderPassType::TEXT_2D]->Run(world, kv.second.GetCamera(), rect);
 	}
+
+	RootRenderingPasses[eRootRenderPassType::BLINN_PHONG]->DebugDraw();
 
 	// Signal frame end
 	EndFrame();
