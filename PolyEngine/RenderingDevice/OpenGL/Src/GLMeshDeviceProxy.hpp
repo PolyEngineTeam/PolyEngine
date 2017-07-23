@@ -23,6 +23,7 @@ namespace Poly
 
 		void SetContent(const Mesh& mesh);
 
+		GLuint GetVAO() const { return VAO; }
 	private:
 		void EnsureVBOCreated(eBufferType type);
 

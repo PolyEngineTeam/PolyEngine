@@ -34,11 +34,29 @@ namespace Poly {
 		while ((err = glGetError()) != GL_NO_ERROR)
 			gConsole.LogError("{}:{} OpenGL error: [{}] {}", file, line, err, OpenGLErrorStr(err));
 	}
+
+	inline void CheckFBOStatus(const char *file, int line)
+	{
+		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+
+		if (status != GL_FRAMEBUFFER_COMPLETE) {
+			std::string text;
+			switch (status) {
+			case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: text = "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT"; break;
+			case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: text = "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT"; break;
+			case GL_FRAMEBUFFER_UNSUPPORTED: text = "GL_FRAMEBUFFER_UNSUPPORTED"; break;
+			default: text = "NO DESCRIPTION"; break;
+			}
+			gConsole.LogError("FrameBuffer error, status: [{}] {}", status, text);
+		}
+	}
 }
 
 #ifdef _DEBUG
 	#define CHECK_GL_ERR() ::Poly::CheckGLError(__FILE__, __LINE__ )
+	#define CHECK_FBO_STATUS() ::Poly::CheckFBOStatus(__FILE__, __LINE__ )
 #else
 	#define CHECK_GL_ERR() (void)0
+	#define CHECK_FBO_STATUS() (void)0
 #endif // _DEBUG
 
