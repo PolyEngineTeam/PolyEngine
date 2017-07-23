@@ -91,7 +91,7 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 		ASSERTE(false, "Creation of shader failed!");
 	}
 	
-	ShaderCode[type] = LoadTextFile(GetResourcesAbsolutePath() + shaderName);
+	ShaderCode[type] = LoadTextFileRelative(eResourceSource::ENGINE, shaderName);
 
 	const char *code = ShaderCode[type].GetCStr();
 	glShaderSource(shader, 1, &code, NULL);

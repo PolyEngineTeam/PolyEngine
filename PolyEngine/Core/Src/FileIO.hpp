@@ -55,4 +55,18 @@ namespace Poly {
 		else
 			throw FileIOException("File save failed");
 	}
+
+	inline bool FileExists(const String& path)
+	{
+		FILE *f;
+		fopen_s(&f, path.GetCStr(), "r");
+		if (f) {
+			fclose(f);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }
