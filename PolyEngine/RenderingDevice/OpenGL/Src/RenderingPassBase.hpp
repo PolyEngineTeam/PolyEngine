@@ -29,6 +29,8 @@ namespace Poly
 		RenderingPassBase(const String& vertex, const String& fragment);
 		RenderingPassBase(const String& vertex, const String& geometry, const String& fragment);
 
+		virtual ~RenderingPassBase();
+
 		void Run(World* world, const CameraComponent* camera, const AABox& rect);
 		void Finalize();
 

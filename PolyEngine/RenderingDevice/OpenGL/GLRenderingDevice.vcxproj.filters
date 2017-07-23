@@ -56,7 +56,7 @@
     <ClInclude Include="Src\DebugNormalsRenderingPass.hpp">
       <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
     </ClInclude>
-    <ClInclude Include="Src\PostprocessRenderingPassBase.hpp">
+    <ClInclude Include="Src\PostprocessRenderingPass.hpp">
       <Filter>Source Files\RenderingPasses\PostprocessPasses</Filter>
     </ClInclude>
   </ItemGroup>
@@ -91,7 +91,7 @@
     <ClCompile Include="Src\DebugNormalsRenderingPass.cpp">
       <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
     </ClCompile>
-    <ClCompile Include="Src\PostprocessRenderingPassBase.cpp">
+    <ClCompile Include="Src\PostprocessRenderingPass.cpp">
       <Filter>Source Files\RenderingPasses\PostprocessPasses</Filter>
     </ClCompile>
   </ItemGroup>

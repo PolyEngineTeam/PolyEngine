@@ -97,6 +97,13 @@ Poly::RenderingPassBase::RenderingPassBase(const String& vertex, const String& g
 }
 
 //------------------------------------------------------------------------------
+Poly::RenderingPassBase::~RenderingPassBase()
+{
+	if(FBO > 0)
+		glDeleteFramebuffers(1, &FBO);
+}
+
+//------------------------------------------------------------------------------
 void RenderingPassBase::Run(World* world, const CameraComponent* camera, const AABox& rect)
 {
 	// Bind inputs

@@ -25,12 +25,25 @@ namespace Poly
 	class DEVICE_DLLEXPORT GLRenderingDevice : public IRenderingDevice
 	{
 	private:
-		enum class eRootRenderPassType
+		enum class eGeometryRenderPassType
 		{
 			BLINN_PHONG,
 			DEBUG_NORMALS,
 			TEXT_2D,
 			_COUNT
+		};
+
+		enum class ePostprocessRenderPassType
+		{
+			VINETTE,
+			_COUNT
+		};
+
+		struct InputOutputBind
+		{
+			InputOutputBind(const String& name, RenderingTargetBase* target) : Name(name), Target(target) {}
+			String Name;
+			RenderingTargetBase* Target;
 		};
 
 	public:
@@ -60,6 +73,18 @@ namespace Poly
 		void InitPrograms();
 		void EndFrame();
 
+		template <typename T>
+		void RegisterGeometryPass(eGeometryRenderPassType type, 
+			const std::initializer_list<InputOutputBind>& inputs = {}, 
+			const std::initializer_list<InputOutputBind>& outputs = {});
+
+		void RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName, 
+			const std::initializer_list<InputOutputBind>& inputs = {},
+			const std::initializer_list<InputOutputBind>& outputs = {});
+
+		template <typename T, typename... Args>
+		T* CreateRenderingTarget(Args&&... args);
+
 #if defined(_WIN32)
 		HDC hDC;
 		HWND hWnd;
@@ -73,9 +98,9 @@ namespace Poly
 #endif
 
 		Dynarray<std::unique_ptr<RenderingTargetBase>> RenderingTargets;
-		Dynarray<std::unique_ptr<RenderingPassBase>> RenderingPasses;
 
-		EnumArray<RenderingPassBase*, eRootRenderPassType> RootRenderingPasses;
+		EnumArray<std::unique_ptr<RenderingPassBase>, eGeometryRenderPassType> GeometryRenderingPasses;
+		EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
 
 		ScreenSize ScreenDim;
 	};

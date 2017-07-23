@@ -20,44 +20,46 @@ using namespace Poly;
 //------------------------------------------------------------------------------
 void GLRenderingDevice::RenderWorld(World * world)
 {
-	// Prepare frame buffer
-	glDepthMask(GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
+	const ScreenSize screenSize = gEngine->GetRenderingDevice()->GetScreenSize();
 
 	// Choose correct rendering mode
-	if (gCoreConfig.WireframeRendering)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	else
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	ScreenSize screen = gEngine->GetRenderingDevice()->GetScreenSize();
-
-	for (auto& pass : RenderingPasses)
-		pass->ClearFBO();
+	glPolygonMode(GL_FRONT_AND_BACK, gCoreConfig.WireframeRendering ? GL_LINE : GL_FILL);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+	
+	// Clear FBO's
+	for (eGeometryRenderPassType type : IterateEnum<eGeometryRenderPassType>())
+		GeometryRenderingPasses[type]->ClearFBO();
+	for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
+		PostprocessRenderingPasses[type]->ClearFBO();
 
 	// For each visible viewport draw it
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
 	{
-		// Get viewport rect (TOOO change it to propper rect, not box)
+		// Set viewport rect (TOOO change it to propper rect, not box)
 		const AABox& rect = kv.second.GetRect();
-		glViewport((int)(rect.GetMin().X * screen.Width), (int)(rect.GetMin().Y * screen.Height),
-			(int)(rect.GetSize().X * screen.Width), (int)(rect.GetSize().Y * screen.Height));
+		glViewport((int)(rect.GetMin().X * screenSize.Width), (int)(rect.GetMin().Y * screenSize.Height),
+			(int)(rect.GetSize().X * screenSize.Width), (int)(rect.GetSize().Y * screenSize.Height));
 
-		// Render meshes
-		RootRenderingPasses[eRootRenderPassType::BLINN_PHONG]->Run(world, kv.second.GetCamera(), rect);
+		glDepthMask(GL_TRUE);
+		glEnable(GL_DEPTH_TEST);
 
-		
+		// Render meshes with blin-phong shader
+		GeometryRenderingPasses[eGeometryRenderPassType::BLINN_PHONG]->Run(world, kv.second.GetCamera(), rect);
+
 		glDepthMask(GL_FALSE);
 		glDisable(GL_DEPTH_TEST);
 
-		//HACK calling postprocess in this way is ultra hack!
-		RenderingPasses[1]->Run(world, kv.second.GetCamera(), rect);
-
 		// Draw debug normals
 		if (gCoreConfig.DebugNormalsFlag)
-			RootRenderingPasses[eRootRenderPassType::DEBUG_NORMALS]->Run(world, kv.second.GetCamera(), rect);
-		
-		RootRenderingPasses[eRootRenderPassType::TEXT_2D]->Run(world, kv.second.GetCamera(), rect);
+			GeometryRenderingPasses[eGeometryRenderPassType::DEBUG_NORMALS]->Run(world, kv.second.GetCamera(), rect);
+
+		// Render text
+		GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, kv.second.GetCamera(), rect);
+
+		// Run postprocess passes
+		for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
+			PostprocessRenderingPasses[type]->Run(world, kv.second.GetCamera(), rect);
 	}
 
 	// Signal frame end

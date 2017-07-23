@@ -10,7 +10,7 @@
 #include "BlinnPhongRenderingPass.hpp"
 #include "Text2DRenderingPass.hpp"
 #include "DebugNormalsRenderingPass.hpp"
-#include "PostprocessRenderingPassBase.hpp"
+#include "PostprocessRenderingPass.hpp"
 
 using namespace Poly;
 
@@ -223,36 +223,55 @@ void GLRenderingDevice::Resize(const ScreenSize& size)
 }
 
 //------------------------------------------------------------------------------
+template<typename T>
+inline void GLRenderingDevice::RegisterGeometryPass(eGeometryRenderPassType type, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
+{
+	GeometryRenderingPasses[type] = std::make_unique<T>();
+	
+	for (const InputOutputBind& bind : outputs)
+		GeometryRenderingPasses[type]->BindOutput(bind.Name, bind.Target);
+	
+	for (const InputOutputBind& bind : inputs)
+		GeometryRenderingPasses[type]->BindInput(bind.Name, bind.Target);
+
+	GeometryRenderingPasses[type]->Finalize();
+}
+
+//------------------------------------------------------------------------------
+template<typename T, typename... Args>
+T* Poly::GLRenderingDevice::CreateRenderingTarget(Args&&... args)
+{
+	T* target = new T(std::forward<Args>(args)...);
+	RenderingTargets.PushBack(std::unique_ptr<RenderingTargetBase>(target));
+	return target;
+}
+
+//------------------------------------------------------------------------------
+void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
+{
+	PostprocessRenderingPasses[type] = std::make_unique<PostprocessRenderingPass>(fragShaderName);
+
+	for (const InputOutputBind& bind : outputs)
+		PostprocessRenderingPasses[type]->BindOutput(bind.Name, bind.Target);
+
+	for (const InputOutputBind& bind : inputs)
+		PostprocessRenderingPasses[type]->BindInput(bind.Name, bind.Target);
+
+	PostprocessRenderingPasses[type]->Finalize();
+}
+
+//------------------------------------------------------------------------------
 void GLRenderingDevice::InitPrograms()
 {
 	// Init programs
-	Texture2DRenderingTarget* texture = new Texture2DRenderingTarget(GL_RGBA32F);
-	RenderingTargets.PushBack(std::unique_ptr<RenderingTargetBase>(texture));
-
-	DepthRenderingTarget* depth = new DepthRenderingTarget();
-	RenderingTargets.PushBack(std::unique_ptr<RenderingTargetBase>(depth));
+	Texture2DRenderingTarget* texture = CreateRenderingTarget<Texture2DRenderingTarget>(GL_RGBA32F);
+	DepthRenderingTarget* depth = CreateRenderingTarget<DepthRenderingTarget>();
 	
-	BlinnPhongRenderingPass* pass = new BlinnPhongRenderingPass();
-	pass->BindOutput("color", texture);
-	pass->BindOutput("depth", depth);
-	RootRenderingPasses[eRootRenderPassType::BLINN_PHONG] = pass;
-	RenderingPasses.PushBack(std::unique_ptr<RenderingPassBase>(pass));
-	pass->Finalize();
+	RegisterGeometryPass<BlinnPhongRenderingPass>(eGeometryRenderPassType::BLINN_PHONG, {}, { { "color", texture }, { "depth", depth } });
+	RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS);
+	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D);
 
-	PostprocessRenderingPassBase* postpass = new PostprocessRenderingPassBase("Shaders/vinetteFrag.shader");
-	postpass->BindInput("i_color", texture);
-	RenderingPasses.PushBack(std::unique_ptr<RenderingPassBase>(postpass));
-	postpass->Finalize();
-
-	DebugNormalsRenderingPass* pass2 = new DebugNormalsRenderingPass();
-	RootRenderingPasses[eRootRenderPassType::DEBUG_NORMALS] = pass2;
-	RenderingPasses.PushBack(std::unique_ptr<RenderingPassBase>(pass2));
-	pass2->Finalize();
-
-	Text2DRenderingPass* pass3 = new Text2DRenderingPass();
-	RootRenderingPasses[eRootRenderPassType::TEXT_2D] = pass3;
-	RenderingPasses.PushBack(std::unique_ptr<RenderingPassBase>(pass3));
-	pass3->Finalize();
+	RegisterPostprocessPass(ePostprocessRenderPassType::VINETTE, "Shaders/vinetteFrag.shader", { { "i_color", texture } });
 }
 
 //------------------------------------------------------------------------------

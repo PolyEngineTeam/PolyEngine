@@ -1,4 +1,4 @@
-#include "PostprocessRenderingPassBase.hpp"
+#include "PostprocessRenderingPass.hpp"
 
 #include "GLMeshDeviceProxy.hpp"
 #include "GLTextureDeviceProxy.hpp"
@@ -56,18 +56,18 @@ public:
 
 
 
-PostprocessRenderingPassBase::PostprocessRenderingPassBase(const String& fragment)
+PostprocessRenderingPass::PostprocessRenderingPass(const String& fragment)
 	: RenderingPassBase("Shaders/postprocessCommonVert.shader", fragment)
 {
 }
 
-PostprocessRenderingPassBase::PostprocessRenderingPassBase(const String& geometry, const String& fragment)
+PostprocessRenderingPass::PostprocessRenderingPass(const String& geometry, const String& fragment)
 	: RenderingPassBase("Shaders/postprocessCommonVert.shader", geometry, fragment)
 {
 }
 
 
-void PostprocessRenderingPassBase::OnRun(World* world, const CameraComponent* camera, const AABox& rect)
+void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera, const AABox& rect)
 {
 	static const PostprocessQuad QUAD;
 
