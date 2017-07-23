@@ -60,8 +60,6 @@ void GLRenderingDevice::RenderWorld(World * world)
 		RootRenderingPasses[eRootRenderPassType::TEXT_2D]->Run(world, kv.second.GetCamera(), rect);
 	}
 
-	RootRenderingPasses[eRootRenderPassType::BLINN_PHONG]->DebugDraw();
-
 	// Signal frame end
 	EndFrame();
 }
