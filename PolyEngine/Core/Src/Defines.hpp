@@ -95,7 +95,7 @@
 #endif
 
 #ifndef DISABLE_SIMD
-#define DISABLE_SIMD true
+#define DISABLE_SIMD false
 #endif
 
 // limits
