@@ -9,7 +9,7 @@ namespace Poly {
 
 	class CORE_DLLEXPORT String : BaseObject<> {
 	public:
-		String() {};
+		String() : String("") {};
 		String(const char* data);
 		String(const String& rhs);
 		String(String&& rhs);
