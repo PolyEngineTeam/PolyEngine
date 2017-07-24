@@ -37,7 +37,7 @@ void InvadersGame::Init()
 	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(Engine->GetWorld(), Camera, 60_deg, 1.0f, 1000.f);
 	DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(Engine->GetWorld(), Camera, 10.0f, 0.003f);
 
-	float y_pos = Engine->GetRenderingDevice()->GetScreenSize().Height;
+	float y_pos = (float)Engine->GetRenderingDevice()->GetScreenSize().Height;
 	auto textDispaly = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::ScreenSpaceTextComponent>(Engine->GetWorld(), textDispaly, Vector{ 0.0f, y_pos ,0.0f }, "Fonts/Raleway/Raleway-Heavy.ttf", 32, "Kill count: 0");
 	
@@ -69,7 +69,7 @@ void InvadersGame::Init()
 			Poly::TransformComponent* baseTransform = Engine->GetWorld()->GetComponent<Poly::TransformComponent>(base);
 			
 			entTransform->SetParent(baseTransform);
-			baseTransform->SetLocalTranslation(Vector(i * 12, 0, j * 8));
+			baseTransform->SetLocalTranslation(Vector(i * 12.f, 0.f, j * 8.f));
 			baseTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -90.0_deg));
 			entTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -60.0_deg));
 		}

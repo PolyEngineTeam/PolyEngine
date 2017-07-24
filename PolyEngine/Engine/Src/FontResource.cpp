@@ -58,7 +58,7 @@ void Poly::FontResource::LoadFace(size_t height) const
 	FT_Error err = FT_New_Face(gFreeTypeLibrary, FontPath.GetCStr(), 0, &face.FTFace);
 	if (err != FT_Err_Ok)
 		throw ResourceLoadFailedException();
-	err = FT_Set_Pixel_Sizes(face.FTFace, 0, height);
+	err = FT_Set_Pixel_Sizes(face.FTFace, 0, (FT_UInt)height);
 	if (err != FT_Err_Ok)
 		throw ResourceLoadFailedException();
 
@@ -75,7 +75,7 @@ void Poly::FontResource::LoadFace(size_t height) const
 	for (size_t c = 0; c < 128; c++)
 	{
 		// Load character glyph 
-		FT_Error err = FT_Load_Char(face.FTFace, c, FT_LOAD_RENDER);
+		FT_Error err = FT_Load_Char(face.FTFace, (FT_ULong)c, FT_LOAD_RENDER);
 		if (err != FT_Err_Ok)
 		{
 			gConsole.LogError("Glyph {} of size {} failed to load", (char)c, height);
@@ -159,8 +159,8 @@ void Poly::FontResource::LoadFace(size_t height) const
 		FontFace::FontGlyph glyph;
 		glyph.TextureUV[0] = Vector((float)xoffset / (float)TEXTURE_WIDTH, (float)yoffset / (float)estimatedTextureHeight, 0);
 		glyph.TextureUV[1] = Vector((float)(xoffset + glyphSize.width) / (float)TEXTURE_WIDTH, (float)(yoffset + glyphSize.height) / (float)estimatedTextureHeight, 0);
-		glyph.Size = Vector(glyphSize.width, glyphSize.height, 0);
-		glyph.Bearing = Vector(face.FTFace->glyph->bitmap_left, face.FTFace->glyph->bitmap_top, 0);
+		glyph.Size = Vector((float)glyphSize.width, (float)glyphSize.height, 0.f);
+		glyph.Bearing = Vector((float)face.FTFace->glyph->bitmap_left, (float)face.FTFace->glyph->bitmap_top, 0.f);
 		glyph.Advance = (float)face.FTFace->glyph->advance.x / 64.0f;
 
 		if (face.FTFace->glyph->format != FT_GLYPH_FORMAT_BITMAP)

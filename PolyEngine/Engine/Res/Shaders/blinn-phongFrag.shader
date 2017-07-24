@@ -4,7 +4,7 @@ uniform sampler2D ourTexture;
 
 in vec2 vTexCoord;
 
-out vec4 color;
+layout(location = 0) out vec4 color;
 
 void main(){
   vec4 texColor = texture(ourTexture, vTexCoord);
