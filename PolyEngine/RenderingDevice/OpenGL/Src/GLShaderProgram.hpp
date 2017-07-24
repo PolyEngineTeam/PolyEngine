@@ -29,10 +29,10 @@ namespace Poly {
 		struct OutputInfo
 		{
 			OutputInfo() {}
-			OutputInfo(const String& type, const String& name) : Name(name), TypeName(type) {}
+			OutputInfo(const String& type, size_t index) : TypeName(type), Index(index) {}
 
-			String Name;
 			String TypeName;
+			size_t Index = 0;
 		};
 	public:
 		GLShaderProgram(const String& vertex, const String& fragment);
@@ -49,7 +49,7 @@ namespace Poly {
 		void SetUniform(const String& name, const Color& val);
 		void SetUniform(const String& name, const Matrix& val);
 
-		const Dynarray<OutputInfo>& GetOutputsInfo() const { return Outputs; }
+		const std::map<String, OutputInfo>& GetOutputsInfo() const { return Outputs; }
 		const std::map<String, UniformInfo>& GetUniformsInfo() const { return Uniforms; }
 	private:
 		void CompileProgram();
@@ -62,7 +62,7 @@ namespace Poly {
 		void AnalyzeShaderCode(eShaderUnitType type);
 
 		std::map<String, UniformInfo> Uniforms;
-		Dynarray<OutputInfo> Outputs;
+		std::map<String, OutputInfo> Outputs;
 		GLuint ProgramHandle;
 		EnumArray<String, eShaderUnitType> ShaderCode;
 	};

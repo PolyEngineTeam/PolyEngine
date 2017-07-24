@@ -141,42 +141,78 @@ void GLShaderProgram::RegisterUniform(const String& type, const String& name)
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, int val)
 { 
-	HEAVY_ASSERTE(Uniforms[name].TypeName == "int", "Invalid uniform type!");
-	glUniform1i(Uniforms[name].Location, val);
+	auto& it = Uniforms.find(name);
+	if (it != Uniforms.end())
+	{
+		HEAVY_ASSERTE(it->second.TypeName == "int" || it->second.TypeName == "sampler2D", "Invalid uniform type!");
+		glUniform1i(it->second.Location, val);
+	}
+	else
+		gConsole.LogWarning("Uniform {} not found!", name);
 }
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, float val)
 {
-	HEAVY_ASSERTE(Uniforms[name].TypeName == "float", "Invalid uniform type!");
-	glUniform1f(Uniforms[name].Location, val);
+	auto& it = Uniforms.find(name);
+	if (it != Uniforms.end())
+	{
+		HEAVY_ASSERTE(it->second.TypeName == "float", "Invalid uniform type!");
+		glUniform1f(it->second.Location, val);
+	}
+	else
+		gConsole.LogWarning("Uniform {} not found!", name);
 }
 
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String & name, float val1, float val2)
 {
-	HEAVY_ASSERTE(Uniforms[name].TypeName == "vec2", "Invalid uniform type!");
-	glUniform2f(Uniforms[name].Location, val1, val2);
+	auto& it = Uniforms.find(name);
+	if (it != Uniforms.end())
+	{
+		HEAVY_ASSERTE(it->second.TypeName == "vec2", "Invalid uniform type!");
+		glUniform2f(it->second.Location, val1, val2);
+	}
+	else
+		gConsole.LogWarning("Uniform {} not found!", name);
 }
 
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, const Vector& val)
 {
-	HEAVY_ASSERTE(Uniforms[name].TypeName == "vec4", "Invalid uniform type!");
-	glUniform4f(Uniforms[name].Location, val.X, val.Y, val.Z, val.W);
+	auto& it = Uniforms.find(name);
+	if (it != Uniforms.end())
+	{
+		HEAVY_ASSERTE(it->second.TypeName == "vec4", "Invalid uniform type!");
+		glUniform4f(it->second.Location, val.X, val.Y, val.Z, val.W);
+	}
+	else
+		gConsole.LogWarning("Uniform {} not found!", name);
 }
 
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, const Color& val)
 {
-	HEAVY_ASSERTE(Uniforms[name].TypeName == "vec4", "Invalid uniform type!");
-	glUniform4f(Uniforms[name].Location, val.R, val.G, val.B, val.A);
+	auto& it = Uniforms.find(name);
+	if (it != Uniforms.end())
+	{
+		HEAVY_ASSERTE(it->second.TypeName == "vec4", "Invalid uniform type!");
+		glUniform4f(it->second.Location, val.R, val.G, val.B, val.A);
+	}
+	else
+		gConsole.LogWarning("Uniform {} not found!", name);
 }
 
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, const Matrix& val)
 {
-	HEAVY_ASSERTE(Uniforms[name].TypeName == "mat4", "Invalid uniform type!");
-	glUniformMatrix4fv(Uniforms[name].Location, 1, GL_FALSE, val.GetTransposed().GetDataPtr());
+	auto& it = Uniforms.find(name);
+	if (it != Uniforms.end())
+	{
+		HEAVY_ASSERTE(it->second.TypeName == "mat4", "Invalid uniform type!");
+		glUniformMatrix4fv(it->second.Location, 1, GL_FALSE, val.GetTransposed().GetDataPtr());
+	}
+	else
+		gConsole.LogWarning("Uniform {} not found!", name);
 }
 
 //------------------------------------------------------------------------------
@@ -225,6 +261,7 @@ void Poly::GLShaderProgram::AnalyzeShaderCode(eShaderUnitType type)
 		auto regex_begin = std::cregex_iterator(ShaderCode[type].GetCStr(), ShaderCode[type].GetCStr() + ShaderCode[type].GetLength(), outRegex);
 		auto regex_end = std::cregex_iterator();
 
+		size_t index = 0;
 		for (std::cregex_iterator i = regex_begin; i != regex_end; ++i)
 		{
 			const std::cmatch& match = *i;
@@ -232,7 +269,7 @@ void Poly::GLShaderProgram::AnalyzeShaderCode(eShaderUnitType type)
 			gConsole.LogDebug("Out {} of type {} found.", match[2].str(), match[1].str());
 
 			//TODO remove unnecessary string copy
-			Outputs.PushBack(OutputInfo(String(match[1].str().c_str()), String(match[2].str().c_str())));
+			Outputs.insert(std::make_pair(String(match[2].str().c_str()), OutputInfo(String(match[1].str().c_str()), index++)));
 		}
 	}
 }
