@@ -1,5 +1,4 @@
 // include the basic windows header file
-#define NOMINMAX
 #include <windows.h>
 #include <windowsx.h>
 
