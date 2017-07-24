@@ -18,6 +18,7 @@
 // stupid warning in MSVC about template specialization exporting, according to https://msdn.microsoft.com/en-US/library/esew7y1w.aspx it can be ignored
 #if defined(_WIN32)
 	#pragma warning(disable: 4251)
+	#pragma warning(disable: 4275)
 #endif
 
 #ifdef __GNUC__
@@ -87,15 +88,16 @@
 	#define DEVICE_DLLEXPORT
 #endif
 
+#if defined(_WIN32)
+#define POLY_STDCALL __stdcall
+#else
+#define POLY_STDCALL
+#endif
+
 #ifndef DISABLE_SIMD
 #define DISABLE_SIMD true
 #endif
 
-#if defined(_WIN32)
-    #define POLY_STDCALL __stdcall
-#else
-    #define POLY_STDCALL
-#endif
 // limits
 constexpr auto MAX_FLOAT = (std::numeric_limits<float>::max)(); //the parentheses are there to prevent WinAPI macros from breaking this
 constexpr auto MIN_FLOAT = (std::numeric_limits<float>::min)();

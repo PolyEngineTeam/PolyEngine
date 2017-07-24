@@ -103,7 +103,7 @@ int main() {
 	std::unique_ptr<Window, decltype(windowCleanup)> windowCleanupGuard(&window, windowCleanup);
 
 	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(new InvadersGame());
-	std::unique_ptr<Poly::IRenderingDevice> device = std::make_unique<Poly::GLRenderingDevice>(display.get(), window, fbConfig);
+	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(PolyCreateRenderingDevice(display.get(), window, fbConfig));
 
 	Poly::Engine Engine(std::move(game), std::move(device));
 	Poly::gConsole.LogDebug("Engine loaded");
@@ -115,12 +115,15 @@ int main() {
 
 	//enter the matri... *ekhm* game loop
 	XEvent ev;
-	for(;;) {
-		if (XPending(display.get()) > 0) {
+	for(;;)
+	{
+		if (XPending(display.get()) > 0)
+		{
 			XNextEvent(display.get(), &ev);
 
 			handleEvents(display.get(), window, ev);
-			if ((ev.type == ClientMessage && static_cast<Atom>(ev.xclient.data.l[0]) == atomWmDeleteWindow) || ev.type == DestroyNotify) {
+			if ((ev.type == ClientMessage && static_cast<Atom>(ev.xclient.data.l[0]) == atomWmDeleteWindow) || ev.type == DestroyNotify)
+			{
 				break;
 			}
 		} else {

@@ -12,6 +12,11 @@ set(POLYGLDEVICE_SRCS
 	Src/GLTextureDeviceProxy.cpp
 	Src/GLWorldRendering.cpp
 	Src/GLShaderProgram.cpp
+	Src/RenderingPassBase.cpp
+	Src/BlinnPhongRenderingPass.cpp
+	Src/Text2DRenderingPass.cpp
+	Src/DebugNormalsRenderingPass.cpp
+	Src/PostprocessRenderingPass.cpp
 )
 set(POLYGLDEVICE_INCLUDE Src)
 set(POLYGLDEVICE_H_FOR_IDE
@@ -21,6 +26,11 @@ set(POLYGLDEVICE_H_FOR_IDE
 	Src/GLTextureDeviceProxy.hpp
 	Src/GLUtils.hpp
 	Src/GLShaderProgram.hpp
+	Src/RenderingPassBase.hpp
+	Src/BlinnPhongRenderingPass.hpp
+	Src/Text2DRenderingPass.hpp
+	Src/DebugNormalsRenderingPass.hpp
+	Src/PostprocessRenderingPass.hpp
 )
 
 add_library(polygldevice SHARED ${POLYGLDEVICE_SRCS} ${POLYGLDEVICE_H_FOR_IDE})

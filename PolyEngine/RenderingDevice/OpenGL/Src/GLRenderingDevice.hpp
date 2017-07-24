@@ -16,6 +16,7 @@
 
 #include "GLShaderProgram.hpp"
 
+#include "RenderingPassBase.hpp"
 
 namespace Poly
 {
@@ -24,12 +25,25 @@ namespace Poly
 	class DEVICE_DLLEXPORT GLRenderingDevice : public IRenderingDevice
 	{
 	private:
-		enum class eShaderProgramType
+		enum class eGeometryRenderPassType
 		{
-			TEST,
+			BLINN_PHONG,
 			DEBUG_NORMALS,
 			TEXT_2D,
 			_COUNT
+		};
+
+		enum class ePostprocessRenderPassType
+		{
+			VINETTE,
+			_COUNT
+		};
+
+		struct InputOutputBind
+		{
+			InputOutputBind(const String& name, RenderingTargetBase* target) : Name(name), Target(target) {}
+			String Name;
+			RenderingTargetBase* Target;
 		};
 
 	public:
@@ -43,19 +57,33 @@ namespace Poly
 
 		~GLRenderingDevice();
 
+		GLRenderingDevice(const GLRenderingDevice&) = delete;
+		void operator=(const GLRenderingDevice&) = delete;
+
 		void Resize(const ScreenSize& size) override;
 		const ScreenSize& GetScreenSize() const override { return ScreenDim; }
-	
+
 		void RenderWorld(World* world) override;
 
 		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) override;
 		std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() override;
 		std::unique_ptr<IMeshDeviceProxy> CreateMesh() override;
-	
+
 	private:
 		void InitPrograms();
-		virtual GLShaderProgram& GetProgram(eShaderProgramType type) { return *ShaderPrograms[type]; }
 		void EndFrame();
+
+		template <typename T>
+		void RegisterGeometryPass(eGeometryRenderPassType type, 
+			const std::initializer_list<InputOutputBind>& inputs = {}, 
+			const std::initializer_list<InputOutputBind>& outputs = {});
+
+		void RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName, 
+			const std::initializer_list<InputOutputBind>& inputs = {},
+			const std::initializer_list<InputOutputBind>& outputs = {});
+
+		template <typename T, typename... Args>
+		T* CreateRenderingTarget(Args&&... args);
 
 #if defined(_WIN32)
 		HDC hDC;
@@ -69,9 +97,15 @@ namespace Poly
 #error "Unsupported platform :("
 #endif
 
+		Dynarray<std::unique_ptr<RenderingTargetBase>> RenderingTargets;
+
+		EnumArray<std::unique_ptr<RenderingPassBase>, eGeometryRenderPassType> GeometryRenderingPasses;
+		EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
+
 		ScreenSize ScreenDim;
-		EnumArray<GLShaderProgram*, eShaderProgramType> ShaderPrograms;
 	};
+
+	extern GLRenderingDevice* gRenderingDevice;
 }
 
 extern "C"

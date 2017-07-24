@@ -13,6 +13,8 @@ namespace Poly
 
 		void SetContent(size_t count, const TextFieldLetter* letters);
 
+		GLuint GetVAO() const { return VAO; }
+		size_t GetSize() const { return Size; }
 	private:
 		GLuint VAO = 0;
 		GLuint VBO = 0;

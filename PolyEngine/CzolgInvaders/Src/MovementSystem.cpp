@@ -11,7 +11,7 @@
 
 void Invaders::MovementSystem::MovementUpdatePhase(Poly::World* world)
 {
-	float dt = Poly::TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
+	float dt = (float)Poly::TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
 	MovementComponent* movement;
 	Poly::TransformComponent* transform;
 

@@ -118,9 +118,9 @@ namespace Poly
 		template<typename T> void RegisterComponent(size_t id)
 		{
 			ASSERTE(
-				([this, &id] () ->bool 
-				{ 
-					for(auto it = ComponentTypeMap.begin(); it != ComponentTypeMap.end(); ++it) 
+				([this, &id] () ->bool
+				{
+					for(auto it = ComponentTypeMap.begin(); it != ComponentTypeMap.end(); ++it)
 						if(it->first == typeid(T) || it->second == id) return false;
 					return true;
 				})(),
@@ -145,14 +145,14 @@ namespace Poly
 		template<typename T> void RegisterWorldComponent(size_t id)
 		{
 			ASSERTE(
-				([this, &id] () ->bool 
-				{ 
-					for(auto it = WorldComponentTypeMap.begin(); it != WorldComponentTypeMap.end(); ++it) 
+				([this, &id] () ->bool
+				{
+					for(auto it = WorldComponentTypeMap.begin(); it != WorldComponentTypeMap.end(); ++it)
 						if(it->first == typeid(T) || it->second == id) return false;
 					return true;
 				})(),
-				"World component type or id was registered twice!");			
-				
+				"World component type or id was registered twice!");
+
 			WorldComponentTypeMap[typeid(T)] = id;
 		}
 
