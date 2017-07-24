@@ -1,6 +1,7 @@
 #pragma once
 
 #if defined(_WIN32)
+	#define NOMINMAX
 	#include <Windows.h>
 #elif defined(__linux__)
 	#include <X11/Xlib.h>
