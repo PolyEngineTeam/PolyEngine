@@ -88,9 +88,14 @@
 #endif
 
 #ifndef DISABLE_SIMD
-#define DISABLE_SIMD false
+#define DISABLE_SIMD true
 #endif
 
+#if defined(_WIN32)
+    #define POLY_STDCALL __stdcall
+#else
+    #define POLY_STDCALL
+#endif
 // limits
 constexpr auto MAX_FLOAT = (std::numeric_limits<float>::max)(); //the parentheses are there to prevent WinAPI macros from breaking this
 constexpr auto MIN_FLOAT = (std::numeric_limits<float>::min)();

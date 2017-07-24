@@ -2,8 +2,6 @@
 #include <GLRenderingDevice.hpp>
 #include <InvadersGame.hpp>
 
-static Poly::Engine* Poly::gEngine = nullptr;
-
 void handleEvents(Display* display, Window window, const XEvent& ev);
 
 int main() {
@@ -105,7 +103,7 @@ int main() {
 	std::unique_ptr<Window, decltype(windowCleanup)> windowCleanupGuard(&window, windowCleanup);
 
 	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(new InvadersGame());
-	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(Poly::CreateRenderingDevice(display.get(), window, fbConfig));
+	std::unique_ptr<Poly::IRenderingDevice> device = std::make_unique<Poly::GLRenderingDevice>(display.get(), window, fbConfig);
 
 	Poly::Engine Engine(std::move(game), std::move(device));
 	Poly::gConsole.LogDebug("Engine loaded");
@@ -126,12 +124,11 @@ int main() {
 				break;
 			}
 		} else {
-			engine.Update();
+			Engine.Update();
 		}
 	}
 	Poly::gConsole.LogDebug("Game loop interrupted");
 
-	engine.Deinit();
 	Poly::gConsole.LogDebug("Engine suicide");
 }
 
