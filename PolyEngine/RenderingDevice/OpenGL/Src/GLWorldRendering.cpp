@@ -50,16 +50,16 @@ void GLRenderingDevice::RenderWorld(World * world)
 		glDepthMask(GL_FALSE);
 		glDisable(GL_DEPTH_TEST);
 
-		// Draw debug normals
-		if (gCoreConfig.DebugNormalsFlag)
-			GeometryRenderingPasses[eGeometryRenderPassType::DEBUG_NORMALS]->Run(world, kv.second.GetCamera(), rect);
+		// Run postprocess passes
+		for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
+			PostprocessRenderingPasses[type]->Run(world, kv.second.GetCamera(), rect);
 
 		// Render text
 		GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, kv.second.GetCamera(), rect);
 
-		// Run postprocess passes
-		for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
-			PostprocessRenderingPasses[type]->Run(world, kv.second.GetCamera(), rect);
+		// Draw debug normals
+		if (gCoreConfig.DebugNormalsFlag)
+			GeometryRenderingPasses[eGeometryRenderPassType::DEBUG_NORMALS]->Run(world, kv.second.GetCamera(), rect);
 	}
 
 	// Signal frame end
