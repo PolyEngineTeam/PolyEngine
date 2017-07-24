@@ -128,8 +128,8 @@ Vector Vector::Cross(const Vector& rhs) const {
   ret.Z = X * rhs.Y - Y * rhs.X;
   return ret;
 #else
-  const uint32_t YZXMask = _MM_SHUFFLE(0, 0, 2, 1);
-  const uint32_t ZXYMask = _MM_SHUFFLE(0, 1, 0, 2);
+#define YZXMask _MM_SHUFFLE(0, 0, 2, 1)
+#define ZXYMask _MM_SHUFFLE(0, 1, 0, 2)
   // first subtraction part
   __m128 tmp_yzx = _mm_shuffle_ps(SimdData, SimdData, YZXMask);
   __m128 tmp_zxy = _mm_shuffle_ps(rhs.SimdData, rhs.SimdData, ZXYMask);

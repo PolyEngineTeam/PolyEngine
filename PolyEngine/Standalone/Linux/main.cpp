@@ -2,8 +2,6 @@
 #include <GLRenderingDevice.hpp>
 #include <InvadersGame.hpp>
 
-extern Poly::Engine* Poly::gEngine = nullptr;
-
 void handleEvents(Display* display, Window window, const XEvent& ev);
 
 int main() {

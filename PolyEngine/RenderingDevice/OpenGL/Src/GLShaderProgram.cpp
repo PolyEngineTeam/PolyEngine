@@ -141,7 +141,7 @@ void GLShaderProgram::RegisterUniform(const String& type, const String& name)
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, int val)
 { 
-	auto& it = Uniforms.find(name);
+	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
 	{
 		HEAVY_ASSERTE(it->second.TypeName == "int" || it->second.TypeName == "sampler2D", "Invalid uniform type!");
@@ -153,7 +153,7 @@ void GLShaderProgram::SetUniform(const String& name, int val)
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, float val)
 {
-	auto& it = Uniforms.find(name);
+	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
 	{
 		HEAVY_ASSERTE(it->second.TypeName == "float", "Invalid uniform type!");
@@ -166,7 +166,7 @@ void GLShaderProgram::SetUniform(const String& name, float val)
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String & name, float val1, float val2)
 {
-	auto& it = Uniforms.find(name);
+	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
 	{
 		HEAVY_ASSERTE(it->second.TypeName == "vec2", "Invalid uniform type!");
@@ -179,7 +179,7 @@ void GLShaderProgram::SetUniform(const String & name, float val1, float val2)
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, const Vector& val)
 {
-	auto& it = Uniforms.find(name);
+	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
 	{
 		HEAVY_ASSERTE(it->second.TypeName == "vec4", "Invalid uniform type!");
@@ -192,7 +192,7 @@ void GLShaderProgram::SetUniform(const String& name, const Vector& val)
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, const Color& val)
 {
-	auto& it = Uniforms.find(name);
+	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
 	{
 		HEAVY_ASSERTE(it->second.TypeName == "vec4", "Invalid uniform type!");
@@ -205,7 +205,7 @@ void GLShaderProgram::SetUniform(const String& name, const Color& val)
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, const Matrix& val)
 {
-	auto& it = Uniforms.find(name);
+	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
 	{
 		HEAVY_ASSERTE(it->second.TypeName == "mat4", "Invalid uniform type!");
