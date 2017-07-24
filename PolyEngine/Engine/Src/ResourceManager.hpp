@@ -3,6 +3,7 @@
 #include <Defines.hpp>
 #include <Logger.hpp>
 #include <String.hpp>
+#include <FileIO.hpp>
 
 #include "CoreConfig.hpp"
 #include "ResourceBase.hpp"
