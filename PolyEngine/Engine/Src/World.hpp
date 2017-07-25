@@ -18,37 +18,29 @@ namespace Poly {
 		template<typename T, typename ...Args> void AddWorldComponentImmediate(World* w, Args && ...args);
 		template<typename T> void RemoveWorldComponentImmediate(World* w);
 	}
-
-	/// Entities per world limit.
-	constexpr size_t MAX_ENTITY_COUNT = 65536;
-
-	/// World components in limit.
-	constexpr size_t MAX_WORLD_COMPONENTS_COUNT = 64;
-
 	struct InputState;
 
-	/// World represents world/scene/level in engine.
-	/// It only contains entities and its components.
-	/// Also it is the argument for update phases.
+	/// <summary>Entities per world limit.</summary>
+	constexpr size_t MAX_ENTITY_COUNT = 65536;
+
+	/// <summary>World components in limit.</summary>
+	constexpr size_t MAX_WORLD_COMPONENTS_COUNT = 64;
+
+	/// <summary>World represents world/scene/level in engine.
+	/// It contains entities, its components and world components.</summary>
 	class ENGINE_DLLEXPORT World : public BaseObject<>
 	{
 	public:
-		/// Allocates memory for entities, world components and components allocators
-		/// Also saves pointer to an engine.
-		/// @param engine - pointer to an engine
+		/// <summary>Allocates memory for entities, world components and components allocators.</summary>
 		World();
 
-		/// Allocates memory for entities, world components and components allocators
-		/// Also saves pointer to an engine.
-		/// @param engine - pointer to an engine
 		virtual ~World();
 
-		/// Gets a component of a specified type from entity with given UniqueID.
-		/// @tparam T - component type to get
-		/// @param entityId - UniqueID of a component to get
-		/// @return pointer to a specified component or a nullptr, if none was found
-		/// @see AddComponent()
-		/// @see RemoveComponent()
+		/// <summary>Gets a component of a specified type from entity with given UniqueID.</summary>
+		/// <param name="entityId">UniqueID of the entity.</param>
+		/// <returns>Pointer to a specified component or a nullptr, if none was found.</returns>
+		/// <see cref="World.AddComponent()">
+		/// <see cref="World.RemoveComponent()">
 		template<typename T>
 		T* GetComponent(const UniqueID& entityId)
 		{
@@ -58,14 +50,13 @@ namespace Poly {
 			return iter->second->GetComponent<T>();
 		}
 
-		/// Checks whether world has component of given ID.
-		/// @param ID - registered component ID
-		/// @return has - true when world has component of given ID
+		/// <summary>Checks whether world has component of given ID.</summary>
+		/// <param name="ID">Registered component ID.</param>
+		/// <returns>True when world has component of given ID, false otherwise</returns>
 		bool HasWorldComponent(size_t ID) const;
 
-		/// Returns world component of given type.
-		/// @tparam T - requested component type
-		/// @return T* - pointer to world component
+		/// <summary>Returns world component of given type.</summary>
+		/// <returns>Pointer to world component</returns>
 		template<typename T>
 		T* GetWorldComponent()
 		{			
@@ -76,18 +67,16 @@ namespace Poly {
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		struct IteratorProxy;
 
-		/// Allows iteration over multiple component types
-		/// Iterator dereferences to a tuple of component pointers
-		///
-		/// To get the component out of the tuple use std::get()
-		/// e.g. `std::get<YourComponentType*>(components)`
+		/// <summary>Allows iteration over multiple component types.
+		/// Iterator dereferences to a tuple of component pointers.</summary>
+		/// <example>To get the component out of the tuple use std::get()
+		/// e.g. <code>std::get{YourComponentType*}(components)</code>
 		/// If you have a C++17-compliant compiler, you can use structured bindings
-		/// e.g. `for(auto [a, b] : world->IterateComponents<ComponentA, ComponentB>())`
-		///
-		/// @tparam PrimaryComponent At least one component type must be specified
-		/// @tparam SecondaryComponents Additional component types (warning: returned pointers might be null!)
-		/// @return A proxy object that can be used in a range-for loop.
-		/// @see ComponentIterator
+		/// e.g. <code>for(auto [a, b] : world->IterateComponents{ComponentA, ComponentB}())</code></example>
+		/// <param name="PrimaryComponent">At least one component type must be specified</param>
+		/// <param name="SecondaryComponents">Additional component types (warning: returned pointers might be null!)</param>
+		/// <returns>A proxy object that can be used in a range-for loop.</returns>
+		/// <see cref="World.ComponentIterator"/>
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		IteratorProxy<PrimaryComponent, SecondaryComponents...> IterateComponents()
 		{

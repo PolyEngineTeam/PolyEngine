@@ -4,7 +4,7 @@
 
 void Poly::CameraSystem::CameraUpdatePhase(World* world)
 {
-	ScreenSize screen = gEngine->GetRenderingContext()->GetScreenSize();
+	ScreenSize screen = gEngine->GetRenderingDevice()->GetScreenSize();
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
 	{
 		const AABox& rect = kv.second.GetRect();

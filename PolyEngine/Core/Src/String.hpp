@@ -92,7 +92,7 @@ namespace Poly {
 		}
 
 		//------------------------------------------------------------------------------
-		const T& operator[](int idx) const { HEAVY_ASSERTE(idx <= GetLength(), "Index out of bounds!"); return Data[idx]; }
+		const T& operator[](size_t idx) const { HEAVY_ASSERTE(idx <= GetLength(), "Index out of bounds!"); return Data[idx]; }
 		size_t GetLength() const { return Data.GetSize() - 1; }
 		const T* GetCStr() const { return Data.GetData(); }
 

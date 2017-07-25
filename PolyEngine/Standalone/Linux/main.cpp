@@ -2,8 +2,6 @@
 #include <GLRenderingDevice.hpp>
 #include <InvadersGame.hpp>
 
-static Poly::Engine* gEngine = nullptr;
-
 void handleEvents(Display* display, Window window, const XEvent& ev);
 
 int main() {
@@ -64,6 +62,10 @@ int main() {
 	XVisualInfo* visual = glXGetVisualFromFBConfig(display.get(), fbConfig);
 	Colormap colourMap;
 
+	Poly::ScreenSize windowSize;
+	windowSize.Width = 800;
+	windowSize.Height = 600;
+	
 	//create the window
 	XSetWindowAttributes windowAttribs;
 	windowAttribs.colormap = colourMap = XCreateColormap(display.get(), RootWindow(display.get(), screen), visual->visual, AllocNone);
@@ -74,8 +76,8 @@ int main() {
 		RootWindow(display.get(), screen),                                     //parent
 		0,                                                                     //x
 		0,                                                                     //y
-		800,                                                                   //width
-		600,                                                                   //height
+		windowSize.Width,                                                                   //width
+		windowSize.Height,                                                                   //height
 		0,                                                                     //border width
 		visual->depth,
 		InputOutput,                                                           //class
@@ -104,16 +106,10 @@ int main() {
 	};
 	std::unique_ptr<Window, decltype(windowCleanup)> windowCleanupGuard(&window, windowCleanup);
 
-	//engine init (creates context)
-	InvadersGame game;
+	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(new InvadersGame());
+	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(PolyCreateRenderingDevice(display.get(), window, fbConfig, windowSize));
 
-	Poly::IRenderingDevice* device = Poly::CreateRenderingDevice(display.get(), window, fbConfig);
-	Poly::Engine engine(&game, device);
-	gEngine = &engine;
-	if (!engine.Init()) {
-		Poly::gConsole.LogError("Engine load failed!");
-		return 1;
-	}
+	Poly::Engine Engine(std::move(game), std::move(device));
 	Poly::gConsole.LogDebug("Engine loaded");
 
 	//show the window
@@ -123,21 +119,23 @@ int main() {
 
 	//enter the matri... *ekhm* game loop
 	XEvent ev;
-	for(;;) {
-		if (XPending(display.get()) > 0) {
+	for(;;)
+	{
+		if (XPending(display.get()) > 0)
+		{
 			XNextEvent(display.get(), &ev);
 
 			handleEvents(display.get(), window, ev);
-			if ((ev.type == ClientMessage && static_cast<Atom>(ev.xclient.data.l[0]) == atomWmDeleteWindow) || ev.type == DestroyNotify) {
+			if ((ev.type == ClientMessage && static_cast<Atom>(ev.xclient.data.l[0]) == atomWmDeleteWindow) || ev.type == DestroyNotify)
+			{
 				break;
 			}
 		} else {
-			engine.Update();
+			Engine.Update();
 		}
 	}
 	Poly::gConsole.LogDebug("Game loop interrupted");
 
-	engine.Deinit();
 	Poly::gConsole.LogDebug("Engine suicide");
 }
 
@@ -151,7 +149,7 @@ void handleEvents(Display* display, Window window, const XEvent& ev) {
 		case Expose: {
 			XWindowAttributes attribs;
 			XGetWindowAttributes(display, window, &attribs);
-			gEngine->ResizeScreen(Poly::ScreenSize{attribs.width, attribs.height});
+			Poly::gEngine->ResizeScreen(Poly::ScreenSize{attribs.width, attribs.height});
 		}
 		break;
 
@@ -162,21 +160,21 @@ void handleEvents(Display* display, Window window, const XEvent& ev) {
 
 		case KeyPress: {
 // 			len = XLookupString(&ev.xkey, str, 25, &keysym, NULL);
-			gEngine->KeyDown(static_cast<Poly::eKey>(ev.xkey.keycode));
+			Poly::gEngine->KeyDown(static_cast<Poly::eKey>(ev.xkey.keycode));
 		}
 		break;
 
-		case KeyRelease: gEngine->KeyUp(static_cast<Poly::eKey>(ev.xkey.keycode)); break; //TODO(vuko): should we ignore auto-repeat?
+		case KeyRelease: Poly::gEngine->KeyUp(static_cast<Poly::eKey>(ev.xkey.keycode)); break; //TODO(vuko): should we ignore auto-repeat?
 		case ButtonPress: {
 			switch (ev.xbutton.button) {
-				case scrollUp: gEngine->UpdateWheelPos(Poly::Vector(0.0f, -120.0f, 0.0f)); break;
-				case scrollDown: gEngine->UpdateWheelPos(Poly::Vector(0.0f, 120.0f, 0.0f)); break;
-				default: gEngine->KeyDown(static_cast<Poly::eKey>(ev.xbutton.button));
+				case scrollUp: Poly::gEngine->UpdateWheelPos(Poly::Vector(0.0f, -120.0f, 0.0f)); break;
+				case scrollDown: Poly::gEngine->UpdateWheelPos(Poly::Vector(0.0f, 120.0f, 0.0f)); break;
+				default: Poly::gEngine->KeyDown(static_cast<Poly::eKey>(ev.xbutton.button));
 			}
 		}
 		break;
 
-		case ButtonRelease: gEngine->KeyUp(static_cast<Poly::eKey>(ev.xbutton.button)); break;
-		case MotionNotify: gEngine->UpdateMousePos(Poly::Vector(static_cast<float>(ev.xmotion.x), static_cast<float>(ev.xmotion.y), 0.0f)); break;
+		case ButtonRelease: Poly::gEngine->KeyUp(static_cast<Poly::eKey>(ev.xbutton.button)); break;
+		case MotionNotify: Poly::gEngine->UpdateMousePos(Poly::Vector(static_cast<float>(ev.xmotion.x), static_cast<float>(ev.xmotion.y), 0.0f)); break;
 	}
 }

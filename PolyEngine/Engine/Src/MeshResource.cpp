@@ -70,7 +70,7 @@ Poly::MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMateria
 		}
 	}
 
-	MeshProxy = gEngine->GetRenderingContext()->CreateMesh();
+	MeshProxy = gEngine->GetRenderingDevice()->CreateMesh();
 	MeshProxy->SetContent(MeshData);
 
 	gConsole.LogDebug(

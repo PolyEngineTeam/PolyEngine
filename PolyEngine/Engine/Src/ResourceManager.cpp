@@ -18,7 +18,7 @@ DEFINE_RESOURCE(SoundResource, gALSoundResourcesMap)
 const String& Poly::GetResourcesAbsolutePath()
 {
 	static String PATH;
-	static const String defaultPath("../Engine/Res/");
+	static const String defaultPath("../../Engine/Res/");
 	static const String assetsPath("AssetsPath.txt");
 
 	if (PATH.GetLength() == 0)

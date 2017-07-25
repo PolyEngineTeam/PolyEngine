@@ -68,7 +68,7 @@ void World::DestroyEntity(const UniqueID& entityId)
 bool World::HasWorldComponent(size_t ID) const
 {
 	HEAVY_ASSERTE(ID < MAX_WORLD_COMPONENTS_COUNT, "Invalid component ID - greater than MAX_WORLD_COMPONENTS_COUNT.");
-	return static_cast<bool>(WorldComponents[ID]);
+	return WorldComponents[ID] != nullptr;
 }
 
 //------------------------------------------------------------------------------

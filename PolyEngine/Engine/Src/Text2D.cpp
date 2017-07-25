@@ -26,7 +26,7 @@ void Text2D::UpdateDeviceBuffers() const
 	// Create buffers on GPU
 	if (TextFieldBufferProxy == nullptr)
 	{
-		TextFieldBufferProxy = gEngine->GetRenderingContext()->CreateTextFieldBuffer();
+		TextFieldBufferProxy = gEngine->GetRenderingDevice()->CreateTextFieldBuffer();
 	}
 
 	if(!Font)

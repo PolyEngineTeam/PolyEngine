@@ -10,30 +10,25 @@ namespace Poly
 	class ComponentBase;
 	constexpr unsigned int MAX_COMPONENTS_COUNT = 64;
 
-	//TODO finish implementation of this class
-
+	/// <summary>Class that represent entity inside core engine systems. Should not be used anywhere else.</summary>
 	class ENGINE_DLLEXPORT Entity : public BaseObject<>
 	{
 	public:
 		const UniqueID& GetID() const { HEAVY_ASSERTE(EntityID, "Entity was not properly initialized");  return EntityID; }
 		const World* GetWorld() const { HEAVY_ASSERTE(EntityID, "Entity was not properly initialized");  return EntityWorld; }
 
-		
-		/// Note: This function should only be accessed by engine's internal logic.
-		/// Checks whether there is a component of a given ID under this Entity's ID.
-		/// @param ID of a component type
-		/// @see GetComponent()
-		/// @see HasComponents()
-		
+		/// <summary>Checks whether there is a component of a given ID under this Entity's ID.</summary>
+		/// <param name="ID">ID of a component type</param>
+		/// <returns>True if has queried component, false otherwise.</summary>
+		/// <seealso cref="Entity.GetComponent()"/>
+		/// <seealso cref="Entity.HasComponents()"/>
 		bool HasComponent(size_t ID) const;
 
-		
-		/// Note: This function should only be accessed by engine's internal logic.
-		/// Checks whether there are all of the specified components under this Entity's ID.
-		/// @param IDs is a bit field of component IDs to be checked for, see macro BIT()
-		/// @see GetComponent()
-		/// @see HasComponent()
-		
+		/// <summary>Checks whether there are all of the specified components under this Entity's ID.</summary>
+		/// <param name="IDs">IDs is a bit field of component IDs to be checked for, see macro BIT()</param> 
+		/// <returns>True if has queried components, false otherwise.</summary>
+		/// <seealso cref="Entity.GetComponent()"/>
+		/// <seealso cref="Entity.HasComponent()"/>
 		inline bool HasComponents(unsigned long int IDs) const
 		{
 			//TODO This bit field has to be reimplemented - it will not work for MAX_COMPONENTS_COUNT greater than 64 in its current state.
@@ -41,11 +36,8 @@ namespace Poly
 			return (ComponentPosessionFlags.to_ullong() & IDs) == IDs;
 		}
 
-		
-		/// Note: This function should only be accessed by engine's internal logic.
-		/// Gets a pointer to a component of a given ID.
-		/// @return A pointer to a component or nullptr if it does not exist.
-		
+		/// <summary>Gets a pointer to a component of a given ID.</summary>
+		/// <returns>A pointer to a component or nullptr if it does not exist.</returns>
 		template<class T>
 		T* GetComponent(); //defined in World.hpp due to circular inclusion problem; FIXME: circular inclusion
 

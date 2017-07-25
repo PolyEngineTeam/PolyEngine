@@ -33,7 +33,7 @@ namespace Poly {
 			bool operator!=(const Iterator& rhs) const { return !(*this == rhs); }
 
 			T& operator*() const { return *reinterpret_cast<T*>(CurrentCell->Data); }
-			T& operator->() const { return *reinterpret_cast<T*>(CurrentCell->Data); }
+			T* operator->() const { return reinterpret_cast<T*>(CurrentCell->Data); }
 
 			Iterator& operator++() { CurrentCell = CurrentCell->Next; return *this; }
 			Iterator operator++(int) { Iterator ret(CurrentCell); CurrentCell = CurrentCell->Next; return ret; }
@@ -55,7 +55,7 @@ namespace Poly {
 			bool operator!=(const ConstIterator& rhs) const { return !(*this == rhs); }
 
 			const T& operator*() const { return *reinterpret_cast<T*>(CurrentCell->Data); }
-			const T& operator->() const { return *reinterpret_cast<T*>(CurrentCell->Data); }
+			const T* operator->() const { return reinterpret_cast<T*>(CurrentCell->Data); }
 
 			ConstIterator& operator++() { CurrentCell = CurrentCell->Next; return *this; }
 			ConstIterator operator++(int) { ConstIterator ret(CurrentCell); CurrentCell = CurrentCell->Next; return ret; }

@@ -20,7 +20,7 @@ namespace Poly {
 			bool operator!=(const Iterator& rhs) const { return !(*this == rhs); }
 
 			T& operator*() const { return Data[Idx]; }
-			T& operator->() const { return Data[Idx]; }
+			T* operator->() const { return Data + Idx; }
 
 			Iterator& operator++() { ++Idx; return *this; }
 			Iterator operator++(int) { Iterator ret(Data, Idx); ++Idx; return ret; }
@@ -46,7 +46,7 @@ namespace Poly {
 			bool operator!=(const ConstIterator& rhs) const { return !(*this == rhs); }
 
 			const T& operator*() const { return Data[Idx]; }
-			const T& operator->() const { return Data[Idx]; }
+			const T* operator->() const { return Data + Idx; }
 
 			ConstIterator& operator++() { ++Idx; return *this; }
 			ConstIterator operator++(int) { ConstIterator ret(Data, Idx); ++Idx; return ret; }

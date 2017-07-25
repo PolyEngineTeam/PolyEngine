@@ -6,8 +6,14 @@ namespace Poly
 
 	namespace FPSSystem
 	{
-		void ENGINE_DLLEXPORT FPSUpdatePhase(World*);
+		struct FPSData
+		{
+			int FPS;
+			double ElapsedTime;
+			bool DisplayingFPS;
+		};
 
 		float ENGINE_DLLEXPORT GetFPS(World* world);
+		void FPSUpdatePhase(World*);
 	}
 }

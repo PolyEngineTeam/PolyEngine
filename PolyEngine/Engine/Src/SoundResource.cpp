@@ -204,7 +204,7 @@ SoundResource::SoundResource(const String& path)
 									const size_t oldDataSize = rawData.GetSize();
 									if(oldDataSize + newBlocksize > rawData.GetCapacity())
 									{
-										const size_t newCap = max(rawData.GetCapacity(), newBlocksize);
+										const size_t newCap = std::max(rawData.GetCapacity(), newBlocksize);
 										rawData.Reserve(newCap * 2);
 									}
 									rawData.Resize(oldDataSize + newBlocksize);

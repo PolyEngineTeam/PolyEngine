@@ -18,6 +18,7 @@
 // stupid warning in MSVC about template specialization exporting, according to https://msdn.microsoft.com/en-US/library/esew7y1w.aspx it can be ignored
 #if defined(_WIN32)
 	#pragma warning(disable: 4251)
+	#pragma warning(disable: 4275)
 #endif
 
 #ifdef __GNUC__
@@ -85,6 +86,12 @@
 	#define ENGINE_DLLEXPORT
 	#define GAME_DLLEXPORT
 	#define DEVICE_DLLEXPORT
+#endif
+
+#if defined(_WIN32)
+#define POLY_STDCALL __stdcall
+#else
+#define POLY_STDCALL
 #endif
 
 #ifndef DISABLE_SIMD

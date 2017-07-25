@@ -27,7 +27,7 @@ namespace Poly
 			bool operator>=(const Iterator& rhs) const { HEAVY_ASSERTE(Data == rhs.Data, "Not valid iterator pair");  return Idx >= rhs.Idx; }
 
 			T& operator*() const { return Data[Idx]; }
-			T& operator->() const { return Data[Idx]; }
+			T* operator->() const { return Data + Idx; }
 
 			Iterator& operator++() { ++Idx; return *this; }
 			Iterator operator++(int) { Iterator ret(Data, Idx); ++Idx; return ret; }
@@ -60,7 +60,7 @@ namespace Poly
 			bool operator>=(const ConstIterator& rhs) const { HEAVY_ASSERTE(Data == rhs.Data, "Not valid iterator pair");  return Idx >= rhs.Idx; }
 
 			const T& operator*() const { return Data[Idx]; }
-			const T& operator->() const { return Data[Idx]; }
+			const T* operator->() const { return Data + Idx; }
 
 			ConstIterator& operator++() { ++Idx; return *this; }
 			ConstIterator operator++(int) { ConstIterator ret(Data, Idx); ++Idx; return ret; }
@@ -82,7 +82,7 @@ namespace Poly
 		};
 
 		/// <summary>Base dynarray constructor that creates empty object with capacity == 0.</summary>
-		Dynarray() = default;
+		Dynarray() {}
 
 		/// <summary>Creates dynarray instance with provided capacity.</summary>
 		/// <param name="capacity"></param>
@@ -212,6 +212,23 @@ namespace Poly
 		}
 
 		/// <summary>
+		/// Moved provided object to the specified location in the dynarray.
+		/// Objects already present that are in position >= idx will be moved one position to the right.
+		/// Insertion with idx > size results in undefined behaviour.
+		/// </summary>
+		/// <param name="idx">Index in which object should be created.</param>
+		/// <param name="obj">R-value reference to object that should be copied to the container.</param>
+		void Insert(size_t idx, T&& obj)
+		{
+			HEAVY_ASSERTE(idx <= GetSize(), "Index out of bounds!");
+			if (Size == GetCapacity())
+				Enlarge();
+			std::move_backward(Begin() + idx, End(), End() + 1);
+			ObjectLifetimeHelper::MoveCreate(Data + idx, std::move(obj));
+			++Size;
+		}
+
+		/// <summary>
 		/// Removes element from the collection with specified index.
 		/// Objects in position > idx will be moved one position to the left.
 		/// Removal of object in idx >= size results in undefined behavour.
@@ -242,12 +259,20 @@ namespace Poly
 		/// <param name="obj">Const reference to object that should be copied to the container.</param>
 		void PushBack(const T& obj) { Insert(GetSize(), obj); }
 
+		/// <summary>Performs insertion to the back of the container.</summary>
+		/// <param name="obj">R-value reference to object that should be copied to the container.</param>
+		void PushBack(T&& obj) { Insert(GetSize(), std::move(obj)); }
+
 		/// <summary>Performs removal from the back of the container.</summary>
 		void PopBack() { RemoveByIdx(GetSize() - 1); }
 
 		/// <summary>Performs insertion to the front of the container.</summary>
 		/// <param name="obj">Const reference to object that should be copied to the container.</param>
 		void PushFront(const T& obj) { Insert(0, obj); }
+
+		/// <summary>Performs insertion to the front of the container.</summary>
+		/// <param name="obj">R-value reference to object that should be copied to the container.</param>
+		void PushFront(T&& obj) { Insert(0, std::move(obj)); }
 
 		/// <summary>Performs removal from the front of the container.</summary>
 		void PopFront() { RemoveByIdx(0); }
