@@ -137,6 +137,7 @@
     <ClCompile Include="Src\QuaternionTests.cpp" />
     <ClCompile Include="Src\QueueTests.cpp" />
     <ClCompile Include="Src\ResourceManagerTests.cpp" />
+    <ClCompile Include="Src\StringTests.cpp" />
     <ClCompile Include="Src\VectorTests.cpp" />
     <ClCompile Include="Src\TransformComponentTests.cpp" />
   </ItemGroup>

@@ -144,6 +144,7 @@
     <ClCompile Include="Src\AABox.cpp" />
     <ClCompile Include="Src\RefCountedBase.cpp" />
     <ClCompile Include="Src\SimdMath.cpp" />
+    <ClCompile Include="src\String.cpp" />
     <ClCompile Include="Src\UniqueID.cpp" />
     <ClCompile Include="Src\Vector.cpp" />
   </ItemGroup>
