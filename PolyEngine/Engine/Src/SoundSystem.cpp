@@ -26,7 +26,7 @@ void SoundSystem::SoundPhase(World* world)
 void SoundSystem::SetDevice(const String& name)
 {
 	alcCloseDevice(gEngine->GetAudioDevice().Device);
-	gEngine->GetAudioDevice().Device = alcOpenDevice(&name[0]);
+	gEngine->GetAudioDevice().Device = alcOpenDevice(name.GetCStr());
 	HEAVY_ASSERTE(gEngine->GetAudioDevice().Device, "OpenAL device creation failed");
 }
 
