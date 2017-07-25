@@ -7,6 +7,7 @@ set(POLYCORE_SRCS
 	Src/Quaternion.cpp
 	Src/RefCountedBase.cpp
 	Src/SimdMath.cpp
+	Src/String.cpp
 	Src/UniqueID.cpp
 	Src/Vector.cpp
 )
