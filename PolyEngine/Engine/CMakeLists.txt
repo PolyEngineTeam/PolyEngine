@@ -29,8 +29,14 @@ set(POLYENGINE_SRCS
 	Src/InputWorldComponent.cpp
 	Src/MeshRenderingComponent.cpp
 	Src/MovementSystem.cpp
+	Src/OpenALDevice.cpp
 	Src/RenderingSystem.cpp
 	Src/ResourceManager.cpp
+	Src/SoundEmitterComponent.cpp
+	Src/SoundListenerComponent.cpp
+	Src/SoundResource.cpp
+	Src/SoundSystem.cpp
+	Src/SoundWorldComponent.cpp
 	Src/Text2D.cpp
 	Src/TimeSystem.cpp
 	Src/TimeWorldComponent.cpp
@@ -54,6 +60,7 @@ set(POLYENGINE_H_FOR_IDE
 	Src/IRenderingDevice.hpp
 	Src/Mesh.hpp
 	Src/MeshResource.hpp
+	Src/OpenALDevice.hpp
 	Src/TextureResource.hpp
 	Src/DeferredTaskBase.hpp
 	Src/DeferredTaskImplementation.hpp
@@ -69,6 +76,11 @@ set(POLYENGINE_H_FOR_IDE
 	Src/ResourceBase.hpp
 	Src/ResourceManager.hpp
 	Src/ScreenSpaceTextComponent.hpp
+	Src/SoundEmitterComponent.hpp
+	Src/SoundListenerComponent.hpp
+	Src/SoundResource.hpp
+	Src/SoundSystem.hpp
+	Src/SoundWorldComponent.hpp
 	Src/Text2D.hpp
 	Src/TimeSystem.hpp
 	Src/TimeWorldComponent.hpp
