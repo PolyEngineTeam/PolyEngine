@@ -55,6 +55,9 @@
     <ClCompile Include="Src\AABox.cpp">
       <Filter>Source Files\Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="Src\BinaryBuffer.cpp">
+      <Filter>Source Files\FileIO</Filter>
+    </ClCompile>
     <ClCompile Include="src\String.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
@@ -131,6 +134,9 @@
     </ClInclude>
     <ClInclude Include="Src\AABox.hpp">
       <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BinaryBuffer.hpp">
+      <Filter>Source Files\FileIO</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 
 #include "Defines.hpp"
 #include "String.hpp"
+#include "BinaryBuffer.hpp"
 
 namespace Poly {
 
@@ -28,7 +29,8 @@ namespace Poly {
 	{
 		FILE *f;
 		fopen_s(&f, path.GetCStr(), "rb");
-		if (f) {
+		if (f) 
+		{
 			fseek(f, 0, SEEK_END);
 			long fsize = ftell(f);
 			fseek(f, 0, SEEK_SET);  //same as rewind(f);
@@ -48,11 +50,34 @@ namespace Poly {
 	{
 		FILE *f;
 		fopen_s(&f, path.GetCStr(), "w");
-		if (f) {
+		if (f) 
+		{
 			fprintf(f, "%s", data.GetCStr());
 			fclose(f);
 		}
 		else
 			throw FileIOException("File save failed");
+	}
+
+	//------------------------------------------------------------------------------
+	inline BinaryBuffer* LoadBinaryFile(const String& path)
+	{
+		FILE* f;
+		fopen_s(&f, path.GetCStr(), "rb");
+		if (f) 
+		{
+			fseek(f, 0, SEEK_END);
+			long fsize = ftell(f);
+			fseek(f, 0, SEEK_SET);
+
+			BinaryBuffer* data = new BinaryBuffer(fsize);
+			fread(data->GetBegin(), fsize, 1, f);
+			fclose(f);
+
+			return data;
+		}
+		else
+			throw FileIOException(path);
+
 	}
 }

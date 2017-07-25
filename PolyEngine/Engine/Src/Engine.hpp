@@ -8,6 +8,8 @@
 
 #include <Core.hpp>
 #include "IRenderingDevice.hpp"
+#include "OpenALDevice.hpp"
+
 
 #include "InputSystem.hpp"
 
@@ -28,6 +30,8 @@ namespace Poly
 		MESH_RENDERING,
 		FREE_FLOAT_MOVEMENT,
 		SCREEN_SPACE_TEXT,
+		SOUND_EMMITER,
+		SOUND_LISTENER,
 		_COUNT
 	};
 
@@ -42,6 +46,7 @@ namespace Poly
 		TIME,
 		DEBUG,
 		DEFERRED_TASK,
+		SOUND,
 		_COUNT
 	};
 
@@ -169,6 +174,11 @@ namespace Poly
 		/// <returns>Pointer to IRenderingDevice instance.</returns>
 		IRenderingDevice* GetRenderingDevice() const { return RenderingDevice.get(); }
 
+		/// Returns referrence to audio renderer
+		/// @return AudioRenderer - pointer to IRenderingContext instance.
+		/// @see IRenderingContext
+		OpenALDevice& GetAudioDevice() { return AudioDevice; }
+
 		/// <summary>Returns refference to input queue needed by InputPhase.</summary>
 		/// <returns>Reference to InputQueue instance.</returns>
 		InputQueue& GetInputQueue() { return InputEventsQueue; }
@@ -195,6 +205,7 @@ namespace Poly
 		std::unique_ptr<World> BaseWorld;
 		std::unique_ptr<IGame> Game;
 		std::unique_ptr<IRenderingDevice> RenderingDevice;
+		OpenALDevice AudioDevice;
 		InputQueue InputEventsQueue;
 
 		Dynarray<PhaseUpdateFunction> GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];

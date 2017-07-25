@@ -1,6 +1,7 @@
 set(POLYCORE_SRCS
 	Src/AABox.cpp
 	Src/BaseObject.cpp
+	Src/BinaryBuffer.cpp
 	Src/Color.cpp
 	Src/Logger.cpp
 	Src/Matrix.cpp
@@ -18,6 +19,7 @@ set(POLYCORE_H_FOR_IDE
 	Src/Angle.hpp
 	Src/BaseObject.hpp
 	Src/BasicMath.hpp
+	Src/BinaryBuffer.hpp
 	Src/Color.hpp
 	Src/Core.hpp
 	Src/CorePCH.hpp
