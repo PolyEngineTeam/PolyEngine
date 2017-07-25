@@ -10,12 +10,12 @@ TEST_CASE("String.From", "[String]") {
 	String sInt2 = String::From(i);
 	REQUIRE(sInt == sInt2);
 
-	String sFloat = String("-23.58");
+	String sFloat = String("-23.580000");
 	float f = -23.58f;
 	String sFloat2 = String::From(f);
 	REQUIRE(sFloat == sFloat2);
 
-	String sDouble = String("-23.58");
+	String sDouble = String("-23.580000");
 	double d = -23.58;
 	String sDouble2 = String::From(d);
 	REQUIRE(sDouble == sDouble2);
@@ -25,9 +25,9 @@ TEST_CASE("String.From", "[String]") {
 	String s4Float2 = String::From(f, 4);
 	REQUIRE(s4Float == s4Float2);
 
-	String s5Double = String("-23.58000");
+	String s5Double = String("-23.580");
 	double d5 = -23.58;
-	String s5Double2 = String::From(d, 5);
+	String s5Double2 = String::From(d, 3);
 	REQUIRE(s5Double == s5Double2);
 
 	String sChar = String("c");
