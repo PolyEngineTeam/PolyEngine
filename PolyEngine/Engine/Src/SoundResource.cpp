@@ -2,7 +2,7 @@
 
 #include <al.h>
 #include <ogg/ogg.h>
-#include <vorbis\vorbisfile.h>
+#include <vorbis/vorbisfile.h>
 #include <fstream>
 
 #include "SoundResource.hpp"
