@@ -23,6 +23,8 @@ Currently it is in a early stage of development, thus backwards compatibility is
 * Assimp - mesh loading
 * SOIL - image loading
 * Catch - unit tests
+* OpenAL - audio playback
+* OGG, Vorbis - audio files loading
 
 PolyEngine currently uses OpenGL 3.3+ only, but might gain support for other graphic
 APIs (DirectX, Vulkan, Metal) in the future.
