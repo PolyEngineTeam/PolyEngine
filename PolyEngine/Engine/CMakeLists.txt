@@ -10,6 +10,7 @@ find_package(GLEW REQUIRED)
 find_package(SOIL REQUIRED)
 find_package(assimp REQUIRED)
 find_package(Freetype REQUIRED)
+find_package(OpenAL REQUIRED)
 
 set(POLYENGINE_SRCS
 	Src/CameraComponent.cpp
@@ -93,8 +94,8 @@ set(POLYENGINE_H_FOR_IDE
 
 add_library(polyengine SHARED ${POLYENGINE_SRCS} ${POLYENGINE_H_FOR_IDE})
 target_compile_definitions(polyengine PRIVATE _ENGINE)
-target_include_directories(polyengine INTERFACE ${POLYENGINE_INCLUDE} PRIVATE ${OPENGL_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS})
-target_link_libraries(polyengine PRIVATE polycore ${OPENGL_LIBRARIES} GLEW::GLEW SOIL::SOIL ${ASSIMP_LIBRARIES} ${FREETYPE_LIBRARIES})
+target_include_directories(polyengine INTERFACE ${POLYENGINE_INCLUDE} PRIVATE ${OPENGL_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} ${OPENAL_INCLUDE_DIR})
+target_link_libraries(polyengine PRIVATE polycore ${OPENGL_LIBRARIES} GLEW::GLEW SOIL::SOIL ${ASSIMP_LIBRARIES} ${FREETYPE_LIBRARIES} ${OPENAL_LIBRARY})
 
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	target_compile_options(polyengine PRIVATE --coverage -fprofile-arcs -ftest-coverage)
