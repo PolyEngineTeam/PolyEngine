@@ -25,15 +25,25 @@ namespace Poly
 
 		Dynarray<String> GetAssetsPaths(eResourceSource Source) const;
 
-		bool GetIsLoadedFromFile() const;
+		bool IsLoadedFromFile() const;
 
 		bool ReloadFromFile();
 
+		void LoadDefaults();
+
 	private:
 
-		bool IsLoadedFromFile = false;
+		const String CORE_CONFIG_PATH = String("CoreConfig.json");
+		const String DEFAULT_ENGINE_ASSETS_PATH = String("../../Engine/Res/");
+		const String DEFAULT_GAME_ASSETS_PATH = String("../../Gamee/Res/");
 
-		std::unordered_map<eResourceSource, Dynarray<String>> AssetsPaths;
+		bool LoadedFromFile = false;
+
+		EnumArray<Dynarray<String>, eResourceSource> AssetsPaths;
+
+		void WriteDefaultJson();
+
+		//std::unordered_map<eResourceSource, Dynarray<String>> AssetsPaths;
 	};
 
 	ENGINE_DLLEXPORT extern CoreConfig gCoreConfig;

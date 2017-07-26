@@ -14,20 +14,18 @@ namespace Poly
 	Dynarray<String> CoreConfig::GetAssetsPaths(eResourceSource Source) const
 	{
 		HEAVY_ASSERTE(Source < eResourceSource::_COUNT, "_COUNT enum value passed to GetAssetsPaths(), which is an invalid value");
-		return AssetsPaths.at(Source);
+		return AssetsPaths[Source];
 	}
 
-	bool CoreConfig::GetIsLoadedFromFile() const
+	bool CoreConfig::IsLoadedFromFile() const
 	{
-		return IsLoadedFromFile;
+		return LoadedFromFile;
 	}
 
 	bool CoreConfig::ReloadFromFile()
 	{
 		gConsole.LogInfo("CoreConfig::ReloadFromFile() called");
 		bool IsSuccessfull = true;
-
-		static const String CORE_CONFIG_PATH("CoreConfig.json");
 
 		String ConfigFileContent;
 		try
@@ -38,54 +36,32 @@ namespace Poly
 		catch (FileIOException)
 		{
 			IsSuccessfull = false;
-			gConsole.LogInfo("Config file reading failed: {}", CORE_CONFIG_PATH);
+			gConsole.LogInfo("Config file reading failed: {}, using defaults", CORE_CONFIG_PATH);
+
+			LoadDefaults();
+
+			try
+			{
+				WriteDefaultJson();
+			}
+			catch (FileIOException)
+			{
+				gConsole.LogInfo("Config file saving defaults failed");
+			}
 		}
 
 		Document Json; // UTF8 by default
-		if (Json.Parse(ConfigFileContent.GetCStr()).HasParseError()) 
+		if (Json.Parse(ConfigFileContent.GetCStr()).HasParseError())
 		{
 			IsSuccessfull = false;
 			gConsole.LogInfo("Config file json has error: {}", Json.GetParseError());
+
+			LoadDefaults();
 		}
 		else
 		{
 			// validate
 			HEAVY_ASSERTE(Json.IsObject(), "Json root must be Object");
-
-			// read properties
-			if (Json.HasMember("DebugNormalsFlag") && Json["DebugNormalsFlag"].IsBool())
-			{
-				DebugNormalsFlag = Json["DebugNormalsFlag"].GetBool();
-				gConsole.LogInfo("CoreConfig: bool DebugNormalsFlag found: {}", DebugNormalsFlag);
-			}
-			else 
-			{
-				gConsole.LogInfo("CoreConfig: bool DebugNormalsFlag not found");
-			}
-
-			if (Json.HasMember("WireframeRendering") && Json["WireframeRendering"].IsBool())
-			{
-				WireframeRendering = Json["WireframeRendering"].GetBool();
-				gConsole.LogInfo("CoreConfig: bool WireframeRendering found: {}", WireframeRendering);
-			}
-			else
-			{
-				gConsole.LogInfo("CoreConfig: bool WireframeRendering not found");
-			}
-
-			if (Json.HasMember("DisplayFPS") && Json["DisplayFPS"].IsBool())
-			{
-				DisplayFPS = Json["DisplayFPS"].GetBool();
-				gConsole.LogInfo("CoreConfig: bool DisplayFPS found: {}", WireframeRendering);
-			}
-			else
-			{
-				gConsole.LogInfo("CoreConfig: bool DisplayFPS not found");
-			}
-
-
-			// read assets paths
-			AssetsPaths.clear();
 
 			if (Json.HasMember("EngineAssetsPaths") && Json["EngineAssetsPaths"].IsArray())
 			{
@@ -105,7 +81,7 @@ namespace Poly
 					}
 				}
 
-				AssetsPaths[eResourceSource::ENGINE] = std::move(EngineAssetPaths);
+				AssetsPaths[eResourceSource::ENGINE] = EngineAssetPaths;
 			}
 			else
 			{
@@ -130,16 +106,36 @@ namespace Poly
 					}
 				}
 
-				AssetsPaths[eResourceSource::GAME] = std::move(GameAssetsPaths);
+				AssetsPaths[eResourceSource::GAME] = GameAssetsPaths;
 			}
 			else
 			{
 				gConsole.LogInfo("CoreConfig: Array GameAssetsPaths not found");
 			}
+
 		}
 
-		IsLoadedFromFile = IsSuccessfull ? true : IsLoadedFromFile;
+		LoadedFromFile = IsSuccessfull ? true : LoadedFromFile;
 
 		return IsSuccessfull;
+	}
+
+	void CoreConfig::LoadDefaults()
+	{
+		gConsole.LogInfo("CoreConfig::LoadDefaults() called");
+
+		Dynarray<String> EngineAssetPaths;
+		EngineAssetPaths.PushBack(DEFAULT_ENGINE_ASSETS_PATH);
+		AssetsPaths[eResourceSource::ENGINE] = EngineAssetPaths;
+
+		Dynarray<String> GameAssetPaths;
+		GameAssetPaths.PushBack(DEFAULT_GAME_ASSETS_PATH);
+		AssetsPaths[eResourceSource::GAME] = GameAssetPaths;
+	}
+
+	void CoreConfig::WriteDefaultJson()
+	{
+		String JsonContent("{\"EngineAssetsPaths\":[\"../../Engine/Res/\"],\"GameAssetsPaths\":[\"../../Game/Res/\"]}");
+		SaveTextFile(CORE_CONFIG_PATH, JsonContent);
 	}
 }

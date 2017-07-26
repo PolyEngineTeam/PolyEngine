@@ -69,7 +69,7 @@ namespace Poly
 						gConsole.LogError("Resource loading found absolute path: {}", absolutePath);
 						resource = new T(absolutePath);
 					}
-					else 
+					else
 					{
 						gConsole.LogError("Resource absolute path not found! {}", path);
 						return nullptr;

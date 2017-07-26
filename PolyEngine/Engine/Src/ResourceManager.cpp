@@ -17,7 +17,7 @@ ENGINE_DLLEXPORT String Poly::LoadTextFileRelative(eResourceSource Source, const
 	bool IsNotLoaded = true;
 
 	// TODO: move to very first start block in program
-	if (!gCoreConfig.GetIsLoadedFromFile())
+	if (!gCoreConfig.IsLoadedFromFile())
 	{
 		gCoreConfig.ReloadFromFile();
 	}

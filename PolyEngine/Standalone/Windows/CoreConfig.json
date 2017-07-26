@@ -1,9 +1,1 @@
-{
-	"DebugNormalsFlag": false,
-	"EngineAssetsPaths": [
-		"../../Engine/Res/"
-	],
-	"GameAssetsPaths": [
-		"../../Game/Res/"
-	]
-}
+{"EngineAssetsPaths":["../../Engine/Res/"],"GameAssetsPaths":["../../Game/Res/"]}
