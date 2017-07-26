@@ -1,11 +1,6 @@
 #include"EnginePCH.hpp"
 
 #include "rapidjson/document.h"     // rapidjson's DOM-style API
-#include "rapidjson/prettywriter.h" // for stringify JSON
-#include <cstdio>
-
-using namespace rapidjson;
-using namespace std;
 
 namespace Poly
 {
@@ -50,7 +45,7 @@ namespace Poly
 			}
 		}
 
-		Document Json; // UTF8 by default
+		rapidjson::Document Json; // UTF8 by default
 		if (Json.Parse(ConfigFileContent.GetCStr()).HasParseError())
 		{
 			IsSuccessfull = false;
@@ -66,8 +61,8 @@ namespace Poly
 			if (Json.HasMember("EngineAssetsPaths") && Json["EngineAssetsPaths"].IsArray())
 			{
 				Dynarray<String> EngineAssetPaths;
-				const Value& JsonArray = Json["EngineAssetsPaths"];
-				for (SizeType i = 0; i < JsonArray.Size(); i++)
+				const rapidjson::Value& JsonArray = Json["EngineAssetsPaths"];
+				for (rapidjson::SizeType i = 0; i < JsonArray.Size(); i++)
 				{
 					if (JsonArray[i].IsString())
 					{
@@ -91,8 +86,8 @@ namespace Poly
 			if (Json.HasMember("GameAssetsPaths") && Json["GameAssetsPaths"].IsArray())
 			{
 				Dynarray<String> GameAssetsPaths;
-				const Value& JsonArray = Json["GameAssetsPaths"];
-				for (SizeType i = 0; i < JsonArray.Size(); i++)
+				const rapidjson::Value& JsonArray = Json["GameAssetsPaths"];
+				for (rapidjson::SizeType i = 0; i < JsonArray.Size(); i++)
 				{
 					if (JsonArray[i].IsString())
 					{
