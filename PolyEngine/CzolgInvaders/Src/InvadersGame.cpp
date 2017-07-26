@@ -10,6 +10,8 @@
 #include <DeferredTaskSystem.hpp>
 #include <ViewportWorldComponent.hpp>
 #include <ResourceManager.hpp>
+#include <SoundEmitterComponent.hpp>
+#include <SoundSystem.hpp>
 
 #include "GameManagerSystem.hpp"
 #include "MovementComponent.hpp"
@@ -78,6 +80,7 @@ void InvadersGame::Init()
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(Engine->GetWorld(), player);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(Engine->GetWorld(), player, "Models/tank2/bradle.3ds");
 	DeferredTaskSystem::AddComponentImmediate<PlayerControllerComponent>(Engine->GetWorld(), player, 10.0f);
+	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(Engine->GetWorld(), player, "COJ2_Battle_Hard_Attack.ogg");
 	Poly::TransformComponent* entTransform = Engine->GetWorld()->GetComponent<Poly::TransformComponent>(player);
 	entTransform->SetLocalTranslation(Vector(0, 0, 50));
 	entTransform->SetLocalScale(10);

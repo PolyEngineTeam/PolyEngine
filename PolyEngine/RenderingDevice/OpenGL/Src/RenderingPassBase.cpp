@@ -50,7 +50,7 @@ void Poly::RenderingPassBase::DebugDraw()
 		if (attachmentsCount == 0)
 			return;
 
-		size_t drawDivisor = max(3, attachmentsCount);
+		size_t drawDivisor = std::max((size_t)3, attachmentsCount);
 		ScreenSize screenSize = gRenderingDevice->GetScreenSize();
 		size_t divH = screenSize.Height / drawDivisor;
 

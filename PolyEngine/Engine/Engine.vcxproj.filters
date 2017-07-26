@@ -48,11 +48,29 @@
     <Filter Include="Source Files\Debug\FPS">
       <UniqueIdentifier>{17b587c1-a616-4199-9dc5-9d610ecdad4c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Sound">
+      <UniqueIdentifier>{dbe6753f-11fa-490e-ad00-cb8a89aaac63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Sound\OpenAL">
+      <UniqueIdentifier>{1a22b4e4-e503-42b6-bd58-51c62d533c04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Sound\SoundListener">
+      <UniqueIdentifier>{a604b741-1ec1-4f94-8b37-b380937c35bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Sound\SoundEmitter">
+      <UniqueIdentifier>{829be843-8f0a-4092-a0f4-b547d54569eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Sound\WorldComponent">
+      <UniqueIdentifier>{110f2084-3c9a-4697-a4f6-4b7fd47a3cf5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\DeferredTasks">
       <UniqueIdentifier>{21bac9b2-ecb8-4fef-bdb4-2ba17695b4db}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Transform">
       <UniqueIdentifier>{6817a596-ae56-4935-a63c-29ba8139d6f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Sound\Loaders">
+      <UniqueIdentifier>{725b4a09-2c76-47ae-ac48-dbbe8dbae207}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -116,6 +134,15 @@
     <ClCompile Include="Src\FPSSystem.cpp">
       <Filter>Source Files\Debug\FPS</Filter>
     </ClCompile>
+    <ClCompile Include="Src\SoundSystem.cpp">
+      <Filter>Source Files\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SoundResource.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SoundListenerComponent.cpp">
+      <Filter>Source Files\Sound\SoundListener</Filter>
+    </ClCompile>
     <ClCompile Include="Src\TextureResource.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
@@ -125,6 +152,9 @@
     <ClCompile Include="Src\MeshResource.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="Src\SoundWorldComponent.cpp">
+      <Filter>Source Files\Sound\WorldComponent</Filter>
+    </ClCompile>
     <ClCompile Include="Src\TransformComponent.cpp">
       <Filter>Source Files\Transform</Filter>
     </ClCompile>
@@ -133,6 +163,12 @@
     </ClCompile>
     <ClCompile Include="Src\RenderingSystem.cpp">
       <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\OpenALDevice.cpp">
+      <Filter>Source Files\Sound\OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SoundEmitterComponent.cpp">
+      <Filter>Source Files\Sound\SoundEmitter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -217,6 +253,15 @@
     <ClInclude Include="Src\FPSSystem.hpp">
       <Filter>Source Files\Debug\FPS</Filter>
     </ClInclude>
+    <ClInclude Include="Src\SoundSystem.hpp">
+      <Filter>Source Files\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SoundResource.hpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SoundListenerComponent.hpp">
+      <Filter>Source Files\Sound\SoundListener</Filter>
+    </ClInclude>
     <ClInclude Include="Src\IRenderingDevice.hpp">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
@@ -228,6 +273,9 @@
     </ClInclude>
     <ClInclude Include="Src\MeshResource.hpp">
       <Filter>Source Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SoundWorldComponent.hpp">
+      <Filter>Source Files\Sound\WorldComponent</Filter>
     </ClInclude>
     <ClInclude Include="Src\TransformComponent.hpp">
       <Filter>Source Files\Transform</Filter>
@@ -246,6 +294,12 @@
     </ClInclude>
     <ClInclude Include="Src\RenderingSystem.hpp">
       <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\OpenALDevice.hpp">
+      <Filter>Source Files\Sound\OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SoundEmitterComponent.hpp">
+      <Filter>Source Files\Sound\SoundEmitter</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -15,6 +15,7 @@ namespace Poly
 	class MeshResource;
 	class TextureResource;
 	class FontResource;
+	class SoundResource;
 
 	ENGINE_DLLEXPORT String LoadTextFileRelative(eResourceSource Source, const String& path);
 
@@ -31,6 +32,7 @@ namespace Poly
 	DECLARE_RESOURCE(MeshResource, gMeshResourcesMap)
 	DECLARE_RESOURCE(TextureResource, gTextureResourcesMap)
 	DECLARE_RESOURCE(FontResource, gFontResourcesMap)
+	DECLARE_RESOURCE(SoundResource, gALSoundResourcesMap)
 
 	//------------------------------------------------------------------------------
 	template<typename T>

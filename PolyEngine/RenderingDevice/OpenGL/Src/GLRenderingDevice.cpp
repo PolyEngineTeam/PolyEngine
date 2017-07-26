@@ -130,15 +130,17 @@ GLRenderingDevice* Poly::gRenderingDevice = nullptr;
 #elif defined(__linux__)
 
 	//------------------------------------------------------------------------------
-	IRenderingDevice* PolyCreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig) { return new GLRenderingDevice(display, window, fbConfig); }
+	IRenderingDevice* PolyCreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig, const ScreenSize& size) { return new GLRenderingDevice(display, window, fbConfig, size); }
 
 	//------------------------------------------------------------------------------
-	GLRenderingDevice::GLRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig)
+	GLRenderingDevice::GLRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig, const ScreenSize& size)
 	 : display(display), window(window)
 	{
 		ASSERTE(gRenderingDevice == nullptr, "Creating device twice?");
 		gRenderingDevice = this;
 		
+		ScreenDim = size;
+
 		//create a temporary context to make GLEW happy, then immediately destroy it (it has wrong parameters)
 		{
 			GLXContext makeGlewHappy = glXCreateNewContext(this->display, fbConfig, GLX_RGBA_TYPE, /*share list*/ nullptr, /*direct*/ True);

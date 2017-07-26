@@ -50,7 +50,7 @@ namespace Poly
 #if defined(_WIN32)
 		GLRenderingDevice(HWND HWnd, RECT Rect);
 #elif defined(__linux__)
-		GLRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig);
+		GLRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig, const ScreenSize& size);
 #else
 #error "Unsupported platform :("
 #endif
@@ -113,7 +113,7 @@ extern "C"
 #if defined(_WIN32)
 	DEVICE_DLLEXPORT Poly::IRenderingDevice* __stdcall PolyCreateRenderingDevice(HWND hwnd, RECT rect);
 #elif defined(__linux__)
-	DEVICE_DLLEXPORT Poly::IRenderingDevice* PolyCreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig);
+	DEVICE_DLLEXPORT Poly::IRenderingDevice* PolyCreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig, const Poly::ScreenSize& size);
 #else
 #error "Unsupported platform :("
 #endif
