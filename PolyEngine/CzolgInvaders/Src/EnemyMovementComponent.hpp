@@ -9,7 +9,7 @@ namespace Poly {
 	{
 
 	public:
-		EnemyMovementComponent(AABox collision, UniqueID& turret, float movementSpeed = 2.0f);
+		EnemyMovementComponent(const AABox& collision, UniqueID& turret, float movementSpeed = 2.0f);
 
 		float GetMovementSpeed() const { return MovementSpeed; }
 		AABox& GetCollisionBox() { return CollisionBox; }

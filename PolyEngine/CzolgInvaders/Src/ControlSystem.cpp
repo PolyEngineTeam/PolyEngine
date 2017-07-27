@@ -129,7 +129,7 @@ void ControlSystem::ControlSystemPhase(World* world)
 	CleanUpEnitites(gameManager, world);
 }
 
-void ControlSystem::SpawnBullet(GameManagerComponent* gameManager, World* world, Vector pos, Vector direction, float speed)
+void ControlSystem::SpawnBullet(GameManagerComponent* gameManager, World* world, const Vector& pos, const Vector& direction, float speed)
 {
 	auto bullet = DeferredTaskSystem::SpawnEntityImmediate(world);
 
@@ -137,9 +137,10 @@ void ControlSystem::SpawnBullet(GameManagerComponent* gameManager, World* world,
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, bullet, "Models/bullet/lowpolybullet.obj");
 	DeferredTaskSystem::AddComponentImmediate<Invaders::CollisionSystem::CollisionComponent>(world, bullet,  Vector(0, 0, 0), Vector(2.0f,2.0f,2.0f));
 
+	Vector normDir;
 	if (direction.Length() > 0)
-		direction.Normalize();
-	DeferredTaskSystem::AddComponentImmediate<BulletComponent>(world, bullet, speed, direction,
+		normDir = direction.GetNormalized();
+	DeferredTaskSystem::AddComponentImmediate<BulletComponent>(world, bullet, speed, normDir,
 		AABox(world->GetComponent<Poly::TransformComponent>(bullet)->GetLocalTranslation(), Vector(2.0f,2.0f,2.0f)), world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 	Poly::TransformComponent* transform = world->GetComponent<Poly::TransformComponent>(bullet);
 	transform->SetLocalScale(Vector(0.25f, 0.25f, 0.25f));

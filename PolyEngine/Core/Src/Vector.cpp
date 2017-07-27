@@ -128,6 +128,7 @@ Vector Vector::Cross(const Vector& rhs) const {
   ret.Z = X * rhs.Y - Y * rhs.X;
   return ret;
 #else
+// Shuffle must be an immediate value on some compilers.
 #define YZXMask _MM_SHUFFLE(0, 0, 2, 1)
 #define ZXYMask _MM_SHUFFLE(0, 1, 0, 2)
   // first subtraction part
@@ -140,6 +141,10 @@ Vector Vector::Cross(const Vector& rhs) const {
   __m128 mult2 = _mm_mul_ps(tmp_zxy, tmp_yzx);
 
   return Vector(_mm_sub_ps(mult1, mult2));
+// Cleanup the defines
+#undef YZXMask
+#undef ZXYMask
+
 #endif
 }
 

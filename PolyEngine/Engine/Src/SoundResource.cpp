@@ -43,7 +43,7 @@ SoundResource::SoundResource(const String& path)
 		size_t bytesRead = 0;
 
 		buffer = ogg_sync_buffer(&syncState, 4096);
-		memcpy(buffer, reinterpret_cast<void*>(reinterpret_cast<size_t>(data->GetBegin()) + bytesRead), 4096);
+		memcpy(buffer, reinterpret_cast<void*>(reinterpret_cast<size_t>(data->GetData()) + bytesRead), 4096);
 		bytesRead += 4096;
 		if (bytesRead > data->GetSize()) break;
 		else ogg_sync_wrote(&syncState, 4096);
@@ -108,7 +108,7 @@ SoundResource::SoundResource(const String& path)
 			}
 
 			buffer = ogg_sync_buffer(&syncState, 4096);
-			memcpy(buffer, reinterpret_cast<void*>(reinterpret_cast<size_t>(data->GetBegin()) + bytesRead), 4096);
+			memcpy(buffer, reinterpret_cast<void*>(reinterpret_cast<size_t>(data->GetData()) + bytesRead), 4096);
 			bytesRead += 4096;
 			if (bytesRead > data->GetSize() && i < 2)
 			{
@@ -228,7 +228,7 @@ SoundResource::SoundResource(const String& path)
 					}
 
 					buffer = ogg_sync_buffer(&syncState, 4096);
-					memcpy(buffer, reinterpret_cast<void*>(reinterpret_cast<size_t>(data->GetBegin()) + bytesRead), bytesRead <= data->GetSize() ? 4096 : bytesRead - data->GetSize());
+					memcpy(buffer, reinterpret_cast<void*>(reinterpret_cast<size_t>(data->GetData()) + bytesRead), bytesRead <= data->GetSize() ? 4096 : bytesRead - data->GetSize());
 					bytesRead += 4096;
 					if (bytesRead > data->GetSize()) ogg_sync_wrote(&syncState, bytesRead - data->GetSize());
 					else ogg_sync_wrote(&syncState, 4096);
