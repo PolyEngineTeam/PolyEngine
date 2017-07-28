@@ -8,15 +8,21 @@ namespace Poly
 	class CORE_DLLEXPORT BinaryBuffer : public BaseObject<>
 	{
 	public:
-		BinaryBuffer(size_t);
+		BinaryBuffer(size_t size);
 		~BinaryBuffer();
 
-		void* GetBegin() const { return Begin; }
+		BinaryBuffer(const BinaryBuffer& rhs) { *this = rhs; }
+		BinaryBuffer(BinaryBuffer&& rhs) { *this = std::move(rhs); }
+
+		BinaryBuffer& operator=(const BinaryBuffer& rhs);
+		BinaryBuffer& operator=(BinaryBuffer&& rhs);
+
+		char* GetData() { return Data; }
+		const char* GetData() const { return Data; }
 		size_t GetSize() const { return Size; }
-		void AddData(void*, size_t);
 
 	private:
-		void* Begin;
+		char* Data;
 		size_t Size;
 	};
 

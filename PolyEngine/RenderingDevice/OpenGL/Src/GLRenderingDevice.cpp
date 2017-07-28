@@ -19,7 +19,7 @@ GLRenderingDevice* Poly::gRenderingDevice = nullptr;
 #if defined(_WIN32)
 
 	//------------------------------------------------------------------------------
-	IRenderingDevice* PolyCreateRenderingDevice(HWND hwnd, RECT rect) { return new GLRenderingDevice(hwnd, rect); }
+	IRenderingDevice* __stdcall PolyCreateRenderingDevice(HWND hwnd, RECT rect) { return new GLRenderingDevice(hwnd, rect); }
 
 	//------------------------------------------------------------------------------
 	GLRenderingDevice::GLRenderingDevice(HWND hwnd, RECT rect)

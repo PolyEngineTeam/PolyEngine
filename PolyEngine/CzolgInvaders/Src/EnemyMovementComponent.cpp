@@ -2,7 +2,7 @@
 
 using namespace Poly;
 
-EnemyMovementComponent::EnemyMovementComponent(AABox collision, UniqueID& turret, float movementSpeed) :
+EnemyMovementComponent::EnemyMovementComponent(const AABox& collision, UniqueID& turret, float movementSpeed) :
 	CollisionBox(collision),
 	Turret(turret),
 	MovementSpeed(movementSpeed)

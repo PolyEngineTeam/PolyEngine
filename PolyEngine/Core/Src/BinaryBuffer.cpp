@@ -4,25 +4,37 @@
 
 using namespace Poly;
 
-BinaryBuffer::BinaryBuffer(size_t size) : 
-	Size(size)
+BinaryBuffer::BinaryBuffer(size_t size) 
+	: Size(size)
 {
-	Begin = DefaultAlloc(size);
-	HEAVY_ASSERTE(Begin, "Couldn't allocate memory!");
+	HEAVY_ASSERTE(size > 0, "Creating buffer with size == 0!");
+	Data = (char*)DefaultAlloc(size);
+	HEAVY_ASSERTE(Data, "Couldn't allocate memory!");
 }
 
 BinaryBuffer::~BinaryBuffer()
 {
-	HEAVY_ASSERTE(Begin, "");
-	DefaultFree(Begin);
+	if(Data)
+		DefaultFree(Data);
 }
 
-void BinaryBuffer::AddData(void* src, size_t size)
+BinaryBuffer& Poly::BinaryBuffer::operator=(const BinaryBuffer& rhs)
 {
-	void* temp = DefaultAlloc(Size + size);
-	memcpy(temp, Begin, Size);
-	memcpy(reinterpret_cast<void*>(reinterpret_cast<size_t>(temp) + Size), src, size);
-	Size += size;
-	DefaultFree(Begin);
-	Begin = temp;
+	if(Data)
+		DefaultFree(Data);
+	Data = (char*)DefaultAlloc(rhs.Size);
+	memcpy(Data, rhs.Data, rhs.Size);
+	Size = rhs.Size;
+	return *this;
+}
+
+BinaryBuffer& Poly::BinaryBuffer::operator=(BinaryBuffer&& rhs)
+{
+	if (Data)
+		DefaultFree(Data);
+	Data = rhs.Data;
+	Size = rhs.Size;
+	rhs.Data = nullptr;
+	rhs.Size = 0;
+	return *this;
 }

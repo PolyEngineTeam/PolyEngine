@@ -11,10 +11,10 @@ namespace Poly {
 	{
 
 	public:
-		BulletComponent(float movementSpeed, Vector direction, AABox collision, double spawnTime);
+		BulletComponent(float movementSpeed, const Vector& direction, const AABox& collision, double spawnTime);
 
 		float GetMovementSpeed() const { return MovementSpeed; }
-		Vector GetDirection() const { return Direction; }
+		const Vector& GetDirection() const { return Direction; }
 		double GetLifeTme() const { return LifeTime; }
 		double GetSpawnTme() const { return SpawnTime; }
 		AABox& GetCollisionBox() { return CollisionBox; }

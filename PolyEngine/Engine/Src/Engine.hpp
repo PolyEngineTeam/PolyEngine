@@ -218,4 +218,4 @@ namespace Poly
 }
 
 #define DECLARE_GAME() extern "C" { DEVICE_DLLEXPORT Poly::IGame* POLY_STDCALL CreateGame(); }
-#define DEFINE_GAME(type) Poly::IGame* CreateGame() { return new type(); }
+#define DEFINE_GAME(type) Poly::IGame* POLY_STDCALL CreateGame() { return new type(); }

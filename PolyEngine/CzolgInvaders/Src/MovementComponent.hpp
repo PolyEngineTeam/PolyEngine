@@ -22,7 +22,7 @@ namespace Invaders
 		friend void SetAngularAcceleration(Poly::World*, const Poly::UniqueID&, const Poly::Quaternion&);
 		friend const Poly::Quaternion& GetAngularAcceleration(Poly::World*, Poly::UniqueID);
 		public:
-			MovementComponent(Poly::Vector linVel, Poly::Vector linAcc, Poly::Quaternion angVel, Poly::Quaternion angAcc) :
+			MovementComponent(const Poly::Vector& linVel, const Poly::Vector& linAcc, const Poly::Quaternion& angVel, const Poly::Quaternion& angAcc) :
 				LinearVelocity(linVel),
 				LinearAcceleration(linAcc),
 				AngularVelocity(angVel),

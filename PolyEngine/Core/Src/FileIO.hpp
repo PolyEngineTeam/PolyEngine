@@ -92,7 +92,7 @@ namespace Poly {
 			fseek(f, 0, SEEK_SET);
 
 			BinaryBuffer* data = new BinaryBuffer(fsize);
-			fread(data->GetBegin(), fsize, 1, f);
+			fread(data->GetData(), fsize, 1, f);
 			fclose(f);
 
 			return data;
