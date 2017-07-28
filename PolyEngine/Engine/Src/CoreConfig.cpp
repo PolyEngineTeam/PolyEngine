@@ -10,6 +10,10 @@ namespace Poly
 	Dynarray<String> AssetsPathConfig::GetAssetsPaths(eResourceSource Source) const
 	{
 		HEAVY_ASSERTE(Source < eResourceSource::_COUNT, "_COUNT enum value passed to GetAssetsPaths(), which is an invalid value");
+		// TODO: move to very first start block in program
+		if (!gAssetsPathConfig.IsLoadedFromFile())
+			gAssetsPathConfig.ReloadFromFile();
+		
 		return AssetsPaths[Source];
 	}
 

@@ -19,12 +19,6 @@ ENGINE_DLLEXPORT String Poly::LoadTextFileRelative(eResourceSource Source, const
 	static const String DEFAULT_PATH("../../Engine/Res/");
 	bool IsNotLoaded = true;
 
-	// TODO: move to very first start block in program
-	if (!gAssetsPathConfig.IsLoadedFromFile())
-	{
-		gAssetsPathConfig.ReloadFromFile();
-	}
-
 	String FileContent;
 	Dynarray<String> Paths = gAssetsPathConfig.GetAssetsPaths(eResourceSource::ENGINE);
 	for (int i = 0; i < Paths.GetSize() && IsNotLoaded; ++i)

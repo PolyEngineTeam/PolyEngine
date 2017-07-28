@@ -109,7 +109,7 @@ SoundResource::SoundResource(const String& path)
 			}
 
 			buffer = ogg_sync_buffer(&syncState, 4096);
-			memcpy(buffer, reinterpret_cast<void*>(reinterpret_cast<size_t>(data->GetData()) + bytesRead), 4096);
+			memcpy(buffer, data->GetData() + bytesRead, 4096);
 			bytesRead += 4096;
 			if (bytesRead > data->GetSize() && i < 2)
 			{
@@ -222,18 +222,19 @@ SoundResource::SoundResource(const String& path)
 				// End of pages; load data with new pages
 				if (!eos)
 				{
-					if (bytesRead > data->GetSize())
+					if (bytesRead >= data->GetSize())
 					{
 						eos = 1;
 						break;
 					}
 
 					buffer = ogg_sync_buffer(&syncState, 4096);
-					memcpy(buffer, reinterpret_cast<void*>(reinterpret_cast<size_t>(data->GetData()) + bytesRead), bytesRead <= data->GetSize() ? 4096 : bytesRead - data->GetSize());
-					bytesRead += 4096;
-					if (bytesRead > data->GetSize()) ogg_sync_wrote(&syncState, bytesRead - data->GetSize());
-					else ogg_sync_wrote(&syncState, 4096);
-					int duap;
+					
+					size_t increase = bytesRead + 4096 <= data->GetSize() ? 4096 : data->GetSize() - bytesRead;
+					memcpy(buffer, data->GetData() + bytesRead, increase);
+					bytesRead += increase;
+
+					ogg_sync_wrote(&syncState, increase);
 				}
 			}
 
@@ -249,7 +250,7 @@ SoundResource::SoundResource(const String& path)
 		vorbis_comment_clear(&vorbisComment);
 		vorbis_info_clear(&vorbisInfo);
 
-		if (bytesRead > data->GetSize()) break;
+		if (bytesRead >= data->GetSize()) break;
 	}
 
 	ogg_sync_clear(&syncState);

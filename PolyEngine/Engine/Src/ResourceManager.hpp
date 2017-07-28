@@ -54,44 +54,31 @@ namespace Poly
 
 			// Load the resource
 			T* resource = nullptr;
-			try {
-				if (isAbsolute)
-				{
-					String absolutePath;
-					bool isFound = false;
-					Dynarray<String> paths = gAssetsPathConfig.GetAssetsPaths(source);
-					for (int i = 0; i < paths.GetSize() && !isFound; ++i)
-					{
-						absolutePath = paths[i] + path;
-						isFound = FileExists(absolutePath);
-					}
+			Dynarray<String> paths = !isAbsolute ? Dynarray<String>({String()}) : gAssetsPathConfig.GetAssetsPaths(source);
+			for (int i = 0; i < paths.GetSize() && !resource; ++i)
+			{
+				String absolutePath = paths[i] + path;
 
-					if (isFound)
-					{
-						gConsole.LogError("Resource loading found absolute path: {}", absolutePath);
-						resource = new T(absolutePath);
-					}
-					else
-					{
-						gConsole.LogError("Resource absolute path not found! {}", path);
-						return nullptr;
-					}
-				}
-				else
+				try
 				{
-					resource = new T(path);
+					resource = new T(absolutePath);
+				}
+				catch (const ResourceLoadFailedException& e)
+				{
+					UNUSED(e);
+					resource = nullptr;
+				}
+				catch (const std::exception& e)
+				{
+					UNUSED(e);
+					HEAVY_ASSERTE(false, "Resource creation failed for unknown reason!");
+					return nullptr;
 				}
 			}
-			catch (const ResourceLoadFailedException& e)
+
+			if (!resource)
 			{
-				UNUSED(e);
 				gConsole.LogError("Resource loading failed! {}", path);
-				return nullptr;
-			}
-			catch (const std::exception& e)
-			{
-				UNUSED(e);
-				HEAVY_ASSERTE(false, "Resource creation failed for unknown reason!");
 				return nullptr;
 			}
 
