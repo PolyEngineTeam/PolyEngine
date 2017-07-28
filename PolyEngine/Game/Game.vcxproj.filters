@@ -12,6 +12,9 @@
     <Filter Include="Source Files\Level">
       <UniqueIdentifier>{78fed068-c069-4f39-9a76-379966e5b8c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Components">
+      <UniqueIdentifier>{7af7fb05-701c-4afe-ad46-4b0eeff0de52}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Game.hpp">
@@ -20,6 +23,12 @@
     <ClInclude Include="Src\Level.hpp">
       <Filter>Source Files\Level</Filter>
     </ClInclude>
+    <ClInclude Include="Src\BackgroundSystem.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BackgroundComponent.hpp">
+      <Filter>Source Files\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Game.cpp">
@@ -27,6 +36,12 @@
     </ClCompile>
     <ClCompile Include="Src\Level.cpp">
       <Filter>Source Files\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BackgroundSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BackgroundComponent.cpp">
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

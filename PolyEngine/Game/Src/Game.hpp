@@ -19,6 +19,7 @@ public:
 
 private:
 	Poly::UniqueID Camera;
+	Poly::UniqueID Background;
 
 	Poly::Dynarray<Poly::UniqueID> GameEntities;
 	Poly::Engine* Engine;

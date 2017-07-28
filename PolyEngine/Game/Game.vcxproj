@@ -137,6 +137,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\BackgroundComponent.cpp" />
+    <ClCompile Include="Src\BackgroundSystem.cpp" />
     <ClCompile Include="Src\Game.cpp" />
     <ClCompile Include="Src\Level.cpp" />
   </ItemGroup>
@@ -149,6 +151,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\BackgroundComponent.hpp" />
+    <ClInclude Include="Src\BackgroundSystem.hpp" />
     <ClInclude Include="Src\Game.hpp" />
     <ClInclude Include="Src\Level.hpp" />
   </ItemGroup>
