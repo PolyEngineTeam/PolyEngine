@@ -4,15 +4,16 @@
 #include "String.hpp"
 #include "BinaryBuffer.hpp"
 
+
 namespace Poly {
 
-	#if defined(__GNUC__) || defined(__clang__)
+#if defined(__GNUC__) || defined(__clang__)
 	inline int fopen_s(FILE *__restrict__ *__restrict__ streamptr, const char *__restrict__ filename, const char *__restrict__ mode) {
 		FILE* f = fopen(filename, mode);
 		*streamptr = f;
 		return f == nullptr ? errno : 0;
 	}
-	#endif
+#endif
 
 	//------------------------------------------------------------------------------
 	class ENGINE_DLLEXPORT FileIOException : public BaseObject<>, public std::exception
@@ -29,7 +30,7 @@ namespace Poly {
 	{
 		FILE *f;
 		fopen_s(&f, path.GetCStr(), "rb");
-		if (f) 
+		if (f)
 		{
 			fseek(f, 0, SEEK_END);
 			long fsize = ftell(f);
@@ -42,7 +43,9 @@ namespace Poly {
 			return String(string);
 		}
 		else
+		{
 			throw FileIOException("File open failed!");
+		}
 	}
 
 	//------------------------------------------------------------------------------
@@ -50,13 +53,31 @@ namespace Poly {
 	{
 		FILE *f;
 		fopen_s(&f, path.GetCStr(), "w");
-		if (f) 
+		if (f)
 		{
 			fprintf(f, "%s", data.GetCStr());
 			fclose(f);
 		}
 		else
+		{
 			throw FileIOException("File save failed");
+		}
+	}
+
+	//------------------------------------------------------------------------------
+	inline bool FileExists(const String& path)
+	{
+		FILE *f;
+		fopen_s(&f, path.GetCStr(), "r");
+		if (f)
+		{
+			fclose(f);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	//------------------------------------------------------------------------------
@@ -64,7 +85,7 @@ namespace Poly {
 	{
 		FILE* f;
 		fopen_s(&f, path.GetCStr(), "rb");
-		if (f) 
+		if (f)
 		{
 			fseek(f, 0, SEEK_END);
 			long fsize = ftell(f);
@@ -78,6 +99,5 @@ namespace Poly {
 		}
 		else
 			throw FileIOException(path);
-
 	}
 }

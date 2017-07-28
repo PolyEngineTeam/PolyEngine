@@ -89,7 +89,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_ENGINE;NOMINMAX;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.hpp</PrecompiledHeaderFile>
@@ -108,7 +108,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\Win32\assimp-vc140-mt.dl
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_ENGINE;NOMINMAX;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.hpp</PrecompiledHeaderFile>
@@ -129,7 +129,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_ENGINE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.hpp</PrecompiledHeaderFile>
@@ -152,7 +152,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\Win32\assimp-vc140-mt.dl
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_ENGINE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.hpp</PrecompiledHeaderFile>

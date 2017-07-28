@@ -3,7 +3,9 @@
 #include <Defines.hpp>
 #include <Logger.hpp>
 #include <String.hpp>
+#include <FileIO.hpp>
 
+#include "CoreConfig.hpp"
 #include "ResourceBase.hpp"
 
 #include <map>
@@ -15,7 +17,7 @@ namespace Poly
 	class FontResource;
 	class SoundResource;
 
-	ENGINE_DLLEXPORT const String& GetResourcesAbsolutePath();
+	ENGINE_DLLEXPORT String LoadTextFileRelative(eResourceSource Source, const String& path);
 
 	namespace Impl { template<typename T> std::map<String, std::unique_ptr<T>>& GetResources(); }
 
@@ -38,9 +40,9 @@ namespace Poly
 	{
 	public:
 		//------------------------------------------------------------------------------
-		static T* Load(const String& relativePath, bool absolute = true)
+		static T* Load(const String& path, bool isAbsolute = true, eResourceSource source = eResourceSource::ENGINE)
 		{
-			auto it = Impl::GetResources<T>().find(relativePath);
+			auto it = Impl::GetResources<T>().find(path);
 
 			// Check if it is already loaded
 			if (it != Impl::GetResources<T>().end())
@@ -52,32 +54,36 @@ namespace Poly
 
 			// Load the resource
 			T* resource = nullptr;
-			try {
-				//TODO create wrapper for path
-				if (absolute)
+			Dynarray<String> paths = !isAbsolute ? Dynarray<String>({String()}) : gAssetsPathConfig.GetAssetsPaths(source);
+			for (int i = 0; i < paths.GetSize() && !resource; ++i)
+			{
+				String absolutePath = paths[i] + path;
+
+				try
 				{
-					resource = new T(GetResourcesAbsolutePath() + relativePath);
+					resource = new T(absolutePath);
 				}
-				else
+				catch (const ResourceLoadFailedException& e)
 				{
-					resource = new T(relativePath);
+					UNUSED(e);
+					resource = nullptr;
+				}
+				catch (const std::exception& e)
+				{
+					UNUSED(e);
+					HEAVY_ASSERTE(false, "Resource creation failed for unknown reason!");
+					return nullptr;
 				}
 			}
-			catch (const ResourceLoadFailedException& e)
+
+			if (!resource)
 			{
-				UNUSED(e);
-				gConsole.LogError("Resource loading failed! {}", relativePath);
-				return nullptr;
-			}
-			catch (const std::exception& e)
-			{
-				UNUSED(e);
-				HEAVY_ASSERTE(false, "Resource creation failed for unknown reason!");
+				gConsole.LogError("Resource loading failed! {}", path);
 				return nullptr;
 			}
 
-			Impl::GetResources<T>().insert(std::make_pair(relativePath, std::unique_ptr<T>(resource)));
-			resource->Path = relativePath;
+			Impl::GetResources<T>().insert(std::make_pair(path, std::unique_ptr<T>(resource)));
+			resource->Path = path;
 			resource->AddRef();
 			return resource;
 		}
@@ -92,5 +98,5 @@ namespace Poly
 				Impl::GetResources<T>().erase(it);
 			}
 		}
-	};	
+	};
 }
