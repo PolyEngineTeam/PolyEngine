@@ -131,20 +131,14 @@ String String::Replace(const String& a, const String& b) const {
 	return String();
 }
 
-String String::Split(char delimiter) const {
-	ASSERTE(false, "Not implemented yet.");
-	//TODO Dynarray.FindAllIdx(T rhs)
-	//for all indexes get substring
-	//and return an array of these substrings
-	return String();
+Dynarray<String> String::Split(char delimiter) const {
+	return Split(String::From(delimiter));
 }
 
-String String::Split(const String& delimiter) const {
+Dynarray<String> String::Split(const String& delimiter) const {
+	Dynarray<String> elements;
 	ASSERTE(false, "Not implemented yet.");
-	//TODO Dynarray.FindAllIdx(T rhs)
-	//for all indexes remove delimiter strings from source
-	//return an array of whats left (using Substring)
-	return String();
+	return elements;
 }
 
 String String::Join(const String* vars, size_t size, const String& separator) {
@@ -272,4 +266,23 @@ String String::operator+(char rhs) const {
 char String::operator[](int idx) const { 
 	HEAVY_ASSERTE(idx <= GetLength(), "Index out of bounds!"); 
 	return Data[idx];
+}
+
+size_t String::FindSubstrFromPoint(size_t startPoint, const String& str) const
+{
+	for (int idx = startPoint; idx < GetLength(); ++idx)
+	{
+		size_t matchCount = 0;
+		while (matchCount < str.GetLength())
+		{
+			if (Data[idx + matchCount] == str[matchCount])
+				++matchCount;
+			else
+				break;
+		}
+
+		if (matchCount == str.GetLength())
+			return idx;
+	}
+	return GetLength();
 }

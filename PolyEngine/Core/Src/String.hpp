@@ -105,12 +105,12 @@ namespace Poly {
 		/// <summary>Splits String by given delimite to array of Strings</summary>
 		/// <param name="delimiter">Char used as token to split String with</param>
 		/// <returns>String array</returns>
-		String Split(char delimiter) const;
+		Dynarray<String> Split(char delimiter) const;
 
 		/// <summary>Splits String by given delimiter to array of Strings</summary>
 		/// <param name="delimiter">String used as token to split String with</param>
 		/// <returns>String array</returns>
-		String Split(const String& delimiter) const;
+		Dynarray<String> Split(const String& delimiter) const;
 
 		/// <summary>Merges String array to single String instance, separating them with given separator</summary>
 		/// <param name="vars">String array to be merged</param>
@@ -192,5 +192,7 @@ namespace Poly {
 
 	private:
 		Dynarray<char> Data;
+
+		size_t FindSubstrFromPoint(size_t startPoint, const String& str) const;
 	};
 }
