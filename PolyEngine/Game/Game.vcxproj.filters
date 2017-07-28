@@ -19,11 +19,14 @@
     </ClInclude>
     <ClInclude Include="Src\Level.hpp">
       <Filter>Source Files\Level</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="Src\PlayerControllerComponent.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Src\PlayerUpdateSystem.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Powerups.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -33,7 +36,7 @@
     </ClCompile>
     <ClCompile Include="Src\Level.cpp">
       <Filter>Source Files\Level</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="Src\PlayerControllerComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

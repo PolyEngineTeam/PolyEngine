@@ -2,6 +2,7 @@
 
 #include "ComponentBase.hpp"
 #include "PlayerUpdateSystem.hpp"
+#include "Powerups.hpp"
 
 namespace sgj
 {
@@ -12,13 +13,14 @@ namespace sgj
 		PlayerControllerComponent(float movementSpeed = 1.0f);
 
 		float GetMovementSpeed() const { return MovementSpeed; };
-
+		ePowerup GetActivePower() const { return ActivePower; };
+		void SetActivePower(ePowerup activePower) { ActivePower = activePower; };
 
 	private:
-		//active 'powerup'?
-		//deaths?
-
-		//movement speed
+		ePowerup ActivePower = ePowerup::NONE;
+		bool IsJumping = false;
+		int score = 0;
+		int deaths = 0;
 		float MovementSpeed;
 
 	};

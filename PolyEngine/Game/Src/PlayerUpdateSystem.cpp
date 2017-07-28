@@ -15,7 +15,6 @@ namespace sgj
 			TransformComponent* transCmp = std::get<TransformComponent*>(playerTuple);
 			PlayerControllerComponent* playerCmp = std::get<PlayerControllerComponent*>(playerTuple);
 
-
 			//movement like in MovementSystem
 			Vector move;
 			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A))
@@ -24,6 +23,7 @@ namespace sgj
 				move += Vector::UNIT_X;
 
 			move *= playerCmp->GetMovementSpeed();
+			//Local? (that was in MovementSystem)
 			transCmp->SetLocalTranslation(transCmp->GetLocalTranslation() + transCmp->GetLocalRotation() * move);
 		}
 
