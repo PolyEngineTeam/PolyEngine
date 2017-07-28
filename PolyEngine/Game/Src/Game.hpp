@@ -10,7 +10,7 @@ namespace GameMainSystem
 }
 
 DECLARE_GAME()
-class GAME_DLLEXPORT TestGame : public Poly::IGame {
+class GAME_DLLEXPORT SGJGame : public Poly::IGame {
 public:
 	void RegisterEngine(Poly::Engine* engine) override { Engine = engine; }
 	
