@@ -20,13 +20,13 @@ ENGINE_DLLEXPORT String Poly::LoadTextFileRelative(eResourceSource Source, const
 	bool IsNotLoaded = true;
 
 	// TODO: move to very first start block in program
-	if (!gCoreConfig.IsLoadedFromFile())
+	if (!gAssetsPathConfig.IsLoadedFromFile())
 	{
-		gCoreConfig.ReloadFromFile();
+		gAssetsPathConfig.ReloadFromFile();
 	}
 
 	String FileContent;
-	Dynarray<String> Paths = gCoreConfig.GetAssetsPaths(eResourceSource::ENGINE);
+	Dynarray<String> Paths = gAssetsPathConfig.GetAssetsPaths(eResourceSource::ENGINE);
 	for (int i = 0; i < Paths.GetSize() && IsNotLoaded; ++i)
 	{
 		String AbsolutePath = Paths[i] + path;

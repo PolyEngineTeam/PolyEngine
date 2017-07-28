@@ -4,20 +4,21 @@
 
 namespace Poly
 {
+	AssetsPathConfig gAssetsPathConfig;
 	CoreConfig gCoreConfig;
 
-	Dynarray<String> CoreConfig::GetAssetsPaths(eResourceSource Source) const
+	Dynarray<String> AssetsPathConfig::GetAssetsPaths(eResourceSource Source) const
 	{
 		HEAVY_ASSERTE(Source < eResourceSource::_COUNT, "_COUNT enum value passed to GetAssetsPaths(), which is an invalid value");
 		return AssetsPaths[Source];
 	}
 
-	bool CoreConfig::IsLoadedFromFile() const
+	bool AssetsPathConfig::IsLoadedFromFile() const
 	{
 		return LoadedFromFile;
 	}
 
-	bool CoreConfig::ReloadFromFile()
+	bool AssetsPathConfig::ReloadFromFile()
 	{
 		gConsole.LogInfo("CoreConfig::ReloadFromFile() called");
 		bool IsSuccessfull = true;
@@ -25,13 +26,13 @@ namespace Poly
 		String ConfigFileContent;
 		try
 		{
-			ConfigFileContent = LoadTextFile(CORE_CONFIG_PATH);
+			ConfigFileContent = LoadTextFile(ASSETS_PATH_CONFIG_PATH);
 			// gConsole.LogInfo("File Content: {}", ConfigFileContent);
 		}
 		catch (FileIOException)
 		{
 			IsSuccessfull = false;
-			gConsole.LogInfo("Config file reading failed: {}, using defaults", CORE_CONFIG_PATH);
+			gConsole.LogInfo("Config file reading failed: {}, using defaults", ASSETS_PATH_CONFIG_PATH);
 
 			LoadDefaults();
 
@@ -115,7 +116,7 @@ namespace Poly
 		return IsSuccessfull;
 	}
 
-	void CoreConfig::LoadDefaults()
+	void AssetsPathConfig::LoadDefaults()
 	{
 		gConsole.LogInfo("CoreConfig::LoadDefaults() called");
 
@@ -128,9 +129,9 @@ namespace Poly
 		AssetsPaths[eResourceSource::GAME] = GameAssetPaths;
 	}
 
-	void CoreConfig::WriteDefaultJson()
+	void AssetsPathConfig::WriteDefaultJson()
 	{
 		String JsonContent("{\"EngineAssetsPaths\":[\"../../Engine/Res/\"],\"GameAssetsPaths\":[\"../../Game/Res/\"]}");
-		SaveTextFile(CORE_CONFIG_PATH, JsonContent);
+		SaveTextFile(ASSETS_PATH_CONFIG_PATH, JsonContent);
 	}
 }

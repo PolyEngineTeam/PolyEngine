@@ -13,16 +13,9 @@ namespace Poly
 		_COUNT
 	};
 
-	/// <summary>This is class where all core configuration variables are placed</summary>
-	class ENGINE_DLLEXPORT CoreConfig
+	class ENGINE_DLLEXPORT AssetsPathConfig
 	{
 	public:
-
-		// Rendering
-		bool DebugNormalsFlag = false;
-		bool WireframeRendering = false;
-		bool DisplayFPS = true;
-
 		Dynarray<String> GetAssetsPaths(eResourceSource Source) const;
 
 		bool IsLoadedFromFile() const;
@@ -32,8 +25,7 @@ namespace Poly
 		void LoadDefaults();
 
 	private:
-
-		const String CORE_CONFIG_PATH = String("CoreConfig.json");
+		const String ASSETS_PATH_CONFIG_PATH = String("AssetsPath.json");
 		const String DEFAULT_ENGINE_ASSETS_PATH = String("../../Engine/Res/");
 		const String DEFAULT_GAME_ASSETS_PATH = String("../../Gamee/Res/");
 
@@ -42,8 +34,20 @@ namespace Poly
 		EnumArray<Dynarray<String>, eResourceSource> AssetsPaths;
 
 		void WriteDefaultJson();
+	};
 
-		//std::unordered_map<eResourceSource, Dynarray<String>> AssetsPaths;
+	ENGINE_DLLEXPORT extern AssetsPathConfig gAssetsPathConfig;
+
+
+	/// <summary>This is class where all core configuration variables are placed</summary>
+	class ENGINE_DLLEXPORT CoreConfig
+	{
+	public:
+
+		// Rendering
+		bool DebugNormalsFlag = false;
+		bool WireframeRendering = false;
+		bool DisplayFPS = true;
 	};
 
 	ENGINE_DLLEXPORT extern CoreConfig gCoreConfig;

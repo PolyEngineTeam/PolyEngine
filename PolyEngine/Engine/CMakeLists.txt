@@ -4,9 +4,9 @@ if(WIN32)
 	list(APPEND CMAKE_LIBRARY_PATH "${CMAKE_SOURCE_DIR}/ThirdParty/glew/lib/Release/x64/" "${CMAKE_SOURCE_DIR}/ThirdParty/glew/lib/Release/Win32/")
 	list(APPEND CMAKE_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/ThirdParty/SOIL/include")
 	list(APPEND CMAKE_LIBRARY_PATH "${CMAKE_SOURCE_DIR}/ThirdParty/SOIL/lib/Release/x64/" "${CMAKE_SOURCE_DIR}/ThirdParty/SOIL/lib/Release/Win32/")
-	list(APPEND CMAKE_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/ThirdParty/rapidjson/include")
 	set(ASSIMP_ROOT_DIR "${CMAKE_SOURCE_DIR}/ThirdParty/assimp")
 endif()
+
 find_package(GLEW REQUIRED)
 find_package(SOIL REQUIRED)
 find_package(assimp REQUIRED)
@@ -15,6 +15,8 @@ find_package(OpenAL REQUIRED)
 find_package(OGG REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(VorbisFile REQUIRED)
+
+list(APPEND CMAKE_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/ThirdParty/rapidjson/include")
 
 set(POLYENGINE_SRCS
 	Src/CameraComponent.cpp

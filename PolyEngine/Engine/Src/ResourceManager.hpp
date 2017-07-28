@@ -59,7 +59,7 @@ namespace Poly
 				{
 					String absolutePath;
 					bool isFound = false;
-					Dynarray<String> paths = gCoreConfig.GetAssetsPaths(source);
+					Dynarray<String> paths = gAssetsPathConfig.GetAssetsPaths(source);
 					for (int i = 0; i < paths.GetSize() && !isFound; ++i)
 					{
 						absolutePath = paths[i] + path;
