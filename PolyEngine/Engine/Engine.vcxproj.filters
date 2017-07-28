@@ -72,6 +72,9 @@
     <Filter Include="Source Files\Sound\Loaders">
       <UniqueIdentifier>{725b4a09-2c76-47ae-ac48-dbbe8dbae207}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Physics2D">
+      <UniqueIdentifier>{82ce724b-c08b-4b81-84d3-ba837fa851fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -169,6 +172,9 @@
     </ClCompile>
     <ClCompile Include="Src\SoundEmitterComponent.cpp">
       <Filter>Source Files\Sound\SoundEmitter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics2DSystem.cpp">
+      <Filter>Source Files\Physics2D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -300,6 +306,9 @@
     </ClInclude>
     <ClInclude Include="Src\SoundEmitterComponent.hpp">
       <Filter>Source Files\Sound\SoundEmitter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics2DSystem.hpp">
+      <Filter>Source Files\Physics2D</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

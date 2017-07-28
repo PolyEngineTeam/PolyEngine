@@ -1,0 +1,52 @@
+﻿  b2Rope.cpp
+  b2WheelJoint.cpp
+  b2WeldJoint.cpp
+  b2RopeJoint.cpp
+  b2RevoluteJoint.cpp
+  b2PulleyJoint.cpp
+  b2PrismaticJoint.cpp
+  b2MouseJoint.cpp
+  b2MotorJoint.cpp
+  b2Joint.cpp
+  b2GearJoint.cpp
+  b2FrictionJoint.cpp
+  b2DistanceJoint.cpp
+  b2PolygonContact.cpp
+  b2PolygonAndCircleContact.cpp
+  b2EdgeAndPolygonContact.cpp
+  b2EdgeAndCircleContact.cpp
+  b2ContactSolver.cpp
+  b2Contact.cpp
+  b2CircleContact.cpp
+  Generating Code...
+  Compiling...
+  b2ChainAndPolygonContact.cpp
+  b2ChainAndCircleContact.cpp
+  b2WorldCallbacks.cpp
+  b2World.cpp
+  b2Island.cpp
+  b2Fixture.cpp
+  b2ContactManager.cpp
+  b2Body.cpp
+  b2Timer.cpp
+  b2StackAllocator.cpp
+  b2Settings.cpp
+  b2Math.cpp
+  b2Draw.cpp
+  b2BlockAllocator.cpp
+  b2PolygonShape.cpp
+  b2EdgeShape.cpp
+  b2CircleShape.cpp
+  b2ChainShape.cpp
+  b2TimeOfImpact.cpp
+  b2DynamicTree.cpp
+  Generating Code...
+  Compiling...
+  b2Distance.cpp
+  b2Collision.cpp
+  b2CollidePolygon.cpp
+  b2CollideEdge.cpp
+  b2CollideCircle.cpp
+  b2BroadPhase.cpp
+  Generating Code...
+  Box2D.vcxproj -> C:\Users\Michal\Documents\PolyEngine\PolyEngine\x64\Debug\Box2D.lib
