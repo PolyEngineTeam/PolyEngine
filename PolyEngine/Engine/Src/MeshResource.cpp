@@ -94,7 +94,7 @@ Poly::MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMateria
 		String textPath(fullPath.c_str());
 		// end temporary code for extracting path
 
-		MeshData.DiffuseTexture = ResourceManager<TextureResource>::Load(textPath, false);
+		MeshData.DiffuseTexture = ResourceManager<TextureResource>::Load(textPath, eResourceSource::NONE);
 		if (!MeshData.DiffuseTexture)
 			gConsole.LogError("Failed to load diffuse texture: {}", fullPath);
 		else

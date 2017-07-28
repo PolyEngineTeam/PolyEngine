@@ -6,9 +6,9 @@
 
 using namespace Poly;
 
-MeshRenderingComponent::MeshRenderingComponent(const String& meshPath)
+MeshRenderingComponent::MeshRenderingComponent(const String& meshPath, eResourceSource source)
 {
-	Mesh = ResourceManager<MeshResource>::Load(meshPath);
+	Mesh = ResourceManager<MeshResource>::Load(meshPath, source);
 }
 
 Poly::MeshRenderingComponent::~MeshRenderingComponent()

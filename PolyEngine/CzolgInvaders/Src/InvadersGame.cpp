@@ -41,7 +41,7 @@ void InvadersGame::Init()
 
 	float y_pos = (float)Engine->GetRenderingDevice()->GetScreenSize().Height;
 	auto textDispaly = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
-	DeferredTaskSystem::AddComponentImmediate<Poly::ScreenSpaceTextComponent>(Engine->GetWorld(), textDispaly, Vector{ 0.0f, y_pos ,0.0f }, "Fonts/Raleway/Raleway-Heavy.ttf", 32, "Kill count: 0");
+	DeferredTaskSystem::AddComponentImmediate<Poly::ScreenSpaceTextComponent>(Engine->GetWorld(), textDispaly, Vector{ 0.0f, y_pos ,0.0f }, "Fonts/Raleway/Raleway-Heavy.ttf", eResourceSource::ENGINE, 32, "Kill count: 0");
 	
 	GameManager = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<GameManagerComponent>(Engine->GetWorld(), GameManager, textDispaly);
@@ -59,12 +59,12 @@ void InvadersGame::Init()
 		{
 			auto ent = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
 			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(Engine->GetWorld(), ent);
-			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(Engine->GetWorld(), ent, "model-tank/turret.fbx");
+			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(Engine->GetWorld(), ent, "model-tank/turret.fbx", eResourceSource::GAME);
 			Poly::TransformComponent* entTransform = Engine->GetWorld()->GetComponent<Poly::TransformComponent>(ent);
 
 			auto base = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
 			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(Engine->GetWorld(), base);
-			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(Engine->GetWorld(), base, "model-tank/base.fbx");
+			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(Engine->GetWorld(), base, "model-tank/base.fbx", eResourceSource::GAME);
 			DeferredTaskSystem::AddComponentImmediate<Invaders::MovementSystem::MovementComponent>(Engine->GetWorld(), base, Vector(5, 0, 0), Vector(0, 0, 0), Quaternion(Vector(0, 0, 0), 0_deg), Quaternion(Vector(0, 0, 0), 0_deg));
 			DeferredTaskSystem::AddComponentImmediate<Invaders::CollisionSystem::CollisionComponent>(Engine->GetWorld(), base,  Vector(0, 0, 0), Vector(5.0f, 5.0f, 5.0f));
 			DeferredTaskSystem::AddComponentImmediate<Invaders::TankComponent>(Engine->GetWorld(), base,  ent, 12.0_deg, (i * j)%5 );
@@ -78,9 +78,9 @@ void InvadersGame::Init()
 	}
 	auto player = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(Engine->GetWorld(), player);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(Engine->GetWorld(), player, "Models/tank2/bradle.3ds");
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(Engine->GetWorld(), player, "Models/tank2/bradle.3ds", eResourceSource::GAME);
 	DeferredTaskSystem::AddComponentImmediate<PlayerControllerComponent>(Engine->GetWorld(), player, 10.0f);
-	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(Engine->GetWorld(), player, "COJ2_Battle_Hard_Attack.ogg");
+	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(Engine->GetWorld(), player, "COJ2_Battle_Hard_Attack.ogg", eResourceSource::GAME);
 	Poly::TransformComponent* entTransform = Engine->GetWorld()->GetComponent<Poly::TransformComponent>(player);
 	entTransform->SetLocalTranslation(Vector(0, 0, 50));
 	entTransform->SetLocalScale(10);
@@ -101,14 +101,14 @@ void InvadersGame::Init()
 
 			auto ground = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
 			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(Engine->GetWorld(), ground);
-			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(Engine->GetWorld(), ground, "Models/ground/ground.fbx");
+			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(Engine->GetWorld(), ground, "Models/ground/ground.fbx", eResourceSource::GAME);
 			Poly::TransformComponent* groundTransform = Engine->GetWorld()->GetComponent<Poly::TransformComponent>(ground);
 			groundTransform->SetLocalTranslation(Vector(x * SCALE * SIZE, 0, z * SCALE * SIZE));
 			groundTransform->SetLocalScale(SCALE);
 		}
 
 	// Precache bullet mesh
-	BulletMesh = Poly::ResourceManager<MeshResource>::Load("Models/bullet/lowpolybullet.obj");
+	BulletMesh = Poly::ResourceManager<MeshResource>::Load("Models/bullet/lowpolybullet.obj", eResourceSource::GAME);
 };
 
 void InvadersGame::Deinit()

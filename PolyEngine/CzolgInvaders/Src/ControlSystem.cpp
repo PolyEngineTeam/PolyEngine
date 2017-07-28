@@ -7,6 +7,7 @@
 #include "CollisionComponent.hpp"
 #include "TankComponent.hpp"
 #include "SoundEmitterComponent.hpp"
+#include "CoreConfig.hpp"
 
 using namespace Poly;
 
@@ -134,7 +135,7 @@ void ControlSystem::SpawnBullet(GameManagerComponent* gameManager, World* world,
 	auto bullet = DeferredTaskSystem::SpawnEntityImmediate(world);
 
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, bullet);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, bullet, "Models/bullet/lowpolybullet.obj");
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, bullet, "Models/bullet/lowpolybullet.obj", eResourceSource::ENGINE);
 	DeferredTaskSystem::AddComponentImmediate<Invaders::CollisionSystem::CollisionComponent>(world, bullet,  Vector(0, 0, 0), Vector(2.0f,2.0f,2.0f));
 
 	Vector normDir;

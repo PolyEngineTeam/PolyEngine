@@ -10,7 +10,7 @@ namespace Poly {
 	{
 		friend void RenderingSystem::RenderingPhase(World*);
 	public:
-		MeshRenderingComponent(const String& meshPath);
+		MeshRenderingComponent(const String& meshPath, eResourceSource source);
 		virtual ~MeshRenderingComponent();
 
 		const MeshResource* GetMesh() const { return Mesh; }

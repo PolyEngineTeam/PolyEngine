@@ -119,14 +119,14 @@ void SoundSystem::SetEmitterOffsetInBytes(World* world, const UniqueID& id, size
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::SetEmitterSource(World* world, const UniqueID& id, const String& path)
+void SoundSystem::SetEmitterSource(World* world, const UniqueID& id, const String& path, eResourceSource source)
 {
 	SoundEmitterComponent* emitter = world->GetComponent<SoundEmitterComponent>(id);
 
 	alDeleteSources(1, &emitter->EmitterID);
 	ResourceManager<SoundResource>::Release(emitter->Resource);
 
-	emitter->Resource = ResourceManager<SoundResource>::Load(path);
+	emitter->Resource = ResourceManager<SoundResource>::Load(path, source);
 
 	alGenSources(1, &emitter->EmitterID);
 	alSourcei(emitter->EmitterID, AL_BUFFER, emitter->Resource->GetBufferID());

@@ -11,8 +11,8 @@ namespace Poly {
 	class ENGINE_DLLEXPORT ScreenSpaceTextComponent : public ComponentBase
 	{
 	public:
-		ScreenSpaceTextComponent(const Vector& pos, const String& fontName, size_t fontSize, const String& text = "", const Color& fontColor = Color(1, 1, 1))
-			: Text(fontName, fontSize, text, fontColor), ScreenPosition(pos) {}
+		ScreenSpaceTextComponent(const Vector& pos, const String& fontName, eResourceSource source, size_t fontSize, const String& text = "", const Color& fontColor = Color(1, 1, 1))
+			: Text(fontName, source, fontSize, text, fontColor), ScreenPosition(pos) {}
 
 		Text2D& GetText() { return Text; }
 		const Text2D& GetText() const { return Text; }

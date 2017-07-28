@@ -15,7 +15,7 @@ void FPSSystem::FPSUpdatePhase(World* world)
 	if (gCoreConfig.DisplayFPS && !com->FPSData.DisplayingFPS)
 	{
 		UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(world);
-		DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(world,  id, Vector(0, 10, 0), "Fonts/Raleway/Raleway-Regular.ttf", 32);
+		DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(world,  id, Vector(0, 10, 0), "Fonts/Raleway/Raleway-Regular.ttf", eResourceSource::ENGINE, 32);
 		com->FPSData.DisplayingFPS = true;
 	}
 		

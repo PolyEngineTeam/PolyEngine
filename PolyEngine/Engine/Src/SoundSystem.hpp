@@ -7,6 +7,7 @@ namespace Poly
 	class UniqueID;
 	class SoundEmitterComponent;
 	class SoundListenerComponent;
+	enum class eResourceSource;
 
 	namespace SoundSystem
 	{
@@ -32,7 +33,7 @@ namespace Poly
 		void ENGINE_DLLEXPORT SetEmitterOffsetInSeconds(World*, const UniqueID&, float);
 		void ENGINE_DLLEXPORT SetEmitterOffsetInSamples(World*, const UniqueID&, size_t);
 		void ENGINE_DLLEXPORT SetEmitterOffsetInBytes(World*, const UniqueID&, size_t);
-		void ENGINE_DLLEXPORT SetEmitterSource(World*, const UniqueID&, const String&);
+		void ENGINE_DLLEXPORT SetEmitterSource(World*, const UniqueID&, const String&, eResourceSource);
 		/*void ENGINE_DLLEXPORT QueueEmitterSource(World*, const UniqueID&, const String&);
 		void ENGINE_DLLEXPORT DequeueEmitterSource(World*, const UniqueID&, const String&);
 		void ENGINE_DLLEXPORT SetEmitterDistanceModel(World*, const UniqueID&, void(*fun)(SoundEmitterComponent, SoundListenerComponent));
