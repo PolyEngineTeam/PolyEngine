@@ -139,6 +139,8 @@
   <ItemGroup>
     <ClCompile Include="Src\Game.cpp" />
     <ClCompile Include="Src\Level.cpp" />
+    <ClCompile Include="Src\PlayerControllerComponent.cpp" />
+    <ClCompile Include="Src\PlayerUpdateSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.vcxproj">
@@ -151,6 +153,8 @@
   <ItemGroup>
     <ClInclude Include="Src\Game.hpp" />
     <ClInclude Include="Src\Level.hpp" />
+    <ClInclude Include="Src\PlayerControllerComponent.hpp" />
+    <ClInclude Include="Src\PlayerUpdateSystem.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
