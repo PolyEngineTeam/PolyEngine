@@ -111,3 +111,19 @@ void Poly::RigidBody2DComponent::ApplyImpulseToCenter(const Vector& impulse)
 {
 	ImplData->Body->ApplyLinearImpulseToCenter(b2Vec2(impulse.X, impulse.Y), true);
 }
+
+void Poly::RigidBody2DComponent::SetDamping(float dampfactor)
+{
+	ImplData->Body->SetLinearDamping(dampfactor);
+}
+
+void Poly::RigidBody2DComponent::SetFixedRotation(bool fixed)
+{
+	ImplData->Body->SetFixedRotation(fixed);
+}
+
+Vector Poly::RigidBody2DComponent::GetLinearSpeed() const
+{
+	b2Vec2 v = ImplData->Body->GetLinearVelocity();
+	return Vector(v.x, v.y, 0);
+}
