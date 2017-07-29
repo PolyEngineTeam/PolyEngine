@@ -80,6 +80,13 @@ void Poly::RigidBody2DComponent::FinishInit()
 			ImplData->Fixture = ImplData->Body->CreateFixture(&ImplData->FixtureDef);
 			ASSERTE(ImplData->Fixture, "Fixture failed to create!");
 		}
+		else if(const Circle2DColliderComponent* circleCmp = GetSibling<Circle2DColliderComponent>())
+		{
+			ImplData->FixtureDef.shape = circleCmp->GetShape();
+
+			ImplData->Fixture = ImplData->Body->CreateFixture(&ImplData->FixtureDef);
+			ASSERTE(ImplData->Fixture, "Fixture failed to create!");
+		}
 		else
 			gConsole.LogError("There is no collider on rigidbody!");
 	}
