@@ -52,7 +52,7 @@ vec4 diffuseLight(DiffuseLight base, vec3 direction, vec3 normal) {
 
 // calculates attenuation of the point light
 float pointLightAttenuation(PointLight light, vec3 vertexPos) {
-	float distanceToLight = length(light.Position - vertexPos);
+	float distanceToLight = length(light.Position.xyz - vertexPos);
 	if( distanceToLight > light.Range ) {
 		return 0.0f;
 	}
