@@ -70,19 +70,23 @@ namespace SGJ
 		if ((!changedSize && playerCmp->GetHasChangedSize() ) || (changedSize && !playerCmp->GetHasChangedSize()))
 		{
 			TransformComponent* transformCmp = playerCmp->GetSibling<TransformComponent>();
-			Box2DColliderComponent* colliderCmp = playerCmp->GetSibling<Box2DColliderComponent>();
+			Circle2DColliderComponent* colliderCmp = playerCmp->GetSibling<Circle2DColliderComponent>();
+			 
 			Poly::Vector size;
+			float colliderRange;
 			if (activePower == ePowerup::INCREASED_SIZE)
 			{
 				playerCmp->SetHasChangedSize(true);
 				playerCmp->SetDensityMultiplier(2.0f);		//Setting size density multiplier
 				size = playerCmp->GetDefaultScale() * 2.0f;
+				colliderRange = playerCmp->GetDefaultScale().X;
 			}
 			else if(activePower == ePowerup::DECREASED_SIZE)
 			{
 				playerCmp->SetHasChangedSize(true);
 				playerCmp->SetDensityMultiplier(0.5f);		//Setting decr size density multiplier
 				size = playerCmp->GetDefaultScale() * 0.5f;
+				colliderRange = playerCmp->GetDefaultScale().X * 0.25f;
 			}
 			else
 			{
@@ -91,9 +95,10 @@ namespace SGJ
 				playerCmp->SetHasChangedSize(false);
 				playerCmp->SetDensityMultiplier(1.0f);
 				size = playerCmp->GetDefaultScale();
+				colliderRange = playerCmp->GetDefaultScale().X * 0.5f;;
 			}
 			transformCmp->SetLocalScale(size);
-			colliderCmp->SetSize(size);
+			colliderCmp->SetSize(colliderRange);
 			rbCmp->SetDensity(rbCmp->GetDensity() * playerCmp->GetDensityMultiplier());
 			
 		}
