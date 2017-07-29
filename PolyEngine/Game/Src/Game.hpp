@@ -8,8 +8,7 @@ DECLARE_GAME()
 
 enum class eGameComponents
 {
-	BACKGROUND = (int)Poly::eEngineComponents::_COUNT,
-	GROUND,
+	GROUND = (int)Poly::eEngineComponents::_COUNT,
 	OBSTACLE,
 	PLAYER,
 	_COUNT

@@ -191,6 +191,9 @@
     <ClCompile Include="Src\LightSourceComponent.cpp">
       <Filter>Source Files\Rendering\Light</Filter>
     </ClCompile>
+    <ClCompile Include="Src\PostprocessSettingsComponent.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine.hpp">
@@ -339,6 +342,9 @@
     </ClInclude>
     <ClInclude Include="Src\LightSourceComponent.hpp">
       <Filter>Source Files\Rendering\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PostprocessSettingsComponent.hpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

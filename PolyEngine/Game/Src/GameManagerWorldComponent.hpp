@@ -18,6 +18,7 @@ namespace SGJ
 
 		Poly::Dynarray<Level*> Levels;
 		size_t CurrentLevelID = 0;
-		int MinLevelWidth, MaxLevelWidth;
+		float MinLevelWidth, MaxLevelWidth;
+		float MinLevelHeight, MaxLevelHeight;
 	};
 }

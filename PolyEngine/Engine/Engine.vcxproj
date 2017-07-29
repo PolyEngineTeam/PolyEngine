@@ -191,6 +191,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\Physics2DColliders.cpp" />
     <ClCompile Include="Src\Physics2DSystem.cpp" />
     <ClCompile Include="Src\Physics2DWorldComponent.cpp" />
+    <ClCompile Include="Src\PostprocessSettingsComponent.cpp" />
     <ClCompile Include="Src\SoundEmitterComponent.cpp" />
     <ClCompile Include="Src\SoundListenerComponent.cpp" />
     <ClCompile Include="Src\Mesh.cpp" />
@@ -238,6 +239,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\DeferredTaskSystem.hpp" />
     <ClInclude Include="Src\LightSourceComponent.hpp" />
     <ClInclude Include="Src\Physics2DWorldComponent.hpp" />
+    <ClInclude Include="Src\PostprocessSettingsComponent.hpp" />
     <ClInclude Include="Src\Rigidbody2DComponent.hpp" />
     <ClInclude Include="Src\InputSystem.hpp" />
     <ClInclude Include="Src\InputQueue.hpp" />
