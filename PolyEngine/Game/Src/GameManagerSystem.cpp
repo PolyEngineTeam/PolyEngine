@@ -13,6 +13,7 @@
 #include <LightSourceComponent.hpp>
 #include "GroundComponent.hpp"
 #include "ObstacleComponent.hpp"
+#include "PlayerControllerComponent.hpp"
 
 using namespace SGJ;
 using namespace Poly;
@@ -76,7 +77,9 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 {
 	UniqueID player = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, player);
+	DeferredTaskSystem::AddComponentImmediate<PlayerControllerComponent>(world, player);
 	TransformComponent* playerTrans = world->GetComponent<Poly::TransformComponent>(player);
+
 	DeferredTaskSystem::AddComponentImmediate<Poly::Box2DColliderComponent>(world, player, Vector(1, 1, 0));
 	DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, player, world, eRigidBody2DType::DYNAMIC);
 

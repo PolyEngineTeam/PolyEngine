@@ -19,6 +19,7 @@
 #include "GroundComponent.hpp"
 #include "ObstacleComponent.hpp"
 #include "PlayerControllerComponent.hpp"
+#include "PlayerUpdateSystem.hpp"
 
 using namespace Poly;
 
@@ -33,6 +34,8 @@ void SGJGame::Init()
 
 	gEngine->RegisterComponent<BackgroundComponent>((int)eGameComponents::BACKGROUND);
 	gEngine->RegisterWorldComponent<SGJ::GameManagerWorldComponent>((int)eGameWorldComponents::GAME_MGR);
+
+	gEngine->RegisterGameUpdatePhase(SGJ::PlayerUpdateSystem::Update);
 	
 	DeferredTaskSystem::AddWorldComponentImmediate<SGJ::GameManagerWorldComponent>(gEngine->GetWorld());
 

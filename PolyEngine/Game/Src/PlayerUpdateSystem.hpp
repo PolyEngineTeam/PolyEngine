@@ -11,7 +11,7 @@ namespace SGJ
 {
 	namespace PlayerUpdateSystem
 	{
-		void ProcessInput(Poly::World* world);
+		void Update(Poly::World* world);
 	}
 
 }
