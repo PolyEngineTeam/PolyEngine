@@ -75,6 +75,9 @@
     <Filter Include="Source Files\Physics2D">
       <UniqueIdentifier>{82ce724b-c08b-4b81-84d3-ba837fa851fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Rendering\Light">
+      <UniqueIdentifier>{ba289ef3-b2de-4d1c-9f5b-b69e07f78b9a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -184,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="Src\Physics2DWorldComponent.cpp">
       <Filter>Source Files\Physics2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\LightSourceComponent.cpp">
+      <Filter>Source Files\Rendering\Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -330,6 +336,9 @@
     </ClInclude>
     <ClInclude Include="Src\RigidBody2DImpl.hpp">
       <Filter>Source Files\Physics2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\LightSourceComponent.hpp">
+      <Filter>Source Files\Rendering\Light</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

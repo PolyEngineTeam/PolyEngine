@@ -10,6 +10,7 @@
 #include <MeshRenderingComponent.hpp>
 #include <CameraComponent.hpp>
 #include <FreeFloatMovementComponent.hpp>
+#include <LightSourceComponent.hpp>
 
 using namespace SGJ;
 using namespace Poly;
@@ -115,6 +116,13 @@ void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
 		UniqueID id = SGJ::GameManagerSystem::CreateTileObject(gEngine->GetWorld(), Vector((i * 2) % 20, 20.0f + (i % 20), 0), Vector(1, 1, 0), Color(1, 0, 0), eRigidBody2DType::DYNAMIC);
 		gameMgrCmp->OtherEntities.PushBack(id);
 	}
+
+	UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(gEngine->GetWorld(), id);
+	Poly::TransformComponent* lightTrans = gEngine->GetWorld()->GetComponent<Poly::TransformComponent>(id);
+	lightTrans->SetLocalRotation(Quaternion(Vector::UNIT_Y, 180_deg));
+	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightSourceComponent>(gEngine->GetWorld(), id, Color(1,0,0), 1.0f);
+	gameMgrCmp->OtherEntities.PushBack(id);
 }
 
 void SGJ::GameManagerSystem::Cleanup(Poly::World* world)

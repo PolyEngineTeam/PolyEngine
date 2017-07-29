@@ -40,6 +40,7 @@
 #include "TransformComponent.hpp"
 #include "Physics2DColliders.hpp"
 #include "Rigidbody2DComponent.hpp"
+#include "LightSourceComponent.hpp"
 
 // World Components
 #include "DebugWorldComponent.hpp"

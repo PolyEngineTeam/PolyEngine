@@ -186,6 +186,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\FreeFloatMovementComponent.cpp" />
     <ClCompile Include="Src\DeferredTaskSystem.cpp" />
     <ClCompile Include="Src\InputWorldComponent.cpp" />
+    <ClCompile Include="Src\LightSourceComponent.cpp" />
     <ClCompile Include="Src\OpenALDevice.cpp" />
     <ClCompile Include="Src\Physics2DColliders.cpp" />
     <ClCompile Include="Src\Physics2DSystem.cpp" />
@@ -235,6 +236,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\DeferredTaskBase.hpp" />
     <ClInclude Include="Src\DeferredTaskImplementation.hpp" />
     <ClInclude Include="Src\DeferredTaskSystem.hpp" />
+    <ClInclude Include="Src\LightSourceComponent.hpp" />
     <ClInclude Include="Src\Physics2DWorldComponent.hpp" />
     <ClInclude Include="Src\Rigidbody2DComponent.hpp" />
     <ClInclude Include="Src\InputSystem.hpp" />

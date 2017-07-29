@@ -51,6 +51,8 @@ namespace Poly {
 
 		const std::map<String, OutputInfo>& GetOutputsInfo() const { return Outputs; }
 		const std::map<String, UniformInfo>& GetUniformsInfo() const { return Uniforms; }
+
+		void RegisterUniform(const String& type, const String& name);
 	private:
 		void CompileProgram();
 		void Validate();
@@ -58,7 +60,6 @@ namespace Poly {
 
 		static GLenum GetEnumFromShaderUnitType(eShaderUnitType type);
 
-		void RegisterUniform(const String& type, const String& name);
 		void AnalyzeShaderCode(eShaderUnitType type);
 
 		std::map<String, UniformInfo> Uniforms;
