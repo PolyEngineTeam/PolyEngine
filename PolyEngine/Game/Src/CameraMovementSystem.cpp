@@ -1,8 +1,10 @@
 #include "CameraMovementSystem.hpp"
 
 #include <World.hpp>
+#include <TimeSystem.hpp>
 #include <CameraComponent.hpp>
 #include <TransformComponent.hpp>
+#include <PostprocessSettingsComponent.hpp>
 
 #include "GameManagerWorldComponent.hpp"
 
@@ -36,5 +38,15 @@ void SGJ::CameraMovementSystem::CameraMovementUpdatePhase(Poly::World* world)
 		desiredPosition.X = Clamp(playerTransCmp->GetGlobalTranslation().X, minW, maxW) - 0.5f;
 
 		transformCmp->SetLocalTranslation(desiredPosition);
+
+		PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
+		if (post != nullptr)
+		{
+			float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
+			float intpart;
+			float fractpart = std::modf(Time, &intpart);
+			// post->UseCashetes = (fractpart > 0.5) ? 1 : 0;
+			// gConsole.LogInfo("SGJ::CameraMovementSystem::CameraMovementUpdatePhase Time: {}, useCashetes: {}", Time, post->UseCashetes);
+		}
 	}
 }

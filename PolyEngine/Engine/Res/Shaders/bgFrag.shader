@@ -79,6 +79,7 @@ float vine(vec3 p, in float c, in float h)
 
 float map(vec3 p)
 {
+	p *= 0.1;
 	p.y += height(p.zx);
 
 	vec3 bp = p;
@@ -226,7 +227,7 @@ void main()
 	uv = uv * 2.0 - 1.0;
 	uv.x *= uResolution.x / uResolution.y;
 
-	vec3 ori = uCameraPosition.xyz;
+	vec3 ori = uCameraPosition.xyz + vec3(0.0, 0.0, 1.0);
 	vec3 dir = normalize(vec3(uv.xy, -2.0));
 	// dir.z += length(uv) * 0.15;
 	dir = (uCameraRotation * vec4(dir, 1.0)).xyz;
