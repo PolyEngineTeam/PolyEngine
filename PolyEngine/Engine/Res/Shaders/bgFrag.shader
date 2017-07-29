@@ -16,9 +16,9 @@ uniform int uUseCashetes;
 
 //Audio by Dave_Hoskins
 // default 100
-#define ITR 50 
+#define ITR 100 
 // default 40.
-#define FAR 20.
+#define FAR 40.
 #define time uTime
 
 /*
@@ -79,7 +79,7 @@ float vine(vec3 p, in float c, in float h)
 
 float map(vec3 p)
 {
-	p *= 0.1;
+	// p *= 0.1;
 	p.y += height(p.zx);
 
 	vec3 bp = p;
@@ -140,8 +140,8 @@ float triNoise3d(in vec3 p, in float spd)
 
 float fogmap(in vec3 p, in float d)
 {
-	p.x += time*1.5;
-	p.z += sin(p.x*.5);
+	p.x += time*0.5;
+	p.z += sin(p.x*.2);
 	return triNoise3d(p*2.2 / (d + 20.), 0.2)*(1. - smoothstep(0., .7, p.y));
 }
 
@@ -227,7 +227,7 @@ void main()
 	uv = uv * 2.0 - 1.0;
 	uv.x *= uResolution.x / uResolution.y;
 
-	vec3 ori = uCameraPosition.xyz + vec3(0.0, 0.0, 1.0);
+	vec3 ori =  uCameraPosition.xyz * vec3(0.1, 1.0, 0.1) + vec3(0.0, 0.0, 1.0);
 	vec3 dir = normalize(vec3(uv.xy, -2.0));
 	// dir.z += length(uv) * 0.15;
 	dir = (uCameraRotation * vec4(dir, 1.0)).xyz;

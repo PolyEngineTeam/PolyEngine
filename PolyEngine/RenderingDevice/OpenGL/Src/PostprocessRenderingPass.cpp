@@ -102,7 +102,7 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 		GetProgram().SetUniform("uUseCashetes",						PostprocessSettings->UseCashetes);
 		GetProgram().SetUniform("uUseBgShader",						PostprocessSettings->UseBgShader);
 		GetProgram().SetUniform("uUseFgShader",						PostprocessSettings->UseFgShader);
-		GetProgram().SetUniform("uAberationPower",					PostprocessSettings->AberationPower);
+		GetProgram().SetUniform("uDistortionPower",					PostprocessSettings->DistortionPower);
 		GetProgram().SetUniform("uColorTempValue",					PostprocessSettings->ColorTempValue);
 		GetProgram().SetUniform("uColorTempPower",					PostprocessSettings->ColorTempPower);
 		GetProgram().SetUniform("uColorTempLuminancePreservation",	PostprocessSettings->ColorTempLuminancePreservation);

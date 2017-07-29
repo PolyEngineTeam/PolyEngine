@@ -10,19 +10,18 @@ namespace Poly {
 		friend void CameraSystem::CameraUpdatePhase(World*);
 	public:
 
-		bool UseBgShader = false;
-		bool UseFgShader = false;
+		bool UseBgShader = true;
+		bool UseFgShader = true;
 
 		int UseCashetes = 0;
-		float AberationPower = 0.35f;
-		float ColorTempValue = 10000.0f; // 6500.0 from [1000.0, 40000.0]
+		float DistortionPower = 0.45f;
+		float ColorTempValue = 7500.0f; // 6500.0 from [1000.0, 40000.0]
 		float ColorTempPower = 1.0f;
 		float ColorTempLuminancePreservation = 0.75f;
 		float SaturationPower = 1.0f;
 		float GrainPower = 0.1f;
-		float StripesPower = 0.15f;
-		float VinettePower = 0.20f;
+		float StripesPower = 0.25f;
+		float VinettePower = 0.30f;
 
-	private:
 	};
 }

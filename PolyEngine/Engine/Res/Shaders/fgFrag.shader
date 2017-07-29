@@ -8,7 +8,7 @@ in vec2 vTexCoord;
 out vec4 color;
 
 uniform int uUseCashetes;
-uniform float uAberationPower;
+uniform float uDistortionPower;
 uniform float uColorTempValue; // default 6500 in [1000.0, 40000.0]
 uniform float uColorTempPower;
 uniform float uColorTempLuminancePreservation;
@@ -17,14 +17,10 @@ uniform float uStripesPower;
 uniform float uVinettePower;
 uniform float uGrainPower;
 
-// #define DEBUG
-
-// aberation by hornet
+// based on aberation by hornet
 // https://www.shadertoy.com/view/XssGz8
 // To the extent possible under law,
 // the author has waived all copyright and related or neighboring rights to this work.
-
-// #define LUMINANCE_PRESERVATION 0.75
 
 #define EPSILON 1e-10
 
@@ -119,13 +115,6 @@ vec3 spectrum_offset_rgb(float t)
 	//vec3 ret = clamp( vec3(1.0-t, 1.0-abs(t-1.0), t-1.0), 0.0, 1.0);
 	float t0 = 3.0 * t - 1.5;
 	vec3 ret = clamp(vec3(-t0, 1.0 - abs(t0), t0), 0.0, 1.0);
-
-	//note: old crappy code
-	//vec3 ret;
-	//float lo = step(t,0.5);
-	//float hi = 1.0-lo;
-	//float w = linterp( remap( t, 1.0/6.0, 5.0/6.0 ) );
-	//ret = vec3(lo,1.0,hi) * vec3(1.0-w, w, 1.0-w);
 
 	return ret;
 	//return smoothstep( vec3(0.0), vec3(1.0), ret );
@@ -224,8 +213,8 @@ vec2 brownConradyDistortion(vec2 uv, float dist)
 vec2 distort(vec2 uv, float t, vec2 min_distort, vec2 max_distort)
 {
 	vec2 dist = mix(min_distort, max_distort, t);
-	//return radialdistort( uv, 2.0 * dist );
-	//return barrelDistortion( uv, 1.75 * dist ); //distortion at center
+	// return radialdistort( uv, 2.0 * dist );
+	// return barrelDistortion( uv, 1.75 * dist ); //distortion at center
 	return brownConradyDistortion(uv, 75.0 * dist.x);
 }
 
@@ -259,17 +248,6 @@ float nrand(vec2 n)
 
 vec3 render(vec2 uv)
 {
-
-#if defined( DEBUG )
-	if (uv.x > 0.7 && uv.y > 0.7)
-	{
-		float d = length(vec2(0.77) - uv);
-		d = min(d, length(vec2(0.82) - uv));
-		d = min(d, length(vec2(0.875) - uv));
-		return vec3(step(d, 0.025));
-	}
-#endif
-
 	return srgb2lin(texture(i_color, uv).rgb);
 }
 
@@ -316,13 +294,12 @@ vec3 colorTemperature(vec3 color, float temperature)
 vec3 Saturation(vec3 color, float saturation)
 {
 	vec3 hsl = RGBtoHSL(color);
-	hsl.g = saturation;
+	hsl.g *= saturation;
 	return HSLtoRGB(hsl);
 }
 
 void main()
 {
-	color = vec4(1.0);
 	vec2 uv = vTexCoord;
 
 	if (uUseCashetes > 0)
@@ -336,48 +313,31 @@ void main()
 		}
 	}
 
-	// float power = smoothstep(-0.2, 0.2, -cos(0.5*uTime));
-
-	
+	// float power = 1.0;
 
 	const float MAX_DIST_PX = 50.0;
-	float max_distort_px = MAX_DIST_PX * uAberationPower;
+	float max_distort_px = MAX_DIST_PX * (uDistortionPower);
 	vec2 max_distort = vec2(max_distort_px) / uResolution.xy;
 	vec2 min_distort = 0.5 * max_distort;
 
 	//vec2 oversiz = vec2(1.0);
 	vec2 oversiz = distort(vec2(1.0), 1.0, min_distort, max_distort);
-	// uv = remap(uv, 1.0 - oversiz, oversiz);
-	// uv = clamp(uv, vec2(0.0), vec2(1.0));
+	uv = remap(uv, 1.0 - oversiz, oversiz);
 
-	//debug oversiz
-	//vec2 distuv = distort( uv, 1.0, max_distort );
-	//if ( abs(distuv.x-0.5)>0.5 || abs(distuv.y-0.5)>0.5)
-	//{
-	//    fragColor = vec4( 1.0, 0.0, 0.0, 1.0 ); return;
-	//}
-	
 	// Chromatic Aberration
 	const int num_iter = 7;
 	const float stepsiz = 1.0 / (float(num_iter) - 1.0);
 	float rnd = nrand(uv + fract(uTime));
 	float t = rnd * stepsiz;
-	
+
+
 	vec3 sumcol = vec3(0.0);
 	vec3 sumw = vec3(0.0);
-	vec2 uvd = distort(uv, t, min_distort, max_distort); //TODO: move out of loop
-	color = vec4(uvd, 0.0, 1.0);
-	// if ( > 1.0)
-	// {
-	// 	color.rgb = vec3(1.0, 0.0, 1.0);
-	// }
-	// return;
-
 	for (int i = 0; i<num_iter; ++i)
 	{
 		vec3 w = spectrum_offset(t);
 		sumw += w;
-		// uvd = clamp(uvd, vec2(0.0), vec2(1.0));
+		vec2 uvd = distort(uv, t, min_distort, max_distort); //TODO: move out of loop
 		sumcol += w * render(uvd);
 		t += stepsiz;
 	}
@@ -386,34 +346,24 @@ void main()
 	vec3 outcol = sumcol.rgb;
 	outcol = lin2srgb(outcol);
 	outcol += rnd / 255.0;
-	
+
 	color.rgb = outcol;
 
 	// tonemapper
 	color.rgb = Tonemap_ACES(color.rgb);
-
+	
 	// color temperature
-	color.rgb = colorTemperature(color.rgb, mix(6000.0, uColorTempValue, uColorTempPower));
-
+	color.rgb = colorTemperature(color.rgb, mix(6500.0, uColorTempValue, uColorTempPower));
+	
 	// color saturation
 	color.rgb = Saturation(color.rgb, uSaturationPower);
-
+	
 	// Stripes
 	color *= mix( 1.0, stripes(vTexCoord), uStripesPower);
-
+	
 	// grain
 	color *= mix( 1.0, grain(uv), uGrainPower);
-
+	
 	// Vinette
 	color *= mix(1.0, vinette(vTexCoord), uVinettePower);
 }
-
-/*
-void main(){
-  vec4 texColor = texture(i_color, vTexCoord);
-  vec2 p = (vTexCoord - vec2(0.5)) * 2.0;
-  p.x *= uResolution.x / uResolution.y;
-  p.x += 0.1 * sin(uTime);
-  color = texColor *smoothstep(0.1, 0.11, length(p));
-}
-*/

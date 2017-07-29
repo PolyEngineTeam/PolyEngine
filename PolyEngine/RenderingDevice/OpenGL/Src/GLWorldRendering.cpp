@@ -70,7 +70,7 @@ void GLRenderingDevice::RenderWorld(World* world)
 		if (post && post->UseFgShader)
 			PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND]->Run(world, kv.second.GetCamera(), rect);
 		else 
-			PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, kv.second.GetCamera(), rect);
+		 	PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, kv.second.GetCamera(), rect);
 
 		// Draw debug normals
 		if (gCoreConfig.DebugNormalsFlag)
