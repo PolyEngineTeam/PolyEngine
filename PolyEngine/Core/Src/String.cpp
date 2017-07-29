@@ -138,7 +138,16 @@ Dynarray<String> String::Split(char delimiter) const {
 Dynarray<String> String::Split(const String& delimiter) const {
 	Dynarray<String> elements;
 
-	String checker = "";
+	
+	size_t idx = 0;
+	while (idx < GetLength())
+	{
+		size_t delimiterStart = FindSubstrFromPoint(idx, delimiter);
+		elements.PushBack(Substring(idx, delimiterStart));
+		idx = delimiterStart + delimiter.GetLength();
+	}
+
+	/*String checker = "";
 	String loaded = "";
 
 	int i = 0;
@@ -177,7 +186,7 @@ Dynarray<String> String::Split(const String& delimiter) const {
 
 			break;
 		}
-	}
+	}*/
 
 	return elements;
 }
@@ -311,15 +320,7 @@ char String::operator[](int idx) const {
 
 size_t String::GetLength() const
 {
-	for (int i = Data.GetSize() - 1; i > 0; i--)
-	{
-		if (Data[i] != 0)
-		{
-			return i + 1;
-		}
-	}
-
-	return 0;
+	return Data.GetSize() - 1;
 }
 
 size_t String::FindSubstrFromPoint(size_t startPoint, const String& str) const

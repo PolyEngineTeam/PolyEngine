@@ -12,13 +12,12 @@ namespace SGJ
 		_COUNT
 	};
 
-	class GAME_DLLEXPORT LevelResource : public Poly::BaseObject<>
+	class GAME_DLLEXPORT Level : public Poly::BaseObject<>
 	{
 		friend class LevelComponent;
 	public:
-		LevelResource(const Poly::String& path);
+		Level(const Poly::String& path);
 
-	private:
 		Poly::Dynarray<eTileType> Tiles;
 		size_t Height;
 		size_t Width;

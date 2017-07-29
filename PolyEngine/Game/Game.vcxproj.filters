@@ -9,25 +9,19 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Level">
-      <UniqueIdentifier>{78fed068-c069-4f39-9a76-379966e5b8c8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Resources">
       <UniqueIdentifier>{9bdb7551-293d-4f91-b16d-7de33fc11a95}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Player">
       <UniqueIdentifier>{09f97ba9-23a7-43ec-bf38-e94a12ab200a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\GameManager">
+      <UniqueIdentifier>{fdd1d471-6e4f-41e8-947a-bdedbb577ee0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Game.hpp">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\LevelResource.hpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\LevelComponent.hpp">
-      <Filter>Source Files\Level</Filter>
     </ClInclude>
     <ClInclude Include="Src\PlayerControllerComponent.hpp">
       <Filter>Source Files\Player</Filter>
@@ -38,22 +32,42 @@
     <ClInclude Include="Src\Powerups.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Src\BackgroundComponent.hpp" />
+    <ClInclude Include="Src\BackgroundSystem.hpp" />
+    <ClInclude Include="Src\GameManagerWorldComponent.hpp">
+      <Filter>Source Files\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Level.hpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GameManagerSystem.hpp">
+      <Filter>Source Files\GameManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Game.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\LevelResource.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\LevelComponent.cpp">
-      <Filter>Source Files\Level</Filter>
     </ClCompile>
     <ClCompile Include="Src\PlayerControllerComponent.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
     <ClCompile Include="Src\PlayerUpdateSystem.cpp">
       <Filter>Source Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BackgroundComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BackgroundSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GameManagerWorldComponent.cpp">
+      <Filter>Source Files\GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Level.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GameManagerSystem.cpp">
+      <Filter>Source Files\GameManager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

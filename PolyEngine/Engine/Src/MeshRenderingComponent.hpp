@@ -10,11 +10,13 @@ namespace Poly {
 	{
 		friend void RenderingSystem::RenderingPhase(World*);
 	public:
-		MeshRenderingComponent(const String& meshPath, eResourceSource source);
+		MeshRenderingComponent(const String& meshPath, eResourceSource source, const Color& baseColor = Color(0,0,0,1));
 		virtual ~MeshRenderingComponent();
 
 		const MeshResource* GetMesh() const { return Mesh; }
+		const Color& GetBaseColor() const { return BaseColor; }
 	private:
 		MeshResource* Mesh = nullptr;
+		Color BaseColor;
 	};
 }

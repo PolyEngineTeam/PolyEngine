@@ -4,31 +4,24 @@
 #include <Engine.hpp>
 #include <World.hpp>
 
-namespace GameMainSystem
-{
-	void GameUpdate(Poly::World* world);
-}
-
 DECLARE_GAME()
 
 enum class eGameComponents
 {
-	LEVELCOMPONENT = (int)Poly::eEngineComponents::_COUNT,
-	BACKGROUND,
+	BACKGROUND = (int)Poly::eEngineComponents::_COUNT,
+	_COUNT
+};
+
+enum class eGameWorldComponents
+{
+	GAME_MGR = (int)Poly::eEngineWorldComponents::_COUNT,
 	_COUNT
 };
 
 class GAME_DLLEXPORT SGJGame : public Poly::IGame {
 public:
-	void RegisterEngine(Poly::Engine* engine) override { Engine = engine; }
+	void RegisterEngine(Poly::Engine* engine) override { }
 	
 	void Init() override;
 	void Deinit() override;
-
-private:
-	Poly::UniqueID Camera;
-	Poly::UniqueID Background;
-
-	Poly::Dynarray<Poly::UniqueID> GameEntities;
-	Poly::Engine* Engine;
 };
