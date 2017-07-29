@@ -6,26 +6,26 @@
 
 using namespace Poly;
 
-namespace sgj
+namespace SGJ
 {
 	void PlayerUpdateSystem::ProcessInput(World* world)
 	{
-		for (auto playerTuple : world->IterateComponents<PlayerControllerComponent, TransformComponent>())
-		{
-			TransformComponent* transCmp = std::get<TransformComponent*>(playerTuple);
-			PlayerControllerComponent* playerCmp = std::get<PlayerControllerComponent*>(playerTuple);
-
-			//movement like in MovementSystem
-			Vector move;
-			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A))
-				move -= Vector::UNIT_X;
-			else if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D))
-				move += Vector::UNIT_X;
-
-			move *= playerCmp->GetMovementSpeed();
-			//Local? (that was in MovementSystem)
-			transCmp->SetLocalTranslation(transCmp->GetLocalTranslation() + transCmp->GetLocalRotation() * move);
-		}
+		//for (auto playerTuple : world->IterateComponents<SGJ::PlayerControllerComponent, TransformComponent>())
+		//{
+		//	TransformComponent* transCmp = std::get<TransformComponent*>(playerTuple);
+		//	SGJ::PlayerControllerComponent* playerCmp = std::get<SGJ::PlayerControllerComponent*>(playerTuple);
+		//
+		//	//movement like in MovementSystem
+		//	Vector move;
+		//	if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A))
+		//		move -= Vector::UNIT_X;
+		//	else if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D))
+		//		move += Vector::UNIT_X;
+		//
+		//	move *= playerCmp->GetMovementSpeed();
+		//	//Local? (that was in MovementSystem)
+		//	transCmp->SetLocalTranslation(transCmp->GetLocalTranslation() + transCmp->GetLocalRotation() * move);
+		//}
 
 	}
 

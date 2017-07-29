@@ -1,9 +1,8 @@
 #include "PlayerControllerComponent.hpp"
 
-namespace sgj
+namespace SGJ
 {
 	PlayerControllerComponent::PlayerControllerComponent(float movementSpeed)
-		: MovementSpeed(movementSpeed)
 	{
 	}
 }

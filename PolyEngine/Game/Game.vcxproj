@@ -143,8 +143,10 @@
     <ClCompile Include="Src\GameManagerSystem.cpp" />
     <ClCompile Include="Src\GameManagerWorldComponent.cpp" />
     <ClCompile Include="Src\Level.cpp" />
+    <ClCompile Include="Src\ObstacleComponent.cpp" />
     <ClCompile Include="Src\PlayerControllerComponent.cpp" />
     <ClCompile Include="Src\PlayerUpdateSystem.cpp" />
+    <ClCompile Include="Src\GroundComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.vcxproj">
@@ -161,9 +163,11 @@
     <ClInclude Include="Src\GameManagerSystem.hpp" />
     <ClInclude Include="Src\GameManagerWorldComponent.hpp" />
     <ClInclude Include="Src\Level.hpp" />
+    <ClInclude Include="Src\ObstacleComponent.hpp" />
     <ClInclude Include="Src\PlayerControllerComponent.hpp" />
     <ClInclude Include="Src\PlayerUpdateSystem.hpp" />
     <ClInclude Include="Src\Powerups.hpp" />
+    <ClInclude Include="Src\GroundComponent.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

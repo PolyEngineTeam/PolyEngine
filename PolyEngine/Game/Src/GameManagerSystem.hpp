@@ -2,6 +2,10 @@
 
 #include <World.hpp>
 
+namespace SGJ {
+	enum class eTileType;
+}
+
 namespace Poly
 {
 	enum class eRigidBody2DType;
@@ -11,8 +15,9 @@ namespace SGJ
 {
 	namespace GameManagerSystem
 	{
-		Poly::UniqueID CreateTileObject(Poly::World* world, const Poly::Vector& position, const Poly::Vector& size, const Poly::Color& color, Poly::eRigidBody2DType type);
-
+		Poly::UniqueID CreateGroundObject(Poly::World* world, const Poly::Vector& position, eTileType tileType);
+		Poly::UniqueID CreateObstacleObject(Poly::World* world, const Poly::Vector& position, const Poly::Vector& size, eTileType tileType);
+		Poly::UniqueID SpawnPlayer(Poly::World* world, const Poly::Vector& position);
 
 		void LoadLevel(Poly::World* world, const Poly::String& path);
 		void SpawnLevel(Poly::World* world, size_t idx);

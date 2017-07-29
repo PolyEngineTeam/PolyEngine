@@ -11,6 +11,8 @@
 #include <CameraComponent.hpp>
 #include <FreeFloatMovementComponent.hpp>
 #include <LightSourceComponent.hpp>
+#include "GroundComponent.hpp"
+#include "ObstacleComponent.hpp"
 
 using namespace SGJ;
 using namespace Poly;
@@ -22,27 +24,74 @@ void SGJ::GameManagerSystem::LoadLevel(Poly::World* world, const Poly::String& p
 	gameMgrCmp->Levels.PushBack(new Level(path));
 }
 
-UniqueID SGJ::GameManagerSystem::CreateTileObject(World* world, const Vector& position, const Vector& size, const Color& color, eRigidBody2DType type)
+Poly::UniqueID GameManagerSystem::CreateGroundObject(Poly::World* world, const Poly::Vector& position, eTileType tileType)
 {
-	UniqueID obj1 = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, obj1);
-	Poly::TransformComponent* obj1Trans = world->GetComponent<Poly::TransformComponent>(obj1);
+	UniqueID ground = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, ground);
+	DeferredTaskSystem::AddComponentImmediate<GroundComponent>(world, ground);
+	Poly::TransformComponent* groundTrans = world->GetComponent<Poly::TransformComponent>(ground);
 
-	DeferredTaskSystem::AddComponentImmediate<Poly::Box2DColliderComponent>(world, obj1, size);
-	DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, obj1, world, type);
-
-	UniqueID subobj1 = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, subobj1);
-	Poly::TransformComponent* subobj1Trans = world->GetComponent<Poly::TransformComponent>(subobj1);
-	subobj1Trans->SetParent(obj1Trans);
-	subobj1Trans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
-	Vector correctedSize = size;
+	DeferredTaskSystem::AddComponentImmediate<Poly::Box2DColliderComponent>(world, ground, Vector(1, 1, 0));
+	DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, ground, world, tileType == eTileType::RIGIDBODYGROUND ? eRigidBody2DType::DYNAMIC : eRigidBody2DType::STATIC);
+	
+	UniqueID mesh = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, mesh);
+	Poly::TransformComponent* meshTrans = world->GetComponent<Poly::TransformComponent>(mesh);
+	meshTrans->SetParent(groundTrans);
+	meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
+	Vector correctedSize = Vector(1, 1, 0);
 	correctedSize.Z = 1.0f;
-	subobj1Trans->SetLocalScale(correctedSize);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, subobj1, "Quad.obj", eResourceSource::GAME, color);
+	meshTrans->SetLocalScale(correctedSize);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, mesh, "Quad.obj", eResourceSource::GAME, Color(0, 0, 0));
 
-	obj1Trans->SetLocalTranslation(position);
-	return obj1;
+	meshTrans->SetLocalTranslation(position);
+	return ground;
+}
+
+Poly::UniqueID GameManagerSystem::CreateObstacleObject(Poly::World* world, const Poly::Vector& position, const Poly::Vector& size, eTileType tileType)
+{
+	UniqueID obstacle = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, obstacle);
+	DeferredTaskSystem::AddComponentImmediate<ObstacleComponent>(world, obstacle, tileType);
+	Poly::TransformComponent* obstacleTrans = world->GetComponent<Poly::TransformComponent>(obstacle);
+
+	DeferredTaskSystem::AddComponentImmediate<Poly::Box2DColliderComponent>(world, obstacle, size);
+	DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, obstacle, world, eRigidBody2DType::STATIC);
+
+	UniqueID mesh = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, mesh);
+	Poly::TransformComponent* meshTrans = world->GetComponent<Poly::TransformComponent>(mesh);
+	meshTrans->SetParent(obstacleTrans);
+	meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
+	Vector correctedSize = Vector(1, 1, 0);
+	correctedSize.Z = 1.0f;
+	meshTrans->SetLocalScale(correctedSize);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, mesh, "Quad.obj", eResourceSource::GAME, Color(1, 0, 0));
+
+	meshTrans->SetLocalTranslation(position);
+	return obstacle;
+}
+
+Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Vector& position)
+{
+	UniqueID player = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, player);
+	TransformComponent* playerTrans = world->GetComponent<Poly::TransformComponent>(player);
+	DeferredTaskSystem::AddComponentImmediate<Poly::Box2DColliderComponent>(world, player, Vector(1, 1, 0));
+	DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, player, world, eRigidBody2DType::DYNAMIC);
+
+	UniqueID body = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, body);
+	Poly::TransformComponent* bodyTrans = world->GetComponent<Poly::TransformComponent>(body);
+	bodyTrans->SetParent(playerTrans);
+	bodyTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
+	Vector correctedSize = Vector(1, 2, 0);
+	correctedSize.Z = 1.0f;
+	bodyTrans->SetLocalScale(correctedSize);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, body, "Quad.obj", eResourceSource::GAME, Color(0, 0, 1));
+
+	bodyTrans->SetLocalTranslation(position);
+	return player;
 }
 
 void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
@@ -60,8 +109,8 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 	{
 		if (level->Tiles[idx] != SGJ::eTileType::NOTHING)
 		{
-			meanW += (idx % 100);
-			meanH += (idx / 100);
+			meanW += (idx % level->Width);
+			meanH += (idx / level->Width);
 			++count;
 		}
 	}
@@ -73,10 +122,30 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 	{
 		if (level->Tiles[idx] != SGJ::eTileType::NOTHING)
 		{
-			int posW = (idx % 100) - meanW;
-			int posH = (idx / 100) - meanH;
-			UniqueID id = CreateTileObject(world, Vector(posW, posH, 0), Vector(1, 1, 0), Color(0, 1, 0), eRigidBody2DType::STATIC);
-			gameMgrCmp->LevelEntities.PushBack(id);
+			int posW = (idx % level->Width) - meanW;
+			int posH = (idx / level->Width) - meanH;
+
+			switch (level->Tiles[idx])
+			{
+			case eTileType::PLAYERSTARTPOS:
+				gameMgrCmp->Player = SpawnPlayer(world, Vector(posW, -posH, 0));
+				break;
+
+			case eTileType::STATICGROUND:
+			case eTileType::RIGIDBODYGROUND:
+				gameMgrCmp->LevelEntities.PushBack(CreateGroundObject(world, Vector(posW, -posH, 0), level->Tiles[idx]));
+				break;
+
+			case eTileType::SPIKESBOTTOM:
+			case eTileType::SPIKESTOP:
+			case eTileType::SPIKESLEFT:
+			case eTileType::SPIKESRIGHT:
+				gameMgrCmp->LevelEntities.PushBack(CreateObstacleObject(world, Vector(posW, -posH, 0), Vector(1, 1, 0), level->Tiles[idx]));
+				break;
+
+			default:
+				break;
+			}
 		}
 	}
 }
@@ -110,12 +179,6 @@ void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
 
 	// SETUP SCENE HERE
 
-	// For physics testing
-	for (int i = 0; i < 100; ++i)
-	{
-		UniqueID id = SGJ::GameManagerSystem::CreateTileObject(gEngine->GetWorld(), Vector((i * 2) % 20, 20.0f + (i % 20), 0), Vector(1, 1, 0), Color(1, 0, 0), eRigidBody2DType::DYNAMIC);
-		gameMgrCmp->OtherEntities.PushBack(id);
-	}
 
 	UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(gEngine->GetWorld(), id);

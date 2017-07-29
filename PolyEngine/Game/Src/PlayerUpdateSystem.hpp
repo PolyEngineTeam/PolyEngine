@@ -7,7 +7,7 @@ namespace Poly
 	class TransformComponent;
 }
 
-namespace sgj
+namespace SGJ
 {
 	namespace PlayerUpdateSystem
 	{

@@ -18,6 +18,9 @@
     <Filter Include="Source Files\GameManager">
       <UniqueIdentifier>{fdd1d471-6e4f-41e8-947a-bdedbb577ee0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Tiles">
+      <UniqueIdentifier>{7c933607-37c7-441e-99f2-a9cdc96c1455}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Game.hpp">
@@ -42,6 +45,12 @@
     </ClInclude>
     <ClInclude Include="Src\GameManagerSystem.hpp">
       <Filter>Source Files\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GroundComponent.hpp">
+      <Filter>Source Files\Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ObstacleComponent.hpp">
+      <Filter>Source Files\Tiles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +77,12 @@
     </ClCompile>
     <ClCompile Include="Src\GameManagerSystem.cpp">
       <Filter>Source Files\GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GroundComponent.cpp">
+      <Filter>Source Files\Tiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ObstacleComponent.cpp">
+      <Filter>Source Files\Tiles</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

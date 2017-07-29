@@ -16,6 +16,9 @@
 #include "GameManagerWorldComponent.hpp"
 #include "GameManagerSystem.hpp"
 #include "Level.hpp"
+#include "GroundComponent.hpp"
+#include "ObstacleComponent.hpp"
+#include "PlayerControllerComponent.hpp"
 
 using namespace Poly;
 
@@ -24,6 +27,10 @@ DEFINE_GAME(SGJGame)
 void SGJGame::Init()
 {
 	// Register Game Components
+	gEngine->RegisterComponent<SGJ::GroundComponent>((int)eGameComponents::GROUND);
+	gEngine->RegisterComponent<SGJ::ObstacleComponent>((int)eGameComponents::OBSTACLE);
+	gEngine->RegisterComponent<SGJ::PlayerControllerComponent>((int)eGameComponents::PLAYER);
+
 	gEngine->RegisterComponent<BackgroundComponent>((int)eGameComponents::BACKGROUND);
 	gEngine->RegisterWorldComponent<SGJ::GameManagerWorldComponent>((int)eGameWorldComponents::GAME_MGR);
 	
@@ -35,7 +42,7 @@ void SGJGame::Init()
 	gEngine->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, gEngine->GetWorld()->GetComponent<Poly::CameraComponent>(Camera));
 	
 	// load levels
-	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/sampleLevel.csv");
+	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level1.csv");
 	SGJ::GameManagerSystem::SpawnLevel(gEngine->GetWorld(), 0);
 };
 
