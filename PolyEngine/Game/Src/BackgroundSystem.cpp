@@ -4,7 +4,7 @@ using namespace Poly;
 
 void Poly::BackgroundSystem::BackgroundSystemSystemPhase(World *)
 {
-	gConsole.LogInfo("Poly::BackgroundSystem::BackgroundSystemSystemPhase() called");
+	// gConsole.LogInfo("Poly::BackgroundSystem::BackgroundSystemSystemPhase() called");
 
 	// GameManagerComponent* gameManager = nullptr;
 	// for (auto componentTuple : world->IterateComponents<GameManagerComponent>())

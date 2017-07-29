@@ -41,9 +41,13 @@ void GLRenderingDevice::RenderWorld(World * world)
 		glViewport((int)(rect.GetMin().X * screenSize.Width), (int)(rect.GetMin().Y * screenSize.Height),
 			(int)(rect.GetSize().X * screenSize.Width), (int)(rect.GetSize().Y * screenSize.Height));
 
+		glDepthMask(GL_FALSE);
+		glDisable(GL_DEPTH_TEST);
+
+		PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND]->Run(world, kv.second.GetCamera(), rect);
+
 		glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
-
 		// Render meshes with blin-phong shader
 		GeometryRenderingPasses[eGeometryRenderPassType::BLINN_PHONG]->Run(world, kv.second.GetCamera(), rect);
 
@@ -51,11 +55,13 @@ void GLRenderingDevice::RenderWorld(World * world)
 		glDisable(GL_DEPTH_TEST);
 
 		// Run postprocess passes
-		for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
-			PostprocessRenderingPasses[type]->Run(world, kv.second.GetCamera(), rect);
+		// for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
 
 		// Render text
 		GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, kv.second.GetCamera(), rect);
+
+		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND]->Run(world, kv.second.GetCamera(), rect);
+		// PostprocessRenderingPasses[ePostprocessRenderPassType::VINETTE]->Run(world, kv.second.GetCamera(), rect);
 
 		// Draw debug normals
 		if (gCoreConfig.DebugNormalsFlag)

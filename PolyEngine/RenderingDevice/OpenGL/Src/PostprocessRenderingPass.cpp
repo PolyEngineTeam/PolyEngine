@@ -1,9 +1,12 @@
 #include "PostprocessRenderingPass.hpp"
 
+#include "GLRenderingDevice.hpp"
 #include "GLMeshDeviceProxy.hpp"
 #include "GLTextureDeviceProxy.hpp"
 
+#include <AABox.hpp>
 #include <World.hpp>
+#include <TimeSystem.hpp>
 #include <CameraComponent.hpp>
 #include <TransformComponent.hpp>
 #include <MeshRenderingComponent.hpp>
@@ -71,7 +74,17 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 {
 	static const PostprocessQuad QUAD;
 
+	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
+	float ResolutionX = rect.GetSize().X * gRenderingDevice->GetScreenSize().Width;
+	float ResolutionY = rect.GetSize().X * gRenderingDevice->GetScreenSize().Height;
+
 	GetProgram().BindProgram();
+
+	GetProgram().SetUniform("uTime", Time);
+	GetProgram().SetUniform("uResolution", ResolutionX, ResolutionY);
+
+	// gConsole.LogInfo("PostprocessRenderingPass::OnRun() Time: {}, uResolution: ({}, {})", Time, ResolutionX, ResolutionY);
+
 	glBindVertexArray(QUAD.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
