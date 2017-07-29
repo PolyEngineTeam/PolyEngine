@@ -137,7 +137,48 @@ Dynarray<String> String::Split(char delimiter) const {
 
 Dynarray<String> String::Split(const String& delimiter) const {
 	Dynarray<String> elements;
-	ASSERTE(false, "Not implemented yet.");
+
+	String checker = "";
+	String loaded = "";
+
+	int i = 0;
+
+	while (true)
+	{
+		for (int j = 0; i < Data.GetSize() && j < delimiter.GetLength(); i++, j++)
+			checker = checker + Data[i];
+
+		for (; i < Data.GetSize(); i++)
+		{
+			if (checker == delimiter)
+			{
+				elements.PushBack(loaded);
+				loaded = "";
+				checker = "";
+				break;
+			}
+
+			loaded = loaded + checker.Substring(0, 1);
+			checker.Data.RemoveByIdx(0);
+			checker = checker + From(Data[i]);
+		}
+
+		if (i == Data.GetSize())
+		{
+			if (checker == delimiter)
+			{
+			}
+			else
+			{
+				loaded = loaded + checker;
+				if (loaded.GetLength() != 0)
+					elements.PushBack(loaded);
+			}
+
+			break;
+		}
+	}
+
 	return elements;
 }
 
@@ -266,6 +307,19 @@ String String::operator+(char rhs) const {
 char String::operator[](int idx) const { 
 	HEAVY_ASSERTE(idx <= GetLength(), "Index out of bounds!"); 
 	return Data[idx];
+}
+
+size_t String::GetLength() const
+{
+	for (int i = Data.GetSize() - 1; i > 0; i--)
+	{
+		if (Data[i] != 0)
+		{
+			return i + 1;
+		}
+	}
+
+	return 0;
 }
 
 size_t String::FindSubstrFromPoint(size_t startPoint, const String& str) const

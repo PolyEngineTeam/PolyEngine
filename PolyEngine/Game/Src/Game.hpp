@@ -10,6 +10,13 @@ namespace GameMainSystem
 }
 
 DECLARE_GAME()
+
+enum class eGameComponents
+{
+	LEVELCOMPONENT = (int)Poly::eEngineComponents::_COUNT,
+	_COUNT
+};
+
 class GAME_DLLEXPORT SGJGame : public Poly::IGame {
 public:
 	void RegisterEngine(Poly::Engine* engine) override { Engine = engine; }

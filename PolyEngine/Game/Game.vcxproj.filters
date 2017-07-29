@@ -12,19 +12,28 @@
     <Filter Include="Source Files\Level">
       <UniqueIdentifier>{78fed068-c069-4f39-9a76-379966e5b8c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Resources">
+      <UniqueIdentifier>{9bdb7551-293d-4f91-b16d-7de33fc11a95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Player">
+      <UniqueIdentifier>{09f97ba9-23a7-43ec-bf38-e94a12ab200a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Game.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Level.hpp">
+    <ClInclude Include="Src\LevelResource.hpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\LevelComponent.hpp">
       <Filter>Source Files\Level</Filter>
     </ClInclude>
     <ClInclude Include="Src\PlayerControllerComponent.hpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Player</Filter>
     </ClInclude>
     <ClInclude Include="Src\PlayerUpdateSystem.hpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Player</Filter>
     </ClInclude>
     <ClInclude Include="Src\Powerups.hpp">
       <Filter>Source Files</Filter>
@@ -34,14 +43,17 @@
     <ClCompile Include="Src\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Level.cpp">
+    <ClCompile Include="Src\LevelResource.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\LevelComponent.cpp">
       <Filter>Source Files\Level</Filter>
     </ClCompile>
     <ClCompile Include="Src\PlayerControllerComponent.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Player</Filter>
     </ClCompile>
     <ClCompile Include="Src\PlayerUpdateSystem.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Player</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -25,11 +25,14 @@ enum class eGameComponents
 
 void SGJGame::Init()
 {
+<<<<<<< Updated upstream
 	// Register Game Components
 	Engine->RegisterComponent<BackgroundComponent>((int)eGameComponents::BACKGROUND);
 
+=======
 	Engine->RegisterComponent<SGJ::LevelComponent>((int)eGameComponents::LEVELCOMPONENT);
 		
+>>>>>>> Stashed changes
 	Camera = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(Engine->GetWorld(), Camera);
 	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(Engine->GetWorld(), Camera, 60_deg, 1.0f, 1000.f);

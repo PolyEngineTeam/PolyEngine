@@ -185,7 +185,7 @@ namespace Poly {
 		/// <returns>Char from given index</returns>
 		char operator[](int idx) const;
 
-		size_t GetLength() const { return Data.GetSize() - 1; }
+		size_t GetLength() const;
 		const char* GetCStr() const { return Data.GetData(); }
 
 		/*CORE_DLLEXPORT*/ friend std::ostream& operator<< (std::ostream& stream, const String& rhs) { return stream << rhs.GetCStr(); }
