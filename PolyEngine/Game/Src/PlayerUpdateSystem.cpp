@@ -21,9 +21,9 @@ namespace SGJ
 			PlayerControllerComponent* playerCmp = std::get<PlayerControllerComponent*>(playerTuple);
 
 			Vector move(0, 0, 0);
-			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A))
+			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::LEFT))
 				move -= Vector::UNIT_X;
-			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D))
+			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::RIGHT))
 				move += Vector::UNIT_X;
 			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::SPACE))
 				move += Vector::UNIT_Y;
@@ -32,9 +32,10 @@ namespace SGJ
 			move.Y *= deltaTime * playerCmp->GetJumpForce();
 
 			playerCmp->SetMoveVector(move);
+
+
+
 			PowerupSystem::ApplyInput(playerCmp);
-			
-			
 		}
 
 	}

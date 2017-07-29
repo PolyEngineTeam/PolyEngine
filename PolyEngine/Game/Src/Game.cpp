@@ -48,7 +48,7 @@ void SGJGame::Init()
 	gEngine->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, gEngine->GetWorld()->GetComponent<Poly::CameraComponent>(Camera));
 	
 	// load levels
-	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level1.csv");
+	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level3.csv");
 	SGJ::GameManagerSystem::SpawnLevel(gEngine->GetWorld(), 0);
 };
 

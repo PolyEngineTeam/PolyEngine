@@ -23,7 +23,7 @@ namespace Poly
 	{
 		friend void Physics2DSystem::Physics2DUpdatePhase(World* world);
 	public:
-		RigidBody2DComponent(World* world, eRigidBody2DType type, float density = 1.0f, float friction = 0.3f);
+		RigidBody2DComponent(World* world, eRigidBody2DType type, float density = 10.0f, float friction = 0.3f);
 		RigidBody2DComponent(World* world, eRigidBody2DType type, RigidBody2DSensorTag sensorTag);
 		~RigidBody2DComponent();
 

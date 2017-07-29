@@ -2,7 +2,9 @@
 
 namespace SGJ
 {
-	PlayerControllerComponent::PlayerControllerComponent(float movementSpeed, float jumpForce)
+	PlayerControllerComponent::PlayerControllerComponent(float movementSpeed, float jumpForce) :
+		MovementSpeed(movementSpeed),
+		JumpForce(jumpForce)
 	{
 	}
 }

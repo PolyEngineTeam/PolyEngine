@@ -10,7 +10,7 @@ namespace SGJ
 	{
 	public:
 
-		PlayerControllerComponent(float movementSpeed = 100.0f, float jumpForce = 100.0f);
+		PlayerControllerComponent(float movementSpeed = 50.0f, float jumpForce = 250.0f);
 
 		float GetMovementSpeed() const { return MovementSpeed; }
 		float GetJumpForce() const { return JumpForce; };
@@ -19,8 +19,8 @@ namespace SGJ
 		void SetMoveVector(Poly::Vector newMoveVector) { CurrentMoveVector = newMoveVector; };
 
 	private:
-		float MovementSpeed = 10.0f;
-		float JumpForce = 10.0f;
+		float MovementSpeed;
+		float JumpForce;
 		ePowerup ActivePowerup = ePowerup::NONE;
 		Poly::Vector CurrentMoveVector = Poly::Vector::ZERO;
 	};
