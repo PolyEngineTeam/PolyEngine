@@ -33,7 +33,7 @@ namespace SGJ
 
 			move *= deltaTime * playerCmp->GetMovementSpeed();
 
-			if (rigidbodyCmp->GetLinearSpeed().Length() < 1)
+			if (rigidbodyCmp->GetLinearSpeed().Length() < 10)
 				rigidbodyCmp->ApplyImpulseToCenter(move);
 
 			//rigidbodyCmp->
