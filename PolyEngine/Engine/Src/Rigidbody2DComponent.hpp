@@ -17,14 +17,20 @@ namespace Poly
 
 	struct RigidBody2DData;
 
+	struct ENGINE_DLLEXPORT RigidBody2DSensorTag {};
+
 	class ENGINE_DLLEXPORT RigidBody2DComponent : public ComponentBase
 	{
 		friend void Physics2DSystem::Physics2DUpdatePhase(World* world);
 	public:
 		RigidBody2DComponent(World* world, eRigidBody2DType type, float density = 1.0f, float friction = 0.3f);
+		RigidBody2DComponent(World* world, eRigidBody2DType type, RigidBody2DSensorTag sensorTag);
 		~RigidBody2DComponent();
 
 		void DebugPrintInfo() const;
+
+		void ApplyForceToCenter(const Vector& force);
+		void ApplyImpulseToCenter(const Vector& impulse);
 	private:
 		void FinishInit();
 
