@@ -23,12 +23,20 @@ namespace Poly
 		friend void Physics2DSystem::Physics2DUpdatePhase(World* world);
 		friend class Physics2DContactListener;
 	public:
+		struct Collision
+		{
+			RigidBody2DComponent* rb;
+			Vector Normal;
+		};
+
 		Physics2DWorldComponent(const Physics2DConfig& config);
 		~Physics2DWorldComponent();
 
 		b2World* GetPhysicsWorld() { return World.get(); }
 
-		const Dynarray<RigidBody2DComponent*>& GetOverlapingBodies(RigidBody2DComponent* rb) const;
+		const Dynarray<Collision>& GetOverlapingBodies(RigidBody2DComponent* rb) const;
+
+		void SetGravity(const Vector& gravity) const;
 	private:
 		float LastDeltaOverflow = 0.f;
 
@@ -36,6 +44,6 @@ namespace Poly
 		std::unique_ptr<b2World> World;
 		std::unique_ptr<Physics2DContactListener> ContactListener;
 
-		std::unordered_map<RigidBody2DComponent*, Dynarray<RigidBody2DComponent*>> OverlapingBodies;
+		std::unordered_map<RigidBody2DComponent*, Dynarray<Collision>> OverlapingBodies;
 	};
 }

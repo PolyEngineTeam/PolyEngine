@@ -36,6 +36,8 @@ namespace Poly
 		void SetFixedRotation(bool fixed);
 
 		Vector GetLinearSpeed() const;
+
+		eRigidBody2DType GetBodyType() const { return BodyType; }
 	private:
 		void FinishInit();
 
