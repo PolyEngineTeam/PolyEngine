@@ -14,6 +14,7 @@ namespace SGJ
 
 		float GetMovementSpeed() const { return MovementSpeed; }
 		float GetJumpForce() const { return JumpForce; };
+		float GetDensityMultiplier() const { return DensityMultiplier; };
 		bool GetIsJumping() const { return IsJumping; };
 		bool GetHasChangedSize() const { return HasChangedSize; };
 		ePowerup GetActivePowerup() const { return ActivePowerup; };
@@ -23,11 +24,13 @@ namespace SGJ
 		void SetIsJumping(bool isJumping) { IsJumping = isJumping; };
 		void SetHasChangedSize(bool hasChangedSize) { HasChangedSize = hasChangedSize; };
 		void SetMoveVector(Poly::Vector newMoveVector) { CurrentMoveVector = newMoveVector; };
+		void SetDensityMultiplier(float densityMul) { DensityMultiplier = densityMul; };
 		
 
 	private:
 		float MovementSpeed = 50.0f;
 		float JumpForce = 250.0f;
+		float DensityMultiplier = 1.0f;
 		bool IsJumping = false;
 		bool HasChangedSize = false;
 		ePowerup ActivePowerup = ePowerup::NONE;

@@ -11,7 +11,9 @@ using namespace Poly;
 
 namespace SGJ
 {
-	void PowerupSystem::ApplyInput(World* world, PlayerControllerComponent* playerCmp)
+	//this function checks which powerup is active and applies its effects
+	//TODO it should probably be split into few smaller functions
+	void PowerupSystem::ApplyPowerupsAndInput(World* world, PlayerControllerComponent* playerCmp)
 	{
 		Poly::RigidBody2DComponent* rbCmp = playerCmp->GetSibling<Poly::RigidBody2DComponent>();
 		double deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
@@ -60,23 +62,27 @@ namespace SGJ
 			if (activePower == ePowerup::INCREASED_SIZE)
 			{
 				playerCmp->SetHasChangedSize(true);
+				playerCmp->SetDensityMultiplier(2.0f);		//Setting size density multiplier
 				size = playerCmp->GetDefaultScale() * 2.0f;
 			}
 			else if(activePower == ePowerup::DECREASED_SIZE)
 			{
 				playerCmp->SetHasChangedSize(true);
-				size = playerCmp->GetDefaultScale() / 2.0f;
+				playerCmp->SetDensityMultiplier(0.5f);		//Setting decr size density multiplier
+				size = playerCmp->GetDefaultScale() * 0.5f;
 			}
 			else
 			{
 				//powerup changed from size-changing to another
 				//reset player size to default
 				playerCmp->SetHasChangedSize(false);
-				//hardcoded for now
+				playerCmp->SetDensityMultiplier(1.0f);
 				size = playerCmp->GetDefaultScale();
-				//colliderCmp->
 			}
 			transformCmp->SetLocalScale(size);
+			colliderCmp->SetSize(size);
+			rbCmp->SetDensity(rbCmp->GetDensity() * playerCmp->GetDensityMultiplier());
+			
 		}
 
 		//apply validated movement vector
