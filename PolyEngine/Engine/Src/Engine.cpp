@@ -33,6 +33,7 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	RegisterComponent<Box2DColliderComponent>((size_t)eEngineComponents::BOX2D_COLLIDER);
 	RegisterComponent<DirectionalLightSourceComponent>((size_t)eEngineComponents::DIRECTIONAL_LIGHTSOURCE);
 	RegisterComponent<PointLightSourceComponent>((size_t)eEngineComponents::POINT_LIGHTSOURCE);
+	RegisterComponent<PostprocessSettingsComponent>((size_t)eEngineComponents::POSTPROCESS_SETTINGS);
 
 	// Engine World Components
 	RegisterWorldComponent<InputWorldComponent>((size_t)eEngineWorldComponents::INPUT);

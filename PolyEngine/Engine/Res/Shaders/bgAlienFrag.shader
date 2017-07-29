@@ -10,8 +10,7 @@ uniform mat4 uCameraRotation;
 in vec2 vTexCoord;
 out vec4 o_color;
 
-uniform int uUseCashetes;
-
+#define CASHETES 1
 //Xyptonjtroz by nimitz (twitter: @stormoid)
 
 //Audio by Dave_Hoskins
@@ -211,16 +210,15 @@ float curv(in vec3 p, in float w)
 void main()
 {
 
-	// if (uUseCashetes > 0)
-	// {
+#if CASHETES
 	vec2 cp = -1.0 + 2.0 * vTexCoord.xy;
 	cp.x *= uResolution.x / uResolution.y;
 	float cashetes = step(abs(cp.y)*2.39, uResolution.x / uResolution.y);
-	if (cashetes < 0.1 && uUseCashetes > 0 ) {
+	if (cashetes<0.1) {
 		o_color = vec4(0.0);
 		return;
 	}
-	// }
+#endif
 
 	vec2 uv = vTexCoord.xy;
 	uv = uv * 2.0 - 1.0;

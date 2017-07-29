@@ -7,7 +7,13 @@ uniform vec2 uResolution;
 in vec2 vTexCoord;
 out vec4 color;
 
-#define CASHETES 1
+uniform int uUseCashetes;
+uniform float uColorTempValue;
+uniform float uColorTempPower;
+uniform float uAberationPower;
+uniform float uStripesPower;
+uniform float uVinettePower;
+uniform float uGrainPower;
 
 // [1000.0, 40000.0]
 // #define COLOR_TEMP_VALUE 6500.0 cold
@@ -27,6 +33,8 @@ out vec4 color;
 #define LUMINANCE_PRESERVATION 0.75
 
 #define EPSILON 1e-10
+
+const float gamma = 2.2;
 
 float saturate(float v) { return clamp(v, 0.0, 1.0); }
 vec2  saturate(vec2  v) { return clamp(v, vec2(0.0), vec2(1.0)); }
@@ -130,11 +138,12 @@ vec3 spectrum_offset_rgb(float t)
 
 }
 
-const float gamma = 2.2;
+
 vec3 lin2srgb(vec3 c)
 {
 	return pow(c, vec3(gamma));
 }
+
 vec3 srgb2lin(vec3 c)
 {
 	return pow(c, vec3(1.0 / gamma));
@@ -315,19 +324,19 @@ vec3 colorTemperature(vec3 color, float temperature)
 void main()
 {
 	vec2 uv = vTexCoord;
-	color = texture(i_color, vTexCoord);
-	return;
+	// color = texture(i_color, vTexCoord);
+	// return;
 
-
-#if CASHETES
-	vec2 p = -1.0 + 2.0 * vTexCoord.xy;
-	p.x *= uResolution.x / uResolution.y;
-	float cashetes = step(abs(p.y)*2.39, uResolution.x / uResolution.y);
-	if (cashetes<0.1) {
-		color = vec4(0.0);
-		return;
-	}
-#endif
+	// if ()
+	// {
+		vec2 p = -1.0 + 2.0 * vTexCoord.xy;
+		p.x *= uResolution.x / uResolution.y;
+		float cashetes = step(abs(p.y)*2.39, uResolution.x / uResolution.y);
+		if (cashetes < 0.1 && uUseCashetes > 0) {
+			color = vec4(0.0);
+			return;
+		}
+	// }
 
 	float power = smoothstep(-0.2, 0.2, -cos(0.5*uTime));
 

@@ -35,8 +35,6 @@
     <ClInclude Include="Src\Powerups.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Src\BackgroundComponent.hpp" />
-    <ClInclude Include="Src\BackgroundSystem.hpp" />
     <ClInclude Include="Src\GameManagerWorldComponent.hpp">
       <Filter>Source Files\GameManager</Filter>
     </ClInclude>
@@ -62,12 +60,6 @@
     </ClCompile>
     <ClCompile Include="Src\PlayerUpdateSystem.cpp">
       <Filter>Source Files\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\BackgroundComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\BackgroundSystem.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\GameManagerWorldComponent.cpp">
       <Filter>Source Files\GameManager</Filter>
