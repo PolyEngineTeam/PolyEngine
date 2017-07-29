@@ -11,3 +11,8 @@ Poly::Box2DColliderComponent::Box2DColliderComponent(const Vector& size)
 Poly::Box2DColliderComponent::~Box2DColliderComponent()
 {
 }
+
+void Poly::Box2DColliderComponent::SetSize(Vector size)
+{
+	Shape->SetAsBox(size.X / 2, size.Y / 2);
+}

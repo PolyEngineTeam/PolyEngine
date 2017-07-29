@@ -19,16 +19,20 @@ namespace SGJ
 		ePowerup GetActivePowerup() const { return ActivePowerup; }
 		Poly::Vector GetMoveVector() const { return CurrentMoveVector; }
 		Poly::Vector GetDefaultScale() const { return DefaultScale; }
-
+		float GetDensityMultiplier() const { return DensityMultiplier; }
+		
 		void SetIsJumping(bool isJumping) { IsJumping = isJumping; }
 		void SetHasChangedSize(bool hasChangedSize) { HasChangedSize = hasChangedSize; }
 		void SetMoveVector(Poly::Vector newMoveVector) { CurrentMoveVector = newMoveVector; }
+		void SetDensityMultiplier(float densityMul) { DensityMultiplier = densityMul; }
+		
 
 		double LastAllowJumpChecked = 0;
 		bool AllowJump = false;
 	private:
 		float MovementSpeed = 50.0f;
 		float JumpForce = 250.0f;
+		float DensityMultiplier = 1.0f;
 		bool IsJumping = false;
 		bool HasChangedSize = false;
 		ePowerup ActivePowerup = ePowerup::NONE;

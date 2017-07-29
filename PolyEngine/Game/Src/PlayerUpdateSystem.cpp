@@ -65,7 +65,7 @@ namespace SGJ
 				playerCmp->AllowJump = false;
 
 
-			PowerupSystem::ApplyInput(world, playerCmp);
+			PowerupSystem::ApplyPowerupsAndInput(world, playerCmp);
 				
 		}
 

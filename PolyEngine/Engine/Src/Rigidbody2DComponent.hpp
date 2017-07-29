@@ -34,7 +34,9 @@ namespace Poly
 
 		void SetDamping(float dampfactor);
 		void SetFixedRotation(bool fixed);
+		void SetDensity(float density);
 
+		float GetDensity() const;
 		Vector GetLinearSpeed() const;
 
 		eRigidBody2DType GetBodyType() const { return BodyType; }

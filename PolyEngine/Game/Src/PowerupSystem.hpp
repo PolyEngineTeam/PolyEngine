@@ -10,7 +10,7 @@ namespace SGJ
 	class PlayerControllerComponent;
 	namespace PowerupSystem
 	{
-		void ApplyInput(Poly::World* world, PlayerControllerComponent* player);
+		void ApplyPowerupsAndInput(Poly::World* world, PlayerControllerComponent* player);
 	}
 
 }
