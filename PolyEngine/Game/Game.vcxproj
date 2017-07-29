@@ -146,6 +146,7 @@
     <ClCompile Include="Src\PlayerControllerComponent.cpp" />
     <ClCompile Include="Src\PlayerUpdateSystem.cpp" />
     <ClCompile Include="Src\GroundComponent.cpp" />
+    <ClCompile Include="Src\PowerupSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.vcxproj">
@@ -166,6 +167,7 @@
     <ClInclude Include="Src\PlayerUpdateSystem.hpp" />
     <ClInclude Include="Src\Powerups.hpp" />
     <ClInclude Include="Src\GroundComponent.hpp" />
+    <ClInclude Include="Src\PowerupSystem.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
