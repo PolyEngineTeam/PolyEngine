@@ -23,19 +23,9 @@ namespace SGJ
 
 			Vector move(0, 0, 0);
 			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::LEFT))
-				move -= Vector::UNIT_X;
-			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::RIGHT))
-				move += Vector::UNIT_X;
-
-			if(move.X < 0.5 && move.X > -0.5)
-			{
-				playerCmp->SetMoveVector(playerCmp->GetMoveVector() * -0.9);
-			}
-			else
-			{
-				move.X *= deltaTime * playerCmp->GetMovementSpeed();
-				playerCmp->SetMoveVector(move);
-			}
+				playerCmp->SetMoveVector(Vector(-deltaTime * playerCmp->GetMovementSpeed(), 0, 0));
+			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::RIGHT))				
+				playerCmp->SetMoveVector(Vector(deltaTime * playerCmp->GetMovementSpeed(), 0, 0));
 
 			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::SPACE) && playerCmp->AllowJump)
 			{
