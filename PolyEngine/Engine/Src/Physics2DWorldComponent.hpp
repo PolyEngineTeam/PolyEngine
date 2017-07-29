@@ -34,7 +34,7 @@ namespace Poly
 
 		b2World* GetPhysicsWorld() { return World.get(); }
 
-		const Dynarray<Collision>& GetOverlapingBodies(RigidBody2DComponent* rb) const;
+		const Dynarray<Collision>& GetCollidingBodies(RigidBody2DComponent* rb) const;
 
 		void SetGravity(const Vector& gravity) const;
 	private:

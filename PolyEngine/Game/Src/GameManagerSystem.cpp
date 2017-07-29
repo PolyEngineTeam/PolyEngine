@@ -32,7 +32,7 @@ Poly::UniqueID GameManagerSystem::CreateGroundObject(Poly::World* world, const P
 	DeferredTaskSystem::AddComponentImmediate<GroundComponent>(world, ground);
 	Poly::TransformComponent* groundTrans = world->GetComponent<Poly::TransformComponent>(ground);
 
-	DeferredTaskSystem::AddComponentImmediate<Poly::Box2DColliderComponent>(world, ground, Vector(1, 1, 0));
+	DeferredTaskSystem::AddComponentImmediate<Poly::Box2DColliderComponent>(world, ground, tileType == eTileType::RIGIDBODYGROUND ? Vector(0.8, 0.8, 0) : Vector(1, 1, 0));
 	DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, ground, world, tileType == eTileType::RIGIDBODYGROUND ? eRigidBody2DType::DYNAMIC : eRigidBody2DType::STATIC);
 	
 	UniqueID mesh = DeferredTaskSystem::SpawnEntityImmediate(world);

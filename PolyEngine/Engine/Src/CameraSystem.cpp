@@ -38,7 +38,7 @@ void Poly::CameraSystem::CameraUpdatePhase(World* world)
 				float intpart;
 				float fractpart = std::modf(Time, &intpart);
 				// post->UseCashetes = (fractpart > 0.5) ? 1 : 0;
-				gConsole.LogInfo("Poly::CameraSystem::CameraUpdatePhase useCashetes: {}", post->UseCashetes);
+				//gConsole.LogInfo("Poly::CameraSystem::CameraUpdatePhase useCashetes: {}", post->UseCashetes);
 			}
 		}
 		else

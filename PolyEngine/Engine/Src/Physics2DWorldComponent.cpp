@@ -21,7 +21,6 @@ namespace Poly {
 			contact->GetWorldManifold(&manifold);
 			
 			Vector normal(manifold.normal.x, manifold.normal.y, 0);
-			gConsole.LogDebug("New contact {}, {}, {}", normal, (int)rb1->GetBodyType(), (int)rb2->GetBodyType());
 			Component->OverlapingBodies[rb1].PushBack(Physics2DWorldComponent::Collision{ rb2, normal });
 			Component->OverlapingBodies[rb2].PushBack(Physics2DWorldComponent::Collision{ rb1, -normal });
 		}
@@ -59,7 +58,7 @@ Poly::Physics2DWorldComponent::~Physics2DWorldComponent()
 {
 }
 
-const Dynarray<Physics2DWorldComponent::Collision>& Poly::Physics2DWorldComponent::GetOverlapingBodies(RigidBody2DComponent* rb) const
+const Dynarray<Physics2DWorldComponent::Collision>& Poly::Physics2DWorldComponent::GetCollidingBodies(RigidBody2DComponent* rb) const
 {
 	return OverlapingBodies.at(rb);
 }

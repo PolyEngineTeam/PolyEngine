@@ -107,7 +107,7 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 		GetProgram().SetUniform("uStripesPower",					PostprocessSettings->StripesPower);
 		GetProgram().SetUniform("uVinettePower",					PostprocessSettings->VinettePower);
 		
-		gConsole.LogInfo("void PostprocessRenderingPass::OnRun: UseCashetes: {}", PostprocessSettings->UseCashetes);
+		//gConsole.LogInfo("void PostprocessRenderingPass::OnRun: UseCashetes: {}", PostprocessSettings->UseCashetes);
 	}
 
 	// gConsole.LogInfo("PostprocessRenderingPass::OnRun() Time: {}, uResolution: ({}, {})", Time, ResolutionX, ResolutionY);
