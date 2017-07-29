@@ -9,6 +9,7 @@
 #include <TimeSystem.hpp>
 #include <CameraComponent.hpp>
 #include <TransformComponent.hpp>
+#include <MovementSystem.hpp>
 #include <MeshRenderingComponent.hpp>
 
 using namespace Poly;
@@ -77,11 +78,18 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	float ResolutionX = rect.GetSize().X * gRenderingDevice->GetScreenSize().Width;
 	float ResolutionY = rect.GetSize().X * gRenderingDevice->GetScreenSize().Height;
+	const TransformComponent* CameraTransform = camera->GetSibling<TransformComponent>();
+	Vector CameraPosition = CameraTransform->GetGlobalTranslation();
+	Matrix CameraRotation = CameraTransform->GetGlobalRotation().ToRotationMatrix();
+	// Vector CameraDirection = MovementSystem::GetGlobalForward(CameraTransform);
 
 	GetProgram().BindProgram();
 
 	GetProgram().SetUniform("uTime", Time);
 	GetProgram().SetUniform("uResolution", ResolutionX, ResolutionY);
+
+	GetProgram().SetUniform("uCameraPosition", CameraPosition);
+	GetProgram().SetUniform("uCameraRotation", CameraRotation);
 
 	// gConsole.LogInfo("PostprocessRenderingPass::OnRun() Time: {}, uResolution: ({}, {})", Time, ResolutionX, ResolutionY);
 

@@ -71,8 +71,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	// register the window class
 	RegisterClassEx(&wc);
 
-	RECT viewportRect = { 0, 0, 960, 540 };
-	// RECT viewportRect = { 0, 0, 1920, 1080 };
+	RECT viewportRect = { 0, 0, 1413, 600 };			// Cinematic
+	// RECT viewportRect = { 0, 0, 960, 540 };			// half HD
+	// RECT viewportRect = { 0, 0, 1920, 1080 };	// HD
 	RECT windowRect = viewportRect;    // set the size, but not the position
 	AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
 
