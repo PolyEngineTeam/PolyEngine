@@ -22,18 +22,14 @@ namespace SGJ
 			Vector move(0, 0, 0);
 			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A))
 				move -= Vector::UNIT_X;
-			if (world->GetWorldComponent<InputWorldComponent>()->IsReleased(eKey::KEY_A))
+			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D))
 				move += Vector::UNIT_X;
-			else if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D))
-				move += Vector::UNIT_X;
-			else if (world->GetWorldComponent<InputWorldComponent>()->IsReleased(eKey::KEY_D))
-				move -= Vector::UNIT_X;
-			else if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::SPACE))
+			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::SPACE))
 				move += Vector::UNIT_Y;
 
-			move *= deltaTime * playerCmp->GetMovementSpeed();
+			move *= deltaTime * 10;//playerCmp->GetMovementSpeed();
 
-			if (rigidbodyCmp->GetLinearSpeed().Length() < 10)
+			//if (rigidbodyCmp->GetLinearSpeed().Length() < 10)
 				rigidbodyCmp->ApplyImpulseToCenter(move);
 
 			//rigidbodyCmp->

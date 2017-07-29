@@ -80,7 +80,7 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	DeferredTaskSystem::AddComponentImmediate<PlayerControllerComponent>(world, player);
 	TransformComponent* playerTrans = world->GetComponent<Poly::TransformComponent>(player);
 
-	DeferredTaskSystem::AddComponentImmediate<Poly::Box2DColliderComponent>(world, player, Vector(1, 1, 0));
+	DeferredTaskSystem::AddComponentImmediate<Poly::Box2DColliderComponent>(world, player, Vector(0.8, 0.8, 0));
 	DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, player, world, eRigidBody2DType::DYNAMIC);
 
 	UniqueID body = DeferredTaskSystem::SpawnEntityImmediate(world);
@@ -88,8 +88,8 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	Poly::TransformComponent* bodyTrans = world->GetComponent<Poly::TransformComponent>(body);
 	bodyTrans->SetParent(playerTrans);
 	bodyTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
-	Vector correctedSize = Vector(1, 2, 0);
-	correctedSize.Z = 1.0f;
+	Vector correctedSize = Vector(0.8, 0.8, 0);
+	correctedSize.Z = 0.8f;
 	bodyTrans->SetLocalScale(correctedSize);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, body, "Quad.obj", eResourceSource::GAME, Color(0, 0, 1));
 
