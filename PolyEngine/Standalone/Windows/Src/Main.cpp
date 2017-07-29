@@ -71,7 +71,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	// register the window class
 	RegisterClassEx(&wc);
 
-	RECT viewportRect = { 0, 0, 800, 600 };
+	RECT viewportRect = { 0, 0, 960, 540 };
+	// RECT viewportRect = { 0, 0, 1920, 1080 };
 	RECT windowRect = viewportRect;    // set the size, but not the position
 	AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
 
@@ -80,8 +81,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		"WindowClass1",    // name of the window class
 		" Standalone - OpenGL",   // title of the window
 		WS_OVERLAPPEDWINDOW,    // window style
-		300,    // x-position of the window
-		300,    // y-position of the window
+		0,    // x-position of the window
+		0,    // y-position of the window
 		windowRect.right - windowRect.left,    // width of the window
 		windowRect.bottom - windowRect.top,    // height of the window
 		NULL,    // we have no parent window, NULL
