@@ -31,6 +31,11 @@ namespace Poly
 
 		void ApplyForceToCenter(const Vector& force);
 		void ApplyImpulseToCenter(const Vector& impulse);
+
+		void SetDamping(float dampfactor);
+		void SetFixedRotation(bool fixed);
+
+		Vector GetLinearSpeed() const;
 	private:
 		void FinishInit();
 
