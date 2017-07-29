@@ -55,11 +55,13 @@
     <ClInclude Include="Src\ObstacleComponent.hpp">
       <Filter>Source Files\Tiles</Filter>
     </ClInclude>
+<<<<<<< Updated upstream
     <ClInclude Include="Src\CameraMovementSystem.hpp">
       <Filter>Source Files\Camera</Filter>
-	</ClInclude>
+=======
     <ClInclude Include="Src\PowerupSystem.hpp">
       <Filter>Source Files</Filter>
+>>>>>>> Stashed changes
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -93,11 +95,13 @@
     <ClCompile Include="Src\ObstacleComponent.cpp">
       <Filter>Source Files\Tiles</Filter>
     </ClCompile>
+<<<<<<< Updated upstream
     <ClCompile Include="Src\CameraMovementSystem.cpp">
       <Filter>Source Files\Camera</Filter>
-	 </ClCompile>
+=======
     <ClCompile Include="Src\PowerupSystem.cpp">
       <Filter>Source Files</Filter>
+>>>>>>> Stashed changes
     </ClCompile>
   </ItemGroup>
 </Project>

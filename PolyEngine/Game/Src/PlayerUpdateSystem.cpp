@@ -4,6 +4,7 @@
 #include "InputWorldComponent.hpp"
 #include "PlayerControllerComponent.hpp"
 #include "Rigidbody2DComponent.hpp"
+#include "PowerupSystem.hpp"
 #include "Timer.hpp"
 
 using namespace Poly;
@@ -27,23 +28,13 @@ namespace SGJ
 			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::SPACE))
 				move += Vector::UNIT_Y;
 
-			move *= deltaTime * 10;//playerCmp->GetMovementSpeed();
+			move.X *= deltaTime * playerCmp->GetMovementSpeed();
+			move.Y *= deltaTime * playerCmp->GetJumpForce();
 
-			//if (rigidbodyCmp->GetLinearSpeed().Length() < 10)
-				rigidbodyCmp->ApplyImpulseToCenter(move);
-
-			//rigidbodyCmp->
-		
-		//	//movement like in MovementSystem
-		//	Vector move;
-		//	if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A))
-		//		move -= Vector::UNIT_X;
-		//	else if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D))
-		//		move += Vector::UNIT_X;
-		//
-		//	move *= playerCmp->GetMovementSpeed();
-		//	//Local? (that was in MovementSystem)
-		//	transCmp->SetLocalTranslation(transCmp->GetLocalTranslation() + transCmp->GetLocalRotation() * move);
+			playerCmp->SetMoveVector(move);
+			PowerupSystem::ApplyInput(playerCmp);
+			
+			
 		}
 
 	}

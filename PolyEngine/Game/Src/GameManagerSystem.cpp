@@ -80,7 +80,7 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	DeferredTaskSystem::AddComponentImmediate<PlayerControllerComponent>(world, player);
 	TransformComponent* playerTrans = world->GetComponent<Poly::TransformComponent>(player);
 
-	DeferredTaskSystem::AddComponentImmediate<Poly::Box2DColliderComponent>(world, player, Vector(0.8, 0.8, 0));
+	DeferredTaskSystem::AddComponentImmediate<Poly::Box2DColliderComponent>(world, player, Vector(0.9, 0.9, 0));
 	DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, player, world, eRigidBody2DType::DYNAMIC);
 
 	UniqueID body = DeferredTaskSystem::SpawnEntityImmediate(world);
