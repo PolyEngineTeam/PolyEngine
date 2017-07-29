@@ -24,6 +24,9 @@
     <Filter Include="Source Files\Camera">
       <UniqueIdentifier>{e6f81caa-18aa-415f-b47d-5f7db69b717c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Debug">
+      <UniqueIdentifier>{5b5723ca-8f4b-4ffe-9e1d-fd0c9d8da240}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Game.hpp">
@@ -38,8 +41,6 @@
     <ClInclude Include="Src\Powerups.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Src\BackgroundComponent.hpp" />
-    <ClInclude Include="Src\BackgroundSystem.hpp" />
     <ClInclude Include="Src\GameManagerWorldComponent.hpp">
       <Filter>Source Files\GameManager</Filter>
     </ClInclude>
@@ -57,9 +58,15 @@
     </ClInclude>
     <ClInclude Include="Src\CameraMovementSystem.hpp">
       <Filter>Source Files\Camera</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="Src\PowerupSystem.hpp">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GameDebugSystem.hpp">
+      <Filter>Source Files\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GameDebugWorldComponent.hpp">
+      <Filter>Source Files\Debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -71,12 +78,6 @@
     </ClCompile>
     <ClCompile Include="Src\PlayerUpdateSystem.cpp">
       <Filter>Source Files\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\BackgroundComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\BackgroundSystem.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\GameManagerWorldComponent.cpp">
       <Filter>Source Files\GameManager</Filter>
@@ -95,9 +96,15 @@
     </ClCompile>
     <ClCompile Include="Src\CameraMovementSystem.cpp">
       <Filter>Source Files\Camera</Filter>
-	 </ClCompile>
+    </ClCompile>
     <ClCompile Include="Src\PowerupSystem.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GameDebugSystem.cpp">
+      <Filter>Source Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GameDebugWorldComponent.cpp">
+      <Filter>Source Files\Debug</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

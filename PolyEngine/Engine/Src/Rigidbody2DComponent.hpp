@@ -39,6 +39,8 @@ namespace Poly
 		float GetDensity() const;
 		Vector GetLinearSpeed() const;
 
+		void UpdatePosition();
+
 		eRigidBody2DType GetBodyType() const { return BodyType; }
 	private:
 		void FinishInit();

@@ -17,6 +17,7 @@ enum class eGameComponents
 enum class eGameWorldComponents
 {
 	GAME_MGR = (int)Poly::eEngineWorldComponents::_COUNT,
+	GAME_DEBUG,
 	_COUNT
 };
 

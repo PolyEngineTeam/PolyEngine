@@ -20,6 +20,8 @@
 #include "PlayerControllerComponent.hpp"
 #include "PlayerUpdateSystem.hpp"
 #include "CameraMovementSystem.hpp"
+#include "GameDebugWorldComponent.hpp"
+#include "GameDebugSystem.hpp"
 
 using namespace Poly;
 
@@ -32,12 +34,16 @@ void SGJGame::Init()
 	gEngine->RegisterComponent<SGJ::ObstacleComponent>((int)eGameComponents::OBSTACLE);
 	gEngine->RegisterComponent<SGJ::PlayerControllerComponent>((int)eGameComponents::PLAYER);
 	gEngine->RegisterWorldComponent<SGJ::GameManagerWorldComponent>((int)eGameWorldComponents::GAME_MGR);
+	gEngine->RegisterWorldComponent<SGJ::GameDebugWorldComponent>((int)eGameWorldComponents::GAME_DEBUG);
+	
 
 	gEngine->RegisterGameUpdatePhase(SGJ::PlayerUpdateSystem::Update);
 	gEngine->RegisterGameUpdatePhase(SGJ::CameraMovementSystem::CameraMovementUpdatePhase);
+	gEngine->RegisterGameUpdatePhase(SGJ::Debug::DebugSystemPhase);
 	
 	
 	DeferredTaskSystem::AddWorldComponentImmediate<SGJ::GameManagerWorldComponent>(gEngine->GetWorld());
+	DeferredTaskSystem::AddWorldComponentImmediate<SGJ::GameDebugWorldComponent>(gEngine->GetWorld());
 
 	SGJ::GameManagerSystem::PrepareNonlevelObjects(gEngine->GetWorld());
 		
@@ -46,7 +52,7 @@ void SGJGame::Init()
 	DeferredTaskSystem::AddComponent<PostprocessSettingsComponent>(gEngine->GetWorld(), Camera);
 	
 	// load levels
-	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level3.csv");
+	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level1.csv");
 	SGJ::GameManagerSystem::SpawnLevel(gEngine->GetWorld(), 0);
 };
 

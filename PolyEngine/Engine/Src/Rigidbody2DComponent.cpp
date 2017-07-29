@@ -73,16 +73,6 @@ void Poly::RigidBody2DComponent::FinishInit()
 {
 	if (!ImplData->Fixture)
 	{
-		TransformComponent* transform = GetSibling<TransformComponent>();
-		ASSERTE(transform, "No transform on physics object!");
-		ASSERTE(transform->GetParent() == nullptr, "Physics cannot be applied to child entity");
-
-		Vector localTrans = transform->GetLocalTranslation();
-		EulerAngles localRot = transform->GetLocalRotation().ToEulerAngles();
-
-		// Set correct starting pos!
-		ImplData->Body->SetTransform(b2Vec2(localTrans.X, localTrans.Y), localRot.Z.AsRadians());
-
 		if (const Box2DColliderComponent* boxCmp = GetSibling<Box2DColliderComponent>())
 		{
 			ImplData->FixtureDef.shape = boxCmp->GetShape();
@@ -131,6 +121,19 @@ Vector Poly::RigidBody2DComponent::GetLinearSpeed() const
 {
 	b2Vec2 v = ImplData->Body->GetLinearVelocity();
 	return Vector(v.x, v.y, 0);
+}
+
+void Poly::RigidBody2DComponent::UpdatePosition()
+{
+	TransformComponent* transform = GetSibling<TransformComponent>();
+	ASSERTE(transform, "No transform on physics object!");
+	ASSERTE(transform->GetParent() == nullptr, "Physics cannot be applied to child entity");
+
+	Vector localTrans = transform->GetLocalTranslation();
+	EulerAngles localRot = transform->GetLocalRotation().ToEulerAngles();
+
+	// Set correct starting pos!
+	ImplData->Body->SetTransform(b2Vec2(localTrans.X, localTrans.Y), localRot.Z.AsRadians());
 }
 
 void Poly::RigidBody2DComponent::SetDensity(float density)
