@@ -26,7 +26,7 @@ void SGJ::GameManagerSystem::LoadLevel(Poly::World* world, const Poly::String& p
 	gameMgrCmp->Levels.PushBack(new Level(path));
 }
 
-void GameManagerSystem::Update(Poly::World* world)
+void SGJ::GameManagerSystem::Update(Poly::World* world)
 {
 	GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
 
@@ -45,9 +45,7 @@ void GameManagerSystem::Update(Poly::World* world)
 			case eTileType::SPIKESLEFT:
 			case eTileType::SPIKESRIGHT:
 			{
-				Vector pos = world->GetComponent<PlayerControllerComponent>(manager->Player)->StartingPos;
-				//DeferredTaskSystem::DestroyEntityImmediate(world, manager->Player);
-				manager->Player = SpawnPlayer(world, pos);
+				world->GetComponent<TransformComponent>(manager->Player)->SetLocalTranslation(world->GetComponent<PlayerControllerComponent>(manager->Player)->SpawnPoint);
 				return;
 			}
 			break;
@@ -113,6 +111,8 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	UniqueID player = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, player);
 	DeferredTaskSystem::AddComponentImmediate<PlayerControllerComponent>(world, player);
+	PlayerControllerComponent* p = world->GetComponent<PlayerControllerComponent>(player);
+	p->SpawnPoint = position;
 	TransformComponent* playerTrans = world->GetComponent<Poly::TransformComponent>(player);
 
 	DeferredTaskSystem::AddComponentImmediate<Poly::Box2DColliderComponent>(world, player, Vector(0.8, 0.8, 0));

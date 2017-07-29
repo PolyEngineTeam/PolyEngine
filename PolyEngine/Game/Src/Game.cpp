@@ -37,6 +37,7 @@ void SGJGame::Init()
 	gEngine->RegisterWorldComponent<SGJ::GameDebugWorldComponent>((int)eGameWorldComponents::GAME_DEBUG);
 	
 
+	gEngine->RegisterGameUpdatePhase(SGJ::GameManagerSystem::Update);
 	gEngine->RegisterGameUpdatePhase(SGJ::PlayerUpdateSystem::Update);
 	gEngine->RegisterGameUpdatePhase(SGJ::CameraMovementSystem::CameraMovementUpdatePhase);
 	gEngine->RegisterGameUpdatePhase(SGJ::Debug::DebugSystemPhase);
