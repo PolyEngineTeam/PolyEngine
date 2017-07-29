@@ -120,9 +120,13 @@ void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
 	UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(gEngine->GetWorld(), id);
 	Poly::TransformComponent* lightTrans = gEngine->GetWorld()->GetComponent<Poly::TransformComponent>(id);
-	lightTrans->SetLocalRotation(Quaternion(Vector::UNIT_Y, 180_deg));
+	//lightTrans->SetLocalRotation(Quaternion(Vector::UNIT_Y, 180_deg));
 	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightSourceComponent>(gEngine->GetWorld(), id, Color(1,0,0), 1.0f);
 	gameMgrCmp->OtherEntities.PushBack(id);
+
+	UniqueID czolg = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(gEngine->GetWorld(), czolg);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(gEngine->GetWorld(), czolg, "model-tank/tank.fbx", eResourceSource::GAME);
 }
 
 void SGJ::GameManagerSystem::Cleanup(Poly::World* world)
