@@ -33,7 +33,7 @@ namespace SGJ
 
 			playerCmp->SetMoveVector(move);
 
-			PowerupSystem::ApplyInput(world, playerCmp);
+			PowerupSystem::ApplyPowerupsAndInput(world, playerCmp);
 				
 		}
 

@@ -122,8 +122,18 @@ void Poly::RigidBody2DComponent::SetFixedRotation(bool fixed)
 	ImplData->Body->SetFixedRotation(fixed);
 }
 
+float Poly::RigidBody2DComponent::GetDensity() const
+{
+	return ImplData->Fixture->GetDensity();
+}
+
 Vector Poly::RigidBody2DComponent::GetLinearSpeed() const
 {
 	b2Vec2 v = ImplData->Body->GetLinearVelocity();
 	return Vector(v.x, v.y, 0);
+}
+
+void Poly::RigidBody2DComponent::SetDensity(float density)
+{
+	ImplData->Fixture->SetDensity(density);
 }

@@ -12,10 +12,11 @@ namespace Poly
 		Box2DColliderComponent(const Vector& size);
 		~Box2DColliderComponent();
 
+		void SetSize(Vector size);
+
 		const b2PolygonShape* GetShape() const { return Shape.get(); }
 	private:
 		std::unique_ptr<b2PolygonShape> Shape;
-		Vector Size;
 	};
 
 
