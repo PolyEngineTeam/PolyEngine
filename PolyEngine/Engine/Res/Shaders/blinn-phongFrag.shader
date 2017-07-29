@@ -38,21 +38,15 @@ layout(location = 0) out vec4 color;
 
 // calculates ambient light
 vec4 ambientlLight(DiffuseLight ambientLight) {
-	if(ambientLight.Intensity <= 0.0f)
-		return vec4(0.0f,0.0f,0.0f,0.0f);
-	
-	return vec4(ambientLight.Color.rgb * ambientLight.Intensity, 1);
+	return vec4(ambientLight.Color.rgb * max(ambientLight.Intensity, 0), 1);
 }
 
 // calculates diffuse factor of any light
 vec4 diffuseLight(DiffuseLight base, vec3 direction, vec3 normal) {
-	if(base.Intensity <= 0.0f)
-		return vec4(0.0f,0.0f,0.0f,0.0f);
-	
 	vec4 diffuseColor = vec4(0.0f,0.0f,0.0f,0.0f);	
 	float diffuseFactor =  dot(normal,-direction);	
 	
-	diffuseColor = vec4(base.Color.rgb, 1.0) * base.Intensity * diffuseFactor;
+	diffuseColor = vec4(base.Color.rgb, 1.0) * max(base.Intensity, 0) * max(diffuseFactor, 0);
 	return diffuseColor;
 }
 
