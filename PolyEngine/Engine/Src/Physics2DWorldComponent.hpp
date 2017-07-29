@@ -16,18 +16,26 @@ namespace Poly
 		const Vector Gravity = Vector(0.f, -9.81f, 0.f);
 	};
 
+	class Physics2DContactListener;
+
 	class ENGINE_DLLEXPORT Physics2DWorldComponent : public ComponentBase
 	{
 		friend void Physics2DSystem::Physics2DUpdatePhase(World* world);
+		friend class Physics2DContactListener;
 	public:
 		Physics2DWorldComponent(const Physics2DConfig& config);
 		~Physics2DWorldComponent();
 
 		b2World* GetPhysicsWorld() { return World.get(); }
+
+		const Dynarray<RigidBody2DComponent*>& GetOverlapingBodies(RigidBody2DComponent* rb) const;
 	private:
 		float LastDeltaOverflow = 0.f;
 
 		const Physics2DConfig Config;
 		std::unique_ptr<b2World> World;
+		std::unique_ptr<Physics2DContactListener> ContactListener;
+
+		std::unordered_map<RigidBody2DComponent*, Dynarray<RigidBody2DComponent*>> OverlapingBodies;
 	};
 }

@@ -44,7 +44,7 @@ Poly::UniqueID GameManagerSystem::CreateGroundObject(Poly::World* world, const P
 	meshTrans->SetLocalScale(correctedSize);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, mesh, "Quad.obj", eResourceSource::GAME, Color(0, 0, 0));
 
-	meshTrans->SetLocalTranslation(position);
+	groundTrans->SetLocalTranslation(position);
 	return ground;
 }
 
@@ -68,7 +68,7 @@ Poly::UniqueID GameManagerSystem::CreateObstacleObject(Poly::World* world, const
 	meshTrans->SetLocalScale(correctedSize);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, mesh, "Quad.obj", eResourceSource::GAME, Color(1, 0, 0));
 
-	meshTrans->SetLocalTranslation(position);
+	obstacleTrans->SetLocalTranslation(position);
 	return obstacle;
 }
 
@@ -90,7 +90,7 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	bodyTrans->SetLocalScale(correctedSize);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, body, "Quad.obj", eResourceSource::GAME, Color(0, 0, 1));
 
-	bodyTrans->SetLocalTranslation(position);
+	playerTrans->SetLocalTranslation(position);
 	return player;
 }
 
@@ -195,6 +195,6 @@ void SGJ::GameManagerSystem::Cleanup(Poly::World* world)
 	for (auto ent : gameMgrCmp->OtherEntities)
 		DeferredTaskSystem::DestroyEntityImmediate(world, ent);
 
-	//DeferredTaskSystem::DestroyEntityImmediate(world, gameMgrCmp->Player);
+	DeferredTaskSystem::DestroyEntityImmediate(world, gameMgrCmp->Player);
 	DeferredTaskSystem::DestroyEntityImmediate(world, gameMgrCmp->Camera);
 }
