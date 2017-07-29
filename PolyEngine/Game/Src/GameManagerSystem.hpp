@@ -15,6 +15,8 @@ namespace SGJ
 {
 	namespace GameManagerSystem
 	{
+		void GameManagerSystem::Update(Poly::World*);
+
 		Poly::UniqueID CreateGroundObject(Poly::World* world, const Poly::Vector& position, eTileType tileType);
 		Poly::UniqueID CreateObstacleObject(Poly::World* world, const Poly::Vector& position, const Poly::Vector& size, eTileType tileType);
 		Poly::UniqueID SpawnPlayer(Poly::World* world, const Poly::Vector& position);

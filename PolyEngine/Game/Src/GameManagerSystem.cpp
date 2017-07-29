@@ -14,6 +14,7 @@
 #include "GroundComponent.hpp"
 #include "ObstacleComponent.hpp"
 #include "PlayerControllerComponent.hpp"
+#include "Physics2DWorldComponent.hpp"
 
 using namespace SGJ;
 using namespace Poly;
@@ -23,6 +24,40 @@ void SGJ::GameManagerSystem::LoadLevel(Poly::World* world, const Poly::String& p
 {
 	GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
 	gameMgrCmp->Levels.PushBack(new Level(path));
+}
+
+void GameManagerSystem::Update(Poly::World* world)
+{
+	GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
+
+	try
+	{
+		for (Physics2DWorldComponent::Collision col : world->GetWorldComponent<Physics2DWorldComponent>()->GetCollidingBodies(world->GetComponent<RigidBody2DComponent>(manager->Player)))
+		{
+			ObstacleComponent* obstacle = col.rb->GetSibling<ObstacleComponent>();
+
+			if (!obstacle) continue;
+
+			switch (obstacle->GetTileType())
+			{
+			case eTileType::SPIKESBOTTOM:
+			case eTileType::SPIKESTOP:
+			case eTileType::SPIKESLEFT:
+			case eTileType::SPIKESRIGHT:
+			{
+				Vector pos = world->GetComponent<PlayerControllerComponent>(manager->Player)->StartingPos;
+				//DeferredTaskSystem::DestroyEntityImmediate(world, manager->Player);
+				manager->Player = SpawnPlayer(world, pos);
+				return;
+			}
+			break;
+
+			default:
+				break;
+			}
+		}
+	}
+	catch (std::exception) {}
 }
 
 Poly::UniqueID GameManagerSystem::CreateGroundObject(Poly::World* world, const Poly::Vector& position, eTileType tileType)

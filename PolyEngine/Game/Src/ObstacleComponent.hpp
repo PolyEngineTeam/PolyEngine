@@ -10,6 +10,8 @@ namespace SGJ
 	public:
 		ObstacleComponent(eTileType type);
 
+		eTileType GetTileType() const{ return Type; }
+
 	private:
 		eTileType Type;
 	};
