@@ -9,6 +9,7 @@
 #include <TransformComponent.hpp>
 #include <ScreenSpaceTextComponent.hpp>
 #include <ViewportWorldComponent.hpp>
+#include <PostprocessSettingsComponent.hpp>
 
 #include "GLTextFieldBufferDeviceProxy.hpp"
 #include "GLTextureDeviceProxy.hpp"
@@ -18,7 +19,7 @@
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-void GLRenderingDevice::RenderWorld(World * world)
+void GLRenderingDevice::RenderWorld(World* world)
 {
 	const ScreenSize screenSize = gEngine->GetRenderingDevice()->GetScreenSize();
 
@@ -26,10 +27,11 @@ void GLRenderingDevice::RenderWorld(World * world)
 	glPolygonMode(GL_FRONT_AND_BACK, gCoreConfig.WireframeRendering ? GL_LINE : GL_FILL);
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
-	
+
 	// Clear FBO's
 	for (eGeometryRenderPassType type : IterateEnum<eGeometryRenderPassType>())
 		GeometryRenderingPasses[type]->ClearFBO();
+
 	for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
 		PostprocessRenderingPasses[type]->ClearFBO();
 
@@ -38,13 +40,18 @@ void GLRenderingDevice::RenderWorld(World * world)
 	{
 		// Set viewport rect (TOOO change it to propper rect, not box)
 		const AABox& rect = kv.second.GetRect();
+		PostprocessSettingsComponent* post = kv.second.GetCamera()->GetSibling<PostprocessSettingsComponent>();
+
 		glViewport((int)(rect.GetMin().X * screenSize.Width), (int)(rect.GetMin().Y * screenSize.Height),
 			(int)(rect.GetSize().X * screenSize.Width), (int)(rect.GetSize().Y * screenSize.Height));
 
 		glDepthMask(GL_FALSE);
 		glDisable(GL_DEPTH_TEST);
 
-		PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND]->Run(world, kv.second.GetCamera(), rect);
+		if (post && post->UseBgShader)
+			PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND]->Run(world, kv.second.GetCamera(), rect);
+		else
+			PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND_LIGHT]->Run(world, kv.second.GetCamera(), rect);
 
 		glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
@@ -60,8 +67,10 @@ void GLRenderingDevice::RenderWorld(World * world)
 		// Render text
 		GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, kv.second.GetCamera(), rect);
 
-		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND]->Run(world, kv.second.GetCamera(), rect);
-		// PostprocessRenderingPasses[ePostprocessRenderPassType::VINETTE]->Run(world, kv.second.GetCamera(), rect);
+		if (post && post->UseFgShader)
+			PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND]->Run(world, kv.second.GetCamera(), rect);
+		else 
+			PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, kv.second.GetCamera(), rect);
 
 		// Draw debug normals
 		if (gCoreConfig.DebugNormalsFlag)

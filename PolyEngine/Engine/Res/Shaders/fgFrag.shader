@@ -323,10 +323,7 @@ vec3 Saturation(vec3 color, float saturation)
 void main()
 {
 	color = vec4(1.0);
-
 	vec2 uv = vTexCoord;
-	// color = texture(i_color, vTexCoord);
-	// return;
 
 	if (uUseCashetes > 0)
 	{
@@ -370,11 +367,11 @@ void main()
 	vec3 sumw = vec3(0.0);
 	vec2 uvd = distort(uv, t, min_distort, max_distort); //TODO: move out of loop
 	color = vec4(uvd, 0.0, 1.0);
-	if ( > 1.0)
-	{
-		color.rgb = vec3(1.0, 0.0, 1.0);
-	}
-	return;
+	// if ( > 1.0)
+	// {
+	// 	color.rgb = vec3(1.0, 0.0, 1.0);
+	// }
+	// return;
 
 	for (int i = 0; i<num_iter; ++i)
 	{

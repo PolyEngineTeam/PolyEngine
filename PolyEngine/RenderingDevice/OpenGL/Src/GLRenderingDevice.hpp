@@ -38,6 +38,8 @@ namespace Poly
 			VINETTE,
 			BACKGROUND,
 			FOREGROUND,
+			BACKGROUND_LIGHT,
+			FOREGROUND_LIGHT,
 			_COUNT
 		};
 

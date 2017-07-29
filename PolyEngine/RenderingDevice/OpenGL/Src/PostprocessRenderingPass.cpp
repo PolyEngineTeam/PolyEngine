@@ -100,6 +100,8 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 	else
 	{
 		GetProgram().SetUniform("uUseCashetes",						PostprocessSettings->UseCashetes);
+		GetProgram().SetUniform("uUseBgShader",						PostprocessSettings->UseBgShader);
+		GetProgram().SetUniform("uUseFgShader",						PostprocessSettings->UseFgShader);
 		GetProgram().SetUniform("uAberationPower",					PostprocessSettings->AberationPower);
 		GetProgram().SetUniform("uColorTempValue",					PostprocessSettings->ColorTempValue);
 		GetProgram().SetUniform("uColorTempPower",					PostprocessSettings->ColorTempPower);
@@ -107,7 +109,7 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 		GetProgram().SetUniform("uSaturationPower",					PostprocessSettings->SaturationPower);
 		GetProgram().SetUniform("uGrainPower",						PostprocessSettings->GrainPower);
 		GetProgram().SetUniform("uStripesPower",					PostprocessSettings->StripesPower);
-		GetProgram().SetUniform("uVinettePower",					PostprocessSettings->VinettePower);
+			
 		
 		// gConsole.LogInfo("void PostprocessRenderingPass::OnRun: UseCashetes: {}", PostprocessSettings->UseCashetes);
 	}

@@ -277,8 +277,10 @@ void GLRenderingDevice::InitPrograms()
 	RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS);
 	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, {}, { { "color", texture },{ "depth", depth } });
 
-	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND, "Shaders/bgFrag.shader", { { "i_noise", RGBANoise256 } }, { { "o_color", texture }, { "depth", depth } });
+	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND, "Shaders/bgFrag.shader", {}, { { "o_color", texture }, { "depth", depth } });
+	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND_LIGHT, "Shaders/bgLightFrag.shader", {}, { { "o_color", texture }, { "depth", depth } });
 	RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND, "Shaders/fgFrag.shader", { { "i_color", texture } }, { });
+	RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND_LIGHT, "Shaders/fgLightFrag.shader", { { "i_color", texture } }, {});
 	RegisterPostprocessPass(ePostprocessRenderPassType::VINETTE, "Shaders/vinetteFrag.shader", { { "i_color", texture } });
 }
 
