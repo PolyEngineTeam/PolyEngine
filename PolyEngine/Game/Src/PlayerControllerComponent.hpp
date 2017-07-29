@@ -23,7 +23,7 @@ namespace SGJ
 
 		void SetIsJumping(bool isJumping) { IsJumping = isJumping; };
 		void SetHasChangedSize(bool hasChangedSize) { HasChangedSize = hasChangedSize; };
-		void SetMoveVector(Poly::Vector newMoveVector) { CurrentMoveVector = newMoveVector; };
+		void SetMoveVector(const Poly::Vector& newMoveVector) { CurrentMoveVector = newMoveVector; };
 		void SetDensityMultiplier(float densityMul) { DensityMultiplier = densityMul; };
 		
 
