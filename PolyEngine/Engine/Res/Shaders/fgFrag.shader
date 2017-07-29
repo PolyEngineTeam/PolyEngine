@@ -315,6 +315,8 @@ vec3 colorTemperature(vec3 color, float temperature)
 void main()
 {
 	vec2 uv = vTexCoord;
+	color = texture(i_color, vTexCoord);
+	return;
 
 
 #if CASHETES
