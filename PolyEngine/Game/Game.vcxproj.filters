@@ -21,6 +21,9 @@
     <Filter Include="Source Files\Tiles">
       <UniqueIdentifier>{7c933607-37c7-441e-99f2-a9cdc96c1455}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Camera">
+      <UniqueIdentifier>{e6f81caa-18aa-415f-b47d-5f7db69b717c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Game.hpp">
@@ -50,6 +53,7 @@
     <ClInclude Include="Src\ObstacleComponent.hpp">
       <Filter>Source Files\Tiles</Filter>
     </ClInclude>
+    <ClInclude Include="Src\CameraMovementSystem.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Game.cpp">
@@ -75,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="Src\ObstacleComponent.cpp">
       <Filter>Source Files\Tiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\CameraMovementSystem.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

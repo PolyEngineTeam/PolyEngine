@@ -13,6 +13,7 @@
 #include <LightSourceComponent.hpp>
 #include "GroundComponent.hpp"
 #include "ObstacleComponent.hpp"
+#include "PlayerControllerComponent.hpp"
 
 using namespace SGJ;
 using namespace Poly;
@@ -76,8 +77,10 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 {
 	UniqueID player = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, player);
+	DeferredTaskSystem::AddComponentImmediate<PlayerControllerComponent>(world, player);
 	TransformComponent* playerTrans = world->GetComponent<Poly::TransformComponent>(player);
-	DeferredTaskSystem::AddComponentImmediate<Poly::Box2DColliderComponent>(world, player, Vector(1, 1, 0));
+
+	DeferredTaskSystem::AddComponentImmediate<Poly::Box2DColliderComponent>(world, player, Vector(0.8, 0.8, 0));
 	DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, player, world, eRigidBody2DType::DYNAMIC);
 
 	UniqueID body = DeferredTaskSystem::SpawnEntityImmediate(world);
@@ -85,8 +88,8 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	Poly::TransformComponent* bodyTrans = world->GetComponent<Poly::TransformComponent>(body);
 	bodyTrans->SetParent(playerTrans);
 	bodyTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
-	Vector correctedSize = Vector(1, 2, 0);
-	correctedSize.Z = 1.0f;
+	Vector correctedSize = Vector(0.8, 0.8, 0);
+	correctedSize.Z = 0.8f;
 	bodyTrans->SetLocalScale(correctedSize);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, body, "Quad.obj", eResourceSource::GAME, Color(0, 0, 1));
 
@@ -98,24 +101,38 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 {
 	// cleanup previous level
 	DespawnLevel(world);
-	
+
 	GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
 	Level* level = gameMgrCmp->Levels[idx];
 
+	gameMgrCmp->CurrentLevelID = idx;
+
 	// calculate level center
+	gameMgrCmp->MinLevelWidth = level->Width;
+	gameMgrCmp->MaxLevelWidth = 0;
 	size_t meanW = 0, meanH = 0;
 	size_t count = 0;
 	for (size_t idx = 0; idx < level->Tiles.GetSize(); ++idx)
 	{
 		if (level->Tiles[idx] != SGJ::eTileType::NOTHING)
 		{
-			meanW += (idx % level->Width);
+			size_t w = (idx % level->Width);
+			meanW += w;
 			meanH += (idx / level->Width);
+
+			if (w < gameMgrCmp->MinLevelWidth)
+				gameMgrCmp->MinLevelWidth = w;
+			if (w > gameMgrCmp->MaxLevelWidth)
+				gameMgrCmp->MaxLevelWidth = w;
+
 			++count;
 		}
 	}
 	meanW /= count;
 	meanH /= count;
+
+	gameMgrCmp->MinLevelWidth -= meanW;
+	gameMgrCmp->MaxLevelWidth -= meanW;
 
 	// spawn level tiles
 	for (int idx = 0; idx < level->Tiles.GetSize(); ++idx)
@@ -164,7 +181,6 @@ void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
 	gameMgrCmp->Camera = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(gEngine->GetWorld(), gameMgrCmp->Camera);
 	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(gEngine->GetWorld(), gameMgrCmp->Camera, 60_deg, 1.0f, 1000.f);
-	DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(gEngine->GetWorld(), gameMgrCmp->Camera, 10.0f, 0.003f);
 
 	// Set some camera position
 	Poly::TransformComponent* cameraTrans = gEngine->GetWorld()->GetComponent<Poly::TransformComponent>(gameMgrCmp->Camera);

@@ -3,18 +3,37 @@
 #include "TransformComponent.hpp"
 #include "InputWorldComponent.hpp"
 #include "PlayerControllerComponent.hpp"
+#include "Rigidbody2DComponent.hpp"
+#include "Timer.hpp"
 
 using namespace Poly;
 
 namespace SGJ
 {
-	void PlayerUpdateSystem::ProcessInput(World* world)
+	void PlayerUpdateSystem::Update(World* world)
 	{
-		//for (auto playerTuple : world->IterateComponents<SGJ::PlayerControllerComponent, TransformComponent>())
-		//{
-		//	TransformComponent* transCmp = std::get<TransformComponent*>(playerTuple);
-		//	SGJ::PlayerControllerComponent* playerCmp = std::get<SGJ::PlayerControllerComponent*>(playerTuple);
-		//
+		double deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
+
+		for (auto playerTuple : world->IterateComponents<PlayerControllerComponent, RigidBody2DComponent>())
+		{
+			RigidBody2DComponent* rigidbodyCmp = std::get<RigidBody2DComponent*>(playerTuple);
+			PlayerControllerComponent* playerCmp = std::get<PlayerControllerComponent*>(playerTuple);
+
+			Vector move(0, 0, 0);
+			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A))
+				move -= Vector::UNIT_X;
+			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D))
+				move += Vector::UNIT_X;
+			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::SPACE))
+				move += Vector::UNIT_Y;
+
+			move *= deltaTime * 10;//playerCmp->GetMovementSpeed();
+
+			//if (rigidbodyCmp->GetLinearSpeed().Length() < 10)
+				rigidbodyCmp->ApplyImpulseToCenter(move);
+
+			//rigidbodyCmp->
+		
 		//	//movement like in MovementSystem
 		//	Vector move;
 		//	if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A))
@@ -25,7 +44,7 @@ namespace SGJ
 		//	move *= playerCmp->GetMovementSpeed();
 		//	//Local? (that was in MovementSystem)
 		//	transCmp->SetLocalTranslation(transCmp->GetLocalTranslation() + transCmp->GetLocalRotation() * move);
-		//}
+		}
 
 	}
 

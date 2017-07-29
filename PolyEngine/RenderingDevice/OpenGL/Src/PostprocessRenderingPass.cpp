@@ -82,7 +82,6 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 	const TransformComponent* CameraTransform = camera->GetSibling<TransformComponent>();
 	Vector CameraPosition = CameraTransform->GetGlobalTranslation();
 	Matrix CameraRotation = CameraTransform->GetGlobalRotation().ToRotationMatrix();
-	const PostprocessSettingsComponent* PostprocessSettings = camera->GetSibling<PostprocessSettingsComponent>();
 
 	GetProgram().BindProgram();
 
@@ -92,16 +91,24 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 	GetProgram().SetUniform("uCameraPosition", CameraPosition);
 	GetProgram().SetUniform("uCameraRotation", CameraRotation);
 
-	GetProgram().SetUniform("uUseCashetes",						PostprocessSettings->UseCashetes);
-	GetProgram().SetUniform("uColorTempValue",					PostprocessSettings->ColorTempValue);
-	GetProgram().SetUniform("uColorTempPower",					PostprocessSettings->ColorTempPower);
-	GetProgram().SetUniform("uColorTempLuminancePreservation",	PostprocessSettings->ColorTempLuminancePreservation);
-	GetProgram().SetUniform("uAberationPower",					PostprocessSettings->AberationPower);
-	GetProgram().SetUniform("uGrainPower",						PostprocessSettings->GrainPower);
-	GetProgram().SetUniform("uStripesPower",					PostprocessSettings->StripesPower);
-	GetProgram().SetUniform("uVinettePower",					PostprocessSettings->VinettePower);
-
-	gConsole.LogInfo("void PostprocessRenderingPass::OnRun: UseCashetes: {}", PostprocessSettings->UseCashetes);
+	const PostprocessSettingsComponent* PostprocessSettings = camera->GetSibling<PostprocessSettingsComponent>();
+	if (PostprocessSettings == nullptr)
+	{
+		gConsole.LogInfo("void PostprocessRenderingPass::OnRun: PostprocessSettings is NULL");
+	}
+	else
+	{
+		GetProgram().SetUniform("uUseCashetes",						PostprocessSettings->UseCashetes);
+		GetProgram().SetUniform("uColorTempValue",					PostprocessSettings->ColorTempValue);
+		GetProgram().SetUniform("uColorTempPower",					PostprocessSettings->ColorTempPower);
+		GetProgram().SetUniform("uColorTempLuminancePreservation",	PostprocessSettings->ColorTempLuminancePreservation);
+		GetProgram().SetUniform("uAberationPower",					PostprocessSettings->AberationPower);
+		GetProgram().SetUniform("uGrainPower",						PostprocessSettings->GrainPower);
+		GetProgram().SetUniform("uStripesPower",					PostprocessSettings->StripesPower);
+		GetProgram().SetUniform("uVinettePower",					PostprocessSettings->VinettePower);
+		
+		gConsole.LogInfo("void PostprocessRenderingPass::OnRun: UseCashetes: {}", PostprocessSettings->UseCashetes);
+	}
 
 	// gConsole.LogInfo("PostprocessRenderingPass::OnRun() Time: {}, uResolution: ({}, {})", Time, ResolutionX, ResolutionY);
 
