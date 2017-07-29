@@ -8,29 +8,23 @@ in vec2 vTexCoord;
 out vec4 color;
 
 uniform int uUseCashetes;
-uniform float uColorTempValue;
-uniform float uColorTempPower;
 uniform float uAberationPower;
+uniform float uColorTempValue; // default 6500 in [1000.0, 40000.0]
+uniform float uColorTempPower;
+uniform float uColorTempLuminancePreservation;
+uniform float uSaturationPower;
 uniform float uStripesPower;
 uniform float uVinettePower;
 uniform float uGrainPower;
 
-// [1000.0, 40000.0]
-// #define COLOR_TEMP_VALUE 6500.0 cold
-#define COLOR_TEMP_VALUE 20000.0
-#define COLOR_TEMP_POWER 1.0
-#define ABERATION_POWER 0.55
-#define GRAIN_POWER 0.3
-#define STRIPES_POWER 0.0
-#define VIGNETE_POWER 0.60
+// #define DEBUG
 
-
-// by hornet
+// aberation by hornet
 // https://www.shadertoy.com/view/XssGz8
 // To the extent possible under law,
 // the author has waived all copyright and related or neighboring rights to this work.
 
-#define LUMINANCE_PRESERVATION 0.75
+// #define LUMINANCE_PRESERVATION 0.75
 
 #define EPSILON 1e-10
 
@@ -112,6 +106,7 @@ vec3 RGBtoHSL(vec3 RGB)
 float remap(float t, float a, float b) {
 	return clamp((t - a) / (b - a), 0.0, 1.0);
 }
+
 vec2 remap(vec2 t, vec2 a, vec2 b) {
 	return clamp((t - a) / (b - a), 0.0, 1.0);
 }
@@ -138,7 +133,6 @@ vec3 spectrum_offset_rgb(float t)
 
 }
 
-
 vec3 lin2srgb(vec3 c)
 {
 	return pow(c, vec3(gamma));
@@ -148,7 +142,6 @@ vec3 srgb2lin(vec3 c)
 {
 	return pow(c, vec3(1.0 / gamma));
 }
-
 
 vec3 yCgCo2rgb(vec3 ycc)
 {
@@ -175,7 +168,6 @@ vec3 yuv2rgb(vec3 yuv)
 	rgb.b = yuv.x + yuv.y * 2.03211;
 	return rgb;
 }
-
 
 // ====
 
@@ -267,7 +259,7 @@ float nrand(vec2 n)
 
 vec3 render(vec2 uv)
 {
-// #define DEBUG
+
 #if defined( DEBUG )
 	if (uv.x > 0.7 && uv.y > 0.7)
 	{
@@ -315,39 +307,48 @@ vec3 colorTemperature(vec3 color, float temperature)
 {
 	vec3 colorTempRGB = ColorTemperatureToRGB(temperature);
 	float originalLuminance = Luminance(color);
-	vec3 blended = mix(color, color * colorTempRGB, COLOR_TEMP_POWER);
+	vec3 blended = mix(color, color * colorTempRGB, uColorTempPower);
 	vec3 resultHSL = RGBtoHSL(blended);
 	vec3 luminancePreservedRGB = HSLtoRGB(vec3(resultHSL.x, resultHSL.y, originalLuminance));
-	return mix(blended, luminancePreservedRGB, LUMINANCE_PRESERVATION);
+	return mix(blended, luminancePreservedRGB, uColorTempLuminancePreservation);
+}
+
+vec3 Saturation(vec3 color, float saturation)
+{
+	vec3 hsl = RGBtoHSL(color);
+	hsl.g = saturation;
+	return HSLtoRGB(hsl);
 }
 
 void main()
 {
+	color = vec4(1.0);
 	vec2 uv = vTexCoord;
-	// color = texture(i_color, vTexCoord);
-	// return;
 
-	// if ()
-	// {
+	if (uUseCashetes > 0)
+	{
 		vec2 p = -1.0 + 2.0 * vTexCoord.xy;
 		p.x *= uResolution.x / uResolution.y;
 		float cashetes = step(abs(p.y)*2.39, uResolution.x / uResolution.y);
-		if (cashetes < 0.1 && uUseCashetes > 0) {
+		if (cashetes < 0.1) {
 			color = vec4(0.0);
 			return;
 		}
-	// }
+	}
 
-	float power = smoothstep(-0.2, 0.2, -cos(0.5*uTime));
+	// float power = smoothstep(-0.2, 0.2, -cos(0.5*uTime));
+
+	
 
 	const float MAX_DIST_PX = 50.0;
-	float max_distort_px = MAX_DIST_PX * (power * ABERATION_POWER);
+	float max_distort_px = MAX_DIST_PX * uAberationPower;
 	vec2 max_distort = vec2(max_distort_px) / uResolution.xy;
 	vec2 min_distort = 0.5 * max_distort;
 
 	//vec2 oversiz = vec2(1.0);
 	vec2 oversiz = distort(vec2(1.0), 1.0, min_distort, max_distort);
-	uv = remap(uv, 1.0 - oversiz, oversiz);
+	// uv = remap(uv, 1.0 - oversiz, oversiz);
+	// uv = clamp(uv, vec2(0.0), vec2(1.0));
 
 	//debug oversiz
 	//vec2 distuv = distort( uv, 1.0, max_distort );
@@ -362,14 +363,21 @@ void main()
 	float rnd = nrand(uv + fract(uTime));
 	float t = rnd * stepsiz;
 	
-
 	vec3 sumcol = vec3(0.0);
 	vec3 sumw = vec3(0.0);
+	vec2 uvd = distort(uv, t, min_distort, max_distort); //TODO: move out of loop
+	color = vec4(uvd, 0.0, 1.0);
+	// if ( > 1.0)
+	// {
+	// 	color.rgb = vec3(1.0, 0.0, 1.0);
+	// }
+	// return;
+
 	for (int i = 0; i<num_iter; ++i)
 	{
 		vec3 w = spectrum_offset(t);
 		sumw += w;
-		vec2 uvd = distort(uv, t, min_distort, max_distort); //TODO: move out of loop
+		// uvd = clamp(uvd, vec2(0.0), vec2(1.0));
 		sumcol += w * render(uvd);
 		t += stepsiz;
 	}
@@ -385,16 +393,19 @@ void main()
 	color.rgb = Tonemap_ACES(color.rgb);
 
 	// color temperature
-	color.rgb = colorTemperature(color.rgb, mix(6000.0, COLOR_TEMP_VALUE, power));
+	color.rgb = colorTemperature(color.rgb, mix(6000.0, uColorTempValue, uColorTempPower));
+
+	// color saturation
+	color.rgb = Saturation(color.rgb, uSaturationPower);
 
 	// Stripes
-	color *= mix( 1.0, stripes(vTexCoord), STRIPES_POWER);
+	color *= mix( 1.0, stripes(vTexCoord), uStripesPower);
 
 	// grain
-	color *= mix( 1.0, grain(uv), GRAIN_POWER);
+	color *= mix( 1.0, grain(uv), uGrainPower);
 
 	// Vinette
-	color *= mix(1.0, vinette(vTexCoord), VIGNETE_POWER);
+	color *= mix(1.0, vinette(vTexCoord), uVinettePower);
 }
 
 /*

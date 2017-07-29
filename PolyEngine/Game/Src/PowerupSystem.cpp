@@ -6,6 +6,7 @@
 #include "Rigidbody2DComponent.hpp"
 #include "TimeSystem.hpp"
 #include "TransformComponent.hpp"
+#include "Physics2DWorldComponent.hpp"
 
 using namespace Poly;
 
@@ -34,24 +35,32 @@ namespace SGJ
 			move.Y *= 2;
 			break;
 		case(ePowerup::POGO_JUMP):
-			//TODO If not jumping, jump
 			if (!playerCmp->GetIsJumping())
 			{
 				move += Vector::UNIT_Y;
-				move.Y *= deltaTime * playerCmp->GetJumpForce();
+				move.Y *= playerCmp->GetJumpForce();
 			}
 			break;
 		case(ePowerup::INCREASED_SPEED):
 			move.X *= 2;
 			speedConstraint *= 2;
 			break;
-		case(ePowerup::INCREASED_SIZE):	//not input related, maybe move?
+		case(ePowerup::INCREASED_SIZE):	
 		case(ePowerup::DECREASED_SIZE):
 			changedSize = true;
 			break;
 		default:
 			break;
 		}
+
+		if (activePower == ePowerup::INVERSED_GRAVITY)
+		{
+			world->GetWorldComponent<Physics2DWorldComponent>()->SetGravity(Vector(0, 9.81f, 0));
+			move.Y *= -1;
+		}
+		else
+			world->GetWorldComponent<Physics2DWorldComponent>()->SetGravity(Vector(0, -9.81f, 0));
+
 
 		//check if size changed in this frame
 		if ((!changedSize && playerCmp->GetHasChangedSize() ) || (changedSize && !playerCmp->GetHasChangedSize()))
@@ -87,7 +96,7 @@ namespace SGJ
 
 		//apply validated movement vector
 		if (rbCmp->GetLinearSpeed().Length() < speedConstraint)
-			rbCmp->ApplyImpulseToCenter(move);
+			rbCmp->ApplyImpulseToCenter(move * playerCmp->GetDensityMultiplier());
 
 	}
 }

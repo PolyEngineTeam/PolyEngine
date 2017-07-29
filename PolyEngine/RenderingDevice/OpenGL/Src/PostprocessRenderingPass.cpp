@@ -99,18 +99,20 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 	else
 	{
 		GetProgram().SetUniform("uUseCashetes",						PostprocessSettings->UseCashetes);
+		GetProgram().SetUniform("uUseBgShader",						PostprocessSettings->UseBgShader);
+		GetProgram().SetUniform("uUseFgShader",						PostprocessSettings->UseFgShader);
+		GetProgram().SetUniform("uAberationPower",					PostprocessSettings->AberationPower);
 		GetProgram().SetUniform("uColorTempValue",					PostprocessSettings->ColorTempValue);
 		GetProgram().SetUniform("uColorTempPower",					PostprocessSettings->ColorTempPower);
 		GetProgram().SetUniform("uColorTempLuminancePreservation",	PostprocessSettings->ColorTempLuminancePreservation);
-		GetProgram().SetUniform("uAberationPower",					PostprocessSettings->AberationPower);
+		GetProgram().SetUniform("uSaturationPower",					PostprocessSettings->SaturationPower);
 		GetProgram().SetUniform("uGrainPower",						PostprocessSettings->GrainPower);
 		GetProgram().SetUniform("uStripesPower",					PostprocessSettings->StripesPower);
-		GetProgram().SetUniform("uVinettePower",					PostprocessSettings->VinettePower);
+			
 		
-		//gConsole.LogInfo("void PostprocessRenderingPass::OnRun: UseCashetes: {}", PostprocessSettings->UseCashetes);
+		gConsole.LogInfo("void PostprocessRenderingPass::OnRun: UseCashetes: {}", PostprocessSettings->UseCashetes);
 	}
 
-	// gConsole.LogInfo("PostprocessRenderingPass::OnRun() Time: {}, uResolution: ({}, {})", Time, ResolutionX, ResolutionY);
 
 	glBindVertexArray(QUAD.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);

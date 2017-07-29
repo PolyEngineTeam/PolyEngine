@@ -126,6 +126,8 @@ void RenderingPassBase::Run(World* world, const CameraComponent* camera, const A
 			GLuint textureID = static_cast<Texture2DRenderingTarget*>(target)->GetTextureID();
 			size_t idx = samplerCount++;
 			glActiveTexture(GL_TEXTURE0 + idx);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glBindTexture(GL_TEXTURE_2D, textureID);
 			Program.SetUniform(name, (int)idx);
 			tmp = textureID;

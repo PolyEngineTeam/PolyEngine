@@ -11,6 +11,7 @@ namespace SGJ
 		POGO_JUMP,			//Constantly jumping
 		INCREASED_SPEED,
 		INCREASED_SIZE,
-		DECREASED_SIZE
+		DECREASED_SIZE,
+		INVERSED_GRAVITY
 	};
 }
