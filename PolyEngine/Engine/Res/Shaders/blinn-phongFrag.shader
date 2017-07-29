@@ -1,6 +1,7 @@
 #version 330 core
 
 uniform sampler2D ourTexture;
+uniform vec4 uBaseColor;
 
 in vec2 vTexCoord;
 
@@ -10,5 +11,5 @@ void main(){
   vec4 texColor = texture(ourTexture, vTexCoord);
   if(texColor.a < 0.1)
         discard;
-  color = texColor;
+  color = uBaseColor + texColor;
 }

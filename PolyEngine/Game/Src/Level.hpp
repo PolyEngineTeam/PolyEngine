@@ -1,25 +1,25 @@
 #pragma once
 
-#include "ResourceManager.hpp"
-#include "Dynarray.hpp"
+#include <ResourceManager.hpp>
+#include <ResourceBase.hpp>
+#include <Dynarray.hpp>
 
 namespace SGJ
 {
 	enum class eTileType
 	{
-		NONE = -1,
-		GROUND = 0,
+		NOTHING = -1,
 		_COUNT
 	};
 
-	class Level : Poly::ResourceBase
+	class GAME_DLLEXPORT Level : public Poly::BaseObject<>
 	{
+		friend class LevelComponent;
 	public:
 		Level(const Poly::String& path);
 
-
-	private:
 		Poly::Dynarray<eTileType> Tiles;
-		size_t Height, Width;
+		size_t Height;
+		size_t Width;
 	};
 }

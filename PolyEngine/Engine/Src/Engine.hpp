@@ -32,6 +32,8 @@ namespace Poly
 		SCREEN_SPACE_TEXT,
 		SOUND_EMMITER,
 		SOUND_LISTENER,
+		RIGIDBODY_2D,
+		BOX2D_COLLIDER,
 		_COUNT
 	};
 
@@ -47,6 +49,7 @@ namespace Poly
 		DEBUG,
 		DEFERRED_TASK,
 		SOUND,
+		PHYSICS_2D,
 		_COUNT
 	};
 

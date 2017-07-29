@@ -29,6 +29,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
 		Matrix screenTransform = mvp * objTransform;
 		GetProgram().SetUniform("uTransform", screenTransform);
+		GetProgram().SetUniform("uBaseColor", meshCmp->GetBaseColor());
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());

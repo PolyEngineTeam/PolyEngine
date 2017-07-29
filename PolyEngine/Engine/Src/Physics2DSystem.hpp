@@ -2,8 +2,8 @@
 
 namespace Poly
 {
-	class Physics2DSystem
+	namespace Physics2DSystem
 	{
-
-	};
+		void Physics2DUpdatePhase(World* world);
+	}
 }
