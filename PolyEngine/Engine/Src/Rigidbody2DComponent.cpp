@@ -40,6 +40,7 @@ Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType 
 }
 
 Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType type, RigidBody2DSensorTag sensorTag)
+	: BodyType(type)
 {
 	ImplData = std::make_unique<RigidBody2DData>();
 
