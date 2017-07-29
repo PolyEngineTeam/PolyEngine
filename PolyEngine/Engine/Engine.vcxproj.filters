@@ -176,6 +176,15 @@
     <ClCompile Include="Src\Physics2DSystem.cpp">
       <Filter>Source Files\Physics2D</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Physics2DColliders.cpp">
+      <Filter>Source Files\Physics2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Rigidbody2DComponent.cpp">
+      <Filter>Source Files\Physics2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics2DWorldComponent.cpp">
+      <Filter>Source Files\Physics2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine.hpp">
@@ -308,6 +317,18 @@
       <Filter>Source Files\Sound\SoundEmitter</Filter>
     </ClInclude>
     <ClInclude Include="Src\Physics2DSystem.hpp">
+      <Filter>Source Files\Physics2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics2DColliders.hpp">
+      <Filter>Source Files\Physics2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Rigidbody2DComponent.hpp">
+      <Filter>Source Files\Physics2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics2DWorldComponent.hpp">
+      <Filter>Source Files\Physics2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\RigidBody2DImpl.hpp">
       <Filter>Source Files\Physics2D</Filter>
     </ClInclude>
   </ItemGroup>

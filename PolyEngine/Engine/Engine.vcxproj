@@ -187,7 +187,9 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\DeferredTaskSystem.cpp" />
     <ClCompile Include="Src\InputWorldComponent.cpp" />
     <ClCompile Include="Src\OpenALDevice.cpp" />
+    <ClCompile Include="Src\Physics2DColliders.cpp" />
     <ClCompile Include="Src\Physics2DSystem.cpp" />
+    <ClCompile Include="Src\Physics2DWorldComponent.cpp" />
     <ClCompile Include="Src\SoundEmitterComponent.cpp" />
     <ClCompile Include="Src\SoundListenerComponent.cpp" />
     <ClCompile Include="Src\Mesh.cpp" />
@@ -200,6 +202,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\SoundResource.cpp" />
     <ClCompile Include="Src\SoundSystem.cpp" />
     <ClCompile Include="Src\SoundWorldComponent.cpp" />
+    <ClCompile Include="Src\Rigidbody2DComponent.cpp" />
     <ClCompile Include="Src\Text2D.cpp" />
     <ClCompile Include="Src\TimeSystem.cpp" />
     <ClCompile Include="Src\TimeWorldComponent.cpp" />
@@ -232,13 +235,17 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\DeferredTaskBase.hpp" />
     <ClInclude Include="Src\DeferredTaskImplementation.hpp" />
     <ClInclude Include="Src\DeferredTaskSystem.hpp" />
+    <ClInclude Include="Src\Physics2DWorldComponent.hpp" />
+    <ClInclude Include="Src\Rigidbody2DComponent.hpp" />
     <ClInclude Include="Src\InputSystem.hpp" />
     <ClInclude Include="Src\InputQueue.hpp" />
     <ClInclude Include="Src\InputWorldComponent.hpp" />
     <ClInclude Include="Src\IRenderingDevice.hpp" />
     <ClInclude Include="Src\KeyBindings.hpp" />
     <ClInclude Include="Src\OpenALDevice.hpp" />
+    <ClInclude Include="Src\Physics2DColliders.hpp" />
     <ClInclude Include="Src\Physics2DSystem.hpp" />
+    <ClInclude Include="Src\RigidBody2DImpl.hpp" />
     <ClInclude Include="Src\SoundListenerComponent.hpp" />
     <ClInclude Include="Src\Mesh.hpp" />
     <ClInclude Include="Src\MeshRenderingComponent.hpp" />
