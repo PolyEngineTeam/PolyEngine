@@ -29,6 +29,8 @@ namespace SGJ
 
 		double LastAllowJumpChecked = 0;
 		bool AllowJump = false;
+		double LastLandTimeStart = 0;
+		double LastJumpTimeStart = 0;
 	private:
 		float MovementSpeed = 50.0f;
 		float JumpForce = 250.0f;

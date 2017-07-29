@@ -12,6 +12,8 @@ namespace SGJ
 	namespace PlayerUpdateSystem
 	{
 		void Update(Poly::World* world);
+
+		float ElasticEaseOut(float p);
 	}
 
 }

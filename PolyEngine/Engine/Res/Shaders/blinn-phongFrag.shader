@@ -59,10 +59,12 @@ float pointLightAttenuation(PointLight light, vec3 vertexPos) {
     return 1.0 / (1.0 + light.Attenuation * pow(distanceToLight, 2));
 }
 
-void main(){
-  vec4 texColor = texture(ourTexture, vTexCoord);
+void main() {
+	vec4 texColor = vec4(vTexCoord, 0.0, 1.0); // texture(ourTexture, vTexCoord);
+
   if(texColor.a < 0.1)
-        discard;
+         discard;
+
   texColor += uBaseColor;
   
   vec4 ambient = texColor * ambientlLight(uDiffuseLight);
@@ -78,4 +80,5 @@ void main(){
   }
   
   color = ambient + directional;
+  color = uBaseColor; // vec4(vTexCoord, 0.0, 1.0);
 }
