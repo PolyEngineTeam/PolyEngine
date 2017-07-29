@@ -106,7 +106,7 @@ GLRenderingDevice::GLRenderingDevice(HWND hwnd, RECT rect)
 
 	// We have successfully created a context, return true
 
-	InitPrograms();
+	// InitPrograms();
 }
 
 //------------------------------------------------------------------------------
@@ -193,7 +193,7 @@ GLRenderingDevice::GLRenderingDevice(Display* display, Window window, GLXFBConfi
 	gConsole.LogInfo("GL Version: {}", glGetString(GL_VERSION));
 	gConsole.LogInfo("GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-	InitPrograms();
+	// InitPrograms();
 }
 
 //------------------------------------------------------------------------------
@@ -265,6 +265,9 @@ void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType
 //------------------------------------------------------------------------------
 void GLRenderingDevice::InitPrograms()
 {
+	// Init input textures
+	Texture2DInputTarget* RGBANoise256 = CreateRenderingTarget<Texture2DInputTarget>("Textures/RGBANoise256x256.png");
+
 	// Init programs
 	Texture2DRenderingTarget* texture = CreateRenderingTarget<Texture2DRenderingTarget>(GL_RGBA32F);
 	DepthRenderingTarget* depth = CreateRenderingTarget<DepthRenderingTarget>();
@@ -274,7 +277,7 @@ void GLRenderingDevice::InitPrograms()
 	RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS);
 	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, {}, { { "color", texture },{ "depth", depth } });
 
-	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND, "Shaders/bgFrag.shader", {}, { { "o_color", texture }, { "depth", depth } });
+	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND, "Shaders/bgFrag.shader", { { "i_noise", RGBANoise256 } }, { { "o_color", texture }, { "depth", depth } });
 	RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND, "Shaders/fgFrag.shader", { { "i_color", texture } }, { });
 	RegisterPostprocessPass(ePostprocessRenderPassType::VINETTE, "Shaders/vinetteFrag.shader", { { "i_color", texture } });
 }

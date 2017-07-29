@@ -72,3 +72,8 @@ void GLRenderingDevice::RenderWorld(World * world)
 	EndFrame();
 }
 
+void Poly::GLRenderingDevice::Init()
+{
+	InitPrograms();
+}
+

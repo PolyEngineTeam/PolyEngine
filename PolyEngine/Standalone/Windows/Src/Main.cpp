@@ -97,10 +97,12 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	// this struct holds Windows event messages
 	MSG msg;
 
+	Poly::Engine Engine;
+
 	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(LoadGame());
 	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(hWnd, viewportRect));
 
-	Poly::Engine Engine(std::move(game), std::move(device));
+	Engine.Init(std::move(game), std::move(device));	
 	Poly::gConsole.LogDebug("Engine loaded successfully");
 
 	// wait for the next message in the queue, store the result in 'msg'

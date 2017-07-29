@@ -6,11 +6,18 @@ using namespace Poly;
 Engine* Poly::gEngine = nullptr;
 
 //------------------------------------------------------------------------------
-Engine::Engine(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device) 
-	: Game(std::move(game)), RenderingDevice(std::move(device))
+Engine::Engine() 
+	: Game()
 {
 	ASSERTE(gEngine == nullptr, "Creating engine twice?");
 	gEngine = this;
+}
+
+void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device)
+{
+	Game = std::move(game);
+	RenderingDevice = std::move(device);
+	RenderingDevice->Init();
 	BaseWorld = std::make_unique<World>();
 	Game->RegisterEngine(this);
 
