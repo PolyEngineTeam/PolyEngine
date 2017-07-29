@@ -25,6 +25,7 @@ namespace SGJ
 		void SetHasChangedSize(bool hasChangedSize) { HasChangedSize = hasChangedSize; }
 		void SetMoveVector(Poly::Vector newMoveVector) { CurrentMoveVector = newMoveVector; }
 		void SetDensityMultiplier(float densityMul) { DensityMultiplier = densityMul; }
+		void SetActivePowerup(ePowerup newPower) { ActivePowerup = newPower; };
 
 		Poly::Vector SpawnPoint;
 		double LastAllowJumpChecked = 0;

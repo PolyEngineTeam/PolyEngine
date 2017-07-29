@@ -29,12 +29,13 @@ void SGJ::GameManagerSystem::LoadLevel(Poly::World* world, const Poly::String& p
 void SGJ::GameManagerSystem::Update(Poly::World* world)
 {
 	GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
-
+	
 	try
 	{
 		for (Physics2DWorldComponent::Collision col : world->GetWorldComponent<Physics2DWorldComponent>()->GetCollidingBodies(world->GetComponent<RigidBody2DComponent>(manager->Player)))
 		{
 			ObstacleComponent* obstacle = col.rb->GetSibling<ObstacleComponent>();
+			PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(manager->Player);
 
 			if (!obstacle) continue;
 
@@ -49,7 +50,30 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 				return;
 			}
 			break;
-
+			case eTileType::FASTERCHARACTER:
+				playerCmp->SetActivePowerup(ePowerup::INCREASED_SPEED);
+				break;
+			case eTileType::HIGHJUMP:
+				playerCmp->SetActivePowerup(ePowerup::HIGH_JUMP);
+				break;
+			case eTileType::LARGERCHARACTER:
+				playerCmp->SetActivePowerup(ePowerup::INCREASED_SIZE);
+				break;
+			case eTileType::SMALLERCHARACTER:
+				playerCmp->SetActivePowerup(ePowerup::DECREASED_SIZE);
+				break;
+			case eTileType::POGOJUMP:
+				playerCmp->SetActivePowerup(ePowerup::POGO_JUMP);
+				break;
+			case eTileType::REVERSEDCONTROLS:
+				playerCmp->SetActivePowerup(ePowerup::REVERSED_CONTROLS);
+				break;
+			case eTileType::LOWJUMP:
+				playerCmp->SetActivePowerup(ePowerup::LOW_JUMP);
+				break;
+			case eTileType::INVERSEDGRAVITY:
+				playerCmp->SetActivePowerup(ePowerup::INVERSED_GRAVITY);
+				break;
 			default:
 				break;
 			}
