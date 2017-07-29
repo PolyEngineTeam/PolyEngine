@@ -10,23 +10,25 @@ namespace SGJ
 	{
 	public:
 
-		PlayerControllerComponent(float movementSpeed = 50.0f, float jumpForce = 250.0f);
+		PlayerControllerComponent(float movementSpeed = 3.0f, float jumpForce = 3.0f);
 
 		float GetMovementSpeed() const { return MovementSpeed; }
-		float GetJumpForce() const { return JumpForce; };
-		float GetDensityMultiplier() const { return DensityMultiplier; };
-		bool GetIsJumping() const { return IsJumping; };
-		bool GetHasChangedSize() const { return HasChangedSize; };
-		ePowerup GetActivePowerup() const { return ActivePowerup; };
-		Poly::Vector GetMoveVector() const { return CurrentMoveVector; };
-		Poly::Vector GetDefaultScale() const { return DefaultScale; };
-
-		void SetIsJumping(bool isJumping) { IsJumping = isJumping; };
-		void SetHasChangedSize(bool hasChangedSize) { HasChangedSize = hasChangedSize; };
-		void SetMoveVector(Poly::Vector newMoveVector) { CurrentMoveVector = newMoveVector; };
-		void SetDensityMultiplier(float densityMul) { DensityMultiplier = densityMul; };
+		float GetJumpForce() const { return JumpForce; }
+		bool GetIsJumping() const { return IsJumping; }
+		bool GetHasChangedSize() const { return HasChangedSize; }
+		ePowerup GetActivePowerup() const { return ActivePowerup; }
+		Poly::Vector GetMoveVector() const { return CurrentMoveVector; }
+		Poly::Vector GetDefaultScale() const { return DefaultScale; }
+		float GetDensityMultiplier() const { return DensityMultiplier; }
+		
+		void SetIsJumping(bool isJumping) { IsJumping = isJumping; }
+		void SetHasChangedSize(bool hasChangedSize) { HasChangedSize = hasChangedSize; }
+		void SetMoveVector(Poly::Vector newMoveVector) { CurrentMoveVector = newMoveVector; }
+		void SetDensityMultiplier(float densityMul) { DensityMultiplier = densityMul; }
 		
 
+		double LastAllowJumpChecked = 0;
+		bool AllowJump = false;
 	private:
 		float MovementSpeed = 50.0f;
 		float JumpForce = 250.0f;

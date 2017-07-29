@@ -87,7 +87,6 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 
 	GetProgram().SetUniform("uTime", Time);
 	GetProgram().SetUniform("uResolution", ResolutionX, ResolutionY);
-	// gConsole.LogInfo("PostprocessRenderingPass::OnRun() Time: {}, uResolution: ({}, {})", Time, ResolutionX, ResolutionY);
 
 	GetProgram().SetUniform("uCameraPosition", CameraPosition);
 	GetProgram().SetUniform("uCameraRotation", CameraRotation);
@@ -111,7 +110,7 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 		GetProgram().SetUniform("uStripesPower",					PostprocessSettings->StripesPower);
 			
 		
-		// gConsole.LogInfo("void PostprocessRenderingPass::OnRun: UseCashetes: {}", PostprocessSettings->UseCashetes);
+		gConsole.LogInfo("void PostprocessRenderingPass::OnRun: UseCashetes: {}", PostprocessSettings->UseCashetes);
 	}
 
 
