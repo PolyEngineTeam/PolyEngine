@@ -14,6 +14,7 @@ DECLARE_GAME()
 enum class eGameComponents
 {
 	LEVELCOMPONENT = (int)Poly::eEngineComponents::_COUNT,
+	BACKGROUND,
 	_COUNT
 };
 

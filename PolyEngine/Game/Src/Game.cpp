@@ -17,12 +17,6 @@ using namespace Poly;
 
 DEFINE_GAME(SGJGame)
 
-enum class eGameComponents
-{
-	BACKGROUND = (int)Poly::eEngineComponents::_COUNT,
-};
-
-
 void SGJGame::Init()
 {
 	// Register Game Components
