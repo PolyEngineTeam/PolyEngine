@@ -269,7 +269,7 @@ void GLRenderingDevice::InitPrograms()
 	Texture2DInputTarget* RGBANoise256 = CreateRenderingTarget<Texture2DInputTarget>("Textures/RGBANoise256x256.png");
 
 	// Init programs
-	Texture2DRenderingTarget* texture = CreateRenderingTarget<Texture2DRenderingTarget>(GL_RGBA32F);
+	Texture2DRenderingTarget* texture = CreateRenderingTarget<Texture2DRenderingTarget>(GL_R11F_G11F_B10F);
 	DepthRenderingTarget* depth = CreateRenderingTarget<DepthRenderingTarget>();
 	// Texture2DRenderingTarget* depth2 = CreateRenderingTarget<Texture2DRenderingTarget>(GL_R16F);
 

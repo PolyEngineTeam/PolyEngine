@@ -66,7 +66,6 @@ namespace SGJ
 
 
 			PowerupSystem::ApplyPowerupsAndInput(world, playerCmp);
-				
 		}
 
 

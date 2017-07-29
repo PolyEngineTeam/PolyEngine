@@ -139,6 +139,8 @@
   <ItemGroup>
     <ClCompile Include="Src\CameraMovementSystem.cpp" />
     <ClCompile Include="Src\Game.cpp" />
+    <ClCompile Include="Src\GameDebugSystem.cpp" />
+    <ClCompile Include="Src\GameDebugWorldComponent.cpp" />
     <ClCompile Include="Src\GameManagerSystem.cpp" />
     <ClCompile Include="Src\GameManagerWorldComponent.cpp" />
     <ClCompile Include="Src\Level.cpp" />
@@ -159,6 +161,8 @@
   <ItemGroup>
     <ClInclude Include="Src\CameraMovementSystem.hpp" />
     <ClInclude Include="Src\Game.hpp" />
+    <ClInclude Include="Src\GameDebugSystem.hpp" />
+    <ClInclude Include="Src\GameDebugWorldComponent.hpp" />
     <ClInclude Include="Src\GameManagerSystem.hpp" />
     <ClInclude Include="Src\GameManagerWorldComponent.hpp" />
     <ClInclude Include="Src\Level.hpp" />
