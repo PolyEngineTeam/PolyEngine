@@ -20,14 +20,20 @@ void SGJ::CameraMovementSystem::CameraMovementUpdatePhase(Poly::World* world)
 		CameraComponent* cameraCmp = std::get<CameraComponent*>(tuple);
 		TransformComponent* transformCmp = std::get<TransformComponent*>(tuple);
 
+		const float cameraHeight = 16.f;
+
 		Vector desiredPosition;
-		desiredPosition.Y = 0.5f;
+		
 		desiredPosition.Z = 8.0f / Tan(cameraCmp->GetFOV() / 2.0f);
 
-		float sideSpan = 8.0f * cameraCmp->GetAspect() - 0.5f;
-		float minW = gameMgrCmp->MinLevelWidth + sideSpan;
-		float maxW = gameMgrCmp->MaxLevelWidth - sideSpan;
-		desiredPosition.X = Clamp(playerTransCmp->GetGlobalTranslation().X, minW, maxW);
+		float verticalSpan = cameraHeight / 2.0f;
+		float horizontalSpan = (cameraHeight * cameraCmp->GetAspect()) / 2.0f;
+		float minW = gameMgrCmp->MinLevelWidth + horizontalSpan;
+		float maxW = gameMgrCmp->MaxLevelWidth - horizontalSpan + 1;
+		float minH = gameMgrCmp->MinLevelHeight + verticalSpan;
+		float maxH = gameMgrCmp->MaxLevelHeight - verticalSpan + 1;
+		desiredPosition.Y = Clamp(playerTransCmp->GetGlobalTranslation().Y, minH, maxH) + 0.5f;
+		desiredPosition.X = Clamp(playerTransCmp->GetGlobalTranslation().X, minW, maxW) - 0.5f;
 
 		transformCmp->SetLocalTranslation(desiredPosition);
 	}

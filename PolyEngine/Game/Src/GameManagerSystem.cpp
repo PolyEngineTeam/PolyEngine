@@ -110,29 +110,35 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 	// calculate level center
 	gameMgrCmp->MinLevelWidth = level->Width;
 	gameMgrCmp->MaxLevelWidth = 0;
-	size_t meanW = 0, meanH = 0;
+	gameMgrCmp->MinLevelHeight = level->Height;
+	gameMgrCmp->MaxLevelHeight = 0;
+	float meanW = 0, meanH = 0;
 	size_t count = 0;
 	for (size_t idx = 0; idx < level->Tiles.GetSize(); ++idx)
 	{
 		if (level->Tiles[idx] != SGJ::eTileType::NOTHING)
 		{
 			size_t w = (idx % level->Width);
-			meanW += w;
-			meanH += (idx / level->Width);
+			size_t h = (idx / level->Width);
 
 			if (w < gameMgrCmp->MinLevelWidth)
 				gameMgrCmp->MinLevelWidth = w;
 			if (w > gameMgrCmp->MaxLevelWidth)
 				gameMgrCmp->MaxLevelWidth = w;
 
-			++count;
+			if (h < gameMgrCmp->MinLevelHeight)
+				gameMgrCmp->MinLevelHeight = h;
+			if (h > gameMgrCmp->MaxLevelHeight)
+				gameMgrCmp->MaxLevelHeight = h;
 		}
 	}
-	meanW /= count;
-	meanH /= count;
+	meanW = (gameMgrCmp->MaxLevelWidth - gameMgrCmp->MinLevelWidth + 1)/2;
+	meanH = (gameMgrCmp->MaxLevelHeight - gameMgrCmp->MinLevelHeight + 1)/2;
 
 	gameMgrCmp->MinLevelWidth -= meanW;
 	gameMgrCmp->MaxLevelWidth -= meanW;
+	gameMgrCmp->MinLevelHeight -= meanH;
+	gameMgrCmp->MaxLevelHeight -= meanH;
 
 	// spawn level tiles
 	for (int idx = 0; idx < level->Tiles.GetSize(); ++idx)
