@@ -17,8 +17,7 @@ namespace SGJ
 	{
 		void Update(Poly::World*);
 
-		Poly::UniqueID CreateGroundObject(Poly::World* world, const Poly::Vector& position, eTileType tileType);
-		Poly::UniqueID CreateObstacleObject(Poly::World* world, const Poly::Vector& position, const Poly::Vector& size, eTileType tileType);
+		Poly::UniqueID CreateTileObject(Poly::World* world, const Poly::Vector& position, eTileType tileType, Poly::eRigidBody2DType physicsPropertie, const Poly::Vector& size, const Poly::Color& color);
 		Poly::UniqueID SpawnPlayer(Poly::World* world, const Poly::Vector& position);
 
 		void LoadLevel(Poly::World* world, const Poly::String& path);

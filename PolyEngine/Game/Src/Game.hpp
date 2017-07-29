@@ -8,8 +8,7 @@ DECLARE_GAME()
 
 enum class eGameComponents
 {
-	GROUND = (int)Poly::eEngineComponents::_COUNT,
-	OBSTACLE,
+	TILE = (int)Poly::eEngineComponents::_COUNT,
 	PLAYER,
 	_COUNT
 };

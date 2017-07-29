@@ -30,9 +30,9 @@ namespace SGJ
 		double LastAllowJumpChecked = 0;
 		bool AllowJump = false;
 	private:
-		float MovementSpeed = 50.0f;
-		float JumpForce = 250.0f;
-		float DensityMultiplier = 1.0f;
+		float MovementSpeed = 50;
+		float JumpForce = 250;
+		float DensityMultiplier = 1;
 		bool IsJumping = false;
 		bool HasChangedSize = false;
 		ePowerup ActivePowerup = ePowerup::NONE;
