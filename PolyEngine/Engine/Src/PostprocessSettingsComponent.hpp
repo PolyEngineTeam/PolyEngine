@@ -11,13 +11,14 @@ namespace Poly {
 	public:
 
 		int UseCashetes = 0;
-		float ColorTempValue = 20000.0f; // 6500.0 from [1000.0, 40000.0]
+		float AberationPower = 0.15f;
+		float ColorTempValue = 10000.0f; // 6500.0 from [1000.0, 40000.0]
 		float ColorTempPower = 1.0f;
 		float ColorTempLuminancePreservation = 0.75f;
-		float AberationPower = 0.55f;
+		float SaturationPower = 1.0f;
 		float GrainPower = 0.1f;
-		float StripesPower = 0.55f;
-		float VinettePower = 0.60f;
+		float StripesPower = 0.15f;
+		float VinettePower = 0.20f;
 
 	private:
 	};
