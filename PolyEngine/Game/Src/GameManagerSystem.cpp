@@ -28,12 +28,13 @@ void SGJ::GameManagerSystem::LoadLevel(Poly::World* world, const Poly::String& p
 void SGJ::GameManagerSystem::Update(Poly::World* world)
 {
 	GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
-
+	
 	try
 	{
 		for (Physics2DWorldComponent::Collision col : world->GetWorldComponent<Physics2DWorldComponent>()->GetCollidingBodies(world->GetComponent<RigidBody2DComponent>(manager->Player)))
 		{
 			TileComponent* obstacle = col.rb->GetSibling<TileComponent>();
+			PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(manager->Player);
 
 			if (!obstacle) continue;
 
@@ -44,11 +45,34 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 			case eTileType::SPIKESLEFT:
 			case eTileType::SPIKESRIGHT:
 			{
-				world->GetComponent<TransformComponent>(manager->Player)->SetLocalTranslation(world->GetComponent<PlayerControllerComponent>(manager->Player)->SpawnPoint);
+				KillPlayer(world);
 				return;
 			}
 			break;
-
+			case eTileType::FASTERCHARACTER:
+				playerCmp->SetActivePowerup(ePowerup::INCREASED_SPEED);
+				break;
+			case eTileType::HIGHJUMP:
+				playerCmp->SetActivePowerup(ePowerup::HIGH_JUMP);
+				break;
+			case eTileType::LARGERCHARACTER:
+				playerCmp->SetActivePowerup(ePowerup::INCREASED_SIZE);
+				break;
+			case eTileType::SMALLERCHARACTER:
+				playerCmp->SetActivePowerup(ePowerup::DECREASED_SIZE);
+				break;
+			case eTileType::POGOJUMP:
+				playerCmp->SetActivePowerup(ePowerup::POGO_JUMP);
+				break;
+			case eTileType::REVERSEDCONTROLS:
+				playerCmp->SetActivePowerup(ePowerup::REVERSED_CONTROLS);
+				break;
+			case eTileType::LOWJUMP:
+				playerCmp->SetActivePowerup(ePowerup::LOW_JUMP);
+				break;
+			case eTileType::INVERSEDGRAVITY:
+				playerCmp->SetActivePowerup(ePowerup::INVERSED_GRAVITY);
+				break;
 			default:
 				break;
 			}
@@ -88,8 +112,8 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	p->SpawnPoint = position;
 	TransformComponent* playerTrans = world->GetComponent<Poly::TransformComponent>(player);
 
-	DeferredTaskSystem::AddComponentImmediate<Poly::Box2DColliderComponent>(world, player, Vector(0.8, 0.8, 0));
-	DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, player, world, eRigidBody2DType::DYNAMIC, 1.0f, 0.02f);
+	DeferredTaskSystem::AddComponentImmediate<Poly::Circle2DColliderComponent>(world, player, 0.4);
+	DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, player, world, eRigidBody2DType::DYNAMIC, 1.0f, 0.3f);
 
 	UniqueID body = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, body);
@@ -103,6 +127,12 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 
 	playerTrans->SetLocalTranslation(position);
 	return player;
+}
+
+void SGJ::GameManagerSystem::KillPlayer(Poly::World* world)
+{
+	GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
+	world->GetComponent<TransformComponent>(manager->Player)->SetLocalTranslation(world->GetComponent<PlayerControllerComponent>(manager->Player)->SpawnPoint);
 }
 
 void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
@@ -166,7 +196,10 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 			case eTileType::RIGIDBODYGROUND:
 				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], level->Tiles[idx] == eTileType::STATICGROUND ? eRigidBody2DType::STATIC : eRigidBody2DType::DYNAMIC, level->Tiles[idx] == eTileType::STATICGROUND ? Vector(1, 1, 1) : Vector(0.9, 0.9, 0.9), level->Tiles[idx] == eTileType::STATICGROUND ? Color(0, 0, 0) : Color(0.5, 0.5, 0.5)));
 				break;
-			
+			case eTileType::PLAYERENDPOS:
+				gameMgrCmp->LevelEntities.PushBack(CreateObstacleObject(world, Vector(posW, -posH, 0), Vector(0, 0, 1), level->Tiles[idx]));
+				break;
+
 			case eTileType::SPIKESBOTTOM:
 			case eTileType::SPIKESTOP:
 			case eTileType::SPIKESLEFT:

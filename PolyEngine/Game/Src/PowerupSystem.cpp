@@ -34,9 +34,13 @@ namespace SGJ
 		case(ePowerup::HIGH_JUMP):
 			move.Y *= 2;
 			break;
+		case(ePowerup::LOW_JUMP):
+			move.Y *= 0.7f;
+			break;
 		case(ePowerup::POGO_JUMP):
-			if (!playerCmp->GetIsJumping())
+			if (playerCmp->AllowJump)
 			{
+				playerCmp->AllowJump = false;
 				move += Vector::UNIT_Y;
 				move.Y *= playerCmp->GetJumpForce();
 			}

@@ -12,7 +12,23 @@ Poly::Box2DColliderComponent::~Box2DColliderComponent()
 {
 }
 
-void Poly::Box2DColliderComponent::SetSize(Vector size)
+void Poly::Box2DColliderComponent::SetSize(const Vector& size)
 {
 	Shape->SetAsBox(size.X / 2, size.Y / 2);
+}
+
+
+Poly::Circle2DColliderComponent::Circle2DColliderComponent(float size)
+{
+	Shape = std::make_unique<b2CircleShape>();
+	Shape->m_radius = size;
+}
+
+Poly::Circle2DColliderComponent::~Circle2DColliderComponent()
+{
+}
+
+void Poly::Circle2DColliderComponent::SetSize(float size)
+{
+	Shape->m_radius = size;
 }
