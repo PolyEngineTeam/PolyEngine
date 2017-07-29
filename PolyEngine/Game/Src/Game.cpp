@@ -20,6 +20,7 @@
 #include "ObstacleComponent.hpp"
 #include "PlayerControllerComponent.hpp"
 #include "PlayerUpdateSystem.hpp"
+#include "CameraMovementSystem.hpp"
 
 using namespace Poly;
 
@@ -36,6 +37,8 @@ void SGJGame::Init()
 	gEngine->RegisterWorldComponent<SGJ::GameManagerWorldComponent>((int)eGameWorldComponents::GAME_MGR);
 
 	gEngine->RegisterGameUpdatePhase(SGJ::PlayerUpdateSystem::Update);
+	gEngine->RegisterGameUpdatePhase(SGJ::CameraMovementSystem::CameraMovementUpdatePhase);
+	
 	
 	DeferredTaskSystem::AddWorldComponentImmediate<SGJ::GameManagerWorldComponent>(gEngine->GetWorld());
 

@@ -17,5 +17,7 @@ namespace SGJ
 		Poly::Dynarray<Poly::UniqueID> OtherEntities;
 
 		Poly::Dynarray<Level*> Levels;
+		size_t CurrentLevelID = 0;
+		int MinLevelWidth, MaxLevelWidth;
 	};
 }

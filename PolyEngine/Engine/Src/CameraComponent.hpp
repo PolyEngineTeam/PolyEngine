@@ -15,6 +15,9 @@ namespace Poly {
 		const Matrix& GetProjectionMatrix() const { return Projection; }
 		const Matrix& GetModelViewMatrix() const { return ModelView; }
 		const Matrix& GetMVP() const { return MVP; }
+
+		const Angle& GetFOV() const { return Fov; }
+		float GetAspect() const { return Aspect; }
 	private:
 		Matrix Projection;
 		Matrix ModelView;

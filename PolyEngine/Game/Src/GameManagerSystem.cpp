@@ -101,24 +101,38 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 {
 	// cleanup previous level
 	DespawnLevel(world);
-	
+
 	GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
 	Level* level = gameMgrCmp->Levels[idx];
 
+	gameMgrCmp->CurrentLevelID = idx;
+
 	// calculate level center
+	gameMgrCmp->MinLevelWidth = level->Width;
+	gameMgrCmp->MaxLevelWidth = 0;
 	size_t meanW = 0, meanH = 0;
 	size_t count = 0;
 	for (size_t idx = 0; idx < level->Tiles.GetSize(); ++idx)
 	{
 		if (level->Tiles[idx] != SGJ::eTileType::NOTHING)
 		{
-			meanW += (idx % level->Width);
+			size_t w = (idx % level->Width);
+			meanW += w;
 			meanH += (idx / level->Width);
+
+			if (w < gameMgrCmp->MinLevelWidth)
+				gameMgrCmp->MinLevelWidth = w;
+			if (w > gameMgrCmp->MaxLevelWidth)
+				gameMgrCmp->MaxLevelWidth = w;
+
 			++count;
 		}
 	}
 	meanW /= count;
 	meanH /= count;
+
+	gameMgrCmp->MinLevelWidth -= meanW;
+	gameMgrCmp->MaxLevelWidth -= meanW;
 
 	// spawn level tiles
 	for (int idx = 0; idx < level->Tiles.GetSize(); ++idx)
@@ -167,7 +181,6 @@ void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
 	gameMgrCmp->Camera = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(gEngine->GetWorld(), gameMgrCmp->Camera);
 	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(gEngine->GetWorld(), gameMgrCmp->Camera, 60_deg, 1.0f, 1000.f);
-	DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(gEngine->GetWorld(), gameMgrCmp->Camera, 10.0f, 0.003f);
 
 	// Set some camera position
 	Poly::TransformComponent* cameraTrans = gEngine->GetWorld()->GetComponent<Poly::TransformComponent>(gameMgrCmp->Camera);
