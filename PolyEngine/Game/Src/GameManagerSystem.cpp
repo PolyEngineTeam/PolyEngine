@@ -46,7 +46,7 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 			case eTileType::SPIKESLEFT:
 			case eTileType::SPIKESRIGHT:
 			{
-				world->GetComponent<TransformComponent>(manager->Player)->SetLocalTranslation(world->GetComponent<PlayerControllerComponent>(manager->Player)->SpawnPoint);
+				KillPlayer(world);
 				return;
 			}
 			break;
@@ -114,7 +114,10 @@ Poly::UniqueID GameManagerSystem::CreateObstacleObject(Poly::World* world, const
 	Poly::TransformComponent* obstacleTrans = world->GetComponent<Poly::TransformComponent>(obstacle);
 
 	DeferredTaskSystem::AddComponentImmediate<Poly::Box2DColliderComponent>(world, obstacle, size);
-	DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, obstacle, world, eRigidBody2DType::STATIC);
+	if(tileType == eTileType::PLAYERENDPOS)
+		DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, obstacle, world, eRigidBody2DType::STATIC, RigidBody2DSensorTag{});
+	else
+		DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, obstacle, world, eRigidBody2DType::STATIC);
 
 	UniqueID mesh = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, mesh);
@@ -154,6 +157,12 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 
 	playerTrans->SetLocalTranslation(position);
 	return player;
+}
+
+void SGJ::GameManagerSystem::KillPlayer(Poly::World* world)
+{
+	GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
+	world->GetComponent<TransformComponent>(manager->Player)->SetLocalTranslation(world->GetComponent<PlayerControllerComponent>(manager->Player)->SpawnPoint);
 }
 
 void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
@@ -216,6 +225,9 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 			case eTileType::STATICGROUND:
 			case eTileType::RIGIDBODYGROUND:
 				gameMgrCmp->LevelEntities.PushBack(CreateGroundObject(world, Vector(posW, -posH, 0), level->Tiles[idx]));
+				break;
+			case eTileType::PLAYERENDPOS:
+				gameMgrCmp->LevelEntities.PushBack(CreateObstacleObject(world, Vector(posW, -posH, 0), Vector(0, 0, 1), level->Tiles[idx]));
 				break;
 
 			case eTileType::SPIKESBOTTOM:

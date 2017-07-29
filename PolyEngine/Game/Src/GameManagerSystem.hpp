@@ -21,6 +21,8 @@ namespace SGJ
 		Poly::UniqueID CreateObstacleObject(Poly::World* world, const Poly::Vector& position, const Poly::Vector& size, eTileType tileType);
 		Poly::UniqueID SpawnPlayer(Poly::World* world, const Poly::Vector& position);
 
+		void KillPlayer(Poly::World* world);
+
 		void LoadLevel(Poly::World* world, const Poly::String& path);
 		void SpawnLevel(Poly::World* world, size_t idx);
 		void DespawnLevel(Poly::World* world);
