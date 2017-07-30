@@ -86,6 +86,10 @@ namespace SGJ
 
 		Vector jump(0, 0, 0);
 		jump.Y = playerCmp->GetJumpForce();
+
+		if (playerCmp->GetActivePowerup() == ePowerup::INVERSED_GRAVITY)
+			jump.Y = -jump.Y;
+
 		rigidbodyCmp->ApplyImpulseToCenter(jump);
 		GameManagerSystem::PlaySample(world, "Audio/jump-sound.ogg", transCmp->GetGlobalTranslation(), 1.5, 1.5);
 	}
@@ -106,8 +110,9 @@ namespace SGJ
 		bool wasInAir = playerCmp->InAir;
 		playerCmp->InAir = true;
 		Physics2DWorldComponent* physicsWorldComponent = world->GetWorldComponent<Physics2DWorldComponent>();
+
 		for (Physics2DWorldComponent::Collision col : physicsWorldComponent->GetCollidingBodies(rigidbodyCmp))
-			if (col.Normal.Dot(Vector::UNIT_Y) < -0.7)
+			if (playerCmp->GetActivePowerup() == ePowerup::INVERSED_GRAVITY ? col.Normal.Dot(Vector::UNIT_Y) > 0.7 : col.Normal.Dot(Vector::UNIT_Y) < -0.7)
 			{
 				if (wasInAir)
 					playerCmp->LastLandTimeStart = TimeSystem::GetTimerElapsedTime(world, Poly::eEngineTimer::GAMEPLAY);

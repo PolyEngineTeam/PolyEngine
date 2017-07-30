@@ -1,4 +1,4 @@
-#include "BlinnPhongRenderingPass.hpp"
+#include "TransparentRenderingPass.hpp"
 
 #include "GLMeshDeviceProxy.hpp"
 #include "GLTextureDeviceProxy.hpp"
@@ -15,8 +15,8 @@ using namespace Poly;
 const float IntensityThreshold = 0.05f;
 const size_t MAX_POINT_LIGHT_COUNT = 8;
 
-BlinnPhongRenderingPass::BlinnPhongRenderingPass()
-: RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
+TransparentRenderingPass::TransparentRenderingPass()
+	: RenderingPassBase("Shaders/transparentVert.shader", "Shaders/transparentFrag.shader")
 {
 	GetProgram().RegisterUniform("vec4", "uDiffuseLight.Color");
 	GetProgram().RegisterUniform("float", "uDiffuseLight.Intensity");
@@ -38,13 +38,13 @@ BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 	GetProgram().RegisterUniform("int", "uPointLightCount");
 }
 
-void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera, const AABox& rect)
+void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera, const AABox& rect)
 {
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
 
 	DiffuseLightSourceWorldComponent* diffuseCmp = world->GetWorldComponent<DiffuseLightSourceWorldComponent>();
-	
+
 	GetProgram().SetUniform("uDiffuseLight.Color", diffuseCmp->GetColor());
 	GetProgram().SetUniform("uDiffuseLight.Intensity", diffuseCmp->GetIntensity());
 
@@ -73,7 +73,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		GetProgram().SetUniform(baseName + "Base.Intensity", pointLightCmp->GetIntensity());
 		GetProgram().SetUniform(baseName + "Position", transformCmp->GetGlobalTranslation());
 		GetProgram().SetUniform(baseName + "Attenuation", pointLightCmp->GetAttenuation());
-		float range = sqrt(((1.f / IntensityThreshold) - 1.0f)/ pointLightCmp->GetAttenuation());
+		float range = sqrt(((1.f / IntensityThreshold) - 1.0f) / pointLightCmp->GetAttenuation());
 		GetProgram().SetUniform(baseName + "Range", range);
 		// use only first on scene
 		++pointLightsCount;
@@ -88,7 +88,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	float horizontalSpan = (cameraHeight * camera->GetAspect()) / 2.0f;
 	Vector cameraPos = camera->GetSibling<TransformComponent>()->GetGlobalTranslation();
 
-	
+
 
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
@@ -96,7 +96,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		const TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
 
-		if (meshCmp->IsTransparent())
+		if (!meshCmp->IsTransparent())
 			continue;
 
 		Vector objPos = transCmp->GetGlobalTranslation();
