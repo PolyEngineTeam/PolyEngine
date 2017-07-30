@@ -28,6 +28,7 @@ namespace Poly
 		enum class eGeometryRenderPassType
 		{
 			BLINN_PHONG,
+			TRANSPARENT_GEOMETRY,
 			DEBUG_NORMALS,
 			TEXT_2D,
 			_COUNT

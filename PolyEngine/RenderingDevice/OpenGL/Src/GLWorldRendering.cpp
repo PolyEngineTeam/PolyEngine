@@ -59,6 +59,18 @@ void GLRenderingDevice::RenderWorld(World* world)
 		GeometryRenderingPasses[eGeometryRenderPassType::BLINN_PHONG]->Run(world, kv.second.GetCamera(), rect);
 
 		glDepthMask(GL_FALSE);
+		
+		glEnable(GL_BLEND);
+
+		// TODO test these blending options
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//glBlendFunc(GL_ONE, GL_ONE);
+		//glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
+
+		GeometryRenderingPasses[eGeometryRenderPassType::TRANSPARENT_GEOMETRY]->Run(world, kv.second.GetCamera(), rect);
+
+		glDisable(GL_BLEND);
+
 		glDisable(GL_DEPTH_TEST);
 
 		// Run postprocess passes

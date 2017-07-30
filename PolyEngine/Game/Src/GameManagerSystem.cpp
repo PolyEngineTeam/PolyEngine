@@ -173,11 +173,6 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 
 void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 {
-	UniqueID backgroundPlayer = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<SoundEmitterComponent>(world, backgroundPlayer, "Audio/Reloaded_installer_1.ogg", eResourceSource::GAME);
-	SoundSystem::PlayEmitter(world, backgroundPlayer);
-	SoundSystem::LoopEmitter(world, backgroundPlayer);
-
 	// cleanup previous level
 	DespawnLevel(world);
 
@@ -305,6 +300,11 @@ void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
 	//gEngine->RegisterGameUpdatePhase(BackgroundSystem::BackgroundSystemSystemPhase);
 
 	// SETUP SCENE HERE
+
+	UniqueID backgroundPlayer = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<SoundEmitterComponent>(world, backgroundPlayer, "Audio/Reloaded_installer_1.ogg", eResourceSource::GAME);
+	SoundSystem::PlayEmitter(world, backgroundPlayer);
+	SoundSystem::LoopEmitter(world, backgroundPlayer);
 
 	UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(gEngine->GetWorld(), id);

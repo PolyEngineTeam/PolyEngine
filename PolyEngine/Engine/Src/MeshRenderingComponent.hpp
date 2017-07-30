@@ -15,6 +15,7 @@ namespace Poly {
 
 		const MeshResource* GetMesh() const { return Mesh; }
 		const Color& GetBaseColor() const { return BaseColor; }
+		bool IsTransparent() const { return BaseColor.A < 1.0f; }
 	private:
 		MeshResource* Mesh = nullptr;
 		Color BaseColor;
