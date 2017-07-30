@@ -44,22 +44,27 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 			++i;
 	}
 
+	PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(manager->Player);
+	if (playerCmp->DeathCoolDowntime > 0)
+		return;
+
 	// Proces triggers
 	for (Physics2DWorldComponent::Collision col : world->GetWorldComponent<Physics2DWorldComponent>()->GetCollidingBodies(world->GetComponent<RigidBody2DComponent>(manager->Player)))
 	{
 		TileComponent* obstacle = col.rb->GetSibling<TileComponent>();
-		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(manager->Player);
+		
 
 		if (!obstacle) continue;
 
 		switch (obstacle->GetTileType())
-		{
+ 		{
 		case eTileType::SPIKESBOTTOM:
 		case eTileType::SPIKESTOP:
 		case eTileType::SPIKESLEFT:
 		case eTileType::SPIKESRIGHT:
 		{
 			PlayerUpdateSystem::KillPlayer(world);
+			PlayerUpdateSystem::PushPlayer(world, -col.Normal, 40.0f);
 			return;
 		}
 		case eTileType::PLAYERENDPOS:
@@ -261,12 +266,8 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 void SGJ::GameManagerSystem::DespawnLevel(Poly::World* world)
 {
 	GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
-	for (int i = 0; i < gameMgrCmp->LevelEntities.GetSize(); i++)
-	{
-		DeferredTaskSystem::DestroyEntityImmediate(world, gameMgrCmp->LevelEntities[i]);
-		gameMgrCmp->LevelEntities.RemoveByIdx(i);
-	}
-
+	for (auto ent : gameMgrCmp->LevelEntities)
+		DeferredTaskSystem::DestroyEntityImmediate(world, ent);
 }
 
 void SGJ::GameManagerSystem::PlaySample(Poly::World* world, const String& file, const Vector& position, float pitch, float gain)
