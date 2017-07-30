@@ -114,7 +114,7 @@ Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Pol
 	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, mesh, meshSource, eResourceSource::GAME, color);
 	TransformComponent* meshTrans = world->GetComponent<TransformComponent>(mesh);
 	meshTrans->SetParent(tileTrans);
-	//meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
+	meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
 	switch (tileType)
 	{
 	case eTileType::SPIKESBOTTOM:
@@ -246,7 +246,7 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 			case eTileType::SPIKESTOP:
 			case eTileType::SPIKESLEFT:
 			case eTileType::SPIKESRIGHT:
-				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/spikes.obj", eRigidBody2DType::STATIC, Vector(1, 1, 1), Color(1, 0, 0)));
+				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/spikes.fbx", eRigidBody2DType::STATIC, Vector(0.5, 0.5, 0.25), Color(1, 0, 0)));
 				break;
 
 			default:
@@ -260,8 +260,12 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 void SGJ::GameManagerSystem::DespawnLevel(Poly::World* world)
 {
 	GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
-	for (auto ent : gameMgrCmp->LevelEntities)
-		DeferredTaskSystem::DestroyEntityImmediate(world, ent);
+	for (int i = 0; i < gameMgrCmp->LevelEntities.GetSize(); i++)
+	{
+		DeferredTaskSystem::DestroyEntityImmediate(world, gameMgrCmp->LevelEntities[i]);
+		gameMgrCmp->LevelEntities.RemoveByIdx(i);
+	}
+
 }
 
 void SGJ::GameManagerSystem::PlaySample(Poly::World* world, const String& file, const Vector& position, float pitch, float gain)
