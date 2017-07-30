@@ -27,7 +27,7 @@ void SGJ::CameraMovementSystem::CameraMovementUpdatePhase(Poly::World* world)
 		TransformComponent* transformCmp = std::get<TransformComponent*>(tuple);
 
 		float velocity = rigidbodyCmp->GetLinearSpeed().Length2();
-		Angle TargetFov = Lerp(60_deg, 47_deg, Clamp(velocity/750.0f, 0.0f, 1.0f));
+		Angle TargetFov = Lerp(60_deg, 47_deg, Clamp(velocity/350.0f, 0.0f, 1.0f));
 		cameraCmp->SetTargetFOV(TargetFov);
 		cameraCmp->SetFOV(Lerp(cameraCmp->GetFOV(), cameraCmp->GetTargetFOV(), deltaTime));
 
