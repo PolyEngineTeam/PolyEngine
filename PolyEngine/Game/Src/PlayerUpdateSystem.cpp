@@ -21,31 +21,38 @@ namespace SGJ
 		GameManagerWorldComponent* mgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
 		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(mgrCmp->Player);
 		
-		// Jumping
-		UpdateInAir(world);	
-		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::SPACE))
-			TryPlayerJump(world);
-		ProcessJumpStrech(world);
+		if (playerCmp->DeathCoolDowntime > 0)
+			UpdateDeathAction(world);
+		else
+		{
 
-		// Moving
-		const float modifier = (playerCmp->InAir ? 0.2f : 1.0f);
-		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::LEFT))
-			playerCmp->SetMoveVector(Vector(-deltaTime * modifier * playerCmp->GetMovementSpeed(), 0, 0));
-		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::RIGHT))
-			playerCmp->SetMoveVector(Vector(deltaTime * modifier * playerCmp->GetMovementSpeed(), 0, 0));
-		PowerupSystem::ApplyPowerupsAndInput(world, playerCmp);
+			// Jumping
+			UpdateInAir(world);
+			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::SPACE))
+				TryPlayerJump(world);
+			ProcessJumpStrech(world);
+
+			// Moving
+			const float modifier = (playerCmp->InAir ? 0.2f : 1.0f);
+			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::LEFT))
+				playerCmp->SetMoveVector(Vector(-deltaTime * modifier * playerCmp->GetMovementSpeed(), 0, 0));
+			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::RIGHT))
+				playerCmp->SetMoveVector(Vector(deltaTime * modifier * playerCmp->GetMovementSpeed(), 0, 0));
+			PowerupSystem::ApplyPowerupsAndInput(world, playerCmp);
 
 
-		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::ESCAPE))
-			ResetPlayer(world, world->GetComponent<PlayerControllerComponent>(mgrCmp->Player)->SpawnPoint);
+			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::ESCAPE))
+				ResetPlayer(world, world->GetComponent<PlayerControllerComponent>(mgrCmp->Player)->SpawnPoint);
+		}
 	}
 
 	void PlayerUpdateSystem::KillPlayer(Poly::World * world)
 	{
 		GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
 		TransformComponent* transCmp = world->GetComponent<TransformComponent>(manager->Player);
+		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(manager->Player);
 		GameManagerSystem::PlaySample(world, "Audio/death-sound.ogg", transCmp->GetGlobalTranslation(), 1.0, 1.8);
-		ResetPlayer(world, world->GetComponent<PlayerControllerComponent>(manager->Player)->SpawnPoint);
+		playerCmp->DeathCoolDowntime = 2.0f;
 	}
 
 	void PlayerUpdateSystem::ResetPlayer(Poly::World* world, const Vector& spawnLocation)
@@ -63,6 +70,7 @@ namespace SGJ
 
 		playerCmp->InAir = false;
 		playerCmp->JumpCooldownTimer = 0.f;
+		playerCmp->DeathCoolDowntime = 0.f;
 
 		playerCmp->SetActivePowerup(ePowerup(6));
 
@@ -161,5 +169,28 @@ namespace SGJ
 			float scaleY = Lerp(2.5f, 1.2f, Clamp(ElasticEaseOut(tY), 0.0f, 1.0f));
 			playerTrans->SetLocalScale(playerTrans->GetGlobalRotation().GetConjugated() * Vector(scaleX, scaleY, 1.0f));
 		}
+	}
+
+	void PlayerUpdateSystem::UpdateDeathAction(Poly::World * world)
+	{
+		GameManagerWorldComponent* mgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
+		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(mgrCmp->Player);
+		RigidBody2DComponent* rigidbodyCmp = world->GetComponent<RigidBody2DComponent>(mgrCmp->Player);
+		float deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
+
+		if (playerCmp->DeathCoolDowntime >= 0)
+			playerCmp->DeathCoolDowntime -= deltaTime;
+
+		if (playerCmp->DeathCoolDowntime <= 0)
+		{
+			ResetPlayer(world, playerCmp->SpawnPoint);
+		}
+	}
+
+	void PlayerUpdateSystem::PushPlayer(Poly::World* world, const Poly::Vector& normal, float force)
+	{
+		GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
+		RigidBody2DComponent* rbCmp = world->GetComponent<RigidBody2DComponent>(manager->Player);
+		rbCmp->ApplyImpulseToCenter(normal * force);
 	}
 }

@@ -33,9 +33,10 @@ namespace SGJ
 		// Jumping logic
 		bool InAir = false;
 		float JumpCooldownTimer = 0.f;
+		float DeathCoolDowntime = 0.f;
 		double LastLandTimeStart = 0;
 		double LastJumpTimeStart = 0;
-	
+		
 	private:
 		const float DefJumpForce;
 		float MovementSpeed = 50;
