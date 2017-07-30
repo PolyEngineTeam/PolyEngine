@@ -12,7 +12,7 @@
 using namespace Poly;
 
 Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType type, float density, float friction)
-	: BodyType(type)
+	: BodyType(type), BodyWorld(world)
 {
 	ImplData = std::make_unique<RigidBody2DData>();
 
@@ -40,7 +40,7 @@ Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType 
 }
 
 Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType type, RigidBody2DSensorTag sensorTag)
-	: BodyType(type)
+	: BodyType(type), BodyWorld(world)
 {
 	ImplData = std::make_unique<RigidBody2DData>();
 
@@ -68,9 +68,10 @@ Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType 
 
 Poly::RigidBody2DComponent::~RigidBody2DComponent()
 {
+	BodyWorld->GetWorldComponent<Physics2DWorldComponent>()->GetPhysicsWorld()->DestroyBody(ImplData->Body);
 }
 
-void Poly::RigidBody2DComponent::FinishInit()
+void Poly::RigidBody2DComponent::EnsureInit()
 {
 	if (!ImplData->Fixture)
 	{

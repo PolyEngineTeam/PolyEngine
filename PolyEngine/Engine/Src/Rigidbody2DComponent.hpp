@@ -47,8 +47,9 @@ namespace Poly
 
 		eRigidBody2DType GetBodyType() const { return BodyType; }
 	private:
-		void FinishInit();
+		void EnsureInit();
 
+		World* BodyWorld;
 		eRigidBody2DType BodyType;
 		std::unique_ptr<RigidBody2DData> ImplData;
 	};

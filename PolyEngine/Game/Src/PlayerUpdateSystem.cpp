@@ -28,29 +28,43 @@ namespace SGJ
 		ProcessJumpStrech(world);
 
 		// Moving
-		Vector move(0, 0, 0);
+		const float modifier = (playerCmp->InAir ? 0.2f : 1.0f);
 		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::LEFT))
-			playerCmp->SetMoveVector(Vector(-deltaTime * playerCmp->GetMovementSpeed(), 0, 0));
+			playerCmp->SetMoveVector(Vector(-deltaTime * modifier * playerCmp->GetMovementSpeed(), 0, 0));
 		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::RIGHT))
-			playerCmp->SetMoveVector(Vector(deltaTime * playerCmp->GetMovementSpeed(), 0, 0));
+			playerCmp->SetMoveVector(Vector(deltaTime * modifier * playerCmp->GetMovementSpeed(), 0, 0));
 		PowerupSystem::ApplyPowerupsAndInput(world, playerCmp);
+
+
+		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::ESCAPE))
+			ResetPlayer(world, world->GetComponent<PlayerControllerComponent>(mgrCmp->Player)->SpawnPoint);
 	}
 
 	void PlayerUpdateSystem::KillPlayer(Poly::World * world)
 	{
 		GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
 		TransformComponent* transCmp = world->GetComponent<TransformComponent>(manager->Player);
-		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(manager->Player);
 		GameManagerSystem::PlaySample(world, "Audio/death-sound.ogg", transCmp->GetGlobalTranslation(), 1.0, 1.8);
-		
-		world->GetComponent<TransformComponent>(manager->Player)->SetLocalTranslation(world->GetComponent<PlayerControllerComponent>(manager->Player)->SpawnPoint);
+		ResetPlayer(world, world->GetComponent<PlayerControllerComponent>(manager->Player)->SpawnPoint);
+	}
 
+	void PlayerUpdateSystem::ResetPlayer(Poly::World* world, const Vector& spawnLocation)
+	{
+		GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
+		TransformComponent* transCmp = world->GetComponent<TransformComponent>(manager->Player);
+		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(manager->Player);
 		RigidBody2DComponent* rbCmp = world->GetComponent<RigidBody2DComponent>(manager->Player);
+
+		transCmp->SetLocalTranslation(spawnLocation);
+		playerCmp->SpawnPoint = spawnLocation;
+
 		rbCmp->SetLinearSpeed(Vector::ZERO);
 		rbCmp->SetRotationSpeed(0.f);
-		
+
 		playerCmp->InAir = false;
 		playerCmp->JumpCooldownTimer = 0.f;
+
+		rbCmp->UpdatePosition();
 	}
 
 	void PlayerUpdateSystem::TryPlayerJump(Poly::World* world)
@@ -73,7 +87,7 @@ namespace SGJ
 		Vector jump(0, 0, 0);
 		jump.Y = playerCmp->GetJumpForce();
 		rigidbodyCmp->ApplyImpulseToCenter(jump);
-		GameManagerSystem::PlaySample(world, "Audio/jump-sound.ogg", transCmp->GetGlobalTranslation(), 1.5, 1.8);
+		GameManagerSystem::PlaySample(world, "Audio/jump-sound.ogg", transCmp->GetGlobalTranslation(), 1.5, 1.5);
 	}
 
 	void PlayerUpdateSystem::UpdateInAir(Poly::World* world)
@@ -101,6 +115,11 @@ namespace SGJ
 				playerCmp->InAir = false;
 				break;
 			}
+
+		if(!playerCmp->InAir)
+			rigidbodyCmp->SetDamping(3);
+		else
+			rigidbodyCmp->SetDamping(0.1);
 	}
 
 	float PlayerUpdateSystem::ElasticEaseOut(float p)
