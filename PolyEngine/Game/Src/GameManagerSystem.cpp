@@ -14,6 +14,8 @@
 #include "TileComponent.hpp"
 #include "PlayerControllerComponent.hpp"
 #include "Physics2DWorldComponent.hpp"
+#include <SoundEmitterComponent.hpp>
+#include <SoundSystem.hpp>
 
 using namespace SGJ;
 using namespace Poly;
@@ -29,6 +31,18 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 {
 	GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
 	
+	for (size_t i=0; i < manager->SoundSampleEntities.GetSize();)
+	{
+		UniqueID soundEnt = manager->SoundSampleEntities[i];
+		if (!SoundSystem::IsEmmiterActive(world, soundEnt))
+		{
+			manager->SoundSampleEntities.RemoveByIdx(i);
+			DeferredTaskSystem::DestroyEntity(world, soundEnt);
+		}
+		else
+			++i;
+	}
+
 	try
 	{
 		for (Physics2DWorldComponent::Collision col : world->GetWorldComponent<Physics2DWorldComponent>()->GetCollidingBodies(world->GetComponent<RigidBody2DComponent>(manager->Player)))
@@ -44,8 +58,9 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 			case eTileType::SPIKESTOP:
 			case eTileType::SPIKESLEFT:
 			case eTileType::SPIKESRIGHT:
+			case eTileType::PLAYERENDPOS:
 			{
-				//KillPlayer(world);
+				PlayerUpdateSystem::KillPlayer(world);
 				return;
 			}
 			break;
@@ -136,12 +151,6 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	return player;
 }
 
-void SGJ::GameManagerSystem::KillPlayer(Poly::World* world)
-{
-	GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
-	world->GetComponent<TransformComponent>(manager->Player)->SetLocalTranslation(world->GetComponent<PlayerControllerComponent>(manager->Player)->SpawnPoint);
-}
-
 void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 {
 	// cleanup previous level
@@ -230,6 +239,22 @@ void SGJ::GameManagerSystem::DespawnLevel(Poly::World* world)
 	GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
 	for (auto ent : gameMgrCmp->LevelEntities)
 		DeferredTaskSystem::DestroyEntityImmediate(world, ent);
+}
+
+void SGJ::GameManagerSystem::PlaySample(Poly::World* world, const String& file, const Vector& position, float pitch, float gain)
+{
+	GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
+
+	UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, id);
+	Poly::TransformComponent* trans = world->GetComponent<Poly::TransformComponent>(id);
+	trans->SetLocalTranslation(position);
+	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(world, id, file, eResourceSource::GAME);
+	
+	SoundSystem::SetEmitterFrequency(world, id, pitch);
+	SoundSystem::SetEmitterGain(world, id, gain);
+	SoundSystem::PlayEmitter(world, id);
+	gameMgrCmp->SoundSampleEntities.PushBack(id);
 }
 
 void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)

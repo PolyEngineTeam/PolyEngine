@@ -16,6 +16,8 @@ namespace SGJ
 		Poly::Dynarray<Poly::UniqueID> LevelEntities;
 		Poly::Dynarray<Poly::UniqueID> OtherEntities;
 
+		Poly::Dynarray<Poly::UniqueID> SoundSampleEntities;
+
 		Poly::Dynarray<Level*> Levels;
 		size_t CurrentLevelID = 0;
 		float MinLevelWidth, MaxLevelWidth;

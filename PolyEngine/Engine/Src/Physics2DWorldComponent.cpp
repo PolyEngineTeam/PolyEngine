@@ -60,7 +60,11 @@ Poly::Physics2DWorldComponent::~Physics2DWorldComponent()
 
 const Dynarray<Physics2DWorldComponent::Collision>& Poly::Physics2DWorldComponent::GetCollidingBodies(RigidBody2DComponent* rb) const
 {
-	return OverlapingBodies.at(rb);
+	static Dynarray<Physics2DWorldComponent::Collision> EMPTY;
+	auto it = OverlapingBodies.find(rb);
+	if (it == OverlapingBodies.end())
+		return EMPTY;
+	return it->second;
 }
 
 void Poly::Physics2DWorldComponent::SetGravity(const Vector& gravity) const
