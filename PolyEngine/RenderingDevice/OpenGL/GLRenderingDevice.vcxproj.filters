@@ -59,6 +59,9 @@
     <ClInclude Include="Src\PostprocessRenderingPass.hpp">
       <Filter>Source Files\RenderingPasses\PostprocessPasses</Filter>
     </ClInclude>
+    <ClInclude Include="Src\TransparentRenderingPass.hpp">
+      <Filter>Source Files\RenderingPasses\BasePasses</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\GLRenderingDevice.cpp">
@@ -93,6 +96,9 @@
     </ClCompile>
     <ClCompile Include="Src\PostprocessRenderingPass.cpp">
       <Filter>Source Files\RenderingPasses\PostprocessPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\TransparentRenderingPass.cpp">
+      <Filter>Source Files\RenderingPasses\BasePasses</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
