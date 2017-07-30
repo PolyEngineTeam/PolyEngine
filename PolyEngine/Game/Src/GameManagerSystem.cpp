@@ -158,7 +158,6 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 {
 	UniqueID backgroundPlayer = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<SoundEmitterComponent>(world, backgroundPlayer, "Audio/Reloaded_installer_1.ogg", eResourceSource::GAME);
-	SoundSystem::SetEmitterGain(world, backgroundPlayer, 4);
 	SoundSystem::PlayEmitter(world, backgroundPlayer);
 	SoundSystem::LoopEmitter(world, backgroundPlayer);
 
