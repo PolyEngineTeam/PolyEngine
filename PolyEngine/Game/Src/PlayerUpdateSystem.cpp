@@ -100,6 +100,9 @@ namespace SGJ
 		TransformComponent* transCmp = world->GetComponent<TransformComponent>(manager->Player);
 		GameManagerSystem::PlaySample(world, "Audio/death-sound.ogg", transCmp->GetGlobalTranslation(), 1.0, 1.8);
 		
+		RigidBody2DComponent* rbCmp = world->GetComponent<RigidBody2DComponent>(manager->Player);
+		rbCmp->SetLinearSpeed(Vector::ZERO);
+		rbCmp->SetRotationSpeed(0.f);
 		
 		world->GetComponent<TransformComponent>(manager->Player)->SetLocalTranslation(world->GetComponent<PlayerControllerComponent>(manager->Player)->SpawnPoint);
 	}

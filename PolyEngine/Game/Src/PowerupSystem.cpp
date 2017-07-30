@@ -44,7 +44,7 @@ namespace SGJ
 				//playerCmp->AllowJump = false;
 				//move += Vector::UNIT_Y;
 				//move.Y *= playerCmp->GetJumpForce();
-				PlayerUpdateSystem::PlayerJump();
+				PlayerUpdateSystem::PlayerJump(world);
 			}
 			break;
 		case(ePowerup::INCREASED_SPEED):
@@ -107,8 +107,8 @@ namespace SGJ
 		}
 
 		//apply validated movement vector
-		if (rbCmp->GetLinearSpeed().Length() < speedConstraint)
+		if (rbCmp->GetLinearSpeed().Length() < speedConstraint && move.Length() > 0)
 			rbCmp->ApplyImpulseToCenter(move * playerCmp->GetDensityMultiplier());
-
+		playerCmp->SetMoveVector(Vector::ZERO);
 	}
 }
