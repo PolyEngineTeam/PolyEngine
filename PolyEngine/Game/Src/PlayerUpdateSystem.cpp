@@ -97,6 +97,10 @@ namespace SGJ
 	void PlayerUpdateSystem::KillPlayer(Poly::World * world)
 	{
 		GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
+		TransformComponent* transCmp = world->GetComponent<TransformComponent>(manager->Player);
+		GameManagerSystem::PlaySample(world, "Audio/death-sound.ogg", transCmp->GetGlobalTranslation(), 1.0, 1.8);
+		
+		
 		world->GetComponent<TransformComponent>(manager->Player)->SetLocalTranslation(world->GetComponent<PlayerControllerComponent>(manager->Player)->SpawnPoint);
 	}
 
