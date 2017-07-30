@@ -80,5 +80,5 @@ void main() {
   }
   
   color = ambient + directional;
-  color = uBaseColor; // vec4(vTexCoord, 0.0, 1.0);
+  color = vec4(vTexCoord, 0.0, 0.5);
 }
