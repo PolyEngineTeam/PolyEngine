@@ -168,6 +168,9 @@ namespace SGJ
 		{
 			playerCmp->LastDeathTimeStart = time;
 		}
+
+		TransformComponent* transCmp = world->GetComponent<TransformComponent>(manager->Player);
+		GameManagerSystem::PlaySample(world, "Audio/death-sound.ogg", transCmp->GetGlobalTranslation(), 1.0, 1.8);
 	}
 
 	void PlayerUpdateSystem::PlayerJump(Poly::World* world)
