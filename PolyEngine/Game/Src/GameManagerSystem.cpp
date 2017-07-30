@@ -99,22 +99,36 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 	}
 }
 
-Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Poly::Vector& position, eTileType tileType, eRigidBody2DType physicsProperties = eRigidBody2DType::STATIC, const Vector& size = Vector(1, 1, 1), const Color& color = Color(0, 0, 0))
+Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Poly::Vector& position, eTileType tileType, String meshSource, eRigidBody2DType physicsProperties = eRigidBody2DType::STATIC, const Vector& size = Vector(1, 1, 1), const Color& color = Color(0, 0, 0))
 {
 	UniqueID tile = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, tile);
 	DeferredTaskSystem::AddComponentImmediate<TileComponent>(world, tile, tileType);
-	DeferredTaskSystem::AddComponentImmediate<Box2DColliderComponent>(world, tile, size);
+	DeferredTaskSystem::AddComponentImmediate<Box2DColliderComponent>(world, tile, size * 2);
 	DeferredTaskSystem::AddComponentImmediate<RigidBody2DComponent>(world, tile, world, physicsProperties, tileType == eTileType::RIGIDBODYGROUND ? 0.5f : 1.0f);
 
 	TransformComponent* tileTrans = world->GetComponent<TransformComponent>(tile);
 
 	UniqueID mesh = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, mesh);
-	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, mesh, "Quad.obj", eResourceSource::GAME, color);
+	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, mesh, meshSource, eResourceSource::GAME, color);
 	TransformComponent* meshTrans = world->GetComponent<TransformComponent>(mesh);
 	meshTrans->SetParent(tileTrans);
-	meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
+	//meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
+	switch (tileType)
+	{
+	case eTileType::SPIKESBOTTOM:
+		break;
+	case eTileType::SPIKESTOP:
+		meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_Z, 180_deg));
+		break;
+	case eTileType::SPIKESLEFT:
+		meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_Z, -90_deg));
+		break;
+	case eTileType::SPIKESRIGHT:
+		meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_Z, 90_deg));
+		break;
+	}
 	meshTrans->SetLocalScale(size);
 
 	tileTrans->SetLocalTranslation(position);
@@ -216,20 +230,20 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 			switch (level->Tiles[idx])
 			{
 			case eTileType::PLAYERSTARTPOS:
-				if (gameMgrCmp->Player)    
+				if (gameMgrCmp->Player)   
 					PlayerUpdateSystem::ResetPlayer(world, Vector(posW, -posH, 0));
 				else
 					gameMgrCmp->Player = SpawnPlayer(world, Vector(posW, -posH, 0));
 				break;
 			case eTileType::PLAYERENDPOS:
-				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], eRigidBody2DType::STATIC, Vector(1, 1, 1), Color(0, 0, 1)));
+				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/cube.fbx", eRigidBody2DType::STATIC, Vector(0.5, 0.5, 0.5), Color(0, 0, 1)));
 				break;
 
 			case eTileType::STATICGROUND:
 			case eTileType::RIGIDBODYGROUND:
-				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], 
+				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/cube.fbx",
 					level->Tiles[idx] == eTileType::STATICGROUND ? eRigidBody2DType::STATIC : eRigidBody2DType::DYNAMIC, 
-					level->Tiles[idx] == eTileType::STATICGROUND ? Vector(1, 1, 1) : Vector(0.9, 0.9, 0.9), 
+					level->Tiles[idx] == eTileType::STATICGROUND ? Vector(0.5, 0.5, 0.5) : Vector(0.4, 0.4, 0.4),
 					level->Tiles[idx] == eTileType::STATICGROUND ? Color(0, 0, 0) : Color(0.5, 0.5, 0.5)));
 				break;
 
@@ -237,11 +251,11 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 			case eTileType::SPIKESTOP:
 			case eTileType::SPIKESLEFT:
 			case eTileType::SPIKESRIGHT:
-				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], eRigidBody2DType::STATIC, Vector(1, 1, 1), Color(1, 0, 0)));
+				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/spikes.obj", eRigidBody2DType::STATIC, Vector(1, 1, 1), Color(1, 0, 0)));
 				break;
 
 			default:
-				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], eRigidBody2DType::STATIC, Vector(1, 1, 1), Color(1, 0, 1)));
+				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/cube.fbx", eRigidBody2DType::STATIC, Vector(0.5, 0.5, 0.5), Color(1, 0, 1)));
 				break;
 			}
 		}

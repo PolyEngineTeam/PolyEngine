@@ -10,7 +10,7 @@ namespace SGJ
 	{
 	public:
 
-		PlayerControllerComponent(float movementSpeed = 12.0f, float jumpForce = 5.6f);
+		PlayerControllerComponent(float movementSpeed = 12.0f, float jumpForce = 5.8f);
 
 		float GetMovementSpeed() const { return MovementSpeed; }
 		float GetJumpForce() const { return JumpForce; }
