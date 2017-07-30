@@ -135,7 +135,7 @@ Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Pol
 	lightTrans->SetParent(meshTrans);
 	lightTrans->SetLocalScale(Vector(3.0f, 3.0f, 3.0f));
 	Color c = Color(color);
-	c.A = 0.9;
+	c.A = 0.5;
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, tileBloom, "Quad.obj", eResourceSource::GAME, c);
 
 	switch (tileType)
@@ -177,11 +177,10 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, body);
 	Poly::TransformComponent* bodyTrans = world->GetComponent<Poly::TransformComponent>(body);
 	bodyTrans->SetParent(playerTrans);
-	bodyTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
-	Vector correctedSize = Vector(0.8, 0.8, 0.0);
-	correctedSize.Z = 0.8f;
+	//bodyTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
+	Vector correctedSize = Vector(0.4, 0.4, 0.1);
 	bodyTrans->SetLocalScale(correctedSize);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, body, "Quad.obj", eResourceSource::GAME, Color(0, 1.5f, 0));
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, body, "Models/player.fbx", eResourceSource::GAME, Color(0, 1.5f, 0));
 
 	UniqueID playerLight = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, playerLight);
@@ -253,7 +252,7 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 					gameMgrCmp->Player = SpawnPlayer(world, Vector(posW, -posH, 0));
 				break;
 			case eTileType::PLAYERENDPOS:
-				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/cube.fbx", eRigidBody2DType::STATIC, Vector(0.5, 0.5, 0.5), Color(0, 0, 1.2f)));
+				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/cube.fbx", eRigidBody2DType::STATIC, Vector(0.5, 0.5, 0.5), Color(0, 0, 1.5f)));
 				break;
 
 			case eTileType::STATICGROUND:

@@ -372,4 +372,8 @@ void main()
 	
 	// Vinette
 	color *= mix(1.0, vinette(vTexCoord), uVinettePower);
+
+	color.rgb = pow(color.rgb, vec3(1.1));
+	color.rgb += vec3(0.1);
+	color.rgb = pow(color.rgb, vec3(0.9));
 }
