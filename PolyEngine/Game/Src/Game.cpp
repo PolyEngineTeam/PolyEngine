@@ -50,7 +50,7 @@ void SGJGame::Init()
 	DeferredTaskSystem::AddComponent<PostprocessSettingsComponent>(gEngine->GetWorld(), Camera);
 	
 	// load levels
-	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level3.csv");
+	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level4.csv");
 	SGJ::GameManagerSystem::SpawnLevel(gEngine->GetWorld(), 0);
 };
 

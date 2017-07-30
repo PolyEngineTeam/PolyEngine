@@ -44,6 +44,7 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 			case eTileType::SPIKESTOP:
 			case eTileType::SPIKESLEFT:
 			case eTileType::SPIKESRIGHT:
+			case eTileType::PLAYERENDPOS:
 			{
 				//KillPlayer(world);
 				return;
