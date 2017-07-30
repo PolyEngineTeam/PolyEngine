@@ -11,8 +11,11 @@ namespace Poly
 
 namespace SGJ
 {
+<<<<<<< Updated upstream
 	class PlayerControllerComponent;
+=======
 	enum class ePowerup;
+>>>>>>> Stashed changes
 
 	namespace PlayerUpdateSystem
 	{

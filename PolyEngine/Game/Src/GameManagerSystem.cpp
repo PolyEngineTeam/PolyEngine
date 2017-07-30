@@ -69,34 +69,34 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 		}
 		case eTileType::PLAYERENDPOS:
 		{
-			manager->CurrentLevelID = (manager->CurrentLevelID + 1) % manager->LevelEntities.GetSize();
+			manager->CurrentLevelID = (manager->CurrentLevelID + 1) % manager->Levels.GetSize();
 			SpawnLevel(world, manager->CurrentLevelID);
 			return;
 		}
 		break;
 		case eTileType::FASTERCHARACTER:
-			playerCmp->SetActivePowerup(ePowerup::INCREASED_SPEED);
+			PlayerUpdateSystem::PickupPowerup(world, ePowerup::INCREASED_SPEED);
 			break;
 		case eTileType::HIGHJUMP:
-			playerCmp->SetActivePowerup(ePowerup::HIGH_JUMP);
+			PlayerUpdateSystem::PickupPowerup(world, ePowerup::HIGH_JUMP);
 			break;
 		case eTileType::LARGERCHARACTER:
-			playerCmp->SetActivePowerup(ePowerup::INCREASED_SIZE);
+			PlayerUpdateSystem::PickupPowerup(world, ePowerup::INCREASED_SIZE);
 			break;
 		case eTileType::SMALLERCHARACTER:
-			playerCmp->SetActivePowerup(ePowerup::DECREASED_SIZE);
+			PlayerUpdateSystem::PickupPowerup(world, ePowerup::DECREASED_SIZE);
 			break;
 		case eTileType::POGOJUMP:
-			playerCmp->SetActivePowerup(ePowerup::POGO_JUMP);
+			PlayerUpdateSystem::PickupPowerup(world, ePowerup::POGO_JUMP);
 			break;
 		case eTileType::REVERSEDCONTROLS:
-			playerCmp->SetActivePowerup(ePowerup::REVERSED_CONTROLS);
+			PlayerUpdateSystem::PickupPowerup(world, ePowerup::REVERSED_CONTROLS);
 			break;
 		case eTileType::LOWJUMP:
-			playerCmp->SetActivePowerup(ePowerup::LOW_JUMP);
+			PlayerUpdateSystem::PickupPowerup(world, ePowerup::LOW_JUMP);
 			break;
 		case eTileType::INVERSEDGRAVITY:
-			playerCmp->SetActivePowerup(ePowerup::INVERSED_GRAVITY);
+			PlayerUpdateSystem::PickupPowerup(world, ePowerup::INVERSED_GRAVITY);
 			break;
 		default:
 			break;

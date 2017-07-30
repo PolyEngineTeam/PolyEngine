@@ -20,7 +20,7 @@ void FPSSystem::FPSUpdatePhase(World* world)
 	}
 		
 	
-	if (TimeSystem::GetTimerElapsedTime(world, eEngineTimer::SYSTEM) - com->FPSData.ElapsedTime > 1)
+	if (gCoreConfig.DisplayFPS && TimeSystem::GetTimerElapsedTime(world, eEngineTimer::SYSTEM) - com->FPSData.ElapsedTime > 1)
 	{
 		com->FPSData.ElapsedTime = TimeSystem::GetTimerElapsedTime(world, eEngineTimer::SYSTEM);
 
