@@ -1,6 +1,7 @@
 #include "Physics2DColliders.hpp"
 #include "PowerupSystem.hpp"
 #include "PlayerControllerComponent.hpp"
+#include "PlayerUpdateSystem.hpp"
 #include "World.hpp"
 #include "Powerups.hpp"
 #include "Rigidbody2DComponent.hpp"
@@ -40,9 +41,10 @@ namespace SGJ
 		case(ePowerup::POGO_JUMP):
 			if (playerCmp->AllowJump)
 			{
-				playerCmp->AllowJump = false;
-				move += Vector::UNIT_Y;
-				move.Y *= playerCmp->GetJumpForce();
+				//playerCmp->AllowJump = false;
+				//move += Vector::UNIT_Y;
+				//move.Y *= playerCmp->GetJumpForce();
+				PlayerUpdateSystem::PlayerJump();
 			}
 			break;
 		case(ePowerup::INCREASED_SPEED):
@@ -100,6 +102,7 @@ namespace SGJ
 			transformCmp->SetLocalScale(size);
 			colliderCmp->SetSize(colliderRange);
 			rbCmp->SetDensity(rbCmp->GetDensity() * playerCmp->GetDensityMultiplier());
+			
 			
 		}
 

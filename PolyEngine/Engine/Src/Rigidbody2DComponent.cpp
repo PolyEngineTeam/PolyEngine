@@ -146,5 +146,5 @@ void Poly::RigidBody2DComponent::UpdatePosition()
 
 void Poly::RigidBody2DComponent::SetDensity(float density)
 {
-	ImplData->Fixture->SetDensity(density);
+	ImplData->FixtureDef.density = density;
 }
