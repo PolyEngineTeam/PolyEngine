@@ -168,11 +168,10 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, body);
 	Poly::TransformComponent* bodyTrans = world->GetComponent<Poly::TransformComponent>(body);
 	bodyTrans->SetParent(playerTrans);
-	bodyTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
-	Vector correctedSize = Vector(0.8, 0.8, 0.0);
-	correctedSize.Z = 0.8f;
+	//bodyTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
+	Vector correctedSize = Vector(0.4, 0.4, 0.1);
 	bodyTrans->SetLocalScale(correctedSize);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, body, "Quad.obj", eResourceSource::GAME, Color(0, 1, 0));
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, body, "Models/player.fbx", eResourceSource::GAME, Color(0, 1, 0));
 
 	UniqueID playerLight = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, playerLight);
