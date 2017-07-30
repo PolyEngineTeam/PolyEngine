@@ -239,7 +239,7 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/cube.fbx",
 					level->Tiles[idx] == eTileType::STATICGROUND ? eRigidBody2DType::STATIC : eRigidBody2DType::DYNAMIC, 
 					level->Tiles[idx] == eTileType::STATICGROUND ? Vector(0.5, 0.5, 0.5) : Vector(0.4, 0.4, 0.4),
-					level->Tiles[idx] == eTileType::STATICGROUND ? Color(0, 0, 0) : Color(0.5, 0.5, 0.5)));
+					level->Tiles[idx] == eTileType::STATICGROUND ? Color(0.05, 0, 0.125) : Color(0.5, 0.5, 0.5)));
 				break;
 
 			case eTileType::SPIKESBOTTOM:
@@ -250,7 +250,7 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 				break;
 
 			default:
-				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/cube.fbx", eRigidBody2DType::STATIC, Vector(0.5, 0.5, 0.5), Color(1, 0, 1)));
+				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/cube.fbx", eRigidBody2DType::STATIC, Vector(0.5, 0.5, 0.5), Color(0.25, 0, 0.125)));
 				break;
 			}
 		}
