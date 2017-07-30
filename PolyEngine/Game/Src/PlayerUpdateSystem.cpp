@@ -7,6 +7,8 @@
 #include "PowerupSystem.hpp"
 #include "Timer.hpp"
 #include "Physics2DWorldComponent.hpp"
+#include "GameManagerWorldComponent.hpp"
+#include "GameManagerSystem.hpp"
 
 using namespace Poly;
 
@@ -31,14 +33,7 @@ namespace SGJ
 
 			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::SPACE) && playerCmp->AllowJump)
 			{
-				if (playerCmp->AllowJump)
-				{
-					playerCmp->LastJumpTimeStart = time;
-				}
-				playerCmp->AllowJump = false;
-				Vector jump(0, 0, 0);
-				jump.Y = playerCmp->GetJumpForce();
-				rigidbodyCmp->ApplyImpulseToCenter(jump);
+				PlayerJump(world);
 			}
 
 			try
@@ -99,4 +94,29 @@ namespace SGJ
 		return sin(-13 * 3.14 * (p + 1)) * pow(2, -10 * p) + 1;
 	}
 
+	void PlayerUpdateSystem::KillPlayer(Poly::World * world)
+	{
+		GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
+		world->GetComponent<TransformComponent>(manager->Player)->SetLocalTranslation(world->GetComponent<PlayerControllerComponent>(manager->Player)->SpawnPoint);
+	}
+
+	void PlayerUpdateSystem::PlayerJump(Poly::World* world)
+	{
+		UniqueID playerID = world->GetWorldComponent<GameManagerWorldComponent>()->Player;
+
+		RigidBody2DComponent* rigidbodyCmp = world->GetComponent<RigidBody2DComponent>(playerID);
+		TransformComponent* transCmp = world->GetComponent<TransformComponent>(playerID);
+		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(playerID);
+
+		double time = TimeSystem::GetTimerElapsedTime(world, Poly::eEngineTimer::GAMEPLAY);
+		if (playerCmp->AllowJump)
+		{
+			playerCmp->LastJumpTimeStart = time;
+		}
+		playerCmp->AllowJump = false;
+		Vector jump(0, 0, 0);
+		jump.Y = playerCmp->GetJumpForce();
+		rigidbodyCmp->ApplyImpulseToCenter(jump);
+		GameManagerSystem::PlaySample(world, "Audio/jump-sound.ogg", transCmp->GetGlobalTranslation(), 1.5, 1.8);
+	}
 }
