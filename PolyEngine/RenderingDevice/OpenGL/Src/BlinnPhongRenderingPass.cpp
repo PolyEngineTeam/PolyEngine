@@ -98,9 +98,6 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 
 		if (meshCmp->IsTransparent())
 			continue;
-		
-		// TODO: remove
-		transCmp->SetLocalRotation(transCmp->GetParent()->GetGlobalRotation().GetConjugated());
 
 		Vector objPos = transCmp->GetGlobalTranslation();
 

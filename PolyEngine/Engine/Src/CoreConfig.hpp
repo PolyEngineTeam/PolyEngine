@@ -48,7 +48,7 @@ namespace Poly
 		// Rendering
 		bool DebugNormalsFlag = false;
 		bool WireframeRendering = false;
-		bool DisplayFPS = true;
+		bool DisplayFPS = false;
 	};
 
 	ENGINE_DLLEXPORT extern CoreConfig gCoreConfig;

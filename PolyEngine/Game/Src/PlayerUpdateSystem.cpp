@@ -73,7 +73,7 @@ namespace SGJ
 		playerCmp->JumpCooldownTimer = 0.f;
 		playerCmp->DeathCoolDowntime = 0.f;
 
-		playerCmp->SetActivePowerup(ePowerup(6));
+		playerCmp->SetActivePowerup(ePowerup::NONE);
 
 		rbCmp->UpdatePosition();
 	}
@@ -123,7 +123,7 @@ namespace SGJ
 		Physics2DWorldComponent* physicsWorldComponent = world->GetWorldComponent<Physics2DWorldComponent>();
 
 		for (Physics2DWorldComponent::Collision col : physicsWorldComponent->GetCollidingBodies(rigidbodyCmp))
-			if (playerCmp->GetActivePowerup() == ePowerup::INVERSED_GRAVITY ? col.Normal.Dot(Vector::UNIT_Y) > 0.7 : col.Normal.Dot(Vector::UNIT_Y) < -0.7)
+			if (playerCmp->GetActivePowerup() == ePowerup::INVERSED_GRAVITY ? col.Normal.Dot(Vector::UNIT_Y) > 0.5 : col.Normal.Dot(Vector::UNIT_Y) < -0.5)
 			{
 				if (wasInAir)
 					playerCmp->LastLandTimeStart = TimeSystem::GetTimerElapsedTime(world, Poly::eEngineTimer::GAMEPLAY);
@@ -171,6 +171,18 @@ namespace SGJ
 			// float scaleY = Lerp(2.5f, 1.2f, Clamp(ElasticEaseOut(tY), 0.0f, 1.0f));
 			// playerTrans->SetLocalScale(playerTrans->GetGlobalRotation().GetConjugated() * Vector(scaleX, scaleY, 1.0f));
 			playerTrans->SetLocalScale(Vector(scaleX, scaleX, scaleX));
+		}
+	}
+
+	void PlayerUpdateSystem::PickupPowerup(Poly::World * world, ePowerup powerup)
+	{
+		GameManagerWorldComponent* mgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
+		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(mgrCmp->Player);
+		TransformComponent* playerTrans = playerCmp->GetSibling<TransformComponent>();
+		if (playerCmp->GetActivePowerup() != powerup)
+		{
+			playerCmp->SetActivePowerup(powerup);
+			GameManagerSystem::PlaySample(world, "Audio/powerup.ogg", playerTrans->GetGlobalTranslation(), 1.0f, 1.5f);
 		}
 	}
 
