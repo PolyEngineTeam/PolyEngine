@@ -53,16 +53,17 @@ void SGJGame::Init()
 	// load levels
 	//SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level0.csv");
 	//SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level0_1.csv");
-	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level0_2.csv");
-	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level0_3.csv");
+	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level0_2.csv"); // gut
+	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level0_3.csv"); // gut
 	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level1.csv");
 	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level2.csv");
 	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level3.csv");
 	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level4.csv");
-	SGJ::GameManagerSystem::SpawnLevel(gEngine->GetWorld(), 0);
+	SGJ::GameManagerSystem::SpawnLevel(gEngine->GetWorld(), 3);
 
 	SoundsPreload.PushBack(ResourceManager<SoundResource>::Load("Audio/jump-sound.ogg", eResourceSource::GAME));
 	SoundsPreload.PushBack(ResourceManager<SoundResource>::Load("Audio/death-sound.ogg", eResourceSource::GAME));
+	SoundsPreload.PushBack(ResourceManager<SoundResource>::Load("Audio/powerup.ogg", eResourceSource::GAME));
 };
 
 void SGJGame::Deinit()
