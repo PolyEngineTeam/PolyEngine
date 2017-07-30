@@ -20,11 +20,15 @@ namespace SGJ
 		Poly::RigidBody2DComponent* rbCmp = playerCmp->GetSibling<Poly::RigidBody2DComponent>();
 		double deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
 		bool changedSize = false;
+		bool changedJumpHeight = false;
 
 		ePowerup activePower = playerCmp->GetActivePowerup();
 		Poly::Vector move = playerCmp->GetMoveVector();
 
 		float speedConstraint = 10.0f;
+
+		//reset jump force to default (in case no jump modifier)
+		playerCmp->SetJumpForce(playerCmp->GetDefaultJumpForce());
 
 		//check active powerup and modify relevant mechanics
 		switch (activePower)
@@ -33,10 +37,10 @@ namespace SGJ
 			move.X *= -1;
 			break;
 		case(ePowerup::HIGH_JUMP):
-			move.Y *= 2;
+			playerCmp->SetJumpForce(playerCmp->GetDefaultJumpForce() * 2.0f);
 			break;
 		case(ePowerup::LOW_JUMP):
-			move.Y *= 0.7f;
+			playerCmp->SetJumpForce(playerCmp->GetDefaultJumpForce() * 0.7f);
 			break;
 		case(ePowerup::POGO_JUMP):
 			PlayerUpdateSystem::TryPlayerJump(world);
@@ -73,14 +77,14 @@ namespace SGJ
 			if (activePower == ePowerup::INCREASED_SIZE)
 			{
 				playerCmp->SetHasChangedSize(true);
-				playerCmp->SetDensityMultiplier(2.0f);		//Setting size density multiplier
+				playerCmp->SetDensityMultiplier(4.f);		//Setting size density multiplier
 				size = playerCmp->GetDefaultScale() * 2.0f;
-				colliderRange = playerCmp->GetDefaultScale().X;
+				colliderRange = playerCmp->GetDefaultScale().X * 1.5f;
 			}
 			else if(activePower == ePowerup::DECREASED_SIZE)
 			{
 				playerCmp->SetHasChangedSize(true);
-				playerCmp->SetDensityMultiplier(0.5f);		//Setting decr size density multiplier
+				playerCmp->SetDensityMultiplier(.7f);		//Setting decr size density multiplier
 				size = playerCmp->GetDefaultScale() * 0.5f;
 				colliderRange = playerCmp->GetDefaultScale().X * 0.25f;
 			}
@@ -95,14 +99,14 @@ namespace SGJ
 			}
 			transformCmp->SetLocalScale(size);
 			colliderCmp->SetSize(colliderRange);
-			rbCmp->SetDensity(rbCmp->GetDensity() * playerCmp->GetDensityMultiplier());
+			rbCmp->SetDensity(playerCmp->GetDensityMultiplier());
 			
 			
 		}
 
 		//apply validated movement vector
 		if (rbCmp->GetLinearSpeed().Length() < speedConstraint && move.Length() > 0)
-			rbCmp->ApplyImpulseToCenter(move * playerCmp->GetDensityMultiplier());
+			rbCmp->ApplyImpulseToCenter(move);
 		playerCmp->SetMoveVector(Vector::ZERO);
 	}
 }

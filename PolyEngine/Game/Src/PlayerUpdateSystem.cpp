@@ -64,6 +64,8 @@ namespace SGJ
 		playerCmp->InAir = false;
 		playerCmp->JumpCooldownTimer = 0.f;
 
+		playerCmp->SetActivePowerup(ePowerup(6));
+
 		rbCmp->UpdatePosition();
 	}
 

@@ -20,11 +20,13 @@ namespace SGJ
 		Poly::Vector GetMoveVector() const { return CurrentMoveVector; }
 		Poly::Vector GetDefaultScale() const { return DefaultScale; }
 		float GetDensityMultiplier() const { return DensityMultiplier; }
+		float GetDefaultJumpForce() const { return DefJumpForce; }
 		
 		void SetHasChangedSize(bool hasChangedSize) { HasChangedSize = hasChangedSize; }
 		void SetMoveVector(Poly::Vector newMoveVector) { CurrentMoveVector = newMoveVector; }
 		void SetDensityMultiplier(float densityMul) { DensityMultiplier = densityMul; }
 		void SetActivePowerup(ePowerup newPower) { ActivePowerup = newPower; };
+		void SetJumpForce(float jumpForce) { JumpForce = jumpForce; }
 
 		Poly::Vector SpawnPoint;
 
@@ -35,6 +37,7 @@ namespace SGJ
 		double LastJumpTimeStart = 0;
 	
 	private:
+		const float DefJumpForce;
 		float MovementSpeed = 50;
 		float JumpForce = 250;
 		float DensityMultiplier = 1;
