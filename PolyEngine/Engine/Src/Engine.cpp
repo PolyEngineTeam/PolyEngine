@@ -31,6 +31,7 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	RegisterComponent<SoundListenerComponent>((size_t)eEngineComponents::SOUND_LISTENER);
 	RegisterComponent<RigidBody2DComponent>((size_t)eEngineComponents::RIGIDBODY_2D);
 	RegisterComponent<Box2DColliderComponent>((size_t)eEngineComponents::BOX2D_COLLIDER);
+	RegisterComponent<Circle2DColliderComponent>((size_t)eEngineComponents::CIRCLE2D_COLLIDER);
 	RegisterComponent<DirectionalLightSourceComponent>((size_t)eEngineComponents::DIRECTIONAL_LIGHTSOURCE);
 	RegisterComponent<PointLightSourceComponent>((size_t)eEngineComponents::POINT_LIGHTSOURCE);
 	RegisterComponent<PostprocessSettingsComponent>((size_t)eEngineComponents::POSTPROCESS_SETTINGS);

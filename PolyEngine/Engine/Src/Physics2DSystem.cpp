@@ -16,6 +16,7 @@ void Poly::Physics2DSystem::Physics2DUpdatePhase(World* world)
 	for (auto& tuple : world->IterateComponents<RigidBody2DComponent, TransformComponent>())
 	{
 		RigidBody2DComponent* rigidBody = std::get<RigidBody2DComponent*>(tuple);
+		rigidBody->UpdatePosition();
 		if(rigidBody->CheckFlags(eComponentBaseFlags::NEWLY_CREATED))
 			rigidBody->FinishInit();
 	}

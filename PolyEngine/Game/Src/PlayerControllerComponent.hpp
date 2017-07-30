@@ -25,16 +25,17 @@ namespace SGJ
 		void SetHasChangedSize(bool hasChangedSize) { HasChangedSize = hasChangedSize; }
 		void SetMoveVector(Poly::Vector newMoveVector) { CurrentMoveVector = newMoveVector; }
 		void SetDensityMultiplier(float densityMul) { DensityMultiplier = densityMul; }
-		
+		void SetActivePowerup(ePowerup newPower) { ActivePowerup = newPower; };
 
+		Poly::Vector SpawnPoint;
 		double LastAllowJumpChecked = 0;
 		bool AllowJump = false;
 		double LastLandTimeStart = 0;
 		double LastJumpTimeStart = 0;
 	private:
-		float MovementSpeed = 50.0f;
-		float JumpForce = 250.0f;
-		float DensityMultiplier = 1.0f;
+		float MovementSpeed = 50;
+		float JumpForce = 250;
+		float DensityMultiplier = 1;
 		bool IsJumping = false;
 		bool HasChangedSize = false;
 		ePowerup ActivePowerup = ePowerup::NONE;

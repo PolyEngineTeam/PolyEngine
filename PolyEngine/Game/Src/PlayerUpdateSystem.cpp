@@ -1,4 +1,3 @@
-#include <algorithm>
 #include "PlayerUpdateSystem.hpp"
 #include "World.hpp"
 #include "TransformComponent.hpp"
@@ -25,24 +24,18 @@ namespace SGJ
 
 			Vector move(0, 0, 0);
 			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::LEFT))
-				move -= Vector::UNIT_X;
-			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::RIGHT))
-				move += Vector::UNIT_X;
+				playerCmp->SetMoveVector(Vector(-deltaTime * playerCmp->GetMovementSpeed(), 0, 0));
 
-			if (move.X < 0.5 && move.X > -0.5)
-			{
-				playerCmp->SetMoveVector(playerCmp->GetMoveVector() * -0.9);
-			}
-			else
-			{
-				move.X *= deltaTime * playerCmp->GetMovementSpeed();
-				playerCmp->SetMoveVector(move);
-			}
+			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::RIGHT))				
+				playerCmp->SetMoveVector(Vector(deltaTime * playerCmp->GetMovementSpeed(), 0, 0));
 
 			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::SPACE) && playerCmp->AllowJump)
 			{
+				if (playerCmp->AllowJump)
+				{
+					playerCmp->LastJumpTimeStart = time;
+				}
 				playerCmp->AllowJump = false;
-				playerCmp->LastJumpTimeStart = time;
 				Vector jump(0, 0, 0);
 				jump.Y = playerCmp->GetJumpForce();
 				rigidbodyCmp->ApplyImpulseToCenter(jump);
@@ -52,37 +45,33 @@ namespace SGJ
 			{
 				Physics2DWorldComponent* physicsWorldComponent = world->GetWorldComponent<Physics2DWorldComponent>();
 				for (Physics2DWorldComponent::Collision col : physicsWorldComponent->GetCollidingBodies(rigidbodyCmp))
-				{
 					if (col.Normal.Dot(Vector::UNIT_Y) < -0.7)
 					{
-						playerCmp->LastAllowJumpChecked = 0;
-						if (!playerCmp->AllowJump)
+						if (!playerCmp->AllowJump) 
 						{
 							playerCmp->LastLandTimeStart = time;
 						}
+						playerCmp->LastAllowJumpChecked = 0;
 						playerCmp->AllowJump = true;
+
 						break;
 					}
-				}
 			}
 			catch (std::exception)
 			{
 
 			}
-
-
 			playerCmp->LastAllowJumpChecked += deltaTime;
 			if (playerCmp->LastAllowJumpChecked > 0.5)
 				playerCmp->AllowJump = false;
 
 
-			PowerupSystem::ApplyPowerupsAndInput(world, playerCmp);
 
 			TransformComponent* playerTrans = playerCmp->GetSibling<TransformComponent>();
 			float timeSinceLastJump = time - playerCmp->LastJumpTimeStart;
 			float timeSinceLastLand = time - playerCmp->LastLandTimeStart;
 
-			if (timeSinceLastLand < timeSinceLastJump )
+			if (timeSinceLastLand < timeSinceLastJump)
 			{
 				// stretch on jump anim
 				float tX = 1.0f * timeSinceLastJump;
@@ -101,6 +90,7 @@ namespace SGJ
 				playerTrans->SetLocalScale(playerTrans->GetGlobalRotation().GetConjugated() * Vector(scaleX, scaleY, 1.0f));
 			}
 
+			PowerupSystem::ApplyPowerupsAndInput(world, playerCmp);
 		}
 	}
 

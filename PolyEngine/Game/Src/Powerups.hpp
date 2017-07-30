@@ -8,10 +8,11 @@ namespace SGJ
 		NONE,				//Used as a starting state
 		REVERSED_CONTROLS,	//Reversed X axis
 		HIGH_JUMP,			//Increased jump height
+		LOW_JUMP,
 		POGO_JUMP,			//Constantly jumping
 		INCREASED_SPEED,
 		INCREASED_SIZE,
 		DECREASED_SIZE,
-		INVERSED_GRAVITY
+		INVERSED_GRAVITY,
 	};
 }
