@@ -15,7 +15,9 @@ namespace SGJ
 
 		float ElasticEaseOut(float p);
 		void KillPlayer(Poly::World* world);
-		void PlayerJump(Poly::World* world);
+		void TryPlayerJump(Poly::World* world);
+		void UpdateInAir(Poly::World* world);
+		void ProcessJumpStrech(Poly::World* world);
 	}
 
 }

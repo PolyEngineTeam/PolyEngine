@@ -28,10 +28,13 @@ namespace SGJ
 		void SetActivePowerup(ePowerup newPower) { ActivePowerup = newPower; };
 
 		Poly::Vector SpawnPoint;
-		double LastAllowJumpChecked = 0;
-		bool AllowJump = false;
+
+		// Jumping logic
+		bool InAir = false;
+		float JumpCooldownTimer = 0.f;
 		double LastLandTimeStart = 0;
 		double LastJumpTimeStart = 0;
+	
 	private:
 		float MovementSpeed = 50;
 		float JumpForce = 250;
