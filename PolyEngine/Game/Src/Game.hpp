@@ -30,5 +30,5 @@ public:
 	void Deinit() override;
 
 private:
-	Poly::SoundResource* JumpSoundPreload;
+	Poly::Dynarray<Poly::SoundResource*> SoundsPreload;
 };
