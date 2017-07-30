@@ -76,8 +76,8 @@ namespace SGJ
 				// stretch on jump anim
 				float tX = 1.0f * timeSinceLastJump;
 				float tY = 1.0f * timeSinceLastJump;
-				float scaleX = Lerp(2.5f, 1.0f, Clamp(ElasticEaseOut(tX), 0.0f, 1.0f));
-				float scaleY = Lerp(0.3f, 1.0f, Clamp(ElasticEaseOut(tY), 0.0f, 1.0f));
+				float scaleX = Clamp(Lerp(2.5f, 1.0f, Clamp(ElasticEaseOut(tX), 0.0f, 1.0f)), 0.1f, 10.0f);
+				float scaleY = Clamp(Lerp(0.3f, 1.0f, Clamp(ElasticEaseOut(tY), 0.0f, 1.0f)), 0.1f, 10.0f);
 				playerTrans->SetLocalScale(playerTrans->GetGlobalRotation().GetConjugated() * Vector(scaleX, scaleY, 1.0f));
 			}
 			else
@@ -85,8 +85,8 @@ namespace SGJ
 				// stretch on jump anim
 				float tX = 0.75f * timeSinceLastJump;
 				float tY = 0.5f * timeSinceLastJump;
-				float scaleX = Lerp(0.3f, 0.5f, Clamp(ElasticEaseOut(tX), 0.0f, 1.0f));
-				float scaleY = Lerp(2.5f, 1.2f, Clamp(ElasticEaseOut(tY), 0.0f, 1.0f));
+				float scaleX = Clamp(Lerp(0.3f, 0.5f, Clamp(ElasticEaseOut(tX), 0.0f, 1.0f)), 0.1f, 10.0f);
+				float scaleY = Clamp(Lerp(2.5f, 1.2f, Clamp(ElasticEaseOut(tY), 0.0f, 1.0f)), 0.1f, 10.0f);
 				playerTrans->SetLocalScale(playerTrans->GetGlobalRotation().GetConjugated() * Vector(scaleX, scaleY, 1.0f));
 			}
 
