@@ -44,6 +44,12 @@ namespace SGJ
 
 			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::ESCAPE))
 				ResetPlayer(world, world->GetComponent<PlayerControllerComponent>(mgrCmp->Player)->SpawnPoint);
+
+			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_N))
+			{
+				mgrCmp->CurrentLevelID = (mgrCmp->CurrentLevelID + 1) % mgrCmp->Levels.GetSize();
+				GameManagerSystem::SpawnLevel(world, mgrCmp->CurrentLevelID);
+			}
 		}
 	}
 

@@ -69,7 +69,7 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 		}
 		case eTileType::PLAYERENDPOS:
 		{
-			manager->CurrentLevelID = (manager->CurrentLevelID + 1) % manager->LevelEntities.GetSize();
+			manager->CurrentLevelID = (manager->CurrentLevelID + 1) % manager->Levels.GetSize();
 			SpawnLevel(world, manager->CurrentLevelID);
 			return;
 		}
