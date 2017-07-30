@@ -277,6 +277,7 @@ void SGJ::GameManagerSystem::DespawnLevel(Poly::World* world)
 	GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
 	for (auto ent : gameMgrCmp->LevelEntities)
 		DeferredTaskSystem::DestroyEntityImmediate(world, ent);
+	gameMgrCmp->LevelEntities.Clear();
 }
 
 void SGJ::GameManagerSystem::PlaySample(Poly::World* world, const String& file, const Vector& position, float pitch, float gain)
