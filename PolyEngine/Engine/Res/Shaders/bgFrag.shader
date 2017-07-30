@@ -16,7 +16,7 @@ uniform int uUseCashetes;
 
 //Audio by Dave_Hoskins
 // default 100
-#define ITR 100 
+#define ITR 50 
 // default 40.
 #define FAR 40.
 #define time uTime
@@ -275,7 +275,7 @@ void main()
 		brdf += 1.5*dif*vec3(1.00, 0.90, 0.7);
 		col = mix(vec3(0.1, 0.2, 1), vec3(.3, .5, 1), pos.y*.5)*0.2 + .1;
 		col *= (sin(bnoise(pos)*900.)*0.2 + 0.8);
-		col = col*brdf + col*spe*.5 + fre*vec3(.7, 1., 0.2)*.3*crv;
+		col = col*brdf + col*spe*.5 + fre*vec3(.2, 1., 0.7)*.3*crv;
 	}
 
 	//ordinary distance fog first

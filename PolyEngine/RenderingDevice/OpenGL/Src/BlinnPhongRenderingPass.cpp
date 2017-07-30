@@ -94,10 +94,13 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-		const TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
+		TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
 
 		if (meshCmp->IsTransparent())
 			continue;
+		
+		// TODO: remove
+		transCmp->SetLocalRotation(transCmp->GetParent()->GetGlobalRotation().GetConjugated());
 
 		Vector objPos = transCmp->GetGlobalTranslation();
 

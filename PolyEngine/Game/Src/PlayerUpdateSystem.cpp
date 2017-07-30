@@ -8,6 +8,7 @@
 #include "Timer.hpp"
 #include "Physics2DWorldComponent.hpp"
 #include "GameManagerWorldComponent.hpp"
+#include "PostprocessSettingsComponent.hpp"
 #include "GameManagerSystem.hpp"
 
 using namespace Poly;
@@ -52,7 +53,7 @@ namespace SGJ
 		TransformComponent* transCmp = world->GetComponent<TransformComponent>(manager->Player);
 		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(manager->Player);
 		GameManagerSystem::PlaySample(world, "Audio/death-sound.ogg", transCmp->GetGlobalTranslation(), 1.0, 1.8);
-		playerCmp->DeathCoolDowntime = 2.0f;
+		playerCmp->DeathCoolDowntime = playerCmp->DeathCoolDowntimeMax;
 	}
 
 	void PlayerUpdateSystem::ResetPlayer(Poly::World* world, const Vector& spawnLocation)
@@ -157,17 +158,19 @@ namespace SGJ
 			float tX = 1.0f * timeSinceLastJump;
 			float tY = 1.0f * timeSinceLastJump;
 			float scaleX = Lerp(2.5f, 1.0f, Clamp(ElasticEaseOut(tX), 0.0f, 1.0f));
-			float scaleY = Lerp(0.3f, 1.0f, Clamp(ElasticEaseOut(tY), 0.0f, 1.0f));
-			playerTrans->SetLocalScale(playerTrans->GetGlobalRotation().GetConjugated() * Vector(scaleX, scaleY, 1.0f));
+			// float scaleY = Lerp(0.3f, 1.0f, Clamp(ElasticEaseOut(tY), 0.0f, 1.0f));
+			// playerTrans->SetLocalScale(playerTrans->GetGlobalRotation().GetConjugated() * Vector(scaleX, scaleY, 1.0f));
+			playerTrans->SetLocalScale(Vector(scaleX, scaleX, scaleX));
 		}
 		else
 		{
 			// stretch on jump anim
 			float tX = 0.75f * timeSinceLastJump;
 			float tY = 0.5f * timeSinceLastJump;
-			float scaleX = Lerp(0.3f, 0.5f, Clamp(ElasticEaseOut(tX), 0.0f, 1.0f));
-			float scaleY = Lerp(2.5f, 1.2f, Clamp(ElasticEaseOut(tY), 0.0f, 1.0f));
-			playerTrans->SetLocalScale(playerTrans->GetGlobalRotation().GetConjugated() * Vector(scaleX, scaleY, 1.0f));
+			float scaleX = Lerp(0.3f, 1.5f, Clamp(ElasticEaseOut(tX), 0.0f, 1.0f));
+			// float scaleY = Lerp(2.5f, 1.2f, Clamp(ElasticEaseOut(tY), 0.0f, 1.0f));
+			// playerTrans->SetLocalScale(playerTrans->GetGlobalRotation().GetConjugated() * Vector(scaleX, scaleY, 1.0f));
+			playerTrans->SetLocalScale(Vector(scaleX, scaleX, scaleX));
 		}
 	}
 
@@ -176,13 +179,34 @@ namespace SGJ
 		GameManagerWorldComponent* mgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
 		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(mgrCmp->Player);
 		RigidBody2DComponent* rigidbodyCmp = world->GetComponent<RigidBody2DComponent>(mgrCmp->Player);
+		PostprocessSettingsComponent* postCmp = world->GetComponent<PostprocessSettingsComponent>(mgrCmp->Camera);
 		float deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
 
 		if (playerCmp->DeathCoolDowntime >= 0)
+		{
+			if (postCmp)
+			{
+				float t = Clamp(playerCmp->DeathCoolDowntime / playerCmp->DeathCoolDowntimeMax, 0.0f, 1.0f);
+				postCmp->SaturationPower = Clamp(Lerp(1.0f, -2.0f, t), 0.0f, 1.0f);
+				postCmp->VinettePower = Lerp(0.3f, 2.0f, t);
+				postCmp->DistortionPower = Lerp(0.45f, 1.0f, t);
+				postCmp->GrainPower = Lerp(0.1f, 0.3f, t);
+				postCmp->StripesPower = Lerp(0.25f, 0.35f, t);
+			}
+
 			playerCmp->DeathCoolDowntime -= deltaTime;
+		}
 
 		if (playerCmp->DeathCoolDowntime <= 0)
 		{
+			if (postCmp)
+			{
+				postCmp->SaturationPower = 1.0f;
+				postCmp->VinettePower = 0.3f;
+				postCmp->DistortionPower = 0.45f;
+				postCmp->GrainPower = 0.1f;
+				postCmp->StripesPower = 0.35f;
+			}
 			ResetPlayer(world, playerCmp->SpawnPoint);
 		}
 	}
