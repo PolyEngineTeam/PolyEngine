@@ -32,6 +32,7 @@ namespace SGJ
 		bool AllowJump = false;
 		double LastLandTimeStart = 0;
 		double LastJumpTimeStart = 0;
+		double LastDeathTimeStart = -1.0f;
 	private:
 		float MovementSpeed = 50;
 		float JumpForce = 250;

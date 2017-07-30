@@ -43,12 +43,15 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 			++i;
 	}
 
+
 	try
 	{
 		for (Physics2DWorldComponent::Collision col : world->GetWorldComponent<Physics2DWorldComponent>()->GetCollidingBodies(world->GetComponent<RigidBody2DComponent>(manager->Player)))
 		{
 			TileComponent* obstacle = col.rb->GetSibling<TileComponent>();
 			PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(manager->Player);
+
+			if (playerCmp->LastDeathTimeStart > 0.0f) continue;
 
 			if (!obstacle) continue;
 
@@ -61,7 +64,7 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 			case eTileType::PLAYERENDPOS:
 			{
 				PlayerUpdateSystem::KillPlayer(world);
-				return;
+				break;
 			}
 			break;
 			case eTileType::FASTERCHARACTER:

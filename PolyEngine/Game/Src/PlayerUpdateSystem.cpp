@@ -1,10 +1,12 @@
-#include	"PlayerUpdateSystem.hpp"
+#include "PlayerUpdateSystem.hpp"
 #include "World.hpp"
 #include "TransformComponent.hpp"
+#include "CameraComponent.hpp"
 #include "InputWorldComponent.hpp"
 #include "PlayerControllerComponent.hpp"
 #include "Rigidbody2DComponent.hpp"
 #include "PowerupSystem.hpp"
+#include "PostprocessSettingsComponent.hpp"
 #include "Timer.hpp"
 #include "Physics2DWorldComponent.hpp"
 #include "GameManagerWorldComponent.hpp"
@@ -16,6 +18,8 @@ namespace SGJ
 {
 	void PlayerUpdateSystem::Update(World* world)
 	{
+		gConsole.LogInfo("PlayerUpdateSystem::Update");
+
 		double deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
 		double time = TimeSystem::GetTimerElapsedTime(world, Poly::eEngineTimer::GAMEPLAY);
 
@@ -24,68 +28,119 @@ namespace SGJ
 			RigidBody2DComponent* rigidbodyCmp = std::get<RigidBody2DComponent*>(playerTuple);
 			PlayerControllerComponent* playerCmp = std::get<PlayerControllerComponent*>(playerTuple);
 
-			Vector move(0, 0, 0);
-			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::LEFT))
-				playerCmp->SetMoveVector(Vector(-deltaTime * playerCmp->GetMovementSpeed(), 0, 0));
-
-			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::RIGHT))				
-				playerCmp->SetMoveVector(Vector(deltaTime * playerCmp->GetMovementSpeed(), 0, 0));
-
-			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::SPACE) && playerCmp->AllowJump)
+			if (playerCmp->LastDeathTimeStart > 0.0f)
 			{
-				PlayerJump(world);
-			}
-
-			try
-			{
-				Physics2DWorldComponent* physicsWorldComponent = world->GetWorldComponent<Physics2DWorldComponent>();
-				for (Physics2DWorldComponent::Collision col : physicsWorldComponent->GetCollidingBodies(rigidbodyCmp))
-					if (col.Normal.Dot(Vector::UNIT_Y) < -0.7)
-					{
-						if (!playerCmp->AllowJump) 
-						{
-							playerCmp->LastLandTimeStart = time;
-						}
-						playerCmp->LastAllowJumpChecked = 0;
-						playerCmp->AllowJump = true;
-
-						break;
-					}
-			}
-			catch (std::exception)
-			{
-
-			}
-			playerCmp->LastAllowJumpChecked += deltaTime;
-			if (playerCmp->LastAllowJumpChecked > 0.5)
-				playerCmp->AllowJump = false;
-
-
-
-			TransformComponent* playerTrans = playerCmp->GetSibling<TransformComponent>();
-			float timeSinceLastJump = time - playerCmp->LastJumpTimeStart;
-			float timeSinceLastLand = time - playerCmp->LastLandTimeStart;
-
-			if (timeSinceLastLand < timeSinceLastJump)
-			{
-				// stretch on jump anim
-				float tX = 1.0f * timeSinceLastJump;
-				float tY = 1.0f * timeSinceLastJump;
-				float scaleX = Clamp(Lerp(2.5f, 1.0f, Clamp(ElasticEaseOut(tX), 0.0f, 1.0f)), 0.1f, 10.0f);
-				float scaleY = Clamp(Lerp(0.3f, 1.0f, Clamp(ElasticEaseOut(tY), 0.0f, 1.0f)), 0.1f, 10.0f);
-				playerTrans->SetLocalScale(playerTrans->GetGlobalRotation().GetConjugated() * Vector(scaleX, scaleY, 1.0f));
+				PlayerDead(world, time, playerCmp);
 			}
 			else
 			{
-				// stretch on jump anim
-				float tX = 0.75f * timeSinceLastJump;
-				float tY = 0.5f * timeSinceLastJump;
-				float scaleX = Clamp(Lerp(0.3f, 0.5f, Clamp(ElasticEaseOut(tX), 0.0f, 1.0f)), 0.1f, 10.0f);
-				float scaleY = Clamp(Lerp(2.5f, 1.2f, Clamp(ElasticEaseOut(tY), 0.0f, 1.0f)), 0.1f, 10.0f);
-				playerTrans->SetLocalScale(playerTrans->GetGlobalRotation().GetConjugated() * Vector(scaleX, scaleY, 1.0f));
+				PlayerAlive(world, playerCmp, deltaTime, rigidbodyCmp, time);
 			}
+		}
+	}
 
-			PowerupSystem::ApplyPowerupsAndInput(world, playerCmp);
+	void PlayerUpdateSystem::PlayerAlive(Poly::World * world, PlayerControllerComponent * playerCmp, double deltaTime, Poly::RigidBody2DComponent * rigidbodyCmp, double time)
+	{
+		gConsole.LogInfo("PlayerUpdateSystem::PlayerAlive");
+
+		Vector move(0, 0, 0);
+		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::LEFT))
+			playerCmp->SetMoveVector(Vector(-deltaTime * playerCmp->GetMovementSpeed(), 0, 0));
+
+		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::RIGHT))
+			playerCmp->SetMoveVector(Vector(deltaTime * playerCmp->GetMovementSpeed(), 0, 0));
+
+		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::SPACE) && playerCmp->AllowJump)
+		{
+			PlayerJump(world);
+		}
+
+		try
+		{
+			Physics2DWorldComponent* physicsWorldComponent = world->GetWorldComponent<Physics2DWorldComponent>();
+			for (Physics2DWorldComponent::Collision col : physicsWorldComponent->GetCollidingBodies(rigidbodyCmp))
+				if (col.Normal.Dot(Vector::UNIT_Y) < -0.7)
+				{
+					if (!playerCmp->AllowJump)
+					{
+						playerCmp->LastLandTimeStart = time;
+					}
+					playerCmp->LastAllowJumpChecked = 0;
+					playerCmp->AllowJump = true;
+
+					break;
+				}
+		}
+		catch (std::exception)
+		{
+
+		}
+		playerCmp->LastAllowJumpChecked += deltaTime;
+		if (playerCmp->LastAllowJumpChecked > 0.5)
+			playerCmp->AllowJump = false;
+
+
+
+		TransformComponent* playerTrans = playerCmp->GetSibling<TransformComponent>();
+		float timeSinceLastJump = time - playerCmp->LastJumpTimeStart;
+		float timeSinceLastLand = time - playerCmp->LastLandTimeStart;
+
+		if (timeSinceLastLand < timeSinceLastJump)
+		{
+			// stretch on jump anim
+			float tX = 1.0f * timeSinceLastJump;
+			float tY = 1.0f * timeSinceLastJump;
+			float scaleX = Clamp(Lerp(2.5f, 1.0f, Clamp(ElasticEaseOut(tX), 0.0f, 1.0f)), 0.1f, 10.0f);
+			float scaleY = Clamp(Lerp(0.3f, 1.0f, Clamp(ElasticEaseOut(tY), 0.0f, 1.0f)), 0.1f, 10.0f);
+			playerTrans->SetLocalScale(playerTrans->GetGlobalRotation().GetConjugated() * Vector(scaleX, scaleY, 1.0f));
+		}
+		else
+		{
+			// stretch on jump anim
+			float tX = 0.75f * timeSinceLastJump;
+			float tY = 0.5f * timeSinceLastJump;
+			float scaleX = Clamp(Lerp(0.3f, 0.5f, Clamp(ElasticEaseOut(tX), 0.0f, 1.0f)), 0.1f, 10.0f);
+			float scaleY = Clamp(Lerp(2.5f, 1.2f, Clamp(ElasticEaseOut(tY), 0.0f, 1.0f)), 0.1f, 10.0f);
+			playerTrans->SetLocalScale(playerTrans->GetGlobalRotation().GetConjugated() * Vector(scaleX, scaleY, 1.0f));
+		}
+
+		PowerupSystem::ApplyPowerupsAndInput(world, playerCmp);
+	}
+
+	void PlayerUpdateSystem::PlayerDead(Poly::World * world, double time, PlayerControllerComponent * playerCmp)
+	{
+		gConsole.LogInfo("PlayerUpdateSystem::PlayerDead");
+
+		GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
+		CameraComponent* cameraCmp = world->GetComponent<CameraComponent>(manager->Camera);
+		PostprocessSettingsComponent* postCmp = world->GetComponent<PostprocessSettingsComponent>(manager->Camera);
+
+		float timeSinceDeath = time - playerCmp->LastDeathTimeStart;
+		float deathAnimDuration = 1.0f;
+		if (timeSinceDeath > deathAnimDuration)
+		{
+			// reset
+			postCmp->SaturationPower = 1.0f;
+			postCmp->VinettePower = 0.3f;
+			postCmp->DistortionPower = 0.45f;
+			postCmp->GrainPower = 0.1f;
+			postCmp->StripesPower = 0.35f;
+
+			// respawn
+			world->GetComponent<TransformComponent>(manager->Player)->SetLocalTranslation(world->GetComponent<PlayerControllerComponent>(manager->Player)->SpawnPoint);
+			playerCmp->LastDeathTimeStart = -1.0f;
+		}
+		else
+		{
+			if (postCmp)
+			{
+				float t = Clamp(timeSinceDeath / deathAnimDuration, 0.0f, 1.0f);
+				postCmp->SaturationPower = Clamp(Lerp(1.0f, -2.0f, t), 0.0f, 1.0f);
+				postCmp->VinettePower = Lerp(0.3f, 2.0f, t);
+				postCmp->DistortionPower = Lerp(0.45f, 1.0f, t);
+				postCmp->GrainPower = Lerp(0.1f, 0.3f, t);
+				postCmp->StripesPower = Lerp(0.25f, 0.35f, t);
+			}
 		}
 	}
 
@@ -96,8 +151,23 @@ namespace SGJ
 
 	void PlayerUpdateSystem::KillPlayer(Poly::World * world)
 	{
+		gConsole.LogInfo("PlayerUpdateSystem::KillPlayer");
+
 		GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
-		world->GetComponent<TransformComponent>(manager->Player)->SetLocalTranslation(world->GetComponent<PlayerControllerComponent>(manager->Player)->SpawnPoint);
+		CameraComponent* cameraCmp = world->GetComponent<CameraComponent>(manager->Camera);
+
+		double time = TimeSystem::GetTimerElapsedTime(world, Poly::eEngineTimer::GAMEPLAY);
+		if (cameraCmp)
+		{
+			cameraCmp->LastShakeTime = time;
+			cameraCmp->ShakePower = Clamp(cameraCmp->ShakePower + 0.025f, 0.0f, 0.1f);
+		}
+		
+		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(manager->Player);
+		if (playerCmp)
+		{
+			playerCmp->LastDeathTimeStart = time;
+		}
 	}
 
 	void PlayerUpdateSystem::PlayerJump(Poly::World* world)
@@ -107,12 +177,21 @@ namespace SGJ
 		RigidBody2DComponent* rigidbodyCmp = world->GetComponent<RigidBody2DComponent>(playerID);
 		TransformComponent* transCmp = world->GetComponent<TransformComponent>(playerID);
 		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(playerID);
-
+		GameManagerWorldComponent* mgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
+		CameraComponent* cameraCmp = world->GetComponent<CameraComponent>(mgrCmp->Camera);
+		
 		double time = TimeSystem::GetTimerElapsedTime(world, Poly::eEngineTimer::GAMEPLAY);
+		if (cameraCmp)
+		{
+			cameraCmp->LastShakeTime = time;
+			cameraCmp->ShakePower = Clamp(cameraCmp->ShakePower + 0.010f, 0.0f, 0.05f);
+		}
+
 		if (playerCmp->AllowJump)
 		{
 			playerCmp->LastJumpTimeStart = time;
 		}
+
 		playerCmp->AllowJump = false;
 		Vector jump(0, 0, 0);
 		jump.Y = playerCmp->GetJumpForce();
@@ -120,3 +199,4 @@ namespace SGJ
 		GameManagerSystem::PlaySample(world, "Audio/jump-sound.ogg", transCmp->GetGlobalTranslation(), 1.5, 1.8);
 	}
 }
+
