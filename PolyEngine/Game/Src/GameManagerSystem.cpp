@@ -45,7 +45,7 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 			case eTileType::SPIKESLEFT:
 			case eTileType::SPIKESRIGHT:
 			{
-				KillPlayer(world);
+				//KillPlayer(world);
 				return;
 			}
 			break;
@@ -218,6 +218,7 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 				break;
 
 			default:
+				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], eRigidBody2DType::STATIC, Vector(1, 1, 1), Color(1, 0, 1)));
 				break;
 			}
 		}
