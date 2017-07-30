@@ -12,7 +12,7 @@
 using namespace Poly;
 
 Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType type, float density, float friction)
-	: BodyType(type)
+	: BodyType(type), BodyWorld(world)
 {
 	ImplData = std::make_unique<RigidBody2DData>();
 
@@ -40,7 +40,7 @@ Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType 
 }
 
 Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType type, RigidBody2DSensorTag sensorTag)
-	: BodyType(type)
+	: BodyType(type), BodyWorld(world)
 {
 	ImplData = std::make_unique<RigidBody2DData>();
 
@@ -68,9 +68,10 @@ Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType 
 
 Poly::RigidBody2DComponent::~RigidBody2DComponent()
 {
+	BodyWorld->GetWorldComponent<Physics2DWorldComponent>()->GetPhysicsWorld()->DestroyBody(ImplData->Body);
 }
 
-void Poly::RigidBody2DComponent::FinishInit()
+void Poly::RigidBody2DComponent::EnsureInit()
 {
 	if (!ImplData->Fixture)
 	{
@@ -115,6 +116,11 @@ void Poly::RigidBody2DComponent::SetDamping(float dampfactor)
 	ImplData->Body->SetLinearDamping(dampfactor);
 }
 
+void Poly::RigidBody2DComponent::SetRotationDamping(float dampfactor)
+{
+	ImplData->Body->SetAngularDamping(dampfactor);
+}
+
 void Poly::RigidBody2DComponent::SetFixedRotation(bool fixed)
 {
 	ImplData->Body->SetFixedRotation(fixed);
@@ -129,6 +135,16 @@ Vector Poly::RigidBody2DComponent::GetLinearSpeed() const
 {
 	b2Vec2 v = ImplData->Body->GetLinearVelocity();
 	return Vector(v.x, v.y, 0);
+}
+
+void Poly::RigidBody2DComponent::SetLinearSpeed(const Vector& speed)
+{
+	ImplData->Body->SetLinearVelocity(b2Vec2(speed.X, speed.Y));
+}
+
+void Poly::RigidBody2DComponent::SetRotationSpeed(float speed)
+{
+	ImplData->Body->SetAngularVelocity(speed);
 }
 
 void Poly::RigidBody2DComponent::UpdatePosition()

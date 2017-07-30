@@ -33,18 +33,23 @@ namespace Poly
 		void ApplyImpulseToCenter(const Vector& impulse);
 
 		void SetDamping(float dampfactor);
+		void SetRotationDamping(float dampfactor);
 		void SetFixedRotation(bool fixed);
 		void SetDensity(float density);
 
 		float GetDensity() const;
 		Vector GetLinearSpeed() const;
 
+		void SetLinearSpeed(const Vector& speed);
+		void SetRotationSpeed(float speed);
+
 		void UpdatePosition();
 
 		eRigidBody2DType GetBodyType() const { return BodyType; }
 	private:
-		void FinishInit();
+		void EnsureInit();
 
+		World* BodyWorld;
 		eRigidBody2DType BodyType;
 		std::unique_ptr<RigidBody2DData> ImplData;
 	};

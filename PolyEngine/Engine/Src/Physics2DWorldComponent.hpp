@@ -37,6 +37,7 @@ namespace Poly
 		const Dynarray<Collision>& GetCollidingBodies(RigidBody2DComponent* rb) const;
 
 		void SetGravity(const Vector& gravity) const;
+		Vector GetGravity() const { return Config.Gravity; }
 	private:
 		float LastDeltaOverflow = 0.f;
 
