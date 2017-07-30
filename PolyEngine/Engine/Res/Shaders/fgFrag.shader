@@ -333,13 +333,19 @@ void main()
 
 	vec3 sumcol = vec3(0.0);
 	vec3 sumw = vec3(0.0);
+	vec3 emissive = vec3(0.0);
 	for (int i = 0; i<num_iter; ++i)
 	{
 		vec3 w = spectrum_offset(t);
 		sumw += w;
 		vec2 uvd = distort(uv, t, min_distort, max_distort); //TODO: move out of loop
-		sumcol += w * render(uvd);
+		vec3 c = w * render(uvd);
+		sumcol += c;
 		t += stepsiz;
+		if (length(c) > 0.8) 
+		{
+			emissive += c;
+		}
 	}
 	sumcol.rgb /= sumw;
 
@@ -347,7 +353,7 @@ void main()
 	outcol = lin2srgb(outcol);
 	outcol += rnd / 255.0;
 
-	color.rgb = outcol;
+	color.rgb = outcol + 0.4*(emissive);
 
 	// tonemapper
 	color.rgb = Tonemap_ACES(color.rgb);

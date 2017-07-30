@@ -21,6 +21,8 @@ uniform int uUseCashetes;
 #define FAR 40.
 #define time uTime
 
+#define EPSILON 1e-10
+
 /*
 Believable animated volumetric dust storm in 7 samples,
 blending each layer in based on geometry distance allows to
@@ -44,7 +46,7 @@ appear too noisy and as a function of current height to get some
 "ground hugging" effect.
 
 */
-
+vec3 saturate(vec3 a) { return clamp(a, vec3(0.0), vec3(1.0)); }
 mat2 mm2(in float a) { float c = cos(a), s = sin(a); return mat2(c, s, -s, c); }
 
 float height(in vec2 p)
@@ -209,6 +211,40 @@ float curv(in vec3 p, in float w)
 	return .125 / (e.x*e.x) *(t1 + t2 + t3 + t4 - 4. * map(p));
 }
 
+vec3 RGBtoHCV(vec3 RGB)
+{
+	// Based on work by Sam Hocevar and Emil Persson
+	vec4 P = (RGB.g < RGB.b) ? vec4(RGB.bg, -1.0, 2.0 / 3.0) : vec4(RGB.gb, 0.0, -1.0 / 3.0);
+	vec4 Q = (RGB.r < P.x) ? vec4(P.xyw, RGB.r) : vec4(RGB.r, P.yzx);
+	float C = Q.x - min(Q.w, Q.y);
+	float H = abs((Q.w - Q.y) / (6.0 * C + EPSILON) + Q.z);
+	return vec3(H, C, Q.x);
+}
+
+vec3 HUEtoRGB(float H)
+{
+	float R = abs(H * 6.0 - 3.0) - 1.0;
+	float G = 2.0 - abs(H * 6.0 - 2.0);
+	float B = 2.0 - abs(H * 6.0 - 4.0);
+	return saturate(vec3(R, G, B));
+}
+
+vec3 RGBtoHSL(vec3 RGB)
+{
+	vec3 HCV = RGBtoHCV(RGB);
+	float L = HCV.z - HCV.y * 0.5;
+	float S = HCV.y / (1.0 - abs(L * 2.0 - 1.0) + EPSILON);
+	return vec3(HCV.x, S, L);
+}
+
+
+vec3 HSLtoRGB(in vec3 HSL)
+{
+	vec3 RGB = HUEtoRGB(HSL.x);
+	float C = (1.0 - abs(2.0 * HSL.z - 1.0)) * HSL.y;
+	return (RGB - 0.5) * C + vec3(HSL.z);
+}
+
 void main()
 {
 
@@ -278,6 +314,9 @@ void main()
 		col = col*brdf + col*spe*.5 + fre*vec3(.2, 1., 0.7)*.3*crv;
 	}
 
+	vec3 hsl = RGBtoHSL(col.rgb);
+	hsl.s *= 1.2;
+	col.rgb = HSLtoRGB(hsl);
 	//ordinary distance fog first
 	col = mix(col, fogb, smoothstep(FAR - 7., FAR, rz));
 
