@@ -104,13 +104,22 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 	}
 }
 
-Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Poly::Vector& position, eTileType tileType, String meshSource, eRigidBody2DType physicsProperties = eRigidBody2DType::STATIC, const Vector& size = Vector(1, 1, 1), const Color& color = Color(0, 0, 0))
+Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Poly::Vector& position, eTileType tileType, String meshSource, eRigidBody2DType physicsProperties = eRigidBody2DType::STATIC, const Vector& size = Vector(1, 1, 1), const Color& color = Color(0, 0, 0), bool colliding = true)
 {
 	UniqueID tile = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, tile);
 	DeferredTaskSystem::AddComponentImmediate<TileComponent>(world, tile, tileType);
 	DeferredTaskSystem::AddComponentImmediate<Box2DColliderComponent>(world, tile, size * 2);
-	DeferredTaskSystem::AddComponentImmediate<RigidBody2DComponent>(world, tile, world, physicsProperties, tileType == eTileType::RIGIDBODYGROUND ? 0.5f : 1.0f);
+
+	if (colliding)
+	{
+		DeferredTaskSystem::AddComponentImmediate<RigidBody2DComponent>(world, tile, world, physicsProperties, tileType == eTileType::RIGIDBODYGROUND ? 0.5f : 1.0f);
+	}
+	else
+	{
+		DeferredTaskSystem::AddComponentImmediate<RigidBody2DComponent>(world, tile, world, physicsProperties, RigidBody2DSensorTag());
+	}
+
 
 	TransformComponent* tileTrans = world->GetComponent<TransformComponent>(tile);
 
@@ -249,7 +258,7 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/cube.fbx",
 					level->Tiles[idx] == eTileType::STATICGROUND ? eRigidBody2DType::STATIC : eRigidBody2DType::DYNAMIC, 
 					level->Tiles[idx] == eTileType::STATICGROUND ? Vector(0.5, 0.5, 0.5) : Vector(0.4, 0.4, 0.4),
-					level->Tiles[idx] == eTileType::STATICGROUND ? Color(0, 0, 0) : Color(0.5, 0.5, 0.5)));
+					level->Tiles[idx] == eTileType::STATICGROUND ? Color(0.05, 0, 0.125) : Color(0.5, 0.5, 0.5)));
 				break;
 
 			case eTileType::SPIKESBOTTOM:
@@ -260,7 +269,7 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 				break;
 
 			default:
-				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/cube.fbx", eRigidBody2DType::STATIC, Vector(0.5, 0.5, 0.5), Color(1, 0, 1)));
+				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/cube.fbx", eRigidBody2DType::STATIC, Vector(0.5, 0.5, 0.5), Color(0.25, 0, 0.125), false));
 				break;
 			}
 		}
@@ -272,6 +281,7 @@ void SGJ::GameManagerSystem::DespawnLevel(Poly::World* world)
 	GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
 	for (auto ent : gameMgrCmp->LevelEntities)
 		DeferredTaskSystem::DestroyEntityImmediate(world, ent);
+	gameMgrCmp->LevelEntities.Clear();
 }
 
 void SGJ::GameManagerSystem::PlaySample(Poly::World* world, const String& file, const Vector& position, float pitch, float gain)
