@@ -80,5 +80,9 @@ void main() {
   }
   
   color = ambient + directional;
-  color = vec4(vTexCoord, 0.0, 0.5);
+  vec2 p = (vTexCoord - 0.5)*2.0;
+  float a = clamp(1.0 - length(p), 0.0, 1.0);
+  a = smoothstep(0.25, 1.0, a);
+
+  color = 0.7*vec4(0.0, 1.0, 0.0, a);
 }

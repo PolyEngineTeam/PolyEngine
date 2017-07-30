@@ -16,7 +16,7 @@ uniform int uUseCashetes;
 
 //Audio by Dave_Hoskins
 // default 100
-#define ITR 100 
+#define ITR 50 
 // default 40.
 #define FAR 40.
 #define time uTime

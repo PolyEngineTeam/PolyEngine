@@ -107,7 +107,7 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 		errorMessage.Resize(static_cast<size_t>(infoLogLength + 1));
 		glGetShaderInfoLog(shader, infoLogLength, NULL, &errorMessage[0]);
 		gConsole.LogError("Shader compilation: {}", std::string(&errorMessage[0]));
-		ASSERTE(false, "Shader compilation failed!");
+		ASSERTE(false, "Shader compilation failed!");	
 	}
 
 	glAttachShader(ProgramHandle, shader);

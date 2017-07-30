@@ -170,8 +170,8 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, playerLight);
 	Poly::TransformComponent* lightTrans = world->GetComponent<Poly::TransformComponent>(playerLight);
 	lightTrans->SetParent(playerTrans);
-	lightTrans->SetLocalTranslation(Vector(0.0f, 0.0f, 1.0f));
-	lightTrans->SetLocalScale(Vector(3.0f, 3.0f, 3.0f));
+	// lightTrans->SetLocalTranslation(Vector(0.0f, 0.0f, 0.5f));
+	// lightTrans->SetLocalScale(Vector(3.0f, 3.0f, 3.0f));
 	// DeferredTaskSystem::AddComponentImmediate<PointLightSourceComponent>(world, playerLight, Color(0.0, 1.0, 0.0, 1.0), 1000.0f, 100.0f);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, playerLight, "Quad.obj", eResourceSource::GAME, Color(0.0f, 1.0f, 0.0f, 0.5f));
 //	Poly::MeshRenderingComponent* mesh = world->GetComponent<Poly::MeshRenderingComponent>(playerLight);

@@ -36,6 +36,7 @@ namespace SGJ
 		float DeathCoolDowntime = 0.f;
 		double LastLandTimeStart = 0;
 		double LastJumpTimeStart = 0;
+		float DeathCoolDowntimeMax = 2.0f;
 		
 	private:
 		const float DefJumpForce;
