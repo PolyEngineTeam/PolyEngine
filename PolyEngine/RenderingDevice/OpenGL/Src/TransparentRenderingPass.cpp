@@ -103,11 +103,13 @@ void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera
 		if (shouldCull)
 			continue;
 
+		GetProgram().SetUniform("uBaseColor", meshCmp->GetBaseColor());
+
 		Matrix objScale;
 		objScale.SetScale(Vector(1.0f, 1.0f, 1.0f));
 
 		Matrix objTransform; // = transCmp->GetGlobalTransformationMatrix();
-		objTransform.SetTranslation(transCmp->GetGlobalTranslation() + Vector(0.0f, 0.0f, 0.25f));
+		objTransform.SetTranslation(transCmp->GetGlobalTranslation() + Vector(0.0f, 0.0f, 0.5f));
 		
 		Matrix screenTransform = camera->GetMVP() * objTransform * objScale;
 		GetProgram().SetUniform("uTransform", objTransform * objScale);

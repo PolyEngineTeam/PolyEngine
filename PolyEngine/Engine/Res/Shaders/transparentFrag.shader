@@ -84,6 +84,6 @@ void main() {
   float a = clamp(1.0 - length(p), 0.0, 1.0);
   a = smoothstep(0.0, 1.0, a);
 
-  color = 0.7*vec4(0.0, 1.0, 0.0, a);
+  color = uBaseColor * 1.0*vec4(1.0, 1.0, 1.0, a);
 }
 

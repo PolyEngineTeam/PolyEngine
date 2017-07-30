@@ -104,7 +104,8 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 	}
 }
 
-Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Poly::Vector& position, eTileType tileType, String meshSource, eRigidBody2DType physicsProperties = eRigidBody2DType::STATIC, const Vector& size = Vector(1, 1, 1), const Color& color = Color(0, 0, 0), bool colliding = true)
+Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Poly::Vector& position, eTileType tileType, String meshSource,
+	eRigidBody2DType physicsProperties = eRigidBody2DType::STATIC, const Vector& size = Vector(1, 1, 1), const Color& color = Color(0, 0, 0), bool colliding = true)
 {
 	UniqueID tile = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, tile);
@@ -120,7 +121,6 @@ Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Pol
 		DeferredTaskSystem::AddComponentImmediate<RigidBody2DComponent>(world, tile, world, physicsProperties, RigidBody2DSensorTag());
 	}
 
-
 	TransformComponent* tileTrans = world->GetComponent<TransformComponent>(tile);
 
 	UniqueID mesh = DeferredTaskSystem::SpawnEntityImmediate(world);
@@ -128,6 +128,15 @@ Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Pol
 	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, mesh, meshSource, eResourceSource::GAME, color);
 	TransformComponent* meshTrans = world->GetComponent<TransformComponent>(mesh);
 	meshTrans->SetParent(tileTrans);
+
+	UniqueID tileBloom = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, tileBloom);
+	Poly::TransformComponent* lightTrans = world->GetComponent<Poly::TransformComponent>(tileBloom);
+	lightTrans->SetParent(meshTrans);
+	lightTrans->SetLocalScale(Vector(3.0f, 3.0f, 3.0f));
+	Color c = Color(color);
+	c.A = 0.9;
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, tileBloom, "Quad.obj", eResourceSource::GAME, c);
 
 	switch (tileType)
 	{
@@ -173,18 +182,13 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	Vector correctedSize = Vector(0.8, 0.8, 0.0);
 	correctedSize.Z = 0.8f;
 	bodyTrans->SetLocalScale(correctedSize);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, body, "Quad.obj", eResourceSource::GAME, Color(0, 1, 0));
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, body, "Quad.obj", eResourceSource::GAME, Color(0, 1.5f, 0));
 
 	UniqueID playerLight = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, playerLight);
 	Poly::TransformComponent* lightTrans = world->GetComponent<Poly::TransformComponent>(playerLight);
 	lightTrans->SetParent(playerTrans);
-	// lightTrans->SetLocalTranslation(Vector(0.0f, 0.0f, 0.5f));
-	// lightTrans->SetLocalScale(Vector(3.0f, 3.0f, 3.0f));
-	// DeferredTaskSystem::AddComponentImmediate<PointLightSourceComponent>(world, playerLight, Color(0.0, 1.0, 0.0, 1.0), 1000.0f, 100.0f);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, playerLight, "Quad.obj", eResourceSource::GAME, Color(0.0f, 1.0f, 0.0f, 0.5f));
-//	Poly::MeshRenderingComponent* mesh = world->GetComponent<Poly::MeshRenderingComponent>(playerLight);
-	
 
 	playerTrans->SetLocalTranslation(position);
 	return player;
@@ -250,7 +254,7 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 					gameMgrCmp->Player = SpawnPlayer(world, Vector(posW, -posH, 0));
 				break;
 			case eTileType::PLAYERENDPOS:
-				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/cube.fbx", eRigidBody2DType::STATIC, Vector(0.5, 0.5, 0.5), Color(0, 0, 1)));
+				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/cube.fbx", eRigidBody2DType::STATIC, Vector(0.5, 0.5, 0.5), Color(0, 0, 1.2f)));
 				break;
 
 			case eTileType::STATICGROUND:
@@ -265,7 +269,7 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 			case eTileType::SPIKESTOP:
 			case eTileType::SPIKESLEFT:
 			case eTileType::SPIKESRIGHT:
-				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/spikes.fbx", eRigidBody2DType::STATIC, Vector(0.4, 0.4, 0.25), Color(1, 0, 0)));
+				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/spikes.fbx", eRigidBody2DType::STATIC, Vector(0.4, 0.4, 0.25), Color(1.2f, 0, 0)));
 				break;
 
 			default:
