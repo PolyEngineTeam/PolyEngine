@@ -17,47 +17,40 @@ namespace SGJ
 	void PlayerUpdateSystem::Update(World* world)
 	{
 		double deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
-		double time = TimeSystem::GetTimerElapsedTime(world, Poly::eEngineTimer::GAMEPLAY);
 
-		for (auto playerTuple : world->IterateComponents<PlayerControllerComponent, RigidBody2DComponent>())
-		{
-			RigidBody2DComponent* rigidbodyCmp = std::get<RigidBody2DComponent*>(playerTuple);
-			PlayerControllerComponent* playerCmp = std::get<PlayerControllerComponent*>(playerTuple);
+		GameManagerWorldComponent* mgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
+		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(mgrCmp->Player);
+		
+		// Jumping
+		UpdateInAir(world);	
+		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::SPACE))
+			TryPlayerJump(world);
+		ProcessJumpStrech(world);
 
-			UpdateInAir(world);
-			
-			Vector move(0, 0, 0);
-			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::LEFT))
-				playerCmp->SetMoveVector(Vector(-deltaTime * playerCmp->GetMovementSpeed(), 0, 0));
-
-			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::RIGHT))				
-				playerCmp->SetMoveVector(Vector(deltaTime * playerCmp->GetMovementSpeed(), 0, 0));
-
-			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::SPACE))
-				TryPlayerJump(world);
-
-			ProcessJumpStrech(world);
-
-			PowerupSystem::ApplyPowerupsAndInput(world, playerCmp);
-		}
-	}
-
-	float PlayerUpdateSystem::ElasticEaseOut(float p)
-	{
-		return sin(-13 * 3.14 * (p + 1)) * pow(2, -10 * p) + 1;
+		// Moving
+		Vector move(0, 0, 0);
+		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::LEFT))
+			playerCmp->SetMoveVector(Vector(-deltaTime * playerCmp->GetMovementSpeed(), 0, 0));
+		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::RIGHT))
+			playerCmp->SetMoveVector(Vector(deltaTime * playerCmp->GetMovementSpeed(), 0, 0));
+		PowerupSystem::ApplyPowerupsAndInput(world, playerCmp);
 	}
 
 	void PlayerUpdateSystem::KillPlayer(Poly::World * world)
 	{
 		GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
 		TransformComponent* transCmp = world->GetComponent<TransformComponent>(manager->Player);
+		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(manager->Player);
 		GameManagerSystem::PlaySample(world, "Audio/death-sound.ogg", transCmp->GetGlobalTranslation(), 1.0, 1.8);
 		
+		world->GetComponent<TransformComponent>(manager->Player)->SetLocalTranslation(world->GetComponent<PlayerControllerComponent>(manager->Player)->SpawnPoint);
+
 		RigidBody2DComponent* rbCmp = world->GetComponent<RigidBody2DComponent>(manager->Player);
 		rbCmp->SetLinearSpeed(Vector::ZERO);
 		rbCmp->SetRotationSpeed(0.f);
 		
-		world->GetComponent<TransformComponent>(manager->Player)->SetLocalTranslation(world->GetComponent<PlayerControllerComponent>(manager->Player)->SpawnPoint);
+		playerCmp->InAir = false;
+		playerCmp->JumpCooldownTimer = 0.f;
 	}
 
 	void PlayerUpdateSystem::TryPlayerJump(Poly::World* world)
@@ -108,6 +101,11 @@ namespace SGJ
 				playerCmp->InAir = false;
 				break;
 			}
+	}
+
+	float PlayerUpdateSystem::ElasticEaseOut(float p)
+	{
+		return sin(-13 * 3.14 * (p + 1)) * pow(2, -10 * p) + 1;
 	}
 
 	void PlayerUpdateSystem::ProcessJumpStrech(Poly::World * world)
