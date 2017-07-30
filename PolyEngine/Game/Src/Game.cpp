@@ -40,7 +40,6 @@ void SGJGame::Init()
 	gEngine->RegisterGameUpdatePhase(SGJ::CameraMovementSystem::CameraMovementUpdatePhase);
 	//gEngine->RegisterGameUpdatePhase(SGJ::Debug::DebugSystemPhase);
 	
-	
 	DeferredTaskSystem::AddWorldComponentImmediate<SGJ::GameManagerWorldComponent>(gEngine->GetWorld());
 	DeferredTaskSystem::AddWorldComponentImmediate<SGJ::GameDebugWorldComponent>(gEngine->GetWorld());
 

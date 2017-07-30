@@ -120,10 +120,17 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	Poly::TransformComponent* bodyTrans = world->GetComponent<Poly::TransformComponent>(body);
 	bodyTrans->SetParent(playerTrans);
 	bodyTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
-	Vector correctedSize = Vector(0.8, 0.8, 0);
+	Vector correctedSize = Vector(0.8, 0.8, 0.0);
 	correctedSize.Z = 0.8f;
 	bodyTrans->SetLocalScale(correctedSize);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, body, "Quad.obj", eResourceSource::GAME, Color(0, 1, 0));
+
+	UniqueID playerLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, playerLight);
+	Poly::TransformComponent* lightTrans = world->GetComponent<Poly::TransformComponent>(playerLight);
+	lightTrans->SetParent(playerTrans);
+	lightTrans->SetLocalTranslation(Vector(0.0, 0.0, 5.0));
+	DeferredTaskSystem::AddComponentImmediate<PointLightSourceComponent>(world, playerLight, Color(0.0, 1.0, 0.0, 1.0), 1000.0f, 100.0f);
 
 	playerTrans->SetLocalTranslation(position);
 	return player;
@@ -246,12 +253,11 @@ void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
 
 	// SETUP SCENE HERE
 
-
 	UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(gEngine->GetWorld(), id);
 	Poly::TransformComponent* lightTrans = gEngine->GetWorld()->GetComponent<Poly::TransformComponent>(id);
-	lightTrans->SetLocalRotation(Quaternion(Vector::UNIT_Y, 180_deg));
-	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightSourceComponent>(gEngine->GetWorld(), id, Color(1,0,0), 1.0f);
+	lightTrans->SetLocalRotation(Quaternion(Vector::UNIT_Y, -15_deg));
+	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightSourceComponent>(gEngine->GetWorld(), id, Color(1,0,1), 100.0f);
 	gameMgrCmp->OtherEntities.PushBack(id);
 }
 

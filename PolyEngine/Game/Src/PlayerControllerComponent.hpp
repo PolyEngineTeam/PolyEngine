@@ -30,6 +30,8 @@ namespace SGJ
 		Poly::Vector SpawnPoint;
 		double LastAllowJumpChecked = 0;
 		bool AllowJump = false;
+		double LastLandTimeStart = 0;
+		double LastJumpTimeStart = 0;
 	private:
 		float MovementSpeed = 50;
 		float JumpForce = 250;
