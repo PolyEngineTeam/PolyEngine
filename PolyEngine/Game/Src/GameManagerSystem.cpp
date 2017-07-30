@@ -31,6 +31,7 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 {
 	GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
 	
+	// Proces sound entities
 	for (size_t i=0; i < manager->SoundSampleEntities.GetSize();)
 	{
 		UniqueID soundEnt = manager->SoundSampleEntities[i];
@@ -43,57 +44,59 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 			++i;
 	}
 
-	try
+	// Proces triggers
+	for (Physics2DWorldComponent::Collision col : world->GetWorldComponent<Physics2DWorldComponent>()->GetCollidingBodies(world->GetComponent<RigidBody2DComponent>(manager->Player)))
 	{
-		for (Physics2DWorldComponent::Collision col : world->GetWorldComponent<Physics2DWorldComponent>()->GetCollidingBodies(world->GetComponent<RigidBody2DComponent>(manager->Player)))
+		TileComponent* obstacle = col.rb->GetSibling<TileComponent>();
+		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(manager->Player);
+
+		if (!obstacle) continue;
+
+		switch (obstacle->GetTileType())
 		{
-			TileComponent* obstacle = col.rb->GetSibling<TileComponent>();
-			PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(manager->Player);
-
-			if (!obstacle) continue;
-
-			switch (obstacle->GetTileType())
-			{
-			case eTileType::SPIKESBOTTOM:
-			case eTileType::SPIKESTOP:
-			case eTileType::SPIKESLEFT:
-			case eTileType::SPIKESRIGHT:
-			case eTileType::PLAYERENDPOS:
-			{
-				PlayerUpdateSystem::KillPlayer(world);
-				return;
-			}
+		case eTileType::SPIKESBOTTOM:
+		case eTileType::SPIKESTOP:
+		case eTileType::SPIKESLEFT:
+		case eTileType::SPIKESRIGHT:
+		{
+			PlayerUpdateSystem::KillPlayer(world);
+			return;
+		}
+		case eTileType::PLAYERENDPOS:
+		{
+			manager->CurrentLevelID = (manager->CurrentLevelID + 1) % manager->LevelEntities.GetSize();
+			SpawnLevel(world, manager->CurrentLevelID);
+			return;
+		}
+		break;
+		case eTileType::FASTERCHARACTER:
+			playerCmp->SetActivePowerup(ePowerup::INCREASED_SPEED);
 			break;
-			case eTileType::FASTERCHARACTER:
-				playerCmp->SetActivePowerup(ePowerup::INCREASED_SPEED);
-				break;
-			case eTileType::HIGHJUMP:
-				playerCmp->SetActivePowerup(ePowerup::HIGH_JUMP);
-				break;
-			case eTileType::LARGERCHARACTER:
-				playerCmp->SetActivePowerup(ePowerup::INCREASED_SIZE);
-				break;
-			case eTileType::SMALLERCHARACTER:
-				playerCmp->SetActivePowerup(ePowerup::DECREASED_SIZE);
-				break;
-			case eTileType::POGOJUMP:
-				playerCmp->SetActivePowerup(ePowerup::POGO_JUMP);
-				break;
-			case eTileType::REVERSEDCONTROLS:
-				playerCmp->SetActivePowerup(ePowerup::REVERSED_CONTROLS);
-				break;
-			case eTileType::LOWJUMP:
-				playerCmp->SetActivePowerup(ePowerup::LOW_JUMP);
-				break;
-			case eTileType::INVERSEDGRAVITY:
-				playerCmp->SetActivePowerup(ePowerup::INVERSED_GRAVITY);
-				break;
-			default:
-				break;
-			}
+		case eTileType::HIGHJUMP:
+			playerCmp->SetActivePowerup(ePowerup::HIGH_JUMP);
+			break;
+		case eTileType::LARGERCHARACTER:
+			playerCmp->SetActivePowerup(ePowerup::INCREASED_SIZE);
+			break;
+		case eTileType::SMALLERCHARACTER:
+			playerCmp->SetActivePowerup(ePowerup::DECREASED_SIZE);
+			break;
+		case eTileType::POGOJUMP:
+			playerCmp->SetActivePowerup(ePowerup::POGO_JUMP);
+			break;
+		case eTileType::REVERSEDCONTROLS:
+			playerCmp->SetActivePowerup(ePowerup::REVERSED_CONTROLS);
+			break;
+		case eTileType::LOWJUMP:
+			playerCmp->SetActivePowerup(ePowerup::LOW_JUMP);
+			break;
+		case eTileType::INVERSEDGRAVITY:
+			playerCmp->SetActivePowerup(ePowerup::INVERSED_GRAVITY);
+			break;
+		default:
+			break;
 		}
 	}
-	catch (std::exception) {}
 }
 
 Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Poly::Vector& position, eTileType tileType, eRigidBody2DType physicsProperties = eRigidBody2DType::STATIC, const Vector& size = Vector(1, 1, 1), const Color& color = Color(0, 0, 0))
@@ -102,7 +105,7 @@ Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Pol
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, tile);
 	DeferredTaskSystem::AddComponentImmediate<TileComponent>(world, tile, tileType);
 	DeferredTaskSystem::AddComponentImmediate<Box2DColliderComponent>(world, tile, size);
-	DeferredTaskSystem::AddComponentImmediate<RigidBody2DComponent>(world, tile, world, physicsProperties);
+	DeferredTaskSystem::AddComponentImmediate<RigidBody2DComponent>(world, tile, world, physicsProperties, tileType == eTileType::RIGIDBODYGROUND ? 0.5f : 1.0f);
 
 	TransformComponent* tileTrans = world->GetComponent<TransformComponent>(tile);
 
@@ -130,7 +133,7 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	DeferredTaskSystem::AddComponentImmediate<Poly::Circle2DColliderComponent>(world, player, 0.4);
 	DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, player, world, eRigidBody2DType::DYNAMIC, 1.0f, 0.5f);
 	Poly::RigidBody2DComponent* rigidBody = world->GetComponent<Poly::RigidBody2DComponent>(player);
-	//rigidBody->SetDamping(0.5);
+	rigidBody->SetDamping(3);
 	rigidBody->SetRotationDamping(10);
 
 	UniqueID body = DeferredTaskSystem::SpawnEntityImmediate(world);
@@ -213,7 +216,10 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 			switch (level->Tiles[idx])
 			{
 			case eTileType::PLAYERSTARTPOS:
-				gameMgrCmp->Player = SpawnPlayer(world, Vector(posW, -posH, 0));
+				if (gameMgrCmp->Player)    
+					PlayerUpdateSystem::ResetPlayer(world, Vector(posW, -posH, 0));
+				else
+					gameMgrCmp->Player = SpawnPlayer(world, Vector(posW, -posH, 0));
 				break;
 			case eTileType::PLAYERENDPOS:
 				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], eRigidBody2DType::STATIC, Vector(1, 1, 1), Color(0, 0, 1)));

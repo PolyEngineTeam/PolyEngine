@@ -5,6 +5,7 @@ namespace Poly
 {
 	class World;
 	class TransformComponent;
+	class Vector;
 }
 
 namespace SGJ
@@ -15,6 +16,7 @@ namespace SGJ
 
 		float ElasticEaseOut(float p);
 		void KillPlayer(Poly::World* world);
+		void ResetPlayer(Poly::World* world, const Poly::Vector& spawnLocation);
 		void TryPlayerJump(Poly::World* world);
 		void UpdateInAir(Poly::World* world);
 		void ProcessJumpStrech(Poly::World* world);
