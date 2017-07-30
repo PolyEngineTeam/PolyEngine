@@ -10,6 +10,7 @@
 #include <PostprocessSettingsComponent.hpp>
 #include <Core.hpp>
 #include <DeferredTaskSystem.hpp>
+#include <SoundResource.hpp>
 
 #include "ViewportWorldComponent.hpp"
 #include "GameManagerWorldComponent.hpp"
@@ -52,9 +53,12 @@ void SGJGame::Init()
 	// load levels
 	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level3.csv");
 	SGJ::GameManagerSystem::SpawnLevel(gEngine->GetWorld(), 0);
+
+	JumpSoundPreload = ResourceManager<SoundResource>::Load("Audio/jump-sound.ogg", eResourceSource::GAME);
 };
 
 void SGJGame::Deinit()
 {
 	SGJ::GameManagerSystem::Cleanup(gEngine->GetWorld());
+	ResourceManager<SoundResource>::Release(JumpSoundPreload);
 }

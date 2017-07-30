@@ -42,5 +42,6 @@ namespace Poly
 		void ENGINE_DLLEXPORT ActivateListener(World*, const UniqueID&);
 		void ENGINE_DLLEXPORT DeactivateListener(World*, const UniqueID&);
 		void ENGINE_DLLEXPORT SetListenerGain(World*, const UniqueID&, float);
+		bool ENGINE_DLLEXPORT IsEmmiterActive(World*, const UniqueID&);
 	}
 } // namespace Poly
