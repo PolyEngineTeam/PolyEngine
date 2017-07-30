@@ -20,6 +20,8 @@ namespace SGJ
 		void TryPlayerJump(Poly::World* world);
 		void UpdateInAir(Poly::World* world);
 		void ProcessJumpStrech(Poly::World* world);
+
+		void PushPlayer(Poly::World * world, const Poly::Vector& normal, float force);
 	}
 
 }

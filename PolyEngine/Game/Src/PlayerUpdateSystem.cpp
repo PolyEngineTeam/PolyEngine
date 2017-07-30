@@ -162,4 +162,11 @@ namespace SGJ
 			playerTrans->SetLocalScale(playerTrans->GetGlobalRotation().GetConjugated() * Vector(scaleX, scaleY, 1.0f));
 		}
 	}
+
+	void PlayerUpdateSystem::PushPlayer(Poly::World* world, const Poly::Vector& normal, float force)
+	{
+		GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
+		RigidBody2DComponent* rbCmp = world->GetComponent<RigidBody2DComponent>(manager->Player);
+		rbCmp->ApplyImpulseToCenter(normal * force);
+	}
 }

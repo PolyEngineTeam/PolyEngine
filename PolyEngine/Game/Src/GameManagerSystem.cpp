@@ -114,19 +114,20 @@ Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Pol
 	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, mesh, meshSource, eResourceSource::GAME, color);
 	TransformComponent* meshTrans = world->GetComponent<TransformComponent>(mesh);
 	meshTrans->SetParent(tileTrans);
-	meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
+
 	switch (tileType)
 	{
 	case eTileType::SPIKESBOTTOM:
+		meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
 		break;
 	case eTileType::SPIKESTOP:
-		meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_Z, 180_deg));
+		meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_Z, 180_deg) * Quaternion(Vector::UNIT_X, 90_deg));
 		break;
 	case eTileType::SPIKESLEFT:
-		meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_Z, -90_deg));
+		meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_Z, -90_deg) * Quaternion(Vector::UNIT_X, 90_deg));
 		break;
 	case eTileType::SPIKESRIGHT:
-		meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_Z, 90_deg));
+		meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_Z, 90_deg) * Quaternion(Vector::UNIT_X, 90_deg));
 		break;
 	}
 	meshTrans->SetLocalScale(size);
@@ -246,7 +247,7 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 			case eTileType::SPIKESTOP:
 			case eTileType::SPIKESLEFT:
 			case eTileType::SPIKESRIGHT:
-				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/spikes.fbx", eRigidBody2DType::STATIC, Vector(0.5, 0.5, 0.25), Color(1, 0, 0)));
+				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/spikes.fbx", eRigidBody2DType::STATIC, Vector(0.4, 0.4, 0.25), Color(1, 0, 0)));
 				break;
 
 			default:
