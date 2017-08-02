@@ -37,7 +37,7 @@ void GLRenderingDevice::RenderWorld(World* world)
 		}
 		else
 		{
-			gConsole.LogInfo("GeometryPass is empty: type {0}", (int)type);
+			gConsole.LogInfo("GeometryPass is empty: type {}", (int)type);
 		}
 	}
 
@@ -49,7 +49,7 @@ void GLRenderingDevice::RenderWorld(World* world)
 		}
 		else
 		{
-			gConsole.LogInfo("Postoricess is empty: type {0}", (int)type);
+			gConsole.LogInfo("Postprocess is empty: type {}", (int)type);
 		}
 	}
 
