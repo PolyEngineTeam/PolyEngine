@@ -131,20 +131,64 @@ String String::Replace(const String& a, const String& b) const {
 	return String();
 }
 
-String String::Split(char delimiter) const {
-	ASSERTE(false, "Not implemented yet.");
-	//TODO Dynarray.FindAllIdx(T rhs)
-	//for all indexes get substring
-	//and return an array of these substrings
-	return String();
+Dynarray<String> String::Split(char delimiter) const {
+	return Split(String::From(delimiter));
 }
 
-String String::Split(const String& delimiter) const {
-	ASSERTE(false, "Not implemented yet.");
-	//TODO Dynarray.FindAllIdx(T rhs)
-	//for all indexes remove delimiter strings from source
-	//return an array of whats left (using Substring)
-	return String();
+Dynarray<String> String::Split(const String& delimiter) const {
+	Dynarray<String> elements;
+
+	
+	size_t idx = 0;
+	while (idx < GetLength())
+	{
+		size_t delimiterStart = FindSubstrFromPoint(idx, delimiter);
+		elements.PushBack(Substring(idx, delimiterStart));
+		idx = delimiterStart + delimiter.GetLength();
+	}
+
+	/*String checker = "";
+	String loaded = "";
+
+	int i = 0;
+
+	while (true)
+	{
+		for (int j = 0; i < Data.GetSize() && j < delimiter.GetLength(); i++, j++)
+			checker = checker + Data[i];
+
+		for (; i < Data.GetSize(); i++)
+		{
+			if (checker == delimiter)
+			{
+				elements.PushBack(loaded);
+				loaded = "";
+				checker = "";
+				break;
+			}
+
+			loaded = loaded + checker.Substring(0, 1);
+			checker.Data.RemoveByIdx(0);
+			checker = checker + From(Data[i]);
+		}
+
+		if (i == Data.GetSize())
+		{
+			if (checker == delimiter)
+			{
+			}
+			else
+			{
+				loaded = loaded + checker;
+				if (loaded.GetLength() != 0)
+					elements.PushBack(loaded);
+			}
+
+			break;
+		}
+	}*/
+
+	return elements;
 }
 
 String String::Join(const String* vars, size_t size, const String& separator) {
@@ -272,4 +316,28 @@ String String::operator+(char rhs) const {
 char String::operator[](int idx) const { 
 	HEAVY_ASSERTE(idx <= GetLength(), "Index out of bounds!"); 
 	return Data[idx];
+}
+
+size_t String::GetLength() const
+{
+	return Data.GetSize() - 1;
+}
+
+size_t String::FindSubstrFromPoint(size_t startPoint, const String& str) const
+{
+	for (int idx = startPoint; idx < GetLength(); ++idx)
+	{
+		size_t matchCount = 0;
+		while (matchCount < str.GetLength())
+		{
+			if (Data[idx + matchCount] == str[matchCount])
+				++matchCount;
+			else
+				break;
+		}
+
+		if (matchCount == str.GetLength())
+			return idx;
+	}
+	return GetLength();
 }

@@ -158,3 +158,11 @@ void SoundSystem::DeactivateListener(World* world, const UniqueID& id)
 void SoundSystem::SetListenerGain(World* world, const UniqueID& id, float gain)
 {
 }
+
+bool ENGINE_DLLEXPORT Poly::SoundSystem::IsEmmiterActive(World* world, const UniqueID& id)
+{
+	ALint state;
+	SoundEmitterComponent* emitter = world->GetComponent<SoundEmitterComponent>(id);
+	alGetSourcei(emitter->GetEmitterID(), AL_SOURCE_STATE, &state);
+	return state == AL_PLAYING;
+}

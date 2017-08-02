@@ -28,6 +28,7 @@ namespace Poly
 		enum class eGeometryRenderPassType
 		{
 			BLINN_PHONG,
+			TRANSPARENT_GEOMETRY,
 			DEBUG_NORMALS,
 			TEXT_2D,
 			_COUNT
@@ -36,6 +37,10 @@ namespace Poly
 		enum class ePostprocessRenderPassType
 		{
 			VINETTE,
+			BACKGROUND,
+			FOREGROUND,
+			BACKGROUND_LIGHT,
+			FOREGROUND_LIGHT,
 			_COUNT
 		};
 
@@ -64,6 +69,7 @@ namespace Poly
 		const ScreenSize& GetScreenSize() const override { return ScreenDim; }
 
 		void RenderWorld(World* world) override;
+		void Init() override;
 
 		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) override;
 		std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() override;

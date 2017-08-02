@@ -27,6 +27,15 @@ namespace Poly {
 			return Owner->GetComponent<T>();
 		}
 
+		/// <summary>Getter for a component of a specified type that shares UniqueID with this one.</summary>
+		/// <returns>Pointer to a component of a specified type or a nullptr, if it does not exist.</returns>
+		template<typename T>
+		const T* GetSibling() const
+		{
+			HEAVY_ASSERTE(Owner, "Component was not properly initialized.");
+			return Owner->GetComponent<T>();
+		}
+
 		UniqueID GetOwnerID() const
 		{
 			HEAVY_ASSERTE(Owner, "Component was not properly initialized.");

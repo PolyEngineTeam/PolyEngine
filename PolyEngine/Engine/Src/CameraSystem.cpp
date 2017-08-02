@@ -1,5 +1,8 @@
+#include <math.h> 
+
 #include "EnginePCH.hpp"
 
+#include "PostprocessSettingsComponent.hpp"
 #include "CameraSystem.hpp"
 
 void Poly::CameraSystem::CameraUpdatePhase(World* world)
@@ -27,8 +30,20 @@ void Poly::CameraSystem::CameraUpdatePhase(World* world)
 
 			cameraCmp->ModelView = transformCmp->GetGlobalTransformationMatrix().GetInversed();
 			cameraCmp->MVP = cameraCmp->Projection * cameraCmp->ModelView;
+
+			PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
+			if (post != nullptr)
+			{
+				float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
+				float intpart;
+				float fractpart = std::modf(Time, &intpart);
+				// post->UseCashetes = (fractpart > 0.5) ? 1 : 0;
+				//gConsole.LogInfo("Poly::CameraSystem::CameraUpdatePhase useCashetes: {}", post->UseCashetes);
+			}
 		}
 		else
+		{
 			gConsole.LogError("Entity has camera component but no transform component!");
+		}
 	}
 }
