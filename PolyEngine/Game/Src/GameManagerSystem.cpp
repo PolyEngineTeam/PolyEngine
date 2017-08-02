@@ -141,6 +141,7 @@ Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Pol
 	switch (tileType)
 	{
 	case eTileType::SPIKESBOTTOM:
+		meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
 		break;
 	case eTileType::SPIKESTOP:
 		meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_Z, 180_deg) * Quaternion(Vector::UNIT_X, 90_deg));
