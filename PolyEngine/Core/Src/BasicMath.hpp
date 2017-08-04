@@ -83,14 +83,18 @@ namespace Poly {
 	}
 
 	// Basic math operations
-	template <typename T> inline constexpr T Abs(T val) { return Poly::abs(val); }
+	template <typename T> inline constexpr T Abs(T val) {
+		return Poly::abs(val);
+	}
 	template <typename T> inline T Clamp(const T& val, const T& min, const T& max) {
 		HEAVY_ASSERTE(min <= max, "Min is larger than max when calling clamp!");
 		return val < min ? min : (val > max ? max : val);
 	}
 	template <typename T> inline T Lerp(const T& val1, const T& val2, float t) {
-		HEAVY_ASSERTE(t >= 0.f && t <= 1.f, "Value of t needs to be between 0 and 1.");
 		return val1 * (1.0f - t) + val2 * t;
 	}
-
+	template <typename T> inline T Smoothstep(const T& edge0, const T& edge1, float x) {
+		T t = Clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
+		return t * t * (3.0f - 2.0f * t);
+	}
 }

@@ -21,7 +21,6 @@ namespace Poly {
 		float SaturationPower = 1.0f;
 		float GrainPower = 0.1f;
 		float StripesPower = 0.25f;
-		float VinetteIntensity = 0.30f;
-
+		float VignetteIntensity = 0.30f;
 	};
 }

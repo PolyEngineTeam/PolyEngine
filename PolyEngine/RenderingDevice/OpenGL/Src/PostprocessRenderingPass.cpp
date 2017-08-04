@@ -91,14 +91,15 @@ void RenderingPass::OnRun(World* world, const CameraComponent* camera, const AAB
 	GetProgram().SetUniform("uCameraPosition", CameraPosition);
 	GetProgram().SetUniform("uCameraRotation", CameraRotation);
 
-	const PostprocessSettingsComponent* PostprocessSettings = camera->GetSibling<PostprocessSettingsComponent>();
+	// const PostprocessSettingsComponent* PostprocessSettings = camera->GetSibling<PostprocessSettingsComponent>();
+	PostprocessSettingsComponent* PostprocessSettings = world->GetComponent<PostprocessSettingsComponent>(camera->GetOwnerID());
 	if (PostprocessSettings == nullptr)
 	{
-		// gConsole.LogInfo("void PostprocessRenderingPass::OnRun: PostprocessSettings is NULL");
+		gConsole.LogInfo("void PostprocessRenderingPass::OnRun: PostprocessSettings is NULL");
 	}
 	else
 	{
-		GetProgram().SetUniform("uVignetteIntensity",				PostprocessSettings->VinetteIntensity);
+		GetProgram().SetUniform("uVignetteIntensity",				PostprocessSettings->VignetteIntensity);
 		GetProgram().SetUniform("uDistortionPower",					PostprocessSettings->DistortionPower);
 		GetProgram().SetUniform("uColorTempValue",					PostprocessSettings->ColorTempValue);
 		GetProgram().SetUniform("uColorTempPower",					PostprocessSettings->ColorTempPower);
@@ -107,7 +108,7 @@ void RenderingPass::OnRun(World* world, const CameraComponent* camera, const AAB
 		GetProgram().SetUniform("uGrainPower",						PostprocessSettings->GrainPower);
 		GetProgram().SetUniform("uStripesPower",					PostprocessSettings->StripesPower);
 		
-		gConsole.LogInfo("void PostprocessRenderingPass::OnRun: VignetteIntensity: {}", PostprocessSettings->VinetteIntensity);
+		// gConsole.LogInfo("void PostprocessRenderingPass::OnRun: VignetteIntensity: {}", PostprocessSettings->VignetteIntensity);
 	}
 
 	glBindVertexArray(QUAD.VAO);

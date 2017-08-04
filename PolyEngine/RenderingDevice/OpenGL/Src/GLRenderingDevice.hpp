@@ -36,7 +36,7 @@ namespace Poly
 
 		enum class ePostprocessRenderPassType
 		{
-			VINETTE,
+			VIGNETTE,
 			BACKGROUND,
 			FOREGROUND,
 			BACKGROUND_LIGHT,

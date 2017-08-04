@@ -137,14 +137,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Src\BulletComponent.cpp" />
-    <ClCompile Include="Src\CollisionSystem.cpp" />
-    <ClCompile Include="Src\ControlSystem.cpp" />
-    <ClCompile Include="Src\EnemyMovementComponent.cpp" />
-    <ClCompile Include="Src\GameManagerComponent.cpp" />
-    <ClCompile Include="Src\GameManagerSystem.cpp" />
-    <ClCompile Include="Src\MovementSystem.cpp" />
-    <ClCompile Include="Src\PlayerControllerComponent.cpp" />
     <ClCompile Include="Src\InvadersGame.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -156,18 +148,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\BulletComponent.hpp" />
-    <ClInclude Include="Src\CollisionComponent.hpp" />
-    <ClInclude Include="Src\CollisionSystem.hpp" />
-    <ClInclude Include="Src\ControlSystem.hpp" />
-    <ClInclude Include="Src\EnemyMovementComponent.hpp" />
-    <ClInclude Include="Src\GameManagerComponent.hpp" />
-    <ClInclude Include="Src\GameManagerSystem.hpp" />
-    <ClInclude Include="Src\MovementComponent.hpp" />
-    <ClInclude Include="Src\MovementSystem.hpp" />
-    <ClInclude Include="Src\PlayerControllerComponent.hpp" />
     <ClInclude Include="Src\InvadersGame.hpp" />
-    <ClInclude Include="Src\TankComponent.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

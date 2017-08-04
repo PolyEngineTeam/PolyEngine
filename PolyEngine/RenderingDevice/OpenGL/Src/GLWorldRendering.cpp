@@ -32,25 +32,13 @@ void GLRenderingDevice::RenderWorld(World* world)
 	for (eGeometryRenderPassType type : IterateEnum<eGeometryRenderPassType>())
 	{
 		if (GeometryRenderingPasses[type]) 
-		{
 			GeometryRenderingPasses[type]->ClearFBO();
-		}
-		else
-		{
-			gConsole.LogInfo("GeometryPass is empty: type {}", (int)type);
-		}
 	}
 
 	for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
 	{
 		if (PostprocessRenderingPasses[type])
-		{
 			PostprocessRenderingPasses[type]->ClearFBO();
-		}
-		else
-		{
-			gConsole.LogInfo("Postprocess is empty: type {}", (int)type);
-		}
 	}
 
 	// For each visible viewport draw it
@@ -100,7 +88,7 @@ void GLRenderingDevice::RenderWorld(World* world)
 		// else 
 		//  	PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, kv.second.GetCamera(), rect);
 
-		PostprocessRenderingPasses[ePostprocessRenderPassType::VINETTE]->Run(world, kv.second.GetCamera(), rect);
+		PostprocessRenderingPasses[ePostprocessRenderPassType::VIGNETTE]->Run(world, kv.second.GetCamera(), rect);
 
 		// Draw debug normals
 		// if (gCoreConfig.DebugNormalsFlag)
