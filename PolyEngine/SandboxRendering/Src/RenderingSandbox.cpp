@@ -29,8 +29,8 @@ void RenderingSandbox::Init()
 	DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(world, Camera, 10.0f, 0.003f);
 	DeferredTaskSystem::AddComponentImmediate<Poly::PostprocessSettingsComponent>(world, Camera);
 	Poly::TransformComponent* cameraTrans = world->GetComponent<Poly::TransformComponent>(Camera);
-	cameraTrans->SetLocalTranslation(Vector(0.0f, 2.0f, 0.0f));
-	cameraTrans->SetLocalRotation(Quaternion({ 1.0f, 0.0f, 0.0f }, -30_deg));
+	cameraTrans->SetLocalTranslation(Vector(0.0f, 5.0f, 15.0f));
+	// cameraTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 180_deg));
 
 	world->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, world->GetComponent<Poly::CameraComponent>(Camera));
 
@@ -49,7 +49,7 @@ void RenderingSandbox::Init()
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, player, "Models/tank2/bradle.3ds", eResourceSource::GAME);
 	Poly::TransformComponent* entTransform = world->GetComponent<Poly::TransformComponent>(player);
 	entTransform->SetLocalTranslation(Vector(0.0f, 0.0f, 5.0f));
-	entTransform->SetLocalScale(1.0f);
+	entTransform->SetLocalScale(20.0f);
 	entTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -90_deg) * Quaternion(Vector::UNIT_X, -90_deg));
 
 	const float SCALE = 4.0f;
@@ -59,7 +59,7 @@ void RenderingSandbox::Init()
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, ground);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, ground, "Models/ground/ground.fbx", eResourceSource::GAME);
 	Poly::TransformComponent* groundTransform = world->GetComponent<Poly::TransformComponent>(ground);
-	groundTransform->SetLocalTranslation(Vector(SCALE * SIZE, 0.f, SCALE * SIZE));
+//	groundTransform->SetLocalTranslation(Vector(SCALE * SIZE, 0.f, SCALE * SIZE));
 	groundTransform->SetLocalScale(SCALE);
 
 	Engine->RegisterGameUpdatePhase(GameMainSystem::GameUpdate);

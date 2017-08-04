@@ -285,7 +285,7 @@ void GLRenderingDevice::InitPrograms()
 		{ { "color", texture }, { "depth", depth } }
 	);
 
-	// RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS);
+	RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS);
 	// RegisterGeometryPass<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } });
 
 	RegisterRenderPass(eRenderPassType::BACKGROUND,
@@ -298,11 +298,11 @@ void GLRenderingDevice::InitPrograms()
 		{},
 		{ { "color", texture },	{ "depth", depth } }
 	);
-	// RegisterRenderPass(eRenderPassType::FOREGROUND,
-	// 	"Shaders/fgFrag.shader",
-	// 	{ { "i_color", texture } },
-	// 	{ { "color", texture },{ "depth", depth } }
-	// );
+	RegisterRenderPass(eRenderPassType::FOREGROUND,
+		"Shaders/fgFrag.shader",
+		{ { "i_color", texture } },
+		{ { "color", texture },{ "depth", depth } }
+	);
 	RegisterRenderPass(eRenderPassType::FOREGROUND_LIGHT,
 		"Shaders/fgLightFrag.shader",
 		{ { "i_color", texture } },

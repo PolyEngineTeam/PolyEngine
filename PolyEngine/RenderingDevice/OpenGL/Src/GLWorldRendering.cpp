@@ -54,8 +54,8 @@ void GLRenderingDevice::RenderWorld(World* world)
 		glDepthMask(GL_FALSE);
 		glDisable(GL_DEPTH_TEST);
 
-		RenderingPasses[eRenderPassType::BACKGROUND]->Run(world, kv.second.GetCamera(), rect);
-		// RenderingPasses[eRenderPassType::BACKGROUND_LIGHT]->Run(world, kv.second.GetCamera(), rect);
+		// RenderingPasses[eRenderPassType::BACKGROUND]->Run(world, kv.second.GetCamera(), rect);
+		RenderingPasses[eRenderPassType::BACKGROUND_LIGHT]->Run(world, kv.second.GetCamera(), rect);
 
 		// Render meshes with blin-phong shader
 		glDepthMask(GL_TRUE);
