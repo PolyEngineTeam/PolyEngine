@@ -34,7 +34,7 @@ namespace Poly
 			_COUNT
 		};
 
-		enum class ePostprocessRenderPassType
+		enum class eRenderPassType
 		{
 			VIGNETTE,
 			BACKGROUND,
@@ -84,7 +84,7 @@ namespace Poly
 			const std::initializer_list<InputOutputBind>& inputs = {}, 
 			const std::initializer_list<InputOutputBind>& outputs = {});
 
-		void RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName, 
+		void RegisterRenderPass(eRenderPassType type, const String& fragShaderName, 
 			const std::initializer_list<InputOutputBind>& inputs = {},
 			const std::initializer_list<InputOutputBind>& outputs = {});
 
@@ -106,7 +106,7 @@ namespace Poly
 		Dynarray<std::unique_ptr<RenderingTargetBase>> RenderingTargets;
 
 		EnumArray<std::unique_ptr<RenderingPassBase>, eGeometryRenderPassType> GeometryRenderingPasses;
-		EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
+		EnumArray<std::unique_ptr<RenderingPassBase>, eRenderPassType> RenderingPasses;
 
 		ScreenSize ScreenDim;
 	};

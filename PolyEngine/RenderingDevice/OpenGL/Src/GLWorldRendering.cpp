@@ -35,10 +35,10 @@ void GLRenderingDevice::RenderWorld(World* world)
 			GeometryRenderingPasses[type]->ClearFBO();
 	}
 
-	for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
+	for (eRenderPassType type : IterateEnum<eRenderPassType>())
 	{
-		if (PostprocessRenderingPasses[type])
-			PostprocessRenderingPasses[type]->ClearFBO();
+		if (RenderingPasses[type])
+			RenderingPasses[type]->ClearFBO();
 	}
 
 	// For each visible viewport draw it
@@ -51,13 +51,11 @@ void GLRenderingDevice::RenderWorld(World* world)
 		glViewport((int)(rect.GetMin().X * screenSize.Width), (int)(rect.GetMin().Y * screenSize.Height),
 			(int)(rect.GetSize().X * screenSize.Width), (int)(rect.GetSize().Y * screenSize.Height));
 
-		// glDepthMask(GL_FALSE);
-		// glDisable(GL_DEPTH_TEST);
+		glDepthMask(GL_FALSE);
+		glDisable(GL_DEPTH_TEST);
 
-		//if (post && post->UseBgShader)
-		// PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND]->Run(world, kv.second.GetCamera(), rect);
-		//else
-		//	PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND_LIGHT]->Run(world, kv.second.GetCamera(), rect);
+		RenderingPasses[eRenderPassType::BACKGROUND]->Run(world, kv.second.GetCamera(), rect);
+		// RenderingPasses[eRenderPassType::BACKGROUND_LIGHT]->Run(world, kv.second.GetCamera(), rect);
 
 		// Render meshes with blin-phong shader
 		glDepthMask(GL_TRUE);
@@ -66,7 +64,6 @@ void GLRenderingDevice::RenderWorld(World* world)
 
 		// glDepthMask(GL_FALSE);
 		// glEnable(GL_BLEND);
-
 		// TODO test these blending options
 		// glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		// glBlendFunc(GL_ONE, GL_ONE);
@@ -86,9 +83,9 @@ void GLRenderingDevice::RenderWorld(World* world)
 		// if (post && post->UseFgShader)
 		//	PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND]->Run(world, kv.second.GetCamera(), rect);
 		// else 
-		//  	PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, kv.second.GetCamera(), rect);
+		RenderingPasses[eRenderPassType::FOREGROUND_LIGHT]->Run(world, kv.second.GetCamera(), rect);
 
-		PostprocessRenderingPasses[ePostprocessRenderPassType::VIGNETTE]->Run(world, kv.second.GetCamera(), rect);
+		RenderingPasses[eRenderPassType::VIGNETTE]->Run(world, kv.second.GetCamera(), rect);
 
 		// Draw debug normals
 		// if (gCoreConfig.DebugNormalsFlag)

@@ -301,6 +301,7 @@ vec3 Saturation(vec3 color, float saturation)
 void main()
 {
 	vec2 uv = vTexCoord;
+	color = texture(i_color, vTexCoord);
 
 	if (uUseCashetes > 0)
 	{

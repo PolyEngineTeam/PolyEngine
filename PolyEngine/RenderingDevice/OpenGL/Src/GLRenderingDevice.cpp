@@ -250,17 +250,17 @@ T* Poly::GLRenderingDevice::CreateRenderingTarget(Args&&... args)
 }
 
 //------------------------------------------------------------------------------
-void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
+void Poly::GLRenderingDevice::RegisterRenderPass(eRenderPassType type, const String& fragShaderName, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
 {
-	PostprocessRenderingPasses[type] = std::make_unique<RenderingPass>(fragShaderName);
+	RenderingPasses[type] = std::make_unique<RenderingPass>(fragShaderName);
 
 	for (const InputOutputBind& bind : outputs)
-		PostprocessRenderingPasses[type]->BindOutput(bind.Name, bind.Target);
+		RenderingPasses[type]->BindOutput(bind.Name, bind.Target);
 
 	for (const InputOutputBind& bind : inputs)
-		PostprocessRenderingPasses[type]->BindInput(bind.Name, bind.Target);
+		RenderingPasses[type]->BindInput(bind.Name, bind.Target);
 
-	PostprocessRenderingPasses[type]->Finalize();
+	RenderingPasses[type]->Finalize();
 }
 
 //------------------------------------------------------------------------------
@@ -273,25 +273,45 @@ void GLRenderingDevice::InitPrograms()
 	Texture2DRenderingTarget* texture = CreateRenderingTarget<Texture2DRenderingTarget>(GL_R11F_G11F_B10F);
 	DepthRenderingTarget* depth = CreateRenderingTarget<DepthRenderingTarget>();
 
-	RegisterGeometryPass<BlinnPhongRenderingPass>(eGeometryRenderPassType::BLINN_PHONG,
+	RegisterGeometryPass<BlinnPhongRenderingPass>(
+		eGeometryRenderPassType::BLINN_PHONG,
 		{},
 		{ { "color", texture }, { "depth", depth } }
 	);
 
-	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, 
+	RegisterGeometryPass<Text2DRenderingPass>(
+		eGeometryRenderPassType::TEXT_2D, 
 		{},
-		{ { "color", texture },{ "depth", depth } }
+		{ { "color", texture }, { "depth", depth } }
 	);
 
 	// RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS);
 	// RegisterGeometryPass<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } });
 
-	// RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND,			"Shaders/bgFrag.shader",		{}, { { "o_color", texture },	{ "depth", depth } });
-	// RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND_LIGHT,	"Shaders/bgLightFrag.shader",	{}, { { "o_color", texture },	{ "depth", depth } });
-	// RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND,			"Shaders/fgFrag.shader",		{ { "i_color", texture } },		{} );
-	// RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND_LIGHT,	"Shaders/fgLightFrag.shader",	{ { "i_color", texture } },		{} );
-	RegisterPostprocessPass(ePostprocessRenderPassType::VIGNETTE, "Shaders/vinetteFrag.shader",
-		{ { "i_color", texture } }
+	RegisterRenderPass(eRenderPassType::BACKGROUND,
+		"Shaders/bgFrag.shader",
+		{},
+		{ { "color", texture }, { "depth", depth } }
+	);
+	RegisterRenderPass(eRenderPassType::BACKGROUND_LIGHT,
+		"Shaders/bgLightFrag.shader",
+		{},
+		{ { "color", texture },	{ "depth", depth } }
+	);
+	// RegisterRenderPass(eRenderPassType::FOREGROUND,
+	// 	"Shaders/fgFrag.shader",
+	// 	{ { "i_color", texture } },
+	// 	{ { "color", texture },{ "depth", depth } }
+	// );
+	RegisterRenderPass(eRenderPassType::FOREGROUND_LIGHT,
+		"Shaders/fgLightFrag.shader",
+		{ { "i_color", texture } },
+		{ { "color", texture },{ "depth", depth } }
+	);
+	RegisterRenderPass(eRenderPassType::VIGNETTE,
+		"Shaders/vinetteFrag.shader",
+		{ { "i_color", texture } },
+		{}
 	);
 }
 
