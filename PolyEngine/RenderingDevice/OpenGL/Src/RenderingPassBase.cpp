@@ -2,6 +2,7 @@
 
 #include <ResourceManager.hpp>
 #include <TextureResource.hpp>
+#include <TimeSystem.hpp>
 
 #include "GLTextureDeviceProxy.hpp"
 #include "GLRenderingDevice.hpp"
@@ -69,7 +70,7 @@ void Poly::RenderingPassBase::DebugDraw()
 			{
 				glReadBuffer(GL_COLOR_ATTACHMENT0 + count);
 				glBlitFramebuffer(0, 0, screenSize.Width, screenSize.Height,
-					0, count * divH, screenSize.Width / drawDivisor, (count + 1) * divH, 
+					0, count * divH, screenSize.Width / drawDivisor, (count + 1) * divH,
 					GL_COLOR_BUFFER_BIT, GL_LINEAR);
 				++count;
 			}
@@ -102,7 +103,7 @@ Poly::RenderingPassBase::RenderingPassBase(const String& vertex, const String& g
 //------------------------------------------------------------------------------
 Poly::RenderingPassBase::~RenderingPassBase()
 {
-	if(FBO > 0)
+	if (FBO > 0)
 		glDeleteFramebuffers(1, &FBO);
 }
 
@@ -110,6 +111,8 @@ Poly::RenderingPassBase::~RenderingPassBase()
 void RenderingPassBase::Run(World* world, const CameraComponent* camera, const AABox& rect)
 {
 	// Bind inputs
+	double TimeStarted = TimeSystem::GetTimerElapsedTime(world, eEngineTimer::SYSTEM);
+
 	Program.BindProgram();
 	size_t samplerCount = 0;
 	GLuint tmp = 0;
@@ -120,40 +123,43 @@ void RenderingPassBase::Run(World* world, const CameraComponent* camera, const A
 
 		switch (target->GetType())
 		{
-		case eRenderingTargetType::DEPTH:
-		case eRenderingTargetType::TEXTURE_2D:
-		{
-			GLuint textureID = static_cast<Texture2DRenderingTarget*>(target)->GetTextureID();
-			size_t idx = samplerCount++;
-			glActiveTexture(GL_TEXTURE0 + idx);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glBindTexture(GL_TEXTURE_2D, textureID);
-			Program.SetUniform(name, (int)idx);
-			tmp = textureID;
-			break;
-		}
-		case eRenderingTargetType::TEXTURE_2D_INPUT:
-		{
-			GLuint textureID = static_cast<Texture2DInputTarget*>(target)->GetTextureID();
-			size_t idx = samplerCount++;
-			glActiveTexture(GL_TEXTURE0 + idx);
-			glBindTexture(GL_TEXTURE_2D, textureID);
-			Program.SetUniform(name, (int)idx);
-			tmp = textureID;
-			break;
-		}
-		default:
-			ASSERTE(false, "Unhandled target type!");
+			case eRenderingTargetType::DEPTH:
+			case eRenderingTargetType::TEXTURE_2D:
+			{
+				GLuint textureID = static_cast<Texture2DRenderingTarget*>(target)->GetTextureID();
+				size_t idx = samplerCount++;
+				glActiveTexture(GL_TEXTURE0 + idx);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				glBindTexture(GL_TEXTURE_2D, textureID);
+				Program.SetUniform(name, (int)idx);
+				tmp = textureID;
+				break;
+			}
+			case eRenderingTargetType::TEXTURE_2D_INPUT:
+			{
+				GLuint textureID = static_cast<Texture2DInputTarget*>(target)->GetTextureID();
+				size_t idx = samplerCount++;
+				glActiveTexture(GL_TEXTURE0 + idx);
+				glBindTexture(GL_TEXTURE_2D, textureID);
+				Program.SetUniform(name, (int)idx);
+				tmp = textureID;
+				break;
+			}
+			default:
+				ASSERTE(false, "Unhandled target type!");
 		}
 	}
 	glActiveTexture(GL_TEXTURE0); // reset texture binding
 
 	// bind outputs (by binding fbo)
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO);
-	
+
 	// call run implementation
 	OnRun(world, camera, rect);
+
+	double TimeEnded = TimeSystem::GetTimerElapsedTime(world, eEngineTimer::SYSTEM);
+	RunTime = TimeEnded - TimeStarted;
 }
 
 //------------------------------------------------------------------------------
@@ -161,14 +167,14 @@ void RenderingPassBase::Finalize()
 {
 	if (GetOutputs().size() == 0)
 		return; // we want the default FBO == 0, which is the screen buffer
-	
+
 	ASSERTE(FBO == 0, "Calling finalize twice!");
 	glGenFramebuffers(1, &FBO);
 	ASSERTE(FBO > 0, "Failed to create FBO!");
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
 	bool foundDepth = false;
-	
+
 	Dynarray<GLenum> colorAttachements;
 	for (auto& kv : GetOutputs())
 	{
@@ -177,28 +183,29 @@ void RenderingPassBase::Finalize()
 
 		switch (target->GetType())
 		{
-		case eRenderingTargetType::TEXTURE_2D:
-		{
-			GLuint textureID = static_cast<Texture2DRenderingTarget*>(target)->GetTextureID();
-			size_t idx = Program.GetOutputsInfo().at(name).Index;
-			GLenum attachementIdx = GL_COLOR_ATTACHMENT0 + idx;
-			glBindTexture(GL_TEXTURE_2D, textureID);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, attachementIdx, GL_TEXTURE_2D, textureID, 0);
-			colorAttachements.PushBack(attachementIdx);
-			CHECK_FBO_STATUS();
-			break;
-		}
-		case eRenderingTargetType::DEPTH:
-		{
-			GLuint textureID = static_cast<DepthRenderingTarget*>(target)->GetTextureID();
-			glBindTexture(GL_TEXTURE_2D, textureID);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureID, 0);
-			foundDepth = true;
-			CHECK_FBO_STATUS();
-			break;
-		}
-		default:
-			ASSERTE(false, "Unhandled target type!");
+			case eRenderingTargetType::TEXTURE_2D:
+			{
+				GLuint textureID = static_cast<Texture2DRenderingTarget*>(target)->GetTextureID();
+				ASSERTE(Program.GetOutputsInfo().count(name) > 0, "Program: failed to find input");
+				size_t idx = Program.GetOutputsInfo().at(name).Index;
+				GLenum attachementIdx = GL_COLOR_ATTACHMENT0 + idx;
+				glBindTexture(GL_TEXTURE_2D, textureID);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, attachementIdx, GL_TEXTURE_2D, textureID, 0);
+				colorAttachements.PushBack(attachementIdx);
+				CHECK_FBO_STATUS();
+				break;
+			}
+			case eRenderingTargetType::DEPTH:
+			{
+				GLuint textureID = static_cast<DepthRenderingTarget*>(target)->GetTextureID();
+				glBindTexture(GL_TEXTURE_2D, textureID);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureID, 0);
+				foundDepth = true;
+				CHECK_FBO_STATUS();
+				break;
+			}
+			default:
+				ASSERTE(false, "Unhandled target type!");
 		}
 	}
 	ASSERTE(foundDepth, "Depth buffer not present when constructing FBO!");

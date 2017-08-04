@@ -11,11 +11,11 @@ namespace Poly
 	class AABox;
 
 	//------------------------------------------------------------------------------
-	class PostprocessRenderingPass : public RenderingPassBase
+	class RenderingPass : public RenderingPassBase
 	{
 	public:
-		PostprocessRenderingPass(const String& fragment);
-		PostprocessRenderingPass(const String& geometry, const String& fragment);
+		RenderingPass(const String& fragment);
+		RenderingPass(const String& geometry, const String& fragment);
 	
 	protected:
 		virtual void OnRun(World* world, const CameraComponent* camera, const AABox& rect) override;

@@ -8,7 +8,7 @@ uniform vec4 uCameraPosition;
 uniform mat4 uCameraRotation;
 
 in vec2 vTexCoord;
-out vec4 o_color;
+out vec4 color;
 
 uniform int uUseCashetes;
 
@@ -254,7 +254,7 @@ void main()
 	cp.x *= uResolution.x / uResolution.y;
 	float cashetes = step(abs(cp.y)*2.39, uResolution.x / uResolution.y);
 	if (cashetes < 0.1 && uUseCashetes > 0 ) {
-		o_color = vec4(0.0);
+		color = vec4(0.0);
 		return;
 	}
 	// }
@@ -328,5 +328,5 @@ void main()
 	// col *= 1. - smoothstep(0.1, 2., length(p));	
 
 	// post
-	o_color = vec4(col, 1.0);
+	color = vec4(col, 1.0);
 }

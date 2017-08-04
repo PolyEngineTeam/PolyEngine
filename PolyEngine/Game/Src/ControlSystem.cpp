@@ -6,15 +6,12 @@
 #include "MovementComponent.hpp"
 #include "CollisionComponent.hpp"
 #include "TankComponent.hpp"
-#include "SoundEmitterComponent.hpp"
 #include "CoreConfig.hpp"
 
 using namespace Poly;
 
 void ControlSystem::ControlSystemPhase(World* world)
 {
-	
-
 	GameManagerComponent* gameManager = nullptr;
 	double time = world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime();
 	double deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
@@ -25,13 +22,6 @@ void ControlSystem::ControlSystemPhase(World* world)
 	for (auto componentTuple : world->IterateComponents<PlayerControllerComponent>())
 	{
 		PlayerControllerComponent* player = std::get<PlayerControllerComponent*>(componentTuple);
-
-		if(world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A))
-			SoundSystem::PlayEmitter(world, player->GetOwnerID());
-		if(world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_S))
-			SoundSystem::PauseEmitter(world, player->GetOwnerID());
-		if(world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D))
-			SoundSystem::StopEmitter(world, player->GetOwnerID());
 
 		Vector move(0, 0, 0);
 		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(player->GetLeftKey()))

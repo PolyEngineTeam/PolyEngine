@@ -9,6 +9,7 @@ using namespace Poly;
 
 //------------------------------------------------------------------------------
 GLShaderProgram::GLShaderProgram(const String & vertex, const String & fragment)
+	: VertexProgramPath(vertex), FragmentProgramPath(fragment)
 {
 	gConsole.LogDebug("Creating shader program {} {}", vertex, fragment);
 	ProgramHandle = glCreateProgram();
@@ -25,6 +26,7 @@ GLShaderProgram::GLShaderProgram(const String & vertex, const String & fragment)
 
 //------------------------------------------------------------------------------
 GLShaderProgram::GLShaderProgram(const String& vertex, const String& geometry, const String& fragment)
+	: VertexProgramPath(vertex), GeometryProgramPath(geometry), FragmentProgramPath(fragment)
 {
 	gConsole.LogDebug("Creating shader program {} {} {}", vertex, geometry, fragment);
 	ProgramHandle = glCreateProgram();

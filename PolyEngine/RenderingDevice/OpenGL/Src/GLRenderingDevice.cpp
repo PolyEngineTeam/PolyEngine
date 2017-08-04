@@ -252,7 +252,7 @@ T* Poly::GLRenderingDevice::CreateRenderingTarget(Args&&... args)
 //------------------------------------------------------------------------------
 void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
 {
-	PostprocessRenderingPasses[type] = std::make_unique<PostprocessRenderingPass>(fragShaderName);
+	PostprocessRenderingPasses[type] = std::make_unique<RenderingPass>(fragShaderName);
 
 	for (const InputOutputBind& bind : outputs)
 		PostprocessRenderingPasses[type]->BindOutput(bind.Name, bind.Target);
@@ -277,6 +277,7 @@ void GLRenderingDevice::InitPrograms()
 		{},
 		{ { "color", texture }, { "depth", depth } }
 	);
+
 	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, 
 		{},
 		{ { "color", texture },{ "depth", depth } }

@@ -41,6 +41,8 @@ namespace Poly
 		void DebugDraw();
 
 		void ClearFBO(GLenum flags = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		double GetRunTime() const { return RunTime; }
 	protected:
 		virtual void OnRun(World* world, const CameraComponent* camera, const AABox& rect) = 0;
 
@@ -56,6 +58,7 @@ namespace Poly
 
 		GLShaderProgram Program;
 		GLuint FBO = 0;
+		double RunTime = -1.0;
 	};
 
 	//------------------------------------------------------------------------------

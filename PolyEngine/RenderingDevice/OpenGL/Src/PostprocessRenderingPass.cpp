@@ -61,18 +61,18 @@ public:
 
 
 
-PostprocessRenderingPass::PostprocessRenderingPass(const String& fragment)
+RenderingPass::RenderingPass(const String& fragment)
 	: RenderingPassBase("Shaders/postprocessCommonVert.shader", fragment)
 {
 }
 
-PostprocessRenderingPass::PostprocessRenderingPass(const String& geometry, const String& fragment)
+RenderingPass::RenderingPass(const String& geometry, const String& fragment)
 	: RenderingPassBase("Shaders/postprocessCommonVert.shader", geometry, fragment)
 {
 }
 
 
-void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera, const AABox& rect)
+void RenderingPass::OnRun(World* world, const CameraComponent* camera, const AABox& rect)
 {
 	static const PostprocessQuad QUAD;
 
@@ -94,11 +94,11 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 	const PostprocessSettingsComponent* PostprocessSettings = camera->GetSibling<PostprocessSettingsComponent>();
 	if (PostprocessSettings == nullptr)
 	{
-		gConsole.LogInfo("void PostprocessRenderingPass::OnRun: PostprocessSettings is NULL");
+		// gConsole.LogInfo("void PostprocessRenderingPass::OnRun: PostprocessSettings is NULL");
 	}
 	else
 	{
-		GetProgram().SetUniform("uUseCashetes",						PostprocessSettings->UseCashetes);
+		GetProgram().SetUniform("uVignetteIntensity",				PostprocessSettings->VinetteIntensity);
 		GetProgram().SetUniform("uDistortionPower",					PostprocessSettings->DistortionPower);
 		GetProgram().SetUniform("uColorTempValue",					PostprocessSettings->ColorTempValue);
 		GetProgram().SetUniform("uColorTempPower",					PostprocessSettings->ColorTempPower);
@@ -106,11 +106,9 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 		GetProgram().SetUniform("uSaturationPower",					PostprocessSettings->SaturationPower);
 		GetProgram().SetUniform("uGrainPower",						PostprocessSettings->GrainPower);
 		GetProgram().SetUniform("uStripesPower",					PostprocessSettings->StripesPower);
-			
 		
-		//gConsole.LogInfo("void PostprocessRenderingPass::OnRun: UseCashetes: {}", PostprocessSettings->UseCashetes);
+		gConsole.LogInfo("void PostprocessRenderingPass::OnRun: VignetteIntensity: {}", PostprocessSettings->VinetteIntensity);
 	}
-
 
 	glBindVertexArray(QUAD.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);

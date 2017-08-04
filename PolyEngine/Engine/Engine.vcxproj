@@ -213,9 +213,6 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ProjectReference Include="..\Core\Core.vcxproj">
       <Project>{cad95e91-98a5-497a-9726-09c897edb267}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\ThirdParty\Box2D\Box2D.vcxproj">
-      <Project>{a026e658-1cca-458e-a110-ea908564820b}</Project>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\CameraComponent.hpp" />

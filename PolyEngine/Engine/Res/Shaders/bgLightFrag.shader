@@ -1,9 +1,9 @@
 #version 330 core
 
 in vec2 vTexCoord;
-out vec4 o_color;
+out vec4 color;
 
 void main()
 {
-	o_color = vec4(0.3);
+	color = vec4(0.3);
 }

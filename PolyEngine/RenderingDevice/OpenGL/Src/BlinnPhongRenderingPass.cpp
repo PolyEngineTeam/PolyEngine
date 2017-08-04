@@ -16,8 +16,10 @@ const float IntensityThreshold = 0.05f;
 const size_t MAX_POINT_LIGHT_COUNT = 8;
 
 BlinnPhongRenderingPass::BlinnPhongRenderingPass()
-: RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
+	: RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
 {
+	GetProgram().RegisterUniform("vec4", "uBaseColor");
+
 	GetProgram().RegisterUniform("vec4", "uDiffuseLight.Color");
 	GetProgram().RegisterUniform("float", "uDiffuseLight.Intensity");
 
@@ -44,7 +46,9 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	const Matrix& mvp = camera->GetMVP();
 
 	DiffuseLightSourceWorldComponent* diffuseCmp = world->GetWorldComponent<DiffuseLightSourceWorldComponent>();
-	
+	Vector CameraDirection = camera->GetMVP() * Vector::UNIT_Z;
+
+	GetProgram().SetUniform("uCameraDirection", CameraDirection);
 	GetProgram().SetUniform("uDiffuseLight.Color", diffuseCmp->GetColor());
 	GetProgram().SetUniform("uDiffuseLight.Intensity", diffuseCmp->GetIntensity());
 
@@ -73,7 +77,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		GetProgram().SetUniform(baseName + "Base.Intensity", pointLightCmp->GetIntensity());
 		GetProgram().SetUniform(baseName + "Position", transformCmp->GetGlobalTranslation());
 		GetProgram().SetUniform(baseName + "Attenuation", pointLightCmp->GetAttenuation());
-		float range = sqrt(((1.f / IntensityThreshold) - 1.0f)/ pointLightCmp->GetAttenuation());
+		float range = sqrt(((1.f / IntensityThreshold) - 1.0f) / pointLightCmp->GetAttenuation());
 		GetProgram().SetUniform(baseName + "Range", range);
 		// use only first on scene
 		++pointLightsCount;
@@ -88,25 +92,23 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	float horizontalSpan = (cameraHeight * camera->GetAspect()) / 2.0f;
 	Vector cameraPos = camera->GetSibling<TransformComponent>()->GetGlobalTranslation();
 
-	
-
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
 
-		if (meshCmp->IsTransparent())
-			continue;
-		
+		// if (meshCmp->IsTransparent())
+		// 	continue;
+
 		Vector objPos = transCmp->GetGlobalTranslation();
 
-		bool shouldCull = objPos.Y > cameraPos.Y + verticalSpan;
-		shouldCull = shouldCull || objPos.Y < cameraPos.Y - verticalSpan;
-		shouldCull = shouldCull || objPos.X > cameraPos.X + horizontalSpan;
-		shouldCull = shouldCull || objPos.X < cameraPos.X - horizontalSpan;
-		if (shouldCull)
-			continue;
+		// bool shouldCull = objPos.Y > cameraPos.Y + verticalSpan;
+		// shouldCull = shouldCull || objPos.Y < cameraPos.Y - verticalSpan;
+		// shouldCull = shouldCull || objPos.X > cameraPos.X + horizontalSpan;
+		// shouldCull = shouldCull || objPos.X < cameraPos.X - horizontalSpan;
+		// if (shouldCull)
+		// 	continue;
 
 
 		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();

@@ -9,8 +9,9 @@
 #include <Core.hpp>
 #include <DeferredTaskSystem.hpp>
 #include <ViewportWorldComponent.hpp>
+#include <LightSourceComponent.hpp>
+#include <PostprocessSettingsComponent.hpp>
 #include <ResourceManager.hpp>
-#include <SoundEmitterComponent.hpp>
 #include <SoundSystem.hpp>
 
 #include "GameManagerSystem.hpp"
@@ -34,22 +35,30 @@ void InvadersGame::Init()
 	Engine->RegisterComponent<Invaders::CollisionSystem::CollisionComponent>((int)eGameComponents::COLLISION);
 	Engine->RegisterComponent<Invaders::TankComponent>((int)eGameComponents::TANK);
 	
-	Camera = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
-	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(Engine->GetWorld(), Camera);
-	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(Engine->GetWorld(), Camera, 60_deg, 1.0f, 1000.f);
-	DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(Engine->GetWorld(), Camera, 10.0f, 0.003f);
+	World* world = Engine->GetWorld();
+	
+	Camera = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, Camera);
+	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(world, Camera, 60_deg, 1.0f, 1000.f);
+	DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(world, Camera, 10.0f, 0.003f);
+	DeferredTaskSystem::AddComponentImmediate<Poly::PostprocessSettingsComponent>(world, Camera);
 
 	float y_pos = (float)Engine->GetRenderingDevice()->GetScreenSize().Height;
-	auto textDispaly = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
-	DeferredTaskSystem::AddComponentImmediate<Poly::ScreenSpaceTextComponent>(Engine->GetWorld(), textDispaly, Vector{ 0.0f, y_pos ,0.0f }, "Fonts/Raleway/Raleway-Heavy.ttf", eResourceSource::ENGINE, 32, "Kill count: 0");
+	auto textDispaly = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::ScreenSpaceTextComponent>(world, textDispaly, Vector{ 0.0f, y_pos ,0.0f }, "Fonts/Raleway/Raleway-Heavy.ttf", eResourceSource::ENGINE, 32, "Kill count: 0");
 	
-	GameManager = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
-	DeferredTaskSystem::AddComponentImmediate<GameManagerComponent>(Engine->GetWorld(), GameManager, textDispaly);
-	GameManagerComponent* gameManagerComponent = Engine->GetWorld()->GetComponent<GameManagerComponent>(GameManager);
+	GameManager = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<GameManagerComponent>(world, GameManager, textDispaly);
+	GameManagerComponent* gameManagerComponent = world->GetComponent<GameManagerComponent>(GameManager);
 	
+	Light = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, Light);
+	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightSourceComponent>(world, Light, 1000.0f);
+	Poly::TransformComponent* lightTrans = world->GetComponent<Poly::TransformComponent>(Light);
+	lightTrans->SetLocalTranslation(Vector(0.0f, 20.0f, 50.0f));
 
 	// Set some camera position
-	Poly::TransformComponent* cameraTrans = Engine->GetWorld()->GetComponent<Poly::TransformComponent>(Camera);
+	Poly::TransformComponent* cameraTrans = world->GetComponent<Poly::TransformComponent>(Camera);
 	cameraTrans->SetLocalTranslation(Vector(0.0f, 20.0f, 60.0f));
 	cameraTrans->SetLocalRotation(Quaternion({ 1, 0, 0 }, -30_deg));
 
@@ -57,18 +66,18 @@ void InvadersGame::Init()
 	{
 		for (int j = -2; j < 1; ++j)
 		{
-			auto ent = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
-			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(Engine->GetWorld(), ent);
-			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(Engine->GetWorld(), ent, "model-tank/turret.fbx", eResourceSource::GAME);
-			Poly::TransformComponent* entTransform = Engine->GetWorld()->GetComponent<Poly::TransformComponent>(ent);
+			auto ent = DeferredTaskSystem::SpawnEntityImmediate(world);
+			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, ent);
+			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, ent, "model-tank/turret.fbx", eResourceSource::GAME);
+			Poly::TransformComponent* entTransform = world->GetComponent<Poly::TransformComponent>(ent);
 
-			auto base = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
-			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(Engine->GetWorld(), base);
-			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(Engine->GetWorld(), base, "model-tank/base.fbx", eResourceSource::GAME);
-			DeferredTaskSystem::AddComponentImmediate<Invaders::MovementSystem::MovementComponent>(Engine->GetWorld(), base, Vector(5, 0, 0), Vector(0, 0, 0), Quaternion(Vector(0, 0, 0), 0_deg), Quaternion(Vector(0, 0, 0), 0_deg));
-			DeferredTaskSystem::AddComponentImmediate<Invaders::CollisionSystem::CollisionComponent>(Engine->GetWorld(), base,  Vector(0, 0, 0), Vector(5.0f, 5.0f, 5.0f));
-			DeferredTaskSystem::AddComponentImmediate<Invaders::TankComponent>(Engine->GetWorld(), base,  ent, 12.0_deg, (i * j)%5 );
-			Poly::TransformComponent* baseTransform = Engine->GetWorld()->GetComponent<Poly::TransformComponent>(base);
+			auto base = DeferredTaskSystem::SpawnEntityImmediate(world);
+			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, base);
+			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, base, "model-tank/base.fbx", eResourceSource::GAME);
+			DeferredTaskSystem::AddComponentImmediate<Invaders::MovementSystem::MovementComponent>(world, base, Vector(5, 0, 0), Vector(0, 0, 0), Quaternion(Vector(0, 0, 0), 0_deg), Quaternion(Vector(0, 0, 0), 0_deg));
+			DeferredTaskSystem::AddComponentImmediate<Invaders::CollisionSystem::CollisionComponent>(world, base,  Vector(0, 0, 0), Vector(5.0f, 5.0f, 5.0f));
+			DeferredTaskSystem::AddComponentImmediate<Invaders::TankComponent>(world, base,  ent, 12.0_deg, (i * j)%5 );
+			Poly::TransformComponent* baseTransform = world->GetComponent<Poly::TransformComponent>(base);
 			
 			entTransform->SetParent(baseTransform);
 			baseTransform->SetLocalTranslation(Vector(i * 12.f, 0.f, j * 8.f));
@@ -76,17 +85,17 @@ void InvadersGame::Init()
 			entTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -60.0_deg));
 		}
 	}
-	auto player = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
-	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(Engine->GetWorld(), player);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(Engine->GetWorld(), player, "Models/tank2/bradle.3ds", eResourceSource::GAME);
-	DeferredTaskSystem::AddComponentImmediate<PlayerControllerComponent>(Engine->GetWorld(), player, 10.0f);
-	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(Engine->GetWorld(), player, "COJ2_Battle_Hard_Attack.ogg", eResourceSource::GAME);
-	Poly::TransformComponent* entTransform = Engine->GetWorld()->GetComponent<Poly::TransformComponent>(player);
+	auto player = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, player);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, player, "Models/tank2/bradle.3ds", eResourceSource::GAME);
+	DeferredTaskSystem::AddComponentImmediate<PlayerControllerComponent>(world, player, 10.0f);
+	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(world, player, "COJ2_Battle_Hard_Attack.ogg", eResourceSource::GAME);
+	Poly::TransformComponent* entTransform = world->GetComponent<Poly::TransformComponent>(player);
 	entTransform->SetLocalTranslation(Vector(0, 0, 50));
 	entTransform->SetLocalScale(10);
 	entTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -90_deg) * Quaternion(Vector::UNIT_X, -90_deg));
 	
-	Engine->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, Engine->GetWorld()->GetComponent<Poly::CameraComponent>(Camera));
+	world->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, world->GetComponent<Poly::CameraComponent>(Camera));
 	Engine->RegisterGameUpdatePhase(Invaders::MovementSystem::MovementUpdatePhase);
 	Engine->RegisterGameUpdatePhase(Invaders::CollisionSystem::CollisionUpdatePhase);
 	Engine->RegisterGameUpdatePhase(GameMainSystem::GameUpdate);
@@ -99,10 +108,10 @@ void InvadersGame::Init()
 			const float SCALE = 4.0f;
 			const float SIZE = 40.0f;
 
-			auto ground = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
-			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(Engine->GetWorld(), ground);
-			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(Engine->GetWorld(), ground, "Models/ground/ground.fbx", eResourceSource::GAME);
-			Poly::TransformComponent* groundTransform = Engine->GetWorld()->GetComponent<Poly::TransformComponent>(ground);
+			auto ground = DeferredTaskSystem::SpawnEntityImmediate(world);
+			DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, ground);
+			DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, ground, "Models/ground/ground.fbx", eResourceSource::GAME);
+			Poly::TransformComponent* groundTransform = world->GetComponent<Poly::TransformComponent>(ground);
 			groundTransform->SetLocalTranslation(Vector(x * SCALE * SIZE, 0, z * SCALE * SIZE));
 			groundTransform->SetLocalScale(SCALE);
 		}
