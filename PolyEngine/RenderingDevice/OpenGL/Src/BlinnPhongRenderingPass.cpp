@@ -60,7 +60,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 
 		GetProgram().SetUniform("uDirectionalLight.Base.Color", dirLightCmp->GetColor());
 		GetProgram().SetUniform("uDirectionalLight.Base.Intensity", dirLightCmp->GetIntensity());
-		GetProgram().SetUniform("uDirectionalLight.Direction", MovementSystem::GetGlobalForward(transformCmp));
+		GetProgram().SetUniform("uDirectionalLight.Direction", transformCmp->GetGlobalRotation() * Vector::UNIT_Z);
 		// use only first on scene
 		break;
 	}

@@ -42,12 +42,12 @@ vec4 ambientlLight(DiffuseLight ambientLight) {
 }
 
 // calculates diffuse factor of any light
-vec4 diffuseLight(DiffuseLight base, vec3 direction, vec3 normal) {
-	vec4 diffuseColor = vec4(0.0, 0.0, 0.0, 0.0);
-	float diffuseFactor = dot(normal, -direction);
-
-	diffuseColor = vec4(base.Color.rgb, 1.0) * max(base.Intensity, 0.0) * max(diffuseFactor, 0.0);
-	return diffuseColor;
+vec4 directionalLight(DirectionalLight light, vec3 normalWS) {
+	DiffuseLight base = light.Base;
+	vec3 dir = light.Direction.xyz;
+	float dirNdotL = max(dot(normalWS, dir), 0.0);
+	vec4 dirDiffuse = vec4(base.Color.rgb, 1.0) * max(base.Intensity, 0.0) * dirNdotL;
+	return dirDiffuse;
 }
 
 // calculates attenuation of the point light
@@ -64,16 +64,20 @@ void main() {
 		discard;
 
 	// vec4 ambient = texColor * ambientlLight(uDiffuseLight);
-	vec3 normal = normalize(transpose(inverse(mat3(uTransform))) * vNormal);
-	vec4 point = texColor * diffuseLight(uDirectionalLight.Base, uDirectionalLight.Direction.xyz, normal);
+	vec3 normalWS = normalize(transpose(inverse(mat3(uTransform))) * vNormal);
+	vec4 dirDiffuse = directionalLight(uDirectionalLight, normalWS);
+	// vec4 point = texColor * diffuseLight(uDirectionalLight.BasdirectionalLight(DirectionalLight light, vec3 normalWS) {e, uDirectionalLight.Direction.xyz, normalWS);
 
-	for (int i = 8; i < uPointLightCount; ++i)
-	{
-		vec3 lightPos = uPointLight[i].Position.xyz;
-		point += texColor * diffuseLight(uPointLight[i].Base, normalize(lightPos - vVertexPos), normal)
-			* pointLightAttenuation(uPointLight[i], vVertexPos);
-	}
+	// for (int i = 8; i < uPointLightCount; ++i)
+	// {
+	// 	vec3 lightPos = uPointLight[i].Position.xyz;
+	// 	point += texColor * diffuseLight(uPointLight[i].Base, normalize(lightPos - vVertexPos), normalWS)
+	// 		* pointLightAttenuation(uPointLight[i], vVertexPos);
+	// }
 
 	// color = point + uBaseColor;
-	color = texColor;
+	// color = texColor;
+	// color = vec4(0.5*(1.0+normalWS), 1.0);
+	// color = vec4(max(dot(normalWS, uDirectionalLight.Direction.xyz), 0.0));
+	color = texColor + dirDiffuse;
 }

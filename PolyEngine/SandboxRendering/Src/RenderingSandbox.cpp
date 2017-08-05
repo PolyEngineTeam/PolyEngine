@@ -34,23 +34,42 @@ void RenderingSandbox::Init()
 
 	world->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, world->GetComponent<Poly::CameraComponent>(Camera));
 
-	Light = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, Light);
-	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightSourceComponent>(world, Light, Color(1.0f, 0.0f, 0.0f), 1000.0f);
-	Poly::TransformComponent* lightTrans = world->GetComponent<Poly::TransformComponent>(Light);
-	lightTrans->SetLocalTranslation(Vector(0.0f, 5.0f, 0.0f));
+	Vector DirLightPos = Vector(0.0f, 5.0f, 10.0f);
+	Quaternion DirLightRot = Quaternion(Vector::UNIT_Y, -45_deg) * Quaternion(Vector::UNIT_X, -15_deg);
+	DirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, DirLight);
+	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightSourceComponent>(world, DirLight, Color(1.0f, 1.0f, 0.9f), 0.5f);
+	Poly::TransformComponent* lightTrans = world->GetComponent<Poly::TransformComponent>(DirLight);
+	lightTrans->SetLocalTranslation(DirLightPos);
+	lightTrans->SetLocalRotation(DirLightRot);
 
-	float y_pos = (float)Engine->GetRenderingDevice()->GetScreenSize().Height;
+	auto Dummy = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, Dummy);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, Dummy, "Models/bullet/bullet.obj", eResourceSource::GAME);
+	Poly::TransformComponent* dummyTrans = world->GetComponent<Poly::TransformComponent>(Dummy);
+	dummyTrans->SetLocalScale(Vector(0.5f, 0.5f, -1.0f));
+	dummyTrans->SetLocalTranslation(DirLightPos);
+	dummyTrans->SetLocalRotation(DirLightRot);
+
+	float yPos = (float)Engine->GetRenderingDevice()->GetScreenSize().Height;
 	auto textDispaly = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<Poly::ScreenSpaceTextComponent>(world, textDispaly, Vector{ 0.0f, y_pos ,0.0f }, "Fonts/Raleway/Raleway-Heavy.ttf", eResourceSource::ENGINE, 32, "Kill count: 0");
+	DeferredTaskSystem::AddComponentImmediate<Poly::ScreenSpaceTextComponent>(world, textDispaly, Vector{ 0.0f, yPos ,0.0f }, "Fonts/Raleway/Raleway-Heavy.ttf", eResourceSource::ENGINE, 32, "Kill count: 0");
 
 	auto player = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, player);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, player, "Models/tank2/bradle.3ds", eResourceSource::GAME);
-	Poly::TransformComponent* entTransform = world->GetComponent<Poly::TransformComponent>(player);
-	entTransform->SetLocalTranslation(Vector(0.0f, 0.0f, 5.0f));
-	entTransform->SetLocalScale(20.0f);
-	entTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -90_deg) * Quaternion(Vector::UNIT_X, -90_deg));
+	Poly::TransformComponent* playerTransform = world->GetComponent<Poly::TransformComponent>(player);
+	playerTransform->SetLocalTranslation(Vector(-3.0f, 0.0f, 5.0f));
+	playerTransform->SetLocalScale(10.0f);
+	playerTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -90_deg) * Quaternion(Vector::UNIT_X, -90_deg));
+
+	auto shaderball = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, shaderball);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, shaderball, "Models/shaderball/shaderball.fbx", eResourceSource::GAME);
+	Poly::TransformComponent* ballTrans = world->GetComponent<Poly::TransformComponent>(shaderball);
+	ballTrans->SetLocalTranslation(Vector(3.0f, 0.0f, 5.0f));
+	ballTrans->SetLocalScale(0.01f);
+	// entTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -90_deg) * Quaternion(Vector::UNIT_X, -90_deg));
 
 	const float SCALE = 4.0f;
 	const float SIZE = 40.0f;
@@ -58,9 +77,9 @@ void RenderingSandbox::Init()
 	auto ground = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, ground);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, ground, "Models/ground/ground.fbx", eResourceSource::GAME);
-	Poly::TransformComponent* groundTransform = world->GetComponent<Poly::TransformComponent>(ground);
+	Poly::TransformComponent* groundTrans = world->GetComponent<Poly::TransformComponent>(ground);
 //	groundTransform->SetLocalTranslation(Vector(SCALE * SIZE, 0.f, SCALE * SIZE));
-	groundTransform->SetLocalScale(SCALE);
+	groundTrans->SetLocalScale(SCALE);
 
 	Engine->RegisterGameUpdatePhase(GameMainSystem::GameUpdate);
 };

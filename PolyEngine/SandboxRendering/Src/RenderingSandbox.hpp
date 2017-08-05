@@ -25,7 +25,7 @@ public:
 private:
 	Poly::UniqueID Camera;
 	Poly::UniqueID GameManager;
-	Poly::UniqueID Light;
+	Poly::UniqueID DirLight;
 
 	Poly::Dynarray<Poly::UniqueID> GameEntities;
 	Poly::Engine* Engine;
