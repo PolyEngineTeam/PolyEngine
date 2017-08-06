@@ -1,3 +1,5 @@
+#include <math.h> 
+
 #include "EnginePCH.hpp"
 
 #include "CameraSystem.hpp"
@@ -29,6 +31,8 @@ void Poly::CameraSystem::CameraUpdatePhase(World* world)
 			cameraCmp->MVP = cameraCmp->Projection * cameraCmp->ModelView;
 		}
 		else
+		{
 			gConsole.LogError("Entity has camera component but no transform component!");
+		}
 	}
 }

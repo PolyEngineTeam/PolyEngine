@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Components">
+      <UniqueIdentifier>{ff79658a-4fc6-4c3a-8f7c-deb35df08a8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\MovementSystem">
+      <UniqueIdentifier>{6bff096b-e765-4b95-8d03-c9b7be4298ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CollisionSystem">
+      <UniqueIdentifier>{c7ee2cc8-b2a4-404e-b5aa-c166f63bbcd7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Src\InvadersGame.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ControlSystem.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PlayerControllerComponent.hpp">
+      <Filter>Source Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BulletComponent.hpp">
+      <Filter>Source Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EnemyMovementComponent.hpp">
+      <Filter>Source Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GameManagerComponent.hpp">
+      <Filter>Source Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GameManagerSystem.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\MovementSystem.hpp">
+      <Filter>Source Files\MovementSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\MovementComponent.hpp">
+      <Filter>Source Files\MovementSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\CollisionSystem.hpp">
+      <Filter>Source Files\CollisionSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\CollisionComponent.hpp">
+      <Filter>Source Files\CollisionSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\TankComponent.hpp">
+      <Filter>Source Files\Components</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\InvadersGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ControlSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PlayerControllerComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BulletComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EnemyMovementComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GameManagerComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GameManagerSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\MovementSystem.cpp">
+      <Filter>Source Files\MovementSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\CollisionSystem.cpp">
+      <Filter>Source Files\CollisionSystem</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

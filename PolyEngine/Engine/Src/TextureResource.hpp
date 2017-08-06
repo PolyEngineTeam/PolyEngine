@@ -6,6 +6,8 @@ typedef unsigned int GLuint;
 
 namespace Poly 
 {
+	class ITextureDeviceProxy;
+
 	class ENGINE_DLLEXPORT TextureResource : public ResourceBase
 	{
 	public:
