@@ -22,6 +22,7 @@
 #include "GameDebugWorldComponent.hpp"
 #include "GameDebugSystem.hpp"
 #include "TileComponent.hpp"
+#include "CameraMovementComponent.hpp"
 
 using namespace Poly;
 
@@ -32,6 +33,7 @@ void SGJGame::Init()
 	// Register Game Components
 	gEngine->RegisterComponent<SGJ::TileComponent>((int)eGameComponents::TILE);
 	gEngine->RegisterComponent<SGJ::PlayerControllerComponent>((int)eGameComponents::PLAYER);
+	gEngine->RegisterComponent<SGJ::CameraMovementComponent>((int)eGameComponents::CAMERA_MOVEMENT);
 	gEngine->RegisterWorldComponent<SGJ::GameManagerWorldComponent>((int)eGameWorldComponents::GAME_MGR);
 	gEngine->RegisterWorldComponent<SGJ::GameDebugWorldComponent>((int)eGameWorldComponents::GAME_DEBUG);
 	

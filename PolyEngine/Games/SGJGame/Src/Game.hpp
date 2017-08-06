@@ -10,6 +10,7 @@ enum class eGameComponents
 {
 	TILE = (int)Poly::eEngineComponents::_COUNT,
 	PLAYER,
+	CAMERA_MOVEMENT,
 	_COUNT
 };
 

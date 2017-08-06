@@ -32,9 +32,9 @@ void MovementSystem::MovementUpdatePhase(World* world)
 		{
 			Vector delta = world->GetWorldComponent<InputWorldComponent>()->GetMousePosDelta();
 
-			Quaternion rot = Quaternion(Vector::UNIT_Y, Angle::FromRadians(-delta.X * freeFloatMovementCmp->GetRotationSpeed()));
+			Quaternion rot = Quaternion(Vector::UNIT_Y, Angle::FromRadians(-delta.X * freeFloatMovementCmp->GetAngularVelocity()));
 			rot *= transCmp->GetLocalRotation();
-			rot *= Quaternion(Vector::UNIT_X, Angle::FromRadians(-delta.Y * freeFloatMovementCmp->GetRotationSpeed()));
+			rot *= Quaternion(Vector::UNIT_X, Angle::FromRadians(-delta.Y * freeFloatMovementCmp->GetAngularVelocity()));
 
 			if (rot != Quaternion()) {
 				rot.Normalize();

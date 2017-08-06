@@ -65,6 +65,9 @@
     <ClInclude Include="Src\TileComponent.hpp">
       <Filter>Source Files\Tiles</Filter>
     </ClInclude>
+    <ClInclude Include="Src\CameraMovementComponent.hpp">
+      <Filter>Source Files\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Game.cpp">

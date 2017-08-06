@@ -31,7 +31,7 @@ Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType 
 		ASSERTE(false, "Invalid body type");
 	}
 
-	ImplData->Body = world->GetWorldComponent<Physics2DWorldComponent>()->GetPhysicsWorld()->CreateBody(&ImplData->BodyDef);
+	ImplData->Body = world->GetWorldComponent<Physics2DWorldComponent>()->World->CreateBody(&ImplData->BodyDef);
 	ASSERTE(ImplData->Body, "Body failed to create!");
 
 	ImplData->FixtureDef.density = density;
@@ -59,7 +59,7 @@ Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType 
 		ASSERTE(false, "Invalid body type");
 	}
 
-	ImplData->Body = world->GetWorldComponent<Physics2DWorldComponent>()->GetPhysicsWorld()->CreateBody(&ImplData->BodyDef);
+	ImplData->Body = world->GetWorldComponent<Physics2DWorldComponent>()->World->CreateBody(&ImplData->BodyDef);
 	ASSERTE(ImplData->Body, "Body failed to create!");
 
 	ImplData->FixtureDef.isSensor = true;
@@ -68,7 +68,7 @@ Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType 
 
 Poly::RigidBody2DComponent::~RigidBody2DComponent()
 {
-	BodyWorld->GetWorldComponent<Physics2DWorldComponent>()->GetPhysicsWorld()->DestroyBody(ImplData->Body);
+	BodyWorld->GetWorldComponent<Physics2DWorldComponent>()->World->DestroyBody(ImplData->Body);
 }
 
 void Poly::RigidBody2DComponent::EnsureInit()
@@ -111,12 +111,12 @@ void Poly::RigidBody2DComponent::ApplyImpulseToCenter(const Vector& impulse)
 	ImplData->Body->ApplyLinearImpulseToCenter(b2Vec2(impulse.X, impulse.Y), true);
 }
 
-void Poly::RigidBody2DComponent::SetDamping(float dampfactor)
+void Poly::RigidBody2DComponent::SetLinearDamping(float dampfactor)
 {
 	ImplData->Body->SetLinearDamping(dampfactor);
 }
 
-void Poly::RigidBody2DComponent::SetRotationDamping(float dampfactor)
+void Poly::RigidBody2DComponent::SetAngularDamping(float dampfactor)
 {
 	ImplData->Body->SetAngularDamping(dampfactor);
 }
@@ -131,18 +131,23 @@ float Poly::RigidBody2DComponent::GetDensity() const
 	return ImplData->Fixture->GetDensity();
 }
 
-Vector Poly::RigidBody2DComponent::GetLinearSpeed() const
+Vector Poly::RigidBody2DComponent::GetLinearVelocity() const
 {
 	b2Vec2 v = ImplData->Body->GetLinearVelocity();
 	return Vector(v.x, v.y, 0);
 }
 
-void Poly::RigidBody2DComponent::SetLinearSpeed(const Vector& speed)
+void Poly::RigidBody2DComponent::SetLinearVelocity(const Vector& speed)
 {
 	ImplData->Body->SetLinearVelocity(b2Vec2(speed.X, speed.Y));
 }
 
-void Poly::RigidBody2DComponent::SetRotationSpeed(float speed)
+float Poly::RigidBody2DComponent::GetAngularVelocity() const
+{
+	return ImplData->Body->GetAngularVelocity();
+}
+
+void Poly::RigidBody2DComponent::SetAngularVelocity(float speed)
 {
 	ImplData->Body->SetAngularVelocity(speed);
 }

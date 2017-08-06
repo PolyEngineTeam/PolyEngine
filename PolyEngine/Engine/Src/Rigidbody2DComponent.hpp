@@ -32,16 +32,17 @@ namespace Poly
 		void ApplyForceToCenter(const Vector& force);
 		void ApplyImpulseToCenter(const Vector& impulse);
 
-		void SetDamping(float dampfactor);
-		void SetRotationDamping(float dampfactor);
+		void SetLinearDamping(float dampfactor);
+		void SetAngularDamping(float dampfactor);
 		void SetFixedRotation(bool fixed);
+		
 		void SetDensity(float density);
-
 		float GetDensity() const;
-		Vector GetLinearSpeed() const;
 
-		void SetLinearSpeed(const Vector& speed);
-		void SetRotationSpeed(float speed);
+		Vector GetLinearVelocity() const;
+		void SetLinearVelocity(const Vector& speed);
+		float GetAngularVelocity() const;
+		void SetAngularVelocity(float speed);
 
 		void UpdatePosition();
 

@@ -72,8 +72,8 @@ namespace SGJ
 		transCmp->SetLocalTranslation(spawnLocation);
 		playerCmp->SpawnPoint = spawnLocation;
 
-		rbCmp->SetLinearSpeed(Vector::ZERO);
-		rbCmp->SetRotationSpeed(0.f);
+		rbCmp->SetLinearVelocity(Vector::ZERO);
+		rbCmp->SetAngularVelocity(0.f);
 
 		playerCmp->InAir = false;
 		playerCmp->JumpCooldownTimer = 0.f;
@@ -139,9 +139,9 @@ namespace SGJ
 			}
 
 		if(!playerCmp->InAir)
-			rigidbodyCmp->SetDamping(3);
+			rigidbodyCmp->SetLinearDamping(3);
 		else
-			rigidbodyCmp->SetDamping(0.1);
+			rigidbodyCmp->SetLinearDamping(0.1);
 	}
 
 	float PlayerUpdateSystem::ElasticEaseOut(float p)

@@ -13,6 +13,7 @@ void Poly::Physics2DSystem::Physics2DUpdatePhase(World* world)
 	Physics2DWorldComponent* physicsCmp = world->GetWorldComponent<Physics2DWorldComponent>();
 	physicsCmp->LastDeltaOverflow += deltaTime;
 
+	// Load physics position from engine translation
 	for (auto& tuple : world->IterateComponents<RigidBody2DComponent, TransformComponent>())
 	{
 		RigidBody2DComponent* rigidBody = std::get<RigidBody2DComponent*>(tuple);
@@ -20,13 +21,14 @@ void Poly::Physics2DSystem::Physics2DUpdatePhase(World* world)
 		rigidBody->EnsureInit();
 	}
 
-	// maintain fixed step
+	// Update physics simulation, maintain fixed step
 	while (physicsCmp->LastDeltaOverflow >= physicsCmp->Config.TimeStep)
 	{
 		physicsCmp->LastDeltaOverflow -= physicsCmp->Config.TimeStep;
 		physicsCmp->World->Step(physicsCmp->Config.TimeStep, physicsCmp->Config.VelocityIterations, physicsCmp->Config.PositionIterations);
 	}
 
+	// Store physics position to engine translation
 	for (auto& tuple : world->IterateComponents<RigidBody2DComponent, TransformComponent>())
 	{
 		RigidBody2DComponent* rigidBody = std::get<RigidBody2DComponent*>(tuple);

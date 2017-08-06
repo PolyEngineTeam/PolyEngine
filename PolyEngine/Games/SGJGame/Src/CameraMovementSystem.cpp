@@ -5,6 +5,7 @@
 #include <CameraComponent.hpp>
 #include <TransformComponent.hpp>
 #include "Rigidbody2DComponent.hpp"
+#include "CameraMovementComponent.hpp"
 #include <PostprocessSettingsComponent.hpp>
 
 #include "GameManagerWorldComponent.hpp"
@@ -15,19 +16,20 @@ using namespace SGJ;
 void SGJ::CameraMovementSystem::CameraMovementUpdatePhase(Poly::World* world)
 {
 	double deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
-	double time = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
+	double time = TimeSystem::GetTimerElapsedTime(world, Poly::eEngineTimer::GAMEPLAY);
 
 	GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
 	UniqueID player = gameMgrCmp->Player;
 	TransformComponent* playerTransCmp = world->GetComponent<TransformComponent>(player);
 	RigidBody2DComponent* rigidbodyCmp = world->GetComponent<RigidBody2DComponent>(player);
 
-	for (auto& tuple : world->IterateComponents<CameraComponent, TransformComponent>())
+	for (auto& tuple : world->IterateComponents<CameraComponent, CameraMovementComponent, TransformComponent>())
 	{
 		CameraComponent* cameraCmp = std::get<CameraComponent*>(tuple);
+		CameraMovementComponent* cameraMvmtCmp = std::get<CameraMovementComponent*>(tuple);
 		TransformComponent* transformCmp = std::get<TransformComponent*>(tuple);
 
-		float velocity = rigidbodyCmp->GetLinearSpeed().Length2();
+		float velocity = rigidbodyCmp->GetLinearVelocity().Length2();
 		Angle TargetFov = Lerp(60_deg, 47_deg, Clamp(velocity/350.0f, 0.0f, 1.0f));
 		cameraCmp->SetTargetFOV(TargetFov);
 		cameraCmp->SetFOV(Lerp(cameraCmp->GetFOV(), cameraCmp->GetTargetFOV(), deltaTime));
@@ -47,18 +49,11 @@ void SGJ::CameraMovementSystem::CameraMovementUpdatePhase(Poly::World* world)
 		TargetPosition.X = Clamp(playerTransCmp->GetGlobalTranslation().X, minW, maxW) - 0.5f;
 
 		// add lag to translation
-		cameraCmp->SetTargetTranslation(TargetPosition);
-		Vector Translation = Lerp(transformCmp->GetLocalTranslation(), cameraCmp->GetTargetTranslation(), 2.0*deltaTime);
-		
-		// add screen shake
-		float timeSinceLastShake = time - cameraCmp->LastShakeTime;
-		Vector Shake = Vector(0.0f, cameraCmp->ShakePower * -1.0f * Abs(sin(500.0f * time)), 0.0f);
-		cameraCmp->ShakePower = Clamp((float)(cameraCmp->ShakePower - 0.2f * deltaTime), 0.0f, 0.1f);
-		cameraCmp->ShakeOffset = Shake;
-		// gConsole.LogInfo("SGJ::CameraMovementSystem::CameraMovementUpdatePhase ShakeOffset: {}", cameraCmp->ShakeOffset);
+		cameraMvmtCmp->SetTargetTranslation(TargetPosition);
+		Vector Translation = Lerp(transformCmp->GetLocalTranslation(), cameraMvmtCmp->GetTargetTranslation(), 2.0*deltaTime);
 		
 		// sum the camera modified translation
-		transformCmp->SetLocalTranslation(Translation + cameraCmp->ShakeOffset);
+		transformCmp->SetLocalTranslation(Translation);
 
 		PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
 		if (post != nullptr)

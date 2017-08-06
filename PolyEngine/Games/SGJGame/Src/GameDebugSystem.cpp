@@ -32,7 +32,7 @@ void SGJ::Debug::DebugSystemPhase(Poly::World* world)
 
 
 	String text;
-	text = String("Vel: ") + String::From(rb->GetLinearSpeed().X, 2) + String(" ") + String::From(rb->GetLinearSpeed().Y, 2);
+	text = String("Vel: ") + String::From(rb->GetLinearVelocity().X, 2) + String(" ") + String::From(rb->GetLinearVelocity().Y, 2);
 
 	textCom->SetText(text);
 }

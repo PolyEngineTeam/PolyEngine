@@ -1,6 +1,7 @@
 #include "GameManagerSystem.hpp"
 
 #include "GameManagerWorldComponent.hpp"
+#include "CameraMovementComponent.hpp"
 #include "Level.hpp"
 
 #include <DeferredTaskSystem.hpp>
@@ -171,8 +172,8 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	DeferredTaskSystem::AddComponentImmediate<Poly::Circle2DColliderComponent>(world, player, 0.4);
 	DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, player, world, eRigidBody2DType::DYNAMIC, 1.0f, 0.5f);
 	Poly::RigidBody2DComponent* rigidBody = world->GetComponent<Poly::RigidBody2DComponent>(player);
-	rigidBody->SetDamping(3);
-	rigidBody->SetRotationDamping(10);
+	rigidBody->SetLinearDamping(3);
+	rigidBody->SetAngularDamping(10);
 
 	UniqueID body = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, body);
@@ -310,7 +311,7 @@ void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
 	gameMgrCmp->Camera = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(gEngine->GetWorld(), gameMgrCmp->Camera);
 	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(gEngine->GetWorld(), gameMgrCmp->Camera, 60_deg, 1.0f, 1000.f);
-
+	DeferredTaskSystem::AddComponentImmediate<SGJ::CameraMovementComponent>(gEngine->GetWorld(), gameMgrCmp->Camera);
 	// Set some camera position
 	Poly::TransformComponent* cameraTrans = gEngine->GetWorld()->GetComponent<Poly::TransformComponent>(gameMgrCmp->Camera);
 	cameraTrans->SetLocalTranslation(Vector(0, 0, 50.f));

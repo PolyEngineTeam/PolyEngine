@@ -22,6 +22,7 @@ namespace Poly
 	{
 		friend void Physics2DSystem::Physics2DUpdatePhase(World* world);
 		friend class Physics2DContactListener;
+		friend class RigidBody2DComponent;
 	public:
 		struct Collision
 		{
@@ -32,12 +33,10 @@ namespace Poly
 		Physics2DWorldComponent(const Physics2DConfig& config);
 		~Physics2DWorldComponent();
 
-		b2World* GetPhysicsWorld() { return World.get(); }
-
 		const Dynarray<Collision>& GetCollidingBodies(RigidBody2DComponent* rb) const;
 
 		void SetGravity(const Vector& gravity) const;
-		Vector GetGravity() const { return Config.Gravity; }
+		const Vector& GetGravity() const { return Config.Gravity; }
 	private:
 		float LastDeltaOverflow = 0.f;
 

@@ -105,7 +105,7 @@ namespace SGJ
 		}
 
 		//apply validated movement vector
-		if (rbCmp->GetLinearSpeed().Length() < speedConstraint && move.Length() > 0)
+		if (rbCmp->GetLinearVelocity().Length() < speedConstraint && move.Length() > 0)
 			rbCmp->ApplyImpulseToCenter(move);
 		playerCmp->SetMoveVector(Vector::ZERO);
 	}
