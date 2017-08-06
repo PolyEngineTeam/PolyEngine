@@ -23,7 +23,6 @@ set(SGJGAME_H_FOR_IDE
 	Src/Level.hpp
 	Src/PlayerControllerComponent.hpp
 	Src/PlayerUpdateSystem.hpp
-	Src/PlayerUpdateSystem.hpp.orig
 	Src/PowerupSystem.hpp
 	Src/Powerups.hpp
 	Src/TileComponent.hpp
