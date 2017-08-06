@@ -137,8 +137,6 @@ Dynarray<String> String::Split(char delimiter) const {
 
 Dynarray<String> String::Split(const String& delimiter) const {
 	Dynarray<String> elements;
-
-	
 	size_t idx = 0;
 	while (idx < GetLength())
 	{
@@ -146,48 +144,6 @@ Dynarray<String> String::Split(const String& delimiter) const {
 		elements.PushBack(Substring(idx, delimiterStart));
 		idx = delimiterStart + delimiter.GetLength();
 	}
-
-	/*String checker = "";
-	String loaded = "";
-
-	int i = 0;
-
-	while (true)
-	{
-		for (int j = 0; i < Data.GetSize() && j < delimiter.GetLength(); i++, j++)
-			checker = checker + Data[i];
-
-		for (; i < Data.GetSize(); i++)
-		{
-			if (checker == delimiter)
-			{
-				elements.PushBack(loaded);
-				loaded = "";
-				checker = "";
-				break;
-			}
-
-			loaded = loaded + checker.Substring(0, 1);
-			checker.Data.RemoveByIdx(0);
-			checker = checker + From(Data[i]);
-		}
-
-		if (i == Data.GetSize())
-		{
-			if (checker == delimiter)
-			{
-			}
-			else
-			{
-				loaded = loaded + checker;
-				if (loaded.GetLength() != 0)
-					elements.PushBack(loaded);
-			}
-
-			break;
-		}
-	}*/
-
 	return elements;
 }
 
