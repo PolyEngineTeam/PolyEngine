@@ -300,18 +300,18 @@ void GLRenderingDevice::InitPrograms()
 	);
 	RegisterRenderPass(eRenderPassType::FOREGROUND,
 		"Shaders/fgFrag.shader",
-		{ { "i_color", texture } },
-		{ { "color", texture },{ "depth", depth } }
+		{ { "i_color", texture } }
+		//, { { "color", texture },{ "depth", depth } }
 	);
 	RegisterRenderPass(eRenderPassType::FOREGROUND_LIGHT,
 		"Shaders/fgLightFrag.shader",
-		{ { "i_color", texture } },
-		{ { "color", texture },{ "depth", depth } }
+		{ { "i_color", texture } }
+		//,{ { "color", texture },{ "depth", depth } }
 	);
 	RegisterRenderPass(eRenderPassType::VIGNETTE,
 		"Shaders/vinetteFrag.shader",
-		{ { "i_color", texture } },
-		{}
+		{ { "i_color", texture } }
+		//, { { "color", texture },{ "depth", depth } }
 	);
 }
 

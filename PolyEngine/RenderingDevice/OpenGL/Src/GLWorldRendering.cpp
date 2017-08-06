@@ -55,7 +55,7 @@ void GLRenderingDevice::RenderWorld(World* world)
 		glDisable(GL_DEPTH_TEST);
 
 		// RenderingPasses[eRenderPassType::BACKGROUND]->Run(world, kv.second.GetCamera(), rect);
-		RenderingPasses[eRenderPassType::BACKGROUND_LIGHT]->Run(world, kv.second.GetCamera(), rect);
+		// RenderingPasses[eRenderPassType::BACKGROUND]->Run(world, kv.second.GetCamera(), rect);
 
 		// Render meshes with blin-phong shader
 		glDepthMask(GL_TRUE);
@@ -83,9 +83,8 @@ void GLRenderingDevice::RenderWorld(World* world)
 		// if (post && post->UseFgShader)
 		//	PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND]->Run(world, kv.second.GetCamera(), rect);
 		// else 
-		RenderingPasses[eRenderPassType::FOREGROUND_LIGHT]->Run(world, kv.second.GetCamera(), rect);
-
-		RenderingPasses[eRenderPassType::VIGNETTE]->Run(world, kv.second.GetCamera(), rect);
+		RenderingPasses[eRenderPassType::FOREGROUND]->Run(world, kv.second.GetCamera(), rect);
+		//RenderingPasses[eRenderPassType::VIGNETTE]->Run(world, kv.second.GetCamera(), rect);
 
 		// Draw debug normals
 		// if (gCoreConfig.DebugNormalsFlag)

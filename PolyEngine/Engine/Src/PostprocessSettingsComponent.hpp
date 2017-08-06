@@ -8,19 +8,20 @@ namespace Poly {
 	class ENGINE_DLLEXPORT PostprocessSettingsComponent : public ComponentBase
 	{
 		friend void CameraSystem::CameraUpdatePhase(World*);
+
 	public:
-
-		bool UseBgShader = true;
-		bool UseFgShader = true;
-
-		int UseCashetes = 0;
-		float DistortionPower = 0.45f;
-		float ColorTempValue = 7500.0f; // 6500.0 from [1000.0, 40000.0]
-		float ColorTempPower = 1.0f;
+	
+		int UseCashetes = 1;
+		float Distortion = 0.1f;
+		float Bloom = 0.1f;
+		float BloomThreshold = 0.7f;
+		float ColorTempValue = 7000.0f; // 6500.0 from [1000.0, 40000.0]
 		float ColorTempLuminancePreservation = 0.75f;
-		float SaturationPower = 1.0f;
-		float GrainPower = 0.1f;
-		float StripesPower = 0.25f;
-		float VignetteIntensity = 0.30f;
+		float Saturation = 1.0f;
+		float Grain = 0.0f;
+		float Stripes = 0.0f;
+		float Vignette = 0.0f;
+		float Brightness = 0.0;
+		float Contrast = 1.0;
 	};
 }

@@ -39,9 +39,16 @@ void RenderingSandbox::Init()
 	DirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, DirLight);
 	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightSourceComponent>(world, DirLight, Color(1.0f, 1.0f, 0.9f), 0.5f);
-	Poly::TransformComponent* lightTrans = world->GetComponent<Poly::TransformComponent>(DirLight);
-	lightTrans->SetLocalTranslation(DirLightPos);
-	lightTrans->SetLocalRotation(DirLightRot);
+	Poly::TransformComponent* dirLightTrans = world->GetComponent<Poly::TransformComponent>(DirLight);
+	dirLightTrans->SetLocalTranslation(DirLightPos);
+	dirLightTrans->SetLocalRotation(DirLightRot);
+
+	Vector PointLightPos = Vector(3.0f, -5.0f, 10.0f);
+	auto PointLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLight);
+	DeferredTaskSystem::AddComponentImmediate<Poly::PointLightSourceComponent>(world, PointLight, Color(1.0f, 0.0f, 0.0f), 2000.5f, 1000.0f);
+	Poly::TransformComponent* lightTrans = world->GetComponent<Poly::TransformComponent>(PointLight);
+	dirLightTrans->SetLocalTranslation(PointLightPos);
 
 	auto Dummy = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, Dummy);
@@ -78,7 +85,7 @@ void RenderingSandbox::Init()
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, ground);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, ground, "Models/ground/ground.fbx", eResourceSource::GAME);
 	Poly::TransformComponent* groundTrans = world->GetComponent<Poly::TransformComponent>(ground);
-//	groundTransform->SetLocalTranslation(Vector(SCALE * SIZE, 0.f, SCALE * SIZE));
+	//	groundTransform->SetLocalTranslation(Vector(SCALE * SIZE, 0.f, SCALE * SIZE));
 	groundTrans->SetLocalScale(SCALE);
 
 	Engine->RegisterGameUpdatePhase(GameMainSystem::GameUpdate);
@@ -98,10 +105,33 @@ void GameMainSystem::GameUpdate(Poly::World* world)
 	double time = world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime();
 	double deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
 
+	// int UseCashetes = 0;
+	// float ColorTempLuminancePreservation = 0.75f;
+	float Distortion	= 0.5f;
+	float Bloom			= 0.4f;
+	float ColorTempValue = 9500.0f; // 6500.0 from [1000.0, 40000.0]
+	float Saturation	= 0.5f;
+	float Grain			= 0.5f;
+	float Stripes		= 0.5f;
+	float Vignette		= 0.5f;
+	float Brightness	= 0.1f;
+	float Contrast		= 1.5f;
+
 	for (auto cmpTuple : world->IterateComponents<PostprocessSettingsComponent>())
 	{
 		PostprocessSettingsComponent* postCmp = std::get<PostprocessSettingsComponent*>(cmpTuple);
-		postCmp->VignetteIntensity = Smoothstep(-0.2f, 0.2f, -Cos(Angle::FromRadians(0.5f*time)));
-//		gConsole.LogInfo("PostCmp: Vignette: {}", postCmp->VignetteIntensity);
+		float t = Smoothstep(-0.2f, 0.2f, -Cos(Angle::FromRadians(0.5f*time))); // [0, 1]
+
+		postCmp->Distortion = t * Distortion;
+		postCmp->Bloom = t * Bloom;
+		postCmp->ColorTempValue = Lerp(6500.0f, ColorTempValue, t);
+		postCmp->Saturation = Lerp(1.0f, Saturation, t);
+		postCmp->Grain = Lerp(0.0f, Grain, t);
+		postCmp->Stripes = Lerp(0.0f, Stripes, t);
+		postCmp->Vignette = Lerp(0.0f, Vignette, t);
+		postCmp->Brightness = Lerp(0.0f, Brightness, t);
+		postCmp->Contrast = Lerp(1.0f, Contrast, t);
+
+		gConsole.LogInfo("PostCmp: t: {}, Saturation: {}, Vignette: {}", t, postCmp->Saturation, postCmp->Vignette);
 	}
 }

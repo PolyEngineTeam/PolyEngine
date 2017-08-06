@@ -99,14 +99,17 @@ void RenderingPass::OnRun(World* world, const CameraComponent* camera, const AAB
 	}
 	else
 	{
-		GetProgram().SetUniform("uVignetteIntensity",				PostprocessSettings->VignetteIntensity);
-		GetProgram().SetUniform("uDistortionPower",					PostprocessSettings->DistortionPower);
+		GetProgram().SetUniform("uVignette",						PostprocessSettings->Vignette);
+		GetProgram().SetUniform("uBloom",							PostprocessSettings->Bloom);
+		GetProgram().SetUniform("uBloomThreshold",					PostprocessSettings->BloomThreshold);
+		GetProgram().SetUniform("uDistortion",						PostprocessSettings->Distortion);
 		GetProgram().SetUniform("uColorTempValue",					PostprocessSettings->ColorTempValue);
-		GetProgram().SetUniform("uColorTempPower",					PostprocessSettings->ColorTempPower);
 		GetProgram().SetUniform("uColorTempLuminancePreservation",	PostprocessSettings->ColorTempLuminancePreservation);
-		GetProgram().SetUniform("uSaturationPower",					PostprocessSettings->SaturationPower);
-		GetProgram().SetUniform("uGrainPower",						PostprocessSettings->GrainPower);
-		GetProgram().SetUniform("uStripesPower",					PostprocessSettings->StripesPower);
+		GetProgram().SetUniform("uSaturation",						PostprocessSettings->Saturation);
+		GetProgram().SetUniform("uGrain",							PostprocessSettings->Grain);
+		GetProgram().SetUniform("uStripes",							PostprocessSettings->Stripes);
+		GetProgram().SetUniform("uBrightness",						PostprocessSettings->Brightness);
+		GetProgram().SetUniform("uContrast",						PostprocessSettings->Contrast);
 		
 		// gConsole.LogInfo("void PostprocessRenderingPass::OnRun: VignetteIntensity: {}", PostprocessSettings->VignetteIntensity);
 	}

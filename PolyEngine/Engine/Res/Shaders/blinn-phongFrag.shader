@@ -66,6 +66,10 @@ void main() {
 	// vec4 ambient = texColor * ambientlLight(uDiffuseLight);
 	vec3 normalWS = normalize(transpose(inverse(mat3(uTransform))) * vNormal);
 	vec4 dirDiffuse = directionalLight(uDirectionalLight, normalWS);
+
+	vec3 pointLightPos = uPointLight[0].Position.xyz;
+	vec3 pointLightDir = normalize(pointLightPos - vVertexPos);
+	float pointNdotL = max(dot(normalWS, pointLightDir), 0.0);
 	// vec4 point = texColor * diffuseLight(uDirectionalLight.BasdirectionalLight(DirectionalLight light, vec3 normalWS) {e, uDirectionalLight.Direction.xyz, normalWS);
 
 	// for (int i = 8; i < uPointLightCount; ++i)
@@ -79,5 +83,8 @@ void main() {
 	// color = texColor;
 	// color = vec4(0.5*(1.0+normalWS), 1.0);
 	// color = vec4(max(dot(normalWS, uDirectionalLight.Direction.xyz), 0.0));
+
+	// color = vec4(pointNdotL);
+	
 	color = texColor + dirDiffuse;
 }
