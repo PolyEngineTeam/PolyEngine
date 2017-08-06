@@ -152,6 +152,8 @@
   <ItemGroup>
     <ClInclude Include="Src\Allocator.hpp" />
     <ClInclude Include="Src\Angle.hpp" />
+    <ClInclude Include="Src\BTreeMap.hpp" />
+    <ClInclude Include="Src\BTreeNode.hpp" />
     <ClInclude Include="Src\BaseObject.hpp" />
     <ClInclude Include="Src\BasicMath.hpp" />
     <ClInclude Include="Src\BinaryBuffer.hpp" />
@@ -165,6 +167,7 @@
     <ClInclude Include="Src\IterablePoolAllocator.hpp" />
     <ClInclude Include="Src\Logger.hpp" />
     <ClInclude Include="Src\Matrix.hpp" />
+    <ClInclude Include="Src\Optional.hpp" />
     <ClInclude Include="Src\ObjectLifetimeHelpers.hpp" />
     <ClInclude Include="Src\PoolAllocator.hpp" />
     <ClInclude Include="Src\Quaternion.hpp" />
@@ -174,6 +177,7 @@
     <ClInclude Include="Src\SimdMath.hpp" />
     <ClInclude Include="Src\String.hpp" />
     <ClInclude Include="Src\UniqueID.hpp" />
+    <ClInclude Include="Src\UnsafeStorage.hpp" />
     <ClInclude Include="Src\Vector.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

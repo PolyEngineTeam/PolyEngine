@@ -81,11 +81,20 @@
     <ClInclude Include="Src\Matrix.hpp">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Optional.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
     <ClInclude Include="Src\SimdMath.hpp">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="Src\Angle.hpp">
       <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BTreeMap.hpp">
+      <Filter>Source Files\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BTreeNode.hpp">
+      <Filter>Source Files\Memory</Filter>
     </ClInclude>
     <ClInclude Include="Src\Color.hpp">
       <Filter>Source Files</Filter>
@@ -112,6 +121,9 @@
       <Filter>Source Files\Memory</Filter>
     </ClInclude>
     <ClInclude Include="Src\UniqueID.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\UnsafeStorage.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Src\Quaternion.hpp">
