@@ -2,20 +2,20 @@ set(POLYTESTS_SRCS
 	Src/AABoxTests.cpp
 	Src/AllocatorTests.cpp
 	Src/AngleTests.cpp
+	Src/BTreeMapTests.cpp
 	Src/BasicMathTests.cpp
 	Src/DynarrayTests.cpp
 	Src/EnumUtilsTests.cpp
-	Src/main.cpp
 	Src/MatrixTests.cpp
+	Src/OptionalTests.cpp
+	Src/QuaternionTests.cpp
+	Src/QueueTests.cpp
 	Src/ResourceManagerTests.cpp
 	Src/StringTests.cpp
 	Src/TransformComponentTests.cpp
-	Src/QuaternionTests.cpp
-	Src/QueueTests.cpp
-	Src/VectorTests.cpp
-	Src/OptionalTests.cpp
 	Src/UnsafeStorageTests.cpp
-	Src/BTreeMapTests.cpp
+	Src/VectorTests.cpp
+	Src/main.cpp
 )
 
 if(NOT TARGET Catch) #TODO(vuko): falling back to bundled Catch after failing the download doesn't seem to be possible... or is it?
