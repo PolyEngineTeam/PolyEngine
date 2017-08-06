@@ -62,10 +62,8 @@ int main() {
 	XVisualInfo* visual = glXGetVisualFromFBConfig(display.get(), fbConfig);
 	Colormap colourMap;
 
-	Poly::ScreenSize windowSize;
-	windowSize.Width = 800;
-	windowSize.Height = 600;
-	
+	Poly::ScreenSize windowSize{800, 600};
+
 	//create the window
 	XSetWindowAttributes windowAttribs;
 	windowAttribs.colormap = colourMap = XCreateColormap(display.get(), RootWindow(display.get(), screen), visual->visual, AllocNone);
@@ -76,8 +74,8 @@ int main() {
 		RootWindow(display.get(), screen),                                     //parent
 		0,                                                                     //x
 		0,                                                                     //y
-		windowSize.Width,                                                                   //width
-		windowSize.Height,                                                                   //height
+		windowSize.Width,                                                      //width
+		windowSize.Height,                                                     //height
 		0,                                                                     //border width
 		visual->depth,
 		InputOutput,                                                           //class
@@ -119,15 +117,12 @@ int main() {
 
 	//enter the matri... *ekhm* game loop
 	XEvent ev;
-	for(;;)
-	{
-		if (XPending(display.get()) > 0)
-		{
+	for(;;) {
+		if (XPending(display.get()) > 0) {
 			XNextEvent(display.get(), &ev);
 
 			handleEvents(display.get(), window, ev);
-			if ((ev.type == ClientMessage && static_cast<Atom>(ev.xclient.data.l[0]) == atomWmDeleteWindow) || ev.type == DestroyNotify)
-			{
+			if ((ev.type == ClientMessage && static_cast<Atom>(ev.xclient.data.l[0]) == atomWmDeleteWindow) || ev.type == DestroyNotify) {
 				break;
 			}
 		} else {

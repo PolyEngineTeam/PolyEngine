@@ -38,6 +38,10 @@ set(POLYCORE_H_FOR_IDE
 	Src/String.hpp
 	Src/UniqueID.hpp
 	Src/Vector.hpp
+	Src/UnsafeStorage.hpp
+	Src/BTreeNode.hpp
+	Src/BTreeMap.hpp
+	Src/Optional.hpp
 )
 
 add_library(polycore SHARED ${POLYCORE_SRCS} ${POLYCORE_H_FOR_IDE})
