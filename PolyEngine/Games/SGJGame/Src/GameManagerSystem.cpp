@@ -7,7 +7,7 @@
 #include <DeferredTaskSystem.hpp>
 #include <TransformComponent.hpp>
 #include <Physics2DColliders.hpp>
-#include <RigidBody2DComponent.hpp>
+#include <Rigidbody2DComponent.hpp>
 #include <MeshRenderingComponent.hpp>
 #include <CameraComponent.hpp>
 #include <FreeFloatMovementComponent.hpp>

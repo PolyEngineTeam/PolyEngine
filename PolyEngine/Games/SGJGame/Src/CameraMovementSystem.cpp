@@ -23,7 +23,7 @@ void SGJ::CameraMovementSystem::CameraMovementUpdatePhase(Poly::World* world)
 	TransformComponent* playerTransCmp = world->GetComponent<TransformComponent>(player);
 	RigidBody2DComponent* rigidbodyCmp = world->GetComponent<RigidBody2DComponent>(player);
 
-	for (auto& tuple : world->IterateComponents<CameraComponent, CameraMovementComponent, TransformComponent>())
+	for (auto tuple : world->IterateComponents<CameraComponent, CameraMovementComponent, TransformComponent>())
 	{
 		CameraComponent* cameraCmp = std::get<CameraComponent*>(tuple);
 		CameraMovementComponent* cameraMvmtCmp = std::get<CameraMovementComponent*>(tuple);

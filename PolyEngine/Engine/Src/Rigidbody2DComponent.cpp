@@ -103,12 +103,14 @@ void Poly::RigidBody2DComponent::DebugPrintInfo() const
 
 void Poly::RigidBody2DComponent::ApplyForceToCenter(const Vector& force)
 {
-	ImplData->Body->ApplyForceToCenter(b2Vec2(force.X, force.Y), true);
+	const b2Vec2& center = ImplData->Body->GetWorldCenter();
+	ImplData->Body->ApplyForce(b2Vec2(force.X, force.Y),center, true);
 }
 
 void Poly::RigidBody2DComponent::ApplyImpulseToCenter(const Vector& impulse)
 {
-	ImplData->Body->ApplyLinearImpulseToCenter(b2Vec2(impulse.X, impulse.Y), true);
+	const b2Vec2& center = ImplData->Body->GetWorldCenter();
+	ImplData->Body->ApplyLinearImpulse(b2Vec2(impulse.X, impulse.Y), center, true);
 }
 
 void Poly::RigidBody2DComponent::SetLinearDamping(float dampfactor)

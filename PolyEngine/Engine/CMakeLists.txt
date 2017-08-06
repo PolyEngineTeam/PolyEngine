@@ -15,6 +15,7 @@ find_package(OpenAL REQUIRED)
 find_package(OGG REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(VorbisFile REQUIRED)
+find_package(Box2D REQUIRED)
 
 set(RAPIDJSON_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/ThirdParty/rapidjson/include")
 
@@ -23,28 +24,34 @@ set(POLYENGINE_SRCS
 	Src/CameraSystem.cpp
 	Src/CoreConfig.cpp
 	Src/DebugWorldComponent.cpp
+	Src/DeferredTaskSystem.cpp
 	Src/Engine.cpp
 	Src/Entity.cpp
-	Src/FreeFloatMovementComponent.cpp
 	Src/FontResource.cpp
 	Src/FPSSystem.cpp
-	Src/Mesh.cpp
-	Src/MeshResource.cpp
-	Src/TextureResource.cpp
-	Src/DeferredTaskSystem.cpp
+	Src/FreeFloatMovementComponent.cpp
 	Src/InputSystem.cpp
 	Src/InputWorldComponent.cpp
+	Src/LightSourceComponent.cpp
+	Src/Mesh.cpp
 	Src/MeshRenderingComponent.cpp
+	Src/MeshResource.cpp
 	Src/MovementSystem.cpp
 	Src/OpenALDevice.cpp
+	Src/Physics2DColliders.cpp
+	Src/Physics2DSystem.cpp
+	Src/Physics2DWorldComponent.cpp
+	Src/PostprocessSettingsComponent.cpp
 	Src/RenderingSystem.cpp
 	Src/ResourceManager.cpp
+	Src/Rigidbody2DComponent.cpp
 	Src/SoundEmitterComponent.cpp
 	Src/SoundListenerComponent.cpp
 	Src/SoundResource.cpp
 	Src/SoundSystem.cpp
 	Src/SoundWorldComponent.cpp
 	Src/Text2D.cpp
+	Src/TextureResource.cpp
 	Src/TimeSystem.cpp
 	Src/TimeWorldComponent.cpp
 	Src/TransformComponent.cpp
@@ -58,30 +65,36 @@ set(POLYENGINE_H_FOR_IDE
 	Src/ComponentBase.hpp
 	Src/CoreConfig.hpp
 	Src/DebugWorldComponent.hpp
-	Src/Engine.hpp
-	Src/EnginePCH.hpp
-	Src/Entity.hpp
-	Src/FreeFloatMovementComponent.hpp
-	Src/FontResource.hpp
-	Src/FPSSystem.hpp
-	Src/IRenderingDevice.hpp
-	Src/Mesh.hpp
-	Src/MeshResource.hpp
-	Src/OpenALDevice.hpp
-	Src/TextureResource.hpp
 	Src/DeferredTaskBase.hpp
 	Src/DeferredTaskImplementation.hpp
 	Src/DeferredTaskSystem.hpp
 	Src/DeferredTaskWorldComponent.hpp
+	Src/Engine.hpp
+	Src/EnginePCH.hpp
+	Src/Entity.hpp
+	Src/FontResource.hpp
+	Src/FPSSystem.hpp
+	Src/FreeFloatMovementComponent.hpp
 	Src/InputQueue.hpp
 	Src/InputSystem.hpp
 	Src/InputWorldComponent.hpp
+	Src/IRenderingDevice.hpp
 	Src/KeyBindings.hpp
+	Src/LightSourceComponent.hpp
+	Src/Mesh.hpp
 	Src/MeshRenderingComponent.hpp
+	Src/MeshResource.hpp
 	Src/MovementSystem.hpp
+	Src/OpenALDevice.hpp
+	Src/Physics2DColliders.hpp
+	Src/Physics2DSystem.hpp
+	Src/Physics2DWorldComponent.hpp
+	Src/PostprocessSettingsComponent.hpp
 	Src/RenderingSystem.hpp
 	Src/ResourceBase.hpp
 	Src/ResourceManager.hpp
+	Src/Rigidbody2DComponent.hpp
+	Src/RigidBody2DImpl.hpp
 	Src/ScreenSpaceTextComponent.hpp
 	Src/SoundEmitterComponent.hpp
 	Src/SoundListenerComponent.hpp
@@ -89,9 +102,10 @@ set(POLYENGINE_H_FOR_IDE
 	Src/SoundSystem.hpp
 	Src/SoundWorldComponent.hpp
 	Src/Text2D.hpp
+	Src/TextureResource.hpp
+	Src/Timer.hpp
 	Src/TimeSystem.hpp
 	Src/TimeWorldComponent.hpp
-	Src/Timer.hpp
 	Src/TransformComponent.hpp
 	Src/Viewport.hpp
 	Src/ViewportWorldComponent.hpp
@@ -100,8 +114,8 @@ set(POLYENGINE_H_FOR_IDE
 
 add_library(polyengine SHARED ${POLYENGINE_SRCS} ${POLYENGINE_H_FOR_IDE})
 target_compile_definitions(polyengine PRIVATE _ENGINE)
-target_include_directories(polyengine INTERFACE ${POLYENGINE_INCLUDE} PRIVATE ${OPENGL_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} ${OPENAL_INCLUDE_DIR} ${OGG_INCLUDE_DIRS} ${VORBIS_INCLUDE_DIRS} ${VORBISFILE_INCLUDE_DIRS} ${RAPIDJSON_INCLUDE_DIRS})
-target_link_libraries(polyengine PRIVATE polycore ${OPENGL_LIBRARIES} GLEW::GLEW SOIL::SOIL ${ASSIMP_LIBRARIES} ${FREETYPE_LIBRARIES} ${OPENAL_LIBRARY} ${OGG_LIBRARIES} ${VORBIS_LIBRARIES} ${VORBISFILE_LIBRARIES})
+target_include_directories(polyengine INTERFACE ${POLYENGINE_INCLUDE} PRIVATE ${OPENGL_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} ${OPENAL_INCLUDE_DIR} ${OGG_INCLUDE_DIRS} ${VORBIS_INCLUDE_DIRS} ${VORBISFILE_INCLUDE_DIRS} ${RAPIDJSON_INCLUDE_DIRS} ${BOX2D_INCLUDE_DIRS})
+target_link_libraries(polyengine PRIVATE polycore ${OPENGL_LIBRARIES} GLEW::GLEW SOIL::SOIL ${ASSIMP_LIBRARIES} ${FREETYPE_LIBRARIES} ${OPENAL_LIBRARY} ${OGG_LIBRARIES} ${VORBIS_LIBRARIES} ${VORBISFILE_LIBRARIES} ${BOX2D_LIBRARIES})
 
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	target_compile_options(polyengine PRIVATE --coverage -fprofile-arcs -ftest-coverage)

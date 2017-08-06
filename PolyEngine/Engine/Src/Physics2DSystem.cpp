@@ -7,6 +7,8 @@
 
 #include <Box2D/Box2D.h>
 
+using namespace Poly;
+
 void Poly::Physics2DSystem::Physics2DUpdatePhase(World* world)
 {
 	float deltaTime = (float)TimeSystem::GetTimerDeltaTime(world, eEngineTimer::GAMEPLAY);
@@ -14,7 +16,7 @@ void Poly::Physics2DSystem::Physics2DUpdatePhase(World* world)
 	physicsCmp->LastDeltaOverflow += deltaTime;
 
 	// Load physics position from engine translation
-	for (auto& tuple : world->IterateComponents<RigidBody2DComponent, TransformComponent>())
+	for (auto tuple : world->IterateComponents<RigidBody2DComponent, TransformComponent>())
 	{
 		RigidBody2DComponent* rigidBody = std::get<RigidBody2DComponent*>(tuple);
 		rigidBody->UpdatePosition();
@@ -29,7 +31,7 @@ void Poly::Physics2DSystem::Physics2DUpdatePhase(World* world)
 	}
 
 	// Store physics position to engine translation
-	for (auto& tuple : world->IterateComponents<RigidBody2DComponent, TransformComponent>())
+	for (auto tuple : world->IterateComponents<RigidBody2DComponent, TransformComponent>())
 	{
 		RigidBody2DComponent* rigidBody = std::get<RigidBody2DComponent*>(tuple);
 		TransformComponent* transform = std::get<TransformComponent*>(tuple);

@@ -6,7 +6,7 @@
 #include <ScreenSpaceTextComponent.hpp>
 #include <CoreConfig.hpp>
 #include "GameManagerWorldComponent.hpp"
-#include "RigidBody2DComponent.hpp"
+#include <Rigidbody2DComponent.hpp>
 
 using namespace Poly;
 

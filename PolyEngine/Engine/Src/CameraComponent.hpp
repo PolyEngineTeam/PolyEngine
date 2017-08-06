@@ -18,8 +18,8 @@ namespace Poly {
 
 		const Angle& GetFOV() const { return Fov; }
 		const Angle& GetTargetFOV() const { return TargetFov; }
-		void SetTargetFOV(Angle& Value) { TargetFov = Value; }
-		void SetFOV(Angle& Value) { Fov = Value; }
+		void SetTargetFOV(const Angle& Value) { TargetFov = Value; }
+		void SetFOV(const Angle& Value) { Fov = Value; }
 		float GetAspect() const { return Aspect; }
 
 	private:
