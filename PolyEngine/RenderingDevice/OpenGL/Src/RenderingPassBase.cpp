@@ -1,8 +1,11 @@
 #include "RenderingPassBase.hpp"
 
-#include "GLTextureDeviceProxy.hpp"
+#include <ResourceManager.hpp>
+#include <TextureResource.hpp>
 
+#include "GLTextureDeviceProxy.hpp"
 #include "GLRenderingDevice.hpp"
+
 
 using namespace Poly;
 
@@ -123,6 +126,18 @@ void RenderingPassBase::Run(World* world, const CameraComponent* camera, const A
 			GLuint textureID = static_cast<Texture2DRenderingTarget*>(target)->GetTextureID();
 			size_t idx = samplerCount++;
 			glActiveTexture(GL_TEXTURE0 + idx);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glBindTexture(GL_TEXTURE_2D, textureID);
+			Program.SetUniform(name, (int)idx);
+			tmp = textureID;
+			break;
+		}
+		case eRenderingTargetType::TEXTURE_2D_INPUT:
+		{
+			GLuint textureID = static_cast<Texture2DInputTarget*>(target)->GetTextureID();
+			size_t idx = samplerCount++;
+			glActiveTexture(GL_TEXTURE0 + idx);
 			glBindTexture(GL_TEXTURE_2D, textureID);
 			Program.SetUniform(name, (int)idx);
 			tmp = textureID;
@@ -237,6 +252,21 @@ GLuint Poly::Texture2DRenderingTarget::GetTextureID()
 }
 
 Poly::DepthRenderingTarget::DepthRenderingTarget()
-	: Texture2DRenderingTarget(GL_DEPTH_COMPONENT32F, eInternalTextureUsageType::DEPTH_ATTACHEMENT)
+	: Texture2DRenderingTarget(GL_DEPTH_COMPONENT16, eInternalTextureUsageType::DEPTH_ATTACHEMENT)
 {
+}
+
+Poly::Texture2DInputTarget::Texture2DInputTarget(const String & path)
+{
+	Texture = ResourceManager<TextureResource>::Load(path, eResourceSource::ENGINE);
+}
+
+Poly::Texture2DInputTarget::~Texture2DInputTarget()
+{
+	ResourceManager<TextureResource>::Release(Texture);
+}
+
+GLuint Poly::Texture2DInputTarget::GetTextureID() const
+{
+	return static_cast<const GLTextureDeviceProxy*>(Texture->GetTextureProxy())->GetTextureID();
 }

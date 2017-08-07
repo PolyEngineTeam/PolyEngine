@@ -82,6 +82,7 @@ namespace Poly
 		virtual const ScreenSize& GetScreenSize() const = 0;
 
 		virtual void RenderWorld(World* world) = 0;
+		virtual void Init() = 0;
 
 		virtual std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) = 0;
 		virtual std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() = 0;

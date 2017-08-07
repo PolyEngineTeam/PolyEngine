@@ -13,6 +13,7 @@ namespace Poly
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
 	class AABox;
+	class TextureResource;
 	struct ScreenSize;
 	enum class eInternalTextureUsageType;
 
@@ -61,6 +62,7 @@ namespace Poly
 	enum class eRenderingTargetType
 	{
 		TEXTURE_2D,
+		TEXTURE_2D_INPUT,
 		DEPTH,
 		_COUNT
 	};
@@ -68,8 +70,8 @@ namespace Poly
 	//------------------------------------------------------------------------------
 	class RenderingTargetBase : public BaseObject<>
 	{
-		
-	public:	
+
+	public:
 		virtual eRenderingTargetType GetType() const = 0;
 
 		virtual void Resize(const ScreenSize& size) {}
@@ -99,5 +101,17 @@ namespace Poly
 		DepthRenderingTarget();
 
 		eRenderingTargetType GetType() const override { return eRenderingTargetType::DEPTH; }
+	};
+
+	class Texture2DInputTarget : public RenderingTargetBase
+	{
+	public:
+		Texture2DInputTarget(const String& path);
+		~Texture2DInputTarget();
+		
+		GLuint GetTextureID() const;
+		eRenderingTargetType GetType() const override { return eRenderingTargetType::TEXTURE_2D_INPUT; }
+	private:
+		TextureResource* Texture;
 	};
 }

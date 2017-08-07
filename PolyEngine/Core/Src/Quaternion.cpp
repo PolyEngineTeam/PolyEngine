@@ -48,17 +48,17 @@ Quaternion Quaternion::operator*(const Quaternion& rhs) const {
 
 //------------------------------------------------------------------------------
 Vector Quaternion::operator*(const Vector& rhs) const {
-  HEAVY_ASSERTE(Cmpf(Length2(), 1.0f), "Non unit quaterion");
+  HEAVY_ASSERTE(Cmpf(LengthSquared(), 1.0f), "Non unit quaterion");
   Vector tmp(X, Y, Z);
   Vector t = tmp.Cross(rhs) * 2;
   return rhs + t * W + tmp.Cross(t);
 }
 
 //------------------------------------------------------------------------------
-float Quaternion::Length() const { return std::sqrt(Length2()); }
+float Quaternion::Length() const { return std::sqrt(LengthSquared()); }
 
 //------------------------------------------------------------------------------
-float Quaternion::Length2() const { return W * W + X * X + Y * Y + Z * Z; }
+float Quaternion::LengthSquared() const { return W * W + X * X + Y * Y + Z * Z; }
 
 //------------------------------------------------------------------------------
 Quaternion& Quaternion::Conjugate() { X = -X; Y = -Y; Z = -Z; return *this; }

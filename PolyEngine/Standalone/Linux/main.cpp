@@ -1,6 +1,8 @@
 #include <Engine.hpp>
 #include <GLRenderingDevice.hpp>
-#include <InvadersGame.hpp>
+#include <Game.hpp>
+
+extern Poly::Engine* Poly::gEngine = nullptr;
 
 void handleEvents(Display* display, Window window, const XEvent& ev);
 
@@ -106,10 +108,12 @@ int main() {
 	};
 	std::unique_ptr<Window, decltype(windowCleanup)> windowCleanupGuard(&window, windowCleanup);
 
-	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(new InvadersGame());
+	Poly::Engine Engine;
+
+	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(new SGJGame());
 	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(PolyCreateRenderingDevice(display.get(), window, fbConfig, windowSize));
 
-	Poly::Engine Engine(std::move(game), std::move(device));
+	Engine.Init(std::move(game), std::move(device));
 	Poly::gConsole.LogDebug("Engine loaded");
 
 	//show the window

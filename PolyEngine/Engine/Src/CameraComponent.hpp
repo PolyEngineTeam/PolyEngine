@@ -15,6 +15,13 @@ namespace Poly {
 		const Matrix& GetProjectionMatrix() const { return Projection; }
 		const Matrix& GetModelViewMatrix() const { return ModelView; }
 		const Matrix& GetMVP() const { return MVP; }
+
+		const Angle& GetFOV() const { return Fov; }
+		const Angle& GetTargetFOV() const { return TargetFov; }
+		void SetTargetFOV(const Angle& Value) { TargetFov = Value; }
+		void SetFOV(const Angle& Value) { Fov = Value; }
+		float GetAspect() const { return Aspect; }
+
 	private:
 		Matrix Projection;
 		Matrix ModelView;
@@ -23,6 +30,7 @@ namespace Poly {
 		bool IsPerspective = false;
 		// Prerpective
 		Angle Fov = 0_deg;
+		Angle TargetFov = 0_deg;
 
 		// Orthographic
 		float Top = 0.f;
