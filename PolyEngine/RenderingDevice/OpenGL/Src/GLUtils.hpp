@@ -1,13 +1,15 @@
 #pragma once
 
-#include <GL/glew.h>
-#ifdef _WIN32
-	#include <GL/wglew.h>
+#if defined(_WIN32)
+	#include <windows.h> //WinAPI is ultra-weird
+	#include <epoxy/wgl.h>
 #elif defined(__linux__)
-	#include <GL/glxew.h>
-#elif
+	#include <epoxy/glx.h>
+#else
 	#error "Unsupported platform :("
 #endif
+
+#include <epoxy/gl.h> //note(vuko): do not move before windows.h unless you want all hell to break loose; Microsoft, you silly goofball, why
 
 #include <Logger.hpp>
 

@@ -64,14 +64,6 @@ GLRenderingDevice::GLRenderingDevice(HWND hwnd, RECT rect)
 	HGLRC tempContext = wglCreateContext(hDC);
 	wglMakeCurrent(hDC, tempContext);
 
-	// Initialize GLEW
-	GLenum err = glewInit();
-	if (GLEW_OK != err)
-	{
-		gConsole.LogError("GLEW init failed, code: {}, status: {}", err, glewGetErrorString(err));
-		throw RenderingDeviceSetupFailedException();
-	}
-
 	// Setup OpenGL 3.3 context attribs
 	int attribs[] =
 	{
@@ -82,7 +74,7 @@ GLRenderingDevice::GLRenderingDevice(HWND hwnd, RECT rect)
 	};
 
 	// Create OpenGL 3.3 context and destroy the temporary one.
-	if (wglewIsSupported("WGL_ARB_create_context") == 1)
+	if (epoxy_has_wgl_extension(hDC, "WGL_ARB_create_context"))
 	{
 		hRC = wglCreateContextAttribsARB(hDC, 0, attribs);
 		wglMakeCurrent(nullptr, nullptr);
@@ -142,35 +134,16 @@ GLRenderingDevice::GLRenderingDevice(Display* display, Window window, GLXFBConfi
 
 	ScreenDim = size;
 
-	//create a temporary context to make GLEW happy, then immediately destroy it (it has wrong parameters)
-	{
-		GLXContext makeGlewHappy = glXCreateNewContext(this->display, fbConfig, GLX_RGBA_TYPE, /*share list*/ nullptr, /*direct*/ True);
-		glXMakeCurrent(this->display, this->window, makeGlewHappy);
-		gConsole.LogDebug("Temporary GL context for GLEW created.");
-
-		//initialize GLEW
-		GLenum err = glewInit();
-		if (err != GLEW_OK) {
-			gConsole.LogError("GLEW init failed, code: {}, status: {}", err, glewGetErrorString(err));
-			throw RenderingDeviceSetupFailedException();
-		}
-		glXMakeCurrent(this->display, None, nullptr);
-		glXDestroyContext(this->display, makeGlewHappy);
-		gConsole.LogDebug("GLEW initialized.");
-	}
-
 	//create GLX OpenGL context
-	this->context = nullptr;
 	int context_attribs[] = {
 		GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
 		GLX_CONTEXT_MINOR_VERSION_ARB, 3,
 		GLX_CONTEXT_FLAGS_ARB        , GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
 		None
 	};
-	if (GLXEW_ARB_create_context) {
+	if (epoxy_has_glx_extension(display, DefaultScreen(display), "GLX_ARB_create_context")) {
 		this->context = glXCreateContextAttribsARB(this->display, fbConfig, /*share context*/ nullptr, /*direct*/ True, context_attribs);
-	}
-	else {
+	} else {
 		gConsole.LogError("GLX_ARB_create_context extension not found. This platform does not support OpenGL {}.{}+", context_attribs[1], context_attribs[3]);
 		throw RenderingDeviceSetupFailedException();
 	}
@@ -183,8 +156,7 @@ GLRenderingDevice::GLRenderingDevice(Display* display, Window window, GLXFBConfi
 
 	if (glXIsDirect(this->display, this->context)) {
 		Poly::gConsole.LogDebug("Direct GLX rendering context obtained");
-	}
-	else {
+	} else {
 		Poly::gConsole.LogDebug("Indirect GLX rendering context obtained");
 	}
 	glXMakeCurrent(this->display, this->window, this->context);

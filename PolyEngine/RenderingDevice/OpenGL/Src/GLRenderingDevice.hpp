@@ -1,13 +1,9 @@
 #pragma once
 
 #if defined(_WIN32)
-	#include <Windows.h>
+	#include <epoxy/wgl.h>
 #elif defined(__linux__)
-	#include <X11/Xlib.h>
-	#include <X11/Xutil.h>
-	#include <GL/glew.h>
-	#include <GL/glxew.h>
-	#include <GL/glx.h>
+	#include <epoxy/glx.h>
 #else
 	#error "Unsupported platform :("
 #endif
@@ -80,11 +76,11 @@ namespace Poly
 		void EndFrame();
 
 		template <typename T>
-		void RegisterGeometryPass(eGeometryRenderPassType type, 
-			const std::initializer_list<InputOutputBind>& inputs = {}, 
+		void RegisterGeometryPass(eGeometryRenderPassType type,
+			const std::initializer_list<InputOutputBind>& inputs = {},
 			const std::initializer_list<InputOutputBind>& outputs = {});
 
-		void RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName, 
+		void RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName,
 			const std::initializer_list<InputOutputBind>& inputs = {},
 			const std::initializer_list<InputOutputBind>& outputs = {});
 

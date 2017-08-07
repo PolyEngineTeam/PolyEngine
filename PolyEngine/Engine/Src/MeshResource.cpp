@@ -95,15 +95,25 @@ Poly::MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMateria
 		// end temporary code for extracting path
 
 		MeshData.DiffuseTexture = ResourceManager<TextureResource>::Load(textPath, eResourceSource::NONE);
-		if (!MeshData.DiffuseTexture)
+		if (!MeshData.DiffuseTexture) {
 			gConsole.LogError("Failed to load diffuse texture: {}", fullPath);
-		else
+		} else {
 			gConsole.LogDebug("Succeded to load diffuse texture: {}", fullPath);
+		}
+	} else {
+		gConsole.LogError("Failed to load diffuse texture for material: {}", path);
+		MeshData.DiffuseTexture = nullptr;
 	}
 
 	// Material params loading
-	material->Get(AI_MATKEY_SHININESS_STRENGTH, MeshData.Mtl.SpecularIntensity);
-	material->Get(AI_MATKEY_SHININESS, MeshData.Mtl.SpecularPower);
+	if (material->Get(AI_MATKEY_SHININESS_STRENGTH, MeshData.Mtl.SpecularIntensity) != AI_SUCCESS) {
+		MeshData.Mtl.SpecularIntensity = 0.0f;
+		gConsole.LogError("Error reading specular intensity in {}", path);
+	}
+	if (material->Get(AI_MATKEY_SHININESS, MeshData.Mtl.SpecularPower) != AI_SUCCESS) {
+		MeshData.Mtl.SpecularPower = 0.0f;
+		gConsole.LogError("Error reading specular power in {}", path);
+	}
 	aiColor3D color;
 	material->Get(AI_MATKEY_COLOR_SPECULAR, color);
 	MeshData.Mtl.SpecularColor = Color(color.r, color.b, color.g);

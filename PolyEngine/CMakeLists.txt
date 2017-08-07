@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.6) #TODO(vuko): test older versions (3.2 seems to work for basic options with the exception of Fetch-Catch which needs 3.3)
-project(PolyEngine VERSION 0.0.2 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.2)
+project(PolyEngine VERSION 0.1.2 LANGUAGES CXX C) #note(vuko): without C older CMake versions fail to process FindX11 the first time
 
 ##
 # Initial setup: C++ standard version, build types, CMake modules
@@ -212,9 +212,9 @@ if(RUN_CLANG_TIDY_PY)   #we got the script, use it
 
 	add_custom_target(clang-tidy COMMAND ${RUN_CLANG_TIDY_PY} -p "${CMAKE_BINARY_DIR}" DEPENDS "compile_commands.json")
 
-else(CMAKE_VERSION VERSION_EQUAL 3.8 OR CMAKE_VERSION VERSION_GREATER 3.8)
+else(NOT CMAKE_VERSION VERSION_LESS 3.8)
 
-	#don't have it, replicate it somewhat (needs CMake 3.7 for BUILDSYSTEM_TARGETS property and 3.8 for COMMAND_EXPAND_LISTS; ironically VERSION_GREATER_EQUAL also needs 3.7)
+	#don't have it, replicate it somewhat (needs CMake 3.7 for BUILDSYSTEM_TARGETS property and 3.8 for COMMAND_EXPAND_LISTS)
 	set(CLANG_TIDY_SOURCES "")
 	get_directory_property(subdirs SUBDIRECTORIES)
 	foreach(dir IN LISTS subdirs)
@@ -233,8 +233,15 @@ else(CMAKE_VERSION VERSION_EQUAL 3.8 OR CMAKE_VERSION VERSION_GREATER 3.8)
 		endforeach()
 
 	endforeach()
-	add_custom_target(clang-tidy COMMAND ${CLANG_TIDY_EXE} -p "${CMAKE_BINARY_DIR}" "${CLANG_TIDY_SOURCES}" DEPENDS "compile_commands.json" WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" COMMAND_EXPAND_LISTS)
+	add_custom_target(
+			clang-tidy
+			COMMAND ${CLANG_TIDY_EXE} -p "${CMAKE_BINARY_DIR}" "${CLANG_TIDY_SOURCES}"
+			DEPENDS "compile_commands.json"
+			WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+			COMMAND_EXPAND_LISTS
+	)
 
 endif()
 
 #TODO(vuko): install and stuff
+#todo(vuko): source file categories for VS
