@@ -12,9 +12,11 @@ Text2D::~Text2D()
 		ResourceManager<FontResource>::Release(Font);
 }
 
-void Text2D::SetFont(const String& fontName)
+void Text2D::SetFont(const String& fontName, eResourceSource source)
 {
-	Font = ResourceManager<FontResource>::Load(fontName);
+	FontName = fontName;
+	ResSource = source;
+	Font = ResourceManager<FontResource>::Load(fontName, source);
 }
 
 void Text2D::UpdateDeviceBuffers() const
@@ -30,7 +32,7 @@ void Text2D::UpdateDeviceBuffers() const
 	}
 
 	if(!Font)
-		Font = ResourceManager<FontResource>::Load(FontName);
+		Font = ResourceManager<FontResource>::Load(FontName, ResSource);
 
 	const FontResource::FontFace& face = Font->GetFace(FontSize);
 

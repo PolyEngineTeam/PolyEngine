@@ -9,12 +9,12 @@ namespace Poly
 	{
 		void MovementUpdatePhase(World* world);
 
-		Vector GetLocalForward(const TransformComponent* transform);
-		Vector GetLocalRight(const TransformComponent* transform);
-		Vector GetLocalUp(const TransformComponent* transform);
+		Vector ENGINE_DLLEXPORT GetLocalForward(const TransformComponent* transform);
+		Vector ENGINE_DLLEXPORT GetLocalRight(const TransformComponent* transform);
+		Vector ENGINE_DLLEXPORT GetLocalUp(const TransformComponent* transform);
 
-		Vector GetGlobalForward(const TransformComponent* transform);
-		Vector GetGlobalRight(const TransformComponent* transform);
-		Vector GetGlobalUp(const TransformComponent* transform);
+		Vector ENGINE_DLLEXPORT GetGlobalForward(const TransformComponent* transform);
+		Vector ENGINE_DLLEXPORT GetGlobalRight(const TransformComponent* transform);
+		Vector ENGINE_DLLEXPORT GetGlobalUp(const TransformComponent* transform);
 	}
 }

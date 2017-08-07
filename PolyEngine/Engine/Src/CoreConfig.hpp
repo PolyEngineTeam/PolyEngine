@@ -10,6 +10,7 @@ namespace Poly
 	{
 		ENGINE,
 		GAME,
+		NONE,
 		_COUNT
 	};
 

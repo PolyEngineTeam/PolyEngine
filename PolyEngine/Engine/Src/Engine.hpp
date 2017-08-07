@@ -32,6 +32,12 @@ namespace Poly
 		SCREEN_SPACE_TEXT,
 		SOUND_EMMITER,
 		SOUND_LISTENER,
+		RIGIDBODY_2D,
+		BOX2D_COLLIDER,
+		CIRCLE2D_COLLIDER,
+		DIRECTIONAL_LIGHTSOURCE,
+		POINT_LIGHTSOURCE,
+		POSTPROCESS_SETTINGS,
 		_COUNT
 	};
 
@@ -47,6 +53,8 @@ namespace Poly
 		DEBUG,
 		DEFERRED_TASK,
 		SOUND,
+		PHYSICS_2D,
+		DIFFUSE_LIGHTSOURCE,
 		_COUNT
 	};
 
@@ -63,11 +71,8 @@ namespace Poly
 	class ENGINE_DLLEXPORT Engine : public BaseObject<>
 	{
 	public:
-		/// <summary>Constructs engine instance. Registers engine components. Registers and creates world components.
-		/// Registers engine update phases and initializes game dbject. </summary>
-		/// <param name="game">Pointer to IGame instance.</param>
-		/// <param name="device">Pointer to IRenderingDevice instance.</param>
-		Engine(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device);
+		/// <summary>Constructs engine instance.</summary>
+		Engine();
 
 		/// <summary>Deletes engine instance.</summary>
 		~Engine();
@@ -81,6 +86,12 @@ namespace Poly
 			POSTUPDATE,
 			_COUNT
 		};
+		
+		/// <summary>Registers engine components. Registers and creates world components.
+		/// Registers engine update phases and initializes game dbject. </summary>
+		/// <param name="game">Pointer to IGame instance.</param>
+		/// <param name="device">Pointer to IRenderingDevice instance.</param>
+		void Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device);
 
 		/// <summary>Registers a PhaseUpdateFunction to be executed in the update.</summary>
 		/// <param name="phaseFunction"/>

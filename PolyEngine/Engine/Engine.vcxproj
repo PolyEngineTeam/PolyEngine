@@ -89,14 +89,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;$(SolutionDir)ThirdParty\Box2D\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_ENGINE;NOMINMAX;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile_static.lib;libogg_static.lib;OpenAL32.lib;opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;freetype28.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\libvorbis\lib\Win32;$(SolutionDir)ThirdParty\libogg\lib\Win32;$(SolutionDir)ThirdParty\OpenAL\lib\Win32;$(SolutionDir)ThirdParty\glew\lib\Release\Win32;$(SolutionDir)ThirdParty\SOIL\lib\Release\Win32;$(SolutionDir)ThirdParty\assimp\lib\Release\Win32;$(SolutionDir)ThirdParty\freetype\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile_static.lib;libogg_static.lib;OpenAL32.lib;opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;freetype28.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\libvorbis\lib\Win32;$(SolutionDir)ThirdParty\libogg\lib\Win32;$(SolutionDir)ThirdParty\OpenAL\lib\Win32;$(SolutionDir)ThirdParty\glew\lib\Release\Win32;$(SolutionDir)ThirdParty\SOIL\lib\Release\Win32;$(SolutionDir)ThirdParty\assimp\lib\Release\Win32;$(SolutionDir)ThirdParty\freetype\lib\Release\Win32;$(SolutionDir)ThirdParty\Box2D\lib\Debug\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d $(SolutionDir)ThirdParty\glew\bin\Release\Win32\glew32.dll $(OutDir)
@@ -108,14 +108,14 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\Win32\assimp-vc140-mt.dl
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;$(SolutionDir)ThirdParty\Box2D\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_ENGINE;NOMINMAX;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile_static.lib;libogg_static.lib;OpenAL32.lib;opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;freetype28.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\libvorbis\lib\x64;$(SolutionDir)ThirdParty\libogg\lib\x64;$(SolutionDir)ThirdParty\OpenAL\lib\Win64;$(SolutionDir)ThirdParty\glew\lib\Release\x64;$(SolutionDir)ThirdParty\SOIL\lib\Release\x64;$(SolutionDir)ThirdParty\assimp\lib\Release\x64;$(SolutionDir)ThirdParty\freetype\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile_static.lib;libogg_static.lib;OpenAL32.lib;opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;freetype28.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\libvorbis\lib\x64;$(SolutionDir)ThirdParty\libogg\lib\x64;$(SolutionDir)ThirdParty\OpenAL\lib\Win64;$(SolutionDir)ThirdParty\glew\lib\Release\x64;$(SolutionDir)ThirdParty\SOIL\lib\Release\x64;$(SolutionDir)ThirdParty\assimp\lib\Release\x64;$(SolutionDir)ThirdParty\freetype\lib\Release\x64;$(SolutionDir)ThirdParty\Box2D\lib\Debug\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d $(SolutionDir)ThirdParty\glew\bin\Release\x64\glew32.dll $(OutDir)
@@ -129,7 +129,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;$(SolutionDir)ThirdParty\Box2D\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_ENGINE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.hpp</PrecompiledHeaderFile>
@@ -137,8 +137,8 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile_static.lib;libogg_static.lib;OpenAL32.lib;opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;freetype28.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\libvorbis\lib\Win32;$(SolutionDir)ThirdParty\libogg\lib\Win32;$(SolutionDir)ThirdParty\OpenAL\lib\Win32;$(SolutionDir)ThirdParty\glew\lib\Release\Win32;$(SolutionDir)ThirdParty\SOIL\lib\Release\Win32;$(SolutionDir)ThirdParty\assimp\lib\Release\Win32;$(SolutionDir)ThirdParty\freetype\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile_static.lib;libogg_static.lib;OpenAL32.lib;opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;freetype28.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\libvorbis\lib\Win32;$(SolutionDir)ThirdParty\libogg\lib\Win32;$(SolutionDir)ThirdParty\OpenAL\lib\Win32;$(SolutionDir)ThirdParty\glew\lib\Release\Win32;$(SolutionDir)ThirdParty\SOIL\lib\Release\Win32;$(SolutionDir)ThirdParty\assimp\lib\Release\Win32;$(SolutionDir)ThirdParty\freetype\lib\Release\Win32;$(SolutionDir)ThirdParty\Box2D\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d $(SolutionDir)ThirdParty\glew\bin\Release\Win32\glew32.dll $(OutDir)
@@ -152,7 +152,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\Win32\assimp-vc140-mt.dl
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;$(SolutionDir)ThirdParty\Box2D\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_ENGINE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>EnginePCH.hpp</PrecompiledHeaderFile>
@@ -160,8 +160,8 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\Win32\assimp-vc140-mt.dl
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile_static.lib;libogg_static.lib;OpenAL32.lib;opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;freetype28.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\libvorbis\lib\x64;$(SolutionDir)ThirdParty\libogg\lib\x64;$(SolutionDir)ThirdParty\OpenAL\lib\Win64;$(SolutionDir)ThirdParty\glew\lib\Release\x64;$(SolutionDir)ThirdParty\SOIL\lib\Release\x64;$(SolutionDir)ThirdParty\assimp\lib\Release\x64;$(SolutionDir)ThirdParty\freetype\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libvorbis_static.lib;libvorbisfile_static.lib;libogg_static.lib;OpenAL32.lib;opengl32.lib;glew32.lib;SOIL.lib;assimp-vc140-mt.lib;freetype28.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\libvorbis\lib\x64;$(SolutionDir)ThirdParty\libogg\lib\x64;$(SolutionDir)ThirdParty\OpenAL\lib\Win64;$(SolutionDir)ThirdParty\glew\lib\Release\x64;$(SolutionDir)ThirdParty\SOIL\lib\Release\x64;$(SolutionDir)ThirdParty\assimp\lib\Release\x64;$(SolutionDir)ThirdParty\freetype\lib\Release\x64;$(SolutionDir)ThirdParty\Box2D\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d $(SolutionDir)ThirdParty\glew\bin\Release\x64\glew32.dll $(OutDir)
@@ -186,7 +186,12 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\FreeFloatMovementComponent.cpp" />
     <ClCompile Include="Src\DeferredTaskSystem.cpp" />
     <ClCompile Include="Src\InputWorldComponent.cpp" />
+    <ClCompile Include="Src\LightSourceComponent.cpp" />
     <ClCompile Include="Src\OpenALDevice.cpp" />
+    <ClCompile Include="Src\Physics2DColliders.cpp" />
+    <ClCompile Include="Src\Physics2DSystem.cpp" />
+    <ClCompile Include="Src\Physics2DWorldComponent.cpp" />
+    <ClCompile Include="Src\PostprocessSettingsComponent.cpp" />
     <ClCompile Include="Src\SoundEmitterComponent.cpp" />
     <ClCompile Include="Src\SoundListenerComponent.cpp" />
     <ClCompile Include="Src\Mesh.cpp" />
@@ -199,6 +204,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClCompile Include="Src\SoundResource.cpp" />
     <ClCompile Include="Src\SoundSystem.cpp" />
     <ClCompile Include="Src\SoundWorldComponent.cpp" />
+    <ClCompile Include="Src\Rigidbody2DComponent.cpp" />
     <ClCompile Include="Src\Text2D.cpp" />
     <ClCompile Include="Src\TimeSystem.cpp" />
     <ClCompile Include="Src\TimeWorldComponent.cpp" />
@@ -210,6 +216,9 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.vcxproj">
       <Project>{cad95e91-98a5-497a-9726-09c897edb267}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ThirdParty\Box2D\Box2D.vcxproj">
+      <Project>{a026e658-1cca-458e-a110-ea908564820b}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -228,12 +237,19 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
     <ClInclude Include="Src\DeferredTaskBase.hpp" />
     <ClInclude Include="Src\DeferredTaskImplementation.hpp" />
     <ClInclude Include="Src\DeferredTaskSystem.hpp" />
+    <ClInclude Include="Src\LightSourceComponent.hpp" />
+    <ClInclude Include="Src\Physics2DWorldComponent.hpp" />
+    <ClInclude Include="Src\PostprocessSettingsComponent.hpp" />
+    <ClInclude Include="Src\Rigidbody2DComponent.hpp" />
     <ClInclude Include="Src\InputSystem.hpp" />
     <ClInclude Include="Src\InputQueue.hpp" />
     <ClInclude Include="Src\InputWorldComponent.hpp" />
     <ClInclude Include="Src\IRenderingDevice.hpp" />
     <ClInclude Include="Src\KeyBindings.hpp" />
     <ClInclude Include="Src\OpenALDevice.hpp" />
+    <ClInclude Include="Src\Physics2DColliders.hpp" />
+    <ClInclude Include="Src\Physics2DSystem.hpp" />
+    <ClInclude Include="Src\RigidBody2DImpl.hpp" />
     <ClInclude Include="Src\SoundListenerComponent.hpp" />
     <ClInclude Include="Src\Mesh.hpp" />
     <ClInclude Include="Src\MeshRenderingComponent.hpp" />

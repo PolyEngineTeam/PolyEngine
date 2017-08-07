@@ -46,7 +46,7 @@ SoundResource::SoundResource(const String& path)
 		buffer = ogg_sync_buffer(&syncState, 4096);
 		memcpy(buffer, reinterpret_cast<void*>(reinterpret_cast<size_t>(data->GetData()) + bytesRead), 4096);
 		bytesRead += 4096;
-		if (bytesRead > data->GetSize()) break;
+		if (bytesRead >= data->GetSize()) break;
 		else ogg_sync_wrote(&syncState, 4096);
 
 		if (ogg_sync_pageout(&syncState, &page) != 1)
@@ -108,15 +108,16 @@ SoundResource::SoundResource(const String& path)
 				}
 			}
 
-			buffer = ogg_sync_buffer(&syncState, 4096);
-			memcpy(buffer, data->GetData() + bytesRead, 4096);
-			bytesRead += 4096;
-			if (bytesRead > data->GetSize() && i < 2)
+			size_t increase = bytesRead + 4096 <= data->GetSize() ? 4096 : data->GetSize() - bytesRead;
+			buffer = ogg_sync_buffer(&syncState, increase);
+			memcpy(buffer, data->GetData() + bytesRead, increase);
+			bytesRead += increase;
+			if (bytesRead >= data->GetSize() && i < 2)
 			{
 				gConsole.LogDebug("End of file before finding all Vorbis headers!");
 				throw OggDecoderException();
 			}
-			else ogg_sync_wrote(&syncState, 4096);
+			else ogg_sync_wrote(&syncState, increase);
 		}
 
 		// stats for nerds
@@ -228,9 +229,10 @@ SoundResource::SoundResource(const String& path)
 						break;
 					}
 
-					buffer = ogg_sync_buffer(&syncState, 4096);
+					
 					
 					size_t increase = bytesRead + 4096 <= data->GetSize() ? 4096 : data->GetSize() - bytesRead;
+					buffer = ogg_sync_buffer(&syncState, increase);
 					memcpy(buffer, data->GetData() + bytesRead, increase);
 					bytesRead += increase;
 

@@ -39,8 +39,18 @@ namespace Poly
 	class ResourceManager
 	{
 	public:
+		static T* LoadEngineAsset(const String& path)
+		{
+			return Load(path, true, eResourceSource::ENGINE);
+		}
+
+		static T* LoadGameAsset(const String& path)
+		{
+			return Load(path, true, eResourceSource::GAME);
+		}
+
 		//------------------------------------------------------------------------------
-		static T* Load(const String& path, bool isAbsolute = true, eResourceSource source = eResourceSource::ENGINE)
+		static T* Load(const String& path, eResourceSource source = eResourceSource::NONE)
 		{
 			auto it = Impl::GetResources<T>().find(path);
 
@@ -54,7 +64,7 @@ namespace Poly
 
 			// Load the resource
 			T* resource = nullptr;
-			Dynarray<String> paths = !isAbsolute ? Dynarray<String>({String()}) : gAssetsPathConfig.GetAssetsPaths(source);
+			Dynarray<String> paths = (source == eResourceSource::NONE) ? Dynarray<String>({String()}) : gAssetsPathConfig.GetAssetsPaths(source);
 			for (int i = 0; i < paths.GetSize() && !resource; ++i)
 			{
 				String absolutePath = paths[i] + path;

@@ -8,10 +8,10 @@
 
 using namespace Poly;
 
-SoundEmitterComponent::SoundEmitterComponent(const String& path, bool relative) :
+SoundEmitterComponent::SoundEmitterComponent(const String& path, eResourceSource source, bool relative) :
 	Background(relative)
 {
-	Resource = ResourceManager<SoundResource>::Load(path);
+	Resource = ResourceManager<SoundResource>::Load(path, source);
 
 	alGenSources(1, &EmitterID);
 	alSourcei(EmitterID, AL_BUFFER, Resource->GetBufferID());

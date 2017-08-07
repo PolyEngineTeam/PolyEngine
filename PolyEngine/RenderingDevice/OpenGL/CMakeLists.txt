@@ -6,31 +6,33 @@ endif()
 find_package(GLEW REQUIRED)
 
 set(POLYGLDEVICE_SRCS
+	Src/BlinnPhongRenderingPass.cpp
+	Src/DebugNormalsRenderingPass.cpp
 	Src/GLMeshDeviceProxy.cpp
 	Src/GLRenderingDevice.cpp
+	Src/GLShaderProgram.cpp
 	Src/GLTextFieldBufferDeviceProxy.cpp
 	Src/GLTextureDeviceProxy.cpp
 	Src/GLWorldRendering.cpp
-	Src/GLShaderProgram.cpp
-	Src/RenderingPassBase.cpp
-	Src/BlinnPhongRenderingPass.cpp
-	Src/Text2DRenderingPass.cpp
-	Src/DebugNormalsRenderingPass.cpp
 	Src/PostprocessRenderingPass.cpp
+	Src/RenderingPassBase.cpp
+	Src/Text2DRenderingPass.cpp
+	Src/TransparentRenderingPass.cpp
 )
 set(POLYGLDEVICE_INCLUDE Src)
 set(POLYGLDEVICE_H_FOR_IDE
+	Src/BlinnPhongRenderingPass.hpp
+	Src/DebugNormalsRenderingPass.hpp
 	Src/GLMeshDeviceProxy.hpp
 	Src/GLRenderingDevice.hpp
+	Src/GLShaderProgram.hpp
 	Src/GLTextFieldBufferDeviceProxy.hpp
 	Src/GLTextureDeviceProxy.hpp
 	Src/GLUtils.hpp
-	Src/GLShaderProgram.hpp
-	Src/RenderingPassBase.hpp
-	Src/BlinnPhongRenderingPass.hpp
-	Src/Text2DRenderingPass.hpp
-	Src/DebugNormalsRenderingPass.hpp
 	Src/PostprocessRenderingPass.hpp
+	Src/RenderingPassBase.hpp
+	Src/Text2DRenderingPass.hpp
+	Src/TransparentRenderingPass.hpp
 )
 
 add_library(polygldevice SHARED ${POLYGLDEVICE_SRCS} ${POLYGLDEVICE_H_FOR_IDE})

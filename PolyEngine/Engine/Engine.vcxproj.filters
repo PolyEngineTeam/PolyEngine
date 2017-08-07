@@ -72,6 +72,12 @@
     <Filter Include="Source Files\Sound\Loaders">
       <UniqueIdentifier>{725b4a09-2c76-47ae-ac48-dbbe8dbae207}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Physics2D">
+      <UniqueIdentifier>{82ce724b-c08b-4b81-84d3-ba837fa851fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering\Light">
+      <UniqueIdentifier>{ba289ef3-b2de-4d1c-9f5b-b69e07f78b9a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -169,6 +175,24 @@
     </ClCompile>
     <ClCompile Include="Src\SoundEmitterComponent.cpp">
       <Filter>Source Files\Sound\SoundEmitter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics2DSystem.cpp">
+      <Filter>Source Files\Physics2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics2DColliders.cpp">
+      <Filter>Source Files\Physics2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Rigidbody2DComponent.cpp">
+      <Filter>Source Files\Physics2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics2DWorldComponent.cpp">
+      <Filter>Source Files\Physics2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\LightSourceComponent.cpp">
+      <Filter>Source Files\Rendering\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PostprocessSettingsComponent.cpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -300,6 +324,27 @@
     </ClInclude>
     <ClInclude Include="Src\SoundEmitterComponent.hpp">
       <Filter>Source Files\Sound\SoundEmitter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics2DSystem.hpp">
+      <Filter>Source Files\Physics2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics2DColliders.hpp">
+      <Filter>Source Files\Physics2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Rigidbody2DComponent.hpp">
+      <Filter>Source Files\Physics2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics2DWorldComponent.hpp">
+      <Filter>Source Files\Physics2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\RigidBody2DImpl.hpp">
+      <Filter>Source Files\Physics2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\LightSourceComponent.hpp">
+      <Filter>Source Files\Rendering\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PostprocessSettingsComponent.hpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
