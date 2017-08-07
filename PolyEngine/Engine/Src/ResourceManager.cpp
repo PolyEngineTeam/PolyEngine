@@ -2,6 +2,8 @@
 
 #include "ResourceManager.hpp"
 #include "MeshResource.hpp"
+#include "SoundResource.hpp"
+
 
 #include <fstream>
 
@@ -10,26 +12,39 @@ using namespace Poly;
 DEFINE_RESOURCE(MeshResource, gMeshResourcesMap)
 DEFINE_RESOURCE(TextureResource, gTextureResourcesMap)
 DEFINE_RESOURCE(FontResource, gFontResourcesMap)
+DEFINE_RESOURCE(SoundResource, gALSoundResourcesMap)
 
-
-const String& Poly::GetResourcesAbsolutePath()
+ENGINE_DLLEXPORT String Poly::LoadTextFileRelative(eResourceSource Source, const String & path)
 {
-	static String PATH;
-	static const String defaultPath("../../Engine/Res/");
-	static const String assetsPath("AssetsPath.txt");
+	static const String DEFAULT_PATH("../../Engine/Res/");
+	bool IsNotLoaded = true;
 
-	if (PATH.GetLength() == 0)
+	String FileContent;
+	Dynarray<String> Paths = gAssetsPathConfig.GetAssetsPaths(eResourceSource::ENGINE);
+	for (int i = 0; i < Paths.GetSize() && IsNotLoaded; ++i)
 	{
-		try
+		String AbsolutePath = Paths[i] + path;
+		if (FileExists(AbsolutePath))
 		{
-			PATH = LoadTextFile(assetsPath);
-		}
-		catch (FileIOException)
-		{
-			PATH = defaultPath;
-			SaveTextFile(assetsPath, defaultPath);
+			FileContent = LoadTextFile(AbsolutePath);
+			IsNotLoaded = false;
 		}
 	}
 
-	return PATH;
+	if (IsNotLoaded)
+	{
+		String AbsolutePath = DEFAULT_PATH + path;
+		if (FileExists(AbsolutePath))
+		{
+			FileContent = LoadTextFile(AbsolutePath);
+			IsNotLoaded = false;
+		}
+	}
+
+	if (IsNotLoaded)
+	{
+		throw FileIOException("File load failed from all sources, check config");
+	}
+
+	return FileContent;
 }

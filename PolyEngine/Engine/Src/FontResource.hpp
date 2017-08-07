@@ -7,8 +7,8 @@
 #include "ResourceBase.hpp"
 #include "TextureResource.hpp"
 
-typedef struct  FT_FaceRec_;
-typedef struct FT_FaceRec_*  FT_Face;
+struct FT_FaceRec_;
+typedef struct FT_FaceRec_* FT_Face;
 
 typedef unsigned int GLuint;
 

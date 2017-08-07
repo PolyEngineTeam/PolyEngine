@@ -7,17 +7,27 @@
 #include "GLTextFieldBufferDeviceProxy.hpp"
 #include "GLMeshDeviceProxy.hpp"
 
+#include "BlinnPhongRenderingPass.hpp"
+#include "Text2DRenderingPass.hpp"
+#include "DebugNormalsRenderingPass.hpp"
+#include "PostprocessRenderingPass.hpp"
+
 using namespace Poly;
+
+GLRenderingDevice* Poly::gRenderingDevice = nullptr;
 
 #if defined(_WIN32)
 
 	//------------------------------------------------------------------------------
-	IRenderingDevice* PolyCreateRenderingDevice(HWND hwnd, RECT rect) { return new GLRenderingDevice(hwnd, rect); }
+	IRenderingDevice* __stdcall PolyCreateRenderingDevice(HWND hwnd, RECT rect) { return new GLRenderingDevice(hwnd, rect); }
 
 	//------------------------------------------------------------------------------
 	GLRenderingDevice::GLRenderingDevice(HWND hwnd, RECT rect)
 		: hWnd(hwnd)
 	{
+		ASSERTE(gRenderingDevice == nullptr, "Creating device twice?");
+		gRenderingDevice = this;
+		
 		hDC = GetDC(hWnd);
 
 		ScreenDim.Width = rect.right - rect.left;
@@ -92,6 +102,8 @@ using namespace Poly;
 
 		gConsole.LogInfo("OpenGL context succesfully setup. [{}]", glGetString(GL_VERSION));
 
+		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
+
 		// We have successfully created a context, return true
 		
 		InitPrograms();
@@ -106,6 +118,7 @@ using namespace Poly;
 			wglDeleteContext(hRC);
 			hRC = nullptr;
 		}
+		gRenderingDevice = nullptr;
 	}
 
 	//------------------------------------------------------------------------------
@@ -117,12 +130,17 @@ using namespace Poly;
 #elif defined(__linux__)
 
 	//------------------------------------------------------------------------------
-	IRenderingDevice* PolyCreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig) { return new GLRenderingDevice(display, window, fbConfig); }
+	IRenderingDevice* PolyCreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig, const ScreenSize& size) { return new GLRenderingDevice(display, window, fbConfig, size); }
 
 	//------------------------------------------------------------------------------
-	GLRenderingDevice::GLRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig)
+	GLRenderingDevice::GLRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig, const ScreenSize& size)
 	 : display(display), window(window)
 	{
+		ASSERTE(gRenderingDevice == nullptr, "Creating device twice?");
+		gRenderingDevice = this;
+		
+		ScreenDim = size;
+
 		//create a temporary context to make GLEW happy, then immediately destroy it (it has wrong parameters)
 		{
 			GLXContext makeGlewHappy = glXCreateNewContext(this->display, fbConfig, GLX_RGBA_TYPE, /*share list*/ nullptr, /*direct*/ True);
@@ -186,6 +204,7 @@ using namespace Poly;
 			glXDestroyContext(this->display, this->context);
 			this->context = nullptr;
 		}
+		gRenderingDevice = nullptr;
 	}
 
 	//------------------------------------------------------------------------------
@@ -198,27 +217,63 @@ using namespace Poly;
 #endif
 
 //------------------------------------------------------------------------------
-void GLRenderingDevice::Resize(const ScreenSize & size)
+void GLRenderingDevice::Resize(const ScreenSize& size)
 {
 	ScreenDim = size;
+	for (auto& target : RenderingTargets)
+		target->Resize(size);
+}
+
+//------------------------------------------------------------------------------
+template<typename T>
+inline void GLRenderingDevice::RegisterGeometryPass(eGeometryRenderPassType type, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
+{
+	GeometryRenderingPasses[type] = std::make_unique<T>();
+	
+	for (const InputOutputBind& bind : outputs)
+		GeometryRenderingPasses[type]->BindOutput(bind.Name, bind.Target);
+	
+	for (const InputOutputBind& bind : inputs)
+		GeometryRenderingPasses[type]->BindInput(bind.Name, bind.Target);
+
+	GeometryRenderingPasses[type]->Finalize();
+}
+
+//------------------------------------------------------------------------------
+template<typename T, typename... Args>
+T* Poly::GLRenderingDevice::CreateRenderingTarget(Args&&... args)
+{
+	T* target = new T(std::forward<Args>(args)...);
+	RenderingTargets.PushBack(std::unique_ptr<RenderingTargetBase>(target));
+	return target;
+}
+
+//------------------------------------------------------------------------------
+void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
+{
+	PostprocessRenderingPasses[type] = std::make_unique<PostprocessRenderingPass>(fragShaderName);
+
+	for (const InputOutputBind& bind : outputs)
+		PostprocessRenderingPasses[type]->BindOutput(bind.Name, bind.Target);
+
+	for (const InputOutputBind& bind : inputs)
+		PostprocessRenderingPasses[type]->BindInput(bind.Name, bind.Target);
+
+	PostprocessRenderingPasses[type]->Finalize();
 }
 
 //------------------------------------------------------------------------------
 void GLRenderingDevice::InitPrograms()
 {
 	// Init programs
-	ShaderPrograms[eShaderProgramType::TEST] = new GLShaderProgram("test.vsh", "test.fsh");
-	ShaderPrograms[eShaderProgramType::TEST]->RegisterUniform("uTransform");
+	Texture2DRenderingTarget* texture = CreateRenderingTarget<Texture2DRenderingTarget>(GL_RGBA32F);
+	DepthRenderingTarget* depth = CreateRenderingTarget<DepthRenderingTarget>();
+	
+	RegisterGeometryPass<BlinnPhongRenderingPass>(eGeometryRenderPassType::BLINN_PHONG, {}, { { "color", texture }, { "depth", depth } });
+	RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS);
+	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D);
 
-	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS] = new GLShaderProgram("debugVertSh.shader", "debugGeomSh.shader", "debugFragSh.shader");
-	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS]->RegisterUniform("u_projection");
-	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS]->RegisterUniform("u_MVP");
-	ShaderPrograms[eShaderProgramType::DEBUG_NORMALS]->RegisterUniform("u_normalMatrix4x4");
-
-	ShaderPrograms[eShaderProgramType::TEXT_2D] = new GLShaderProgram("Shaders/text2DVert.shader", "Shaders/text2DFrag.shader");
-	ShaderPrograms[eShaderProgramType::TEXT_2D]->RegisterUniform("u_projection");
-	ShaderPrograms[eShaderProgramType::TEXT_2D]->RegisterUniform("u_textColor");
-	ShaderPrograms[eShaderProgramType::TEXT_2D]->RegisterUniform("u_position");
+	RegisterPostprocessPass(ePostprocessRenderPassType::VINETTE, "Shaders/vinetteFrag.shader", { { "i_color", texture } });
 }
 
 //------------------------------------------------------------------------------

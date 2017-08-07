@@ -8,6 +8,7 @@ set(POLYTESTS_SRCS
 	Src/main.cpp
 	Src/MatrixTests.cpp
 	Src/ResourceManagerTests.cpp
+	Src/StringTests.cpp
 	Src/TransformComponentTests.cpp
 	Src/QuaternionTests.cpp
 	Src/QueueTests.cpp

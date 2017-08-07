@@ -64,6 +64,10 @@ int main() {
 	XVisualInfo* visual = glXGetVisualFromFBConfig(display.get(), fbConfig);
 	Colormap colourMap;
 
+	Poly::ScreenSize windowSize;
+	windowSize.Width = 800;
+	windowSize.Height = 600;
+	
 	//create the window
 	XSetWindowAttributes windowAttribs;
 	windowAttribs.colormap = colourMap = XCreateColormap(display.get(), RootWindow(display.get(), screen), visual->visual, AllocNone);
@@ -74,8 +78,8 @@ int main() {
 		RootWindow(display.get(), screen),                                     //parent
 		0,                                                                     //x
 		0,                                                                     //y
-		800,                                                                   //width
-		600,                                                                   //height
+		windowSize.Width,                                                                   //width
+		windowSize.Height,                                                                   //height
 		0,                                                                     //border width
 		visual->depth,
 		InputOutput,                                                           //class
@@ -105,7 +109,7 @@ int main() {
 	std::unique_ptr<Window, decltype(windowCleanup)> windowCleanupGuard(&window, windowCleanup);
 
 	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(new InvadersGame());
-	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(PolyCreateRenderingDevice(display.get(), window, fbConfig));
+	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(PolyCreateRenderingDevice(display.get(), window, fbConfig, windowSize));
 
 	Poly::Engine Engine(std::move(game), std::move(device));
 	Poly::gConsole.LogDebug("Engine loaded");

@@ -6,11 +6,13 @@
 #include "MovementComponent.hpp"
 #include "CollisionComponent.hpp"
 #include "TankComponent.hpp"
+#include "SoundEmitterComponent.hpp"
 
 using namespace Poly;
 
 void ControlSystem::ControlSystemPhase(World* world)
 {
+	
 
 	GameManagerComponent* gameManager = nullptr;
 	double time = world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime();
@@ -22,18 +24,25 @@ void ControlSystem::ControlSystemPhase(World* world)
 	for (auto componentTuple : world->IterateComponents<PlayerControllerComponent>())
 	{
 		PlayerControllerComponent* player = std::get<PlayerControllerComponent*>(componentTuple);
+
+		if(world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A))
+			SoundSystem::PlayEmitter(world, player->GetOwnerID());
+		if(world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_S))
+			SoundSystem::PauseEmitter(world, player->GetOwnerID());
+		if(world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D))
+			SoundSystem::StopEmitter(world, player->GetOwnerID());
+
 		Vector move(0, 0, 0);
 		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(player->GetLeftKey()))
 			move -= Vector::UNIT_X;
 		else if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(player->GetRightKey()))
 			move += Vector::UNIT_X;
 
-
 		if (move.Length() > 0)
 		{
 			move.Normalize();
 			move *= player->GetMovementSpeed();
-			move *= deltaTime;
+			move *= (float)deltaTime;
 			TransformComponent* player_transform = player->GetSibling<TransformComponent>();
 			Vector prev_location = player_transform->GetLocalTranslation();
 			if (Abs(prev_location.X + move.X) <= player->GetMaxAbsXPosition())
@@ -59,7 +68,7 @@ void ControlSystem::ControlSystemPhase(World* world)
 			tank->MovedDistance = 0;
 		}
 
-		tank->MovedDistance += std::fabs(Invaders::MovementSystem::GetLinearVelocity(world, transform->GetOwnerID()).X * deltaTime);
+		tank->MovedDistance += std::fabs(Invaders::MovementSystem::GetLinearVelocity(world, transform->GetOwnerID()).X * (float)deltaTime);
 		
 	}
 	
@@ -71,10 +80,10 @@ void ControlSystem::ControlSystemPhase(World* world)
  
 		if (tank->NextRotTime < time)
 		{
-			tank->NextRotTime = time + 5.0f;
+			tank->NextRotTime = (float)time + 5.0f;
 			tank->Degree *= -1;
 		}
-		Quaternion rotaton(Vector::UNIT_Y, tank->Degree * deltaTime);
+		Quaternion rotaton(Vector::UNIT_Y, tank->Degree * (float)deltaTime);
 		rotaton *= transformTurret->GetLocalRotation();
 		transformTurret->SetLocalRotation(rotaton);
 
@@ -88,7 +97,7 @@ void ControlSystem::ControlSystemPhase(World* world)
 		{
 			Vector move = bullet->GetDirection();
 			move *= bullet->GetMovementSpeed();
-			move *= TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
+			move *= (float)TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
 			transform->SetLocalTranslation(transform->GetLocalTranslation() + move);
 			bullet->GetCollisionBox().SetPosition(transform->GetLocalTranslation() + move);
 		}
@@ -120,7 +129,7 @@ void ControlSystem::ControlSystemPhase(World* world)
 	CleanUpEnitites(gameManager, world);
 }
 
-void ControlSystem::SpawnBullet(GameManagerComponent* gameManager, World* world, Vector pos, Vector direction, float speed)
+void ControlSystem::SpawnBullet(GameManagerComponent* gameManager, World* world, const Vector& pos, const Vector& direction, float speed)
 {
 	auto bullet = DeferredTaskSystem::SpawnEntityImmediate(world);
 
@@ -128,9 +137,10 @@ void ControlSystem::SpawnBullet(GameManagerComponent* gameManager, World* world,
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, bullet, "Models/bullet/lowpolybullet.obj");
 	DeferredTaskSystem::AddComponentImmediate<Invaders::CollisionSystem::CollisionComponent>(world, bullet,  Vector(0, 0, 0), Vector(2.0f,2.0f,2.0f));
 
+	Vector normDir;
 	if (direction.Length() > 0)
-		direction.Normalize();
-	DeferredTaskSystem::AddComponentImmediate<BulletComponent>(world, bullet, speed, direction,
+		normDir = direction.GetNormalized();
+	DeferredTaskSystem::AddComponentImmediate<BulletComponent>(world, bullet, speed, normDir,
 		AABox(world->GetComponent<Poly::TransformComponent>(bullet)->GetLocalTranslation(), Vector(2.0f,2.0f,2.0f)), world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 	Poly::TransformComponent* transform = world->GetComponent<Poly::TransformComponent>(bullet);
 	transform->SetLocalScale(Vector(0.25f, 0.25f, 0.25f));

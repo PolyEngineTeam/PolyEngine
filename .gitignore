@@ -3,7 +3,10 @@
 *.user
 *.userosscache
 *.sln.docstates
+
+# Engine specific files
 *AssetsPath.txt
+*AssetsPath.json
 
 # Build results
 [Dd]ebug/

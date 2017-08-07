@@ -6,10 +6,17 @@ if(WIN32)
 	list(APPEND CMAKE_LIBRARY_PATH "${CMAKE_SOURCE_DIR}/ThirdParty/SOIL/lib/Release/x64/" "${CMAKE_SOURCE_DIR}/ThirdParty/SOIL/lib/Release/Win32/")
 	set(ASSIMP_ROOT_DIR "${CMAKE_SOURCE_DIR}/ThirdParty/assimp")
 endif()
+
 find_package(GLEW REQUIRED)
 find_package(SOIL REQUIRED)
 find_package(assimp REQUIRED)
 find_package(Freetype REQUIRED)
+find_package(OpenAL REQUIRED)
+find_package(OGG REQUIRED)
+find_package(Vorbis REQUIRED)
+find_package(VorbisFile REQUIRED)
+
+set(RAPIDJSON_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/ThirdParty/rapidjson/include")
 
 set(POLYENGINE_SRCS
 	Src/CameraComponent.cpp
@@ -29,8 +36,14 @@ set(POLYENGINE_SRCS
 	Src/InputWorldComponent.cpp
 	Src/MeshRenderingComponent.cpp
 	Src/MovementSystem.cpp
+	Src/OpenALDevice.cpp
 	Src/RenderingSystem.cpp
 	Src/ResourceManager.cpp
+	Src/SoundEmitterComponent.cpp
+	Src/SoundListenerComponent.cpp
+	Src/SoundResource.cpp
+	Src/SoundSystem.cpp
+	Src/SoundWorldComponent.cpp
 	Src/Text2D.cpp
 	Src/TimeSystem.cpp
 	Src/TimeWorldComponent.cpp
@@ -54,6 +67,7 @@ set(POLYENGINE_H_FOR_IDE
 	Src/IRenderingDevice.hpp
 	Src/Mesh.hpp
 	Src/MeshResource.hpp
+	Src/OpenALDevice.hpp
 	Src/TextureResource.hpp
 	Src/DeferredTaskBase.hpp
 	Src/DeferredTaskImplementation.hpp
@@ -69,6 +83,11 @@ set(POLYENGINE_H_FOR_IDE
 	Src/ResourceBase.hpp
 	Src/ResourceManager.hpp
 	Src/ScreenSpaceTextComponent.hpp
+	Src/SoundEmitterComponent.hpp
+	Src/SoundListenerComponent.hpp
+	Src/SoundResource.hpp
+	Src/SoundSystem.hpp
+	Src/SoundWorldComponent.hpp
 	Src/Text2D.hpp
 	Src/TimeSystem.hpp
 	Src/TimeWorldComponent.hpp
@@ -81,8 +100,8 @@ set(POLYENGINE_H_FOR_IDE
 
 add_library(polyengine SHARED ${POLYENGINE_SRCS} ${POLYENGINE_H_FOR_IDE})
 target_compile_definitions(polyengine PRIVATE _ENGINE)
-target_include_directories(polyengine INTERFACE ${POLYENGINE_INCLUDE} PRIVATE ${OPENGL_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS})
-target_link_libraries(polyengine PRIVATE polycore ${OPENGL_LIBRARIES} GLEW::GLEW SOIL::SOIL ${ASSIMP_LIBRARIES} ${FREETYPE_LIBRARIES})
+target_include_directories(polyengine INTERFACE ${POLYENGINE_INCLUDE} PRIVATE ${OPENGL_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} ${OPENAL_INCLUDE_DIR} ${OGG_INCLUDE_DIRS} ${VORBIS_INCLUDE_DIRS} ${VORBISFILE_INCLUDE_DIRS} ${RAPIDJSON_INCLUDE_DIRS})
+target_link_libraries(polyengine PRIVATE polycore ${OPENGL_LIBRARIES} GLEW::GLEW SOIL::SOIL ${ASSIMP_LIBRARIES} ${FREETYPE_LIBRARIES} ${OPENAL_LIBRARY} ${OGG_LIBRARIES} ${VORBIS_LIBRARIES} ${VORBISFILE_LIBRARIES})
 
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	target_compile_options(polyengine PRIVATE --coverage -fprofile-arcs -ftest-coverage)

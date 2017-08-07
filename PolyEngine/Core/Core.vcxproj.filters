@@ -55,8 +55,13 @@
     <ClCompile Include="Src\AABox.cpp">
       <Filter>Source Files\Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="src\String.cpp">
+      <Filter>Source Files\Containers</Filter>
     <ClCompile Include="Src\Vector2f.cpp">
       <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BinaryBuffer.cpp">
+      <Filter>Source Files\Containers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -132,6 +137,8 @@
     <ClInclude Include="Src\AABox.hpp">
       <Filter>Source Files\Geometry</Filter>
     </ClInclude>
+    <ClInclude Include="Src\BinaryBuffer.hpp">
+      <Filter>Source Files\Containers</Filter>
     <ClInclude Include="Src\Vector2f.hpp">
       <Filter>Source Files\Math</Filter>
     </ClInclude>

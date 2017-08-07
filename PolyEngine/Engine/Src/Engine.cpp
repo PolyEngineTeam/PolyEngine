@@ -20,6 +20,8 @@ Engine::Engine(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> de
 	RegisterComponent<MeshRenderingComponent>((size_t)eEngineComponents::MESH_RENDERING);
 	RegisterComponent<FreeFloatMovementComponent>((size_t)eEngineComponents::FREE_FLOAT_MOVEMENT);
 	RegisterComponent<ScreenSpaceTextComponent>((size_t)eEngineComponents::SCREEN_SPACE_TEXT);
+	RegisterComponent<SoundEmitterComponent>((size_t)eEngineComponents::SOUND_EMMITER);
+	RegisterComponent<SoundListenerComponent>((size_t)eEngineComponents::SOUND_LISTENER);
 
 	// Engine World Components
 	RegisterWorldComponent<InputWorldComponent>((size_t)eEngineWorldComponents::INPUT);
@@ -27,12 +29,14 @@ Engine::Engine(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> de
 	RegisterWorldComponent<TimeWorldComponent>((size_t)eEngineWorldComponents::TIME);
 	RegisterWorldComponent<DebugWorldComponent>((size_t)eEngineWorldComponents::DEBUG);
 	RegisterWorldComponent<DeferredTaskWorldComponent>((size_t)eEngineWorldComponents::DEFERRED_TASK);
+	RegisterWorldComponent<SoundWorldComponent>((size_t) eEngineWorldComponents::SOUND);
 
 	// Add WorldComponents
 	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(BaseWorld.get());
 	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(BaseWorld.get());
 	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(BaseWorld.get());
 	DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(BaseWorld.get());
+	DeferredTaskSystem::AddWorldComponentImmediate<SoundWorldComponent>(BaseWorld.get(), BaseWorld.get());
 	DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(BaseWorld.get());
 
 	// Engine update phases
@@ -41,8 +45,11 @@ Engine::Engine(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> de
 	RegisterUpdatePhase(MovementSystem::MovementUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(RenderingSystem::RenderingPhase, eUpdatePhaseOrder::POSTUPDATE);
+	RegisterUpdatePhase(SoundSystem::SoundPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(DeferredTaskSystem::DeferredTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(FPSSystem::FPSUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
+
+	SoundSystem::SetWorldCurrent(BaseWorld.get());
 
 	// Init game
 	Game->Init();

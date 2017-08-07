@@ -46,7 +46,10 @@
     <ClCompile Include="Src\AABoxTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Vector2fTests.cpp">
+    <ClCompile Include="Src\StringTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+	<ClCompile Include="Src\Vector2fTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

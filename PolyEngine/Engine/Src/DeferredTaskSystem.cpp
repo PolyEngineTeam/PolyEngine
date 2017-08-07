@@ -25,23 +25,23 @@ void DeferredTaskSystem::DestroyEntity(World* w, const UniqueID& entityId)
 //------------------------------------------------------------------------------
 void DeferredTaskSystem::DeferredTaskPhase(World* w)
 {
-	DeferredTaskWorldComponent* cmp = w->GetWorldComponent<DeferredTaskWorldComponent>();
+	DeferredTaskWorldComponent* worldCmp = w->GetWorldComponent<DeferredTaskWorldComponent>();
 
 	// clear newly created flags after one tic.
-	for (ComponentBase* cmp : cmp->NewlyCreatedComponents)
+	for (ComponentBase* cmp : worldCmp->NewlyCreatedComponents)
 		cmp->ResetFlags(eComponentBaseFlags::NEWLY_CREATED);
-	cmp->NewlyCreatedComponents.Clear();
+	worldCmp->NewlyCreatedComponents.Clear();
 
 	// execute tasks from queue
-	while (!cmp->TasksQueue.IsEmpty())
+	while (!worldCmp->TasksQueue.IsEmpty())
 	{
-		DeferredTaskBase *task = cmp->TasksQueue.Front();
+		DeferredTaskBase *task = worldCmp->TasksQueue.Front();
 		ASSERTE(task, "The task doesn't exist!");
 
 		gConsole.LogDebug("Executing task: {}", task->GetDescription());
 		task->Execute(w);
 
-		cmp->TasksQueue.PopFront();
+		worldCmp->TasksQueue.PopFront();
 		delete task;
 	}
 }
