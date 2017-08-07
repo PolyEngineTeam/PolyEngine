@@ -149,6 +149,7 @@
     <ClCompile Include="Src\UniqueID.cpp" />
     <ClCompile Include="Src\Vector.cpp" />
     <ClCompile Include="Src\Vector2f.cpp" />
+    <ClCompile Include="Src\Vector2i.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Allocator.hpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="Src\UniqueID.hpp" />
     <ClInclude Include="Src\Vector.hpp" />
     <ClInclude Include="Src\Vector2f.hpp" />
+    <ClInclude Include="Src\Vector2i.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

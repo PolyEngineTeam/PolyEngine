@@ -1,6 +1,7 @@
 #include "CorePCH.hpp"
 
 #include "Vector2i.hpp"
+#include "Vector2f.hpp"
 
 using namespace Poly;
 
@@ -41,61 +42,38 @@ Vector2i& Vector2i::operator-=(const Vector2i& rhs)
 }
 
 //------------------------------------------------------------------------------
-Vector2i Vector2i::operator*(int rhs) const
+Vector2i Vector2i::operator*(VectorIntType rhs) const
 {
-	return Vector2i(X*rhs, Y*rhs);
+	return Vector2i(X * rhs, Y * rhs);
 }
 
 //------------------------------------------------------------------------------
-Vector2i Vector2i::operator/(int rhs) const
+Vector2i Vector2i::operator/(VectorIntType rhs) const
 {
 	return Vector2i(X / rhs, Y / rhs);
 }
 
 //------------------------------------------------------------------------------
-Vector2i& Vector2i::operator*=(int rhs)
+Vector2i& Vector2i::operator*=(VectorIntType rhs)
 {
 	X *= rhs; Y *= rhs;
 	return *this;
 }
 
 //------------------------------------------------------------------------------
-Vector2i& Vector2i::operator/=(int rhs)
+Vector2i& Vector2i::operator/=(VectorIntType rhs)
 {
 	X /= rhs; Y /= rhs;
 	return *this;
 }
 
 //------------------------------------------------------------------------------
-//TODO maybe inline this?
-float Vector2i::Length() const { return std::sqrt(LengthSquared()); }
-int Vector2i::LengthSquared() const { return Dot(*this); }
-
-//------------------------------------------------------------------------------
-int Vector2i::Dot(const Vector2i& rhs) const
+Vector2f Vector2i::ToVector2f() const
 {
-	return X * rhs.X + Y * rhs.Y;
+	return Vector2f(static_cast<float>(X), static_cast<float>(Y));
 }
 
 //------------------------------------------------------------------------------
-int Vector2i::Cross(const Vector2i& rhs) const
-{
-	return X * rhs.Y - Y * rhs.X;
-}
-
-//------------------------------------------------------------------------------
-Vector2i& Vector2i::Normalize()
-{
-	*this /= Length();
-	return *this;
-}
-
-//------------------------------------------------------------------------------
-Vector2i Vector2i::GetNormalized() const
-{
-	return *this / Length();
-}
-
 namespace Poly
 {
 	//------------------------------------------------------------------------------

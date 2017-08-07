@@ -69,6 +69,10 @@ namespace Poly
 		/// <returns>Normalized vector.</returns>
 		Vector2f GetNormalized() const;
 
+		/// <summary>Creates Vector2i based on this vector.</summary>
+		/// <returns>Converted vector.</returns>
+		class Vector2i ToVector2i() const;
+
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Vector2f& vec);
 
 		// This structure allows to access vector elements by index or name.

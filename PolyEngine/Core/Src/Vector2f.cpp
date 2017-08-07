@@ -1,6 +1,7 @@
 #include "CorePCH.hpp"
 
 #include "Vector2f.hpp"
+#include "Vector2i.hpp"
 
 using namespace Poly;
 
@@ -94,6 +95,11 @@ Vector2f& Vector2f::Normalize()
 Vector2f Vector2f::GetNormalized() const
 {
 	return *this / Length();
+}
+
+Vector2i Vector2f::ToVector2i() const
+{
+	return Vector2i(static_cast<int>(X), static_cast<int>(Y));
 }
 
 namespace Poly

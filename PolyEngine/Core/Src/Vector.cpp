@@ -104,8 +104,8 @@ Vector& Vector::operator/=(float rhs) {
 
 //------------------------------------------------------------------------------
 //TODO maybe inline this?
-float Vector::Length() const { return std::sqrt(Length2()); }
-float Vector::Length2() const { return Dot(*this); }
+float Vector::Length() const { return std::sqrt(LengthSquared()); }
+float Vector::LengthSquared() const { return Dot(*this); }
 
 //------------------------------------------------------------------------------
 float Vector::Dot(const Vector& rhs) const {
