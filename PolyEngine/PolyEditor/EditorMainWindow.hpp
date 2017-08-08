@@ -12,6 +12,7 @@ class EditorMainWindow : public QMainWindow
 
 public:
 	EditorMainWindow(QWidget *parent = nullptr);
+	~EditorMainWindow();
 
 private:
 	Ui::EditorMainWindowClass* ui;

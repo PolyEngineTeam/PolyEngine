@@ -20,3 +20,8 @@ EditorMainWindow::EditorMainWindow(QWidget *parent)
 
 	QObject::connect(ui->actionQuit, &QAction::triggered, [](bool checked) {QApplication::quit(); });
 }
+
+EditorMainWindow::~EditorMainWindow()
+{
+	delete ui;
+}
