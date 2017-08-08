@@ -26,6 +26,11 @@ cmake-build-*
 # Windows specific stuff
 [Tt]humbs.db
 
+# Qt 5 generated files
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+
 # Visual Studio 2015 cache/options directory
 .vs/
 
@@ -59,3 +64,4 @@ xcuserdata/
 
 # Exculdes from ignore
 !**/ThirdParty/**
+
