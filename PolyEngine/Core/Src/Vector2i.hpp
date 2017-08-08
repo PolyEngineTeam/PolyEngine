@@ -5,11 +5,12 @@
 
 namespace Poly
 {
-
+	class Vector2f;
 	using VectorIntType = int32_t;
 
 	/// <summary>Class representing 2D integer vector.</summary>
-	class ALIGN_16 CORE_DLLEXPORT Vector2i : public BaseObject<>{
+	class CORE_DLLEXPORT Vector2i : public BaseObject<>
+	{
 	public:
 		static const Vector2i ZERO;
 		static const Vector2i UNIT_X;
@@ -23,14 +24,14 @@ namespace Poly
 		/// <param name="y"></param>
 		constexpr Vector2i(VectorIntType x, VectorIntType y) : X(x), Y(y) {}
 
-
 		inline Vector2i(const Vector2i& rhs) : X(rhs.X), Y(rhs.Y) {}
 		inline Vector2i& operator=(const Vector2i& rhs) { X = rhs.X; Y = rhs.Y; return *this; }
 
 		/// <summary>Creates Vector2f based on this vector.</summary>
 		/// <returns>Converted vector.</returns>
-		class Vector2f ToVector2f() const;
-		
+		Vector2f ToVector2f() const;
+		explicit operator Vector2f() const;
+
 		/// <summary>Negation operator</summary>
 		inline Vector2i operator-() const { return Vector2i(-X, -Y); }
 
@@ -59,7 +60,6 @@ namespace Poly
 			struct { VectorIntType X, Y; };
 		};
 
-	private:
 	};
 
 }

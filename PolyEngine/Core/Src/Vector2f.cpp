@@ -79,7 +79,7 @@ float Vector2f::Dot(const Vector2f& rhs) const
 }
 
 //------------------------------------------------------------------------------
-float Vector2f::Cross(const Vector2f& rhs) const 
+float Vector2f::Cross(const Vector2f& rhs) const
 {
 	return X * rhs.Y - Y * rhs.X;
 }
@@ -100,6 +100,11 @@ Vector2f Vector2f::GetNormalized() const
 Vector2i Vector2f::ToVector2i() const
 {
 	return Vector2i(static_cast<int>(X), static_cast<int>(Y));
+}
+
+Vector2f::operator Vector2i() const
+{
+	return ToVector2i();
 }
 
 namespace Poly

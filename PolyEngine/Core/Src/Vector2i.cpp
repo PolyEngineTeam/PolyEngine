@@ -12,7 +12,7 @@ const Vector2i Vector2i::UNIT_Y = Vector2i(0, 1);
 //------------------------------------------------------------------------------
 bool Vector2i::operator==(const Vector2i& rhs) const
 {
-	return Cmpf(X, rhs.X) && Cmpf(Y, rhs.Y);
+	return X == rhs.X && Y == rhs.Y;
 }
 
 //------------------------------------------------------------------------------
@@ -71,6 +71,11 @@ Vector2i& Vector2i::operator/=(VectorIntType rhs)
 Vector2f Vector2i::ToVector2f() const
 {
 	return Vector2f(static_cast<float>(X), static_cast<float>(Y));
+}
+
+Vector2i::operator Vector2f() const
+{
+	return ToVector2f();
 }
 
 //------------------------------------------------------------------------------

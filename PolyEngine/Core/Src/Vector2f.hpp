@@ -5,8 +5,11 @@
 
 namespace Poly 
 {
+	class Vector2i;
+
 	/// <summary>Class representing 2D float vector.</summary>
-	class ALIGN_16 CORE_DLLEXPORT Vector2f : public BaseObject<>{
+	class CORE_DLLEXPORT Vector2f : public BaseObject<>
+	{
 	public:
 		static const Vector2f ZERO;
 		static const Vector2f UNIT_X;
@@ -20,9 +23,13 @@ namespace Poly
 		/// <param name="y"></param>
 		constexpr Vector2f(float x, float y) : X(x), Y(y) {}
 
-
 		inline Vector2f(const Vector2f& rhs) : X(rhs.X), Y(rhs.Y) {}
 		inline Vector2f& operator=(const Vector2f& rhs) { X = rhs.X; Y = rhs.Y; return *this; }
+
+		/// <summary>Creates Vector2i based on this vector.</summary>
+		/// <returns>Converted vector.</returns>
+		Vector2i ToVector2i() const;
+		explicit operator Vector2i() const;
 
 		/// <summary>Negation operator</summary>
 		inline Vector2f operator-() const { return Vector2f(-X, -Y); }
@@ -69,10 +76,6 @@ namespace Poly
 		/// <returns>Normalized vector.</returns>
 		Vector2f GetNormalized() const;
 
-		/// <summary>Creates Vector2i based on this vector.</summary>
-		/// <returns>Converted vector.</returns>
-		class Vector2i ToVector2i() const;
-
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Vector2f& vec);
 
 		// This structure allows to access vector elements by index or name.
@@ -82,7 +85,6 @@ namespace Poly
 			struct { float X,Y; };
 		};
 
-	private:
 	};
 
 }

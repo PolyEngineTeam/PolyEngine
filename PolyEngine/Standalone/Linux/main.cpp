@@ -2,8 +2,6 @@
 #include <GLRenderingDevice.hpp>
 #include <Game.hpp>
 
-extern Poly::Engine* Poly::gEngine = nullptr;
-
 void handleEvents(Display* display, Window window, const XEvent& ev);
 
 int main() {
@@ -67,7 +65,7 @@ int main() {
 	Poly::ScreenSize windowSize;
 	windowSize.Width = 800;
 	windowSize.Height = 600;
-	
+
 	//create the window
 	XSetWindowAttributes windowAttribs;
 	windowAttribs.colormap = colourMap = XCreateColormap(display.get(), RootWindow(display.get(), screen), visual->visual, AllocNone);
