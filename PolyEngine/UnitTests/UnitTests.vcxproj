@@ -138,6 +138,8 @@
     <ClCompile Include="Src\QueueTests.cpp" />
     <ClCompile Include="Src\ResourceManagerTests.cpp" />
     <ClCompile Include="Src\StringTests.cpp" />
+    <ClCompile Include="Src\Vector2fTests.cpp" />
+    <ClCompile Include="Src\Vector2iTests.cpp" />
     <ClCompile Include="Src\VectorTests.cpp" />
     <ClCompile Include="Src\TransformComponentTests.cpp" />
   </ItemGroup>

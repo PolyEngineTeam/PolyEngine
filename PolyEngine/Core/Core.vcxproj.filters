@@ -1,142 +1,49 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Source Files\Math">
-      <UniqueIdentifier>{0cbb606d-bdf8-46c8-a30a-174751ac62fb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Memory">
-      <UniqueIdentifier>{fa910fbd-fa6e-4303-b5fd-58a317ea054f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\FileIO">
-      <UniqueIdentifier>{c35ea550-8e76-4523-bf9e-1317c387dcca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Containers">
-      <UniqueIdentifier>{e8e2d5b0-dbb7-44a9-8edc-6ac56295ecf8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Geometry">
-      <UniqueIdentifier>{f002524e-61e4-441f-82eb-eb9005fee855}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="Src\BaseObject.cpp" />
+    <ClCompile Include="Src\BinaryBuffer.cpp" />
+    <ClCompile Include="Src\Color.cpp" />
+    <ClCompile Include="Src\CorePCH.cpp" />
+    <ClCompile Include="Src\Logger.cpp" />
+    <ClCompile Include="Src\Matrix.cpp" />
+    <ClCompile Include="Src\Quaternion.cpp" />
+    <ClCompile Include="Src\AABox.cpp" />
+    <ClCompile Include="Src\RefCountedBase.cpp" />
+    <ClCompile Include="Src\SimdMath.cpp" />
+    <ClCompile Include="src\String.cpp" />
+    <ClCompile Include="Src\UniqueID.cpp" />
+    <ClCompile Include="Src\Vector.cpp" />
+    <ClCompile Include="Src\Vector2f.cpp" />
+    <ClCompile Include="Src\Vector2i.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Matrix.cpp">
-      <Filter>Source Files\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Quaternion.cpp">
-      <Filter>Source Files\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\SimdMath.cpp">
-      <Filter>Source Files\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Vector.cpp">
-      <Filter>Source Files\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Color.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\UniqueID.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\CorePCH.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\RefCountedBase.cpp">
-      <Filter>Source Files\Memory</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\BaseObject.cpp">
-      <Filter>Source Files\Memory</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\AABox.cpp">
-      <Filter>Source Files\Geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="src\String.cpp">
-      <Filter>Source Files\Containers</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\BinaryBuffer.cpp">
-      <Filter>Source Files\Containers</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Src\Dynarray.hpp">
-      <Filter>Source Files\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\String.hpp">
-      <Filter>Source Files\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Allocator.hpp">
-      <Filter>Source Files\Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\BaseObject.hpp">
-      <Filter>Source Files\Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\BasicMath.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Matrix.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\SimdMath.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Angle.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Color.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Core.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Defines.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Logger.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Vector.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\FileIO.hpp">
-      <Filter>Source Files\FileIO</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\IterablePoolAllocator.hpp">
-      <Filter>Source Files\Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\PoolAllocator.hpp">
-      <Filter>Source Files\Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\UniqueID.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Quaternion.hpp">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Queue.hpp">
-      <Filter>Source Files\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\EnumUtils.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\CorePCH.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\RefCountedBase.hpp">
-      <Filter>Source Files\Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\ObjectLifetimeHelpers.hpp">
-      <Filter>Source Files\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\AABox.hpp">
-      <Filter>Source Files\Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\BinaryBuffer.hpp">
-      <Filter>Source Files\Containers</Filter>
-    </ClInclude>
+    <ClInclude Include="Src\Allocator.hpp" />
+    <ClInclude Include="Src\Angle.hpp" />
+    <ClInclude Include="Src\BaseObject.hpp" />
+    <ClInclude Include="Src\BasicMath.hpp" />
+    <ClInclude Include="Src\BinaryBuffer.hpp" />
+    <ClInclude Include="Src\Color.hpp" />
+    <ClInclude Include="Src\Core.hpp" />
+    <ClInclude Include="Src\CorePCH.hpp" />
+    <ClInclude Include="Src\Defines.hpp" />
+    <ClInclude Include="Src\Dynarray.hpp" />
+    <ClInclude Include="Src\EnumUtils.hpp" />
+    <ClInclude Include="Src\FileIO.hpp" />
+    <ClInclude Include="Src\IterablePoolAllocator.hpp" />
+    <ClInclude Include="Src\Logger.hpp" />
+    <ClInclude Include="Src\Matrix.hpp" />
+    <ClInclude Include="Src\ObjectLifetimeHelpers.hpp" />
+    <ClInclude Include="Src\PoolAllocator.hpp" />
+    <ClInclude Include="Src\Quaternion.hpp" />
+    <ClInclude Include="Src\Queue.hpp" />
+    <ClInclude Include="Src\AABox.hpp" />
+    <ClInclude Include="Src\RefCountedBase.hpp" />
+    <ClInclude Include="Src\SimdMath.hpp" />
+    <ClInclude Include="Src\String.hpp" />
+    <ClInclude Include="Src\UniqueID.hpp" />
+    <ClInclude Include="Src\Vector.hpp" />
+    <ClInclude Include="Src\Vector2f.hpp" />
+    <ClInclude Include="Src\Vector2i.hpp" />
   </ItemGroup>
 </Project>

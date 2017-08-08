@@ -119,8 +119,8 @@ TEST_CASE("Vector algebraic methods", "[Vector]") {
   }
 
   SECTION("Length calculation") {
-	  REQUIRE(v1.Length2() == 14.0f);
-	  REQUIRE(v2.Length2() == 61.0f);
+	  REQUIRE(v1.LengthSquared() == 14.0f);
+	  REQUIRE(v2.LengthSquared() == 61.0f);
 	  REQUIRE(v1.Length() == Approx(sqrt(14.0f)));
 	  REQUIRE(v2.Length() == Approx(sqrt(61.0f)));
   }
