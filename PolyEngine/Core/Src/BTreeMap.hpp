@@ -155,8 +155,8 @@ namespace Poly {
 		}
 		Range<K, V, Bfactor> MaxRange() { return {BTree::first_leaf_edge(this->root.as_node_ref()), BTree::last_leaf_edge(this->root.as_node_ref())}; }
 		Range<K, V, Bfactor> GetRange(const K& lower, const K& upper) { ASSERTE(lower < upper, ""); return {search_tree(this->root.as_node_ref(), lower).handle, search_tree(this->root.as_node_ref(), upper).handle}; }
-		Iter begin() { return {BTree::first_leaf_edge(this->root.as_node_ref()), this->GetSize(), this->GetSize()}; }
-		Iter end()   { return {BTree:: last_leaf_edge(this->root.as_node_ref()), 0,               this->GetSize()}; }
+		Iter begin() { return {BTree::first_leaf_edge(this->root.as_node_ref()), 0,               this->GetSize()}; }
+		Iter end()   { return {BTree:: last_leaf_edge(this->root.as_node_ref()), this->GetSize(), this->GetSize()}; }
 		class Keys   Keys()   { return {*this}; }
 		class Values Values() { return {*this}; }
 
@@ -356,7 +356,13 @@ namespace Poly {
 
 		class Iter : public std::iterator<std::bidirectional_iterator_tag, KV> {
 		public:
-			Iter(KVERef kv_ref, size_t left, size_t len) : next(kv_ref), current(kv_ref), left(left), max(len+1) { if (this->left) { this->next_unchecked(); } this->left += 1; }
+			Iter(KVERef kv_ref, size_t position, size_t map_len) : current(kv_ref), next_forward(kv_ref), next_backward(kv_ref), position(position), map_len(map_len) {
+					if (this->position != this->map_len) {
+						if (kv_ref.idx < kv_ref.node_ref.node->len) {
+							this->next_forward = KVERef{kv_ref.node_ref, kv_ref.idx + 1};
+						}
+					}
+				}
 		public:
 			bool operator==(const Iter& other) const { return this->current == other.current; }
 			bool operator!=(const Iter& other) const { return !(*this == other); }
@@ -364,21 +370,21 @@ namespace Poly {
 			KV operator*()  const { return {this->current.node_ref.node->keys[this->current.idx], this->current.node_ref.node->values[this->current.idx]}; }
 			KV operator->() const { return operator*(); }
 		public:
-			Iter& operator++() { this->current = next_unchecked(); return *this; }
-			Iter operator++(int) { Iter ret(this->current, this->left, this->max); operator++(); return ret; }
-			Iter& operator--() { this->current = prev_unchecked(); return *this; } //todo(vuko): due to delaying KVRef movement, interweaving ++ and -- results in weird results
-			Iter operator--(int) { Iter ret(this->current, this->left, this->max); operator--(); return ret; }
+			Iter& operator++() { this->next_backward = this->current; this->current = this->next(); return *this; }
+			Iter& operator--() { this->next_forward  = this->current; this->current = this->prev(); return *this; }
+			Iter operator++(int) { Iter ret(this->current, this->position, this->map_len); operator++(); return ret; }
+			Iter operator--(int) { Iter ret(this->current, this->position, this->map_len); operator--(); return ret; }
 		private:
-			KVERef next_unchecked() {
-				KVERef kv_ref = this->next;
-				this->left -= 1;
+			KVERef next() {
+				KVERef kv_ref = this->next_forward;
 
-				if (kv_ref.idx < kv_ref.node_ref.node->len) {
-					this->next = KVERef{kv_ref.node_ref, kv_ref.idx + 1};
+				if (this->position + 1u >= this->map_len) {
 					return kv_ref;
 				}
+				this->position += 1u;
 
-				if (this->left == 0) {
+				if (kv_ref.idx < kv_ref.node_ref.node->len) {
+					this->next_forward = KVERef{kv_ref.node_ref, kv_ref.idx + 1u};
 					return kv_ref;
 				}
 
@@ -386,19 +392,21 @@ namespace Poly {
 					kv_ref = kv_ref.node_ref.ascend().parent;
 				} while (kv_ref.idx >= kv_ref.node_ref.node->len);
 
-				this->next = BTree::first_leaf_edge(KVERef{kv_ref.node_ref, kv_ref.idx + 1}.descend());
+				this->next_forward = BTree::first_leaf_edge(KVERef{kv_ref.node_ref, kv_ref.idx + 1u}.descend());
 				return kv_ref;
 			}
-			KVERef prev_unchecked() {
-				KVERef kv_ref = this->next;
-				this->left += 1;
+			KVERef prev() {
+				KVERef kv_ref = this->next_backward;
 
-				if (kv_ref.idx > 0) {
-					this->next = KVERef{kv_ref.node_ref, kv_ref.idx - 1};
+				if (this->position <= 1u) {
+					this->next_forward = KVERef{this->current.node_ref, this->current.idx + 1 - this->position};
+					this->position = 0;
 					return kv_ref;
 				}
+				this->position -= 1u;
 
-				if (this->left - 1 == this->max) {
+				if (kv_ref.idx > 0) {
+					this->next_backward = KVERef{kv_ref.node_ref, kv_ref.idx - 1u};
 					return kv_ref;
 				}
 
@@ -406,14 +414,15 @@ namespace Poly {
 					kv_ref = kv_ref.node_ref.ascend().parent;
 				} while (kv_ref.idx == 0);
 
-				this->next = BTree::last_leaf_edge(KVERef{kv_ref.node_ref, kv_ref.idx - 1}.descend());
+				this->next_backward = BTree::last_leaf_edge(KVERef{kv_ref.node_ref, kv_ref.idx - 1u}.descend());
 				return kv_ref;
 			}
 		private:
-			KVERef next;
 			KVERef current;
-			size_t left;
-			size_t max;
+			KVERef next_forward;
+			KVERef next_backward;
+			size_t position;
+			size_t map_len;
 		};
 
 		class Keys {

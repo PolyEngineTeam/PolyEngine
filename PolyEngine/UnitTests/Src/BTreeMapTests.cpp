@@ -287,3 +287,76 @@ TEST_CASE("BTreeMap properly running destructors", "[BTreeMap]") {
 TEST_CASE("BTreeMap avoiding copies", "[BTreeMap]") {
 	//todo(vuko)
 }
+
+TEST_CASE("BTreeMap bi-directional iteration", "[BTreeMap]") {
+	BTreeMap<int, int> map;
+	map.Insert(0, 0);
+	map.Insert(1, 0);
+	map.Insert(2, 0);
+	map.Insert(3, 0);
+
+	auto iter = map.Keys().begin();
+	auto end  = map.Keys().end();
+
+	SECTION("Change direction") {
+		REQUIRE(*iter == 0);
+
+		++iter; REQUIRE(*iter == 1);
+		++iter; REQUIRE(*iter == 2);
+		--iter; REQUIRE(*iter == 1);
+		--iter; REQUIRE(*iter == 0);
+	}
+
+	SECTION("Interweave") {
+		++iter; //1
+		++iter; //2
+		--iter; //1
+		++iter; //2
+		REQUIRE(*iter == 2);
+
+		++iter; //3
+		--iter; //2
+		--iter; //1
+		++iter; //2
+		REQUIRE(*iter == 2);
+	}
+
+	SECTION("Negative bound") {
+		--iter; REQUIRE(*iter == 0);
+		--iter; REQUIRE(*iter == 0);
+	}
+
+	SECTION("Positive bound") {
+		++iter; ++iter; ++iter; //1, 2, 3
+		REQUIRE(*iter == 3);
+
+		++iter; REQUIRE(iter == end);
+		--iter; REQUIRE(*iter == 3);
+	}
+
+	SECTION("Both bounds") {
+		--iter;
+		REQUIRE(*iter == 0);
+
+		--iter;
+		REQUIRE(*iter == 0);
+
+		++iter; //1
+		REQUIRE(*iter == 1);
+
+		++iter; ++iter; //2, 3
+		REQUIRE(*iter == 3);
+
+		--iter; --iter; --iter; //2, 1, 0
+		REQUIRE(*iter == 0);
+
+		--iter;
+		REQUIRE(*iter == 0);
+
+		++iter; //1
+		REQUIRE(*iter == 1);
+
+		++iter; ++iter; ++iter; --iter; //2, 3, !, 3
+		REQUIRE(*iter == 3);
+	}
+}
