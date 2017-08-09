@@ -75,7 +75,7 @@ namespace Poly {
 	public:
 		BTreeMap() : root{new LeafNode(), 0}, len(0) {} //todo(vuko): should we delay the allocation until the first insertion?
 		BTreeMap(BTreeMap&& other) : root(other.root), len(other.len) { ::new(&other) BTreeMap(); } //note(vuko): due to the previous issue this allocates!
-		//todo(vuko): copy constructor? tbh I'd rather avoid implementing it
+		BTreeMap(const BTreeMap& other) : BTreeMap() { for (auto kv : other) { this->Insert(kv.key, kv.value); } } //todo(vuko): can be implemented more efficiently
 		~BTreeMap() { this->Clear(); delete this->root.node; };
 
 	public:
@@ -86,6 +86,7 @@ namespace Poly {
 			::new(&other) BTreeMap();
 			return *this;
 		}
+		BTreeMap& operator=(const BTreeMap& other) { this->~BTreeMap(); this->BTreeMap(other); return *this; }
 
 	public:
 		Optional<V> Insert(const K&  key, const V&  value) { return this->insert(          key ,           value ); }
