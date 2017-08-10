@@ -162,7 +162,7 @@ namespace Poly {
 		class Values Values() { return {*this}; }
 
 	public:
-		void swap(BTreeMap& other) { std::swap(this->root, other.root); std::swap(this->len, other.len); }
+		void Swap(BTreeMap& other) { std::swap(this->root, other.root); std::swap(this->len, other.len); }
 
 	private:
 		template<typename Key, typename Val>
@@ -540,3 +540,5 @@ namespace Poly {
 	};
 
 } //namespace Poly
+
+template<typename K, typename V, size_t B> void swap(Poly::BTreeMap<K, V, B>& lhs, Poly::BTreeMap<K, V, B>& rhs) { lhs.Swap(rhs); };
