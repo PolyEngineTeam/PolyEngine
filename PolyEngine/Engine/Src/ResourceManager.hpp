@@ -52,6 +52,7 @@ namespace Poly
 		//------------------------------------------------------------------------------
 		static T* Load(const String& path, eResourceSource source = eResourceSource::NONE)
 		{
+			gConsole.LogInfo("ResourceManager: Loading: {}", path);
 			auto it = Impl::GetResources<T>().find(path);
 
 			// Check if it is already loaded

@@ -10,7 +10,10 @@ using namespace Poly;
 //------------------------------------------------------------------------------
 TextureResource::TextureResource(const String& path)
 {
-	Image = SOIL_load_image(path.GetCStr(), &Width, &Height, &Channels, SOIL_LOAD_RGBA);
+	Channels = 4;
+
+	int FileChannels;
+	Image = SOIL_load_image(path.GetCStr(), &Width, &Height, &FileChannels, SOIL_LOAD_RGBA);
 	if (Image == nullptr)
 	{
 		throw ResourceLoadFailedException();
