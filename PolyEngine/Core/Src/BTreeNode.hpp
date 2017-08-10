@@ -229,8 +229,8 @@ namespace Poly {
 					PopResult ret{std::move(keys[0]), std::move(values[0]), Edge{}};
 					std::move(keys.begin()   + 1u, keys.begin()   + len, keys.begin());
 					std::move(values.begin() + 1u, values.begin() + len, values.begin());
-					node->keys  .destruct_at(len - 1u);
-					node->values.destruct_at(len - 1u);
+					keys  .destruct_at(len - 1u);
+					values.destruct_at(len - 1u);
 
 					if (height) {
 						//branch
@@ -243,7 +243,7 @@ namespace Poly {
 						new_edge.as_node_ref().node->parent = nullptr;
 						ret.edge = new_edge;
 
-						for (size_t i = 0; i < node->len; ++i) {
+						for (size_t i = 0; i < len; ++i) {
 							KVERef{*this, i}.correct_parent_link();
 						}
 					}
@@ -278,37 +278,39 @@ namespace Poly {
 
 				SplitResult split_leaf() { //mark: kv
 					auto new_node = new LeafNode();
+					auto old_node = node_ref.node;
 
-					const auto k = std::move(node_ref.node->keys  [idx]);
-					const auto v = std::move(node_ref.node->values[idx]);
-					node_ref.node->keys  .destruct_at(idx);
-					node_ref.node->values.destruct_at(idx);
+					const auto k = std::move(old_node->keys  [idx]);
+					const auto v = std::move(old_node->values[idx]);
+					old_node->keys  .destruct_at(idx);
+					old_node->values.destruct_at(idx);
 
-					constructing_move(node_ref.node->keys.begin()   + idx + 1u, node_ref.node->keys.begin()   + node_ref.node->len, new_node->keys.begin());
-					constructing_move(node_ref.node->values.begin() + idx + 1u, node_ref.node->values.begin() + node_ref.node->len, new_node->values.begin());
+					constructing_move(old_node->keys.begin()   + idx + 1u, old_node->keys.begin()   + old_node->len, new_node->keys.begin());
+					constructing_move(old_node->values.begin() + idx + 1u, old_node->values.begin() + old_node->len, new_node->values.begin());
 
-					const auto new_len = node_ref.node->len - idx - 1u;
-					node_ref.node->len = static_cast<uint16_t>(idx);
-					new_node     ->len = static_cast<uint16_t>(new_len);
+					const auto new_len = old_node->len - idx - 1u;
+					old_node->len = static_cast<uint16_t>(idx);
+					new_node->len = static_cast<uint16_t>(new_len);
 
 					return SplitResult{node_ref, std::move(k), std::move(v), Edge{new_node, 0}};
 				}
 
 				SplitResult split_branch() { //mark: kv
 					auto new_node = new BranchNode();
+					auto old_node = node_ref.node;
 
-					const auto k = std::move(node_ref.node->keys  [idx]);
-					const auto v = std::move(node_ref.node->values[idx]);
-					node_ref.node->keys  .destruct_at(idx);
-					node_ref.node->values.destruct_at(idx);
+					const auto k = std::move(old_node->keys  [idx]);
+					const auto v = std::move(old_node->values[idx]);
+					old_node->keys  .destruct_at(idx);
+					old_node->values.destruct_at(idx);
 
-					constructing_move(node_ref.node->keys.begin()   + idx + 1u, node_ref.node->keys.begin()   + node_ref.node->len, new_node->keys.begin());
-					constructing_move(node_ref.node->values.begin() + idx + 1u, node_ref.node->values.begin() + node_ref.node->len, new_node->values.begin());
-					std::move(node_ref.node->as_branch()->edges.begin() + idx + 1u, node_ref.node->as_branch()->edges.begin() + node_ref.node->len + 1u, new_node->edges.begin());
+					constructing_move(old_node->keys.begin()   + idx + 1u, old_node->keys.begin()   + old_node->len, new_node->keys.begin());
+					constructing_move(old_node->values.begin() + idx + 1u, old_node->values.begin() + old_node->len, new_node->values.begin());
+					std::move(old_node->as_branch()->edges.begin() + idx + 1u, old_node->as_branch()->edges.begin() + old_node->len + 1u, new_node->edges.begin());
 
-					const auto new_len = node_ref.node->len - idx - 1u;
-					node_ref.node->len = static_cast<uint16_t>(idx);
-					new_node     ->len = static_cast<uint16_t>(new_len);
+					const auto new_len = old_node->len - idx - 1u;
+					old_node->len = static_cast<uint16_t>(idx);
+					new_node->len = static_cast<uint16_t>(new_len);
 
 					Edge new_edge = {new_node, node_ref.height};
 
