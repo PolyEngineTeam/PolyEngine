@@ -120,7 +120,7 @@ void GameMainSystem::GameUpdate(Poly::World* world)
 	for (auto cmpTuple : world->IterateComponents<PostprocessSettingsComponent>())
 	{
 		PostprocessSettingsComponent* postCmp = std::get<PostprocessSettingsComponent*>(cmpTuple);
-		float t = Smoothstep(-0.2f, 0.2f, -Cos(Angle::FromRadians(0.5f*time))); // [0, 1]
+		float t = SmoothStep(-0.2f, 0.2f, -Cos(Angle::FromRadians(0.5f*time))); // [0, 1]
 
 		postCmp->Distortion = t * Distortion;
 	//	postCmp->Bloom = t * Bloom;
