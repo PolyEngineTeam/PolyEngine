@@ -205,11 +205,11 @@ namespace SGJ
 			if (postCmp)
 			{
 				float t = Clamp(playerCmp->DeathCoolDowntime / playerCmp->DeathCoolDowntimeMax, 0.0f, 1.0f);
-				postCmp->SaturationPower = Clamp(Lerp(1.0f, -2.0f, t), 0.0f, 1.0f);
-				postCmp->VinettePower = Lerp(0.3f, 2.0f, t);
-				postCmp->DistortionPower = Lerp(0.45f, 1.0f, t);
-				postCmp->GrainPower = Lerp(0.1f, 0.3f, t);
-				postCmp->StripesPower = Lerp(0.25f, 0.35f, t);
+				postCmp->Saturation = Clamp(Lerp(1.0f, -2.0f, t), 0.0f, 1.0f);
+				postCmp->Vignette = Lerp(0.3f, 2.0f, t);
+				postCmp->Distortion = Lerp(0.45f, 1.0f, t);
+				postCmp->Grain = Lerp(0.1f, 0.3f, t);
+				postCmp->Stripes = Lerp(0.25f, 0.35f, t);
 			}
 
 			playerCmp->DeathCoolDowntime -= deltaTime;
@@ -219,11 +219,11 @@ namespace SGJ
 		{
 			if (postCmp)
 			{
-				postCmp->SaturationPower = 1.0f;
-				postCmp->VinettePower = 0.3f;
-				postCmp->DistortionPower = 0.45f;
-				postCmp->GrainPower = 0.1f;
-				postCmp->StripesPower = 0.35f;
+				postCmp->Saturation = 1.0f;
+				postCmp->Vignette = 0.3f;
+				postCmp->Distortion = 0.45f;
+				postCmp->Grain = 0.1f;
+				postCmp->Stripes = 0.35f;
 			}
 			ResetPlayer(world, playerCmp->SpawnPoint);
 		}

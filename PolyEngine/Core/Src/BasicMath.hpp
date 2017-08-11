@@ -96,7 +96,7 @@ namespace Poly {
 		return val1 * (1.0f - t) + val2 * t;
 	}
 
-	template <typename T> inline T Smoothstep(const T& edge1, const T& edge2, float x) {
+	template <typename T> inline T SmoothStep(const T& edge1, const T& edge2, const T& x) {
 		T t = Clamp((x - edge1) / (edge2 - edge1), 0.0f, 1.0f);
 		return t * t * (3.0f - 2.0f * t);
 	}
