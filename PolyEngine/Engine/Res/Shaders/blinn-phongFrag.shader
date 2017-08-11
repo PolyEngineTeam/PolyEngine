@@ -78,13 +78,6 @@ void main() {
 	// 	point += texColor * diffuseLight(uPointLight[i].Base, normalize(lightPos - vVertexPos), normalWS)
 	// 		* pointLightAttenuation(uPointLight[i], vVertexPos);
 	// }
-
-	// color = point + uBaseColor;
-	// color = texColor;
-	// color = vec4(0.5*(1.0+normalWS), 1.0);
-	// color = vec4(max(dot(normalWS, uDirectionalLight.Direction.xyz), 0.0));
-
-	// color = vec4(pointNdotL);
 	
 	color = texColor + dirDiffuse;
 }
