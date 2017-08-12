@@ -82,13 +82,22 @@ namespace Poly {
 		BTreeMap& operator=(BTreeMap&& other) {
 			this->~BTreeMap();
 			this->root = other.root;
-			this->len = other.len;
+			this->len  = other.len;
 			::new(&other) BTreeMap();
 			return *this;
 		}
 		BTreeMap& operator=(const BTreeMap& other) { this->~BTreeMap(); this->BTreeMap(other); return *this; }
 
 	public:
+		Entry Entry(const K& key) {
+			const auto search_result = search_tree(this->root.as_node_ref(), key);
+			switch (search_result.result) {
+				case SearchResult::FOUND:  return Entry::Occupied(search_result.handle, this->len);
+				case SearchResult::FAILED: return Entry::Vacant(  search_result.handle, this->len, key);
+				default: UNREACHABLE();
+			}
+		}
+
 		Optional<V> Insert(const K&  key, const V&  value) { return this->insert(          key ,           value ); }
 		Optional<V> Insert(const K&  key,       V&& value) { return this->insert(          key , std::move(value)); }
 		Optional<V> Insert(      K&& key, const V&  value) { return this->insert(std::move(key),           value ); }
@@ -98,11 +107,15 @@ namespace Poly {
 		Optional<V> Remove(      K&& key) { return this->remove(std::move(key)); }
 
 		Optional<V&> Get(const K&  key) { return this->get(key); }
-		Optional<V&> Get(      K&  key) { return this->get(std::move(key)); }
+		Optional<V&> Get(      K&& key) { return this->get(std::move(key)); }
+		Optional<const V&> Get(const K&  key) const { return this->get(key); }
+		Optional<const V&> Get(      K&& key) const { return this->get(std::move(key)); }
 
-		V& operator[](const K& key) { return this->Get(key).value(); }
-		size_t GetSize() { return this->len; };
-		bool IsEmpty()   { return this->GetSize() == 0; };
+		const V& operator[](const K& key) const { return this->Get(key).Value(); }
+		      V& operator[](const K& key)       { return this->Get(key).Value(); }
+
+		size_t GetSize() const { return this->len; };
+		bool   IsEmpty() const { return this->GetSize() == 0; };
 
 		void Clear() {
 			KVERef current = BTree::first_leaf_edge(this->root.as_node_ref());
@@ -146,14 +159,6 @@ namespace Poly {
 		}
 
 	public:
-		Entry Entry(const K& key) {
-			const auto search_result = search_tree(this->root.as_node_ref(), key);
-			switch (search_result.result) {
-				case SearchResult::FOUND:  return Entry::Occupied(search_result.handle, this->len);
-				case SearchResult::FAILED: return Entry::Vacant(  search_result.handle, this->len, key);
-				default: UNREACHABLE();
-			}
-		}
 		Range<K, V, Bfactor> MaxRange() { return {BTree::first_leaf_edge(this->root.as_node_ref()), BTree::last_leaf_edge(this->root.as_node_ref())}; }
 		Range<K, V, Bfactor> GetRange(const K& lower, const K& upper) { ASSERTE(lower < upper, ""); return {search_tree(this->root.as_node_ref(), lower).handle, search_tree(this->root.as_node_ref(), upper).handle}; }
 		Iter begin() { return {BTree::first_leaf_edge(this->root.as_node_ref()), 0,               this->GetSize()}; }
@@ -187,6 +192,16 @@ namespace Poly {
 		}
 
 		template<typename Key>
+		Optional<const V&> get(Key&& key) const {
+			auto entry = const_cast<BTreeMap&>(*this).Entry(std::forward<Key>(key)); //note(vuko): using only const pathways down the line
+			if (!entry.IsVacant()) {
+				return {entry.OccupiedGet()};
+			} else {
+				return {};
+			}
+		}
+
+		template<typename Key>
 		Optional<V&> get(Key&& key) {
 			auto entry = this->Entry(std::forward<Key>(key));
 			if (!entry.IsVacant()) {
@@ -197,14 +212,17 @@ namespace Poly {
 		}
 
 	private:
-		class Entry	{
+		class Entry {
 		public:
 			static Entry Vacant  (KVERef kv_ref, size_t& len, const K&  key) { return Entry(kv_ref, len, key); }
 			static Entry Vacant  (KVERef kv_ref, size_t& len,       K&& key) { return Entry(kv_ref, len, std::move(key)); }
 			static Entry Occupied(KVERef kv_ref, size_t& len)                { return Entry(kv_ref, len); }
 
 		public:
-			bool IsVacant() { return static_cast<bool>(key); }
+			Entry(Entry&&) = default;
+
+		public:
+			bool IsVacant() const { return static_cast<bool>(key); }
 
 			V& OrInsert(const V&  value) { return this->or_insert(value); }
 			V& OrInsert(      V&& value) { return this->or_insert(std::move(value)); }
@@ -215,7 +233,8 @@ namespace Poly {
 			V OccupiedInsert(const V&  value) { return this->occupied_insert(value); }
 			V OccupiedInsert(      V&& value) { return this->occupied_insert(std::move(value)); }
 
-			V& OccupiedGet() { ASSERTE(!this->IsVacant(), "Cannot read value from a vacant map entry!"); return this->kv_ref.node_ref.node->values[this->kv_ref.idx]; }
+			const V& OccupiedGet() const { ASSERTE(!this->IsVacant(), "Cannot read value from a vacant map entry!"); return this->kv_ref.node_ref.node->values[this->kv_ref.idx]; }
+			V& OccupiedGet() { return const_cast<V&>(const_cast<const Entry&>(*this).OccupiedGet()); }
 
 			struct kv {
 				K key;

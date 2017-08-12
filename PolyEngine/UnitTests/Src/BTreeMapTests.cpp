@@ -285,7 +285,7 @@ TEST_CASE("BTreeMap properly running destructors", "[BTreeMap]") {
 }
 
 TEST_CASE("BTreeMap avoiding copies", "[BTreeMap]") {
-	//todo(vuko)
+	//todo(vuko): test BTreeMap avoiding copies
 }
 
 TEST_CASE("BTreeMap bi-directional iteration", "[BTreeMap]") {
