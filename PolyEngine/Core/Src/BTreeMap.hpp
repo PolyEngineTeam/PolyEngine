@@ -36,7 +36,7 @@ namespace Poly {
 			::new(&other) BTreeMap();
 			return *this;
 		}
-		BTreeMap& operator=(const BTreeMap& other) { this->~BTreeMap(); this->BTreeMap(other); return *this; }
+		BTreeMap& operator=(const BTreeMap& other) { this->~BTreeMap(); ::new(this) BTreeMap(other); return *this; }
 
 	public:
 		Entry Entry(const K& key) {
@@ -295,7 +295,10 @@ namespace Poly {
 				ASSERTE(this->IsVacant(), "Cannot insert into already occupied map entry!");
 
 				if (this->kv_ref.node_ref.node == nullptr) {
-					plant_the_tree();
+					//we've got nothing to operate on; plant the little happy tree first!
+					auto sapling = new LeafNode();
+					kv_ref.node_ref.node       = sapling;
+					kv_ref.node_ref.root->node = sapling;
 				}
 
 				this->map_len += 1;
@@ -332,12 +335,6 @@ namespace Poly {
 				auto old = std::move(this->OccupiedGet());
 				this->OccupiedGet() = std::forward<Val>(value);
 				return old;
-			}
-
-			void plant_the_tree() {
-				auto sapling = new LeafNode();
-				this->kv_ref.node_ref.root->node = sapling;
-				this->kv_ref.node_ref.node       = sapling;
 			}
 
 		private:
