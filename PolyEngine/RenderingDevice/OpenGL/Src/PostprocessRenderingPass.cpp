@@ -99,13 +99,12 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 	else
 	{
 		GetProgram().SetUniform("uUseCashetes",						PostprocessSettings->UseCashetes);
-		GetProgram().SetUniform("uDistortionPower",					PostprocessSettings->DistortionPower);
+		GetProgram().SetUniform("uDistortionPower",					PostprocessSettings->Distortion);
 		GetProgram().SetUniform("uColorTempValue",					PostprocessSettings->ColorTempValue);
-		GetProgram().SetUniform("uColorTempPower",					PostprocessSettings->ColorTempPower);
 		GetProgram().SetUniform("uColorTempLuminancePreservation",	PostprocessSettings->ColorTempLuminancePreservation);
-		GetProgram().SetUniform("uSaturationPower",					PostprocessSettings->SaturationPower);
-		GetProgram().SetUniform("uGrainPower",						PostprocessSettings->GrainPower);
-		GetProgram().SetUniform("uStripesPower",					PostprocessSettings->StripesPower);
+		GetProgram().SetUniform("uSaturationPower",					PostprocessSettings->Saturation);
+		GetProgram().SetUniform("uGrainPower",						PostprocessSettings->Grain);
+		GetProgram().SetUniform("uStripesPower",					PostprocessSettings->Stripes);
 			
 		
 		//gConsole.LogInfo("void PostprocessRenderingPass::OnRun: UseCashetes: {}", PostprocessSettings->UseCashetes);

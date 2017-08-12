@@ -9,9 +9,9 @@ out vec3 vVertexPos;
 out vec2 vTexCoord;
 out vec3 vNormal;
 
-void main(){
-  gl_Position = uMVPTransform * aPos;
-  vTexCoord = aTexCoord;
-  vNormal = aNormal;
-  vVertexPos = aPos.xyz;
+void main() {
+	gl_Position = uMVPTransform * aPos;
+	vTexCoord = aTexCoord;
+	vNormal = aNormal;
+	vVertexPos = aPos.xyz;
 }
