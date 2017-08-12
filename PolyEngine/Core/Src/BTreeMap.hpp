@@ -4,58 +4,6 @@
 #include "Optional.hpp"
 
 namespace Poly {
-
-	template<typename K, typename V, size_t B>
-	struct Range { //note(vuko): doubles as a proper fucking iterator; behold the goddamn beauty! (alright, this is for show only for now)
-		using BTree  = Impl::BTree<K, V, B>;
-		using KVERef = typename BTree::KVERef;
-
-		KVERef front;
-		KVERef back;
-
-		struct KV {
-			const K& key;
-			V& value;
-		};
-
-		KV next_unchecked() {
-			KVERef kv_ref = this->front;
-
-			if (kv_ref.idx < kv_ref.node_ref.node->len) {
-				front = KVERef{kv_ref.node_ref, kv_ref.idx + 1};
-				return {kv_ref.node_ref.node->keys[kv_ref.idx], kv_ref.node_ref.node->values[kv_ref.idx]};
-			}
-
-			do {
-				kv_ref = kv_ref.node_ref.ascend().parent;
-			} while (kv_ref.idx >= kv_ref.node_ref.node->len);
-
-			front = BTree::first_leaf_edge(KVERef{kv_ref.node_ref, kv_ref.idx + 1}.descend());
-			return {kv_ref.node_ref.node->keys[kv_ref.idx], kv_ref.node_ref.node->values[kv_ref.idx]};
-		}
-
-		KV prev_unchecked() {
-			KVERef kv_ref = this->back;
-
-			if (kv_ref.idx > 0) {
-				this->back = KVERef{kv_ref.node_ref, kv_ref.idx - 1};
-				return {kv_ref.node_ref.node->keys[kv_ref.idx], kv_ref.node_ref.node->values[kv_ref.idx]};
-			}
-
-			do {
-				kv_ref = kv_ref.node_ref.ascend().parent;
-			} while (kv_ref.idx == 0);
-
-			this->back = BTree::last_leaf_edge(KVERef{kv_ref.node_ref, kv_ref.idx - 1}.descend());
-			return {kv_ref.node_ref.node->keys[kv_ref.idx], kv_ref.node_ref.node->values[kv_ref.idx]};
-		}
-
-		KV next() {
-			assert(!(front == back));
-			return next_unchecked();
-		}
-	};
-
 	//todo(vuko): docs
 	template<typename K, typename V, size_t Bfactor = 6>
 	class BTreeMap {
@@ -161,9 +109,6 @@ namespace Poly {
 		}
 
 	public:
-		Range<K, V, Bfactor> MaxRange() { return {BTree::first_leaf_edge(this->root.as_node_ref()), BTree::last_leaf_edge(this->root.as_node_ref())}; }
-		Range<K, V, Bfactor> GetRange(const K& lower, const K& upper) { ASSERTE(lower < upper, ""); return {search_tree(this->root.as_node_ref(), lower).handle, search_tree(this->root.as_node_ref(), upper).handle}; }
-
 		ConstIterator cbegin() const { return {BTree::first_leaf_edge(const_cast<BTreeMap&>(*this).root.as_node_ref()), 0,               this->GetSize()}; }
 		ConstIterator cend()   const { return {BTree:: last_leaf_edge(const_cast<BTreeMap&>(*this).root.as_node_ref()), this->GetSize(), this->GetSize()}; }
 		ConstIterator begin()  const { return this->cbegin(); }
