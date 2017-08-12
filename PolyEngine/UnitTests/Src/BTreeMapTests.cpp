@@ -356,7 +356,30 @@ TEST_CASE("BTreeMap bi-directional iteration", "[BTreeMap]") {
 		++iter; //1
 		REQUIRE(*iter == 1);
 
-		++iter; ++iter; ++iter; --iter; //2, 3, !, 3
+		++iter; ++iter; ++iter; --iter; //2, 3, $, 3
 		REQUIRE(*iter == 3);
 	}
+}
+
+
+TEST_CASE("Empty BTreeMap", "[BTreeMap]") {
+	BTreeMap<int, int> map;
+
+	REQUIRE(map.Entry(0).IsVacant());
+	REQUIRE(map.Entry(0).IsVacant()); //check for any insertions
+	REQUIRE(map.GetSize() == 0);
+
+	{
+		size_t iterations = 0;
+		for (auto kv : map) {
+			UNUSED(kv);
+			iterations += 1;
+		}
+		REQUIRE(iterations == 0);
+	}
+
+	map.Insert(0, 0);
+	REQUIRE_FALSE(map.Entry(0).IsVacant());
+
+	//note(vuko): unfortunately Catch does not support death tests (yet), so we can't test other stuff
 }

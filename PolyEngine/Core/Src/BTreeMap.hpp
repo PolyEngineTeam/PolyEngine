@@ -16,17 +16,17 @@ namespace Poly {
 		class Entry;
 		class ConstIterator;
 		class Iterator;
-		class Keys; //note(vuko): key references are always const, allowing to modify them would break the order invariant
+		class Keys; //note(vuko): key references are always const; allowing to modify them would break the order invariant
 		class ConstValues;
 		class Values;
 	public:
 		static constexpr size_t B = Bfactor;
 
 	public:
-		BTreeMap() : root{new LeafNode(), 0}, len(0) {} //todo(vuko): should we delay the allocation until the first insertion?
-		BTreeMap(BTreeMap&& other) : root(other.root), len(other.len) { ::new(&other) BTreeMap(); } //note(vuko): due to the previous issue this allocates!
+		BTreeMap() : root{nullptr, 0}, len(0) {}
+		BTreeMap(BTreeMap&& other) : root(other.root), len(other.len) { ::new(&other) BTreeMap(); }
 		BTreeMap(const BTreeMap& other) : BTreeMap() { for (auto kv : other) { this->Insert(kv.key, kv.value); } } //todo(vuko): can be implemented more efficiently
-		~BTreeMap() { this->Clear(); delete this->root.node; };
+		~BTreeMap() { if (this->root.node) { this->Clear(); delete this->root.node; } };
 
 	public:
 		BTreeMap& operator=(BTreeMap&& other) {
@@ -40,6 +40,10 @@ namespace Poly {
 
 	public:
 		Entry Entry(const K& key) {
+			if (this->root.node == nullptr) {
+				return Entry::Vacant(KVERef{this->root.as_node_ref(), 0}, this->len, key);
+			}
+
 			const auto search_result = search_tree(this->root.as_node_ref(), key);
 			switch (search_result.result) {
 				case SearchResult::FOUND:  return Entry::Occupied(search_result.handle, this->len);
@@ -68,6 +72,10 @@ namespace Poly {
 		bool   IsEmpty() const { return this->GetSize() == 0; };
 
 		void Clear() {
+			if (this->root.node == nullptr) {
+				return;
+			}
+
 			KVERef current = BTree::first_leaf_edge(this->root.as_node_ref());
 			while (this->len) {
 				this->len -= 1;
@@ -109,12 +117,24 @@ namespace Poly {
 		}
 
 	public:
-		ConstIterator cbegin() const { return {BTree::first_leaf_edge(const_cast<BTreeMap&>(*this).root.as_node_ref()), 0,               this->GetSize()}; }
-		ConstIterator cend()   const { return {BTree:: last_leaf_edge(const_cast<BTreeMap&>(*this).root.as_node_ref()), this->GetSize(), this->GetSize()}; }
-		ConstIterator begin()  const { return this->cbegin(); }
-		ConstIterator end()    const { return this->cend(); }
-		Iterator begin() { return {BTree::first_leaf_edge(this->root.as_node_ref()), 0,               this->GetSize()}; }
-		Iterator end()   { return {BTree:: last_leaf_edge(this->root.as_node_ref()), this->GetSize(), this->GetSize()}; }
+		ConstIterator cbegin() const { return {BTree::first_leaf_edge(const_cast<BTreeMap&>(*this).root.as_node_ref()), 0, this->GetSize()}; }
+		ConstIterator cend() const {
+			if (this->root.node == nullptr) {
+				return this->cbegin();
+			}
+			return {BTree::last_leaf_edge(const_cast<BTreeMap&>(*this).root.as_node_ref()), this->GetSize(), this->GetSize()};
+		}
+
+		ConstIterator begin() const { return this->cbegin(); }
+		ConstIterator end()   const { return this->cend();   }
+
+		Iterator begin() { return {BTree::first_leaf_edge(this->root.as_node_ref()), 0, this->GetSize()}; }
+		Iterator end() {
+			if (this->root.node == nullptr) {
+				return this->begin();
+			}
+			return {BTree::last_leaf_edge(this->root.as_node_ref()), this->GetSize(), this->GetSize()};
+		}
 
 		class Keys   Keys()   const { return {*this}; }
 		class Values Values()       { return {*this}; }
@@ -274,6 +294,10 @@ namespace Poly {
 			V& vacant_insert(Val&& value) {
 				ASSERTE(this->IsVacant(), "Cannot insert into already occupied map entry!");
 
+				if (this->kv_ref.node_ref.node == nullptr) {
+					plant_the_tree();
+				}
+
 				this->map_len += 1;
 
 				auto insert_result = this->kv_ref.leaf_insert(this->key.TakeValue(), std::forward<Val>(value));
@@ -308,6 +332,12 @@ namespace Poly {
 				auto old = std::move(this->OccupiedGet());
 				this->OccupiedGet() = std::forward<Val>(value);
 				return old;
+			}
+
+			void plant_the_tree() {
+				auto sapling = new LeafNode();
+				this->kv_ref.node_ref.root->node = sapling;
+				this->kv_ref.node_ref.node       = sapling;
 			}
 
 		private:
