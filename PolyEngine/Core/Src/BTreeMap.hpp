@@ -66,8 +66,10 @@ namespace Poly {
 		using KVERef   = typename BTree::KVERef;
 		using NodeRef  = typename BTree::NodeRef;
 		class Entry;
-		class Iter;
-		class Keys;
+		class ConstIterator;
+		class Iterator;
+		class Keys; //note(vuko): key references are always const, allowing to modify them would break the order invariant
+		class ConstValues;
 		class Values;
 	public:
 		static constexpr size_t B = Bfactor;
@@ -161,12 +163,18 @@ namespace Poly {
 	public:
 		Range<K, V, Bfactor> MaxRange() { return {BTree::first_leaf_edge(this->root.as_node_ref()), BTree::last_leaf_edge(this->root.as_node_ref())}; }
 		Range<K, V, Bfactor> GetRange(const K& lower, const K& upper) { ASSERTE(lower < upper, ""); return {search_tree(this->root.as_node_ref(), lower).handle, search_tree(this->root.as_node_ref(), upper).handle}; }
-		Iter begin() { return {BTree::first_leaf_edge(this->root.as_node_ref()), 0,               this->GetSize()}; }
-		Iter end()   { return {BTree:: last_leaf_edge(this->root.as_node_ref()), this->GetSize(), this->GetSize()}; }
-		class Keys   Keys()   { return {*this}; }
-		class Values Values() { return {*this}; }
 
-	public:
+		ConstIterator cbegin() const { return {BTree::first_leaf_edge(const_cast<BTreeMap&>(*this).root.as_node_ref()), 0,               this->GetSize()}; }
+		ConstIterator cend()   const { return {BTree:: last_leaf_edge(const_cast<BTreeMap&>(*this).root.as_node_ref()), this->GetSize(), this->GetSize()}; }
+		ConstIterator begin()  const { return this->cbegin(); }
+		ConstIterator end()    const { return this->cend(); }
+		Iterator begin() { return {BTree::first_leaf_edge(this->root.as_node_ref()), 0,               this->GetSize()}; }
+		Iterator end()   { return {BTree:: last_leaf_edge(this->root.as_node_ref()), this->GetSize(), this->GetSize()}; }
+
+		class Keys   Keys()   const { return {*this}; }
+		class Values Values()       { return {*this}; }
+		ConstValues  Values() const { return {*this}; }
+
 		void Swap(BTreeMap& other) { std::swap(this->root, other.root); std::swap(this->len, other.len); }
 
 	private:
@@ -368,15 +376,22 @@ namespace Poly {
 			size_t& map_len;
 		};
 
+	private:
+		struct ConstKV {
+			const K& key;
+			const V& value;
+			const ConstKV* operator->() const { return this; } //note(vuko): needed by the iterator's own operator ->, since it returns KV by value
+		};
 		struct KV {
 			const K& key;
 			V& value;
-			const KV* operator->() const { return this; } //note(vuko): needed by the iterator's own operator ->, since it returns KV by value
+			KV* operator->()       { return this; }
 		};
 
-		class Iter : public std::iterator<std::bidirectional_iterator_tag, KV> {
+		template<typename RetKV>
+		class IteratorBase : public std::iterator<std::bidirectional_iterator_tag, RetKV> {
 		public:
-			Iter(KVERef kv_ref, size_t position, size_t map_len) : current(kv_ref), next_forward(kv_ref), next_backward(kv_ref), position(position), map_len(map_len) {
+			IteratorBase(KVERef kv_ref, size_t position, size_t map_len) : current(kv_ref), next_forward(kv_ref), next_backward(kv_ref), position(position), map_len(map_len) {
 					if (this->position != this->map_len) {
 						if (kv_ref.idx < kv_ref.node_ref.node->len) {
 							this->next_forward = KVERef{kv_ref.node_ref, kv_ref.idx + 1};
@@ -384,16 +399,13 @@ namespace Poly {
 					}
 				}
 		public:
-			bool operator==(const Iter& other) const { return this->current == other.current; }
-			bool operator!=(const Iter& other) const { return !(*this == other); }
+			bool operator==(const IteratorBase& other) const { return this->current == other.current; }
+			bool operator!=(const IteratorBase& other) const { return !(*this == other); }
 		public:
-			KV operator*()  const { return {this->current.node_ref.node->keys[this->current.idx], this->current.node_ref.node->values[this->current.idx]}; }
-			KV operator->() const { return operator*(); }
-		public:
-			Iter& operator++() { this->next_backward = this->current; this->current = this->next(); return *this; }
-			Iter& operator--() { this->next_forward  = this->current; this->current = this->prev(); return *this; }
-			Iter operator++(int) { Iter ret(this->current, this->position, this->map_len); operator++(); return ret; }
-			Iter operator--(int) { Iter ret(this->current, this->position, this->map_len); operator--(); return ret; }
+			IteratorBase& operator++() { this->next_backward = this->current; this->current = this->next(); return *this; }
+			IteratorBase& operator--() { this->next_forward  = this->current; this->current = this->prev(); return *this; }
+			IteratorBase operator++(int) { IteratorBase ret(this->current, this->position, this->map_len); operator++(); return ret; }
+			IteratorBase operator--(int) { IteratorBase ret(this->current, this->position, this->map_len); operator--(); return ret; }
 		private:
 			KVERef next() {
 				KVERef kv_ref = this->next_forward;
@@ -437,7 +449,7 @@ namespace Poly {
 				this->next_backward = BTree::last_leaf_edge(KVERef{kv_ref.node_ref, kv_ref.idx - 1u}.descend());
 				return kv_ref;
 			}
-		private:
+		protected:
 			KVERef current;
 			KVERef next_forward;
 			KVERef next_backward;
@@ -445,59 +457,109 @@ namespace Poly {
 			size_t map_len;
 		};
 
+		class ConstIterator : public IteratorBase<ConstKV> {
+			using IteratorBase<ConstKV>::current;
+		public:
+			using IteratorBase<ConstKV>::IteratorBase;
+			ConstKV operator*()  const { return {this->current.node_ref.node->keys[this->current.idx], this->current.node_ref.node->values[this->current.idx]}; }
+			ConstKV operator->() const { return operator*(); }
+		};
+
+		class Iterator : public IteratorBase<KV> {
+			using IteratorBase<KV>::current;
+		public:
+			using IteratorBase<KV>::IteratorBase;
+			KV operator*()  { return {this->current.node_ref.node->keys[this->current.idx], this->current.node_ref.node->values[this->current.idx]}; }
+			KV operator->() { return operator*(); }
+		};
+
 		class Keys {
-			class KIter; //note(vuko): GCC is being weird here, so we can't name the class simply Iter and also additionally we have to forward-declare it
+			class Iter;
 		public:
-			Keys(BTreeMap& map) : map(map) {}
+			Keys(const BTreeMap& map) : map(map) {}
 		public:
-			KIter begin() { return {this->map.begin()}; }
-			KIter end() { return {this->map.end()}; }
+			Iter cbegin() const { return {this->map.cbegin()}; }
+			Iter cend()   const { return {this->map.cend()  }; }
+			Iter begin()  const { return this->cbegin(); }
+			Iter end()    const { return this->cend(); }
 		private:
-			using ParentIter = typename BTreeMap::Iter;
-			class KIter : public std::iterator<std::bidirectional_iterator_tag, K> {
+			using ParentIter = typename BTreeMap::ConstIterator;
+			class Iter : public std::iterator<std::bidirectional_iterator_tag, K> {
 			public:
-				KIter(ParentIter iter) : iter(iter) {}
+				Iter(ParentIter iter) : iter(iter) {}
 			public:
-				bool operator==(const KIter& other) const { return this->iter == other.iter; }
-				bool operator!=(const KIter& other) const { return !(*this == other); }
+				bool operator==(const Iter& other) const { return this->iter == other.iter; }
+				bool operator!=(const Iter& other) const { return !(*this == other); }
 			public:
-				const K& operator*()  const { return this->iter->key; }
-				const K& operator->() const { return operator*(); }
+				const K& operator*()  { return this->iter->key; }
+				const K& operator->() { return operator*(); }
 			public:
-				KIter& operator++() { ++(this->iter); return *this; }
-				KIter operator++(int) { KIter ret(this->iter); operator++(); return ret; }
-				KIter& operator--() { --(this->iter); return *this; }
-				KIter operator--(int) { KIter ret(this->iter); operator--(); return ret; }
+				Iter& operator++() { ++(this->iter); return *this; }
+				Iter& operator--() { --(this->iter); return *this; }
+				Iter operator++(int) { Iter ret(this->iter); operator++(); return ret; }
+				Iter operator--(int) { Iter ret(this->iter); operator--(); return ret; }
 			private:
 				ParentIter iter;
 			};
 		private:
-			BTreeMap& map;
+			const BTreeMap& map;
+		};
+
+		class ConstValues {
+			class Iter;
+		public:
+			ConstValues(const BTreeMap& map) : map(map) {}
+		public:
+			Iter cbegin() const { return {this->map.cbegin()}; }
+			Iter cend()   const { return {this->map.cend()}; }
+			Iter begin()  const { return this->cbegin(); }
+			Iter end()    const { return this->cend(); }
+		private:
+			using ParentIter = typename BTreeMap::ConstIterator;
+			class Iter : public std::iterator<std::bidirectional_iterator_tag, V> {
+			public:
+				Iter(ParentIter iter) : iter(iter) {}
+			public:
+				bool operator==(const Iter& other) const { return this->iter == other.iter; }
+				bool operator!=(const Iter& other) const { return !(*this == other); }
+			public:
+				Iter& operator++() { ++(this->iter); return *this; }
+				Iter& operator--() { --(this->iter); return *this; }
+				Iter operator++(int) { Iter ret(this->iter); operator++(); return ret; }
+				Iter operator--(int) { Iter ret(this->iter); operator--(); return ret; }
+			public:
+				const V& operator*()  { return this->iter->value; }
+				const V& operator->() { return operator*(); }
+			private:
+				ParentIter iter;
+			};
+		private:
+			const BTreeMap& map;
 		};
 
 		class Values {
-			class VIter;
+			class Iter;
 		public:
 			Values(BTreeMap& map) : map(map) {}
 		public:
-			VIter begin() { return {this->map.begin()}; }
-			VIter end() { return {this->map.end()}; }
+			Iter begin() { return {this->map.begin()}; }
+			Iter end()   { return {this->map.end()}; }
 		private:
-			using ParentIter = typename BTreeMap::Iter;
-			class VIter : public std::iterator<std::bidirectional_iterator_tag, V> {
+			using ParentIter = typename BTreeMap::Iterator;
+			class Iter : public std::iterator<std::bidirectional_iterator_tag, V> {
 			public:
-				VIter(ParentIter iter) : iter(iter) {}
+				Iter(ParentIter iter) : iter(iter) {}
 			public:
-				bool operator==(const VIter& other) const { return this->iter == other.iter; }
-				bool operator!=(const VIter& other) const { return !(*this == other); }
+				bool operator==(const Iter& other) const { return this->iter == other.iter; }
+				bool operator!=(const Iter& other) const { return !(*this == other); }
 			public:
-				K& operator*()  const { return this->iter->value; }
-				K& operator->() const { return operator*(); }
+				Iter& operator++() { ++(this->iter); return *this; }
+				Iter& operator--() { --(this->iter); return *this; }
+				Iter operator++(int) { Iter ret(this->iter); operator++(); return ret; }
+				Iter operator--(int) { Iter ret(this->iter); operator--(); return ret; }
 			public:
-				VIter& operator++() { ++(this->iter); return *this; }
-				VIter operator++(int) { VIter ret(this->iter); operator++(); return ret; }
-				VIter& operator--() { --(this->iter); return *this; }
-				VIter operator--(int) { VIter ret(this->iter); operator--(); return ret; }
+				V& operator*()  { return this->iter->value; }
+				V& operator->() { return operator*(); }
 			private:
 				ParentIter iter;
 			};
