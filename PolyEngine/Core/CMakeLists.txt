@@ -1,5 +1,6 @@
 set(POLYCORE_SRCS
 	Src/AABox.cpp
+	Src/AARect.cpp
 	Src/BaseObject.cpp
 	Src/BinaryBuffer.cpp
 	Src/Color.cpp
@@ -17,6 +18,7 @@ set(POLYCORE_SRCS
 set(POLYCORE_INCLUDE Src)
 set(POLYCORE_H_FOR_IDE
 	Src/AABox.hpp
+	Src/AARect.hpp
 	Src/Allocator.hpp
 	Src/Angle.hpp
 	Src/BaseObject.hpp
