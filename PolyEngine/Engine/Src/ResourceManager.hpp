@@ -52,7 +52,6 @@ namespace Poly
 		//------------------------------------------------------------------------------
 		static T* Load(const String& path, eResourceSource source = eResourceSource::NONE)
 		{
-			gConsole.LogInfo("ResourceManager: Loading: {}", path);
 			auto it = Impl::GetResources<T>().find(path);
 
 			// Check if it is already loaded
@@ -64,6 +63,7 @@ namespace Poly
 			}
 
 			// Load the resource
+			gConsole.LogInfo("ResourceManager: Loading: {}", path);
 			T* resource = nullptr;
 			Dynarray<String> paths = (source == eResourceSource::NONE) ? Dynarray<String>({String()}) : gAssetsPathConfig.GetAssetsPaths(source);
 			for (int i = 0; i < paths.GetSize() && !resource; ++i)
