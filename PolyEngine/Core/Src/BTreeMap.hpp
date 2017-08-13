@@ -4,7 +4,21 @@
 #include "Optional.hpp"
 
 namespace Poly {
-	//todo(vuko): docs
+	/**
+	 * <summary>
+	 * A sorted map based on a B-Tree.
+	 * </summary>
+	 *
+	 * <typeparam name="K">Key type</typeparam>
+	 * <typeparam name="V">Value type</typeparam>
+	 * <typeparam name='Bfactor'>
+	 * Each node contains B-1 to 2*B-1 elements.
+	 * Increasing B reduces allocations and improves cache locality in searches, but hurts complexity O(B*log_B(n)).
+	 * Default value is 6.
+	 * </typeparam>
+	 *
+	 * If you do not need the elements to be ordered <see cref="HashMap<K, V>"/>, which is generally faster
+	 */
 	template<typename K, typename V, size_t Bfactor = 6>
 	class BTreeMap {
 		static_assert(Bfactor > 1, "B factor must be greater than 1. Consider using a classic binary tree if you need a lesser value.");
@@ -23,6 +37,7 @@ namespace Poly {
 		static constexpr size_t B = Bfactor;
 
 	public:
+		/// <summary>Constructs a new, empty <c>BTreeMap<K, V, B></c>. The map will not allocate until elements are inserted into it. </summary>
 		BTreeMap() : root{nullptr, 0}, len(0) {}
 		BTreeMap(BTreeMap&& other) : root(other.root), len(other.len) { ::new(&other) BTreeMap(); }
 		BTreeMap(const BTreeMap& other) : BTreeMap() { for (auto kv : other) { this->Insert(kv.key, kv.value); } } //todo(vuko): can be implemented more efficiently
@@ -39,17 +54,40 @@ namespace Poly {
 		BTreeMap& operator=(const BTreeMap& other) { this->~BTreeMap(); ::new(this) BTreeMap(other); return *this; }
 
 	public:
+		/**
+		 * <summary>Gets the given key's corresponding entry in the map for in-place manipulation.</summary>
+		 * <param name="key"></param>
+		 * <returns>A view into a single entry in a map, which may either be vacant or occupied.</returns>
+		 * <seealso cref="MapEntry"/>
+		 */
 		MapEntry<const K& > Entry(const K&  key) { return this->entry(key); }
 		MapEntry<      K&&> Entry(      K&& key) { return this->entry(std::move(key)); }
 
+		/**
+		 * <summary>Inserts a key-value pair into the map. Updates the value if the key was already present.</summary>
+		 * <param name="key"></param>
+		 * <param name="value"></param>
+		 * <returns>The old value if it was present.</returns>
+		 * <remarks>The key is not updated. This may matter for types that can be equal without being identical.</remarks>
+		 */
 		Optional<V> Insert(const K&  key, const V&  value) { return this->insert(          key ,           value ); }
 		Optional<V> Insert(const K&  key,       V&& value) { return this->insert(          key , std::move(value)); }
 		Optional<V> Insert(      K&& key, const V&  value) { return this->insert(std::move(key),           value ); }
 		Optional<V> Insert(      K&& key,       V&& value) { return this->insert(std::move(key), std::move(value)); }
 
+		/**
+		 * <summary>Removes a key from the map.</summary>
+		 * <param name="key"></param>
+		 * <returns>Value at key if it was present in the map.</returns>
+		 */
 		Optional<V> Remove(const K&  key) { return this->remove(key); }
 		Optional<V> Remove(      K&& key) { return this->remove(std::move(key)); }
 
+		/**
+		 * <summary>Get a reference to the value at key.</summary>
+		 * <param name="key"></param>
+		 * <returns>The reference if the keys is in the map.</returns>
+		 */
 		Optional<V&> Get(const K&  key) { return this->get(key); }
 		Optional<V&> Get(      K&& key) { return this->get(std::move(key)); }
 		Optional<const V&> Get(const K&  key) const { return this->get(key); }
@@ -58,9 +96,12 @@ namespace Poly {
 		const V& operator[](const K& key) const { return this->Get(key).Value(); }
 		      V& operator[](const K& key)       { return this->Get(key).Value(); }
 
+		/// <returns>The number of elements in the map.</returns>
 		size_t GetSize() const { return this->len; };
+		/// <returns>True if the map contains no elements.</returns>
 		bool   IsEmpty() const { return this->GetSize() == 0; };
 
+		/// <summary>Clears the map, removing all elements. Frees all memory except the root node.</summary>
 		void Clear() {
 			if (this->root.node == nullptr) {
 				return;
@@ -126,10 +167,13 @@ namespace Poly {
 			return {BTree::last_leaf_edge(this->root.as_node_ref()), this->GetSize(), this->GetSize()};
 		}
 
+		/// <returns>A range over the keys of the map, in sorted order.</returns>
 		class Keys   Keys()   const { return {*this}; }
+		/// <returns>A range over the values of the map, in order by key.</returns>
 		class Values Values()       { return {*this}; }
 		ConstValues  Values() const { return {*this}; }
 
+		/// <summary>Swaps the contents of this map with the other map.</summary>
 		void Swap(BTreeMap& other) { std::swap(this->root, other.root); std::swap(this->len, other.len); }
 
 	private:
@@ -185,6 +229,7 @@ namespace Poly {
 		}
 
 	private:
+		/// <see cref="BTreeMap::Entry()"/>
 		template<typename Key>
 		class MapEntry {
 		public:
@@ -195,25 +240,47 @@ namespace Poly {
 			MapEntry(MapEntry&&) = default;
 
 		public:
+			/// <returns>True if the entry is vacant.</returns>
 			bool IsVacant() const { return static_cast<bool>(key); }
 			operator bool() const { return !this->IsVacant(); }
 
+			/**
+			 * <summary>Ensures a value is in the map by inserting if vacant.</summary>
+			 * <param name="value">A value to insert if the entry is vacant.</param>
+			 * <returns>Reference to the value in the map.</returns>
+			 */
 			V& OrInsert(const V&  value) { return this->or_insert(value); }
 			V& OrInsert(      V&& value) { return this->or_insert(std::move(value)); }
 
+			/**
+			 * <summary>Inserts the value into the map at entry's key.</summary>
+			 * <param name="value"></param>
+			 * <returns>Reference to the value in the map.</returns>
+			 */
 			V& VacantInsert(const V&  value) { return this->vacant_insert(value); }
 			V& VacantInsert(      V&& value) { return this->vacant_insert(std::move(value)); }
 
+			/**
+			 * <summary>Replaces the value in the map at entry's key.</summary>
+			 * <param name="value"></param>
+			 * <returns>Old value.</returns>
+			 */
 			V OccupiedInsert(const V&  value) { return this->occupied_insert(value); }
 			V OccupiedInsert(      V&& value) { return this->occupied_insert(std::move(value)); }
 
+			/// <returns>A reference to the value in the entry.</returns>
 			const V& OccupiedGet() const { ASSERTE(!this->IsVacant(), "Cannot read value from a vacant map entry!"); return this->kv_ref.node_ref.node->values[this->kv_ref.idx]; }
 			V& OccupiedGet() { return const_cast<V&>(const_cast<const MapEntry&>(*this).OccupiedGet()); }
 
+			/// <summary>A key-value pair.</summary>
 			struct kv {
 				K key;
 				V value;
 			};
+			/**
+			 * <summary>Removes the entry from the map.</summary>
+			 * <returns>Removed key-value pair.</returns>
+			 */
 			kv RemoveKV() {
 				ASSERTE(!this->IsVacant(), "Cannot remove value from a vacant map entry!");
 
@@ -279,6 +346,11 @@ namespace Poly {
 				}
 			}
 
+			/**
+			 * <summary>Removes the entry from the map.</summary>
+			 * <returns>Removed value.</returns>
+			 * <seealso cref="RemoveKV"/>
+			 */
 			V Remove() { return this->RemoveKV().value; }
 
 		private:
@@ -443,6 +515,7 @@ namespace Poly {
 			KV operator->() { return operator*(); }
 		};
 
+		/// <see cref="BTreeMap::Keys()"/>
 		class Keys {
 			class Iter;
 		public:
@@ -475,6 +548,7 @@ namespace Poly {
 			const BTreeMap& map;
 		};
 
+		/// <see cref="BTreeMap::Values()"/>
 		class ConstValues {
 			class Iter;
 		public:
@@ -507,6 +581,7 @@ namespace Poly {
 			const BTreeMap& map;
 		};
 
+		/// <see cref="BTreeMap::Values()"/>
 		class Values {
 			class Iter;
 		public:
