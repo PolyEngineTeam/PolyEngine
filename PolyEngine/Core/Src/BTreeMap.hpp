@@ -196,6 +196,7 @@ namespace Poly {
 
 		public:
 			bool IsVacant() const { return static_cast<bool>(key); }
+			operator bool() const { return !this->IsVacant(); }
 
 			V& OrInsert(const V&  value) { return this->or_insert(value); }
 			V& OrInsert(      V&& value) { return this->or_insert(std::move(value)); }
