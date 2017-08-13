@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0">
-     <widget class="QOpenGLWidget" name="viewportWidget"/>
+     <widget class="GameplayViewportWidget" name="viewportWidget"/>
     </item>
    </layout>
   </widget>
@@ -186,8 +186,15 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>GameplayViewportWidget</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GameplayViewportWidget.hpp</header>
+  </customwidget>
+ </customwidgets>
  <resources>
-  <include location="EditorMainWindow.qrc"/>
+  <include location="../Res/EditorMainWindow.qrc"/>
  </resources>
  <connections/>
 </ui>
