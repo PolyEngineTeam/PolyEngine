@@ -110,7 +110,7 @@ namespace Poly {
 		      V&  Value() &      { ASSERTE(this->HasValue(), "Attempting to get a value from an empty optional"); return *this->value_storage; }
 
 	public:
-		V& TakeValue() { ASSERTE(this->HasValue(), "Attempting to take a value from an empty optional"); V& ret = *this->Value(); this->value_storage = nullptr; return ret; }
+		V& TakeValue() { ASSERTE(this->HasValue(), "Attempting to take a value from an empty optional"); V& ret = *this->value_storage; this->value_storage = nullptr; return ret; }
 
 	public:
 		V ValueOr(V&& fallback) const &  { if (this->HasValue()) { return *this->Value(); } return fallback; }
