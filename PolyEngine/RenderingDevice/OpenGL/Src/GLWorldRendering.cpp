@@ -39,7 +39,7 @@ void GLRenderingDevice::RenderWorld(World* world)
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
 	{
 		// Set viewport rect (TOOO change it to propper rect, not box)
-		const AABox& rect = kv.second.GetRect();
+		const AARect& rect = kv.second.GetRect();
 		PostprocessSettingsComponent* post = kv.second.GetCamera()->GetSibling<PostprocessSettingsComponent>();
 
 		glViewport((int)(rect.GetMin().X * screenSize.Width), (int)(rect.GetMin().Y * screenSize.Height),

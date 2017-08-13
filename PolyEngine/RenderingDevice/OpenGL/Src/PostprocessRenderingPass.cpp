@@ -4,7 +4,7 @@
 #include "GLMeshDeviceProxy.hpp"
 #include "GLTextureDeviceProxy.hpp"
 
-#include <AABox.hpp>
+#include <AARect.hpp>
 #include <World.hpp>
 #include <TimeSystem.hpp>
 #include <CameraComponent.hpp>
@@ -72,7 +72,7 @@ PostprocessRenderingPass::PostprocessRenderingPass(const String& geometry, const
 }
 
 
-void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera, const AABox& rect)
+void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& rect)
 {
 	static const PostprocessQuad QUAD;
 

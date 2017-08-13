@@ -67,7 +67,7 @@ TransparentRenderingPass::TransparentRenderingPass()
 }
 
 
-void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera, const AABox& rect)
+void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& rect)
 {
 	static const PostprocessQuad QUAD;
 

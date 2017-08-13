@@ -12,7 +12,7 @@ namespace Poly
 	class CameraComponent;
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
-	class AABox;
+	class AARect;
 	class TextureResource;
 	struct ScreenSize;
 	enum class eInternalTextureUsageType;
@@ -32,7 +32,7 @@ namespace Poly
 
 		virtual ~RenderingPassBase();
 
-		void Run(World* world, const CameraComponent* camera, const AABox& rect);
+		void Run(World* world, const CameraComponent* camera, const AARect& rect);
 		void Finalize();
 
 		void BindOutput(const String& outputName, RenderingTargetBase* target);
@@ -42,7 +42,7 @@ namespace Poly
 
 		void ClearFBO(GLenum flags = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	protected:
-		virtual void OnRun(World* world, const CameraComponent* camera, const AABox& rect) = 0;
+		virtual void OnRun(World* world, const CameraComponent* camera, const AARect& rect) = 0;
 
 		RenderingTargetBase* GetInputTarget(const String& name);
 		RenderingTargetBase* GetOutputTarget(const String& name);

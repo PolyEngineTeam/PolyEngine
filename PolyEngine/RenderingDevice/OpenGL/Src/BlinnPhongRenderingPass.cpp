@@ -38,7 +38,7 @@ BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 	GetProgram().RegisterUniform("int", "uPointLightCount");
 }
 
-void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera, const AABox& rect)
+void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& rect)
 {
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();

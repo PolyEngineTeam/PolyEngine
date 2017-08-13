@@ -130,6 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\AARect.cpp" />
     <ClCompile Include="Src\BaseObject.cpp" />
     <ClCompile Include="Src\BinaryBuffer.cpp" />
     <ClCompile Include="Src\Color.cpp" />
@@ -152,6 +153,7 @@
     <ClCompile Include="Src\Vector2i.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\AARect.hpp" />
     <ClInclude Include="Src\Allocator.hpp" />
     <ClInclude Include="Src\Angle.hpp" />
     <ClInclude Include="Src\BaseObject.hpp" />

@@ -127,6 +127,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\AABoxTests.cpp" />
+    <ClCompile Include="Src\AARectTests.cpp" />
     <ClCompile Include="Src\AllocatorTests.cpp" />
     <ClCompile Include="Src\AngleTests.cpp" />
     <ClCompile Include="Src\BasicMathTests.cpp" />
