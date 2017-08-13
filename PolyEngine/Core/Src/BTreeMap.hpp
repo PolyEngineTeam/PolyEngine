@@ -13,7 +13,7 @@ namespace Poly {
 		using LeafNode = typename BTree::LeafNode;
 		using KVERef   = typename BTree::KVERef;
 		using NodeRef  = typename BTree::NodeRef;
-		class Entry;
+		template<typename> class MapEntry; //note(vuko): can't be named Entry due to symbol collision (class/method -> ok, template/method -> nope ;_;)
 		class ConstIterator;
 		class Iterator;
 		class Keys; //note(vuko): key references are always const; allowing to modify them would break the order invariant
@@ -39,18 +39,8 @@ namespace Poly {
 		BTreeMap& operator=(const BTreeMap& other) { this->~BTreeMap(); ::new(this) BTreeMap(other); return *this; }
 
 	public:
-		Entry Entry(const K& key) {
-			if (this->root.node == nullptr) {
-				return Entry::Vacant(KVERef{this->root.as_node_ref(), 0}, this->len, key);
-			}
-
-			const auto search_result = search_tree(this->root.as_node_ref(), key);
-			switch (search_result.result) {
-				case SearchResult::FOUND:  return Entry::Occupied(search_result.handle, this->len);
-				case SearchResult::FAILED: return Entry::Vacant(  search_result.handle, this->len, key);
-				default: UNREACHABLE();
-			}
-		}
+		MapEntry<const K& > Entry(const K&  key) { return this->entry(key); }
+		MapEntry<      K&&> Entry(      K&& key) { return this->entry(std::move(key)); }
 
 		Optional<V> Insert(const K&  key, const V&  value) { return this->insert(          key ,           value ); }
 		Optional<V> Insert(const K&  key,       V&& value) { return this->insert(          key , std::move(value)); }
@@ -143,6 +133,16 @@ namespace Poly {
 		void Swap(BTreeMap& other) { std::swap(this->root, other.root); std::swap(this->len, other.len); }
 
 	private:
+		template<typename Key>
+		MapEntry<Key&&> entry(Key&& key) {
+			const auto search_result = search_tree(this->root.as_node_ref(), key);
+			switch (search_result.result) {
+				case SearchResult::FOUND:  return MapEntry<Key&&>::Occupied(search_result.handle, this->len);
+				case SearchResult::FAILED: return MapEntry<Key&&>::Vacant(  search_result.handle, this->len, std::forward<Key>(key));
+				default: UNREACHABLE();
+			}
+		}
+
 		template<typename Key, typename Val>
 		Optional<V> insert(Key&& key, Val&& value) {
 			auto entry = this->Entry(std::forward<Key>(key));
@@ -185,14 +185,14 @@ namespace Poly {
 		}
 
 	private:
-		class Entry {
+		template<typename Key>
+		class MapEntry {
 		public:
-			static Entry Vacant  (KVERef kv_ref, size_t& len, const K&  key) { return Entry(kv_ref, len, key); }
-			static Entry Vacant  (KVERef kv_ref, size_t& len,       K&& key) { return Entry(kv_ref, len, std::move(key)); }
-			static Entry Occupied(KVERef kv_ref, size_t& len)                { return Entry(kv_ref, len); }
+			static MapEntry Vacant  (KVERef kv_ref, size_t& len, Key&& key) { return MapEntry(kv_ref, len, std::forward<Key>(key)); }
+			static MapEntry Occupied(KVERef kv_ref, size_t& len)            { return MapEntry(kv_ref, len); }
 
 		public:
-			Entry(Entry&&) = default;
+			MapEntry(MapEntry&&) = default;
 
 		public:
 			bool IsVacant() const { return static_cast<bool>(key); }
@@ -208,7 +208,7 @@ namespace Poly {
 			V OccupiedInsert(      V&& value) { return this->occupied_insert(std::move(value)); }
 
 			const V& OccupiedGet() const { ASSERTE(!this->IsVacant(), "Cannot read value from a vacant map entry!"); return this->kv_ref.node_ref.node->values[this->kv_ref.idx]; }
-			V& OccupiedGet() { return const_cast<V&>(const_cast<const Entry&>(*this).OccupiedGet()); }
+			V& OccupiedGet() { return const_cast<V&>(const_cast<const MapEntry&>(*this).OccupiedGet()); }
 
 			struct kv {
 				K key;
@@ -331,21 +331,18 @@ namespace Poly {
 			template<typename Val>
 			V occupied_insert(Val&& value) {
 				ASSERTE(!this->IsVacant(), "Cannot replace (non-existent) value in a vacant map entry!");
-				//std::swap(value, this->OccupiedGet());
-				//return value;
 				auto old = std::move(this->OccupiedGet());
 				this->OccupiedGet() = std::forward<Val>(value);
 				return old;
 			}
 
 		private:
-			Entry(KVERef kv_ref, size_t& len, const K&  key) : key(key),            kv_ref(kv_ref), map_len(len) {}
-			Entry(KVERef kv_ref, size_t& len,       K&& key) : key(std::move(key)), kv_ref(kv_ref), map_len(len) {}
-			Entry(KVERef kv_ref, size_t& len)                : key{},               kv_ref(kv_ref), map_len(len) {}
+			MapEntry(KVERef kv_ref, size_t& len, Key&& key) : key(std::forward<Key>(key)), kv_ref(kv_ref), map_len(len) {}
+			MapEntry(KVERef kv_ref, size_t& len)            : key{},                       kv_ref(kv_ref), map_len(len) {}
 
 		private:
-			Optional<K> key; //todo(vuko): store a reference instead (need to parametrize the class on reference type; lvalue-ref -> opt<T&>, rvalue-ref -> opt<T>)
-			KVERef kv_ref;
+			Optional<Key> key;
+			KVERef  kv_ref;
 			size_t& map_len;
 		};
 
@@ -358,7 +355,7 @@ namespace Poly {
 		struct KV {
 			const K& key;
 			V& value;
-			KV* operator->()       { return this; }
+			KV* operator->() { return this; }
 		};
 
 		template<typename RetKV>
@@ -547,6 +544,10 @@ namespace Poly {
 		};
 
 		static SearchResult search_tree(NodeRef node_ref, const K& key) {
+			if (node_ref.node == nullptr) {
+				return {SearchResult::FAILED, KVERef{node_ref, 0}};
+			}
+
 			for (;;) {
 				const auto search_result = search_node(node_ref, key);
 				switch (search_result.result) {
