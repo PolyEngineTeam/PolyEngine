@@ -40,7 +40,7 @@ namespace Poly {
 		/// <summary>Constructs a new, empty <c>BTreeMap<K, V, B></c>. The map will not allocate until elements are inserted into it. </summary>
 		BTreeMap() : root{nullptr, 0}, len(0) {}
 		BTreeMap(BTreeMap&& other) : root(other.root), len(other.len) { ::new(&other) BTreeMap(); }
-		BTreeMap(const BTreeMap& other) : BTreeMap() { for (auto kv : other) { this->Insert(kv.key, kv.value); } } //todo(vuko): can be implemented more efficiently
+		BTreeMap(const BTreeMap& other) : BTreeMap() { for (auto kv : other) { this->TryInsert(kv.key, kv.value); } } //todo(vuko): can be implemented more efficiently
 		~BTreeMap() { if (this->root.node) { this->Clear(); delete this->root.node; } };
 
 	public:
@@ -70,18 +70,36 @@ namespace Poly {
 		 * <returns>The old value if it was present.</returns>
 		 * <remarks>The key is not updated. This may matter for types that can be equal without being identical.</remarks>
 		 */
-		Optional<V> Insert(const K&  key, const V&  value) { return this->insert(          key ,           value ); }
-		Optional<V> Insert(const K&  key,       V&& value) { return this->insert(          key , std::move(value)); }
-		Optional<V> Insert(      K&& key, const V&  value) { return this->insert(std::move(key),           value ); }
-		Optional<V> Insert(      K&& key,       V&& value) { return this->insert(std::move(key), std::move(value)); }
+		Optional<V> TryInsert(const K&  key, const V&  value) { return this->insert(          key ,           value ); }
+		Optional<V> TryInsert(const K&  key,       V&& value) { return this->insert(          key , std::move(value)); }
+		Optional<V> TryInsert(      K&& key, const V&  value) { return this->insert(std::move(key),           value ); }
+		Optional<V> TryInsert(      K&& key,       V&& value) { return this->insert(std::move(key), std::move(value)); }
+
+		/**
+		 * <summary>Inserts a key-value pair into the map. Panics if the key was already present.</summary>
+		 * <param name="key"></param>
+		 * <param name="value"></param>
+		 */
+		void Insert(const K&  key, const V&  value) { auto entry = this->Entry(          key ); ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(          value) ; }
+		void Insert(const K&  key,       V&& value) { auto entry = this->Entry(          key) ; ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(std::move(value)); }
+		void Insert(      K&& key, const V&  value) { auto entry = this->Entry(std::move(key)); ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(          value) ; }
+		void Insert(      K&& key,       V&& value) { auto entry = this->Entry(std::move(key)); ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(std::move(value)); }
 
 		/**
 		 * <summary>Removes a key from the map.</summary>
 		 * <param name="key"></param>
 		 * <returns>Value at key if it was present in the map.</returns>
 		 */
-		Optional<V> Remove(const K&  key) { return this->remove(key); }
-		Optional<V> Remove(      K&& key) { return this->remove(std::move(key)); }
+		Optional<V> TryRemove(const K&  key) { return this->remove(key); }
+		Optional<V> TryRemove(      K&& key) { return this->remove(std::move(key)); }
+
+		/**
+		 * <summary>Removes a key from the map. Panics if the key is not present in the map.</summary>
+		 * <param name="key"></param>
+		 * <returns>Value at key.</returns>
+		 */
+		V Remove(const K&  key) { auto entry = this->Entry(          key ); ASSERTE(!entry.IsVacant(), "Key not present in the map!"); return entry.Remove(); }
+		V Remove(      K&& key) { auto entry = this->Entry(std::move(key)); ASSERTE(!entry.IsVacant(), "Key not present in the map!"); return entry.Remove(); }
 
 		/**
 		 * <summary>Get a reference to the value at key.</summary>
@@ -99,7 +117,7 @@ namespace Poly {
 		/// <returns>The number of elements in the map.</returns>
 		size_t GetSize() const { return this->len; };
 		/// <returns>True if the map contains no elements.</returns>
-		bool   IsEmpty() const { return this->GetSize() == 0; };
+		bool IsEmpty() const { return this->GetSize() == 0; };
 
 		/// <summary>Clears the map, removing all elements. Frees all memory except the root node.</summary>
 		void Clear() {
