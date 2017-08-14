@@ -39,7 +39,7 @@ namespace Poly {
 		/// <summary>Constructs a new, empty <c>OrderedMap<K, V, B></c>. The map will not allocate until elements are inserted into it. </summary>
 		OrderedMap() : root{nullptr, 0}, len(0) {}
 		OrderedMap(OrderedMap&& other) : root(other.root), len(other.len) { ::new(&other) OrderedMap(); }
-		OrderedMap(const OrderedMap& other) : OrderedMap() { for (auto kv : other) { TryInsert(kv.key, kv.value); } } //todo(vuko): can be implemented more efficiently
+		OrderedMap(const OrderedMap& other) : OrderedMap() { for (auto kv : other) { Insert(kv.key, kv.value); } } //todo(vuko): can be implemented more efficiently
 		~OrderedMap() { if (root.node) { Clear(); delete root.node; } };
 
 		OrderedMap& operator=(OrderedMap&& other) {
@@ -59,7 +59,7 @@ namespace Poly {
 		 * if (auto entry = map.Entry(key)) { //`if (auto entry = map.Entry(key); !entry.IsVacant())` in C++17
 		 * 	entry.Remove().DoStuffWithOldValue();
 		 * 	//or
-		 * 	entry.OccupiedInsert(newValue);
+		 * 	entry.OccupiedReplace(newValue);
 		 * 	//or
 		 * 	entry.OccupiedGet().DoStuffWithValue();
 		 * } else {
@@ -83,36 +83,36 @@ namespace Poly {
 		 * <returns>The old value if it was present.</returns>
 		 * <remarks>The key is not updated. This may matter for types that can be equal without being identical.</remarks>
 		 */
-		Optional<V> TryInsert(const K&  key, const V&  value) { return insert(          key ,           value ); }
-		Optional<V> TryInsert(const K&  key,       V&& value) { return insert(          key , std::move(value)); }
-		Optional<V> TryInsert(      K&& key, const V&  value) { return insert(std::move(key),           value ); }
-		Optional<V> TryInsert(      K&& key,       V&& value) { return insert(std::move(key), std::move(value)); }
+		Optional<V> Insert(const K&  key, const V&  value) { return insert(          key ,           value ); }
+		Optional<V> Insert(const K&  key,       V&& value) { return insert(          key , std::move(value)); }
+		Optional<V> Insert(      K&& key, const V&  value) { return insert(std::move(key),           value ); }
+		Optional<V> Insert(      K&& key,       V&& value) { return insert(std::move(key), std::move(value)); }
 
 		/**
 		 * <summary>Inserts a key-value pair into the map. Panics if the key was already present.</summary>
 		 * <param name="key"></param>
 		 * <param name="value"></param>
 		 */
-		void Insert(const K&  key, const V&  value) { auto entry = Entry(          key ); ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(          value) ; }
-		void Insert(const K&  key,       V&& value) { auto entry = Entry(          key) ; ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(std::move(value)); }
-		void Insert(      K&& key, const V&  value) { auto entry = Entry(std::move(key)); ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(          value) ; }
-		void Insert(      K&& key,       V&& value) { auto entry = Entry(std::move(key)); ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(std::move(value)); }
+		void MustInsert(const K&  key, const V&  value) { auto entry = Entry(          key ); ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(          value) ; }
+		void MustInsert(const K&  key,       V&& value) { auto entry = Entry(          key) ; ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(std::move(value)); }
+		void MustInsert(      K&& key, const V&  value) { auto entry = Entry(std::move(key)); ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(          value) ; }
+		void MustInsert(      K&& key,       V&& value) { auto entry = Entry(std::move(key)); ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(std::move(value)); }
 
 		/**
 		 * <summary>Removes a key from the map.</summary>
 		 * <param name="key"></param>
 		 * <returns>Value at key if it was present in the map.</returns>
 		 */
-		Optional<V> TryRemove(const K&  key) { return remove(key); }
-		Optional<V> TryRemove(      K&& key) { return remove(std::move(key)); }
+		Optional<V> Remove(const K&  key) { return remove(key); }
+		Optional<V> Remove(      K&& key) { return remove(std::move(key)); }
 
 		/**
 		 * <summary>Removes a key from the map. Panics if the key is not present in the map.</summary>
 		 * <param name="key"></param>
 		 * <returns>Value at key.</returns>
 		 */
-		V Remove(const K&  key) { auto entry = Entry(          key ); ASSERTE(!entry.IsVacant(), "Key not present in the map!"); return entry.Remove(); }
-		V Remove(      K&& key) { auto entry = Entry(std::move(key)); ASSERTE(!entry.IsVacant(), "Key not present in the map!"); return entry.Remove(); }
+		V MustRemove(const K&  key) { auto entry = Entry(          key ); ASSERTE(!entry.IsVacant(), "Key not present in the map!"); return entry.Remove(); }
+		V MustRemove(      K&& key) { auto entry = Entry(std::move(key)); ASSERTE(!entry.IsVacant(), "Key not present in the map!"); return entry.Remove(); }
 
 		/**
 		 * <summary>Get a reference to the value at key.</summary>
@@ -224,7 +224,7 @@ namespace Poly {
 				entry.VacantInsert(std::forward<Val>(value));
 				return {};
 			} else {
-				return {entry.OccupiedInsert(std::forward<Val>(value))};
+				return {entry.OccupiedReplace(std::forward<Val>(value))};
 			}
 		}
 
@@ -292,8 +292,8 @@ namespace Poly {
 			 * <param name="value"></param>
 			 * <returns>Old value.</returns>
 			 */
-			V OccupiedInsert(const V&  value) { return occupied_insert(value); }
-			V OccupiedInsert(      V&& value) { return occupied_insert(std::move(value)); }
+			V OccupiedReplace(const V&  value) { return occupied_replace(value); }
+			V OccupiedReplace(      V&& value) { return occupied_replace(std::move(value)); }
 
 			/// <returns>A reference to the value in the entry.</returns>
 			const V& OccupiedGet() const { ASSERTE(!IsVacant(), "Cannot read value from a vacant map entry!"); return kv_ref.node_ref.node->values[kv_ref.idx]; }
@@ -428,7 +428,7 @@ namespace Poly {
 			}
 
 			template<typename Val>
-			V occupied_insert(Val&& value) {
+			V occupied_replace(Val&& value) {
 				ASSERTE(!IsVacant(), "Cannot replace (non-existent) value in a vacant map entry!");
 				auto old = std::move(OccupiedGet());
 				OccupiedGet() = std::forward<Val>(value);

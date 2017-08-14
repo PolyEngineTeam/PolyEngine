@@ -12,7 +12,7 @@ TEST_CASE("OrderedMap sorted insertion/lookup", "[OrderedMap]") {
 
 	OrderedMap<int, int> map;
 	for (int n = 0; n < int(size); ++n) {
-		auto previous = map.TryInsert(n, -n);
+		auto previous = map.Insert(n, -n);
 		REQUIRE_FALSE(previous);
 	}
 	REQUIRE(map.GetSize() == size);
@@ -28,7 +28,7 @@ TEST_CASE("OrderedMap sorted insertion/lookup", "[OrderedMap]") {
 	AND_THEN("Replacement insertion") {
 
 		for (int n = 0; n < int(size); ++n) {
-			auto previous = map.TryInsert(n, n);
+			auto previous = map.Insert(n, n);
 			REQUIRE(previous);
 			REQUIRE(previous.Value() == -n);
 		}
@@ -68,7 +68,7 @@ TEST_CASE("OrderedMap random insertion/lookup", "[OrderedMap]") {
 	OrderedMap<int, int> map;
 	for (int key : shuffled_input) {
 		int value = -key;
-		auto previous = map.TryInsert(key, value);
+		auto previous = map.Insert(key, value);
 		REQUIRE_FALSE(previous);
 	}
 	REQUIRE(map.GetSize() == size);
@@ -85,7 +85,7 @@ TEST_CASE("OrderedMap random insertion/lookup", "[OrderedMap]") {
 	AND_THEN("Replacement insertion") {
 
 		for (int n = 0; n < int(size); ++n) {
-			auto previous = map.TryInsert(n, n);
+			auto previous = map.Insert(n, n);
 			REQUIRE(previous);
 			REQUIRE(previous.Value() == -n);
 		}
@@ -115,7 +115,7 @@ TEST_CASE("OrderedMap clearing", "[OrderedMap]") {
 	SECTION("Size: B") {
 		constexpr int size = decltype(map)::B;
 		for (int i = 0; i < size; ++i) {
-			map.TryInsert(i, i);
+			map.Insert(i, i);
 		}
 		REQUIRE(map.GetSize() == size);
 
@@ -127,7 +127,7 @@ TEST_CASE("OrderedMap clearing", "[OrderedMap]") {
 	SECTION("Size: 2*B") {
 		constexpr int size = 2 * decltype(map)::B;
 		for (int i = 0; i < size; ++i) {
-			map.TryInsert(i, i);
+			map.Insert(i, i);
 		}
 		REQUIRE(map.GetSize() == size);
 
@@ -139,7 +139,7 @@ TEST_CASE("OrderedMap clearing", "[OrderedMap]") {
 	constexpr size_t size = 1024;
 	SECTION("Size: 1024") {
 		for (int i = 0; i < int(size); ++i) {
-			map.TryInsert(i, i);
+			map.Insert(i, i);
 		}
 		REQUIRE(map.GetSize() == size);
 
@@ -165,7 +165,7 @@ TEST_CASE("BTree random removals", "[OrderedMap]") {
 	OrderedMap<int, int> map;
 	for (int key : shuffled_input) {
 		int value = -key;
-		map.TryInsert(key, value);
+		map.Insert(key, value);
 	}
 	REQUIRE(map.GetSize() == size);
 	REQUIRE(map.Get(0));
@@ -181,7 +181,7 @@ TEST_CASE("BTree random removals", "[OrderedMap]") {
 
 	for (int key : to_remove) {
 		int value = -key;
-		auto removed = map.TryRemove(key);
+		auto removed = map.Remove(key);
 		REQUIRE(removed);
 		REQUIRE(removed.Value() == value);
 		REQUIRE_FALSE(map.GetSize() == size);
@@ -232,7 +232,7 @@ TEST_CASE("OrderedMap properly running destructors", "[OrderedMap]") {
 
 	SECTION("Linear insertion") {
 		for (size_t i = 0; i < size; ++i) {
-			map.TryInsert(Counting(i), Counting(i));
+			map.Insert(Counting(i), Counting(i));
 		}
 		REQUIRE(gCurrentInstances == map.GetSize() * 2);
 	}
@@ -251,7 +251,7 @@ TEST_CASE("OrderedMap properly running destructors", "[OrderedMap]") {
 		std::shuffle(shuffled_input.Begin(), shuffled_input.End(), rng);
 
 		for (size_t v : shuffled_input) {
-			map.TryInsert(Counting(v), Counting(v));
+			map.Insert(Counting(v), Counting(v));
 		}
 		REQUIRE(gCurrentInstances == map.GetSize() * 2);
 
@@ -271,12 +271,12 @@ TEST_CASE("OrderedMap properly running destructors", "[OrderedMap]") {
 			std::shuffle(to_remove_second.Begin(), to_remove_second.End(), rng);
 
 			for (size_t v : to_remove_first) {
-				map.TryRemove(Counting(v));
+				map.Remove(Counting(v));
 			}
 			REQUIRE(gCurrentInstances == map.GetSize() * 2);
 
 			for (size_t v : to_remove_second) {
-				map.TryRemove(Counting(v));
+				map.Remove(Counting(v));
 			}
 			REQUIRE(gCurrentInstances == 0);
 		}
@@ -290,10 +290,10 @@ TEST_CASE("OrderedMap avoiding copies", "[OrderedMap]") {
 
 TEST_CASE("OrderedMap bi-directional iteration", "[OrderedMap]") {
 	OrderedMap<int, int> map;
-	map.TryInsert(0, 0);
-	map.TryInsert(1, 0);
-	map.TryInsert(2, 0);
-	map.TryInsert(3, 0);
+	map.Insert(0, 0);
+	map.Insert(1, 0);
+	map.Insert(2, 0);
+	map.Insert(3, 0);
 
 	auto iter = map.Keys().begin();
 	auto end  = map.Keys().end();
@@ -378,7 +378,7 @@ TEST_CASE("Empty OrderedMap", "[OrderedMap]") {
 		REQUIRE(iterations == 0);
 	}
 
-	map.TryInsert(0, 0);
+	map.Insert(0, 0);
 	REQUIRE_FALSE(map.Entry(0).IsVacant());
 
 	//note(vuko): unfortunately Catch does not support death tests (yet), so we can't test other stuff
