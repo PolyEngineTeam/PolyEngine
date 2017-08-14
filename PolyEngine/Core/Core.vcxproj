@@ -130,6 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\AARect.cpp" />
     <ClCompile Include="Src\BaseObject.cpp" />
     <ClCompile Include="Src\BinaryBuffer.cpp" />
     <ClCompile Include="Src\Color.cpp" />
@@ -148,8 +149,11 @@
     <ClCompile Include="src\String.cpp" />
     <ClCompile Include="Src\UniqueID.cpp" />
     <ClCompile Include="Src\Vector.cpp" />
+    <ClCompile Include="Src\Vector2f.cpp" />
+    <ClCompile Include="Src\Vector2i.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\AARect.hpp" />
     <ClInclude Include="Src\Allocator.hpp" />
     <ClInclude Include="Src\Angle.hpp" />
     <ClInclude Include="Src\OrderedMap.hpp" />
@@ -179,6 +183,8 @@
     <ClInclude Include="Src\UniqueID.hpp" />
     <ClInclude Include="Src\UnsafeStorage.hpp" />
     <ClInclude Include="Src\Vector.hpp" />
+    <ClInclude Include="Src\Vector2f.hpp" />
+    <ClInclude Include="Src\Vector2i.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

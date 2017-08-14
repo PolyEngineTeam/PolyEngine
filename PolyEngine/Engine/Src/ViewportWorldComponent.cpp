@@ -4,10 +4,10 @@ using namespace Poly;
 
 ViewportWorldComponent::ViewportWorldComponent()
 {
-	AddViewport(AABox(Vector(0, 0, 0), Vector(1, 1, 0)));
+	AddViewport(AARect(Vector2f(0, 0), Vector2f(1, 1)));
 }
 
-ViewportID ViewportWorldComponent::AddViewport(const AABox& rect)
+ViewportID ViewportWorldComponent::AddViewport(const AARect& rect)
 {
 	ViewportID id = IDCounter++;
 	Viewport view(rect);
@@ -23,7 +23,7 @@ void ViewportWorldComponent::RemoveViewport(ViewportID id)
 	Viewports.erase(it);
 }
 
-void ViewportWorldComponent::ResizeViewport(ViewportID id, const AABox& rect)
+void ViewportWorldComponent::ResizeViewport(ViewportID id, const AARect& rect)
 {
 	auto it = Viewports.find(id);
 	ASSERTE(it != Viewports.end(), "Viewport doesn't exist.");

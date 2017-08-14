@@ -8,7 +8,7 @@ namespace Poly
 	class World;
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
-	class AABox;
+	class AARect;
 
 	//------------------------------------------------------------------------------
 	class PostprocessRenderingPass : public RenderingPassBase
@@ -18,6 +18,6 @@ namespace Poly
 		PostprocessRenderingPass(const String& geometry, const String& fragment);
 	
 	protected:
-		virtual void OnRun(World* world, const CameraComponent* camera, const AABox& rect) override;
+		virtual void OnRun(World* world, const CameraComponent* camera, const AARect& rect) override;
 	};
 }

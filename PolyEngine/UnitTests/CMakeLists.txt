@@ -15,6 +15,8 @@ set(POLYTESTS_SRCS
 	Src/TransformComponentTests.cpp
 	Src/UnsafeStorageTests.cpp
 	Src/VectorTests.cpp
+	Src/Vector2fTests.cpp
+	Src/Vector2iTests.cpp
 	Src/main.cpp
 )
 
@@ -52,9 +54,9 @@ add_custom_target(tests COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS polytests)
 #WORKAROUND(vuko): CTest tests do not depend on targets that produce COMMAND executables, so add a dummy test that will force a recompilation if needed
 add_test(NAME "BUILD_TESTS"                                   COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target polytests --config "$<CONFIG>")
 #TODO(vuko): one has to manually add a case here every time you add a new test to Catch... Maybe grep the files looking for TEST_CASE then generate?
-add_test(NAME "AABox-contains"                               COMMAND polytests "AABox contains")
-add_test(NAME "AABox-collisions-with-other-AABox"           COMMAND polytests "AABox collisions with other AABox")
-add_test(NAME "AABox-intersection-calculation"               COMMAND polytests "AABox intersection calculation")
+add_test(NAME "AABox-contains"                                COMMAND polytests "AABox contains")
+add_test(NAME "AABox-collisions-with-other-AABox"             COMMAND polytests "AABox collisions with other AABox")
+add_test(NAME "AABox-intersection-calculation"                COMMAND polytests "AABox intersection calculation")
 add_test(NAME "Pool-allocator"                                COMMAND polytests "Pool allocator")
 add_test(NAME "Iterable-pool-allocator"                       COMMAND polytests "Iterable pool allocator")
 add_test(NAME "Angle-constructors"                            COMMAND polytests "Angle constructors")
@@ -84,6 +86,15 @@ add_test(NAME "Vector-comparison-operators"                   COMMAND polytests 
 add_test(NAME "Vector-Vector-operators"                       COMMAND polytests "Vector-Vector operators")
 add_test(NAME "Vector-scalar-operators"                       COMMAND polytests "Vector-scalar operators")
 add_test(NAME "Vector-algebraic-methods"                      COMMAND polytests "Vector algebraic methods")
+add_test(NAME "Vector2f-constructors"                         COMMAND polytests "Vector2f constructors")
+add_test(NAME "Vector2f-comparison-operators"                 COMMAND polytests "Vector2f comparison operators")
+add_test(NAME "Vector2f-Vector2f-operators"                   COMMAND polytests "Vector2f-Vector2f operators")
+add_test(NAME "Vector2f-scalar-operators"                     COMMAND polytests "Vector2f-scalar operators")
+add_test(NAME "Vector2f-algebraic-methods"                    COMMAND polytests "Vector2f algebraic methods")
+add_test(NAME "Vector2i-comparison-operators"                 COMMAND polytests "Vector2i comparison operators")
+add_test(NAME "Vector2i-Vector2i-operators"                   COMMAND polytests "Vector2i-Vector2i operators")
+add_test(NAME "Vector2i-scalar-operators"                     COMMAND polytests "Vector2i-scalar operators")
+add_test(NAME "Vector2i-algebraic-methods"                    COMMAND polytests "Vector2i algebraic methods")
 add_test(NAME "Floating-point-equality-comparisons"           COMMAND polytests "Floating-point equality comparisons")
 add_test(NAME "TransformComponent-with-no-parent"             COMMAND polytests "TransformComponent with no parent")
 add_test(NAME "TransformComponent-with-parent"                COMMAND polytests "TransformComponent with parent")

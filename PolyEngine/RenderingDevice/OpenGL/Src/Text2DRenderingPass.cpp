@@ -31,7 +31,7 @@ Text2DRenderingPass::Text2DRenderingPass()
 
 }
 
-void Text2DRenderingPass::OnRun(World* world, const CameraComponent* camera, const AABox& rect)
+void Text2DRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& rect)
 {
 	// Text drawing
 	glEnable(GL_BLEND);

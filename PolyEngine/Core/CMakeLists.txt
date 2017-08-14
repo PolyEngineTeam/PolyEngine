@@ -1,5 +1,6 @@
 set(POLYCORE_SRCS
 	Src/AABox.cpp
+	Src/AARect.cpp
 	Src/BaseObject.cpp
 	Src/BinaryBuffer.cpp
 	Src/Color.cpp
@@ -11,10 +12,13 @@ set(POLYCORE_SRCS
 	Src/String.cpp
 	Src/UniqueID.cpp
 	Src/Vector.cpp
+	Src/Vector2f.cpp
+	Src/Vector2i.cpp
 )
 set(POLYCORE_INCLUDE Src)
 set(POLYCORE_H_FOR_IDE
 	Src/AABox.hpp
+	Src/AARect.hpp
 	Src/Allocator.hpp
 	Src/Angle.hpp
 	Src/OrderedMap.hpp
@@ -42,6 +46,8 @@ set(POLYCORE_H_FOR_IDE
 	Src/UniqueID.hpp
 	Src/UnsafeStorage.hpp
 	Src/Vector.hpp
+	Src/Vector2f.hpp
+	Src/Vector2i.hpp
 )
 
 add_library(polycore SHARED ${POLYCORE_SRCS} ${POLYCORE_H_FOR_IDE})

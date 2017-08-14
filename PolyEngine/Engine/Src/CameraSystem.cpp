@@ -1,3 +1,5 @@
+#include <math.h> 
+
 #include "EnginePCH.hpp"
 
 #include "CameraSystem.hpp"
@@ -7,7 +9,7 @@ void Poly::CameraSystem::CameraUpdatePhase(World* world)
 	ScreenSize screen = gEngine->GetRenderingDevice()->GetScreenSize();
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
 	{
-		const AABox& rect = kv.second.GetRect();
+		const AARect& rect = kv.second.GetRect();
 		float aspect = (rect.GetSize().X * screen.Width) / (rect.GetSize().Y * screen.Height);
 
 		CameraComponent* cameraCmp = kv.second.GetCamera();
@@ -29,6 +31,8 @@ void Poly::CameraSystem::CameraUpdatePhase(World* world)
 			cameraCmp->MVP = cameraCmp->Projection * cameraCmp->ModelView;
 		}
 		else
+		{
 			gConsole.LogError("Entity has camera component but no transform component!");
+		}
 	}
 }

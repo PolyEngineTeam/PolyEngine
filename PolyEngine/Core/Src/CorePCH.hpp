@@ -6,12 +6,15 @@
 #include "BasicMath.hpp"
 #include "Angle.hpp"
 #include "Vector.hpp"
+#include "Vector2f.hpp"
+#include "Vector2i.hpp"
 #include "Matrix.hpp"
 #include "Quaternion.hpp"
 #include "SimdMath.hpp"
 
 // Geometry
 #include "AABox.hpp"
+#include "AARect.hpp"
 
 // Memory
 #include "BaseObject.hpp"

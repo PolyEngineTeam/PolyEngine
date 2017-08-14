@@ -16,24 +16,13 @@ DEFINE_RESOURCE(SoundResource, gALSoundResourcesMap)
 
 ENGINE_DLLEXPORT String Poly::LoadTextFileRelative(eResourceSource Source, const String & path)
 {
-	static const String DEFAULT_PATH("../../Engine/Res/");
 	bool IsNotLoaded = true;
 
 	String FileContent;
-	Dynarray<String> Paths = gAssetsPathConfig.GetAssetsPaths(eResourceSource::ENGINE);
+	Dynarray<String> Paths = (Source == eResourceSource::NONE) ? Dynarray<String>{""} : gAssetsPathConfig.GetAssetsPaths(Source);
 	for (int i = 0; i < Paths.GetSize() && IsNotLoaded; ++i)
 	{
 		String AbsolutePath = Paths[i] + path;
-		if (FileExists(AbsolutePath))
-		{
-			FileContent = LoadTextFile(AbsolutePath);
-			IsNotLoaded = false;
-		}
-	}
-
-	if (IsNotLoaded)
-	{
-		String AbsolutePath = DEFAULT_PATH + path;
 		if (FileExists(AbsolutePath))
 		{
 			FileContent = LoadTextFile(AbsolutePath);

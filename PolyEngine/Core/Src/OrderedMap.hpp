@@ -36,7 +36,7 @@ namespace Poly {
 	public:
 		static constexpr size_t B = Bfactor;
 
-		/// <summary>Constructs a new, empty <c>BTreeMap<K, V, B></c>. The map will not allocate until elements are inserted into it. </summary>
+		/// <summary>Constructs a new, empty <c>OrderedMap<K, V, B></c>. The map will not allocate until elements are inserted into it. </summary>
 		OrderedMap() : root{nullptr, 0}, len(0) {}
 		OrderedMap(OrderedMap&& other) : root(other.root), len(other.len) { ::new(&other) OrderedMap(); }
 		OrderedMap(const OrderedMap& other) : OrderedMap() { for (auto kv : other) { TryInsert(kv.key, kv.value); } } //todo(vuko): can be implemented more efficiently
@@ -258,7 +258,7 @@ namespace Poly {
 			}
 		}
 
-		/// <see cref="BTreeMap::Entry()"/>
+		/// <see cref="OrderedMap::Entry()"/>
 		template<typename Key>
 		class MapEntry {
 		public:
@@ -539,7 +539,7 @@ namespace Poly {
 			KV operator->() { return operator*(); }
 		};
 
-		/// <see cref="BTreeMap::Keys()"/>
+		/// <see cref="OrderedMap::Keys()"/>
 		class Keys {
 			class Iter;
 		public:
@@ -572,7 +572,7 @@ namespace Poly {
 			const OrderedMap& map;
 		};
 
-		/// <see cref="BTreeMap::Values()"/>
+		/// <see cref="OrderedMap::Values()"/>
 		class ConstValues {
 			class Iter;
 		public:
@@ -605,7 +605,7 @@ namespace Poly {
 			const OrderedMap& map;
 		};
 
-		/// <see cref="BTreeMap::Values()"/>
+		/// <see cref="OrderedMap::Values()"/>
 		class Values {
 			class Iter;
 		public:

@@ -12,7 +12,7 @@ namespace Poly {
 		FreeFloatMovementComponent(float movementSpeed = 1.0f, float rotationSpeed = 1.0f);
 
 		float GetMovementSpeed() const { return MovementSpeed; }
-		float GetRotationSpeed() const { return RotationSpeed; }
+		float GetAngularVelocity() const { return RotationSpeed; }
 
 	private:
 		float MovementSpeed = 1.0f;

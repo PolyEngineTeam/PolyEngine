@@ -22,7 +22,7 @@ namespace Poly
 		/// <summary>Creates queue instance with provided capacity.</summary>
 		/// <param name="capacity"></param>
 		explicit Queue(size_t capacity) { Reserve(capacity); }
-		
+
 		/// <summary>Basic copy constructor</summary>
 		/// <param name="rhs">Reference to Queue instance which state should be copied.</param>
 		Queue(const Queue<T>& rhs) { Copy(rhs); }
@@ -94,11 +94,11 @@ namespace Poly
 		/// <summary>Checks whether queue is empty</summary>
 		/// <returns>True if is empty, false otherwise.</returns>
 		bool IsEmpty() const { return GetSize() == 0; }
-		
+
 		/// <summary>Returns current size of the queue</summary>
 		/// <returns>Size of the queue in objects count.</returns>
 		size_t GetSize() const { return Size; }
-		
+
 		/// <summary>
 		/// Returns current maximum capacity of the queue.
 		/// If the capacity is exceeded the queue will have to expand.
@@ -164,7 +164,7 @@ namespace Poly
 		/// <summary>Returns reference to the last element in queue.</summary>
 		/// <returns>Reference to the last element in queue.</returns>
 		T& Back() { HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!"); return Data[GetPrevIdx(Tail)]; };
-		
+
 		/// <summary>Returns const reference to the first element in queue.</summary>
 		/// <returns>Const reference to the first element in queue.</returns>
 		const T& Front() const { HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!"); return Data[Head]; };
@@ -203,7 +203,7 @@ namespace Poly
 			for (size_t i = 0; i < Size; ++i)
 				if (Data[GetNthIdx(i)] == rhs)
 					return GetNthIdx(i);
-			
+
 			return GetSize();
 		}
 
@@ -211,7 +211,7 @@ namespace Poly
 		void Realloc(size_t capacity)
 		{
 			HEAVY_ASSERTE(Size <= capacity, "Invalid resize capacity!");
-			T* newData = static_cast<T*>(DefaultAlloc(capacity * sizeof(T)));
+			T* newData = Allocate<T>(capacity);
 
 			// move all elements
 			for (size_t i = 0; i < Size; ++i)
@@ -221,14 +221,14 @@ namespace Poly
 				ObjectLifetimeHelper::Destroy(Data + oldIdx);
 			}
 
-			DefaultFree(Data);
+			Deallocate(Data);
 			Data = newData;
 			Capacity = capacity;
 			Head = 0;
 			Tail = Size;
 		}
 
-		void Free() { if (Data) DefaultFree(Data); }
+		void Free() { if (Data) Deallocate(Data); }
 
 		//------------------------------------------------------------------------------
 		void Copy(const Queue<T>& rhs)

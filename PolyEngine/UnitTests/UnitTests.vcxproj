@@ -127,9 +127,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\AABoxTests.cpp" />
+    <ClCompile Include="Src\AARectTests.cpp" />
     <ClCompile Include="Src\AllocatorTests.cpp" />
     <ClCompile Include="Src\AngleTests.cpp" />
-    <ClCompile Include="Src\BTreeMapTests.cpp" />
+    <ClCompile Include="Src\OrderedMapTests.cpp" />
     <ClCompile Include="Src\BasicMathTests.cpp" />
     <ClCompile Include="Src\DynarrayTests.cpp" />
     <ClCompile Include="Src\EnumUtilsTests.cpp" />
@@ -141,6 +142,8 @@
     <ClCompile Include="Src\ResourceManagerTests.cpp" />
     <ClCompile Include="Src\StringTests.cpp" />
     <ClCompile Include="Src\UnsafeStorageTests.cpp" />
+    <ClCompile Include="Src\Vector2fTests.cpp" />
+    <ClCompile Include="Src\Vector2iTests.cpp" />
     <ClCompile Include="Src\VectorTests.cpp" />
     <ClCompile Include="Src\TransformComponentTests.cpp" />
   </ItemGroup>

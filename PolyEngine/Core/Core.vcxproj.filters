@@ -61,6 +61,15 @@
     <ClCompile Include="Src\BinaryBuffer.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Vector2f.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Vector2i.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\AARect.cpp">
+      <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Dynarray.hpp">
@@ -149,6 +158,15 @@
     </ClInclude>
     <ClInclude Include="Src\BinaryBuffer.hpp">
       <Filter>Source Files\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Vector2f.hpp">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Vector2i.hpp">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\AARect.hpp">
+      <Filter>Source Files\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

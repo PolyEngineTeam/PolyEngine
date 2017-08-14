@@ -81,7 +81,7 @@ namespace Poly {
 			: Capacity(count), FreeBlockCount(count)
 		{
 			ASSERTE(count > 0, "Cell count cannot be lower than 1.");
-			Data = reinterpret_cast<Cell*>(DefaultAlloc(sizeof(Cell) * (Capacity + 1)));
+			Data = Allocate<Cell>(Capacity + 1);
 			NextFree = Data;
 			Head = Tail = Data + Capacity; // Head and tail point to the last element from pool which is reserved for linked list.
 			Head->Next = nullptr; // Reset next and prev pointers
@@ -94,7 +94,7 @@ namespace Poly {
 		virtual ~IterablePoolAllocator()
 		{
 			ASSERTE(Data, "Allocator is invalid");
-			DefaultFree(Data);
+			Deallocate(Data);
 			Data = nullptr;
 		}
 
@@ -124,7 +124,7 @@ namespace Poly {
 
 						//Cell* prev = ret - 1;
 						HEAVY_ASSERTE(prev->Next != nullptr, "prev is null");
-						
+
 						ret->Prev = prev;
 						ret->Next = prev->Next;
 						prev->Next->Prev = ret;

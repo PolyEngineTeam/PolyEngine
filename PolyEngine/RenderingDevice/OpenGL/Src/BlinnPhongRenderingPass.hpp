@@ -8,7 +8,7 @@ namespace Poly
 	class World;
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
-	class AABox;
+	class AARect;
 
 	//------------------------------------------------------------------------------
 	class BlinnPhongRenderingPass : public RenderingPassBase
@@ -17,6 +17,6 @@ namespace Poly
 		BlinnPhongRenderingPass();
 
 	protected:
-		void OnRun(World* world, const CameraComponent* camera, const AABox& rect) override;
+		void OnRun(World* world, const CameraComponent* camera, const AARect& rect) override;
 	};
 }

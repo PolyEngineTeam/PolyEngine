@@ -58,7 +58,7 @@ namespace Poly {
 
 		/// <summary>Returns square length of the vector.</summary>
 		/// <returns>Square length of the vector.</returns>
-		float Length2() const;
+		float LengthSquared() const;
 
 		/// <summary>Calculates dot product of two vectors.</summary>
 		/// <param name="rhs">The other vector.</param>

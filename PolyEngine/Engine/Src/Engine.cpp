@@ -6,11 +6,18 @@ using namespace Poly;
 Engine* Poly::gEngine = nullptr;
 
 //------------------------------------------------------------------------------
-Engine::Engine(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device) 
-	: Game(std::move(game)), RenderingDevice(std::move(device))
+Engine::Engine() 
+	: Game()
 {
 	ASSERTE(gEngine == nullptr, "Creating engine twice?");
 	gEngine = this;
+}
+
+void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device)
+{
+	Game = std::move(game);
+	RenderingDevice = std::move(device);
+	RenderingDevice->Init();
 	BaseWorld = std::make_unique<World>();
 	Game->RegisterEngine(this);
 
@@ -22,6 +29,12 @@ Engine::Engine(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> de
 	RegisterComponent<ScreenSpaceTextComponent>((size_t)eEngineComponents::SCREEN_SPACE_TEXT);
 	RegisterComponent<SoundEmitterComponent>((size_t)eEngineComponents::SOUND_EMMITER);
 	RegisterComponent<SoundListenerComponent>((size_t)eEngineComponents::SOUND_LISTENER);
+	RegisterComponent<RigidBody2DComponent>((size_t)eEngineComponents::RIGIDBODY_2D);
+	RegisterComponent<Box2DColliderComponent>((size_t)eEngineComponents::BOX2D_COLLIDER);
+	RegisterComponent<Circle2DColliderComponent>((size_t)eEngineComponents::CIRCLE2D_COLLIDER);
+	RegisterComponent<DirectionalLightSourceComponent>((size_t)eEngineComponents::DIRECTIONAL_LIGHTSOURCE);
+	RegisterComponent<PointLightSourceComponent>((size_t)eEngineComponents::POINT_LIGHTSOURCE);
+	RegisterComponent<PostprocessSettingsComponent>((size_t)eEngineComponents::POSTPROCESS_SETTINGS);
 
 	// Engine World Components
 	RegisterWorldComponent<InputWorldComponent>((size_t)eEngineWorldComponents::INPUT);
@@ -30,6 +43,8 @@ Engine::Engine(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> de
 	RegisterWorldComponent<DebugWorldComponent>((size_t)eEngineWorldComponents::DEBUG);
 	RegisterWorldComponent<DeferredTaskWorldComponent>((size_t)eEngineWorldComponents::DEFERRED_TASK);
 	RegisterWorldComponent<SoundWorldComponent>((size_t) eEngineWorldComponents::SOUND);
+	RegisterWorldComponent<Physics2DWorldComponent>((size_t)eEngineWorldComponents::PHYSICS_2D);
+	RegisterWorldComponent<DiffuseLightSourceWorldComponent>((size_t)eEngineWorldComponents::DIFFUSE_LIGHTSOURCE);
 
 	// Add WorldComponents
 	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(BaseWorld.get());
@@ -38,10 +53,14 @@ Engine::Engine(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> de
 	DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(BaseWorld.get());
 	DeferredTaskSystem::AddWorldComponentImmediate<SoundWorldComponent>(BaseWorld.get(), BaseWorld.get());
 	DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(BaseWorld.get());
+	Physics2DConfig physicsConfig;
+	DeferredTaskSystem::AddWorldComponentImmediate<Physics2DWorldComponent>(BaseWorld.get(), physicsConfig);
+	DeferredTaskSystem::AddWorldComponentImmediate<DiffuseLightSourceWorldComponent>(BaseWorld.get(), Color(1,1,1,1), 0.2f);
 
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(InputSystem::InputPhase, eUpdatePhaseOrder::PREUPDATE);
+	RegisterUpdatePhase(Physics2DSystem::Physics2DUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(MovementSystem::MovementUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(RenderingSystem::RenderingPhase, eUpdatePhaseOrder::POSTUPDATE);

@@ -63,6 +63,7 @@ namespace Poly
 			}
 
 			// Load the resource
+			gConsole.LogInfo("ResourceManager: Loading: {}", path);
 			T* resource = nullptr;
 			Dynarray<String> paths = (source == eResourceSource::NONE) ? Dynarray<String>({String()}) : gAssetsPathConfig.GetAssetsPaths(source);
 			for (int i = 0; i < paths.GetSize() && !resource; ++i)
