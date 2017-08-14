@@ -40,6 +40,25 @@ namespace Poly {
 				return *this;
 			}
 
+			OptionalBase(const OptionalBase& other) {
+				if (other.HasValue()) {
+					this->initialized = true;
+					::new(&this->Value()) V(other.Value());
+				} else {
+					this->initialized = false;
+				}
+			}
+			OptionalBase& operator=(const OptionalBase& other) {
+				if (other.HasValue()) {
+					this->initialized = true;
+					this->Value() = other.Value();
+				} else if (this->HasValue()) {
+					this->Value().~V();
+					this->initialized = false;
+				}
+				return *this;
+			}
+
 			bool HasValue() const { return initialized; }
 			operator bool() const { return HasValue(); }
 
@@ -94,6 +113,9 @@ namespace Poly {
 
 		Optional(Optional&& other) { this->value_storage = other.value_storage; other.value_storage = nullptr; }
 		Optional& operator=(Optional&& other) { this->value_storage = other.value_storage; other.value_storage = nullptr; return *this; }
+
+		Optional(const Optional& other) { this->value_storage = other.value_storage; }
+		Optional& operator=(const Optional& other) { this->value_storage = other.value_storage; return *this; }
 
 		bool HasValue() const  { return static_cast<bool>(value_storage); }
 		operator bool() const { return HasValue(); }
