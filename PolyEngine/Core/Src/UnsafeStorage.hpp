@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Defines.hpp"
+#include "ObjectLifetimeHelpers.hpp"
 
 namespace Poly {
 
@@ -31,7 +32,7 @@ namespace Poly {
 			ASSERTE(until <= N, "Higher bound is greater than maximum");
 			if (!std::is_trivially_destructible<T>::value) {
 				for (iterator it = begin() + from; it != begin() + until; ++it) {
-					it->~T();
+					ObjectLifetimeHelper::Destroy(&*it);
 				}
 			}
 		}
