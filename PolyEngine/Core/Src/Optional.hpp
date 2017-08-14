@@ -1,9 +1,11 @@
 #pragma once
 
 #include "Defines.hpp"
+#include "ObjectLifetimeHelpers.hpp"
 
 namespace Poly {
 	namespace Impl {
+		namespace Object = ObjectLifetimeHelper;
 
 		template<typename V>
 		class OptionalBase {
@@ -13,14 +15,14 @@ namespace Poly {
 			OptionalBase() : initialized(false), dummy{} {}
 			OptionalBase(const V&  value) : initialized(true), value_storage(value) {}
 			OptionalBase(      V&& value) : initialized(true), value_storage(std::move(value)) {}
-			~OptionalBase() { if (HasValue()) { Value().~V(); } }
+			~OptionalBase() { if (HasValue()) { Object::Destroy(&Value()); } }
 
 			OptionalBase(OptionalBase&& other) {
 				if (other.HasValue()) {
 					this->initialized = true;
-					::new(&this->Value()) V(std::move(other.Value()));
+					Object::MoveCreate(&this->Value(), std::move(other.Value()));
 
-					other.Value().~V();
+					Object::Destroy(&other.Value());
 					other.initialized = false;
 				} else {
 					this->initialized = false;
@@ -31,10 +33,10 @@ namespace Poly {
 					this->initialized = true;
 					this->Value() = std::move(other.Value());
 
-					other.Value().~V();
+					Object::Destroy(&other.Value());
 					other.initialized = false;
 				} else if (this->HasValue()) {
-					this->Value().~V();
+					Object::Destroy(&this->Value());
 					this->initialized = false;
 				}
 				return *this;
@@ -43,7 +45,7 @@ namespace Poly {
 			OptionalBase(const OptionalBase& other) {
 				if (other.HasValue()) {
 					this->initialized = true;
-					::new(&this->Value()) V(other.Value());
+					Object::CopyCreate(&this->Value(), other.Value());
 				} else {
 					this->initialized = false;
 				}
@@ -53,7 +55,7 @@ namespace Poly {
 					this->initialized = true;
 					this->Value() = other.Value();
 				} else if (this->HasValue()) {
-					this->Value().~V();
+					Object::Destroy(&this->Value());
 					this->initialized = false;
 				}
 				return *this;
@@ -72,7 +74,7 @@ namespace Poly {
 				V ret = std::move(value_storage);
 
 				initialized = false;
-				value_storage.~V();
+				Object::Destroy(&value_storage);
 
 				return ret;
 			}
