@@ -20,7 +20,7 @@ ENGINE_DLLEXPORT String Poly::LoadTextFileRelative(eResourceSource Source, const
 
 	String FileContent;
 	Dynarray<String> Paths = (Source == eResourceSource::NONE) ? Dynarray<String>{""} : gAssetsPathConfig.GetAssetsPaths(Source);
-	for (int i = 0; i < Paths.GetSize() && IsNotLoaded; ++i)
+	for (size_t i = 0; i < Paths.GetSize() && IsNotLoaded; ++i)
 	{
 		String AbsolutePath = Paths[i] + path;
 		if (FileExists(AbsolutePath))

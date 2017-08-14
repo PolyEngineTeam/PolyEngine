@@ -44,8 +44,6 @@ void GLTextFieldBufferDeviceProxy::SetContent(size_t count, const TextFieldLette
 
 	Size = count;
 
-	float x = 0;
-	float y = 0;
 	Dynarray<float> vboData(count * 36);
 	for (size_t i = 0; i < count; ++i)
 	{

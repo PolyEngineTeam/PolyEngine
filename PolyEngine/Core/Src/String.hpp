@@ -94,7 +94,7 @@ namespace Poly {
 		/// <param name="a">Char which should be replaced</param>
 		/// <param name="b">Char which should overwrite another char</param>
 		/// <returns>String instance witch replaced chars</returns>
-		String Replace(char a, char b) const;
+		String Replace(char what, char with) const;
 
 		/// <summary>Replaces all occurences of given String with another String</summary>
 		/// <param name="a">String reference which should be replaced</param>
@@ -183,7 +183,7 @@ namespace Poly {
 		/// <summary>Char access operator</summary>
 		/// <param name="idx">Index of the char to access</param>
 		/// <returns>Char from given index</returns>
-		char operator[](int idx) const;
+		char operator[](size_t idx) const;
 
 		size_t GetLength() const;
 		const char* GetCStr() const { return Data.GetData(); }

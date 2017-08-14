@@ -36,7 +36,7 @@ namespace Poly
 		}
 
 		// IMMEDIATE CALLS
-		
+
 		/// <summary>Creates entity immediately.</summary>
 		/// <param name="world">Pointer to world to create entity in.</summary>
 		UniqueID ENGINE_DLLEXPORT SpawnEntityImmediate(World* w);
@@ -69,7 +69,6 @@ namespace Poly
 		/// <param name="world">Pointer to world.</summary>
 		template<typename T> void RemoveWorldComponentImmediate(World* w)
 		{
-			DeferredTaskWorldComponent* cmp = w->GetWorldComponent<DeferredTaskWorldComponent>();
 			w->RemoveWorldComponent<T>();
 		}
 	}

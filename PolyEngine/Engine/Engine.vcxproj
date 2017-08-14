@@ -87,6 +87,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;$(SolutionDir)ThirdParty\Box2D\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -106,6 +107,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\Win32\assimp-vc140-mt.dl
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libvorbis\include;$(SolutionDir)ThirdParty\libogg\include;$(SolutionDir)ThirdParty\OpenAL\include;$(SolutionDir)ThirdParty\glew\include;$(SolutionDir)ThirdParty\SOIL\include;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\freetype\include;$(SolutionDir)Core\Src;$(SolutionDir)ThirdParty\Box2D\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -125,6 +127,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\x64\assimp-vc140-mt.dll 
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -148,6 +151,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\assimp\lib\Release\Win32\assimp-vc140-mt.dl
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>

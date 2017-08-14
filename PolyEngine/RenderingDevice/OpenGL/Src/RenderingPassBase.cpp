@@ -43,7 +43,7 @@ void Poly::RenderingPassBase::DebugDraw()
 {
 	if (FBO > 0)
 	{
-		size_t attachmentsCount = 0;
+		uint32_t attachmentsCount = 0;
 		for (auto& kv : GetOutputs())
 		{
 			if (kv.second->GetType() == eRenderingTargetType::TEXTURE_2D)
@@ -53,14 +53,14 @@ void Poly::RenderingPassBase::DebugDraw()
 		if (attachmentsCount == 0)
 			return;
 
-		size_t drawDivisor = std::max((size_t)3, attachmentsCount);
+		uint32_t drawDivisor = std::max(3u, attachmentsCount);
 		ScreenSize screenSize = gRenderingDevice->GetScreenSize();
-		size_t divH = screenSize.Height / drawDivisor;
+		uint32_t divH = screenSize.Height / drawDivisor;
 
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, FBO);
 
-		size_t count = 0;
+		uint32_t count = 0;
 		for (auto& kv : GetOutputs())
 		{
 			RenderingTargetBase* target = kv.second;
@@ -69,7 +69,7 @@ void Poly::RenderingPassBase::DebugDraw()
 			{
 				glReadBuffer(GL_COLOR_ATTACHMENT0 + count);
 				glBlitFramebuffer(0, 0, screenSize.Width, screenSize.Height,
-					0, count * divH, screenSize.Width / drawDivisor, (count + 1) * divH, 
+					0, count * divH, screenSize.Width / drawDivisor, (count + 1) * divH,
 					GL_COLOR_BUFFER_BIT, GL_LINEAR);
 				++count;
 			}
@@ -111,8 +111,7 @@ void RenderingPassBase::Run(World* world, const CameraComponent* camera, const A
 {
 	// Bind inputs
 	Program.BindProgram();
-	size_t samplerCount = 0;
-	GLuint tmp = 0;
+	uint32_t samplerCount = 0;
 	for (auto& kv : GetInputs())
 	{
 		const String& name = kv.first;
@@ -124,23 +123,21 @@ void RenderingPassBase::Run(World* world, const CameraComponent* camera, const A
 		case eRenderingTargetType::TEXTURE_2D:
 		{
 			GLuint textureID = static_cast<Texture2DRenderingTarget*>(target)->GetTextureID();
-			size_t idx = samplerCount++;
+			uint32_t idx = samplerCount++;
 			glActiveTexture(GL_TEXTURE0 + idx);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glBindTexture(GL_TEXTURE_2D, textureID);
 			Program.SetUniform(name, (int)idx);
-			tmp = textureID;
 			break;
 		}
 		case eRenderingTargetType::TEXTURE_2D_INPUT:
 		{
 			GLuint textureID = static_cast<Texture2DInputTarget*>(target)->GetTextureID();
-			size_t idx = samplerCount++;
+			uint32_t idx = samplerCount++;
 			glActiveTexture(GL_TEXTURE0 + idx);
 			glBindTexture(GL_TEXTURE_2D, textureID);
 			Program.SetUniform(name, (int)idx);
-			tmp = textureID;
 			break;
 		}
 		default:
@@ -151,7 +148,7 @@ void RenderingPassBase::Run(World* world, const CameraComponent* camera, const A
 
 	// bind outputs (by binding fbo)
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO);
-	
+
 	// call run implementation
 	OnRun(world, camera, rect);
 }
@@ -161,14 +158,14 @@ void RenderingPassBase::Finalize()
 {
 	if (GetOutputs().size() == 0)
 		return; // we want the default FBO == 0, which is the screen buffer
-	
+
 	ASSERTE(FBO == 0, "Calling finalize twice!");
 	glGenFramebuffers(1, &FBO);
 	ASSERTE(FBO > 0, "Failed to create FBO!");
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
 	bool foundDepth = false;
-	
+
 	Dynarray<GLenum> colorAttachements;
 	for (auto& kv : GetOutputs())
 	{
@@ -181,7 +178,7 @@ void RenderingPassBase::Finalize()
 		{
 			GLuint textureID = static_cast<Texture2DRenderingTarget*>(target)->GetTextureID();
 			size_t idx = Program.GetOutputsInfo().at(name).Index;
-			GLenum attachementIdx = GL_COLOR_ATTACHMENT0 + idx;
+			GLenum attachementIdx = GL_COLOR_ATTACHMENT0 + (uint32_t)idx;
 			glBindTexture(GL_TEXTURE_2D, textureID);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, attachementIdx, GL_TEXTURE_2D, textureID, 0);
 			colorAttachements.PushBack(attachementIdx);
@@ -203,7 +200,7 @@ void RenderingPassBase::Finalize()
 	}
 	ASSERTE(foundDepth, "Depth buffer not present when constructing FBO!");
 	CHECK_GL_ERR();
-	glDrawBuffers(colorAttachements.GetSize(), colorAttachements.GetData());
+	glDrawBuffers((GLsizei)colorAttachements.GetSize(), colorAttachements.GetData());
 	CHECK_GL_ERR();
 	CHECK_FBO_STATUS();
 
@@ -235,7 +232,7 @@ Poly::Texture2DRenderingTarget::Texture2DRenderingTarget(GLuint format)
 }
 
 Poly::Texture2DRenderingTarget::Texture2DRenderingTarget(GLuint format, eInternalTextureUsageType internalUsage)
-	: Format(format), InternalUsage(internalUsage)
+	: /*Format(format),*/ InternalUsage(internalUsage)
 {
 	ScreenSize size = gRenderingDevice->GetScreenSize();
 	Texture = std::make_unique<GLTextureDeviceProxy>(size.Width, size.Height, InternalUsage, format);

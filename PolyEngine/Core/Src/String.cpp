@@ -68,7 +68,7 @@ String String::From(const std::string& var) {
 	return String(var.c_str());
 }
 
-bool String::Contains(const String& var) const {
+bool String::Contains(const String& /*var*/) const {
 	ASSERTE(false, "Not impleented yet.");
 	//TODO Dynarray.FindAllIdx()
 	//for all this.Data.FindAllIdx()
@@ -81,28 +81,30 @@ bool String::Contains(char var) const {
 	return this->Data.FindIdx(var) != this->Data.GetSize();
 }
 
+//note: ASCII only
 String String::ToLower() const {
 	String s = String();
 	s.Data.Resize(this->Data.GetSize());
 
-	for (int i = 0; i < this->Data.GetSize(); i++) {
+	for (size_t i = 0; i < this->Data.GetSize(); i++) {
 		char c = this->Data[i];
-		if (c > 64 && c < 91) {
-			c += 32;
+		if (c >= 'A' && c <= 'Z') {
+			c += ('a' - 'A');
 		}
 		s.Data[i] = c;
 	}
 	return s;
 }
 
+//note: ASCII only
 String String::ToUpper() const {
 	String s = String();
 	s.Data.Resize(this->Data.GetSize());
 
-	for (int i = 0; i < this->Data.GetSize(); i++) {
+	for (size_t i = 0; i < this->Data.GetSize(); i++) {
 		char c = this->Data[i];
-		if (c > 96 && c < 123) {
-			c -= 32;
+		if (c >= 'a' && c <= 'z') {
+			c -= ('a' - 'A');
 		}
 		s.Data[i] = c;
 	}
@@ -113,18 +115,18 @@ bool String::IsEmpty() const {
 	return GetLength() == 0;
 }
 
-String String::Replace(char a, char b) const {
+String String::Replace(char what, char with) const {
 	String s = String(*this);
 	s.Data.Resize(this->Data.GetSize());
-	for (int i = 0; i < this->Data.GetSize(); i++) {
-		if (this->Data[i] == a) {
-			s.Data[i] = b;
+	for (size_t i = 0; i < this->Data.GetSize(); i++) {
+		if (this->Data[i] == what) {
+			s.Data[i] = with;
 		}
 	}
 	return s;
 }
 
-String String::Replace(const String& a, const String& b) const {
+String String::Replace(const String& /*what*/, const String& /*with*/) const {
 	ASSERTE(false, "Not implemented yet.");
 	//split source by delimiter a
 	//return string joined with separator b
@@ -150,7 +152,7 @@ Dynarray<String> String::Split(const String& delimiter) const {
 String String::Join(const String* vars, size_t size, const String& separator) {
 	//TODO replace using stringbuilder
 	String s = String("");
-	for (int i = 0; i < size; i++) {
+	for (size_t i = 0; i < size; i++) {
 		s = s + vars[i];
 		if (i != size - 1) {
 			s = s + separator;
@@ -162,7 +164,7 @@ String String::Join(const String* vars, size_t size, const String& separator) {
 String String::Join(const String* vars, size_t size, char separator) {
 	//TODO replace using stringbuilder
 	String s = String("");
-	for (int i = 0; i < size; i++) {
+	for (size_t i = 0; i < size; i++) {
 		s = s + vars[i];
 		if (i != size - 1) {
 			s = s + separator;
@@ -184,11 +186,10 @@ String String::Substring(size_t end) const {
 }
 
 String String::Substring(size_t start, size_t end) const {
-	ASSERTE(start >= 0 && end >= 0, "Start and end parameters cannot be negative");
 	ASSERTE(start <= end && end <= this->Data.GetSize(), "Invalid start or end parameter");
 	String s = String();
 	s.Data.Resize(end - start + 1);
-	for (int i = start; i < end; i++) {
+	for (size_t i = start; i < end; i++) {
 		s.Data[i-start] = this->Data[i];
 	}
 	s.Data[end - start] = 0;
@@ -196,13 +197,13 @@ String String::Substring(size_t start, size_t end) const {
 }
 
 String String::GetTrimmed() const {
-	int start = 0;
-	int end = this->GetLength();
+	size_t start = 0;
+	size_t end = this->GetLength();
 	String whitespaces = String(" \n\t\r");
 
 	while (whitespaces.Contains(this->Data[start])) {
 		++start;
-	}	
+	}
 	while (whitespaces.Contains(this->Data[end])) {
 		--end;
 	}
@@ -269,8 +270,8 @@ String String::operator+(char rhs) const {
 	return ret;
 }
 
-char String::operator[](int idx) const { 
-	HEAVY_ASSERTE(idx <= GetLength(), "Index out of bounds!"); 
+char String::operator[](size_t idx) const {
+	HEAVY_ASSERTE(idx <= GetLength(), "Index out of bounds!");
 	return Data[idx];
 }
 
@@ -281,7 +282,7 @@ size_t String::GetLength() const
 
 size_t String::FindSubstrFromPoint(size_t startPoint, const String& str) const
 {
-	for (int idx = startPoint; idx < GetLength(); ++idx)
+	for (size_t idx = startPoint; idx < GetLength(); ++idx)
 	{
 		size_t matchCount = 0;
 		while (matchCount < str.GetLength())

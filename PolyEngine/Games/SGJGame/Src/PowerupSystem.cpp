@@ -18,9 +18,9 @@ namespace SGJ
 	void PowerupSystem::ApplyPowerupsAndInput(World* world, PlayerControllerComponent* playerCmp)
 	{
 		Poly::RigidBody2DComponent* rbCmp = playerCmp->GetSibling<Poly::RigidBody2DComponent>();
-		double deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
+		//double deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
 		bool changedSize = false;
-		bool changedJumpHeight = false;
+		//bool changedJumpHeight = false;
 
 		ePowerup activePower = playerCmp->GetActivePowerup();
 		Poly::Vector move = playerCmp->GetMoveVector();
@@ -49,7 +49,7 @@ namespace SGJ
 			move.X *= 2;
 			speedConstraint *= 2;
 			break;
-		case(ePowerup::INCREASED_SIZE):	
+		case(ePowerup::INCREASED_SIZE):
 		case(ePowerup::DECREASED_SIZE):
 			changedSize = true;
 			break;
@@ -71,7 +71,7 @@ namespace SGJ
 		{
 			TransformComponent* transformCmp = playerCmp->GetSibling<TransformComponent>();
 			Circle2DColliderComponent* colliderCmp = playerCmp->GetSibling<Circle2DColliderComponent>();
-			 
+
 			Poly::Vector size;
 			float colliderRange;
 			if (activePower == ePowerup::INCREASED_SIZE)
@@ -100,8 +100,8 @@ namespace SGJ
 			transformCmp->SetLocalScale(size);
 			colliderCmp->SetSize(colliderRange);
 			rbCmp->SetDensity(playerCmp->GetDensityMultiplier());
-			
-			
+
+
 		}
 
 		//apply validated movement vector

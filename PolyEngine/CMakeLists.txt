@@ -105,6 +105,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "(Clang|^GNU$)")
 	add_compile_options(-pipe)
 	add_compile_options(-Wall)
 	add_compile_options(-Wextra)
+	add_compile_options(-Werror)
 	add_compile_options(-fvisibility=hidden)
 	add_compile_options($<$<STREQUAL:${CMAKE_GENERATOR},Ninja>:-fdiagnostics-color=always>)
 	add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:-g>)
@@ -118,6 +119,8 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	add_compile_options($<$<CONFIG:Release>:/DFINAL>)
 	if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
 		#add_compile_options(/Wall) #NOTE(vuko): too chatty when it comes to stdlib, enable on demand
+		add_compile_options(/W3) #warning level 3 (includes lower levels)
+		add_compile_options(/Wx) #treat warnings as errors
 		add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:/Zi>) #debug symbols
 		add_compile_options($<$<CONFIG:DebugFast>:/O1>)
 		add_compile_options($<$<OR:$<CONFIG:Testing>,$<CONFIG:Release>>:/Ox>) #max optimizations

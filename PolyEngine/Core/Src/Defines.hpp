@@ -19,17 +19,24 @@
 #if defined(_WIN32)
 	#pragma warning(disable: 4251)
 	#pragma warning(disable: 4275)
+	#define SILENCE_MSVC_WARNING(warning_id, reason) \
+		__pragma(warning(push))                      \
+		__pragma(warning(disable:warning_id))
+	#define UNSILENCE_MSVC_WARNING() __pragma(warning(pop))
+#else
+	#define SILENCE_MSVC_WARNING(unused_warning_id, unused_reason)
+	#define UNSILENCE_MSVC_WARNING()
 #endif
 
 #ifdef __GNUC__
 	#define IMPL_SAVE_WARNING_SETTINGS _Pragma("GCC diagnostic push")
 	#define IMPL_SILENCE_WARNING(w) _Pragma(#w)
-	#define SILENCE_GCC_WARNING(w)                     \
+	#define SILENCE_GCC_WARNING(w, reason)             \
 		IMPL_SAVE_WARNING_SETTINGS                     \
 		IMPL_SILENCE_WARNING(GCC diagnostic ignored #w)
 	#define UNSILENCE_GCC_WARNING() _Pragma("GCC diagnostic pop")
 #else
-	#define SILENCE_GCC_WARNING(unused)
+	#define SILENCE_GCC_WARNING(unused_w, unused_reason)
 	#define UNSILENCE_GCC_WARNING()
 #endif
 

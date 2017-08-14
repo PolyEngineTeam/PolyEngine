@@ -31,7 +31,7 @@ void SGJ::GameManagerSystem::LoadLevel(Poly::World* world, const Poly::String& p
 void SGJ::GameManagerSystem::Update(Poly::World* world)
 {
 	GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
-	
+
 	// Proces sound entities
 	for (size_t i=0; i < manager->SoundSampleEntities.GetSize();)
 	{
@@ -53,7 +53,7 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 	for (Physics2DWorldComponent::Collision col : world->GetWorldComponent<Physics2DWorldComponent>()->GetCollidingBodies(world->GetComponent<RigidBody2DComponent>(manager->Player)))
 	{
 		TileComponent* obstacle = col.rb->GetSibling<TileComponent>();
-		
+
 
 		if (!obstacle) continue;
 
@@ -153,6 +153,7 @@ Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Pol
 	case eTileType::SPIKESRIGHT:
 		meshTrans->SetLocalRotation(Quaternion(Vector::UNIT_Z, 90_deg) * Quaternion(Vector::UNIT_X, 90_deg));
 		break;
+	default:;
 	}
 	meshTrans->SetLocalScale(size);
 
@@ -169,7 +170,7 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	p->SpawnPoint = position;
 	TransformComponent* playerTrans = world->GetComponent<Poly::TransformComponent>(player);
 
-	DeferredTaskSystem::AddComponentImmediate<Poly::Circle2DColliderComponent>(world, player, 0.4);
+	DeferredTaskSystem::AddComponentImmediate<Poly::Circle2DColliderComponent>(world, player, 0.4f);
 	DeferredTaskSystem::AddComponentImmediate<Poly::RigidBody2DComponent>(world, player, world, eRigidBody2DType::DYNAMIC, 1.0f, 0.5f);
 	Poly::RigidBody2DComponent* rigidBody = world->GetComponent<Poly::RigidBody2DComponent>(player);
 	rigidBody->SetLinearDamping(3);
@@ -180,9 +181,9 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	Poly::TransformComponent* bodyTrans = world->GetComponent<Poly::TransformComponent>(body);
 	bodyTrans->SetParent(playerTrans);
 	//bodyTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
-	Vector correctedSize = Vector(0.4, 0.4, 0.1);
+	Vector correctedSize = Vector(0.4f, 0.4f, 0.1f);
 	bodyTrans->SetLocalScale(correctedSize);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, body, "Models/player.fbx", eResourceSource::GAME, Color(0, 1.5f, 0));
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, body, "Models/player.fbx", eResourceSource::GAME, Color(0.f, 1.5f, 0.f));
 
 	UniqueID playerLight = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, playerLight);
@@ -205,18 +206,16 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 	gameMgrCmp->CurrentLevelID = idx;
 
 	// calculate level center
-	gameMgrCmp->MinLevelWidth = level->Width;
-	gameMgrCmp->MaxLevelWidth = 0;
-	gameMgrCmp->MinLevelHeight = level->Height;
-	gameMgrCmp->MaxLevelHeight = 0;
-	float meanW = 0, meanH = 0;
-	size_t count = 0;
+	gameMgrCmp->MinLevelWidth = float(level->Width);
+	gameMgrCmp->MaxLevelWidth = 0.f;
+	gameMgrCmp->MinLevelHeight = float(level->Height);
+	gameMgrCmp->MaxLevelHeight = 0.f;
 	for (size_t idx = 0; idx < level->Tiles.GetSize(); ++idx)
 	{
 		if (level->Tiles[idx] != SGJ::eTileType::NOTHING)
 		{
-			size_t w = (idx % level->Width);
-			size_t h = (idx / level->Width);
+			auto w = float(size_t(idx % level->Width));
+			auto h = float(size_t(idx / level->Width));
 
 			if (w < gameMgrCmp->MinLevelWidth)
 				gameMgrCmp->MinLevelWidth = w;
@@ -229,8 +228,8 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 				gameMgrCmp->MaxLevelHeight = h;
 		}
 	}
-	meanW = (gameMgrCmp->MaxLevelWidth - gameMgrCmp->MinLevelWidth + 1)/2;
-	meanH = (gameMgrCmp->MaxLevelHeight - gameMgrCmp->MinLevelHeight + 1)/2;
+	float meanW = (gameMgrCmp->MaxLevelWidth - gameMgrCmp->MinLevelWidth + 1)/2;
+	float meanH = (gameMgrCmp->MaxLevelHeight - gameMgrCmp->MinLevelHeight + 1)/2;
 
 	gameMgrCmp->MinLevelWidth -= meanW;
 	gameMgrCmp->MaxLevelWidth -= meanW;
@@ -238,42 +237,42 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 	gameMgrCmp->MaxLevelHeight -= meanH;
 
 	// spawn level tiles
-	for (int idx = 0; idx < level->Tiles.GetSize(); ++idx)
+	for (size_t idx = 0; idx < level->Tiles.GetSize(); ++idx)
 	{
 		if (level->Tiles[idx] != SGJ::eTileType::NOTHING)
 		{
-			int posW = (idx % level->Width) - meanW;
-			int posH = (idx / level->Width) - meanH;
+			auto posW = float(int((idx % level->Width) - meanW));
+			auto posH = float(int((idx / level->Width) - meanH));
 
 			switch (level->Tiles[idx])
 			{
 			case eTileType::PLAYERSTARTPOS:
-				if (gameMgrCmp->Player)   
+				if (gameMgrCmp->Player)
 					PlayerUpdateSystem::ResetPlayer(world, Vector(posW, -posH, 0));
 				else
 					gameMgrCmp->Player = SpawnPlayer(world, Vector(posW, -posH, 0));
 				break;
 			case eTileType::PLAYERENDPOS:
-				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/cube.fbx", eRigidBody2DType::STATIC, Vector(0.5, 0.5, 0.5), Color(0, 0, 1.5f)));
+				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0.f), level->Tiles[idx], "Models/cube.fbx", eRigidBody2DType::STATIC, Vector(0.5f, 0.5f, 0.5f), Color(0.f, 0.f, 1.5f)));
 				break;
 
 			case eTileType::STATICGROUND:
 			case eTileType::RIGIDBODYGROUND:
-				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/cube.fbx",
-					level->Tiles[idx] == eTileType::STATICGROUND ? eRigidBody2DType::STATIC : eRigidBody2DType::DYNAMIC, 
-					level->Tiles[idx] == eTileType::STATICGROUND ? Vector(0.5, 0.5, 0.5) : Vector(0.4, 0.4, 0.4),
-					level->Tiles[idx] == eTileType::STATICGROUND ? Color(0.05, 0, 0.125) : Color(0.5, 0.5, 0.5)));
+				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0.f), level->Tiles[idx], "Models/cube.fbx",
+					level->Tiles[idx] == eTileType::STATICGROUND ? eRigidBody2DType::STATIC : eRigidBody2DType::DYNAMIC,
+					level->Tiles[idx] == eTileType::STATICGROUND ? Vector(0.5f, 0.5f, 0.5f) : Vector(0.4f, 0.4f, 0.4f),
+					level->Tiles[idx] == eTileType::STATICGROUND ? Color(0.05f, 0.f, 0.125f) : Color(0.5f, 0.5f, 0.5f)));
 				break;
 
 			case eTileType::SPIKESBOTTOM:
 			case eTileType::SPIKESTOP:
 			case eTileType::SPIKESLEFT:
 			case eTileType::SPIKESRIGHT:
-				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/spikes.fbx", eRigidBody2DType::STATIC, Vector(0.4, 0.4, 0.25), Color(1.2f, 0, 0)));
+				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0.f), level->Tiles[idx], "Models/spikes.fbx", eRigidBody2DType::STATIC, Vector(0.4f, 0.4f, 0.25f), Color(1.2f, 0.f, 0.f)));
 				break;
 
 			default:
-				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0), level->Tiles[idx], "Models/cube.fbx", eRigidBody2DType::STATIC, Vector(0.5, 0.5, 0.5), Color(0.25, 0, 0.125), false));
+				gameMgrCmp->LevelEntities.PushBack(CreateTileObject(world, Vector(posW, -posH, 0.f), level->Tiles[idx], "Models/cube.fbx", eRigidBody2DType::STATIC, Vector(0.5f, 0.5f, 0.5f), Color(0.25f, 0, 0.125f), false));
 				break;
 			}
 		}
@@ -297,7 +296,7 @@ void SGJ::GameManagerSystem::PlaySample(Poly::World* world, const String& file, 
 	Poly::TransformComponent* trans = world->GetComponent<Poly::TransformComponent>(id);
 	trans->SetLocalTranslation(position);
 	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(world, id, file, eResourceSource::GAME);
-	
+
 	SoundSystem::SetEmitterFrequency(world, id, pitch);
 	SoundSystem::SetEmitterGain(world, id, gain);
 	SoundSystem::PlayEmitter(world, id);
@@ -316,7 +315,7 @@ void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
 	Poly::TransformComponent* cameraTrans = gEngine->GetWorld()->GetComponent<Poly::TransformComponent>(gameMgrCmp->Camera);
 	cameraTrans->SetLocalTranslation(Vector(0, 0, 50.f));
 
-	// Set background 
+	// Set background
 	//double Time = gEngine->GetWorld()->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime();
 	//Background = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
 	//DeferredTaskSystem::AddComponentImmediate<Poly::BackgroundComponent>(gEngine->GetWorld(), Background, Time);

@@ -8,12 +8,12 @@ namespace Poly {
 
 	class GAME_DLLEXPORT GameManagerComponent : public ComponentBase
 	{
-		
+
 	public:
 
 		GameManagerComponent(const Poly::UniqueID& counter);
 		Poly::Dynarray<Poly::UniqueID>* GetDeadGameEntities() { return &DeadGameEntities; }
-		Poly::eKey const GetQuitKey() { return QuitKey; }
+		Poly::eKey GetQuitKey() const { return QuitKey; }
 		size_t GetKillCount() { return KillCount; }
 		Poly::UniqueID& GetKillCounter() { return KillCounter; }
 

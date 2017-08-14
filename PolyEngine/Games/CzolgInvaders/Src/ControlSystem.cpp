@@ -13,7 +13,7 @@ using namespace Poly;
 
 void ControlSystem::ControlSystemPhase(World* world)
 {
-	
+
 
 	GameManagerComponent* gameManager = nullptr;
 	double time = world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime();
@@ -70,15 +70,15 @@ void ControlSystem::ControlSystemPhase(World* world)
 		}
 
 		tank->MovedDistance += std::fabs(Invaders::MovementSystem::GetLinearVelocity(world, transform->GetOwnerID()).X * (float)deltaTime);
-		
+
 	}
-	
+
 	for (auto componentTuple : world->IterateComponents<Invaders::TankComponent, TransformComponent>())
 	{
-		TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
+		//TransformComponent* transform = std::get<TransformComponent*>(componentTuple);
 		Invaders::TankComponent* tank = std::get<Invaders::TankComponent*>(componentTuple);
 		TransformComponent* transformTurret = world->GetComponent<TransformComponent>(tank->Turret);
- 
+
 		if (tank->NextRotTime < time)
 		{
 			tank->NextRotTime = (float)time + 5.0f;
@@ -110,7 +110,7 @@ void ControlSystem::ControlSystemPhase(World* world)
 	}
 
 	Invaders::CollisionSystem::CollisionComponent* collider;
-	
+
 	for (auto tuple : world->IterateComponents<Invaders::CollisionSystem::CollisionComponent>())
 	{
 		collider = std::get<Invaders::CollisionSystem::CollisionComponent*>(tuple);
@@ -130,7 +130,7 @@ void ControlSystem::ControlSystemPhase(World* world)
 	CleanUpEnitites(gameManager, world);
 }
 
-void ControlSystem::SpawnBullet(GameManagerComponent* gameManager, World* world, const Vector& pos, const Vector& direction, float speed)
+void ControlSystem::SpawnBullet(GameManagerComponent* /*gameManager*/, World* world, const Vector& pos, const Vector& direction, float speed)
 {
 	auto bullet = DeferredTaskSystem::SpawnEntityImmediate(world);
 
@@ -155,5 +155,5 @@ void ControlSystem::CleanUpEnitites(GameManagerComponent* gameManager, World* wo
 	{
 		DeferredTaskSystem::DestroyEntity(world, ent);
 	}
-	gameManager->GetDeadGameEntities()->Clear();	
+	gameManager->GetDeadGameEntities()->Clear();
 }

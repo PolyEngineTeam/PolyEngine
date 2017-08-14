@@ -86,7 +86,7 @@ namespace Poly
 			POSTUPDATE,
 			_COUNT
 		};
-		
+
 		/// <summary>Registers engine components. Registers and creates world components.
 		/// Registers engine update phases and initializes game dbject. </summary>
 		/// <param name="game">Pointer to IGame instance.</param>
@@ -228,5 +228,5 @@ namespace Poly
 	ENGINE_DLLEXPORT extern Engine* gEngine;
 }
 
-#define DECLARE_GAME() extern "C" { DEVICE_DLLEXPORT Poly::IGame* POLY_STDCALL CreateGame(); }
+#define DECLARE_GAME() extern "C" { GAME_DLLEXPORT Poly::IGame* POLY_STDCALL CreateGame(); }
 #define DEFINE_GAME(type) Poly::IGame* POLY_STDCALL CreateGame() { return new type(); }

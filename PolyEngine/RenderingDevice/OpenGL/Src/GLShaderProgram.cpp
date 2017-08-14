@@ -1,7 +1,9 @@
 #include "GLShaderProgram.hpp"
 #include "GLUtils.hpp"
 
+SILENCE_MSVC_WARNING(4805, "Warning originates in std::regex");
 #include <regex>
+UNSILENCE_MSVC_WARNING()
 
 #include <ResourceManager.hpp>
 
@@ -90,7 +92,7 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 	if (shader == 0) {
 		ASSERTE(false, "Creation of shader failed!");
 	}
-	
+
 	ShaderCode[type] = LoadTextFileRelative(eResourceSource::ENGINE, shaderName);
 
 	const char *code = ShaderCode[type].GetCStr();
@@ -107,7 +109,7 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 		errorMessage.Resize(static_cast<size_t>(infoLogLength + 1));
 		glGetShaderInfoLog(shader, infoLogLength, NULL, &errorMessage[0]);
 		gConsole.LogError("Shader compilation: {}", std::string(&errorMessage[0]));
-		ASSERTE(false, "Shader compilation failed!");	
+		ASSERTE(false, "Shader compilation failed!");
 	}
 
 	glAttachShader(ProgramHandle, shader);
@@ -140,7 +142,7 @@ void GLShaderProgram::RegisterUniform(const String& type, const String& name)
 
 //------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, int val)
-{ 
+{
 	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
 	{
