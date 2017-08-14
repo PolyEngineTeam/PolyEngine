@@ -55,7 +55,23 @@ namespace Poly {
 
 	public:
 		/**
-		 * <summary>Gets the given key's corresponding entry in the map for in-place manipulation.</summary>
+		 * <summary>
+		 * Gets the given key's corresponding entry in the map for in-place manipulation.
+		 * Examples:
+		 * <code>
+		 * if (auto entry = map.Entry(key)) { //`if (auto entry = map.Entry(key); !entry.IsVacant())` in C++17
+		 * 	entry.Remove().DoStuffWithOldValue();
+		 * 	//or
+		 * 	entry.OccupiedInsert(newValue);
+		 * 	//or
+		 * 	entry.OccupiedGet().DoStuffWithValue();
+		 * } else {
+		 * 	entry.VacantInsert(value);
+		 * }
+		 *
+		 * map.Entry(key).OrInsert(Dynarray<int>()).PushBack(8);
+		 * </code>
+		 * </summary>
 		 * <param name="key"></param>
 		 * <returns>A view into a single entry in a map, which may either be vacant or occupied.</returns>
 		 * <seealso cref="MapEntry"/>
