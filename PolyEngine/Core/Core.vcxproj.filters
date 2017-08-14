@@ -90,7 +90,7 @@
     <ClInclude Include="Src\Angle.hpp">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Src\BTreeMap.hpp">
+    <ClInclude Include="Src\OrderedMap.hpp">
       <Filter>Source Files\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Src\BTreeNode.hpp">

@@ -20,7 +20,7 @@ namespace Poly {
 	 * If you do not need the elements to be ordered <see cref="HashMap<K, V>"/>, which is generally faster
 	 */
 	template<typename K, typename V, size_t Bfactor = 6>
-	class BTreeMap {
+	class OrderedMap {
 		static_assert(Bfactor > 1, "B factor must be greater than 1. Consider using a classic binary tree if you need a lesser value.");
 		using BTree    = Impl::BTree<K, V, Bfactor>;
 		using Root     = typename BTree::Root;
@@ -38,20 +38,20 @@ namespace Poly {
 
 	public:
 		/// <summary>Constructs a new, empty <c>BTreeMap<K, V, B></c>. The map will not allocate until elements are inserted into it. </summary>
-		BTreeMap() : root{nullptr, 0}, len(0) {}
-		BTreeMap(BTreeMap&& other) : root(other.root), len(other.len) { ::new(&other) BTreeMap(); }
-		BTreeMap(const BTreeMap& other) : BTreeMap() { for (auto kv : other) { TryInsert(kv.key, kv.value); } } //todo(vuko): can be implemented more efficiently
-		~BTreeMap() { if (root.node) { Clear(); delete root.node; } };
+		OrderedMap() : root{nullptr, 0}, len(0) {}
+		OrderedMap(OrderedMap&& other) : root(other.root), len(other.len) { ::new(&other) OrderedMap(); }
+		OrderedMap(const OrderedMap& other) : OrderedMap() { for (auto kv : other) { TryInsert(kv.key, kv.value); } } //todo(vuko): can be implemented more efficiently
+		~OrderedMap() { if (root.node) { Clear(); delete root.node; } };
 
 	public:
-		BTreeMap& operator=(BTreeMap&& other) {
-			this->~BTreeMap();
+		OrderedMap& operator=(OrderedMap&& other) {
+			this->OrderedMap();
 			this->root = other.root;
 			this->len  = other.len;
-			::new(&other) BTreeMap();
+			::new(&other) OrderedMap();
 			return *this;
 		}
-		BTreeMap& operator=(const BTreeMap& other) { this->~BTreeMap(); ::new(this) BTreeMap(other); return *this; }
+		OrderedMap& operator=(const OrderedMap& other) { this->OrderedMap(); ::new(this) OrderedMap(other); return *this; }
 
 	public:
 		/**
@@ -182,12 +182,12 @@ namespace Poly {
 		}
 
 	public:
-		ConstIterator cbegin() const { return {BTree::first_leaf_edge(const_cast<BTreeMap&>(*this).root.as_node_ref()), 0, GetSize()}; }
+		ConstIterator cbegin() const { return {BTree::first_leaf_edge(const_cast<OrderedMap&>(*this).root.as_node_ref()), 0, GetSize()}; }
 		ConstIterator cend() const {
 			if (root.node == nullptr) {
 				return cbegin();
 			}
-			return {BTree::last_leaf_edge(const_cast<BTreeMap&>(*this).root.as_node_ref()), GetSize(), GetSize()};
+			return {BTree::last_leaf_edge(const_cast<OrderedMap&>(*this).root.as_node_ref()), GetSize(), GetSize()};
 		}
 
 		ConstIterator begin() const { return cbegin(); }
@@ -208,7 +208,7 @@ namespace Poly {
 		ConstValues  Values() const { return {*this}; }
 
 		/// <summary>Swaps the contents of this map with the other map.</summary>
-		void Swap(BTreeMap& other) { std::swap(this->root, other.root); std::swap(this->len, other.len); }
+		void Swap(OrderedMap& other) { std::swap(this->root, other.root); std::swap(this->len, other.len); }
 
 	private:
 		template<typename Key>
@@ -244,7 +244,7 @@ namespace Poly {
 
 		template<typename Key>
 		Optional<const V&> get(Key&& key) const {
-			auto entry = const_cast<BTreeMap&>(*this).Entry(std::forward<Key>(key)); //note(vuko): using only const pathways down the line
+			auto entry = const_cast<OrderedMap&>(*this).Entry(std::forward<Key>(key)); //note(vuko): using only const pathways down the line
 			if (!entry.IsVacant()) {
 				return {entry.OccupiedGet()};
 			} else {
@@ -553,14 +553,14 @@ namespace Poly {
 		class Keys {
 			class Iter;
 		public:
-			Keys(const BTreeMap& map) : map(map) {}
+			Keys(const OrderedMap& map) : map(map) {}
 		public:
 			Iter cbegin() const { return {map.cbegin()}; }
 			Iter cend()   const { return {map.cend()  }; }
 			Iter begin()  const { return cbegin(); }
 			Iter end()    const { return cend(); }
 		private:
-			using ParentIter = typename BTreeMap::ConstIterator;
+			using ParentIter = typename OrderedMap::ConstIterator;
 			class Iter : public std::iterator<std::bidirectional_iterator_tag, K> {
 			public:
 				Iter(ParentIter iter) : iter(iter) {}
@@ -579,21 +579,21 @@ namespace Poly {
 				ParentIter iter;
 			};
 		private:
-			const BTreeMap& map;
+			const OrderedMap& map;
 		};
 
 		/// <see cref="BTreeMap::Values()"/>
 		class ConstValues {
 			class Iter;
 		public:
-			ConstValues(const BTreeMap& map) : map(map) {}
+			ConstValues(const OrderedMap& map) : map(map) {}
 		public:
 			Iter cbegin() const { return {map.cbegin()}; }
 			Iter cend()   const { return {map.cend()}; }
 			Iter begin()  const { return cbegin(); }
 			Iter end()    const { return cend(); }
 		private:
-			using ParentIter = typename BTreeMap::ConstIterator;
+			using ParentIter = typename OrderedMap::ConstIterator;
 			class Iter : public std::iterator<std::bidirectional_iterator_tag, V> {
 			public:
 				Iter(ParentIter iter) : iter(iter) {}
@@ -612,19 +612,19 @@ namespace Poly {
 				ParentIter iter;
 			};
 		private:
-			const BTreeMap& map;
+			const OrderedMap& map;
 		};
 
 		/// <see cref="BTreeMap::Values()"/>
 		class Values {
 			class Iter;
 		public:
-			Values(BTreeMap& map) : map(map) {}
+			Values(OrderedMap& map) : map(map) {}
 		public:
 			Iter begin() { return {map.begin()}; }
 			Iter end()   { return {map.end()}; }
 		private:
-			using ParentIter = typename BTreeMap::Iterator;
+			using ParentIter = typename OrderedMap::Iterator;
 			class Iter : public std::iterator<std::bidirectional_iterator_tag, V> {
 			public:
 				Iter(ParentIter iter) : iter(iter) {}
@@ -643,7 +643,7 @@ namespace Poly {
 				ParentIter iter;
 			};
 		private:
-			BTreeMap& map;
+			OrderedMap& map;
 		};
 
 	private:
@@ -705,4 +705,4 @@ namespace Poly {
 
 } //namespace Poly
 
-template<typename K, typename V, size_t B> void swap(Poly::BTreeMap<K, V, B>& lhs, Poly::BTreeMap<K, V, B>& rhs) { lhs.Swap(rhs); };
+template<typename K, typename V, size_t B> void swap(Poly::OrderedMap<K, V, B>& lhs, Poly::OrderedMap<K, V, B>& rhs) { lhs.Swap(rhs); };

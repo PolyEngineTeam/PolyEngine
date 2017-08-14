@@ -17,7 +17,7 @@ set(POLYCORE_H_FOR_IDE
 	Src/AABox.hpp
 	Src/Allocator.hpp
 	Src/Angle.hpp
-	Src/BTreeMap.hpp
+	Src/OrderedMap.hpp
 	Src/BTreeNode.hpp
 	Src/BaseObject.hpp
 	Src/BasicMath.hpp

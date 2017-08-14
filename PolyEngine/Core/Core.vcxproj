@@ -152,7 +152,7 @@
   <ItemGroup>
     <ClInclude Include="Src\Allocator.hpp" />
     <ClInclude Include="Src\Angle.hpp" />
-    <ClInclude Include="Src\BTreeMap.hpp" />
+    <ClInclude Include="Src\OrderedMap.hpp" />
     <ClInclude Include="Src\BTreeNode.hpp" />
     <ClInclude Include="Src\BaseObject.hpp" />
     <ClInclude Include="Src\BasicMath.hpp" />

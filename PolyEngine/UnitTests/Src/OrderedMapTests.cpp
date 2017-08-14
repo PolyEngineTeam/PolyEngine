@@ -1,16 +1,16 @@
 #include <catch.hpp>
 
-#include <BTreeMap.hpp>
+#include <OrderedMap.hpp>
 #include <Dynarray.hpp>
 #include <random>
 
 
 using namespace Poly;
 
-TEST_CASE("BTreeMap sorted insertion/lookup", "[BTreeMap]") {
+TEST_CASE("OrderedMap sorted insertion/lookup", "[OrderedMap]") {
 	constexpr size_t size = 1024;
 
-	BTreeMap<int, int> map;
+	OrderedMap<int, int> map;
 	for (int n = 0; n < int(size); ++n) {
 		auto previous = map.TryInsert(n, -n);
 		REQUIRE_FALSE(previous);
@@ -52,7 +52,7 @@ TEST_CASE("BTreeMap sorted insertion/lookup", "[BTreeMap]") {
 	}
 }
 
-TEST_CASE("BTreeMap random insertion/lookup", "[BTreeMap]") {
+TEST_CASE("OrderedMap random insertion/lookup", "[OrderedMap]") {
 	constexpr size_t size = 1024;
 
 	Dynarray<int> shuffled_input;
@@ -65,7 +65,7 @@ TEST_CASE("BTreeMap random insertion/lookup", "[BTreeMap]") {
 	std::mt19937 rng(mtSeed); //note(vuko): a single int is actually by far too little data to properly seed the Twister, but we don't care about proper randomness here
 	std::shuffle(shuffled_input.Begin(), shuffled_input.End(), rng);
 
-	BTreeMap<int, int> map;
+	OrderedMap<int, int> map;
 	for (int key : shuffled_input) {
 		int value = -key;
 		auto previous = map.TryInsert(key, value);
@@ -109,8 +109,8 @@ TEST_CASE("BTreeMap random insertion/lookup", "[BTreeMap]") {
 	}
 }
 
-TEST_CASE("BTreeMap clearing", "[BTreeMap]") {
-	BTreeMap<int, int> map;
+TEST_CASE("OrderedMap clearing", "[OrderedMap]") {
+	OrderedMap<int, int> map;
 
 	SECTION("Size: B") {
 		constexpr int size = decltype(map)::B;
@@ -149,7 +149,7 @@ TEST_CASE("BTreeMap clearing", "[BTreeMap]") {
 	}
 }
 
-TEST_CASE("BTree random removals", "[BTreeMap]") {
+TEST_CASE("BTree random removals", "[OrderedMap]") {
 	constexpr size_t size = 1024;
 
 	Dynarray<int> shuffled_input;
@@ -162,7 +162,7 @@ TEST_CASE("BTree random removals", "[BTreeMap]") {
 	std::mt19937 rng(mtSeed); //note(vuko): a single int is actually by far too little data to properly seed the Twister, but we don't care about proper randomness here
 	std::shuffle(shuffled_input.Begin(), shuffled_input.End(), rng);
 
-	BTreeMap<int, int> map;
+	OrderedMap<int, int> map;
 	for (int key : shuffled_input) {
 		int value = -key;
 		map.TryInsert(key, value);
@@ -209,7 +209,7 @@ TEST_CASE("BTree random removals", "[BTreeMap]") {
 	}
 }
 
-TEST_CASE("BTreeMap properly running destructors", "[BTreeMap]") {
+TEST_CASE("OrderedMap properly running destructors", "[OrderedMap]") {
 	//note(vuko): Valgrind + sanitizers (Mem/UB+Leak+Addr) detect no leaks, no uninitialized memory reads, no undefined behaviour.
 	//            Any bugs (if there are any at all) must lie somewhere deeper...
 	static size_t gCurrentInstances = 0; //counts living object at the given time
@@ -228,7 +228,7 @@ TEST_CASE("BTreeMap properly running destructors", "[BTreeMap]") {
 	};
 
 	constexpr size_t size = 1024;
-	BTreeMap<Counting, Counting> map;
+	OrderedMap<Counting, Counting> map;
 
 	SECTION("Linear insertion") {
 		for (size_t i = 0; i < size; ++i) {
@@ -284,12 +284,12 @@ TEST_CASE("BTreeMap properly running destructors", "[BTreeMap]") {
 	}
 }
 
-TEST_CASE("BTreeMap avoiding copies", "[BTreeMap]") {
-	//todo(vuko): test BTreeMap avoiding copies
+TEST_CASE("OrderedMap avoiding copies", "[OrderedMap]") {
+	//todo(vuko): test OrderedMap avoiding copies
 }
 
-TEST_CASE("BTreeMap bi-directional iteration", "[BTreeMap]") {
-	BTreeMap<int, int> map;
+TEST_CASE("OrderedMap bi-directional iteration", "[OrderedMap]") {
+	OrderedMap<int, int> map;
 	map.TryInsert(0, 0);
 	map.TryInsert(1, 0);
 	map.TryInsert(2, 0);
@@ -362,8 +362,8 @@ TEST_CASE("BTreeMap bi-directional iteration", "[BTreeMap]") {
 }
 
 
-TEST_CASE("Empty BTreeMap", "[BTreeMap]") {
-	BTreeMap<int, int> map;
+TEST_CASE("Empty OrderedMap", "[OrderedMap]") {
+	OrderedMap<int, int> map;
 
 	REQUIRE(map.Entry(0).IsVacant());
 	REQUIRE(map.Entry(0).IsVacant()); //check for any insertions
