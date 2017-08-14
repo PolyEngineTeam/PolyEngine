@@ -43,13 +43,13 @@ namespace Poly {
 		~OrderedMap() { if (root.node) { Clear(); delete root.node; } };
 
 		OrderedMap& operator=(OrderedMap&& other) {
-			this->OrderedMap();
+			this->~OrderedMap();
 			this->root = other.root;
 			this->len  = other.len;
 			::new(&other) OrderedMap();
 			return *this;
 		}
-		OrderedMap& operator=(const OrderedMap& other) { this->OrderedMap(); ::new(this) OrderedMap(other); return *this; }
+		OrderedMap& operator=(const OrderedMap& other) { this->~OrderedMap(); ::new(this) OrderedMap(other); return *this; }
 
 		/**
 		 * <summary>
