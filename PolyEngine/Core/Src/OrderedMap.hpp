@@ -36,14 +36,12 @@ namespace Poly {
 	public:
 		static constexpr size_t B = Bfactor;
 
-	public:
 		/// <summary>Constructs a new, empty <c>BTreeMap<K, V, B></c>. The map will not allocate until elements are inserted into it. </summary>
 		OrderedMap() : root{nullptr, 0}, len(0) {}
 		OrderedMap(OrderedMap&& other) : root(other.root), len(other.len) { ::new(&other) OrderedMap(); }
 		OrderedMap(const OrderedMap& other) : OrderedMap() { for (auto kv : other) { TryInsert(kv.key, kv.value); } } //todo(vuko): can be implemented more efficiently
 		~OrderedMap() { if (root.node) { Clear(); delete root.node; } };
 
-	public:
 		OrderedMap& operator=(OrderedMap&& other) {
 			this->OrderedMap();
 			this->root = other.root;
@@ -53,7 +51,6 @@ namespace Poly {
 		}
 		OrderedMap& operator=(const OrderedMap& other) { this->OrderedMap(); ::new(this) OrderedMap(other); return *this; }
 
-	public:
 		/**
 		 * <summary>
 		 * Gets the given key's corresponding entry in the map for in-place manipulation.
@@ -181,7 +178,6 @@ namespace Poly {
 			root = {new_root_to_be, 0};
 		}
 
-	public:
 		ConstIterator cbegin() const { return {BTree::first_leaf_edge(const_cast<OrderedMap&>(*this).root.as_node_ref()), 0, GetSize()}; }
 		ConstIterator cend() const {
 			if (root.node == nullptr) {
@@ -262,7 +258,6 @@ namespace Poly {
 			}
 		}
 
-	private:
 		/// <see cref="BTreeMap::Entry()"/>
 		template<typename Key>
 		class MapEntry {
@@ -270,10 +265,8 @@ namespace Poly {
 			static MapEntry Vacant  (KVERef kv_ref, size_t& len, Key&& key) { return MapEntry(kv_ref, len, std::forward<Key>(key)); }
 			static MapEntry Occupied(KVERef kv_ref, size_t& len)            { return MapEntry(kv_ref, len); }
 
-		public:
 			MapEntry(MapEntry&&) = default;
 
-		public:
 			/// <returns>True if the entry is vacant.</returns>
 			bool IsVacant() const { return static_cast<bool>(key); }
 			operator bool() const { return !IsVacant(); }
@@ -442,17 +435,14 @@ namespace Poly {
 				return old;
 			}
 
-		private:
 			MapEntry(KVERef kv_ref, size_t& len, Key&& key) : key(std::forward<Key>(key)), kv_ref(kv_ref), map_len(len) {}
 			MapEntry(KVERef kv_ref, size_t& len)            : key{},                       kv_ref(kv_ref), map_len(len) {}
 
-		private:
 			Optional<Key> key;
 			KVERef  kv_ref;
 			size_t& map_len;
 		};
 
-	private:
 		struct ConstKV {
 			const K& key;
 			const V& value;
@@ -474,10 +464,10 @@ namespace Poly {
 						}
 					}
 				}
-		public:
+
 			bool operator==(const IteratorBase& other) const { return this->current == other.current; }
 			bool operator!=(const IteratorBase& other) const { return !(*this == other); }
-		public:
+
 			IteratorBase& operator++() { next_backward = current; current = next(); return *this; }
 			IteratorBase& operator--() { next_forward  = current; current = prev(); return *this; }
 			IteratorBase operator++(int) { IteratorBase ret(current, position, map_len); operator++(); return ret; }
@@ -554,7 +544,7 @@ namespace Poly {
 			class Iter;
 		public:
 			Keys(const OrderedMap& map) : map(map) {}
-		public:
+
 			Iter cbegin() const { return {map.cbegin()}; }
 			Iter cend()   const { return {map.cend()  }; }
 			Iter begin()  const { return cbegin(); }
@@ -564,13 +554,13 @@ namespace Poly {
 			class Iter : public std::iterator<std::bidirectional_iterator_tag, K> {
 			public:
 				Iter(ParentIter iter) : iter(iter) {}
-			public:
+
 				bool operator==(const Iter& other) const { return this->iter == other.iter; }
 				bool operator!=(const Iter& other) const { return !(*this == other); }
-			public:
+
 				const K& operator*()  { return iter->key; }
 				const K& operator->() { return operator*(); }
-			public:
+
 				Iter& operator++() { ++(iter); return *this; }
 				Iter& operator--() { --(iter); return *this; }
 				Iter operator++(int) { Iter ret(iter); operator++(); return ret; }
@@ -578,7 +568,7 @@ namespace Poly {
 			private:
 				ParentIter iter;
 			};
-		private:
+
 			const OrderedMap& map;
 		};
 
@@ -587,7 +577,7 @@ namespace Poly {
 			class Iter;
 		public:
 			ConstValues(const OrderedMap& map) : map(map) {}
-		public:
+
 			Iter cbegin() const { return {map.cbegin()}; }
 			Iter cend()   const { return {map.cend()}; }
 			Iter begin()  const { return cbegin(); }
@@ -597,21 +587,21 @@ namespace Poly {
 			class Iter : public std::iterator<std::bidirectional_iterator_tag, V> {
 			public:
 				Iter(ParentIter iter) : iter(iter) {}
-			public:
+
 				bool operator==(const Iter& other) const { return this->iter == other.iter; }
 				bool operator!=(const Iter& other) const { return !(*this == other); }
-			public:
+
 				Iter& operator++() { ++(iter); return *this; }
 				Iter& operator--() { --(iter); return *this; }
 				Iter operator++(int) { Iter ret(iter); operator++(); return ret; }
 				Iter operator--(int) { Iter ret(iter); operator--(); return ret; }
-			public:
+
 				const V& operator*()  { return iter->value; }
 				const V& operator->() { return operator*(); }
 			private:
 				ParentIter iter;
 			};
-		private:
+
 			const OrderedMap& map;
 		};
 
@@ -620,7 +610,7 @@ namespace Poly {
 			class Iter;
 		public:
 			Values(OrderedMap& map) : map(map) {}
-		public:
+
 			Iter begin() { return {map.begin()}; }
 			Iter end()   { return {map.end()}; }
 		private:
@@ -628,25 +618,24 @@ namespace Poly {
 			class Iter : public std::iterator<std::bidirectional_iterator_tag, V> {
 			public:
 				Iter(ParentIter iter) : iter(iter) {}
-			public:
+
 				bool operator==(const Iter& other) const { return this->iter == other.iter; }
 				bool operator!=(const Iter& other) const { return !(*this == other); }
-			public:
+
 				Iter& operator++() { ++(iter); return *this; }
 				Iter& operator--() { --(iter); return *this; }
 				Iter operator++(int) { Iter ret(iter); operator++(); return ret; }
 				Iter operator--(int) { Iter ret(iter); operator--(); return ret; }
-			public:
+
 				V& operator*()  { return iter->value; }
 				V& operator->() { return operator*(); }
 			private:
 				ParentIter iter;
 			};
-		private:
+
 			OrderedMap& map;
 		};
 
-	private:
 		struct SearchResult {
 			enum { FOUND, DESCEND, FAILED = DESCEND } result;
 			KVERef handle;
@@ -698,7 +687,6 @@ namespace Poly {
 
 		static SearchResult search_binary(NodeRef node_ref, const K& search_key);
 
-	private:
 		Root root;
 		size_t len;
 	};

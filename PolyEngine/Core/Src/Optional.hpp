@@ -9,13 +9,12 @@ namespace Poly {
 		class OptionalBase {
 		public:
 			using ValueType = V;
-		public:
+
 			OptionalBase() : initialized(false), dummy{} {}
 			OptionalBase(const V&  value) : initialized(true), value_storage(value) {}
 			OptionalBase(      V&& value) : initialized(true), value_storage(std::move(value)) {}
 			~OptionalBase() { if (HasValue()) { Value().~V(); } }
 
-		public:
 			OptionalBase(OptionalBase&& other) {
 				if (other.HasValue()) {
 					this->initialized = true;
@@ -41,16 +40,13 @@ namespace Poly {
 				return *this;
 			}
 
-		public:
 			bool HasValue() const { return initialized; }
 			operator bool() const { return HasValue(); }
 
-		public:
 			const V&  Value() const& { ASSERTE(HasValue(), "Attempting to get a value from an empty optional"); return value_storage; }
 			      V&  Value() &      { ASSERTE(HasValue(), "Attempting to get a value from an empty optional"); return value_storage; }
 			      V&& Value() &&     { ASSERTE(HasValue(), "Attempting to get a value from an empty optional"); return std::move(value_storage); }
 
-		public:
 			V TakeValue() {
 				ASSERTE(HasValue(), "Attempting to take a value from an empty optional");
 
@@ -62,7 +58,6 @@ namespace Poly {
 				return ret;
 			}
 
-		public:
 			V ValueOr(V&& fallback) const &  { if (HasValue()) { return Value(); } return fallback; } //todo(vuko): do not copy when possible
 			V ValueOr(V&& fallback) const && { if (HasValue()) { return std::move(Value()); } return fallback; }
 
@@ -92,27 +87,22 @@ namespace Poly {
 	class Optional<V&> {
 	public:
 		using ValueType = V&;
-	public:
+
 		Optional() : value_storage(nullptr) {}
 		Optional(V& value) : value_storage(&value) {}
 		~Optional() = default;
 
-	public:
 		Optional(Optional&& other) { this->value_storage = other.value_storage; other.value_storage = nullptr; }
 		Optional& operator=(Optional&& other) { this->value_storage = other.value_storage; other.value_storage = nullptr; return *this; }
 
-	public:
 		bool HasValue() const  { return static_cast<bool>(value_storage); }
 		operator bool() const { return HasValue(); }
 
-	public:
 		const V&  Value() const& { ASSERTE(HasValue(), "Attempting to get a value from an empty optional"); return *value_storage; }
 		      V&  Value() &      { ASSERTE(HasValue(), "Attempting to get a value from an empty optional"); return *value_storage; }
 
-	public:
 		V& TakeValue() { ASSERTE(HasValue(), "Attempting to take a value from an empty optional"); V& ret = *value_storage; value_storage = nullptr; return ret; }
 
-	public:
 		V ValueOr(V&& fallback) const &  { if (HasValue()) { return *Value(); } return fallback; }
 		V ValueOr(V&& fallback) const && { if (HasValue()) { return std::move(*Value()); } return fallback; }
 
