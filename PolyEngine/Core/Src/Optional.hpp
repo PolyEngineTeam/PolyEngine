@@ -42,25 +42,6 @@ namespace Poly {
 				return *this;
 			}
 
-			OptionalBase(const OptionalBase& other) {
-				if (other.HasValue()) {
-					this->initialized = true;
-					Object::CopyCreate(&this->Value(), other.Value());
-				} else {
-					this->initialized = false;
-				}
-			}
-			OptionalBase& operator=(const OptionalBase& other) {
-				if (other.HasValue()) {
-					this->initialized = true;
-					this->Value() = other.Value();
-				} else if (this->HasValue()) {
-					Object::Destroy(&this->Value());
-					this->initialized = false;
-				}
-				return *this;
-			}
-
 			bool HasValue() const { return initialized; }
 			operator bool() const { return HasValue(); }
 
@@ -82,7 +63,7 @@ namespace Poly {
 			V ValueOr(V&& fallback) const &  { if (HasValue()) { return Value(); } return fallback; } //todo(vuko): do not copy when possible
 			V ValueOr(V&& fallback) const && { if (HasValue()) { return std::move(Value()); } return fallback; }
 
-		private:
+		protected:
 			bool initialized;
 			union {
 				V value_storage;
@@ -94,14 +75,40 @@ namespace Poly {
 	template<typename V>
 	class Optional : public Impl::OptionalBase<V> {
 	public:
+		Optional() : Impl::OptionalBase<V>() {} //note(vuko): work around older compilers not importing default constructor from the base class
 		using Impl::OptionalBase<V>::OptionalBase;
+		using Impl::OptionalBase<V>::initialized;
+
+		Optional(Optional&& other) : Impl::OptionalBase<V>(std::move(other)) {} //note(vuko): another workaround
+
+		Optional(const Optional& other) : Impl::OptionalBase<V>() {
+			namespace Object = ObjectLifetimeHelper;
+			if (other.HasValue()) {
+				this->initialized = true;
+				Object::CopyCreate(&this->Value(), other.Value());
+			} else {
+				this->initialized = false;
+			}
+		}
+		Optional& operator=(const Optional& other) {
+			namespace Object = ObjectLifetimeHelper;
+			if (other.HasValue()) {
+				this->initialized = true;
+				this->Value() = other.Value();
+			} else if (this->HasValue()) {
+				Object::Destroy(&this->Value());
+				this->initialized = false;
+			}
+			return *this;
+		}
 	};
 
 	template<typename V>
 	class Optional<V&&> : public Impl::OptionalBase<V> {
 	public:
+		Optional() : Impl::OptionalBase<V>() {} //note(vuko): see above
 		using Impl::OptionalBase<V>::OptionalBase;
-		Optional(const V&) = delete; //note(vuko): prevent copying
+		Optional(const V&) = delete; //note(vuko): prevent copying value in
 	};
 
 	template<typename V>

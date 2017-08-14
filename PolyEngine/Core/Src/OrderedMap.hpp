@@ -436,7 +436,7 @@ namespace Poly {
 			}
 
 			MapEntry(KVERef kv_ref, size_t& len, Key&& key) : key(std::forward<Key>(key)), kv_ref(kv_ref), map_len(len) {}
-			MapEntry(KVERef kv_ref, size_t& len)            : key{},                       kv_ref(kv_ref), map_len(len) {}
+			MapEntry(KVERef kv_ref, size_t& len)            : key(),                       kv_ref(kv_ref), map_len(len) {}
 
 			Optional<Key> key;
 			KVERef  kv_ref;
