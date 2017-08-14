@@ -40,8 +40,8 @@ namespace Poly {
 		/// <summary>Constructs a new, empty <c>BTreeMap<K, V, B></c>. The map will not allocate until elements are inserted into it. </summary>
 		BTreeMap() : root{nullptr, 0}, len(0) {}
 		BTreeMap(BTreeMap&& other) : root(other.root), len(other.len) { ::new(&other) BTreeMap(); }
-		BTreeMap(const BTreeMap& other) : BTreeMap() { for (auto kv : other) { this->TryInsert(kv.key, kv.value); } } //todo(vuko): can be implemented more efficiently
-		~BTreeMap() { if (this->root.node) { this->Clear(); delete this->root.node; } };
+		BTreeMap(const BTreeMap& other) : BTreeMap() { for (auto kv : other) { TryInsert(kv.key, kv.value); } } //todo(vuko): can be implemented more efficiently
+		~BTreeMap() { if (root.node) { Clear(); delete root.node; } };
 
 	public:
 		BTreeMap& operator=(BTreeMap&& other) {
@@ -76,8 +76,8 @@ namespace Poly {
 		 * <returns>A view into a single entry in a map, which may either be vacant or occupied.</returns>
 		 * <seealso cref="MapEntry"/>
 		 */
-		MapEntry<const K& > Entry(const K&  key) { return this->entry(key); }
-		MapEntry<      K&&> Entry(      K&& key) { return this->entry(std::move(key)); }
+		MapEntry<const K& > Entry(const K&  key) { return entry(key); }
+		MapEntry<      K&&> Entry(      K&& key) { return entry(std::move(key)); }
 
 		/**
 		 * <summary>Inserts a key-value pair into the map. Updates the value if the key was already present.</summary>
@@ -86,64 +86,64 @@ namespace Poly {
 		 * <returns>The old value if it was present.</returns>
 		 * <remarks>The key is not updated. This may matter for types that can be equal without being identical.</remarks>
 		 */
-		Optional<V> TryInsert(const K&  key, const V&  value) { return this->insert(          key ,           value ); }
-		Optional<V> TryInsert(const K&  key,       V&& value) { return this->insert(          key , std::move(value)); }
-		Optional<V> TryInsert(      K&& key, const V&  value) { return this->insert(std::move(key),           value ); }
-		Optional<V> TryInsert(      K&& key,       V&& value) { return this->insert(std::move(key), std::move(value)); }
+		Optional<V> TryInsert(const K&  key, const V&  value) { return insert(          key ,           value ); }
+		Optional<V> TryInsert(const K&  key,       V&& value) { return insert(          key , std::move(value)); }
+		Optional<V> TryInsert(      K&& key, const V&  value) { return insert(std::move(key),           value ); }
+		Optional<V> TryInsert(      K&& key,       V&& value) { return insert(std::move(key), std::move(value)); }
 
 		/**
 		 * <summary>Inserts a key-value pair into the map. Panics if the key was already present.</summary>
 		 * <param name="key"></param>
 		 * <param name="value"></param>
 		 */
-		void Insert(const K&  key, const V&  value) { auto entry = this->Entry(          key ); ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(          value) ; }
-		void Insert(const K&  key,       V&& value) { auto entry = this->Entry(          key) ; ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(std::move(value)); }
-		void Insert(      K&& key, const V&  value) { auto entry = this->Entry(std::move(key)); ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(          value) ; }
-		void Insert(      K&& key,       V&& value) { auto entry = this->Entry(std::move(key)); ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(std::move(value)); }
+		void Insert(const K&  key, const V&  value) { auto entry = Entry(          key ); ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(          value) ; }
+		void Insert(const K&  key,       V&& value) { auto entry = Entry(          key) ; ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(std::move(value)); }
+		void Insert(      K&& key, const V&  value) { auto entry = Entry(std::move(key)); ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(          value) ; }
+		void Insert(      K&& key,       V&& value) { auto entry = Entry(std::move(key)); ASSERTE(entry.IsVacant(), "Key already present in the map!"); entry.VacantInsert(std::move(value)); }
 
 		/**
 		 * <summary>Removes a key from the map.</summary>
 		 * <param name="key"></param>
 		 * <returns>Value at key if it was present in the map.</returns>
 		 */
-		Optional<V> TryRemove(const K&  key) { return this->remove(key); }
-		Optional<V> TryRemove(      K&& key) { return this->remove(std::move(key)); }
+		Optional<V> TryRemove(const K&  key) { return remove(key); }
+		Optional<V> TryRemove(      K&& key) { return remove(std::move(key)); }
 
 		/**
 		 * <summary>Removes a key from the map. Panics if the key is not present in the map.</summary>
 		 * <param name="key"></param>
 		 * <returns>Value at key.</returns>
 		 */
-		V Remove(const K&  key) { auto entry = this->Entry(          key ); ASSERTE(!entry.IsVacant(), "Key not present in the map!"); return entry.Remove(); }
-		V Remove(      K&& key) { auto entry = this->Entry(std::move(key)); ASSERTE(!entry.IsVacant(), "Key not present in the map!"); return entry.Remove(); }
+		V Remove(const K&  key) { auto entry = Entry(          key ); ASSERTE(!entry.IsVacant(), "Key not present in the map!"); return entry.Remove(); }
+		V Remove(      K&& key) { auto entry = Entry(std::move(key)); ASSERTE(!entry.IsVacant(), "Key not present in the map!"); return entry.Remove(); }
 
 		/**
 		 * <summary>Get a reference to the value at key.</summary>
 		 * <param name="key"></param>
 		 * <returns>The reference if the keys is in the map.</returns>
 		 */
-		Optional<V&> Get(const K&  key) { return this->get(key); }
-		Optional<V&> Get(      K&& key) { return this->get(std::move(key)); }
-		Optional<const V&> Get(const K&  key) const { return this->get(key); }
-		Optional<const V&> Get(      K&& key) const { return this->get(std::move(key)); }
+		Optional<V&> Get(const K&  key) { return get(key); }
+		Optional<V&> Get(      K&& key) { return get(std::move(key)); }
+		Optional<const V&> Get(const K&  key) const { return get(key); }
+		Optional<const V&> Get(      K&& key) const { return get(std::move(key)); }
 
-		const V& operator[](const K& key) const { return this->Get(key).Value(); }
-		      V& operator[](const K& key)       { return this->Get(key).Value(); }
+		const V& operator[](const K& key) const { return Get(key).Value(); }
+		      V& operator[](const K& key)       { return Get(key).Value(); }
 
 		/// <returns>The number of elements in the map.</returns>
-		size_t GetSize() const { return this->len; };
+		size_t GetSize() const { return len; };
 		/// <returns>True if the map contains no elements.</returns>
-		bool IsEmpty() const { return this->GetSize() == 0; };
+		bool IsEmpty() const { return GetSize() == 0; };
 
 		/// <summary>Clears the map, removing all elements. Frees all memory except the root node.</summary>
 		void Clear() {
-			if (this->root.node == nullptr) {
+			if (root.node == nullptr) {
 				return;
 			}
 
-			KVERef current = BTree::first_leaf_edge(this->root.as_node_ref());
-			while (this->len) {
-				this->len -= 1;
+			KVERef current = BTree::first_leaf_edge(root.as_node_ref());
+			while (len) {
+				len -= 1;
 				if (current.idx < current.node_ref.node->len) {
 					current = KVERef{current.node_ref, current.idx + 1};
 					continue;
@@ -178,27 +178,27 @@ namespace Poly {
 			new_root_to_be->~LeafNode();
 			::new(new_root_to_be) LeafNode();
 
-			this->root = {new_root_to_be, 0};
+			root = {new_root_to_be, 0};
 		}
 
 	public:
-		ConstIterator cbegin() const { return {BTree::first_leaf_edge(const_cast<BTreeMap&>(*this).root.as_node_ref()), 0, this->GetSize()}; }
+		ConstIterator cbegin() const { return {BTree::first_leaf_edge(const_cast<BTreeMap&>(*this).root.as_node_ref()), 0, GetSize()}; }
 		ConstIterator cend() const {
-			if (this->root.node == nullptr) {
-				return this->cbegin();
+			if (root.node == nullptr) {
+				return cbegin();
 			}
-			return {BTree::last_leaf_edge(const_cast<BTreeMap&>(*this).root.as_node_ref()), this->GetSize(), this->GetSize()};
+			return {BTree::last_leaf_edge(const_cast<BTreeMap&>(*this).root.as_node_ref()), GetSize(), GetSize()};
 		}
 
-		ConstIterator begin() const { return this->cbegin(); }
-		ConstIterator end()   const { return this->cend();   }
+		ConstIterator begin() const { return cbegin(); }
+		ConstIterator end()   const { return cend();   }
 
-		Iterator begin() { return {BTree::first_leaf_edge(this->root.as_node_ref()), 0, this->GetSize()}; }
+		Iterator begin() { return {BTree::first_leaf_edge(root.as_node_ref()), 0, GetSize()}; }
 		Iterator end() {
-			if (this->root.node == nullptr) {
-				return this->begin();
+			if (root.node == nullptr) {
+				return begin();
 			}
-			return {BTree::last_leaf_edge(this->root.as_node_ref()), this->GetSize(), this->GetSize()};
+			return {BTree::last_leaf_edge(root.as_node_ref()), GetSize(), GetSize()};
 		}
 
 		/// <returns>A range over the keys of the map, in sorted order.</returns>
@@ -213,17 +213,17 @@ namespace Poly {
 	private:
 		template<typename Key>
 		MapEntry<Key&&> entry(Key&& key) {
-			const auto search_result = search_tree(this->root.as_node_ref(), key);
+			const auto search_result = search_tree(root.as_node_ref(), key);
 			switch (search_result.result) {
-				case SearchResult::FOUND:  return MapEntry<Key&&>::Occupied(search_result.handle, this->len);
-				case SearchResult::FAILED: return MapEntry<Key&&>::Vacant(  search_result.handle, this->len, std::forward<Key>(key));
+				case SearchResult::FOUND:  return MapEntry<Key&&>::Occupied(search_result.handle, len);
+				case SearchResult::FAILED: return MapEntry<Key&&>::Vacant(  search_result.handle, len, std::forward<Key>(key));
 				default: UNREACHABLE();
 			}
 		}
 
 		template<typename Key, typename Val>
 		Optional<V> insert(Key&& key, Val&& value) {
-			auto entry = this->Entry(std::forward<Key>(key));
+			auto entry = Entry(std::forward<Key>(key));
 			if (entry.IsVacant()) {
 				entry.VacantInsert(std::forward<Val>(value));
 				return {};
@@ -234,7 +234,7 @@ namespace Poly {
 
 		template<typename Key>
 		Optional<V> remove(Key&& key) {
-			auto entry = this->Entry(std::forward<Key>(key));
+			auto entry = Entry(std::forward<Key>(key));
 			if (!entry.IsVacant()) {
 				return {entry.Remove()};
 			} else {
@@ -254,7 +254,7 @@ namespace Poly {
 
 		template<typename Key>
 		Optional<V&> get(Key&& key) {
-			auto entry = this->Entry(std::forward<Key>(key));
+			auto entry = Entry(std::forward<Key>(key));
 			if (!entry.IsVacant()) {
 				return {entry.OccupiedGet()};
 			} else {
@@ -276,34 +276,34 @@ namespace Poly {
 		public:
 			/// <returns>True if the entry is vacant.</returns>
 			bool IsVacant() const { return static_cast<bool>(key); }
-			operator bool() const { return !this->IsVacant(); }
+			operator bool() const { return !IsVacant(); }
 
 			/**
 			 * <summary>Ensures a value is in the map by inserting if vacant.</summary>
 			 * <param name="value">A value to insert if the entry is vacant.</param>
 			 * <returns>Reference to the value in the map.</returns>
 			 */
-			V& OrInsert(const V&  value) { return this->or_insert(value); }
-			V& OrInsert(      V&& value) { return this->or_insert(std::move(value)); }
+			V& OrInsert(const V&  value) { return or_insert(value); }
+			V& OrInsert(      V&& value) { return or_insert(std::move(value)); }
 
 			/**
 			 * <summary>Inserts the value into the map at entry's key.</summary>
 			 * <param name="value"></param>
 			 * <returns>Reference to the value in the map.</returns>
 			 */
-			V& VacantInsert(const V&  value) { return this->vacant_insert(value); }
-			V& VacantInsert(      V&& value) { return this->vacant_insert(std::move(value)); }
+			V& VacantInsert(const V&  value) { return vacant_insert(value); }
+			V& VacantInsert(      V&& value) { return vacant_insert(std::move(value)); }
 
 			/**
 			 * <summary>Replaces the value in the map at entry's key.</summary>
 			 * <param name="value"></param>
 			 * <returns>Old value.</returns>
 			 */
-			V OccupiedInsert(const V&  value) { return this->occupied_insert(value); }
-			V OccupiedInsert(      V&& value) { return this->occupied_insert(std::move(value)); }
+			V OccupiedInsert(const V&  value) { return occupied_insert(value); }
+			V OccupiedInsert(      V&& value) { return occupied_insert(std::move(value)); }
 
 			/// <returns>A reference to the value in the entry.</returns>
-			const V& OccupiedGet() const { ASSERTE(!this->IsVacant(), "Cannot read value from a vacant map entry!"); return this->kv_ref.node_ref.node->values[this->kv_ref.idx]; }
+			const V& OccupiedGet() const { ASSERTE(!IsVacant(), "Cannot read value from a vacant map entry!"); return kv_ref.node_ref.node->values[kv_ref.idx]; }
 			V& OccupiedGet() { return const_cast<V&>(const_cast<const MapEntry&>(*this).OccupiedGet()); }
 
 			/// <summary>A key-value pair.</summary>
@@ -316,9 +316,9 @@ namespace Poly {
 			 * <returns>Removed key-value pair.</returns>
 			 */
 			kv RemoveKV() {
-				ASSERTE(!this->IsVacant(), "Cannot remove value from a vacant map entry!");
+				ASSERTE(!IsVacant(), "Cannot remove value from a vacant map entry!");
 
-				this->map_len -= 1;
+				map_len -= 1;
 
 				auto handle_underflow = [](NodeRef cur_node) {
 					while (cur_node.node->len < BTree::MIN_LEN) {
@@ -359,17 +359,17 @@ namespace Poly {
 					}
 				};
 
-				if(this->kv_ref.node_ref.height == 0) {
+				if(kv_ref.node_ref.height == 0) {
 					//leaf
-					const auto remove_result = this->kv_ref.leaf_remove();
-					handle_underflow(this->kv_ref.node_ref);
+					const auto remove_result = kv_ref.leaf_remove();
+					handle_underflow(kv_ref.node_ref);
 					return kv{std::move(remove_result.k), std::move(remove_result.v)};
 				} else {
 					//branch
-					auto& key_ref = this->kv_ref.node_ref.node->keys  [this->kv_ref.idx];
-					auto& val_ref = this->kv_ref.node_ref.node->values[this->kv_ref.idx];
+					auto& key_ref = kv_ref.node_ref.node->keys  [kv_ref.idx];
+					auto& val_ref = kv_ref.node_ref.node->values[kv_ref.idx];
 
-					auto to_remove = BTree::first_leaf_edge(KVERef{this->kv_ref.node_ref, this->kv_ref.idx + 1}.descend());
+					auto to_remove = BTree::first_leaf_edge(KVERef{kv_ref.node_ref, kv_ref.idx + 1}.descend());
 					auto remove_result = to_remove.leaf_remove();
 
 					std::swap(key_ref, remove_result.k);
@@ -385,32 +385,32 @@ namespace Poly {
 			 * <returns>Removed value.</returns>
 			 * <seealso cref="RemoveKV"/>
 			 */
-			V Remove() { return this->RemoveKV().value; }
+			V Remove() { return RemoveKV().value; }
 
 		private:
 			template<typename Val>
 			V& or_insert(Val&& value) {
-				if (this->key) {
-					return this->VacantInsert(std::forward<Val>(value));
+				if (key) {
+					return VacantInsert(std::forward<Val>(value));
 				} else {
-					return this->OccupiedGet();
+					return OccupiedGet();
 				}
 			}
 
 			template<typename Val>
 			V& vacant_insert(Val&& value) {
-				ASSERTE(this->IsVacant(), "Cannot insert into already occupied map entry!");
+				ASSERTE(IsVacant(), "Cannot insert into already occupied map entry!");
 
-				if (this->kv_ref.node_ref.node == nullptr) {
+				if (kv_ref.node_ref.node == nullptr) {
 					//we've got nothing to operate on; plant the little happy tree first!
 					auto sapling = new LeafNode();
 					kv_ref.node_ref.node       = sapling;
 					kv_ref.node_ref.root->node = sapling;
 				}
 
-				this->map_len += 1;
+				map_len += 1;
 
-				auto insert_result = this->kv_ref.leaf_insert(this->key.TakeValue(), std::forward<Val>(value));
+				auto insert_result = kv_ref.leaf_insert(key.TakeValue(), std::forward<Val>(value));
 				if (insert_result.fit) {
 					return *insert_result.value_ref;
 				}
@@ -436,9 +436,9 @@ namespace Poly {
 
 			template<typename Val>
 			V occupied_insert(Val&& value) {
-				ASSERTE(!this->IsVacant(), "Cannot replace (non-existent) value in a vacant map entry!");
-				auto old = std::move(this->OccupiedGet());
-				this->OccupiedGet() = std::forward<Val>(value);
+				ASSERTE(!IsVacant(), "Cannot replace (non-existent) value in a vacant map entry!");
+				auto old = std::move(OccupiedGet());
+				OccupiedGet() = std::forward<Val>(value);
 				return old;
 			}
 
@@ -468,9 +468,9 @@ namespace Poly {
 		class IteratorBase : public std::iterator<std::bidirectional_iterator_tag, RetKV> {
 		public:
 			IteratorBase(KVERef kv_ref, size_t position, size_t map_len) : current(kv_ref), next_forward(kv_ref), next_backward(kv_ref), position(position), map_len(map_len) {
-					if (this->position != this->map_len) {
+					if (position != map_len) {
 						if (kv_ref.idx < kv_ref.node_ref.node->len) {
-							this->next_forward = KVERef{kv_ref.node_ref, kv_ref.idx + 1};
+							next_forward = KVERef{kv_ref.node_ref, kv_ref.idx + 1};
 						}
 					}
 				}
@@ -478,21 +478,21 @@ namespace Poly {
 			bool operator==(const IteratorBase& other) const { return this->current == other.current; }
 			bool operator!=(const IteratorBase& other) const { return !(*this == other); }
 		public:
-			IteratorBase& operator++() { this->next_backward = this->current; this->current = this->next(); return *this; }
-			IteratorBase& operator--() { this->next_forward  = this->current; this->current = this->prev(); return *this; }
-			IteratorBase operator++(int) { IteratorBase ret(this->current, this->position, this->map_len); operator++(); return ret; }
-			IteratorBase operator--(int) { IteratorBase ret(this->current, this->position, this->map_len); operator--(); return ret; }
+			IteratorBase& operator++() { next_backward = current; current = next(); return *this; }
+			IteratorBase& operator--() { next_forward  = current; current = prev(); return *this; }
+			IteratorBase operator++(int) { IteratorBase ret(current, position, map_len); operator++(); return ret; }
+			IteratorBase operator--(int) { IteratorBase ret(current, position, map_len); operator--(); return ret; }
 		private:
 			KVERef next() {
-				KVERef kv_ref = this->next_forward;
+				KVERef kv_ref = next_forward;
 
-				if (this->position + 1u >= this->map_len) {
+				if (position + 1u >= map_len) {
 					return kv_ref;
 				}
-				this->position += 1u;
+				position += 1u;
 
 				if (kv_ref.idx < kv_ref.node_ref.node->len) {
-					this->next_forward = KVERef{kv_ref.node_ref, kv_ref.idx + 1u};
+					next_forward = KVERef{kv_ref.node_ref, kv_ref.idx + 1u};
 					return kv_ref;
 				}
 
@@ -500,21 +500,21 @@ namespace Poly {
 					kv_ref = kv_ref.node_ref.ascend().parent;
 				} while (kv_ref.idx >= kv_ref.node_ref.node->len);
 
-				this->next_forward = BTree::first_leaf_edge(KVERef{kv_ref.node_ref, kv_ref.idx + 1u}.descend());
+				next_forward = BTree::first_leaf_edge(KVERef{kv_ref.node_ref, kv_ref.idx + 1u}.descend());
 				return kv_ref;
 			}
 			KVERef prev() {
-				KVERef kv_ref = this->next_backward;
+				KVERef kv_ref = next_backward;
 
-				if (this->position <= 1u) {
-					this->next_forward = KVERef{this->current.node_ref, this->current.idx + 1 - this->position};
-					this->position = 0;
+				if (position <= 1u) {
+					next_forward = KVERef{current.node_ref, current.idx + 1 - position};
+					position = 0;
 					return kv_ref;
 				}
-				this->position -= 1u;
+				position -= 1u;
 
 				if (kv_ref.idx > 0) {
-					this->next_backward = KVERef{kv_ref.node_ref, kv_ref.idx - 1u};
+					next_backward = KVERef{kv_ref.node_ref, kv_ref.idx - 1u};
 					return kv_ref;
 				}
 
@@ -522,7 +522,7 @@ namespace Poly {
 					kv_ref = kv_ref.node_ref.ascend().parent;
 				} while (kv_ref.idx == 0);
 
-				this->next_backward = BTree::last_leaf_edge(KVERef{kv_ref.node_ref, kv_ref.idx - 1u}.descend());
+				next_backward = BTree::last_leaf_edge(KVERef{kv_ref.node_ref, kv_ref.idx - 1u}.descend());
 				return kv_ref;
 			}
 		protected:
@@ -537,7 +537,7 @@ namespace Poly {
 			using IteratorBase<ConstKV>::current;
 		public:
 			using IteratorBase<ConstKV>::IteratorBase;
-			ConstKV operator*()  const { return {this->current.node_ref.node->keys[this->current.idx], this->current.node_ref.node->values[this->current.idx]}; }
+			ConstKV operator*()  const { return {current.node_ref.node->keys[current.idx], current.node_ref.node->values[current.idx]}; }
 			ConstKV operator->() const { return operator*(); }
 		};
 
@@ -545,7 +545,7 @@ namespace Poly {
 			using IteratorBase<KV>::current;
 		public:
 			using IteratorBase<KV>::IteratorBase;
-			KV operator*()  { return {this->current.node_ref.node->keys[this->current.idx], this->current.node_ref.node->values[this->current.idx]}; }
+			KV operator*()  { return {current.node_ref.node->keys[current.idx], current.node_ref.node->values[current.idx]}; }
 			KV operator->() { return operator*(); }
 		};
 
@@ -555,10 +555,10 @@ namespace Poly {
 		public:
 			Keys(const BTreeMap& map) : map(map) {}
 		public:
-			Iter cbegin() const { return {this->map.cbegin()}; }
-			Iter cend()   const { return {this->map.cend()  }; }
-			Iter begin()  const { return this->cbegin(); }
-			Iter end()    const { return this->cend(); }
+			Iter cbegin() const { return {map.cbegin()}; }
+			Iter cend()   const { return {map.cend()  }; }
+			Iter begin()  const { return cbegin(); }
+			Iter end()    const { return cend(); }
 		private:
 			using ParentIter = typename BTreeMap::ConstIterator;
 			class Iter : public std::iterator<std::bidirectional_iterator_tag, K> {
@@ -568,13 +568,13 @@ namespace Poly {
 				bool operator==(const Iter& other) const { return this->iter == other.iter; }
 				bool operator!=(const Iter& other) const { return !(*this == other); }
 			public:
-				const K& operator*()  { return this->iter->key; }
+				const K& operator*()  { return iter->key; }
 				const K& operator->() { return operator*(); }
 			public:
-				Iter& operator++() { ++(this->iter); return *this; }
-				Iter& operator--() { --(this->iter); return *this; }
-				Iter operator++(int) { Iter ret(this->iter); operator++(); return ret; }
-				Iter operator--(int) { Iter ret(this->iter); operator--(); return ret; }
+				Iter& operator++() { ++(iter); return *this; }
+				Iter& operator--() { --(iter); return *this; }
+				Iter operator++(int) { Iter ret(iter); operator++(); return ret; }
+				Iter operator--(int) { Iter ret(iter); operator--(); return ret; }
 			private:
 				ParentIter iter;
 			};
@@ -588,10 +588,10 @@ namespace Poly {
 		public:
 			ConstValues(const BTreeMap& map) : map(map) {}
 		public:
-			Iter cbegin() const { return {this->map.cbegin()}; }
-			Iter cend()   const { return {this->map.cend()}; }
-			Iter begin()  const { return this->cbegin(); }
-			Iter end()    const { return this->cend(); }
+			Iter cbegin() const { return {map.cbegin()}; }
+			Iter cend()   const { return {map.cend()}; }
+			Iter begin()  const { return cbegin(); }
+			Iter end()    const { return cend(); }
 		private:
 			using ParentIter = typename BTreeMap::ConstIterator;
 			class Iter : public std::iterator<std::bidirectional_iterator_tag, V> {
@@ -601,12 +601,12 @@ namespace Poly {
 				bool operator==(const Iter& other) const { return this->iter == other.iter; }
 				bool operator!=(const Iter& other) const { return !(*this == other); }
 			public:
-				Iter& operator++() { ++(this->iter); return *this; }
-				Iter& operator--() { --(this->iter); return *this; }
-				Iter operator++(int) { Iter ret(this->iter); operator++(); return ret; }
-				Iter operator--(int) { Iter ret(this->iter); operator--(); return ret; }
+				Iter& operator++() { ++(iter); return *this; }
+				Iter& operator--() { --(iter); return *this; }
+				Iter operator++(int) { Iter ret(iter); operator++(); return ret; }
+				Iter operator--(int) { Iter ret(iter); operator--(); return ret; }
 			public:
-				const V& operator*()  { return this->iter->value; }
+				const V& operator*()  { return iter->value; }
 				const V& operator->() { return operator*(); }
 			private:
 				ParentIter iter;
@@ -621,8 +621,8 @@ namespace Poly {
 		public:
 			Values(BTreeMap& map) : map(map) {}
 		public:
-			Iter begin() { return {this->map.begin()}; }
-			Iter end()   { return {this->map.end()}; }
+			Iter begin() { return {map.begin()}; }
+			Iter end()   { return {map.end()}; }
 		private:
 			using ParentIter = typename BTreeMap::Iterator;
 			class Iter : public std::iterator<std::bidirectional_iterator_tag, V> {
@@ -632,12 +632,12 @@ namespace Poly {
 				bool operator==(const Iter& other) const { return this->iter == other.iter; }
 				bool operator!=(const Iter& other) const { return !(*this == other); }
 			public:
-				Iter& operator++() { ++(this->iter); return *this; }
-				Iter& operator--() { --(this->iter); return *this; }
-				Iter operator++(int) { Iter ret(this->iter); operator++(); return ret; }
-				Iter operator--(int) { Iter ret(this->iter); operator--(); return ret; }
+				Iter& operator++() { ++(iter); return *this; }
+				Iter& operator--() { --(iter); return *this; }
+				Iter operator++(int) { Iter ret(iter); operator++(); return ret; }
+				Iter operator--(int) { Iter ret(iter); operator--(); return ret; }
 			public:
-				V& operator*()  { return this->iter->value; }
+				V& operator*()  { return iter->value; }
 				V& operator->() { return operator*(); }
 			private:
 				ParentIter iter;

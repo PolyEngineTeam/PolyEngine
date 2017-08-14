@@ -44,8 +44,8 @@ namespace Poly {
 				LeafNode() : parent(nullptr), len(0) {}
 				~LeafNode() {
 					//since the backing storage has no idea about how many values it contains, we need to destroy them explicitly
-					this->keys  .destruct(len);
-					this->values.destruct(len);
+					keys  .destruct(len);
+					values.destruct(len);
 				}
 				auto as_branch() { return static_cast<BranchNode*>(this); };
 
