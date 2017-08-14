@@ -17,7 +17,7 @@ namespace Poly {
 			: Capacity(count), FreeBlockCount(count)
 		{
 			ASSERTE(count > 0, "Cell count cannot be lower than 1.");
-			Data = reinterpret_cast<T*>(DefaultAlloc(sizeof(T) * Capacity));
+			Data = Allocate<T>(Capacity);
 			Next = Data;
 		}
 
@@ -25,7 +25,7 @@ namespace Poly {
 		virtual ~PoolAllocator()
 		{
 			ASSERTE(Data, "Allocator is invalid");
-			DefaultFree(Data);
+			Deallocate(Data);
 			Data = nullptr;
 		}
 
