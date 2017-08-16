@@ -72,10 +72,10 @@ namespace Poly {
 
 				NodeRef push_level() {
 					const auto new_node = new BranchNode();
-					new_node->edges[0] = this->node;
+					new_node->edges[0] = node;
 
-					this->node = new_node;
-					this->height += 1u;
+					node = new_node;
+					height += 1u;
 
 					const auto node_ref = this->as_node_ref();
 					KVERef{node_ref, 0}.correct_parent_link();
@@ -85,10 +85,10 @@ namespace Poly {
 				void pop_level() {
 					ASSERTE(this->height > 0, "No levels to pop!");
 
-					LeafNode* const top = this->node;
-					this->node = KVERef{this->as_node_ref(), 0}.descend().node;
-					this->node->parent = nullptr;
-					this->height -= 1u;
+					LeafNode* const top = node;
+					node = KVERef{this->as_node_ref(), 0}.descend().node;
+					node->parent = nullptr;
+					height -= 1u;
 
 					delete top->as_branch();
 				}
