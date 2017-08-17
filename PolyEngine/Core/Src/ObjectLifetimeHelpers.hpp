@@ -50,7 +50,7 @@ namespace Poly
 			::new(ptr) T(std::move(obj));
 		}
 
-		//wondering(vuko): missing CopyInto, MoveInto
+		//wondering(vuko): missing CopyInto, MoveInto, ForwardCreate
 
 		//wondering(vuko): `Destroy(T&)` overload?
 		template<class T>

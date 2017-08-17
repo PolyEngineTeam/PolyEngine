@@ -103,8 +103,8 @@ constexpr auto MAX_FLOAT = (std::numeric_limits<float>::max)(); //the parenthese
 constexpr auto MIN_FLOAT = (std::numeric_limits<float>::min)();
 
 // Assertions
-#define ASSERTE(expr, msg) assert((expr) && #msg) //note(muniu): enabled in all builds except Release
-#define HEAVY_ASSERTE(expr, msg) assert((expr) && #msg) //todo(muniu): enabled only in Debug
+#define ASSERTE(expr, msg) assert((expr) && static_cast<const char*>(#msg)) //note(muniu): enabled in all builds except Release
+#define HEAVY_ASSERTE(expr, msg) assert((expr) && static_cast<const char*>(#msg)) //todo(muniu): enabled only in Debug
 #define STATIC_ASSERTE(expr, msg) static_assert(expr, msg)
 
 // `Unreachable code` compiler intrinsic
@@ -119,6 +119,6 @@ constexpr auto MIN_FLOAT = (std::numeric_limits<float>::min)();
 // Utilities
 #define BIT(x) (1u<<x)
 
-#define UNUSED(expr) do { (void)(expr); } while (0)
+#define UNUSED(expr) do { (void)(expr); } while (false)
 
 #include "BaseObject.hpp"

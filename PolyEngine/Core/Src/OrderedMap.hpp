@@ -3,7 +3,8 @@
 #include "BTreeNode.hpp"
 #include "Optional.hpp"
 
-namespace Poly {
+namespace Poly
+{
 	/**
 	 * <summary>
 	 * A sorted map based on a B-Tree.
@@ -20,7 +21,8 @@ namespace Poly {
 	 * If you do not need the elements to be ordered <see cref="HashMap<K, V>"/>, which is generally faster
 	 */
 	template<typename K, typename V, size_t Bfactor = 6>
-	class OrderedMap {
+	class OrderedMap : public BaseObject<>
+	{
 		static_assert(Bfactor > 1, "B factor must be greater than 1. Consider using a classic binary tree if you need a lesser value.");
 		using BTree    = Impl::BTree<K, V, Bfactor>;
 		using Root     = typename BTree::Root;
@@ -38,31 +40,35 @@ namespace Poly {
 
 		/// <summary>Constructs a new, empty <c>OrderedMap<K, V, B></c>. The map will not allocate until elements are inserted into it. </summary>
 		OrderedMap() : root{nullptr, 0}, len(0) {}
-		OrderedMap(OrderedMap&& other) : root(other.root), len(other.len) { ::new(&other) OrderedMap(); }
+		OrderedMap(OrderedMap&& other) : root(other.root), len(other.len) { ObjectLifetimeHelper::DefaultCreate(&other); }
 		OrderedMap(const OrderedMap& other) : OrderedMap() { for (auto kv : other) { Insert(kv.key, kv.value); } } //todo(vuko): can be implemented more efficiently
-		~OrderedMap() { if (root.node) { Clear(); delete root.node; } };
+		~OrderedMap() override { if (root.node) { Clear(); delete root.node; } };
 
-		OrderedMap& operator=(OrderedMap&& other) {
-			this->~OrderedMap();
+		OrderedMap& operator=(OrderedMap&& other)
+		{
+			ObjectLifetimeHelper::Destroy(this);
 			this->root = other.root;
 			this->len  = other.len;
-			::new(&other) OrderedMap();
+			ObjectLifetimeHelper::DefaultCreate(&other);
 			return *this;
 		}
-		OrderedMap& operator=(const OrderedMap& other) { this->~OrderedMap(); ::new(this) OrderedMap(other); return *this; }
+		OrderedMap& operator=(const OrderedMap& other) { ObjectLifetimeHelper::Destroy(this); ObjectLifetimeHelper::CopyCreate(this, other); return *this; }
 
 		/**
 		 * <summary>
 		 * Gets the given key's corresponding entry in the map for in-place manipulation.
 		 * Examples:
 		 * <code>
-		 * if (auto entry = map.Entry(key)) { //`if (auto entry = map.Entry(key); !entry.IsVacant())` in C++17
+		 * if (auto entry = map.Entry(key)) //`if (auto entry = map.Entry(key); !entry.IsVacant())` in C++17
+		 * {
 		 * 	entry.Remove().DoStuffWithOldValue();
 		 * 	//or
 		 * 	entry.OccupiedReplace(newValue);
 		 * 	//or
 		 * 	entry.OccupiedGet().DoStuffWithValue();
-		 * } else {
+		 * }
+		 * else
+		 * {
 		 * 	entry.VacantInsert(value);
 		 * }
 		 *
@@ -73,8 +79,8 @@ namespace Poly {
 		 * <returns>A view into a single entry in a map, which may either be vacant or occupied.</returns>
 		 * <seealso cref="MapEntry"/>
 		 */
-		MapEntry<const K& > Entry(const K&  key) { return entry(key); }
-		MapEntry<      K&&> Entry(      K&& key) { return entry(std::move(key)); }
+		MapEntry<const K& > Entry(const K&  key) { return EntryPimple(key); }
+		MapEntry<      K&&> Entry(      K&& key) { return EntryPimple(std::move(key)); }
 
 		/**
 		 * <summary>Inserts a key-value pair into the map. Updates the value if the key was already present.</summary>
@@ -83,10 +89,10 @@ namespace Poly {
 		 * <returns>The old value if it was present.</returns>
 		 * <remarks>The key is not updated. This may matter for types that can be equal without being identical.</remarks>
 		 */
-		Optional<V> Insert(const K&  key, const V&  value) { return insert(          key ,           value ); }
-		Optional<V> Insert(const K&  key,       V&& value) { return insert(          key , std::move(value)); }
-		Optional<V> Insert(      K&& key, const V&  value) { return insert(std::move(key),           value ); }
-		Optional<V> Insert(      K&& key,       V&& value) { return insert(std::move(key), std::move(value)); }
+		Optional<V> Insert(const K&  key, const V&  value) { return InsertPimple(          key ,           value ); }
+		Optional<V> Insert(const K&  key,       V&& value) { return InsertPimple(          key , std::move(value)); }
+		Optional<V> Insert(      K&& key, const V&  value) { return InsertPimple(std::move(key),           value ); }
+		Optional<V> Insert(      K&& key,       V&& value) { return InsertPimple(std::move(key), std::move(value)); }
 
 		/**
 		 * <summary>Inserts a key-value pair into the map. Panics if the key was already present.</summary>
@@ -103,8 +109,8 @@ namespace Poly {
 		 * <param name="key"></param>
 		 * <returns>Value at key if it was present in the map.</returns>
 		 */
-		Optional<V> Remove(const K&  key) { return remove(key); }
-		Optional<V> Remove(      K&& key) { return remove(std::move(key)); }
+		Optional<V> Remove(const K&  key) { return RemovePimple(key); }
+		Optional<V> Remove(      K&& key) { return RemovePimple(std::move(key)); }
 
 		/**
 		 * <summary>Removes a key from the map. Panics if the key is not present in the map.</summary>
@@ -119,10 +125,10 @@ namespace Poly {
 		 * <param name="key"></param>
 		 * <returns>The reference if the keys is in the map.</returns>
 		 */
-		Optional<V&> Get(const K&  key) { return get(key); }
-		Optional<V&> Get(      K&& key) { return get(std::move(key)); }
-		Optional<const V&> Get(const K&  key) const { return get(key); }
-		Optional<const V&> Get(      K&& key) const { return get(std::move(key)); }
+		Optional<V&> Get(const K&  key) { return GetPimple(key); }
+		Optional<V&> Get(      K&& key) { return GetPimple(std::move(key)); }
+		Optional<const V&> Get(const K&  key) const { return GetPimple(key); }
+		Optional<const V&> Get(      K&& key) const { return GetPimple(std::move(key)); }
 
 		const V& operator[](const K& key) const { return Get(key).Value(); }
 		      V& operator[](const K& key)       { return Get(key).Value(); }
@@ -133,68 +139,83 @@ namespace Poly {
 		bool IsEmpty() const { return GetSize() == 0; };
 
 		/// <summary>Clears the map, removing all elements. Frees all memory except the root node.</summary>
-		void Clear() {
-			if (root.node == nullptr) {
+		void Clear()
+		{
+			if (root.node == nullptr)
+			{
 				return;
 			}
 
-			KVERef current = BTree::first_leaf_edge(root.as_node_ref());
-			while (len) {
+			KVERef current = BTree::FirstLeafEdge(root.AsNodeRef());
+			while (len)
+			{
 				len -= 1;
-				if (current.idx < current.node_ref.node->len) {
-					current = KVERef{current.node_ref, current.idx + 1};
+				if (current.idx < current.nodeRef.node->len)
+				{
+					current = KVERef{current.nodeRef, current.idx + 1};
 					continue;
-				} else {
-					const NodeRef to_delete = current.node_ref;
-					current = current.node_ref.ascend().parent;
-					delete to_delete.node;
+				}
+				else
+				{
+					const NodeRef toDelete = current.nodeRef;
+					current = current.nodeRef.Ascend().parent;
+					delete toDelete.node;
 				}
 
-				for (;;) {
-					if (current.idx < current.node_ref.node->len) {
-						current = BTree::first_leaf_edge(KVERef{current.node_ref, current.idx + 1}.descend());
+				for (;;)
+				{
+					if (current.idx < current.nodeRef.node->len)
+					{
+						current = BTree::FirstLeafEdge(KVERef{current.nodeRef, current.idx + 1}.Descend());
 						break; //continue outer loop
-					} else {
-						const NodeRef to_delete = current.node_ref;
-						current = current.node_ref.ascend().parent;
-						delete to_delete.node->as_branch();
+					}
+					else
+					{
+						const NodeRef toDelete = current.nodeRef;
+						current = current.nodeRef.Ascend().parent;
+						delete toDelete.node->AsBranch();
 					}
 				}
 			}
 
-			LeafNode* new_root_to_be = current.node_ref.node;
+			LeafNode* newRootToBe = current.nodeRef.node;
 
-			auto ascension = current.node_ref.ascend();
-			while (ascension.succeeded) {
+			auto ascension = current.nodeRef.Ascend();
+			while (ascension.succeeded)
+			{
 				KVERef node = ascension.parent;
-				ascension = node.node_ref.ascend();
-				delete node.node_ref.node->as_branch();
+				ascension = node.nodeRef.Ascend();
+				delete node.nodeRef.node->AsBranch();
 			}
 
 			//reinitialize the root node
-			new_root_to_be->~LeafNode();
-			::new(new_root_to_be) LeafNode();
+			ObjectLifetimeHelper::Destroy(newRootToBe);
+			ObjectLifetimeHelper::DefaultCreate(newRootToBe);
 
-			root = {new_root_to_be, 0};
+			root = {newRootToBe, 0};
 		}
 
-		ConstIterator cbegin() const { return {BTree::first_leaf_edge(const_cast<OrderedMap&>(*this).root.as_node_ref()), 0, GetSize()}; }
-		ConstIterator cend() const {
-			if (root.node == nullptr) {
+		ConstIterator cbegin() const { return {BTree::FirstLeafEdge(const_cast<OrderedMap&>(*this).root.AsNodeRef()), 0, GetSize()}; }
+		ConstIterator cend() const
+		{
+			if (root.node == nullptr)
+			{
 				return cbegin();
 			}
-			return {BTree::last_leaf_edge(const_cast<OrderedMap&>(*this).root.as_node_ref()), GetSize(), GetSize()};
+			return {BTree::LastLeafEdge(const_cast<OrderedMap&>(*this).root.AsNodeRef()), GetSize(), GetSize()};
 		}
 
 		ConstIterator begin() const { return cbegin(); }
 		ConstIterator end()   const { return cend();   }
 
-		Iterator begin() { return {BTree::first_leaf_edge(root.as_node_ref()), 0, GetSize()}; }
-		Iterator end() {
-			if (root.node == nullptr) {
+		Iterator begin() { return {BTree::FirstLeafEdge(root.AsNodeRef()), 0, GetSize()}; }
+		Iterator end()
+		{
+			if (root.node == nullptr)
+			{
 				return begin();
 			}
-			return {BTree::last_leaf_edge(root.as_node_ref()), GetSize(), GetSize()};
+			return {BTree::LastLeafEdge(root.AsNodeRef()), GetSize(), GetSize()};
 		}
 
 		/// <returns>A range over the keys of the map, in sorted order.</returns>
@@ -208,62 +229,81 @@ namespace Poly {
 
 	private:
 		template<typename Key>
-		MapEntry<Key&&> entry(Key&& key) {
-			const auto search_result = search_tree(root.as_node_ref(), key);
-			switch (search_result.result) {
-				case SearchResult::FOUND:  return MapEntry<Key&&>::Occupied(search_result.handle, len);
-				case SearchResult::FAILED: return MapEntry<Key&&>::Vacant(  search_result.handle, len, std::forward<Key>(key));
+		MapEntry<Key&&> EntryPimple(Key&& key)
+		{
+			const auto searchResult = SearchTree(root.AsNodeRef(), key);
+			switch (searchResult.result)
+			{
+				case SearchResult::FOUND:  return MapEntry<Key&&>::Occupied(searchResult.handle, len);
+				case SearchResult::FAILED: return MapEntry<Key&&>::Vacant(  searchResult.handle, len, std::forward<Key>(key));
 				default: UNREACHABLE();
 			}
 		}
 
 		template<typename Key, typename Val>
-		Optional<V> insert(Key&& key, Val&& value) {
+		Optional<V> InsertPimple(Key&& key, Val&& value)
+		{
 			auto entry = Entry(std::forward<Key>(key));
-			if (entry.IsVacant()) {
+			if (entry.IsVacant())
+			{
 				entry.VacantInsert(std::forward<Val>(value));
 				return {};
-			} else {
+			}
+			else
+			{
 				return {entry.OccupiedReplace(std::forward<Val>(value))};
 			}
 		}
 
 		template<typename Key>
-		Optional<V> remove(Key&& key) {
+		Optional<V> RemovePimple(Key&& key)
+		{
 			auto entry = Entry(std::forward<Key>(key));
-			if (!entry.IsVacant()) {
+			if (!entry.IsVacant())
+			{
 				return {entry.Remove()};
-			} else {
+			}
+			else
+			{
 				return {};
 			}
 		}
 
 		template<typename Key>
-		Optional<const V&> get(Key&& key) const {
+		Optional<const V&> GetPimple(Key&& key) const
+		{
 			auto entry = const_cast<OrderedMap&>(*this).Entry(std::forward<Key>(key)); //note(vuko): using only const pathways down the line
-			if (!entry.IsVacant()) {
+			if (!entry.IsVacant())
+			{
 				return {entry.OccupiedGet()};
-			} else {
+			}
+			else
+			{
 				return {};
 			}
 		}
 
 		template<typename Key>
-		Optional<V&> get(Key&& key) {
+		Optional<V&> GetPimple(Key&& key)
+		{
 			auto entry = Entry(std::forward<Key>(key));
-			if (!entry.IsVacant()) {
+			if (!entry.IsVacant())
+			{
 				return {entry.OccupiedGet()};
-			} else {
+			}
+			else
+			{
 				return {};
 			}
 		}
 
 		/// <see cref="OrderedMap::Entry()"/>
 		template<typename Key>
-		class MapEntry {
+		class MapEntry : public BaseObjectLiteralType<>
+		{
 		public:
-			static MapEntry Vacant  (KVERef kv_ref, size_t& len, Key&& key) { return MapEntry(kv_ref, len, std::forward<Key>(key)); }
-			static MapEntry Occupied(KVERef kv_ref, size_t& len)            { return MapEntry(kv_ref, len); }
+			static MapEntry Vacant  (KVERef kvRef, size_t& len, Key&& key) { return MapEntry(kvRef, len, std::forward<Key>(key)); }
+			static MapEntry Occupied(KVERef kvRef, size_t& len)            { return MapEntry(kvRef, len); }
 
 			MapEntry(MapEntry&&) = default;
 
@@ -276,31 +316,32 @@ namespace Poly {
 			 * <param name="value">A value to insert if the entry is vacant.</param>
 			 * <returns>Reference to the value in the map.</returns>
 			 */
-			V& OrInsert(const V&  value) { return or_insert(value); }
-			V& OrInsert(      V&& value) { return or_insert(std::move(value)); }
+			V& OrInsert(const V&  value) { return OrInsertPimple(value); }
+			V& OrInsert(      V&& value) { return OrInsertPimple(std::move(value)); }
 
 			/**
 			 * <summary>Inserts the value into the map at entry's key.</summary>
 			 * <param name="value"></param>
 			 * <returns>Reference to the value in the map.</returns>
 			 */
-			V& VacantInsert(const V&  value) { return vacant_insert(value); }
-			V& VacantInsert(      V&& value) { return vacant_insert(std::move(value)); }
+			V& VacantInsert(const V&  value) { return VacantInsertPimple(value); }
+			V& VacantInsert(      V&& value) { return VacantInsertPimple(std::move(value)); }
 
 			/**
 			 * <summary>Replaces the value in the map at entry's key.</summary>
 			 * <param name="value"></param>
 			 * <returns>Old value.</returns>
 			 */
-			V OccupiedReplace(const V&  value) { return occupied_replace(value); }
-			V OccupiedReplace(      V&& value) { return occupied_replace(std::move(value)); }
+			V OccupiedReplace(const V&  value) { return OccupiedReplacePimple(value); }
+			V OccupiedReplace(      V&& value) { return OccupiedReplacePimple(std::move(value)); }
 
 			/// <returns>A reference to the value in the entry.</returns>
-			const V& OccupiedGet() const { ASSERTE(!IsVacant(), "Cannot read value from a vacant map entry!"); return kv_ref.node_ref.node->values[kv_ref.idx]; }
+			const V& OccupiedGet() const { ASSERTE(!IsVacant(), "Cannot read value from a vacant map entry!"); return kvRef.nodeRef.node->values[kvRef.idx]; }
 			V& OccupiedGet() { return const_cast<V&>(const_cast<const MapEntry&>(*this).OccupiedGet()); }
 
 			/// <summary>A key-value pair.</summary>
-			struct kv {
+			struct KV
+			{
 				K key;
 				V value;
 			};
@@ -308,68 +349,83 @@ namespace Poly {
 			 * <summary>Removes the entry from the map.</summary>
 			 * <returns>Removed key-value pair.</returns>
 			 */
-			kv RemoveKV() {
+			KV RemoveKV()
+			{
 				ASSERTE(!IsVacant(), "Cannot remove value from a vacant map entry!");
 
-				map_len -= 1;
+				mapLen -= 1;
 
-				auto handle_underflow = [](NodeRef cur_node) {
-					while (cur_node.node->len < BTree::MIN_LEN) {
-						const auto ascension = cur_node.ascend();
-						if (!ascension.succeeded) {
+				auto handleUnderflow = [](NodeRef curNode)
+				{
+					while (curNode.node->len < BTree::MIN_LEN)
+					{
+						const auto ascension = curNode.Ascend();
+						if (!ascension.succeeded)
+						{
 							break; //root is allowed to underflow
 						}
 
 						const KVERef parent = ascension.parent;
-						bool is_left;
+						bool isLeft;
 						KVERef handle;
-						if (parent.idx > 0) {
-							is_left = true;
-							handle = {parent.node_ref, parent.idx - 1};
-						} else {
-							is_left = false;
-							handle = {parent.node_ref, parent.idx};
+						if (parent.idx > 0)
+						{
+							isLeft = true;
+							handle = {parent.nodeRef, parent.idx - 1};
+						}
+						else
+						{
+							isLeft = false;
+							handle = {parent.nodeRef, parent.idx};
 						}
 
-						if (!handle.can_merge()) {
-							if (is_left) {
-								handle.steal_left();
-							} else {
-								handle.steal_right();
+						if (!handle.CanMerge())
+						{
+							if (isLeft)
+							{
+								handle.StealLeft();
+							}
+							else
+							{
+								handle.StealRight();
 							}
 							break;
 						}
 
-						NodeRef node_ref = handle.merge().node_ref;
-						if (node_ref.node->len == 0) {
+						NodeRef nodeRef = handle.Merge().nodeRef;
+						if (nodeRef.node->len == 0)
+						{
 							//a node of zero length; only root is allowed to underflow, therefore we must be at root
 							//the root is empty with only one child leaf, get rid of it
-							node_ref.root->pop_level();
+							nodeRef.root->PopLevel();
 							break;
 						}
 
-						cur_node = node_ref;
+						curNode = nodeRef;
 					}
 				};
 
-				if(kv_ref.node_ref.height == 0) {
+				if(kvRef.nodeRef.height == 0)
+				{
 					//leaf
-					const auto remove_result = kv_ref.leaf_remove();
-					handle_underflow(kv_ref.node_ref);
-					return kv{std::move(remove_result.k), std::move(remove_result.v)};
-				} else {
+					const auto removeResult = kvRef.LeafRemove();
+					handleUnderflow(removeResult.nodeRef);
+					return KV{std::move(removeResult.k), std::move(removeResult.v)};
+				}
+				else
+				{
 					//branch
-					auto& key_ref = kv_ref.node_ref.node->keys  [kv_ref.idx];
-					auto& val_ref = kv_ref.node_ref.node->values[kv_ref.idx];
+					auto& keyRef = kvRef.nodeRef.node->keys  [kvRef.idx];
+					auto& valRef = kvRef.nodeRef.node->values[kvRef.idx];
 
-					auto to_remove = BTree::first_leaf_edge(KVERef{kv_ref.node_ref, kv_ref.idx + 1}.descend());
-					auto remove_result = to_remove.leaf_remove();
+					auto toRemove = BTree::FirstLeafEdge(KVERef{kvRef.nodeRef, kvRef.idx + 1}.Descend());
+					auto removeResult = toRemove.LeafRemove();
 
-					std::swap(key_ref, remove_result.k);
-					std::swap(val_ref, remove_result.v);
+					std::swap(keyRef, removeResult.k);
+					std::swap(valRef, removeResult.v);
 
-					handle_underflow(to_remove.node_ref);
-					return kv{std::move(remove_result.k), std::move(remove_result.v)};
+					handleUnderflow(removeResult.nodeRef);
+					return KV{std::move(removeResult.k), std::move(removeResult.v)};
 				}
 			}
 
@@ -382,165 +438,197 @@ namespace Poly {
 
 		private:
 			template<typename Val>
-			V& or_insert(Val&& value) {
-				if (key) {
+			V& OrInsertPimple(Val&& value)
+			{
+				if (key)
+				{
 					return VacantInsert(std::forward<Val>(value));
-				} else {
+				}
+				else
+				{
 					return OccupiedGet();
 				}
 			}
 
 			template<typename Val>
-			V& vacant_insert(Val&& value) {
+			V& VacantInsertPimple(Val&& value)
+			{
 				ASSERTE(IsVacant(), "Cannot insert into already occupied map entry!");
 
-				if (kv_ref.node_ref.node == nullptr) {
+				if (kvRef.nodeRef.node == nullptr)
+				{
 					//we've got nothing to operate on; plant the little happy tree first!
 					auto sapling = new LeafNode();
-					kv_ref.node_ref.node       = sapling;
-					kv_ref.node_ref.root->node = sapling;
+					kvRef.nodeRef.node       = sapling;
+					kvRef.nodeRef.root->node = sapling;
 				}
 
-				map_len += 1;
+				mapLen += 1;
 
-				auto insert_result = kv_ref.leaf_insert(key.TakeValue(), std::forward<Val>(value));
-				if (insert_result.fit) {
-					return *insert_result.value_ref;
+				auto insertResult = kvRef.LeafInsert(key.TakeValue(), std::forward<Val>(value));
+				if (insertResult.fit)
+				{
+					return *insertResult.valueRef;
 				}
 				//insertion resulted in a node split; need to re-insert the extracted key-value pair
 
-				V* v = insert_result.value_ref; //points to the value we just inserted
-				auto ascension_result = insert_result.split_result.old_node_left.ascend();
+				V* v = insertResult.valueRef; //points to the value we just inserted
+				auto ascensionResult = insertResult.splitResult.oldNodeLeft.Ascend();
 
-				for (;;) {
-					if (ascension_result.succeeded) {
-						insert_result = ascension_result.parent.branch_insert(insert_result.split_result.key, insert_result.split_result.value, insert_result.split_result.new_edge_right);
-						if (insert_result.fit) {
+				for (;;)
+				{
+					if (ascensionResult.succeeded)
+					{
+						insertResult = ascensionResult.parent.BranchInsert(insertResult.splitResult.key, insertResult.splitResult.value, insertResult.splitResult.newEdgeRight);
+						if (insertResult.fit)
+						{
 							return *v;
 						}
-						ascension_result = insert_result.split_result.old_node_left.ascend();
-					} else {
-						Root* root = ascension_result.self.root;
-						root->push_level().push_back(insert_result.split_result.key, insert_result.split_result.value, insert_result.split_result.new_edge_right);
+						ascensionResult = insertResult.splitResult.oldNodeLeft.Ascend();
+					}
+					else
+					{
+						Root* root = ascensionResult.self.root;
+						root->PushLevel().PushBack(insertResult.splitResult.key, insertResult.splitResult.value, insertResult.splitResult.newEdgeRight);
 						return *v;
 					}
 				}
 			}
 
 			template<typename Val>
-			V occupied_replace(Val&& value) {
+			V OccupiedReplacePimple(Val&& value)
+			{
 				ASSERTE(!IsVacant(), "Cannot replace (non-existent) value in a vacant map entry!");
 				auto old = std::move(OccupiedGet());
 				OccupiedGet() = std::forward<Val>(value);
 				return old;
 			}
 
-			MapEntry(KVERef kv_ref, size_t& len, Key&& key) : key(std::forward<Key>(key)), kv_ref(kv_ref), map_len(len) {}
-			MapEntry(KVERef kv_ref, size_t& len)            : key(),                       kv_ref(kv_ref), map_len(len) {}
+			MapEntry(KVERef kvRef, size_t& len, Key&& key) : key(std::forward<Key>(key)), kvRef(kvRef), mapLen(len) {}
+			MapEntry(KVERef kvRef, size_t& len)            : key(),                       kvRef(kvRef), mapLen(len) {}
 
 			Optional<Key> key;
-			KVERef  kv_ref;
-			size_t& map_len;
+			KVERef  kvRef;
+			size_t& mapLen;
 		};
 
-		struct ConstKV {
+		struct ConstKV
+		{
 			const K& key;
 			const V& value;
 			const ConstKV* operator->() const { return this; } //note(vuko): needed by the iterator's own operator ->, since it returns KV by value
 		};
-		struct KV {
+		struct KV
+		{
 			const K& key;
 			V& value;
 			KV* operator->() { return this; }
 		};
 
 		template<typename RetKV>
-		class IteratorBase : public std::iterator<std::bidirectional_iterator_tag, RetKV> {
+		class IteratorBase : public std::iterator<std::bidirectional_iterator_tag, RetKV>, public BaseObjectLiteralType<>
+		{
 		public:
-			IteratorBase(KVERef kv_ref, size_t position, size_t map_len) : current(kv_ref), next_forward(kv_ref), next_backward(kv_ref), position(position), map_len(map_len) {
-					if (position != map_len) {
-						if (kv_ref.idx < kv_ref.node_ref.node->len) {
-							next_forward = KVERef{kv_ref.node_ref, kv_ref.idx + 1};
-						}
+			IteratorBase(KVERef kvRef, size_t position, size_t mapLen) : current(kvRef), nextForward(kvRef), nextBackward(kvRef), position(position), mapLen(mapLen)
+			{
+				if (position != mapLen)
+				{
+					if (kvRef.idx < kvRef.nodeRef.node->len)
+					{
+						nextForward = KVERef{kvRef.nodeRef, kvRef.idx + 1};
 					}
 				}
+			}
 
 			bool operator==(const IteratorBase& other) const { return this->current == other.current; }
 			bool operator!=(const IteratorBase& other) const { return !(*this == other); }
 
-			IteratorBase& operator++() { next_backward = current; current = next(); return *this; }
-			IteratorBase& operator--() { next_forward  = current; current = prev(); return *this; }
-			IteratorBase operator++(int) { IteratorBase ret(current, position, map_len); operator++(); return ret; }
-			IteratorBase operator--(int) { IteratorBase ret(current, position, map_len); operator--(); return ret; }
+			IteratorBase& operator++() { nextBackward = current; current = Next(); return *this; }
+			IteratorBase& operator--() { nextForward  = current; current = Prev(); return *this; }
+			IteratorBase operator++(int) { IteratorBase ret(current, position, mapLen); operator++(); return ret; }
+			IteratorBase operator--(int) { IteratorBase ret(current, position, mapLen); operator--(); return ret; }
 		private:
-			KVERef next() {
-				KVERef kv_ref = next_forward;
+			KVERef Next()
+			{
+				KVERef kvRef = nextForward;
 
-				if (position + 1u >= map_len) {
-					return kv_ref;
+				if (position + 1u >= mapLen)
+				{
+					return kvRef;
 				}
 				position += 1u;
 
-				if (kv_ref.idx < kv_ref.node_ref.node->len) {
-					next_forward = KVERef{kv_ref.node_ref, kv_ref.idx + 1u};
-					return kv_ref;
+				if (kvRef.idx < kvRef.nodeRef.node->len)
+				{
+					nextForward = KVERef{kvRef.nodeRef, kvRef.idx + 1u};
+					return kvRef;
 				}
 
-				do {
-					kv_ref = kv_ref.node_ref.ascend().parent;
-				} while (kv_ref.idx >= kv_ref.node_ref.node->len);
+				do
+				{
+					kvRef = kvRef.nodeRef.Ascend().parent;
+				}
+				while (kvRef.idx >= kvRef.nodeRef.node->len);
 
-				next_forward = BTree::first_leaf_edge(KVERef{kv_ref.node_ref, kv_ref.idx + 1u}.descend());
-				return kv_ref;
+				nextForward = BTree::FirstLeafEdge(KVERef{kvRef.nodeRef, kvRef.idx + 1u}.Descend());
+				return kvRef;
 			}
-			KVERef prev() {
-				KVERef kv_ref = next_backward;
+			KVERef Prev()
+			{
+				KVERef kvRef = nextBackward;
 
-				if (position <= 1u) {
-					next_forward = KVERef{current.node_ref, current.idx + 1 - position};
+				if (position <= 1u)
+				{
+					nextForward = KVERef{current.nodeRef, current.idx + 1 - position};
 					position = 0;
-					return kv_ref;
+					return kvRef;
 				}
 				position -= 1u;
 
-				if (kv_ref.idx > 0) {
-					next_backward = KVERef{kv_ref.node_ref, kv_ref.idx - 1u};
-					return kv_ref;
+				if (kvRef.idx > 0)
+				{
+					nextBackward = KVERef{kvRef.nodeRef, kvRef.idx - 1u};
+					return kvRef;
 				}
 
-				do {
-					kv_ref = kv_ref.node_ref.ascend().parent;
-				} while (kv_ref.idx == 0);
+				do
+				{
+					kvRef = kvRef.nodeRef.Ascend().parent;
+				}
+				while (kvRef.idx == 0);
 
-				next_backward = BTree::last_leaf_edge(KVERef{kv_ref.node_ref, kv_ref.idx - 1u}.descend());
-				return kv_ref;
+				nextBackward = BTree::LastLeafEdge(KVERef{kvRef.nodeRef, kvRef.idx - 1u}.Descend());
+				return kvRef;
 			}
 		protected:
 			KVERef current;
-			KVERef next_forward;
-			KVERef next_backward;
+			KVERef nextForward;
+			KVERef nextBackward;
 			size_t position;
-			size_t map_len;
+			size_t mapLen;
 		};
 
-		class ConstIterator : public IteratorBase<ConstKV> {
+		class ConstIterator : public IteratorBase<ConstKV>
+		{
 			using IteratorBase<ConstKV>::current;
 		public:
 			using IteratorBase<ConstKV>::IteratorBase;
-			ConstKV operator*()  const { return {current.node_ref.node->keys[current.idx], current.node_ref.node->values[current.idx]}; }
+			ConstKV operator*()  const { return {current.nodeRef.node->keys[current.idx], current.nodeRef.node->values[current.idx]}; }
 			ConstKV operator->() const { return operator*(); }
 		};
 
-		class Iterator : public IteratorBase<KV> {
+		class Iterator : public IteratorBase<KV>
+		{
 			using IteratorBase<KV>::current;
 		public:
 			using IteratorBase<KV>::IteratorBase;
-			KV operator*()  { return {current.node_ref.node->keys[current.idx], current.node_ref.node->values[current.idx]}; }
+			KV operator*()  { return {current.nodeRef.node->keys[current.idx], current.nodeRef.node->values[current.idx]}; }
 			KV operator->() { return operator*(); }
 		};
 
 		/// <see cref="OrderedMap::Keys()"/>
-		class Keys {
+		class Keys : public BaseObjectLiteralType<>
+		{
 			class Iter;
 		public:
 			Keys(const OrderedMap& map) : map(map) {}
@@ -551,7 +639,8 @@ namespace Poly {
 			Iter end()    const { return cend(); }
 		private:
 			using ParentIter = typename OrderedMap::ConstIterator;
-			class Iter : public std::iterator<std::bidirectional_iterator_tag, K> {
+			class Iter : public std::iterator<std::bidirectional_iterator_tag, K>
+			{
 			public:
 				Iter(ParentIter iter) : iter(iter) {}
 
@@ -573,7 +662,8 @@ namespace Poly {
 		};
 
 		/// <see cref="OrderedMap::Values()"/>
-		class ConstValues {
+		class ConstValues : public BaseObjectLiteralType<>
+		{
 			class Iter;
 		public:
 			ConstValues(const OrderedMap& map) : map(map) {}
@@ -584,7 +674,8 @@ namespace Poly {
 			Iter end()    const { return cend(); }
 		private:
 			using ParentIter = typename OrderedMap::ConstIterator;
-			class Iter : public std::iterator<std::bidirectional_iterator_tag, V> {
+			class Iter : public std::iterator<std::bidirectional_iterator_tag, V>
+			{
 			public:
 				Iter(ParentIter iter) : iter(iter) {}
 
@@ -606,7 +697,8 @@ namespace Poly {
 		};
 
 		/// <see cref="OrderedMap::Values()"/>
-		class Values {
+		class Values : public BaseObjectLiteralType<>
+		{
 			class Iter;
 		public:
 			Values(OrderedMap& map) : map(map) {}
@@ -615,7 +707,8 @@ namespace Poly {
 			Iter end()   { return {map.end()}; }
 		private:
 			using ParentIter = typename OrderedMap::Iterator;
-			class Iter : public std::iterator<std::bidirectional_iterator_tag, V> {
+			class Iter : public std::iterator<std::bidirectional_iterator_tag, V>
+			{
 			public:
 				Iter(ParentIter iter) : iter(iter) {}
 
@@ -636,56 +729,69 @@ namespace Poly {
 			OrderedMap& map;
 		};
 
-		struct SearchResult {
+		struct SearchResult
+		{
 			enum { FOUND, DESCEND, FAILED = DESCEND } result;
 			KVERef handle;
 		};
 
-		static SearchResult search_tree(NodeRef node_ref, const K& key) {
-			if (node_ref.node == nullptr) {
-				return {SearchResult::FAILED, KVERef{node_ref, 0}};
+		static SearchResult SearchTree(NodeRef nodeRef, const K& key)
+		{
+			if (nodeRef.node == nullptr)
+			{
+				return {SearchResult::FAILED, KVERef{nodeRef, 0}};
 			}
 
-			for (;;) {
-				const auto search_result = search_node(node_ref, key);
-				switch (search_result.result) {
-					case SearchResult::FOUND: return {SearchResult::FOUND, search_result.handle};
-					case SearchResult::DESCEND: {
-						const auto handle = search_result.handle;
-						if (handle.node_ref.height == 0) {
+			for (;;)
+			{
+				const auto searchResult = SearchNode(nodeRef, key);
+				switch (searchResult.result)
+				{
+					case SearchResult::FOUND: return {SearchResult::FOUND, searchResult.handle};
+					case SearchResult::DESCEND:
+					{
+						const auto handle = searchResult.handle;
+						if (handle.nodeRef.height == 0)
+						{
 							//leaf
 							return {SearchResult::FAILED, handle};
 						}
 						//branch
-						node_ref = handle.descend();
+						nodeRef = handle.Descend();
 					}
 				}
 			}
 		}
 
-		static SearchResult search_node(const NodeRef node_ref, const K& key) {
-			return search_linear(node_ref, key);
+		static SearchResult SearchNode(const NodeRef nodeRef, const K& key)
+		{
+			return SearchLinear(nodeRef, key);
 			//todo(vuko): possibly switch to binary search when B is large enough (how large?)
 		}
 
-		template<typename T> static auto equality_check(const T& a, const T& b, int) -> decltype(a == b) { return a == b; } //note(vuko): templating and decltype are used for SFINAE here
-		template<typename T> static auto equality_check(const T& a, const T& b, ...) -> decltype(bool{}) { return !(a < b || b < a); }
-		static bool equals(const K& a, const K& b) { constexpr int choose{}; return equality_check(a, b, choose); }
+		template<typename T> static auto EqualityCheck(const T& a, const T& b, int) -> decltype(a == b) { return a == b; } //note(vuko): templating and decltype are used for SFINAE here
+		template<typename T> static auto EqualityCheck(const T& a, const T& b, ...) -> decltype(bool{}) { return !(a < b || b < a); }
+		static bool Equals(const K& a, const K& b) { constexpr int choose{}; return EqualityCheck(a, b, choose); }
 
-		static SearchResult search_linear(const NodeRef node_ref, const K& search_key) {
-			const LeafNode* const node = node_ref.node;
-			for (size_t i = 0; i < node->len; i++) {
-				const K& tested_key = node->keys[i];
-				if (search_key < tested_key) {
-					return {SearchResult::DESCEND, KVERef{node_ref, i}};
-				} else if (equals(search_key, tested_key)) {
-					return {SearchResult::FOUND, KVERef{node_ref, i}};
+		static SearchResult SearchLinear(const NodeRef nodeRef, const K& searchKey)
+		{
+			const LeafNode* const node = nodeRef.node;
+			for (size_t i = 0; i < node->len; i++)
+			{
+				const K& testedKey = node->keys[i];
+				if (searchKey < testedKey)
+				{
+					return {SearchResult::DESCEND, KVERef{nodeRef, i}};
+				}
+				else if (Equals(searchKey, testedKey))
+				{
+					return {SearchResult::FOUND, KVERef{nodeRef, i}};
 				}
 			}
-			return {SearchResult::DESCEND, KVERef{node_ref, node->len}};
+			return {SearchResult::DESCEND, KVERef{nodeRef, node->len}};
 		}
 
-		static SearchResult search_binary(NodeRef node_ref, const K& search_key);
+		static SearchResult SearchBinary(NodeRef nodeRef, const K& searchKey);
 
 		Root root;
 		size_t len;

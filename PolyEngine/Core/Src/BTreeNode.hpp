@@ -3,60 +3,65 @@
 #include "Defines.hpp"
 #include "UnsafeStorage.hpp"
 
-namespace Poly {
-	namespace Impl {
+namespace Poly
+{
+	namespace Impl
+	{
+		namespace Object = ObjectLifetimeHelper;
 
 		//note(vuko): used to move into uninitialized memory, when using operator=() and (by extension) std::move([range]) is not possible
 		template<typename InIt, typename OutIt>
-		auto constructing_move(InIt first, InIt last, OutIt dest_first) {
-			using InType  = typename std::iterator_traits<InIt>::value_type;
-			using OutType = typename std::iterator_traits<OutIt>::value_type;
-
-			for (; first < last; ++first, ++dest_first) {
-				::new(&*(dest_first)) OutType(std::move(*first));
-				first->~InType();
+		auto ConstructingMove(InIt first, InIt last, OutIt destFirst)
+		{
+			for (; first < last; first++, destFirst++)
+			{
+				Object::MoveCreate(&*destFirst, std::move(*first));
+				Object::Destroy(&*first);
 			}
 
-			return dest_first;
+			return destFirst;
 		};
 
 		template<typename InputIter, typename DestIter>
-		auto constructing_move_backwards(InputIter first, InputIter last, DestIter dest_last) {
-			using InType  = typename std::iterator_traits<InputIter>::value_type;
-			using OutType = typename std::iterator_traits<DestIter>::value_type;
-
-			while (first < last) {
-				::new(&*(--dest_last)) OutType(std::move(*(--last)));
-				last->~InType();
+		auto ConstructingMoveBackwards(InputIter first, InputIter last, DestIter destLast)
+		{
+			while (first < last)
+			{
+				Object::MoveCreate(&*(--destLast), std::move(*(--last)));
+				Object::Destroy(&*last);
 			}
 
-			return dest_last;
+			return destLast;
 		};
 
 		template<typename K, typename V, size_t B>
-		struct BTree {
+		struct BTree : public BaseObject<> //Ordnung muss sein xDDD
+		{
 			constexpr static size_t CAPACITY = 2 * B - 1u;
-			constexpr static size_t MIN_LEN = B - 1u;
+			constexpr static size_t MIN_LEN  = B - 1u;
 			static_assert(CAPACITY >= 3, "Capacity must be at least 3 or greater!");
 
 			struct BranchNode;
-			struct LeafNode {
+			struct LeafNode : public BaseObjectLiteralType<>
+			{
 				LeafNode() : parent(nullptr), len(0) {}
-				~LeafNode() {
-					//since the backing storage has no idea about how many values it contains, we need to destroy them explicitly
-					keys  .destruct(len);
-					values.destruct(len);
+				~LeafNode()
+				{
+					//since the backing storage has no idea about how many elements it contains, we need to destroy them explicitly
+					keys.Destruct(len);
+					values.Destruct(len);
 				}
-				auto as_branch() { return static_cast<BranchNode*>(this); };
+				auto AsBranch() { return static_cast<BranchNode*>(this); };
 
 				UnsafeStorage<K, CAPACITY> keys;
 				UnsafeStorage<V, CAPACITY> values;
 				BranchNode* parent;
-				uint16_t edge_idx; //todo(vuko): rename? choose: edge_idx_in_parent, parent_idx, position
+				uint16_t position; //position (edge index) in parent
 				uint16_t len;
 			};
 
-			struct BranchNode : public LeafNode {
+			struct BranchNode : public LeafNode //note(vuko): not a true is-a relation, but simplifies the code
+			{
 				BranchNode() : LeafNode() {}
 				UnsafeStorage<LeafNode*, CAPACITY + 1u> edges; //len+1 initialized and valid
 			};
@@ -64,39 +69,43 @@ namespace Poly {
 			struct NodeRef;
 			struct KVERef;
 
-			struct Root {
+			struct Root
+			{
 				LeafNode* node;
 				size_t height;
 
-				NodeRef as_node_ref() { return {this->height, this->node, this}; };
+				NodeRef AsNodeRef() { return {this->height, this->node, this}; };
 
-				NodeRef push_level() {
-					const auto new_node = new BranchNode();
-					new_node->edges[0] = node;
+				NodeRef PushLevel()
+				{
+					const auto newNode = new BranchNode();
+					newNode->edges[0]  = node;
 
-					node = new_node;
+					node = newNode;
 					height += 1u;
 
-					const auto node_ref = this->as_node_ref();
-					KVERef{node_ref, 0}.correct_parent_link();
-					return node_ref;
+					const auto nodeRef = this->AsNodeRef();
+					KVERef{nodeRef, 0}.CorrectParentLink();
+					return nodeRef;
 				};
 
-				void pop_level() {
+				void PopLevel()
+				{
 					ASSERTE(this->height > 0, "No levels to pop!");
 
 					LeafNode* const top = node;
-					node = KVERef{this->as_node_ref(), 0}.descend().node;
+					node = KVERef{this->AsNodeRef(), 0}.Descend().node;
 					node->parent = nullptr;
 					height -= 1u;
 
-					delete top->as_branch();
+					delete top->AsBranch();
 				}
 			};
 
 			using Edge = Root; //mostly the same
 
-			struct NodeRef {
+			struct NodeRef
+			{
 				size_t height;
 				LeafNode* node;
 				Root* root;
@@ -107,54 +116,64 @@ namespace Poly {
 				//auto& len() { return node->len; }
 				//auto& keys() { return node->keys; }
 				//auto& values() { return node->values; }
-				//auto& edges() { ASSERTE(height, "Attempting to use leaf as a branch!"); return node->as_branch()->edges; }
+				//auto& edges() { ASSERTE(height, "Attempting to use leaf as a branch!"); return node->AsBranch()->edges; }
 
-				struct AscensionResult {
-					AscensionResult(KVERef edge_ref) : succeeded(true), parent(edge_ref) {}
-					AscensionResult(NodeRef self)    : succeeded(false), self(self) {}
+				struct AscensionResult : public BaseObjectLiteralType<>
+				{
+					AscensionResult(KVERef edgeRef) : succeeded(true), parent(edgeRef) {}
+					AscensionResult(NodeRef self)   : succeeded(false), self(self) {}
 					bool succeeded;
-					union {
+					union
+					{
 						KVERef parent; //valid if succeeded
-						NodeRef self; //valid if not succeeded; note(vuko): technically this is redundant, but actually simplifies things a little bit
+						NodeRef self;  //valid if not succeeded; note(vuko): technically this is redundant, but actually simplifies things a little bit
 					};
 				};
-				AscensionResult const ascend() {
-					if (node->parent) {
-						return {KVERef{ NodeRef{ height + 1u, node->parent, root }, node->edge_idx} };
-					} else {
+
+				AscensionResult const Ascend()
+				{
+					if (node->parent)
+					{
+						return {KVERef{ NodeRef{ height + 1u, node->parent, root }, node->position} };
+					}
+					else
+					{
 						return {*this};
 					}
 				};
 
 				template<typename Key, typename Val>
-				void push_back(Key&& key, Val&& value) {
+				void PushBack(Key&& key, Val&& value)
+				{
 					//leaf
 					ASSERTE(node->len < CAPACITY, "No space left in the leaf!");
 
 					const uint16_t idx = node->len;
 
-					::new(&node->keys  [idx]) K(std::forward<Key>(key));
+					::new(&node->keys  [idx]) K(std::forward<Key>(key)); //todo(muniu): need a ObjectLifetimeHelpers::ForwardingConstruct
 					::new(&node->values[idx]) V(std::forward<Val>(value));
 
 					node->len += 1u;
 				}
 
 				template<typename Key, typename Val>
-				void push_front(Key&& key, Val&& value) {
+				void PushFront(Key&& key, Val&& value)
+				{
 					//leaf
 					ASSERTE(node->len < CAPACITY, "No space left in the leaf!");
 
-					constructing_move_backwards(node->keys.begin(),   node->keys.begin()   + node->len, node->keys.begin()   + node->len + 1u);
+					ConstructingMoveBackwards(node->keys.begin(),   node->keys.begin()   + node->len, node->keys.begin()   + node->len + 1u);
 					::new(&node->keys  [0]) K(std::forward<Key>(key));
 
-					constructing_move_backwards(node->values.begin(), node->values.begin() + node->len, node->values.begin() + node->len + 1u);
+					ConstructingMoveBackwards(node->values.begin(), node->values.begin() + node->len, node->values.begin() + node->len + 1u);
 					::new(&node->values[0]) V(std::forward<Val>(value));
 
 					node->len += 1u;
 				}
 
 				template<typename Key, typename Val>
-				void push_back(Key&& key, Val&& value, const Edge edge) {
+				void PushBack(Key&& key, Val&& value, const Edge edge)
+				{
 					//branch
 					ASSERTE(edge.height == height - 1u, "Attempting to push an edge node of incorrect height!");
 					ASSERTE(node->len < CAPACITY, "No space left in the branch!");
@@ -163,63 +182,69 @@ namespace Poly {
 
 					::new(&node->keys  [idx]) K(std::forward<Key>(key));
 					::new(&node->values[idx]) V(std::forward<Val>(value));
-					node->as_branch()->edges[idx + 1u] = edge.node;
+					node->AsBranch()->edges[idx + 1u] = edge.node;
 
 					node->len += 1u;
 
-					KVERef{*this, idx + 1u}.correct_parent_link();
+					KVERef{*this, idx + 1u}.CorrectParentLink();
 				}
 
 				template<typename Key, typename Val>
-				void push_front(Key&& key, Val&& value, const Edge edge) {
+				void PushFront(Key&& key, Val&& value, const Edge edge)
+				{
 					//branch
 					ASSERTE(edge.height == height - 1u, "Attempting to push an edge node of incorrect height!");
 					ASSERTE(node->len < CAPACITY, "No space left in the branch");
 
-					constructing_move_backwards(node->keys.begin(),   node->keys.begin()   + node->len, node->keys.begin()   + node->len + 1u);
+					ConstructingMoveBackwards(node->keys.begin(),   node->keys.begin()   + node->len, node->keys.begin()   + node->len + 1u);
 					::new(&node->keys  [0]) K(std::forward<Key>(key));
 
-					constructing_move_backwards(node->values.begin(), node->values.begin() + node->len, node->values.begin() + node->len + 1u);
+					ConstructingMoveBackwards(node->values.begin(), node->values.begin() + node->len, node->values.begin() + node->len + 1u);
 					::new(&node->values[0]) V(std::forward<Val>(value));
 
-					auto& edges = node->as_branch()->edges;
+					auto& edges = node->AsBranch()->edges;
 					std::move_backward(edges.begin(), edges.begin() + node->len + 1u, edges.begin() + node->len + 2u);
 					edges[0] = edge.node;
 
 					node->len += 1u;
 
-					for (size_t i = 0; i < node->len + 1u; i++) {
-						KVERef{*this, i}.correct_parent_link();
+					for (size_t i = 0; i < node->len + 1u; i++)
+					{
+						KVERef{*this, i}.CorrectParentLink();
 					}
 				}
 
-				struct PopResult {
+				struct PopResult
+				{
 					K key;
 					V value;
 					Edge edge; //optional
 				};
 
-				PopResult pop_back() {
+				PopResult PopBack()
+				{
 					ASSERTE(node->len > 0, "No entry to pop in the node!");
 
 					const uint16_t idx = node->len - 1u;
 
 					PopResult ret{std::move(node->keys[idx]), std::move(node->values[idx]), Edge{}};
-					node->keys  .destruct_at(idx);
-					node->values.destruct_at(idx);
+					node->keys  .DestructAt(idx);
+					node->values.DestructAt(idx);
 
-					if (height) {
+					if (height)
+					{
 						//branch
-						Edge new_edge = {node->as_branch()->edges[idx + 1u], height - 1u};
-						new_edge.as_node_ref().node->parent = nullptr;
-						ret.edge = new_edge;
+						Edge newEdge = {node->AsBranch()->edges[idx + 1u], height - 1u};
+						newEdge.AsNodeRef().node->parent = nullptr;
+						ret.edge = newEdge;
 					}
 
 					node->len -= 1u;
 					return ret;
 				}
 
-				PopResult pop_front() {
+				PopResult PopFront()
+				{
 					ASSERTE(node->len > 0, "No entry to pop in the node!");
 
 					auto& len    = node->len;
@@ -229,22 +254,24 @@ namespace Poly {
 					PopResult ret{std::move(keys[0]), std::move(values[0]), Edge{}};
 					std::move(keys.begin()   + 1u, keys.begin()   + len, keys.begin());
 					std::move(values.begin() + 1u, values.begin() + len, values.begin());
-					keys  .destruct_at(len - 1u);
-					values.destruct_at(len - 1u);
+					keys  .DestructAt(len - 1u);
+					values.DestructAt(len - 1u);
 
-					if (height) {
+					if (height)
+					{
 						//branch
-						auto& edges = node->as_branch()->edges;
+						auto& edges = node->AsBranch()->edges;
 
 						LeafNode* const child = edges[0];
 						std::move(edges.begin() + 1u, edges.begin() + len + 1u, edges.begin());
 
 						Edge new_edge = {child, height - 1u};
-						new_edge.as_node_ref().node->parent = nullptr;
+						new_edge.AsNodeRef().node->parent = nullptr;
 						ret.edge = new_edge;
 
-						for (size_t i = 0; i < len; ++i) {
-							KVERef{*this, i}.correct_parent_link();
+						for (size_t i = 0; i < len; i++)
+						{
+							KVERef{*this, i}.CorrectParentLink();
 						}
 					}
 
@@ -253,350 +280,411 @@ namespace Poly {
 				}
 			};
 
-			struct KVERef { //todo(vuko): does double duty as KeyValueRef/EdgeRef; split?
-				NodeRef node_ref;
+			struct KVERef //todo(vuko): does double duty as KeyValueRef/EdgeRef; split?
+			{
+				NodeRef nodeRef;
 				size_t idx;
 
-				bool operator==(const KVERef& other) const { return node_ref == other.node_ref && idx == other.idx; }
+				bool operator==(const KVERef& other) const { return nodeRef == other.nodeRef && idx == other.idx; }
 
 				//todo(vuko): these accessors or maybe an overloaded operator-> might make the code more readable
-				//size_t& height() { return node_ref.height; }
-				//LeafNode<K, V>* node() { return node_ref.node; }
-				//Root<K, V>* root() { return node_ref.root; }
-				//size_t& len() { return node_ref.len(); }
-				//auto& keys() { return node_ref.keys(); }
-				//auto& values() { return node_ref.values(); }
-				//auto& edges() { return node_ref.edges(); }
-				NodeRef descend() const { ASSERTE(node_ref.height, "Cannot descend from a leaf node!"); return {node_ref.height - 1u, node_ref.node->as_branch()->edges[idx], node_ref.root}; }; //mark: edge
+				//size_t& height() { return nodeRef.height; }
+				//LeafNode<K, V>* node() { return nodeRef.node; }
+				//Root<K, V>* root() { return nodeRef.root; }
+				//size_t& len() { return nodeRef.len(); }
+				//auto& keys() { return nodeRef.keys(); }
+				//auto& values() { return nodeRef.values(); }
+				//auto& edges() { return nodeRef.edges(); }
+				NodeRef Descend() const { ASSERTE(nodeRef.height, "Cannot Descend from a leaf node!"); return {nodeRef.height - 1u, nodeRef.node->AsBranch()->edges[idx], nodeRef.root}; }; //mark: edge
 
-				struct SplitResult {
-					NodeRef old_node_left; //old node truncated to only contain key/value pairs (and possibly edges) to the left of the handle
-					K key;   //pointed to by the handle, extracted
-					V value; //pointed to by the handle, extracted
-					Edge new_edge_right; //new node containing key/value pairs (and possibly edges) from the right of the handle
+				struct SplitResult
+				{
+					NodeRef oldNodeLeft; //old node truncated to only contain key/value pairs (and possibly edges) to the left of the handle
+					K key;               //pointed to by the handle, extracted
+					V value;             //pointed to by the handle, extracted
+					Edge newEdgeRight;   //new node containing key/value pairs (and possibly edges) from the right of the handle
 				};
 
-				SplitResult split_leaf() { //mark: kv
-					auto new_node = new LeafNode();
-					auto old_node = node_ref.node;
+				SplitResult SplitLeaf() //mark: kv
+				{
+					auto newNode = new LeafNode();
+					auto oldNode = nodeRef.node;
 
-					const auto k = std::move(old_node->keys  [idx]);
-					const auto v = std::move(old_node->values[idx]);
-					old_node->keys  .destruct_at(idx);
-					old_node->values.destruct_at(idx);
+					const auto k = std::move(oldNode->keys  [idx]);
+					const auto v = std::move(oldNode->values[idx]);
+					oldNode->keys  .DestructAt(idx);
+					oldNode->values.DestructAt(idx);
 
-					constructing_move(old_node->keys.begin()   + idx + 1u, old_node->keys.begin()   + old_node->len, new_node->keys.begin());
-					constructing_move(old_node->values.begin() + idx + 1u, old_node->values.begin() + old_node->len, new_node->values.begin());
+					ConstructingMove(oldNode->keys.begin()   + idx + 1u, oldNode->keys.begin()   + oldNode->len, newNode->keys.begin());
+					ConstructingMove(oldNode->values.begin() + idx + 1u, oldNode->values.begin() + oldNode->len, newNode->values.begin());
 
-					const auto new_len = old_node->len - idx - 1u;
-					old_node->len = static_cast<uint16_t>(idx);
-					new_node->len = static_cast<uint16_t>(new_len);
+					const auto new_len = oldNode->len - idx - 1u;
+					oldNode->len = static_cast<uint16_t>(idx);
+					newNode->len = static_cast<uint16_t>(new_len);
 
-					return SplitResult{node_ref, std::move(k), std::move(v), Edge{new_node, 0}};
+					return SplitResult{nodeRef, std::move(k), std::move(v), Edge{newNode, 0}};
 				}
 
-				SplitResult split_branch() { //mark: kv
-					auto new_node = new BranchNode();
-					auto old_node = node_ref.node;
+				SplitResult SplitBranch() //mark: kv
+				{
+					auto newNode = new BranchNode();
+					auto oldNode = nodeRef.node;
 
-					const auto k = std::move(old_node->keys  [idx]);
-					const auto v = std::move(old_node->values[idx]);
-					old_node->keys  .destruct_at(idx);
-					old_node->values.destruct_at(idx);
+					const auto k = std::move(oldNode->keys  [idx]);
+					const auto v = std::move(oldNode->values[idx]);
+					oldNode->keys  .DestructAt(idx);
+					oldNode->values.DestructAt(idx);
 
-					constructing_move(old_node->keys.begin()   + idx + 1u, old_node->keys.begin()   + old_node->len, new_node->keys.begin());
-					constructing_move(old_node->values.begin() + idx + 1u, old_node->values.begin() + old_node->len, new_node->values.begin());
-					std::move(old_node->as_branch()->edges.begin() + idx + 1u, old_node->as_branch()->edges.begin() + old_node->len + 1u, new_node->edges.begin());
+					ConstructingMove(oldNode->keys.begin()   + idx + 1u, oldNode->keys.begin()   + oldNode->len, newNode->keys.begin());
+					ConstructingMove(oldNode->values.begin() + idx + 1u, oldNode->values.begin() + oldNode->len, newNode->values.begin());
+					std::move(oldNode->AsBranch()->edges.begin() + idx + 1u, oldNode->AsBranch()->edges.begin() + oldNode->len + 1u, newNode->edges.begin());
 
-					const auto new_len = old_node->len - idx - 1u;
-					old_node->len = static_cast<uint16_t>(idx);
-					new_node->len = static_cast<uint16_t>(new_len);
+					const auto newLen = oldNode->len - idx - 1u;
+					oldNode->len = static_cast<uint16_t>(idx);
+					newNode->len = static_cast<uint16_t>(newLen);
 
-					Edge new_edge = {new_node, node_ref.height};
+					Edge newEdge = {newNode, nodeRef.height};
 
-					for(size_t i = 0; i < new_node->len + 1u; i++) {
-						KVERef{new_edge.as_node_ref(), i}.correct_parent_link();
+					for(size_t i = 0; i < newNode->len + 1u; i++)
+					{
+						KVERef{newEdge.AsNodeRef(), i}.CorrectParentLink();
 					}
 
-					return SplitResult{node_ref, std::move(k), std::move(v), new_edge};
+					return SplitResult{nodeRef, std::move(k), std::move(v), newEdge};
 				}
 
-				struct InsertResult {
-					InsertResult(KVERef handle,            V* value_ref) : fit(true ), handle(handle),                        value_ref(value_ref) {}
-					InsertResult(SplitResult split_result, V* value_ref) : fit(false), split_result(std::move(split_result)), value_ref(value_ref) {}
-					InsertResult(const InsertResult&  other) : fit(other.fit), value_ref(other.value_ref) {
-						if (other.fit) {
+				struct InsertResult : public BaseObjectLiteralType<>
+				{
+					InsertResult(KVERef handle,           V* valueRef) : fit(true ), handle(handle),                      valueRef(valueRef) {}
+					InsertResult(SplitResult splitResult, V* valueRef) : fit(false), splitResult(std::move(splitResult)), valueRef(valueRef) {}
+					InsertResult(const InsertResult& other) : fit(other.fit), valueRef(other.valueRef)
+					{
+						if (other.fit)
+						{
 							this->handle = other.handle;
-						} else {
-							::new(&this->split_result) SplitResult(other.split_result);
+						}
+						else
+						{
+							Object::CopyCreate(&this->splitResult, other.splitResult);
 						}
 					}
-					InsertResult(      InsertResult&& other) : fit(other.fit), value_ref(other.value_ref) {
-						if (other.fit) {
+					InsertResult(InsertResult&& other) : fit(other.fit), valueRef(other.valueRef)
+					{
+						if (other.fit)
+						{
 							this->handle = other.handle;
-						} else {
-							::new(&this->split_result) SplitResult(std::move(other.split_result));
+						}
+						else
+						{
+							Object::MoveCreate(&this->splitResult, std::move(other.splitResult));
 						}
 					}
-					~InsertResult() { if (!this->fit) { split_result.~SplitResult(); } };
-					InsertResult& operator=(const InsertResult& other) {
-						if (!this->fit) {
-							this->split_result.~SplitResult();
+					~InsertResult() { if (!this->fit) { Object::Destroy(&splitResult); } };
+					InsertResult& operator=(const InsertResult& other)
+					{
+						if (!this->fit)
+						{
+							Object::Destroy(&this->splitResult);
 						}
 
-						if (other.fit) {
+						if (other.fit)
+						{
 							this->handle = other.handle;
-						} else {
-							::new(&this->split_result) SplitResult(other.split_result);
+						}
+						else
+						{
+							Object::CopyCreate(&this->splitResult, other.splitResult);
 						}
 
 						this->fit = other.fit;
-						this->value_ref = other.value_ref;
+						this->valueRef = other.valueRef;
 
 						return *this;
 					}
-					InsertResult& operator=(InsertResult&& other) {
-						if (!this->fit) {
-							this->split_result.~SplitResult();
+					InsertResult& operator=(InsertResult&& other)
+					{
+						if (!this->fit)
+						{
+							Object::Destroy(&this->splitResult);
 						}
 
-						if (other.fit) {
+						if (other.fit)
+						{
 							this->handle = other.handle;
-						} else {
-							::new(&this->split_result) SplitResult(std::move(other.split_result));
+						}
+						else
+						{
+							Object::MoveCreate(&this->splitResult, std::move(other.splitResult));
 						}
 
 						this->fit = other.fit;
-						this->value_ref = other.value_ref;
+						this->valueRef = other.valueRef;
 
 						return *this;
 					}
 
 					bool fit;
-					union {
-						KVERef handle;            //valid if fit
-						SplitResult split_result; //valid if did not fit
+					union
+					{
+						KVERef handle;           //valid if fit
+						SplitResult splitResult; //valid if did not fit
 					};
-					V* value_ref; //non-owning
+					V* valueRef; //non-owning
 				};
 
 				template<typename Key, typename Val>
-				V* leaf_insert_fit(Key&& key, Val&& value) { //mark: edge
-					auto& node_len = node_ref.node->len;
-					ASSERTE(node_len < CAPACITY, "No space left in the leaf!");
+				V* LeafInsertFit(Key&& key, Val&& value) //mark: edge
+				{
+					auto& nodeLen = nodeRef.node->len;
+					ASSERTE(nodeLen < CAPACITY, "No space left in the leaf!");
 
-					auto& keys = node_ref.node->keys;
-					constructing_move_backwards(keys.begin()   + idx, keys.begin()   + node_len, keys.begin()   + node_len + 1u);
+					auto& keys = nodeRef.node->keys;
+					ConstructingMoveBackwards(keys.begin()  + idx, keys.begin()    + nodeLen, keys.begin()   + nodeLen + 1u);
 					::new(&keys  [idx]) K(std::forward<Key>(key));
 
-					auto& values = node_ref.node->values;
-					constructing_move_backwards(values.begin() + idx, values.begin() + node_len, values.begin() + node_len + 1u);
+					auto& values = nodeRef.node->values;
+					ConstructingMoveBackwards(values.begin() + idx, values.begin() + nodeLen, values.begin() + nodeLen + 1u);
 					::new(&values[idx]) V(std::forward<Val>(value));
 
-					node_len += 1u;
+					nodeLen += 1u;
 					return &values[idx];
 				}
 
 				template<typename Key, typename Val>
-				InsertResult leaf_insert(Key&& key, Val&& value) { //mark: edge
-					if (node_ref.node->len < CAPACITY) {
-						V* const v = leaf_insert_fit(std::forward<Key>(key), std::forward<Val>(value));
+				InsertResult LeafInsert(Key&& key, Val&& value) //mark: edge
+				{
+					if (nodeRef.node->len < CAPACITY)
+					{
+						V* const v = LeafInsertFit(std::forward<Key>(key), std::forward<Val>(value));
 
-						return {KVERef{node_ref, idx}, v};
-					} else {
-						KVERef middle = {node_ref, B};
-						auto split_result = middle.split_leaf();
+						return {KVERef{nodeRef, idx}, v};
+					}
+					else
+					{
+						KVERef middle = {nodeRef, B};
+						auto splitResult = middle.SplitLeaf();
 
-						NodeRef left = split_result.old_node_left;
-						NodeRef right = split_result.new_edge_right.as_node_ref();
+						NodeRef left  = splitResult.oldNodeLeft;
+						NodeRef right = splitResult.newEdgeRight.AsNodeRef();
 
 						V* const v = (idx <= B) ?
-						             KVERef{left,  idx           }.leaf_insert_fit(std::forward<Key>(key), std::forward<Val>(value))
+						             KVERef{left,  idx           }.LeafInsertFit(std::forward<Key>(key), std::forward<Val>(value))
 						                        :
-						             KVERef{right, idx - (B + 1u)}.leaf_insert_fit(std::forward<Key>(key), std::forward<Val>(value));
+						             KVERef{right, idx - (B + 1u)}.LeafInsertFit(std::forward<Key>(key), std::forward<Val>(value));
 
-						return {std::move(split_result), v};
+						return {std::move(splitResult), v};
 					}
 				}
 
 				template<typename Key, typename Val>
-				void branch_insert_fit(Key&& key, Val&& value, const Edge edge) { //mark: edge
-					uint16_t& node_len = node_ref.node->len;
-					ASSERTE(node_len < CAPACITY, "No space left in the branch!");
-					ASSERTE(edge.height == node_ref.height - 1u, "Attempting to insert an edge node of incorrect height. Tree corrupted!");
+				void BranchInsertFit(Key&& key, Val&& value, const Edge edge) //mark: edge
+				{
+					uint16_t& nodeLen = nodeRef.node->len;
+					ASSERTE(nodeLen < CAPACITY, "No space left in the branch!");
+					ASSERTE(edge.height == nodeRef.height - 1u, "Attempting to insert an edge node of incorrect height. Tree corrupted!");
 
-					auto& keys = node_ref.node->keys;
-					constructing_move_backwards(keys.begin()   + idx, keys.begin()   + node_len, keys.begin()   + node_len + 1u);
+					auto& keys = nodeRef.node->keys;
+					ConstructingMoveBackwards(keys.begin()   + idx, keys.begin()   + nodeLen, keys.begin()   + nodeLen + 1u);
 					::new(&keys  [idx]) K(std::forward<Key>(key));
 
-					auto& values = node_ref.node->values;
-					constructing_move_backwards(values.begin() + idx, values.begin() + node_len, values.begin() + node_len + 1u);
+					auto& values = nodeRef.node->values;
+					ConstructingMoveBackwards(values.begin() + idx, values.begin() + nodeLen, values.begin() + nodeLen + 1u);
 					::new(&values[idx]) V(std::forward<Val>(value));
 
-					auto& edges = node_ref.node->as_branch()->edges;
-					std::move_backward(edges.begin() + idx + 1u, edges.begin() + node_len + 1u, edges.begin() + node_len + 2u);
+					auto& edges = nodeRef.node->AsBranch()->edges;
+					std::move_backward(edges.begin() + idx + 1u, edges.begin() + nodeLen + 1u, edges.begin() + nodeLen + 2u);
 					edges[idx + 1u] = edge.node;
 
-					node_len += 1u;
+					nodeLen += 1u;
 
-					for (size_t i = idx + 1u; i < node_len + 1u; i++) {
-						KVERef{node_ref, i}.correct_parent_link();
+					for (size_t i = idx + 1u; i < nodeLen + 1u; i++)
+					{
+						KVERef{nodeRef, i}.CorrectParentLink();
 					}
 				}
 
 				template<typename Key, typename Val>
-				InsertResult branch_insert(Key&& key, Val&& value, const Edge edge) { //mark: edge
-					ASSERTE(edge.height == node_ref.height - 1u, "Attempting to insert an edge node of incorrect height. Tree corrupted!");
+				InsertResult BranchInsert(Key&& key, Val&& value, const Edge edge) //mark: edge
+				{
+					ASSERTE(edge.height == nodeRef.height - 1u, "Attempting to insert an edge node of incorrect height. Tree corrupted!");
 
-					if (node_ref.node->len < CAPACITY) {
-						branch_insert_fit(std::forward<Key>(key), std::forward<Val>(value), edge);
+					if (nodeRef.node->len < CAPACITY)
+					{
+						BranchInsertFit(std::forward<Key>(key), std::forward<Val>(value), edge);
 
-						return {KVERef{node_ref, idx}, nullptr}; //note(vuko): returned value reference is never used and so can be safely null
-					} else {
-						KVERef middle = {node_ref, B};
-						auto split_result = middle.split_branch();
+						return {KVERef{nodeRef, idx}, nullptr}; //note(vuko): returned value reference is never used and so can be safely null
+					}
+					else
+					{
+						KVERef middle = {nodeRef, B};
+						auto splitResult = middle.SplitBranch();
 
-						NodeRef left = split_result.old_node_left;
-						NodeRef right = split_result.new_edge_right.as_node_ref();
+						NodeRef left  = splitResult.oldNodeLeft;
+						NodeRef right = splitResult.newEdgeRight.AsNodeRef();
 
-						if (idx <= B) {
-							KVERef{left,  idx           }.branch_insert_fit(std::forward<Key>(key), std::forward<Val>(value), edge);
-						} else {
-							KVERef{right, idx - (B + 1u)}.branch_insert_fit(std::forward<Key>(key), std::forward<Val>(value), edge);
+						if (idx <= B)
+						{
+							KVERef{left,  idx           }.BranchInsertFit(std::forward<Key>(key), std::forward<Val>(value), edge);
+						}
+						else
+						{
+							KVERef{right, idx - (B + 1u)}.BranchInsertFit(std::forward<Key>(key), std::forward<Val>(value), edge);
 						}
 
-						return InsertResult(std::move(split_result), nullptr);
+						return InsertResult(std::move(splitResult), nullptr);
 					}
 				}
 
-				struct RemoveResult {
+				struct RemoveResult
+				{
 					K k;
 					V v;
+					NodeRef nodeRef; //note(vuko): technically redundant, but makes the calling code a bit easier to understand
 				};
-				RemoveResult leaf_remove() { //mark: kv
-					auto& keys     = node_ref.node->keys;
-					auto& values   = node_ref.node->values;
-					auto& node_len = node_ref.node->len;
+				RemoveResult LeafRemove() //mark: kv
+				{
+					auto& keys     = nodeRef.node->keys;
+					auto& values   = nodeRef.node->values;
+					auto& node_len = nodeRef.node->len;
 
-					RemoveResult ret{std::move(keys[idx]), std::move(values[idx])};
+					RemoveResult ret{std::move(keys[idx]), std::move(values[idx]), nodeRef};
 
 					std::move(keys.begin()   + idx + 1u, keys.begin()   + node_len, keys.begin()   + idx);
 					std::move(values.begin() + idx + 1u, values.begin() + node_len, values.begin() + idx);
-					keys  .destruct_at(node_len - 1u);
-					values.destruct_at(node_len - 1u);
+					keys  .DestructAt(node_len - 1u);
+					values.DestructAt(node_len - 1u);
 
 					node_len -= 1u;
 
 					return ret;
 				};
 
-				bool can_merge() const { return KVERef{node_ref, idx}.descend().node->len + KVERef{node_ref, idx + 1u}.descend().node->len + 1u <= CAPACITY; } //mark: kv
+				bool CanMerge() const { return KVERef{nodeRef, idx}.Descend().node->len + KVERef{nodeRef, idx + 1u}.Descend().node->len + 1u <= CAPACITY; } //mark: kv
 
-				KVERef merge() { //mark: kv
-					NodeRef left_node = KVERef{node_ref, idx}.descend();
-					uint16_t& left_len = left_node.node->len;
-					uint16_t old_left_len = left_len;
+				KVERef Merge() //mark: kv
+				{
+					NodeRef  leftNode   = KVERef{nodeRef, idx}.Descend();
+					uint16_t& leftLen   = leftNode.node->len;
+					uint16_t oldLeftLen = leftLen;
 
-					NodeRef right_node = KVERef{node_ref, idx + 1u}.descend();
-					uint16_t& right_len = right_node.node->len;
-					uint16_t old_right_len = right_len;
+					NodeRef rightNode    = KVERef{nodeRef, idx + 1u}.Descend();
+					uint16_t& rightLen   = rightNode.node->len;
+					uint16_t oldRightLen = rightLen;
 
-					ASSERTE(left_len + 1u + right_len <= CAPACITY, "Nodes are too big to merge!");
+					ASSERTE(leftLen + 1u + rightLen <= CAPACITY, "Nodes are too big to merge!");
 
-					auto& len = node_ref.node->len;
+					auto& len = nodeRef.node->len;
 
-					auto& keys       = node_ref  .node->keys;
-					auto& left_keys  = left_node .node->keys;
-					auto& right_keys = right_node.node->keys;
+					auto& keys      = nodeRef  .node->keys;
+					auto& leftKeys  = leftNode .node->keys;
+					auto& rightKeys = rightNode.node->keys;
 
-					::new(&left_keys  [left_len]) K(std::move(keys[idx]));
+					Object::MoveCreate(&leftKeys  [leftLen], std::move(keys  [idx]));
 					std::move(keys.begin()   + idx + 1u, keys.begin()   + len, keys.begin()   + idx);
-					keys.destruct_at(len - 1u);
-					constructing_move(right_keys.begin(),   right_keys.begin()   + right_len, left_keys.begin()   + left_len + 1u);
+					keys.DestructAt(len - 1u);
+					ConstructingMove(rightKeys.begin(),   rightKeys.begin()   + rightLen, leftKeys.begin()   + leftLen + 1u);
 
-					auto& values       = node_ref  .node->values;
-					auto& left_values  = left_node .node->values;
-					auto& right_values = right_node.node->values;
+					auto& values      = nodeRef  .node->values;
+					auto& leftValues  = leftNode .node->values;
+					auto& rightValues = rightNode.node->values;
 
-					::new(&left_values[left_len]) V(std::move(values[idx]));
+					Object::MoveCreate(&leftValues[leftLen], std::move(values[idx]));
 					std::move(values.begin() + idx + 1u, values.begin() + len, values.begin() + idx);
-					values.destruct_at(len - 1u);
-					constructing_move(right_values.begin(), right_values.begin() + right_len, left_values.begin() + left_len + 1u);
+					values.DestructAt(len - 1u);
+					ConstructingMove(rightValues.begin(), rightValues.begin() + rightLen, leftValues.begin() + leftLen + 1u);
 
-					auto& edges = node_ref.node->as_branch()->edges;
+					auto& edges = nodeRef.node->AsBranch()->edges;
 					std::move(edges.begin() + idx + 2u, edges.begin() + len + 1u, edges.begin() + idx + 1u);
-					for (size_t i = idx + 1u; i < len; i++) {
-						KVERef{node_ref, i}.correct_parent_link();
+					for (size_t i = idx + 1u; i < len; i++)
+					{
+						KVERef{nodeRef, i}.CorrectParentLink();
 					}
 
 					len -= 1u;
-					left_len += 1u + right_len;
-					right_len = 0; //we just moved out (and destroyed) all it holds
+					leftLen += 1u + rightLen;
+					rightLen = 0; //we just moved out (and destroyed) all it holds
 
-					if (node_ref.height > 1) {
-						auto& right_edges = right_node.node->as_branch()->edges;
-						auto& left_edges  = left_node .node->as_branch()->edges;
-						std::move(right_edges.begin(), right_edges.begin() + old_right_len + 1u, left_edges.begin() + old_left_len + 1u);
+					if (nodeRef.height > 1)
+					{
+						auto& rightEdges = rightNode.node->AsBranch()->edges;
+						auto& leftEdges  = leftNode.node->AsBranch()->edges;
+						std::move(rightEdges.begin(), rightEdges.begin() + oldRightLen + 1u, leftEdges.begin() + oldLeftLen + 1u);
 
-						for (size_t i = old_left_len + 1u; i < old_left_len + old_right_len + 2u; i++) {
-							KVERef{left_node, i}.correct_parent_link();
+						for (size_t i = oldLeftLen + 1u; i < oldLeftLen + oldRightLen + 2u; i++)
+						{
+							KVERef{leftNode, i}.CorrectParentLink();
 						}
 
-						delete right_node.node->as_branch();
-					} else {
-						delete right_node.node;
+						delete rightNode.node->AsBranch();
+					}
+					else
+					{
+						delete rightNode.node;
 					}
 
 					return *this;
 				};
 
-				void steal_left() { //mark: kv
-					auto pop_result = KVERef{node_ref, idx}.descend().pop_back();
+				void StealLeft() //mark: kv
+				{
+					auto popResult = KVERef{nodeRef, idx}.Descend().PopBack();
 
-					std::swap(node_ref.node->keys  [idx], pop_result.key);
-					std::swap(node_ref.node->values[idx], pop_result.value);
+					std::swap(nodeRef.node->keys  [idx], popResult.key);
+					std::swap(nodeRef.node->values[idx], popResult.value);
 
-					NodeRef child = KVERef{node_ref, idx + 1u}.descend();
-					if (child.height == 0) {
-						child.push_front(pop_result.key, pop_result.value);
-					} else {
-						child.push_front(pop_result.key, pop_result.value, pop_result.edge);
+					NodeRef child = KVERef{nodeRef, idx + 1u}.Descend();
+					if (child.height == 0)
+					{
+						child.PushFront(popResult.key, popResult.value);
+					}
+					else
+					{
+						child.PushFront(popResult.key, popResult.value, popResult.edge);
 					}
 				}
 
-				void steal_right() { //mark: kv
-					auto pop_result = KVERef{node_ref, idx + 1u}.descend().pop_front();
+				void StealRight() //mark: kv
+				{
+					auto popResult = KVERef{nodeRef, idx + 1u}.Descend().PopFront();
 
-					std::swap(node_ref.node->keys  [idx], pop_result.key);
-					std::swap(node_ref.node->values[idx], pop_result.value);
+					std::swap(nodeRef.node->keys  [idx], popResult.key);
+					std::swap(nodeRef.node->values[idx], popResult.value);
 
-					NodeRef child = KVERef{node_ref, idx}.descend();
-					if (child.height == 0) {
-						child.push_back(pop_result.key, pop_result.value);
-					} else {
-						child.push_back(pop_result.key, pop_result.value, pop_result.edge);
+					NodeRef child = KVERef{nodeRef, idx}.Descend();
+					if (child.height == 0)
+					{
+						child.PushBack(popResult.key, popResult.value);
+					}
+					else
+					{
+						child.PushBack(popResult.key, popResult.value, popResult.edge);
 					}
 				}
 
-				void correct_parent_link() { //mark: edge
-					NodeRef child = descend();
-					child.node->parent = this->node_ref.node->as_branch();
-					child.node->edge_idx = static_cast<uint16_t>(this->idx);
+				void CorrectParentLink() //mark: edge
+				{
+					NodeRef child = this->Descend();
+					child.node->parent   = this->nodeRef.node->AsBranch();
+					child.node->position = static_cast<uint16_t>(this->idx);
 				}
 			};
 
-			static KVERef first_leaf_edge(NodeRef node_ref) {
-				while (node_ref.height > 0) {
-					node_ref = KVERef{node_ref, 0}.descend();
+			static KVERef FirstLeafEdge(NodeRef nodeRef)
+			{
+				while (nodeRef.height > 0)
+				{
+					nodeRef = KVERef{nodeRef, 0}.Descend();
 				}
-				return KVERef{node_ref, 0};
+				return KVERef{nodeRef, 0};
 			};
 
-			static KVERef last_leaf_edge(NodeRef node_ref) {
-				while (node_ref.height > 0) {
-					node_ref = KVERef{node_ref, node_ref.node->len}.descend();
+			static KVERef LastLeafEdge(NodeRef nodeRef)
+			{
+				while (nodeRef.height > 0)
+				{
+					nodeRef = KVERef{nodeRef, nodeRef.node->len}.Descend();
 				}
-				return KVERef{node_ref, node_ref.node->len};
+				return KVERef{nodeRef, nodeRef.node->len};
 			};
 
 		};

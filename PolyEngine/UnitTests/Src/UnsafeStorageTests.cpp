@@ -37,6 +37,6 @@ TEST_CASE("Unsafe Storage", "[UnsafeStorage]") {
 		}
 	}
 
-	storage.destruct(len);
+	storage.Destruct(len);
 	REQUIRE(gCurrentInstances == 0);
 }
