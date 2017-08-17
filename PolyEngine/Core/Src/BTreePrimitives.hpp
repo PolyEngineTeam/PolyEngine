@@ -60,7 +60,7 @@ namespace Poly
 				uint16_t len;
 			};
 
-			struct BranchNode : public LeafNode //note(vuko): not a true is-a relation, but simplifies the code
+			struct BranchNode final : public LeafNode //note(vuko): not a true is-a relation, but simplifies the code
 			{
 				BranchNode() : LeafNode() {}
 				UnsafeStorage<LeafNode*, CAPACITY + 1u> edges; //len+1 initialized and valid
@@ -69,7 +69,7 @@ namespace Poly
 			struct NodeRef;
 			struct KVERef;
 
-			struct Root
+			struct Root final
 			{
 				LeafNode* node;
 				size_t height;
@@ -104,7 +104,7 @@ namespace Poly
 
 			using Edge = Root; //mostly the same
 
-			struct NodeRef
+			struct NodeRef final
 			{
 				size_t height;
 				LeafNode* node;
@@ -118,7 +118,7 @@ namespace Poly
 				//auto& values() { return node->values; }
 				//auto& edges() { ASSERTE(height, "Attempting to use leaf as a branch!"); return node->AsBranch()->edges; }
 
-				struct AscensionResult : public BaseObjectLiteralType<>
+				struct AscensionResult final : public BaseObjectLiteralType<>
 				{
 					AscensionResult(KVERef edgeRef) : succeeded(true), parent(edgeRef) {}
 					AscensionResult(NodeRef self)   : succeeded(false), self(self) {}
@@ -214,7 +214,7 @@ namespace Poly
 					}
 				}
 
-				struct PopResult
+				struct PopResult final
 				{
 					K key;
 					V value;
@@ -280,7 +280,7 @@ namespace Poly
 				}
 			};
 
-			struct KVERef //todo(vuko): does double duty as KeyValueRef/EdgeRef; split?
+			struct KVERef final //todo(vuko): does double duty as KeyValueRef/EdgeRef; split?
 			{
 				NodeRef nodeRef;
 				size_t idx;
@@ -297,7 +297,7 @@ namespace Poly
 				//auto& edges() { return nodeRef.edges(); }
 				NodeRef Descend() const { ASSERTE(nodeRef.height, "Cannot Descend from a leaf node!"); return {nodeRef.height - 1u, nodeRef.node->AsBranch()->edges[idx], nodeRef.root}; }; //mark: edge
 
-				struct SplitResult
+				struct SplitResult final
 				{
 					NodeRef oldNodeLeft; //old node truncated to only contain key/value pairs (and possibly edges) to the left of the handle
 					K key;               //pointed to by the handle, extracted
@@ -353,7 +353,7 @@ namespace Poly
 					return SplitResult{nodeRef, std::move(k), std::move(v), newEdge};
 				}
 
-				struct InsertResult : public BaseObjectLiteralType<>
+				struct InsertResult final : public BaseObjectLiteralType<>
 				{
 					InsertResult(KVERef handle,           V* valueRef) : fit(true ), handle(handle),                      valueRef(valueRef) {}
 					InsertResult(SplitResult splitResult, V* valueRef) : fit(false), splitResult(std::move(splitResult)), valueRef(valueRef) {}
@@ -535,7 +535,7 @@ namespace Poly
 					}
 				}
 
-				struct RemoveResult
+				struct RemoveResult final
 				{
 					K k;
 					V v;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BTreeNode.hpp"
+#include "BTreePrimitives.hpp"
 #include "Optional.hpp"
 
 namespace Poly
@@ -299,7 +299,7 @@ namespace Poly
 
 		/// <see cref="OrderedMap::Entry()"/>
 		template<typename Key>
-		class MapEntry : public BaseObjectLiteralType<>
+		class MapEntry final : public BaseObjectLiteralType<>
 		{
 		public:
 			static MapEntry Vacant  (KVERef kvRef, size_t& len, Key&& key) { return MapEntry(kvRef, len, std::forward<Key>(key)); }
@@ -340,7 +340,7 @@ namespace Poly
 			V& OccupiedGet() { return const_cast<V&>(const_cast<const MapEntry&>(*this).OccupiedGet()); }
 
 			/// <summary>A key-value pair.</summary>
-			struct KV
+			struct KV final
 			{
 				K key;
 				V value;
@@ -512,13 +512,13 @@ namespace Poly
 			size_t& mapLen;
 		};
 
-		struct ConstKV
+		struct ConstKV final
 		{
 			const K& key;
 			const V& value;
 			const ConstKV* operator->() const { return this; } //note(vuko): needed by the iterator's own operator ->, since it returns KV by value
 		};
-		struct KV
+		struct KV final
 		{
 			const K& key;
 			V& value;
@@ -608,7 +608,7 @@ namespace Poly
 			size_t mapLen;
 		};
 
-		class ConstIterator : public IteratorBase<ConstKV>
+		class ConstIterator final : public IteratorBase<ConstKV>
 		{
 			using IteratorBase<ConstKV>::current;
 		public:
@@ -617,7 +617,7 @@ namespace Poly
 			ConstKV operator->() const { return operator*(); }
 		};
 
-		class Iterator : public IteratorBase<KV>
+		class Iterator final : public IteratorBase<KV>
 		{
 			using IteratorBase<KV>::current;
 		public:
@@ -627,7 +627,7 @@ namespace Poly
 		};
 
 		/// <see cref="OrderedMap::Keys()"/>
-		class Keys : public BaseObjectLiteralType<>
+		class Keys final : public BaseObjectLiteralType<>
 		{
 			class Iter;
 		public:
@@ -639,7 +639,7 @@ namespace Poly
 			Iter end()    const { return cend(); }
 		private:
 			using ParentIter = typename OrderedMap::ConstIterator;
-			class Iter : public std::iterator<std::bidirectional_iterator_tag, K>
+			class Iter final : public std::iterator<std::bidirectional_iterator_tag, K>
 			{
 			public:
 				Iter(ParentIter iter) : iter(iter) {}
@@ -662,7 +662,7 @@ namespace Poly
 		};
 
 		/// <see cref="OrderedMap::Values()"/>
-		class ConstValues : public BaseObjectLiteralType<>
+		class ConstValues final : public BaseObjectLiteralType<>
 		{
 			class Iter;
 		public:
@@ -674,7 +674,7 @@ namespace Poly
 			Iter end()    const { return cend(); }
 		private:
 			using ParentIter = typename OrderedMap::ConstIterator;
-			class Iter : public std::iterator<std::bidirectional_iterator_tag, V>
+			class Iter final : public std::iterator<std::bidirectional_iterator_tag, V>
 			{
 			public:
 				Iter(ParentIter iter) : iter(iter) {}
@@ -697,7 +697,7 @@ namespace Poly
 		};
 
 		/// <see cref="OrderedMap::Values()"/>
-		class Values : public BaseObjectLiteralType<>
+		class Values final : public BaseObjectLiteralType<>
 		{
 			class Iter;
 		public:
@@ -707,7 +707,7 @@ namespace Poly
 			Iter end()   { return {map.end()}; }
 		private:
 			using ParentIter = typename OrderedMap::Iterator;
-			class Iter : public std::iterator<std::bidirectional_iterator_tag, V>
+			class Iter final : public std::iterator<std::bidirectional_iterator_tag, V>
 			{
 			public:
 				Iter(ParentIter iter) : iter(iter) {}
@@ -729,7 +729,7 @@ namespace Poly
 			OrderedMap& map;
 		};
 
-		struct SearchResult
+		struct SearchResult final
 		{
 			enum { FOUND, DESCEND, FAILED = DESCEND } result;
 			KVERef handle;

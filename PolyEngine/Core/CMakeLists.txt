@@ -22,7 +22,7 @@ set(POLYCORE_H_FOR_IDE
 	Src/Allocator.hpp
 	Src/Angle.hpp
 	Src/OrderedMap.hpp
-	Src/BTreeNode.hpp
+	Src/BTreePrimitives.hpp
 	Src/BaseObject.hpp
 	Src/BasicMath.hpp
 	Src/BinaryBuffer.hpp
