@@ -25,8 +25,8 @@ namespace Poly { class SoundResource; }
 
 class GAME_DLLEXPORT SGJGame : public Poly::IGame {
 public:
-	void RegisterEngine(Poly::Engine* engine) override { }
-	
+	void RegisterEngine(Poly::Engine* /*engine*/) override { }
+
 	void Init() override;
 	void Deinit() override;
 

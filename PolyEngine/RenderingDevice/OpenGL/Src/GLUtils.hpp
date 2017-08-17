@@ -35,7 +35,7 @@ namespace Poly {
 			gConsole.LogError("{}:{} OpenGL error: [{}] {}", file, line, err, OpenGLErrorStr(err));
 	}
 
-	inline void CheckFBOStatus(const char *file, int line)
+	inline void CheckFBOStatus(const char* /*file*/, int /*line*/)
 	{
 		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 

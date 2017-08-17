@@ -1,5 +1,7 @@
 #include <catch.hpp>
 
+#define _WINDLL
+#define _GAME //fake being a game for the dllexport macros
 #include <ResourceManager.hpp>
 
 using namespace Poly;

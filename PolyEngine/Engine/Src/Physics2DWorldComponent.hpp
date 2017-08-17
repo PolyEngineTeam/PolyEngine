@@ -11,8 +11,8 @@ namespace Poly
 	{
 	public:
 		const float TimeStep = 1.0f / 60.0f;
-		const size_t VelocityIterations = 8;
-		const size_t PositionIterations = 3;
+		const int32_t VelocityIterations = 8;
+		const int32_t PositionIterations = 3;
 		const Vector Gravity = Vector(0.f, -9.81f, 0.f);
 	};
 

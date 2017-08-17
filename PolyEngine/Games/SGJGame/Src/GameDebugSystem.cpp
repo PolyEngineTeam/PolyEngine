@@ -15,17 +15,17 @@ void SGJ::Debug::DebugSystemPhase(Poly::World* world)
 	GameDebugWorldComponent* com = world->GetWorldComponent<GameDebugWorldComponent>();
 
 	Poly::ScreenSize size = gEngine->GetRenderingDevice()->GetScreenSize();
-	
+
 
 	if (!com->TextID)
 	{
 		com->TextID = DeferredTaskSystem::SpawnEntityImmediate(world);
-		
-		DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(world, com->TextID, Vector(size.Width - 200, size.Height - 30, 0), "Fonts/Raleway/Raleway-Regular.ttf", eResourceSource::ENGINE, 32);
+
+		DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(world, com->TextID, Vector(float(size.Width) - 200.f, float(size.Height) - 30.f, 0.f), "Fonts/Raleway/Raleway-Regular.ttf", eResourceSource::ENGINE, 32);
 	}
 
 	ScreenSpaceTextComponent* textCom = world->GetComponent<ScreenSpaceTextComponent>(com->TextID);
-	textCom->SetScreenPosition(Vector(size.Width - 200, size.Height - 30, 0));
+	textCom->SetScreenPosition(Vector(float(size.Width) - 200.f, float(size.Height) - 30.f, 0.f));
 
 	GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
 	RigidBody2DComponent* rb = world->GetComponent<RigidBody2DComponent>(gameMgrCmp->Player);

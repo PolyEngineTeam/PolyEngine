@@ -2,7 +2,7 @@
 
 #include "SoundSystem.hpp"
 
-#include <al.h> 
+#include <al.h>
 #include <alc.h>
 
 using namespace Poly;
@@ -147,15 +147,15 @@ void SoundSystem::SetEmitterDistanceModel(World* world, const UniqueID& id, void
 {
 }*/
 
-void SoundSystem::ActivateListener(World* world, const UniqueID& id)
+void SoundSystem::ActivateListener(World* /*world*/, const UniqueID& /*id*/)
 {
 }
 
-void SoundSystem::DeactivateListener(World* world, const UniqueID& id)
+void SoundSystem::DeactivateListener(World* /*world*/, const UniqueID& /*id*/)
 {
 }
 
-void SoundSystem::SetListenerGain(World* world, const UniqueID& id, float gain)
+void SoundSystem::SetListenerGain(World* /*world*/, const UniqueID& /*id*/, float /*gain*/)
 {
 }
 

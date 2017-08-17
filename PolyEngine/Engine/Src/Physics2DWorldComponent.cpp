@@ -19,7 +19,7 @@ namespace Poly {
 			RigidBody2DComponent* rb2 = static_cast<RigidBody2DComponent*>(contact->GetFixtureB()->GetUserData());
 			b2WorldManifold manifold;
 			contact->GetWorldManifold(&manifold);
-			
+
 			Vector normal(manifold.normal.x, manifold.normal.y, 0);
 			Component->OverlapingBodies[rb1].PushBack(Physics2DWorldComponent::Collision{ rb2, normal });
 			Component->OverlapingBodies[rb2].PushBack(Physics2DWorldComponent::Collision{ rb1, -normal });
@@ -30,13 +30,13 @@ namespace Poly {
 			RigidBody2DComponent* rb1 = static_cast<RigidBody2DComponent*>(contact->GetFixtureA()->GetUserData());
 			RigidBody2DComponent* rb2 = static_cast<RigidBody2DComponent*>(contact->GetFixtureB()->GetUserData());
 
-			for (int i = 0; i < Component->OverlapingBodies[rb1].GetSize(); ++i)
+			for (size_t i = 0; i < Component->OverlapingBodies[rb1].GetSize(); ++i)
 			{
 				if (Component->OverlapingBodies[rb1][i].rb == rb2)
 					Component->OverlapingBodies[rb1].RemoveByIdx(i);
 			}
-			
-			for (int i = 0; i < Component->OverlapingBodies[rb2].GetSize(); ++i)
+
+			for (size_t i = 0; i < Component->OverlapingBodies[rb2].GetSize(); ++i)
 			{
 				if (Component->OverlapingBodies[rb2][i].rb == rb1)
 					Component->OverlapingBodies[rb2].RemoveByIdx(i);

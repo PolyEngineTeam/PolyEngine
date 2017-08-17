@@ -1,7 +1,7 @@
 #pragma once
 
+#include <Core.hpp>
 #include <Defines.hpp>
-#include <Logger.hpp>
 #include <String.hpp>
 #include <FileIO.hpp>
 
@@ -21,18 +21,24 @@ namespace Poly
 
 	namespace Impl { template<typename T> std::map<String, std::unique_ptr<T>>& GetResources(); }
 
-#define DECLARE_RESOURCE(type, map_name) \
+#define ENGINE_DECLARE_RESOURCE(type, map_name) \
 	namespace Impl { \
 		ENGINE_DLLEXPORT extern std::map<String, std::unique_ptr<type>> map_name; \
 		template<> inline std::map<String, std::unique_ptr<type>>& GetResources<type>() { return map_name; } \
 	}
 
+#define DECLARE_RESOURCE(type, map_name) \
+	namespace Impl { \
+		GAME_DLLEXPORT extern std::map<String, std::unique_ptr<type>> map_name; \
+		template<> inline std::map<String, std::unique_ptr<type>>& GetResources<type>() { return map_name; } \
+	}
+
 #define DEFINE_RESOURCE(type, map_name) namespace Poly { namespace Impl { std::map<String, std::unique_ptr<type>> map_name = {}; }}
 
-	DECLARE_RESOURCE(MeshResource, gMeshResourcesMap)
-	DECLARE_RESOURCE(TextureResource, gTextureResourcesMap)
-	DECLARE_RESOURCE(FontResource, gFontResourcesMap)
-	DECLARE_RESOURCE(SoundResource, gALSoundResourcesMap)
+	ENGINE_DECLARE_RESOURCE(MeshResource, gMeshResourcesMap)
+	ENGINE_DECLARE_RESOURCE(TextureResource, gTextureResourcesMap)
+	ENGINE_DECLARE_RESOURCE(FontResource, gFontResourcesMap)
+	ENGINE_DECLARE_RESOURCE(SoundResource, gALSoundResourcesMap)
 
 	//------------------------------------------------------------------------------
 	template<typename T>
@@ -66,7 +72,7 @@ namespace Poly
 			gConsole.LogInfo("ResourceManager: Loading: {}", path);
 			T* resource = nullptr;
 			Dynarray<String> paths = (source == eResourceSource::NONE) ? Dynarray<String>({String()}) : gAssetsPathConfig.GetAssetsPaths(source);
-			for (int i = 0; i < paths.GetSize() && !resource; ++i)
+			for (size_t i = 0; i < paths.GetSize() && !resource; ++i)
 			{
 				String absolutePath = paths[i] + path;
 

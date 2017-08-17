@@ -25,9 +25,9 @@ BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 	GetProgram().RegisterUniform("float", "uDirectionalLight.Base.Intensity");
 	GetProgram().RegisterUniform("vec4", "uDirectionalLight.Direction");
 
-	for (int i = 0; i < MAX_POINT_LIGHT_COUNT; ++i)
+	for (size_t i = 0; i < MAX_POINT_LIGHT_COUNT; ++i)
 	{
-		String baseName = String("uPointLight[") + String::From(i) + String("].");
+		String baseName = String("uPointLight[") + String::From(static_cast<int>(i)) + String("].");
 		GetProgram().RegisterUniform("vec4", baseName + "Base.Color");
 		GetProgram().RegisterUniform("float", baseName + "Base.Intensity");
 		GetProgram().RegisterUniform("vec4", baseName + "Position");
@@ -38,13 +38,13 @@ BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 	GetProgram().RegisterUniform("int", "uPointLightCount");
 }
 
-void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& rect)
+void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/)
 {
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
 
 	DiffuseLightSourceWorldComponent* diffuseCmp = world->GetWorldComponent<DiffuseLightSourceWorldComponent>();
-	
+
 	GetProgram().SetUniform("uDiffuseLight.Color", diffuseCmp->GetColor());
 	GetProgram().SetUniform("uDiffuseLight.Intensity", diffuseCmp->GetIntensity());
 
@@ -88,7 +88,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	float horizontalSpan = (cameraHeight * camera->GetAspect()) / 2.0f;
 	Vector cameraPos = camera->GetSibling<TransformComponent>()->GetGlobalTranslation();
 
-	
+
 
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
@@ -98,7 +98,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 
 		if (meshCmp->IsTransparent())
 			continue;
-		
+
 		Vector objPos = transCmp->GetGlobalTranslation();
 
 		bool shouldCull = objPos.Y > cameraPos.Y + verticalSpan;

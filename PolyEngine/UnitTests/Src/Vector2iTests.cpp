@@ -84,7 +84,7 @@ TEST_CASE("Vector2i-Vector2i operators", "[Vector2i]") {
 TEST_CASE("Vector2i-scalar operators", "[Vector2i]") {
 	Vector2i v1(1, 2);
 	Vector2i v2(v1);
-	float s1 = 2;
+	int s1 = 2;
 
 	SECTION("Multiplication operator") {
 		REQUIRE(v1*s1 == Vector2i(2, 4));
@@ -93,7 +93,7 @@ TEST_CASE("Vector2i-scalar operators", "[Vector2i]") {
 	}
 
 	SECTION("Division operator") {
-		REQUIRE(v1 / s1 == Vector2i(0.5f, 1.0f));
+		REQUIRE(v1 / s1 == Vector2i(0, 1));
 		v2 /= s1;
 		REQUIRE(v2 == v1 / s1);
 	}

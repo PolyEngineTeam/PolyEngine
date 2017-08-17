@@ -15,8 +15,8 @@ using namespace SGJ;
 
 void SGJ::CameraMovementSystem::CameraMovementUpdatePhase(Poly::World* world)
 {
-	double deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
-	double time = TimeSystem::GetTimerElapsedTime(world, Poly::eEngineTimer::GAMEPLAY);
+	auto deltaTime = float(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
+	//double time = TimeSystem::GetTimerElapsedTime(world, Poly::eEngineTimer::GAMEPLAY);
 
 	GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
 	UniqueID player = gameMgrCmp->Player;
@@ -50,25 +50,25 @@ void SGJ::CameraMovementSystem::CameraMovementUpdatePhase(Poly::World* world)
 
 		// add lag to translation
 		cameraMvmtCmp->SetTargetTranslation(TargetPosition);
-		Vector Translation = Lerp(transformCmp->GetLocalTranslation(), cameraMvmtCmp->GetTargetTranslation(), 2.0*deltaTime);
-		
+		Vector Translation = Lerp(transformCmp->GetLocalTranslation(), cameraMvmtCmp->GetTargetTranslation(), 2.0f*deltaTime);
+
 		// sum the camera modified translation
 		transformCmp->SetLocalTranslation(Translation);
 
-		PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
-		if (post != nullptr)
-		{
-			float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
-			float intpart;
-			float fractpart = std::modf(Time, &intpart);
-			// post->UseCashetes = (fractpart > 0.5) ? 1 : 0;
-			// gConsole.LogInfo("SGJ::CameraMovementSystem::CameraMovementUpdatePhase Time: {}, useCashetes: {}", Time, post->UseCashetes);
-		}
+		//PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
+		//if (post != nullptr)
+		//{
+		//	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
+		//	float intpart;
+		//	float fractpart = std::modf(Time, &intpart);
+		//	// post->UseCashetes = (fractpart > 0.5) ? 1 : 0;
+		//	// gConsole.LogInfo("SGJ::CameraMovementSystem::CameraMovementUpdatePhase Time: {}, useCashetes: {}", Time, post->UseCashetes);
+		//}
 	}
 
 }
 
 float SGJ::CameraMovementSystem::ElasticEaseOut(float p)
 {
-	return sin(-13 * 3.14 * (p + 1)) * pow(2, -10 * p) + 1;
+	return std::sin(-13.f * 3.14f * (p + 1.f)) * std::pow(2.f, -10.f * p) + 1.f;
 }

@@ -67,12 +67,12 @@ TransparentRenderingPass::TransparentRenderingPass()
 }
 
 
-void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& rect)
+void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/)
 {
 	static const PostprocessQuad QUAD;
 
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
-	const TransformComponent* CameraTransform = camera->GetSibling<TransformComponent>();
+	//const TransformComponent* CameraTransform = camera->GetSibling<TransformComponent>();
 
 	GetProgram().BindProgram();
 
@@ -110,14 +110,15 @@ void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera
 
 		Matrix objTransform; // = transCmp->GetGlobalTransformationMatrix();
 		objTransform.SetTranslation(transCmp->GetGlobalTranslation() + Vector(0.0f, 0.0f, 0.5f));
-		
+
 		Matrix screenTransform = camera->GetMVP() * objTransform * objScale;
 		GetProgram().SetUniform("uTransform", objTransform * objScale);
 		GetProgram().SetUniform("uMVPTransform", screenTransform);
 		GetProgram().SetUniform("uBaseColor", meshCmp->GetBaseColor());
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
-			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
+			UNUSED(subMesh);
+			//const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 
 			glBindVertexArray(QUAD.VAO);
 			glDrawArrays(GL_TRIANGLES, 0, 6);

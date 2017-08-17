@@ -33,7 +33,7 @@ namespace Poly
 	class AddComponentDeferredTask : public DeferredTaskBase
 	{
 	public:
-		AddComponentDeferredTask(const UniqueID &entityID, Args&&... args) : arguments(std::forward<Args>(args)...), Id(entityID) {}
+		AddComponentDeferredTask(const UniqueID &entityID, Args&&... args) : Id(entityID), arguments(std::forward<Args>(args)...) {}
 
 		virtual void Execute(World* w) { func(w, arguments); }
 

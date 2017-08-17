@@ -21,7 +21,7 @@ namespace SGJ
 
 		GameManagerWorldComponent* mgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
 		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(mgrCmp->Player);
-		
+
 		if (playerCmp->DeathCoolDowntime > 0)
 			UpdateDeathAction(world);
 		else
@@ -36,9 +36,9 @@ namespace SGJ
 			// Moving
 			const float modifier = (playerCmp->InAir ? 0.2f : 1.0f);
 			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::LEFT))
-				playerCmp->SetMoveVector(Vector(-deltaTime * modifier * playerCmp->GetMovementSpeed(), 0, 0));
+				playerCmp->SetMoveVector(Vector(float(-deltaTime * modifier * playerCmp->GetMovementSpeed()), 0, 0));
 			if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D) || world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::RIGHT))
-				playerCmp->SetMoveVector(Vector(deltaTime * modifier * playerCmp->GetMovementSpeed(), 0, 0));
+				playerCmp->SetMoveVector(Vector(float(deltaTime * modifier * playerCmp->GetMovementSpeed()), 0, 0));
 			PowerupSystem::ApplyPowerupsAndInput(world, playerCmp);
 
 
@@ -58,7 +58,7 @@ namespace SGJ
 		GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
 		TransformComponent* transCmp = world->GetComponent<TransformComponent>(manager->Player);
 		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(manager->Player);
-		GameManagerSystem::PlaySample(world, "Audio/death-sound.ogg", transCmp->GetGlobalTranslation(), 1.0, 1.8);
+		GameManagerSystem::PlaySample(world, "Audio/death-sound.ogg", transCmp->GetGlobalTranslation(), 1.0f, 1.8f);
 		playerCmp->DeathCoolDowntime = playerCmp->DeathCoolDowntimeMax;
 	}
 
@@ -91,10 +91,10 @@ namespace SGJ
 		RigidBody2DComponent* rigidbodyCmp = world->GetComponent<RigidBody2DComponent>(playerID);
 		TransformComponent* transCmp = world->GetComponent<TransformComponent>(playerID);
 		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(playerID);
-		
+
 		if (playerCmp->JumpCooldownTimer >= 0 || playerCmp->InAir)
 			return;
-		
+
 		// we can jump indeed
 		double time = TimeSystem::GetTimerElapsedTime(world, Poly::eEngineTimer::GAMEPLAY);
 		playerCmp->LastJumpTimeStart = time;
@@ -116,7 +116,7 @@ namespace SGJ
 		GameManagerWorldComponent* mgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
 		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(mgrCmp->Player);
 		RigidBody2DComponent* rigidbodyCmp = world->GetComponent<RigidBody2DComponent>(mgrCmp->Player);
-		float deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
+		auto deltaTime = float(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
 
 		if(playerCmp->JumpCooldownTimer >= 0)
 			playerCmp->JumpCooldownTimer -= deltaTime;
@@ -133,20 +133,20 @@ namespace SGJ
 			{
 				if (wasInAir)
 					playerCmp->LastLandTimeStart = TimeSystem::GetTimerElapsedTime(world, Poly::eEngineTimer::GAMEPLAY);
-				
+
 				playerCmp->InAir = false;
 				break;
 			}
 
 		if(!playerCmp->InAir)
-			rigidbodyCmp->SetLinearDamping(3);
+			rigidbodyCmp->SetLinearDamping(3.f);
 		else
-			rigidbodyCmp->SetLinearDamping(0.1);
+			rigidbodyCmp->SetLinearDamping(0.1f);
 	}
 
 	float PlayerUpdateSystem::ElasticEaseOut(float p)
 	{
-		return sin(-13 * 3.14 * (p + 1)) * pow(2, -10 * p) + 1;
+		return std::sin(-13.f * 3.14f * (p + 1.f)) * std::pow(2.f, -10.f * p) + 1.f;
 	}
 
 	void PlayerUpdateSystem::ProcessJumpStrech(Poly::World * world)
@@ -155,14 +155,14 @@ namespace SGJ
 		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(mgrCmp->Player);
 		double time = TimeSystem::GetTimerElapsedTime(world, Poly::eEngineTimer::GAMEPLAY);
 		TransformComponent* playerTrans = playerCmp->GetSibling<TransformComponent>();
-		float timeSinceLastJump = time - playerCmp->LastJumpTimeStart;
-		float timeSinceLastLand = time - playerCmp->LastLandTimeStart;
+		auto timeSinceLastJump = float(time - playerCmp->LastJumpTimeStart);
+		auto timeSinceLastLand = float(time - playerCmp->LastLandTimeStart);
 
 		if (timeSinceLastLand < timeSinceLastJump)
 		{
 			// stretch on jump anim
 			float tX = 1.0f * timeSinceLastJump;
-			float tY = 1.0f * timeSinceLastJump;
+			//float tY = 1.0f * timeSinceLastJump;
 			float scaleX = Lerp(2.5f, 1.0f, Clamp(ElasticEaseOut(tX), 0.0f, 1.0f));
 			// float scaleY = Lerp(0.3f, 1.0f, Clamp(ElasticEaseOut(tY), 0.0f, 1.0f));
 			// playerTrans->SetLocalScale(playerTrans->GetGlobalRotation().GetConjugated() * Vector(scaleX, scaleY, 1.0f));
@@ -172,7 +172,7 @@ namespace SGJ
 		{
 			// stretch on jump anim
 			float tX = 0.75f * timeSinceLastJump;
-			float tY = 0.5f * timeSinceLastJump;
+			//float tY = 0.5f * timeSinceLastJump;
 			float scaleX = Lerp(0.3f, 1.5f, Clamp(ElasticEaseOut(tX), 0.0f, 1.0f));
 			// float scaleY = Lerp(2.5f, 1.2f, Clamp(ElasticEaseOut(tY), 0.0f, 1.0f));
 			// playerTrans->SetLocalScale(playerTrans->GetGlobalRotation().GetConjugated() * Vector(scaleX, scaleY, 1.0f));
@@ -196,9 +196,9 @@ namespace SGJ
 	{
 		GameManagerWorldComponent* mgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
 		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(mgrCmp->Player);
-		RigidBody2DComponent* rigidbodyCmp = world->GetComponent<RigidBody2DComponent>(mgrCmp->Player);
+		//RigidBody2DComponent* rigidbodyCmp = world->GetComponent<RigidBody2DComponent>(mgrCmp->Player);
 		PostprocessSettingsComponent* postCmp = world->GetComponent<PostprocessSettingsComponent>(mgrCmp->Camera);
-		float deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
+		auto deltaTime = float(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
 
 		if (playerCmp->DeathCoolDowntime >= 0)
 		{
