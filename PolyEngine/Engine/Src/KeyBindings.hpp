@@ -182,6 +182,8 @@ namespace Poly
 		_COUNT =				0xff
 	};
 }
+#elif defined(__APPLE__)
+#error Implement
 #elif defined(__linux__)
 namespace Poly
 {
