@@ -185,6 +185,32 @@ void GLRenderingDevice::EndFrame()
 {
 	glXSwapBuffers(this->display, this->window);
 }
+
+#elif defined(__APPLE__)
+
+//------------------------------------------------------------------------------
+IRenderingDevice* PolyCreateRenderingDevice(void* window, const ScreenSize& size) { return new GLRenderingDevice(window, size); }
+
+//------------------------------------------------------------------------------
+GLRenderingDevice::GLRenderingDevice(void* window, const ScreenSize& size)
+	: window(window)
+{
+	ScreenDim = size;
+	//TODO
+}
+
+//------------------------------------------------------------------------------
+GLRenderingDevice::~GLRenderingDevice()
+{
+	//TODO
+}
+
+//------------------------------------------------------------------------------
+void GLRenderingDevice::EndFrame()
+{
+	//TODO
+}
+
 #else
 #error "Unsupported platform :("
 #endif

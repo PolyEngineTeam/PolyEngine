@@ -5,6 +5,8 @@
 	#include <epoxy/wgl.h>
 #elif defined(__linux__)
 	#include <epoxy/glx.h>
+#elif defined(__APPLE__)
+	#include <epoxy/gl.h>
 #else
 	#error "Unsupported platform :("
 #endif

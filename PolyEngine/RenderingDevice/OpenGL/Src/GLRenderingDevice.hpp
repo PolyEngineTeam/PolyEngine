@@ -4,6 +4,8 @@
 	#include <epoxy/wgl.h>
 #elif defined(__linux__)
 	#include <epoxy/glx.h>
+#elif defined(__APPLE__)
+	#include <epoxy/gl.h>
 #else
 	#error "Unsupported platform :("
 #endif
@@ -52,6 +54,8 @@ namespace Poly
 		GLRenderingDevice(HWND HWnd, RECT Rect);
 #elif defined(__linux__)
 		GLRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig, const ScreenSize& size);
+#elif defined(__APPLE__)
+		GLRenderingDevice(void* window, const ScreenSize& size); //TODO creation API
 #else
 #error "Unsupported platform :("
 #endif
@@ -95,6 +99,8 @@ namespace Poly
 		Display* display;
 		Window window;
 		GLXContext context;
+#elif defined(__APPLE__)
+		void* window;
 #else
 #error "Unsupported platform :("
 #endif
@@ -116,6 +122,8 @@ extern "C"
 	DEVICE_DLLEXPORT Poly::IRenderingDevice* __stdcall PolyCreateRenderingDevice(HWND hwnd, RECT rect);
 #elif defined(__linux__)
 	DEVICE_DLLEXPORT Poly::IRenderingDevice* PolyCreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig, const Poly::ScreenSize& size);
+#elif defined(__APPLE__)
+	DEVICE_DLLEXPORT Poly::IRenderingDevice* PolyCreateRenderingDevice(void* window, const Poly::ScreenSize& size);
 #else
 #error "Unsupported platform :("
 #endif
