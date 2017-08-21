@@ -19,18 +19,11 @@ int main() {
 	{
 		GLint majorGLX = 0, minorGLX = 0;
 		glXQueryVersion(display.get(), &majorGLX, &minorGLX);
-		if (majorGLX <= 1 && minorGLX < 2) {
-			Poly::gConsole.LogError("GLX 1.2 or greater is required.");
+		if (majorGLX <= 1 && minorGLX < 4) {
+			Poly::gConsole.LogError("GLX 1.4 or greater is required.");
 			return 1;
 		}
 	}
-
-	GLenum err = glxewInit();
-	if (err != GLEW_OK) {
-		Poly::gConsole.LogError("GLXEW init failed, code: {}, status: {}", err, glewGetErrorString(err));
-		return 1;
-	}
-	Poly::gConsole.LogDebug("GLXEW initialized.");
 
 	GLint glxAttribs[] = {
 		GLX_X_RENDERABLE  , True,

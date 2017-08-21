@@ -1,87 +1,97 @@
-#Taken from the official assimp repository (rev 270355f). Modified slightly.
-#License file can be found in ThirdParty/assimp.
+# Findassimp
+# --------
+#
+# Find the Open Asset Import Library (assimp)
+#
+# Inspired by the official version in the assimp repository (rev 270355f).
+# License file can be found in ThirdParty/assimp.
+#
+# IMPORTED Targets
+# ^^^^^^^^^^^^^^^^
+#
+# This module defines the :prop_tgt:`IMPORTED` target ``ass::imp``,
+# if assimp has been found.
+#
+# Result Variables
+# ^^^^^^^^^^^^^^^^
+#
+# This module defines the following variables:
+#
+# ::
+#
+#   assimp_INCLUDE_DIRS - include directories for assimp
+#   assimp_LIBRARIES - libraries to link against assimp
+#   assimp_DEFINITIONS - pre-processor definitions for assimp
+#   assimp_FOUND - true if assimp has been found and can be used
+#
 
 #NOTE(vuko): older versions of assimp unfortunately do not provide an assimp-config.cmake file
 #            which is why we need this
 
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-	set(ASSIMP_ARCHITECTURE "x64")
-elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-	set(ASSIMP_ARCHITECTURE "Win32")
-endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
-
-if(WIN32)
-	set(ASSIMP_ROOT_DIR CACHE PATH "ASSIMP root directory")
-
-	# Find path of each library
-	find_path(ASSIMP_INCLUDE_DIRS
-		NAMES
-			assimp/anim.h
-		HINTS
-			${ASSIMP_ROOT_DIR}/include
-	)
-
-	if(MSVC12)
-		set(ASSIMP_MSVC_VERSION "vc120")
-	elseif(MSVC14)
-		set(ASSIMP_MSVC_VERSION "vc140")
-	endif(MSVC12)
-
-	if(MSVC12 OR MSVC14)
-
-		find_path(ASSIMP_LIBRARY_DIR
-			NAMES
-				assimp-${ASSIMP_MSVC_VERSION}-mt.lib
-			HINTS
-				${ASSIMP_ROOT_DIR}/lib/Release/${ASSIMP_ARCHITECTURE}
-		)
-
-		find_library(ASSIMP_LIBRARY_RELEASE				assimp-${ASSIMP_MSVC_VERSION}-mt.lib 			PATHS ${ASSIMP_LIBRARY_DIR})
-		find_library(ASSIMP_LIBRARY_DEBUG				assimp-${ASSIMP_MSVC_VERSION}-mtd.lib			PATHS ${ASSIMP_LIBRARY_DIR})
-
-		set(ASSIMP_LIBRARIES "${ASSIMP_LIBRARY_RELEASE}")
-
-		FUNCTION(ASSIMP_COPY_BINARIES TargetDirectory)
-			ADD_CUSTOM_TARGET(AssimpCopyBinaries
-				COMMAND ${CMAKE_COMMAND} -E copy ${ASSIMP_ROOT_DIR}/bin${ASSIMP_ARCHITECTURE}/assimp-${ASSIMP_MSVC_VERSION}-mtd.dll 	${TargetDirectory}/Debug/assimp-${ASSIMP_MSVC_VERSION}-mtd.dll
-				COMMAND ${CMAKE_COMMAND} -E copy ${ASSIMP_ROOT_DIR}/bin${ASSIMP_ARCHITECTURE}/assimp-${ASSIMP_MSVC_VERSION}-mt.dll 		${TargetDirectory}/Release/assimp-${ASSIMP_MSVC_VERSION}-mt.dll
-			COMMENT "Copying Assimp binaries to '${TargetDirectory}'"
-			VERBATIM)
-		ENDFUNCTION(ASSIMP_COPY_BINARIES)
-
-	endif()
-
-else(WIN32)
-
-	find_path(
-	  ASSIMP_INCLUDE_DIRS
-	  NAMES postprocess.h scene.h version.h config.h cimport.h
-	  PATHS /usr/local/include/
-	  PATH_SUFFIXES assimp
-	)
-
-	find_library(
-	  ASSIMP_LIBRARIES
-	  NAMES assimp assimp3.0
-	  PATHS /usr/local/include/
-	)
-
-endif(WIN32)
-
-if (NOT ASSIMP_INCLUDE_DIRS AND ASSIMP_LIBRARIES)
-	message(FATAL_ERROR "Found Assimp libraries, but not includes. Installed version is most likely too old!")
+if (assimp_FOUND)
+	return()
 endif()
 
-if (ASSIMP_INCLUDE_DIRS AND ASSIMP_LIBRARIES)
-	SET(ASSIMP_FOUND TRUE)
-ENDIF (ASSIMP_INCLUDE_DIRS AND ASSIMP_LIBRARIES)
+include(SelectLibraryConfigurations)
+include(FindPackageHandleStandardArgs)
 
-if (ASSIMP_FOUND)
-	if (NOT assimp_FIND_QUIETLY)
-		message(STATUS "Found asset importer library: ${ASSIMP_LIBRARIES}")
-	endif (NOT assimp_FIND_QUIETLY)
-else (ASSIMP_FOUND)
-	if (assimp_FIND_REQUIRED)
-		message(FATAL_ERROR "Could not find asset importer library")
-	endif (assimp_FIND_REQUIRED)
-endif (ASSIMP_FOUND)
+if (WIN32)
+	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+		set(assimp_ARCH "x64")
+	elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+		set(assimp_ARCH "Win32")
+	endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+
+	if(MSVC12)
+		set(assimp_MSVC_VERSION "vc120")
+	elseif(MSVC14)
+		set(assimp_MSVC_VERSION "vc140")
+	endif(MSVC12)
+
+	set(assimp_ROOT_DIR "${CMAKE_SOURCE_DIR}/ThirdParty/assimp" CACHE PATH "Assimp root directory")
+	set(INCLUDE_HINTS "${assimp_ROOT_DIR}/include")
+	set(LIB_HINTS     "${assimp_ROOT_DIR}/lib/Release/${assimp_ARCH}" "${assimp_ROOT_DIR}/lib/Debug/${assimp_ARCH}")
+	set(LIB_NAMES     "assimp-${assimp_MSVC_VERSION}-mt")
+	set(LIB_NAMES_DBG "assimp-${assimp_MSVC_VERSION}-mtd")
+else()
+	find_package(PkgConfig)
+	pkg_search_module(PKG_assimp QUIET assimp>=3.0 assimp3.0)
+
+	set(INCLUDE_HINTS ${PKG_assimp_INCLUDEDIR} ${PKG_assimp_INCLUDE_DIRS})
+	set(LIB_HINTS     ${PKG_assimp_LIBDIR}     ${PKG_assimp_LIBRARY_DIRS})
+	set(assimp_DEFINITIONS ${PKG_assimp_CFLAGS})
+	set(LIB_NAMES     assimp assimp3.0)
+	set(LIB_NAMES_DBG assimp-dbg)
+endif()
+
+find_path(assimp_INCLUDE_DIR        NAMES assimp/postprocess.h assimp/scene.h assimp/version.h assimp/config.h assimp/cimport.h  HINTS ${INCLUDE_HINTS})
+find_library(assimp_LIBRARY_RELEASE NAMES ${LIB_NAMES}                                                                           HINTS ${LIB_HINTS})
+find_library(assimp_LIBRARY_DEBUG   NAMES ${LIB_NAMES_DBG}                                                                       HINTS ${LIB_HINTS})
+
+set(assimp_INCLUDE_DIRS "${assimp_INCLUDE_DIR}")
+mark_as_advanced(assimp_INCLUDE_DIR)
+select_library_configurations(assimp)
+
+if (NOT assimp_INCLUDE_DIRS AND assimp_LIBRARIES)
+	message(FATAL_ERROR "Found Assimp 2? Required version is 3! (or we just couldn't find the headers)")
+endif()
+find_package_handle_standard_args(assimp REQUIRED_VARS assimp_LIBRARY assimp_INCLUDE_DIRS)
+
+if (NOT TARGET ass::imp)
+	add_library(ass::imp UNKNOWN IMPORTED)
+	set_target_properties(ass::imp PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${assimp_INCLUDE_DIRS}")
+
+	if(assimp_LIBRARY_RELEASE)
+		set_property(TARGET ass::imp APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+		set_target_properties(ass::imp PROPERTIES IMPORTED_LOCATION_RELEASE "${assimp_LIBRARY_RELEASE}")
+	endif()
+
+	if(assimp_LIBRARY_DEBUG)
+		set_property(TARGET ass::imp APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+		set_target_properties(ass::imp PROPERTIES IMPORTED_LOCATION_DEBUG "${assimp_LIBRARY_DEBUG}")
+	endif()
+
+	if(NOT assimp_LIBRARY_RELEASE AND NOT assimp_LIBRARY_DEBUG)
+		set_property(TARGET ass::imp APPEND PROPERTY IMPORTED_LOCATION "${assimp_LIBRARY}")
+	endif()
+endif()

@@ -17,7 +17,7 @@ set(POLYTESTS_SRCS
 	Src/Vector2iTests.cpp
 )
 
-if(NOT TARGET Catch) #TODO(vuko): falling back to bundled Catch after failing the download doesn't seem to be possible... or is it?
+if(NOT TARGET Catch)
 	include(ExternalProject)
 	if(IS_TRAVIS_BUILD)
 		set(FETCH_EXTERNAL_CATCH GIT_REPOSITORY https://github.com/philsquared/Catch.git GIT_TAG 0c015aa8878db0b582afa95bb9ef8ebf97baf232)
@@ -34,15 +34,17 @@ if(NOT TARGET Catch) #TODO(vuko): falling back to bundled Catch after failing th
 		BUILD_COMMAND ""
 		INSTALL_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/3rdparty/Catch/src/Fetch-Catch/single_include/catch.hpp
 		                                         ${CMAKE_BINARY_DIR}/3rdparty/Catch/include/catch.hpp
+		UPDATE_DISCONNECTED ON
+		EXCLUDE_FROM_ALL    ON
 	)
 
 	add_library(Catch INTERFACE)
-	if(NOT USE_BUNDLED_CATCH)
+	if(NOT USE_BUNDLED_CATCH AND TARGET Fetch-Catch AND NOT CMAKE_VERSION VERSION_LESS 3.3)
 		add_dependencies(Catch Fetch-Catch)
 		target_include_directories(Catch INTERFACE ${CMAKE_BINARY_DIR}/3rdparty/Catch/include)
-	else(NOT USE_BUNDLED_CATCH)
+	else()
 		target_include_directories(Catch INTERFACE ${PROJECT_SOURCE_DIR}/ThirdParty/Catch/Include)
-	endif(NOT USE_BUNDLED_CATCH)
+	endif()
 endif(NOT TARGET Catch)
 
 add_executable(polytests ${POLYTESTS_SRCS})

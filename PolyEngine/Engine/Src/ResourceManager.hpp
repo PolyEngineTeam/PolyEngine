@@ -72,22 +72,18 @@ namespace Poly
 			gConsole.LogInfo("ResourceManager: Loading: {}", path);
 			T* resource = nullptr;
 			Dynarray<String> paths = (source == eResourceSource::NONE) ? Dynarray<String>({String()}) : gAssetsPathConfig.GetAssetsPaths(source);
-			for (size_t i = 0; i < paths.GetSize() && !resource; ++i)
+			for (size_t i = 0; i < paths.GetSize(); ++i)
 			{
 				String absolutePath = paths[i] + path;
 
 				try
 				{
-					resource = new T(absolutePath);
-				}
-				catch (const ResourceLoadFailedException& e)
-				{
-					UNUSED(e);
+					auto new_resource = new T(absolutePath);
+					resource = new_resource;
+					break;
+				} catch (const ResourceLoadFailedException&) {
 					resource = nullptr;
-				}
-				catch (const std::exception& e)
-				{
-					UNUSED(e);
+				} catch (const std::exception&) {
 					HEAVY_ASSERTE(false, "Resource creation failed for unknown reason!");
 					return nullptr;
 				}

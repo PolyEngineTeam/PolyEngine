@@ -4,7 +4,6 @@
 #include "ResourceManager.hpp"
 #include "SOIL/SOIL.h"
 
-
 using namespace Poly;
 
 //------------------------------------------------------------------------------
