@@ -188,6 +188,9 @@ void GLRenderingDevice::EndFrame()
 
 #elif defined(__APPLE__)
 
+// FIXME, why is this not working? For some reason Src-macOS folder is not on the include path for the project.
+#include "../Src-macOS/ObjCInterface.hpp"
+
 //------------------------------------------------------------------------------
 IRenderingDevice* PolyCreateRenderingDevice(void* window, const ScreenSize& size) { return new GLRenderingDevice(window, size); }
 
@@ -195,20 +198,25 @@ IRenderingDevice* PolyCreateRenderingDevice(void* window, const ScreenSize& size
 GLRenderingDevice::GLRenderingDevice(void* window, const ScreenSize& size)
 	: window(window)
 {
-	ScreenDim = size;
-	//TODO
+    ASSERTE(gRenderingDevice == nullptr, "Creating device twice?");
+    gRenderingDevice = this;
+
+    ScreenDim = size;
+    CreateDeviceImpl(window, size.Width, size.Height);
+
+    gConsole.LogInfo("OpenGL context succesfully setup. [{}]", glGetString(GL_VERSION));
 }
 
 //------------------------------------------------------------------------------
 GLRenderingDevice::~GLRenderingDevice()
 {
-	//TODO
+	DestroyDeviceImpl(window);
 }
 
 //------------------------------------------------------------------------------
 void GLRenderingDevice::EndFrame()
 {
-	//TODO
+    EndFrameImpl(window);
 }
 
 #else
