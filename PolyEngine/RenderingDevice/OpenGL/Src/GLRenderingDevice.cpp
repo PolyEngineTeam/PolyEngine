@@ -202,7 +202,7 @@ GLRenderingDevice::GLRenderingDevice(void* window, const ScreenSize& size)
     gRenderingDevice = this;
 
     ScreenDim = size;
-    CreateDeviceImpl(window, size.Width, size.Height);
+    view = CreateDeviceImpl(window, size.Width, size.Height);
 
     gConsole.LogInfo("OpenGL context succesfully setup. [{}]", glGetString(GL_VERSION));
 }
@@ -216,7 +216,7 @@ GLRenderingDevice::~GLRenderingDevice()
 //------------------------------------------------------------------------------
 void GLRenderingDevice::EndFrame()
 {
-    EndFrameImpl(window);
+    EndFrameImpl(view);
 }
 
 #else

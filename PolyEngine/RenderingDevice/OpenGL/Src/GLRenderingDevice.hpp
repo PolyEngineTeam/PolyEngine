@@ -1,14 +1,6 @@
 #pragma once
 
-#if defined(_WIN32)
-	#include <epoxy/wgl.h>
-#elif defined(__linux__)
-	#include <epoxy/glx.h>
-#elif defined(__APPLE__)
-	#include <epoxy/gl.h>
-#else
-	#error "Unsupported platform :("
-#endif
+#include "GLUtils.hpp"
 
 #include <IRenderingDevice.hpp>
 
@@ -101,6 +93,7 @@ namespace Poly
 		GLXContext context;
 #elif defined(__APPLE__)
 		void* window;
+        void* view;
 #else
 #error "Unsupported platform :("
 #endif

@@ -9,7 +9,7 @@ static void createWindow() {
     NSUInteger windowStyle = NSWindowStyleMaskMiniaturizable|NSWindowStyleMaskClosable|NSWindowStyleMaskResizable|NSWindowStyleMaskTitled;
     
     NSRect screenRect = [[NSScreen mainScreen] frame];
-    NSRect viewRect = NSMakeRect(0, 0, 500, 500);
+    NSRect viewRect = NSMakeRect(0, 0, 800, 600);
     NSRect windowRect = NSMakeRect(NSMidX(screenRect) - NSMidX(viewRect),
                                    NSMidY(screenRect) - NSMidY(viewRect),
                                    viewRect.size.width,

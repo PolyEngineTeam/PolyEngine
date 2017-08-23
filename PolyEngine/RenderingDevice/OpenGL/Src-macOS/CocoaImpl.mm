@@ -2,7 +2,7 @@
 
 @implementation CocoaImpl
 
-void CreateDeviceImpl(void* window_ptr, unsigned width, unsigned height)
+void* CreateDeviceImpl(void* window_ptr, unsigned width, unsigned height)
 {
     id window = (id)window_ptr;
 
@@ -23,7 +23,10 @@ void CreateDeviceImpl(void* window_ptr, unsigned width, unsigned height)
         NSLog(@"No OpenGL pixel format");
     }
 
-    [window setContentView:[[NSOpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height) pixelFormat:pf]];
+    NSOpenGLView* view = [[NSOpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height) pixelFormat:pf];
+    [window setContentView:view];
+    [[view openGLContext] makeCurrentContext];
+    return (void*)view;
 }
 
 void DestroyDeviceImpl(void* window)
@@ -31,10 +34,11 @@ void DestroyDeviceImpl(void* window)
     (void)window;
 }
 
-void EndFrameImpl(void* window_ptr)
+void EndFrameImpl(void* view_ptr)
 {
-    id window = (id)window_ptr;
-    [window setNeedsDisplay:YES];
+    NSOpenGLView* view = (NSOpenGLView*)view_ptr;
+    [[view openGLContext] flushBuffer];
+    [view setNeedsDisplay:YES];
 }
 
 @end

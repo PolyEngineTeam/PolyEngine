@@ -20,7 +20,7 @@ set(STANDALONE_H_FOR_IDE
 add_executable(standalone ${STANDALONE_SRCS})
 # TODO proper linking with engine
 
-target_link_libraries(standalone polycore polyengine polygldevice sgjgame epoxy::gl
+target_link_libraries(standalone polycore polyengine polygldevice sgjgame
     "-framework Cocoa"
     #”-framework AppKit"
     #”-framework CoreData"
