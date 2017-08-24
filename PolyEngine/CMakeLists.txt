@@ -107,16 +107,20 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "(Clang|^GNU$)")
 	add_compile_options(-Wextra)
 	add_compile_options(-Werror)
 	add_compile_options(-fvisibility=hidden)
+	add_compile_options(-fvisibility-inlines-hidden)
 	add_compile_options($<$<STREQUAL:${CMAKE_GENERATOR},Ninja>:-fdiagnostics-color=always>)
 	add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:-g>)
 	add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:-fno-omit-frame-pointer>)
 	add_compile_options($<$<CONFIG:DebugFast>:-O1>)
 	add_compile_options($<$<OR:$<CONFIG:Testing>,$<CONFIG:Release>>:-O3>)
 	add_compile_options($<$<CONFIG:Release>:-DFINAL>) #NOTE(vuko): add_definitions() does not support generator expressions
+	add_compile_options($<$<CONFIG:Release>:-mtune=native>)
+	set(SIMD_FLAGS -msse4.2 -mfpmath=sse) #note(vuko): $<CXX_COMPILER_ID:comp> and cotire do not get along, see cotire issue #124
 	#TODO(vuko): more build type macro definitions (once we decide on them)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	add_definitions(/DNOMINMAX) #those macros are useless and just keep messing things up, so disable them
 	add_compile_options($<$<CONFIG:Release>:/DFINAL>)
+	set(SIMD_FLAGS "") #doesn't seem we need them
 	if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
 		#add_compile_options(/Wall) #NOTE(vuko): too chatty when it comes to stdlib, enable on demand
 		add_compile_options(/W3) #warning level 3 (includes lower levels)
@@ -149,6 +153,7 @@ include(sanitizers)
 ##
 find_program(CCACHE_FOUND ccache)
 if(CCACHE_FOUND)
+	message(STATUS "ccache will be used: ${CCACHE_FOUND}")
 	set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
 	set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif(CCACHE_FOUND)

@@ -51,7 +51,7 @@ set(POLYCORE_H_FOR_IDE
 )
 
 add_library(polycore SHARED ${POLYCORE_SRCS} ${POLYCORE_H_FOR_IDE})
-target_compile_options(polycore PRIVATE $<$<BOOL:${SIMD}>:-msse4.2>)
+target_compile_options(polycore PRIVATE $<$<BOOL:${SIMD}>:${SIMD_FLAGS}>)
 target_compile_definitions(polycore PRIVATE _CORE DISABLE_SIMD=$<NOT:$<BOOL:${SIMD}>>)
 target_include_directories(polycore INTERFACE ${POLYCORE_INCLUDE})
 
