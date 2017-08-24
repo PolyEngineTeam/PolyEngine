@@ -10,6 +10,7 @@
 		9028C2121F4AF8BC00406F9B /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9028C20C1F4AF8BC00406F9B /* AppDelegate.mm */; };
 		9028C2131F4AF8BC00406F9B /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9028C20D1F4AF8BC00406F9B /* main.mm */; };
 		9028C21B1F4DBD9500406F9B /* CppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9028C21A1F4DBD9500406F9B /* CppInterface.cpp */; };
+		9028C21F1F4F2AEC00406F9B /* Window.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9028C21E1F4F2AEC00406F9B /* Window.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +32,8 @@
 		9028C20D1F4AF8BC00406F9B /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = main.mm; path = Src/main.mm; sourceTree = SOURCE_ROOT; };
 		9028C2191F4DBD9500406F9B /* CppInterface.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CppInterface.hpp; path = Src/CppInterface.hpp; sourceTree = SOURCE_ROOT; };
 		9028C21A1F4DBD9500406F9B /* CppInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CppInterface.cpp; path = Src/CppInterface.cpp; sourceTree = SOURCE_ROOT; };
+		9028C21D1F4F2AEC00406F9B /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Window.h; path = Src/Window.h; sourceTree = SOURCE_ROOT; };
+		9028C21E1F4F2AEC00406F9B /* Window.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Window.mm; path = Src/Window.mm; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +69,8 @@
 				9028C20B1F4AF8BC00406F9B /* AppDelegate.h */,
 				9028C20C1F4AF8BC00406F9B /* AppDelegate.mm */,
 				9028C20D1F4AF8BC00406F9B /* main.mm */,
+				9028C21D1F4F2AEC00406F9B /* Window.h */,
+				9028C21E1F4F2AEC00406F9B /* Window.mm */,
 				9028C2191F4DBD9500406F9B /* CppInterface.hpp */,
 				9028C21A1F4DBD9500406F9B /* CppInterface.cpp */,
 			);
@@ -131,6 +136,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9028C2131F4AF8BC00406F9B /* main.mm in Sources */,
+				9028C21F1F4F2AEC00406F9B /* Window.mm in Sources */,
 				9028C21B1F4DBD9500406F9B /* CppInterface.cpp in Sources */,
 				9028C2121F4AF8BC00406F9B /* AppDelegate.mm in Sources */,
 			);

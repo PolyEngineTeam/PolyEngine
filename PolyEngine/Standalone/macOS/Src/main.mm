@@ -1,11 +1,12 @@
 #import <Cocoa/Cocoa.h>
 #import "AppDelegate.h"
 #import "CppInterface.hpp"
+#import "Window.h"
 
 id window;
 bool running;
 
-static void createWindow() {
+static NSRect createWindow() {
     NSUInteger windowStyle = NSWindowStyleMaskMiniaturizable|NSWindowStyleMaskClosable|NSWindowStyleMaskResizable|NSWindowStyleMaskTitled;
     
     NSRect screenRect = [[NSScreen mainScreen] frame];
@@ -15,7 +16,7 @@ static void createWindow() {
                                    viewRect.size.width,
                                    viewRect.size.height);
     
-    window = [[NSWindow alloc] initWithContentRect:windowRect
+    window = [[Window alloc] initWithContentRect:windowRect
                                          styleMask:windowStyle
                                            backing:NSBackingStoreBuffered
                                              defer:NO];
@@ -26,14 +27,14 @@ static void createWindow() {
     [window setTitle:@"macOS Standalone"];
     [window makeKeyAndOrderFront:nil];
     
-    PolyEngineLoad((void*)window, windowRect.size.width, windowRect.size.height);
+    return windowRect;
 }
 
 void initApp() {
     [NSApplication sharedApplication];
     [NSApp setDelegate:[[AppDelegate alloc] init]];
     running = true;
-    [NSApp finishLaunching];
+    //[NSApp finishLaunching];
 }
 
 void handleEvents() {
@@ -45,6 +46,48 @@ void handleEvents() {
                                        inMode: NSDefaultRunLoopMode
                                       dequeue: YES];
             if (ev) {
+                if([ev type] == NSEventType::NSEventTypeKeyUp)
+                {
+                    unsigned code = [ev keyCode];
+                    PolyEngineKeyUp(code);
+                }
+                else if([ev type] == NSEventType::NSEventTypeKeyDown)
+                {
+                    unsigned code = [ev keyCode];
+                    PolyEngineKeyDown(code);
+                }
+                else if([ev type] == NSEventType::NSEventTypeMouseMoved)
+                {
+                    NSPoint point = [ev locationInWindow];
+                    PolyEngineUpdateMousePos(point.x, point.y);
+                }
+                else if([ev type] == NSEventType::NSEventTypeLeftMouseUp)
+                {
+                    PolyEngineKeyUp(0xfe);
+                }
+                else if([ev type] == NSEventType::NSEventTypeLeftMouseDown)
+                {
+                    PolyEngineKeyDown(0xfe);
+                }
+                else if([ev type] == NSEventType::NSEventTypeRightMouseUp)
+                {
+                    PolyEngineKeyUp(0xfd);
+                }
+                else if([ev type] == NSEventType::NSEventTypeRightMouseDown)
+                {
+                    PolyEngineKeyDown(0xfd);
+                }
+                else if([ev type] == NSEventType::NSEventTypeOtherMouseUp)
+                {
+                    PolyEngineKeyUp(0xfc);
+                }
+                else if([ev type] == NSEventType::NSEventTypeOtherMouseDown)
+                {
+                    PolyEngineKeyDown(0xfc);
+                }
+                
+                // FIXME no mouse wheel events
+                
                 // handle events here
                 [NSApp sendEvent: ev];
             }
@@ -55,13 +98,17 @@ void handleEvents() {
 int main(/*int argc, const char * argv[]*/)  {
     @autoreleasepool {
         initApp();
-        createWindow();
-        
-        while (running) {
+        NSRect windowRect = createWindow();
+
+        PolyEngineLoad((void*)window, windowRect.size.width, windowRect.size.height);
+
+        while (running && [window isVisible]) {
             handleEvents();
             PolyEngineUpdate();
             [window display];
         }
+
+        PolyEngineRelease();
     }
     return (0);
 }

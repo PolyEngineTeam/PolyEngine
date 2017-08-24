@@ -7,12 +7,14 @@ find_package(epoxy REQUIRED)
 set(STANDALONE_SRCS 
 	Src/main.mm
 	Src/AppDelegate.mm
+	Src/Window.mm
 	Src/CppInterface.cpp
 )
 
 set(STANDALONE_INCLUDE Src)
 set(STANDALONE_H_FOR_IDE
 	Src/AppDelegate.h
+	Src/Window.h
 	Src/CppInterface.hpp
 )
 

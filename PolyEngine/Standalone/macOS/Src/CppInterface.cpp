@@ -10,8 +10,8 @@
 using namespace Poly;
 
 static std::unique_ptr<Engine> engine;
-static std::unique_ptr<IRenderingDevice> device;
-static std::unique_ptr<IGame> game;
+
+#include <sstream>
 
 IGame* LoadGame()
 {
@@ -32,8 +32,8 @@ void PolyEngineLoad(void* window, unsigned width, unsigned height)
 {
     gConsole.LogError("Init engine load");
     engine = std::make_unique<Engine>();
-    game = std::unique_ptr<IGame>(LoadGame());
-    device = std::unique_ptr<IRenderingDevice>(LoadRenderingDevice(window, width, height));
+    std::unique_ptr<IGame> game = std::unique_ptr<IGame>(LoadGame());
+    std::unique_ptr<IRenderingDevice> device = std::unique_ptr<IRenderingDevice>(LoadRenderingDevice(window, width, height));
 
     engine->Init(std::move(game), std::move(device));
     gConsole.LogError("Engine loaded");
@@ -42,4 +42,37 @@ void PolyEngineLoad(void* window, unsigned width, unsigned height)
 void PolyEngineUpdate()
 {
     engine->Update();
+}
+
+void PolyEngineRelease()
+{
+    engine.reset();
+}
+
+void PolyEngineResize(unsigned width, unsigned height)
+{
+    ScreenSize size;
+    size.Width = width;
+    size.Height = height;
+    engine->ResizeScreen(size);
+}
+
+void PolyEngineKeyDown(unsigned keyCode)
+{
+    engine->KeyDown(static_cast<eKey>(keyCode));
+}
+
+void PolyEngineKeyUp(unsigned keyCode)
+{
+    engine->KeyUp(static_cast<eKey>(keyCode));
+}
+
+void PolyEngineUpdateMousePos(unsigned x, unsigned y)
+{
+    engine->UpdateMousePos(Vector(static_cast<float>(x), static_cast<float>(y), 0.f));
+}
+
+void PolyEngineUpdateWheelPos(unsigned x, unsigned y)
+{
+    engine->UpdateWheelPos(Vector(static_cast<float>(x), static_cast<float>(y), 0.f));
 }
