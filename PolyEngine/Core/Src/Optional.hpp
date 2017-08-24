@@ -126,7 +126,7 @@ namespace Poly {
 		Optional(const Optional& other) { this->value_storage = other.value_storage; }
 		Optional& operator=(const Optional& other) { this->value_storage = other.value_storage; return *this; }
 
-		bool HasValue() const  { return static_cast<bool>(value_storage); }
+		bool HasValue() const  { return value_storage != nullptr; }
 		operator bool() const { return HasValue(); }
 
 		const V&  Value() const& { ASSERTE(HasValue(), "Attempting to get a value from an empty optional"); return *value_storage; }

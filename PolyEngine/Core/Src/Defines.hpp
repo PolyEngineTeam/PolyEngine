@@ -120,7 +120,7 @@ constexpr auto MIN_FLOAT = (std::numeric_limits<float>::min)();
 #elif defined(FINAL) && (defined(__GNUC__) || defined(__clang__))
 #define UNREACHABLE() __builtin_unreachable();
 #else
-#define UNREACHABLE() assert("Unreachable code reached!" && false);
+#define UNREACHABLE() do { assert("Unreachable code reached!" && false); throw; } while (false) //note(vuko): `throw` is needed to terminate the control path (assert is sadly not enough)
 #endif
 
 // Utilities
