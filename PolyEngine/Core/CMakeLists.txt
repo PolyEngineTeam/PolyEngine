@@ -21,6 +21,8 @@ set(POLYCORE_H_FOR_IDE
 	Src/AARect.hpp
 	Src/Allocator.hpp
 	Src/Angle.hpp
+	Src/OrderedMap.hpp
+	Src/BTreePrimitives.hpp
 	Src/BaseObject.hpp
 	Src/BasicMath.hpp
 	Src/BinaryBuffer.hpp
@@ -34,13 +36,15 @@ set(POLYCORE_H_FOR_IDE
 	Src/IterablePoolAllocator.hpp
 	Src/Logger.hpp
 	Src/Matrix.hpp
+	Src/Optional.hpp
 	Src/PoolAllocator.hpp
-	Src/RefCountedBase.hpp
 	Src/Quaternion.hpp
 	Src/Queue.hpp
+	Src/RefCountedBase.hpp
 	Src/SimdMath.hpp
 	Src/String.hpp
 	Src/UniqueID.hpp
+	Src/UnsafeStorage.hpp
 	Src/Vector.hpp
 	Src/Vector2f.hpp
 	Src/Vector2i.hpp

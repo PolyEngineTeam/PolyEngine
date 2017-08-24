@@ -2,19 +2,22 @@ set(POLYTESTS_SRCS
 	Src/AABoxTests.cpp
 	Src/AllocatorTests.cpp
 	Src/AngleTests.cpp
+	Src/OrderedMapTests.cpp
 	Src/BasicMathTests.cpp
 	Src/DynarrayTests.cpp
 	Src/EnumUtilsTests.cpp
-	Src/main.cpp
 	Src/MatrixTests.cpp
+	Src/OptionalTests.cpp
+	Src/QuaternionTests.cpp
+	Src/QueueTests.cpp
 	Src/ResourceManagerTests.cpp
 	Src/StringTests.cpp
 	Src/TransformComponentTests.cpp
-	Src/QuaternionTests.cpp
-	Src/QueueTests.cpp
+	Src/UnsafeStorageTests.cpp
 	Src/VectorTests.cpp
 	Src/Vector2fTests.cpp
 	Src/Vector2iTests.cpp
+	Src/main.cpp
 )
 
 if(NOT TARGET Catch)
@@ -53,9 +56,9 @@ add_custom_target(tests COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS polytests)
 #WORKAROUND(vuko): CTest tests do not depend on targets that produce COMMAND executables, so add a dummy test that will force a recompilation if needed
 add_test(NAME "BUILD_TESTS"                                   COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target polytests --config "$<CONFIG>")
 #TODO(vuko): one has to manually add a case here every time you add a new test to Catch... Maybe grep the files looking for TEST_CASE then generate?
-add_test(NAME "AABox-contains"                               COMMAND polytests "AABox contains")
-add_test(NAME "AABox-collisions-with-other-AABox"           COMMAND polytests "AABox collisions with other AABox")
-add_test(NAME "AABox-intersection-calculation"               COMMAND polytests "AABox intersection calculation")
+add_test(NAME "AABox-contains"                                COMMAND polytests "AABox contains")
+add_test(NAME "AABox-collisions-with-other-AABox"             COMMAND polytests "AABox collisions with other AABox")
+add_test(NAME "AABox-intersection-calculation"                COMMAND polytests "AABox intersection calculation")
 add_test(NAME "Pool-allocator"                                COMMAND polytests "Pool allocator")
 add_test(NAME "Iterable-pool-allocator"                       COMMAND polytests "Iterable pool allocator")
 add_test(NAME "Angle-constructors"                            COMMAND polytests "Angle constructors")
