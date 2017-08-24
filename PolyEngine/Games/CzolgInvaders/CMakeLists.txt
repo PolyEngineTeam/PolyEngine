@@ -1,4 +1,4 @@
-set(TESTGAME_SRCS 
+set(CZOLG_INVADERS_SRCS
 	Src/InvadersGame.cpp
 	Src/BulletComponent.cpp
 	Src/CollisionSystem.cpp
@@ -9,8 +9,8 @@ set(TESTGAME_SRCS
 	Src/MovementSystem.cpp
 	Src/PlayerControllerComponent.cpp
 )
-set(TESTGAME_INCLUDE Src)
-set(TESTGAME_H_FOR_IDE 
+set(CZOLG_INVADERS_INCLUDE Src)
+set(CZOLG_INVADERS_H_FOR_IDE
 	Src/InvadersGame.hpp
 	Src/BulletComponent.hpp
 	Src/CollisionSystem.hpp
@@ -24,9 +24,10 @@ set(TESTGAME_H_FOR_IDE
 	Src/PlayerControllerComponent.hpp
 )
 
-add_library(testgame SHARED ${TESTGAME_SRCS} ${TESTGAME_H_FOR_IDE})
-target_compile_definitions(testgame PRIVATE _GAME)
-target_include_directories(testgame INTERFACE ${TESTGAME_INCLUDE})
-target_link_libraries(testgame polycore polyengine)
+add_library(czolg_invaders SHARED ${CZOLG_INVADERS_SRCS} ${CZOLG_INVADERS_H_FOR_IDE})
+target_compile_definitions(czolg_invaders PRIVATE _GAME)
+target_include_directories(czolg_invaders PRIVATE ${CZOLG_INVADERS_INCLUDE})
+target_link_libraries(czolg_invaders PRIVATE polyengine)
+set_target_properties(czolg_invaders PROPERTIES OUTPUT_NAME game)
 
-cotire(testgame)
+cotire(czolg_invaders)

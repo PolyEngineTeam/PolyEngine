@@ -1,4 +1,4 @@
-set(SGJGAME_SRCS 
+set(SGJGAME_SRCS
 	Src/CameraMovementSystem.cpp
 	Src/Game.cpp
 	Src/GameDebugSystem.cpp
@@ -12,7 +12,7 @@ set(SGJGAME_SRCS
 	Src/TileComponent.cpp
 )
 set(SGJGAME_INCLUDE Src)
-set(SGJGAME_H_FOR_IDE 
+set(SGJGAME_H_FOR_IDE
 	Src/CameraMovementComponent.hpp
 	Src/CameraMovementSystem.hpp
 	Src/Game.hpp
@@ -30,7 +30,8 @@ set(SGJGAME_H_FOR_IDE
 
 add_library(sgjgame SHARED ${SGJGAME_SRCS} ${SGJGAME_H_FOR_IDE})
 target_compile_definitions(sgjgame PRIVATE _GAME)
-target_include_directories(sgjgame INTERFACE ${SGJGAME_INCLUDE})
-target_link_libraries(sgjgame polycore polyengine)
+target_include_directories(sgjgame PRIVATE ${SGJGAME_INCLUDE})
+target_link_libraries(sgjgame PRIVATE polyengine)
+set_target_properties(sgjgame PROPERTIES OUTPUT_NAME game)
 
 cotire(sgjgame)

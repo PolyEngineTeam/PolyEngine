@@ -51,7 +51,7 @@ if(NOT TARGET Catch)
 endif(NOT TARGET Catch)
 
 add_executable(polytests ${POLYTESTS_SRCS})
-target_link_libraries(polytests polycore polyengine Catch)
+target_link_libraries(polytests PRIVATE polycore polyengine Catch)
 add_custom_target(tests COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS polytests)
 #WORKAROUND(vuko): CTest tests do not depend on targets that produce COMMAND executables, so add a dummy test that will force a recompilation if needed
 add_test(NAME "BUILD_TESTS"                                   COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target polytests --config "$<CONFIG>")
