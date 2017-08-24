@@ -26,7 +26,6 @@ if (OGG_FOUND)
 	return()
 endif()
 
-include(SelectLibraryConfigurations)
 include(FindPackageHandleStandardArgs)
 
 if (WIN32)
@@ -48,31 +47,16 @@ else ()
 	set(LIB_HINTS       ${PKG_OGG_LIBDIR}     ${PKG_OGG_LIBRARY_DIRS})
 endif()
 
-find_path(OGG_INCLUDE_DIR         NAMES ogg/ogg.h ogg/os_types.h    HINTS ${INCLUDE_HINTS})
-find_library(OGG_LIBRARY_RELEASE  NAMES ogg libogg libogg_static    HINTS ${LIB_HINTS})
-find_library(OGG_LIBRARY_DEBUG    NAMES ogg liboggd liboggd_static  HINTS ${LIB_HINTS})
+find_path(OGG_INCLUDE_DIR  NAMES ogg/ogg.h ogg/os_types.h    HINTS ${INCLUDE_HINTS})
+find_library(OGG_LIBRARY   NAMES ogg libogg libogg_static    HINTS ${LIB_HINTS})
 
 set(OGG_INCLUDE_DIRS "${OGG_INCLUDE_DIR}")
-mark_as_advanced(OGG_INCLUDE_DIR)
-select_library_configurations(OGG)
+set(OGG_LIBRARIES    "${OGG_LIBRARY}")
+mark_as_advanced(OGG_INCLUDE_DIR OGG_LIBRARY)
 
-find_package_handle_standard_args(OGG REQUIRED_VARS OGG_LIBRARY OGG_INCLUDE_DIRS)
+find_package_handle_standard_args(OGG  REQUIRED_VARS OGG_LIBRARIES OGG_INCLUDE_DIRS  VERSION_VAR PKG_OGG_VERSION)
 
 if (NOT TARGET OGG::OGG)
 	add_library(OGG::OGG UNKNOWN IMPORTED)
-	set_target_properties(OGG::OGG PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${OGG_INCLUDE_DIRS}" )
-
-	if(OGG_LIBRARY_RELEASE)
-		set_property(TARGET OGG::OGG APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-		set_target_properties(OGG::OGG PROPERTIES IMPORTED_LOCATION_RELEASE "${OGG_LIBRARY_RELEASE}")
-	endif()
-
-	if(OGG_LIBRARY_DEBUG)
-		set_property(TARGET SOIL::SOIL APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
-		set_target_properties(OGG::OGG PROPERTIES IMPORTED_LOCATION_DEBUG "${OGG_LIBRARY_DEBUG}")
-	endif()
-
-	if(NOT OGG_LIBRARY_RELEASE AND NOT OGG_LIBRARY_DEBUG)
-		set_property(TARGET OGG::OGG APPEND PROPERTY IMPORTED_LOCATION "${OGG_LIBRARY}")
-	endif()
+	set_target_properties(OGG::OGG PROPERTIES  INTERFACE_INCLUDE_DIRECTORIES "${OGG_INCLUDE_DIRS}"  IMPORTED_LOCATION "${OGG_LIBRARIES}")
 endif()
