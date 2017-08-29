@@ -110,5 +110,4 @@ if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	add_dependencies(coverage coverage_core coverage_engine)
 endif(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 
-set_target_properties(polytests PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE) #unity build interferes with Catch
 cotire(polytests)
