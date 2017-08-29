@@ -45,7 +45,7 @@ find_path(RapidJSON_INCLUDE_DIR  NAMES rapidjson/rapidjson.h  HINTS ${INCLUDE_HI
 set(RapidJSON_INCLUDE_DIRS "${RapidJSON_INCLUDE_DIR}")
 mark_as_advanced(RapidJSON_INCLUDE_DIR)
 
-find_package_handle_standard_args(RapidJSON REQUIRED_VARS RapidJSON_INCLUDE_DIRS)
+find_package_handle_standard_args(RapidJSON  REQUIRED_VARS RapidJSON_INCLUDE_DIRS  VERSION_VAR PKG_RapidJSON_VERSION)
 
 if (NOT TARGET Rapid::JSON)
 	add_library(Rapid::JSON INTERFACE IMPORTED)

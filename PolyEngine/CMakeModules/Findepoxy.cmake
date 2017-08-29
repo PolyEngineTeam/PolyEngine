@@ -49,16 +49,17 @@ endif()
 find_path(epoxy_INCLUDE_DIR  NAMES epoxy/gl.h   HINTS ${INCLUDE_HINTS})
 find_library(epoxy_LIBRARY   NAMES epoxy        HINTS ${LIB_HINTS})
 find_file(epoxy_GLX_HEADER   NAMES epoxy/glx.h  HINTS ${epoxy_INCLUDE_DIR})
+find_file(epoxy_EGL_HEADER   NAMES epoxy/egl.h  HINTS ${epoxy_INCLUDE_DIR})
 find_file(epoxy_WGL_HEADER   NAMES epoxy/wgl.h  HINTS ${epoxy_INCLUDE_DIR})
 
 set(epoxy_INCLUDE_DIRS "${epoxy_INCLUDE_DIR}")
 set(epoxy_LIBRARIES    "${epoxy_LIBRARY}")
-mark_as_advanced(epoxy_INCLUDE_DIR epoxy_LIBRARY epoxy_GLX_HEADER epoxy_WGL_HEADER)
+mark_as_advanced(epoxy_INCLUDE_DIR epoxy_LIBRARY epoxy_GLX_HEADER epoxy_EGL_HEADER epoxy_WGL_HEADER)
 
-find_package_handle_standard_args(epoxy REQUIRED_VARS epoxy_LIBRARY epoxy_INCLUDE_DIRS)
+find_package_handle_standard_args(epoxy  REQUIRED_VARS epoxy_LIBRARIES epoxy_INCLUDE_DIRS  VERSION_VAR PKG_epoxy_VERSION)
 
 if (NOT TARGET epoxy::gl)
 	add_library(epoxy::gl UNKNOWN IMPORTED)
-	set_target_properties(epoxy::gl PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${epoxy_INCLUDE_DIRS}" IMPORTED_LOCATION "${epoxy_LIBRARY}")
+	set_target_properties(epoxy::gl PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${epoxy_INCLUDE_DIRS}" IMPORTED_LOCATION "${epoxy_LIBRARIES}")
 endif()
 
