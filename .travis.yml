@@ -8,6 +8,9 @@ notifications:
 # Enable C++ support
 language: cpp
 
+# Enable compiler cache to speed up compilation
+cache: ccache
+
 matrix:
   include:
     - compiler: gcc
