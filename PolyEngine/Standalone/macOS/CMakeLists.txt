@@ -1,9 +1,5 @@
 find_package(epoxy REQUIRED)
 
-# TODO Are these necessary?
-#set(CMAKE_C_FLAGS "-x objective-c")
-#set(CMAKE_CXX_FLAGS "-x objective-c++")
-
 set(STANDALONE_SRCS 
 	Src/main.mm
 	Src/AppDelegate.mm
@@ -22,11 +18,10 @@ set(STANDALONE_H_FOR_IDE
 add_executable(standalone ${STANDALONE_SRCS})
 # TODO proper linking with engine
 
+find_library(Cocoa_LIBRARY Cocoa)
+mark_as_advanced(Cocoa_LIBRARY)
+
 target_link_libraries(standalone polycore polyengine polygldevice sgjgame
-    "-framework Cocoa"
-    #”-framework AppKit"
-    #”-framework CoreData"
-    #”-framework Foundation"
-)
+		${Cocoa_LIBRARY})
 
 cotire(standalone)

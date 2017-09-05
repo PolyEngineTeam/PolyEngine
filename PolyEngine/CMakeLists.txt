@@ -5,10 +5,6 @@ project(PolyEngine VERSION 0.1.2 LANGUAGES CXX C) #note(vuko): without C older C
 # Initial setup: C++ standard version, build types, CMake modules
 ##
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set(MACOSX TRUE)
-endif()
-
 ##C++ standard
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -182,13 +178,11 @@ add_subdirectory(RenderingDevice/OpenGL)
 if(NOT SANITIZER_MEMORY)
 	if(WIN32)
 		add_subdirectory(Standalone/Windows)
-	else(WIN32)
-		if(MACOSX)
-			add_subdirectory(Standalone/macOS)
-		else(MACOSX)
-			add_subdirectory(Standalone/Linux)
-		endif(MACOSX)
-	endif(WIN32)
+	elseif(APPLE)
+		add_subdirectory(Standalone/macOS)
+	else()
+		add_subdirectory(Standalone/Linux)
+	endif()
 else()
 	message(STATUS "MemorySanitizer detected. Standalone disabled due to many shared library dependencies.")
 	message(STATUS "MemorySanitizer requires for EVERY dependency to be also instrumented.")

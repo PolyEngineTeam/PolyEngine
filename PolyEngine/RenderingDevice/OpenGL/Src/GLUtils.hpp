@@ -3,15 +3,15 @@
 #if defined(_WIN32)
 	#include <windows.h> //WinAPI is ultra-weird
 	#include <epoxy/wgl.h>
+	#include <epoxy/gl.h>
 #elif defined(__linux__)
 	#include <epoxy/glx.h>
+	#include <epoxy/gl.h>
 #elif defined(__APPLE__)
 	#include <epoxy/gl.h>
 #else
 	#error "Unsupported platform :("
 #endif
-
-#include <epoxy/gl.h> //note(vuko): do not move before windows.h unless you want all hell to break loose; Microsoft, you silly goofball, why
 
 #include <Logger.hpp>
 
