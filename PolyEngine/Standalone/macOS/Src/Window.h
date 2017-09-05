@@ -1,8 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
-@interface Window : NSWindow
+@interface WindowController : NSWindowController <NSWindowDelegate>
 
 - (void)windowDidResize:(NSNotification *)aNotification;
 
 @end
-

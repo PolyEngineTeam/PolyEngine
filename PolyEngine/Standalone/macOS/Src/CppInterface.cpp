@@ -51,6 +51,7 @@ void PolyEngineRelease()
 
 void PolyEngineResize(unsigned width, unsigned height)
 {
+    gConsole.LogError("Window resize {} {}", width, height);
     ScreenSize size;
     size.Width = width;
     size.Height = height;

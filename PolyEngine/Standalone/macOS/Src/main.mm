@@ -16,11 +16,14 @@ static NSRect createWindow() {
                                    viewRect.size.width,
                                    viewRect.size.height);
     
-    window = [[Window alloc] initWithContentRect:windowRect
+    window = [[NSWindow alloc] initWithContentRect:windowRect
                                          styleMask:windowStyle
                                            backing:NSBackingStoreBuffered
                                              defer:NO];
-    
+    WindowController* controler = [[WindowController alloc] init];
+    [controler setWindow:window];
+    [window setWindowController:controler];
+    [window setDelegate:controler];
     [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
     
     [window cascadeTopLeftFromPoint:NSMakePoint(200, 200)];
@@ -34,7 +37,6 @@ void initApp() {
     [NSApplication sharedApplication];
     [NSApp setDelegate:[[AppDelegate alloc] init]];
     running = true;
-    //[NSApp finishLaunching];
 }
 
 void handleEvents() {

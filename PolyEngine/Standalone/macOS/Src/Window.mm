@@ -1,11 +1,12 @@
 #import "Window.h"
+#import "CppInterface.hpp"
 
-@implementation Window
+@implementation WindowController
 
 - (void)windowDidResize:(NSNotification *)aNotification {
-    // Insert code here to initialize your application
     (void)aNotification; //unused
-    NSLog(@"test");
+    NSRect screenRect = [[[self window] contentView] bounds];
+    PolyEngineResize(screenRect.size.width, screenRect.size.height);
 }
 
 @end
