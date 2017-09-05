@@ -29,10 +29,25 @@ set(POLYGLDEVICE_H_FOR_IDE
 	Src/Text2DRenderingPass.hpp
 	Src/TransparentRenderingPass.hpp
 )
+set(POLYGLDEVICE_LIBS polycore polyengine epoxy::gl)
+
+# macOS Obj-C sources
+if(APPLE)
+	find_library(Cocoa_LIBRARY Cocoa)
+	mark_as_advanced(Cocoa_LIBRARY)
+
+	list(APPEND POLYGLDEVICE_SRCS
+            Src-macOS/CocoaImpl.mm)
+	list(APPEND POLYGLDEVICE_INCLUDE Src-macOS)
+	list(APPEND POLYGLDEVICE_H_FOR_IDE
+			Src-macOS/CocoaImpl.h
+            Src-macOS/ObjCInterface.hpp)
+	list(APPEND POLYGLDEVICE_LIBS ${Cocoa_LIBRARY})
+endif(APPLE)
 
 add_library(polygldevice SHARED ${POLYGLDEVICE_SRCS} ${POLYGLDEVICE_H_FOR_IDE})
 target_compile_definitions(polygldevice PRIVATE _DEVICE)
-target_include_directories(polygldevice INTERFACE ${POLYGLDEVICE_INCLUDE})
-target_link_libraries(polygldevice PRIVATE polycore polyengine epoxy::gl)
+target_include_directories(polygldevice PUBLIC ${POLYGLDEVICE_INCLUDE})
+target_link_libraries(polygldevice PRIVATE ${POLYGLDEVICE_LIBS})
 
 cotire(polygldevice)

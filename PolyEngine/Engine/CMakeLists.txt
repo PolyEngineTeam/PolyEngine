@@ -103,8 +103,15 @@ set(POLYENGINE_H_FOR_IDE
 add_library(polyengine SHARED ${POLYENGINE_SRCS} ${POLYENGINE_H_FOR_IDE})
 target_compile_definitions(polyengine PRIVATE _ENGINE)
 target_include_directories(polyengine INTERFACE ${POLYENGINE_INCLUDE})
-target_link_libraries(polyengine PRIVATE polycore SOIL::SOIL ass::imp Freetype::FT2 OpenAL::AL OGG::OGG Vorbis::Vorbis Vorbis::File Box2D::Box2D Rapid::JSON)
 
+set(POLYENGINE_LIBS polycore SOIL::SOIL ass::imp Freetype::FT2 OpenAL::AL OGG::OGG Vorbis::Vorbis Vorbis::File Box2D::Box2D Rapid::JSON)
+
+if(MACOSX)
+	# SOIL needs CoreFoundation on macOS
+	set(POLYENGINE_LIBS ${POLYENGINE_LIBS} "-framework Foundation")
+endif()
+
+target_link_libraries(polyengine PRIVATE ${POLYENGINE_LIBS})
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	target_compile_options(polyengine PRIVATE --coverage -fprofile-arcs -ftest-coverage)
 	target_link_libraries(polyengine PRIVATE -fprofile-arcs -ftest-coverage)

@@ -56,8 +56,8 @@ else()
 endif()
 
 if (NOT TARGET OpenAL::AL)
-	add_library(OpenAL::AL UNKNOWN IMPORTED)
-	set_target_properties(OpenAL::AL PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${OpenAL_INCLUDE_DIRS}")
+    add_library(OpenAL::AL UNKNOWN IMPORTED)
+    set_target_properties(OpenAL::AL PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${OpenAL_INCLUDE_DIRS}")
 
 	if(OpenAL_LIBRARY MATCHES "/([^/]+)\\.framework$") #note(vuko): Apple be weird like that
 		set(OpenAL_FRAMEWORK "${OpenAL_LIBRARY}/${CMAKE_MATCH_1}")

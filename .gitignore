@@ -39,5 +39,17 @@ ipch/
 *.VC.db
 *.VC.VC.opendb
 
+# macOS stuff
+.DS_Store
+
+# Xcode stuff
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/
+*.xccheckout
+
+
 # Exculdes from ignore
 !**/ThirdParty/**

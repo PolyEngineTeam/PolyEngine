@@ -185,6 +185,39 @@ void GLRenderingDevice::EndFrame()
 {
 	glXSwapBuffers(this->display, this->window);
 }
+
+#elif defined(__APPLE__)
+
+#include "ObjCInterface.hpp"
+
+//------------------------------------------------------------------------------
+IRenderingDevice* PolyCreateRenderingDevice(void* window, const ScreenSize& size) { return new GLRenderingDevice(window, size); }
+
+//------------------------------------------------------------------------------
+GLRenderingDevice::GLRenderingDevice(void* window, const ScreenSize& size)
+	: window(window)
+{
+    ASSERTE(gRenderingDevice == nullptr, "Creating device twice?");
+    gRenderingDevice = this;
+
+    ScreenDim = size;
+    view = CreateDeviceImpl(window, size.Width, size.Height);
+
+    gConsole.LogInfo("OpenGL context succesfully setup. [{}]", glGetString(GL_VERSION));
+}
+
+//------------------------------------------------------------------------------
+GLRenderingDevice::~GLRenderingDevice()
+{
+	DestroyDeviceImpl(window);
+}
+
+//------------------------------------------------------------------------------
+void GLRenderingDevice::EndFrame()
+{
+    EndFrameImpl(view);
+}
+
 #else
 #error "Unsupported platform :("
 #endif
