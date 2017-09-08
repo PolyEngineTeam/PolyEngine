@@ -124,17 +124,6 @@ void GLRenderingDevice::EndFrame()
 	SwapBuffers(hDC);
 }
 
-//------------------------------------------------------------------------------
-void Poly::GLRenderingDevice::CleanUpResources()
-{
-	RenderingTargets.Clear();
-	for (eGeometryRenderPassType passType : IterateEnum<eGeometryRenderPassType>())
-		GeometryRenderingPasses[passType].reset();
-	for (ePostprocessRenderPassType passType : IterateEnum<ePostprocessRenderPassType>())
-		PostprocessRenderingPasses[passType].reset();
-	PostprocessRenderingQuad.reset();
-}
-
 #elif defined(__linux__)
 
 //------------------------------------------------------------------------------
@@ -316,6 +305,17 @@ void GLRenderingDevice::InitPrograms()
 	RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND,			"Shaders/fgFrag.shader",		{ { "i_color", texture } },		{} );
 	RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND_LIGHT,	"Shaders/fgLightFrag.shader",	{ { "i_color", texture } },		{} );
 	RegisterPostprocessPass(ePostprocessRenderPassType::VINETTE,			"Shaders/vinetteFrag.shader",	{ { "i_color", texture } } );
+}
+
+//------------------------------------------------------------------------------
+void Poly::GLRenderingDevice::CleanUpResources()
+{
+	RenderingTargets.Clear();
+	for (eGeometryRenderPassType passType : IterateEnum<eGeometryRenderPassType>())
+		GeometryRenderingPasses[passType].reset();
+	for (ePostprocessRenderPassType passType : IterateEnum<ePostprocessRenderPassType>())
+		PostprocessRenderingPasses[passType].reset();
+	PostprocessRenderingQuad.reset();
 }
 
 //------------------------------------------------------------------------------
