@@ -132,7 +132,7 @@ void Poly::GLRenderingDevice::CleanUpResources()
 		GeometryRenderingPasses[passType].reset();
 	for (ePostprocessRenderPassType passType : IterateEnum<ePostprocessRenderPassType>())
 		PostprocessRenderingPasses[passType].reset();
-	PostprocessQuad.reset();
+	PostprocessRenderingQuad.reset();
 }
 
 #elif defined(__linux__)
@@ -281,7 +281,7 @@ T* Poly::GLRenderingDevice::CreateRenderingTarget(Args&&... args)
 //------------------------------------------------------------------------------
 void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
 {
-	PostprocessRenderingPasses[type] = std::make_unique<PostprocessRenderingPass>(PostprocessQuad.get(), fragShaderName);
+	PostprocessRenderingPasses[type] = std::make_unique<PostprocessRenderingPass>(PostprocessRenderingQuad.get(), fragShaderName);
 
 	for (const InputOutputBind& bind : outputs)
 		PostprocessRenderingPasses[type]->BindOutput(bind.Name, bind.Target);
@@ -295,7 +295,7 @@ void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType
 //------------------------------------------------------------------------------
 void GLRenderingDevice::InitPrograms()
 {
-	PostprocessQuad = std::make_unique<Poly::PostprocessQuad>();
+	PostprocessRenderingQuad = std::make_unique<PostprocessQuad>();
 	
 	// Init input textures
 	//Texture2DInputTarget* RGBANoise256 = CreateRenderingTarget<Texture2DInputTarget>("Textures/RGBANoise256x256.png");
@@ -308,7 +308,7 @@ void GLRenderingDevice::InitPrograms()
 	RegisterGeometryPass<BlinnPhongRenderingPass>(eGeometryRenderPassType::BLINN_PHONG, {}, { { "color", texture }, { "depth", depth } });
 	RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS);
 	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, {}, { { "color", texture },{ "depth", depth } });
-	RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } }, PostprocessQuad.get());
+	RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } }, PostprocessRenderingQuad.get());
 
 
 	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND,			"Shaders/bgFrag.shader",		{}, { { "o_color", texture },	{ "depth", depth } });

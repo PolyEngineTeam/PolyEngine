@@ -108,7 +108,7 @@ namespace Poly
 		EnumArray<std::unique_ptr<RenderingPassBase>, eGeometryRenderPassType> GeometryRenderingPasses;
 		EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
 
-		std::unique_ptr<PostprocessQuad> PostprocessQuad;
+		std::unique_ptr<PostprocessQuad> PostprocessRenderingQuad;
 
 		ScreenSize ScreenDim;
 	};
