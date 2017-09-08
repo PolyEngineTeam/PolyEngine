@@ -1,5 +1,7 @@
 #include "GLRenderingDevice.hpp"
 
+#include <memory>
+
 #include <Logger.hpp>
 
 #include "GLUtils.hpp"
@@ -12,6 +14,7 @@
 #include "DebugNormalsRenderingPass.hpp"
 #include "PostprocessRenderingPass.hpp"
 #include "TransparentRenderingPass.hpp"
+#include "PostprocessQuad.hpp"
 
 using namespace Poly;
 
@@ -105,6 +108,7 @@ GLRenderingDevice::GLRenderingDevice(HWND hwnd, RECT rect)
 //------------------------------------------------------------------------------
 GLRenderingDevice::~GLRenderingDevice()
 {
+	CleanUpResources();
 	wglMakeCurrent(nullptr, nullptr);
 	if (hRC)
 	{
@@ -118,6 +122,17 @@ GLRenderingDevice::~GLRenderingDevice()
 void GLRenderingDevice::EndFrame()
 {
 	SwapBuffers(hDC);
+}
+
+//------------------------------------------------------------------------------
+void Poly::GLRenderingDevice::CleanUpResources()
+{
+	RenderingTargets.Clear();
+	for (eGeometryRenderPassType passType : IterateEnum<eGeometryRenderPassType>())
+		GeometryRenderingPasses[passType].reset();
+	for (ePostprocessRenderPassType passType : IterateEnum<ePostprocessRenderPassType>())
+		PostprocessRenderingPasses[passType].reset();
+	PostprocessQuad.reset();
 }
 
 #elif defined(__linux__)
@@ -172,6 +187,7 @@ GLRenderingDevice::GLRenderingDevice(Display* display, Window window, GLXFBConfi
 //------------------------------------------------------------------------------
 GLRenderingDevice::~GLRenderingDevice()
 {
+	CleanUpResources();
 	if (this->display && this->context) {
 		glXMakeCurrent(this->display, None, nullptr);
 		glXDestroyContext(this->display, this->context);
@@ -209,6 +225,7 @@ GLRenderingDevice::GLRenderingDevice(void* window, const ScreenSize& size)
 //------------------------------------------------------------------------------
 GLRenderingDevice::~GLRenderingDevice()
 {
+	CleanUpResources();
 	DestroyDeviceImpl(window);
 }
 
@@ -234,7 +251,14 @@ void GLRenderingDevice::Resize(const ScreenSize& size)
 template<typename T>
 inline void GLRenderingDevice::RegisterGeometryPass(eGeometryRenderPassType type, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
 {
-	GeometryRenderingPasses[type] = std::make_unique<T>();
+	RegisterGeometryPassWithArgs<T>(type, inputs, outputs);
+}
+
+//------------------------------------------------------------------------------
+template<typename T, class... Args_t>
+inline void GLRenderingDevice::RegisterGeometryPassWithArgs(eGeometryRenderPassType type, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs, Args_t&&... args)
+{
+	GeometryRenderingPasses[type] = std::make_unique<T>(std::forward<Args_t>(args)...);
 
 	for (const InputOutputBind& bind : outputs)
 		GeometryRenderingPasses[type]->BindOutput(bind.Name, bind.Target);
@@ -257,7 +281,7 @@ T* Poly::GLRenderingDevice::CreateRenderingTarget(Args&&... args)
 //------------------------------------------------------------------------------
 void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
 {
-	PostprocessRenderingPasses[type] = std::make_unique<PostprocessRenderingPass>(fragShaderName);
+	PostprocessRenderingPasses[type] = std::make_unique<PostprocessRenderingPass>(PostprocessQuad.get(), fragShaderName);
 
 	for (const InputOutputBind& bind : outputs)
 		PostprocessRenderingPasses[type]->BindOutput(bind.Name, bind.Target);
@@ -271,6 +295,8 @@ void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType
 //------------------------------------------------------------------------------
 void GLRenderingDevice::InitPrograms()
 {
+	PostprocessQuad = std::make_unique<Poly::PostprocessQuad>();
+	
 	// Init input textures
 	//Texture2DInputTarget* RGBANoise256 = CreateRenderingTarget<Texture2DInputTarget>("Textures/RGBANoise256x256.png");
 
@@ -282,7 +308,7 @@ void GLRenderingDevice::InitPrograms()
 	RegisterGeometryPass<BlinnPhongRenderingPass>(eGeometryRenderPassType::BLINN_PHONG, {}, { { "color", texture }, { "depth", depth } });
 	RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS);
 	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, {}, { { "color", texture },{ "depth", depth } });
-	RegisterGeometryPass<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } });
+	RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } }, PostprocessQuad.get());
 
 
 	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND,			"Shaders/bgFrag.shader",		{}, { { "o_color", texture },	{ "depth", depth } });

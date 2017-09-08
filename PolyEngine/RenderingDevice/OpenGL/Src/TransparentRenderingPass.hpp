@@ -2,6 +2,7 @@
 
 #include "RenderingPassBase.hpp"
 #include "GLShaderProgram.hpp"
+#include "PostprocessQuad.hpp"
 
 namespace Poly
 {
@@ -14,9 +15,11 @@ namespace Poly
 	class TransparentRenderingPass : public RenderingPassBase
 	{
 	public:
-		TransparentRenderingPass();
+		TransparentRenderingPass(const PostprocessQuad* quad);
 
 	protected:
 		void OnRun(World* world, const CameraComponent* camera, const AARect& rect) override;
+
+		const PostprocessQuad* Quad;
 	};
 }

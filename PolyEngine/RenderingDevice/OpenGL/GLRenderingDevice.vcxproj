@@ -166,6 +166,7 @@
     <ClInclude Include="Src\GLTextureDeviceProxy.hpp" />
     <ClInclude Include="Src\GLUtils.hpp" />
     <ClInclude Include="Src\GLShaderProgram.hpp" />
+    <ClInclude Include="Src\PostprocessQuad.hpp" />
     <ClInclude Include="Src\PostprocessRenderingPass.hpp" />
     <ClInclude Include="Src\RenderingPassBase.hpp" />
     <ClInclude Include="Src\Text2DRenderingPass.hpp" />
@@ -180,6 +181,7 @@
     <ClCompile Include="Src\GLTextureDeviceProxy.cpp" />
     <ClCompile Include="Src\GLWorldRendering.cpp" />
     <ClCompile Include="Src\GLShaderProgram.cpp" />
+    <ClCompile Include="Src\PostprocessQuad.cpp" />
     <ClCompile Include="Src\PostprocessRenderingPass.cpp" />
     <ClCompile Include="Src\RenderingPassBase.cpp" />
     <ClCompile Include="Src\Text2DRenderingPass.cpp" />

@@ -1,16 +1,14 @@
 #pragma once
 
 #include "GLUtils.hpp"
-
 #include <IRenderingDevice.hpp>
-
 #include "GLShaderProgram.hpp"
-
 #include "RenderingPassBase.hpp"
 
 namespace Poly
 {
 	class World;
+	struct PostprocessQuad;
 
 	class DEVICE_DLLEXPORT GLRenderingDevice : public IRenderingDevice
 	{
@@ -71,10 +69,17 @@ namespace Poly
 		void InitPrograms();
 		void EndFrame();
 
-		template <typename T>
+		void CleanUpResources();
+
+		template<typename T>
 		void RegisterGeometryPass(eGeometryRenderPassType type,
 			const std::initializer_list<InputOutputBind>& inputs = {},
 			const std::initializer_list<InputOutputBind>& outputs = {});
+
+		template<typename T, class... Args_t>
+		void RegisterGeometryPassWithArgs(eGeometryRenderPassType type,
+			const std::initializer_list<InputOutputBind>& inputs = {},
+			const std::initializer_list<InputOutputBind>& outputs = {}, Args_t&&... args);
 
 		void RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName,
 			const std::initializer_list<InputOutputBind>& inputs = {},
@@ -102,6 +107,8 @@ namespace Poly
 
 		EnumArray<std::unique_ptr<RenderingPassBase>, eGeometryRenderPassType> GeometryRenderingPasses;
 		EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
+
+		std::unique_ptr<PostprocessQuad> PostprocessQuad;
 
 		ScreenSize ScreenDim;
 	};
