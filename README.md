@@ -15,7 +15,7 @@ Currently it is in a early stage of development, thus backwards compatibility is
 ## Supported platforms
 * Windows 7+ with MSVC compiler (Visual Studio 2015, toolset v140 with SDK 8.1)
 * Linux with both GCC and Clang compilers (X11 with GLX 1.4 extension additionally required)
-* macOS (**planned**)
+* macOS with Clang compiler and Cocoa as backend (provided with Xcode, tested on macOS Sierra)
 
 PolyEngine currently uses OpenGL 3.3+ only, but might gain support for other graphic  
 APIs (DirectX, Vulkan, Metal) in the future.
