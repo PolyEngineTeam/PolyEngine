@@ -11,6 +11,7 @@ namespace Poly {
 			}
 
 			TypeInfo TypeManager::RegisterOrGetType(const char* name, const TypeInfo& rawTypeInfo, const std::vector<TypeInfo>& baseClassList) {
+				UNUSED(rawTypeInfo);
 				if (s_nameToTypeMap.find(name) != s_nameToTypeMap.end())
 					return s_nameToTypeMap[name];
 				else {
@@ -23,14 +24,14 @@ namespace Poly {
 			}
 
 			bool TypeManager::IsTypeDerivedFrom(const TypeInfo& checked, const TypeInfo& from) const {
-				_ASSERTE(checked.IsValid());
-				_ASSERTE(from.IsValid());
+				ASSERTE(checked.IsValid(), "Checked type is not a valid TypeInfo");
+				ASSERTE(from.IsValid(), "From type is not a valid TypeInfo");
 
 				if (checked == from)
 					return true;
 
 				for (auto& base : s_inheritanceListMap.at(checked)) {
-					_ASSERTE(base.IsValid());
+					ASSERTE(base.IsValid(), "Base type is not a valid TypeInfo");
 					if (from == base)
 						return true;
 				}

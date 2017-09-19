@@ -58,7 +58,7 @@ namespace Poly {
 			template<>
 			struct TypeInfoFromBaseClassList<Typelist<nil_t>>
 			{
-				static void Fill(std::vector<TypeInfo>& v) {}
+				static void Fill(std::vector<TypeInfo>& v) { UNUSED(v); }
 			};
 
 			template<class T, class U>
@@ -81,7 +81,7 @@ namespace Poly {
 				Impl::TypeInfoFromBaseClassList<typename T::baseClassList>::Fill(v);
 			}
 
-			static void RetriveImpl(std::vector<TypeInfo>& v, std::false_type) {}
+			static void RetriveImpl(std::vector<TypeInfo>& v, std::false_type) { UNUSED(v); }
 		public:
 			static std::vector<TypeInfo> Retrive() {
 				std::vector<TypeInfo> result;
