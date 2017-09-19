@@ -15,6 +15,19 @@
 #include <iostream>
 #include <string>
 
+// Custom type names
+typedef uint8_t u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+typedef uint64_t u64;
+typedef int8_t i8;
+typedef int16_t i16;
+typedef int32_t i32;
+typedef int64_t i64;
+typedef float f32;
+typedef double f64;
+typedef unsigned int uint;
+
 // stupid warning in MSVC about template specialization exporting, according to https://msdn.microsoft.com/en-US/library/esew7y1w.aspx it can be ignored
 #if defined(_WIN32)
 	#pragma warning(disable: 4251)

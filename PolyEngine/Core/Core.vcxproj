@@ -149,6 +149,8 @@
     <ClCompile Include="Src\Quaternion.cpp" />
     <ClCompile Include="Src\AABox.cpp" />
     <ClCompile Include="Src\RefCountedBase.cpp" />
+    <ClCompile Include="Src\RTTI.cpp" />
+    <ClCompile Include="Src\RTTITypeInfo.cpp" />
     <ClCompile Include="Src\SimdMath.cpp" />
     <ClCompile Include="src\String.cpp" />
     <ClCompile Include="Src\UniqueID.cpp" />
@@ -182,6 +184,11 @@
     <ClInclude Include="Src\Queue.hpp" />
     <ClInclude Include="Src\AABox.hpp" />
     <ClInclude Include="Src\RefCountedBase.hpp" />
+    <ClInclude Include="Src\RTTI.hpp" />
+    <ClInclude Include="Src\RTTICast.hpp" />
+    <ClInclude Include="Src\RTTIProperty.hpp" />
+    <ClInclude Include="Src\RTTITypeInfo.hpp" />
+    <ClInclude Include="Src\RTTITypeInfoImpl.hpp" />
     <ClInclude Include="Src\SimdMath.hpp" />
     <ClInclude Include="Src\String.hpp" />
     <ClInclude Include="Src\UniqueID.hpp" />
