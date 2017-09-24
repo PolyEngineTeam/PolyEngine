@@ -42,5 +42,6 @@ namespace Poly {
 
 		virtual Poly::RTTI::IPropertyManager* GetPropertyManager() { return nullptr; }
 	};
-	RTTI_DECLARE_TYPE(RTTIBase)
 }
+// FIXME Clang really don't like template specialization inside of namespaces. For now this needs to be in global scope.
+RTTI_DECLARE_TYPE(Poly::RTTIBase)
