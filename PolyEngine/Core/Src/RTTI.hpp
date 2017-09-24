@@ -23,22 +23,24 @@ RTTI_DECLARE_TYPE(f64)
 //RTTI_DECLARE_TYPE(int)
 //RTTI_DECLARE_TYPE(uint)
 
-
-class RTTIBase {
-	RTTI_ENABLE()
-public:
-	virtual void Init() {
-		if (Poly::RTTI::IPropertyManager* mgr = GetPropertyManager()) {
-			mgr->Deserialize();
+namespace Poly {
+	class RTTIBase {
+		RTTI_ENABLE()
+	public:
+		// TODO rework this API
+		virtual void Init() {
+			if (Poly::RTTI::IPropertyManager* mgr = GetPropertyManager()) {
+				mgr->Deserialize();
+			}
 		}
-	}
 
-	virtual void Destroy() {
-		if (Poly::RTTI::IPropertyManager* mgr = GetPropertyManager()) {
-			mgr->Serialize();
+		virtual void Destroy() {
+			if (Poly::RTTI::IPropertyManager* mgr = GetPropertyManager()) {
+				mgr->Serialize();
+			}
 		}
-	}
 
-	virtual Poly::RTTI::IPropertyManager* GetPropertyManager() { return nullptr; }
-};
-RTTI_DECLARE_TYPE(RTTIBase)
+		virtual Poly::RTTI::IPropertyManager* GetPropertyManager() { return nullptr; }
+	};
+	RTTI_DECLARE_TYPE(RTTIBase)
+}

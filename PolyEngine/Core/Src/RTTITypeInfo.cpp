@@ -10,15 +10,15 @@ namespace Poly {
 				return instance;
 			}
 
-			TypeInfo TypeManager::RegisterOrGetType(const char* name, const TypeInfo& rawTypeInfo, const std::vector<TypeInfo>& baseClassList) {
+			TypeInfo TypeManager::RegisterOrGetType(const char* name, const TypeInfo& rawTypeInfo, const Dynarray<TypeInfo>& baseClassList) {
 				UNUSED(rawTypeInfo);
-				if (s_nameToTypeMap.find(name) != s_nameToTypeMap.end())
-					return s_nameToTypeMap[name];
+				if (NameToTypeMap.find(name) != NameToTypeMap.end())
+					return NameToTypeMap[name];
 				else {
-					TypeInfo ti(++s_counter);
-					s_nameToTypeMap.insert(std::make_pair(name, ti));
-					s_typeToNameMap.insert(std::make_pair(ti, name));
-					s_inheritanceListMap[ti] = baseClassList;
+					TypeInfo ti(++Counter);
+					NameToTypeMap.insert(std::make_pair(name, ti));
+					TypeToNameMap.insert(std::make_pair(ti, name));
+					InheritanceListMap[ti] = baseClassList;
 					return ti;
 				}
 			}
@@ -30,7 +30,7 @@ namespace Poly {
 				if (checked == from)
 					return true;
 
-				for (auto& base : s_inheritanceListMap.at(checked)) {
+				for (auto& base : InheritanceListMap.at(checked)) {
 					ASSERTE(base.IsValid(), "Base type is not a valid TypeInfo");
 					if (from == base)
 						return true;

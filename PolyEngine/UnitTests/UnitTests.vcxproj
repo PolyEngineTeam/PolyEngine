@@ -144,6 +144,7 @@
     <ClCompile Include="Src\QuaternionTests.cpp" />
     <ClCompile Include="Src\QueueTests.cpp" />
     <ClCompile Include="Src\ResourceManagerTests.cpp" />
+    <ClCompile Include="Src\RTTITests.cpp" />
     <ClCompile Include="Src\StringTests.cpp" />
     <ClCompile Include="Src\UnsafeStorageTests.cpp" />
     <ClCompile Include="Src\Vector2fTests.cpp" />

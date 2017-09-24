@@ -24,10 +24,10 @@ namespace Poly {
 		};
 
 		struct Property {
-			TypeInfo type;
-			size_t offset;
-			const char* name;
-			ePropertyFlag flags;
+			TypeInfo Type;
+			size_t Offset;
+			const char* Name;
+			ePropertyFlag Flags;
 		};
 
 		class IPropertyManager {
@@ -39,11 +39,11 @@ namespace Poly {
 				//TODO deserialiation
 			}
 
-			void AddProperty(const Property& property) { m_properties.push_back(property); }
-			const std::vector<Property>& GetPropertyList() { return m_properties; };
+			void AddProperty(const Property& property) { Properties.PushBack(property); }
+			const Dynarray<Property>& GetPropertyList() { return Properties; };
 
 		protected:
-			std::vector<Property> m_properties;
+			Dynarray<Property> Properties;
 		};
 
 		template<class T>
@@ -67,10 +67,12 @@ friend class Poly::RTTI::PropertyManager<Type>;\
 
 // standard RTTIBase deriving (or POD type) property
 #define RTTI_PROPERTY(Type, variable, var_name, flags) \
-  _STATIC_ASSERTE(!std::is_pointer<Type>::value || (flags & Poly::RTTI::DONT_SERIALIZE != 0), "Serializable variable cannot be a pointer."); \
+  STATIC_ASSERTE(!std::is_pointer<Type>::value || ((flags & Poly::RTTI::DONT_SERIALIZE) != 0), "Serializable variable cannot be a pointer."); \
   mgr->AddProperty(Poly::RTTI::Property{Poly::RTTI::TypeInfo::Get<Type>(), Poly::RTTI::offsetOfMember(&T::variable), var_name, flags});
 
 // property with enum type
 #define RTTI_PROPERTY_ENUM(Type, variable, var_name, flags) \
-  _STATIC_ASSERTE(!std::is_pointer<Type>::value || (flags & Poly::RTTI::DONT_SERIALIZE != 0), "Serializable variable cannot be a pointer."); \
-  mgr->AddProperty(Poly::RTTI::Property{RTTI::TypeInfo::Get<int>(), Poly::RTTI::offsetOfMember(&T::variable), var_name, flags});
+  STATIC_ASSERTE(std::is_enum<Type>::value, "Enum type is required"); \
+  STATIC_ASSERTE(std::is_integral<std::underlying_type<Type>::type>::value, "Enum with integral underlying type is required"); \
+  STATIC_ASSERTE(!std::is_pointer<Type>::value || ((flags & Poly::RTTI::DONT_SERIALIZE) != 0), "Serializable variable cannot be a pointer."); \
+  mgr->AddProperty(Poly::RTTI::Property{RTTI::TypeInfo::Get<i64>(), Poly::RTTI::offsetOfMember(&T::variable), var_name, flags});

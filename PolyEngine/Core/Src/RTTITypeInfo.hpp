@@ -20,10 +20,10 @@ namespace Poly {
 			struct RawTypeInfo;
 
 			//--------------------------------------------------------------------------
-			class TypeManager {
+			class CORE_DLLEXPORT TypeManager {
 			public:
 				static TypeManager& Get();
-				TypeInfo RegisterOrGetType(const char* name, const TypeInfo& rawTypeInfo, const std::vector<TypeInfo>& baseClassList);
+				TypeInfo RegisterOrGetType(const char* name, const TypeInfo& rawTypeInfo, const Dynarray<TypeInfo>& baseClassList);
 				bool IsTypeDerivedFrom(const TypeInfo& checked, const TypeInfo& from) const;
 
 			private:
@@ -31,16 +31,16 @@ namespace Poly {
 				TypeManager(const TypeManager& rhs) = delete;
 				TypeManager& operator=(const TypeManager& rhs) = delete;
 
-				long long s_counter = 0;
-				std::map<const char*, TypeInfo> s_nameToTypeMap;
-				std::map<TypeInfo, const char*> s_typeToNameMap;
-				std::map<TypeInfo, std::vector<TypeInfo>> s_inheritanceListMap;
+				long long Counter = 0;
+				std::map<const char*, TypeInfo> NameToTypeMap;
+				std::map<TypeInfo, const char*> TypeToNameMap;
+				std::map<TypeInfo, Dynarray<TypeInfo>> InheritanceListMap;
 			};
 
 		} // namespace Impl
 
 		  //--------------------------------------------------------------------------
-		class TypeInfo {
+		class CORE_DLLEXPORT TypeInfo {
 		public:
 			typedef long long TypeId;
 
