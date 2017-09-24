@@ -59,10 +59,10 @@ namespace Poly {
 			static TypeInfo Get() { return MetaTypeInfo<typename std::remove_cv<T>::type>::GetTypeInfo(); }
 
 			template<typename T>
-			static TypeInfo Get(T* object) { return Get<typename std::remove_pointer<T>::type>(); }
+			static TypeInfo Get(T* object) { UNUSED(object); return Get<typename std::remove_pointer<T>::type>(); }
 
 			template<typename T>
-			static TypeInfo Get(T& object) { return Get<typename std::remove_reference<T>::type>(); }
+			static TypeInfo Get(T& object) { UNUSED(object); return Get<typename std::remove_reference<T>::type>(); }
 
 			template<typename T>
 			inline bool isTypeDerivedFrom() const {
