@@ -7,25 +7,25 @@
 #include "RTTIProperty.hpp"
 
 // basic types declaration
-RTTI_DECLARE_TYPE(bool)
-RTTI_DECLARE_TYPE(i8)
-RTTI_DECLARE_TYPE(i16)
-RTTI_DECLARE_TYPE(i32)
-RTTI_DECLARE_TYPE(i64)
-RTTI_DECLARE_TYPE(u8)
-RTTI_DECLARE_TYPE(u16)
-RTTI_DECLARE_TYPE(u32)
-RTTI_DECLARE_TYPE(u64)
-RTTI_DECLARE_TYPE(f32)
-RTTI_DECLARE_TYPE(f64)
+RTTI_DECLARE_PRIMITIVE_TYPE(bool)
+RTTI_DECLARE_PRIMITIVE_TYPE(i8)
+RTTI_DECLARE_PRIMITIVE_TYPE(i16)
+RTTI_DECLARE_PRIMITIVE_TYPE(i32)
+RTTI_DECLARE_PRIMITIVE_TYPE(i64)
+RTTI_DECLARE_PRIMITIVE_TYPE(u8)
+RTTI_DECLARE_PRIMITIVE_TYPE(u16)
+RTTI_DECLARE_PRIMITIVE_TYPE(u32)
+RTTI_DECLARE_PRIMITIVE_TYPE(u64)
+RTTI_DECLARE_PRIMITIVE_TYPE(f32)
+RTTI_DECLARE_PRIMITIVE_TYPE(f64)
 
 // FIXME What to do with those? Under MSVC there are == to int32_t and uint32_t resulting in doubled template specification
-//RTTI_DECLARE_TYPE(int)
-//RTTI_DECLARE_TYPE(uint)
+//RTTI_DECLARE_PRIMITIVE_TYPE(int)
+//RTTI_DECLARE_PRIMITIVE_TYPE(uint)
 
 namespace Poly {
 	class RTTIBase {
-		RTTI_ENABLE()
+		RTTI_DECLARE_TYPE(Poly::RTTIBase) {}
 	public:
 		// TODO rework this API
 		virtual void Init() {
@@ -39,9 +39,6 @@ namespace Poly {
 				mgr->Serialize();
 			}
 		}
-
-		virtual Poly::RTTI::IPropertyManager* GetPropertyManager() { return nullptr; }
 	};
 }
 // FIXME Clang really don't like template specialization inside of namespaces. For now this needs to be in global scope.
-RTTI_DECLARE_TYPE(Poly::RTTIBase)

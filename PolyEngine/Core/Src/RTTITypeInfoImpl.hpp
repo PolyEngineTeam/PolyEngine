@@ -2,53 +2,37 @@
 
 #include <type_traits>
 
-/*template<bool B, class T = void>
-struct enable_if {};
+// Define this to detect not registered types
+template <typename T>
+struct MetaTypeInfo {
+	static Poly::RTTI::TypeInfo GetTypeInfo() {
+		STATIC_ASSERTE(false, "Type not declared in rtti system!");
+		return Poly::RTTI::TypeInfo();
+	}
+};
 
-template<class T>
-struct enable_if<true, T> { typedef T type; };
-*/
+template<typename T> constexpr auto GetCheckedTypeInfoImpl(int) -> decltype(T::MetaTypeInfo::GetTypeInfo(), Poly::RTTI::TypeInfo{}) { return T::MetaTypeInfo::GetTypeInfo(); }
+template<typename T> constexpr auto GetCheckedTypeInfoImpl(...) -> decltype(Poly::RTTI::TypeInfo{}) { return MetaTypeInfo<T>::GetTypeInfo(); }
+template<typename T> constexpr Poly::RTTI::TypeInfo GetCheckedTypeInfo() { return GetCheckedTypeInfoImpl<T>(0); }
+
 namespace Poly {
 	namespace RTTI {
 		namespace Impl {
 
-			template <class T>
-			struct RawType { typedef T type; };
-
-			template <class T> struct RawType<const T> { typedef typename RawType<T>::type type; };
-
-			template <class T> struct RawType<T*> { typedef typename RawType<T>::type type; };
-			template <class T> struct RawType<T* const> { typedef typename RawType<T>::type type; };
-			template <class T> struct RawType<T* volatile> { typedef typename RawType<T>::type type; };
-
-			template <class T> struct RawType<T&> { typedef typename RawType<T>::type type; };
+			template <class T> using RawType = std::remove_pointer<typename std::decay<T>::type>;
 
 			//--------------------------------------------------------------------------
 			template<typename T>
-			class HasGetTypeInfoFunc_impl {
-				typedef char YesType[1];
-				typedef char NoType[2];
+			class HasGetTypeInfoFunc {
+				template <typename>
+				constexpr static auto evaluate(int) -> decltype(std::declval<T>()->GetTypeInfo(), bool{}) { return true; }
 
-				template <typename U, RTTI::TypeInfo(U::*)() const>
-				class check {};
-
-				template <typename C>
-				static YesType& f(check<C, &C::GetTypeInfo>*);
-
-				template <typename C>
-				static NoType& f(...);
+				template <typename>
+				constexpr static auto evaluate(...) -> decltype(bool{}) { return false; }
 
 			public:
-				static const bool value = (sizeof(f<typename RawType<T>::type>(0)) == sizeof(YesType));
+				static const bool value = evaluate<typename RawType<T>::type>(0);
 			};
-
-			//--------------------------------------------------------------------------
-			template<class T, class = void>
-			struct HasGetTypeInfoFunc : std::integral_constant<bool, false> {};
-
-			//--------------------------------------------------------------------------
-			template<class T>
-			struct HasGetTypeInfoFunc<T, typename std::enable_if<HasGetTypeInfoFunc_impl<T>::value>::type > : std::integral_constant<bool, true> {};
 
 			//--------------------------------------------------------------------------
 			template<typename T, bool = std::is_same<T, typename RawType<T>::type >::value>
@@ -59,34 +43,26 @@ namespace Poly {
 			//--------------------------------------------------------------------------
 			template<typename T>
 			struct RawTypeInfo<T, false> {
-				static inline TypeInfo Get() { return MetaTypeInfo<typename RawType<T>::type>::GetTypeInfo(); }
+				static inline TypeInfo Get() { return GetCheckedTypeInfo<typename RawType<T>::type>(); }
 			};
 
 		} // namespace Impl
 	} // namespace RTTI
 } // namespace Poly
 
-  // Define this to detect not registered types
-template <typename T>
-struct MetaTypeInfo {
-	static Poly::RTTI::TypeInfo GetTypeInfo() {
-		return T::TYPE_NOT_DECLARED_IN_RTTI_SYSTEM();
-	}
-};
-
 // Macro for declaring new types
-#define RTTI_DECLARE_TYPE(T)              \
+#define RTTI_DECLARE_PRIMITIVE_TYPE(T)              \
 template <>                               \
 struct MetaTypeInfo< T > {                \
 static Poly::RTTI::TypeInfo GetTypeInfo() {   \
-return Poly::RTTI::Impl::TypeManager::Get().RegisterOrGetType(#T, Poly::RTTI::Impl::RawTypeInfo<T>::Get(), Poly::RTTI::BaseClasses<T>::Retrive());   \
+return Poly::RTTI::Impl::TypeManager::Get().RegisterOrGetType(#T, Poly::RTTI::Impl::RawTypeInfo<T>::Get(), Poly::RTTI::BaseClasses<T>::Retrieve());   \
 }                                       \
 };
 
 template <typename T>
 struct AutoRegisterType {
 	AutoRegisterType() {
-		T::TYPE_NOT_DEFINED_IN_RTTI_SYSTEM();
+		STATIC_ASSERTE(false, "Type not defined in rtti system!");
 	}
 };
 
@@ -95,10 +71,12 @@ struct AutoRegisterType {
 
 // Macro for defining new types
 #define RTTI_DEFINE_TYPE(T)                       \
-template <>                                       \
-struct AutoRegisterType< T > {                    \
-AutoRegisterType() {                            \
-MetaTypeInfo<T>::GetTypeInfo();               \
-}                                               \
-};                                                \
+template <> struct AutoRegisterType<T> { AutoRegisterType() { GetCheckedTypeInfo<T>(); } }; \
 static const AutoRegisterType<T> RTTI_CAT(autoRegisterType, __COUNTER__);
+
+#define RTTI_GENERATE_TYPE_INFO(T)\
+	struct MetaTypeInfo {	\
+	static Poly::RTTI::TypeInfo GetTypeInfo() {   \
+		return Poly::RTTI::Impl::TypeManager::Get().RegisterOrGetType(#T, Poly::RTTI::Impl::RawTypeInfo<T>::Get(), Poly::RTTI::BaseClasses<T>::Retrieve());   \
+	}  \
+	};

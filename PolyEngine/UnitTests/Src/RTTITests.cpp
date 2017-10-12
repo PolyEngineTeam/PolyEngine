@@ -12,26 +12,23 @@ enum class eTestEnum
 };
 
 class TestClass : public RTTIBase {
-	RTTI_ENABLE_DERIVED(RTTIBase)
-		RTTI_PROPERTIES_BEGIN(TestClass)
-		RTTI_PROPERTY(bool, val1, "Val1", RTTI::ePropertyFlag::NONE)
-		RTTI_PROPERTY_ENUM(eTestEnum, val2, "Val2", RTTI::ePropertyFlag::NONE)
-		RTTI_PROPERTIES_END
-
+	RTTI_DECLARE_TYPE_DERIVED(TestClass, RTTIBase)
+	{
+		RTTI_PROPERTY(bool, val1, "Val1", RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_ENUM(eTestEnum, val2, "Val2", RTTI::ePropertyFlag::NONE);
+	}
 public:
 	bool val1 = true;
 	eTestEnum val2 = eTestEnum::VAL_1;
 };
-RTTI_DECLARE_TYPE(TestClass)
-	RTTI_DEFINE_TYPE(TestClass)
 
-	class TestClass2 : public RTTIBase {
-	RTTI_ENABLE_DERIVED(RTTIBase)
+RTTI_DEFINE_TYPE(TestClass)
 
-	public:
+class TestClass2 : public RTTIBase {
+	RTTI_DECLARE_TYPE_DERIVED(TestClass2, RTTIBase) {}
+public:
 };
-RTTI_DECLARE_TYPE(TestClass2)
-	RTTI_DEFINE_TYPE(TestClass2)
+RTTI_DEFINE_TYPE(TestClass2)
 
 TEST_CASE("RTTI basics", "[RTTI]") {
 	TestClass* a = new TestClass();

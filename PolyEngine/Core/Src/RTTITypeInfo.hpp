@@ -56,7 +56,7 @@ namespace Poly {
 			bool IsValid() const;
 
 			template<typename T>
-			static TypeInfo Get() { return MetaTypeInfo<typename std::remove_cv<T>::type>::GetTypeInfo(); }
+			static TypeInfo Get() { return GetCheckedTypeInfo<typename std::remove_cv<T>::type>(); }
 
 			template<typename T>
 			static TypeInfo Get(T* object) { UNUSED(object); return Get<typename std::remove_pointer<T>::type>(); }
@@ -66,7 +66,7 @@ namespace Poly {
 
 			template<typename T>
 			inline bool isTypeDerivedFrom() const {
-				return Impl::TypeManager::Get().IsTypeDerivedFrom(*this, MetaTypeInfo<T>::GetTypeInfo());
+				return Impl::TypeManager::Get().IsTypeDerivedFrom(*this, GetCheckedTypeInfo<T>());
 			}
 
 		private:

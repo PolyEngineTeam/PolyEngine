@@ -3,6 +3,7 @@
 #include "Defines.hpp"
 #include "Dynarray.hpp"
 #include "RTTITypeInfo.hpp"
+#include "RTTIProperty.hpp"
 
 
 namespace Poly {
@@ -21,31 +22,6 @@ namespace Poly {
 				typedef T head;
 				typedef U tail;
 			};
-
-			/**
-			* Template for assuring that class T has defined baseClassList. baseClassList contains entries of all base classes of class T.
-			*/
-			template <typename T>
-			class HasBaseClassList_impl {
-				typedef char YesType[1];
-				typedef char NoType[2];
-
-				template <typename C>
-				static YesType& test(typename C::baseClassList*);
-
-				template <typename>
-				static NoType& test(...);
-
-			public:
-				static const bool value = (sizeof(YesType) == sizeof(test<T>(0)));
-			};
-
-			//--------------------------------------------------------------------------------------
-			template <class T, class = void>
-			struct HasBaseClassList : std::integral_constant<bool, false> {};
-
-			template <class T>
-			struct HasBaseClassList<T, typename std::enable_if<HasBaseClassList_impl<T>::value>::type > : std::integral_constant<bool, true> {};
 
 			//--------------------------------------------------------------------------------------
 
@@ -77,17 +53,21 @@ namespace Poly {
 		template<class T>
 		struct BaseClasses {
 		private:
-			static void RetriveImpl(Dynarray<TypeInfo>& v, std::true_type) {
-				Impl::TypeInfoFromBaseClassList<typename T::baseClassList>::Fill(v);
-			}
-
-			static void RetriveImpl(Dynarray<TypeInfo>& v, std::false_type) { UNUSED(v); }
-		public:
-			static Dynarray<TypeInfo> Retrive() {
+			// Returns dynarray of TypeInfo if class T has baseClassList, that is filled with TypeInfos of base types for type T
+			template<typename>
+			static auto RetrieveImpl(int) -> decltype(T::baseClassList, Dynarray<TypeInfo>{}) {
 				Dynarray<TypeInfo> result;
-				RetriveImpl(result, typename Impl::HasBaseClassList<T>::type());
+				Impl::TypeInfoFromBaseClassList<typename T::baseClassList>::Fill(result);
 				return result;
 			}
+
+			// Returns dynarray of TypeInfo if class T has no baseClassList, that is empty
+			template<typename>
+			static auto RetrieveImpl(...) -> decltype(Dynarray<TypeInfo>{}) {
+				return Dynarray<TypeInfo>();
+			}
+		public:
+			static Dynarray<TypeInfo> Retrieve() { return RetrieveImpl<T>(0); }
 		};
 
 	} // namespace RTTI
@@ -131,23 +111,30 @@ bool IsOfType(U object) {
 //--------------------------------------------------------------------------------------
 template <typename T>
 Poly::RTTI::TypeInfo getTypeInfoFromInstance(const T*) {
-	return MetaTypeInfo<T>::GetTypeInfo();
+	return GetCheckedTypeInfo<T>();
 }
 
-#define RTTI_ENABLE() \
+// Declares type with no base class
+#define RTTI_DECLARE_TYPE(T) \
 public: \
+RTTI_GENERATE_TYPE_INFO(T)\
 virtual Poly::RTTI::TypeInfo GetTypeInfo() const { return getTypeInfoFromInstance(this); } \
 typedef TYPE_LIST() baseClassList;\
-private:
+RTTI_GENERATE_PROPERTY_LIST(T)
 
-#define RTTI_ENABLE_DERIVED(A) \
+
+// Declares type with one base class
+#define RTTI_DECLARE_TYPE_DERIVED(T,A) \
 public: \
+RTTI_GENERATE_TYPE_INFO(T)\
 Poly::RTTI::TypeInfo GetTypeInfo() const override { return getTypeInfoFromInstance(this); } \
 typedef TYPE_LIST_1(A) baseClassList;\
-private:
+RTTI_GENERATE_PROPERTY_LIST(T)
 
-#define RTTI_ENABLE_DERIVED2(A,B) \
+// Declares type with two base classes. Disabled for now.
+/*#define RTTI_DECLARE_TYPE_DERIVED2(T,A,B) \
 public: \
+RTTI_GENERATE_TYPE_INFO(T)\
 Poly::RTTI::TypeInfo GetTypeInfo() const override { return getTypeInfoFromInstance(this); } \
 typedef TYPE_LIST_2(A,B) baseClassList;\
-private:
+RTTI_GENERATE_PROPERTY_LIST(T)*/
