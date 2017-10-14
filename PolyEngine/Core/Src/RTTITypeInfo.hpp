@@ -55,7 +55,7 @@ namespace Poly {
 
 			constexpr TypeInfo() : m_id(0) {}
             constexpr TypeInfo(const TypeInfo& rhs) : m_id(rhs.m_id) {}
-            constexpr TypeInfo& operator=(const TypeInfo& rhs) { m_id = rhs.m_id; return *this; }
+            TypeInfo& operator=(const TypeInfo& rhs) { m_id = rhs.m_id; return *this; }
             constexpr bool operator<(const TypeInfo& rhs) const { return m_id < rhs.m_id; }
             constexpr bool operator>(const TypeInfo& rhs) const { return m_id > rhs.m_id; }
             constexpr bool operator<=(const TypeInfo& rhs) const { return m_id <= rhs.m_id; }
