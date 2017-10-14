@@ -41,18 +41,6 @@ namespace Poly {
 
 		} // namespace Impl
 
-		  // TYPE INFO
-		TypeInfo::TypeInfo() : m_id(0) {}
 		TypeInfo::TypeInfo(long long id) : m_id(id) {}
-		TypeInfo::TypeInfo(const TypeInfo& rhs) : m_id(rhs.m_id) {}
-		TypeInfo& TypeInfo::operator=(const TypeInfo& rhs) { m_id = rhs.m_id; return *this; }
-		bool TypeInfo::operator<(const TypeInfo& rhs) const { return m_id < rhs.m_id; }
-		bool TypeInfo::operator>(const TypeInfo& rhs) const { return m_id > rhs.m_id; }
-		bool TypeInfo::operator<=(const TypeInfo& rhs) const { return m_id <= rhs.m_id; }
-		bool TypeInfo::operator>=(const TypeInfo& rhs) const { return m_id >= rhs.m_id; }
-		bool TypeInfo::operator==(const TypeInfo& rhs) const { return m_id == rhs.m_id; }
-		bool TypeInfo::operator!=(const TypeInfo& rhs) const { return m_id != rhs.m_id; }
-		bool TypeInfo::IsValid() const { return m_id != 0; }
-
 	}
 }

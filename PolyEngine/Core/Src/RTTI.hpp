@@ -25,7 +25,7 @@ RTTI_DECLARE_PRIMITIVE_TYPE(f64)
 
 namespace Poly {
 	class RTTIBase {
-		RTTI_DECLARE_TYPE(Poly::RTTIBase) {}
+		RTTI_DECLARE_TYPE(Poly::RTTIBase) { UNUSED(mgr); }
 	public:
 		// TODO rework this API
 		virtual void Init() {

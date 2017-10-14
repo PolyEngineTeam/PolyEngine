@@ -6,14 +6,13 @@
 template <typename T>
 struct MetaTypeInfo {
 	static Poly::RTTI::TypeInfo GetTypeInfo() {
-		STATIC_ASSERTE(false, "Type not declared in rtti system!");
+		ASSERTE(false, "Type not declared in rtti system!");
 		return Poly::RTTI::TypeInfo();
 	}
 };
 
-template<typename T> constexpr auto GetCheckedTypeInfoImpl(int) -> decltype(T::MetaTypeInfo::GetTypeInfo(), Poly::RTTI::TypeInfo{}) { return T::MetaTypeInfo::GetTypeInfo(); }
-template<typename T> constexpr auto GetCheckedTypeInfoImpl(...) -> decltype(Poly::RTTI::TypeInfo{}) { return MetaTypeInfo<T>::GetTypeInfo(); }
-template<typename T> constexpr Poly::RTTI::TypeInfo GetCheckedTypeInfo() { return GetCheckedTypeInfoImpl<T>(0); }
+template<typename T> constexpr Poly::RTTI::TypeInfo GetCheckedTypeInfo(typename std::enable_if<std::is_fundamental<T>::value>::type*) { return MetaTypeInfo<T>::GetTypeInfo(); }
+template<typename T> constexpr Poly::RTTI::TypeInfo GetCheckedTypeInfo(typename std::enable_if<!std::is_fundamental<T>::value>::type*) { return T::MetaTypeInfo::GetTypeInfo(); }
 
 namespace Poly {
 	namespace RTTI {
@@ -62,7 +61,7 @@ return Poly::RTTI::Impl::TypeManager::Get().RegisterOrGetType(#T, Poly::RTTI::Im
 template <typename T>
 struct AutoRegisterType {
 	AutoRegisterType() {
-		STATIC_ASSERTE(false, "Type not defined in rtti system!");
+		ASSERTE(false, "Type not defined in rtti system!");
 	}
 };
 

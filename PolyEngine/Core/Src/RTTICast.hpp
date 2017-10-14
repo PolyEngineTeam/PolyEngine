@@ -54,15 +54,15 @@ namespace Poly {
 		struct BaseClasses {
 		private:
 			// Returns dynarray of TypeInfo if class T has baseClassList, that is filled with TypeInfos of base types for type T
-			template<typename>
-			static auto RetrieveImpl(int) -> decltype(T::baseClassList, Dynarray<TypeInfo>{}) {
+			template<typename C>
+			static auto RetrieveImpl(int, typename std::enable_if<std::is_fundamental<C>::value>::type* = 0) -> decltype(C::baseClassList, Dynarray<TypeInfo>{}) {
 				Dynarray<TypeInfo> result;
-				Impl::TypeInfoFromBaseClassList<typename T::baseClassList>::Fill(result);
+				Impl::TypeInfoFromBaseClassList<typename C::baseClassList>::Fill(result);
 				return result;
 			}
 
 			// Returns dynarray of TypeInfo if class T has no baseClassList, that is empty
-			template<typename>
+			template<typename C>
 			static auto RetrieveImpl(...) -> decltype(Dynarray<TypeInfo>{}) {
 				return Dynarray<TypeInfo>();
 			}

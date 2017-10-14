@@ -6,12 +6,21 @@
 #include <map>
 #include <vector>
 
+namespace Poly {
+    namespace RTTI {
+        class TypeInfo;
+    }
+}
+
 template <typename T>
 struct MetaTypeInfo;
 
+template<typename T> constexpr Poly::RTTI::TypeInfo GetCheckedTypeInfo(typename std::enable_if<std::is_fundamental<T>::value>::type* = 0);
+template<typename T> constexpr Poly::RTTI::TypeInfo GetCheckedTypeInfo(typename std::enable_if<!std::is_fundamental<T>::value>::type* = 0);
+
+
 namespace Poly {
 	namespace RTTI {
-		class TypeInfo;
 
 		namespace Impl {
 
@@ -44,19 +53,19 @@ namespace Poly {
 		public:
 			typedef long long TypeId;
 
-			TypeInfo();
-			TypeInfo(const TypeInfo& rhs);
-			TypeInfo& operator=(const TypeInfo& rhs);
-			bool operator<(const TypeInfo& rhs) const;
-			bool operator>(const TypeInfo& rhs) const;
-			bool operator<=(const TypeInfo& rhs) const;
-			bool operator>=(const TypeInfo& rhs) const;
-			bool operator==(const TypeInfo& rhs) const;
-			bool operator!=(const TypeInfo& rhs) const;
-			bool IsValid() const;
+			constexpr TypeInfo() : m_id(0) {}
+            constexpr TypeInfo(const TypeInfo& rhs) : m_id(rhs.m_id) {}
+            constexpr TypeInfo& operator=(const TypeInfo& rhs) { m_id = rhs.m_id; return *this; }
+            constexpr bool operator<(const TypeInfo& rhs) const { return m_id < rhs.m_id; }
+            constexpr bool operator>(const TypeInfo& rhs) const { return m_id > rhs.m_id; }
+            constexpr bool operator<=(const TypeInfo& rhs) const { return m_id <= rhs.m_id; }
+            constexpr bool operator>=(const TypeInfo& rhs) const { return m_id >= rhs.m_id; }
+            constexpr bool operator==(const TypeInfo& rhs) const { return m_id == rhs.m_id; }
+            constexpr bool operator!=(const TypeInfo& rhs) const { return m_id != rhs.m_id; }
+            constexpr bool IsValid() const  { return m_id != 0; }
 
 			template<typename T>
-			static TypeInfo Get() { return GetCheckedTypeInfo<typename std::remove_cv<T>::type>(); }
+			constexpr static TypeInfo Get() { return GetCheckedTypeInfo<typename std::remove_cv<T>::type>(); }
 
 			template<typename T>
 			static TypeInfo Get(T* object) { UNUSED(object); return Get<typename std::remove_pointer<T>::type>(); }
