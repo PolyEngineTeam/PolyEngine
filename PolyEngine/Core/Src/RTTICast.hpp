@@ -120,7 +120,7 @@ public: \
 RTTI_GENERATE_TYPE_INFO(T)\
 virtual Poly::RTTI::TypeInfo GetTypeInfo() const { return getTypeInfoFromInstance(this); } \
 typedef TYPE_LIST() baseClassList;\
-RTTI_GENERATE_PROPERTY_LIST(T)
+RTTI_GENERATE_PROPERTY_LIST_BASE(T)
 
 
 // Declares type with one base class

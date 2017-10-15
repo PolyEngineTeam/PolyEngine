@@ -56,11 +56,19 @@ namespace Poly {
 	}
 }
 
-#define RTTI_GENERATE_PROPERTY_LIST(Type)\
+#define RTTI_GENERATE_PROPERTY_LIST_BASE(Type)\
 friend class Poly::RTTI::PropertyManager<Type>; \
 virtual Poly::RTTI::IPropertyManager* GetPropertyManager() { static Poly::RTTI::PropertyManager<Type> instance; return &instance; } \
 template <class T> \
 static void InitProperties(Poly::RTTI::PropertyManager<T>* mgr)
+
+#define RTTI_GENERATE_PROPERTY_LIST(Type)\
+friend class Poly::RTTI::PropertyManager<Type>; \
+Poly::RTTI::IPropertyManager* GetPropertyManager() override { static Poly::RTTI::PropertyManager<Type> instance; return &instance; } \
+template <class T> \
+static void InitProperties(Poly::RTTI::PropertyManager<T>* mgr)
+
+#define NO_RTTI_PROPERTY() UNUSED(mgr)
 
 // standard RTTIBase deriving (or POD type) property
 #define RTTI_PROPERTY(Type, variable, var_name, flags) \

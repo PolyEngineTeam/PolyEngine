@@ -25,7 +25,7 @@ public:
 RTTI_DEFINE_TYPE(TestClass)
 
 class TestClass2 : public RTTIBase {
-	RTTI_DECLARE_TYPE_DERIVED(TestClass2, RTTIBase) {}
+	RTTI_DECLARE_TYPE_DERIVED(TestClass2, RTTIBase) { NO_RTTI_PROPERTY(); }
 public:
 };
 RTTI_DEFINE_TYPE(TestClass2)

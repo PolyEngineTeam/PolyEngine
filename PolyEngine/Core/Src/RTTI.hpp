@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Defines.hpp"
+#include "BaseObject.hpp"
 
 #include "RTTICast.hpp"
 #include "RTTITypeInfo.hpp"
@@ -24,8 +25,8 @@ RTTI_DECLARE_PRIMITIVE_TYPE(f64)
 //RTTI_DECLARE_PRIMITIVE_TYPE(uint)
 
 namespace Poly {
-	class RTTIBase {
-		RTTI_DECLARE_TYPE(Poly::RTTIBase) { UNUSED(mgr); }
+	class RTTIBase : public BaseObject<> {
+		RTTI_DECLARE_TYPE(Poly::RTTIBase) { NO_RTTI_PROPERTY(); }
 	public:
 		// TODO rework this API
 		virtual void Init() {
