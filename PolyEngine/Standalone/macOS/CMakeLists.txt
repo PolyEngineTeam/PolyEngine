@@ -22,6 +22,6 @@ find_library(Cocoa_LIBRARY Cocoa)
 mark_as_advanced(Cocoa_LIBRARY)
 
 target_link_libraries(standalone polycore polyengine polygldevice sgjgame
-		${Cocoa_LIBRARY})
+		${Cocoa_LIBRARY} epoxy::gl)
 
 cotire(standalone)
