@@ -1,14 +1,14 @@
 #pragma once
 
-#include "GLUtils.hpp"
 #include <IRenderingDevice.hpp>
 #include "GLShaderProgram.hpp"
-#include "RenderingPassBase.hpp"
 
 namespace Poly
 {
 	class World;
 	struct PostprocessQuad;
+	class RenderingPassBase;
+	class RenderingTargetBase;
 
 	class DEVICE_DLLEXPORT GLRenderingDevice : public IRenderingDevice
 	{
@@ -78,8 +78,8 @@ namespace Poly
 
 		template<typename T, class... Args_t>
 		void RegisterGeometryPassWithArgs(eGeometryRenderPassType type,
-			const std::initializer_list<InputOutputBind>& inputs = {},
-			const std::initializer_list<InputOutputBind>& outputs = {}, Args_t&&... args);
+			const std::initializer_list<InputOutputBind>& inputs,
+			const std::initializer_list<InputOutputBind>& outputs, Args_t&&... args);
 
 		void RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName,
 			const std::initializer_list<InputOutputBind>& inputs = {},

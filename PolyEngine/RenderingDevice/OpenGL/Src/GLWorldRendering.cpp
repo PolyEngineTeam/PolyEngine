@@ -13,6 +13,7 @@
 
 #include "GLTextFieldBufferDeviceProxy.hpp"
 #include "GLTextureDeviceProxy.hpp"
+#include "RenderingPassBase.hpp"
 #include "GLMeshDeviceProxy.hpp"
 #include "GLUtils.hpp"
 
