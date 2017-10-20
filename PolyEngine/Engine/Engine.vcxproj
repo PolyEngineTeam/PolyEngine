@@ -237,6 +237,7 @@
     <ClInclude Include="Src\DeferredTaskBase.hpp" />
     <ClInclude Include="Src\DeferredTaskImplementation.hpp" />
     <ClInclude Include="Src\DeferredTaskSystem.hpp" />
+    <ClInclude Include="Src\ISoundDevice.hpp" />
     <ClInclude Include="Src\LightSourceComponent.hpp" />
     <ClInclude Include="Src\Physics2DWorldComponent.hpp" />
     <ClInclude Include="Src\PostprocessSettingsComponent.hpp" />

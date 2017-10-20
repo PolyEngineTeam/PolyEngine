@@ -69,9 +69,6 @@
     <Filter Include="Source Files\Transform">
       <UniqueIdentifier>{6817a596-ae56-4935-a63c-29ba8139d6f6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Sound\Loaders">
-      <UniqueIdentifier>{725b4a09-2c76-47ae-ac48-dbbe8dbae207}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Physics2D">
       <UniqueIdentifier>{82ce724b-c08b-4b81-84d3-ba837fa851fe}</UniqueIdentifier>
     </Filter>
@@ -345,6 +342,9 @@
     </ClInclude>
     <ClInclude Include="Src\PostprocessSettingsComponent.hpp">
       <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ISoundDevice.hpp">
+      <Filter>Source Files\Sound</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
