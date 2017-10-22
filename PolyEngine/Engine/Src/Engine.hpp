@@ -8,7 +8,7 @@
 
 #include <Core.hpp>
 #include "IRenderingDevice.hpp"
-#include "OpenALDevice.hpp"
+#include "ISoundDevice.hpp"
 
 
 #include "InputSystem.hpp"
@@ -188,7 +188,7 @@ namespace Poly
 		/// Returns referrence to audio renderer
 		/// @return AudioRenderer - pointer to IRenderingContext instance.
 		/// @see IRenderingContext
-		OpenALDevice& GetAudioDevice() { return AudioDevice; }
+		ISoundDevice* GetSoundDevice() const { return SoundDevice.get(); }
 
 		/// <summary>Returns refference to input queue needed by InputPhase.</summary>
 		/// <returns>Reference to InputQueue instance.</returns>
@@ -216,7 +216,7 @@ namespace Poly
 		std::unique_ptr<World> BaseWorld;
 		std::unique_ptr<IGame> Game;
 		std::unique_ptr<IRenderingDevice> RenderingDevice;
-		OpenALDevice AudioDevice;
+		std::unique_ptr<ISoundDevice> SoundDevice;
 		InputQueue InputEventsQueue;
 
 		Dynarray<PhaseUpdateFunction> GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];

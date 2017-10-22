@@ -54,12 +54,6 @@
     <Filter Include="Source Files\Sound\OpenAL">
       <UniqueIdentifier>{1a22b4e4-e503-42b6-bd58-51c62d533c04}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Sound\SoundListener">
-      <UniqueIdentifier>{a604b741-1ec1-4f94-8b37-b380937c35bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Sound\SoundEmitter">
-      <UniqueIdentifier>{829be843-8f0a-4092-a0f4-b547d54569eb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Sound\WorldComponent">
       <UniqueIdentifier>{110f2084-3c9a-4697-a4f6-4b7fd47a3cf5}</UniqueIdentifier>
     </Filter>
@@ -74,6 +68,9 @@
     </Filter>
     <Filter Include="Source Files\Rendering\Light">
       <UniqueIdentifier>{ba289ef3-b2de-4d1c-9f5b-b69e07f78b9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Sound\Components">
+      <UniqueIdentifier>{829be843-8f0a-4092-a0f4-b547d54569eb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -143,9 +140,6 @@
     <ClCompile Include="Src\SoundResource.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Src\SoundListenerComponent.cpp">
-      <Filter>Source Files\Sound\SoundListener</Filter>
-    </ClCompile>
     <ClCompile Include="Src\TextureResource.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
@@ -170,9 +164,6 @@
     <ClCompile Include="Src\OpenALDevice.cpp">
       <Filter>Source Files\Sound\OpenAL</Filter>
     </ClCompile>
-    <ClCompile Include="Src\SoundEmitterComponent.cpp">
-      <Filter>Source Files\Sound\SoundEmitter</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Physics2DSystem.cpp">
       <Filter>Source Files\Physics2D</Filter>
     </ClCompile>
@@ -190,6 +181,12 @@
     </ClCompile>
     <ClCompile Include="Src\PostprocessSettingsComponent.cpp">
       <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SoundEmitterComponent.cpp">
+      <Filter>Source Files\Sound\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SoundListenerComponent.cpp">
+      <Filter>Source Files\Sound\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -280,9 +277,6 @@
     <ClInclude Include="Src\SoundResource.hpp">
       <Filter>Source Files\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Src\SoundListenerComponent.hpp">
-      <Filter>Source Files\Sound\SoundListener</Filter>
-    </ClInclude>
     <ClInclude Include="Src\IRenderingDevice.hpp">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
@@ -319,9 +313,6 @@
     <ClInclude Include="Src\OpenALDevice.hpp">
       <Filter>Source Files\Sound\OpenAL</Filter>
     </ClInclude>
-    <ClInclude Include="Src\SoundEmitterComponent.hpp">
-      <Filter>Source Files\Sound\SoundEmitter</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Physics2DSystem.hpp">
       <Filter>Source Files\Physics2D</Filter>
     </ClInclude>
@@ -345,6 +336,12 @@
     </ClInclude>
     <ClInclude Include="Src\ISoundDevice.hpp">
       <Filter>Source Files\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SoundEmitterComponent.hpp">
+      <Filter>Source Files\Sound\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SoundListenerComponent.hpp">
+      <Filter>Source Files\Sound\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

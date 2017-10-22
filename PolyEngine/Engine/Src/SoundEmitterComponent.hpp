@@ -16,7 +16,6 @@ namespace Poly
 	class ENGINE_DLLEXPORT SoundEmitterComponent : public ComponentBase
 	{
 	friend void SoundSystem::SoundPhase(World* world);
-	friend void SoundSystem::SetEmitterSource(World*, const UniqueID&, const String&, eResourceSource source);
 	public:
 		/// Loads resource from given path (optimized by resource manager).
 		/// @param path path to sound resource
@@ -26,12 +25,21 @@ namespace Poly
 		/// Releases resource (optimized by resource manager).
 		~SoundEmitterComponent();
 
-		unsigned int GetEmitterID() const { return EmitterID; }
-
-	protected:
-		unsigned int EmitterID;
-		bool Background = false;
-		SoundResource* Resource;
+		float Pitch;
+		float Gain;
+		float MaxDistance;
+		float RolloffFactor;
+		float RefferenceDistance;
+		float MinGain;
+		float MaxGain;
+		float ConeOuterGain;
+		Vector ConeInnerAngle;
+		Vector ConeOuterAngle;
+		Vector Direction;
+		bool Looping;
+		Queue<SoundResource*> Playlist;
+		bool Paused;
+		float SecondsOffset;
 	};
 
 } // namespace Poly
