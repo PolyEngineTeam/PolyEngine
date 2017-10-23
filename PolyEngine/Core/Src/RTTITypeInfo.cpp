@@ -10,8 +10,7 @@ namespace Poly {
 				return instance;
 			}
 
-			TypeInfo TypeManager::RegisterOrGetType(const char* name, const TypeInfo& rawTypeInfo, const Dynarray<TypeInfo>& baseClassList) {
-				UNUSED(rawTypeInfo);
+			TypeInfo TypeManager::RegisterOrGetType(const char* name, const Dynarray<TypeInfo>& baseClassList) {
 				if (NameToTypeMap.find(name) != NameToTypeMap.end())
 					return NameToTypeMap[name];
 				else {
@@ -41,6 +40,6 @@ namespace Poly {
 
 		} // namespace Impl
 
-		TypeInfo::TypeInfo(long long id) : m_id(id) {}
+		TypeInfo::TypeInfo(long long id) : ID(id) {}
 	}
 }

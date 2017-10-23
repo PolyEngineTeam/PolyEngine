@@ -25,21 +25,7 @@ RTTI_DECLARE_PRIMITIVE_TYPE(f64)
 //RTTI_DECLARE_PRIMITIVE_TYPE(uint)
 
 namespace Poly {
-	class RTTIBase : public BaseObject<> {
+	class CORE_DLLEXPORT RTTIBase : public BaseObject<> {
 		RTTI_DECLARE_TYPE(Poly::RTTIBase) { NO_RTTI_PROPERTY(); }
-	public:
-		// TODO rework this API
-		virtual void Init() {
-			if (Poly::RTTI::IPropertyManager* mgr = GetPropertyManager()) {
-				mgr->Deserialize();
-			}
-		}
-
-		virtual void Destroy() {
-			if (Poly::RTTI::IPropertyManager* mgr = GetPropertyManager()) {
-				mgr->Serialize();
-			}
-		}
 	};
 }
-// FIXME Clang really don't like template specialization inside of namespaces. For now this needs to be in global scope.

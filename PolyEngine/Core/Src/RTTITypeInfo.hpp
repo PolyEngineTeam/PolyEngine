@@ -12,12 +12,12 @@ namespace Poly {
     }
 }
 
-template <typename T>
-struct MetaTypeInfo;
+template <typename T> struct MetaTypeInfo;
 
-template<typename T> constexpr Poly::RTTI::TypeInfo GetCheckedTypeInfo(typename std::enable_if<std::is_fundamental<T>::value>::type* = 0);
-template<typename T> constexpr Poly::RTTI::TypeInfo GetCheckedTypeInfo(typename std::enable_if<!std::is_fundamental<T>::value>::type* = 0);
-
+template<typename T, typename std::enable_if<std::is_fundamental<T>::value>::type* = nullptr> 
+constexpr Poly::RTTI::TypeInfo GetUnifiedTypeInfo();
+template<typename T, typename std::enable_if<!std::is_fundamental<T>::value>::type* = nullptr> 
+constexpr Poly::RTTI::TypeInfo GetUnifiedTypeInfo();
 
 namespace Poly {
 	namespace RTTI {
@@ -25,14 +25,10 @@ namespace Poly {
 		namespace Impl {
 
 			//--------------------------------------------------------------------------
-			template<typename T, bool>
-			struct RawTypeInfo;
-
-			//--------------------------------------------------------------------------
 			class CORE_DLLEXPORT TypeManager {
 			public:
 				static TypeManager& Get();
-				TypeInfo RegisterOrGetType(const char* name, const TypeInfo& rawTypeInfo, const Dynarray<TypeInfo>& baseClassList);
+				TypeInfo RegisterOrGetType(const char* name, const Dynarray<TypeInfo>& baseClassList);
 				bool IsTypeDerivedFrom(const TypeInfo& checked, const TypeInfo& from) const;
 
 			private:
@@ -53,19 +49,19 @@ namespace Poly {
 		public:
 			typedef long long TypeId;
 
-			constexpr TypeInfo() : m_id(0) {}
-            constexpr TypeInfo(const TypeInfo& rhs) : m_id(rhs.m_id) {}
-            TypeInfo& operator=(const TypeInfo& rhs) { m_id = rhs.m_id; return *this; }
-            constexpr bool operator<(const TypeInfo& rhs) const { return m_id < rhs.m_id; }
-            constexpr bool operator>(const TypeInfo& rhs) const { return m_id > rhs.m_id; }
-            constexpr bool operator<=(const TypeInfo& rhs) const { return m_id <= rhs.m_id; }
-            constexpr bool operator>=(const TypeInfo& rhs) const { return m_id >= rhs.m_id; }
-            constexpr bool operator==(const TypeInfo& rhs) const { return m_id == rhs.m_id; }
-            constexpr bool operator!=(const TypeInfo& rhs) const { return m_id != rhs.m_id; }
-            constexpr bool IsValid() const  { return m_id != 0; }
+			constexpr TypeInfo() : ID(0) {}
+            constexpr TypeInfo(const TypeInfo& rhs) : ID(rhs.ID) {}
+            TypeInfo& operator=(const TypeInfo& rhs) { ID = rhs.ID; return *this; }
+            constexpr bool operator<(const TypeInfo& rhs) const { return ID < rhs.ID; }
+            constexpr bool operator>(const TypeInfo& rhs) const { return ID > rhs.ID; }
+            constexpr bool operator<=(const TypeInfo& rhs) const { return ID <= rhs.ID; }
+            constexpr bool operator>=(const TypeInfo& rhs) const { return ID >= rhs.ID; }
+            constexpr bool operator==(const TypeInfo& rhs) const { return ID == rhs.ID; }
+            constexpr bool operator!=(const TypeInfo& rhs) const { return ID != rhs.ID; }
+            constexpr bool IsValid() const  { return ID != 0; }
 
 			template<typename T>
-			constexpr static TypeInfo Get() { return GetCheckedTypeInfo<typename std::remove_cv<T>::type>(); }
+			constexpr static TypeInfo Get() { return GetUnifiedTypeInfo<typename std::remove_cv<T>::type>(); }
 
 			template<typename T>
 			static TypeInfo Get(T* object) { UNUSED(object); return Get<typename std::remove_pointer<T>::type>(); }
@@ -75,7 +71,7 @@ namespace Poly {
 
 			template<typename T>
 			inline bool isTypeDerivedFrom() const {
-				return Impl::TypeManager::Get().IsTypeDerivedFrom(*this, GetCheckedTypeInfo<T>());
+				return Impl::TypeManager::Get().IsTypeDerivedFrom(*this, GetUnifiedTypeInfo<T>());
 			}
 
 		private:
@@ -83,10 +79,8 @@ namespace Poly {
 
 			friend class Impl::TypeManager;
 
-			template<typename T, bool>
-			friend struct Impl::RawTypeInfo;
 		private:
-			TypeId m_id = 0;
+			TypeId ID = 0;
 		};
 
 	} // namespace RTTI
