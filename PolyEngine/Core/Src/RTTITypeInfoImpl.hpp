@@ -15,15 +15,9 @@ struct MetaTypeInfo {
 	}
 };
 
-template<typename T, typename std::enable_if<std::is_fundamental<T>::value>::type*> 
-constexpr Poly::RTTI::TypeInfo GetUnifiedTypeInfo() { return MetaTypeInfo<T>::GetTypeInfo(); }
-template<typename T, typename std::enable_if<!std::is_fundamental<T>::value>::type*> 
-constexpr Poly::RTTI::TypeInfo GetUnifiedTypeInfo() { return T::MetaTypeInfo::GetTypeInfo(); }
-
 namespace Poly {
 	namespace RTTI {
 		namespace Impl {
-
 			template <class T> using RawType = std::remove_pointer<typename std::decay<T>::type>;
 
 			//--------------------------------------------------------------------------
@@ -39,16 +33,26 @@ namespace Poly {
 				static const bool value = evaluate<typename RawType<T>::type>(0);
 			};
 		} // namespace Impl
+
+		template<typename T, typename std::enable_if<std::is_fundamental<T>::value || std::is_enum<T>::value>::type*>
+		constexpr TypeInfo GetUnifiedTypeInfo() { return MetaTypeInfo<T>::GetTypeInfo(); }
+		template<typename T, typename std::enable_if<!std::is_fundamental<T>::value && !std::is_enum<T>::value>::type*>
+		constexpr TypeInfo GetUnifiedTypeInfo() { return T::MetaTypeInfo::GetTypeInfo(); }
+		template <typename T> 
+		constexpr TypeInfo GetUnifiedTypeInfoFromInstance(const T*) { return GetUnifiedTypeInfo<T>(); }
+
 	} // namespace RTTI
 } // namespace Poly
 
 // Macro for declaring new types
 #define RTTI_DECLARE_PRIMITIVE_TYPE(T)              \
 	template <>                               \
-	struct MetaTypeInfo< T > {                \
-	static Poly::RTTI::TypeInfo GetTypeInfo() {   \
-		return Poly::RTTI::Impl::TypeManager::Get().RegisterOrGetType(#T, Poly::RTTI::BaseClasses<T>::Retrieve());   \
-	}                                       \
+	struct MetaTypeInfo< T > \
+	{                \
+		static Poly::RTTI::TypeInfo GetTypeInfo() \
+		{   \
+			return Poly::RTTI::Impl::TypeManager::Get().RegisterOrGetType(#T, Poly::RTTI::BaseClasses<T>::Retrieve());   \
+		}                                       \
 	};
 
 template <typename T>
@@ -67,11 +71,11 @@ struct AutoRegisterType {
 
 // Macro for defining new types
 #define RTTI_DEFINE_PRIMITIVE_TYPE(T)                       \
-	template <> struct AutoRegisterType<T> { AutoRegisterType() { GetUnifiedTypeInfo<T>(); } }; \
+	template <> struct AutoRegisterType<T> { AutoRegisterType() { Poly::RTTI::GetUnifiedTypeInfo<T>(); } }; \
 	static const AutoRegisterType<T> RTTI_CAT(autoRegisterType, __COUNTER__);
 
 #define RTTI_DEFINE_TYPE(T)                       \
-	template <> struct AutoRegisterType<T> { AutoRegisterType() { GetUnifiedTypeInfo<T>(); } }; \
+	template <> struct AutoRegisterType<T> { AutoRegisterType() { Poly::RTTI::GetUnifiedTypeInfo<T>(); } }; \
 	static const AutoRegisterType<T> RTTI_CAT(autoRegisterType, __COUNTER__); \
 	RTTI_PROPERTY_MANAGER_IMPL(T)
 

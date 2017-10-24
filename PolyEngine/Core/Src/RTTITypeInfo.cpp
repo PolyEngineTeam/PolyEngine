@@ -38,8 +38,20 @@ namespace Poly {
 				return false;
 			}
 
+			const char* TypeManager::GetTypeName(const TypeInfo& typeInfo) const
+			{
+				const auto& it = TypeToNameMap.find(typeInfo);
+				ASSERTE(it != TypeToNameMap.end(), "Type has no name! Not registered?");
+				return it->second;
+			}
+
 		} // namespace Impl
 
 		TypeInfo::TypeInfo(long long id) : ID(id) {}
-	}
-}
+
+		//------------------------------------------------------------------------------
+		std::ostream& operator<< (std::ostream& stream, const TypeInfo& typeInfo) {
+			return stream << "TypeInfo["<< typeInfo.ID << ", " << Impl::TypeManager::Get().GetTypeName(typeInfo) << "]";
+		}
+	} // namespace RTTI
+} // namespace Poly

@@ -6,31 +6,27 @@
 #include <map>
 #include <vector>
 
-namespace Poly {
-    namespace RTTI {
-        class TypeInfo;
-    }
-}
-
-template <typename T> struct MetaTypeInfo;
-
-template<typename T, typename std::enable_if<std::is_fundamental<T>::value>::type* = nullptr> 
-constexpr Poly::RTTI::TypeInfo GetUnifiedTypeInfo();
-template<typename T, typename std::enable_if<!std::is_fundamental<T>::value>::type* = nullptr> 
-constexpr Poly::RTTI::TypeInfo GetUnifiedTypeInfo();
-
-namespace Poly {
+namespace Poly 
+{
 	namespace RTTI {
+		class TypeInfo;
+
+		template<typename T, typename std::enable_if<std::is_fundamental<T>::value || std::is_enum<T>::value>::type* = nullptr>
+		constexpr TypeInfo GetUnifiedTypeInfo();
+		template<typename T, typename std::enable_if<!std::is_fundamental<T>::value && !std::is_enum<T>::value>::type* = nullptr>
+		constexpr TypeInfo GetUnifiedTypeInfo();
+
 
 		namespace Impl {
 
 			//--------------------------------------------------------------------------
-			class CORE_DLLEXPORT TypeManager {
+			class CORE_DLLEXPORT TypeManager : public BaseObjectLiteralType<> {
 			public:
 				static TypeManager& Get();
 				TypeInfo RegisterOrGetType(const char* name, const Dynarray<TypeInfo>& baseClassList);
 				bool IsTypeDerivedFrom(const TypeInfo& checked, const TypeInfo& from) const;
 
+				const char* GetTypeName(const TypeInfo& typeInfo) const;
 			private:
 				TypeManager() = default;
 				TypeManager(const TypeManager& rhs) = delete;
@@ -45,7 +41,7 @@ namespace Poly {
 		} // namespace Impl
 
 		  //--------------------------------------------------------------------------
-		class CORE_DLLEXPORT TypeInfo {
+		class CORE_DLLEXPORT TypeInfo : public BaseObjectLiteralType<> {
 		public:
 			typedef long long TypeId;
 
@@ -73,6 +69,8 @@ namespace Poly {
 			inline bool isTypeDerivedFrom() const {
 				return Impl::TypeManager::Get().IsTypeDerivedFrom(*this, GetUnifiedTypeInfo<T>());
 			}
+
+			CORE_DLLEXPORT friend std::ostream& operator<<(std::ostream& stream, const TypeInfo& typeInfo);
 
 		private:
 			TypeInfo(TypeId id);

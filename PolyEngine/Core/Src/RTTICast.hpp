@@ -9,21 +9,15 @@
 namespace Poly {
 	namespace RTTI {
 		namespace Impl {
-			/**
-			* Empty structure to end recurency
-			*/
+			/// <summary>Empty structure to end recurency</summary>
 			struct nil_t {};
 
-			/**
-			* Typelist entry
-			*/
+			/// <summary>Typelist entry</summary>
 			template<class TypeHeld, class Next = nil_t> struct Typelist {};
 
 			//--------------------------------------------------------------------------------------
 
-			/**
-			* Template for filling baseClassList
-			*/
+			/// <summary>Template for filling baseClassList</summary>
 			template<class> struct TypeInfoFromBaseClassList;
 
 			template<>
@@ -69,9 +63,7 @@ namespace Poly {
 	} // namespace RTTI
 }
 
-  /**
-  * Implementation of rtti_cast
-  */
+/// <summary>Implementation of rtti_cast</summary>
 template<typename T1, typename T2>
 T1 rtti_cast(T2 object) {
 	STATIC_ASSERTE(std::is_pointer<T1>::value, "return type must be a pointer"); // return type must be a pointer
@@ -105,13 +97,12 @@ bool IsOfType(U object) {
 #define TYPE_LIST_2(A,B) Poly::RTTI::Impl::Typelist< A, TYPE_LIST_1(B) >
 
 //--------------------------------------------------------------------------------------
-template <typename T> Poly::RTTI::TypeInfo getTypeInfoFromInstance(const T*) { return GetUnifiedTypeInfo<T>(); }
 
 // Declares type with no base class
 #define RTTI_DECLARE_TYPE(T) \
 	public: \
 	RTTI_GENERATE_TYPE_INFO(T)\
-	virtual Poly::RTTI::TypeInfo GetTypeInfo() const { return getTypeInfoFromInstance(this); } \
+	virtual Poly::RTTI::TypeInfo GetTypeInfo() const { return Poly::RTTI::GetUnifiedTypeInfoFromInstance(this); } \
 	typedef TYPE_LIST() baseClassList;\
 	RTTI_GENERATE_PROPERTY_LIST_BASE(T)
 
@@ -120,7 +111,7 @@ template <typename T> Poly::RTTI::TypeInfo getTypeInfoFromInstance(const T*) { r
 #define RTTI_DECLARE_TYPE_DERIVED(T,A) \
 	public: \
 	RTTI_GENERATE_TYPE_INFO(T)\
-	Poly::RTTI::TypeInfo GetTypeInfo() const override { return getTypeInfoFromInstance(this); } \
+	Poly::RTTI::TypeInfo GetTypeInfo() const override { return Poly::RTTI::GetUnifiedTypeInfoFromInstance(this); } \
 	typedef TYPE_LIST_1(A) baseClassList;\
 	RTTI_GENERATE_PROPERTY_LIST(T)
 
@@ -128,6 +119,6 @@ template <typename T> Poly::RTTI::TypeInfo getTypeInfoFromInstance(const T*) { r
 /*#define RTTI_DECLARE_TYPE_DERIVED2(T,A,B) \
 	public: \
 	RTTI_GENERATE_TYPE_INFO(T)\
-	Poly::RTTI::TypeInfo GetTypeInfo() const override { return getTypeInfoFromInstance(this); } \
+	Poly::RTTI::TypeInfo GetTypeInfo() const override { return Poly::RTTI::GetUnifiedTypeInfoFromInstance(this); } \
 	typedef TYPE_LIST_2(A,B) baseClassList;\
 	RTTI_GENERATE_PROPERTY_LIST(T)*/
