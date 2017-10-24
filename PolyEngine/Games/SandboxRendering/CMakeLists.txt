@@ -1,4 +1,4 @@
-set(TESTGAME_SRCS 
+set(SANDBOX_RENDERING_SRCS
 	Src/InvadersGame.cpp
 	Src/BulletComponent.cpp
 	Src/CollisionSystem.cpp
@@ -9,8 +9,8 @@ set(TESTGAME_SRCS
 	Src/MovementSystem.cpp
 	Src/PlayerControllerComponent.cpp
 )
-set(TESTGAME_INCLUDE Src)
-set(TESTGAME_H_FOR_IDE 
+set(SANDBOX_RENDERING_INCLUDE Src)
+set(SANDBOX_RENDERING_H_FOR_IDE
 	Src/InvadersGame.hpp
 	Src/BulletComponent.hpp
 	Src/CollisionSystem.hpp
@@ -24,9 +24,10 @@ set(TESTGAME_H_FOR_IDE
 	Src/PlayerControllerComponent.hpp
 )
 
-add_library(testgame SHARED ${TESTGAME_SRCS} ${TESTGAME_H_FOR_IDE})
-target_compile_definitions(testgame PRIVATE _GAME)
-target_include_directories(testgame INTERFACE ${TESTGAME_INCLUDE})
-target_link_libraries(testgame polycore polyengine)
+add_library(sandbox_rendering SHARED ${SANDBOX_RENDERING_SRCS} ${SANDBOX_RENDERING_H_FOR_IDE})
+target_compile_definitions(sandbox_rendering PRIVATE _GAME)
+target_include_directories(sandbox_rendering PRIVATE ${SANDBOX_RENDERING_INCLUDE})
+target_link_libraries(sandbox_rendering PRIVATE polyengine)
+set_target_properties(sandbox_rendering PROPERTIES OUTPUT_NAME game)
 
-cotire(testgame)
+cotire(sandbox_rendering)

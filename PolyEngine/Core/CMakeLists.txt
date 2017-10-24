@@ -53,7 +53,7 @@ set(POLYCORE_H_FOR_IDE
 add_library(polycore SHARED ${POLYCORE_SRCS} ${POLYCORE_H_FOR_IDE})
 target_compile_options(polycore PRIVATE $<$<BOOL:${SIMD}>:${SIMD_FLAGS}>)
 target_compile_definitions(polycore PRIVATE _CORE DISABLE_SIMD=$<NOT:$<BOOL:${SIMD}>>)
-target_include_directories(polycore INTERFACE ${POLYCORE_INCLUDE})
+target_include_directories(polycore PUBLIC ${POLYCORE_INCLUDE})
 
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	target_compile_options(polycore PRIVATE --coverage -fprofile-arcs -ftest-coverage)
