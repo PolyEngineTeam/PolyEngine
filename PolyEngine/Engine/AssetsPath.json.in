@@ -1,0 +1,8 @@
+{
+  "EngineAssetsPaths": [
+    "@ENGINE_ASSETS_PATHS@"
+  ],
+  "GameAssetsPaths": [
+    "@GAME_ASSETS_PATHS@"
+  ]
+}

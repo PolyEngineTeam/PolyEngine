@@ -1,7 +1,6 @@
-add_executable(polyrun Src/Main.cpp)
-set_target_properties(polyrun PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+add_executable(polyrun WIN32 Src/Main.cpp)
 target_link_libraries(polyrun PRIVATE polyengine)
-add_dependencies(polyrun polyrenderingdevicegl sgjgame) #dynamically loaded
+add_dependencies(polyrun polyrenderingdevicegl) #dynamically loaded
 add_custom_command(
 		TARGET polyrun POST_BUILD
 		COMMAND

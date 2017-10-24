@@ -217,6 +217,7 @@ RawFunc LoadFunction(const char* library, const char* functionName) {
 	void* handle = dlopen(library, RTLD_NOW /*| RTLD_GLOBAL*/); //don't be lazy in resolving symbols /*and allow subsequently loaded libs to use them*/
 	if (const char* err = dlerror()) { //we could simply check if the handle is null, but using dlerror() doubles as clearing error flags
 		Poly::gConsole.LogError("{}", err);
+		Poly::gConsole.LogError("Use a game run-script or set the LD_LIBRARY_PATH environment variable manually");
 		return {nullptr, nullptr};
 	}
 
