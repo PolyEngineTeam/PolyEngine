@@ -187,7 +187,6 @@
     <ClCompile Include="Src\DeferredTaskSystem.cpp" />
     <ClCompile Include="Src\InputWorldComponent.cpp" />
     <ClCompile Include="Src\LightSourceComponent.cpp" />
-    <ClCompile Include="Src\OpenALDevice.cpp" />
     <ClCompile Include="Src\Physics2DColliders.cpp" />
     <ClCompile Include="Src\Physics2DSystem.cpp" />
     <ClCompile Include="Src\Physics2DWorldComponent.cpp" />
@@ -203,7 +202,6 @@
     <ClCompile Include="Src\ResourceManager.cpp" />
     <ClCompile Include="Src\SoundResource.cpp" />
     <ClCompile Include="Src\SoundSystem.cpp" />
-    <ClCompile Include="Src\SoundWorldComponent.cpp" />
     <ClCompile Include="Src\Rigidbody2DComponent.cpp" />
     <ClCompile Include="Src\Text2D.cpp" />
     <ClCompile Include="Src\TimeSystem.cpp" />
@@ -247,7 +245,6 @@
     <ClInclude Include="Src\InputWorldComponent.hpp" />
     <ClInclude Include="Src\IRenderingDevice.hpp" />
     <ClInclude Include="Src\KeyBindings.hpp" />
-    <ClInclude Include="Src\OpenALDevice.hpp" />
     <ClInclude Include="Src\Physics2DColliders.hpp" />
     <ClInclude Include="Src\Physics2DSystem.hpp" />
     <ClInclude Include="Src\RigidBody2DImpl.hpp" />
@@ -263,7 +260,6 @@
     <ClInclude Include="Src\SoundResource.hpp" />
     <ClInclude Include="Src\SoundSystem.hpp" />
     <ClInclude Include="Src\SoundEmitterComponent.hpp" />
-    <ClInclude Include="Src\SoundWorldComponent.hpp" />
     <ClInclude Include="Src\Text2D.hpp" />
     <ClInclude Include="Src\Timer.hpp" />
     <ClInclude Include="Src\TimeSystem.hpp" />

@@ -51,12 +51,6 @@
     <Filter Include="Source Files\Sound">
       <UniqueIdentifier>{dbe6753f-11fa-490e-ad00-cb8a89aaac63}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Sound\OpenAL">
-      <UniqueIdentifier>{1a22b4e4-e503-42b6-bd58-51c62d533c04}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Sound\WorldComponent">
-      <UniqueIdentifier>{110f2084-3c9a-4697-a4f6-4b7fd47a3cf5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\DeferredTasks">
       <UniqueIdentifier>{21bac9b2-ecb8-4fef-bdb4-2ba17695b4db}</UniqueIdentifier>
     </Filter>
@@ -149,9 +143,6 @@
     <ClCompile Include="Src\MeshResource.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Src\SoundWorldComponent.cpp">
-      <Filter>Source Files\Sound\WorldComponent</Filter>
-    </ClCompile>
     <ClCompile Include="Src\TransformComponent.cpp">
       <Filter>Source Files\Transform</Filter>
     </ClCompile>
@@ -160,9 +151,6 @@
     </ClCompile>
     <ClCompile Include="Src\RenderingSystem.cpp">
       <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\OpenALDevice.cpp">
-      <Filter>Source Files\Sound\OpenAL</Filter>
     </ClCompile>
     <ClCompile Include="Src\Physics2DSystem.cpp">
       <Filter>Source Files\Physics2D</Filter>
@@ -289,9 +277,6 @@
     <ClInclude Include="Src\MeshResource.hpp">
       <Filter>Source Files\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Src\SoundWorldComponent.hpp">
-      <Filter>Source Files\Sound\WorldComponent</Filter>
-    </ClInclude>
     <ClInclude Include="Src\TransformComponent.hpp">
       <Filter>Source Files\Transform</Filter>
     </ClInclude>
@@ -309,9 +294,6 @@
     </ClInclude>
     <ClInclude Include="Src\RenderingSystem.hpp">
       <Filter>Source Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\OpenALDevice.hpp">
-      <Filter>Source Files\Sound\OpenAL</Filter>
     </ClInclude>
     <ClInclude Include="Src\Physics2DSystem.hpp">
       <Filter>Source Files\Physics2D</Filter>

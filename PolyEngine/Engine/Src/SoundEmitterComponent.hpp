@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ComponentBase.hpp"
-#include "SoundSystem.hpp"
 
 namespace Poly
 {
@@ -15,14 +14,8 @@ namespace Poly
 	/// @see SoundSystem 
 	class ENGINE_DLLEXPORT SoundEmitterComponent : public ComponentBase
 	{
-	friend void SoundSystem::SoundPhase(World* world);
 	public:
-		/// Loads resource from given path (optimized by resource manager).
-		/// @param path path to sound resource
-		/// @see SoundListenerComponent
-		SoundEmitterComponent(const String& path, eResourceSource source, bool background = false);
-
-		/// Releases resource (optimized by resource manager).
+		SoundEmitterComponent();
 		~SoundEmitterComponent();
 
 		float Pitch;
@@ -33,13 +26,13 @@ namespace Poly
 		float MinGain;
 		float MaxGain;
 		float ConeOuterGain;
-		Vector ConeInnerAngle;
-		Vector ConeOuterAngle;
-		Vector Direction;
-		bool Looping;
-		Queue<SoundResource*> Playlist;
-		bool Paused;
+		float ConeInnerAngle;
+		float ConeOuterAngle;
+		float Direction;
 		float SecondsOffset;
+		bool Looping;
+		bool Paused;
+		Queue<SoundResource*> Playlist;
 	};
 
 } // namespace Poly

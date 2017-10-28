@@ -1,8 +1,8 @@
 #include "EnginePCH.hpp"
 
-#include <al.h>
 #include <ogg/ogg.h>
 #include <vorbis/vorbisfile.h>
+
 #include <fstream>
 
 #include "SoundResource.hpp"
@@ -12,8 +12,6 @@ using namespace Poly;
 
 SoundResource::SoundResource(const String& path)
 {
-	alGenBuffers(1, &BufferID);
-
 	// Declarations and loading file to buffer.
 
 	BinaryBuffer* data = LoadBinaryFile(path);
@@ -248,6 +246,8 @@ SoundResource::SoundResource(const String& path)
 		// TODO: loading chained sounds;
 		alBufferData(BufferID, AL_FORMAT_STEREO16, rawData.GetData(), (ALsizei)rawData.GetSize(), vorbisInfo.rate);
 
+
+
 		ogg_stream_clear(&streamState);
 		vorbis_comment_clear(&vorbisComment);
 		vorbis_info_clear(&vorbisInfo);
@@ -262,5 +262,4 @@ SoundResource::SoundResource(const String& path)
 
 SoundResource::~SoundResource()
 {
-	alDeleteBuffers(1, &BufferID);
 }

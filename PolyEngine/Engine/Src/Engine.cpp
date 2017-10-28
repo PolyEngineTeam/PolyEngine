@@ -13,10 +13,10 @@ Engine::Engine()
 	gEngine = this;
 }
 
-void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device)
+void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> renderingDevice, std::unique_ptr<ISoundDevice> soundDevice)
 {
 	Game = std::move(game);
-	RenderingDevice = std::move(device);
+	RenderingDevice = std::move(renderingDevice);
 	RenderingDevice->Init();
 	BaseWorld = std::make_unique<World>();
 	Game->RegisterEngine(this);
@@ -67,8 +67,6 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	RegisterUpdatePhase(SoundSystem::SoundPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(DeferredTaskSystem::DeferredTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(FPSSystem::FPSUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
-
-	SoundSystem::SetWorldCurrent(BaseWorld.get());
 
 	// Init game
 	Game->Init();

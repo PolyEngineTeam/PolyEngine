@@ -90,8 +90,9 @@ namespace Poly
 		/// <summary>Registers engine components. Registers and creates world components.
 		/// Registers engine update phases and initializes game dbject. </summary>
 		/// <param name="game">Pointer to IGame instance.</param>
-		/// <param name="device">Pointer to IRenderingDevice instance.</param>
-		void Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device);
+		/// <param name="renderingDevice">Pointer to IRenderingDevice instance.</param>
+		/// <param name="renderingDevice">Pointer to ISoundDevice instance.</param>
+		void Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> renderingDevice, std::unique_ptr<ISoundDevice> soundDevice);
 
 		/// <summary>Registers a PhaseUpdateFunction to be executed in the update.</summary>
 		/// <param name="phaseFunction"/>

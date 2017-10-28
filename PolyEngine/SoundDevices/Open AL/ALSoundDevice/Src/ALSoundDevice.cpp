@@ -8,28 +8,42 @@
 
 using namespace Poly;
 
-void ALSoundDevice::RenderWorld(World* world)
+//---------------------------------------------------------------------------------------------------
+void SOUND_DEVICE_DLLEXPORT ALSoundDevice::Init()
 {
-	Dynarray<UniqueID> CurrentEmitterOwners;
+	Device = alcOpenDevice(nullptr);
+}
+
+//---------------------------------------------------------------------------------------------------
+void SOUND_DEVICE_DLLEXPORT ALSoundDevice::Close()
+{
+	alcCloseDevice(Device);
+}
+
+//---------------------------------------------------------------------------------------------------
+void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
+{
+	Dynarray<UniqueID> newlyCreated;
 
 	for (auto& emitterTuple : world->IterateComponents<SoundEmitterComponent, TransformComponent>())
 	{
 		SoundEmitterComponent* emitterCmp = std::get<SoundEmitterComponent*>(emitterTuple);
 		TransformComponent* transCmp = std::get<TransformComponent*>(emitterTuple);
-		
-		UniqueID emitterOwnerID = emitterCmp->GetOwnerID();
-		CurrentEmitterOwners.PushBack(emitterOwnerID);
 
-		if (!EmitterOwners.Contains(emitterOwnerID))
+		if (emitterCmp->GetFlags().IsSet(eComponentBaseFlags::NEWLY_CREATED))
 		{
-			EmitterOwners.PushBack(emitterOwnerID);
-
 			unsigned int emitterID;
 			alGenSources(1, &emitterID);
-			OwnerIDToEmitterIDMap[emitterOwnerID] =  emitterID;
+			OwnerToEmitterMap[emitterCmp->GetOwnerID()] =  emitterID;
 		}
 
-		unsigned int emitterID = OwnerIDToEmitterIDMap[emitterOwnerID];
+		if (emitterCmp->GetFlags().IsSet(eComponentBaseFlags::ABOUT_TO_BE_REMOVED))
+		{
+			alDeleteSources(1, &OwnerToEmitterMap[emitterCmp->GetOwnerID()]);
+			OwnerToEmitterMap.erase(emitterCmp->GetOwnerID());
+		}
+
+		unsigned int emitterID = OwnerToEmitterMap[emitterCmp->GetOwnerID()];
 
 		alSourcef(emitterID, AL_PITCH, emitterCmp->Pitch);
 		alSourcef(emitterID, AL_GAIN, emitterCmp->Gain);
@@ -39,15 +53,9 @@ void ALSoundDevice::RenderWorld(World* world)
 		alSourcef(emitterID, AL_MIN_GAIN, emitterCmp->MinGain);
 		alSourcef(emitterID, AL_MAX_GAIN, emitterCmp->MaxGain);
 		alSourcef(emitterID, AL_CONE_OUTER_GAIN, emitterCmp->ConeOuterGain);
-
-		ALfloat u[3] = { emitterCmp->ConeInnerAngle.X, emitterCmp->ConeInnerAngle.Y, emitterCmp->ConeInnerAngle.Z };
-		alSourcefv(emitterID, AL_CONE_INNER_ANGLE, u);
-
-		ALfloat v[3] = { emitterCmp->ConeOuterAngle.X, emitterCmp->ConeOuterAngle.Y, emitterCmp->ConeOuterAngle.Z };
-		alSourcefv(emitterID, AL_CONE_OUTER_ANGLE, v);
-
-		ALfloat w[3] = { emitterCmp->Direction.X, emitterCmp->Direction.Y, emitterCmp->Direction.Z };
-		alSourcefv(emitterID, AL_CONE_OUTER_GAIN, w);
+		alSourcef(emitterID, AL_CONE_INNER_ANGLE, emitterCmp->ConeInnerAngle);
+		alSourcef(emitterID, AL_CONE_OUTER_ANGLE, emitterCmp->ConeOuterAngle);
+		alSourcef(emitterID, AL_CONE_OUTER_GAIN, emitterCmp->Direction);
 
 		Vector pos = transCmp->GetGlobalTranslation();
 		alSource3f(emitterID, AL_POSITION, pos.X, pos.Y, pos.Z);
@@ -64,10 +72,47 @@ void ALSoundDevice::RenderWorld(World* world)
 
 		// set velocity
 	}
+}
 
-	for (int i = 0; i < EmitterOwners.GetSize(); i++)
-		if (!CurrentEmitterOwners.Contains(EmitterOwners[i]))
+//---------------------------------------------------------------------------------------------------
+void SOUND_DEVICE_DLLEXPORT ALSoundDevice::SetDevice(const String& device)
+{
+	alcCloseDevice(Device);
+	Device = alcOpenDevice(device.GetCStr());
+	AvailableDevices.Remove(device);
+	AvailableDevices.PushFront(device);
+	HEAVY_ASSERTE(Device, "OpenAL device creation failed");
+}
+
+//---------------------------------------------------------------------------------------------------
+const String& SOUND_DEVICE_DLLEXPORT ALSoundDevice::GetCurrentDevice()
+{
+	return String(alcGetString(Device, ALC_DEVICE_SPECIFIER));
+}
+
+//---------------------------------------------------------------------------------------------------
+const Dynarray<String>& SOUND_DEVICE_DLLEXPORT ALSoundDevice::GetAvailableDevices()
+{
+	Dynarray<String> availableDevices;
+
+	if (alcIsExtensionPresent(nullptr, "ALC_ENUMERATION_EXT") == AL_TRUE)
+	{
+		const ALCchar* devices = alcGetString(nullptr, ALC_DEVICE_SPECIFIER);
+
+		int i = 0;
+		while (true)
 		{
-			// delete emitter from openal and from emitterOwners list
+			availableDevices.PushFront(String(&devices[i]));
+
+			while (devices[i] != 0) ++i;
+			if (devices[i] == 0 && devices[i + 1] == 0) break;
+			++i;
 		}
+	}
+	else
+	{
+		availableDevices.PushFront(String(alcGetString(Device, ALC_DEVICE_SPECIFIER)));
+	}
+
+	return availableDevices;
 }
