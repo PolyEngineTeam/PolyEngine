@@ -26,7 +26,7 @@ template<typename Function>
 class DynLoaded {
 public:
     //note(vuko): thankfully casting void* to func-ptr is defined and allowed in C++11 and up ._. UBSan still complains though :(
-    DynLoaded() {}
+    DynLoaded() = default;
     DynLoaded(RawFunc raw) : handle(raw.libraryHandle), func(reinterpret_cast<Function*>(raw.func)) {}
     DynLoaded(DynLoaded&& other) : DynLoaded{RawFunc{other.handle, reinterpret_cast<void*>(other.func)}} { other.handle = nullptr; other.func = nullptr; }
     DynLoaded& operator=(DynLoaded&& other) { handle = other.handle; func = other.func; other.handle = nullptr; other.func = nullptr; return *this; }
@@ -69,8 +69,8 @@ inline DynLoaded<LoadGameFunc> GetGameLoader(const char* soname) {
 
 //-----------------------------------------------------------------------------------------------
 static std::unique_ptr<Engine> engine;
-static DynLoaded<CreateRenderingDeviceFunc> renderingDeviceDylibHandle;
-static DynLoaded<LoadGameFunc> gameDylibHandle;
+static DynLoaded<CreateRenderingDeviceFunc> loadRenderingDevice;
+static DynLoaded<LoadGameFunc> loadGame;
 
 //-----------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------
@@ -88,16 +88,16 @@ void PolyEngineLoad(void* window, unsigned width, unsigned height)
 
     // Load game dylib
     std::unique_ptr<IGame> game;
-    gameDylibHandle = GetGameLoader("libgame.dylib"); //the name could be passed as a command-line arg
-    if (gameDylibHandle.FunctionValid())
-        game.reset(gameDylibHandle());
+    loadGame = GetGameLoader("libgame.dylib"); //the name could be passed as a command-line arg
+    if (loadGame.FunctionValid())
+        game.reset(loadGame());
     ASSERTE(game, "Game load failed!");
 
     // Load rendering device dylib
     std::unique_ptr<IRenderingDevice> device;
-    renderingDeviceDylibHandle = GetRenderingDeviceCreator("libpolyrenderingdevice.dylib");
-    if (renderingDeviceDylibHandle.FunctionValid())
-         device.reset(renderingDeviceDylibHandle(window, size));
+    loadRenderingDevice = GetRenderingDeviceCreator("libpolyrenderingdevice.dylib");
+    if (loadRenderingDevice.FunctionValid())
+         device.reset(loadRenderingDevice(window, size));
     ASSERTE(device, "Rendering device load failed!");
 
     engine->Init(std::move(game), std::move(device));
