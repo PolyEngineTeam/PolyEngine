@@ -8,6 +8,8 @@ set(POLYCORE_SRCS
 	Src/Matrix.cpp
 	Src/Quaternion.cpp
 	Src/RefCountedBase.cpp
+	Src/RTTI.cpp
+	Src/RTTITypeInfo.cpp
 	Src/SimdMath.cpp
 	Src/String.cpp
 	Src/UniqueID.cpp
@@ -41,6 +43,11 @@ set(POLYCORE_H_FOR_IDE
 	Src/Quaternion.hpp
 	Src/Queue.hpp
 	Src/RefCountedBase.hpp
+	Src/RTTI.hpp
+	Src/RTTICast.hpp
+	Src/RTTIProperty.hpp
+	Src/RTTITypeInfo.hpp
+	Src/RTTITypeInfoImpl.hpp
 	Src/SimdMath.hpp
 	Src/String.hpp
 	Src/UniqueID.hpp

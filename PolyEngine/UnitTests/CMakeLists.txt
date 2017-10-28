@@ -11,6 +11,7 @@ set(POLYTESTS_SRCS
 	Src/QuaternionTests.cpp
 	Src/QueueTests.cpp
 	Src/ResourceManagerTests.cpp
+	Src/RTTITests.cpp
 	Src/StringTests.cpp
 	Src/TransformComponentTests.cpp
 	Src/UnsafeStorageTests.cpp
