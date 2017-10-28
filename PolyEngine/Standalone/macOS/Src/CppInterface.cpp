@@ -26,14 +26,16 @@ template<typename Function>
 class DynLoaded {
 public:
     //note(vuko): thankfully casting void* to func-ptr is defined and allowed in C++11 and up ._. UBSan still complains though :(
+    DynLoaded() {}
     DynLoaded(RawFunc raw) : handle(raw.libraryHandle), func(reinterpret_cast<Function*>(raw.func)) {}
     DynLoaded(DynLoaded&& other) : DynLoaded{RawFunc{other.handle, reinterpret_cast<void*>(other.func)}} { other.handle = nullptr; other.func = nullptr; }
+    DynLoaded& operator=(DynLoaded&& other) { handle = other.handle; func = other.func; other.handle = nullptr; other.func = nullptr; return *this; }
     ~DynLoaded() { if (handle) { dlclose(handle); } }
     template<typename... Args> inline typename std::result_of<Function*(Args...)>::type operator()(Args... args) { return func(std::forward<Args>(args)...); }
     inline bool FunctionValid() { return static_cast<bool>(func); }
 private:
-    void* handle;
-    Function* func;
+    void* handle = nullptr;
+    Function* func = nullptr;
 };
 
 //-----------------------------------------------------------------------------------------------
@@ -41,7 +43,7 @@ RawFunc LoadFunction(const char* library, const char* functionName) {
     void* handle = dlopen(library, RTLD_NOW /*| RTLD_GLOBAL*/); //don't be lazy in resolving symbols /*and allow subsequently loaded libs to use them*/
     if (const char* err = dlerror()) { //we could simply check if the handle is null, but using dlerror() doubles as clearing error flags
         Poly::gConsole.LogError("{}", err);
-        Poly::gConsole.LogError("Use a game run-script or set the LD_LIBRARY_PATH environment variable manually");
+        Poly::gConsole.LogError("Use a game run-script or set the DYLD_LIBRARY_PATH environment variable manually");
         return {nullptr, nullptr};
     }
 
@@ -56,41 +58,19 @@ RawFunc LoadFunction(const char* library, const char* functionName) {
 }
 
 //-----------------------------------------------------------------------------------------------
-inline std::unique_ptr<DynLoaded<CreateRenderingDeviceFunc>> GetRenderingDeviceCreator(const char* soname) {
-    return std::make_unique<DynLoaded<CreateRenderingDeviceFunc>>(LoadFunction(soname, "PolyCreateRenderingDevice"));
+inline DynLoaded<CreateRenderingDeviceFunc> GetRenderingDeviceCreator(const char* soname) {
+    return {LoadFunction(soname, "PolyCreateRenderingDevice")};
 }
 
 //-----------------------------------------------------------------------------------------------
-inline std::unique_ptr<DynLoaded<LoadGameFunc>> GetGameLoader(const char* soname) {
-    return std::make_unique<DynLoaded<LoadGameFunc>>(LoadFunction(soname, "CreateGame"));
+inline DynLoaded<LoadGameFunc> GetGameLoader(const char* soname) {
+    return {LoadFunction(soname, "CreateGame")};
 }
 
 //-----------------------------------------------------------------------------------------------
 static std::unique_ptr<Engine> engine;
-static std::unique_ptr<DynLoaded<CreateRenderingDeviceFunc>> renderingDeviceDylibHandle;
-static std::unique_ptr<DynLoaded<LoadGameFunc>> gameDylibHandle;
-
-//-----------------------------------------------------------------------------------------------
-std::unique_ptr<IGame> LoadGame()
-{
-    gameDylibHandle = GetGameLoader("libgame.dylib"); //the name could be passed as a command-line arg
-    if (gameDylibHandle->FunctionValid())
-        return std::unique_ptr<IGame>((*gameDylibHandle)());
-    return nullptr;
-}
-
-//-----------------------------------------------------------------------------------------------
-std::unique_ptr<IRenderingDevice> LoadRenderingDevice(void* window, unsigned width, unsigned height)
-{
-    ScreenSize size;
-    size.Width = width;
-    size.Height = height;
-
-    renderingDeviceDylibHandle = GetRenderingDeviceCreator("libpolyrenderingdevice.dylib");
-    if (renderingDeviceDylibHandle->FunctionValid())
-        return std::unique_ptr<IRenderingDevice>((*renderingDeviceDylibHandle)(window, size));
-    return nullptr;
-}
+static DynLoaded<CreateRenderingDeviceFunc> renderingDeviceDylibHandle;
+static DynLoaded<LoadGameFunc> gameDylibHandle;
 
 //-----------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------
@@ -99,11 +79,27 @@ std::unique_ptr<IRenderingDevice> LoadRenderingDevice(void* window, unsigned wid
 void PolyEngineLoad(void* window, unsigned width, unsigned height)
 {
     gConsole.LogError("Init engine load");
+
+    ScreenSize size;
+    size.Width = width;
+    size.Height = height;
+
     engine = std::make_unique<Engine>();
-    std::unique_ptr<IGame> game = LoadGame();
+
+    // Load game dylib
+    std::unique_ptr<IGame> game;
+    gameDylibHandle = GetGameLoader("libgame.dylib"); //the name could be passed as a command-line arg
+    if (gameDylibHandle.FunctionValid())
+        game.reset(gameDylibHandle());
     ASSERTE(game, "Game load failed!");
-    std::unique_ptr<IRenderingDevice> device = LoadRenderingDevice(window, width, height);
+
+    // Load rendering device dylib
+    std::unique_ptr<IRenderingDevice> device;
+    renderingDeviceDylibHandle = GetRenderingDeviceCreator("libpolyrenderingdevice.dylib");
+    if (renderingDeviceDylibHandle.FunctionValid())
+         device.reset(renderingDeviceDylibHandle(window, size));
     ASSERTE(device, "Rendering device load failed!");
+
     engine->Init(std::move(game), std::move(device));
     gConsole.LogError("Engine loaded");
 }
