@@ -79,19 +79,17 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::SetDevice(const String& device)
 {
 	alcCloseDevice(Device);
 	Device = alcOpenDevice(device.GetCStr());
-	AvailableDevices.Remove(device);
-	AvailableDevices.PushFront(device);
 	HEAVY_ASSERTE(Device, "OpenAL device creation failed");
 }
 
 //---------------------------------------------------------------------------------------------------
-const String& SOUND_DEVICE_DLLEXPORT ALSoundDevice::GetCurrentDevice()
+String SOUND_DEVICE_DLLEXPORT ALSoundDevice::GetCurrentDevice()
 {
 	return String(alcGetString(Device, ALC_DEVICE_SPECIFIER));
 }
 
 //---------------------------------------------------------------------------------------------------
-const Dynarray<String>& SOUND_DEVICE_DLLEXPORT ALSoundDevice::GetAvailableDevices()
+Dynarray<String> SOUND_DEVICE_DLLEXPORT ALSoundDevice::GetAvailableDevices()
 {
 	Dynarray<String> availableDevices;
 

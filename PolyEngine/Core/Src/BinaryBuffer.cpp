@@ -12,6 +12,16 @@ BinaryBuffer::BinaryBuffer(size_t size)
 	HEAVY_ASSERTE(Data, "Couldn't allocate memory!");
 }
 
+BinaryBuffer::BinaryBuffer(char* begin, size_t size)
+	: Size(size)
+{
+	HEAVY_ASSERTE(size > 0, "Creating buffer with size == 0!");
+	Data = AllocateSlab(size);
+	HEAVY_ASSERTE(Data, "Couldn't allocate memory!");
+
+	memcpy(Data, begin, size);
+}
+
 BinaryBuffer::~BinaryBuffer()
 {
 	if(Data)

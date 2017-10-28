@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Dynarray.hpp>
 #include <BaseObject.hpp>
 
 namespace Poly 
@@ -16,8 +17,8 @@ namespace Poly
 		virtual void RenderWorld(World* world) = 0;
 
 		virtual void SetDevice(const String& device) = 0;
-		virtual const String& GetCurrentDevice() = 0;
-		virtual const Dynarray<String>& GetAvailableDevices() = 0;
+		virtual String GetCurrentDevice() = 0;
+		virtual Dynarray<String> GetAvailableDevices() = 0;
 	};
 
 }

@@ -10,11 +10,31 @@
 
 using namespace Poly;
 
-SoundResource::SoundResource(const String& path)
+SoundResource::SoundResource(const String& path, eSoundFileFormat format, size_t size = 0, size_t offset = 0)
+{
+	switch (format)
+	{
+	case eSoundFileFormat::OGG_VORBIS:
+		BinaryBuffer* data = LoadBinaryFile(path);
+		DecodeOggVorbis(*data, size, offset);
+		delete data;
+		break;
+
+	default:
+		gConsole.LogDebug("Unsupported file format.");
+		throw new SoundResourceException();
+	}
+}
+
+SoundResource::~SoundResource()
+{
+	if (RawData)
+		delete RawData;
+}
+
+void Poly::SoundResource::DecodeOggVorbis(const BinaryBuffer& data, size_t size, size_t offset)
 {
 	// Declarations and loading file to buffer.
-
-	BinaryBuffer* data = LoadBinaryFile(path);
 	Dynarray<char> rawData;
 
 	ogg_sync_state   syncState;		/* sync and verify incoming physical bitstream */
@@ -42,9 +62,9 @@ SoundResource::SoundResource(const String& path)
 		size_t bytesRead = 0;
 
 		buffer = ogg_sync_buffer(&syncState, 4096);
-		memcpy(buffer, reinterpret_cast<void*>(reinterpret_cast<size_t>(data->GetData()) + bytesRead), 4096);
+		memcpy(buffer, reinterpret_cast<void*>(reinterpret_cast<size_t>(data.GetData()) + bytesRead), 4096);
 		bytesRead += 4096;
-		if (bytesRead >= data->GetSize()) break;
+		if (bytesRead >= data.GetSize()) break;
 		else ogg_sync_wrote(&syncState, 4096);
 
 		if (ogg_sync_pageout(&syncState, &page) != 1)
@@ -85,7 +105,7 @@ SoundResource::SoundResource(const String& path)
 				if (result == 1)
 				{
 					ogg_stream_pagein(&streamState, &page);
-					while (i < 2){
+					while (i < 2) {
 						result = ogg_stream_packetout(&streamState, &packet);
 						if (result == 0) break;
 						if (result < 0)
@@ -106,11 +126,11 @@ SoundResource::SoundResource(const String& path)
 				}
 			}
 
-			auto increase = long(bytesRead + 4096 <= data->GetSize() ? 4096 : data->GetSize() - bytesRead);
+			auto increase = long(bytesRead + 4096 <= data.GetSize() ? 4096 : data.GetSize() - bytesRead);
 			buffer = ogg_sync_buffer(&syncState, increase);
-			memcpy(buffer, data->GetData() + bytesRead, increase);
+			memcpy(buffer, data.GetData() + bytesRead, increase);
 			bytesRead += increase;
-			if (bytesRead >= data->GetSize() && i < 2)
+			if (bytesRead >= data.GetSize() && i < 2)
 			{
 				gConsole.LogDebug("End of file before finding all Vorbis headers!");
 				throw OggDecoderException();
@@ -121,7 +141,7 @@ SoundResource::SoundResource(const String& path)
 		// stats for nerds
 		{
 			char** ptr = vorbisComment.user_comments;
-			while(*ptr)
+			while (*ptr)
 			{
 				gConsole.LogDebug("{}", *ptr);
 				++ptr;
@@ -178,7 +198,7 @@ SoundResource::SoundResource(const String& path)
 										float* mono = pcm[i];
 										for (j = 0; j < bout; j++)
 										{
-											auto val = int(floor(mono[j] * 32767.f+.5f));
+											auto val = int(floor(mono[j] * 32767.f + .5f));
 
 											if (val > 32767)
 											{
@@ -202,7 +222,7 @@ SoundResource::SoundResource(const String& path)
 
 									const size_t newBlocksize = 2 * vorbisInfo.channels * bout;
 									const size_t oldDataSize = rawData.GetSize();
-									if(oldDataSize + newBlocksize > rawData.GetCapacity())
+									if (oldDataSize + newBlocksize > rawData.GetCapacity())
 									{
 										const size_t newCap = std::max(rawData.GetCapacity(), newBlocksize);
 										rawData.Reserve(newCap * 2);
@@ -221,7 +241,7 @@ SoundResource::SoundResource(const String& path)
 				// End of pages; load data with new pages
 				if (!eos)
 				{
-					if (bytesRead >= data->GetSize())
+					if (bytesRead >= data.GetSize())
 					{
 						eos = 1;
 						break;
@@ -229,9 +249,9 @@ SoundResource::SoundResource(const String& path)
 
 
 
-					auto increase = long(bytesRead + 4096 <= data->GetSize() ? 4096 : data->GetSize() - bytesRead);
+					auto increase = long(bytesRead + 4096 <= data.GetSize() ? 4096 : data.GetSize() - bytesRead);
 					buffer = ogg_sync_buffer(&syncState, increase);
-					memcpy(buffer, data->GetData() + bytesRead, increase);
+					memcpy(buffer, data.GetData() + bytesRead, increase);
 					bytesRead += increase;
 
 					ogg_sync_wrote(&syncState, increase);
@@ -243,23 +263,17 @@ SoundResource::SoundResource(const String& path)
 		}
 		else gConsole.LogDebug("Error: Corrupt header during playback initialization.");
 
-		// TODO: loading chained sounds;
-		alBufferData(BufferID, AL_FORMAT_STEREO16, rawData.GetData(), (ALsizei)rawData.GetSize(), vorbisInfo.rate);
 
-
+		RawData = new BinaryBuffer(rawData.GetData(), rawData.GetSize());
+		SampleFormat = eSoundSampleFormat::STEREO16;
+		Frequency = vorbisInfo.rate;
 
 		ogg_stream_clear(&streamState);
 		vorbis_comment_clear(&vorbisComment);
 		vorbis_info_clear(&vorbisInfo);
 
-		if (bytesRead >= data->GetSize()) break;
+		if (bytesRead >= data.GetSize()) break;
 	}
 
 	ogg_sync_clear(&syncState);
-
-	delete data;
-}
-
-SoundResource::~SoundResource()
-{
 }

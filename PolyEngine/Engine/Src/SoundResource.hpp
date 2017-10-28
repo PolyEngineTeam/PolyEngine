@@ -4,6 +4,11 @@
 
 namespace Poly 
 {
+	class ENGINE_DLLEXPORT SoundResourceException : public BaseObject<>, public std::exception
+	{
+	public:
+		SoundResourceException() {}
+	};
 
 	class ENGINE_DLLEXPORT OggDecoderException : public BaseObject<>, public std::exception
 	{
@@ -19,6 +24,12 @@ namespace Poly
 		STEREO16,
 		_COUNT
 	};
+
+	enum class eSoundFileFormat
+	{
+		OGG_VORBIS = 0,
+		_COUNT
+	};
 	
 	/// Resource that stores sound resource
 	/// For now is designed only for opening ogg files (and not too large (tested on 188KB sample))
@@ -26,15 +37,14 @@ namespace Poly
 	{
 	public:
 		// samples
-		SoundResource(const String& path, size_t size = 0, size_t offset = 0);
-		// seconds
-		SoundResource(const String& path, float size = -1, float offset = 0);
+		SoundResource(const String& path, eSoundFileFormat format, size_t size = 0, size_t offset = 0);
 		~SoundResource();
 
-		void OggVorbisDecoder();
 
 	private:
-		Dynarray<char>* RawData;
+		void DecodeOggVorbis(const BinaryBuffer& data, size_t size = 0, size_t offset = 0);
+
+		BinaryBuffer* RawData;
 		eSoundSampleFormat SampleFormat;
 		size_t Frequency;
 	};

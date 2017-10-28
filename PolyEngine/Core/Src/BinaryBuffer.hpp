@@ -9,6 +9,7 @@ namespace Poly
 	{
 	public:
 		BinaryBuffer(size_t size);
+		BinaryBuffer(char* begin, size_t size);
 		~BinaryBuffer();
 
 		BinaryBuffer(const BinaryBuffer& rhs) { *this = rhs; }

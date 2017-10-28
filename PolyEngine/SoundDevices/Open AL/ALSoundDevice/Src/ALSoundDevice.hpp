@@ -1,6 +1,7 @@
 #pragma once
 
 #include <alc.h>
+#include <unordered_map>
 
 #include <ISoundDevice.hpp>
 #include <UniqueID.hpp>
@@ -16,8 +17,8 @@ namespace Poly
 		void RenderWorld(World* world) override;
 
 		void SetDevice(const String& device) override;
-		const String& GetCurrentDevice() override;
-		const Dynarray<String>& GetAvailableDevices() override;
+		String GetCurrentDevice() override;
+		Dynarray<String> GetAvailableDevices() override;
 
 	private:
 		ALCdevice* Device;
