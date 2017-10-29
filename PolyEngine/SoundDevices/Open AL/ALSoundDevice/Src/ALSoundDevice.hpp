@@ -9,9 +9,12 @@
 
 namespace Poly
 {
-	class SOUND_DEVICE_DLLEXPORT ALSoundDevice : ISoundDevice
+	class SOUND_DEVICE_DLLEXPORT ALSoundDevice : public ISoundDevice
 	{
 	public:
+		ALSoundDevice();
+		~ALSoundDevice();
+
 		void Init() override;
 		void Close() override;
 		void RenderWorld(World* world) override;
@@ -25,4 +28,9 @@ namespace Poly
 
 		std::unordered_map<UniqueID, unsigned int> OwnerToEmitterMap;
 	};
+} // namespace Poly
+
+extern "C"
+{
+	SOUND_DEVICE_DLLEXPORT Poly::ISoundDevice* __stdcall PolyCreateSoundDevice();
 }

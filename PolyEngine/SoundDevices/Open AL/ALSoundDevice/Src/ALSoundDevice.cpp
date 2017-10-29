@@ -8,6 +8,16 @@
 
 using namespace Poly;
 
+//------------------------------------------------------------------------------
+Poly::ALSoundDevice::ALSoundDevice()
+{
+}
+
+//------------------------------------------------------------------------------
+Poly::ALSoundDevice::~ALSoundDevice()
+{
+}
+
 //---------------------------------------------------------------------------------------------------
 void SOUND_DEVICE_DLLEXPORT ALSoundDevice::Init()
 {
@@ -113,4 +123,10 @@ Dynarray<String> SOUND_DEVICE_DLLEXPORT ALSoundDevice::GetAvailableDevices()
 	}
 
 	return availableDevices;
+}
+
+//------------------------------------------------------------------------------
+Poly::ISoundDevice* PolyCreateSoundDevice()
+{
+	return new ALSoundDevice();
 }
