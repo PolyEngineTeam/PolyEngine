@@ -2,6 +2,7 @@
 
 #include <Core.hpp>
 #include "Entity.hpp"
+#include "Family.hpp"
 
 namespace Poly {
 

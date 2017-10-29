@@ -52,4 +52,6 @@ namespace Poly
 		void UpdateGlobalTransformationCache() const;
 		void SetGlobalDirty() const;
 	};
+
+	COMPONENT_INS(ComponentsFamily, TransformComponent)
 }

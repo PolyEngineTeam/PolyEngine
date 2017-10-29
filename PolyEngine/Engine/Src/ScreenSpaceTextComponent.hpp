@@ -25,4 +25,6 @@ namespace Poly {
 		Text2D Text;
 		Vector ScreenPosition;
 	};
+
+	COMPONENT_INS(ComponentsFamily, ScreenSpaceTextComponent)
 }

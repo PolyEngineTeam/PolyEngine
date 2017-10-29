@@ -6,7 +6,6 @@
 namespace Poly
 {
 	/// <summary>Enum used to identify source of asset.
-	/// <see cref="RegisterComponent()">
 	enum class eResourceSource
 	{
 		ENGINE,

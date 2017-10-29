@@ -27,4 +27,6 @@ namespace Poly
 		std::unordered_map<size_t, Viewport> Viewports;
 		ViewportID IDCounter = 0;
 	};
+
+	COMPONENT_INS(WorldComponentsFamily, ViewportWorldComponent)
 }

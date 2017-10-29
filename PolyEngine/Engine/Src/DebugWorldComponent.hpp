@@ -17,4 +17,5 @@ namespace Poly
 	private:
 		FPSSystem::FPSData FPSData;
 	};
+	COMPONENT_INS(WorldComponentsFamily, DebugWorldComponent)
 }

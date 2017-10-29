@@ -17,6 +17,8 @@ namespace Poly
 		float Intensity = 1.0f;
 	};
 
+	COMPONENT_INS(WorldComponentsFamily, DiffuseLightSourceWorldComponent)
+
 	class ENGINE_DLLEXPORT DirectionalLightSourceComponent : public ComponentBase
 	{
 	public:

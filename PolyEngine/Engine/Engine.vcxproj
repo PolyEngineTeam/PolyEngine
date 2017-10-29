@@ -181,6 +181,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Src\Entity.cpp" />
+    <ClCompile Include="Src\Family.cpp" />
     <ClCompile Include="Src\FontResource.cpp" />
     <ClCompile Include="Src\FPSSystem.cpp" />
     <ClCompile Include="Src\FreeFloatMovementComponent.cpp" />
@@ -231,6 +232,7 @@
     <ClInclude Include="Src\Engine.hpp" />
     <ClInclude Include="Src\EnginePCH.hpp" />
     <ClInclude Include="Src\Entity.hpp" />
+    <ClInclude Include="Src\Family.hpp" />
     <ClInclude Include="Src\FontResource.hpp" />
     <ClInclude Include="Src\FPSSystem.hpp" />
     <ClInclude Include="Src\FreeFloatMovementComponent.hpp" />
@@ -272,6 +274,9 @@
     <ClInclude Include="Src\ViewportWorldComponent.hpp" />
     <ClInclude Include="Src\World.hpp" />
     <ClInclude Include="Src\TextureResource.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\Family.inc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

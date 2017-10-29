@@ -38,4 +38,6 @@ namespace Poly
 
 		bool Paused = false;
 	};
+
+	COMPONENT_INS(WorldComponentsFamily, TimeWorldComponent)
 }

@@ -194,6 +194,9 @@
     <ClCompile Include="Src\PostprocessSettingsComponent.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Family.cpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine.hpp">
@@ -346,5 +349,13 @@
     <ClInclude Include="Src\PostprocessSettingsComponent.hpp">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Family.hpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\Family.inc">
+      <Filter>Source Files\ECS</Filter>
+    </None>
   </ItemGroup>
 </Project>

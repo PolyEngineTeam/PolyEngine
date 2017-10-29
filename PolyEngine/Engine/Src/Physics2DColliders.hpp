@@ -20,6 +20,8 @@ namespace Poly
 		std::unique_ptr<b2PolygonShape> Shape;
 	};
 
+	COMPONENT_INS(ComponentsFamily, Box2DColliderComponent)
+
 	class ENGINE_DLLEXPORT Circle2DColliderComponent : public ComponentBase
 	{
 	public:
@@ -32,4 +34,6 @@ namespace Poly
 	private:
 		std::unique_ptr<b2CircleShape> Shape;
 	};
+
+	COMPONENT_INS(ComponentsFamily, Circle2DColliderComponent)
 }

@@ -18,6 +18,8 @@
 #include <SoundEmitterComponent.hpp>
 #include <SoundSystem.hpp>
 
+#include "Family.inc"
+
 using namespace SGJ;
 using namespace Poly;
 
