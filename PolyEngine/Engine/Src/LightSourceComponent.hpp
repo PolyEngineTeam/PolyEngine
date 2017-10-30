@@ -31,6 +31,8 @@ namespace Poly
 		float Intensity = 1.0f;
 	};
 
+	COMPONENT_INS(ComponentsFamily, DirectionalLightSourceComponent)
+
 	class ENGINE_DLLEXPORT PointLightSourceComponent : public ComponentBase
 	{
 	public:
@@ -44,4 +46,6 @@ namespace Poly
 		float Intensity = 1.0f;
 		float Attenuation = 1.0f;
 	};
+
+	COMPONENT_INS(ComponentsFamily, PointLightSourceComponent)
 }

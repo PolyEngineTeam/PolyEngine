@@ -20,4 +20,6 @@ namespace Poly {
 		MeshResource* Mesh = nullptr;
 		Color BaseColor;
 	};
+
+	COMPONENT_INS(ComponentsFamily, MeshRenderingComponent)
 }

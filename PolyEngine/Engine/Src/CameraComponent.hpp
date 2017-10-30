@@ -43,4 +43,6 @@ namespace Poly {
 		float Far = 0.f;
 		float Aspect = 1.f;
 	};
+
+	COMPONENT_INS(ComponentsFamily, CameraComponent)
 }

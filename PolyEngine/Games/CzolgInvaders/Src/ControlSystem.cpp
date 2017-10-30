@@ -9,6 +9,8 @@
 #include "SoundEmitterComponent.hpp"
 #include "CoreConfig.hpp"
 
+#include "Family.inc"
+
 using namespace Poly;
 
 void ControlSystem::ControlSystemPhase(World* world)
