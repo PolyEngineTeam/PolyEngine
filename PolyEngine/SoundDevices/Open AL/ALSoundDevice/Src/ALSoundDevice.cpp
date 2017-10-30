@@ -9,12 +9,12 @@
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-Poly::ALSoundDevice::ALSoundDevice()
+ALSoundDevice::ALSoundDevice()
 {
 }
 
 //------------------------------------------------------------------------------
-Poly::ALSoundDevice::~ALSoundDevice()
+ALSoundDevice::~ALSoundDevice()
 {
 }
 

@@ -32,7 +32,7 @@ SoundResource::~SoundResource()
 		delete RawData;
 }
 
-void Poly::SoundResource::DecodeOggVorbis(const BinaryBuffer& data, size_t size, size_t offset)
+void SoundResource::DecodeOggVorbis(const BinaryBuffer& data, size_t size, size_t offset)
 {
 	// Declarations and loading file to buffer.
 	Dynarray<char> rawData;

@@ -40,9 +40,8 @@ namespace Poly
 		SoundResource(const String& path, eSoundFileFormat format, size_t size = 0, size_t offset = 0);
 		~SoundResource();
 
-
 	private:
-		void DecodeOggVorbis(const BinaryBuffer& data, size_t size = 0, size_t offset = 0);
+		void DecodeOggVorbis(const BinaryBuffer& data, size_t size, size_t offset);
 
 		BinaryBuffer* RawData;
 		eSoundSampleFormat SampleFormat;

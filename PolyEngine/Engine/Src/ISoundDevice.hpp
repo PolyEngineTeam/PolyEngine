@@ -20,5 +20,4 @@ namespace Poly
 		virtual String GetCurrentDevice() = 0;
 		virtual Dynarray<String> GetAvailableDevices() = 0;
 	};
-
-}
+} // namespace Poly

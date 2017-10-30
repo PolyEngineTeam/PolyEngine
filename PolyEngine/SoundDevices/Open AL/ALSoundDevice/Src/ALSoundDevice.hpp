@@ -4,11 +4,12 @@
 #include <unordered_map>
 
 #include <ISoundDevice.hpp>
-#include <UniqueID.hpp>
 #include <Dynarray.hpp>
 
 namespace Poly
 {
+	class UniqueID;
+
 	class SOUND_DEVICE_DLLEXPORT ALSoundDevice : public ISoundDevice
 	{
 	public:
