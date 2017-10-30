@@ -42,7 +42,6 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	RegisterWorldComponent<TimeWorldComponent>((size_t)eEngineWorldComponents::TIME);
 	RegisterWorldComponent<DebugWorldComponent>((size_t)eEngineWorldComponents::DEBUG);
 	RegisterWorldComponent<DeferredTaskWorldComponent>((size_t)eEngineWorldComponents::DEFERRED_TASK);
-	RegisterWorldComponent<SoundWorldComponent>((size_t) eEngineWorldComponents::SOUND);
 	RegisterWorldComponent<Physics2DWorldComponent>((size_t)eEngineWorldComponents::PHYSICS_2D);
 	RegisterWorldComponent<DiffuseLightSourceWorldComponent>((size_t)eEngineWorldComponents::DIFFUSE_LIGHTSOURCE);
 
@@ -51,7 +50,6 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(BaseWorld.get());
 	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(BaseWorld.get());
 	DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(BaseWorld.get());
-	DeferredTaskSystem::AddWorldComponentImmediate<SoundWorldComponent>(BaseWorld.get(), BaseWorld.get());
 	DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(BaseWorld.get());
 	Physics2DConfig physicsConfig;
 	DeferredTaskSystem::AddWorldComponentImmediate<Physics2DWorldComponent>(BaseWorld.get(), physicsConfig);

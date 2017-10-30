@@ -10,14 +10,16 @@
 
 using namespace Poly;
 
-SoundResource::SoundResource(const String& path, eSoundFileFormat format, size_t size = 0, size_t offset = 0)
+SoundResource::SoundResource(const String& path, eSoundFileFormat format, size_t size, size_t offset)
 {
 	switch (format)
 	{
 	case eSoundFileFormat::OGG_VORBIS:
-		BinaryBuffer* data = LoadBinaryFile(path);
-		DecodeOggVorbis(*data, size, offset);
-		delete data;
+		{
+			BinaryBuffer* data = LoadBinaryFile(path);
+			DecodeOggVorbis(*data, size, offset);
+			delete data;
+		}
 		break;
 
 	default:
