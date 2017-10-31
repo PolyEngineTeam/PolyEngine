@@ -36,11 +36,16 @@ namespace Poly {
 			long fsize = ftell(f);
 			fseek(f, 0, SEEK_SET);  //same as rewind(f);
 
-			char* string = (char*)DefaultAlloc(fsize + 1);
-			fread(string, fsize, 1, f);
+			char* chars = AllocateSlab(fsize + 1);
+
+			fread(chars, fsize, 1, f); //todo: would be nice if we could read directly into the string
 			fclose(f);
-			string[fsize] = 0;
-			return String(string);
+			chars[fsize] = '\0';
+
+			String string(chars);
+			Deallocate(chars);
+
+			return string;
 		}
 		else
 		{

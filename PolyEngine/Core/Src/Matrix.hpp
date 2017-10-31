@@ -136,7 +136,7 @@ namespace Poly
 	  // This structure allows to access vector elements by index or name.
 		union {
 		#if !DISABLE_SIMD
-			SILENCE_GCC_WARNING(-Wignored-attributes)
+			SILENCE_GCC_WARNING(-Wignored-attributes, "__m128 has an alignment attribute that gets ignored, but it doesn't matter since we explicitly set alignment here")
 			alignas(16) std::array<__m128, 4> SimdRow;
 			UNSILENCE_GCC_WARNING()
 		#endif //!DISABLE_SIMD

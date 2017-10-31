@@ -12,7 +12,7 @@ namespace Poly
 	class CameraComponent;
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
-	class AABox;
+	class AARect;
 	class TextureResource;
 	struct ScreenSize;
 	enum class eInternalTextureUsageType;
@@ -32,7 +32,7 @@ namespace Poly
 
 		virtual ~RenderingPassBase();
 
-		void Run(World* world, const CameraComponent* camera, const AABox& rect);
+		void Run(World* world, const CameraComponent* camera, const AARect& rect);
 		void Finalize();
 
 		void BindOutput(const String& outputName, RenderingTargetBase* target);
@@ -41,10 +41,8 @@ namespace Poly
 		void DebugDraw();
 
 		void ClearFBO(GLenum flags = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		double GetRunTime() const { return RunTime; }
 	protected:
-		virtual void OnRun(World* world, const CameraComponent* camera, const AABox& rect) = 0;
+		virtual void OnRun(World* world, const CameraComponent* camera, const AARect& rect) = 0;
 
 		RenderingTargetBase* GetInputTarget(const String& name);
 		RenderingTargetBase* GetOutputTarget(const String& name);
@@ -58,7 +56,6 @@ namespace Poly
 
 		GLShaderProgram Program;
 		GLuint FBO = 0;
-		double RunTime = -1.0;
 	};
 
 	//------------------------------------------------------------------------------
@@ -77,7 +74,7 @@ namespace Poly
 	public:
 		virtual eRenderingTargetType GetType() const = 0;
 
-		virtual void Resize(const ScreenSize& size) {}
+		virtual void Resize(const ScreenSize& /*size*/) {}
 	};
 
 	//------------------------------------------------------------------------------
@@ -88,11 +85,11 @@ namespace Poly
 		Texture2DRenderingTarget(GLuint format, eInternalTextureUsageType internalUsage);
 
 		eRenderingTargetType GetType() const override { return eRenderingTargetType::TEXTURE_2D; }
-		void Resize(const ScreenSize& size) override;
+		void Resize(const ScreenSize& /*size*/) override;
 
 		GLuint GetTextureID();
 	private:
-		GLuint Format;
+		//GLuint Format;
 		eInternalTextureUsageType InternalUsage = eInternalTextureUsageType(0);
 		std::unique_ptr<GLTextureDeviceProxy> Texture;
 	};
@@ -111,7 +108,7 @@ namespace Poly
 	public:
 		Texture2DInputTarget(const String& path);
 		~Texture2DInputTarget();
-		
+
 		GLuint GetTextureID() const;
 		eRenderingTargetType GetType() const override { return eRenderingTargetType::TEXTURE_2D_INPUT; }
 	private:

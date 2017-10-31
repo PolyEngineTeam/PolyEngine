@@ -38,8 +38,8 @@
 #include "SoundEmitterComponent.hpp"
 #include "SoundListenerComponent.hpp"
 #include "TransformComponent.hpp"
-// #include "Physics2DColliders.hpp"
-// #include "Rigidbody2DComponent.hpp"
+#include "Physics2DColliders.hpp"
+#include "Rigidbody2DComponent.hpp"
 #include "LightSourceComponent.hpp"
 #include "PostprocessSettingsComponent.hpp"
 
@@ -50,13 +50,13 @@
 #include "TimeWorldComponent.hpp"
 #include "ViewportWorldComponent.hpp"
 #include "DeferredTaskWorldComponent.hpp"
-// #include "Physics2DWorldComponent.hpp"
+#include "Physics2DWorldComponent.hpp"
 
 // Systems
 #include "DeferredTaskSystem.hpp"
 #include "SoundSystem.hpp"
 #include "DeferredTaskSystem.hpp"
-// #include "Physics2DSystem.hpp"
+#include "Physics2DSystem.hpp"
 
 // Config
 #include "CoreConfig.hpp"

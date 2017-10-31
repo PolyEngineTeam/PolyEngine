@@ -1,26 +1,15 @@
 #pragma once
 
-#if defined(_WIN32)
-	#include <Windows.h>
-#elif defined(__linux__)
-	#include <X11/Xlib.h>
-	#include <X11/Xutil.h>
-	#include <GL/glew.h>
-	#include <GL/glxew.h>
-	#include <GL/glx.h>
-#else
-	#error "Unsupported platform :("
-#endif
-
+#include "GLUtils.hpp"
 #include <IRenderingDevice.hpp>
-
 #include "GLShaderProgram.hpp"
-
-#include "RenderingPassBase.hpp"
 
 namespace Poly
 {
 	class World;
+	struct PostprocessQuad;
+	class RenderingPassBase;
+	class RenderingTargetBase;
 
 	class DEVICE_DLLEXPORT GLRenderingDevice : public IRenderingDevice
 	{
@@ -34,9 +23,9 @@ namespace Poly
 			_COUNT
 		};
 
-		enum class eRenderPassType
+		enum class ePostprocessRenderPassType
 		{
-			VIGNETTE,
+			VINETTE,
 			BACKGROUND,
 			FOREGROUND,
 			BACKGROUND_LIGHT,
@@ -56,6 +45,8 @@ namespace Poly
 		GLRenderingDevice(HWND HWnd, RECT Rect);
 #elif defined(__linux__)
 		GLRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig, const ScreenSize& size);
+#elif defined(__APPLE__)
+		GLRenderingDevice(void* window, const ScreenSize& size); //TODO creation API
 #else
 #error "Unsupported platform :("
 #endif
@@ -79,12 +70,19 @@ namespace Poly
 		void InitPrograms();
 		void EndFrame();
 
-		template <typename T>
-		void RegisterGeometryPass(eGeometryRenderPassType type, 
-			const std::initializer_list<InputOutputBind>& inputs = {}, 
+		void CleanUpResources();
+
+		template<typename T>
+		void RegisterGeometryPass(eGeometryRenderPassType type,
+			const std::initializer_list<InputOutputBind>& inputs = {},
 			const std::initializer_list<InputOutputBind>& outputs = {});
 
-		void RegisterRenderPass(eRenderPassType type, const String& fragShaderName, 
+		template<typename T, class... Args_t>
+		void RegisterGeometryPassWithArgs(eGeometryRenderPassType type,
+			const std::initializer_list<InputOutputBind>& inputs,
+			const std::initializer_list<InputOutputBind>& outputs, Args_t&&... args);
+
+		void RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName,
 			const std::initializer_list<InputOutputBind>& inputs = {},
 			const std::initializer_list<InputOutputBind>& outputs = {});
 
@@ -99,6 +97,9 @@ namespace Poly
 		Display* display;
 		Window window;
 		GLXContext context;
+#elif defined(__APPLE__)
+		void* window;
+        void* view;
 #else
 #error "Unsupported platform :("
 #endif
@@ -106,7 +107,9 @@ namespace Poly
 		Dynarray<std::unique_ptr<RenderingTargetBase>> RenderingTargets;
 
 		EnumArray<std::unique_ptr<RenderingPassBase>, eGeometryRenderPassType> GeometryRenderingPasses;
-		EnumArray<std::unique_ptr<RenderingPassBase>, eRenderPassType> RenderingPasses;
+		EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
+
+		std::unique_ptr<PostprocessQuad> PostprocessRenderingQuad;
 
 		ScreenSize ScreenDim;
 	};
@@ -120,6 +123,8 @@ extern "C"
 	DEVICE_DLLEXPORT Poly::IRenderingDevice* __stdcall PolyCreateRenderingDevice(HWND hwnd, RECT rect);
 #elif defined(__linux__)
 	DEVICE_DLLEXPORT Poly::IRenderingDevice* PolyCreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig, const Poly::ScreenSize& size);
+#elif defined(__APPLE__)
+	DEVICE_DLLEXPORT Poly::IRenderingDevice* PolyCreateRenderingDevice(void* window, const Poly::ScreenSize& size);
 #else
 #error "Unsupported platform :("
 #endif

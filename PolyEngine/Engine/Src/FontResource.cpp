@@ -2,10 +2,8 @@
 
 #include "FontResource.hpp"
 
-#include <GL/glew.h>
-
 #include <ft2build.h>
-#include FT_FREETYPE_H  
+#include FT_FREETYPE_H
 
 using namespace Poly;
 
@@ -74,7 +72,7 @@ void Poly::FontResource::LoadFace(size_t height) const
 	glyphSizes.Reserve(128);
 	for (size_t c = 0; c < 128; c++)
 	{
-		// Load character glyph 
+		// Load character glyph
 		FT_Error err = FT_Load_Char(face.FTFace, (FT_ULong)c, FT_LOAD_RENDER);
 		if (err != FT_Err_Ok)
 		{
@@ -97,7 +95,7 @@ void Poly::FontResource::LoadFace(size_t height) const
 	for (const GlyphSize& glyphSize : glyphSizes)
 	{
 
-		
+
 		currRowLen += glyphSize.width + GLYPH_PADDING;
 		if (currRowLen <= TEXTURE_WIDTH)
 		{
@@ -130,12 +128,12 @@ void Poly::FontResource::LoadFace(size_t height) const
 	maxLastRowHeight = 0;
 	size_t currTextureHeight = 0;
 	for (const GlyphSize& glyphSize : glyphSizes)
-	{		
+	{
 		FT_Error err = FT_Load_Char(face.FTFace, glyphSize.Glyph, FT_LOAD_RENDER);
 		ASSERTE(err == FT_Err_Ok, "Glyph loading failed!");
 
 		currRowLen += glyphSize.width + GLYPH_PADDING;
-		
+
 		size_t xoffset = 0;
 		size_t yoffset = 0;
 		if (currRowLen <= TEXTURE_WIDTH)

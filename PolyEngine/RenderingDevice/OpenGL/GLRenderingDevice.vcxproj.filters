@@ -62,6 +62,9 @@
     <ClInclude Include="Src\TransparentRenderingPass.hpp">
       <Filter>Source Files\RenderingPasses\BasePasses</Filter>
     </ClInclude>
+    <ClInclude Include="Src\PostprocessQuad.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\GLRenderingDevice.cpp">
@@ -99,6 +102,9 @@
     </ClCompile>
     <ClCompile Include="Src\TransparentRenderingPass.cpp">
       <Filter>Source Files\RenderingPasses\BasePasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PostprocessQuad.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

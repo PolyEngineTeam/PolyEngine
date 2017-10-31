@@ -1,52 +1,58 @@
-find_package(OpenGL REQUIRED)
-if(WIN32)
-	list(APPEND CMAKE_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/ThirdParty/glew/include")
-	list(APPEND CMAKE_LIBRARY_PATH "${CMAKE_SOURCE_DIR}/ThirdParty/glew/lib/Release/x64/" "${CMAKE_SOURCE_DIR}/ThirdParty/glew/lib/Release/Win32/")
-endif()
-find_package(GLEW REQUIRED)
+find_package(epoxy REQUIRED)
 
 set(POLYGLDEVICE_SRCS
+	Src/BlinnPhongRenderingPass.cpp
+	Src/DebugNormalsRenderingPass.cpp
 	Src/GLMeshDeviceProxy.cpp
 	Src/GLRenderingDevice.cpp
+	Src/GLShaderProgram.cpp
 	Src/GLTextFieldBufferDeviceProxy.cpp
 	Src/GLTextureDeviceProxy.cpp
 	Src/GLWorldRendering.cpp
-	Src/GLShaderProgram.cpp
-	Src/RenderingPassBase.cpp
-	Src/BlinnPhongRenderingPass.cpp
-	Src/Text2DRenderingPass.cpp
-	Src/DebugNormalsRenderingPass.cpp
 	Src/PostprocessRenderingPass.cpp
+	Src/PostprocessQuad.cpp
+	Src/RenderingPassBase.cpp
+	Src/Text2DRenderingPass.cpp
+	Src/TransparentRenderingPass.cpp
+)
+set(POLYGLDEVICE_SRCS_APPLE
+	Src-macOS/CocoaImpl.mm
 )
 set(POLYGLDEVICE_INCLUDE Src)
+set(POLYGLDEVICE_INCLUDE_APPLE Src-macOS)
 set(POLYGLDEVICE_H_FOR_IDE
+	Src/BlinnPhongRenderingPass.hpp
+	Src/DebugNormalsRenderingPass.hpp
 	Src/GLMeshDeviceProxy.hpp
 	Src/GLRenderingDevice.hpp
+	Src/GLShaderProgram.hpp
 	Src/GLTextFieldBufferDeviceProxy.hpp
 	Src/GLTextureDeviceProxy.hpp
 	Src/GLUtils.hpp
-	Src/GLShaderProgram.hpp
-	Src/RenderingPassBase.hpp
-	Src/BlinnPhongRenderingPass.hpp
-	Src/Text2DRenderingPass.hpp
-	Src/DebugNormalsRenderingPass.hpp
 	Src/PostprocessRenderingPass.hpp
+	Src/PostprocessQuad.hpp
+	Src/RenderingPassBase.hpp
+	Src/Text2DRenderingPass.hpp
+	Src/TransparentRenderingPass.hpp
+)
+set(POLYGLDEVICE_H_FOR_IDE_APPLE
+	Src-macOS/CocoaImpl.h
+	Src-macOS/ObjCInterface.hpp
 )
 
-add_library(polygldevice SHARED ${POLYGLDEVICE_SRCS} ${POLYGLDEVICE_H_FOR_IDE})
-target_compile_definitions(polygldevice PRIVATE _DEVICE)
-target_include_directories(polygldevice INTERFACE ${POLYGLDEVICE_INCLUDE} PRIVATE ${OPENGL_INCLUDE_DIR})
-target_link_libraries(polygldevice PRIVATE polycore polyengine ${OPENGL_LIBRARIES} GLEW::GLEW )
+add_library(polyrenderingdevicegl SHARED ${POLYGLDEVICE_SRCS} ${POLYGLDEVICE_H_FOR_IDE})
+target_compile_definitions(polyrenderingdevicegl PRIVATE _DEVICE)
+target_include_directories(polyrenderingdevicegl PUBLIC ${POLYGLDEVICE_INCLUDE})
+target_link_libraries(polyrenderingdevicegl PRIVATE polyengine epoxy::gl)
+set_target_properties(polyrenderingdevicegl PROPERTIES OUTPUT_NAME polyrenderingdevice)
 
-if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
-	target_compile_options(polygldevice PRIVATE --coverage -fprofile-arcs -ftest-coverage)
-	target_link_libraries(polygldevice PRIVATE -fprofile-arcs -ftest-coverage)
-	add_custom_target(coverage_gldevice
-	                  COMMAND ${GCOV_COMMAND} -r -o "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/polygldevice.dir/Src" -s ${CMAKE_CURRENT_SOURCE_DIR} ${POLYGLDEVICE_SRCS}
-	                  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-	                  COMMENT "Collecting gcov coverage information for polygldevice"
-	)
-endif(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
+if(APPLE)
+	find_library(Cocoa_LIBRARY Cocoa)
+	mark_as_advanced(Cocoa_LIBRARY)
 
-#set_target_properties(polygldevice PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "Src/EnginePCH.hpp")
-cotire(polygldevice)
+	target_sources(polyrenderingdevicegl PRIVATE ${POLYGLDEVICE_SRCS_APPLE} ${POLYGLDEVICE_H_FOR_IDE_APPLE})
+	target_include_directories(polyrenderingdevicegl PUBLIC ${POLYGLDEVICE_INCLUDE_APPLE})
+	target_link_libraries(polyrenderingdevicegl PRIVATE ${Cocoa_LIBRARY})
+endif()
+
+cotire(polyrenderingdevicegl)

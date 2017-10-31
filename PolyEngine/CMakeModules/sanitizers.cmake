@@ -3,7 +3,7 @@ set(SANITIZERS_PROCESSED false)
 
 if(NOT WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_BUILD_TYPE MATCHES "(Debug|DebugFast)")
 	set(SANITIZERS none CACHE STRING "Clang C++ Sanitizers. Possible values: none, address, undefined, memory, thread. Can be combined using \";\" (e.g. \"address;undefined\")")
-	set(MEMSAN_LIBCXX CACHE PATH "Instrumented C++ standard library location for MemorySanitizer")
+	set(MEMSAN_LIBCXX CACHE PATH "Instrumented C++ standard library location for MemorySanitizer") #todo(vuko): find out why we can't set this explicitly while creating cache
 
 	#normalize the option string
 	string(TOLOWER "${SANITIZERS}" SANITIZERS)
@@ -78,9 +78,9 @@ if(NOT WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_BUILD_TYPE MATC
 					if((NOT EXISTS "${MEMSAN_LIBCXX}" OR NOT CXXLIB_FOUND) AND NOT SANITIZERS_PROCESSED)
 						message(FATAL_ERROR "Given path (MEMSAN_LIBCXX: \"${MEMSAN_LIBCXX}\") does not seem to contain the MemorySanitizer-instrumented libc++ library required!")
 					endif()
-					include_directories(${MEMSAN_LIBCXX}/include)
-					link_directories(${MEMSAN_LIBCXX}/lib)
-					link_libraries(c++abi)
+					include_directories(SYSTEM ${MEMSAN_LIBCXX}/include)
+					link_directories(SYSTEM ${MEMSAN_LIBCXX}/lib)
+					link_libraries(SYSTEM c++abi)
 				endif()
 			endif()
 

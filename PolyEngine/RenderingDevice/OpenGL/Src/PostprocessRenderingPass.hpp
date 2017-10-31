@@ -2,22 +2,25 @@
 
 #include "RenderingPassBase.hpp"
 #include "GLShaderProgram.hpp"
+#include "PostprocessQuad.hpp"
 
 namespace Poly
 {
 	class World;
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
-	class AABox;
+	class AARect;
 
 	//------------------------------------------------------------------------------
-	class RenderingPass : public RenderingPassBase
+	class PostprocessRenderingPass : public RenderingPassBase
 	{
 	public:
-		RenderingPass(const String& fragment);
-		RenderingPass(const String& geometry, const String& fragment);
+		PostprocessRenderingPass(const PostprocessQuad* quad, const String& fragment);
+		PostprocessRenderingPass(const PostprocessQuad* quad, const String& geometry, const String& fragment);
 	
 	protected:
-		virtual void OnRun(World* world, const CameraComponent* camera, const AABox& rect) override;
+		virtual void OnRun(World* world, const CameraComponent* camera, const AARect& rect) override;
+
+		const PostprocessQuad* Quad;
 	};
 }

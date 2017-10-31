@@ -8,17 +8,14 @@ in vec2 vTexCoord;
 out vec4 color;
 
 uniform int uUseCashetes;
-uniform float uDistortion;
-uniform float uBloom;
-uniform float uBloomThreshold;
+uniform float uDistortionPower;
 uniform float uColorTempValue; // default 6500 in [1000.0, 40000.0]
+uniform float uColorTempPower;
 uniform float uColorTempLuminancePreservation;
-uniform float uSaturation;
-uniform float uStripes;
-uniform float uVignette;
-uniform float uGrain;
-uniform float uContrast;
-uniform float uBrightness;
+uniform float uSaturationPower;
+uniform float uStripesPower;
+uniform float uVinettePower;
+uniform float uGrainPower;
 
 // based on aberation by hornet
 // https://www.shadertoy.com/view/XssGz8
@@ -277,17 +274,18 @@ float grain(vec2 uv)
 	return 1.0 - grain;
 }
 
-float vignette(vec2 uv)
+float vinette(vec2 uv)
 {
 	float dist = length((vTexCoord - vec2(0.5, 0.5)) * 1.43f);
-	return 1.0 - pow(dist, 4.0);
+	float vinette = 1.0 - dist * dist;
+	return mix(0.2, 1.0, vinette);
 }
 
 vec3 colorTemperature(vec3 color, float temperature)
 {
 	vec3 colorTempRGB = ColorTemperatureToRGB(temperature);
 	float originalLuminance = Luminance(color);
-	vec3 blended = color * colorTempRGB;
+	vec3 blended = mix(color, color * colorTempRGB, uColorTempPower);
 	vec3 resultHSL = RGBtoHSL(blended);
 	vec3 luminancePreservedRGB = HSLtoRGB(vec3(resultHSL.x, resultHSL.y, originalLuminance));
 	return mix(blended, luminancePreservedRGB, uColorTempLuminancePreservation);
@@ -300,45 +298,9 @@ vec3 Saturation(vec3 color, float saturation)
 	return HSLtoRGB(hsl);
 }
 
-vec3 ChromaticAberrationAndBloom(vec2 uv, vec2 minDistort, vec2 maxDistort)
-{
-	// Chromatic Aberration and bloom
-	const int num_iter = 7;
-	const float stepsiz = 1.0 / (float(num_iter) - 1.0);
-	float rnd = nrand(uv + fract(uTime));
-	float t = rnd * stepsiz;
-
-	vec3 sumcol = vec3(0.0);
-	vec3 sumw = vec3(0.0);
-	vec3 emissive = vec3(0.0);
-	vec2 uvd = distort(uv, t, minDistort, maxDistort); //TODO: move out of loop
-
-	for (int i = 0; i < num_iter; ++i)
-	{
-		vec3 w = spectrum_offset(t);
-		sumw += w;
-		vec3 c = w * render(uvd);
-		sumcol += c;
-		t += stepsiz;
-		if (length(c) > uBloomThreshold)
-		{
-			emissive += c;
-		}
-	}
-	sumcol.rgb /= sumw;
-
-	vec3 outcol = sumcol.rgb;
-	outcol = lin2srgb(outcol);
-	outcol += rnd / 255.0;
-
-	// bloom
-	return outcol + uBloom*emissive;
-}
-
 void main()
 {
 	vec2 uv = vTexCoord;
-	color = texture(i_color, vTexCoord);
 
 	if (uUseCashetes > 0)
 	{
@@ -351,38 +313,67 @@ void main()
 		}
 	}
 
-	const float MAX_DIST_PX = 50.0;
-	float maxDistortPX = MAX_DIST_PX * (uDistortion);
-	vec2 maxDistort = vec2(maxDistortPX) / uResolution.xy;
-	vec2 minDistort = 0.5 * maxDistort;
+	// float power = 1.0;
 
-	vec2 oversiz = distort(vec2(1.0), 1.0, minDistort, maxDistort);
+	const float MAX_DIST_PX = 50.0;
+	float max_distort_px = MAX_DIST_PX * (uDistortionPower);
+	vec2 max_distort = vec2(max_distort_px) / uResolution.xy;
+	vec2 min_distort = 0.5 * max_distort;
+
+	//vec2 oversiz = vec2(1.0);
+	vec2 oversiz = distort(vec2(1.0), 1.0, min_distort, max_distort);
 	uv = remap(uv, 1.0 - oversiz, oversiz);
 
-	// aberration and bloom
-	color.rgb = ChromaticAberrationAndBloom(uv, minDistort, maxDistort);
+	// Chromatic Aberration
+	const int num_iter = 7;
+	const float stepsiz = 1.0 / (float(num_iter) - 1.0);
+	float rnd = nrand(uv + fract(uTime));
+	float t = rnd * stepsiz;
+
+
+	vec3 sumcol = vec3(0.0);
+	vec3 sumw = vec3(0.0);
+	vec3 emissive = vec3(0.0);
+	for (int i = 0; i<num_iter; ++i)
+	{
+		vec3 w = spectrum_offset(t);
+		sumw += w;
+		vec2 uvd = distort(uv, t, min_distort, max_distort); //TODO: move out of loop
+		vec3 c = w * render(uvd);
+		sumcol += c;
+		t += stepsiz;
+		if (length(c) > 0.8) 
+		{
+			emissive += c;
+		}
+	}
+	sumcol.rgb /= sumw;
+
+	vec3 outcol = sumcol.rgb;
+	outcol = lin2srgb(outcol);
+	outcol += rnd / 255.0;
+
+	color.rgb = outcol + 0.4*(emissive);
 
 	// tonemapper
 	color.rgb = Tonemap_ACES(color.rgb);
-
+	
 	// color temperature
-	color.rgb = colorTemperature(color.rgb, uColorTempValue);
-
+	color.rgb = colorTemperature(color.rgb, mix(6500.0, uColorTempValue, uColorTempPower));
+	
 	// color saturation
-	color.rgb = Saturation(color.rgb, uSaturation);
-
+	color.rgb = Saturation(color.rgb, uSaturationPower);
+	
 	// Stripes
-	color *= mix(1.0, stripes(vTexCoord), uStripes);
-
+	color *= mix( 1.0, stripes(vTexCoord), uStripesPower);
+	
 	// grain
-	color *= mix(1.0, grain(uv), uGrain);
-
+	color *= mix( 1.0, grain(uv), uGrainPower);
+	
 	// Vinette
-	color *= mix(1.0, vignette(vTexCoord), uVignette);
+	color *= mix(1.0, vinette(vTexCoord), uVinettePower);
 
-	// brightness
-	color.rgb += vec3(uBrightness);
-
-	// contrast
-	color.rgb = pow(color.rgb, vec3(uContrast));
+	color.rgb = pow(color.rgb, vec3(1.1));
+	color.rgb += vec3(0.1);
+	color.rgb = pow(color.rgb, vec3(0.9));
 }

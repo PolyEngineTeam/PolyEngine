@@ -1,11 +1,15 @@
 #pragma once
 
-#include <GL/glew.h>
-#ifdef _WIN32
-	#include <GL/wglew.h>
+#if defined(_WIN32)
+	#include <windows.h> //WinAPI is ultra-weird
+	#include <epoxy/wgl.h>
+	#include <epoxy/gl.h>
 #elif defined(__linux__)
-	#include <GL/glxew.h>
-#elif
+	#include <epoxy/glx.h>
+	#include <epoxy/gl.h>
+#elif defined(__APPLE__)
+	#include <epoxy/gl.h>
+#else
 	#error "Unsupported platform :("
 #endif
 
@@ -35,7 +39,7 @@ namespace Poly {
 			gConsole.LogError("{}:{} OpenGL error: [{}] {}", file, line, err, OpenGLErrorStr(err));
 	}
 
-	inline void CheckFBOStatus(const char *file, int line)
+	inline void CheckFBOStatus(const char* /*file*/, int /*line*/)
 	{
 		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 

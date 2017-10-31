@@ -1,5 +1,7 @@
 #include "GLRenderingDevice.hpp"
 
+#include <memory>
+
 #include <Logger.hpp>
 
 #include "GLUtils.hpp"
@@ -12,6 +14,7 @@
 #include "DebugNormalsRenderingPass.hpp"
 #include "PostprocessRenderingPass.hpp"
 #include "TransparentRenderingPass.hpp"
+#include "PostprocessQuad.hpp"
 
 using namespace Poly;
 
@@ -64,14 +67,6 @@ GLRenderingDevice::GLRenderingDevice(HWND hwnd, RECT rect)
 	HGLRC tempContext = wglCreateContext(hDC);
 	wglMakeCurrent(hDC, tempContext);
 
-	// Initialize GLEW
-	GLenum err = glewInit();
-	if (GLEW_OK != err)
-	{
-		gConsole.LogError("GLEW init failed, code: {}, status: {}", err, glewGetErrorString(err));
-		throw RenderingDeviceSetupFailedException();
-	}
-
 	// Setup OpenGL 3.3 context attribs
 	int attribs[] =
 	{
@@ -82,7 +77,7 @@ GLRenderingDevice::GLRenderingDevice(HWND hwnd, RECT rect)
 	};
 
 	// Create OpenGL 3.3 context and destroy the temporary one.
-	if (wglewIsSupported("WGL_ARB_create_context") == 1)
+	if (epoxy_has_wgl_extension(hDC, "WGL_ARB_create_context"))
 	{
 		hRC = wglCreateContextAttribsARB(hDC, 0, attribs);
 		wglMakeCurrent(nullptr, nullptr);
@@ -113,6 +108,7 @@ GLRenderingDevice::GLRenderingDevice(HWND hwnd, RECT rect)
 //------------------------------------------------------------------------------
 GLRenderingDevice::~GLRenderingDevice()
 {
+	CleanUpResources();
 	wglMakeCurrent(nullptr, nullptr);
 	if (hRC)
 	{
@@ -142,35 +138,16 @@ GLRenderingDevice::GLRenderingDevice(Display* display, Window window, GLXFBConfi
 
 	ScreenDim = size;
 
-	//create a temporary context to make GLEW happy, then immediately destroy it (it has wrong parameters)
-	{
-		GLXContext makeGlewHappy = glXCreateNewContext(this->display, fbConfig, GLX_RGBA_TYPE, /*share list*/ nullptr, /*direct*/ True);
-		glXMakeCurrent(this->display, this->window, makeGlewHappy);
-		gConsole.LogDebug("Temporary GL context for GLEW created.");
-
-		//initialize GLEW
-		GLenum err = glewInit();
-		if (err != GLEW_OK) {
-			gConsole.LogError("GLEW init failed, code: {}, status: {}", err, glewGetErrorString(err));
-			throw RenderingDeviceSetupFailedException();
-		}
-		glXMakeCurrent(this->display, None, nullptr);
-		glXDestroyContext(this->display, makeGlewHappy);
-		gConsole.LogDebug("GLEW initialized.");
-	}
-
 	//create GLX OpenGL context
-	this->context = nullptr;
 	int context_attribs[] = {
 		GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
 		GLX_CONTEXT_MINOR_VERSION_ARB, 3,
 		GLX_CONTEXT_FLAGS_ARB        , GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
 		None
 	};
-	if (GLXEW_ARB_create_context) {
+	if (epoxy_has_glx_extension(display, DefaultScreen(display), "GLX_ARB_create_context")) {
 		this->context = glXCreateContextAttribsARB(this->display, fbConfig, /*share context*/ nullptr, /*direct*/ True, context_attribs);
-	}
-	else {
+	} else {
 		gConsole.LogError("GLX_ARB_create_context extension not found. This platform does not support OpenGL {}.{}+", context_attribs[1], context_attribs[3]);
 		throw RenderingDeviceSetupFailedException();
 	}
@@ -183,8 +160,7 @@ GLRenderingDevice::GLRenderingDevice(Display* display, Window window, GLXFBConfi
 
 	if (glXIsDirect(this->display, this->context)) {
 		Poly::gConsole.LogDebug("Direct GLX rendering context obtained");
-	}
-	else {
+	} else {
 		Poly::gConsole.LogDebug("Indirect GLX rendering context obtained");
 	}
 	glXMakeCurrent(this->display, this->window, this->context);
@@ -200,6 +176,7 @@ GLRenderingDevice::GLRenderingDevice(Display* display, Window window, GLXFBConfi
 //------------------------------------------------------------------------------
 GLRenderingDevice::~GLRenderingDevice()
 {
+	CleanUpResources();
 	if (this->display && this->context) {
 		glXMakeCurrent(this->display, None, nullptr);
 		glXDestroyContext(this->display, this->context);
@@ -213,6 +190,40 @@ void GLRenderingDevice::EndFrame()
 {
 	glXSwapBuffers(this->display, this->window);
 }
+
+#elif defined(__APPLE__)
+
+#include "ObjCInterface.hpp"
+
+//------------------------------------------------------------------------------
+IRenderingDevice* PolyCreateRenderingDevice(void* window, const ScreenSize& size) { return new GLRenderingDevice(window, size); }
+
+//------------------------------------------------------------------------------
+GLRenderingDevice::GLRenderingDevice(void* window, const ScreenSize& size)
+	: window(window)
+{
+    ASSERTE(gRenderingDevice == nullptr, "Creating device twice?");
+    gRenderingDevice = this;
+
+    ScreenDim = size;
+    view = CreateDeviceImpl(window, size.Width, size.Height);
+
+    gConsole.LogInfo("OpenGL context succesfully setup. [{}]", glGetString(GL_VERSION));
+}
+
+//------------------------------------------------------------------------------
+GLRenderingDevice::~GLRenderingDevice()
+{
+	CleanUpResources();
+	DestroyDeviceImpl(window);
+}
+
+//------------------------------------------------------------------------------
+void GLRenderingDevice::EndFrame()
+{
+    EndFrameImpl(view);
+}
+
 #else
 #error "Unsupported platform :("
 #endif
@@ -229,7 +240,14 @@ void GLRenderingDevice::Resize(const ScreenSize& size)
 template<typename T>
 inline void GLRenderingDevice::RegisterGeometryPass(eGeometryRenderPassType type, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
 {
-	GeometryRenderingPasses[type] = std::make_unique<T>();
+	RegisterGeometryPassWithArgs<T>(type, inputs, outputs);
+}
+
+//------------------------------------------------------------------------------
+template<typename T, class... Args_t>
+inline void GLRenderingDevice::RegisterGeometryPassWithArgs(eGeometryRenderPassType type, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs, Args_t&&... args)
+{
+	GeometryRenderingPasses[type] = std::make_unique<T>(std::forward<Args_t>(args)...);
 
 	for (const InputOutputBind& bind : outputs)
 		GeometryRenderingPasses[type]->BindOutput(bind.Name, bind.Target);
@@ -250,69 +268,54 @@ T* Poly::GLRenderingDevice::CreateRenderingTarget(Args&&... args)
 }
 
 //------------------------------------------------------------------------------
-void Poly::GLRenderingDevice::RegisterRenderPass(eRenderPassType type, const String& fragShaderName, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
+void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
 {
-	RenderingPasses[type] = std::make_unique<RenderingPass>(fragShaderName);
+	PostprocessRenderingPasses[type] = std::make_unique<PostprocessRenderingPass>(PostprocessRenderingQuad.get(), fragShaderName);
 
 	for (const InputOutputBind& bind : outputs)
-		RenderingPasses[type]->BindOutput(bind.Name, bind.Target);
+		PostprocessRenderingPasses[type]->BindOutput(bind.Name, bind.Target);
 
 	for (const InputOutputBind& bind : inputs)
-		RenderingPasses[type]->BindInput(bind.Name, bind.Target);
+		PostprocessRenderingPasses[type]->BindInput(bind.Name, bind.Target);
 
-	RenderingPasses[type]->Finalize();
+	PostprocessRenderingPasses[type]->Finalize();
 }
 
 //------------------------------------------------------------------------------
 void GLRenderingDevice::InitPrograms()
 {
+	PostprocessRenderingQuad = std::make_unique<PostprocessQuad>();
+	
 	// Init input textures
-	Texture2DInputTarget* RGBANoise256 = CreateRenderingTarget<Texture2DInputTarget>("Textures/RGBANoise256x256.png");
+	//Texture2DInputTarget* RGBANoise256 = CreateRenderingTarget<Texture2DInputTarget>("Textures/RGBANoise256x256.png");
 
 	// Init programs
 	Texture2DRenderingTarget* texture = CreateRenderingTarget<Texture2DRenderingTarget>(GL_R11F_G11F_B10F);
 	DepthRenderingTarget* depth = CreateRenderingTarget<DepthRenderingTarget>();
+	// Texture2DRenderingTarget* depth2 = CreateRenderingTarget<Texture2DRenderingTarget>(GL_R16F);
 
-	RegisterGeometryPass<BlinnPhongRenderingPass>(
-		eGeometryRenderPassType::BLINN_PHONG,
-		{},
-		{ { "color", texture }, { "depth", depth } }
-	);
-
-	RegisterGeometryPass<Text2DRenderingPass>(
-		eGeometryRenderPassType::TEXT_2D, 
-		{},
-		{ { "color", texture }, { "depth", depth } }
-	);
-
+	RegisterGeometryPass<BlinnPhongRenderingPass>(eGeometryRenderPassType::BLINN_PHONG, {}, { { "color", texture }, { "depth", depth } });
 	RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS);
-	// RegisterGeometryPass<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } });
+	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, {}, { { "color", texture },{ "depth", depth } });
+	RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } }, PostprocessRenderingQuad.get());
 
-	RegisterRenderPass(eRenderPassType::BACKGROUND,
-		"Shaders/bgFrag.shader",
-		{},
-		{ { "color", texture }, { "depth", depth } }
-	);
-	RegisterRenderPass(eRenderPassType::BACKGROUND_LIGHT,
-		"Shaders/bgLightFrag.shader",
-		{},
-		{ { "color", texture },	{ "depth", depth } }
-	);
-	RegisterRenderPass(eRenderPassType::FOREGROUND,
-		"Shaders/fgFrag.shader",
-		{ { "i_color", texture } }
-		//, { { "color", texture },{ "depth", depth } }
-	);
-	RegisterRenderPass(eRenderPassType::FOREGROUND_LIGHT,
-		"Shaders/fgLightFrag.shader",
-		{ { "i_color", texture } }
-		//,{ { "color", texture },{ "depth", depth } }
-	);
-	RegisterRenderPass(eRenderPassType::VIGNETTE,
-		"Shaders/vinetteFrag.shader",
-		{ { "i_color", texture } }
-		//, { { "color", texture },{ "depth", depth } }
-	);
+
+	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND,			"Shaders/bgFrag.shader",		{}, { { "o_color", texture },	{ "depth", depth } });
+	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND_LIGHT,	"Shaders/bgLightFrag.shader",	{}, { { "o_color", texture },	{ "depth", depth } });
+	RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND,			"Shaders/fgFrag.shader",		{ { "i_color", texture } },		{} );
+	RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND_LIGHT,	"Shaders/fgLightFrag.shader",	{ { "i_color", texture } },		{} );
+	RegisterPostprocessPass(ePostprocessRenderPassType::VINETTE,			"Shaders/vinetteFrag.shader",	{ { "i_color", texture } } );
+}
+
+//------------------------------------------------------------------------------
+void Poly::GLRenderingDevice::CleanUpResources()
+{
+	RenderingTargets.Clear();
+	for (eGeometryRenderPassType passType : IterateEnum<eGeometryRenderPassType>())
+		GeometryRenderingPasses[passType].reset();
+	for (ePostprocessRenderPassType passType : IterateEnum<ePostprocessRenderPassType>())
+		PostprocessRenderingPasses[passType].reset();
+	PostprocessRenderingQuad.reset();
 }
 
 //------------------------------------------------------------------------------

@@ -15,21 +15,42 @@
 #include <iostream>
 #include <string>
 
+// Custom type names
+using u8 = uint8_t;
+using u16 = uint16_t;
+using u32 = uint32_t;
+using u64 = uint64_t;
+using i8 = int8_t;
+using i16 = int16_t;
+using i32 = int32_t;
+using i64 = int64_t;
+using f32 = float;
+using f64 = double;
+
+using uint = unsigned int;
+
 // stupid warning in MSVC about template specialization exporting, according to https://msdn.microsoft.com/en-US/library/esew7y1w.aspx it can be ignored
 #if defined(_WIN32)
 	#pragma warning(disable: 4251)
 	#pragma warning(disable: 4275)
+	#define SILENCE_MSVC_WARNING(warning_id, reason) \
+		__pragma(warning(push))                      \
+		__pragma(warning(disable:warning_id))
+	#define UNSILENCE_MSVC_WARNING() __pragma(warning(pop))
+#else
+	#define SILENCE_MSVC_WARNING(unused_warning_id, unused_reason)
+	#define UNSILENCE_MSVC_WARNING()
 #endif
 
-#ifdef __GNUC__
+#ifdef __GNUC__ //todo(vuko): add a reason parameter to the warning-silencing macro
 	#define IMPL_SAVE_WARNING_SETTINGS _Pragma("GCC diagnostic push")
 	#define IMPL_SILENCE_WARNING(w) _Pragma(#w)
-	#define SILENCE_GCC_WARNING(w)                     \
+	#define SILENCE_GCC_WARNING(w, reason)             \
 		IMPL_SAVE_WARNING_SETTINGS                     \
 		IMPL_SILENCE_WARNING(GCC diagnostic ignored #w)
 	#define UNSILENCE_GCC_WARNING() _Pragma("GCC diagnostic pop")
 #else
-	#define SILENCE_GCC_WARNING(unused)
+	#define SILENCE_GCC_WARNING(unused_w, unused_reason)
 	#define UNSILENCE_GCC_WARNING()
 #endif
 
@@ -103,13 +124,22 @@ constexpr auto MAX_FLOAT = (std::numeric_limits<float>::max)(); //the parenthese
 constexpr auto MIN_FLOAT = (std::numeric_limits<float>::min)();
 
 // Assertions
-#define ASSERTE(expr, msg) assert((expr) && #msg)
-#define HEAVY_ASSERTE(expr, msg) assert((expr) && #msg)
+#define ASSERTE(expr, msg) assert((expr) && static_cast<const char*>(#msg)) //note(muniu): enabled in all builds except Release
+#define HEAVY_ASSERTE(expr, msg) assert((expr) && static_cast<const char*>(#msg)) //todo(muniu): enabled only in Debug
 #define STATIC_ASSERTE(expr, msg) static_assert(expr, msg)
+
+// `Unreachable code` compiler intrinsic
+#if defined(FINAL) && defined(_WIN32)
+#define UNREACHABLE() __assume(0);
+#elif defined(FINAL) && (defined(__GNUC__) || defined(__clang__))
+#define UNREACHABLE() __builtin_unreachable();
+#else
+#define UNREACHABLE() do { assert("Unreachable code reached!" && false); throw; } while (false) //note(vuko): `throw` is needed to terminate the control path (assert is sadly not enough)
+#endif
 
 // Utilities
 #define BIT(x) (1u<<x)
 
-#define UNUSED(expr) do { (void)(expr); } while (0)
+#define UNUSED(expr) do { (void)(expr); } while (false)
 
 #include "BaseObject.hpp"

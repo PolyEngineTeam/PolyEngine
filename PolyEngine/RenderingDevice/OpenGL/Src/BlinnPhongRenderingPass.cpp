@@ -16,10 +16,8 @@ const float IntensityThreshold = 0.05f;
 const size_t MAX_POINT_LIGHT_COUNT = 8;
 
 BlinnPhongRenderingPass::BlinnPhongRenderingPass()
-	: RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
+: RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
 {
-	GetProgram().RegisterUniform("vec4", "uBaseColor");
-
 	GetProgram().RegisterUniform("vec4", "uDiffuseLight.Color");
 	GetProgram().RegisterUniform("float", "uDiffuseLight.Intensity");
 
@@ -27,9 +25,9 @@ BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 	GetProgram().RegisterUniform("float", "uDirectionalLight.Base.Intensity");
 	GetProgram().RegisterUniform("vec4", "uDirectionalLight.Direction");
 
-	for (int i = 0; i < MAX_POINT_LIGHT_COUNT; ++i)
+	for (size_t i = 0; i < MAX_POINT_LIGHT_COUNT; ++i)
 	{
-		String baseName = String("uPointLight[") + String::From(i) + String("].");
+		String baseName = String("uPointLight[") + String::From(static_cast<int>(i)) + String("].");
 		GetProgram().RegisterUniform("vec4", baseName + "Base.Color");
 		GetProgram().RegisterUniform("float", baseName + "Base.Intensity");
 		GetProgram().RegisterUniform("vec4", baseName + "Position");
@@ -40,15 +38,13 @@ BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 	GetProgram().RegisterUniform("int", "uPointLightCount");
 }
 
-void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera, const AABox& rect)
+void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/)
 {
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
 
 	DiffuseLightSourceWorldComponent* diffuseCmp = world->GetWorldComponent<DiffuseLightSourceWorldComponent>();
-	Vector CameraDirection = camera->GetMVP() * Vector::UNIT_Z;
 
-	GetProgram().SetUniform("uCameraDirection", CameraDirection);
 	GetProgram().SetUniform("uDiffuseLight.Color", diffuseCmp->GetColor());
 	GetProgram().SetUniform("uDiffuseLight.Intensity", diffuseCmp->GetIntensity());
 
@@ -60,7 +56,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 
 		GetProgram().SetUniform("uDirectionalLight.Base.Color", dirLightCmp->GetColor());
 		GetProgram().SetUniform("uDirectionalLight.Base.Intensity", dirLightCmp->GetIntensity());
-		GetProgram().SetUniform("uDirectionalLight.Direction", transformCmp->GetGlobalRotation() * Vector::UNIT_Z);
+		GetProgram().SetUniform("uDirectionalLight.Direction", MovementSystem::GetGlobalForward(transformCmp));
 		// use only first on scene
 		break;
 	}
@@ -77,7 +73,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		GetProgram().SetUniform(baseName + "Base.Intensity", pointLightCmp->GetIntensity());
 		GetProgram().SetUniform(baseName + "Position", transformCmp->GetGlobalTranslation());
 		GetProgram().SetUniform(baseName + "Attenuation", pointLightCmp->GetAttenuation());
-		float range = sqrt(((1.f / IntensityThreshold) - 1.0f) / pointLightCmp->GetAttenuation());
+		float range = sqrt(((1.f / IntensityThreshold) - 1.0f)/ pointLightCmp->GetAttenuation());
 		GetProgram().SetUniform(baseName + "Range", range);
 		// use only first on scene
 		++pointLightsCount;
@@ -92,23 +88,25 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	float horizontalSpan = (cameraHeight * camera->GetAspect()) / 2.0f;
 	Vector cameraPos = camera->GetSibling<TransformComponent>()->GetGlobalTranslation();
 
+
+
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
 
-		// if (meshCmp->IsTransparent())
-		// 	continue;
+		if (meshCmp->IsTransparent())
+			continue;
 
 		Vector objPos = transCmp->GetGlobalTranslation();
 
-		// bool shouldCull = objPos.Y > cameraPos.Y + verticalSpan;
-		// shouldCull = shouldCull || objPos.Y < cameraPos.Y - verticalSpan;
-		// shouldCull = shouldCull || objPos.X > cameraPos.X + horizontalSpan;
-		// shouldCull = shouldCull || objPos.X < cameraPos.X - horizontalSpan;
-		// if (shouldCull)
-		// 	continue;
+		bool shouldCull = objPos.Y > cameraPos.Y + verticalSpan;
+		shouldCull = shouldCull || objPos.Y < cameraPos.Y - verticalSpan;
+		shouldCull = shouldCull || objPos.X > cameraPos.X + horizontalSpan;
+		shouldCull = shouldCull || objPos.X < cameraPos.X - horizontalSpan;
+		if (shouldCull)
+			continue;
 
 
 		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
@@ -125,8 +123,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 			if (subMesh->GetMeshData().GetDiffTexture())
 			{
 				glActiveTexture(GL_TEXTURE0);
-				GLuint TextureID = static_cast<const GLTextureDeviceProxy*>(subMesh->GetMeshData().GetDiffTexture()->GetTextureProxy())->GetTextureID();
-				glBindTexture(GL_TEXTURE_2D, TextureID);
+				glBindTexture(GL_TEXTURE_2D, static_cast<const GLTextureDeviceProxy*>(subMesh->GetMeshData().GetDiffTexture()->GetTextureProxy())->GetTextureID());
 			}
 
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);

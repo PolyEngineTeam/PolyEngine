@@ -34,14 +34,9 @@ namespace Poly {
 			String TypeName;
 			size_t Index = 0;
 		};
-
 	public:
 		GLShaderProgram(const String& vertex, const String& fragment);
 		GLShaderProgram(const String& vertex, const String& geometry, const String& fragment);
-
-		const String VertexProgramPath;
-		const String GeometryProgramPath;
-		const String FragmentProgramPath;
 
 		void BindProgram() const;
 
@@ -58,7 +53,6 @@ namespace Poly {
 		const std::map<String, UniformInfo>& GetUniformsInfo() const { return Uniforms; }
 
 		void RegisterUniform(const String& type, const String& name);
-
 	private:
 		void CompileProgram();
 		void Validate();

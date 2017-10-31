@@ -66,13 +66,13 @@ SoundResource::SoundResource(const String& path)
 		}
 
 		if (ogg_stream_packetout(&streamState, &packet) != 1)
-		{ 
+		{
 			gConsole.LogDebug("Error reading initial header packet.");
 			throw OggDecoderException();
 		}
 
 		if (vorbis_synthesis_headerin(&vorbisInfo, &vorbisComment, &packet) < 0)
-		{ 
+		{
 			gConsole.LogDebug("This Ogg bitstream does not contain Vorbis audio data.");
 			throw OggDecoderException();
 		}
@@ -83,15 +83,15 @@ SoundResource::SoundResource(const String& path)
 			{
 				int result = ogg_sync_pageout(&syncState, &page);
 
-				if (result == 0) break; 
+				if (result == 0) break;
 				if (result == 1)
 				{
-					ogg_stream_pagein(&streamState, &page); 
+					ogg_stream_pagein(&streamState, &page);
 					while (i < 2){
 						result = ogg_stream_packetout(&streamState, &packet);
 						if (result == 0) break;
 						if (result < 0)
-						{ 
+						{
 							gConsole.LogDebug("Corrupt secondary header.  Exiting.");
 							throw OggDecoderException();
 						}
@@ -108,7 +108,7 @@ SoundResource::SoundResource(const String& path)
 				}
 			}
 
-			size_t increase = bytesRead + 4096 <= data->GetSize() ? 4096 : data->GetSize() - bytesRead;
+			auto increase = long(bytesRead + 4096 <= data->GetSize() ? 4096 : data->GetSize() - bytesRead);
 			buffer = ogg_sync_buffer(&syncState, increase);
 			memcpy(buffer, data->GetData() + bytesRead, increase);
 			bytesRead += increase;
@@ -138,8 +138,8 @@ SoundResource::SoundResource(const String& path)
 
 		convsize = 4096 / vorbisInfo.channels;
 
-		if (vorbis_synthesis_init(&vorbisDSPState, &vorbisInfo) == 0) 
-		{										  
+		if (vorbis_synthesis_init(&vorbisDSPState, &vorbisInfo) == 0)
+		{
 			vorbis_block_init(&vorbisDSPState, &vorbisBlock);
 
 			// Decoder initialized; decoding until end of stream (eos)
@@ -149,16 +149,16 @@ SoundResource::SoundResource(const String& path)
 				while (!eos)
 				{
 					int result = ogg_sync_pageout(&syncState, &page);
-					if (result == 0) break; 
+					if (result == 0) break;
 					if (result< 0) gConsole.LogDebug("Corrupt or missing data in bitstream; continuing...");
 					else
 					{
-						ogg_stream_pagein(&streamState, &page); 
+						ogg_stream_pagein(&streamState, &page);
 						while (true)
 						{
 							result = ogg_stream_packetout(&streamState, &packet);
 
-							if (result == 0) break; 
+							if (result == 0) break;
 							if (result < 0) continue;
 							else
 							{
@@ -180,7 +180,7 @@ SoundResource::SoundResource(const String& path)
 										float* mono = pcm[i];
 										for (j = 0; j < bout; j++)
 										{
-											int val = floor(mono[j] * 32767.f+.5f);
+											auto val = int(floor(mono[j] * 32767.f+.5f));
 
 											if (val > 32767)
 											{
@@ -212,8 +212,8 @@ SoundResource::SoundResource(const String& path)
 									rawData.Resize(oldDataSize + newBlocksize);
 									memcpy(rawData.GetData() + oldDataSize, convbuffer, newBlocksize);
 
-									vorbis_synthesis_read(&vorbisDSPState, bout); 
-								}            
+									vorbis_synthesis_read(&vorbisDSPState, bout);
+								}
 							}
 						}
 						if (ogg_page_eos(&page)) eos = 1;
@@ -229,9 +229,9 @@ SoundResource::SoundResource(const String& path)
 						break;
 					}
 
-					
-					
-					size_t increase = bytesRead + 4096 <= data->GetSize() ? 4096 : data->GetSize() - bytesRead;
+
+
+					auto increase = long(bytesRead + 4096 <= data->GetSize() ? 4096 : data->GetSize() - bytesRead);
 					buffer = ogg_sync_buffer(&syncState, increase);
 					memcpy(buffer, data->GetData() + bytesRead, increase);
 					bytesRead += increase;
@@ -246,7 +246,7 @@ SoundResource::SoundResource(const String& path)
 		else gConsole.LogDebug("Error: Corrupt header during playback initialization.");
 
 		// TODO: loading chained sounds;
-		alBufferData(BufferID, AL_FORMAT_STEREO16, rawData.GetData(), rawData.GetSize(), vorbisInfo.rate);
+		alBufferData(BufferID, AL_FORMAT_STEREO16, rawData.GetData(), (ALsizei)rawData.GetSize(), vorbisInfo.rate);
 
 		ogg_stream_clear(&streamState);
 		vorbis_comment_clear(&vorbisComment);
@@ -261,6 +261,6 @@ SoundResource::SoundResource(const String& path)
 }
 
 SoundResource::~SoundResource()
-{	
+{
 	alDeleteBuffers(1, &BufferID);
 }

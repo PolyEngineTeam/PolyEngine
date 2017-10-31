@@ -13,8 +13,8 @@ namespace Poly
 	public:
 		//------------------------------------------------------------------------------
 		Timer(bool isPausable = false, double multiplier = 1) :
-			IsPausable(isPausable),
-			Multiplier(multiplier){}
+			Multiplier(multiplier),
+			IsPausable(isPausable){}
 
 		void SetMultiplier(double multiplier) { Multiplier = multiplier; }
 		double GetTime() const { return Time.count(); }

@@ -8,6 +8,9 @@ notifications:
 # Enable C++ support
 language: cpp
 
+# Enable compiler cache to speed up compilation
+cache: ccache
+
 matrix:
   include:
     - compiler: gcc
@@ -23,12 +26,12 @@ before_install:
   - export CXX=${COMPILER}
   - sudo apt-get update -qq
   - sudo apt-get install -qq mesa-common-dev libx11-dev
-  - sudo apt-get install -qq libglew-dev libsoil-dev libassimp-dev libfreetype6-dev libopenal-dev libogg-dev libvorbis-dev
+  - sudo apt-get install -qq libepoxy-dev libsoil-dev libassimp-dev libfreetype6-dev libopenal-dev libogg-dev libvorbis-dev libbox2d-dev
 
-install:  
+install:
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
   - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
-  
+
   ############################################################################
   # Install a recent CMake
   ############################################################################
@@ -40,7 +43,7 @@ install:
     else
       brew upgrade cmake || brew install cmake
     fi
-  - cmake --version 
+  - cmake --version
 
 
 before_script:
@@ -50,9 +53,8 @@ before_script:
   - cd ${TRAVIS_BUILD_DIR}
 
 script:
-  - cd PolyEngine
-  - mkdir build
-  - cd build
-  - cmake -DCMAKE_CXX_COMPILER=$COMPILER .. && make polytests
-  - cd $TRAVIS_BUILD_DIR/PolyEngine/build/UnitTests
-  - ./polytests
+  - mkdir -p PolyEngine/build
+  - cd PolyEngine/build
+  - cmake -DCMAKE_CXX_COMPILER=$COMPILER -DUSE_BUNDLED_CATCH=ON ..
+  - make
+  - UnitTests/polytests

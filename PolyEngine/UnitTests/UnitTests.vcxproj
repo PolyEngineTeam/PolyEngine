@@ -72,6 +72,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)Core\Src;$(SolutionDir)Engine\Src;$(SolutionDir)ThirdParty\Catch\Include</AdditionalIncludeDirectories>
@@ -84,6 +85,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)Core\Src;$(SolutionDir)Engine\Src;$(SolutionDir)ThirdParty\Catch\Include</AdditionalIncludeDirectories>
@@ -96,6 +98,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -112,6 +115,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -127,17 +131,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\AABoxTests.cpp" />
+    <ClCompile Include="Src\AARectTests.cpp" />
     <ClCompile Include="Src\AllocatorTests.cpp" />
     <ClCompile Include="Src\AngleTests.cpp" />
+    <ClCompile Include="Src\OrderedMapTests.cpp" />
     <ClCompile Include="Src\BasicMathTests.cpp" />
     <ClCompile Include="Src\DynarrayTests.cpp" />
     <ClCompile Include="Src\EnumUtilsTests.cpp" />
     <ClCompile Include="Src\main.cpp" />
     <ClCompile Include="Src\MatrixTests.cpp" />
+    <ClCompile Include="Src\OptionalTests.cpp" />
     <ClCompile Include="Src\QuaternionTests.cpp" />
     <ClCompile Include="Src\QueueTests.cpp" />
     <ClCompile Include="Src\ResourceManagerTests.cpp" />
+    <ClCompile Include="Src\RTTITests.cpp" />
     <ClCompile Include="Src\StringTests.cpp" />
+    <ClCompile Include="Src\UnsafeStorageTests.cpp" />
+    <ClCompile Include="Src\Vector2fTests.cpp" />
+    <ClCompile Include="Src\Vector2iTests.cpp" />
     <ClCompile Include="Src\VectorTests.cpp" />
     <ClCompile Include="Src\TransformComponentTests.cpp" />
   </ItemGroup>

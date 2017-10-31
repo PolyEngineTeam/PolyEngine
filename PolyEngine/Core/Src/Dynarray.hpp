@@ -4,7 +4,7 @@
 #include "Defines.hpp"
 #include "Allocator.hpp"
 
-namespace Poly 
+namespace Poly
 {
 	/// <summary>
 	/// Dynarray is a vector based container thet allocates its memory in one, continous block.
@@ -153,7 +153,7 @@ namespace Poly
 		/// <summary>Not-equal comparison operator with other dynarray.</summary>
 		/// <returns>bool True when equal operator returns false, false otherwise.</returns>
 		bool operator!=(const Dynarray<T>& rhs) const { return !(*this == rhs); };
-		
+
 		/// <summary>Checks whether dynarray is empty.</summary>
 		/// <returns>True if is empty, false otherwise.</returns>
 		bool IsEmpty() const { return GetSize() == 0; }
@@ -372,7 +372,7 @@ namespace Poly
 		void Realloc(size_t capacity)
 		{
 			HEAVY_ASSERTE(Size <= capacity, "Invalid resize capacity!");
-			T* newData = static_cast<T*>(DefaultAlloc(capacity * sizeof(T)));
+			T* newData = Allocate<T>(capacity);
 
 			// move all elements
 			for (size_t i = 0; i < Size; ++i)
@@ -381,12 +381,12 @@ namespace Poly
 				ObjectLifetimeHelper::Destroy(Data + i);
 			}
 
-			DefaultFree(Data);
+			Deallocate(Data);
 			Data = newData;
 			Capacity = capacity;
 		}
 
-		void Free() { if (Data) DefaultFree(Data); }
+		void Free() { if (Data) Deallocate(Data); }
 
 		//------------------------------------------------------------------------------
 		void Copy(const Dynarray<T>& rhs)

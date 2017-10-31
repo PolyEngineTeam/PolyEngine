@@ -32,6 +32,9 @@ namespace Poly
 		SCREEN_SPACE_TEXT,
 		SOUND_EMMITER,
 		SOUND_LISTENER,
+		RIGIDBODY_2D,
+		BOX2D_COLLIDER,
+		CIRCLE2D_COLLIDER,
 		DIRECTIONAL_LIGHTSOURCE,
 		POINT_LIGHTSOURCE,
 		POSTPROCESS_SETTINGS,
@@ -50,6 +53,7 @@ namespace Poly
 		DEBUG,
 		DEFERRED_TASK,
 		SOUND,
+		PHYSICS_2D,
 		DIFFUSE_LIGHTSOURCE,
 		_COUNT
 	};
@@ -67,10 +71,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT Engine : public BaseObject<>
 	{
 	public:
-		/// <summary>Constructs engine instance. Registers engine components. Registers and creates world components.
-		/// Registers engine update phases and initializes game dbject. </summary>
-		/// <param name="game">Pointer to IGame instance.</param>
-		/// <param name="device">Pointer to IRenderingDevice instance.</param>
+		/// <summary>Constructs engine instance.</summary>
 		Engine();
 
 		/// <summary>Deletes engine instance.</summary>
@@ -85,7 +86,11 @@ namespace Poly
 			POSTUPDATE,
 			_COUNT
 		};
-		
+
+		/// <summary>Registers engine components. Registers and creates world components.
+		/// Registers engine update phases and initializes game dbject. </summary>
+		/// <param name="game">Pointer to IGame instance.</param>
+		/// <param name="device">Pointer to IRenderingDevice instance.</param>
 		void Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device);
 
 		/// <summary>Registers a PhaseUpdateFunction to be executed in the update.</summary>
@@ -223,5 +228,5 @@ namespace Poly
 	ENGINE_DLLEXPORT extern Engine* gEngine;
 }
 
-#define DECLARE_GAME() extern "C" { DEVICE_DLLEXPORT Poly::IGame* POLY_STDCALL CreateGame(); }
+#define DECLARE_GAME() extern "C" { GAME_DLLEXPORT Poly::IGame* POLY_STDCALL CreateGame(); }
 #define DEFINE_GAME(type) Poly::IGame* POLY_STDCALL CreateGame() { return new type(); }

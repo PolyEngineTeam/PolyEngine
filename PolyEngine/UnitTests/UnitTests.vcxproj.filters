@@ -16,10 +16,16 @@
     <ClCompile Include="Src\MatrixTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Src\OptionalTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Src\VectorTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\AngleTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\OrderedMapTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\DynarrayTests.cpp">
@@ -40,6 +46,9 @@
     <ClCompile Include="Src\TransformComponentTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Src\UnsafeStorageTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Src\ResourceManagerTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -47,6 +56,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\StringTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Vector2fTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Vector2iTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\AARectTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\RTTITests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

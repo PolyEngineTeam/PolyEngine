@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.6) #TODO(vuko): test older versions (3.2 seems to work for basic options with the exception of Fetch-Catch which needs 3.3)
-project(PolyEngine VERSION 0.0.2 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.2)
+project(PolyEngine VERSION 0.1.2 LANGUAGES CXX C) #note(vuko): without C older CMake versions fail to process FindX11 the first time
 
 ##
 # Initial setup: C++ standard version, build types, CMake modules
@@ -105,19 +105,27 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "(Clang|^GNU$)")
 	add_compile_options(-pipe)
 	add_compile_options(-Wall)
 	add_compile_options(-Wextra)
+	add_compile_options(-Werror)
 	add_compile_options(-fvisibility=hidden)
+	add_compile_options(-fvisibility-inlines-hidden)
 	add_compile_options($<$<STREQUAL:${CMAKE_GENERATOR},Ninja>:-fdiagnostics-color=always>)
 	add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:-g>)
 	add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:-fno-omit-frame-pointer>)
 	add_compile_options($<$<CONFIG:DebugFast>:-O1>)
 	add_compile_options($<$<OR:$<CONFIG:Testing>,$<CONFIG:Release>>:-O3>)
 	add_compile_options($<$<CONFIG:Release>:-DFINAL>) #NOTE(vuko): add_definitions() does not support generator expressions
+	add_compile_options($<$<CONFIG:Release>:-mtune=native>)
+	set(SIMD_FLAGS -msse4.2 -mfpmath=sse) #note(vuko): $<CXX_COMPILER_ID:comp> and cotire do not get along, see cotire issue #124
+	link_libraries($<$<PLATFORM_ID:Linux>:-Wl,--enable-new-dtags>) #use DT_RUNPATH instead of DT_RPATH
 	#TODO(vuko): more build type macro definitions (once we decide on them)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	add_definitions(/DNOMINMAX) #those macros are useless and just keep messing things up, so disable them
 	add_compile_options($<$<CONFIG:Release>:/DFINAL>)
+	set(SIMD_FLAGS "") #doesn't seem we need them
 	if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
 		#add_compile_options(/Wall) #NOTE(vuko): too chatty when it comes to stdlib, enable on demand
+		add_compile_options(/W3) #warning level 3 (includes lower levels)
+		add_compile_options(/Wx) #treat warnings as errors
 		add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:/Zi>) #debug symbols
 		add_compile_options($<$<CONFIG:DebugFast>:/O1>)
 		add_compile_options($<$<OR:$<CONFIG:Testing>,$<CONFIG:Release>>:/Ox>) #max optimizations
@@ -146,6 +154,7 @@ include(sanitizers)
 ##
 find_program(CCACHE_FOUND ccache)
 if(CCACHE_FOUND)
+	message(STATUS "ccache will be used: ${CCACHE_FOUND}")
 	set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
 	set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif(CCACHE_FOUND)
@@ -163,24 +172,28 @@ endif(CCACHE_FOUND AND COMMAND cotire)
 # Finally, meat and potatoes
 ##
 add_subdirectory(Core)
-add_subdirectory(Engine)
-add_subdirectory(CzolgInvaders)
-add_subdirectory(RenderingDevice/OpenGL)
 if(NOT SANITIZER_MEMORY)
+	add_subdirectory(Engine)
+	add_subdirectory(RenderingDevice/OpenGL)
 	if(WIN32)
 		add_subdirectory(Standalone/Windows)
-	else(WIN32)
+	elseif(APPLE)
+		add_subdirectory(Standalone/macOS)
+	else()
 		add_subdirectory(Standalone/Linux)
-	endif(WIN32)
+	endif()
+	if(BUILD_TESTS)
+		enable_testing()
+		add_subdirectory(UnitTests)
+	endif(BUILD_TESTS)
+	add_subdirectory(Games/CzolgInvaders)
+	add_subdirectory(Games/SGJGame)
 else()
-	message(STATUS "MemorySanitizer detected. Standalone disabled due to many shared library dependencies.")
+	message(STATUS "MemorySanitizer enabled!")
+	message(STATUS "Disabling all targets except PolyCore due to external dependencies.")
 	message(STATUS "MemorySanitizer requires for EVERY dependency to be also instrumented.")
-	message(STATUS "Hint: consider using Valgrind instead.")
+	message(STATUS "Hint: consider using Valgrind instead for other targets.")
 endif()
-if(BUILD_TESTS)
-	enable_testing()
-	add_subdirectory(UnitTests)
-endif(BUILD_TESTS)
 
 ##
 # Doxygen
@@ -208,9 +221,9 @@ if(RUN_CLANG_TIDY_PY)   #we got the script, use it
 
 	add_custom_target(clang-tidy COMMAND ${RUN_CLANG_TIDY_PY} -p "${CMAKE_BINARY_DIR}" DEPENDS "compile_commands.json")
 
-else(CMAKE_VERSION VERSION_EQUAL 3.8 OR CMAKE_VERSION VERSION_GREATER 3.8)
+else(NOT CMAKE_VERSION VERSION_LESS 3.8)
 
-	#don't have it, replicate it somewhat (needs CMake 3.7 for BUILDSYSTEM_TARGETS property and 3.8 for COMMAND_EXPAND_LISTS; ironically VERSION_GREATER_EQUAL also needs 3.7)
+	#don't have it, replicate it somewhat (needs CMake 3.7 for BUILDSYSTEM_TARGETS property and 3.8 for COMMAND_EXPAND_LISTS)
 	set(CLANG_TIDY_SOURCES "")
 	get_directory_property(subdirs SUBDIRECTORIES)
 	foreach(dir IN LISTS subdirs)
@@ -229,8 +242,15 @@ else(CMAKE_VERSION VERSION_EQUAL 3.8 OR CMAKE_VERSION VERSION_GREATER 3.8)
 		endforeach()
 
 	endforeach()
-	add_custom_target(clang-tidy COMMAND ${CLANG_TIDY_EXE} -p "${CMAKE_BINARY_DIR}" "${CLANG_TIDY_SOURCES}" DEPENDS "compile_commands.json" WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" COMMAND_EXPAND_LISTS)
+	add_custom_target(
+			clang-tidy
+			COMMAND ${CLANG_TIDY_EXE} -p "${CMAKE_BINARY_DIR}" "${CLANG_TIDY_SOURCES}"
+			DEPENDS "compile_commands.json"
+			WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+			COMMAND_EXPAND_LISTS
+	)
 
 endif()
 
 #TODO(vuko): install and stuff
+#todo(vuko): source file categories for VS

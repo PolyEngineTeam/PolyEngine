@@ -72,6 +72,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>
@@ -84,6 +85,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>
@@ -96,6 +98,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -114,6 +117,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -130,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\AARect.cpp" />
     <ClCompile Include="Src\BaseObject.cpp" />
     <ClCompile Include="Src\BinaryBuffer.cpp" />
     <ClCompile Include="Src\Color.cpp" />
@@ -144,14 +149,21 @@
     <ClCompile Include="Src\Quaternion.cpp" />
     <ClCompile Include="Src\AABox.cpp" />
     <ClCompile Include="Src\RefCountedBase.cpp" />
+    <ClCompile Include="Src\RTTI.cpp" />
+    <ClCompile Include="Src\RTTITypeInfo.cpp" />
     <ClCompile Include="Src\SimdMath.cpp" />
     <ClCompile Include="src\String.cpp" />
     <ClCompile Include="Src\UniqueID.cpp" />
     <ClCompile Include="Src\Vector.cpp" />
+    <ClCompile Include="Src\Vector2f.cpp" />
+    <ClCompile Include="Src\Vector2i.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\AARect.hpp" />
     <ClInclude Include="Src\Allocator.hpp" />
     <ClInclude Include="Src\Angle.hpp" />
+    <ClInclude Include="Src\OrderedMap.hpp" />
+    <ClInclude Include="Src\BTreeNode.hpp" />
     <ClInclude Include="Src\BaseObject.hpp" />
     <ClInclude Include="Src\BasicMath.hpp" />
     <ClInclude Include="Src\BinaryBuffer.hpp" />
@@ -165,16 +177,25 @@
     <ClInclude Include="Src\IterablePoolAllocator.hpp" />
     <ClInclude Include="Src\Logger.hpp" />
     <ClInclude Include="Src\Matrix.hpp" />
+    <ClInclude Include="Src\Optional.hpp" />
     <ClInclude Include="Src\ObjectLifetimeHelpers.hpp" />
     <ClInclude Include="Src\PoolAllocator.hpp" />
     <ClInclude Include="Src\Quaternion.hpp" />
     <ClInclude Include="Src\Queue.hpp" />
     <ClInclude Include="Src\AABox.hpp" />
     <ClInclude Include="Src\RefCountedBase.hpp" />
+    <ClInclude Include="Src\RTTI.hpp" />
+    <ClInclude Include="Src\RTTICast.hpp" />
+    <ClInclude Include="Src\RTTIProperty.hpp" />
+    <ClInclude Include="Src\RTTITypeInfo.hpp" />
+    <ClInclude Include="Src\RTTITypeInfoImpl.hpp" />
     <ClInclude Include="Src\SimdMath.hpp" />
     <ClInclude Include="Src\String.hpp" />
     <ClInclude Include="Src\UniqueID.hpp" />
+    <ClInclude Include="Src\UnsafeStorage.hpp" />
     <ClInclude Include="Src\Vector.hpp" />
+    <ClInclude Include="Src\Vector2f.hpp" />
+    <ClInclude Include="Src\Vector2i.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

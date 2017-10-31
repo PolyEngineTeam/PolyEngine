@@ -74,7 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	// RECT viewportRect = { 0, 0, 1413,  600 };	// Cinematic medium
 	// RECT viewportRect = { 0, 0, 1920,  804 };	// Cinematic big
 	RECT viewportRect = { 0, 0,  960,  540 };	// half HD
-	// RECT viewportRect = { 0, 0, 1920, 1080 };	// full HD, Presentation
+	// RECT viewportRect = { 0, 0, 1920, 1080 };	// full HD
 	RECT windowRect = viewportRect;    // set the size, but not the position
 	AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
 
@@ -105,7 +105,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(LoadGame());
 	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(hWnd, viewportRect));
 
-	Engine.Init(std::move(game), std::move(device));
+	Engine.Init(std::move(game), std::move(device));	
 	Poly::gConsole.LogDebug("Engine loaded successfully");
 
 	// wait for the next message in the queue, store the result in 'msg'

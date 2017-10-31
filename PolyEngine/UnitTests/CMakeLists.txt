@@ -2,20 +2,26 @@ set(POLYTESTS_SRCS
 	Src/AABoxTests.cpp
 	Src/AllocatorTests.cpp
 	Src/AngleTests.cpp
+	Src/OrderedMapTests.cpp
 	Src/BasicMathTests.cpp
 	Src/DynarrayTests.cpp
 	Src/EnumUtilsTests.cpp
-	Src/main.cpp
 	Src/MatrixTests.cpp
-	Src/ResourceManagerTests.cpp
-	Src/StringTests.cpp
-	Src/TransformComponentTests.cpp
+	Src/OptionalTests.cpp
 	Src/QuaternionTests.cpp
 	Src/QueueTests.cpp
+	Src/ResourceManagerTests.cpp
+	Src/RTTITests.cpp
+	Src/StringTests.cpp
+	Src/TransformComponentTests.cpp
+	Src/UnsafeStorageTests.cpp
 	Src/VectorTests.cpp
+	Src/Vector2fTests.cpp
+	Src/Vector2iTests.cpp
+	Src/main.cpp
 )
 
-if(NOT TARGET Catch) #TODO(vuko): falling back to bundled Catch after failing the download doesn't seem to be possible... or is it?
+if(NOT TARGET Catch)
 	include(ExternalProject)
 	if(IS_TRAVIS_BUILD)
 		set(FETCH_EXTERNAL_CATCH GIT_REPOSITORY https://github.com/philsquared/Catch.git GIT_TAG 0c015aa8878db0b582afa95bb9ef8ebf97baf232)
@@ -32,26 +38,28 @@ if(NOT TARGET Catch) #TODO(vuko): falling back to bundled Catch after failing th
 		BUILD_COMMAND ""
 		INSTALL_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/3rdparty/Catch/src/Fetch-Catch/single_include/catch.hpp
 		                                         ${CMAKE_BINARY_DIR}/3rdparty/Catch/include/catch.hpp
+		UPDATE_DISCONNECTED ON
+		EXCLUDE_FROM_ALL    ON
 	)
 
 	add_library(Catch INTERFACE)
-	if(NOT USE_BUNDLED_CATCH)
+	if(NOT USE_BUNDLED_CATCH AND TARGET Fetch-Catch AND NOT CMAKE_VERSION VERSION_LESS 3.3)
 		add_dependencies(Catch Fetch-Catch)
 		target_include_directories(Catch INTERFACE ${CMAKE_BINARY_DIR}/3rdparty/Catch/include)
-	else(NOT USE_BUNDLED_CATCH)
+	else()
 		target_include_directories(Catch INTERFACE ${PROJECT_SOURCE_DIR}/ThirdParty/Catch/Include)
-	endif(NOT USE_BUNDLED_CATCH)
+	endif()
 endif(NOT TARGET Catch)
 
 add_executable(polytests ${POLYTESTS_SRCS})
-target_link_libraries(polytests polycore polyengine Catch)
+target_link_libraries(polytests PRIVATE polycore polyengine Catch)
 add_custom_target(tests COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS polytests)
 #WORKAROUND(vuko): CTest tests do not depend on targets that produce COMMAND executables, so add a dummy test that will force a recompilation if needed
 add_test(NAME "BUILD_TESTS"                                   COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target polytests --config "$<CONFIG>")
 #TODO(vuko): one has to manually add a case here every time you add a new test to Catch... Maybe grep the files looking for TEST_CASE then generate?
-add_test(NAME "AABox-contains"                               COMMAND polytests "AABox contains")
-add_test(NAME "AABox-collisions-with-other-AABox"           COMMAND polytests "AABox collisions with other AABox")
-add_test(NAME "AABox-intersection-calculation"               COMMAND polytests "AABox intersection calculation")
+add_test(NAME "AABox-contains"                                COMMAND polytests "AABox contains")
+add_test(NAME "AABox-collisions-with-other-AABox"             COMMAND polytests "AABox collisions with other AABox")
+add_test(NAME "AABox-intersection-calculation"                COMMAND polytests "AABox intersection calculation")
 add_test(NAME "Pool-allocator"                                COMMAND polytests "Pool allocator")
 add_test(NAME "Iterable-pool-allocator"                       COMMAND polytests "Iterable pool allocator")
 add_test(NAME "Angle-constructors"                            COMMAND polytests "Angle constructors")
@@ -81,6 +89,15 @@ add_test(NAME "Vector-comparison-operators"                   COMMAND polytests 
 add_test(NAME "Vector-Vector-operators"                       COMMAND polytests "Vector-Vector operators")
 add_test(NAME "Vector-scalar-operators"                       COMMAND polytests "Vector-scalar operators")
 add_test(NAME "Vector-algebraic-methods"                      COMMAND polytests "Vector algebraic methods")
+add_test(NAME "Vector2f-constructors"                         COMMAND polytests "Vector2f constructors")
+add_test(NAME "Vector2f-comparison-operators"                 COMMAND polytests "Vector2f comparison operators")
+add_test(NAME "Vector2f-Vector2f-operators"                   COMMAND polytests "Vector2f-Vector2f operators")
+add_test(NAME "Vector2f-scalar-operators"                     COMMAND polytests "Vector2f-scalar operators")
+add_test(NAME "Vector2f-algebraic-methods"                    COMMAND polytests "Vector2f algebraic methods")
+add_test(NAME "Vector2i-comparison-operators"                 COMMAND polytests "Vector2i comparison operators")
+add_test(NAME "Vector2i-Vector2i-operators"                   COMMAND polytests "Vector2i-Vector2i operators")
+add_test(NAME "Vector2i-scalar-operators"                     COMMAND polytests "Vector2i-scalar operators")
+add_test(NAME "Vector2i-algebraic-methods"                    COMMAND polytests "Vector2i algebraic methods")
 add_test(NAME "Floating-point-equality-comparisons"           COMMAND polytests "Floating-point equality comparisons")
 add_test(NAME "TransformComponent-with-no-parent"             COMMAND polytests "TransformComponent with no parent")
 add_test(NAME "TransformComponent-with-parent"                COMMAND polytests "TransformComponent with parent")
@@ -94,5 +111,4 @@ if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	add_dependencies(coverage coverage_core coverage_engine)
 endif(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 
-set_target_properties(polytests PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE) #unity build interferes with Catch
 cotire(polytests)

@@ -10,7 +10,7 @@ void Poly::CameraSystem::CameraUpdatePhase(World* world)
 	ScreenSize screen = gEngine->GetRenderingDevice()->GetScreenSize();
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
 	{
-		const AABox& rect = kv.second.GetRect();
+		const AARect& rect = kv.second.GetRect();
 		float aspect = (rect.GetSize().X * screen.Width) / (rect.GetSize().Y * screen.Height);
 
 		CameraComponent* cameraCmp = kv.second.GetCamera();

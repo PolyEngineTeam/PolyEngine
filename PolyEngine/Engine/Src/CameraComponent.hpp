@@ -18,22 +18,14 @@ namespace Poly {
 
 		const Angle& GetFOV() const { return Fov; }
 		const Angle& GetTargetFOV() const { return TargetFov; }
-		void SetTargetFOV(Angle& Value) { TargetFov = Value; }
-		void SetFOV(Angle& Value) { Fov = Value; }
+		void SetTargetFOV(const Angle& Value) { TargetFov = Value; }
+		void SetFOV(const Angle& Value) { Fov = Value; }
 		float GetAspect() const { return Aspect; }
 
-		float LastShakeTime = 0.0f;
-		float ShakePower = 0.0f;
-		Vector ShakeOffset;
-
-		void SetTargetTranslation(Vector Value) { TargetTranslation = Value; }
-		const Vector& GetTargetTranslation() const { return TargetTranslation; }
 	private:
 		Matrix Projection;
 		Matrix ModelView;
 		Matrix MVP;
-
-		Vector TargetTranslation;
 
 		bool IsPerspective = false;
 		// Prerpective

@@ -1,5 +1,6 @@
 set(POLYCORE_SRCS
 	Src/AABox.cpp
+	Src/AARect.cpp
 	Src/BaseObject.cpp
 	Src/BinaryBuffer.cpp
 	Src/Color.cpp
@@ -7,16 +8,23 @@ set(POLYCORE_SRCS
 	Src/Matrix.cpp
 	Src/Quaternion.cpp
 	Src/RefCountedBase.cpp
+	Src/RTTI.cpp
+	Src/RTTITypeInfo.cpp
 	Src/SimdMath.cpp
 	Src/String.cpp
 	Src/UniqueID.cpp
 	Src/Vector.cpp
+	Src/Vector2f.cpp
+	Src/Vector2i.cpp
 )
 set(POLYCORE_INCLUDE Src)
 set(POLYCORE_H_FOR_IDE
 	Src/AABox.hpp
+	Src/AARect.hpp
 	Src/Allocator.hpp
 	Src/Angle.hpp
+	Src/OrderedMap.hpp
+	Src/BTreePrimitives.hpp
 	Src/BaseObject.hpp
 	Src/BasicMath.hpp
 	Src/BinaryBuffer.hpp
@@ -30,20 +38,29 @@ set(POLYCORE_H_FOR_IDE
 	Src/IterablePoolAllocator.hpp
 	Src/Logger.hpp
 	Src/Matrix.hpp
+	Src/Optional.hpp
 	Src/PoolAllocator.hpp
-	Src/RefCountedBase.hpp
 	Src/Quaternion.hpp
 	Src/Queue.hpp
+	Src/RefCountedBase.hpp
+	Src/RTTI.hpp
+	Src/RTTICast.hpp
+	Src/RTTIProperty.hpp
+	Src/RTTITypeInfo.hpp
+	Src/RTTITypeInfoImpl.hpp
 	Src/SimdMath.hpp
 	Src/String.hpp
 	Src/UniqueID.hpp
+	Src/UnsafeStorage.hpp
 	Src/Vector.hpp
+	Src/Vector2f.hpp
+	Src/Vector2i.hpp
 )
 
 add_library(polycore SHARED ${POLYCORE_SRCS} ${POLYCORE_H_FOR_IDE})
-target_compile_options(polycore PRIVATE $<$<BOOL:${SIMD}>:-msse4.2>)
+target_compile_options(polycore PRIVATE $<$<BOOL:${SIMD}>:${SIMD_FLAGS}>)
 target_compile_definitions(polycore PRIVATE _CORE DISABLE_SIMD=$<NOT:$<BOOL:${SIMD}>>)
-target_include_directories(polycore INTERFACE ${POLYCORE_INCLUDE})
+target_include_directories(polycore PUBLIC ${POLYCORE_INCLUDE})
 
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	target_compile_options(polycore PRIVATE --coverage -fprofile-arcs -ftest-coverage)

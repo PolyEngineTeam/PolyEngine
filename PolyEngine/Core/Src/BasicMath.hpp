@@ -20,16 +20,16 @@ namespace Poly {
 	/// <returns>True if float is valid, false otherwise.</returns>
 	inline bool IsValidf(float val) { return std::isfinite(val); }
 
-	
-	 /// <summary>Checks if given single-precision floating-point numbers are roughly equal</summary>
-	 /// <param name="epsilon">The smallest unit of difference that can be ignored (by default == CMPF_EPS).</param>
-	 /// <param name="handle_infinities">Determines if we should care about infinite values (by default == false).</param>
-	 /// <returns>Rough equality test result</returns>
+
+	/// <summary>Checks if given single-precision floating-point numbers are roughly equal</summary>
+	/// <param name="epsilon">The smallest unit of difference that can be ignored (by default == CMPF_EPS).</param>
+	/// <param name="handle_infinities">Determines if we should care about infinite values (by default == false).</param>
+	/// <returns>Rough equality test result</returns>
 #ifdef _MSC_VER //WORKAROUND(vuko): MSVC does not support extended constexpr yet
 	constexpr bool Cmpf(const float a, const float b, const float epsilon = CMPF_EPS, const bool handle_infinities = false) {
-	    return (handle_infinities && a == b) ||
-	    ((Poly::abs(a - b) < MIN_FLOAT || Poly::abs(a) == 0.0f || Poly::abs(b) == 0.0f) && (Poly::abs(a - b) <= epsilon)) ||
-	    (!(Poly::abs(a - b) < MIN_FLOAT || Poly::abs(a) == 0.0f || Poly::abs(b) == 0.0f) && (Poly::abs(a - b) < (std::max)(Poly::abs(a), Poly::abs(b)) * epsilon));
+		return (handle_infinities && a == b) ||
+			((Poly::abs(a - b) < MIN_FLOAT || Poly::abs(a) == 0.0f || Poly::abs(b) == 0.0f) && (Poly::abs(a - b) <= epsilon)) ||
+			(!(Poly::abs(a - b) < MIN_FLOAT || Poly::abs(a) == 0.0f || Poly::abs(b) == 0.0f) && (Poly::abs(a - b) < (std::max)(Poly::abs(a), Poly::abs(b)) * epsilon));
 	}
 #else
 	constexpr bool Cmpf(const float a, const float b, const float epsilon = CMPF_EPS, const bool handle_infinities = false) {
@@ -86,15 +86,18 @@ namespace Poly {
 	template <typename T> inline constexpr T Abs(T val) {
 		return Poly::abs(val);
 	}
+
 	template <typename T> inline T Clamp(const T& val, const T& min, const T& max) {
 		HEAVY_ASSERTE(min <= max, "Min is larger than max when calling clamp!");
 		return val < min ? min : (val > max ? max : val);
 	}
+
 	template <typename T> inline T Lerp(const T& val1, const T& val2, float t) {
 		return val1 * (1.0f - t) + val2 * t;
 	}
-	template <typename T> inline T Smoothstep(const T& edge0, const T& edge1, float x) {
-		T t = Clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
+
+	template <typename T> inline T SmoothStep(const T& edge1, const T& edge2, const T& x) {
+		T t = Clamp((x - edge1) / (edge2 - edge1), 0.0f, 1.0f);
 		return t * t * (3.0f - 2.0f * t);
 	}
 }
