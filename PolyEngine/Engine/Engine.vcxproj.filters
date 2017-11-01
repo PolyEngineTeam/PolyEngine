@@ -78,6 +78,9 @@
     <Filter Include="Source Files\Rendering\Light">
       <UniqueIdentifier>{ba289ef3-b2de-4d1c-9f5b-b69e07f78b9a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Config\Impl">
+      <UniqueIdentifier>{1c837727-aa9c-4683-a7eb-64b1b4bba880}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -124,9 +127,6 @@
     </ClCompile>
     <ClCompile Include="Src\FreeFloatMovementComponent.cpp">
       <Filter>Source Files\Movement</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\CoreConfig.cpp">
-      <Filter>Source Files\Config</Filter>
     </ClCompile>
     <ClCompile Include="Src\FontResource.cpp">
       <Filter>Source Files\Resources</Filter>
@@ -194,6 +194,15 @@
     <ClCompile Include="Src\PostprocessSettingsComponent.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Src\ConfigBase.cpp">
+      <Filter>Source Files\Config\Impl</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DebugConfig.cpp">
+      <Filter>Source Files\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\AssetsPathConfig.cpp">
+      <Filter>Source Files\Config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine.hpp">
@@ -258,9 +267,6 @@
     </ClInclude>
     <ClInclude Include="Src\FreeFloatMovementComponent.hpp">
       <Filter>Source Files\Movement</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\CoreConfig.hpp">
-      <Filter>Source Files\Config</Filter>
     </ClInclude>
     <ClInclude Include="Src\FontResource.hpp">
       <Filter>Source Files\Resources</Filter>
@@ -345,6 +351,15 @@
     </ClInclude>
     <ClInclude Include="Src\PostprocessSettingsComponent.hpp">
       <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ConfigBase.hpp">
+      <Filter>Source Files\Config\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DebugConfig.hpp">
+      <Filter>Source Files\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\AssetsPathConfig.hpp">
+      <Filter>Source Files\Config</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
