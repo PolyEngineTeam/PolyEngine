@@ -70,7 +70,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		GetProgram().SetUniform(baseName + "Base.Intensity", dirLightCmp->GetIntensity());
 		
 		++dirLightsCount;
-		if (dirLightsCount >= MAX_LIGHT_COUNT_DIRECTIONAL)
+		if (dirLightsCount == MAX_LIGHT_COUNT_DIRECTIONAL)
 			break;
 	}
 	GetProgram().SetUniform("uDirectionalLightCount", dirLightsCount);
