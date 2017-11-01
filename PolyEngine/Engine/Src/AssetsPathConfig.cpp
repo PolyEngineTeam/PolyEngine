@@ -1,11 +1,10 @@
-#include"EnginePCH.hpp"
+#include "EnginePCH.hpp"
 
 #include "rapidjson/document.h"
 
 namespace Poly
 {
 	AssetsPathConfig gAssetsPathConfig;
-	CoreConfig gCoreConfig;
 
 	Dynarray<String> AssetsPathConfig::GetAssetsPaths(eResourceSource Source) const
 	{

@@ -171,7 +171,9 @@
   <ItemGroup>
     <ClCompile Include="Src\CameraComponent.cpp" />
     <ClCompile Include="Src\CameraSystem.cpp" />
-    <ClCompile Include="Src\CoreConfig.cpp" />
+    <ClCompile Include="Src\ConfigBase.cpp" />
+    <ClCompile Include="Src\AssetsPathConfig.cpp" />
+    <ClCompile Include="Src\DebugConfig.cpp" />
     <ClCompile Include="Src\DebugWorldComponent.cpp" />
     <ClCompile Include="Src\Engine.cpp" />
     <ClCompile Include="Src\EnginePCH.cpp">
@@ -225,7 +227,9 @@
     <ClInclude Include="Src\CameraComponent.hpp" />
     <ClInclude Include="Src\CameraSystem.hpp" />
     <ClInclude Include="Src\ComponentBase.hpp" />
-    <ClInclude Include="Src\CoreConfig.hpp" />
+    <ClInclude Include="Src\ConfigBase.hpp" />
+    <ClInclude Include="Src\AssetsPathConfig.hpp" />
+    <ClInclude Include="Src\DebugConfig.hpp" />
     <ClInclude Include="Src\DebugWorldComponent.hpp" />
     <ClInclude Include="Src\DeferredTaskWorldComponent.hpp" />
     <ClInclude Include="Src\Engine.hpp" />

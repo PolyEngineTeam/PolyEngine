@@ -49,9 +49,11 @@ namespace Poly {
 
 		TypeInfo::TypeInfo(long long id) : ID(id) {}
 
+		const char* TypeInfo::GetTypeName() const { return Impl::TypeManager::Get().GetTypeName(*this); }
+
 		//------------------------------------------------------------------------------
 		std::ostream& operator<< (std::ostream& stream, const TypeInfo& typeInfo) {
-			return stream << "TypeInfo["<< typeInfo.ID << ", " << Impl::TypeManager::Get().GetTypeName(typeInfo) << "]";
+			return stream << "TypeInfo["<< typeInfo.ID << ", " << typeInfo.GetTypeName() << "]";
 		}
 	} // namespace RTTI
 } // namespace Poly
