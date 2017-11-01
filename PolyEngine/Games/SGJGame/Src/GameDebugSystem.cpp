@@ -4,7 +4,7 @@
 #include "GameDebugWorldComponent.hpp"
 #include <DeferredTaskSystem.hpp>
 #include <ScreenSpaceTextComponent.hpp>
-#include <CoreConfig.hpp>
+#include <AssetsPathConfig.hpp>
 #include "GameManagerWorldComponent.hpp"
 #include <Rigidbody2DComponent.hpp>
 

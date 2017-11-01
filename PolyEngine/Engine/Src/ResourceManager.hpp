@@ -5,7 +5,7 @@
 #include <String.hpp>
 #include <FileIO.hpp>
 
-#include "CoreConfig.hpp"
+#include "AssetsPathConfig.hpp"
 #include "ResourceBase.hpp"
 
 #include <map>

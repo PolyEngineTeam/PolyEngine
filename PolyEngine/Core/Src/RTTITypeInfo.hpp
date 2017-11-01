@@ -70,6 +70,8 @@ namespace Poly
 				return Impl::TypeManager::Get().IsTypeDerivedFrom(*this, GetUnifiedTypeInfo<T>());
 			}
 
+			const char* GetTypeName() const;
+
 			CORE_DLLEXPORT friend std::ostream& operator<<(std::ostream& stream, const TypeInfo& typeInfo);
 
 		private:

@@ -1,7 +1,7 @@
 #include "GLRenderingDevice.hpp"
 
 #include <World.hpp>
-#include <CoreConfig.hpp>
+#include <DebugConfig.hpp>
 #include <Viewport.hpp>
 
 #include <CameraComponent.hpp>
@@ -25,7 +25,7 @@ void GLRenderingDevice::RenderWorld(World* world)
 	const ScreenSize screenSize = gEngine->GetRenderingDevice()->GetScreenSize();
 
 	// Choose correct rendering mode
-	glPolygonMode(GL_FRONT_AND_BACK, gCoreConfig.WireframeRendering ? GL_LINE : GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, gDebugConfig.WireframeRendering ? GL_LINE : GL_FILL);
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 
@@ -86,7 +86,7 @@ void GLRenderingDevice::RenderWorld(World* world)
 		 	PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, kv.second.GetCamera(), rect);
 
 		// Draw debug normals
-		if (gCoreConfig.DebugNormalsFlag)
+		if (gDebugConfig.DebugNormalsFlag)
 			GeometryRenderingPasses[eGeometryRenderPassType::DEBUG_NORMALS]->Run(world, kv.second.GetCamera(), rect);
 	}
 
