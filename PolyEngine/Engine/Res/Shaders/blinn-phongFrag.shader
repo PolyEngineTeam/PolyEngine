@@ -5,7 +5,6 @@ uniform vec4 uBaseColor;
 uniform float uSpecularStrength;
 
 uniform vec4 uCameraDirection;
-uniform mat4 uTransform;
 
 struct DiffuseLight
 {
@@ -91,8 +90,7 @@ void main() {
 	if (texDiffuse.a < 0.1)
 		discard;
 
-	vec3 normalWS = normalize(transpose(inverse(mat3(uTransform))) * vNormal);
-	
+	vec3 normalWS = vNormal;
 	vec3 diffuse = vec3(0.0);
 	vec3 specular = vec3(0.0);
 	
