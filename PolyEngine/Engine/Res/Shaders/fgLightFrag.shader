@@ -7,5 +7,5 @@ out vec4 color;
 
 void main()
 {
-	color = texture(i_color, vTexCoord);
+	color = vec4(pow(texture(i_color, vTexCoord).rgb, 1.0/2.2), 1.0);
 }
