@@ -24,15 +24,15 @@ namespace Poly {
 	{
 		friend void RenderingSystem::RenderingPhase(World*);
 	public:
-		MeshRenderingComponent(const String& meshPath, eResourceSource source, const PhongMaterial& material = {});
+		MeshRenderingComponent(const String& meshPath, eResourceSource source);
 		virtual ~MeshRenderingComponent();
 
 		const MeshResource* GetMesh() const { return Mesh; }
-		const PhongMaterial& GetMaterial() const { return Material; }
-		void SetMaterial(const PhongMaterial& value) { Material = value; }
-		bool IsTransparent() const { return Material.DiffuseColor.A < 1.0f; } //HACK replace with better solution for transloucent objects.
+		const PhongMaterial& GetMaterial(int i) const { return Materials[i]; }
+		void SetMaterial(int i, const PhongMaterial& value) { Materials[i] = value; }
+		bool IsTransparent() const { return Materials[0].DiffuseColor.A < 1.0f; } //HACK replace with better solution for transloucent objects.
 	private:
 		MeshResource* Mesh = nullptr;
-		PhongMaterial Material;
+		Dynarray<PhongMaterial> Materials;
 	};
 }

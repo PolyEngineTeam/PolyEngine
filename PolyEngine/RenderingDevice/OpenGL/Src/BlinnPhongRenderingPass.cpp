@@ -122,18 +122,20 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		if (shouldCull)
 			continue;
 
-		PhongMaterial material = meshCmp->GetMaterial();
-		GetProgram().SetUniform("uMaterial.Ambient", material.AmbientColor);
-		GetProgram().SetUniform("uMaterial.Diffuse", material.DiffuseColor);
-		GetProgram().SetUniform("uMaterial.Specular", material.SpecularColor);
-		GetProgram().SetUniform("uMaterial.Shininess", material.Shininess);
-
 		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
 		Matrix screenTransform = mvp * objTransform;
 		GetProgram().SetUniform("uTransform", objTransform);
-		GetProgram().SetUniform("uMVPTransform", screenTransform);
+		GetProgram().SetUniform("uMVPTransform", screenTransform);		
+		
+		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
+			PhongMaterial material = meshCmp->GetMaterial(i);
+			GetProgram().SetUniform("uMaterial.Ambient", material.AmbientColor);
+			GetProgram().SetUniform("uMaterial.Diffuse", material.DiffuseColor);
+			GetProgram().SetUniform("uMaterial.Specular", material.SpecularColor);
+			GetProgram().SetUniform("uMaterial.Shininess", material.Shininess);
+
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 
 			glBindVertexArray(meshProxy->GetVAO());
@@ -147,6 +149,8 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 			glBindTexture(GL_TEXTURE_2D, 0);
 			glBindVertexArray(0);
+
+			++i;
 		}
 	}
 }
