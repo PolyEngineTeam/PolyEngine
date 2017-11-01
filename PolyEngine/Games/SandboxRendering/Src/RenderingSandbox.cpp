@@ -75,6 +75,13 @@ void RenderingSandbox::Init()
 	auto shaderball = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, shaderball);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, shaderball, "Models/shaderball/shaderball.fbx", eResourceSource::GAME);
+	Poly::MeshRenderingComponent* ballMesh = world->GetComponent<Poly::MeshRenderingComponent>(shaderball);
+	ballMesh->SetMaterial(PhongMaterial(Color(1.0f, 0.5f, 0.5f), Color(0.5f, 1.0f, 0.5f), Color(0.5f, 0.5f, 1.0f), 0.1f));
+	// ballMesh->GetMesh()->GetSubMeshes()[0]->GetMeshData().SetMaterial(material);
+	// GetProgram().SetUniform("uMaterial.Ambient", Vector(1.0f, 0.5f, 0.5f));
+	// GetProgram().SetUniform("uMaterial.Diffuse", Vector(0.5f, 1.0f, 0.5f));
+	// GetProgram().SetUniform("uMaterial.Specular", Vector(0.5f, 0.5f, 1.0f));
+	// GetProgram().SetUniform("uMaterial.Shininess", 0.1f);
 	Poly::TransformComponent* ballTrans = world->GetComponent<Poly::TransformComponent>(shaderball);
 	ballTrans->SetLocalScale(0.01f);
 

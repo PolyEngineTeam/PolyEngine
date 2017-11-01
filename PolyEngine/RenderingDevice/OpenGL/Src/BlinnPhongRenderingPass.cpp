@@ -19,7 +19,10 @@ const size_t MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 : RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
 {
-	GetProgram().RegisterUniform("float", "uSpecularStrength");
+	GetProgram().RegisterUniform("vec4", "uMaterial.Ambient");
+	GetProgram().RegisterUniform("vec4", "uMaterial.Diffuse");
+	GetProgram().RegisterUniform("vec4", "uMaterial.Specular");
+	GetProgram().RegisterUniform("float", "uMaterial.Shininess");
 
 	GetProgram().RegisterUniform("vec4", "uAmbientLight.Base.Color");
 	GetProgram().RegisterUniform("float", "uAmbientLight.Base.Intensity");
@@ -96,8 +99,6 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	}
 	GetProgram().SetUniform("uPointLightCount", pointLightsCount);
 
-	GetProgram().SetUniform("uSpecularStrength", 0.1f); // TODO: move to Material
-
 	const float cameraHeight = 16.f + 1.f;
 	float verticalSpan = cameraHeight / 2.0f;
 	float horizontalSpan = (cameraHeight * camera->GetAspect()) / 2.0f;
@@ -121,11 +122,16 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		if (shouldCull)
 			continue;
 
+		PhongMaterial material = meshCmp->GetMaterial();
+		GetProgram().SetUniform("uMaterial.Ambient", material.AmbientColor);
+		GetProgram().SetUniform("uMaterial.Diffuse", material.DiffuseColor);
+		GetProgram().SetUniform("uMaterial.Specular", material.SpecularColor);
+		GetProgram().SetUniform("uMaterial.Shininess", material.Shininess);
+
 		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
 		Matrix screenTransform = mvp * objTransform;
 		GetProgram().SetUniform("uTransform", objTransform);
 		GetProgram().SetUniform("uMVPTransform", screenTransform);
-		GetProgram().SetUniform("uBaseColor", meshCmp->GetBaseColor());
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());

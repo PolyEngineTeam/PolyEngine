@@ -55,8 +55,6 @@ void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera
 		if (shouldCull)
 			continue;
 
-		GetProgram().SetUniform("uBaseColor", meshCmp->GetBaseColor());
-
 		Matrix objScale;
 		objScale.SetScale(Vector(1.0f, 1.0f, 1.0f));
 
@@ -66,7 +64,7 @@ void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera
 		Matrix screenTransform = camera->GetMVP() * objTransform * objScale;
 		GetProgram().SetUniform("uTransform", objTransform * objScale);
 		GetProgram().SetUniform("uMVPTransform", screenTransform);
-		GetProgram().SetUniform("uBaseColor", meshCmp->GetBaseColor());
+		GetProgram().SetUniform("uBaseColor", meshCmp->GetMaterial().DiffuseColor);
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
 			UNUSED(subMesh);
