@@ -25,8 +25,10 @@ public:
 private:
 	Poly::UniqueID Camera;
 	Poly::UniqueID GameManager;
-	Poly::UniqueID DirLight;
+	// Poly::UniqueID DirLight;
 
 	Poly::Dynarray<Poly::UniqueID> GameEntities;
 	Poly::Engine* Engine;
+
+	float Random();
 };
