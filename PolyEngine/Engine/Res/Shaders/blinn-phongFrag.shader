@@ -2,6 +2,7 @@
 
 uniform sampler2D uTexture;
 uniform vec4 uBaseColor;
+uniform float uSpecularStrength;
 
 uniform vec4 uCameraDirection;
 uniform mat4 uTransform;
@@ -26,6 +27,12 @@ struct PointLight
 	float Range;
 };
 
+struct Phong
+{
+	vec3 Diffuse;
+	vec3 Specular;
+};
+
 uniform DiffuseLight uAmbientLight;
 uniform DirectionalLight uDirectionalLight[8];
 uniform int uDirectionalLightCount;
@@ -38,25 +45,44 @@ in vec3 vNormal;
 
 layout(location = 0) out vec4 color;
 
-// calculates ambient light
 vec3 ambientlLight(DiffuseLight ambientLight) {
 	return vec3(ambientLight.Color.rgb * max(ambientLight.Intensity, 0.0));
 }
 
-// calculates diffuse factor of any light
-vec3 directionalLight(DirectionalLight light, vec3 normalWS) {
+Phong directionalLight(DirectionalLight light, vec3 positionWS, vec3 normalWS) {
+	Phong result;
 	DiffuseLight base = light.Base;
 	vec3 dir = light.Direction.xyz;
 	float dirNdotL = max(dot(normalWS, dir), 0.0);
-	vec3 dirDiffuse = vec3(base.Color.rgb) * max(base.Intensity, 0.0) * dirNdotL;
-	return dirDiffuse;
+	result.Diffuse = vec3(base.Color.rgb) * max(base.Intensity, 0.0) * dirNdotL;
+	
+	vec3 reflectDir = reflect(-dir, normalWS);
+	float spec = pow(max(dot(uCameraDirection.xyz, reflectDir), 0.0), 32);
+	result.Specular = uSpecularStrength * spec * base.Color.rgb;
+	
+	return result;	
 }
 
-// calculates attenuation of the point light
 float pointLightAttenuation(PointLight light, vec3 vertexPos) {
 	float distanceToLight = length(light.Position.xyz - vertexPos);
 	float attentuation = 1.0 / (1.0 + light.Attenuation * pow(distanceToLight, 2));
 	return mix(0.0, attentuation, step(distanceToLight, light.Range));
+}
+
+Phong pointLight(PointLight pointLight, vec3 positionWS, vec3 normalWS) {	
+	Phong result;
+	float attentuation = pointLightAttenuation(pointLight, vVertexPos);
+	vec3 pointLightPos = pointLight.Position.xyz;
+	vec3 pointLightDir = normalize(pointLightPos - vVertexPos);
+	float pointNdotL = max(dot(normalWS, pointLightDir), 0.0);
+	vec3 point = vec3(pointLight.Base.Color.rgb) * max(pointLight.Base.Intensity, 0.0) * pointNdotL;
+	result.Diffuse = point*attentuation;
+	
+	vec3 reflectDir = reflect(-pointLightDir, normalWS);
+	float spec = pow(max(dot(uCameraDirection.xyz, reflectDir), 0.0), 32);
+	result.Specular = uSpecularStrength * spec * pointLight.Base.Color.rgb;
+	
+	return result;
 }
 
 void main() {
@@ -66,38 +92,27 @@ void main() {
 		discard;
 
 	vec3 normalWS = normalize(transpose(inverse(mat3(uTransform))) * vNormal);
-	vec3 ambient = ambientlLight(uAmbientLight);
 	
-	vec3 dirDiffuse = vec3(0.0);
+	vec3 diffuse = vec3(0.0);
+	vec3 specular = vec3(0.0);
+	
+	diffuse += ambientlLight(uAmbientLight);
+	
 	for (int i = 0; i < uDirectionalLightCount; ++i)
 	{
-		dirDiffuse += directionalLight(uDirectionalLight[i], normalWS);
+		Phong phong = directionalLight(uDirectionalLight[i], vVertexPos, normalWS);
+		diffuse += phong.Diffuse;
+		specular += phong.Specular;
 	}
 	
-	vec3 pointDiffuse = vec3(0.0);
 	for (int i = 0; i < uPointLightCount; ++i)
 	{
-		float attentuation = pointLightAttenuation(uPointLight[i], vVertexPos);
-		vec3 pointLightPos = uPointLight[i].Position.xyz;
-		vec3 pointLightDir = normalize(pointLightPos - vVertexPos);
-		float pointNdotL = max(dot(normalWS, pointLightDir), 0.0);
-		vec3 point = vec3(uPointLight[i].Base.Color.rgb) * max(uPointLight[i].Base.Intensity, 0.0) * pointNdotL;
-		pointDiffuse += point*attentuation;
+		Phong phong = pointLight(uPointLight[i], vVertexPos, normalWS);
+		diffuse += phong.Diffuse;
+		specular += phong.Specular;
 	}
 	
-	vec3 diffuse = texDiffuse.rgb * (ambient + dirDiffuse + pointDiffuse);
+	vec3 phong = texDiffuse.rgb * (diffuse + specular);
 	
-	// vec4 point = texColor * diffuseLight(uDirectionalLight.BasdirectionalLight(DirectionalLight light, vec3 normalWS) {e, uDirectionalLight.Direction.xyz, normalWS);
-
-	// for (int i = 8; i < uPointLightCount; ++i)
-	// {
-	// 	vec3 lightPos = uPointLight[i].Position.xyz;
-	// 	point += texColor * diffuseLight(uPointLight[i].Base, normalize(lightPos - vVertexPos), normalWS)
-	// 		* pointLightAttenuation(uPointLight[i], vVertexPos);
-	// }
-	
-	color = vec4(diffuse, 1.0);
-	// color = vec4(dirDiffuse, 1.0);
-	// color = vec4(normalWS*0.5+0.5, 1.0);
-	// color = vec4(max(dot(normalWS, uLightDirectional.Direction.xyz), 0.0));
+	color = vec4(phong, 1.0);
 }
