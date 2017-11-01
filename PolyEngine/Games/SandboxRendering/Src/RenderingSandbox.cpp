@@ -1,3 +1,5 @@
+#include "stdlib.h" // srand rand
+
 #include "RenderingSandbox.hpp"
 
 #include <DeferredTaskSystem.hpp>
@@ -23,6 +25,8 @@ void RenderingSandbox::Init()
 {
 	World* world = Engine->GetWorld();
 
+	srand(42);
+
 	Camera = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, Camera);
 	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(world, Camera, 60_deg, 1.0f, 1000.f);
@@ -34,19 +38,33 @@ void RenderingSandbox::Init()
 
 	world->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, world->GetComponent<Poly::CameraComponent>(Camera));
 
-	Vector DirLightPos = Vector(0.0f, 5.0f, 10.0f);
+	Vector DirLightPos = Vector(0.0f, 0.0f, 0.0f);
 	Quaternion DirLightRot = Quaternion(Vector::UNIT_Y, -45_deg) * Quaternion(Vector::UNIT_X, -15_deg);
-	DirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, DirLight);
-	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightSourceComponent>(world, DirLight, Color(1.0f, 1.0f, 0.9f), 0.5f);
-	Poly::TransformComponent* dirLightTrans = world->GetComponent<Poly::TransformComponent>(DirLight);
+	
+	// Dir Light 0
+	Poly::UniqueID KeyDirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, KeyDirLight);
+	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightSourceComponent>(world, KeyDirLight, Color(1.0f, 0.0f, 0.0f), 0.5f);
+	Poly::TransformComponent* dirLightTrans = world->GetComponent<Poly::TransformComponent>(KeyDirLight);
 	dirLightTrans->SetLocalTranslation(DirLightPos);
 	dirLightTrans->SetLocalRotation(DirLightRot);
 
-	Vector PointLightPos = Vector(3.0f, -5.0f, 10.0f);
+	// Dir Light 1-7
+	for (int i = 0; i < 7; ++i)
+	{
+		Poly::UniqueID DirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+		DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, DirLight);
+		DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightSourceComponent>(world, DirLight, Color(Random(), Random(), Random()), 0.4f);
+		Poly::TransformComponent* dirLightTrans = world->GetComponent<Poly::TransformComponent>(DirLight);
+		dirLightTrans->SetLocalTranslation(DirLightPos);
+		dirLightTrans->SetLocalRotation(DirLightRot);
+	}
+	
+	
+	Vector PointLightPos = Vector(3.0f, -5.0f, 10.0f);	
 	auto PointLight = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLight);
-	DeferredTaskSystem::AddComponentImmediate<Poly::PointLightSourceComponent>(world, PointLight, Color(1.0f, 0.0f, 0.0f), 2000.5f, 1000.0f);
+	DeferredTaskSystem::AddComponentImmediate<Poly::PointLightSourceComponent>(world, PointLight, Color(0.0f, 1.0f, 0.0f), 2000.5f, 1000.0f);
 	Poly::TransformComponent* lightTrans = world->GetComponent<Poly::TransformComponent>(PointLight);
 	dirLightTrans->SetLocalTranslation(PointLightPos);
 
@@ -89,6 +107,17 @@ void RenderingSandbox::Init()
 	groundTrans->SetLocalScale(SCALE);
 
 	Engine->RegisterGameUpdatePhase(GameMainSystem::GameUpdate);
+
+	for (auto cmpTuple : world->IterateComponents<PostprocessSettingsComponent>())
+	{
+		PostprocessSettingsComponent* postCmp = std::get<PostprocessSettingsComponent*>(cmpTuple);
+		postCmp->Distortion		= 0.0f;
+		postCmp->ColorTempValue	= 6500.0f;
+		postCmp->Saturation		= 1.0f;
+		postCmp->Grain			= 0.0f;
+		postCmp->Stripes		= 0.0f;
+		postCmp->Vignette		= 0.0f;
+	}
 };
 
 void RenderingSandbox::Deinit()
@@ -100,38 +129,52 @@ void RenderingSandbox::Deinit()
 	}
 };
 
+float RenderingSandbox::Random()
+{
+	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+}
+
 void GameMainSystem::GameUpdate(Poly::World* world)
 {
 	double time = world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime();
 	double deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
 
+	float i = 0;
+	for (auto cmpTuple : world->IterateComponents<DirectionalLightSourceComponent, TransformComponent>())
+	{
+		TransformComponent* dirLightTrans = std::get<TransformComponent*>(cmpTuple);
+		Quaternion dirLightRot = Quaternion(Vector::UNIT_Y, 60.0_deg*i + 1_deg *100.0f*(float)time);
+		dirLightTrans->SetLocalRotation(dirLightRot);
+		gConsole.LogInfo("DirLight[{}]: time: {}", i, time);
+
+		i += 1.0f;
+	}
+
 	// int UseCashetes = 0;
 	// float ColorTempLuminancePreservation = 0.75f;
-	float Distortion	= 0.5f;
-	float Bloom			= 0.4f;
-	float ColorTempValue = 9500.0f; // 6500.0 from [1000.0, 40000.0]
-	float Saturation	= 0.5f;
-	float Grain			= 0.5f;
-	float Stripes		= 0.5f;
-	float Vignette		= 0.5f;
-	float Brightness	= 0.1f;
-	float Contrast		= 1.5f;
+	// float Distortion	= 0.5f;
+	// float Bloom			= 0.4f;
+	// float ColorTempValue = 9500.0f; // 6500.0 from [1000.0, 40000.0]
+	// float Saturation	= 0.5f;
+	// float Grain			= 0.5f;
+	// float Stripes		= 0.5f;
+	// float Vignette		= 0.5f;
+	// float Brightness	= 0.1f;
+	// float Contrast		= 1.5f;
 
-	for (auto cmpTuple : world->IterateComponents<PostprocessSettingsComponent>())
-	{
-		PostprocessSettingsComponent* postCmp = std::get<PostprocessSettingsComponent*>(cmpTuple);
-		float t = SmoothStep(-0.2f, 0.2f, -Cos(Angle::FromRadians(0.5f*time))); // [0, 1]
-
-		postCmp->Distortion = t * Distortion;
-	//	postCmp->Bloom = t * Bloom;
-		postCmp->ColorTempValue = Lerp(6500.0f, ColorTempValue, t);
-		postCmp->Saturation = Lerp(1.0f, Saturation, t);
-		postCmp->Grain = Lerp(0.0f, Grain, t);
-		postCmp->Stripes = Lerp(0.0f, Stripes, t);
-		postCmp->Vignette = Lerp(0.0f, Vignette, t);
-		//postCmp->Brightness = Lerp(0.0f, Brightness, t);
-		//postCmp->Contrast = Lerp(1.0f, Contrast, t);
-
-		// gConsole.LogInfo("PostCmp: t: {}, Saturation: {}, Vignette: {}", t, postCmp->Saturation, postCmp->Vignette);
-	}
+	// for (auto cmpTuple : world->IterateComponents<PostprocessSettingsComponent>())
+	// {
+	// 	PostprocessSettingsComponent* postCmp = std::get<PostprocessSettingsComponent*>(cmpTuple);
+	// 	float t = SmoothStep(-0.2f, 0.2f, -Cos(Angle::FromRadians(0.5f*time))); // [0, 1]
+	// 	float t = 0.0f;
+	// 
+	// 	postCmp->Distortion = t * Distortion;
+	// 	postCmp->ColorTempValue = Lerp(6500.0f, ColorTempValue, t);
+	// 	postCmp->Saturation = Lerp(1.0f, Saturation, t);
+	// 	postCmp->Grain = Lerp(0.0f, Grain, t);
+	// 	postCmp->Stripes = Lerp(0.0f, Stripes, t);
+	// 	postCmp->Vignette = Lerp(0.0f, Vignette, t);
+	// 
+	// 	gConsole.LogInfo("PostCmp: t: {}, Saturation: {}, Vignette: {}", t, postCmp->Saturation, postCmp->Vignette);
+	// }
 }
