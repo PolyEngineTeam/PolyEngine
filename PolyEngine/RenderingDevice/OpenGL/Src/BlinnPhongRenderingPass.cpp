@@ -19,6 +19,8 @@ const size_t MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 : RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
 {
+	GetProgram().RegisterUniform("float", "uSpecularStrength");
+
 	GetProgram().RegisterUniform("vec4", "uAmbientLight.Base.Color");
 	GetProgram().RegisterUniform("float", "uAmbientLight.Base.Intensity");
 
@@ -49,6 +51,9 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 {
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
+	
+	Vector CameraDir = MovementSystem::GetGlobalForward(camera->GetSibling<TransformComponent>());
+	GetProgram().SetUniform("uCameraDirection", CameraDir);
 
 	AmbientLightWorldComponent* ambientCmp = world->GetWorldComponent<AmbientLightWorldComponent>();
 	GetProgram().SetUniform("uAmbientLight.Base.Color", ambientCmp->GetColor());
@@ -91,6 +96,8 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	}
 	GetProgram().SetUniform("uPointLightCount", pointLightsCount);
 
+	GetProgram().SetUniform("uSpecularStrength", 0.1f); // TODO: move to Material
+
 	const float cameraHeight = 16.f + 1.f;
 	float verticalSpan = cameraHeight / 2.0f;
 	float horizontalSpan = (cameraHeight * camera->GetAspect()) / 2.0f;
@@ -102,17 +109,17 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
 
-		// if (meshCmp->IsTransparent())
-		// 	continue;
+		if (meshCmp->IsTransparent())
+		 	continue;
 
 		Vector objPos = transCmp->GetGlobalTranslation();
 
-		// bool shouldCull = objPos.Y > cameraPos.Y + verticalSpan;
-		// shouldCull = shouldCull || objPos.Y < cameraPos.Y - verticalSpan;
-		// shouldCull = shouldCull || objPos.X > cameraPos.X + horizontalSpan;
-		// shouldCull = shouldCull || objPos.X < cameraPos.X - horizontalSpan;
-		// if (shouldCull)
-		// 	continue;
+		bool shouldCull = objPos.Y > cameraPos.Y + verticalSpan;
+		shouldCull = shouldCull || objPos.Y < cameraPos.Y - verticalSpan;
+		shouldCull = shouldCull || objPos.X > cameraPos.X + horizontalSpan;
+		shouldCull = shouldCull || objPos.X < cameraPos.X - horizontalSpan;
+		if (shouldCull)
+			continue;
 
 		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
 		Matrix screenTransform = mvp * objTransform;
