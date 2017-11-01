@@ -333,7 +333,7 @@ void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(gEngine->GetWorld(), id);
 	Poly::TransformComponent* lightTrans = gEngine->GetWorld()->GetComponent<Poly::TransformComponent>(id);
 	lightTrans->SetLocalRotation(Quaternion(Vector::UNIT_Y, -15_deg));
-	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightSourceComponent>(gEngine->GetWorld(), id, Color(1,0,1), 100.0f);
+	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightComponent>(gEngine->GetWorld(), id, Color(1,0,1), 100.0f);
 	gameMgrCmp->OtherEntities.PushBack(id);
 }
 

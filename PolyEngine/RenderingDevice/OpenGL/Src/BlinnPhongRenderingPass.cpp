@@ -19,12 +19,8 @@ const size_t MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 : RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
 {
-	// GetProgram().RegisterUniform("vec4", "uDiffuseLight.Color");
-	// GetProgram().RegisterUniform("float", "uDiffuseLight.Intensity");
-
-	// GetProgram().RegisterUniform("vec4", "uDirectionalLight.Base.Color");
-	// GetProgram().RegisterUniform("float", "uDirectionalLight.Base.Intensity");
-	// GetProgram().RegisterUniform("vec4", "uDirectionalLight.Direction");
+	GetProgram().RegisterUniform("vec4", "uAmbientLight.Base.Color");
+	GetProgram().RegisterUniform("float", "uAmbientLight.Base.Intensity");
 
 	for (size_t i = 0; i < MAX_LIGHT_COUNT_DIRECTIONAL; ++i)
 	{
@@ -54,52 +50,46 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
 
-	DiffuseLightSourceWorldComponent* diffuseCmp = world->GetWorldComponent<DiffuseLightSourceWorldComponent>();
-
-//	GetProgram().SetUniform("uDiffuseLight.Color", diffuseCmp->GetColor());
-//	GetProgram().SetUniform("uDiffuseLight.Intensity", diffuseCmp->GetIntensity());
+	AmbientLightWorldComponent* ambientCmp = world->GetWorldComponent<AmbientLightWorldComponent>();
+	GetProgram().SetUniform("uAmbientLight.Base.Color", ambientCmp->GetColor());
+	GetProgram().SetUniform("uAmbientLight.Base.Intensity", ambientCmp->GetIntensity());
 
 	int dirLightsCount = 0;
-	for (auto componentsTuple : world->IterateComponents<DirectionalLightSourceComponent, TransformComponent>())
+	for (auto componentsTuple : world->IterateComponents<DirectionalLightComponent, TransformComponent>())
 	{
-		DirectionalLightSourceComponent* dirLightCmp = std::get<DirectionalLightSourceComponent*>(componentsTuple);
+		DirectionalLightComponent* dirLightCmp = std::get<DirectionalLightComponent*>(componentsTuple);
 		TransformComponent* transformCmp = std::get<TransformComponent*>(componentsTuple);
 		String baseName = String("uDirectionalLight[") + String::From(dirLightsCount) + String("].");
-
 		GetProgram().SetUniform(baseName + "Direction", MovementSystem::GetGlobalForward(transformCmp));
 		GetProgram().SetUniform(baseName + "Base.Color", dirLightCmp->GetColor());
 		GetProgram().SetUniform(baseName + "Base.Intensity", dirLightCmp->GetIntensity());
 		
-		gConsole.LogInfo("DirLight[{}]: Name: {}, value: {}",
-			dirLightsCount, baseName + "Direction", MovementSystem::GetGlobalForward(transformCmp));
-
 		++dirLightsCount;
 		if (dirLightsCount >= MAX_LIGHT_COUNT_DIRECTIONAL)
 			break;
 	}
 	GetProgram().SetUniform("uDirectionalLightCount", dirLightsCount);
 	
-	// int pointLightsCount = 0;
-	// for (auto componentsTuple : world->IterateComponents<PointLightSourceComponent, TransformComponent>())
-	// {
-	// 	PointLightSourceComponent* pointLightCmp = std::get<PointLightSourceComponent*>(componentsTuple);
-	// 	TransformComponent* transformCmp = std::get<TransformComponent*>(componentsTuple);
-	   
-	// 	String baseName = String("uPointLight[") + String::From(pointLightsCount) + String("].");
-	   
-	// 	GetProgram().SetUniform(baseName + "Base.Color", pointLightCmp->GetColor());
-	// 	GetProgram().SetUniform(baseName + "Base.Intensity", pointLightCmp->GetIntensity());
-	// 	GetProgram().SetUniform(baseName + "Position", transformCmp->GetGlobalTranslation());
-	// 	GetProgram().SetUniform(baseName + "Attenuation", pointLightCmp->GetAttenuation());
-	// 	float range = sqrt(((1.f / IntensityThreshold) - 1.0f)/ pointLightCmp->GetAttenuation());
-	// 	GetProgram().SetUniform(baseName + "Range", range);
+	int pointLightsCount = 0;
+	for (auto componentsTuple : world->IterateComponents<PointLightComponent, TransformComponent>())
+	{
+		PointLightComponent* pointLightCmp = std::get<PointLightComponent*>(componentsTuple);
+		TransformComponent* transformCmp = std::get<TransformComponent*>(componentsTuple);
+	
+		String baseName = String("uPointLight[") + String::From(pointLightsCount) + String("].");
+	
+		GetProgram().SetUniform(baseName + "Base.Color", pointLightCmp->GetColor());
+		GetProgram().SetUniform(baseName + "Base.Intensity", pointLightCmp->GetIntensity());
+		GetProgram().SetUniform(baseName + "Position", transformCmp->GetGlobalTranslation());
+		GetProgram().SetUniform(baseName + "Attenuation", pointLightCmp->GetAttenuation());
+		float range = sqrt(((1.f / IntensityThreshold) - 1.0f)/ pointLightCmp->GetAttenuation());
+		GetProgram().SetUniform(baseName + "Range", range);
 
-	// 	++pointLightsCount;
-	// 	if (pointLightsCount == MAX_POINT_LIGHT_COUNT)
-	// 		break;
-	// }
-	   
-	// GetProgram().SetUniform("uPointLightCount", pointLightsCount);
+		++pointLightsCount;
+		if (pointLightsCount == MAX_LIGHT_COUNT_POINT)
+			break;
+	}
+	GetProgram().SetUniform("uPointLightCount", pointLightsCount);
 
 	const float cameraHeight = 16.f + 1.f;
 	float verticalSpan = cameraHeight / 2.0f;

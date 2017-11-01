@@ -37,62 +37,56 @@ void RenderingSandbox::Init()
 	// cameraTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 180_deg));
 
 	world->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, world->GetComponent<Poly::CameraComponent>(Camera));
+	world->GetWorldComponent<AmbientLightWorldComponent>()->SetColor(Color(0.1f, 0.2f, 0.1f));
 
-	Vector DirLightPos = Vector(0.0f, 0.0f, 0.0f);
 	Quaternion DirLightRot = Quaternion(Vector::UNIT_Y, -45_deg) * Quaternion(Vector::UNIT_X, -15_deg);
 	
 	// Dir Light 0
 	Poly::UniqueID KeyDirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, KeyDirLight);
-	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightSourceComponent>(world, KeyDirLight, Color(1.0f, 0.0f, 0.0f), 0.5f);
-	Poly::TransformComponent* dirLightTrans = world->GetComponent<Poly::TransformComponent>(KeyDirLight);
-	dirLightTrans->SetLocalTranslation(DirLightPos);
-	dirLightTrans->SetLocalRotation(DirLightRot);
+	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightComponent>(world, KeyDirLight, Color(1.0f, 0.5f, 0.1f), 0.8f);
 
-	// Dir Light 1-7
-	for (int i = 0; i < 7; ++i)
-	{
-		Poly::UniqueID DirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
-		DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, DirLight);
-		DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightSourceComponent>(world, DirLight, Color(Random(), Random(), Random()), 0.4f);
-		Poly::TransformComponent* dirLightTrans = world->GetComponent<Poly::TransformComponent>(DirLight);
-		dirLightTrans->SetLocalTranslation(DirLightPos);
-		dirLightTrans->SetLocalRotation(DirLightRot);
-	}
+	Poly::UniqueID FillDirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, FillDirLight);
+	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightComponent>(world, FillDirLight, Color(0.1f, 0.5f, 1.0f), 0.2f);
+
+	Poly::UniqueID RimDirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, RimDirLight);
+	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightComponent>(world, RimDirLight, Color(0.5f, 0.5f, 1.0f), 1.0f);
 	
+	// AddDirectionalLights();
 	
-	Vector PointLightPos = Vector(3.0f, -5.0f, 10.0f);	
-	auto PointLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+	// Vector PointLightPos = Vector(1.0f, 2.0f, 3.0f);
+	PointLight = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLight);
-	DeferredTaskSystem::AddComponentImmediate<Poly::PointLightSourceComponent>(world, PointLight, Color(0.0f, 1.0f, 0.0f), 2000.5f, 1000.0f);
-	Poly::TransformComponent* lightTrans = world->GetComponent<Poly::TransformComponent>(PointLight);
-	dirLightTrans->SetLocalTranslation(PointLightPos);
+	DeferredTaskSystem::AddComponentImmediate<Poly::PointLightComponent>(world, PointLight, Color(0.0f, 1.0f, 1.0f), 2.0f, 0.1f);
+	
+	AddPointLights();
 
-	auto Dummy = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, Dummy);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, Dummy, "Models/bullet/bullet.obj", eResourceSource::GAME);
-	Poly::TransformComponent* dummyTrans = world->GetComponent<Poly::TransformComponent>(Dummy);
-	dummyTrans->SetLocalScale(Vector(0.5f, 0.5f, -1.0f));
-	dummyTrans->SetLocalTranslation(DirLightPos);
-	dummyTrans->SetLocalRotation(DirLightRot);
-
+	// Dummy = DeferredTaskSystem::SpawnEntityImmediate(world);
+	// DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, Dummy);
+	// DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, Dummy, "Models/bullet/bullet.obj", eResourceSource::GAME);
+	// Poly::TransformComponent* dummyTrans = world->GetComponent<Poly::TransformComponent>(Dummy);
+	// dummyTrans->SetLocalScale(Vector(0.5f, 0.5f, -1.0f));
+	// dummyTrans->SetLocalTranslation(PointLightPos);	
+	
 	float yPos = (float)Engine->GetRenderingDevice()->GetScreenSize().Height;
 	auto textDispaly = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::ScreenSpaceTextComponent>(world, textDispaly, Vector{ 0.0f, yPos ,0.0f }, "Fonts/Raleway/Raleway-Heavy.ttf", eResourceSource::ENGINE, 32, "Kill count: 0");
 
-	auto player = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, player);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, player, "Models/tank2/bradle.3ds", eResourceSource::GAME);
-	Poly::TransformComponent* playerTransform = world->GetComponent<Poly::TransformComponent>(player);
-	playerTransform->SetLocalTranslation(Vector(-3.0f, 0.0f, 5.0f));
-	playerTransform->SetLocalScale(10.0f);
-	playerTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -90_deg) * Quaternion(Vector::UNIT_X, -90_deg));
+	// auto player = DeferredTaskSystem::SpawnEntityImmediate(world);
+	// DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, player);
+	// DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, player, "Models/tank2/bradle.3ds", eResourceSource::GAME);
+	// Poly::TransformComponent* playerTransform = world->GetComponent<Poly::TransformComponent>(player);
+	// playerTransform->SetLocalTranslation(Vector(-2.0f, 0.0f, 0.0f));
+	// playerTransform->SetLocalScale(10.0f);
+	// playerTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -90_deg) * Quaternion(Vector::UNIT_X, -90_deg));
 
 	auto shaderball = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, shaderball);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, shaderball, "Models/shaderball/shaderball.fbx", eResourceSource::GAME);
 	Poly::TransformComponent* ballTrans = world->GetComponent<Poly::TransformComponent>(shaderball);
-	ballTrans->SetLocalTranslation(Vector(3.0f, 0.0f, 5.0f));
+	// ballTrans->SetLocalTranslation(Vector(2.0f, 0.0f, 0.0f));
 	ballTrans->SetLocalScale(0.01f);
 	// entTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -90_deg) * Quaternion(Vector::UNIT_X, -90_deg));
 
@@ -104,7 +98,7 @@ void RenderingSandbox::Init()
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, ground, "Models/ground/ground.fbx", eResourceSource::GAME);
 	Poly::TransformComponent* groundTrans = world->GetComponent<Poly::TransformComponent>(ground);
 	//	groundTransform->SetLocalTranslation(Vector(SCALE * SIZE, 0.f, SCALE * SIZE));
-	groundTrans->SetLocalScale(SCALE);
+	// groundTrans->SetLocalScale(SCALE);
 
 	Engine->RegisterGameUpdatePhase(GameMainSystem::GameUpdate);
 
@@ -134,20 +128,85 @@ float RenderingSandbox::Random()
 	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 }
 
+float RenderingSandbox::Random(float min, float max)
+{
+	float rnd = Random();
+	return Lerp(min, max, rnd);
+}
+
+void RenderingSandbox::AddDirectionalLights() 
+{
+	World* world = Engine->GetWorld();
+	Quaternion DirLightRot = Quaternion(Vector::UNIT_Y, -45_deg) * Quaternion(Vector::UNIT_X, -15_deg);
+
+	for (int i = 0; i < 7; ++i)
+	{
+		Poly::UniqueID DirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+		DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, DirLight);
+		DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightComponent>(world, DirLight, Color(Random(), Random(), Random()), 0.4f);
+		Poly::TransformComponent* dirLightTrans = world->GetComponent<Poly::TransformComponent>(DirLight);
+		dirLightTrans->SetLocalTranslation(Vector(0.0f, 0.0f, 0.0f));
+		dirLightTrans->SetLocalRotation(DirLightRot);
+	}
+}
+
+void RenderingSandbox::AddPointLights() 
+{
+	World* world = Engine->GetWorld();
+
+	for (int i = 0; i < 7; ++i)
+	{
+		Vector Pos = Vector(0.0, 1.0f, 0.0f);
+		Vector RndPos = Vector(Random(-1.0f, 1.0f), 0.0f, Random(-1.0f, 1.0f)) * 10.0f;
+		Poly::UniqueID PointLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+		DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLight);
+		DeferredTaskSystem::AddComponentImmediate<Poly::PointLightComponent>(world, PointLight, Color(1.0f, Random(), Random()), 2.0f, 0.1f);
+		Poly::TransformComponent* lightTrans = world->GetComponent<Poly::TransformComponent>(PointLight);
+		lightTrans->SetLocalTranslation(Pos + RndPos);
+	}
+}
+
 void GameMainSystem::GameUpdate(Poly::World* world)
 {
-	double time = world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime();
-	double deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
+	float time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
+	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
 
-	float i = 0;
-	for (auto cmpTuple : world->IterateComponents<DirectionalLightSourceComponent, TransformComponent>())
+	float di = 0;
+	for (auto cmpTuple : world->IterateComponents<DirectionalLightComponent, TransformComponent>())
 	{
 		TransformComponent* dirLightTrans = std::get<TransformComponent*>(cmpTuple);
-		Quaternion dirLightRot = Quaternion(Vector::UNIT_Y, 60.0_deg*i + 1_deg *100.0f*(float)time);
+		Quaternion dirLightRot = Quaternion(Vector::UNIT_X, -45_deg);
+		dirLightRot *= Quaternion(Vector::UNIT_Y, 90.0_deg*di + 1_deg *100.0f*time);
+		
 		dirLightTrans->SetLocalRotation(dirLightRot);
-		gConsole.LogInfo("DirLight[{}]: time: {}", i, time);
+		// gConsole.LogInfo("DirLight[{}]: time: {}", di, time);
 
-		i += 1.0f;
+		di += 1.0f;
+	}
+
+	int pi = 0;
+	for (auto cmpTuple : world->IterateComponents<PointLightComponent, TransformComponent>())
+	{
+		TransformComponent* pointLightTrans = std::get<TransformComponent*>(cmpTuple);
+		PointLightComponent* pointLight = std::get<PointLightComponent*>(cmpTuple);
+
+		// first point light stays in place
+		if (pi > 0)
+		{
+			float x = pointLightTrans->GetLocalTranslation().X;
+			pointLight->SetIntensity( 2.0f*Abs(Sin(1.0_rad *(x+time))) );
+		
+		}
+		else
+		{
+			Vector pointLightPos = Vector(0.0f, 2.0f, 0.0f);
+			// pointLightPos += Vector(Sin(1_rad*time), 0.0f, Cos(1_rad*time)) * 1.0f;
+			// pointLightPos += Vector(Cos(1_rad*time), 0.0f, 0.0f) * 10.0f;
+			// pointLightTrans->SetLocalTranslation(pointLightPos);
+		}
+			
+		// gConsole.LogInfo("PointLight[{}]: pos: {}", pi, pointLightTrans->GetLocalTranslation());
+		++pi;
 	}
 
 	// int UseCashetes = 0;
