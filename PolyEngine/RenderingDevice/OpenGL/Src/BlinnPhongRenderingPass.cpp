@@ -99,11 +99,6 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	}
 	GetProgram().SetUniform("uPointLightCount", pointLightsCount);
 
-	const float cameraHeight = 16.f + 1.f;
-	float verticalSpan = cameraHeight / 2.0f;
-	float horizontalSpan = (cameraHeight * camera->GetAspect()) / 2.0f;
-	Vector cameraPos = camera->GetSibling<TransformComponent>()->GetGlobalTranslation();
-
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
 	{
@@ -114,13 +109,6 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		 	continue;
 
 		Vector objPos = transCmp->GetGlobalTranslation();
-
-		bool shouldCull = objPos.Y > cameraPos.Y + verticalSpan;
-		shouldCull = shouldCull || objPos.Y < cameraPos.Y - verticalSpan;
-		shouldCull = shouldCull || objPos.X > cameraPos.X + horizontalSpan;
-		shouldCull = shouldCull || objPos.X < cameraPos.X - horizontalSpan;
-		if (shouldCull)
-			continue;
 
 		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
 		Matrix screenTransform = mvp * objTransform;

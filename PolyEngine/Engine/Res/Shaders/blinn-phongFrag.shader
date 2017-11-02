@@ -58,9 +58,9 @@ vec3 ambientlLight(DiffuseLight ambientLight) {
 Phong directionalLight(Material material, DirectionalLight light, vec3 positionWS, vec3 normalWS) {
 	Phong result;
 	DiffuseLight base = light.Base;
-	vec3 dir = light.Direction.xyz;
-	float dirNdotL = max(dot(normalWS, dir), 0.0);
-	result.Diffuse = vec3(base.Color.rgb) * max(base.Intensity, 0.0) * dirNdotL;
+	vec3 dir = normalize(-light.Direction.xyz);
+	float NdotL = max(dot(normalWS, dir), 0.0);
+	result.Diffuse = vec3(base.Color.rgb) * max(base.Intensity, 0.0) * NdotL;
 	
 	vec3 reflectDir = reflect(-dir, normalWS);
 	float spec = pow(max(dot(uCameraDirection.xyz, reflectDir), 0.0), 32);
@@ -98,27 +98,26 @@ void main() {
 		discard;
 
 	vec3 normalWS = vNormal;
-	vec3 diffuse = vec3(0.0);
-	vec3 specular = vec3(0.0);
-	
-	diffuse += uMaterial.Ambient.rgb * ambientlLight(uAmbientLight);
+	vec3 diffuseLight = uMaterial.Ambient.rgb * ambientlLight(uAmbientLight);
+	vec3 specularLight = vec3(0.0);
 	
 	for (int i = 0; i < uDirectionalLightCount; ++i)
 	{
 		Phong phong = directionalLight(uMaterial, uDirectionalLight[i], vVertexPos, normalWS);
-		diffuse += phong.Diffuse;
-		specular += phong.Specular;
+		diffuseLight = max(diffuseLight, phong.Diffuse);
+		specularLight = max(specularLight, phong.Specular);
 	}
 	
 	for (int i = 0; i < uPointLightCount; ++i)
 	{
 		Phong phong = pointLight(uMaterial, uPointLight[i], vVertexPos, normalWS);
-		diffuse += phong.Diffuse;
-		specular += phong.Specular;
+		diffuseLight = max(diffuseLight, phong.Diffuse);
+		specularLight = max(specularLight, phong.Specular);
 	}
 	
-	float rim = pow(dot(uCameraDirection.xyz, normalWS), 2.0);
-	vec3 phong = mix(uMaterial.Diffuse.rgb, texDiffuse.rgb, 1.0-rim) * (uMaterial.Diffuse.rgb * diffuse + uMaterial.Specular.rgb * specular);
+	// float rim = pow(dot(uCameraDirection.xyz, normalWS), 2.0);
+	// vec3 phong = uMaterial.Diffuse.rgb*texDiffuse.rgb * (uMaterial.Diffuse.rgb * diffuse + uMaterial.Specular.rgb * specular);
+	vec3 phong = uMaterial.Diffuse.rgb*texDiffuse.rgb*diffuseLight;
 	
 	color = vec4(phong, 1.0);
 }
