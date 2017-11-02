@@ -17,6 +17,6 @@ namespace Poly
 		return value;
 	}
 
-	EXPIMP_TEMPLATE template class ENGINE_DLLEXPORT Family<struct ENGINE_DLLEXPORT ComponentsFamily>;
-	EXPIMP_TEMPLATE template class ENGINE_DLLEXPORT Family<struct ENGINE_DLLEXPORT WorldComponentsFamily>;
+	EXPIMP_TEMPLATE template class ENGINE_DLLEXPORT Family<struct ComponentsFamilyType>;
+	EXPIMP_TEMPLATE template class ENGINE_DLLEXPORT Family<struct WorldComponentsFamilyType>;
 }

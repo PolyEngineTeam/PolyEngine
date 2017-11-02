@@ -15,6 +15,7 @@ set(POLYENGINE_SRCS
 	Src/DeferredTaskSystem.cpp
 	Src/Engine.cpp
 	Src/Entity.cpp
+	Src/Family.cpp
 	Src/FontResource.cpp
 	Src/FPSSystem.cpp
 	Src/FreeFloatMovementComponent.cpp
@@ -60,6 +61,8 @@ set(POLYENGINE_H_FOR_IDE
 	Src/Engine.hpp
 	Src/EnginePCH.hpp
 	Src/Entity.hpp
+	Src/Family.hpp
+	Src/Family.inc
 	Src/FontResource.hpp
 	Src/FPSSystem.hpp
 	Src/FreeFloatMovementComponent.hpp
