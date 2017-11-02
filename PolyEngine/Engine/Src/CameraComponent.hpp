@@ -21,6 +21,8 @@ namespace Poly {
 		void SetTargetFOV(const Angle& Value) { TargetFov = Value; }
 		void SetFOV(const Angle& Value) { Fov = Value; }
 		float GetAspect() const { return Aspect; }
+		int GetRenderingMode() const { return RenderingMode; }
+		void SetRenderingMode(int i) { RenderingMode = i; }
 
 	private:
 		Matrix Projection;
@@ -42,5 +44,8 @@ namespace Poly {
 		float Near = 0.f;
 		float Far = 0.f;
 		float Aspect = 1.f;
+
+		// RenderingMode
+		int RenderingMode;
 	};
 }

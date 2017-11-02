@@ -6,6 +6,8 @@
 
 namespace Poly
 {
+	class CameraComponent;
+	class AARect;
 	class World;
 	struct PostprocessQuad;
 	class RenderingPassBase;
@@ -71,6 +73,10 @@ namespace Poly
 		void EndFrame();
 
 		void CleanUpResources();
+
+		void RenderBeauty(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		// void Render(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 
 		template<typename T>
 		void RegisterGeometryPass(eGeometryRenderPassType type,
