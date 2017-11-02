@@ -6,36 +6,45 @@ using namespace Poly;
 
 void MovementSystem::MovementUpdatePhase(World* world)
 {
+	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
+	InputWorldComponent* inputCmp = world->GetWorldComponent<InputWorldComponent>();
+
 	for (auto freeFloatTuple : world->IterateComponents<FreeFloatMovementComponent, TransformComponent>())
 	{
 		TransformComponent* transCmp = std::get<TransformComponent*>(freeFloatTuple);
 		FreeFloatMovementComponent* freeFloatMovementCmp = std::get<FreeFloatMovementComponent*>(freeFloatTuple);
 
+		int wheelDelta = inputCmp->GetWheelPosDelta();
+		float speed = freeFloatMovementCmp->GetMovementSpeed();
+		speed = Clamp(speed + 0.1f*wheelDelta, 0.001f, 10000.0f);
+		freeFloatMovementCmp->SetMovementSpeed(speed);
+
 		Vector move;
-		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_W))
+		if (inputCmp->IsPressed(eKey::KEY_W))
 			move -= Vector::UNIT_Z;
-		else if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_S))
+		else if (inputCmp->IsPressed(eKey::KEY_S))
 			move += Vector::UNIT_Z;
 
-		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_A))
+		if (inputCmp->IsPressed(eKey::KEY_A))
 			move -= Vector::UNIT_X;
-		else if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D))
+		else if (inputCmp->IsPressed(eKey::KEY_D))
 			move += Vector::UNIT_X;
 
-		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_Q))
+		if (inputCmp->IsPressed(eKey::KEY_Q))
 			move -= Vector::UNIT_Y;
-		else if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_E))
+		else if (inputCmp->IsPressed(eKey::KEY_E))
 			move += Vector::UNIT_Y;
 
 		if (move.LengthSquared() > 0)
 			move.Normalize();
-		move *= freeFloatMovementCmp->GetMovementSpeed() * 0.016f; //TMP dt
+
+		move *= speed * deltaTime;
 
 		transCmp->SetLocalTranslation(transCmp->GetLocalTranslation() + transCmp->GetLocalRotation() * move);
 		
-		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::MLBUTTON))
+		if (inputCmp->IsPressed(eKey::MLBUTTON))
 		{
-			Vector delta = world->GetWorldComponent<InputWorldComponent>()->GetMousePosDelta();
+			Vector delta = inputCmp->GetMousePosDelta();
 
 			Quaternion rot = Quaternion(Vector::UNIT_Y, Angle::FromRadians(-delta.X * freeFloatMovementCmp->GetAngularVelocity()));
 			rot *= transCmp->GetLocalRotation();
