@@ -18,6 +18,7 @@ namespace Poly
 	private:
 		enum class eGeometryRenderPassType
 		{
+			UNLIT,
 			BLINN_PHONG,
 			TRANSPARENT_GEOMETRY,
 			DEBUG_NORMALS,
@@ -74,9 +75,10 @@ namespace Poly
 
 		void CleanUpResources();
 
-		void RenderBeauty(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderUnlit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 		void RenderWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		// void Render(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderNormals(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 
 		template<typename T>
 		void RegisterGeometryPass(eGeometryRenderPassType type,

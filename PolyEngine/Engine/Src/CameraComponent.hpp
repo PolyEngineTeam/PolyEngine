@@ -5,6 +5,15 @@
 
 namespace Poly {
 
+	enum class eRenderingModeType
+	{
+		LIT,
+		UNLIT,
+		WIREFRAME,
+		DEBUG_NORMALS,
+		_COUNT
+	};
+
 	class ENGINE_DLLEXPORT CameraComponent : public ComponentBase
 	{
 		friend void CameraSystem::CameraUpdatePhase(World*);
@@ -21,8 +30,8 @@ namespace Poly {
 		void SetTargetFOV(const Angle& Value) { TargetFov = Value; }
 		void SetFOV(const Angle& Value) { Fov = Value; }
 		float GetAspect() const { return Aspect; }
-		int GetRenderingMode() const { return RenderingMode; }
-		void SetRenderingMode(int i) { RenderingMode = i; }
+		eRenderingModeType GetRenderingMode() const { return RenderingMode; }
+		void SetRenderingMode(eRenderingModeType value) { RenderingMode = value; }
 
 	private:
 		Matrix Projection;
@@ -46,6 +55,6 @@ namespace Poly {
 		float Aspect = 1.f;
 
 		// RenderingMode
-		int RenderingMode;
+		eRenderingModeType RenderingMode;
 	};
 }

@@ -38,22 +38,22 @@ void Poly::CameraSystem::CameraUpdatePhase(World* world)
 		InputWorldComponent* inputCmp = world->GetWorldComponent<InputWorldComponent>();
 		if (inputCmp->IsPressed(eKey::F5))
 		{
-			cameraCmp->SetRenderingMode(0); // Beauty
+			cameraCmp->SetRenderingMode(eRenderingModeType::LIT);
 		}
 
 		if (inputCmp->IsPressed(eKey::F6))
 		{
-			cameraCmp->SetRenderingMode(1); // Unlit
+			cameraCmp->SetRenderingMode(eRenderingModeType::UNLIT);
 		}
 
 		if (inputCmp->IsPressed(eKey::F7))
 		{
-			cameraCmp->SetRenderingMode(2); // Solid
+			cameraCmp->SetRenderingMode(eRenderingModeType::WIREFRAME);
 		}
 
 		if (inputCmp->IsPressed(eKey::F8))
 		{
-			cameraCmp->SetRenderingMode(3); // Wireframe
+			cameraCmp->SetRenderingMode(eRenderingModeType::DEBUG_NORMALS);
 		}
 	}
 }

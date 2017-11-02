@@ -40,22 +40,28 @@ void GLRenderingDevice::RenderWorld(World* world)
 		// Set viewport rect (TOOO change it to propper rect, not box)
 		CameraComponent* cameraCmp = kv.second.GetCamera();
 		const AARect& rect = kv.second.GetRect();
-		const int RenderingMode = cameraCmp->GetRenderingMode();
-
-		gConsole.LogInfo("GLRenderingDevice: RenderingMode: {}", RenderingMode);
+		const eRenderingModeType renderMode = cameraCmp->GetRenderingMode();
 
 		glViewport((int)(rect.GetMin().X * screenSize.Width), (int)(rect.GetMin().Y * screenSize.Height),
 			(int)(rect.GetSize().X * screenSize.Width), (int)(rect.GetSize().Y * screenSize.Height));
 
-		switch (RenderingMode)
+		switch (renderMode)
 		{
-			case 1:
+			case eRenderingModeType::UNLIT:
+				RenderUnlit(world, rect, cameraCmp);
+				break;
+
+			case eRenderingModeType::WIREFRAME:
 				RenderWireframe(world, rect, cameraCmp);
 				break;
 
-			case 0:
+			case eRenderingModeType::DEBUG_NORMALS:
+				RenderNormals(world, rect, cameraCmp);
+				break;
+
+			case eRenderingModeType::LIT:
 			default:
-				RenderBeauty(world, rect, cameraCmp);
+				RenderLit(world, rect, cameraCmp);
 		}
 	}
 
@@ -69,7 +75,7 @@ void GLRenderingDevice::RenderWireframe(World* world, const AARect& rect, Camera
 
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
-	GeometryRenderingPasses[eGeometryRenderPassType::BLINN_PHONG]->Run(world, cameraCmp, rect);
+	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
 
 	glDepthMask(GL_FALSE);
 	glDisable(GL_BLEND);
@@ -80,7 +86,73 @@ void GLRenderingDevice::RenderWireframe(World* world, const AARect& rect, Camera
 	PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
 }
 
-void GLRenderingDevice::RenderBeauty(World* world, const AARect& rect, CameraComponent* cameraCmp) const
+void GLRenderingDevice::RenderNormals(World* world, const AARect& rect, CameraComponent* cameraCmp) const
+{
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+	GeometryRenderingPasses[eGeometryRenderPassType::DEBUG_NORMALS]->Run(world, cameraCmp, rect);
+
+	glDepthMask(GL_FALSE);
+	glDisable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
+}
+
+void GLRenderingDevice::RenderUnlit(World* world, const AARect& rect, CameraComponent* cameraCmp) const
+{
+	PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glDepthMask(GL_FALSE);
+	glDisable(GL_DEPTH_TEST);
+
+	if (post && post->UseBgShader)
+		PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND]->Run(world, cameraCmp, rect);
+	else
+		PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND_LIGHT]->Run(world, cameraCmp, rect);
+
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+	// Render meshes with blin-phong shader
+	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
+
+	glDepthMask(GL_FALSE);
+
+	glEnable(GL_BLEND);
+
+	// TODO test these blending options
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glBlendFunc(GL_ONE, GL_ONE);
+	//glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
+
+	GeometryRenderingPasses[eGeometryRenderPassType::TRANSPARENT_GEOMETRY]->Run(world, cameraCmp, rect);
+
+	glDisable(GL_BLEND);
+
+	glDisable(GL_DEPTH_TEST);
+
+	// Run postprocess passes
+	// for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
+
+	// Render text
+	GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);
+
+	if (post && post->UseFgShader)
+		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND]->Run(world, cameraCmp, rect);
+	else
+		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
+
+	// Draw debug normals
+	if (gDebugConfig.DebugNormalsFlag)
+		GeometryRenderingPasses[eGeometryRenderPassType::DEBUG_NORMALS]->Run(world, cameraCmp, rect);
+}
+
+void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp) const
 {
 	PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
 
@@ -134,4 +206,3 @@ void GLRenderingDevice::Init()
 {
 	InitPrograms();
 }
-
