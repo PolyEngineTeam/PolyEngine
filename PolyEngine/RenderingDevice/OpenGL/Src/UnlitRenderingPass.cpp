@@ -21,14 +21,6 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
 	
-	// Vector CameraDir = MovementSystem::GetGlobalForward(camera->GetSibling<TransformComponent>());
-	// GetProgram().SetUniform("uCameraDirection", CameraDir);
-
-	const float cameraHeight = 16.f + 1.f;
-	float verticalSpan = cameraHeight / 2.0f;
-	float horizontalSpan = (cameraHeight * camera->GetAspect()) / 2.0f;
-	Vector cameraPos = camera->GetSibling<TransformComponent>()->GetGlobalTranslation();
-
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
 	{
