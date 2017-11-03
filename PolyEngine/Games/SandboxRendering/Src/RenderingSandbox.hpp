@@ -34,6 +34,5 @@ private:
 
 	float Random();
 	float Random(float min, float max);
-	void AddDirectionalLights();
 	void AddPointLights();
 };
