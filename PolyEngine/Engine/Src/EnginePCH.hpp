@@ -7,6 +7,7 @@
 #include "Engine.hpp"
 
 // ECS
+#include "Family.inc"
 #include "ComponentBase.hpp"
 #include "Entity.hpp"
 #include "World.hpp"
