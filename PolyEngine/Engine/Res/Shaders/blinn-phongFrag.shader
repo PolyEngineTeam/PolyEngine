@@ -36,6 +36,7 @@ struct Material
 
 uniform sampler2D uTexture;
 uniform vec4 uCameraDirection;
+uniform vec4 uCameraPosition;
 
 uniform Material uMaterial;
 
