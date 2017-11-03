@@ -29,7 +29,7 @@ namespace Poly
 	private:
 		const String ASSETS_PATH_CONFIG_PATH = String("AssetsPath.json");
 		const String DEFAULT_ENGINE_ASSETS_PATH = String("../../Engine/Res/");
-		const String DEFAULT_GAME_ASSETS_PATH = String("../../Gamee/Res/");
+		const String DEFAULT_GAME_ASSETS_PATH = String("../../Games/SGJGame/Res/");
 
 		bool LoadedFromFile = false;
 

@@ -43,6 +43,19 @@ TEST_CASE("EnumArray tests", "[EnumArray]")
 	a1[eTestEnum::VAL_3] = 3;
 	REQUIRE(a1 == a3);
 
+	EnumArray<int, eTestEnum> a4{ { eTestEnum::VAL_2, 1 },{ eTestEnum::VAL_1, 2 },{ eTestEnum::VAL_3, 3 } };
+	REQUIRE(a4.GetSize() == (int)eTestEnum::_COUNT);
+	REQUIRE(a4[eTestEnum::VAL_1] == 2);
+	REQUIRE(a4[eTestEnum::VAL_2] == 1);
+	REQUIRE(a4[eTestEnum::VAL_3] == 3);
+
+	REQUIRE(a1 != a4);
+
+	a1[eTestEnum::VAL_1] = 2;
+	a1[eTestEnum::VAL_2] = 1;
+	a1[eTestEnum::VAL_3] = 3;
+	REQUIRE(a1 == a4);
+
 	REQUIRE(strcmp(GetEnumName(eTestEnum::VAL_1), "Val1") == 0);
 	REQUIRE(strcmp(GetEnumName(eTestEnum::VAL_2), "Val2") == 0);
 	REQUIRE(strcmp(GetEnumName(eTestEnum::VAL_3), "Val3") == 0);

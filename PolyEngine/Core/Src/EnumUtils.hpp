@@ -68,6 +68,12 @@ namespace Poly {
 		EnumArray() : Data{} {}
 
 		//------------------------------------------------------------------------------
+		EnumArray(const std::initializer_list<std::pair<E, T>>& list)
+		{
+			PopulateFromInitializerList(list);
+		}
+
+		//------------------------------------------------------------------------------
 		EnumArray(const std::initializer_list<T>& list)
 		{
 			PopulateFromInitializerList(list);
@@ -118,6 +124,13 @@ namespace Poly {
 		//------------------------------------------------------------------------------
 		T& operator[](size_t idx) { HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!"); return Data[idx]; }
 		const T& operator[](size_t idx) const { HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!"); return Data[idx]; }
+
+		//------------------------------------------------------------------------------
+		void PopulateFromInitializerList(const std::initializer_list<std::pair<E, T>>& list)
+		{
+			for (const std::pair<E, T>& val : list)
+				Data[static_cast<int>(val.first)] = val.second;
+		}
 
 		//------------------------------------------------------------------------------
 		void PopulateFromInitializerList(const std::initializer_list<T>& list)
@@ -244,13 +257,18 @@ namespace Poly {
 
 //NOTE(vuko): apparently defining specializations in a namespace from global/other namespace is illegal C++ and GCC complains
 //Unfortunately being compliant causes problems when using the macro in a namespace. Use _IN_POLY variant then.
-#define REGISTER_ENUM_NAMES(type, ...)                                                    \
-	namespace Poly { namespace Impl {                                                     \
-	template<> struct EnumInfo<type> {                                                    \
-		static EnumInfo<type>& Get() { static EnumInfo<type> instance; return instance; } \
-		const EnumArray<const char*, type> Names = {__VA_ARGS__};                         \
-	};                                                                                    \
-	}} //namespace Poly::Impl
+#define REGISTER_ENUM_NAMES(type, ...)                                                    			\
+	namespace Poly																					\
+	{																								\
+		namespace Impl 																				\
+		{																							\
+			template<> struct EnumInfo<type> 														\
+			{                                                    									\
+				static EnumInfo<type>& Get() { static EnumInfo<type> instance; return instance; } 	\
+				const EnumArray<const char*, type> Names = {__VA_ARGS__};                        	\
+			};                                                                                    	\
+		} /* namespace Impl */																		\
+	} //namespace Poly
 
 #define REGISTER_ENUM_NAMES_IN_POLY(type, ...)                                            \
 	namespace Impl {                                                                      \

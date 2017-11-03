@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Defines.hpp"
+#include "RTTI.hpp"
 
 // Math
 #include "BasicMath.hpp"

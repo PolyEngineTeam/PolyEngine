@@ -1,0 +1,82 @@
+#include <catch.hpp>
+
+#include <RTTI.hpp>
+
+using namespace Poly;
+
+enum class eTestEnum
+{
+	VAL_1,
+	VAL_2,
+	_COUNT
+};
+RTTI_DECLARE_PRIMITIVE_TYPE(eTestEnum)
+RTTI_DEFINE_PRIMITIVE_TYPE(eTestEnum)
+
+class TestClass : public RTTIBase {
+	RTTI_DECLARE_TYPE_DERIVED(TestClass, RTTIBase)
+	{
+		RTTI_PROPERTY(bool, val1, "Val1", RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_ENUM(eTestEnum, val2, "Val2", RTTI::ePropertyFlag::NONE);
+	}
+public:
+	bool val1 = true;
+	eTestEnum val2 = eTestEnum::VAL_1;
+};
+
+RTTI_DEFINE_TYPE(TestClass)
+
+class TestClass2 : public RTTIBase {
+	RTTI_DECLARE_TYPE_DERIVED(TestClass2, RTTIBase) { NO_RTTI_PROPERTY(); }
+public:
+};
+RTTI_DEFINE_TYPE(TestClass2)
+
+TEST_CASE("RTTI basics", "[RTTI]") {
+	TestClass* a = new TestClass();
+	RTTIBase* b = a;
+	CHECK(rtti_cast<TestClass2*>(b) == nullptr);
+	CHECK(rtti_cast<TestClass*>(b) == a);
+	CHECK(IsOfType<TestClass>(b) == true);
+	CHECK(IsOfType<TestClass2>(b) == false);
+	CHECK(rtti_cast<TestClass*>(a) == a);
+	CHECK(IsOfType<TestClass>(a) == true);
+	CHECK(IsOfType<TestClass2>(a) == false);
+	CHECK(b->GetTypeInfo() == RTTI::TypeInfo::Get<TestClass>());
+	CHECK(b->GetTypeInfo() != RTTI::TypeInfo::Get<TestClass2>());
+	delete a;
+
+	TestClass2* a2 = new TestClass2();
+	RTTIBase* b2 = a2;
+	CHECK(rtti_cast<TestClass*>(b2) == nullptr);
+	CHECK(rtti_cast<TestClass2*>(b2) == a2);
+	CHECK(IsOfType<TestClass>(b2) == false);
+	CHECK(IsOfType<TestClass2>(b2) == true);
+	CHECK(rtti_cast<TestClass2*>(a2) == a2);
+	CHECK(IsOfType<TestClass>(a2) == false);
+	CHECK(IsOfType<TestClass2>(a2) == true);
+	CHECK(b2->GetTypeInfo() != RTTI::TypeInfo::Get<TestClass>());
+	CHECK(b2->GetTypeInfo() == RTTI::TypeInfo::Get<TestClass2>());
+	delete a2;
+}
+
+TEST_CASE("RTTI property", "[RTTI]") {
+	TestClass* a = new TestClass();
+	RTTIBase* b = a;
+	
+	auto propMgr = b->GetPropertyManager();
+	REQUIRE(propMgr != nullptr);
+	
+	const auto& properties = propMgr->GetPropertyList();
+	REQUIRE(properties.GetSize() == 2);
+	
+	auto p1 = properties[0];
+	CHECK(properties[0].Type == RTTI::TypeInfo::Get<bool>());
+	CHECK(properties[0].Name == "Val1");
+	CHECK((char*)b + properties[0].Offset == (char*)&(a->val1));
+
+	auto p2 = properties[1];
+	CHECK(properties[1].Type == RTTI::TypeInfo::Get<eTestEnum>());
+	CHECK(properties[1].Name == "Val2");
+	CHECK((char*)b + properties[1].Offset == (char*)&(a->val2));
+}
