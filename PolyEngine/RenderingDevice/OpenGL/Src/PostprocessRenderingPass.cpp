@@ -13,7 +13,6 @@
 #include <MeshRenderingComponent.hpp>
 #include <PostprocessSettingsComponent.hpp>
 
-#include "Family.inc"
 
 using namespace Poly;
 

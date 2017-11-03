@@ -10,7 +10,6 @@
 #include <LightSourceComponent.hpp>
 #include <MovementSystem.hpp>
 
-#include "Family.inc"
 
 using namespace Poly;
 
