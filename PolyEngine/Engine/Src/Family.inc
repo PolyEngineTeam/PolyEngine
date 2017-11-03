@@ -3,7 +3,7 @@
 namespace Poly
 {
 	template<typename T>
-	size_t Family<T>::identifier() noexcept
+	size_t Family<T>::identifier()
 	{
 		static size_t value = 0;
 		return value++;
@@ -11,7 +11,7 @@ namespace Poly
 
 	template<typename T>
 	template<typename U>
-	size_t Family<T>::type_id() noexcept
+	size_t Family<T>::type_id()
 	{
 		static const size_t value = identifier();
 		return value;

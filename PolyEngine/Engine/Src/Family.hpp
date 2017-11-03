@@ -7,7 +7,7 @@
 #endif
 
 #define COMPONENT_INS(FAMILY, COMPONENT) \
-	EXPIMP_TEMPLATE template size_t ENGINE_DLLEXPORT FAMILY::type_id<COMPONENT>() noexcept;
+	EXPIMP_TEMPLATE template size_t ENGINE_DLLEXPORT FAMILY::type_id<COMPONENT>();
 
 namespace Poly
 {
@@ -44,14 +44,14 @@ namespace Poly
 	template<typename T>
 	class Family
 	{
-		static size_t identifier() noexcept;
+		static size_t identifier();
 
 	public:
 		///<summary>
 		/// Returns an unique identifier for the given type.
 		///</summary>
 		template<typename U>
-		static size_t type_id() noexcept;
+		static size_t type_id();
 	};
 
 	using ComponentsFamily = Family<struct ComponentsFamilyType>;
