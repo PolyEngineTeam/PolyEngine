@@ -128,7 +128,6 @@ namespace Poly {
 		//------------------------------------------------------------------------------
 		void PopulateFromInitializerList(const std::initializer_list<std::pair<E, T>>& list)
 		{
-			HEAVY_ASSERTE(list.size() == GetSize(), "Initializer list size and enum array size are different!");
 			for (const std::pair<E, T>& val : list)
 				Data[static_cast<int>(val.first)] = val.second;
 		}

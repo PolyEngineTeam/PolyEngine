@@ -45,8 +45,8 @@ TEST_CASE("EnumArray tests", "[EnumArray]")
 
 	EnumArray<int, eTestEnum> a4{ { eTestEnum::VAL_2, 1 },{ eTestEnum::VAL_1, 2 },{ eTestEnum::VAL_3, 3 } };
 	REQUIRE(a4.GetSize() == (int)eTestEnum::_COUNT);
-	REQUIRE(a4[eTestEnum::VAL_1] == 1);
-	REQUIRE(a4[eTestEnum::VAL_2] == 2);
+	REQUIRE(a4[eTestEnum::VAL_1] == 2);
+	REQUIRE(a4[eTestEnum::VAL_2] == 1);
 	REQUIRE(a4[eTestEnum::VAL_3] == 3);
 
 	REQUIRE(a1 != a4);
