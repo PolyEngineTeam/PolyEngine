@@ -32,8 +32,8 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	RegisterComponent<RigidBody2DComponent>((size_t)eEngineComponents::RIGIDBODY_2D);
 	RegisterComponent<Box2DColliderComponent>((size_t)eEngineComponents::BOX2D_COLLIDER);
 	RegisterComponent<Circle2DColliderComponent>((size_t)eEngineComponents::CIRCLE2D_COLLIDER);
-	RegisterComponent<DirectionalLightComponent>((size_t)eEngineComponents::DIRECTIONAL_LIGHTSOURCE);
-	RegisterComponent<PointLightComponent>((size_t)eEngineComponents::POINT_LIGHTSOURCE);
+	RegisterComponent<DirectionalLightComponent>((size_t)eEngineComponents::DIRECTIONAL_LIGHT);
+	RegisterComponent<PointLightComponent>((size_t)eEngineComponents::POINT_LIGHT);
 	RegisterComponent<PostprocessSettingsComponent>((size_t)eEngineComponents::POSTPROCESS_SETTINGS);
 
 	// Engine World Components
@@ -44,7 +44,7 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	RegisterWorldComponent<DeferredTaskWorldComponent>((size_t)eEngineWorldComponents::DEFERRED_TASK);
 	RegisterWorldComponent<SoundWorldComponent>((size_t) eEngineWorldComponents::SOUND);
 	RegisterWorldComponent<Physics2DWorldComponent>((size_t)eEngineWorldComponents::PHYSICS_2D);
-	RegisterWorldComponent<AmbientLightWorldComponent>((size_t)eEngineWorldComponents::DIFFUSE_LIGHTSOURCE);
+	RegisterWorldComponent<AmbientLightWorldComponent>((size_t)eEngineWorldComponents::DIFFUSE_LIGHT);
 
 	// Add WorldComponents
 	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(BaseWorld.get());
