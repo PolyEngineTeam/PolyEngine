@@ -7,7 +7,7 @@
 #include "CollisionComponent.hpp"
 #include "TankComponent.hpp"
 #include "SoundEmitterComponent.hpp"
-#include "CoreConfig.hpp"
+#include "AssetsPathConfig.hpp"
 
 #include "Family.inc"
 

@@ -22,6 +22,9 @@ bld/
 build/
 cmake-build-*
 
+# Windows specific stuff
+[Tt]humbs.db
+
 # Visual Studio 2015 cache/options directory
 .vs/
 

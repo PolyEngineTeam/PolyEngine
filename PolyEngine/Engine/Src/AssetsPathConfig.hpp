@@ -28,7 +28,7 @@ namespace Poly
 	private:
 		const String ASSETS_PATH_CONFIG_PATH = String("AssetsPath.json");
 		const String DEFAULT_ENGINE_ASSETS_PATH = String("../../Engine/Res/");
-		const String DEFAULT_GAME_ASSETS_PATH = String("../../Gamee/Res/");
+		const String DEFAULT_GAME_ASSETS_PATH = String("../../Games/SGJGame/Res/");
 
 		bool LoadedFromFile = false;
 
@@ -38,18 +38,4 @@ namespace Poly
 	};
 
 	ENGINE_DLLEXPORT extern AssetsPathConfig gAssetsPathConfig;
-
-
-	/// <summary>This is class where all core configuration variables are placed</summary>
-	class ENGINE_DLLEXPORT CoreConfig
-	{
-	public:
-
-		// Rendering
-		bool DebugNormalsFlag = false;
-		bool WireframeRendering = false;
-		bool DisplayFPS = true;
-	};
-
-	ENGINE_DLLEXPORT extern CoreConfig gCoreConfig;
 }

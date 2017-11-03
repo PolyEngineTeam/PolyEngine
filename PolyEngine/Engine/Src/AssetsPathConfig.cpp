@@ -1,11 +1,10 @@
-#include"EnginePCH.hpp"
+#include "EnginePCH.hpp"
 
 #include "rapidjson/document.h"
 
 namespace Poly
 {
 	AssetsPathConfig gAssetsPathConfig;
-	CoreConfig gCoreConfig;
 
 	Dynarray<String> AssetsPathConfig::GetAssetsPaths(eResourceSource Source) const
 	{
@@ -135,7 +134,7 @@ namespace Poly
 
 	void AssetsPathConfig::WriteDefaultJson()
 	{
-		String JsonContent("{\"EngineAssetsPaths\":[\"../../Engine/Res/\"],\"GameAssetsPaths\":[\"../../Game/Res/\"]}");
+		String JsonContent = String("{\"EngineAssetsPaths\":[") + DEFAULT_ENGINE_ASSETS_PATH + String("],\"GameAssetsPaths\":[") + DEFAULT_GAME_ASSETS_PATH + String("]}");
 		SaveTextFile(ASSETS_PATH_CONFIG_PATH, JsonContent);
 	}
 }

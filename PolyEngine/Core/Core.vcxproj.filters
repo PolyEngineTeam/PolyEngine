@@ -20,6 +20,9 @@
     <Filter Include="Source Files\Geometry">
       <UniqueIdentifier>{f002524e-61e4-441f-82eb-eb9005fee855}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\RTTI">
+      <UniqueIdentifier>{dc532e3a-e9e2-44e0-bc9d-8a6344187c6e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Matrix.cpp">
@@ -69,6 +72,12 @@
     </ClCompile>
     <ClCompile Include="Src\AARect.cpp">
       <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\RTTITypeInfo.cpp">
+      <Filter>Source Files\RTTI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\RTTI.cpp">
+      <Filter>Source Files\RTTI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -167,6 +176,21 @@
     </ClInclude>
     <ClInclude Include="Src\AARect.hpp">
       <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\RTTI.hpp">
+      <Filter>Source Files\RTTI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\RTTICast.hpp">
+      <Filter>Source Files\RTTI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\RTTIProperty.hpp">
+      <Filter>Source Files\RTTI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\RTTITypeInfo.hpp">
+      <Filter>Source Files\RTTI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\RTTITypeInfoImpl.hpp">
+      <Filter>Source Files\RTTI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
