@@ -5,6 +5,7 @@
 #include <World.hpp>
 #include <TransformComponent.hpp>
 #include <SoundEmitterComponent.hpp>
+#include <SoundResource.hpp>
 
 using namespace Poly;
 
@@ -44,17 +45,46 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 		{
 			unsigned int emitterID;
 			alGenSources(1, &emitterID);
-			OwnerToEmitterMap[emitterCmp->GetOwnerID()] =  emitterID;
+			OwnerToEmitterMap[emitterCmp->GetOwnerID()] = new ALEmitter{ emitterID };
 		}
 
 		if (emitterCmp->GetFlags().IsSet(eComponentBaseFlags::ABOUT_TO_BE_REMOVED))
 		{
-			alDeleteSources(1, &OwnerToEmitterMap[emitterCmp->GetOwnerID()]);
+			alDeleteSources(1, &OwnerToEmitterMap[emitterCmp->GetOwnerID()]->EmitterID);
 			OwnerToEmitterMap.erase(emitterCmp->GetOwnerID());
 		}
 
-		unsigned int emitterID = OwnerToEmitterMap[emitterCmp->GetOwnerID()];
+		ALEmitter* emitter = OwnerToEmitterMap[emitterCmp->GetOwnerID()];
+		unsigned int emitterID = emitter->EmitterID;
 
+		// streaming
+		int queued;
+		alGetSourcei(emitterID, AL_BUFFERS_QUEUED, &queued);
+		if (emitterCmp->PlaylistChanged)
+		{
+			alSourceStop(emitterID);
+			alSourceUnqueueBuffers(emitterID, emitter->QueuedBuffersCount, emitter->QueuedBuffers);
+			alDeleteBuffers(emitter->QueuedBuffersCount, emitter->QueuedBuffers);
+
+			emitter->QueuedBuffersCount = emitterCmp->GetBufferCount() >= BuffersInQueueCount ? BuffersInQueueCount : emitterCmp->GetBufferCount();
+			alGenBuffers(emitter->QueuedBuffersCount, emitter->QueuedBuffers);
+
+			for (int i = 0; i < emitter->QueuedBuffersCount; i++)
+			{
+				const SoundResource* res = emitterCmp->GetBuffer(i);
+
+				alBufferData(emitter->QueuedBuffers[i], EngineFormatToALFormatMap[res->GetSampleFormat()],  res->GetRawData())
+			}
+		}
+		else if (queued < BuffersInQueueCount)
+		{
+			emitterCmp->PopSoundResource();
+
+		}
+
+		emitterCmp->PlaylistChanged = false;
+
+		// scalar properties
 		alSourcef(emitterID, AL_PITCH, emitterCmp->Pitch);
 		alSourcef(emitterID, AL_GAIN, emitterCmp->Gain);
 		alSourcef(emitterID, AL_MAX_DISTANCE, emitterCmp->MaxDistance);
@@ -62,14 +92,17 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 		alSourcef(emitterID, AL_REFERENCE_DISTANCE, emitterCmp->RefferenceDistance);
 		alSourcef(emitterID, AL_MIN_GAIN, emitterCmp->MinGain);
 		alSourcef(emitterID, AL_MAX_GAIN, emitterCmp->MaxGain);
-		alSourcef(emitterID, AL_CONE_OUTER_GAIN, emitterCmp->ConeOuterGain);
 		alSourcef(emitterID, AL_CONE_INNER_ANGLE, emitterCmp->ConeInnerAngle);
 		alSourcef(emitterID, AL_CONE_OUTER_ANGLE, emitterCmp->ConeOuterAngle);
-		alSourcef(emitterID, AL_CONE_OUTER_GAIN, emitterCmp->Direction);
+		alSourcef(emitterID, AL_CONE_OUTER_GAIN, emitterCmp->ConeOuterGain);
 
+		// vector properties
 		Vector pos = transCmp->GetGlobalTranslation();
 		alSource3f(emitterID, AL_POSITION, pos.X, pos.Y, pos.Z);
+		// set direction
+		// set velocity
 
+		// boolean properites
 		if (emitterCmp->Looping)
 			alSourcei(emitterID, AL_LOOPING, AL_TRUE);
 		else
@@ -80,7 +113,6 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 		else
 			alSourcei(emitterID, AL_SOURCE_STATE, AL_PLAYING);
 
-		// set velocity
 	}
 }
 
