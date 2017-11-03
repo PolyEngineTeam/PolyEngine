@@ -8,16 +8,12 @@ namespace Poly
 	{
 		RTTI_DECLARE_TYPE_DERIVED(DebugConfig, ConfigBase)
 		{
-			RTTI_PROPERTY(bool, DebugNormalsFlag, "DebugNormalsFlag", RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY(bool, WireframeRendering, "WireframeRendering", RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY(bool, DisplayFPS, "DisplayFPS", RTTI::ePropertyFlag::NONE);
 		}
 	public:
 		DebugConfig() : ConfigBase("Debug", eConfigLocation::LOCAL) {}
 
 		// Rendering
-		bool DebugNormalsFlag = false;
-		bool WireframeRendering = false;
 		bool DisplayFPS = true;
 	};
 

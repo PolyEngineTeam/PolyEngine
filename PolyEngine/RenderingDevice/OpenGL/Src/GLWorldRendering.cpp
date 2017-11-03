@@ -40,13 +40,17 @@ void GLRenderingDevice::RenderWorld(World* world)
 		// Set viewport rect (TOOO change it to propper rect, not box)
 		CameraComponent* cameraCmp = kv.second.GetCamera();
 		const AARect& rect = kv.second.GetRect();
-		const eRenderingModeType renderMode = cameraCmp->GetRenderingMode();
+		const eRenderingModeType renderingMode = cameraCmp->GetRenderingMode();
 
 		glViewport((int)(rect.GetMin().X * screenSize.Width), (int)(rect.GetMin().Y * screenSize.Height),
 			(int)(rect.GetSize().X * screenSize.Width), (int)(rect.GetSize().Y * screenSize.Height));
 
-		switch (renderMode)
+		switch (renderingMode)
 		{
+			case eRenderingModeType::LIT:
+				RenderLit(world, rect, cameraCmp);
+				break;
+
 			case eRenderingModeType::UNLIT:
 				RenderUnlit(world, rect, cameraCmp);
 				break;
@@ -59,9 +63,8 @@ void GLRenderingDevice::RenderWorld(World* world)
 				RenderNormals(world, rect, cameraCmp);
 				break;
 
-			case eRenderingModeType::LIT:
 			default:
-				RenderLit(world, rect, cameraCmp);
+				ASSERTE(false, "Uknown eRenderingModeType");
 		}
 	}
 
@@ -146,10 +149,6 @@ void GLRenderingDevice::RenderUnlit(World* world, const AARect& rect, CameraComp
 		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND]->Run(world, cameraCmp, rect);
 	else
 		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
-
-	// Draw debug normals
-	if (gDebugConfig.DebugNormalsFlag)
-		GeometryRenderingPasses[eGeometryRenderPassType::DEBUG_NORMALS]->Run(world, cameraCmp, rect);
 }
 
 void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp) const
@@ -195,10 +194,6 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND]->Run(world, cameraCmp, rect);
 	else
 		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
-
-	// Draw debug normals
-	if (gDebugConfig.DebugNormalsFlag)
-		GeometryRenderingPasses[eGeometryRenderPassType::DEBUG_NORMALS]->Run(world, cameraCmp, rect);
 }
 
 
