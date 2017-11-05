@@ -9,6 +9,7 @@
 #include "GLTextFieldBufferDeviceProxy.hpp"
 #include "GLMeshDeviceProxy.hpp"
 
+#include "UnlitRenderingPass.hpp"
 #include "BlinnPhongRenderingPass.hpp"
 #include "Text2DRenderingPass.hpp"
 #include "DebugNormalsRenderingPass.hpp"
@@ -294,8 +295,9 @@ void GLRenderingDevice::InitPrograms()
 	DepthRenderingTarget* depth = CreateRenderingTarget<DepthRenderingTarget>();
 	// Texture2DRenderingTarget* depth2 = CreateRenderingTarget<Texture2DRenderingTarget>(GL_R16F);
 
+	RegisterGeometryPass<UnlitRenderingPass>(eGeometryRenderPassType::UNLIT, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPass<BlinnPhongRenderingPass>(eGeometryRenderPassType::BLINN_PHONG, {}, { { "color", texture }, { "depth", depth } });
-	RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS);
+	RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } }, PostprocessRenderingQuad.get());
 

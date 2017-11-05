@@ -1,6 +1,7 @@
 find_package(epoxy REQUIRED)
 
 set(POLYGLDEVICE_SRCS
+	Src/UnlitRenderingPass.cpp
 	Src/BlinnPhongRenderingPass.cpp
 	Src/DebugNormalsRenderingPass.cpp
 	Src/GLMeshDeviceProxy.cpp
@@ -21,6 +22,7 @@ set(POLYGLDEVICE_SRCS_APPLE
 set(POLYGLDEVICE_INCLUDE Src)
 set(POLYGLDEVICE_INCLUDE_APPLE Src-macOS)
 set(POLYGLDEVICE_H_FOR_IDE
+	Src/UnlitRenderingPass.hpp
 	Src/BlinnPhongRenderingPass.hpp
 	Src/DebugNormalsRenderingPass.hpp
 	Src/GLMeshDeviceProxy.hpp
