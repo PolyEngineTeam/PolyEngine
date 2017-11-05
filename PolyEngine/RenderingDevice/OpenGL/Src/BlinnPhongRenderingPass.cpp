@@ -13,19 +13,28 @@
 using namespace Poly;
 
 const float IntensityThreshold = 0.05f;
-const size_t MAX_POINT_LIGHT_COUNT = 8;
+const size_t MAX_LIGHT_COUNT_POINT = 8;
+const size_t MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 
 BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 : RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
 {
-	GetProgram().RegisterUniform("vec4", "uDiffuseLight.Color");
-	GetProgram().RegisterUniform("float", "uDiffuseLight.Intensity");
+	GetProgram().RegisterUniform("float", "uSpecularStrength");
 
-	GetProgram().RegisterUniform("vec4", "uDirectionalLight.Base.Color");
-	GetProgram().RegisterUniform("float", "uDirectionalLight.Base.Intensity");
-	GetProgram().RegisterUniform("vec4", "uDirectionalLight.Direction");
+	GetProgram().RegisterUniform("vec4", "uAmbientLight.Base.Color");
+	GetProgram().RegisterUniform("float", "uAmbientLight.Base.Intensity");
 
-	for (size_t i = 0; i < MAX_POINT_LIGHT_COUNT; ++i)
+	for (size_t i = 0; i < MAX_LIGHT_COUNT_DIRECTIONAL; ++i)
+	{
+		String baseName = String("uDirectionalLight[") + String::From(static_cast<int>(i)) + String("].");
+		GetProgram().RegisterUniform("vec4", baseName + "Base.Color");
+		GetProgram().RegisterUniform("float", baseName + "Base.Intensity");
+		GetProgram().RegisterUniform("vec4", baseName + "Direction");
+	}
+
+	GetProgram().RegisterUniform("int", "uDirectionalLightCount");
+
+	for (size_t i = 0; i < MAX_LIGHT_COUNT_POINT; ++i)
 	{
 		String baseName = String("uPointLight[") + String::From(static_cast<int>(i)) + String("].");
 		GetProgram().RegisterUniform("vec4", baseName + "Base.Color");
@@ -42,53 +51,57 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 {
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
+	
+	Vector CameraDir = MovementSystem::GetGlobalForward(camera->GetSibling<TransformComponent>());
+	GetProgram().SetUniform("uCameraDirection", CameraDir);
 
-	DiffuseLightSourceWorldComponent* diffuseCmp = world->GetWorldComponent<DiffuseLightSourceWorldComponent>();
+	AmbientLightWorldComponent* ambientCmp = world->GetWorldComponent<AmbientLightWorldComponent>();
+	GetProgram().SetUniform("uAmbientLight.Base.Color", ambientCmp->GetColor());
+	GetProgram().SetUniform("uAmbientLight.Base.Intensity", ambientCmp->GetIntensity());
 
-	GetProgram().SetUniform("uDiffuseLight.Color", diffuseCmp->GetColor());
-	GetProgram().SetUniform("uDiffuseLight.Intensity", diffuseCmp->GetIntensity());
-
-	GetProgram().SetUniform("uDirectionalLight.Base.Intensity", 0.f);
-	for (auto componentsTuple : world->IterateComponents<DirectionalLightSourceComponent, TransformComponent>())
+	int dirLightsCount = 0;
+	for (auto componentsTuple : world->IterateComponents<DirectionalLightComponent, TransformComponent>())
 	{
-		DirectionalLightSourceComponent* dirLightCmp = std::get<DirectionalLightSourceComponent*>(componentsTuple);
+		DirectionalLightComponent* dirLightCmp = std::get<DirectionalLightComponent*>(componentsTuple);
 		TransformComponent* transformCmp = std::get<TransformComponent*>(componentsTuple);
-
-		GetProgram().SetUniform("uDirectionalLight.Base.Color", dirLightCmp->GetColor());
-		GetProgram().SetUniform("uDirectionalLight.Base.Intensity", dirLightCmp->GetIntensity());
-		GetProgram().SetUniform("uDirectionalLight.Direction", MovementSystem::GetGlobalForward(transformCmp));
-		// use only first on scene
-		break;
+		String baseName = String("uDirectionalLight[") + String::From(dirLightsCount) + String("].");
+		GetProgram().SetUniform(baseName + "Direction", MovementSystem::GetGlobalForward(transformCmp));
+		GetProgram().SetUniform(baseName + "Base.Color", dirLightCmp->GetColor());
+		GetProgram().SetUniform(baseName + "Base.Intensity", dirLightCmp->GetIntensity());
+		
+		++dirLightsCount;
+		if (dirLightsCount == MAX_LIGHT_COUNT_DIRECTIONAL)
+			break;
 	}
-
+	GetProgram().SetUniform("uDirectionalLightCount", dirLightsCount);
+	
 	int pointLightsCount = 0;
-	for (auto componentsTuple : world->IterateComponents<PointLightSourceComponent, TransformComponent>())
+	for (auto componentsTuple : world->IterateComponents<PointLightComponent, TransformComponent>())
 	{
-		PointLightSourceComponent* pointLightCmp = std::get<PointLightSourceComponent*>(componentsTuple);
+		PointLightComponent* pointLightCmp = std::get<PointLightComponent*>(componentsTuple);
 		TransformComponent* transformCmp = std::get<TransformComponent*>(componentsTuple);
-
+	
 		String baseName = String("uPointLight[") + String::From(pointLightsCount) + String("].");
-
+	
 		GetProgram().SetUniform(baseName + "Base.Color", pointLightCmp->GetColor());
 		GetProgram().SetUniform(baseName + "Base.Intensity", pointLightCmp->GetIntensity());
 		GetProgram().SetUniform(baseName + "Position", transformCmp->GetGlobalTranslation());
 		GetProgram().SetUniform(baseName + "Attenuation", pointLightCmp->GetAttenuation());
 		float range = sqrt(((1.f / IntensityThreshold) - 1.0f)/ pointLightCmp->GetAttenuation());
 		GetProgram().SetUniform(baseName + "Range", range);
-		// use only first on scene
+
 		++pointLightsCount;
-		if (pointLightsCount == MAX_POINT_LIGHT_COUNT)
+		if (pointLightsCount == MAX_LIGHT_COUNT_POINT)
 			break;
 	}
-
 	GetProgram().SetUniform("uPointLightCount", pointLightsCount);
+
+	GetProgram().SetUniform("uSpecularStrength", 0.1f); // TODO: move to Material
 
 	const float cameraHeight = 16.f + 1.f;
 	float verticalSpan = cameraHeight / 2.0f;
 	float horizontalSpan = (cameraHeight * camera->GetAspect()) / 2.0f;
 	Vector cameraPos = camera->GetSibling<TransformComponent>()->GetGlobalTranslation();
-
-
 
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
@@ -97,7 +110,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
 
 		if (meshCmp->IsTransparent())
-			continue;
+		 	continue;
 
 		Vector objPos = transCmp->GetGlobalTranslation();
 
@@ -107,7 +120,6 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		shouldCull = shouldCull || objPos.X < cameraPos.X - horizontalSpan;
 		if (shouldCull)
 			continue;
-
 
 		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
 		Matrix screenTransform = mvp * objTransform;
