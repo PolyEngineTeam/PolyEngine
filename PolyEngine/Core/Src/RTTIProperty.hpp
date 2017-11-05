@@ -23,9 +23,9 @@ namespace Poly {
 			_COUNT
 		};
 
-		template <typename T> eCorePropertyType GetCorePropertyType() { return RTTI::Impl::HasGetTypeInfoFunc<T>::value ? eCorePropertyType::NONE : eCorePropertyType::UNHANDLED; };
+		template <typename T> inline eCorePropertyType GetCorePropertyType() { return RTTI::Impl::HasGetTypeInfoFunc<T>::value ? eCorePropertyType::NONE : eCorePropertyType::UNHANDLED; };
 		// specializations
-		template <> CORE_DLLEXPORT eCorePropertyType GetCorePropertyType<bool>() { return eCorePropertyType::BOOL; };
+		template <> inline eCorePropertyType GetCorePropertyType<bool>() { return eCorePropertyType::BOOL; };
 
 		enum class ePropertyFlag {
 			NONE = 0,
