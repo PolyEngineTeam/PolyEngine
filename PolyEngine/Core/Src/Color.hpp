@@ -12,6 +12,12 @@ namespace Poly {
 		Color();
 		Color(float r, float g, float b, float a = 1.0f);
 
+		// Operators with other Colors
+		Color operator+(const Color& rhs) const;
+		Color operator-(const Color& rhs) const;
+		Color& operator+=(const Color& rhs);
+		Color& operator-=(const Color& rhs);
+
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Color& color);
 
 		union {

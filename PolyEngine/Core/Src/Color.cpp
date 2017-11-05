@@ -16,6 +16,28 @@ Color::Color(float r, float g, float b, float a)
 }
 
 //------------------------------------------------------------------------------
+Color Color::operator+(const Color& rhs) const {
+	return Color(R + rhs.R, G + rhs.G, B + rhs.B, A + rhs.A);
+}
+
+//------------------------------------------------------------------------------
+Color Color::operator-(const Color& rhs) const {
+	return Color(R - rhs.R, G - rhs.G, B - rhs.B, A - rhs.A);
+}
+
+//------------------------------------------------------------------------------
+Color& Color::operator+=(const Color& rhs) {
+	R += rhs.R; G += rhs.G; B += rhs.B; A += rhs.A;
+	return *this;
+}
+
+//------------------------------------------------------------------------------
+Color& Color::operator-=(const Color& rhs) {
+	R -= rhs.R; G -= rhs.G; B -= rhs.B; A -= rhs.A;
+	return *this;
+}
+
+//------------------------------------------------------------------------------
 std::ostream& operator<< (std::ostream& stream, const Color& color)
 {
 	return stream << "Color[ " << color.R << " " << color.G << " " << color.B << " " << color.A << " ]";
