@@ -1,6 +1,7 @@
 #include <catch.hpp>
 
 #include <RTTI.hpp>
+#include <DebugConfig.hpp>
 
 using namespace Poly;
 
@@ -33,6 +34,8 @@ public:
 RTTI_DEFINE_TYPE(TestClass2)
 
 TEST_CASE("RTTI basics", "[RTTI]") {
+	Poly::gDebugConfig.Save();
+	
 	TestClass* a = new TestClass();
 	RTTIBase* b = a;
 	CHECK(rtti_cast<TestClass2*>(b) == nullptr);

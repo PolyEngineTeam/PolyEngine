@@ -79,6 +79,9 @@
     <ClCompile Include="Src\RTTI.cpp">
       <Filter>Source Files\RTTI</Filter>
     </ClCompile>
+    <ClCompile Include="Src\RTTISerialization.cpp">
+      <Filter>Source Files\RTTI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Dynarray.hpp">
@@ -190,6 +193,9 @@
       <Filter>Source Files\RTTI</Filter>
     </ClInclude>
     <ClInclude Include="Src\RTTITypeInfoImpl.hpp">
+      <Filter>Source Files\RTTI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\RTTISerialization.hpp">
       <Filter>Source Files\RTTI</Filter>
     </ClInclude>
   </ItemGroup>
