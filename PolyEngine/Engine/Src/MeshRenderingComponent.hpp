@@ -37,8 +37,8 @@ namespace Poly {
 		const MeshResource* GetMesh() const { return Mesh; }
 		const PhongMaterial& GetMaterial(int i) const { return Materials[i]; }
 		void SetMaterial(int i, const PhongMaterial& value) { Materials[i] = value; }
-		bool GetWireframe() const { return IsWireframe; }
-		void SetWireframe(bool value) { IsWireframe = value; }
+		bool GetIsWireframe() const { return IsWireframe; }
+		void SetIsWireframe(bool value) { IsWireframe = value; }
 		eShadingModel GetShadingModel() const { return ShadingModel; }
 		void SetShadingModel(eShadingModel value) { ShadingModel = value; }
 		bool IsTransparent() const { return Materials[0].DiffuseColor.A < 1.0f; } // HACK replace with better solution for transloucent objects.

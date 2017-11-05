@@ -121,13 +121,16 @@ void GLRenderingDevice::RenderUnlit(World* world, const AARect& rect, CameraComp
 
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
 	// Render meshes with blin-phong shader
 	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
 
 	glDepthMask(GL_FALSE);
 
 	glEnable(GL_BLEND);
-
+	glDisable(GL_CULL_FACE);
 	// TODO test these blending options
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//glBlendFunc(GL_ONE, GL_ONE);
@@ -166,21 +169,24 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
-	// Render meshes with unlit shader
-	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 
 	// Render meshes with blin-phong shader
 	GeometryRenderingPasses[eGeometryRenderPassType::BLINN_PHONG]->Run(world, cameraCmp, rect);
 
+	// Render meshes with unlit shader
+	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
+
 	glDepthMask(GL_FALSE);
 
 	glEnable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
 
 	// TODO test these blending options
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//glBlendFunc(GL_ONE, GL_ONE);
 	//glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
-
 	GeometryRenderingPasses[eGeometryRenderPassType::TRANSPARENT_GEOMETRY]->Run(world, cameraCmp, rect);
 
 	glDisable(GL_BLEND);

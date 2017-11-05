@@ -124,8 +124,10 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
 		Matrix screenTransform = mvp * objTransform;
 		GetProgram().SetUniform("uTransform", objTransform);
-		GetProgram().SetUniform("uMVPTransform", screenTransform);		
+		GetProgram().SetUniform("uMVPTransform", screenTransform);
 		
+		glPolygonMode(GL_FRONT_AND_BACK, meshCmp->GetIsWireframe() ? GL_LINE : GL_FILL);
+
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
@@ -151,5 +153,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 
 			++i;
 		}
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 }

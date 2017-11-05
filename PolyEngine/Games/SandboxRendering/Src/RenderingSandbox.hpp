@@ -34,5 +34,7 @@ private:
 
 	float Random();
 	float Random(float min, float max);
-	void AddPointLights();
+	void AddDirectionalLights();
+	void AddPointLights(int Quata);
+	void CreatePointLight(float Range);
 };

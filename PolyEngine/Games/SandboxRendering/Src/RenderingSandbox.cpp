@@ -59,33 +59,9 @@ void RenderingSandbox::Init()
 	
 	// AddDirectionalLights();
 	
-	Vector PointLightPos = Vector(1.0f, 2.0f, 3.0f);
-	Color PointLightColor = Color(0.0f, 1.0f, 1.0f);
-	PointLight = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLight);
-	DeferredTaskSystem::AddComponentImmediate<Poly::PointLightComponent>(world, PointLight, PointLightColor, 1.0f, 10.0f);
-	Poly::TransformComponent* PointLightTrans = world->GetComponent<Poly::TransformComponent>(PointLight);
-	
-	Poly::UniqueID PointLightPrimitive = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLightPrimitive);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, PointLightPrimitive, "Models/Primitives/Sphere_LowPoly.obj", eResourceSource::GAME);
-	Poly::MeshRenderingComponent* PointLightMesh = world->GetComponent<Poly::MeshRenderingComponent>(PointLightPrimitive);
-	PointLightMesh->SetShadingModel(eShadingModel::UNLIT);
-	PointLightMesh->SetMaterial(0, PhongMaterial(PointLightColor, PointLightColor, PointLightColor, 8.0f));
-	Poly::TransformComponent* PointLightPrimitiveTrans = world->GetComponent<Poly::TransformComponent>(PointLightPrimitive);
-	PointLightPrimitiveTrans->SetLocalScale(1.0f);
-	PointLightPrimitiveTrans->SetParent(PointLightTrans);
+	CreatePointLight(100.0f);
 
-	// Poly::UniqueID PointLightRange = DeferredTaskSystem::SpawnEntityImmediate(world);
-	// DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLightPrimitive);
-	// DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, PointLightPrimitive, "Models/Primitives/Sphere_LowPoly.obj", eResourceSource::GAME);
-	// Poly::MeshRenderingComponent* PointLightMesh = world->GetComponent<Poly::MeshRenderingComponent>(PointLightPrimitive);
-	// PointLightMesh->SetMaterial(0, PhongMaterial(PointLightColor, PointLightColor, PointLightColor, 8.0f));
-	// Poly::TransformComponent* PointLightPrimitiveTrans = world->GetComponent<Poly::TransformComponent>(PointLightPrimitive);
-	// PointLightPrimitiveTrans->SetLocalScale(1.0f);
-	// PointLightPrimitiveTrans->SetPatent(PointLightTrans);
-
-	// AddPointLights();
+	AddPointLights(7);
 	
 	float yPos = (float)Engine->GetRenderingDevice()->GetScreenSize().Height;
 	auto textDispaly = DeferredTaskSystem::SpawnEntityImmediate(world);
@@ -166,20 +142,46 @@ void RenderingSandbox::AddDirectionalLights()
 	}
 }
 
-void RenderingSandbox::AddPointLights() 
+void RenderingSandbox::AddPointLights(int Quota) 
+{
+	for (int i = 0; i < Quota; ++i)
+	{
+		CreatePointLight(100.0f);
+	}
+}
+
+void RenderingSandbox::CreatePointLight(float Range)
 {
 	World* world = Engine->GetWorld();
 
-	for (int i = 0; i < 7; ++i)
-	{
-		Vector Pos = Vector(0.0, 1.0f, 0.0f);
-		Vector RndPos = Vector(Random(-1.0f, 1.0f), 0.0f, Random(-1.0f, 1.0f)) * 10.0f;
-		Poly::UniqueID PointLight = DeferredTaskSystem::SpawnEntityImmediate(world);
-		DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLight);
-		DeferredTaskSystem::AddComponentImmediate<Poly::PointLightComponent>(world, PointLight, Color(1.0f, Random(), Random()), 2.0f, 0.1f);
-		Poly::TransformComponent* lightTrans = world->GetComponent<Poly::TransformComponent>(PointLight);
-		lightTrans->SetLocalTranslation(Pos + RndPos);
-	}
+	Vector PointLightPos = Vector(Random(-1.0f, 1.0f), Random(-1.0f, 1.0f), Random(-1.0f, 1.0f)) * 100.0f;
+	Color LightColor = Color(1.0f, 0.5f, 0.0f);
+	// float PointLightRange = 100.0f;
+	PointLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLight);
+	DeferredTaskSystem::AddComponentImmediate<Poly::PointLightComponent>(world, PointLight, LightColor, 1.0f, Range);
+	Poly::TransformComponent* PointLightTrans = world->GetComponent<Poly::TransformComponent>(PointLight);
+
+	Poly::UniqueID PointLightDebugSource = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLightDebugSource);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, PointLightDebugSource, "Models/Primitives/Sphere_LowPoly.obj", eResourceSource::GAME);
+	Poly::MeshRenderingComponent* PointLightMesh = world->GetComponent<Poly::MeshRenderingComponent>(PointLightDebugSource);
+	PointLightMesh->SetShadingModel(eShadingModel::UNLIT);
+	PointLightMesh->SetMaterial(0, PhongMaterial(LightColor, LightColor, LightColor, 8.0f));
+	Poly::TransformComponent* PointLightDebugSourceTrans = world->GetComponent<Poly::TransformComponent>(PointLightDebugSource);
+	PointLightDebugSourceTrans->SetLocalScale(1.0f);
+	PointLightDebugSourceTrans->SetParent(PointLightTrans);
+
+	Poly::UniqueID PointLightDebugRange = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLightDebugRange);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, PointLightDebugRange, "Models/Primitives/Sphere_LowPoly.obj", eResourceSource::GAME);
+	Poly::MeshRenderingComponent* PointLightRangeMesh = world->GetComponent<Poly::MeshRenderingComponent>(PointLightDebugRange);
+	PointLightRangeMesh->SetShadingModel(eShadingModel::UNLIT);
+	PointLightRangeMesh->SetIsWireframe(true);
+	PointLightRangeMesh->SetMaterial(0, PhongMaterial(LightColor, LightColor, LightColor, 8.0f));
+	Poly::TransformComponent* PointLightRangeTrans = world->GetComponent<Poly::TransformComponent>(PointLightDebugRange);
+	PointLightRangeTrans->SetLocalScale(Range);
+	PointLightRangeTrans->SetParent(PointLightTrans);
 }
 
 void GameMainSystem::GameUpdate(Poly::World* world)
@@ -209,7 +211,7 @@ void GameMainSystem::GameUpdate(Poly::World* world)
 		// first point light stays in place
 		if (pi > 0)
 		{
-			float x = pointLightTrans->GetLocalTranslation().X;
+			// float x = pointLightTrans->GetLocalTranslation().X;
 			// pointLight->SetIntensity( 2.0f*Abs(Sin(1.0_rad *(x+time))) );
 		
 		}
