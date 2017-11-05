@@ -35,15 +35,15 @@ namespace Poly
 	class ENGINE_DLLEXPORT PointLightComponent : public ComponentBase
 	{
 	public:
-		PointLightComponent(const Color& color, float intensity, float attenuation);
+		PointLightComponent(const Color& color, float intensity, float range);
 
 		const Color& GetColor() const { return LightColor; }
 		float GetIntensity() const { return Intensity; }
-		void SetIntensity(float value) { Intensity = value; }
-		float GetAttenuation() const { return Attenuation; }
+		void SetRange(float value) { Range = value; }
+		float GetRange() const { return Range; }
 	private:
 		Color LightColor;
 		float Intensity = 1.0f;
-		float Attenuation = 1.0f;
+		float Range = 1.0f;
 	};
 }

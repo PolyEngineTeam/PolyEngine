@@ -20,7 +20,7 @@ struct PointLight
 	float Range;
 };
 
-struct Phong
+struct Lighting
 {
 	vec3 Diffuse;
 	vec3 Specular;
@@ -35,7 +35,7 @@ struct Material
 };
 
 uniform sampler2D uTexture;
-uniform vec4 uCameraDirection;
+uniform vec4 uCameraForward;
 uniform vec4 uCameraPosition;
 
 uniform Material uMaterial;
@@ -52,73 +52,70 @@ in vec3 vNormal;
 
 layout(location = 0) out vec4 color;
 
-vec3 ambientlLight(DiffuseLight ambientLight) {
-	return vec3(ambientLight.Color.rgb * max(ambientLight.Intensity, 0.0));
+vec3 ambientLighting()
+{
+	return uMaterial.Ambient.rgb * uAmbientLight.Color.rgb * uAmbientLight.Intensity;
 }
 
-Phong directionalLight(Material material, DirectionalLight light, vec3 positionWS, vec3 normalWS) {
-	Phong result;
-	DiffuseLight base = light.Base;
-	vec3 dir = normalize(-light.Direction.xyz);
-	float NdotL = max(dot(normalWS, dir), 0.0);
-	result.Diffuse = vec3(base.Color.rgb) * max(base.Intensity, 0.0) * NdotL;
-	
-	vec3 reflectDir = reflect(-dir, normalWS);
-	float spec = pow(max(dot(uCameraDirection.xyz, reflectDir), 0.0), 32);
-	result.Specular = material.Shininess * spec * base.Color.rgb;
-	
-	return result;	
+// returns intensity of diffuse reflection
+vec3 diffuseLighting(in vec3 N, in vec3 L)
+{
+	// calculation as for Lambertian reflection
+	float NdotL = clamp(dot(N, L), 0.0, 1.0);
+	return vec3(NdotL) * uMaterial.Diffuse.rgb * uPointLight[0].Base.Color.rgb * uPointLight[0].Base.Intensity;
 }
 
-float pointLightAttenuation(PointLight light, vec3 vertexPos) {
-	float distanceToLight = length(light.Position.xyz - vertexPos);
-	float attentuation = 1.0 / (1.0 + light.Attenuation * pow(distanceToLight, 2));
-	return mix(0.0, attentuation, step(distanceToLight, light.Range));
-}
+// returns intensity of specular reflection
+vec3 specularLighting(in vec3 N, in vec3 L, in vec3 V)
+{
+	float specularTerm = 0;
 
-Phong pointLight(Material material, PointLight pointLight, vec3 positionWS, vec3 normalWS) {	
-	Phong result;
-	float attentuation = pointLightAttenuation(pointLight, vVertexPos);
-	vec3 pointLightPos = pointLight.Position.xyz;
-	vec3 pointLightDir = normalize(pointLightPos - vVertexPos);
-	float pointNdotL = max(dot(normalWS, pointLightDir), 0.0);
-	vec3 point = vec3(pointLight.Base.Color.rgb) * max(pointLight.Base.Intensity, 0.0) * pointNdotL;
-	result.Diffuse = point*attentuation;
-	
-	vec3 reflectDir = reflect(-pointLightDir, normalWS);
-	float spec = pow(max(dot(uCameraDirection.xyz, reflectDir), 0.0), 32);
-	result.Specular = material.Shininess * spec * pointLight.Base.Color.rgb;
-	
-	return result;
+	// calculate specular reflection only if
+	// the surface is oriented to the light source
+	if (dot(N, L) > 0)
+	{
+		// half vector
+		vec3 H = normalize(L + V);
+		specularTerm = pow(dot(N, H), uMaterial.Shininess);
+	}
+	return specularTerm * uMaterial.Specular.rgb * uPointLight[0].Base.Color.rgb * uPointLight[0].Base.Intensity;
 }
 
 void main() {
+
 	vec4 texDiffuse = texture(uTexture, vTexCoord);
 
 	if (texDiffuse.a < 0.1)
 		discard;
 
-	vec3 normalWS = vNormal;
-	vec3 diffuseLight = uMaterial.Ambient.rgb * ambientlLight(uAmbientLight);
-	vec3 specularLight = vec3(0.0);
+	vec3 normalWS = normalize(vNormal);
+	vec3 positionWS = vVertexPos;
 	
-	for (int i = 0; i < uDirectionalLightCount; ++i)
-	{
-		Phong phong = directionalLight(uMaterial, uDirectionalLight[i], vVertexPos, normalWS);
-		diffuseLight = max(diffuseLight, phong.Diffuse);
-		specularLight = max(specularLight, phong.Specular);
-	}
-	
-	for (int i = 0; i < uPointLightCount; ++i)
-	{
-		Phong phong = pointLight(uMaterial, uPointLight[i], vVertexPos, normalWS);
-		diffuseLight = max(diffuseLight, phong.Diffuse);
-		specularLight = max(specularLight, phong.Specular);
-	}
-	
-	// float rim = pow(dot(uCameraDirection.xyz, normalWS), 2.0);
-	// vec3 phong = uMaterial.Diffuse.rgb*texDiffuse.rgb * (uMaterial.Diffuse.rgb * diffuse + uMaterial.Specular.rgb * specular);
-	vec3 phong = uMaterial.Diffuse.rgb*texDiffuse.rgb*diffuseLight;
-	
-	color = vec4(phong, 1.0);
+	vec3 u_cameraPosition = uCameraPosition.xyz;
+	vec3 u_lightPosition = uPointLight[0].Position.xyz;
+	float u_lightRadius = uPointLight[0].Range;
+
+	vec3 o_toLight = normalize(u_lightPosition - positionWS);
+	vec3 o_toCamera = normalize(u_cameraPosition - positionWS);
+	vec3 o_normal = normalWS;
+
+	// normalize vectors after interpolation
+	vec3 L = normalize(o_toLight);
+	vec3 V = normalize(o_toCamera);
+	vec3 N = normalize(o_normal);
+
+	// attentuation
+	float dist = distance(u_lightPosition, positionWS);
+	float att = clamp(1.0 - dist*dist/(u_lightRadius*u_lightRadius), 0.0, 1.0);
+	att *= att;
+
+	// get Blinn-Phong reflectance components
+	vec3 Iamb = ambientLighting();
+	vec3 Idif = diffuseLighting(N, L) * att;
+	vec3 Ispe = specularLighting(N, L, V) * att;
+
+	// combination of all components and diffuse color of the object
+	color.xyz = texDiffuse.rgb * (Iamb + Idif + Ispe);
+	// color.xyz = 0.5+0.5*normalWS; // need this as RenderingMode
+	color.w = 1.0;
 }

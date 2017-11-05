@@ -14,6 +14,9 @@ using namespace Poly;
 UnlitRenderingPass::UnlitRenderingPass()
 	: RenderingPassBase("Shaders/unlitVert.shader", "Shaders/unlitFrag.shader")
 {
+	GetProgram().RegisterUniform("mat4", "uTransform");
+	GetProgram().RegisterUniform("mat4", "uMVPTransform");
+	GetProgram().RegisterUniform("vec4", "Color");
 }
 
 void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/)
@@ -27,6 +30,9 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
 
+		if (meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::UNLIT)
+			continue;
+
 		Vector objPos = transCmp->GetGlobalTranslation();
 
 		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
@@ -37,8 +43,10 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
-			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
+			PhongMaterial material = meshCmp->GetMaterial(i);
+			GetProgram().SetUniform("uColor", material.DiffuseColor);
 
+			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 			glBindVertexArray(meshProxy->GetVAO());
 
 			if (subMesh->GetMeshData().GetDiffTexture())

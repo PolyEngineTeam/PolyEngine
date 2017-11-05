@@ -19,13 +19,21 @@ const size_t MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 : RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
 {
+	GetProgram().RegisterUniform("vec4", "uCameraPosition");
+	GetProgram().RegisterUniform("vec4", "uCameraForward");
+
+	// GetProgram().SetUniform("uMaterial.Ambient", material.AmbientColor);
+	// GetProgram().SetUniform("uMaterial.Diffuse", material.DiffuseColor);
+	// GetProgram().SetUniform("uMaterial.Specular", material.SpecularColor);
+	// GetProgram().SetUniform("uMaterial.Shininess", material.Shininess);
+
 	GetProgram().RegisterUniform("vec4", "uMaterial.Ambient");
 	GetProgram().RegisterUniform("vec4", "uMaterial.Diffuse");
 	GetProgram().RegisterUniform("vec4", "uMaterial.Specular");
 	GetProgram().RegisterUniform("float", "uMaterial.Shininess");
 
-	GetProgram().RegisterUniform("vec4", "uAmbientLight.Base.Color");
-	GetProgram().RegisterUniform("float", "uAmbientLight.Base.Intensity");
+	GetProgram().RegisterUniform("vec4", "uAmbientLight.Color");
+	GetProgram().RegisterUniform("float", "uAmbientLight.Intensity");
 
 	for (size_t i = 0; i < MAX_LIGHT_COUNT_DIRECTIONAL; ++i)
 	{
@@ -55,12 +63,15 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
 	
-	Vector CameraDir = MovementSystem::GetGlobalForward(camera->GetSibling<TransformComponent>());
-	GetProgram().SetUniform("uCameraDirection", CameraDir);
+	const TransformComponent* cameraTransCmp = camera->GetSibling<TransformComponent>();
+	Vector CameraPos = cameraTransCmp->GetGlobalTranslation();
+	Vector CameraDir = MovementSystem::GetGlobalForward(cameraTransCmp);
+	GetProgram().SetUniform("uCameraPosition", CameraPos);
+	GetProgram().SetUniform("uCameraForward", CameraDir);
 
 	AmbientLightWorldComponent* ambientCmp = world->GetWorldComponent<AmbientLightWorldComponent>();
-	GetProgram().SetUniform("uAmbientLight.Base.Color", ambientCmp->GetColor());
-	GetProgram().SetUniform("uAmbientLight.Base.Intensity", ambientCmp->GetIntensity());
+	GetProgram().SetUniform("uAmbientLight.Color", ambientCmp->GetColor());
+	GetProgram().SetUniform("uAmbientLight.Intensity", ambientCmp->GetIntensity());
 
 	int dirLightsCount = 0;
 	for (auto componentsTuple : world->IterateComponents<DirectionalLightComponent, TransformComponent>())
@@ -88,10 +99,10 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	
 		GetProgram().SetUniform(baseName + "Base.Color", pointLightCmp->GetColor());
 		GetProgram().SetUniform(baseName + "Base.Intensity", pointLightCmp->GetIntensity());
+		// GetProgram().SetUniform(baseName + "Attenuation", pointLightCmp->GetAttenuation());
+		// float range = sqrt(((1.f / IntensityThreshold) - 1.0f)/ pointLightCmp->GetAttenuation());
+		GetProgram().SetUniform(baseName + "Range", pointLightCmp->GetRange());
 		GetProgram().SetUniform(baseName + "Position", transformCmp->GetGlobalTranslation());
-		GetProgram().SetUniform(baseName + "Attenuation", pointLightCmp->GetAttenuation());
-		float range = sqrt(((1.f / IntensityThreshold) - 1.0f)/ pointLightCmp->GetAttenuation());
-		GetProgram().SetUniform(baseName + "Range", range);
 
 		++pointLightsCount;
 		if (pointLightsCount == MAX_LIGHT_COUNT_POINT)
@@ -105,7 +116,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
 
-		if (meshCmp->IsTransparent())
+		if (meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::LIT)
 		 	continue;
 
 		Vector objPos = transCmp->GetGlobalTranslation();

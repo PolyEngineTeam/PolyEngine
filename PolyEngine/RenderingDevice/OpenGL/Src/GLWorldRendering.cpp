@@ -166,6 +166,9 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
+	// Render meshes with unlit shader
+	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
+
 	// Render meshes with blin-phong shader
 	GeometryRenderingPasses[eGeometryRenderPassType::BLINN_PHONG]->Run(world, cameraCmp, rect);
 
