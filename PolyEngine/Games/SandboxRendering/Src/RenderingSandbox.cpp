@@ -86,9 +86,9 @@ void RenderingSandbox::Init()
 
 	auto ground = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, ground);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, ground, "Models/sponza/sponza.obj", eResourceSource::GAME);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, ground, "Models/Sponza/sponza.obj", eResourceSource::GAME);
 	Poly::TransformComponent* groundTrans = world->GetComponent<Poly::TransformComponent>(ground);
-	Poly::MeshRenderingComponent* sponzaMesh = world->GetComponent<Poly::MeshRenderingComponent>(shaderball);
+	Poly::MeshRenderingComponent* sponzaMesh = world->GetComponent<Poly::MeshRenderingComponent>(ground);
 	for (int i = 0; i < sponzaMesh->GetMesh()->GetSubMeshes().GetSize(); ++i)
 	 	sponzaMesh->SetMaterial(i, PhongMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), 8.0f));
 
@@ -146,7 +146,7 @@ void RenderingSandbox::AddPointLights(int Quota)
 {
 	for (int i = 0; i < Quota; ++i)
 	{
-		CreatePointLight(100.0f);
+		CreatePointLight(200.0f);
 	}
 }
 
@@ -154,13 +154,15 @@ void RenderingSandbox::CreatePointLight(float Range)
 {
 	World* world = Engine->GetWorld();
 
-	Vector PointLightPos = Vector(Random(-1.0f, 1.0f), Random(-1.0f, 1.0f), Random(-1.0f, 1.0f)) * 100.0f;
-	Color LightColor = Color(1.0f, 0.5f, 0.0f);
+	Vector PointLightPos = Vector(Random(-1.0f, 1.0f), Random(0.0f, 0.2f), Random(-0.5f, 0.5f)) * 1000.0f;
+	Color LightColor = Color(1.0f, 0.5f, 0.0f) + Color(Random(0.0f, 1.0f), Random( 0.0, 0.5f), Random(0.0f, 0.2f));
+
 	// float PointLightRange = 100.0f;
 	PointLight = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLight);
 	DeferredTaskSystem::AddComponentImmediate<Poly::PointLightComponent>(world, PointLight, LightColor, 1.0f, Range);
 	Poly::TransformComponent* PointLightTrans = world->GetComponent<Poly::TransformComponent>(PointLight);
+	PointLightTrans->SetLocalTranslation(PointLightPos);
 
 	Poly::UniqueID PointLightDebugSource = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLightDebugSource);
@@ -169,8 +171,9 @@ void RenderingSandbox::CreatePointLight(float Range)
 	PointLightMesh->SetShadingModel(eShadingModel::UNLIT);
 	PointLightMesh->SetMaterial(0, PhongMaterial(LightColor, LightColor, LightColor, 8.0f));
 	Poly::TransformComponent* PointLightDebugSourceTrans = world->GetComponent<Poly::TransformComponent>(PointLightDebugSource);
-	PointLightDebugSourceTrans->SetLocalScale(1.0f);
 	PointLightDebugSourceTrans->SetParent(PointLightTrans);
+	PointLightDebugSourceTrans->SetLocalScale(1.0f);
+	PointLightDebugSourceTrans->SetLocalTranslation(Vector(0.0f, 0.0f, 0.0f));
 
 	Poly::UniqueID PointLightDebugRange = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLightDebugRange);
@@ -180,8 +183,9 @@ void RenderingSandbox::CreatePointLight(float Range)
 	PointLightRangeMesh->SetIsWireframe(true);
 	PointLightRangeMesh->SetMaterial(0, PhongMaterial(LightColor, LightColor, LightColor, 8.0f));
 	Poly::TransformComponent* PointLightRangeTrans = world->GetComponent<Poly::TransformComponent>(PointLightDebugRange);
-	PointLightRangeTrans->SetLocalScale(Range);
 	PointLightRangeTrans->SetParent(PointLightTrans);
+	PointLightRangeTrans->SetLocalScale(Range);
+	PointLightRangeTrans->SetLocalTranslation(Vector(0.0f, 0.0f, 0.0f));
 }
 
 void GameMainSystem::GameUpdate(Poly::World* world)
@@ -202,30 +206,30 @@ void GameMainSystem::GameUpdate(Poly::World* world)
 	// 	di += 1.0f;
 	// }
 
-	int pi = 0;
-	for (auto cmpTuple : world->IterateComponents<PointLightComponent, TransformComponent>())
-	{
-		TransformComponent* pointLightTrans = std::get<TransformComponent*>(cmpTuple);
-		PointLightComponent* pointLight = std::get<PointLightComponent*>(cmpTuple);
-
-		// first point light stays in place
-		if (pi > 0)
-		{
-			// float x = pointLightTrans->GetLocalTranslation().X;
-			// pointLight->SetIntensity( 2.0f*Abs(Sin(1.0_rad *(x+time))) );
-		
-		}
-		else
-		{
-			Vector pointLightPos = Vector(0.0f, 2.0f, 0.0f);
-			// pointLightPos += Vector(Sin(1_rad*time), 0.0f, Cos(1_rad*time)) * 1.0f;
-			pointLightPos += Vector(Cos(1_rad*time), 0.0f, 0.0f) * 10.0f;
-			pointLightTrans->SetLocalTranslation(pointLightPos);
-		}
-			
-		// gConsole.LogInfo("PointLight[{}]: pos: {}", pi, pointLightTrans->GetLocalTranslation());
-		++pi;
-	}
+	// int pi = 0;
+	// for (auto cmpTuple : world->IterateComponents<PointLightComponent, TransformComponent>())
+	// {
+	// 	TransformComponent* pointLightTrans = std::get<TransformComponent*>(cmpTuple);
+	// 	PointLightComponent* pointLight = std::get<PointLightComponent*>(cmpTuple);
+	// 
+	// 	// first point light stays in place
+	// 	if (pi > 0)
+	// 	{
+	// 		// float x = pointLightTrans->GetLocalTranslation().X;
+	// 		// pointLight->SetIntensity( 2.0f*Abs(Sin(1.0_rad *(x+time))) );
+	// 	
+	// 	}
+	// 	else
+	// 	{
+	// 		Vector pointLightPos = Vector(0.0f, 2.0f, 0.0f);
+	// 		// pointLightPos += Vector(Sin(1_rad*time), 0.0f, Cos(1_rad*time)) * 1.0f;
+	// 		pointLightPos += Vector(Cos(1_rad*time), 0.0f, 0.0f) * 10.0f;
+	// 		pointLightTrans->SetLocalTranslation(pointLightPos);
+	// 	}
+	// 		
+	// 	// gConsole.LogInfo("PointLight[{}]: pos: {}", pi, pointLightTrans->GetLocalTranslation());
+	// 	++pi;
+	// }
 
 	// int UseCashetes = 0;
 	// float ColorTempLuminancePreservation = 0.75f;
