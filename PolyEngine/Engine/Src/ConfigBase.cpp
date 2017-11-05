@@ -3,8 +3,8 @@
 
 #include <RTTISerialization.hpp>
 #include <sstream>
-#include <rapidjson\stringbuffer.h>
-#include <rapidjson\prettywriter.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/prettywriter.h>
 
 using namespace Poly;
 
