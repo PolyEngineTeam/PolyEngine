@@ -22,6 +22,11 @@ void MovementSystem::MovementUpdatePhase(World* world)
 		else if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_D))
 			move += Vector::UNIT_X;
 
+		if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_Q))
+			move -= Vector::UNIT_Y;
+		else if (world->GetWorldComponent<InputWorldComponent>()->IsPressed(eKey::KEY_E))
+			move += Vector::UNIT_Y;
+
 		if (move.LengthSquared() > 0)
 			move.Normalize();
 		move *= freeFloatMovementCmp->GetMovementSpeed() * 0.016f; //TMP dt
