@@ -3,10 +3,7 @@
 
 using namespace Poly;
 
-#define JSON_CLASS_NAME_TEXT rapidjson::StringRef("class_name")
-#define JSON_NAME_TEXT rapidjson::StringRef("name")
-#define JSON_PROPERTIES_TEXT rapidjson::StringRef("properties")
-#define JSON_VALUE_TEXT rapidjson::StringRef("value")
+static const char* JSON_TYPE_ANNOTATION = "@type";
 
 void Poly::RTTI::SerializeObject(const RTTIBase* obj, const String& propertyName, rapidjson::Document& doc)
 {
@@ -18,37 +15,25 @@ void RTTI::SerializeObject(const RTTIBase* obj, const String& propertyName, rapi
 {
 	const TypeInfo typeInfo = obj->GetTypeInfo();
 	const PropertyManagerBase* propMgr = obj->GetPropertyManager();
-	currentValue.SetObject();
-	currentValue.AddMember(JSON_CLASS_NAME_TEXT, rapidjson::StringRef(typeInfo.GetTypeName()), alloc);
-	currentValue.AddMember(JSON_NAME_TEXT, rapidjson::StringRef(propertyName.GetCStr()), alloc);
-	currentValue.AddMember(JSON_PROPERTIES_TEXT, rapidjson::Value(rapidjson::kArrayType), alloc);
-	rapidjson::Value& propList = currentValue[JSON_PROPERTIES_TEXT.s];
+
+	HEAVY_ASSERTE(currentValue.IsObject(), "JSON value is not an object!");
+	currentValue.AddMember(rapidjson::StringRef(propertyName.GetCStr()), rapidjson::Value(rapidjson::kObjectType), alloc);
+	rapidjson::Value& object = currentValue[propertyName.GetCStr()];
+
+	object.AddMember(rapidjson::StringRef(JSON_TYPE_ANNOTATION), rapidjson::StringRef(typeInfo.GetTypeName()), alloc);
 
 	for (auto& child : propMgr->GetPropertyList())
 	{
+		ASSERTE(child.CoreType != eCorePropertyType::UNHANDLED, "Invalid type in property declaration!");
+		if (child.Flags.IsSet(ePropertyFlag::DONT_SERIALIZE))
+			continue;
+
 		const void* ptr = ((const char*)obj) + child.Offset;
 		if (child.CoreType == eCorePropertyType::NONE)
-		{
-			rapidjson::Value nestedValue;
-			SerializeObject(reinterpret_cast<const RTTIBase*>(ptr), child.Name, nestedValue, alloc);
-			propList.GetArray().PushBack(std::move(nestedValue), alloc);
-		}
+			SerializeObject(reinterpret_cast<const RTTIBase*>(ptr), child.Name, object, alloc);
 		else
-			SerializeCoreProperty(ptr, child, propList, alloc);
+			object.AddMember(rapidjson::StringRef(child.Name.GetCStr()), GetCorePropertyValue(ptr, child, alloc), alloc);
 	}
-}
-
-bool RTTI::SerializeCoreProperty(const void* value, const RTTI::Property& prop, rapidjson::Value& currentValue, rapidjson::Document::AllocatorType& alloc)
-{
-	const TypeInfo& typeInfo = prop.Type;
-
-	rapidjson::Value nestedValue;
-	nestedValue.SetObject();
-	nestedValue.AddMember(JSON_CLASS_NAME_TEXT, rapidjson::StringRef(typeInfo.GetTypeName()), alloc);
-	nestedValue.AddMember(JSON_NAME_TEXT, rapidjson::StringRef(prop.Name.GetCStr()), alloc);
-	nestedValue.AddMember(JSON_VALUE_TEXT, GetCorePropertyValue(value, prop, alloc), alloc);
-	currentValue.GetArray().PushBack(std::move(nestedValue), alloc);
-	return true;
 }
 
 rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Property& prop, rapidjson::Document::AllocatorType& alloc)
@@ -71,4 +56,54 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	}
 
 	return currentValue;
+}
+
+CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const String& propertyName, const rapidjson::Document& doc)
+{
+	auto& it = doc.GetObject().FindMember(propertyName.GetCStr());
+	if(it != doc.GetObject().MemberEnd())
+		RTTI::DeserializeObject(obj, propertyName, doc.GetObject().MemberBegin()->value);
+}
+
+CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const String& propertyName, const rapidjson::Value& currentValue)
+{
+	const TypeInfo typeInfo = obj->GetTypeInfo();
+	const PropertyManagerBase* propMgr = obj->GetPropertyManager();
+
+	HEAVY_ASSERTE(currentValue.IsObject(), "JSON value is not an object!");
+
+	for (auto& child : propMgr->GetPropertyList())
+	{
+		ASSERTE(child.CoreType != eCorePropertyType::UNHANDLED, "Invalid type in property declaration!");
+		if (child.Flags.IsSet(ePropertyFlag::DONT_SERIALIZE))
+			continue;
+
+		void* ptr = ((char*)obj) + child.Offset;
+		auto& it = currentValue.FindMember(child.Name.GetCStr());
+		if (it != currentValue.MemberEnd())
+		{
+			if (child.CoreType == eCorePropertyType::NONE)
+				DeserializeObject(reinterpret_cast<RTTIBase*>(ptr), child.Name, it->value);
+			else
+				SetCorePropertyValue(ptr, child, it->value);
+		}
+	}
+}
+
+CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Property& prop, const rapidjson::Value& value)
+{
+	switch (prop.CoreType)
+	{
+	case eCorePropertyType::BOOL:
+	{
+		bool& val = *reinterpret_cast<bool*>(obj);
+		val = value.GetBool();
+	}
+	break;
+	case eCorePropertyType::NONE:
+		ASSERTE(false, "Invalid property type!");
+		break;
+	default:
+		ASSERTE(false, "Unknown property type!");
+	}
 }

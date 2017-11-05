@@ -20,9 +20,10 @@ namespace Poly
 
 		void Save();
 		void Load();
-
+		
+		const String& GetFileName() const;
 	protected:
-		String FileName;
+		mutable String FileName;
 		String DisplayName;
 		eConfigLocation Location;
 	};

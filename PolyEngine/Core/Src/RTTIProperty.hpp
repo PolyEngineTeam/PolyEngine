@@ -16,13 +16,14 @@ namespace Poly {
 
 		enum class eCorePropertyType
 		{
+			UNHANDLED,
 			NONE,
 			BOOL,
 			ENUM,
 			_COUNT
 		};
 
-		template <typename T> eCorePropertyType GetCorePropertyType() { return eCorePropertyType::NONE; };
+		template <typename T> eCorePropertyType GetCorePropertyType() { return RTTI::Impl::HasGetTypeInfoFunc<T>::value ? eCorePropertyType::NONE : eCorePropertyType::UNHANDLED; };
 		// specializations
 		template <> CORE_DLLEXPORT eCorePropertyType GetCorePropertyType<bool>() { return eCorePropertyType::BOOL; };
 
