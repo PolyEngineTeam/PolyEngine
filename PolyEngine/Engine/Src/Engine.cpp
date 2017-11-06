@@ -30,7 +30,7 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(BaseWorld.get());
 	Physics2DConfig physicsConfig;
 	DeferredTaskSystem::AddWorldComponentImmediate<Physics2DWorldComponent>(BaseWorld.get(), physicsConfig);
-	DeferredTaskSystem::AddWorldComponentImmediate<DiffuseLightSourceWorldComponent>(BaseWorld.get(), Color(1,1,1,1), 0.2f);
+	DeferredTaskSystem::AddWorldComponentImmediate<AmbientLightWorldComponent>(BaseWorld.get(), Color(1,1,1,1), 0.2f);
 
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
