@@ -17,8 +17,6 @@
 #include <TimeWorldComponent.hpp>
 #include <SoundSystem.hpp>
 
-#include "Family.inc"
-
 using namespace Poly;
 
 DEFINE_GAME(RenderingSandbox)
