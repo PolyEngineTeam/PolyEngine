@@ -21,5 +21,5 @@ namespace Poly {
 		Color BaseColor;
 	};
 
-	COMPONENT_INS(ComponentsFamily, MeshRenderingComponent)
+	REGISTER_COMPONENT(ComponentsFamily, MeshRenderingComponent)
 }

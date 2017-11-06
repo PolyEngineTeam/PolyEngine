@@ -20,5 +20,5 @@ namespace Poly {
 		float RotationSpeed = 1.0f;
 	};
 
-	COMPONENT_INS(ComponentsFamily, FreeFloatMovementComponent)
+	REGISTER_COMPONENT(ComponentsFamily, FreeFloatMovementComponent)
 }

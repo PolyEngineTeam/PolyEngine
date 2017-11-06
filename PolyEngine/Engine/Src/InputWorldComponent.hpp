@@ -35,5 +35,5 @@ namespace Poly
 		int PrevWheel = 0;
 	};
 
-	COMPONENT_INS(WorldComponentsFamily, InputWorldComponent)
+	REGISTER_COMPONENT(WorldComponentsFamily, InputWorldComponent)
 }

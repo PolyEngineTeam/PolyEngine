@@ -1,13 +1,13 @@
 #pragma once
 
 #if defined(_ENGINE)
-#    define EXPIMP_TEMPLATE
+#    define EXPORT_TEMPLATE
 #else
-#    define EXPIMP_TEMPLATE extern
+#    define EXPORT_TEMPLATE extern
 #endif
 
-#define COMPONENT_INS(FAMILY, COMPONENT) \
-	EXPIMP_TEMPLATE template size_t ENGINE_DLLEXPORT FAMILY::type_id<COMPONENT>();
+#define REGISTER_COMPONENT(FAMILY, COMPONENT) \
+	EXPORT_TEMPLATE template size_t ENGINE_DLLEXPORT FAMILY::GetComponentTypeID<COMPONENT>() noexcept;
 
 namespace Poly
 {
@@ -26,32 +26,27 @@ namespace Poly
 	/// <para>
 	/// A component identified by this generator and used across dll linking
 	/// (f.ex. created in Engine and being used in Game)
-	/// MUST(!) define a COMPONENT_INS macro under it's declaration
+	/// MUST(!) define a REGISTER_COMPONENT macro under it's declaration
 	/// (i.e. under component class in .hpp file).
 	/// Otherwise the two compilation units (f.ex. Engine and Game)
-	/// won't know about each other templates (i.e. about unique ids for components)
-	/// Also in .cpp files where components are being used/created
-	/// a include of "Family.inc" file is needed.
+	/// won't know about each other templates (i.e. about unique ids for components).
+	/// Definitions are kept in FamilyImpl.hpp file, which is included once
+	/// in ComponentBase.hpp. This allows compiler to create a definition
+	/// of Family::GetComponentTypeID<U>() type (where U is a type of the component)
+	/// where the component is used for the first time (f.ex. created).
 	/// https://itk.org/Wiki/Proposals:Explicit_Instantiation#DLL_Symbol_Resolution_on_Windows
-	/// </para>
-
-	/// <para>
-	/// Definitions are kept in Family.inc file. That means that this '.inc' file must
-	/// be included in every .cpp file where template of Family with specific component type
-	/// is used for the first time. This allows compiler to create a definition
-	/// of Family::type_id<U>() type (where U is typeof the component).
 	/// </para>
 	template<typename T>
 	class Family
 	{
-		static size_t identifier();
+		static size_t Identifier() noexcept;
 
 	public:
 		///<summary>
 		/// Returns an unique identifier for the given type.
 		///</summary>
 		template<typename U>
-		static size_t type_id();
+		static size_t GetComponentTypeID() noexcept;
 	};
 
 	using ComponentsFamily = Family<struct ComponentsFamilyType>;

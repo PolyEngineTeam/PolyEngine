@@ -369,7 +369,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Src\Family.inc">
+    <None Include="Src\FamilyImpl.hpp">
       <Filter>Source Files\ECS</Filter>
     </None>
   </ItemGroup>

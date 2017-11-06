@@ -29,5 +29,5 @@ namespace Poly
 		Dynarray<ComponentBase*> NewlyCreatedComponents;
 	};
 
-	COMPONENT_INS(WorldComponentsFamily, DeferredTaskWorldComponent)
+	REGISTER_COMPONENT(WorldComponentsFamily, DeferredTaskWorldComponent)
 }

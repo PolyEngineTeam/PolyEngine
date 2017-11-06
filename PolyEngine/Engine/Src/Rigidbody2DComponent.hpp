@@ -55,5 +55,5 @@ namespace Poly
 		std::unique_ptr<RigidBody2DData> ImplData;
 	};
 
-	COMPONENT_INS(ComponentsFamily, RigidBody2DComponent)
+	REGISTER_COMPONENT(ComponentsFamily, RigidBody2DComponent)
 }

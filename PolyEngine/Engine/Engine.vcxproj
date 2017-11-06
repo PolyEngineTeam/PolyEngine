@@ -280,7 +280,7 @@
     <ClInclude Include="Src\TextureResource.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Src\Family.inc" />
+    <None Include="Src\FamilyImpl.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

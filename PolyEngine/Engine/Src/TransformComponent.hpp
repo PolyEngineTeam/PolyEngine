@@ -53,5 +53,5 @@ namespace Poly
 		void SetGlobalDirty() const;
 	};
 
-	COMPONENT_INS(ComponentsFamily, TransformComponent)
+	REGISTER_COMPONENT(ComponentsFamily, TransformComponent)
 }

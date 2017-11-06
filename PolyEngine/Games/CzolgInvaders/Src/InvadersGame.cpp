@@ -20,7 +20,6 @@
 #include "CollisionSystem.hpp"
 #include "TankComponent.hpp"
 
-#include "Family.inc"
 
 using namespace Poly;
 

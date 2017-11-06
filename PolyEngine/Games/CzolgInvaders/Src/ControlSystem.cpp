@@ -9,7 +9,6 @@
 #include "SoundEmitterComponent.hpp"
 #include "AssetsPathConfig.hpp"
 
-#include "Family.inc"
 
 using namespace Poly;
 

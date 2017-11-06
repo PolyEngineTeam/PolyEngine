@@ -34,6 +34,6 @@ namespace Poly
 		Dynarray<SoundListenerComponent> Listeners;
 	};
 
-	COMPONENT_INS(WorldComponentsFamily, SoundWorldComponent)
+	REGISTER_COMPONENT(WorldComponentsFamily, SoundWorldComponent)
 
 } // namespace Poly

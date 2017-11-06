@@ -24,7 +24,6 @@
 #include "TileComponent.hpp"
 #include "CameraMovementComponent.hpp"
 
-#include "Family.inc"
 
 using namespace Poly;
 

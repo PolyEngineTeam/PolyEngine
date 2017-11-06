@@ -66,7 +66,7 @@ set(POLYENGINE_H_FOR_IDE
 	Src/EnginePCH.hpp
 	Src/Entity.hpp
 	Src/Family.hpp
-	Src/Family.inc
+	Src/FamilyImpl.hpp
 	Src/FontResource.hpp
 	Src/FPSSystem.hpp
 	Src/FreeFloatMovementComponent.hpp

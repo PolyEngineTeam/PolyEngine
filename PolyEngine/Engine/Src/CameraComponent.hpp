@@ -58,5 +58,5 @@ namespace Poly {
 		eRenderingModeType RenderingMode;
 	};
 
-	COMPONENT_INS(ComponentsFamily, CameraComponent)
+	REGISTER_COMPONENT(ComponentsFamily, CameraComponent)
 }
