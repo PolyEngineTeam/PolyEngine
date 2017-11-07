@@ -15,8 +15,6 @@ ConfigBase::ConfigBase(const String& displayName, eConfigLocation location)
 {
 }
 
-//TODO correct config location!
-
 void ConfigBase::Save()
 {
 	rapidjson::Document DOMObject; // UTF8 by default
@@ -29,7 +27,20 @@ void ConfigBase::Save()
 	DOMObject.Accept(writer);
 	
 	gConsole.LogDebug("{} json:\n{}", DisplayName, buffer.GetString());
-	SaveTextFile(GetFileName(), String(buffer.GetString()));
+	switch (Location)
+	{
+	case Poly::eConfigLocation::ENGINE:
+		SaveTextFileRelative(eResourceSource::ENGINE, GetFileName(), String(buffer.GetString()));
+		break;
+	case Poly::eConfigLocation::GAME:
+		SaveTextFileRelative(eResourceSource::GAME, GetFileName(), String(buffer.GetString()));
+		break;
+	case Poly::eConfigLocation::LOCAL:
+		SaveTextFile(GetFileName(), String(buffer.GetString()));
+		break;
+	default:
+		ASSERTE(false, "Invalid location");
+	}
 }
 
 void ConfigBase::Load()
@@ -37,7 +48,20 @@ void ConfigBase::Load()
 	String json;
 	try
 	{
-		json = LoadTextFile(GetFileName());
+		switch (Location)
+		{
+		case Poly::eConfigLocation::ENGINE:
+			json = LoadTextFileRelative(eResourceSource::ENGINE, GetFileName());
+			break;
+		case Poly::eConfigLocation::GAME:
+			json = LoadTextFileRelative(eResourceSource::GAME, GetFileName());
+			break;
+		case Poly::eConfigLocation::LOCAL:
+			json = LoadTextFile(GetFileName());
+			break;
+		default:
+			ASSERTE(false, "Invalid location");
+		}
 	} 
 	catch (std::exception)
 	{
@@ -49,12 +73,14 @@ void ConfigBase::Load()
 	rapidjson::Document DOMObject;
 	DOMObject.Parse(json.GetCStr());
 	RTTI::DeserializeObject(this, DisplayName, DOMObject);
-	Save(); // For now, ensure newest state of config file.
+
+	// For now, ensure newest state of config file.
+	Save(); 
 }
 
 const String& ConfigBase::GetFileName() const
 {
 	if (FileName.GetLength() == 0)
-		FileName = String(GetTypeInfo().GetTypeName()) + String(".json");
+		FileName = String("Configs/") + String(GetTypeInfo().GetTypeName()) + String(".json");
 	return FileName;
 }

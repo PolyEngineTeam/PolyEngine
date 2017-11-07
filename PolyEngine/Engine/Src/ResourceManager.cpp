@@ -14,7 +14,7 @@ DEFINE_RESOURCE(TextureResource, gTextureResourcesMap)
 DEFINE_RESOURCE(FontResource, gFontResourcesMap)
 DEFINE_RESOURCE(SoundResource, gALSoundResourcesMap)
 
-ENGINE_DLLEXPORT String Poly::LoadTextFileRelative(eResourceSource Source, const String & path)
+String Poly::LoadTextFileRelative(eResourceSource Source, const String & path)
 {
 	bool IsNotLoaded = true;
 
@@ -36,4 +36,11 @@ ENGINE_DLLEXPORT String Poly::LoadTextFileRelative(eResourceSource Source, const
 	}
 
 	return FileContent;
+}
+
+void Poly::SaveTextFileRelative(eResourceSource Source, const String& path, const String& data)
+{
+	ASSERTE(gAssetsPathConfig.GetAssetsPaths(Source).GetSize() != 0, "No assets path for given location");
+	String absolutePath = gAssetsPathConfig.GetAssetsPaths(Source)[0] + path;
+	SaveTextFile(absolutePath, data);
 }

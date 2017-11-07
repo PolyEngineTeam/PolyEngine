@@ -130,6 +130,8 @@ namespace Poly
 		Dynarray<String> GameAssetPaths;
 		GameAssetPaths.PushBack(DEFAULT_GAME_ASSETS_PATH);
 		AssetsPaths[eResourceSource::GAME] = GameAssetPaths;
+
+		AssetsPaths[eResourceSource::NONE] = { "" };
 	}
 
 	void AssetsPathConfig::WriteDefaultJson()

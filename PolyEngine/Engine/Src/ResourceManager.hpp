@@ -18,6 +18,7 @@ namespace Poly
 	class SoundResource;
 
 	ENGINE_DLLEXPORT String LoadTextFileRelative(eResourceSource Source, const String& path);
+	ENGINE_DLLEXPORT void SaveTextFileRelative(eResourceSource Source, const String& path, const String& text);
 
 	namespace Impl { template<typename T> std::map<String, std::unique_ptr<T>>& GetResources(); }
 

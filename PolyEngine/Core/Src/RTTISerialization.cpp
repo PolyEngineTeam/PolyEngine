@@ -38,6 +38,7 @@ void RTTI::SerializeObject(const RTTIBase* obj, const String& propertyName, rapi
 
 rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Property& prop, rapidjson::Document::AllocatorType& alloc)
 {
+	UNUSED(alloc);
 	rapidjson::Value currentValue;
 
 	switch (prop.CoreType)
@@ -67,6 +68,7 @@ CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const String& p
 
 CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const String& propertyName, const rapidjson::Value& currentValue)
 {
+	UNUSED(propertyName);
 	const TypeInfo typeInfo = obj->GetTypeInfo();
 	const PropertyManagerBase* propMgr = obj->GetPropertyManager();
 
