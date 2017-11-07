@@ -216,7 +216,7 @@ TEST_CASE("Dynarray find all idx", "[Dynarray]")
 	a.PushBack(20);
 	a.PushBack(10);
 
-	Dynarray<int> result;
+	Dynarray<size_t> result;
 	result = a.FindAllIdx(10);
 	REQUIRE(result[0] == 0);
 	REQUIRE(result[1] == 2);

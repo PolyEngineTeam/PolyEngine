@@ -69,7 +69,7 @@ String String::From(const std::string& var) {
 }
 
 bool String::Contains(const String& var) const {
-	Dynarray<int> idx = this->Data.FindAllIdx(*var.GetCStr());
+	Dynarray<size_t> idx = this->Data.FindAllIdx(*var.GetCStr());
 	// -1 because of null terminator
 	size_t dataSize = var.Data.GetSize() - 1;
 	for (size_t i = 0; i < idx.GetSize(); i++) {

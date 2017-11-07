@@ -258,10 +258,10 @@ namespace Poly
 		/// <summary>Finds indexes of all encountered objects from the cointainer that are equal to provided object.</summary>
 		/// <param name="rhs">Searched object.</param>
 		/// <returns>DynArray of indexes of searched objects or empty DynArray if object was not found.</returns>
-		Dynarray<int> FindAllIdx(const T& rhs) const
+		Dynarray<size_t> FindAllIdx(const T& rhs) const
 		{
-			Dynarray<int> r;
-			for (int idx = 0; idx < GetSize(); ++idx)
+			Dynarray<size_t> r;
+			for (size_t idx = 0; idx < GetSize(); ++idx)
 			{
 				if (Data[idx] == rhs)
 					r.PushBack(idx);
