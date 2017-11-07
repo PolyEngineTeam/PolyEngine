@@ -9,6 +9,7 @@ set(POLYCORE_SRCS
 	Src/Quaternion.cpp
 	Src/RefCountedBase.cpp
 	Src/RTTI.cpp
+	Src/RTTISerialization.cpp
 	Src/RTTITypeInfo.cpp
 	Src/SimdMath.cpp
 	Src/String.cpp
@@ -46,6 +47,7 @@ set(POLYCORE_H_FOR_IDE
 	Src/RTTI.hpp
 	Src/RTTICast.hpp
 	Src/RTTIProperty.hpp
+	Src/RTTISerialization.hpp
 	Src/RTTITypeInfo.hpp
 	Src/RTTITypeInfoImpl.hpp
 	Src/SimdMath.hpp
