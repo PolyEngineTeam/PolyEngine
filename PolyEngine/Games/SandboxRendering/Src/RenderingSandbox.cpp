@@ -34,7 +34,6 @@ void RenderingSandbox::Init()
 	DeferredTaskSystem::AddComponentImmediate<Poly::PostprocessSettingsComponent>(world, Camera);
 	Poly::TransformComponent* cameraTrans = world->GetComponent<Poly::TransformComponent>(Camera);
 	cameraTrans->SetLocalTranslation(Vector(0.0f, 5.0f, 15.0f));
-	// cameraTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 180_deg));
 
 	world->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, world->GetComponent<Poly::CameraComponent>(Camera));
 	world->GetWorldComponent<AmbientLightWorldComponent>()->SetColor(Color(0.2f, 0.5f, 1.0f));
@@ -49,16 +48,6 @@ void RenderingSandbox::Init()
 	Poly::TransformComponent* dirLightTrans = world->GetComponent<Poly::TransformComponent>(KeyDirLight);
 	dirLightTrans->SetLocalRotation(DirLightRot);
 
-	// Poly::UniqueID FillDirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
-	// DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, FillDirLight);
-	// DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightComponent>(world, FillDirLight, Color(0.1f, 0.2f, 1.0f), 0.2f);
-	// 
-	// Poly::UniqueID RimDirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
-	// DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, RimDirLight);
-	// DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightComponent>(world, RimDirLight, Color(0.1f, 0.1f, 0.2f), 0.5f);
-	
-	// AddDirectionalLights();
-	
 	CreatePointLight(100.0f);
 
 	AddPointLights(7);
@@ -67,13 +56,6 @@ void RenderingSandbox::Init()
 	auto textDispaly = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::ScreenSpaceTextComponent>(world, textDispaly, Vector{ 0.0f, yPos ,0.0f }, "Fonts/Raleway/Raleway-Heavy.ttf", eResourceSource::ENGINE, 32, "Kill count: 0");
 
-	// auto player = DeferredTaskSystem::SpawnEntityImmediate(world);
-	// DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, player);
-	// DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, player, "Models/tank2/bradle.3ds", eResourceSource::GAME);
-	// Poly::TransformComponent* playerTransform = world->GetComponent<Poly::TransformComponent>(player);
-	// playerTransform->SetLocalTranslation(Vector(-2.0f, 0.0f, 0.0f));
-	// playerTransform->SetLocalScale(10.0f);
-	// playerTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -90_deg) * Quaternion(Vector::UNIT_X, -90_deg));
 
 	auto shaderball = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, shaderball);
@@ -193,69 +175,5 @@ void GameMainSystem::GameUpdate(Poly::World* world)
 	float time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
 
-	// float di = 0;
-	// for (auto cmpTuple : world->IterateComponents<DirectionalLightComponent, TransformComponent>())
-	// {
-	// 	TransformComponent* dirLightTrans = std::get<TransformComponent*>(cmpTuple);
-	// 	Quaternion dirLightRot = Quaternion(Vector::UNIT_X, -45_deg);
-	// 	dirLightRot *= Quaternion(Vector::UNIT_Y, 90.0_deg*di + 1_deg *10.0f*time);
-	// 	
-	// 	dirLightTrans->SetLocalRotation(dirLightRot);
-	// 	// gConsole.LogInfo("DirLight[{}]: time: {}", di, time);
-	// 
-	// 	di += 1.0f;
-	// }
-
-	// int pi = 0;
-	// for (auto cmpTuple : world->IterateComponents<PointLightComponent, TransformComponent>())
-	// {
-	// 	TransformComponent* pointLightTrans = std::get<TransformComponent*>(cmpTuple);
-	// 	PointLightComponent* pointLight = std::get<PointLightComponent*>(cmpTuple);
-	// 
-	// 	// first point light stays in place
-	// 	if (pi > 0)
-	// 	{
-	// 		// float x = pointLightTrans->GetLocalTranslation().X;
-	// 		// pointLight->SetIntensity( 2.0f*Abs(Sin(1.0_rad *(x+time))) );
-	// 	
-	// 	}
-	// 	else
-	// 	{
-	// 		Vector pointLightPos = Vector(0.0f, 2.0f, 0.0f);
-	// 		// pointLightPos += Vector(Sin(1_rad*time), 0.0f, Cos(1_rad*time)) * 1.0f;
-	// 		pointLightPos += Vector(Cos(1_rad*time), 0.0f, 0.0f) * 10.0f;
-	// 		pointLightTrans->SetLocalTranslation(pointLightPos);
-	// 	}
-	// 		
-	// 	// gConsole.LogInfo("PointLight[{}]: pos: {}", pi, pointLightTrans->GetLocalTranslation());
-	// 	++pi;
-	// }
-
-	// int UseCashetes = 0;
-	// float ColorTempLuminancePreservation = 0.75f;
-	// float Distortion	= 0.5f;
-	// float Bloom			= 0.4f;
-	// float ColorTempValue = 9500.0f; // 6500.0 from [1000.0, 40000.0]
-	// float Saturation	= 0.5f;
-	// float Grain			= 0.5f;
-	// float Stripes		= 0.5f;
-	// float Vignette		= 0.5f;
-	// float Brightness	= 0.1f;
-	// float Contrast		= 1.5f;
-
-	// for (auto cmpTuple : world->IterateComponents<PostprocessSettingsComponent>())
-	// {
-	// 	PostprocessSettingsComponent* postCmp = std::get<PostprocessSettingsComponent*>(cmpTuple);
-	// 	float t = SmoothStep(-0.2f, 0.2f, -Cos(Angle::FromRadians(0.5f*time))); // [0, 1]
-	// 	float t = 0.0f;
-	// 
-	// 	postCmp->Distortion = t * Distortion;
-	// 	postCmp->ColorTempValue = Lerp(6500.0f, ColorTempValue, t);
-	// 	postCmp->Saturation = Lerp(1.0f, Saturation, t);
-	// 	postCmp->Grain = Lerp(0.0f, Grain, t);
-	// 	postCmp->Stripes = Lerp(0.0f, Stripes, t);
-	// 	postCmp->Vignette = Lerp(0.0f, Vignette, t);
-	// 
-	// 	gConsole.LogInfo("PostCmp: t: {}, Saturation: {}, Vignette: {}", t, postCmp->Saturation, postCmp->Vignette);
-	// }
+	gConsole.LogInfo("GameMainSystem::GameUpdate: t: {}, dt: {}", t, deltaTime);
 }
