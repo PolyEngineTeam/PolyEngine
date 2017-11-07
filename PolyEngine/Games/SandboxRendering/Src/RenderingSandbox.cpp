@@ -37,8 +37,8 @@ void RenderingSandbox::Init()
 	// cameraTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 180_deg));
 
 	world->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, world->GetComponent<Poly::CameraComponent>(Camera));
-	world->GetWorldComponent<AmbientLightWorldComponent>()->SetColor(Color(0.5f, 0.5f, 1.0f));
-	world->GetWorldComponent<AmbientLightWorldComponent>()->SetIntensity(0.05f);
+	world->GetWorldComponent<AmbientLightWorldComponent>()->SetColor(Color(0.2f, 0.5f, 1.0f));
+	world->GetWorldComponent<AmbientLightWorldComponent>()->SetIntensity(0.1f);
 	
 	
 	// Dir Light 0

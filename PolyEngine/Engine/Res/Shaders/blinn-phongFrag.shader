@@ -81,6 +81,65 @@ vec3 specularLighting(in vec3 N, in vec3 L, in vec3 V, in vec3 LightColor)
 	return specularTerm * uMaterial.Specular.rgb * LightColor;
 }
 
+Lighting directionalLighting(in DirectionalLight dirLight, in vec3 positionWS, in vec3 normalWS, in vec3 toCamera)
+{
+	Lighting OUT;
+
+	// vec3 u_lightPosition = dirLight.Position.xyz;
+	// float u_lightRadius = dirLight.Range;
+
+	vec3 o_toLight = normalize(-dirLight.Direction.xyz);
+	vec3 o_normal = normalWS;
+
+	// normalize vectors after interpolation
+	vec3 L = normalize(o_toLight);
+	vec3 V = normalize(toCamera);
+	vec3 N = normalize(o_normal);
+
+	// attentuation
+	// float dist = distance(u_lightPosition, positionWS);
+	// float att = clamp(1.0 - dist*dist / (u_lightRadius*u_lightRadius), 0.0, 1.0);
+	// att *= att;
+
+	vec3 lightColor = dirLight.Base.Color.rgb * dirLight.Base.Intensity;
+
+	// get Blinn-Phong reflectance components
+	OUT.Diffuse = diffuseLighting(N, L, lightColor);
+	OUT.Specular = specularLighting(N, L, V, lightColor);
+
+	return OUT;
+}
+
+
+Lighting pointLighting(in PointLight pointLight, in vec3 positionWS, in vec3 normalWS, in vec3 toCamera)
+{
+	Lighting OUT;
+
+	vec3 u_lightPosition = pointLight.Position.xyz;
+	float u_lightRadius = pointLight.Range;
+
+	vec3 o_toLight = normalize(u_lightPosition - positionWS);
+	vec3 o_normal = normalWS;
+
+	// normalize vectors after interpolation
+	vec3 L = normalize(o_toLight);
+	vec3 V = normalize(toCamera);
+	vec3 N = normalize(o_normal);
+
+	// attentuation
+	float dist = distance(u_lightPosition, positionWS);
+	float att = clamp(1.0 - dist*dist / (u_lightRadius*u_lightRadius), 0.0, 1.0);
+	att *= att;
+
+	vec3 lightColor = pointLight.Base.Color.rgb * pointLight.Base.Intensity;
+	
+	// get Blinn-Phong reflectance components
+	OUT.Diffuse = diffuseLighting(N, L, lightColor) * att;
+	OUT.Specular = specularLighting(N, L, V, lightColor) * att;
+
+	return OUT;
+}
+
 void main() {
 
 	vec4 texDiffuse = texture(uTexture, vTexCoord);
@@ -91,36 +150,25 @@ void main() {
 	vec3 normalWS = normalize(vNormal);
 	vec3 positionWS = vVertexPos;
 	
-	vec3 Iamb = vec3(0.0);
+	vec3 Iamb = ambientLighting();
 	vec3 Idif =	vec3(0.0);
 	vec3 Ispe =	vec3(0.0);
 
+	vec3 u_cameraPosition = uCameraPosition.xyz;
+	vec3 o_toCamera = normalize(u_cameraPosition - positionWS);
+
+	for (int i = 0; i < uDirectionalLightCount; ++i)
+	{
+		Lighting lighting = directionalLighting(uDirectionalLight[i], positionWS, normalWS, o_toCamera);
+		Idif += lighting.Diffuse;
+		Ispe += lighting.Specular;
+	}
+
 	for (int i = 0; i < uPointLightCount; ++i)
 	{
-		vec3 u_cameraPosition = uCameraPosition.xyz;
-		vec3 u_lightPosition = uPointLight[i].Position.xyz;
-		float u_lightRadius = uPointLight[i].Range;
-
-		vec3 o_toLight = normalize(u_lightPosition - positionWS);
-		vec3 o_toCamera = normalize(u_cameraPosition - positionWS);
-		vec3 o_normal = normalWS;
-
-		// normalize vectors after interpolation
-		vec3 L = normalize(o_toLight);
-		vec3 V = normalize(o_toCamera);
-		vec3 N = normalize(o_normal);
-
-		// attentuation
-		float dist = distance(u_lightPosition, positionWS);
-		float att = clamp(1.0 - dist*dist/(u_lightRadius*u_lightRadius), 0.0, 1.0);
-		att *= att;
-
-		vec3 lightColor = uPointLight[i].Base.Color.rgb * uPointLight[i].Base.Intensity;
-
-		// get Blinn-Phong reflectance components
-		Iamb += ambientLighting();
-		Idif += diffuseLighting(N, L, lightColor) * att;
-		Ispe += specularLighting(N, L, V, lightColor) * att;
+		Lighting lighting = pointLighting(uPointLight[i], positionWS, normalWS, o_toCamera);
+		Idif += lighting.Diffuse;
+		Ispe += lighting.Specular;
 	}
 
 	// combination of all components and diffuse color of the object
