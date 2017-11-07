@@ -242,20 +242,16 @@ namespace Poly {
 	}
 }
 
-//NOTE(vuko): apparently defining specializations in a namespace from global/other namespace is illegal C++ and GCC complains
-//Unfortunately being compliant causes problems when using the macro in a namespace. Use _IN_POLY variant then.
+#if defined(__GNUC__) 
 #define REGISTER_ENUM_NAMES(type, ...)                                                    \
-	namespace Poly { namespace Impl {                                                     \
-	template<> struct EnumInfo<type> {                                                    \
-		static EnumInfo<type>& Get() { static EnumInfo<type> instance; return instance; } \
-		const EnumArray<const char*, type> Names = {__VA_ARGS__};                         \
-	};                                                                                    \
-	}} //namespace Poly::Impl
-
-#define REGISTER_ENUM_NAMES_IN_POLY(type, ...)                                            \
-	namespace Impl {                                                                      \
-	template<> struct EnumInfo<type> {                                                    \
-		static EnumInfo<type>& Get() { static EnumInfo<type> instance; return instance; } \
-		const EnumArray<const char*, type> Names = {__VA_ARGS__};                         \
-	};                                                                                    \
-	} //namespace Impl
+	template<> struct < ::Poly >::Impl::EnumInfo<type> {                                                    \
+		static < ::Poly >::Impl::EnumInfo<type>& Get() { static ::Poly::Impl::EnumInfo<type> instance; return instance; } \
+		const < ::Poly >::EnumArray<const char*, type> Names = {__VA_ARGS__};                         \
+	};
+#else
+#define REGISTER_ENUM_NAMES(type, ...)                                                    \
+	template<> struct ::Poly::Impl::EnumInfo<type> {                                                    \
+		static ::Poly::Impl::EnumInfo<type>& Get() { static ::Poly::Impl::EnumInfo<type> instance; return instance; } \
+		const ::Poly::EnumArray<const char*, type> Names = {__VA_ARGS__};                         \
+	};
+#endif
