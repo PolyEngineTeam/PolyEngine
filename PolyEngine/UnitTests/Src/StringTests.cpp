@@ -59,6 +59,9 @@ TEST_CASE("String operations", "[String]") {
 	String replace = String("@ALZ[aWWzD{");
 	String replaced = test.Replace('l', 'W').Replace('\'', 'D');
 	REQUIRE(replace == replaced);
+	String replaceString = String("@ATeStllz'{");
+	String replacedString = test.Replace("LZ[a", "TeSt");
+	REQUIRE(replaceString == replacedString);
 
 	REQUIRE(test.StartsWith('@'));
 	REQUIRE(!test.StartsWith('!'));
@@ -84,4 +87,7 @@ TEST_CASE("String operations", "[String]") {
 	String charJoined = strArr[0] + charSeparator + strArr[1] + charSeparator + strArr[2];
 	REQUIRE(String::Join(strArr, 3, separator) == joined);
 	REQUIRE(String::Join(strArr, 3, charSeparator) == charJoined);
+
+	String containsTest = String("al");
+	REQUIRE(test.Contains(containsTest) == true);
 }

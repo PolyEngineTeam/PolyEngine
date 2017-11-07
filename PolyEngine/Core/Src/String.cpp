@@ -68,12 +68,16 @@ String String::From(const std::string& var) {
 	return String(var.c_str());
 }
 
-bool String::Contains(const String& /*var*/) const {
-	ASSERTE(false, "Not impleented yet.");
-	//TODO Dynarray.FindAllIdx()
-	//for all this.Data.FindAllIdx()
-	//	if var == this->Substring(idx, idx+var.Data.GetSize()
-	//		return true
+bool String::Contains(const String& var) const {
+	Dynarray<int> idx = this->Data.FindAllIdx(*var.GetCStr());
+	// -1 because of null terminator
+	int dataSize = var.Data.GetSize() - 1;
+	for (size_t i = 0; i < idx.GetSize(); i++) {
+		String substr = this->Substring(idx[i], idx[i] + dataSize);
+		if (var == this->Substring(idx[i], idx[i] + dataSize)) {
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -126,11 +130,10 @@ String String::Replace(char what, char with) const {
 	return s;
 }
 
-String String::Replace(const String& /*what*/, const String& /*with*/) const {
-	ASSERTE(false, "Not implemented yet.");
-	//split source by delimiter a
-	//return string joined with separator b
-	return String();
+String String::Replace(const String& what, const String& with) const {
+	String s = "";
+	Dynarray<String> splitted = this->Split(what);
+	return s.Join(splitted.GetData(), splitted.GetSize(), with);
 }
 
 Dynarray<String> String::Split(char delimiter) const {
