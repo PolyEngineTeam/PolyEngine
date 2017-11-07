@@ -61,15 +61,14 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 
 CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const String& propertyName, const rapidjson::Document& doc)
 {
-	auto& it = doc.GetObject().FindMember(propertyName.GetCStr());
+	const auto& it = doc.GetObject().FindMember(propertyName.GetCStr());
 	if(it != doc.GetObject().MemberEnd())
-		RTTI::DeserializeObject(obj, propertyName, doc.GetObject().MemberBegin()->value);
+		RTTI::DeserializeObject(obj, propertyName, it->value);
 }
 
 CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const String& propertyName, const rapidjson::Value& currentValue)
 {
 	UNUSED(propertyName);
-	const TypeInfo typeInfo = obj->GetTypeInfo();
 	const PropertyManagerBase* propMgr = obj->GetPropertyManager();
 
 	HEAVY_ASSERTE(currentValue.IsObject(), "JSON value is not an object!");
@@ -81,7 +80,7 @@ CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const String& p
 			continue;
 
 		void* ptr = ((char*)obj) + child.Offset;
-		auto& it = currentValue.FindMember(child.Name.GetCStr());
+		const auto& it = currentValue.FindMember(child.Name.GetCStr());
 		if (it != currentValue.MemberEnd())
 		{
 			if (child.CoreType == eCorePropertyType::NONE)
