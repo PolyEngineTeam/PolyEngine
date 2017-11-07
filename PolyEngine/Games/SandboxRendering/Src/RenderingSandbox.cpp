@@ -175,5 +175,5 @@ void GameMainSystem::GameUpdate(Poly::World* world)
 	float time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
 
-	gConsole.LogInfo("GameMainSystem::GameUpdate: t: {}, dt: {}", t, deltaTime);
+	gConsole.LogInfo("GameMainSystem::GameUpdate: t: {}, dt: {}", time, deltaTime);
 }
