@@ -24,5 +24,5 @@ namespace Poly {
 
 	};
 
-	REGISTER_COMPONENT(ComponentsFamily, PostprocessSettingsComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, PostprocessSettingsComponent)
 }

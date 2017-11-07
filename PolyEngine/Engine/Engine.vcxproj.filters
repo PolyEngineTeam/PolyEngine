@@ -194,9 +194,6 @@
     <ClCompile Include="Src\PostprocessSettingsComponent.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Family.cpp">
-      <Filter>Source Files\ECS</Filter>
-    </ClCompile>
     <ClCompile Include="Src\ConfigBase.cpp">
       <Filter>Source Files\Config\Impl</Filter>
     </ClCompile>
@@ -205,6 +202,9 @@
     </ClCompile>
     <ClCompile Include="Src\AssetsPathConfig.cpp">
       <Filter>Source Files\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ComponentIDGenerator.cpp">
+      <Filter>Source Files\ECS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -364,12 +364,12 @@
     <ClInclude Include="Src\AssetsPathConfig.hpp">
       <Filter>Source Files\Config</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Family.hpp">
+    <ClInclude Include="Src\ComponentIDGenerator.hpp">
       <Filter>Source Files\ECS</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Src\FamilyImpl.hpp">
+    <None Include="Src\ComponentIDGeneratorImpl.hpp">
       <Filter>Source Files\ECS</Filter>
     </None>
   </ItemGroup>

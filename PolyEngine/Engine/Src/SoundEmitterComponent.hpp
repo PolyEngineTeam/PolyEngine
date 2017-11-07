@@ -34,6 +34,6 @@ namespace Poly
 		SoundResource* Resource;
 	};
 
-	REGISTER_COMPONENT(ComponentsFamily, SoundEmitterComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, SoundEmitterComponent)
 
 } // namespace Poly

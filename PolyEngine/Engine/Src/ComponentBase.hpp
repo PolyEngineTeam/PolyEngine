@@ -2,8 +2,8 @@
 
 #include <Core.hpp>
 #include "Entity.hpp"
-#include "Family.hpp"
-#include "FamilyImpl.hpp"
+#include "ComponentIDGenerator.hpp"
+#include "ComponentIDGeneratorImpl.hpp"
 
 namespace Poly {
 

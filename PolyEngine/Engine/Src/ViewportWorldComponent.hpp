@@ -28,5 +28,5 @@ namespace Poly
 		ViewportID IDCounter = 0;
 	};
 
-	REGISTER_COMPONENT(WorldComponentsFamily, ViewportWorldComponent)
+	REGISTER_COMPONENT(WorldComponentsIDGroup, ViewportWorldComponent)
 }

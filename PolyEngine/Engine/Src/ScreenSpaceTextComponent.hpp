@@ -26,5 +26,5 @@ namespace Poly {
 		Vector ScreenPosition;
 	};
 
-	REGISTER_COMPONENT(ComponentsFamily, ScreenSpaceTextComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, ScreenSpaceTextComponent)
 }
