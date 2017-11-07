@@ -22,11 +22,6 @@ BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 	GetProgram().RegisterUniform("vec4", "uCameraPosition");
 	GetProgram().RegisterUniform("vec4", "uCameraForward");
 
-	// GetProgram().SetUniform("uMaterial.Ambient", material.AmbientColor);
-	// GetProgram().SetUniform("uMaterial.Diffuse", material.DiffuseColor);
-	// GetProgram().SetUniform("uMaterial.Specular", material.SpecularColor);
-	// GetProgram().SetUniform("uMaterial.Shininess", material.Shininess);
-
 	GetProgram().RegisterUniform("vec4", "uMaterial.Ambient");
 	GetProgram().RegisterUniform("vec4", "uMaterial.Diffuse");
 	GetProgram().RegisterUniform("vec4", "uMaterial.Specular");
@@ -96,13 +91,10 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		TransformComponent* transformCmp = std::get<TransformComponent*>(componentsTuple);
 	
 		String baseName = String("uPointLight[") + String::From(pointLightsCount) + String("].");
-	
-		GetProgram().SetUniform(baseName + "Base.Color", pointLightCmp->GetColor());
-		GetProgram().SetUniform(baseName + "Base.Intensity", pointLightCmp->GetIntensity());
-		// GetProgram().SetUniform(baseName + "Attenuation", pointLightCmp->GetAttenuation());
-		// float range = sqrt(((1.f / IntensityThreshold) - 1.0f)/ pointLightCmp->GetAttenuation());
 		GetProgram().SetUniform(baseName + "Range", pointLightCmp->GetRange());
 		GetProgram().SetUniform(baseName + "Position", transformCmp->GetGlobalTranslation());
+		GetProgram().SetUniform(baseName + "Base.Color", pointLightCmp->GetColor());
+		GetProgram().SetUniform(baseName + "Base.Intensity", pointLightCmp->GetIntensity());
 
 		++pointLightsCount;
 		if (pointLightsCount == MAX_LIGHT_COUNT_POINT)
