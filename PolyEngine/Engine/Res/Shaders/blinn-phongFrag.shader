@@ -85,21 +85,10 @@ Lighting directionalLighting(in DirectionalLight dirLight, in vec3 positionWS, i
 {
 	Lighting OUT;
 
-	// vec3 u_lightPosition = dirLight.Position.xyz;
-	// float u_lightRadius = dirLight.Range;
-
-	vec3 o_toLight = normalize(-dirLight.Direction.xyz);
-	vec3 o_normal = normalWS;
-
 	// normalize vectors after interpolation
-	vec3 L = normalize(o_toLight);
+	vec3 L = normalize(-dirLight.Direction.xyz);
 	vec3 V = normalize(toCamera);
-	vec3 N = normalize(o_normal);
-
-	// attentuation
-	// float dist = distance(u_lightPosition, positionWS);
-	// float att = clamp(1.0 - dist*dist / (u_lightRadius*u_lightRadius), 0.0, 1.0);
-	// att *= att;
+	vec3 N = normalize(normalWS);
 
 	vec3 lightColor = dirLight.Base.Color.rgb * dirLight.Base.Intensity;
 
@@ -115,20 +104,14 @@ Lighting pointLighting(in PointLight pointLight, in vec3 positionWS, in vec3 nor
 {
 	Lighting OUT;
 
-	vec3 u_lightPosition = pointLight.Position.xyz;
-	float u_lightRadius = pointLight.Range;
+	vec3 o_toLight = normalize(pointLight.Position.xyz - positionWS);
 
-	vec3 o_toLight = normalize(u_lightPosition - positionWS);
-	vec3 o_normal = normalWS;
-
-	// normalize vectors after interpolation
 	vec3 L = normalize(o_toLight);
 	vec3 V = normalize(toCamera);
-	vec3 N = normalize(o_normal);
+	vec3 N = normalize(normalWS);
 
-	// attentuation
-	float dist = distance(u_lightPosition, positionWS);
-	float att = clamp(1.0 - dist*dist / (u_lightRadius*u_lightRadius), 0.0, 1.0);
+	float dist = distance(pointLight.Position.xyz, positionWS);
+	float att = clamp(1.0 - dist*dist / (pointLight.Range*pointLight.Range), 0.0, 1.0);
 	att *= att;
 
 	vec3 lightColor = pointLight.Base.Color.rgb * pointLight.Base.Intensity;
@@ -154,19 +137,18 @@ void main() {
 	vec3 Idif =	vec3(0.0);
 	vec3 Ispe =	vec3(0.0);
 
-	vec3 u_cameraPosition = uCameraPosition.xyz;
-	vec3 o_toCamera = normalize(u_cameraPosition - positionWS);
+	vec3 toCamera = normalize(uCameraPosition.xyz - positionWS);
 
 	for (int i = 0; i < uDirectionalLightCount; ++i)
 	{
-		Lighting lighting = directionalLighting(uDirectionalLight[i], positionWS, normalWS, o_toCamera);
+		Lighting lighting = directionalLighting(uDirectionalLight[i], positionWS, normalWS, toCamera);
 		Idif += lighting.Diffuse;
 		Ispe += lighting.Specular;
 	}
 
 	for (int i = 0; i < uPointLightCount; ++i)
 	{
-		Lighting lighting = pointLighting(uPointLight[i], positionWS, normalWS, o_toCamera);
+		Lighting lighting = pointLighting(uPointLight[i], positionWS, normalWS, toCamera);
 		Idif += lighting.Diffuse;
 		Ispe += lighting.Specular;
 	}
