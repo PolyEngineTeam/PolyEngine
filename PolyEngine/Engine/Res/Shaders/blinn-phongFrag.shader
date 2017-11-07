@@ -155,7 +155,5 @@ void main() {
 
 	// combination of all components and diffuse color of the object
 	color.xyz = texDiffuse.rgb * (Iamb + Idif + Ispe);
-
-	// color.xyz = 0.5+0.5*normalWS; // need this as RenderingMode
 	color.w = 1.0;
 }
