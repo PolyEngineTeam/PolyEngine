@@ -146,6 +146,10 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, static_cast<const GLTextureDeviceProxy*>(subMesh->GetMeshData().GetDiffTexture()->GetTextureProxy())->GetTextureID());
 			}
+			else
+			{
+				glBindTexture(GL_TEXTURE_2D, 0);
+			}
 
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 			glBindTexture(GL_TEXTURE_2D, 0);
