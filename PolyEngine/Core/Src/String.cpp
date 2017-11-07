@@ -71,7 +71,7 @@ String String::From(const std::string& var) {
 bool String::Contains(const String& var) const {
 	Dynarray<int> idx = this->Data.FindAllIdx(*var.GetCStr());
 	// -1 because of null terminator
-	int dataSize = var.Data.GetSize() - 1;
+	size_t dataSize = var.Data.GetSize() - 1;
 	for (size_t i = 0; i < idx.GetSize(); i++) {
 		String substr = this->Substring(idx[i], idx[i] + dataSize);
 		if (var == this->Substring(idx[i], idx[i] + dataSize)) {
