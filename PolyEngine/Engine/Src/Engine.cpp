@@ -107,9 +107,9 @@ void Engine::ResizeScreen(const ScreenSize & size)
 	GetRenderingDevice()->Resize(size);
 }
 
-void Engine::QuitGame()
+void Engine::RequestGameQuit()
 {
-	shouldQuit = 1;
+	QuitRequested = true;
 }
 
-bool Engine::ShouldQuit() { return shouldQuit; }
+bool Engine::IsQuitRequested() const { return QuitRequested; }
