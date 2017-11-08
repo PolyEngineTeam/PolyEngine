@@ -123,6 +123,11 @@ namespace Poly
 		/// <param name="pos">New wheel position.</param>
 		void UpdateWheelPos(const Vector& pos) { InputEventsQueue.PushBack({eInputEventType::WHEELMOVE, pos}); }
 
+		///functions for closing the game
+		bool IsQuitRequested() const;
+		void RequestGameQuit();
+		
+
 		/// <summary>Returns current base world refference.</summary>
 		/// <returns>Pointer to current world.</returns>
 		World* GetWorld() { return BaseWorld.get(); }
@@ -223,6 +228,8 @@ namespace Poly
 
 		std::unordered_map<std::type_index, size_t> ComponentTypeMap;
 		std::unordered_map<std::type_index, size_t> WorldComponentTypeMap;
+
+		bool QuitRequested = 0; //stop the game
 	};
 
 	ENGINE_DLLEXPORT extern Engine* gEngine;

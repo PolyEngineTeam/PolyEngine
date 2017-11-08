@@ -106,3 +106,10 @@ void Engine::ResizeScreen(const ScreenSize & size)
 	gConsole.LogDebug("Screen resize: {} {}", size.Width, size.Height);
 	GetRenderingDevice()->Resize(size);
 }
+
+void Engine::RequestGameQuit()
+{
+	QuitRequested = true;
+}
+
+bool Engine::IsQuitRequested() const { return QuitRequested; }
