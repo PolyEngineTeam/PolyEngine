@@ -19,6 +19,16 @@ namespace Poly {
 			UNHANDLED,
 			NONE,
 			BOOL,
+			INT8,
+			INT16,
+			INT32,
+			INT64,
+			UINT8,
+			UINT16,
+			UINT32,
+			UINT64,
+			FLOAT,
+			DOUBLE,
 			ENUM,
 			_COUNT
 		};
@@ -26,6 +36,16 @@ namespace Poly {
 		template <typename T> inline eCorePropertyType GetCorePropertyType() { return RTTI::Impl::HasGetTypeInfoFunc<T>::value ? eCorePropertyType::NONE : eCorePropertyType::UNHANDLED; };
 		// specializations
 		template <> inline eCorePropertyType GetCorePropertyType<bool>() { return eCorePropertyType::BOOL; };
+		template <> inline eCorePropertyType GetCorePropertyType<i8>() { return eCorePropertyType::INT8; };
+		template <> inline eCorePropertyType GetCorePropertyType<i16>() { return eCorePropertyType::INT16; };
+		template <> inline eCorePropertyType GetCorePropertyType<i32>() { return eCorePropertyType::INT32; };
+		template <> inline eCorePropertyType GetCorePropertyType<i64>() { return eCorePropertyType::INT64; };
+		template <> inline eCorePropertyType GetCorePropertyType<u8>() { return eCorePropertyType::UINT8; };
+		template <> inline eCorePropertyType GetCorePropertyType<u16>() { return eCorePropertyType::UINT16; };
+		template <> inline eCorePropertyType GetCorePropertyType<u32>() { return eCorePropertyType::UINT32; };
+		template <> inline eCorePropertyType GetCorePropertyType<u64>() { return eCorePropertyType::UINT64; };
+		template <> inline eCorePropertyType GetCorePropertyType<float>() { return eCorePropertyType::FLOAT; };
+		template <> inline eCorePropertyType GetCorePropertyType<double>() { return eCorePropertyType::DOUBLE; };
 
 		enum class ePropertyFlag {
 			NONE = 0,
@@ -81,7 +101,8 @@ namespace Poly {
 #define NO_RTTI_PROPERTY() UNUSED(mgr)
 
 // standard RTTIBase deriving (or POD type) property
-#define RTTI_PROPERTY(Type, variable, var_name, flags) \
+#define RTTI_PROPERTY(variable, var_name, flags) \
+	using Type = decltype(variable); \
 	STATIC_ASSERTE(!std::is_pointer<Type>::value || EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE), "Serializable variable cannot be a pointer."); \
 	mgr->AddProperty(Poly::RTTI::Property{Poly::RTTI::TypeInfo::Get<Type>(), Poly::RTTI::OffsetOfMember(&T::variable), var_name, flags, Poly::RTTI::GetCorePropertyType<Type>()})
 

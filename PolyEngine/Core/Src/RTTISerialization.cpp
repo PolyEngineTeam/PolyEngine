@@ -44,10 +44,37 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	switch (prop.CoreType)
 	{
 	case eCorePropertyType::BOOL:
-		{
-			bool val = *reinterpret_cast<const bool*>(value);
-			currentValue.SetBool(val);
-		}
+		currentValue.SetBool(*reinterpret_cast<const bool*>(value));
+		break;
+	case eCorePropertyType::INT8:
+		currentValue.SetInt(*reinterpret_cast<const i8*>(value));
+		break;
+	case eCorePropertyType::INT16:
+		currentValue.SetInt(*reinterpret_cast<const i16*>(value));
+		break;
+	case eCorePropertyType::INT32:
+		currentValue.SetInt(*reinterpret_cast<const i32*>(value));
+		break;
+	case eCorePropertyType::INT64:
+		currentValue.SetInt64(*reinterpret_cast<const i64*>(value));
+		break;
+	case eCorePropertyType::UINT8:
+		currentValue.SetUint(*reinterpret_cast<const u8*>(value));
+		break;
+	case eCorePropertyType::UINT16:
+		currentValue.SetUint(*reinterpret_cast<const u16*>(value));
+		break;
+	case eCorePropertyType::UINT32:
+		currentValue.SetUint(*reinterpret_cast<const u32*>(value));
+		break;
+	case eCorePropertyType::UINT64:
+		currentValue.SetUint64(*reinterpret_cast<const u64*>(value));
+		break;
+	case eCorePropertyType::FLOAT:
+		currentValue.SetFloat(*reinterpret_cast<const float*>(value));
+		break;
+	case eCorePropertyType::DOUBLE:
+		currentValue.SetDouble(*reinterpret_cast<const double*>(value));
 		break;
 	case eCorePropertyType::NONE:
 		ASSERTE(false, "Invalid property type!");
@@ -96,11 +123,54 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 	switch (prop.CoreType)
 	{
 	case eCorePropertyType::BOOL:
+		*reinterpret_cast<bool*>(obj) = value.GetBool();
+		break;
+	case eCorePropertyType::INT8:
 	{
-		bool& val = *reinterpret_cast<bool*>(obj);
-		val = value.GetBool();
+		int result = value.GetInt();
+		HEAVY_ASSERTE((result & 0xFF) == result, "Value outside of int8 range");
+		*reinterpret_cast<i8*>(obj) = (i8)result;
+		break;
 	}
-	break;
+	case eCorePropertyType::INT16:
+	{
+		int result = value.GetInt();
+		HEAVY_ASSERTE((result & 0xFFFF) == result, "Value outside of int16 range");
+		*reinterpret_cast<i16*>(obj) = (i16)result;
+		break;
+	}
+	case eCorePropertyType::INT32:
+		*reinterpret_cast<i32*>(obj) = value.GetInt();
+		break;
+	case eCorePropertyType::INT64:
+		*reinterpret_cast<i64*>(obj) = value.GetInt64();
+		break;
+	case eCorePropertyType::UINT8:
+	{
+		uint result = value.GetUint();
+		HEAVY_ASSERTE((result & 0xFF) == result, "Value outside of uint8 range");
+		*reinterpret_cast<u8*>(obj) = (u8)result;
+		break;
+	}
+	case eCorePropertyType::UINT16:
+	{
+		uint result = value.GetUint();
+		HEAVY_ASSERTE((result & 0xFFFF) == result, "Value outside of uint16 range");
+		*reinterpret_cast<u16*>(obj) = (u16)result;
+		break;
+	}
+	case eCorePropertyType::UINT32:
+		*reinterpret_cast<u32*>(obj) = value.GetUint();
+		break;
+	case eCorePropertyType::UINT64:
+		*reinterpret_cast<u64*>(obj) = value.GetUint64();
+		break;
+	case eCorePropertyType::FLOAT:
+		*reinterpret_cast<float*>(obj) = value.GetFloat();
+		break;
+	case eCorePropertyType::DOUBLE:
+		*reinterpret_cast<double*>(obj) = value.GetDouble();
+		break;
 	case eCorePropertyType::NONE:
 		ASSERTE(false, "Invalid property type!");
 		break;

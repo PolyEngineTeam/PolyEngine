@@ -17,7 +17,7 @@ RTTI_DEFINE_PRIMITIVE_TYPE(eTestEnum)
 class TestClass : public RTTIBase {
 	RTTI_DECLARE_TYPE_DERIVED(TestClass, RTTIBase)
 	{
-		RTTI_PROPERTY(bool, val1, "Val1", RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY(val1, "Val1", RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_ENUM(eTestEnum, val2, "Val2", RTTI::ePropertyFlag::NONE);
 	}
 public:
