@@ -48,6 +48,13 @@ void RenderingSandbox::Init()
 	Poly::TransformComponent* dirLightTrans = world->GetComponent<Poly::TransformComponent>(KeyDirLight);
 	dirLightTrans->SetLocalRotation(DirLightRot);
 
+	Quaternion SpotLightRot = Quaternion(Vector::UNIT_Y, 90_deg) * Quaternion(Vector::UNIT_X, -15_deg);
+	Poly::UniqueID SpotLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, SpotLight);
+	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightComponent>(world, SpotLight, Color(0.7f, 1.0f, 0.5f), 0.8f);
+	Poly::TransformComponent* spotLightTrans = world->GetComponent<Poly::TransformComponent>(SpotLight);
+	spotLightTrans->SetLocalRotation(SpotLightRot);
+
 	CreatePointLight(100.0f);
 
 	AddPointLights(7);
