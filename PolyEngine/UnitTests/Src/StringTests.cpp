@@ -90,4 +90,7 @@ TEST_CASE("String operations", "[String]") {
 
 	String containsTest = String("al");
 	REQUIRE(test.Contains(containsTest) == true);
+
+	String notContainsTest = String("Z[allz'/");
+	REQUIRE(test.Contains(notContainsTest) == false);
 }

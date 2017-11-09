@@ -69,12 +69,14 @@ String String::From(const std::string& var) {
 }
 
 bool String::Contains(const String& var) const {
-	Dynarray<size_t> idx = this->Data.FindAllIdx(*var.GetCStr());
-	// -1 because of null terminator
-	size_t dataSize = var.Data.GetSize() - 1;
-	for (size_t i = 0; i < idx.GetSize(); i++) {
-		String substr = this->Substring(idx[i], idx[i] + dataSize);
-		if (var == this->Substring(idx[i], idx[i] + dataSize)) {
+	size_t idx1 = 0, idx2 = 0;
+	for (idx1; idx1 < this->GetLength(); idx1++) {
+		if (var[idx2] == Data[idx1]) {
+			idx2++;
+		} else {
+			idx2 = 0;
+		}
+		if (idx2 == var.GetLength()) {
 			return true;
 		}
 	}
@@ -131,9 +133,9 @@ String String::Replace(char what, char with) const {
 }
 
 String String::Replace(const String& what, const String& with) const {
-	String s = "";
+	
 	Dynarray<String> splitted = this->Split(what);
-	return s.Join(splitted.GetData(), splitted.GetSize(), with);
+	return Join(splitted.GetData(), splitted.GetSize(), with);
 }
 
 Dynarray<String> String::Split(char delimiter) const {
