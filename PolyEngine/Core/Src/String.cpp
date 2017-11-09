@@ -69,8 +69,8 @@ String String::From(const std::string& var) {
 }
 
 bool String::Contains(const String& var) const {
-	size_t idx1 = 0, idx2 = 0;
-	for (idx1; idx1 < this->GetLength(); idx1++) {
+	size_t idx2 = 0;
+	for (size_t idx1 = 0; idx1 < this->GetLength(); idx1++) {
 		if (var[idx2] == Data[idx1]) {
 			idx2++;
 		} else {
