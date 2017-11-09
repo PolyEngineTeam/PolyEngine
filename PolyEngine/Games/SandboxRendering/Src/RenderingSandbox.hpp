@@ -37,4 +37,5 @@ private:
 	void AddDirectionalLights();
 	void AddPointLights(int Quata);
 	void CreatePointLight(float Range);
+	void CreateSpotLight(float Range);
 };

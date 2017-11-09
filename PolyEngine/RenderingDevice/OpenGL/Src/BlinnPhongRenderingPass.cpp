@@ -15,6 +15,7 @@ using namespace Poly;
 
 const size_t MAX_LIGHT_COUNT_POINT = 8;
 const size_t MAX_LIGHT_COUNT_DIRECTIONAL = 8;
+const size_t MAX_LIGHT_COUNT_SPOT = 8;
 
 BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 : RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
@@ -52,7 +53,18 @@ BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 		GetProgram().RegisterUniform("float", baseName + "Range");
 	}
 
-	GetProgram().RegisterUniform("int", "uPointLightCount");
+	for (size_t i = 0; i < MAX_LIGHT_COUNT_SPOT; ++i)
+	{
+		String baseName = String("uSpotLight[") + String::From(static_cast<int>(i)) + String("].");
+		GetProgram().RegisterUniform("vec4", baseName + "Base.Color");
+		GetProgram().RegisterUniform("float", baseName + "Base.Intensity");
+		GetProgram().RegisterUniform("vec4", baseName + "Position");
+		GetProgram().RegisterUniform("vec4", baseName + "Direction");
+		GetProgram().RegisterUniform("float", baseName + "Range");
+		GetProgram().RegisterUniform("float", baseName + "CutOff");
+	}
+
+	GetProgram().RegisterUniform("int", "uSpotLightCount");
 }
 
 void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/)
@@ -103,6 +115,29 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 			break;
 	}
 	GetProgram().SetUniform("uPointLightCount", pointLightsCount);
+
+	int spotLightsCount = 0;
+	for (auto componentsTuple : world->IterateComponents<SpotLightComponent, TransformComponent>())
+	{
+		SpotLightComponent* spotLightCmp = std::get<SpotLightComponent*>(componentsTuple);
+		TransformComponent* transformCmp = std::get<TransformComponent*>(componentsTuple);
+
+		String baseName = String("uSpotLight[") + String::From(spotLightsCount) + String("].");
+		GetProgram().SetUniform(baseName + "Range", spotLightCmp->GetRange());
+		GetProgram().SetUniform(baseName + "CutOff", Cos(1.0_rad * spotLightCmp->GetCutOff()));
+		GetProgram().SetUniform(baseName + "Position", transformCmp->GetGlobalTranslation());
+		GetProgram().SetUniform(baseName + "Direction", MovementSystem::GetGlobalForward(transformCmp));
+		GetProgram().SetUniform(baseName + "Base.Color", spotLightCmp->GetColor());
+		GetProgram().SetUniform(baseName + "Base.Intensity", spotLightCmp->GetIntensity());
+
+		gConsole.LogInfo("BlinnPhongRenderingPass::OnRun: spotlight[{}]: pos: {}, dir: {}",
+			spotLightsCount, transformCmp->GetGlobalTranslation(), MovementSystem::GetGlobalForward(transformCmp));
+
+		++spotLightsCount;
+		if (spotLightsCount == MAX_LIGHT_COUNT_SPOT)
+			break;
+	}
+	GetProgram().SetUniform("uSpotLightCount", spotLightsCount);
 
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
