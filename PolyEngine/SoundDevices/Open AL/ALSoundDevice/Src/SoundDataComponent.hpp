@@ -7,7 +7,7 @@ namespace Poly
 	class SoundDataComponent : public SoundDataComponentProxy
 	{
 	public:
-		SoundDataComponent();
+		SoundDataComponent(unsigned int emitterID);
 		~SoundDataComponent();
 		
 		unsigned int EmitterID;

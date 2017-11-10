@@ -2,7 +2,8 @@
 
 using namespace Poly;
 
-SoundDataComponent::SoundDataComponent()
+SoundDataComponent::SoundDataComponent(unsigned int emitterID) :
+	EmitterID(emitterID)
 {
 }
 
