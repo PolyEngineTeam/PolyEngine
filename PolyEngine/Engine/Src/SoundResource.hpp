@@ -12,12 +12,6 @@ namespace Poly
 		SoundResourceException() {}
 	};
 
-	class ENGINE_DLLEXPORT OggDecoderException : public BaseObject<>, public std::exception
-	{
-	public:
-		OggDecoderException() {}
-	};
-
 	enum class eSoundSampleFormat 
 	{
 		MONO8 = 0,
