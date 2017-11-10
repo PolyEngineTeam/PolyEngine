@@ -1,13 +1,10 @@
 #pragma once
 
 #include <alc.h>
-#include <al.h>
 #include <unordered_map>
 
 #include <ISoundDevice.hpp>
-#include <UniqueID.hpp>
 #include <Dynarray.hpp>
-#include <SoundResource.hpp>
 
 namespace Poly
 {
@@ -28,11 +25,6 @@ namespace Poly
 
 	private:
 		ALCdevice* Device;
-
-		std::unordered_map<UniqueID, ALEmitter*> OwnerToEmitterMap;
-
-		static const int BuffersInQueueCount = 2;
-		std::unordered_map<eSoundSampleFormat, int>EngineFormatToALFormatMap;
 	};
 } // namespace Poly
 

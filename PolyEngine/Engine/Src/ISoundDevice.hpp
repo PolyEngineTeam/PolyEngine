@@ -4,9 +4,6 @@
 #include <Dynarray.hpp>
 #include <BaseObject.hpp>
 
-// engine
-#include "ComponentBase.hpp"
-
 namespace Poly 
 {
 	class World;
