@@ -8,33 +8,43 @@
 #include <Engine.hpp>
 #include <World.hpp>
 
+using namespace Poly;
+
 namespace GameMainSystem
 {
-	void GameUpdate(Poly::World* world);
+	void GameUpdate(World* world);
 }
 
 
+enum class eGameWorldComponents
+{
+	GAME_MGR = (int)eEngineWorldComponents::_COUNT,
+	_COUNT
+};
+
 DECLARE_GAME()
-class GAME_DLLEXPORT RenderingSandbox : public Poly::IGame {
+
+class GAME_DLLEXPORT RenderingSandbox : public IGame {
 public:
-	void RegisterEngine(Poly::Engine* engine) override { Engine = engine; }
+	void RegisterEngine(Engine* engine) override { Engine = engine; }
 	
 	void Init() override;
-	void GameUpdate(Poly::World* world);
+	void GameUpdate(World* world);
 	void Deinit() override;
 
 private:
-	Poly::UniqueID Camera;
-	Poly::UniqueID GameManager;
-	Poly::UniqueID Dummy;
-	Poly::UniqueID PointLight;
+	UniqueID Camera;
+	UniqueID GameManager;
+	UniqueID Dummy;
+	UniqueID PointLight;
 
-	Poly::Dynarray<Poly::UniqueID> GameEntities;
-	Poly::Engine* Engine;	
+	Dynarray<UniqueID> GameEntities;
+	Engine* Engine;
 
-	float Random();
-	float Random(float min, float max);
-	void AddDirectionalLights();
-	void AddPointLights(int Quata);
-	void CreatePointLight(float Range);
+	// float Random();
+	// float Random(float min, float max);
+	// void AddDirectionalLights();
+	// void AddPointLights(int Quata);
+	// void CreatePointLight(float Range);
+	// void CreateSpotLight(float Range);
 };

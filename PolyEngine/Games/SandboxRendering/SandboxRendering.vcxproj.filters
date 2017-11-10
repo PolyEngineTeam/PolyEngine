@@ -14,10 +14,18 @@
     <ClCompile Include="Src\RenderingSandbox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Src\GameManagerSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GameManagerWorldComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\RenderingSandbox.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Src\GameManagerSystem.hpp" />
+    <ClInclude Include="Src\GameManagerWorldComponent.hpp" />
   </ItemGroup>
 </Project>
