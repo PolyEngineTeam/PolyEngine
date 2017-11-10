@@ -8,8 +8,6 @@
 
 #include <Core.hpp>
 #include "IRenderingDevice.hpp"
-#include "ISoundDevice.hpp"
-
 
 #include "InputSystem.hpp"
 
@@ -18,6 +16,8 @@ namespace Poly
 	class World;
 	class Engine;
 	typedef std::function<void(World*)> PhaseUpdateFunction;
+
+	class ISoundDevice;
 
 	/// <summary>Enum used to identify components.
 	/// User should make his own enum for custom components.

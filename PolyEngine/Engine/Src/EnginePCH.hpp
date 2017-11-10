@@ -14,6 +14,9 @@
 // Rendering
 #include "IRenderingDevice.hpp"
 
+// Sound
+#include "ISoundDevice.hpp"
+
 // Utils
 #include "InputQueue.hpp"
 #include "KeyBindings.hpp"

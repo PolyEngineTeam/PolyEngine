@@ -3,6 +3,7 @@
 #include <windowsx.h>
 
 #include <Engine.hpp>
+#include <ISoundDevice.hpp>
 #include <sstream>
 #include <TimeSystem.hpp>
 

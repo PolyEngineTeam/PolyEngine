@@ -1,12 +1,23 @@
 #pragma once
 
+// core
 #include <Dynarray.hpp>
 #include <BaseObject.hpp>
+
+// engine
+#include "ComponentBase.hpp"
 
 namespace Poly 
 {
 	class World;
 	class String;
+
+	//------------------------------------------------------------------------------
+	class ENGINE_DLLEXPORT SoundDataComponentProxy : public ComponentBase
+	{
+	public:
+		SoundDataComponentProxy() {}
+	};
 
 	//------------------------------------------------------------------------------
 	class ENGINE_DLLEXPORT ISoundDevice : public BaseObject<> 
