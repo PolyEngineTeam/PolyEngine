@@ -1,18 +1,14 @@
 #pragma once
 
+// engine
+#include "SoundSystem.hpp"
 #include "ResourceBase.hpp"
 
-namespace Poly 
+namespace Poly
 {
 	class BinaryBuffer;
 
-	class ENGINE_DLLEXPORT SoundResourceException : public BaseObject<>, public std::exception
-	{
-	public:
-		SoundResourceException() {}
-	};
-
-	enum class eSoundSampleFormat 
+	enum class eSoundSampleFormat
 	{
 		MONO8 = 0,
 		MONO16,
@@ -26,11 +22,11 @@ namespace Poly
 		OGG_VORBIS = 0,
 		_COUNT
 	};
-	
+
 	class ENGINE_DLLEXPORT SoundResource : public ResourceBase
 	{
+		friend void SoundSystem::DecodeOggVorbis(SoundResource*, const BinaryBuffer&, size_t, size_t);
 	public:
-		// samples
 		SoundResource(const String& path, eSoundFileFormat format, size_t size = 0, size_t offset = 0);
 		~SoundResource();
 
@@ -39,8 +35,6 @@ namespace Poly
 		size_t GetFrequency() { return Frequency; }
 
 	private:
-		void DecodeOggVorbis(const BinaryBuffer& data, size_t size, size_t offset);
-
 		BinaryBuffer* RawData;
 		eSoundSampleFormat SampleFormat;
 		size_t Frequency;
