@@ -13,13 +13,6 @@ namespace Poly
 	class String;
 
 	//------------------------------------------------------------------------------
-	class ENGINE_DLLEXPORT SoundDataComponentProxy : public ComponentBase
-	{
-	public:
-		SoundDataComponentProxy() {}
-	};
-
-	//------------------------------------------------------------------------------
 	class ENGINE_DLLEXPORT ISoundDevice : public BaseObject<> 
 	{
 	public:

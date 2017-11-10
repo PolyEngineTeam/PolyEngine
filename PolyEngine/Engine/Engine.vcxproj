@@ -191,6 +191,7 @@
     <ClCompile Include="Src\Physics2DSystem.cpp" />
     <ClCompile Include="Src\Physics2DWorldComponent.cpp" />
     <ClCompile Include="Src\PostprocessSettingsComponent.cpp" />
+    <ClCompile Include="Src\SoundDataComponentProxy.cpp" />
     <ClCompile Include="Src\SoundEmitterComponent.cpp" />
     <ClCompile Include="Src\SoundListenerComponent.cpp" />
     <ClCompile Include="Src\Mesh.cpp" />
@@ -248,6 +249,7 @@
     <ClInclude Include="Src\Physics2DColliders.hpp" />
     <ClInclude Include="Src\Physics2DSystem.hpp" />
     <ClInclude Include="Src\RigidBody2DImpl.hpp" />
+    <ClInclude Include="Src\SoundDataComponentProxy.hpp" />
     <ClInclude Include="Src\SoundListenerComponent.hpp" />
     <ClInclude Include="Src\Mesh.hpp" />
     <ClInclude Include="Src\MeshRenderingComponent.hpp" />
