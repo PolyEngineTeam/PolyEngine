@@ -1,7 +1,6 @@
 #include "ALSoundDevice.hpp"
 
 // third party
-#include <al.h>
 
 // engine
 #include <World.hpp>
@@ -95,7 +94,7 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 				const SoundResource* res = emitterCmp->GetBuffer(i);
 
 				// fill immediate buffer with data
-				//alBufferData(dataHolder->QueuedBuffers[i], FormatMap[res->GetSampleFormat()], res->GetRawData()->GetData(), res->GetRawData()->GetSize(), res->GetFrequency());
+				alBufferData(dataHolder->QueuedBuffers[i], FormatMap[res->GetSampleFormat()], res->GetRawData()->GetData(), (int)res->GetRawData()->GetSize(), (int)res->GetFrequency());
 			}
 		}
 		else while ((unsigned int)queuedBuffersCount < dataHolder->MaxBuffersInQueue && queuedBuffersCount < emitterCmp->GetBufferCount())
@@ -114,7 +113,7 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 			unsigned int bufferID;
 			alGenBuffers(1, &bufferID);
 			// fill buffer with data
-			//alBufferData(bufferID, FormatMap[res->GetSampleFormat()], res->GetRawData()->GetData(), res->GetRawData()->GetSize(), res->GetFrequency());
+			alBufferData(bufferID, FormatMap[res->GetSampleFormat()], res->GetRawData()->GetData(), (int)res->GetRawData()->GetSize(), (int)res->GetFrequency());
 			// add buffer to sound data component
 			dataHolder->QueuedBuffers.PushBack(bufferID);
 

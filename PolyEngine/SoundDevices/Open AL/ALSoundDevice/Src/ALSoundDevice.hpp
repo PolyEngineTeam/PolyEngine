@@ -1,10 +1,13 @@
 #pragma once
 
 #include <alc.h>
+#include <al.h>
 #include <unordered_map>
 
 #include <ISoundDevice.hpp>
 #include <Dynarray.hpp>
+#include <EnumUtils.hpp>
+#include <SoundResource.hpp>
 
 namespace Poly
 {
@@ -24,6 +27,12 @@ namespace Poly
 
 	private:
 		ALCdevice* Device;
+
+		const EnumArray<int, eSoundSampleFormat> FormatMap{ 
+			{ eSoundSampleFormat::MONO8, AL_FORMAT_MONO8 }, 
+			{ eSoundSampleFormat::MONO16, AL_FORMAT_MONO16 }, 
+			{ eSoundSampleFormat::STEREO8, AL_FORMAT_STEREO8 }, 
+			{ eSoundSampleFormat::STEREO16, AL_FORMAT_STEREO16 } };
 	};
 } // namespace Poly
 

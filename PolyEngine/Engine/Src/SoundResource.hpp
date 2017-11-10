@@ -30,8 +30,11 @@ namespace Poly
 		SoundResource(const String& path, eSoundFileFormat format, size_t size = 0, size_t offset = 0);
 		~SoundResource();
 
+		const BinaryBuffer* GetRawData() const { return RawData; }
 		const BinaryBuffer* GetRawData() { return RawData; }
+		eSoundSampleFormat GetSampleFormat() const { return SampleFormat; }
 		eSoundSampleFormat GetSampleFormat() { return SampleFormat; }
+		size_t GetFrequency() const { return Frequency; }
 		size_t GetFrequency() { return Frequency; }
 
 	private:
