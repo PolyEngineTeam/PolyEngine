@@ -3,7 +3,7 @@
 #include "ComponentBase.hpp"
 #include "RenderingSystem.hpp"
 #include "MeshResource.hpp"
-#include "CoreConfig.hpp"
+#include "AssetsPathConfig.hpp"
 
 namespace Poly {
 
