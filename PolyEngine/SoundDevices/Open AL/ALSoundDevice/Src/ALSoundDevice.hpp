@@ -10,7 +10,6 @@ namespace Poly
 {
 	class SOUND_DEVICE_DLLEXPORT ALSoundDevice : public ISoundDevice
 	{
-		friend struct ALEmitter;
 	public:
 		ALSoundDevice();
 		~ALSoundDevice();
