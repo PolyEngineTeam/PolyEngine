@@ -26,6 +26,7 @@ struct SpotLight
 	vec4 Direction;
 	float Range;
 	float CutOff;
+	float OuterCutOff;
 };
 
 struct Lighting
@@ -43,6 +44,7 @@ struct Material
 };
 
 uniform sampler2D uTexture;
+uniform float uTime;
 uniform vec4 uCameraForward;
 uniform vec4 uCameraPosition;
 
@@ -130,25 +132,24 @@ Lighting spotLighting(in SpotLight spotLight, in vec3 positionWS, in vec3 normal
 	OUT.Diffuse = vec3(0.0);
 	OUT.Specular = vec3(0.0);
 
-	vec3 o_toLight = normalize(spotLight.Position.xyz - positionWS);
-
-	vec3 L = normalize(o_toLight);
+	vec3 S = normalize(-spotLight.Direction.xyz);
+	vec3 L = normalize(spotLight.Position.xyz - positionWS);
 	vec3 V = normalize(toCamera);
 	vec3 N = normalize(normalWS);
 	
-	float theta = dot(L, normalize(-spotLight.Direction.xyz));
-	if (theta > spotLight.CutOff)
-	{
-		float dist = distance(spotLight.Position.xyz, positionWS);
-		float att = clamp(1.0 - dist*dist / (spotLight.Range*spotLight.Range), 0.0, 1.0);
-		att *= att;
+	float dist = distance(spotLight.Position.xyz, positionWS);
+	float att = clamp(1.0 - dist*dist / (spotLight.Range*spotLight.Range), 0.0, 1.0);
+	att *= att;
 	
-		vec3 lightColor = spotLight.Base.Color.rgb * spotLight.Base.Intensity;
+	float theta = dot(L, S);
+	float epsilon = spotLight.CutOff - spotLight.OuterCutOff;
+	float intensity = smoothstep(0.0, 1.0, clamp((theta - spotLight.OuterCutOff) / epsilon, 0.0, 1.0));
+
+	vec3 lightColor = spotLight.Base.Color.rgb * spotLight.Base.Intensity *intensity;
 	
-		// get Blinn - Phong reflectance components
-		OUT.Diffuse = diffuseLighting(N, L, lightColor) * att;
-		OUT.Specular = specularLighting(N, L, V, lightColor) * att;
-	}
+	// get Blinn - Phong reflectance components
+	OUT.Diffuse = diffuseLighting(N, L, lightColor) * att;
+	OUT.Specular = specularLighting(N, L, V, lightColor) * att;
 
 	return OUT;
 }
@@ -169,19 +170,19 @@ void main() {
 
 	vec3 toCamera = normalize(uCameraPosition.xyz - positionWS);
 
-	// for (int i = 0; i < uDirectionalLightCount; ++i)
-	// {
-	// 	Lighting lighting = directionalLighting(uDirectionalLight[i], positionWS, normalWS, toCamera);
-	// 	Idif += lighting.Diffuse;
-	// 	Ispe += lighting.Specular;
-	// }
-	// 
-	// for (int i = 0; i < uPointLightCount; ++i)
-	// {
-	// 	Lighting lighting = pointLighting(uPointLight[i], positionWS, normalWS, toCamera);
-	// 	Idif += lighting.Diffuse;
-	// 	Ispe += lighting.Specular;
-	// }
+	for (int i = 0; i < uDirectionalLightCount; ++i)
+	{
+		Lighting lighting = directionalLighting(uDirectionalLight[i], positionWS, normalWS, toCamera);
+		Idif += lighting.Diffuse;
+		Ispe += lighting.Specular;
+	}
+	
+	for (int i = 0; i < uPointLightCount; ++i)
+	{
+		Lighting lighting = pointLighting(uPointLight[i], positionWS, normalWS, toCamera);
+		Idif += lighting.Diffuse;
+		Ispe += lighting.Specular;
+	}
 
 	for (int i = 0; i < uSpotLightCount; ++i)
 	{

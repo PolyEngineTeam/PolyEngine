@@ -9,6 +9,7 @@
 #include <MeshRenderingComponent.hpp>
 #include <LightSourceComponent.hpp>
 #include <MovementSystem.hpp>
+#include <TimeWorldComponent.hpp>
 
 
 using namespace Poly;
@@ -62,6 +63,7 @@ BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 		GetProgram().RegisterUniform("vec4", baseName + "Direction");
 		GetProgram().RegisterUniform("float", baseName + "Range");
 		GetProgram().RegisterUniform("float", baseName + "CutOff");
+		GetProgram().RegisterUniform("float", baseName + "OuterCutOff");
 	}
 
 	GetProgram().RegisterUniform("int", "uSpotLightCount");
@@ -69,9 +71,13 @@ BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 
 void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/)
 {
+
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
 	
+	float time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
+	GetProgram().SetUniform("uTime", time);
+
 	const TransformComponent* cameraTransCmp = camera->GetSibling<TransformComponent>();
 	Vector CameraPos = cameraTransCmp->GetGlobalTranslation();
 	Vector CameraDir = MovementSystem::GetGlobalForward(cameraTransCmp);
@@ -124,7 +130,8 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 
 		String baseName = String("uSpotLight[") + String::From(spotLightsCount) + String("].");
 		GetProgram().SetUniform(baseName + "Range", spotLightCmp->GetRange());
-		GetProgram().SetUniform(baseName + "CutOff", Cos(1.0_rad * spotLightCmp->GetCutOff()));
+		GetProgram().SetUniform(baseName + "CutOff", Cos(1.0_deg * spotLightCmp->GetCutOff()));
+		GetProgram().SetUniform(baseName + "OuterCutOff", Cos(1.0_deg * spotLightCmp->GetOuterCutOff()));
 		GetProgram().SetUniform(baseName + "Position", transformCmp->GetGlobalTranslation());
 		GetProgram().SetUniform(baseName + "Direction", MovementSystem::GetGlobalForward(transformCmp));
 		GetProgram().SetUniform(baseName + "Base.Color", spotLightCmp->GetColor());

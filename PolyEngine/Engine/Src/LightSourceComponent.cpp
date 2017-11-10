@@ -17,7 +17,7 @@ Poly::PointLightComponent::PointLightComponent(const Color& color, float intensi
 {
 }
 
-Poly::SpotLightComponent::SpotLightComponent(const Color& color = Color(1.0f, 1.0f, 1.0f), float intensity = 1.0f, float range = 10.0f, float cutOff = 15.0f)
-	: LightColor(color), Intensity(intensity), Range(range), CutOff(cutOff)
+Poly::SpotLightComponent::SpotLightComponent(const Color& color, float intensity, float range, float cutOff, float outerCutOff)
+	: LightColor(color), Intensity(intensity), Range(range), CutOff(cutOff), OuterCutOff(outerCutOff)
 {
 }

@@ -49,7 +49,7 @@ void RenderingSandbox::Init()
 	dirLightTrans->SetLocalRotation(DirLightRot);
 
 	// SpotLight
-	CreateSpotLight(100.0f);
+	CreateSpotLight(500.0f);
 
 	CreatePointLight(100.0f);
 	// AddPointLights(7);
@@ -176,13 +176,13 @@ void RenderingSandbox::CreateSpotLight(float Range)
 {
 	World* world = Engine->GetWorld();
 
-	Vector SpotLightPos = Vector(100.0f, 10.0f, 0.0f);
+	Vector SpotLightPos = Vector(100.0f, 100.0f, 0.0f);
 	Color LightColor = Color(1.0f, 0.5f, 0.0f) + Color(Random(0.0f, 1.0f), Random(0.0, 0.5f), Random(0.0f, 0.2f));
-	Quaternion SpotLightRot = Quaternion(Vector::UNIT_Y, 45_deg) * Quaternion(Vector::UNIT_X, -75_deg);
+	Quaternion SpotLightRot = Quaternion(Vector::UNIT_Y, 45_deg) * Quaternion(Vector::UNIT_X, -25_deg);
 	// float PointLightRange = 100.0f;
 	UniqueID SpotLight = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, SpotLight);
-	DeferredTaskSystem::AddComponentImmediate<SpotLightComponent>(world, SpotLight, LightColor, 1.0f, Range, 20.0f);
+	DeferredTaskSystem::AddComponentImmediate<SpotLightComponent>(world, SpotLight, LightColor, 1.0f, Range, 5.0f, 17.0f);
 	TransformComponent* SpotLightTrans = world->GetComponent<TransformComponent>(SpotLight);
 	SpotLightTrans->SetLocalTranslation(SpotLightPos);
 	SpotLightTrans->SetLocalRotation(SpotLightRot);
