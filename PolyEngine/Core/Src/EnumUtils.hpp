@@ -74,13 +74,7 @@ namespace Poly {
 		}
 
 		//------------------------------------------------------------------------------
-		EnumArray(const std::initializer_list<T>& list)
-		{
-			PopulateFromInitializerList(list);
-		}
-
-		//------------------------------------------------------------------------------
-		EnumArray<T, E>& operator=(const std::initializer_list<T>& list)
+		EnumArray<T, E>& operator=(const std::initializer_list<std::pair<E, T>>& list)
 		{
 			PopulateFromInitializerList(list);
 			return *this;
@@ -130,15 +124,6 @@ namespace Poly {
 		{
 			for (const std::pair<E, T>& val : list)
 				Data[static_cast<int>(val.first)] = val.second;
-		}
-
-		//------------------------------------------------------------------------------
-		void PopulateFromInitializerList(const std::initializer_list<T>& list)
-		{
-			HEAVY_ASSERTE(list.size() == GetSize(), "Initializer list size and enum array size are different!");
-			size_t i = 0;
-			for (const T& val : list)
-				Data[i++] = val;
 		}
 
 		T Data[SIZE];
@@ -265,15 +250,17 @@ namespace Poly {
 			template<> struct EnumInfo<type> 														\
 			{                                                    									\
 				static EnumInfo<type>& Get() { static EnumInfo<type> instance; return instance; } 	\
-				const EnumArray<const char*, type> Names = {__VA_ARGS__};                        	\
+				const EnumArray<const char*, type> Names{__VA_ARGS__};                        		\
 			};                                                                                    	\
 		} /* namespace Impl */																		\
 	} //namespace Poly
-
-#define REGISTER_ENUM_NAMES_IN_POLY(type, ...)                                            \
-	namespace Impl {                                                                      \
-	template<> struct EnumInfo<type> {                                                    \
-		static EnumInfo<type>& Get() { static EnumInfo<type> instance; return instance; } \
-		const EnumArray<const char*, type> Names = {__VA_ARGS__};                         \
-	};                                                                                    \
-	} //namespace Impl
+																									
+#define REGISTER_ENUM_NAMES_IN_POLY(type, ...)                                            			\
+	namespace Impl 																					\
+	{																								\
+		template<> struct EnumInfo<type> 															\
+		{                                                    										\
+			static EnumInfo<type>& Get() { static EnumInfo<type> instance; return instance; } 		\
+			const EnumArray<const char*, type> Names{__VA_ARGS__};                        			\
+		};                                                                                    		\
+	} /* namespace Impl */																				
