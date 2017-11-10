@@ -11,17 +11,6 @@
 
 namespace Poly
 {
-	struct AlEmitter;
-
-	enum class eSoundSampleFormatAL
-	{
-		MONO8 = AL_FORMAT_MONO8,
-		MONO16 = AL_FORMAT_MONO16,
-		STEREO8 = AL_FORMAT_STEREO8,
-		STEREO16 = AL_FORMAT_STEREO16,
-		_COUNT = 4
-	};
-
 	class SOUND_DEVICE_DLLEXPORT ALSoundDevice : public ISoundDevice
 	{
 		friend struct ALEmitter;
@@ -44,13 +33,6 @@ namespace Poly
 
 		static const int BuffersInQueueCount = 2;
 		std::unordered_map<eSoundSampleFormat, int>EngineFormatToALFormatMap;
-	};
-
-	struct ALEmitter
-	{
-		unsigned int EmitterID;
-		unsigned int QueuedBuffers[ALSoundDevice::BuffersInQueueCount];
-		unsigned int QueuedBuffersCount = 0;
 	};
 } // namespace Poly
 

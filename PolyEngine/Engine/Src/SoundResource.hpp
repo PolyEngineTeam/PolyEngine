@@ -4,6 +4,8 @@
 
 namespace Poly 
 {
+	class BinaryBuffer;
+
 	class ENGINE_DLLEXPORT SoundResourceException : public BaseObject<>, public std::exception
 	{
 	public:
@@ -31,8 +33,6 @@ namespace Poly
 		_COUNT
 	};
 	
-	/// Resource that stores sound resource
-	/// For now is designed only for opening ogg files (and not too large (tested on 188KB sample))
 	class ENGINE_DLLEXPORT SoundResource : public ResourceBase
 	{
 	public:

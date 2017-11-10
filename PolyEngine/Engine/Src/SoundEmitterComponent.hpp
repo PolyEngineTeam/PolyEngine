@@ -6,12 +6,6 @@ namespace Poly
 {
 	class SoundResource;
 
-	/// Class representing sound source.
-	/// Sound source is located where enititys TransformComponent points.
-	/// Emitters by default have enabled Doppler effect and default distance model.
-	/// If you wish you can change default distance model on your own or particularly for one of emitters.
-	/// @see SoundListenerComponent
-	/// @see SoundSystem 
 	class ENGINE_DLLEXPORT SoundEmitterComponent : public ComponentBase
 	{
 	public:
@@ -19,7 +13,7 @@ namespace Poly
 		~SoundEmitterComponent();
 
 		void PushSoundResource(SoundResource* val) { Playlist.PushBack(val); PlaylistChanged = true; }
-		void PopSoundResource() { Playlist.PopFront; PlaylistChanged = true; }
+		void PopSoundResource() { Playlist.PopFront(); PlaylistChanged = true; }
 		const SoundResource* GetBuffer(size_t idx) { return Playlist[idx]; }
 		size_t GetBufferCount() { return Playlist.GetSize(); }
 
