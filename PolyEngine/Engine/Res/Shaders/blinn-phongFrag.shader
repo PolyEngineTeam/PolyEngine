@@ -68,16 +68,8 @@ vec3 diffuseLighting(in vec3 N, in vec3 L, in vec3 LightColor)
 // returns intensity of specular reflection
 vec3 specularLighting(in vec3 N, in vec3 L, in vec3 V, in vec3 LightColor)
 {
-	float specularTerm = 0;
-
-	// calculate specular reflection only if
-	// the surface is oriented to the light source
-	if (dot(N, L) > 0)
-	{
-		// half vector
-		vec3 H = normalize(L + V);
-		specularTerm = pow(dot(N, H), uMaterial.Shininess);
-	}
+	vec3 H = normalize(L + V);
+	float specularTerm = ceil(dot(N, L)) * pow(dot(N, H), uMaterial.Shininess);
 	return specularTerm * uMaterial.Specular.rgb * LightColor;
 }
 
