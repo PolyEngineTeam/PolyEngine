@@ -171,7 +171,9 @@
   <ItemGroup>
     <ClCompile Include="Src\CameraComponent.cpp" />
     <ClCompile Include="Src\CameraSystem.cpp" />
-    <ClCompile Include="Src\CoreConfig.cpp" />
+    <ClCompile Include="Src\ConfigBase.cpp" />
+    <ClCompile Include="Src\AssetsPathConfig.cpp" />
+    <ClCompile Include="Src\DebugConfig.cpp" />
     <ClCompile Include="Src\DebugWorldComponent.cpp" />
     <ClCompile Include="Src\Engine.cpp" />
     <ClCompile Include="Src\EnginePCH.cpp">
@@ -181,6 +183,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Src\Entity.cpp" />
+    <ClCompile Include="Src\ComponentIDGenerator.cpp" />
     <ClCompile Include="Src\FontResource.cpp" />
     <ClCompile Include="Src\FPSSystem.cpp" />
     <ClCompile Include="Src\FreeFloatMovementComponent.cpp" />
@@ -225,12 +228,15 @@
     <ClInclude Include="Src\CameraComponent.hpp" />
     <ClInclude Include="Src\CameraSystem.hpp" />
     <ClInclude Include="Src\ComponentBase.hpp" />
-    <ClInclude Include="Src\CoreConfig.hpp" />
+    <ClInclude Include="Src\ConfigBase.hpp" />
+    <ClInclude Include="Src\AssetsPathConfig.hpp" />
+    <ClInclude Include="Src\DebugConfig.hpp" />
     <ClInclude Include="Src\DebugWorldComponent.hpp" />
     <ClInclude Include="Src\DeferredTaskWorldComponent.hpp" />
     <ClInclude Include="Src\Engine.hpp" />
     <ClInclude Include="Src\EnginePCH.hpp" />
     <ClInclude Include="Src\Entity.hpp" />
+    <ClInclude Include="Src\ComponentIDGenerator.hpp" />
     <ClInclude Include="Src\FontResource.hpp" />
     <ClInclude Include="Src\FPSSystem.hpp" />
     <ClInclude Include="Src\FreeFloatMovementComponent.hpp" />
@@ -272,6 +278,9 @@
     <ClInclude Include="Src\ViewportWorldComponent.hpp" />
     <ClInclude Include="Src\World.hpp" />
     <ClInclude Include="Src\TextureResource.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\ComponentIDGeneratorImpl.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -10,7 +10,6 @@
 #include "IRenderingDevice.hpp"
 #include "OpenALDevice.hpp"
 
-
 #include "InputSystem.hpp"
 
 namespace Poly
@@ -18,45 +17,6 @@ namespace Poly
 	class World;
 	class Engine;
 	typedef std::function<void(World*)> PhaseUpdateFunction;
-
-	/// <summary>Enum used to identify components.
-	/// User should make his own enum for custom components.
-	/// Custom components ID's should be equal to or bigger than eEngineComponents::_COUNT. </summary>
-	/// <see cref="RegisterComponent()">
-	enum class eEngineComponents
-	{
-		TRANSFORM,
-		BASE_CAMERA,
-		MESH_RENDERING,
-		FREE_FLOAT_MOVEMENT,
-		SCREEN_SPACE_TEXT,
-		SOUND_EMMITER,
-		SOUND_LISTENER,
-		RIGIDBODY_2D,
-		BOX2D_COLLIDER,
-		CIRCLE2D_COLLIDER,
-		DIRECTIONAL_LIGHTSOURCE,
-		POINT_LIGHTSOURCE,
-		POSTPROCESS_SETTINGS,
-		_COUNT
-	};
-
-	/// <summary>Enum used to identify world components.
-	/// User should make his own enum for custom world components.
-	/// Custom world components ID's should be equal or bigger than eEngineWorldComponents::_COUNT.</summary>
-	/// <see cref="RegisterWorldComponent()">
-	enum class eEngineWorldComponents
-	{
-		INPUT,
-		VIEWPORT,
-		TIME,
-		DEBUG,
-		DEFERRED_TASK,
-		SOUND,
-		PHYSICS_2D,
-		DIFFUSE_LIGHTSOURCE,
-		_COUNT
-	};
 
 	/// <summary>Abstract class that every game has to inherit from.</summary>
 	class ENGINE_DLLEXPORT IGame : public BaseObject<>
@@ -132,60 +92,6 @@ namespace Poly
 		/// <returns>Pointer to current world.</returns>
 		World* GetWorld() { return BaseWorld.get(); }
 
-		/// <summary>Registers component tyoe for further use.
-		/// Registered class must inherit from ComponentBase class.</summary>
-		/// <tparam name="T">component typen</tparam>
-		/// <param name="id">Specifies what id should be associated to registered component.</param>
-		template<typename T> void RegisterComponent(size_t id)
-		{
-			ASSERTE(
-				([this, &id] () ->bool
-				{
-					for(auto it = ComponentTypeMap.begin(); it != ComponentTypeMap.end(); ++it)
-						if(it->first == typeid(T) || it->second == id) return false;
-					return true;
-				})(),
-				"Component type or id was registered twice!");
-
-			ComponentTypeMap[typeid(T)] = id;
-		}
-
-		/// <summary>If given component is registered function returns associated ID.</summary>
-		/// <tparam name="T">Typename which ID is requested</tparam>
-		/// <returns>Associated ID.</returns>
-		template<typename T> size_t GetComponentID() const
-		{
-			ASSERTE(ComponentTypeMap.find(typeid(T)) != ComponentTypeMap.end(), "Component was not registered!");
-			return ComponentTypeMap.at(typeid(T));
-		}
-
-		/// <summary>Registers world component tyoe for further use.
-		/// Registered class must inherit from ComponentBase class.</summary>
-		/// <tparam name="T">Component type</tparam>
-		/// <param name="id">Specifies what id should be associated to registered component.</param>
-		template<typename T> void RegisterWorldComponent(size_t id)
-		{
-			ASSERTE(
-				([this, &id] () ->bool
-				{
-					for(auto it = WorldComponentTypeMap.begin(); it != WorldComponentTypeMap.end(); ++it)
-						if(it->first == typeid(T) || it->second == id) return false;
-					return true;
-				})(),
-				"World component type or id was registered twice!");
-
-			WorldComponentTypeMap[typeid(T)] = id;
-		}
-
-		/// <summary>If given world component is registered function returns associated ID.</summary>
-		/// <tparam name="T">Typename which ID is requested.</tparam>
-		/// <returns>Associated ID.</returns>
-		template<typename T> size_t GetWorldComponentID() const
-		{
-			ASSERTE(WorldComponentTypeMap.find(typeid(T)) != WorldComponentTypeMap.end(), "World component was not registered!");
-			return WorldComponentTypeMap.at(typeid(T));
-		}
-
 		/// <summary>Returns pointer to rendering device.</summary>
 		/// <returns>Pointer to IRenderingDevice instance.</returns>
 		IRenderingDevice* GetRenderingDevice() const { return RenderingDevice.get(); }
@@ -226,10 +132,7 @@ namespace Poly
 
 		Dynarray<PhaseUpdateFunction> GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];
 
-		std::unordered_map<std::type_index, size_t> ComponentTypeMap;
-		std::unordered_map<std::type_index, size_t> WorldComponentTypeMap;
-
-		bool QuitRequested = 0; //stop the game
+		bool QuitRequested = false; //stop the game
 	};
 
 	ENGINE_DLLEXPORT extern Engine* gEngine;

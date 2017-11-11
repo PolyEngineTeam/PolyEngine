@@ -116,6 +116,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "(Clang|^GNU$)")
 	add_compile_options($<$<CONFIG:Release>:-DFINAL>) #NOTE(vuko): add_definitions() does not support generator expressions
 	add_compile_options($<$<CONFIG:Release>:-mtune=native>)
 	set(SIMD_FLAGS -msse4.2 -mfpmath=sse) #note(vuko): $<CXX_COMPILER_ID:comp> and cotire do not get along, see cotire issue #124
+	link_libraries($<$<PLATFORM_ID:Linux>:-Wl,--enable-new-dtags>) #use DT_RUNPATH instead of DT_RPATH
 	#TODO(vuko): more build type macro definitions (once we decide on them)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	add_definitions(/DNOMINMAX) #those macros are useless and just keep messing things up, so disable them
@@ -171,11 +172,9 @@ endif(CCACHE_FOUND AND COMMAND cotire)
 # Finally, meat and potatoes
 ##
 add_subdirectory(Core)
-add_subdirectory(Engine)
-add_subdirectory(Games/CzolgInvaders)
-add_subdirectory(Games/SGJGame)
-add_subdirectory(RenderingDevice/OpenGL)
 if(NOT SANITIZER_MEMORY)
+	add_subdirectory(Engine)
+	add_subdirectory(RenderingDevice/OpenGL)
 	if(WIN32)
 		add_subdirectory(Standalone/Windows)
 	elseif(APPLE)
@@ -183,15 +182,17 @@ if(NOT SANITIZER_MEMORY)
 	else()
 		add_subdirectory(Standalone/Linux)
 	endif()
+	if(BUILD_TESTS)
+		enable_testing()
+		add_subdirectory(UnitTests)
+	endif(BUILD_TESTS)
+	add_subdirectory(Games/SGJGame)
 else()
-	message(STATUS "MemorySanitizer detected. Standalone disabled due to many shared library dependencies.")
+	message(STATUS "MemorySanitizer enabled!")
+	message(STATUS "Disabling all targets except PolyCore due to external dependencies.")
 	message(STATUS "MemorySanitizer requires for EVERY dependency to be also instrumented.")
-	message(STATUS "Hint: consider using Valgrind instead.")
+	message(STATUS "Hint: consider using Valgrind instead for other targets.")
 endif()
-if(BUILD_TESTS)
-	enable_testing()
-	add_subdirectory(UnitTests)
-endif(BUILD_TESTS)
 
 ##
 # Doxygen

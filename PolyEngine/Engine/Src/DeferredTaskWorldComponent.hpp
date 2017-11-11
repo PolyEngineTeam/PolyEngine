@@ -28,4 +28,6 @@ namespace Poly
 		Queue<DeferredTaskBase*> TasksQueue;
 		Dynarray<ComponentBase*> NewlyCreatedComponents;
 	};
+
+	REGISTER_COMPONENT(WorldComponentsIDGroup, DeferredTaskWorldComponent)
 }

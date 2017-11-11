@@ -13,6 +13,7 @@
 #include <MeshRenderingComponent.hpp>
 #include <PostprocessSettingsComponent.hpp>
 
+
 using namespace Poly;
 
 PostprocessRenderingPass::PostprocessRenderingPass(const PostprocessQuad* quad, const String& fragment)

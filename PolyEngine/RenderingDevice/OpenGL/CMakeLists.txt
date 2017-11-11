@@ -1,6 +1,7 @@
 find_package(epoxy REQUIRED)
 
 set(POLYGLDEVICE_SRCS
+	Src/UnlitRenderingPass.cpp
 	Src/BlinnPhongRenderingPass.cpp
 	Src/DebugNormalsRenderingPass.cpp
 	Src/GLMeshDeviceProxy.cpp
@@ -15,8 +16,13 @@ set(POLYGLDEVICE_SRCS
 	Src/Text2DRenderingPass.cpp
 	Src/TransparentRenderingPass.cpp
 )
+set(POLYGLDEVICE_SRCS_APPLE
+	Src-macOS/CocoaImpl.mm
+)
 set(POLYGLDEVICE_INCLUDE Src)
+set(POLYGLDEVICE_INCLUDE_APPLE Src-macOS)
 set(POLYGLDEVICE_H_FOR_IDE
+	Src/UnlitRenderingPass.hpp
 	Src/BlinnPhongRenderingPass.hpp
 	Src/DebugNormalsRenderingPass.hpp
 	Src/GLMeshDeviceProxy.hpp
@@ -31,25 +37,24 @@ set(POLYGLDEVICE_H_FOR_IDE
 	Src/Text2DRenderingPass.hpp
 	Src/TransparentRenderingPass.hpp
 )
-set(POLYGLDEVICE_LIBS polycore polyengine epoxy::gl)
+set(POLYGLDEVICE_H_FOR_IDE_APPLE
+	Src-macOS/CocoaImpl.h
+	Src-macOS/ObjCInterface.hpp
+)
 
-# macOS Obj-C sources
+add_library(polyrenderingdevicegl SHARED ${POLYGLDEVICE_SRCS} ${POLYGLDEVICE_H_FOR_IDE})
+target_compile_definitions(polyrenderingdevicegl PRIVATE _DEVICE)
+target_include_directories(polyrenderingdevicegl PUBLIC ${POLYGLDEVICE_INCLUDE})
+target_link_libraries(polyrenderingdevicegl PRIVATE polyengine epoxy::gl)
+set_target_properties(polyrenderingdevicegl PROPERTIES OUTPUT_NAME polyrenderingdevice)
+
 if(APPLE)
 	find_library(Cocoa_LIBRARY Cocoa)
 	mark_as_advanced(Cocoa_LIBRARY)
 
-	list(APPEND POLYGLDEVICE_SRCS
-            Src-macOS/CocoaImpl.mm)
-	list(APPEND POLYGLDEVICE_INCLUDE Src-macOS)
-	list(APPEND POLYGLDEVICE_H_FOR_IDE
-			Src-macOS/CocoaImpl.h
-            Src-macOS/ObjCInterface.hpp)
-	list(APPEND POLYGLDEVICE_LIBS ${Cocoa_LIBRARY})
-endif(APPLE)
+	target_sources(polyrenderingdevicegl PRIVATE ${POLYGLDEVICE_SRCS_APPLE} ${POLYGLDEVICE_H_FOR_IDE_APPLE})
+	target_include_directories(polyrenderingdevicegl PUBLIC ${POLYGLDEVICE_INCLUDE_APPLE})
+	target_link_libraries(polyrenderingdevicegl PRIVATE ${Cocoa_LIBRARY})
+endif()
 
-add_library(polygldevice SHARED ${POLYGLDEVICE_SRCS} ${POLYGLDEVICE_H_FOR_IDE})
-target_compile_definitions(polygldevice PRIVATE _DEVICE)
-target_include_directories(polygldevice PUBLIC ${POLYGLDEVICE_INCLUDE})
-target_link_libraries(polygldevice PRIVATE ${POLYGLDEVICE_LIBS})
-
-cotire(polygldevice)
+cotire(polyrenderingdevicegl)

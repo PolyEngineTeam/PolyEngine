@@ -20,13 +20,19 @@ public:
 	void RegisterEngine(Poly::Engine* engine) override { Engine = engine; }
 	
 	void Init() override;
+	void GameUpdate(Poly::World* world);
 	void Deinit() override;
 
 private:
 	Poly::UniqueID Camera;
 	Poly::UniqueID GameManager;
-	Poly::UniqueID DirLight;
+	Poly::UniqueID Dummy;
+	Poly::UniqueID PointLight;
 
 	Poly::Dynarray<Poly::UniqueID> GameEntities;
-	Poly::Engine* Engine;
+	Poly::Engine* Engine;	
+
+	float Random();
+	float Random(float min, float max);
+	void AddPointLights();
 };

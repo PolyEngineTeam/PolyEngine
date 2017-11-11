@@ -6,21 +6,6 @@
 
 DECLARE_GAME()
 
-enum class eGameComponents
-{
-	TILE = (int)Poly::eEngineComponents::_COUNT,
-	PLAYER,
-	CAMERA_MOVEMENT,
-	_COUNT
-};
-
-enum class eGameWorldComponents
-{
-	GAME_MGR = (int)Poly::eEngineWorldComponents::_COUNT,
-	GAME_DEBUG,
-	_COUNT
-};
-
 namespace Poly { class SoundResource; }
 
 class GAME_DLLEXPORT SGJGame : public Poly::IGame {

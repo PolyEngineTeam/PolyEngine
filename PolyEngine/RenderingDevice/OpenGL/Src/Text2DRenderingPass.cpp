@@ -9,7 +9,7 @@
 #include <MeshRenderingComponent.hpp>
 
 #include <World.hpp>
-#include <CoreConfig.hpp>
+#include <AssetsPathConfig.hpp>
 #include <Viewport.hpp>
 
 #include <CameraComponent.hpp>
