@@ -6,7 +6,7 @@
 namespace Poly {
 	
 	/// <summary>Class representing RGBA color.</summary>
-	class CORE_DLLEXPORT Color : public BaseObject<>
+	class CORE_DLLEXPORT Color : public BaseObjectLiteralType<>
 	{
 	public:
 		static const Color WHITE;
@@ -19,15 +19,15 @@ namespace Poly {
 		{
 		}
 
-		Color(float r, float g, float b, float a = 1.0f) : R(r), G(g), B(b), A(a)
+		constexpr Color(float r, float g, float b, float a = 1.0f) : R(r), G(g), B(b), A(a)
 		{
 		}
 
-		Color operator+(const Color& rhs) const {
+		constexpr Color operator+(const Color& rhs) const {
 			return Color(R + rhs.R, G + rhs.G, B + rhs.B, A + rhs.A);
 		}
 
-		Color operator-(const Color& rhs) const {
+		constexpr Color operator-(const Color& rhs) const {
 			return Color(R - rhs.R, G - rhs.G, B - rhs.B, A - rhs.A);
 		}
 
