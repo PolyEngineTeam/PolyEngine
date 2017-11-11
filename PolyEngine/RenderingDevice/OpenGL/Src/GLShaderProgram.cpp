@@ -149,10 +149,6 @@ void GLShaderProgram::SetUniform(const String& name, int val)
 		HEAVY_ASSERTE(it->second.TypeName == "int" || it->second.TypeName == "sampler2D", "Invalid uniform type!");
 		glUniform1i(it->second.Location, val);
 	}
-	// else
-	// {
-	// 	gConsole.LogWarning("GLShaderProgram::SetUniform(): Unregistered Uniform: {}", name);
-	// }
 }
 
 //------------------------------------------------------------------------------
@@ -164,10 +160,6 @@ void GLShaderProgram::SetUniform(const String& name, float val)
 		HEAVY_ASSERTE(it->second.TypeName == "float", "Invalid uniform type!");
 		glUniform1f(it->second.Location, val);
 	}
-	// else
-	// {
-	// 	gConsole.LogWarning("GLShaderProgram::SetUniform(): Unregistered Uniform: {}", name);
-	// }
 }
 
 //------------------------------------------------------------------------------
@@ -179,10 +171,6 @@ void GLShaderProgram::SetUniform(const String & name, float val1, float val2)
 		HEAVY_ASSERTE(it->second.TypeName == "vec2", "Invalid uniform type!");
 		glUniform2f(it->second.Location, val1, val2);
 	}
-	// else
-	// {
-	// 	gConsole.LogWarning("GLShaderProgram::SetUniform(): Unregistered Uniform: {}", name);
-	// }
 }
 
 //------------------------------------------------------------------------------
@@ -194,10 +182,6 @@ void GLShaderProgram::SetUniform(const String& name, const Vector& val)
 		HEAVY_ASSERTE(it->second.TypeName == "vec4", "Invalid uniform type!");
 		glUniform4f(it->second.Location, val.X, val.Y, val.Z, val.W);
 	}
-	// else
-	// {
-	// 	gConsole.LogWarning("GLShaderProgram::SetUniform(): Unregistered Uniform: {}", name);
-	// }
 }
 
 //------------------------------------------------------------------------------
@@ -209,10 +193,6 @@ void GLShaderProgram::SetUniform(const String& name, const Color& val)
 		HEAVY_ASSERTE(it->second.TypeName == "vec4", "Invalid uniform type!");
 		glUniform4f(it->second.Location, val.R, val.G, val.B, val.A);
 	}
-	// else
-	// {
-	// 	gConsole.LogWarning("GLShaderProgram::SetUniform(): Unregistered Uniform: {}", name);
-	// }
 }
 
 //------------------------------------------------------------------------------
@@ -224,10 +204,6 @@ void GLShaderProgram::SetUniform(const String& name, const Matrix& val)
 		HEAVY_ASSERTE(it->second.TypeName == "mat4", "Invalid uniform type!");
 		glUniformMatrix4fv(it->second.Location, 1, GL_FALSE, val.GetTransposed().GetDataPtr());
 	}
-	// else
-	// {
-	// 	gConsole.LogWarning("GLShaderProgram::SetUniform(): Unregistered Uniform: {}", name);
-	// }
 }
 
 //------------------------------------------------------------------------------
