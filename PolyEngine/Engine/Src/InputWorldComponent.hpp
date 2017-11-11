@@ -34,4 +34,6 @@ namespace Poly
 		int CurrWheel = 0;
 		int PrevWheel = 0;
 	};
+
+	REGISTER_COMPONENT(WorldComponentsIDGroup, InputWorldComponent)
 }

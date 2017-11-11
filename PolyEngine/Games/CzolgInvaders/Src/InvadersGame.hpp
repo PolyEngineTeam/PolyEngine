@@ -20,17 +20,6 @@ namespace GameMainSystem
 	void GameUpdate(Poly::World* world);
 }
 
-enum class eGameComponents
-{
-	PLAYERCONTROLLER = (int)Poly::eEngineComponents::_COUNT,
-	BULLET,
-	GAMEMANAGER,
-	ENEMYMOVEMENT,
-	MOVEMENT,
-	COLLISION,
-	TANK
-};
-
 DECLARE_GAME()
 class GAME_DLLEXPORT InvadersGame : public Poly::IGame {
 public:

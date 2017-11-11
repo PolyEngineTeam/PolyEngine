@@ -10,6 +10,7 @@
 #include <LightSourceComponent.hpp>
 #include <MovementSystem.hpp>
 
+
 using namespace Poly;
 
 const float IntensityThreshold = 0.05f;

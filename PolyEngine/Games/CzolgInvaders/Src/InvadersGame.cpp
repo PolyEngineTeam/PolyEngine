@@ -20,20 +20,13 @@
 #include "CollisionSystem.hpp"
 #include "TankComponent.hpp"
 
+
 using namespace Poly;
 
 DEFINE_GAME(InvadersGame)
 
 void InvadersGame::Init()
 {
-	Engine->RegisterComponent<PlayerControllerComponent>((int)eGameComponents::PLAYERCONTROLLER);
-	Engine->RegisterComponent<BulletComponent>((int)eGameComponents::BULLET);
-	Engine->RegisterComponent<GameManagerComponent>((int)eGameComponents::GAMEMANAGER);
-	Engine->RegisterComponent<EnemyMovementComponent>((int)eGameComponents::ENEMYMOVEMENT);
-	Engine->RegisterComponent<Invaders::MovementSystem::MovementComponent>((int)eGameComponents::MOVEMENT);
-	Engine->RegisterComponent<Invaders::CollisionSystem::CollisionComponent>((int)eGameComponents::COLLISION);
-	Engine->RegisterComponent<Invaders::TankComponent>((int)eGameComponents::TANK);
-
 	Camera = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(Engine->GetWorld(), Camera);
 	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(Engine->GetWorld(), Camera, 60_deg, 1.0f, 1000.f);
