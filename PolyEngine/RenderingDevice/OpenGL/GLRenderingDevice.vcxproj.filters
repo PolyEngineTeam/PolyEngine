@@ -68,7 +68,9 @@
     <ClInclude Include="Src\UnlitRenderingPass.hpp">
       <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
     </ClInclude>
-    <ClInclude Include="Src\DebugNormalsWireframeRenderingPass.hpp" />
+    <ClInclude Include="Src\DebugNormalsWireframeRenderingPass.hpp">
+      <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\GLRenderingDevice.cpp">
@@ -114,7 +116,7 @@
       <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
     </ClCompile>
     <ClCompile Include="Src\DebugNormalsWireframeRenderingPass.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
