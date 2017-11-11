@@ -20,6 +20,8 @@ namespace Poly
 		float Intensity = 1.0f;
 	};
 
+	REGISTER_COMPONENT(WorldComponentsIDGroup, AmbientLightWorldComponent)
+
 	class ENGINE_DLLEXPORT DirectionalLightComponent : public ComponentBase
 	{
 	public:
@@ -31,6 +33,8 @@ namespace Poly
 		Color LightColor;
 		float Intensity = 1.0f;
 	};
+
+	REGISTER_COMPONENT(ComponentsIDGroup, DirectionalLightComponent)
 
 	class ENGINE_DLLEXPORT PointLightComponent : public ComponentBase
 	{
@@ -46,4 +50,6 @@ namespace Poly
 		float Intensity = 1.0f;
 		float Range = 1.0f;
 	};
+
+	REGISTER_COMPONENT(ComponentsIDGroup, PointLightComponent)
 }

@@ -48,4 +48,6 @@ namespace Poly {
 		eShadingModel ShadingModel = eShadingModel::LIT;
 		bool IsWireframe = false;
 	};
+
+	REGISTER_COMPONENT(ComponentsIDGroup, MeshRenderingComponent)
 }

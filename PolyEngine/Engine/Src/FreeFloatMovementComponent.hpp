@@ -19,4 +19,6 @@ namespace Poly {
 		float MovementSpeed = 1.0f;
 		float RotationSpeed = 1.0f;
 	};
+
+	REGISTER_COMPONENT(ComponentsIDGroup, FreeFloatMovementComponent)
 }
