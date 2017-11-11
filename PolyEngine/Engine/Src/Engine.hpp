@@ -83,6 +83,11 @@ namespace Poly
 		/// <param name="pos">New wheel position.</param>
 		void UpdateWheelPos(const Vector& pos) { InputEventsQueue.PushBack({eInputEventType::WHEELMOVE, pos}); }
 
+		///functions for closing the game
+		bool IsQuitRequested() const;
+		void RequestGameQuit();
+		
+
 		/// <summary>Returns current base world refference.</summary>
 		/// <returns>Pointer to current world.</returns>
 		World* GetWorld() { return BaseWorld.get(); }
@@ -126,6 +131,8 @@ namespace Poly
 		InputQueue InputEventsQueue;
 
 		Dynarray<PhaseUpdateFunction> GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];
+
+		bool QuitRequested = false; //stop the game
 	};
 
 	ENGINE_DLLEXPORT extern Engine* gEngine;
