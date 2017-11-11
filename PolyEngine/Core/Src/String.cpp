@@ -70,15 +70,15 @@ String String::From(const std::string& var) {
 
 bool String::Contains(const String& var) const {
 	size_t idx2 = 0;
-	for (size_t idx1 = 0; idx1 < this->GetLength(); idx1++) {
-		if (var[idx2] == Data[idx1]) {
+	for (size_t idx1 = 0; idx1 < GetLength(); idx1++)
+	{
+		if (var[idx2] == Data[idx1])
 			idx2++;
-		} else {
+		else
 			idx2 = 0;
-		}
-		if (idx2 == var.GetLength()) {
+
+		if (idx2 == var.GetLength())
 			return true;
-		}
 	}
 	return false;
 }
@@ -134,7 +134,7 @@ String String::Replace(char what, char with) const {
 
 String String::Replace(const String& what, const String& with) const {
 	
-	Dynarray<String> splitted = this->Split(what);
+	Dynarray<String> splitted = Split(what);
 	return Join(splitted.GetData(), splitted.GetSize(), with);
 }
 
