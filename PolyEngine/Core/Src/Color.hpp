@@ -9,6 +9,11 @@ namespace Poly {
 	class CORE_DLLEXPORT Color : public BaseObject<>
 	{
 	public:
+		static const Color WHITE;
+		static const Color BLACK;
+		static const Color RED;
+		static const Color GREEN;
+		static const Color BLUE;
 
 		Color() : R(0), G(0), B(0), A(1)
 		{
@@ -35,12 +40,6 @@ namespace Poly {
 			R -= rhs.R; G -= rhs.G; B -= rhs.B; A -= rhs.A;
 			return *this;
 		}
-
-		std::ostream& operator<< (std::ostream& stream, const Color& color)
-		{
-			return stream << "Color[ " << color.R << " " << color.G << " " << color.B << " " << color.A << " ]";
-		}
-
 
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Color& color);
 
