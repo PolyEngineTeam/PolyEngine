@@ -35,7 +35,8 @@ void ConfigBase::Save()
 	case Poly::eConfigLocation::GAME:
 		SaveTextFileRelative(eResourceSource::GAME, GetFileName(), String(buffer.GetString()));
 		break;
-	case Poly::eConfigLocation::LOCAL:
+	case Poly::eConfigLocation::LOCAL: // local for now is similar to RUNTIME_DIR
+	case Poly::eConfigLocation::RUNTIME_DIR:
 		SaveTextFile(GetFileName(), String(buffer.GetString()));
 		break;
 	default:
@@ -56,7 +57,8 @@ void ConfigBase::Load()
 		case Poly::eConfigLocation::GAME:
 			json = LoadTextFileRelative(eResourceSource::GAME, GetFileName());
 			break;
-		case Poly::eConfigLocation::LOCAL:
+		case Poly::eConfigLocation::LOCAL: // local for now is similar to RUNTIME_DIR
+		case Poly::eConfigLocation::RUNTIME_DIR:
 			json = LoadTextFile(GetFileName());
 			break;
 		default:
@@ -81,6 +83,12 @@ void ConfigBase::Load()
 const String& ConfigBase::GetFileName() const
 {
 	if (FileName.GetLength() == 0)
-		FileName = String("Configs/") + String(GetTypeInfo().GetTypeName()) + String(".json");
+	{
+		if(Location == eConfigLocation::RUNTIME_DIR)
+			FileName = String(GetTypeInfo().GetTypeName()) + String(".json");
+		else
+			FileName = String("Configs/") + String(GetTypeInfo().GetTypeName()) + String(".json");
+	}
+		
 	return FileName;
 }

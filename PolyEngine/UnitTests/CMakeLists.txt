@@ -2,8 +2,9 @@ set(POLYTESTS_SRCS
 	Src/AABoxTests.cpp
 	Src/AllocatorTests.cpp
 	Src/AngleTests.cpp
-	Src/OrderedMapTests.cpp
 	Src/BasicMathTests.cpp
+	Src/ConfigTests.cpp
+	Src/OrderedMapTests.cpp
 	Src/DynarrayTests.cpp
 	Src/EnumUtilsTests.cpp
 	Src/MatrixTests.cpp

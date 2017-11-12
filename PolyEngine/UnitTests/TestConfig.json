@@ -1,0 +1,17 @@
+{
+    "Test": {
+        "@type": "TestConfig",
+        "PropBool": true,
+        "PropI8": -1,
+        "PropI16": -2,
+        "PropI32": -3,
+        "PropI64": -4,
+        "PropU8": 1,
+        "PropU16": 2,
+        "PropU32": 3,
+        "PropU64": 4,
+        "Propf32": 0.3199999928474426,
+        "Propf64": 0.32,
+        "PropStr": "Test string"
+    }
+}

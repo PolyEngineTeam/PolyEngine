@@ -1,5 +1,6 @@
 #include "CorePCH.hpp"
 #include "RTTISerialization.hpp"
+#include "String.hpp"
 
 using namespace Poly;
 
@@ -38,7 +39,6 @@ void RTTI::SerializeObject(const RTTIBase* obj, const String& propertyName, rapi
 
 rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Property& prop, rapidjson::Document::AllocatorType& alloc)
 {
-	UNUSED(alloc);
 	rapidjson::Value currentValue;
 
 	switch (prop.CoreType)
@@ -76,6 +76,12 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	case eCorePropertyType::DOUBLE:
 		currentValue.SetDouble(*reinterpret_cast<const double*>(value));
 		break;
+	case eCorePropertyType::STRING:
+	{
+		const String* str = reinterpret_cast<const String*>(value);
+		currentValue.SetString(str->GetCStr(), alloc);
+		break;
+	}
 	case eCorePropertyType::NONE:
 		ASSERTE(false, "Invalid property type!");
 		break;
@@ -128,14 +134,14 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 	case eCorePropertyType::INT8:
 	{
 		int result = value.GetInt();
-		HEAVY_ASSERTE((result & 0xFF) == result, "Value outside of int8 range");
+		HEAVY_ASSERTE((result < 0) ? ((-result & 0xFF) == -result) : ((result & 0xFF) == result), "Value outside of int8 range");
 		*reinterpret_cast<i8*>(obj) = (i8)result;
 		break;
 	}
 	case eCorePropertyType::INT16:
 	{
 		int result = value.GetInt();
-		HEAVY_ASSERTE((result & 0xFFFF) == result, "Value outside of int16 range");
+		HEAVY_ASSERTE((result < 0) ? ((-result & 0xFFFF) == -result) : ((result & 0xFFFF) == result), "Value outside of int16 range");
 		*reinterpret_cast<i16*>(obj) = (i16)result;
 		break;
 	}
@@ -171,6 +177,13 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 	case eCorePropertyType::DOUBLE:
 		*reinterpret_cast<double*>(obj) = value.GetDouble();
 		break;
+	case eCorePropertyType::STRING:
+	{
+		String* str = reinterpret_cast<String*>(obj);
+		*str = String(value.GetString());
+		HEAVY_ASSERTE(str->GetLength() == value.GetStringLength(), "String deserialization failed");
+		break;
+	}
 	case eCorePropertyType::NONE:
 		ASSERTE(false, "Invalid property type!");
 		break;

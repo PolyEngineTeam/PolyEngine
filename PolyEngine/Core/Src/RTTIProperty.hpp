@@ -30,6 +30,7 @@ namespace Poly {
 			FLOAT,
 			DOUBLE,
 			ENUM,
+			STRING,
 			_COUNT
 		};
 
@@ -46,6 +47,7 @@ namespace Poly {
 		template <> inline eCorePropertyType GetCorePropertyType<u64>() { return eCorePropertyType::UINT64; };
 		template <> inline eCorePropertyType GetCorePropertyType<float>() { return eCorePropertyType::FLOAT; };
 		template <> inline eCorePropertyType GetCorePropertyType<double>() { return eCorePropertyType::DOUBLE; };
+		template <> inline eCorePropertyType GetCorePropertyType<String>() { return eCorePropertyType::STRING; };
 
 		enum class ePropertyFlag {
 			NONE = 0,
@@ -61,6 +63,17 @@ namespace Poly {
 			EnumFlags<ePropertyFlag> Flags;
 			eCorePropertyType CoreType;
 		};
+
+		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags) 
+		{ 
+			return Property{ TypeInfo::Get<T>(), offset, name, flags, GetCorePropertyType<T>()}; 
+		};
+		
+		// specializations
+		template <> inline Property CreatePropertyInfo<String>(size_t offset, const char* name, ePropertyFlag flags)
+		{
+			return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<String>() };
+		}
 
 		class CORE_DLLEXPORT PropertyManagerBase : public BaseObject<> {
 		public:
@@ -102,9 +115,12 @@ namespace Poly {
 
 // standard RTTIBase deriving (or POD type) property
 #define RTTI_PROPERTY(variable, var_name, flags) \
-	using Type = decltype(variable); \
-	STATIC_ASSERTE(!std::is_pointer<Type>::value || EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE), "Serializable variable cannot be a pointer."); \
-	mgr->AddProperty(Poly::RTTI::Property{Poly::RTTI::TypeInfo::Get<Type>(), Poly::RTTI::OffsetOfMember(&T::variable), var_name, flags, Poly::RTTI::GetCorePropertyType<Type>()})
+	STATIC_ASSERTE(!std::is_pointer<decltype(variable)>::value || EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE), "Serializable variable cannot be a pointer."); \
+	mgr->AddProperty(Poly::RTTI::CreatePropertyInfo<decltype(variable)>(Poly::RTTI::OffsetOfMember(&T::variable), var_name, flags))
+
+#define RTTI_PROPERTY_AUTONAME(variable, flags) \
+	STATIC_ASSERTE(!std::is_pointer<decltype(variable)>::value || EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE), "Serializable variable cannot be a pointer."); \
+	mgr->AddProperty(Poly::RTTI::CreatePropertyInfo<decltype(variable)>(Poly::RTTI::OffsetOfMember(&T::variable), #variable, flags))	
 
 // property with enum type
 #define RTTI_PROPERTY_ENUM(Type, variable, var_name, flags) \

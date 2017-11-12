@@ -9,7 +9,8 @@ namespace Poly
 	{
 		ENGINE,
 		GAME,
-		LOCAL
+		LOCAL,
+		RUNTIME_DIR
 	};
 
 	class ENGINE_DLLEXPORT ConfigBase : public RTTIBase
