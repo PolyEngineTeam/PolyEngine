@@ -88,7 +88,7 @@ namespace Poly {
 				implData->ValueToNameMap.insert(std::make_pair((i64)val, name));
 				implData->NameToValueMap.insert(std::make_pair(name, (i64)val));
 			}
-			implData->ValueSize = sizeof(std::underlying_type<E>::type);
+			implData->ValueSize = sizeof(typename std::underlying_type<E>::type);
 			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::ENUM, std::move(implData)};
 		}
 
