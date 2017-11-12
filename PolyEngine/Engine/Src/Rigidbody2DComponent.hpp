@@ -54,4 +54,6 @@ namespace Poly
 		eRigidBody2DType BodyType;
 		std::unique_ptr<RigidBody2DData> ImplData;
 	};
+
+	REGISTER_COMPONENT(ComponentsIDGroup, RigidBody2DComponent)
 }
