@@ -11,7 +11,7 @@ enum class eConfigTest
 	VAL_2,
 	_COUNT
 };
-REGISTER_ENUM_NAMES(eConfigTest, "val_1", "val_2");
+REGISTER_ENUM_NAMES(eConfigTest, { eConfigTest::VAL_1, "val_1" }, { eConfigTest::VAL_2, "val_2" });
 
 class TestConfig : public ConfigBase
 {
