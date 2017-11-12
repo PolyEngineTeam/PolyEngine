@@ -79,7 +79,7 @@ namespace Poly {
 		template <typename E> Property CreateEnumPropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
 		{
 			STATIC_ASSERTE(std::is_enum<E>::value, "Enum type is required");
-			STATIC_ASSERTE(std::is_integral<std::underlying_type<E>::type>::value, "Enum with integral underlying type is required");
+			STATIC_ASSERTE(std::is_integral<typename std::underlying_type<E>::type>::value, "Enum with integral underlying type is required");
 			std::shared_ptr<EnumPropertyImplData> implData = std::make_shared<EnumPropertyImplData>();
 
 			for (E val : IterateEnum<E>())
