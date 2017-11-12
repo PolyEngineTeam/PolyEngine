@@ -69,7 +69,9 @@ vec3 diffuseLighting(in vec3 N, in vec3 L, in vec3 LightColor)
 vec3 specularLighting(in vec3 N, in vec3 L, in vec3 V, in vec3 LightColor)
 {
 	vec3 H = normalize(L + V);
-	float specularTerm = ceil(dot(N, L)) * pow(dot(N, H), uMaterial.Shininess);
+	// to avoid issues when dot(N, L) is -1 and ceil could result in 1.0 for negative values
+	float nearlyOne = 0.9999;
+	float specularTerm = ceil(nearlyOne*dot(N, L)) * pow(dot(N, H), uMaterial.Shininess);
 	return specularTerm * uMaterial.Specular.rgb * LightColor;
 }
 
@@ -77,14 +79,12 @@ Lighting directionalLighting(in DirectionalLight dirLight, in vec3 positionWS, i
 {
 	Lighting OUT;
 
-	// normalize vectors after interpolation
 	vec3 L = normalize(-dirLight.Direction.xyz);
 	vec3 V = normalize(toCamera);
 	vec3 N = normalize(normalWS);
 
 	vec3 lightColor = dirLight.Base.Color.rgb * dirLight.Base.Intensity;
 
-	// get Blinn-Phong reflectance components
 	OUT.Diffuse = diffuseLighting(N, L, lightColor);
 	OUT.Specular = specularLighting(N, L, V, lightColor);
 
@@ -108,7 +108,6 @@ Lighting pointLighting(in PointLight pointLight, in vec3 positionWS, in vec3 nor
 
 	vec3 lightColor = pointLight.Base.Color.rgb * pointLight.Base.Intensity;
 	
-	// get Blinn-Phong reflectance components
 	OUT.Diffuse = diffuseLighting(N, L, lightColor) * att;
 	OUT.Specular = specularLighting(N, L, V, lightColor) * att;
 
@@ -145,7 +144,6 @@ void main() {
 		Ispe += lighting.Specular;
 	}
 
-	// combination of all components and diffuse color of the object
 	color.xyz = texDiffuse.rgb * (Iamb + Idif + Ispe);
 	color.w = 1.0;
 }
