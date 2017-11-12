@@ -5,6 +5,14 @@
 
 using namespace Poly;
 
+enum class eConfigTest
+{
+	VAL_1,
+	VAL_2,
+	_COUNT
+};
+REGISTER_ENUM_NAMES(eConfigTest, "val_1", "val_2");
+
 class TestConfig : public ConfigBase
 {
 	RTTI_DECLARE_TYPE_DERIVED(TestConfig, ConfigBase)
@@ -21,6 +29,7 @@ class TestConfig : public ConfigBase
 		RTTI_PROPERTY_AUTONAME(Propf32, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(Propf64, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropStr, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_ENUM(PropEnum, "PropEnum", RTTI::ePropertyFlag::NONE);
 	}
 public:
 	TestConfig() : ConfigBase("Test", eConfigLocation::RUNTIME_DIR) {}
@@ -38,6 +47,7 @@ public:
 	float Propf32 = 0.32f;
 	double Propf64 = 0.32;
 	String PropStr = "Test string";
+	eConfigTest PropEnum = eConfigTest::VAL_2;
 };
 RTTI_DEFINE_TYPE(TestConfig)
 

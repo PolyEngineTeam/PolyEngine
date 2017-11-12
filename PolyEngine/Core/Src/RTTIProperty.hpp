@@ -7,6 +7,7 @@
 
 #include <functional>
 #include <initializer_list>
+#include <unordered_map>
 
 namespace Poly {
 	namespace RTTI {
@@ -54,21 +55,48 @@ namespace Poly {
 			DONT_SERIALIZE = BIT(1)
 		};
 
-		struct Property : public BaseObjectLiteralType<> {
-			Property(TypeInfo typeInfo, size_t offset, const char* name, ePropertyFlag flags, eCorePropertyType coreType)
-				: Type(typeInfo), Offset(offset), Name(name), Flags(flags), CoreType(coreType) {}
+		struct PropertyImplData : public BaseObjectLiteralType<> {};
+
+		struct Property : public BaseObjectLiteralType<>
+		{
+			Property(TypeInfo typeInfo, size_t offset, const char* name, ePropertyFlag flags, eCorePropertyType coreType, std::shared_ptr<PropertyImplData>&& implData = nullptr)
+				: Type(typeInfo), Offset(offset), Name(name), Flags(flags), CoreType(coreType), ImplData(std::move(implData)) {}
 			TypeInfo Type;
 			size_t Offset;
 			String Name;
 			EnumFlags<ePropertyFlag> Flags;
 			eCorePropertyType CoreType;
+			std::shared_ptr<PropertyImplData> ImplData; // @fixme ugly hack for not working Two-phase lookup in MSVC, should use unique_ptr
 		};
 
-		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags) 
+		struct EnumPropertyImplData : public PropertyImplData
+		{
+			std::unordered_map<i64, String> ValueToNameMap;
+			std::map<String, i64> NameToValueMap;
+			size_t ValueSize = 0;
+		};
+
+		template <typename E> Property CreateEnumPropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
+		{
+			STATIC_ASSERTE(std::is_enum<E>::value, "Enum type is required");
+			STATIC_ASSERTE(std::is_integral<std::underlying_type<E>::type>::value, "Enum with integral underlying type is required");
+			std::shared_ptr<EnumPropertyImplData> implData = std::make_shared<EnumPropertyImplData>();
+
+			for (E val : IterateEnum<E>())
+			{
+				String name = GetEnumName(val);
+				implData->ValueToNameMap.insert(std::make_pair((i64)val, name));
+				implData->NameToValueMap.insert(std::make_pair(name, (i64)val));
+			}
+			implData->ValueSize = sizeof(std::underlying_type<E>::type);
+			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::ENUM, std::move(implData)};
+		}
+
+		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
 		{ 
 			return Property{ TypeInfo::Get<T>(), offset, name, flags, GetCorePropertyType<T>()}; 
 		};
-		
+
 		// specializations
 		template <> inline Property CreatePropertyInfo<String>(size_t offset, const char* name, ePropertyFlag flags)
 		{
@@ -79,7 +107,7 @@ namespace Poly {
 		public:
 			//TODO serialiation
 
-			void AddProperty(const Property& property) { Properties.PushBack(property); }
+			void AddProperty(Property&& property) { Properties.PushBack(std::move(property)); }
 			const Dynarray<Property>& GetPropertyList() const { return Properties; };
 
 		protected:
@@ -123,8 +151,6 @@ namespace Poly {
 	mgr->AddProperty(Poly::RTTI::CreatePropertyInfo<decltype(variable)>(Poly::RTTI::OffsetOfMember(&T::variable), #variable, flags))	
 
 // property with enum type
-#define RTTI_PROPERTY_ENUM(Type, variable, var_name, flags) \
-	STATIC_ASSERTE(std::is_enum<Type>::value, "Enum type is required"); \
-	STATIC_ASSERTE(std::is_integral<std::underlying_type<Type>::type>::value, "Enum with integral underlying type is required"); \
-	STATIC_ASSERTE(!std::is_pointer<Type>::value || EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE), "Serializable variable cannot be a pointer."); \
-	mgr->AddProperty(Poly::RTTI::Property{Poly::RTTI::TypeInfo::Get<Type>(), Poly::RTTI::OffsetOfMember(&T::variable), var_name, flags, Poly::RTTI::eCorePropertyType::ENUM})
+#define RTTI_PROPERTY_ENUM(variable, var_name, flags) \
+	STATIC_ASSERTE(!std::is_pointer<decltype(variable)>::value || EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE), "Serializable variable cannot be a pointer."); \
+	mgr->AddProperty(Poly::RTTI::CreateEnumPropertyInfo<decltype(variable)>(Poly::RTTI::OffsetOfMember(&T::variable), var_name, flags))

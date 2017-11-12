@@ -11,14 +11,13 @@ enum class eTestEnum
 	VAL_2,
 	_COUNT
 };
-RTTI_DECLARE_PRIMITIVE_TYPE(eTestEnum)
-RTTI_DEFINE_PRIMITIVE_TYPE(eTestEnum)
+REGISTER_ENUM_NAMES(eTestEnum, "val_1", "val_2");
 
 class TestClass : public RTTIBase {
 	RTTI_DECLARE_TYPE_DERIVED(TestClass, RTTIBase)
 	{
 		RTTI_PROPERTY(val1, "Val1", RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_ENUM(eTestEnum, val2, "Val2", RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_ENUM(val2, "Val2", RTTI::ePropertyFlag::NONE);
 	}
 public:
 	bool val1 = true;
@@ -71,13 +70,13 @@ TEST_CASE("RTTI property", "[RTTI]") {
 	const auto& properties = propMgr->GetPropertyList();
 	REQUIRE(properties.GetSize() == 2);
 	
-	auto p1 = properties[0];
+	const auto& p1 = properties[0];
 	CHECK(properties[0].Type == RTTI::TypeInfo::Get<bool>());
 	CHECK(properties[0].Name == "Val1");
 	CHECK((char*)b + properties[0].Offset == (char*)&(a->val1));
 
-	auto p2 = properties[1];
-	CHECK(properties[1].Type == RTTI::TypeInfo::Get<eTestEnum>());
+	const auto& p2 = properties[1];
+	CHECK(properties[1].Type == RTTI::TypeInfo::INVALID);
 	CHECK(properties[1].Name == "Val2");
 	CHECK((char*)b + properties[1].Offset == (char*)&(a->val2));
 }

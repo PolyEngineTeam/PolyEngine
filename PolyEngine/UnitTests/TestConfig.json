@@ -12,6 +12,7 @@
         "PropU64": 4,
         "Propf32": 0.3199999928474426,
         "Propf64": 0.32,
-        "PropStr": "Test string"
+        "PropStr": "Test string",
+        "PropEnum": "val_2"
     }
 }

@@ -82,6 +82,23 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 		currentValue.SetString(str->GetCStr(), alloc);
 		break;
 	}
+	case eCorePropertyType::ENUM:
+	{
+		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid enum impl data!");
+		const EnumPropertyImplData* implData = static_cast<const EnumPropertyImplData*>(prop.ImplData.get());
+		i64 val;
+		if (implData->ValueSize == sizeof(i32))
+			val = *reinterpret_cast<const i32*>(value);
+		else if (implData->ValueSize == sizeof(i64))
+			val = *reinterpret_cast<const i64*>(value);
+		else
+			ASSERTE(false, "Unhadled value size!");
+		
+		const auto& it = implData->ValueToNameMap.find(val);
+		HEAVY_ASSERTE(it != implData->ValueToNameMap.end(), "Name not found!");
+		currentValue.SetString(it->second.GetCStr(), alloc);
+		break;
+	}
 	case eCorePropertyType::NONE:
 		ASSERTE(false, "Invalid property type!");
 		break;
@@ -182,6 +199,20 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 		String* str = reinterpret_cast<String*>(obj);
 		*str = String(value.GetString());
 		HEAVY_ASSERTE(str->GetLength() == value.GetStringLength(), "String deserialization failed");
+		break;
+	}
+	case eCorePropertyType::ENUM:
+	{
+		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid enum impl data!");
+		const EnumPropertyImplData* implData = static_cast<const EnumPropertyImplData*>(prop.ImplData.get());
+		const auto& it = implData->NameToValueMap.find(value.GetString());
+		HEAVY_ASSERTE(it != implData->NameToValueMap.end(), "Value not found!");
+		if (implData->ValueSize == sizeof(i32))
+			*reinterpret_cast<i32*>(obj) = (i32)it->second;
+		else if (implData->ValueSize == sizeof(i64))
+			*reinterpret_cast<i64*>(obj) = it->second;
+		else
+			ASSERTE(false, "Unhadled value size!");
 		break;
 	}
 	case eCorePropertyType::NONE:
