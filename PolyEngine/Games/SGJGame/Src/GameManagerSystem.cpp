@@ -128,7 +128,7 @@ Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Pol
 	UniqueID mesh = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, mesh);
 	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, mesh, meshSource, eResourceSource::GAME);
-	world->GetComponent<MeshRenderingComponent>(tile)->SetMaterial(0, PhongMaterial(color, color, color, 8.0f));
+	world->GetComponent<MeshRenderingComponent>(mesh)->SetMaterial(0, PhongMaterial(color, color, color, 8.0f));
 	
 	TransformComponent* meshTrans = world->GetComponent<TransformComponent>(mesh);
 	meshTrans->SetParent(tileTrans);
