@@ -34,5 +34,26 @@ void Poly::CameraSystem::CameraUpdatePhase(World* world)
 		{
 			gConsole.LogError("Entity has camera component but no transform component!");
 		}
+
+		InputWorldComponent* inputCmp = world->GetWorldComponent<InputWorldComponent>();
+		if (inputCmp->IsPressed(eKey::F5))
+		{
+			cameraCmp->SetRenderingMode(eRenderingModeType::LIT);
+		}
+
+		if (inputCmp->IsPressed(eKey::F6))
+		{
+			cameraCmp->SetRenderingMode(eRenderingModeType::UNLIT);
+		}
+
+		if (inputCmp->IsPressed(eKey::F7))
+		{
+			cameraCmp->SetRenderingMode(eRenderingModeType::WIREFRAME);
+		}
+
+		if (inputCmp->IsPressed(eKey::F8))
+		{
+			cameraCmp->SetRenderingMode(eRenderingModeType::DEBUG_NORMALS);
+		}
 	}
 }

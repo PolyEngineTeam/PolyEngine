@@ -171,6 +171,7 @@
     <ClInclude Include="Src\RenderingPassBase.hpp" />
     <ClInclude Include="Src\Text2DRenderingPass.hpp" />
     <ClInclude Include="Src\TransparentRenderingPass.hpp" />
+    <ClInclude Include="Src\UnlitRenderingPass.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\BlinnPhongRenderingPass.cpp" />
@@ -186,6 +187,7 @@
     <ClCompile Include="Src\RenderingPassBase.cpp" />
     <ClCompile Include="Src\Text2DRenderingPass.cpp" />
     <ClCompile Include="Src\TransparentRenderingPass.cpp" />
+    <ClCompile Include="Src\UnlitRenderingPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Core.vcxproj">

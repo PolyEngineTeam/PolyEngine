@@ -34,8 +34,8 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	RegisterComponent<RigidBody2DComponent>((size_t)eEngineComponents::RIGIDBODY_2D);
 	RegisterComponent<Box2DColliderComponent>((size_t)eEngineComponents::BOX2D_COLLIDER);
 	RegisterComponent<Circle2DColliderComponent>((size_t)eEngineComponents::CIRCLE2D_COLLIDER);
-	RegisterComponent<DirectionalLightSourceComponent>((size_t)eEngineComponents::DIRECTIONAL_LIGHTSOURCE);
-	RegisterComponent<PointLightSourceComponent>((size_t)eEngineComponents::POINT_LIGHTSOURCE);
+	RegisterComponent<DirectionalLightComponent>((size_t)eEngineComponents::DIRECTIONAL_LIGHT);
+	RegisterComponent<PointLightComponent>((size_t)eEngineComponents::POINT_LIGHT);
 	RegisterComponent<PostprocessSettingsComponent>((size_t)eEngineComponents::POSTPROCESS_SETTINGS);
 
 	// Engine World Components
@@ -45,7 +45,7 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	RegisterWorldComponent<DebugWorldComponent>((size_t)eEngineWorldComponents::DEBUG);
 	RegisterWorldComponent<DeferredTaskWorldComponent>((size_t)eEngineWorldComponents::DEFERRED_TASK);
 	RegisterWorldComponent<Physics2DWorldComponent>((size_t)eEngineWorldComponents::PHYSICS_2D);
-	RegisterWorldComponent<DiffuseLightSourceWorldComponent>((size_t)eEngineWorldComponents::DIFFUSE_LIGHTSOURCE);
+	RegisterWorldComponent<AmbientLightWorldComponent>((size_t)eEngineWorldComponents::DIFFUSE_LIGHT);
 
 	// Add WorldComponents
 	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(BaseWorld.get());
@@ -55,7 +55,7 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(BaseWorld.get());
 	Physics2DConfig physicsConfig;
 	DeferredTaskSystem::AddWorldComponentImmediate<Physics2DWorldComponent>(BaseWorld.get(), physicsConfig);
-	DeferredTaskSystem::AddWorldComponentImmediate<DiffuseLightSourceWorldComponent>(BaseWorld.get(), Color(1,1,1,1), 0.2f);
+	DeferredTaskSystem::AddWorldComponentImmediate<AmbientLightWorldComponent>(BaseWorld.get(), Color(1,1,1,1), 0.2f);
 
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
