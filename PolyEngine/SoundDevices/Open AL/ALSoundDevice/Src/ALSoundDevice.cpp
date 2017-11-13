@@ -196,7 +196,7 @@ Dynarray<String> SOUND_DEVICE_DLLEXPORT ALSoundDevice::GetAvailableDevices()
 }
 
 //------------------------------------------------------------------------------
-Poly::ISoundDevice* PolyCreateSoundDevice()
+ISoundDevice* __stdcall PolyCreateSoundDevice()
 {
 	return new ALSoundDevice();
 }

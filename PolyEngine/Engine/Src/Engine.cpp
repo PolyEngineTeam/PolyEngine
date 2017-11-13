@@ -18,6 +18,8 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	Game = std::move(game);
 	RenderingDevice = std::move(renderingDevice);
 	RenderingDevice->Init();
+	SoundDevice = std::move(soundDevice);
+	SoundDevice->Init();
 	BaseWorld = std::make_unique<World>();
 	Game->RegisterEngine(this);
 
