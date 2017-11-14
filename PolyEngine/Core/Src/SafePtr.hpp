@@ -24,12 +24,22 @@ namespace Poly
 			return SafePtr(pointer);
 		}
 
-		T *operator->() const
+		T *operator->()
 		{
 			return Get();
 		}
 
-		T *operator*() const
+		const T *operator->() const
+		{
+			return Get();
+		}
+
+		T *operator*()
+		{
+			return Get();
+		}
+
+		const T *operator*() const
 		{
 			return Get();
 		}
