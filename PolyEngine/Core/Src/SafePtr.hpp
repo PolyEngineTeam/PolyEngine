@@ -14,15 +14,46 @@ namespace Poly
 			PointerIdx = SafePtrRoot::RegisterPointer(pointer);
 		}
 
-		SafePtrRoot *operator->()
+		T *Get() const
 		{
-			return SafePtrRoot::GetPointer(PointerIdx);
+			return dynamic_cast<T*>(SafePtrRoot::GetPointer(PointerIdx));
 		}
 
-		SafePtrRoot *operator*()
+		SafePtr operator=(const SafePtrRoot* pointer)
 		{
-			return SafePtrRoot::GetPointer(PointerIdx);
+			return SafePtr(pointer);
 		}
+
+		T *operator->() const
+		{
+			return Get();
+		}
+
+		T *operator*() const
+		{
+			return Get();
+		}
+
+		bool operator==(const SafePtr<T>& other) const 
+		{
+			return this->Get() == other.Get();
+		}
+
+		bool operator==(const T& other) const
+		{
+			return this->Get() == &other;
+		}
+
+		bool operator!=(const SafePtr<T>& other) const
+		{
+			return !(*this == other);
+		}
+
+		bool operator!=(const T& other) const
+		{
+			return !(*this == other);
+		}
+
 	private:
 		size_t PointerIdx;
 	};
