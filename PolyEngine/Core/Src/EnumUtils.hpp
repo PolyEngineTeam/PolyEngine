@@ -257,34 +257,36 @@ namespace Poly {
 
 //NOTE(vuko): apparently defining specializations in a namespace from global/other namespace is illegal C++ and GCC complains
 //Unfortunately being compliant causes problems when using the macro in a namespace. Use _IN_POLY variant then.
-#define REGISTER_ENUM_NAMES_IN_POLY(type, ...)                                            			\
+#define REGISTER_ENUM_NAMES_IN_POLY(Type, ...)                                            			\
 	namespace Impl 																					\
 	{																								\
-		template<> struct EnumInfo<type> : public EnumInfoBase														\
+		template<> struct EnumInfo<Type> : public EnumInfoBase														\
 		{                                                    										\
-			static EnumInfo<type>& Get() { static EnumInfo<type> instance({__VA_ARGS__}); return instance; } 		\
+			STATIC_ASSERTE(std::is_enum<Type>::value, "Provided type is not an enum!");\
+			STATIC_ASSERTE(std::is_integral<typename std::underlying_type<Type>::type>::value, "Underlying enum value type is not integral!");\
+			static EnumInfo<Type>& Get() { static EnumInfo<Type> instance({__VA_ARGS__}); return instance; } 		\
 			EnumInfo(std::initializer_list<const char*> namesList)	\
 			{\
 				int idx = 0;	\
 				for(const char* name : namesList)	\
 				{	\
-					ValueToNameMap[(type)idx] = name;\
-					NameToValueMap[String(name)] = (type)idx;\
+					ValueToNameMap[(Type)idx] = name;\
+					NameToValueMap[String(name)] = (Type)idx;\
 					++idx;\
 				}	\
 			}\
-			const char* GetEnumName(i64 value) const override { return ValueToNameMap[(type)value]; }	\
+			const char* GetEnumName(i64 value) const override { return ValueToNameMap[(Type)value]; }	\
 			i64 GetEnumValue(const String& name) const override { return (i64)NameToValueMap.at(name); }	\
-			size_t GetUnderlyingValueSize() const override { return sizeof(type); }\
+			size_t GetUnderlyingValueSize() const override { return sizeof(Type); }\
 			private: \
-				EnumArray<const char*, type> ValueToNameMap;\
-				std::map<String, type> NameToValueMap;\
+				EnumArray<const char*, Type> ValueToNameMap;\
+				std::map<String, Type> NameToValueMap;\
 		};                                                                                    		\
 	} /* namespace Impl */			
 
-#define REGISTER_ENUM_NAMES(type, ...)                                                    			\
+#define REGISTER_ENUM_NAMES(Type, ...)                                                    			\
 	namespace Poly																					\
 	{																								\
-		REGISTER_ENUM_NAMES_IN_POLY(type, __VA_ARGS__)												\
+		REGISTER_ENUM_NAMES_IN_POLY(Type, __VA_ARGS__)												\
 	} //namespace Poly
 																																									
