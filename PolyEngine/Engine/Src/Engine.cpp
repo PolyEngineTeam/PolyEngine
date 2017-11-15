@@ -67,9 +67,18 @@ void Engine::RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpda
 	UpdatePhases.PushBack(phaseFunction);
 }
 
+void Engine::RequestGameRestart() { IsRestartRequested = true; }
+
 //------------------------------------------------------------------------------
 void Engine::Update()
 {
+	if (IsRestartRequested)
+	{
+		Game->Deinit();
+		BaseWorld.reset();
+		Game->Init();
+		BaseWorld = std::make_unique<World>();
+	}
 	UpdatePhases(eUpdatePhaseOrder::PREUPDATE);
 	UpdatePhases(eUpdatePhaseOrder::UPDATE);
 	UpdatePhases(eUpdatePhaseOrder::POSTUPDATE);
