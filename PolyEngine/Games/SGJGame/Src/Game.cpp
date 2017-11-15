@@ -64,9 +64,9 @@ void SGJGame::Init()
 	SGJ::GameManagerSystem::LoadLevel(gEngine->GetWorld(), "Levels/Level4.csv");
 	SGJ::GameManagerSystem::SpawnLevel(gEngine->GetWorld(), 0);
 
-	//SoundsPreload.PushBack(ResourceManager<SoundResource>::Load("Audio/jump-sound.ogg", eResourceSource::GAME));
-	//SoundsPreload.PushBack(ResourceManager<SoundResource>::Load("Audio/death-sound.ogg", eResourceSource::GAME));
-	//SoundsPreload.PushBack(ResourceManager<SoundResource>::Load("Audio/powerup.ogg", eResourceSource::GAME));
+	SoundsPreload.PushBack(ResourceManager<SoundResource>::Load("Audio/jump-sound.ogg", eResourceSource::GAME));
+	SoundsPreload.PushBack(ResourceManager<SoundResource>::Load("Audio/death-sound.ogg", eResourceSource::GAME));
+	SoundsPreload.PushBack(ResourceManager<SoundResource>::Load("Audio/powerup.ogg", eResourceSource::GAME));
 };
 
 void SGJGame::Deinit()

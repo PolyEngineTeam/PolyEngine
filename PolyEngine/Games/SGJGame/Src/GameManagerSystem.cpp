@@ -324,10 +324,10 @@ void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
 
 	// SETUP SCENE HERE
 
-	//UniqueID backgroundPlayer = DeferredTaskSystem::SpawnEntityImmediate(world);
-	//DeferredTaskSystem::AddComponentImmediate<SoundEmitterComponent>(world, backgroundPlayer, "Audio/Pursuit_cut.ogg", eResourceSource::GAME);
-	//SoundSystem::PlayEmitter(world, backgroundPlayer);
-	//SoundSystem::LoopEmitter(world, backgroundPlayer);
+	UniqueID backgroundPlayer = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<SoundEmitterComponent>(world, backgroundPlayer);
+	SoundEmitterComponent* emitter = world->GetComponent<SoundEmitterComponent>(backgroundPlayer);
+	emitter->PushSoundResource("Audio/Pursuit_cut.ogg", eResourceSource::GAME);
 
 	UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(gEngine->GetWorld(), id);

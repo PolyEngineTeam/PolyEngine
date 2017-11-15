@@ -70,7 +70,7 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 		unsigned int emitterID = dataHolder->EmitterID;
 
 		// get queued buffers count
-		int queuedBuffersCount = 2;
+		int queuedBuffersCount;
 		alGetSourcei(emitterID, AL_BUFFERS_QUEUED, &queuedBuffersCount);
 
 		if (emitterCmp->PlaylistChanged)
@@ -120,37 +120,42 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 			queuedBuffersCount++;
 		}
 
-		emitterCmp->PlaylistChanged = false;
+		if (emitterCmp->StateChanged) 
+		{
+			emitterCmp->PlaylistChanged = false;
 
-		alSourcef(emitterID, AL_PITCH, emitterCmp->Pitch);
-		alSourcef(emitterID, AL_GAIN, emitterCmp->Gain);
-		alSourcef(emitterID, AL_MAX_DISTANCE, emitterCmp->MaxDistance);
-		alSourcef(emitterID, AL_ROLLOFF_FACTOR, emitterCmp->RolloffFactor);
-		alSourcef(emitterID, AL_REFERENCE_DISTANCE, emitterCmp->RefferenceDistance);
-		alSourcef(emitterID, AL_MIN_GAIN, emitterCmp->MinGain);
-		alSourcef(emitterID, AL_MAX_GAIN, emitterCmp->MaxGain);
-		alSourcef(emitterID, AL_CONE_INNER_ANGLE, emitterCmp->ConeInnerAngle);
-		alSourcef(emitterID, AL_CONE_OUTER_ANGLE, emitterCmp->ConeOuterAngle);
-		alSourcef(emitterID, AL_CONE_OUTER_GAIN, emitterCmp->ConeOuterGain);
+			alSourcef(emitterID, AL_PITCH, emitterCmp->Pitch);
+			alSourcef(emitterID, AL_GAIN, emitterCmp->Gain);
+			alSourcef(emitterID, AL_MAX_DISTANCE, emitterCmp->MaxDistance);
+			alSourcef(emitterID, AL_ROLLOFF_FACTOR, emitterCmp->RolloffFactor);
+			alSourcef(emitterID, AL_REFERENCE_DISTANCE, emitterCmp->RefferenceDistance);
+			alSourcef(emitterID, AL_MIN_GAIN, emitterCmp->MinGain);
+			alSourcef(emitterID, AL_MAX_GAIN, emitterCmp->MaxGain);
+			alSourcef(emitterID, AL_CONE_INNER_ANGLE, emitterCmp->ConeInnerAngle);
+			alSourcef(emitterID, AL_CONE_OUTER_ANGLE, emitterCmp->ConeOuterAngle);
+			alSourcef(emitterID, AL_CONE_OUTER_GAIN, emitterCmp->ConeOuterGain);
 
-		// set position
-		TransformComponent* transCmp = emitterCmp->GetSibling<TransformComponent>();
-		Vector pos = transCmp->GetGlobalTranslation();
-		alSource3f(emitterID, AL_POSITION, pos.X, pos.Y, pos.Z);
+			// set position
+			TransformComponent* transCmp = emitterCmp->GetSibling<TransformComponent>();
+			if (transCmp)
+			{
+				Vector pos = transCmp->GetGlobalTranslation();
+				alSource3f(emitterID, AL_POSITION, pos.X, pos.Y, pos.Z);
+			}
 
-		// set direction
-		// set velocity
+			// set direction
+			// set velocity
 
-		if (emitterCmp->Looping)
-			alSourcei(emitterID, AL_LOOPING, AL_TRUE);
-		else
-			alSourcei(emitterID, AL_LOOPING, AL_FALSE);
+			if (emitterCmp->Looping)
+				alSourcei(emitterID, AL_LOOPING, AL_TRUE);
+			else
+				alSourcei(emitterID, AL_LOOPING, AL_FALSE);
 
-		if (emitterCmp->Paused)
-			alSourcei(emitterID, AL_SOURCE_STATE, AL_PAUSED);
-		else
-			alSourcei(emitterID, AL_SOURCE_STATE, AL_PLAYING);
-
+			if (emitterCmp->Paused)
+				alSourcei(emitterID, AL_SOURCE_STATE, AL_PAUSED);
+			else
+				alSourcei(emitterID, AL_SOURCE_STATE, AL_PLAYING);
+		}
 	}
 }
 

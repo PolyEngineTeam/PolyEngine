@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ComponentBase.hpp"
+#include "SoundResource.hpp"
 
 namespace Poly
 {
@@ -12,7 +13,7 @@ namespace Poly
 		SoundEmitterComponent();
 		~SoundEmitterComponent();
 
-		void PushSoundResource(SoundResource* val) { Playlist.PushBack(val); PlaylistChanged = true; }
+		void PushSoundResource(String path, eResourceSource source, eSoundFileFormat format = eSoundFileFormat::OGG_VORBIS, size_t size = 0, size_t offset = 0) { Playlist.PushBack(ResourceManager<SoundResource>::Load(path, source, format, size, offset)); PlaylistChanged = true; }
 		void PopSoundResource() { Playlist.PopFront(); PlaylistChanged = true; }
 		const SoundResource* GetBuffer(size_t idx) { return Playlist[idx]; }
 		size_t GetBufferCount() { return Playlist.GetSize(); }
@@ -31,6 +32,7 @@ namespace Poly
 		bool Looping = false;
 		bool Paused = false;
 		bool PlaylistChanged = false;
+		bool StateChanged = true;
 
 	private:
 		Dynarray<SoundResource*> Playlist;

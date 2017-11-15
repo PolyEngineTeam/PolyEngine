@@ -15,7 +15,7 @@ using namespace Poly;
 //---------------------------------------------------------------------------------------------------
 void ENGINE_DLLEXPORT SoundSystem::SoundPhase(World* world)
 {
-	gEngine->GetSoundDevice()->RenderWorld(world);
+	//gEngine->GetSoundDevice()->RenderWorld(world);
 }
 
 void ENGINE_DLLEXPORT SoundSystem::DecodeSoundData(SoundResource* resource, const BinaryBuffer& data, eSoundFileFormat format, size_t size, size_t offset)
