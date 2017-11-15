@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Defines.hpp"
+#include "String.hpp"
+#include <map>
+
 namespace Poly {
 
 	/// <summary> Class that enables creation of arrays that are indexed by enum.</summary>
@@ -229,38 +232,59 @@ namespace Poly {
 
 	//------------------------------------------------------------------------------
 	namespace Impl {
+		struct EnumInfoBase
+		{
+			virtual const char* GetEnumName(i64 value) const = 0;
+			virtual i64 GetEnumValue(const String& name) const = 0;
+			virtual size_t GetUnderlyingValueSize() const = 0;
+		};
+
 		template<typename T>
-		struct EnumInfo {};
+		struct EnumInfo : public EnumInfoBase 
+		{
+			const char* GetEnumName(i64 value) const override { ASSERTE(false, "This should never be called"); return nullptr; }
+			i64 GetEnumValue(const String& name) const override { ASSERTE(false, "This should never be called"); return 0; }
+			size_t GetUnderlyingValueSize() const override { ASSERTE(false, "This should never be called"); return 0; }
+		};
 	}
 
 	template<typename T>
 	const char* GetEnumName(T val)
 	{
-		return Impl::EnumInfo<T>::Get().Names[val];
+		return Impl::EnumInfo<T>::Get().GetEnumName((i64)val);
 	}
 }
 
 //NOTE(vuko): apparently defining specializations in a namespace from global/other namespace is illegal C++ and GCC complains
 //Unfortunately being compliant causes problems when using the macro in a namespace. Use _IN_POLY variant then.
-#define REGISTER_ENUM_NAMES(type, ...)                                                    			\
-	namespace Poly																					\
-	{																								\
-		namespace Impl 																				\
-		{																							\
-			template<> struct EnumInfo<type> 														\
-			{                                                    									\
-				static EnumInfo<type>& Get() { static EnumInfo<type> instance; return instance; } 	\
-				const EnumArray<const char*, type> Names{__VA_ARGS__};                        		\
-			};                                                                                    	\
-		} /* namespace Impl */																		\
-	} //namespace Poly
-																									
 #define REGISTER_ENUM_NAMES_IN_POLY(type, ...)                                            			\
 	namespace Impl 																					\
 	{																								\
-		template<> struct EnumInfo<type> 															\
+		template<> struct EnumInfo<type> : public EnumInfoBase														\
 		{                                                    										\
-			static EnumInfo<type>& Get() { static EnumInfo<type> instance; return instance; } 		\
-			const EnumArray<const char*, type> Names{__VA_ARGS__};                        			\
+			static EnumInfo<type>& Get() { static EnumInfo<type> instance({__VA_ARGS__}); return instance; } 		\
+			EnumInfo(std::initializer_list<const char*> namesList)	\
+			{\
+				int idx = 0;	\
+				for(const char* name : namesList)	\
+				{	\
+					ValueToNameMap[(type)idx] = name;\
+					NameToValueMap[String(name)] = (type)idx;\
+					++idx;\
+				}	\
+			}\
+			const char* GetEnumName(i64 value) const override { return ValueToNameMap[(type)value]; }	\
+			i64 GetEnumValue(const String& name) const override { return (i64)NameToValueMap.at(name); }	\
+			size_t GetUnderlyingValueSize() const override { return sizeof(type); }\
+			private: \
+				EnumArray<const char*, type> ValueToNameMap;\
+				std::map<String, type> NameToValueMap;\
 		};                                                                                    		\
-	} /* namespace Impl */																				
+	} /* namespace Impl */			
+
+#define REGISTER_ENUM_NAMES(type, ...)                                                    			\
+	namespace Poly																					\
+	{																								\
+		REGISTER_ENUM_NAMES_IN_POLY(type, __VA_ARGS__)												\
+	} //namespace Poly
+																																									

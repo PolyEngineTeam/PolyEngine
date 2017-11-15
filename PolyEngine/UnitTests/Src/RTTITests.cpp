@@ -11,7 +11,7 @@ enum class eTestEnum
 	VAL_2,
 	_COUNT
 };
-REGISTER_ENUM_NAMES(eTestEnum, { eTestEnum::VAL_1, "val_1" }, { eTestEnum::VAL_2, "val_2" });
+REGISTER_ENUM_NAMES(eTestEnum, "val_1", "val_2");
 
 class TestClass : public RTTIBase {
 	RTTI_DECLARE_TYPE_DERIVED(TestClass, RTTIBase)

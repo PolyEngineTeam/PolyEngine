@@ -71,9 +71,7 @@ namespace Poly {
 
 		struct EnumPropertyImplData : public PropertyImplData
 		{
-			std::unordered_map<i64, String> ValueToNameMap;
-			std::map<String, i64> NameToValueMap;
-			size_t ValueSize = 0;
+			const ::Poly::Impl::EnumInfoBase* EnumInfo = nullptr;
 		};
 
 		template <typename E> Property CreateEnumPropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
@@ -82,13 +80,8 @@ namespace Poly {
 			STATIC_ASSERTE(std::is_integral<typename std::underlying_type<E>::type>::value, "Enum with integral underlying type is required");
 			std::shared_ptr<EnumPropertyImplData> implData = std::make_shared<EnumPropertyImplData>();
 
-			for (E val : IterateEnum<E>())
-			{
-				String name = GetEnumName(val);
-				implData->ValueToNameMap.insert(std::make_pair((i64)val, name));
-				implData->NameToValueMap.insert(std::make_pair(name, (i64)val));
-			}
-			implData->ValueSize = sizeof(typename std::underlying_type<E>::type);
+			// Register EnumInfo object pointer to property
+			implData->EnumInfo = &::Poly::Impl::EnumInfo<E>::Get();
 			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::ENUM, std::move(implData)};
 		}
 
