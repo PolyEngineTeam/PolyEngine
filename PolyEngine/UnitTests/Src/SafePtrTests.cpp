@@ -62,4 +62,11 @@ TEST_CASE("* and -> operators", "[SafePtr]") {
 	REQUIRE(*p == &obj);
 }
 
+TEST_CASE("Initializing SafePtr with nullptr", "[SafePtr]") {
+	Test *ptr = nullptr;
+	SafePtr<Test> p = SafePtr<Test>(ptr);
+
+	REQUIRE(p == nullptr);
+}
+
 

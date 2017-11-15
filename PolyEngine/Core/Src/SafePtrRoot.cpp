@@ -14,7 +14,6 @@ SafePtrRoot::~SafePtrRoot()
 	SafePtrRoot::ClearPointer(this);
 }
 
-//------------------------------------------------------------------------------
 size_t SafePtrRoot::RegisterPointer(SafePtrRoot *pointer)
 {
 	const auto it = PointersMap.find(pointer);
@@ -29,17 +28,20 @@ size_t SafePtrRoot::RegisterPointer(SafePtrRoot *pointer)
 	}
 }
 
-//------------------------------------------------------------------------------
+/// <summary>Registers pointer in array and map</summary>
+/// <param name="pointer">Pointer to be registered</param>
+/// <returns>Index of given pointer in array</returns>
 void SafePtrRoot::ClearPointer(SafePtrRoot *pointer)
 {
-	size_t idx;
-	try
+	HEAVY_ASSERTE(pointer != nullptr, "Cannot unregister nullptr");
+
+	const auto it = SafePtrRoot::PointersMap.find(pointer);
+	if (it != SafePtrRoot::PointersMap.end())
 	{
-		idx = SafePtrRoot::PointersMap.at(pointer);
-		SafePtrRoot::Pointers[idx] = nullptr;
-		SafePtrRoot::PointersMap.erase(pointer);
+		SafePtrRoot::Pointers[it->second] = nullptr;
+		SafePtrRoot::PointersMap.erase(it);
 	}
-	catch (std::out_of_range e)
+	else
 	{
 		ASSERTE(false, "Pointer already cleared from safe pointer map");
 	}
