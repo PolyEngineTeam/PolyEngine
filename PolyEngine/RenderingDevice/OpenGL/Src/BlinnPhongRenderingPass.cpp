@@ -13,7 +13,6 @@
 
 using namespace Poly;
 
-const float IntensityThreshold = 0.05f;
 const size_t MAX_LIGHT_COUNT_POINT = 8;
 const size_t MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 

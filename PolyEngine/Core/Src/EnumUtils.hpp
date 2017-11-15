@@ -242,8 +242,8 @@ namespace Poly {
 		template<typename T>
 		struct EnumInfo : public EnumInfoBase 
 		{
-			const char* GetEnumName(i64 value) const override { ASSERTE(false, "This should never be called"); return nullptr; }
-			i64 GetEnumValue(const String& name) const override { ASSERTE(false, "This should never be called"); return 0; }
+			const char* GetEnumName(i64 value) const override { UNUSED(value); ASSERTE(false, "This should never be called"); return nullptr; }
+			i64 GetEnumValue(const String& name) const override { UNUSED(name); ASSERTE(false, "This should never be called"); return 0; }
 			size_t GetUnderlyingValueSize() const override { ASSERTE(false, "This should never be called"); return 0; }
 		};
 	}

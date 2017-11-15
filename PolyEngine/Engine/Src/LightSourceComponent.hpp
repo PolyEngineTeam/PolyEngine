@@ -8,7 +8,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT AmbientLightWorldComponent : public ComponentBase
 	{
 	public:
-		AmbientLightWorldComponent(const Color& color, float intensity);
+		AmbientLightWorldComponent(const Color& color = Color::WHITE, float intensity = 1.0f);
 
 		const Color& GetColor() const { return LightColor; }
 		void SetColor(const Color& value) { LightColor = value; }
@@ -25,7 +25,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT DirectionalLightComponent : public ComponentBase
 	{
 	public:
-		DirectionalLightComponent(const Color& color, float intensity);
+		DirectionalLightComponent(const Color& color = Color::WHITE, float intensity = 1.0f);
 
 		const Color& GetColor() const { return LightColor; }
 		float GetIntensity() const { return Intensity; }
@@ -39,7 +39,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT PointLightComponent : public ComponentBase
 	{
 	public:
-		PointLightComponent(const Color& color, float intensity, float range);
+		PointLightComponent(const Color& color = Color::WHITE, float intensity = 1.0f, float range = 10.0f);
 
 		const Color& GetColor() const { return LightColor; }
 		float GetIntensity() const { return Intensity; }
