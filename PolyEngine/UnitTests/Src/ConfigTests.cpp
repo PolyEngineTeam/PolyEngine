@@ -32,7 +32,7 @@ class TestConfig : public ConfigBase
 		RTTI_PROPERTY_ENUM(PropEnum, "PropEnum", RTTI::ePropertyFlag::NONE);
 	}
 public:
-	TestConfig() : ConfigBase("Test", eConfigLocation::RUNTIME_DIR) {}
+	TestConfig() : ConfigBase("Test", eResourceSource::NONE) {}
 
 	// Rendering
 	bool PropBool = true;
