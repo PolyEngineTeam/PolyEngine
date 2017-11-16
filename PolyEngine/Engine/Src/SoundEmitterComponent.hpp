@@ -15,11 +15,6 @@ namespace Poly
 		SoundEmitterComponent();
 		~SoundEmitterComponent();
 
-		void PushSoundResource(String path, eResourceSource source) { Playlist.PushBack(ResourceManager<SoundResource>::Load(path, source)); PlaylistChanged = true; }
-		void PopSoundResource() { Playlist.PopFront(); PlaylistChanged = true; }
-		const SoundResource* GetBuffer(size_t idx) { return idx < Playlist.GetSize() ? Playlist[idx] : nullptr; }
-		size_t GetBufferCount() { return Playlist.GetSize(); }
-
 		float Pitch = 1.0f;
 		float Gain = 1.0f;
 		float MaxDistance = 100.0f;
@@ -36,10 +31,10 @@ namespace Poly
 		bool PlaylistChanged = false;
 		bool StateChanged = true;
 
+		Dynarray<SoundResource*> Playlist;
 		ISoundDataHolderProxy* DataHolder;
 
 	private:
-		Dynarray<SoundResource*> Playlist;
 	};
 
 } // namespace Poly

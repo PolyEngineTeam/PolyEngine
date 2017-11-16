@@ -28,7 +28,7 @@ namespace Poly
 		friend void SoundSystem::DecodeOggVorbis(SoundResource*, const BinaryBuffer&, size_t, size_t);
 	public:
 		SoundResource(const String& path, eSoundFileFormat format = eSoundFileFormat::OGG_VORBIS, size_t size = 0, size_t offset = 0);
-		~SoundResource();
+		~SoundResource() override;
 
 		const BinaryBuffer* GetRawData() const { return RawData; }
 		const BinaryBuffer* GetRawData() { return RawData; }

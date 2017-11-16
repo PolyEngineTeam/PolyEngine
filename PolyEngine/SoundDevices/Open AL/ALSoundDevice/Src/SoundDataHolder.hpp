@@ -12,6 +12,5 @@ namespace Poly
 
 		unsigned int EmitterID;
 		Poly::Dynarray<unsigned int> QueuedBuffers;
-		unsigned int MaxBuffersInQueue = 2;
 	};
 }

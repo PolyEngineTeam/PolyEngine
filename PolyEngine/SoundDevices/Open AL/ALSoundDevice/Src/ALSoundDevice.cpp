@@ -32,7 +32,8 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::Init()
 {
 	Device = alcOpenDevice(nullptr);
 
-	if (Device) {
+	if (Device) 
+	{
 		Context = alcCreateContext(Device, nullptr);
 		alcMakeContextCurrent(Context);
 	}
@@ -132,7 +133,7 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 			alDeleteBuffers((int)dataHolder->QueuedBuffers.GetSize(), dataHolder->QueuedBuffers.GetData());
 			
 			// establish OpenAL buffer count
-			queuedBuffersCount = emitterCmp->GetBufferCount() >= dataHolder->MaxBuffersInQueue ? (int)dataHolder->MaxBuffersInQueue : (int)emitterCmp->GetBufferCount();
+			queuedBuffersCount = (int)emitterCmp->Playlist.GetSize();
 
 			if (queuedBuffersCount == 0)
 				continue;
@@ -147,7 +148,7 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 			// copy certain number of queued buffers into immediate buffers
 			for (int i = 0; i < queuedBuffersCount; i++)
 			{
-				const SoundResource* res = emitterCmp->GetBuffer(i);
+				const SoundResource* res = emitterCmp->Playlist[i];
 			
 				// fill OpenAL buffer with data
 				unsigned int* buffersBegin = dataHolder->QueuedBuffers.GetData();
@@ -159,11 +160,6 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 
 			alSourcePlay(emitterID);
 		}
-		//else if (queuedBuffersCount - processedBuffersCount <= dataHolder->MaxBuffersInQueue)
-		//{
-		//
-		//}
-
 	}
 }
 
