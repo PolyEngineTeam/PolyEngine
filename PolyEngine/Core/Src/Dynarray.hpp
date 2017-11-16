@@ -255,6 +255,20 @@ namespace Poly
 			return GetSize();
 		}
 
+		/// <summary>Finds indexes of all encountered objects from the cointainer that are equal to provided object.</summary>
+		/// <param name="rhs">Searched object.</param>
+		/// <returns>DynArray of indexes of searched objects or empty DynArray if object was not found.</returns>
+		Dynarray<size_t> FindAllIdx(const T& rhs) const
+		{
+			Dynarray<size_t> r;
+			for (size_t idx = 0; idx < GetSize(); ++idx)
+			{
+				if (Data[idx] == rhs)
+					r.PushBack(idx);
+			}
+			return r;
+		}
+
 		/// <summary>Performs insertion to the back of the container.</summary>
 		/// <param name="obj">Const reference to object that should be copied to the container.</param>
 		void PushBack(const T& obj) { Insert(GetSize(), obj); }

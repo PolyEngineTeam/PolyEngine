@@ -11,12 +11,12 @@ namespace Poly
 	class AARect;
 
 	//------------------------------------------------------------------------------
-	class DebugNormalsRenderingPass : public RenderingPassBase
+	class DebugNormalsWireframeRenderingPass : public RenderingPassBase
 	{
 	public:
-		DebugNormalsRenderingPass();
+		DebugNormalsWireframeRenderingPass();
 
 	protected:
-		void OnRun(World* world, const CameraComponent* camera, const AARect& rect) override;
+		virtual void OnRun(World* world, const CameraComponent* camera, const AARect& rect) override;
 	};
 }

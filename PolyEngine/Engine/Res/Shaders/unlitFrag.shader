@@ -2,6 +2,8 @@
 
 uniform sampler2D uTexture;
 
+uniform vec4 uColor;
+
 in vec3 vVertexPos;
 in vec2 vTexCoord;
 
@@ -13,5 +15,5 @@ void main() {
 	if (texDiffuse.a < 0.1)
 		discard;
 	
-	color = texDiffuse;
+	color = texDiffuse * uColor;
 }

@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="Src\BlinnPhongRenderingPass.hpp" />
     <ClInclude Include="Src\DebugNormalsRenderingPass.hpp" />
+    <ClInclude Include="Src\DebugNormalsWireframeRenderingPass.hpp" />
     <ClInclude Include="Src\GLMeshDeviceProxy.hpp" />
     <ClInclude Include="Src\GLRenderingDevice.hpp" />
     <ClInclude Include="Src\GLTextFieldBufferDeviceProxy.hpp" />
@@ -176,6 +177,7 @@
   <ItemGroup>
     <ClCompile Include="Src\BlinnPhongRenderingPass.cpp" />
     <ClCompile Include="Src\DebugNormalsRenderingPass.cpp" />
+    <ClCompile Include="Src\DebugNormalsWireframeRenderingPass.cpp" />
     <ClCompile Include="Src\GLMeshDeviceProxy.cpp" />
     <ClCompile Include="Src\GLRenderingDevice.cpp" />
     <ClCompile Include="Src\GLTextFieldBufferDeviceProxy.cpp" />

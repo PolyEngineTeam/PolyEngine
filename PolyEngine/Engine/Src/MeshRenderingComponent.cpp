@@ -6,10 +6,10 @@
 
 using namespace Poly;
 
-MeshRenderingComponent::MeshRenderingComponent(const String& meshPath, eResourceSource source, const Color& baseColor)
-	: BaseColor(baseColor)
+MeshRenderingComponent::MeshRenderingComponent(const String& meshPath, eResourceSource source)
 {
 	Mesh = ResourceManager<MeshResource>::Load(meshPath, source);
+	Materials.Resize(Mesh->GetSubMeshes().GetSize());
 }
 
 Poly::MeshRenderingComponent::~MeshRenderingComponent()
