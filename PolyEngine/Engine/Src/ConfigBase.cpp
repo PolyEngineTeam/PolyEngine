@@ -10,7 +10,7 @@ using namespace Poly;
 
 RTTI_DEFINE_TYPE(Poly::ConfigBase)
 
-ConfigBase::ConfigBase(const String& displayName, eConfigLocation location)
+ConfigBase::ConfigBase(const String& displayName, eResourceSource location)
 	: DisplayName(displayName), Location(location)
 {
 }
@@ -27,21 +27,7 @@ void ConfigBase::Save()
 	DOMObject.Accept(writer);
 	
 	gConsole.LogDebug("{} json:\n{}", DisplayName, buffer.GetString());
-	switch (Location)
-	{
-	case Poly::eConfigLocation::ENGINE:
-		SaveTextFileRelative(eResourceSource::ENGINE, GetFileName(), String(buffer.GetString()));
-		break;
-	case Poly::eConfigLocation::GAME:
-		SaveTextFileRelative(eResourceSource::GAME, GetFileName(), String(buffer.GetString()));
-		break;
-	case Poly::eConfigLocation::LOCAL: // local for now is similar to RUNTIME_DIR
-	case Poly::eConfigLocation::RUNTIME_DIR:
-		SaveTextFile(GetFileName(), String(buffer.GetString()));
-		break;
-	default:
-		ASSERTE(false, "Invalid location");
-	}
+	SaveTextFileRelative(Location, GetFileName(), String(buffer.GetString()));
 }
 
 void ConfigBase::Load()
@@ -49,21 +35,7 @@ void ConfigBase::Load()
 	String json;
 	try
 	{
-		switch (Location)
-		{
-		case Poly::eConfigLocation::ENGINE:
-			json = LoadTextFileRelative(eResourceSource::ENGINE, GetFileName());
-			break;
-		case Poly::eConfigLocation::GAME:
-			json = LoadTextFileRelative(eResourceSource::GAME, GetFileName());
-			break;
-		case Poly::eConfigLocation::LOCAL: // local for now is similar to RUNTIME_DIR
-		case Poly::eConfigLocation::RUNTIME_DIR:
-			json = LoadTextFile(GetFileName());
-			break;
-		default:
-			ASSERTE(false, "Invalid location");
-		}
+		json = LoadTextFileRelative(Location, GetFileName());
 	} 
 	catch (std::exception)
 	{
@@ -84,7 +56,7 @@ const String& ConfigBase::GetFileName() const
 {
 	if (FileName.GetLength() == 0)
 	{
-		if(Location == eConfigLocation::RUNTIME_DIR)
+		if(Location == eResourceSource::NONE)
 			FileName = String(GetTypeInfo().GetTypeName()) + String(".json");
 		else
 			FileName = String("Configs/") + String(GetTypeInfo().GetTypeName()) + String(".json");

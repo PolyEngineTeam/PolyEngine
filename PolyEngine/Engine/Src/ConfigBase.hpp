@@ -5,19 +5,21 @@
 
 namespace Poly
 {
-	enum class eConfigLocation
+	/// <summary>Enum used to identify source of asset.
+	enum class eResourceSource
 	{
 		ENGINE,
 		GAME,
-		LOCAL,
-		RUNTIME_DIR
+		NONE,
+		USR_LOCAL,
+		_COUNT
 	};
 
 	class ENGINE_DLLEXPORT ConfigBase : public RTTIBase
 	{
 		RTTI_DECLARE_TYPE_DERIVED(ConfigBase, RTTIBase) { NO_RTTI_PROPERTY(); }
 	public:
-		ConfigBase(const String& displayName, eConfigLocation location);
+		ConfigBase(const String& displayName, eResourceSource location);
 
 		void Save();
 		void Load();
@@ -26,6 +28,6 @@ namespace Poly
 	protected:
 		mutable String FileName;
 		String DisplayName;
-		eConfigLocation Location;
+		eResourceSource Location;
 	};
 }

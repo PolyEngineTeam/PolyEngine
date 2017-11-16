@@ -11,7 +11,7 @@ namespace Poly
 			RTTI_PROPERTY(DisplayFPS, "DisplayFPS", RTTI::ePropertyFlag::NONE);
 		}
 	public:
-		DebugConfig() : ConfigBase("Debug Config", eConfigLocation::ENGINE) {}
+		DebugConfig() : ConfigBase("Debug Config", eResourceSource::ENGINE) {}
 
 		// Rendering
 		bool DisplayFPS = true;

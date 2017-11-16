@@ -19,16 +19,13 @@ String Poly::LoadTextFileRelative(eResourceSource Source, const String & path)
 	bool IsNotLoaded = true;
 
 	String FileContent;
-	Dynarray<String> Paths = (Source == eResourceSource::NONE) ? Dynarray<String>{""} : gAssetsPathConfig.GetAssetsPaths(Source);
-	for (size_t i = 0; i < Paths.GetSize() && IsNotLoaded; ++i)
+	String AbsolutePath = gAssetsPathConfig.GetAssetsPath(Source) + path;
+	if (FileExists(AbsolutePath))
 	{
-		String AbsolutePath = Paths[i] + path;
-		if (FileExists(AbsolutePath))
-		{
-			FileContent = LoadTextFile(AbsolutePath);
-			IsNotLoaded = false;
-		}
+		FileContent = LoadTextFile(AbsolutePath);
+		IsNotLoaded = false;
 	}
+
 
 	if (IsNotLoaded)
 	{
@@ -40,7 +37,6 @@ String Poly::LoadTextFileRelative(eResourceSource Source, const String & path)
 
 void Poly::SaveTextFileRelative(eResourceSource Source, const String& path, const String& data)
 {
-	ASSERTE(gAssetsPathConfig.GetAssetsPaths(Source).GetSize() != 0, "No assets path for given location");
-	String absolutePath = gAssetsPathConfig.GetAssetsPaths(Source)[0] + path;
+	String absolutePath = gAssetsPathConfig.GetAssetsPath(Source) + path;
 	SaveTextFile(absolutePath, data);
 }
