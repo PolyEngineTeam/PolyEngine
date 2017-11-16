@@ -31,7 +31,7 @@ namespace Poly
 		float ConeOuterAngle = 360.0f;
 		float ConeOuterGain = 1.0f;
 		float SecondsOffset = 0.0f;
-		bool Looping = true;
+		bool Looping = false;
 		bool Paused = false;
 		bool PlaylistChanged = false;
 		bool StateChanged = true;
