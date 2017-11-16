@@ -17,6 +17,7 @@
 #include "Physics2DWorldComponent.hpp"
 #include <SoundEmitterComponent.hpp>
 #include <SoundSystem.hpp>
+#include <SoundResource.hpp>
 
 using namespace SGJ;
 using namespace Poly;

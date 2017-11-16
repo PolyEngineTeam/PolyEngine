@@ -18,7 +18,7 @@
     <ClInclude Include="Src\ALSoundDevice.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Src\SoundDataComponent.hpp">
+    <ClInclude Include="Src\SoundDataHolder.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -26,7 +26,7 @@
     <ClCompile Include="Src\ALSoundDevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\SoundDataComponent.cpp">
+    <ClCompile Include="Src\SoundDataHolder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

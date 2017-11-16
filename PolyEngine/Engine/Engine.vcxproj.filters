@@ -185,9 +185,6 @@
     <ClCompile Include="Src\SoundListenerComponent.cpp">
       <Filter>Source Files\Sound\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Src\SoundDataComponentProxy.cpp">
-      <Filter>Source Files\Sound\Components</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine.hpp">
@@ -341,9 +338,6 @@
       <Filter>Source Files\Sound\Components</Filter>
     </ClInclude>
     <ClInclude Include="Src\SoundListenerComponent.hpp">
-      <Filter>Source Files\Sound\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\SoundDataComponentProxy.hpp">
       <Filter>Source Files\Sound\Components</Filter>
     </ClInclude>
   </ItemGroup>

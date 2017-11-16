@@ -1,10 +1,12 @@
 #pragma once
 
 #include "ComponentBase.hpp"
-#include "SoundResource.hpp"
+#include "ResourceManager.hpp"
 
 namespace Poly
 {
+	enum class eResourceSource;
+	class ISoundDataHolderProxy;
 	class SoundResource;
 
 	class ENGINE_DLLEXPORT SoundEmitterComponent : public ComponentBase
@@ -13,9 +15,9 @@ namespace Poly
 		SoundEmitterComponent();
 		~SoundEmitterComponent();
 
-		void PushSoundResource(String path, eResourceSource source, eSoundFileFormat format = eSoundFileFormat::OGG_VORBIS, size_t size = 0, size_t offset = 0) { Playlist.PushBack(ResourceManager<SoundResource>::Load(path, source, format, size, offset)); PlaylistChanged = true; }
+		void PushSoundResource(String path, eResourceSource source) { Playlist.PushBack(ResourceManager<SoundResource>::Load(path, source)); PlaylistChanged = true; }
 		void PopSoundResource() { Playlist.PopFront(); PlaylistChanged = true; }
-		const SoundResource* GetBuffer(size_t idx) { return Playlist[idx]; }
+		const SoundResource* GetBuffer(size_t idx) { return idx < Playlist.GetSize() ? Playlist[idx] : nullptr; }
 		size_t GetBufferCount() { return Playlist.GetSize(); }
 
 		float Pitch = 1.0f;
@@ -29,10 +31,12 @@ namespace Poly
 		float ConeOuterAngle = 360.0f;
 		float ConeOuterGain = 1.0f;
 		float SecondsOffset = 0.0f;
-		bool Looping = false;
+		bool Looping = true;
 		bool Paused = false;
 		bool PlaylistChanged = false;
-		bool StateChanged = true;
+		bool StateChanged = false;
+
+		ISoundDataHolderProxy* DataHolder;
 
 	private:
 		Dynarray<SoundResource*> Playlist;

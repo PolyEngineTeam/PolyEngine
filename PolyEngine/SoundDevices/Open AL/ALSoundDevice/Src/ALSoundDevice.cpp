@@ -13,7 +13,7 @@
 #include <SoundResource.hpp>
 
 // sound device
-#include "SoundDataComponent.hpp"
+#include "SoundDataHolder.hpp"
 
 using namespace Poly;
 
@@ -31,21 +31,29 @@ ALSoundDevice::~ALSoundDevice()
 void SOUND_DEVICE_DLLEXPORT ALSoundDevice::Init()
 {
 	Device = alcOpenDevice(nullptr);
+
+	if (Device) {
+		Context = alcCreateContext(Device, nullptr);
+		alcMakeContextCurrent(Context);
+	}
+	else
+		throw new ALSoundDeviceInitializationException();
 }
 
 //---------------------------------------------------------------------------------------------------
 void SOUND_DEVICE_DLLEXPORT ALSoundDevice::Close()
 {
+	alcMakeContextCurrent(NULL);
+	alcDestroyContext(Context);
 	alcCloseDevice(Device);
 }
 
 //---------------------------------------------------------------------------------------------------
 void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 {
-	Dynarray<UniqueID> newlyCreated;
-
 	for (auto& emitterTuple : world->IterateComponents<SoundEmitterComponent>())
 	{
+		alGetError();
 		SoundEmitterComponent* emitterCmp = std::get<SoundEmitterComponent*>(emitterTuple);
 
 		// create new sound emitter helpers
@@ -53,27 +61,27 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 		{
 			unsigned int emitterID;
 			alGenSources(1, &emitterID);
-			DeferredTaskSystem::AddComponent<SoundDataComponent>(world, emitterCmp->GetOwnerID(), emitterID);
-			continue;
+			emitterCmp->DataHolder = new SoundDataHolder(emitterID);
 		}
-
-		SoundDataComponent* dataHolder = emitterCmp->GetSibling<SoundDataComponent>();
-
+		
 		// delete sound emitter helpers
 		if (emitterCmp->GetFlags().IsSet(eComponentBaseFlags::ABOUT_TO_BE_REMOVED))
 		{
-			alDeleteSources(1, &dataHolder->EmitterID);
-			DeferredTaskSystem::RemoveComponent<SoundDataComponent>(world, emitterCmp->GetOwnerID());
+			alDeleteSources(1, &reinterpret_cast<SoundDataHolder*>(emitterCmp->DataHolder)->EmitterID);
+			delete emitterCmp->DataHolder;
 			continue;
 		}
-
-		unsigned int emitterID = dataHolder->EmitterID;
-
+		
+		SoundDataHolder* dataHolder = reinterpret_cast<SoundDataHolder*>(emitterCmp->DataHolder);
+		unsigned int emitterID = reinterpret_cast<SoundDataHolder*>(emitterCmp->DataHolder)->EmitterID;
+		
 		// get queued buffers count
 		int queuedBuffersCount;
+		int processedBuffersCount;
 		alGetSourcei(emitterID, AL_BUFFERS_QUEUED, &queuedBuffersCount);
+		alGetSourcei(emitterID, AL_BUFFERS_PROCESSED, &processedBuffersCount);
 
-		if (emitterCmp->PlaylistChanged)
+		if ((emitterCmp->PlaylistChanged || queuedBuffersCount == processedBuffersCount) && emitterCmp->GetBufferCount() > 0)
 		{
 			// set all buffers as processed
 			alSourceStop(emitterID);
@@ -81,49 +89,83 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 			alSourceUnqueueBuffers(emitterID, (int)dataHolder->QueuedBuffers.GetSize(), dataHolder->QueuedBuffers.GetData());
 			// delete all buffers queued in source
 			alDeleteBuffers((int)dataHolder->QueuedBuffers.GetSize(), dataHolder->QueuedBuffers.GetData());
-
+			
 			// establish immediate buffer count
-			queuedBuffersCount = emitterCmp->GetBufferCount() >= dataHolder->MaxBuffersInQueue ? (int)dataHolder->MaxBuffersInQueue : (int)emitterCmp->GetBufferCount();
+			queuedBuffersCount = 1; // emitterCmp->GetBufferCount() >= dataHolder->MaxBuffersInQueue ? (int)dataHolder->MaxBuffersInQueue : (int)emitterCmp->GetBufferCount();
+			// resize if needed
+			if (queuedBuffersCount != dataHolder->QueuedBuffers.GetCapacity())
+				dataHolder->QueuedBuffers.Resize(queuedBuffersCount);
 			// create new al buffers
-			dataHolder->QueuedBuffers.Resize(queuedBuffersCount);
 			alGenBuffers(queuedBuffersCount, dataHolder->QueuedBuffers.GetData());
 
+			
 			// copy certain number of queued buffers into immediate buffers
-			for (int i = 0; i < queuedBuffersCount; i++)
-			{
-				const SoundResource* res = emitterCmp->GetBuffer(i);
+			const SoundResource* res = emitterCmp->GetBuffer(0);
+			// fill OpenAL buffer with data
+			alBufferData(dataHolder->QueuedBuffers[0], FormatMap[res->GetSampleFormat()], res->GetRawData()->GetData(), (int)res->GetRawData()->GetSize(), (int)res->GetFrequency());
 
-				// fill immediate buffer with data
-				alBufferData(dataHolder->QueuedBuffers[i], FormatMap[res->GetSampleFormat()], res->GetRawData()->GetData(), (int)res->GetRawData()->GetSize(), (int)res->GetFrequency());
-			}
+			// attach buffer to source
+			alSourcei(emitterID, AL_BUFFER, dataHolder->QueuedBuffers[0]);
+
+			//if (emitterCmp->Paused)
+			//	alSourcei(emitterID, AL_SOURCE_STATE, AL_PAUSED);
+			///else
+			alSourcePlay(emitterID);
+
+			emitterCmp->PlaylistChanged = false;
 		}
-		else while ((unsigned int)queuedBuffersCount < dataHolder->MaxBuffersInQueue && queuedBuffersCount < emitterCmp->GetBufferCount())
-		{
-			// remove resource from emitter
-			emitterCmp->PopSoundResource();
-			// remove resource fromom OpenAL source
-			alSourceUnqueueBuffers(emitterID, 1, dataHolder->QueuedBuffers.Begin().operator->());
-			alDeleteBuffers(1, dataHolder->QueuedBuffers.Begin().operator->());
-			// remove resource from sound data component
-			dataHolder->QueuedBuffers.PopFront();
-
-			// get next buffer from emitter
-			const SoundResource* res = emitterCmp->GetBuffer(queuedBuffersCount);
-			// create new OpenAL buffer
-			unsigned int bufferID;
-			alGenBuffers(1, &bufferID);
-			// fill buffer with data
-			alBufferData(bufferID, FormatMap[res->GetSampleFormat()], res->GetRawData()->GetData(), (int)res->GetRawData()->GetSize(), (int)res->GetFrequency());
-			// add buffer to sound data component
-			dataHolder->QueuedBuffers.PushBack(bufferID);
-
-			queuedBuffersCount++;
-		}
-
+		
+		//if (emitterCmp->PlaylistChanged)
+		//{
+		//	// set all buffers as processed
+		//	alSourceStop(emitterID);
+		//	// unqueue all processed buffers
+		//	alSourceUnqueueBuffers(emitterID, (int)dataHolder->QueuedBuffers.GetSize(), dataHolder->QueuedBuffers.GetData());
+		//	// delete all buffers queued in source
+		//	alDeleteBuffers((int)dataHolder->QueuedBuffers.GetSize(), dataHolder->QueuedBuffers.GetData());
+		//
+		//	// establish immediate buffer count
+		//	queuedBuffersCount = emitterCmp->GetBufferCount() >= dataHolder->MaxBuffersInQueue ? (int)dataHolder->MaxBuffersInQueue : (int)emitterCmp->GetBufferCount();
+		//	// create new al buffers
+		//	dataHolder->QueuedBuffers.Resize(queuedBuffersCount);
+		//	alGenBuffers(queuedBuffersCount, dataHolder->QueuedBuffers.GetData());
+		//
+		//	// copy certain number of queued buffers into immediate buffers
+		//	for (int i = 0; i < queuedBuffersCount; i++)
+		//	{
+		//		const SoundResource* res = emitterCmp->GetBuffer(i);
+		//
+		//		// fill immediate buffer with data
+		//		alBufferData(dataHolder->QueuedBuffers[i], FormatMap[res->GetSampleFormat()], res->GetRawData()->GetData(), (int)res->GetRawData()->GetSize(), (int)res->GetFrequency());
+		//	}
+		//}
+		//else while ((unsigned int)queuedBuffersCount < dataHolder->MaxBuffersInQueue && queuedBuffersCount < emitterCmp->GetBufferCount())
+		//{
+		//	// remove resource from emitter
+		//	emitterCmp->PopSoundResource();
+		//	// remove resource fromom OpenAL source
+		//	alSourceUnqueueBuffers(emitterID, 1, dataHolder->QueuedBuffers.Begin().operator->());
+		//	alDeleteBuffers(1, dataHolder->QueuedBuffers.Begin().operator->());
+		//	// remove resource from sound data component
+		//	dataHolder->QueuedBuffers.PopFront();
+		//
+		//	// get next buffer from emitter
+		//	const SoundResource* res = emitterCmp->GetBuffer(queuedBuffersCount);
+		//	// create new OpenAL buffer
+		//	unsigned int bufferID;
+		//	alGenBuffers(1, &bufferID);
+		//	// fill buffer with data
+		//	alBufferData(bufferID, FormatMap[res->GetSampleFormat()], res->GetRawData()->GetData(), (int)res->GetRawData()->GetSize(), (int)res->GetFrequency());
+		//	// add buffer to sound data component
+		//	dataHolder->QueuedBuffers.PushBack(bufferID);
+		//
+		//	queuedBuffersCount++;
+		//}
+		
 		if (emitterCmp->StateChanged) 
 		{
 			emitterCmp->PlaylistChanged = false;
-
+		
 			alSourcef(emitterID, AL_PITCH, emitterCmp->Pitch);
 			alSourcef(emitterID, AL_GAIN, emitterCmp->Gain);
 			alSourcef(emitterID, AL_MAX_DISTANCE, emitterCmp->MaxDistance);
@@ -134,7 +176,7 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 			alSourcef(emitterID, AL_CONE_INNER_ANGLE, emitterCmp->ConeInnerAngle);
 			alSourcef(emitterID, AL_CONE_OUTER_ANGLE, emitterCmp->ConeOuterAngle);
 			alSourcef(emitterID, AL_CONE_OUTER_GAIN, emitterCmp->ConeOuterGain);
-
+		
 			// set position
 			TransformComponent* transCmp = emitterCmp->GetSibling<TransformComponent>();
 			if (transCmp)
@@ -142,15 +184,15 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 				Vector pos = transCmp->GetGlobalTranslation();
 				alSource3f(emitterID, AL_POSITION, pos.X, pos.Y, pos.Z);
 			}
-
+		
 			// set direction
 			// set velocity
-
+		
 			if (emitterCmp->Looping)
 				alSourcei(emitterID, AL_LOOPING, AL_TRUE);
 			else
 				alSourcei(emitterID, AL_LOOPING, AL_FALSE);
-
+		
 			if (emitterCmp->Paused)
 				alSourcei(emitterID, AL_SOURCE_STATE, AL_PAUSED);
 			else

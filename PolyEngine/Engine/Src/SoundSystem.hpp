@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Defines.hpp"
+
 namespace Poly
 {
 	class ENGINE_DLLEXPORT SoundSystemException : public BaseObject<>, public std::exception

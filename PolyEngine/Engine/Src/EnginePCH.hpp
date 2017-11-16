@@ -37,7 +37,6 @@
 #include "ScreenSpaceTextComponent.hpp"
 #include "SoundEmitterComponent.hpp"
 #include "SoundListenerComponent.hpp"
-#include "SoundDataComponentProxy.hpp"
 #include "TransformComponent.hpp"
 #include "Physics2DColliders.hpp"
 #include "Rigidbody2DComponent.hpp"

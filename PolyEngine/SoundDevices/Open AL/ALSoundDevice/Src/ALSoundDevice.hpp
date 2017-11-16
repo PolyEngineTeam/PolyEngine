@@ -5,12 +5,18 @@
 #include <unordered_map>
 
 #include <ISoundDevice.hpp>
+#include <SoundResource.hpp>
 #include <Dynarray.hpp>
 #include <EnumUtils.hpp>
-#include <SoundResource.hpp>
 
 namespace Poly
 {
+	class ALSoundDeviceInitializationException : public BaseObject<>, public std::exception
+	{
+	public:
+		ALSoundDeviceInitializationException() {}
+	};
+
 	class SOUND_DEVICE_DLLEXPORT ALSoundDevice : public ISoundDevice
 	{
 	public:
@@ -27,6 +33,7 @@ namespace Poly
 
 	private:
 		ALCdevice* Device;
+		ALCcontext* Context;
 
 		const EnumArray<int, eSoundSampleFormat> FormatMap{ 
 			{ eSoundSampleFormat::MONO8, AL_FORMAT_MONO8 }, 

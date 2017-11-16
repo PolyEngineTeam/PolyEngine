@@ -15,7 +15,7 @@ using namespace Poly;
 //---------------------------------------------------------------------------------------------------
 void ENGINE_DLLEXPORT SoundSystem::SoundPhase(World* world)
 {
-	//gEngine->GetSoundDevice()->RenderWorld(world);
+	gEngine->GetSoundDevice()->RenderWorld(world);
 }
 
 void ENGINE_DLLEXPORT SoundSystem::DecodeSoundData(SoundResource* resource, const BinaryBuffer& data, eSoundFileFormat format, size_t size, size_t offset)
@@ -267,9 +267,9 @@ void ENGINE_DLLEXPORT SoundSystem::DecodeOggVorbis(SoundResource* resource, cons
 			throw new OggDecoderException();
 		}
 
-		//resource->RawData = new BinaryBuffer(rawData.GetData(), rawData.GetSize());
-		//resource->SampleFormat = eSoundSampleFormat::STEREO16;
-		//resource->Frequency = vorbisInfo.rate;
+		resource->RawData = new BinaryBuffer(rawData.GetData(), rawData.GetSize());
+		resource->SampleFormat = eSoundSampleFormat::STEREO16;
+		resource->Frequency = vorbisInfo.rate;
 
 		ogg_stream_clear(&streamState);
 		vorbis_comment_clear(&vorbisComment);

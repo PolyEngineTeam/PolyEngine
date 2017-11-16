@@ -56,8 +56,7 @@ namespace Poly
 		}
 
 		//------------------------------------------------------------------------------
-		template<typename... Args>
-		static T* Load(const String& path, eResourceSource source = eResourceSource::NONE, Args && ...args)
+		static T* Load(const String& path, eResourceSource source = eResourceSource::NONE)
 		{
 			auto it = Impl::GetResources<T>().find(path);
 
@@ -79,7 +78,7 @@ namespace Poly
 
 				try
 				{
-					auto new_resource = new T(absolutePath, std::forward<Args>(args)...);
+					auto new_resource = new T(absolutePath);
 					resource = new_resource;
 					break;
 				} catch (const ResourceLoadFailedException&) {

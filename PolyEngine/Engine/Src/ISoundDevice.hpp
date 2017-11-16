@@ -6,6 +6,12 @@
 
 namespace Poly 
 {
+	class ENGINE_DLLEXPORT ISoundDataHolderProxy : public BaseObject<>
+	{
+	public:
+		ISoundDataHolderProxy() {}
+	};
+
 	class World;
 	class String;
 

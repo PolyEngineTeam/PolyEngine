@@ -9,6 +9,7 @@ SoundResource::SoundResource(const String& path, eSoundFileFormat format, size_t
 
 SoundResource::~SoundResource()
 {
+	// tutaj wypierdala na zamkniêciu gry
 	if (RawData)
 		delete RawData;
 }
