@@ -34,7 +34,7 @@ namespace Poly
 		bool Looping = true;
 		bool Paused = false;
 		bool PlaylistChanged = false;
-		bool StateChanged = false;
+		bool StateChanged = true;
 
 		ISoundDataHolderProxy* DataHolder;
 

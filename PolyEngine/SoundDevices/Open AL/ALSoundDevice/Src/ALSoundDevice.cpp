@@ -80,91 +80,10 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 		int processedBuffersCount;
 		alGetSourcei(emitterID, AL_BUFFERS_QUEUED, &queuedBuffersCount);
 		alGetSourcei(emitterID, AL_BUFFERS_PROCESSED, &processedBuffersCount);
-
-		if ((emitterCmp->PlaylistChanged || queuedBuffersCount == processedBuffersCount) && emitterCmp->GetBufferCount() > 0)
-		{
-			// set all buffers as processed
-			alSourceStop(emitterID);
-			// unqueue all processed buffers
-			alSourceUnqueueBuffers(emitterID, (int)dataHolder->QueuedBuffers.GetSize(), dataHolder->QueuedBuffers.GetData());
-			// delete all buffers queued in source
-			alDeleteBuffers((int)dataHolder->QueuedBuffers.GetSize(), dataHolder->QueuedBuffers.GetData());
-			
-			// establish immediate buffer count
-			queuedBuffersCount = 1; // emitterCmp->GetBufferCount() >= dataHolder->MaxBuffersInQueue ? (int)dataHolder->MaxBuffersInQueue : (int)emitterCmp->GetBufferCount();
-			// resize if needed
-			if (queuedBuffersCount != dataHolder->QueuedBuffers.GetCapacity())
-				dataHolder->QueuedBuffers.Resize(queuedBuffersCount);
-			// create new al buffers
-			alGenBuffers(queuedBuffersCount, dataHolder->QueuedBuffers.GetData());
-
-			
-			// copy certain number of queued buffers into immediate buffers
-			const SoundResource* res = emitterCmp->GetBuffer(0);
-			// fill OpenAL buffer with data
-			alBufferData(dataHolder->QueuedBuffers[0], FormatMap[res->GetSampleFormat()], res->GetRawData()->GetData(), (int)res->GetRawData()->GetSize(), (int)res->GetFrequency());
-
-			// attach buffer to source
-			alSourcei(emitterID, AL_BUFFER, dataHolder->QueuedBuffers[0]);
-
-			//if (emitterCmp->Paused)
-			//	alSourcei(emitterID, AL_SOURCE_STATE, AL_PAUSED);
-			///else
-			alSourcePlay(emitterID);
-
-			emitterCmp->PlaylistChanged = false;
-		}
-		
-		//if (emitterCmp->PlaylistChanged)
-		//{
-		//	// set all buffers as processed
-		//	alSourceStop(emitterID);
-		//	// unqueue all processed buffers
-		//	alSourceUnqueueBuffers(emitterID, (int)dataHolder->QueuedBuffers.GetSize(), dataHolder->QueuedBuffers.GetData());
-		//	// delete all buffers queued in source
-		//	alDeleteBuffers((int)dataHolder->QueuedBuffers.GetSize(), dataHolder->QueuedBuffers.GetData());
-		//
-		//	// establish immediate buffer count
-		//	queuedBuffersCount = emitterCmp->GetBufferCount() >= dataHolder->MaxBuffersInQueue ? (int)dataHolder->MaxBuffersInQueue : (int)emitterCmp->GetBufferCount();
-		//	// create new al buffers
-		//	dataHolder->QueuedBuffers.Resize(queuedBuffersCount);
-		//	alGenBuffers(queuedBuffersCount, dataHolder->QueuedBuffers.GetData());
-		//
-		//	// copy certain number of queued buffers into immediate buffers
-		//	for (int i = 0; i < queuedBuffersCount; i++)
-		//	{
-		//		const SoundResource* res = emitterCmp->GetBuffer(i);
-		//
-		//		// fill immediate buffer with data
-		//		alBufferData(dataHolder->QueuedBuffers[i], FormatMap[res->GetSampleFormat()], res->GetRawData()->GetData(), (int)res->GetRawData()->GetSize(), (int)res->GetFrequency());
-		//	}
-		//}
-		//else while ((unsigned int)queuedBuffersCount < dataHolder->MaxBuffersInQueue && queuedBuffersCount < emitterCmp->GetBufferCount())
-		//{
-		//	// remove resource from emitter
-		//	emitterCmp->PopSoundResource();
-		//	// remove resource fromom OpenAL source
-		//	alSourceUnqueueBuffers(emitterID, 1, dataHolder->QueuedBuffers.Begin().operator->());
-		//	alDeleteBuffers(1, dataHolder->QueuedBuffers.Begin().operator->());
-		//	// remove resource from sound data component
-		//	dataHolder->QueuedBuffers.PopFront();
-		//
-		//	// get next buffer from emitter
-		//	const SoundResource* res = emitterCmp->GetBuffer(queuedBuffersCount);
-		//	// create new OpenAL buffer
-		//	unsigned int bufferID;
-		//	alGenBuffers(1, &bufferID);
-		//	// fill buffer with data
-		//	alBufferData(bufferID, FormatMap[res->GetSampleFormat()], res->GetRawData()->GetData(), (int)res->GetRawData()->GetSize(), (int)res->GetFrequency());
-		//	// add buffer to sound data component
-		//	dataHolder->QueuedBuffers.PushBack(bufferID);
-		//
-		//	queuedBuffersCount++;
-		//}
 		
 		if (emitterCmp->StateChanged) 
 		{
-			emitterCmp->PlaylistChanged = false;
+			emitterCmp->StateChanged = false;
 		
 			alSourcef(emitterID, AL_PITCH, emitterCmp->Pitch);
 			alSourcef(emitterID, AL_GAIN, emitterCmp->Gain);
@@ -198,6 +117,53 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 			else
 				alSourcei(emitterID, AL_SOURCE_STATE, AL_PLAYING);
 		}
+
+		if (emitterCmp->Looping && queuedBuffersCount - processedBuffersCount > 0)
+			continue;
+		else if (emitterCmp->PlaylistChanged)
+		{
+			emitterCmp->PlaylistChanged = false;
+
+			// set all buffers as processed
+			alSourceStop(emitterID);
+			// unqueue all processed buffers
+			alSourceUnqueueBuffers(emitterID, (int)dataHolder->QueuedBuffers.GetSize(), dataHolder->QueuedBuffers.GetData());
+			// delete all buffers queued in source
+			alDeleteBuffers((int)dataHolder->QueuedBuffers.GetSize(), dataHolder->QueuedBuffers.GetData());
+			
+			// establish OpenAL buffer count
+			queuedBuffersCount = emitterCmp->GetBufferCount() >= dataHolder->MaxBuffersInQueue ? (int)dataHolder->MaxBuffersInQueue : (int)emitterCmp->GetBufferCount();
+
+			if (queuedBuffersCount == 0)
+				continue;
+
+			// enlarge bufferID collection if needed
+			if (dataHolder->QueuedBuffers.GetCapacity() < queuedBuffersCount)
+				dataHolder->QueuedBuffers.Reserve(queuedBuffersCount);
+
+			// create new al buffers
+			alGenBuffers(queuedBuffersCount, dataHolder->QueuedBuffers.GetData());
+			
+			// copy certain number of queued buffers into immediate buffers
+			for (int i = 0; i < queuedBuffersCount; i++)
+			{
+				const SoundResource* res = emitterCmp->GetBuffer(i);
+			
+				// fill OpenAL buffer with data
+				unsigned int* buffersBegin = dataHolder->QueuedBuffers.GetData();
+				alBufferData(buffersBegin[i], FormatMap[res->GetSampleFormat()], res->GetRawData()->GetData(), (int)res->GetRawData()->GetSize(), (int)res->GetFrequency());
+			}
+
+			// queue buffers
+			alSourceQueueBuffers(emitterID, queuedBuffersCount, dataHolder->QueuedBuffers.GetData());
+
+			alSourcePlay(emitterID);
+		}
+		//else if (queuedBuffersCount - processedBuffersCount <= dataHolder->MaxBuffersInQueue)
+		//{
+		//
+		//}
+
 	}
 }
 
