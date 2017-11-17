@@ -11,6 +11,7 @@ namespace Poly {
 		UNLIT,
 		WIREFRAME,
 		DEBUG_NORMALS,
+		DEBUG_NORMALS_WIREFRAME,
 		_COUNT
 	};
 
@@ -57,4 +58,6 @@ namespace Poly {
 		// RenderingMode
 		eRenderingModeType RenderingMode;
 	};
+
+	REGISTER_COMPONENT(ComponentsIDGroup, CameraComponent)
 }

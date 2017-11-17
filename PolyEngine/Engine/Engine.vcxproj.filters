@@ -179,6 +179,9 @@
     <ClCompile Include="Src\AssetsPathConfig.cpp">
       <Filter>Source Files\Config</Filter>
     </ClCompile>
+    <ClCompile Include="Src\ComponentIDGenerator.cpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClCompile>
     <ClCompile Include="Src\SoundEmitterComponent.cpp">
       <Filter>Source Files\Sound\Components</Filter>
     </ClCompile>
@@ -331,6 +334,9 @@
     <ClInclude Include="Src\AssetsPathConfig.hpp">
       <Filter>Source Files\Config</Filter>
     </ClInclude>
+    <ClInclude Include="Src\ComponentIDGenerator.hpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClInclude>
     <ClInclude Include="Src\ISoundDevice.hpp">
       <Filter>Source Files\Sound</Filter>
     </ClInclude>
@@ -340,5 +346,10 @@
     <ClInclude Include="Src\SoundListenerComponent.hpp">
       <Filter>Source Files\Sound\Components</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\ComponentIDGeneratorImpl.hpp">
+      <Filter>Source Files\ECS</Filter>
+    </None>
   </ItemGroup>
 </Project>

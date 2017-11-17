@@ -10,6 +10,7 @@
 #include <LightSourceComponent.hpp>
 #include <MovementSystem.hpp>
 
+
 using namespace Poly;
 
 const float IntensityThreshold = 0.05f;
@@ -19,10 +20,16 @@ const size_t MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 : RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
 {
-	GetProgram().RegisterUniform("float", "uSpecularStrength");
+	GetProgram().RegisterUniform("vec4", "uCameraPosition");
+	GetProgram().RegisterUniform("vec4", "uCameraForward");
 
-	GetProgram().RegisterUniform("vec4", "uAmbientLight.Base.Color");
-	GetProgram().RegisterUniform("float", "uAmbientLight.Base.Intensity");
+	GetProgram().RegisterUniform("vec4", "uMaterial.Ambient");
+	GetProgram().RegisterUniform("vec4", "uMaterial.Diffuse");
+	GetProgram().RegisterUniform("vec4", "uMaterial.Specular");
+	GetProgram().RegisterUniform("float", "uMaterial.Shininess");
+
+	GetProgram().RegisterUniform("vec4", "uAmbientLight.Color");
+	GetProgram().RegisterUniform("float", "uAmbientLight.Intensity");
 
 	for (size_t i = 0; i < MAX_LIGHT_COUNT_DIRECTIONAL; ++i)
 	{
@@ -52,12 +59,15 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
 	
-	Vector CameraDir = MovementSystem::GetGlobalForward(camera->GetSibling<TransformComponent>());
-	GetProgram().SetUniform("uCameraDirection", CameraDir);
+	const TransformComponent* cameraTransCmp = camera->GetSibling<TransformComponent>();
+	Vector CameraPos = cameraTransCmp->GetGlobalTranslation();
+	Vector CameraDir = MovementSystem::GetGlobalForward(cameraTransCmp);
+	GetProgram().SetUniform("uCameraPosition", CameraPos);
+	GetProgram().SetUniform("uCameraForward", CameraDir);
 
 	AmbientLightWorldComponent* ambientCmp = world->GetWorldComponent<AmbientLightWorldComponent>();
-	GetProgram().SetUniform("uAmbientLight.Base.Color", ambientCmp->GetColor());
-	GetProgram().SetUniform("uAmbientLight.Base.Intensity", ambientCmp->GetIntensity());
+	GetProgram().SetUniform("uAmbientLight.Color", ambientCmp->GetColor());
+	GetProgram().SetUniform("uAmbientLight.Intensity", ambientCmp->GetIntensity());
 
 	int dirLightsCount = 0;
 	for (auto componentsTuple : world->IterateComponents<DirectionalLightComponent, TransformComponent>())
@@ -82,13 +92,10 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		TransformComponent* transformCmp = std::get<TransformComponent*>(componentsTuple);
 	
 		String baseName = String("uPointLight[") + String::From(pointLightsCount) + String("].");
-	
+		GetProgram().SetUniform(baseName + "Range", pointLightCmp->GetRange());
+		GetProgram().SetUniform(baseName + "Position", transformCmp->GetGlobalTranslation());
 		GetProgram().SetUniform(baseName + "Base.Color", pointLightCmp->GetColor());
 		GetProgram().SetUniform(baseName + "Base.Intensity", pointLightCmp->GetIntensity());
-		GetProgram().SetUniform(baseName + "Position", transformCmp->GetGlobalTranslation());
-		GetProgram().SetUniform(baseName + "Attenuation", pointLightCmp->GetAttenuation());
-		float range = sqrt(((1.f / IntensityThreshold) - 1.0f)/ pointLightCmp->GetAttenuation());
-		GetProgram().SetUniform(baseName + "Range", range);
 
 		++pointLightsCount;
 		if (pointLightsCount == MAX_LIGHT_COUNT_POINT)
@@ -96,38 +103,33 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	}
 	GetProgram().SetUniform("uPointLightCount", pointLightsCount);
 
-	GetProgram().SetUniform("uSpecularStrength", 0.1f); // TODO: move to Material
-
-	const float cameraHeight = 16.f + 1.f;
-	float verticalSpan = cameraHeight / 2.0f;
-	float horizontalSpan = (cameraHeight * camera->GetAspect()) / 2.0f;
-	Vector cameraPos = camera->GetSibling<TransformComponent>()->GetGlobalTranslation();
-
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
 
-		if (meshCmp->IsTransparent())
+		if (meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::LIT)
 		 	continue;
 
 		Vector objPos = transCmp->GetGlobalTranslation();
-
-		bool shouldCull = objPos.Y > cameraPos.Y + verticalSpan;
-		shouldCull = shouldCull || objPos.Y < cameraPos.Y - verticalSpan;
-		shouldCull = shouldCull || objPos.X > cameraPos.X + horizontalSpan;
-		shouldCull = shouldCull || objPos.X < cameraPos.X - horizontalSpan;
-		if (shouldCull)
-			continue;
 
 		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
 		Matrix screenTransform = mvp * objTransform;
 		GetProgram().SetUniform("uTransform", objTransform);
 		GetProgram().SetUniform("uMVPTransform", screenTransform);
-		GetProgram().SetUniform("uBaseColor", meshCmp->GetBaseColor());
+		
+		glPolygonMode(GL_FRONT_AND_BACK, meshCmp->GetIsWireframe() ? GL_LINE : GL_FILL);
+
+		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
+			PhongMaterial material = meshCmp->GetMaterial(i);
+			GetProgram().SetUniform("uMaterial.Ambient", material.AmbientColor);
+			GetProgram().SetUniform("uMaterial.Diffuse", material.DiffuseColor);
+			GetProgram().SetUniform("uMaterial.Specular", material.SpecularColor);
+			GetProgram().SetUniform("uMaterial.Shininess", material.Shininess);
+
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 
 			glBindVertexArray(meshProxy->GetVAO());
@@ -137,10 +139,18 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, static_cast<const GLTextureDeviceProxy*>(subMesh->GetMeshData().GetDiffTexture()->GetTextureProxy())->GetTextureID());
 			}
+			else
+			{
+				glBindTexture(GL_TEXTURE_2D, 0);
+			}
 
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 			glBindTexture(GL_TEXTURE_2D, 0);
 			glBindVertexArray(0);
+
+			++i;
 		}
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 }

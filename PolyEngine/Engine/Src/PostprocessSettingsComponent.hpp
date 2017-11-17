@@ -23,4 +23,6 @@ namespace Poly {
 		float Vignette = 0.30f;
 
 	};
+
+	REGISTER_COMPONENT(ComponentsIDGroup, PostprocessSettingsComponent)
 }

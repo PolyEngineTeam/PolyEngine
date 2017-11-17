@@ -23,30 +23,6 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	BaseWorld = std::make_unique<World>();
 	Game->RegisterEngine(this);
 
-	// Engine Components
-	RegisterComponent<TransformComponent>((size_t)eEngineComponents::TRANSFORM);
-	RegisterComponent<CameraComponent>((size_t)eEngineComponents::BASE_CAMERA);
-	RegisterComponent<MeshRenderingComponent>((size_t)eEngineComponents::MESH_RENDERING);
-	RegisterComponent<FreeFloatMovementComponent>((size_t)eEngineComponents::FREE_FLOAT_MOVEMENT);
-	RegisterComponent<ScreenSpaceTextComponent>((size_t)eEngineComponents::SCREEN_SPACE_TEXT);
-	RegisterComponent<SoundEmitterComponent>((size_t)eEngineComponents::SOUND_EMMITER);
-	RegisterComponent<SoundListenerComponent>((size_t)eEngineComponents::SOUND_LISTENER);
-	RegisterComponent<RigidBody2DComponent>((size_t)eEngineComponents::RIGIDBODY_2D);
-	RegisterComponent<Box2DColliderComponent>((size_t)eEngineComponents::BOX2D_COLLIDER);
-	RegisterComponent<Circle2DColliderComponent>((size_t)eEngineComponents::CIRCLE2D_COLLIDER);
-	RegisterComponent<DirectionalLightComponent>((size_t)eEngineComponents::DIRECTIONAL_LIGHT);
-	RegisterComponent<PointLightComponent>((size_t)eEngineComponents::POINT_LIGHT);
-	RegisterComponent<PostprocessSettingsComponent>((size_t)eEngineComponents::POSTPROCESS_SETTINGS);
-
-	// Engine World Components
-	RegisterWorldComponent<InputWorldComponent>((size_t)eEngineWorldComponents::INPUT);
-	RegisterWorldComponent<ViewportWorldComponent>((size_t)eEngineWorldComponents::VIEWPORT);
-	RegisterWorldComponent<TimeWorldComponent>((size_t)eEngineWorldComponents::TIME);
-	RegisterWorldComponent<DebugWorldComponent>((size_t)eEngineWorldComponents::DEBUG);
-	RegisterWorldComponent<DeferredTaskWorldComponent>((size_t)eEngineWorldComponents::DEFERRED_TASK);
-	RegisterWorldComponent<Physics2DWorldComponent>((size_t)eEngineWorldComponents::PHYSICS_2D);
-	RegisterWorldComponent<AmbientLightWorldComponent>((size_t)eEngineWorldComponents::DIFFUSE_LIGHT);
-
 	// Add WorldComponents
 	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(BaseWorld.get());
 	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(BaseWorld.get());
@@ -105,3 +81,10 @@ void Engine::ResizeScreen(const ScreenSize & size)
 	gConsole.LogDebug("Screen resize: {} {}", size.Width, size.Height);
 	GetRenderingDevice()->Resize(size);
 }
+
+void Engine::RequestGameQuit()
+{
+	QuitRequested = true;
+}
+
+bool Engine::IsQuitRequested() const { return QuitRequested; }

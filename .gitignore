@@ -53,6 +53,8 @@ ipch/
 xcuserdata/
 *.xccheckout
 
+# Vim stuff
+*.stackdump
 
 # Exculdes from ignore
 !**/ThirdParty/**

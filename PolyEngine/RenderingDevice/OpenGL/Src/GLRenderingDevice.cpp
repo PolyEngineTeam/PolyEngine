@@ -13,6 +13,7 @@
 #include "BlinnPhongRenderingPass.hpp"
 #include "Text2DRenderingPass.hpp"
 #include "DebugNormalsRenderingPass.hpp"
+#include "DebugNormalsWireframeRenderingPass.hpp"
 #include "PostprocessRenderingPass.hpp"
 #include "TransparentRenderingPass.hpp"
 #include "PostprocessQuad.hpp"
@@ -298,6 +299,7 @@ void GLRenderingDevice::InitPrograms()
 	RegisterGeometryPass<UnlitRenderingPass>(eGeometryRenderPassType::UNLIT, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPass<BlinnPhongRenderingPass>(eGeometryRenderPassType::BLINN_PHONG, {}, { { "color", texture }, { "depth", depth } });
 	RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS, {}, { { "color", texture },{ "depth", depth } });
+	RegisterGeometryPass<DebugNormalsWireframeRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS_WIREFRAME, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } }, PostprocessRenderingQuad.get());
 

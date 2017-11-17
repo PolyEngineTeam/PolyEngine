@@ -19,6 +19,7 @@
 #include <SoundSystem.hpp>
 #include <SoundResource.hpp>
 
+
 using namespace SGJ;
 using namespace Poly;
 
@@ -128,7 +129,9 @@ Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Pol
 
 	UniqueID mesh = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, mesh);
-	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, mesh, meshSource, eResourceSource::GAME, color);
+	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, mesh, meshSource, eResourceSource::GAME);
+	world->GetComponent<MeshRenderingComponent>(mesh)->SetMaterial(0, PhongMaterial(color, color, color, 8.0f));
+	
 	TransformComponent* meshTrans = world->GetComponent<TransformComponent>(mesh);
 	meshTrans->SetParent(tileTrans);
 
@@ -139,7 +142,8 @@ Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Pol
 	lightTrans->SetLocalScale(Vector(3.0f, 3.0f, 3.0f));
 	Color c = Color(color);
 	c.A = 0.5;
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, tileBloom, "Quad.obj", eResourceSource::GAME, c);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, tileBloom, "Quad.obj", eResourceSource::GAME);
+	world->GetComponent<MeshRenderingComponent>(tileBloom)->SetMaterial(0, PhongMaterial(c, c, c, 8.0f));
 
 	switch (tileType)
 	{
@@ -185,13 +189,17 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	//bodyTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
 	Vector correctedSize = Vector(0.4f, 0.4f, 0.1f);
 	bodyTrans->SetLocalScale(correctedSize);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, body, "Models/player.fbx", eResourceSource::GAME, Color(0.f, 1.5f, 0.f));
+	Color bodyColor = Color(0.f, 1.5f, 0.f);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, body, "Models/player.fbx", eResourceSource::GAME);
+	world->GetComponent<MeshRenderingComponent>(body)->SetMaterial(0, PhongMaterial(bodyColor, bodyColor, bodyColor, 8.0f));
 
 	UniqueID playerLight = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, playerLight);
 	Poly::TransformComponent* lightTrans = world->GetComponent<Poly::TransformComponent>(playerLight);
 	lightTrans->SetParent(playerTrans);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, playerLight, "Quad.obj", eResourceSource::GAME, Color(0.0f, 1.0f, 0.0f, 0.5f));
+	Color playerLightColor = Color(0.0f, 1.0f, 0.0f, 0.5f);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, playerLight, "Quad.obj", eResourceSource::GAME);
+	world->GetComponent<MeshRenderingComponent>(body)->SetMaterial(0, PhongMaterial(playerLightColor, playerLightColor, playerLightColor, 8.0f));
 
 	playerTrans->SetLocalTranslation(position);
 	return player;

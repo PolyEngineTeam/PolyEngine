@@ -142,6 +142,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				quitRequested = true;
 		}
 
+		quitRequested = quitRequested || Engine.IsQuitRequested();
 		// Run game code here
 		Engine.Update();
 	}

@@ -38,4 +38,6 @@ namespace Poly
 	private:
 	};
 
+	REGISTER_COMPONENT(ComponentsIDGroup, SoundEmitterComponent)
+
 } // namespace Poly
