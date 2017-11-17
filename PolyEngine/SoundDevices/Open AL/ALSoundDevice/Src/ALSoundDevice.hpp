@@ -24,7 +24,6 @@ namespace Poly
 		~ALSoundDevice();
 
 		void Init() override;
-		void Close() override;
 		void RenderWorld(World* world) override;
 
 		void SetDevice(const String& device) override;

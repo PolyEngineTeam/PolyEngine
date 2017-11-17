@@ -28,6 +28,7 @@ namespace Poly
 		float SecondsOffset = 0.0f;
 		bool Looping = false;
 		bool Paused = false;
+		bool Active = true;
 		bool PlaylistChanged = false;
 		bool StateChanged = true;
 

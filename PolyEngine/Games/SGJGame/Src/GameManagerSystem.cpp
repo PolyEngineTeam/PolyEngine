@@ -34,17 +34,18 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 	GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
 
 	// Proces sound entities
-	//for (size_t i=0; i < manager->SoundSampleEntities.GetSize();)
-	//{
-	//	UniqueID soundEnt = manager->SoundSampleEntities[i];
-	//	if (!SoundSystem::IsEmmiterActive(world, soundEnt))
-	//	{
-	//		manager->SoundSampleEntities.RemoveByIdx(i);
-	//		DeferredTaskSystem::DestroyEntity(world, soundEnt);
-	//	}
-	//	else
-	//		++i;
-	//}
+	for (size_t i=0; i < manager->SoundSampleEntities.GetSize();)
+	{
+		UniqueID soundEnt = manager->SoundSampleEntities[i];
+		SoundEmitterComponent* emitter = world->GetComponent<SoundEmitterComponent>(soundEnt);
+		if (!emitter->Active)
+		{
+			manager->SoundSampleEntities.RemoveByIdx(i);
+			DeferredTaskSystem::DestroyEntity(world, soundEnt);
+		}
+		else
+			++i;
+	}
 
 	PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(manager->Player);
 	if (playerCmp->DeathCoolDowntime > 0)
@@ -290,18 +291,23 @@ void SGJ::GameManagerSystem::DespawnLevel(Poly::World* world)
 
 void SGJ::GameManagerSystem::PlaySample(Poly::World* world, const String& file, const Vector& position, float pitch, float gain)
 {
-	//GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
-	//
-	//UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(world);
-	//DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, id);
-	//Poly::TransformComponent* trans = world->GetComponent<Poly::TransformComponent>(id);
-	//trans->SetLocalTranslation(position);
-	//DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(world, id, file, eResourceSource::GAME);
-	//
-	//SoundSystem::SetEmitterFrequency(world, id, pitch);
-	//SoundSystem::SetEmitterGain(world, id, gain);
-	//SoundSystem::PlayEmitter(world, id);
-	//gameMgrCmp->SoundSampleEntities.PushBack(id);
+	GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
+	
+	UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, id);
+	Poly::TransformComponent* trans = world->GetComponent<Poly::TransformComponent>(id);
+	trans->SetLocalTranslation(position);
+	SoundResource* res = ResourceManager<SoundResource>::Load(file, eResourceSource::GAME);
+	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(world, id);
+	SoundEmitterComponent* emitter = world->GetComponent<SoundEmitterComponent>(id);
+	emitter->Playlist.PushBack(res);
+	emitter->Pitch = pitch;
+	emitter->Gain = gain;
+	emitter->Pitch = pitch;
+	emitter->StateChanged = true;
+	emitter->PlaylistChanged = true;
+	
+	gameMgrCmp->SoundSampleEntities.PushBack(id);
 }
 
 void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
@@ -329,7 +335,7 @@ void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
 	DeferredTaskSystem::AddComponentImmediate<SoundEmitterComponent>(world, backgroundPlayer);
 	SoundEmitterComponent* emitter = world->GetComponent<SoundEmitterComponent>(backgroundPlayer);
 	emitter->Playlist.PushBack(ResourceManager<SoundResource>::Load("Audio/Pursuit_cut.ogg", eResourceSource::GAME));
-	emitter->Playlist.PushBack(ResourceManager<SoundResource>::Load("Audio/death-sound.ogg", eResourceSource::GAME));
+	emitter->Pitch = 1.25;
 	emitter->Looping = true;
 	emitter->StateChanged = true;
 	emitter->PlaylistChanged = true;

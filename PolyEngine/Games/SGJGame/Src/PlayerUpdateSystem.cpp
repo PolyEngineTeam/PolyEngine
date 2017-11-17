@@ -11,12 +11,17 @@
 #include "PostprocessSettingsComponent.hpp"
 #include "GameManagerSystem.hpp"
 
+#include <ctime>
+#include <stdlib.h>
+
 using namespace Poly;
 
 namespace SGJ
 {
 	void PlayerUpdateSystem::Update(World* world)
 	{
+		srand((unsigned int)time(NULL));
+
 		double deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
 
 		GameManagerWorldComponent* mgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
@@ -58,7 +63,7 @@ namespace SGJ
 		GameManagerWorldComponent* manager = world->GetWorldComponent<GameManagerWorldComponent>();
 		TransformComponent* transCmp = world->GetComponent<TransformComponent>(manager->Player);
 		PlayerControllerComponent* playerCmp = world->GetComponent<PlayerControllerComponent>(manager->Player);
-		GameManagerSystem::PlaySample(world, "Audio/death-sound.ogg", transCmp->GetGlobalTranslation(), 1.0f, 1.8f);
+		GameManagerSystem::PlaySample(world, "Audio/death-sound.ogg", transCmp->GetGlobalTranslation(), 1.0f * (rand() % 10 + 5) / 10.0f, 1.8f);
 		playerCmp->DeathCoolDowntime = playerCmp->DeathCoolDowntimeMax;
 	}
 
@@ -108,7 +113,7 @@ namespace SGJ
 			jump.Y = -jump.Y;
 
 		rigidbodyCmp->ApplyImpulseToCenter(jump);
-		GameManagerSystem::PlaySample(world, "Audio/jump-sound.ogg", transCmp->GetGlobalTranslation(), 1.5, 1.5);
+		GameManagerSystem::PlaySample(world, "Audio/jump-sound.ogg", transCmp->GetGlobalTranslation(), 1.5f * (rand() % 10 + 5) / 10.0f, 1.5f);
 	}
 
 	void PlayerUpdateSystem::UpdateInAir(Poly::World* world)

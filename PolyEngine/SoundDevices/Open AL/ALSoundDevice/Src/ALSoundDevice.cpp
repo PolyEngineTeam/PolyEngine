@@ -25,6 +25,9 @@ ALSoundDevice::ALSoundDevice()
 //------------------------------------------------------------------------------
 ALSoundDevice::~ALSoundDevice()
 {
+	alcMakeContextCurrent(nullptr);
+	alcDestroyContext(Context);
+	alcCloseDevice(Device);
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -39,14 +42,6 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::Init()
 	}
 	else
 		throw new ALSoundDeviceInitializationException();
-}
-
-//---------------------------------------------------------------------------------------------------
-void SOUND_DEVICE_DLLEXPORT ALSoundDevice::Close()
-{
-	alcMakeContextCurrent(NULL);
-	alcDestroyContext(Context);
-	alcCloseDevice(Device);
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -114,14 +109,17 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 				alSourcei(emitterID, AL_LOOPING, AL_FALSE);
 		
 			if (emitterCmp->Paused)
-				alSourcei(emitterID, AL_SOURCE_STATE, AL_PAUSED);
+				alSourcePause(emitterID);
 			else
-				alSourcei(emitterID, AL_SOURCE_STATE, AL_PLAYING);
+				alSourcePlay(emitterID);
+
+			if (emitterCmp->Active)
+				alSourceStop(emitterID);
 		}
 
-		if (emitterCmp->Looping && queuedBuffersCount - processedBuffersCount > 0)
+		if (emitterCmp->Active && emitterCmp->Looping && queuedBuffersCount - processedBuffersCount > 0)
 			continue;
-		else if (emitterCmp->PlaylistChanged)
+		else if (emitterCmp->Active && emitterCmp->PlaylistChanged)
 		{
 			emitterCmp->PlaylistChanged = false;
 
@@ -159,6 +157,10 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 			alSourceQueueBuffers(emitterID, queuedBuffersCount, dataHolder->QueuedBuffers.GetData());
 
 			alSourcePlay(emitterID);
+		}
+		else if (!emitterCmp->Looping)
+		{
+			emitterCmp->Active = false;
 		}
 	}
 }

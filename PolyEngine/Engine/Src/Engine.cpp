@@ -79,6 +79,7 @@ Engine::~Engine()
 	BaseWorld.reset();
 	Game.reset();
 	RenderingDevice.reset();
+	SoundDevice.reset();
 	gEngine = nullptr;
 }
 
