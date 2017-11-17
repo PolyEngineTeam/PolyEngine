@@ -151,19 +151,19 @@ typename std::enable_if<!C::value, F&&>::type select(T&&, F&& f) { return std::f
 
 //-----------------------------------------------------------------------------------------------------
 template<typename C, typename T, typename F>
-auto constexpr_if(T&& t, F&& f) { return select<C>(std::forward<T>(t), std::forward<F>(f))(C{}); }
+auto constexpr_if(T&& t, F&& f) { return select<C>(std::forward<T>(t), std::forward<F>(f))(int{}); }
 
 //-----------------------------------------------------------------------------------------------------
 template<typename TL>
-auto constexpr_match(TL&& f) { return std::forward<TL>(f)(int{}); }
+auto constexpr_match(TL&& tl) { return std::forward<TL>(tl)(int{}); }
 
 template<typename C1, typename T1, typename TL>
-auto constexpr_match(C1, T1&& t, TL&& f) { return select<C1>(std::forward<T1>(t), std::forward<TL>(f))(int{}); }
+auto constexpr_match(C1, T1&& t1, TL&& tl) { return select<C1>(std::forward<T1>(t1), std::forward<TL>(tl))(int{}); }
 
 template<typename C1, typename T1, typename C2, typename T2, typename... Args>
-auto constexpr_match(C1, T1&& t, C2, T2&& f, Args&&... tail)
+auto constexpr_match(C1, T1&& t1, C2, T2&& t2, Args&&... tail)
 {
-	return select<C1>(std::forward<T1>(t), [&, tail ...](auto) { return constexpr_match(C2{}, std::forward<T2>(f), tail...); })(int{});
+	return select<C1>(std::forward<T1>(t1), [&, tail ...](auto) { return constexpr_match(C2{}, std::forward<T2>(t2), tail...); })(int{});
 }
 
 //-----------------------------------------------------------------------------------------------------
