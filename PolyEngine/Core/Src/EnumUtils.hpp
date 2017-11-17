@@ -218,6 +218,8 @@ namespace Poly {
 	class EnumIteratorProxy
 	{
 		STATIC_ASSERTE(std::is_enum<E>::value, "Provided EnumIteratorProxy type is not an enum!");
+		using ValueType = typename std::underlying_type<E>::type; \
+		STATIC_ASSERTE(std::is_integral<ValueType>::value, "Only enums with integral underlying types are supported"); \
 	public:
 		EnumIterator<E> Begin() const { return EnumIterator<E>(0); }
 		EnumIterator<E> End() const { return EnumIterator<E>(E::_COUNT); }
@@ -262,8 +264,11 @@ namespace Poly {
 	{																								\
 		template<> struct EnumInfo<Type> : public EnumInfoBase														\
 		{                                                    										\
-			STATIC_ASSERTE(std::is_enum<Type>::value, "Provided type is not an enum!");\
-			STATIC_ASSERTE(std::is_integral<typename std::underlying_type<Type>::type>::value, "Underlying enum value type is not integral!");\
+			STATIC_ASSERTE(std::is_enum<Type>::value, "Enum type is required");\
+			using ValueType = typename std::underlying_type<Type>::type;\
+			STATIC_ASSERTE(std::is_integral<ValueType>::value, "Only enums with integral underlying types are supported");\
+			STATIC_ASSERTE(std::is_signed<ValueType>::value, "Only enums with signed underlying types are supported");\
+			STATIC_ASSERTE(sizeof(ValueType) <= sizeof(i64), "Only enums with max 64 bit underlying types are supported");\
 			static EnumInfo<Type>& Get() { static EnumInfo<Type> instance({__VA_ARGS__}); return instance; } 		\
 			EnumInfo(std::initializer_list<const char*> namesList)	\
 			{\

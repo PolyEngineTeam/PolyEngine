@@ -5,13 +5,13 @@
 
 namespace Poly
 {
-	/// <summary>Enum used to identify source of asset.
+	/// <summary>Enum used to identify source location of an asset.
 	enum class eResourceSource
 	{
-		ENGINE,
-		GAME,
-		NONE,
-		USR_LOCAL,
+		ENGINE, // engine resources location
+		GAME, // game resources location
+		USR_LOCAL, // user local space resources location
+		NONE, // default (often runtime directory) resources location, this option will not modify path to resource
 		_COUNT
 	};
 

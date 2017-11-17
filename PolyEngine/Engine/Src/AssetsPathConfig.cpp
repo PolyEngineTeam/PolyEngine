@@ -9,7 +9,8 @@ namespace Poly
 
 	AssetsPathConfig gAssetsPathConfig;
 
-	AssetsPathConfig::AssetsPathConfig() : ConfigBase("Assets Path Config", eResourceSource::NONE)
+	// Location needs to be set to eResourceSource::NONE, as this config prepares all required source paths
+	AssetsPathConfig::AssetsPathConfig() : ConfigBase("Assets Path Config", eResourceSource::NONE) 
 	{
 		EngineAssetsPath = DEFAULT_ENGINE_ASSETS_PATH;
 		GameAssetsPath = DEFAULT_GAME_ASSETS_PATH;
@@ -17,7 +18,6 @@ namespace Poly
 
 	const String& AssetsPathConfig::GetAssetsPath(eResourceSource source) const
 	{
-		static String EMPTY;
 		switch (source)
 		{
 		case eResourceSource::ENGINE:
@@ -26,10 +26,10 @@ namespace Poly
 			return GameAssetsPath;
 		case eResourceSource::NONE:
 		case eResourceSource::USR_LOCAL: //TODO implement usr local directory
-			return EMPTY;
+			return String::EMPTY;
 		default:
-			ASSERTE(false, "Invalid resoruce source!");
-			return EMPTY;
+			ASSERTE(false, "Invalid resource source!");
+			return String::EMPTY;
 		}
 	}
 }

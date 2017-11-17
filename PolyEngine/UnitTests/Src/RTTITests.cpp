@@ -17,7 +17,7 @@ class TestClass : public RTTIBase {
 	RTTI_DECLARE_TYPE_DERIVED(TestClass, RTTIBase)
 	{
 		RTTI_PROPERTY(val1, "Val1", RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_ENUM(val2, "Val2", RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY(val2, "Val2", RTTI::ePropertyFlag::NONE);
 	}
 public:
 	bool val1 = true;

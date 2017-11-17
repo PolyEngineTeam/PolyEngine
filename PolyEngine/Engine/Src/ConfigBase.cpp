@@ -26,7 +26,7 @@ void ConfigBase::Save()
 	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
 	DOMObject.Accept(writer);
 	
-	gConsole.LogDebug("{} json:\n{}", DisplayName, buffer.GetString());
+	//gConsole.LogDebug("{} json:\n{}", DisplayName, buffer.GetString());
 	SaveTextFileRelative(Location, GetFileName(), String(buffer.GetString()));
 }
 

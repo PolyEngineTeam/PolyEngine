@@ -194,9 +194,8 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 		break;
 	case eCorePropertyType::STRING:
 	{
-		String* str = reinterpret_cast<String*>(obj);
-		*str = String(value.GetString());
-		HEAVY_ASSERTE(str->GetLength() == value.GetStringLength(), "String deserialization failed");
+		*reinterpret_cast<String*>(obj) = String(value.GetString());
+		HEAVY_ASSERTE(reinterpret_cast<String*>(obj)->GetLength() == value.GetStringLength(), "String deserialization failed");
 		break;
 	}
 	case eCorePropertyType::ENUM:
@@ -211,7 +210,7 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 		else if (implData->EnumInfo->GetUnderlyingValueSize() == sizeof(i64))
 			*reinterpret_cast<i64*>(obj) = val;
 		else
-			ASSERTE(false, "Unhadled value size!");
+			ASSERTE(false, "Unhandled value size!");
 		break;
 	}
 	case eCorePropertyType::NONE:

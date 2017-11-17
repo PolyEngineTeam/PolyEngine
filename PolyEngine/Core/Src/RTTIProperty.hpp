@@ -77,7 +77,10 @@ namespace Poly {
 		template <typename E> Property CreateEnumPropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
 		{
 			STATIC_ASSERTE(std::is_enum<E>::value, "Enum type is required");
-			STATIC_ASSERTE(std::is_integral<typename std::underlying_type<E>::type>::value, "Enum with integral underlying type is required");
+			using UnderlyingType = typename std::underlying_type<E>::type;
+			STATIC_ASSERTE(std::is_integral<UnderlyingType>::value, "Only enums with integral underlying types are supported");
+			STATIC_ASSERTE(std::is_signed<UnderlyingType>::value, "Only enums with signed underlying types are supported");
+			STATIC_ASSERTE(sizeof(UnderlyingType) <= sizeof(i64), "Only enums with max 64 bit underlying types are supported");
 			std::shared_ptr<EnumPropertyImplData> implData = std::make_shared<EnumPropertyImplData>();
 
 			// Register EnumInfo object pointer to property
@@ -87,19 +90,15 @@ namespace Poly {
 
 		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
 		{ 
-			return Property{ TypeInfo::Get<T>(), offset, name, flags, GetCorePropertyType<T>()}; 
-		};
-
-		// specializations
-		template <> inline Property CreatePropertyInfo<String>(size_t offset, const char* name, ePropertyFlag flags)
-		{
-			return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<String>() };
+			return constexpr_match(
+				std::is_enum<T>{},			[&](auto) { return CreateEnumPropertyInfo<T>(offset, name, flags); },
+				std::is_same<String, T>{},	[&](auto) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<String>() }; },
+				/*default*/					[&](auto) { return Property{ TypeInfo::Get<T>(), offset, name, flags, GetCorePropertyType<T>() }; }
+			);
 		}
 
 		class CORE_DLLEXPORT PropertyManagerBase : public BaseObject<> {
 		public:
-			//TODO serialiation
-
 			void AddProperty(Property&& property) { Properties.PushBack(std::move(property)); }
 			const Dynarray<Property>& GetPropertyList() const { return Properties; };
 
@@ -142,8 +141,3 @@ namespace Poly {
 #define RTTI_PROPERTY_AUTONAME(variable, flags) \
 	STATIC_ASSERTE(!std::is_pointer<decltype(variable)>::value || EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE), "Serializable variable cannot be a pointer."); \
 	mgr->AddProperty(Poly::RTTI::CreatePropertyInfo<decltype(variable)>(Poly::RTTI::OffsetOfMember(&T::variable), #variable, flags))	
-
-// property with enum type
-#define RTTI_PROPERTY_ENUM(variable, var_name, flags) \
-	STATIC_ASSERTE(!std::is_pointer<decltype(variable)>::value || EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE), "Serializable variable cannot be a pointer."); \
-	mgr->AddProperty(Poly::RTTI::CreateEnumPropertyInfo<decltype(variable)>(Poly::RTTI::OffsetOfMember(&T::variable), var_name, flags))
