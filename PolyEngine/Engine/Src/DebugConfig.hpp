@@ -8,10 +8,10 @@ namespace Poly
 	{
 		RTTI_DECLARE_TYPE_DERIVED(DebugConfig, ConfigBase)
 		{
-			RTTI_PROPERTY(bool, DisplayFPS, "DisplayFPS", RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY(DisplayFPS, "DisplayFPS", RTTI::ePropertyFlag::NONE);
 		}
 	public:
-		DebugConfig() : ConfigBase("Debug", eConfigLocation::LOCAL) {}
+		DebugConfig() : ConfigBase("Debug Config", eResourceSource::ENGINE) {}
 
 		// Rendering
 		bool DisplayFPS = true;

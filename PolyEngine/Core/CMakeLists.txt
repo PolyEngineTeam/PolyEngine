@@ -1,3 +1,5 @@
+find_package(RapidJSON REQUIRED)
+
 set(POLYCORE_SRCS
 	Src/AABox.cpp
 	Src/AARect.cpp
@@ -9,6 +11,7 @@ set(POLYCORE_SRCS
 	Src/Quaternion.cpp
 	Src/RefCountedBase.cpp
 	Src/RTTI.cpp
+	Src/RTTISerialization.cpp
 	Src/RTTITypeInfo.cpp
 	Src/SimdMath.cpp
 	Src/String.cpp
@@ -46,6 +49,7 @@ set(POLYCORE_H_FOR_IDE
 	Src/RTTI.hpp
 	Src/RTTICast.hpp
 	Src/RTTIProperty.hpp
+	Src/RTTISerialization.hpp
 	Src/RTTITypeInfo.hpp
 	Src/RTTITypeInfoImpl.hpp
 	Src/SimdMath.hpp
@@ -61,6 +65,7 @@ add_library(polycore SHARED ${POLYCORE_SRCS} ${POLYCORE_H_FOR_IDE})
 target_compile_options(polycore PRIVATE $<$<BOOL:${SIMD}>:${SIMD_FLAGS}>)
 target_compile_definitions(polycore PRIVATE _CORE DISABLE_SIMD=$<NOT:$<BOOL:${SIMD}>>)
 target_include_directories(polycore PUBLIC ${POLYCORE_INCLUDE})
+target_link_libraries(polycore PRIVATE Rapid::JSON)
 
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	target_compile_options(polycore PRIVATE --coverage -fprofile-arcs -ftest-coverage)

@@ -75,8 +75,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\rapidjson\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CORE;NOMINMAX;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>CorePCH.hpp</PrecompiledHeaderFile>
@@ -88,8 +87,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\rapidjson\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CORE;NOMINMAX;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>CorePCH.hpp</PrecompiledHeaderFile>
@@ -103,8 +101,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\rapidjson\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CORE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>CorePCH.hpp</PrecompiledHeaderFile>
@@ -122,8 +119,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\rapidjson\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CORE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>CorePCH.hpp</PrecompiledHeaderFile>
@@ -152,6 +148,7 @@
     <ClCompile Include="Src\RTTI.cpp" />
     <ClCompile Include="Src\RTTITypeInfo.cpp" />
     <ClCompile Include="Src\SimdMath.cpp" />
+    <ClCompile Include="Src\RTTISerialization.cpp" />
     <ClCompile Include="src\String.cpp" />
     <ClCompile Include="Src\UniqueID.cpp" />
     <ClCompile Include="Src\Vector.cpp" />
@@ -187,6 +184,7 @@
     <ClInclude Include="Src\RTTI.hpp" />
     <ClInclude Include="Src\RTTICast.hpp" />
     <ClInclude Include="Src\RTTIProperty.hpp" />
+    <ClInclude Include="Src\RTTISerialization.hpp" />
     <ClInclude Include="Src\RTTITypeInfo.hpp" />
     <ClInclude Include="Src\RTTITypeInfoImpl.hpp" />
     <ClInclude Include="Src\SimdMath.hpp" />

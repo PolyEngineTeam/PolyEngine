@@ -9,6 +9,7 @@ namespace Poly {
 
 	class CORE_DLLEXPORT String : BaseObject<> {
 	public:
+		static const String EMPTY;
 
 		/// <summary>Basic String costructor that creates empty String</summary>
 		String() : String("") {};

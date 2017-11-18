@@ -3,6 +3,8 @@
 
 namespace Poly {
 	namespace RTTI {
+		const TypeInfo TypeInfo::INVALID = TypeInfo();
+
 		namespace Impl {
 
 			TypeManager& TypeManager::Get() {
