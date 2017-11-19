@@ -46,12 +46,12 @@ namespace Poly
 #if defined(_WIN32)
 		~LibraryFunctionHandle() { if (LibHandle) FreeLibrary(LibHandle); }
 	private:
-		LibraryFunctionHandle(HMODULE libHandle, Function* funcHandle) : FunctionPtr(funcHandle), LibHandle(libHandle) {}
+		LibraryFunctionHandle(HMODULE libHandle, Function* funcHandle) : LibHandle(libHandle), FunctionPtr(funcHandle) {}
 		HMODULE LibHandle = nullptr;
 #elif defined(__linux__) || defined(__APPLE__)
 		~LibraryFunctionHandle() { if (LibHandle) dlclose(LibHandle); }
 	private:
-		LibraryFunctionHandle(void* libHandle, Function* funcHandle) : FunctionPtr(funcHandle), LibHandle(libHandle) {}
+		LibraryFunctionHandle(void* libHandle, Function* funcHandle) : LibHandle(libHandle), FunctionPtr(funcHandle) {}
 		void* LibHandle = nullptr;
 #else
 #error "Unsupported platform :("
