@@ -34,6 +34,7 @@ namespace Poly
 			FunctionPtr = other.FunctionPtr;
 			other.LibHandle = nullptr;
 			other.FunctionPtr = nullptr;
+			return *this;
 		}
 		
 		template<typename... Args> inline typename std::result_of<Function*(Args...)>::type operator()(Args... args) 
