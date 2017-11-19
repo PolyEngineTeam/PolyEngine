@@ -151,11 +151,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Src\ALSoundDevice.hpp" />
-    <ClInclude Include="Src\SoundDataHolder.hpp" />
+    <ClInclude Include="Src\SoundBuffer.hpp" />
+    <ClInclude Include="Src\SoundEmitterData.hpp" />
+    <ClInclude Include="Src\SoundListenerData.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\ALSoundDevice.cpp" />
-    <ClCompile Include="Src\SoundDataHolder.cpp" />
+    <ClCompile Include="Src\SoundBuffer.cpp" />
+    <ClCompile Include="Src\SoundEmitterData.cpp" />
+    <ClCompile Include="Src\SoundListenerData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Core\Core.vcxproj">

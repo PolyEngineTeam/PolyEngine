@@ -18,6 +18,7 @@ void ENGINE_DLLEXPORT SoundSystem::SoundPhase(World* world)
 	gEngine->GetSoundDevice()->RenderWorld(world);
 }
 
+//---------------------------------------------------------------------------------------------------
 void ENGINE_DLLEXPORT SoundSystem::DecodeSoundData(SoundResource* resource, const BinaryBuffer& data, eSoundFileFormat format, size_t size, size_t offset)
 {
 	switch (format)
@@ -32,6 +33,7 @@ void ENGINE_DLLEXPORT SoundSystem::DecodeSoundData(SoundResource* resource, cons
 	}
 }
 
+//---------------------------------------------------------------------------------------------------
 void ENGINE_DLLEXPORT SoundSystem::DecodeOggVorbis(SoundResource* resource, const BinaryBuffer& data, size_t size, size_t offset)
 {
 	// Declarations and loading file to buffer.
@@ -279,6 +281,30 @@ void ENGINE_DLLEXPORT SoundSystem::DecodeOggVorbis(SoundResource* resource, cons
 	}
 
 	ogg_sync_clear(&syncState);
+}
+
+//---------------------------------------------------------------------------------------------------
+void ENGINE_DLLEXPORT SoundSystem::PushSoundResource(World * world, UniqueID emitterID, const SoundResource & res)
+{
+	gEngine->GetSoundDevice()->PushSoundResource(world->GetComponent<SoundEmitterComponent>(emitterID), res);
+}
+
+//---------------------------------------------------------------------------------------------------
+void ENGINE_DLLEXPORT SoundSystem::PopSoundResource(World * world, UniqueID emitterID)
+{
+	gEngine->GetSoundDevice()->PopSoundResource(world->GetComponent<SoundEmitterComponent>(emitterID));
+}
+
+//---------------------------------------------------------------------------------------------------
+int ENGINE_DLLEXPORT SoundSystem::GetProcessedBuffersCount(World * world, UniqueID emitterID)
+{
+	return gEngine->GetSoundDevice()->GetProcessedBuffersCount(world->GetComponent<SoundEmitterComponent>(emitterID));
+}
+
+//---------------------------------------------------------------------------------------------------
+int ENGINE_DLLEXPORT SoundSystem::GetQueuedBuffersCount(World * world, UniqueID emitterID)
+{
+	return gEngine->GetSoundDevice()->GetQueuedBuffersCount(world->GetComponent<SoundEmitterComponent>(emitterID));
 }
 
 

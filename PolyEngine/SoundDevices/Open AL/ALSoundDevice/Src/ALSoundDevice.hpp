@@ -2,7 +2,6 @@
 
 #include <alc.h>
 #include <al.h>
-#include <unordered_map>
 
 #include <ISoundDevice.hpp>
 #include <SoundResource.hpp>
@@ -11,12 +10,14 @@
 
 namespace Poly
 {
+	//---------------------------------------------------------------------------------------------------
 	class ALSoundDeviceInitializationException : public BaseObject<>, public std::exception
 	{
 	public:
 		ALSoundDeviceInitializationException() {}
 	};
 
+	//---------------------------------------------------------------------------------------------------
 	class SOUND_DEVICE_DLLEXPORT ALSoundDevice : public ISoundDevice
 	{
 	public:
@@ -30,6 +31,11 @@ namespace Poly
 		String GetCurrentDevice() override;
 		Dynarray<String> GetAvailableDevices() override;
 
+		void PushSoundResource(SoundEmitterComponent* emitter, const SoundResource& res) override;
+		void PopSoundResource(SoundEmitterComponent* emitter) override;
+		int GetProcessedBuffersCount(SoundEmitterComponent* emitter) override;
+		int GetQueuedBuffersCount(SoundEmitterComponent* emitter) override;
+
 	private:
 		ALCdevice* Device;
 		ALCcontext* Context;
@@ -42,6 +48,7 @@ namespace Poly
 	};
 } // namespace Poly
 
+  //---------------------------------------------------------------------------------------------------
 extern "C"
 {
 	SOUND_DEVICE_DLLEXPORT Poly::ISoundDevice* __stdcall PolyCreateSoundDevice();

@@ -6,8 +6,8 @@
 namespace Poly
 {
 	enum class eResourceSource;
-	class ISoundDataHolderProxy;
-	class SoundResource;
+	class ISoundBufferProxy;
+	class ISoundEmitterDataProxy;
 
 	class ENGINE_DLLEXPORT SoundEmitterComponent : public ComponentBase
 	{
@@ -29,13 +29,9 @@ namespace Poly
 		bool Looping = false;
 		bool Paused = false;
 		bool Active = true;
-		bool PlaylistChanged = false;
 		bool StateChanged = true;
 
-		Dynarray<SoundResource*> Playlist;
-		ISoundDataHolderProxy* DataHolder;
-
-	private:
+		ISoundEmitterDataProxy* SoundEmitterData = nullptr;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, SoundEmitterComponent)

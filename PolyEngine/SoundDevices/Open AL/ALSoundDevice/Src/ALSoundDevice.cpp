@@ -1,19 +1,17 @@
 #include "ALSoundDevice.hpp"
 
-// third party
-
 // engine
 #include <World.hpp>
 #include <TransformComponent.hpp>
-#include <FreeFloatMovementComponent.hpp>
-#include <DeferredTaskSystem.hpp>
 
-#include <SoundListenerComponent.hpp>
-#include <SoundEmitterComponent.hpp>
 #include <SoundResource.hpp>
+#include <SoundEmitterComponent.hpp>
+#include <SoundListenerComponent.hpp>
 
 // sound device
-#include "SoundDataHolder.hpp"
+#include "SoundBuffer.hpp"
+#include "SoundEmitterData.hpp"
+#include "SoundListenerData.hpp"
 
 using namespace Poly;
 
@@ -31,7 +29,7 @@ ALSoundDevice::~ALSoundDevice()
 }
 
 //---------------------------------------------------------------------------------------------------
-void SOUND_DEVICE_DLLEXPORT ALSoundDevice::Init()
+void ALSoundDevice::Init()
 {
 	Device = alcOpenDevice(nullptr);
 
@@ -45,38 +43,33 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::Init()
 }
 
 //---------------------------------------------------------------------------------------------------
-void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
+void ALSoundDevice::RenderWorld(World* world)
 {
 	for (auto& emitterTuple : world->IterateComponents<SoundEmitterComponent>())
 	{
 		alGetError();
 		SoundEmitterComponent* emitterCmp = std::get<SoundEmitterComponent*>(emitterTuple);
-
-		// create new sound emitter helpers
-		if (emitterCmp->GetFlags().IsSet(eComponentBaseFlags::NEWLY_CREATED))
-		{
-			unsigned int emitterID;
-			alGenSources(1, &emitterID);
-			emitterCmp->DataHolder = new SoundDataHolder(emitterID);
-		}
 		
 		// delete sound emitter helpers
 		if (emitterCmp->GetFlags().IsSet(eComponentBaseFlags::ABOUT_TO_BE_REMOVED))
 		{
-			alDeleteSources(1, &reinterpret_cast<SoundDataHolder*>(emitterCmp->DataHolder)->EmitterID);
-			delete emitterCmp->DataHolder;
+			alDeleteSources(1, &reinterpret_cast<SoundEmitterData*>(emitterCmp->SoundEmitterData)->EmitterID);
+			delete emitterCmp->SoundEmitterData;
 			continue;
 		}
 		
-		SoundDataHolder* dataHolder = reinterpret_cast<SoundDataHolder*>(emitterCmp->DataHolder);
-		unsigned int emitterID = reinterpret_cast<SoundDataHolder*>(emitterCmp->DataHolder)->EmitterID;
+		SoundEmitterData* emitterData = reinterpret_cast<SoundEmitterData*>(emitterCmp->SoundEmitterData);
+		unsigned int emitterID = emitterData->EmitterID;
 		
-		// get queued buffers count
-		int queuedBuffersCount;
 		int processedBuffersCount;
-		alGetSourcei(emitterID, AL_BUFFERS_QUEUED, &queuedBuffersCount);
-		alGetSourcei(emitterID, AL_BUFFERS_PROCESSED, &processedBuffersCount);
-		
+		alGetSourcei(reinterpret_cast<SoundEmitterData*>(emitterCmp->SoundEmitterData)->EmitterID, AL_BUFFERS_PROCESSED, &processedBuffersCount);
+
+		if (processedBuffersCount == emitterData->CurrentPlaylist.GetSize() && !emitterCmp->Looping)
+		{
+			emitterCmp->Active = false;
+			emitterCmp->StateChanged = true;
+		}
+
 		if (emitterCmp->StateChanged) 
 		{
 			emitterCmp->StateChanged = false;
@@ -107,66 +100,20 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::RenderWorld(World* world)
 				alSourcei(emitterID, AL_LOOPING, AL_TRUE);
 			else
 				alSourcei(emitterID, AL_LOOPING, AL_FALSE);
+
+			if (!emitterCmp->Active)
+				emitterCmp->Paused = true;
 		
 			if (emitterCmp->Paused)
 				alSourcePause(emitterID);
 			else
 				alSourcePlay(emitterID);
-
-			if (emitterCmp->Active)
-				alSourceStop(emitterID);
-		}
-
-		if (emitterCmp->Active && emitterCmp->Looping && queuedBuffersCount - processedBuffersCount > 0)
-			continue;
-		else if (emitterCmp->Active && emitterCmp->PlaylistChanged)
-		{
-			emitterCmp->PlaylistChanged = false;
-
-			// set all buffers as processed
-			alSourceStop(emitterID);
-			// unqueue all processed buffers
-			alSourceUnqueueBuffers(emitterID, (int)dataHolder->QueuedBuffers.GetSize(), dataHolder->QueuedBuffers.GetData());
-			// delete all buffers queued in source
-			alDeleteBuffers((int)dataHolder->QueuedBuffers.GetSize(), dataHolder->QueuedBuffers.GetData());
-			
-			// establish OpenAL buffer count
-			queuedBuffersCount = (int)emitterCmp->Playlist.GetSize();
-
-			if (queuedBuffersCount == 0)
-				continue;
-
-			// enlarge bufferID collection if needed
-			if (dataHolder->QueuedBuffers.GetCapacity() < queuedBuffersCount)
-				dataHolder->QueuedBuffers.Reserve(queuedBuffersCount);
-
-			// create new al buffers
-			alGenBuffers(queuedBuffersCount, dataHolder->QueuedBuffers.GetData());
-			
-			// copy certain number of queued buffers into immediate buffers
-			for (int i = 0; i < queuedBuffersCount; i++)
-			{
-				const SoundResource* res = emitterCmp->Playlist[i];
-			
-				// fill OpenAL buffer with data
-				unsigned int* buffersBegin = dataHolder->QueuedBuffers.GetData();
-				alBufferData(buffersBegin[i], FormatMap[res->GetSampleFormat()], res->GetRawData()->GetData(), (int)res->GetRawData()->GetSize(), (int)res->GetFrequency());
-			}
-
-			// queue buffers
-			alSourceQueueBuffers(emitterID, queuedBuffersCount, dataHolder->QueuedBuffers.GetData());
-
-			alSourcePlay(emitterID);
-		}
-		else if (!emitterCmp->Looping)
-		{
-			emitterCmp->Active = false;
 		}
 	}
 }
 
 //---------------------------------------------------------------------------------------------------
-void SOUND_DEVICE_DLLEXPORT ALSoundDevice::SetDevice(const String& device)
+void ALSoundDevice::SetDevice(const String& device)
 {
 	alcCloseDevice(Device);
 	Device = alcOpenDevice(device.GetCStr());
@@ -174,13 +121,13 @@ void SOUND_DEVICE_DLLEXPORT ALSoundDevice::SetDevice(const String& device)
 }
 
 //---------------------------------------------------------------------------------------------------
-String SOUND_DEVICE_DLLEXPORT ALSoundDevice::GetCurrentDevice()
+String ALSoundDevice::GetCurrentDevice()
 {
 	return String(alcGetString(Device, ALC_DEVICE_SPECIFIER));
 }
 
 //---------------------------------------------------------------------------------------------------
-Dynarray<String> SOUND_DEVICE_DLLEXPORT ALSoundDevice::GetAvailableDevices()
+Dynarray<String> ALSoundDevice::GetAvailableDevices()
 {
 	Dynarray<String> availableDevices;
 
@@ -204,6 +151,74 @@ Dynarray<String> SOUND_DEVICE_DLLEXPORT ALSoundDevice::GetAvailableDevices()
 	}
 
 	return availableDevices;
+}
+
+//---------------------------------------------------------------------------------------------------
+void ALSoundDevice::PushSoundResource(SoundEmitterComponent* emitterCmp, const SoundResource& src)
+{
+	if (emitterCmp->SoundEmitterData == nullptr)
+	{
+		emitterCmp->SoundEmitterData = new SoundEmitterData;
+		alGenSources(1, &reinterpret_cast<SoundEmitterData*>(emitterCmp->SoundEmitterData)->EmitterID);
+	}
+
+	SoundBuffer* buffer = new SoundBuffer();
+
+	alGenBuffers(1, &buffer->BufferID);
+	alBufferData(buffer->BufferID, FormatMap[src.GetSampleFormat()], src.GetRawData()->GetData(), (int)src.GetRawData()->GetSize(), (int)src.GetFrequency());
+
+	alSourceQueueBuffers(reinterpret_cast<SoundEmitterData*>(emitterCmp->SoundEmitterData)->EmitterID, 1, &buffer->BufferID);
+
+	emitterCmp->StateChanged = true;
+
+	reinterpret_cast<SoundEmitterData*>(emitterCmp->SoundEmitterData)->CurrentPlaylist.PushBack(buffer->BufferID);
+}
+
+//---------------------------------------------------------------------------------------------------
+void ALSoundDevice::PopSoundResource(SoundEmitterComponent* emitterCmp)
+{
+	if (emitterCmp->SoundEmitterData == nullptr)
+	{
+		emitterCmp->SoundEmitterData = new SoundEmitterData;
+		alGenSources(1, &reinterpret_cast<SoundEmitterData*>(emitterCmp->SoundEmitterData)->EmitterID);
+	}
+
+	int processedBuffersCount;
+	alGetSourcei(reinterpret_cast<SoundEmitterData*>(emitterCmp->SoundEmitterData)->EmitterID, AL_BUFFERS_PROCESSED, &processedBuffersCount);
+
+	if (processedBuffersCount > 0)
+	{
+		alSourceUnqueueBuffers(reinterpret_cast<SoundEmitterData*>(emitterCmp->SoundEmitterData)->EmitterID, 1, &reinterpret_cast<SoundEmitterData*>(emitterCmp->SoundEmitterData)->CurrentPlaylist[0]);
+		reinterpret_cast<SoundEmitterData*>(emitterCmp->SoundEmitterData)->CurrentPlaylist.PopFront();
+	}
+}
+
+//---------------------------------------------------------------------------------------------------
+int ALSoundDevice::GetProcessedBuffersCount(SoundEmitterComponent* emitterCmp)
+{
+	if (emitterCmp->SoundEmitterData == nullptr)
+	{
+		emitterCmp->SoundEmitterData = new SoundEmitterData;
+		alGenSources(1, &reinterpret_cast<SoundEmitterData*>(emitterCmp->SoundEmitterData)->EmitterID);
+	}
+
+	int processedBuffersCount;
+	alGetSourcei(reinterpret_cast<SoundEmitterData*>(emitterCmp->SoundEmitterData)->EmitterID, AL_BUFFERS_PROCESSED, &processedBuffersCount);
+	return processedBuffersCount;
+}
+
+//---------------------------------------------------------------------------------------------------
+int ALSoundDevice::GetQueuedBuffersCount(SoundEmitterComponent* emitterCmp)
+{
+	if (emitterCmp->SoundEmitterData == nullptr)
+	{
+		emitterCmp->SoundEmitterData = new SoundEmitterData;
+		alGenSources(1, &reinterpret_cast<SoundEmitterData*>(emitterCmp->SoundEmitterData)->EmitterID);
+	}
+
+	int queuedBuffersCount;
+	alGetSourcei(reinterpret_cast<SoundEmitterData*>(emitterCmp->SoundEmitterData)->EmitterID, AL_BUFFERS_QUEUED, &queuedBuffersCount);
+	return queuedBuffersCount;
 }
 
 //------------------------------------------------------------------------------

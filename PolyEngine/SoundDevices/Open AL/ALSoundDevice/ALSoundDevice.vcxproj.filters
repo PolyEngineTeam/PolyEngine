@@ -18,7 +18,13 @@
     <ClInclude Include="Src\ALSoundDevice.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Src\SoundDataHolder.hpp">
+    <ClInclude Include="Src\SoundBuffer.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SoundEmitterData.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SoundListenerData.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -26,7 +32,13 @@
     <ClCompile Include="Src\ALSoundDevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\SoundDataHolder.cpp">
+    <ClCompile Include="Src\SoundBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SoundEmitterData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SoundListenerData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

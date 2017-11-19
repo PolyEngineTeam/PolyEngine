@@ -308,12 +308,12 @@ void SGJ::GameManagerSystem::PlaySample(Poly::World* world, const String& file, 
 	SoundResource* res = ResourceManager<SoundResource>::Load(file, eResourceSource::GAME);
 	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(world, id);
 	SoundEmitterComponent* emitter = world->GetComponent<SoundEmitterComponent>(id);
-	emitter->Playlist.PushBack(res);
+	SoundSystem::PushSoundResource(world, id, *res);
+	ResourceManager<SoundResource>::Release(res);
 	emitter->Pitch = pitch;
 	emitter->Gain = gain;
 	emitter->Pitch = pitch;
 	emitter->StateChanged = true;
-	emitter->PlaylistChanged = true;
 	
 	gameMgrCmp->SoundSampleEntities.PushBack(id);
 }
@@ -342,11 +342,12 @@ void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
 	UniqueID backgroundPlayer = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<SoundEmitterComponent>(world, backgroundPlayer);
 	SoundEmitterComponent* emitter = world->GetComponent<SoundEmitterComponent>(backgroundPlayer);
-	emitter->Playlist.PushBack(ResourceManager<SoundResource>::Load("Audio/Pursuit_cut.ogg", eResourceSource::GAME));
-	emitter->Pitch = 1.25;
+	SoundResource* res = ResourceManager<SoundResource>::Load("Audio/Pursuit_cut.ogg", eResourceSource::GAME);
+	SoundSystem::PushSoundResource(world, backgroundPlayer, *res);
+	ResourceManager<SoundResource>::Release(res);
+	emitter->Pitch = 1.0;
 	emitter->Looping = true;
 	emitter->StateChanged = true;
-	emitter->PlaylistChanged = true;
 
 	UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(gEngine->GetWorld(), id);
