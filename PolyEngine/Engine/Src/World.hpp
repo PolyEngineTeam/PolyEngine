@@ -59,9 +59,28 @@ namespace Poly {
 		/// <returns>Pointer to world component</returns>
 		template<typename T>
 		T* GetWorldComponent()
-		{			
-			ASSERTE(HasWorldComponent(gEngine->GetWorldComponentID<T>()), "Invalid type - world component of given type does not exist!");
-			return reinterpret_cast<T*>(WorldComponents[gEngine->GetWorldComponentID<T>()]);
+		{
+			const auto ctypeID = GetWorldComponentID<T>();
+			ASSERTE(HasWorldComponent(ctypeID), "Invalid type - world component of given type does not exist!");
+			return reinterpret_cast<T*>(WorldComponents[ctypeID]);
+		}
+
+		//------------------------------------------------------------------------------
+		/// <summary>Returns statically set component type ID.</summary>
+		/// <tparam name="T">Type of requested component.</tparam>
+		/// <returns>Associated ID.</returns>
+		template<typename T> static size_t GetComponentID() noexcept
+		{
+			return ComponentsIDGroup::GetComponentTypeID<T>();
+		}
+
+		//------------------------------------------------------------------------------
+		/// <summary>Returns statically set component type ID from 'World' group.</summary>
+		/// <tparam name="T">Type of requested component.</tparam>
+		/// <returns>Associated ID.</returns>
+		template<typename T> static size_t GetWorldComponentID() noexcept
+		{
+			return WorldComponentsIDGroup::GetComponentTypeID<T>();
 		}
 
 		template<typename PrimaryComponent, typename... SecondaryComponents>
@@ -154,58 +173,62 @@ namespace Poly {
 		template<typename T, typename... Args>
 		void AddComponent(const UniqueID& entityId, Args&&... args)
 		{
+			const auto ctypeID = GetComponentID<T>();
 			T* ptr = GetComponentAllocator<T>()->Alloc();
 			::new(ptr) T(std::forward<Args>(args)...);
 			Entity* ent = IDToEntityMap[entityId];
 			HEAVY_ASSERTE(ent, "Invalid entity ID");
-			HEAVY_ASSERTE(!ent->HasComponent(gEngine->GetComponentID<T>()), "Failed at AddComponent() - a component of a given UniqueID already exists!");
-			ent->ComponentPosessionFlags.set(gEngine->GetComponentID<T>(), true);
-			ent->Components[gEngine->GetComponentID<T>()] = ptr;
+			HEAVY_ASSERTE(!ent->HasComponent(ctypeID), "Failed at AddComponent() - a component of a given UniqueID already exists!");
+			ent->ComponentPosessionFlags.set(ctypeID, true);
+			ent->Components[ctypeID] = ptr;
 			ptr->Owner = ent;
-			HEAVY_ASSERTE(ent->HasComponent(gEngine->GetComponentID<T>()), "Failed at AddComponent() - the component was not added!");
+			HEAVY_ASSERTE(ent->HasComponent(ctypeID), "Failed at AddComponent() - the component was not added!");
 		}
 
 		//------------------------------------------------------------------------------
 		template<typename T>
 		void RemoveComponent(const UniqueID& entityId)
 		{
+			const auto ctypeID = GetComponentID<T>();
 			Entity* ent = IDToEntityMap[entityId];
 			HEAVY_ASSERTE(ent, "Invalid entity ID");
-			HEAVY_ASSERTE(ent->HasComponent(gEngine->GetComponentID<T>()), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
-			ent->ComponentPosessionFlags.set(gEngine->GetComponentID<T>(), false);
-			T* component = static_cast<T*>(ent->Components[gEngine->GetComponentID<T>()]);
-			ent->Components[gEngine->GetComponentID<T>()] = nullptr;
+			HEAVY_ASSERTE(ent->HasComponent(ctypeID), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
+			ent->ComponentPosessionFlags.set(ctypeID, false);
+			T* component = static_cast<T*>(ent->Components[ctypeID]);
+			ent->Components[ctypeID] = nullptr;
 			component->~T();
 			GetComponentAllocator<T>()->Free(component);
-			HEAVY_ASSERTE(!ent->HasComponent(gEngine->GetComponentID<T>()), "Failed at AddComponent() - the component was not removed!");
+			HEAVY_ASSERTE(!ent->HasComponent(ctypeID), "Failed at AddComponent() - the component was not removed!");
 		}
 
 		//------------------------------------------------------------------------------
 		template<typename T>
 		IterablePoolAllocator<T>* GetComponentAllocator()
 		{
-			size_t componentID = gEngine->GetComponentID<T>();
-			HEAVY_ASSERTE(componentID < MAX_COMPONENTS_COUNT, "Invalid component ID");
-			if (ComponentAllocators[componentID] == nullptr)
-				ComponentAllocators[componentID] = new IterablePoolAllocator<T>(MAX_ENTITY_COUNT);
-			return static_cast<IterablePoolAllocator<T>*>(ComponentAllocators[componentID]);
+			const auto ctypeID = GetComponentID<T>();
+			HEAVY_ASSERTE(ctypeID < MAX_COMPONENTS_COUNT, "Invalid component ID");
+			if (ComponentAllocators[ctypeID] == nullptr)
+				ComponentAllocators[ctypeID] = new IterablePoolAllocator<T>(MAX_ENTITY_COUNT);
+			return static_cast<IterablePoolAllocator<T>*>(ComponentAllocators[ctypeID]);
 		}
 
 		//------------------------------------------------------------------------------
 		template<typename T, typename... Args>
 		void AddWorldComponent(Args&&... args)
 		{
-			HEAVY_ASSERTE(!HasWorldComponent(gEngine->GetWorldComponentID<T>()), "Failed at AddWorldComponent() - a world component of a given type already exists!");
-			WorldComponents[gEngine->GetWorldComponentID<T>()] = new T(std::forward<Args>(args)...);
+			const auto ctypeID = GetWorldComponentID<T>();
+			HEAVY_ASSERTE(!HasWorldComponent(ctypeID), "Failed at AddWorldComponent() - a world component of a given type already exists!");
+			WorldComponents[ctypeID] = new T(std::forward<Args>(args)...);
 		}
 
 		//------------------------------------------------------------------------------
 		template<typename T>
 		void RemoveWorldComponent()
 		{
-			HEAVY_ASSERTE(HasWorldComponent(gEngine->GetWorldComponentID<T>()), "Failed at RemoveWorldComponent() - a component of a given type does not exist!");
-			T* component = reinterpret_cast<T*>(WorldComponents[gEngine->GetWorldComponentID<T>()]);
-			WorldComponents[gEngine->GetWorldComponentID<T>()] = nullptr;
+			const auto ctypeID = GetComponentID<T>();
+			HEAVY_ASSERTE(HasWorldComponent(ctypeID), "Failed at RemoveWorldComponent() - a component of a given type does not exist!");
+			T* component = reinterpret_cast<T*>(WorldComponents[ctypeID]);
+			WorldComponents[ctypeID] = nullptr;
 			component->~T();
 		}
 
@@ -224,8 +247,9 @@ namespace Poly {
 	template<typename T>
 	T* Entity::GetComponent()
 	{
-		if (HasComponent(gEngine->GetComponentID<T>()))
-			return static_cast<T*>(Components[gEngine->GetComponentID<T>()]);
+		const auto ctypeID = World::GetComponentID<T>();
+		if (HasComponent(ctypeID))
+			return static_cast<T*>(Components[ctypeID]);
 		else
 			return nullptr;
 	}

@@ -8,13 +8,16 @@ find_package(Box2D REQUIRED)
 find_package(RapidJSON REQUIRED)
 
 set(POLYENGINE_SRCS
+	Src/AssetsPathConfig.cpp
 	Src/CameraComponent.cpp
 	Src/CameraSystem.cpp
-	Src/CoreConfig.cpp
+	Src/ConfigBase.cpp
+	Src/DebugConfig.cpp
 	Src/DebugWorldComponent.cpp
 	Src/DeferredTaskSystem.cpp
 	Src/Engine.cpp
 	Src/Entity.cpp
+	Src/ComponentIDGenerator.cpp
 	Src/FontResource.cpp
 	Src/FPSSystem.cpp
 	Src/FreeFloatMovementComponent.cpp
@@ -48,10 +51,12 @@ set(POLYENGINE_SRCS
 )
 set(POLYENGINE_INCLUDE Src)
 set(POLYENGINE_H_FOR_IDE
+	Src/AssetsPathConfig.hpp
 	Src/CameraComponent.hpp
 	Src/CameraSystem.hpp
 	Src/ComponentBase.hpp
-	Src/CoreConfig.hpp
+	Src/ConfigBase.hpp
+	Src/DebugConfig.hpp
 	Src/DebugWorldComponent.hpp
 	Src/DeferredTaskBase.hpp
 	Src/DeferredTaskImplementation.hpp
@@ -60,6 +65,8 @@ set(POLYENGINE_H_FOR_IDE
 	Src/Engine.hpp
 	Src/EnginePCH.hpp
 	Src/Entity.hpp
+	Src/ComponentIDGenerator.hpp
+	Src/ComponentIDGeneratorImpl.hpp
 	Src/FontResource.hpp
 	Src/FPSSystem.hpp
 	Src/FreeFloatMovementComponent.hpp

@@ -11,7 +11,7 @@ namespace Poly {
 	public:
 
 		bool UseBgShader = true;
-		bool UseFgShader = true;
+		bool UseFgShader = false;
 
 		int UseCashetes = 0;
 		float Distortion = 0.45f;
@@ -23,4 +23,6 @@ namespace Poly {
 		float Vignette = 0.30f;
 
 	};
+
+	REGISTER_COMPONENT(ComponentsIDGroup, PostprocessSettingsComponent)
 }

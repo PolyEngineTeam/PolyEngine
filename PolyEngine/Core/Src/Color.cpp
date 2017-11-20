@@ -4,18 +4,12 @@
 
 using namespace Poly;
 
-//------------------------------------------------------------------------------
-Color::Color() : R(0), G(0), B(0), A(1)
-{
-}
+const Color Color::WHITE = Color(1.0f, 1.0f, 1.0f);
+const Color Color::BLACK = Color(0.0f, 0.0f, 0.0f);
+const Color Color::RED = Color(1.0f, 0.0f, 0.0f);
+const Color Color::GREEN = Color(0.0f, 1.0f, 0.0f);
+const Color Color::BLUE = Color(0.0f, 0.0f, 1.0f);
 
-//------------------------------------------------------------------------------
-Color::Color(float r, float g, float b, float a)
-	: R(r), G(g), B(b), A(a)
-{
-}
-
-//------------------------------------------------------------------------------
 std::ostream& operator<< (std::ostream& stream, const Color& color)
 {
 	return stream << "Color[ " << color.R << " " << color.G << " " << color.B << " " << color.A << " ]";

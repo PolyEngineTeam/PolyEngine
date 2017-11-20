@@ -1,3 +1,5 @@
+#include "stdlib.h" // srand rand
+
 #include "RenderingSandbox.hpp"
 
 #include <DeferredTaskSystem.hpp>
@@ -23,72 +25,67 @@ void RenderingSandbox::Init()
 {
 	World* world = Engine->GetWorld();
 
+	srand(42);
+
 	Camera = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, Camera);
-	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(world, Camera, 60_deg, 1.0f, 1000.f);
+	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(world, Camera, 60_deg, 1.0f, 3000.f);
 	DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(world, Camera, 10.0f, 0.003f);
 	DeferredTaskSystem::AddComponentImmediate<Poly::PostprocessSettingsComponent>(world, Camera);
 	Poly::TransformComponent* cameraTrans = world->GetComponent<Poly::TransformComponent>(Camera);
 	cameraTrans->SetLocalTranslation(Vector(0.0f, 5.0f, 15.0f));
-	// cameraTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 180_deg));
 
 	world->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, world->GetComponent<Poly::CameraComponent>(Camera));
-
-	Vector DirLightPos = Vector(0.0f, 5.0f, 10.0f);
+	world->GetWorldComponent<AmbientLightWorldComponent>()->SetColor(Color(0.2f, 0.5f, 1.0f));
+	world->GetWorldComponent<AmbientLightWorldComponent>()->SetIntensity(0.1f);
+	
+	
+	// Dir Light 0
 	Quaternion DirLightRot = Quaternion(Vector::UNIT_Y, -45_deg) * Quaternion(Vector::UNIT_X, -15_deg);
-	DirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, DirLight);
-	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightSourceComponent>(world, DirLight, Color(1.0f, 1.0f, 0.9f), 0.5f);
-	Poly::TransformComponent* dirLightTrans = world->GetComponent<Poly::TransformComponent>(DirLight);
-	dirLightTrans->SetLocalTranslation(DirLightPos);
+	Poly::UniqueID KeyDirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, KeyDirLight);
+	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightComponent>(world, KeyDirLight, Color(1.0f, 0.9f, 0.8f), 0.8f);
+	Poly::TransformComponent* dirLightTrans = world->GetComponent<Poly::TransformComponent>(KeyDirLight);
 	dirLightTrans->SetLocalRotation(DirLightRot);
 
-	Vector PointLightPos = Vector(3.0f, -5.0f, 10.0f);
-	auto PointLight = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLight);
-	DeferredTaskSystem::AddComponentImmediate<Poly::PointLightSourceComponent>(world, PointLight, Color(1.0f, 0.0f, 0.0f), 2000.5f, 1000.0f);
-	Poly::TransformComponent* lightTrans = world->GetComponent<Poly::TransformComponent>(PointLight);
-	dirLightTrans->SetLocalTranslation(PointLightPos);
+	CreatePointLight(100.0f);
 
-	auto Dummy = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, Dummy);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, Dummy, "Models/bullet/bullet.obj", eResourceSource::GAME);
-	Poly::TransformComponent* dummyTrans = world->GetComponent<Poly::TransformComponent>(Dummy);
-	dummyTrans->SetLocalScale(Vector(0.5f, 0.5f, -1.0f));
-	dummyTrans->SetLocalTranslation(DirLightPos);
-	dummyTrans->SetLocalRotation(DirLightRot);
-
+	AddPointLights(7);
+	
 	float yPos = (float)Engine->GetRenderingDevice()->GetScreenSize().Height;
 	auto textDispaly = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::ScreenSpaceTextComponent>(world, textDispaly, Vector{ 0.0f, yPos ,0.0f }, "Fonts/Raleway/Raleway-Heavy.ttf", eResourceSource::ENGINE, 32, "Kill count: 0");
 
-	auto player = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, player);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, player, "Models/tank2/bradle.3ds", eResourceSource::GAME);
-	Poly::TransformComponent* playerTransform = world->GetComponent<Poly::TransformComponent>(player);
-	playerTransform->SetLocalTranslation(Vector(-3.0f, 0.0f, 5.0f));
-	playerTransform->SetLocalScale(10.0f);
-	playerTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -90_deg) * Quaternion(Vector::UNIT_X, -90_deg));
 
 	auto shaderball = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, shaderball);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, shaderball, "Models/shaderball/shaderball.fbx", eResourceSource::GAME);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, shaderball, "Models/shaderball/PolyEngine_shaderball.fbx", eResourceSource::GAME);
+	Poly::MeshRenderingComponent* ballMesh = world->GetComponent<Poly::MeshRenderingComponent>(shaderball);
+	ballMesh->SetMaterial(0, PhongMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 0.0f), Color(1.0f, 1.0f, 0.5f), 8.0f));
+	ballMesh->SetMaterial(1, PhongMaterial(Color(1.0f, 1.0f, 1.0f), Color(0.4f, 0.4f, 0.4f), Color(1.0f, 1.0f, 0.5f), 16.0f));
 	Poly::TransformComponent* ballTrans = world->GetComponent<Poly::TransformComponent>(shaderball);
-	ballTrans->SetLocalTranslation(Vector(3.0f, 0.0f, 5.0f));
-	ballTrans->SetLocalScale(0.01f);
-	// entTransform->SetLocalRotation(Quaternion(Vector::UNIT_Y, -90_deg) * Quaternion(Vector::UNIT_X, -90_deg));
-
-	const float SCALE = 4.0f;
-	const float SIZE = 40.0f;
+	ballTrans->SetLocalScale(0.1f);
 
 	auto ground = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, ground);
-	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, ground, "Models/ground/ground.fbx", eResourceSource::GAME);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, ground, "Models/Sponza/sponza.obj", eResourceSource::GAME);
 	Poly::TransformComponent* groundTrans = world->GetComponent<Poly::TransformComponent>(ground);
-	//	groundTransform->SetLocalTranslation(Vector(SCALE * SIZE, 0.f, SCALE * SIZE));
-	groundTrans->SetLocalScale(SCALE);
+	Poly::MeshRenderingComponent* sponzaMesh = world->GetComponent<Poly::MeshRenderingComponent>(ground);
+	for (int i = 0; i < sponzaMesh->GetMesh()->GetSubMeshes().GetSize(); ++i)
+	 	sponzaMesh->SetMaterial(i, PhongMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), 8.0f));
 
 	Engine->RegisterGameUpdatePhase(GameMainSystem::GameUpdate);
+
+	for (auto cmpTuple : world->IterateComponents<PostprocessSettingsComponent>())
+	{
+		PostprocessSettingsComponent* postCmp = std::get<PostprocessSettingsComponent*>(cmpTuple);
+		postCmp->Distortion		= 0.0f;
+		postCmp->ColorTempValue	= 6500.0f;
+		postCmp->Saturation		= 1.0f;
+		postCmp->Grain			= 0.0f;
+		postCmp->Stripes		= 0.0f;
+		postCmp->Vignette		= 0.0f;
+	}
 };
 
 void RenderingSandbox::Deinit()
@@ -100,38 +97,83 @@ void RenderingSandbox::Deinit()
 	}
 };
 
+float RenderingSandbox::Random()
+{
+	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+}
+
+float RenderingSandbox::Random(float min, float max)
+{
+	float rnd = Random();
+	return Lerp(min, max, rnd);
+}
+
+void RenderingSandbox::AddDirectionalLights() 
+{
+	World* world = Engine->GetWorld();
+	Quaternion DirLightRot = Quaternion(Vector::UNIT_Y, -45_deg) * Quaternion(Vector::UNIT_X, -15_deg);
+
+	for (int i = 0; i < 7; ++i)
+	{
+		Poly::UniqueID DirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+		DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, DirLight);
+		DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightComponent>(world, DirLight, Color(Random(), Random(), Random()), 0.4f);
+		Poly::TransformComponent* dirLightTrans = world->GetComponent<Poly::TransformComponent>(DirLight);
+		dirLightTrans->SetLocalTranslation(Vector(0.0f, 0.0f, 0.0f));
+		dirLightTrans->SetLocalRotation(DirLightRot);
+	}
+}
+
+void RenderingSandbox::AddPointLights(int Quota) 
+{
+	for (int i = 0; i < Quota; ++i)
+	{
+		CreatePointLight(200.0f);
+	}
+}
+
+void RenderingSandbox::CreatePointLight(float Range)
+{
+	World* world = Engine->GetWorld();
+
+	Vector PointLightPos = Vector(Random(-1.0f, 1.0f), Random(0.0f, 0.2f), Random(-0.5f, 0.5f)) * 1000.0f;
+	Color LightColor = Color(1.0f, 0.5f, 0.0f) + Color(Random(0.0f, 1.0f), Random( 0.0, 0.5f), Random(0.0f, 0.2f));
+
+	// float PointLightRange = 100.0f;
+	PointLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLight);
+	DeferredTaskSystem::AddComponentImmediate<Poly::PointLightComponent>(world, PointLight, LightColor, 1.0f, Range);
+	Poly::TransformComponent* PointLightTrans = world->GetComponent<Poly::TransformComponent>(PointLight);
+	PointLightTrans->SetLocalTranslation(PointLightPos);
+
+	Poly::UniqueID PointLightDebugSource = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLightDebugSource);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, PointLightDebugSource, "Models/Primitives/Sphere_LowPoly.obj", eResourceSource::GAME);
+	Poly::MeshRenderingComponent* PointLightMesh = world->GetComponent<Poly::MeshRenderingComponent>(PointLightDebugSource);
+	PointLightMesh->SetShadingModel(eShadingModel::UNLIT);
+	PointLightMesh->SetMaterial(0, PhongMaterial(LightColor, LightColor, LightColor, 8.0f));
+	Poly::TransformComponent* PointLightDebugSourceTrans = world->GetComponent<Poly::TransformComponent>(PointLightDebugSource);
+	PointLightDebugSourceTrans->SetParent(PointLightTrans);
+	PointLightDebugSourceTrans->SetLocalScale(1.0f);
+	PointLightDebugSourceTrans->SetLocalTranslation(Vector(0.0f, 0.0f, 0.0f));
+
+	Poly::UniqueID PointLightDebugRange = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, PointLightDebugRange);
+	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, PointLightDebugRange, "Models/Primitives/Sphere_LowPoly.obj", eResourceSource::GAME);
+	Poly::MeshRenderingComponent* PointLightRangeMesh = world->GetComponent<Poly::MeshRenderingComponent>(PointLightDebugRange);
+	PointLightRangeMesh->SetShadingModel(eShadingModel::UNLIT);
+	PointLightRangeMesh->SetIsWireframe(true);
+	PointLightRangeMesh->SetMaterial(0, PhongMaterial(LightColor, LightColor, LightColor, 8.0f));
+	Poly::TransformComponent* PointLightRangeTrans = world->GetComponent<Poly::TransformComponent>(PointLightDebugRange);
+	PointLightRangeTrans->SetParent(PointLightTrans);
+	PointLightRangeTrans->SetLocalScale(Range);
+	PointLightRangeTrans->SetLocalTranslation(Vector(0.0f, 0.0f, 0.0f));
+}
+
 void GameMainSystem::GameUpdate(Poly::World* world)
 {
-	double time = world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime();
-	double deltaTime = TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY);
+	float time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
+	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
 
-	// int UseCashetes = 0;
-	// float ColorTempLuminancePreservation = 0.75f;
-	float Distortion	= 0.5f;
-	float Bloom			= 0.4f;
-	float ColorTempValue = 9500.0f; // 6500.0 from [1000.0, 40000.0]
-	float Saturation	= 0.5f;
-	float Grain			= 0.5f;
-	float Stripes		= 0.5f;
-	float Vignette		= 0.5f;
-	float Brightness	= 0.1f;
-	float Contrast		= 1.5f;
-
-	for (auto cmpTuple : world->IterateComponents<PostprocessSettingsComponent>())
-	{
-		PostprocessSettingsComponent* postCmp = std::get<PostprocessSettingsComponent*>(cmpTuple);
-		float t = SmoothStep(-0.2f, 0.2f, -Cos(Angle::FromRadians(0.5f*time))); // [0, 1]
-
-		postCmp->Distortion = t * Distortion;
-	//	postCmp->Bloom = t * Bloom;
-		postCmp->ColorTempValue = Lerp(6500.0f, ColorTempValue, t);
-		postCmp->Saturation = Lerp(1.0f, Saturation, t);
-		postCmp->Grain = Lerp(0.0f, Grain, t);
-		postCmp->Stripes = Lerp(0.0f, Stripes, t);
-		postCmp->Vignette = Lerp(0.0f, Vignette, t);
-		//postCmp->Brightness = Lerp(0.0f, Brightness, t);
-		//postCmp->Contrast = Lerp(1.0f, Contrast, t);
-
-		// gConsole.LogInfo("PostCmp: t: {}, Saturation: {}, Vignette: {}", t, postCmp->Saturation, postCmp->Vignette);
-	}
+	gConsole.LogInfo("GameMainSystem::GameUpdate: t: {}, dt: {}", time, deltaTime);
 }

@@ -43,6 +43,8 @@ namespace Poly
 		  //--------------------------------------------------------------------------
 		class CORE_DLLEXPORT TypeInfo : public BaseObjectLiteralType<> {
 		public:
+			static const TypeInfo INVALID;
+
 			typedef long long TypeId;
 
 			constexpr TypeInfo() : ID(0) {}
@@ -69,6 +71,8 @@ namespace Poly
 			inline bool isTypeDerivedFrom() const {
 				return Impl::TypeManager::Get().IsTypeDerivedFrom(*this, GetUnifiedTypeInfo<T>());
 			}
+
+			const char* GetTypeName() const;
 
 			CORE_DLLEXPORT friend std::ostream& operator<<(std::ostream& stream, const TypeInfo& typeInfo);
 

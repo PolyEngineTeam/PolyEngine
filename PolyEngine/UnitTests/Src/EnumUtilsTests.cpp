@@ -2,7 +2,6 @@
 
 #include <EnumUtils.hpp>
 
-
 using namespace Poly;
 
 enum class eTestEnum
@@ -13,15 +12,7 @@ enum class eTestEnum
 	_COUNT
 };
 
-REGISTER_ENUM_NAMES(eTestEnum, "Val1", "Val2", "Val3" );
-
-enum class eTestFlagsEnum
-{
-	FLAG_1 = 0x01,
-	FLAG_2 = 0x02,
-	FLAG_3 = 0x04
-};
-
+REGISTER_ENUM_NAMES(eTestEnum, "Val1", "Val2", "Val3");
 
 TEST_CASE("EnumArray tests", "[EnumArray]")
 {
@@ -30,23 +21,44 @@ TEST_CASE("EnumArray tests", "[EnumArray]")
 	EnumArray<int, eTestEnum, 2> a2;
 	REQUIRE(a2.GetSize() == 2);
 
-	EnumArray<int, eTestEnum> a3{1, 2, 3};
-	REQUIRE(a3.GetSize() == (int)eTestEnum::_COUNT);
-	REQUIRE(a3[eTestEnum::VAL_1] == 1);
-	REQUIRE(a3[eTestEnum::VAL_2] == 2);
+	a1[eTestEnum::VAL_1] = 4;
+	a1[eTestEnum::VAL_2] = 48;
+	a1[eTestEnum::VAL_3] = 3;
+
+	EnumArray<int, eTestEnum> a3;
+	a3 = a1;
+
+	REQUIRE(a3[eTestEnum::VAL_1] == 4);
+	REQUIRE(a3[eTestEnum::VAL_2] == 48);
 	REQUIRE(a3[eTestEnum::VAL_3] == 3);
 
-	REQUIRE(a1 != a3);
+	EnumArray<int, eTestEnum> a4{ { eTestEnum::VAL_2, 1 },{ eTestEnum::VAL_1, 2 },{ eTestEnum::VAL_3, 3 } };
+	REQUIRE(a4.GetSize() == (int)eTestEnum::_COUNT);
+	REQUIRE(a4[eTestEnum::VAL_1] == 2);
+	REQUIRE(a4[eTestEnum::VAL_2] == 1);
+	REQUIRE(a4[eTestEnum::VAL_3] == 3);
 
-	a1[eTestEnum::VAL_1] = 1;
-	a1[eTestEnum::VAL_2] = 2;
+	REQUIRE(a1 != a4);
+
+	a1[eTestEnum::VAL_1] = 2;
+	a1[eTestEnum::VAL_2] = 1;
 	a1[eTestEnum::VAL_3] = 3;
-	REQUIRE(a1 == a3);
+	REQUIRE(a1 == a4);
 
 	REQUIRE(strcmp(GetEnumName(eTestEnum::VAL_1), "Val1") == 0);
 	REQUIRE(strcmp(GetEnumName(eTestEnum::VAL_2), "Val2") == 0);
 	REQUIRE(strcmp(GetEnumName(eTestEnum::VAL_3), "Val3") == 0);
 }
+
+// **********************************************************************************************************************************************************
+
+enum class eTestFlagsEnum
+{
+	FLAG_1 = 0x01,
+	FLAG_2 = 0x02,
+	FLAG_3 = 0x04
+};
+
 
 TEST_CASE("EnumFlags tests", "[EnumFlags]")
 {

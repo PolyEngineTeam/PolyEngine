@@ -12,7 +12,7 @@ void FPSSystem::FPSUpdatePhase(World* world)
 {
 	DebugWorldComponent* com = world->GetWorldComponent<DebugWorldComponent>();
 
-	if (gCoreConfig.DisplayFPS && !com->FPSData.TextID)
+	if (gDebugConfig.DisplayFPS && !com->FPSData.TextID)
 	{
 		UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(world);
 		DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(world,  id, Vector(300, 300, 0), "Fonts/Raleway/Raleway-Regular.ttf", eResourceSource::ENGINE, 32);
@@ -20,7 +20,7 @@ void FPSSystem::FPSUpdatePhase(World* world)
 	}
 		
 	
-	if (gCoreConfig.DisplayFPS && TimeSystem::GetTimerElapsedTime(world, eEngineTimer::SYSTEM) - com->FPSData.ElapsedTime > 1)
+	if (gDebugConfig.DisplayFPS && TimeSystem::GetTimerElapsedTime(world, eEngineTimer::SYSTEM) - com->FPSData.ElapsedTime > 1)
 	{
 		com->FPSData.ElapsedTime = TimeSystem::GetTimerElapsedTime(world, eEngineTimer::SYSTEM);
 

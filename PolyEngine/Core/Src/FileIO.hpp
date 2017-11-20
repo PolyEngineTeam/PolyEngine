@@ -7,6 +7,8 @@
 
 namespace Poly {
 
+	//TODO add creation of folders if necessary
+
 #if defined(__GNUC__) || defined(__clang__)
 	inline int fopen_s(FILE *__restrict__ *__restrict__ streamptr, const char *__restrict__ filename, const char *__restrict__ mode) {
 		FILE* f = fopen(filename, mode);

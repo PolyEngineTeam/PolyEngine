@@ -2,17 +2,17 @@
 
 #include "LightSourceComponent.hpp"
 
-Poly::DiffuseLightSourceWorldComponent::DiffuseLightSourceWorldComponent(const Color& color, float intensity)
+Poly::AmbientLightWorldComponent::AmbientLightWorldComponent(const Color& color, float intensity)
 	: LightColor(color), Intensity(intensity)
 {
 }
 
-Poly::DirectionalLightSourceComponent::DirectionalLightSourceComponent(const Color& color, float intensity)
+Poly::DirectionalLightComponent::DirectionalLightComponent(const Color& color, float intensity)
 	: LightColor(color), Intensity(intensity)
 {
 }
 
-Poly::PointLightSourceComponent::PointLightSourceComponent(const Color& color, float intensity, float attenuation)
-	: LightColor(color), Intensity(intensity), Attenuation(attenuation)
+Poly::PointLightComponent::PointLightComponent(const Color& color, float intensity, float range)
+	: LightColor(color), Intensity(intensity), Range(range)
 {
 }

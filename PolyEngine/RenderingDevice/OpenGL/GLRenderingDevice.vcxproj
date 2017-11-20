@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="Src\BlinnPhongRenderingPass.hpp" />
     <ClInclude Include="Src\DebugNormalsRenderingPass.hpp" />
+    <ClInclude Include="Src\DebugNormalsWireframeRenderingPass.hpp" />
     <ClInclude Include="Src\GLMeshDeviceProxy.hpp" />
     <ClInclude Include="Src\GLRenderingDevice.hpp" />
     <ClInclude Include="Src\GLTextFieldBufferDeviceProxy.hpp" />
@@ -171,10 +172,12 @@
     <ClInclude Include="Src\RenderingPassBase.hpp" />
     <ClInclude Include="Src\Text2DRenderingPass.hpp" />
     <ClInclude Include="Src\TransparentRenderingPass.hpp" />
+    <ClInclude Include="Src\UnlitRenderingPass.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\BlinnPhongRenderingPass.cpp" />
     <ClCompile Include="Src\DebugNormalsRenderingPass.cpp" />
+    <ClCompile Include="Src\DebugNormalsWireframeRenderingPass.cpp" />
     <ClCompile Include="Src\GLMeshDeviceProxy.cpp" />
     <ClCompile Include="Src\GLRenderingDevice.cpp" />
     <ClCompile Include="Src\GLTextFieldBufferDeviceProxy.cpp" />
@@ -186,6 +189,7 @@
     <ClCompile Include="Src\RenderingPassBase.cpp" />
     <ClCompile Include="Src\Text2DRenderingPass.cpp" />
     <ClCompile Include="Src\TransparentRenderingPass.cpp" />
+    <ClCompile Include="Src\UnlitRenderingPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Core.vcxproj">

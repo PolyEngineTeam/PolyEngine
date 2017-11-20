@@ -59,4 +59,5 @@
 #include "Physics2DSystem.hpp"
 
 // Config
-#include "CoreConfig.hpp"
+#include "AssetsPathConfig.hpp"
+#include "DebugConfig.hpp"

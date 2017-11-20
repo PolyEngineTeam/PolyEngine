@@ -6,6 +6,8 @@
 
 using namespace Poly;
 
+const String String::EMPTY = String();
+
 size_t Poly::StrLen(const char* str) {
 	size_t len = 0;
 	while (str[len] != 0)
@@ -68,12 +70,18 @@ String String::From(const std::string& var) {
 	return String(var.c_str());
 }
 
-bool String::Contains(const String& /*var*/) const {
-	ASSERTE(false, "Not impleented yet.");
-	//TODO Dynarray.FindAllIdx()
-	//for all this.Data.FindAllIdx()
-	//	if var == this->Substring(idx, idx+var.Data.GetSize()
-	//		return true
+bool String::Contains(const String& var) const {
+	size_t idx2 = 0;
+	for (size_t idx1 = 0; idx1 < GetLength(); idx1++)
+	{
+		if (var[idx2] == Data[idx1])
+			idx2++;
+		else
+			idx2 = 0;
+
+		if (idx2 == var.GetLength())
+			return true;
+	}
 	return false;
 }
 
@@ -126,11 +134,10 @@ String String::Replace(char what, char with) const {
 	return s;
 }
 
-String String::Replace(const String& /*what*/, const String& /*with*/) const {
-	ASSERTE(false, "Not implemented yet.");
-	//split source by delimiter a
-	//return string joined with separator b
-	return String();
+String String::Replace(const String& what, const String& with) const {
+	
+	Dynarray<String> splitted = Split(what);
+	return Join(splitted.GetData(), splitted.GetSize(), with);
 }
 
 Dynarray<String> String::Split(char delimiter) const {

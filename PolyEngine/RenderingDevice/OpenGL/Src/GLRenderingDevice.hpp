@@ -6,6 +6,8 @@
 
 namespace Poly
 {
+	class CameraComponent;
+	class AARect;
 	class World;
 	struct PostprocessQuad;
 	class RenderingPassBase;
@@ -16,9 +18,11 @@ namespace Poly
 	private:
 		enum class eGeometryRenderPassType
 		{
+			UNLIT,
 			BLINN_PHONG,
 			TRANSPARENT_GEOMETRY,
 			DEBUG_NORMALS,
+			DEBUG_NORMALS_WIREFRAME,
 			TEXT_2D,
 			_COUNT
 		};
@@ -71,6 +75,12 @@ namespace Poly
 		void EndFrame();
 
 		void CleanUpResources();
+
+		void RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderUnlit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderNormals(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderNormalsWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 
 		template<typename T>
 		void RegisterGeometryPass(eGeometryRenderPassType type,

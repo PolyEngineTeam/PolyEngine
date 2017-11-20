@@ -66,5 +66,9 @@ namespace Poly {
 		std::map<String, OutputInfo> Outputs;
 		GLuint ProgramHandle;
 		EnumArray<String, eShaderUnitType> ShaderCode;
+
+		String VertexProgramPath;
+		String GeometryProgramPath;
+		String FragmentProgramPath;
 	};
 }

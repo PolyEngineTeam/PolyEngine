@@ -208,3 +208,16 @@ TEST_CASE("Dynarray iterators dereferencing operators tests", "[Dynarray]")
 	REQUIRE(b.Begin()->GetVal() == true);
 	REQUIRE((*b.Begin()).GetVal() == true);
 }
+
+TEST_CASE("Dynarray find all idx", "[Dynarray]")
+{
+	Dynarray<int> a;
+	a.PushBack(10);
+	a.PushBack(20);
+	a.PushBack(10);
+
+	Dynarray<size_t> result;
+	result = a.FindAllIdx(10);
+	REQUIRE(result[0] == 0);
+	REQUIRE(result[1] == 2);
+}
