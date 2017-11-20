@@ -6,6 +6,7 @@
 
 #include <Core.hpp>
 
+// ---------------------------------------------------------------------------------------------------------
 EditorMainWindow::EditorMainWindow(QWidget *parent)
 	: QMainWindow(parent),
 	ui(new Ui::EditorMainWindowClass)
@@ -37,7 +38,18 @@ EditorMainWindow::EditorMainWindow(QWidget *parent)
 	Poly::gConsole.LogError("test2");
 }
 
+// ---------------------------------------------------------------------------------------------------------
 EditorMainWindow::~EditorMainWindow()
 {
 	delete ui;
+}
+
+// ---------------------------------------------------------------------------------------------------------
+void EditorMainWindow::GameUpdatePhase()
+{
+}
+
+// ---------------------------------------------------------------------------------------------------------
+void EditorMainWindow::EditorUpdatePhase()
+{
 }

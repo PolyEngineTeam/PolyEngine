@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "Core\Core.vcxproj", "{CAD95E91-98A5-497A-9726-09C897EDB267}"
 EndProject
@@ -71,10 +71,8 @@ Global
 		{3B123CD8-CBF6-40AF-8D79-7CBEBFA80FF3}.Release|x64.Build.0 = Release|x64
 		{B12702AD-ABFB-343A-A199-8E24837244A3}.Debug|x64.ActiveCfg = Debug|x64
 		{B12702AD-ABFB-343A-A199-8E24837244A3}.Debug|x64.Build.0 = Debug|x64
-		{B12702AD-ABFB-343A-A199-8E24837244A3}.Debug|x86.ActiveCfg = Debug|x64
 		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|x64.ActiveCfg = Release|x64
 		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|x64.Build.0 = Release|x64
-		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,5 +81,8 @@ Global
 		{65ACF8FD-853F-4F27-AB59-EF2E13268720} = {73B76588-D587-410D-B6A0-2FB50324456D}
 		{1FFE2400-7129-41DC-9EFB-08CDEAD7F66A} = {37ED4269-2B2C-49CB-82B0-E1F8C4313E6C}
 		{3B123CD8-CBF6-40AF-8D79-7CBEBFA80FF3} = {37ED4269-2B2C-49CB-82B0-E1F8C4313E6C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {41BD3BD7-99E5-4C7E-B0D3-1FF77C9355C0}
 	EndGlobalSection
 EndGlobal

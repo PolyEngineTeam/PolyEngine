@@ -16,4 +16,7 @@ public:
 
 private:
 	Ui::EditorMainWindowClass* ui;
+
+	void GameUpdatePhase();
+	void EditorUpdatePhase();
 };

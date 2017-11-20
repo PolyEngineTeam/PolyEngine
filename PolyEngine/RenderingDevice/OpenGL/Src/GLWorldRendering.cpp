@@ -250,7 +250,7 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 	// for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
 
 	// Render text
-	GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);
+	//GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);
 
 	if (post && post->UseFgShader)
 		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND]->Run(world, cameraCmp, rect);
