@@ -13,6 +13,7 @@ set(POLYCORE_SRCS
 	Src/RTTI.cpp
 	Src/RTTISerialization.cpp
 	Src/RTTITypeInfo.cpp
+	Src/SafePtrRoot.cpp
 	Src/SimdMath.cpp
 	Src/String.cpp
 	Src/UniqueID.cpp
@@ -52,6 +53,8 @@ set(POLYCORE_H_FOR_IDE
 	Src/RTTISerialization.hpp
 	Src/RTTITypeInfo.hpp
 	Src/RTTITypeInfoImpl.hpp
+	Src/SafePtr.hpp
+	Src/SafePtrRoot.hpp
 	Src/SimdMath.hpp
 	Src/String.hpp
 	Src/UniqueID.hpp
