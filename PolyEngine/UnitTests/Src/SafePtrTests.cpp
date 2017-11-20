@@ -25,10 +25,10 @@ TEST_CASE("Registering and comparing pointers", "[SafePtr]") {
 	Test obj2 = Test(2);
 
 	SafePtr<Test> p1 = SafePtr<Test>(&obj1);
-	SafePtr<Test> p2 = &obj2;
+	SafePtr<Test> p2 = SafePtr<Test>(&obj2);
 
-	REQUIRE(p1 == obj1);
-	REQUIRE(p2 == obj2);
+	REQUIRE(p1 == &obj1);
+	REQUIRE(p2 == &obj2);
 
 	REQUIRE(p1 != p2);
 	REQUIRE(p1 != &obj2);

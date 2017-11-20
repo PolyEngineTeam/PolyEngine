@@ -24,11 +24,6 @@ namespace Poly
 			return dynamic_cast<T*>(SafePtrRoot::GetPointer(PointerIdx));
 		}
 
-		/// <summary>Alternative way to construct SafePtr instance</summary>
-		/// <param name="pointer">Raw pointer to target object</param>
-		/// <returns>SafePtr instance</returns>
-		SafePtr operator=(const SafePtrRoot* pointer) {	return SafePtr(pointer); }
-
 		/// <summary>Member access operator</summary>
 		/// <returns>Raw pointer to target object</returns>
 		T *operator->() { return Get();	}
@@ -53,7 +48,7 @@ namespace Poly
 		/// <summary>Equality operator</summary>
 		/// <param name="other">Raw pointer</param>
 		/// <returns>True, if both SafePtr instance and raw pointer points to the same object. False, if not</returns>
-		bool operator==(const T& other) const {	return this->Get() == &other; }
+		bool operator==(const T* other) const {	return this->Get() == other; }
 
 		/// <summary>Inequality operator</summary>
 		/// <param name="other">Another SafePtr instance</param>
@@ -63,7 +58,7 @@ namespace Poly
 		/// <summary>Inequality operator</summary>
 		/// <param name="other">Raw pointer</param>
 		/// <returns>False, if both SafePtr instance and raw pointer points to the same object, True, if not</returns>
-		bool operator!=(const T& other) const { return !(*this == other); }
+		bool operator!=(const T* other) const { return !(*this == other); }
 
 	private:
 		size_t PointerIdx;
