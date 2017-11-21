@@ -95,13 +95,10 @@ void GameplayViewportWidget::keyPressEvent(QKeyEvent* keyEvent)
 // ---------------------------------------------------------------------------------------------------------
 void GameplayViewportWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 {
-	if (!dupa)
-		dupa = true;
+	if (keyEvent->isAutoRepeat())
+		keyEvent->ignore();
 	else
-	{
  		Poly::gEngine->KeyUp(static_cast<Poly::eKey>((unsigned int)keyEvent->nativeVirtualKey()));
-		dupa = false;
-	}
 }
 
 // ---------------------------------------------------------------------------------------------------------

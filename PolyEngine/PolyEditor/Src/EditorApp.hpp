@@ -7,13 +7,13 @@ namespace Ui
 	class EditorMainWindowClass;
 }
 
-class EditorApplication : public QMainWindow
+class EditorApp : public QMainWindow
 {
 	Q_OBJECT
 
 public:
-	EditorApplication(QWidget *parent = nullptr);
-	~EditorApplication();
+	EditorApp(QWidget *parent = nullptr);
+	~EditorApp();
 
 private:
 	void SetupUpdateTimer();

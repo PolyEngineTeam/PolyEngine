@@ -1,11 +1,11 @@
 #include "PolyEditorPCH.hpp"
-#include "EditorMainWindow.hpp"
+#include "EditorApp.hpp"
 #include <QtWidgets/QApplication>
 
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
-	EditorApplication w;
+	EditorApp w;
 	w.show();
 	return a.exec();
 }

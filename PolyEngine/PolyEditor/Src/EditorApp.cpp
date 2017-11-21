@@ -1,5 +1,5 @@
 #include "PolyEditorPCH.hpp"
-#include "EditorMainWindow.hpp"
+#include "EditorApp.hpp"
 #include "ui_EditorMainWindow.h"
 #include <QFileSystemModel>
 #include <QFileSystemWatcher>
@@ -7,7 +7,7 @@
 #include <Core.hpp>
 
 // ---------------------------------------------------------------------------------------------------------
-EditorApplication::EditorApplication(QWidget *parent)
+EditorApp::EditorApp(QWidget *parent)
 	: QMainWindow(parent),
 	MainWindow(new Ui::EditorMainWindowClass)
 {
@@ -41,13 +41,14 @@ EditorApplication::EditorApplication(QWidget *parent)
 }
 
 // ---------------------------------------------------------------------------------------------------------
-EditorApplication::~EditorApplication()
+EditorApp::~EditorApp()
 {
 	delete MainWindow;
+	delete UpdateTimer;
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void EditorApplication::SetupUpdateTimer()
+void EditorApp::SetupUpdateTimer()
 {
 	UpdateTimer = new QTimer(this);
 	connect(UpdateTimer, SIGNAL(timeout()), this, SLOT(UpdatePhase()));
@@ -55,7 +56,7 @@ void EditorApplication::SetupUpdateTimer()
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void EditorApplication::UpdatePhase()
+void EditorApp::UpdatePhase()
 {
 	MainWindow->ViewportWidget->Update();
 }

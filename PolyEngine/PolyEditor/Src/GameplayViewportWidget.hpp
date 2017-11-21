@@ -28,6 +28,4 @@ private:
 	Poly::IGame* LoadGameDll(Poly::String path);
 
 	Poly::Engine* Engine = nullptr;
-
-	bool dupa = false;
 };
