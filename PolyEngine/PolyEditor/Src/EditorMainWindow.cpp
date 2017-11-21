@@ -7,13 +7,13 @@
 #include <Core.hpp>
 
 // ---------------------------------------------------------------------------------------------------------
-EditorMainWindow::EditorMainWindow(QWidget *parent)
+EditorApplication::EditorApplication(QWidget *parent)
 	: QMainWindow(parent),
-	ui(new Ui::EditorMainWindowClass)
+	MainWindow(new Ui::EditorMainWindowClass)
 {
 	freopen("console.log", "w", stdout);
 	setvbuf(stdout, NULL, _IONBF, 0);
-	ui->setupUi(this);
+	MainWindow->setupUi(this);
 
 	//for (int i = 0; i<100; ++i)
 	//	ui->consoleOutput->append(QString("dupa dupa\n dupa"));
@@ -21,35 +21,41 @@ EditorMainWindow::EditorMainWindow(QWidget *parent)
 	QDir dir("C:\\");
 	QFileSystemModel* model = new QFileSystemModel();
 	model->setRootPath(dir.absolutePath());
-	ui->assetsTreeView->setModel(model);
-	ui->assetsTreeView->setRootIndex(model->index(dir.absolutePath()));
+	MainWindow->assetsTreeView->setModel(model);
+	MainWindow->assetsTreeView->setRootIndex(model->index(dir.absolutePath()));
 
 	QFileSystemWatcher* watcher = new QFileSystemWatcher(this);
 	watcher->addPath("console.log");
 	QObject::connect(watcher, &QFileSystemWatcher::fileChanged, [&](const QString& path) 
 	{ 
-		ui->consoleOutput->setText(path);
+		MainWindow->consoleOutput->setText(path);
 	});
 
-	QObject::connect(ui->actionQuit, &QAction::triggered, [](bool checked) { Poly::gConsole.LogError("test3");/*QApplication::quit();*/ });
+	QObject::connect(MainWindow->actionQuit, &QAction::triggered, [](bool checked) { Poly::gConsole.LogError("test3");/*QApplication::quit();*/ });
 	
 
 	Poly::gConsole.LogError("test1");
 	Poly::gConsole.LogError("test2");
+
+	SetupUpdateTimer();
 }
 
 // ---------------------------------------------------------------------------------------------------------
-EditorMainWindow::~EditorMainWindow()
+EditorApplication::~EditorApplication()
 {
-	delete ui;
+	delete MainWindow;
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void EditorMainWindow::GameUpdatePhase()
+void EditorApplication::SetupUpdateTimer()
 {
+	UpdateTimer = new QTimer(this);
+	connect(UpdateTimer, SIGNAL(timeout()), this, SLOT(UpdatePhase()));
+	UpdateTimer->start(0);
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void EditorMainWindow::EditorUpdatePhase()
+void EditorApplication::UpdatePhase()
 {
+	MainWindow->ViewportWidget->Update();
 }

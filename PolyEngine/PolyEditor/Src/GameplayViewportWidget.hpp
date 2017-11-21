@@ -10,13 +10,24 @@ class GameplayViewportWidget : public QOpenGLWidget//, public QOpenGLFunctions_3
 public:
 	explicit GameplayViewportWidget(QWidget* parent = nullptr);
 
+	void LoadEditor();
+	void LoadGame(Poly::String path);
+
+	void Update();
+
 protected:
 	void initializeGL() override;
 	void paintGL() override;
 	void resizeGL(int width, int height) override;
 
-	Poly::IRenderingDevice* LoadRenderingDevice(HWND hwnd, RECT rect);
-	Poly::IGame* LoadGame();
+	void keyPressEvent(QKeyEvent* keyEvent) override;
+	void keyReleaseEvent(QKeyEvent* keyEvent) override;
 
-	Poly::Engine* Engine;
+private:
+	Poly::IRenderingDevice* LoadRenderingDeviceDll(HWND hwnd, RECT rect, Poly::String path);
+	Poly::IGame* LoadGameDll(Poly::String path);
+
+	Poly::Engine* Engine = nullptr;
+
+	bool dupa = false;
 };

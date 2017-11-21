@@ -206,7 +206,6 @@ void GLRenderingDevice::RenderNormals(World* world, const AARect& rect, CameraCo
 		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
 }
 
-
 void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp) const
 {
 	PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
@@ -257,7 +256,6 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 	else
 		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
 }
-
 
 void GLRenderingDevice::Init()
 {

@@ -2,21 +2,26 @@
 
 #include <QtWidgets/QMainWindow>
 
-namespace Ui {
+namespace Ui 
+{
 	class EditorMainWindowClass;
 }
 
-class EditorMainWindow : public QMainWindow
+class EditorApplication : public QMainWindow
 {
 	Q_OBJECT
 
 public:
-	EditorMainWindow(QWidget *parent = nullptr);
-	~EditorMainWindow();
+	EditorApplication(QWidget *parent = nullptr);
+	~EditorApplication();
 
 private:
-	Ui::EditorMainWindowClass* ui;
+	void SetupUpdateTimer();
 
-	void GameUpdatePhase();
-	void EditorUpdatePhase();
+	Ui::EditorMainWindowClass* MainWindow;
+	QTimer* UpdateTimer;
+
+
+private slots:
+	void UpdatePhase();
 };

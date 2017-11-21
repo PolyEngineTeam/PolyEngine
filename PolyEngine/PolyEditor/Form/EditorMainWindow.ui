@@ -16,7 +16,11 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0">
-     <widget class="GameplayViewportWidget" name="viewportWidget"/>
+     <widget class="GameplayViewportWidget" name="ViewportWidget">
+      <property name="focusPolicy">
+       <enum>Qt::ClickFocus</enum>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
