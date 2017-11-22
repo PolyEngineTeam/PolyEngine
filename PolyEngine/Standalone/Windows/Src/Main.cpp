@@ -5,6 +5,7 @@
 #include <Engine.hpp>
 #include <sstream>
 #include <TimeSystem.hpp>
+#include <LibraryLoader.hpp>
 
 // the WindowProc function prototype
 LRESULT CALLBACK WindowProc(HWND hWnd,
@@ -12,31 +13,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd,
 	WPARAM wParam,
 	LPARAM lParam);
 
-Poly::IRenderingDevice* LoadRenderingDevice(HWND hwnd, RECT rect)
-{
-	typedef Poly::IRenderingDevice* (__stdcall *RenderingDeviceGetter_t)(HWND, RECT);
-
-	HINSTANCE hGetProcIDDLL = LoadLibrary("libRenderingDevice.dll");
-	ASSERTE(hGetProcIDDLL, "could not load the dynamic library");
-
-	RenderingDeviceGetter_t getRenderingDevice = (RenderingDeviceGetter_t)GetProcAddress(hGetProcIDDLL, "PolyCreateRenderingDevice");
-	ASSERTE(getRenderingDevice, "could not locate the function");
-	
-	return getRenderingDevice(hwnd, rect);
-}
-
-Poly::IGame* LoadGame()
-{
-	typedef Poly::IGame* (__stdcall *GameGetter_t)();
-
-	HINSTANCE hGetProcIDDLL = LoadLibrary("libGame.dll");
-	ASSERTE(hGetProcIDDLL, "could not load the dynamic library");
-
-	GameGetter_t getGame = (GameGetter_t)GetProcAddress(hGetProcIDDLL, "CreateGame");
-	ASSERTE(getGame, "could not locate the function");
-
-	return getGame();
-}
+using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (HWND hwnd, RECT rect);
+using CreateGameFunc = Poly::IGame* (void);
 
 // the entry point for any Windows program
 int WINAPI WinMain(HINSTANCE hInstance,
@@ -100,37 +78,43 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	// this struct holds Windows event messages
 	MSG msg;
 
-	Poly::Engine Engine;
+	auto loadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>("libRenderingDevice", "PolyCreateRenderingDevice");
+	if (!loadRenderingDevice.FunctionValid()) { return 1; }
+	auto loadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("libGame", "CreateGame");
+	if (!loadGame.FunctionValid()) { return 1; }
 
-	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(LoadGame());
-	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(hWnd, viewportRect));
-
-	Engine.Init(std::move(game), std::move(device));	
-	Poly::gConsole.LogDebug("Engine loaded successfully");
-
-	// wait for the next message in the queue, store the result in 'msg'
-	bool quitRequested = false;
-	while (!quitRequested)
 	{
-		// Check to see if any messages are waiting in the queue
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != 0)
+		Poly::Engine Engine;
+
+		std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(loadGame());
+		std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(loadRenderingDevice(hWnd, viewportRect));
+
+		Engine.Init(std::move(game), std::move(device));
+		Poly::gConsole.LogDebug("Engine loaded successfully");
+
+		// wait for the next message in the queue, store the result in 'msg'
+		bool quitRequested = false;
+		while (!quitRequested)
 		{
-			// translate keystroke messages into the right format
-			TranslateMessage(&msg);
+			// Check to see if any messages are waiting in the queue
+			while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != 0)
+			{
+				// translate keystroke messages into the right format
+				TranslateMessage(&msg);
 
-			// send the message to the WindowProc function
-			DispatchMessage(&msg);
+				// send the message to the WindowProc function
+				DispatchMessage(&msg);
 
-			// check to see if it's time to quit
-			if (msg.message == WM_QUIT)
-				quitRequested = true;
+				// check to see if it's time to quit
+				if (msg.message == WM_QUIT)
+					quitRequested = true;
+			}
+
+			quitRequested = quitRequested || Engine.IsQuitRequested();
+			// Run game code here
+			Engine.Update();
 		}
-
-		quitRequested = quitRequested || Engine.IsQuitRequested();
-		// Run game code here
-		Engine.Update();
 	}
-
 	// return this part of the WM_QUIT message to Windows
 	return static_cast<int>(msg.wParam);
 }

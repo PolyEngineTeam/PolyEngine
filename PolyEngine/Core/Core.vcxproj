@@ -160,6 +160,7 @@
     <ClInclude Include="Src\AARect.hpp" />
     <ClInclude Include="Src\Allocator.hpp" />
     <ClInclude Include="Src\Angle.hpp" />
+    <ClInclude Include="Src\LibraryLoader.hpp" />
     <ClInclude Include="Src\OrderedMap.hpp" />
     <ClInclude Include="Src\BTreeNode.hpp" />
     <ClInclude Include="Src\BaseObject.hpp" />
