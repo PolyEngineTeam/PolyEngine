@@ -13,6 +13,7 @@ set(POLYTESTS_SRCS
 	Src/QueueTests.cpp
 	Src/ResourceManagerTests.cpp
 	Src/RTTITests.cpp
+	Src/SafePtrTests.cpp
 	Src/StringTests.cpp
 	Src/TransformComponentTests.cpp
 	Src/UnsafeStorageTests.cpp

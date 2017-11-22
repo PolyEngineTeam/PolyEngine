@@ -51,8 +51,8 @@ add_custom_command(
 	TARGET sgjgame
 	POST_BUILD
 	COMMAND "${CMAKE_COMMAND}"
-	        -DINPUT_FILE="$<TARGET_PROPERTY:polyengine,SOURCE_DIR>/AssetsPath.json.in"
-	        -DOUTPUT_FILE="$<TARGET_FILE_DIR:sgjgame>/AssetsPath.json"
+	        -DINPUT_FILE="$<TARGET_PROPERTY:polyengine,SOURCE_DIR>/AssetsPathConfig.json.in"
+	        -DOUTPUT_FILE="$<TARGET_FILE_DIR:sgjgame>/AssetsPathConfig.json"
 	        -DENGINE_ASSETS_PATHS="$<TARGET_PROPERTY:polyengine,SOURCE_DIR>/Res/"
 	        -DGAME_ASSETS_PATHS="$<TARGET_PROPERTY:sgjgame,SOURCE_DIR>/Res/"
 	        -P "${CMAKE_TEMPLATE_PROCESSOR_SCRIPT}"

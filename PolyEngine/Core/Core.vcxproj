@@ -147,6 +147,7 @@
     <ClCompile Include="Src\RefCountedBase.cpp" />
     <ClCompile Include="Src\RTTI.cpp" />
     <ClCompile Include="Src\RTTITypeInfo.cpp" />
+    <ClCompile Include="Src\SafePtrRoot.cpp" />
     <ClCompile Include="Src\SimdMath.cpp" />
     <ClCompile Include="Src\RTTISerialization.cpp" />
     <ClCompile Include="src\String.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="Src\AARect.hpp" />
     <ClInclude Include="Src\Allocator.hpp" />
     <ClInclude Include="Src\Angle.hpp" />
+    <ClInclude Include="Src\LibraryLoader.hpp" />
     <ClInclude Include="Src\OrderedMap.hpp" />
     <ClInclude Include="Src\BTreeNode.hpp" />
     <ClInclude Include="Src\BaseObject.hpp" />
@@ -187,6 +189,8 @@
     <ClInclude Include="Src\RTTISerialization.hpp" />
     <ClInclude Include="Src\RTTITypeInfo.hpp" />
     <ClInclude Include="Src\RTTITypeInfoImpl.hpp" />
+    <ClInclude Include="Src\SafePtr.hpp" />
+    <ClInclude Include="Src\SafePtrRoot.hpp" />
     <ClInclude Include="Src\SimdMath.hpp" />
     <ClInclude Include="Src\String.hpp" />
     <ClInclude Include="Src\UniqueID.hpp" />
