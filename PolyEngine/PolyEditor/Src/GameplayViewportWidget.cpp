@@ -5,6 +5,8 @@
 #include <windows.h>
 #include <windowsx.h>
 
+#include <QGLWidget>
+
 using CreateRenderingDeviceInEditorFunc = Poly::IRenderingDevice* (const Poly::ScreenSize& size);
 using CreateGameFunc = Poly::IGame* (void);
 
@@ -42,6 +44,7 @@ void GameplayViewportWidget::Update()
 // ---------------------------------------------------------------------------------------------------------
 void GameplayViewportWidget::initializeGL()
 {
+	initializeOpenGLFunctions();
 	LoadRenderingDeviceInEditor = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceInEditorFunc>("libRenderingDevice", "PolyCreateRenderingDeviceInEditor");
 	ASSERTE(LoadRenderingDeviceInEditor.FunctionValid(), "Error loading rendering device DLL");
 	LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("libGame", "CreateGame");

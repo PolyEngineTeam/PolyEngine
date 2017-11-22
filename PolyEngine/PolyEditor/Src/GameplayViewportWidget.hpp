@@ -4,7 +4,7 @@
 
 #include <Engine.hpp>
 
-class GameplayViewportWidget : public QOpenGLWidget//, public QOpenGLFunctions_3_3_CoreBackend
+class GameplayViewportWidget : public QOpenGLWidget, protected QOpenGLFunctions//, public QOpenGLFunctions_3_3_CoreBackend
 {
 	Q_OBJECT
 public:
