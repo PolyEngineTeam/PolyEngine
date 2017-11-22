@@ -20,6 +20,8 @@ const size_t MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 : RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
 {
+	CreateDummyTexture();
+
 	GetProgram().RegisterUniform("vec4", "uCameraPosition");
 	GetProgram().RegisterUniform("vec4", "uCameraForward");
 
@@ -131,18 +133,15 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 			GetProgram().SetUniform("uMaterial.Shininess", material.Shininess);
 
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
-
 			glBindVertexArray(meshProxy->GetVAO());
 
-			if (subMesh->GetMeshData().GetDiffTexture())
-			{
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, static_cast<const GLTextureDeviceProxy*>(subMesh->GetMeshData().GetDiffTexture()->GetTextureProxy())->GetTextureID());
-			}
-			else
-			{
-				glBindTexture(GL_TEXTURE_2D, 0);
-			}
+			const Poly::TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
+			GLuint TextureID = DiffuseTexture == nullptr
+				? WhiteDummyTexture
+				: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, TextureID);
 
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 			glBindTexture(GL_TEXTURE_2D, 0);
@@ -153,4 +152,21 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
+}
+
+void Poly::BlinnPhongRenderingPass::CreateDummyTexture()
+{
+
+	glGenTextures(1, &WhiteDummyTexture);
+
+	GLubyte data[] = { 255, 255, 255, 255 };
+
+	glBindTexture(GL_TEXTURE_2D, WhiteDummyTexture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }

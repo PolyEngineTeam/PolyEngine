@@ -197,7 +197,7 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 	UniqueID playerFakeGlow = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, playerFakeGlow);
 	Poly::TransformComponent* glowTrans = world->GetComponent<Poly::TransformComponent>(playerFakeGlow);
-	glowTrans->SetParent(playerTrans);
+	glowTrans->SetParent(playerTrans);	
 	Color playerLightColor = Color(0.0f, 1.0f, 0.0f, 0.5f);
 	DeferredTaskSystem::AddComponentImmediate<Poly::MeshRenderingComponent>(world, playerFakeGlow, "Quad.obj", eResourceSource::GAME);
 	world->GetComponent<MeshRenderingComponent>(playerFakeGlow)->SetShadingModel(eShadingModel::LIT);
