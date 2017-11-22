@@ -17,8 +17,6 @@ public:
 
 private:
 	void SetupUpdateTimer();
-	void LoadEditor();
-	void LoadGame();
 
 	Ui::EditorMainWindowClass* MainWindow;
 	QTimer* UpdateTimer;

@@ -4,23 +4,16 @@
 
 #include <Engine.hpp>
 
-namespace Poly
-{
-	class IGame;
-	class IRenderingDevice;
-}
-
 class GameplayViewportWidget : public QOpenGLWidget//, public QOpenGLFunctions_3_3_CoreBackend
 {
 	Q_OBJECT
 public:
 	explicit GameplayViewportWidget(QWidget* parent = nullptr);
 
-	void Init(std::unique_ptr<Poly::IGame> game, std::unique_ptr<Poly::IRenderingDevice> device);
-	void Update();
+	void LoadEditor();
+	void LoadGame(Poly::String path);
 
-	HWND GetHwnd() { return (HWND)effectiveWinId(); }
-	RECT GetRect();
+	void Update();
 
 protected:
 	void initializeGL() override;
@@ -31,5 +24,8 @@ protected:
 	void keyReleaseEvent(QKeyEvent* keyEvent) override;
 
 private:
-	Poly::Engine Engine;
+	Poly::IRenderingDevice* LoadRenderingDeviceDll(HWND hwnd, RECT rect, Poly::String path);
+	Poly::IGame* LoadGameDll(Poly::String path);
+
+	Poly::Engine* Engine = nullptr;
 };

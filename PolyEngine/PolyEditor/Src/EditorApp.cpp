@@ -6,11 +6,6 @@
 
 #include <Core.hpp>
 
-#include <LibraryLoader.hpp>
-
-using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (HWND hwnd, RECT rect);
-using CreateGameFunc = Poly::IGame* (void);
-
 // ---------------------------------------------------------------------------------------------------------
 EditorApp::EditorApp(QWidget *parent)
 	: QMainWindow(parent),
@@ -43,7 +38,6 @@ EditorApp::EditorApp(QWidget *parent)
 	Poly::gConsole.LogError("test2");
 
 	SetupUpdateTimer();
-	LoadGame();
 }
 
 // ---------------------------------------------------------------------------------------------------------
@@ -59,27 +53,6 @@ void EditorApp::SetupUpdateTimer()
 	UpdateTimer = new QTimer(this);
 	connect(UpdateTimer, SIGNAL(timeout()), this, SLOT(UpdatePhase()));
 	UpdateTimer->start(0);
-}
-
-// ---------------------------------------------------------------------------------------------------------
-void EditorApp::LoadEditor()
-{
-
-}
-
-// ---------------------------------------------------------------------------------------------------------
-void EditorApp::LoadGame()
-{
-	auto loadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>("libRenderingDevice", "PolyCreateRenderingDevice");
-	if (!loadRenderingDevice.FunctionValid()) { return; }
-	auto loadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("libGame", "CreateGame");
-	if (!loadGame.FunctionValid()) { return; }
-
-	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(loadGame());
-	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(loadRenderingDevice(MainWindow->ViewportWidget->GetHwnd(), MainWindow->ViewportWidget->GetRect()));
-
-	MainWindow->ViewportWidget->Init(std::move(game), std::move(device));
-	Poly::gConsole.LogDebug("Engine loaded successfully");
 }
 
 // ---------------------------------------------------------------------------------------------------------
