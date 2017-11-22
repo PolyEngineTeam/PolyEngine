@@ -1,0 +1,6 @@
+{
+    "Debug Config": {
+        "@type": "DebugConfig",
+        "DisplayFPS": true
+    }
+}

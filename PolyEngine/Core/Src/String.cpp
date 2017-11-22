@@ -6,6 +6,8 @@
 
 using namespace Poly;
 
+const String String::EMPTY = String();
+
 size_t Poly::StrLen(const char* str) {
 	size_t len = 0;
 	while (str[len] != 0)

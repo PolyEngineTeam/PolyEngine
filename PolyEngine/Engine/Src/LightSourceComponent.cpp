@@ -2,17 +2,17 @@
 
 #include "LightSourceComponent.hpp"
 
-Poly::AmbientLightWorldComponent::AmbientLightWorldComponent(const Color& color = Color::WHITE, float intensity = 1.0f)
+Poly::AmbientLightWorldComponent::AmbientLightWorldComponent(const Color& color, float intensity)
 	: LightColor(color), Intensity(intensity)
 {
 }
 
-Poly::DirectionalLightComponent::DirectionalLightComponent(const Color& color = Color::WHITE, float intensity = 1.0f)
+Poly::DirectionalLightComponent::DirectionalLightComponent(const Color& color, float intensity)
 	: LightColor(color), Intensity(intensity)
 {
 }
 
-Poly::PointLightComponent::PointLightComponent(const Color& color = Color::WHITE, float intensity = 1.0f, float range = 10.0f)
+Poly::PointLightComponent::PointLightComponent(const Color& color, float intensity, float range)
 	: LightColor(color), Intensity(intensity), Range(range)
 {
 }
