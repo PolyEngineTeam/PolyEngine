@@ -42,7 +42,7 @@ namespace Poly
 			return FunctionPtr(std::forward<Args>(args)...); 
 		}
 
-		inline bool FunctionValid() const { return static_cast<bool>(FunctionPtr); }
+		inline bool FunctionValid() const { return FunctionPtr != nullptr; }
 
 #if defined(_WIN32)
 		~LibraryFunctionHandle() { if (LibHandle) FreeLibrary(LibHandle); }
