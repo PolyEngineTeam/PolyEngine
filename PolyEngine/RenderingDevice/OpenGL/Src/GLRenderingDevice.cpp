@@ -22,6 +22,20 @@ using namespace Poly;
 
 GLRenderingDevice* Poly::gRenderingDevice = nullptr;
 
+//------------------------------------------------------------------------------
+IRenderingDevice* __stdcall PolyCreateRenderingDeviceInEditor(const ScreenSize& size) { return new GLRenderingDevice(size); }
+
+//------------------------------------------------------------------------------
+Poly::GLRenderingDevice::GLRenderingDevice(const ScreenSize& size)
+	: RunningInEditor(false)
+{
+	ASSERTE(gRenderingDevice == nullptr, "Creating device twice?");
+	gRenderingDevice = this;
+
+	ScreenDim = size;
+}
+
+
 #if defined(_WIN32)
 
 //------------------------------------------------------------------------------
@@ -123,7 +137,8 @@ GLRenderingDevice::~GLRenderingDevice()
 //------------------------------------------------------------------------------
 void GLRenderingDevice::EndFrame()
 {
-	SwapBuffers(hDC);
+	if(!RunningInEditor)
+		SwapBuffers(hDC);
 }
 
 #elif defined(__linux__)
@@ -190,7 +205,8 @@ GLRenderingDevice::~GLRenderingDevice()
 //------------------------------------------------------------------------------
 void GLRenderingDevice::EndFrame()
 {
-	glXSwapBuffers(this->display, this->window);
+	if (!RunningInEditor)
+		glXSwapBuffers(this->display, this->window);
 }
 
 #elif defined(__APPLE__)
@@ -223,7 +239,8 @@ GLRenderingDevice::~GLRenderingDevice()
 //------------------------------------------------------------------------------
 void GLRenderingDevice::EndFrame()
 {
-    EndFrameImpl(view);
+	if (!RunningInEditor)
+		EndFrameImpl(view);
 }
 
 #else

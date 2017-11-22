@@ -45,6 +45,8 @@ namespace Poly
 		};
 
 	public:
+		// Empty constructor for editor build
+		GLRenderingDevice(const ScreenSize& size);
 #if defined(_WIN32)
 		GLRenderingDevice(HWND HWnd, RECT Rect);
 #elif defined(__linux__)
@@ -122,6 +124,8 @@ namespace Poly
 		std::unique_ptr<PostprocessQuad> PostprocessRenderingQuad;
 
 		ScreenSize ScreenDim;
+
+		const bool RunningInEditor = false;
 	};
 
 	extern GLRenderingDevice* gRenderingDevice;
@@ -129,6 +133,7 @@ namespace Poly
 
 extern "C"
 {
+	DEVICE_DLLEXPORT Poly::IRenderingDevice* __stdcall PolyCreateRenderingDeviceInEditor(const Poly::ScreenSize& size);
 #if defined(_WIN32)
 	DEVICE_DLLEXPORT Poly::IRenderingDevice* __stdcall PolyCreateRenderingDevice(HWND hwnd, RECT rect);
 #elif defined(__linux__)

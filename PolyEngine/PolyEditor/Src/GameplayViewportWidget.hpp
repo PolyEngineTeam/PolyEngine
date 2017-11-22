@@ -11,7 +11,6 @@ public:
 	explicit GameplayViewportWidget(QWidget* parent = nullptr);
 
 	void LoadEditor();
-	void LoadGame(Poly::String path);
 
 	void Update();
 
@@ -24,8 +23,5 @@ protected:
 	void keyReleaseEvent(QKeyEvent* keyEvent) override;
 
 private:
-	Poly::IRenderingDevice* LoadRenderingDeviceDll(HWND hwnd, RECT rect, Poly::String path);
-	Poly::IGame* LoadGameDll(Poly::String path);
-
-	Poly::Engine* Engine = nullptr;
+	std::unique_ptr<Poly::Engine> Engine = nullptr;
 };
