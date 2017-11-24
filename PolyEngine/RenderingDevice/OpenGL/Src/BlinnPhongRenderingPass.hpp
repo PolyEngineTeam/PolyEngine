@@ -18,5 +18,10 @@ namespace Poly
 
 	protected:
 		void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;
+
+		void CreateDummyTexture();
+
+	private:
+		GLuint WhiteDummyTexture;
 	};
 }
