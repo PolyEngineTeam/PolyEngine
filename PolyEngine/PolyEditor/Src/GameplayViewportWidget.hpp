@@ -4,7 +4,7 @@
 
 #include <Engine.hpp>
 
-class GameplayViewportWidget : public QOpenGLWidget, protected QOpenGLFunctions//, public QOpenGLFunctions_3_3_CoreBackend
+class GameplayViewportWidget : public QWidget
 {
 	Q_OBJECT
 public:
@@ -15,10 +15,7 @@ public:
 	void Update();
 
 protected:
-	void initializeGL() override;
-	void paintGL() override;
-	void resizeGL(int width, int height) override;
-
+	void resizeEvent(QResizeEvent* resizeEvent) override;
 	void keyPressEvent(QKeyEvent* keyEvent) override;
 	void keyReleaseEvent(QKeyEvent* keyEvent) override;
 

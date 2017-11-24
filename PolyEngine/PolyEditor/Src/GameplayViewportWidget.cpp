@@ -7,16 +7,24 @@
 
 #include <QGLWidget>
 
-using CreateRenderingDeviceInEditorFunc = Poly::IRenderingDevice* (const Poly::ScreenSize& size);
+using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (HWND hwnd, RECT rect);
 using CreateGameFunc = Poly::IGame* (void);
 
-static Poly::LibraryFunctionHandle<CreateRenderingDeviceInEditorFunc> LoadRenderingDeviceInEditor;
+static Poly::LibraryFunctionHandle<CreateRenderingDeviceFunc> LoadRenderingDevice;
 static Poly::LibraryFunctionHandle<CreateGameFunc> LoadGame;
 
 // ---------------------------------------------------------------------------------------------------------
 GameplayViewportWidget::GameplayViewportWidget(QWidget* parent)
-	: QOpenGLWidget(parent)
+	: QWidget(parent)
 {
+	setAttribute(Qt::WA_NativeWindow);
+
+	LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>("libRenderingDevice", "PolyCreateRenderingDevice");
+	ASSERTE(LoadRenderingDevice.FunctionValid(), "Error loading rendering device DLL");
+	LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("libGame", "CreateGame");
+	ASSERTE(LoadGame.FunctionValid(), "Error loading rendering device DLL");
+
+	LoadEditor();
 }
 
 // ---------------------------------------------------------------------------------------------------------
@@ -25,12 +33,15 @@ void GameplayViewportWidget::LoadEditor()
 	ASSERTE(!Engine, "Engine was already created!");
 	Engine = std::make_unique<Poly::Engine>();
 
-	Poly::ScreenSize viewportRect;
-	viewportRect.Width = width();
-	viewportRect.Height = height();
+	RECT viewportRect;
+	viewportRect.top = 0;
+	viewportRect.left = 0;
+	viewportRect.bottom = height();
+	viewportRect.right = width();
 
 	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(LoadGame());
-	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDeviceInEditor(viewportRect));
+	// TODO: catch winId changes (http://doc.qt.io/qt-5/qwidget.html#winId)
+	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice((HWND)winId(), viewportRect));
 
 	Engine->Init(std::move(game), std::move(device));
 	Poly::gConsole.LogDebug("Engine loaded successfully");
@@ -38,33 +49,15 @@ void GameplayViewportWidget::LoadEditor()
 
 void GameplayViewportWidget::Update()
 {
-	
-}
-
-// ---------------------------------------------------------------------------------------------------------
-void GameplayViewportWidget::initializeGL()
-{
-	initializeOpenGLFunctions();
-	LoadRenderingDeviceInEditor = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceInEditorFunc>("libRenderingDevice", "PolyCreateRenderingDeviceInEditor");
-	ASSERTE(LoadRenderingDeviceInEditor.FunctionValid(), "Error loading rendering device DLL");
-	LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("libGame", "CreateGame");
-	ASSERTE(LoadGame.FunctionValid(), "Error loading rendering device DLL");
-
-	LoadEditor();
-}
-
-// ---------------------------------------------------------------------------------------------------------
-void GameplayViewportWidget::paintGL()
-{
 	Poly::gEngine->Update();
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void GameplayViewportWidget::resizeGL(int w, int h)
+void GameplayViewportWidget::resizeEvent(QResizeEvent* resizeEvent)
 {
 	Poly::ScreenSize screenSize;
-	screenSize.Width = width();
-	screenSize.Height = height();
+	screenSize.Width = resizeEvent->size().width();
+	screenSize.Height = resizeEvent->size().height();
 	Poly::gEngine->ResizeScreen(screenSize);
 }
 
