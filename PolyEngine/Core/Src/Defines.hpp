@@ -8,7 +8,7 @@
 #include <ostream>
 #include <cmath>
 #include <cassert>
-#include <cstring>
+#include <string.h>
 #include <type_traits>
 #include <limits>
 #include <array>
