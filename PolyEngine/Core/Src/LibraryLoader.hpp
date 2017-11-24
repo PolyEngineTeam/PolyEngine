@@ -16,7 +16,7 @@ namespace Poly
 	template<typename Function> LibraryFunctionHandle<Function> LoadFunctionFromSharedLibrary(const char* libraryName, const char* functionSymbol);
 
 	template<typename Function>
-	class LibraryFunctionHandle
+	class LibraryFunctionHandle : BaseObjectLiteralType<>
 	{
 	public:
 		STATIC_ASSERTE(std::is_function<Function>::value, "Not a valid function type!");
@@ -80,8 +80,14 @@ namespace Poly
 
 		const size_t fullLibNameLength = strlen(libraryName) + strlen(LIB_EXTENSION);
 		std::unique_ptr<char> fullLibName = std::unique_ptr<char>(new char[fullLibNameLength + 1]);
+		// TODO fix this hack
+#if defined(_WIN32)
 		strcpy_s(fullLibName.get(), fullLibNameLength + 1, libraryName);
 		strcat_s(fullLibName.get(), fullLibNameLength + 1, LIB_EXTENSION);
+#else
+		strcpy(fullLibName.get(), libraryName);
+		strcat(fullLibName.get(), LIB_EXTENSION);
+#endif
 
 #if defined(_WIN32)
 		// If UNICODE is defined windows is using wchar_t. Then we need to convert const char* array to wchar_t array.
@@ -108,7 +114,7 @@ namespace Poly
 			return LibraryFunctionHandle<Function>{ nullptr, nullptr };
 		}
 #elif defined(__linux__) || defined(__APPLE__)
-		void* libHandle = dlopen(fullLibName, RTLD_NOW /*| RTLD_GLOBAL*/); //don't be lazy in resolving symbols /*and allow subsequently loaded libs to use them*/
+		void* libHandle = dlopen(fullLibName.get(), RTLD_NOW /*| RTLD_GLOBAL*/); //don't be lazy in resolving symbols /*and allow subsequently loaded libs to use them*/
 		if (const char* err = dlerror()) 
 		{ //we could simply check if the handle is null, but using dlerror() doubles as clearing error flags
 			Poly::gConsole.LogError("Shared library [{}] load failed. Error: {}", libraryName, err);
