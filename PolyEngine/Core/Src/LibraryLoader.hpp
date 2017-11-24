@@ -80,8 +80,14 @@ namespace Poly
 
 		const size_t fullLibNameLength = strlen(libraryName) + strlen(LIB_EXTENSION);
 		std::unique_ptr<char> fullLibName = std::unique_ptr<char>(new char[fullLibNameLength + 1]);
+		// TODO fix this hack
+#if defined(_WIN32)
 		strcpy_s(fullLibName.get(), fullLibNameLength + 1, libraryName);
 		strcat_s(fullLibName.get(), fullLibNameLength + 1, LIB_EXTENSION);
+#else
+		strcpy(fullLibName.get(), libraryName);
+		strcat(fullLibName.get(), LIB_EXTENSION);
+#endif
 
 #if defined(_WIN32)
 		// If UNICODE is defined windows is using wchar_t. Then we need to convert const char* array to wchar_t array.
