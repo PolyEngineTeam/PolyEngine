@@ -18,6 +18,7 @@ GameplayViewportWidget::GameplayViewportWidget(QWidget* parent)
 	: QWidget(parent)
 {
 	setAttribute(Qt::WA_NativeWindow);
+	setMouseTracking(true);
 
 	LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>("libRenderingDevice", "PolyCreateRenderingDevice");
 	ASSERTE(LoadRenderingDevice.FunctionValid(), "Error loading rendering device DLL");
@@ -47,6 +48,7 @@ void GameplayViewportWidget::LoadEditor()
 	Poly::gConsole.LogDebug("Engine loaded successfully");
 }
 
+// ---------------------------------------------------------------------------------------------------------
 void GameplayViewportWidget::Update()
 {
 	Poly::gEngine->Update();
@@ -59,6 +61,64 @@ void GameplayViewportWidget::resizeEvent(QResizeEvent* resizeEvent)
 	screenSize.Width = resizeEvent->size().width();
 	screenSize.Height = resizeEvent->size().height();
 	Poly::gEngine->ResizeScreen(screenSize);
+}
+
+// ---------------------------------------------------------------------------------------------------------
+void GameplayViewportWidget::wheelEvent(QWheelEvent* wheelEvent)
+{
+	Poly::gEngine->UpdateWheelPos(Poly::Vector(static_cast<float>(wheelEvent->delta()), 0, 0));
+}
+
+// ---------------------------------------------------------------------------------------------------------
+void GameplayViewportWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
+{
+	Poly::gEngine->UpdateMousePos(Poly::Vector(static_cast<float>(mouseEvent->pos().x()), static_cast<float>(mouseEvent->pos().y()), 0));
+}
+
+// ---------------------------------------------------------------------------------------------------------
+void GameplayViewportWidget::mousePressEvent(QMouseEvent* mouseEvent)
+{
+	switch (mouseEvent->button())
+	{
+	case Qt::LeftButton:
+		Poly::gEngine->KeyDown(static_cast<Poly::eKey>(Poly::eKey::MLBUTTON));
+		break;
+
+	case Qt::RightButton:
+		Poly::gEngine->KeyDown(static_cast<Poly::eKey>(Poly::eKey::MRBUTTON));
+		break;
+
+	case Qt::MiddleButton:
+		Poly::gEngine->KeyDown(static_cast<Poly::eKey>(Poly::eKey::MMBUTTON));
+		break;
+
+	default:
+		// unsupported key
+		break;
+	}
+}
+
+// ---------------------------------------------------------------------------------------------------------
+void GameplayViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
+{
+	switch (mouseEvent->button())
+	{
+	case Qt::LeftButton:
+		Poly::gEngine->KeyUp(static_cast<Poly::eKey>(Poly::eKey::MLBUTTON));
+		break;
+
+	case Qt::RightButton:
+		Poly::gEngine->KeyUp(static_cast<Poly::eKey>(Poly::eKey::MRBUTTON));
+		break;
+
+	case Qt::MiddleButton:
+		Poly::gEngine->KeyUp(static_cast<Poly::eKey>(Poly::eKey::MMBUTTON));
+		break;
+
+	default:
+		// unsupported key
+		break;
+	}
 }
 
 // ---------------------------------------------------------------------------------------------------------
