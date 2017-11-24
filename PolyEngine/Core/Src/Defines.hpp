@@ -1,5 +1,12 @@
 #pragma once
 
+#if defined(__STDC_LIB_EXT1__)
+// Request presence of bound checked STL functions like strcat_s, strcpy_s, etc.
+	#define __STDC_WANT_LIB_EXT1__ 1
+#else
+	// TODO implement all necessary *_s methods here.
+#endif
+
 // STL
 // This is only legal place for STL includes
 #include <ostream>
