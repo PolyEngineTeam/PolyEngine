@@ -27,7 +27,7 @@ PostprocessRenderingPass::PostprocessRenderingPass(const PostprocessQuad* quad, 
 }
 
 
-void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& rect)
+void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType = ePassType::GLOBAL)
 {
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	float ResolutionX = rect.GetSize().X * gRenderingDevice->GetScreenSize().Width;

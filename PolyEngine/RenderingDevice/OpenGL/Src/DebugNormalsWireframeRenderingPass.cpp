@@ -16,7 +16,7 @@ DebugNormalsWireframeRenderingPass::DebugNormalsWireframeRenderingPass()
 
 }
 
-void DebugNormalsWireframeRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/)
+void DebugNormalsWireframeRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType)
 {
 	const Matrix& mModelView = camera->GetMVP();
 	const Matrix& mProjection = camera->GetProjectionMatrix();

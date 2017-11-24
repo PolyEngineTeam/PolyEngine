@@ -82,7 +82,7 @@ void GLRenderingDevice::RenderWireframe(World* world, const AARect& rect, Camera
 
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
-	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
+	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect, ePassType::GLOBAL);
 
 	glDepthMask(GL_FALSE);
 	glDisable(GL_BLEND);
@@ -99,7 +99,7 @@ void GLRenderingDevice::RenderNormalsWireframe(World* world, const AARect& rect,
 
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
-	GeometryRenderingPasses[eGeometryRenderPassType::DEBUG_NORMALS_WIREFRAME]->Run(world, cameraCmp, rect);
+	GeometryRenderingPasses[eGeometryRenderPassType::DEBUG_NORMALS_WIREFRAME]->Run(world, cameraCmp, rect, ePassType::GLOBAL);
 
 	glDepthMask(GL_FALSE);
 	glDisable(GL_BLEND);
@@ -129,7 +129,7 @@ void GLRenderingDevice::RenderUnlit(World* world, const AARect& rect, CameraComp
 	glCullFace(GL_BACK);
 
 	// Render meshes with blin-phong shader
-	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
+	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect, ePassType::GLOBAL);
 
 	glDepthMask(GL_FALSE);
 
@@ -177,7 +177,7 @@ void GLRenderingDevice::RenderNormals(World* world, const AARect& rect, CameraCo
 	glCullFace(GL_BACK);
 
 	// Render meshes with blin-phong shader
-	GeometryRenderingPasses[eGeometryRenderPassType::DEBUG_NORMALS]->Run(world, cameraCmp, rect);
+	GeometryRenderingPasses[eGeometryRenderPassType::DEBUG_NORMALS]->Run(world, cameraCmp, rect, ePassType::GLOBAL);
 
 	glDepthMask(GL_FALSE);
 
@@ -205,7 +205,6 @@ void GLRenderingDevice::RenderNormals(World* world, const AARect& rect, CameraCo
 	else
 		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
 }
-
 
 void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp) const
 {
@@ -257,7 +256,6 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 	else
 		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
 }
-
 
 void GLRenderingDevice::Init()
 {
