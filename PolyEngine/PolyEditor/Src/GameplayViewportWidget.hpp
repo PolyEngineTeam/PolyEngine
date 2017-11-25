@@ -10,12 +10,11 @@ class GameplayViewportWidget : public QWidget
 public:
 	explicit GameplayViewportWidget(QWidget* parent = nullptr);
 
-	void LoadEditor();
+	void InitializeViewport();
 
 	void Update();
 
 protected:
-	
 	// overriden events
 	void resizeEvent(QResizeEvent* resizeEvent) override;
 	void wheelEvent(QWheelEvent* wheelEvent) override;
@@ -26,5 +25,4 @@ protected:
 	void keyReleaseEvent(QKeyEvent* keyEvent) override;
 
 private:
-	std::unique_ptr<Poly::Engine> Engine = nullptr;
 };

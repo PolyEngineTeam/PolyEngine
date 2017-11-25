@@ -7,12 +7,15 @@
 #include <Core.hpp>
 
 // ---------------------------------------------------------------------------------------------------------
-EditorApp::EditorApp(QWidget *parent)
-	: QMainWindow(parent),
+EditorApp::EditorApp(QWidget *parent) : 
+	QMainWindow(parent),
 	MainWindow(new Ui::EditorMainWindowClass)
 {
+	Engine = std::make_unique<Poly::Engine>();
+
 	freopen("console.log", "w", stdout);
 	setvbuf(stdout, NULL, _IONBF, 0);
+
 	MainWindow->setupUi(this);
 
 	//for (int i = 0; i<100; ++i)
@@ -38,6 +41,8 @@ EditorApp::EditorApp(QWidget *parent)
 	Poly::gConsole.LogError("test2");
 
 	SetupUpdateTimer();
+
+	MainWindow->ViewportWidget->InitializeViewport();
 }
 
 // ---------------------------------------------------------------------------------------------------------

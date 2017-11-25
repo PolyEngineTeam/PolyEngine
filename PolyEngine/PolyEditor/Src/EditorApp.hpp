@@ -2,6 +2,8 @@
 
 #include <QtWidgets/QMainWindow>
 
+#include <Engine.hpp>
+
 namespace Ui 
 {
 	class EditorMainWindowClass;
@@ -18,8 +20,9 @@ public:
 private:
 	void SetupUpdateTimer();
 
-	Ui::EditorMainWindowClass* MainWindow;
 	QTimer* UpdateTimer;
+	Ui::EditorMainWindowClass* MainWindow;
+	std::unique_ptr<Poly::Engine> Engine = nullptr;
 
 
 private slots:

@@ -24,27 +24,23 @@ GameplayViewportWidget::GameplayViewportWidget(QWidget* parent)
 	ASSERTE(LoadRenderingDevice.FunctionValid(), "Error loading rendering device DLL");
 	LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("libGame", "CreateGame");
 	ASSERTE(LoadGame.FunctionValid(), "Error loading rendering device DLL");
-
-	LoadEditor();
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void GameplayViewportWidget::LoadEditor()
+void GameplayViewportWidget::InitializeViewport()
 {
-	ASSERTE(!Engine, "Engine was already created!");
-	Engine = std::make_unique<Poly::Engine>();
-
 	RECT viewportRect;
 	viewportRect.top = 0;
 	viewportRect.left = 0;
 	viewportRect.bottom = height();
 	viewportRect.right = width();
 
-	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(LoadGame());
 	// TODO: catch winId changes (http://doc.qt.io/qt-5/qwidget.html#winId)
+	// TODO: something like addviewport to rendering device
+	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(LoadGame());
 	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice((HWND)winId(), viewportRect));
 
-	Engine->Init(std::move(game), std::move(device));
+	Poly::gEngine->Init(std::move(game), std::move(device));
 	Poly::gConsole.LogDebug("Engine loaded successfully");
 }
 
