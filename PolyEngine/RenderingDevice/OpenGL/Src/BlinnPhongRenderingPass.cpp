@@ -137,9 +137,6 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		GetProgram().SetUniform(baseName + "Base.Color", spotLightCmp->GetColor());
 		GetProgram().SetUniform(baseName + "Base.Intensity", spotLightCmp->GetIntensity());
 
-		gConsole.LogInfo("BlinnPhongRenderingPass::OnRun: spotlight[{}]: pos: {}, dir: {}",
-			spotLightsCount, transformCmp->GetGlobalTranslation(), MovementSystem::GetGlobalForward(transformCmp));
-
 		++spotLightsCount;
 		if (spotLightsCount == MAX_LIGHT_COUNT_SPOT)
 			break;
