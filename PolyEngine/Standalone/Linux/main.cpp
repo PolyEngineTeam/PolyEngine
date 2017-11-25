@@ -1,35 +1,13 @@
 #include <Engine.hpp>
 #include <epoxy/glx.h>
-#include <dlfcn.h>
+#include <LibraryLoader.hpp>
 
 extern "C" {
-	//using CreateRenderingDeviceFunc = decltype(PolyCreateRenderingDevice);
-	//using LoadGameFunc = decltype(CreateGame);
 	using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (Display* display, Window window, GLXFBConfig fbConfig, const Poly::ScreenSize& size);
-	using LoadGameFunc = Poly::IGame* ();
+	using CreateGameFunc = Poly::IGame* ();
 }
 
 void handleEvents(Display* display, Window window, const XEvent& ev);
-
-struct RawFunc {
-	void* libraryHandle;
-	void* func;
-};
-template<typename Function>
-class DynLoaded {
-public:
-	//note(vuko): thankfully casting void* to func-ptr is defined and allowed in C++11 and up ._. UBSan still complains though :(
-	DynLoaded(RawFunc raw) : handle(raw.libraryHandle), func(reinterpret_cast<Function*>(raw.func)) {}
-	DynLoaded(DynLoaded&& other) : DynLoaded{RawFunc{other.handle, reinterpret_cast<void*>(other.func)}} { other.handle = nullptr; other.func = nullptr; }
-	~DynLoaded() { if (handle) { dlclose(handle); } }
-	template<typename... Args> inline typename std::result_of<Function*(Args...)>::type operator()(Args... args) { return func(std::forward<Args>(args)...); }
-	inline bool FunctionValid() { return static_cast<bool>(func); }
-private:
-	void* handle;
-	Function* func;
-};
-inline DynLoaded<CreateRenderingDeviceFunc> GetRenderingDeviceCreator(const char* soname);
-inline DynLoaded<LoadGameFunc> GetGameLoader(const char* soname);
 
 
 int main() { //todo(vuko): command-line args
@@ -125,51 +103,45 @@ int main() { //todo(vuko): command-line args
 	};
 	std::unique_ptr<Window, decltype(windowCleanup)> windowCleanupGuard(&window, windowCleanup);
 
-	std::unique_ptr<Poly::IRenderingDevice> renderingDevice;
-	auto createRenderingDevice = GetRenderingDeviceCreator("libpolyrenderingdevice.so");
-	if (createRenderingDevice.FunctionValid()) {
-		auto newDevice = createRenderingDevice(display.get(), window, fbConfig, windowSize);
-		renderingDevice.reset(newDevice);
-	} else {
-		return 1; //error message already handled
-	}
-	Poly::gConsole.LogDebug("Rendering device loaded");
+	auto loadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>("libpolyrenderingdevice", "PolyCreateRenderingDevice");
+	if (!loadRenderingDevice.FunctionValid()) { return 1; }
+	auto loadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("libgame", "CreateGame");
+	if (!loadGame.FunctionValid()) { return 1; }
 
-	std::unique_ptr<Poly::IGame> game;
-	auto loadGame = GetGameLoader("libgame.so"); //the name could be passed as a command-line arg
-	if (loadGame.FunctionValid()) {
-		auto newGame = loadGame();
-		game.reset(newGame);
-	} else {
-		return 1; //error message already handled
-	}
-	Poly::gConsole.LogDebug("Game loaded");
+    {
+        std::unique_ptr<Poly::IRenderingDevice> renderingDevice = std::unique_ptr<Poly::IRenderingDevice>(
+                loadRenderingDevice(display.get(), window, fbConfig, windowSize));
+        Poly::gConsole.LogDebug("Rendering device loaded");
 
-	Poly::Engine Engine;
-	Engine.Init(std::move(game), std::move(renderingDevice));
-	Poly::gConsole.LogDebug("Engine loaded");
+        std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(loadGame());
+        Poly::gConsole.LogDebug("Game loaded");
 
-	//show the window
-	XClearWindow(display.get(), window);
-	XMapRaised(display.get(), window);
-	Poly::gConsole.LogDebug("X11 window shown");
+        Poly::Engine Engine;
+        Engine.Init(std::move(game), std::move(renderingDevice));
+        Poly::gConsole.LogDebug("Engine loaded");
 
-	//enter the matri... *ekhm* game loop
-	XEvent ev;
-	for(;;) {
-		if (XPending(display.get()) > 0) {
-			XNextEvent(display.get(), &ev);
+        //show the window
+        XClearWindow(display.get(), window);
+        XMapRaised(display.get(), window);
+        Poly::gConsole.LogDebug("X11 window shown");
 
-			handleEvents(display.get(), window, ev);
-			if ((ev.type == ClientMessage && static_cast<Atom>(ev.xclient.data.l[0]) == atomWmDeleteWindow) || ev.type == DestroyNotify) {
-				break;
-			}
-		} else {
-			Engine.Update();
-		}
-	}
-	Poly::gConsole.LogDebug("Game loop interrupted");
+        //enter the matri... *ekhm* game loop
+        XEvent ev;
+        for (;;) {
+            if (XPending(display.get()) > 0) {
+                XNextEvent(display.get(), &ev);
 
+                handleEvents(display.get(), window, ev);
+                if ((ev.type == ClientMessage && static_cast<Atom>(ev.xclient.data.l[0]) == atomWmDeleteWindow) ||
+                    ev.type == DestroyNotify) {
+                    break;
+                }
+            } else {
+                Engine.Update();
+            }
+        }
+        Poly::gConsole.LogDebug("Game loop interrupted");
+    }
 	Poly::gConsole.LogDebug("Engine suicide");
 }
 
@@ -211,30 +183,4 @@ void handleEvents(Display* display, Window window, const XEvent& ev) {
 		case ButtonRelease: Poly::gEngine->KeyUp(static_cast<Poly::eKey>(ev.xbutton.button)); break;
 		case MotionNotify: Poly::gEngine->UpdateMousePos(Poly::Vector(static_cast<float>(ev.xmotion.x), static_cast<float>(ev.xmotion.y), 0.0f)); break;
 	}
-}
-
-RawFunc LoadFunction(const char* library, const char* functionName) {
-	void* handle = dlopen(library, RTLD_NOW /*| RTLD_GLOBAL*/); //don't be lazy in resolving symbols /*and allow subsequently loaded libs to use them*/
-	if (const char* err = dlerror()) { //we could simply check if the handle is null, but using dlerror() doubles as clearing error flags
-		Poly::gConsole.LogError("{}", err);
-		Poly::gConsole.LogError("Use a game run-script or set the LD_LIBRARY_PATH environment variable manually");
-		return {nullptr, nullptr};
-	}
-
-	void* func = dlsym(handle, functionName);
-	if(const char* err = dlerror()) { //symbols can be legally null, so we need to check for errors instead
-		Poly::gConsole.LogError("{}", err);
-		dlclose(handle);
-		return {nullptr, nullptr};
-	}
-
-	return {handle, func};
-}
-
-inline DynLoaded<CreateRenderingDeviceFunc> GetRenderingDeviceCreator(const char* soname) {
-	return {LoadFunction(soname, "PolyCreateRenderingDevice")};
-}
-
-inline DynLoaded<LoadGameFunc> GetGameLoader(const char* soname) {
-	return {LoadFunction(soname, "CreateGame")};
 }

@@ -2,39 +2,25 @@
 
 #include <unordered_map>
 #include <EnumUtils.hpp>
+#include "ConfigBase.hpp"
 
 namespace Poly
 {
-	/// <summary>Enum used to identify source of asset.
-	enum class eResourceSource
+	class ENGINE_DLLEXPORT AssetsPathConfig : public ConfigBase
 	{
-		ENGINE,
-		GAME,
-		NONE,
-		_COUNT
-	};
-
-	class ENGINE_DLLEXPORT AssetsPathConfig
-	{
+		RTTI_DECLARE_TYPE_DERIVED(AssetsPathConfig, ConfigBase)
+		{
+			RTTI_PROPERTY(EngineAssetsPath, "EngineAssetsPath", RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY(GameAssetsPath, "GameAssetsPath", RTTI::ePropertyFlag::NONE);
+		}
 	public:
-		Dynarray<String> GetAssetsPaths(eResourceSource Source) const;
+		AssetsPathConfig();
 
-		bool IsLoadedFromFile() const;
-
-		bool ReloadFromFile();
-
-		void LoadDefaults();
+		const String& GetAssetsPath(eResourceSource Source) const;
 
 	private:
-		const String ASSETS_PATH_CONFIG_PATH = String("AssetsPath.json");
-		const String DEFAULT_ENGINE_ASSETS_PATH = String("../../Engine/Res/");
-		const String DEFAULT_GAME_ASSETS_PATH = String("../../Games/SGJGame/Res/");
-
-		bool LoadedFromFile = false;
-
-		EnumArray<Dynarray<String>, eResourceSource> AssetsPaths;
-
-		void WriteDefaultJson();
+		String EngineAssetsPath;
+		String GameAssetsPath;
 	};
 
 	ENGINE_DLLEXPORT extern AssetsPathConfig gAssetsPathConfig;

@@ -11,6 +11,9 @@ Engine::Engine()
 {
 	ASSERTE(gEngine == nullptr, "Creating engine twice?");
 	gEngine = this;
+
+	gAssetsPathConfig.Load();
+	gDebugConfig.Load();
 }
 
 void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> renderingDevice, std::unique_ptr<ISoundDevice> soundDevice)

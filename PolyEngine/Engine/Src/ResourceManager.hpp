@@ -18,6 +18,7 @@ namespace Poly
 	class SoundResource;
 
 	ENGINE_DLLEXPORT String LoadTextFileRelative(eResourceSource Source, const String& path);
+	ENGINE_DLLEXPORT void SaveTextFileRelative(eResourceSource Source, const String& path, const String& text);
 
 	namespace Impl { template<typename T> std::map<String, std::unique_ptr<T>>& GetResources(); }
 
@@ -71,22 +72,17 @@ namespace Poly
 			// Load the resource
 			gConsole.LogInfo("ResourceManager: Loading: {}", path);
 			T* resource = nullptr;
-			Dynarray<String> paths = (source == eResourceSource::NONE) ? Dynarray<String>({String()}) : gAssetsPathConfig.GetAssetsPaths(source);
-			for (size_t i = 0; i < paths.GetSize(); ++i)
-			{
-				String absolutePath = paths[i] + path;
+			String absolutePath = gAssetsPathConfig.GetAssetsPath(source) + path;
 
-				try
-				{
-					auto new_resource = new T(absolutePath);
-					resource = new_resource;
-					break;
-				} catch (const ResourceLoadFailedException&) {
-					resource = nullptr;
-				} catch (const std::exception&) {
-					HEAVY_ASSERTE(false, "Resource creation failed for unknown reason!");
-					return nullptr;
-				}
+			try
+			{
+				auto new_resource = new T(absolutePath);
+				resource = new_resource;
+			} catch (const ResourceLoadFailedException&) {
+				resource = nullptr;
+			} catch (const std::exception&) {
+				HEAVY_ASSERTE(false, "Resource creation failed for unknown reason!");
+				return nullptr;
 			}
 
 			if (!resource)
