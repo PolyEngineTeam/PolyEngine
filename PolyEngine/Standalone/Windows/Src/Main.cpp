@@ -90,9 +90,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	{
 		Poly::Engine Engine;
 
-	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(LoadGame());
-	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(hWnd, viewportRect));
-	std::unique_ptr<Poly::ISoundDevice> soundDevice = std::unique_ptr<Poly::ISoundDevice>(LoadSoundDevice());
+	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(loadGame());
+	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(loadRenderingDevice(hWnd, viewportRect));
+	std::unique_ptr<Poly::ISoundDevice> soundDevice = std::unique_ptr<Poly::ISoundDevice>(loadSoundDevice());
 
 
 	Engine.Init(std::move(game), std::move(device), std::move(soundDevice));
