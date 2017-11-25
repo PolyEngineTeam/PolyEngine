@@ -44,7 +44,6 @@ struct Material
 };
 
 uniform sampler2D uTexture;
-uniform float uTime;
 uniform vec4 uCameraForward;
 uniform vec4 uCameraPosition;
 
