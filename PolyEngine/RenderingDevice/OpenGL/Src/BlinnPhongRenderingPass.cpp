@@ -9,7 +9,6 @@
 #include <MeshRenderingComponent.hpp>
 #include <LightSourceComponent.hpp>
 #include <MovementSystem.hpp>
-#include <TimeWorldComponent.hpp>
 
 
 using namespace Poly;
@@ -75,9 +74,6 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
 	
-	float time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
-	GetProgram().SetUniform("uTime", time);
-
 	const TransformComponent* cameraTransCmp = camera->GetSibling<TransformComponent>();
 	Vector CameraPos = cameraTransCmp->GetGlobalTranslation();
 	Vector CameraDir = MovementSystem::GetGlobalForward(cameraTransCmp);
