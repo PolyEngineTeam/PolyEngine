@@ -2,12 +2,16 @@ find_package(OpenAL REQUIRED)
 
 set(POLYALDEVICE_SRCS
 	Src/ALSoundDevice.cpp
-	Src/SoundDataHolder.cpp
+	Src/SoundBuffer.cpp
+	Src/SoundEmitterData.cpp
+	Src/SoundListenerData.cpp
 )
 set(POLYALDEVICE_INCLUDE Src)
 set(POLYALDEVICE_H_FOR_IDE
 	Src/ALSoundDevice.hpp
-	Src/SoundDataHolder.hcpp
+	Src/SoundBuffer.hpp
+	Src/SoundEmitterData.hpp
+	Src/SoundListenerData.hpp
 )
 
 add_library(polysounddeviceal SHARED ${POLYALDEVICE_SRCS} ${POLYALDEVICE_H_FOR_IDE})
