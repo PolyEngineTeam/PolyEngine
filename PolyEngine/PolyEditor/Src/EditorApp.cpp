@@ -48,6 +48,8 @@ EditorApp::EditorApp(QWidget *parent) :
 	ViewportWidget = new PolyDockWidget<PolyViewportWidget>(this, "Viewport 1", Qt::LeftDockWidgetArea);
 	ViewportWidget->setFocusPolicy(Qt::ClickFocus);
 
+	QObject::connect(MainWindow->actionQuit, &QAction::triggered, [](bool) { Poly::gConsole.LogError("test3");/*QApplication::quit();*/ });
+	
 
 	//consoleDockWidget = new QDockWidget(EditorMainWindowClass);
 	//consoleDockWidget->setObjectName(QStringLiteral("consoleDockWidget"));

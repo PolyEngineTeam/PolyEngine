@@ -173,6 +173,7 @@ endif(CCACHE_FOUND AND COMMAND cotire)
 ##
 add_subdirectory(Core)
 if(NOT SANITIZER_MEMORY)
+	add_subdirectory(PolyEditor)
 	add_subdirectory(Engine)
 	add_subdirectory(RenderingDevice/OpenGL)
 	if(WIN32)
