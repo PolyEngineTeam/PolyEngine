@@ -1,18 +1,19 @@
 #include "PolyEditorPCH.hpp"
 #include "GameplayViewportWidget.hpp"
 #include <LibraryLoader.hpp>
+#include <QGLWidget>
 
 #if defined(_WIN32)
 	#include <windows.h>
 	#include <windowsx.h>
 #elif defined(__linux__) 
-	//#include <epoxy/glx.h>
+	#include <QX11Info>
+    #include <X11/Xlib.h>
+    #include <GL/glx.h>
 #elif defined(__APPLE__)
 #else
 #error "Unsupported platform :("
 #endif
-
-#include <QGLWidget>
 
 extern "C"
 {
@@ -73,7 +74,7 @@ void GameplayViewportWidget::InitializeViewport()
 #elif defined(__linux__)  || defined(__APPLE__)
 	Poly::ScreenSize viewportRect;
 	viewportRect.Width = width();
-	viewportRect.Hidth = height();
+	viewportRect.Height = height();
 #endif
 	
 
@@ -84,8 +85,30 @@ void GameplayViewportWidget::InitializeViewport()
 #if defined(_WIN32)
 	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice((HWND)winId(), viewportRect));
 #elif defined(__linux__)
-	GLXFBConfig config = qglx_findConfig(QX11Info::display(), QX11Info::appScreen(), platformWindowFormat());
-	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(QX11Info::display(), (Window)winId(), config, viewportRect));
+	//GLXFBConfig config = qglx_findConfig(QX11Info::display(), QX11Info::appScreen(), this->platformWindowFormat());
+
+    GLint glxAttribs[] = {
+            GLX_X_RENDERABLE  , True,
+            GLX_DRAWABLE_TYPE , GLX_WINDOW_BIT,
+            GLX_RENDER_TYPE   , GLX_RGBA_BIT,
+            GLX_X_VISUAL_TYPE , GLX_TRUE_COLOR,
+            GLX_RED_SIZE      , 8,
+            GLX_GREEN_SIZE    , 8,
+            GLX_BLUE_SIZE     , 8,
+            GLX_ALPHA_SIZE    , 8,
+            GLX_DEPTH_SIZE    , 24,
+            GLX_STENCIL_SIZE  , 8,
+            GLX_DOUBLEBUFFER  , True,
+            GLX_SAMPLE_BUFFERS, False, //MSAA off
+            GLX_SAMPLES       , 0,
+            None
+    };
+
+    int fbcount = 0;
+    // This part is crashing for now.
+    GLXFBConfig* fbc = glXChooseFBConfig(QX11Info::display(), QX11Info::appScreen(), glxAttribs, &fbcount);
+    ASSERTE(fbcount > 0, "Invalid fb count");
+	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(QX11Info::display(), (Window)winId(), fbc[0], viewportRect));
 #elif defined(__APPLE__)
 	//TODO
 	// use HIObjectRef(winId())
