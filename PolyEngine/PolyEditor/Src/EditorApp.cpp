@@ -24,66 +24,37 @@ EditorApp::EditorApp(QWidget *parent) :
 	//for (int i = 0; i<100; ++i)
 	//	ui->consoleOutput->append(QString("dupa dupa\n dupa"));
 	
-	//QDir dir("C:\\");
-	//QFileSystemModel* model = new QFileSystemModel();
-	//model->setRootPath(dir.absolutePath());
+	QDir dir("C:\\");
+	QFileSystemModel* model = new QFileSystemModel();
+	model->setRootPath(dir.absolutePath());
 	//MainWindow->assetsTreeView->setModel(model);
 	//MainWindow->assetsTreeView->setRootIndex(model->index(dir.absolutePath()));
-	//
-	//QFileSystemWatcher* watcher = new QFileSystemWatcher(this);
-	//watcher->addPath("console.log");
-	//QObject::connect(watcher, &QFileSystemWatcher::fileChanged, [&](const QString& path) 
-	//{ 
-	//	MainWindow->consoleOutput->setText(path);
-	//});
-	//
-	//QObject::connect(MainWindow->actionQuit, &QAction::triggered, [](bool checked) { Poly::gConsole.LogError("test3");/*QApplication::quit();*/ });
-	//
-	//
-	//Poly::gConsole.LogError("test1");
-	//Poly::gConsole.LogError("test2");
+	
+	QFileSystemWatcher* watcher = new QFileSystemWatcher(this);
+	watcher->addPath("console.log");
+	QObject::connect(watcher, &QFileSystemWatcher::fileChanged, [&](const QString& path) 
+	{ 
+		ConsoleWidget->setText(path);
+	});
+	
+	QObject::connect(MainWindow->actionQuit, &QAction::triggered, [](bool checked) { Poly::gConsole.LogError("test3");/*QApplication::quit();*/ });
+	
+	
+	Poly::gConsole.LogError("test1");
+	Poly::gConsole.LogError("test2");
 
 	SetupUpdateTimer();
 
 	ViewportWidget = new PolyDockWidget<PolyViewportWidget>(this, "Viewport 1", Qt::LeftDockWidgetArea);
 	ViewportWidget->setFocusPolicy(Qt::ClickFocus);
 
+	ConsoleWidget = new PolyDockWidget<PolyConsoleWidget>(this, "Console output", Qt::RightDockWidgetArea);
+	ConsoleWidget->setEnabled(true);
+	ConsoleWidget->setReadOnly(true);
+
 	QObject::connect(MainWindow->actionQuit, &QAction::triggered, [](bool) { Poly::gConsole.LogError("test3");/*QApplication::quit();*/ });
 	
 
-	//consoleDockWidget = new QDockWidget(EditorMainWindowClass);
-	//consoleDockWidget->setObjectName(QStringLiteral("consoleDockWidget"));
-	//consoleDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea);
-	//dockWidgetContents = new QWidget();
-	//dockWidgetContents->setObjectName(QStringLiteral("dockWidgetContents"));
-	//QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-	//sizePolicy.setHorizontalStretch(0);
-	//sizePolicy.setVerticalStretch(0);
-	//sizePolicy.setHeightForWidth(dockWidgetContents->sizePolicy().hasHeightForWidth());
-	//dockWidgetContents->setSizePolicy(sizePolicy);
-	//gridLayout = new QGridLayout(dockWidgetContents);
-	//gridLayout->setSpacing(6);
-	//gridLayout->setContentsMargins(11, 11, 11, 11);
-	//gridLayout->setObjectName(QStringLiteral("gridLayout"));
-	//verticalLayout_2 = new QVBoxLayout();
-	//verticalLayout_2->setSpacing(6);
-	//verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
-	//verticalLayout_2->setSizeConstraint(QLayout::SetMaximumSize);
-	//consoleOutput = new QTextEdit(dockWidgetContents);
-	//consoleOutput->setObjectName(QStringLiteral("consoleOutput"));
-	//consoleOutput->setEnabled(true);
-	//QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	//sizePolicy1.setHorizontalStretch(0);
-	//sizePolicy1.setVerticalStretch(0);
-	//sizePolicy1.setHeightForWidth(consoleOutput->sizePolicy().hasHeightForWidth());
-	//consoleOutput->setSizePolicy(sizePolicy1);
-	//consoleOutput->setMinimumSize(QSize(0, 0));
-	//consoleOutput->setSizeIncrement(QSize(0, 0));
-	//consoleOutput->setReadOnly(true);
-	//
-	//verticalLayout_2->addWidget(consoleOutput);
-	//
-	//
 	//gridLayout->addLayout(verticalLayout_2, 0, 0, 1, 1);
 	//
 	//consoleDockWidget->setWidget(dockWidgetContents);

@@ -13,6 +13,12 @@
   <property name="windowTitle">
    <string>PolyEditor</string>
   </property>
+  <property name="animated">
+   <bool>false</bool>
+  </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::GroupedDragging</set>
+  </property>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
@@ -49,7 +55,6 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
-  <customwidgets/>
  <resources>
   <include location="../Res/EditorMainWindow.qrc"/>
  </resources>

@@ -64,6 +64,9 @@
     <ClCompile Include="Src\PolyViewportWidget.cpp">
       <Filter>Source Files\Widgets</Filter>
     </ClCompile>
+    <ClCompile Include="Src\PolyConsoleWidget.cpp">
+      <Filter>Source Files\Widgets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\PolyEditorPCH.hpp">
@@ -71,6 +74,9 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_EditorMainWindow.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PolyConsoleWidget.hpp">
+      <Filter>Header Files\Widgets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -12,6 +12,7 @@ namespace Ui
 }
 
 class PolyViewportWidget;
+class PolyConsoleWidget;
 
 class EditorApp : public QMainWindow
 {
@@ -28,7 +29,9 @@ private:
 	Ui::EditorMainWindowClass* MainWindow;
 	std::unique_ptr<Poly::Engine> Engine = nullptr;
 
+	// TODO: dynarray or something like this.
 	PolyDockWidget<PolyViewportWidget>* ViewportWidget;
+	PolyDockWidget<PolyConsoleWidget>* ConsoleWidget;
 
 private slots:
 	void UpdatePhase();

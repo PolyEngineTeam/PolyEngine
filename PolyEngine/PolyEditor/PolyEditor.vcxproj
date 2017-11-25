@@ -87,6 +87,7 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Src\EditorApp.cpp" />
+    <ClCompile Include="Src\PolyConsoleWidget.cpp" />
     <ClCompile Include="Src\PolyViewportWidget.cpp" />
     <ClCompile Include="Src\Main.cpp" />
     <ClCompile Include="Src\PolyEditorPCH.cpp">
@@ -134,6 +135,7 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </Command>
     </CustomBuild>
+    <ClInclude Include="Src\PolyConsoleWidget.hpp" />
     <ClInclude Include="Src\PolyEditorPCH.hpp" />
   </ItemGroup>
   <ItemGroup>
