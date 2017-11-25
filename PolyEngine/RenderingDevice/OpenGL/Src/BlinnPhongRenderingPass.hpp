@@ -18,10 +18,5 @@ namespace Poly
 
 	protected:
 		void OnRun(World* world, const CameraComponent* camera, const AARect& rect) override;
-
-		void CreateDummyTexture();
-
-	private:
-		GLuint WhiteDummyTexture;
 	};
 }

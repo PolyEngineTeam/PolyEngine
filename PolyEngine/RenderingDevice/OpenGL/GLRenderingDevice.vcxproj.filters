@@ -65,11 +65,11 @@
     <ClInclude Include="Src\PostprocessQuad.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Src\UnlitRenderingPass.hpp">
-      <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
-    </ClInclude>
     <ClInclude Include="Src\DebugNormalsWireframeRenderingPass.hpp">
       <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\UnlitRenderingPass.hpp">
+      <Filter>Source Files\RenderingPasses\BasePasses</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -112,11 +112,11 @@
     <ClCompile Include="Src\PostprocessQuad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\UnlitRenderingPass.cpp">
-      <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
-    </ClCompile>
     <ClCompile Include="Src\DebugNormalsWireframeRenderingPass.cpp">
       <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\UnlitRenderingPass.cpp">
+      <Filter>Source Files\RenderingPasses\BasePasses</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

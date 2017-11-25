@@ -19,8 +19,6 @@ const size_t MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 BlinnPhongRenderingPass::BlinnPhongRenderingPass()
 : RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
 {
-	CreateDummyTexture();
-
 	GetProgram().RegisterUniform("vec4", "uCameraPosition");
 	GetProgram().RegisterUniform("vec4", "uCameraForward");
 
@@ -136,7 +134,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 
 			const Poly::TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
 			GLuint TextureID = DiffuseTexture == nullptr
-				? WhiteDummyTexture
+				? FallbackWhiteTexture
 				: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
 
 			glActiveTexture(GL_TEXTURE0);
@@ -151,21 +149,4 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
-}
-
-void Poly::BlinnPhongRenderingPass::CreateDummyTexture()
-{
-
-	glGenTextures(1, &WhiteDummyTexture);
-
-	GLubyte data[] = { 255, 255, 255, 255 };
-
-	glBindTexture(GL_TEXTURE_2D, WhiteDummyTexture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }
