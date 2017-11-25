@@ -4,11 +4,10 @@
 
 #include <Engine.hpp>
 
-class GameplayViewportWidget : public QWidget
+class PolyViewportWidget : public QWidget
 {
-	Q_OBJECT
 public:
-	explicit GameplayViewportWidget(QWidget* parent = nullptr);
+	explicit PolyViewportWidget(QWidget* parent = nullptr);
 
 	void InitializeViewport();
 

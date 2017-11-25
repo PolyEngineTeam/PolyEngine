@@ -1,11 +1,13 @@
 #include "PolyEditorPCH.hpp"
-#include "GameplayViewportWidget.hpp"
+
 #include <LibraryLoader.hpp>
 
 #include <windows.h>
 #include <windowsx.h>
 
-#include <QGLWidget>
+#include <QWidget>
+#include <QResizeEvent>
+
 
 using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (HWND hwnd, RECT rect);
 using CreateGameFunc = Poly::IGame* (void);
@@ -14,7 +16,7 @@ static Poly::LibraryFunctionHandle<CreateRenderingDeviceFunc> LoadRenderingDevic
 static Poly::LibraryFunctionHandle<CreateGameFunc> LoadGame;
 
 // ---------------------------------------------------------------------------------------------------------
-GameplayViewportWidget::GameplayViewportWidget(QWidget* parent)
+PolyViewportWidget::PolyViewportWidget(QWidget* parent)
 	: QWidget(parent)
 {
 	setAttribute(Qt::WA_NativeWindow);
@@ -27,7 +29,7 @@ GameplayViewportWidget::GameplayViewportWidget(QWidget* parent)
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void GameplayViewportWidget::InitializeViewport()
+void PolyViewportWidget::InitializeViewport()
 {
 	RECT viewportRect;
 	viewportRect.top = 0;
@@ -45,13 +47,13 @@ void GameplayViewportWidget::InitializeViewport()
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void GameplayViewportWidget::Update()
+void PolyViewportWidget::Update()
 {
 	Poly::gEngine->Update();
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void GameplayViewportWidget::resizeEvent(QResizeEvent* resizeEvent)
+void PolyViewportWidget::resizeEvent(QResizeEvent* resizeEvent)
 {
 	Poly::ScreenSize screenSize;
 	screenSize.Width = resizeEvent->size().width();
@@ -60,19 +62,19 @@ void GameplayViewportWidget::resizeEvent(QResizeEvent* resizeEvent)
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void GameplayViewportWidget::wheelEvent(QWheelEvent* wheelEvent)
+void PolyViewportWidget::wheelEvent(QWheelEvent* wheelEvent)
 {
 	Poly::gEngine->UpdateWheelPos(Poly::Vector(static_cast<float>(wheelEvent->delta()), 0, 0));
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void GameplayViewportWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
+void PolyViewportWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 {
 	Poly::gEngine->UpdateMousePos(Poly::Vector(static_cast<float>(mouseEvent->pos().x()), static_cast<float>(mouseEvent->pos().y()), 0));
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void GameplayViewportWidget::mousePressEvent(QMouseEvent* mouseEvent)
+void PolyViewportWidget::mousePressEvent(QMouseEvent* mouseEvent)
 {
 	switch (mouseEvent->button())
 	{
@@ -95,7 +97,7 @@ void GameplayViewportWidget::mousePressEvent(QMouseEvent* mouseEvent)
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void GameplayViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
+void PolyViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 {
 	switch (mouseEvent->button())
 	{
@@ -118,13 +120,13 @@ void GameplayViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void GameplayViewportWidget::keyPressEvent(QKeyEvent* keyEvent)
+void PolyViewportWidget::keyPressEvent(QKeyEvent* keyEvent)
 {
 	Poly::gEngine->KeyDown(static_cast<Poly::eKey>((unsigned int)keyEvent->nativeVirtualKey()));
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void GameplayViewportWidget::keyReleaseEvent(QKeyEvent* keyEvent)
+void PolyViewportWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 {
 	if (keyEvent->isAutoRepeat())
 		keyEvent->ignore();

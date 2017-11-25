@@ -4,10 +4,14 @@
 
 #include <Engine.hpp>
 
+#include "PolyDockWidget.hpp"
+
 namespace Ui 
 {
 	class EditorMainWindowClass;
 }
+
+class PolyViewportWidget;
 
 class EditorApp : public QMainWindow
 {
@@ -24,6 +28,7 @@ private:
 	Ui::EditorMainWindowClass* MainWindow;
 	std::unique_ptr<Poly::Engine> Engine = nullptr;
 
+	PolyDockWidget<PolyViewportWidget>* ViewportWidget;
 
 private slots:
 	void UpdatePhase();
