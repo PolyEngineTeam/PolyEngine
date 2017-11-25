@@ -25,7 +25,11 @@
     <ClInclude Include="Src\RenderingSandbox.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Src\GameManagerSystem.hpp" />
-    <ClInclude Include="Src\GameManagerWorldComponent.hpp" />
+    <ClInclude Include="Src\GameManagerSystem.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GameManagerWorldComponent.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

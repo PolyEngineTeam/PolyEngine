@@ -25,8 +25,6 @@ DEFINE_GAME(RenderingSandbox)
 
 void RenderingSandbox::Init()
 {
-	// Register Game Components
-	gEngine->RegisterWorldComponent<GameManagerWorldComponent>((int)eGameWorldComponents::GAME_MGR);
 	gEngine->RegisterGameUpdatePhase(GameManagerSystem::Update);
 	DeferredTaskSystem::AddWorldComponentImmediate<GameManagerWorldComponent>(gEngine->GetWorld());
 

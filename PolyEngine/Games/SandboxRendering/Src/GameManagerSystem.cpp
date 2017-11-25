@@ -51,10 +51,6 @@ void GameManagerSystem::CreateScene(World* world)
 	CreatePointLight(world, 100.0f);
 
 	AddPointLights(world, 7);
-	// AddPointLights(world, 31);
-
-	// SpotLight
-	CreateSpotLight(world, 500.0f);
 
 	UniqueID Shaderball = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, Shaderball);
@@ -91,14 +87,11 @@ void GameManagerSystem::CreateScene(World* world)
 
 void GameManagerSystem::Update(World* world)
 {
-	// gConsole.LogInfo("GameManagerSystem::Update");
-	
 	float Time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 	GameManagerWorldComponent* GameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
 
 	for (int i = 0; i < GameMgrCmp->PointLights.GetSize(); ++i)
 	{
-		// gConsole.LogInfo("GameManagerSystem::Update PointLight[{}]", i);
 		PointLightComponent* PointLightCmp = GameMgrCmp->PointLights[i];
 		TransformComponent* TransCmp = PointLightCmp->GetSibling<TransformComponent>();
 		Vector Position = GameMgrCmp->PointLightPositions[i];
@@ -138,7 +131,6 @@ void GameManagerSystem::CreatePointLight(World* world, float Range)
 	Vector PointLightPos = Vector(Random(-1.0f, 1.0f), Random(0.0f, 0.2f), Random(-0.5f, 0.5f)) * 1000.0f;
 	Color LightColor = Color(1.0f, 0.5f, 0.0f) + Color(Random(0.0f, 1.0f), Random(0.0, 0.5f), Random(0.0f, 0.2f));
 
-	// float PointLightRange = 100.0f;
 	UniqueID PointLight = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, PointLight);
 	DeferredTaskSystem::AddComponentImmediate<PointLightComponent>(world, PointLight, LightColor, 1.0f, Range);
@@ -173,49 +165,6 @@ void GameManagerSystem::CreatePointLight(World* world, float Range)
 	GameMgrCmp->PointLights.PushBack(PointLightCmp);
 	GameMgrCmp->PointLightPositions.PushBack(PointLightPos);
 	GameMgrCmp->DebugMeshes.PushBack(PointLightRangeMesh);
-}
-
-void GameManagerSystem::CreateSpotLight(World* world, float Range)
-{
-	// World* world = Engine->GetWorld();
-
-	Vector SpotLightPos = Vector(100.0f, 100.0f, 0.0f);
-	Color LightColor = Color(1.0f, 0.5f, 0.0f) + Color(Random(0.0f, 1.0f), Random(0.0, 0.5f), Random(0.0f, 0.2f));
-	Quaternion SpotLightRot = Quaternion(Vector::UNIT_Y, 45_deg) * Quaternion(Vector::UNIT_X, -25_deg);
-	// float PointLightRange = 100.0f;
-	UniqueID SpotLight = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, SpotLight);
-	DeferredTaskSystem::AddComponentImmediate<SpotLightComponent>(world, SpotLight, LightColor, 1.0f, Range, 5.0f, 17.0f);
-	TransformComponent* SpotLightTrans = world->GetComponent<TransformComponent>(SpotLight);
-	SpotLightTrans->SetLocalTranslation(SpotLightPos);
-	SpotLightTrans->SetLocalRotation(SpotLightRot);
-
-	UniqueID SpotLightDebugSource = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, SpotLightDebugSource);
-	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, SpotLightDebugSource, "Models/Primitives/Sphere_LowPoly.obj", eResourceSource::GAME);
-	MeshRenderingComponent* SpotLightMesh = world->GetComponent<MeshRenderingComponent>(SpotLightDebugSource);
-	SpotLightMesh->SetShadingModel(eShadingModel::UNLIT);
-	SpotLightMesh->SetMaterial(0, PhongMaterial(LightColor, LightColor, LightColor, 8.0f));
-	TransformComponent* SpotLightDebugSourceTrans = world->GetComponent<TransformComponent>(SpotLightDebugSource);
-	SpotLightDebugSourceTrans->SetParent(SpotLightTrans);
-	SpotLightDebugSourceTrans->SetLocalScale(2.0f);
-	SpotLightDebugSourceTrans->SetLocalTranslation(Vector(0.0f, 0.0f, 0.0f));
-
-	UniqueID SpotLightDebugRange = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, SpotLightDebugRange);
-	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, SpotLightDebugRange, "Models/Primitives/Sphere_LowPoly.obj", eResourceSource::GAME);
-	MeshRenderingComponent* SpotLightRangeMesh = world->GetComponent<MeshRenderingComponent>(SpotLightDebugRange);
-	SpotLightRangeMesh->SetShadingModel(eShadingModel::UNLIT);
-	SpotLightRangeMesh->SetIsWireframe(true);
-	SpotLightRangeMesh->SetMaterial(0, PhongMaterial(LightColor, LightColor, LightColor, 8.0f));
-	TransformComponent* SpotLightRangeTrans = world->GetComponent<TransformComponent>(SpotLightDebugRange);
-	SpotLightRangeTrans->SetParent(SpotLightTrans);
-	SpotLightRangeTrans->SetLocalScale(Vector(0.5f, 1.0f, 0.5f) * Range);
-	SpotLightRangeTrans->SetLocalTranslation(Vector(0.0f, 0.0f, 0.0f));	
-
-	GameManagerWorldComponent* GameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
-	GameMgrCmp->SpotLights.PushBack(SpotLight);
-	GameMgrCmp->DebugMeshes.PushBack(SpotLightRangeMesh);
 }
 
 float GameManagerSystem::Random(float min, float max)

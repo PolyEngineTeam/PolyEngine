@@ -10,12 +10,6 @@
 
 using namespace Poly;
 
-enum class eGameWorldComponents
-{
-	GAME_MGR = (int)eEngineWorldComponents::_COUNT,
-	_COUNT
-};
-
 DECLARE_GAME()
 
 class GAME_DLLEXPORT RenderingSandbox : public IGame {
