@@ -30,6 +30,16 @@ void GameManagerSystem::CreateScene(World* world)
 	DeferredTaskSystem::AddComponentImmediate<CameraComponent>(world, Camera, 60_deg, 1.0f, 3000.f);
 	DeferredTaskSystem::AddComponentImmediate<FreeFloatMovementComponent>(world, Camera, 10.0f, 0.003f);
 	DeferredTaskSystem::AddComponentImmediate<PostprocessSettingsComponent>(world, Camera);
+	PostprocessSettingsComponent* postCmp = world->GetComponent<PostprocessSettingsComponent>(Camera);
+	postCmp->UseBgShader = false;
+	postCmp->UseFgShader = false;
+	postCmp->Distortion = 0.0f;
+	postCmp->ColorTempValue = 6500.0f;
+	postCmp->Saturation = 1.0f;
+	postCmp->Grain = 0.0f;
+	postCmp->Stripes = 0.0f;
+	postCmp->Vignette = 0.0f;
+
 	TransformComponent* cameraTrans = world->GetComponent<TransformComponent>(Camera);
 	cameraTrans->SetLocalTranslation(Vector(0.0f, 5.0f, 15.0f));
 	GameMgrCmp->Camera;
@@ -72,17 +82,6 @@ void GameManagerSystem::CreateScene(World* world)
 		sponzaMesh->SetMaterial(i, PhongMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), 8.0f));
 	}
 	GameMgrCmp->GameEntities.PushBack(Ground);
-
-	for (auto cmpTuple : world->IterateComponents<PostprocessSettingsComponent>())
-	{
-		PostprocessSettingsComponent* postCmp = std::get<PostprocessSettingsComponent*>(cmpTuple);
-		postCmp->Distortion = 0.0f;
-		postCmp->ColorTempValue = 6500.0f;
-		postCmp->Saturation = 1.0f;
-		postCmp->Grain = 0.0f;
-		postCmp->Stripes = 0.0f;
-		postCmp->Vignette = 0.0f;
-	}
 }
 
 void GameManagerSystem::Update(World* world)
