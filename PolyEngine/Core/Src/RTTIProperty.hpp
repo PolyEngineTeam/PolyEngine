@@ -88,12 +88,16 @@ namespace Poly {
 			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::ENUM, std::move(implData)};
 		}
 
+        // Hack for clang compilation, should be used in every lambda in constexpr_match everywhere where T is required.
+        // required lambda argument to be "auto lazy"
+        #define LAZY_TYPE(T) decltype(lazy(std::declval<T>()))
+
 		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
 		{ 
 			return constexpr_match(
-				std::is_enum<T>{},			[&](auto) { return CreateEnumPropertyInfo<T>(offset, name, flags); },
+				std::is_enum<T>{},			[&](auto lazy) { return CreateEnumPropertyInfo<LAZY_TYPE(T)>(offset, name, flags); },
 				std::is_same<String, T>{},	[&](auto) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<String>() }; },
-				/*default*/					[&](auto) { return Property{ TypeInfo::Get<T>(), offset, name, flags, GetCorePropertyType<T>() }; }
+				/*default*/					[&](auto lazy) { return Property{ TypeInfo::Get<LAZY_TYPE(T)>(), offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>() }; }
 			);
 		}
 
