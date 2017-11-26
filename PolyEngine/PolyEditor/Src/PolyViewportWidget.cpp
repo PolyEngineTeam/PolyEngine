@@ -1,4 +1,4 @@
-//#include "PolyEditorPCH.hpp"
+#include "PolyEditorPCH.hpp"
 #include <qtextstream.h>
 #include "PolyViewportWidget.hpp"
 #include <Engine.hpp>
