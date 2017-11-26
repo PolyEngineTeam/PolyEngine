@@ -10,6 +10,7 @@ elseif(APPLE)
     #TODO
 else()
     find_package(OpenGL REQUIRED)
+    find_package(epoxy REQUIRED)
     find_package(X11 REQUIRED)
 endif()
 
@@ -18,14 +19,17 @@ find_package(Qt5 COMPONENTS OpenGL Core Widgets X11Extras REQUIRED)
 
 set(EDITOR_SRCS
         Src/EditorApp.cpp
-        Src/GameplayViewportWidget.cpp
+        Src/PolyConsoleWidget.cpp
+        Src/PolyViewportWidget.cpp
         Src/Main.cpp
         Src/PolyEditorPCH.cpp
         )
 set(EDITOR_INCLUDE Src)
 set(EDITOR_H_FOR_IDE
         Src/PolyEditorPCH.hpp
-        Src/GameplayViewportWidget.hpp
+        Src/PolyConsoleWidget.hpp
+        Src/PolyDockWidget.hpp
+        Src/PolyViewportWidget.hpp
         Src/EditorApp.hpp
         )
 
@@ -36,7 +40,7 @@ if(WIN32)
 elseif(APPLE)
     #TODO
 else()
-    target_link_libraries(polyeditor ${X11_LIBRARIES} ${OPENGL_LIBRARIES} ${CMAKE_DL_LIBS})
+    target_link_libraries(polyeditor ${X11_LIBRARIES} ${OPENGL_LIBRARIES} epoxy::gl ${CMAKE_DL_LIBS})
 endif()
 
 target_link_libraries(polyeditor Qt5::Widgets Qt5::OpenGL Qt5::Core Qt5::X11Extras polyengine polycore)

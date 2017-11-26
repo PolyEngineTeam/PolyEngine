@@ -37,7 +37,7 @@ EditorApp::EditorApp(QWidget *parent) :
 		ConsoleWidget->setText(path);
 	});
 	
-	QObject::connect(MainWindow->actionQuit, &QAction::triggered, [](bool checked) { Poly::gConsole.LogError("test3");/*QApplication::quit();*/ });
+	QObject::connect(MainWindow->actionQuit, &QAction::triggered, [](bool) { Poly::gConsole.LogError("test3");/*QApplication::quit();*/ });
 	
 	
 	Poly::gConsole.LogError("test1");

@@ -1,9 +1,10 @@
-#include "PolyEditorPCH.hpp"
-
+//#include "PolyEditorPCH.hpp"
+#include <qtextstream.h>
+#include "PolyViewportWidget.hpp"
+#include <Engine.hpp>
 #include <LibraryLoader.hpp>
-#include <QGLWidget>
-#include <QWidget>
-#include <QResizeEvent>
+#include <QtGui/QtGui>
+
 
 #if defined(_WIN32)
 	#include <windows.h>
@@ -83,11 +84,20 @@ void PolyViewportWidget::InitializeViewport()
 	// TODO: catch winId changes (http://doc.qt.io/qt-5/qwidget.html#winId)
 	// TODO: something like addviewport to rendering device
 	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(LoadGame());
-	
 #if defined(_WIN32)
 	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice((HWND)winId(), viewportRect));
 #elif defined(__linux__)
 	//GLXFBConfig config = qglx_findConfig(QX11Info::display(), QX11Info::appScreen(), this->platformWindowFormat());
+
+    //check GLX version
+    {
+        GLint majorGLX = 0, minorGLX = 0;
+        glXQueryVersion(QX11Info::display(), &majorGLX, &minorGLX);
+        if (majorGLX <= 1 && minorGLX < 4) {
+            Poly::gConsole.LogError("GLX 1.4 or greater is required.");
+            std::exit(1);
+        }
+    }
 
     GLint glxAttribs[] = {
             GLX_X_RENDERABLE  , True,
@@ -109,14 +119,21 @@ void PolyViewportWidget::InitializeViewport()
     int fbcount = 0;
     // This part is crashing for now.
     GLXFBConfig* fbc = glXChooseFBConfig(QX11Info::display(), QX11Info::appScreen(), glxAttribs, &fbcount);
+    if (!fbc) {
+        Poly::gConsole.LogError("Failed to retrieve framebuffer config.");
+        std::exit(1);
+    }
+    GLXFBConfig fbConfig = *fbc;
+    XFree(fbc);
+    Poly::gConsole.LogDebug("Framebuffer config get");
+
     ASSERTE(fbcount > 0, "Invalid fb count");
-	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(QX11Info::display(), (Window)winId(), fbc[0], viewportRect));
+	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(QX11Info::display(), (Window)winId(), fbConfig, viewportRect));
 #elif defined(__APPLE__)
 	//TODO
 	// use HIObjectRef(winId())
 	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(winId(), viewportRect));
 #endif
-
 	Poly::gEngine->Init(std::move(game), std::move(device));
 	Poly::gConsole.LogDebug("Engine loaded successfully");
 }
