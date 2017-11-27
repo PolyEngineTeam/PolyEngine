@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <QtGui/QtGui>
 
 class PolyViewportWidget : public QWidget
 {
