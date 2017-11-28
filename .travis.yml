@@ -20,13 +20,8 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-6
+            - libsdl2-dev # workaround for https://github.com/travis-ci/travis-ci/issues/8317
       env: COMPILER=g++-6
-
-# work-a-round for https://github.com/travis-ci/travis-ci/issues/8317
-addons:
-  apt:
-    packages:
-    - libsdl2-dev
  
 before_install:
   - export CXX=${COMPILER}
