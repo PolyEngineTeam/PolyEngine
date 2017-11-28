@@ -82,12 +82,14 @@ namespace Poly
 		/// One of four functions handling incoming input events.</summary>
 		/// <param name="pos">New wheel position.</param>
 		void UpdateWheelPos(const Vector& pos) { InputEventsQueue.PushBack({eInputEventType::WHEELMOVE, pos}); }
-
+    
+		/// Restart the game
+		void RequestGameRestart();
+    
 		///functions for closing the game
 		bool IsQuitRequested() const;
 		void RequestGameQuit();
-		
-
+    
 		/// <summary>Returns current base world refference.</summary>
 		/// <returns>Pointer to current world.</returns>
 		World* GetWorld() { return BaseWorld.get(); }
@@ -123,6 +125,8 @@ namespace Poly
 		/// @param order - enum eUpdatePhaseOrder value
 		/// @see eUpdatePhaseOrder
 		void RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order);
+
+		bool IsRestartRequested = false; /// Restart if true
 
 		std::unique_ptr<World> BaseWorld;
 		std::unique_ptr<IGame> Game;
