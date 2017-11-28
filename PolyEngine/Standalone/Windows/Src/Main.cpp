@@ -3,6 +3,7 @@
 #include <windowsx.h>
 
 #include <Engine.hpp>
+#include <ISoundDevice.hpp>
 #include <sstream>
 #include <TimeSystem.hpp>
 #include <LibraryLoader.hpp>
@@ -14,6 +15,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd,
 	LPARAM lParam);
 
 using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (HWND hwnd, RECT rect);
+using CreateSoundDeviceFunc = Poly::ISoundDevice* ();
 using CreateGameFunc = Poly::IGame* (void);
 
 // the entry point for any Windows program
@@ -80,17 +82,21 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	auto loadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>("libRenderingDevice", "PolyCreateRenderingDevice");
 	if (!loadRenderingDevice.FunctionValid()) { return 1; }
+	auto loadSoundDevice = Poly::LoadFunctionFromSharedLibrary<CreateSoundDeviceFunc>("libSoundDevice", "PolyCreateSoundDevice");
+	if (!loadRenderingDevice.FunctionValid()) { return 1; }
 	auto loadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("libGame", "CreateGame");
 	if (!loadGame.FunctionValid()) { return 1; }
 
 	{
 		Poly::Engine Engine;
 
-		std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(loadGame());
-		std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(loadRenderingDevice(hWnd, viewportRect));
+	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(loadGame());
+	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(loadRenderingDevice(hWnd, viewportRect));
+	std::unique_ptr<Poly::ISoundDevice> soundDevice = std::unique_ptr<Poly::ISoundDevice>(loadSoundDevice());
 
-		Engine.Init(std::move(game), std::move(device));
-		Poly::gConsole.LogDebug("Engine loaded successfully");
+
+	Engine.Init(std::move(game), std::move(device), std::move(soundDevice));
+	Poly::gConsole.LogDebug("Engine loaded successfully");
 
 		// wait for the next message in the queue, store the result in 'msg'
 		bool quitRequested = false;

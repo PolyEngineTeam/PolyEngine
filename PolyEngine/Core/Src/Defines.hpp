@@ -103,6 +103,12 @@ using uint = unsigned int;
 	#else
 		#define DEVICE_DLLEXPORT __declspec(dllimport)
 	#endif
+
+	#if defined(_WINDLL) && defined(_SOUND_DEVICE)
+		#define SOUND_DEVICE_DLLEXPORT __declspec(dllexport)
+	#else
+		#define SOUND_DEVICE_DLLEXPORT __declspec(dllimport)
+	#endif
 #elif defined(__GNUC__) || defined(__clang__)
 	//NOTE(vuko): dllexport and dllimport are the same as far as GCC and Clang are concerned
 	#define CORE_DLLEXPORT __attribute__ ((visibility ("default")))

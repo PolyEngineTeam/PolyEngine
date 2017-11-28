@@ -1,28 +1,46 @@
 #pragma once
 
+// engine
+#include "SoundSystem.hpp"
 #include "ResourceBase.hpp"
 
-namespace Poly 
+namespace Poly
 {
+	class BinaryBuffer;
 
-	class ENGINE_DLLEXPORT OggDecoderException : public BaseObject<>, public std::exception
+	enum class eSoundSampleFormat
 	{
-	public:
-		OggDecoderException() {}
+		MONO8 = 0,
+		MONO16,
+		STEREO8,
+		STEREO16,
+		_COUNT
 	};
-	
-	/// Resource that stores sound resource
-	/// For now is designed only for opening ogg files (and not too large (tested on 188KB sample))
+
+	enum class eSoundFileFormat
+	{
+		OGG_VORBIS = 0,
+		_COUNT
+	};
+
 	class ENGINE_DLLEXPORT SoundResource : public ResourceBase
 	{
+		friend void SoundSystem::DecodeOggVorbis(SoundResource*, const BinaryBuffer&, size_t, size_t);
 	public:
-		SoundResource(const String& path);
-		~SoundResource();
+		SoundResource(const String& path, eSoundFileFormat format = eSoundFileFormat::OGG_VORBIS, size_t size = 0, size_t offset = 0);
+		~SoundResource() override;
 
-		unsigned int GetBufferID() const { return BufferID; }
+		const BinaryBuffer* GetRawData() const { return RawData; }
+		const BinaryBuffer* GetRawData() { return RawData; }
+		eSoundSampleFormat GetSampleFormat() const { return SampleFormat; }
+		eSoundSampleFormat GetSampleFormat() { return SampleFormat; }
+		size_t GetFrequency() const { return Frequency; }
+		size_t GetFrequency() { return Frequency; }
 
 	private:
-		unsigned int BufferID;
+		BinaryBuffer* RawData;
+		eSoundSampleFormat SampleFormat;
+		size_t Frequency;
 	};
 
 } // namespace Poly

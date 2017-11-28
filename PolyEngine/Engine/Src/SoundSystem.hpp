@@ -1,47 +1,37 @@
 #pragma once
 
+#include "Defines.hpp"
+
 namespace Poly
 {
+	class ENGINE_DLLEXPORT SoundSystemException : public BaseObject<>, public std::exception
+	{
+	public:
+		SoundSystemException() {}
+	};
+
+	class ENGINE_DLLEXPORT OggDecoderException : public SoundSystemException
+	{
+	public:
+		OggDecoderException() {}
+	};
+
 	class World;
+	class BinaryBuffer;
 	class SoundResource;
-	class UniqueID;
-	class SoundEmitterComponent;
-	class SoundListenerComponent;
-	enum class eResourceSource;
+	enum class eSoundFileFormat;
 
 	namespace SoundSystem
 	{
 		void ENGINE_DLLEXPORT SoundPhase(World*);
 
-		// Device
-		void ENGINE_DLLEXPORT SetDevice(const String&);
-		const ENGINE_DLLEXPORT String& GetDeviceName();
-		const ENGINE_DLLEXPORT Dynarray<String>& GetAvailableDevices();
+		void ENGINE_DLLEXPORT DecodeSoundData(SoundResource* resource, const BinaryBuffer& data, eSoundFileFormat format, size_t size, size_t offset);
 
-		// Context
-		void ENGINE_DLLEXPORT SetWorldCurrent(World*);
+		void ENGINE_DLLEXPORT DecodeOggVorbis(SoundResource* resource, const BinaryBuffer& data, size_t size, size_t offset);
 
-		// Emitter
-		void ENGINE_DLLEXPORT PlayEmitter(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT ReplayEmitter(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT PauseEmitter(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT StopEmitter(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT LoopEmitter(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT UnLoopEmitter(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT SetEmitterGain(World*, const UniqueID&, float);
-		void ENGINE_DLLEXPORT SetEmitterFrequency(World*, const UniqueID&, float);
-		void ENGINE_DLLEXPORT SetEmitterOffsetInSeconds(World*, const UniqueID&, float);
-		void ENGINE_DLLEXPORT SetEmitterOffsetInSamples(World*, const UniqueID&, size_t);
-		void ENGINE_DLLEXPORT SetEmitterOffsetInBytes(World*, const UniqueID&, size_t);
-		void ENGINE_DLLEXPORT SetEmitterSource(World*, const UniqueID&, const String&, eResourceSource);
-		/*void ENGINE_DLLEXPORT QueueEmitterSource(World*, const UniqueID&, const String&);
-		void ENGINE_DLLEXPORT DequeueEmitterSource(World*, const UniqueID&, const String&);
-		void ENGINE_DLLEXPORT SetEmitterDistanceModel(World*, const UniqueID&, void(*fun)(SoundEmitterComponent, SoundListenerComponent));
-		*/
-		// Listener
-		void ENGINE_DLLEXPORT ActivateListener(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT DeactivateListener(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT SetListenerGain(World*, const UniqueID&, float);
-		bool ENGINE_DLLEXPORT IsEmmiterActive(World*, const UniqueID&);
+		void ENGINE_DLLEXPORT PushSoundResource(World* world, UniqueID emitterID, const SoundResource& res);
+		void ENGINE_DLLEXPORT PopSoundResource(World* world, UniqueID emitterID);
+		int ENGINE_DLLEXPORT GetProcessedBuffersCount(World* world, UniqueID emitterID);
+		int ENGINE_DLLEXPORT GetQueuedBuffersCount(World* world, UniqueID emitterID);
 	}
 } // namespace Poly

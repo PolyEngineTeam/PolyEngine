@@ -16,11 +16,13 @@ Engine::Engine()
 	gDebugConfig.Load();
 }
 
-void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device)
+void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> renderingDevice, std::unique_ptr<ISoundDevice> soundDevice)
 {
 	Game = std::move(game);
-	RenderingDevice = std::move(device);
+	RenderingDevice = std::move(renderingDevice);
 	RenderingDevice->Init();
+	SoundDevice = std::move(soundDevice);
+	SoundDevice->Init();
 	BaseWorld = std::make_unique<World>();
 	Game->RegisterEngine(this);
 
@@ -29,7 +31,6 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(BaseWorld.get());
 	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(BaseWorld.get());
 	DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(BaseWorld.get());
-	DeferredTaskSystem::AddWorldComponentImmediate<SoundWorldComponent>(BaseWorld.get(), BaseWorld.get());
 	DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(BaseWorld.get());
 	Physics2DConfig physicsConfig;
 	DeferredTaskSystem::AddWorldComponentImmediate<Physics2DWorldComponent>(BaseWorld.get(), physicsConfig);
@@ -46,8 +47,6 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	RegisterUpdatePhase(DeferredTaskSystem::DeferredTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(FPSSystem::FPSUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 
-	SoundSystem::SetWorldCurrent(BaseWorld.get());
-
 	// Init game
 	Game->Init();
 }
@@ -59,6 +58,7 @@ Engine::~Engine()
 	BaseWorld.reset();
 	Game.reset();
 	RenderingDevice.reset();
+	SoundDevice.reset();
 	gEngine = nullptr;
 }
 

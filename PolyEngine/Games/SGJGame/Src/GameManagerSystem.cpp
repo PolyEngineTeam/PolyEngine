@@ -17,6 +17,7 @@
 #include "Physics2DWorldComponent.hpp"
 #include <SoundEmitterComponent.hpp>
 #include <SoundSystem.hpp>
+#include <SoundResource.hpp>
 
 
 using namespace SGJ;
@@ -37,7 +38,8 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 	for (size_t i=0; i < manager->SoundSampleEntities.GetSize();)
 	{
 		UniqueID soundEnt = manager->SoundSampleEntities[i];
-		if (!SoundSystem::IsEmmiterActive(world, soundEnt))
+		SoundEmitterComponent* emitter = world->GetComponent<SoundEmitterComponent>(soundEnt);
+		if (!emitter->Active)
 		{
 			manager->SoundSampleEntities.RemoveByIdx(i);
 			DeferredTaskSystem::DestroyEntity(world, soundEnt);
@@ -302,16 +304,21 @@ void SGJ::GameManagerSystem::DespawnLevel(Poly::World* world)
 void SGJ::GameManagerSystem::PlaySample(Poly::World* world, const String& file, const Vector& position, float pitch, float gain)
 {
 	GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
-
+	
 	UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, id);
 	Poly::TransformComponent* trans = world->GetComponent<Poly::TransformComponent>(id);
 	trans->SetLocalTranslation(position);
-	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(world, id, file, eResourceSource::GAME);
-
-	SoundSystem::SetEmitterFrequency(world, id, pitch);
-	SoundSystem::SetEmitterGain(world, id, gain);
-	SoundSystem::PlayEmitter(world, id);
+	SoundResource* res = ResourceManager<SoundResource>::Load(file, eResourceSource::GAME);
+	DeferredTaskSystem::AddComponentImmediate<Poly::SoundEmitterComponent>(world, id);
+	SoundEmitterComponent* emitter = world->GetComponent<SoundEmitterComponent>(id);
+	SoundSystem::PushSoundResource(world, id, *res);
+	ResourceManager<SoundResource>::Release(res);
+	emitter->Pitch = pitch;
+	emitter->Gain = gain;
+	emitter->Pitch = pitch;
+	emitter->StateChanged = true;
+	
 	gameMgrCmp->SoundSampleEntities.PushBack(id);
 }
 
@@ -337,9 +344,14 @@ void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
 	// SETUP SCENE HERE
 
 	UniqueID backgroundPlayer = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<SoundEmitterComponent>(world, backgroundPlayer, "Audio/Pursuit_cut.ogg", eResourceSource::GAME);
-	SoundSystem::PlayEmitter(world, backgroundPlayer);
-	SoundSystem::LoopEmitter(world, backgroundPlayer);
+	DeferredTaskSystem::AddComponentImmediate<SoundEmitterComponent>(world, backgroundPlayer);
+	SoundEmitterComponent* emitter = world->GetComponent<SoundEmitterComponent>(backgroundPlayer);
+	SoundResource* res = ResourceManager<SoundResource>::Load("Audio/Pursuit_cut.ogg", eResourceSource::GAME);
+	SoundSystem::PushSoundResource(world, backgroundPlayer, *res);
+	ResourceManager<SoundResource>::Release(res);
+	emitter->Pitch = 1.0;
+	emitter->Looping = true;
+	emitter->StateChanged = true;
 
 	world->GetWorldComponent<AmbientLightWorldComponent>()->SetColor(Color(0.2f, 0.5f, 1.0f));
 	world->GetWorldComponent<AmbientLightWorldComponent>()->SetIntensity(0.5f); 

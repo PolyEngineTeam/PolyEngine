@@ -14,8 +14,8 @@
 // Rendering
 #include "IRenderingDevice.hpp"
 
-// Audio
-#include "OpenALDevice.hpp"
+// Sound
+#include "ISoundDevice.hpp"
 
 // Utils
 #include "InputQueue.hpp"
@@ -46,7 +46,6 @@
 // World Components
 #include "DebugWorldComponent.hpp"
 #include "InputWorldComponent.hpp"
-#include "SoundWorldComponent.hpp"
 #include "TimeWorldComponent.hpp"
 #include "ViewportWorldComponent.hpp"
 #include "DeferredTaskWorldComponent.hpp"
