@@ -134,7 +134,7 @@ namespace Poly
                                    does send code 73, not 117) */
 		HOME = 74,
 		PAGEUP = 75,
-		DELETE = 76,
+		DEL = 76,
 		END = 77,
 		PAGEDOWN = 78,
 		RIGHT = 79,
@@ -294,6 +294,6 @@ namespace Poly
 		RALT = 230, /**< alt gr, option */
 		RGUI = 231, /**< windows, command (apple), meta */
 
-		_COUNT                 = 256
+		_COUNT = 256
 	};
 }
