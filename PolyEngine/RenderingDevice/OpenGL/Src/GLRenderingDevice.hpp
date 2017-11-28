@@ -3,6 +3,9 @@
 #include "GLUtils.hpp"
 #include <IRenderingDevice.hpp>
 #include "GLShaderProgram.hpp"
+#include <SDL.h>
+
+struct SDL_Window;
 
 namespace Poly
 {
@@ -45,16 +48,7 @@ namespace Poly
 		};
 
 	public:
-#if defined(_WIN32)
-		GLRenderingDevice(HWND HWnd, RECT Rect);
-#elif defined(__linux__)
-		GLRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig, const ScreenSize& size);
-#elif defined(__APPLE__)
-		GLRenderingDevice(void* window, const ScreenSize& size); //TODO creation API
-#else
-#error "Unsupported platform :("
-#endif
-
+		GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize& size);
 		~GLRenderingDevice();
 
 		GLRenderingDevice(const GLRenderingDevice&) = delete;
@@ -99,20 +93,8 @@ namespace Poly
 		template <typename T, typename... Args>
 		T* CreateRenderingTarget(Args&&... args);
 
-#if defined(_WIN32)
-		HDC hDC;
-		HWND hWnd;
-		HGLRC hRC;
-#elif defined(__linux__)
-		Display* display;
-		Window window;
-		GLXContext context;
-#elif defined(__APPLE__)
-		void* window;
-        void* view;
-#else
-#error "Unsupported platform :("
-#endif
+		SDL_Window* Window;
+		SDL_GLContext Context;
 
 		Dynarray<std::unique_ptr<RenderingTargetBase>> RenderingTargets;
 
@@ -129,13 +111,5 @@ namespace Poly
 
 extern "C"
 {
-#if defined(_WIN32)
-	DEVICE_DLLEXPORT Poly::IRenderingDevice* __stdcall PolyCreateRenderingDevice(HWND hwnd, RECT rect);
-#elif defined(__linux__)
-	DEVICE_DLLEXPORT Poly::IRenderingDevice* PolyCreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig, const Poly::ScreenSize& size);
-#elif defined(__APPLE__)
-	DEVICE_DLLEXPORT Poly::IRenderingDevice* PolyCreateRenderingDevice(void* window, const Poly::ScreenSize& size);
-#else
-#error "Unsupported platform :("
-#endif
+	DEVICE_DLLEXPORT Poly::IRenderingDevice* __stdcall PolyCreateRenderingDevice(SDL_Window* window, const Poly::ScreenSize& size);
 }
