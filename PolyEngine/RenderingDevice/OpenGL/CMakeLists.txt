@@ -1,3 +1,4 @@
+find_package(SDL2 REQUIRED)
 find_package(epoxy REQUIRED)
 
 set(POLYGLDEVICE_SRCS
@@ -46,8 +47,8 @@ set(POLYGLDEVICE_H_FOR_IDE_APPLE
 
 add_library(polyrenderingdevicegl SHARED ${POLYGLDEVICE_SRCS} ${POLYGLDEVICE_H_FOR_IDE})
 target_compile_definitions(polyrenderingdevicegl PRIVATE _DEVICE)
-target_include_directories(polyrenderingdevicegl PUBLIC ${POLYGLDEVICE_INCLUDE})
-target_link_libraries(polyrenderingdevicegl PRIVATE polyengine epoxy::gl)
+target_include_directories(polyrenderingdevicegl PUBLIC ${POLYGLDEVICE_INCLUDE} ${SDL2_INCLUDE_DIRS})
+target_link_libraries(polyrenderingdevicegl PRIVATE polyengine epoxy::gl ${SDL2_LIBRARIES})
 set_target_properties(polyrenderingdevicegl PROPERTIES OUTPUT_NAME polyrenderingdevice)
 
 if(APPLE)

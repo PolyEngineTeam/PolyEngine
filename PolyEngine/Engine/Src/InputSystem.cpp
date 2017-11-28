@@ -21,16 +21,26 @@ void InputSystem::InputPhase(World* world)
 		switch (ev.Type)
 		{
 		case eInputEventType::KEYDOWN:
-			com->CurrKey[ev.Key] = true;
+			if(ev.Key < eKey::_COUNT)
+				com->CurrKey[ev.Key] = true;
 			break;
 		case eInputEventType::KEYUP:
-			com->CurrKey[ev.Key] = false;
+			if(ev.Key < eKey::_COUNT)
+				com->CurrKey[ev.Key] = false;
+			break;
+		case eInputEventType::MOUSEBUTTONDOWN:
+			if(ev.MouseButton < eMouseButton::_COUNT)
+				com->CurrMouseButton[ev.MouseButton] = true;
+			break;
+		case eInputEventType::MOUSEBUTTONUP:
+			if(ev.MouseButton < eMouseButton::_COUNT)
+				com->CurrMouseButton[ev.MouseButton] = false;
 			break;
 		case eInputEventType::MOUSEMOVE:
 			com->CurrMouse = ev.Pos;
 			break;
 		case eInputEventType::WHEELMOVE:
-			com->CurrWheel += (int)ev.Pos.X;
+			com->CurrWheel += ev.Pos;
 			break;
 		case eInputEventType::_COUNT:
 			HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::Push(), which is an invalid value");

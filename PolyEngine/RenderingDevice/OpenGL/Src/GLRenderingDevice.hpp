@@ -95,6 +95,7 @@ namespace Poly
 
 		SDL_Window* Window;
 		SDL_GLContext Context;
+		ScreenSize ScreenDim;
 
 		Dynarray<std::unique_ptr<RenderingTargetBase>> RenderingTargets;
 
@@ -102,8 +103,6 @@ namespace Poly
 		EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
 
 		std::unique_ptr<PostprocessQuad> PostprocessRenderingQuad;
-
-		ScreenSize ScreenDim;
 	};
 
 	extern GLRenderingDevice* gRenderingDevice;
@@ -111,5 +110,5 @@ namespace Poly
 
 extern "C"
 {
-	DEVICE_DLLEXPORT Poly::IRenderingDevice* __stdcall PolyCreateRenderingDevice(SDL_Window* window, const Poly::ScreenSize& size);
+	DEVICE_DLLEXPORT Poly::IRenderingDevice* POLY_STDCALL PolyCreateRenderingDevice(SDL_Window* window, const Poly::ScreenSize& size);
 }

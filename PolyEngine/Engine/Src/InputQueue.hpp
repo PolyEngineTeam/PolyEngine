@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Queue.hpp>
-#include <Vector.hpp>
+#include <Vector2i.hpp>
 #include "KeyBindings.hpp"
 
 namespace Poly
@@ -10,6 +10,8 @@ namespace Poly
 	{
 		KEYDOWN,
 		KEYUP,
+		MOUSEBUTTONDOWN,
+		MOUSEBUTTONUP,
 		MOUSEMOVE,
 		WHEELMOVE,
 		_COUNT
@@ -19,11 +21,13 @@ namespace Poly
 	{
 		InputEvent() = default;
 		InputEvent(eInputEventType type, eKey key) : Type(type), Key(key) {}
-		InputEvent(eInputEventType type, const Vector& pos) : Type(type), Pos(pos) {}
+		InputEvent(eInputEventType type, eMouseButton button) : Type(type), MouseButton(button) {}
+		InputEvent(eInputEventType type, const Vector2i& pos) : Type(type), Pos(pos) {}
 
 		eInputEventType Type = eInputEventType::_COUNT;
 		eKey Key = eKey::_COUNT;
-		Vector Pos;
+		eMouseButton MouseButton = eMouseButton::_COUNT;
+		Vector2i Pos;
 	};
 
 	using InputQueue = Queue<InputEvent>;

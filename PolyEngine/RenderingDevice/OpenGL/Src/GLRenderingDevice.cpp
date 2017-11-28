@@ -22,22 +22,30 @@ using namespace Poly;
 
 GLRenderingDevice* Poly::gRenderingDevice = nullptr;
 
-IRenderingDevice* __stdcall PolyCreateRenderingDevice(SDL_Window* window, const Poly::ScreenSize& size) { return new GLRenderingDevice(window, size); }
+IRenderingDevice* POLY_STDCALL PolyCreateRenderingDevice(SDL_Window* window, const Poly::ScreenSize& size) { return new GLRenderingDevice(window, size); }
 
 GLRenderingDevice::GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize& size)
+: Window(window), ScreenDim(size)
 {
+	ASSERTE(window, "Invalid window passed to rendering device.");
 	ASSERTE(gRenderingDevice == nullptr, "Creating device twice?");
 	gRenderingDevice = this;
-	ScreenDim = size;
-	Window = window;
 
+	// Setup SDL OpenLG attributes
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 	Context = SDL_GL_CreateContext(Window);
-	printf("glGetString (GL_VERSION) returns %s\n", glGetString(GL_VERSION));
+	ASSERTE(Context, "OpenGL context creation failed!");
+
+	gConsole.LogInfo("OpenGL context set up successfully");
+	gConsole.LogInfo("GL Renderer: {}", glGetString(GL_RENDERER));
+	gConsole.LogInfo("GL Version: {}", glGetString(GL_VERSION));
+	gConsole.LogInfo("GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+	// Setup V-Sync
 	SDL_GL_SetSwapInterval(1);
 }
 
@@ -46,13 +54,17 @@ GLRenderingDevice::~GLRenderingDevice()
 {
 	CleanUpResources();
 
+	if(Context)
+		SDL_GL_DeleteContext(Context);
+
 	gRenderingDevice = nullptr;
 }
 
 //------------------------------------------------------------------------------
 void GLRenderingDevice::EndFrame()
 {
-	SDL_GL_SwapWindow(Window);
+	if(Window && Context)
+		SDL_GL_SwapWindow(Window);
 }
 
 //------------------------------------------------------------------------------
