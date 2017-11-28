@@ -88,10 +88,6 @@ namespace Poly {
 			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::ENUM, std::move(implData)};
 		}
 
-        // Hack for clang compilation, should be used in every lambda in constexpr_match everywhere where T is required.
-        // required lambda argument to be "auto lazy"
-        #define LAZY_TYPE(T) decltype(lazy(std::declval<T>()))
-
 		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
 		{ 
 			return constexpr_match(

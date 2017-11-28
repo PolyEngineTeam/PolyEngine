@@ -18,11 +18,7 @@ set(POLYGLDEVICE_SRCS
 	Src/Text2DRenderingPass.cpp
 	Src/TransparentRenderingPass.cpp
 )
-set(POLYGLDEVICE_SRCS_APPLE
-	Src-macOS/CocoaImpl.mm
-)
 set(POLYGLDEVICE_INCLUDE Src)
-set(POLYGLDEVICE_INCLUDE_APPLE Src-macOS)
 set(POLYGLDEVICE_H_FOR_IDE
 	Src/UnlitRenderingPass.hpp
 	Src/BlinnPhongRenderingPass.hpp
@@ -40,24 +36,11 @@ set(POLYGLDEVICE_H_FOR_IDE
 	Src/Text2DRenderingPass.hpp
 	Src/TransparentRenderingPass.hpp
 )
-set(POLYGLDEVICE_H_FOR_IDE_APPLE
-	Src-macOS/CocoaImpl.h
-	Src-macOS/ObjCInterface.hpp
-)
 
 add_library(polyrenderingdevicegl SHARED ${POLYGLDEVICE_SRCS} ${POLYGLDEVICE_H_FOR_IDE})
 target_compile_definitions(polyrenderingdevicegl PRIVATE _DEVICE)
 target_include_directories(polyrenderingdevicegl PUBLIC ${POLYGLDEVICE_INCLUDE} ${SDL2_INCLUDE_DIRS})
 target_link_libraries(polyrenderingdevicegl PRIVATE polyengine epoxy::gl ${SDL2_LIBRARIES})
 set_target_properties(polyrenderingdevicegl PROPERTIES OUTPUT_NAME polyrenderingdevice)
-
-if(APPLE)
-	find_library(Cocoa_LIBRARY Cocoa)
-	mark_as_advanced(Cocoa_LIBRARY)
-
-	target_sources(polyrenderingdevicegl PRIVATE ${POLYGLDEVICE_SRCS_APPLE} ${POLYGLDEVICE_H_FOR_IDE_APPLE})
-	target_include_directories(polyrenderingdevicegl PUBLIC ${POLYGLDEVICE_INCLUDE_APPLE})
-	target_link_libraries(polyrenderingdevicegl PRIVATE ${Cocoa_LIBRARY})
-endif()
 
 cotire(polyrenderingdevicegl)
