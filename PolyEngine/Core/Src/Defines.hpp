@@ -149,6 +149,10 @@ constexpr auto MIN_FLOAT = (std::numeric_limits<float>::min)();
 
 #define UNUSED(expr) do { (void)(expr); } while (false)
 
+// Hack for clang compilation, should be used in every lambda in constexpr_match everywhere where T is required.
+// required lambda argument to be "auto lazy"
+#define LAZY_TYPE(T) decltype(lazy(std::declval<T>()))
+
 template<bool B>
 struct identity : std::integral_constant<bool, B> {
     template<typename T> typename std::conditional<B, T, void>::type operator()(T&& x) const { return std::forward<T>(x); }
@@ -175,7 +179,7 @@ auto constexpr_match(C1, T1&& t1, TL&& tl) { return select(C1{}, std::forward<T1
 template<typename C1, typename T1, typename C2, typename T2, typename... Args>
 auto constexpr_match(C1, T1&& t1, C2, T2&& t2, Args&&... tail)
 {
-	return select(C1{}, std::forward<T1>(t1), [&, tail ...](auto) { return constexpr_match(C2{}, std::forward<T2>(t2), tail...); });
+	return select(C1{}, std::forward<T1>(t1), [&, tail ...](auto lazy) { return constexpr_match(C2{}, std::forward<LAZY_TYPE(T2)>(t2), tail...); });
 }
 
 //-----------------------------------------------------------------------------------------------------
