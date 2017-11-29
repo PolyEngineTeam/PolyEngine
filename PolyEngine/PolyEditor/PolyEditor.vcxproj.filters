@@ -67,6 +67,12 @@
     <ClCompile Include="Src\PolyConsoleWidget.cpp">
       <Filter>Source Files\Widgets</Filter>
     </ClCompile>
+    <ClCompile Include="Src\CustomSDLWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_EditorApp.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\PolyEditorPCH.hpp">
@@ -77,6 +83,9 @@
     </ClInclude>
     <ClInclude Include="Src\PolyConsoleWidget.hpp">
       <Filter>Header Files\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\CustomSDLWindow.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -4,9 +4,11 @@
 #include <Engine.hpp>
 #include <LibraryLoader.hpp>
 
-
-using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (SDL_Window*, const Poly::ScreenSize&);
-using CreateGameFunc = Poly::IGame* (void);
+extern "C"
+{
+	using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (SDL_Window*, const Poly::ScreenSize&);
+	using CreateGameFunc = Poly::IGame* (void);
+}
 
 void HandleWindowEvent(const SDL_WindowEvent& windowEvent);
 

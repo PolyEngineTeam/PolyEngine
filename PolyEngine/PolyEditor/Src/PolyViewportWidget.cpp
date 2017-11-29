@@ -1,23 +1,17 @@
 #include "PolyEditorPCH.hpp"
 #include <Engine.hpp>
 #include <LibraryLoader.hpp>
-
-
-#if defined(_WIN32)
-	#include <windows.h>
-	#include <windowsx.h>
-#else
-#error "Unsupported platform :("
-#endif
+#include <SDL.h>
 
 extern "C"
 {
-	using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (HWND hwnd, RECT rect);
+	using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (SDL_Window*, const Poly::ScreenSize&);
 	using CreateGameFunc = Poly::IGame* (void);
 }
 
 static Poly::LibraryFunctionHandle<CreateRenderingDeviceFunc> LoadRenderingDevice;
 static Poly::LibraryFunctionHandle<CreateGameFunc> LoadGame;
+
 
 // ---------------------------------------------------------------------------------------------------------
 PolyViewportWidget::PolyViewportWidget(QWidget* parent)
@@ -29,56 +23,56 @@ PolyViewportWidget::PolyViewportWidget(QWidget* parent)
 	// TODO fix library names differences between platforms
 	if (!LoadRenderingDevice.FunctionValid())
 	{
-#if defined(_WIN32)
+		// Load rendering device library
 		LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>("libRenderingDevice", "PolyCreateRenderingDevice");
-#elif defined(__linux__)  || defined(__APPLE__)
-		LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>("libpolyrenderingdevice", "PolyCreateRenderingDevice");
-#endif
-		ASSERTE(LoadRenderingDevice.FunctionValid(), "Error loading rendering device DLL");
+		// Try to load library with different name
+		if (!LoadRenderingDevice.FunctionValid())
+			LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>("libpolyrenderingdevice", "PolyCreateRenderingDevice");
+		ASSERTE(LoadRenderingDevice.FunctionValid(), "Library libRenderingDevice load failed");
+		Poly::gConsole.LogDebug("Library libRenderingDevice loaded.");
 	}
 	
 	if (!LoadGame.FunctionValid())
 	{
-#if defined(_WIN32)
+		// Load game library
 		LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("libGame", "CreateGame");
-#elif defined(__linux__)  || defined(__APPLE__)
-		LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("libgame", "CreateGame");
-#endif
-		ASSERTE(LoadGame.FunctionValid(), "Error loading rendering device DLL");
+		// Try to load library with different name
+		if (!LoadGame.FunctionValid())
+			LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("libgame", "CreateGame");
+		ASSERTE(LoadGame.FunctionValid(), "Library libGame load failed");
+		Poly::gConsole.LogDebug("Library libGame loaded.");
 	}
 }
 
 // ---------------------------------------------------------------------------------------------------------
 void PolyViewportWidget::InitializeViewport()
 {
-#if defined(_WIN32)
-	RECT viewportRect;
-	viewportRect.top = 0;
-	viewportRect.left = 0;
-	viewportRect.bottom = height();
-	viewportRect.right = width();
-#elif defined(__linux__)  || defined(__APPLE__)
 	Poly::ScreenSize viewportRect;
 	viewportRect.Width = width();
 	viewportRect.Height = height();
-#endif
-	
+
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	{
+		ASSERTE(false, "SDL initialization failed!");
+	}
+	Poly::gConsole.LogDebug("SDL initialized.");
+
 
 	// TODO: catch winId changes (http://doc.qt.io/qt-5/qwidget.html#winId)
 	// TODO: something like addviewport to rendering device
 	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(LoadGame());
-#if defined(_WIN32)
-	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice((HWND)winId(), viewportRect));
-#else
-#error "Unsupported platform :("
-#endif
+	ASSERTE(!WindowInSDL.IsValid(), "Window already initialized!");
+	WindowInSDL = CustomSDLWindow::CreateSDLWindowFromArgs((void*)winId(), SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	ASSERTE(WindowInSDL.IsValid(), "Window creation failed!");
+	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(WindowInSDL.Get(), viewportRect));
 	Poly::gEngine->Init(std::move(game), std::move(device));
 	Poly::gConsole.LogDebug("Engine loaded successfully");
+	
 }
 
 // ---------------------------------------------------------------------------------------------------------
 void PolyViewportWidget::Update()
-{
+{	
 	Poly::gEngine->Update();
 }
 
@@ -94,13 +88,13 @@ void PolyViewportWidget::resizeEvent(QResizeEvent* resizeEvent)
 // ---------------------------------------------------------------------------------------------------------
 void PolyViewportWidget::wheelEvent(QWheelEvent* wheelEvent)
 {
-	Poly::gEngine->UpdateWheelPos(Poly::Vector(static_cast<float>(wheelEvent->delta()), 0, 0));
+	Poly::gEngine->UpdateWheelPos(Poly::Vector2i(wheelEvent->delta(), 0));
 }
 
 // ---------------------------------------------------------------------------------------------------------
 void PolyViewportWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 {
-	Poly::gEngine->UpdateMousePos(Poly::Vector(static_cast<float>(mouseEvent->pos().x()), static_cast<float>(mouseEvent->pos().y()), 0));
+	Poly::gEngine->UpdateMousePos(Poly::Vector2i(mouseEvent->pos().x(), mouseEvent->pos().y()));
 }
 
 // ---------------------------------------------------------------------------------------------------------
@@ -109,15 +103,15 @@ void PolyViewportWidget::mousePressEvent(QMouseEvent* mouseEvent)
 	switch (mouseEvent->button())
 	{
 	case Qt::LeftButton:
-		Poly::gEngine->KeyDown(static_cast<Poly::eKey>(Poly::eKey::MLBUTTON));
+		Poly::gEngine->MouseButtonDown(static_cast<Poly::eMouseButton>(Poly::eMouseButton::LEFT));
 		break;
 
 	case Qt::RightButton:
-		Poly::gEngine->KeyDown(static_cast<Poly::eKey>(Poly::eKey::MRBUTTON));
+		Poly::gEngine->MouseButtonDown(static_cast<Poly::eMouseButton>(Poly::eMouseButton::RIGHT));
 		break;
 
 	case Qt::MiddleButton:
-		Poly::gEngine->KeyDown(static_cast<Poly::eKey>(Poly::eKey::MMBUTTON));
+		Poly::gEngine->MouseButtonDown(static_cast<Poly::eMouseButton>(Poly::eMouseButton::MIDDLE));
 		break;
 
 	default:
@@ -132,15 +126,15 @@ void PolyViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 	switch (mouseEvent->button())
 	{
 	case Qt::LeftButton:
-		Poly::gEngine->KeyUp(static_cast<Poly::eKey>(Poly::eKey::MLBUTTON));
+		Poly::gEngine->MouseButtonUp(static_cast<Poly::eMouseButton>(Poly::eMouseButton::LEFT));
 		break;
 
 	case Qt::RightButton:
-		Poly::gEngine->KeyUp(static_cast<Poly::eKey>(Poly::eKey::MRBUTTON));
+		Poly::gEngine->MouseButtonUp(static_cast<Poly::eMouseButton>(Poly::eMouseButton::RIGHT));
 		break;
 
 	case Qt::MiddleButton:
-		Poly::gEngine->KeyUp(static_cast<Poly::eKey>(Poly::eKey::MMBUTTON));
+		Poly::gEngine->MouseButtonUp(static_cast<Poly::eMouseButton>(Poly::eMouseButton::MIDDLE));
 		break;
 
 	default:
@@ -152,7 +146,7 @@ void PolyViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 // ---------------------------------------------------------------------------------------------------------
 void PolyViewportWidget::keyPressEvent(QKeyEvent* keyEvent)
 {
-	Poly::gEngine->KeyDown(static_cast<Poly::eKey>((unsigned int)keyEvent->nativeVirtualKey()));
+	Poly::gEngine->KeyDown(static_cast<Poly::eKey>(QtKeyEventToSDLScancode(keyEvent->nativeScanCode())));
 }
 
 // ---------------------------------------------------------------------------------------------------------
@@ -161,5 +155,5 @@ void PolyViewportWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 	if (keyEvent->isAutoRepeat())
 		keyEvent->ignore();
 	else
- 		Poly::gEngine->KeyUp(static_cast<Poly::eKey>((unsigned int)keyEvent->nativeVirtualKey()));
+ 		Poly::gEngine->KeyUp(static_cast<Poly::eKey>(QtKeyEventToSDLScancode(keyEvent->nativeScanCode())));
 }

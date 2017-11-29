@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include <QtGui/QtGui>
+#include "CustomSDLWindow.hpp"
 
 class PolyViewportWidget : public QWidget
 {
@@ -23,4 +24,5 @@ protected:
 	void keyReleaseEvent(QKeyEvent* keyEvent) override;
 
 private:
+	CustomSDLWindow WindowInSDL;
 };
