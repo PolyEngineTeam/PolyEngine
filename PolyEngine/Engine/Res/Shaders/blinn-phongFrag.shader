@@ -1,3 +1,15 @@
+#ifndef MAX_DIRLIGHT_COUNT
+#define MAX_DIRLIGHT_COUNT 8
+#endif
+
+#ifndef MAX_SPOTLIGHT_COUNT
+#define MAX_SPOTLIGHT_COUNT 8
+#endif
+
+#ifndef MAX_POINTLIGHT_COUNT
+#define MAX_POINTLIGHT_COUNT 8
+#endif
+
 #version 330 core
 
 struct DiffuseLight
@@ -50,11 +62,11 @@ uniform vec4 uCameraPosition;
 uniform Material uMaterial;
 
 uniform DiffuseLight uAmbientLight;
-uniform DirectionalLight uDirectionalLight[8];
+uniform DirectionalLight uDirectionalLight[MAX_DIRLIGHT_COUNT];
 uniform int uDirectionalLightCount;
-uniform PointLight uPointLight[8];
+uniform PointLight uPointLight[MAX_POINTLIGHT_COUNT];
 uniform int uPointLightCount;
-uniform SpotLight uSpotLight[8];
+uniform SpotLight uSpotLight[MAX_SPOTLIGHT_COUNT];
 uniform int uSpotLightCount;
 
 in vec3 vVertexPos;
@@ -68,21 +80,16 @@ vec3 ambientLighting()
 	return uMaterial.Ambient.rgb * uAmbientLight.Color.rgb * uAmbientLight.Intensity;
 }
 
-// returns intensity of diffuse reflection
 vec3 diffuseLighting(in vec3 N, in vec3 L, in vec3 LightColor)
 {
-	// calculation as for Lambertian reflection
-	float NdotL = clamp(dot(N, L), 0.0, 1.0);
+	float NdotL = max(dot(N, L), 0.0);
 	return vec3(NdotL) * uMaterial.Diffuse.rgb * LightColor;
 }
 
-// returns intensity of specular reflection
 vec3 specularLighting(in vec3 N, in vec3 L, in vec3 V, in vec3 LightColor)
 {
 	vec3 H = normalize(L + V);
-	// to avoid issues when dot(N, L) is -1 and ceil could result in 1.0 for negative values
-	float nearlyOne = 0.9999;
-	float specularTerm = ceil(nearlyOne*dot(N, L)) * pow(dot(N, H), uMaterial.Shininess);
+	float specularTerm = pow(max(dot(N, H), 0.0), uMaterial.Shininess);
 	return specularTerm * uMaterial.Specular.rgb * LightColor;
 }
 
@@ -146,7 +153,6 @@ Lighting spotLighting(in SpotLight spotLight, in vec3 positionWS, in vec3 normal
 
 	vec3 lightColor = spotLight.Base.Color.rgb * spotLight.Base.Intensity *intensity;
 	
-	// get Blinn - Phong reflectance components
 	OUT.Diffuse = diffuseLighting(N, L, lightColor) * att;
 	OUT.Specular = specularLighting(N, L, V, lightColor) * att;
 
@@ -190,6 +196,6 @@ void main() {
 		Ispe += lighting.Specular;
 	}
 
-	color.xyz = texDiffuse.rgb * (Iamb + Idif + Ispe);
-	color.w = 1.0;
+	color.rgb = texDiffuse.rgb * (Iamb + Idif + Ispe);
+	color.a = 1.0;
 }
