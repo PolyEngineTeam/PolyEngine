@@ -4,8 +4,8 @@ RTTI_DEFINE_TYPE(Poly::AssetsPathConfig)
 
 namespace Poly
 {
-	static const String DEFAULT_ENGINE_ASSETS_PATH = String("../../Engine/Res/");
-	static const String DEFAULT_GAME_ASSETS_PATH = String("../../Games/SGJGame/Res/");
+	static const String DEFAULT_ENGINE_ASSETS_PATH = String("../Engine/Res/");
+	static const String DEFAULT_GAME_ASSETS_PATH = String("../Games/SGJGame/Res/");
 
 	AssetsPathConfig gAssetsPathConfig;
 

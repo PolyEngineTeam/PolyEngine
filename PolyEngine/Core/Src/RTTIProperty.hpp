@@ -91,9 +91,9 @@ namespace Poly {
 		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
 		{ 
 			return constexpr_match(
-				std::is_enum<T>{},			[&](auto) { return CreateEnumPropertyInfo<T>(offset, name, flags); },
+				std::is_enum<T>{},			[&](auto lazy) { return CreateEnumPropertyInfo<LAZY_TYPE(T)>(offset, name, flags); },
 				std::is_same<String, T>{},	[&](auto) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<String>() }; },
-				/*default*/					[&](auto) { return Property{ TypeInfo::Get<T>(), offset, name, flags, GetCorePropertyType<T>() }; }
+				/*default*/					[&](auto lazy) { return Property{ TypeInfo::Get<LAZY_TYPE(T)>(), offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>() }; }
 			);
 		}
 
