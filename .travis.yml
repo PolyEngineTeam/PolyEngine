@@ -26,10 +26,9 @@ before_install:
   - export CXX=${COMPILER}
   - sudo apt-get update -qq
   - sudo apt-get install -qq mesa-common-dev libx11-dev
-  # Workaround for https://github.com/travis-ci/travis-ci/issues/8317
-  #- sudo apt-get install -qq libegl1-mesa-dev libgles2-mesa-dev 
   - sudo apt-get install -qq libepoxy-dev libsoil-dev libassimp-dev libfreetype6-dev libopenal-dev libogg-dev libvorbis-dev libbox2d-dev
-  - wget https://www.libsdl.org/release/SDL2-2.0.5.tar.gz -O SDL2-2.0.5.tar.gz
+  # Workaround for not working `sudo apt-get install -qq libsdl2-dev` https://github.com/travis-ci/travis-ci/issues/8317
+  - wget https://www.libsdl.org/release/SDL2-2.0.7.tar.gz -O SDL2-2.0.5.tar.gz
   - tar -xzvf SDL2-2.0.5.tar.gz
 
 install:
