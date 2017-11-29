@@ -18,9 +18,10 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
-            - libsdl2-dev # workaround for https://github.com/travis-ci/travis-ci/issues/8317
+          packages: [
+            g++-6
+            libsdl2-dev
+          ]
       env: COMPILER=g++-6
  
 before_install:
