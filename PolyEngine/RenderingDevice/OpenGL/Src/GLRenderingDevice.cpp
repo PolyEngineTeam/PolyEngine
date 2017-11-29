@@ -294,7 +294,7 @@ void GLRenderingDevice::InitPrograms()
 	// Init programs
 	Texture2DRenderingTarget* texture = CreateRenderingTarget<Texture2DRenderingTarget>(GL_R11F_G11F_B10F);
 	DepthRenderingTarget* depth = CreateRenderingTarget<DepthRenderingTarget>();
-	// Texture2DRenderingTarget* depth2 = CreateRenderingTarget<Texture2DRenderingTarget>(GL_R16F);
+	// DepthRenderingTarget* depth = CreateRenderingTarget<DepthRenderingTarget>(GL_DEPTH_COMPONENT16);
 
 	RegisterGeometryPass<UnlitRenderingPass>(eGeometryRenderPassType::UNLIT, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPass<BlinnPhongRenderingPass>(eGeometryRenderPassType::BLINN_PHONG, {}, { { "color", texture }, { "depth", depth } });

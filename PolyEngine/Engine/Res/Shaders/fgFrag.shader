@@ -353,10 +353,10 @@ void main()
 	outcol = lin2srgb(outcol);
 	outcol += rnd / 255.0;
 
-	color.rgb = outcol + 0.4*(emissive);
+	color.rgb = outcol;
 
 	// tonemapper
-	color.rgb = Tonemap_ACES(color.rgb);
+	// color.rgb = Tonemap_ACES(color.rgb);
 	
 	// color temperature
 	color.rgb = colorTemperature(color.rgb, mix(6500.0, uColorTempValue, uColorTempPower));
@@ -372,8 +372,8 @@ void main()
 	
 	// Vinette
 	color *= mix(1.0, vinette(vTexCoord), uVinettePower);
-
-	color.rgb = pow(color.rgb, vec3(1.1));
-	color.rgb += vec3(0.1);
-	color.rgb = pow(color.rgb, vec3(0.9));
+	
+	// Gamma
+	color = vec4(pow(color.rgb, vec3(1.0/2.2)), 1.0);
+	// color = vec4(texture(i_color, vTexCoord).rgb, 1.0);
 }

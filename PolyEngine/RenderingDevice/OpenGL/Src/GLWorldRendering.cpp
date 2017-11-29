@@ -237,17 +237,19 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 	glDisable(GL_CULL_FACE);
 
 	// TODO test these blending options
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//glBlendFunc(GL_ONE, GL_ONE);
 	//glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
-	GeometryRenderingPasses[eGeometryRenderPassType::TRANSPARENT_GEOMETRY]->Run(world, cameraCmp, rect);
+	// GeometryRenderingPasses[eGeometryRenderPassType::TRANSPARENT_GEOMETRY]->Run(world, cameraCmp, rect);
 
-	glDisable(GL_BLEND);
-
-	glDisable(GL_DEPTH_TEST);
+	// glDisable(GL_BLEND);
+	// glDisable(GL_DEPTH_TEST);
 
 	// Run postprocess passes
 	// for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
+
+	glDisable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
 
 	// Render text
 	GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);

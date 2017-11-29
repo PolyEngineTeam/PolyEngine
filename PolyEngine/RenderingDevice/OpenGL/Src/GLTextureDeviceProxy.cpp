@@ -128,11 +128,18 @@ void Poly::GLTextureDeviceProxy::InitTextureParams()
 	glBindTexture(GL_TEXTURE_2D, TextureID);
 
 	if(InternalUsage == eInternalTextureUsageType::DEPTH_ATTACHEMENT)
-		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-	if (InternalUsage == eInternalTextureUsageType::COLOR_ATTACHEMENT)
+	{
+		// glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, (GLsizei)Width, (GLsizei)Height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr);
+	}
+	else if (InternalUsage == eInternalTextureUsageType::COLOR_ATTACHEMENT)
+	{
 		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_RGBA, GL_FLOAT, nullptr);
+	}
 	else
+	{
 		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_RGBA, GL_FLOAT, nullptr);
+	}
 
 	if (InternalUsage == eInternalTextureUsageType::COLOR_ATTACHEMENT || InternalUsage == eInternalTextureUsageType::DEPTH_ATTACHEMENT)
 	{

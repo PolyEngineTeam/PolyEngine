@@ -19,6 +19,7 @@ public:
 	Dynarray<UniqueID> SpotLights;
 	Dynarray<MeshRenderingComponent*> DebugMeshes;
 	bool IsDrawingDebugMeshes = true;
+	bool IsUsingPostProcess = false;
 
 	Dynarray<UniqueID> GameEntities;
 };

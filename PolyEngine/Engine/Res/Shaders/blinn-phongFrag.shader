@@ -52,27 +52,31 @@ in vec3 vNormal;
 
 layout(location = 0) out vec4 color;
 
+// float attenuate(vec3 lightDirection, float radius) {
+// 	float cutoff = 0.5;
+// 	float attenuation = dot(lightDirection, lightDirection) / (100.0 * radius);
+// 	attenuation = 1.0 / (attenuation * 15.0 + 1.0);
+// 	attenuation = (attenuation - cutoff) / (1.0 - cutoff);
+// 
+// 	return clamp(attenuation, 0.0, 1.0);
+// }
+
 vec3 ambientLighting()
 {
 	return uMaterial.Ambient.rgb * uAmbientLight.Color.rgb * uAmbientLight.Intensity;
 }
 
-// returns intensity of diffuse reflection
-vec3 diffuseLighting(in vec3 N, in vec3 L, in vec3 LightColor)
+vec3 diffuseLighting(in vec3 N, in vec3 L)
 {
-	// calculation as for Lambertian reflection
-	float NdotL = clamp(dot(N, L), 0.0, 1.0);
-	return vec3(NdotL) * uMaterial.Diffuse.rgb * LightColor;
+	float diffuseTerm = max(dot(N, L), 0.0);
+	return diffuseTerm * uMaterial.Diffuse.rgb;
 }
 
-// returns intensity of specular reflection
-vec3 specularLighting(in vec3 N, in vec3 L, in vec3 V, in vec3 LightColor)
+vec3 specularLighting(in vec3 N, in vec3 L, in vec3 V)
 {
 	vec3 H = normalize(L + V);
-	// to avoid issues when dot(N, L) is -1 and ceil could result in 1.0 for negative values
-	float nearlyOne = 0.9999;
-	float specularTerm = ceil(nearlyOne*dot(N, L)) * pow(dot(N, H), uMaterial.Shininess);
-	return specularTerm * uMaterial.Specular.rgb * LightColor;
+	float specularTerm = pow(max(dot(N, H), 0.0), uMaterial.Shininess);
+	return specularTerm * uMaterial.Specular.rgb;
 }
 
 Lighting directionalLighting(in DirectionalLight dirLight, in vec3 positionWS, in vec3 normalWS, in vec3 toCamera)
@@ -85,8 +89,11 @@ Lighting directionalLighting(in DirectionalLight dirLight, in vec3 positionWS, i
 
 	vec3 lightColor = dirLight.Base.Color.rgb * dirLight.Base.Intensity;
 
-	OUT.Diffuse = diffuseLighting(N, L, lightColor);
-	OUT.Specular = specularLighting(N, L, V, lightColor);
+	OUT.Diffuse = diffuseLighting(N, L) * lightColor;	
+	if (length(OUT.Diffuse) > 0.0)
+	{		
+		OUT.Specular = specularLighting(N, L, V) * lightColor;
+	}
 
 	return OUT;
 }
@@ -96,21 +103,23 @@ Lighting pointLighting(in PointLight pointLight, in vec3 positionWS, in vec3 nor
 {
 	Lighting OUT;
 
-	vec3 o_toLight = normalize(pointLight.Position.xyz - positionWS);
-
-	vec3 L = normalize(o_toLight);
+	vec3 L = normalize(pointLight.Position.xyz - positionWS);
 	vec3 V = normalize(toCamera);
 	vec3 N = normalize(normalWS);
 
+	// float att = attenuate(L, pointLight.Range);
 	float dist = distance(pointLight.Position.xyz, positionWS);
 	float att = clamp(1.0 - dist*dist / (pointLight.Range*pointLight.Range), 0.0, 1.0);
-	att *= att;
+	att = pow(att, 2.0);
 
 	vec3 lightColor = pointLight.Base.Color.rgb * pointLight.Base.Intensity;
 	
-	OUT.Diffuse = diffuseLighting(N, L, lightColor) * att;
-	OUT.Specular = specularLighting(N, L, V, lightColor) * att;
-
+	OUT.Diffuse = diffuseLighting(N, L) * lightColor * att;
+	if (length(OUT.Diffuse) > 0.0)
+	{		
+		OUT.Specular = specularLighting(N, L, V) * lightColor * att;
+	}
+	
 	return OUT;
 }
 
@@ -136,14 +145,14 @@ void main() {
 		Idif += lighting.Diffuse;
 		Ispe += lighting.Specular;
 	}
-
+     
 	for (int i = 0; i < uPointLightCount; ++i)
 	{
 		Lighting lighting = pointLighting(uPointLight[i], positionWS, normalWS, toCamera);
 		Idif += lighting.Diffuse;
 		Ispe += lighting.Specular;
 	}
-
+	
 	color.xyz = texDiffuse.rgb * (Iamb + Idif + Ispe);
 	color.w = 1.0;
 }
