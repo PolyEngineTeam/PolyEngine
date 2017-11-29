@@ -14,7 +14,7 @@ void MovementSystem::MovementUpdatePhase(World* world)
 		TransformComponent* transCmp = std::get<TransformComponent*>(freeFloatTuple);
 		FreeFloatMovementComponent* freeFloatMovementCmp = std::get<FreeFloatMovementComponent*>(freeFloatTuple);
 
-		int wheelDelta = inputCmp->GetWheelPosDelta();
+		int wheelDelta = inputCmp->GetWheelPosDelta().Y;
 		float speed = freeFloatMovementCmp->GetMovementSpeed();
 		speed = Clamp(speed + 0.1f*wheelDelta, 0.001f, 10000.0f);
 		freeFloatMovementCmp->SetMovementSpeed(speed);
@@ -42,9 +42,9 @@ void MovementSystem::MovementUpdatePhase(World* world)
 
 		transCmp->SetLocalTranslation(transCmp->GetLocalTranslation() + transCmp->GetLocalRotation() * move);
 		
-		if (inputCmp->IsPressed(eKey::MLBUTTON))
+		if (inputCmp->IsPressed(eMouseButton::LEFT))
 		{
-			Vector delta = inputCmp->GetMousePosDelta();
+			Vector2i delta = inputCmp->GetMousePosDelta();
 
 			Quaternion rot = Quaternion(Vector::UNIT_Y, Angle::FromRadians(-delta.X * freeFloatMovementCmp->GetAngularVelocity()));
 			rot *= transCmp->GetLocalRotation();

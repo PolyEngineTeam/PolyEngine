@@ -31,7 +31,7 @@ set(SGJGAME_H_FOR_IDE
 add_library(sgjgame SHARED ${SGJGAME_SRCS} ${SGJGAME_H_FOR_IDE})
 target_compile_definitions(sgjgame PRIVATE _GAME)
 target_include_directories(sgjgame PRIVATE ${SGJGAME_INCLUDE})
-target_link_libraries(sgjgame PRIVATE polyengine)
+target_link_libraries(sgjgame PRIVATE polyengine polycore)
 set_target_properties(sgjgame PROPERTIES OUTPUT_NAME game)
 
 #note(vuko): we can't use configure_file() directly because there is no reliable way to get an output artifact location at configure-time

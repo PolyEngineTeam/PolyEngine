@@ -1,5 +1,6 @@
 set(POLYTESTS_SRCS
 	Src/AABoxTests.cpp
+	Src/AARectTests.cpp
 	Src/AllocatorTests.cpp
 	Src/AngleTests.cpp
 	Src/BasicMathTests.cpp
