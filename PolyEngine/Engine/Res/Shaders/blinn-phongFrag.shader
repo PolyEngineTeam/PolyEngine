@@ -1,3 +1,5 @@
+#version 330 core
+
 #ifndef MAX_DIRLIGHT_COUNT
 #define MAX_DIRLIGHT_COUNT 8
 #endif
@@ -9,8 +11,6 @@
 #ifndef MAX_POINTLIGHT_COUNT
 #define MAX_POINTLIGHT_COUNT 8
 #endif
-
-#version 330 core
 
 struct DiffuseLight
 {

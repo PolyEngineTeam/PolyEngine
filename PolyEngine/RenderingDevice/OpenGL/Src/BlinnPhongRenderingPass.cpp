@@ -85,7 +85,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	GetProgram().SetUniform("uAmbientLight.Intensity", ambientCmp->GetIntensity());
 
 	int dirLightsCount = 0;
-	for (auto componentsTuple : world->IterateComponents<DirectionalLightComponent, TransformComponent>())
+	for (const auto& componentsTuple : world->IterateComponents<DirectionalLightComponent, TransformComponent>())
 	{
 		DirectionalLightComponent* dirLightCmp = std::get<DirectionalLightComponent*>(componentsTuple);
 		TransformComponent* transformCmp = std::get<TransformComponent*>(componentsTuple);
@@ -101,7 +101,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	GetProgram().SetUniform("uDirectionalLightCount", dirLightsCount);
 	
 	int pointLightsCount = 0;
-	for (auto componentsTuple : world->IterateComponents<PointLightComponent, TransformComponent>())
+	for (const auto& componentsTuple : world->IterateComponents<PointLightComponent, TransformComponent>())
 	{
 		PointLightComponent* pointLightCmp = std::get<PointLightComponent*>(componentsTuple);
 		TransformComponent* transformCmp = std::get<TransformComponent*>(componentsTuple);
@@ -119,7 +119,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	GetProgram().SetUniform("uPointLightCount", pointLightsCount);
 
 	int spotLightsCount = 0;
-	for (auto componentsTuple : world->IterateComponents<SpotLightComponent, TransformComponent>())
+	for (const auto& componentsTuple : world->IterateComponents<SpotLightComponent, TransformComponent>())
 	{
 		SpotLightComponent* spotLightCmp = std::get<SpotLightComponent*>(componentsTuple);
 		TransformComponent* transformCmp = std::get<TransformComponent*>(componentsTuple);
@@ -140,7 +140,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	GetProgram().SetUniform("uSpotLightCount", spotLightsCount);
 
 	// Render meshes
-	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
+	for (const auto& componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
