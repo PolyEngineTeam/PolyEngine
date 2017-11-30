@@ -52,7 +52,7 @@ CustomSDLWindow CustomSDLWindow::CreateSDLWindowFromArgs(void* nativeHandle, uin
 
 	// Create string from temporary window pointer and set proper window creation hint (!)
 	char sBuf[32];
-	sprintf_s<32>(sBuf, "%p", tmp);
+	sprintf(sBuf, "%p", tmp);
 	SDL_SetHint(SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT, sBuf);
 
 	// Create result window handle from native handle

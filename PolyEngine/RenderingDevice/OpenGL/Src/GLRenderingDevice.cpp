@@ -38,7 +38,12 @@ GLRenderingDevice::GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize&
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 	Context = SDL_GL_CreateContext(Window);
-	ASSERTE(Context, "OpenGL context creation failed!");
+
+    if(!Context)
+    {
+        gConsole.LogError("Context setup failed, err: {}", SDL_GetError());
+        ASSERTE(Context, "OpenGL context creation failed!");
+    }
 
 	gConsole.LogInfo("OpenGL context set up successfully");
 	gConsole.LogInfo("GL Renderer: {}", glGetString(GL_RENDERER));

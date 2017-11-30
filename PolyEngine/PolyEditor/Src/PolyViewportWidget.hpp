@@ -4,6 +4,7 @@
 #include <QtGui/QtGui>
 #include "CustomSDLWindow.hpp"
 
+
 class PolyViewportWidget : public QWidget
 {
 public:
