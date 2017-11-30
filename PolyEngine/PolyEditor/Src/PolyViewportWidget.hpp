@@ -11,8 +11,6 @@ public:
 
 	void InitializeViewport();
 
-	void Update();
-
 protected:
 	// overriden events
 	void resizeEvent(QResizeEvent* resizeEvent) override;

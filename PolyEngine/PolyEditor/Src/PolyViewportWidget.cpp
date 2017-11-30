@@ -71,12 +71,6 @@ void PolyViewportWidget::InitializeViewport()
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void PolyViewportWidget::Update()
-{	
-	Poly::gEngine->Update();
-}
-
-// ---------------------------------------------------------------------------------------------------------
 void PolyViewportWidget::resizeEvent(QResizeEvent* resizeEvent)
 {
 	Poly::ScreenSize screenSize;
