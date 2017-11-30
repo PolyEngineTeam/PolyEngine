@@ -44,6 +44,12 @@
     <Filter Include="Source Files\Widgets">
       <UniqueIdentifier>{804a0efb-1201-4281-b88b-04612d9dbca3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Windows">
+      <UniqueIdentifier>{1402b9aa-8179-44ab-932e-593fb9602729}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Windows">
+      <UniqueIdentifier>{5290e629-0177-40b2-aeb5-039625f57161}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Main.cpp">
@@ -51,12 +57,6 @@
     </ClCompile>
     <ClCompile Include="Src\PolyEditorPCH.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\qrc_EditorMainWindow.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_EditorApp.cpp">
-      <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="Src\EditorApp.cpp">
       <Filter>Source Files</Filter>
@@ -67,8 +67,17 @@
     <ClCompile Include="Src\PolyConsoleWidget.cpp">
       <Filter>Source Files\Widgets</Filter>
     </ClCompile>
+    <ClCompile Include="Src\PolyMainWindow.cpp">
+      <Filter>Source Files\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PolyWindow.cpp">
+      <Filter>Source Files\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="Src\CustomSDLWindow.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_EditorApp.cpp">
+      <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_EditorApp.cpp">
       <Filter>Generated Files\Release</Filter>
@@ -78,28 +87,22 @@
     <ClInclude Include="Src\PolyEditorPCH.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_EditorMainWindow.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
     <ClInclude Include="Src\PolyConsoleWidget.hpp">
       <Filter>Header Files\Widgets</Filter>
     </ClInclude>
+    <ClInclude Include="Src\PolyMainWindow.hpp">
+      <Filter>Header Files\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PolyWindow.hpp">
+      <Filter>Header Files\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="Src\CustomSDLWindow.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Res\EditorMainWindow.qrc">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Form\EditorMainWindow.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="Src\EditorApp.hpp">
       <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Src\PolyDockWidget.hpp">
-      <Filter>Header Files\Widgets</Filter>
     </CustomBuild>
     <CustomBuild Include="Src\PolyViewportWidget.hpp">
       <Filter>Header Files\Widgets</Filter>

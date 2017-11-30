@@ -1,6 +1,7 @@
 #include "EditorApp.hpp"
 
-#include "PolyDockWidget.hpp"
+#include "PolyWindow.hpp"
+#include "PolyMainWindow.hpp"
 
 #include "PolyViewportWidget.hpp"
 #include "PolyConsoleWidget.hpp"

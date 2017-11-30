@@ -1,37 +1,31 @@
 #pragma once
 
-#include <QtWidgets/QMainWindow>
+#include <QApplication>
 
+#include <Dynarray.hpp>
 #include <Engine.hpp>
 
-#include "PolyDockWidget.hpp"
+class PolyMainWindow;
+class PolyWindow;
 
-namespace Ui 
-{
-	class EditorMainWindowClass;
-}
-
-class PolyViewportWidget;
-class PolyConsoleWidget;
-
-class EditorApp : public QMainWindow
+class EditorApp : public QApplication
 {
 	Q_OBJECT
 
 public:
-	EditorApp(QWidget *parent = nullptr);
+	EditorApp(int argc, char *argv[]);
 	~EditorApp();
 
 private:
 	void SetupUpdateTimer();
+	void SetupConsoleOutput();
+	void InitializeEngine();
 
-	QTimer* UpdateTimer;
-	Ui::EditorMainWindowClass* MainWindow;
+	PolyMainWindow* MainWindow;
+	Poly::Dynarray<PolyWindow> Windows;
+
+	QTimer* Updater;
 	std::unique_ptr<Poly::Engine> Engine = nullptr;
-
-	// TODO: dynarray or something like this.
-	PolyDockWidget<PolyViewportWidget>* ViewportWidget;
-	PolyDockWidget<PolyConsoleWidget>* ConsoleWidget;
 
 private slots:
 	void UpdatePhase();
