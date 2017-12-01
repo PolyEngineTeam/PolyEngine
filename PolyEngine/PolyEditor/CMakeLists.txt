@@ -1,5 +1,9 @@
 find_package(SDL2 REQUIRED)
 
+if(APPLE)
+	set(CMAKE_PREFIX_PATH /usr/local/opt/qt)
+endif()
+
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
