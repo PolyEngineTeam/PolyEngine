@@ -29,7 +29,7 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq mesa-common-dev libx11-dev
   - sudo apt-get install -qq libepoxy-dev libsoil-dev libassimp-dev libfreetype6-dev libopenal-dev libogg-dev libvorbis-dev libbox2d-dev
-  - sudo apt-get -y install qt59[QTPACKAGE]
+  - sudo apt-get -y install qt59base
   # Workaround for not working `sudo apt-get install -qq libsdl2-dev` https://github.com/travis-ci/travis-ci/issues/8317
   - wget https://www.libsdl.org/release/SDL2-2.0.7.tar.gz -O SDL2-2.0.7.tar.gz
   - tar -xzf SDL2-2.0.7.tar.gz
