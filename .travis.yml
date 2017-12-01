@@ -60,7 +60,7 @@ before_script:
   - cd ${TRAVIS_BUILD_DIR}
 
 script:
-  - source /opt/qt55/bin/qt59-env.sh
+  - source /opt/qt59/bin/qt59-env.sh
   - mkdir -p PolyEngine/build
   - cd PolyEngine/build
   - cmake -DCMAKE_CXX_COMPILER=$COMPILER -DUSE_BUNDLED_CATCH=ON ..
