@@ -17,6 +17,6 @@ namespace Poly
 		DebugNormalsWireframeRenderingPass();
 
 	protected:
-		virtual void OnRun(World* world, const CameraComponent* camera, const AARect& rect) override;
+		virtual void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType = ePassType::BY_MATERIAL) override;
 	};
 }

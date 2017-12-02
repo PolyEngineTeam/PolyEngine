@@ -15,7 +15,7 @@ DebugNormalsRenderingPass::DebugNormalsRenderingPass()
 {
 }
 
-void DebugNormalsRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/)
+void DebugNormalsRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
@@ -26,8 +26,11 @@ void DebugNormalsRenderingPass::OnRun(World* world, const CameraComponent* camer
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
 
-		if (meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::LIT)
+		if (passType == ePassType::BY_MATERIAL &&
+			(meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::LIT))
+		{
 		 	continue;
+		}
 
 		Vector objPos = transCmp->GetGlobalTranslation();
 

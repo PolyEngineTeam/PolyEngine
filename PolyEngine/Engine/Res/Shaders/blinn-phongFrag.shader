@@ -1,5 +1,17 @@
 #version 330 core
 
+#ifndef MAX_DIRLIGHT_COUNT
+#define MAX_DIRLIGHT_COUNT 8
+#endif
+
+#ifndef MAX_SPOTLIGHT_COUNT
+#define MAX_SPOTLIGHT_COUNT 8
+#endif
+
+#ifndef MAX_POINTLIGHT_COUNT
+#define MAX_POINTLIGHT_COUNT 8
+#endif
+
 struct DiffuseLight
 {
 	vec4 Color;
@@ -16,8 +28,17 @@ struct PointLight
 {
 	DiffuseLight Base;
 	vec4 Position;
-	float Attenuation;
 	float Range;
+};
+
+struct SpotLight
+{
+	DiffuseLight Base;
+	vec4 Position;
+	vec4 Direction;
+	float Range;
+	float CutOff;
+	float OuterCutOff;
 };
 
 struct Lighting
@@ -41,25 +62,18 @@ uniform vec4 uCameraPosition;
 uniform Material uMaterial;
 
 uniform DiffuseLight uAmbientLight;
-uniform DirectionalLight uDirectionalLight[8];
+uniform DirectionalLight uDirectionalLight[MAX_DIRLIGHT_COUNT];
 uniform int uDirectionalLightCount;
-uniform PointLight uPointLight[8];
+uniform PointLight uPointLight[MAX_POINTLIGHT_COUNT];
 uniform int uPointLightCount;
+uniform SpotLight uSpotLight[MAX_SPOTLIGHT_COUNT];
+uniform int uSpotLightCount;
 
 in vec3 vVertexPos;
 in vec2 vTexCoord;
 in vec3 vNormal;
 
 layout(location = 0) out vec4 color;
-
-// float attenuate(vec3 lightDirection, float radius) {
-// 	float cutoff = 0.5;
-// 	float attenuation = dot(lightDirection, lightDirection) / (100.0 * radius);
-// 	attenuation = 1.0 / (attenuation * 15.0 + 1.0);
-// 	attenuation = (attenuation - cutoff) / (1.0 - cutoff);
-// 
-// 	return clamp(attenuation, 0.0, 1.0);
-// }
 
 vec3 ambientLighting()
 {
@@ -106,8 +120,7 @@ Lighting pointLighting(in PointLight pointLight, in vec3 positionWS, in vec3 nor
 	vec3 L = normalize(pointLight.Position.xyz - positionWS);
 	vec3 V = normalize(toCamera);
 	vec3 N = normalize(normalWS);
-
-	// float att = attenuate(L, pointLight.Range);
+	
 	float dist = distance(pointLight.Position.xyz, positionWS);
 	float att = clamp(1.0 - dist*dist / (pointLight.Range*pointLight.Range), 0.0, 1.0);
 	att = pow(att, 2.0);
@@ -120,6 +133,33 @@ Lighting pointLighting(in PointLight pointLight, in vec3 positionWS, in vec3 nor
 		OUT.Specular = specularLighting(N, L, V) * lightColor * att;
 	}
 	
+	return OUT;
+}
+
+Lighting spotLighting(in SpotLight spotLight, in vec3 positionWS, in vec3 normalWS, in vec3 toCamera)
+{
+	Lighting OUT;
+	OUT.Diffuse = vec3(0.0);
+	OUT.Specular = vec3(0.0);
+
+	vec3 S = normalize(-spotLight.Direction.xyz);
+	vec3 L = normalize(spotLight.Position.xyz - positionWS);
+	vec3 V = normalize(toCamera);
+	vec3 N = normalize(normalWS);
+	
+	float dist = distance(spotLight.Position.xyz, positionWS);
+	float att = clamp(1.0 - dist*dist / (spotLight.Range*spotLight.Range), 0.0, 1.0);
+	att *= att;
+	
+	float theta = dot(L, S);
+	float epsilon = spotLight.CutOff - spotLight.OuterCutOff;
+	float intensity = smoothstep(0.0, 1.0, clamp((theta - spotLight.OuterCutOff) / epsilon, 0.0, 1.0));
+
+	vec3 lightColor = spotLight.Base.Color.rgb * spotLight.Base.Intensity *intensity;
+	
+	OUT.Diffuse = diffuseLighting(N, L) * lightColor * att;
+	OUT.Specular = specularLighting(N, L, V) * lightColor * att;
+
 	return OUT;
 }
 
@@ -145,14 +185,21 @@ void main() {
 		Idif += lighting.Diffuse;
 		Ispe += lighting.Specular;
 	}
-     
+
 	for (int i = 0; i < uPointLightCount; ++i)
 	{
 		Lighting lighting = pointLighting(uPointLight[i], positionWS, normalWS, toCamera);
 		Idif += lighting.Diffuse;
 		Ispe += lighting.Specular;
 	}
-	
-	color.xyz = texDiffuse.rgb * (Iamb + Idif + Ispe);
-	color.w = 1.0;
+
+	for (int i = 0; i < uSpotLightCount; ++i)
+	{
+		Lighting lighting = spotLighting(uSpotLight[i], positionWS, normalWS, toCamera);
+		Idif += lighting.Diffuse;
+		Ispe += lighting.Specular;
+	}
+
+	color.rgb = texDiffuse.rgb * (Iamb + Idif + Ispe);
+	color.a = 1.0;
 }

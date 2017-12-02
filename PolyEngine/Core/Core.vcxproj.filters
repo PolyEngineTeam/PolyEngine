@@ -210,5 +210,8 @@
     <ClInclude Include="Src\LibraryLoader.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Src\BTreePrimitives.hpp">
+      <Filter>Source Files\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
