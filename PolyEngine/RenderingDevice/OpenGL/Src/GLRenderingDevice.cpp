@@ -46,6 +46,18 @@ GLRenderingDevice::GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize&
 	gConsole.LogInfo("GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
 
+	GLint n = 0;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &n);
+
+	PFNGLGETSTRINGIPROC glGetStringi = 0;
+	glGetStringi = (PFNGLGETSTRINGIPROC)wglGetProcAddress("glGetStringi");
+
+	ASSERTE(Context, "OpenGL supported extensions:");
+	for (GLint i = 0; i<n; i++)
+	{
+		const char* extension = (const char*)glGetStringi(GL_EXTENSIONS, i);
+		gConsole.LogInfo("Ext {}: {}", i, extension);
+	}
 
 	// Setup V-Sync
 	SDL_GL_SetSwapInterval(1);
