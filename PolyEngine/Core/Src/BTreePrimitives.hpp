@@ -35,7 +35,7 @@ namespace Poly
 		};
 
 		template<typename K, typename V, size_t B>
-		struct BTree : public BaseObject<> //Ordnung muss sein xDDD
+		struct BTree : public BaseObject<>
 		{
 			constexpr static size_t CAPACITY = 2 * B - 1u;
 			constexpr static size_t MIN_LEN  = B - 1u;

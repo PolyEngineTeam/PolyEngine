@@ -109,7 +109,7 @@ Poly::RenderingPassBase::~RenderingPassBase()
 }
 
 //------------------------------------------------------------------------------
-void RenderingPassBase::Run(World* world, const CameraComponent* camera, const AARect& rect)
+void RenderingPassBase::Run(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType)
 {
 	// Bind inputs
 	Program.BindProgram();
@@ -152,7 +152,7 @@ void RenderingPassBase::Run(World* world, const CameraComponent* camera, const A
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO);
 
 	// call run implementation
-	OnRun(world, camera, rect);
+	OnRun(world, camera, rect, passType);
 }
 
 //------------------------------------------------------------------------------

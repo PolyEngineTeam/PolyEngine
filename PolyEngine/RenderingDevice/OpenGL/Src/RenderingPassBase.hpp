@@ -17,6 +17,13 @@ namespace Poly
 	struct ScreenSize;
 	enum class eInternalTextureUsageType;
 
+	enum class ePassType
+	{
+		BY_MATERIAL,
+		GLOBAL,
+		_COUNT
+	};
+
 	//------------------------------------------------------------------------------
 	class RenderingPassBase : public BaseObject<>
 	{
@@ -32,7 +39,7 @@ namespace Poly
 
 		virtual ~RenderingPassBase();
 
-		void Run(World* world, const CameraComponent* camera, const AARect& rect);
+		void Run(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType = ePassType::BY_MATERIAL);
 		void Finalize();
 
 		void BindOutput(const String& outputName, RenderingTargetBase* target);
@@ -43,9 +50,10 @@ namespace Poly
 		void ClearFBO(GLenum flags = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	protected:
+
 		GLuint FallbackWhiteTexture;
 
-		virtual void OnRun(World* world, const CameraComponent* camera, const AARect& rect) = 0;
+		virtual void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) = 0;
 
 		RenderingTargetBase* GetInputTarget(const String& name);
 		RenderingTargetBase* GetOutputTarget(const String& name);

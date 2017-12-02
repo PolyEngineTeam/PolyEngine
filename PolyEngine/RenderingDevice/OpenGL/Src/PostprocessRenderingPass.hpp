@@ -19,7 +19,7 @@ namespace Poly
 		PostprocessRenderingPass(const PostprocessQuad* quad, const String& geometry, const String& fragment);
 	
 	protected:
-		virtual void OnRun(World* world, const CameraComponent* camera, const AARect& rect) override;
+		virtual void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;
 
 		const PostprocessQuad* Quad;
 	};

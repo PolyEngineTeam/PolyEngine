@@ -46,7 +46,7 @@ void GameManagerSystem::CreateScene(World* world)
 
 	world->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, world->GetComponent<CameraComponent>(Camera));
 	world->GetWorldComponent<AmbientLightWorldComponent>()->SetColor(Color(0.2f, 0.5f, 1.0f));
-	world->GetWorldComponent<AmbientLightWorldComponent>()->SetIntensity(0.1f);
+	world->GetWorldComponent<AmbientLightWorldComponent>()->SetIntensity(0.05f);
 
 	// Dir Light 0
 	Quaternion DirLightRot = Quaternion(Vector::UNIT_Y, -45_deg) * Quaternion(Vector::UNIT_X, -35_deg);
@@ -61,6 +61,8 @@ void GameManagerSystem::CreateScene(World* world)
 	CreatePointLight(world, 100.0f);
 
 	AddPointLights(world, 7);
+
+	CreateSpotLight(world, 200.0f);
 
 	UniqueID Shaderball = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, Shaderball);
@@ -166,13 +168,38 @@ void GameManagerSystem::CreatePointLight(World* world, float Range)
 	GameMgrCmp->DebugMeshes.PushBack(PointLightRangeMesh);
 }
 
-float GameManagerSystem::Random(float min, float max)
+void GameManagerSystem::CreateSpotLight(World* world, float Range)
 {
-	float rnd = Random();
-	return Lerp(min, max, rnd);
+	Vector SpotLightPos = Vector(50.0f, 50.0f, 0.0f);
+	Color LightColor = Color(1.0f, 0.5f, 0.0f) + Color(Random(0.0f, 1.0f), Random(0.0, 0.5f), Random(0.0f, 0.2f));
+	Quaternion SpotLightRot = Quaternion(Vector::UNIT_Y, -45_deg) * Quaternion(Vector::UNIT_X, -35_deg);
+	// float PointLightRange = 100.0f;
+	UniqueID SpotLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, SpotLight);
+	DeferredTaskSystem::AddComponentImmediate<SpotLightComponent>(world, SpotLight, LightColor, 1.0f, Range, 5.0f, 17.0f);
+	TransformComponent* SpotLightTrans = world->GetComponent<TransformComponent>(SpotLight);
+	SpotLightTrans->SetLocalTranslation(SpotLightPos);
+	SpotLightTrans->SetLocalRotation(SpotLightRot);
+
+	UniqueID SpotLightDebugSource = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, SpotLightDebugSource);
+	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, SpotLightDebugSource, "Models/Primitives/Sphere_LowPoly.obj", eResourceSource::GAME);
+	MeshRenderingComponent* SpotLightMesh = world->GetComponent<MeshRenderingComponent>(SpotLightDebugSource);
+	SpotLightMesh->SetShadingModel(eShadingModel::UNLIT);
+	SpotLightMesh->SetMaterial(0, PhongMaterial(LightColor, LightColor, LightColor, 8.0f));
+	TransformComponent* SpotLightDebugSourceTrans = world->GetComponent<TransformComponent>(SpotLightDebugSource);
+	SpotLightDebugSourceTrans->SetParent(SpotLightTrans);
+	SpotLightDebugSourceTrans->SetLocalScale(2.0f);
+	SpotLightDebugSourceTrans->SetLocalTranslation(Vector(0.0f, 0.0f, 0.0f));	
 }
 
 float GameManagerSystem::Random()
 {
 	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+}
+
+float GameManagerSystem::Random(float min, float max)
+{
+	float rnd = Random();
+	return Lerp(min, max, rnd);
 }

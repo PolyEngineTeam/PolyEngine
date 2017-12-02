@@ -19,7 +19,7 @@ UnlitRenderingPass::UnlitRenderingPass()
 	GetProgram().RegisterUniform("vec4", "Color");
 }
 
-void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/)
+void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
@@ -30,8 +30,11 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
 
-		if (meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::UNLIT)
+		if (passType == ePassType::BY_MATERIAL &&
+			(meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::UNLIT))
+		{
 			continue;
+		}
 
 		Vector objPos = transCmp->GetGlobalTranslation();
 
@@ -40,7 +43,10 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 		GetProgram().SetUniform("uTransform", objTransform);
 		GetProgram().SetUniform("uMVPTransform", screenTransform);
 		
-		glPolygonMode(GL_FRONT_AND_BACK, meshCmp->GetIsWireframe() ? GL_LINE : GL_FILL);
+		if (passType == ePassType::BY_MATERIAL)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, meshCmp->GetIsWireframe() ? GL_LINE : GL_FILL);
+		}
 
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
@@ -66,6 +72,9 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 			++i;
 		}
 		
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		if (passType == ePassType::BY_MATERIAL)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
 	}
 }
