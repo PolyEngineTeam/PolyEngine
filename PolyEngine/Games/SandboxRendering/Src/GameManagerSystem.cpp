@@ -36,71 +36,43 @@ void GameManagerSystem::CreateScene(World* world)
 	postCmp->Distortion = 0.0f;
 	postCmp->ColorTempValue = 6500.0f;
 	postCmp->Saturation = 1.0f;
-	postCmp->Grain = 0.1f;
+	postCmp->Grain = 0.0f;
 	postCmp->Stripes = 0.0f;
-	postCmp->Vignette = 0.1f;
+	postCmp->Vignette = 0.0f;
 
 	TransformComponent* cameraTrans = world->GetComponent<TransformComponent>(Camera);
 	cameraTrans->SetLocalTranslation(Vector(0.0f, 5.0f, 15.0f));
-	GameMgrCmp->Camera = Camera;
+	GameMgrCmp->Camera;
 
 	world->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, world->GetComponent<CameraComponent>(Camera));
 	world->GetWorldComponent<AmbientLightWorldComponent>()->SetColor(Color(0.2f, 0.5f, 1.0f));
-	world->GetWorldComponent<AmbientLightWorldComponent>()->SetIntensity(0.01f);
+	world->GetWorldComponent<AmbientLightWorldComponent>()->SetIntensity(0.05f);
 
 	// Dir Light 0
-	// Quaternion DirLightRot = Quaternion(Vector::UNIT_Y, -45_deg) * Quaternion(Vector::UNIT_X, 90_deg);
-	Quaternion DirLightRot = Quaternion(Vector::UNIT_X, -65_deg);
+	Quaternion DirLightRot = Quaternion(Vector::UNIT_Y, -45_deg) * Quaternion(Vector::UNIT_X, -35_deg);
 	UniqueID KeyDirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, KeyDirLight);
-	DeferredTaskSystem::AddComponentImmediate<DirectionalLightComponent>(world, KeyDirLight, Color(1.0f, 0.95f, 0.9f), 0.5f);
+	DeferredTaskSystem::AddComponentImmediate<DirectionalLightComponent>(world, KeyDirLight, Color(1.0f, 0.9f, 0.8f), 0.8f);
 	TransformComponent* dirLightTrans = world->GetComponent<TransformComponent>(KeyDirLight);
 	dirLightTrans->SetLocalRotation(DirLightRot);
 	GameMgrCmp->KeyDirLight = KeyDirLight;
 
 	// Point Lights
-	// CreatePointLight(world, 1.0f);
+	CreatePointLight(world, 100.0f);
 
-	AddPointLights(world, 8);
+	AddPointLights(world, 7);
 
-	UniqueID ShaderballGray = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, ShaderballGray);
-	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, ShaderballGray, "Models/shaderball/shaderball.obj", eResourceSource::GAME);
-	MeshRenderingComponent* ballMeshGray = world->GetComponent<MeshRenderingComponent>(ShaderballGray);
-	for (int i = 0; i < ballMeshGray->GetMesh()->GetSubMeshes().GetSize(); ++i)
-	{
-		ballMeshGray->SetMaterial(0, PhongMaterial(Color(0.0f, 0.0f, 0.0f), Color(0.5f, 0.5f, 0.5f), Color(0.0f, 0.0f, 0.0f), 32.0f));
-	}
-	TransformComponent* ballTransGray = world->GetComponent<TransformComponent>(ShaderballGray);
-	ballTransGray->SetLocalScale(0.2f);
-	GameMgrCmp->GameEntities.PushBack(ShaderballGray);
+	CreateSpotLight(world, 200.0f);
 
-	UniqueID ShaderballBlack = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, ShaderballBlack);
-	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, ShaderballBlack, "Models/shaderball/shaderball.obj", eResourceSource::GAME);
-	MeshRenderingComponent* ballMeshBlack = world->GetComponent<MeshRenderingComponent>(ShaderballBlack);
-	for (int i = 0; i < ballMeshBlack->GetMesh()->GetSubMeshes().GetSize(); ++i)
-	{
-		ballMeshBlack->SetMaterial(0, PhongMaterial(Color(0.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 0.0f), 16.0f));
-	}
-	TransformComponent* ballTransBlack = world->GetComponent<TransformComponent>(ShaderballBlack);
-	ballTransBlack->SetLocalTranslation(Vector(50.0f, 0.0f, 0.0));
-	ballTransBlack->SetLocalScale(0.2f);
-	GameMgrCmp->GameEntities.PushBack(ShaderballBlack);
-
-	UniqueID ShaderballWhite = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, ShaderballWhite);
-	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, ShaderballWhite, "Models/shaderball/shaderball.obj", eResourceSource::GAME);
-	MeshRenderingComponent* ballMeshWhite = world->GetComponent<MeshRenderingComponent>(ShaderballWhite);
-	for (int i = 0; i < ballMeshWhite->GetMesh()->GetSubMeshes().GetSize(); ++i)
-	{
-		ballMeshWhite->SetMaterial(0, PhongMaterial(Color(0.0f, 0.0f, 0.0f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f), 16.0f));
-	}
-	TransformComponent* ballTransWhite = world->GetComponent<TransformComponent>(ShaderballWhite);
-	ballTransWhite->SetLocalTranslation(Vector(-50.0f, 0.0f, 0.0));
-	ballTransWhite->SetLocalScale(0.2f);
-	GameMgrCmp->GameEntities.PushBack(ShaderballWhite);
-
+	UniqueID Shaderball = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, Shaderball);
+	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, Shaderball, "Models/shaderball/PolyEngine_shaderball.fbx", eResourceSource::GAME);
+	MeshRenderingComponent* ballMesh = world->GetComponent<MeshRenderingComponent>(Shaderball);
+	ballMesh->SetMaterial(0, PhongMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 0.0f), Color(1.0f, 1.0f, 0.5f), 8.0f));
+	ballMesh->SetMaterial(1, PhongMaterial(Color(1.0f, 1.0f, 1.0f), Color(0.4f, 0.4f, 0.4f), Color(1.0f, 1.0f, 0.5f), 16.0f));
+	TransformComponent* ballTrans = world->GetComponent<TransformComponent>(Shaderball);
+	ballTrans->SetLocalScale(0.1f);
+	GameMgrCmp->GameEntities.PushBack(Shaderball);
 
 	UniqueID Ground = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, Ground);
@@ -109,7 +81,7 @@ void GameManagerSystem::CreateScene(World* world)
 	MeshRenderingComponent* sponzaMesh = world->GetComponent<MeshRenderingComponent>(Ground);
 	for (int i = 0; i < sponzaMesh->GetMesh()->GetSubMeshes().GetSize(); ++i)
 	{
-		sponzaMesh->SetMaterial(i, PhongMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), Color(0.5f, 0.5f, 0.5f), 8.0f));
+		sponzaMesh->SetMaterial(i, PhongMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), 8.0f));
 	}
 	GameMgrCmp->GameEntities.PushBack(Ground);
 }
@@ -140,15 +112,6 @@ void GameManagerSystem::Update(World* world)
 			GameMgrCmp->DebugMeshes[i]->SetShadingModel(GameMgrCmp->IsDrawingDebugMeshes ? eShadingModel::UNLIT : eShadingModel::NONE);
 		}
 	}
-
-	if (inputCmp->IsReleased(eKey::KEY_H))
-	{
-		GameMgrCmp->IsUsingPostProcess = !GameMgrCmp->IsUsingPostProcess;
-		gConsole.LogInfo("GameManagerSystem::Update IsUsingPostProcess: {}", GameMgrCmp->IsUsingPostProcess);
-
-		PostprocessSettingsComponent* postCmp = world->GetComponent<PostprocessSettingsComponent>(GameMgrCmp->Camera);
-		postCmp->UseFgShader = GameMgrCmp->IsUsingPostProcess;
-	}
 }
 
 void GameManagerSystem::Deinit(World* world)
@@ -167,7 +130,7 @@ void GameManagerSystem::AddPointLights(World* world, int Quota)
 void GameManagerSystem::CreatePointLight(World* world, float Range)
 {
 	Vector PointLightPos = Vector(Random(-1.0f, 1.0f), Random(0.0f, 0.2f), Random(-0.5f, 0.5f)) * 1000.0f;
-	Color LightColor = Color(1.0f, 0.5f, 0.0f) + Color(Random(0.0f, 0.0f), Random(0.0, 0.5f), Random(0.0f, 0.2f));
+	Color LightColor = Color(1.0f, 0.5f, 0.0f) + Color(Random(0.0f, 1.0f), Random(0.0, 0.5f), Random(0.0f, 0.2f));
 
 	UniqueID PointLight = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, PointLight);
@@ -205,13 +168,38 @@ void GameManagerSystem::CreatePointLight(World* world, float Range)
 	GameMgrCmp->DebugMeshes.PushBack(PointLightRangeMesh);
 }
 
-float GameManagerSystem::Random(float min, float max)
+void GameManagerSystem::CreateSpotLight(World* world, float Range)
 {
-	float rnd = Random();
-	return Lerp(min, max, rnd);
+	Vector SpotLightPos = Vector(50.0f, 50.0f, 0.0f);
+	Color LightColor = Color(1.0f, 0.5f, 0.0f) + Color(Random(0.0f, 1.0f), Random(0.0, 0.5f), Random(0.0f, 0.2f));
+	Quaternion SpotLightRot = Quaternion(Vector::UNIT_Y, -45_deg) * Quaternion(Vector::UNIT_X, -35_deg);
+	// float PointLightRange = 100.0f;
+	UniqueID SpotLight = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, SpotLight);
+	DeferredTaskSystem::AddComponentImmediate<SpotLightComponent>(world, SpotLight, LightColor, 1.0f, Range, 5.0f, 17.0f);
+	TransformComponent* SpotLightTrans = world->GetComponent<TransformComponent>(SpotLight);
+	SpotLightTrans->SetLocalTranslation(SpotLightPos);
+	SpotLightTrans->SetLocalRotation(SpotLightRot);
+
+	UniqueID SpotLightDebugSource = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, SpotLightDebugSource);
+	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, SpotLightDebugSource, "Models/Primitives/Sphere_LowPoly.obj", eResourceSource::GAME);
+	MeshRenderingComponent* SpotLightMesh = world->GetComponent<MeshRenderingComponent>(SpotLightDebugSource);
+	SpotLightMesh->SetShadingModel(eShadingModel::UNLIT);
+	SpotLightMesh->SetMaterial(0, PhongMaterial(LightColor, LightColor, LightColor, 8.0f));
+	TransformComponent* SpotLightDebugSourceTrans = world->GetComponent<TransformComponent>(SpotLightDebugSource);
+	SpotLightDebugSourceTrans->SetParent(SpotLightTrans);
+	SpotLightDebugSourceTrans->SetLocalScale(2.0f);
+	SpotLightDebugSourceTrans->SetLocalTranslation(Vector(0.0f, 0.0f, 0.0f));	
 }
 
 float GameManagerSystem::Random()
 {
 	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+}
+
+float GameManagerSystem::Random(float min, float max)
+{
+	float rnd = Random();
+	return Lerp(min, max, rnd);
 }
