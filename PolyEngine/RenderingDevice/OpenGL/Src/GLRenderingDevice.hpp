@@ -19,6 +19,14 @@ namespace Poly
 	class DEVICE_DLLEXPORT GLRenderingDevice : public IRenderingDevice
 	{
 	private:
+
+		enum class eRendererType
+		{
+			FORWARD,
+			TILED_FORWARD,
+			_COUNT
+		};
+
 		enum class eGeometryRenderPassType
 		{
 			UNLIT,
@@ -49,7 +57,6 @@ namespace Poly
 
 	public:
 		GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize& size);
-		void GetExtensions();
 		~GLRenderingDevice();
 
 		GLRenderingDevice(const GLRenderingDevice&) = delete;
@@ -66,6 +73,8 @@ namespace Poly
 		std::unique_ptr<IMeshDeviceProxy> CreateMesh() override;
 
 	private:
+		void GetExtensions();
+
 		void InitPrograms();
 		void EndFrame();
 
@@ -97,6 +106,9 @@ namespace Poly
 		SDL_Window* Window;
 		SDL_GLContext Context;
 		ScreenSize ScreenDim;
+		Dynarray<String> OpenGLExtensions;
+		
+		eRendererType RendererType;
 
 		Dynarray<std::unique_ptr<RenderingTargetBase>> RenderingTargets;
 

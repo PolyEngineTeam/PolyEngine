@@ -45,8 +45,11 @@ GLRenderingDevice::GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize&
 	gConsole.LogInfo("GL Version: {}", glGetString(GL_VERSION));
 	gConsole.LogInfo("GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-
 	GetExtensions();
+	
+	RendererType = OpenGLExtensions.Contains(String("GL_ARB_compute_shader")) 
+		? eRendererType::TILED_FORWARD : eRendererType::FORWARD;
+	gConsole.LogInfo("RendererType: {}", (int)RendererType);
 
 	// Setup V-Sync
 	SDL_GL_SetSwapInterval(1);
@@ -54,25 +57,18 @@ GLRenderingDevice::GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize&
 
 void GLRenderingDevice::GetExtensions()
 {
-	GLint n = 0;
-	glGetIntegerv(GL_NUM_EXTENSIONS, &n);
-
-	// PFNGLGETSTRINGIPROC glGetStringi = 0;
-	// glGetStringi = (PFNGLGETSTRINGIPROC)wglGetProcAddress("glGetStringi");
-
-	const char* ComputeShaderExtension = "GL_ARB_compute_shader";
-	bool IsComputeShaderAvaliable = false;
+	int ExtensionsSize = 0;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &ExtensionsSize);
+	OpenGLExtensions.Clear();
+	OpenGLExtensions.Reserve(ExtensionsSize);
 
 	gConsole.LogInfo("OpenGL supported extensions:");
-	for (GLint i = 0; i<n; i++)
+	for (int i = 0; i<ExtensionsSize; i++)
 	{
-		const char* extension = (const char*)glGetStringi(GL_EXTENSIONS, i);
-		IsComputeShaderAvaliable |= !strcmp(extension, ComputeShaderExtension);
-
+		String extension = String((const char*)glGetStringi(GL_EXTENSIONS, i));
+		OpenGLExtensions.PushBack(extension);
 		gConsole.LogInfo("Ext {}: {}", i, extension);
 	}
-
-	gConsole.LogInfo("IsComputeShaderAvaliable: {}", IsComputeShaderAvaliable);
 }
 
 //------------------------------------------------------------------------------
