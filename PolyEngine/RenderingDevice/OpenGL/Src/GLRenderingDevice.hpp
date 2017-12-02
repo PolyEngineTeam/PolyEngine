@@ -49,6 +49,7 @@ namespace Poly
 
 	public:
 		GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize& size);
+		void GetExtensions();
 		~GLRenderingDevice();
 
 		GLRenderingDevice(const GLRenderingDevice&) = delete;
