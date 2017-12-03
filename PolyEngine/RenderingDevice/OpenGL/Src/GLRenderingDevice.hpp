@@ -66,10 +66,8 @@ namespace Poly
 
 		void Resize(const ScreenSize& size) override;
 		const ScreenSize& GetScreenSize() const override { return ScreenDim; }
-
 		void RenderWorld(World* world) override;
 		void Init() override;
-		void Deinit();
 
 		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) override;
 		std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() override;
@@ -81,15 +79,13 @@ namespace Poly
 		void InitPrograms();
 		void EndFrame();
 
+		void Deinit();
 		void CleanUpResources();
 
-		ForwardRenderer* GetRenderer();
+		ForwardRenderer* CreateRenderer();
 
-		void RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderUnlit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderNormals(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderNormalsWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void PreRender(World* world, CameraComponent* cameraCmp, const AARect& rect) const;
+		void PostRender(World* world, CameraComponent* cameraCmp, const AARect& rect) const;
 
 		template<typename T>
 		void RegisterGeometryPass(eGeometryRenderPassType type,

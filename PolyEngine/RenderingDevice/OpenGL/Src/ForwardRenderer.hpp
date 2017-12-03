@@ -25,5 +25,9 @@ namespace Poly {
 		GLRenderingDevice* RDI;
 
 		void RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderUnlit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderNormals(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderNormalsWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 	};
 }
