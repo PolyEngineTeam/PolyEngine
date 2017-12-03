@@ -168,10 +168,12 @@
     <ClInclude Include="Src\GLTextureDeviceProxy.hpp" />
     <ClInclude Include="Src\GLUtils.hpp" />
     <ClInclude Include="Src\GLShaderProgram.hpp" />
+    <ClInclude Include="Src\IRendererInterface.hpp" />
     <ClInclude Include="Src\PostprocessQuad.hpp" />
     <ClInclude Include="Src\PostprocessRenderingPass.hpp" />
     <ClInclude Include="Src\RenderingPassBase.hpp" />
     <ClInclude Include="Src\Text2DRenderingPass.hpp" />
+    <ClInclude Include="Src\TiledForwardRenderer.hpp" />
     <ClInclude Include="Src\TransparentRenderingPass.hpp" />
     <ClInclude Include="Src\UnlitRenderingPass.hpp" />
   </ItemGroup>
@@ -186,10 +188,12 @@
     <ClCompile Include="Src\GLTextureDeviceProxy.cpp" />
     <ClCompile Include="Src\GLWorldRendering.cpp" />
     <ClCompile Include="Src\GLShaderProgram.cpp" />
+    <ClCompile Include="Src\IRendererInterface.cpp" />
     <ClCompile Include="Src\PostprocessQuad.cpp" />
     <ClCompile Include="Src\PostprocessRenderingPass.cpp" />
     <ClCompile Include="Src\RenderingPassBase.cpp" />
     <ClCompile Include="Src\Text2DRenderingPass.cpp" />
+    <ClCompile Include="Src\TiledForwardRenderer.cpp" />
     <ClCompile Include="Src\TransparentRenderingPass.cpp" />
     <ClCompile Include="Src\UnlitRenderingPass.cpp" />
   </ItemGroup>

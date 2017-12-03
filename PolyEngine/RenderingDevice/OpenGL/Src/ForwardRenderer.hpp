@@ -1,29 +1,19 @@
 #pragma once
 
-#include <Core.hpp>
-
+#include "IRendererInterface.hpp"
 
 namespace Poly {
 
-	class GLRenderingDevice;
-
-	class CameraComponent;
-	class World;
-	class AARect;
-
-	class ForwardRenderer : public BaseObject<>
+	class ForwardRenderer : public IRendererInterface
 	{
 	public:
 		ForwardRenderer(GLRenderingDevice* RenderingDeviceInterface);
 
-		void Init();
-		void Render(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void Deinit();
+		void Init() override;
+		void Render(World* world, const AARect& rect, CameraComponent* cameraCmp) const override;
+		void Deinit() override;
 
 	private:
-		
-		GLRenderingDevice* RDI;
-
 		void RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 		void RenderUnlit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 		void RenderWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;

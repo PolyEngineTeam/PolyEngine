@@ -74,6 +74,12 @@
     <ClInclude Include="Src\ForwardRenderer.hpp">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Src\IRendererInterface.hpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\TiledForwardRenderer.hpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\GLRenderingDevice.cpp">
@@ -122,6 +128,12 @@
       <Filter>Source Files\Rendering\BasePasses</Filter>
     </ClCompile>
     <ClCompile Include="Src\ForwardRenderer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\TiledForwardRenderer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\IRendererInterface.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
   </ItemGroup>

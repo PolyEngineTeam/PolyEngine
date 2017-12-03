@@ -9,8 +9,9 @@
 using namespace Poly;
 
 ForwardRenderer::ForwardRenderer(GLRenderingDevice* RenderingDeviceInterface)
-	: RDI(RenderingDeviceInterface)
+	: IRendererInterface(RenderingDeviceInterface)
 {
+
 }
 
 void ForwardRenderer::Init()

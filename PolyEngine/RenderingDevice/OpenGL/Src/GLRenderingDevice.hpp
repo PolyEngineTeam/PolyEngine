@@ -3,7 +3,7 @@
 #include "GLUtils.hpp"
 #include <IRenderingDevice.hpp>
 #include "GLShaderProgram.hpp"
-#include "ForwardRenderer.hpp"
+#include "IRendererInterface.hpp"
 #include <SDL.h>
 
 struct SDL_Window;
@@ -20,6 +20,7 @@ namespace Poly
 	class DEVICE_DLLEXPORT GLRenderingDevice : public IRenderingDevice
 	{
 		friend class ForwardRenderer;
+		friend class TiledForwardRenderer;
 
 	private:
 		enum class eGeometryRenderPassType
@@ -82,10 +83,10 @@ namespace Poly
 		void Deinit();
 		void CleanUpResources();
 
-		ForwardRenderer* CreateRenderer();
+		IRendererInterface* CreateRenderer();
 
-		void PreRender(World* world, CameraComponent* cameraCmp, const AARect& rect) const;
-		void PostRender(World* world, CameraComponent* cameraCmp, const AARect& rect) const;
+		void PreRender(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void PostRender(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 
 		template<typename T>
 		void RegisterGeometryPass(eGeometryRenderPassType type,
@@ -110,7 +111,7 @@ namespace Poly
 		Dynarray<String> OpenGLExtensions;
 		
 		eRendererType RendererType;
-		ForwardRenderer* Renderer;
+		IRendererInterface* Renderer;
 
 		Dynarray<std::unique_ptr<RenderingTargetBase>> RenderingTargets;
 

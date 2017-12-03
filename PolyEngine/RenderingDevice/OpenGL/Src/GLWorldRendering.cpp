@@ -14,6 +14,8 @@
 #include "GLTextFieldBufferDeviceProxy.hpp"
 #include "GLTextureDeviceProxy.hpp"
 #include "RenderingPassBase.hpp"
+#include "ForwardRenderer.hpp"
+#include "TiledForwardRenderer.hpp"
 #include "GLMeshDeviceProxy.hpp"
 #include "GLUtils.hpp"
 
@@ -29,12 +31,26 @@ void GLRenderingDevice::Init()
 	InitPrograms();
 }
 
-ForwardRenderer* GLRenderingDevice::CreateRenderer()
+IRendererInterface* GLRenderingDevice::CreateRenderer()
 {
 	RendererType = OpenGLExtensions.Contains(String("GL_ARB_compute_shader")) ? eRendererType::TILED_FORWARD : eRendererType::FORWARD;
 	gConsole.LogInfo("RendererType: {}", (int)RendererType);
 
-	return new ForwardRenderer(this);
+	IRendererInterface* renderer = nullptr;
+
+	switch (RendererType)
+	{
+		case Poly::GLRenderingDevice::eRendererType::FORWARD:
+			renderer = new ForwardRenderer(this);
+
+		case Poly::GLRenderingDevice::eRendererType::TILED_FORWARD:
+			renderer = new TiledForwardRenderer(this);
+
+		default:
+			ASSERTE(false, "Uknown eRenderingModeType");
+	}
+
+	return renderer;
 }
 
 void GLRenderingDevice::Deinit()
