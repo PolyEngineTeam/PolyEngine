@@ -32,10 +32,10 @@ CustomSDLWindow& CustomSDLWindow::operator=(CustomSDLWindow&& rhs)
 
 CustomSDLWindow::~CustomSDLWindow()
 {
-	if (MainWindow)
-		SDL_DestroyWindow(MainWindow);
 	if (HelperWindow)
 		SDL_DestroyWindow(HelperWindow);
+	if (MainWindow)
+		SDL_DestroyWindow(MainWindow);
 }
 
 CustomSDLWindow CustomSDLWindow::CreateSDLWindowFromArgs(void* nativeHandle, uint32_t flags)
