@@ -14,6 +14,7 @@ set(POLYGLDEVICE_SRCS
 	Src/GLWorldRendering.cpp
 	Src/PostprocessRenderingPass.cpp
 	Src/PostprocessQuad.cpp
+	Src/ForwardRenderer.cpp
 	Src/RenderingPassBase.cpp
 	Src/Text2DRenderingPass.cpp
 	Src/TransparentRenderingPass.cpp
@@ -32,6 +33,7 @@ set(POLYGLDEVICE_H_FOR_IDE
 	Src/GLUtils.hpp
 	Src/PostprocessRenderingPass.hpp
 	Src/PostprocessQuad.hpp
+	Src/ForwardRenderer.hpp
 	Src/RenderingPassBase.hpp
 	Src/Text2DRenderingPass.hpp
 	Src/TransparentRenderingPass.hpp

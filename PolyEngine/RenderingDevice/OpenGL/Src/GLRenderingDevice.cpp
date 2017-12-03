@@ -45,12 +45,6 @@ GLRenderingDevice::GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize&
 	gConsole.LogInfo("GL Version: {}", glGetString(GL_VERSION));
 	gConsole.LogInfo("GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-	GetExtensions();
-	
-	RendererType = OpenGLExtensions.Contains(String("GL_ARB_compute_shader")) 
-		? eRendererType::TILED_FORWARD : eRendererType::FORWARD;
-	gConsole.LogInfo("RendererType: {}", (int)RendererType);
-
 	// Setup V-Sync
 	SDL_GL_SetSwapInterval(1);
 }
@@ -74,6 +68,8 @@ void GLRenderingDevice::GetExtensions()
 //------------------------------------------------------------------------------
 GLRenderingDevice::~GLRenderingDevice()
 {
+	Renderer->Deinit();
+
 	CleanUpResources();
 
 	if(Context)
@@ -174,10 +170,13 @@ void GLRenderingDevice::InitPrograms()
 void Poly::GLRenderingDevice::CleanUpResources()
 {
 	RenderingTargets.Clear();
+	
 	for (eGeometryRenderPassType passType : IterateEnum<eGeometryRenderPassType>())
 		GeometryRenderingPasses[passType].reset();
+
 	for (ePostprocessRenderPassType passType : IterateEnum<ePostprocessRenderPassType>())
 		PostprocessRenderingPasses[passType].reset();
+
 	PostprocessRenderingQuad.reset();
 }
 

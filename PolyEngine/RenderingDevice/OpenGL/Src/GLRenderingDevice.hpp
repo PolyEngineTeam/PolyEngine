@@ -3,6 +3,7 @@
 #include "GLUtils.hpp"
 #include <IRenderingDevice.hpp>
 #include "GLShaderProgram.hpp"
+#include "ForwardRenderer.hpp"
 #include <SDL.h>
 
 struct SDL_Window;
@@ -18,15 +19,9 @@ namespace Poly
 
 	class DEVICE_DLLEXPORT GLRenderingDevice : public IRenderingDevice
 	{
+		friend class ForwardRenderer;
+
 	private:
-
-		enum class eRendererType
-		{
-			FORWARD,
-			TILED_FORWARD,
-			_COUNT
-		};
-
 		enum class eGeometryRenderPassType
 		{
 			UNLIT,
@@ -35,6 +30,13 @@ namespace Poly
 			DEBUG_NORMALS,
 			DEBUG_NORMALS_WIREFRAME,
 			TEXT_2D,
+			_COUNT
+		};
+
+		enum class eRendererType
+		{
+			FORWARD,
+			TILED_FORWARD,
 			_COUNT
 		};
 
@@ -67,6 +69,7 @@ namespace Poly
 
 		void RenderWorld(World* world) override;
 		void Init() override;
+		void Deinit();
 
 		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) override;
 		std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() override;
@@ -79,6 +82,8 @@ namespace Poly
 		void EndFrame();
 
 		void CleanUpResources();
+
+		ForwardRenderer* GetRenderer();
 
 		void RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 		void RenderUnlit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
@@ -109,6 +114,7 @@ namespace Poly
 		Dynarray<String> OpenGLExtensions;
 		
 		eRendererType RendererType;
+		ForwardRenderer* Renderer;
 
 		Dynarray<std::unique_ptr<RenderingTargetBase>> RenderingTargets;
 
