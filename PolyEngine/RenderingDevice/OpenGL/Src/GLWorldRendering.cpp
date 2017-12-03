@@ -40,11 +40,13 @@ IRendererInterface* GLRenderingDevice::CreateRenderer()
 
 	switch (RendererType)
 	{
-		case Poly::GLRenderingDevice::eRendererType::FORWARD:
+		case GLRenderingDevice::eRendererType::FORWARD:
 			renderer = new ForwardRenderer(this);
+			break;
 
-		case Poly::GLRenderingDevice::eRendererType::TILED_FORWARD:
+		case GLRenderingDevice::eRendererType::TILED_FORWARD:
 			renderer = new TiledForwardRenderer(this);
+			break;
 
 		default:
 			ASSERTE(false, "Uknown eRenderingModeType");
