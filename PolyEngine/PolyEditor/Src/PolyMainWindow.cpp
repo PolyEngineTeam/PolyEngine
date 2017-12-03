@@ -27,8 +27,6 @@ PolyMainWindow::PolyMainWindow(QWidget* parent) :
 	QDockWidget* viewportDockWidget = new QDockWidget();
 	// when you won't pass this argument to the constructor you won't be able to dock this widget
 	PolyViewportWidget* viewportWidget = new PolyViewportWidget(viewportDockWidget); 
-	viewportWidget->InitializeViewport();
-	viewportWidget->setFocusPolicy(Qt::ClickFocus);
 	viewportDockWidget->setWindowTitle("Viewport Widget");
 	viewportDockWidget->setWidget(viewportWidget);
 	AddWidget(viewportDockWidget, Qt::DockWidgetArea::TopDockWidgetArea, Qt::Orientation::Horizontal);

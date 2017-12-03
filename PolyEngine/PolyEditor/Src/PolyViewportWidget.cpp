@@ -19,6 +19,8 @@ PolyViewportWidget::PolyViewportWidget(QWidget* parent)
 {
 	setAttribute(Qt::WA_NativeWindow);
 	setMouseTracking(true);
+	setFocusPolicy(Qt::ClickFocus);
+	setMinimumSize(320, 200);
 
 	// TODO fix library names differences between platforms
 	if (!LoadRenderingDevice.FunctionValid())
@@ -42,6 +44,8 @@ PolyViewportWidget::PolyViewportWidget(QWidget* parent)
 		ASSERTE(LoadGame.FunctionValid(), "Library libGame load failed");
 		Poly::gConsole.LogDebug("Library libGame loaded.");
 	}
+
+	InitializeViewport();
 }
 
 // ---------------------------------------------------------------------------------------------------------
@@ -140,7 +144,7 @@ void PolyViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 // ---------------------------------------------------------------------------------------------------------
 void PolyViewportWidget::keyPressEvent(QKeyEvent* keyEvent)
 {
-	Poly::gEngine->KeyDown(static_cast<Poly::eKey>(QtKeyEventToSDLScancode(keyEvent->nativeScanCode())));
+	Poly::gEngine->KeyDown(static_cast<Poly::eKey>(QtKeyEventToSDLScancode(keyEvent->key())));
 }
 
 // ---------------------------------------------------------------------------------------------------------
@@ -149,5 +153,5 @@ void PolyViewportWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 	if (keyEvent->isAutoRepeat())
 		keyEvent->ignore();
 	else
- 		Poly::gEngine->KeyUp(static_cast<Poly::eKey>(QtKeyEventToSDLScancode(keyEvent->nativeScanCode())));
+ 		Poly::gEngine->KeyUp(static_cast<Poly::eKey>(QtKeyEventToSDLScancode(keyEvent->key())));
 }

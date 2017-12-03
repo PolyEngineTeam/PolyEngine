@@ -24,4 +24,4 @@ private:
 	SDL_Window* HelperWindow = nullptr;
 };
 
-uint32_t QtKeyEventToSDLScancode(uint32_t nativeQtCode);
+uint32_t QtKeyEventToSDLScancode(uint32_t key);
