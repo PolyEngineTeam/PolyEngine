@@ -66,18 +66,18 @@ void GLRenderingDevice::RenderWorld(World* world)
 		glViewport((int)(rect.GetMin().X * screenSize.Width), (int)(rect.GetMin().Y * screenSize.Height),
 			(int)(rect.GetSize().X * screenSize.Width), (int)(rect.GetSize().Y * screenSize.Height));
 
-		PreRender(world, cameraCmp, rect);
+		PreRender(world, rect, cameraCmp);
 
 		Renderer->Render(world, rect, cameraCmp);
 
-		PostRender(world, cameraCmp, rect);
+		PostRender(world, rect, cameraCmp);
 	}
 
 	// Signal frame end
 	EndFrame();
 }
 
-void GLRenderingDevice::PreRender(World* world, CameraComponent* cameraCmp, const AARect& rect) const
+void GLRenderingDevice::PreRender(World* world, const AARect& rect, CameraComponent* cameraCmp) const
 {
 	PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
 
@@ -91,7 +91,7 @@ void GLRenderingDevice::PreRender(World* world, CameraComponent* cameraCmp, cons
 		PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND_LIGHT]->Run(world, cameraCmp, rect);
 }
 
-void GLRenderingDevice::PostRender(World* world, CameraComponent* cameraCmp, const AARect& rect) const
+void GLRenderingDevice::PostRender(World* world, const AARect& rect, CameraComponent* cameraCmp) const
 {
 	PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
 

@@ -12,16 +12,16 @@
     <Filter Include="Source Files\Impl">
       <UniqueIdentifier>{904335d2-5c41-4c10-96f4-58692e8e0e5c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\RenderingPasses">
+    <Filter Include="Source Files\Rendering">
       <UniqueIdentifier>{826d17ac-3499-45fb-b848-b8f449afa1e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\RenderingPasses\BasePasses">
+    <Filter Include="Source Files\Rendering\BasePasses">
       <UniqueIdentifier>{36ad4b13-7a12-42e7-b2bf-e8b119442549}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\RenderingPasses\DebugPasses">
+    <Filter Include="Source Files\Rendering\DebugPasses">
       <UniqueIdentifier>{cd052487-08f6-4b21-a640-72817e6999c6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\RenderingPasses\PostprocessPasses">
+    <Filter Include="Source Files\Rendering\PostprocessPasses">
       <UniqueIdentifier>{cc225310-6aae-4a18-9543-869e2e8d4173}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -45,31 +45,34 @@
       <Filter>Source Files\Impl</Filter>
     </ClInclude>
     <ClInclude Include="Src\RenderingPassBase.hpp">
-      <Filter>Source Files\RenderingPasses</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Src\BlinnPhongRenderingPass.hpp">
-      <Filter>Source Files\RenderingPasses\BasePasses</Filter>
+      <Filter>Source Files\Rendering\BasePasses</Filter>
     </ClInclude>
     <ClInclude Include="Src\Text2DRenderingPass.hpp">
-      <Filter>Source Files\RenderingPasses\BasePasses</Filter>
+      <Filter>Source Files\Rendering\BasePasses</Filter>
     </ClInclude>
     <ClInclude Include="Src\DebugNormalsRenderingPass.hpp">
-      <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
+      <Filter>Source Files\Rendering\DebugPasses</Filter>
     </ClInclude>
     <ClInclude Include="Src\PostprocessRenderingPass.hpp">
-      <Filter>Source Files\RenderingPasses\PostprocessPasses</Filter>
+      <Filter>Source Files\Rendering\PostprocessPasses</Filter>
     </ClInclude>
     <ClInclude Include="Src\TransparentRenderingPass.hpp">
-      <Filter>Source Files\RenderingPasses\BasePasses</Filter>
+      <Filter>Source Files\Rendering\BasePasses</Filter>
     </ClInclude>
     <ClInclude Include="Src\PostprocessQuad.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Src\UnlitRenderingPass.hpp">
-      <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
-    </ClInclude>
     <ClInclude Include="Src\DebugNormalsWireframeRenderingPass.hpp">
-      <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
+      <Filter>Source Files\Rendering\DebugPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\UnlitRenderingPass.hpp">
+      <Filter>Source Files\Rendering\BasePasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ForwardRenderer.hpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -92,31 +95,34 @@
       <Filter>Source Files\Impl</Filter>
     </ClCompile>
     <ClCompile Include="Src\RenderingPassBase.cpp">
-      <Filter>Source Files\RenderingPasses</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Src\BlinnPhongRenderingPass.cpp">
-      <Filter>Source Files\RenderingPasses\BasePasses</Filter>
+      <Filter>Source Files\Rendering\BasePasses</Filter>
     </ClCompile>
     <ClCompile Include="Src\Text2DRenderingPass.cpp">
-      <Filter>Source Files\RenderingPasses\BasePasses</Filter>
+      <Filter>Source Files\Rendering\BasePasses</Filter>
     </ClCompile>
     <ClCompile Include="Src\DebugNormalsRenderingPass.cpp">
-      <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
+      <Filter>Source Files\Rendering\DebugPasses</Filter>
     </ClCompile>
     <ClCompile Include="Src\PostprocessRenderingPass.cpp">
-      <Filter>Source Files\RenderingPasses\PostprocessPasses</Filter>
+      <Filter>Source Files\Rendering\PostprocessPasses</Filter>
     </ClCompile>
     <ClCompile Include="Src\TransparentRenderingPass.cpp">
-      <Filter>Source Files\RenderingPasses\BasePasses</Filter>
+      <Filter>Source Files\Rendering\BasePasses</Filter>
     </ClCompile>
     <ClCompile Include="Src\PostprocessQuad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\UnlitRenderingPass.cpp">
-      <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
-    </ClCompile>
     <ClCompile Include="Src\DebugNormalsWireframeRenderingPass.cpp">
-      <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
+      <Filter>Source Files\Rendering\DebugPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\UnlitRenderingPass.cpp">
+      <Filter>Source Files\Rendering\BasePasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ForwardRenderer.cpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
