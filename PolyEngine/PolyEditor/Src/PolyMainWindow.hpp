@@ -1,20 +1,27 @@
 #pragma once
 
 #include "PolyWindow.hpp"
+#include "PolyMainWindowUi.hpp"
 
 class PolyMainWindow : public PolyWindow
 {
+	friend class PolyMainWindowUi;
+
+	Q_OBJECT
+
 public:
 	PolyMainWindow(QWidget* parent = nullptr);
 	~PolyMainWindow();
 
 private:
-	void SetupUi();
-	void RetranslateUi(QMainWindow *EditorMainWindowClass);
+	PolyMainWindowUi Ui;
 
-	QAction *actionQuit;
-	QMenuBar *menuBar;
-	QMenu *menuFile;
-	QMenu *menuEdit;
-	QMenu *menuHelp;
+private slots:
+	void CloseProject();
+	void Quit();
+	void Undo();
+	void Redo();
+	void AddWindow();
+	void Build();
+	void ContactUs();
 };

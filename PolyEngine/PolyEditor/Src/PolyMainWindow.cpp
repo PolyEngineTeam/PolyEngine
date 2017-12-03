@@ -11,10 +11,9 @@
 #include <QDockWidget>
 
 PolyMainWindow::PolyMainWindow(QWidget* parent) :
-	PolyWindow(parent)
+	PolyWindow(parent),
+	Ui(this)
 {
-	SetupUi();
-
 	QDockWidget* consoleDockWidget = new QDockWidget();
 	PolyConsoleWidget* consoleWidget = new PolyConsoleWidget();
 	consoleWidget->setFocusPolicy(Qt::ClickFocus);
@@ -54,41 +53,30 @@ PolyMainWindow::~PolyMainWindow()
 {
 }
 
-void PolyMainWindow::SetupUi()
+void PolyMainWindow::CloseProject()
 {
-	if (objectName().isEmpty())
-		setObjectName(QStringLiteral("EditorMainWindowClass"));
-	resize(1200, 700);
-	setAnimated(false);
-	setDockOptions(QMainWindow::AllowNestedDocks | QMainWindow::AllowTabbedDocks | QMainWindow::GroupedDragging);
-	actionQuit = new QAction(this);
-	actionQuit->setObjectName(QStringLiteral("actionQuit"));
-	menuBar = new QMenuBar(this);
-	menuBar->setObjectName(QStringLiteral("menuBar"));
-	menuBar->setGeometry(QRect(0, 0, 1200, 21));
-	menuFile = new QMenu(menuBar);
-	menuFile->setObjectName(QStringLiteral("menuFile"));
-	menuEdit = new QMenu(menuBar);
-	menuEdit->setObjectName(QStringLiteral("menuEdit"));
-	menuHelp = new QMenu(menuBar);
-	menuHelp->setObjectName(QStringLiteral("menuHelp"));
-	setMenuBar(menuBar);
-
-	menuBar->addAction(menuFile->menuAction());
-	menuBar->addAction(menuEdit->menuAction());
-	menuBar->addAction(menuHelp->menuAction());
-	menuFile->addAction(actionQuit);
-
-	RetranslateUi(this);
-
-	QMetaObject::connectSlotsByName(this);
 }
 
-void PolyMainWindow::RetranslateUi(QMainWindow *EditorMainWindowClass)
+void PolyMainWindow::Quit()
 {
-	EditorMainWindowClass->setWindowTitle(QApplication::translate("EditorMainWindowClass", "PolyEditor", Q_NULLPTR));
-	actionQuit->setText(QApplication::translate("EditorMainWindowClass", "Quit", Q_NULLPTR));
-	menuFile->setTitle(QApplication::translate("EditorMainWindowClass", "File", Q_NULLPTR));
-	menuEdit->setTitle(QApplication::translate("EditorMainWindowClass", "Edit", Q_NULLPTR));
-	menuHelp->setTitle(QApplication::translate("EditorMainWindowClass", "Help", Q_NULLPTR));
+}
+
+void PolyMainWindow::Undo()
+{
+}
+
+void PolyMainWindow::Redo()
+{
+}
+
+void PolyMainWindow::AddWindow()
+{
+}
+
+void PolyMainWindow::Build()
+{
+}
+
+void PolyMainWindow::ContactUs()
+{
 }

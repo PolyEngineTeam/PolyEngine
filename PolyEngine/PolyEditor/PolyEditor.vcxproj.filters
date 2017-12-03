@@ -82,6 +82,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_EditorApp.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PolyMainWindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PolyMainWindow.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PolyMainWindowUi.cpp">
+      <Filter>Source Files\Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\PolyEditorPCH.hpp">
@@ -89,9 +98,6 @@
     </ClInclude>
     <ClInclude Include="Src\PolyConsoleWidget.hpp">
       <Filter>Header Files\Widgets</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\PolyMainWindow.hpp">
-      <Filter>Header Files\Windows</Filter>
     </ClInclude>
     <ClInclude Include="Src\PolyWindow.hpp">
       <Filter>Header Files\Windows</Filter>
@@ -106,6 +112,12 @@
     </CustomBuild>
     <CustomBuild Include="Src\PolyViewportWidget.hpp">
       <Filter>Header Files\Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Src\PolyMainWindow.hpp">
+      <Filter>Header Files\Windows</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Src\PolyMainWindowUi.hpp">
+      <Filter>Header Files\Windows</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>
