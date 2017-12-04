@@ -19,6 +19,7 @@ set(EDITOR_SRCS
         Src/EditorApp.cpp
         Src/PolyConsoleWidget.cpp
         Src/PolyMainWindow.cpp
+        Src/PolyMainWindowUi.cpp
         Src/PolyViewportWidget.cpp
         Src/Main.cpp
         Src/PolyWindow.cpp
@@ -30,6 +31,7 @@ set(EDITOR_H_FOR_IDE
         Src/EditorApp.hpp
         Src/PolyConsoleWidget.hpp
         Src/PolyMainWindow.hpp
+        Src/PolyMainWindowUi.hpp
         Src/PolyViewportWidget.hpp
         Src/PolyWindow.hpp
         Src/PolyEditorPCH.hpp
