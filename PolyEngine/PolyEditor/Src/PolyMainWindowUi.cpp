@@ -92,10 +92,10 @@ void PolyMainWindowUi::InitMenuBar(PolyMainWindow* window)
 			QObject::connect(ContactUsAction, &QAction::triggered, window, &PolyMainWindow::ContactUs);
 }
 
-void PolyMainWindowUi::InitToolbars(PolyMainWindow* window)
+void PolyMainWindowUi::InitToolbars(PolyMainWindow*)
 {
 }
 
-void PolyMainWindowUi::InitDockWidgets(PolyMainWindow* window)
+void PolyMainWindowUi::InitDockWidgets(PolyMainWindow*)
 {
 }
