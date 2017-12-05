@@ -4,18 +4,22 @@
 
 #include "PolyMainWindow.hpp"
 
-class PolyMainWindowUi
+class PolyEditorUi
 {
 public:
-	PolyMainWindowUi(PolyMainWindow* window);
-	~PolyMainWindowUi();
+	PolyEditorUi();
+	~PolyEditorUi();
 
 private:
-	void InitMenuBar(PolyMainWindow* window);
-	void InitToolbars(PolyMainWindow* window);
-	void InitDockWidgets(PolyMainWindow* window);
+	void InitMainWindow();
+	void InitDockWidgets();
 
-	QMenuBar *MenuBar;
+	PolyMainWindow* MainWindow;
+	Poly::Dynarray<PolyWindow> Windows;
+
+	Poly::Dynarray<QWidget> Widgets;
+
+	QMenuBar* MenuBar;
 		QMenu* FileMenu;
 			QAction* CloseProjectAction;
 			QAction* QuitAction;

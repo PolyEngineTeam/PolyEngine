@@ -93,7 +93,7 @@
     <ClCompile Include="Src\EditorApp.cpp" />
     <ClCompile Include="Src\PolyConsoleWidget.cpp" />
     <ClCompile Include="Src\PolyMainWindow.cpp" />
-    <ClCompile Include="Src\PolyMainWindowUi.cpp" />
+    <ClCompile Include="Src\PolyEditorUi.cpp" />
     <ClCompile Include="Src\PolyViewportWidget.cpp" />
     <ClCompile Include="Src\Main.cpp" />
     <ClCompile Include="Src\PolyEditorPCH.cpp">
@@ -113,7 +113,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fPolyEditorPCH.hpp" "-f../../Src/PolyMainWindow.hpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -D_MBCS "-I$(SolutionDir)Core\Src" "-I$(SolutionDir)Engine\Src" "-I$(SolutionDir)ThirdParty\SDL2\include" "-I$(ProjectDir)GeneratedFiles" "-I$(ProjectDir)Src" "-I$(QTDIR)\include" "-I$(ProjectDir)GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets"</Command>
     </CustomBuild>
-    <CustomBuild Include="Src\PolyMainWindowUi.hpp">
+    <CustomBuild Include="Src\PolyEditorUi.hpp">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

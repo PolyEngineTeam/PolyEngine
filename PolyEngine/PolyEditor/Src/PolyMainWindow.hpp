@@ -1,20 +1,17 @@
 #pragma once
 
 #include "PolyWindow.hpp"
-#include "PolyMainWindowUi.hpp"
+#include "PolyEditorUi.hpp"
 
 class PolyMainWindow : public PolyWindow
 {
-	friend class PolyMainWindowUi;
+	friend class PolyEditorUi;
 
 	Q_OBJECT
 
 public:
 	PolyMainWindow(QWidget* parent = nullptr);
 	~PolyMainWindow();
-
-private:
-	PolyMainWindowUi Ui;
 
 private slots:
 	void CloseProject();

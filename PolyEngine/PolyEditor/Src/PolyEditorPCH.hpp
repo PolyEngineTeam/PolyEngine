@@ -2,7 +2,7 @@
 
 #include "PolyWindow.hpp"
 #include "PolyMainWindow.hpp"
-#include "PolyMainWindowUi.hpp"
+#include "PolyEditorUi.hpp"
 
 #include "PolyViewportWidget.hpp"
 #include "PolyConsoleWidget.hpp"

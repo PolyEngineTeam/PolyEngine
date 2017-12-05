@@ -7,6 +7,7 @@
 
 class PolyMainWindow;
 class PolyWindow;
+class PolyEditorUi;
 
 class EditorApp : public QApplication
 {
@@ -21,8 +22,7 @@ private:
 	void SetupConsoleOutput();
 	void InitializeEngine();
 
-	PolyMainWindow* MainWindow;
-	Poly::Dynarray<PolyWindow> Windows;
+	PolyEditorUi* Ui;
 
 	QTimer* Updater;
 	std::unique_ptr<Poly::Engine> Engine = nullptr;

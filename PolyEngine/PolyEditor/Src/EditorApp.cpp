@@ -12,12 +12,11 @@ EditorApp::EditorApp(int argc, char *argv[]) :
 {
 	Engine = std::make_unique<Poly::Engine>();
 	
+	Ui = new PolyEditorUi();
+
 	SetupUpdateTimer();
 	SetupConsoleOutput();
 	InitializeEngine();
-	
-	MainWindow = new PolyMainWindow();
-	MainWindow->show();
 	
 	Poly::gConsole.LogDebug("PolyEditor succesfully initialized.");
 }
@@ -25,7 +24,7 @@ EditorApp::EditorApp(int argc, char *argv[]) :
 // ---------------------------------------------------------------------------------------------------------
 EditorApp::~EditorApp()
 {
-	delete MainWindow;
+	delete Ui;
 	delete Updater;
 }
 

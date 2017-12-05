@@ -88,7 +88,7 @@
     <ClCompile Include="GeneratedFiles\Release\moc_PolyMainWindow.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="Src\PolyMainWindowUi.cpp">
+    <ClCompile Include="Src\PolyEditorUi.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
   </ItemGroup>
@@ -116,7 +116,7 @@
     <CustomBuild Include="Src\PolyMainWindow.hpp">
       <Filter>Header Files\Windows</Filter>
     </CustomBuild>
-    <CustomBuild Include="Src\PolyMainWindowUi.hpp">
+    <CustomBuild Include="Src\PolyEditorUi.hpp">
       <Filter>Header Files\Windows</Filter>
     </CustomBuild>
   </ItemGroup>
