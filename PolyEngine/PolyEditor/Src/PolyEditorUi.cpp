@@ -39,12 +39,12 @@ void PolyEditorUi::InitMainWindow()
 			CloseProjectAction = new QAction(MainWindow);
 			FileMenu->addAction(CloseProjectAction);
 			CloseProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Close Project", Q_NULLPTR));
-			QObject::connect(CloseProjectAction, &QAction::triggered, MainWindow, &PolyMainWindow::CloseProject);
+			QObject::connect(CloseProjectAction, &QAction::triggered, this, &PolyEditorUi::CloseProject);
 
 			QuitAction = new QAction(MainWindow);
 			FileMenu->addAction(QuitAction);
 			QuitAction->setText(QApplication::translate("EditorMainWindowClass", "Quit", Q_NULLPTR));
-			QObject::connect(QuitAction, &QAction::triggered, MainWindow, &PolyMainWindow::Quit);
+			QObject::connect(QuitAction, &QAction::triggered, this, &PolyEditorUi::Quit);
 
 
 		// edit menu
@@ -55,12 +55,12 @@ void PolyEditorUi::InitMainWindow()
 			UndoAction = new QAction(MainWindow);
 			EditMenu->addAction(UndoAction);
 			UndoAction->setText(QApplication::translate("EditorMainWindowClass", "Undo", Q_NULLPTR));
-			QObject::connect(UndoAction, &QAction::triggered, MainWindow, &PolyMainWindow::Undo);
+			QObject::connect(UndoAction, &QAction::triggered, this, &PolyEditorUi::Undo);
 
 			RedoAction = new QAction(MainWindow);
 			EditMenu->addAction(RedoAction);
 			RedoAction->setText(QApplication::translate("EditorMainWindowClass", "Redo", Q_NULLPTR));
-			QObject::connect(RedoAction, &QAction::triggered, MainWindow, &PolyMainWindow::Redo);
+			QObject::connect(RedoAction, &QAction::triggered, this, &PolyEditorUi::Redo);
 
 
 		// view menu
@@ -71,7 +71,7 @@ void PolyEditorUi::InitMainWindow()
 			AddWindowAction = new QAction(MainWindow);
 			ViewMenu->addAction(AddWindowAction);
 			AddWindowAction->setText(QApplication::translate("EditorMainWindowClass", "Add Window", Q_NULLPTR));
-			QObject::connect(AddWindowAction, &QAction::triggered, MainWindow, &PolyMainWindow::AddWindow);
+			QObject::connect(AddWindowAction, &QAction::triggered, this, &PolyEditorUi::AddWindow);
 
 
 		// build menu
@@ -82,7 +82,7 @@ void PolyEditorUi::InitMainWindow()
 			BuildAction = new QAction(MainWindow);
 			BuildMenu->addAction(BuildAction);
 			BuildAction->setText(QApplication::translate("EditorMainWindowClass", "Build", Q_NULLPTR));
-			QObject::connect(BuildAction, &QAction::triggered, MainWindow, &PolyMainWindow::Build);
+			QObject::connect(BuildAction, &QAction::triggered, this, &PolyEditorUi::Build);
 
 
 		// help menu
@@ -93,7 +93,7 @@ void PolyEditorUi::InitMainWindow()
 			ContactUsAction = new QAction(MainWindow);
 			HelpMenu->addAction(ContactUsAction);
 			ContactUsAction->setText(QApplication::translate("EditorMainWindowClass", "Contact Us", Q_NULLPTR));
-			QObject::connect(ContactUsAction, &QAction::triggered, MainWindow, &PolyMainWindow::ContactUs);
+			QObject::connect(ContactUsAction, &QAction::triggered, this, &PolyEditorUi::ContactUs);
 
 	// hardcoded initialization of several widgets.
 	QDockWidget* consoleDockWidget = new QDockWidget();
@@ -134,5 +134,34 @@ void PolyEditorUi::InitMainWindow()
 }
 
 void PolyEditorUi::InitDockWidgets()
+{
+}
+
+void PolyEditorUi::CloseProject()
+{
+}
+
+void PolyEditorUi::Quit()
+{
+}
+
+void PolyEditorUi::Undo()
+{
+}
+
+void PolyEditorUi::Redo()
+{
+}
+
+void PolyEditorUi::AddWindow()
+{
+
+}
+
+void PolyEditorUi::Build()
+{
+}
+
+void PolyEditorUi::ContactUs()
 {
 }

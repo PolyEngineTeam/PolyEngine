@@ -50,15 +50,18 @@
     <Filter Include="Source Files\Windows">
       <UniqueIdentifier>{5290e629-0177-40b2-aeb5-039625f57161}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\App">
+      <UniqueIdentifier>{36b186d4-9357-4ab7-8f4b-9253b7df85db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\App">
+      <UniqueIdentifier>{194e0921-f2d7-44b2-aea3-9ca1c377e287}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\PolyEditorPCH.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\EditorApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\PolyViewportWidget.cpp">
@@ -82,14 +85,17 @@
     <ClCompile Include="GeneratedFiles\Release\moc_EditorApp.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_PolyMainWindow.cpp">
+    <ClCompile Include="Src\EditorApp.cpp">
+      <Filter>Source Files\App</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PolyEditorUi.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_PolyMainWindow.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_PolyEditorUi.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="Src\PolyEditorUi.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>Source Files\App</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -107,17 +113,17 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Src\EditorApp.hpp">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="Src\PolyViewportWidget.hpp">
       <Filter>Header Files\Widgets</Filter>
     </CustomBuild>
     <CustomBuild Include="Src\PolyMainWindow.hpp">
       <Filter>Header Files\Windows</Filter>
     </CustomBuild>
+    <CustomBuild Include="Src\EditorApp.hpp">
+      <Filter>Header Files\App</Filter>
+    </CustomBuild>
     <CustomBuild Include="Src\PolyEditorUi.hpp">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>Header Files\App</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

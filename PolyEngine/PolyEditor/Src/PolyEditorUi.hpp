@@ -4,8 +4,9 @@
 
 #include "PolyMainWindow.hpp"
 
-class PolyEditorUi
+class PolyEditorUi : public QObject
 {
+	Q_OBJECT
 public:
 	PolyEditorUi();
 	~PolyEditorUi();
@@ -32,4 +33,13 @@ private:
 			QAction* BuildAction;
 		QMenu* HelpMenu;
 			QAction* ContactUsAction;
+
+private slots:
+	void CloseProject();
+	void Quit();
+	void Undo();
+	void Redo();
+	void AddWindow();
+	void Build();
+	void ContactUs();
 };
