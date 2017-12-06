@@ -179,6 +179,7 @@
     <ClInclude Include="Src\Matrix.hpp" />
     <ClInclude Include="Src\Optional.hpp" />
     <ClInclude Include="Src\ObjectLifetimeHelpers.hpp" />
+    <ClInclude Include="Src\OutputStream.hpp" />
     <ClInclude Include="Src\PoolAllocator.hpp" />
     <ClInclude Include="Src\Quaternion.hpp" />
     <ClInclude Include="Src\Queue.hpp" />

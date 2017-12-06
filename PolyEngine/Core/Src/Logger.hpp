@@ -2,6 +2,8 @@
 
 #include "Defines.hpp"
 #include "EnumUtils.hpp"
+#include "OutputStream.hpp"
+#include <streambuf>
 
 namespace Poly 
 {
@@ -23,8 +25,10 @@ namespace Poly
 	inline void sprint(std::ostream& stream, eLogLevel level,
 		const std::string& fmt) {
 		(void)level;  // suppress unused warning
-		stream << fmt << std::endl;
+		stream << fmt.c_str();
+		stream << String("\n"); 
 	}
+	
 
 	/**
 	*  Variadic template type safe logging implementation
@@ -40,18 +44,43 @@ namespace Poly
 		const T& head, Args&&... tail) {
 		constexpr char marker[] = "{}";
 		std::string::size_type format_marker_pos = fmt.find(marker);
-		stream << fmt.substr(0, format_marker_pos);
+		stream << String(fmt.substr(0, format_marker_pos).c_str());
 		if (format_marker_pos != fmt.npos) {
 			stream << head;
 			sprint(stream, level, fmt.substr(format_marker_pos + sizeof(marker) - 1),
 				tail...);
 		}
 		else
-			stream << std::endl;
+			stream << String("\n");
 	}
 
 	class CORE_DLLEXPORT Console : public BaseObject<> {
 	public:
+		Console() : Ostream(new std::ostream(std::cout.rdbuf())){} // this is a hack :v
+
+		//thoughts
+		//cannot assign std::cout to ostream via copy
+		//what to do with sentinel function outside of class
+
+		//handle checking if new is the same as old one
+		template <typename S, typename... Args>
+		void RegisterStream(Args&&... args)
+		{
+			constexpr bool isStream = std::is_base_of<OutputStream, S>::value; // Strange workaround to STATIC_ASSERTE macro on MSVC
+			STATIC_ASSERTE(isStream, "Provided value is not stream!");
+			UnregisterStream();
+			CurrentStream = std::make_unique<S>(std::forward<Args>(args)...);
+			Ostream.reset( new std::ostream(CurrentStream.get()));
+		}
+
+		void UnregisterStream() {
+			if (CurrentStream)
+			{
+				CurrentStream->OnUnregister();
+				CurrentStream.reset();
+			}
+		}
+		
 
 		/**
 		*  Set of methods for easy logging. Only those should be used in engine code.
@@ -94,8 +123,12 @@ namespace Poly
 		void LogImpl(eLogLevel level, const std::string& levelStr, const std::string& fmt,
 			Args&&... args) {
 			if (level >= LOG_LEVEL_FILTER)
-				sprint(std::cout, level, "[" + levelStr + "] " + fmt, args...);
+				sprint(*Ostream, level, "[" + levelStr + "] " + fmt, args...);
 		}
+
+		std::unique_ptr<OutputStream> CurrentStream;
+		std::unique_ptr<std::ostream> Ostream;
+		
 	};
 
 	CORE_DLLEXPORT extern Console gConsole;
