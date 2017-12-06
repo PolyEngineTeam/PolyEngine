@@ -15,6 +15,7 @@ namespace Poly
 
 		// Rendering
 		bool DisplayFPS = true;
+		bool DebugRender = true;
 	};
 
 	ENGINE_DLLEXPORT extern DebugConfig gDebugConfig;

@@ -27,13 +27,15 @@ namespace Poly
 
 		struct DebugLine
 		{
-			Vector Begin;
-			Vector End;
-			Vector Color;
+			Mesh::Vector3D Begin;
+			Mesh::Vector3D End;
 		};
 
 		Dynarray<DebugLine> DebugLines;
+		Dynarray<Mesh::Vector3D> DebugLinesColors;
 	};
+
+	REGISTER_COMPONENT(WorldComponentsIDGroup, DebugRenderingLinesComponent)
 
 	class ENGINE_DLLEXPORT DebugRenderingStringsComponent : public ComponentBase
 	{

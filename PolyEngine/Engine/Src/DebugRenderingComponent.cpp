@@ -1,3 +1,4 @@
+#include "EnginePCH.hpp"
 #include "DebugRenderingComponent.hpp"
 
 Poly::DebugRenderingPointsComponent::DebugRenderingPointsComponent()

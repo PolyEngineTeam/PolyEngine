@@ -230,6 +230,8 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 	// Render meshes with unlit shader
 	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
 
+	GeometryRenderingPasses[eGeometryRenderPassType::DEBUG]->Run(world, cameraCmp, rect);
+
 	glDepthMask(GL_FALSE);
 
 	glEnable(GL_BLEND);
