@@ -8,6 +8,7 @@
 class PolyMainWindow;
 class PolyWindow;
 class PolyEditorUi;
+class GlobalEventFilter;
 
 class EditorApp : public QApplication
 {
@@ -23,6 +24,7 @@ private:
 	void InitializeEngine();
 
 	PolyEditorUi* Ui;
+	GlobalEventFilter* EventFilter;
 
 	QTimer* Updater;
 	std::unique_ptr<Poly::Engine> Engine = nullptr;

@@ -97,6 +97,9 @@
     <ClCompile Include="Src\PolyEditorUi.cpp">
       <Filter>Source Files\App</Filter>
     </ClCompile>
+    <ClCompile Include="Src\GlobalEventFilter.cpp">
+      <Filter>Source Files\App</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\PolyEditorPCH.hpp">
@@ -110,6 +113,9 @@
     </ClInclude>
     <ClInclude Include="Src\CustomSDLWindow.hpp">
       <Filter>Header Files\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GlobalEventFilter.hpp">
+      <Filter>Header Files\App</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

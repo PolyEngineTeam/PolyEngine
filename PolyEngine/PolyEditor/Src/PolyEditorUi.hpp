@@ -18,7 +18,7 @@ private:
 	PolyMainWindow* MainWindow;
 	Poly::Dynarray<PolyWindow> Windows;
 
-	Poly::Dynarray<QWidget> Widgets;
+	Poly::Dynarray<QWidget*> Widgets;
 
 	QMenuBar* MenuBar;
 		QMenu* FileMenu;

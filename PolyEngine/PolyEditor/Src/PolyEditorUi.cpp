@@ -104,6 +104,7 @@ void PolyEditorUi::InitMainWindow()
 	consoleDockWidget->setWindowTitle("Assets Explorer");
 	consoleDockWidget->setWidget(consoleWidget);
 	MainWindow->AddWidget(consoleDockWidget, Qt::DockWidgetArea::TopDockWidgetArea, Qt::Orientation::Horizontal);
+	Widgets.PushBack((QWidget*)consoleDockWidget);
 
 	QDockWidget* viewportDockWidget = new QDockWidget();
 	// when you won't pass this argument to the constructor you won't be able to dock this widget
@@ -111,6 +112,7 @@ void PolyEditorUi::InitMainWindow()
 	viewportDockWidget->setWindowTitle("Viewport Widget");
 	viewportDockWidget->setWidget(viewportWidget);
 	MainWindow->AddWidget(viewportDockWidget, Qt::DockWidgetArea::TopDockWidgetArea, Qt::Orientation::Horizontal);
+	Widgets.PushBack((QWidget*)viewportDockWidget);
 
 	consoleDockWidget = new QDockWidget();
 	consoleWidget = new PolyConsoleWidget();
@@ -120,6 +122,7 @@ void PolyEditorUi::InitMainWindow()
 	consoleDockWidget->setWindowTitle("Object Properties");
 	consoleDockWidget->setWidget(consoleWidget);
 	MainWindow->AddWidget(consoleDockWidget, Qt::DockWidgetArea::TopDockWidgetArea, Qt::Orientation::Horizontal);
+	Widgets.PushBack((QWidget*)consoleDockWidget);
 
 	consoleDockWidget = new QDockWidget();
 	consoleWidget = new PolyConsoleWidget();
@@ -129,6 +132,7 @@ void PolyEditorUi::InitMainWindow()
 	consoleDockWidget->setWindowTitle("Console");
 	consoleDockWidget->setWidget(consoleWidget);
 	MainWindow->AddWidget(consoleDockWidget, Qt::DockWidgetArea::BottomDockWidgetArea, Qt::Orientation::Horizontal);
+	Widgets.PushBack((QWidget*)consoleDockWidget);
 
 	MainWindow->show();
 }
@@ -155,7 +159,11 @@ void PolyEditorUi::Redo()
 
 void PolyEditorUi::AddWindow()
 {
-
+	PolyWindow* window = new PolyWindow();
+	//Windows.PushBack(window);
+	window->show();
+	for (int i = 0; i < Widgets.GetSize(); i++)
+		Widgets[i]->setParent(window);
 }
 
 void PolyEditorUi::Build()
