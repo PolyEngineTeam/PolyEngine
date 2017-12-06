@@ -68,7 +68,11 @@
     <ClInclude Include="Src\UnlitRenderingPass.hpp">
       <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
     </ClInclude>
-    <ClInclude Include="Src\DebugNormalsWireframeRenderingPass.hpp">
+    <ClInclude Include="Src\DebugNormalsWireframeRenderingPass.hpp" />
+    <ClInclude Include="Src\DebugRenderingPass.hpp">
+      <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DebugRenderingBuffers.hpp">
       <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
     </ClInclude>
     <ClInclude Include="Src\GLCubemapDeviceProxy.hpp">
