@@ -28,30 +28,15 @@ namespace Poly {
 			return c;
 		}
 	};
-/*
-	class OutputStreamBase : public std::streambuf {
-	public:
-		virtual void OnUnregister() = 0;
-		virtual OutputStreamBase& operator<<(const String& data) = 0;
-	};
-*/
-	/*
-	class StandardOutputStream : public OutputStream {
-	public:
-		StandardOutputStream(std::ostream& ostream) : stream(ostream) {};
-		void OnUnregister() { stream.flush(); }
-		void Append(const String&& data) {
-			const char* cdata = data.GetCStr();
-			stream.write(cdata, sizeof(cdata));
-		}
-	private:
-		std::ostream& stream;
-	};
-	*/
+
 	class FileOutputStream : public OutputStream {
 	public:
 		FileOutputStream(const char* name) { 
+#if defined(_WIN32)
 			freopen_s(&file, name, "w", stdout); 
+#else
+			file = freopen(name, "w", stdout);
+#endif
 			setvbuf(stdout, NULL, _IONBF, 0);
 		}
 		FileOutputStream& operator=(FileOutputStream&& rhs) {
