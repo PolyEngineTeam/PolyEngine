@@ -13,6 +13,7 @@ namespace Poly {
 	protected:
 		std::streamsize xsputn(const char_type* s, std::streamsize n) override final
 		{
+			UNUSED(n);
 			String str(s);
 			size_t len = str.GetLength();
 			Append(std::move(str));
@@ -43,7 +44,7 @@ namespace Poly {
 			EnsureFileClosed();
 			file = rhs.file;
 			rhs.file = nullptr;
-			return *this;
+			return *this;	
 		}
 		FileOutputStream(FileOutputStream&& rhs) {
 			*this = std::move(rhs);
