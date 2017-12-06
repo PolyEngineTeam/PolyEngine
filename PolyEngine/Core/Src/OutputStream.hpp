@@ -43,6 +43,7 @@ namespace Poly {
 			EnsureFileClosed();
 			file = rhs.file;
 			rhs.file = nullptr;
+			return *this;
 		}
 		FileOutputStream(FileOutputStream&& rhs) {
 			*this = std::move(rhs);
