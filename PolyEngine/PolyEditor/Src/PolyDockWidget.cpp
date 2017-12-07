@@ -13,5 +13,5 @@ PolyDockWidget::~PolyDockWidget()
 void PolyDockWidget::TopLevelChanged(bool topLevel)
 {
 	if (topLevel) gApp->draggedWidget = this;
-	else Poly::gConsole.LogDebug("nonFloating");
+	//else Poly::gConsole.LogDebug("nonFloating");
 }
