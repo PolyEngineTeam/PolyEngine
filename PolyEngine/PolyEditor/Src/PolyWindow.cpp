@@ -11,9 +11,9 @@ PolyWindow::~PolyWindow()
 {
 }
 
-void PolyWindow::AddWidget(QDockWidget* widget, Qt::DockWidgetArea area, Qt::Orientation orientation)
+void PolyWindow::AddWidget(QDockWidget* widget, Qt::DockWidgetArea area)
 {
-	UNUSED(orientation);
 	//Widgets.PushBack(*widget);
+	widget->setParent(this);
 	addDockWidget(area, widget);
 }

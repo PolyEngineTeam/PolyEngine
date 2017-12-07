@@ -15,6 +15,9 @@ bool GlobalEventFilter::eventFilter(QObject* watched, QEvent* event)
 		if (event->type() == QEvent::MouseButtonRelease)
 		{
 			PolyWindow* wnd = new PolyWindow;
+			wnd->resize(gApp->draggedWidget->size());
+			wnd->move(gApp->draggedWidget->pos());
+			wnd->AddWidget(gApp->draggedWidget, Qt::DockWidgetArea::TopDockWidgetArea);
 			wnd->show();
 			gApp->draggedWidget = nullptr;
 		}

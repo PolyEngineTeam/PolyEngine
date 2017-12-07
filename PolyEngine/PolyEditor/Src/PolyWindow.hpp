@@ -10,7 +10,7 @@ public:
 	PolyWindow(QWidget* parent = nullptr);
 	~PolyWindow();
 
-	void AddWidget(QDockWidget* widget, Qt::DockWidgetArea area, Qt::Orientation orientation);
+	void AddWidget(QDockWidget* widget, Qt::DockWidgetArea area);
 
 private:
 	Poly::Dynarray<QWidget> Widgets;
