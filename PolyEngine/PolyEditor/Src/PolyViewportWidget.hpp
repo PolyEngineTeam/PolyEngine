@@ -2,13 +2,14 @@
 
 #include <QWidget>
 #include <QtGui/QtGui>
+
 #include "CustomSDLWindow.hpp"
+#include "PolyWidget.hpp"
 
-
-class PolyViewportWidget : public QWidget
+class PolyViewportWidget : public QWidget, public PolyWidget
 {
 public:
-	explicit PolyViewportWidget(QWidget* parent = nullptr);
+	explicit PolyViewportWidget(const QString& title, QWidget* parent = nullptr);
 
 	void InitializeViewport();
 

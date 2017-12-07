@@ -96,11 +96,20 @@ void PolyEditorUi::InitMainWindow()
 			ContactUsAction->setText(QApplication::translate("EditorMainWindowClass", "Contact Us", Q_NULLPTR));
 			QObject::connect(ContactUsAction, &QAction::triggered, this, &PolyEditorUi::ContactUs);
 
+
+
 	// hardcoded initialization of several widgets.
-	PolyDockWidget<PolyConsoleWidget>* consoleWidget = new PolyDockWidget<PolyConsoleWidget>(App, "Assets Explorer", Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
-	PolyDockWidget<PolyViewportWidget>* viewportDockWidget = new PolyDockWidget<PolyViewportWidget>(App, "Viewport", Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
-	consoleWidget = new PolyDockWidget<PolyConsoleWidget>(App, "Object Properties", Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
-	consoleWidget = new PolyDockWidget<PolyConsoleWidget>(App, "Console", Qt::DockWidgetArea::BottomDockWidgetArea, MainWindow);
+	PolyConsoleWidget* consoleWidget = new PolyConsoleWidget("Assets Explorer");
+	consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
+
+	PolyViewportWidget* viewportWidget = new PolyViewportWidget("Viewport");
+	viewportWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
+
+	consoleWidget = new PolyConsoleWidget("Object Properties");
+	consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
+
+	consoleWidget = new PolyConsoleWidget("Console");
+	consoleWidget->Dock(Qt::DockWidgetArea::BottomDockWidgetArea, MainWindow);
 
 	MainWindow->show();
 }

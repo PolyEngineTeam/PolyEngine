@@ -56,6 +56,12 @@
     <Filter Include="Source Files\App">
       <UniqueIdentifier>{194e0921-f2d7-44b2-aea3-9ca1c377e287}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Widgets\Base">
+      <UniqueIdentifier>{08ac2224-6a12-4131-85a8-742a88304f3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Widgets\Base">
+      <UniqueIdentifier>{5a854d91-2a86-42c8-8f99-2cd7d4f2e974}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Main.cpp">
@@ -106,6 +112,12 @@
     <ClCompile Include="GeneratedFiles\Release\moc_PolyDockWidget.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="Src\PolyDockWidget.cpp">
+      <Filter>Source Files\Widgets\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PolyWidget.cpp">
+      <Filter>Source Files\Widgets\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\PolyEditorPCH.hpp">
@@ -123,6 +135,9 @@
     <ClInclude Include="Src\GlobalEventFilter.hpp">
       <Filter>Header Files\App</Filter>
     </ClInclude>
+    <ClInclude Include="Src\PolyWidget.hpp">
+      <Filter>Header Files\Widgets\Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Src\PolyViewportWidget.hpp">
@@ -138,7 +153,7 @@
       <Filter>Header Files\App</Filter>
     </CustomBuild>
     <CustomBuild Include="Src\PolyDockWidget.hpp">
-      <Filter>Header Files\Widgets</Filter>
+      <Filter>Header Files\Widgets\Base</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

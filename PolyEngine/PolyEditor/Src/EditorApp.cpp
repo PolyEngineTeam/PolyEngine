@@ -6,10 +6,14 @@
 
 #include <Core.hpp>
 
+EditorApp* gApp = nullptr;
+
 // ---------------------------------------------------------------------------------------------------------
 EditorApp::EditorApp(int argc, char *argv[]) :
 	QApplication(argc, argv)
 {
+	gApp = this;
+
 	Engine = std::make_unique<Poly::Engine>();
 	
 	Ui = new PolyEditorUi(this);

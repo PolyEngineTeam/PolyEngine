@@ -1,11 +1,12 @@
 #pragma once
 
 #include <QTextEdit>
+#include "PolyWidget.hpp"
 
-class PolyConsoleWidget : public QTextEdit
+class PolyConsoleWidget : public QTextEdit, public PolyWidget
 {
 public:
-	explicit PolyConsoleWidget(QWidget* parent = nullptr);
+	explicit PolyConsoleWidget(const QString& title, QWidget* parent = nullptr);
 
 
 protected:

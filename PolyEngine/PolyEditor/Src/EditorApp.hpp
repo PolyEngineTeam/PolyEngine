@@ -37,3 +37,5 @@ private:
 private slots:
 	void UpdatePhase();
 };
+
+extern EditorApp* gApp;

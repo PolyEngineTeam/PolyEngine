@@ -1,6 +1,7 @@
 #include "PolyEditorPCH.hpp"
 
-PolyConsoleWidget::PolyConsoleWidget(QWidget* parent):
-	QTextEdit(parent)
+PolyConsoleWidget::PolyConsoleWidget(const QString& title, QWidget* parent):
+	QTextEdit(parent),
+	PolyWidget(title, this)
 {
 }
