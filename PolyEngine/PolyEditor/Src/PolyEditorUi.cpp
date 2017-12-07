@@ -5,8 +5,9 @@
 #include <QAction>
 #include <qdockwidget.h>
 
-PolyEditorUi::PolyEditorUi()
+PolyEditorUi::PolyEditorUi(EditorApp* app)
 {
+	App = app;
 	InitMainWindow();
 }
 
@@ -96,43 +97,10 @@ void PolyEditorUi::InitMainWindow()
 			QObject::connect(ContactUsAction, &QAction::triggered, this, &PolyEditorUi::ContactUs);
 
 	// hardcoded initialization of several widgets.
-	QDockWidget* consoleDockWidget = new QDockWidget();
-	PolyConsoleWidget* consoleWidget = new PolyConsoleWidget();
-	consoleWidget->setFocusPolicy(Qt::ClickFocus);
-	consoleWidget->setEnabled(true);
-	consoleWidget->setReadOnly(true);
-	consoleDockWidget->setWindowTitle("Assets Explorer");
-	consoleDockWidget->setWidget(consoleWidget);
-	MainWindow->AddWidget(consoleDockWidget, Qt::DockWidgetArea::TopDockWidgetArea, Qt::Orientation::Horizontal);
-	Widgets.PushBack((QWidget*)consoleDockWidget);
-
-	QDockWidget* viewportDockWidget = new QDockWidget();
-	// when you won't pass this argument to the constructor you won't be able to dock this widget
-	PolyViewportWidget* viewportWidget = new PolyViewportWidget(viewportDockWidget);
-	viewportDockWidget->setWindowTitle("Viewport Widget");
-	viewportDockWidget->setWidget(viewportWidget);
-	MainWindow->AddWidget(viewportDockWidget, Qt::DockWidgetArea::TopDockWidgetArea, Qt::Orientation::Horizontal);
-	Widgets.PushBack((QWidget*)viewportDockWidget);
-
-	consoleDockWidget = new QDockWidget();
-	consoleWidget = new PolyConsoleWidget();
-	consoleWidget->setFocusPolicy(Qt::ClickFocus);
-	consoleWidget->setEnabled(true);
-	consoleWidget->setReadOnly(true);
-	consoleDockWidget->setWindowTitle("Object Properties");
-	consoleDockWidget->setWidget(consoleWidget);
-	MainWindow->AddWidget(consoleDockWidget, Qt::DockWidgetArea::TopDockWidgetArea, Qt::Orientation::Horizontal);
-	Widgets.PushBack((QWidget*)consoleDockWidget);
-
-	consoleDockWidget = new QDockWidget();
-	consoleWidget = new PolyConsoleWidget();
-	consoleWidget->setFocusPolicy(Qt::ClickFocus);
-	consoleWidget->setEnabled(true);
-	consoleWidget->setReadOnly(true);
-	consoleDockWidget->setWindowTitle("Console");
-	consoleDockWidget->setWidget(consoleWidget);
-	MainWindow->AddWidget(consoleDockWidget, Qt::DockWidgetArea::BottomDockWidgetArea, Qt::Orientation::Horizontal);
-	Widgets.PushBack((QWidget*)consoleDockWidget);
+	PolyDockWidget<PolyConsoleWidget>* consoleWidget = new PolyDockWidget<PolyConsoleWidget>(App, "Assets Explorer", Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
+	PolyDockWidget<PolyViewportWidget>* viewportDockWidget = new PolyDockWidget<PolyViewportWidget>(App, "Viewport", Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
+	consoleWidget = new PolyDockWidget<PolyConsoleWidget>(App, "Object Properties", Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
+	consoleWidget = new PolyDockWidget<PolyConsoleWidget>(App, "Console", Qt::DockWidgetArea::BottomDockWidgetArea, MainWindow);
 
 	MainWindow->show();
 }
@@ -162,8 +130,6 @@ void PolyEditorUi::AddWindow()
 	PolyWindow* window = new PolyWindow();
 	//Windows.PushBack(window);
 	window->show();
-	for (int i = 0; i < Widgets.GetSize(); i++)
-		Widgets[i]->setParent(window);
 }
 
 void PolyEditorUi::Build()

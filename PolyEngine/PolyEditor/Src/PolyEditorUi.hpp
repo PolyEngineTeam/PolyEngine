@@ -3,13 +3,16 @@
 #include <QMenu>
 
 #include "PolyMainWindow.hpp"
+#include "PolyDockWidget.hpp"
 
 class PolyEditorUi : public QObject
 {
 	Q_OBJECT
 public:
-	PolyEditorUi();
+	PolyEditorUi(EditorApp* app);
 	~PolyEditorUi();
+
+	EditorApp* App;
 
 private:
 	void InitMainWindow();
@@ -17,8 +20,6 @@ private:
 
 	PolyMainWindow* MainWindow;
 	Poly::Dynarray<PolyWindow> Windows;
-
-	Poly::Dynarray<QWidget*> Widgets;
 
 	QMenuBar* MenuBar;
 		QMenu* FileMenu;

@@ -100,6 +100,12 @@
     <ClCompile Include="Src\GlobalEventFilter.cpp">
       <Filter>Source Files\App</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PolyDockWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PolyDockWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\PolyEditorPCH.hpp">
@@ -130,6 +136,9 @@
     </CustomBuild>
     <CustomBuild Include="Src\PolyEditorUi.hpp">
       <Filter>Header Files\App</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Src\PolyDockWidget.hpp">
+      <Filter>Header Files\Widgets</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

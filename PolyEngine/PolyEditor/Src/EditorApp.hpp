@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QApplication>
+#include <qpoint.h>
 
 #include <Dynarray.hpp>
 #include <Engine.hpp>
@@ -9,6 +10,7 @@ class PolyMainWindow;
 class PolyWindow;
 class PolyEditorUi;
 class GlobalEventFilter;
+class QDockWidget;
 
 class EditorApp : public QApplication
 {
@@ -17,6 +19,9 @@ class EditorApp : public QApplication
 public:
 	EditorApp(int argc, char *argv[]);
 	~EditorApp();
+
+	bool dragging = false;
+	QDockWidget* draggedWidget = nullptr;
 
 private:
 	void SetupUpdateTimer();

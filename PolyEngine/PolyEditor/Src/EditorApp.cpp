@@ -12,8 +12,8 @@ EditorApp::EditorApp(int argc, char *argv[]) :
 {
 	Engine = std::make_unique<Poly::Engine>();
 	
-	Ui = new PolyEditorUi();
-	EventFilter = new GlobalEventFilter();
+	Ui = new PolyEditorUi(this);
+	EventFilter = new GlobalEventFilter(Ui);
 
 	installEventFilter(EventFilter);
 
