@@ -85,6 +85,9 @@
     <ClCompile Include="Src\RTTISerialization.cpp">
       <Filter>Source Files\RTTI</Filter>
     </ClCompile>
+    <ClCompile Include="Src\OutputStream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Dynarray.hpp">

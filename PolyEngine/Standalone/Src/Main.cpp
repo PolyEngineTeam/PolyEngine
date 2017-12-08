@@ -13,13 +13,14 @@ extern "C"
 
 void HandleWindowEvent(const SDL_WindowEvent& windowEvent);
 
-	class FileAndCoutStream : public Poly::FileOutputStream {
+	class FileAndCoutStream : public Poly::FileOutputStream
+	{
 	public:
 		FileAndCoutStream(const char* name) : Poly::FileOutputStream(name) {}
-		void Append(Poly::String&& data) override {
-			std::cout << data.GetCStr();
+		void Append(const char* data) override {
+			std::cout << data;
 			std::cout.flush();
-			Poly::FileOutputStream::Append(std::move(data));
+			Poly::FileOutputStream::Append(data);
 		}
 	};
 

@@ -142,6 +142,7 @@
     </ClCompile>
     <ClCompile Include="Src\Logger.cpp" />
     <ClCompile Include="Src\Matrix.cpp" />
+    <ClCompile Include="Src\OutputStream.cpp" />
     <ClCompile Include="Src\Quaternion.cpp" />
     <ClCompile Include="Src\AABox.cpp" />
     <ClCompile Include="Src\RefCountedBase.cpp" />

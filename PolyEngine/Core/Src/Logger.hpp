@@ -25,8 +25,7 @@ namespace Poly
 	inline void sprint(std::ostream& stream, eLogLevel level,
 		const std::string& fmt) {
 		(void)level;  // suppress unused warning
-		stream << fmt.c_str();
-		stream << String("\n"); 
+		stream << fmt.c_str() << std::endl;
 	}
 	
 
@@ -44,25 +43,21 @@ namespace Poly
 		const T& head, Args&&... tail) {
 		constexpr char marker[] = "{}";
 		std::string::size_type format_marker_pos = fmt.find(marker);
-		stream << String(fmt.substr(0, format_marker_pos).c_str());
+		stream << fmt.substr(0, format_marker_pos);
 		if (format_marker_pos != fmt.npos) {
 			stream << head;
 			sprint(stream, level, fmt.substr(format_marker_pos + sizeof(marker) - 1),
 				tail...);
 		}
 		else
-			stream << String("\n");
+			stream << std::endl;
 	}
 
-	class CORE_DLLEXPORT Console : public BaseObject<> {
+	class CORE_DLLEXPORT Console : public BaseObject<> 
+	{
 	public:
-		Console() : Ostream(new std::ostream(std::cout.rdbuf())){} // this is a hack :v
+		Console() : Ostream(new std::ostream(std::cout.rdbuf())) {}
 
-		//thoughts
-		//cannot assign std::cout to ostream via copy
-		//what to do with sentinel function outside of class
-
-		//handle checking if new is the same as old one
 		template <typename S, typename... Args>
 		void RegisterStream(Args&&... args)
 		{
@@ -73,7 +68,8 @@ namespace Poly
 			Ostream.reset( new std::ostream(CurrentStream.get()));
 		}
 
-		void UnregisterStream() {
+		void UnregisterStream() 
+		{
 			if (CurrentStream)
 			{
 				CurrentStream->OnUnregister();
@@ -128,7 +124,6 @@ namespace Poly
 
 		std::unique_ptr<OutputStream> CurrentStream;
 		std::unique_ptr<std::ostream> Ostream;
-		
 	};
 
 	CORE_DLLEXPORT extern Console gConsole;
