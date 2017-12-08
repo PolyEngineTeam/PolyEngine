@@ -1,7 +1,5 @@
 #include "CorePCH.hpp"
 
-#include "OutputStream.hpp"
-
 using namespace Poly;
 
 FileOutputStream& FileOutputStream::operator=(FileOutputStream&& rhs)

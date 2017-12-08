@@ -3,7 +3,6 @@
 
 #include <Engine.hpp>
 #include <LibraryLoader.hpp>
-#include <OutputStream.hpp>
 
 extern "C"
 {
