@@ -8,7 +8,7 @@ set(POLYCORE_SRCS
 	Src/Color.cpp
 	Src/Logger.cpp
 	Src/Matrix.cpp
-	Src/OutputStream.hpp
+	Src/OutputStream.cpp
 	Src/Quaternion.cpp
 	Src/RefCountedBase.cpp
 	Src/RTTI.cpp
