@@ -11,23 +11,8 @@ namespace Poly {
 		virtual void OnUnregister() {}
 		virtual void Append(const char*) = 0;
 	protected:
-		std::streamsize xsputn(const char_type* s, std::streamsize n) override final
-		{
-			UNUSED(n);
-			std::string str(s);
-			size_t len = str.length();
-			Append(s);
-			return len;
-		}
-
-		int_type overflow(int_type c) override final
-		{
-			char tab[2];
-			tab[0] = c;
-			tab[1] = '\0';
-			Append(tab);
-			return c;
-		}
+		std::streamsize xsputn(const char_type* s, std::streamsize n) override final;
+		int_type overflow(int_type c) override final;
 	};
 
 	class CORE_DLLEXPORT FileOutputStream : public OutputStream

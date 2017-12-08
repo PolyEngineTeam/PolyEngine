@@ -63,20 +63,12 @@ namespace Poly
 		{
 			constexpr bool isStream = std::is_base_of<OutputStream, S>::value; // Strange workaround to STATIC_ASSERTE macro on MSVC
 			STATIC_ASSERTE(isStream, "Provided value is not stream!");
-			UnregisterStream();
+			if (CurrentStream)
+				CurrentStream->OnUnregister();
 			CurrentStream = std::make_unique<S>(std::forward<Args>(args)...);
-			Ostream.reset( new std::ostream(CurrentStream.get()));
+			Ostream = std::make_unique<std::ostream>(CurrentStream.get());
 		}
 
-		void UnregisterStream() 
-		{
-			if (CurrentStream)
-			{
-				CurrentStream->OnUnregister();
-				CurrentStream.reset();
-			}
-		}
-		
 
 		/**
 		*  Set of methods for easy logging. Only those should be used in engine code.

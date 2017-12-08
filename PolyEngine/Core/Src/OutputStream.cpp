@@ -2,6 +2,24 @@
 
 using namespace Poly;
 
+std::streamsize OutputStream::xsputn(const char_type* s, std::streamsize n)
+{
+	UNUSED(n);
+	std::string str(s);
+	size_t len = str.length();
+	Append(s);
+	return len;
+}
+
+std::streambuf::int_type OutputStream::overflow(int_type c)
+{
+	char tab[2];
+	tab[0] = c;
+	tab[1] = '\0';
+	Append(tab);
+	return c;
+}
+
 FileOutputStream& FileOutputStream::operator=(FileOutputStream&& rhs)
 {
 	EnsureFileClosed();
