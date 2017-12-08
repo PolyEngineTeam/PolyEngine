@@ -35,3 +35,4 @@
 #include "Logger.hpp"
 #include "UniqueID.hpp"
 #include "EnumUtils.hpp"
+#include "OutputStream.hpp"

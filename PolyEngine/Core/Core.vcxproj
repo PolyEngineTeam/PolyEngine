@@ -142,6 +142,7 @@
     </ClCompile>
     <ClCompile Include="Src\Logger.cpp" />
     <ClCompile Include="Src\Matrix.cpp" />
+    <ClCompile Include="Src\OutputStream.cpp" />
     <ClCompile Include="Src\Quaternion.cpp" />
     <ClCompile Include="Src\AABox.cpp" />
     <ClCompile Include="Src\RefCountedBase.cpp" />
@@ -179,6 +180,7 @@
     <ClInclude Include="Src\Matrix.hpp" />
     <ClInclude Include="Src\Optional.hpp" />
     <ClInclude Include="Src\ObjectLifetimeHelpers.hpp" />
+    <ClInclude Include="Src\OutputStream.hpp" />
     <ClInclude Include="Src\PoolAllocator.hpp" />
     <ClInclude Include="Src\Quaternion.hpp" />
     <ClInclude Include="Src\Queue.hpp" />

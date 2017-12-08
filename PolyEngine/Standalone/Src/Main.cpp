@@ -4,14 +4,28 @@
 #include <Engine.hpp>
 #include <LibraryLoader.hpp>
 
-
-using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (SDL_Window*, const Poly::ScreenSize&);
-using CreateGameFunc = Poly::IGame* (void);
+extern "C"
+{
+	using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (SDL_Window*, const Poly::ScreenSize&);
+	using CreateGameFunc = Poly::IGame* (void);
+}
 
 void HandleWindowEvent(const SDL_WindowEvent& windowEvent);
 
+	class FileAndCoutStream : public Poly::FileOutputStream
+	{
+	public:
+		FileAndCoutStream(const char* name) : Poly::FileOutputStream(name) {}
+		void Append(const char* data) override {
+			std::cout << data;
+			std::cout.flush();
+			Poly::FileOutputStream::Append(data);
+		}
+	};
+
 int main(int argc, char* args[])
 {
+	Poly::gConsole.RegisterStream<FileAndCoutStream>("console.log");
 	UNUSED(argc);
 	UNUSED(args);
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
