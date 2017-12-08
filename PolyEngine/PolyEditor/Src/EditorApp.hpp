@@ -21,6 +21,7 @@ public:
 	~EditorApp();
 
 	bool dragging = false;
+	PolyWindow* MouseOver = nullptr;
 	QDockWidget* draggedWidget = nullptr;
 
 private:

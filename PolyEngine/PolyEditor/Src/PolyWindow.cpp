@@ -13,7 +13,7 @@ PolyWindow::~PolyWindow()
 
 void PolyWindow::AddWidget(QDockWidget* widget, Qt::DockWidgetArea area)
 {
-	//Widgets.PushBack(*widget);
+	//Widgets.PushBack(widget);
 	widget->setParent(this);
 	addDockWidget(area, widget);
 }

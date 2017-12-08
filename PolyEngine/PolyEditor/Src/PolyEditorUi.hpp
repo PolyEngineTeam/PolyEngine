@@ -7,6 +7,7 @@
 
 class PolyEditorUi : public QObject
 {
+	friend class GlobalEventFilter;
 	Q_OBJECT
 public:
 	PolyEditorUi(EditorApp* app);
@@ -19,7 +20,7 @@ private:
 	void InitDockWidgets();
 
 	PolyMainWindow* MainWindow;
-	Poly::Dynarray<PolyWindow> Windows;
+	Poly::Dynarray<PolyWindow*> Windows;
 
 	QMenuBar* MenuBar;
 		QMenu* FileMenu;

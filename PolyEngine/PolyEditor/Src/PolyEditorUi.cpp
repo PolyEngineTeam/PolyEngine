@@ -19,12 +19,13 @@ PolyEditorUi::~PolyEditorUi()
 void PolyEditorUi::InitMainWindow()
 {
 	MainWindow = new PolyMainWindow();
+	Windows.PushBack(std::move(MainWindow));
 
 	MainWindow->setObjectName(QStringLiteral("EditorMainWindowClass"));
 
 	MainWindow->setWindowTitle(QApplication::translate("EditorMainWindowClass", "PolyEditor", Q_NULLPTR));
 	MainWindow->resize(1200, 600);;
-	MainWindow->setDockOptions(QMainWindow::AllowNestedDocks | QMainWindow::AllowTabbedDocks | QMainWindow::GroupedDragging);
+	MainWindow->setDockOptions(QMainWindow::AllowNestedDocks | QMainWindow::AllowTabbedDocks);
 
 	// menu bar
 	MenuBar = new QMenuBar(MainWindow);
