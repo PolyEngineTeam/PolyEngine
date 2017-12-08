@@ -8,6 +8,7 @@ set(POLYCORE_SRCS
 	Src/Color.cpp
 	Src/Logger.cpp
 	Src/Matrix.cpp
+	Src/OutputStream.cpp
 	Src/Quaternion.cpp
 	Src/RefCountedBase.cpp
 	Src/RTTI.cpp
@@ -43,6 +44,7 @@ set(POLYCORE_H_FOR_IDE
 	Src/Logger.hpp
 	Src/Matrix.hpp
 	Src/Optional.hpp
+	Src/OutputStream.hpp
 	Src/PoolAllocator.hpp
 	Src/Quaternion.hpp
 	Src/Queue.hpp

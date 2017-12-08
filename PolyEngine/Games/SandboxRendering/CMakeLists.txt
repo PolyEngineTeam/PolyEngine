@@ -1,27 +1,13 @@
 set(SANDBOX_RENDERING_SRCS
-	Src/InvadersGame.cpp
-	Src/BulletComponent.cpp
-	Src/CollisionSystem.cpp
-	Src/ControlSystem.cpp
-	Src/EnemyMovementComponent.cpp
-	Src/GameManagerComponent.cpp
+	Src/RenderingSandbox.cpp
 	Src/GameManagerSystem.cpp
-	Src/MovementSystem.cpp
-	Src/PlayerControllerComponent.cpp
+	Src/GameManagerWorldComponent.cpp
 )
 set(SANDBOX_RENDERING_INCLUDE Src)
 set(SANDBOX_RENDERING_H_FOR_IDE
-	Src/InvadersGame.hpp
-	Src/BulletComponent.hpp
-	Src/CollisionSystem.hpp
-	Src/CollisionComponent.hpp
-	Src/ControlSystem.hpp
-	Src/EnemyMovementComponent.hpp
-	Src/GameManagerComponent.hpp
-	Src/MovementComponent.hpp
+	Src/RenderingSandbox.hpp
 	Src/GameManagerSystem.hpp
-	Src/MovementSystem.hpp
-	Src/PlayerControllerComponent.hpp
+	Src/GameManagerWorldComponent.hpp
 )
 
 add_library(sandbox_rendering SHARED ${SANDBOX_RENDERING_SRCS} ${SANDBOX_RENDERING_H_FOR_IDE})

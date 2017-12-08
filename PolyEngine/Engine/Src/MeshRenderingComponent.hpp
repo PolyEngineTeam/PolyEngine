@@ -8,6 +8,7 @@ namespace Poly {
 
 	enum class eShadingModel
 	{
+		NONE,
 		LIT,
 		UNLIT,
 		_COUNT
