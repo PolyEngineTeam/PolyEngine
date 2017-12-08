@@ -11,7 +11,7 @@ namespace Poly {
 		virtual void OnUnregister() {}
 		virtual void Append(const char*) = 0;
 	protected:
-		std::streamsize OutputStream::xsputn(const char_type* s, std::streamsize n) override final
+		std::streamsize xsputn(const char_type* s, std::streamsize n) override final
 		{
 			UNUSED(n);
 			std::string str(s);
@@ -20,7 +20,7 @@ namespace Poly {
 			return len;
 		}
 
-		int_type OutputStream::overflow(int_type c) override final
+		int_type overflow(int_type c) override final
 		{
 			char tab[2];
 			tab[0] = c;
