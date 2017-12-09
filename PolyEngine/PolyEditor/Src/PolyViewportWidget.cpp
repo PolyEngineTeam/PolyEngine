@@ -145,7 +145,7 @@ void PolyViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 // ---------------------------------------------------------------------------------------------------------
 void PolyViewportWidget::keyPressEvent(QKeyEvent* keyEvent)
 {
-	Poly::gEngine->KeyDown(static_cast<Poly::eKey>(QtKeyEventToSDLScancode(keyEvent->key())));
+	Poly::gEngine->KeyDown(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
 }
 
 // ---------------------------------------------------------------------------------------------------------
@@ -154,5 +154,5 @@ void PolyViewportWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 	if (keyEvent->isAutoRepeat())
 		keyEvent->ignore();
 	else
- 		Poly::gEngine->KeyUp(static_cast<Poly::eKey>(QtKeyEventToSDLScancode(keyEvent->key())));
+ 		Poly::gEngine->KeyUp(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
 }
