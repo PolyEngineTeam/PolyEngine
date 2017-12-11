@@ -1,4 +1,5 @@
 #include "PolyEditorPCH.hpp"
+#include "EditorOutputStream.hpp"
 #include "LoggerWidget.hpp" 
 
 LoggerWidget::LoggerWidget(const QString& title, QWidget* parent)

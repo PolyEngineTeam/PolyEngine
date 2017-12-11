@@ -11,6 +11,7 @@ GlobalEventFilter::~GlobalEventFilter()
 
 bool GlobalEventFilter::eventFilter(QObject* watched, QEvent* event)
 {
+	UNUSED(watched);
 	if (gApp->draggedWidget != nullptr)
 	{
 		if (event->type() == QEvent::MouseMove)
@@ -18,7 +19,7 @@ bool GlobalEventFilter::eventFilter(QObject* watched, QEvent* event)
 			QPoint mousePos = ((QMouseEvent*)event)->pos() + gApp->draggedWidget->pos();
 			gApp->MouseOver = nullptr;
 
-			for (int i = 0; i < Ui->Windows.GetSize(); i++)
+			for (size_t i = 0; i < Ui->Windows.GetSize(); i++)
 			{
 				QPoint diff = mousePos - Ui->Windows[i]->pos();
 
