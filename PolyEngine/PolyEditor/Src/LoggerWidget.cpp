@@ -6,7 +6,6 @@ LoggerWidget::LoggerWidget(const QString& title, QWidget* parent):
 {
 	Poly::gConsole.RegisterStream<EditorOutputStream>("console.log", this);
 	TextEdit.setReadOnly(true);
-	AppendLog("boop");
 }
 
 LoggerWidget::~LoggerWidget()
@@ -16,7 +15,8 @@ LoggerWidget::~LoggerWidget()
 
 void LoggerWidget::AppendLog(const char * data)
 {
-	QString str(data);
-	TextEdit.append(str);
+	TextEdit.moveCursor(QTextCursor::End);
+	TextEdit.insertPlainText(QString::fromLocal8Bit(data));
+	TextEdit.moveCursor(QTextCursor::End);
 	TextEdit.show();
 }

@@ -10,5 +10,5 @@ EditorOutputStream::EditorOutputStream(const char* name, LoggerWidget* widget) :
 void EditorOutputStream::Append(const char* data) 
 {
 	Logger->AppendLog(data);
-	//Poly::FileOutputStream::Append(data);
+	Poly::FileOutputStream::Append(data);
 }
