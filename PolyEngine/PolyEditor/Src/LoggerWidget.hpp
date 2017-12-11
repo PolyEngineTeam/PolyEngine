@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QTextEdit>
+#include <QBoxLayout>
 #include "PolyWidget.hpp"
 #include "EditorOutputStream.hpp"
 
@@ -13,5 +14,6 @@ public:
 protected:
 
 private:
-	QTextEdit TextEdit;
+	QTextEdit* TextEdit;
+	QBoxLayout* Layout;
 };
