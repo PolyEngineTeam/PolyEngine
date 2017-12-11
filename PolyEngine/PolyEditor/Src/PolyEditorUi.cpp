@@ -100,16 +100,16 @@ void PolyEditorUi::InitMainWindow()
 
 
 	// hardcoded initialization of several widgets.
-	PolyConsoleWidget* consoleWidget = new PolyConsoleWidget("Assets Explorer");
-	consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
+	//LoggerWidget* consoleWidget = new LoggerWidget("Assets Explorer");
+	//consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
 
 	PolyViewportWidget* viewportWidget = new PolyViewportWidget("Viewport");
 	viewportWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
 
-	consoleWidget = new PolyConsoleWidget("Object Properties");
-	consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
+	//consoleWidget = new LoggerWidget("Object Properties");
+	//consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow); //we need to create new base class for this -> someone created all as loggerwidgets
 
-	consoleWidget = new PolyConsoleWidget("Console");
+	LoggerWidget* consoleWidget = new LoggerWidget("Console");
 	consoleWidget->Dock(Qt::DockWidgetArea::BottomDockWidgetArea, MainWindow);
 
 	MainWindow->show();

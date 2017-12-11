@@ -73,9 +73,6 @@
     <ClCompile Include="Src\PolyViewportWidget.cpp">
       <Filter>Source Files\Widgets</Filter>
     </ClCompile>
-    <ClCompile Include="Src\PolyConsoleWidget.cpp">
-      <Filter>Source Files\Widgets</Filter>
-    </ClCompile>
     <ClCompile Include="Src\PolyMainWindow.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
@@ -118,13 +115,16 @@
     <ClCompile Include="Src\PolyWidget.cpp">
       <Filter>Source Files\Widgets\Base</Filter>
     </ClCompile>
+    <ClCompile Include="Src\LoggerWidget.cpp">
+      <Filter>Source Files\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EditorOutputStream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\PolyEditorPCH.hpp">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\PolyConsoleWidget.hpp">
-      <Filter>Header Files\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="Src\PolyWindow.hpp">
       <Filter>Header Files\Windows</Filter>
@@ -137,6 +137,12 @@
     </ClInclude>
     <ClInclude Include="Src\PolyWidget.hpp">
       <Filter>Header Files\Widgets\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EditorOutputStream.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\LoggerWidget.hpp">
+      <Filter>Header Files\Widgets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

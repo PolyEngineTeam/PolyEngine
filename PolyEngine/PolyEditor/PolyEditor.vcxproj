@@ -97,8 +97,9 @@
     </ClCompile>
     <ClCompile Include="Src\CustomSDLWindow.cpp" />
     <ClCompile Include="Src\EditorApp.cpp" />
+    <ClCompile Include="Src\EditorOutputStream.cpp" />
     <ClCompile Include="Src\GlobalEventFilter.cpp" />
-    <ClCompile Include="Src\PolyConsoleWidget.cpp" />
+    <ClCompile Include="Src\LoggerWidget.cpp" />
     <ClCompile Include="Src\PolyDockWidget.cpp" />
     <ClCompile Include="Src\PolyMainWindow.cpp" />
     <ClCompile Include="Src\PolyEditorUi.cpp" />
@@ -136,6 +137,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
+    <ClInclude Include="Src\EditorOutputStream.hpp" />
     <ClInclude Include="Src\GlobalEventFilter.hpp" />
     <CustomBuild Include="Src\PolyDockWidget.hpp">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing PolyDockWidget.hpp...</Message>
@@ -174,7 +176,7 @@
       </Command>
     </CustomBuild>
     <ClInclude Include="Src\CustomSDLWindow.hpp" />
-    <ClInclude Include="Src\PolyConsoleWidget.hpp" />
+    <ClInclude Include="Src\LoggerWidget.hpp" />
     <ClInclude Include="Src\PolyEditorPCH.hpp" />
   </ItemGroup>
   <ItemGroup>

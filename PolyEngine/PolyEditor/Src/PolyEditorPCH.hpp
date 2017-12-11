@@ -13,4 +13,4 @@
 
 // widgets
 #include "PolyViewportWidget.hpp"
-#include "PolyConsoleWidget.hpp"
+#include "LoggerWidget.hpp"
