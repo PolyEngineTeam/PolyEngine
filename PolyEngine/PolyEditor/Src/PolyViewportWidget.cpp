@@ -15,8 +15,7 @@ static Poly::LibraryFunctionHandle<CreateGameFunc> LoadGame;
 
 // ---------------------------------------------------------------------------------------------------------
 PolyViewportWidget::PolyViewportWidget(const QString& title, QWidget* parent) :
-	QWidget(parent),
-	PolyWidget(title, this)
+	PolyWidget(title, parent)
 {
 	setAttribute(Qt::WA_NativeWindow);
 	setMouseTracking(true);

@@ -6,7 +6,7 @@
 #include "CustomSDLWindow.hpp"
 #include "PolyWidget.hpp"
 
-class PolyViewportWidget : public QWidget, public PolyWidget
+class PolyViewportWidget : public PolyWidget
 {
 public:
 	explicit PolyViewportWidget(const QString& title, QWidget* parent = nullptr);

@@ -1,8 +1,8 @@
 #include "PolyEditorPCH.hpp"
 #include "LoggerWidget.hpp" 
 
-LoggerWidget::LoggerWidget(const QString& title, QWidget* parent):
-	PolyWidget(title, this)
+LoggerWidget::LoggerWidget(const QString& title, QWidget* parent)
+	: PolyWidget(title, parent)
 {
 	Layout = new QBoxLayout(QBoxLayout::Direction::LeftToRight, this);
 	TextEdit = new QTextEdit(this);
