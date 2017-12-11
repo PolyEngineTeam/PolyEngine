@@ -11,7 +11,7 @@ LoggerWidget::LoggerWidget(const QString& title, QWidget* parent):
 
 LoggerWidget::~LoggerWidget()
 {
-	Poly::gConsole.RegisterStream<Poly::OutputStream>();
+	Poly::gConsole.RegisterDefaultStream();
 }
 
 void LoggerWidget::AppendLog(const char * data)
