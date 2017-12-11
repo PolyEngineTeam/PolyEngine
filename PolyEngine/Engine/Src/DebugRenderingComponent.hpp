@@ -32,7 +32,7 @@ namespace Poly
 		};
 
 		Dynarray<DebugLine> DebugLines;
-		Dynarray<Mesh::Vector3D> DebugLinesColors;
+		Dynarray<DebugLine> DebugLinesColors;
 	};
 
 	REGISTER_COMPONENT(WorldComponentsIDGroup, DebugRenderingLinesComponent)

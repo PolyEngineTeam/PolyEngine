@@ -7,7 +7,9 @@ using namespace Poly;
 
 namespace Util
 {
-	Mesh::Vector3D findMinMax(const Dynarray<Mesh::Vector3D> & dynarray, std::function< bool(const float, const float) > comp)
+	/// <summary>Get vector with minimum/maximum/else (depends on comparison function) values
+	/// on each axis in given set of vectors.</summary>
+	Mesh::Vector3D findExtremum(const Dynarray<Mesh::Vector3D> & dynarray, std::function< bool(const float, const float) > comp)
 	{
 		if(dynarray.GetSize() <= 0)
 			Mesh::Vector3D(); // or assert?
@@ -32,17 +34,19 @@ void DebugRenderingSystem::DebugRenderingUpdatePhase(World* world)
 	if(!gDebugConfig.DebugRender)
 		return;
 
-	for(int renderMode = 0; renderMode < 1; ++renderMode)// render modes: LINE (todo POINT, STRING)
+	enum class RenderMode : int { /*POINT = 1,*/ LINE = 1, /*STRING,*/ _COUNT };
+
+	// iterate RenderMode::_COUNT times to create shapes defining debug primitives
+	for(int renderMode = static_cast<int>(RenderMode::LINE); renderMode < static_cast<int>(RenderMode::_COUNT); ++renderMode)
 	{
 		for(auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
 		{
 			const auto meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-			auto transformCmp = std::get<TransformComponent*>(componentsTuple);
+			const auto transformCmp = std::get<TransformComponent*>(componentsTuple);
 
 			Vector objPos = transformCmp->GetGlobalTranslation();
 
 			const Matrix& objTransform = transformCmp->GetGlobalTransformationMatrix();
-			//Matrix screenTransform = mvp * objTransform;
 
 			// spawn a box for every mesh, in correct size
 			for(const auto subMesh : meshCmp->GetMesh()->GetSubMeshes())
@@ -51,8 +55,8 @@ void DebugRenderingSystem::DebugRenderingUpdatePhase(World* world)
 
 				// find mins and maxs of each mesh coordinates
 				// in order to create AABB
-				auto minVector = Util::findMinMax(meshVerticesPositions, std::less<float>());
-				auto maxVector = Util::findMinMax(meshVerticesPositions, std::greater<float>());
+				auto minVector = Util::findExtremum(meshVerticesPositions, std::less<float>());
+				auto maxVector = Util::findExtremum(meshVerticesPositions, std::greater<float>());
 
 				Vector _minVector(minVector.X, minVector.Y, minVector.Z);
 				Vector _maxVector(maxVector.X, maxVector.Y, maxVector.Z);
@@ -60,12 +64,14 @@ void DebugRenderingSystem::DebugRenderingUpdatePhase(World* world)
 				_minVector = objTransform * _minVector;
 				_maxVector = objTransform * _maxVector;
 
-				minVector.X = _minVector.X;
-				minVector.Y = _minVector.Y;
-				minVector.Z = _minVector.Z;
-				maxVector.X = _maxVector.X;
-				maxVector.Y = _maxVector.Y;
-				maxVector.Z = _maxVector.Z;
+				const float boundingOffset = 0.1f;
+				// convert from Vector to Mesh::Vector3D and move avay a little bit from mesh
+				minVector.X = _minVector.X - boundingOffset;
+				minVector.Y = _minVector.Y - boundingOffset;
+				minVector.Z = _minVector.Z - boundingOffset;
+				maxVector.X = _maxVector.X + boundingOffset;
+				maxVector.Y = _maxVector.Y + boundingOffset;
+				maxVector.Z = _maxVector.Z + boundingOffset;
 
 				EmitBox(world, minVector, maxVector);
 			}
@@ -81,9 +87,10 @@ void Poly::DebugRenderingSystem::EmitLine(World* world, Mesh::Vector3D begin, Me
 {
 	auto debugLinesComponent = world->GetWorldComponent<DebugRenderingLinesComponent>();
 	debugLinesComponent->DebugLines.PushBack(DebugRenderingLinesComponent::DebugLine{ begin, end });
-	Mesh::Vector3D color;
-	color = begin;
-	debugLinesComponent->DebugLinesColors.PushBack(color);
+	Mesh::Vector3D colorBegin, colorEnd;
+	colorBegin = begin;
+	colorEnd = end;
+	debugLinesComponent->DebugLinesColors.PushBack(DebugRenderingLinesComponent::DebugLine{ colorBegin, colorEnd });
 }
 
 void Poly::DebugRenderingSystem::EmitQuad(Vector mins, Vector maxs)
