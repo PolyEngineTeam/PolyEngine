@@ -31,6 +31,10 @@ namespace Util
 
 void DebugRenderingSystem::DebugRenderingUpdatePhase(World* world)
 {
+	const auto & inputComponent = world->GetWorldComponent<InputWorldComponent>();
+	if(inputComponent->IsPressed(eKey::LCTRL) && inputComponent->IsPressed(eKey::KEY_D))
+		gDebugConfig.DebugRender = !gDebugConfig.DebugRender;
+
 	if(!gDebugConfig.DebugRender)
 		return;
 
@@ -64,8 +68,8 @@ void DebugRenderingSystem::DebugRenderingUpdatePhase(World* world)
 				_minVector = objTransform * _minVector;
 				_maxVector = objTransform * _maxVector;
 
-				const float boundingOffset = 0.1f;
-				// convert from Vector to Mesh::Vector3D and move avay a little bit from mesh
+				const float boundingOffset = 0.04f;
+				// convert from Vector to Mesh::Vector3D and move avay a little bit from a mesh
 				minVector.X = _minVector.X - boundingOffset;
 				minVector.Y = _minVector.Y - boundingOffset;
 				minVector.Z = _minVector.Z - boundingOffset;
@@ -88,8 +92,8 @@ void Poly::DebugRenderingSystem::EmitLine(World* world, Mesh::Vector3D begin, Me
 	auto debugLinesComponent = world->GetWorldComponent<DebugRenderingLinesComponent>();
 	debugLinesComponent->DebugLines.PushBack(DebugRenderingLinesComponent::DebugLine{ begin, end });
 	Mesh::Vector3D colorBegin, colorEnd;
-	colorBegin = begin;
-	colorEnd = end;
+	colorBegin.X = 0.0f; colorBegin.Y = 0.3f; colorBegin.Z = 0.0f;
+	colorEnd.X = 0.0f; colorEnd.Y = 0.2f; colorEnd.Z = 0.0f;
 	debugLinesComponent->DebugLinesColors.PushBack(DebugRenderingLinesComponent::DebugLine{ colorBegin, colorEnd });
 }
 

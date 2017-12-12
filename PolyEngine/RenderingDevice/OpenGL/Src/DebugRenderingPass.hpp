@@ -15,6 +15,6 @@ namespace Poly
 		DebugRenderingPass();
 
 	protected:
-		void OnRun(World* world, const CameraComponent* camera, const AARect& rect) override final;
+		void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override final;
 	};
 }

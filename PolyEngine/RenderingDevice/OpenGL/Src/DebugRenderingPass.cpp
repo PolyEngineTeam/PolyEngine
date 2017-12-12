@@ -14,7 +14,7 @@ DebugRenderingPass::DebugRenderingPass()
 	GetProgram().RegisterUniform("mat4", "MVP");
 }
 
-void DebugRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/)
+void DebugRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType)
 {
 	GetProgram().BindProgram();
 	const Matrix& MVP = camera->GetMVP();
@@ -33,7 +33,7 @@ void DebugRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 		glBufferData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugRenderingLinesComponent::DebugLine)
 									+ debugLinesColors.GetSize() * sizeof(DebugRenderingLinesComponent::DebugLine), NULL, GL_STATIC_DRAW);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, debugLines.GetSize() * sizeof(DebugRenderingLinesComponent::DebugLine), (GLvoid*)debugLines.GetData());
-		glBufferSubData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugRenderingLinesComponent::DebugLine), debugLinesColors.GetSize() * sizeof(Mesh::Vector3D), (GLvoid*)debugLinesColors.GetData());
+		glBufferSubData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugRenderingLinesComponent::DebugLine), debugLinesColors.GetSize() * sizeof(DebugRenderingLinesComponent::DebugLine), (GLvoid*)debugLinesColors.GetData());
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vector3D), NULL);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vector3D), (GLvoid*)(debugLines.GetSize() * sizeof(DebugRenderingLinesComponent::DebugLine)));
