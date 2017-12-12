@@ -15,11 +15,8 @@ EditorApp::EditorApp(int argc, char *argv[]) :
 	gApp = this;
 
 	Engine = std::make_unique<Poly::Engine>();
-	
-	Ui = new PolyEditorUi(this);
-	EventFilter = new GlobalEventFilter(Ui);
 
-	installEventFilter(EventFilter);
+	installEventFilter(&EventFilter);
 
 	SetupUpdateTimer();
 	SetupConsoleOutput();
@@ -31,7 +28,6 @@ EditorApp::EditorApp(int argc, char *argv[]) :
 // ---------------------------------------------------------------------------------------------------------
 EditorApp::~EditorApp()
 {
-	delete Ui;
 	delete Updater;
 }
 

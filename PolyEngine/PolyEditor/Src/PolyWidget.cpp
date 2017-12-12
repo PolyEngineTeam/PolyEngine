@@ -1,23 +1,21 @@
 #include "PolyEditorPCH.hpp"
 
-PolyWidget::PolyWidget(const QString& title, QWidget* parent)
-	: QWidget(parent)
+PolyWidget::PolyWidget(const QString& title, QWidget* parent) :
+	QWidget(parent),
+	Title(title)
 {
-	DockWidget = new PolyDockWidget(title);
-	DockWidget->setWidget(this);
 }
 
 PolyWidget::~PolyWidget()
 {
 }
 
-void PolyWidget::Dock(Qt::DockWidgetArea area, QMainWindow* parent)
+void PolyWidget::Connect()
 {
-	DockWidget->setParent(parent);
-	parent->addDockWidget(area, DockWidget);
+	connect(DockWidget, &QDockWidget::topLevelChanged, this, &PolyWidget::TopLevelChanged);
 }
 
-void PolyWidget::Reparent(QMainWindow* parent)
+void PolyWidget::TopLevelChanged(bool topLevel)
 {
-	DockWidget->setParent(parent);
+	if (topLevel) gApp->DockManager.WidgetCatchEvent(this);
 }

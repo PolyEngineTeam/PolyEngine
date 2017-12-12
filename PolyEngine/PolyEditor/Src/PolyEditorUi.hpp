@@ -3,17 +3,14 @@
 #include <QMenu>
 
 #include "PolyMainWindow.hpp"
-#include "PolyDockWidget.hpp"
 
 class PolyEditorUi : public QObject
 {
-	friend class GlobalEventFilter;
+	friend class PolyDockManager;
 	Q_OBJECT
 public:
-	PolyEditorUi(EditorApp* app);
+	PolyEditorUi();
 	~PolyEditorUi();
-
-	EditorApp* App;
 
 private:
 	void InitMainWindow();

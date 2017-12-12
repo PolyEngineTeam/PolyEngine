@@ -11,9 +11,21 @@ PolyWindow::~PolyWindow()
 {
 }
 
-void PolyWindow::AddWidget(QDockWidget* widget, Qt::DockWidgetArea area)
+void PolyWindow::AddWidget(Qt::DockWidgetArea area, PolyWidget* widget)
 {
-	//Widgets.PushBack(widget);
-	widget->setParent(this);
-	addDockWidget(area, widget);
+	if (widget->DockWidget)
+		((PolyWindow*)widget->parent())->RemoveWidget(widget);
+
+	widget->DockWidget = new QDockWidget(widget->Title, this);
+	widget->DockWidget->setWidget(widget);
+	addDockWidget(area, widget->DockWidget);
+	widget->Connect();
+
+	Widgets.PushBack(widget);
+}
+
+void PolyWindow::RemoveWidget(PolyWidget* widget)
+{
+	Widgets.Remove(widget);
+	widget->DockWidget = nullptr;
 }

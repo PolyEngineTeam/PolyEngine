@@ -5,9 +5,8 @@
 #include <QAction>
 #include <qdockwidget.h>
 
-PolyEditorUi::PolyEditorUi(EditorApp* app)
+PolyEditorUi::PolyEditorUi()
 {
-	App = app;
 	InitMainWindow();
 }
 
@@ -103,14 +102,23 @@ void PolyEditorUi::InitMainWindow()
 	//LoggerWidget* consoleWidget = new LoggerWidget("Assets Explorer");
 	//consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
 
-	PolyViewportWidget* viewportWidget = new PolyViewportWidget("Viewport");
-	viewportWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
-
 	//consoleWidget = new LoggerWidget("Object Properties");
 	//consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow); //we need to create new base class for this -> someone created all as loggerwidgets
 
-	LoggerWidget* consoleWidget = new LoggerWidget("Console");
-	consoleWidget->Dock(Qt::DockWidgetArea::BottomDockWidgetArea, MainWindow);
+	//PolyViewportWidget* viewportWidget = new PolyViewportWidget("Viewport");
+	//viewportWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
+
+	LoggerWidget* consoleWidget = new LoggerWidget("Console1");
+	MainWindow->AddWidget(Qt::DockWidgetArea::BottomDockWidgetArea, consoleWidget);
+
+	consoleWidget = new LoggerWidget("Console2");
+	MainWindow->AddWidget(Qt::DockWidgetArea::BottomDockWidgetArea, consoleWidget);
+
+	consoleWidget = new LoggerWidget("Console3");
+	MainWindow->AddWidget(Qt::DockWidgetArea::BottomDockWidgetArea, consoleWidget);
+
+	consoleWidget = new LoggerWidget("Console4");
+	MainWindow->AddWidget(Qt::DockWidgetArea::BottomDockWidgetArea, consoleWidget);
 
 	MainWindow->show();
 }

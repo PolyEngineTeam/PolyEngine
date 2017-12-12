@@ -1,20 +1,24 @@
 #pragma once
 
 #include "qdockwidget.h"
-#include "qwidget.h"
 
-class EditorApp;
-class PolyDockWidget;
-
-class PolyWidget: public QWidget
+class PolyWidget : public QWidget
 {
+	friend class PolyWindow;
+
+	Q_OBJECT
 public:
 	PolyWidget(const QString& title, QWidget* parent);
 	~PolyWidget();
 
-	void Dock(Qt::DockWidgetArea area, QMainWindow* parent);
-	void Reparent(QMainWindow* parent);
+	const QDockWidget* GetDockWidget() const { return DockWidget; }
 
 private:
-	PolyDockWidget* DockWidget;
+	void Connect();
+
+	QString Title;
+	QDockWidget* DockWidget = nullptr;
+
+private slots:
+	void TopLevelChanged(bool topLevel);
 };

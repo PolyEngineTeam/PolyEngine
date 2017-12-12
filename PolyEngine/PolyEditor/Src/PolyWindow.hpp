@@ -4,14 +4,17 @@
 
 #include <Dynarray.hpp>
 
+class PolyWidget;
+
 class PolyWindow : public QMainWindow
 {
 public:
 	PolyWindow(QWidget* parent = nullptr);
 	~PolyWindow();
 
-	void AddWidget(QDockWidget* widget, Qt::DockWidgetArea area);
+	void AddWidget(Qt::DockWidgetArea area, PolyWidget* widget);
+	void RemoveWidget(PolyWidget* widget);
 
 private:
-	Poly::Dynarray<QWidget> Widgets;
+	Poly::Dynarray<PolyWidget*> Widgets;
 };

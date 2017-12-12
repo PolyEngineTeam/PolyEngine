@@ -6,11 +6,16 @@
 #include <Dynarray.hpp>
 #include <Engine.hpp>
 
+#include "PolyEditorUi.hpp"
+#include "PolyDockManager.hpp"
+#include "GlobalEventFilter.hpp"
+
 class PolyMainWindow;
 class PolyWindow;
 class PolyEditorUi;
 class GlobalEventFilter;
 class QDockWidget;
+class PolyWidget;
 
 class EditorApp : public QApplication
 {
@@ -20,17 +25,15 @@ public:
 	EditorApp(int argc, char *argv[]);
 	~EditorApp();
 
-	bool dragging = false;
-	PolyWindow* MouseOver = nullptr;
-	QDockWidget* draggedWidget = nullptr;
+	PolyDockManager DockManager;
+	PolyEditorUi Ui;
+	GlobalEventFilter EventFilter;
 
 private:
 	void SetupUpdateTimer();
 	void SetupConsoleOutput();
 	void InitializeEngine();
 
-	PolyEditorUi* Ui;
-	GlobalEventFilter* EventFilter;
 
 	QTimer* Updater;
 	std::unique_ptr<Poly::Engine> Engine = nullptr;

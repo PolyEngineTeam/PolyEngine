@@ -103,15 +103,6 @@
     <ClCompile Include="Src\GlobalEventFilter.cpp">
       <Filter>Source Files\App</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_PolyDockWidget.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_PolyDockWidget.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\PolyDockWidget.cpp">
-      <Filter>Source Files\Widgets\Base</Filter>
-    </ClCompile>
     <ClCompile Include="Src\PolyWidget.cpp">
       <Filter>Source Files\Widgets\Base</Filter>
     </ClCompile>
@@ -120,6 +111,15 @@
     </ClCompile>
     <ClCompile Include="Src\EditorOutputStream.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PolyWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PolyWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PolyDockManager.cpp">
+      <Filter>Source Files\App</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -135,14 +135,14 @@
     <ClInclude Include="Src\GlobalEventFilter.hpp">
       <Filter>Header Files\App</Filter>
     </ClInclude>
-    <ClInclude Include="Src\PolyWidget.hpp">
-      <Filter>Header Files\Widgets\Base</Filter>
-    </ClInclude>
     <ClInclude Include="Src\EditorOutputStream.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Src\LoggerWidget.hpp">
       <Filter>Header Files\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PolyDockManager.hpp">
+      <Filter>Header Files\App</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -158,7 +158,7 @@
     <CustomBuild Include="Src\PolyEditorUi.hpp">
       <Filter>Header Files\App</Filter>
     </CustomBuild>
-    <CustomBuild Include="Src\PolyDockWidget.hpp">
+    <CustomBuild Include="Src\PolyWidget.hpp">
       <Filter>Header Files\Widgets\Base</Filter>
     </CustomBuild>
   </ItemGroup>
