@@ -105,8 +105,9 @@ void PolyEditorUi::InitMainWindow()
 	//consoleWidget = new LoggerWidget("Object Properties");
 	//consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow); //we need to create new base class for this -> someone created all as loggerwidgets
 
-	//PolyViewportWidget* viewportWidget = new PolyViewportWidget("Viewport");
-	//viewportWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
+	PolyViewportWidget* viewportWidget = new PolyViewportWidget("Viewport");
+	MainWindow->AddWidget(Qt::DockWidgetArea::TopDockWidgetArea, viewportWidget);
+
 
 	LoggerWidget* consoleWidget = new LoggerWidget("Console1");
 	MainWindow->AddWidget(Qt::DockWidgetArea::BottomDockWidgetArea, consoleWidget);
