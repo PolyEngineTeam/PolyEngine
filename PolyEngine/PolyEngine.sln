@@ -26,6 +26,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandboxRendering", "Games\SandboxRendering\SandboxRendering.vcxproj", "{3B123CD8-CBF6-40AF-8D79-7CBEBFA80FF3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Standalone", "Standalone\Standalone.vcxproj", "{553B6C70-D203-431C-89A0-DC0599AE63CB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1FFE2400-7129-41DC-9EFB-08CDEAD7F66A} = {1FFE2400-7129-41DC-9EFB-08CDEAD7F66A}
+		{3B123CD8-CBF6-40AF-8D79-7CBEBFA80FF3} = {3B123CD8-CBF6-40AF-8D79-7CBEBFA80FF3}
+		{65ACF8FD-853F-4F27-AB59-EF2E13268720} = {65ACF8FD-853F-4F27-AB59-EF2E13268720}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

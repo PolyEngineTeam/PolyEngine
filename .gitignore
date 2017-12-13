@@ -5,9 +5,10 @@
 *.sln.docstates
 
 # Engine specific files
-*AssetsPath.txt
-*AssetsPath.json
-*AssetsPathConfig.json
+console.log
+
+# Engine local configurations
+AssetsPathConfig.json
 
 # Build results
 [Dd]ebug/

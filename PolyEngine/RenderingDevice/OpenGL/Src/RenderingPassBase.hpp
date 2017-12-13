@@ -48,6 +48,7 @@ namespace Poly
 		void DebugDraw();
 
 		void ClearFBO(GLenum flags = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
 	protected:
 
 		GLuint FallbackWhiteTexture;
@@ -60,6 +61,7 @@ namespace Poly
 		const std::map<String, RenderingTargetBase*>& GetInputs() const { return Inputs; }
 		const std::map<String, RenderingTargetBase*>& GetOutputs() const { return Outputs; }
 		GLShaderProgram& GetProgram() { return Program; }
+
 	private:
 		std::map<String, RenderingTargetBase*> Inputs;
 		std::map<String, RenderingTargetBase*> Outputs;
