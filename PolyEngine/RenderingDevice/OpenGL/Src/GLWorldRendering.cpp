@@ -84,11 +84,11 @@ void GLRenderingDevice::RenderWorld(World* world)
 		glViewport((int)(rect.GetMin().X * screenSize.Width), (int)(rect.GetMin().Y * screenSize.Height),
 			(int)(rect.GetSize().X * screenSize.Width), (int)(rect.GetSize().Y * screenSize.Height));
 
-		PreRender(world, rect, cameraCmp);
+		// PreRender(world, rect, cameraCmp);
 
 		Renderer->Render(world, rect, cameraCmp);
 
-		PostRender(world, rect, cameraCmp);
+		// PostRender(world, rect, cameraCmp);
 	}
 
 	// Signal frame end
