@@ -4,7 +4,3 @@ PolyMainWindow::PolyMainWindow(QWidget* parent) :
 	PolyWindow(parent)
 {
 }
-
-PolyMainWindow::~PolyMainWindow()
-{
-}

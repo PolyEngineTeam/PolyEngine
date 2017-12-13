@@ -1,13 +1,5 @@
 #include "PolyEditorPCH.hpp"
 
-GlobalEventFilter::GlobalEventFilter()
-{
-}
-
-GlobalEventFilter::~GlobalEventFilter()
-{
-}
-
 bool GlobalEventFilter::eventFilter(QObject* watched, QEvent* event)
 {
 	gApp->DockManager.ProcessEvent(event);

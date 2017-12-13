@@ -5,15 +5,6 @@
 #include <QAction>
 #include <qdockwidget.h>
 
-PolyEditorUi::PolyEditorUi()
-{
-}
-
-PolyEditorUi::~PolyEditorUi()
-{
-	delete MainWindow;
-}
-
 void PolyEditorUi::InitMainWindow()
 {
 	MainWindow = new PolyMainWindow();
@@ -22,12 +13,12 @@ void PolyEditorUi::InitMainWindow()
 	MainWindow->setObjectName(QStringLiteral("EditorMainWindowClass"));
 
 	MainWindow->setWindowTitle(QApplication::translate("EditorMainWindowClass", "PolyEditor", Q_NULLPTR));
-	MainWindow->resize(1200, 600);;
+	MainWindow->resize(1280, 720);;
 	MainWindow->setDockOptions(QMainWindow::AllowNestedDocks | QMainWindow::AllowTabbedDocks);
 
 	// menu bar
 	MenuBar = new QMenuBar(MainWindow);
-	MenuBar->setGeometry(QRect(0, 0, 1200, 21));
+	MenuBar->setGeometry(QRect(0, 0, 1280, 21));
 	MainWindow->setMenuBar(MenuBar);
 
 
@@ -105,16 +96,10 @@ void PolyEditorUi::InitMainWindow()
 	//consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow); //we need to create new base class for this -> someone created all as loggerwidgets
 
 	PolyViewportWidget* viewportWidget = new PolyViewportWidget("Viewport", MainWindow);
-	MainWindow->AddWidget(Qt::DockWidgetArea::TopDockWidgetArea, viewportWidget);
+	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, viewportWidget);
 
-	LoggerWidget* consoleWidget = new LoggerWidget("Console1");
-	MainWindow->AddWidget(Qt::DockWidgetArea::BottomDockWidgetArea, consoleWidget);
-
-	consoleWidget = new LoggerWidget("Console2");
-	MainWindow->AddWidget(Qt::DockWidgetArea::BottomDockWidgetArea, consoleWidget);
-
-	consoleWidget = new LoggerWidget("Console3");
-	MainWindow->AddWidget(Qt::DockWidgetArea::BottomDockWidgetArea, consoleWidget);
+	LoggerWidget* consoleWidget = new LoggerWidget("Console");
+	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, consoleWidget);
 
 	MainWindow->show();
 }

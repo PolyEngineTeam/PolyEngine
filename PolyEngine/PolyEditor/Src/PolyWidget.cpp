@@ -6,10 +6,6 @@ PolyWidget::PolyWidget(const QString& title, QWidget* parent) :
 {
 }
 
-PolyWidget::~PolyWidget()
-{
-}
-
 void PolyWidget::Connect()
 {
 	connect(DockWidget, &QDockWidget::topLevelChanged, this, &PolyWidget::TopLevelChanged);

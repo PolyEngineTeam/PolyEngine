@@ -1,14 +1,6 @@
 #include "PolyDockWidgetManager.hpp"
 #include "PolyEditorPCH.hpp"
 
-PolyDockManager::PolyDockManager()
-{
-}
-
-PolyDockManager::~PolyDockManager()
-{
-}
-
 void PolyDockManager::WidgetCatchEvent(PolyWidget* catched)
 {
 	DraggedWidget = catched;

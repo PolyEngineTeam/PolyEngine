@@ -9,6 +9,7 @@ class LoggerWidget : public PolyWidget
 public:
 	explicit LoggerWidget(const QString& title, QWidget* parent = nullptr);
 	~LoggerWidget();
+
 	void AppendLog(const char* data);
 protected:
 

@@ -6,5 +6,4 @@ class PolyMainWindow : public PolyWindow
 {
 public:
 	PolyMainWindow(QWidget* parent = nullptr);
-	~PolyMainWindow();
 };

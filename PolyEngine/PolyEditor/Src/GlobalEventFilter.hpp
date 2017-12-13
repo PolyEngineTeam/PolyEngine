@@ -3,8 +3,7 @@
 class GlobalEventFilter : public QObject
 {
 public:
-	GlobalEventFilter();
-	~GlobalEventFilter();
+	GlobalEventFilter() = default;
 
 	bool eventFilter(QObject* watched, QEvent* event) override;
 };

@@ -21,7 +21,7 @@ set(EDITOR_SRCS
         Src/GlobalEventFilter.cpp
         Src/LoggerWidget.cpp
         Src/Main.cpp
-        Src/PolyDockWidget.cpp
+        Src/PolyDockManager.cpp
         Src/PolyEditorPCH.cpp
         Src/PolyEditorUi.cpp
         Src/PolyMainWindow.cpp
@@ -36,7 +36,7 @@ set(EDITOR_H_FOR_IDE
         Src/EditorOutputStream.hpp
         Src/GlobalEventFilter.hpp
         Src/LoggerWidget.hpp
-        Src/PolyDockWidget.hpp
+        Src/PolyDockManager.hpp
         Src/PolyEditorPCH.hpp
         Src/PolyEditorUi.hpp
         Src/PolyMainWindow.hpp

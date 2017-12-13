@@ -9,9 +9,8 @@ class PolyWidget : public QWidget
 	Q_OBJECT
 public:
 	PolyWidget(const QString& title, QWidget* parent);
-	~PolyWidget();
 
-	const QDockWidget* GetDockWidget() const { return DockWidget; }
+	QDockWidget* GetDockWidget() const { return DockWidget; }
 	PolyWindow* GetOwner() const { return Owner; }
 
 private:

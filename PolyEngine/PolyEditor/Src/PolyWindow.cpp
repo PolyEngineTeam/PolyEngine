@@ -8,10 +8,6 @@ PolyWindow::PolyWindow(QWidget* parent) :
 	setAttribute(Qt::WA_DeleteOnClose);
 }
 
-PolyWindow::~PolyWindow()
-{
-}
-
 void PolyWindow::AddWidget(Qt::DockWidgetArea area, PolyWidget* widget)
 {
 	if (widget->DockWidget)

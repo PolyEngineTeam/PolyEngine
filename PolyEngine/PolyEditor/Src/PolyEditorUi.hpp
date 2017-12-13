@@ -10,8 +10,7 @@ class PolyEditorUi : public QObject
 	friend class PolyWindow;
 	Q_OBJECT
 public:
-	PolyEditorUi();
-	~PolyEditorUi();
+	PolyEditorUi() = default;
 
 	void InitMainWindow();
 

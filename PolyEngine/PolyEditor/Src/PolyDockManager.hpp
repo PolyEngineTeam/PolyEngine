@@ -9,8 +9,7 @@ class PolyDockManager
 {
 	friend class GlobalEventFilter;
 public:
-	PolyDockManager();
-	~PolyDockManager();
+	PolyDockManager() = default;
 
 	void WidgetCatchEvent(PolyWidget* catched);
 	void ProcessEvent(QEvent* event);
