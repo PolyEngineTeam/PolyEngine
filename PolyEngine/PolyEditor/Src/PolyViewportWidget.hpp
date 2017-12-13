@@ -9,7 +9,8 @@
 class PolyViewportWidget : public PolyWidget
 {
 public:
-	explicit PolyViewportWidget(const QString& title, QWidget* parent = nullptr);
+	// Viewport widget must have parent at initialization otherwise it will appear without title bar
+	explicit PolyViewportWidget(const QString& title, QWidget* parent);
 
 	void InitializeViewport();
 

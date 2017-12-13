@@ -45,6 +45,12 @@ void PolyDockManager::WidgetDropEvent(QEvent* event)
 {
 	if (MouseOver)
 	{
+		if (((PolyWindow*)DraggedWidget->GetDockWidget()->parent())->Widgets.GetSize() == 0)
+		{
+			((PolyWindow*)DraggedWidget->GetDockWidget()->parent())->close();
+			gApp->Ui.Windows.Remove(((PolyWindow*)DraggedWidget->GetDockWidget()->parent()));
+		}
+
 		MouseOver->AddWidget(Qt::DockWidgetArea::TopDockWidgetArea, DraggedWidget);
 	}
 	else

@@ -12,8 +12,9 @@ public:
 	PolyEditorUi();
 	~PolyEditorUi();
 
-private:
 	void InitMainWindow();
+
+private:
 	void InitDockWidgets();
 
 	PolyMainWindow* MainWindow;

@@ -27,5 +27,7 @@ void PolyWindow::AddWidget(Qt::DockWidgetArea area, PolyWidget* widget)
 void PolyWindow::RemoveWidget(PolyWidget* widget)
 {
 	Widgets.Remove(widget);
+	widget->DockWidget->setWidget(nullptr);
+	((PolyWindow*)widget->DockWidget->parent())->removeDockWidget(widget->DockWidget);
 	widget->DockWidget = nullptr;
 }

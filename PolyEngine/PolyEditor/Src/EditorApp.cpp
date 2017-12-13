@@ -16,6 +16,8 @@ EditorApp::EditorApp(int argc, char *argv[]) :
 
 	Engine = std::make_unique<Poly::Engine>();
 
+	Ui.InitMainWindow();
+
 	installEventFilter(&EventFilter);
 
 	SetupUpdateTimer();

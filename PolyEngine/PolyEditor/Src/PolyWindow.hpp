@@ -8,6 +8,7 @@ class PolyWidget;
 
 class PolyWindow : public QMainWindow
 {
+	friend class PolyDockManager;
 public:
 	PolyWindow(QWidget* parent = nullptr);
 	~PolyWindow();
