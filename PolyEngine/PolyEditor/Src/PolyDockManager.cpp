@@ -43,7 +43,11 @@ void PolyDockManager::WidgetMoveEvent(QEvent * event)
 
 void PolyDockManager::WidgetDropEvent(QEvent* event)
 {
-	if (!MouseOver)
+	if (MouseOver)
+	{
+		MouseOver->AddWidget(Qt::DockWidgetArea::TopDockWidgetArea, DraggedWidget);
+	}
+	else
 	{
 		PolyWindow* wnd = new PolyWindow;
 		wnd->resize(DraggedWidget->GetDockWidget()->size());
