@@ -12,11 +12,13 @@ public:
 	~PolyWidget();
 
 	const QDockWidget* GetDockWidget() const { return DockWidget; }
+	PolyWindow* GetOwner() const { return Owner; }
 
 private:
 	void Connect();
 
 	QString Title;
+	PolyWindow* Owner = nullptr;
 	QDockWidget* DockWidget = nullptr;
 
 private slots:

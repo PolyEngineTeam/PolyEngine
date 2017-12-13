@@ -47,8 +47,17 @@ void PolyDockManager::WidgetDropEvent(QEvent* event)
 	{
 		if (MouseOver == ((PolyWindow*)DraggedWidget->GetDockWidget()->parent()))
 			DraggedWidget = nullptr;
-		else 
+		else
+		{
+			PolyWindow* oldOwner = DraggedWidget->GetOwner();
 			MouseOver->AddWidget(Qt::DockWidgetArea::TopDockWidgetArea, DraggedWidget);
+
+			if (oldOwner != gApp->Ui.MainWindow
+				&& oldOwner->Widgets.GetSize() == 0)
+			{
+				oldOwner->close();
+			}
+		}
 	}
 	else
 	{

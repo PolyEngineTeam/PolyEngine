@@ -18,4 +18,6 @@ public:
 
 private:
 	Poly::Dynarray<PolyWidget*> Widgets;
-};
+
+	void closeEvent(QCloseEvent* event) override;
+}; 

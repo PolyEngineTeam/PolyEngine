@@ -7,6 +7,7 @@
 class PolyEditorUi : public QObject
 {
 	friend class PolyDockManager;
+	friend class PolyWindow;
 	Q_OBJECT
 public:
 	PolyEditorUi();
