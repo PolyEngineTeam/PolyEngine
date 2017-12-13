@@ -10,7 +10,21 @@ UNSILENCE_MSVC_WARNING()
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-GLShaderProgram::GLShaderProgram(const String & vertex, const String & fragment)
+GLShaderProgram::GLShaderProgram(const String& compute)
+{
+	gConsole.LogDebug("Creating shader program {}", compute);
+	ProgramHandle = glCreateProgram();
+	if (ProgramHandle == 0) {
+		ASSERTE(false, "Creation of shader program failed! Exiting...");
+	}
+	LoadShader(eShaderUnitType::COMPUTE, compute);
+	CompileProgram();
+
+	for (eShaderUnitType type : IterateEnum<eShaderUnitType>())
+		AnalyzeShaderCode(type);
+}
+
+GLShaderProgram::GLShaderProgram(const String& vertex, const String& fragment)
 {
 	gConsole.LogDebug("Creating shader program {} {}", vertex, fragment);
 	ProgramHandle = glCreateProgram();
@@ -25,7 +39,6 @@ GLShaderProgram::GLShaderProgram(const String & vertex, const String & fragment)
 		AnalyzeShaderCode(type);
 }
 
-//------------------------------------------------------------------------------
 GLShaderProgram::GLShaderProgram(const String& vertex, const String& geometry, const String& fragment)
 {
 	gConsole.LogDebug("Creating shader program {} {} {}", vertex, geometry, fragment);
@@ -214,6 +227,7 @@ GLenum GLShaderProgram::GetEnumFromShaderUnitType(eShaderUnitType type)
 		case eShaderUnitType::VERTEX: return GL_VERTEX_SHADER;
 		case eShaderUnitType::GEOMETRY: return GL_GEOMETRY_SHADER;
 		case eShaderUnitType::FRAGMENT: return GL_FRAGMENT_SHADER;
+		case eShaderUnitType::COMPUTE: return GL_COMPUTE_SHADER;
 		default:
 			ASSERTE(false, "Invalid type!");
 			return -1;

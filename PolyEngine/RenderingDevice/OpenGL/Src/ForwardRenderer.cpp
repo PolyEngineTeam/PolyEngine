@@ -22,7 +22,7 @@ void ForwardRenderer::Deinit()
 {
 }
 
-void ForwardRenderer::Render(World* world, const AARect& rect, CameraComponent* cameraCmp) const
+void ForwardRenderer::Render(World* world, const AARect& rect, CameraComponent* cameraCmp)
 {
 	const eRenderingModeType renderingMode = cameraCmp->GetRenderingMode();
 

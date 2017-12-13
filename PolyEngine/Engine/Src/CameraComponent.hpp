@@ -26,6 +26,8 @@ namespace Poly {
 		const Matrix& GetModelViewMatrix() const { return ModelView; }
 		const Matrix& GetMVP() const { return MVP; }
 
+		const float GetNear() const { return Near; }
+		const float GetFar() const { return Far; }
 		const Angle& GetFOV() const { return Fov; }
 		const Angle& GetTargetFOV() const { return TargetFov; }
 		void SetTargetFOV(const Angle& Value) { TargetFov = Value; }

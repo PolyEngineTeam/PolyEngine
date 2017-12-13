@@ -10,7 +10,7 @@ namespace Poly {
 		ForwardRenderer(GLRenderingDevice* RenderingDeviceInterface);
 
 		void Init() override;
-		void Render(World* world, const AARect& rect, CameraComponent* cameraCmp) const override;
+		void Render(World* world, const AARect& rect, CameraComponent* cameraCmp) override;
 		void Deinit() override;
 
 	private:
