@@ -22,9 +22,13 @@ namespace Poly {
 		/// <param name="rhs">Reference to String instance which state should be copied</param>
 		String(const String& rhs);
 
+        String(Dynarray<char> data) {Data = data;};
+
 		/// <summary>String move constructor</summary>
 		/// <param name="rhs">Reference to String instance which state should be moved</param>
 		String(String&& rhs);
+
+		String Format(size_t count, ...);
 
 
 		/// <summary>Casts int to String</summary>
@@ -102,6 +106,8 @@ namespace Poly {
 		/// <param name="b">String reference which should overwrite another String</param>
 		/// <returns>String instance witch replaced substrings</returns>
 		String Replace(const String& a, const String& b) const;
+
+		String Replace(const String& a, const String& b, size_t howMany) const;
 
 		/// <summary>Splits String by given delimite to array of Strings</summary>
 		/// <param name="delimiter">Char used as token to split String with</param>

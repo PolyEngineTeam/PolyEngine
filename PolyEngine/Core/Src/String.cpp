@@ -2,6 +2,7 @@
 
 #include "String.hpp"
 #include <iomanip>
+#include <cstdarg>
 #include <sstream>
 
 using namespace Poly;
@@ -68,6 +69,30 @@ String String::From(const char* var) {
 
 String String::From(const std::string& var) {
 	return String(var.c_str());
+}
+
+String String::Format(size_t count, ...)
+{
+	va_list args;
+	Dynarray<String> strings = this->Split(String("{}"));
+	size_t size = strings.GetSize();
+    HEAVY_ASSERTE(count != size, "Inconsistent arguments count");
+	va_start(args, count); //second argument must be last named argument from method
+
+	// TODO replace with StringBuilder
+	String ret = strings[0];
+
+	for (size_t i = 0; i < count; ++i)
+	{
+		ret = ret + va_arg(args, String);
+		if (i < size)
+		{
+			ret = ret + strings[i+1];
+		}
+	}
+
+	va_end(args);
+	return ret;
 }
 
 bool String::Contains(const String& var) const {
@@ -138,6 +163,14 @@ String String::Replace(const String& what, const String& with) const {
 	
 	Dynarray<String> splitted = Split(what);
 	return Join(splitted.GetData(), splitted.GetSize(), with);
+}
+
+String String::Replace(const String& what, const String& with, size_t howMany) const {
+	size_t start = this->FindSubstrFromPoint(0, what);
+    size_t end = start + with.GetLength() - 2;
+    end = end + howMany; //TODO supress unused parameter warning
+    String ret = this->Substring(start) + with + this->Substring(end, this->GetLength());
+	return ret;
 }
 
 Dynarray<String> String::Split(char delimiter) const {
