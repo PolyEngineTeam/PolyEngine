@@ -29,6 +29,9 @@ public:
 	PolyEditorUi Ui;
 	GlobalEventFilter EventFilter;
 
+signals:
+	void EngineInitialized();
+
 private:
 	void SetupUpdateTimer();
 	void SetupConsoleOutput();

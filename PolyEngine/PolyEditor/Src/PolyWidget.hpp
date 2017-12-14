@@ -2,22 +2,19 @@
 
 #include "qdockwidget.h"
 
+class PolyWindow;
+
 class PolyWidget : public QWidget
 {
-	friend class PolyWindow;
-
 	Q_OBJECT
 public:
 	PolyWidget(const QString& title, QWidget* parent);
 
-	QDockWidget* GetDockWidget() const { return DockWidget; }
-	PolyWindow* GetOwner() const { return Owner; }
+	QDockWidget* GetDockWidget() { return DockWidget; }
+	PolyWindow* GetOwner() const { return static_cast<PolyWindow*>(DockWidget->parent()); }
 
 private:
-	void Connect();
-
 	QString Title;
-	PolyWindow* Owner = nullptr;
 	QDockWidget* DockWidget = nullptr;
 
 private slots:

@@ -9,12 +9,11 @@
 EditorApp* gApp = nullptr;
 
 // ---------------------------------------------------------------------------------------------------------
-EditorApp::EditorApp(int argc, char *argv[]) :
-	QApplication(argc, argv)
+EditorApp::EditorApp(int argc, char *argv[])
+	: QApplication(argc, argv)
 {
+	ASSERTE(!gApp, "Creating application twice?!");
 	gApp = this;
-
-	Engine = std::make_unique<Poly::Engine>();
 
 	Ui.InitMainWindow();
 
@@ -51,6 +50,8 @@ void EditorApp::SetupConsoleOutput()
 // ---------------------------------------------------------------------------------------------------------
 void EditorApp::InitializeEngine()
 {
+	Engine = std::make_unique<Poly::Engine>();
+	emit EngineInitialized();
 }
 
 // ---------------------------------------------------------------------------------------------------------

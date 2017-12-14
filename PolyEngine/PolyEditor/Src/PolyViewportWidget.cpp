@@ -45,7 +45,7 @@ PolyViewportWidget::PolyViewportWidget(const QString& title, QWidget* parent) :
 		Poly::gConsole.LogDebug("Library libGame loaded.");
 	}
 
-	InitializeViewport();
+	connect(gApp, &EditorApp::EngineInitialized, [this]() { InitializeViewport(); });
 }
 
 // ---------------------------------------------------------------------------------------------------------
@@ -71,12 +71,14 @@ void PolyViewportWidget::InitializeViewport()
 	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(WindowInSDL.Get(), viewportRect));
 	Poly::gEngine->Init(std::move(game), std::move(device));
 	Poly::gConsole.LogDebug("Engine loaded successfully");
-	
 }
 
 // ---------------------------------------------------------------------------------------------------------
 void PolyViewportWidget::resizeEvent(QResizeEvent* resizeEvent)
 {
+	if (!Poly::gEngine)
+		return;
+
 	Poly::ScreenSize screenSize;
 	screenSize.Width = resizeEvent->size().width();
 	screenSize.Height = resizeEvent->size().height();
@@ -86,18 +88,24 @@ void PolyViewportWidget::resizeEvent(QResizeEvent* resizeEvent)
 // ---------------------------------------------------------------------------------------------------------
 void PolyViewportWidget::wheelEvent(QWheelEvent* wheelEvent)
 {
+	if (!Poly::gEngine)
+		return;
 	Poly::gEngine->UpdateWheelPos(Poly::Vector2i(wheelEvent->delta(), 0));
 }
 
 // ---------------------------------------------------------------------------------------------------------
 void PolyViewportWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 {
+	if (!Poly::gEngine)
+		return;
 	Poly::gEngine->UpdateMousePos(Poly::Vector2i(mouseEvent->pos().x(), mouseEvent->pos().y()));
 }
 
 // ---------------------------------------------------------------------------------------------------------
 void PolyViewportWidget::mousePressEvent(QMouseEvent* mouseEvent)
 {
+	if (!Poly::gEngine)
+		return;
 	switch (mouseEvent->button())
 	{
 	case Qt::LeftButton:
@@ -121,6 +129,8 @@ void PolyViewportWidget::mousePressEvent(QMouseEvent* mouseEvent)
 // ---------------------------------------------------------------------------------------------------------
 void PolyViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 {
+	if (!Poly::gEngine)
+		return;
 	switch (mouseEvent->button())
 	{
 	case Qt::LeftButton:
@@ -144,12 +154,17 @@ void PolyViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 // ---------------------------------------------------------------------------------------------------------
 void PolyViewportWidget::keyPressEvent(QKeyEvent* keyEvent)
 {
+	if (!Poly::gEngine)
+		return;
 	Poly::gEngine->KeyDown(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
 }
 
 // ---------------------------------------------------------------------------------------------------------
 void PolyViewportWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 {
+	if (!Poly::gEngine)
+		return;
+
 	if (keyEvent->isAutoRepeat())
 		keyEvent->ignore();
 	else

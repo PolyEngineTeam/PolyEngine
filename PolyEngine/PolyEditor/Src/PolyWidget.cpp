@@ -4,10 +4,9 @@ PolyWidget::PolyWidget(const QString& title, QWidget* parent) :
 	QWidget(parent),
 	Title(title)
 {
-}
+	DockWidget = new QDockWidget(title, parent);
+	DockWidget->setWidget(this);
 
-void PolyWidget::Connect()
-{
 	connect(DockWidget, &QDockWidget::topLevelChanged, this, &PolyWidget::TopLevelChanged);
 }
 
