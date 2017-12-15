@@ -14,7 +14,6 @@ public:
 	PolyWindow* GetOwner() const { return static_cast<PolyWindow*>(DockWidget->parent()); }
 
 private:
-	QString Title;
 	QDockWidget* DockWidget = nullptr;
 
 private slots:

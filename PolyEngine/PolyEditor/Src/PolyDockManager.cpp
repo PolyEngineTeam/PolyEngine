@@ -1,4 +1,4 @@
-#include "PolyDockWidgetManager.hpp"
+#include "PolyDockManager.hpp"
 #include "PolyEditorPCH.hpp"
 
 void PolyDockManager::WidgetCatchEvent(PolyWidget* catched)
@@ -45,7 +45,7 @@ void PolyDockManager::WidgetDropEvent(QEvent* event)
 			MouseOver->AddWidget(Qt::DockWidgetArea::TopDockWidgetArea, DraggedWidget);
 
 			if (oldOwner != gApp->Ui.MainWindow
-				&& oldOwner->Widgets.GetSize() == 1)
+				&& oldOwner->WidgetsCount() == 1)
 			{
 				oldOwner->close();
 			}

@@ -8,9 +8,10 @@ class PolyWidget;
 
 class PolyWindow : public QMainWindow
 {
-	friend class PolyDockManager;
 public:
 	PolyWindow(QWidget* parent = nullptr);
+
+	int WidgetsCount() { return Widgets.GetSize(); }
 
 	void AddWidget(Qt::DockWidgetArea area, PolyWidget* widget);
 	void RemoveWidget(PolyWidget* widget);
