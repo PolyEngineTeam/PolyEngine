@@ -19,4 +19,7 @@ private:
 	Poly::Dynarray<PolyWidget*> Widgets;
 
 	void closeEvent(QCloseEvent* event) override;
+
+private slots:
+	void DeferredDocking(Qt::DockWidgetArea area, PolyWidget* widget);
 }; 
