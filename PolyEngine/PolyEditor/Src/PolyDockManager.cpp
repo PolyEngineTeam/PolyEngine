@@ -45,7 +45,7 @@ void PolyDockManager::WidgetDropEvent(QEvent* event)
 			MouseOver->AddWidget(Qt::DockWidgetArea::TopDockWidgetArea, DraggedWidget);
 
 			if (oldOwner != gApp->Ui.MainWindow
-				&& oldOwner->Widgets.GetSize() == 0)
+				&& oldOwner->Widgets.GetSize() == 1)
 			{
 				oldOwner->close();
 			}

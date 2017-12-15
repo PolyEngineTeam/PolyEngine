@@ -14,7 +14,7 @@ void PolyWindow::AddWidget(Qt::DockWidgetArea area, PolyWidget* widget)
 		window->RemoveWidget(widget);
 
 	addDockWidget(area, widget->GetDockWidget());
-	QTimer::singleShot(1, this, [ a = area,  w = widget, object = this]() { object->addDockWidget(a, w->GetDockWidget()); });
+	QTimer::singleShot(1, this, [a = area,  w = widget, object = this]() { object->addDockWidget(a, w->GetDockWidget()); });
 	Widgets.PushBack(widget);
 }
 
