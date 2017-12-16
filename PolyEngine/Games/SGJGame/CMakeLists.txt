@@ -48,6 +48,17 @@ add_custom_command(
 	        -P "${CMAKE_TEMPLATE_PROCESSOR_SCRIPT}"
 )
 add_custom_command(
+		TARGET sgjgame
+		POST_BUILD
+		COMMAND "${CMAKE_COMMAND}"
+		-DINPUT_FILE="$<TARGET_PROPERTY:polyrun,SOURCE_DIR>/run_script.in"
+		-DOUTPUT_FILE="$<TARGET_FILE_DIR:sgjgame>/sgjgame-editor"
+		-DRENDERING_DEVICE_LIB_DIR="$<TARGET_FILE_DIR:polyrenderingdevicegl>"
+		-DGAME_LIB_DIR="$<TARGET_FILE_DIR:sgjgame>"
+		-DPOLYRUN_PATH="$<TARGET_FILE:polyeditor>"
+		-P "${CMAKE_TEMPLATE_PROCESSOR_SCRIPT}"
+)
+add_custom_command(
 	TARGET sgjgame
 	POST_BUILD
 	COMMAND "${CMAKE_COMMAND}"

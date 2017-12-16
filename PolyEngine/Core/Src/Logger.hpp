@@ -68,8 +68,15 @@ namespace Poly
 			CurrentStream = std::make_unique<S>(std::forward<Args>(args)...);
 			Ostream = std::make_unique<std::ostream>(CurrentStream.get());
 		}
-
-
+		
+		void RegisterDefaultStream()
+		{
+			if (CurrentStream)
+				CurrentStream->OnUnregister();
+			CurrentStream = nullptr;
+			Ostream = std::make_unique<std::ostream>(std::cout.rdbuf());
+		}
+		
 		/**
 		*  Set of methods for easy logging. Only those should be used in engine code.
 		*  Future compatibility is guaranteed

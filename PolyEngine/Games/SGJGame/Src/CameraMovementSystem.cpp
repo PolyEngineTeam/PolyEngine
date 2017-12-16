@@ -45,8 +45,16 @@ void SGJ::CameraMovementSystem::CameraMovementUpdatePhase(Poly::World* world)
 		float maxW = gameMgrCmp->MaxLevelWidth - horizontalSpan + 1;
 		float minH = gameMgrCmp->MinLevelHeight + verticalSpan;
 		float maxH = gameMgrCmp->MaxLevelHeight - verticalSpan + 1;
-		TargetPosition.Y = Clamp(playerTransCmp->GetGlobalTranslation().Y, minH, maxH) + 0.5f;
-		TargetPosition.X = Clamp(playerTransCmp->GetGlobalTranslation().X, minW, maxW) - 0.5f;
+
+		if (minH > maxH)
+			TargetPosition.Y = minH;
+		else
+			TargetPosition.Y = Clamp(playerTransCmp->GetGlobalTranslation().Y, minH, maxH) + 0.5f;
+
+		if (minW > maxW)
+			TargetPosition.X = minW;
+		else
+			TargetPosition.X = Clamp(playerTransCmp->GetGlobalTranslation().X, minW, maxW) - 0.5f;
 
 		// add lag to translation
 		cameraMvmtCmp->SetTargetTranslation(TargetPosition);

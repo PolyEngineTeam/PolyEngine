@@ -340,6 +340,7 @@ void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
 	DeferredTaskSystem::AddComponentImmediate<SoundEmitterComponent>(world, backgroundPlayer, "Audio/Pursuit_cut.ogg", eResourceSource::GAME);
 	SoundSystem::PlayEmitter(world, backgroundPlayer);
 	SoundSystem::LoopEmitter(world, backgroundPlayer);
+	SoundSystem::SetEmitterGain(world, backgroundPlayer, 0.1f);
 
 	world->GetWorldComponent<AmbientLightWorldComponent>()->SetColor(Color(0.2f, 0.5f, 1.0f));
 	world->GetWorldComponent<AmbientLightWorldComponent>()->SetIntensity(0.5f); 

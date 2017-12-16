@@ -95,7 +95,8 @@
       <AdditionalDependencies>opengl32.lib;epoxy.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d $(SolutionDir)ThirdParty\libepoxy\bin\x64\epoxy-0.dll $(OutDir)</Command>
+      <Command>xcopy /y /d $(SolutionDir)ThirdParty\libepoxy\bin\x64\epoxy-0.dll $(OutDir)
+xcopy /y /d $(SolutionDir)ThirdParty\SDL2\lib\x64\SDL2.dll $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -154,7 +155,8 @@
       <AdditionalDependencies>opengl32.lib;epoxy.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d $(SolutionDir)ThirdParty\libepoxy\bin\x64\epoxy-0.dll $(OutDir)</Command>
+      <Command>xcopy /y /d $(SolutionDir)ThirdParty\libepoxy\bin\x64\epoxy-0.dll $(OutDir)
+xcopy /y /d $(SolutionDir)ThirdParty\SDL2\lib\x64\SDL2.dll $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
