@@ -1,12 +1,14 @@
 #pragma once
 
 #include <QApplication>
+#include <QTimer>
 
 #include "EditorUi.hpp"
 #include "DockManager.hpp"
 #include "GlobalEventFilter.hpp"
 
 #include <Engine.hpp>
+
 
 class EditorApp : public QApplication
 {
