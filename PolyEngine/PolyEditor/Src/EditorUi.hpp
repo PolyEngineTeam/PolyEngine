@@ -6,7 +6,7 @@
 
 class EditorUi : public QObject
 {
-	friend class DockManager;
+	friend class DockMgr;
 	friend class PolyWindow;
 	Q_OBJECT
 public:
