@@ -104,10 +104,6 @@ void PolyEditorUi::InitMainWindow()
 	MainWindow->show();
 }
 
-void PolyEditorUi::InitDockWidgets()
-{
-}
-
 void PolyEditorUi::CloseProject()
 {
 }

@@ -15,8 +15,6 @@ public:
 	void InitMainWindow();
 
 private:
-	void InitDockWidgets();
-
 	PolyMainWindow* MainWindow;
 	Poly::Dynarray<PolyWindow*> Windows;
 

@@ -45,7 +45,7 @@ PolyViewportWidget::PolyViewportWidget(const QString& title, QWidget* parent) :
 		Poly::gConsole.LogDebug("Library libGame loaded.");
 	}
 
-	connect(gApp, &EditorApp::EngineInitialized, [this]() { InitializeViewport(); });
+	connect(gApp, &EditorApp::EngineCreated, [this]() { InitializeViewport(); });
 }
 
 // ---------------------------------------------------------------------------------------------------------

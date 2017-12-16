@@ -12,10 +12,10 @@ void PolyDockManager::ProcessEvent(QEvent* event)
 		if (event->type() == QEvent::MouseMove)
 			WidgetMoveEvent(event);
 		else if (event->type() == QEvent::MouseButtonRelease)
-			WidgetDropEvent(event);
+			WidgetDropEvent();
 }
 
-void PolyDockManager::WidgetMoveEvent(QEvent * event)
+void PolyDockManager::WidgetMoveEvent(QEvent* event)
 {
 	QPoint mousePos = ((QMouseEvent*)event)->pos() + DraggedWidget->GetDockWidget()->pos();
 	MouseOver = nullptr;
@@ -28,12 +28,28 @@ void PolyDockManager::WidgetMoveEvent(QEvent * event)
 			diff.y() >= 0 && diff.y() < gApp->Ui.Windows[i]->size().height())
 		{
 			MouseOver = gApp->Ui.Windows[i];
+
+			// @fixme: it doesn't work because when any widget that already is in window is docked 
+			// in LeftDockWidgetArea and we want to dock this widget there it will be docked beside previous widget,
+			// and any other DockWidgetArea behaviours so.
+
+			//if (diff.x() < MouseOver->size().height() / 3)
+			//	DraggedWidgetDockArea = Qt::DockWidgetArea::TopDockWidgetArea;
+			//else if (diff.x() > MouseOver->size().height() / 3 * 2)
+			//	DraggedWidgetDockArea = Qt::DockWidgetArea::BottomDockWidgetArea;
+			//else if (diff.y() < MouseOver->size().width() / 5)
+			//	DraggedWidgetDockArea = Qt::DockWidgetArea::LeftDockWidgetArea;
+			//else if (diff.y() > MouseOver->size().width() / 5 * 4)
+			//	DraggedWidgetDockArea = Qt::DockWidgetArea::RightDockWidgetArea;
+			//else
+			//	DraggedWidgetDockArea = Qt::DockWidgetArea::LeftDockWidgetArea;
+
 			break;
 		}
 	}
 }
 
-void PolyDockManager::WidgetDropEvent(QEvent* event)
+void PolyDockManager::WidgetDropEvent()
 {
 	if (MouseOver)
 	{
@@ -42,7 +58,7 @@ void PolyDockManager::WidgetDropEvent(QEvent* event)
 		else
 		{
 			PolyWindow* oldOwner = DraggedWidget->GetOwner();
-			MouseOver->AddWidget(Qt::DockWidgetArea::TopDockWidgetArea, DraggedWidget);
+			MouseOver->AddWidget(DraggedWidgetDockArea, DraggedWidget);
 
 			if (oldOwner != gApp->Ui.MainWindow
 				&& oldOwner->WidgetsCount() == 1)

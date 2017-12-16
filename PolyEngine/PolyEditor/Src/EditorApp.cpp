@@ -21,7 +21,7 @@ EditorApp::EditorApp(int argc, char *argv[])
 
 	SetupUpdateTimer();
 	SetupConsoleOutput();
-	InitializeEngine();
+	CreateEngine();
 	
 	Poly::gConsole.LogDebug("PolyEditor succesfully initialized.");
 }
@@ -48,10 +48,10 @@ void EditorApp::SetupConsoleOutput()
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void EditorApp::InitializeEngine()
+void EditorApp::CreateEngine()
 {
 	Engine = std::make_unique<Poly::Engine>();
-	emit EngineInitialized();
+	emit EngineCreated();
 }
 
 // ---------------------------------------------------------------------------------------------------------

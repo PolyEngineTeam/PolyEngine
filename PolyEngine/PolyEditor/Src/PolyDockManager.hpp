@@ -7,17 +7,17 @@ class PolyWidget;
 
 class PolyDockManager
 {
-	friend class GlobalEventFilter;
 public:
 	PolyDockManager() = default;
 
 	void WidgetCatchEvent(PolyWidget* catched);
+	void WidgetMoveEvent(QEvent* event);
+	void WidgetDropEvent();
+
 	void ProcessEvent(QEvent* event);
 
 private:
-	PolyWindow* MouseOver = nullptr;
+	PolyWindow* MouseOver = nullptr; // over this window is currently dragged DraggedWidget
 	PolyWidget* DraggedWidget = nullptr;
-
-	void WidgetMoveEvent(QEvent* event);
-	void WidgetDropEvent(QEvent* event);
+	Qt::DockWidgetArea DraggedWidgetDockArea = Qt::DockWidgetArea::TopDockWidgetArea;
 };
