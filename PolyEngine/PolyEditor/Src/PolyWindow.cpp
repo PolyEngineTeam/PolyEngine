@@ -26,5 +26,6 @@ void PolyWindow::RemoveWidget(PolyWidget* widget)
 
 void PolyWindow::closeEvent(QCloseEvent* event)
 {
+	UNUSED(event);
 	gApp->Ui.Windows.Remove(this);
 }
