@@ -74,10 +74,15 @@ String String::From(const std::string& var) {
 String String::Format(size_t count, ...)
 {
 	va_list args;
+	va_start(args, count); //second argument must be last named argument from method
+	return Format(count, args);
+}
+
+String String::Format(size_t count, va_list args)
+{
 	Dynarray<String> strings = this->Split(String("{}"));
 	size_t size = strings.GetSize();
     HEAVY_ASSERTE(count != size, "Inconsistent arguments count");
-	va_start(args, count); //second argument must be last named argument from method
 
 	// TODO replace with StringBuilder
 	String ret = strings[0];

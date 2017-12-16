@@ -151,6 +151,7 @@
     <ClCompile Include="Src\SimdMath.cpp" />
     <ClCompile Include="Src\RTTISerialization.cpp" />
     <ClCompile Include="src\String.cpp" />
+    <ClCompile Include="src\StringBuilder.cpp" />
     <ClCompile Include="Src\UniqueID.cpp" />
     <ClCompile Include="Src\Vector.cpp" />
     <ClCompile Include="Src\Vector2f.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="Src\SafePtrRoot.hpp" />
     <ClInclude Include="Src\SimdMath.hpp" />
     <ClInclude Include="Src\String.hpp" />
+    <ClInclude Include="Src\StringBuilder.hpp" />
     <ClInclude Include="Src\UniqueID.hpp" />
     <ClInclude Include="Src\UnsafeStorage.hpp" />
     <ClInclude Include="Src\Vector.hpp" />

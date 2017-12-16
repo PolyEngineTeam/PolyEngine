@@ -58,6 +58,9 @@
     <ClCompile Include="Src\StringTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Src\StringBuilderTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Vector2fTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

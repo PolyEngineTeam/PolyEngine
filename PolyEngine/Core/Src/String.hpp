@@ -22,13 +22,19 @@ namespace Poly {
 		/// <param name="rhs">Reference to String instance which state should be copied</param>
 		String(const String& rhs);
 
-        String(Dynarray<char> data) {Data = data;};
-
 		/// <summary>String move constructor</summary>
 		/// <param name="rhs">Reference to String instance which state should be moved</param>
 		String(String&& rhs);
 
+        /// <summary>Replaces all '{}' occurences with according Strings from va_list</summary>
+        /// <param name="count">Variadic arguments count</param>
+        /// <param name="...">Strings to be inserted into source object</param>
 		String Format(size_t count, ...);
+
+        /// <summary>Replaces all '{}' occurences with according Strings from va_list</summary>
+        /// <param name="count">Variadic arguments count</param>
+        /// <param name="args">Strings to be inserted into source object</param>
+		String Format(size_t count, va_list args);
 
 
 		/// <summary>Casts int to String</summary>
@@ -200,6 +206,9 @@ namespace Poly {
 	private:
 		Dynarray<char> Data;
 
+		String(Dynarray<char> data) { Data = std::move(data); };
 		size_t FindSubstrFromPoint(size_t startPoint, const String& str) const;
+
+		friend class StringBuilder;
 	};
 }

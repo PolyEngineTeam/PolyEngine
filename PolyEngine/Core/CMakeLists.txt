@@ -16,6 +16,7 @@ set(POLYCORE_SRCS
 	Src/SafePtrRoot.cpp
 	Src/SimdMath.cpp
 	Src/String.cpp
+	Src/StringBuilder.cpp
 	Src/UniqueID.cpp
 	Src/Vector.cpp
 	Src/Vector2f.cpp
@@ -57,6 +58,7 @@ set(POLYCORE_H_FOR_IDE
 	Src/SafePtrRoot.hpp
 	Src/SimdMath.hpp
 	Src/String.hpp
+	Src/StringBuilder.hpp
 	Src/UniqueID.hpp
 	Src/UnsafeStorage.hpp
 	Src/Vector.hpp

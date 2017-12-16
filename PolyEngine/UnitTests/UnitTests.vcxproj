@@ -148,6 +148,7 @@
     <ClCompile Include="Src\RTTITests.cpp" />
     <ClCompile Include="Src\SafePtrTests.cpp" />
     <ClCompile Include="Src\StringTests.cpp" />
+    <ClCompile Include="Src\StringBuilderTests.cpp" />
     <ClCompile Include="Src\UnsafeStorageTests.cpp" />
     <ClCompile Include="Src\Vector2fTests.cpp" />
     <ClCompile Include="Src\Vector2iTests.cpp" />
