@@ -6,7 +6,7 @@
 #include "DockManager.hpp"
 #include "GlobalEventFilter.hpp"
 
-namespace Poly { class Engine; }
+#include <Engine.hpp>
 
 class EditorApp : public QApplication
 {
