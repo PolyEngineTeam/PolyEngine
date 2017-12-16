@@ -20,7 +20,7 @@ void PolyDockManager::WidgetMoveEvent(QEvent* event)
 	QPoint mousePos = ((QMouseEvent*)event)->pos() + DraggedWidget->GetDockWidget()->pos();
 	MouseOver = nullptr;
 
-	for (int i = 0; i < gApp->Ui.Windows.GetSize(); i++)
+	for (size_t i = 0; i < gApp->Ui.Windows.GetSize(); i++)
 	{
 		QPoint diff = mousePos - gApp->Ui.Windows[i]->pos();
 
