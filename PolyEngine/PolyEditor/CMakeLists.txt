@@ -18,7 +18,6 @@ set(EDITOR_SRCS
         Src/CustomSDLWindow.cpp
         Src/DockManager.cpp
         Src/EditorApp.cpp
-        Src/EditorOutputStream.cpp
         Src/EditorUi.cpp
         Src/GlobalEventFilter.cpp
         Src/LoggerWidget.cpp
@@ -34,7 +33,6 @@ set(EDITOR_H_FOR_IDE
         Src/CustomSDLWindow.hpp
         Src/DockManager.hpp
         Src/EditorApp.hpp
-        Src/EditorOutputStream.hpp
         Src/EditorUi.hpp
         Src/GlobalEventFilter.hpp
         Src/LoggerWidget.hpp
