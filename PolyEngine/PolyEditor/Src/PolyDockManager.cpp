@@ -9,10 +9,12 @@ void PolyDockManager::WidgetCatchEvent(PolyWidget* catched)
 void PolyDockManager::ProcessEvent(QEvent* event)
 {
 	if (DraggedWidget != nullptr)
+	{
 		if (event->type() == QEvent::MouseMove)
 			WidgetMoveEvent(event);
 		else if (event->type() == QEvent::MouseButtonRelease)
 			WidgetDropEvent();
+	}
 }
 
 void PolyDockManager::WidgetMoveEvent(QEvent* event)
