@@ -5,10 +5,10 @@
 class PolyWindow;
 class PolyWidget;
 
-class DockMgr
+class DockManager
 {
 public:
-	DockMgr() = default;
+	DockManager() = default;
 
 	void WidgetCatchEvent(PolyWidget* catched);
 	void WidgetMoveEvent(QEvent* event);

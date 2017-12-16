@@ -1,12 +1,12 @@
 #include "PolyDockManager.hpp"
 #include "PolyEditorPCH.hpp"
 
-void DockMgr::WidgetCatchEvent(PolyWidget* catched)
+void DockManager::WidgetCatchEvent(PolyWidget* catched)
 {
 	DraggedWidget = catched;
 }
 
-void DockMgr::ProcessEvent(QEvent* event)
+void DockManager::ProcessEvent(QEvent* event)
 {
 	if (DraggedWidget != nullptr)
 	{
@@ -17,7 +17,7 @@ void DockMgr::ProcessEvent(QEvent* event)
 	}
 }
 
-void DockMgr::WidgetMoveEvent(QEvent* event)
+void DockManager::WidgetMoveEvent(QEvent* event)
 {
 	QPoint mousePos = ((QMouseEvent*)event)->pos() + DraggedWidget->GetDockWidget()->pos();
 	MouseOver = nullptr;
@@ -51,7 +51,7 @@ void DockMgr::WidgetMoveEvent(QEvent* event)
 	}
 }
 
-void DockMgr::WidgetDropEvent()
+void DockManager::WidgetDropEvent()
 {
 	if (MouseOver)
 	{

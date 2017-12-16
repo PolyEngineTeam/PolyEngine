@@ -15,7 +15,7 @@ class EditorApp : public QApplication
 public:
 	EditorApp(int argc, char *argv[]);
 
-	DockMgr DockMgr;
+	DockManager DockMgr;
 	EditorUi Ui;
 	
 signals:
