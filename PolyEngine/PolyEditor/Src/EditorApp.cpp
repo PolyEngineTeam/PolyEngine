@@ -16,35 +16,20 @@ EditorApp::EditorApp(int argc, char *argv[])
 	gApp = this;
 
 	Ui.InitMainWindow();
-
 	installEventFilter(&EventFilter);
-
+	
 	SetupUpdateTimer();
-	SetupConsoleOutput();
 	CreateEngine();
 	
-	Poly::gConsole.LogDebug("PolyEditor succesfully initialized.");
-}
-
-// ---------------------------------------------------------------------------------------------------------
-EditorApp::~EditorApp()
-{
-	delete Updater;
+	Poly::gConsole.LogInfo("PolyEditor succesfully initialized.");
 }
 
 // ---------------------------------------------------------------------------------------------------------
 void EditorApp::SetupUpdateTimer()
 {
-	Updater = new QTimer(this);
-	connect(Updater, SIGNAL(timeout()), this, SLOT(UpdatePhase()));
+	Updater = std::make_unique<QTimer>(this);
+	connect(Updater.get(), SIGNAL(timeout()), this, SLOT(UpdatePhase()));
 	Updater->start(0);
-}
-
-// ---------------------------------------------------------------------------------------------------------
-void EditorApp::SetupConsoleOutput()
-{
-	freopen("console.log", "w", stdout);
-	setvbuf(stdout, NULL, _IONBF, 0);
 }
 
 // ---------------------------------------------------------------------------------------------------------

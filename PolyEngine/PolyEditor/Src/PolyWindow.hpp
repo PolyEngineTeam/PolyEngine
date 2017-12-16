@@ -13,7 +13,7 @@ public:
 
 	int WidgetsCount() { return Widgets.GetSize(); }
 
-	void AddWidget(Qt::DockWidgetArea area, PolyWidget* widget);
+	void AddWidget(Qt::DockWidgetArea area, PolyWidget* widget, bool isInitialization = false);
 	void RemoveWidget(PolyWidget* widget);
 
 private:

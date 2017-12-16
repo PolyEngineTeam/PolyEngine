@@ -4,13 +4,13 @@
 
 #include "PolyMainWindow.hpp"
 
-class PolyEditorUi : public QObject
+class EditorUi : public QObject
 {
-	friend class PolyDockManager;
+	friend class DockManager;
 	friend class PolyWindow;
 	Q_OBJECT
 public:
-	PolyEditorUi() = default;
+	EditorUi() = default;
 
 	void InitMainWindow();
 

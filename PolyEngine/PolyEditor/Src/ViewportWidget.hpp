@@ -6,11 +6,11 @@
 #include "CustomSDLWindow.hpp"
 #include "PolyWidget.hpp"
 
-class PolyViewportWidget : public PolyWidget
+class ViewportWidget : public PolyWidget
 {
 public:
 	// Viewport widget must have parent at initialization otherwise it will appear without title bar
-	explicit PolyViewportWidget(const QString& title, QWidget* parent);
+	explicit ViewportWidget(const QString& title, QWidget* parent);
 
 	void InitializeViewport();
 

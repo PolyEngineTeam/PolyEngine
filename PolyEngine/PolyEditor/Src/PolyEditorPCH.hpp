@@ -1,8 +1,8 @@
 // application
 #include "EditorApp.hpp"
-#include "PolyEditorUi.hpp"
+#include "EditorUi.hpp"
 #include "GlobalEventFilter.hpp"
-#include "PolyDockManager.hpp"
+#include "DockManager.hpp"
 
 // windows
 #include "PolyWindow.hpp"
@@ -12,6 +12,8 @@
 #include "PolyWidget.hpp"
 
 // widgets
-#include "PolyViewportWidget.hpp"
+#include "ViewportWidget.hpp"
 #include "LoggerWidget.hpp"
-#include "EditorOutputStream.hpp"
+
+// engine
+#include <Engine.hpp>

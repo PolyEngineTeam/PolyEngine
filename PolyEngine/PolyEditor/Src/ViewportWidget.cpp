@@ -14,7 +14,7 @@ static Poly::LibraryFunctionHandle<CreateGameFunc> LoadGame;
 
 
 // ---------------------------------------------------------------------------------------------------------
-PolyViewportWidget::PolyViewportWidget(const QString& title, QWidget* parent) :
+ViewportWidget::ViewportWidget(const QString& title, QWidget* parent) :
 	PolyWidget(title, parent)
 {
 	setAttribute(Qt::WA_NativeWindow);
@@ -49,7 +49,7 @@ PolyViewportWidget::PolyViewportWidget(const QString& title, QWidget* parent) :
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void PolyViewportWidget::InitializeViewport()
+void ViewportWidget::InitializeViewport()
 {
 	Poly::ScreenSize viewportRect;
 	viewportRect.Width = width();
@@ -74,7 +74,7 @@ void PolyViewportWidget::InitializeViewport()
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void PolyViewportWidget::resizeEvent(QResizeEvent* resizeEvent)
+void ViewportWidget::resizeEvent(QResizeEvent* resizeEvent)
 {
 	if (!Poly::gEngine)
 		return;
@@ -86,7 +86,7 @@ void PolyViewportWidget::resizeEvent(QResizeEvent* resizeEvent)
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void PolyViewportWidget::wheelEvent(QWheelEvent* wheelEvent)
+void ViewportWidget::wheelEvent(QWheelEvent* wheelEvent)
 {
 	if (!Poly::gEngine)
 		return;
@@ -94,7 +94,7 @@ void PolyViewportWidget::wheelEvent(QWheelEvent* wheelEvent)
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void PolyViewportWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
+void ViewportWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 {
 	if (!Poly::gEngine)
 		return;
@@ -102,7 +102,7 @@ void PolyViewportWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void PolyViewportWidget::mousePressEvent(QMouseEvent* mouseEvent)
+void ViewportWidget::mousePressEvent(QMouseEvent* mouseEvent)
 {
 	if (!Poly::gEngine)
 		return;
@@ -127,7 +127,7 @@ void PolyViewportWidget::mousePressEvent(QMouseEvent* mouseEvent)
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void PolyViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
+void ViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 {
 	if (!Poly::gEngine)
 		return;
@@ -152,7 +152,7 @@ void PolyViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void PolyViewportWidget::keyPressEvent(QKeyEvent* keyEvent)
+void ViewportWidget::keyPressEvent(QKeyEvent* keyEvent)
 {
 	if (!Poly::gEngine)
 		return;
@@ -160,7 +160,7 @@ void PolyViewportWidget::keyPressEvent(QKeyEvent* keyEvent)
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void PolyViewportWidget::keyReleaseEvent(QKeyEvent* keyEvent)
+void ViewportWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 {
 	if (!Poly::gEngine)
 		return;

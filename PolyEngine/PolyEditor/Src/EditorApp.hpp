@@ -2,11 +2,11 @@
 
 #include <QApplication>
 
-#include <Engine.hpp>
-
-#include "PolyEditorUi.hpp"
-#include "PolyDockManager.hpp"
+#include "EditorUi.hpp"
+#include "DockManager.hpp"
 #include "GlobalEventFilter.hpp"
+
+namespace Poly { class Engine; }
 
 class EditorApp : public QApplication
 {
@@ -14,23 +14,21 @@ class EditorApp : public QApplication
 
 public:
 	EditorApp(int argc, char *argv[]);
-	~EditorApp();
 
-	PolyDockManager DockManager;
-	PolyEditorUi Ui;
-	GlobalEventFilter EventFilter;
-
+	DockManager DockManager;
+	EditorUi Ui;
+	
 signals:
 	void EngineCreated();
 
 private:
 	void SetupUpdateTimer();
-	void SetupConsoleOutput();
 	void CreateEngine();
 
-	QTimer* Updater;
+	std::unique_ptr<QTimer> Updater = nullptr;
 	std::unique_ptr<Poly::Engine> Engine = nullptr;
-
+	GlobalEventFilter EventFilter;
+	
 private slots:
 	void UpdatePhase();
 };

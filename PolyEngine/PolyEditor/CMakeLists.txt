@@ -16,33 +16,33 @@ find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
 set(EDITOR_SRCS
         Src/CustomSDLWindow.cpp
+        Src/DockManager.cpp
         Src/EditorApp.cpp
         Src/EditorOutputStream.cpp
+        Src/EditorUi.cpp
         Src/GlobalEventFilter.cpp
         Src/LoggerWidget.cpp
         Src/Main.cpp
-        Src/PolyDockManager.cpp
         Src/PolyEditorPCH.cpp
-        Src/PolyEditorUi.cpp
         Src/PolyMainWindow.cpp
-        Src/PolyViewportWidget.cpp
         Src/PolyWidget.cpp
         Src/PolyWindow.cpp
+        Src/ViewportWidget.cpp
         )
 set(EDITOR_INCLUDE Src)
 set(EDITOR_H_FOR_IDE
         Src/CustomSDLWindow.hpp
+        Src/DockManager.hpp
         Src/EditorApp.hpp
         Src/EditorOutputStream.hpp
+        Src/EditorUi.hpp
         Src/GlobalEventFilter.hpp
         Src/LoggerWidget.hpp
-        Src/PolyDockManager.hpp
         Src/PolyEditorPCH.hpp
-        Src/PolyEditorUi.hpp
         Src/PolyMainWindow.hpp
-        Src/PolyViewportWidget.hpp
         Src/PolyWidget.hpp
         Src/PolyWindow.hpp
+        Src/ViewportWidget.hpp
         )
 
 set(EDITOR_SRCS_FOR_APPLE Src-macOS/MacOSHelper.mm)

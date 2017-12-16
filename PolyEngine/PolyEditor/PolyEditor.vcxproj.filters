@@ -70,9 +70,6 @@
     <ClCompile Include="Src\PolyEditorPCH.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\PolyViewportWidget.cpp">
-      <Filter>Source Files\Widgets</Filter>
-    </ClCompile>
     <ClCompile Include="Src\PolyMainWindow.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
@@ -91,15 +88,6 @@
     <ClCompile Include="Src\EditorApp.cpp">
       <Filter>Source Files\App</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_PolyEditorUi.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_PolyEditorUi.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\PolyEditorUi.cpp">
-      <Filter>Source Files\App</Filter>
-    </ClCompile>
     <ClCompile Include="Src\GlobalEventFilter.cpp">
       <Filter>Source Files\App</Filter>
     </ClCompile>
@@ -109,11 +97,20 @@
     <ClCompile Include="Src\LoggerWidget.cpp">
       <Filter>Source Files\Widgets</Filter>
     </ClCompile>
-    <ClCompile Include="Src\EditorOutputStream.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\PolyDockManager.cpp">
+    <ClCompile Include="Src\DockManager.cpp">
       <Filter>Source Files\App</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EditorUi.cpp">
+      <Filter>Source Files\App</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ViewportWidget.cpp">
+      <Filter>Source Files\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_EditorUi.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_EditorUi.cpp">
+      <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -129,31 +126,28 @@
     <ClInclude Include="Src\GlobalEventFilter.hpp">
       <Filter>Header Files\App</Filter>
     </ClInclude>
-    <ClInclude Include="Src\EditorOutputStream.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Src\LoggerWidget.hpp">
       <Filter>Header Files\Widgets</Filter>
     </ClInclude>
-    <ClInclude Include="Src\PolyDockManager.hpp">
+    <ClInclude Include="Src\DockManager.hpp">
       <Filter>Header Files\App</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Src\PolyViewportWidget.hpp">
-      <Filter>Header Files\Widgets</Filter>
-    </CustomBuild>
     <CustomBuild Include="Src\PolyMainWindow.hpp">
       <Filter>Header Files\Windows</Filter>
     </CustomBuild>
     <CustomBuild Include="Src\EditorApp.hpp">
       <Filter>Header Files\App</Filter>
     </CustomBuild>
-    <CustomBuild Include="Src\PolyEditorUi.hpp">
-      <Filter>Header Files\App</Filter>
-    </CustomBuild>
     <CustomBuild Include="Src\PolyWidget.hpp">
       <Filter>Header Files\Widgets\Base</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Src\EditorUi.hpp">
+      <Filter>Header Files\App</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Src\ViewportWidget.hpp">
+      <Filter>Header Files\Widgets</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

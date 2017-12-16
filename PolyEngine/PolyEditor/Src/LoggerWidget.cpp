@@ -1,6 +1,26 @@
 #include "PolyEditorPCH.hpp"
-#include "EditorOutputStream.hpp"
 #include "LoggerWidget.hpp" 
+
+class LoggerWidget;
+
+class EditorOutputStream : public Poly::FileOutputStream
+{
+public:
+	EditorOutputStream(const char* name, LoggerWidget* widget)
+		: FileOutputStream(name)
+	{
+		Logger = widget;
+	}
+
+	void Append(const char* data) override
+	{
+		Logger->AppendLog(data);
+		Poly::FileOutputStream::Append(data);
+	}
+private:
+	LoggerWidget* Logger = nullptr;
+};
+
 
 LoggerWidget::LoggerWidget(const QString& title, QWidget* parent)
 	: PolyWidget(title, parent)
