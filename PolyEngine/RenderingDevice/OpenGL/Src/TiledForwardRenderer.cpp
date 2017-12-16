@@ -35,6 +35,10 @@ void TiledForwardRenderer::Init()
 	depthShader.RegisterUniform("mat4", "uMVPTransform");
 	hdrShader.RegisterUniform("float", "near");
 	hdrShader.RegisterUniform("float", "far");
+	hdrShader.RegisterUniform("float", "numberOfTilesX");
+	hdrShader.RegisterUniform("float", "totalLightCount");
+	// lightCullingShader.RegisterUniform("sampler2", "depthMap");
+	lightAccumulationShader.RegisterUniform("vec4", "viewPosition");
 
 	CreateDummyTexture();
 
@@ -57,7 +61,6 @@ void TiledForwardRenderer::Init()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
-	// Create a floating point HDR frame buffer and a floating point color buffer (as a texture)
 	glGenFramebuffers(1, &hdrFBO);
 
 	glGenTextures(1, &colorBuffer);
@@ -66,7 +69,6 @@ void TiledForwardRenderer::Init()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	// It will also need a depth component as a render buffer, attached to the hdrFBO
 	glGenRenderbuffers(1, &rboDepth);
 	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCREEN_SIZE_X, SCREEN_SIZE_Y);
@@ -130,6 +132,7 @@ void TiledForwardRenderer::RenderLit(World* world, const AARect& rect, CameraCom
 {
 	gConsole.LogInfo("TiledForwardRenderer::RenderLit");
 
+	const TransformComponent* cameraTransCmp = cameraCmp->GetSibling<TransformComponent>();
 	const Matrix& mvp = cameraCmp->GetMVP();
 	
 	//============================================================================
@@ -151,38 +154,41 @@ void TiledForwardRenderer::RenderLit(World* world, const AARect& rect, CameraCom
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// // Step 2: Perform light culling on point lights in the scene
-	// lightCullingShader.Use();
+	lightCullingShader.BindProgram();
+	lightCullingShader.SetUniform("projection", cameraCmp->GetProjectionMatrix());
+	lightCullingShader.SetUniform("view", cameraCmp->GetModelViewMatrix());
 	// glUniformMatrix4fv(glGetUniformLocation(lightCullingShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	// glUniformMatrix4fv(glGetUniformLocation(lightCullingShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-	// 
-	// // Bind depth map texture to texture location 4 (which will not be used by any model texture)
-	// glActiveTexture(GL_TEXTURE4);
-	// glUniform1i(glGetUniformLocation(lightCullingShader.Program, "depthMap"), 4);
-	// glBindTexture(GL_TEXTURE_2D, depthMap);
-	// 
-	// // Bind shader storage buffer objects for the light and indice buffers
-	// glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
-	// glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, visibleLightIndicesBuffer);
-	// 
-	// // Dispatch the compute shader, using the workgroup values calculated earlier
-	// glDispatchCompute(workGroupsX, workGroupsY, 1);
-	// 
-	// // Unbind the depth map
-	// glActiveTexture(GL_TEXTURE4);
-	// glBindTexture(GL_TEXTURE_2D, 0);
+	
+	// Bind depth map texture to texture location 4 (which will not be used by any model texture)
+	glActiveTexture(GL_TEXTURE4);
+	glUniform1i(glGetUniformLocation((GLuint)lightCullingShader.GetProgramHandle(), "depthMap"), 4);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	
+	// Bind shader storage buffer objects for the light and indice buffers
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, visibleLightIndicesBuffer);
+	
+	// Dispatch the compute shader, using the workgroup values calculated earlier
+	glDispatchCompute(workGroupsX, workGroupsY, 1);
+	
+	// Unbind the depth map
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// // Step 3: Light accumulation
 	// // We render the scene into the floating point HDR frame buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	// lightAccumulationShader.Use();
-	// glUniformMatrix4fv(glGetUniformLocation(lightAccumulationShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-	// glUniformMatrix4fv(glGetUniformLocation(lightAccumulationShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-	// glUniform3fv(glGetUniformLocation(lightAccumulationShader.Program, "viewPosition"), 1, &cameraPosition[0]);
-	// 
-	// sponzaModel.Draw(lightAccumulationShader);
+	 
+	// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	 
+	// lightAccumulationShader.BindProgram();
+	// lightAccumulationShader.SetUniform("viewPosition", cameraTransCmp->GetGlobalTranslation());
+	// // glUniformMatrix4fv(glGetUniformLocation(lightAccumulationShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	// // glUniformMatrix4fv(glGetUniformLocation(lightAccumulationShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+	//  
+	// // sponzaModel.Draw(lightAccumulationShader);
+	// DrawMeshes(world, lightAccumulationShader, mvp);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// Tonemap the HDR colors to the default framebuffer
@@ -194,10 +200,12 @@ void TiledForwardRenderer::RenderLit(World* world, const AARect& rect, CameraCom
 	// glUniform1f(glGetUniformLocation(hdrShader.Program, "exposure"), exposure);
 	hdrShader.SetUniform("near", cameraCmp->GetNear());
 	hdrShader.SetUniform("far", cameraCmp->GetFar());
+	hdrShader.SetUniform("numberOfTilesX", (float)workGroupsX);
+	hdrShader.SetUniform("totalLightCount", (float)NUM_LIGHTS);
 	DrawQuad();
 
-	// glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
-	// glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
 
 	// //============================================================================
 	// // FORWARD
@@ -215,7 +223,7 @@ void TiledForwardRenderer::RenderLit(World* world, const AARect& rect, CameraCom
 	// RDI->GeometryRenderingPasses[GLRenderingDevice::eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
 }
 
-void TiledForwardRenderer::DrawMeshes(World* world, GLShaderProgram& shader, const Matrix & mvp)
+void TiledForwardRenderer::DrawMeshes(World* world, GLShaderProgram& shader, const Matrix& mvp)
 {
 	gConsole.LogInfo("TiledForwardRenderer::DrawMeshes");
 
@@ -286,6 +294,9 @@ void TiledForwardRenderer::UpdateLights(World* world) const
 		Color c = pointLightCmp->GetColor();
 		light.color = Vector(c.R, c.G, c.B);
 		light.paddingAndRadius = Vector(0.0f, 0.0f, 0.0f, pointLightCmp->GetRange());
+
+		gConsole.LogInfo("TiledForwardRenderer::UpdateLights[{}], p: {}, c: {}, r: {}",
+			i, light.position, light.color, light.paddingAndRadius.W);
 
 		if (i >= NUM_LIGHTS) break;
 		++i;

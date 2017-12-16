@@ -32,7 +32,7 @@ namespace Poly {
 	private:
 		void RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp);
 
-		void DrawMeshes(World* world, GLShaderProgram& shader, const Matrix & mvp);
+		void DrawMeshes(World* world, GLShaderProgram& shader, const Matrix& mvp);
 
 		void UpdateLights(World* world) const;
 
