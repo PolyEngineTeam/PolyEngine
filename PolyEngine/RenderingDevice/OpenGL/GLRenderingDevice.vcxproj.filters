@@ -71,6 +71,9 @@
     <ClInclude Include="Src\DebugNormalsWireframeRenderingPass.hpp">
       <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
     </ClInclude>
+    <ClInclude Include="Src\GLCubemapDeviceProxy.hpp">
+      <Filter>Source Files\Impl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\GLRenderingDevice.cpp">
@@ -117,6 +120,9 @@
     </ClCompile>
     <ClCompile Include="Src\DebugNormalsWireframeRenderingPass.cpp">
       <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GLCubemapDeviceProxy.cpp">
+      <Filter>Source Files\Impl</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

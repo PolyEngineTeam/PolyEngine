@@ -6,6 +6,7 @@
 
 #include "GLUtils.hpp"
 #include "GLTextureDeviceProxy.hpp"
+#include "GLCubemapDeviceProxy.hpp"
 #include "GLTextFieldBufferDeviceProxy.hpp"
 #include "GLMeshDeviceProxy.hpp"
 
@@ -168,6 +169,11 @@ void Poly::GLRenderingDevice::CleanUpResources()
 std::unique_ptr<ITextureDeviceProxy> GLRenderingDevice::CreateTexture(size_t width, size_t height, eTextureUsageType usage)
 {
 	return std::make_unique<GLTextureDeviceProxy>(width, height, usage);
+}
+
+std::unique_ptr<ICubemapDeviceProxy> Poly::GLRenderingDevice::CreateCubemap(size_t width, size_t height)
+{
+	return std::make_unique<GLCubemapDeviceProxy>(width, height);
 }
 
 //------------------------------------------------------------------------------

@@ -24,6 +24,8 @@ set(POLYENGINE_SRCS
 	Src/InputSystem.cpp
 	Src/InputWorldComponent.cpp
 	Src/LightSourceComponent.cpp
+	Src/CubemapResource.cpp
+	Src/SkyboxWorldComponent.cpp
 	Src/Mesh.cpp
 	Src/MeshRenderingComponent.cpp
 	Src/MeshResource.cpp
@@ -76,6 +78,8 @@ set(POLYENGINE_H_FOR_IDE
 	Src/IRenderingDevice.hpp
 	Src/KeyBindings.hpp
 	Src/LightSourceComponent.hpp
+	Src/CubemapResource.hpp
+	Src/SkyboxWorldComponent.hpp
 	Src/Mesh.hpp
 	Src/MeshRenderingComponent.hpp
 	Src/MeshResource.hpp

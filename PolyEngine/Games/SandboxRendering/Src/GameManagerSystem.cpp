@@ -13,6 +13,7 @@
 #include <PostprocessSettingsComponent.hpp>
 #include <ViewportWorldComponent.hpp>
 #include <TimeWorldComponent.hpp>
+#include <SkyboxWorldComponent.hpp>
 #include <InputWorldComponent.hpp>
 
 using namespace Poly;
@@ -21,9 +22,9 @@ void GameManagerSystem::CreateScene(World* world)
 {
 	gConsole.LogInfo("GameManagerSystem::CreateScene");
 
-	srand(42);
-
 	GameManagerWorldComponent* GameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
+
+	srand(42);
 
 	UniqueID Camera = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, Camera);
@@ -45,6 +46,29 @@ void GameManagerSystem::CreateScene(World* world)
 	GameMgrCmp->Camera;
 
 	world->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, world->GetComponent<CameraComponent>(Camera));
+	DeferredTaskSystem::AddWorldComponentImmediate<SkyboxWorldComponent>(world, "Cubemaps/miramar/miramar");
+	// world->GetWorldComponent<SkyboxWorldComponent>()->SetCubemap("Cubemaps/miramar");
+
+	world->GetWorldComponent<AmbientLightWorldComponent>()->SetColor(Color(0.0f, 0.0f, 0.0f));
+	world->GetWorldComponent<AmbientLightWorldComponent>()->SetIntensity(0.0f);
+	
+	UniqueID Shaderball = DeferredTaskSystem::SpawnEntityImmediate(world);
+	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, Shaderball);
+	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, Shaderball, "Models/shaderball/PolyEngine_shaderball.fbx", eResourceSource::GAME);
+	MeshRenderingComponent* ballMesh = world->GetComponent<MeshRenderingComponent>(Shaderball);
+	ballMesh->SetMaterial(0, PhongMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 0.0f), Color(1.0f, 1.0f, 0.5f), 8.0f));
+	ballMesh->SetMaterial(1, PhongMaterial(Color(1.0f, 1.0f, 1.0f), Color(0.4f, 0.4f, 0.4f), Color(1.0f, 1.0f, 0.5f), 16.0f));
+	TransformComponent* ballTrans = world->GetComponent<TransformComponent>(Shaderball);
+	ballTrans->SetLocalScale(0.1f);
+	GameMgrCmp->GameEntities.PushBack(Shaderball);
+
+	// CreateSponzaScene(world, GameMgrCmp);
+}
+
+void GameManagerSystem::CreateSponzaScene(World* world)
+{
+	GameManagerWorldComponent* GameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
+
 	world->GetWorldComponent<AmbientLightWorldComponent>()->SetColor(Color(0.2f, 0.5f, 1.0f));
 	world->GetWorldComponent<AmbientLightWorldComponent>()->SetIntensity(0.05f);
 
@@ -64,15 +88,6 @@ void GameManagerSystem::CreateScene(World* world)
 
 	CreateSpotLight(world, 200.0f);
 
-	UniqueID Shaderball = DeferredTaskSystem::SpawnEntityImmediate(world);
-	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, Shaderball);
-	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, Shaderball, "Models/shaderball/PolyEngine_shaderball.fbx", eResourceSource::GAME);
-	MeshRenderingComponent* ballMesh = world->GetComponent<MeshRenderingComponent>(Shaderball);
-	ballMesh->SetMaterial(0, PhongMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 0.0f), Color(1.0f, 1.0f, 0.5f), 8.0f));
-	ballMesh->SetMaterial(1, PhongMaterial(Color(1.0f, 1.0f, 1.0f), Color(0.4f, 0.4f, 0.4f), Color(1.0f, 1.0f, 0.5f), 16.0f));
-	TransformComponent* ballTrans = world->GetComponent<TransformComponent>(Shaderball);
-	ballTrans->SetLocalScale(0.1f);
-	GameMgrCmp->GameEntities.PushBack(Shaderball);
 
 	UniqueID Ground = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, Ground);

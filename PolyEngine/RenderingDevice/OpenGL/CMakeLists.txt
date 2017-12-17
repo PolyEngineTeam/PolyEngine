@@ -7,6 +7,7 @@ set(POLYGLDEVICE_SRCS
 	Src/DebugNormalsRenderingPass.cpp
 	Src/DebugNormalsWireframeRenderingPass.cpp
 	Src/GLMeshDeviceProxy.cpp
+	Src/GLCubemapDeviceProxy.cpp
 	Src/GLRenderingDevice.cpp
 	Src/GLShaderProgram.cpp
 	Src/GLTextFieldBufferDeviceProxy.cpp
@@ -25,6 +26,7 @@ set(POLYGLDEVICE_H_FOR_IDE
 	Src/DebugNormalsRenderingPass.hpp
 	Src/DebugNormalsWireframeRenderingPass.hpp
 	Src/GLMeshDeviceProxy.hpp
+	Src/GLCubemapDeviceProxy.hpp
 	Src/GLRenderingDevice.hpp
 	Src/GLShaderProgram.hpp
 	Src/GLTextFieldBufferDeviceProxy.hpp
