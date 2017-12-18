@@ -27,7 +27,6 @@ namespace Poly
 	{
 		DIFFUSE,
 		FONT,
-		CUBEMAP,
 		_COUNT
 	};
 

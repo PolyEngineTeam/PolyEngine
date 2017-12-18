@@ -47,20 +47,7 @@ GLTextureDeviceProxy::GLTextureDeviceProxy(size_t width, size_t height, eTexture
 	: GLTextureDeviceProxy(width, height, eInternalTextureUsageType::NONE, GetGLInternalFormat(usage))
 {
 	Usage = usage;
-	switch (Usage)
-	{
-		case Poly::eTextureUsageType::DIFFUSE:
-		case Poly::eTextureUsageType::FONT:
-			InitTextureParams();
-			break;
-		case Poly::eTextureUsageType::CUBEMAP:
-			InitCubemapParams();
-			break;
-		case Poly::eTextureUsageType::_COUNT:
-		default:
-			ASSERTE(false, "Uknown eTextureUsageType");
-			break;
-	}
+	InitTextureParams();
 }
 
 //---------------------------------------------------------------
@@ -87,23 +74,6 @@ void GLTextureDeviceProxy::SetContent(eTextureDataFormat format, const unsigned 
 	}
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-	CHECK_GL_ERR();
-}
-
-void Poly::GLTextureDeviceProxy::SetContentCubemap(eTextureDataFormat inputFormat, const unsigned char * data, const int side)
-{
-	ASSERTE(Width > 0 && Height > 0, "Invalid arguments!");
-	ASSERTE(TextureID > 0, "Texture is invalid!");
-	ASSERTE(data, "Data pointer is nullptr!");
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, TextureID);
-
-	glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X + side, 0, GL_RGB, (GLsizei)Width, (GLsizei)Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	CHECK_GL_ERR();
 }
 
@@ -187,16 +157,4 @@ void Poly::GLTextureDeviceProxy::InitTextureParams()
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	CHECK_GL_ERR();
-}
-
-void Poly::GLTextureDeviceProxy::InitCubemapParams()
-{
-	glGenTextures(1, &TextureID);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, TextureID);
-
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
