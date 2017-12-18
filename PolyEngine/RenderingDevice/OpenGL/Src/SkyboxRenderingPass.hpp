@@ -16,6 +16,7 @@ namespace Poly
 	{
 	public:
 		SkyboxRenderingPass(const PostprocessQuad* quad);
+		void CreateCube();
 		~SkyboxRenderingPass();
 
 	protected:

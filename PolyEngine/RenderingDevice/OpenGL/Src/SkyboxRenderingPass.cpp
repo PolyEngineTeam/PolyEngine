@@ -20,19 +20,21 @@ using namespace Poly;
 SkyboxRenderingPass::SkyboxRenderingPass(const PostprocessQuad* quad)
 	: RenderingPassBase("Shaders/skyboxVert.shader", "Shaders/skyboxFrag.shader"), Quad(quad)
 {
-	// GetProgram().RegisterUniform("vec4", "uCameraPosition");
-	// GetProgram().RegisterUniform("vec2", "uResolution");
-	// GetProgram().RegisterUniform("mat4", "uCameraRotation");
 	GetProgram().RegisterUniform("mat4", "uMVP");
 
-	// quad with uv mapping
+	CreateCube();
+}
+
+void Poly::SkyboxRenderingPass::CreateCube()
+{
+	// cube
 	static const float vertices[] = {
 		// x, y, z 
 		-1.0f,  1.0f, -1.0f,
 		-1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f,  1.0f, -1.0f,
 		-1.0f,  1.0f, -1.0f,
 
 		-1.0f, -1.0f,  1.0f,
@@ -42,33 +44,33 @@ SkyboxRenderingPass::SkyboxRenderingPass(const PostprocessQuad* quad)
 		-1.0f,  1.0f,  1.0f,
 		-1.0f, -1.0f,  1.0f,
 
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
 
 		-1.0f, -1.0f,  1.0f,
 		-1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f, -1.0f,  1.0f,
 		-1.0f, -1.0f,  1.0f,
 
 		-1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f, -1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
 		-1.0f,  1.0f,  1.0f,
 		-1.0f,  1.0f, -1.0f,
 
 		-1.0f, -1.0f, -1.0f,
 		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
 		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f
+		1.0f, -1.0f,  1.0f
 	};
 
 	glGenVertexArrays(1, &CubeVAO);
@@ -80,8 +82,6 @@ SkyboxRenderingPass::SkyboxRenderingPass(const PostprocessQuad* quad)
 	glBufferData(GL_ARRAY_BUFFER, 36 * 3 * sizeof(float), vertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), NULL);
 	glEnableVertexAttribArray(0);
-	// glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
-	// glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
@@ -97,25 +97,6 @@ Poly::SkyboxRenderingPass::~SkyboxRenderingPass()
 
 void SkyboxRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType /*passType = ePassType::GLOBAL*/ )
 {
-	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
-	
-	const TransformComponent* CameraTransform = camera->GetSibling<TransformComponent>();
-	Vector CameraPosition = CameraTransform->GetGlobalTranslation();
-	Matrix CameraRotation = CameraTransform->GetGlobalRotation().ToRotationMatrix();
-	float ResolutionX = rect.GetSize().X * gRenderingDevice->GetScreenSize().Width;
-	float ResolutionY = rect.GetSize().Y * gRenderingDevice->GetScreenSize().Height;
-	
-	const Matrix& mvp = camera->GetMVP();
-	Matrix cubeTransform;
-	cubeTransform.SetScale(1000.0f);
-
-	Matrix screenTransform = mvp * cubeTransform;
-
-	GetProgram().BindProgram();
-	// GetProgram().SetUniform("uResolution", ResolutionX, ResolutionY);
-	// GetProgram().SetUniform("uCameraRotation", CameraRotation);
-	GetProgram().SetUniform("uMVP", screenTransform);
-
 	const SkyboxWorldComponent* SkyboxWorldCmp = world->GetWorldComponent<SkyboxWorldComponent>();
 	if (SkyboxWorldCmp == nullptr)
 	{
@@ -123,6 +104,29 @@ void SkyboxRenderingPass::OnRun(World* world, const CameraComponent* camera, con
 	}
 	else
 	{
+		// float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
+	
+		// const TransformComponent* CameraTransform = camera->GetSibling<TransformComponent>();
+		// Vector CameraPosition = CameraTransform->GetGlobalTranslation();
+		// Matrix CameraRotation = CameraTransform->GetGlobalRotation().ToRotationMatrix();
+		// float ResolutionX = rect.GetSize().X * gRenderingDevice->GetScreenSize().Width;
+		// float ResolutionY = rect.GetSize().Y * gRenderingDevice->GetScreenSize().Height;
+	
+		const Matrix projection = camera->GetProjectionMatrix();
+		Matrix modelView = Matrix(camera->GetModelViewMatrix());
+		// center cube in view space, SetTranslation resets Matrix to identity
+		modelView.Data[3]  = 0.0f;
+		modelView.Data[7]  = 0.0f;
+		modelView.Data[11] = 0.0f;
+
+		Matrix cubeTransform;
+		cubeTransform.SetScale(1000.0f);
+
+		Matrix mvp = projection * modelView * cubeTransform;
+
+		GetProgram().BindProgram();
+		GetProgram().SetUniform("uMVP", mvp);
+
 		GLuint CubemapID = static_cast<const GLCubemapDeviceProxy*>(SkyboxWorldCmp->GetCubemap().GetTextureProxy())->GetTextureID();
 
 		glDepthMask(GL_FALSE);
@@ -145,6 +149,6 @@ void SkyboxRenderingPass::OnRun(World* world, const CameraComponent* camera, con
 		glEnable(GL_CULL_FACE);
 		glDepthFunc(GL_LESS);
 		glDisable(GL_DEPTH_TEST);
-		glDepthMask(GL_TRUE);
+		glDepthMask(GL_TRUE);	
 	}
 }

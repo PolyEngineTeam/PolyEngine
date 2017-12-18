@@ -58,8 +58,7 @@ void GameManagerSystem::CreateScene(World* world)
 		"Cubemaps/stormydays/stormydays_bk.tga", "Cubemaps/stormydays/stormydays_ft.tga"
 	};
 
-	DeferredTaskSystem::AddWorldComponentImmediate<SkyboxWorldComponent>(world, miramar);
-	// world->GetWorldComponent<SkyboxWorldComponent>()->SetCubemap("Cubemaps/miramar");
+	DeferredTaskSystem::AddWorldComponentImmediate<SkyboxWorldComponent>(world, stormydays);
 
 	world->GetWorldComponent<AmbientLightWorldComponent>()->SetColor(Color(0.0f, 0.0f, 0.0f));
 	world->GetWorldComponent<AmbientLightWorldComponent>()->SetIntensity(0.0f);

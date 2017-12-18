@@ -16,7 +16,7 @@ void MovementSystem::MovementUpdatePhase(World* world)
 
 		int wheelDelta = inputCmp->GetWheelPosDelta().Y;
 		float speed = freeFloatMovementCmp->GetMovementSpeed();
-		speed = Clamp(speed + 0.1f*wheelDelta, 0.001f, 10000.0f);
+		speed = Clamp(speed + wheelDelta, 0.001f, 10000.0f);
 		freeFloatMovementCmp->SetMovementSpeed(speed);
 
 		Vector move;
