@@ -20,4 +20,4 @@
 *.lib binary
 
 # Vendor specific folders
-ThirdParty/* linguist-vendored
+PolyEngine/ThirdParty/* linguist-vendored
