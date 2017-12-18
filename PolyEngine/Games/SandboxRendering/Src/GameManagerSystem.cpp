@@ -46,7 +46,10 @@ void GameManagerSystem::CreateScene(World* world)
 	GameMgrCmp->Camera;
 
 	world->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, world->GetComponent<CameraComponent>(Camera));
-	DeferredTaskSystem::AddWorldComponentImmediate<SkyboxWorldComponent>(world, "Cubemaps/miramar/miramar");
+	DeferredTaskSystem::AddWorldComponentImmediate<SkyboxWorldComponent>(world, 
+		Dynarray<String>({ "Cubemaps/miramar/miramar_lt.jpg", "Cubemaps/miramar/miramar_rt.jpg", "Cubemaps/miramar/miramar_up.jpg",
+			"Cubemaps/miramar/miramar_dn.jpg","Cubemaps/miramar/miramar_ft.jpg", "Cubemaps/miramar/miramar_bk.jpg" })
+	);
 	// world->GetWorldComponent<SkyboxWorldComponent>()->SetCubemap("Cubemaps/miramar");
 
 	world->GetWorldComponent<AmbientLightWorldComponent>()->SetColor(Color(0.0f, 0.0f, 0.0f));

@@ -6,29 +6,21 @@
 
 using namespace Poly;
 
-CubemapResource::CubemapResource(const String& path)
+CubemapResource::CubemapResource(const Dynarray<String> paths)
 {
-	gConsole.LogInfo("CubemapResource::CubemapResource path:{}", path);
-
-	String absolutePath = gAssetsPathConfig.GetAssetsPath(eResourceSource::ENGINE) + path;
-
-	Dynarray<String> suffixes(6);
-	suffixes.PushBack("_rt.jpg");
-	suffixes.PushBack("_lt.jpg");
-	suffixes.PushBack("_up.jpg");
-	suffixes.PushBack("_dn.jpg");
-	suffixes.PushBack("_bk.jpg");
-	suffixes.PushBack("_ft.jpg");
+	ASSERTE(paths.GetSize() == 6, "CubemapResource::CubemapResource parths need to have 6 elements");
+	gConsole.LogInfo("CubemapResource::CubemapResource path:{}", paths[0]);
 
 	Images.Reserve(6);
-	for (int i = 0; i < suffixes.GetSize(); ++i) 
+	for (int i = 0; i < paths.GetSize(); ++i) 
 	{
-		Images.PushBack(LoadImage(absolutePath + suffixes[i]));
+		String absolutePath = gAssetsPathConfig.GetAssetsPath(eResourceSource::ENGINE) + paths[i];
+		Images.PushBack(LoadImage(absolutePath));
 	}
 
 	TextureProxy = gEngine->GetRenderingDevice()->CreateCubemap(Width, Height);
 
-	for (int i = 0; i < suffixes.GetSize(); ++i)
+	for (int i = 0; i < Images.GetSize(); ++i)
 	{
 		TextureProxy->SetContent(i, Images[i]);
 	}
@@ -53,16 +45,6 @@ unsigned char* CubemapResource::LoadImage(const String& path)
 
 	Width = std::max(Width, fileWidth);
 	Height = std::max(Height, fileHeight);
-
-	// // Flip Y axis
-	// int rowSize = Width*Channels;
-	// static Dynarray<unsigned char> row;
-	// row.Resize(rowSize);
-	// for (int i = 0; i < Height / 2; ++i) {
-	// 	memcpy(row.GetData(), image + ((Height - i - 1) * Width*Channels), sizeof(unsigned char) * rowSize);
-	// 	memcpy(image + ((Height - i - 1) * Width*Channels), image + (i * Width*Channels), sizeof(unsigned char) * rowSize);
-	// 	memcpy(image + (i * Width*Channels), row.GetData(), sizeof(unsigned char) * rowSize);
-	// }
 
 	return image;
 }

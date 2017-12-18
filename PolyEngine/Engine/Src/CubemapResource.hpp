@@ -11,7 +11,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT CubemapResource : public ResourceBase
 	{
 	public:
-		CubemapResource(const String& path);
+		CubemapResource(const Dynarray<String> path);
 		~CubemapResource() override;
 
 		unsigned char* LoadImage(const String& path);
