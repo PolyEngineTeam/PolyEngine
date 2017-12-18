@@ -26,7 +26,6 @@ CubemapResource::CubemapResource(const Dynarray<String> paths)
 	}
 }
 
-// TODO: not DRY, see TextureResource
 unsigned char* CubemapResource::LoadImage(const String& path)
 {
 	unsigned char* image;
