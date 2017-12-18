@@ -28,7 +28,7 @@ void GameManagerSystem::CreateScene(World* world)
 
 	UniqueID Camera = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, Camera);
-	DeferredTaskSystem::AddComponentImmediate<CameraComponent>(world, Camera, 60_deg, 1.0f, 3000.f);
+	DeferredTaskSystem::AddComponentImmediate<CameraComponent>(world, Camera, 120_deg, 1.0f, 3000.f);
 	DeferredTaskSystem::AddComponentImmediate<FreeFloatMovementComponent>(world, Camera, 10.0f, 0.003f);
 	DeferredTaskSystem::AddComponentImmediate<PostprocessSettingsComponent>(world, Camera);
 	PostprocessSettingsComponent* postCmp = world->GetComponent<PostprocessSettingsComponent>(Camera);
@@ -54,6 +54,8 @@ void GameManagerSystem::CreateScene(World* world)
 	
 	UniqueID Shaderball = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, Shaderball);
+	TransformComponent* shaderballTrans = world->GetComponent<TransformComponent>(Shaderball);
+	shaderballTrans->SetLocalTranslation(Vector(0.0f, 5.0f, 0.0f));
 	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, Shaderball, "Models/shaderball/PolyEngine_shaderball.fbx", eResourceSource::GAME);
 	MeshRenderingComponent* ballMesh = world->GetComponent<MeshRenderingComponent>(Shaderball);
 	ballMesh->SetMaterial(0, PhongMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 0.0f), Color(1.0f, 1.0f, 0.5f), 8.0f));

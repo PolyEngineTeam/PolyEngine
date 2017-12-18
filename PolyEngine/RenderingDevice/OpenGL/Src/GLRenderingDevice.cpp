@@ -17,6 +17,7 @@
 #include "DebugNormalsWireframeRenderingPass.hpp"
 #include "PostprocessRenderingPass.hpp"
 #include "TransparentRenderingPass.hpp"
+#include "SkyboxRenderingPass.hpp"
 #include "PostprocessQuad.hpp"
 
 using namespace Poly;
@@ -144,6 +145,7 @@ void GLRenderingDevice::InitPrograms()
 	RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPass<DebugNormalsWireframeRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS_WIREFRAME, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, {}, { { "color", texture },{ "depth", depth } });
+	RegisterGeometryPassWithArgs<SkyboxRenderingPass>(eGeometryRenderPassType::SKYBOX, {}, { { "color", texture },{ "depth", depth } }, PostprocessRenderingQuad.get());
 	RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } }, PostprocessRenderingQuad.get());
 
 

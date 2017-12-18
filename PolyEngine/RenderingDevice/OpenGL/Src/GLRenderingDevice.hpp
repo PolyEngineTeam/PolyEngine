@@ -27,6 +27,7 @@ namespace Poly
 			DEBUG_NORMALS,
 			DEBUG_NORMALS_WIREFRAME,
 			TEXT_2D,
+			SKYBOX,
 			_COUNT
 		};
 

@@ -9,6 +9,7 @@ namespace Poly
 	{
 	public:
 		SkyboxWorldComponent(const String cubemapPath);
+		const CubemapResource& GetCubemap() const { return Cubemap; }
 
 	private:
 		CubemapResource Cubemap;

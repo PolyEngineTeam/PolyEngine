@@ -173,6 +173,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\SDL2\lib\x64\SDL2.dll $(OutDir)</Command>
     <ClInclude Include="Src\PostprocessQuad.hpp" />
     <ClInclude Include="Src\PostprocessRenderingPass.hpp" />
     <ClInclude Include="Src\RenderingPassBase.hpp" />
+    <ClInclude Include="Src\SkyboxRenderingPass.hpp" />
     <ClInclude Include="Src\Text2DRenderingPass.hpp" />
     <ClInclude Include="Src\TransparentRenderingPass.hpp" />
     <ClInclude Include="Src\UnlitRenderingPass.hpp" />
@@ -191,6 +192,7 @@ xcopy /y /d $(SolutionDir)ThirdParty\SDL2\lib\x64\SDL2.dll $(OutDir)</Command>
     <ClCompile Include="Src\PostprocessQuad.cpp" />
     <ClCompile Include="Src\PostprocessRenderingPass.cpp" />
     <ClCompile Include="Src\RenderingPassBase.cpp" />
+    <ClCompile Include="Src\SkyboxRenderingPass.cpp" />
     <ClCompile Include="Src\Text2DRenderingPass.cpp" />
     <ClCompile Include="Src\TransparentRenderingPass.cpp" />
     <ClCompile Include="Src\UnlitRenderingPass.cpp" />

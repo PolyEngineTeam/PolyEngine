@@ -74,6 +74,9 @@
     <ClInclude Include="Src\GLCubemapDeviceProxy.hpp">
       <Filter>Source Files\Impl</Filter>
     </ClInclude>
+    <ClInclude Include="Src\SkyboxRenderingPass.hpp">
+      <Filter>Source Files\RenderingPasses\BasePasses</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\GLRenderingDevice.cpp">
@@ -123,6 +126,9 @@
     </ClCompile>
     <ClCompile Include="Src\GLCubemapDeviceProxy.cpp">
       <Filter>Source Files\Impl</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SkyboxRenderingPass.cpp">
+      <Filter>Source Files\RenderingPasses\BasePasses</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
