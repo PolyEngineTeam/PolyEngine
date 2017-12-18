@@ -104,14 +104,6 @@ void SkyboxRenderingPass::OnRun(World* world, const CameraComponent* camera, con
 	}
 	else
 	{
-		// float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
-	
-		// const TransformComponent* CameraTransform = camera->GetSibling<TransformComponent>();
-		// Vector CameraPosition = CameraTransform->GetGlobalTranslation();
-		// Matrix CameraRotation = CameraTransform->GetGlobalRotation().ToRotationMatrix();
-		// float ResolutionX = rect.GetSize().X * gRenderingDevice->GetScreenSize().Width;
-		// float ResolutionY = rect.GetSize().Y * gRenderingDevice->GetScreenSize().Height;
-	
 		const Matrix projection = camera->GetProjectionMatrix();
 		Matrix modelView = Matrix(camera->GetModelViewMatrix());
 		// center cube in view space, SetTranslation resets Matrix to identity
@@ -133,13 +125,10 @@ void SkyboxRenderingPass::OnRun(World* world, const CameraComponent* camera, con
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 		glDepthFunc(GL_LEQUAL);
-		// glDepthFunc(GL_LESS);
-		// glDepthFunc(GL_GREATER);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapID);
 
-		// glBindVertexArray(Quad->VAO);
 		glBindVertexArray(CubeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
