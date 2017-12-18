@@ -46,15 +46,24 @@ void GameManagerSystem::CreateScene(World* world)
 	GameMgrCmp->Camera;
 
 	world->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, world->GetComponent<CameraComponent>(Camera));
-	DeferredTaskSystem::AddWorldComponentImmediate<SkyboxWorldComponent>(world, 
-		Dynarray<String>({ "Cubemaps/miramar/miramar_lt.jpg", "Cubemaps/miramar/miramar_rt.jpg", "Cubemaps/miramar/miramar_up.jpg",
-			"Cubemaps/miramar/miramar_dn.jpg","Cubemaps/miramar/miramar_ft.jpg", "Cubemaps/miramar/miramar_bk.jpg" })
-	);
+	Dynarray<String> miramar = { 
+		"Cubemaps/miramar/miramar_rt.jpg", "Cubemaps/miramar/miramar_lt.jpg",
+		"Cubemaps/miramar/miramar_up.jpg", "Cubemaps/miramar/miramar_dn.jpg",
+		"Cubemaps/miramar/miramar_bk.jpg", "Cubemaps/miramar/miramar_ft.jpg"
+	};
+
+	Dynarray<String> stormydays = {
+		"Cubemaps/stormydays/stormydays_rt.tga", "Cubemaps/stormydays/stormydays_lt.tga",
+		"Cubemaps/stormydays/stormydays_up.tga", "Cubemaps/stormydays/stormydays_dn.tga",
+		"Cubemaps/stormydays/stormydays_bk.tga", "Cubemaps/stormydays/stormydays_ft.tga"
+	};
+
+	DeferredTaskSystem::AddWorldComponentImmediate<SkyboxWorldComponent>(world, miramar);
 	// world->GetWorldComponent<SkyboxWorldComponent>()->SetCubemap("Cubemaps/miramar");
 
 	world->GetWorldComponent<AmbientLightWorldComponent>()->SetColor(Color(0.0f, 0.0f, 0.0f));
 	world->GetWorldComponent<AmbientLightWorldComponent>()->SetIntensity(0.0f);
-	
+
 	UniqueID Shaderball = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, Shaderball);
 	TransformComponent* shaderballTrans = world->GetComponent<TransformComponent>(Shaderball);
@@ -210,7 +219,7 @@ void GameManagerSystem::CreateSpotLight(World* world, float Range)
 	TransformComponent* SpotLightDebugSourceTrans = world->GetComponent<TransformComponent>(SpotLightDebugSource);
 	SpotLightDebugSourceTrans->SetParent(SpotLightTrans);
 	SpotLightDebugSourceTrans->SetLocalScale(2.0f);
-	SpotLightDebugSourceTrans->SetLocalTranslation(Vector(0.0f, 0.0f, 0.0f));	
+	SpotLightDebugSourceTrans->SetLocalTranslation(Vector(0.0f, 0.0f, 0.0f));
 }
 
 float GameManagerSystem::Random()
