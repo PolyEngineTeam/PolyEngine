@@ -46,16 +46,10 @@ void GameManagerSystem::CreateScene(World* world)
 	GameMgrCmp->Camera;
 
 	world->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, world->GetComponent<CameraComponent>(Camera));
-	Dynarray<String> miramar = { 
-		"Cubemaps/miramar/miramar_rt.jpg", "Cubemaps/miramar/miramar_lt.jpg",
-		"Cubemaps/miramar/miramar_up.jpg", "Cubemaps/miramar/miramar_dn.jpg",
-		"Cubemaps/miramar/miramar_bk.jpg", "Cubemaps/miramar/miramar_ft.jpg"
-	};
-
 	Dynarray<String> stormydays = {
-		"Cubemaps/stormydays/stormydays_rt.tga", "Cubemaps/stormydays/stormydays_lt.tga",
-		"Cubemaps/stormydays/stormydays_up.tga", "Cubemaps/stormydays/stormydays_dn.tga",
-		"Cubemaps/stormydays/stormydays_bk.tga", "Cubemaps/stormydays/stormydays_ft.tga"
+		"Cubemaps/stormydays/stormydays_rt.jpg", "Cubemaps/stormydays/stormydays_lt.jpg",
+		"Cubemaps/stormydays/stormydays_up.jpg", "Cubemaps/stormydays/stormydays_dn.jpg",
+		"Cubemaps/stormydays/stormydays_bk.jpg", "Cubemaps/stormydays/stormydays_ft.jpg"
 	};
 
 	DeferredTaskSystem::AddWorldComponentImmediate<SkyboxWorldComponent>(world, stormydays);

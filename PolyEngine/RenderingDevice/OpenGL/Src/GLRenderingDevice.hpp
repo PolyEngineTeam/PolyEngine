@@ -13,6 +13,7 @@ namespace Poly
 	class AARect;
 	class World;
 	struct PostprocessQuad;
+	struct PrimitiveCube;
 	class RenderingPassBase;
 	class RenderingTargetBase;
 
@@ -105,6 +106,7 @@ namespace Poly
 		EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
 
 		std::unique_ptr<PostprocessQuad> PostprocessRenderingQuad;
+		std::unique_ptr<PrimitiveCube> PrimitiveRenderingCube;
 	};
 
 	extern GLRenderingDevice* gRenderingDevice;

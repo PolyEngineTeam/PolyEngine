@@ -2,7 +2,7 @@
 
 #include "RenderingPassBase.hpp"
 #include "GLShaderProgram.hpp"
-#include "PostprocessQuad.hpp"
+#include "PrimitiveCube.hpp"
 
 namespace Poly
 {
@@ -10,21 +10,18 @@ namespace Poly
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
 	class AARect;
+	class SkyboxWorldComponent;
 
-	//------------------------------------------------------------------------------
 	class SkyboxRenderingPass : public RenderingPassBase
 	{
 	public:
-		SkyboxRenderingPass(const PostprocessQuad* quad);
-		void CreateCube();
-		~SkyboxRenderingPass();
+		SkyboxRenderingPass(const PrimitiveCube* cube);
 
 	protected:
 		void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;
 
-		const PostprocessQuad* Quad;
+		void RenderSkybox(const CameraComponent* camera, const SkyboxWorldComponent* SkyboxWorldCmp);
 
-		GLuint CubeVAO = 0;
-		GLuint CubeVBO = 0;
+		const PrimitiveCube* Cube;
 	};
 }

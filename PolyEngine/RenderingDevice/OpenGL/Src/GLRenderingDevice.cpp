@@ -19,6 +19,7 @@
 #include "TransparentRenderingPass.hpp"
 #include "SkyboxRenderingPass.hpp"
 #include "PostprocessQuad.hpp"
+#include "PrimitiveCube.hpp"
 
 using namespace Poly;
 
@@ -131,6 +132,7 @@ void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType
 void GLRenderingDevice::InitPrograms()
 {
 	PostprocessRenderingQuad = std::make_unique<PostprocessQuad>();
+	PrimitiveRenderingCube = std::make_unique<PrimitiveCube>();
 	
 	// Init input textures
 	//Texture2DInputTarget* RGBANoise256 = CreateRenderingTarget<Texture2DInputTarget>("Textures/RGBANoise256x256.png");
@@ -145,7 +147,7 @@ void GLRenderingDevice::InitPrograms()
 	RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPass<DebugNormalsWireframeRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS_WIREFRAME, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, {}, { { "color", texture },{ "depth", depth } });
-	RegisterGeometryPassWithArgs<SkyboxRenderingPass>(eGeometryRenderPassType::SKYBOX, {}, { { "color", texture },{ "depth", depth } }, PostprocessRenderingQuad.get());
+	RegisterGeometryPassWithArgs<SkyboxRenderingPass>(eGeometryRenderPassType::SKYBOX, {}, { { "color", texture },{ "depth", depth } }, PrimitiveRenderingCube.get());
 	RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } }, PostprocessRenderingQuad.get());
 
 
@@ -160,11 +162,15 @@ void GLRenderingDevice::InitPrograms()
 void Poly::GLRenderingDevice::CleanUpResources()
 {
 	RenderingTargets.Clear();
+
 	for (eGeometryRenderPassType passType : IterateEnum<eGeometryRenderPassType>())
 		GeometryRenderingPasses[passType].reset();
+
 	for (ePostprocessRenderPassType passType : IterateEnum<ePostprocessRenderPassType>())
 		PostprocessRenderingPasses[passType].reset();
+
 	PostprocessRenderingQuad.reset();
+	PrimitiveRenderingCube.reset();
 }
 
 //------------------------------------------------------------------------------
