@@ -12,7 +12,7 @@ CubemapResource::CubemapResource(const Dynarray<String> paths)
 	gConsole.LogInfo("CubemapResource::CubemapResource path:{}", paths[0]);
 
 	Images.Reserve(6);
-	for (int i = 0; i < paths.GetSize(); ++i) 
+	for (size_t i = 0; i < paths.GetSize(); ++i) 
 	{
 		String absolutePath = gAssetsPathConfig.GetAssetsPath(eResourceSource::ENGINE) + paths[i];
 		Images.PushBack(LoadImage(absolutePath));
@@ -20,7 +20,7 @@ CubemapResource::CubemapResource(const Dynarray<String> paths)
 
 	TextureProxy = gEngine->GetRenderingDevice()->CreateCubemap(Width, Height);
 
-	for (int i = 0; i < Images.GetSize(); ++i)
+	for (size_t i = 0; i < Images.GetSize(); ++i)
 	{
 		TextureProxy->SetContent(i, Images[i]);
 	}
@@ -53,7 +53,7 @@ CubemapResource::~CubemapResource()
 {
 	gConsole.LogInfo("CubemapResource::~CubemapResource");
 
-	for(int i = 0; i < Images.GetSize(); ++i)
+	for(size_t i = 0; i < Images.GetSize(); ++i)
 	{
 		SOIL_free_image_data(Images[i]);
 	}
