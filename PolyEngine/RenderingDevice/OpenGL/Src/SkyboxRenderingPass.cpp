@@ -17,7 +17,7 @@ SkyboxRenderingPass::SkyboxRenderingPass(const PrimitiveCube* cube)
 	GetProgram().RegisterUniform("mat4", "uMVP");
 }
 
-void SkyboxRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType /*passType = ePassType::GLOBAL*/ )
+void SkyboxRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
 {
 	const SkyboxWorldComponent* SkyboxWorldCmp = world->GetWorldComponent<SkyboxWorldComponent>();
 	if (SkyboxWorldCmp == nullptr)

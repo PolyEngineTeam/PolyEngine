@@ -18,7 +18,7 @@ namespace Poly
 		SkyboxRenderingPass(const PrimitiveCube* cube);
 
 	protected:
-		void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;
+		void OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType) override;
 
 		void RenderSkybox(const CameraComponent* camera, const SkyboxWorldComponent* SkyboxWorldCmp);
 

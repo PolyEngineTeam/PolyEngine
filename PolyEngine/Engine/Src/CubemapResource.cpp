@@ -22,7 +22,7 @@ CubemapResource::CubemapResource(const Dynarray<String> paths)
 
 	for (size_t i = 0; i < Images.GetSize(); ++i)
 	{
-		TextureProxy->SetContent(i, Images[i]);
+		TextureProxy->SetContent((unsigned int)i, Images[i]);
 	}
 }
 
