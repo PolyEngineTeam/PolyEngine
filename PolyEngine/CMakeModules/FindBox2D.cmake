@@ -36,8 +36,14 @@ if (WIN32)
 
 	set(Box2D_ROOT_DIR "${CMAKE_SOURCE_DIR}/ThirdParty/Box2D" CACHE PATH "Box2D root directory")
 
-	find_path(Box2D_INCLUDE_DIR  NAMES Box2D/Box2D.h  HINTS "${BOX2D_ROOT_DIR}/Src")
-	find_library(Box2D_LIBRARY   NAMES Box2D          HINTS "${BOX2D_ROOT_DIR}/lib/Release/${Box2D_ARCH}")
+	find_path(Box2D_INCLUDE_DIR
+				NAMES "Box2D/Box2D.h" 
+				PATHS "${Box2D_ROOT_DIR}/Src" 
+				PATH_SUFFIXES "Box2D" )
+	find_library(Box2D_LIBRARY  
+				Box2D
+				PATH  "${Box2D_ROOT_DIR}/lib/Release/${Box2D_ARCH}" NO_DEFAULT_PATH)
+	
 else()
 	find_package(Box2D CONFIG QUIET) #note(vuko): frequently faulty, so try to use it just for `BOX2D_ROOT_DIR` and `BOX2D_VERSION_STRING`
 	unset(Box2D_DIR CACHE)

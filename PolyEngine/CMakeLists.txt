@@ -5,6 +5,14 @@ project(PolyEngine VERSION 0.1.2 LANGUAGES CXX C) #note(vuko): without C older C
 # Initial setup: C++ standard version, build types, CMake modules
 ##
 
+if(DEFINED ENV{QTDIR})
+	list(APPEND CMAKE_PREFIX_PATH $ENV{QTDIR})
+elseif(APPLE)
+	list(APPEND CMAKE_PREFIX_PATH /usr/local/opt/qt)
+else()
+	message(FATAL_ERROR "Please setup QTDIR environment variable to point to Qt5 toolchain instalation")
+endif()
+
 ##C++ standard
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
