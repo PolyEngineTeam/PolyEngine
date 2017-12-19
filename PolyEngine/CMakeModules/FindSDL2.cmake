@@ -51,10 +51,10 @@ else()
 			set(SDL2_LIB_HINTS ${SDL2PC_LIBRARY_DIRS})
 		endif()
 	endif()
-	
+
 	unset(SDL2_DIR CACHE)
 	unset(SDL2_INCLUDE_DIRS)
-	find_path(SDL2_INCLUDE_DIR  NAMES SDL2/SDL2.h  HINTS ${SDL2_ROOT_DIR}/include ${SDL2_INCLUDE_HINTS})
+	find_path(SDL2_INCLUDE_DIR  NAMES SDL.h  HINTS ${SDL2_ROOT_DIR}/include/SDL ${SDL2_INCLUDE_HINTS})
 	find_library(SDL2_LIBRARY   NAMES SDL2          HINTS ${SDL2_ROOT_DIR}/lib/ ${SDL2_LIB_HINTS})
 endif()
 
