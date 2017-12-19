@@ -39,10 +39,7 @@ void SkyboxRenderingPass::RenderSkybox(const CameraComponent* camera, const Skyb
 	modelView.Data[7] = 0.0f;
 	modelView.Data[11] = 0.0f;
 
-	Matrix cubeTransform;
-	cubeTransform.SetScale(1000.0f);
-
-	Matrix mvp = projection * modelView * cubeTransform;
+	Matrix mvp = projection * modelView;
 
 	GetProgram().BindProgram();
 	GetProgram().SetUniform("uMVP", mvp);
