@@ -2,6 +2,8 @@
     "Assets Path Config": {
         "@type": "AssetsPathConfig",
         "EngineAssetsPath": "@ENGINE_ASSETS_PATHS@",
-        "GameAssetsPath": "@GAME_ASSETS_PATHS@"
+        "GameAssetsPath": "@GAME_ASSETS_PATHS@",
+        "RenderingDeviceLibPath": "@RENDERING_DEVICE_LIB_PATH@",
+        "GameLibPath": "@GAME_LIB_PATH@"
     }
 }
