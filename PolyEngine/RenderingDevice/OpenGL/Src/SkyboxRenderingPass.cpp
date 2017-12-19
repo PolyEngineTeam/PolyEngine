@@ -34,7 +34,7 @@ void SkyboxRenderingPass::RenderSkybox(const CameraComponent* camera, const Skyb
 {
 	const Matrix projection = camera->GetProjectionMatrix();
 	Matrix modelView = Matrix(camera->GetModelViewMatrix());
-	// center cube in view space, SetTranslation resets Matrix to identity
+	// center cube in view space by setting translation to 0 for x, y and z. SetTranslation resets Matrix to identity
 	modelView.Data[3] = 0.0f;
 	modelView.Data[7] = 0.0f;
 	modelView.Data[11] = 0.0f;
