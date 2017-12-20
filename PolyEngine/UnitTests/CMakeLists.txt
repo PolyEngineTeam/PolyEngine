@@ -45,15 +45,21 @@ if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	add_dependencies(coverage coverage_core coverage_engine)
 endif(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 
-if(WIN32)
-	# Copy all necessary DLL's on Windows
-	add_custom_command(
+add_custom_command(
 		TARGET polytests
 		POST_BUILD
 			# Inhouse DLL's
 			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polycore>" "$<TARGET_FILE_DIR:polytests>"
 			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polyengine>" "$<TARGET_FILE_DIR:polytests>"
 			
+			COMMENT "Copying Libs..." VERBATIM
+		)
+
+if(WIN32)
+	# Copy all necessary DLL's on Windows
+	add_custom_command(
+		TARGET polytests
+		POST_BUILD
 			# Thirdparty DLL's
 			COMMAND ${CMAKE_COMMAND} -E copy  "${CMAKE_SOURCE_DIR}/ThirdParty/SDL2/lib/x64/SDL2.dll" "$<TARGET_FILE_DIR:polytests>"
 			COMMAND ${CMAKE_COMMAND} -E copy  "${CMAKE_SOURCE_DIR}/ThirdParty/Assimp/lib/Release/x64/assimp-vc140-mt.dll" "$<TARGET_FILE_DIR:polytests>"
