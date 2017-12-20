@@ -66,7 +66,6 @@ set(CMAKE_BUILD_TYPE "Debug" CACHE STRING
 if(ARCH_X64)
 	option(SIMD "Enable SSE4.2 extensions for faster code (requires a compatible CPU)" ON)
 endif()
-option(USE_BUNDLED_CATCH "Do not try to fetch Catch and use the bundled copy instead" ON)
 
 ##clang-tidy
 option(CLANG_TIDY_ON_BUILD "Run clang-tidy static analyzer while compiling" OFF)

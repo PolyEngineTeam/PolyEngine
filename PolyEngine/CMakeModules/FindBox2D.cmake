@@ -42,7 +42,7 @@ if (WIN32)
 				PATH_SUFFIXES "Box2D" )
 	find_library(Box2D_LIBRARY  
 				Box2D
-				PATH  "${Box2D_ROOT_DIR}/lib/Release/${Box2D_ARCH}" NO_DEFAULT_PATH)
+				PATH  "${Box2D_ROOT_DIR}/lib/Release/${Box2D_ARCH}")
 	
 else()
 	find_package(Box2D CONFIG QUIET) #note(vuko): frequently faulty, so try to use it just for `BOX2D_ROOT_DIR` and `BOX2D_VERSION_STRING`
