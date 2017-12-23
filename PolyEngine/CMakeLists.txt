@@ -5,6 +5,14 @@ project(PolyEngine VERSION 0.1.2 LANGUAGES CXX C) #note(vuko): without C older C
 # Initial setup: C++ standard version, build types, CMake modules
 ##
 
+if(DEFINED ENV{QTDIR})
+	list(APPEND CMAKE_PREFIX_PATH $ENV{QTDIR})
+elseif(APPLE)
+	list(APPEND CMAKE_PREFIX_PATH /usr/local/opt/qt)
+else()
+	message(FATAL_ERROR "Please setup QTDIR environment variable to point to Qt5 toolchain instalation")
+endif()
+
 ##C++ standard
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -58,7 +66,6 @@ set(CMAKE_BUILD_TYPE "Debug" CACHE STRING
 if(ARCH_X64)
 	option(SIMD "Enable SSE4.2 extensions for faster code (requires a compatible CPU)" ON)
 endif()
-option(USE_BUNDLED_CATCH "Do not try to fetch Catch and use the bundled copy instead" ON)
 
 ##clang-tidy
 option(CLANG_TIDY_ON_BUILD "Run clang-tidy static analyzer while compiling" OFF)

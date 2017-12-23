@@ -3,6 +3,7 @@
 
 #include <Engine.hpp>
 #include <LibraryLoader.hpp>
+#include <AssetsPathConfig.hpp>
 
 extern "C"
 {
@@ -52,85 +53,79 @@ int main(int argc, char* args[])
 
 	ASSERTE(window, "Failed to create standalone window!");
 	Poly::gConsole.LogDebug("Window created.");
+	
+	std::unique_ptr<Poly::Engine> Engine = std::make_unique<Poly::Engine>();
+	Poly::gConsole.LogDebug("Engine created.");
 
 	// Load rendering device library
-	auto loadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>("libRenderingDevice", "PolyCreateRenderingDevice");
-	// Try to load library with different name
-    if(!loadRenderingDevice.FunctionValid())
-        loadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>("libpolyrenderingdevice", "PolyCreateRenderingDevice");
-    if (!loadRenderingDevice.FunctionValid())
+	auto loadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>(Poly::gAssetsPathConfig.GetRenderingDeviceLibPath().GetCStr(), "PolyCreateRenderingDevice");
+	if (!loadRenderingDevice.FunctionValid())
 		return 1;
 	Poly::gConsole.LogDebug("Library libRenderingDevice loaded.");
 
 	// Load game library
-	auto loadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("libGame", "CreateGame");
-    // Try to load library with different name
-    if (!loadGame.FunctionValid())
-        loadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("libgame", "CreateGame");
-    if (!loadGame.FunctionValid())
+	auto loadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>(Poly::gAssetsPathConfig.GetGameLibPath().GetCStr(), "CreateGame");
+	if (!loadGame.FunctionValid())
 		return 1;
 	Poly::gConsole.LogDebug("Library libGame loaded.");
-	
-	{ // Start engine scope
-		Poly::Engine Engine;
-		Poly::gConsole.LogDebug("Engine created.");
 		
-		std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(loadGame());
-		Poly::gConsole.LogDebug("Game created");
+	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(loadGame());
+	Poly::gConsole.LogDebug("Game created");
 
-		std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(loadRenderingDevice(window, screenSize));
-		Poly::gConsole.LogDebug("Device created.");
+	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(loadRenderingDevice(window, screenSize));
+	Poly::gConsole.LogDebug("Device created.");
 
-		Engine.Init(std::move(game), std::move(device));
-		Poly::gConsole.LogDebug("Engine initialization and handshake successfull. Starting main loop...");
+	Engine->Init(std::move(game), std::move(device));
+	Poly::gConsole.LogDebug("Engine initialization and handshake successfull. Starting main loop...");
 
-		bool quitRequested = false;
-		while (!quitRequested)
+	bool quitRequested = false;
+	while (!quitRequested)
+	{
+		// Handle events
+		SDL_Event event;
+		while (SDL_PollEvent(&event))
 		{
-			// Handle events
-			SDL_Event event;
-			while (SDL_PollEvent(&event))
+			switch (event.type)
 			{
-				switch (event.type)
-				{
-				// TODO add controller support
-				case SDL_QUIT:
-					quitRequested = true;
-					break;
-				case SDL_KEYDOWN:
-					Engine.KeyDown(static_cast<Poly::eKey>(event.key.keysym.scancode));
-					break;
-				case SDL_KEYUP:
-					Engine.KeyUp(static_cast<Poly::eKey>(event.key.keysym.scancode));
-					break;
-				case SDL_MOUSEMOTION:
-					Engine.UpdateMousePos(Poly::Vector2i(event.motion.x, event.motion.y));
-					break;
-				case SDL_MOUSEBUTTONDOWN:
-                    Engine.MouseButtonDown(static_cast<Poly::eMouseButton>(event.button.button));
-                    break;
-				case SDL_MOUSEBUTTONUP:
-                    Engine.MouseButtonUp(static_cast<Poly::eMouseButton>(event.button.button));
-					break;
-				case SDL_MOUSEWHEEL:
-					// Not sure if this is correct.
-					Engine.UpdateWheelPos(Poly::Vector2i(event.wheel.x, event.wheel.y));
-					break;
-				case SDL_WINDOWEVENT:
-					HandleWindowEvent(event.window);
-					break;
-				default:
-					break;
-				}
+			// TODO add controller support
+			case SDL_QUIT:
+				quitRequested = true;
+				break;
+			case SDL_KEYDOWN:
+				Engine->KeyDown(static_cast<Poly::eKey>(event.key.keysym.scancode));
+				break;
+			case SDL_KEYUP:
+				Engine->KeyUp(static_cast<Poly::eKey>(event.key.keysym.scancode));
+				break;
+			case SDL_MOUSEMOTION:
+				Engine->UpdateMousePos(Poly::Vector2i(event.motion.x, event.motion.y));
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+                Engine->MouseButtonDown(static_cast<Poly::eMouseButton>(event.button.button));
+                break;
+			case SDL_MOUSEBUTTONUP:
+                Engine->MouseButtonUp(static_cast<Poly::eMouseButton>(event.button.button));
+				break;
+			case SDL_MOUSEWHEEL:
+				// Not sure if this is correct.
+				Engine->UpdateWheelPos(Poly::Vector2i(event.wheel.x, event.wheel.y));
+				break;
+			case SDL_WINDOWEVENT:
+				HandleWindowEvent(event.window);
+				break;
+			default:
+				break;
 			}
-
-			// Engine loop
-			Engine.Update();
-			quitRequested = quitRequested || Engine.IsQuitRequested();
 		}
-		Poly::gConsole.LogDebug("Closing main loop...");
-	} // End engine scope
+
+		// Engine loop
+		Engine->Update();
+		quitRequested = quitRequested || Engine->IsQuitRequested();
+	}
+	Poly::gConsole.LogDebug("Closing main loop...");
 	
+	Engine.reset();
+
 	// Destroy window
 	SDL_DestroyWindow(window);
 
