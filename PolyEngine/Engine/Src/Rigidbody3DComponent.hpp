@@ -8,7 +8,6 @@
 class btCollisionShape;
 struct btDefaultMotionState;
 class btRigidBody;
-class btSliderConstraint;
 
 namespace Poly
 {
@@ -28,18 +27,18 @@ namespace Poly
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
 	public:
 		Rigidbody3DComponent(World* world, eRigidBody3DType type, btCollisionShape* shape, float mass);
-		
+		~Rigidbody3DComponent();
 
 		eRigidBody3DType GetBodyType() const { return BodyType; }
 
 	private:
+
 		World* BodyWorld;
 		eRigidBody3DType BodyType;
 
 		btCollisionShape* Shape;
 		btDefaultMotionState* MotionState;
 		btRigidBody* RigidBody;
-		btSliderConstraint* Constraint;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, Rigidbody3DComponent)

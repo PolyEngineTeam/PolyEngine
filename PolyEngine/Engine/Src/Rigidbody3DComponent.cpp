@@ -1,22 +1,37 @@
 #include "EnginePCH.hpp"
 
-Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType type, btCollisionShape* shape, float mass)
-{
-	//Shape = std::move(shape);
-	//
-	//btVector3 inertia(0, 0, 0);
-	//if (mass > 0) Shape->calculateLocalInertia(mass, inertia);
-	//
-	//TransformComponent* trans = world->GetComponent<TransformComponent>(GetOwnerID());
-	//Vector translation = trans->GetGlobalTranslation();
-	//Quaternion rotation = trans->GetGlobalRotation();
+#include "btBulletDynamicsCommon.h"
 
-	//btVector3 v(translation.X, translation.Y, translation.Z);
-	//btQuaternion q(rotation.X, rotation.Y, rotation.Z, rotation.W);
-	//btTransform t(q, v);
+Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType type, btCollisionShape* shape, float mass)
+	: BodyType(type)
+{
+	Shape = shape;
 	
-	//btDefaultMotionState m(t);
-	//MotionState = std::unique_ptr<btDefaultMotionState>(new btDefaultMotionState(t));
-	//
-	//RigidBody = std::unique_ptr<btRigidBody>(new btRigidBody({ mass, MotionState.get(), Shape.get(), inertia }));
+	TransformComponent* trans = world->GetComponent<TransformComponent>(GetOwnerID());
+	Vector translation = trans->GetGlobalTranslation();
+	Quaternion rotation = trans->GetGlobalRotation();
+	
+	MotionState = new btDefaultMotionState(btTransform({ rotation.X, rotation.Y, rotation.Z, rotation.W }, { translation.X, translation.Y, translation.Z }));
+	
+	btVector3 inertia(0, 0, 0);
+
+	switch (type)
+	{
+	case eRigidBody3DType::STATIC:
+		break;
+
+	case eRigidBody3DType::KINEMATIC:
+		break;
+
+	case eRigidBody3DType::DYNAMIC:
+		ASSERTE(type != eRigidBody3DType::STATIC && mass > 0, "Can't create dynamic body with 0 mass.");
+		Shape->calculateLocalInertia(mass, inertia);
+		break;
+	}
+
+	RigidBody = new btRigidBody({ mass, MotionState, Shape, inertia });
+}
+
+Poly::Rigidbody3DComponent::~Rigidbody3DComponent()
+{
 }

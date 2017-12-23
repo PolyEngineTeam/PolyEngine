@@ -11,5 +11,5 @@ Poly::Rigidbody3DWorldComponent::Rigidbody3DWorldComponent()
 	
 	DynamicsWorld = new btDiscreteDynamicsWorld(Dispatcher, Broadphase, Solver, CollisionConfiguration);
 
-	DynamicsWorld->setGravity(btVector3(0, -10, 0));
+	DynamicsWorld->setGravity(btVector3(0, 0, 0));
 }
