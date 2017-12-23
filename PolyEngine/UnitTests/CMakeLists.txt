@@ -48,7 +48,7 @@ endif(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 add_custom_command(
 		TARGET polytests
 		POST_BUILD
-			# Inhouse DLL's
+			# Inhouse shared library dependancies
 			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polycore>" "$<TARGET_FILE_DIR:polytests>"
 			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polyengine>" "$<TARGET_FILE_DIR:polytests>"
 			

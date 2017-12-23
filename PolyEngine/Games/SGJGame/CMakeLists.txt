@@ -54,7 +54,7 @@ add_custom_command(
 add_custom_command(
 		TARGET sgjgame
 		POST_BUILD
-			# Inhouse DLL's
+			# Inhouse shared library dependancies
 			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polycore>" "$<TARGET_FILE_DIR:sgjgame>"
 			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polyengine>" "$<TARGET_FILE_DIR:sgjgame>"
 			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polyrun>" "$<TARGET_FILE_DIR:sgjgame>"
