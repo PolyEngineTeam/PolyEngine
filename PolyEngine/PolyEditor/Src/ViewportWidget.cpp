@@ -1,6 +1,7 @@
 #include "PolyEditorPCH.hpp"
 #include <Engine.hpp>
 #include <LibraryLoader.hpp>
+#include <AssetsPathConfig.hpp>
 #include <SDL.h>
 
 extern "C"
@@ -22,14 +23,17 @@ ViewportWidget::ViewportWidget(const QString& title, QWidget* parent) :
 	setFocusPolicy(Qt::ClickFocus);
 	setMinimumSize(320, 200);
 
+	connect(gApp, &EditorApp::EngineCreated, [this]() { InitializeViewport(); });
+}
+
+// ---------------------------------------------------------------------------------------------------------
+void ViewportWidget::InitializeViewport()
+{
 	// TODO fix library names differences between platforms
 	if (!LoadRenderingDevice.FunctionValid())
 	{
 		// Load rendering device library
-		LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>("libRenderingDevice", "PolyCreateRenderingDevice");
-		// Try to load library with different name
-		if (!LoadRenderingDevice.FunctionValid())
-			LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>("libpolyrenderingdevice", "PolyCreateRenderingDevice");
+		LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>(Poly::gAssetsPathConfig.GetRenderingDeviceLibPath().GetCStr(), "PolyCreateRenderingDevice");
 		ASSERTE(LoadRenderingDevice.FunctionValid(), "Library libRenderingDevice load failed");
 		Poly::gConsole.LogDebug("Library libRenderingDevice loaded.");
 	}
@@ -37,20 +41,12 @@ ViewportWidget::ViewportWidget(const QString& title, QWidget* parent) :
 	if (!LoadGame.FunctionValid())
 	{
 		// Load game library
-		LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("libGame", "CreateGame");
-		// Try to load library with different name
-		if (!LoadGame.FunctionValid())
-			LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("libgame", "CreateGame");
+		LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>(Poly::gAssetsPathConfig.GetGameLibPath().GetCStr(), "CreateGame");
 		ASSERTE(LoadGame.FunctionValid(), "Library libGame load failed");
 		Poly::gConsole.LogDebug("Library libGame loaded.");
 	}
-
-	connect(gApp, &EditorApp::EngineCreated, [this]() { InitializeViewport(); });
-}
-
-// ---------------------------------------------------------------------------------------------------------
-void ViewportWidget::InitializeViewport()
-{
+	
+	
 	Poly::ScreenSize viewportRect;
 	viewportRect.Width = width();
 	viewportRect.Height = height();
