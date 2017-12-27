@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ComponentBase.hpp"
+
 class btDiscreteDynamicsWorld;
 class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
@@ -15,9 +17,10 @@ namespace Poly
 		const Vector Gravity = Vector(0.f, -9.81f, 0.f);
 	};
 
-	class ENGINE_DLLEXPORT Physics3DWorldComponent
+	class ENGINE_DLLEXPORT Physics3DWorldComponent : public ComponentBase
 	{
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
+		friend void Physics3DSystem::RegisterRigidbody(World* world, btRigidBody* body);
 	public:
 		Physics3DWorldComponent(Physics3DConfig config);
 

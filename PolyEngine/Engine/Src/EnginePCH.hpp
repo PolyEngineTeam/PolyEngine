@@ -39,6 +39,7 @@
 #include "SoundListenerComponent.hpp"
 #include "TransformComponent.hpp"
 #include "Physics2DColliders.hpp"
+#include "Physics3DShapes.hpp"
 #include "Rigidbody2DComponent.hpp"
 #include "Rigidbody3DComponent.hpp"
 #include "LightSourceComponent.hpp"

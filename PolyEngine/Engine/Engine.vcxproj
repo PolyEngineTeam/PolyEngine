@@ -245,6 +245,7 @@
     <ClInclude Include="Src\DeferredTaskSystem.hpp" />
     <ClInclude Include="Src\LightSourceComponent.hpp" />
     <ClInclude Include="Src\Physics2DWorldComponent.hpp" />
+    <ClInclude Include="Src\Physics3DShapes.hpp" />
     <ClInclude Include="Src\Physics3DSystem.hpp" />
     <ClInclude Include="Src\Physics3DWorldComponent.hpp" />
     <ClInclude Include="Src\PostprocessSettingsComponent.hpp" />

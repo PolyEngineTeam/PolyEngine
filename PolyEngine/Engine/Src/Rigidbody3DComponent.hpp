@@ -4,6 +4,7 @@
 
 #include "ComponentBase.hpp"
 #include "Physics3DSystem.hpp"
+#include "Physics3DShapes.hpp"
 
 class btCollisionShape;
 struct btDefaultMotionState;
@@ -21,17 +22,17 @@ namespace Poly
 		_COUNT
 	};
 
-	class Rigidbody3DComponent : public ComponentBase
+	class ENGINE_DLLEXPORT Rigidbody3DComponent : public ComponentBase
 	{
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
 	public:
-		Rigidbody3DComponent(World* world, eRigidBody3DType type, btCollisionShape* shape, float mass);
+		Rigidbody3DComponent(World* world, eRigidBody3DType type, Physics3DShape* shape, float mass = 0);
 		~Rigidbody3DComponent();
 
 		eRigidBody3DType GetBodyType() const { return BodyType; }
+		void UpdatePosition();
 
 	private:
-		void UpdatePosition();
 
 		World* BodyWorld;
 		eRigidBody3DType BodyType;

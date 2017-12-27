@@ -43,3 +43,8 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 		transform->SetLocalRotation(localrot);
 	}
 }
+
+void Poly::Physics3DSystem::RegisterRigidbody(World * world, btRigidBody* body)
+{
+	world->GetWorldComponent<Physics3DWorldComponent>()->DynamicsWorld->addRigidBody(body);
+}
