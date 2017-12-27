@@ -17,7 +17,6 @@ namespace Poly
 	enum class eRigidBody3DType
 	{
 		STATIC,
-		KINEMATIC,
 		DYNAMIC,
 		_COUNT
 	};
@@ -32,6 +31,7 @@ namespace Poly
 		eRigidBody3DType GetBodyType() const { return BodyType; }
 
 	private:
+		void UpdatePosition();
 
 		World* BodyWorld;
 		eRigidBody3DType BodyType;

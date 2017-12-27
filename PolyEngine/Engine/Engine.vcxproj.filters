@@ -215,14 +215,14 @@
     <ClCompile Include="Src\ComponentIDGenerator.cpp">
       <Filter>Source Files\ECS</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Rigidbody3DComponent.cpp">
-      <Filter>Source Files\Physics3D\Components</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Physics3DSystem.cpp">
       <Filter>Source Files\Physics3D</Filter>
     </ClCompile>
     <ClCompile Include="Src\Physics3DWorldComponent.cpp">
       <Filter>Source Files\Physics3D\World Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Rigidbody3DComponent.cpp">
+      <Filter>Source Files\Physics3D\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -385,14 +385,14 @@
     <ClInclude Include="Src\ComponentIDGenerator.hpp">
       <Filter>Source Files\ECS</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Rigidbody3DComponent.hpp">
-      <Filter>Source Files\Physics3D\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Physics3DSystem.hpp">
       <Filter>Source Files\Physics3D</Filter>
     </ClInclude>
     <ClInclude Include="Src\Physics3DWorldComponent.hpp">
       <Filter>Source Files\Physics3D\World Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Rigidbody3DComponent.hpp">
+      <Filter>Source Files\Physics3D\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
