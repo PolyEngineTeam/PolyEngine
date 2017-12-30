@@ -20,7 +20,8 @@ namespace Poly
 	class ENGINE_DLLEXPORT Physics3DWorldComponent : public ComponentBase
 	{
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
-		friend void Physics3DSystem::RegisterRigidbody(World* world, btRigidBody* body);
+		friend void Physics3DSystem::RegisterRigidbody(World* world, const UniqueID& entityID);
+		friend void Physics3DSystem::UnregisterRigidBody(World* world, const UniqueID& entityID);
 	public:
 		Physics3DWorldComponent(Physics3DConfig config);
 

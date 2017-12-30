@@ -34,8 +34,10 @@ namespace Poly
 	class ENGINE_DLLEXPORT Rigidbody3DComponent : public ComponentBase
 	{
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
+		friend void Physics3DSystem::RegisterRigidbody(World * world, const UniqueID& entityID);
+		friend void Physics3DSystem::UnregisterRigidBody(World * world, const UniqueID& entityID);
 	public:
-		Rigidbody3DComponent(World* world, eRigidBody3DType type, Physics3DShape* shape, float mass);
+		Rigidbody3DComponent(World* world, eRigidBody3DType type, Physics3DShape* shape, float mass = 0);
 		~Rigidbody3DComponent();
 
 		void ApplyForceToCenter(const Vector& force);
@@ -48,31 +50,32 @@ namespace Poly
 		void ApplyTorqueImpulse(const Vector& torque);
 
 		void ClearForces();
+		void UpdatePosition();
 
-		void SetAngularFactor();
+		void SetLinearFactor(float factor);
+		void SetLinearFactor(const Vector& factor);
+		const Vector& GetLinearFactor();
+		void SetLinearVelocity(const Vector& velocity);
+		const Vector& GetLinearVelocity();
+
+		void SetAngularFactor(float factor);
+		void SetAngularFactor(const Vector& factor);
 		const Vector& GetAngularFactor();
-		void SetAngularVelocity();
+		void SetAngularVelocity(const Vector& velocity);
 		const Vector& GetAngularVelocity();
 
-		void SetDamping(float dampfactor);
+		void SetDamping(float LinearDamping, float angularDamping);
 		float GetLinearDamping();
 		float GetAngularDamping();
 
-		void SetGravity();
+		void SetGravity(float gravity);
 		float GetGravity();
 
-		void SetLinearFactor();
-		const Vector& GetLinearFactor();
-		void SetLinearVelocity();
-		const Vector& GetLinearVelocity();
-
-		void SetMassProperties();
+		void SetMassProperties(float mass, const Vector& intertia);
 		float GetInvMass();
 
 		void SetFixedTranslation(bool fixed);
 		void SetFixedRotation(bool fixed);
-
-		void UpdatePosition();
 
 		eRigidBody3DType GetBodyType() const { return BodyType; }
 

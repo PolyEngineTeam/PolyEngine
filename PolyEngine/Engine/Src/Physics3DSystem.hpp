@@ -10,6 +10,7 @@ namespace Poly
 	{
 		void Physics3DUpdatePhase(World* world);
 
-		void RegisterRigidbody(World* world, btRigidBody* body);
+		void RegisterRigidbody(World* world, const UniqueID& entityID);
+		void UnregisterRigidBody(World* world, const UniqueID& entityID);
 	}
 }
