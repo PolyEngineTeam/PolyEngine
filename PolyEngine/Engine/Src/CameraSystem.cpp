@@ -60,5 +60,10 @@ void Poly::CameraSystem::CameraUpdatePhase(World* world)
 		{
 			cameraCmp->SetRenderingMode(eRenderingModeType::DEBUG_NORMALS_WIREFRAME);
 		}
+
+		if (inputCmp->IsPressed(eKey::F10))
+		{
+			cameraCmp->SetRenderingMode(eRenderingModeType::DEBUG);
+		}
 	}
 }

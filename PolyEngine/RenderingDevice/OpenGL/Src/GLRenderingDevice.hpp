@@ -79,6 +79,7 @@ namespace Poly
 		void RenderWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 		void RenderNormals(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 		void RenderNormalsWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderDebug(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 
 		template<typename T>
 		void RegisterGeometryPass(eGeometryRenderPassType type,

@@ -12,6 +12,7 @@ namespace Poly {
 		WIREFRAME,
 		DEBUG_NORMALS,
 		DEBUG_NORMALS_WIREFRAME,
+		DEBUG,
 		_COUNT
 	};
 

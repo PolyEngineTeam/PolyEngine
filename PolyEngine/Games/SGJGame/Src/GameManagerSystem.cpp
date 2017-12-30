@@ -16,6 +16,7 @@
 #include "PlayerControllerComponent.hpp"
 #include "Physics2DWorldComponent.hpp"
 #include <SoundEmitterComponent.hpp>
+#include <DebugRenderingComponent.hpp>
 #include <SoundSystem.hpp>
 
 
@@ -109,8 +110,11 @@ void SGJ::GameManagerSystem::Update(Poly::World* world)
 Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Poly::Vector& position, eTileType tileType, String meshSource,
 	eRigidBody2DType physicsProperties = eRigidBody2DType::STATIC, const Vector& size = Vector(1, 1, 1), const Color& color = Color(0, 0, 0), bool colliding = true)
 {
+	DebugDrawPreset ddrawPreset = physicsProperties == eRigidBody2DType::STATIC ? DebugDrawPreset::STATIC : DebugDrawPreset::DYNAMIC;
+
 	UniqueID tile = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(world, tile);
+	DeferredTaskSystem::AddComponentImmediate<DebugDrawableComponent>(world, tile, ddrawPreset);
 	DeferredTaskSystem::AddComponentImmediate<TileComponent>(world, tile, tileType);
 	DeferredTaskSystem::AddComponentImmediate<Box2DColliderComponent>(world, tile, size * 2);
 
@@ -127,6 +131,7 @@ Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Pol
 
 	UniqueID mesh = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, mesh);
+	DeferredTaskSystem::AddComponentImmediate<DebugDrawableComponent>(world, mesh, ddrawPreset);
 	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, mesh, meshSource, eResourceSource::GAME);
 	world->GetComponent<MeshRenderingComponent>(mesh)->SetMaterial(0, PhongMaterial(color, color, color, 8.0f));
 	world->GetComponent<MeshRenderingComponent>(mesh)->SetShadingModel(eShadingModel::LIT);
@@ -136,6 +141,7 @@ Poly::UniqueID GameManagerSystem::CreateTileObject(Poly::World* world, const Pol
 
 	UniqueID tileFakeGlow = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, tileFakeGlow);
+	DeferredTaskSystem::AddComponentImmediate<DebugDrawableComponent>(world, tileFakeGlow, DebugDrawPreset::GFX);
 	Poly::TransformComponent* glowTrans = world->GetComponent<Poly::TransformComponent>(tileFakeGlow);
 	glowTrans->SetParent(meshTrans);
 	glowTrans->SetLocalTranslation(Vector(0.0f, 0.0f, 0.2f));
@@ -171,6 +177,7 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 {
 	UniqueID player = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, player);
+	DeferredTaskSystem::AddComponentImmediate<DebugDrawableComponent>(world, player, DebugDrawPreset::PLAYER);
 	DeferredTaskSystem::AddComponentImmediate<PlayerControllerComponent>(world, player);
 	PlayerControllerComponent* p = world->GetComponent<PlayerControllerComponent>(player);
 	p->SpawnPoint = position;
@@ -184,6 +191,7 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 
 	UniqueID body = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, body);
+	DeferredTaskSystem::AddComponentImmediate<DebugDrawableComponent>(world, body, DebugDrawPreset::STATIC);
 	Poly::TransformComponent* bodyTrans = world->GetComponent<Poly::TransformComponent>(body);
 	bodyTrans->SetParent(playerTrans);
 	//bodyTrans->SetLocalRotation(Quaternion(Vector::UNIT_X, 90_deg));
@@ -196,6 +204,7 @@ Poly::UniqueID GameManagerSystem::SpawnPlayer(Poly::World* world, const Poly::Ve
 
 	UniqueID playerFakeGlow = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, playerFakeGlow);
+	DeferredTaskSystem::AddComponentImmediate<DebugDrawableComponent>(world, playerFakeGlow, DebugDrawPreset::GFX);
 	Poly::TransformComponent* glowTrans = world->GetComponent<Poly::TransformComponent>(playerFakeGlow);
 	glowTrans->SetParent(playerTrans);	
 	Color playerLightColor = Color(0.0f, 1.0f, 0.0f, 0.5f);
@@ -348,6 +357,7 @@ void SGJ::GameManagerSystem::PrepareNonlevelObjects(Poly::World * world)
 	Quaternion DirLightRot = Quaternion(Vector::UNIT_Y, 80_deg) * Quaternion(Vector::UNIT_X, -80_deg);
 	Poly::UniqueID KeyDirLight = DeferredTaskSystem::SpawnEntityImmediate(world);
 	DeferredTaskSystem::AddComponentImmediate<Poly::TransformComponent>(world, KeyDirLight);
+	DeferredTaskSystem::AddComponentImmediate<DebugDrawableComponent>(world, KeyDirLight, DebugDrawPreset::GFX);
 	DeferredTaskSystem::AddComponentImmediate<Poly::DirectionalLightComponent>(world, KeyDirLight, Color(1.0f, 0.9f, 0.8f), 0.8f);
 	Poly::TransformComponent* dirLightTrans = world->GetComponent<Poly::TransformComponent>(KeyDirLight);
 	dirLightTrans->SetLocalRotation(DirLightRot);

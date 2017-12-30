@@ -31,9 +31,13 @@ namespace Util
 
 void DebugRenderingSystem::DebugRenderingUpdatePhase(World* world)
 {
-	const auto & inputComponent = world->GetWorldComponent<InputWorldComponent>();
-	if(inputComponent->IsPressed(eKey::LCTRL) && inputComponent->IsPressed(eKey::KEY_D))
-		gDebugConfig.DebugRender = !gDebugConfig.DebugRender;
+	gDebugConfig.DebugRender = false;
+	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
+	{
+		CameraComponent* cameraCmp = kv.second.GetCamera();
+		if (cameraCmp->GetRenderingMode() == eRenderingModeType::DEBUG)
+			gDebugConfig.DebugRender = true;
+	}
 
 	if(!gDebugConfig.DebugRender)
 		return;
@@ -43,10 +47,17 @@ void DebugRenderingSystem::DebugRenderingUpdatePhase(World* world)
 	// iterate RenderMode::_COUNT times to create shapes defining debug primitives
 	for(int renderMode = static_cast<int>(RenderMode::LINE); renderMode < static_cast<int>(RenderMode::_COUNT); ++renderMode)
 	{
-		for(auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
+		for(auto componentsTuple : world->IterateComponents<DebugDrawableComponent, MeshRenderingComponent, TransformComponent>())
 		{
+			const auto ddrawCmp = std::get<DebugDrawableComponent*>(componentsTuple);
 			const auto meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 			const auto transformCmp = std::get<TransformComponent*>(componentsTuple);
+
+			if (meshCmp == nullptr)
+				continue;
+
+			if (!gDebugConfig.DebugDrawPresets.IsSet(ddrawCmp->entityPreset))
+				continue;
 
 			Vector objPos = transformCmp->GetGlobalTranslation();
 
@@ -59,52 +70,72 @@ void DebugRenderingSystem::DebugRenderingUpdatePhase(World* world)
 
 				// find mins and maxs of each mesh coordinates
 				// in order to create AABB
-				auto minVector = Util::findExtremum(meshVerticesPositions, std::less<float>());
-				auto maxVector = Util::findExtremum(meshVerticesPositions, std::greater<float>());
+				auto minMeshVector = Util::findExtremum(meshVerticesPositions, std::less<float>());
+				auto maxMeshVector = Util::findExtremum(meshVerticesPositions, std::greater<float>());
 
-				Vector _minVector(minVector.X, minVector.Y, minVector.Z);
-				Vector _maxVector(maxVector.X, maxVector.Y, maxVector.Z);
+				Vector minVector(minMeshVector.X, minMeshVector.Y, minMeshVector.Z);
+				Vector maxVector(maxMeshVector.X, maxMeshVector.Y, maxMeshVector.Z);
 
-				_minVector = objTransform * _minVector;
-				_maxVector = objTransform * _maxVector;
+				minVector = objTransform * minVector;
+				maxVector = objTransform * maxVector;
 
-				const float boundingOffset = 0.04f;
-				// convert from Vector to Mesh::Vector3D and move avay a little bit from a mesh
-				minVector.X = _minVector.X - boundingOffset;
-				minVector.Y = _minVector.Y - boundingOffset;
-				minVector.Z = _minVector.Z - boundingOffset;
-				maxVector.X = _maxVector.X + boundingOffset;
-				maxVector.Y = _maxVector.Y + boundingOffset;
-				maxVector.Z = _maxVector.Z + boundingOffset;
+				const auto boundingOffset = Vector(0.04f, 0.04f, 0.04f);
+				// move vector away a little bit from a mesh
+				minVector -= boundingOffset;
+				maxVector += boundingOffset;
 
 				EmitBox(world, minVector, maxVector);
 			}
 		}
+
+		for (auto componentsTuple : world->IterateComponents<RigidBody2DComponent, DebugDrawableComponent, TransformComponent>())
+		{
+			const auto rigidbodyCmp = std::get<RigidBody2DComponent*>(componentsTuple);
+			const auto ddrawCmp = std::get<DebugDrawableComponent*>(componentsTuple);
+			const auto transformCmp = std::get<TransformComponent*>(componentsTuple);
+
+			if (ddrawCmp == nullptr)
+				continue;
+
+			if (!gDebugConfig.DebugDrawPresets.IsSet(ddrawCmp->entityPreset))
+				continue;
+
+			auto localTrans = transformCmp->GetLocalTranslation();
+			auto velocity = rigidbodyCmp->GetLinearVelocity();
+
+			if (velocity.LengthSquared() == 0.0f)
+				continue;
+
+			EmitArrow(world, localTrans, velocity);
+		}
 	}
 }
 
-void Poly::DebugRenderingSystem::EmitPoint(Vector position, float size)
+void Poly::DebugRenderingSystem::EmitPoint(World* world, Mesh::Vector3D position, float size)
 {
 }
 
-void Poly::DebugRenderingSystem::EmitLine(World* world, Mesh::Vector3D begin, Mesh::Vector3D end)
+void Poly::DebugRenderingSystem::EmitLine(World* world, Vector begin, Vector end)
 {
+	Mesh::Vector3D meshvecBegin, meshvecEnd;
+	meshvecBegin.X = begin.X; meshvecBegin.Y = begin.Y; meshvecBegin.Z = begin.Z;
+	meshvecEnd.X = end.X; meshvecEnd.Y = end.Y; meshvecEnd.Z = end.Z;
 	auto debugLinesComponent = world->GetWorldComponent<DebugRenderingLinesComponent>();
-	debugLinesComponent->DebugLines.PushBack(DebugRenderingLinesComponent::DebugLine{ begin, end });
+	debugLinesComponent->DebugLines.PushBack(DebugRenderingLinesComponent::DebugLine{ meshvecBegin, meshvecEnd });
 	Mesh::Vector3D colorBegin, colorEnd;
 	colorBegin.X = 0.0f; colorBegin.Y = 0.3f; colorBegin.Z = 0.0f;
 	colorEnd.X = 0.0f; colorEnd.Y = 0.2f; colorEnd.Z = 0.0f;
 	debugLinesComponent->DebugLinesColors.PushBack(DebugRenderingLinesComponent::DebugLine{ colorBegin, colorEnd });
 }
 
-void Poly::DebugRenderingSystem::EmitQuad(Vector mins, Vector maxs)
+void Poly::DebugRenderingSystem::EmitQuad(Mesh::Vector3D mins, Mesh::Vector3D maxs)
 {
 }
 
-void Poly::DebugRenderingSystem::EmitBox(World* world, Mesh::Vector3D mins, Mesh::Vector3D maxs)
+void Poly::DebugRenderingSystem::EmitBox(World* world, Vector mins, Vector maxs)
 {
-	std::array<Mesh::Vector3D, 8> points;
-	std::array<Mesh::Vector3D, 2> minmaxVector = { mins, maxs };
+	std::array<Vector, 8> points;
+	std::array<Vector, 2> minmaxVector = { mins, maxs };
 
 	for (int i = 0; i < points.size(); ++i)
 	{
@@ -141,10 +172,34 @@ void Poly::DebugRenderingSystem::EmitBox(World* world, Mesh::Vector3D mins, Mesh
 	EmitLine(world, points[5], points[6]);
 }
 
-void Poly::DebugRenderingSystem::EmitSphere(Vector position, float radius)
+void Poly::DebugRenderingSystem::EmitSphere(World* world, Mesh::Vector3D position, float radius)
 {
 }
 
-void Poly::DebugRenderingSystem::EmitArrow(Vector position, Vector direction)
+void Poly::DebugRenderingSystem::EmitArrow(World* world, Vector position, Vector directionVector)
 {
+	constexpr float arrowLengthScale = 0.5f;
+	constexpr float arrowheadScale = 0.5f;
+	
+	// body line
+	auto arrowTip = position + directionVector*arrowLengthScale;
+	EmitLine(world, position, arrowTip);
+	directionVector.Normalize();
+
+	// arrowhead
+	const auto rotationStep = Angle::FromDegrees(24.0f);
+	Quaternion rotAroundDirectionVector;
+	rotAroundDirectionVector.SetRotation(directionVector, rotationStep);
+
+	// calculate point which sets edge points around the arrowhead
+	auto arrowTipEdgePoint = position.Cross(directionVector);
+	arrowTipEdgePoint.Normalize();
+	arrowTipEdgePoint *= arrowheadScale; // scale the arrowhead (cone base diameter)
+
+	for (float degrees = 0.0f; degrees < 360.0f; degrees += rotationStep.AsDegrees())
+	{
+		EmitLine(world, arrowTip, arrowTip + arrowTipEdgePoint);
+		EmitLine(world, arrowTip + arrowTipEdgePoint, arrowTip + directionVector*arrowheadScale);
+		arrowTipEdgePoint = rotAroundDirectionVector*arrowTipEdgePoint;
+	}
 }
