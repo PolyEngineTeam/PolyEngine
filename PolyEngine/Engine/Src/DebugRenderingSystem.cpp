@@ -1,4 +1,5 @@
 #include "EnginePCH.hpp"
+#include <cmath>
 
 #include "DebugRenderingComponent.hpp"
 #include "DebugRenderingSystem.hpp"
@@ -26,6 +27,17 @@ namespace Util
 		}
 
 		return result;
+	}
+
+	/// <summary>Produces two orthonormal vectors from a single normal vector.</summary>
+	/// Building an Orthonormal Basis, Revisited; http://jcgt.org/published/0006/01/01/
+	void branchlessONB(const Vector & n, Vector & b1, Vector & b2)
+	{
+		float sign = std::copysignf(1.0f, n.Z);
+		const float a = -1.0f / (sign + n.Z);
+		const float b = n.X * n.Y * a;
+		b1 = Vector(1.0f + sign * n.X * n.X * a, sign * b, -sign * n.X);
+		b2 = Vector(b, sign + n.Y * n.Y * a, -n.Y);
 	}
 }
 
@@ -111,7 +123,7 @@ void DebugRenderingSystem::DebugRenderingUpdatePhase(World* world)
 	}
 }
 
-void Poly::DebugRenderingSystem::EmitPoint(World* world, Mesh::Vector3D position, float size)
+void Poly::DebugRenderingSystem::EmitPoint(World* world, Vector position, float size)
 {
 }
 
@@ -172,8 +184,35 @@ void Poly::DebugRenderingSystem::EmitBox(World* world, Vector mins, Vector maxs)
 	EmitLine(world, points[5], points[6]);
 }
 
-void Poly::DebugRenderingSystem::EmitSphere(World* world, Mesh::Vector3D position, float radius)
+void Poly::DebugRenderingSystem::EmitCircle(World * world, Vector position, float radius, Vector orientation)
 {
+	const auto circleSegmentStep = Angle::FromDegrees(15.0f);
+	orientation.Normalize();
+
+	Quaternion rotAroundCircle;
+	rotAroundCircle.SetRotation(orientation, circleSegmentStep);
+
+	// get a vector perpendicular to orientation
+	Vector right, forward; // forward is unused
+	Util::branchlessONB(orientation, right, forward);
+
+	right *= radius;
+
+	for(float degrees = 0.0f; degrees < 360.0f; degrees += circleSegmentStep.AsDegrees())
+	{
+		Vector previousSegmentPoint = right;
+		right = rotAroundCircle*right;
+		EmitLine(world, position + previousSegmentPoint, position + right);
+	}
+
+	EmitArrow(world, position, right);
+}
+
+void Poly::DebugRenderingSystem::EmitSphere(World* world, Vector position, float radius)
+{
+	EmitCircle(world, position, radius, Vector(1.0f, 0.0f, 0.0f));
+	EmitCircle(world, position, radius, Vector(0.0f, 1.0f, 0.0f));
+	EmitCircle(world, position, radius, Vector(0.0f, 0.0f, 1.0f));
 }
 
 void Poly::DebugRenderingSystem::EmitArrow(World* world, Vector position, Vector directionVector)

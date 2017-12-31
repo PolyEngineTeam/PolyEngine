@@ -15,7 +15,7 @@ Engine::Engine()
 	gAssetsPathConfig.Load();
 	gDebugConfig.Load();
 	// also set presets for debug draw (DebugDrawPresets)
-	// TO DO: update debug draw presets from GUI
+	// @todo update debug draw presets from GUI
 	gDebugConfig.DebugDrawPresets |= DebugDrawPreset::DYNAMIC;
 }
 
