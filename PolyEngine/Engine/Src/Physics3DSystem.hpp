@@ -8,9 +8,9 @@ namespace Poly
 {
 	namespace Physics3DSystem
 	{
-		void Physics3DUpdatePhase(World* world);
+		void ENGINE_DLLEXPORT Physics3DUpdatePhase(World* world);
 
-		void RegisterRigidbody(World* world, const UniqueID& entityID);
-		void UnregisterRigidBody(World* world, const UniqueID& entityID);
+		void ENGINE_DLLEXPORT RegisterRigidbody(World* world, const UniqueID& entityID);
+		void ENGINE_DLLEXPORT UnregisterRigidBody(World* world, const UniqueID& entityID);
 	}
 }

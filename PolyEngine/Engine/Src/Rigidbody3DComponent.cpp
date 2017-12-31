@@ -36,7 +36,6 @@ Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType 
 	}
 
 	RigidBody = new btRigidBody(btRigidBody::btRigidBodyConstructionInfo(mass, MotionState, Shape, inertia));
-	Physics3DSystem::RegisterRigidbody(world, RigidBody);
 }
 
 Poly::Rigidbody3DComponent::~Rigidbody3DComponent()

@@ -44,12 +44,12 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 	}
 }
 
-void Poly::Physics3DSystem::RegisterRigidbody(World * world, const UniqueID& entityID)
+void Poly::Physics3DSystem::RegisterRigidbody(World* world, const UniqueID& entityID)
 {
 	world->GetWorldComponent<Physics3DWorldComponent>()->DynamicsWorld->addRigidBody(world->GetComponent<Rigidbody3DComponent>(entityID)->RigidBody);
 }
 
-void Poly::Physics3DSystem::UnregisterRigidBody(World * world, const UniqueID & entityID)
+void Poly::Physics3DSystem::UnregisterRigidBody(World* world, const UniqueID& entityID)
 {
 	world->GetWorldComponent<Physics3DWorldComponent>()->DynamicsWorld->removeRigidBody(world->GetComponent<Rigidbody3DComponent>(entityID)->RigidBody);
 }

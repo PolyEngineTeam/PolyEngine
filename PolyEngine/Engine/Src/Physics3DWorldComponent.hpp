@@ -40,4 +40,6 @@ namespace Poly
 
 		float LastDeltaOverflow = 0.f;
 	};
+
+	REGISTER_COMPONENT(WorldComponentsIDGroup, Physics3DWorldComponent)
 }
