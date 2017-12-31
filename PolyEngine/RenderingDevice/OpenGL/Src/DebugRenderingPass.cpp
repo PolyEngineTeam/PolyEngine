@@ -4,7 +4,7 @@
 
 #include <World.hpp>
 #include <CameraComponent.hpp>
-#include <DebugRenderingComponent.hpp>
+#include <DebugDrawComponents.hpp>
 
 using namespace Poly;
 

@@ -42,7 +42,7 @@
 #include "Rigidbody2DComponent.hpp"
 #include "LightSourceComponent.hpp"
 #include "PostprocessSettingsComponent.hpp"
-#include "DebugRenderingComponent.hpp"
+#include "DebugDrawComponents.hpp"
 
 // World Components
 #include "DebugWorldComponent.hpp"
@@ -58,7 +58,7 @@
 #include "SoundSystem.hpp"
 #include "DeferredTaskSystem.hpp"
 #include "Physics2DSystem.hpp"
-#include "DebugRenderingSystem.hpp"
+#include "DebugDrawSystem.hpp"
 
 // Config
 #include "AssetsPathConfig.hpp"

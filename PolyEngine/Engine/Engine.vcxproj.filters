@@ -215,7 +215,7 @@
     <ClCompile Include="Src\CubemapResource.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Src\DebugRenderingSystem.cpp">
+    <ClCompile Include="Src\DebugDrawSystem.cpp">
       <Filter>Source Files\Debug\DebugRendering</Filter>
     </ClCompile>
     <ClCompile Include="Src\DebugRenderingComponent.cpp">
@@ -388,10 +388,10 @@
     <ClInclude Include="Src\CubemapResource.hpp">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Src\DebugRenderingSystem.hpp">
+    <ClInclude Include="Src\DebugDrawComponents.hpp">
       <Filter>Source Files\Debug\DebugRendering</Filter>
     </ClInclude>
-    <ClInclude Include="Src\DebugRenderingComponent.hpp">
+    <ClInclude Include="Src\DebugDrawSystem.hpp">
       <Filter>Source Files\Debug\DebugRendering</Filter>
     </ClInclude>
   </ItemGroup>

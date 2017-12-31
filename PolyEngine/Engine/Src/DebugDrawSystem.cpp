@@ -1,8 +1,8 @@
 #include "EnginePCH.hpp"
 #include <cmath>
 
-#include "DebugRenderingComponent.hpp"
-#include "DebugRenderingSystem.hpp"
+#include "DebugDrawComponents.hpp"
+#include "DebugDrawSystem.hpp"
 
 using namespace Poly;
 
@@ -41,7 +41,7 @@ namespace Util
 	}
 }
 
-void DebugRenderingSystem::DebugRenderingUpdatePhase(World* world)
+void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 {
 	gDebugConfig.DebugRender = false;
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
@@ -123,11 +123,11 @@ void DebugRenderingSystem::DebugRenderingUpdatePhase(World* world)
 	}
 }
 
-void Poly::DebugRenderingSystem::EmitPoint(World* world, Vector position, float size)
+void Poly::DebugDrawSystem::EmitPoint(World* world, Vector position, float size)
 {
 }
 
-void Poly::DebugRenderingSystem::EmitLine(World* world, Vector begin, Vector end)
+void Poly::DebugDrawSystem::EmitLine(World* world, Vector begin, Vector end)
 {
 	Mesh::Vector3D meshvecBegin, meshvecEnd;
 	meshvecBegin.X = begin.X; meshvecBegin.Y = begin.Y; meshvecBegin.Z = begin.Z;
@@ -140,11 +140,11 @@ void Poly::DebugRenderingSystem::EmitLine(World* world, Vector begin, Vector end
 	debugLinesComponent->DebugLinesColors.PushBack(DebugRenderingLinesComponent::DebugLine{ colorBegin, colorEnd });
 }
 
-void Poly::DebugRenderingSystem::EmitQuad(Mesh::Vector3D mins, Mesh::Vector3D maxs)
+void Poly::DebugDrawSystem::EmitQuad(Mesh::Vector3D mins, Mesh::Vector3D maxs)
 {
 }
 
-void Poly::DebugRenderingSystem::EmitBox(World* world, Vector mins, Vector maxs)
+void Poly::DebugDrawSystem::EmitBox(World* world, Vector mins, Vector maxs)
 {
 	std::array<Vector, 8> points;
 	std::array<Vector, 2> minmaxVector = { mins, maxs };
@@ -184,7 +184,7 @@ void Poly::DebugRenderingSystem::EmitBox(World* world, Vector mins, Vector maxs)
 	EmitLine(world, points[5], points[6]);
 }
 
-void Poly::DebugRenderingSystem::EmitCircle(World * world, Vector position, float radius, Vector orientation)
+void Poly::DebugDrawSystem::EmitCircle(World * world, Vector position, float radius, Vector orientation)
 {
 	const auto circleSegmentStep = Angle::FromDegrees(15.0f);
 	orientation.Normalize();
@@ -208,14 +208,14 @@ void Poly::DebugRenderingSystem::EmitCircle(World * world, Vector position, floa
 	EmitArrow(world, position, right);
 }
 
-void Poly::DebugRenderingSystem::EmitSphere(World* world, Vector position, float radius)
+void Poly::DebugDrawSystem::EmitSphere(World* world, Vector position, float radius)
 {
 	EmitCircle(world, position, radius, Vector(1.0f, 0.0f, 0.0f));
 	EmitCircle(world, position, radius, Vector(0.0f, 1.0f, 0.0f));
 	EmitCircle(world, position, radius, Vector(0.0f, 0.0f, 1.0f));
 }
 
-void Poly::DebugRenderingSystem::EmitArrow(World* world, Vector position, Vector directionVector)
+void Poly::DebugDrawSystem::EmitArrow(World* world, Vector position, Vector directionVector)
 {
 	constexpr float arrowLengthScale = 0.5f;
 	constexpr float arrowheadScale = 0.5f;

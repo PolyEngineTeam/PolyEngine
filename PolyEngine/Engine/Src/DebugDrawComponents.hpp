@@ -21,7 +21,8 @@ namespace Poly
 	class ENGINE_DLLEXPORT DebugRenderingPointsComponent : public ComponentBase
 	{
 	public:
-		DebugRenderingPointsComponent();
+		DebugRenderingPointsComponent()
+		{ }
 
 		struct DebugPoint
 		{
@@ -36,7 +37,8 @@ namespace Poly
 	class ENGINE_DLLEXPORT DebugRenderingLinesComponent : public ComponentBase
 	{
 	public:
-		DebugRenderingLinesComponent();
+		DebugRenderingLinesComponent()
+		{ }
 
 		struct DebugLine
 		{
@@ -53,7 +55,8 @@ namespace Poly
 	class ENGINE_DLLEXPORT DebugRenderingStringsComponent : public ComponentBase
 	{
 	public:
-		DebugRenderingStringsComponent();
+		DebugRenderingStringsComponent()
+		{ }
 
 		struct DebugString
 		{

@@ -175,8 +175,7 @@
     <ClCompile Include="Src\AssetsPathConfig.cpp" />
     <ClCompile Include="Src\CubemapResource.cpp" />
     <ClCompile Include="Src\DebugConfig.cpp" />
-    <ClCompile Include="Src\DebugRenderingComponent.cpp" />
-    <ClCompile Include="Src\DebugRenderingSystem.cpp" />
+    <ClCompile Include="Src\DebugDrawSystem.cpp" />
     <ClCompile Include="Src\DebugWorldComponent.cpp" />
     <ClCompile Include="Src\Engine.cpp" />
     <ClCompile Include="Src\EnginePCH.cpp">
@@ -236,8 +235,8 @@
     <ClInclude Include="Src\AssetsPathConfig.hpp" />
     <ClInclude Include="Src\CubemapResource.hpp" />
     <ClInclude Include="Src\DebugConfig.hpp" />
-    <ClInclude Include="Src\DebugRenderingComponent.hpp" />
-    <ClInclude Include="Src\DebugRenderingSystem.hpp" />
+    <ClInclude Include="Src\DebugDrawComponents.hpp" />
+    <ClInclude Include="Src\DebugDrawSystem.hpp" />
     <ClInclude Include="Src\DebugWorldComponent.hpp" />
     <ClInclude Include="Src\DeferredTaskWorldComponent.hpp" />
     <ClInclude Include="Src\Engine.hpp" />

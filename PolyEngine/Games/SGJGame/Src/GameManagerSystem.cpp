@@ -16,7 +16,7 @@
 #include "PlayerControllerComponent.hpp"
 #include "Physics2DWorldComponent.hpp"
 #include <SoundEmitterComponent.hpp>
-#include <DebugRenderingComponent.hpp>
+#include <DebugDrawComponents.hpp>
 #include <SoundSystem.hpp>
 
 

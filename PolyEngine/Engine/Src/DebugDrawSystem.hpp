@@ -1,14 +1,11 @@
 #pragma once
 #include "Vector.hpp"
 
-// TODO:
-// rename. there is no actual 'rendering' in this system
-
 namespace Poly
 {
 	class World;
 
-	namespace DebugRenderingSystem
+	namespace DebugDrawSystem
 	{
 		void ENGINE_DLLEXPORT DebugRenderingUpdatePhase(World*);
 
