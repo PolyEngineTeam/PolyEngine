@@ -21,7 +21,7 @@ void DebugRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 
 	// Render Lines
 	{
-		auto debugLinesComponent = world->GetWorldComponent<DebugRenderingLinesComponent>();
+		auto debugLinesComponent = world->GetWorldComponent<DebugDrawLinesComponent>();
 		auto & debugLines = debugLinesComponent->DebugLines;
 		auto & debugLinesColors = debugLinesComponent->DebugLinesColors;
 
@@ -30,13 +30,13 @@ void DebugRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 		// set up buffer
 		glBindVertexArray(debugLinesBuffers.VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, debugLinesBuffers.VBO);
-		glBufferData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugRenderingLinesComponent::DebugLine)
-									+ debugLinesColors.GetSize() * sizeof(DebugRenderingLinesComponent::DebugLine), NULL, GL_STATIC_DRAW);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, debugLines.GetSize() * sizeof(DebugRenderingLinesComponent::DebugLine), (GLvoid*)debugLines.GetData());
-		glBufferSubData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugRenderingLinesComponent::DebugLine), debugLinesColors.GetSize() * sizeof(DebugRenderingLinesComponent::DebugLine), (GLvoid*)debugLinesColors.GetData());
+		glBufferData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugDrawLinesComponent::DebugLine)
+									+ debugLinesColors.GetSize() * sizeof(DebugDrawLinesComponent::DebugLine), NULL, GL_STATIC_DRAW);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, debugLines.GetSize() * sizeof(DebugDrawLinesComponent::DebugLine), (GLvoid*)debugLines.GetData());
+		glBufferSubData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugDrawLinesComponent::DebugLine), debugLinesColors.GetSize() * sizeof(DebugDrawLinesComponent::DebugLine), (GLvoid*)debugLinesColors.GetData());
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vector3D), NULL);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vector3D), (GLvoid*)(debugLines.GetSize() * sizeof(DebugRenderingLinesComponent::DebugLine)));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vector3D), (GLvoid*)(debugLines.GetSize() * sizeof(DebugDrawLinesComponent::DebugLine)));
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 

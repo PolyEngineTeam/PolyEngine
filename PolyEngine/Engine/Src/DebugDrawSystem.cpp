@@ -123,25 +123,17 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 	}
 }
 
-void Poly::DebugDrawSystem::EmitPoint(World* world, Vector position, float size)
-{
-}
-
 void Poly::DebugDrawSystem::EmitLine(World* world, Vector begin, Vector end)
 {
 	Mesh::Vector3D meshvecBegin, meshvecEnd;
 	meshvecBegin.X = begin.X; meshvecBegin.Y = begin.Y; meshvecBegin.Z = begin.Z;
 	meshvecEnd.X = end.X; meshvecEnd.Y = end.Y; meshvecEnd.Z = end.Z;
-	auto debugLinesComponent = world->GetWorldComponent<DebugRenderingLinesComponent>();
-	debugLinesComponent->DebugLines.PushBack(DebugRenderingLinesComponent::DebugLine{ meshvecBegin, meshvecEnd });
+	auto debugLinesComponent = world->GetWorldComponent<DebugDrawLinesComponent>();
+	debugLinesComponent->DebugLines.PushBack(DebugDrawLinesComponent::DebugLine{ meshvecBegin, meshvecEnd });
 	Mesh::Vector3D colorBegin, colorEnd;
 	colorBegin.X = 0.0f; colorBegin.Y = 0.3f; colorBegin.Z = 0.0f;
 	colorEnd.X = 0.0f; colorEnd.Y = 0.2f; colorEnd.Z = 0.0f;
-	debugLinesComponent->DebugLinesColors.PushBack(DebugRenderingLinesComponent::DebugLine{ colorBegin, colorEnd });
-}
-
-void Poly::DebugDrawSystem::EmitQuad(Mesh::Vector3D mins, Mesh::Vector3D maxs)
-{
+	debugLinesComponent->DebugLinesColors.PushBack(DebugDrawLinesComponent::DebugLine{ colorBegin, colorEnd });
 }
 
 void Poly::DebugDrawSystem::EmitBox(World* world, Vector mins, Vector maxs)

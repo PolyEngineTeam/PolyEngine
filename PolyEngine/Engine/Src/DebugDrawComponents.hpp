@@ -18,26 +18,10 @@ namespace Poly
 
 	REGISTER_COMPONENT(ComponentsIDGroup, DebugDrawableComponent)
 
-	class ENGINE_DLLEXPORT DebugRenderingPointsComponent : public ComponentBase
+	class ENGINE_DLLEXPORT DebugDrawLinesComponent : public ComponentBase
 	{
 	public:
-		DebugRenderingPointsComponent()
-		{ }
-
-		struct DebugPoint
-		{
-			Vector Position;
-			Vector Color;
-			float Size;
-		};
-
-		Dynarray<DebugPoint> DebugPoints;
-	};
-
-	class ENGINE_DLLEXPORT DebugRenderingLinesComponent : public ComponentBase
-	{
-	public:
-		DebugRenderingLinesComponent()
+		DebugDrawLinesComponent()
 		{ }
 
 		struct DebugLine
@@ -50,21 +34,5 @@ namespace Poly
 		Dynarray<DebugLine> DebugLinesColors;
 	};
 
-	REGISTER_COMPONENT(WorldComponentsIDGroup, DebugRenderingLinesComponent)
-
-	class ENGINE_DLLEXPORT DebugRenderingStringsComponent : public ComponentBase
-	{
-	public:
-		DebugRenderingStringsComponent()
-		{ }
-
-		struct DebugString
-		{
-			Vector Position; // in 2D orientation (Y axis is 0-ed)
-			Vector Color;
-			float FontSize;
-		};
-
-		Dynarray<DebugString> DebugStrings;
-	};
+	REGISTER_COMPONENT(WorldComponentsIDGroup, DebugDrawLinesComponent)
 }
