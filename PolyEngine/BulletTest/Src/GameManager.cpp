@@ -8,6 +8,8 @@
 #include <Rigidbody3DComponent.hpp>
 #include <Physics3DShapes.hpp>
 #include <Physics3DSystem.hpp>
+#include <MeshRenderingComponent.hpp>
+#include <ConfigBase.hpp>
 
 #include "GameManagerWorldComponent.hpp"
 
@@ -31,6 +33,8 @@ void BT::GameManagerSystem::InitializeDemoWorld(World* world)
 	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(gEngine->GetWorld(), gameManager->Camera, 60_deg, 1.0f, 1000.f);
 	gEngine->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, gEngine->GetWorld()->GetComponent<CameraComponent>(gameManager->Camera));
 	DeferredTaskSystem::AddComponentImmediate<PostprocessSettingsComponent>(gEngine->GetWorld(), gameManager->Camera);
+	TransformComponent* cameraTransform = gEngine->GetWorld()->GetComponent<TransformComponent>(gameManager->Camera);
+	cameraTransform->SetLocalTranslation(Vector(0, 1, 0));
 	//gEngine->GetWorld()->GetComponent<PostprocessSettingsComponent>(gameManager->Camera)->UseFgShader = false;
 	//gEngine->GetWorld()->GetComponent<PostprocessSettingsComponent>(gameManager->Camera)->UseBgShader = false;
 
@@ -39,9 +43,13 @@ void BT::GameManagerSystem::InitializeDemoWorld(World* world)
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(gEngine->GetWorld(), gameManager->Ground);
 	DeferredTaskSystem::AddComponentImmediate<Rigidbody3DComponent>(gEngine->GetWorld(), gameManager->Ground, gEngine->GetWorld(), eRigidBody3DType::STATIC, reinterpret_cast<Physics3DShape*>(&Physics3DBoxShape(Vector(5, 0.5, 5))));
 	Physics3DSystem::RegisterRigidbody(world, gameManager->Ground);
+	DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, gameManager->Ground, "Models/BulletTest/Ground.fbx", eResourceSource::GAME);
+	world->GetComponent<MeshRenderingComponent>(gameManager->Ground)->SetMaterial(0, PhongMaterial(Color(1, 0.5, 0.2), Color(1, 0.5, 0.2), Color(1, 0.5, 0.2), 8.0f));
+	world->GetComponent<MeshRenderingComponent>(gameManager->Ground)->SetShadingModel(eShadingModel::LIT);
 	TransformComponent* groundTransform = gEngine->GetWorld()->GetComponent<TransformComponent>(gameManager->Ground);
 	Rigidbody3DComponent* groundRigidbody = gEngine->GetWorld()->GetComponent<Rigidbody3DComponent>(gameManager->Ground);
 	groundTransform->SetLocalTranslation(Vector(0, 0, 0));
+	groundTransform->SetLocalRotation(Quaternion({ Angle::FromDegrees(-90), Angle::FromDegrees(0), Angle::FromDegrees(0) }));
 	groundRigidbody->UpdatePosition();
 
 	// create stone

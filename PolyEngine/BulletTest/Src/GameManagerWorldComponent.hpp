@@ -9,6 +9,8 @@ namespace BT
 	public:
 		GameManagerWorldComponent() = default;
 
+		Poly::UniqueID Player;
+
 		Poly::UniqueID Camera;
 		Poly::UniqueID Ground;
 		Poly::UniqueID Stone;

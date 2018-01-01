@@ -18,6 +18,9 @@
     <Filter Include="Source Files\Camera">
       <UniqueIdentifier>{0516859a-616c-419b-9276-c854b7229b95}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\PlayerController">
+      <UniqueIdentifier>{9a9e233c-d9e2-4f8e-aa49-41ee85b00981}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Game.cpp">
@@ -28,6 +31,12 @@
     </ClCompile>
     <ClCompile Include="Src\CameraMovementSystem.cpp">
       <Filter>Source Files\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PlayerControllerComponent.cpp">
+      <Filter>Source Files\PlayerController</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PlayerControllerSystem.cpp">
+      <Filter>Source Files\PlayerController</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -42,6 +51,12 @@
     </ClInclude>
     <ClInclude Include="Src\CameraMovementSystem.hpp">
       <Filter>Source Files\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PlayerControllerComponent.hpp">
+      <Filter>Source Files\PlayerController</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PlayerControllerSystem.hpp">
+      <Filter>Source Files\PlayerController</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
