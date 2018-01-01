@@ -141,7 +141,7 @@ void Poly::DebugDrawSystem::EmitBox(World* world, Vector mins, Vector maxs)
 	std::array<Vector, 8> points;
 	std::array<Vector, 2> minmaxVector = { mins, maxs };
 
-	for (int i = 0; i < points.size(); ++i)
+	for (unsigned int i = 0; i < points.size(); ++i)
 	{
 		points[i].X = minmaxVector[(i ^ (i >> 1)) & 1].X;
 		points[i].Y = minmaxVector[(i >> 1) & 1].Y;
