@@ -13,6 +13,7 @@ set(POLYENGINE_SRCS
 	Src/CameraSystem.cpp
 	Src/ConfigBase.cpp
 	Src/DebugConfig.cpp
+	Src/DebugDrawSystem.cpp
 	Src/DebugWorldComponent.cpp
 	Src/DeferredTaskSystem.cpp
 	Src/Engine.cpp
@@ -59,6 +60,8 @@ set(POLYENGINE_H_FOR_IDE
 	Src/ComponentBase.hpp
 	Src/ConfigBase.hpp
 	Src/DebugConfig.hpp
+	Src/DebugDrawComponents.hpp
+	Src/DebugDrawSystem.hpp
 	Src/DebugWorldComponent.hpp
 	Src/DeferredTaskBase.hpp
 	Src/DeferredTaskImplementation.hpp

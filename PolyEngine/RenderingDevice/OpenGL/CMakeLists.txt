@@ -6,6 +6,8 @@ set(POLYGLDEVICE_SRCS
 	Src/BlinnPhongRenderingPass.cpp
 	Src/DebugNormalsRenderingPass.cpp
 	Src/DebugNormalsWireframeRenderingPass.cpp
+	Src/DebugRenderingBuffers.cpp
+	Src/DebugRenderingPass.cpp
 	Src/GLMeshDeviceProxy.cpp
 	Src/GLCubemapDeviceProxy.cpp
 	Src/GLRenderingDevice.cpp
@@ -27,6 +29,8 @@ set(POLYGLDEVICE_H_FOR_IDE
 	Src/BlinnPhongRenderingPass.hpp
 	Src/DebugNormalsRenderingPass.hpp
 	Src/DebugNormalsWireframeRenderingPass.hpp
+	Src/DebugRenderingBuffers.hpp
+	Src/DebugRenderingPass.hpp
 	Src/GLMeshDeviceProxy.hpp
 	Src/GLCubemapDeviceProxy.hpp
 	Src/GLRenderingDevice.hpp
