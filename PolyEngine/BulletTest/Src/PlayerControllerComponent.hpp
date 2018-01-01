@@ -13,6 +13,5 @@ namespace BT
 
 	private:
 		float Velocity = 0.1;
-		float Threshold = 1;
 	};
 }
