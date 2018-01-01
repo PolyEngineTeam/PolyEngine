@@ -13,11 +13,12 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 		rigidbody->UpdatePosition();
 	}
 
-	while (physicsWorldCmp->LastDeltaOverflow >= physicsWorldCmp->Config.TimeStep)
-	{
-		physicsWorldCmp->LastDeltaOverflow -= physicsWorldCmp->Config.TimeStep;
-		physicsWorldCmp->DynamicsWorld->stepSimulation(physicsWorldCmp->Config.TimeStep);
-	}
+	physicsWorldCmp->DynamicsWorld->stepSimulation((float)TimeSystem::GetTimerDeltaTime(world, eEngineTimer::GAMEPLAY));
+	//while (physicsWorldCmp->LastDeltaOverflow >= physicsWorldCmp->Config.TimeStep)
+	//{
+	//	physicsWorldCmp->LastDeltaOverflow -= physicsWorldCmp->Config.TimeStep;
+	//	physicsWorldCmp->DynamicsWorld->stepSimulation(physicsWorldCmp->Config.TimeStep);
+	//}
 
 	for (auto tuple : world->IterateComponents<Rigidbody3DComponent, TransformComponent>())
 	{
