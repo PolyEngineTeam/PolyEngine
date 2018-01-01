@@ -15,9 +15,6 @@
     <Filter Include="Source Files\GameManager">
       <UniqueIdentifier>{9d29372f-1e0f-4d5e-a625-eb29bfb0d3bd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\PlayerController">
-      <UniqueIdentifier>{9a9e233c-d9e2-4f8e-aa49-41ee85b00981}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Game.cpp">
@@ -25,12 +22,6 @@
     </ClCompile>
     <ClCompile Include="Src\GameManager.cpp">
       <Filter>Source Files\GameManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\PlayerControllerComponent.cpp">
-      <Filter>Source Files\PlayerController</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\PlayerControllerSystem.cpp">
-      <Filter>Source Files\PlayerController</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -42,12 +33,6 @@
     </ClInclude>
     <ClInclude Include="Src\GameManagerWorldComponent.hpp">
       <Filter>Source Files\GameManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\PlayerControllerComponent.hpp">
-      <Filter>Source Files\PlayerController</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\PlayerControllerSystem.hpp">
-      <Filter>Source Files\PlayerController</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

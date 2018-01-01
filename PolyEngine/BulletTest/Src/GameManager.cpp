@@ -10,6 +10,7 @@
 #include <Physics3DSystem.hpp>
 #include <MeshRenderingComponent.hpp>
 #include <ConfigBase.hpp>
+#include <FreeFloatMovementComponent.hpp>
 
 #include "GameManagerWorldComponent.hpp"
 
@@ -30,6 +31,7 @@ void BT::GameManagerSystem::InitializeDemoWorld(World* world)
 	// create camera
 	gameManager->Camera = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<TransformComponent>(gEngine->GetWorld(), gameManager->Camera);
+	DeferredTaskSystem::AddComponentImmediate<FreeFloatMovementComponent>(gEngine->GetWorld(), gameManager->Camera);
 	DeferredTaskSystem::AddComponentImmediate<Poly::CameraComponent>(gEngine->GetWorld(), gameManager->Camera, 60_deg, 1.0f, 1000.f);
 	gEngine->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, gEngine->GetWorld()->GetComponent<CameraComponent>(gameManager->Camera));
 	DeferredTaskSystem::AddComponentImmediate<PostprocessSettingsComponent>(gEngine->GetWorld(), gameManager->Camera);
