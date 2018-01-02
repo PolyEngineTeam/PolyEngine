@@ -52,6 +52,13 @@ def ReplaceTagsInFile(fileToSearch, tagsAndValues):
                 line = line.replace(tag, val)
             print(line, end='')
 
+def RunCmake(path, buildDir):
+    # Run cmake update (using undocumented parameters that work for some reason, src: http://cprieto.com/posts/2016/10/cmake-out-of-source-build.html)
+    if os.name == 'nt':
+        os.system(r'cmake -G "Visual Studio 14 2015 Win64" -H' + path + ' -B' + buildDir)
+    else:
+        os.system(r'cmake -H' + path + ' -B' + buildDir)
+
 def CreateProject(name, path, enginePath):
     print('Creating project', name, 'in', path, 'with engine at', enginePath)
 
@@ -82,14 +89,11 @@ def CreateProject(name, path, enginePath):
     ReplaceTagsInFile(path + os.sep + 'CMakeLists.txt', [('$PROJECT_PATH$', name), ('$ENGINE_DIR$', os.path.abspath(enginePath).replace('\\', '/'))])
     ReplaceTagsInFile(projectPath + os.sep + 'CMakeLists.txt', [('$PROJECT_NAME$', name)])
 
-    # Run cmake update (using undocumented parameters that work for some reason, src: http://cprieto.com/posts/2016/10/cmake-out-of-source-build.html)
-    os.system(r'cmake -G "Visual Studio 14 2015 Win64" -H' + path + ' -B' + path + '/Build')
+    RunCmake(path, path + '/Build')
 
 def UpdateProject(path, enginePath):
     print('Updating project at', path, 'with engine at', enginePath)
-
-    # Run cmake update (using undocumented parameters that work for some reason, src: http://cprieto.com/posts/2016/10/cmake-out-of-source-build.html)
-    os.system(r'cmake -G "Visual Studio 14 2015 Win64" -H' + path + ' -B' + path + '/Build')
+    RunCmake(path, path + '/Build')
 
 #################### SCRIPT START ####################
 parser = argparse.ArgumentParser(description='PolyEngine project management tool')
