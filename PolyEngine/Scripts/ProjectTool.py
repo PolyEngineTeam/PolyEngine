@@ -1,4 +1,8 @@
 import argparse
+import os
+import shutil
+import sys
+import fileinput
 from enum import Enum
 
 class ActionType(Enum):
@@ -30,11 +34,62 @@ class UpdateProjectAction(argparse.Action):
 
 # Functions
 # Create project function
+
+# Setup:
+# $PROJECT_NAME$ - name of the project
+# $PROJECT_PATH$ - relative path of the project (game) directory (relative to root project dir)
+# $GAME_CLASS_NAME$ - name of the game class
+# $ENGINE_DIR$ - absolute path to engine root directory
+
+def ReplaceTagsInFile(fileToSearch, tagsAndValues):
+    print('Replacing tags in', fileToSearch)
+    for (tag, val) in tagsAndValues:
+        print('\tchanging', tag, 'to', val)
+
+    with fileinput.FileInput(fileToSearch, inplace=True) as file:
+        for line in file:
+            for (tag, val) in tagsAndValues:
+                line = line.replace(tag, val)
+            print(line, end='')
+
 def CreateProject(name, path, enginePath):
-    print('Creating project', name, 'in', path, 'with engine at', args.enginePath)
+    print('Creating project', name, 'in', path, 'with engine at', enginePath)
+
+    if os.path.exists(path):
+        raise ValueError('Path', path, 'already exists. Cannot create project there!')
+    
+    path = os.path.abspath(path)
+
+
+    os.makedirs(path)
+    os.makedirs(path + os.sep + 'Build')
+
+    projectPath = path + os.sep + name
+    os.makedirs(projectPath)
+    projectResourcesPath = projectPath + os.sep + 'Res'
+    os.makedirs(projectResourcesPath)
+    projectSourcesPath = projectPath + os.sep + 'Src'
+    os.makedirs(projectSourcesPath)
+
+    scriptsDataPath = enginePath + os.sep + 'Scripts'
+    shutil.copy(scriptsDataPath + os.sep + 'Game.hpp.in', projectSourcesPath + os.sep + 'Game.hpp')
+    shutil.copy(scriptsDataPath + os.sep + 'Game.cpp.in', projectSourcesPath + os.sep + 'Game.cpp')
+    shutil.copy(scriptsDataPath + os.sep + 'Sln-CMakeLists.txt.in', path + os.sep + 'CMakeLists.txt')
+    shutil.copy(scriptsDataPath + os.sep + 'Proj-CMakeLists.txt.in', projectPath + os.sep + 'CMakeLists.txt')
+
+    ReplaceTagsInFile(projectSourcesPath + os.sep + 'Game.hpp', [('$GAME_CLASS_NAME$', 'Game')])
+    ReplaceTagsInFile(projectSourcesPath + os.sep + 'Game.cpp', [('$GAME_CLASS_NAME$', 'Game')])
+    ReplaceTagsInFile(path + os.sep + 'CMakeLists.txt', [('$PROJECT_PATH$', name), ('$ENGINE_DIR$', os.path.abspath(enginePath).replace('\\', '/'))])
+    ReplaceTagsInFile(projectPath + os.sep + 'CMakeLists.txt', [('$PROJECT_NAME$', name)])
+
+    # Run cmake update (using undocumented parameters that work for some reason, src: http://cprieto.com/posts/2016/10/cmake-out-of-source-build.html)
+    os.system(r'cmake -G "Visual Studio 14 2015 Win64" -H' + path + ' -B' + path + '/Build')
 
 def UpdateProject(path, enginePath):
-    print('Updating project at', path, 'with engine at', args.enginePath)
+    print('Updating project at', path, 'with engine at', enginePath)
+
+    # Run cmake update (using undocumented parameters that work for some reason, src: http://cprieto.com/posts/2016/10/cmake-out-of-source-build.html)
+    os.system(r'cmake -G "Visual Studio 14 2015 Win64" -H' + path + ' -B' + path + '/Build')
 
 #################### SCRIPT START ####################
 parser = argparse.ArgumentParser(description='PolyEngine project management tool')
@@ -46,7 +101,7 @@ parser.add_argument("-e", "--engine", action='store', dest='enginePath',
 
 mtx = parser.add_mutually_exclusive_group()
 mtx.add_argument('-c', '--create', action=CreateProjectAction, dest='actionToPerform',
-                    nargs=2, metavar=('project_name', 'project_path'),
+                    nargs=2, metavar=('project_path', 'project_name'),
                     help='create project of given name at provided path')
 mtx.add_argument('-u', '--update', action=UpdateProjectAction, dest='actionToPerform',
                     nargs=1, metavar='project_path',

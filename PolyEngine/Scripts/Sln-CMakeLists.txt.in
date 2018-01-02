@@ -5,7 +5,8 @@ project(PolyEngine VERSION 0.1.2 LANGUAGES CXX C) #note(vuko): without C older C
 # Initial setup: C++ standard version, build types, CMake modules
 ##
 
-set(ENGINE_ROOT_DIR ${CMAKE_SOURCE_DIR})
+## Need to setup $ENGINE_DIR$ and $PROJECT_PATH$
+set(ENGINE_ROOT_DIR $ENGINE_DIR$)
 
 if(DEFINED ENV{QTDIR})
 	list(APPEND CMAKE_PREFIX_PATH $ENV{QTDIR})
@@ -33,16 +34,6 @@ endif()
 
 ##Prepend our modules dir to the path
 list(INSERT CMAKE_MODULE_PATH 0 "${ENGINE_ROOT_DIR}/CMakeModules")
-
-
-##
-# Are we running Travis?
-##
-if($ENV{TRAVIS})
-	if($ENV{TRAVIS} STREQUAL "true")
-		set(IS_TRAVIS_BUILD TRUE)
-	endif($ENV{TRAVIS} STREQUAL "true")
-endif($ENV{TRAVIS})
 
 
 ##
@@ -180,17 +171,13 @@ endif(CCACHE_FOUND AND COMMAND cotire)
 ##
 # Finally, meat and potatoes
 ##
-add_subdirectory(Core)
 if(NOT SANITIZER_MEMORY)
-	add_subdirectory(PolyEditor)
-	add_subdirectory(Engine)
-	add_subdirectory(RenderingDevice/OpenGL)
-	add_subdirectory(Standalone)
-	if(BUILD_TESTS)
-		enable_testing()
-		add_subdirectory(UnitTests)
-	endif(BUILD_TESTS)
-	add_subdirectory(Games/SGJGame)
+	#add_subdirectory(${ENGINE_ROOT_DIR}/PolyEditor)
+	add_subdirectory(${ENGINE_ROOT_DIR}/Core "${CMAKE_CURRENT_BINARY_DIR}/core_build")
+	add_subdirectory(${ENGINE_ROOT_DIR}/Engine "${CMAKE_CURRENT_BINARY_DIR}/engine_build")
+	add_subdirectory(${ENGINE_ROOT_DIR}/RenderingDevice/OpenGL "${CMAKE_CURRENT_BINARY_DIR}/renderingdevice_build")
+	add_subdirectory(${ENGINE_ROOT_DIR}/Standalone "${CMAKE_CURRENT_BINARY_DIR}/standalone_build")
+	add_subdirectory($PROJECT_PATH$)
 else()
 	message(STATUS "MemorySanitizer enabled!")
 	message(STATUS "Disabling all targets except PolyCore due to external dependencies.")

@@ -47,7 +47,7 @@ if (WIN32)
 		set(assimp_MSVC_VERSION "vc140")
 	endif(MSVC12)
 
-	set(assimp_ROOT_DIR "${CMAKE_SOURCE_DIR}/ThirdParty/assimp" CACHE PATH "Assimp root directory")
+	set(assimp_ROOT_DIR "${ENGINE_ROOT_DIR}/ThirdParty/assimp" CACHE PATH "Assimp root directory")
 	set(INCLUDE_HINTS "${assimp_ROOT_DIR}/include")
 	set(LIB_HINTS     "${assimp_ROOT_DIR}/lib/Release/${assimp_ARCH}")
 	set(LIB_NAMES     "assimp-${assimp_MSVC_VERSION}-mt")
