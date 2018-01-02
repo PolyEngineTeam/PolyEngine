@@ -63,10 +63,9 @@ def CreateProject(name, path, enginePath):
     print('Creating project', name, 'in', path, 'with engine at', enginePath)
 
     if os.path.exists(path):
-        raise ValueError('Path', path, 'already exists. Cannot create project there!')
+        raise Exception('Path', path, 'already exists. Cannot create project there!')
     
     path = os.path.abspath(path)
-
 
     os.makedirs(path)
     os.makedirs(path + os.sep + 'Build')
@@ -93,6 +92,10 @@ def CreateProject(name, path, enginePath):
 
 def UpdateProject(path, enginePath):
     print('Updating project at', path, 'with engine at', enginePath)
+
+    if not os.path.exists(path):
+        raise Exception('Path', path, 'does not exists. Cannot update project there!')
+
     RunCmake(path, path + '/Build')
 
 #################### SCRIPT START ####################
