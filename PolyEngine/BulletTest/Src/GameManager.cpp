@@ -115,6 +115,7 @@ void BT::GameManagerSystem::InitializeDemoWorld(World* world)
 			stoneTransform->SetLocalTranslation(Vector(-5 + i*2, 5 + j*2, 0));
 			stoneRigidbody->UpdatePosition();
 			stoneRigidbody->ApplyGravity();
+			stoneRigidbody->SetDamping(0.f, 0.f);
 		}
 	}
 }

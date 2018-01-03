@@ -15,6 +15,7 @@ namespace Poly
 	public:
 		const float TimeStep = 1.0f / 60.0f;
 		const Vector Gravity = Vector(0.f, -9.81f, 0.f);
+		const int MaxSimulationStepsPerFrame = 20;
 	};
 
 	class ENGINE_DLLEXPORT Physics3DWorldComponent : public ComponentBase
