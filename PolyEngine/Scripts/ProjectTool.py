@@ -81,7 +81,7 @@ def ReadProjectFile(path):
                     data = json.load(json_file)
             return data
 
-def UpdateConfigFiles(path, name, enginePath):
+def UpdateConfigFiles(path, name, enginePath, isNewConfiguration):
     projectPath = os.sep.join([path, name])
     projectResourcesPath = os.sep.join([projectPath, 'Res'])
     projectSourcesPath = os.sep.join([projectPath, 'Src'])
@@ -92,13 +92,15 @@ def UpdateConfigFiles(path, name, enginePath):
     cmakeSlnOutputPath = os.sep.join([path, 'CMakeLists.txt'])
     cmakeProjOutputPath = os.sep.join([projectPath, 'CMakeLists.txt'])
 
-    shutil.copy(os.sep.join([scriptsDataPath, 'Game.hpp.in']), gameHppOutputPath)
-    shutil.copy(os.sep.join([scriptsDataPath, 'Game.cpp.in']), gameCppOutputPath)
+    if isNewConfiguration:
+        shutil.copy(os.sep.join([scriptsDataPath, 'Game.hpp.in']), gameHppOutputPath)
+        shutil.copy(os.sep.join([scriptsDataPath, 'Game.cpp.in']), gameCppOutputPath)
     shutil.copy(os.sep.join([scriptsDataPath, 'Sln-CMakeLists.txt.in']), cmakeSlnOutputPath)
     shutil.copy(os.sep.join([scriptsDataPath, 'Proj-CMakeLists.txt.in']), cmakeProjOutputPath)
 
-    ReplaceTagsInFile(gameHppOutputPath, [('$GAME_CLASS_NAME$', 'Game')])
-    ReplaceTagsInFile(gameCppOutputPath, [('$GAME_CLASS_NAME$', 'Game')])
+    if isNewConfiguration:
+        ReplaceTagsInFile(gameHppOutputPath, [('$GAME_CLASS_NAME$', 'Game')])
+        ReplaceTagsInFile(gameCppOutputPath, [('$GAME_CLASS_NAME$', 'Game')])
     # Cmake needs paths with '/' (instead of '\') regardles of platform
     ReplaceTagsInFile(cmakeSlnOutputPath, [('$PROJECT_PATH$', name), ('$ENGINE_DIR$', GetCmakePath(os.path.abspath(enginePath)))]) 
     ReplaceTagsInFile(cmakeProjOutputPath, [('$PROJECT_NAME$', name)])
@@ -120,7 +122,7 @@ def CreateProject(name, path, enginePath):
     projectSourcesPath = os.sep.join([projectPath, 'Src'])
     os.makedirs(projectSourcesPath)
 
-    UpdateConfigFiles(path, name, enginePath)
+    UpdateConfigFiles(path, name, enginePath, True)
 
     CreateProjectFile(path, name)
     RunCmake(path, 'Build')
@@ -134,7 +136,7 @@ def UpdateProject(path, enginePath):
     name = ReadProjectFile(path)['ProjectName']
     print('Project name:', name)
    
-    UpdateConfigFiles(path, name, enginePath)
+    UpdateConfigFiles(path, name, enginePath, False)
 
     RunCmake(path, 'Build')
 
