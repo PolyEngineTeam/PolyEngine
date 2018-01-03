@@ -40,6 +40,7 @@ namespace Poly
 		Rigidbody3DComponent(World* world, eRigidBody3DType type, Physics3DShape* shape, float mass = 0);
 		~Rigidbody3DComponent();
 
+
 		void ApplyForceToCenter(const Vector& force);
 		void ApplyImpulseToCenter(const Vector& impulse);
 		void ApplyDamping(float timestep);
@@ -52,7 +53,6 @@ namespace Poly
 		void ClearForces();
 		void UpdatePosition();
 
-		void SetLinearFactor(float factor);
 		void SetLinearFactor(const Vector& factor);
 		const Vector& GetLinearFactor();
 		void SetLinearVelocity(const Vector& velocity);
@@ -64,7 +64,7 @@ namespace Poly
 		void SetAngularVelocity(const Vector& velocity);
 		const Vector& GetAngularVelocity();
 
-		void SetDamping(float LinearDamping, float angularDamping);
+		void SetDamping(float linearDamping, float angularDamping);
 		float GetLinearDamping();
 		float GetAngularDamping();
 
@@ -80,6 +80,8 @@ namespace Poly
 		eRigidBody3DType GetBodyType() const { return BodyType; }
 
 	private:
+		bool Registered;
+
 		World* BodyWorld;
 		eRigidBody3DType BodyType;
 

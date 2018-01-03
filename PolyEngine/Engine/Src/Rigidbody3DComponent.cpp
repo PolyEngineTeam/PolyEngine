@@ -4,7 +4,8 @@
 #include "Rigidbody3DComponent.hpp"
 
 Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType type, Physics3DShape* shape, float mass)
-	: BodyType(type)
+	: BodyType(type), 
+	BodyWorld(world)
 {
 	switch (shape->ShapeType)
 	{
@@ -36,10 +37,31 @@ Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType 
 	}
 
 	RigidBody = new btRigidBody(btRigidBody::btRigidBodyConstructionInfo(mass, MotionState, Shape, inertia));
+	//Physics3DSystem::RegisterRigidbody(world, GetOwnerID());
 }
 
 Poly::Rigidbody3DComponent::~Rigidbody3DComponent()
 {
+	Physics3DSystem::UnregisterRigidBody(BodyWorld, GetOwnerID());
+
+	delete RigidBody;
+	delete MotionState;
+	delete Shape;
+}
+
+void Poly::Rigidbody3DComponent::ApplyForceToCenter(const Vector& force)
+{
+	RigidBody->applyCentralForce(btVector3(force.X, force.Y, force.Z));
+}
+
+void Poly::Rigidbody3DComponent::ApplyImpulseToCenter(const Vector& impulse)
+{
+	RigidBody->applyCentralImpulse(btVector3(impulse.X, impulse.Y, impulse.Z));
+}
+
+void Poly::Rigidbody3DComponent::ApplyDamping(float timestep)
+{
+	RigidBody->applyDamping(timestep);
 }
 
 void Poly::Rigidbody3DComponent::UpdatePosition()
@@ -60,4 +82,19 @@ void Poly::Rigidbody3DComponent::UpdatePosition()
 	
 	RigidBody->setWorldTransform(initialTransform);
 	MotionState->setWorldTransform(initialTransform);
+}
+
+void Poly::Rigidbody3DComponent::SetLinearFactor(const Vector& factor)
+{
+	RigidBody->setLinearFactor(btVector3(factor.X, factor.Y, factor.Z));
+}
+
+void Poly::Rigidbody3DComponent::ApplyGravity()
+{
+	RigidBody->applyGravity();
+}
+
+void Poly::Rigidbody3DComponent::SetDamping(float linearDamping, float angularDamping)
+{
+	RigidBody->setDamping(linearDamping, angularDamping);
 }
