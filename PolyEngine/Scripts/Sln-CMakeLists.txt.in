@@ -172,7 +172,7 @@ endif(CCACHE_FOUND AND COMMAND cotire)
 # Finally, meat and potatoes
 ##
 if(NOT SANITIZER_MEMORY)
-	#add_subdirectory(${ENGINE_ROOT_DIR}/PolyEditor)
+	add_subdirectory(${ENGINE_ROOT_DIR}/PolyEditor "${CMAKE_CURRENT_BINARY_DIR}/editor_build")
 	add_subdirectory(${ENGINE_ROOT_DIR}/Core "${CMAKE_CURRENT_BINARY_DIR}/core_build")
 	add_subdirectory(${ENGINE_ROOT_DIR}/Engine "${CMAKE_CURRENT_BINARY_DIR}/engine_build")
 	add_subdirectory(${ENGINE_ROOT_DIR}/RenderingDevice/OpenGL "${CMAKE_CURRENT_BINARY_DIR}/renderingdevice_build")

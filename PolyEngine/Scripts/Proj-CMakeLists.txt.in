@@ -35,7 +35,7 @@ add_custom_command(
 			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polycore>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
 			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polyengine>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
 			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polyrun>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
-			#COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polyeditor>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
+			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polyeditor>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
 			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polyrenderingdevicegl>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
 
 			COMMENT "Copying Libs..." VERBATIM
