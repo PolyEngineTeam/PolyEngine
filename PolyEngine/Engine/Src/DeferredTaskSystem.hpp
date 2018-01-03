@@ -49,20 +49,21 @@ namespace Poly
 		/// <summary>Adds component to entity immediately.</summary>
 		/// <param name="world">Pointer to world entity is in.</summary>
 		/// <param name="entityId">ID of the entity.</summary>
-		template<typename T, typename ...Args> void AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args)
+		template<typename T, typename ...Args> T* AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args)
 		{
 			w->AddComponent<T>(entityId, std::forward<Args>(args)...);
 			DeferredTaskWorldComponent* cmp = w->GetWorldComponent<DeferredTaskWorldComponent>();
 			T* newCmp = w->GetComponent<T>(entityId);
 			cmp->NewlyCreatedComponents.PushBack(newCmp);
 			newCmp->SetFlags(eComponentBaseFlags::NEWLY_CREATED);
+			return newCmp;
 		}
 
 		/// <summary>Adds world component to world.</summary>
 		/// <param name="world">Pointer to world.</summary>
-		template<typename T, typename ...Args> void AddWorldComponentImmediate(World* w, Args && ...args)
+		template<typename T, typename ...Args> T* AddWorldComponentImmediate(World* w, Args && ...args)
 		{
-			w->AddWorldComponent<T>(std::forward<Args>(args)...);
+			return w->AddWorldComponent<T>(std::forward<Args>(args)...);
 		}
 
 		/// <summary>Removes world component from world.</summary>
