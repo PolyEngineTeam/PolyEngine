@@ -41,7 +41,7 @@ if (WIN32)
 		set(Vorbis_ARCH "Win32")
 	endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
-	set(Vorbis_ROOT_DIR "${CMAKE_SOURCE_DIR}/ThirdParty/libvorbis" CACHE PATH "LibVorbis root directory")
+	set(Vorbis_ROOT_DIR "${ENGINE_ROOT_DIR}/ThirdParty/libvorbis" CACHE PATH "LibVorbis root directory")
 	set(INCLUDE_HINTS   "${Vorbis_ROOT_DIR}/include")
 	set(LIB_HINTS       "${Vorbis_ROOT_DIR}/lib/${Vorbis_ARCH}")
 else ()

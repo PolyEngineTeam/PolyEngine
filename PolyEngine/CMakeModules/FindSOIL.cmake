@@ -40,7 +40,7 @@ if (WIN32)
 		set(SOIL_ARCH "Win32")
 	endif()
 
-	set(SOIL_ROOT_DIR "${CMAKE_SOURCE_DIR}/ThirdParty/SOIL" CACHE PATH "SOIL root directory")
+	set(SOIL_ROOT_DIR "${ENGINE_ROOT_DIR}/ThirdParty/SOIL" CACHE PATH "SOIL root directory")
 	set(INCLUDE_HINTS "${SOIL_ROOT_DIR}/include")
 	set(LIB_HINTS     "${SOIL_ROOT_DIR}/lib/Release/${SOIL_ARCH}")
 endif()

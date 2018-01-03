@@ -34,7 +34,7 @@ if (WIN32)
 		set(SDL2_ARCH "Win32")
 	endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
-	set(SDL2_ROOT_DIR "${CMAKE_SOURCE_DIR}/ThirdParty/SDL2" CACHE PATH "SDL2 root directory")
+	set(SDL2_ROOT_DIR "${ENGINE_ROOT_DIR}/ThirdParty/SDL2" CACHE PATH "SDL2 root directory")
 
 	find_path(SDL2_INCLUDE_DIR "SDL.h" PATHS "${SDL2_ROOT_DIR}/include" )
 	find_library(SDL2_LIBRARY SDL2 PATH "${SDL2_ROOT_DIR}/lib/${SDL2_ARCH}" NO_DEFAULT_PATH)
