@@ -214,12 +214,11 @@ namespace Poly {
 
 		//------------------------------------------------------------------------------
 		template<typename T, typename... Args>
-		T* AddWorldComponent(Args&&... args)
+		void AddWorldComponent(Args&&... args)
 		{
 			const auto ctypeID = GetWorldComponentID<T>();
 			HEAVY_ASSERTE(!HasWorldComponent(ctypeID), "Failed at AddWorldComponent() - a world component of a given type already exists!");
 			WorldComponents[ctypeID] = new T(std::forward<Args>(args)...);
-			return static_cast<T*>(WorldComponents[ctypeID]);
 		}
 
 		//------------------------------------------------------------------------------

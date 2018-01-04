@@ -63,7 +63,8 @@ namespace Poly
 		/// <param name="world">Pointer to world.</summary>
 		template<typename T, typename ...Args> T* AddWorldComponentImmediate(World* w, Args && ...args)
 		{
-			return w->AddWorldComponent<T>(std::forward<Args>(args)...);
+			w->AddWorldComponent<T>(std::forward<Args>(args)...);
+			return w->GetWorldComponent<T>();
 		}
 
 		/// <summary>Removes world component from world.</summary>
