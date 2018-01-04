@@ -62,7 +62,7 @@ def run_cmake(path, build_dir_name):
     
     # Run cmake update (using undocumented parameters that work for some reason, src: http://cprieto.com/posts/2016/10/cmake-out-of-source-build.html)
     if os.name == 'nt':
-        os.system('cmake -G "Visual Studio 14 2015 Win64" -H{} -B{}'.format(get_cmake_path(path), get_cmake_path(build_dir_path)))
+        os.system('cmake -G "Visual Studio 15 2017 Win64" -H{} -B{}'.format(get_cmake_path(path), get_cmake_path(build_dir_path)))
     else:
         os.system('cmake -H{} -B{}'.format(get_cmake_path(path), get_cmake_path(build_dir_path)))
 
