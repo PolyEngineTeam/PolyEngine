@@ -30,14 +30,12 @@ void BT::GameManagerSystem::Update(World* world)
 		Vector direction = MovementSystem::GetGlobalForward(transform);
 
 		gameManager->Stone = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
-		DeferredTaskSystem::AddComponentImmediate<TransformComponent>(gEngine->GetWorld(), gameManager->Stone);
-		DeferredTaskSystem::AddComponentImmediate<Rigidbody3DComponent>(gEngine->GetWorld(), gameManager->Stone, gEngine->GetWorld(), eRigidBody3DType::DYNAMIC, reinterpret_cast<Physics3DShape*>(&Physics3DSphereShape(1)), 1);
+		TransformComponent* stoneTransform = DeferredTaskSystem::AddComponentImmediate<TransformComponent>(gEngine->GetWorld(), gameManager->Stone);
+		Rigidbody3DComponent* stoneRigidbody = DeferredTaskSystem::AddComponentImmediate<Rigidbody3DComponent>(gEngine->GetWorld(), gameManager->Stone, gEngine->GetWorld(), eRigidBody3DType::DYNAMIC, reinterpret_cast<Physics3DShape*>(&Physics3DSphereShape(1)), 1);
 		Physics3DSystem::RegisterRigidbody(world, gameManager->Stone);
 		DeferredTaskSystem::AddComponentImmediate<MeshRenderingComponent>(world, gameManager->Stone, "Models/BulletTest/Sphere.fbx", eResourceSource::GAME);
 		world->GetComponent<MeshRenderingComponent>(gameManager->Stone)->SetMaterial(0, PhongMaterial(Color(1, 0.2, 0), Color(1, 0.2, 0), Color(1, 0.2, 0), 8.0f));
 		world->GetComponent<MeshRenderingComponent>(gameManager->Stone)->SetShadingModel(eShadingModel::LIT);
-		TransformComponent* stoneTransform = gEngine->GetWorld()->GetComponent<TransformComponent>(gameManager->Stone);
-		Rigidbody3DComponent* stoneRigidbody = gEngine->GetWorld()->GetComponent<Rigidbody3DComponent>(gameManager->Stone);
 		stoneTransform->SetLocalTranslation(transform->GetGlobalTranslation());
 		stoneRigidbody->UpdatePosition();
 		stoneRigidbody->ApplyGravity();
