@@ -59,6 +59,6 @@ mark_as_advanced(Bullet_INCLUDE_DIR BulletCollision_LIBRARY BulletDynamics_LIBRA
 find_package_handle_standard_args(Bullet  REQUIRED_VARS Bullet_LIBRARIES Bullet_INCLUDE_DIRS  VERSION_VAR)
 
 if (NOT TARGET Bullet::Bullet)
-	add_library(Bullet::Bullet UNKNOWN IMPORTED)
-	set_target_properties(Bullet::Bullet PROPERTIES  INTERFACE_INCLUDE_DIRECTORIES "${Bullet_INCLUDE_DIRS}"  IMPORTED_LOCATION "${Bullet_LIBRARIES}")
+    add_library(Bullet::Bullet INTERFACE IMPORTED)
+    set_target_properties(Bullet::Bullet PROPERTIES  INTERFACE_INCLUDE_DIRECTORIES "${Bullet_INCLUDE_DIRS}"  INTERFACE_LINK_LIBRARIES "${Bullet_LIBRARIES}")
 endif()
