@@ -38,7 +38,7 @@ if (WIN32)
 	find_library(Bullet3Dynamics_LIBRARY NAMES Bullet3Dynamics  HINTS "${Bullet_ROOT_DIR}/lib/Release/x64")
 	find_library(Bullet3Geometry_LIBRARY NAMES Bullet3Geometry HINTS "${Bullet_ROOT_DIR}/lib/Release/x64")
 else()
-	find_package(Bullet CONFIG QUIET) #note(vuko): frequently faulty, so try to use it just for `Bullet_ROOT_DIR'
+	find_package(Bullet CONFIG QUIET)
 	unset(Bullet_DIR CACHE)
 	unset(Bullet_INCLUDE_DIRS)
 
