@@ -60,11 +60,8 @@ def run_cmake(path, build_dir_name):
     if not os.path.exists(build_dir_path):
         os.makedirs(build_dir_path)
     
-    # Run cmake update (using undocumented parameters that work for some reason, src: http://cprieto.com/posts/2016/10/cmake-out-of-source-build.html)
-    if os.name == 'nt':
-        os.system('cmake -G "Visual Studio 14 2015 Win64" -H{} -B{}'.format(get_cmake_path(path), get_cmake_path(build_dir_path)))
-    else:
-        os.system('cmake -H{} -B{}'.format(get_cmake_path(path), get_cmake_path(build_dir_path)))
+    # Run cmake update with 64bit arch (using undocumented parameters that work for some reason, src: http://cprieto.com/posts/2016/10/cmake-out-of-source-build.html)
+    os.system('cmake -A x64 -H{} -B{}'.format(get_cmake_path(path), get_cmake_path(build_dir_path)))
 
 def create_project_file(path, proj_name):
     data = {}
