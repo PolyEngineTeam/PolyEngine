@@ -36,7 +36,7 @@ Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType 
 		break;
 	}
 	btRigidBody::btRigidBodyConstructionInfo CI(mass, MotionState, Shape, inertia);
-	CI.m_restitution = 0.7;
+	CI.m_restitution = 0.7f;
 	RigidBody = new btRigidBody(CI);
 	//Physics3DSystem::RegisterRigidbody(world, GetOwnerID());
 }
