@@ -14,8 +14,8 @@ namespace Poly {
 	{
 		UniqueID ENGINE_DLLEXPORT SpawnEntityImmediate(World* w);
 		void ENGINE_DLLEXPORT DestroyEntityImmediate(World* w, const UniqueID& entityId);
-		template<typename T, typename ...Args> void AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args);
-		template<typename T, typename ...Args> void AddWorldComponentImmediate(World* w, Args && ...args);
+		template<typename T, typename ...Args> T* AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args);
+		template<typename T, typename ...Args> T* AddWorldComponentImmediate(World* w, Args && ...args);
 		template<typename T> void RemoveWorldComponentImmediate(World* w);
 	}
 	struct InputState;
@@ -159,8 +159,8 @@ namespace Poly {
 
 		friend UniqueID DeferredTaskSystem::SpawnEntityImmediate(World*);
 		friend void DeferredTaskSystem::DestroyEntityImmediate(World* w, const UniqueID& entityId);
-		template<typename T, typename ...Args> friend void DeferredTaskSystem::AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args);
-		template<typename T, typename ...Args> friend void DeferredTaskSystem::AddWorldComponentImmediate(World* w, Args && ...args);
+		template<typename T, typename ...Args> friend T* DeferredTaskSystem::AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args);
+		template<typename T, typename ...Args> friend T* DeferredTaskSystem::AddWorldComponentImmediate(World* w, Args && ...args);
 		template<typename T> friend void DeferredTaskSystem::RemoveWorldComponentImmediate(World* w);
 
 		//------------------------------------------------------------------------------
