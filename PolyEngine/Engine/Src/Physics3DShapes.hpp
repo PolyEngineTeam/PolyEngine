@@ -2,7 +2,7 @@
 
 namespace Poly
 {
-	enum class ePhysics3DShapes
+	enum class ePhysics3DShape
 	{
 		PLANE,
 		BOX,
@@ -14,14 +14,14 @@ namespace Poly
 	class ENGINE_DLLEXPORT Physics3DShape
 	{
 	public:
-		Physics3DShape(ePhysics3DShapes type) : ShapeType(type) {}
-		const ePhysics3DShapes ShapeType;
+		Physics3DShape(ePhysics3DShape type) : ShapeType(type) {}
+		const ePhysics3DShape ShapeType;
 	};
 
 	class ENGINE_DLLEXPORT Physics3DPlaneShape : Physics3DShape
 	{
 	public:
-		Physics3DPlaneShape(Vector normal, float halfExtent) : Physics3DShape(ePhysics3DShapes::PLANE), Normal(normal), HalfExtent(halfExtent) {}
+		Physics3DPlaneShape(Vector normal, float halfExtent) : Physics3DShape(ePhysics3DShape::PLANE), Normal(normal), HalfExtent(halfExtent) {}
 		Vector Normal;
 		float HalfExtent;
 	};
@@ -29,21 +29,21 @@ namespace Poly
 	class ENGINE_DLLEXPORT Physics3DBoxShape : Physics3DShape
 	{
 	public:
-		Physics3DBoxShape(Vector halfExtents) : Physics3DShape(ePhysics3DShapes::BOX), HalfExtents(halfExtents) {}
+		Physics3DBoxShape(Vector halfExtents) : Physics3DShape(ePhysics3DShape::BOX), HalfExtents(halfExtents) {}
 		Vector HalfExtents;
 	};
 
 	class ENGINE_DLLEXPORT Physics3DSphereShape : Physics3DShape
 	{
 	public:
-		Physics3DSphereShape(float radius) : Physics3DShape(ePhysics3DShapes::SPHERE), Radius(radius) {}
+		Physics3DSphereShape(float radius) : Physics3DShape(ePhysics3DShape::SPHERE), Radius(radius) {}
 		float Radius;
 	};
 
 	class ENGINE_DLLEXPORT Physics3DCapsuleShape : Physics3DShape
 	{
 	public:
-		Physics3DCapsuleShape(float radius, float height) : Physics3DShape(ePhysics3DShapes::PLANE), Radius(radius), Height(height) {}
+		Physics3DCapsuleShape(float radius, float height) : Physics3DShape(ePhysics3DShape::PLANE), Radius(radius), Height(height) {}
 		float Radius;
 		float Height;
 	};

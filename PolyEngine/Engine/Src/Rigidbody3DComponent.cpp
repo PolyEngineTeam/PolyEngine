@@ -3,40 +3,47 @@
 #include "btBulletDynamicsCommon.h"
 #include "Rigidbody3DComponent.hpp"
 
-Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType type, Physics3DShape* shape, 
+//********************************************************************************************************************************************
+Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType type, Physics3DShape* shape,
 	float restitution, float friction, float rollingFriction, float spinningFriction, float mass)
-	: BodyType(type), 
-	BodyWorld(world)
+	: BodyWorld(world),
+	Mass(mass),
+	Restitution(restitution),
+	Friction(friction),
+	RollingFriction(rollingFriction),
+	SpinningFriction(spinningFriction),
+	Shape(shape),
+	BodyType(type)
 {
 	switch (shape->ShapeType)
 	{
-	case ePhysics3DShapes::PLANE:
+	case ePhysics3DShape::PLANE:
 	{
 		Physics3DPlaneShape* plane = reinterpret_cast<Physics3DPlaneShape*>(shape);
-		Shape = new btStaticPlaneShape(btVector3(plane->Normal.X, plane->Normal.Y, plane->Normal.Z), plane->HalfExtent);
+		BulletShape = new btStaticPlaneShape(btVector3(plane->Normal.X, plane->Normal.Y, plane->Normal.Z), plane->HalfExtent);
 	}
 		break;
 
-	case ePhysics3DShapes::BOX:
+	case ePhysics3DShape::BOX:
 	{
 		Vector v = reinterpret_cast<Physics3DBoxShape*>(shape)->HalfExtents;
-		Shape = new btBoxShape(btVector3(v.X, v.Y, v.Z));
+		BulletShape = new btBoxShape(btVector3(v.X, v.Y, v.Z));
 	}
 		break;
 
-	case ePhysics3DShapes::SPHERE:
-		Shape = new btSphereShape(reinterpret_cast<Physics3DSphereShape*>(shape)->Radius);
+	case ePhysics3DShape::SPHERE:
+		BulletShape = new btSphereShape(reinterpret_cast<Physics3DSphereShape*>(shape)->Radius);
 		break;
 
-	case ePhysics3DShapes::CAPSULE:
+	case ePhysics3DShape::CAPSULE:
 	{
 		Physics3DCapsuleShape* capsule = reinterpret_cast<Physics3DCapsuleShape*>(shape);
-		Shape = new btCapsuleShape(capsule->Radius, capsule->Height);
+		BulletShape = new btCapsuleShape(capsule->Radius, capsule->Height);
 	}
 		break;	
 	}
 	
-	MotionState = new btDefaultMotionState();
+	BulletMotionState = new btDefaultMotionState();
 	
 	btVector3 inertia(0, 0, 0);
 
@@ -47,42 +54,46 @@ Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType 
 
 	case eRigidBody3DType::DYNAMIC:
 		ASSERTE(type != eRigidBody3DType::STATIC && mass > 0, "Can't create dynamic body with 0 mass.");
-		Shape->calculateLocalInertia(mass, inertia);
+		BulletShape->calculateLocalInertia(mass, inertia);
 		break;
 	}
-	btRigidBody::btRigidBodyConstructionInfo CI(mass, MotionState, Shape, inertia);
+	btRigidBody::btRigidBodyConstructionInfo CI(mass, BulletMotionState, BulletShape, inertia);
 	CI.m_restitution = restitution;
 	CI.m_friction = friction;
 	CI.m_rollingFriction = rollingFriction;
 	CI.m_spinningFriction = spinningFriction;
-	RigidBody = new btRigidBody(CI);
-	//Physics3DSystem::RegisterRigidbody(world, GetOwnerID());
+	BulletRigidBody = new btRigidBody(CI);
 }
 
+//********************************************************************************************************************************************
 Poly::Rigidbody3DComponent::~Rigidbody3DComponent()
 {
 	Physics3DSystem::UnregisterRigidBody(BodyWorld, GetOwnerID());
 
-	delete RigidBody;
-	delete MotionState;
-	delete Shape;
+	delete BulletRigidBody;
+	delete BulletMotionState;
+	delete BulletShape;
 }
 
+//********************************************************************************************************************************************
 void Poly::Rigidbody3DComponent::ApplyForceToCenter(const Vector& force)
 {
-	RigidBody->applyCentralForce(btVector3(force.X, force.Y, force.Z));
+	BulletRigidBody->applyCentralForce(btVector3(force.X, force.Y, force.Z));
 }
 
+//********************************************************************************************************************************************
 void Poly::Rigidbody3DComponent::ApplyImpulseToCenter(const Vector& impulse)
 {
-	RigidBody->applyCentralImpulse(btVector3(impulse.X, impulse.Y, impulse.Z));
+	BulletRigidBody->applyCentralImpulse(btVector3(impulse.X, impulse.Y, impulse.Z));
 }
 
+//********************************************************************************************************************************************
 void Poly::Rigidbody3DComponent::ApplyDamping(float timestep)
 {
-	RigidBody->applyDamping(timestep);
+	BulletRigidBody->applyDamping(timestep);
 }
 
+//********************************************************************************************************************************************
 void Poly::Rigidbody3DComponent::UpdatePosition()
 {
 	TransformComponent* transCmp = GetSibling<TransformComponent>();
@@ -99,21 +110,68 @@ void Poly::Rigidbody3DComponent::UpdatePosition()
 	initialTransform.setOrigin(position);
 	initialTransform.setRotation(orientation);
 	
-	RigidBody->setWorldTransform(initialTransform);
-	MotionState->setWorldTransform(initialTransform);
+	BulletRigidBody->setWorldTransform(initialTransform);
+	BulletMotionState->setWorldTransform(initialTransform);
 }
 
+//********************************************************************************************************************************************
 void Poly::Rigidbody3DComponent::SetLinearFactor(const Vector& factor)
 {
-	RigidBody->setLinearFactor(btVector3(factor.X, factor.Y, factor.Z));
+	BulletRigidBody->setLinearFactor(btVector3(factor.X, factor.Y, factor.Z));
 }
 
+//********************************************************************************************************************************************
 void Poly::Rigidbody3DComponent::ApplyGravity()
 {
-	RigidBody->applyGravity();
+	BulletRigidBody->applyGravity();
 }
 
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::SetAngularFactor(float factor)
+{
+}
+
+//********************************************************************************************************************************************
+const Poly::Vector& Poly::Rigidbody3DComponent::GetAngularFactor()
+{
+	const btVector3& v = BulletRigidBody->getLinearVelocity();
+	return Vector(v.x(), v.y(), v.z());
+}
+
+//********************************************************************************************************************************************
+const Poly::Vector& Poly::Rigidbody3DComponent::GetAngularVelocity()
+{
+	const btVector3& v = BulletRigidBody->getAngularVelocity();
+	return Vector(v.x(), v.y(), v.z());
+}
+
+//********************************************************************************************************************************************
 void Poly::Rigidbody3DComponent::SetDamping(float linearDamping, float angularDamping)
 {
-	RigidBody->setDamping(linearDamping, angularDamping);
+	BulletRigidBody->setDamping(linearDamping, angularDamping);
+}
+
+//********************************************************************************************************************************************
+float Poly::Rigidbody3DComponent::GetLinearDamping()
+{
+	return BulletRigidBody->getLinearDamping();
+}
+
+//********************************************************************************************************************************************
+float Poly::Rigidbody3DComponent::GetAngularDamping()
+{
+	return BulletRigidBody->getAngularDamping();
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::SetGravity(const Vector&  gravity)
+{
+	BulletRigidBody->setGravity(btVector3(gravity.X, gravity.Y, gravity.Z));
+}
+
+//********************************************************************************************************************************************
+const Poly::Vector& Poly::Rigidbody3DComponent::GetGravity()
+{
+	const btVector3& g = BulletRigidBody->getGravity();
+	return Vector(g.x(), g.y(), g.z());
 }

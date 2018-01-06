@@ -22,15 +22,6 @@ namespace Poly
 		_COUNT
 	};
 
-	struct Rigidbody3DComponentConstructionInfo
-	{
-		float Mass = 0;
-		float Friction = 0;
-
-		Physics3DShape* Shape;
-		eRigidBody3DType Type;
-	};
-
 	class ENGINE_DLLEXPORT Rigidbody3DComponent : public ComponentBase
 	{
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
@@ -69,26 +60,30 @@ namespace Poly
 		float GetLinearDamping();
 		float GetAngularDamping();
 
-		void SetGravity(float gravity);
-		float GetGravity();
+		void SetGravity(const Vector& gravity);
+		const Vector& GetGravity();
 
-		void SetMassProperties(float mass, const Vector& intertia);
-		float GetInvMass();
-
-		void SetFixedTranslation(bool fixed);
-		void SetFixedRotation(bool fixed);
-
+		bool IsRegistered() const { return Registered; }
 		eRigidBody3DType GetBodyType() const { return BodyType; }
 
+		const float Mass;
+		const float Restitution;
+		const float Friction;
+		const float RollingFriction;
+		const float SpinningFriction;
+		const Physics3DShape const* Shape; // FIXME(squares): ...
+		const eRigidBody3DType BodyType;
+
 	private:
-		bool Registered;
+		bool Registered = false;
+		bool FixedTranslation = false;
+		bool FixedRotation = false;
 
 		World* BodyWorld;
-		eRigidBody3DType BodyType;
 
-		btCollisionShape* Shape;
-		btDefaultMotionState* MotionState;
-		btRigidBody* RigidBody;
+		btCollisionShape* BulletShape;
+		btDefaultMotionState* BulletMotionState;
+		btRigidBody* BulletRigidBody;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, Rigidbody3DComponent)

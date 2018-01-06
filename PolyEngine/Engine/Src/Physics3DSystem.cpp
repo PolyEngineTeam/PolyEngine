@@ -21,7 +21,7 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 		TransformComponent* transform = std::get<TransformComponent*>(tuple);
 
 		btTransform trans;
-		rigidbody->MotionState->getWorldTransform(trans);
+		rigidbody->BulletMotionState->getWorldTransform(trans);
 
 		Vector localTrans = transform->GetLocalTranslation();
 		Quaternion localrot = transform->GetLocalRotation().ToEulerAngles();
@@ -42,10 +42,10 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 
 void Poly::Physics3DSystem::RegisterRigidbody(World* world, const UniqueID& entityID)
 {
-	world->GetWorldComponent<Physics3DWorldComponent>()->DynamicsWorld->addRigidBody(world->GetComponent<Rigidbody3DComponent>(entityID)->RigidBody);
+	world->GetWorldComponent<Physics3DWorldComponent>()->DynamicsWorld->addRigidBody(world->GetComponent<Rigidbody3DComponent>(entityID)->BulletRigidBody);
 }
 
 void Poly::Physics3DSystem::UnregisterRigidBody(World* world, const UniqueID& entityID)
 {
-	world->GetWorldComponent<Physics3DWorldComponent>()->DynamicsWorld->removeRigidBody(world->GetComponent<Rigidbody3DComponent>(entityID)->RigidBody);
+	world->GetWorldComponent<Physics3DWorldComponent>()->DynamicsWorld->removeRigidBody(world->GetComponent<Rigidbody3DComponent>(entityID)->BulletRigidBody);
 }
