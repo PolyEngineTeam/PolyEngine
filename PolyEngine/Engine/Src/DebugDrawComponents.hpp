@@ -2,6 +2,7 @@
 #include "ComponentBase.hpp"
 #include "DebugConfig.hpp"
 #include "Dynarray.hpp"
+#include "Color.hpp"
 #include "Vector.hpp"
 
 namespace Poly
@@ -30,8 +31,14 @@ namespace Poly
 			Mesh::Vector3D End;
 		};
 
+		struct DebugLineColor
+		{
+			Color Begin;
+			Color End;
+		};
+
 		Dynarray<DebugLine> DebugLines;
-		Dynarray<DebugLine> DebugLinesColors;
+		Dynarray<DebugLineColor> DebugLinesColors;
 	};
 
 	REGISTER_COMPONENT(WorldComponentsIDGroup, DebugDrawLinesComponent)

@@ -10,10 +10,9 @@ namespace Util
 {
 	/// <summary>Get vector with minimum/maximum/else (depends on comparison function) values
 	/// on each axis in given set of vectors.</summary>
-	Mesh::Vector3D findExtremum(const Dynarray<Mesh::Vector3D> & dynarray, std::function< bool(const float, const float) > comp)
+	Mesh::Vector3D FindExtremum(const Dynarray<Mesh::Vector3D>& dynarray, std::function< bool(const float, const float) > comp)
 	{
-		if(dynarray.GetSize() <= 0)
-			Mesh::Vector3D(); // or assert?
+		ASSERTE(dynarray.GetSize() > 0, "SubMesh vertex data is empty.");
 
 		Mesh::Vector3D result = dynarray[0];
 		for (auto const & vec : dynarray)
@@ -31,7 +30,7 @@ namespace Util
 
 	/// <summary>Produces two orthonormal vectors from a single normal vector.</summary>
 	/// Building an Orthonormal Basis, Revisited; http://jcgt.org/published/0006/01/01/
-	void branchlessONB(const Vector & n, Vector & b1, Vector & b2)
+	void BranchlessONB(const Vector & n, Vector & b1, Vector & b2)
 	{
 		float sign = std::copysignf(1.0f, n.Z);
 		const float a = -1.0f / (sign + n.Z);
@@ -47,7 +46,7 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
 	{
 		CameraComponent* cameraCmp = kv.second.GetCamera();
-		if (cameraCmp->GetRenderingMode() == eRenderingModeType::DEBUG)
+		if (cameraCmp->GetRenderingMode() == eRenderingModeType::IMMEDIATE_DEBUG)
 			gDebugConfig.DebugRender = true;
 	}
 
@@ -82,8 +81,8 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 
 				// find mins and maxs of each mesh coordinates
 				// in order to create AABB
-				auto minMeshVector = Util::findExtremum(meshVerticesPositions, std::less<float>());
-				auto maxMeshVector = Util::findExtremum(meshVerticesPositions, std::greater<float>());
+				auto minMeshVector = Util::FindExtremum(meshVerticesPositions, std::less<float>());
+				auto maxMeshVector = Util::FindExtremum(meshVerticesPositions, std::greater<float>());
 
 				Vector minVector(minMeshVector.X, minMeshVector.Y, minMeshVector.Z);
 				Vector maxVector(maxMeshVector.X, maxMeshVector.Y, maxMeshVector.Z);
@@ -96,10 +95,12 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 				minVector -= boundingOffset;
 				maxVector += boundingOffset;
 
-				EmitBox(world, minVector, maxVector);
+				DrawBox(world, minVector, maxVector);
 			}
 		}
 
+		// @fixme
+		// move iteration over RigidBody2DComponent to different debug-system (f.ex. PhysicsDebugDrawSystem)
 		for (auto componentsTuple : world->IterateComponents<RigidBody2DComponent, DebugDrawableComponent, TransformComponent>())
 		{
 			const auto rigidbodyCmp = std::get<RigidBody2DComponent*>(componentsTuple);
@@ -118,25 +119,23 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 			if (velocity.LengthSquared() == 0.0f)
 				continue;
 
-			EmitArrow(world, localTrans, velocity);
+			DrawArrow(world, localTrans, velocity);
 		}
 	}
 }
 
-void Poly::DebugDrawSystem::EmitLine(World* world, Vector begin, Vector end)
+void Poly::DebugDrawSystem::DrawLine(World* world, Vector begin, Vector end)
 {
 	Mesh::Vector3D meshvecBegin, meshvecEnd;
 	meshvecBegin.X = begin.X; meshvecBegin.Y = begin.Y; meshvecBegin.Z = begin.Z;
 	meshvecEnd.X = end.X; meshvecEnd.Y = end.Y; meshvecEnd.Z = end.Z;
 	auto debugLinesComponent = world->GetWorldComponent<DebugDrawLinesComponent>();
 	debugLinesComponent->DebugLines.PushBack(DebugDrawLinesComponent::DebugLine{ meshvecBegin, meshvecEnd });
-	Mesh::Vector3D colorBegin, colorEnd;
-	colorBegin.X = 0.0f; colorBegin.Y = 0.3f; colorBegin.Z = 0.0f;
-	colorEnd.X = 0.0f; colorEnd.Y = 0.2f; colorEnd.Z = 0.0f;
-	debugLinesComponent->DebugLinesColors.PushBack(DebugDrawLinesComponent::DebugLine{ colorBegin, colorEnd });
+	Color colorBegin(0.0f, 0.3f, 0.0f), colorEnd(0.0f, 0.2f, 0.0f);
+	debugLinesComponent->DebugLinesColors.PushBack(DebugDrawLinesComponent::DebugLineColor{ colorBegin, colorEnd });
 }
 
-void Poly::DebugDrawSystem::EmitBox(World* world, Vector mins, Vector maxs)
+void Poly::DebugDrawSystem::DrawBox(World* world, Vector mins, Vector maxs)
 {
 	std::array<Vector, 8> points;
 	std::array<Vector, 2> minmaxVector = { mins, maxs };
@@ -158,25 +157,25 @@ void Poly::DebugDrawSystem::EmitBox(World* world, Vector mins, Vector maxs)
 	// 7: 0 1 1
 
 	// bottom
-	EmitLine(world, points[0], points[4]);
-	EmitLine(world, points[0], points[1]);
-	EmitLine(world, points[5], points[4]);
-	EmitLine(world, points[5], points[1]);
+	DrawLine(world, points[0], points[4]);
+	DrawLine(world, points[0], points[1]);
+	DrawLine(world, points[5], points[4]);
+	DrawLine(world, points[5], points[1]);
 
 	// top
-	EmitLine(world, points[3], points[7]);
-	EmitLine(world, points[3], points[2]);
-	EmitLine(world, points[6], points[7]);
-	EmitLine(world, points[6], points[2]);
+	DrawLine(world, points[3], points[7]);
+	DrawLine(world, points[3], points[2]);
+	DrawLine(world, points[6], points[7]);
+	DrawLine(world, points[6], points[2]);
 
 	// top-bottom lines
-	EmitLine(world, points[0], points[3]);
-	EmitLine(world, points[1], points[2]);
-	EmitLine(world, points[4], points[7]);
-	EmitLine(world, points[5], points[6]);
+	DrawLine(world, points[0], points[3]);
+	DrawLine(world, points[1], points[2]);
+	DrawLine(world, points[4], points[7]);
+	DrawLine(world, points[5], points[6]);
 }
 
-void Poly::DebugDrawSystem::EmitCircle(World * world, Vector position, float radius, Vector orientation)
+void Poly::DebugDrawSystem::DrawCircle(World* world, Vector position, float radius, Vector orientation)
 {
 	const auto circleSegmentStep = Angle::FromDegrees(15.0f);
 	orientation.Normalize();
@@ -186,7 +185,7 @@ void Poly::DebugDrawSystem::EmitCircle(World * world, Vector position, float rad
 
 	// get a vector perpendicular to orientation
 	Vector right, forward; // forward is unused
-	Util::branchlessONB(orientation, right, forward);
+	Util::BranchlessONB(orientation, right, forward);
 
 	right *= radius;
 
@@ -194,27 +193,27 @@ void Poly::DebugDrawSystem::EmitCircle(World * world, Vector position, float rad
 	{
 		Vector previousSegmentPoint = right;
 		right = rotAroundCircle*right;
-		EmitLine(world, position + previousSegmentPoint, position + right);
+		DrawLine(world, position + previousSegmentPoint, position + right);
 	}
 
-	EmitArrow(world, position, right);
+	DrawArrow(world, position, right);
 }
 
-void Poly::DebugDrawSystem::EmitSphere(World* world, Vector position, float radius)
+void Poly::DebugDrawSystem::DrawSphere(World* world, Vector position, float radius)
 {
-	EmitCircle(world, position, radius, Vector(1.0f, 0.0f, 0.0f));
-	EmitCircle(world, position, radius, Vector(0.0f, 1.0f, 0.0f));
-	EmitCircle(world, position, radius, Vector(0.0f, 0.0f, 1.0f));
+	DrawCircle(world, position, radius, Vector(1.0f, 0.0f, 0.0f));
+	DrawCircle(world, position, radius, Vector(0.0f, 1.0f, 0.0f));
+	DrawCircle(world, position, radius, Vector(0.0f, 0.0f, 1.0f));
 }
 
-void Poly::DebugDrawSystem::EmitArrow(World* world, Vector position, Vector directionVector)
+void Poly::DebugDrawSystem::DrawArrow(World* world, Vector position, Vector directionVector)
 {
 	constexpr float arrowLengthScale = 0.5f;
 	constexpr float arrowheadScale = 0.5f;
 	
 	// body line
 	auto arrowTip = position + directionVector*arrowLengthScale;
-	EmitLine(world, position, arrowTip);
+	DrawLine(world, position, arrowTip);
 	directionVector.Normalize();
 
 	// arrowhead
@@ -229,8 +228,8 @@ void Poly::DebugDrawSystem::EmitArrow(World* world, Vector position, Vector dire
 
 	for (float degrees = 0.0f; degrees < 360.0f; degrees += rotationStep.AsDegrees())
 	{
-		EmitLine(world, arrowTip, arrowTip + arrowTipEdgePoint);
-		EmitLine(world, arrowTip + arrowTipEdgePoint, arrowTip + directionVector*arrowheadScale);
+		DrawLine(world, arrowTip, arrowTip + arrowTipEdgePoint);
+		DrawLine(world, arrowTip + arrowTipEdgePoint, arrowTip + directionVector*arrowheadScale);
 		arrowTipEdgePoint = rotAroundDirectionVector*arrowTipEdgePoint;
 	}
 }

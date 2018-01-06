@@ -5,11 +5,11 @@ namespace Poly
 {
 	enum class DebugDrawPreset
 	{
-		NONE = 0x00,
-		PLAYER = 0x01,
-		DYNAMIC = 0x02,
-		STATIC = 0x04,
-		GFX = 0x08
+		NONE = 0,
+		PLAYER = BIT(1),
+		DYNAMIC = BIT(2),
+		STATIC = BIT(3),
+		GFX = BIT(4)
 	};
 
 	/// <summary>This is class where all debug configuration variables are placed</summary>

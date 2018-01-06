@@ -67,7 +67,7 @@ void GLRenderingDevice::RenderWorld(World* world)
 				RenderNormalsWireframe(world, rect, cameraCmp);
 				break;
 
-			case eRenderingModeType::DEBUG:
+			case eRenderingModeType::IMMEDIATE_DEBUG:
 				RenderDebug(world, rect, cameraCmp);
 				break;
 
@@ -114,7 +114,7 @@ void GLRenderingDevice::RenderNormalsWireframe(World* world, const AARect& rect,
 	PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
 }
 
-void Poly::GLRenderingDevice::RenderDebug(World * world, const AARect & rect, CameraComponent * cameraCmp) const
+void Poly::GLRenderingDevice::RenderDebug(World* world, const AARect& rect, CameraComponent* cameraCmp) const
 {
 	PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
 
@@ -141,7 +141,7 @@ void Poly::GLRenderingDevice::RenderDebug(World * world, const AARect & rect, Ca
 	glDisable(GL_CULL_FACE);
 
 	// Render debug geometry
-	GeometryRenderingPasses[eGeometryRenderPassType::DEBUG]->Run(world, cameraCmp, rect);
+	GeometryRenderingPasses[eGeometryRenderPassType::IMMEDIATE_DEBUG]->Run(world, cameraCmp, rect);
 
 	glEnable(GL_CULL_FACE);
 
