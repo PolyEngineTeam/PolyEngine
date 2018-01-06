@@ -1,6 +1,6 @@
+#include "GLCubemapDeviceProxy.hpp"
 #include "GLTextureDeviceProxy.hpp"
 #include "GLUtils.hpp"
-#include "GLCubemapDeviceProxy.hpp"
 
 using namespace Poly;
 
@@ -32,7 +32,7 @@ void GLCubemapDeviceProxy::InitCubemapParams()
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
-void GLCubemapDeviceProxy::SetContent(unsigned int side, const unsigned char* data)
+void GLCubemapDeviceProxy::SetContent(const eCubemapSide side, const unsigned char* data)
 {
 	ASSERTE(Width > 0 && Height > 0, "Invalid arguments!");
 	ASSERTE(TextureID > 0, "Texture is invalid!");
@@ -41,7 +41,7 @@ void GLCubemapDeviceProxy::SetContent(unsigned int side, const unsigned char* da
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, TextureID);
 	
-	glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X + side, 0, GL_RGB, (GLsizei)Width, (GLsizei)Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	glTexImage2D( GetEnumFromCubemapSide(side), 0, GL_RGB, (GLsizei)Width, (GLsizei)Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 	
 	glGenerateMipmap(GL_TEXTURE_2D);
 	
@@ -49,3 +49,18 @@ void GLCubemapDeviceProxy::SetContent(unsigned int side, const unsigned char* da
 	CHECK_GL_ERR();
 }
 
+GLenum GLCubemapDeviceProxy::GetEnumFromCubemapSide(eCubemapSide type)
+{
+	switch (type)
+	{
+		case eCubemapSide::RIGHT:	return GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+		case eCubemapSide::LEFT:	return GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+		case eCubemapSide::TOP:		return GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+		case eCubemapSide::DOWN:	return GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+		case eCubemapSide::BACK:	return GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+		case eCubemapSide::FRONT:	return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+		default:
+			ASSERTE(false, "Invalid type!");
+			return -1;
+	}
+}

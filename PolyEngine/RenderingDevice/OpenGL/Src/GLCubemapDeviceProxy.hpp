@@ -11,11 +11,13 @@ namespace Poly
 		GLCubemapDeviceProxy(size_t width, size_t height);
 		virtual ~GLCubemapDeviceProxy();
 		
-		void SetContent(unsigned int side, const unsigned char* data) override;
+		void SetContent(const eCubemapSide side, const unsigned char* data) override;
 
 		GLuint GetTextureID() const { return TextureID; }
 
 	private:
+		static GLenum GetEnumFromCubemapSide(eCubemapSide type);
+
 		void InitCubemapParams();
 
 		size_t Width = 0;

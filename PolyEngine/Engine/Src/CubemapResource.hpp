@@ -11,11 +11,10 @@ namespace Poly
 	class ENGINE_DLLEXPORT CubemapResource : public ResourceBase
 	{
 	public:
-		CubemapResource(const Dynarray<String> path);
+		CubemapResource(const EnumArray<String, eCubemapSide> paths);
 		~CubemapResource() override;
-
-		unsigned char* LoadImage(const String& path);
-		unsigned char* GetImage(int side) const { return Images[side]; }
+		
+		unsigned char* GetImage(const eCubemapSide side) const { return Images[side]; }
 		int GetWidth() const { return Width; }
 		int GetHeight() const { return Height; }
 		int GetChannels() const { return Channels; }
@@ -23,10 +22,12 @@ namespace Poly
 		const ICubemapDeviceProxy* GetTextureProxy() const { return TextureProxy.get(); }
 	private:
 		std::unique_ptr<ICubemapDeviceProxy> TextureProxy;
-		Dynarray<unsigned char*> Images;
+		EnumArray<unsigned char*, eCubemapSide> Images;
 		int Width;
 		int Height;
 		int Channels;
+
+		unsigned char* LoadImage(const String& path);
 	};
 }
 

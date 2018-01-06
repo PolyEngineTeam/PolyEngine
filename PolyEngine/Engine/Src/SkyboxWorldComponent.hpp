@@ -8,7 +8,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT SkyboxWorldComponent : public ComponentBase
 	{
 	public:
-		SkyboxWorldComponent(const Dynarray<String> cubemapPath);
+		SkyboxWorldComponent(const EnumArray<String, eCubemapSide> cubemapPath);
 		const CubemapResource& GetCubemap() const { return Cubemap; }
 
 	private:

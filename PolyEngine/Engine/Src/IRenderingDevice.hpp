@@ -30,6 +30,19 @@ namespace Poly
 		_COUNT
 	};
 
+	enum class eCubemapSide
+	{
+		RIGHT,
+		LEFT,
+		TOP,
+		DOWN,
+		BACK,
+		FRONT,
+		_COUNT
+	};
+
+	// REGISTER_ENUM_NAMES(eCubemapSide, "RIGHT", "LEFT", "TOP", "BOTTOM", "BACK", "FRONT");
+
 	//------------------------------------------------------------------------------
 	class ENGINE_DLLEXPORT RenderingDeviceSetupFailedException : public BaseObject<>, public std::exception
 	{
@@ -55,7 +68,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT ICubemapDeviceProxy : public BaseObject<>
 	{
 	public:
-		virtual void SetContent(unsigned int side, const unsigned char* data) = 0;
+		virtual void SetContent(const eCubemapSide side, const unsigned char* data) = 0;
 	};
 
 	//------------------------------------------------------------------------------

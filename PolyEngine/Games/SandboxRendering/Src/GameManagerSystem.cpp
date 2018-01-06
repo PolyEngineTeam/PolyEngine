@@ -46,13 +46,16 @@ void GameManagerSystem::CreateScene(World* world)
 	GameMgrCmp->Camera;
 
 	world->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, world->GetComponent<CameraComponent>(Camera));
-	Dynarray<String> stormydays = {
-		"Cubemaps/stormydays/stormydays_rt.jpg", "Cubemaps/stormydays/stormydays_lt.jpg",
-		"Cubemaps/stormydays/stormydays_up.jpg", "Cubemaps/stormydays/stormydays_dn.jpg",
-		"Cubemaps/stormydays/stormydays_bk.jpg", "Cubemaps/stormydays/stormydays_ft.jpg"
+	EnumArray<String, eCubemapSide> miramar {
+		{eCubemapSide::RIGHT, "Cubemaps/miramar/miramar_rt.jpg"},
+		{eCubemapSide::LEFT , "Cubemaps/miramar/miramar_lt.jpg"},
+		{eCubemapSide::TOP   , "Cubemaps/miramar/miramar_up.jpg"},
+		{eCubemapSide::DOWN , "Cubemaps/miramar/miramar_dn.jpg"},
+		{eCubemapSide::BACK , "Cubemaps/miramar/miramar_bk.jpg"},
+		{eCubemapSide::FRONT, "Cubemaps/miramar/miramar_ft.jpg"}
 	};
 
-	DeferredTaskSystem::AddWorldComponentImmediate<SkyboxWorldComponent>(world, stormydays);
+	DeferredTaskSystem::AddWorldComponentImmediate<SkyboxWorldComponent>(world, miramar);
 
 	world->GetWorldComponent<AmbientLightWorldComponent>()->SetColor(Color(0.0f, 0.0f, 0.0f));
 	world->GetWorldComponent<AmbientLightWorldComponent>()->SetIntensity(0.0f);

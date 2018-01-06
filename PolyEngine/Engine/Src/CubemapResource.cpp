@@ -6,23 +6,22 @@
 
 using namespace Poly;
 
-CubemapResource::CubemapResource(const Dynarray<String> paths)
+CubemapResource::CubemapResource(const EnumArray<String, eCubemapSide> paths)
 {
 	ASSERTE(paths.GetSize() == 6, "CubemapResource::CubemapResource parths need to have 6 elements");
-	gConsole.LogInfo("CubemapResource::CubemapResource path:{}", paths[0]);
+	gConsole.LogInfo("CubemapResource::CubemapResource path:{}", paths[eCubemapSide::LEFT]);
 
-	Images.Reserve(6);
-	for (size_t i = 0; i < paths.GetSize(); ++i) 
+	for (auto side : IterateEnum<eCubemapSide>())
 	{
-		String absolutePath = gAssetsPathConfig.GetAssetsPath(eResourceSource::ENGINE) + paths[i];
-		Images.PushBack(LoadImage(absolutePath));
+		String absolutePath = gAssetsPathConfig.GetAssetsPath(eResourceSource::ENGINE) + paths[side];
+		Images[side] = LoadImage(absolutePath);
 	}
 
 	TextureProxy = gEngine->GetRenderingDevice()->CreateCubemap(Width, Height);
 
-	for (size_t i = 0; i < Images.GetSize(); ++i)
+	for (auto side : IterateEnum<eCubemapSide>())
 	{
-		TextureProxy->SetContent((unsigned int)i, Images[i]);
+		TextureProxy->SetContent(side, Images[side]);
 	}
 }
 
@@ -52,8 +51,8 @@ CubemapResource::~CubemapResource()
 {
 	gConsole.LogInfo("CubemapResource::~CubemapResource");
 
-	for(size_t i = 0; i < Images.GetSize(); ++i)
+	for (auto side : IterateEnum<eCubemapSide>())
 	{
-		SOIL_free_image_data(Images[i]);
+		SOIL_free_image_data(Images[side]);
 	}
 }
