@@ -3,12 +3,20 @@
 #include "btBulletDynamicsCommon.h"
 #include "Rigidbody3DComponent.hpp"
 
-Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType type, Physics3DShape* shape, float mass)
+Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType type, Physics3DShape* shape, 
+	float restitution, float friction, float rollingFriction, float spinningFriction, float mass)
 	: BodyType(type), 
 	BodyWorld(world)
 {
 	switch (shape->ShapeType)
 	{
+	case ePhysics3DShapes::PLANE:
+	{
+		Physics3DPlaneShape* plane = reinterpret_cast<Physics3DPlaneShape*>(shape);
+		Shape = new btStaticPlaneShape(btVector3(plane->Normal.X, plane->Normal.Y, plane->Normal.Z), plane->HalfExtent);
+	}
+		break;
+
 	case ePhysics3DShapes::BOX:
 	{
 		Vector v = reinterpret_cast<Physics3DBoxShape*>(shape)->HalfExtents;
@@ -19,6 +27,13 @@ Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType 
 	case ePhysics3DShapes::SPHERE:
 		Shape = new btSphereShape(reinterpret_cast<Physics3DSphereShape*>(shape)->Radius);
 		break;
+
+	case ePhysics3DShapes::CAPSULE:
+	{
+		Physics3DCapsuleShape* capsule = reinterpret_cast<Physics3DCapsuleShape*>(shape);
+		Shape = new btCapsuleShape(capsule->Radius, capsule->Height);
+	}
+		break;	
 	}
 	
 	MotionState = new btDefaultMotionState();
@@ -36,7 +51,10 @@ Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType 
 		break;
 	}
 	btRigidBody::btRigidBodyConstructionInfo CI(mass, MotionState, Shape, inertia);
-	CI.m_restitution = 0.7f;
+	CI.m_restitution = restitution;
+	CI.m_friction = friction;
+	CI.m_rollingFriction = rollingFriction;
+	CI.m_spinningFriction = spinningFriction;
 	RigidBody = new btRigidBody(CI);
 	//Physics3DSystem::RegisterRigidbody(world, GetOwnerID());
 }

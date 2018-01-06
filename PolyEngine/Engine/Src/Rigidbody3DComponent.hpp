@@ -37,7 +37,8 @@ namespace Poly
 		friend void Physics3DSystem::RegisterRigidbody(World * world, const UniqueID& entityID);
 		friend void Physics3DSystem::UnregisterRigidBody(World * world, const UniqueID& entityID);
 	public:
-		Rigidbody3DComponent(World* world, eRigidBody3DType type, Physics3DShape* shape, float mass = 0);
+		Rigidbody3DComponent(World* world, eRigidBody3DType type, Physics3DShape* shape,
+			float restitution = 0, float friction = 0, float rollingFriction = 0, float spinningFriction = 0, float mass = 0);
 		~Rigidbody3DComponent();
 
 
