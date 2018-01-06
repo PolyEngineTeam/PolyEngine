@@ -9,6 +9,7 @@ void InputSystem::InputPhase(World* world)
 	InputWorldComponent* com = world->GetWorldComponent<InputWorldComponent>();
 
 	com->PrevKey = com->CurrKey;
+	com->PrevMouseButton = com->CurrMouseButton;
 
 	com->PrevMouse = com->CurrMouse;
 	com->PrevWheel = com->CurrWheel;

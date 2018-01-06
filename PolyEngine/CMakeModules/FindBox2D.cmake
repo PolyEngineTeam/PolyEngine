@@ -34,7 +34,7 @@ if (WIN32)
 		set(Box2D_ARCH "Win32")
 	endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
-	set(Box2D_ROOT_DIR "${CMAKE_SOURCE_DIR}/ThirdParty/Box2D" CACHE PATH "Box2D root directory")
+	set(Box2D_ROOT_DIR "${ENGINE_ROOT_DIR}/ThirdParty/Box2D" CACHE PATH "Box2D root directory")
 
 	find_path(Box2D_INCLUDE_DIR
 				NAMES "Box2D/Box2D.h" 

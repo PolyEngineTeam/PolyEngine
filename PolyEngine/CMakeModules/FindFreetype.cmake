@@ -33,7 +33,7 @@ if (WIN32)
 		set(Freetype_ARCH "Win32")
 	endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
-	set(Freetype_ROOT_DIR "${CMAKE_SOURCE_DIR}/ThirdParty/freetype" CACHE PATH "Freetype root directory")
+	set(Freetype_ROOT_DIR "${ENGINE_ROOT_DIR}/ThirdParty/freetype" CACHE PATH "Freetype root directory")
 
 	find_path(Freetype_INCLUDE_DIR  NAMES freetype/freetype.h  HINTS "${Freetype_ROOT_DIR}/include")
 	find_library(Freetype_LIBRARY   NAMES freetype freetype28  HINTS "${Freetype_ROOT_DIR}/lib/Release/${Freetype_ARCH}")

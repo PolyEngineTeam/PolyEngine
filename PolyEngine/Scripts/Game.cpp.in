@@ -1,0 +1,5 @@
+#include "Game.hpp"
+
+using namespace Poly;
+
+DEFINE_GAME($GAME_CLASS_NAME$)
