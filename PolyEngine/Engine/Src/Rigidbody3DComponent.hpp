@@ -46,14 +46,14 @@ namespace Poly
 		void UpdatePosition();
 
 		void SetLinearFactor(const Vector& factor);
-		const Vector& GetLinearFactor();
 		void SetLinearVelocity(const Vector& velocity);
+		const Vector& GetLinearFactor();
 		const Vector& GetLinearVelocity();
 
 		void SetAngularFactor(float factor);
 		void SetAngularFactor(const Vector& factor);
-		const Vector& GetAngularFactor();
 		void SetAngularVelocity(const Vector& velocity);
+		const Vector& GetAngularFactor();
 		const Vector& GetAngularVelocity();
 
 		void SetDamping(float linearDamping, float angularDamping);
@@ -76,8 +76,6 @@ namespace Poly
 
 	private:
 		bool Registered = false;
-		bool FixedTranslation = false;
-		bool FixedRotation = false;
 
 		World* BodyWorld;
 

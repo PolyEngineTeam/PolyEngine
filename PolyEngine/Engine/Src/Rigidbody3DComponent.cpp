@@ -93,6 +93,41 @@ void Poly::Rigidbody3DComponent::ApplyDamping(float timestep)
 	BulletRigidBody->applyDamping(timestep);
 }
 
+void Poly::Rigidbody3DComponent::ApplyForce(const Vector& force, const Vector& relPos)
+{
+	BulletRigidBody->applyForce(btVector3(force.X, force.Y, force.Z), btVector3(relPos.X, relPos.Y, relPos.Z))
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::ApplyGravity()
+{
+	BulletRigidBody->applyGravity();
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::ApplyImpulse(const Vector& impulse, const Vector& relPos)
+{
+	BulletRigidBody->applyImpulse(btVector3(impulse.X, impulse.Y, impulse.Z), btVector3(relPos.X, relPos.Y, relPos.Z));
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::ApplyTorque(const Vector& torque)
+{
+	BulletRigidBody->applyTorque(btVector3(torque.X, torque.Y, torque.Z));
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::ApplyTorqueImpulse(const Vector& torque)
+{
+	BulletRigidBody->applyTorqueImpulse(btVector3(torque.X, torque.Y, torque.Z));
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::ClearForces()
+{
+	BulletRigidBody->clearForces();
+}
+
 //********************************************************************************************************************************************
 void Poly::Rigidbody3DComponent::UpdatePosition()
 {
@@ -121,20 +156,47 @@ void Poly::Rigidbody3DComponent::SetLinearFactor(const Vector& factor)
 }
 
 //********************************************************************************************************************************************
-void Poly::Rigidbody3DComponent::ApplyGravity()
+void Poly::Rigidbody3DComponent::SetLinearVelocity(const Vector& velocity)
 {
-	BulletRigidBody->applyGravity();
+	BulletRigidBody->setLinearVelocity(btVector3(velocity.X, velocity.Y, velocity.Z));
+}
+
+//********************************************************************************************************************************************
+const Poly::Vector& Poly::Rigidbody3DComponent::GetLinearFactor()
+{
+	const btVector3& v = BulletRigidBody->getLinearFactor();
+	return Vector(v.x(), v.y(), v.z());
+}
+
+//********************************************************************************************************************************************
+const Poly::Vector& Poly::Rigidbody3DComponent::GetLinearVelocity()
+{
+	const btVector3& v = BulletRigidBody->getLinearVelocity();
+	return Vector(v.x(), v.y(), v.z());
 }
 
 //********************************************************************************************************************************************
 void Poly::Rigidbody3DComponent::SetAngularFactor(float factor)
 {
+	BulletRigidBody->setAngularFactor(factor);
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::SetAngularFactor(const Vector& factor)
+{
+	BulletRigidBody->setAngularFactor(btVector3(factor.X, factor.Y, factor.Z));
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::SetAngularVelocity(const Vector& velocity)
+{
+	BulletRigidBody->setAngularVelocity(btVector3(velocity.X, velocity.Y, velocity.Z));
 }
 
 //********************************************************************************************************************************************
 const Poly::Vector& Poly::Rigidbody3DComponent::GetAngularFactor()
 {
-	const btVector3& v = BulletRigidBody->getLinearVelocity();
+	const btVector3& v = BulletRigidBody->getAngularFactor();
 	return Vector(v.x(), v.y(), v.z());
 }
 
