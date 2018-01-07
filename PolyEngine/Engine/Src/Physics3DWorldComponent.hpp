@@ -23,6 +23,8 @@ namespace Poly
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
 		friend void Physics3DSystem::RegisterRigidbody(World* world, const UniqueID& entityID);
 		friend void Physics3DSystem::UnregisterRigidBody(World* world, const UniqueID& entityID);
+		friend void Physics3DSystem::RegisterTriger(World* world, const UniqueID& entityID);
+		friend void Physics3DSystem::UnregisterTriger(World* world, const UniqueID& entityID);
 	public:
 		Physics3DWorldComponent(Physics3DConfig config);
 

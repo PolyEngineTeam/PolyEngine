@@ -13,5 +13,7 @@ namespace Poly
 
 		void ENGINE_DLLEXPORT RegisterTriger(World* world, const UniqueID& entityID);
 		void ENGINE_DLLEXPORT UnregisterTriger(World* world, const UniqueID& entityID);
+
+		bool ENGINE_DLLEXPORT Colliding(World* world, const UniqueID& firstID, const UniqueID& secondID);
 	}
 }
