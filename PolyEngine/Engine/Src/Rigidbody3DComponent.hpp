@@ -79,7 +79,6 @@ namespace Poly
 
 		World* BodyWorld;
 
-		btCollisionShape* BulletShape;
 		btDefaultMotionState* BulletMotionState;
 		btRigidBody* BulletRigidBody;
 	};

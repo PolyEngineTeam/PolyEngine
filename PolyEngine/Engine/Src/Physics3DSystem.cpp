@@ -1,7 +1,9 @@
 #include "EnginePCH.hpp"
 
 #include <btBulletDynamicsCommon.h>
+#include <btBulletCollisionCommon.h>
 
+//********************************************************************************************************************************************
 void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 {
 	Physics3DWorldComponent* physicsWorldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
@@ -40,12 +42,27 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 	}
 }
 
+//********************************************************************************************************************************************
 void Poly::Physics3DSystem::RegisterRigidbody(World* world, const UniqueID& entityID)
 {
 	world->GetWorldComponent<Physics3DWorldComponent>()->DynamicsWorld->addRigidBody(world->GetComponent<Rigidbody3DComponent>(entityID)->BulletRigidBody);
 }
 
+//********************************************************************************************************************************************
 void Poly::Physics3DSystem::UnregisterRigidBody(World* world, const UniqueID& entityID)
 {
 	world->GetWorldComponent<Physics3DWorldComponent>()->DynamicsWorld->removeRigidBody(world->GetComponent<Rigidbody3DComponent>(entityID)->BulletRigidBody);
+}
+
+//********************************************************************************************************************************************
+void Poly::Physics3DSystem::RegisterTriger(World* world, const UniqueID& entityID)
+{
+	//world->GetWorldComponent<Physics3DWorldComponent>()->DynamicsWorld->addCollisionObject(world->GetComponent<Rigidbody3DComponent>(entityID)->BulletRigidBody);
+
+}
+
+//********************************************************************************************************************************************
+void Poly::Physics3DSystem::UnregisterTriger(World* world, const UniqueID& entityID)
+{
+	return void ENGINE_DLLEXPORT();
 }

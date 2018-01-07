@@ -2,8 +2,6 @@
 
 #include <Vector.hpp>
 
-class btRigidBody;
-
 namespace Poly
 {
 	namespace Physics3DSystem
@@ -12,5 +10,8 @@ namespace Poly
 
 		void ENGINE_DLLEXPORT RegisterRigidbody(World* world, const UniqueID& entityID);
 		void ENGINE_DLLEXPORT UnregisterRigidBody(World* world, const UniqueID& entityID);
+
+		void ENGINE_DLLEXPORT RegisterTriger(World* world, const UniqueID& entityID);
+		void ENGINE_DLLEXPORT UnregisterTriger(World* world, const UniqueID& entityID);
 	}
 }

@@ -42,6 +42,7 @@
 #include "Physics3DShapes.hpp"
 #include "Rigidbody2DComponent.hpp"
 #include "Rigidbody3DComponent.hpp"
+#include "Trigger3DComponent.hpp"
 #include "LightSourceComponent.hpp"
 #include "PostprocessSettingsComponent.hpp"
 

@@ -33,6 +33,7 @@ set(POLYENGINE_SRCS
 	Src/Physics2DColliders.cpp
 	Src/Physics2DSystem.cpp
 	Src/Physics2DWorldComponent.cpp
+	Src/Physics3DShapes.cpp
 	Src/Physics3DSystem.cpp
 	Src/Physics3DWorldComponent.cpp
 	Src/PostprocessSettingsComponent.cpp
@@ -49,6 +50,7 @@ set(POLYENGINE_SRCS
 	Src/TextureResource.cpp
 	Src/TimeSystem.cpp
 	Src/TimeWorldComponent.cpp
+	Src/Trigger3DComponent.cpp
 	Src/TransformComponent.cpp
 	Src/ViewportWorldComponent.cpp
 	Src/World.cpp
@@ -109,6 +111,7 @@ set(POLYENGINE_H_FOR_IDE
 	Src/Timer.hpp
 	Src/TimeSystem.hpp
 	Src/TimeWorldComponent.hpp
+	Src/Trigger3DComponent.hpp
 	Src/TransformComponent.hpp
 	Src/Viewport.hpp
 	Src/ViewportWorldComponent.hpp

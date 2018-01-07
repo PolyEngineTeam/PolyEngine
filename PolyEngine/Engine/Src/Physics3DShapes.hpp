@@ -1,5 +1,7 @@
 #pragma once
 
+class btCollisionShape;
+
 namespace Poly
 {
 	enum class ePhysics3DShape
@@ -13,38 +15,42 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT Physics3DShape
 	{
+		friend class Trigger3DComponent;
+		friend class Rigidbody3DComponent;
 	public:
 		Physics3DShape(ePhysics3DShape type) : ShapeType(type) {}
 		const ePhysics3DShape ShapeType;
+	protected:
+		btCollisionShape* BulletShape;
 	};
 
-	class ENGINE_DLLEXPORT Physics3DPlaneShape : Physics3DShape
+	class ENGINE_DLLEXPORT Physics3DPlaneShape : public Physics3DShape
 	{
 	public:
-		Physics3DPlaneShape(Vector normal, float halfExtent) : Physics3DShape(ePhysics3DShape::PLANE), Normal(normal), HalfExtent(halfExtent) {}
-		Vector Normal;
-		float HalfExtent;
+		Physics3DPlaneShape(Vector normal, float halfExtent);
+		const Vector Normal;
+		const float HalfExtent;
 	};
 
-	class ENGINE_DLLEXPORT Physics3DBoxShape : Physics3DShape
+	class ENGINE_DLLEXPORT Physics3DBoxShape : public Physics3DShape
 	{
 	public:
-		Physics3DBoxShape(Vector halfExtents) : Physics3DShape(ePhysics3DShape::BOX), HalfExtents(halfExtents) {}
-		Vector HalfExtents;
+		Physics3DBoxShape(Vector halfExtents);
+		const Vector HalfExtents;
 	};
 
-	class ENGINE_DLLEXPORT Physics3DSphereShape : Physics3DShape
+	class ENGINE_DLLEXPORT Physics3DSphereShape : public Physics3DShape
 	{
 	public:
-		Physics3DSphereShape(float radius) : Physics3DShape(ePhysics3DShape::SPHERE), Radius(radius) {}
-		float Radius;
+		Physics3DSphereShape(float radius);
+		const float Radius;
 	};
 
-	class ENGINE_DLLEXPORT Physics3DCapsuleShape : Physics3DShape
+	class ENGINE_DLLEXPORT Physics3DCapsuleShape : public Physics3DShape
 	{
 	public:
-		Physics3DCapsuleShape(float radius, float height) : Physics3DShape(ePhysics3DShape::PLANE), Radius(radius), Height(height) {}
-		float Radius;
-		float Height;
+		Physics3DCapsuleShape(float radius, float height);
+		const float Radius;
+		const float Height;
 	};
 }

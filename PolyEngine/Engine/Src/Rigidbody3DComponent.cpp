@@ -14,35 +14,7 @@ Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType 
 	SpinningFriction(spinningFriction),
 	Shape(shape),
 	BodyType(type)
-{
-	switch (shape->ShapeType)
-	{
-	case ePhysics3DShape::PLANE:
-	{
-		Physics3DPlaneShape* plane = reinterpret_cast<Physics3DPlaneShape*>(shape);
-		BulletShape = new btStaticPlaneShape(btVector3(plane->Normal.X, plane->Normal.Y, plane->Normal.Z), plane->HalfExtent);
-	}
-		break;
-
-	case ePhysics3DShape::BOX:
-	{
-		Vector v = reinterpret_cast<Physics3DBoxShape*>(shape)->HalfExtents;
-		BulletShape = new btBoxShape(btVector3(v.X, v.Y, v.Z));
-	}
-		break;
-
-	case ePhysics3DShape::SPHERE:
-		BulletShape = new btSphereShape(reinterpret_cast<Physics3DSphereShape*>(shape)->Radius);
-		break;
-
-	case ePhysics3DShape::CAPSULE:
-	{
-		Physics3DCapsuleShape* capsule = reinterpret_cast<Physics3DCapsuleShape*>(shape);
-		BulletShape = new btCapsuleShape(capsule->Radius, capsule->Height);
-	}
-		break;	
-	}
-	
+{	
 	BulletMotionState = new btDefaultMotionState();
 	
 	btVector3 inertia(0, 0, 0);
@@ -54,14 +26,16 @@ Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType 
 
 	case eRigidBody3DType::DYNAMIC:
 		ASSERTE(type != eRigidBody3DType::STATIC && mass > 0, "Can't create dynamic body with 0 mass.");
-		BulletShape->calculateLocalInertia(mass, inertia);
+		shape->BulletShape->calculateLocalInertia(mass, inertia);
 		break;
 	}
-	btRigidBody::btRigidBodyConstructionInfo CI(mass, BulletMotionState, BulletShape, inertia);
+
+	btRigidBody::btRigidBodyConstructionInfo CI(mass, BulletMotionState, shape->BulletShape, inertia);
 	CI.m_restitution = restitution;
 	CI.m_friction = friction;
 	CI.m_rollingFriction = rollingFriction;
 	CI.m_spinningFriction = spinningFriction;
+
 	BulletRigidBody = new btRigidBody(CI);
 }
 
@@ -72,7 +46,6 @@ Poly::Rigidbody3DComponent::~Rigidbody3DComponent()
 
 	delete BulletRigidBody;
 	delete BulletMotionState;
-	delete BulletShape;
 }
 
 //********************************************************************************************************************************************
@@ -93,9 +66,10 @@ void Poly::Rigidbody3DComponent::ApplyDamping(float timestep)
 	BulletRigidBody->applyDamping(timestep);
 }
 
+//********************************************************************************************************************************************
 void Poly::Rigidbody3DComponent::ApplyForce(const Vector& force, const Vector& relPos)
 {
-	BulletRigidBody->applyForce(btVector3(force.X, force.Y, force.Z), btVector3(relPos.X, relPos.Y, relPos.Z))
+	BulletRigidBody->applyForce(btVector3(force.X, force.Y, force.Z), btVector3(relPos.X, relPos.Y, relPos.Z));
 }
 
 //********************************************************************************************************************************************
