@@ -1,5 +1,7 @@
 #pragma once
 
+#include <OrderedMap.hpp>
+
 #include "ComponentBase.hpp"
 
 class btDiscreteDynamicsWorld;
@@ -7,6 +9,9 @@ class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
 class btBroadphaseInterface;
 class btSequentialImpulseConstraintSolver;
+
+class btCollisionObject;
+class btRigidBody;
 
 namespace Poly
 {
@@ -42,6 +47,8 @@ namespace Poly
 		btSequentialImpulseConstraintSolver* Solver;
 
 		float LastDeltaOverflow = 0.f;
+		OrderedMap<UniqueID, btCollisionObject*> BulletTriggerToEntity;
+		OrderedMap<UniqueID, btRigidBody*> BulletRigidbodyToEntity;
 	};
 
 	REGISTER_COMPONENT(WorldComponentsIDGroup, Physics3DWorldComponent)

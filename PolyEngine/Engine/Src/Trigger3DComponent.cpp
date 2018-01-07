@@ -2,6 +2,7 @@
 
 #include "btBulletCollisionCommon.h"
 
+//********************************************************************************************************************************************
 Poly::Trigger3DComponent::Trigger3DComponent(Physics3DShape* shape)
 	: Shape(shape)
 {
@@ -10,6 +11,7 @@ Poly::Trigger3DComponent::Trigger3DComponent(Physics3DShape* shape)
 	BulletTrigger->setCollisionFlags(BulletTrigger->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
 }
 
+//********************************************************************************************************************************************
 Poly::Trigger3DComponent::~Trigger3DComponent()
 {
 	Physics3DSystem::UnregisterTriger(BodyWorld, GetOwnerID());
