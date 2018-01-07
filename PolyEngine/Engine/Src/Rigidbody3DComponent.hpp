@@ -28,8 +28,7 @@ namespace Poly
 		friend void Physics3DSystem::RegisterRigidbody(World * world, const UniqueID& entityID);
 		friend void Physics3DSystem::UnregisterRigidBody(World * world, const UniqueID& entityID);
 	public:
-		Rigidbody3DComponent(World* world, eRigidBody3DType type, Physics3DShape* shape,
-			float restitution = 0, float friction = 0, float rollingFriction = 0, float spinningFriction = 0, float mass = 0);
+		Rigidbody3DComponent(World* world, eRigidBody3DType type, Physics3DShape* shape, float mass = 0);
 		~Rigidbody3DComponent();
 
 
@@ -56,6 +55,15 @@ namespace Poly
 		const Vector& GetAngularFactor();
 		const Vector& GetAngularVelocity();
 
+		void SetRestitution(float restitution);
+		float GetRestitution();
+
+		void SetFriction(float friction);
+		float GetFriction();
+
+		void SetRollingFriction(float friction);
+		float GetRollingFriction();
+
 		void SetDamping(float linearDamping, float angularDamping);
 		float GetLinearDamping();
 		float GetAngularDamping();
@@ -67,10 +75,6 @@ namespace Poly
 		eRigidBody3DType GetBodyType() const { return BodyType; }
 
 		const float Mass;
-		const float Restitution;
-		const float Friction;
-		const float RollingFriction;
-		const float SpinningFriction;
 		const Physics3DShape const* Shape; // FIXME(squares): ...
 		const eRigidBody3DType BodyType;
 

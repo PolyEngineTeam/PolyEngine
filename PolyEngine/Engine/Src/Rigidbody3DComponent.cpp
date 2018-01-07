@@ -4,14 +4,9 @@
 #include "Rigidbody3DComponent.hpp"
 
 //********************************************************************************************************************************************
-Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType type, Physics3DShape* shape,
-	float restitution, float friction, float rollingFriction, float spinningFriction, float mass)
+Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType type, Physics3DShape* shape, float mass)
 	: BodyWorld(world),
 	Mass(mass),
-	Restitution(restitution),
-	Friction(friction),
-	RollingFriction(rollingFriction),
-	SpinningFriction(spinningFriction),
 	Shape(shape),
 	BodyType(type)
 {	
@@ -31,10 +26,6 @@ Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType 
 	}
 
 	btRigidBody::btRigidBodyConstructionInfo CI(mass, BulletMotionState, shape->BulletShape, inertia);
-	CI.m_restitution = restitution;
-	CI.m_friction = friction;
-	CI.m_rollingFriction = rollingFriction;
-	CI.m_spinningFriction = spinningFriction;
 
 	BulletRigidBody = new btRigidBody(CI);
 }
@@ -179,6 +170,42 @@ const Poly::Vector& Poly::Rigidbody3DComponent::GetAngularVelocity()
 {
 	const btVector3& v = BulletRigidBody->getAngularVelocity();
 	return Vector(v.x(), v.y(), v.z());
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::SetRestitution(float restitution)
+{
+	BulletRigidBody->setRestitution(restitution);
+}
+
+//********************************************************************************************************************************************
+float Poly::Rigidbody3DComponent::GetRestitution()
+{
+	return BulletRigidBody->getRestitution();
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::SetFriction(float friction)
+{
+	BulletRigidBody->setFriction(friction);
+}
+
+//********************************************************************************************************************************************
+float Poly::Rigidbody3DComponent::GetFriction()
+{
+	return BulletRigidBody->getFriction();
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::SetRollingFriction(float friction)
+{
+	BulletRigidBody->setRollingFriction(friction);
+}
+
+//********************************************************************************************************************************************
+float Poly::Rigidbody3DComponent::GetRollingFriction()
+{
+	return BulletRigidBody->getRollingFriction();
 }
 
 //********************************************************************************************************************************************

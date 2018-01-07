@@ -49,7 +49,7 @@ void Poly::Physics3DSystem::RegisterRigidbody(World* world, const UniqueID& enti
 	Rigidbody3DComponent* cmp = world->GetComponent<Rigidbody3DComponent>(entityID);
 
 	worldCmp->DynamicsWorld->addRigidBody(cmp->BulletRigidBody);
-	worldCmp->BulletRigidbodyToEntity.Insert(entityID, cmp->BulletRigidBody);
+	worldCmp->BulletRigidbodyToEntity.Insert(cmp->BulletRigidBody, entityID);
 
 	cmp->Registered = true;
 }
@@ -60,8 +60,8 @@ void Poly::Physics3DSystem::UnregisterRigidBody(World* world, const UniqueID& en
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
 	Rigidbody3DComponent* cmp = world->GetComponent<Rigidbody3DComponent>(entityID);
 
+	worldCmp->BulletRigidbodyToEntity.Remove(cmp->BulletRigidBody);
 	worldCmp->DynamicsWorld->removeRigidBody(cmp->BulletRigidBody);
-	worldCmp->BulletRigidbodyToEntity.Remove(entityID);
 
 	cmp->Registered = true;
 }
@@ -73,7 +73,7 @@ void Poly::Physics3DSystem::RegisterTriger(World* world, const UniqueID& entityI
 	Trigger3DComponent* cmp = world->GetComponent<Trigger3DComponent>(entityID);
 
 	worldCmp->DynamicsWorld->addCollisionObject(cmp->BulletTrigger);
-	worldCmp->BulletTriggerToEntity.Insert(entityID, cmp->BulletTrigger);
+	worldCmp->BulletTriggerToEntity.Insert(cmp->BulletTrigger, entityID);
 
 	cmp->Registered = true;
 }
@@ -85,7 +85,7 @@ void Poly::Physics3DSystem::UnregisterTriger(World* world, const UniqueID& entit
 	Trigger3DComponent* cmp = world->GetComponent<Trigger3DComponent>(entityID);
 
 	worldCmp->DynamicsWorld->removeCollisionObject(cmp->BulletTrigger);
-	worldCmp->BulletTriggerToEntity.Remove(entityID);
+	worldCmp->BulletTriggerToEntity.Remove(cmp->BulletTrigger);
 
 	cmp->Registered = true;
 }
@@ -101,24 +101,37 @@ bool Poly::Physics3DSystem::IsColliding(World* world, const UniqueID& firstID, c
 //********************************************************************************************************************************************
 const Poly::ContactResult& Poly::Physics3DSystem::ContactPair(World* world, const UniqueID& firstID, const UniqueID & secondID)
 {
+	return ContactResult();
 }
 
 //********************************************************************************************************************************************
 const Poly::ContactResult& Poly::Physics3DSystem::Contact(World* world, const UniqueID& entityID)
 {
+	return ContactResult();
 }
 
 //********************************************************************************************************************************************
 const Poly::RaycastResult& Poly::Physics3DSystem::AllHitsRaycast(World* world, const Vector& from, const Vector & to)
 {
+	return RaycastResult();
 }
 
 //********************************************************************************************************************************************
 const Poly::RaycastResult& Poly::Physics3DSystem::ClosestHitRaycast(World* world, const Vector& from, const Vector & to)
 {
-}
+	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
 
-//********************************************************************************************************************************************
-const Poly::RaycastResult& Poly::Physics3DSystem::ClosestNotMeHitRaycast(World* world, const Vector& from, const Vector & to)
-{
+	RaycastResult result;
+
+	btVector3 f = btVector3(from.X, from.Y, from.Z);
+	btVector3 t = btVector3(to.X, to.Y, to.Z);
+	btCollisionWorld::ClosestRayResultCallback r(f, t);
+
+	world->GetWorldComponent<Physics3DWorldComponent>()->DynamicsWorld->rayTest(f, t, r);
+
+	//UniqueID hitEntityID = worldCmp->;
+
+
+	//result.Hits.PushBack({})
+	return RaycastResult();
 }

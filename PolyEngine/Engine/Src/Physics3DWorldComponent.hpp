@@ -3,6 +3,7 @@
 #include <OrderedMap.hpp>
 
 #include "ComponentBase.hpp"
+#include "Physics3DSystem.hpp"
 
 class btDiscreteDynamicsWorld;
 class btDefaultCollisionConfiguration;
@@ -26,10 +27,19 @@ namespace Poly
 	class ENGINE_DLLEXPORT Physics3DWorldComponent : public ComponentBase
 	{
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
+
 		friend void Physics3DSystem::RegisterRigidbody(World* world, const UniqueID& entityID);
 		friend void Physics3DSystem::UnregisterRigidBody(World* world, const UniqueID& entityID);
+
 		friend void Physics3DSystem::RegisterTriger(World* world, const UniqueID& entityID);
 		friend void Physics3DSystem::UnregisterTriger(World* world, const UniqueID& entityID);
+
+		friend bool Physics3DSystem::IsColliding(World* world, const UniqueID& firstID, const UniqueID& secondID);
+		friend const ContactResult& Physics3DSystem::ContactPair(World* world, const UniqueID& firstID, const UniqueID& secondID);
+		friend const ContactResult& Physics3DSystem::Contact(World* world, const UniqueID& entityID);
+
+		friend const RaycastResult& Physics3DSystem::AllHitsRaycast(World* world, const Vector& from, const Vector& to);
+		friend const RaycastResult& Physics3DSystem::ClosestHitRaycast(World* world, const Vector& from, const Vector& to);
 	public:
 		Physics3DWorldComponent(Physics3DConfig config);
 
@@ -47,8 +57,8 @@ namespace Poly
 		btSequentialImpulseConstraintSolver* Solver;
 
 		float LastDeltaOverflow = 0.f;
-		OrderedMap<UniqueID, btCollisionObject*> BulletTriggerToEntity;
-		OrderedMap<UniqueID, btRigidBody*> BulletRigidbodyToEntity;
+		OrderedMap<btRigidBody*, UniqueID> BulletRigidbodyToEntity;
+		OrderedMap<btCollisionObject*, UniqueID> BulletTriggerToEntity;
 	};
 
 	REGISTER_COMPONENT(WorldComponentsIDGroup, Physics3DWorldComponent)

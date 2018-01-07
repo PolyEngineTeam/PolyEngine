@@ -5,7 +5,7 @@
 
 namespace Poly
 {
-	struct RaycastResult
+	struct ENGINE_DLLEXPORT RaycastResult
 	{
 		struct RaycastHit
 		{
@@ -18,7 +18,7 @@ namespace Poly
 		Dynarray<RaycastHit> Hits;
 	};
 
-	struct ContactResult
+	struct ENGINE_DLLEXPORT ContactResult
 	{
 		struct Contact
 		{
@@ -28,7 +28,7 @@ namespace Poly
 			float HitFraction;
 		};
 
-		Dynarray<Contact> Contacts
+		Dynarray<Contact> Contacts;
 	};
 
 	namespace Physics3DSystem
@@ -44,11 +44,10 @@ namespace Poly
 
 		// TODO(squares: check if collisions and raycasts work also with ordinary rigid bodies
 		bool ENGINE_DLLEXPORT IsColliding(World* world, const UniqueID& firstID, const UniqueID& secondID);
-		const ContactResult& ENGINE_DLLEXPORT ContactPair(World* world, const UniqueID& firstID, const UniqueID& secondID);
-		const ContactResult& ENGINE_DLLEXPORT Contact(World* world, const UniqueID& entityID);
+		const ENGINE_DLLEXPORT ContactResult& ContactPair(World* world, const UniqueID& firstID, const UniqueID& secondID);
+		const ENGINE_DLLEXPORT ContactResult& Contact(World* world, const UniqueID& entityID);
 
-		const RaycastResult& ENGINE_DLLEXPORT AllHitsRaycast(World* world, const Vector& from, const Vector& to);
-		const RaycastResult& ENGINE_DLLEXPORT ClosestHitRaycast(World* world, const Vector& from, const Vector& to);
-		const RaycastResult& ENGINE_DLLEXPORT ClosestNotMeHitRaycast(World* world, const Vector& from, const Vector& to);
+		const ENGINE_DLLEXPORT RaycastResult& AllHitsRaycast(World* world, const Vector& from, const Vector& to);
+		const ENGINE_DLLEXPORT RaycastResult& ClosestHitRaycast(World* world, const Vector& from, const Vector& to);
 	}
 }
