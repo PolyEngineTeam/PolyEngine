@@ -6,17 +6,22 @@
 //********************************************************************************************************************************************
 void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 {
+	// get physics world component and add telta time to delta overflow
+		// FIXME(squares): bullet lags without loosing FPS 
 	Physics3DWorldComponent* physicsWorldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
 	physicsWorldCmp->LastDeltaOverflow += (float)TimeSystem::GetTimerDeltaTime(world, eEngineTimer::GAMEPLAY);
 
+	// update all bullet rigidbodies from engine tranforms
 	for (auto tuple : world->IterateComponents<Rigidbody3DComponent, TransformComponent>())
 	{
 		Rigidbody3DComponent* rigidbody = std::get<Rigidbody3DComponent*>(tuple);
 		rigidbody->UpdatePosition();
 	}
 
+	// step simulation
 	physicsWorldCmp->DynamicsWorld->stepSimulation((float)TimeSystem::GetTimerDeltaTime(world, eEngineTimer::GAMEPLAY), physicsWorldCmp->Config.MaxSimulationStepsPerFrame);
 
+	// update all engine transform from bullet rigidbodies
 	for (auto tuple : world->IterateComponents<Rigidbody3DComponent, TransformComponent>())
 	{
 		Rigidbody3DComponent* rigidbody = std::get<Rigidbody3DComponent*>(tuple);
@@ -101,12 +106,14 @@ bool Poly::Physics3DSystem::IsColliding(World* world, const UniqueID& firstID, c
 //********************************************************************************************************************************************
 const Poly::ContactResult& Poly::Physics3DSystem::ContactPair(World* world, const UniqueID& firstID, const UniqueID & secondID)
 {
+		// TODO(squares): implement this
 	return ContactResult();
 }
 
 //********************************************************************************************************************************************
 const Poly::ContactResult& Poly::Physics3DSystem::Contact(World* world, const UniqueID& entityID)
 {
+		// TODO(squares): implement this
 	return ContactResult();
 }
 
@@ -126,7 +133,6 @@ const Poly::RaycastResult& Poly::Physics3DSystem::AllHitsRaycast(World* world, c
 		RaycastResult::RaycastHit hit;
 
 		// try catch something?
-		//hit.HitEntityID = worldCmp->BulletTriggerToEntity[r.m_collisionObjects[i]];
 		hit.HitFraction = r.m_hitFractions[i];
 		btVector3 n = r.m_hitNormalWorld[i];
 		hit.WorldHitNormal = Vector(n.x(), n.y(), n.z());
