@@ -49,7 +49,7 @@ void Poly::Physics3DSystem::RegisterRigidbody(World* world, const UniqueID& enti
 	Rigidbody3DComponent* cmp = world->GetComponent<Rigidbody3DComponent>(entityID);
 
 	worldCmp->DynamicsWorld->addRigidBody(cmp->BulletRigidBody);
-	worldCmp->BulletRigidbodyToEntity.Insert(cmp->BulletRigidBody, entityID);
+	worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, UniqueID>(cmp->BulletRigidBody, entityID));
 
 	cmp->Registered = true;
 }
@@ -60,7 +60,7 @@ void Poly::Physics3DSystem::UnregisterRigidBody(World* world, const UniqueID& en
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
 	Rigidbody3DComponent* cmp = world->GetComponent<Rigidbody3DComponent>(entityID);
 
-	worldCmp->BulletRigidbodyToEntity.Remove(cmp->BulletRigidBody);
+	worldCmp->BulletTriggerToEntity.erase(cmp->BulletRigidBody);
 	worldCmp->DynamicsWorld->removeRigidBody(cmp->BulletRigidBody);
 
 	cmp->Registered = true;
@@ -73,7 +73,7 @@ void Poly::Physics3DSystem::RegisterTriger(World* world, const UniqueID& entityI
 	Trigger3DComponent* cmp = world->GetComponent<Trigger3DComponent>(entityID);
 
 	worldCmp->DynamicsWorld->addCollisionObject(cmp->BulletTrigger);
-	worldCmp->BulletTriggerToEntity.Insert(cmp->BulletTrigger, entityID);
+	worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, UniqueID>(cmp->BulletTrigger, entityID));
 
 	cmp->Registered = true;
 }
@@ -85,7 +85,7 @@ void Poly::Physics3DSystem::UnregisterTriger(World* world, const UniqueID& entit
 	Trigger3DComponent* cmp = world->GetComponent<Trigger3DComponent>(entityID);
 
 	worldCmp->DynamicsWorld->removeCollisionObject(cmp->BulletTrigger);
-	worldCmp->BulletTriggerToEntity.Remove(cmp->BulletTrigger);
+	worldCmp->BulletTriggerToEntity.erase(cmp->BulletTrigger);
 
 	cmp->Registered = true;
 }
@@ -113,7 +113,30 @@ const Poly::ContactResult& Poly::Physics3DSystem::Contact(World* world, const Un
 //********************************************************************************************************************************************
 const Poly::RaycastResult& Poly::Physics3DSystem::AllHitsRaycast(World* world, const Vector& from, const Vector & to)
 {
-	return RaycastResult();
+	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
+
+	RaycastResult result;
+
+	btCollisionWorld::AllHitsRayResultCallback r(btVector3(from.X, from.Y, from.Z), btVector3(to.X, to.Y, to.Z));
+
+	worldCmp->DynamicsWorld->rayTest(r.m_rayFromWorld, r.m_rayToWorld, r);
+
+	for (int i = r.m_collisionObjects.size(); ; --i)
+	{
+		RaycastResult::RaycastHit hit;
+
+		// try catch something?
+		//hit.HitEntityID = worldCmp->BulletTriggerToEntity[r.m_collisionObjects[i]];
+		hit.HitFraction = r.m_hitFractions[i];
+		btVector3 n = r.m_hitNormalWorld[i];
+		hit.WorldHitNormal = Vector(n.x(), n.y(), n.z());
+		n = r.m_hitPointWorld[i];
+		hit.WorldHitPoint = Vector(n.x(), n.y(), n.z());
+
+		result.Hits.PushBack(hit);
+	}
+
+	return result;
 }
 
 //********************************************************************************************************************************************
@@ -122,16 +145,18 @@ const Poly::RaycastResult& Poly::Physics3DSystem::ClosestHitRaycast(World* world
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
 
 	RaycastResult result;
+	RaycastResult::RaycastHit hit;
 
-	btVector3 f = btVector3(from.X, from.Y, from.Z);
-	btVector3 t = btVector3(to.X, to.Y, to.Z);
-	btCollisionWorld::ClosestRayResultCallback r(f, t);
+	btCollisionWorld::ClosestRayResultCallback r(btVector3(from.X, from.Y, from.Z), btVector3(to.X, to.Y, to.Z));
 
-	world->GetWorldComponent<Physics3DWorldComponent>()->DynamicsWorld->rayTest(f, t, r);
+	worldCmp->DynamicsWorld->rayTest(r.m_rayFromWorld, r.m_rayToWorld, r);
+	// try catch something?
+	hit.HitEntityID = worldCmp->BulletTriggerToEntity[r.m_collisionObject];
+	hit.HitFraction = r.m_closestHitFraction;
+	hit.WorldHitNormal = Vector(r.m_hitNormalWorld.x(), r.m_hitNormalWorld.y(), r.m_hitNormalWorld.z());
+	hit.WorldHitPoint = Vector(r.m_hitPointWorld.x(), r.m_hitPointWorld.y(), r.m_hitPointWorld.z());
 
-	//UniqueID hitEntityID = worldCmp->;
+	result.Hits.PushBack(hit);
 
-
-	//result.Hits.PushBack({})
-	return RaycastResult();
+	return result;
 }

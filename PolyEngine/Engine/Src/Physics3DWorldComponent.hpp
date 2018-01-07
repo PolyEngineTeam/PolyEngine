@@ -1,6 +1,6 @@
 #pragma once
 
-#include <OrderedMap.hpp>
+#include <map>
 
 #include "ComponentBase.hpp"
 #include "Physics3DSystem.hpp"
@@ -57,8 +57,7 @@ namespace Poly
 		btSequentialImpulseConstraintSolver* Solver;
 
 		float LastDeltaOverflow = 0.f;
-		OrderedMap<btRigidBody*, UniqueID> BulletRigidbodyToEntity;
-		OrderedMap<btCollisionObject*, UniqueID> BulletTriggerToEntity;
+		std::map<const btCollisionObject*, UniqueID> BulletTriggerToEntity;
 	};
 
 	REGISTER_COMPONENT(WorldComponentsIDGroup, Physics3DWorldComponent)
