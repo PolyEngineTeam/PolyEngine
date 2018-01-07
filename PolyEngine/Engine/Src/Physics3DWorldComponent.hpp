@@ -54,12 +54,12 @@ namespace Poly
 	private:
 		const Physics3DConfig Config;
 
-		btDiscreteDynamicsWorld* DynamicsWorld;
+		std::unique_ptr<btDiscreteDynamicsWorld> DynamicsWorld;
 
-		btDefaultCollisionConfiguration* CollisionConfiguration;
-		btCollisionDispatcher* Dispatcher;
-		btBroadphaseInterface* Broadphase;
-		btSequentialImpulseConstraintSolver* Solver;
+		std::unique_ptr<btDefaultCollisionConfiguration> CollisionConfiguration;
+		std::unique_ptr<btCollisionDispatcher> Dispatcher;
+		std::unique_ptr<btBroadphaseInterface> Broadphase;
+		std::unique_ptr<btSequentialImpulseConstraintSolver> Solver;
 
 		float LastDeltaOverflow = 0.f;
 		std::map<const btCollisionObject*, UniqueID> BulletTriggerToEntity;

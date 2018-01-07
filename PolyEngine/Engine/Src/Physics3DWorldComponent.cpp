@@ -4,17 +4,13 @@
 
 //********************************************************************************************************************************************
 Poly::Physics3DWorldComponent::Physics3DWorldComponent(Physics3DConfig config)
-	: Config(config)
+	: Config(config),
+	CollisionConfiguration(new btDefaultCollisionConfiguration()),
+	Dispatcher(new btCollisionDispatcher(CollisionConfiguration.get())),
+	Broadphase(new btDbvtBroadphase()),
+	Solver(new btSequentialImpulseConstraintSolver()),
+	DynamicsWorld(new btDiscreteDynamicsWorld(Dispatcher.get(), Broadphase.get(), Solver.get(), CollisionConfiguration.get()))
 {
-	// create importand things for bullet world
-	CollisionConfiguration = new btDefaultCollisionConfiguration();
-	Dispatcher = new btCollisionDispatcher(CollisionConfiguration);
-	Broadphase = new btDbvtBroadphase();
-	Solver = new btSequentialImpulseConstraintSolver();
-	
-	// create world
-	DynamicsWorld = new btDiscreteDynamicsWorld(Dispatcher, Broadphase, Solver, CollisionConfiguration);
-
 	// set default gravity
 	DynamicsWorld->setGravity(btVector3(config.Gravity.X, config.Gravity.Y, config.Gravity.Z));
 }
