@@ -10,12 +10,15 @@ class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
 class btBroadphaseInterface;
 class btSequentialImpulseConstraintSolver;
-
 class btCollisionObject;
 class btRigidBody;
 
 namespace Poly
 {
+	/// Config for physics simulation
+	/// @see Physics3DWorldComponent
+	/// @see Trigger3DComponent
+	/// @see Rigidbody3DComponent
 	struct ENGINE_DLLEXPORT Physics3DConfig
 	{
 	public:
@@ -24,20 +27,22 @@ namespace Poly
 		const int MaxSimulationStepsPerFrame = 20;
 	};
 
+	/// World component contains configuration for physics simulation and 
+	/// many other important things per world but only thing the user has to be 
+	/// concerned about is gravity.
+	/// @see Physics3DConfig
+	/// @see Trigger3DComponent
+	/// @see Rigidbody3DComponent
 	class ENGINE_DLLEXPORT Physics3DWorldComponent : public ComponentBase
 	{
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
-
 		friend void Physics3DSystem::RegisterRigidbody(World* world, const UniqueID& entityID);
 		friend void Physics3DSystem::UnregisterRigidBody(World* world, const UniqueID& entityID);
-
 		friend void Physics3DSystem::RegisterTriger(World* world, const UniqueID& entityID);
 		friend void Physics3DSystem::UnregisterTriger(World* world, const UniqueID& entityID);
-
 		friend bool Physics3DSystem::IsColliding(World* world, const UniqueID& firstID, const UniqueID& secondID);
 		friend const ContactResult& Physics3DSystem::ContactPair(World* world, const UniqueID& firstID, const UniqueID& secondID);
 		friend const ContactResult& Physics3DSystem::Contact(World* world, const UniqueID& entityID);
-
 		friend const RaycastResult& Physics3DSystem::AllHitsRaycast(World* world, const Vector& from, const Vector& to);
 		friend const RaycastResult& Physics3DSystem::ClosestHitRaycast(World* world, const Vector& from, const Vector& to);
 	public:
@@ -61,4 +66,4 @@ namespace Poly
 	};
 
 	REGISTER_COMPONENT(WorldComponentsIDGroup, Physics3DWorldComponent)
-}
+} // namespace Poly
