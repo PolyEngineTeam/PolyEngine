@@ -13,6 +13,7 @@ namespace Poly
 	class AARect;
 	class World;
 	struct PostprocessQuad;
+	struct PrimitiveCube;
 	class RenderingPassBase;
 	class RenderingTargetBase;
 
@@ -27,6 +28,7 @@ namespace Poly
 			DEBUG_NORMALS,
 			DEBUG_NORMALS_WIREFRAME,
 			TEXT_2D,
+			SKYBOX,
 			_COUNT
 		};
 
@@ -61,6 +63,7 @@ namespace Poly
 		void Init() override;
 
 		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) override;
+		std::unique_ptr<ICubemapDeviceProxy> CreateCubemap(size_t width, size_t height) override;
 		std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() override;
 		std::unique_ptr<IMeshDeviceProxy> CreateMesh() override;
 
@@ -103,6 +106,7 @@ namespace Poly
 		EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
 
 		std::unique_ptr<PostprocessQuad> PostprocessRenderingQuad;
+		std::unique_ptr<PrimitiveCube> PrimitiveRenderingCube;
 	};
 
 	extern GLRenderingDevice* gRenderingDevice;

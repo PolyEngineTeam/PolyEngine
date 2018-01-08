@@ -9,6 +9,7 @@ using namespace Poly;
 namespace GameManagerSystem
 {
 	void CreateScene(World* world);
+	void CreateSponzaScene(World* world);
 	void Update(World* world);
 	void Deinit(World* world);
 

@@ -6,6 +6,7 @@
 
 #include "GLUtils.hpp"
 #include "GLTextureDeviceProxy.hpp"
+#include "GLCubemapDeviceProxy.hpp"
 #include "GLTextFieldBufferDeviceProxy.hpp"
 #include "GLMeshDeviceProxy.hpp"
 
@@ -16,7 +17,9 @@
 #include "DebugNormalsWireframeRenderingPass.hpp"
 #include "PostprocessRenderingPass.hpp"
 #include "TransparentRenderingPass.hpp"
+#include "SkyboxRenderingPass.hpp"
 #include "PostprocessQuad.hpp"
+#include "PrimitiveCube.hpp"
 
 using namespace Poly;
 
@@ -129,6 +132,7 @@ void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType
 void GLRenderingDevice::InitPrograms()
 {
 	PostprocessRenderingQuad = std::make_unique<PostprocessQuad>();
+	PrimitiveRenderingCube = std::make_unique<PrimitiveCube>();
 	
 	// Init input textures
 	//Texture2DInputTarget* RGBANoise256 = CreateRenderingTarget<Texture2DInputTarget>("Textures/RGBANoise256x256.png");
@@ -143,6 +147,7 @@ void GLRenderingDevice::InitPrograms()
 	RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPass<DebugNormalsWireframeRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS_WIREFRAME, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, {}, { { "color", texture },{ "depth", depth } });
+	RegisterGeometryPassWithArgs<SkyboxRenderingPass>(eGeometryRenderPassType::SKYBOX, {}, { { "color", texture },{ "depth", depth } }, PrimitiveRenderingCube.get());
 	RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } }, PostprocessRenderingQuad.get());
 
 
@@ -157,17 +162,26 @@ void GLRenderingDevice::InitPrograms()
 void Poly::GLRenderingDevice::CleanUpResources()
 {
 	RenderingTargets.Clear();
+
 	for (eGeometryRenderPassType passType : IterateEnum<eGeometryRenderPassType>())
 		GeometryRenderingPasses[passType].reset();
+
 	for (ePostprocessRenderPassType passType : IterateEnum<ePostprocessRenderPassType>())
 		PostprocessRenderingPasses[passType].reset();
+
 	PostprocessRenderingQuad.reset();
+	PrimitiveRenderingCube.reset();
 }
 
 //------------------------------------------------------------------------------
 std::unique_ptr<ITextureDeviceProxy> GLRenderingDevice::CreateTexture(size_t width, size_t height, eTextureUsageType usage)
 {
 	return std::make_unique<GLTextureDeviceProxy>(width, height, usage);
+}
+
+std::unique_ptr<ICubemapDeviceProxy> Poly::GLRenderingDevice::CreateCubemap(size_t width, size_t height)
+{
+	return std::make_unique<GLCubemapDeviceProxy>(width, height);
 }
 
 //------------------------------------------------------------------------------

@@ -173,6 +173,7 @@
     <ClCompile Include="Src\CameraSystem.cpp" />
     <ClCompile Include="Src\ConfigBase.cpp" />
     <ClCompile Include="Src\AssetsPathConfig.cpp" />
+    <ClCompile Include="Src\CubemapResource.cpp" />
     <ClCompile Include="Src\DebugConfig.cpp" />
     <ClCompile Include="Src\DebugWorldComponent.cpp" />
     <ClCompile Include="Src\Engine.cpp" />
@@ -195,6 +196,7 @@
     <ClCompile Include="Src\Physics2DSystem.cpp" />
     <ClCompile Include="Src\Physics2DWorldComponent.cpp" />
     <ClCompile Include="Src\PostprocessSettingsComponent.cpp" />
+    <ClCompile Include="Src\SkyboxWorldComponent.cpp" />
     <ClCompile Include="Src\SoundEmitterComponent.cpp" />
     <ClCompile Include="Src\SoundListenerComponent.cpp" />
     <ClCompile Include="Src\Mesh.cpp" />
@@ -230,6 +232,7 @@
     <ClInclude Include="Src\ComponentBase.hpp" />
     <ClInclude Include="Src\ConfigBase.hpp" />
     <ClInclude Include="Src\AssetsPathConfig.hpp" />
+    <ClInclude Include="Src\CubemapResource.hpp" />
     <ClInclude Include="Src\DebugConfig.hpp" />
     <ClInclude Include="Src\DebugWorldComponent.hpp" />
     <ClInclude Include="Src\DeferredTaskWorldComponent.hpp" />
@@ -256,6 +259,7 @@
     <ClInclude Include="Src\Physics2DColliders.hpp" />
     <ClInclude Include="Src\Physics2DSystem.hpp" />
     <ClInclude Include="Src\RigidBody2DImpl.hpp" />
+    <ClInclude Include="Src\SkyboxWorldComponent.hpp" />
     <ClInclude Include="Src\SoundListenerComponent.hpp" />
     <ClInclude Include="Src\Mesh.hpp" />
     <ClInclude Include="Src\MeshRenderingComponent.hpp" />
