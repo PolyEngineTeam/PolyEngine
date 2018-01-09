@@ -9,7 +9,7 @@ uniform mat4 uMVP;
 void main()
 {
     vec3 textureFlipXFix = vec3(-1.0, 1.0, 1.0);
-	vUV = normalize(aPos * textureFlipFix);
+	vUV = normalize(aPos * textureFlipXFix);
     vec4 pos = uMVP * vec4(aPos, 1.0f);
 	gl_Position = pos.xyww;
 }

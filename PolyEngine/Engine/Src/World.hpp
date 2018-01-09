@@ -61,8 +61,9 @@ namespace Poly {
 		T* GetWorldComponent()
 		{
 			const auto ctypeID = GetWorldComponentID<T>();
-			ASSERTE(HasWorldComponent(ctypeID), "Invalid type - world component of given type does not exist!");
-			return reinterpret_cast<T*>(WorldComponents[ctypeID]);
+			if(HasWorldComponent(ctypeID))
+				return static_cast<T*>(WorldComponents[ctypeID]);
+			return nullptr;
 		}
 
 		//------------------------------------------------------------------------------

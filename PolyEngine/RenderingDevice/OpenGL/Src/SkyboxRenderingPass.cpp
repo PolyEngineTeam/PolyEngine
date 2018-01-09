@@ -20,14 +20,8 @@ SkyboxRenderingPass::SkyboxRenderingPass(const PrimitiveCube* cube)
 void SkyboxRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
 {
 	const SkyboxWorldComponent* SkyboxWorldCmp = world->GetWorldComponent<SkyboxWorldComponent>();
-	if (SkyboxWorldCmp == nullptr)
-	{
-		gConsole.LogInfo("SkyboxRenderingPass::OnRun: SkyboxWorldCmp is NULL");
-	}
-	else
-	{
+	if (SkyboxWorldCmp != nullptr)
 		RenderSkybox(camera, SkyboxWorldCmp);
-	}
 }
 
 void SkyboxRenderingPass::RenderSkybox(const CameraComponent* camera, const SkyboxWorldComponent* SkyboxWorldCmp)
