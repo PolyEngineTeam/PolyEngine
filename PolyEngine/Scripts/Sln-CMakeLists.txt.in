@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
-project(PolyEngine VERSION 0.1.2 LANGUAGES CXX C) #note(vuko): without C older CMake versions fail to process FindX11 the first time
+project($PROJECT_NAME$ VERSION 0.1 LANGUAGES CXX C) #note(vuko): without C older CMake versions fail to process FindX11 the first time
 
 ##
 # Initial setup: C++ standard version, build types, CMake modules

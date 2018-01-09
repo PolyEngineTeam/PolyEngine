@@ -4,6 +4,7 @@ import shutil
 import fileinput
 import json
 from enum import Enum
+import xml.etree.ElementTree as ET
 
 class ActionType(Enum):
     CREATE = 'Create',
@@ -55,13 +56,91 @@ def replace_tags_in_file(file_to_search, tags_and_values):
                 line = line.replace(tag, val)
             print(line, end='')
 
-def run_cmake(path, build_dir_name):
+def xml_indent(elem, level=0):
+    i = "\n" + level*"  "
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "  "
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        for elem in elem:
+            xml_indent(elem, level+1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = i
+
+def patch_usr_proj(path, proj_name):
+    usr_proj_path = os.sep.join([path, 'Build', proj_name, proj_name + '.vcxproj.user'])
+    xml_namespace = { 'ns' : 'http://schemas.microsoft.com/developer/msbuild/2003' }
+    namespace_str = '{' + xml_namespace['ns'] + '}'
+    ET.register_namespace('', xml_namespace['ns'])
+    
+    property_group_conditions_to_add = [ "'$(Configuration)|$(Platform)'=='Debug|x64'",
+                                  "'$(Configuration)|$(Platform)'=='DebugFast|x64'",
+                                  "'$(Configuration)|$(Platform)'=='Release|x64'",
+                                  "'$(Configuration)|$(Platform)'=='Testing|x64'" ]
+
+    if os.path.exists(usr_proj_path):
+        # Load file if exists
+        print('File', usr_proj_path, 'found, parsing xml data...')
+        xml_data = ET.parse(usr_proj_path)
+    else:
+        # Create file if doesn't exist
+        print('File', usr_proj_path, 'not found, creating it...')
+        xml_data = ET.ElementTree(ET.fromstring('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003"></Project>'))
+    
+    root = xml_data.getroot()
+    print('Patching', usr_proj_path)
+
+    # find all present property groups
+    for project_property_group in root.findall('ns:PropertyGroup', xml_namespace):
+        print('Found property group:', project_property_group.attrib['Condition'])
+        property_group_conditions_to_add.remove(project_property_group.attrib['Condition'])
+
+    # add all missing property groups
+    for condition in property_group_conditions_to_add:
+        print('Creating missing property group:', condition)
+        el = ET.SubElement(root, namespace_str + 'PropertyGroup')
+        el.attrib['Condition'] = condition
+
+    # patch all property groups info
+    for project_property_group in root.findall('ns:PropertyGroup', xml_namespace):
+        print('Patching property group:', project_property_group.attrib['Condition'])
+        
+        dbg_cmd = project_property_group.find('ns:LocalDebuggerCommand', xml_namespace)
+        if dbg_cmd == None:
+            dbg_cmd = ET.SubElement(project_property_group, namespace_str + 'LocalDebuggerCommand')
+        dbg_cmd.text = 'polyrun.exe'
+        print('\tset LocalDebuggerCommand to', dbg_cmd.text)
+        
+        dbg_work_dir = project_property_group.find('ns:LocalDebuggerWorkingDirectory', xml_namespace)
+        if dbg_work_dir == None:
+            dbg_work_dir = ET.SubElement(project_property_group, namespace_str + 'LocalDebuggerWorkingDirectory')
+        dbg_work_dir.text = '$(OutputPath)'
+        print('\tset LocalDebuggerWorkingDirectory to', dbg_work_dir.text)
+
+        dbg_flavor = project_property_group.find('ns:DebuggerFlavor', xml_namespace)
+        if dbg_flavor == None:
+            dbg_flavor = ET.SubElement(project_property_group, namespace_str + 'DebuggerFlavor')
+        dbg_flavor.text = 'WindowsLocalDebugger'
+        print('\tset DebuggerFlavor to', dbg_flavor.text)
+
+    xml_indent(root)
+    xml_data.write(usr_proj_path, encoding='utf-8', xml_declaration=True)
+
+def run_cmake(path, build_dir_name, proj_name):
     build_dir_path = os.sep.join([path, build_dir_name])
     if not os.path.exists(build_dir_path):
         os.makedirs(build_dir_path)
     
     # Run cmake update with 64bit arch (using undocumented parameters that work for some reason, src: http://cprieto.com/posts/2016/10/cmake-out-of-source-build.html)
     os.system('cmake -A x64 -H{} -B{}'.format(get_cmake_path(path), get_cmake_path(build_dir_path)))
+    
+    # Patch project proj.user file to contain proper runtime info
+    if os.name == 'nt':
+        patch_usr_proj(path, proj_name)
 
 def create_project_file(path, proj_name):
     data = {}
@@ -96,7 +175,7 @@ def update_config_files(path, name, engine_path, is_new_config):
         replace_tags_in_file(game_hpp_output_path, [('$GAME_CLASS_NAME$', 'Game')])
         replace_tags_in_file(game_cpp_output_path, [('$GAME_CLASS_NAME$', 'Game')])
     # Cmake needs paths with '/' (instead of '\') regardles of platform
-    replace_tags_in_file(cmake_sln_output_path, [('$PROJECT_PATH$', name), ('$ENGINE_DIR$', get_cmake_path(os.path.abspath(engine_path)))]) 
+    replace_tags_in_file(cmake_sln_output_path, [('$PROJECT_PATH$', name), ('$PROJECT_NAME$', name), ('$ENGINE_DIR$', get_cmake_path(os.path.abspath(engine_path)))]) 
     replace_tags_in_file(cmake_proj_output_path, [('$PROJECT_NAME$', name)])
 
 def create_project(name, path, engine_path):
@@ -119,7 +198,7 @@ def create_project(name, path, engine_path):
     update_config_files(path, name, engine_path, True)
 
     create_project_file(path, name)
-    run_cmake(path, 'Build')
+    run_cmake(path, 'Build', name)
 
 def update_project(path, engine_path):
     print('Updating project at', path, 'with engine at', engine_path)
@@ -132,7 +211,7 @@ def update_project(path, engine_path):
 
     update_config_files(path, name, engine_path, False)
 
-    run_cmake(path, 'Build')
+    run_cmake(path, 'Build', name)
 
 #################### SCRIPT START ####################
 if __name__ == "__main__":
