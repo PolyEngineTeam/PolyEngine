@@ -26,7 +26,7 @@ using namespace Poly;
 void SGJ::GameManagerSystem::LoadLevel(Poly::World* world, const Poly::String& path)
 {
 	GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
-	gameMgrCmp->Levels.PushBack(new Level(path));
+	gameMgrCmp->Levels.PushBack(std::make_unique<Level>(path));
 }
 
 void SGJ::GameManagerSystem::Update(Poly::World* world)
@@ -213,7 +213,7 @@ void SGJ::GameManagerSystem::SpawnLevel(Poly::World* world, size_t idx)
 	DespawnLevel(world);
 
 	GameManagerWorldComponent* gameMgrCmp = world->GetWorldComponent<GameManagerWorldComponent>();
-	Level* level = gameMgrCmp->Levels[idx];
+	auto& level = gameMgrCmp->Levels[idx];
 
 	gameMgrCmp->CurrentLevelID = idx;
 

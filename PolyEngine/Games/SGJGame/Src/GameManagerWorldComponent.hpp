@@ -18,7 +18,7 @@ namespace SGJ
 
 		Poly::Dynarray<Poly::UniqueID> SoundSampleEntities;
 
-		Poly::Dynarray<Level*> Levels;
+		Poly::Dynarray<std::unique_ptr<Level>> Levels;
 		size_t CurrentLevelID = 0;
 		float MinLevelWidth, MaxLevelWidth;
 		float MinLevelHeight, MaxLevelHeight;

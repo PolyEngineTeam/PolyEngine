@@ -16,6 +16,7 @@ FontResource::FontResource(const String& path)
 	if (!gFreeTypeLibrary)
 	{
 		FT_Error err = FT_Init_FreeType(&gFreeTypeLibrary);
+		UNUSED(err); //`err` is unused in Release mode, since ASSERTE gets nullified
 		ASSERTE(err == FT_Err_Ok, "Freetype initialization failed!");
 	}
 	FontPath = path;
@@ -131,6 +132,7 @@ void Poly::FontResource::LoadFace(size_t height) const
 	{
 		FT_Error err = FT_Load_Char(face.FTFace, glyphSize.Glyph, FT_LOAD_RENDER);
 		ASSERTE(err == FT_Err_Ok, "Glyph loading failed!");
+		UNUSED(err);
 
 		currRowLen += glyphSize.width + GLYPH_PADDING;
 
