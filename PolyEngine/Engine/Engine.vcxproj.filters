@@ -93,6 +93,9 @@
     <Filter Include="Source Files\Physics3D\Shapes">
       <UniqueIdentifier>{0ed95461-7a45-47d5-ad38-2aec88428cda}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Physics3D\Implementation">
+      <UniqueIdentifier>{9214b8b0-342c-4763-8eff-216066bdf2aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -408,6 +411,12 @@
     </ClInclude>
     <ClInclude Include="Src\Trigger3DComponent.hpp">
       <Filter>Source Files\Physics3D\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Rigidbody3DImpl.hpp">
+      <Filter>Source Files\Physics3D\Implementation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Trigger3DImpl.hpp">
+      <Filter>Source Files\Physics3D\Implementation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

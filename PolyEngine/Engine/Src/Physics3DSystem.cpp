@@ -3,6 +3,9 @@
 #include <btBulletDynamicsCommon.h>
 #include <btBulletCollisionCommon.h>
 
+#include "Rigidbody3DImpl.hpp"
+#include "Trigger3DImpl.hpp"
+
 //********************************************************************************************************************************************
 void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 {
@@ -28,7 +31,7 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 		TransformComponent* transform = std::get<TransformComponent*>(tuple);
 
 		btTransform trans;
-		rigidbody->BulletMotionState->getWorldTransform(trans);
+		rigidbody->ImplData.get()->BulletMotionState->getWorldTransform(trans);
 
 		Vector localTrans = transform->GetLocalTranslation();
 		Quaternion localrot = transform->GetLocalRotation().ToEulerAngles();
@@ -53,8 +56,8 @@ void Poly::Physics3DSystem::RegisterRigidbody(World* world, const UniqueID& enti
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
 	Rigidbody3DComponent* cmp = world->GetComponent<Rigidbody3DComponent>(entityID);
 
-	worldCmp->DynamicsWorld->addRigidBody(cmp->BulletRigidBody);
-	worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, UniqueID>(cmp->BulletRigidBody, entityID));
+	worldCmp->DynamicsWorld->addRigidBody(cmp->ImplData.get()->BulletRigidBody);
+	worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, UniqueID>(cmp->ImplData.get()->BulletRigidBody, entityID));
 
 	cmp->Registered = true;
 }
@@ -65,8 +68,8 @@ void Poly::Physics3DSystem::UnregisterRigidBody(World* world, const UniqueID& en
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
 	Rigidbody3DComponent* cmp = world->GetComponent<Rigidbody3DComponent>(entityID);
 
-	worldCmp->BulletTriggerToEntity.erase(cmp->BulletRigidBody);
-	worldCmp->DynamicsWorld->removeRigidBody(cmp->BulletRigidBody);
+	worldCmp->BulletTriggerToEntity.erase(cmp->ImplData.get()->BulletRigidBody);
+	worldCmp->DynamicsWorld->removeRigidBody(cmp->ImplData.get()->BulletRigidBody);
 
 	cmp->Registered = true;
 }
@@ -77,8 +80,8 @@ void Poly::Physics3DSystem::RegisterTriger(World* world, const UniqueID& entityI
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
 	Trigger3DComponent* cmp = world->GetComponent<Trigger3DComponent>(entityID);
 
-	worldCmp->DynamicsWorld->addCollisionObject(cmp->BulletTrigger);
-	worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, UniqueID>(cmp->BulletTrigger, entityID));
+	worldCmp->DynamicsWorld->addCollisionObject(cmp->ImplData.get()->BulletTrigger);
+	worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, UniqueID>(cmp->ImplData.get()->BulletTrigger, entityID));
 
 	cmp->Registered = true;
 }
@@ -89,8 +92,8 @@ void Poly::Physics3DSystem::UnregisterTriger(World* world, const UniqueID& entit
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
 	Trigger3DComponent* cmp = world->GetComponent<Trigger3DComponent>(entityID);
 
-	worldCmp->DynamicsWorld->removeCollisionObject(cmp->BulletTrigger);
-	worldCmp->BulletTriggerToEntity.erase(cmp->BulletTrigger);
+	worldCmp->DynamicsWorld->removeCollisionObject(cmp->ImplData.get()->BulletTrigger);
+	worldCmp->BulletTriggerToEntity.erase(cmp->ImplData.get()->BulletTrigger);
 
 	cmp->Registered = true;
 }
@@ -100,7 +103,7 @@ bool Poly::Physics3DSystem::IsColliding(World* world, const UniqueID& firstID, c
 {
 	ASSERTE(world->GetComponent<Trigger3DComponent>(firstID)->Registered && world->GetComponent<Trigger3DComponent>(secondID)->Registered, "One of the entities was not registered as trigger.");
 
-	return world->GetComponent<Trigger3DComponent>(firstID)->BulletTrigger->checkCollideWith(world->GetComponent<Trigger3DComponent>(secondID)->BulletTrigger);
+	return world->GetComponent<Trigger3DComponent>(firstID)->ImplData.get()->BulletTrigger->checkCollideWith(world->GetComponent<Trigger3DComponent>(secondID)->ImplData.get()->BulletTrigger);
 }
 
 //********************************************************************************************************************************************

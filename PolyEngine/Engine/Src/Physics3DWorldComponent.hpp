@@ -5,6 +5,9 @@
 #include "ComponentBase.hpp"
 #include "Physics3DSystem.hpp"
 
+#include <btBulletDynamicsCommon.h>
+#include <btBulletCollisionCommon.h>
+
 class btDiscreteDynamicsWorld;
 class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;

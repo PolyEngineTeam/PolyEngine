@@ -262,6 +262,7 @@
     <ClInclude Include="Src\Physics2DSystem.hpp" />
     <ClInclude Include="Src\RigidBody2DImpl.hpp" />
     <ClInclude Include="Src\Rigidbody3DComponent.hpp" />
+    <ClInclude Include="Src\Rigidbody3DImpl.hpp" />
     <ClInclude Include="Src\SoundListenerComponent.hpp" />
     <ClInclude Include="Src\Mesh.hpp" />
     <ClInclude Include="Src\MeshRenderingComponent.hpp" />
@@ -281,6 +282,7 @@
     <ClInclude Include="Src\TimeWorldComponent.hpp" />
     <ClInclude Include="Src\TransformComponent.hpp" />
     <ClInclude Include="Src\Trigger3DComponent.hpp" />
+    <ClInclude Include="Src\Trigger3DImpl.hpp" />
     <ClInclude Include="Src\Viewport.hpp" />
     <ClInclude Include="Src\ViewportWorldComponent.hpp" />
     <ClInclude Include="Src\World.hpp" />

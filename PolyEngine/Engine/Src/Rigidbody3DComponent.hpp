@@ -13,8 +13,10 @@ class btRigidBody;
 namespace Poly
 {
 	class World;
-	struct RigidBody3DData;
+	struct Rigidbody3DImpl;
 
+	/// Rigidbody type; for now rigidbody can be only static or dynamic.
+	/// @see Rigidbody3DComponent
 	enum class eRigidBody3DType
 	{
 		STATIC,
@@ -22,13 +24,15 @@ namespace Poly
 		_COUNT
 	};
 
+	// You should use this component when you want to simulate physics bodies.
+	// If you simply want to detect collisions use @see Trigger3DComponent.
 	class ENGINE_DLLEXPORT Rigidbody3DComponent : public ComponentBase
 	{
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
 		friend void Physics3DSystem::RegisterRigidbody(World * world, const UniqueID& entityID);
 		friend void Physics3DSystem::UnregisterRigidBody(World * world, const UniqueID& entityID);
 	public:
-		Rigidbody3DComponent(World* world, eRigidBody3DType type, Physics3DShape* shape, float mass = 0);
+		Rigidbody3DComponent(World* world, eRigidBody3DType type, float mass);
 		~Rigidbody3DComponent();
 
 
@@ -74,8 +78,9 @@ namespace Poly
 		bool IsRegistered() const { return Registered; }
 		eRigidBody3DType GetBodyType() const { return BodyType; }
 
+		void EnsureInit();
+
 		const float Mass;
-		const Physics3DShape const* Shape; // FIXME(squares): ...
 		const eRigidBody3DType BodyType;
 
 	private:
@@ -83,8 +88,7 @@ namespace Poly
 
 		World* BodyWorld;
 
-		btDefaultMotionState* BulletMotionState;
-		btRigidBody* BulletRigidBody;
+		std::unique_ptr<Rigidbody3DImpl> ImplData;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, Rigidbody3DComponent)
