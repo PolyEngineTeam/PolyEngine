@@ -34,7 +34,7 @@ void DebugRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 									+ debugLinesColors.GetSize() * sizeof(DebugDrawLinesComponent::DebugLineColor), NULL, GL_STATIC_DRAW);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, debugLines.GetSize() * sizeof(DebugDrawLinesComponent::DebugLine), (GLvoid*)debugLines.GetData());
 		glBufferSubData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugDrawLinesComponent::DebugLine), debugLinesColors.GetSize() * sizeof(DebugDrawLinesComponent::DebugLineColor), (GLvoid*)debugLinesColors.GetData());
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vector3D), NULL);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), NULL);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Color), (GLvoid*)(debugLines.GetSize() * sizeof(DebugDrawLinesComponent::DebugLine)));
 		glEnableVertexAttribArray(1);

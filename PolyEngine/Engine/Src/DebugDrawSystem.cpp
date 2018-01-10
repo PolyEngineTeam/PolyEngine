@@ -10,11 +10,11 @@ namespace Util
 {
 	/// <summary>Get vector with minimum/maximum/else (depends on comparison function) values
 	/// on each axis in given set of vectors.</summary>
-	Mesh::Vector3D FindExtremum(const Dynarray<Mesh::Vector3D>& dynarray, std::function< bool(const float, const float) > comp)
+	Vector3f FindExtremum(const Dynarray<Vector3f>& dynarray, std::function< bool(const float, const float) > comp)
 	{
 		ASSERTE(dynarray.GetSize() > 0, "SubMesh vertex data is empty.");
 
-		Mesh::Vector3D result = dynarray[0];
+		Vector3f result = dynarray[0];
 		for (auto const & vec : dynarray)
 		{
 			if (comp(vec.X, result.X))
@@ -126,9 +126,7 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 
 void Poly::DebugDrawSystem::DrawLine(World* world, Vector begin, Vector end)
 {
-	Mesh::Vector3D meshvecBegin, meshvecEnd;
-	meshvecBegin.X = begin.X; meshvecBegin.Y = begin.Y; meshvecBegin.Z = begin.Z;
-	meshvecEnd.X = end.X; meshvecEnd.Y = end.Y; meshvecEnd.Z = end.Z;
+	Vector3f meshvecBegin(begin.X, begin.Y, begin.Z), meshvecEnd(end.X, end.Y, end.Z);
 	auto debugLinesComponent = world->GetWorldComponent<DebugDrawLinesComponent>();
 	debugLinesComponent->DebugLines.PushBack(DebugDrawLinesComponent::DebugLine{ meshvecBegin, meshvecEnd });
 	Color colorBegin(0.0f, 0.3f, 0.0f), colorEnd(0.0f, 0.2f, 0.0f);

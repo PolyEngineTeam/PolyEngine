@@ -3,7 +3,7 @@
 #include "DebugConfig.hpp"
 #include "Dynarray.hpp"
 #include "Color.hpp"
-#include "Vector.hpp"
+#include "Vector3f.hpp"
 
 namespace Poly
 {
@@ -27,8 +27,8 @@ namespace Poly
 
 		struct DebugLine
 		{
-			Mesh::Vector3D Begin;
-			Mesh::Vector3D End;
+			Vector3f Begin;
+			Vector3f End;
 		};
 
 		struct DebugLineColor
