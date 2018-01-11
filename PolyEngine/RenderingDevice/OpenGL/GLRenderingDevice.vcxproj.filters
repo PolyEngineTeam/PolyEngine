@@ -68,7 +68,11 @@
     <ClInclude Include="Src\UnlitRenderingPass.hpp">
       <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
     </ClInclude>
-    <ClInclude Include="Src\DebugNormalsWireframeRenderingPass.hpp">
+    <ClInclude Include="Src\DebugNormalsWireframeRenderingPass.hpp" />
+    <ClInclude Include="Src\DebugRenderingPass.hpp">
+      <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DebugRenderingBuffers.hpp">
       <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
     </ClInclude>
     <ClInclude Include="Src\GLCubemapDeviceProxy.hpp">
@@ -82,6 +86,12 @@
     </ClInclude>
     <ClInclude Include="Src\PrimitiveCube.hpp">
       <Filter>Source Files\RenderingPasses\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DebugRenderingPass.hpp">
+      <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DebugRenderingBuffers.hpp">
+      <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -138,6 +148,12 @@
     </ClCompile>
     <ClCompile Include="Src\PrimitiveCube.cpp">
       <Filter>Source Files\RenderingPasses\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DebugRenderingPass.cpp">
+      <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DebugRenderingBuffers.cpp">
+      <Filter>Source Files\RenderingPasses\DebugPasses</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

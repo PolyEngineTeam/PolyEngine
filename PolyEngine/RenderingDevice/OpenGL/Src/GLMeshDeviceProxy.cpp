@@ -1,4 +1,5 @@
 #include "GLMeshDeviceProxy.hpp"
+#include "Vector3f.hpp"
 #include "GLUtils.hpp"
 
 using namespace Poly;
@@ -48,7 +49,7 @@ void GLMeshDeviceProxy::SetContent(const Mesh& mesh)
 	if (mesh.HasVertices()) {
 		EnsureVBOCreated(eBufferType::VERTEX_BUFFER);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO[eBufferType::VERTEX_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, mesh.GetPositions().GetSize() * sizeof(Mesh::Vector3D), mesh.GetPositions().GetData(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, mesh.GetPositions().GetSize() * sizeof(Vector3f), mesh.GetPositions().GetData(), GL_STATIC_DRAW);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 		glEnableVertexAttribArray(0);
 		CHECK_GL_ERR();
@@ -66,7 +67,7 @@ void GLMeshDeviceProxy::SetContent(const Mesh& mesh)
 	if (mesh.HasNormals()) {
 		EnsureVBOCreated(eBufferType::NORMAL_BUFFER);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO[eBufferType::NORMAL_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, mesh.GetNormals().GetSize() * sizeof(Mesh::Vector3D), mesh.GetNormals().GetData(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, mesh.GetNormals().GetSize() * sizeof(Vector3f), mesh.GetNormals().GetData(), GL_STATIC_DRAW);
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 		glEnableVertexAttribArray(2);
 		CHECK_GL_ERR();

@@ -64,6 +64,7 @@ set(POLYCORE_H_FOR_IDE
 	Src/Vector.hpp
 	Src/Vector2f.hpp
 	Src/Vector2i.hpp
+	Src/Vector3f.hpp
 )
 
 add_library(polycore SHARED ${POLYCORE_SRCS} ${POLYCORE_H_FOR_IDE})
