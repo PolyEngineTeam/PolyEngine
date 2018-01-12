@@ -252,4 +252,6 @@ void Poly::Rigidbody3DComponent::EnsureInit()
 	
 	Physics3DSystem::RegisterRigidbody(BodyWorld, GetOwnerID());
 	Registered = true;
+
+	UpdatePosition();
 }
