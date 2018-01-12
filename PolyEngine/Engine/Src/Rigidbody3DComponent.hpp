@@ -25,7 +25,7 @@ namespace Poly
 	};
 
 	// You should use this component when you want to simulate physics bodies.
-	// If you simply want to detect collisions use @see Trigger3DComponent.
+	// If you simply want to detect collisions use @see[Trigger3DComponent].
 	class ENGINE_DLLEXPORT Rigidbody3DComponent : public ComponentBase
 	{
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
@@ -34,7 +34,6 @@ namespace Poly
 	public:
 		Rigidbody3DComponent(World* world, eRigidBody3DType type, float mass);
 		~Rigidbody3DComponent();
-
 
 		void ApplyForceToCenter(const Vector& force);
 		void ApplyImpulseToCenter(const Vector& impulse);
@@ -88,7 +87,7 @@ namespace Poly
 
 		World* BodyWorld;
 
-		std::unique_ptr<Rigidbody3DImpl> ImplData;
+		Rigidbody3DImpl* ImplData;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, Rigidbody3DComponent)

@@ -37,7 +37,7 @@ namespace Poly
 
 		World* BodyWorld;
 
-		std::unique_ptr<Trigger3DImpl> ImplData;
+		Trigger3DImpl* ImplData;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, Trigger3DComponent)

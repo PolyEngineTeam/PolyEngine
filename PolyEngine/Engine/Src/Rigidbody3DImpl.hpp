@@ -4,8 +4,6 @@
 
 namespace Poly
 {
-	struct Trigger3DImpl;
-	
 	struct Rigidbody3DImpl
 	{
 		btDefaultMotionState* BulletMotionState = nullptr;
