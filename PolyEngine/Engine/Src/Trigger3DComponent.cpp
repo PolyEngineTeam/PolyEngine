@@ -8,7 +8,7 @@
 Poly::Trigger3DComponent::Trigger3DComponent(World* world, Physics3DShape* shape)
 	: BodyWorld(world)
 {
-	ImplData = new Trigger3DImpl();
+	ImplData = std::make_unique<Trigger3DImpl>();
 	ImplData->Shape = shape;
 }
 
