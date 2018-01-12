@@ -43,20 +43,20 @@ set(EDITOR_SRCS_FOR_APPLE Src-macOS/MacOSHelper.mm)
 set(EDITOR_INCLUDE_FOR_APPLE Src-macOS)
 set(EDITOR_H_FOR_IDE_FOR_APPLE Src-macOS/MacOSHelper.hpp)
 
-add_executable(polyeditor ${EDITOR_SRCS} ${AUTOGEN_SOURCE_GROUP} ${EDITOR_H_FOR_IDE})
-target_include_directories(polyeditor PUBLIC ${EDITOR_INCLUDE} ${SDL2_INCLUDE_DIRS})
-target_link_libraries(polyeditor polyengine polycore ${SDL2_LIBRARIES} ${CMAKE_DL_LIBS})
-target_link_libraries(polyeditor Qt5::Widgets Qt5::Core)
-add_dependencies(polyeditor polyrenderingdevicegl) #dynamically loaded
-qt5_use_modules(polyeditor Widgets Core)
+add_executable(PolyEditor ${EDITOR_SRCS} ${AUTOGEN_SOURCE_GROUP} ${EDITOR_H_FOR_IDE})
+target_include_directories(PolyEditor PUBLIC ${EDITOR_INCLUDE} ${SDL2_INCLUDE_DIRS})
+target_link_libraries(PolyEditor PolyEngine PolyCore ${SDL2_LIBRARIES} ${CMAKE_DL_LIBS})
+target_link_libraries(PolyEditor Qt5::Widgets Qt5::Core)
+add_dependencies(PolyEditor PolyRenderingDeviceGL) #dynamically loaded
+qt5_use_modules(PolyEditor Widgets Core)
 
 if(APPLE)
     find_library(Cocoa_LIBRARY Cocoa)
     mark_as_advanced(Cocoa_LIBRARY)
 
-    target_sources(polyeditor PRIVATE ${EDITOR_SRCS_FOR_APPLE} ${EDITOR_H_FOR_IDE_FOR_APPLE})
-    target_include_directories(polyeditor PRIVATE ${EDITOR_INCLUDE_FOR_APPLE})
-    target_link_libraries(polyeditor ${Cocoa_LIBRARY})
+    target_sources(PolyEditor PRIVATE ${EDITOR_SRCS_FOR_APPLE} ${EDITOR_H_FOR_IDE_FOR_APPLE})
+    target_include_directories(PolyEditor PRIVATE ${EDITOR_INCLUDE_FOR_APPLE})
+    target_link_libraries(PolyEditor ${Cocoa_LIBRARY})
 endif()
 
-cotire(polyeditor)
+cotire(PolyEditor)
