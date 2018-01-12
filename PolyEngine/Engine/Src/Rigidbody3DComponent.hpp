@@ -87,7 +87,7 @@ namespace Poly
 
 		World* BodyWorld;
 
-		Rigidbody3DImpl* ImplData;
+		std::unique_ptr<Rigidbody3DImpl> ImplData;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, Rigidbody3DComponent)
