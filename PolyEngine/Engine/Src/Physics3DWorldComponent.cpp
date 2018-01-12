@@ -7,11 +7,11 @@
 Poly::Physics3DWorldComponent::Physics3DWorldComponent(Physics3DConfig config)
 	: Config(config)
 {
-	CollisionConfiguration = new btDefaultCollisionConfiguration();
-	Dispatcher = new btCollisionDispatcher(CollisionConfiguration);
-	Broadphase = new btDbvtBroadphase();
-	Solver = new btSequentialImpulseConstraintSolver();
-	DynamicsWorld = new btDiscreteDynamicsWorld(Dispatcher, Broadphase, Solver, CollisionConfiguration);
+	CollisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>();
+	Dispatcher = std::make_unique<btCollisionDispatcher>(CollisionConfiguration.get());
+	Broadphase = std::make_unique<btDbvtBroadphase>();
+	Solver = std::make_unique<btSequentialImpulseConstraintSolver>();
+	DynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(Dispatcher.get(), Broadphase.get(), Solver.get(), CollisionConfiguration.get());
 
 	// set default gravity
 	DynamicsWorld->setGravity(btVector3(config.Gravity.X, config.Gravity.Y, config.Gravity.Z));

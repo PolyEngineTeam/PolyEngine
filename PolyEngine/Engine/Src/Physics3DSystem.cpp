@@ -59,7 +59,7 @@ void Poly::Physics3DSystem::RegisterRigidbody(World* world, const UniqueID& enti
 
 	if (!cmp->Registered)
 	{
-		worldCmp->DynamicsWorld->addRigidBody(cmp->ImplData->BulletRigidBody);
+		worldCmp->DynamicsWorld.get()->addRigidBody(cmp->ImplData->BulletRigidBody);
 		worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, UniqueID>(cmp->ImplData->BulletRigidBody, entityID));
 
 		cmp->Registered = true;
@@ -75,7 +75,7 @@ void Poly::Physics3DSystem::UnregisterRigidBody(World* world, const UniqueID& en
 	if (cmp->Registered)
 	{
 		worldCmp->BulletTriggerToEntity.erase(cmp->ImplData->BulletRigidBody);
-		worldCmp->DynamicsWorld->removeRigidBody(cmp->ImplData->BulletRigidBody);
+		worldCmp->DynamicsWorld.get()->removeRigidBody(cmp->ImplData->BulletRigidBody);
 
 		cmp->Registered = false;
 	}
@@ -89,7 +89,7 @@ void Poly::Physics3DSystem::RegisterTriger(World* world, const UniqueID& entityI
 
 	if (!cmp->Registered)
 	{
-		worldCmp->DynamicsWorld->addCollisionObject(cmp->ImplData->BulletTrigger);
+		worldCmp->DynamicsWorld.get()->addCollisionObject(cmp->ImplData->BulletTrigger);
 		worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, UniqueID>(cmp->ImplData->BulletTrigger, entityID));
 
 		cmp->Registered = true;
@@ -104,8 +104,8 @@ void Poly::Physics3DSystem::UnregisterTriger(World* world, const UniqueID& entit
 
 	if (cmp->Registered)
 	{
-		worldCmp->DynamicsWorld->removeCollisionObject(cmp->ImplData->BulletTrigger);
 		worldCmp->BulletTriggerToEntity.erase(cmp->ImplData->BulletTrigger);
+		worldCmp->DynamicsWorld.get() ->removeCollisionObject(cmp->ImplData->BulletTrigger);
 
 		cmp->Registered = true;
 	}
