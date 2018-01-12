@@ -112,7 +112,7 @@ def patch_usr_proj(path, proj_name):
         dbg_cmd = project_property_group.find('ns:LocalDebuggerCommand', xml_namespace)
         if dbg_cmd == None:
             dbg_cmd = ET.SubElement(project_property_group, namespace_str + 'LocalDebuggerCommand')
-        dbg_cmd.text = 'polyrun.exe'
+        dbg_cmd.text = 'PolyStandalone.exe'
         print('\tset LocalDebuggerCommand to', dbg_cmd.text)
         
         dbg_work_dir = project_property_group.find('ns:LocalDebuggerWorkingDirectory', xml_namespace)

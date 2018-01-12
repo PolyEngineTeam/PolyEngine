@@ -7,9 +7,9 @@ set(GAME_NAME $PROJECT_NAME$)
 add_library(${GAME_NAME} SHARED ${GAME_SRCS} ${GAME_H_FOR_IDE})
 target_compile_definitions(${GAME_NAME} PRIVATE _GAME)
 target_include_directories(${GAME_NAME} PRIVATE ${GAME_INCLUDE})
-target_link_libraries(${GAME_NAME} PRIVATE polyengine polycore)
-add_dependencies(${GAME_NAME} polyrun polyrenderingdevicegl)
-#add_dependencies(${GAME_NAME} polyeditor )
+target_link_libraries(${GAME_NAME} PRIVATE PolyEngine PolyCore)
+add_dependencies(${GAME_NAME} PolyStandalone PolyRenderingDeviceGL)
+#add_dependencies(${GAME_NAME} PolyEditor )
 
 #note(vuko): we can't use configure_file() directly because there is no reliable way to get an output artifact location at configure-time
 find_file(CMAKE_TEMPLATE_PROCESSOR_SCRIPT process_template.cmake  PATHS ${CMAKE_MODULE_PATH}  NO_DEFAULT_PATH)
@@ -19,11 +19,11 @@ add_custom_command(
 	TARGET ${GAME_NAME}
 	POST_BUILD
 	COMMAND "${CMAKE_COMMAND}"
-	        -DINPUT_FILE="$<TARGET_PROPERTY:polyengine,SOURCE_DIR>/AssetsPathConfig.json.in"
+	        -DINPUT_FILE="$<TARGET_PROPERTY:PolyEngine,SOURCE_DIR>/AssetsPathConfig.json.in"
 	        -DOUTPUT_FILE="$<TARGET_FILE_DIR:${GAME_NAME}>/AssetsPathConfig.json"
-	        -DENGINE_ASSETS_PATHS="$<TARGET_PROPERTY:polyengine,SOURCE_DIR>/Res/"
+	        -DENGINE_ASSETS_PATHS="$<TARGET_PROPERTY:PolyEngine,SOURCE_DIR>/Res/"
 			-DGAME_ASSETS_PATHS="$<TARGET_PROPERTY:${GAME_NAME},SOURCE_DIR>/Res/"
-			-DRENDERING_DEVICE_LIB_PATH="$<TARGET_FILE_NAME:polyrenderingdevicegl>"
+			-DRENDERING_DEVICE_LIB_PATH="$<TARGET_FILE_NAME:PolyRenderingDeviceGL>"
 			-DGAME_LIB_PATH="$<TARGET_FILE_NAME:${GAME_NAME}>"
 	        -P "${CMAKE_TEMPLATE_PROCESSOR_SCRIPT}"
 )
@@ -32,11 +32,11 @@ add_custom_command(
 		TARGET ${GAME_NAME}
 		POST_BUILD
 			# Inhouse shared library dependancies
-			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polycore>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
-			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polyengine>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
-			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polyrun>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
-			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polyeditor>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
-			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:polyrenderingdevicegl>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
+			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:PolyCore>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
+			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:PolyEngine>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
+			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:PolyStandalone>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
+			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:PolyEditor>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
+			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:PolyRenderingDeviceGL>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
 
 			COMMENT "Copying Libs..." VERBATIM
 		)
