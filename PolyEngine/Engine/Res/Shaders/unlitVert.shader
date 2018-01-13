@@ -4,7 +4,6 @@ layout(location = 1) in vec2 aTexCoord;
 layout(location = 2) in vec3 aNormal;
 
 uniform mat4 uMVPTransform;
-uniform mat4 uTransform;
 
 out vec3 vVertexPos;
 out vec2 vTexCoord;

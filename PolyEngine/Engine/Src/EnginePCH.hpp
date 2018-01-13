@@ -45,6 +45,7 @@
 #include "Trigger3DComponent.hpp"
 #include "LightSourceComponent.hpp"
 #include "PostprocessSettingsComponent.hpp"
+#include "DebugDrawComponents.hpp"
 
 // World Components
 #include "DebugWorldComponent.hpp"
@@ -61,6 +62,7 @@
 #include "SoundSystem.hpp"
 #include "DeferredTaskSystem.hpp"
 #include "Physics2DSystem.hpp"
+#include "DebugDrawSystem.hpp"
 #include "Physics3DSystem.hpp"
 
 // Config

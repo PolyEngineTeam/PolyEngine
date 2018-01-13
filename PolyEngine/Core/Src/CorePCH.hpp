@@ -9,6 +9,7 @@
 #include "Vector.hpp"
 #include "Vector2f.hpp"
 #include "Vector2i.hpp"
+#include "Vector3f.hpp"
 #include "Matrix.hpp"
 #include "Quaternion.hpp"
 #include "SimdMath.hpp"

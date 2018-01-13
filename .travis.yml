@@ -65,4 +65,4 @@ script:
   - cd PolyEngine/build
   - cmake -DCMAKE_CXX_COMPILER=$COMPILER -DUSE_BUNDLED_CATCH=ON ..
   - make
-  - UnitTests/polytests
+  - UnitTests/PolyUnitTests

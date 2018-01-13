@@ -219,5 +219,8 @@
     <ClInclude Include="Src\BTreePrimitives.hpp">
       <Filter>Source Files\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Vector3f.hpp">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

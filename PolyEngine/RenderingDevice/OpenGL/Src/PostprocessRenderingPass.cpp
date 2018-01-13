@@ -31,7 +31,7 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 {
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	float ResolutionX = rect.GetSize().X * gRenderingDevice->GetScreenSize().Width;
-	float ResolutionY = rect.GetSize().X * gRenderingDevice->GetScreenSize().Height;
+	float ResolutionY = rect.GetSize().Y * gRenderingDevice->GetScreenSize().Height;
 	const TransformComponent* CameraTransform = camera->GetSibling<TransformComponent>();
 	Vector CameraPosition = CameraTransform->GetGlobalTranslation();
 	Matrix CameraRotation = CameraTransform->GetGlobalRotation().ToRotationMatrix();

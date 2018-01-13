@@ -2,7 +2,7 @@
 
 #include <BaseObject.hpp>
 #include <Dynarray.hpp>
-#include <Vector.hpp>
+#include "Vector3f.hpp"
 #include <Color.hpp>
 
 namespace Poly
@@ -14,7 +14,6 @@ namespace Poly
 	public:
 		virtual ~Mesh();
 
-		struct ENGINE_DLLEXPORT Vector3D { float X = 0, Y = 0, Z = 0; };
 		struct ENGINE_DLLEXPORT TextCoord { float U = 0, V = 0; };
 		struct ENGINE_DLLEXPORT Material
 		{
@@ -29,8 +28,8 @@ namespace Poly
 		size_t GetVertexCount() const { return Positions.GetSize(); }
 		size_t GetTriangleCount() const { return Indices.GetSize() / 3; }
 
-		const Dynarray<Vector3D>& GetPositions() const { return Positions; }
-		const Dynarray<Vector3D>& GetNormals() const { return Normals; }
+		const Dynarray<Vector3f>& GetPositions() const { return Positions; }
+		const Dynarray<Vector3f>& GetNormals() const { return Normals; }
 		const Dynarray<TextCoord>& GetTextCoords() const { return TextCoords; }
 		const Dynarray<uint32_t>& GetIndicies() const { return Indices; }
 
@@ -42,8 +41,8 @@ namespace Poly
 	private:
 		Material Mtl;
 		TextureResource* DiffuseTexture;
-		Dynarray<Vector3D> Positions;
-		Dynarray<Vector3D> Normals;
+		Dynarray<Vector3f> Positions;
+		Dynarray<Vector3f> Normals;
 		Dynarray<TextCoord> TextCoords;
 		Dynarray<uint32_t> Indices;
 
