@@ -8,7 +8,7 @@ namespace Poly {
 
 	/// <summary> Class that enables creation of arrays that are indexed by enum.</summary>
 	template<typename T, typename E, size_t SIZE = static_cast<typename std::underlying_type<E>::type>(E::_COUNT)>
-	class EnumArray : public BaseObject<>
+	class EnumArray final : public BaseObjectLiteralType<>
 	{
 		using IndexType = typename std::underlying_type<E>::type;
 
@@ -16,7 +16,7 @@ namespace Poly {
 		STATIC_ASSERTE(std::is_integral<IndexType>::value, "Underlying enum value type is not integral!");
 		STATIC_ASSERTE(SIZE > 0, "Zero size enum array is prohibited");
 	public:
-		class Iterator : public BaseObject<>
+		class Iterator final : public BaseObjectLiteralType<>
 		{
 		public:
 			bool operator==(const Iterator& rhs) const { return Data == rhs.Data && Idx == rhs.Idx; }
@@ -42,7 +42,7 @@ namespace Poly {
 			friend class EnumArray<T, E, SIZE>;
 		};
 
-		class ConstIterator : public BaseObject<>
+		class ConstIterator final : public BaseObjectLiteralType<>
 		{
 		public:
 			bool operator==(const ConstIterator& rhs) const { return Data == rhs.Data && Idx == rhs.Idx; }
@@ -134,7 +134,7 @@ namespace Poly {
 
 	/// <summary> Class that enables creation of bit field flags that are based on enum.</summary>
 	template<typename E>
-	class EnumFlags : public BaseObjectLiteralType<>
+	class EnumFlags final : public BaseObjectLiteralType<>
 	{
 		using FlagType = typename std::underlying_type<E>::type;
 
@@ -177,7 +177,7 @@ namespace Poly {
 
 	/// <summary>Class that enables iteration of enum values.</summary>
 	template <typename E>
-	class EnumIterator : public BaseObject<>, public std::iterator<std::random_access_iterator_tag, E>
+	class EnumIterator final : public BaseObjectLiteralType<>, public std::iterator<std::random_access_iterator_tag, E>
 	{
 		using ValueType = typename std::underlying_type<E>::type;
 
@@ -215,7 +215,7 @@ namespace Poly {
 
 	//------------------------------------------------------------------------------
 	template <typename E>
-	class EnumIteratorProxy
+	class EnumIteratorProxy final : public BaseObjectLiteralType<>
 	{
 		STATIC_ASSERTE(std::is_enum<E>::value, "Provided EnumIteratorProxy type is not an enum!");
 		using ValueType = typename std::underlying_type<E>::type; \
@@ -234,7 +234,7 @@ namespace Poly {
 
 	//------------------------------------------------------------------------------
 	namespace Impl {
-		struct EnumInfoBase
+		struct EnumInfoBase : public BaseObjectLiteralType<>
 		{
 			virtual const char* GetEnumName(i64 value) const = 0;
 			virtual i64 GetEnumValue(const String& name) const = 0;
@@ -242,7 +242,7 @@ namespace Poly {
 		};
 
 		template<typename T>
-		struct EnumInfo : public EnumInfoBase 
+		struct EnumInfo final : public EnumInfoBase 
 		{
 			const char* GetEnumName(i64 value) const override { UNUSED(value); ASSERTE(false, "This should never be called"); return nullptr; }
 			i64 GetEnumValue(const String& name) const override { UNUSED(name); ASSERTE(false, "This should never be called"); return 0; }

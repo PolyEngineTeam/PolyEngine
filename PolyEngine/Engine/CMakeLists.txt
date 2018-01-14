@@ -13,6 +13,7 @@ set(POLYENGINE_SRCS
 	Src/CameraSystem.cpp
 	Src/ConfigBase.cpp
 	Src/DebugConfig.cpp
+	Src/DebugDrawSystem.cpp
 	Src/DebugWorldComponent.cpp
 	Src/DeferredTaskSystem.cpp
 	Src/Engine.cpp
@@ -24,6 +25,8 @@ set(POLYENGINE_SRCS
 	Src/InputSystem.cpp
 	Src/InputWorldComponent.cpp
 	Src/LightSourceComponent.cpp
+	Src/CubemapResource.cpp
+	Src/SkyboxWorldComponent.cpp
 	Src/Mesh.cpp
 	Src/MeshRenderingComponent.cpp
 	Src/MeshResource.cpp
@@ -57,6 +60,8 @@ set(POLYENGINE_H_FOR_IDE
 	Src/ComponentBase.hpp
 	Src/ConfigBase.hpp
 	Src/DebugConfig.hpp
+	Src/DebugDrawComponents.hpp
+	Src/DebugDrawSystem.hpp
 	Src/DebugWorldComponent.hpp
 	Src/DeferredTaskBase.hpp
 	Src/DeferredTaskImplementation.hpp
@@ -76,6 +81,8 @@ set(POLYENGINE_H_FOR_IDE
 	Src/IRenderingDevice.hpp
 	Src/KeyBindings.hpp
 	Src/LightSourceComponent.hpp
+	Src/CubemapResource.hpp
+	Src/SkyboxWorldComponent.hpp
 	Src/Mesh.hpp
 	Src/MeshRenderingComponent.hpp
 	Src/MeshResource.hpp
@@ -107,20 +114,20 @@ set(POLYENGINE_H_FOR_IDE
 	Src/World.hpp
 )
 
-add_library(polyengine SHARED ${POLYENGINE_SRCS} ${POLYENGINE_H_FOR_IDE})
-target_compile_definitions(polyengine PRIVATE _ENGINE)
-target_include_directories(polyengine PUBLIC ${POLYENGINE_INCLUDE})
-target_link_libraries(polyengine PUBLIC polycore PRIVATE SOIL::SOIL ass::imp Freetype::FT2 OpenAL::AL OGG::OGG Vorbis::Vorbis Vorbis::File Box2D::Box2D Rapid::JSON)
+add_library(PolyEngine SHARED ${POLYENGINE_SRCS} ${POLYENGINE_H_FOR_IDE})
+target_compile_definitions(PolyEngine PRIVATE _ENGINE)
+target_include_directories(PolyEngine PUBLIC ${POLYENGINE_INCLUDE})
+target_link_libraries(PolyEngine PUBLIC PolyCore PRIVATE SOIL::SOIL ass::imp Freetype::FT2 OpenAL::AL OGG::OGG Vorbis::Vorbis Vorbis::File Box2D::Box2D Rapid::JSON)
 
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
-	target_compile_options(polyengine PRIVATE --coverage -fprofile-arcs -ftest-coverage)
-	target_link_libraries(polyengine PRIVATE -fprofile-arcs -ftest-coverage)
+	target_compile_options(PolyEngine PRIVATE --coverage -fprofile-arcs -ftest-coverage)
+	target_link_libraries(PolyEngine PRIVATE -fprofile-arcs -ftest-coverage)
 	add_custom_target(coverage_engine
-	                  COMMAND ${GCOV_COMMAND} -r -o "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/polyengine.dir/Src" -s ${CMAKE_CURRENT_SOURCE_DIR} ${POLYENGINE_SRCS}
+	                  COMMAND ${GCOV_COMMAND} -r -o "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/PolyEngine.dir/Src" -s ${CMAKE_CURRENT_SOURCE_DIR} ${POLYENGINE_SRCS}
 	                  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-	                  COMMENT "Collecting gcov coverage information for polyengine"
+	                  COMMENT "Collecting gcov coverage information for PolyEngine"
 	)
 endif(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 
-set_target_properties(polyengine PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "Src/EnginePCH.hpp")
-cotire(polyengine)
+set_target_properties(PolyEngine PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "Src/EnginePCH.hpp")
+cotire(PolyEngine)

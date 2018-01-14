@@ -12,13 +12,14 @@ namespace Poly
 	class Quaternion;
 
 	/// <summary>Class representing skew in 3 dimensions of a matrix transformation.</summary>
-	struct CORE_DLLEXPORT MatrixSkew : public BaseObject<>
+	struct CORE_DLLEXPORT MatrixSkew final : public BaseObjectLiteralType<>
 	{
 		float XY = 0, XZ = 0, YZ = 0;
 	};
 
 	/// <summary>Class representing 4x4 matrix in row-major order. It takes advantage of SIMD (if possible).</summary>
-	class ALIGN_16 CORE_DLLEXPORT Matrix : public BaseObject<>{
+	class ALIGN_16 CORE_DLLEXPORT Matrix final : public BaseObjectLiteralType<>
+	{
 	public:
 		Matrix();
 		Matrix(const float data[16], bool rowOrder = true);

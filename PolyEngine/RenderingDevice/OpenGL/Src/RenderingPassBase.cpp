@@ -91,12 +91,14 @@ void Poly::RenderingPassBase::ClearFBO(GLenum flags)
 Poly::RenderingPassBase::RenderingPassBase(const String& vertex, const String& fragment)
 	: Program(vertex, fragment)
 {
+	CreateDummyTexture();
 }
 
 //------------------------------------------------------------------------------
 Poly::RenderingPassBase::RenderingPassBase(const String& vertex, const String& geometry, const String& fragment)
 	: Program(vertex, geometry, fragment)
 {
+	CreateDummyTexture();
 }
 
 //------------------------------------------------------------------------------
@@ -107,7 +109,7 @@ Poly::RenderingPassBase::~RenderingPassBase()
 }
 
 //------------------------------------------------------------------------------
-void RenderingPassBase::Run(World* world, const CameraComponent* camera, const AARect& rect)
+void RenderingPassBase::Run(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType)
 {
 	// Bind inputs
 	Program.BindProgram();
@@ -150,7 +152,7 @@ void RenderingPassBase::Run(World* world, const CameraComponent* camera, const A
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO);
 
 	// call run implementation
-	OnRun(world, camera, rect);
+	OnRun(world, camera, rect, passType);
 }
 
 //------------------------------------------------------------------------------
@@ -266,4 +268,21 @@ Poly::Texture2DInputTarget::~Texture2DInputTarget()
 GLuint Poly::Texture2DInputTarget::GetTextureID() const
 {
 	return static_cast<const GLTextureDeviceProxy*>(Texture->GetTextureProxy())->GetTextureID();
+}
+
+void Poly::RenderingPassBase::CreateDummyTexture()
+{
+
+	glGenTextures(1, &FallbackWhiteTexture);
+
+	GLubyte data[] = { 255, 255, 255, 255 };
+
+	glBindTexture(GL_TEXTURE_2D, FallbackWhiteTexture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }

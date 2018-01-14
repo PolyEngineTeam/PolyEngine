@@ -2,6 +2,8 @@
 
 #include "Defines.hpp"
 #include "EnumUtils.hpp"
+#include "OutputStream.hpp"
+#include <streambuf>
 
 namespace Poly 
 {
@@ -23,8 +25,9 @@ namespace Poly
 	inline void sprint(std::ostream& stream, eLogLevel level,
 		const std::string& fmt) {
 		(void)level;  // suppress unused warning
-		stream << fmt << std::endl;
+		stream << fmt.c_str() << std::endl;
 	}
+	
 
 	/**
 	*  Variadic template type safe logging implementation
@@ -50,9 +53,30 @@ namespace Poly
 			stream << std::endl;
 	}
 
-	class CORE_DLLEXPORT Console : public BaseObject<> {
+	class CORE_DLLEXPORT Console : public BaseObject<> 
+	{
 	public:
+		Console() : Ostream(new std::ostream(std::cout.rdbuf())) {}
 
+		template <typename S, typename... Args>
+		void RegisterStream(Args&&... args)
+		{
+			constexpr bool isStream = std::is_base_of<OutputStream, S>::value; // Strange workaround to STATIC_ASSERTE macro on MSVC
+			STATIC_ASSERTE(isStream, "Provided value is not stream!");
+			if (CurrentStream)
+				CurrentStream->OnUnregister();
+			CurrentStream = std::make_unique<S>(std::forward<Args>(args)...);
+			Ostream = std::make_unique<std::ostream>(CurrentStream.get());
+		}
+		
+		void RegisterDefaultStream()
+		{
+			if (CurrentStream)
+				CurrentStream->OnUnregister();
+			CurrentStream = nullptr;
+			Ostream = std::make_unique<std::ostream>(std::cout.rdbuf());
+		}
+		
 		/**
 		*  Set of methods for easy logging. Only those should be used in engine code.
 		*  Future compatibility is guaranteed
@@ -94,8 +118,11 @@ namespace Poly
 		void LogImpl(eLogLevel level, const std::string& levelStr, const std::string& fmt,
 			Args&&... args) {
 			if (level >= LOG_LEVEL_FILTER)
-				sprint(std::cout, level, "[" + levelStr + "] " + fmt, args...);
+				sprint(*Ostream, level, "[" + levelStr + "] " + fmt, args...);
 		}
+
+		std::unique_ptr<OutputStream> CurrentStream;
+		std::unique_ptr<std::ostream> Ostream;
 	};
 
 	CORE_DLLEXPORT extern Console gConsole;

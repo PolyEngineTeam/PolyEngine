@@ -34,7 +34,7 @@ if (WIN32)
 		set(epoxy_ARCH "Win32")
 	endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
-	set(epoxy_ROOT_DIR "${CMAKE_SOURCE_DIR}/ThirdParty/libepoxy" CACHE PATH "Epoxy root directory")
+	set(epoxy_ROOT_DIR "${ENGINE_ROOT_DIR}/ThirdParty/libepoxy" CACHE PATH "Epoxy root directory")
 	set(INCLUDE_HINTS "${epoxy_ROOT_DIR}/include")
 	set(LIB_HINTS     "${epoxy_ROOT_DIR}/lib/${epoxy_ARCH}")
 else ()

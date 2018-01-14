@@ -19,7 +19,7 @@ UnlitRenderingPass::UnlitRenderingPass()
 	GetProgram().RegisterUniform("vec4", "Color");
 }
 
-void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/)
+void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
@@ -30,17 +30,21 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
 
-		if (meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::UNLIT)
+		if (passType == ePassType::BY_MATERIAL &&
+			(meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::UNLIT))
+		{
 			continue;
-
-		Vector objPos = transCmp->GetGlobalTranslation();
+		}
 
 		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
 		Matrix screenTransform = mvp * objTransform;
 		GetProgram().SetUniform("uTransform", objTransform);
 		GetProgram().SetUniform("uMVPTransform", screenTransform);
 		
-		glPolygonMode(GL_FRONT_AND_BACK, meshCmp->GetIsWireframe() ? GL_LINE : GL_FILL);
+		if (passType == ePassType::BY_MATERIAL)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, meshCmp->GetIsWireframe() ? GL_LINE : GL_FILL);
+		}
 
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
@@ -51,11 +55,13 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 			glBindVertexArray(meshProxy->GetVAO());
 
-			if (subMesh->GetMeshData().GetDiffTexture())
-			{
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, static_cast<const GLTextureDeviceProxy*>(subMesh->GetMeshData().GetDiffTexture()->GetTextureProxy())->GetTextureID());
-			}
+			const Poly::TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
+			GLuint TextureID = DiffuseTexture == nullptr
+				? FallbackWhiteTexture
+				: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, TextureID);
 
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 			glBindTexture(GL_TEXTURE_2D, 0);
@@ -64,6 +70,9 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 			++i;
 		}
 		
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		if (passType == ePassType::BY_MATERIAL)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
 	}
 }

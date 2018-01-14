@@ -7,13 +7,13 @@ PostprocessQuad::PostprocessQuad()
 	// quad with uv mapping
 	static const float vertices[] = {
 		// x,y,z, u,v
-		-1.f, 1.f, 0.f, 0.f, 1.f,
-		1.f, -1.f, 0.f, 1.f, 0.f,
-		1.f, 1.f, 0.f, 1.f, 1.f,
+		-1.f,  1.f,  0.f,  0.f,  1.f,
+		 1.f, -1.f,  0.f,  1.f,  0.f,
+		 1.f,  1.f,  0.f,  1.f,  1.f,
 
-		-1.f, 1.f, 0.f, 0.f, 1.f,
-		-1.f, -1.f, 0.f, 0.f, 0.f,
-		1.f, -1.f, 0.f, 1.f, 0.f
+		-1.f,  1.f,  0.f,  0.f,  1.f,
+		-1.f, -1.f,  0.f,  0.f,  0.f,
+		 1.f, -1.f,  0.f,  1.f,  0.f
 	};
 
 	glGenVertexArrays(1, &VAO);

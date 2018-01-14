@@ -35,7 +35,7 @@ if (WIN32)
 		set(OGG_ARCH "Win32")
 	endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
-	set(OGG_ROOT_DIR "${CMAKE_SOURCE_DIR}/ThirdParty/libogg" CACHE PATH "LibOGG root directory")
+	set(OGG_ROOT_DIR "${ENGINE_ROOT_DIR}/ThirdParty/libogg" CACHE PATH "LibOGG root directory")
 	set(INCLUDE_HINTS "${OGG_ROOT_DIR}/include")
 	set(LIB_HINTS     "${OGG_ROOT_DIR}/lib/${OGG_ARCH}")
 else ()

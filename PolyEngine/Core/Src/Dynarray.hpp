@@ -11,12 +11,12 @@ namespace Poly
 	/// This should be the goto container for all general purpose usage.
 	/// </summary>
 	template<typename T>
-	class Dynarray : public BaseObject<>
+	class Dynarray final : public BaseObjectLiteralType<>
 	{
 	public:
 
 		/// <summary>Dynarray's Iterator class provides basic random access mutable iterator API for traversing dynarray memory</summary>
-		class Iterator : public BaseObject<>, public std::iterator<std::random_access_iterator_tag, T>
+		class Iterator final : public BaseObjectLiteralType<>, public std::iterator<std::random_access_iterator_tag, T>
 		{
 		public:
 			bool operator==(const Iterator& rhs) const { return Data == rhs.Data && Idx == rhs.Idx; }
@@ -49,7 +49,7 @@ namespace Poly
 		};
 
 		/// <summary>Dynarray's ConstIterator class provides basic random access const iterator API for traversing dynarray memory</summary>
-		class ConstIterator : public BaseObject<>, public std::iterator<std::random_access_iterator_tag, T>
+		class ConstIterator final : public BaseObjectLiteralType<>, public std::iterator<std::random_access_iterator_tag, T>
 		{
 		public:
 			bool operator==(const ConstIterator& rhs) const { return Data == rhs.Data && Idx == rhs.Idx; }

@@ -4,7 +4,6 @@
 #include "MeshResource.hpp"
 #include "SoundResource.hpp"
 
-
 #include <fstream>
 
 using namespace Poly;

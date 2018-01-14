@@ -5,13 +5,13 @@
 
 using namespace Poly;
 
-enum class eTestEnum
+enum class eRTTITestEnum
 {
 	VAL_1,
 	VAL_2,
 	_COUNT
 };
-REGISTER_ENUM_NAMES(eTestEnum, "val_1", "val_2");
+REGISTER_ENUM_NAMES(eRTTITestEnum, "val_1", "val_2");
 
 class TestClass : public RTTIBase {
 	RTTI_DECLARE_TYPE_DERIVED(TestClass, RTTIBase)
@@ -21,7 +21,7 @@ class TestClass : public RTTIBase {
 	}
 public:
 	bool val1 = true;
-	eTestEnum val2 = eTestEnum::VAL_1;
+	eRTTITestEnum val2 = eRTTITestEnum::VAL_1;
 };
 
 RTTI_DEFINE_TYPE(TestClass)

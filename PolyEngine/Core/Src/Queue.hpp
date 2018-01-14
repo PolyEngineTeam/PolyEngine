@@ -13,7 +13,7 @@ namespace Poly
 	/// It does not provide API for insertion in any position.</para>
 	/// </summary>
 	template<typename T>
-	class Queue : public BaseObject<>
+	class Queue final : public BaseObjectLiteralType<>
 	{
 	public:
 		/// <summary>Base queue constructor that creates empty object with capacity == 0.</summary>
@@ -36,7 +36,7 @@ namespace Poly
 		Queue(const std::initializer_list<T>& list) { PopulateFromInitializerList(list); }
 
 		/// <summary>Basic destructor.</summary>
-		~Queue() override
+		~Queue()
 		{
 			Clear();
 			Free();

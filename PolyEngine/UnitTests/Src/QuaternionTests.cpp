@@ -18,21 +18,21 @@ TEST_CASE("Quaternion constructors", "[Quaternion]") {
 	REQUIRE(q2.X == Approx(1));
 	REQUIRE(q2.Y == Approx(0));
 	REQUIRE(q2.Z == Approx(0));
-	REQUIRE(q2.W == Approx(0));
+	REQUIRE(q2.W == Approx(0).margin(1e-6)); //Litle numerical error workaround
 
 	// copy constructor
 	Quaternion q3(q2);
 	REQUIRE(q3.X == Approx(1));
 	REQUIRE(q3.Y == Approx(0));
 	REQUIRE(q3.Z == Approx(0));
-	REQUIRE(q3.W == Approx(0));
+	REQUIRE(q3.W == Approx(0).margin(1e-6)); //Litle numerical error workaround
 
 	// = operator
 	q1 = q2;
 	REQUIRE(q1.X == Approx(1));
 	REQUIRE(q1.Y == Approx(0));
 	REQUIRE(q1.Z == Approx(0));
-	REQUIRE(q1.W == Approx(0));
+	REQUIRE(q1.W == Approx(0).margin(1e-6)); //Litle numerical error workaround
 }
 
 TEST_CASE("Quaternion comparison operators", "[Quaternion]") {
@@ -62,8 +62,6 @@ TEST_CASE("Quaternion-Quaternion multiplication operator", "[Quaternion]") {
 		q2 = Quaternion(Vector(1, 0, 0), -180_deg);
 		REQUIRE(q1*q2 == Quaternion(Vector(1, 0, 0), 0_deg));
 		REQUIRE(q1*q1 == Quaternion(Vector(1, 0, 0), 360_deg));
-		Quaternion qq = q1*q1*q1;
-		Quaternion qq2 = Quaternion(Vector(1, 0, 0), 540_deg);
 		REQUIRE(q1*q1*q1 == Quaternion(Vector(1, 0, 0), 540_deg));
 		q1 *= q2;
 		REQUIRE(q1 == Quaternion(Vector(1, 0, 0), 0_deg));

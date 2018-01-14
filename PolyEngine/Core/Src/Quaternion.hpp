@@ -9,14 +9,19 @@
 namespace Poly {
 
 	/// <summary>Represents simple rotation in 3D space.</summary>
-	struct CORE_DLLEXPORT EulerAngles { 
+	struct CORE_DLLEXPORT EulerAngles final : public BaseObjectLiteralType<>
+	{ 
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const EulerAngles& angles);
+		
+		constexpr EulerAngles() : X(0_deg), Y(0_deg), Z(0_deg) {}
+		constexpr EulerAngles(Angle x, Angle y, Angle z) : X(x), Y(y), Z(z) {}
 
 		Angle X, Y, Z; 
 	};
 
 	/// <summary>Used to represent rotation in 3D space without facing the problems of gimbal lock.</summary>
-	class ALIGN_16 CORE_DLLEXPORT Quaternion : public BaseObject<>{
+	class ALIGN_16 CORE_DLLEXPORT Quaternion final : public BaseObjectLiteralType<>
+	{
 	public:
 		
 		/// <summary>Creates zero-roation quaternion.</summary>

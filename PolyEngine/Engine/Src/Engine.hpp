@@ -73,15 +73,25 @@ namespace Poly
 		/// <param name="key">Key code</param>
 		void KeyUp(eKey key) { InputEventsQueue.PushBack({eInputEventType::KEYUP, key}); }
 
-		/// <summary>Pushes input event to an input queue with specified event type and key code.
+		/// <summary>Pushes input event to an input queue with specified event type and button code.
 		/// One of four functions handling incoming input events.</summary>
-		/// <param name="pos">New mouse position.</param>
-		void UpdateMousePos(const Vector& pos) { InputEventsQueue.PushBack({eInputEventType::MOUSEMOVE, pos}); }
+		/// <param name="button">Mouse button code</param>
+		void MouseButtonDown(eMouseButton button) { InputEventsQueue.PushBack({eInputEventType::MOUSEBUTTONDOWN, button}); }
+
+		/// <summary>Pushes input event to an input queue with specified event type and button code.
+		/// One of four functions handling incoming input events.</summary>
+		/// <param name="button">Mouse button code</param>
+		void MouseButtonUp(eMouseButton button) { InputEventsQueue.PushBack({eInputEventType::MOUSEBUTTONUP, button}); }
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of four functions handling incoming input events.</summary>
-		/// <param name="pos">New wheel position.</param>
-		void UpdateWheelPos(const Vector& pos) { InputEventsQueue.PushBack({eInputEventType::WHEELMOVE, pos}); }
+		/// <param name="pos">New mouse position.</param>
+		void UpdateMousePos(const Vector2i& pos) { InputEventsQueue.PushBack({eInputEventType::MOUSEMOVE, pos}); }
+
+		/// <summary>Pushes input event to an input queue with specified event type and key code.
+		/// One of four functions handling incoming input events.</summary>
+		/// <param name="pos">Wheel delta position.</param>
+		void UpdateWheelPos(const Vector2i& deltaPos) { InputEventsQueue.PushBack({eInputEventType::WHEELMOVE, deltaPos}); }
 
 		///functions for closing the game
 		bool IsQuitRequested() const;

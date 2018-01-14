@@ -18,7 +18,7 @@ namespace Poly
 		TransparentRenderingPass(const PostprocessQuad* quad);
 
 	protected:
-		void OnRun(World* world, const CameraComponent* camera, const AARect& rect) override;
+		void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;
 
 		const PostprocessQuad* Quad;
 	};
