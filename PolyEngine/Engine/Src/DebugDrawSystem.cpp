@@ -70,8 +70,6 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 			if (!gDebugConfig.DebugDrawPresets.IsSet(ddrawCmp->entityPreset))
 				continue;
 
-			Vector objPos = transformCmp->GetGlobalTranslation();
-
 			const Matrix& objTransform = transformCmp->GetGlobalTransformationMatrix();
 
 			// spawn a box for every mesh, in correct size
