@@ -7,7 +7,7 @@ namespace Poly
 {
 	/// <summary>Pointer wrapper, which returns nullptr if target object is not existing anymore</summary>
 	template<typename T>
-	class SafePtr : public BaseObject<>
+	class SafePtr final : public BaseObjectLiteralType<>
 	{
 	public:
 		/// <summary>Basic constructor</summary>

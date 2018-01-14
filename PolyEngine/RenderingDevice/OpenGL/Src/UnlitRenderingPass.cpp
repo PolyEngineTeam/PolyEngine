@@ -36,8 +36,6 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 			continue;
 		}
 
-		Vector objPos = transCmp->GetGlobalTranslation();
-
 		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
 		Matrix screenTransform = mvp * objTransform;
 		GetProgram().SetUniform("uTransform", objTransform);

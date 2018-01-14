@@ -21,7 +21,7 @@ namespace Poly
 	 * If you do not need the elements to be ordered <see cref="HashMap<K, V>"/>, which is generally faster
 	 */
 	template<typename K, typename V, size_t Bfactor = 6>
-	class OrderedMap : public BaseObject<>
+	class OrderedMap final : public BaseObjectLiteralType<>
 	{
 		static_assert(Bfactor > 1, "B factor must be greater than 1. Consider using a classic binary tree if you need a lesser value.");
 		using BTree    = Impl::BTree<K, V, Bfactor>;
@@ -42,7 +42,7 @@ namespace Poly
 		OrderedMap() : root{nullptr, 0}, len(0) {}
 		OrderedMap(OrderedMap&& other) : root(other.root), len(other.len) { ObjectLifetimeHelper::DefaultCreate(&other); }
 		OrderedMap(const OrderedMap& other) : OrderedMap() { for (auto kv : other) { Insert(kv.key, kv.value); } } //todo(vuko): can be implemented more efficiently
-		~OrderedMap() override { if (root.node) { Clear(); delete root.node; } };
+		~OrderedMap() { if (root.node) { Clear(); delete root.node; } };
 
 		OrderedMap& operator=(OrderedMap&& other)
 		{

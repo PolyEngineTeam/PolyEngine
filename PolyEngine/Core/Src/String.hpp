@@ -7,7 +7,8 @@ namespace Poly {
 
 	size_t StrLen(const char* str);
 
-	class CORE_DLLEXPORT String : BaseObject<> {
+	class CORE_DLLEXPORT String final : public BaseObjectLiteralType<>
+	{
 	public:
 		static const String EMPTY;
 

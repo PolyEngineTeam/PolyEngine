@@ -42,10 +42,10 @@ namespace Poly
 			static_assert(CAPACITY >= 3, "Capacity must be at least 3 or greater!");
 
 			struct BranchNode;
-			struct LeafNode : public BaseObjectLiteralType<>
+			struct LeafNode : public BaseObject<>
 			{
 				LeafNode() : parent(nullptr), len(0) {}
-				~LeafNode()
+				virtual ~LeafNode()
 				{
 					//since the backing storage has no idea about how many elements it contains, we need to destroy them explicitly
 					keys.Destruct(len);
@@ -60,7 +60,7 @@ namespace Poly
 				uint16_t len;
 			};
 
-			struct BranchNode final : public LeafNode //note(vuko): not a true is-a relation, but simplifies the code
+			struct BranchNode : public LeafNode //note(vuko): not a true is-a relation, but simplifies the code
 			{
 				BranchNode() : LeafNode() {}
 				UnsafeStorage<LeafNode*, CAPACITY + 1u> edges; //len+1 initialized and valid

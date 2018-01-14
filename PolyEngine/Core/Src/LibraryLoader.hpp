@@ -16,7 +16,7 @@ namespace Poly
 	template<typename Function> LibraryFunctionHandle<Function> LoadFunctionFromSharedLibrary(const char* libraryName, const char* functionSymbol);
 
 	template<typename Function>
-	class LibraryFunctionHandle : BaseObjectLiteralType<>
+	class LibraryFunctionHandle final : BaseObjectLiteralType<>
 	{
 	public:
 		STATIC_ASSERTE(std::is_function<Function>::value, "Not a valid function type!");

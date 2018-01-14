@@ -62,8 +62,6 @@ TEST_CASE("Quaternion-Quaternion multiplication operator", "[Quaternion]") {
 		q2 = Quaternion(Vector(1, 0, 0), -180_deg);
 		REQUIRE(q1*q2 == Quaternion(Vector(1, 0, 0), 0_deg));
 		REQUIRE(q1*q1 == Quaternion(Vector(1, 0, 0), 360_deg));
-		Quaternion qq = q1*q1*q1;
-		Quaternion qq2 = Quaternion(Vector(1, 0, 0), 540_deg);
 		REQUIRE(q1*q1*q1 == Quaternion(Vector(1, 0, 0), 540_deg));
 		q1 *= q2;
 		REQUIRE(q1 == Quaternion(Vector(1, 0, 0), 0_deg));

@@ -20,7 +20,7 @@ namespace Poly
 		namespace Impl {
 
 			//--------------------------------------------------------------------------
-			class CORE_DLLEXPORT TypeManager : public BaseObjectLiteralType<> {
+			class CORE_DLLEXPORT TypeManager final : public BaseObjectLiteralType<> {
 			public:
 				static TypeManager& Get();
 				TypeInfo RegisterOrGetType(const char* name, const Dynarray<TypeInfo>& baseClassList);
@@ -41,7 +41,7 @@ namespace Poly
 		} // namespace Impl
 
 		  //--------------------------------------------------------------------------
-		class CORE_DLLEXPORT TypeInfo : public BaseObjectLiteralType<> {
+		class CORE_DLLEXPORT TypeInfo final : public BaseObjectLiteralType<> {
 		public:
 			static const TypeInfo INVALID;
 

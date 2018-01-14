@@ -120,9 +120,6 @@
     <ClInclude Include="Src\OrderedMap.hpp">
       <Filter>Source Files\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="Src\BTreeNode.hpp">
-      <Filter>Source Files\Memory</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Color.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>

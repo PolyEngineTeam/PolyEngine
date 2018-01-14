@@ -164,7 +164,6 @@
     <ClInclude Include="Src\BTreePrimitives.hpp" />
     <ClInclude Include="Src\LibraryLoader.hpp" />
     <ClInclude Include="Src\OrderedMap.hpp" />
-    <ClInclude Include="Src\BTreeNode.hpp" />
     <ClInclude Include="Src\BaseObject.hpp" />
     <ClInclude Include="Src\BasicMath.hpp" />
     <ClInclude Include="Src\BinaryBuffer.hpp" />
