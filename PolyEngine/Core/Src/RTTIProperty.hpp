@@ -57,7 +57,7 @@ namespace Poly {
 
 		struct PropertyImplData : public BaseObjectLiteralType<> {};
 
-		struct Property : public BaseObjectLiteralType<>
+		struct Property final : public BaseObjectLiteralType<>
 		{
 			Property(TypeInfo typeInfo, size_t offset, const char* name, ePropertyFlag flags, eCorePropertyType coreType, std::shared_ptr<PropertyImplData>&& implData = nullptr)
 				: Type(typeInfo), Offset(offset), Name(name), Flags(flags), CoreType(coreType), ImplData(std::move(implData)) {}
@@ -69,7 +69,7 @@ namespace Poly {
 			std::shared_ptr<PropertyImplData> ImplData; // @fixme ugly hack for not working Two-phase lookup in MSVC, should use unique_ptr
 		};
 
-		struct EnumPropertyImplData : public PropertyImplData
+		struct EnumPropertyImplData final : public PropertyImplData
 		{
 			const ::Poly::Impl::EnumInfoBase* EnumInfo = nullptr;
 		};

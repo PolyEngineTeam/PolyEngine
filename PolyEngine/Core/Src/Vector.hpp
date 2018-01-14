@@ -5,10 +5,11 @@
 #include "Defines.hpp"
 #include "BasicMath.hpp"
 
-namespace Poly {
-
+namespace Poly
+{
 	/// <summary>Class representing 3D vector that takes advantage of SIMD (if possible).</summary>
-	class ALIGN_16 CORE_DLLEXPORT Vector : public BaseObject<>{
+	class ALIGN_16 CORE_DLLEXPORT Vector final : public BaseObjectLiteralType<>
+	{
 	public:
 		static const Vector ZERO;
 		static const Vector UNIT_X;

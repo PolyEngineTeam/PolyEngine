@@ -9,7 +9,7 @@ namespace Poly
 	using VectorIntType = int32_t;
 
 	/// <summary>Class representing 2D integer vector.</summary>
-	class CORE_DLLEXPORT Vector2i : public BaseObject<>
+	class CORE_DLLEXPORT Vector2i final : public BaseObjectLiteralType<>
 	{
 	public:
 		static const Vector2i ZERO;

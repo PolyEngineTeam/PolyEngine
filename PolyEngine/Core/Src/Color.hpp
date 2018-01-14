@@ -6,7 +6,7 @@
 namespace Poly {
 	
 	/// <summary>Class representing RGBA color.</summary>
-	class CORE_DLLEXPORT Color : public BaseObjectLiteralType<>
+	class CORE_DLLEXPORT Color final : public BaseObjectLiteralType<>
 	{
 	public:
 		static const Color WHITE;

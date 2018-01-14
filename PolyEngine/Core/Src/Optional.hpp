@@ -8,7 +8,7 @@ namespace Poly {
 		namespace Object = ObjectLifetimeHelper;
 
 		template<typename V>
-		class OptionalBase {
+		class OptionalBase : public BaseObject<> {
 		public:
 			using ValueType = V;
 
