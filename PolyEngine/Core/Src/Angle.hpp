@@ -11,7 +11,7 @@ namespace Poly {
 	/// <para>All functions that require angle as an input should be using this class in order to ensure maximum compatibility.</para>
 	/// <para>It has very little overhead and most of the implementation is constexpr. Angle value is stored internally in radians.</para>
 	/// </summary>
-	class CORE_DLLEXPORT Angle : public BaseObjectLiteralType<>
+	class CORE_DLLEXPORT Angle final : public BaseObjectLiteralType<>
 	{
 	public:
 		/// <summary>Explicit static method for creating Angle class instance with initial value provided in degrees.</summary>

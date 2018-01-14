@@ -1,0 +1,57 @@
+file(GLOB_RECURSE GAME_SRCS Src/*.cpp)
+set(GAME_INCLUDE Src)
+file(GLOB_RECURSE GAME_H_FOR_IDE Src/*.hpp Src/*.h)
+
+set(GAME_NAME $PROJECT_NAME$)
+
+add_library(${GAME_NAME} SHARED ${GAME_SRCS} ${GAME_H_FOR_IDE})
+target_compile_definitions(${GAME_NAME} PRIVATE _GAME)
+target_include_directories(${GAME_NAME} PRIVATE ${GAME_INCLUDE})
+target_link_libraries(${GAME_NAME} PRIVATE PolyEngine PolyCore)
+add_dependencies(${GAME_NAME} PolyStandalone PolyRenderingDeviceGL)
+#add_dependencies(${GAME_NAME} PolyEditor )
+
+#note(vuko): we can't use configure_file() directly because there is no reliable way to get an output artifact location at configure-time
+find_file(CMAKE_TEMPLATE_PROCESSOR_SCRIPT process_template.cmake  PATHS ${CMAKE_MODULE_PATH}  NO_DEFAULT_PATH)
+
+# Create config file for out game
+add_custom_command(
+	TARGET ${GAME_NAME}
+	POST_BUILD
+	COMMAND "${CMAKE_COMMAND}"
+	        -DINPUT_FILE="$<TARGET_PROPERTY:PolyEngine,SOURCE_DIR>/AssetsPathConfig.json.in"
+	        -DOUTPUT_FILE="$<TARGET_FILE_DIR:${GAME_NAME}>/AssetsPathConfig.json"
+	        -DENGINE_ASSETS_PATHS="$<TARGET_PROPERTY:PolyEngine,SOURCE_DIR>/Res/"
+			-DGAME_ASSETS_PATHS="$<TARGET_PROPERTY:${GAME_NAME},SOURCE_DIR>/Res/"
+			-DRENDERING_DEVICE_LIB_PATH="$<TARGET_FILE_NAME:PolyRenderingDeviceGL>"
+			-DGAME_LIB_PATH="$<TARGET_FILE_NAME:${GAME_NAME}>"
+	        -P "${CMAKE_TEMPLATE_PROCESSOR_SCRIPT}"
+)
+
+add_custom_command(
+		TARGET ${GAME_NAME}
+		POST_BUILD
+			# Inhouse shared library dependancies
+			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:PolyCore>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
+			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:PolyEngine>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
+			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:PolyStandalone>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
+			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:PolyEditor>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
+			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:PolyRenderingDeviceGL>" "$<TARGET_FILE_DIR:${GAME_NAME}>"
+
+			COMMENT "Copying Libs..." VERBATIM
+		)
+
+if(WIN32)
+	# Copy all necessary DLL's on Windows
+	add_custom_command(
+		TARGET ${GAME_NAME}
+		POST_BUILD
+			# Thirdparty DLL's
+			COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/SDL2/lib/x64/SDL2.dll" "$<TARGET_FILE_DIR:${GAME_NAME}>"
+			COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/Assimp/lib/Release/x64/assimp-vc140-mt.dll" "$<TARGET_FILE_DIR:${GAME_NAME}>"
+			COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/libepoxy/bin/x64/epoxy-0.dll" "$<TARGET_FILE_DIR:${GAME_NAME}>"
+
+			COMMENT "Copying DLLs..." VERBATIM
+		)
+endif()
+cotire(${GAME_NAME})

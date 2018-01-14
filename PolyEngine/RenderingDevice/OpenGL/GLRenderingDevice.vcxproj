@@ -87,15 +87,16 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libepoxy\include;$(SolutionDir)Core\Src;$(SolutionDir)Engine\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libepoxy\include;$(SolutionDir)Core\Src;$(SolutionDir)Engine\Src;$(SolutionDir)ThirdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEVICE;NOMINMAX;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\libepoxy\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;epoxy.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\libepoxy\lib\x64;$(SolutionDir)ThirdParty\SDL2\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;epoxy.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d $(SolutionDir)ThirdParty\libepoxy\bin\x64\epoxy-0.dll $(OutDir)</Command>
+      <Command>xcopy /y /d $(SolutionDir)ThirdParty\libepoxy\bin\x64\epoxy-0.dll $(OutDir)
+xcopy /y /d $(SolutionDir)ThirdParty\SDL2\lib\x64\SDL2.dll $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -144,23 +145,27 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libepoxy\include;$(SolutionDir)Core\Src;$(SolutionDir)Engine\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\libepoxy\include;$(SolutionDir)Core\Src;$(SolutionDir)Engine\Src;$(SolutionDir)ThirdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEVICE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\libepoxy\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;epoxy.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\libepoxy\lib\x64;$(SolutionDir)ThirdParty\SDL2\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;epoxy.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d $(SolutionDir)ThirdParty\libepoxy\bin\x64\epoxy-0.dll $(OutDir)</Command>
+      <Command>xcopy /y /d $(SolutionDir)ThirdParty\libepoxy\bin\x64\epoxy-0.dll $(OutDir)
+xcopy /y /d $(SolutionDir)ThirdParty\SDL2\lib\x64\SDL2.dll $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Src\BlinnPhongRenderingPass.hpp" />
     <ClInclude Include="Src\DebugNormalsRenderingPass.hpp" />
     <ClInclude Include="Src\DebugNormalsWireframeRenderingPass.hpp" />
+    <ClInclude Include="Src\GLCubemapDeviceProxy.hpp" />
+    <ClInclude Include="Src\DebugRenderingBuffers.hpp" />
+    <ClInclude Include="Src\DebugRenderingPass.hpp" />
     <ClInclude Include="Src\GLMeshDeviceProxy.hpp" />
     <ClInclude Include="Src\GLRenderingDevice.hpp" />
     <ClInclude Include="Src\GLTextFieldBufferDeviceProxy.hpp" />
@@ -169,7 +174,9 @@
     <ClInclude Include="Src\GLShaderProgram.hpp" />
     <ClInclude Include="Src\PostprocessQuad.hpp" />
     <ClInclude Include="Src\PostprocessRenderingPass.hpp" />
+    <ClInclude Include="Src\PrimitiveCube.hpp" />
     <ClInclude Include="Src\RenderingPassBase.hpp" />
+    <ClInclude Include="Src\SkyboxRenderingPass.hpp" />
     <ClInclude Include="Src\Text2DRenderingPass.hpp" />
     <ClInclude Include="Src\TransparentRenderingPass.hpp" />
     <ClInclude Include="Src\UnlitRenderingPass.hpp" />
@@ -178,6 +185,9 @@
     <ClCompile Include="Src\BlinnPhongRenderingPass.cpp" />
     <ClCompile Include="Src\DebugNormalsRenderingPass.cpp" />
     <ClCompile Include="Src\DebugNormalsWireframeRenderingPass.cpp" />
+    <ClCompile Include="Src\GLCubemapDeviceProxy.cpp" />
+    <ClCompile Include="Src\DebugRenderingBuffers.cpp" />
+    <ClCompile Include="Src\DebugRenderingPass.cpp" />
     <ClCompile Include="Src\GLMeshDeviceProxy.cpp" />
     <ClCompile Include="Src\GLRenderingDevice.cpp" />
     <ClCompile Include="Src\GLTextFieldBufferDeviceProxy.cpp" />
@@ -186,7 +196,9 @@
     <ClCompile Include="Src\GLShaderProgram.cpp" />
     <ClCompile Include="Src\PostprocessQuad.cpp" />
     <ClCompile Include="Src\PostprocessRenderingPass.cpp" />
+    <ClCompile Include="Src\PrimitiveCube.cpp" />
     <ClCompile Include="Src\RenderingPassBase.cpp" />
+    <ClCompile Include="Src\SkyboxRenderingPass.cpp" />
     <ClCompile Include="Src\Text2DRenderingPass.cpp" />
     <ClCompile Include="Src\TransparentRenderingPass.cpp" />
     <ClCompile Include="Src\UnlitRenderingPass.cpp" />

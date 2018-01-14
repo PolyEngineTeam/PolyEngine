@@ -6,7 +6,7 @@
 namespace Poly {
 
 	template<typename T, size_t N>
-	class UnsafeStorage : public BaseObjectLiteralType<>
+	class UnsafeStorage final : public BaseObjectLiteralType<>
 	{
 		using value_type      = T;
 		using pointer         = T*;

@@ -8,7 +8,7 @@ namespace Poly
 	class Vector2i;
 
 	/// <summary>Class representing 2D float vector.</summary>
-	class CORE_DLLEXPORT Vector2f : public BaseObject<>
+	class CORE_DLLEXPORT Vector2f final : public BaseObjectLiteralType<>
 	{
 	public:
 		static const Vector2f ZERO;

@@ -5,6 +5,16 @@ project(PolyEngine VERSION 0.1.2 LANGUAGES CXX C) #note(vuko): without C older C
 # Initial setup: C++ standard version, build types, CMake modules
 ##
 
+set(ENGINE_ROOT_DIR ${CMAKE_SOURCE_DIR})
+
+if(DEFINED ENV{QTDIR})
+	list(APPEND CMAKE_PREFIX_PATH $ENV{QTDIR})
+elseif(APPLE)
+	list(APPEND CMAKE_PREFIX_PATH /usr/local/opt/qt)
+else()
+	message(FATAL_ERROR "Please setup QTDIR environment variable to point to Qt5 toolchain instalation")
+endif()
+
 ##C++ standard
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -22,7 +32,7 @@ if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
 endif()
 
 ##Prepend our modules dir to the path
-list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_SOURCE_DIR}/CMakeModules")
+list(INSERT CMAKE_MODULE_PATH 0 "${ENGINE_ROOT_DIR}/CMakeModules")
 
 
 ##
@@ -58,7 +68,6 @@ set(CMAKE_BUILD_TYPE "Debug" CACHE STRING
 if(ARCH_X64)
 	option(SIMD "Enable SSE4.2 extensions for faster code (requires a compatible CPU)" ON)
 endif()
-option(USE_BUNDLED_CATCH "Do not try to fetch Catch and use the bundled copy instead" OFF)
 
 ##clang-tidy
 option(CLANG_TIDY_ON_BUILD "Run clang-tidy static analyzer while compiling" OFF)
@@ -173,20 +182,14 @@ endif(CCACHE_FOUND AND COMMAND cotire)
 ##
 add_subdirectory(Core)
 if(NOT SANITIZER_MEMORY)
+	add_subdirectory(Editor)
 	add_subdirectory(Engine)
 	add_subdirectory(RenderingDevice/OpenGL)
-	if(WIN32)
-		add_subdirectory(Standalone/Windows)
-	elseif(APPLE)
-		add_subdirectory(Standalone/macOS)
-	else()
-		add_subdirectory(Standalone/Linux)
-	endif()
+	add_subdirectory(Standalone)
 	if(BUILD_TESTS)
 		enable_testing()
 		add_subdirectory(UnitTests)
 	endif(BUILD_TESTS)
-	add_subdirectory(Games/SGJGame)
 else()
 	message(STATUS "MemorySanitizer enabled!")
 	message(STATUS "Disabling all targets except PolyCore due to external dependencies.")
@@ -245,7 +248,7 @@ else(NOT CMAKE_VERSION VERSION_LESS 3.8)
 			clang-tidy
 			COMMAND ${CLANG_TIDY_EXE} -p "${CMAKE_BINARY_DIR}" "${CLANG_TIDY_SOURCES}"
 			DEPENDS "compile_commands.json"
-			WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+			WORKING_DIRECTORY "${ENGINE_ROOT_DIR}"
 			COMMAND_EXPAND_LISTS
 	)
 

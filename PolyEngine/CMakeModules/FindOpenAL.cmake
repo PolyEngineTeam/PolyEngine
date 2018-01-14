@@ -33,7 +33,7 @@ if (WIN32)
 		set(OpenAL_ARCH "Win32")
 	endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
-	set(OpenAL_ROOT_DIR "${CMAKE_SOURCE_DIR}/ThirdParty/OpenAL" CACHE PATH "OpenAL root directory")
+	set(OpenAL_ROOT_DIR "${ENGINE_ROOT_DIR}/ThirdParty/OpenAL" CACHE PATH "OpenAL root directory")
 
 	find_path(OpenAL_INCLUDE_DIR  NAMES al.h alc.h  HINTS "${OpenAL_ROOT_DIR}/include")
 	find_library(OpenAL_LIBRARY   NAMES OpenAL32    HINTS "${OpenAL_ROOT_DIR}/lib/${OpenAL_ARCH}")

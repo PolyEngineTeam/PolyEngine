@@ -5,7 +5,7 @@
 namespace Poly
 {
 
-	class CORE_DLLEXPORT BinaryBuffer : public BaseObject<>
+	class CORE_DLLEXPORT BinaryBuffer final : public BaseObjectLiteralType<>
 	{
 	public:
 		BinaryBuffer(size_t size);

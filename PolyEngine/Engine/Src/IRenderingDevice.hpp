@@ -30,6 +30,19 @@ namespace Poly
 		_COUNT
 	};
 
+	enum class eCubemapSide
+	{
+		RIGHT,
+		LEFT,
+		TOP,
+		DOWN,
+		BACK,
+		FRONT,
+		_COUNT
+	};
+
+	// REGISTER_ENUM_NAMES(eCubemapSide, "RIGHT", "LEFT", "TOP", "BOTTOM", "BACK", "FRONT");
+
 	//------------------------------------------------------------------------------
 	class ENGINE_DLLEXPORT RenderingDeviceSetupFailedException : public BaseObject<>, public std::exception
 	{
@@ -50,6 +63,12 @@ namespace Poly
 	public:
 		virtual void SetContent(eTextureDataFormat format, const unsigned char* data) = 0;
 		virtual void SetSubContent(size_t width, size_t height, size_t offsetX, size_t offsetY, eTextureDataFormat format, const unsigned char* data) = 0;
+	};
+
+	class ENGINE_DLLEXPORT ICubemapDeviceProxy : public BaseObject<>
+	{
+	public:
+		virtual void SetContent(const eCubemapSide side, const unsigned char* data) = 0;
 	};
 
 	//------------------------------------------------------------------------------
@@ -85,6 +104,7 @@ namespace Poly
 		virtual void Init() = 0;
 
 		virtual std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) = 0;
+		virtual std::unique_ptr<ICubemapDeviceProxy> CreateCubemap(size_t width, size_t height) = 0;
 		virtual std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() = 0;
 		virtual std::unique_ptr<IMeshDeviceProxy> CreateMesh() = 0;
 	protected:

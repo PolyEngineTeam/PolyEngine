@@ -3,6 +3,9 @@
 #include "GLUtils.hpp"
 #include <IRenderingDevice.hpp>
 #include "GLShaderProgram.hpp"
+#include <SDL.h>
+
+struct SDL_Window;
 
 namespace Poly
 {
@@ -10,6 +13,7 @@ namespace Poly
 	class AARect;
 	class World;
 	struct PostprocessQuad;
+	struct PrimitiveCube;
 	class RenderingPassBase;
 	class RenderingTargetBase;
 
@@ -23,7 +27,9 @@ namespace Poly
 			TRANSPARENT_GEOMETRY,
 			DEBUG_NORMALS,
 			DEBUG_NORMALS_WIREFRAME,
+			IMMEDIATE_DEBUG,
 			TEXT_2D,
+			SKYBOX,
 			_COUNT
 		};
 
@@ -45,16 +51,7 @@ namespace Poly
 		};
 
 	public:
-#if defined(_WIN32)
-		GLRenderingDevice(HWND HWnd, RECT Rect);
-#elif defined(__linux__)
-		GLRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig, const ScreenSize& size);
-#elif defined(__APPLE__)
-		GLRenderingDevice(void* window, const ScreenSize& size); //TODO creation API
-#else
-#error "Unsupported platform :("
-#endif
-
+		GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize& size);
 		~GLRenderingDevice();
 
 		GLRenderingDevice(const GLRenderingDevice&) = delete;
@@ -67,6 +64,7 @@ namespace Poly
 		void Init() override;
 
 		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) override;
+		std::unique_ptr<ICubemapDeviceProxy> CreateCubemap(size_t width, size_t height) override;
 		std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() override;
 		std::unique_ptr<IMeshDeviceProxy> CreateMesh() override;
 
@@ -81,6 +79,7 @@ namespace Poly
 		void RenderWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 		void RenderNormals(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 		void RenderNormalsWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderDebug(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 
 		template<typename T>
 		void RegisterGeometryPass(eGeometryRenderPassType type,
@@ -99,20 +98,9 @@ namespace Poly
 		template <typename T, typename... Args>
 		T* CreateRenderingTarget(Args&&... args);
 
-#if defined(_WIN32)
-		HDC hDC;
-		HWND hWnd;
-		HGLRC hRC;
-#elif defined(__linux__)
-		Display* display;
-		Window window;
-		GLXContext context;
-#elif defined(__APPLE__)
-		void* window;
-        void* view;
-#else
-#error "Unsupported platform :("
-#endif
+		SDL_Window* Window;
+		SDL_GLContext Context;
+		ScreenSize ScreenDim;
 
 		Dynarray<std::unique_ptr<RenderingTargetBase>> RenderingTargets;
 
@@ -120,8 +108,7 @@ namespace Poly
 		EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
 
 		std::unique_ptr<PostprocessQuad> PostprocessRenderingQuad;
-
-		ScreenSize ScreenDim;
+		std::unique_ptr<PrimitiveCube> PrimitiveRenderingCube;
 	};
 
 	extern GLRenderingDevice* gRenderingDevice;
@@ -129,13 +116,5 @@ namespace Poly
 
 extern "C"
 {
-#if defined(_WIN32)
-	DEVICE_DLLEXPORT Poly::IRenderingDevice* __stdcall PolyCreateRenderingDevice(HWND hwnd, RECT rect);
-#elif defined(__linux__)
-	DEVICE_DLLEXPORT Poly::IRenderingDevice* PolyCreateRenderingDevice(Display* display, Window window, GLXFBConfig fbConfig, const Poly::ScreenSize& size);
-#elif defined(__APPLE__)
-	DEVICE_DLLEXPORT Poly::IRenderingDevice* PolyCreateRenderingDevice(void* window, const Poly::ScreenSize& size);
-#else
-#error "Unsupported platform :("
-#endif
+	DEVICE_DLLEXPORT Poly::IRenderingDevice* POLY_STDCALL PolyCreateRenderingDevice(SDL_Window* window, const Poly::ScreenSize& size);
 }
