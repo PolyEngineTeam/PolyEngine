@@ -134,7 +134,7 @@ void Poly::DebugDrawSystem::DrawLine(World* world, Vector begin, Vector end)
 void Poly::DebugDrawSystem::DrawBox(World* world, Vector mins, Vector maxs)
 {
 	std::array<Vector, 8> points;
-	std::array<Vector, 2> minmaxVector = { mins, maxs };
+	std::array<Vector, 2> minmaxVector = { {mins, maxs} };
 
 	for (unsigned int i = 0; i < points.size(); ++i)
 	{

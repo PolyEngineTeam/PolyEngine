@@ -136,7 +136,10 @@ def run_cmake(path, build_dir_name, proj_name):
         os.makedirs(build_dir_path)
     
     # Run cmake update with 64bit arch (using undocumented parameters that work for some reason, src: http://cprieto.com/posts/2016/10/cmake-out-of-source-build.html)
-    os.system('cmake -A x64 -H{} -B{}'.format(get_cmake_path(path), get_cmake_path(build_dir_path)))
+    if os.name == 'nt':
+        os.system('cmake -A x64 -H{} -B{}'.format(get_cmake_path(path), get_cmake_path(build_dir_path)))
+    else:
+        os.system('cmake -H{} -B{}'.format(get_cmake_path(path), get_cmake_path(build_dir_path)))
     
     # Patch project proj.user file to contain proper runtime info
     if os.name == 'nt':

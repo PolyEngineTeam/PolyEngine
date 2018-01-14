@@ -59,4 +59,7 @@ if(APPLE)
     target_link_libraries(PolyEditor ${Cocoa_LIBRARY})
 endif()
 
-cotire(PolyEditor)
+# Strange bug in cotire for macOS. Disable it for now. Include paths are not working.
+if(NOT APPLE)
+    cotire(PolyEditor)
+endif()
