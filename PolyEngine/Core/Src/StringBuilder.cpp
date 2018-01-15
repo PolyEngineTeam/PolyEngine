@@ -55,14 +55,14 @@ StringBuilder& StringBuilder::Append(const char* data)
     return *this;
 }
 
-StringBuilder& StringBuilder::Format(size_t count, ...)
-{
-    va_list args;
-    va_start(args, count);
-    String str = ToString().Format(count, args);
-    Data = std::move(str.Data);
-    return *this;
-}
+//StringBuilder& StringBuilder::Format(size_t count, ...)
+//{
+//    va_list args;
+//    va_start(args, count);
+//    String str = ToString().Format(count, args);
+//    Data = std::move(str.Data);
+//    return *this;
+//}
 
 void StringBuilder::Clear()
 {

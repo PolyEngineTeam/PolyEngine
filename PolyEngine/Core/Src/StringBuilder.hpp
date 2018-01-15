@@ -20,7 +20,37 @@ namespace Poly {
         StringBuilder& Append(const String& str);
         StringBuilder& Append(const StringBuilder& sb);
 
-        StringBuilder& Format(size_t count, ...);
+        inline StringBuilder& AppendFormat(const String& fmt)
+        {
+            Append(fmt);
+            Data[Data.GetSize()-1] = 0;
+            return *this;
+        }
+
+        template <typename T, typename... Args>
+        StringBuilder& AppendFormat(const char* fmt, const T& head, Args&&... tail)
+        {
+            return AppendFormat(String(fmt), head, tail...);
+        }
+
+        template <typename T, typename... Args>
+        StringBuilder& AppendFormat(const String& fmt, const T& head, Args&&... tail)
+        {
+            constexpr char marker[] = "{}";
+            std::string::size_type format_marker_pos = fmt.FindSubstrFromPoint(0, marker);
+            Append(fmt.Substring(0, format_marker_pos));
+            if (format_marker_pos != fmt.GetLength())
+            {
+                Append(head);
+                AppendFormat(fmt.Substring(format_marker_pos + sizeof(marker) -1, fmt.GetLength()), tail...);
+            }
+            else
+            {
+                Data[Data.GetSize() - 1] = 0;
+            }
+            return *this;
+        }
+
         void Clear();
 
         size_t GetLength() const { return Data.GetSize() - 1; }

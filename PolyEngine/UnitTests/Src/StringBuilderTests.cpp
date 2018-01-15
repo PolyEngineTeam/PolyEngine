@@ -28,10 +28,9 @@ TEST_CASE("String builder - string appendings", "[StringBuilder]") {
 
 TEST_CASE("String builder - formatting", "[StringBuilder]") {
     String test = StringBuilder()
-            .Append("A {} A {} A")
-            .Format(2, String("B"), String("C"))
+            .AppendFormat("A {} A {} A {}", String("BB"), String("CCC"), String("D"))
             .ToString();
-    String pattern = String("A B A C A");
+    String pattern = String("A BB A CCC A D");
     REQUIRE(test == pattern);
 }
 
