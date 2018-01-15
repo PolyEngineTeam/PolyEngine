@@ -66,7 +66,9 @@ namespace Poly
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of four functions handling incoming input events.</summary>
 		/// <param name="key">Key code</param>
-		void KeyDown(eKey key) { InputEventsQueue.PushBack({eInputEventType::KEYDOWN, key}); }
+		void KeyDown(eKey key) { 
+			InputEventsQueue.PushBack({eInputEventType::KEYDOWN, key}); 
+		}
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of four functions handling incoming input events.</summary>
@@ -81,7 +83,9 @@ namespace Poly
 		/// <summary>Pushes input event to an input queue with specified event type and button code.
 		/// One of four functions handling incoming input events.</summary>
 		/// <param name="button">Mouse button code</param>
-		void MouseButtonUp(eMouseButton button) { InputEventsQueue.PushBack({eInputEventType::MOUSEBUTTONUP, button}); }
+		void MouseButtonUp(eMouseButton button) { 
+			InputEventsQueue.PushBack({eInputEventType::MOUSEBUTTONUP, button}); 
+		}
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of four functions handling incoming input events.</summary>

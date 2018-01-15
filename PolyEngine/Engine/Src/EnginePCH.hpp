@@ -39,7 +39,10 @@
 #include "SoundListenerComponent.hpp"
 #include "TransformComponent.hpp"
 #include "Physics2DColliders.hpp"
+#include "Physics3DShapes.hpp"
 #include "Rigidbody2DComponent.hpp"
+#include "Rigidbody3DComponent.hpp"
+#include "Trigger3DComponent.hpp"
 #include "LightSourceComponent.hpp"
 #include "PostprocessSettingsComponent.hpp"
 #include "DebugDrawComponents.hpp"
@@ -52,6 +55,7 @@
 #include "ViewportWorldComponent.hpp"
 #include "DeferredTaskWorldComponent.hpp"
 #include "Physics2DWorldComponent.hpp"
+#include "Physics3DWorldComponent.hpp"
 
 // Systems
 #include "DeferredTaskSystem.hpp"
@@ -59,6 +63,7 @@
 #include "DeferredTaskSystem.hpp"
 #include "Physics2DSystem.hpp"
 #include "DebugDrawSystem.hpp"
+#include "Physics3DSystem.hpp"
 
 // Config
 #include "AssetsPathConfig.hpp"

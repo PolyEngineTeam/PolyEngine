@@ -81,6 +81,21 @@
     <Filter Include="Source Files\Config\Impl">
       <UniqueIdentifier>{1c837727-aa9c-4683-a7eb-64b1b4bba880}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Physics3D">
+      <UniqueIdentifier>{28f0353f-bb30-42dc-96a7-5798554a41bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Physics3D\Components">
+      <UniqueIdentifier>{bd1f580a-913d-46f6-bc67-765d6605583f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Physics3D\World Component">
+      <UniqueIdentifier>{25d77513-b8f0-4375-b7d7-c632629b3bab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Physics3D\Shapes">
+      <UniqueIdentifier>{0ed95461-7a45-47d5-ad38-2aec88428cda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Physics3D\Implementation">
+      <UniqueIdentifier>{9214b8b0-342c-4763-8eff-216066bdf2aa}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Debug\DebugRendering">
       <UniqueIdentifier>{e685527a-7ef6-4bb5-9307-a33f64b66c41}</UniqueIdentifier>
     </Filter>
@@ -208,6 +223,21 @@
     </ClCompile>
     <ClCompile Include="Src\ComponentIDGenerator.cpp">
       <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics3DSystem.cpp">
+      <Filter>Source Files\Physics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics3DWorldComponent.cpp">
+      <Filter>Source Files\Physics3D\World Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Rigidbody3DComponent.cpp">
+      <Filter>Source Files\Physics3D\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Trigger3DComponent.cpp">
+      <Filter>Source Files\Physics3D\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics3DShapes.cpp">
+      <Filter>Source Files\Physics3D\Shapes</Filter>
     </ClCompile>
     <ClCompile Include="Src\SkyboxWorldComponent.cpp">
       <Filter>Source Files\Rendering</Filter>
@@ -381,6 +411,27 @@
     </ClInclude>
     <ClInclude Include="Src\ComponentIDGenerator.hpp">
       <Filter>Source Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics3DSystem.hpp">
+      <Filter>Source Files\Physics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics3DWorldComponent.hpp">
+      <Filter>Source Files\Physics3D\World Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Rigidbody3DComponent.hpp">
+      <Filter>Source Files\Physics3D\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics3DShapes.hpp">
+      <Filter>Source Files\Physics3D\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Trigger3DComponent.hpp">
+      <Filter>Source Files\Physics3D\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Rigidbody3DImpl.hpp">
+      <Filter>Source Files\Physics3D\Implementation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Trigger3DImpl.hpp">
+      <Filter>Source Files\Physics3D\Implementation</Filter>
     </ClInclude>
     <ClInclude Include="Src\SkyboxWorldComponent.hpp">
       <Filter>Source Files\Rendering</Filter>

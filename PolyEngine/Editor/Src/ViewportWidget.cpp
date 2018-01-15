@@ -152,7 +152,11 @@ void ViewportWidget::keyPressEvent(QKeyEvent* keyEvent)
 {
 	if (!Poly::gEngine)
 		return;
-	Poly::gEngine->KeyDown(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
+
+	if (keyEvent->isAutoRepeat())
+		keyEvent->ignore();
+	else
+		Poly::gEngine->KeyDown(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
 }
 
 // ---------------------------------------------------------------------------------------------------------

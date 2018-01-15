@@ -19,7 +19,6 @@ namespace Poly {
 	{
 	friend class World;
 	public:
-		
 		/// <summary>Getter for a component of a specified type that shares UniqueID with this one.</summary>
 		/// <returns>Pointer to a component of a specified type or a nullptr, if it does not exist.</returns>
 		template<typename T>

@@ -5,6 +5,7 @@ find_package(OpenAL REQUIRED)
 find_package(OGG REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(Box2D REQUIRED)
+find_package(Bullet REQUIRED)
 find_package(RapidJSON REQUIRED)
 
 set(POLYENGINE_SRCS
@@ -35,10 +36,14 @@ set(POLYENGINE_SRCS
 	Src/Physics2DColliders.cpp
 	Src/Physics2DSystem.cpp
 	Src/Physics2DWorldComponent.cpp
+	Src/Physics3DShapes.cpp
+	Src/Physics3DSystem.cpp
+	Src/Physics3DWorldComponent.cpp
 	Src/PostprocessSettingsComponent.cpp
 	Src/RenderingSystem.cpp
 	Src/ResourceManager.cpp
 	Src/Rigidbody2DComponent.cpp
+	Src/Rigidbody3DComponent.cpp
 	Src/SoundEmitterComponent.cpp
 	Src/SoundListenerComponent.cpp
 	Src/SoundResource.cpp
@@ -48,6 +53,7 @@ set(POLYENGINE_SRCS
 	Src/TextureResource.cpp
 	Src/TimeSystem.cpp
 	Src/TimeWorldComponent.cpp
+	Src/Trigger3DComponent.cpp
 	Src/TransformComponent.cpp
 	Src/ViewportWorldComponent.cpp
 	Src/World.cpp
@@ -91,11 +97,15 @@ set(POLYENGINE_H_FOR_IDE
 	Src/Physics2DColliders.hpp
 	Src/Physics2DSystem.hpp
 	Src/Physics2DWorldComponent.hpp
+	Src/Physics3DShapes.hpp
+	Src/Physics3DSystem.hpp
+	Src/Physics3DWorldComponent.hpp
 	Src/PostprocessSettingsComponent.hpp
 	Src/RenderingSystem.hpp
 	Src/ResourceBase.hpp
 	Src/ResourceManager.hpp
 	Src/Rigidbody2DComponent.hpp
+	Src/Rigidbody3DComponent.hpp
 	Src/RigidBody2DImpl.hpp
 	Src/ScreenSpaceTextComponent.hpp
 	Src/SoundEmitterComponent.hpp
@@ -108,16 +118,19 @@ set(POLYENGINE_H_FOR_IDE
 	Src/Timer.hpp
 	Src/TimeSystem.hpp
 	Src/TimeWorldComponent.hpp
+	Src/Trigger3DComponent.hpp
 	Src/TransformComponent.hpp
 	Src/Viewport.hpp
 	Src/ViewportWorldComponent.hpp
 	Src/World.hpp
 )
 
+
 add_library(PolyEngine SHARED ${POLYENGINE_SRCS} ${POLYENGINE_H_FOR_IDE})
 target_compile_definitions(PolyEngine PRIVATE _ENGINE)
 target_include_directories(PolyEngine PUBLIC ${POLYENGINE_INCLUDE})
-target_link_libraries(PolyEngine PUBLIC PolyCore PRIVATE SOIL::SOIL ass::imp Freetype::FT2 OpenAL::AL OGG::OGG Vorbis::Vorbis Vorbis::File Box2D::Box2D Rapid::JSON)
+target_link_libraries(PolyEngine PUBLIC PolyCore PRIVATE SOIL::SOIL ass::imp Freetype::FT2 OpenAL::AL OGG::OGG Vorbis::Vorbis Vorbis::File Box2D::Box2D Bullet::Bullet Rapid::JSON)
+
 
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	target_compile_options(PolyEngine PRIVATE --coverage -fprofile-arcs -ftest-coverage)
