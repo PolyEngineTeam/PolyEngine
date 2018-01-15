@@ -61,6 +61,9 @@
     <ClCompile Include="src\String.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
+    <ClCompile Include="src\StringBuilder.cpp">
+      <Filter>Source Files\Containers</Filter>
+    </ClCompile>
     <ClCompile Include="Src\BinaryBuffer.cpp">
       <Filter>Source Files\Containers</Filter>
     </ClCompile>
@@ -94,6 +97,9 @@
       <Filter>Source Files\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Src\String.hpp">
+      <Filter>Source Files\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\StringBuilder.hpp">
       <Filter>Source Files\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Src\Allocator.hpp">

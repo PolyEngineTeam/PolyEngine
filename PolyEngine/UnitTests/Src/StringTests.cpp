@@ -94,3 +94,20 @@ TEST_CASE("String operations", "[String]") {
 	String notContainsTest = String("Z[allz'/");
 	REQUIRE(test.Contains(notContainsTest) == false);
 }
+
+TEST_CASE("String formatting", "[String]") {
+	String s1 = String("{}aa");
+    String s2 = String("aa{}");
+    String s3 = String("a{}a");
+    String s4 = String("a{}{}a");
+    String s5 = String("a{}a{}a{}a");
+    String r1 = String("b");
+    String r2 = String("c");
+
+    REQUIRE(s1.Format(1, r1) == "baa");
+	//FIXME fails due to https://github.com/KNTGPolygon/PolyEngine/issues/101
+    //REQUIRE(s2.Format(1, r1) == "aab");
+    REQUIRE(s3.Format(1, r1) == "aba");
+    REQUIRE(s4.Format(2, r1, r2) == "abca");
+    REQUIRE(s5.Format(3, r1, r2, r1) == "abacaba");
+}

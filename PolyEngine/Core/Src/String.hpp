@@ -27,6 +27,16 @@ namespace Poly {
 		/// <param name="rhs">Reference to String instance which state should be moved</param>
 		String(String&& rhs);
 
+        /// <summary>Replaces all '{}' occurences with according Strings from va_list</summary>
+        /// <param name="count">Variadic arguments count</param>
+        /// <param name="...">Strings to be inserted into source object</param>
+		String Format(size_t count, ...);
+
+        /// <summary>Replaces all '{}' occurences with according Strings from va_list</summary>
+        /// <param name="count">Variadic arguments count</param>
+        /// <param name="args">Strings to be inserted into source object</param>
+		String Format(size_t count, va_list args);
+
 
 		/// <summary>Casts int to String</summary>
 		/// <param name="var">Integer value which should be used to make String instance</param>
@@ -103,6 +113,8 @@ namespace Poly {
 		/// <param name="b">String reference which should overwrite another String</param>
 		/// <returns>String instance witch replaced substrings</returns>
 		String Replace(const String& a, const String& b) const;
+
+		String Replace(const String& a, const String& b, size_t howMany) const;
 
 		/// <summary>Splits String by given delimite to array of Strings</summary>
 		/// <param name="delimiter">Char used as token to split String with</param>
@@ -195,6 +207,9 @@ namespace Poly {
 	private:
 		Dynarray<char> Data;
 
+		String(Dynarray<char> data) { Data = std::move(data); };
 		size_t FindSubstrFromPoint(size_t startPoint, const String& str) const;
+
+		friend class StringBuilder;
 	};
 }
