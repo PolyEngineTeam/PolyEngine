@@ -196,7 +196,11 @@
     <ClCompile Include="Src\Physics2DColliders.cpp" />
     <ClCompile Include="Src\Physics2DSystem.cpp" />
     <ClCompile Include="Src\Physics2DWorldComponent.cpp" />
+    <ClCompile Include="Src\Physics3DShapes.cpp" />
+    <ClCompile Include="Src\Physics3DSystem.cpp" />
+    <ClCompile Include="Src\Physics3DWorldComponent.cpp" />
     <ClCompile Include="Src\PostprocessSettingsComponent.cpp" />
+    <ClCompile Include="Src\Rigidbody3DComponent.cpp" />
     <ClCompile Include="Src\SkyboxWorldComponent.cpp" />
     <ClCompile Include="Src\SoundEmitterComponent.cpp" />
     <ClCompile Include="Src\SoundListenerComponent.cpp" />
@@ -215,6 +219,7 @@
     <ClCompile Include="Src\TimeSystem.cpp" />
     <ClCompile Include="Src\TimeWorldComponent.cpp" />
     <ClCompile Include="Src\TransformComponent.cpp" />
+    <ClCompile Include="Src\Trigger3DComponent.cpp" />
     <ClCompile Include="Src\ViewportWorldComponent.cpp" />
     <ClCompile Include="Src\World.cpp" />
     <ClCompile Include="Src\TextureResource.cpp" />
@@ -251,6 +256,9 @@
     <ClInclude Include="Src\DeferredTaskSystem.hpp" />
     <ClInclude Include="Src\LightSourceComponent.hpp" />
     <ClInclude Include="Src\Physics2DWorldComponent.hpp" />
+    <ClInclude Include="Src\Physics3DShapes.hpp" />
+    <ClInclude Include="Src\Physics3DSystem.hpp" />
+    <ClInclude Include="Src\Physics3DWorldComponent.hpp" />
     <ClInclude Include="Src\PostprocessSettingsComponent.hpp" />
     <ClInclude Include="Src\Rigidbody2DComponent.hpp" />
     <ClInclude Include="Src\InputSystem.hpp" />
@@ -262,6 +270,8 @@
     <ClInclude Include="Src\Physics2DColliders.hpp" />
     <ClInclude Include="Src\Physics2DSystem.hpp" />
     <ClInclude Include="Src\RigidBody2DImpl.hpp" />
+    <ClInclude Include="Src\Rigidbody3DComponent.hpp" />
+    <ClInclude Include="Src\Rigidbody3DImpl.hpp" />
     <ClInclude Include="Src\SkyboxWorldComponent.hpp" />
     <ClInclude Include="Src\SoundListenerComponent.hpp" />
     <ClInclude Include="Src\Mesh.hpp" />
@@ -281,6 +291,8 @@
     <ClInclude Include="Src\TimeSystem.hpp" />
     <ClInclude Include="Src\TimeWorldComponent.hpp" />
     <ClInclude Include="Src\TransformComponent.hpp" />
+    <ClInclude Include="Src\Trigger3DComponent.hpp" />
+    <ClInclude Include="Src\Trigger3DImpl.hpp" />
     <ClInclude Include="Src\Viewport.hpp" />
     <ClInclude Include="Src\ViewportWorldComponent.hpp" />
     <ClInclude Include="Src\World.hpp" />

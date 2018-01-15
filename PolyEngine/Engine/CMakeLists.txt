@@ -36,10 +36,14 @@ set(POLYENGINE_SRCS
 	Src/Physics2DColliders.cpp
 	Src/Physics2DSystem.cpp
 	Src/Physics2DWorldComponent.cpp
+	Src/Physics3DShapes.cpp
+	Src/Physics3DSystem.cpp
+	Src/Physics3DWorldComponent.cpp
 	Src/PostprocessSettingsComponent.cpp
 	Src/RenderingSystem.cpp
 	Src/ResourceManager.cpp
 	Src/Rigidbody2DComponent.cpp
+	Src/Rigidbody3DComponent.cpp
 	Src/SoundEmitterComponent.cpp
 	Src/SoundListenerComponent.cpp
 	Src/SoundResource.cpp
@@ -50,6 +54,7 @@ set(POLYENGINE_SRCS
 	Src/TimeSystem.cpp
 	Src/TimeWorldComponent.cpp
 	Src/TransformComponent.cpp
+	Src/Trigger3DComponent.cpp
 	Src/ViewportWorldComponent.cpp
 	Src/World.cpp
 )
@@ -92,12 +97,17 @@ set(POLYENGINE_H_FOR_IDE
 	Src/Physics2DColliders.hpp
 	Src/Physics2DSystem.hpp
 	Src/Physics2DWorldComponent.hpp
+	Src/Physics3DShapes.hpp
+	Src/Physics3DSystem.hpp
+	Src/Physics3DWorldComponent.hpp
 	Src/PostprocessSettingsComponent.hpp
 	Src/RenderingSystem.hpp
 	Src/ResourceBase.hpp
 	Src/ResourceManager.hpp
 	Src/Rigidbody2DComponent.hpp
+	Src/Rigidbody3DComponent.hpp
 	Src/RigidBody2DImpl.hpp
+	Src/RigidBody3DImpl.hpp
 	Src/ScreenSpaceTextComponent.hpp
 	Src/SoundEmitterComponent.hpp
 	Src/SoundListenerComponent.hpp
@@ -110,6 +120,8 @@ set(POLYENGINE_H_FOR_IDE
 	Src/TimeSystem.hpp
 	Src/TimeWorldComponent.hpp
 	Src/TransformComponent.hpp
+	Src/Trigger3DComponent.hpp
+	Src/Trigger3DImpl.hpp
 	Src/Viewport.hpp
 	Src/ViewportWorldComponent.hpp
 	Src/World.hpp

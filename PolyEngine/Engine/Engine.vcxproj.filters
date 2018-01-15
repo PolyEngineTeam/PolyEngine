@@ -84,6 +84,24 @@
     <Filter Include="Source Files\Debug\DebugRendering">
       <UniqueIdentifier>{e685527a-7ef6-4bb5-9307-a33f64b66c41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Physics3D">
+      <UniqueIdentifier>{2a76d861-1e20-443b-8735-b535557c8278}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics3D\Shapes">
+      <UniqueIdentifier>{5882cf94-a5f1-46c9-943c-010e55addcd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics3D\WorldComponent">
+      <UniqueIdentifier>{42e2b167-4641-4666-8930-00520f41851e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics3D\System">
+      <UniqueIdentifier>{11319f44-8e4c-431e-a51a-6683c49ecc42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics3D\Components">
+      <UniqueIdentifier>{9d35528e-2d6f-46f1-8398-6dd1dcdeac19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics3D\Components\Impl">
+      <UniqueIdentifier>{d49a0c73-36fe-4ceb-a405-c978d55b8ddb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -218,8 +236,20 @@
     <ClCompile Include="Src\DebugDrawSystem.cpp">
       <Filter>Source Files\Debug\DebugRendering</Filter>
     </ClCompile>
-    <ClCompile Include="Src\DebugRenderingComponent.cpp">
-      <Filter>Source Files\Debug\DebugRendering</Filter>
+    <ClCompile Include="Src\Physics3DShapes.cpp">
+      <Filter>Physics3D\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics3DWorldComponent.cpp">
+      <Filter>Physics3D\WorldComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics3DSystem.cpp">
+      <Filter>Physics3D\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Rigidbody3DComponent.cpp">
+      <Filter>Physics3D\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Trigger3DComponent.cpp">
+      <Filter>Physics3D\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -393,6 +423,27 @@
     </ClInclude>
     <ClInclude Include="Src\DebugDrawSystem.hpp">
       <Filter>Source Files\Debug\DebugRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics3DShapes.hpp">
+      <Filter>Physics3D\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics3DWorldComponent.hpp">
+      <Filter>Physics3D\WorldComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics3DSystem.hpp">
+      <Filter>Physics3D\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Rigidbody3DComponent.hpp">
+      <Filter>Physics3D\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Trigger3DComponent.hpp">
+      <Filter>Physics3D\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Rigidbody3DImpl.hpp">
+      <Filter>Physics3D\Components\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Trigger3DImpl.hpp">
+      <Filter>Physics3D\Components\Impl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
