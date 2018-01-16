@@ -6,10 +6,6 @@
 #include "Physics3DSystem.hpp"
 #include "Physics3DShapes.hpp"
 
-class btCollisionShape;
-struct btDefaultMotionState;
-class btRigidBody;
-
 namespace Poly
 {
 	class World;
@@ -29,7 +25,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT Rigidbody3DComponent : public ComponentBase
 	{
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
-		friend void Physics3DSystem::RegisterRigidbody(World * world, const UniqueID& entityID);
+		friend void Physics3DSystem::RegisterRigidbody(World * world, const UniqueID& entityID, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 		friend void Physics3DSystem::UnregisterRigidBody(World * world, const UniqueID& entityID);
 	public:
 		Rigidbody3DComponent(World* world, eRigidBody3DType type, float mass);
@@ -91,4 +87,4 @@ namespace Poly
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, Rigidbody3DComponent)
-}
+} // namespace Poly

@@ -2,12 +2,17 @@
 
 #include <Vector.hpp>
 #include <Dynarray.hpp>
+#include <EnumUtils.hpp>
 
 namespace Poly
 {
 	//********************************************************************************************************************************************
 	// helper structures
-
+	enum class eCollisionGroup
+	{
+		TRIGGER = 0x01,
+		RIGIDBODY = 0x02,
+	};
 
 	/// Contains dynarray of contacts. 
 	/// Dynarray has size 0 when none contact has been encountered.
@@ -63,7 +68,8 @@ namespace Poly
 		/// @param world - world where exists component You want to register
 		/// @param entityID- @see[UniqueID] of entity that contains @see[Rigidbody3DComponent] You want to register
 		/// @see RegisterTriger
-		void ENGINE_DLLEXPORT RegisterRigidbody(World* world, const UniqueID& entityID);
+		void ENGINE_DLLEXPORT RegisterRigidbody(World* world, const UniqueID& entityID, 
+			EnumFlags<eCollisionGroup> colliderGroup = eCollisionGroup::RIGIDBODY, EnumFlags<eCollisionGroup> collidesWith = eCollisionGroup::RIGIDBODY);
 
 		/// You can unregister your entity with this method so it won't be further
 		/// considered during the simulation ((until You call @see[RegisterRigidbody])
@@ -79,7 +85,8 @@ namespace Poly
 		/// @param world - world where exists component You want to register
 		/// @param entityID- @see[UniqueID] of entity that contains @see[Trigger3DComponent] You want to register
 		/// @see RegisterRigidbody
-		void ENGINE_DLLEXPORT RegisterTriger(World* world, const UniqueID& entityID);
+		void ENGINE_DLLEXPORT RegisterTriger(World* world, const UniqueID& entityID,
+			EnumFlags<eCollisionGroup> colliderGroup = eCollisionGroup::TRIGGER, EnumFlags<eCollisionGroup> collidesWith = eCollisionGroup::TRIGGER | eCollisionGroup::RIGIDBODY);
 
 		/// You can unregister your entity with this method so it won't be further
 		/// considered during the simulation ((until You call @see[RegisterTriger])

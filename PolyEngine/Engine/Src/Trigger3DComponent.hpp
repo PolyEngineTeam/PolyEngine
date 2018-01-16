@@ -17,7 +17,7 @@ namespace Poly
 	{
 		friend class Rigidbody3DComponent;
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
-		friend void Physics3DSystem::RegisterTriger(World * world, const UniqueID& entityID);
+		friend void Physics3DSystem::RegisterTriger(World * world, const UniqueID& entityID, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 		friend void Physics3DSystem::UnregisterTriger(World * world, const UniqueID& entityID);
 		friend bool Physics3DSystem::IsColliding(World* world, const UniqueID& firstID, const UniqueID& secondID);
 	public:

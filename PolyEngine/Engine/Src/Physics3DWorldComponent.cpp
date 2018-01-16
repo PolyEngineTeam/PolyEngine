@@ -17,6 +17,10 @@ Poly::Physics3DWorldComponent::Physics3DWorldComponent(Physics3DConfig config)
 	DynamicsWorld->setGravity(btVector3(config.Gravity.X, config.Gravity.Y, config.Gravity.Z));
 }
 
+Poly::Physics3DWorldComponent::~Physics3DWorldComponent()
+{
+}
+
 //********************************************************************************************************************************************
 void Poly::Physics3DWorldComponent::SetGravity(Vector g)
 {
