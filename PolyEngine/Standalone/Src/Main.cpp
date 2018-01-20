@@ -29,13 +29,17 @@ int main(int argc, char* args[])
 	Poly::gConsole.RegisterStream<FileAndCoutStream>("console.log");
 	UNUSED(argc);
 	UNUSED(args);
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_GAMECONTROLLER) < 0)
 	{
 		ASSERTE(false, "SDL initialization failed!");
 		return 1;
 	}
 	Poly::gConsole.LogDebug("SDL initialized.");
-	
+
+//    int num = SDL_NumJoysticks();
+//    SDL_GameControllerOpen(0);
+//    Poly::gConsole.LogDebug(SDL_GameControllerNameForIndex(0));
+
 	// Initial screen size
 	Poly::ScreenSize screenSize;
 	screenSize.Width = 800;
@@ -88,10 +92,30 @@ int main(int argc, char* args[])
 			switch (event.type)
 			{
 			// TODO add controller support
+            case SDL_CONTROLLERBUTTONDOWN:
+                Poly::gConsole.LogDebug("Button down");
+                Engine->ControllerButtonDown(event.cbutton.which, static_cast<Poly::eControllerButton>(event.cbutton.button));
+                break;
+            case SDL_CONTROLLERBUTTONUP:
+                Poly::gConsole.LogDebug("button up");
+                Engine->ControllerButtonUp(event.cbutton.which, static_cast<Poly::eControllerButton>(event.cbutton.button));
+                break;
+            case SDL_CONTROLLERAXISMOTION:
+                Poly::gConsole.LogDebug("axis");
+                Engine->ControllerAxisMotion(event.caxis.which, static_cast<Poly::eControllerAxis>(event.caxis.axis), event.caxis.value);
+                break;
+            case SDL_CONTROLLERDEVICEADDED:
+                Poly::gConsole.LogDebug("controller added");
+                Engine->AddController(event.cdevice.which);
+                break;
+            case SDL_CONTROLLERDEVICEREMOVED:
+                Poly::gConsole.LogDebug("controller removed");
+                break;
 			case SDL_QUIT:
 				quitRequested = true;
 				break;
 			case SDL_KEYDOWN:
+                Poly::gConsole.LogDebug("SDL_KEYDOWN");
 				Engine->KeyDown(static_cast<Poly::eKey>(event.key.keysym.scancode));
 				break;
 			case SDL_KEYUP:

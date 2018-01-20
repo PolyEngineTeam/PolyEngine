@@ -14,6 +14,12 @@ void InputSystem::InputPhase(World* world)
 	com->PrevMouse = com->CurrMouse;
 	com->PrevWheel = com->CurrWheel;
 
+    for (auto it=com->Controllers.begin(); it!=com->Controllers.end(); ++it)
+    {
+        it->second.PrevButton = it->second.CurrButton;
+        it->second.PrevAxis = it->second.CurrAxis;
+    }
+
 	InputQueue& InputEventsQueue = gEngine->GetInputQueue();
 
 	while (!InputEventsQueue.IsEmpty())
@@ -42,6 +48,28 @@ void InputSystem::InputPhase(World* world)
 			break;
 		case eInputEventType::WHEELMOVE:
 			com->CurrWheel += ev.Pos;
+			break;
+		case eInputEventType::CONTROLLERADDED:
+            std::cout << "CONTROLLER ADDED" << std::endl;
+			com->Controllers[ev.Controller] = Controller();
+            com->ControllerPointers.PushBack(ev.Controller);
+			break;
+		case eInputEventType::CONTROLLERREMOVED:
+			break;
+		case eInputEventType::CONTROLLERBUTTONDOWN:
+            std::cout << "BUTTON DOWN" << std::endl;
+            std::cout << static_cast<int>(ev.ControllerButton) << std::endl;
+            com->Controllers.at(ev.Controller).CurrButton[ev.ControllerButton] = true;
+			break;
+		case eInputEventType::CONTROLLERBUTTONUP:
+            std::cout << "BUTTON UP" << std::endl;
+            std::cout << static_cast<int>(ev.ControllerButton) << std::endl;
+            com->Controllers.at(ev.Controller).CurrButton[ev.ControllerButton] = false;
+			break;
+		case eInputEventType::CONTROLLERAXIS:
+            std::cout << "AXIS" << std::endl;
+            std::cout << static_cast<int>(ev.ControllerButton) << std::endl;
+            com->Controllers.at(ev.Controller).CurrAxis[ev.ControllerAxis] = ev.AxisValue;
 			break;
 		case eInputEventType::_COUNT:
 			HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::Push(), which is an invalid value");

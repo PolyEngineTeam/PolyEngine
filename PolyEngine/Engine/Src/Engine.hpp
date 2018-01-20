@@ -7,6 +7,7 @@
 #include <memory>
 
 #include <Core.hpp>
+#include <SDL2/SDL_gamecontroller.h>
 #include "IRenderingDevice.hpp"
 #include "OpenALDevice.hpp"
 
@@ -92,6 +93,11 @@ namespace Poly
 		/// One of four functions handling incoming input events.</summary>
 		/// <param name="pos">Wheel delta position.</param>
 		void UpdateWheelPos(const Vector2i& deltaPos) { InputEventsQueue.PushBack({eInputEventType::WHEELMOVE, deltaPos}); }
+
+        void AddController(Sint32 id) { InputEventsQueue.PushBack({eInputEventType::CONTROLLERADDED, SDL_GameControllerOpen(id)}); };
+        void ControllerButtonDown(Sint32 id, eControllerButton button) { InputEventsQueue.PushBack({eInputEventType::CONTROLLERBUTTONDOWN, SDL_GameControllerFromInstanceID(id), button}); };
+        void ControllerButtonUp(Sint32 id, eControllerButton button) { InputEventsQueue.PushBack({eInputEventType::CONTROLLERBUTTONUP, SDL_GameControllerFromInstanceID(id), button}); };
+        void ControllerAxisMotion(Sint32 id, eControllerAxis axis, Sint16 value) { InputEventsQueue.PushBack({eInputEventType::CONTROLLERAXIS, SDL_GameControllerFromInstanceID(id), axis, value/35768.0f}); };
 
 		///functions for closing the game
 		bool IsQuitRequested() const;
