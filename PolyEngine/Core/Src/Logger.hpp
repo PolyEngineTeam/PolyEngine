@@ -3,6 +3,7 @@
 #include "Defines.hpp"
 #include "EnumUtils.hpp"
 #include "OutputStream.hpp"
+#include "StringBuilder.hpp"
 #include <streambuf>
 
 namespace Poly 
@@ -14,44 +15,6 @@ namespace Poly
 	REGISTER_ENUM_NAMES_IN_POLY(eLogLevel, "DEBUG", "INFO", "WARNING", "ERROR");
 
 	constexpr eLogLevel LOG_LEVEL_FILTER = eLogLevel::LVL_DEBUG;
-
-	/**
-	*  Corner case logging function when there are no arguments to log.
-	*
-	*  @param[in] stream Output stream.
-	*  @param[in] level Level of logging.
-	*  @param[in] fmt Format string.
-	*/
-	inline void sprint(std::ostream& stream, eLogLevel level,
-		const std::string& fmt) {
-		(void)level;  // suppress unused warning
-		stream << fmt.c_str() << std::endl;
-	}
-	
-
-	/**
-	*  Variadic template type safe logging implementation
-	*
-	*  @param[in] stream Output stream.
-	*  @param[in] level Level of logging.
-	*  @param[in] fmt Format string.
-	*  @param[in] head Next (head) argument from variadic template argument list.
-	*  @param[in] tail Rest of the variadic template arguments.
-	*/
-	template <typename T, typename... Args>
-	void sprint(std::ostream& stream, eLogLevel level, const std::string& fmt,
-		const T& head, Args&&... tail) {
-		constexpr char marker[] = "{}";
-		std::string::size_type format_marker_pos = fmt.find(marker);
-		stream << fmt.substr(0, format_marker_pos);
-		if (format_marker_pos != fmt.npos) {
-			stream << head;
-			sprint(stream, level, fmt.substr(format_marker_pos + sizeof(marker) - 1),
-				tail...);
-		}
-		else
-			stream << std::endl;
-	}
 
 	class CORE_DLLEXPORT Console : public BaseObject<> 
 	{
@@ -92,16 +55,16 @@ namespace Poly
 		*  - Arguments that do not have coresponding markers will be ignored.
 		*/
 		template <typename... Args>
-		void Log(eLogLevel lvl, const std::string& fmt, Args&&... args) { LogImpl(lvl, GetEnumName(lvl), fmt, std::forward<Args>(args)...); }
+		void Log(eLogLevel lvl, const String& fmt, Args&&... args) { LogImpl(lvl, GetEnumName(lvl), fmt, std::forward<Args>(args)...); }
 
 		template <typename... Args>
-		void LogDebug(const std::string& fmt, Args&&... args) { Log(eLogLevel::LVL_DEBUG, fmt, std::forward<Args>(args)...); }
+		void LogDebug(const String& fmt, Args&&... args) { Log(eLogLevel::LVL_DEBUG, fmt, std::forward<Args>(args)...); }
 		template <typename... Args>
-		void LogInfo(const std::string& fmt, Args&&... args) { Log(eLogLevel::LVL_INFO, fmt, std::forward<Args>(args)...); }
+		void LogInfo(const String& fmt, Args&&... args) { Log(eLogLevel::LVL_INFO, fmt, std::forward<Args>(args)...); }
 		template <typename... Args>
-		void LogWarning(const std::string& fmt, Args&&... args) { Log(eLogLevel::LVL_WARNING, fmt, std::forward<Args>(args)...); }
+		void LogWarning(const String& fmt, Args&&... args) { Log(eLogLevel::LVL_WARNING, fmt, std::forward<Args>(args)...); }
 		template <typename... Args>
-		void LogError(const std::string& fmt, Args&&... args) { Log(eLogLevel::LVL_ERROR, fmt, std::forward<Args>(args)...); }
+		void LogError(const String& fmt, Args&&... args) { Log(eLogLevel::LVL_ERROR, fmt, std::forward<Args>(args)...); }
 
 	private:
 
@@ -115,10 +78,16 @@ namespace Poly
 		*  @param[in] args Variadic template argument list.
 		*/
 		template <typename... Args>
-		void LogImpl(eLogLevel level, const std::string& levelStr, const std::string& fmt,
-			Args&&... args) {
+		void LogImpl(eLogLevel level, const String& levelStr, const String& fmt, Args&&... args) 
+		{
 			if (level >= LOG_LEVEL_FILTER)
-				sprint(*Ostream, level, "[" + levelStr + "] " + fmt, args...);
+			{
+				static StringBuilder sb;
+				String fullFmt = StringBuilder().AppendFormat("[{}]{}", levelStr, fmt).StealString();
+				sb.AppendFormat(fullFmt.GetCStr(), std::forward<Args>(args)...);
+				*Ostream << sb.GetString() << std::endl;
+				sb.Clear();
+			}
 		}
 
 		std::unique_ptr<OutputStream> CurrentStream;
