@@ -7,21 +7,24 @@
 
 namespace Poly
 {
+	/// Class for efficient creation of complicated strings.
 	class CORE_DLLEXPORT StringBuilder
 	{
 	public:
 		StringBuilder() = default;
 		inline explicit StringBuilder(size_t preallocateSize) { Buffer.Reserve(preallocateSize); }
 
-		inline StringBuilder& Append(char c) { Buffer.PushBack(c); return *this; }
-		inline StringBuilder& Append(const char* str) { return Append(str, strlen(str)); }
-		inline StringBuilder& Append(const std::string& str) { return Append(str.c_str(), str.length()); }
-		inline StringBuilder& Append(const String& str) { return Append(str.GetCStr(), str.GetLength()); }
+		/// @name Appends string representation of value to string buffer
+		///	@param val Value to append
+		///	@return Instance reference for chainlinking
+		inline StringBuilder& Append(char val) { Buffer.PushBack(val); return *this; }
+		inline StringBuilder& Append(const char* val) { return Append(val, strlen(val)); }
+		inline StringBuilder& Append(const std::string& val) { return Append(val.c_str(), val.length()); }
+		inline StringBuilder& Append(const String& val) { return Append(val.GetCStr(), val.GetLength()); }
 		inline StringBuilder& Append(int val) { FillBufferWithFormat(val, "%d"); return *this; }
 		inline StringBuilder& Append(long long val) { FillBufferWithFormat(val, "%lld"); return *this; }
 		inline StringBuilder& Append(unsigned val) { FillBufferWithFormat(val, "%u"); return *this; }
 		inline StringBuilder& Append(unsigned long long val) { FillBufferWithFormat(val, "%llu"); return *this; }
-
 		inline StringBuilder& Append(long val) { return Append((long long)val); }
 		inline StringBuilder& Append(unsigned long val) { return Append((unsigned long long)val); }
 
@@ -40,9 +43,15 @@ namespace Poly
 			return *this;
 		}
 
-		
-		inline StringBuilder& AppendFormat(const char* fmt) { Append(fmt); return *this; }
+		/// Fallback method for no args variant of AppendFormat
+		///	@param fmt Format to use
+		///	@return Instance reference for chainlinking
+		inline StringBuilder& AppendFormat(const char* fmt) { return Append(fmt); }
 
+		/// Appends formatted string to string buffer with {} used as markers for placing stringified arguments
+		///	@param fmt Format to use
+		/// @param head,tail Optional arguments 
+		///	@return Instance reference for chainlinking
 		template<typename T, typename... Args>
 		StringBuilder& AppendFormat(const char* fmt, const T& head, Args&&... tail)
 		{
@@ -51,21 +60,29 @@ namespace Poly
 			if (marker != nullptr) // marker found
 			{
 				const size_t length = marker - fmt;
-				Append(fmt, length);
-				Append(head);
+				Append(fmt, length); // append plain format string
+				Append(head); // append value in place of {} marker
+				// Recursive call
 				AppendFormat(marker + 2, std::forward<Args>(tail)...);
 			}
 			else
 			{
+				// No marker found, just append the whole string
 				Append(fmt, strlen(fmt));
 			}
 			return *this;
 		}
 
+		/// @name Returns copy of the string in the buffer. Data still stays in the buffer.
+		///	@return String copied from string buffer
 		inline String GetString() const & { return String(Buffer); }
 		inline String GetString() && { return StealString(); }
+
+		/// @name Moves data from the buffer to new string and returns it. This deletes buffer from instance.
+		///	@return String with data from string buffer
 		inline String StealString() { return String(std::move(Buffer)); }
 
+		/// Clears data in the string buffer. This does not release held memory
 		inline void Clear() { Buffer.Resize(0); }
 	private:
 		struct CharBuffer
