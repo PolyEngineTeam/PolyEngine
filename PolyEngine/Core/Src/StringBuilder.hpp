@@ -3,16 +3,16 @@
 #include "Dynarray.hpp"
 #include "Defines.hpp"
 #include "String.hpp"
-#include <sstream>
+#include <ostream>
 
 namespace Poly
 {
 	/// Class for efficient creation of complicated strings.
-	class CORE_DLLEXPORT StringBuilder
+	class CORE_DLLEXPORT StringBuilder : public BaseObject<>, public std::streambuf
 	{
 	public:
-		StringBuilder() = default;
-		inline explicit StringBuilder(size_t preallocateSize) { Buffer.Reserve(preallocateSize); }
+		StringBuilder() : Ostream(this) {}
+		inline explicit StringBuilder(size_t preallocateSize) : StringBuilder() { Buffer.Reserve(preallocateSize); }
 
 		/// @name Appends string representation of value to string buffer
 		///	@param val Value to append
@@ -37,9 +37,7 @@ namespace Poly
 		{
 			STATIC_ASSERTE(!std::is_fundamental<T>::value, "This should never be executed for fundamental types. Fix above overloads.");
 			/// @todo(muniu) Consider optimizing this bit with custom method instead of operator<<
-			std::stringstream ss;
-			ss << val;
-			Append(ss.str().c_str(), ss.str().length());
+			Ostream << val;
 			return *this;
 		}
 
@@ -85,6 +83,9 @@ namespace Poly
 		/// Clears data in the string buffer. This does not release held memory
 		inline void Clear() { Buffer.Resize(0); }
 	private:
+		std::streamsize xsputn(const char_type* s, std::streamsize n) override final { Append(s, n); return n; }
+		int_type overflow(int_type c) override final { Append(c); return c; }
+
 		struct CharBuffer
 		{
 			CharBuffer(char* data, size_t length) : Data(data), Length(length) {}
@@ -114,6 +115,7 @@ namespace Poly
 			Buffer.Resize(oldLength + length);
 		}
 
+		std::ostream Ostream;
 		Dynarray<char> Buffer;
 
 		static constexpr size_t DEFAULT_FLT_PRECISION = 6;
