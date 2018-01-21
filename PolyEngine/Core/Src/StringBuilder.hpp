@@ -18,10 +18,12 @@ namespace Poly
 		inline StringBuilder& Append(const std::string& str) { return Append(str.c_str(), str.length()); }
 		inline StringBuilder& Append(const String& str) { return Append(str.GetCStr(), str.GetLength()); }
 		inline StringBuilder& Append(i32 val) { FillBufferWithFormat(val, "%d"); return *this; }
-		inline StringBuilder& Append(long val) { return Append((i64)val); }
 		inline StringBuilder& Append(i64 val) { FillBufferWithFormat(val, "%lld"); return *this; }
 		inline StringBuilder& Append(u32 val) { FillBufferWithFormat(val, "%u"); return *this; }
 		inline StringBuilder& Append(u64 val) { FillBufferWithFormat(val, "%llu"); return *this; }
+
+		inline StringBuilder& Append(long val) { return Append((i64)val); }
+		inline StringBuilder& Append(unsigned long val) { return Append((u64)val); }
 
 		StringBuilder& Append(const char* str, const size_t length);
 		StringBuilder& Append(f32 val, size_t precission = DEFAULT_FLT_PRECISION);
