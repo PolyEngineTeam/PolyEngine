@@ -15,6 +15,7 @@ namespace Poly
 
 		inline StringBuilder& Append(char c) { Buffer.PushBack(c); return *this; }
 		inline StringBuilder& Append(const char* str) { return Append(str, strlen(str)); }
+		inline StringBuilder& Append(const std::string& str) { return Append(str.c_str(), str.length()); }
 		inline StringBuilder& Append(const String& str) { return Append(str.GetCStr(), str.GetLength()); }
 		inline StringBuilder& Append(i32 val) { FillBufferWithFormat(val, "%d"); return *this; }
 		inline StringBuilder& Append(long val) { return Append((i64)val); }
@@ -27,9 +28,9 @@ namespace Poly
 		StringBuilder& Append(f64 val, size_t precission = DEFAULT_FLT_PRECISION);
 
 		template <typename T>
-		StringBuilder& Append(const T& val)
+		typename std::enable_if<!std::is_fundamental<T>::value, StringBuilder&>::type Append(const T& val)
 		{
-			HEAVY_ASSERTE(!std::is_fundamental<T>::value, "This should never be executed for fundamental types. Fix above overloads.");
+			STATIC_ASSERTE(!std::is_fundamental<T>::value, "This should never be executed for fundamental types. Fix above overloads.");
 			/// @todo(muniu) Consider optimizing this bit with custom method instead of operator<<
 			std::stringstream ss;
 			ss << val;
@@ -69,7 +70,7 @@ namespace Poly
 		{
 			CharBuffer(char* data, size_t length) : Data(data), Length(length) {}
 			CharBuffer(CharBuffer&& rhs) : Data(std::move(rhs.Data)), Length(rhs.Length) { rhs.Length = 0; }
-			CharBuffer& operator=(CharBuffer&& rhs) { Data = std::move(rhs.Data); Length = rhs.Length; rhs.Length = 0; }
+			CharBuffer& operator=(CharBuffer&& rhs) { Data = std::move(rhs.Data); Length = rhs.Length; rhs.Length = 0; return *this; }
 
 			std::unique_ptr<char> Data;
 			size_t Length;
