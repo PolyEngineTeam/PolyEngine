@@ -27,6 +27,7 @@
 
 // Containers
 #include "String.hpp"
+#include "StringBuilder.hpp"
 #include "Dynarray.hpp"
 #include "Queue.hpp"
 
