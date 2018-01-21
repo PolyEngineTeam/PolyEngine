@@ -83,7 +83,7 @@ namespace Poly
 			if (level >= LOG_LEVEL_FILTER)
 			{
 				static StringBuilder sb;
-				String fullFmt = StringBuilder().AppendFormat("[{}]{}", levelStr, fmt).StealString();
+				String fullFmt = StringBuilder().AppendFormat("[{}] {}", levelStr, fmt).StealString();
 				sb.AppendFormat(fullFmt.GetCStr(), std::forward<Args>(args)...);
 				*Ostream << sb.GetString() << std::endl;
 				sb.Clear();
