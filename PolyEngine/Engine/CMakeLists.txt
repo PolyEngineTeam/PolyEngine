@@ -12,6 +12,8 @@ set(POLYENGINE_SRCS
 	Src/AssetsPathConfig.cpp
 	Src/CameraComponent.cpp
 	Src/CameraSystem.cpp
+	Src/Collider3DComponent.cpp
+	Src/Collider3DImpl.hpp
 	Src/ConfigBase.cpp
 	Src/DebugConfig.cpp
 	Src/DebugDrawSystem.cpp
@@ -54,7 +56,6 @@ set(POLYENGINE_SRCS
 	Src/TimeSystem.cpp
 	Src/TimeWorldComponent.cpp
 	Src/TransformComponent.cpp
-	Src/Trigger3DComponent.cpp
 	Src/ViewportWorldComponent.cpp
 	Src/World.cpp
 )
@@ -63,6 +64,7 @@ set(POLYENGINE_H_FOR_IDE
 	Src/AssetsPathConfig.hpp
 	Src/CameraComponent.hpp
 	Src/CameraSystem.hpp
+	Src/Collider3DComponent.hpp
 	Src/ComponentBase.hpp
 	Src/ConfigBase.hpp
 	Src/DebugConfig.hpp
@@ -120,8 +122,6 @@ set(POLYENGINE_H_FOR_IDE
 	Src/TimeSystem.hpp
 	Src/TimeWorldComponent.hpp
 	Src/TransformComponent.hpp
-	Src/Trigger3DComponent.hpp
-	Src/Trigger3DImpl.hpp
 	Src/Viewport.hpp
 	Src/ViewportWorldComponent.hpp
 	Src/World.hpp

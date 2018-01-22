@@ -219,7 +219,7 @@
     <ClCompile Include="Src\TimeSystem.cpp" />
     <ClCompile Include="Src\TimeWorldComponent.cpp" />
     <ClCompile Include="Src\TransformComponent.cpp" />
-    <ClCompile Include="Src\Trigger3DComponent.cpp" />
+    <ClCompile Include="Src\Collider3DComponent.cpp" />
     <ClCompile Include="Src\ViewportWorldComponent.cpp" />
     <ClCompile Include="Src\World.cpp" />
     <ClCompile Include="Src\TextureResource.cpp" />
@@ -291,8 +291,8 @@
     <ClInclude Include="Src\TimeSystem.hpp" />
     <ClInclude Include="Src\TimeWorldComponent.hpp" />
     <ClInclude Include="Src\TransformComponent.hpp" />
-    <ClInclude Include="Src\Trigger3DComponent.hpp" />
-    <ClInclude Include="Src\Trigger3DImpl.hpp" />
+    <ClInclude Include="Src\Collider3DComponent.hpp" />
+    <ClInclude Include="Src\Collider3DImpl.hpp" />
     <ClInclude Include="Src\Viewport.hpp" />
     <ClInclude Include="Src\ViewportWorldComponent.hpp" />
     <ClInclude Include="Src\World.hpp" />

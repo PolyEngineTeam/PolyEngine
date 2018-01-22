@@ -8,7 +8,11 @@
 
 namespace Poly
 {
-	class World;
+	//********************************************************************************************************************************************
+	// helper structures
+
+
+	/// Structure containing implementation dependent data.
 	struct Rigidbody3DImpl;
 
 	/// Rigidbody type; for now rigidbody can be only static or dynamic.
@@ -17,20 +21,115 @@ namespace Poly
 	{
 		STATIC,
 		DYNAMIC,
+		DYNAMIC_CUSTOM_INTERTIA,
 		_COUNT
 	};
 
-	// You should use this component when you want to simulate physics bodies.
-	// If you simply want to detect collisions use @see[Trigger3DComponent].
+	/// This structure is used for initialization and keeping important properties of rigid body.
+	/// @see Rigidbody3DComponent
+	/// @see eRigidBody3DType
+	struct Rigidbody3DComponentTemplate
+	{
+		float Mass = 0;
+		Vector Intertia = Vector(0.f, 0.f, 0.f);
+		/// Restitution is in fact a bounciness.
+		float Restitution = 0.5f;
+		float Friction = 0.5f;
+		float RollingFriction = 0.5f;
+		float LinearDamping = 0.5f;
+		float AngularDamping = 0.5f;
+		Vector LinearFactor = Vector(1.f, 1.f, 1.f);
+		Vector AngularFactor = Vector(1.f, 1.f, 1.f);
+
+		/// Rigid body will not be considered during the simulation until it is registered.
+		bool Registered = true;
+		eRigidBody3DType RigidbodyType = eRigidBody3DType::DYNAMIC;
+	};
+
+
+	//********************************************************************************************************************************************
+	// component declaration
+
+
+	/// You should use this component when you want to simulate physics bodies.
+	/// If you simply want to detect collisions use @see[Collider3DComponent].
+	/// @see Rigidbody3DComponentTemplate
 	class ENGINE_DLLEXPORT Rigidbody3DComponent : public ComponentBase
 	{
+		//********************************************************************************************************************************************
+		// friendship declarations
+
+
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
+		friend void Physics3DSystem::EnsureInit(World* world, const UniqueID& entityID);
 		friend void Physics3DSystem::RegisterRigidbody(World * world, const UniqueID& entityID, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 		friend void Physics3DSystem::UnregisterRigidBody(World * world, const UniqueID& entityID);
+
 	public:
-		Rigidbody3DComponent(World* world, eRigidBody3DType type, float mass);
+		//********************************************************************************************************************************************
+		// constructors and destructors
+
+
+		/// This constructor will copy tmp into Template.
+		/// @param world - world where owner entity exists
+		/// @param tmp - template with rigid body properties
+		/// @see Rigidbody3DComponentTemplate
+		Rigidbody3DComponent(World* world, const Rigidbody3DComponentTemplate& tmp);
+
+		/// This constructor will move tmp into Template.
+		/// @param world - world where owner entity exists
+		/// @param tmp - template with rigid body properties
+		/// @see Rigidbody3DComponentTemplate
+		Rigidbody3DComponent(World* world, Rigidbody3DComponentTemplate&& tmp);
+
+		/// If rigid body is registered destructor will unregister it on component destruction.
 		~Rigidbody3DComponent();
 
+
+		//********************************************************************************************************************************************
+		// setters
+
+
+		void SetMassProps(float mass, const Vector& intertia);
+		void SetRestitution(float restitution);
+		void SetFriction(float friction);
+		void SetRollingFriction(float rollingFriction);
+		void SetDamping(float linearDamping, float angularDamping);
+		void SetLinearFactor(const Vector& linearFactor);
+		void SetAngularFactor(const Vector& angularFactor);
+
+		void SetLinearVelocity(const Vector& velocity);
+		void SetAngularVelocity(const Vector& velocity);
+
+
+		//********************************************************************************************************************************************
+		// getters
+
+
+		float GetMass() const { return Template->Mass; }
+		const Vector& GetIntertia() const { return Template->Intertia; }
+		float GetRestitution() const { return Template->Restitution; }
+		float GetFriction() const { return Template->Friction; }
+		float GetRollingFriction() const { return Template->RollingFriction; }
+		float GetLinearDamping() const { return Template->LinearDamping; }
+		float GetAngularDamping() const { return Template->AngularDamping; }
+		const Vector& GetLinearFactor() const { return Template->LinearFactor; }
+		const Vector& GetAngularFactor() const { return Template->AngularFactor; }
+
+		bool IsRegistered() const { return Template->Registered; }
+		eRigidBody3DType GetBodyType() const { return Template->RigidbodyType; }
+
+		const Vector& GetLinearVelocity();
+		const Vector& GetAngularVelocity();
+
+
+		//********************************************************************************************************************************************
+		// other
+
+
+		void UpdatePosition();
+
+			// TODO(squares): test them
 		void ApplyForceToCenter(const Vector& force);
 		void ApplyImpulseToCenter(const Vector& impulse);
 		void ApplyDamping(float timestep);
@@ -41,48 +140,14 @@ namespace Poly
 		void ApplyTorqueImpulse(const Vector& torque);
 
 		void ClearForces();
-		void UpdatePosition();
-
-		void SetLinearFactor(const Vector& factor);
-		void SetLinearVelocity(const Vector& velocity);
-		const Vector& GetLinearFactor();
-		const Vector& GetLinearVelocity();
-
-		void SetAngularFactor(float factor);
-		void SetAngularFactor(const Vector& factor);
-		void SetAngularVelocity(const Vector& velocity);
-		const Vector& GetAngularFactor();
-		const Vector& GetAngularVelocity();
-
-		void SetRestitution(float restitution);
-		float GetRestitution();
-
-		void SetFriction(float friction);
-		float GetFriction();
-
-		void SetRollingFriction(float friction);
-		float GetRollingFriction();
-
-		void SetDamping(float linearDamping, float angularDamping);
-		float GetLinearDamping();
-		float GetAngularDamping();
 
 		void SetGravity(const Vector& gravity);
 		const Vector& GetGravity();
 
-		bool IsRegistered() const { return Registered; }
-		eRigidBody3DType GetBodyType() const { return BodyType; }
-
-		void EnsureInit();
-
-		const float Mass;
-		const eRigidBody3DType BodyType;
-
 	private:
-		bool Registered = false;
-
 		World* BodyWorld;
 
+		std::unique_ptr<Rigidbody3DComponentTemplate> Template;
 		std::unique_ptr<Rigidbody3DImpl> ImplData;
 	};
 

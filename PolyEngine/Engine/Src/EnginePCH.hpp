@@ -41,7 +41,7 @@
 #include "Physics2DColliders.hpp"
 #include "Rigidbody2DComponent.hpp"
 #include "Rigidbody3DComponent.hpp"
-#include "Trigger3DComponent.hpp"
+#include "Collider3DComponent.hpp"
 #include "LightSourceComponent.hpp"
 #include "PostprocessSettingsComponent.hpp"
 #include "DebugDrawComponents.hpp"

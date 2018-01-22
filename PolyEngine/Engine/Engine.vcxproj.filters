@@ -248,7 +248,7 @@
     <ClCompile Include="Src\Rigidbody3DComponent.cpp">
       <Filter>Physics3D\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Trigger3DComponent.cpp">
+    <ClCompile Include="Src\Collider3DComponent.cpp">
       <Filter>Physics3D\Components</Filter>
     </ClCompile>
   </ItemGroup>
@@ -436,13 +436,13 @@
     <ClInclude Include="Src\Rigidbody3DComponent.hpp">
       <Filter>Physics3D\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Trigger3DComponent.hpp">
-      <Filter>Physics3D\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Rigidbody3DImpl.hpp">
       <Filter>Physics3D\Components\Impl</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Trigger3DImpl.hpp">
+    <ClInclude Include="Src\Collider3DComponent.hpp">
+      <Filter>Physics3D\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Collider3DImpl.hpp">
       <Filter>Physics3D\Components\Impl</Filter>
     </ClInclude>
   </ItemGroup>

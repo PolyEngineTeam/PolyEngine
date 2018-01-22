@@ -4,7 +4,7 @@
 #include <btBulletCollisionCommon.h>
 
 #include "Rigidbody3DImpl.hpp"
-#include "Trigger3DImpl.hpp"
+#include "Collider3DImpl.hpp"
 
 //********************************************************************************************************************************************
 void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
@@ -18,7 +18,12 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 	for (auto tuple : world->IterateComponents<Rigidbody3DComponent, TransformComponent>())
 	{
 		Rigidbody3DComponent* rigidbody = std::get<Rigidbody3DComponent*>(tuple);
-		rigidbody->EnsureInit();
+	
+		// ship if rigidbody was not registered
+		if (!rigidbody->IsRegistered())
+			continue;
+	
+		Physics3DSystem::EnsureInit(world, rigidbody->GetOwnerID());
 		rigidbody->UpdatePosition();
 	}
 	
@@ -29,6 +34,11 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 	for (auto tuple : world->IterateComponents<Rigidbody3DComponent, TransformComponent>())
 	{
 		Rigidbody3DComponent* rigidbody = std::get<Rigidbody3DComponent*>(tuple);
+	
+		// ship if rigidbody was not registered
+		if (!rigidbody->IsRegistered())
+			continue;
+	
 		TransformComponent* transform = std::get<TransformComponent*>(tuple);
 	
 		btTransform trans;
@@ -52,75 +62,231 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 }
 
 //********************************************************************************************************************************************
+const Poly::Vector& Poly::Physics3DSystem::CalculateIntertia(const Physics3DShape& shape, float mass)
+{
+	btVector3 i;
+	shape.BulletShape->calculateLocalInertia(mass, i);
+
+	return Vector(i.x(), i.y(), i.z());
+}
+
+//********************************************************************************************************************************************
+void Poly::Physics3DSystem::SetCollisionGroup(World* world, const UniqueID& entityID, EnumFlags<eCollisionGroup> group)
+{
+	// get template
+	Collider3DComponentTemplate* tmp = world->GetComponent<Collider3DComponent>(entityID)->Template.get();
+
+	// check if this changes anything
+	if (tmp->CollisionGroup != group)
+	{
+		tmp->CollisionGroup = group;
+
+		// check if we have to re-register collider with new group and mask
+		if (tmp->Registered)
+		{
+			// if we got rigidbody we have to register rigidbody otherwise we can do this for collider
+			if (world->GetComponent<Rigidbody3DComponent>(entityID) != nullptr)
+			{
+				Physics3DSystem::UnregisterRigidBody(world, entityID);
+				Physics3DSystem::RegisterRigidbody(world, entityID, tmp->CollisionGroup, tmp->CollisionMask);
+			}
+			else
+			{
+				Physics3DSystem::UnregisterCollider(world, entityID);
+				Physics3DSystem::RegisterCollider(world, entityID, tmp->CollisionGroup, tmp->CollisionMask);
+			}
+		}
+	}
+}
+
+//********************************************************************************************************************************************
+void Poly::Physics3DSystem::SetCollisionMask(World* world, const UniqueID& entityID, EnumFlags<eCollisionGroup> mask)
+{
+	// get template
+	Collider3DComponentTemplate* tmp = world->GetComponent<Collider3DComponent>(entityID)->Template.get();
+
+	// check if this changes anything
+	if (tmp->CollisionMask != mask)
+	{
+		tmp->CollisionMask = mask;
+
+		// check if we have to re-register collider with new group and mask
+
+		if (tmp->Registered)
+		{
+			// if we got rigidbody we have to register rigidbody otherwise we can do this for collider
+			if (world->GetComponent<Rigidbody3DComponent>(entityID) != nullptr)
+			{
+				Physics3DSystem::UnregisterRigidBody(world, entityID);
+				Physics3DSystem::RegisterRigidbody(world, entityID, tmp->CollisionGroup, tmp->CollisionMask);
+			}
+			else
+			{
+				Physics3DSystem::UnregisterCollider(world, entityID);
+				Physics3DSystem::RegisterCollider(world, entityID, tmp->CollisionGroup, tmp->CollisionMask);
+			}
+		}
+	}
+}
+
+//********************************************************************************************************************************************
+void Poly::Physics3DSystem::EnsureInit(World* world, const UniqueID& entityID)
+{
+	Collider3DComponent* collider = world->GetComponent<Collider3DComponent>(entityID);
+	Rigidbody3DComponent* rigidbody = world->GetComponent<Rigidbody3DComponent>(entityID);
+
+	ASSERTE(collider != nullptr, "Entity doesn't contain collider.");
+
+	// if we got rigid body here
+	if (rigidbody != nullptr)
+	{
+		// break if Bullet Physics rigidbody exists
+		if (rigidbody->ImplData != nullptr)
+			return;
+
+		// create unique impl data and motion state
+		rigidbody->ImplData = std::make_unique<Rigidbody3DImpl>();
+		collider->ImplData = std::make_unique<Trigger3DImpl>();
+		rigidbody->ImplData->BulletMotionState = new btDefaultMotionState();
+
+		// get collider shape
+		btCollisionShape* shape = collider->GetShape().BulletShape;
+
+		btVector3 inertia(0, 0, 0);
+
+		switch (rigidbody->Template->RigidbodyType)
+		{
+		case eRigidBody3DType::STATIC:
+			// TODO(squares): check if that's enough
+			break;
+
+		case eRigidBody3DType::DYNAMIC:
+			// FIXME(squares): this is't proper way of preventing zero mass
+			ASSERTE(rigidbody->Template->Mass > 0, "Can't create dynamic body with 0 mass.");
+			shape->calculateLocalInertia(rigidbody->Template->Mass, inertia);
+			break;
+
+		case eRigidBody3DType::DYNAMIC_CUSTOM_INTERTIA:
+			Vector i = rigidbody->Template->Intertia;
+			inertia = btVector3(i.X, i.Y, i.Z);
+			break;
+		}
+
+		// create construction info
+		btRigidBody::btRigidBodyConstructionInfo CI(rigidbody->Template->Mass, rigidbody->ImplData->BulletMotionState, shape, inertia);
+
+		// create rigidbody
+		rigidbody->ImplData->BulletRigidBody = new btRigidBody(CI);
+		// assign just created rigidbody as collider in Collider3DComponent
+		collider->ImplData->BulletTrigger = rigidbody->ImplData->BulletRigidBody;
+
+		if (rigidbody->Template->Registered)
+		{
+			Physics3DSystem::RegisterRigidbody(world, entityID, collider->Template->CollisionGroup, collider->Template->CollisionMask);
+			collider->Template->Registered = true;
+		}
+		else
+		{
+			collider->Template->Registered = false;
+		}
+	}
+	// or if we just have to initialize collider
+	else
+	{
+		// break if this component has been already initialized or has sibling of type Rigidbody3DComponent
+		if (collider->ImplData != nullptr)
+			return;
+
+		collider->ImplData->BulletTrigger = new btCollisionObject();
+		collider->ImplData->BulletTrigger->setCollisionFlags(collider->ImplData->BulletTrigger->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+
+		collider->ImplData->BulletTrigger->setCollisionShape(collider->Template->Shape->BulletShape);
+
+		// if component is registered at initialization that means it needs to be registered right now
+		if (collider->Template->Registered)
+			Physics3DSystem::RegisterCollider(world, entityID, collider->Template->CollisionGroup, collider->Template->CollisionMask);
+	}
+}
+
+//********************************************************************************************************************************************
 void Poly::Physics3DSystem::RegisterRigidbody(World* world, const UniqueID& entityID, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith)
 {
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
-	Rigidbody3DComponent* cmp = world->GetComponent<Rigidbody3DComponent>(entityID);
+	Rigidbody3DComponent* rigidbody = world->GetComponent<Rigidbody3DComponent>(entityID);
+	Collider3DComponent* collider = world->GetComponent<Collider3DComponent>(entityID);
 
-	if (!cmp->Registered)
-	{
-		worldCmp->DynamicsWorld->addRigidBody(cmp->ImplData->BulletRigidBody);
-		// see Physics3DSystem::AllHitsRaycast
-		worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, UniqueID>(cmp->ImplData->BulletRigidBody, entityID));
+	ASSERTE(!rigidbody->Template->Registered, "You cant register rigidbody when it is already registered.");
 
-		cmp->Registered = true;
-	}
+	collider->Template->CollisionGroup = collisionGroup;
+	collider->Template->CollisionMask = collidesWith;
+	worldCmp->DynamicsWorld->addRigidBody(rigidbody->ImplData->BulletRigidBody, static_cast<int>(collisionGroup), static_cast<int>(collidesWith));
+	// see Physics3DSystem::AllHitsRaycast
+	worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, UniqueID>(rigidbody->ImplData->BulletRigidBody, entityID));
+
+	rigidbody->Template->Registered = true;
+	collider->Template->Registered = true;
 }
 
 //********************************************************************************************************************************************
 void Poly::Physics3DSystem::UnregisterRigidBody(World* world, const UniqueID& entityID)
 {
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
-	Rigidbody3DComponent* cmp = world->GetComponent<Rigidbody3DComponent>(entityID);
+	Rigidbody3DComponent* rigidbody = world->GetComponent<Rigidbody3DComponent>(entityID);
+	Collider3DComponent* collider = world->GetComponent<Collider3DComponent>(entityID);
 
-	if (cmp->Registered)
-	{
-		worldCmp->BulletTriggerToEntity.erase(cmp->ImplData->BulletRigidBody);
-		// see Physics3DSystem::AllHitsRaycast
-		worldCmp->DynamicsWorld->removeRigidBody(cmp->ImplData->BulletRigidBody);
+	ASSERTE(rigidbody->Template->Registered, "To unregister rigidbody it must be registered first.");
 
-		cmp->Registered = false;
-	}
+	worldCmp->BulletTriggerToEntity.erase(rigidbody->ImplData->BulletRigidBody);
+	// see Physics3DSystem::AllHitsRaycast
+	worldCmp->DynamicsWorld->removeRigidBody(rigidbody->ImplData->BulletRigidBody);
+
+	rigidbody->Template->Registered = false;
+	collider->Template->Registered = false;
 }
 
 //********************************************************************************************************************************************
-void Poly::Physics3DSystem::RegisterTriger(World* world, const UniqueID& entityID, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith)
+void Poly::Physics3DSystem::RegisterCollider(World* world, const UniqueID& entityID, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith)
 {
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
-	Trigger3DComponent* cmp = world->GetComponent<Trigger3DComponent>(entityID);
+	Rigidbody3DComponent* rigidbody = world->GetComponent<Rigidbody3DComponent>(entityID);
+	Collider3DComponent* collider = world->GetComponent<Collider3DComponent>(entityID);
 
-	if (!cmp->Registered)
-	{
-		worldCmp->DynamicsWorld->addCollisionObject(cmp->ImplData->BulletTrigger);
-		// see Physics3DSystem::AllHitsRaycast
-		worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, UniqueID>(cmp->ImplData->BulletTrigger, entityID));
+	ASSERTE(!rigidbody, "You can't register collider when it has rigidbody sibling.");
+	ASSERTE(!collider->Template->Registered, "You cant register rigidbody when it is already registered.");
+	
+	collider->Template->CollisionGroup = collisionGroup;
+	collider->Template->CollisionMask = collidesWith;
+	worldCmp->DynamicsWorld->addCollisionObject(collider->ImplData->BulletTrigger, static_cast<int>(collisionGroup), static_cast<int>(collidesWith));
+	// see Physics3DSystem::AllHitsRaycast
+	worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, UniqueID>(collider->ImplData->BulletTrigger, entityID));
 
-		cmp->Registered = true;
-	}
+	collider->Template->Registered = true;
+	
 }
 
 //********************************************************************************************************************************************
-void Poly::Physics3DSystem::UnregisterTriger(World* world, const UniqueID& entityID)
+void Poly::Physics3DSystem::UnregisterCollider(World* world, const UniqueID& entityID)
 {
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
-	Trigger3DComponent* cmp = world->GetComponent<Trigger3DComponent>(entityID);
+	Rigidbody3DComponent* rigidbody = world->GetComponent<Rigidbody3DComponent>(entityID);
+	Collider3DComponent* collider = world->GetComponent<Collider3DComponent>(entityID);
 
-	if (cmp->Registered)
-	{
-		worldCmp->BulletTriggerToEntity.erase(cmp->ImplData->BulletTrigger);
-		// see Physics3DSystem::AllHitsRaycast
-		worldCmp->DynamicsWorld->removeCollisionObject(cmp->ImplData->BulletTrigger);
+	ASSERTE(!rigidbody, "You can't unregister collider when it has rigidbody sibling.");
+	ASSERTE(collider->Template->Registered, "To unregister collider it must be registered first.");
 
-		cmp->Registered = true;
-	}
+	worldCmp->BulletTriggerToEntity.erase(collider->ImplData->BulletTrigger);
+	// see Physics3DSystem::AllHitsRaycast
+	worldCmp->DynamicsWorld->removeCollisionObject(collider->ImplData->BulletTrigger);
+
+	collider->Template->Registered = false;
 }
 
 //********************************************************************************************************************************************
 bool Poly::Physics3DSystem::IsColliding(World* world, const UniqueID& firstID, const UniqueID& secondID)
 {
-	ASSERTE(world->GetComponent<Trigger3DComponent>(firstID)->Registered && world->GetComponent<Trigger3DComponent>(secondID)->Registered, "One of the entities was not registered as trigger.");
+	ASSERTE(world->GetComponent<Collider3DComponent>(firstID)->Template->Registered && world->GetComponent<Collider3DComponent>(secondID)->Template->Registered, "One of the entities was not registered as trigger.");
 
-	return world->GetComponent<Trigger3DComponent>(firstID)->ImplData->BulletTrigger->checkCollideWith(world->GetComponent<Trigger3DComponent>(secondID)->ImplData->BulletTrigger);
+	return world->GetComponent<Collider3DComponent>(firstID)->ImplData->BulletTrigger->checkCollideWith(world->GetComponent<Collider3DComponent>(secondID)->ImplData->BulletTrigger);
 }
 
 //********************************************************************************************************************************************

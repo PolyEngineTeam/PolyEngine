@@ -4,21 +4,136 @@
 #include "Rigidbody3DComponent.hpp"
 
 #include "Rigidbody3DImpl.hpp"
-#include "Trigger3DImpl.hpp"
 
 //********************************************************************************************************************************************
-Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, eRigidBody3DType type, float mass)
-	: BodyWorld(world),
-	BodyType(type),
-	Mass(mass)
+Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, const Rigidbody3DComponentTemplate& tmp)
+	: BodyWorld(world)
 {
+	Template = std::make_unique<Rigidbody3DComponentTemplate>();
+
+	*Template = tmp;
+}
+
+//********************************************************************************************************************************************
+Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, Rigidbody3DComponentTemplate&& tmp)
+	: BodyWorld(world)
+{
+	*Template = std::move(tmp);
 }
 
 //********************************************************************************************************************************************
 Poly::Rigidbody3DComponent::~Rigidbody3DComponent()
 {
-	Physics3DSystem::UnregisterRigidBody(BodyWorld, GetOwnerID());
+	if (Template->Registered)
+		Physics3DSystem::UnregisterRigidBody(BodyWorld, GetOwnerID());
 }
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::SetMassProps(float mass, const Vector& intertia)
+{
+	Template->Mass = mass;
+	Template->Intertia = intertia;
+
+	ImplData->BulletRigidBody->setMassProps(mass, btVector3(intertia.X, intertia.Y, intertia.Z));
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::SetRestitution(float restitution)
+{
+	Template->Restitution = restitution;
+
+	ImplData->BulletRigidBody->setRestitution(restitution);
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::SetFriction(float friction)
+{
+	Template->Friction = friction;
+
+	ImplData->BulletRigidBody->setFriction(friction);
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::SetRollingFriction(float friction)
+{
+	Template->RollingFriction;
+
+	ImplData->BulletRigidBody->setRollingFriction(friction);
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::SetDamping(float linearDamping, float angularDamping)
+{
+	Template->LinearDamping = linearDamping;
+	Template->AngularDamping = angularDamping;
+
+	ImplData->BulletRigidBody->setDamping(linearDamping, angularDamping);
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::SetLinearFactor(const Vector& linearFactor)
+{
+	Template->LinearFactor = linearFactor;
+
+	ImplData->BulletRigidBody->setLinearFactor(btVector3(linearFactor.X, linearFactor.Y, linearFactor.Z));
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::SetAngularFactor(const Vector& angularFactor)
+{
+	Template->AngularFactor = angularFactor;
+
+	ImplData->BulletRigidBody->setAngularFactor(btVector3(angularFactor.X, angularFactor.Y, angularFactor.Z));
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::SetLinearVelocity(const Vector& velocity)
+{
+	ImplData->BulletRigidBody->setLinearVelocity(btVector3(velocity.X, velocity.Y, velocity.Z));
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::SetAngularVelocity(const Vector& velocity)
+{
+	ImplData->BulletRigidBody->setAngularVelocity(btVector3(velocity.X, velocity.Y, velocity.Z));
+}
+
+//********************************************************************************************************************************************
+const Poly::Vector& Poly::Rigidbody3DComponent::GetLinearVelocity()
+{
+	const btVector3& v = ImplData->BulletRigidBody->getLinearVelocity();
+	return Vector(v.x(), v.y(), v.z());
+}
+
+//********************************************************************************************************************************************
+const Poly::Vector& Poly::Rigidbody3DComponent::GetAngularVelocity()
+{
+	const btVector3& v = ImplData->BulletRigidBody->getAngularVelocity();
+	return Vector(v.x(), v.y(), v.z());
+}
+
+//********************************************************************************************************************************************
+void Poly::Rigidbody3DComponent::UpdatePosition()
+{
+	TransformComponent* transCmp = GetSibling<TransformComponent>();
+	ASSERTE(transCmp, "No transform on physics object!");
+	ASSERTE(transCmp->GetParent() == nullptr, "Physics cannot be applied to child entity");
+
+	Vector localTrans = transCmp->GetLocalTranslation();
+	Quaternion localRot = transCmp->GetLocalRotation();
+
+	btVector3 position(localTrans.X, localTrans.Y, localTrans.Z);
+	btQuaternion orientation(localRot.X, localRot.Y, localRot.Z, localRot.W);
+
+	btTransform initialTransform;
+	initialTransform.setOrigin(position);
+	initialTransform.setRotation(orientation);
+
+	ImplData->BulletRigidBody->setWorldTransform(initialTransform);
+	ImplData->BulletMotionState->setWorldTransform(initialTransform);
+}
+
+	//TODO(squares): test these
 
 //********************************************************************************************************************************************
 void Poly::Rigidbody3DComponent::ApplyForceToCenter(const Vector& force)
@@ -75,139 +190,6 @@ void Poly::Rigidbody3DComponent::ClearForces()
 }
 
 //********************************************************************************************************************************************
-void Poly::Rigidbody3DComponent::UpdatePosition()
-{
-	TransformComponent* transCmp = GetSibling<TransformComponent>();
-	ASSERTE(transCmp, "No transform on physics object!");
-	ASSERTE(transCmp->GetParent() == nullptr, "Physics cannot be applied to child entity");
-	
-	Vector localTrans = transCmp->GetLocalTranslation();
-	Quaternion localRot = transCmp->GetLocalRotation();
-	
-	btVector3 position(localTrans.X, localTrans.Y, localTrans.Z);
-	btQuaternion orientation(localRot.X, localRot.Y, localRot.Z, localRot.W);
-	
-	btTransform initialTransform;
-	initialTransform.setOrigin(position);
-	initialTransform.setRotation(orientation);
-	
-	ImplData->BulletRigidBody->setWorldTransform(initialTransform);
-	ImplData->BulletMotionState->setWorldTransform(initialTransform);
-}
-
-//********************************************************************************************************************************************
-void Poly::Rigidbody3DComponent::SetLinearFactor(const Vector& factor)
-{
-	ImplData->BulletRigidBody->setLinearFactor(btVector3(factor.X, factor.Y, factor.Z));
-}
-
-//********************************************************************************************************************************************
-void Poly::Rigidbody3DComponent::SetLinearVelocity(const Vector& velocity)
-{
-	ImplData->BulletRigidBody->setLinearVelocity(btVector3(velocity.X, velocity.Y, velocity.Z));
-}
-
-//********************************************************************************************************************************************
-const Poly::Vector& Poly::Rigidbody3DComponent::GetLinearFactor()
-{
-	const btVector3& v = ImplData->BulletRigidBody->getLinearFactor();
-	return Vector(v.x(), v.y(), v.z());
-}
-
-//********************************************************************************************************************************************
-const Poly::Vector& Poly::Rigidbody3DComponent::GetLinearVelocity()
-{
-	const btVector3& v = ImplData->BulletRigidBody->getLinearVelocity();
-	return Vector(v.x(), v.y(), v.z());
-}
-
-//********************************************************************************************************************************************
-void Poly::Rigidbody3DComponent::SetAngularFactor(float factor)
-{
-	ImplData->BulletRigidBody->setAngularFactor(factor);
-}
-
-//********************************************************************************************************************************************
-void Poly::Rigidbody3DComponent::SetAngularFactor(const Vector& factor)
-{
-	ImplData->BulletRigidBody->setAngularFactor(btVector3(factor.X, factor.Y, factor.Z));
-}
-
-//********************************************************************************************************************************************
-void Poly::Rigidbody3DComponent::SetAngularVelocity(const Vector& velocity)
-{
-	ImplData->BulletRigidBody->setAngularVelocity(btVector3(velocity.X, velocity.Y, velocity.Z));
-}
-
-//********************************************************************************************************************************************
-const Poly::Vector& Poly::Rigidbody3DComponent::GetAngularFactor()
-{
-	const btVector3& v = ImplData->BulletRigidBody->getAngularFactor();
-	return Vector(v.x(), v.y(), v.z());
-}
-
-//********************************************************************************************************************************************
-const Poly::Vector& Poly::Rigidbody3DComponent::GetAngularVelocity()
-{
-	const btVector3& v = ImplData->BulletRigidBody->getAngularVelocity();
-	return Vector(v.x(), v.y(), v.z());
-}
-
-//********************************************************************************************************************************************
-void Poly::Rigidbody3DComponent::SetRestitution(float restitution)
-{
-	ImplData->BulletRigidBody->setRestitution(restitution);
-}
-
-//********************************************************************************************************************************************
-float Poly::Rigidbody3DComponent::GetRestitution()
-{
-	return ImplData->BulletRigidBody->getRestitution();
-}
-
-//********************************************************************************************************************************************
-void Poly::Rigidbody3DComponent::SetFriction(float friction)
-{
-	ImplData->BulletRigidBody->setFriction(friction);
-}
-
-//********************************************************************************************************************************************
-float Poly::Rigidbody3DComponent::GetFriction()
-{
-	return ImplData->BulletRigidBody->getFriction();
-}
-
-//********************************************************************************************************************************************
-void Poly::Rigidbody3DComponent::SetRollingFriction(float friction)
-{
-	ImplData->BulletRigidBody->setRollingFriction(friction);
-}
-
-//********************************************************************************************************************************************
-float Poly::Rigidbody3DComponent::GetRollingFriction()
-{
-	return ImplData->BulletRigidBody->getRollingFriction();
-}
-
-//********************************************************************************************************************************************
-void Poly::Rigidbody3DComponent::SetDamping(float linearDamping, float angularDamping)
-{
-	ImplData->BulletRigidBody->setDamping(linearDamping, angularDamping);
-}
-
-//********************************************************************************************************************************************
-float Poly::Rigidbody3DComponent::GetLinearDamping()
-{
-	return ImplData->BulletRigidBody->getLinearDamping();
-}
-
-//********************************************************************************************************************************************
-float Poly::Rigidbody3DComponent::GetAngularDamping()
-{
-	return ImplData->BulletRigidBody->getAngularDamping();
-}
-
-//********************************************************************************************************************************************
 void Poly::Rigidbody3DComponent::SetGravity(const Vector&  gravity)
 {
 	ImplData->BulletRigidBody->setGravity(btVector3(gravity.X, gravity.Y, gravity.Z));
@@ -218,40 +200,4 @@ const Poly::Vector& Poly::Rigidbody3DComponent::GetGravity()
 {
 	const btVector3& g = ImplData->BulletRigidBody->getGravity();
 	return Vector(g.x(), g.y(), g.z());
-}
-
-//********************************************************************************************************************************************
-void Poly::Rigidbody3DComponent::EnsureInit()
-{
-	if (ImplData)
-		return;
-	
-	ImplData = std::make_unique<Rigidbody3DImpl>();
-	ImplData->BulletMotionState = new btDefaultMotionState();
-	
-	ASSERTE(GetSibling<Trigger3DComponent>(), "Rigidbody3DComponent must have sibling Trigger3DComponent.");
-	btCollisionShape* shape = GetSibling<Trigger3DComponent>()->GetShape().BulletShape;
-	
-	btVector3 inertia(0, 0, 0);
-	
-	switch (BodyType)
-	{
-	case eRigidBody3DType::STATIC:
-		break;
-	
-	case eRigidBody3DType::DYNAMIC:
-		ASSERTE(BodyType != eRigidBody3DType::STATIC && Mass > 0, "Can't create dynamic body with 0 mass.");
-		shape->calculateLocalInertia(Mass, inertia);
-		break;
-	}
-	
-	btRigidBody::btRigidBodyConstructionInfo CI(Mass, ImplData->BulletMotionState, shape, inertia);
-	
-	ImplData->BulletRigidBody = new btRigidBody(CI);
-	GetSibling<Trigger3DComponent>()->ImplData->BulletTrigger = ImplData->BulletRigidBody;
-	
-	Physics3DSystem::RegisterRigidbody(BodyWorld, GetOwnerID());
-	Registered = true;
-
-	UpdatePosition();
 }

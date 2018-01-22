@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Physics3DSystem.hpp"
+
+	// FIXME(squares): this shouldn't be declared here
 class btCollisionShape;
 
 namespace Poly
@@ -15,13 +18,14 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT Physics3DShape
 	{
-		friend class Trigger3DComponent;
-		friend class Rigidbody3DComponent;
+		//friend void Physics3DSystem::EnsureInit(World* world, const UniqueID& entityID);
+		//friend const Vector& Physics3DSystem::CalculateIntertia(const Physics3DShape& shape, float mass);
 	public:
 		Physics3DShape(ePhysics3DShape type) : ShapeType(type) {}
 		const ePhysics3DShape ShapeType;
-	protected:
+			// FIXME(squares): friendship problems
 		btCollisionShape* BulletShape;
+	protected:
 	};
 
 	class ENGINE_DLLEXPORT Physics3DPlaneShape : public Physics3DShape
@@ -53,4 +57,4 @@ namespace Poly
 		const float Radius;
 		const float Height;
 	};
-}
+} // namespace Poly
