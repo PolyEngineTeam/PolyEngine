@@ -14,6 +14,7 @@ Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, const Rigidbody3D
 	*Template = tmp;
 }
 
+	// FIXME(squares): this didn't work as I expected :(
 //********************************************************************************************************************************************
 Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, Rigidbody3DComponentTemplate&& tmp)
 	: BodyWorld(world)

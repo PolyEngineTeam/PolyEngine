@@ -102,7 +102,7 @@ namespace Poly
 		// registration
 
 
-			// FIXME(squares): fix this undefined behaviour
+			// FIXME(squares): what to do when registering rigidbody after collider registration on the same entity
 
 		/// You can have @see[Rigidbody3DComponent] added to entity but till it's not registered 
 		/// it won't be considered in physics simulation (until You call @see[UnregisterRigidBody]).

@@ -16,6 +16,7 @@ Poly::Collider3DComponent::Collider3DComponent(World* world, const Collider3DCom
 	Template->CollisionMask = tmp.CollisionMask;
 }
 
+	// FIXME(squares): this didn't work as I expected :(
 //********************************************************************************************************************************************
 Poly::Collider3DComponent::Collider3DComponent(World* world, Collider3DComponentTemplate&& tmp)
 	: BodyWorld(world)
