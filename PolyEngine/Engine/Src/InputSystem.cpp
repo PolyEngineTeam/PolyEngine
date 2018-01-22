@@ -50,27 +50,58 @@ void InputSystem::InputPhase(World* world)
 			com->CurrWheel += ev.Pos;
 			break;
 		case eInputEventType::CONTROLLERADDED:
-            std::cout << "CONTROLLER ADDED" << std::endl;
-			com->Controllers[ev.Controller] = Controller();
-            com->ControllerPointers.PushBack(ev.Controller);
-			break;
+        {
+            SDL_GameController *controller = SDL_GameControllerOpen(ev.ControllerID);
+            com->Controllers[controller] = Controller();
+            bool controllerAssigned = false;
+            for (auto it = com->ControllerPointers.Begin(); it != com->ControllerPointers.End(); ++it) {
+                if (*it == nullptr) {
+                    *it = controller;
+                    controllerAssigned = true;
+                    break;
+                }
+            }
+            if (!controllerAssigned) {
+                com->ControllerPointers.PushBack(controller);
+            }
+            break;
+        }
 		case eInputEventType::CONTROLLERREMOVED:
+            for (auto it=com->ControllerPointers.Begin(); it!=com->ControllerPointers.End(); ++it)
+            {
+                SDL_GameController* controllerPtr = *it;
+                SDL_Joystick* jptr = SDL_GameControllerGetJoystick(controllerPtr);
+                Sint32 joystickID = SDL_JoystickInstanceID(jptr);
+                if(joystickID == ev.ControllerID) {
+                    SDL_GameControllerClose(controllerPtr);
+                    com->Controllers.erase(controllerPtr);
+                    *it = nullptr;
+                    break;
+                }
+            }
+            ASSERTE(true, "Could not remove controller");
 			break;
 		case eInputEventType::CONTROLLERBUTTONDOWN:
-            std::cout << "BUTTON DOWN" << std::endl;
+        {
             std::cout << static_cast<int>(ev.ControllerButton) << std::endl;
-            com->Controllers.at(ev.Controller).CurrButton[ev.ControllerButton] = true;
-			break;
+            SDL_GameController *controller = SDL_GameControllerFromInstanceID(ev.ControllerID);
+            com->Controllers.at(controller).CurrButton[ev.ControllerButton] = true;
+            break;
+        }
 		case eInputEventType::CONTROLLERBUTTONUP:
-            std::cout << "BUTTON UP" << std::endl;
+        {
             std::cout << static_cast<int>(ev.ControllerButton) << std::endl;
-            com->Controllers.at(ev.Controller).CurrButton[ev.ControllerButton] = false;
-			break;
+            SDL_GameController *controller = SDL_GameControllerFromInstanceID(ev.ControllerID);
+            com->Controllers.at(controller).CurrButton[ev.ControllerButton] = false;
+            break;
+        }
 		case eInputEventType::CONTROLLERAXIS:
-            std::cout << "AXIS" << std::endl;
+        {
             std::cout << static_cast<int>(ev.ControllerButton) << std::endl;
-            com->Controllers.at(ev.Controller).CurrAxis[ev.ControllerAxis] = ev.AxisValue;
-			break;
+            SDL_GameController *controller = SDL_GameControllerFromInstanceID(ev.ControllerID);
+            com->Controllers.at(controller).CurrAxis[ev.ControllerAxis] = ev.AxisValue;
+            break;
+        }
 		case eInputEventType::_COUNT:
 			HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::Push(), which is an invalid value");
 			break;

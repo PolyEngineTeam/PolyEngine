@@ -42,7 +42,14 @@ namespace Poly
                 return false;
             }
             SDL_GameController* controller = ControllerPointers[controllerID];
-            return Controllers.at(controller).CurrButton[button];
+            if(controller != nullptr)
+            {
+                return Controllers.at(controller).CurrButton[button];
+            }
+            else
+            {
+                return false;
+            }
         }
 
 		const Vector2i& GetMousePos() const { return CurrMouse; }
@@ -58,7 +65,14 @@ namespace Poly
                 return 0.0f;
             }
             SDL_GameController* controller = ControllerPointers[controllerID];
-            return Controllers.at(controller).CurrAxis[axis];
+            if(controller != nullptr)
+            {
+                return Controllers.at(controller).CurrAxis[axis];
+            }
+            else
+            {
+                return false;
+            }
         }
 	private:
 		EnumArray<bool, eKey> CurrKey;

@@ -94,10 +94,15 @@ namespace Poly
 		/// <param name="pos">Wheel delta position.</param>
 		void UpdateWheelPos(const Vector2i& deltaPos) { InputEventsQueue.PushBack({eInputEventType::WHEELMOVE, deltaPos}); }
 
-        void AddController(Sint32 id) { InputEventsQueue.PushBack({eInputEventType::CONTROLLERADDED, SDL_GameControllerOpen(id)}); };
-        void ControllerButtonDown(Sint32 id, eControllerButton button) { InputEventsQueue.PushBack({eInputEventType::CONTROLLERBUTTONDOWN, SDL_GameControllerFromInstanceID(id), button}); };
-        void ControllerButtonUp(Sint32 id, eControllerButton button) { InputEventsQueue.PushBack({eInputEventType::CONTROLLERBUTTONUP, SDL_GameControllerFromInstanceID(id), button}); };
-        void ControllerAxisMotion(Sint32 id, eControllerAxis axis, Sint16 value) { InputEventsQueue.PushBack({eInputEventType::CONTROLLERAXIS, SDL_GameControllerFromInstanceID(id), axis, value/35768.0f}); };
+        void AddController(Sint32 id) {
+            SDL_GameController* gcptr = SDL_GameControllerOpen(id);
+            InputEventsQueue.PushBack({eInputEventType::CONTROLLERADDED, id});
+            SDL_Joystick* jptr = SDL_GameControllerGetJoystick(gcptr);
+        };
+        void RemoveController(Sint32 id) { InputEventsQueue.PushBack({eInputEventType::CONTROLLERREMOVED, id}); };
+        void ControllerButtonDown(Sint32 id, eControllerButton button) { InputEventsQueue.PushBack({eInputEventType::CONTROLLERBUTTONDOWN, id, button}); };
+        void ControllerButtonUp(Sint32 id, eControllerButton button) { InputEventsQueue.PushBack({eInputEventType::CONTROLLERBUTTONUP, id, button}); };
+        void ControllerAxisMotion(Sint32 id, eControllerAxis axis, Sint16 value) { InputEventsQueue.PushBack({eInputEventType::CONTROLLERAXIS, id, axis, value/35768.0f}); };
 
 		///functions for closing the game
 		bool IsQuitRequested() const;

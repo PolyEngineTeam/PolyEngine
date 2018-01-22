@@ -28,15 +28,15 @@ namespace Poly
 		InputEvent(eInputEventType type, eKey key) : Type(type), Key(key) {}
 		InputEvent(eInputEventType type, eMouseButton button) : Type(type), MouseButton(button) {}
 		InputEvent(eInputEventType type, const Vector2i& pos) : Type(type), Pos(pos) {}
-		InputEvent(eInputEventType type, SDL_GameController* controller) : Type(type), Controller(controller) {}
-		InputEvent(eInputEventType type, SDL_GameController* controller, eControllerButton button) : Type(type), Controller(controller), ControllerButton(button) {}
-		InputEvent(eInputEventType type, SDL_GameController* controller, eControllerAxis axis, float value) : Type(type), Controller(controller), ControllerAxis(axis), AxisValue(value) {}
+		InputEvent(eInputEventType type, Sint32 id, eControllerButton button) : Type(type), ControllerID(id), ControllerButton(button) {}
+		InputEvent(eInputEventType type, Sint32 id, eControllerAxis axis, float value) : Type(type), ControllerID(id), ControllerAxis(axis), AxisValue(value) {}
+		InputEvent(eInputEventType type, Sint32 id) : Type(type), ControllerID(id) {}
 
 		eInputEventType Type = eInputEventType::_COUNT;
 		eKey Key = eKey::_COUNT;
 		eMouseButton MouseButton = eMouseButton::_COUNT;
 		Vector2i Pos;
-        SDL_GameController* Controller;
+        Sint32 ControllerID;
         eControllerButton ControllerButton = eControllerButton::_COUNT;
         eControllerAxis ControllerAxis = eControllerAxis::_COUNT;
         float AxisValue;
