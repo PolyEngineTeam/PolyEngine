@@ -11,7 +11,7 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 {
 	// get physics world component and add telta time to delta overflow
 	Physics3DWorldComponent* physicsWorldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
-	physicsWorldCmp->LastDeltaOverflow += (float)TimeSystem::GetTimerDeltaTime(world, eEngineTimer::GAMEPLAY);
+	physicsWorldCmp->LastDeltaOverflow += (float)TimeSystem::GetTimerDeltaTime(world, eEngineTimer::GAMEPLAY) * physicsWorldCmp->Config.TimeFactor;
 	
 	// update all bullet rigidbodies from engine tranforms
 	for (auto tuple : world->IterateComponents<Rigidbody3DComponent, TransformComponent>())

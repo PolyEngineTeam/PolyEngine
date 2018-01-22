@@ -21,9 +21,9 @@ namespace Poly
 	struct ENGINE_DLLEXPORT Physics3DConfig
 	{
 	public:
-		const float TimeStep = 1.0f / 60.0f;
-		const Vector Gravity = Vector(0.f, -9.81f, 0.f);
-		const int MaxSimulationStepsPerFrame = 20;
+		float TimeStep = 1.f / 60.f;
+		Vector Gravity = Vector(0.f, -9.81f, 0.f);
+		float TimeFactor = 1.f;
 	};
 
 	/// World component contains configuration for physics simulation and 
@@ -48,11 +48,16 @@ namespace Poly
 		Physics3DWorldComponent(Physics3DConfig config);
 		~Physics3DWorldComponent();
 
-		void SetGravity(Vector g);
-		Vector GetGravity();
+		void SetGravity(const Vector& g);
+		void SetTimeStep(float timestep);
+		void SetTimeFactor(float factor);
+
+		const Vector& GetGravity() const { return Config.Gravity; }
+		float GetTimeStep() const { return Config.TimeStep; }
+		float GetTimeFactor() const { return Config.TimeFactor; }
 
 	private:
-		const Physics3DConfig Config;
+		Physics3DConfig Config;
 
 		std::unique_ptr<btDiscreteDynamicsWorld> DynamicsWorld;
 

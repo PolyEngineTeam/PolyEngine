@@ -17,20 +17,25 @@ Poly::Physics3DWorldComponent::Physics3DWorldComponent(Physics3DConfig config)
 	DynamicsWorld->setGravity(btVector3(config.Gravity.X, config.Gravity.Y, config.Gravity.Z));
 }
 
+//********************************************************************************************************************************************
 Poly::Physics3DWorldComponent::~Physics3DWorldComponent()
 {
 }
 
 //********************************************************************************************************************************************
-void Poly::Physics3DWorldComponent::SetGravity(Vector g)
+void Poly::Physics3DWorldComponent::SetGravity(const Vector& g)
 {
+	Config.Gravity = g;
 	DynamicsWorld->setGravity(btVector3(g.X, g.Y, g.Z));
 }
 
-//********************************************************************************************************************************************
-Poly::Vector Poly::Physics3DWorldComponent::GetGravity()
+void Poly::Physics3DWorldComponent::SetTimeStep(float timestep)
 {
-	btVector3 g = DynamicsWorld->getGravity();
+	Config.TimeStep = timestep;
+}
 
-	return Vector(g.getX(), g.getY(), g.getZ());
+void Poly::Physics3DWorldComponent::SetTimeFactor(float factor)
+{
+	Config.TimeStep *= factor / Config.TimeFactor;
+	Config.TimeFactor = factor;
 }

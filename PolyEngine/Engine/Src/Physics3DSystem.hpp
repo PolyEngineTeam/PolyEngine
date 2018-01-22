@@ -16,10 +16,12 @@ namespace Poly
 	{
 		TRIGGER = 0x01,
 		RIGIDBODY = 0x02,
-		RIGIDBODY_GREEN = 0x04,
-		RIGIDBODY_RED = 0x08,
-		TRIGGER_GREEN = 0x16,
+		RIGIDBODY_RED = 0x04,
+		RIGIDBODY_GREEN = 0x08,
+		RIGIDBODY_BLUE = 0x16,
 		TRIGGER_RED = 0x32,
+		TRIGGER_GREEN = 0x64,
+		TRIGGER_BLUE = 0x128,
 	};
 
 	/// Contains dynarray of contacts. 
