@@ -16,6 +16,10 @@ namespace Poly
 	{
 		TRIGGER = 0x01,
 		RIGIDBODY = 0x02,
+		RIGIDBODY_GREEN = 0x04,
+		RIGIDBODY_RED = 0x08,
+		TRIGGER_GREEN = 0x16,
+		TRIGGER_RED = 0x32,
 	};
 
 	/// Contains dynarray of contacts. 
@@ -101,8 +105,6 @@ namespace Poly
 		//********************************************************************************************************************************************
 		// registration
 
-
-			// FIXME(squares): what to do when registering rigidbody after collider registration on the same entity
 
 		/// You can have @see[Rigidbody3DComponent] added to entity but till it's not registered 
 		/// it won't be considered in physics simulation (until You call @see[UnregisterRigidBody]).

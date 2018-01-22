@@ -10,7 +10,6 @@
 void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 {
 	// get physics world component and add telta time to delta overflow
-		// FIXME(squares): bullet lags without loosing FPS 
 	Physics3DWorldComponent* physicsWorldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
 	physicsWorldCmp->LastDeltaOverflow += (float)TimeSystem::GetTimerDeltaTime(world, eEngineTimer::GAMEPLAY);
 	
@@ -26,9 +25,13 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 		Physics3DSystem::EnsureInit(world, rigidbody->GetOwnerID());
 		rigidbody->UpdatePosition();
 	}
-	
-	// step simulation
-	physicsWorldCmp->DynamicsWorld->stepSimulation((float)TimeSystem::GetTimerDeltaTime(world, eEngineTimer::GAMEPLAY), physicsWorldCmp->Config.MaxSimulationStepsPerFrame);
+
+	// Update physics simulation, maintain fixed step
+	while (physicsWorldCmp->LastDeltaOverflow >= physicsWorldCmp->Config.TimeStep)
+	{
+		physicsWorldCmp->LastDeltaOverflow -= physicsWorldCmp->Config.TimeStep;
+		physicsWorldCmp->DynamicsWorld->stepSimulation(physicsWorldCmp->Config.TimeStep, 0);
+	}
 	
 	// update all engine transform from bullet rigidbodies
 	for (auto tuple : world->IterateComponents<Rigidbody3DComponent, TransformComponent>())
@@ -215,7 +218,9 @@ void Poly::Physics3DSystem::RegisterRigidbody(World* world, const UniqueID& enti
 	Rigidbody3DComponent* rigidbody = world->GetComponent<Rigidbody3DComponent>(entityID);
 	Collider3DComponent* collider = world->GetComponent<Collider3DComponent>(entityID);
 
+		// FIXME(squares): ucrtbase exception here
 	//ASSERTE(!rigidbody->Template->Registered, "You cant register rigidbody when it is already registered.");
+	//ASSERTE(!collider->Template->Registered, "You cant register rigidbody when collider it is already registered.");
 
 	collider->Template->CollisionGroup = collisionGroup;
 	collider->Template->CollisionMask = collidesWith;
