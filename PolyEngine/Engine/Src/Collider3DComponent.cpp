@@ -26,7 +26,7 @@ Poly::Collider3DComponent::Collider3DComponent(World* world, Collider3DComponent
 //********************************************************************************************************************************************
 Poly::Collider3DComponent::~Collider3DComponent()
 {
-	if (Template->Registered)
+	if (Template->Registered && !GetSibling<Rigidbody3DComponent>())
 		Physics3DSystem::UnregisterCollider(BodyWorld, GetOwnerID());
 }
 

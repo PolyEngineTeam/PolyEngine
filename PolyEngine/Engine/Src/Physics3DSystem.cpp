@@ -19,7 +19,7 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 	{
 		Rigidbody3DComponent* rigidbody = std::get<Rigidbody3DComponent*>(tuple);
 	
-		// ship if rigidbody was not registered
+		// skip if rigidbody was not registered
 		if (!rigidbody->IsRegistered())
 			continue;
 	
@@ -215,7 +215,7 @@ void Poly::Physics3DSystem::RegisterRigidbody(World* world, const UniqueID& enti
 	Rigidbody3DComponent* rigidbody = world->GetComponent<Rigidbody3DComponent>(entityID);
 	Collider3DComponent* collider = world->GetComponent<Collider3DComponent>(entityID);
 
-	ASSERTE(!rigidbody->Template->Registered, "You cant register rigidbody when it is already registered.");
+	//ASSERTE(!rigidbody->Template->Registered, "You cant register rigidbody when it is already registered.");
 
 	collider->Template->CollisionGroup = collisionGroup;
 	collider->Template->CollisionMask = collidesWith;

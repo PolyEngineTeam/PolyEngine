@@ -115,11 +115,11 @@ btMultiBody::btMultiBody(int n_links,
 		m_linearDamping(0.04f),
 		m_angularDamping(0.04f),
 		m_useGyroTerm(true),
-			m_maxAppliedImpulse(1000.f),
+		m_maxAppliedImpulse(1000.f),
 		m_maxCoordinateVelocity(100.f),
-			m_hasSelfCollision(true),		
+		m_hasSelfCollision(true),		
 		__posUpdated(false),
-			m_dofCount(0),
+		m_dofCount(0),
 		m_posVarCnt(0),
 		m_useRK4(false), 	
 		m_useGlobalVelocities(false),
@@ -749,7 +749,7 @@ void btMultiBody::computeAccelerationsArticulatedBodyAlgorithmMultiDof(btScalar 
     // Temporary matrices/vectors -- use scratch space from caller
     // so that we don't have to keep reallocating every frame
 
-    scratch_r.resize(2*m_dofCount + 6);				//multidof? ("Y"s use it and it is used to store qdd) => 2 x m_dofCount
+    scratch_r.resize(2*m_dofCount + 7);				//multidof? ("Y"s use it and it is used to store qdd) => 2 x m_dofCount
     scratch_v.resize(8*num_links + 6);
     scratch_m.resize(4*num_links + 4);
 
@@ -1280,7 +1280,7 @@ void btMultiBody::solveImatrix(const btVector3& rhs_top, const btVector3& rhs_bo
 	{
 		result[0] = rhs_bot[0] / m_baseInertia[0];
 		result[1] = rhs_bot[1] / m_baseInertia[1];
-        	result[2] = rhs_bot[2] / m_baseInertia[2];
+        result[2] = rhs_bot[2] / m_baseInertia[2];
 	} else
 	{
 		result[0] = 0;
@@ -1994,7 +1994,11 @@ int	btMultiBody::calculateSerializeBufferSize()	const
 const char*	btMultiBody::serialize(void* dataBuffer, class btSerializer* serializer) const
 {
 		btMultiBodyData* mbd = (btMultiBodyData*) dataBuffer;
-		getBaseWorldTransform().serialize(mbd->m_baseWorldTransform);
+		getBasePos().serialize(mbd->m_baseWorldPosition);
+		getWorldToBaseRot().inverse().serialize(mbd->m_baseWorldOrientation);
+		getBaseVel().serialize(mbd->m_baseLinearVelocity);
+		getBaseOmega().serialize(mbd->m_baseAngularVelocity);
+
 		mbd->m_baseMass = this->getBaseMass();
 		getBaseInertia().serialize(mbd->m_baseInertia);
 		{
@@ -2020,6 +2024,12 @@ const char*	btMultiBody::serialize(void* dataBuffer, class btSerializer* seriali
 				memPtr->m_posVarCount = getLink(i).m_posVarCount;
 				
 				getLink(i).m_inertiaLocal.serialize(memPtr->m_linkInertia);
+
+				getLink(i).m_absFrameTotVelocity.m_topVec.serialize(memPtr->m_absFrameTotVelocityTop);
+				getLink(i).m_absFrameTotVelocity.m_bottomVec.serialize(memPtr->m_absFrameTotVelocityBottom);
+				getLink(i).m_absFrameLocVelocity.m_topVec.serialize(memPtr->m_absFrameLocVelocityTop);
+				getLink(i).m_absFrameLocVelocity.m_bottomVec.serialize(memPtr->m_absFrameLocVelocityBottom);
+
 				memPtr->m_linkMass = getLink(i).m_mass;
 				memPtr->m_parentIndex = getLink(i).m_parent;
 				memPtr->m_jointDamping = getLink(i).m_jointDamping;
@@ -2029,7 +2039,7 @@ const char*	btMultiBody::serialize(void* dataBuffer, class btSerializer* seriali
 				memPtr->m_jointMaxForce = getLink(i).m_jointMaxForce;
 				memPtr->m_jointMaxVelocity = getLink(i).m_jointMaxVelocity;
 
-				getLink(i).m_eVector.serialize(memPtr->m_parentComToThisComOffset);
+				getLink(i).m_eVector.serialize(memPtr->m_parentComToThisPivotOffset);
 				getLink(i).m_dVector.serialize(memPtr->m_thisPivotToThisComOffset);
 				getLink(i).m_zeroRotParentToThis.serialize(memPtr->m_zeroRotParentToThis);
 				btAssert(memPtr->m_dofCount<=3);
