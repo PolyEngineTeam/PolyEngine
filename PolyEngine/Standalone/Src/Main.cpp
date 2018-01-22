@@ -93,29 +93,24 @@ int main(int argc, char* args[])
 			{
 			// TODO add controller support
             case SDL_CONTROLLERBUTTONDOWN:
-                Poly::gConsole.LogDebug("Button down");
                 Engine->ControllerButtonDown(event.cbutton.which, static_cast<Poly::eControllerButton>(event.cbutton.button));
                 break;
             case SDL_CONTROLLERBUTTONUP:
-                Poly::gConsole.LogDebug("button up");
                 Engine->ControllerButtonUp(event.cbutton.which, static_cast<Poly::eControllerButton>(event.cbutton.button));
                 break;
             case SDL_CONTROLLERAXISMOTION:
-                Poly::gConsole.LogDebug("axis");
                 Engine->ControllerAxisMotion(event.caxis.which, static_cast<Poly::eControllerAxis>(event.caxis.axis), event.caxis.value);
                 break;
             case SDL_CONTROLLERDEVICEADDED:
-                Poly::gConsole.LogDebug("controller added");
                 Engine->AddController(event.cdevice.which);
                 break;
             case SDL_CONTROLLERDEVICEREMOVED:
-                Poly::gConsole.LogDebug("controller removed");
+                Engine->RemoveController(event.cdevice.which);
                 break;
 			case SDL_QUIT:
 				quitRequested = true;
 				break;
 			case SDL_KEYDOWN:
-                Poly::gConsole.LogDebug("SDL_KEYDOWN");
 				Engine->KeyDown(static_cast<Poly::eKey>(event.key.keysym.scancode));
 				break;
 			case SDL_KEYUP:
