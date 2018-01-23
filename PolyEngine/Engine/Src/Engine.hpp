@@ -94,15 +94,29 @@ namespace Poly
 		/// <param name="pos">Wheel delta position.</param>
 		void UpdateWheelPos(const Vector2i& deltaPos) { InputEventsQueue.PushBack({eInputEventType::WHEELMOVE, deltaPos}); }
 
-        void AddController(Sint32 id) {
-            SDL_GameController* gcptr = SDL_GameControllerOpen(id);
-            InputEventsQueue.PushBack({eInputEventType::CONTROLLERADDED, id});
-            SDL_Joystick* jptr = SDL_GameControllerGetJoystick(gcptr);
-        };
-        void RemoveController(Sint32 id) { InputEventsQueue.PushBack({eInputEventType::CONTROLLERREMOVED, id}); };
-        void ControllerButtonDown(Sint32 id, eControllerButton button) { InputEventsQueue.PushBack({eInputEventType::CONTROLLERBUTTONDOWN, id, button}); };
-        void ControllerButtonUp(Sint32 id, eControllerButton button) { InputEventsQueue.PushBack({eInputEventType::CONTROLLERBUTTONUP, id, button}); };
-        void ControllerAxisMotion(Sint32 id, eControllerAxis axis, Sint16 value) { InputEventsQueue.PushBack({eInputEventType::CONTROLLERAXIS, id, axis, value/35768.0f}); };
+        /// <summary>Pushes adding input controller event to an input queue with specified SDL_GameController id</summary>
+        /// <param name="id">SDL Game Controller id</param>
+        void AddController(Sint32 id) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_ADDED, id}); };
+
+        /// <summary>Pushes removing input controller event to an input queue with specified SDL_Joystick instance id</summary>
+        /// <param name="id">SDL Joystick instance id</param>
+        void RemoveController(Sint32 id) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_REMOVED, id}); };
+
+        /// <summary>Pushes controller button down event to an input queue</summary>
+        /// <param name="id">SDL Joystick instance id</param>
+        /// <param name="button">Button pressed enum instance</param>
+        void ControllerButtonDown(Sint32 id, eControllerButton button) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_BUTTON_DOWN, id, button}); };
+
+        /// <summary>Pushes controller button up event to an input queue</summary>
+        /// <param name="id">SDL Joystick instance id</param>
+        /// <param name="button">Button released enum instance</param>
+        void ControllerButtonUp(Sint32 id, eControllerButton button) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_BUTTON_UP, id, button}); };
+
+        /// <summary>Pushes controller axis motion event to an input queue</summary>
+        /// <param name="id">SDL Joystick instance id</param>
+        /// <param name="axis">Axis enum instance</param>
+        /// <param name="value">New axis position (SDL raw, not normalized)</param>
+        void ControllerAxisMotion(Sint32 id, eControllerAxis axis, Sint16 value) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_AXIS_MOTION, id, axis, value/35768.0f}); };
 
 		///functions for closing the game
 		bool IsQuitRequested() const;

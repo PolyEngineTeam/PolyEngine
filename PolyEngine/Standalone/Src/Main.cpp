@@ -36,10 +36,6 @@ int main(int argc, char* args[])
 	}
 	Poly::gConsole.LogDebug("SDL initialized.");
 
-//    int num = SDL_NumJoysticks();
-//    SDL_GameControllerOpen(0);
-//    Poly::gConsole.LogDebug(SDL_GameControllerNameForIndex(0));
-
 	// Initial screen size
 	Poly::ScreenSize screenSize;
 	screenSize.Width = 800;
@@ -91,22 +87,6 @@ int main(int argc, char* args[])
 		{
 			switch (event.type)
 			{
-			// TODO add controller support
-            case SDL_CONTROLLERBUTTONDOWN:
-                Engine->ControllerButtonDown(event.cbutton.which, static_cast<Poly::eControllerButton>(event.cbutton.button));
-                break;
-            case SDL_CONTROLLERBUTTONUP:
-                Engine->ControllerButtonUp(event.cbutton.which, static_cast<Poly::eControllerButton>(event.cbutton.button));
-                break;
-            case SDL_CONTROLLERAXISMOTION:
-                Engine->ControllerAxisMotion(event.caxis.which, static_cast<Poly::eControllerAxis>(event.caxis.axis), event.caxis.value);
-                break;
-            case SDL_CONTROLLERDEVICEADDED:
-                Engine->AddController(event.cdevice.which);
-                break;
-            case SDL_CONTROLLERDEVICEREMOVED:
-                Engine->RemoveController(event.cdevice.which);
-                break;
 			case SDL_QUIT:
 				quitRequested = true;
 				break;
@@ -129,6 +109,21 @@ int main(int argc, char* args[])
 				// Not sure if this is correct.
 				Engine->UpdateWheelPos(Poly::Vector2i(event.wheel.x, event.wheel.y));
 				break;
+            case SDL_CONTROLLERBUTTONDOWN:
+                Engine->ControllerButtonDown(event.cbutton.which, static_cast<Poly::eControllerButton>(event.cbutton.button));
+                break;
+            case SDL_CONTROLLERBUTTONUP:
+                Engine->ControllerButtonUp(event.cbutton.which, static_cast<Poly::eControllerButton>(event.cbutton.button));
+                break;
+            case SDL_CONTROLLERAXISMOTION:
+                Engine->ControllerAxisMotion(event.caxis.which, static_cast<Poly::eControllerAxis>(event.caxis.axis), event.caxis.value);
+                break;
+            case SDL_CONTROLLERDEVICEADDED:
+                Engine->AddController(event.cdevice.which);
+                break;
+            case SDL_CONTROLLERDEVICEREMOVED:
+                Engine->RemoveController(event.cdevice.which);
+                break;
 			case SDL_WINDOWEVENT:
 				HandleWindowEvent(event.window);
 				break;

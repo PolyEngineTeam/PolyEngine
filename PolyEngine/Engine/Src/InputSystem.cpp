@@ -49,7 +49,7 @@ void InputSystem::InputPhase(World* world)
 		case eInputEventType::WHEELMOVE:
 			com->CurrWheel += ev.Pos;
 			break;
-		case eInputEventType::CONTROLLERADDED:
+		case eInputEventType::CONTROLLER_ADDED:
         {
             SDL_GameController *controller = SDL_GameControllerOpen(ev.ControllerID);
             com->Controllers[controller] = Controller();
@@ -66,7 +66,7 @@ void InputSystem::InputPhase(World* world)
             }
             break;
         }
-		case eInputEventType::CONTROLLERREMOVED:
+		case eInputEventType::CONTROLLER_REMOVED:
             for (auto it=com->ControllerPointers.Begin(); it!=com->ControllerPointers.End(); ++it)
             {
                 SDL_GameController* controllerPtr = *it;
@@ -81,21 +81,21 @@ void InputSystem::InputPhase(World* world)
             }
             ASSERTE(true, "Could not remove controller");
 			break;
-		case eInputEventType::CONTROLLERBUTTONDOWN:
+		case eInputEventType::CONTROLLER_BUTTON_DOWN:
         {
             std::cout << static_cast<int>(ev.ControllerButton) << std::endl;
             SDL_GameController *controller = SDL_GameControllerFromInstanceID(ev.ControllerID);
             com->Controllers.at(controller).CurrButton[ev.ControllerButton] = true;
             break;
         }
-		case eInputEventType::CONTROLLERBUTTONUP:
+		case eInputEventType::CONTROLLER_BUTTON_UP:
         {
             std::cout << static_cast<int>(ev.ControllerButton) << std::endl;
             SDL_GameController *controller = SDL_GameControllerFromInstanceID(ev.ControllerID);
             com->Controllers.at(controller).CurrButton[ev.ControllerButton] = false;
             break;
         }
-		case eInputEventType::CONTROLLERAXIS:
+		case eInputEventType::CONTROLLER_AXIS_MOTION:
         {
             std::cout << static_cast<int>(ev.ControllerButton) << std::endl;
             SDL_GameController *controller = SDL_GameControllerFromInstanceID(ev.ControllerID);
