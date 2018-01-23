@@ -35,46 +35,20 @@ namespace Poly
 		bool IsClicked(eMouseButton button) const { return (CurrMouseButton[button] && !PrevMouseButton[button]); }
 		bool IsReleased(eMouseButton button) const { return (!CurrMouseButton[button] && PrevMouseButton[button]); }
 
-        bool IsPressed(size_t controllerID, eControllerButton button) const
-        {
-            if(ControllerPointers.GetSize() <= controllerID)
-            {
-                return false;
-            }
-            SDL_GameController* controller = ControllerPointers[controllerID];
-            if(controller != nullptr)
-            {
-                return Controllers.at(controller).CurrButton[button];
-            }
-            else
-            {
-                return false;
-            }
-        }
-
 		const Vector2i& GetMousePos() const { return CurrMouse; }
-		Vector2i GetMousePosDelta() const  { return CurrMouse - PrevMouse; }
+        Vector2i GetMousePosDelta() const  { return CurrMouse - PrevMouse; }
 
 		const Vector2i& GetWheelPos() const { return CurrWheel; }
-		Vector2i GetWheelPosDelta() const { return CurrWheel - PrevWheel; }
+        Vector2i GetWheelPosDelta() const { return CurrWheel - PrevWheel; }
 
-        float GetControllerAxis(size_t controllerID, eControllerAxis axis) const
-        {
-            if(ControllerPointers.GetSize() <= controllerID)
-            {
-                return 0.0f;
-            }
-            SDL_GameController* controller = ControllerPointers[controllerID];
-            if(controller != nullptr)
-            {
-                return Controllers.at(controller).CurrAxis[axis];
-            }
-            else
-            {
-                return false;
-            }
-        }
-	private:
+        bool IsPressed(size_t controllerID, eControllerButton button) const;
+        bool IsClicked(size_t controllerID, eControllerButton button) const;
+        bool IsReleased(size_t controllerID, eControllerButton button) const;
+
+        float GetControllerAxis(size_t controllerID, eControllerAxis axis) const;
+        float GetControllerAxisDelta(size_t controllerID, eControllerAxis axis) const;
+
+    private:
 		EnumArray<bool, eKey> CurrKey;
 		EnumArray<bool, eKey> PrevKey;
 		EnumArray<bool, eMouseButton> CurrMouseButton;

@@ -54,15 +54,20 @@ void InputSystem::InputPhase(World* world)
             SDL_GameController *controller = SDL_GameControllerOpen(ev.ControllerID);
             com->Controllers[controller] = Controller();
             bool controllerAssigned = false;
-            for (auto it = com->ControllerPointers.Begin(); it != com->ControllerPointers.End(); ++it) {
-                if (*it == nullptr) {
+            for (auto it = com->ControllerPointers.Begin(); it != com->ControllerPointers.End(); ++it)
+            {
+                if (*it == nullptr)
+                {
                     *it = controller;
                     controllerAssigned = true;
+                    Poly::gConsole.LogDebug("Controller added in existing place");
                     break;
                 }
             }
-            if (!controllerAssigned) {
+            if (!controllerAssigned)
+            {
                 com->ControllerPointers.PushBack(controller);
+                Poly::gConsole.LogDebug("Controller added in new place");
             }
             break;
         }
@@ -70,12 +75,13 @@ void InputSystem::InputPhase(World* world)
             for (auto it=com->ControllerPointers.Begin(); it!=com->ControllerPointers.End(); ++it)
             {
                 SDL_GameController* controllerPtr = *it;
-                SDL_Joystick* jptr = SDL_GameControllerGetJoystick(controllerPtr);
-                Sint32 joystickID = SDL_JoystickInstanceID(jptr);
+                SDL_Joystick* joystickPtr = SDL_GameControllerGetJoystick(controllerPtr);
+                Sint32 joystickID = SDL_JoystickInstanceID(joystickPtr);
                 if(joystickID == ev.ControllerID) {
                     SDL_GameControllerClose(controllerPtr);
                     com->Controllers.erase(controllerPtr);
                     *it = nullptr;
+                    Poly::gConsole.LogDebug("Controller removed");
                     break;
                 }
             }
@@ -83,21 +89,18 @@ void InputSystem::InputPhase(World* world)
 			break;
 		case eInputEventType::CONTROLLER_BUTTON_DOWN:
         {
-            std::cout << static_cast<int>(ev.ControllerButton) << std::endl;
             SDL_GameController *controller = SDL_GameControllerFromInstanceID(ev.ControllerID);
             com->Controllers.at(controller).CurrButton[ev.ControllerButton] = true;
             break;
         }
 		case eInputEventType::CONTROLLER_BUTTON_UP:
         {
-            std::cout << static_cast<int>(ev.ControllerButton) << std::endl;
             SDL_GameController *controller = SDL_GameControllerFromInstanceID(ev.ControllerID);
             com->Controllers.at(controller).CurrButton[ev.ControllerButton] = false;
             break;
         }
 		case eInputEventType::CONTROLLER_AXIS_MOTION:
         {
-            std::cout << static_cast<int>(ev.ControllerButton) << std::endl;
             SDL_GameController *controller = SDL_GameControllerFromInstanceID(ev.ControllerID);
             com->Controllers.at(controller).CurrAxis[ev.ControllerAxis] = ev.AxisValue;
             break;
