@@ -102,3 +102,15 @@ float Poly::InputWorldComponent::GetControllerAxisDelta(size_t controllerID, eCo
 		return false;
 	}
 }
+
+bool Poly::InputWorldComponent::IsControllerConnected(size_t idx) const
+{
+	if(ControllerPointers.GetSize() <= idx)
+	{
+		return false;
+	}
+	else
+	{
+		return ControllerPointers[idx] != nullptr;
+	}
+}

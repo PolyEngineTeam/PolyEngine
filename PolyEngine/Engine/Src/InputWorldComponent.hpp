@@ -48,6 +48,9 @@ namespace Poly
         float GetControllerAxis(size_t controllerID, eControllerAxis axis) const;
         float GetControllerAxisDelta(size_t controllerID, eControllerAxis axis) const;
 
+        size_t GetControllersCount() const { ControllerPointers.GetSize(); }
+        bool IsControllerConnected(size_t idx) const;
+
     private:
 		EnumArray<bool, eKey> CurrKey;
 		EnumArray<bool, eKey> PrevKey;
