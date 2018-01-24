@@ -9,8 +9,8 @@
 
 namespace Poly
 {
-    struct Controller {
-        Controller() = default;
+    struct ControllerState {
+        ControllerState() = default;
 
         EnumArray<bool, eControllerButton> CurrButton;
         EnumArray<bool, eControllerButton> PrevButton;
@@ -41,14 +41,15 @@ namespace Poly
 		const Vector2i& GetWheelPos() const { return CurrWheel; }
         Vector2i GetWheelPosDelta() const { return CurrWheel - PrevWheel; }
 
-        bool IsPressed(size_t controllerID, eControllerButton button) const;
-        bool IsClicked(size_t controllerID, eControllerButton button) const;
-        bool IsReleased(size_t controllerID, eControllerButton button) const;
+        bool IsPressed(size_t playerID, eControllerButton button) const;
+        bool IsClicked(size_t playerID, eControllerButton button) const;
+        bool IsReleased(size_t playerID, eControllerButton button) const;
 
-        float GetControllerAxis(size_t controllerID, eControllerAxis axis) const;
-        float GetControllerAxisDelta(size_t controllerID, eControllerAxis axis) const;
+        float GetControllerAxis(size_t playerID, eControllerAxis axis) const;
+        float GetControllerAxisDelta(size_t playerID, eControllerAxis axis) const;
 
-        size_t GetControllersCount() const { ControllerPointers.GetSize(); }
+        size_t GetConnectedControllersCount() const { return PlayerIDToJoystickID.size(); }
+		size_t* GetConnectedControllersIDs() const;
         bool IsControllerConnected(size_t idx) const;
 
     private:
@@ -60,8 +61,9 @@ namespace Poly
 		Vector2i PrevMouse;
 		Vector2i CurrWheel;
 		Vector2i PrevWheel;
-        std::unordered_map<SDL_GameController*, Controller> Controllers;
-        Dynarray<SDL_GameController*> ControllerPointers;
+        std::unordered_map<i32, ControllerState> Controllers;
+        std::unordered_map<size_t, i32> PlayerIDToJoystickID;
+        std::unordered_map<i32, size_t> JoystickIDToPlayerID;
 	};
 
 	REGISTER_COMPONENT(WorldComponentsIDGroup, InputWorldComponent)

@@ -18,99 +18,56 @@ bool Poly::InputWorldComponent::IsPressed(const std::initializer_list<eMouseButt
 	return result;
 }
 
-bool Poly::InputWorldComponent::IsPressed(size_t controllerID, eControllerButton button) const
+bool Poly::InputWorldComponent::IsPressed(size_t playerID, eControllerButton button) const
 {
-	if(ControllerPointers.GetSize() <= controllerID)
-	{
-		return false;
-	}
-	SDL_GameController* controller = ControllerPointers[controllerID];
-	if(controller != nullptr)
-	{
-		return Controllers.at(controller).CurrButton[button];
-	}
-	else
-	{
-		return false;
-	}
+	ASSERTE(IsControllerConnected(playerID), "Controller not connected!");
+	i32 joystickID = PlayerIDToJoystickID.at(playerID);
+	return Controllers.at(joystickID).CurrButton[button];
 }
 
-bool Poly::InputWorldComponent::IsClicked(size_t controllerID, eControllerButton button) const
+bool Poly::InputWorldComponent::IsClicked(size_t playerID, eControllerButton button) const
 {
-	if(ControllerPointers.GetSize() <= controllerID)
-	{
-		return false;
-	}
-	SDL_GameController* controller = ControllerPointers[controllerID];
-	if(controller != nullptr)
-	{
-		return Controllers.at(controller).CurrButton[button] && !Controllers.at(controller).PrevButton[button];
-	}
-	else
-	{
-		return false;
-	}
+	ASSERTE(IsControllerConnected(playerID), "Controller not connected!");
+	i32 joystickID = PlayerIDToJoystickID.at(playerID);
+	return Controllers.at(joystickID).CurrButton[button] && !Controllers.at(playerID).PrevButton[button];
 }
 
-bool Poly::InputWorldComponent::IsReleased(size_t controllerID, eControllerButton button) const
+bool Poly::InputWorldComponent::IsReleased(size_t playerID, eControllerButton button) const
 {
-	if(ControllerPointers.GetSize() <= controllerID)
-	{
-		return false;
-	}
-	SDL_GameController* controller = ControllerPointers[controllerID];
-	if(controller != nullptr)
-	{
-		return !Controllers.at(controller).CurrButton[button] && Controllers.at(controller).PrevButton[button];
-	}
-	else
-	{
-		return false;
-	}
+	ASSERTE(IsControllerConnected(playerID), "Controller not connected!");
+	i32 joystickID = PlayerIDToJoystickID.at(playerID);
+	return !Controllers.at(joystickID).CurrButton[button] && Controllers.at(playerID).PrevButton[button];
 }
 
-float Poly::InputWorldComponent::GetControllerAxis(size_t controllerID, eControllerAxis axis) const
+float Poly::InputWorldComponent::GetControllerAxis(size_t playerID, eControllerAxis axis) const
 {
-	if(ControllerPointers.GetSize() <= controllerID)
-	{
-		return 0.0f;
-	}
-	SDL_GameController* controller = ControllerPointers[controllerID];
-	if(controller != nullptr)
-	{
-		return Controllers.at(controller).CurrAxis[axis];
-	}
-	else
-	{
-		return false;
-	}
+	ASSERTE(IsControllerConnected(playerID), "Controller not connected!");
+	i32 joystickID = PlayerIDToJoystickID.at(playerID);
+	return Controllers.at(joystickID).CurrAxis[axis];
 }
 
-float Poly::InputWorldComponent::GetControllerAxisDelta(size_t controllerID, eControllerAxis axis) const
+float Poly::InputWorldComponent::GetControllerAxisDelta(size_t playerID, eControllerAxis axis) const
 {
-	if(ControllerPointers.GetSize() <= controllerID)
+	ASSERTE(IsControllerConnected(playerID), "Controller not connected!");
+	i32 joystickID = PlayerIDToJoystickID.at(playerID);
+	return Controllers.at(joystickID).CurrAxis[axis] && !Controllers.at(playerID).PrevAxis[axis];
+}
+
+size_t* Poly::InputWorldComponent::GetConnectedControllersIDs() const
+{
+	size_t arraySize = GetConnectedControllersCount();
+	size_t* controllersIDs = new size_t[arraySize];
+	size_t idx = 0;
+	for(auto& pair : PlayerIDToJoystickID)
 	{
-		return 0.0f;
+		controllersIDs[idx] = pair.first;
+		++idx;
 	}
-	SDL_GameController* controller = ControllerPointers[controllerID];
-	if(controller != nullptr)
-	{
-		return Controllers.at(controller).CurrAxis[axis] - Controllers.at(controller).PrevAxis[axis];
-	}
-	else
-	{
-		return false;
-	}
+	std::sort(controllersIDs, controllersIDs + arraySize);
+	return controllersIDs;
 }
 
 bool Poly::InputWorldComponent::IsControllerConnected(size_t idx) const
 {
-	if(ControllerPointers.GetSize() <= idx)
-	{
-		return false;
-	}
-	else
-	{
-		return ControllerPointers[idx] != nullptr;
-	}
+	return PlayerIDToJoystickID.find(idx) != PlayerIDToJoystickID.end();
 }

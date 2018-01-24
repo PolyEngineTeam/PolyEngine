@@ -119,8 +119,13 @@ int main(int argc, char* args[])
                 Engine->ControllerAxisMotion(event.caxis.which, static_cast<Poly::eControllerAxis>(event.caxis.axis), event.caxis.value);
                 break;
             case SDL_CONTROLLERDEVICEADDED:
-                Engine->AddController(event.cdevice.which);
-                break;
+			{
+				SDL_GameController *controller = SDL_GameControllerOpen(event.cdevice.which);
+				SDL_Joystick* joystickPtr = SDL_GameControllerGetJoystick(controller);
+				i32 joystickID = SDL_JoystickInstanceID(joystickPtr);
+				Engine->AddController(joystickID);
+				break;
+			}
             case SDL_CONTROLLERDEVICEREMOVED:
                 Engine->RemoveController(event.cdevice.which);
                 break;
