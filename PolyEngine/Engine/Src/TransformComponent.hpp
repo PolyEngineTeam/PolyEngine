@@ -7,12 +7,8 @@ namespace Poly
 	class ENGINE_DLLEXPORT TransformComponent : public ComponentBase
 	{
 	public:
-		TransformComponent(TransformComponent* parent = nullptr) { if(parent) SetParent(parent); };
+		TransformComponent(TransformComponent* parent = nullptr) { if(parent) GetOwner()->SetParent(parent->GetOwner()); }; //TODO_M get rid of this
 		~TransformComponent();
-
-		const TransformComponent* GetParent() const { return Parent; }
-		void SetParent(TransformComponent* parent);
-		void ResetParent();
 
 		const Vector& GetGlobalTranslation() const;
 		const Vector& GetLocalTranslation() const { return LocalTranslation; };
@@ -31,10 +27,10 @@ namespace Poly
 		const Matrix& GetGlobalTransformationMatrix() const;
 		void SetLocalTransformationMatrix(const Matrix& localTransformation);
 		
-		const Dynarray<TransformComponent*>& GetChildren() const { return Children; }
 	private:
-		TransformComponent* Parent = nullptr;
-		Dynarray<TransformComponent*> Children;
+		void SetParentTransform(TransformComponent* parent);
+		void ResetParentTransform();
+
 
 		Vector LocalTranslation;
 		mutable Vector GlobalTranslation;
@@ -51,6 +47,8 @@ namespace Poly
 		bool UpdateLocalTransformationCache() const;
 		void UpdateGlobalTransformationCache() const;
 		void SetGlobalDirty() const;
+
+		friend class Entity;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, TransformComponent)

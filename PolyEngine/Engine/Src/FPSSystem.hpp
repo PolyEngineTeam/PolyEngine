@@ -12,7 +12,7 @@ namespace Poly
 		{
 			int FPS;
 			double ElapsedTime;
-			UniqueID TextID;
+			SafePtr<Entity> TextEnt;
 		};
 
 		float ENGINE_DLLEXPORT GetFPS(World* world);

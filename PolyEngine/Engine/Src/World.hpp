@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <Core.hpp>
 
+#include "SafePtr.hpp"
 #include "Entity.hpp"
 #include "Engine.hpp"
 
@@ -12,9 +13,9 @@ namespace Poly {
 
 	namespace DeferredTaskSystem
 	{
-		UniqueID ENGINE_DLLEXPORT SpawnEntityImmediate(World* w);
-		void ENGINE_DLLEXPORT DestroyEntityImmediate(World* w, const UniqueID& entityId);
-		template<typename T, typename ...Args> T* AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args);
+		ENGINE_DLLEXPORT Entity* SpawnEntityImmediate(World* w);
+		ENGINE_DLLEXPORT void DestroyEntityImmediate(World* w, Entity* entity);
+		template<typename T, typename ...Args> T* AddComponentImmediate(World* w, Entity* entity, Args && ...args);
 		template<typename T, typename ...Args> T* AddWorldComponentImmediate(World* w, Args && ...args);
 		template<typename T> void RemoveWorldComponentImmediate(World* w);
 	}
@@ -42,12 +43,10 @@ namespace Poly {
 		/// <see cref="World.AddComponent()">
 		/// <see cref="World.RemoveComponent()">
 		template<typename T>
-		T* GetComponent(const UniqueID& entityId)
+		T* GetComponent(Entity* entity)
 		{
-			HEAVY_ASSERTE(!!entityId, "Invalid entity ID");
-			auto iter = IDToEntityMap.find(entityId);
-			HEAVY_ASSERTE(iter != IDToEntityMap.end(), "Invalid entityId - entity with that ID does not exist!");
-			return iter->second->GetComponent<T>();
+			HEAVY_ASSERTE(entity, "Invalid entity - entity with that ID does not exist!");
+			return entity->GetComponent<T>();
 		}
 
 		/// <summary>Checks whether world has component of given ID.</summary>
@@ -158,48 +157,47 @@ namespace Poly {
 		template<typename T,typename... Args> friend class AddComponentDeferredTask;
 		template<typename T> friend class RemoveComponentDeferredTask;
 
-		friend UniqueID DeferredTaskSystem::SpawnEntityImmediate(World*);
-		friend void DeferredTaskSystem::DestroyEntityImmediate(World* w, const UniqueID& entityId);
-		template<typename T, typename ...Args> friend T* DeferredTaskSystem::AddComponentImmediate(World* w, const UniqueID & entityId, Args && ...args);
-		template<typename T, typename ...Args> friend T* DeferredTaskSystem::AddWorldComponentImmediate(World* w, Args && ...args);
+		friend Entity* DeferredTaskSystem::SpawnEntityImmediate(World*);
+		friend void DeferredTaskSystem::DestroyEntityImmediate(World* w, Entity* entity);
+		template<typename T, typename ...Args> friend T* DeferredTaskSystem::AddComponentImmediate(World* w, Entity* entity, Args && ...args);
+		template<typename T, typename ...Args> friend T* DeferredTaskSystem::AddWorldComponentImmediate(World* w, Args&&... args);
 		template<typename T> friend void DeferredTaskSystem::RemoveWorldComponentImmediate(World* w);
 
 		//------------------------------------------------------------------------------
-		UniqueID SpawnEntity();
+		Entity* SpawnEntity();
+		Entity* SpawnEntityInternal();
 
 		//------------------------------------------------------------------------------
-		void DestroyEntity(const UniqueID& entityId);
+		void DestroyEntity(Entity* entityId);
 
 		//------------------------------------------------------------------------------
 		template<typename T, typename... Args>
-		void AddComponent(const UniqueID& entityId, Args&&... args)
+		void AddComponent(Entity* entity, Args&&... args)
 		{
 			const auto ctypeID = GetComponentID<T>();
 			T* ptr = GetComponentAllocator<T>()->Alloc();
 			::new(ptr) T(std::forward<Args>(args)...);
-			Entity* ent = IDToEntityMap[entityId];
-			HEAVY_ASSERTE(ent, "Invalid entity ID");
-			HEAVY_ASSERTE(!ent->HasComponent(ctypeID), "Failed at AddComponent() - a component of a given UniqueID already exists!");
-			ent->ComponentPosessionFlags.set(ctypeID, true);
-			ent->Components[ctypeID] = ptr;
-			ptr->Owner = ent;
-			HEAVY_ASSERTE(ent->HasComponent(ctypeID), "Failed at AddComponent() - the component was not added!");
+			HEAVY_ASSERTE(entity, "Invalid entity ID");
+			HEAVY_ASSERTE(!entity->HasComponent(ctypeID), "Failed at AddComponent() - a component of a given UniqueID already exists!");
+			entity->ComponentPosessionFlags.set(ctypeID, true);
+			entity->Components[ctypeID] = ptr;
+			ptr->Owner = entity;
+			HEAVY_ASSERTE(entity->HasComponent(ctypeID), "Failed at AddComponent() - the component was not added!");
 		}
 
 		//------------------------------------------------------------------------------
 		template<typename T>
-		void RemoveComponent(const UniqueID& entityId)
+		void RemoveComponent(Entity* entity)
 		{
 			const auto ctypeID = GetComponentID<T>();
-			Entity* ent = IDToEntityMap[entityId];
-			HEAVY_ASSERTE(ent, "Invalid entity ID");
-			HEAVY_ASSERTE(ent->HasComponent(ctypeID), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
-			ent->ComponentPosessionFlags.set(ctypeID, false);
-			T* component = static_cast<T*>(ent->Components[ctypeID]);
-			ent->Components[ctypeID] = nullptr;
+			HEAVY_ASSERTE(entity, "Invalid entity ID");
+			HEAVY_ASSERTE(entity->HasComponent(ctypeID), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
+			entity->ComponentPosessionFlags.set(ctypeID, false);
+			T* component = static_cast<T*>(entity->Components[ctypeID]);
+			entity->Components[ctypeID] = nullptr;
 			component->~T();
 			GetComponentAllocator<T>()->Free(component);
-			HEAVY_ASSERTE(!ent->HasComponent(ctypeID), "Failed at AddComponent() - the component was not removed!");
+			HEAVY_ASSERTE(!entity->HasComponent(ctypeID), "Failed at AddComponent() - the component was not removed!");
 		}
 
 		//------------------------------------------------------------------------------
@@ -233,9 +231,9 @@ namespace Poly {
 			component->~T();
 		}
 
-		std::unordered_map<UniqueID, Entity*> IDToEntityMap;
-
 		void RemoveComponentById(Entity* ent, size_t id);
+
+		SafePtr<Entity> rootEntity = nullptr;
 
 		// Allocators
 		PoolAllocator<Entity> EntitiesAllocator;
@@ -247,6 +245,16 @@ namespace Poly {
 	//defined here due to circular inclusion problem; FIXME: circular inclusion
 	template<typename T>
 	T* Entity::GetComponent()
+	{
+		const auto ctypeID = World::GetComponentID<T>();
+		if (HasComponent(ctypeID))
+			return static_cast<T*>(Components[ctypeID]);
+		else
+			return nullptr;
+	}
+
+	template<typename T>
+	const T* Entity::GetComponent() const
 	{
 		const auto ctypeID = World::GetComponentID<T>();
 		if (HasComponent(ctypeID))

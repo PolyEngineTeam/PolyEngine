@@ -3,6 +3,7 @@
 #include <Core.hpp>
 #include <bitset>
 
+#include <SafePtrRoot.hpp>
 #include "Engine.hpp"
 
 namespace Poly
@@ -11,9 +12,17 @@ namespace Poly
 	constexpr unsigned int MAX_COMPONENTS_COUNT = 64;
 
 	/// <summary>Class that represent entity inside core engine systems. Should not be used anywhere else.</summary>
-	class ENGINE_DLLEXPORT Entity : public BaseObject<>
+	class ENGINE_DLLEXPORT Entity : public SafePtrRoot
 	{
 	public:
+		~Entity() 
+		{
+			if (Parent != nullptr)
+			{
+				Parent->Children.Remove(this);
+			}
+		}
+
 		const UniqueID& GetID() const { HEAVY_ASSERTE(EntityID, "Entity was not properly initialized");  return EntityID; }
 		const World* GetWorld() const { HEAVY_ASSERTE(EntityID, "Entity was not properly initialized");  return EntityWorld; }
 
@@ -41,11 +50,28 @@ namespace Poly
 		template<class T>
 		T* GetComponent(); //defined in World.hpp due to circular inclusion problem; FIXME: circular inclusion
 
+		/// <summary>Gets a pointer to a component of a given ID.</summary>
+		/// <returns>A pointer to a component or nullptr if it does not exist.</returns>
+		template<class T>
+		const T* GetComponent() const; //defined in World.hpp due to circular inclusion problem; FIXME: circular inclusion
+
+
+		const Entity* GetParent() const { return Parent; }
+		Entity* GetParent() { return Parent; }
+		void SetParent(Entity* parent);
+		inline void AddChild(Entity* child) { child->SetParent(this); }
+		bool IsRoot() const { return Parent == nullptr; }
+		bool IsChildOfRoot() const { return Parent ? Parent->IsRoot() : false; }
+
+		const Dynarray<Entity*>& GetChildren() const { return Children; }
 	private:
-		Entity(const World* world);
+		Entity(World* world);
+
+		Entity* Parent = nullptr;
+		Dynarray<Entity*> Children;
 
 		UniqueID EntityID;
-		const World* EntityWorld = nullptr;
+		World* EntityWorld = nullptr;
 
 		std::bitset<MAX_COMPONENTS_COUNT> ComponentPosessionFlags;
 		ComponentBase* Components[MAX_COMPONENTS_COUNT];

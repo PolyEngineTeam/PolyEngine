@@ -158,8 +158,7 @@ void Poly::RigidBody2DComponent::UpdatePosition()
 {
 	TransformComponent* transform = GetSibling<TransformComponent>();
 	ASSERTE(transform, "No transform on physics object!");
-	ASSERTE(transform->GetParent() == nullptr, "Physics cannot be applied to child entity");
-
+	ASSERTE(GetOwner()->IsChildOfRoot(), "Physics cannot be applied to child entity");
 	Vector localTrans = transform->GetLocalTranslation();
 	EulerAngles localRot = transform->GetLocalRotation().ToEulerAngles();
 

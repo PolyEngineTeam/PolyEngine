@@ -49,79 +49,79 @@ void SoundSystem::SetWorldCurrent(World* world)
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::PlayEmitter(World* world, const UniqueID& id)
+void SoundSystem::PlayEmitter(World* world, Entity* entity)
 {
 	int state;
-	alGetSourcei(world->GetComponent<SoundEmitterComponent>(id)->GetEmitterID(), AL_SOURCE_STATE, &state);
+	alGetSourcei(world->GetComponent<SoundEmitterComponent>(entity)->GetEmitterID(), AL_SOURCE_STATE, &state);
 
 	if(state != AL_PLAYING)
-		alSourcePlay(world->GetComponent<SoundEmitterComponent>(id)->GetEmitterID());
+		alSourcePlay(world->GetComponent<SoundEmitterComponent>(entity)->GetEmitterID());
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::ReplayEmitter(World* world, const UniqueID& id)
+void SoundSystem::ReplayEmitter(World* world, Entity* entity)
 {
-	alSourcePlay(world->GetComponent<SoundEmitterComponent>(id)->GetEmitterID());
+	alSourcePlay(world->GetComponent<SoundEmitterComponent>(entity)->GetEmitterID());
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::PauseEmitter(World* world, const UniqueID& id)
+void SoundSystem::PauseEmitter(World* world, Entity* entity)
 {
-	alSourcePause(world->GetComponent<SoundEmitterComponent>(id)->GetEmitterID());
+	alSourcePause(world->GetComponent<SoundEmitterComponent>(entity)->GetEmitterID());
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::StopEmitter(World* world, const UniqueID& id)
+void SoundSystem::StopEmitter(World* world, Entity* entity)
 {
-	alSourceStop(world->GetComponent<SoundEmitterComponent>(id)->GetEmitterID());
+	alSourceStop(world->GetComponent<SoundEmitterComponent>(entity)->GetEmitterID());
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::LoopEmitter(World* world, const UniqueID& id)
+void SoundSystem::LoopEmitter(World* world, Entity* entity)
 {
-	alSourcei(world->GetComponent<SoundEmitterComponent>(id)->GetEmitterID(), AL_LOOPING, true);
+	alSourcei(world->GetComponent<SoundEmitterComponent>(entity)->GetEmitterID(), AL_LOOPING, true);
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::UnLoopEmitter(World* world, const UniqueID& id)
+void SoundSystem::UnLoopEmitter(World* world, Entity* entity)
 {
-	alSourcei(world->GetComponent<SoundEmitterComponent>(id)->GetEmitterID(), AL_LOOPING, false);
+	alSourcei(world->GetComponent<SoundEmitterComponent>(entity)->GetEmitterID(), AL_LOOPING, false);
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::SetEmitterGain(World* world, const UniqueID& id, float gain)
+void SoundSystem::SetEmitterGain(World* world, Entity* entity, float gain)
 {
-	alSourcef(world->GetComponent<SoundEmitterComponent>(id)->GetEmitterID(), AL_GAIN, gain);
+	alSourcef(world->GetComponent<SoundEmitterComponent>(entity)->GetEmitterID(), AL_GAIN, gain);
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::SetEmitterFrequency(World* world, const UniqueID& id, float frequency)
+void SoundSystem::SetEmitterFrequency(World* world, Entity* entity, float frequency)
 {
-	alSourcef(world->GetComponent<SoundEmitterComponent>(id)->GetEmitterID(), AL_PITCH, frequency);
+	alSourcef(world->GetComponent<SoundEmitterComponent>(entity)->GetEmitterID(), AL_PITCH, frequency);
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::SetEmitterOffsetInSeconds(World* world, const UniqueID& id, float offset)
+void SoundSystem::SetEmitterOffsetInSeconds(World* world, Entity* entity, float offset)
 {
-	alSourcef(world->GetComponent<SoundEmitterComponent>(id)->GetEmitterID(), AL_SEC_OFFSET, static_cast<float>(offset));
+	alSourcef(world->GetComponent<SoundEmitterComponent>(entity)->GetEmitterID(), AL_SEC_OFFSET, static_cast<float>(offset));
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::SetEmitterOffsetInSamples(World* world, const UniqueID& id, size_t offset)
+void SoundSystem::SetEmitterOffsetInSamples(World* world, Entity* entity, size_t offset)
 {
-	alSourcef(world->GetComponent<SoundEmitterComponent>(id)->GetEmitterID(), AL_SAMPLE_OFFSET, static_cast<float>(offset));
+	alSourcef(world->GetComponent<SoundEmitterComponent>(entity)->GetEmitterID(), AL_SAMPLE_OFFSET, static_cast<float>(offset));
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::SetEmitterOffsetInBytes(World* world, const UniqueID& id, size_t offset)
+void SoundSystem::SetEmitterOffsetInBytes(World* world, Entity* entity, size_t offset)
 {
-	alSourcef(world->GetComponent<SoundEmitterComponent>(id)->GetEmitterID(), AL_BYTE_OFFSET, static_cast<float>(offset));
+	alSourcef(world->GetComponent<SoundEmitterComponent>(entity)->GetEmitterID(), AL_BYTE_OFFSET, static_cast<float>(offset));
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::SetEmitterSource(World* world, const UniqueID& id, const String& path, eResourceSource source)
+void SoundSystem::SetEmitterSource(World* world, Entity* entity, const String& path, eResourceSource source)
 {
-	SoundEmitterComponent* emitter = world->GetComponent<SoundEmitterComponent>(id);
+	SoundEmitterComponent* emitter = entity->GetComponent<SoundEmitterComponent>();
 
 	alDeleteSources(1, &emitter->EmitterID);
 	ResourceManager<SoundResource>::Release(emitter->Resource);
@@ -133,36 +133,36 @@ void SoundSystem::SetEmitterSource(World* world, const UniqueID& id, const Strin
 }
 
 //---------------------------------------------------------------------------------------------------
-/*void SoundSystem::QueueEmitterSource(World* world, const UniqueID& id, const String&)
+/*void SoundSystem::QueueEmitterSource(World* world, Entity* entity, const String&)
 {
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::DequeueEmitterSource(World* world, const UniqueID& id, const String&)
+void SoundSystem::DequeueEmitterSource(World* world, Entity* entity, const String&)
 {
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::SetEmitterDistanceModel(World* world, const UniqueID& id, void (*fun)(SoundEmitterComponent, SoundListenerComponent))
+void SoundSystem::SetEmitterDistanceModel(World* world, Entity* entity, void (*fun)(SoundEmitterComponent, SoundListenerComponent))
 {
 }*/
 
-void SoundSystem::ActivateListener(World* /*world*/, const UniqueID& /*id*/)
+void SoundSystem::ActivateListener(World* /*world*/, Entity* /*entity*/)
 {
 }
 
-void SoundSystem::DeactivateListener(World* /*world*/, const UniqueID& /*id*/)
+void SoundSystem::DeactivateListener(World* /*world*/, Entity* /*entity*/)
 {
 }
 
-void SoundSystem::SetListenerGain(World* /*world*/, const UniqueID& /*id*/, float /*gain*/)
+void SoundSystem::SetListenerGain(World* /*world*/, Entity* /*entity*/, float /*gain*/)
 {
 }
 
-bool ENGINE_DLLEXPORT Poly::SoundSystem::IsEmmiterActive(World* world, const UniqueID& id)
+bool ENGINE_DLLEXPORT Poly::SoundSystem::IsEmmiterActive(World* world, Entity* entity)
 {
 	ALint state;
-	SoundEmitterComponent* emitter = world->GetComponent<SoundEmitterComponent>(id);
+	SoundEmitterComponent* emitter = world->GetComponent<SoundEmitterComponent>(entity);
 	alGetSourcei(emitter->GetEmitterID(), AL_SOURCE_STATE, &state);
 	return state == AL_PLAYING;
 }
