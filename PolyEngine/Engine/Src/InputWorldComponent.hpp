@@ -10,14 +10,14 @@
 
 namespace Poly
 {
-    struct ControllerState {
-        ControllerState() = default;
+		struct ControllerState {
+		ControllerState() = default;
 
-        EnumArray<bool, eControllerButton> CurrButton;
-        EnumArray<bool, eControllerButton> PrevButton;
-        EnumArray<float, eControllerAxis> CurrAxis;
-        EnumArray<float, eControllerAxis> PrevAxis;
-    };
+		EnumArray<bool, eControllerButton> CurrButton;
+		EnumArray<bool, eControllerButton> PrevButton;
+		EnumArray<float, eControllerAxis> CurrAxis;
+		EnumArray<float, eControllerAxis> PrevAxis;
+		};
 
 	/// <summary>World component that holds input data.</summary>
 	class ENGINE_DLLEXPORT InputWorldComponent : public ComponentBase
@@ -37,23 +37,23 @@ namespace Poly
 		bool IsReleased(eMouseButton button) const { return (!CurrMouseButton[button] && PrevMouseButton[button]); }
 
 		const Vector2i& GetMousePos() const { return CurrMouse; }
-        Vector2i GetMousePosDelta() const  { return CurrMouse - PrevMouse; }
+		Vector2i GetMousePosDelta() const  { return CurrMouse - PrevMouse; }
 
 		const Vector2i& GetWheelPos() const { return CurrWheel; }
-        Vector2i GetWheelPosDelta() const { return CurrWheel - PrevWheel; }
+		Vector2i GetWheelPosDelta() const { return CurrWheel - PrevWheel; }
 
-        bool IsPressed(size_t playerID, eControllerButton button) const;
-        bool IsClicked(size_t playerID, eControllerButton button) const;
-        bool IsReleased(size_t playerID, eControllerButton button) const;
+		bool IsPressed(size_t playerID, eControllerButton button) const;
+		bool IsClicked(size_t playerID, eControllerButton button) const;
+		bool IsReleased(size_t playerID, eControllerButton button) const;
 
-        float GetControllerAxis(size_t playerID, eControllerAxis axis) const;
-        float GetControllerAxisDelta(size_t playerID, eControllerAxis axis) const;
+		float GetControllerAxis(size_t playerID, eControllerAxis axis) const;
+		float GetControllerAxisDelta(size_t playerID, eControllerAxis axis) const;
 
-        size_t GetConnectedControllersCount() const { return JoystickIDToPlayerID.size(); }
-		size_t* GetConnectedControllersIDs() const;
-        bool IsControllerConnected(size_t idx) const;
+		size_t GetConnectedControllersCount() const { return JoystickIDToPlayerID.size(); }
+		Dynarray<size_t> GetConnectedControllersIDs() const;
+		bool IsControllerConnected(size_t idx) const;
 
-    private:
+		private:
 		EnumArray<bool, eKey> CurrKey;
 		EnumArray<bool, eKey> PrevKey;
 		EnumArray<bool, eMouseButton> CurrMouseButton;
@@ -62,9 +62,9 @@ namespace Poly
 		Vector2i PrevMouse;
 		Vector2i CurrWheel;
 		Vector2i PrevWheel;
-        std::unordered_map<i32, ControllerState> Controllers;
-        Dynarray<Optional<i32>> PlayerIDToJoystickID;
-        std::unordered_map<i32, size_t> JoystickIDToPlayerID;
+		std::unordered_map<i32, ControllerState> Controllers;
+		Dynarray<Optional<i32>> PlayerIDToJoystickID;
+		std::unordered_map<i32, size_t> JoystickIDToPlayerID;
 	};
 
 	REGISTER_COMPONENT(WorldComponentsIDGroup, InputWorldComponent)

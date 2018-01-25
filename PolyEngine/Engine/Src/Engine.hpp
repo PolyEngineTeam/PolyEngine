@@ -7,7 +7,6 @@
 #include <memory>
 
 #include <Core.hpp>
-#include <SDL2/SDL_gamecontroller.h>
 #include "IRenderingDevice.hpp"
 #include "OpenALDevice.hpp"
 
@@ -116,7 +115,7 @@ namespace Poly
         /// <param name="id">SDL Joystick instance id</param>
         /// <param name="axis">Axis enum instance</param>
         /// <param name="value">New axis position (SDL raw, not normalized)</param>
-        void ControllerAxisMotion(i32 id, eControllerAxis axis, Sint16 value) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_AXIS_MOTION, id, axis, value/35768.0f}); };
+        void ControllerAxisMotion(i32 id, eControllerAxis axis, i16 value) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_AXIS_MOTION, id, axis, value/35768.0f}); };
 
 		///functions for closing the game
 		bool IsQuitRequested() const;

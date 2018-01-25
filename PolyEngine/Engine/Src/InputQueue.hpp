@@ -28,9 +28,9 @@ namespace Poly
 		InputEvent(eInputEventType type, eKey key) : Type(type), Key(key) {}
 		InputEvent(eInputEventType type, eMouseButton button) : Type(type), MouseButton(button) {}
 		InputEvent(eInputEventType type, const Vector2i& pos) : Type(type), Pos(pos) {}
-		InputEvent(eInputEventType type, Sint32 id, eControllerButton button) : Type(type), JoystickID(id), ControllerButton(button) {}
-		InputEvent(eInputEventType type, Sint32 id, eControllerAxis axis, float value) : Type(type), JoystickID(id), ControllerAxis(axis), AxisValue(value) {}
-		InputEvent(eInputEventType type, Sint32 id) : Type(type), JoystickID(id) {}
+		InputEvent(eInputEventType type, i32 id, eControllerButton button) : Type(type), JoystickID(id), ControllerButton(button) {}
+		InputEvent(eInputEventType type, i32 id, eControllerAxis axis, float value) : Type(type), JoystickID(id), ControllerAxis(axis), AxisValue(value) {}
+		InputEvent(eInputEventType type, i32 id) : Type(type), JoystickID(id) {}
 
 		eInputEventType Type = eInputEventType::_COUNT;
 		eKey Key = eKey::_COUNT;

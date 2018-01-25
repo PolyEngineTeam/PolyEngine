@@ -77,8 +77,6 @@ void InputSystem::InputPhase(World* world)
 		case eInputEventType::CONTROLLER_REMOVED:
         {
             size_t playerID = com->JoystickIDToPlayerID.at(ev.JoystickID);
-            SDL_GameController* controller = SDL_GameControllerFromInstanceID(ev.JoystickID);
-            SDL_GameControllerClose(controller);
             com->Controllers.erase(ev.JoystickID);
             com->PlayerIDToJoystickID[playerID] = Optional<i32>{};
             com->JoystickIDToPlayerID.erase(ev.JoystickID);
