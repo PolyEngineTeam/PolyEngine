@@ -4,11 +4,13 @@
 
 namespace Poly 
 {
-	class ENGINE_DLLEXPORT TransformComponent : public ComponentBase
+	class Entity;
+
+	class ENGINE_DLLEXPORT EntityTransform final : public BaseObjectLiteralType<>
 	{
 	public:
-		TransformComponent(TransformComponent* parent = nullptr) { if(parent) GetOwner()->SetParent(parent->GetOwner()); }; //TODO_M get rid of this
-		~TransformComponent();
+		EntityTransform(Entity* owner) : Owner(owner) {};
+		~EntityTransform();
 
 		const Vector& GetGlobalTranslation() const;
 		const Vector& GetLocalTranslation() const { return LocalTranslation; };
@@ -28,10 +30,9 @@ namespace Poly
 		void SetLocalTransformationMatrix(const Matrix& localTransformation);
 		
 	private:
-		void SetParentTransform(TransformComponent* parent);
-		void ResetParentTransform();
+		void UpdateParentTransform();
 
-
+		Entity* Owner = nullptr;
 		Vector LocalTranslation;
 		mutable Vector GlobalTranslation;
 		Quaternion LocalRotation;
@@ -50,6 +51,4 @@ namespace Poly
 
 		friend class Entity;
 	};
-
-	REGISTER_COMPONENT(ComponentsIDGroup, TransformComponent)
 }

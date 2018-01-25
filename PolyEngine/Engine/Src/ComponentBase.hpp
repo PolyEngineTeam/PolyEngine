@@ -1,11 +1,12 @@
 #pragma once
 
 #include <Core.hpp>
-#include "Entity.hpp"
 #include "ComponentIDGenerator.hpp"
 #include "ComponentIDGeneratorImpl.hpp"
 
 namespace Poly {
+	class Entity;
+	class EntityTransform;
 
 	enum class eComponentBaseFlags
 	{
@@ -38,17 +39,20 @@ namespace Poly {
 			return Owner->GetComponent<T>();
 		}
 
-		const Entity* GetOwner() const
+		inline const Entity* GetOwner() const
 		{
 			HEAVY_ASSERTE(Owner, "Component was not properly initialized.");
 			return Owner;
 		}
 
-		Entity* GetOwner()
+		inline Entity* GetOwner()
 		{
 			HEAVY_ASSERTE(Owner, "Component was not properly initialized.");
 			return Owner;
 		}
+
+		EntityTransform& GetTransform();
+		const EntityTransform& GetTransform() const;
 
 		void SetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags |= rhs; }
 		void ResetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags &= ~rhs; }

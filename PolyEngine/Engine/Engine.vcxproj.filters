@@ -164,9 +164,6 @@
     <ClCompile Include="Src\SoundWorldComponent.cpp">
       <Filter>Source Files\Sound\WorldComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Src\TransformComponent.cpp">
-      <Filter>Source Files\Transform</Filter>
-    </ClCompile>
     <ClCompile Include="Src\DeferredTaskSystem.cpp">
       <Filter>Source Files\DeferredTasks</Filter>
     </ClCompile>
@@ -218,8 +215,11 @@
     <ClCompile Include="Src\DebugDrawSystem.cpp">
       <Filter>Source Files\Debug\DebugRendering</Filter>
     </ClCompile>
-    <ClCompile Include="Src\DebugRenderingComponent.cpp">
-      <Filter>Source Files\Debug\DebugRendering</Filter>
+    <ClCompile Include="Src\EntityTransform.cpp">
+      <Filter>Source Files\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ComponentBase.cpp">
+      <Filter>Source Files\ECS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -325,9 +325,6 @@
     <ClInclude Include="Src\SoundWorldComponent.hpp">
       <Filter>Source Files\Sound\WorldComponent</Filter>
     </ClInclude>
-    <ClInclude Include="Src\TransformComponent.hpp">
-      <Filter>Source Files\Transform</Filter>
-    </ClInclude>
     <ClInclude Include="Src\DeferredTaskBase.hpp">
       <Filter>Source Files\DeferredTasks</Filter>
     </ClInclude>
@@ -393,6 +390,9 @@
     </ClInclude>
     <ClInclude Include="Src\DebugDrawSystem.hpp">
       <Filter>Source Files\Debug\DebugRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EntityTransform.hpp">
+      <Filter>Source Files\Transform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

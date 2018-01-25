@@ -5,7 +5,6 @@
 
 #include <World.hpp>
 #include <CameraComponent.hpp>
-#include <TransformComponent.hpp>
 #include <MeshRenderingComponent.hpp>
 #include <LightSourceComponent.hpp>
 #include <MovementSystem.hpp>
@@ -72,9 +71,9 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
 	
-	const TransformComponent* cameraTransCmp = camera->GetSibling<TransformComponent>();
-	Vector CameraPos = cameraTransCmp->GetGlobalTranslation();
-	Vector CameraDir = MovementSystem::GetGlobalForward(cameraTransCmp);
+	const EntityTransform& cameraTrans = camera->GetTransform();
+	Vector CameraPos = cameraTrans.GetGlobalTranslation();
+	Vector CameraDir = MovementSystem::GetGlobalForward(cameraTrans);
 	GetProgram().SetUniform("uCameraPosition", CameraPos);
 	GetProgram().SetUniform("uCameraForward", CameraDir);
 
@@ -83,12 +82,12 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	GetProgram().SetUniform("uAmbientLight.Intensity", ambientCmp->GetIntensity());
 
 	int dirLightsCount = 0;
-	for (const auto& componentsTuple : world->IterateComponents<DirectionalLightComponent, TransformComponent>())
+	for (const auto& componentsTuple : world->IterateComponents<DirectionalLightComponent>())
 	{
 		DirectionalLightComponent* dirLightCmp = std::get<DirectionalLightComponent*>(componentsTuple);
-		TransformComponent* transformCmp = std::get<TransformComponent*>(componentsTuple);
+		const EntityTransform& transform = dirLightCmp->GetTransform();
 		String baseName = String("uDirectionalLight[") + String::From(dirLightsCount) + String("].");
-		GetProgram().SetUniform(baseName + "Direction", MovementSystem::GetGlobalForward(transformCmp));
+		GetProgram().SetUniform(baseName + "Direction", MovementSystem::GetGlobalForward(transform));
 		GetProgram().SetUniform(baseName + "Base.Color", dirLightCmp->GetColor());
 		GetProgram().SetUniform(baseName + "Base.Intensity", dirLightCmp->GetIntensity());
 		
@@ -99,14 +98,14 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	GetProgram().SetUniform("uDirectionalLightCount", dirLightsCount);
 	
 	int pointLightsCount = 0;
-	for (const auto& componentsTuple : world->IterateComponents<PointLightComponent, TransformComponent>())
+	for (const auto& componentsTuple : world->IterateComponents<PointLightComponent>())
 	{
 		PointLightComponent* pointLightCmp = std::get<PointLightComponent*>(componentsTuple);
-		TransformComponent* transformCmp = std::get<TransformComponent*>(componentsTuple);
+		const EntityTransform& transform = pointLightCmp->GetTransform();
 	
 		String baseName = String("uPointLight[") + String::From(pointLightsCount) + String("].");
 		GetProgram().SetUniform(baseName + "Range", pointLightCmp->GetRange());
-		GetProgram().SetUniform(baseName + "Position", transformCmp->GetGlobalTranslation());
+		GetProgram().SetUniform(baseName + "Position", transform.GetGlobalTranslation());
 		GetProgram().SetUniform(baseName + "Base.Color", pointLightCmp->GetColor());
 		GetProgram().SetUniform(baseName + "Base.Intensity", pointLightCmp->GetIntensity());
 
@@ -117,17 +116,17 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	GetProgram().SetUniform("uPointLightCount", pointLightsCount);
 
 	int spotLightsCount = 0;
-	for (const auto& componentsTuple : world->IterateComponents<SpotLightComponent, TransformComponent>())
+	for (const auto& componentsTuple : world->IterateComponents<SpotLightComponent>())
 	{
 		SpotLightComponent* spotLightCmp = std::get<SpotLightComponent*>(componentsTuple);
-		TransformComponent* transformCmp = std::get<TransformComponent*>(componentsTuple);
+		const EntityTransform& transform = spotLightCmp->GetTransform();
 
 		String baseName = String("uSpotLight[") + String::From(spotLightsCount) + String("].");
 		GetProgram().SetUniform(baseName + "Range", spotLightCmp->GetRange());
 		GetProgram().SetUniform(baseName + "CutOff", Cos(1.0_deg * spotLightCmp->GetCutOff()));
 		GetProgram().SetUniform(baseName + "OuterCutOff", Cos(1.0_deg * spotLightCmp->GetOuterCutOff()));
-		GetProgram().SetUniform(baseName + "Position", transformCmp->GetGlobalTranslation());
-		GetProgram().SetUniform(baseName + "Direction", MovementSystem::GetGlobalForward(transformCmp));
+		GetProgram().SetUniform(baseName + "Position", transform.GetGlobalTranslation());
+		GetProgram().SetUniform(baseName + "Direction", MovementSystem::GetGlobalForward(transform));
 		GetProgram().SetUniform(baseName + "Base.Color", spotLightCmp->GetColor());
 		GetProgram().SetUniform(baseName + "Base.Intensity", spotLightCmp->GetIntensity());
 
@@ -138,10 +137,10 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 	GetProgram().SetUniform("uSpotLightCount", spotLightsCount);
 
 	// Render meshes
-	for (const auto& componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
+	for (const auto& componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-		TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
+		const EntityTransform& transform = meshCmp->GetTransform();
 
 		if ( passType == ePassType::BY_MATERIAL &&
 			(meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::LIT))
@@ -149,7 +148,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 			continue;
 		}
 
-		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
+		const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
 		Matrix screenTransform = mvp * objTransform;
 		GetProgram().SetUniform("uTransform", objTransform);
 		GetProgram().SetUniform("uMVPTransform", screenTransform);

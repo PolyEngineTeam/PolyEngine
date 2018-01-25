@@ -12,6 +12,7 @@ set(POLYENGINE_SRCS
 	Src/CameraComponent.cpp
 	Src/CameraSystem.cpp
 	Src/ConfigBase.cpp
+	Src/ComponentBase.cpp
 	Src/DebugConfig.cpp
 	Src/DebugDrawSystem.cpp
 	Src/DebugWorldComponent.cpp
@@ -48,7 +49,7 @@ set(POLYENGINE_SRCS
 	Src/TextureResource.cpp
 	Src/TimeSystem.cpp
 	Src/TimeWorldComponent.cpp
-	Src/TransformComponent.cpp
+	Src/EntityTransform.cpp
 	Src/ViewportWorldComponent.cpp
 	Src/World.cpp
 )
@@ -108,7 +109,7 @@ set(POLYENGINE_H_FOR_IDE
 	Src/Timer.hpp
 	Src/TimeSystem.hpp
 	Src/TimeWorldComponent.hpp
-	Src/TransformComponent.hpp
+	Src/EntityTransform.hpp
 	Src/Viewport.hpp
 	Src/ViewportWorldComponent.hpp
 	Src/World.hpp

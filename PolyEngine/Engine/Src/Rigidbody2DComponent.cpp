@@ -156,11 +156,10 @@ void Poly::RigidBody2DComponent::SetAngularVelocity(float speed)
 
 void Poly::RigidBody2DComponent::UpdatePosition()
 {
-	TransformComponent* transform = GetSibling<TransformComponent>();
-	ASSERTE(transform, "No transform on physics object!");
+	EntityTransform& transform = GetTransform();
 	ASSERTE(GetOwner()->IsChildOfRoot(), "Physics cannot be applied to child entity");
-	Vector localTrans = transform->GetLocalTranslation();
-	EulerAngles localRot = transform->GetLocalRotation().ToEulerAngles();
+	Vector localTrans = transform.GetLocalTranslation();
+	EulerAngles localRot = transform.GetLocalRotation().ToEulerAngles();
 
 	// Set correct starting pos!
 	ImplData->Body->SetTransform(b2Vec2(localTrans.X, localTrans.Y), localRot.Z.AsRadians());

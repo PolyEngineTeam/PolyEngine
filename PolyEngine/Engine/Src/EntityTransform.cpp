@@ -3,18 +3,20 @@
 using namespace Poly;
 
 //-----------------------------------------------------------------------------
-TransformComponent::~TransformComponent() {
+EntityTransform::~EntityTransform() {
 }
 
 //-----------------------------------------------------------------------------
-void TransformComponent::SetParentTransform(TransformComponent* parent)
+void EntityTransform::UpdateParentTransform()
 {
-	if (parent != nullptr)
+	if (Owner->GetParent() != nullptr)
 	{
-		parent->UpdateGlobalTransformationCache();
-		LocalTranslation = LocalTranslation - parent->GlobalTranslation;
-		LocalRotation = LocalRotation * parent->GlobalRotation.GetConjugated();
-		Vector parentGlobalScale = parent->GlobalScale;
+		EntityTransform& parentTransform = Owner->GetParent()->GetTransform();
+		
+		parentTransform.UpdateGlobalTransformationCache();
+		LocalTranslation = LocalTranslation - parentTransform.GlobalTranslation;
+		LocalRotation = LocalRotation * parentTransform.GlobalRotation.GetConjugated();
+		Vector parentGlobalScale = parentTransform.GlobalScale;
 		LocalScale.X = LocalScale.X / parentGlobalScale.X;
 		LocalScale.Y = LocalScale.Y / parentGlobalScale.Y;
 		LocalScale.Z = LocalScale.Z / parentGlobalScale.Z;
@@ -22,26 +24,21 @@ void TransformComponent::SetParentTransform(TransformComponent* parent)
 	}
 	else
 	{
-		ResetParentTransform();
+		// Reset parenting
+		Matrix globalTransform = GetGlobalTransformationMatrix();
+		SetLocalTransformationMatrix(globalTransform);
 	}
 }
 
-//-----------------------------------------------------------------------------
-void TransformComponent::ResetParentTransform()
-{
-	Matrix globalTransform = GetGlobalTransformationMatrix();
-	SetLocalTransformationMatrix(globalTransform);
-}
-
 //------------------------------------------------------------------------------
-const Vector& TransformComponent::GetGlobalTranslation() const
+const Vector& EntityTransform::GetGlobalTranslation() const
 {
 	UpdateGlobalTransformationCache();
 	return GlobalTranslation;
 }
 
 //------------------------------------------------------------------------------
-void TransformComponent::SetLocalTranslation(const Vector& position)
+void EntityTransform::SetLocalTranslation(const Vector& position)
 {
 	LocalTranslation = position;
 	LocalDirty = true;
@@ -49,14 +46,14 @@ void TransformComponent::SetLocalTranslation(const Vector& position)
 }
 
 //------------------------------------------------------------------------------
-const Quaternion& TransformComponent::GetGlobalRotation() const
+const Quaternion& EntityTransform::GetGlobalRotation() const
 {
 	UpdateGlobalTransformationCache();
 	return GlobalRotation;
 }
 
 //------------------------------------------------------------------------------
-void TransformComponent::SetLocalRotation(const Quaternion& quaternion)
+void EntityTransform::SetLocalRotation(const Quaternion& quaternion)
 {
 	LocalRotation = quaternion;
 	LocalDirty = true;
@@ -64,14 +61,14 @@ void TransformComponent::SetLocalRotation(const Quaternion& quaternion)
 }
 
 //------------------------------------------------------------------------------
-const Vector& TransformComponent::GetGlobalScale() const
+const Vector& EntityTransform::GetGlobalScale() const
 {
 	UpdateGlobalTransformationCache();
 	return GlobalScale;
 }
 
 //------------------------------------------------------------------------------
-void TransformComponent::SetLocalScale(const Vector& scale)
+void EntityTransform::SetLocalScale(const Vector& scale)
 {
 	LocalScale = scale;
 	LocalDirty = true;
@@ -79,21 +76,21 @@ void TransformComponent::SetLocalScale(const Vector& scale)
 }
 
 //------------------------------------------------------------------------------
-const Matrix& TransformComponent::GetLocalTransformationMatrix() const
+const Matrix& EntityTransform::GetLocalTransformationMatrix() const
 {
 	UpdateLocalTransformationCache();
 	return LocalTransform;
 }
 
 //------------------------------------------------------------------------------
-const Matrix& TransformComponent::GetGlobalTransformationMatrix() const
+const Matrix& EntityTransform::GetGlobalTransformationMatrix() const
 {
 	UpdateGlobalTransformationCache();
 	return GlobalTransform;
 }
 
 //------------------------------------------------------------------------------
-void TransformComponent::SetLocalTransformationMatrix(const Matrix& localTransformation)
+void EntityTransform::SetLocalTransformationMatrix(const Matrix& localTransformation)
 {
 	LocalTransform = localTransformation;
 	localTransformation.Decompose(LocalTranslation, LocalRotation, LocalScale);
@@ -102,7 +99,7 @@ void TransformComponent::SetLocalTransformationMatrix(const Matrix& localTransfo
 }
 
 //------------------------------------------------------------------------------
-bool TransformComponent::UpdateLocalTransformationCache() const
+bool EntityTransform::UpdateLocalTransformationCache() const
 {
 	if (LocalDirty)
 	{
@@ -119,30 +116,30 @@ bool TransformComponent::UpdateLocalTransformationCache() const
 }
 
 //------------------------------------------------------------------------------
-void TransformComponent::UpdateGlobalTransformationCache() const
+void EntityTransform::UpdateGlobalTransformationCache() const
 {
 	if (!GlobalDirty) return;
 
-	const Entity* parent = GetOwner()->GetParent();
+	const Entity* parent = Owner->GetParent();
 	if (parent->IsRoot())
 	{
 		GlobalTransform = GetLocalTransformationMatrix();
 	}
 	else
 	{
-		GlobalTransform = parent->GetComponent<TransformComponent>()->GetGlobalTransformationMatrix() * GetLocalTransformationMatrix();
+		GlobalTransform = parent->GetTransform().GetGlobalTransformationMatrix() * GetLocalTransformationMatrix();
 	}
 	GlobalTransform.Decompose(GlobalTranslation, GlobalRotation, GlobalScale);
 	GlobalDirty = false;
 }
 
 //------------------------------------------------------------------------------
-void TransformComponent::SetGlobalDirty() const
+void EntityTransform::SetGlobalDirty() const
 {
 	GlobalDirty = true;
-	const auto& children = GetOwner()->GetChildren();
+	const auto& children = Owner->GetChildren();
 	for (Entity* c : children)
 	{
-		c->GetComponent<TransformComponent>()->SetGlobalDirty();
+		c->GetTransform().SetGlobalDirty();
 	}
 }
