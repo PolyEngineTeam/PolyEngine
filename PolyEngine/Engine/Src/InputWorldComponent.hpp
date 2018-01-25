@@ -6,9 +6,19 @@
 #include "ComponentBase.hpp"
 #include "KeyBindings.hpp"
 #include "InputSystem.hpp"
+#include "Optional.hpp"
 
 namespace Poly
 {
+		struct ControllerState {
+		ControllerState() = default;
+
+		EnumArray<bool, eControllerButton> CurrButton;
+		EnumArray<bool, eControllerButton> PrevButton;
+		EnumArray<float, eControllerAxis> CurrAxis;
+		EnumArray<float, eControllerAxis> PrevAxis;
+		};
+
 	/// <summary>World component that holds input data.</summary>
 	class ENGINE_DLLEXPORT InputWorldComponent : public ComponentBase
 	{
@@ -31,7 +41,19 @@ namespace Poly
 
 		const Vector2i& GetWheelPos() const { return CurrWheel; }
 		Vector2i GetWheelPosDelta() const { return CurrWheel - PrevWheel; }
-	private:
+
+		bool IsPressed(size_t playerID, eControllerButton button) const;
+		bool IsClicked(size_t playerID, eControllerButton button) const;
+		bool IsReleased(size_t playerID, eControllerButton button) const;
+
+		float GetControllerAxis(size_t playerID, eControllerAxis axis) const;
+		float GetControllerAxisDelta(size_t playerID, eControllerAxis axis) const;
+
+		size_t GetConnectedControllersCount() const { return JoystickIDToPlayerID.size(); }
+		Dynarray<size_t> GetConnectedControllersIDs() const;
+		bool IsControllerConnected(size_t idx) const;
+
+		private:
 		EnumArray<bool, eKey> CurrKey;
 		EnumArray<bool, eKey> PrevKey;
 		EnumArray<bool, eMouseButton> CurrMouseButton;
@@ -40,6 +62,9 @@ namespace Poly
 		Vector2i PrevMouse;
 		Vector2i CurrWheel;
 		Vector2i PrevWheel;
+		std::unordered_map<size_t, ControllerState> Controllers;
+		Dynarray<Optional<size_t>> PlayerIDToJoystickID;
+		std::unordered_map<size_t, size_t> JoystickIDToPlayerID;
 	};
 
 	REGISTER_COMPONENT(WorldComponentsIDGroup, InputWorldComponent)

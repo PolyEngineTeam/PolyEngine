@@ -1,6 +1,7 @@
 #include "EnginePCH.hpp"
 
 #include "InputSystem.hpp"
+#include "Optional.hpp"
 
 using namespace Poly;
 
@@ -13,6 +14,12 @@ void InputSystem::InputPhase(World* world)
 
 	com->PrevMouse = com->CurrMouse;
 	com->PrevWheel = com->CurrWheel;
+
+	for (auto& pair : com->Controllers)
+	{
+		pair.second.PrevButton = pair.second.CurrButton;
+		pair.second.PrevAxis = pair.second.CurrAxis;
+	}
 
 	InputQueue& InputEventsQueue = gEngine->GetInputQueue();
 
@@ -42,6 +49,47 @@ void InputSystem::InputPhase(World* world)
 			break;
 		case eInputEventType::WHEELMOVE:
 			com->CurrWheel += ev.Pos;
+			break;
+		case eInputEventType::CONTROLLER_ADDED:
+		{
+			com->Controllers[ev.JoystickID] = ControllerState();
+			bool controllerAssigned = false;
+			for (size_t i = 0; i < com->PlayerIDToJoystickID.GetSize(); ++i)
+			{
+				if (!com->PlayerIDToJoystickID[i].HasValue())
+				{
+					com->PlayerIDToJoystickID[i] = Optional<size_t>{ev.JoystickID};
+					com->JoystickIDToPlayerID[ev.JoystickID] = i;
+					controllerAssigned = true;
+					Poly::gConsole.LogDebug("Controller added in existing place");
+					break;
+				}
+			}
+			if (!controllerAssigned)
+			{
+				size_t newPlayerID = com->PlayerIDToJoystickID.GetSize();
+				com->PlayerIDToJoystickID.PushBack(Optional<size_t>{ev.JoystickID});
+				com->JoystickIDToPlayerID[ev.JoystickID] = newPlayerID;
+				Poly::gConsole.LogDebug("Controller added in new place");
+			}
+			break;
+		}
+		case eInputEventType::CONTROLLER_REMOVED:
+		{
+			size_t playerID = com->JoystickIDToPlayerID.at(ev.JoystickID);
+			com->Controllers.erase(ev.JoystickID);
+			com->PlayerIDToJoystickID[playerID] = Optional<size_t>{};
+			com->JoystickIDToPlayerID.erase(ev.JoystickID);
+			break;
+		}
+		case eInputEventType::CONTROLLER_BUTTON_DOWN:
+			com->Controllers.at(ev.JoystickID).CurrButton[ev.ControllerButton] = true;
+			break;
+		case eInputEventType::CONTROLLER_BUTTON_UP:
+			com->Controllers.at(ev.JoystickID).CurrButton[ev.ControllerButton] = false;
+			break;
+		case eInputEventType::CONTROLLER_AXIS_MOTION:
+			com->Controllers.at(ev.JoystickID).CurrAxis[ev.ControllerAxis] = ev.AxisValue;
 			break;
 		case eInputEventType::_COUNT:
 			HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::Push(), which is an invalid value");
