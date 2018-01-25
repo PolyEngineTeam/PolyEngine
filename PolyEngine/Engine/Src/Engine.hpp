@@ -93,6 +93,30 @@ namespace Poly
 		/// <param name="pos">Wheel delta position.</param>
 		void UpdateWheelPos(const Vector2i& deltaPos) { InputEventsQueue.PushBack({eInputEventType::WHEELMOVE, deltaPos}); }
 
+        /// <summary>Pushes adding input controller event to an input queue with specified SDL_GameController id</summary>
+        /// <param name="id">SDL Joystick Instance id</param>
+        void AddController(size_t id) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_ADDED, id}); };
+
+        /// <summary>Pushes removing input controller event to an input queue with specified SDL_Joystick instance id</summary>
+        /// <param name="id">SDL Joystick instance id</param>
+        void RemoveController(size_t id) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_REMOVED, id}); };
+
+        /// <summary>Pushes controller button down event to an input queue</summary>
+        /// <param name="id">SDL Joystick instance id</param>
+        /// <param name="button">Button pressed enum instance</param>
+        void ControllerButtonDown(size_t id, eControllerButton button) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_BUTTON_DOWN, id, button}); };
+
+        /// <summary>Pushes controller button up event to an input queue</summary>
+        /// <param name="id">SDL Joystick instance id</param>
+        /// <param name="button">Button released enum instance</param>
+        void ControllerButtonUp(size_t id, eControllerButton button) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_BUTTON_UP, id, button}); };
+
+        /// <summary>Pushes controller axis motion event to an input queue</summary>
+        /// <param name="id">SDL Joystick instance id</param>
+        /// <param name="axis">Axis enum instance</param>
+        /// <param name="value">New axis position (SDL raw, not normalized)</param>
+        void ControllerAxisMotion(size_t id, eControllerAxis axis, i16 value) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_AXIS_MOTION, id, axis, value/35768.0f}); };
+
 		///functions for closing the game
 		bool IsQuitRequested() const;
 		void RequestGameQuit();
