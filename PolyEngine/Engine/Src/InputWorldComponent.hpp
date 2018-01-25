@@ -62,9 +62,9 @@ namespace Poly
 		Vector2i PrevMouse;
 		Vector2i CurrWheel;
 		Vector2i PrevWheel;
-		std::unordered_map<i32, ControllerState> Controllers;
-		Dynarray<Optional<i32>> PlayerIDToJoystickID;
-		std::unordered_map<i32, size_t> JoystickIDToPlayerID;
+		std::unordered_map<size_t, ControllerState> Controllers;
+		Dynarray<Optional<size_t>> PlayerIDToJoystickID;
+		std::unordered_map<size_t, size_t> JoystickIDToPlayerID;
 	};
 
 	REGISTER_COMPONENT(WorldComponentsIDGroup, InputWorldComponent)
