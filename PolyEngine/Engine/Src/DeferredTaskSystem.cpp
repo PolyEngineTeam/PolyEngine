@@ -38,7 +38,7 @@ void DeferredTaskSystem::DeferredTaskPhase(World* w)
 		DeferredTaskBase *task = worldCmp->TasksQueue.Front();
 		ASSERTE(task, "The task doesn't exist!");
 
-		gConsole.LogDebug("Executing task: {}", task->GetDescription());
+		//gConsole.LogDebug("Executing task: {}", task->GetDescription());
 		task->Execute(w);
 
 		worldCmp->TasksQueue.PopFront();

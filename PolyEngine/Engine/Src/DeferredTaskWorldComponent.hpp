@@ -22,7 +22,7 @@ namespace Poly
 
 		void ScheduleTask(DeferredTaskBase* task) {
 			TasksQueue.PushBack(task);
-			gConsole.LogDebug("New task scheduled: {}", task->GetDescription());
+			//gConsole.LogDebug("New task scheduled: {}", task->GetDescription());
 		}
 	private:
 		Queue<DeferredTaskBase*> TasksQueue;

@@ -40,10 +40,10 @@ namespace Poly
 		friend void Physics3DSystem::RegisterCollider(World* world, const UniqueID& entityID,	EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 		friend void Physics3DSystem::UnregisterCollider(World* world, const UniqueID& entityID);
 		friend bool Physics3DSystem::IsColliding(World* world, const UniqueID& firstID, const UniqueID& secondID);
-		friend const ContactResult& Physics3DSystem::ContactPair(World* world, const UniqueID& firstID, const UniqueID& secondID);
-		friend const ContactResult& Physics3DSystem::Contact(World* world, const UniqueID& entityID);
-		friend const RaycastResult& Physics3DSystem::AllHitsRaycast(World* world, const Vector& from, const Vector& to);
-		friend const RaycastResult& Physics3DSystem::ClosestHitRaycast(World* world, const Vector& from, const Vector& to);
+		friend ContactResult Physics3DSystem::ContactPair(World* world, const UniqueID& firstID, const UniqueID& secondID);
+		friend ContactResult Physics3DSystem::Contact(World* world, const UniqueID& entityID);
+		friend RaycastResult Physics3DSystem::AllHitsRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
+		friend RaycastResult Physics3DSystem::ClosestHitRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 	public:
 		Physics3DWorldComponent(Physics3DConfig config);
 		~Physics3DWorldComponent();

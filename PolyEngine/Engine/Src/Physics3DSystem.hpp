@@ -14,6 +14,7 @@ namespace Poly
 
 	enum class eCollisionGroup
 	{
+		NOTHING = 0x00,
 		TRIGGER = 0x01,
 		RIGIDBODY = 0x02,
 		RIGIDBODY_RED = 0x04,
@@ -74,7 +75,7 @@ namespace Poly
 		/// @param mass - mass of object with given shape
 		/// @return three dimensional vector containing intertia for given shape with mass
 		/// @see Rigidbody3DComponentTemplate
-		const Vector& CalculateIntertia(const Physics3DShape& shape, float mass);
+		Vector CalculateIntertia(const Physics3DShape& shape, float mass);
 
 
 		//********************************************************************************************************************************************
@@ -162,7 +163,7 @@ namespace Poly
 		/// @return result - instance of @see[ContactResult]
 		/// @see IsColliding
 		/// @see Contact
-		const ENGINE_DLLEXPORT ContactResult& ContactPair(World* world, const UniqueID& firstID, const UniqueID& secondID);
+		ENGINE_DLLEXPORT ContactResult ContactPair(World* world, const UniqueID& firstID, const UniqueID& secondID);
 
 		/// With this function You can get all entities colliding with given entity.
 		/// Detects collision only if entity contains @see[Trigger3DComponent] or @see[Rigidbody3DComponent].
@@ -171,13 +172,13 @@ namespace Poly
 		/// @return result - instance of @see[ContactResult]
 		/// @see IsColliding
 		/// @see ContactPair
-		const ENGINE_DLLEXPORT ContactResult& Contact(World* world, const UniqueID& entityID);
+		ENGINE_DLLEXPORT ContactResult Contact(World* world, const UniqueID& entityID);
 
 
 		//********************************************************************************************************************************************
 		// raytracing
 
-
+			// TODO: check why there are masks and groups instead of only groups (how it really works)
 		/// This function returns all hits encountered within one raycast.
 		/// Only entities with @see[Trigger3DComponent] or @see[Rigidbody3DComponent] will be considered.
 		/// @param world - world with entities You want to test
@@ -185,7 +186,7 @@ namespace Poly
 		/// @param to - cast destination
 		/// @return result - instance of @see[RaycastResult]
 		/// @see ClosestHitRaycast
-		const ENGINE_DLLEXPORT RaycastResult& AllHitsRaycast(World* world, const Vector& from, const Vector& to);
+		ENGINE_DLLEXPORT RaycastResult AllHitsRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 
 		/// This function returns only first hit encountered within one raycast.
 		/// Only entities with @see[Trigger3DComponent] or @see[Rigidbody3DComponent] will be considered.
@@ -194,6 +195,6 @@ namespace Poly
 		/// @param to - cast destination
 		/// @return result - instance of @see[RaycastResult]
 		/// @see AllHitsRaycast
-		const ENGINE_DLLEXPORT RaycastResult& ClosestHitRaycast(World* world, const Vector& from, const Vector& to);
+		ENGINE_DLLEXPORT RaycastResult ClosestHitRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 	}
 } // namespace poly

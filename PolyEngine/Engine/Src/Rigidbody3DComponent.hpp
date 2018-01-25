@@ -119,8 +119,8 @@ namespace Poly
 		bool IsRegistered() const { return Template->Registered; }
 		eRigidBody3DType GetBodyType() const { return Template->RigidbodyType; }
 
-		const Vector& GetLinearVelocity();
-		const Vector& GetAngularVelocity();
+		Vector GetLinearVelocity();
+		Vector GetAngularVelocity();
 
 
 		//********************************************************************************************************************************************
@@ -142,7 +142,7 @@ namespace Poly
 		void ClearForces();
 
 		void SetGravity(const Vector& gravity);
-		const Vector& GetGravity();
+		Vector GetGravity();
 
 	private:
 		World* BodyWorld;

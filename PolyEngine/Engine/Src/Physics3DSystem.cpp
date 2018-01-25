@@ -65,7 +65,7 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 }
 
 //********************************************************************************************************************************************
-const Poly::Vector& Poly::Physics3DSystem::CalculateIntertia(const Physics3DShape& shape, float mass)
+Poly::Vector Poly::Physics3DSystem::CalculateIntertia(const Physics3DShape& shape, float mass)
 {
 	btVector3 i;
 	shape.BulletShape->calculateLocalInertia(mass, i);
@@ -291,31 +291,49 @@ bool Poly::Physics3DSystem::IsColliding(World* world, const UniqueID& firstID, c
 {
 	ASSERTE(world->GetComponent<Collider3DComponent>(firstID)->Template->Registered && world->GetComponent<Collider3DComponent>(secondID)->Template->Registered, "One of the entities was not registered as trigger.");
 
-	return world->GetComponent<Collider3DComponent>(firstID)->ImplData->BulletTrigger->checkCollideWith(world->GetComponent<Collider3DComponent>(secondID)->ImplData->BulletTrigger);
+	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
+
+	int numManifolds = worldCmp->Dispatcher->getNumManifolds();
+	for (int i = 0; i < numManifolds; i++)
+	{
+		btPersistentManifold* contactManifold = worldCmp->Dispatcher->getManifoldByIndexInternal(i);
+		const btCollisionObject* obA = contactManifold->getBody0();
+		const btCollisionObject* obB = contactManifold->getBody1();
+
+		if ((worldCmp->BulletTriggerToEntity[obA] == firstID && worldCmp->BulletTriggerToEntity[obB] == secondID)
+			|| (worldCmp->BulletTriggerToEntity[obA] == secondID && worldCmp->BulletTriggerToEntity[obB] == firstID))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 //********************************************************************************************************************************************
-const Poly::ContactResult& Poly::Physics3DSystem::ContactPair(World* world, const UniqueID& firstID, const UniqueID & secondID)
+Poly::ContactResult Poly::Physics3DSystem::ContactPair(World* world, const UniqueID& firstID, const UniqueID& secondID)
 {
 		// TODO(squares): implement this
 	return ContactResult();
 }
 
 //********************************************************************************************************************************************
-const Poly::ContactResult& Poly::Physics3DSystem::Contact(World* world, const UniqueID& entityID)
+Poly::ContactResult Poly::Physics3DSystem::Contact(World* world, const UniqueID& entityID)
 {
 		// TODO(squares): implement this
 	return ContactResult();
 }
 
 //********************************************************************************************************************************************
-const Poly::RaycastResult& Poly::Physics3DSystem::AllHitsRaycast(World* world, const Vector& from, const Vector & to)
+Poly::RaycastResult Poly::Physics3DSystem::AllHitsRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith)
 {
 	RaycastResult result;
 
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
 	// create ray
 	btCollisionWorld::AllHitsRayResultCallback r(btVector3(from.X, from.Y, from.Z), btVector3(to.X, to.Y, to.Z));
+	r.m_collisionFilterGroup = static_cast<int>(collisionGroup);
+	r.m_collisionFilterMask = static_cast<int>(collidesWith);
 	// call raytest
 	worldCmp->DynamicsWorld->rayTest(r.m_rayFromWorld, r.m_rayToWorld, r);
 
@@ -343,13 +361,15 @@ const Poly::RaycastResult& Poly::Physics3DSystem::AllHitsRaycast(World* world, c
 }
 
 //********************************************************************************************************************************************
-const Poly::RaycastResult& Poly::Physics3DSystem::ClosestHitRaycast(World* world, const Vector& from, const Vector & to)
+Poly::RaycastResult Poly::Physics3DSystem::ClosestHitRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith)
 {
 	RaycastResult result;
 
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
 	// create ray
 	btCollisionWorld::ClosestRayResultCallback r(btVector3(from.X, from.Y, from.Z), btVector3(to.X, to.Y, to.Z));
+	r.m_collisionFilterGroup = static_cast<int>(collisionGroup);
+	r.m_collisionFilterMask = static_cast<int>(collidesWith);
 	// call raytest
 	worldCmp->DynamicsWorld->rayTest(r.m_rayFromWorld, r.m_rayToWorld, r);
 

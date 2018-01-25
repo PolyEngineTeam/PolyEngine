@@ -100,14 +100,14 @@ void Poly::Rigidbody3DComponent::SetAngularVelocity(const Vector& velocity)
 }
 
 //********************************************************************************************************************************************
-const Poly::Vector& Poly::Rigidbody3DComponent::GetLinearVelocity()
+Poly::Vector Poly::Rigidbody3DComponent::GetLinearVelocity()
 {
 	const btVector3& v = ImplData->BulletRigidBody->getLinearVelocity();
 	return Vector(v.x(), v.y(), v.z());
 }
 
 //********************************************************************************************************************************************
-const Poly::Vector& Poly::Rigidbody3DComponent::GetAngularVelocity()
+Poly::Vector Poly::Rigidbody3DComponent::GetAngularVelocity()
 {
 	const btVector3& v = ImplData->BulletRigidBody->getAngularVelocity();
 	return Vector(v.x(), v.y(), v.z());
@@ -197,7 +197,7 @@ void Poly::Rigidbody3DComponent::SetGravity(const Vector&  gravity)
 }
 
 //********************************************************************************************************************************************
-const Poly::Vector& Poly::Rigidbody3DComponent::GetGravity()
+Poly::Vector Poly::Rigidbody3DComponent::GetGravity()
 {
 	const btVector3& g = ImplData->BulletRigidBody->getGravity();
 	return Vector(g.x(), g.y(), g.z());
