@@ -1,6 +1,7 @@
 #include "EnginePCH.hpp"
 
 #include "InputSystem.hpp"
+#include "Optional.hpp"
 
 using namespace Poly;
 
@@ -14,10 +15,10 @@ void InputSystem::InputPhase(World* world)
 	com->PrevMouse = com->CurrMouse;
 	com->PrevWheel = com->CurrWheel;
 
-    for (auto it=com->Controllers.begin(); it!=com->Controllers.end(); ++it)
+    for (auto& pair : com->Controllers)
     {
-        it->second.PrevButton = it->second.CurrButton;
-        it->second.PrevAxis = it->second.CurrAxis;
+        pair.second.PrevButton = pair.second.CurrButton;
+        pair.second.PrevAxis = pair.second.CurrAxis;
     }
 
 	InputQueue& InputEventsQueue = gEngine->GetInputQueue();
@@ -51,14 +52,14 @@ void InputSystem::InputPhase(World* world)
 			break;
 		case eInputEventType::CONTROLLER_ADDED:
         {
-            SDL_GameController *controller = SDL_GameControllerOpen(ev.ControllerID);
-            com->Controllers[controller] = Controller();
+            com->Controllers[ev.JoystickID] = ControllerState();
             bool controllerAssigned = false;
-            for (auto it = com->ControllerPointers.Begin(); it != com->ControllerPointers.End(); ++it)
+            for (size_t i = 0; i < com->PlayerIDToJoystickID.GetSize(); ++i)
             {
-                if (*it == nullptr)
+                if (!com->PlayerIDToJoystickID[i].HasValue())
                 {
-                    *it = controller;
+					com->PlayerIDToJoystickID[i] = Optional<i32>{ev.JoystickID};
+                    com->JoystickIDToPlayerID[ev.JoystickID] = i;
                     controllerAssigned = true;
                     Poly::gConsole.LogDebug("Controller added in existing place");
                     break;
@@ -66,45 +67,32 @@ void InputSystem::InputPhase(World* world)
             }
             if (!controllerAssigned)
             {
-                com->ControllerPointers.PushBack(controller);
+				size_t newPlayerID = com->PlayerIDToJoystickID.GetSize();
+                com->PlayerIDToJoystickID.PushBack(Optional<i32>{ev.JoystickID});
+                com->JoystickIDToPlayerID[ev.JoystickID] = newPlayerID;
                 Poly::gConsole.LogDebug("Controller added in new place");
             }
             break;
         }
 		case eInputEventType::CONTROLLER_REMOVED:
-            for (auto it=com->ControllerPointers.Begin(); it!=com->ControllerPointers.End(); ++it)
-            {
-                SDL_GameController* controllerPtr = *it;
-                SDL_Joystick* joystickPtr = SDL_GameControllerGetJoystick(controllerPtr);
-                Sint32 joystickID = SDL_JoystickInstanceID(joystickPtr);
-                if(joystickID == ev.ControllerID) {
-                    SDL_GameControllerClose(controllerPtr);
-                    com->Controllers.erase(controllerPtr);
-                    *it = nullptr;
-                    Poly::gConsole.LogDebug("Controller removed");
-                    break;
-                }
-            }
-            ASSERTE(true, "Could not remove controller");
-			break;
+        {
+            size_t playerID = com->JoystickIDToPlayerID.at(ev.JoystickID);
+            SDL_GameController* controller = SDL_GameControllerFromInstanceID(ev.JoystickID);
+            SDL_GameControllerClose(controller);
+            com->Controllers.erase(ev.JoystickID);
+            com->PlayerIDToJoystickID[playerID] = Optional<i32>{};
+            com->JoystickIDToPlayerID.erase(ev.JoystickID);
+            break;
+        }
 		case eInputEventType::CONTROLLER_BUTTON_DOWN:
-        {
-            SDL_GameController *controller = SDL_GameControllerFromInstanceID(ev.ControllerID);
-            com->Controllers.at(controller).CurrButton[ev.ControllerButton] = true;
+            com->Controllers.at(ev.JoystickID).CurrButton[ev.ControllerButton] = true;
             break;
-        }
 		case eInputEventType::CONTROLLER_BUTTON_UP:
-        {
-            SDL_GameController *controller = SDL_GameControllerFromInstanceID(ev.ControllerID);
-            com->Controllers.at(controller).CurrButton[ev.ControllerButton] = false;
+            com->Controllers.at(ev.JoystickID).CurrButton[ev.ControllerButton] = false;
             break;
-        }
 		case eInputEventType::CONTROLLER_AXIS_MOTION:
-        {
-            SDL_GameController *controller = SDL_GameControllerFromInstanceID(ev.ControllerID);
-            com->Controllers.at(controller).CurrAxis[ev.ControllerAxis] = ev.AxisValue;
+            com->Controllers.at(ev.JoystickID).CurrAxis[ev.ControllerAxis] = ev.AxisValue;
             break;
-        }
 		case eInputEventType::_COUNT:
 			HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::Push(), which is an invalid value");
 			break;

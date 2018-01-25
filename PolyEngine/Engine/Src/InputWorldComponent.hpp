@@ -6,6 +6,7 @@
 #include "ComponentBase.hpp"
 #include "KeyBindings.hpp"
 #include "InputSystem.hpp"
+#include "Optional.hpp"
 
 namespace Poly
 {
@@ -48,7 +49,7 @@ namespace Poly
         float GetControllerAxis(size_t playerID, eControllerAxis axis) const;
         float GetControllerAxisDelta(size_t playerID, eControllerAxis axis) const;
 
-        size_t GetConnectedControllersCount() const { return PlayerIDToJoystickID.size(); }
+        size_t GetConnectedControllersCount() const { return JoystickIDToPlayerID.size(); }
 		size_t* GetConnectedControllersIDs() const;
         bool IsControllerConnected(size_t idx) const;
 
@@ -62,7 +63,7 @@ namespace Poly
 		Vector2i CurrWheel;
 		Vector2i PrevWheel;
         std::unordered_map<i32, ControllerState> Controllers;
-        std::unordered_map<size_t, i32> PlayerIDToJoystickID;
+        Dynarray<Optional<i32>> PlayerIDToJoystickID;
         std::unordered_map<i32, size_t> JoystickIDToPlayerID;
 	};
 
