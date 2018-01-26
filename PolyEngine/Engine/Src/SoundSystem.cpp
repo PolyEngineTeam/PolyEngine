@@ -121,6 +121,7 @@ void SoundSystem::SetEmitterOffsetInBytes(World* world, Entity* entity, size_t o
 //---------------------------------------------------------------------------------------------------
 void SoundSystem::SetEmitterSource(World* world, Entity* entity, const String& path, eResourceSource source)
 {
+	UNUSED(world);
 	SoundEmitterComponent* emitter = entity->GetComponent<SoundEmitterComponent>();
 
 	alDeleteSources(1, &emitter->EmitterID);
