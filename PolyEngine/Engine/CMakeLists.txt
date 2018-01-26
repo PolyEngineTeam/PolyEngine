@@ -12,7 +12,6 @@ set(POLYENGINE_SRCS
 	Src/CameraComponent.cpp
 	Src/CameraSystem.cpp
 	Src/ConfigBase.cpp
-	Src/ComponentBase.cpp
 	Src/DebugConfig.cpp
 	Src/DebugDrawSystem.cpp
 	Src/DebugWorldComponent.cpp

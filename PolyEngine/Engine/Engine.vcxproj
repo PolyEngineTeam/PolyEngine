@@ -171,7 +171,6 @@
   <ItemGroup>
     <ClCompile Include="Src\CameraComponent.cpp" />
     <ClCompile Include="Src\CameraSystem.cpp" />
-    <ClCompile Include="Src\ComponentBase.cpp" />
     <ClCompile Include="Src\ConfigBase.cpp" />
     <ClCompile Include="Src\AssetsPathConfig.cpp" />
     <ClCompile Include="Src\CubemapResource.cpp" />

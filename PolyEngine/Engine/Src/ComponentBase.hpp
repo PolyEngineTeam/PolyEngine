@@ -1,13 +1,11 @@
 #pragma once
 
 #include <Core.hpp>
+#include "Entity.hpp"
 #include "ComponentIDGenerator.hpp"
 #include "ComponentIDGeneratorImpl.hpp"
 
 namespace Poly {
-	class Entity;
-	class EntityTransform;
-
 	enum class eComponentBaseFlags
 	{
 		NONE = 0x00,
@@ -51,8 +49,8 @@ namespace Poly {
 			return Owner;
 		}
 
-		EntityTransform& GetTransform();
-		const EntityTransform& GetTransform() const;
+		inline EntityTransform& GetTransform() { return Owner->GetTransform(); }
+		inline const EntityTransform& GetTransform() const { return Owner->GetTransform(); }
 
 		void SetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags |= rhs; }
 		void ResetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags &= ~rhs; }

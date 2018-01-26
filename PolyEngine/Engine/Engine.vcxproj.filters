@@ -218,9 +218,6 @@
     <ClCompile Include="Src\EntityTransform.cpp">
       <Filter>Source Files\Transform</Filter>
     </ClCompile>
-    <ClCompile Include="Src\ComponentBase.cpp">
-      <Filter>Source Files\ECS</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine.hpp">
