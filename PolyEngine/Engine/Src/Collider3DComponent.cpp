@@ -4,36 +4,51 @@
 
 #include "Collider3DImpl.hpp"
 
-//********************************************************************************************************************************************
+//------------------------------------------------------------------------------
 Poly::Collider3DComponent::Collider3DComponent(World* world, const Collider3DComponentTemplate& tmp)
 	: BodyWorld(world)
 {
-	Template = std::make_unique<Collider3DComponentTemplate>();
-
-	Template->Shape = tmp.Shape;
-	Template->Registered = tmp.Registered;
-	Template->CollisionGroup = tmp.CollisionGroup;
-	Template->CollisionMask = tmp.CollisionMask;
+	Template.Shape = std::make_unique<Physics3DShape>(*tmp.Shape);
+	Template.Registered = tmp.Registered;
+	Template.CollisionGroup = tmp.CollisionGroup;
+	Template.CollisionMask = tmp.CollisionMask;
 }
-
-	// FIXME(squares): this didn't work as I expected :(
-//********************************************************************************************************************************************
-Poly::Collider3DComponent::Collider3DComponent(World* world, Collider3DComponentTemplate&& tmp)
-	: BodyWorld(world)
-{
-	*Template = std::move(tmp);
-}
-
-//********************************************************************************************************************************************
+//------------------------------------------------------------------------------
 Poly::Collider3DComponent::~Collider3DComponent()
 {
-	if (Template->Registered && !GetSibling<Rigidbody3DComponent>())
-		Physics3DSystem::UnregisterCollider(BodyWorld, GetOwnerID());
+	Rigidbody3DComponent* rigidbody = GetSibling<Rigidbody3DComponent>();
+
+	if ((rigidbody && !rigidbody->IsRegistered() && Template.Registered)
+		|| (!rigidbody && Template.Registered))
+	{
+		Physics3DSystem::UnregisterComponent(BodyWorld, GetOwnerID());
+	}
 }
 
-//********************************************************************************************************************************************
-void Poly::Collider3DComponent::SetShape(const std::shared_ptr<Physics3DShape>& shape)
+//------------------------------------------------------------------------------
+void Poly::Collider3DComponent::SetShape(const Physics3DShape& shape)
 {
-	Template->Shape = shape;
-	ImplData->BulletTrigger->setCollisionShape(shape->BulletShape);
+	ImplData->BulletTrigger->setCollisionShape(shape.BulletShape);
+	Template.Shape.release();
+	Template.Shape = std::make_unique<Physics3DShape>(shape);
+}
+
+//------------------------------------------------------------------------------
+void Poly::Collider3DComponent::UpdatePosition()
+{
+	TransformComponent* transCmp = GetSibling<TransformComponent>();
+	ASSERTE(transCmp, "No transform on physics object!");
+	ASSERTE(transCmp->GetParent() == nullptr, "Physics cannot be applied to child entity");
+
+	Vector localTrans = transCmp->GetLocalTranslation();
+	Quaternion localRot = transCmp->GetLocalRotation();
+
+	btVector3 position(localTrans.X, localTrans.Y, localTrans.Z);
+	btQuaternion orientation(localRot.X, localRot.Y, localRot.Z, localRot.W);
+
+	btTransform initialTransform;
+	initialTransform.setOrigin(position);
+	initialTransform.setRotation(orientation);
+
+	ImplData->BulletTrigger->setWorldTransform(initialTransform);
 }

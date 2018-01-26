@@ -8,7 +8,7 @@
 
 namespace Poly
 {
-	//********************************************************************************************************************************************
+	//------------------------------------------------------------------------------
 	// helper structures
 
 
@@ -28,7 +28,7 @@ namespace Poly
 	/// This structure is used for initialization and keeping important properties of rigid body.
 	/// @see Rigidbody3DComponent
 	/// @see eRigidBody3DType
-	struct Rigidbody3DComponentTemplate
+	struct Rigidbody3DComponentTemplate : BaseObject<>
 	{
 		float Mass = 0;
 		Vector Intertia = Vector(0.f, 0.f, 0.f);
@@ -47,7 +47,7 @@ namespace Poly
 	};
 
 
-	//********************************************************************************************************************************************
+	//------------------------------------------------------------------------------
 	// component declaration
 
 
@@ -56,37 +56,28 @@ namespace Poly
 	/// @see Rigidbody3DComponentTemplate
 	class ENGINE_DLLEXPORT Rigidbody3DComponent : public ComponentBase
 	{
-		//********************************************************************************************************************************************
 		// friendship declarations
 
 
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
 		friend void Physics3DSystem::EnsureInit(World* world, const UniqueID& entityID);
-		friend void Physics3DSystem::RegisterRigidbody(World * world, const UniqueID& entityID, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
-		friend void Physics3DSystem::UnregisterRigidBody(World * world, const UniqueID& entityID);
+		friend void Physics3DSystem::RegisterComponent(World* world, const UniqueID& entityID, bool enablePhysics);
+		friend void Physics3DSystem::UnregisterComponent(World * world, const UniqueID& entityID);
 
 	public:
-		//********************************************************************************************************************************************
-		// constructors and destructors
+		// constructors and destructor
 
 
-		/// This constructor will copy tmp into Template.
+		/// Creates Rigidbody3DComponent from provided template parameters.
 		/// @param world - world where owner entity exists
 		/// @param tmp - template with rigid body properties
 		/// @see Rigidbody3DComponentTemplate
 		Rigidbody3DComponent(World* world, const Rigidbody3DComponentTemplate& tmp);
 
-		/// This constructor will move tmp into Template.
-		/// @param world - world where owner entity exists
-		/// @param tmp - template with rigid body properties
-		/// @see Rigidbody3DComponentTemplate
-		Rigidbody3DComponent(World* world, Rigidbody3DComponentTemplate&& tmp);
-
 		/// If rigid body is registered destructor will unregister it on component destruction.
 		~Rigidbody3DComponent();
 
 
-		//********************************************************************************************************************************************
 		// setters
 
 
@@ -102,28 +93,26 @@ namespace Poly
 		void SetAngularVelocity(const Vector& velocity);
 
 
-		//********************************************************************************************************************************************
 		// getters
 
 
-		float GetMass() const { return Template->Mass; }
-		const Vector& GetIntertia() const { return Template->Intertia; }
-		float GetRestitution() const { return Template->Restitution; }
-		float GetFriction() const { return Template->Friction; }
-		float GetRollingFriction() const { return Template->RollingFriction; }
-		float GetLinearDamping() const { return Template->LinearDamping; }
-		float GetAngularDamping() const { return Template->AngularDamping; }
-		const Vector& GetLinearFactor() const { return Template->LinearFactor; }
-		const Vector& GetAngularFactor() const { return Template->AngularFactor; }
+		float GetMass() const { return Template.Mass; }
+		const Vector& GetIntertia() const { return Template.Intertia; }
+		float GetRestitution() const { return Template.Restitution; }
+		float GetFriction() const { return Template.Friction; }
+		float GetRollingFriction() const { return Template.RollingFriction; }
+		float GetLinearDamping() const { return Template.LinearDamping; }
+		float GetAngularDamping() const { return Template.AngularDamping; }
+		const Vector& GetLinearFactor() const { return Template.LinearFactor; }
+		const Vector& GetAngularFactor() const { return Template.AngularFactor; }
 
-		bool IsRegistered() const { return Template->Registered; }
-		eRigidBody3DType GetBodyType() const { return Template->RigidbodyType; }
+		bool IsRegistered() const { return Template.Registered; }
+		eRigidBody3DType GetBodyType() const { return Template.RigidbodyType; }
 
 		Vector GetLinearVelocity();
 		Vector GetAngularVelocity();
 
 
-		//********************************************************************************************************************************************
 		// other
 
 
@@ -142,12 +131,12 @@ namespace Poly
 		void ClearForces();
 
 		void SetGravity(const Vector& gravity);
-		Vector GetGravity();
+		Vector GetGravity() const;
 
 	private:
 		World* BodyWorld;
 
-		std::unique_ptr<Rigidbody3DComponentTemplate> Template;
+		Rigidbody3DComponentTemplate Template;
 		std::unique_ptr<Rigidbody3DImpl> ImplData;
 	};
 

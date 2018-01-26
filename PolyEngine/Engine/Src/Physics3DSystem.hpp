@@ -8,7 +8,7 @@
 
 namespace Poly
 {
-	//********************************************************************************************************************************************
+	//------------------------------------------------------------------------------
 	// helper structures
 
 
@@ -56,7 +56,7 @@ namespace Poly
 	};
 
 
-	//********************************************************************************************************************************************
+	//------------------------------------------------------------------------------
 	// system namespace
 
 
@@ -78,7 +78,6 @@ namespace Poly
 		Vector CalculateIntertia(const Physics3DShape& shape, float mass);
 
 
-		//********************************************************************************************************************************************
 		// collision groups administration
 
 
@@ -97,7 +96,6 @@ namespace Poly
 		void SetCollisionMask(World* world, const UniqueID& entityID, EnumFlags<eCollisionGroup> mask);
 
 
-		//********************************************************************************************************************************************
 		// deferred administration
 
 		/// The actual collider or rigibody is created during the first Physics3DSystem::Update call after creation of that component.
@@ -105,43 +103,19 @@ namespace Poly
 		void EnsureInit(World* world, const UniqueID& entityID);
 
 
-		//********************************************************************************************************************************************
 		// registration
 
 
-		/// You can have @see[Rigidbody3DComponent] added to entity but till it's not registered 
-		/// it won't be considered in physics simulation (until You call @see[UnregisterRigidBody]).
-		/// WARNING - undefined behaviour when you register collider and then register rigidbody
-		/// @param world - world where exists component You want to register
-		/// @param entityID- @see[UniqueID] of entity that contains @see[Rigidbody3DComponent] You want to register
-		/// @see RegisterTriger
-		void ENGINE_DLLEXPORT RegisterRigidbody(World* world, const UniqueID& entityID, 
-			EnumFlags<eCollisionGroup> colliderGroup = eCollisionGroup::RIGIDBODY, EnumFlags<eCollisionGroup> collidesWith = eCollisionGroup::RIGIDBODY);
+		void ENGINE_DLLEXPORT RegisterComponent(World* world, const UniqueID& entityID, bool enablePhysics);
 
 		/// You can unregister your entity with this method so it won't be further
-		/// considered during the simulation ((until You call @see[RegisterRigidbody])
-		/// @param world - world where exists component You want to unregister
-		/// @param entityID- @see[UniqueID] of entity that contains @see[Rigidbody3DComponent] You want to unregister
-		/// @see UnregisterTriger
-		void ENGINE_DLLEXPORT UnregisterRigidBody(World* world, const UniqueID& entityID);
-
-		/// You can have @see[Trigger3DComponent] added to entity but till it's not registered 
-		/// it won't be considered in physics simulation (until You call @see[UnregisterTriger]).
-		/// @param world - world where exists component You want to register
-		/// @param entityID- @see[UniqueID] of entity that contains @see[Trigger3DComponent] You want to register
-		/// @see RegisterRigidbody
-		void ENGINE_DLLEXPORT RegisterCollider(World* world, const UniqueID& entityID,
-			EnumFlags<eCollisionGroup> colliderGroup = eCollisionGroup::TRIGGER, EnumFlags<eCollisionGroup> collidesWith = eCollisionGroup::TRIGGER | eCollisionGroup::RIGIDBODY);
-
-		/// You can unregister your entity with this method so it won't be further
-		/// considered during the simulation ((until You call @see[RegisterTriger])
+		/// considered during the simulation ((until You call @see[RegisterColliderComponent])
 		/// @param world - world where exists component You want to unregister
 		/// @param entityID- @see[UniqueID] of entity that contains @see[Trigger3DComponent] You want to unregister
 		/// @see UnregisterRigidBody
-		void ENGINE_DLLEXPORT UnregisterCollider(World* world, const UniqueID& entityID);
+		void ENGINE_DLLEXPORT UnregisterComponent(World* world, const UniqueID& entityID);
 
 
-		//********************************************************************************************************************************************
 		// collisions
 
 
@@ -175,10 +149,8 @@ namespace Poly
 		ENGINE_DLLEXPORT ContactResult Contact(World* world, const UniqueID& entityID);
 
 
-		//********************************************************************************************************************************************
 		// raytracing
 
-			// TODO: check why there are masks and groups instead of only groups (how it really works)
 		/// This function returns all hits encountered within one raycast.
 		/// Only entities with @see[Trigger3DComponent] or @see[Rigidbody3DComponent] will be considered.
 		/// @param world - world with entities You want to test

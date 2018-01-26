@@ -3,7 +3,7 @@
 #include <btBulletDynamicsCommon.h>
 #include <btBulletCollisionCommon.h>
 
-//********************************************************************************************************************************************
+//------------------------------------------------------------------------------
 Poly::Physics3DWorldComponent::Physics3DWorldComponent(Physics3DConfig config)
 	: Config(config)
 {
@@ -17,12 +17,17 @@ Poly::Physics3DWorldComponent::Physics3DWorldComponent(Physics3DConfig config)
 	DynamicsWorld->setGravity(btVector3(config.Gravity.X, config.Gravity.Y, config.Gravity.Z));
 }
 
-//********************************************************************************************************************************************
+//------------------------------------------------------------------------------
 Poly::Physics3DWorldComponent::~Physics3DWorldComponent()
 {
+	DynamicsWorld.release();
+	Solver.release();
+	Broadphase.release();
+	Dispatcher.release();
+	CollisionConfiguration.release();
 }
 
-//********************************************************************************************************************************************
+//------------------------------------------------------------------------------
 void Poly::Physics3DWorldComponent::SetGravity(const Vector& g)
 {
 	Config.Gravity = g;
@@ -32,10 +37,4 @@ void Poly::Physics3DWorldComponent::SetGravity(const Vector& g)
 void Poly::Physics3DWorldComponent::SetTimeStep(float timestep)
 {
 	Config.TimeStep = timestep;
-}
-
-void Poly::Physics3DWorldComponent::SetTimeFactor(float factor)
-{
-	Config.TimeStep *= factor / Config.TimeFactor;
-	Config.TimeFactor = factor;
 }

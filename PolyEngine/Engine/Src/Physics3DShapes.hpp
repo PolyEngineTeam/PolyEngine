@@ -16,15 +16,16 @@ namespace Poly
 		_COUNT
 	};
 
-	class ENGINE_DLLEXPORT Physics3DShape
+	class ENGINE_DLLEXPORT Physics3DShape : public BaseObject<>
 	{
 		//friend void Physics3DSystem::EnsureInit(World* world, const UniqueID& entityID);
 		//friend const Vector& Physics3DSystem::CalculateIntertia(const Physics3DShape& shape, float mass);
 	public:
 		Physics3DShape(ePhysics3DShape type) : ShapeType(type) {}
+		virtual ~Physics3DShape();
 		const ePhysics3DShape ShapeType;
 			// FIXME(squares): friendship problems
-		btCollisionShape* BulletShape;
+		btCollisionShape* BulletShape = nullptr;
 	protected:
 	};
 

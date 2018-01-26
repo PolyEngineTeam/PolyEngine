@@ -23,7 +23,6 @@ namespace Poly
 	public:
 		float TimeStep = 1.f / 60.f;
 		Vector Gravity = Vector(0.f, -9.81f, 0.f);
-		float TimeFactor = 1.f;
 	};
 
 	/// World component contains configuration for physics simulation and 
@@ -35,10 +34,8 @@ namespace Poly
 	class ENGINE_DLLEXPORT Physics3DWorldComponent : public ComponentBase
 	{
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
-		friend void Physics3DSystem::RegisterRigidbody(World* world, const UniqueID& entityID, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
-		friend void Physics3DSystem::UnregisterRigidBody(World* world, const UniqueID& entityID);
-		friend void Physics3DSystem::RegisterCollider(World* world, const UniqueID& entityID,	EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
-		friend void Physics3DSystem::UnregisterCollider(World* world, const UniqueID& entityID);
+		friend void Physics3DSystem::RegisterComponent(World* world, const UniqueID& entityID, bool enablePhysics);
+		friend void Physics3DSystem::UnregisterComponent(World * world, const UniqueID& entityID);
 		friend bool Physics3DSystem::IsColliding(World* world, const UniqueID& firstID, const UniqueID& secondID);
 		friend ContactResult Physics3DSystem::ContactPair(World* world, const UniqueID& firstID, const UniqueID& secondID);
 		friend ContactResult Physics3DSystem::Contact(World* world, const UniqueID& entityID);
@@ -50,11 +47,9 @@ namespace Poly
 
 		void SetGravity(const Vector& g);
 		void SetTimeStep(float timestep);
-		void SetTimeFactor(float factor);
 
 		const Vector& GetGravity() const { return Config.Gravity; }
 		float GetTimeStep() const { return Config.TimeStep; }
-		float GetTimeFactor() const { return Config.TimeFactor; }
 
 	private:
 		Physics3DConfig Config;
