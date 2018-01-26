@@ -17,7 +17,7 @@ float nrand(float n)
 void main()
 {
     float rnd = nrand(float(gl_InstanceID));
-    float phase = abs(sin(rnd + 2.0 * uTime));
+    float phase = abs(sin(rnd + 7.5 * uTime));
     vec4 p = vec4(aPos, 1.0);
     p = mix(p, aOffset * p, vec4(phase));
     p = uMVP * p;

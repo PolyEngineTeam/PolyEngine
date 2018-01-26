@@ -43,10 +43,13 @@ ParticlesRenderingPass::ParticlesRenderingPass()
 	
 	// gConsole.LogInfo("InstancedMeshRenderingPass::Ctor sizeof(Matrix): {}, sizeof(GLfloat): {}", sizeof(Matrix), sizeof(GLfloat));
 
+
+	instancesTransform.Resize(16 * instancesLen);
+
 	// fill array with zeros
 	for (int i = 0; i < 16 * instancesLen; ++i)
 	{
-		instanceTransform[i] = 0.0f;
+		instancesTransform[i] = 0.0f;
 	}
 
 	srand(42);
@@ -54,22 +57,21 @@ ParticlesRenderingPass::ParticlesRenderingPass()
 	int index = 0;
 	for (int i = 0; i < instancesLen; ++i)
 	{
-		// must be transposed
 		// identity
-		instanceTransform[index + 0] = 1.0f;
-		instanceTransform[index + 5] = 1.0f;
-		instanceTransform[index + 10] = 1.0f;
-		instanceTransform[index + 15] = 1.0f;
+		instancesTransform[index + 0] = 1.0f;
+		instancesTransform[index + 5] = 1.0f;
+		instancesTransform[index + 10] = 1.0f;
+		instancesTransform[index + 15] = 1.0f;
 		// translation
-		instanceTransform[index + 12] = 5.0f * Random(-1.0, 1.0);
-		instanceTransform[index + 13] = 5.0f * Random(-1.0, 1.0);
-		instanceTransform[index + 14] = 5.0f * Random(-1.0, 1.0);
+		instancesTransform[index + 12] = 5.0f * Random(-1.0, 1.0);
+		instancesTransform[index + 13] = 5.0f * Random(-1.0, 1.0);
+		instancesTransform[index + 14] = 5.0f * Random(-1.0, 1.0);
 		index += 16;
 	}
 
 	glGenBuffers(1, &instanceVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16 * instancesLen, &instanceTransform[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16 * instancesLen, instancesTransform.GetData(), GL_STATIC_DRAW);
 	// glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	// http://sol.gfxile.net/instancing.html
@@ -108,12 +110,6 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 
 	GetProgram().BindProgram();
 	GetProgram().SetUniform("uTime", Time);
-	// GetProgram().SetUniform("uMVP", mvp);
-	// 
-	// glBindVertexArray(quadVAO);
-	// glDrawArraysInstanced(GL_TRIANGLES, 0, 6, instancesLen); // 100 triangles of 6 vertices each
-	// glBindVertexArray(0);
-
 
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<ParticlesComponent>())
@@ -128,26 +124,8 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 		GetProgram().SetUniform("uMVP", screenTransform);
 
 		glBindVertexArray(quadVAO);
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, instancesLen); // 100 triangles of 6 vertices each
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, instancesLen);
 		glBindVertexArray(0);
-		
-		// for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
-		// {
-		// 	const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
-		// 	glBindVertexArray(meshProxy->GetVAO());
-		// 
-		// 	// const Poly::TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
-		// 	// GLuint TextureID = DiffuseTexture == nullptr
-		// 	// 	? FallbackWhiteTexture
-		// 	// 	: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
-		// 
-		// 	// glActiveTexture(GL_TEXTURE0);
-		// 	// glBindTexture(GL_TEXTURE_2D, TextureID);
-		// 
-		// 	glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
-		// 	glBindTexture(GL_TEXTURE_2D, 0);
-		// 	glBindVertexArray(0);
-		// }
 	}
 }
 

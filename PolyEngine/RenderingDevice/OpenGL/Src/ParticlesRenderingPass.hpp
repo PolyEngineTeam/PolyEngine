@@ -25,14 +25,10 @@ namespace Poly
 		unsigned int quadVAO, quadVBO;
 		unsigned int instanceVBO;
 
-		static const int instancesLen = 100;
-
-		float instanceTransform[16 * instancesLen];
-
-		// const PostprocessQuad* Quad;
+		static const int instancesLen = 10;
+		Dynarray<float> instancesTransform;
 
 		float Random() const;
-
 		float Random(float min, float max) const;
 	};
 }

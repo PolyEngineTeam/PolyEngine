@@ -3,6 +3,7 @@
 #include <BaseObject.hpp>
 
 #include "Mesh.hpp"
+#include "ParticleEmitter.hpp"
 
 namespace Poly
 {
@@ -91,6 +92,12 @@ namespace Poly
 	{
 	public:
 		virtual void SetContent(const Mesh& mesh) = 0;
+	};
+
+	class ENGINE_DLLEXPORT IParticleDeviceProxy : public BaseObject<>
+	{
+	public:
+		virtual void SetContent(const ParticleEmitter& particles) = 0;
 	};
 
 	//------------------------------------------------------------------------------
