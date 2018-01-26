@@ -49,12 +49,12 @@ namespace Poly
 
 		friend class Rigidbody3DComponent;
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
-		friend void Physics3DSystem::EnsureInit(World* world, const UniqueID& entityID);
-		friend void Physics3DSystem::SetCollisionGroup(World* world, const UniqueID& entityID, EnumFlags<eCollisionGroup> group);
-		friend void Physics3DSystem::SetCollisionMask(World* world, const UniqueID& entityID, EnumFlags<eCollisionGroup> mask);
-		friend void Physics3DSystem::RegisterComponent(World* world, const UniqueID& entityID, bool enablePhysics);
-		friend void Physics3DSystem::UnregisterComponent(World * world, const UniqueID& entityID);
-		friend bool Physics3DSystem::IsColliding(World* world, const UniqueID& firstID, const UniqueID& secondID);
+		friend void Physics3DSystem::EnsureInit(World* world, Entity* entity);
+		friend void Physics3DSystem::SetCollisionGroup(World* world, Entity* entity, EnumFlags<eCollisionGroup> group);
+		friend void Physics3DSystem::SetCollisionMask(World* world, Entity* entity, EnumFlags<eCollisionGroup> mask);
+		friend void Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool enablePhysics);
+		friend void Physics3DSystem::UnregisterComponent(World * world, Entity* entity);
+		friend bool Physics3DSystem::IsColliding(World* world, Entity* firstEntity, Entity* secondEntity);
 
 	public:
 		// constructors and destructor

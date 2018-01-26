@@ -5,7 +5,6 @@
 
 #include <World.hpp>
 #include <CameraComponent.hpp>
-#include <TransformComponent.hpp>
 #include <MeshRenderingComponent.hpp>
 
 using namespace Poly;
@@ -21,10 +20,10 @@ void DebugNormalsRenderingPass::OnRun(World* world, const CameraComponent* camer
 	const Matrix& mvp = camera->GetMVP();
 	
 	// Render meshes
-	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
+	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-		TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
+		const EntityTransform& trans = meshCmp->GetTransform();
 
 		if (passType == ePassType::BY_MATERIAL &&
 			(meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::LIT))
@@ -32,7 +31,7 @@ void DebugNormalsRenderingPass::OnRun(World* world, const CameraComponent* camer
 		 	continue;
 		}
 
-		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
+		const Matrix& objTransform = trans.GetGlobalTransformationMatrix();
 		Matrix screenTransform = mvp * objTransform;
 		GetProgram().SetUniform("uTransform", objTransform);
 		GetProgram().SetUniform("uMVPTransform", screenTransform);

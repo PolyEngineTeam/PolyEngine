@@ -60,9 +60,9 @@ namespace Poly
 
 
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
-		friend void Physics3DSystem::EnsureInit(World* world, const UniqueID& entityID);
-		friend void Physics3DSystem::RegisterComponent(World* world, const UniqueID& entityID, bool enablePhysics);
-		friend void Physics3DSystem::UnregisterComponent(World * world, const UniqueID& entityID);
+		friend void Physics3DSystem::EnsureInit(World* world, Entity* entity);
+		friend void Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool enablePhysics);
+		friend void Physics3DSystem::UnregisterComponent(World * world, Entity* entity);
 
 	public:
 		// constructors and destructor

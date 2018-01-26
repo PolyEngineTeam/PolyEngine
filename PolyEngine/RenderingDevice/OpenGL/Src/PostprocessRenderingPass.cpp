@@ -8,7 +8,6 @@
 #include <World.hpp>
 #include <TimeSystem.hpp>
 #include <CameraComponent.hpp>
-#include <TransformComponent.hpp>
 #include <MovementSystem.hpp>
 #include <MeshRenderingComponent.hpp>
 #include <PostprocessSettingsComponent.hpp>
@@ -32,9 +31,9 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	float ResolutionX = rect.GetSize().X * gRenderingDevice->GetScreenSize().Width;
 	float ResolutionY = rect.GetSize().Y * gRenderingDevice->GetScreenSize().Height;
-	const TransformComponent* CameraTransform = camera->GetSibling<TransformComponent>();
-	Vector CameraPosition = CameraTransform->GetGlobalTranslation();
-	Matrix CameraRotation = CameraTransform->GetGlobalRotation().ToRotationMatrix();
+	const EntityTransform& cameraTransform = camera->GetTransform();
+	Vector CameraPosition = cameraTransform.GetGlobalTranslation();
+	Matrix CameraRotation = cameraTransform.GetGlobalRotation().ToRotationMatrix();
 
 	GetProgram().BindProgram();
 

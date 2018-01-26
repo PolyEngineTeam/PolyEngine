@@ -15,7 +15,7 @@ Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, const Rigidbody3D
 Poly::Rigidbody3DComponent::~Rigidbody3DComponent()
 {
 	if (Template.Registered)
-		Physics3DSystem::UnregisterComponent(BodyWorld, GetOwnerID());
+		Physics3DSystem::UnregisterComponent(BodyWorld, GetOwner());
 }
 
 //------------------------------------------------------------------------------
@@ -105,12 +105,12 @@ Poly::Vector Poly::Rigidbody3DComponent::GetAngularVelocity()
 //------------------------------------------------------------------------------
 void Poly::Rigidbody3DComponent::UpdatePosition()
 {
-	TransformComponent* transCmp = GetSibling<TransformComponent>();
-	ASSERTE(transCmp, "No transform on physics object!");
-	ASSERTE(transCmp->GetParent() == nullptr, "Physics cannot be applied to child entity");
+	const EntityTransform& transform = GetTransform();
+		// TODO: parent can't be nullptr
+	//ASSERTE(transCmp->GetParent() == nullptr, "Physics cannot be applied to child entity");
 
-	Vector localTrans = transCmp->GetLocalTranslation();
-	Quaternion localRot = transCmp->GetLocalRotation();
+	Vector localTrans = transform.GetLocalTranslation();
+	Quaternion localRot = transform.GetLocalRotation();
 
 	btVector3 position(localTrans.X, localTrans.Y, localTrans.Z);
 	btQuaternion orientation(localRot.X, localRot.Y, localRot.Z, localRot.W);

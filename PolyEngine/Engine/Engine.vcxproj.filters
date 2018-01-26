@@ -182,9 +182,6 @@
     <ClCompile Include="Src\SoundWorldComponent.cpp">
       <Filter>Source Files\Sound\WorldComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Src\TransformComponent.cpp">
-      <Filter>Source Files\Transform</Filter>
-    </ClCompile>
     <ClCompile Include="Src\DeferredTaskSystem.cpp">
       <Filter>Source Files\DeferredTasks</Filter>
     </ClCompile>
@@ -236,6 +233,8 @@
     <ClCompile Include="Src\DebugDrawSystem.cpp">
       <Filter>Source Files\Debug\DebugRendering</Filter>
     </ClCompile>
+    <ClCompile Include="Src\EntityTransform.cpp">
+      <Filter>Source Files\Transform</Filter>
     <ClCompile Include="Src\Physics3DShapes.cpp">
       <Filter>Physics3D\Shapes</Filter>
     </ClCompile>
@@ -355,9 +354,6 @@
     <ClInclude Include="Src\SoundWorldComponent.hpp">
       <Filter>Source Files\Sound\WorldComponent</Filter>
     </ClInclude>
-    <ClInclude Include="Src\TransformComponent.hpp">
-      <Filter>Source Files\Transform</Filter>
-    </ClInclude>
     <ClInclude Include="Src\DeferredTaskBase.hpp">
       <Filter>Source Files\DeferredTasks</Filter>
     </ClInclude>
@@ -423,6 +419,9 @@
     </ClInclude>
     <ClInclude Include="Src\DebugDrawSystem.hpp">
       <Filter>Source Files\Debug\DebugRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EntityTransform.hpp">
+      <Filter>Source Files\Transform</Filter>
     </ClInclude>
     <ClInclude Include="Src\Physics3DShapes.hpp">
       <Filter>Physics3D\Shapes</Filter>

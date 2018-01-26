@@ -12,11 +12,11 @@ void FPSSystem::FPSUpdatePhase(World* world)
 {
 	DebugWorldComponent* com = world->GetWorldComponent<DebugWorldComponent>();
 
-	if (gDebugConfig.DisplayFPS && !com->FPSData.TextID)
+	if (gDebugConfig.DisplayFPS && !com->FPSData.TextEnt)
 	{
-		UniqueID id = DeferredTaskSystem::SpawnEntityImmediate(world);
-		DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(world,  id, Vector(300, 300, 0), "Fonts/Raleway/Raleway-Regular.ttf", eResourceSource::ENGINE, 32);
-		com->FPSData.TextID = id;
+		Entity* ent = DeferredTaskSystem::SpawnEntityImmediate(world);
+		DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(world, ent, Vector(300, 300, 0), "Fonts/Raleway/Raleway-Regular.ttf", eResourceSource::ENGINE, 32);
+		com->FPSData.TextEnt = ent;
 	}
 		
 	
@@ -24,7 +24,7 @@ void FPSSystem::FPSUpdatePhase(World* world)
 	{
 		com->FPSData.ElapsedTime = TimeSystem::GetTimerElapsedTime(world, eEngineTimer::SYSTEM);
 
-		ScreenSpaceTextComponent* textCom = world->GetComponent<ScreenSpaceTextComponent>(com->FPSData.TextID);
+		ScreenSpaceTextComponent* textCom = world->GetComponent<ScreenSpaceTextComponent>(com->FPSData.TextEnt.Get());
 		textCom->SetText(&std::string("FPS: " + std::to_string(com->FPSData.FPS))[0]);
 		com->FPSData.FPS = 0;
 	}

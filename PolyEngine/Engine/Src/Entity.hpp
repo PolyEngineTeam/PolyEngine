@@ -3,6 +3,8 @@
 #include <Core.hpp>
 #include <bitset>
 
+#include <SafePtrRoot.hpp>
+#include "EntityTransform.hpp"
 #include "Engine.hpp"
 
 namespace Poly
@@ -11,9 +13,11 @@ namespace Poly
 	constexpr unsigned int MAX_COMPONENTS_COUNT = 64;
 
 	/// <summary>Class that represent entity inside core engine systems. Should not be used anywhere else.</summary>
-	class ENGINE_DLLEXPORT Entity : public BaseObject<>
+	class ENGINE_DLLEXPORT Entity : public SafePtrRoot
 	{
 	public:
+		~Entity();
+
 		const UniqueID& GetID() const { HEAVY_ASSERTE(EntityID, "Entity was not properly initialized");  return EntityID; }
 		const World* GetWorld() const { HEAVY_ASSERTE(EntityID, "Entity was not properly initialized");  return EntityWorld; }
 
@@ -41,11 +45,45 @@ namespace Poly
 		template<class T>
 		T* GetComponent(); //defined in World.hpp due to circular inclusion problem; FIXME: circular inclusion
 
+		/// <summary>Gets a pointer to a component of a given ID.</summary>
+		/// <returns>A pointer to a component or nullptr if it does not exist.</returns>
+		template<class T>
+		const T* GetComponent() const; //defined in World.hpp due to circular inclusion problem; FIXME: circular inclusion
+
+		/// Returns pointer to parent entity. Returns nullptr if (and only if) this is the root of the scene.
+		/// @return Pointer to parent entity.
+		const Entity* GetParent() const { return Parent; }
+		Entity* GetParent() { return Parent; }
+
+		/// Returns collection of children of this entity.
+		/// @return Collection of children.
+		const Dynarray<Entity*>& GetChildren() const { return Children; }
+
+		/// Reparents this entity. Entity cannot be parented to his children, to himself or to nothing (with exception to scene root).
+		/// @param Entity* Pointer to new parent
+		void SetParent(Entity* parent);
+
+		/// Adds new child to this entity. Child cannot be parent of this entity, equal to this entity or nullptr.
+		/// @param Entity* Pointer to new child
+		inline void AddChild(Entity* child) { ASSERTE(child, "Child cannot be null!"); child->SetParent(this); }
+
+		/// Returns transformation data of this entity.
+		/// @return Transformation data of this entity.
+		EntityTransform& GetTransform() { return Transform; }
+		const EntityTransform& GetTransform() const { return Transform; }
+
+		bool IsRoot() const { return Parent == nullptr; }
+		bool IsChildOfRoot() const { return Parent ? Parent->IsRoot() : false; }
+		bool ContainsChildRecursive(Entity* child) const;
 	private:
-		Entity(const World* world);
+		Entity(World* world, Entity* parent = nullptr);
+
+		Entity* Parent = nullptr;
+		Dynarray<Entity*> Children;
 
 		UniqueID EntityID;
-		const World* EntityWorld = nullptr;
+		EntityTransform Transform;
+		World* EntityWorld = nullptr;
 
 		std::bitset<MAX_COMPONENTS_COUNT> ComponentPosessionFlags;
 		ComponentBase* Components[MAX_COMPONENTS_COUNT];

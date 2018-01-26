@@ -186,6 +186,7 @@
     </ClCompile>
     <ClCompile Include="Src\Entity.cpp" />
     <ClCompile Include="Src\ComponentIDGenerator.cpp" />
+    <ClCompile Include="Src\EntityTransform.cpp" />
     <ClCompile Include="Src\FontResource.cpp" />
     <ClCompile Include="Src\FPSSystem.cpp" />
     <ClCompile Include="Src\FreeFloatMovementComponent.cpp" />
@@ -218,7 +219,6 @@
     <ClCompile Include="Src\Text2D.cpp" />
     <ClCompile Include="Src\TimeSystem.cpp" />
     <ClCompile Include="Src\TimeWorldComponent.cpp" />
-    <ClCompile Include="Src\TransformComponent.cpp" />
     <ClCompile Include="Src\Collider3DComponent.cpp" />
     <ClCompile Include="Src\ViewportWorldComponent.cpp" />
     <ClCompile Include="Src\World.cpp" />
@@ -248,6 +248,7 @@
     <ClInclude Include="Src\EnginePCH.hpp" />
     <ClInclude Include="Src\Entity.hpp" />
     <ClInclude Include="Src\ComponentIDGenerator.hpp" />
+    <ClInclude Include="Src\EntityTransform.hpp" />
     <ClInclude Include="Src\FontResource.hpp" />
     <ClInclude Include="Src\FPSSystem.hpp" />
     <ClInclude Include="Src\FreeFloatMovementComponent.hpp" />
@@ -290,7 +291,6 @@
     <ClInclude Include="Src\Timer.hpp" />
     <ClInclude Include="Src\TimeSystem.hpp" />
     <ClInclude Include="Src\TimeWorldComponent.hpp" />
-    <ClInclude Include="Src\TransformComponent.hpp" />
     <ClInclude Include="Src\Collider3DComponent.hpp" />
     <ClInclude Include="Src\Collider3DImpl.hpp" />
     <ClInclude Include="Src\Viewport.hpp" />

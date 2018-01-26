@@ -46,7 +46,7 @@ namespace Poly
 	{
 		struct RaycastHit
 		{
-			UniqueID HitEntityID;
+			const Entity* HitEntityID;
 			Vector WorldHitNormal;
 			Vector WorldHitPoint;
 			float HitFraction;
@@ -86,34 +86,34 @@ namespace Poly
 		/// @param group - new collision group
 		/// @see Trigger3DComponent::GetCollisionGroup
 		/// @see Trigger3DComponent::SetCollisionMask
-		void SetCollisionGroup(World* world, const UniqueID& entityID, EnumFlags<eCollisionGroup> group);
+		void SetCollisionGroup(World* world, Entity* entity, EnumFlags<eCollisionGroup> group);
 
 		/// Use to change collider collision mask.
 		/// Collision mask determines whith which collision groups this collider will collide.
 		/// @param mask - new collision mask
 		/// @see Trigger3DComponent::GetCollisionMask
 		/// @see Trigger3DComponent::SetCollisionGroup
-		void SetCollisionMask(World* world, const UniqueID& entityID, EnumFlags<eCollisionGroup> mask);
+		void SetCollisionMask(World* world, Entity* entity, EnumFlags<eCollisionGroup> mask);
 
 
 		// deferred administration
 
 		/// The actual collider or rigibody is created during the first Physics3DSystem::Update call after creation of that component.
 		/// @see Physics3DSystem::Physics3DUpdatePhase
-		void EnsureInit(World* world, const UniqueID& entityID);
+		void EnsureInit(World* world, Entity* entity);
 
 
 		// registration
 
 
-		void ENGINE_DLLEXPORT RegisterComponent(World* world, const UniqueID& entityID, bool enablePhysics);
+		void ENGINE_DLLEXPORT RegisterComponent(World* world, Entity* entity, bool enablePhysics);
 
 		/// You can unregister your entity with this method so it won't be further
 		/// considered during the simulation ((until You call @see[RegisterColliderComponent])
 		/// @param world - world where exists component You want to unregister
 		/// @param entityID- @see[UniqueID] of entity that contains @see[Trigger3DComponent] You want to unregister
 		/// @see UnregisterRigidBody
-		void ENGINE_DLLEXPORT UnregisterComponent(World* world, const UniqueID& entityID);
+		void ENGINE_DLLEXPORT UnregisterComponent(World* world, Entity* entity);
 
 
 		// collisions
@@ -127,7 +127,7 @@ namespace Poly
 		/// @return colliding - true if given entities are colliding
 		/// @see ContactPair
 		/// @see Contact
-		bool ENGINE_DLLEXPORT IsColliding(World* world, const UniqueID& firstID, const UniqueID& secondID);
+		bool ENGINE_DLLEXPORT IsColliding(World* world, Entity* firstEntity, Entity* secondEntity);
 
 		/// When You want to get collision points You should use this function.
 		/// Both entities have to contain @see[Trigger3DComponent] or @see[Rigidbody3DComponent].
@@ -137,7 +137,7 @@ namespace Poly
 		/// @return result - instance of @see[ContactResult]
 		/// @see IsColliding
 		/// @see Contact
-		ENGINE_DLLEXPORT ContactResult ContactPair(World* world, const UniqueID& firstID, const UniqueID& secondID);
+		ENGINE_DLLEXPORT ContactResult ContactPair(World* world, Entity* firstEntity, Entity* secondEntity);
 
 		/// With this function You can get all entities colliding with given entity.
 		/// Detects collision only if entity contains @see[Trigger3DComponent] or @see[Rigidbody3DComponent].
@@ -146,7 +146,7 @@ namespace Poly
 		/// @return result - instance of @see[ContactResult]
 		/// @see IsColliding
 		/// @see ContactPair
-		ENGINE_DLLEXPORT ContactResult Contact(World* world, const UniqueID& entityID);
+		ENGINE_DLLEXPORT ContactResult Contact(World* world, Entity* entity);
 
 
 		// raytracing

@@ -1,18 +1,16 @@
 #pragma once
 
-#include "ComponentBase.hpp"
+#include <Core.hpp>
 
 namespace Poly 
 {
-	class ENGINE_DLLEXPORT TransformComponent : public ComponentBase
+	class Entity;
+
+	class ENGINE_DLLEXPORT EntityTransform final : public BaseObjectLiteralType<>
 	{
 	public:
-		TransformComponent(TransformComponent* parent = nullptr) { if(parent) SetParent(parent); };
-		~TransformComponent();
-
-		const TransformComponent* GetParent() const { return Parent; }
-		void SetParent(TransformComponent* parent);
-		void ResetParent();
+		EntityTransform(Entity* owner) : Owner(owner) {};
+		~EntityTransform();
 
 		const Vector& GetGlobalTranslation() const;
 		const Vector& GetLocalTranslation() const { return LocalTranslation; };
@@ -31,11 +29,10 @@ namespace Poly
 		const Matrix& GetGlobalTransformationMatrix() const;
 		void SetLocalTransformationMatrix(const Matrix& localTransformation);
 		
-		const Dynarray<TransformComponent*>& GetChildren() const { return Children; }
 	private:
-		TransformComponent* Parent = nullptr;
-		Dynarray<TransformComponent*> Children;
+		void UpdateParentTransform();
 
+		Entity* Owner = nullptr;
 		Vector LocalTranslation;
 		mutable Vector GlobalTranslation;
 		Quaternion LocalRotation;
@@ -51,7 +48,7 @@ namespace Poly
 		bool UpdateLocalTransformationCache() const;
 		void UpdateGlobalTransformationCache() const;
 		void SetGlobalDirty() const;
-	};
 
-	REGISTER_COMPONENT(ComponentsIDGroup, TransformComponent)
+		friend class Entity;
+	};
 }

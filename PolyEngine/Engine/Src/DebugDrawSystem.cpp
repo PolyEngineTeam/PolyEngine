@@ -58,11 +58,11 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 	// iterate RenderMode::_COUNT times to create shapes defining debug primitives
 	for(int renderMode = static_cast<int>(RenderMode::LINE); renderMode < static_cast<int>(RenderMode::_COUNT); ++renderMode)
 	{
-		for(auto componentsTuple : world->IterateComponents<DebugDrawableComponent, MeshRenderingComponent, TransformComponent>())
+		for(auto componentsTuple : world->IterateComponents<DebugDrawableComponent, MeshRenderingComponent>())
 		{
 			const auto ddrawCmp = std::get<DebugDrawableComponent*>(componentsTuple);
 			const auto meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-			const auto transformCmp = std::get<TransformComponent*>(componentsTuple);
+			const auto& transform = meshCmp->GetTransform();
 
 			if (meshCmp == nullptr)
 				continue;
@@ -70,7 +70,7 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 			if (!gDebugConfig.DebugDrawPresets.IsSet(ddrawCmp->entityPreset))
 				continue;
 
-			const Matrix& objTransform = transformCmp->GetGlobalTransformationMatrix();
+			const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
 
 			// spawn a box for every mesh, in correct size
 			for(const auto subMesh : meshCmp->GetMesh()->GetSubMeshes())
@@ -99,11 +99,11 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 
 		// @fixme
 		// move iteration over RigidBody2DComponent to different debug-system (f.ex. PhysicsDebugDrawSystem)
-		for (auto componentsTuple : world->IterateComponents<RigidBody2DComponent, DebugDrawableComponent, TransformComponent>())
+		for (auto componentsTuple : world->IterateComponents<RigidBody2DComponent, DebugDrawableComponent>())
 		{
 			const auto rigidbodyCmp = std::get<RigidBody2DComponent*>(componentsTuple);
 			const auto ddrawCmp = std::get<DebugDrawableComponent*>(componentsTuple);
-			const auto transformCmp = std::get<TransformComponent*>(componentsTuple);
+			const auto& transform = rigidbodyCmp->GetTransform();
 
 			if (ddrawCmp == nullptr)
 				continue;
@@ -111,7 +111,7 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 			if (!gDebugConfig.DebugDrawPresets.IsSet(ddrawCmp->entityPreset))
 				continue;
 
-			auto localTrans = transformCmp->GetLocalTranslation();
+			auto localTrans = transform.GetLocalTranslation();
 			auto velocity = rigidbodyCmp->GetLinearVelocity();
 
 			if (velocity.LengthSquared() == 0.0f)

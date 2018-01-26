@@ -21,7 +21,7 @@ Poly::Collider3DComponent::~Collider3DComponent()
 	if ((rigidbody && !rigidbody->IsRegistered() && Template.Registered)
 		|| (!rigidbody && Template.Registered))
 	{
-		Physics3DSystem::UnregisterComponent(BodyWorld, GetOwnerID());
+		Physics3DSystem::UnregisterComponent(BodyWorld, GetOwner());
 	}
 }
 
@@ -36,12 +36,12 @@ void Poly::Collider3DComponent::SetShape(const Physics3DShape& shape)
 //------------------------------------------------------------------------------
 void Poly::Collider3DComponent::UpdatePosition()
 {
-	TransformComponent* transCmp = GetSibling<TransformComponent>();
-	ASSERTE(transCmp, "No transform on physics object!");
-	ASSERTE(transCmp->GetParent() == nullptr, "Physics cannot be applied to child entity");
+	const EntityTransform& transform = GetTransform();
+		// TODO: parent can't be nullptr
+	//ASSERTE(transCmp->GetParent() == nullptr, "Physics cannot be applied to child entity");
 
-	Vector localTrans = transCmp->GetLocalTranslation();
-	Quaternion localRot = transCmp->GetLocalRotation();
+	Vector localTrans = transform.GetLocalTranslation();
+	Quaternion localRot = transform.GetLocalRotation();
 
 	btVector3 position(localTrans.X, localTrans.Y, localTrans.Z);
 	btQuaternion orientation(localRot.X, localRot.Y, localRot.Z, localRot.W);

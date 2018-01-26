@@ -5,6 +5,7 @@
 #include "ComponentBase.hpp"
 #include "Physics3DSystem.hpp"
 
+	// FIXME(squares): this shouldn't be declared here
 class btDiscreteDynamicsWorld;
 class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
@@ -34,11 +35,11 @@ namespace Poly
 	class ENGINE_DLLEXPORT Physics3DWorldComponent : public ComponentBase
 	{
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
-		friend void Physics3DSystem::RegisterComponent(World* world, const UniqueID& entityID, bool enablePhysics);
-		friend void Physics3DSystem::UnregisterComponent(World * world, const UniqueID& entityID);
-		friend bool Physics3DSystem::IsColliding(World* world, const UniqueID& firstID, const UniqueID& secondID);
-		friend ContactResult Physics3DSystem::ContactPair(World* world, const UniqueID& firstID, const UniqueID& secondID);
-		friend ContactResult Physics3DSystem::Contact(World* world, const UniqueID& entityID);
+		friend void Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool enablePhysics);
+		friend void Physics3DSystem::UnregisterComponent(World * world, Entity* entity);
+		friend bool Physics3DSystem::IsColliding(World* world, Entity* firstEntity, Entity* secondEntity);
+		friend ContactResult Physics3DSystem::ContactPair(World* world, Entity* firstEntity, Entity* secondEntity);
+		friend ContactResult Physics3DSystem::Contact(World* world, Entity* entity);
 		friend RaycastResult Physics3DSystem::AllHitsRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 		friend RaycastResult Physics3DSystem::ClosestHitRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 	public:
@@ -63,7 +64,7 @@ namespace Poly
 
 		float LastDeltaOverflow = 0.f;
 		// raytest returns bullet rigidbody and we want to get UniqueID of that body
-		std::map<const btCollisionObject*, UniqueID> BulletTriggerToEntity;
+		std::map<const btCollisionObject*, const Entity*> BulletTriggerToEntity;
 	};
 
 	REGISTER_COMPONENT(WorldComponentsIDGroup, Physics3DWorldComponent)

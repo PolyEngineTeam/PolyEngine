@@ -19,13 +19,13 @@ namespace Poly
 	class DestroyEntityDeferredTask : public DeferredTaskBase
 	{
 	public:
-		DestroyEntityDeferredTask(const UniqueID &entityID) : Id(entityID) {}
+		DestroyEntityDeferredTask(Entity* entity) : Ent(entity) {}
 
-		virtual void Execute(World* w) { DeferredTaskSystem::DestroyEntityImmediate(w, Id); }
+		virtual void Execute(World* w) { if(Ent) DeferredTaskSystem::DestroyEntityImmediate(w, Ent.Get()); }
 
 		virtual const char* GetDescription() const { return "Destroy entity"; }
 	private:
-		const UniqueID Id;
+		SafePtr<Entity> Ent;
 	};
 
 	//---------------------------------------------------------------
@@ -33,16 +33,16 @@ namespace Poly
 	class AddComponentDeferredTask : public DeferredTaskBase
 	{
 	public:
-		AddComponentDeferredTask(const UniqueID &entityID, Args&&... args) : Id(entityID), arguments(std::forward<Args>(args)...) {}
+		AddComponentDeferredTask(Entity* entity, Args&&... args) : Ent(entity), arguments(std::forward<Args>(args)...) {}
 
 		virtual void Execute(World* w) { func(w, arguments); }
 
 		virtual const char* GetDescription() const { return "Add component"; }
 
-		template <typename... ARG, std::size_t... Is> void func(World* w, std::tuple<ARG...>& tup, index<Is...>) { DeferredTaskSystem::AddComponentImmediate<T>(w, Id, std::get<Is>(tup)...); }
+		template <typename... ARG, std::size_t... Is> void func(World* w, std::tuple<ARG...>& tup, index<Is...>) { if(Ent) DeferredTaskSystem::AddComponentImmediate<T>(w, Ent.Get(), std::get<Is>(tup)...); }
 		template <typename... ARG> void func(World* w, std::tuple<ARG...>& tup) { func(w, tup, gen_seq<sizeof...(ARG)>{}); }
 	private:
-		const UniqueID Id;
+		SafePtr<Entity> Ent;
 		std::tuple<Args...> arguments;
 	};
 
@@ -51,12 +51,12 @@ namespace Poly
 	class RemoveComponentDeferredTask : public DeferredTaskBase
 	{
 	public:
-		RemoveComponentDeferredTask(const UniqueID &entityID) : Id(entityID) {}
+		RemoveComponentDeferredTask(Entity* entity) : Ent(entity) {}
 
-		virtual void Execute(World* w) { w->RemoveComponent<T>(Id); }
+		virtual void Execute(World* w) { if(Ent) w->RemoveComponent<T>(Ent.Get()); }
 
 		virtual const char* GetDescription() const { return "Remove component"; }
 	private:
-		const UniqueID Id;
+		SafePtr<Entity> Ent;
 	};
 }
