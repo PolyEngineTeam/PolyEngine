@@ -8,13 +8,14 @@ project($PROJECT_NAME$ VERSION 0.1 LANGUAGES CXX C) #note(vuko): without C older
 ## Need to setup $ENGINE_DIR$ and $PROJECT_PATH$
 set(ENGINE_ROOT_DIR $ENGINE_DIR$)
 
-if(DEFINED ENV{QTDIR})
-	list(APPEND CMAKE_PREFIX_PATH $ENV{QTDIR})
-elseif(APPLE)
-	list(APPEND CMAKE_PREFIX_PATH /usr/local/opt/qt)
-else()
-	message(FATAL_ERROR "Please setup QTDIR environment variable to point to Qt5 toolchain instalation")
-endif()
+# @fixme Temporary disabling QT for game jam
+#if(DEFINED ENV{QTDIR})
+#	list(APPEND CMAKE_PREFIX_PATH $ENV{QTDIR})
+#elseif(APPLE)
+#	list(APPEND CMAKE_PREFIX_PATH /usr/local/opt/qt)
+#else()
+#	message(FATAL_ERROR "Please setup QTDIR environment variable to point to Qt5 toolchain instalation")
+#endif()
 
 ##C++ standard
 set(CMAKE_CXX_STANDARD 14)
@@ -174,7 +175,7 @@ endif(CCACHE_FOUND AND COMMAND cotire)
 # Finally, meat and potatoes
 ##
 if(NOT SANITIZER_MEMORY)
-	add_subdirectory(${ENGINE_ROOT_DIR}/Editor "${CMAKE_CURRENT_BINARY_DIR}/editor_build")
+	#add_subdirectory(${ENGINE_ROOT_DIR}/Editor "${CMAKE_CURRENT_BINARY_DIR}/editor_build")
 	add_subdirectory(${ENGINE_ROOT_DIR}/Core "${CMAKE_CURRENT_BINARY_DIR}/core_build")
 	add_subdirectory(${ENGINE_ROOT_DIR}/Engine "${CMAKE_CURRENT_BINARY_DIR}/engine_build")
 	add_subdirectory(${ENGINE_ROOT_DIR}/RenderingDevice/OpenGL "${CMAKE_CURRENT_BINARY_DIR}/renderingdevice_build")
