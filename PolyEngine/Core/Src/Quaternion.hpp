@@ -23,9 +23,13 @@ namespace Poly {
 	class ALIGN_16 CORE_DLLEXPORT Quaternion final : public BaseObjectLiteralType<>
 	{
 	public:
-		
+		static const Quaternion IDENTITY;
+
 		/// <summary>Creates zero-roation quaternion.</summary>
 		constexpr Quaternion() : X(0), Y(0), Z(0), W(1) {}
+
+		/// <summary>Creates zero-roation quaternion.</summary>
+		constexpr Quaternion(float x, float y, float z, float w) : X(x), Y(y), Z(z), W(w) {}
 
 		/// <summary>Creates quaternion with rotation around given axis by provided angle.</summary>
 		/// <param name="axis"></param>
@@ -94,6 +98,10 @@ namespace Poly {
 		/// <summary>Converts quaternion to euler angles</summary>
 		/// <returns>Euler angles decomposition of the quaternion.</returns>
 		inline Matrix ToRotationMatrix() const { return static_cast<Matrix>(*this); }
+
+		static Quaternion LookAt(const Vector& pos, const Vector& target, const Vector& up = Vector::UNIT_Y);
+		static Quaternion Lerp(const Quaternion& q1, const Quaternion& q2, float t);
+		static Quaternion Slerp(const Quaternion& q1, Quaternion q2, float t);
 
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Quaternion& quat);
 

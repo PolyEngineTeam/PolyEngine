@@ -2,6 +2,8 @@
 
 using namespace Poly;
 
+const Quaternion Quaternion::IDENTITY = Quaternion();
+
 //------------------------------------------------------------------------------
 Quaternion::Quaternion(const Vector& axis, const Angle& angle) {
 	SetRotation(axis, angle);
@@ -52,6 +54,59 @@ Vector Quaternion::operator*(const Vector& rhs) const {
   Vector tmp(X, Y, Z);
   Vector t = tmp.Cross(rhs) * 2;
   return rhs + t * W + tmp.Cross(t);
+}
+
+//------------------------------------------------------------------------------
+Quaternion Poly::Quaternion::LookAt(const Vector& pos, const Vector& target, const Vector& up)
+{
+	Vector forward = (target - pos).Normalize();
+	float dot = forward.Dot(-Vector::UNIT_Z);
+
+	if (Cmpf(dot, 1.0f))
+		return Quaternion::IDENTITY;
+	if (Cmpf(dot, -1.0f))
+		return Quaternion(up, 180_deg);
+	Quaternion q;
+	Angle rotAngle = Acos(dot);
+	Vector rotAxis = (-Vector::UNIT_Z).Cross(forward).Normalize();
+	return Quaternion(rotAxis, rotAngle);
+}
+
+//------------------------------------------------------------------------------
+Quaternion Poly::Quaternion::Lerp(const Quaternion& q1, const Quaternion& q2, float t)
+{
+	return Quaternion(::Lerp(q1.X,q2.X,t), ::Lerp(q1.Y, q2.Y, t), ::Lerp(q1.Z, q2.Z, t), ::Lerp(q1.W, q2.W, t));
+}
+
+//------------------------------------------------------------------------------
+Quaternion Poly::Quaternion::Slerp(const Quaternion& q1, Quaternion q2, float t)
+{
+	// Calculate angle between them.
+	float cosHalfTheta = q1.W * q2.W + q1.X * q2.X + q1.Y * q2.Y + q1.Z * q2.Z;
+	
+	// if q1=q2 or q1=-q2 then theta = 0 and we can return q1
+	if (Cmpf(cosHalfTheta, 1.f)) {
+		return q1;
+	}
+	// Calculate temporary values.
+	Angle halfTheta = Acos(cosHalfTheta);
+	float sinHalfTheta = sqrt(1.0f - cosHalfTheta*cosHalfTheta);
+	// if theta = 180 degrees then result is not fully defined
+	// we could rotate around any axis normal to q1 or q2
+	if (Cmpf(sinHalfTheta, 0.f))
+	{ // fabs is floating point absolute
+		return Quaternion::Lerp(q1, q2, 0.5f);
+	}
+
+	float ratioA = Sin(halfTheta * (1.0f - t)) / sinHalfTheta;
+	float ratioB = Sin(halfTheta * t) / sinHalfTheta;
+	//calculate Quaternion.
+	Quaternion q;
+	q.W = (q1.W * ratioA + q2.W * ratioB);
+	q.X = (q1.X * ratioA + q2.X * ratioB);
+	q.Y = (q1.Y * ratioA + q2.Y * ratioB);
+	q.Z = (q1.Z * ratioA + q2.Z * ratioB);
+	return q;
 }
 
 //------------------------------------------------------------------------------
