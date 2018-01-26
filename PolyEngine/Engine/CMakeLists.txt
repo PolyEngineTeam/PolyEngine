@@ -5,6 +5,7 @@ find_package(OpenAL REQUIRED)
 find_package(OGG REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(Box2D REQUIRED)
+find_package(Bullet REQUIRED)
 find_package(RapidJSON REQUIRED)
 
 file(GLOB_RECURSE POLYENGINE_SRCS Src/*.cpp)
@@ -13,8 +14,8 @@ file(GLOB_RECURSE POLYENGINE_H_FOR_IDE Src/*.hpp Src/*.h)
 
 add_library(PolyEngine SHARED ${POLYENGINE_SRCS} ${POLYENGINE_H_FOR_IDE})
 target_compile_definitions(PolyEngine PRIVATE _ENGINE)
-target_include_directories(PolyEngine PUBLIC ${POLYENGINE_INCLUDE})
-target_link_libraries(PolyEngine PUBLIC PolyCore PRIVATE SOIL::SOIL ass::imp Freetype::FT2 OpenAL::AL OGG::OGG Vorbis::Vorbis Vorbis::File Box2D::Box2D Rapid::JSON)
+target_include_directories(PolyEngine PUBLIC ${POLYENGINE_INCLUDE} ${BULLET_INCLUDE_DIRS})
+target_link_libraries(PolyEngine PUBLIC PolyCore PRIVATE SOIL::SOIL ass::imp Freetype::FT2 OpenAL::AL OGG::OGG Vorbis::Vorbis Vorbis::File Box2D::Box2D Rapid::JSON ${BULLET_LIBRARIES})
 
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	target_compile_options(PolyEngine PRIVATE --coverage -fprofile-arcs -ftest-coverage)

@@ -36,6 +36,8 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(BaseWorld.get());
 	Physics2DConfig physicsConfig;
 	DeferredTaskSystem::AddWorldComponentImmediate<Physics2DWorldComponent>(BaseWorld.get(), physicsConfig);
+	Physics3DConfig physics3DConfig;
+	DeferredTaskSystem::AddWorldComponentImmediate<Physics3DWorldComponent>(BaseWorld.get(), physics3DConfig);
 	DeferredTaskSystem::AddWorldComponentImmediate<AmbientLightWorldComponent>(BaseWorld.get(), Color(1,1,1,1), 0.2f);
 	DeferredTaskSystem::AddWorldComponentImmediate<DebugDrawLinesComponent>(BaseWorld.get());
 
@@ -43,6 +45,7 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(InputSystem::InputPhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(Physics2DSystem::Physics2DUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
+	RegisterUpdatePhase(Physics3DSystem::Physics3DUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(MovementSystem::MovementUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(DebugDrawSystem::DebugRenderingUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
