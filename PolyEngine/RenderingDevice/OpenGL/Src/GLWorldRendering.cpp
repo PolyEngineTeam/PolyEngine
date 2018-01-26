@@ -105,7 +105,6 @@ void GLRenderingDevice::RenderNormalsWireframe(World* world, const AARect& rect,
 	GeometryRenderingPasses[eGeometryRenderPassType::DEBUG_NORMALS_WIREFRAME]->Run(world, cameraCmp, rect, ePassType::GLOBAL);
 
 	glDepthMask(GL_FALSE);
-	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);
 
@@ -291,6 +290,8 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 	// Render meshes with unlit shader
 	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
 
+	GeometryRenderingPasses[eGeometryRenderPassType::PARTICLES]->Run(world, cameraCmp, rect);
+
 	glDepthMask(GL_FALSE);
 
 	glEnable(GL_BLEND);
@@ -309,7 +310,7 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 	// Run postprocess passes
 	// for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
 
-	GeometryRenderingPasses[eGeometryRenderPassType::SKYBOX]->Run(world, cameraCmp, rect);
+	// GeometryRenderingPasses[eGeometryRenderPassType::SKYBOX]->Run(world, cameraCmp, rect);
 
 	// Render text
 	GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);
