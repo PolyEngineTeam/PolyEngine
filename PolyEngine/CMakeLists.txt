@@ -120,6 +120,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "(Clang|^GNU$)")
 	add_compile_options($<$<STREQUAL:${CMAKE_GENERATOR},Ninja>:-fdiagnostics-color=always>)
 	add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:-g>)
 	add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:-fno-omit-frame-pointer>)
+	add_compile_options($<$<CONFIG:Debug>:-O0>)
 	add_compile_options($<$<CONFIG:DebugFast>:-O1>)
 	add_compile_options($<$<OR:$<CONFIG:Testing>,$<CONFIG:Release>>:-O3>)
 	add_compile_options($<$<CONFIG:Release>:-DFINAL>) #NOTE(vuko): add_definitions() does not support generator expressions
@@ -136,11 +137,12 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 		add_compile_options(/W3) #warning level 3 (includes lower levels)
 		add_compile_options(/Wx) #treat warnings as errors
 		add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:/Zi>) #debug symbols
+		add_compile_options($<$<CONFIG:Debug>:/Od>)
 		add_compile_options($<$<CONFIG:DebugFast>:/O1>)
 		add_compile_options($<$<OR:$<CONFIG:Testing>,$<CONFIG:Release>>:/Ox>) #max optimizations
 	else()
 		#NOTE(vuko): need to define those variables, otherwise CMake encounters internal errors
-		set(CMAKE_CXX_FLAGS_DEBUG "/Zi")
+		set(CMAKE_CXX_FLAGS_DEBUG "/Zi /Od")
 		set(CMAKE_CXX_FLAGS_DEBUGFAST "/Zi /O1")
 		set(CMAKE_CXX_FLAGS_TESTING "/Ox")
 		set(CMAKE_CXX_FLAGS_RELEASE "/Ox")
