@@ -31,7 +31,7 @@ namespace Poly
 		template<typename T> void RemoveComponent(World* world, Entity* entity)
 		{
 			DeferredTaskWorldComponent* cmp = world->GetWorldComponent<DeferredTaskWorldComponent>();
-			world->GetComponent<T>(entityId)->SetFlags(eComponentBaseFlags::ABOUT_TO_BE_REMOVED);
+			world->GetComponent<T>(entity)->SetFlags(eComponentBaseFlags::ABOUT_TO_BE_REMOVED);
 			cmp->ScheduleTask(new RemoveComponentDeferredTask<T>(entityId));
 		}
 
