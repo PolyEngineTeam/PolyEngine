@@ -6,7 +6,6 @@
 
 #include <CameraComponent.hpp>
 #include <MeshRenderingComponent.hpp>
-#include <TransformComponent.hpp>
 #include <ScreenSpaceTextComponent.hpp>
 #include <ViewportWorldComponent.hpp>
 #include <PostprocessSettingsComponent.hpp>

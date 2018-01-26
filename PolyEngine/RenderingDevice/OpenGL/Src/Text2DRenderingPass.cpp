@@ -5,7 +5,6 @@
 
 #include <World.hpp>
 #include <CameraComponent.hpp>
-#include <TransformComponent.hpp>
 #include <MeshRenderingComponent.hpp>
 
 #include <World.hpp>
@@ -14,7 +13,6 @@
 
 #include <CameraComponent.hpp>
 #include <MeshRenderingComponent.hpp>
-#include <TransformComponent.hpp>
 #include <ScreenSpaceTextComponent.hpp>
 #include <ViewportWorldComponent.hpp>
 

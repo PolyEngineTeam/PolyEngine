@@ -41,10 +41,6 @@ void SafePtrRoot::ClearPointer(SafePtrRoot *pointer)
 		SafePtrRoot::Pointers[it->second] = nullptr;
 		SafePtrRoot::PointersMap.erase(it);
 	}
-	else
-	{
-		ASSERTE(false, "Pointer already cleared from safe pointer map");
-	}
 }
 
 //------------------------------------------------------------------------------

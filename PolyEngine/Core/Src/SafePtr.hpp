@@ -10,6 +10,8 @@ namespace Poly
 	class SafePtr final : public BaseObjectLiteralType<>
 	{
 	public:
+		SafePtr() : SafePtr(nullptr) {}
+
 		/// <summary>Basic constructor</summary>
 		/// <param name="pointer">Raw pointer to target object</param>
 		SafePtr(SafePtrRoot* pointer)
@@ -60,6 +62,9 @@ namespace Poly
 		/// <returns>False, if both SafePtr instance and raw pointer points to the same object, True, if not</returns>
 		bool operator!=(const T* other) const { return !(*this == other); }
 
+		operator bool() const { return Get() != nullptr; }
+		explicit operator T*() { return Get(); }
+		explicit operator T*() const { return Get(); }
 	private:
 		size_t PointerIdx;
 	};

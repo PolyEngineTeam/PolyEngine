@@ -4,7 +4,7 @@ namespace Poly
 {
 	class World;
 	class SoundResource;
-	class UniqueID;
+	class Entity;
 	class SoundEmitterComponent;
 	class SoundListenerComponent;
 	enum class eResourceSource;
@@ -22,26 +22,26 @@ namespace Poly
 		void ENGINE_DLLEXPORT SetWorldCurrent(World*);
 
 		// Emitter
-		void ENGINE_DLLEXPORT PlayEmitter(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT ReplayEmitter(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT PauseEmitter(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT StopEmitter(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT LoopEmitter(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT UnLoopEmitter(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT SetEmitterGain(World*, const UniqueID&, float);
-		void ENGINE_DLLEXPORT SetEmitterFrequency(World*, const UniqueID&, float);
-		void ENGINE_DLLEXPORT SetEmitterOffsetInSeconds(World*, const UniqueID&, float);
-		void ENGINE_DLLEXPORT SetEmitterOffsetInSamples(World*, const UniqueID&, size_t);
-		void ENGINE_DLLEXPORT SetEmitterOffsetInBytes(World*, const UniqueID&, size_t);
-		void ENGINE_DLLEXPORT SetEmitterSource(World*, const UniqueID&, const String&, eResourceSource);
-		/*void ENGINE_DLLEXPORT QueueEmitterSource(World*, const UniqueID&, const String&);
-		void ENGINE_DLLEXPORT DequeueEmitterSource(World*, const UniqueID&, const String&);
-		void ENGINE_DLLEXPORT SetEmitterDistanceModel(World*, const UniqueID&, void(*fun)(SoundEmitterComponent, SoundListenerComponent));
+		void ENGINE_DLLEXPORT PlayEmitter(World*, Entity*);
+		void ENGINE_DLLEXPORT ReplayEmitter(World*, Entity*);
+		void ENGINE_DLLEXPORT PauseEmitter(World*, Entity*);
+		void ENGINE_DLLEXPORT StopEmitter(World*, Entity*);
+		void ENGINE_DLLEXPORT LoopEmitter(World*, Entity*);
+		void ENGINE_DLLEXPORT UnLoopEmitter(World*, Entity*);
+		void ENGINE_DLLEXPORT SetEmitterGain(World*, Entity*, float);
+		void ENGINE_DLLEXPORT SetEmitterFrequency(World*, Entity*, float);
+		void ENGINE_DLLEXPORT SetEmitterOffsetInSeconds(World*, Entity*, float);
+		void ENGINE_DLLEXPORT SetEmitterOffsetInSamples(World*, Entity*, size_t);
+		void ENGINE_DLLEXPORT SetEmitterOffsetInBytes(World*, Entity*, size_t);
+		void ENGINE_DLLEXPORT SetEmitterSource(World*, Entity*, const String&, eResourceSource);
+		/*void ENGINE_DLLEXPORT QueueEmitterSource(World*, Entity*, const String&);
+		void ENGINE_DLLEXPORT DequeueEmitterSource(World*, Entity*, const String&);
+		void ENGINE_DLLEXPORT SetEmitterDistanceModel(World*, Entity*, void(*fun)(SoundEmitterComponent, SoundListenerComponent));
 		*/
 		// Listener
-		void ENGINE_DLLEXPORT ActivateListener(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT DeactivateListener(World*, const UniqueID&);
-		void ENGINE_DLLEXPORT SetListenerGain(World*, const UniqueID&, float);
-		bool ENGINE_DLLEXPORT IsEmmiterActive(World*, const UniqueID&);
+		void ENGINE_DLLEXPORT ActivateListener(World*, Entity*);
+		void ENGINE_DLLEXPORT DeactivateListener(World*, Entity*);
+		void ENGINE_DLLEXPORT SetListenerGain(World*, Entity*, float);
+		bool ENGINE_DLLEXPORT IsEmmiterActive(World*, Entity*);
 	}
 } // namespace Poly

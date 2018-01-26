@@ -3,9 +3,9 @@
 #include "GLMeshDeviceProxy.hpp"
 #include "GLTextureDeviceProxy.hpp"
 
+#include <Entity.hpp>
 #include <World.hpp>
 #include <CameraComponent.hpp>
-#include <TransformComponent.hpp>
 #include <MeshRenderingComponent.hpp>
 #include <MovementSystem.hpp>
 
@@ -25,10 +25,10 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 	const Matrix& mvp = camera->GetMVP();
 	
 	// Render meshes
-	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
+	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-		TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
+		const EntityTransform& transform = meshCmp->GetTransform();
 
 		if (passType == ePassType::BY_MATERIAL &&
 			(meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::UNLIT))
@@ -36,7 +36,7 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 			continue;
 		}
 
-		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
+		const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
 		Matrix screenTransform = mvp * objTransform;
 		GetProgram().SetUniform("uTransform", objTransform);
 		GetProgram().SetUniform("uMVPTransform", screenTransform);

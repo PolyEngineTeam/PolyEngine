@@ -8,18 +8,16 @@ World::World()
 {
 	memset(ComponentAllocators, 0, sizeof(IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
 	memset(WorldComponents, 0, sizeof(ComponentBase*) * MAX_WORLD_COMPONENTS_COUNT);
+
+	rootEntity = SpawnEntityInternal();
 }
 
 //------------------------------------------------------------------------------
 World::~World()
 {
 	// copy entities
-	auto entityMap = IDToEntityMap;
-	for (auto& kv : entityMap)
-	{
-		if(IDToEntityMap.find(kv.second->EntityID) != IDToEntityMap.end())
-			DestroyEntity(kv.second->EntityID);
-	}
+	if(rootEntity)
+		DestroyEntity(rootEntity.Get());
 	
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT; ++i)
 	{
@@ -33,35 +31,38 @@ World::~World()
 }
 
 //------------------------------------------------------------------------------
-UniqueID World::SpawnEntity()
+Entity* World::SpawnEntity()
 {
-	Entity* ent = EntitiesAllocator.Alloc();
-	::new(ent) Entity(this);
-	IDToEntityMap[ent->EntityID] = ent;
-	return ent->EntityID;
+	Entity* ent = SpawnEntityInternal();
+	ent->SetParent(rootEntity.Get());
+	return ent;
 }
 
 //------------------------------------------------------------------------------
-void World::DestroyEntity(const UniqueID& entityId)
+Entity * Poly::World::SpawnEntityInternal()
 {
-	Entity* ent = IDToEntityMap[entityId];
-	HEAVY_ASSERTE(ent, "Invalid entity ID");
+	Entity* ent = EntitiesAllocator.Alloc();
+	::new(ent) Entity(this);
+	return ent;
+}
 
-	TransformComponent* transform = ent->GetComponent<TransformComponent>();
-	if (transform)
-	{
-		for (auto it : transform->GetChildren())
-			DestroyEntity(it->GetOwnerID());
-	}
+//------------------------------------------------------------------------------
+void World::DestroyEntity(Entity* entity)
+{
+	HEAVY_ASSERTE(entity, "Invalid entity ID");
+
+	auto childrenCopy = entity->GetChildren();
+	for (Entity* child : childrenCopy)
+		DestroyEntity(child);
 
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT; ++i)
 	{
-		if (ent->Components[i])
-			RemoveComponentById(ent, i);
+		if (entity->Components[i])
+			RemoveComponentById(entity, i);
 	}
-	IDToEntityMap.erase(entityId);
-	ent->~Entity();
-	EntitiesAllocator.Free(ent);
+
+	entity->~Entity();
+	EntitiesAllocator.Free(entity);
 }
 
 //------------------------------------------------------------------------------

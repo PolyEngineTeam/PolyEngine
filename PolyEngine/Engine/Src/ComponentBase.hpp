@@ -6,7 +6,6 @@
 #include "ComponentIDGeneratorImpl.hpp"
 
 namespace Poly {
-
 	enum class eComponentBaseFlags
 	{
 		NONE = 0x00,
@@ -38,11 +37,20 @@ namespace Poly {
 			return Owner->GetComponent<T>();
 		}
 
-		UniqueID GetOwnerID() const
+		inline const Entity* GetOwner() const
 		{
 			HEAVY_ASSERTE(Owner, "Component was not properly initialized.");
-			return Owner->GetID();
+			return Owner;
 		}
+
+		inline Entity* GetOwner()
+		{
+			HEAVY_ASSERTE(Owner, "Component was not properly initialized.");
+			return Owner;
+		}
+
+		inline EntityTransform& GetTransform() { return Owner->GetTransform(); }
+		inline const EntityTransform& GetTransform() const { return Owner->GetTransform(); }
 
 		void SetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags |= rhs; }
 		void ResetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags &= ~rhs; }

@@ -16,7 +16,6 @@ set(POLYTESTS_SRCS
 	Src/RTTITests.cpp
 	Src/SafePtrTests.cpp
 	Src/StringTests.cpp
-	Src/TransformComponentTests.cpp
 	Src/UnsafeStorageTests.cpp
 	Src/VectorTests.cpp
 	Src/Vector2fTests.cpp

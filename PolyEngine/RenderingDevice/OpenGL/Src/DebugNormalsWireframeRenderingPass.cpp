@@ -5,7 +5,6 @@
 
 #include <World.hpp>
 #include <CameraComponent.hpp>
-#include <TransformComponent.hpp>
 #include <MeshRenderingComponent.hpp>
 
 using namespace Poly;
@@ -24,12 +23,12 @@ void DebugNormalsWireframeRenderingPass::OnRun(World* world, const CameraCompone
 	GetProgram().BindProgram();
 	GetProgram().SetUniform("u_projection", mProjection);
 
-	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
+	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-		const TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
+		const EntityTransform& trans = meshCmp->GetTransform();
 
-		const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
+		const Matrix& objTransform = trans.GetGlobalTransformationMatrix();
 		Matrix MVPTransform = mModelView * objTransform;
 		Matrix mNormalMatrix = (mModelView * objTransform).GetInversed().GetTransposed();
 		GetProgram().SetUniform("u_MVP", MVPTransform);

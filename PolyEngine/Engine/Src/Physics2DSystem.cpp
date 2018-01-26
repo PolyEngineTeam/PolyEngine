@@ -16,7 +16,7 @@ void Poly::Physics2DSystem::Physics2DUpdatePhase(World* world)
 	physicsCmp->LastDeltaOverflow += deltaTime;
 
 	// Load physics position from engine translation
-	for (auto tuple : world->IterateComponents<RigidBody2DComponent, TransformComponent>())
+	for (auto tuple : world->IterateComponents<RigidBody2DComponent>())
 	{
 		RigidBody2DComponent* rigidBody = std::get<RigidBody2DComponent*>(tuple);
 		rigidBody->UpdatePosition();
@@ -31,21 +31,21 @@ void Poly::Physics2DSystem::Physics2DUpdatePhase(World* world)
 	}
 
 	// Store physics position to engine translation
-	for (auto tuple : world->IterateComponents<RigidBody2DComponent, TransformComponent>())
+	for (auto tuple : world->IterateComponents<RigidBody2DComponent>())
 	{
 		RigidBody2DComponent* rigidBody = std::get<RigidBody2DComponent*>(tuple);
-		TransformComponent* transform = std::get<TransformComponent*>(tuple);
+		EntityTransform& transform = rigidBody->GetTransform();
 
 		b2Vec2 pos = rigidBody->ImplData->Body->GetPosition();
 		float rot = rigidBody->ImplData->Body->GetAngle();
-		Vector localTrans = transform->GetLocalTranslation();
-		EulerAngles localrot = transform->GetLocalRotation().ToEulerAngles();
+		Vector localTrans = transform.GetLocalTranslation();
+		EulerAngles localrot = transform.GetLocalRotation().ToEulerAngles();
 
 		localTrans.X = pos.x;
 		localTrans.Y = pos.y;
 		localrot.Z = Angle::FromRadians(rot);
 
-		transform->SetLocalTranslation(localTrans);
-		transform->SetLocalRotation(Quaternion(localrot));
+		transform.SetLocalTranslation(localTrans);
+		transform.SetLocalRotation(Quaternion(localrot));
 	}
 }

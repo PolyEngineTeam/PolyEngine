@@ -14,26 +14,21 @@ void Poly::CameraSystem::CameraUpdatePhase(World* world)
 
 		CameraComponent* cameraCmp = kv.second.GetCamera();
 		ASSERTE(cameraCmp, "Viewport without camera?");
-		TransformComponent* transformCmp = cameraCmp->GetSibling<TransformComponent>();
-		if (transformCmp)
-		{
-			// reinit perspective
-			if (cameraCmp->CheckFlags(eComponentBaseFlags::NEWLY_CREATED) || cameraCmp->Aspect != aspect)
-			{
-				cameraCmp->Aspect = aspect;
-				if (cameraCmp->IsPerspective)
-					cameraCmp->Projection.SetPerspective(cameraCmp->Fov, cameraCmp->Aspect, cameraCmp->Near, cameraCmp->Far);
-				else
-					cameraCmp->Projection.SetOrthographic(cameraCmp->Top, cameraCmp->Bottom, cameraCmp->Left, cameraCmp->Right, cameraCmp->Near, cameraCmp->Far);
-			}
+		EntityTransform& transform = cameraCmp->GetTransform();
 
-			cameraCmp->ModelView = transformCmp->GetGlobalTransformationMatrix().GetInversed();
-			cameraCmp->MVP = cameraCmp->Projection * cameraCmp->ModelView;
-		}
-		else
+		// reinit perspective
+		if (cameraCmp->CheckFlags(eComponentBaseFlags::NEWLY_CREATED) || cameraCmp->Aspect != aspect)
 		{
-			gConsole.LogError("Entity has camera component but no transform component!");
+			cameraCmp->Aspect = aspect;
+			if (cameraCmp->IsPerspective)
+				cameraCmp->Projection.SetPerspective(cameraCmp->Fov, cameraCmp->Aspect, cameraCmp->Near, cameraCmp->Far);
+			else
+				cameraCmp->Projection.SetOrthographic(cameraCmp->Top, cameraCmp->Bottom, cameraCmp->Left, cameraCmp->Right, cameraCmp->Near, cameraCmp->Far);
 		}
+
+		cameraCmp->ModelView = transform.GetGlobalTransformationMatrix().GetInversed();
+		cameraCmp->MVP = cameraCmp->Projection * cameraCmp->ModelView;
+
 
 		InputWorldComponent* inputCmp = world->GetWorldComponent<InputWorldComponent>();
 		if (inputCmp->IsPressed(eKey::F5))

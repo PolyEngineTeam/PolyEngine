@@ -1,6 +1,7 @@
 #include "EnginePCH.hpp"
 
 #include "MovementSystem.hpp"
+#include "EntityTransform.hpp"
 
 using namespace Poly;
 
@@ -9,10 +10,10 @@ void MovementSystem::MovementUpdatePhase(World* world)
 	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
 	InputWorldComponent* inputCmp = world->GetWorldComponent<InputWorldComponent>();
 
-	for (auto freeFloatTuple : world->IterateComponents<FreeFloatMovementComponent, TransformComponent>())
+	for (auto freeFloatTuple : world->IterateComponents<FreeFloatMovementComponent>())
 	{
-		TransformComponent* transCmp = std::get<TransformComponent*>(freeFloatTuple);
 		FreeFloatMovementComponent* freeFloatMovementCmp = std::get<FreeFloatMovementComponent*>(freeFloatTuple);
+		EntityTransform& trans = freeFloatMovementCmp->GetTransform();
 
 		int wheelDelta = inputCmp->GetWheelPosDelta().Y;
 		float speed = freeFloatMovementCmp->GetMovementSpeed();
@@ -40,50 +41,50 @@ void MovementSystem::MovementUpdatePhase(World* world)
 
 		move *= speed * deltaTime;
 
-		transCmp->SetLocalTranslation(transCmp->GetLocalTranslation() + transCmp->GetLocalRotation() * move);
+		trans.SetLocalTranslation(trans.GetLocalTranslation() + trans.GetLocalRotation() * move);
 		
 		if (inputCmp->IsPressed(eMouseButton::LEFT))
 		{
 			Vector2i delta = inputCmp->GetMousePosDelta();
 
 			Quaternion rot = Quaternion(Vector::UNIT_Y, Angle::FromRadians(-delta.X * freeFloatMovementCmp->GetAngularVelocity()));
-			rot *= transCmp->GetLocalRotation();
+			rot *= trans.GetLocalRotation();
 			rot *= Quaternion(Vector::UNIT_X, Angle::FromRadians(-delta.Y * freeFloatMovementCmp->GetAngularVelocity()));
 
 			if (rot != Quaternion()) {
 				rot.Normalize();
-				transCmp->SetLocalRotation(rot);
+				trans.SetLocalRotation(rot);
 			}
 		}
 	}
 }
 
-Vector MovementSystem::GetLocalForward(const TransformComponent* transform)
+Vector MovementSystem::GetLocalForward(const EntityTransform& transform)
 {
-	return transform->GetLocalRotation() * -Vector::UNIT_Z;
+	return transform.GetLocalRotation() * -Vector::UNIT_Z;
 }
 
-Vector MovementSystem::GetLocalRight(const TransformComponent* transform)
+Vector MovementSystem::GetLocalRight(const EntityTransform& transform)
 {
-	return transform->GetLocalRotation() * Vector::UNIT_X;
+	return transform.GetLocalRotation() * Vector::UNIT_X;
 }
 
-Vector MovementSystem::GetLocalUp(const TransformComponent* transform)
+Vector MovementSystem::GetLocalUp(const EntityTransform& transform)
 {
-	return transform->GetLocalRotation() * Vector::UNIT_Y;
+	return transform.GetLocalRotation() * Vector::UNIT_Y;
 }
 
-Vector MovementSystem::GetGlobalForward(const TransformComponent* transform)
+Vector MovementSystem::GetGlobalForward(const EntityTransform& transform)
 {
-	return transform->GetGlobalRotation() * -Vector::UNIT_Z;
+	return transform.GetGlobalRotation() * -Vector::UNIT_Z;
 }
 
-Vector MovementSystem::GetGlobalRight(const TransformComponent* transform)
+Vector MovementSystem::GetGlobalRight(const EntityTransform& transform)
 {
-	return transform->GetGlobalRotation() * Vector::UNIT_X;
+	return transform.GetGlobalRotation() * Vector::UNIT_X;
 }
 
-Vector MovementSystem::GetGlobalUp(const TransformComponent* transform)
+Vector MovementSystem::GetGlobalUp(const EntityTransform& transform)
 {
-	return transform->GetGlobalRotation() * Vector::UNIT_Y;
+	return transform.GetGlobalRotation() * Vector::UNIT_Y;
 }

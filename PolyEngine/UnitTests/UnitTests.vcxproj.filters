@@ -43,9 +43,6 @@
     <ClCompile Include="Src\EnumUtilsTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\TransformComponentTests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Src\UnsafeStorageTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

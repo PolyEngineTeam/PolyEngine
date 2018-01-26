@@ -4,22 +4,22 @@
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-UniqueID DeferredTaskSystem::SpawnEntityImmediate(World* w)
+Entity* DeferredTaskSystem::SpawnEntityImmediate(World* w)
 {
 	return w->SpawnEntity();
 }
 
 //------------------------------------------------------------------------------
-void DeferredTaskSystem::DestroyEntityImmediate(World* w, const UniqueID& entityId)
+void DeferredTaskSystem::DestroyEntityImmediate(World* w, Entity* entity)
 {
-	w->DestroyEntity(entityId);
+	w->DestroyEntity(entity);
 }
 
 //------------------------------------------------------------------------------
-void DeferredTaskSystem::DestroyEntity(World* w, const UniqueID& entityId)
+void DeferredTaskSystem::DestroyEntity(World* w, Entity* entity)
 {
 	DeferredTaskWorldComponent* cmp = w->GetWorldComponent<DeferredTaskWorldComponent>();
-	cmp->ScheduleTask(new DestroyEntityDeferredTask(entityId));
+	cmp->ScheduleTask(new DestroyEntityDeferredTask(entity));
 }
 
 //------------------------------------------------------------------------------

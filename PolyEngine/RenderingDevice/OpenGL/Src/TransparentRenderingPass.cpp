@@ -8,7 +8,6 @@
 #include <World.hpp>
 #include <TimeSystem.hpp>
 #include <CameraComponent.hpp>
-#include <TransformComponent.hpp>
 #include <MovementSystem.hpp>
 #include <MeshRenderingComponent.hpp>
 #include <PostprocessSettingsComponent.hpp>
@@ -35,18 +34,18 @@ void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera
 	const float cameraHeight = 16.f + 1.f;
 	float verticalSpan = cameraHeight / 2.0f;
 	float horizontalSpan = (cameraHeight * camera->GetAspect()) / 2.0f;
-	Vector cameraPos = camera->GetSibling<TransformComponent>()->GetGlobalTranslation();
+	Vector cameraPos = camera->GetTransform().GetGlobalTranslation();
 
 	// Render meshes
-	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent, TransformComponent>())
+	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-		TransformComponent* transCmp = std::get<TransformComponent*>(componentsTuple);
+		const EntityTransform& trans = meshCmp->GetTransform();
 
 		if (!meshCmp->IsTransparent())
 			continue;
 
-		Vector objPos = transCmp->GetGlobalTranslation();
+		Vector objPos = trans.GetGlobalTranslation();
 
 		bool shouldCull = objPos.Y > cameraPos.Y + verticalSpan;
 		shouldCull = shouldCull || objPos.Y < cameraPos.Y - verticalSpan;
@@ -59,7 +58,7 @@ void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera
 		objScale.SetScale(Vector(1.0f, 1.0f, 1.0f));
 
 		Matrix objTransform; // = transCmp->GetGlobalTransformationMatrix();
-		objTransform.SetTranslation(transCmp->GetGlobalTranslation() + Vector(0.0f, 0.0f, 0.5f));
+		objTransform.SetTranslation(trans.GetGlobalTranslation() + Vector(0.0f, 0.0f, 0.5f));
 
 		Matrix screenTransform = camera->GetMVP() * objTransform * objScale;
 		GetProgram().SetUniform("uTransform", objTransform * objScale);
