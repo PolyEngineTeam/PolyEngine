@@ -6,7 +6,7 @@
 #include <World.hpp>
 #include <TimeSystem.hpp>
 #include <CameraComponent.hpp>
-// #include <TransformComponent.hpp>
+#include <ParticlesComponent.hpp>
 #include <MeshRenderingComponent.hpp>
 #include <MovementSystem.hpp>
 
@@ -21,14 +21,14 @@ ParticlesRenderingPass::ParticlesRenderingPass()
 	GetProgram().RegisterUniform("mat4", "uMVP");
 
 	float quadVertices[] = {
-		// positions			// colors
-		-1.0f,  1.0f, 0.0f,		1.0f, 0.0f, 0.0f,
-		 1.0f, -1.0f, 0.0f,		0.0f, 1.0f, 0.0f,
-		 1.0f,  1.0f, 0.0f,		0.0f, 0.0f, 1.0f,
+		// positions			// uv
+		-1.0f,  1.0f, 0.0f,		1.0f, 0.0f,
+		 1.0f, -1.0f, 0.0f,		0.0f, 1.0f,
+		 1.0f,  1.0f, 0.0f,		0.0f, 0.0f,
 					  
-		-1.0f,  1.0f, 0.0f,		1.0f, 0.0f, 0.0f,
-		-1.0f, -1.0f, 0.0f,		0.0f, 1.0f, 0.0f,
-	 	 1.0f, -1.0f, 0.0f,		0.0f, 1.0f, 1.0f
+		-1.0f,  1.0f, 0.0f,		1.0f, 0.0f,
+		-1.0f, -1.0f, 0.0f,		0.0f, 1.0f,
+	 	 1.0f, -1.0f, 0.0f,		0.0f, 1.0f
 	};
 	
 	glGenVertexArrays(1, &quadVAO);
@@ -37,9 +37,9 @@ ParticlesRenderingPass::ParticlesRenderingPass()
 	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	
 	// gConsole.LogInfo("InstancedMeshRenderingPass::Ctor sizeof(Matrix): {}, sizeof(GLfloat): {}", sizeof(Matrix), sizeof(GLfloat));
 
@@ -63,7 +63,7 @@ ParticlesRenderingPass::ParticlesRenderingPass()
 		// translation
 		instanceTransform[index + 12] = 5.0f * Random(-1.0, 1.0);
 		instanceTransform[index + 13] = 5.0f * Random(-1.0, 1.0);
-		// instanceTransform[index + 14] = Random(-1.0, 1.0);
+		instanceTransform[index + 14] = 5.0f * Random(-1.0, 1.0);
 		index += 16;
 	}
 
@@ -103,21 +103,52 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetMVP();
-	// Matrix translation;
-	// translation.SetTranslation(Vector(0.0f, 20.0f, 20.0));
-	// const TransformComponent* transCmp = camera->GetSibling<TransformComponent>();
-	// const Matrix& objTransform = transCmp->GetGlobalTransformationMatrix();
-	// Matrix inst = Matrix(&instanceTransform[0]);
-
+	
 	// gConsole.LogInfo("InstancedMeshRenderingPass::OnRun MVP: {}, InstTrans: {}", objTransform, inst);
 
 	GetProgram().BindProgram();
 	GetProgram().SetUniform("uTime", Time);
-	GetProgram().SetUniform("uMVP", mvp);
+	// GetProgram().SetUniform("uMVP", mvp);
+	// 
+	// glBindVertexArray(quadVAO);
+	// glDrawArraysInstanced(GL_TRIANGLES, 0, 6, instancesLen); // 100 triangles of 6 vertices each
+	// glBindVertexArray(0);
 
-	glBindVertexArray(quadVAO);
-	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, instancesLen); // 100 triangles of 6 vertices each
-	glBindVertexArray(0);
+
+	// Render meshes
+	for (auto componentsTuple : world->IterateComponents<ParticlesComponent>())
+	{
+		gConsole.LogInfo("ParticlesRenderingPass::OnRun found particles");
+
+		const ParticlesComponent* meshCmp = std::get<ParticlesComponent*>(componentsTuple);
+		const EntityTransform& transform = meshCmp->GetTransform();
+		
+		const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
+		Matrix screenTransform = mvp * objTransform;
+		GetProgram().SetUniform("uMVP", screenTransform);
+
+		glBindVertexArray(quadVAO);
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, instancesLen); // 100 triangles of 6 vertices each
+		glBindVertexArray(0);
+		
+		// for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
+		// {
+		// 	const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
+		// 	glBindVertexArray(meshProxy->GetVAO());
+		// 
+		// 	// const Poly::TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
+		// 	// GLuint TextureID = DiffuseTexture == nullptr
+		// 	// 	? FallbackWhiteTexture
+		// 	// 	: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
+		// 
+		// 	// glActiveTexture(GL_TEXTURE0);
+		// 	// glBindTexture(GL_TEXTURE_2D, TextureID);
+		// 
+		// 	glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
+		// 	glBindTexture(GL_TEXTURE_2D, 0);
+		// 	glBindVertexArray(0);
+		// }
+	}
 }
 
 float ParticlesRenderingPass::Random() const

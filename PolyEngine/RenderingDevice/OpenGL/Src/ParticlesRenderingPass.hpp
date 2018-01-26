@@ -25,7 +25,7 @@ namespace Poly
 		unsigned int quadVAO, quadVBO;
 		unsigned int instanceVBO;
 
-		static const int instancesLen = 10;
+		static const int instancesLen = 100;
 
 		float instanceTransform[16 * instancesLen];
 
