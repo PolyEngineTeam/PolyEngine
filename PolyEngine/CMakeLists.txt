@@ -15,6 +15,10 @@ else()
 	message(FATAL_ERROR "Please setup QTDIR environment variable to point to Qt5 toolchain instalation")
 endif()
 
+if (WIN32)
+	set(BULLET_ROOT "${ENGINE_ROOT_DIR}/ThirdParty/Bullet")
+endif()
+
 ##C++ standard
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
