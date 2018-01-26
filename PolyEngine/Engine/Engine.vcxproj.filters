@@ -235,6 +235,7 @@
     </ClCompile>
     <ClCompile Include="Src\EntityTransform.cpp">
       <Filter>Source Files\Transform</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Physics3DShapes.cpp">
       <Filter>Physics3D\Shapes</Filter>
     </ClCompile>
