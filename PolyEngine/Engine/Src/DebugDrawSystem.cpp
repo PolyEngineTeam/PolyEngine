@@ -58,13 +58,13 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 	// iterate RenderMode::_COUNT times to create shapes defining debug primitives
 	for(int renderMode = static_cast<int>(RenderMode::LINE); renderMode < static_cast<int>(RenderMode::_COUNT); ++renderMode)
 	{
-		for(auto componentsTuple : world->IterateComponents<DebugDrawableComponent, MeshRenderingComponent>())
+		for(auto componentsTuple : world->IterateComponents<MeshRenderingComponent, DebugDrawableComponent>())
 		{
 			const auto ddrawCmp = std::get<DebugDrawableComponent*>(componentsTuple);
 			const auto meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 			const auto& transform = meshCmp->GetTransform();
 
-			if (meshCmp == nullptr)
+			if (ddrawCmp == nullptr)
 				continue;
 
 			if (!gDebugConfig.DebugDrawPresets.IsSet(ddrawCmp->entityPreset))
