@@ -18,7 +18,7 @@ namespace Poly
 		Vector3f(const Vector3f& rhs) : X(rhs.X), Y(rhs.Y), Z(rhs.Z) {}
 
 		/// Helper method for getting a copy of Vector3f as Vector.
-		Vector GetVector() { return Vector(X, Y, Z); }
+		Vector GetVector() const { return Vector(X, Y, Z); }
 
 		// This structure allows to access vector elements by index or name.
 		float X = 0.0f, Y = 0.0f, Z = 0.0f;

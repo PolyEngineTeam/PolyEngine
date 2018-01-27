@@ -1,5 +1,7 @@
 #pragma once
 
+#include "MeshResource.hpp"
+
 #include "Physics3DSystem.hpp"
 
 	// FIXME(squares): this shouldn't be declared here
@@ -39,7 +41,9 @@ namespace Poly
 	{
 		friend class Physics3DTriangleMeshShape;
 	public:
-		Physics3DTriangleMeshSource();
+		Physics3DTriangleMeshSource(); 
+		void LoadMesh(const String& meshPath, eResourceSource source);
+		void LoadMesh(const MeshResource::SubMesh& subMesh);
 		void AddTriangle(const Vector& a, const Vector& b, const Vector& c);
 
 	private:
