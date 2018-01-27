@@ -350,7 +350,7 @@ Poly::ContactPairResults Poly::Physics3DSystem::GetAllContactPairs(World* world)
 
 		ContactPairResults::ContactPair pair;
 		pair.FirstEntity = worldCmp->BulletTriggerToEntity[contactManifold->getBody0()];
-		pair.FirstEntity = worldCmp->BulletTriggerToEntity[contactManifold->getBody1()];
+		pair.SecondEntity = worldCmp->BulletTriggerToEntity[contactManifold->getBody1()];
 
 		results.ContactPairs.PushBack(pair);
 	}
