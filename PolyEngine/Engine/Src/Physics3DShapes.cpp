@@ -18,12 +18,15 @@ Poly::Physics3DTriangleMeshSource::Physics3DTriangleMeshSource()
 //------------------------------------------------------------------------------
 void Poly::Physics3DTriangleMeshSource::LoadMesh(const String& meshPath, eResourceSource source)
 {
-	const Dynarray<MeshResource::SubMesh*>& subMeshes = ResourceManager<MeshResource>::Load(meshPath, source)->GetSubMeshes();
+	MeshResource* resource = ResourceManager<MeshResource>::Load(meshPath, source);
+	const Dynarray<MeshResource::SubMesh*>& subMeshes = resource->GetSubMeshes();
 
 	for (int m = 0; m < subMeshes.GetSize(); ++m)
 	{
 		LoadMesh(*subMeshes[m]);
 	}
+
+	ResourceManager<MeshResource>::Release(resource);
 }
 
 //------------------------------------------------------------------------------
