@@ -21,7 +21,7 @@ void main()
     // p = mix(p, aOffset * p, vec4(phase));
     vec4 p = vec4(aPos, 1.0);
     p.z += 2.0 * rnd;
-    // p = aOffset * p;
+    p = aOffset * p;
     p = uMVP * p;
     gl_Position = p;
     vTexCoord = aTexCoord;
