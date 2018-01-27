@@ -16,6 +16,36 @@ Poly::Physics3DTriangleMeshSource::Physics3DTriangleMeshSource()
 }
 
 //------------------------------------------------------------------------------
+void Poly::Physics3DTriangleMeshSource::LoadMesh(const String& meshPath, eResourceSource source)
+{
+	const Dynarray<MeshResource::SubMesh*>& subMeshes = ResourceManager<MeshResource>::Load(meshPath, source)->GetSubMeshes();
+
+	for (int m = 0; m < subMeshes.GetSize(); ++m)
+	{
+		LoadMesh(*subMeshes[m]);
+	}
+}
+
+//------------------------------------------------------------------------------
+void Poly::Physics3DTriangleMeshSource::LoadMesh(const MeshResource::SubMesh& subMesh)
+{
+	const Mesh& mesh = subMesh.GetMeshData();
+
+	const Dynarray<Vector3f>& positions = mesh.GetPositions();
+	const Dynarray<uint32_t>& indices = mesh.GetIndicies();
+
+	for (int i = 0; i < indices.GetSize();)
+	{
+		Vector a = positions[indices[i]].GetVector();
+		Vector b = positions[indices[++i]].GetVector();
+		Vector c = positions[indices[++i]].GetVector();
+		++i;
+
+		AddTriangle(a, b, c);
+	}
+}
+
+//------------------------------------------------------------------------------
 void Poly::Physics3DTriangleMeshSource::AddTriangle(const Vector& a, const Vector& b, const Vector& c)
 {
 	BulletMesh->addTriangle({ a.X, a.Y, a.Z }, { b.X, b.Y, b.Z }, { c.X, c.Y, c.Z }, true);
