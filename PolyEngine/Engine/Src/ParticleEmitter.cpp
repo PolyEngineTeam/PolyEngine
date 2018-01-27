@@ -35,22 +35,22 @@ void ParticleEmitter::Update()
 {
 	gConsole.LogInfo("ParticleEmitter::Update");
 
-	// int index = 0;
-	// for (int i = 0; i < InstancesTransform.GetSize() / 16; ++i)
-	// {
-	// 	// identity
-	// 	InstancesTransform[index + 0] = 1.0f;
-	// 	InstancesTransform[index + 5] = 1.0f;
-	// 	InstancesTransform[index + 10] = 1.0f;
-	// 	InstancesTransform[index + 15] = 1.0f;
-	// 	// translation
-	// 	InstancesTransform[index + 12] = 0.99f * InstancesTransform[index + 12];
-	// 	InstancesTransform[index + 13] = 0.99f * InstancesTransform[index + 13];
-	// 	InstancesTransform[index + 14] = 0.99f * InstancesTransform[index + 14];
-	// 	index += 16;
-	// }
+	int index = 0;
+	for (int i = 0; i < InstancesTransform.GetSize() / 16; ++i)
+	{
+		// identity
+		InstancesTransform[index + 0] = 1.0f;
+		InstancesTransform[index + 5] = 1.0f;
+		InstancesTransform[index + 10] = 1.0f;
+		InstancesTransform[index + 15] = 1.0f;
+		// translation
+		InstancesTransform[index + 12] = 0.99f * InstancesTransform[index + 12];
+		InstancesTransform[index + 13] = 0.99f * InstancesTransform[index + 13];
+		InstancesTransform[index + 14] = 0.99f * InstancesTransform[index + 14];
+		index += 16;
+	}
 
-	// UpdateDeviceProxy();
+	UpdateDeviceProxy();
 }
 
 void ParticleEmitter::UpdateDeviceProxy()

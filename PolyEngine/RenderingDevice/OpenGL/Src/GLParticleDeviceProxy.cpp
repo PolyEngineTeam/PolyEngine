@@ -107,31 +107,10 @@ void GLParticleDeviceProxy::SetContent(const ParticleEmitter& particles)
 		// instancesTransformBuffer.GetSize() / 16,
 		particles.GetInstances().GetSize() / 16
 	);
-
-	// fill array with zeros
-	// for (int i = 0; i < instancesTransform.GetSize(); ++i)
-	// {
-	// 	instancesTransform[i] = 0.0f;
-	// }
-	// 
-	// int index = 0;
-	// for (int i = 0; i < instancesLen; ++i)
-	// {
-	// 	// identity
-	// 	instancesTransform[index + 0] = 1.0f;
-	// 	instancesTransform[index + 5] = 1.0f;
-	// 	instancesTransform[index + 10] = 1.0f;
-	// 	instancesTransform[index + 15] = 1.0f;
-	// 	// translation
-	// 	instancesTransform[index + 12] = 5.0f * Random(-1.0, 1.0);
-	// 	instancesTransform[index + 13] = 5.0f * Random(-1.0, 1.0);
-	// 	instancesTransform[index + 14] = 5.0f * Random(-1.0, 1.0);
-	// 	index += 16;
-	// }
 	
-	// glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	// glBufferData(GL_ARRAY_BUFFER, sizeof(float) * instancesTransform.GetSize(), instancesTransform.GetData(), GL_STATIC_DRAW);
-	// glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * particles.GetInstances().GetSize(), particles.GetInstances().GetData(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 float GLParticleDeviceProxy::Random() const
