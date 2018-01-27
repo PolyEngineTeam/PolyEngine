@@ -64,10 +64,10 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 			const auto meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 			const auto& transform = meshCmp->GetTransform();
 
-			if (ddrawCmp == nullptr)
+			if(ddrawCmp == nullptr)
 				continue;
 
-			if (!gDebugConfig.DebugDrawPresets.IsSet(ddrawCmp->entityPreset))
+			if(!gDebugConfig.DebugDrawPresets.IsSet(ddrawCmp->entityPreset))
 				continue;
 
 			const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
@@ -99,25 +99,46 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 
 		// @fixme
 		// move iteration over RigidBody2DComponent to different debug-system (f.ex. PhysicsDebugDrawSystem)
-		for (auto componentsTuple : world->IterateComponents<RigidBody2DComponent, DebugDrawableComponent>())
+		for(auto componentsTuple : world->IterateComponents<RigidBody2DComponent, DebugDrawableComponent>())
 		{
 			const auto rigidbodyCmp = std::get<RigidBody2DComponent*>(componentsTuple);
 			const auto ddrawCmp = std::get<DebugDrawableComponent*>(componentsTuple);
 			const auto& transform = rigidbodyCmp->GetTransform();
 
-			if (ddrawCmp == nullptr)
+			if(ddrawCmp == nullptr)
 				continue;
 
-			if (!gDebugConfig.DebugDrawPresets.IsSet(ddrawCmp->entityPreset))
+			if(!gDebugConfig.DebugDrawPresets.IsSet(ddrawCmp->entityPreset))
 				continue;
 
 			auto localTrans = transform.GetLocalTranslation();
 			auto velocity = rigidbodyCmp->GetLinearVelocity();
 
-			if (velocity.LengthSquared() == 0.0f)
+			if(velocity.LengthSquared() == 0.0f)
 				continue;
 
 			DrawArrow(world, localTrans, velocity);
+		}
+
+
+		for(auto componentsTuple : world->IterateComponents<DirectionalLightComponent, DebugDrawableComponent>())
+		{
+			const auto dirLightCmp = std::get<DirectionalLightComponent*>(componentsTuple);
+			const auto ddrawCmp = std::get<DebugDrawableComponent*>(componentsTuple);
+			const auto transform = dirLightCmp->GetTransform();
+
+			if(ddrawCmp == nullptr)
+				continue;
+
+			if(!gDebugConfig.DebugDrawPresets.IsSet(ddrawCmp->entityPreset))
+				continue;
+
+			auto localTrans = transform.GetLocalTranslation();
+			//auto lightDirection = Vector(1.0f, 1.0f, 1.0f);
+			auto directionRotation = MovementSystem::GetGlobalForward(transform);
+			auto lightMagnitude = dirLightCmp->GetIntensity() * 2.0f;
+
+			DrawArrow(world, localTrans, directionRotation*lightMagnitude);
 		}
 	}
 }
@@ -216,6 +237,10 @@ void Poly::DebugDrawSystem::DrawArrow(World* world, Vector position, Vector dire
 	const auto rotationStep = Angle::FromDegrees(24.0f);
 	Quaternion rotAroundDirectionVector;
 	rotAroundDirectionVector.SetRotation(directionVector, rotationStep);
+
+	if(position.X == 0.0f && position.Y == 0.0f && position.Z == 0.0f) {
+		position.X += 0.01f; position.Y += 0.01f; position.Z += 0.01f;
+	}
 
 	// calculate point which sets edge points around the arrowhead
 	auto arrowTipEdgePoint = position.Cross(directionVector);

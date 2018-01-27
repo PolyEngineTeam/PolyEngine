@@ -11,7 +11,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT TextureResource : public ResourceBase
 	{
 	public:
-		TextureResource(const String& path);
+		TextureResource(const String& path, eTextureUsageType textureUsageType);
 		~TextureResource() override;
 
 		unsigned char* GetImage() const { return Image; }

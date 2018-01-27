@@ -10,6 +10,7 @@ GLMeshDeviceProxy::GLMeshDeviceProxy()
 	VBO[eBufferType::VERTEX_BUFFER] = 0;
 	VBO[eBufferType::TEXCOORD_BUFFER] = 0;
 	VBO[eBufferType::NORMAL_BUFFER] = 0;
+	VBO[eBufferType::TANGENT_BUFFER] = 0;
 	VBO[eBufferType::INDEX_BUFFER] = 0;
 }
 
@@ -24,6 +25,9 @@ GLMeshDeviceProxy::~GLMeshDeviceProxy()
 
 	if (VBO[eBufferType::NORMAL_BUFFER])
 		glDeleteBuffers(1, &VBO[eBufferType::NORMAL_BUFFER]);
+
+	if(VBO[eBufferType::TANGENT_BUFFER])
+		glDeleteBuffers(1, &VBO[eBufferType::TANGENT_BUFFER]);
 
 	if (VBO[eBufferType::INDEX_BUFFER])
 		glDeleteBuffers(1, &VBO[eBufferType::INDEX_BUFFER]);
@@ -73,14 +77,32 @@ void GLMeshDeviceProxy::SetContent(const Mesh& mesh)
 		CHECK_GL_ERR();
 	}
 
+	if(mesh.HasTangents()) {
+		EnsureVBOCreated(eBufferType::TANGENT_BUFFER);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO[eBufferType::TANGENT_BUFFER]);
+		glBufferData(GL_ARRAY_BUFFER, mesh.GetTangents().GetSize() * sizeof(Vector3f), mesh.GetTangents().GetData(), GL_STATIC_DRAW);
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		glEnableVertexAttribArray(3);
+		CHECK_GL_ERR();
+	}
+
+	if(mesh.HasBitangents()) {
+		EnsureVBOCreated(eBufferType::BITANGENT_BUFFER);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO[eBufferType::BITANGENT_BUFFER]);
+		glBufferData(GL_ARRAY_BUFFER, mesh.GetBitangents().GetSize() * sizeof(Vector3f), mesh.GetBitangents().GetData(), GL_STATIC_DRAW);
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		glEnableVertexAttribArray(4);
+		CHECK_GL_ERR();
+	}
+
 	if (mesh.HasIndicies())
 	{
 		EnsureVBOCreated(eBufferType::INDEX_BUFFER);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO[eBufferType::INDEX_BUFFER]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.GetIndicies().GetSize() * sizeof(GLuint), mesh.GetIndicies().GetData(), GL_STATIC_DRAW);
 
-		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		glEnableVertexAttribArray(5);
 		CHECK_GL_ERR();
 	}
 

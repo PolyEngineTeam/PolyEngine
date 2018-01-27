@@ -16,7 +16,7 @@ Engine::Engine()
 	gDebugConfig.Load();
 	// also set presets for debug draw (DebugDrawPresets)
 	// @todo update debug draw presets from GUI
-	gDebugConfig.DebugDrawPresets |= DebugDrawPreset::DYNAMIC;
+	gDebugConfig.DebugDrawPresets |= DebugDrawPreset::GFX;
 }
 
 void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device)
