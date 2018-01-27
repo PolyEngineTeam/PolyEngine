@@ -121,7 +121,7 @@ void EntityTransform::UpdateGlobalTransformationCache() const
 	if (!GlobalDirty) return;
 
 	const Entity* parent = Owner->GetParent();
-	if (parent->IsRoot())
+	if (!parent)
 	{
 		GlobalTransform = GetLocalTransformationMatrix();
 	}
