@@ -26,7 +26,6 @@ namespace Poly
 		
 		/// If this flag is set during Trigger3DComponent::EnsureInit() that collider will be immidiately registered.
 		bool Registered = true;
-		
 		/// Determines in which collision group is currently collider.
 		EnumFlags<eCollisionGroup> CollisionGroup = eCollisionGroup::TRIGGER;
 		/// Determines whith which collision groups this collider will collide.
@@ -94,6 +93,8 @@ namespace Poly
 		/// @return if this component is registered then this function returns true
 		bool IsRegistered() const { return Template.Registered; }
 
+		bool IsPhysicsInitialized() const { return PhysicsInitialized; }
+
 		/// Use to get collider collision group.
 		/// Collision group determines in which collision group collider currently is.
 		/// @return collision group of this collider
@@ -114,6 +115,7 @@ namespace Poly
 
 
 	private:
+		bool PhysicsInitialized = false;
 		/// Needed for destructuion and re-registration.
 		/// @see Trigger3DComponent::~Trigger3DComponent
 		World* BodyWorld;
