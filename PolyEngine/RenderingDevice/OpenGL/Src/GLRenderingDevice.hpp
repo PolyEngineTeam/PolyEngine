@@ -16,6 +16,7 @@ namespace Poly
 	struct PrimitiveCube;
 	class RenderingPassBase;
 	class RenderingTargetBase;
+	class RenderingTargetBase;
 
 	class DEVICE_DLLEXPORT GLRenderingDevice : public IRenderingDevice
 	{
@@ -40,6 +41,13 @@ namespace Poly
 			FOREGROUND,
 			BACKGROUND_LIGHT,
 			FOREGROUND_LIGHT,
+			_COUNT
+		};
+
+		enum class eRenderTargetId
+		{
+			COLOR,
+			DEPTH,
 			_COUNT
 		};
 
@@ -96,17 +104,16 @@ namespace Poly
 			const std::initializer_list<InputOutputBind>& outputs = {});
 
 		template <typename T, typename... Args>
-		T* CreateRenderingTarget(Args&&... args);
+		T* CreateRenderingTarget(eRenderTargetId type, Args&&... args);
 
 		SDL_Window* Window;
 		SDL_GLContext Context;
 		ScreenSize ScreenDim;
 
-		Dynarray<std::unique_ptr<RenderingTargetBase>> RenderingTargets;
-
 		EnumArray<std::unique_ptr<RenderingPassBase>, eGeometryRenderPassType> GeometryRenderingPasses;
 		EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
-
+		EnumArray<std::unique_ptr<RenderingTargetBase>, eRenderTargetId> RenderingTargets;
+		
 		std::unique_ptr<PostprocessQuad> PostprocessRenderingQuad;
 		std::unique_ptr<PrimitiveCube> PrimitiveRenderingCube;
 	};

@@ -80,8 +80,10 @@ void GLRenderingDevice::EndFrame()
 void GLRenderingDevice::Resize(const ScreenSize& size)
 {
 	ScreenDim = size;
-	for (auto& target : RenderingTargets)
-		target->Resize(size);
+
+	for (eRenderTargetId targetType : IterateEnum<eRenderTargetId>())
+		if(RenderingTargets[targetType]) 
+			RenderingTargets[targetType]->Resize(size);
 }
 
 //------------------------------------------------------------------------------
@@ -108,10 +110,10 @@ inline void GLRenderingDevice::RegisterGeometryPassWithArgs(eGeometryRenderPassT
 
 //------------------------------------------------------------------------------
 template<typename T, typename... Args>
-T* Poly::GLRenderingDevice::CreateRenderingTarget(Args&&... args)
+T* Poly::GLRenderingDevice::CreateRenderingTarget(eRenderTargetId type, Args&&... args)
 {
 	T* target = new T(std::forward<Args>(args)...);
-	RenderingTargets.PushBack(std::unique_ptr<RenderingTargetBase>(target));
+	RenderingTargets[type].reset(target);
 	return target;
 }
 
@@ -139,8 +141,8 @@ void GLRenderingDevice::InitPrograms()
 	//Texture2DInputTarget* RGBANoise256 = CreateRenderingTarget<Texture2DInputTarget>("Textures/RGBANoise256x256.png");
 
 	// Init programs
-	Texture2DRenderingTarget* texture = CreateRenderingTarget<Texture2DRenderingTarget>(GL_R11F_G11F_B10F);
-	DepthRenderingTarget* depth = CreateRenderingTarget<DepthRenderingTarget>();
+	Texture2DRenderingTarget* texture = CreateRenderingTarget<Texture2DRenderingTarget>(eRenderTargetId::COLOR, GL_R11F_G11F_B10F);
+	DepthRenderingTarget* depth = CreateRenderingTarget<DepthRenderingTarget>(eRenderTargetId::DEPTH);
 	// Texture2DRenderingTarget* depth2 = CreateRenderingTarget<Texture2DRenderingTarget>(GL_R16F);
 
 	RegisterGeometryPass<UnlitRenderingPass>(eGeometryRenderPassType::UNLIT, {}, { { "color", texture },{ "depth", depth } });
@@ -151,8 +153,7 @@ void GLRenderingDevice::InitPrograms()
 	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPassWithArgs<SkyboxRenderingPass>(eGeometryRenderPassType::SKYBOX, {}, { { "color", texture },{ "depth", depth } }, PrimitiveRenderingCube.get());
 	RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } }, PostprocessRenderingQuad.get());
-
-
+	
 	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND,			"Shaders/bgFrag.shader",		{}, { { "o_color", texture },	{ "depth", depth } });
 	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND_LIGHT,	"Shaders/bgLightFrag.shader",	{}, { { "o_color", texture },	{ "depth", depth } });
 	RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND,			"Shaders/fgFrag.shader",		{ { "i_color", texture } },		{} );
@@ -163,7 +164,8 @@ void GLRenderingDevice::InitPrograms()
 //------------------------------------------------------------------------------
 void Poly::GLRenderingDevice::CleanUpResources()
 {
-	RenderingTargets.Clear();
+	for (eRenderTargetId targetType : IterateEnum<eRenderTargetId>())
+		RenderingTargets[targetType].reset();
 
 	for (eGeometryRenderPassType passType : IterateEnum<eGeometryRenderPassType>())
 		GeometryRenderingPasses[passType].reset();

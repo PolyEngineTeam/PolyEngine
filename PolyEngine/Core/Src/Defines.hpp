@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <iostream>
 #include <string>
+#include <functional>
 
 // Custom type names
 using u8 = uint8_t;
