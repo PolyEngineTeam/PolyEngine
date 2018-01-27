@@ -7,6 +7,7 @@
 namespace Poly
 {
 	class World;
+	class ParticleEmitter;
 
 	struct ScreenSize
 	{
@@ -93,6 +94,12 @@ namespace Poly
 		virtual void SetContent(const Mesh& mesh) = 0;
 	};
 
+	class ENGINE_DLLEXPORT IParticleDeviceProxy : public BaseObject<>
+	{
+	public:
+		virtual void SetContent(const ParticleEmitter& particles) = 0;
+	};
+
 	//------------------------------------------------------------------------------
 	class ENGINE_DLLEXPORT IRenderingDevice : public BaseObject<>
 	{
@@ -107,6 +114,7 @@ namespace Poly
 		virtual std::unique_ptr<ICubemapDeviceProxy> CreateCubemap(size_t width, size_t height) = 0;
 		virtual std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() = 0;
 		virtual std::unique_ptr<IMeshDeviceProxy> CreateMesh() = 0;
+		virtual std::unique_ptr<IParticleDeviceProxy> CreateParticle() = 0;
 	protected:
 	};
 }

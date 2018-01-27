@@ -26,6 +26,7 @@ namespace Poly
 			UNLIT,
 			BLINN_PHONG,
 			TRANSPARENT_GEOMETRY,
+			PARTICLES,
 			DEBUG_NORMALS,
 			DEBUG_NORMALS_WIREFRAME,
 			IMMEDIATE_DEBUG,
@@ -75,6 +76,7 @@ namespace Poly
 		std::unique_ptr<ICubemapDeviceProxy> CreateCubemap(size_t width, size_t height) override;
 		std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() override;
 		std::unique_ptr<IMeshDeviceProxy> CreateMesh() override;
+		std::unique_ptr<IParticleDeviceProxy> CreateParticle() override;
 
 	private:
 		void InitPrograms();
