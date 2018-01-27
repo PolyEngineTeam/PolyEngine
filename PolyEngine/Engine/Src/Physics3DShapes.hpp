@@ -4,17 +4,21 @@
 
 	// FIXME(squares): this shouldn't be declared here
 class btCollisionShape;
+class btTriangleMesh;
 
 namespace Poly
 {
 	enum class ePhysics3DShape
 	{
+		MESH,
 		PLANE,
 		BOX,
 		SPHERE,
 		CAPSULE,
 		_COUNT
 	};
+
+	//------------------------------------------------------------------------------
 
 	class ENGINE_DLLEXPORT Physics3DShape : public BaseObject<>
 	{
@@ -29,6 +33,29 @@ namespace Poly
 	protected:
 	};
 
+	//------------------------------------------------------------------------------
+
+	class ENGINE_DLLEXPORT Physics3DTriangleMeshSource : public BaseObject<>
+	{
+		friend class Physics3DTriangleMeshShape;
+	public:
+		Physics3DTriangleMeshSource();
+		void AddTriangle(const Vector& a, const Vector& b, const Vector& c);
+
+	private:
+		btTriangleMesh* BulletMesh;
+	};
+
+	//------------------------------------------------------------------------------
+
+	class ENGINE_DLLEXPORT Physics3DTriangleMeshShape : public Physics3DShape
+	{
+	public:
+		Physics3DTriangleMeshShape(const Physics3DTriangleMeshSource& source);
+	};
+
+	//------------------------------------------------------------------------------
+
 	class ENGINE_DLLEXPORT Physics3DPlaneShape : public Physics3DShape
 	{
 	public:
@@ -37,6 +64,8 @@ namespace Poly
 		const float HalfExtent;
 	};
 
+	//------------------------------------------------------------------------------
+
 	class ENGINE_DLLEXPORT Physics3DBoxShape : public Physics3DShape
 	{
 	public:
@@ -44,12 +73,16 @@ namespace Poly
 		const Vector HalfExtents;
 	};
 
+	//------------------------------------------------------------------------------
+
 	class ENGINE_DLLEXPORT Physics3DSphereShape : public Physics3DShape
 	{
 	public:
 		Physics3DSphereShape(float radius);
 		const float Radius;
 	};
+
+	//------------------------------------------------------------------------------
 
 	class ENGINE_DLLEXPORT Physics3DCapsuleShape : public Physics3DShape
 	{
