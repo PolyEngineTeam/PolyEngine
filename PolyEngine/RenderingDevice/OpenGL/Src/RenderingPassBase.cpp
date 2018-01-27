@@ -251,7 +251,7 @@ GLuint Poly::Texture2DRenderingTarget::GetTextureID()
 }
 
 Poly::DepthRenderingTarget::DepthRenderingTarget()
-	: Texture2DRenderingTarget(GL_DEPTH_COMPONENT16, eInternalTextureUsageType::DEPTH_ATTACHEMENT)
+	: Texture2DRenderingTarget(GL_DEPTH_COMPONENT24, eInternalTextureUsageType::DEPTH_ATTACHEMENT)
 {
 }
 
