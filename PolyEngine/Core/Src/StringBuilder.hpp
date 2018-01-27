@@ -84,7 +84,7 @@ namespace Poly
 		inline void Clear() { Buffer.Resize(0); }
 	private:
 		std::streamsize xsputn(const char_type* s, std::streamsize n) override final { Append(s, n); return n; }
-		int_type overflow(int_type c) override final { Append(c); return c; }
+		int_type overflow(int_type c) override final { Append((char)c); return c; }
 
 		struct CharBuffer
 		{
