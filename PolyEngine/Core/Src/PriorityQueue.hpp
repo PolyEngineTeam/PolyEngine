@@ -80,7 +80,7 @@ namespace Poly
 			Data[idx2] = std::move(tmp);
 		}
 
-		bool Compare(size_t idx1, size_t idx2)
+		bool Compare(size_t idx1, size_t idx2) const
 		{
 			if (Less.HasValue())
 				return Less.Value()(Data[idx1], Data[idx2]);
