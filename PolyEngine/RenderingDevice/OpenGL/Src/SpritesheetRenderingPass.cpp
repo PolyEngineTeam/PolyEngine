@@ -22,6 +22,7 @@ SpritesheetRenderingPass::SpritesheetRenderingPass(const PostprocessQuad* quad)
 	GetProgram().RegisterUniform("float", "uTime");
 	GetProgram().RegisterUniform("mat4", "uTransform");
 	GetProgram().RegisterUniform("mat4", "uMVPTransform");
+	GetProgram().RegisterUniform("vec2", "uScale");
 }
 
 void SpritesheetRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
@@ -48,6 +49,7 @@ void SpritesheetRenderingPass::OnRun(World* world, const CameraComponent* camera
 		const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
 		Matrix screenTransform = mv * objTransform;
 		GetProgram().SetUniform("uMV", screenTransform);
+		GetProgram().SetUniform("uScale", objTransform.m00, objTransform.m11);
 
 		const TextureResource* Spritesheet = spritesheetCmp->GetSpritesheet();
 		GLuint TextureID = Spritesheet == nullptr
