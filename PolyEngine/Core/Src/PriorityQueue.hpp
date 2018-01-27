@@ -20,8 +20,10 @@ namespace Poly
 		T Pop()
 		{
 			Swap(0, GetSize() - 1);
-			T tmp = Data.PopBack();
+			T tmp = Data[GetSize() - 1];
+			Data.PopBack();
 			SiftDown(0);
+
 			return tmp;
 		}
 
@@ -44,16 +46,20 @@ namespace Poly
 				size_t rightChild = GetRightChild(idx);
 
 				// reached end
-				if (leftChild >= GetSize())
-					return;
-				else if (Data[leftChild] < Data[idx])
+				if (leftChild < GetSize() && Data[leftChild] < Data[idx])
 				{
-					Swap(idx, leftChild);
-					idx = leftChild;
+					if (rightChild < GetSize() && Data[rightChild] < Data[leftChild])
+					{
+						Swap(idx, rightChild);
+						idx = rightChild;
+					}
+					else
+					{
+						Swap(idx, leftChild);
+						idx = leftChild;
+					}
 				}
-				else if (rightChild >= GetSize())
-					return;
-				else if (Data[rightChild] < Data[idx])
+				else if (rightChild < GetSize() && Data[rightChild] < Data[idx])
 				{
 					Swap(idx, rightChild);
 					idx = rightChild;
@@ -72,7 +78,7 @@ namespace Poly
 
 		inline size_t GetParent(size_t node) { return (node - 1) / 2; }
 		inline size_t GetLeftChild(size_t node) { return 2 * node + 1; }
-		inline size_t GetRightcild(size_t node) { return 2 * node + 2; }
+		inline size_t GetRightChild(size_t node) { return 2 * node + 2; }
 
 		Dynarray<T> Data;
 	};
