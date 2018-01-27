@@ -199,3 +199,8 @@ std::unique_ptr<IMeshDeviceProxy> GLRenderingDevice::CreateMesh()
 {
 	return std::make_unique<GLMeshDeviceProxy>();
 }
+
+std::unique_ptr<IParticleDeviceProxy> GLRenderingDevice::CreateParticle()
+{
+	return std::make_unique<GLParticleDeviceProxy>();
+}

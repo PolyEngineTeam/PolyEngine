@@ -56,6 +56,7 @@
 // Systems
 #include "DeferredTaskSystem.hpp"
 #include "SoundSystem.hpp"
+#include "ParticleUpdateSystem.hpp"
 #include "DeferredTaskSystem.hpp"
 #include "Physics2DSystem.hpp"
 #include "DebugDrawSystem.hpp"

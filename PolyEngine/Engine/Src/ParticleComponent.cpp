@@ -1,15 +1,15 @@
 #include "EnginePCH.hpp"
 
-#include "ParticlesComponent.hpp"
+#include "ParticleComponent.hpp"
 #include "CameraComponent.hpp"
 
 using namespace Poly;
 
-ParticlesComponent::ParticlesComponent()
+ParticleComponent::ParticleComponent()
 {
 	emitter = new ParticleEmitter();
 }
 
-Poly::ParticlesComponent::~ParticlesComponent()
+Poly::ParticleComponent::~ParticleComponent()
 {
 }

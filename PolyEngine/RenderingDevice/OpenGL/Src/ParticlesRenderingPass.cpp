@@ -6,7 +6,7 @@
 #include <World.hpp>
 #include <TimeSystem.hpp>
 #include <CameraComponent.hpp>
-#include <ParticlesComponent.hpp>
+#include <ParticleComponent.hpp>
 #include <MeshRenderingComponent.hpp>
 #include <MovementSystem.hpp>
 
@@ -42,7 +42,6 @@ ParticlesRenderingPass::ParticlesRenderingPass()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	
 	// gConsole.LogInfo("InstancedMeshRenderingPass::Ctor sizeof(Matrix): {}, sizeof(GLfloat): {}", sizeof(Matrix), sizeof(GLfloat));
-
 
 	instancesTransform.Resize(16 * instancesLen);
 
@@ -101,6 +100,33 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 {
 	gConsole.LogInfo("ParticlesRenderingPass::OnRun");
 	
+	// fill array with zeros
+	for (int i = 0; i < 16 * instancesLen; ++i)
+	{
+		instancesTransform[i] = 0.0f;
+	}
+
+	// srand(42);
+
+	int index = 0;
+	for (int i = 0; i < instancesLen; ++i)
+	{
+		// identity
+		instancesTransform[index + 0] = 1.0f;
+		instancesTransform[index + 5] = 1.0f;
+		instancesTransform[index + 10] = 1.0f;
+		instancesTransform[index + 15] = 1.0f;
+		// translation
+		instancesTransform[index + 12] = 5.0f * Random(-1.0, 1.0);
+		instancesTransform[index + 13] = 5.0f * Random(-1.0, 1.0);
+		instancesTransform[index + 14] = 5.0f * Random(-1.0, 1.0);
+		index += 16;
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16 * instancesLen, instancesTransform.GetData(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 
 	GetProgram().BindProgram();
@@ -112,11 +138,11 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 	GetProgram().SetUniform("uTime", Time);
 
 	// Render meshes
-	for (auto componentsTuple : world->IterateComponents<ParticlesComponent>())
+	for (auto componentsTuple : world->IterateComponents<ParticleComponent>())
 	{
 		gConsole.LogInfo("ParticlesRenderingPass::OnRun found particles");
 
-		const ParticlesComponent* meshCmp = std::get<ParticlesComponent*>(componentsTuple);
+		const ParticleComponent* meshCmp = std::get<ParticleComponent*>(componentsTuple);
 		const EntityTransform& transform = meshCmp->GetTransform();
 		
 		const Matrix& objTransform = transform.GetGlobalTransformationMatrix();

@@ -3,11 +3,11 @@
 #include <BaseObject.hpp>
 
 #include "Mesh.hpp"
-#include "ParticleEmitter.hpp"
 
 namespace Poly
 {
 	class World;
+	class ParticleEmitter;
 
 	struct ScreenSize
 	{
@@ -114,6 +114,7 @@ namespace Poly
 		virtual std::unique_ptr<ICubemapDeviceProxy> CreateCubemap(size_t width, size_t height) = 0;
 		virtual std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() = 0;
 		virtual std::unique_ptr<IMeshDeviceProxy> CreateMesh() = 0;
+		virtual std::unique_ptr<IParticleDeviceProxy> CreateParticle() = 0;
 	protected:
 	};
 }

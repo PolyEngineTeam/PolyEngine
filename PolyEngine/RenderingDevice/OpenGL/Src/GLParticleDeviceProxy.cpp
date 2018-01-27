@@ -2,6 +2,8 @@
 #include "Vector3f.hpp"
 #include "GLUtils.hpp"
 #include "GLParticleDeviceProxy.hpp"
+#include "ParticleEmitter.hpp"
+#include <algorithm>
 
 using namespace Poly;
 
@@ -9,9 +11,7 @@ using namespace Poly;
 GLParticleDeviceProxy::GLParticleDeviceProxy()
 {
 	// VBO[eBufferType::VERTEX_BUFFER] = 0;
-	// VBO[eBufferType::TEXCOORD_BUFFER] = 0;
-	// VBO[eBufferType::INDEX_BUFFER] = 0;
-	//  VBO[eBufferType::NORMAL_BUFFER] = 0;
+	// VBO[eBufferType::INSTANCE_BUFFER] = 0;
 }
 
 //---------------------------------------------------------------
@@ -31,12 +31,8 @@ GLParticleDeviceProxy::~GLParticleDeviceProxy()
 	// 
 	// if(VAO)
 	// 	glDeleteVertexArrays(1, &VAO);
-}
 
-void Poly::GLParticleDeviceProxy::SetContent(const ParticleEmitter & particles)
-{
-	/*
-	
+	// TODO: extract as common resource, only instance buffer is different per particle emitter
 	float quadVertices[] = {
 		// positions			// uv
 		-1.0f,  1.0f, 0.0f,		1.0f, 0.0f,
@@ -57,35 +53,35 @@ void Poly::GLParticleDeviceProxy::SetContent(const ParticleEmitter & particles)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+}
 
-	instancesTransform.Resize(16 * instancesLen);
+void Poly::GLParticleDeviceProxy::SetContent(const ParticleEmitter& particles)
+{
+	gConsole.LogInfo("GLParticleDeviceProxy::SetContent old: {}, new: {}",
+		instancesTransformBuffer.GetSize() / 16,
+		particles.GetInstances().GetSize() / 16
+	);
+
+	instancesTransformBuffer.Resize(std::max(
+		instancesTransformBuffer.GetSize(),
+		particles.GetInstances().GetSize()
+	));
 
 	// fill array with zeros
-	for (int i = 0; i < 16 * instancesLen; ++i)
+	for (int i = 0; i < instancesTransformBuffer.GetSize(); ++i)
 	{
-		instancesTransform[i] = 0.0f;
+		instancesTransformBuffer[i] = 0.0f;
 	}
 
-	srand(42);
-
-	int index = 0;
-	for (int i = 0; i < instancesLen; ++i)
+	// copy from emitter
+	for (int i = 0; i < particles.GetInstances().GetSize(); ++i)
 	{
-		// identity
-		instancesTransform[index + 0] = 1.0f;
-		instancesTransform[index + 5] = 1.0f;
-		instancesTransform[index + 10] = 1.0f;
-		instancesTransform[index + 15] = 1.0f;
-		// translation
-		instancesTransform[index + 12] = 5.0f * Random(-1.0, 1.0);
-		instancesTransform[index + 13] = 5.0f * Random(-1.0, 1.0);
-		instancesTransform[index + 14] = 5.0f * Random(-1.0, 1.0);
-		index += 16;
+		instancesTransformBuffer[i] = particles.GetInstances()[i];
 	}
 
 	glGenBuffers(1, &instanceVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16 * instancesLen, instancesTransform.GetData(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16 * instancesLen, instancesTransformBuffer.GetData(), GL_STATIC_DRAW);
 	// glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	// http://sol.gfxile.net/instancing.html
@@ -109,8 +105,6 @@ void Poly::GLParticleDeviceProxy::SetContent(const ParticleEmitter & particles)
 	glVertexAttribDivisor(pos3, 1);
 	glVertexAttribDivisor(pos4, 1);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	
-	*/
 }
 
 //---------------------------------------------------------------

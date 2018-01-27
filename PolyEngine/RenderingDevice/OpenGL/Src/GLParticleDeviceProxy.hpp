@@ -34,7 +34,7 @@ namespace Poly
 		unsigned int instanceVBO;
 
 		static const int instancesLen = 10;
-		Dynarray<float> instancesTransform;
+		Dynarray<float> instancesTransformBuffer;
 
 		friend class GLRenderingDevice;
 	};
