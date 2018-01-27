@@ -13,16 +13,25 @@ extern "C"
 
 void HandleWindowEvent(const SDL_WindowEvent& windowEvent);
 
-	class FileAndCoutStream : public Poly::FileOutputStream
-	{
-	public:
-		FileAndCoutStream(const char* name) : Poly::FileOutputStream(name) {}
-		void Append(const char* data) override {
-			std::cout << data;
-			std::cout.flush();
-			Poly::FileOutputStream::Append(data);
-		}
-	};
+enum eMouseStateChange {
+	WINDOW_ENTER,
+	WINDOW_LEAVE,
+	BUTTON_CLICK,
+	_COUNT
+};
+
+void UpdateMouseState(eMouseStateChange change);
+
+class FileAndCoutStream : public Poly::FileOutputStream
+{
+public:
+	FileAndCoutStream(const char* name) : Poly::FileOutputStream(name) {}
+	void Append(const char* data) override {
+		std::cout << data;
+		std::cout.flush();
+		Poly::FileOutputStream::Append(data);
+	}
+};
 
 int main(int argc, char* args[])
 {
@@ -97,10 +106,14 @@ int main(int argc, char* args[])
 				Engine->KeyUp(static_cast<Poly::eKey>(event.key.keysym.scancode));
 				break;
 			case SDL_MOUSEMOTION:
+			{
+				Engine->UpdateMouseMove(Poly::Vector2i(event.motion.xrel, event.motion.yrel));
 				Engine->UpdateMousePos(Poly::Vector2i(event.motion.x, event.motion.y));
 				break;
+			}
 			case SDL_MOUSEBUTTONDOWN:
 				Engine->MouseButtonDown(static_cast<Poly::eMouseButton>(event.button.button));
+				UpdateMouseState(eMouseStateChange::BUTTON_CLICK);
 				break;
 			case SDL_MOUSEBUTTONUP:
 				Engine->MouseButtonUp(static_cast<Poly::eMouseButton>(event.button.button));
@@ -195,8 +208,34 @@ void HandleWindowEvent(const SDL_WindowEvent& windowEvent)
 		Poly::gEngine->ResizeScreen(screenSize);
 		break;
 	}
+	case SDL_WINDOWEVENT_LEAVE:
+	case SDL_WINDOWEVENT_FOCUS_LOST:
+		UpdateMouseState(eMouseStateChange::WINDOW_LEAVE);
+		break;
+	case SDL_WINDOWEVENT_ENTER:
+	case SDL_WINDOWEVENT_FOCUS_GAINED:	
+		UpdateMouseState(eMouseStateChange::WINDOW_ENTER);
+		break;
 	default:
 		Poly::gConsole.LogDebug("Not handled SDL window event, code: {}", GetWindowEventName(windowEvent));
 		break;
+	}
+}
+
+
+void UpdateMouseState(eMouseStateChange change)
+{
+	if (change == eMouseStateChange::BUTTON_CLICK)
+	{
+		SDL_ShowCursor(Poly::gEngine->ShouldMouseBeVisible());
+		SDL_CaptureMouse(Poly::gEngine->ShouldCaptureMouse() ? SDL_bool::SDL_TRUE : SDL_bool::SDL_FALSE);
+		SDL_SetRelativeMouseMode(Poly::gEngine->ShouldCaptureMouse() ? SDL_bool::SDL_TRUE : SDL_bool::SDL_FALSE);
+	}
+
+	if(change == eMouseStateChange::WINDOW_LEAVE || change == eMouseStateChange::WINDOW_ENTER)
+	{
+		SDL_ShowCursor(1);
+		SDL_CaptureMouse(SDL_bool::SDL_FALSE);
+		SDL_SetRelativeMouseMode(SDL_FALSE);
 	}
 }
