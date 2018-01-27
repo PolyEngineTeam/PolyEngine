@@ -6,7 +6,7 @@
 using namespace Poly;
 
 ParticleEmitter::ParticleEmitter(Settings settings)
-	: settings(settings), ParticlesPool(1000) 
+	: settings(settings), ParticlesPool(1000)
 {
 	ParticleProxy = gEngine->GetRenderingDevice()->CreateParticle();
 	Emit(settings.InitialSize);
@@ -22,7 +22,7 @@ void ParticleEmitter::Emit(size_t size)
 
 	size_t amount = Clamp(size, (size_t)0, sizeLeft);
 
-	gConsole.LogInfo("ParticleEmitter::Emit emitLen: {}", amount);
+	// gConsole.LogInfo("ParticleEmitter::Emit emitLen: {}", amount);
 
 	while (amount > 0)
 	{
@@ -45,21 +45,34 @@ void ParticleEmitter::Update(World* world)
 
 	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
 
+	if (IsBurstEnabled)
+	{
+		if (NextBurstTime < 0.0f)
+		{
+			NextBurstTime = Random(settings.BurstTimeMin, settings.BurstTimeMax);
+			Emit((int)Random(settings.BurstSizeMin, settings.BurstSizeMax));
+		}
+		else
+		{
+			NextBurstTime -= deltaTime;
+		}
+	}
+
 	Dynarray<Particle*> ParticleToDelete;
 
 	for (Particle& p : ParticlesPool)
 	{
 		p.Age += deltaTime;
-		if (p.Age > p.LifeTime) 
+		if (p.Age > p.LifeTime)
 		{
 			ParticleToDelete.PushBack(&p);
 		}
 	}
 
-	if (ParticleToDelete.GetSize() > 0)
-	{
-		gConsole.LogInfo("ParticleEmitter::Update toDeleteLen: {}", ParticleToDelete.GetSize());
-	}
+	// if (ParticleToDelete.GetSize() > 0)
+	// {
+	// 	gConsole.LogInfo("ParticleEmitter::Update toDeleteLen: {}", ParticleToDelete.GetSize());
+	// }
 
 
 	for (Particle* p : ParticleToDelete)
@@ -72,9 +85,9 @@ void ParticleEmitter::Update(World* world)
 	{
 		settings.ParticleUpdateFunc(&p);
 	}
-	
+
 	RecreateBufferForProxy();
-	
+
 	UpdateDeviceProxy();
 }
 
@@ -107,4 +120,15 @@ void ParticleEmitter::RecreateBufferForProxy()
 void ParticleEmitter::UpdateDeviceProxy()
 {
 	ParticleProxy->SetContent(*this);
+}
+
+float ParticleEmitter::Random()
+{
+	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+}
+
+float ParticleEmitter::Random(float min, float max)
+{
+	float rnd = Random();
+	return Lerp(min, max, rnd);
 }
