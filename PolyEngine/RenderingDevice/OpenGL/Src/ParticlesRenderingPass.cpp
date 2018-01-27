@@ -39,14 +39,14 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<ParticleComponent>())
 	{
-		const ParticleComponent* particleCmp = std::get<ParticleComponent*>(componentsTuple);
+		ParticleComponent* particleCmp = std::get<ParticleComponent*>(componentsTuple);
 		const EntityTransform& transform = particleCmp->GetTransform();
 		const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
 		Matrix screenTransform = mv * objTransform;
 		GetProgram().SetUniform("uMV", screenTransform);
 
-		int partileLen = particleCmp->Emitter->GetInstances().GetSize() / 16;
-		const GLParticleDeviceProxy* particleProxy = static_cast<const GLParticleDeviceProxy*>(particleCmp->Emitter->GetParticleProxy());
+		int partileLen = particleCmp->GetEmitter()->GetInstances().GetSize() / 16;
+		const GLParticleDeviceProxy* particleProxy = static_cast<const GLParticleDeviceProxy*>(particleCmp->GetEmitter()->GetParticleProxy());
 		GLuint particleVAO = particleProxy->GetVAO();
 
 		// gConsole.LogInfo("ParticlesRenderingPass::OnRun VAO: {}, found particles: {}",

@@ -5,12 +5,15 @@
 
 using namespace Poly;
 
-ParticleComponent::ParticleComponent(ParticleEmitter::Settings settings)
+ParticleComponent::ParticleComponent(ParticleEmitter::Settings emitter, const String& spritePath, eResourceSource source)
 {
-	Emitter = new ParticleEmitter(settings);
+	Spritesheet = ResourceManager<TextureResource>::Load(spritePath, source, eTextureUsageType::DIFFUSE);
+	Emitter = new ParticleEmitter(emitter);
 }
 
 Poly::ParticleComponent::~ParticleComponent()
 {
 	delete Emitter;
+	if (Spritesheet)
+		ResourceManager<TextureResource>::Release(Spritesheet);
 }
