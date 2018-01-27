@@ -107,6 +107,21 @@ Vector2f::operator Vector2i() const
 	return ToVector2i();
 }
 
+Vector2f Vector2f::Max(const Vector2f& v1, const Vector2f& v2)
+{
+	return Vector2f(std::max(v1.X, v2.X), std::max(v1.Y, v2.Y));
+}
+
+Vector2f Vector2f::Min(const Vector2f& v1, const Vector2f& v2)
+{
+	return Vector2f(std::min(v1.X, v2.X), std::min(v1.Y, v2.Y));
+}
+
+Vector2f Vector2f::Clamp(const Vector2f& v1, const Vector2f& min, const Vector2f& max)
+{
+	return Vector2f(::Clamp(v1.X, min.X, max.X), ::Clamp(v1.Y, min.Y, max.Y));
+}
+
 namespace Poly
 {
 	//------------------------------------------------------------------------------
