@@ -52,6 +52,7 @@ namespace Poly
 	protected:
 
 		GLuint FallbackWhiteTexture;
+		GLuint FallbackNormalMap;
 
 		virtual void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) = 0;
 

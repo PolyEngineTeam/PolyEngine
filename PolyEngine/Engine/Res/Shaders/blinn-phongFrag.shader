@@ -175,6 +175,11 @@ void main() {
 
 	vec3 normalTBN = normalize(TBN * normal);
 	vec3 normalWS = normalize(vNormal);
+
+	// if normals, tangents or something else were trash
+	if(isnan(normalTBN.x))
+		normalTBN = normalWS;
+
 	vec3 positionWS = vVertexPos;
 	
 	vec3 Iamb = ambientLighting();

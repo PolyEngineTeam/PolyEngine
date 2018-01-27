@@ -189,7 +189,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 
 			const Poly::TextureResource* NormalMap = subMesh->GetMeshData().GetNormalMap();
 			GLuint NormalMapID = NormalMap == nullptr
-				? FallbackWhiteTexture
+				? FallbackNormalMap
 				: static_cast<const GLTextureDeviceProxy*>(NormalMap->GetTextureProxy())->GetTextureID();
 
 			glActiveTexture(GL_TEXTURE2);

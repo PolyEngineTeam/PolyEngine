@@ -272,7 +272,6 @@ GLuint Poly::Texture2DInputTarget::GetTextureID() const
 
 void Poly::RenderingPassBase::CreateDummyTexture()
 {
-
 	glGenTextures(1, &FallbackWhiteTexture);
 
 	GLubyte data[] = { 255, 255, 255, 255 };
@@ -285,4 +284,18 @@ void Poly::RenderingPassBase::CreateDummyTexture()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+
+	glGenTextures(1, &FallbackNormalMap);
+	
+	GLubyte dataDefaultNormal[] = { 128, 128, 255 };
+
+	glBindTexture(GL_TEXTURE_2D, FallbackNormalMap);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, dataDefaultNormal);
 }
