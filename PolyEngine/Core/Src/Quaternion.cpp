@@ -122,7 +122,6 @@ Quaternion & Poly::Quaternion::SetRotation(const Vector & axis, const Angle & an
 EulerAngles Quaternion::ToEulerAngles() const {
 
   float sinus = 2 * (W * Y - X * Z);
-  HEAVY_ASSERTE(IsInRange(sinus, -1.0f, 1.0f), "Sinus not is sinus range?!");
   sinus = Clamp(sinus, -1.0f, 1.0f); // need to clamp because of float precission problems
 
   return { Atan2(2 * (W * X + Y * Z), 1 - 2 * (X * X + Y * Y)),
