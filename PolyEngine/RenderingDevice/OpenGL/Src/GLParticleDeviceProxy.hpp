@@ -10,9 +10,8 @@ namespace Poly
 	{
 	private:
 		enum class eBufferType {
-			VERTEX_BUFFER,
-			TEXCOORD_BUFFER,
-			INSTANCE,
+			VERTEX_AND_UV_BUFFER,
+			INSTANCE_BUFFER,
 			_COUNT
 		};
 

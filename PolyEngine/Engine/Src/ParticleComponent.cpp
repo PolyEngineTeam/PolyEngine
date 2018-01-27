@@ -7,7 +7,7 @@ using namespace Poly;
 
 ParticleComponent::ParticleComponent()
 {
-	emitter = new ParticleEmitter();
+	Emitter = new ParticleEmitter();
 }
 
 Poly::ParticleComponent::~ParticleComponent()

@@ -40,7 +40,6 @@ ParticlesRenderingPass::ParticlesRenderingPass()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	
 	// gConsole.LogInfo("InstancedMeshRenderingPass::Ctor sizeof(Matrix): {}, sizeof(GLfloat): {}", sizeof(Matrix), sizeof(GLfloat));
 
 	instancesTransform.Resize(16 * instancesLen);
@@ -94,19 +93,52 @@ ParticlesRenderingPass::ParticlesRenderingPass()
 	glVertexAttribDivisor(pos3, 1);
 	glVertexAttribDivisor(pos4, 1);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 }
 
 void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
 	gConsole.LogInfo("ParticlesRenderingPass::OnRun");
-	
+
+	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
+	const Matrix& mvp = camera->GetMVP();
+
+	GetProgram().BindProgram();
+	GetProgram().SetUniform("uTime", Time);
+	GetProgram().SetUniform("uMVP", mvp);
+
+	UpdateInstanceVBO();
+	glBindVertexArray(quadVAO);
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, instancesLen);
+	glBindVertexArray(0);
+
+	// Render meshes
+	for (auto componentsTuple : world->IterateComponents<ParticleComponent>())
+	{
+		const ParticleComponent* particleCmp = std::get<ParticleComponent*>(componentsTuple);
+		const EntityTransform& transform = particleCmp->GetTransform();
+		const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
+		Matrix screenTransform = mvp * objTransform;
+		GetProgram().SetUniform("uMVP", screenTransform);
+
+		gConsole.LogInfo("ParticlesRenderingPass::OnRun found particles: {}",
+			particleCmp->Emitter->GetInstances().GetSize() / 16
+		);
+
+		const GLParticleDeviceProxy* particleProxy = static_cast<const GLParticleDeviceProxy*>(particleCmp->Emitter->GetParticleProxy());
+		glBindVertexArray(particleProxy->GetVAO());
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, instancesLen);
+		glBindVertexArray(0);
+	}
+}
+
+void Poly::ParticlesRenderingPass::UpdateInstanceVBO()
+{
 	// fill array with zeros
 	for (int i = 0; i < 16 * instancesLen; ++i)
 	{
 		instancesTransform[i] = 0.0f;
 	}
-
-	// srand(42);
 
 	int index = 0;
 	for (int i = 0; i < instancesLen; ++i)
@@ -126,33 +158,6 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16 * instancesLen, instancesTransform.GetData(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
-
-	GetProgram().BindProgram();
-	const Matrix& mvp = camera->GetMVP();
-	
-	// gConsole.LogInfo("InstancedMeshRenderingPass::OnRun MVP: {}, InstTrans: {}", objTransform, inst);
-
-	GetProgram().BindProgram();
-	GetProgram().SetUniform("uTime", Time);
-
-	// Render meshes
-	for (auto componentsTuple : world->IterateComponents<ParticleComponent>())
-	{
-		gConsole.LogInfo("ParticlesRenderingPass::OnRun found particles");
-
-		const ParticleComponent* meshCmp = std::get<ParticleComponent*>(componentsTuple);
-		const EntityTransform& transform = meshCmp->GetTransform();
-		
-		const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
-		Matrix screenTransform = mvp * objTransform;
-		GetProgram().SetUniform("uMVP", screenTransform);
-
-		glBindVertexArray(quadVAO);
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, instancesLen);
-		glBindVertexArray(0);
-	}
 }
 
 float ParticlesRenderingPass::Random() const

@@ -14,8 +14,8 @@ void ParticleUpdateSystem::ParticleUpdatePhase(World* world)
 	for (auto compTuple : world->IterateComponents<ParticleComponent>())
 	{
 		ParticleComponent* particle = std::get<ParticleComponent*>(compTuple);
-		particle->emitter->Update();
-		particle->emitter->UpdateDeviceProxy();
+		particle->Emitter->Update();
+		particle->Emitter->UpdateDeviceProxy();
 	}
 
 	// for (auto freeFloatTuple : world->IterateComponents<FreeFloatMovementComponent>())

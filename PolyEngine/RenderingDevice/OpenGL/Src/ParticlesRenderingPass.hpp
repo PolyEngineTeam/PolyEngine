@@ -20,6 +20,8 @@ namespace Poly
 	protected:
 		void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;
 
+		void UpdateInstanceVBO();
+
 	private:
 
 		unsigned int quadVAO, quadVBO;

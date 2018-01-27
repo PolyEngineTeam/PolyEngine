@@ -53,31 +53,8 @@ GLParticleDeviceProxy::~GLParticleDeviceProxy()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-}
 
-void Poly::GLParticleDeviceProxy::SetContent(const ParticleEmitter& particles)
-{
-	gConsole.LogInfo("GLParticleDeviceProxy::SetContent old: {}, new: {}",
-		instancesTransformBuffer.GetSize() / 16,
-		particles.GetInstances().GetSize() / 16
-	);
 
-	instancesTransformBuffer.Resize(std::max(
-		instancesTransformBuffer.GetSize(),
-		particles.GetInstances().GetSize()
-	));
-
-	// fill array with zeros
-	for (int i = 0; i < instancesTransformBuffer.GetSize(); ++i)
-	{
-		instancesTransformBuffer[i] = 0.0f;
-	}
-
-	// copy from emitter
-	for (int i = 0; i < particles.GetInstances().GetSize(); ++i)
-	{
-		instancesTransformBuffer[i] = particles.GetInstances()[i];
-	}
 
 	glGenBuffers(1, &instanceVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
@@ -104,6 +81,35 @@ void Poly::GLParticleDeviceProxy::SetContent(const ParticleEmitter& particles)
 	glVertexAttribDivisor(pos2, 1);
 	glVertexAttribDivisor(pos3, 1);
 	glVertexAttribDivisor(pos4, 1);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Poly::GLParticleDeviceProxy::SetContent(const ParticleEmitter& particles)
+{
+	gConsole.LogInfo("GLParticleDeviceProxy::SetContent old: {}, new: {}",
+		instancesTransformBuffer.GetSize() / 16,
+		particles.GetInstances().GetSize() / 16
+	);
+
+	instancesTransformBuffer.Resize(std::max(
+		instancesTransformBuffer.GetSize(),
+		particles.GetInstances().GetSize()
+	));
+
+	// fill array with zeros
+	for (int i = 0; i < instancesTransformBuffer.GetSize(); ++i)
+	{
+		instancesTransformBuffer[i] = 0.0f;
+	}
+
+	// copy from emitter
+	for (int i = 0; i < particles.GetInstances().GetSize(); ++i)
+	{
+		instancesTransformBuffer[i] = particles.GetInstances()[i];
+	}
+	
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16 * instancesLen, instancesTransformBuffer.GetData(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 

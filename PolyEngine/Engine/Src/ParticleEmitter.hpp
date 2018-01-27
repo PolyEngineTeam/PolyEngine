@@ -14,6 +14,9 @@ namespace Poly
 		const Dynarray<float>& GetInstances() const { return InstancesTransform; }
 
 		void Burst(int quota);
+		
+		const IParticleDeviceProxy* GetParticleProxy() const { return ParticleProxy.get(); }
+
 
 		void Update();
 		void UpdateDeviceProxy();

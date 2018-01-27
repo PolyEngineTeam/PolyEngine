@@ -12,7 +12,7 @@ namespace Poly {
 		ParticleComponent();
 		virtual ~ParticleComponent();
 
-		ParticleEmitter* emitter;
+		ParticleEmitter* Emitter;
 
 	private:
 	};
