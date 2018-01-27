@@ -149,8 +149,10 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		}
 
 		const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
+		const Matrix& localTransform = transform.GetLocalTransformationMatrix();
 		Matrix screenTransform = mvp * objTransform;
 		GetProgram().SetUniform("uTransform", objTransform);
+		GetProgram().SetUniform("uLocalTransform", localTransform);
 		GetProgram().SetUniform("uMVPTransform", screenTransform);
 		
 		glPolygonMode(GL_FRONT_AND_BACK, meshCmp->GetIsWireframe() ? GL_LINE : GL_FILL);
@@ -174,6 +176,25 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, TextureID);
+			GetProgram().SetUniform("uTexture", 0);
+
+			const Poly::TextureResource* SpecularMap = subMesh->GetMeshData().GetSpecularMap();
+			GLuint SpecularMapID = SpecularMap == nullptr
+				? FallbackWhiteTexture
+				: static_cast<const GLTextureDeviceProxy*>(SpecularMap->GetTextureProxy())->GetTextureID();
+
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, SpecularMapID);
+			GetProgram().SetUniform("uSpecularMap", 1);
+
+			const Poly::TextureResource* NormalMap = subMesh->GetMeshData().GetNormalMap();
+			GLuint NormalMapID = NormalMap == nullptr
+				? FallbackWhiteTexture
+				: static_cast<const GLTextureDeviceProxy*>(NormalMap->GetTextureProxy())->GetTextureID();
+
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, NormalMapID);
+			GetProgram().SetUniform("uNormalMap", 2);
 
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 			glBindTexture(GL_TEXTURE_2D, 0);
