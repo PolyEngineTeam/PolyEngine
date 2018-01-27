@@ -336,6 +336,28 @@ Poly::ContactResult Poly::Physics3DSystem::Contact(World* world, Entity* entity)
 }
 
 //------------------------------------------------------------------------------
+Poly::ContactPairResults Poly::Physics3DSystem::GetAllContactPairs(World* world)
+{
+	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
+
+	ContactPairResults results;
+
+	int numManifolds = worldCmp->Dispatcher->getNumManifolds();
+	for (int i = 0; i < numManifolds; i++)
+	{
+		btPersistentManifold* contactManifold = worldCmp->Dispatcher->getManifoldByIndexInternal(i);
+
+		ContactPairResults::ContactPair pair;
+		pair.FirstEntity = worldCmp->BulletTriggerToEntity[contactManifold->getBody0()];
+		pair.FirstEntity = worldCmp->BulletTriggerToEntity[contactManifold->getBody1()];
+
+		results.ContactPairs.PushBack(pair);
+	}
+
+	return results;
+}
+
+//------------------------------------------------------------------------------
 Poly::RaycastResult Poly::Physics3DSystem::AllHitsRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith)
 {
 	RaycastResult result;

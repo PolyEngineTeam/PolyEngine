@@ -25,6 +25,17 @@ namespace Poly
 		TRIGGER_BLUE = 0x128,
 	};
 
+	struct ENGINE_DLLEXPORT ContactPairResults
+	{
+		struct  ContactPair
+		{
+			const Entity* FirstEntity;
+			const Entity* SecondEntity;
+		};
+
+		Dynarray<ContactPair> ContactPairs;
+	};
+
 	/// Contains dynarray of contacts. 
 	/// Dynarray has size 0 when none contact has been encountered.
 	struct ENGINE_DLLEXPORT ContactResult
@@ -148,6 +159,8 @@ namespace Poly
 		/// @see ContactPair
 		ENGINE_DLLEXPORT ContactResult Contact(World* world, Entity* entity);
 
+
+		ENGINE_DLLEXPORT ContactPairResults GetAllContactPairs(World* world);
 
 		// raytracing
 
