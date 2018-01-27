@@ -207,7 +207,6 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 		if (rigidbody->Template.DisableDeactivation)
 			bulletRigidbody->setActivationState(DISABLE_DEACTIVATION);
 
-
 		bulletRigidbody->setRestitution(rigidbody->Template.Restitution);
 		bulletRigidbody->setFriction(rigidbody->Template.Friction);
 		bulletRigidbody->setRollingFriction(rigidbody->Template.RollingFriction);
