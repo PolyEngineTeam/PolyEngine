@@ -1,70 +1,110 @@
 #include "EnginePCH.hpp"
 #include "ParticleEmitter.hpp"
 
+#include <algorithm>
+
 using namespace Poly;
 
-Poly::ParticleEmitter::ParticleEmitter(int size)
+ParticleEmitter::ParticleEmitter(Settings settings)
+	: settings(settings), ParticlesPool(1000) 
 {
 	ParticleProxy = gEngine->GetRenderingDevice()->CreateParticle();
-	Emit(size);
+	Emit(settings.InitialSize);
 }
 
-void ParticleEmitter::Emit(int size)
+void ParticleEmitter::Emit(size_t size)
 {
-	InstancesTransform.Resize(16 * size);
-	int index = 0;
-	for (int i = 0; i < InstancesTransform.GetSize() / 16; ++i)
+	size_t sizeLeft = ParticlesPool.GetFreeBlockCount();
+	if (size > sizeLeft)
 	{
-		gConsole.LogInfo("ParticleEmitter::Burst p#: {}", index);
-		// identity
-		InstancesTransform[index + 0] = 1.0f;
-		InstancesTransform[index + 5] = 1.0f;
-		InstancesTransform[index + 10] = 1.0f;
-		InstancesTransform[index + 15] = 1.0f;
-		// translation
-		InstancesTransform[index + 12] = 5.0f * Random(-1.0, 1.0);
-		InstancesTransform[index + 13] = 5.0f * Random(-1.0, 1.0);
-		InstancesTransform[index + 14] = 5.0f * Random(-1.0, 1.0);
-		index += 16;
+		gConsole.LogInfo("ParticleEmitter::Emit not enough memory in room (1000)");
 	}
+
+	size_t amount = Clamp(size, (size_t)0, sizeLeft);
+
+	gConsole.LogInfo("ParticleEmitter::Emit emitLen: {}", amount);
+
+	while (amount > 0)
+	{
+		Particle* p = ParticlesPool.Alloc();
+		::new(p) Particle();
+
+		settings.ParticleInitFunc(p);
+
+		--amount;
+	}
+
+	RecreateBufferForProxy();
 
 	UpdateDeviceProxy();
 }
 
-void ParticleEmitter::Update()
+void ParticleEmitter::Update(World* world)
 {
-	gConsole.LogInfo("ParticleEmitter::Update");
+	// gConsole.LogInfo("ParticleEmitter::Update");
 
-	int index = 0;
-	for (int i = 0; i < InstancesTransform.GetSize() / 16; ++i)
+	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
+
+	Dynarray<Particle*> ParticleToDelete;
+
+	for (Particle& p : ParticlesPool)
 	{
-		// identity
-		InstancesTransform[index + 0] = 1.0f;
-		InstancesTransform[index + 5] = 1.0f;
-		InstancesTransform[index + 10] = 1.0f;
-		InstancesTransform[index + 15] = 1.0f;
-		// translation
-		// InstancesTransform[index + 12] += 0.001f;
-		InstancesTransform[index + 13] += 0.001f;
-		// InstancesTransform[index + 14] += 0.001f;
-		index += 16;
+		p.Age += deltaTime;
+		if (p.Age > p.LifeTime) 
+		{
+			ParticleToDelete.PushBack(&p);
+		}
 	}
 
+	if (ParticleToDelete.GetSize() > 0)
+	{
+		gConsole.LogInfo("ParticleEmitter::Update toDeleteLen: {}", ParticleToDelete.GetSize());
+	}
+
+
+	for (Particle* p : ParticleToDelete)
+	{
+		p->~Particle();
+		ParticlesPool.Free(p);
+	}
+
+	for (Particle& p : ParticlesPool)
+	{
+		settings.ParticleUpdateFunc(&p);
+	}
+	
+	RecreateBufferForProxy();
+	
 	UpdateDeviceProxy();
+}
+
+void ParticleEmitter::RecreateBufferForProxy()
+{
+	InstancesTransform.Clear();
+	InstancesTransform.Resize(16 * ParticlesPool.GetSize());
+
+	for (int i = 0; i < InstancesTransform.GetSize(); ++i)
+	{
+		InstancesTransform[i] = 0.0f;
+	}
+
+	int transIndx = 0;
+	for (Particle& p : ParticlesPool)
+	{
+		// Scale
+		InstancesTransform[transIndx + 0] = p.Scale.X;
+		InstancesTransform[transIndx + 5] = p.Scale.Y;
+		InstancesTransform[transIndx + 10] = p.Scale.Z;
+		InstancesTransform[transIndx + 15] = 1.0f;
+		// translation
+		InstancesTransform[transIndx + 12] = p.Position.X;
+		InstancesTransform[transIndx + 13] = p.Position.Y;
+		InstancesTransform[transIndx + 14] = p.Position.Z;
+		transIndx += 16;
+	}
 }
 
 void ParticleEmitter::UpdateDeviceProxy()
 {
 	ParticleProxy->SetContent(*this);
-}
-
-float ParticleEmitter::Random() const
-{
-	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-}
-
-float ParticleEmitter::Random(float min, float max) const
-{
-	float rnd = Random();
-	return Lerp(min, max, rnd);
 }

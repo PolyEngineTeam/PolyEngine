@@ -15,7 +15,7 @@ using namespace Poly;
 ParticlesRenderingPass::ParticlesRenderingPass()
 	: RenderingPassBase("Shaders/instancedVert.shader", "Shaders/instancedFrag.shader")
 {
-	gConsole.LogInfo("ParticlesRenderingPass::ParticlesRenderingPass");
+	// gConsole.LogInfo("ParticlesRenderingPass::ParticlesRenderingPass");
 
 	GetProgram().RegisterUniform("float", "uTime");
 	GetProgram().RegisterUniform("mat4", "uMV");
@@ -24,7 +24,7 @@ ParticlesRenderingPass::ParticlesRenderingPass()
 
 void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
-	gConsole.LogInfo("ParticlesRenderingPass::OnRun");
+	// gConsole.LogInfo("ParticlesRenderingPass::OnRun");
 
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	const Matrix& mvp = camera->GetMVP();
@@ -50,8 +50,8 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 		const GLParticleDeviceProxy* particleProxy = static_cast<const GLParticleDeviceProxy*>(particleCmp->Emitter->GetParticleProxy());
 		GLuint particleVAO = particleProxy->GetVAO();
 
-		gConsole.LogInfo("ParticlesRenderingPass::OnRun VAO: {}, found particles: {}",
-			particleVAO, partileLen);
+		// gConsole.LogInfo("ParticlesRenderingPass::OnRun VAO: {}, found particles: {}",
+		// 	particleVAO, partileLen);
 
 		// const TextureResource* DiffuseTexture = particleCmp->Emitter.GetDiffTexture();
 		// GLuint TextureID = DiffuseTexture == nullptr

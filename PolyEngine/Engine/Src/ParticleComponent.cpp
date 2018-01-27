@@ -5,11 +5,12 @@
 
 using namespace Poly;
 
-ParticleComponent::ParticleComponent(int size)
+ParticleComponent::ParticleComponent(ParticleEmitter::Settings settings)
 {
-	Emitter = new ParticleEmitter(size);
+	Emitter = new ParticleEmitter(settings);
 }
 
 Poly::ParticleComponent::~ParticleComponent()
 {
+	delete Emitter;
 }

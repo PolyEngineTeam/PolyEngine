@@ -10,7 +10,7 @@ using namespace Poly;
 //---------------------------------------------------------------
 GLParticleDeviceProxy::GLParticleDeviceProxy()
 {
-	gConsole.LogInfo("GLParticleDeviceProxy::GLParticleDeviceProxy");
+	// gConsole.LogInfo("GLParticleDeviceProxy::GLParticleDeviceProxy");
 	
 	// quad with uv mapping
 	static const float vertices[] = {
@@ -38,32 +38,33 @@ GLParticleDeviceProxy::GLParticleDeviceProxy()
 
 	// gConsole.LogInfo("InstancedMeshRenderingPass::Ctor sizeof(Matrix): {}, sizeof(GLfloat): {}", sizeof(Matrix), sizeof(GLfloat));
 
-	instancesTransform.Resize(16 * instancesLen);
 	
 	// fill array with zeros
-	for (int i = 0; i < instancesTransform.GetSize(); ++i)
-	{
-		instancesTransform[i] = 0.0f;
-	}
-	
-	int index = 0;
-	for (int i = 0; i < instancesLen; ++i)
-	{
-		// identity
-		instancesTransform[index + 0] = 1.0f;
-		instancesTransform[index + 5] = 1.0f;
-		instancesTransform[index + 10] = 1.0f;
-		instancesTransform[index + 15] = 1.0f;
-		// translation
-		instancesTransform[index + 12] = 5.0f * Random(-1.0, 1.0);
-		instancesTransform[index + 13] = 5.0f * Random(-1.0, 1.0);
-		instancesTransform[index + 14] = 5.0f * Random(-1.0, 1.0);
-		index += 16;
-	}
+	// instancesTransform.Resize(16 * instancesLen);
+	// for (int i = 0; i < instancesTransform.GetSize(); ++i)
+	// {
+	// 	instancesTransform[i] = 0.0f;
+	// }
+	// 
+	// int index = 0;
+	// for (int i = 0; i < instancesLen; ++i)
+	// {
+	// 	// identity
+	// 	instancesTransform[index + 0] = 1.0f;
+	// 	instancesTransform[index + 5] = 1.0f;
+	// 	instancesTransform[index + 10] = 1.0f;
+	// 	instancesTransform[index + 15] = 1.0f;
+	// 	// translation
+	// 	instancesTransform[index + 12] = 5.0f * Random(-1.0, 1.0);
+	// 	instancesTransform[index + 13] = 5.0f * Random(-1.0, 1.0);
+	// 	instancesTransform[index + 14] = 5.0f * Random(-1.0, 1.0);
+	// 	index += 16;
+	// }
 
 	glGenBuffers(1, &instanceVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * instancesTransform.GetSize(), instancesTransform.GetData(), GL_STATIC_DRAW);
+	// glBufferData(GL_ARRAY_BUFFER, sizeof(float) * instancesTransform.GetSize(), instancesTransform.GetData(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_STATIC_DRAW);
 	// glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
 	// http://sol.gfxile.net/instancing.html
@@ -103,23 +104,23 @@ GLParticleDeviceProxy::~GLParticleDeviceProxy()
 
 void GLParticleDeviceProxy::SetContent(const ParticleEmitter& particles)
 {
-	gConsole.LogInfo("GLParticleDeviceProxy::SetContent new: {}",
-		// instancesTransformBuffer.GetSize() / 16,
-		particles.GetInstances().GetSize() / 16
-	);
+	// gConsole.LogInfo("GLParticleDeviceProxy::SetContent new: {}",
+	// 	// instancesTransformBuffer.GetSize() / 16,
+	// 	particles.GetInstances().GetSize() / 16
+	// );
 	
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * particles.GetInstances().GetSize(), particles.GetInstances().GetData(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-float GLParticleDeviceProxy::Random() const
-{
-	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-}
-
-float GLParticleDeviceProxy::Random(float min, float max) const
-{
-	float rnd = Random();
-	return Lerp(min, max, rnd);
-}
+// float GLParticleDeviceProxy::Random() const
+// {
+// 	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+// }
+// 
+// float GLParticleDeviceProxy::Random(float min, float max) const
+// {
+// 	float rnd = Random();
+// 	return Lerp(min, max, rnd);
+// }

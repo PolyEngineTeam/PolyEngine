@@ -29,11 +29,11 @@ namespace Poly
 		GLuint VBO = 0;
 		unsigned int instanceVBO;
 
-		static const int instancesLen = 10;
-		Dynarray<float> instancesTransform;
+		// static const int instancesLen = 10;
+		// Dynarray<float> instancesTransform;
 
-		float Random() const;
-		float Random(float min, float max) const;
+		// float Random() const;
+		// float Random(float min, float max) const;
 
 		friend class GLRenderingDevice;
 	};
