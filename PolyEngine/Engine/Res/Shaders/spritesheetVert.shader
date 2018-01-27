@@ -8,6 +8,8 @@ out vec2 vTexCoord;
 uniform mat4 uP;
 uniform mat4 uMV;
 uniform float uTime;
+// uniform float uScaleX;
+// uniform float uScaleY;
 
 float nrand(float n)
 {
@@ -19,8 +21,8 @@ void main()
     float rnd = nrand(float(gl_InstanceID));
     // float _ScaleY = 0.5+smoothstep( -0.8, 0.8, sin(2.0*7.5*uTime) );
     // float _ScaleX = 0.5+smoothstep( -0.8, 0.8, sin(2.0*7.5*uTime) );
-	float _ScaleY = 1.0;
-    float _ScaleX = 1.0;
+	float _ScaleY = 10.0;
+    float _ScaleX = 10.0;
 
     vec4 p = vec4(aPos, 1.0);
     p = uP * (uMV * vec4(0.0, 0.0, 0.0, 1.0)

@@ -53,7 +53,7 @@ void SpritesheetRenderingPass::OnRun(World* world, const CameraComponent* camera
 		GLuint TextureID = Spritesheet == nullptr
 			? FallbackWhiteTexture
 			: static_cast<const GLTextureDeviceProxy*>(Spritesheet->GetTextureProxy())->GetTextureID();
-
+			
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, TextureID);
 
