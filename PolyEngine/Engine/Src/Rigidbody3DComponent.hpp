@@ -21,6 +21,7 @@ namespace Poly
 	{
 		STATIC,
 		DYNAMIC,
+		KINEMATIC,
 		DYNAMIC_CUSTOM_INTERTIA,
 		_COUNT
 	};
