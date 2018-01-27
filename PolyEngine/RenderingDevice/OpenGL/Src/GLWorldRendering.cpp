@@ -304,6 +304,8 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 	//glBlendFunc(GL_ONE, GL_ONE);
 	//glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
 	GeometryRenderingPasses[eGeometryRenderPassType::TRANSPARENT_GEOMETRY]->Run(world, cameraCmp, rect);
+	
+	GeometryRenderingPasses[eGeometryRenderPassType::TRANSPARENT_SPRITESHEET]->Run(world, cameraCmp, rect);
 
 	glDisable(GL_BLEND);
 
