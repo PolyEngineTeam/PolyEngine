@@ -10,6 +10,25 @@ Poly::Physics3DShape::~Physics3DShape()
 }
 
 //------------------------------------------------------------------------------
+Poly::Physics3DTriangleMeshSource::Physics3DTriangleMeshSource()
+{
+	BulletMesh = new btTriangleMesh();
+}
+
+//------------------------------------------------------------------------------
+void Poly::Physics3DTriangleMeshSource::AddTriangle(const Vector& a, const Vector& b, const Vector& c)
+{
+	BulletMesh->addTriangle({ a.X, a.Y, a.Z }, { b.X, b.Y, b.Z }, { c.X, c.Y, c.Z }, true);
+}
+
+//------------------------------------------------------------------------------
+Poly::Physics3DTriangleMeshShape::Physics3DTriangleMeshShape(const Physics3DTriangleMeshSource& source)
+	: Physics3DShape(ePhysics3DShape::MESH)
+{
+	BulletShape = new btBvhTriangleMeshShape(source.BulletMesh, true);
+}
+
+//------------------------------------------------------------------------------
 Poly::Physics3DPlaneShape::Physics3DPlaneShape(Vector normal, float halfExtent) 
 	: Physics3DShape(ePhysics3DShape::PLANE), 
 	Normal(normal), 

@@ -41,6 +41,7 @@ namespace Poly
 		float AngularDamping = 0.5f;
 		Vector LinearFactor = Vector(1.f, 1.f, 1.f);
 		Vector AngularFactor = Vector(1.f, 1.f, 1.f);
+		bool DisableDeactivation = true;
 
 		/// Rigid body will not be considered during the simulation until it is registered.
 		bool DisableDeactivation = true;
