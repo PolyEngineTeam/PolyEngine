@@ -2,7 +2,6 @@
 
 #include "RenderingPassBase.hpp"
 #include "GLShaderProgram.hpp"
-#include "PostprocessQuad.hpp"
 
 namespace Poly
 {

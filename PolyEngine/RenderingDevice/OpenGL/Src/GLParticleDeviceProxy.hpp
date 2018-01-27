@@ -21,19 +21,19 @@ namespace Poly
 
 		void SetContent(const ParticleEmitter& particles);
 
-		GLuint GetVAO() const { return quadVAO; }
+		GLuint GetVAO() const { return VAO; }
 
 	private:
-		void EnsureVBOCreated(eBufferType type);
 
-		// GLuint VAO = 0;
-		// EnumArray<GLuint, eBufferType> VBO;
-
-		unsigned int quadVAO, quadVBO;
+		GLuint VAO = 0;
+		GLuint VBO = 0;
 		unsigned int instanceVBO;
 
-		// static const int instancesLen = 10;
-		// Dynarray<float> instancesTransformBuffer;
+		static const int instancesLen = 10;
+		Dynarray<float> instancesTransform;
+
+		float Random() const;
+		float Random(float min, float max) const;
 
 		friend class GLRenderingDevice;
 	};

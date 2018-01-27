@@ -94,6 +94,7 @@ ParticlesRenderingPass::ParticlesRenderingPass()
 	glVertexAttribDivisor(pos4, 1);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+	CHECK_GL_ERR();
 }
 
 void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
@@ -103,14 +104,17 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	const Matrix& mvp = camera->GetMVP();
 
+	glDisable(GL_CULL_FACE);
+
 	GetProgram().BindProgram();
 	GetProgram().SetUniform("uTime", Time);
 	GetProgram().SetUniform("uMVP", mvp);
 
-	UpdateInstanceVBO();
+	// UpdateInstanceVBO();
 	glBindVertexArray(quadVAO);
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, instancesTransform.GetSize()/16);
 	glBindVertexArray(0);
+	CHECK_GL_ERR();
 
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<ParticleComponent>())
@@ -122,13 +126,19 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 		GetProgram().SetUniform("uMVP", screenTransform);
 
 		int partileLen = particleCmp->Emitter->GetInstances().GetSize() / 16;
-		gConsole.LogInfo("ParticlesRenderingPass::OnRun found particles: {}", partileLen);
-
 		const GLParticleDeviceProxy* particleProxy = static_cast<const GLParticleDeviceProxy*>(particleCmp->Emitter->GetParticleProxy());
-		glBindVertexArray(quadVAO);
+		GLuint particleVAO = particleProxy->GetVAO();
+
+		gConsole.LogInfo("ParticlesRenderingPass::OnRun VAO: {}, found particles: {}",
+			particleVAO, partileLen);
+
+		glBindVertexArray(particleVAO);
 		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, partileLen);
 		glBindVertexArray(0);
+		CHECK_GL_ERR();
 	}
+
+	glEnable(GL_CULL_FACE);
 }
 
 void Poly::ParticlesRenderingPass::UpdateInstanceVBO()
