@@ -6,7 +6,8 @@ layout(location = 3) in mat4 aOffset;
 
 out vec3 vTexCoord;
 
-uniform mat4 uMVP;
+uniform mat4 uP;
+uniform mat4 uMV;
 uniform float uTime;
 
 float nrand(float n)
@@ -16,13 +17,17 @@ float nrand(float n)
 
 void main()
 {
-   float rnd = nrand(float(gl_InstanceID));
-    // float phase = abs(sin(rnd + 7.5 * uTime));
-    // p = mix(p, aOffset * p, vec4(phase));
+	float rnd = nrand(float(gl_InstanceID));
+    float _ScaleY = smoothstep( -0.8, 0.8, sin(10.0*rnd +7.5*uTime) );
+    float _ScaleX = smoothstep( -0.8, 0.8, sin(10.0*rnd +7.5*uTime) );
+    // float _ScaleY = 1.0;
+    // float _ScaleX = 1.0;
+
     vec4 p = vec4(aPos, 1.0);
-    p.z += 2.0 * rnd;
-    p = aOffset * p;
-    p = uMVP * p;
+    p = uP * (uMV * aOffset * vec4(0.0, 0.0, 0.0, 1.0)
+		+ vec4(p.x, p.y, 0.0, 0.0)
+        * vec4(_ScaleX, _ScaleY, 1.0, 1.0));
+	
     gl_Position = p;
     vTexCoord = aTexCoord;
 }

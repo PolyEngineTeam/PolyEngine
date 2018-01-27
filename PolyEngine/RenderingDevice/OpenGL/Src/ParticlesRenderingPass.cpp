@@ -18,7 +18,8 @@ ParticlesRenderingPass::ParticlesRenderingPass()
 	gConsole.LogInfo("ParticlesRenderingPass::ParticlesRenderingPass");
 
 	GetProgram().RegisterUniform("float", "uTime");
-	GetProgram().RegisterUniform("mat4", "uMVP");
+	GetProgram().RegisterUniform("mat4", "uMV");
+	GetProgram().RegisterUniform("mat4", "uP");
 }
 
 void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
@@ -27,12 +28,14 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	const Matrix& mvp = camera->GetMVP();
+	const Matrix& mv = camera->GetModelViewMatrix();
+	const Matrix& p = camera->GetProjectionMatrix();
 
 	glDisable(GL_CULL_FACE);
 
 	GetProgram().BindProgram();
 	GetProgram().SetUniform("uTime", Time);
-	GetProgram().SetUniform("uMVP", mvp);
+	GetProgram().SetUniform("uP", p);
 
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<ParticleComponent>())
@@ -40,8 +43,8 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 		const ParticleComponent* particleCmp = std::get<ParticleComponent*>(componentsTuple);
 		const EntityTransform& transform = particleCmp->GetTransform();
 		const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
-		Matrix screenTransform = mvp * objTransform;
-		GetProgram().SetUniform("uMVP", screenTransform);
+		Matrix screenTransform = mv * objTransform;
+		GetProgram().SetUniform("uMV", screenTransform);
 
 		int partileLen = particleCmp->Emitter->GetInstances().GetSize() / 16;
 		const GLParticleDeviceProxy* particleProxy = static_cast<const GLParticleDeviceProxy*>(particleCmp->Emitter->GetParticleProxy());
@@ -49,6 +52,13 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 
 		gConsole.LogInfo("ParticlesRenderingPass::OnRun VAO: {}, found particles: {}",
 			particleVAO, partileLen);
+
+		// const TextureResource* DiffuseTexture = particleCmp->Emitter.GetDiffTexture();
+		// GLuint TextureID = DiffuseTexture == nullptr
+		// 	? FallbackWhiteTexture
+		// 	: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
+		// glActiveTexture(GL_TEXTURE0);
+		// glBindTexture(GL_TEXTURE_2D, TextureID);
 
 		glBindVertexArray(particleVAO);
 		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, partileLen);

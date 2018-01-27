@@ -6,10 +6,10 @@ using namespace Poly;
 Poly::ParticleEmitter::ParticleEmitter(int size)
 {
 	ParticleProxy = gEngine->GetRenderingDevice()->CreateParticle();
-	Burst(size);
+	Emit(size);
 }
 
-void ParticleEmitter::Burst(int size)
+void ParticleEmitter::Emit(int size)
 {
 	InstancesTransform.Resize(16 * size);
 	int index = 0;
@@ -44,9 +44,9 @@ void ParticleEmitter::Update()
 		InstancesTransform[index + 10] = 1.0f;
 		InstancesTransform[index + 15] = 1.0f;
 		// translation
-		InstancesTransform[index + 12] = 0.99f * InstancesTransform[index + 12];
-		InstancesTransform[index + 13] = 0.99f * InstancesTransform[index + 13];
-		InstancesTransform[index + 14] = 0.99f * InstancesTransform[index + 14];
+		// InstancesTransform[index + 12] += 0.001f;
+		InstancesTransform[index + 13] += 0.001f;
+		// InstancesTransform[index + 14] += 0.001f;
 		index += 16;
 	}
 
