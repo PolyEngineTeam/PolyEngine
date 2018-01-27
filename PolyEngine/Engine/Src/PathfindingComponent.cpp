@@ -4,7 +4,7 @@
 
 using namespace Poly;
 
-void Poly::PathfindingComponent::SetDestination(const Vector& pos)
+void Poly::PathfindingComponent::SetDestination(const Vector2f& pos)
 {
 	CurentDestination = pos;
 	RecalculateRequested = true;
@@ -12,7 +12,7 @@ void Poly::PathfindingComponent::SetDestination(const Vector& pos)
 
 void Poly::PathfindingComponent::ResetDestination()
 {
-	CurentDestination = Optional<Vector>();
+	CurentDestination = Optional<Vector2f>();
 	CalculatedPath.Clear();
 	RecalculateRequested = false;
 }
@@ -23,6 +23,44 @@ Poly::NavGrid::NavGrid(const Vector2i& gridSize, float cellSize)
 
 Poly::NavGrid::NavGrid(const Vector2i& gridSize, const Dynarray<bool>& occpanceMap, float cellSize)
 {
+}
+
+bool Poly::NavGrid::IsPositionValid(const Vector2f& pos) const
+{
+	Optional<Vector2i> cell = GetCellAtPosition(pos);
+	if (cell.HasValue())
+		return !Cells[GetArrayIdx(cell.Value())].Occupied;
+	return false;
+}
+
+bool Poly::NavGrid::IsPositionValid(const Vector2f& pos, float radius) const
+{
+	Dynarray<Vector2i> cells = GetCellAtPosition(pos, radius);
+
+	if (cells.GetSize() == 0)
+		return false;
+
+	for (Vector2i cell : cells)
+	{
+		if (Cells[GetArrayIdx(cell)].Occupied)
+			return false;
+	}
+	return true;
+}
+
+bool Poly::NavGrid::IsLineValid(const Vector2f& start, const Vector2f& end, float radius) const
+{
+	Dynarray<Vector2i> cells = GetCellsInLine(start, end, radius);
+
+	if (cells.GetSize() == 0)
+		return false;
+
+	for (Vector2i cell : cells)
+	{
+		if (Cells[GetArrayIdx(cell)].Occupied)
+			return false;
+	}
+	return true;
 }
 
 Optional<Vector2i> Poly::NavGrid::GetCellAtPosition(const Vector2f& pos) const
@@ -43,6 +81,26 @@ Dynarray<Vector2i> Poly::NavGrid::GetCellsInLine(const Vector2f& start, const Ve
 	float distanceTraveled = 0.f;
 	while(distanceTraveled < )*/
 	return Dynarray<Vector2i>();
+}
+
+Vector2f Poly::NavGrid::GetCellMiddlePos(const Vector2i& cell) const
+{
+	return GetCellOrigin(cell) + Vector2f(CellSize, CellSize) * 0.5f;
+}
+
+Dynarray<Vector2i> Poly::NavGrid::GetNeighbours(const Vector2i& cell) const
+{
+	Dynarray<Vector2i> neighbours(8);
+	for(int x = -1; x <= 1; ++x)
+		for (int y = -1; y <= 1; ++y)
+		{
+			if (x == 0 && y == 0)
+				continue;
+			Vector2i candidate(cell.X + x, cell.Y + y);
+			if (candidate.X >= 0 && candidate.X < GridSize.X && candidate.Y >= 0 && candidate.Y < GridSize.Y)
+				neighbours.PushBack(candidate);
+		}
+	return neighbours;
 }
 
 Dynarray<Vector2i> Poly::NavGrid::GetCellAtPosition(const Vector2f& pos, float radius) const

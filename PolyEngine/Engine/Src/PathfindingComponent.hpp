@@ -20,10 +20,17 @@ namespace Poly
 		NavGrid(const Vector2i& gridSize, float cellSize = 1.0f);
 		NavGrid(const Vector2i& gridSize, const Dynarray<bool>& occpanceMap, float cellSize = 1.0f);
 
+		bool IsPositionValid(const Vector2f& pos) const;
+		bool IsPositionValid(const Vector2f& pos, float radius) const;
+		bool IsLineValid(const Vector2f& start, const Vector2f& end, float radius) const;
 
 		Optional<Vector2i> GetCellAtPosition(const Vector2f& pos) const;
 		Dynarray<Vector2i> GetCellAtPosition(const Vector2f& pos, float radius) const;
 		Dynarray<Vector2i> GetCellsInLine(const Vector2f& start, const Vector2f& end, float radius) const;
+
+		Vector2f GetCellMiddlePos(const Vector2i& cell) const;
+
+		Dynarray<Vector2i> GetNeighbours(const Vector2i& cell) const;
 
 		const Cell& GetCell(size_t x, size_t y) const { return Cells[GetArrayIdx(x, y)]; }
 		Cell& GetCell(size_t x, size_t y) { return Cells[GetArrayIdx(x, y)]; }
@@ -52,15 +59,15 @@ namespace Poly
 	public:
 		PathfindingComponent(const NavGrid* grid) : NavigationGrid(grid) {}
 
-		void SetDestination(const Vector& pos);
+		void SetDestination(const Vector2f& pos);
 		void ResetDestination();
 
-		inline const Dynarray<Vector>& GetPath() const { return CalculatedPath; }
+		inline const Dynarray<Vector2f>& GetPath() const { return CalculatedPath; }
 	private:
 		const NavGrid* NavigationGrid = nullptr;
 		float AgentRadius = 0.5f;
-		Dynarray<Vector> CalculatedPath;
-		Optional<Vector> CurentDestination;
+		Dynarray<Vector2f> CalculatedPath;
+		Optional<Vector2f> CurentDestination;
 		bool RecalculateRequested = false;
 		bool LastPathSearchFailed = false;
 
