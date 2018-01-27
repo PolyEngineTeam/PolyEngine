@@ -32,8 +32,8 @@ namespace Poly
 		unsigned int quadVAO, quadVBO;
 		unsigned int instanceVBO;
 
-		static const int instancesLen = 10;
-		Dynarray<float> instancesTransformBuffer;
+		// static const int instancesLen = 10;
+		// Dynarray<float> instancesTransformBuffer;
 
 		friend class GLRenderingDevice;
 	};

@@ -54,11 +54,16 @@ GLParticleDeviceProxy::~GLParticleDeviceProxy()
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 
-
+	float initTransform[] = {
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
 
 	glGenBuffers(1, &instanceVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16 * instancesLen, instancesTransformBuffer.GetData(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16, &initTransform, GL_STATIC_DRAW);
 	// glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	// http://sol.gfxile.net/instancing.html
@@ -86,30 +91,30 @@ GLParticleDeviceProxy::~GLParticleDeviceProxy()
 
 void Poly::GLParticleDeviceProxy::SetContent(const ParticleEmitter& particles)
 {
-	gConsole.LogInfo("GLParticleDeviceProxy::SetContent old: {}, new: {}",
-		instancesTransformBuffer.GetSize() / 16,
+	gConsole.LogInfo("GLParticleDeviceProxy::SetContent new: {}",
+		// instancesTransformBuffer.GetSize() / 16,
 		particles.GetInstances().GetSize() / 16
 	);
 
-	instancesTransformBuffer.Resize(std::max(
-		instancesTransformBuffer.GetSize(),
-		particles.GetInstances().GetSize()
-	));
+	// instancesTransformBuffer.Resize(std::max(
+	// 	instancesTransformBuffer.GetSize(),
+	// 	particles.GetInstances().GetSize()
+	// ));
 
 	// fill array with zeros
-	for (int i = 0; i < instancesTransformBuffer.GetSize(); ++i)
-	{
-		instancesTransformBuffer[i] = 0.0f;
-	}
+	// for (int i = 0; i < instancesTransformBuffer.GetSize(); ++i)
+	// {
+	// 	instancesTransformBuffer[i] = 0.0f;
+	// }
 
 	// copy from emitter
-	for (int i = 0; i < particles.GetInstances().GetSize(); ++i)
-	{
-		instancesTransformBuffer[i] = particles.GetInstances()[i];
-	}
+	// for (int i = 0; i < particles.GetInstances().GetSize(); ++i)
+	// {
+	// 	instancesTransformBuffer[i] = particles.GetInstances()[i];
+	// }
 	
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16 * instancesLen, instancesTransformBuffer.GetData(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * particles.GetInstances().GetSize(), particles.GetInstances().GetData(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 

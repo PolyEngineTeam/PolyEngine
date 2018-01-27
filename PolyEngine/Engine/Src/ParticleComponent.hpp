@@ -9,7 +9,7 @@ namespace Poly {
 	class ENGINE_DLLEXPORT ParticleComponent : public ComponentBase
 	{
 	public:
-		ParticleComponent();
+		ParticleComponent(int size);
 		virtual ~ParticleComponent();
 
 		ParticleEmitter* Emitter;

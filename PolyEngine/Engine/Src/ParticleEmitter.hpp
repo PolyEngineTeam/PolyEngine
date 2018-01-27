@@ -11,6 +11,9 @@ namespace Poly
 	class ENGINE_DLLEXPORT ParticleEmitter : public BaseObject<>
 	{
 	public:
+
+		ParticleEmitter(int size);
+
 		const Dynarray<float>& GetInstances() const { return InstancesTransform; }
 
 		void Burst(int quota);

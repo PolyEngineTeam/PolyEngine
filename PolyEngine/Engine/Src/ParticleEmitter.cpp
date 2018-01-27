@@ -3,18 +3,19 @@
 
 using namespace Poly;
 
-void ParticleEmitter::Burst(int quota)
+Poly::ParticleEmitter::ParticleEmitter(int size)
 {
-	InstancesTransform.Resize(quota);
+	ParticleProxy = gEngine->GetRenderingDevice()->CreateParticle();
+	Burst(size);
 }
 
-void ParticleEmitter::Update()
+void ParticleEmitter::Burst(int size)
 {
-	gConsole.LogInfo("ParticleEmitter::Update");
-
+	InstancesTransform.Resize(16 * size);
 	int index = 0;
 	for (int i = 0; i < InstancesTransform.GetSize() / 16; ++i)
 	{
+		gConsole.LogInfo("ParticleEmitter::Burst p#: {}", index);
 		// identity
 		InstancesTransform[index + 0] = 1.0f;
 		InstancesTransform[index + 5] = 1.0f;
@@ -26,11 +27,34 @@ void ParticleEmitter::Update()
 		InstancesTransform[index + 14] = 5.0f * Random(-1.0, 1.0);
 		index += 16;
 	}
+
+	UpdateDeviceProxy();
+}
+
+void ParticleEmitter::Update()
+{
+	gConsole.LogInfo("ParticleEmitter::Update");
+
+	// int index = 0;
+	// for (int i = 0; i < InstancesTransform.GetSize() / 16; ++i)
+	// {
+	// 	// identity
+	// 	InstancesTransform[index + 0] = 1.0f;
+	// 	InstancesTransform[index + 5] = 1.0f;
+	// 	InstancesTransform[index + 10] = 1.0f;
+	// 	InstancesTransform[index + 15] = 1.0f;
+	// 	// translation
+	// 	InstancesTransform[index + 12] = 0.99f * InstancesTransform[index + 12];
+	// 	InstancesTransform[index + 13] = 0.99f * InstancesTransform[index + 13];
+	// 	InstancesTransform[index + 14] = 0.99f * InstancesTransform[index + 14];
+	// 	index += 16;
+	// }
+
+	// UpdateDeviceProxy();
 }
 
 void ParticleEmitter::UpdateDeviceProxy()
 {
-	ParticleProxy = gEngine->GetRenderingDevice()->CreateParticle();
 	ParticleProxy->SetContent(*this);
 }
 

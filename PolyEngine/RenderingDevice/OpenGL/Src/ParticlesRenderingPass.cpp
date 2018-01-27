@@ -69,7 +69,7 @@ ParticlesRenderingPass::ParticlesRenderingPass()
 
 	glGenBuffers(1, &instanceVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16 * instancesLen, instancesTransform.GetData(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * instancesTransform.GetSize(), instancesTransform.GetData(), GL_STATIC_DRAW);
 	// glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	// http://sol.gfxile.net/instancing.html
@@ -109,7 +109,7 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 
 	UpdateInstanceVBO();
 	glBindVertexArray(quadVAO);
-	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, instancesLen);
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, instancesTransform.GetSize()/16);
 	glBindVertexArray(0);
 
 	// Render meshes
@@ -121,13 +121,12 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 		Matrix screenTransform = mvp * objTransform;
 		GetProgram().SetUniform("uMVP", screenTransform);
 
-		gConsole.LogInfo("ParticlesRenderingPass::OnRun found particles: {}",
-			particleCmp->Emitter->GetInstances().GetSize() / 16
-		);
+		int partileLen = particleCmp->Emitter->GetInstances().GetSize() / 16;
+		gConsole.LogInfo("ParticlesRenderingPass::OnRun found particles: {}", partileLen);
 
 		const GLParticleDeviceProxy* particleProxy = static_cast<const GLParticleDeviceProxy*>(particleCmp->Emitter->GetParticleProxy());
-		glBindVertexArray(particleProxy->GetVAO());
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, instancesLen);
+		glBindVertexArray(quadVAO);
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, partileLen);
 		glBindVertexArray(0);
 	}
 }
@@ -156,7 +155,7 @@ void Poly::ParticlesRenderingPass::UpdateInstanceVBO()
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16 * instancesLen, instancesTransform.GetData(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * instancesTransform.GetSize(), instancesTransform.GetData(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
