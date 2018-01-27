@@ -292,7 +292,6 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 	// Render meshes with unlit shader
 	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
 
-	GeometryRenderingPasses[eGeometryRenderPassType::PARTICLES]->Run(world, cameraCmp, rect);
 
 	glDepthMask(GL_FALSE);
 
@@ -301,9 +300,15 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 
 	// TODO test these blending options
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glBlendFunc(GL_ONE, GL_ONE);
 	//glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
 	GeometryRenderingPasses[eGeometryRenderPassType::TRANSPARENT_GEOMETRY]->Run(world, cameraCmp, rect);
+	
+	GeometryRenderingPasses[eGeometryRenderPassType::TRANSPARENT_SPRITESHEET]->Run(world, cameraCmp, rect);
+
+	// glBlendFunc(GL_ONE, GL_ONE);
+	glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
+
+	GeometryRenderingPasses[eGeometryRenderPassType::PARTICLES]->Run(world, cameraCmp, rect);
 
 	glDisable(GL_BLEND);
 

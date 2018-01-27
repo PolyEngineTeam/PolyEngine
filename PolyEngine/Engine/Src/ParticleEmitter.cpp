@@ -105,8 +105,8 @@ void ParticleEmitter::RecreateBufferForProxy()
 	for (Particle& p : ParticlesPool)
 	{
 		// Scale
-		InstancesTransform[transIndx + 0] = p.Scale.X;
-		InstancesTransform[transIndx + 5] = p.Scale.Y;
+		InstancesTransform[transIndx + 0]  = p.Scale.X;
+		InstancesTransform[transIndx + 5]  = p.Scale.Y;
 		InstancesTransform[transIndx + 10] = p.Scale.Z;
 		InstancesTransform[transIndx + 15] = 1.0f;
 		// translation

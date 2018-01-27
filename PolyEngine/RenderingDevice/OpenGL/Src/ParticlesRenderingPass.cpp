@@ -27,7 +27,6 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 	// gConsole.LogInfo("ParticlesRenderingPass::OnRun");
 
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
-	const Matrix& mvp = camera->GetMVP();
 	const Matrix& mv = camera->GetModelViewMatrix();
 	const Matrix& p = camera->GetProjectionMatrix();
 
