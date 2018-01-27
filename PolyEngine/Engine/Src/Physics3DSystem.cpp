@@ -60,20 +60,21 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 		btTransform trans;
 		rigidbody->ImplData->BulletMotionState->getWorldTransform(trans);
 	
-		Vector localTrans = transform.GetLocalTranslation();
-		Quaternion localrot = transform.GetLocalRotation().ToEulerAngles();
+		Vector localTrans;
+		Quaternion localrot;
 	
 		localTrans.X = trans.getOrigin().getX();
 		localTrans.Y = trans.getOrigin().getY();
 		localTrans.Z = trans.getOrigin().getZ();
+		localTrans.W = 1;
 	
 		localrot.X = trans.getRotation().getX();
 		localrot.Y = trans.getRotation().getY();
 		localrot.Z = trans.getRotation().getZ();
 		localrot.W = trans.getRotation().getW();
 	
-		transform.SetLocalTranslation(localTrans);
-		transform.SetLocalRotation(localrot);
+		transform.SetGlobalTranslation(localTrans);
+		transform.SetGlobalRotation(localrot);
 	}
 }
 

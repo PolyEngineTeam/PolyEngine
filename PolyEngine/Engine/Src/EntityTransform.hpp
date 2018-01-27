@@ -15,15 +15,18 @@ namespace Poly
 		const Vector& GetGlobalTranslation() const;
 		const Vector& GetLocalTranslation() const { return LocalTranslation; };
 		void SetLocalTranslation(const Vector& position);
+		void SetGlobalTranslation(const Vector& position);
 
 		const Quaternion& GetGlobalRotation() const;
 		const Quaternion& GetLocalRotation() const { return LocalRotation; };
 		void SetLocalRotation(const Quaternion& quaternion);
+		void SetGlobalRotation(const Quaternion& quaternion);
 
 		const Vector& GetGlobalScale() const;
 		const Vector& GetLocalScale() const { return LocalScale; };
 		void SetLocalScale(const Vector& scale);
 		void SetLocalScale(float scale) { SetLocalScale(Vector(scale, scale, scale)); };
+		void SetGlobalScale(const Vector& scale);
 
 		const Matrix& GetLocalTransformationMatrix() const;
 		const Matrix& GetGlobalTransformationMatrix() const;

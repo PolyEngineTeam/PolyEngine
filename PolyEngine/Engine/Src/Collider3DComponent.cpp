@@ -40,8 +40,8 @@ void Poly::Collider3DComponent::UpdatePosition()
 		// TODO: parent can't be nullptr
 	//ASSERTE(transCmp->GetParent() == nullptr, "Physics cannot be applied to child entity");
 
-	Vector localTrans = transform.GetLocalTranslation();
-	Quaternion localRot = transform.GetLocalRotation();
+	Vector localTrans = transform.GetGlobalTranslation();
+	Quaternion localRot = transform.GetGlobalRotation();
 
 	btVector3 position(localTrans.X, localTrans.Y, localTrans.Z);
 	btQuaternion orientation(localRot.X, localRot.Y, localRot.Z, localRot.W);
