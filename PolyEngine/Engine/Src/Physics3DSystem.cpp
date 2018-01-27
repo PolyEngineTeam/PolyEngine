@@ -203,6 +203,10 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 		}
 		else
 			collider->Template.Registered = false;
+		
+		if (rigidbody->Template.DisableDeactivation)
+			bulletRigidbody->setActivationState(DISABLE_DEACTIVATION);
+
 
 		bulletRigidbody->setRestitution(rigidbody->Template.Restitution);
 		bulletRigidbody->setFriction(rigidbody->Template.Friction);

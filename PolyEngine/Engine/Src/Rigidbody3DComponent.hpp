@@ -43,6 +43,7 @@ namespace Poly
 		Vector AngularFactor = Vector(1.f, 1.f, 1.f);
 
 		/// Rigid body will not be considered during the simulation until it is registered.
+		bool DisableDeactivation = true;
 		bool Registered = true;
 		eRigidBody3DType RigidbodyType = eRigidBody3DType::DYNAMIC;
 	};
