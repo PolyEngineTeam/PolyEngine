@@ -60,20 +60,21 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 		btTransform trans;
 		rigidbody->ImplData->BulletMotionState->getWorldTransform(trans);
 	
-		Vector localTrans = transform.GetLocalTranslation();
-		Quaternion localrot = transform.GetLocalRotation().ToEulerAngles();
+		Vector localTrans;
+		Quaternion localrot;
 	
 		localTrans.X = trans.getOrigin().getX();
 		localTrans.Y = trans.getOrigin().getY();
 		localTrans.Z = trans.getOrigin().getZ();
+		localTrans.W = 1;
 	
 		localrot.X = trans.getRotation().getX();
 		localrot.Y = trans.getRotation().getY();
 		localrot.Z = trans.getRotation().getZ();
 		localrot.W = trans.getRotation().getW();
 	
-		transform.SetLocalTranslation(localTrans);
-		transform.SetLocalRotation(localrot);
+		transform.SetGlobalTranslation(localTrans);
+		transform.SetGlobalRotation(localrot);
 	}
 }
 
@@ -235,6 +236,8 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 
 		collider->UpdatePosition();
 	}
+
+	collider->PhysicsInitialized = true;
 }
 
 //------------------------------------------------------------------------------
@@ -331,6 +334,28 @@ Poly::ContactResult Poly::Physics3DSystem::Contact(World* world, Entity* entity)
 {
 		// TODO(squares): implement this
 	return ContactResult();
+}
+
+//------------------------------------------------------------------------------
+Poly::ContactPairResults Poly::Physics3DSystem::GetAllContactPairs(World* world)
+{
+	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
+
+	ContactPairResults results;
+
+	int numManifolds = worldCmp->Dispatcher->getNumManifolds();
+	for (int i = 0; i < numManifolds; i++)
+	{
+		btPersistentManifold* contactManifold = worldCmp->Dispatcher->getManifoldByIndexInternal(i);
+
+		ContactPairResults::ContactPair pair;
+		pair.FirstEntity = worldCmp->BulletTriggerToEntity[contactManifold->getBody0()];
+		pair.SecondEntity = worldCmp->BulletTriggerToEntity[contactManifold->getBody1()];
+
+		results.ContactPairs.PushBack(pair);
+	}
+
+	return results;
 }
 
 //------------------------------------------------------------------------------

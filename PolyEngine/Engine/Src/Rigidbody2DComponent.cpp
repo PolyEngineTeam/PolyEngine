@@ -158,8 +158,8 @@ void Poly::RigidBody2DComponent::UpdatePosition()
 {
 	EntityTransform& transform = GetTransform();
 	ASSERTE(GetOwner()->IsChildOfRoot(), "Physics cannot be applied to child entity");
-	Vector localTrans = transform.GetLocalTranslation();
-	EulerAngles localRot = transform.GetLocalRotation().ToEulerAngles();
+	Vector localTrans = transform.GetGlobalTranslation();
+	EulerAngles localRot = transform.GetGlobalRotation().ToEulerAngles();
 
 	// Set correct starting pos!
 	ImplData->Body->SetTransform(b2Vec2(localTrans.X, localTrans.Y), localRot.Z.AsRadians());

@@ -27,7 +27,6 @@ SpritesheetRenderingPass::SpritesheetRenderingPass(const PostprocessQuad* quad)
 
 void SpritesheetRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
 {
-	gConsole.LogInfo("SpritesheetRenderingPass::OnRun");
 
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	const Matrix& mv = camera->GetModelViewMatrix();
@@ -42,7 +41,6 @@ void SpritesheetRenderingPass::OnRun(World* world, const CameraComponent* camera
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<SpritesheetComponent>())
 	{
-		gConsole.LogInfo("SpritesheetRenderingPass::OnRun found Spritesheet");
 
 		const SpritesheetComponent* spritesheetCmp = std::get<SpritesheetComponent*>(componentsTuple);
 		const EntityTransform& transform = spritesheetCmp->GetTransform();

@@ -38,6 +38,7 @@ namespace Poly
 		friend void Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool enablePhysics);
 		friend void Physics3DSystem::UnregisterComponent(World * world, Entity* entity);
 		friend bool Physics3DSystem::IsColliding(World* world, Entity* firstEntity, Entity* secondEntity);
+		friend ContactPairResults GetAllContactPairs(World* world);
 		friend ContactResult Physics3DSystem::ContactPair(World* world, Entity* firstEntity, Entity* secondEntity);
 		friend ContactResult Physics3DSystem::Contact(World* world, Entity* entity);
 		friend RaycastResult Physics3DSystem::AllHitsRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
@@ -52,7 +53,8 @@ namespace Poly
 		const Vector& GetGravity() const { return Config.Gravity; }
 		float GetTimeStep() const { return Config.TimeStep; }
 
-	private:
+		// FIXME(squares): friendship problems
+	//private:
 		Physics3DConfig Config;
 
 		std::unique_ptr<btDiscreteDynamicsWorld> DynamicsWorld;
