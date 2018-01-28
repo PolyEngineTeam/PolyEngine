@@ -377,7 +377,7 @@ Poly::RaycastResult Poly::Physics3DSystem::AllHitsRaycast(World* world, const Ve
 
 			// FIXME(squares): try catch something?
 		// get UniqueID
-		hit.HitEntityID = worldCmp->BulletTriggerToEntity[r.m_collisionObjects[i]];
+		hit.HitEntity = worldCmp->BulletTriggerToEntity[r.m_collisionObjects[i]];
 		// get fraction
 		hit.HitFraction = r.m_hitFractions[i];
 		// get normal
@@ -413,7 +413,7 @@ Poly::RaycastResult Poly::Physics3DSystem::ClosestHitRaycast(World* world, const
 
 			// FIXME(squares): try catch something?
 		// get UniqueID
-		hit.HitEntityID = worldCmp->BulletTriggerToEntity[r.m_collisionObject];
+		hit.HitEntity = worldCmp->BulletTriggerToEntity[r.m_collisionObject];
 		// get fraction
 		hit.HitFraction = r.m_closestHitFraction;
 		// get normal
