@@ -29,8 +29,9 @@ namespace Poly
 	{
 		struct  ContactPair
 		{
-			const Entity* FirstEntity;
-			const Entity* SecondEntity;
+			Entity* FirstEntity;
+			Entity* SecondEntity;
+			Vector Normal;
 		};
 
 		Dynarray<ContactPair> ContactPairs;

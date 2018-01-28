@@ -255,7 +255,7 @@ void Poly::Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool
 	{
 		worldCmp->DynamicsWorld->addRigidBody(rigidbody->ImplData->BulletRigidBody, 
 			static_cast<int>(collider->Template.CollisionGroup), static_cast<int>(collider->Template.CollisionMask));
-		worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, const Entity*>(rigidbody->ImplData->BulletRigidBody, entity));
+		worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, Entity*>(rigidbody->ImplData->BulletRigidBody, entity));
 
 		rigidbody->Template.Registered = true;
 		collider->Template.Registered = true;
@@ -264,7 +264,7 @@ void Poly::Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool
 	{
 		worldCmp->DynamicsWorld->addCollisionObject(collider->ImplData->BulletTrigger, 
 			static_cast<int>(collider->Template.CollisionGroup), static_cast<int>(collider->Template.CollisionMask));
-		worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, const Entity*>(collider->ImplData->BulletTrigger, entity));
+		worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, Entity*>(collider->ImplData->BulletTrigger, entity));
 
 		collider->Template.Registered = true;
 	}
@@ -348,9 +348,28 @@ Poly::ContactPairResults Poly::Physics3DSystem::GetAllContactPairs(World* world)
 	{
 		btPersistentManifold* contactManifold = worldCmp->Dispatcher->getManifoldByIndexInternal(i);
 
+		Vector normAvg;
+		int numContacts = contactManifold->getNumContacts();
+		for (int j = 0; j<numContacts; j++)
+		{
+			btManifoldPoint& pt = contactManifold->getContactPoint(j);
+
+			btVector3 ptA = pt.getPositionWorldOnA();
+			btVector3 ptB = pt.getPositionWorldOnB();
+			Vector norm = Vector(ptA.x(), ptA.y(), ptA.z()) - Vector(ptB.x(), ptB.y(), ptB.z());
+			normAvg += norm;
+		}
+		if (numContacts > 0)
+		{
+			normAvg /= numContacts;
+			normAvg.Normalize();
+		}
+			
+
 		ContactPairResults::ContactPair pair;
 		pair.FirstEntity = worldCmp->BulletTriggerToEntity[contactManifold->getBody0()];
 		pair.SecondEntity = worldCmp->BulletTriggerToEntity[contactManifold->getBody1()];
+		pair.Normal = normAvg;
 
 		results.ContactPairs.PushBack(pair);
 	}
