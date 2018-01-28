@@ -286,6 +286,8 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
+	GeometryRenderingPasses[eGeometryRenderPassType::SKYBOX]->Run(world, cameraCmp, rect);
+
 	// Render meshes with blin-phong shader
 	GeometryRenderingPasses[eGeometryRenderPassType::BLINN_PHONG]->Run(world, cameraCmp, rect);
 
@@ -317,7 +319,6 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 	// Run postprocess passes
 	// for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
 
-	// GeometryRenderingPasses[eGeometryRenderPassType::SKYBOX]->Run(world, cameraCmp, rect);
 
 	// Render text
 	GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);

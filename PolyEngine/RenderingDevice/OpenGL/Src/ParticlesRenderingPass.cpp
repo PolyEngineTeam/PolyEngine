@@ -48,16 +48,19 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 		int partileLen = particleCmp->GetEmitter()->GetInstances().GetSize() / 16;
 		const GLParticleDeviceProxy* particleProxy = static_cast<const GLParticleDeviceProxy*>(particleCmp->GetEmitter()->GetParticleProxy());
 		GLuint particleVAO = particleProxy->GetVAO();
+		const TextureResource* Texture = particleCmp->GetSpritesheet();
 
-		// gConsole.LogInfo("ParticlesRenderingPass::OnRun VAO: {}, found particles: {}",
-		// 	particleVAO, partileLen);
+		// if (Texture == nullptr) 
+		// {
+		// 	gConsole.LogInfo("ParticlesRenderingPass::OnRun texture nullptr");
+		// }
 
-		// const TextureResource* DiffuseTexture = particleCmp->Emitter.GetDiffTexture();
-		// GLuint TextureID = DiffuseTexture == nullptr
-		// 	? FallbackWhiteTexture
-		// 	: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
-		// glActiveTexture(GL_TEXTURE0);
-		// glBindTexture(GL_TEXTURE_2D, TextureID);
+		GLuint TextureID = Texture == nullptr
+			? FallbackWhiteTexture
+			: static_cast<const GLTextureDeviceProxy*>(Texture->GetTextureProxy())->GetTextureID();
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, TextureID);
 
 		glBindVertexArray(particleVAO);
 		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, partileLen);

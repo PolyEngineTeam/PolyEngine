@@ -10,6 +10,7 @@ namespace Poly {
 	{
 	public:
 		ParticleComponent(ParticleEmitter::Settings emitter, const String& spritePath, eResourceSource source);
+		ParticleComponent(ParticleEmitter::Settings emitter);
 		virtual ~ParticleComponent();
 		
 		ParticleEmitter* GetEmitter() { return Emitter; }

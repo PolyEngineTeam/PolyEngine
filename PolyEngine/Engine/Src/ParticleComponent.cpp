@@ -11,9 +11,15 @@ ParticleComponent::ParticleComponent(ParticleEmitter::Settings emitter, const St
 	Emitter = new ParticleEmitter(emitter);
 }
 
+ParticleComponent::ParticleComponent(ParticleEmitter::Settings emitter)
+{
+	Emitter = new ParticleEmitter(emitter);
+}
+
 Poly::ParticleComponent::~ParticleComponent()
 {
 	delete Emitter;
+
 	if (Spritesheet)
 		ResourceManager<TextureResource>::Release(Spritesheet);
 }

@@ -19,8 +19,8 @@ vec2 SubUV(vec2 uv, vec2 subImages, float frame)
 
 void main()
 {
-    // vec2 c = 2.0 * (vTexCoord - 0.5);
-    // color = 0.5 * vec4(1.0 - clamp(dot(c, c), 0.0, 1.0));
+    vec2 c = 2.0 * (vTexCoord - 0.5);
+    float mask = 0.5 * (1.0 - clamp(dot(c, c), 0.0, 1.0));
 
     vec2 uv = vTexCoord.rg;
     vec2 uSubImages = vec2(4.0, 4.0);
@@ -38,5 +38,5 @@ void main()
     vec4 tex1 = texture(i_color, uvTile1);
     vec4 tex = mix(tex0, tex1, fract(frame));
 
-    color = vec4(tex);
+    color = tex;
 }
