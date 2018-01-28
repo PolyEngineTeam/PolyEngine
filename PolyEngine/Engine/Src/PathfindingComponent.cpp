@@ -49,7 +49,7 @@ bool Poly::NavGrid::IsPositionValid(const Vector2f& pos, float radius) const
 
 	for (Vector2i cell : cells)
 	{
-		if (Cells[GetArrayIdx(cell)].Occupied)
+		if (Cells[GetArrayIdx(cell)].Occupied) // jesli chocby jedna jest occupied to position nie jest Valid?
 			return false;
 	}
 	return true;
@@ -177,7 +177,7 @@ Vector2f Poly::NavGrid::GetCellOrigin(const Vector2i& cell) const
 
 Vector2f Poly::NavGrid::ClosestPointOnCell(const Vector2i& cell, const Vector2f& pos) const
 {
-	Vector2f cellOrigin = GetCellOrigin(GridSize - Vector2i(1, 1)); // get origin of last cell
+	Vector2f cellOrigin = GetCellOrigin(cell); 
 	return Vector2f::Clamp(pos, cellOrigin, cellOrigin + Vector2f(CellSize - CMPF_EPS, CellSize - CMPF_EPS));
 }
 
@@ -198,8 +198,8 @@ Optional<Vector2i> Poly::NavGrid::GetIdxFromPos(const Vector2f& pos) const
 		return Optional<Vector2i>();
 
 	Vector2i idx;
-	idx.X = pos.X / GridSize.X;
-	idx.Y = pos.Y / GridSize.Y;
+	idx.X = (pos.X - GridOrigin.X) / CellSize;
+	idx.Y = (pos.Y - GridOrigin.Y) / CellSize;
 	return idx;
 }
 
