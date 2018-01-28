@@ -14,11 +14,13 @@ namespace Poly
 	public:
 		struct Cell
 		{
+			Cell() = default;
+			Cell(bool occupied) : Occupied(occupied) {}
 			bool Occupied = false;
 		};
 
-		NavGrid(const Vector2i& gridSize, float cellSize = 1.0f);
-		NavGrid(const Vector2i& gridSize, const Dynarray<bool>& occpanceMap, float cellSize = 1.0f);
+		NavGrid(const Vector2f& origin, const Vector2i& gridSize, float cellSize = 1.0f);
+		NavGrid(const Vector2f& origin, const Vector2i& gridSize, const Dynarray<bool>& occpanceMap, float cellSize = 1.0f);
 
 		bool IsPositionValid(const Vector2f& pos) const;
 		bool IsPositionValid(const Vector2f& pos, float radius) const;
@@ -35,16 +37,19 @@ namespace Poly
 		const Cell& GetCell(size_t x, size_t y) const { return Cells[GetArrayIdx(x, y)]; }
 		Cell& GetCell(size_t x, size_t y) { return Cells[GetArrayIdx(x, y)]; }
 
+		const Vector2i& GetGridSize() const { return GridSize; };
+		const float GetCellSize() const { return CellSize; };
+
+		Vector2f TrimPointToGrid(const Vector2f& pos) const;
+		Optional<Vector2i> GetIdxFromPos(const Vector2f& pos) const;
+		inline size_t GetArrayIdx(const Vector2i& v) const { return GetArrayIdx(v.X, v.Y); }
+		inline size_t GetArrayIdx(size_t x, size_t y) const { return y * GridSize.X + x; }
 		bool IsPointInsideGrid(const Vector2f& point) const;
 	private:
 		Vector2f GetCellOrigin(const Vector2i& cell) const;
 		Vector2f ClosestPointOnCell(const Vector2i& cell, const Vector2f& pos) const;
 		Vector2f ClosestPointOnCell(const Vector2i& cell, const Vector2f& start, const Vector2f& end) const;
-		Vector2f TrimPointToGrid(const Vector2f& pos) const;
-		Optional<Vector2i> GetIdxFromPos(const Vector2f& pos) const;
-		inline size_t GetArrayIdx(const Vector2i& v) const { return GetArrayIdx(v.X, v.Y); }
-		inline size_t GetArrayIdx(size_t x, size_t y) const { return y * GridSize.X + x; }
-
+		
 		void GetCellAtPositionInternal(const Vector2f& pos, float radius, Dynarray<Vector2i>& cells) const;
 		void GetCellsInLineInternal(const Vector2f& start, const Vector2f& end, float radius, Dynarray<Vector2i>& cells) const;
 

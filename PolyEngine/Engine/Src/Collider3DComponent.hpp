@@ -63,7 +63,7 @@ namespace Poly
 		/// @param world - world where owner entity exists
 		/// @param tmp - template with collider properties
 		/// @see Collider3DComponentTemplate
-		Collider3DComponent(World* world, const Collider3DComponentTemplate& tmp);
+		Collider3DComponent(World* world, Collider3DComponentTemplate&& tmp);
 
 		/// If collider is registered it will be unregistered.
 		~Collider3DComponent();

@@ -5,10 +5,10 @@
 #include "Collider3DImpl.hpp"
 
 //------------------------------------------------------------------------------
-Poly::Collider3DComponent::Collider3DComponent(World* world, const Collider3DComponentTemplate& tmp)
+Poly::Collider3DComponent::Collider3DComponent(World* world, Collider3DComponentTemplate&& tmp)
 	: BodyWorld(world)
 {
-	Template.Shape = std::make_unique<Physics3DShape>(*tmp.Shape);
+	Template.Shape = std::move(tmp.Shape);
 	Template.Registered = tmp.Registered;
 	Template.CollisionGroup = tmp.CollisionGroup;
 	Template.CollisionMask = tmp.CollisionMask;

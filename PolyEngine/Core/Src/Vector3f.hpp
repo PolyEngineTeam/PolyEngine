@@ -15,6 +15,8 @@ namespace Poly
 		/// Creates vector from float values.
 		explicit constexpr Vector3f(float x, float y, float z) : X(x), Y(y), Z(z) {}
 
+		explicit constexpr Vector3f(Vector v) : X(v.X), Y(v.Y), Z(v.Z) {}
+
 		Vector3f(const Vector3f& rhs) : X(rhs.X), Y(rhs.Y), Z(rhs.Z) {}
 
 		/// Helper method for getting a copy of Vector3f as Vector.

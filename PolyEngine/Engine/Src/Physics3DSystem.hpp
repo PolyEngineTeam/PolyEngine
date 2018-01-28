@@ -29,8 +29,9 @@ namespace Poly
 	{
 		struct  ContactPair
 		{
-			const Entity* FirstEntity;
-			const Entity* SecondEntity;
+			Entity* FirstEntity;
+			Entity* SecondEntity;
+			Vector Normal;
 		};
 
 		Dynarray<ContactPair> ContactPairs;
@@ -57,7 +58,7 @@ namespace Poly
 	{
 		struct RaycastHit
 		{
-			const Entity* HitEntityID;
+			const Entity* HitEntity;
 			Vector WorldHitNormal;
 			Vector WorldHitPoint;
 			float HitFraction;

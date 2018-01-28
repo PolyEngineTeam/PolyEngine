@@ -17,12 +17,19 @@ void Poly::PathfindingComponent::ResetDestination()
 	RecalculateRequested = false;
 }
 
-Poly::NavGrid::NavGrid(const Vector2i& gridSize, float cellSize)
+Poly::NavGrid::NavGrid(const Vector2f& origin, const Vector2i& gridSize, float cellSize)
+	: GridOrigin(origin), GridSize(gridSize), CellSize(cellSize)
 {
+	Cells.Resize(gridSize.X * gridSize.Y);
 }
 
-Poly::NavGrid::NavGrid(const Vector2i& gridSize, const Dynarray<bool>& occpanceMap, float cellSize)
+Poly::NavGrid::NavGrid(const Vector2f& origin, const Vector2i& gridSize, const Dynarray<bool>& occpanceMap, float cellSize)
+	: GridOrigin(origin), GridSize(gridSize), CellSize(cellSize)
 {
+	ASSERTE(gridSize.X * gridSize.Y == occpanceMap.GetSize(), "Invalid occupance map size!");
+	Cells.Reserve(occpanceMap.GetSize());
+	for (bool v : occpanceMap)
+		Cells.PushBack(Cell{ v });
 }
 
 bool Poly::NavGrid::IsPositionValid(const Vector2f& pos) const
