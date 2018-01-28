@@ -298,10 +298,10 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 	
 	glDepthMask(GL_FALSE);
 
-	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
-
+	glEnable(GL_DEPTH_TEST);
 	// TODO test these blending options
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	// glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
 	// glBlendFunc(GL_ONE, GL_ONE);

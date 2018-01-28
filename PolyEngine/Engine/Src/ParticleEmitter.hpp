@@ -27,6 +27,7 @@ namespace Poly
 		{
 			int MaxSize = 1000;
 			int InitialSize;
+			float Speed = 1.0f;
 			float BurstTimeMin;
 			float BurstTimeMax;
 			int BurstSizeMin;

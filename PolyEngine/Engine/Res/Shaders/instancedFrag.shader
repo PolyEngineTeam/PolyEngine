@@ -2,6 +2,7 @@
 
 uniform sampler2D i_color;
 uniform float uTime;
+uniform float uSpeed;
 uniform vec4 uColor;
 uniform float uHasSprite;
 
@@ -26,9 +27,9 @@ void main()
 
     vec2 uv = vTexCoord.rg;
     vec2 uSubImages = vec2(4.0, 4.0);
-    float uSpeedTime = 1.0;
+    // float uSpeedTime = 1.0;
     float uFrame = 0.0;
-    float uSpeed = 1.0;
+//     float uSpeed = 1.0;
     float uSpeedPow = 1.0;
 
     float frame = uFrame + uSubImages.x * uSubImages.y * pow(fract(-1.0 * uSpeed * uTime), uSpeedPow);
