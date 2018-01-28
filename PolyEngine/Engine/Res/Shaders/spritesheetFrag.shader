@@ -23,7 +23,7 @@ void main()
     vec2 uSubImages = vec2(4.0, 4.0);
     float uSpeedTime = 1.0;
     float uFrame = 0.0;
-    float uSpeed = 1.0;
+    float uSpeed = 0.5;
     float uSpeedPow = 1.0;
 
     float frame = uFrame + uSubImages.x * uSubImages.y * pow(fract(-1.0 * uSpeed * uTime), uSpeedPow);
@@ -33,6 +33,7 @@ void main()
 
     vec4 tex0 = texture(i_color, uvTile0);
     vec4 tex1 = texture(i_color, uvTile1);
+
     vec4 tex = mix(tex0, tex1, fract(frame));
 
     color = vec4(tex);
