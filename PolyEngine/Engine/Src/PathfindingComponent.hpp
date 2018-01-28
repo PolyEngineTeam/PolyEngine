@@ -14,11 +14,13 @@ namespace Poly
 	public:
 		struct Cell
 		{
+			Cell() = default;
+			Cell(bool occupied) : Occupied(occupied) {}
 			bool Occupied = false;
 		};
 
-		NavGrid(const Vector2i& gridSize, float cellSize = 1.0f);
-		NavGrid(const Vector2i& gridSize, const Dynarray<bool>& occpanceMap, float cellSize = 1.0f);
+		NavGrid(const Vector2f& origin, const Vector2i& gridSize, float cellSize = 1.0f);
+		NavGrid(const Vector2f& origin, const Vector2i& gridSize, const Dynarray<bool>& occpanceMap, float cellSize = 1.0f);
 
 		bool IsPositionValid(const Vector2f& pos) const;
 		bool IsPositionValid(const Vector2f& pos, float radius) const;
