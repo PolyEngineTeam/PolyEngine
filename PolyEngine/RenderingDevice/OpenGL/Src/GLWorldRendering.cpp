@@ -286,15 +286,16 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
-	GeometryRenderingPasses[eGeometryRenderPassType::SKYBOX]->Run(world, cameraCmp, rect);
-
 	// Render meshes with blin-phong shader
 	GeometryRenderingPasses[eGeometryRenderPassType::BLINN_PHONG]->Run(world, cameraCmp, rect);
 
 	// Render meshes with unlit shader
 	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
 
-
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	GeometryRenderingPasses[eGeometryRenderPassType::SKYBOX]->Run(world, cameraCmp, rect);
+	
 	glDepthMask(GL_FALSE);
 
 	glEnable(GL_BLEND);
