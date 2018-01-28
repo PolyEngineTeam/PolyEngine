@@ -50,8 +50,12 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 			gDebugConfig.DebugRender = true;
 	}
 
-	if(!gDebugConfig.DebugRender)
+	if (!gDebugConfig.DebugRender)
+	{
+		auto debugLinesComponent = world->GetWorldComponent<DebugDrawLinesComponent>();
+		debugLinesComponent->DebugLines.Clear();
 		return;
+	}
 
 	enum class RenderMode : int { /*POINT = 1,*/ LINE = 1, /*STRING,*/ _COUNT };
 
@@ -145,6 +149,9 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 
 void Poly::DebugDrawSystem::DrawLine(World* world, Vector begin, Vector end)
 {
+	if (!gDebugConfig.DebugRender)
+		return;
+
 	Vector3f meshvecBegin(begin.X, begin.Y, begin.Z), meshvecEnd(end.X, end.Y, end.Z);
 	auto debugLinesComponent = world->GetWorldComponent<DebugDrawLinesComponent>();
 	debugLinesComponent->DebugLines.PushBack(DebugDrawLinesComponent::DebugLine{ meshvecBegin, meshvecEnd });
@@ -154,6 +161,9 @@ void Poly::DebugDrawSystem::DrawLine(World* world, Vector begin, Vector end)
 
 void Poly::DebugDrawSystem::DrawBox(World* world, Vector mins, Vector maxs)
 {
+	if (!gDebugConfig.DebugRender)
+		return;
+
 	std::array<Vector, 8> points;
 	std::array<Vector, 2> minmaxVector = { {mins, maxs} };
 
@@ -194,6 +204,9 @@ void Poly::DebugDrawSystem::DrawBox(World* world, Vector mins, Vector maxs)
 
 void Poly::DebugDrawSystem::DrawCircle(World* world, Vector position, float radius, Vector orientation)
 {
+	if (!gDebugConfig.DebugRender)
+		return;
+
 	const auto circleSegmentStep = Angle::FromDegrees(15.0f);
 	orientation.Normalize();
 
@@ -218,6 +231,9 @@ void Poly::DebugDrawSystem::DrawCircle(World* world, Vector position, float radi
 
 void Poly::DebugDrawSystem::DrawSphere(World* world, Vector position, float radius)
 {
+	if (!gDebugConfig.DebugRender)
+		return;
+
 	DrawCircle(world, position, radius, Vector(1.0f, 0.0f, 0.0f));
 	DrawCircle(world, position, radius, Vector(0.0f, 1.0f, 0.0f));
 	DrawCircle(world, position, radius, Vector(0.0f, 0.0f, 1.0f));
@@ -225,6 +241,9 @@ void Poly::DebugDrawSystem::DrawSphere(World* world, Vector position, float radi
 
 void Poly::DebugDrawSystem::DrawArrow(World* world, Vector position, Vector directionVector)
 {
+	if (!gDebugConfig.DebugRender)
+		return;
+
 	constexpr float arrowLengthScale = 0.5f;
 	constexpr float arrowheadScale = 0.5f;
 	
