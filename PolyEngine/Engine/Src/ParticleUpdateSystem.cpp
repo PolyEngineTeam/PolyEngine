@@ -15,6 +15,6 @@ void ParticleUpdateSystem::ParticleUpdatePhase(World* world)
 	for (auto compTuple : world->IterateComponents<ParticleComponent>())
 	{
 		ParticleComponent* particle = std::get<ParticleComponent*>(compTuple);
-		particle->Emitter->Update(world);
+		particle->GetEmitter()->Update(world);
 	}
 }

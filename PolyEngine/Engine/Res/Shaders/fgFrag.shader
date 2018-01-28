@@ -158,8 +158,6 @@ vec3 yuv2rgb(vec3 yuv)
 	return rgb;
 }
 
-// ====
-
 //note: from https://www.shadertoy.com/view/XslGz8
 vec2 radialdistort(vec2 coord, vec2 amt)
 {
@@ -218,8 +216,6 @@ vec2 distort(vec2 uv, float t, vec2 min_distort, vec2 max_distort)
 	return brownConradyDistortion(uv, 75.0 * dist.x);
 }
 
-// ====
-
 vec3 spectrum_offset_yuv(float t)
 {
 	//vec3 yuv = vec3( 1.0, 3.0*t, 0.0 ); //purple-green
@@ -238,8 +234,6 @@ vec3 spectrum_offset(float t)
 	//return spectrum_offset_ycgco( t );
 	//return spectrum_offset_yuv( t );
 }
-
-// ====
 
 float nrand(vec2 n)
 {
@@ -298,82 +292,83 @@ vec3 Saturation(vec3 color, float saturation)
 	return HSLtoRGB(hsl);
 }
 
+vec3 filmGrainColor(vec2 uv, float offset)
+{ // by ma (lstGWn)
+    vec4 uvs;
+    uvs.xy = uv + vec2(offset, offset);
+    uvs.zw = uvs.xy + 0.5 * vec2(1.0 / uResolution.x, 1.0 / uResolution.y);
+
+    uvs = fract(uvs * vec2(21.5932, 21.77156).xyxy);
+
+    vec2 shift = vec2(21.5351, 14.3137);
+    vec2 temp0 = uvs.xy + dot(uvs.yx, uvs.xy + shift);
+    vec2 temp1 = uvs.xw + dot(uvs.wx, uvs.xw + shift);
+    vec2 temp2 = uvs.zy + dot(uvs.yz, uvs.zy + shift);
+    vec2 temp3 = uvs.zw + dot(uvs.wz, uvs.zw + shift);
+
+    vec3 r = vec3(0.0, 0.0, 0.0);
+    r += fract(temp0.x * temp0.y * vec3(95.4337, 96.4337, 97.4337));
+    r += fract(temp1.x * temp1.y * vec3(95.4337, 96.4337, 97.4337));
+    r += fract(temp2.x * temp2.y * vec3(95.4337, 96.4337, 97.4337));
+    r += fract(temp3.x * temp3.y * vec3(95.4337, 96.4337, 97.4337));
+
+    return r * 0.25;
+}
+
+vec3 sharpen(vec2 uv)
+{ // by NickWest (lslGRr)
+    vec2 step = 1.0 / uResolution.xy;
+    float scale = 1.5;
+    vec3 texA = texture(i_color, uv + vec2(-step.x, -step.y) * scale).rgb;
+    vec3 texB = texture(i_color, uv + vec2(step.x, -step.y) * scale).rgb;
+    vec3 texC = texture(i_color, uv + vec2(-step.x, step.y) * scale).rgb;
+    vec3 texD = texture(i_color, uv + vec2(step.x, step.y) * scale).rgb;
+    vec3 around = 0.25 * (texA + texB + texC + texD);
+    vec3 center = texture(i_color, uv).rgb;
+    vec3 col = center + (center - around) * 0.2;
+    return col;
+}
+
+vec2 barrelDistortion(vec2 coord, float amt, float zoom)
+{ // based on gtoledo3 (XslGz8)
+  // added zoomimg
+    vec2 cc = coord - 0.5;
+    vec2 p = cc * zoom;
+    coord = p + 0.5;
+    float dist = dot(cc, cc);
+    return coord + cc * dist * amt;
+    
+}
+
 void main()
 {
 	vec2 uv = vTexCoord;
+    uv = barrelDistortion(uv, 0.1, 0.94);
+    
+    color.rgb = sharpen(uv);
 
-	if (uUseCashetes > 0)
-	{
-		vec2 p = -1.0 + 2.0 * vTexCoord.xy;
-		p.x *= uResolution.x / uResolution.y;
-		float cashetes = step(abs(p.y)*2.39, uResolution.x / uResolution.y);
-		if (cashetes < 0.1) {
-			color = vec4(0.0);
-			return;
-		}
-	}
+    // color.rgb = 0.5 * pow(color.rgb, vec3(1.2));
 
-	// float power = 1.0;
-
-	const float MAX_DIST_PX = 50.0;
-	float max_distort_px = MAX_DIST_PX * (uDistortionPower);
-	vec2 max_distort = vec2(max_distort_px) / uResolution.xy;
-	vec2 min_distort = 0.5 * max_distort;
-
-	//vec2 oversiz = vec2(1.0);
-	vec2 oversiz = distort(vec2(1.0), 1.0, min_distort, max_distort);
-	uv = remap(uv, 1.0 - oversiz, oversiz);
-
-	// Chromatic Aberration
-	const int num_iter = 7;
-	const float stepsiz = 1.0 / (float(num_iter) - 1.0);
-	float rnd = nrand(uv + fract(uTime));
-	float t = rnd * stepsiz;
-
-
-	vec3 sumcol = vec3(0.0);
-	vec3 sumw = vec3(0.0);
-	vec3 emissive = vec3(0.0);
-	for (int i = 0; i<num_iter; ++i)
-	{
-		vec3 w = spectrum_offset(t);
-		sumw += w;
-		vec2 uvd = distort(uv, t, min_distort, max_distort); //TODO: move out of loop
-		vec3 c = w * render(uvd);
-		sumcol += c;
-		t += stepsiz;
-		if (length(c) > 0.8) 
-		{
-			emissive += c;
-		}
-	}
-	sumcol.rgb /= sumw;
-
-	vec3 outcol = sumcol.rgb;
-	outcol = lin2srgb(outcol);
-	outcol += rnd / 255.0;
-
-	color.rgb = outcol + 0.4*(emissive);
+	// color saturation
+	// color.rgb = Saturation(color.rgb, 0.9);
 
 	// tonemapper
-	color.rgb = Tonemap_ACES(color.rgb);
+	// color.rgb = Tonemap_ACES(color.rgb);
 	
 	// color temperature
-	color.rgb = colorTemperature(color.rgb, mix(6500.0, uColorTempValue, uColorTempPower));
+	// color.rgb = colorTemperature(color.rgb, mix(6500.0, uColorTempValue, uColorTempPower));
 	
-	// color saturation
-	color.rgb = Saturation(color.rgb, uSaturationPower);
-	
-	// Stripes
-	color *= mix( 1.0, stripes(vTexCoord), uStripesPower);
 	
 	// grain
-	color *= mix( 1.0, grain(uv), uGrainPower);
-	
-	// Vinette
-	color *= mix(1.0, vinette(vTexCoord), uVinettePower);
+    // float FGanim = 0.01 * smoothstep(-0.8, 0.8, sin(5.0 * uTime));
+    color.rgb *= 1.0 - 0.2 * filmGrainColor(0.001 * uv, uTime).rgb;
 
-	color.rgb = pow(color.rgb, vec3(1.1));
-	color.rgb += vec3(0.1);
-	color.rgb = pow(color.rgb, vec3(0.9));
+	// Vinette
+    // color.rgb = vec3(1.0); // uncomment to see only vignette
+    vec2 v = 2. * (uv - .5);
+    v = clamp((v * .5) + .5, 0., 1.);
+    color.rgb *= 0.25 + pow(16.0 * v.x * v.y * (1.0 - v.x) * (1.0 - v.y), 0.25);
+	
+	// gamma 
+	color.rgb = pow(color.rgb, vec3(0.4545));
 }

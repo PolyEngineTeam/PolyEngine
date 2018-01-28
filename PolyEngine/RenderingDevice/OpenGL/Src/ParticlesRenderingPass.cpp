@@ -20,6 +20,7 @@ ParticlesRenderingPass::ParticlesRenderingPass()
 	GetProgram().RegisterUniform("float", "uTime");
 	GetProgram().RegisterUniform("mat4", "uMV");
 	GetProgram().RegisterUniform("mat4", "uP");
+	GetProgram().RegisterUniform("vec4", "uColor");
 }
 
 void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
@@ -39,25 +40,29 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<ParticleComponent>())
 	{
-		const ParticleComponent* particleCmp = std::get<ParticleComponent*>(componentsTuple);
+		ParticleComponent* particleCmp = std::get<ParticleComponent*>(componentsTuple);
 		const EntityTransform& transform = particleCmp->GetTransform();
 		const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
 		Matrix screenTransform = mv * objTransform;
 		GetProgram().SetUniform("uMV", screenTransform);
+		GetProgram().SetUniform("uColor", particleCmp->GetEmitter()->GetSettings().Color);
 
-		int partileLen = particleCmp->Emitter->GetInstances().GetSize() / 16;
-		const GLParticleDeviceProxy* particleProxy = static_cast<const GLParticleDeviceProxy*>(particleCmp->Emitter->GetParticleProxy());
+		int partileLen = particleCmp->GetEmitter()->GetInstances().GetSize() / 16;
+		const GLParticleDeviceProxy* particleProxy = static_cast<const GLParticleDeviceProxy*>(particleCmp->GetEmitter()->GetParticleProxy());
 		GLuint particleVAO = particleProxy->GetVAO();
+		const TextureResource* Texture = particleCmp->GetSpritesheet();
 
-		// gConsole.LogInfo("ParticlesRenderingPass::OnRun VAO: {}, found particles: {}",
-		// 	particleVAO, partileLen);
+		// if (Texture == nullptr) 
+		// {
+		// 	gConsole.LogInfo("ParticlesRenderingPass::OnRun texture nullptr");
+		// }
 
-		// const TextureResource* DiffuseTexture = particleCmp->Emitter.GetDiffTexture();
-		// GLuint TextureID = DiffuseTexture == nullptr
-		// 	? FallbackWhiteTexture
-		// 	: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
-		// glActiveTexture(GL_TEXTURE0);
-		// glBindTexture(GL_TEXTURE_2D, TextureID);
+		GLuint TextureID = Texture == nullptr
+			? FallbackWhiteTexture
+			: static_cast<const GLTextureDeviceProxy*>(Texture->GetTextureProxy())->GetTextureID();
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, TextureID);
 
 		glBindVertexArray(particleVAO);
 		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, partileLen);
