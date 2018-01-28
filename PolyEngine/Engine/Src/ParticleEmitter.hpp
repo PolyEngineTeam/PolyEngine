@@ -25,6 +25,7 @@ namespace Poly
 
 		struct ENGINE_DLLEXPORT Settings
 		{
+			int MaxSize = 1000;
 			int InitialSize;
 			float BurstTimeMin;
 			float BurstTimeMax;

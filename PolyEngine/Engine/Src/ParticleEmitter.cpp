@@ -6,7 +6,7 @@
 using namespace Poly;
 
 ParticleEmitter::ParticleEmitter(Settings settings)
-	: settings(settings), ParticlesPool(1000)
+	: settings(settings), ParticlesPool(settings.MaxSize)
 {
 	ParticleProxy = gEngine->GetRenderingDevice()->CreateParticle();
 	Emit(settings.InitialSize);
