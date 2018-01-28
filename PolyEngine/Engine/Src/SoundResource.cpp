@@ -199,8 +199,8 @@ SoundResource::SoundResource(const String& path)
 										}
 									}
 
-									if (clipflag)
-										gConsole.LogDebug("Clipping in frame {}", (long)(vorbisDSPState.sequence));
+									//if (clipflag)
+									//	gConsole.LogDebug("Clipping in frame {}", (long)(vorbisDSPState.sequence));
 
 									const size_t newBlocksize = 2 * vorbisInfo.channels * bout;
 									const size_t oldDataSize = rawData.GetSize();
