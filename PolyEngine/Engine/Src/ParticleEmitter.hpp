@@ -30,6 +30,7 @@ namespace Poly
 			float BurstTimeMax;
 			int BurstSizeMin;
 			int BurstSizeMax;
+			Color Color;
 			std::function<void(Particle*)> ParticleInitFunc;
 			std::function<void(Particle*)> ParticleUpdateFunc;
 		};
@@ -42,6 +43,8 @@ namespace Poly
 		void Emit(size_t quota);
 
 		bool GetIsBurstEnabled() { return IsBurstEnabled; }
+		
+		Settings GetSettings() { return settings; }
 
 		void SetBurstEnabled(bool value) { IsBurstEnabled = value; }
 

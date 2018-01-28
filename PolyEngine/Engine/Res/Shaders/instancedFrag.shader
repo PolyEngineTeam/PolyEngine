@@ -2,6 +2,7 @@
 
 uniform sampler2D i_color;
 uniform float uTime;
+uniform vec4 uColor;
 
 in vec2 vTexCoord;
 out vec4 color;
@@ -38,5 +39,6 @@ void main()
     vec4 tex1 = texture(i_color, uvTile1);
     vec4 tex = mix(tex0, tex1, fract(frame));
 
-    color = tex;
+    color = vec4(mask);
+    color *= uColor;
 }

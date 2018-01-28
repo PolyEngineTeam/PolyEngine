@@ -20,6 +20,7 @@ ParticlesRenderingPass::ParticlesRenderingPass()
 	GetProgram().RegisterUniform("float", "uTime");
 	GetProgram().RegisterUniform("mat4", "uMV");
 	GetProgram().RegisterUniform("mat4", "uP");
+	GetProgram().RegisterUniform("vec4", "uColor");
 }
 
 void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
@@ -44,6 +45,7 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 		const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
 		Matrix screenTransform = mv * objTransform;
 		GetProgram().SetUniform("uMV", screenTransform);
+		GetProgram().SetUniform("uColor", particleCmp->GetEmitter()->GetSettings().Color);
 
 		int partileLen = particleCmp->GetEmitter()->GetInstances().GetSize() / 16;
 		const GLParticleDeviceProxy* particleProxy = static_cast<const GLParticleDeviceProxy*>(particleCmp->GetEmitter()->GetParticleProxy());
