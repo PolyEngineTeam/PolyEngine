@@ -61,6 +61,8 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 			? FallbackWhiteTexture
 			: static_cast<const GLTextureDeviceProxy*>(Texture->GetTextureProxy())->GetTextureID();
 
+		GetProgram().SetUniform("uHasSprite", Texture == nullptr ? 0.0f : 1.0f );
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, TextureID);
 
