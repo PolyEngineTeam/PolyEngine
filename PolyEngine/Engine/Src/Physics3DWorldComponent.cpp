@@ -1,7 +1,6 @@
 #include "EnginePCH.hpp"
 
-#include <btBulletDynamicsCommon.h>
-#include <btBulletCollisionCommon.h>
+#include "BulletIncludes.hpp"
 
 //------------------------------------------------------------------------------
 Poly::Physics3DWorldComponent::Physics3DWorldComponent(Physics3DConfig config)

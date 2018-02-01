@@ -1,7 +1,6 @@
 #include "EnginePCH.hpp"
 
-#include <btBulletDynamicsCommon.h>
-#include <btBulletCollisionCommon.h>
+#include "BulletIncludes.hpp"
 
 #include "Rigidbody3DImpl.hpp"
 #include "Collider3DImpl.hpp"
@@ -183,9 +182,15 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 			break;
 
 		case eRigidBody3DType::DYNAMIC_CUSTOM_INTERTIA:
+		{
 			Vector i = rigidbody->Template.Intertia;
 			inertia = btVector3(i.X, i.Y, i.Z);
+		}
 			break;
+
+		default:
+				ASSERTE(false, "Unknown rigid body type");
+				break;
 		}
 
 		// create construction info
@@ -319,6 +324,9 @@ bool Poly::Physics3DSystem::IsColliding(World* world, Entity* firstEntity, Entit
 //------------------------------------------------------------------------------
 Poly::ContactResult Poly::Physics3DSystem::ContactPair(World* world, Entity* firstEntity, Entity* secondEntity)
 {
+	UNUSED(world);
+	UNUSED(firstEntity);
+	UNUSED(secondEntity);
 		// TODO(squares): implement this
 	return ContactResult();
 }
@@ -326,6 +334,8 @@ Poly::ContactResult Poly::Physics3DSystem::ContactPair(World* world, Entity* fir
 //------------------------------------------------------------------------------
 Poly::ContactResult Poly::Physics3DSystem::Contact(World* world, Entity* entity)
 {
+	UNUSED(world);
+	UNUSED(entity);
 		// TODO(squares): implement this
 	return ContactResult();
 }

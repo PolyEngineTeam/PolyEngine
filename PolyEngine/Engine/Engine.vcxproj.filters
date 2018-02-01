@@ -445,6 +445,9 @@
     <ClInclude Include="Src\Collider3DImpl.hpp">
       <Filter>Physics3D\Components\Impl</Filter>
     </ClInclude>
+    <ClInclude Include="Src\BulletIncludes.hpp">
+      <Filter>Physics3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\ComponentIDGeneratorImpl.hpp">

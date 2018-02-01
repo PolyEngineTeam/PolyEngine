@@ -233,6 +233,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\BulletIncludes.hpp" />
     <ClInclude Include="Src\CameraComponent.hpp" />
     <ClInclude Include="Src\CameraSystem.hpp" />
     <ClInclude Include="Src\ComponentBase.hpp" />
