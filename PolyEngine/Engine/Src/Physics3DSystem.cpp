@@ -323,6 +323,9 @@ bool Poly::Physics3DSystem::IsColliding(World* world, Entity* firstEntity, Entit
 //------------------------------------------------------------------------------
 Poly::ContactResult Poly::Physics3DSystem::ContactPair(World* world, Entity* firstEntity, Entity* secondEntity)
 {
+	UNUSED(world);
+	UNUSED(firstEntity);
+	UNUSED(secondEntity);
 		// TODO(squares): implement this
 	return ContactResult();
 }
@@ -330,6 +333,8 @@ Poly::ContactResult Poly::Physics3DSystem::ContactPair(World* world, Entity* fir
 //------------------------------------------------------------------------------
 Poly::ContactResult Poly::Physics3DSystem::Contact(World* world, Entity* entity)
 {
+	UNUSED(world);
+	UNUSED(entity);
 		// TODO(squares): implement this
 	return ContactResult();
 }
