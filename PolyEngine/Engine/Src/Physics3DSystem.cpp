@@ -183,8 +183,10 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 			break;
 
 		case eRigidBody3DType::DYNAMIC_CUSTOM_INTERTIA:
+		{
 			Vector i = rigidbody->Template.Intertia;
 			inertia = btVector3(i.X, i.Y, i.Z);
+		}
 			break;
 
 		default:
