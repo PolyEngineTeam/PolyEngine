@@ -186,6 +186,10 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 			Vector i = rigidbody->Template.Intertia;
 			inertia = btVector3(i.X, i.Y, i.Z);
 			break;
+
+		default:
+				ASSERTE(false, "Unknown rigid body type");
+				break;
 		}
 
 		// create construction info
