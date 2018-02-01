@@ -1,8 +1,6 @@
 #include "EnginePCH.hpp"
 
-SILENCE_GCC_WARNING(-Werror, "Bullet includes has warnings")
-	#include <btBulletCollisionCommon.h>
-UNSILENCE_GCC_WARNING()
+#include "BulletIncludes.hpp"
 
 //------------------------------------------------------------------------------
 Poly::Physics3DShape::~Physics3DShape()

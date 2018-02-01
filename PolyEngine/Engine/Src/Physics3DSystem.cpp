@@ -1,9 +1,6 @@
 #include "EnginePCH.hpp"
 
-SILENCE_GCC_WARNING(-Werror, "Bullet includes has warnings")
-	#include <btBulletDynamicsCommon.h>
-	#include <btBulletCollisionCommon.h>
-UNSILENCE_GCC_WARNING()
+#include "BulletIncludes.hpp"
 
 #include "Rigidbody3DImpl.hpp"
 #include "Collider3DImpl.hpp"
