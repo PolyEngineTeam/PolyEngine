@@ -20,4 +20,5 @@ namespace Poly
 	private:
 		std::unique_ptr<Physics3DMeshSourceImplData> ImplData;
 	};
+
 } // namepsace Poly
