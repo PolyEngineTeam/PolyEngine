@@ -80,7 +80,7 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 }
 
 //------------------------------------------------------------------------------
-Poly::Vector Poly::Physics3DSystem::CalculateIntertia(const Physics3DShape* shape, float mass)
+Poly::Vector Poly::Physics3DSystem::CalculateInertia(const Physics3DShape* shape, float mass)
 {
 	btVector3 i;
 	shape->ImplData->BulletShape->calculateLocalInertia(mass, i);
@@ -175,18 +175,28 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 		switch (rigidbody->Template.RigidbodyType)
 		{
 		case eRigidBody3DType::STATIC:
-			// TODO(squares): check if that's enough
+			// FIXME(squares): float == 0
+			ASSERTE(rigidbody->Template.Mass == 0, "Static body must have zero mass.");
 			break;
 
 		case eRigidBody3DType::DYNAMIC:
 			// FIXME(squares): this is't proper way of preventing zero mass
 			ASSERTE(rigidbody->Template.Mass > 0, "Can't create dynamic body with 0 mass.");
-			shape->calculateLocalInertia(rigidbody->Template.Mass, inertia);
+
+			if (rigidbody->Template.Inertia.HasValue())
+			{
+				Vector i = rigidbody->Template.Inertia.Value();
+				inertia = btVector3(i.X, i.Y, i.Z);
+			}
+			else
+			{
+				shape->calculateLocalInertia(rigidbody->Template.Mass, inertia);
+				rigidbody->Template.Inertia = Vector(inertia.x(), inertia.y(), inertia.z());
+			}
 			break;
 
-		case eRigidBody3DType::DYNAMIC_CUSTOM_INTERTIA:
-			Vector i = rigidbody->Template.Intertia;
-			inertia = btVector3(i.X, i.Y, i.Z);
+		case eRigidBody3DType::_COUNT:
+			ASSERTE(false, "Unknown rigid body type.");
 			break;
 		}
 

@@ -27,7 +27,7 @@ namespace Poly
 	{
 		friend class Collider3DComponent;
 		friend void Physics3DSystem::EnsureInit(World* world, Entity* entity);
-		friend Vector Physics3DSystem::CalculateIntertia(const Physics3DShape* shape, float mass);
+		friend Vector Physics3DSystem::CalculateInertia(const Physics3DShape* shape, float mass);
 
 	public:
 		Physics3DShape(ePhysics3DShape type) : ShapeType(type) {}

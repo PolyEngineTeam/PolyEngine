@@ -87,7 +87,7 @@ namespace Poly
 		/// @param mass - mass of object with given shape
 		/// @return three dimensional vector containing intertia for given shape with mass
 		/// @see Rigidbody3DComponentTemplate
-		Vector ENGINE_DLLEXPORT CalculateIntertia(const Physics3DShape* shape, float mass);
+		Vector ENGINE_DLLEXPORT CalculateInertia(const Physics3DShape* shape, float mass);
 
 
 		// collision groups administration

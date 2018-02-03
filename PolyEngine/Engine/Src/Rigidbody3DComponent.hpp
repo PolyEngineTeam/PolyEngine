@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Vector.hpp>
+#include <Optional.hpp>
 
 #include "ComponentBase.hpp"
 #include "Physics3DSystem.hpp"
@@ -21,7 +22,6 @@ namespace Poly
 	{
 		STATIC,
 		DYNAMIC,
-		DYNAMIC_CUSTOM_INTERTIA,
 		_COUNT
 	};
 
@@ -31,7 +31,9 @@ namespace Poly
 	struct Rigidbody3DComponentTemplate : BaseObject<>
 	{
 		float Mass = 0;
-		Vector Intertia = Vector(0.f, 0.f, 0.f);
+		/// If intertia is set then rigidbody will be created with that intertia.
+		/// Otherwise intertia will be computed from mass and shape of this rigid body.
+		Optional<Vector> Inertia = Vector(0.f, 0.f, 0.f);
 		/// Restitution is in fact a bounciness.
 		float Restitution = 0.5f;
 		float Friction = 0.5f;
@@ -98,7 +100,7 @@ namespace Poly
 
 
 		float GetMass() const { return Template.Mass; }
-		const Vector& GetIntertia() const { return Template.Intertia; }
+		const Vector& GetIntertia() const { return Template.Inertia.Value(); }
 		float GetRestitution() const { return Template.Restitution; }
 		float GetFriction() const { return Template.Friction; }
 		float GetRollingFriction() const { return Template.RollingFriction; }
