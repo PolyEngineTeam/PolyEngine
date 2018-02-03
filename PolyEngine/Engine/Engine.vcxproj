@@ -264,6 +264,7 @@
     <ClInclude Include="Src\Physics3DShapeImpl.hpp" />
     <ClInclude Include="Src\Physics3DSystem.hpp" />
     <ClInclude Include="Src\Physics3DWorldComponent.hpp" />
+    <ClInclude Include="Src\Physics3DWorldComponentImpl.hpp" />
     <ClInclude Include="Src\PostprocessSettingsComponent.hpp" />
     <ClInclude Include="Src\Rigidbody2DComponent.hpp" />
     <ClInclude Include="Src\InputSystem.hpp" />

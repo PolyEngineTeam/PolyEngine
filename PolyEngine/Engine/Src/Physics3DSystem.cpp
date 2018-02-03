@@ -5,6 +5,7 @@
 
 #include "Rigidbody3DImpl.hpp"
 #include "Collider3DImpl.hpp"
+#include "Physics3DWorldComponentImpl.hpp"
 
 //------------------------------------------------------------------------------
 void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
@@ -43,7 +44,7 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 	while (physicsWorldCmp->LastDeltaOverflow >= physicsWorldCmp->Config.TimeStep)
 	{
 		physicsWorldCmp->LastDeltaOverflow -= physicsWorldCmp->Config.TimeStep;
-		physicsWorldCmp->DynamicsWorld->stepSimulation(physicsWorldCmp->Config.TimeStep, 0);
+		physicsWorldCmp->ImplData->DynamicsWorld->stepSimulation(physicsWorldCmp->Config.TimeStep, 0);
 	}
 	
 	// update all engine transform from bullet rigidbodies
@@ -253,7 +254,7 @@ void Poly::Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool
 
 	if (enablePhysics)
 	{
-		worldCmp->DynamicsWorld->addRigidBody(rigidbody->ImplData->BulletRigidBody, 
+		worldCmp->ImplData->DynamicsWorld->addRigidBody(rigidbody->ImplData->BulletRigidBody,
 			static_cast<int>(collider->Template.CollisionGroup), static_cast<int>(collider->Template.CollisionMask));
 
 		rigidbody->Template.Registered = true;
@@ -261,7 +262,7 @@ void Poly::Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool
 	}
 	else
 	{
-		worldCmp->DynamicsWorld->addCollisionObject(collider->ImplData->BulletTrigger, 
+		worldCmp->ImplData->DynamicsWorld->addCollisionObject(collider->ImplData->BulletTrigger,
 			static_cast<int>(collider->Template.CollisionGroup), static_cast<int>(collider->Template.CollisionMask));
 
 		collider->Template.Registered = true;
@@ -281,14 +282,14 @@ void Poly::Physics3DSystem::UnregisterComponent(World* world, Entity* entity)
 
 	if (rigidbody && rigidbody->Template.Registered)
 	{
-		worldCmp->DynamicsWorld->removeRigidBody(rigidbody->ImplData->BulletRigidBody);
+		worldCmp->ImplData->DynamicsWorld->removeRigidBody(rigidbody->ImplData->BulletRigidBody);
 
 		rigidbody->Template.Registered = false;
 		collider->Template.Registered = false;
 	}
 	else
 	{
-		worldCmp->DynamicsWorld->removeCollisionObject(collider->ImplData->BulletTrigger);
+		worldCmp->ImplData->DynamicsWorld->removeCollisionObject(collider->ImplData->BulletTrigger);
 
 		collider->Template.Registered = false;
 	}
@@ -301,10 +302,10 @@ bool Poly::Physics3DSystem::IsColliding(World* world, Entity* firstEntity, Entit
 
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
 
-	int numManifolds = worldCmp->Dispatcher->getNumManifolds();
+	int numManifolds = worldCmp->ImplData->Dispatcher->getNumManifolds();
 	for (int i = 0; i < numManifolds; i++)
 	{
-		btPersistentManifold* contactManifold = worldCmp->Dispatcher->getManifoldByIndexInternal(i);
+		btPersistentManifold* contactManifold = worldCmp->ImplData->Dispatcher->getManifoldByIndexInternal(i);
 		const btCollisionObject* obA = contactManifold->getBody0();
 		const btCollisionObject* obB = contactManifold->getBody1();
 
@@ -339,10 +340,10 @@ Poly::ContactPairResults Poly::Physics3DSystem::GetAllContactPairs(World* world)
 
 	ContactPairResults results;
 
-	int numManifolds = worldCmp->Dispatcher->getNumManifolds();
+	int numManifolds = worldCmp->ImplData->Dispatcher->getNumManifolds();
 	for (int i = 0; i < numManifolds; i++)
 	{
-		btPersistentManifold* contactManifold = worldCmp->Dispatcher->getManifoldByIndexInternal(i);
+		btPersistentManifold* contactManifold = worldCmp->ImplData->Dispatcher->getManifoldByIndexInternal(i);
 
 		Vector normAvg;
 		int numContacts = contactManifold->getNumContacts();
@@ -384,7 +385,7 @@ Poly::RaycastResult Poly::Physics3DSystem::AllHitsRaycast(World* world, const Ve
 	r.m_collisionFilterGroup = static_cast<int>(collisionGroup);
 	r.m_collisionFilterMask = static_cast<int>(collidesWith);
 	// call raytest
-	worldCmp->DynamicsWorld->rayTest(r.m_rayFromWorld, r.m_rayToWorld, r);
+	worldCmp->ImplData->DynamicsWorld->rayTest(r.m_rayFromWorld, r.m_rayToWorld, r);
 
 	for (int i = 0; i < r.m_collisionObjects.size(); ++i)
 	{
@@ -420,7 +421,7 @@ Poly::RaycastResult Poly::Physics3DSystem::ClosestHitRaycast(World* world, const
 	r.m_collisionFilterGroup = static_cast<int>(collisionGroup);
 	r.m_collisionFilterMask = static_cast<int>(collidesWith);
 	// call raytest
-	worldCmp->DynamicsWorld->rayTest(r.m_rayFromWorld, r.m_rayToWorld, r);
+	worldCmp->ImplData->DynamicsWorld->rayTest(r.m_rayFromWorld, r.m_rayToWorld, r);
 
 	if (r.hasHit())
 	{

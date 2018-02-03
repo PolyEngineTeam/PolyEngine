@@ -3,16 +3,10 @@
 #include "ComponentBase.hpp"
 #include "Physics3DSystem.hpp"
 
-	// FIXME(squares): this shouldn't be declared here
-class btDiscreteDynamicsWorld;
-class btDefaultCollisionConfiguration;
-class btCollisionDispatcher;
-class btBroadphaseInterface;
-class btSequentialImpulseConstraintSolver;
-class btCollisionObject;
-
 namespace Poly
 {
+	struct Physics3DWorldComponentImplData;
+
 	/// Config for physics simulation
 	/// @see Physics3DWorldComponent
 	/// @see Trigger3DComponent
@@ -55,12 +49,7 @@ namespace Poly
 	private:
 		Physics3DConfig Config;
 
-		std::unique_ptr<btDiscreteDynamicsWorld> DynamicsWorld;
-
-		std::unique_ptr<btDefaultCollisionConfiguration> CollisionConfiguration;
-		std::unique_ptr<btCollisionDispatcher> Dispatcher;
-		std::unique_ptr<btBroadphaseInterface> Broadphase;
-		std::unique_ptr<btSequentialImpulseConstraintSolver> Solver;
+		std::unique_ptr<Physics3DWorldComponentImplData> ImplData;
 
 		float LastDeltaOverflow = 0.f;
 	};

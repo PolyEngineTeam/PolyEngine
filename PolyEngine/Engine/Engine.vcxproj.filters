@@ -105,6 +105,9 @@
     <Filter Include="Source Files\Physics3D\Components\Impl">
       <UniqueIdentifier>{d49a0c73-36fe-4ceb-a405-c978d55b8ddb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Physics3D\WorldComponent\Impl">
+      <UniqueIdentifier>{ee485009-7464-4472-9355-ecbcf3706b48}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -459,6 +462,9 @@
     </ClInclude>
     <ClInclude Include="Src\Physics3DShapeImpl.hpp">
       <Filter>Source Files\Physics3D\Shapes\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics3DWorldComponentImpl.hpp">
+      <Filter>Source Files\Physics3D\WorldComponent\Impl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
