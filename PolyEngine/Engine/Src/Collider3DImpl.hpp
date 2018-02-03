@@ -11,4 +11,5 @@ namespace Poly
 	{
 		btCollisionObject* BulletTrigger = nullptr;
 	};
+
 } // namespace Poly

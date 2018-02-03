@@ -26,7 +26,6 @@ namespace Poly
 		
 		/// If this flag is set during Trigger3DComponent::EnsureInit() that collider will be immidiately registered.
 		bool Registered = true;
-		
 		/// Determines in which collision group is currently collider.
 		EnumFlags<eCollisionGroup> CollisionGroup = eCollisionGroup::TRIGGER;
 		/// Determines whith which collision groups this collider will collide.
@@ -117,7 +116,7 @@ namespace Poly
 		/// Needed for destructuion and re-registration.
 		/// @see Trigger3DComponent::~Trigger3DComponent
 		World* BodyWorld;
-		///
+		
 		/// It's easier to initialize collider when we can just copy construction data.
 		Collider3DComponentTemplate Template;
 		/// Thanks to this structure we don't need to declare implementation dependent structures in headers.
@@ -125,4 +124,5 @@ namespace Poly
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, Collider3DComponent)
+
 } // namespace Poly

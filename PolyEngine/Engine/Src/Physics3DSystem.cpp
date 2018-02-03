@@ -60,12 +60,13 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 		btTransform trans;
 		rigidbody->ImplData->BulletMotionState->getWorldTransform(trans);
 	
-		Vector localTrans = transform.GetLocalTranslation();
-		Quaternion localrot = transform.GetLocalRotation().ToEulerAngles();
+		Vector localTrans;
+		Quaternion localrot;
 	
 		localTrans.X = trans.getOrigin().getX();
 		localTrans.Y = trans.getOrigin().getY();
 		localTrans.Z = trans.getOrigin().getZ();
+		localTrans.W = 1;
 	
 		localrot.X = trans.getRotation().getX();
 		localrot.Y = trans.getRotation().getY();
@@ -204,6 +205,9 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 		else
 			collider->Template.Registered = false;
 
+		if (rigidbody->Template.DisableDeactivation)
+			bulletRigidbody->setActivationState(DISABLE_DEACTIVATION);
+
 		bulletRigidbody->setRestitution(rigidbody->Template.Restitution);
 		bulletRigidbody->setFriction(rigidbody->Template.Friction);
 		bulletRigidbody->setRollingFriction(rigidbody->Template.RollingFriction);
@@ -249,7 +253,7 @@ void Poly::Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool
 	{
 		worldCmp->DynamicsWorld->addRigidBody(rigidbody->ImplData->BulletRigidBody, 
 			static_cast<int>(collider->Template.CollisionGroup), static_cast<int>(collider->Template.CollisionMask));
-		worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, const Entity*>(rigidbody->ImplData->BulletRigidBody, entity));
+		worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, Entity*>(rigidbody->ImplData->BulletRigidBody, entity));
 
 		rigidbody->Template.Registered = true;
 		collider->Template.Registered = true;
@@ -258,7 +262,7 @@ void Poly::Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool
 	{
 		worldCmp->DynamicsWorld->addCollisionObject(collider->ImplData->BulletTrigger, 
 			static_cast<int>(collider->Template.CollisionGroup), static_cast<int>(collider->Template.CollisionMask));
-		worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, const Entity*>(collider->ImplData->BulletTrigger, entity));
+		worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, Entity*>(collider->ImplData->BulletTrigger, entity));
 
 		collider->Template.Registered = true;
 	}
@@ -331,6 +335,47 @@ Poly::ContactResult Poly::Physics3DSystem::Contact(World* world, Entity* entity)
 }
 
 //------------------------------------------------------------------------------
+Poly::ContactPairResults Poly::Physics3DSystem::GetAllContactPairs(World* world)
+{
+	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
+
+	ContactPairResults results;
+
+	int numManifolds = worldCmp->Dispatcher->getNumManifolds();
+	for (int i = 0; i < numManifolds; i++)
+	{
+		btPersistentManifold* contactManifold = worldCmp->Dispatcher->getManifoldByIndexInternal(i);
+
+		Vector normAvg;
+		int numContacts = contactManifold->getNumContacts();
+		for (int j = 0; j<numContacts; j++)
+		{
+			btManifoldPoint& pt = contactManifold->getContactPoint(j);
+
+			btVector3 ptA = pt.getPositionWorldOnA();
+			btVector3 ptB = pt.getPositionWorldOnB();
+			Vector norm = Vector(ptA.x(), ptA.y(), ptA.z()) - Vector(ptB.x(), ptB.y(), ptB.z());
+			normAvg += norm;
+		}
+		if (numContacts > 0)
+		{
+			normAvg /= (float)numContacts;
+			normAvg.Normalize();
+		}
+
+
+		ContactPairResults::ContactPair pair;
+		pair.FirstEntity = worldCmp->BulletTriggerToEntity[contactManifold->getBody0()];
+		pair.SecondEntity = worldCmp->BulletTriggerToEntity[contactManifold->getBody1()];
+		pair.Normal = normAvg;
+
+		results.ContactPairs.PushBack(pair);
+	}
+
+	return results;
+}
+
+//------------------------------------------------------------------------------
 Poly::RaycastResult Poly::Physics3DSystem::AllHitsRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith)
 {
 	RaycastResult result;
@@ -349,7 +394,7 @@ Poly::RaycastResult Poly::Physics3DSystem::AllHitsRaycast(World* world, const Ve
 
 			// FIXME(squares): try catch something?
 		// get UniqueID
-		hit.HitEntityID = worldCmp->BulletTriggerToEntity[r.m_collisionObjects[i]];
+		hit.HitEntity = worldCmp->BulletTriggerToEntity[r.m_collisionObjects[i]];
 		// get fraction
 		hit.HitFraction = r.m_hitFractions[i];
 		// get normal
@@ -385,7 +430,7 @@ Poly::RaycastResult Poly::Physics3DSystem::ClosestHitRaycast(World* world, const
 
 			// FIXME(squares): try catch something?
 		// get UniqueID
-		hit.HitEntityID = worldCmp->BulletTriggerToEntity[r.m_collisionObject];
+		hit.HitEntity = worldCmp->BulletTriggerToEntity[r.m_collisionObject];
 		// get fraction
 		hit.HitFraction = r.m_closestHitFraction;
 		// get normal

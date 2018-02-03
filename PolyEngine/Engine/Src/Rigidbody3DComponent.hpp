@@ -43,6 +43,7 @@ namespace Poly
 
 		/// Rigid body will not be considered during the simulation until it is registered.
 		bool Registered = true;
+		bool DisableDeactivation = true;
 		eRigidBody3DType RigidbodyType = eRigidBody3DType::DYNAMIC;
 	};
 
