@@ -1,7 +1,5 @@
 #pragma once
 
-#include <map>
-
 #include "ComponentBase.hpp"
 #include "Physics3DSystem.hpp"
 
@@ -65,8 +63,6 @@ namespace Poly
 		std::unique_ptr<btSequentialImpulseConstraintSolver> Solver;
 
 		float LastDeltaOverflow = 0.f;
-		// raytest returns bullet rigidbody and we want to get UniqueID of that body
-		std::map<const btCollisionObject*, Entity*> BulletTriggerToEntity;
 	};
 
 	REGISTER_COMPONENT(WorldComponentsIDGroup, Physics3DWorldComponent)

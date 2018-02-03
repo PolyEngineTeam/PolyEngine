@@ -84,26 +84,26 @@
     <Filter Include="Source Files\Debug\DebugRendering">
       <UniqueIdentifier>{e685527a-7ef6-4bb5-9307-a33f64b66c41}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Physics3D">
+    <Filter Include="Source Files\Physics3D">
       <UniqueIdentifier>{2a76d861-1e20-443b-8735-b535557c8278}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Physics3D\Shapes">
+    <Filter Include="Source Files\Physics3D\Shapes">
       <UniqueIdentifier>{5882cf94-a5f1-46c9-943c-010e55addcd7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Physics3D\WorldComponent">
+    <Filter Include="Source Files\Physics3D\Shapes\Impl">
+      <UniqueIdentifier>{94000c69-400e-401a-ac2b-d6049374f0e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Physics3D\WorldComponent">
       <UniqueIdentifier>{42e2b167-4641-4666-8930-00520f41851e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Physics3D\System">
+    <Filter Include="Source Files\Physics3D\System">
       <UniqueIdentifier>{11319f44-8e4c-431e-a51a-6683c49ecc42}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Physics3D\Components">
+    <Filter Include="Source Files\Physics3D\Components">
       <UniqueIdentifier>{9d35528e-2d6f-46f1-8398-6dd1dcdeac19}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Physics3D\Components\Impl">
+    <Filter Include="Source Files\Physics3D\Components\Impl">
       <UniqueIdentifier>{d49a0c73-36fe-4ceb-a405-c978d55b8ddb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Physics3D\Shapes\Impl">
-      <UniqueIdentifier>{94000c69-400e-401a-ac2b-d6049374f0e3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -240,22 +240,22 @@
       <Filter>Source Files\Transform</Filter>
     </ClCompile>
     <ClCompile Include="Src\Physics3DShapes.cpp">
-      <Filter>Physics3D\Shapes</Filter>
+      <Filter>Source Files\Physics3D\Shapes</Filter>
     </ClCompile>
     <ClCompile Include="Src\Physics3DWorldComponent.cpp">
-      <Filter>Physics3D\WorldComponent</Filter>
+      <Filter>Source Files\Physics3D\WorldComponent</Filter>
     </ClCompile>
     <ClCompile Include="Src\Physics3DSystem.cpp">
-      <Filter>Physics3D\System</Filter>
+      <Filter>Source Files\Physics3D\System</Filter>
     </ClCompile>
     <ClCompile Include="Src\Rigidbody3DComponent.cpp">
-      <Filter>Physics3D\Components</Filter>
+      <Filter>Source Files\Physics3D\Components</Filter>
     </ClCompile>
     <ClCompile Include="Src\Collider3DComponent.cpp">
-      <Filter>Physics3D\Components</Filter>
+      <Filter>Source Files\Physics3D\Components</Filter>
     </ClCompile>
     <ClCompile Include="Src\Physics3DMeshSource.cpp">
-      <Filter>Physics3D\Shapes</Filter>
+      <Filter>Source Files\Physics3D\Shapes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -431,34 +431,34 @@
       <Filter>Source Files\Transform</Filter>
     </ClInclude>
     <ClInclude Include="Src\Physics3DShapes.hpp">
-      <Filter>Physics3D\Shapes</Filter>
+      <Filter>Source Files\Physics3D\Shapes</Filter>
     </ClInclude>
     <ClInclude Include="Src\Physics3DWorldComponent.hpp">
-      <Filter>Physics3D\WorldComponent</Filter>
+      <Filter>Source Files\Physics3D\WorldComponent</Filter>
     </ClInclude>
     <ClInclude Include="Src\Physics3DSystem.hpp">
-      <Filter>Physics3D\System</Filter>
+      <Filter>Source Files\Physics3D\System</Filter>
     </ClInclude>
     <ClInclude Include="Src\Rigidbody3DComponent.hpp">
-      <Filter>Physics3D\Components</Filter>
+      <Filter>Source Files\Physics3D\Components</Filter>
     </ClInclude>
     <ClInclude Include="Src\Rigidbody3DImpl.hpp">
-      <Filter>Physics3D\Components\Impl</Filter>
+      <Filter>Source Files\Physics3D\Components\Impl</Filter>
     </ClInclude>
     <ClInclude Include="Src\Collider3DComponent.hpp">
-      <Filter>Physics3D\Components</Filter>
+      <Filter>Source Files\Physics3D\Components</Filter>
     </ClInclude>
     <ClInclude Include="Src\Collider3DImpl.hpp">
-      <Filter>Physics3D\Components\Impl</Filter>
+      <Filter>Source Files\Physics3D\Components\Impl</Filter>
     </ClInclude>
     <ClInclude Include="Src\Physics3DMeshSource.hpp">
-      <Filter>Physics3D\Shapes</Filter>
+      <Filter>Source Files\Physics3D\Shapes</Filter>
     </ClInclude>
     <ClInclude Include="Src\Physics3DMeshSourceImpl.hpp">
-      <Filter>Physics3D\Shapes\Impl</Filter>
+      <Filter>Source Files\Physics3D\Shapes\Impl</Filter>
     </ClInclude>
     <ClInclude Include="Src\Physics3DShapeImpl.hpp">
-      <Filter>Physics3D\Shapes\Impl</Filter>
+      <Filter>Source Files\Physics3D\Shapes\Impl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
