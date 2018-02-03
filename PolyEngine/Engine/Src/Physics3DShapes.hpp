@@ -25,8 +25,9 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT Physics3DShape : public BaseObject<>
 	{
-		//friend void Physics3DSystem::EnsureInit(World* world, const UniqueID& entityID);
-		//friend const Vector& Physics3DSystem::CalculateIntertia(const Physics3DShape& shape, float mass);
+		friend class Collider3DComponent;
+		friend void Physics3DSystem::EnsureInit(World* world, Entity* entity);
+		friend Vector Physics3DSystem::CalculateIntertia(const Physics3DShape* shape, float mass);
 
 	public:
 		Physics3DShape(ePhysics3DShape type) : ShapeType(type) {}
@@ -35,7 +36,7 @@ namespace Poly
 
 		const ePhysics3DShape ShapeType;
 
-	//protected:
+	protected:
 		std::unique_ptr<Physics3DShapeImplData> ImplData;
 	};
 

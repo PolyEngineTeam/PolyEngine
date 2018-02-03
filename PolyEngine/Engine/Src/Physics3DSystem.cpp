@@ -78,10 +78,10 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 }
 
 //------------------------------------------------------------------------------
-Poly::Vector Poly::Physics3DSystem::CalculateIntertia(const Physics3DShape& shape, float mass)
+Poly::Vector Poly::Physics3DSystem::CalculateIntertia(const Physics3DShape* shape, float mass)
 {
 	btVector3 i;
-	shape.ImplData->BulletShape->calculateLocalInertia(mass, i);
+	shape->ImplData->BulletShape->calculateLocalInertia(mass, i);
 
 	return Vector(i.x(), i.y(), i.z());
 }

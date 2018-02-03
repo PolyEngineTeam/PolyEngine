@@ -4,13 +4,13 @@
 #include <Dynarray.hpp>
 #include <EnumUtils.hpp>
 
-#include "Physics3DShapes.hpp"
-
 namespace Poly
 {
 	//------------------------------------------------------------------------------
 	// helper structures
 
+
+	class Physics3DShape;
 
 	enum class eCollisionGroup
 	{
@@ -75,7 +75,7 @@ namespace Poly
 		/// @param mass - mass of object with given shape
 		/// @return three dimensional vector containing intertia for given shape with mass
 		/// @see Rigidbody3DComponentTemplate
-		Vector CalculateIntertia(const Physics3DShape& shape, float mass);
+		Vector CalculateIntertia(const Physics3DShape* shape, float mass);
 
 
 		// collision groups administration
