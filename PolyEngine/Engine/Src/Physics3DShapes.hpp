@@ -1,14 +1,19 @@
 #pragma once
 
 #include "Physics3DSystem.hpp"
-
-	// FIXME(squares): this shouldn't be declared here
-class btCollisionShape;
+#include "Physics3DMeshSource.hpp"
+#include "Physics3DShapeImpl.hpp"
 
 namespace Poly
 {
+	struct Physics3DShapeImplData;
+
+
+	//------------------------------------------------------------------------------
+
 	enum class ePhysics3DShape
 	{
+		MESH,
 		PLANE,
 		BOX,
 		SPHERE,
@@ -16,18 +21,33 @@ namespace Poly
 		_COUNT
 	};
 
+	//------------------------------------------------------------------------------
+
 	class ENGINE_DLLEXPORT Physics3DShape : public BaseObject<>
 	{
 		//friend void Physics3DSystem::EnsureInit(World* world, const UniqueID& entityID);
 		//friend const Vector& Physics3DSystem::CalculateIntertia(const Physics3DShape& shape, float mass);
+
 	public:
 		Physics3DShape(ePhysics3DShape type) : ShapeType(type) {}
+		Physics3DShape(const Physics3DShape& shape);
 		virtual ~Physics3DShape();
+
 		const ePhysics3DShape ShapeType;
-			// FIXME(squares): friendship problems
-		btCollisionShape* BulletShape = nullptr;
-	protected:
+
+	//protected:
+		std::unique_ptr<Physics3DShapeImplData> ImplData;
 	};
+
+	//------------------------------------------------------------------------------
+
+	class ENGINE_DLLEXPORT Physics3DMeshShape : public Physics3DShape
+	{
+	public:
+		Physics3DMeshShape(const Physics3DMeshSource& source);
+	};
+
+	//------------------------------------------------------------------------------
 
 	class ENGINE_DLLEXPORT Physics3DPlaneShape : public Physics3DShape
 	{
@@ -37,12 +57,16 @@ namespace Poly
 		const float HalfExtent;
 	};
 
+	//------------------------------------------------------------------------------
+
 	class ENGINE_DLLEXPORT Physics3DBoxShape : public Physics3DShape
 	{
 	public:
 		Physics3DBoxShape(Vector halfExtents);
 		const Vector HalfExtents;
 	};
+
+	//------------------------------------------------------------------------------
 
 	class ENGINE_DLLEXPORT Physics3DSphereShape : public Physics3DShape
 	{
@@ -51,6 +75,8 @@ namespace Poly
 		const float Radius;
 	};
 
+	//------------------------------------------------------------------------------
+
 	class ENGINE_DLLEXPORT Physics3DCapsuleShape : public Physics3DShape
 	{
 	public:
@@ -58,4 +84,5 @@ namespace Poly
 		const float Radius;
 		const float Height;
 	};
+
 } // namespace Poly

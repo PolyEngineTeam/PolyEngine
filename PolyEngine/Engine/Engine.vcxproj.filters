@@ -102,6 +102,9 @@
     <Filter Include="Physics3D\Components\Impl">
       <UniqueIdentifier>{d49a0c73-36fe-4ceb-a405-c978d55b8ddb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Physics3D\Shapes\Impl">
+      <UniqueIdentifier>{94000c69-400e-401a-ac2b-d6049374f0e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -250,6 +253,9 @@
     </ClCompile>
     <ClCompile Include="Src\Collider3DComponent.cpp">
       <Filter>Physics3D\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics3DMeshSource.cpp">
+      <Filter>Physics3D\Shapes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -444,6 +450,15 @@
     </ClInclude>
     <ClInclude Include="Src\Collider3DImpl.hpp">
       <Filter>Physics3D\Components\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics3DMeshSource.hpp">
+      <Filter>Physics3D\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics3DMeshSourceImpl.hpp">
+      <Filter>Physics3D\Shapes\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics3DShapeImpl.hpp">
+      <Filter>Physics3D\Shapes\Impl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

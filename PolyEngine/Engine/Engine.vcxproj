@@ -197,6 +197,7 @@
     <ClCompile Include="Src\Physics2DColliders.cpp" />
     <ClCompile Include="Src\Physics2DSystem.cpp" />
     <ClCompile Include="Src\Physics2DWorldComponent.cpp" />
+    <ClCompile Include="Src\Physics3DMeshSource.cpp" />
     <ClCompile Include="Src\Physics3DShapes.cpp" />
     <ClCompile Include="Src\Physics3DSystem.cpp" />
     <ClCompile Include="Src\Physics3DWorldComponent.cpp" />
@@ -257,7 +258,10 @@
     <ClInclude Include="Src\DeferredTaskSystem.hpp" />
     <ClInclude Include="Src\LightSourceComponent.hpp" />
     <ClInclude Include="Src\Physics2DWorldComponent.hpp" />
+    <ClInclude Include="Src\Physics3DMeshSource.hpp" />
+    <ClInclude Include="Src\Physics3DMeshSourceImpl.hpp" />
     <ClInclude Include="Src\Physics3DShapes.hpp" />
+    <ClInclude Include="Src\Physics3DShapeImpl.hpp" />
     <ClInclude Include="Src\Physics3DSystem.hpp" />
     <ClInclude Include="Src\Physics3DWorldComponent.hpp" />
     <ClInclude Include="Src\PostprocessSettingsComponent.hpp" />

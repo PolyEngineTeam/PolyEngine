@@ -28,7 +28,7 @@ Poly::Collider3DComponent::~Collider3DComponent()
 //------------------------------------------------------------------------------
 void Poly::Collider3DComponent::SetShape(const Physics3DShape& shape)
 {
-	ImplData->BulletTrigger->setCollisionShape(shape.BulletShape);
+	ImplData->BulletTrigger->setCollisionShape(shape.ImplData->BulletShape);
 	Template.Shape.release();
 	Template.Shape = std::make_unique<Physics3DShape>(shape);
 }
