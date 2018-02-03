@@ -22,7 +22,6 @@
 #include "InputQueue.hpp"
 #include "KeyBindings.hpp"
 #include "Mesh.hpp"
-#include "Physics3DMeshSource.hpp"
 
 // Resources
 #include "ResourceBase.hpp"
