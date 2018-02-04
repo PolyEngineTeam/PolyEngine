@@ -50,12 +50,69 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 			gDebugConfig.DebugRender = true;
 	}
 
+	auto debugDrawWorldCmp = world->GetWorldComponent<DebugDrawStateWorldComponent>();
 	if (!gDebugConfig.DebugRender)
 	{
-		auto debugLinesComponent = world->GetWorldComponent<DebugDrawLinesComponent>();
-		debugLinesComponent->DebugLines.Clear();
+		debugDrawWorldCmp->Clear();
 		return;
 	}
+
+	// Prepare text2D to render
+	{
+		size_t usedTextEntites = 0;
+		for (const auto& text2D : debugDrawWorldCmp->DebugTexts2D)
+		{
+			Entity* entToUse = nullptr;
+			while (usedTextEntites < debugDrawWorldCmp->Text2DEntityPool.GetSize())
+			{
+				if (debugDrawWorldCmp->Text2DEntityPool[usedTextEntites])
+				{
+					entToUse = debugDrawWorldCmp->Text2DEntityPool[usedTextEntites].Get();
+					++usedTextEntites;
+					break;
+				}
+				else
+					debugDrawWorldCmp->Text2DEntityPool.RemoveByIdx(usedTextEntites);
+			}
+
+			if (!entToUse)
+			{
+				entToUse = DeferredTaskSystem::SpawnEntityImmediate(world);
+				DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(world, entToUse, Vector2i::ZERO, "Fonts/Raleway/Raleway-Regular.ttf", eResourceSource::ENGINE, 0);
+				debugDrawWorldCmp->Text2DEntityPool.PushBack(entToUse);
+				++usedTextEntites;
+			}
+
+			ScreenSpaceTextComponent* textCmp = entToUse->GetComponent<ScreenSpaceTextComponent>();
+			textCmp->SetText(text2D.Text);
+			textCmp->GetText().SetFontSize(text2D.FontSize);
+			textCmp->GetText().SetFontColor(text2D.FontColor);
+			textCmp->SetScreenPosition(text2D.Position);
+		}
+
+
+		// Clear rest of the text entities
+		for (size_t i = usedTextEntites; i < debugDrawWorldCmp->Text2DEntityPool.GetSize(); ++i)
+		{
+			Entity* ent = debugDrawWorldCmp->Text2DEntityPool[i].Get();
+			if (ent)
+			{
+				ScreenSpaceTextComponent* textCmp = ent->GetComponent<ScreenSpaceTextComponent>();
+				textCmp->SetText("");
+				textCmp->GetText().SetFontSize(0);
+				textCmp->GetText().SetFontColor(Color::WHITE);
+				textCmp->SetScreenPosition(Vector2i::ZERO);
+			}
+			else
+			{
+				debugDrawWorldCmp->Text2DEntityPool.RemoveByIdx(i);
+				--i;
+			}
+		}
+
+		debugDrawWorldCmp->DebugTexts2D.Clear();
+	}
+
 
 	enum class RenderMode : int { /*POINT = 1,*/ LINE = 1, /*STRING,*/ _COUNT };
 
@@ -153,10 +210,10 @@ void Poly::DebugDrawSystem::DrawLine(World* world, Vector begin, Vector end)
 		return;
 
 	Vector3f meshvecBegin(begin.X, begin.Y, begin.Z), meshvecEnd(end.X, end.Y, end.Z);
-	auto debugLinesComponent = world->GetWorldComponent<DebugDrawLinesComponent>();
-	debugLinesComponent->DebugLines.PushBack(DebugDrawLinesComponent::DebugLine{ meshvecBegin, meshvecEnd });
+	auto debugLinesComponent = world->GetWorldComponent<DebugDrawStateWorldComponent>();
+	debugLinesComponent->DebugLines.PushBack(DebugDrawStateWorldComponent::DebugLine{ meshvecBegin, meshvecEnd });
 	Color colorBegin(0.0f, 0.3f, 0.0f), colorEnd(0.0f, 0.2f, 0.0f);
-	debugLinesComponent->DebugLinesColors.PushBack(DebugDrawLinesComponent::DebugLineColor{ colorBegin, colorEnd });
+	debugLinesComponent->DebugLinesColors.PushBack(DebugDrawStateWorldComponent::DebugLineColor{ colorBegin, colorEnd });
 }
 
 void Poly::DebugDrawSystem::DrawBox(World* world, Vector mins, Vector maxs)
@@ -272,4 +329,13 @@ void Poly::DebugDrawSystem::DrawArrow(World* world, Vector position, Vector dire
 		DrawLine(world, arrowTip + arrowTipEdgePoint, arrowTip + directionVector*arrowheadScale);
 		arrowTipEdgePoint = rotAroundDirectionVector*arrowTipEdgePoint;
 	}
+}
+
+void Poly::DebugDrawSystem::DrawText2D(World* world, Vector2i screenPosition, String text, size_t fontSize, const Color& color)
+{
+	if (!gDebugConfig.DebugRender)
+		return;
+
+	auto debugLinesComponent = world->GetWorldComponent<DebugDrawStateWorldComponent>();
+	debugLinesComponent->DebugTexts2D.PushBack({ std::move(text), screenPosition , fontSize, color });
 }

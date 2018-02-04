@@ -47,7 +47,7 @@ void Text2DRenderingPass::OnRun(World* world, const CameraComponent* /*camera*/,
 		ScreenSpaceTextComponent* textCmp = std::get<ScreenSpaceTextComponent*>(componentsTuple);
 		Text2D& text = textCmp->GetText();
 		GetProgram().SetUniform("u_textColor", text.GetFontColor());
-		GetProgram().SetUniform("u_position", textCmp->GetScreenPosition());
+		GetProgram().SetUniform("u_position", Vector(textCmp->GetScreenPosition().X, textCmp->GetScreenPosition().Y, 0));
 		text.UpdateDeviceBuffers();
 
 		const GLTextFieldBufferDeviceProxy* textFieldBuffer = static_cast<const GLTextFieldBufferDeviceProxy*>(text.GetTextFieldBuffer());

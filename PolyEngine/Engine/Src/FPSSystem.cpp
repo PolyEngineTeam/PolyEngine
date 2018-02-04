@@ -5,34 +5,31 @@
 
 #include "DebugWorldComponent.hpp"
 #include "TimeSystem.hpp"
+#include "DebugDrawSystem.hpp"
 
 using namespace Poly;
 
 void FPSSystem::FPSUpdatePhase(World* world)
 {
 	DebugWorldComponent* com = world->GetWorldComponent<DebugWorldComponent>();
-
-	if (gDebugConfig.DisplayFPS && !com->FPSData.TextEnt)
-	{
-		Entity* ent = DeferredTaskSystem::SpawnEntityImmediate(world);
-		DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(world, ent, Vector(300, 300, 0), "Fonts/Raleway/Raleway-Regular.ttf", eResourceSource::ENGINE, 32);
-		com->FPSData.TextEnt = ent;
-	}
-		
 	
 	if (gDebugConfig.DisplayFPS && TimeSystem::GetTimerElapsedTime(world, eEngineTimer::SYSTEM) - com->FPSData.ElapsedTime > 1)
 	{
 		com->FPSData.ElapsedTime = TimeSystem::GetTimerElapsedTime(world, eEngineTimer::SYSTEM);
 
-		ScreenSpaceTextComponent* textCom = world->GetComponent<ScreenSpaceTextComponent>(com->FPSData.TextEnt.Get());
-		textCom->SetText(&std::string("FPS: " + std::to_string(com->FPSData.FPS))[0]);
+		StringBuilder sb;
+		sb.AppendFormat("FPS: {}", com->FPSData.FPS);
+		com->FPSData.DisplayedFPSText = sb.StealString();
+		com->FPSData.LastFPS = com->FPSData.FPS;
 		com->FPSData.FPS = 0;
 	}
 
 	com->FPSData.FPS++;
+
+	DebugDrawSystem::DrawText2D(world, Vector2i(300, 300), com->FPSData.DisplayedFPSText, 32);
 }
 
 float FPSSystem::GetFPS(World * world)
 {
-	return (float)world->GetWorldComponent<DebugWorldComponent>()->FPSData.FPS;
+	return (float)world->GetWorldComponent<DebugWorldComponent>()->FPSData.LastFPS;
 }

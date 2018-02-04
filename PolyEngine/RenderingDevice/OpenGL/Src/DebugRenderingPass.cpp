@@ -21,7 +21,7 @@ void DebugRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 
 	// Render Lines
 	{
-		auto debugLinesComponent = world->GetWorldComponent<DebugDrawLinesComponent>();
+		auto debugLinesComponent = world->GetWorldComponent<DebugDrawStateWorldComponent>();
 		auto& debugLines = debugLinesComponent->DebugLines;
 		auto& debugLinesColors = debugLinesComponent->DebugLinesColors;
 
@@ -30,13 +30,13 @@ void DebugRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 		// set up buffer
 		glBindVertexArray(debugLinesBuffers.VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, debugLinesBuffers.VBO);
-		glBufferData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugDrawLinesComponent::DebugLine)
-									+ debugLinesColors.GetSize() * sizeof(DebugDrawLinesComponent::DebugLineColor), NULL, GL_STATIC_DRAW);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, debugLines.GetSize() * sizeof(DebugDrawLinesComponent::DebugLine), (GLvoid*)debugLines.GetData());
-		glBufferSubData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugDrawLinesComponent::DebugLine), debugLinesColors.GetSize() * sizeof(DebugDrawLinesComponent::DebugLineColor), (GLvoid*)debugLinesColors.GetData());
+		glBufferData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLine)
+									+ debugLinesColors.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLineColor), NULL, GL_STATIC_DRAW);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, debugLines.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLine), (GLvoid*)debugLines.GetData());
+		glBufferSubData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLine), debugLinesColors.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLineColor), (GLvoid*)debugLinesColors.GetData());
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), NULL);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Color), (GLvoid*)(debugLines.GetSize() * sizeof(DebugDrawLinesComponent::DebugLine)));
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Color), (GLvoid*)(debugLines.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLine)));
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
