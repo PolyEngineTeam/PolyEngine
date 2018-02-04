@@ -58,7 +58,7 @@ namespace Poly
 	{
 		struct RaycastHit
 		{
-			const Entity* HitEntity;
+			Entity* HitEntity;
 			Vector WorldHitNormal;
 			Vector WorldHitPoint;
 			float HitFraction;

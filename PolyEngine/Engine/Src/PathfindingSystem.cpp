@@ -52,11 +52,11 @@ Optional<Dynarray<Vector2f>> CalculateNewPath(const NavGrid* grid, const Vector2
 	while (openList.GetSize() > 0 && bestNodeIdx < 0)
 	{
 		i64 qIdx = openList.Pop();
-		const PathNode& q = AllNodes[qIdx];
-
-		Dynarray<Vector2i> neighbours = grid->GetNeighbours(q.Cell);
+		
+		Dynarray<Vector2i> neighbours = grid->GetNeighbours(AllNodes[qIdx].Cell);
 		for (const Vector2i& neighbour : neighbours)
 		{
+			const PathNode& q = AllNodes[qIdx];
 			// cannot walk here
 			if (!grid->IsPositionValid(grid->GetCellMiddlePos(neighbour), agentRadius))
 				continue;
@@ -86,7 +86,7 @@ Optional<Dynarray<Vector2f>> CalculateNewPath(const NavGrid* grid, const Vector2
 		}
 
 		closedList.Push(qIdx);
-		closedListsMinCosts[q.Cell] = q.Cost;
+		closedListsMinCosts[AllNodes[qIdx].Cell] = AllNodes[qIdx].Cost;
 	}
 
 	if (bestNodeIdx < 0)
