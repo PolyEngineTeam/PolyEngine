@@ -67,8 +67,9 @@ Optional<Dynarray<Vector2f>> CalculateNewPath(const NavGrid* grid, const Vector2
 				bestNodeIdx = qIdx;
 				break;
 			}
-				
-			PathNode s{ neighbour, q.Cost + 1, heuristic(neighbour), qIdx };
+			
+			const float moveCost = (neighbour.ToVector2f() - q.Cell.ToVector2f()).Length();
+			PathNode s{ neighbour, q.Cost + moveCost, heuristic(neighbour), qIdx };
 
 			auto& it = openListsMinCosts.find(s.Cell);
 			if (it != openListsMinCosts.end() && it->second < s.Cost)

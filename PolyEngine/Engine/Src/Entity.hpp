@@ -20,6 +20,7 @@ namespace Poly
 
 		const UniqueID& GetID() const { HEAVY_ASSERTE(EntityID, "Entity was not properly initialized");  return EntityID; }
 		const World* GetWorld() const { HEAVY_ASSERTE(EntityID, "Entity was not properly initialized");  return EntityWorld; }
+		World* GetWorld() { HEAVY_ASSERTE(EntityID, "Entity was not properly initialized");  return EntityWorld; }
 
 		/// <summary>Checks whether there is a component of a given ID under this Entity's ID.</summary>
 		/// <param name="ID">ID of a component type</param>

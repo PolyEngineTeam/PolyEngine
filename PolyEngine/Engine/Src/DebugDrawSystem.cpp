@@ -154,7 +154,7 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 				minVector -= boundingOffset;
 				maxVector += boundingOffset;
 
-				DrawBox(world, minVector, maxVector);
+				DrawBox(world, minVector, maxVector, Color::GREEN);
 			}
 		}
 
@@ -178,7 +178,7 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 			if(velocity.LengthSquared() == 0.0f)
 				continue;
 
-			DrawArrow(world, localTrans, velocity);
+			DrawArrow(world, localTrans, velocity, Color::RED);
 		}
 
 
@@ -199,12 +199,12 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 			auto directionRotation = MovementSystem::GetGlobalForward(transform);
 			auto lightMagnitude = dirLightCmp->GetIntensity() * 2.0f;
 
-			DrawArrow(world, localTrans, directionRotation*lightMagnitude);
+			DrawArrow(world, localTrans, directionRotation*lightMagnitude, Color::WHITE);
 		}
 	}
 }
 
-void Poly::DebugDrawSystem::DrawLine(World* world, Vector begin, Vector end)
+void Poly::DebugDrawSystem::DrawLine(World* world, const Vector& begin, const Vector& end, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
@@ -212,11 +212,10 @@ void Poly::DebugDrawSystem::DrawLine(World* world, Vector begin, Vector end)
 	Vector3f meshvecBegin(begin.X, begin.Y, begin.Z), meshvecEnd(end.X, end.Y, end.Z);
 	auto debugLinesComponent = world->GetWorldComponent<DebugDrawStateWorldComponent>();
 	debugLinesComponent->DebugLines.PushBack(DebugDrawStateWorldComponent::DebugLine{ meshvecBegin, meshvecEnd });
-	Color colorBegin(0.0f, 0.3f, 0.0f), colorEnd(0.0f, 0.2f, 0.0f);
-	debugLinesComponent->DebugLinesColors.PushBack(DebugDrawStateWorldComponent::DebugLineColor{ colorBegin, colorEnd });
+	debugLinesComponent->DebugLinesColors.PushBack(DebugDrawStateWorldComponent::DebugLineColor{ color, color });
 }
 
-void Poly::DebugDrawSystem::DrawBox(World* world, Vector mins, Vector maxs)
+void Poly::DebugDrawSystem::DrawBox(World* world, const Vector& mins, const Vector& maxs, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
@@ -241,25 +240,25 @@ void Poly::DebugDrawSystem::DrawBox(World* world, Vector mins, Vector maxs)
 	// 7: 0 1 1
 
 	// bottom
-	DrawLine(world, points[0], points[4]);
-	DrawLine(world, points[0], points[1]);
-	DrawLine(world, points[5], points[4]);
-	DrawLine(world, points[5], points[1]);
+	DrawLine(world, points[0], points[4], color);
+	DrawLine(world, points[0], points[1], color);
+	DrawLine(world, points[5], points[4], color);
+	DrawLine(world, points[5], points[1], color);
 
 	// top
-	DrawLine(world, points[3], points[7]);
-	DrawLine(world, points[3], points[2]);
-	DrawLine(world, points[6], points[7]);
-	DrawLine(world, points[6], points[2]);
+	DrawLine(world, points[3], points[7], color);
+	DrawLine(world, points[3], points[2], color);
+	DrawLine(world, points[6], points[7], color);
+	DrawLine(world, points[6], points[2], color);
 
 	// top-bottom lines
-	DrawLine(world, points[0], points[3]);
-	DrawLine(world, points[1], points[2]);
-	DrawLine(world, points[4], points[7]);
-	DrawLine(world, points[5], points[6]);
+	DrawLine(world, points[0], points[3], color);
+	DrawLine(world, points[1], points[2], color);
+	DrawLine(world, points[4], points[7], color);
+	DrawLine(world, points[5], points[6], color);
 }
 
-void Poly::DebugDrawSystem::DrawCircle(World* world, Vector position, float radius, Vector orientation)
+void Poly::DebugDrawSystem::DrawCircle(World* world, const Vector& position, float radius, Vector orientation, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
@@ -280,23 +279,23 @@ void Poly::DebugDrawSystem::DrawCircle(World* world, Vector position, float radi
 	{
 		Vector previousSegmentPoint = right;
 		right = rotAroundCircle*right;
-		DrawLine(world, position + previousSegmentPoint, position + right);
+		DrawLine(world, position + previousSegmentPoint, position + right, color);
 	}
 
-	DrawArrow(world, position, right);
+	DrawArrow(world, position, right, color);
 }
 
-void Poly::DebugDrawSystem::DrawSphere(World* world, Vector position, float radius)
+void Poly::DebugDrawSystem::DrawSphere(World* world, const Vector& position, float radius, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
 
-	DrawCircle(world, position, radius, Vector(1.0f, 0.0f, 0.0f));
-	DrawCircle(world, position, radius, Vector(0.0f, 1.0f, 0.0f));
-	DrawCircle(world, position, radius, Vector(0.0f, 0.0f, 1.0f));
+	DrawCircle(world, position, radius, Vector(1.0f, 0.0f, 0.0f), color);
+	DrawCircle(world, position, radius, Vector(0.0f, 1.0f, 0.0f), color);
+	DrawCircle(world, position, radius, Vector(0.0f, 0.0f, 1.0f), color);
 }
 
-void Poly::DebugDrawSystem::DrawArrow(World* world, Vector position, Vector directionVector)
+void Poly::DebugDrawSystem::DrawArrow(World* world, Vector position, Vector directionVector, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
@@ -306,7 +305,7 @@ void Poly::DebugDrawSystem::DrawArrow(World* world, Vector position, Vector dire
 	
 	// body line
 	auto arrowTip = position + directionVector*arrowLengthScale;
-	DrawLine(world, position, arrowTip);
+	DrawLine(world, position, arrowTip, color);
 	directionVector.Normalize();
 
 	// arrowhead
@@ -325,13 +324,13 @@ void Poly::DebugDrawSystem::DrawArrow(World* world, Vector position, Vector dire
 
 	for (float degrees = 0.0f; degrees < 360.0f; degrees += rotationStep.AsDegrees())
 	{
-		DrawLine(world, arrowTip, arrowTip + arrowTipEdgePoint);
-		DrawLine(world, arrowTip + arrowTipEdgePoint, arrowTip + directionVector*arrowheadScale);
+		DrawLine(world, arrowTip, arrowTip + arrowTipEdgePoint, color);
+		DrawLine(world, arrowTip + arrowTipEdgePoint, arrowTip + directionVector*arrowheadScale, color);
 		arrowTipEdgePoint = rotAroundDirectionVector*arrowTipEdgePoint;
 	}
 }
 
-void Poly::DebugDrawSystem::DrawText2D(World* world, Vector2i screenPosition, String text, size_t fontSize, const Color& color)
+void Poly::DebugDrawSystem::DrawText2D(World* world, const Vector2i& screenPosition, String text, size_t fontSize, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
