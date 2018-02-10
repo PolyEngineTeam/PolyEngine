@@ -1,55 +1,93 @@
 #include <catch.hpp>
-
-#include <ctime>
-
 #include <PriorityQueue.hpp>
 
 using namespace Poly;
 
-TEST_CASE("PriorityQueue basic tests", "[PriorityQueue]")
+TEST_CASE("PriorityQueue sorted push test", "[PriorityQueue]")
 {
 	PriorityQueue<int> q;
+	const size_t testSize = 100;
 
-	srand(time(nullptr));
-
-	int allocSize = 100;
-	for (int i = 0; i < allocSize; ++i)
+	for (size_t i = 0; i < testSize; ++i)
 	{
-		q.Push(rand() % 10000);
+		q.Push(i);
 		CHECK(q.GetSize() == i+1);
 	}
-
-	int max = 0;
-	while (q.GetSize() > 0)
+		
+	for (size_t i = 0; i < testSize; ++i)
 	{
-		int val = q.Pop();
-		--allocSize;
-		CHECK(q.GetSize() == allocSize);
-		CHECK(max <= val);
-		max = std::max(val, max);
+		CHECK(q.Head() == i);
+		CHECK(q.Pop() == i);
 	}
 }
 
-TEST_CASE("PriorityQueue with custom comparator tests", "[PriorityQueue]")
+TEST_CASE("PriorityQueue reverrse sorted push test", "[PriorityQueue]")
 {
-	PriorityQueue<int> q([](int a, int b) { return a > b; });
+	PriorityQueue<int> q;
+	const size_t testSize = 100;
 
-	srand(time(nullptr));
-
-	int allocSize = 100;
-	for (int i = 0; i < allocSize; ++i)
+	for (size_t i = 0; i < testSize; ++i)
 	{
-		q.Push(rand() % 10000);
+		q.Push(testSize - i - 1);
 		CHECK(q.GetSize() == i + 1);
 	}
 
-	int min = 10000;
-	while (q.GetSize() > 0)
+	for (size_t i = 0; i < testSize; ++i)
 	{
-		int val = q.Pop();
-		--allocSize;
-		CHECK(q.GetSize() == allocSize);
-		CHECK(min >= val);
-		min = std::min(val, min);
+		CHECK(q.Head() == i);
+		CHECK(q.Pop() == i);
+	}
+}
+
+TEST_CASE("PriorityQueue random push test", "[PriorityQueue]")
+{
+	PriorityQueue<int> q;
+	const size_t testSize = 100;
+
+	for (size_t i = 0; i < testSize; ++i)
+	{
+		q.Push(rand());
+		CHECK(q.GetSize() == i + 1);
+	}
+
+	for (size_t i = 0; i < testSize - 1; ++i)
+	{
+		size_t v1 = q.Pop();
+		CHECK(v1 <= q.Head());
+	}
+}
+
+TEST_CASE("PriorityQueue custom comparator test", "[PriorityQueue]")
+{
+	PriorityQueue<int> q([](size_t a, size_t b) { return a > b; });
+	const size_t testSize = 100;
+
+	for (size_t i = 0; i < testSize; ++i)
+	{
+		q.Push(rand());
+		CHECK(q.GetSize() == i + 1);
+	}
+
+	for (size_t i = 0; i < testSize - 1; ++i)
+	{
+		size_t v1 = q.Pop();
+		CHECK(v1 >= q.Head());
+	}
+}
+
+TEST_CASE("PriorityQueue heap sort", "[PriorityQueue]")
+{
+	const size_t testSize = 100;
+
+	Dynarray<int> table(testSize);
+	for (size_t i = 0; i < testSize; ++i)
+		table.PushBack(rand());
+
+	PriorityQueue<int> q(std::move(table));
+
+	for (size_t i = 0; i < testSize - 1; ++i)
+	{
+		size_t v1 = q.Pop();
+		CHECK(v1 <= q.Head());
 	}
 }

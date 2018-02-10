@@ -42,11 +42,11 @@ Optional<Dynarray<Vector2f>> CalculateNewPath(const NavGrid* grid, const Vector2
 	auto heuristic = [destInternalCell](const Vector2i& pos) { return (destInternalCell.ToVector2f() - pos.ToVector2f()).Length(); };
 	
 	PriorityQueue<i64> openList(comparator), closedList(comparator);
-	std::unordered_map<Vector2i, float, Vector2iHash> openListsMinCosts, closedListsMinCosts;
+	std::unordered_map<Vector2i, float, Vector2iHash> minCosts;
 
 	AllNodes.PushBack(PathNode( startInternalCell, 0, heuristic(startInternalCell) ));
 	openList.Push(AllNodes.GetSize() - 1);
-	openListsMinCosts[startInternalCell] = 0;
+	minCosts[startInternalCell] = 0;
 
 	i64 bestNodeIdx = -1;
 	while (openList.GetSize() > 0 && bestNodeIdx < 0)
@@ -71,22 +71,17 @@ Optional<Dynarray<Vector2f>> CalculateNewPath(const NavGrid* grid, const Vector2
 			const float moveCost = (neighbour.ToVector2f() - q.Cell.ToVector2f()).Length();
 			PathNode s{ neighbour, q.Cost + moveCost, heuristic(neighbour), qIdx };
 
-			auto& it = openListsMinCosts.find(s.Cell);
-			if (it != openListsMinCosts.end() && it->second < s.Cost)
+			auto& it = minCosts.find(s.Cell);
+			if (it != minCosts.end() && it->second < s.Cost)
 				continue; // node has worse base cost than other (in the same pos) we visited before, skip it
-
-			auto& it2 = closedListsMinCosts.find(s.Cell);
-			if (it2 != closedListsMinCosts.end() && it2->second < s.Cost)
-				continue; // node has worse base cost than other (in the same pos) we visited before, skip it
-
 
 			AllNodes.PushBack(s);
 			openList.Push(AllNodes.GetSize() - 1);
-			openListsMinCosts[s.Cell] = s.Cost;
+			minCosts[s.Cell] = s.Cost;
 		}
 
 		closedList.Push(qIdx);
-		closedListsMinCosts[AllNodes[qIdx].Cell] = AllNodes[qIdx].Cost;
+		minCosts[AllNodes[qIdx].Cell] = AllNodes[qIdx].Cost;
 	}
 
 	if (bestNodeIdx < 0)

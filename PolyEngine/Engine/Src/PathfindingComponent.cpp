@@ -6,8 +6,10 @@ using namespace Poly;
 
 void Poly::PathfindingComponent::SetDestination(const Vector2f& pos)
 {
+	if(!CurentDestination.HasValue() || CurentDestination.Value() != pos)
+		RecalculateRequested = true;
+
 	CurentDestination = pos;
-	RecalculateRequested = true;
 }
 
 void Poly::PathfindingComponent::ResetDestination()
