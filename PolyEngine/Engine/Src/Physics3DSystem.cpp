@@ -238,7 +238,7 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 		collider->UpdatePosition();
 	}
 
-	collider->PhysicsInitialized = true;
+	collider->Initialized = true;
 }
 
 //------------------------------------------------------------------------------

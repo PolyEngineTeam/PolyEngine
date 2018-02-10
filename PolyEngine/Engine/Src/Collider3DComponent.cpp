@@ -3,8 +3,8 @@
 #include "btBulletCollisionCommon.h"
 
 #include "Collider3DImpl.hpp"
-#include "Physics3DShapesImpl.hpp"
 #include "Physics3DShapes.hpp"
+#include "Physics3DShapesImpl.hpp"
 
 //------------------------------------------------------------------------------
 Poly::Collider3DComponent::Collider3DComponent(World* world, Collider3DComponentTemplate&& tmp)
@@ -15,11 +15,15 @@ Poly::Collider3DComponent::Collider3DComponent(World* world, Collider3DComponent
 	Template.CollisionGroup = tmp.CollisionGroup;
 	Template.CollisionMask = tmp.CollisionMask;
 }
+
 //------------------------------------------------------------------------------
 Poly::Collider3DComponent::~Collider3DComponent()
 {
 	Rigidbody3DComponent* rigidbody = GetSibling<Rigidbody3DComponent>();
 
+	// if rigidbody exists and is NOT registered and collider is registered
+	// or
+	// if rigidbody doesnt't exist and collider is registered
 	if ((rigidbody && !rigidbody->IsRegistered() && Template.Registered)
 		|| (!rigidbody && Template.Registered))
 	{
@@ -39,8 +43,6 @@ void Poly::Collider3DComponent::SetShape(const Physics3DShape* shape)
 void Poly::Collider3DComponent::UpdatePosition()
 {
 	const EntityTransform& transform = GetTransform();
-		// TODO: parent can't be nullptr
-	//ASSERTE(transCmp->GetParent() == nullptr, "Physics cannot be applied to child entity");
 
 	Vector localTrans = transform.GetGlobalTranslation();
 	Quaternion localRot = transform.GetGlobalRotation();
