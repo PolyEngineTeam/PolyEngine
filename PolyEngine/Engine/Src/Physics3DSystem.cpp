@@ -26,6 +26,61 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 	
 		Physics3DSystem::EnsureInit(world, rigidbody->GetOwner());
 		rigidbody->UpdatePosition();
+		if (rigidbody->TemplateChanged)
+		{
+			btRigidBody* bulletRigidbody = rigidbody->ImplData->BulletRigidBody;
+			Rigidbody3DComponentTemplate& tmp = rigidbody->Template;
+			Vector v, u;
+
+			v = tmp.Inertia.Value();
+			bulletRigidbody->setMassProps(tmp.Mass, btVector3(v.X, v.Y, v.Z));
+
+			v = tmp.Gravity.Value();
+			bulletRigidbody->setGravity(btVector3(v.X, v.Y, v.Z));
+			bulletRigidbody->setRestitution(tmp.Restitution);
+			bulletRigidbody->setFriction(tmp.Friction);
+			bulletRigidbody->setRollingFriction(tmp.RollingFriction);
+			bulletRigidbody->setDamping(tmp.LinearDamping, tmp.AngularDamping);
+
+			v = tmp.LinearFactor;
+			bulletRigidbody->setLinearFactor(btVector3(v.X, v.Y, v.Z));
+
+			v = tmp.AngularFactor;
+			bulletRigidbody->setAngularFactor(btVector3(v.X, v.Y, v.Z));
+
+			if (tmp.LinearVelocity.HasValue())
+			{
+				v = tmp.LinearVelocity.TakeValue();
+				bulletRigidbody->setLinearVelocity(btVector3(v.X, v.Y, v.Z));
+			}
+
+			if (tmp.AngularVelocity.HasValue())
+			{
+				v = tmp.AngularVelocity.TakeValue();
+				bulletRigidbody->setAngularVelocity(btVector3(v.X, v.Y, v.Z));
+			}
+
+			if (rigidbody->ImpulseToCenter.HasValue())
+			{
+				v = rigidbody->ImpulseToCenter.TakeValue();
+				bulletRigidbody->applyCentralImpulse(btVector3(v.X, v.Y, v.Z));
+			}
+
+			if (rigidbody->Impulse.HasValue())
+			{
+				v = rigidbody->Impulse.TakeValue();
+				u = rigidbody->ImpulsePos.TakeValue();
+				bulletRigidbody->applyImpulse(btVector3(v.X, v.Y, v.Z), btVector3(u.X, u.Y, u.Z));
+			}
+
+			if (rigidbody->TorqueImpulse.HasValue())
+			{
+				v = rigidbody->TorqueImpulse.TakeValue();
+				bulletRigidbody->applyTorqueImpulse(btVector3(v.X, v.Y, v.Z));
+			}
+
+			rigidbody->TemplateChanged = false;
+		}
 	}
 
 	// update all bullet colliders from engine tranforms
@@ -176,6 +231,7 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 		switch (rigidbody->Template.RigidbodyType)
 		{
 		case eRigidBody3DType::STATIC:
+			rigidbody->Template.Inertia = Vector(0, 0, 0);
 			// TODO(squares): check if that's enough
 			break;
 
@@ -184,13 +240,19 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 			ASSERTE(rigidbody->Template.Mass > 0, "Can't create dynamic body with 0 mass.");
 			if (rigidbody->Template.Inertia.HasValue())
 			{
-				Vector i = rigidbody->Template.Inertia.TakeValue();
+				Vector i = rigidbody->Template.Inertia.Value();
 				inertia = btVector3(i.X, i.Y, i.Z);
 			}
 			else
+			{
 				shape->calculateLocalInertia(rigidbody->Template.Mass, inertia);
+				rigidbody->Template.Inertia = Vector(inertia.x(), inertia.y(), inertia.z());
+			}
 			break;
 		}
+
+		if (!rigidbody->Template.Gravity.HasValue())
+			rigidbody->Template.Gravity = world->GetWorldComponent<Physics2DWorldComponent>()->GetGravity();
 
 		// create construction info
 		btRigidBody::btRigidBodyConstructionInfo CI(rigidbody->Template.Mass, rigidbody->ImplData->BulletMotionState, shape, inertia);
@@ -210,14 +272,6 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 		
 		if (!rigidbody->Template.Deactivatable)
 			bulletRigidbody->setActivationState(DISABLE_DEACTIVATION);
-
-		bulletRigidbody->setRestitution(rigidbody->Template.Restitution);
-		bulletRigidbody->setFriction(rigidbody->Template.Friction);
-		bulletRigidbody->setRollingFriction(rigidbody->Template.RollingFriction);
-		bulletRigidbody->setDamping(rigidbody->Template.LinearDamping, rigidbody->Template.AngularDamping);
-		bulletRigidbody->setLinearFactor(btVector3(rigidbody->Template.LinearFactor.X, rigidbody->Template.LinearFactor.Y, rigidbody->Template.LinearFactor.Z));
-		bulletRigidbody->setAngularFactor(btVector3(rigidbody->Template.AngularFactor.X, rigidbody->Template.AngularFactor.Y, rigidbody->Template.AngularFactor.Z));
-	
 		rigidbody->UpdatePosition();
 	}
 	// or if we just have to initialize collider
