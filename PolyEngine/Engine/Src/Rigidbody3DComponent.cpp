@@ -22,7 +22,7 @@ Poly::Rigidbody3DComponent::~Rigidbody3DComponent()
 void Poly::Rigidbody3DComponent::SetMassProps(float mass, const Vector& intertia)
 {
 	Template.Mass = mass;
-	Template.Intertia = intertia;
+	Template.Inertia = intertia;
 
 	ImplData->BulletRigidBody->setMassProps(mass, btVector3(intertia.X, intertia.Y, intertia.Z));
 }

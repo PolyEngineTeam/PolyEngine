@@ -6,6 +6,7 @@
 #include "Rigidbody3DImpl.hpp"
 #include "Collider3DImpl.hpp"
 #include "Physics3DShapesImpl.hpp"
+#include "Physics3DShapes.hpp"
 
 //------------------------------------------------------------------------------
 void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
@@ -181,12 +182,13 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 		case eRigidBody3DType::DYNAMIC:
 			// FIXME(squares): this is't proper way of preventing zero mass
 			ASSERTE(rigidbody->Template.Mass > 0, "Can't create dynamic body with 0 mass.");
-			shape->calculateLocalInertia(rigidbody->Template.Mass, inertia);
-			break;
-
-		case eRigidBody3DType::DYNAMIC_CUSTOM_INTERTIA:
-			Vector i = rigidbody->Template.Intertia;
-			inertia = btVector3(i.X, i.Y, i.Z);
+			if (rigidbody->Template.Inertia.HasValue())
+			{
+				Vector i = rigidbody->Template.Inertia.TakeValue();
+				inertia = btVector3(i.X, i.Y, i.Z);
+			}
+			else
+				shape->calculateLocalInertia(rigidbody->Template.Mass, inertia);
 			break;
 		}
 
@@ -206,7 +208,7 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 		else
 			collider->Template.Registered = false;
 		
-		if (rigidbody->Template.DisableDeactivation)
+		if (!rigidbody->Template.Deactivatable)
 			bulletRigidbody->setActivationState(DISABLE_DEACTIVATION);
 
 		bulletRigidbody->setRestitution(rigidbody->Template.Restitution);

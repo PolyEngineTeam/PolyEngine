@@ -3,6 +3,7 @@
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
 
+#include "Physics3DShapes.hpp"
 #include "Physics3DShapesImpl.hpp"
 
 //------------------------------------------------------------------------------

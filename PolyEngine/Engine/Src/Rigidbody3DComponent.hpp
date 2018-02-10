@@ -1,10 +1,10 @@
 #pragma once
 
 #include <Vector.hpp>
+#include <Optional.hpp>
 
 #include "ComponentBase.hpp"
 #include "Physics3DSystem.hpp"
-#include "Physics3DShapes.hpp"
 
 namespace Poly
 {
@@ -21,8 +21,6 @@ namespace Poly
 	{
 		STATIC,
 		DYNAMIC,
-		KINEMATIC,
-		DYNAMIC_CUSTOM_INTERTIA,
 		_COUNT
 	};
 
@@ -32,7 +30,8 @@ namespace Poly
 	struct Rigidbody3DComponentTemplate : BaseObject<>
 	{
 		float Mass = 0;
-		Vector Intertia = Vector(0.f, 0.f, 0.f);
+		/// If inertia isn't set then it will be computed from mass and shape
+		Optional<Vector> Inertia;
 		/// Restitution is in fact a bounciness.
 		float Restitution = 0.5f;
 		float Friction = 0.5f;
@@ -42,8 +41,9 @@ namespace Poly
 		Vector LinearFactor = Vector(1.f, 1.f, 1.f);
 		Vector AngularFactor = Vector(1.f, 1.f, 1.f);
 
-		/// Rigid body will not be considered during the simulation until it is registered.
-		bool DisableDeactivation = true;
+		/// Due to optimalization rigidbodies are deactivated after some time of idleness.
+		bool Deactivatable = false;
+		/// Rigidbody must be registered to collide and be hit during ray test.
 		bool Registered = true;
 		eRigidBody3DType RigidbodyType = eRigidBody3DType::DYNAMIC;
 	};
@@ -99,7 +99,7 @@ namespace Poly
 
 
 		float GetMass() const { return Template.Mass; }
-		const Vector& GetIntertia() const { return Template.Intertia; }
+		const Vector& GetIntertia() const { return Template.Inertia.Value(); }
 		float GetRestitution() const { return Template.Restitution; }
 		float GetFriction() const { return Template.Friction; }
 		float GetRollingFriction() const { return Template.RollingFriction; }
@@ -137,6 +137,8 @@ namespace Poly
 
 	private:
 		World* BodyWorld;
+
+		bool Initialized = false;
 
 		Rigidbody3DComponentTemplate Template;
 		std::unique_ptr<Rigidbody3DImpl> ImplData;
