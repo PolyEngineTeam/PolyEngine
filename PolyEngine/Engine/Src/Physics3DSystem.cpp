@@ -5,6 +5,7 @@
 
 #include "Rigidbody3DImpl.hpp"
 #include "Collider3DImpl.hpp"
+#include "Physics3DShapesImpl.hpp"
 
 //------------------------------------------------------------------------------
 void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
@@ -79,10 +80,10 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 }
 
 //------------------------------------------------------------------------------
-Poly::Vector Poly::Physics3DSystem::CalculateIntertia(const Physics3DShape& shape, float mass)
+Poly::Vector Poly::Physics3DSystem::CalculateIntertia(const Physics3DShape* shape, float mass)
 {
 	btVector3 i;
-	shape.BulletShape->calculateLocalInertia(mass, i);
+	shape->ImplData->BulletShape->calculateLocalInertia(mass, i);
 
 	return Vector(i.x(), i.y(), i.z());
 }
@@ -167,7 +168,7 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 		rigidbody->ImplData->BulletMotionState = new btDefaultMotionState();
 
 		// get collider shape
-		btCollisionShape* shape = collider->GetShape().BulletShape;
+		btCollisionShape* shape = collider->GetShape().ImplData->BulletShape;
 
 		btVector3 inertia(0, 0, 0);
 
@@ -228,7 +229,7 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 		collider->ImplData->BulletTrigger = new btCollisionObject();
 		collider->ImplData->BulletTrigger->setCollisionFlags(collider->ImplData->BulletTrigger->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
 
-		collider->ImplData->BulletTrigger->setCollisionShape(collider->Template.Shape->BulletShape);
+		collider->ImplData->BulletTrigger->setCollisionShape(collider->Template.Shape->ImplData->BulletShape);
 
 		// if component is registered at initialization that means it needs to be registered right now
 		if (collider->Template.Registered)
@@ -361,7 +362,7 @@ Poly::ContactPairResults Poly::Physics3DSystem::GetAllContactPairs(World* world)
 		}
 		if (numContacts > 0)
 		{
-			normAvg /= numContacts;
+			normAvg /= (float)numContacts;
 			normAvg.Normalize();
 		}
 			

@@ -3,6 +3,8 @@
 #include "btBulletCollisionCommon.h"
 
 #include "Collider3DImpl.hpp"
+#include "Physics3DShapesImpl.hpp"
+#include "Physics3DShapes.hpp"
 
 //------------------------------------------------------------------------------
 Poly::Collider3DComponent::Collider3DComponent(World* world, Collider3DComponentTemplate&& tmp)
@@ -26,11 +28,11 @@ Poly::Collider3DComponent::~Collider3DComponent()
 }
 
 //------------------------------------------------------------------------------
-void Poly::Collider3DComponent::SetShape(const Physics3DShape& shape)
+void Poly::Collider3DComponent::SetShape(const Physics3DShape* shape)
 {
-	ImplData->BulletTrigger->setCollisionShape(shape.BulletShape);
 	Template.Shape.release();
-	Template.Shape = std::make_unique<Physics3DShape>(shape);
+	Template.Shape = std::make_unique<Physics3DShape>(*shape);
+	ImplData->BulletTrigger->setCollisionShape(Template.Shape->ImplData->BulletShape);
 }
 
 //------------------------------------------------------------------------------

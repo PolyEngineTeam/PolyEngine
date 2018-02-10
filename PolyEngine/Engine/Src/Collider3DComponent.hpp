@@ -4,7 +4,6 @@
 
 #include "ComponentBase.hpp"
 #include "Physics3DSystem.hpp"
-#include "Physics3DShapes.hpp"
 
 namespace Poly
 {
@@ -76,7 +75,7 @@ namespace Poly
 		/// Also shape will be replaced within Bullet Physics implementation.
 		/// @param shape - pointer to shape that will be assigned to this collider
 		/// @see Trigger3DComponent::GetShape
-		void SetShape(const Physics3DShape& shape);
+		void SetShape(const Physics3DShape* shape);
 
 
 		// getters

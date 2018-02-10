@@ -102,6 +102,9 @@
     <Filter Include="Physics3D\Components\Impl">
       <UniqueIdentifier>{d49a0c73-36fe-4ceb-a405-c978d55b8ddb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Physics3D\Shapes\Impl">
+      <UniqueIdentifier>{56120815-18d7-4970-b344-195aa0647308}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine.cpp">
@@ -444,6 +447,9 @@
     </ClInclude>
     <ClInclude Include="Src\Collider3DImpl.hpp">
       <Filter>Physics3D\Components\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics3DShapesImpl.hpp">
+      <Filter>Physics3D\Shapes\Impl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
