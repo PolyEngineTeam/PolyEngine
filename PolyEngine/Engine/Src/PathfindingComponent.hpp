@@ -9,70 +9,32 @@
 
 namespace Poly
 {
-	class ENGINE_DLLEXPORT NavGrid : public BaseObject<>
+	class ENGINE_DLLEXPORT NavNode : public BaseObject<>
+	{};
+
+	class ENGINE_DLLEXPORT NavGraph : public BaseObject<>
 	{
 	public:
-		struct Cell
-		{
-			Cell() = default;
-			Cell(bool occupied) : Occupied(occupied) {}
-			bool Occupied = false;
-		};
-
-		NavGrid(const Vector2f& origin, const Vector2i& gridSize, float cellSize = 1.0f);
-		NavGrid(const Vector2f& origin, const Vector2i& gridSize, const Dynarray<bool>& occpanceMap, float cellSize = 1.0f);
-
-		bool IsPositionValid(const Vector2f& pos) const;
-		bool IsPositionValid(const Vector2f& pos, float radius) const;
-		bool IsLineValid(const Vector2f& start, const Vector2f& end, float radius) const;
-
-		Optional<Vector2i> GetCellAtPosition(const Vector2f& pos) const;
-		Dynarray<Vector2i> GetCellAtPosition(const Vector2f& pos, float radius) const;
-		Dynarray<Vector2i> GetCellsInLine(const Vector2f& start, const Vector2f& end, float radius) const;
-
-		Vector2f GetCellMiddlePos(const Vector2i& cell) const;
-
-		Dynarray<Vector2i> GetNeighbours(const Vector2i& cell) const;
-
-		const Cell& GetCell(size_t x, size_t y) const { return Cells[GetArrayIdx(x, y)]; }
-		Cell& GetCell(size_t x, size_t y) { return Cells[GetArrayIdx(x, y)]; }
-
-		const Vector2i& GetGridSize() const { return GridSize; };
-		const float GetCellSize() const { return CellSize; };
-
-		Vector2f TrimPointToGrid(const Vector2f& pos) const;
-		Optional<Vector2i> GetIdxFromPos(const Vector2f& pos) const;
-		inline size_t GetArrayIdx(const Vector2i& v) const { return GetArrayIdx(v.X, v.Y); }
-		inline size_t GetArrayIdx(size_t x, size_t y) const { return y * GridSize.X + x; }
-		bool IsPointInsideGrid(const Vector2f& point) const;
-	private:
-		Vector2f GetCellOrigin(const Vector2i& cell) const;
-		Vector2f ClosestPointOnCell(const Vector2i& cell, const Vector2f& pos) const;
-		Vector2f ClosestPointOnCell(const Vector2i& cell, const Vector2f& start, const Vector2f& end) const;
-		
-		void GetCellAtPositionInternal(const Vector2f& pos, float radius, Dynarray<Vector2i>& cells) const;
-		void GetCellsInLineInternal(const Vector2f& start, const Vector2f& end, float radius, Dynarray<Vector2i>& cells) const;
-
-		Vector2f GridOrigin;
-		float CellSize = 1.0f;
-		Vector2i GridSize;
-		Dynarray<Cell> Cells;
+		virtual float GetTravelCost(const Poly::NavNode* from, const Poly::NavNode* to) const = 0;
+		virtual float GetHeuristicCost(const Poly::NavNode* from, const Poly::NavNode* to) const = 0;
+		virtual Vector GetNodeWorldPosition(const Poly::NavNode* node) const = 0;
+		virtual const NavNode* GetNodeFromWorldPosition(const Vector& pos) const = 0;
+		virtual Dynarray<const NavNode*> GetConnections(const Poly::NavNode* node) const = 0;
 	};
 
 	class ENGINE_DLLEXPORT PathfindingComponent : public ComponentBase
 	{
 	public:
-		PathfindingComponent(const NavGrid* grid) : NavigationGrid(grid) {}
+		PathfindingComponent(const NavGraph* navGraphs) : NavigationGraph(navGraphs) {}
 
-		void SetDestination(const Vector2f& pos);
+		void SetDestination(const Vector& pos);
 		void ResetDestination();
 
-		inline const Dynarray<Vector2f>& GetPath() const { return CalculatedPath; }
+		inline const Dynarray<Vector>& GetPath() const { return CalculatedPath; }
 	private:
-		const NavGrid* NavigationGrid = nullptr;
-		float AgentRadius = 0.5f;
-		Dynarray<Vector2f> CalculatedPath;
-		Optional<Vector2f> CurentDestination;
+		const NavGraph* NavigationGraph = nullptr;
+		Dynarray<Vector> CalculatedPath;
+		Optional<Vector> CurentDestination;
 		bool RecalculateRequested = false;
 		bool LastPathSearchFailed = false;
 
