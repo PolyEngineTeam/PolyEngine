@@ -20,6 +20,7 @@ namespace Poly
 		virtual Vector GetNodeWorldPosition(const Poly::NavNode* node) const = 0;
 		virtual const NavNode* GetNodeFromWorldPosition(const Vector& pos) const = 0;
 		virtual Dynarray<const NavNode*> GetConnections(const Poly::NavNode* node) const = 0;
+		virtual bool CanConnectDirectly(const NavNode* n1, const NavNode* n2) const = 0;
 	};
 
 	class ENGINE_DLLEXPORT PathfindingComponent : public ComponentBase

@@ -89,6 +89,29 @@ Optional<Dynarray<Vector>> CalculateNewPath(const NavGraph* graph, const Vector&
 	return path;
 }
 
+void SmoothPath(const NavGraph* graph, Dynarray<Vector>& path)
+{
+	size_t currIdx = 0;
+	while (currIdx < path.GetSize() - 1)
+	{
+
+		size_t stillVisibleIdx = currIdx;
+		for (size_t idx = path.GetSize() - 1; idx > currIdx; --idx)
+		{
+			if (graph->CanConnectDirectly(graph->GetNodeFromWorldPosition(path[currIdx]), graph->GetNodeFromWorldPosition(path[idx])))
+			{
+				stillVisibleIdx = idx;
+				break;
+			}
+		}
+
+		for (size_t idx = currIdx + 1; idx < stillVisibleIdx; ++idx)
+			path.RemoveByIdx(currIdx + 1);
+
+		++currIdx;
+	}
+}
+
 ENGINE_DLLEXPORT void Poly::PathfindingSystem::UpdatePhase(World* world)
 {
 	for (auto& tuple : world->IterateComponents<PathfindingComponent>())
@@ -108,6 +131,7 @@ ENGINE_DLLEXPORT void Poly::PathfindingSystem::UpdatePhase(World* world)
 				continue;
 			}
 
+			SmoothPath(pathfindingCmp->NavigationGraph, path.Value());
 			pathfindingCmp->CalculatedPath = std::move(path.TakeValue());
 		}
 	}
