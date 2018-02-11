@@ -32,6 +32,7 @@ namespace Poly
 		float Mass = 0;
 		/// If inertia isn't set then it will be computed from mass and shape
 		Optional<Vector> Inertia;
+		Optional<Vector> Gravity;
 		/// Restitution is in fact a bounciness.
 		float Restitution = 0.5f;
 		float Friction = 0.5f;
@@ -40,6 +41,8 @@ namespace Poly
 		float AngularDamping = 0.5f;
 		Vector LinearFactor = Vector(1.f, 1.f, 1.f);
 		Vector AngularFactor = Vector(1.f, 1.f, 1.f);
+		Optional<Vector> LinearVelocity = Vector(0.f, 0.f, 0.f);
+		Optional<Vector> AngularVelocity = Vector(0.f, 0.f, 0.f);
 
 		/// Due to optimalization rigidbodies are deactivated after some time of idleness.
 		bool Deactivatable = false;
@@ -83,11 +86,12 @@ namespace Poly
 		// setters
 
 
-		void SetMassProps(float mass, const Vector& intertia);
+		void SetMassProps(float mass, const Vector& inertia);
 		void SetRestitution(float restitution);
 		void SetFriction(float friction);
 		void SetRollingFriction(float rollingFriction);
 		void SetDamping(float linearDamping, float angularDamping);
+
 		void SetLinearFactor(const Vector& linearFactor);
 		void SetAngularFactor(const Vector& angularFactor);
 
@@ -99,49 +103,48 @@ namespace Poly
 
 
 		float GetMass() const { return Template.Mass; }
-		const Vector& GetIntertia() const { return Template.Inertia.Value(); }
+		const Vector& GetInertia() const { return Template.Inertia.Value(); }
 		float GetRestitution() const { return Template.Restitution; }
 		float GetFriction() const { return Template.Friction; }
 		float GetRollingFriction() const { return Template.RollingFriction; }
 		float GetLinearDamping() const { return Template.LinearDamping; }
 		float GetAngularDamping() const { return Template.AngularDamping; }
+
 		const Vector& GetLinearFactor() const { return Template.LinearFactor; }
 		const Vector& GetAngularFactor() const { return Template.AngularFactor; }
-
-		bool IsRegistered() const { return Template.Registered; }
-		eRigidBody3DType GetBodyType() const { return Template.RigidbodyType; }
 
 		Vector GetLinearVelocity();
 		Vector GetAngularVelocity();
 
 
+		bool IsRegistered() const { return Template.Registered; }
+		bool IsInitialized() const { return Initialized; }
+		eRigidBody3DType GetBodyType() const { return Template.RigidbodyType; }
+
+
 		// other
 
-
-		void UpdatePosition();
-
-			// TODO(squares): test them
-		void ApplyForceToCenter(const Vector& force);
 		void ApplyImpulseToCenter(const Vector& impulse);
-		void ApplyDamping(float timestep);
-		void ApplyForce(const Vector& force, const Vector& relPos);
-		void ApplyGravity();
 		void ApplyImpulse(const Vector& impulse, const Vector& relPos);
-		void ApplyTorque(const Vector& torque);
 		void ApplyTorqueImpulse(const Vector& torque);
-
-		void ClearForces();
 
 		void SetGravity(const Vector& gravity);
 		Vector GetGravity() const;
 
 	private:
-		World* BodyWorld;
+		void UpdatePosition();
 
 		bool Initialized = false;
-
-		Rigidbody3DComponentTemplate Template;
+		World* BodyWorld;
 		std::unique_ptr<Rigidbody3DImpl> ImplData;
+
+		bool TemplateChanged = true;
+		Rigidbody3DComponentTemplate Template;
+
+		Optional<Vector> ImpulseToCenter;
+		Optional<Vector> Impulse;
+		Optional<Vector> ImpulsePos;
+		Optional<Vector> TorqueImpulse;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, Rigidbody3DComponent)
