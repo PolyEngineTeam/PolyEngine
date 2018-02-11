@@ -40,11 +40,13 @@ Optional<Dynarray<Vector>> CalculateNewPath(const NavGraph* graph, const Vector&
 	minCosts[startNode] = 0;
 
 	i64 bestNodeIdx = -1;
+	Dynarray<const NavNode*> connections(8);
 	while (openList.GetSize() > 0 && bestNodeIdx < 0)
 	{
 		i64 qIdx = openList.Pop();
 		
-		Dynarray<const NavNode*> connections = graph->GetConnections(AllNodes[qIdx].Node);
+		connections.Clear();
+		graph->GetConnections(AllNodes[qIdx].Node, connections);
 		for (const NavNode* connection : connections)
 		{
 			// we reached destination

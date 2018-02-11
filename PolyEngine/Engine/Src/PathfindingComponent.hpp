@@ -19,7 +19,7 @@ namespace Poly
 		virtual float GetHeuristicCost(const Poly::NavNode* from, const Poly::NavNode* to) const = 0;
 		virtual Vector GetNodeWorldPosition(const Poly::NavNode* node) const = 0;
 		virtual const NavNode* GetNodeFromWorldPosition(const Vector& pos) const = 0;
-		virtual Dynarray<const NavNode*> GetConnections(const Poly::NavNode* node) const = 0;
+		virtual void GetConnections(const Poly::NavNode* node, Dynarray<const NavNode*>& connections) const = 0;
 		virtual bool CanConnectDirectly(const NavNode* n1, const NavNode* n2) const = 0;
 	};
 
