@@ -17,6 +17,11 @@ struct PathNode
 	float TotalCost() const { return Cost + HeuristicCost; }
 };
 
+struct PathNodeCmp
+{
+	bool operator()(const std::pair<i64, float>& a, const std::pair<i64, float>& b) const { return a.second < b.second; }
+};
+
 Optional<Dynarray<Vector>> CalculateNewPath(const NavGraph* graph, const Vector& start, const Vector& dest, size_t depthLimit)
 {
 	// Swap start and dest to better handle path parsing later
@@ -30,20 +35,18 @@ Optional<Dynarray<Vector>> CalculateNewPath(const NavGraph* graph, const Vector&
 
 	Dynarray<PathNode> AllNodes;
 
-	auto comparator = [&AllNodes](size_t a, size_t b) { return AllNodes[a].TotalCost() < AllNodes[b].TotalCost(); };
-	
-	PriorityQueue<i64> openList(comparator), closedList(comparator);
+	PriorityQueue<std::pair<i64, float>, PathNodeCmp> openList, closedList;
 	std::unordered_map<const NavNode*, float> minCosts;
 
 	AllNodes.PushBack(PathNode(startNode, 0, graph->GetHeuristicCost(startNode, destNode) ));
-	openList.Push(AllNodes.GetSize() - 1);
+	openList.Push(std::make_pair(AllNodes.GetSize() - 1, graph->GetHeuristicCost(startNode, destNode)));
 	minCosts[startNode] = 0;
 
 	i64 bestNodeIdx = -1;
 	Dynarray<const NavNode*> connections(8);
 	while (openList.GetSize() > 0 && bestNodeIdx < 0)
 	{
-		i64 qIdx = openList.Pop();
+		i64 qIdx = openList.Pop().first;
 		
 		connections.Clear();
 		graph->GetConnections(AllNodes[qIdx].Node, connections);
@@ -66,11 +69,11 @@ Optional<Dynarray<Vector>> CalculateNewPath(const NavGraph* graph, const Vector&
 				continue; // node has worse base cost than other (in the same pos) we visited before, skip it
 
 			AllNodes.PushBack(s);
-			openList.Push(AllNodes.GetSize() - 1);
+			openList.Push(std::make_pair(AllNodes.GetSize() - 1, s.TotalCost()));
 			minCosts[s.Node] = s.Cost;
 		}
 
-		closedList.Push(qIdx);
+		closedList.Push(std::make_pair(qIdx, AllNodes[qIdx].TotalCost()));
 		minCosts[AllNodes[qIdx].Node] = AllNodes[qIdx].Cost;
 	}
 

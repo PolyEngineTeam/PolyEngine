@@ -8,12 +8,19 @@
 
 namespace Poly
 {
-	template <typename T>
+	template<typename T>
+	class DefaultCmp
+	{
+		bool operator()(const T& a, const T& b) const { return a < b; }
+	};
+
+
+	template <typename T, typename Less = DefaultCmp<T>>
 	class PriorityQueue final : BaseObjectLiteralType<>
 	{
 	public:
 		PriorityQueue(size_t prealocatedSize = 0) : Data(prealocatedSize) {}
-		PriorityQueue(std::function<bool(const T&, const T&)> cmp, size_t prealocatedSize = 0) : Cmp(std::move(cmp)), Data(prealocatedSize) {}
+		PriorityQueue(Less lessCmp, size_t prealocatedSize = 0) : LessCmp(std::move(lessCmp)), Data(prealocatedSize) {}
 		PriorityQueue(Dynarray<T> data) : Data(std::move(data))
 		{
 			for (size_t idx = Data.GetSize() / 2; idx > 0; --idx)
@@ -38,7 +45,6 @@ namespace Poly
 		const T& Head() const { return Data[0]; }
 		size_t GetSize() const { return Data.GetSize(); }
 		void Reserve(size_t size) { Data.Reserve(size); }
-		void SetLessCmp(std::function<bool(const T&, const T&)> less) { Cmp = std::move(less); }
 	private:
 		void SiftUp(size_t idx)
 		{
@@ -87,12 +93,12 @@ namespace Poly
 			Data[idx2] = std::move(tmp);
 		}
 
-		inline bool Compare(size_t idx1, size_t idx2) const { return Cmp(Data[idx1], Data[idx2]); }
+		inline bool Compare(size_t idx1, size_t idx2) const { return LessCmp(Data[idx1], Data[idx2]); }
 		inline size_t GetParent(size_t node) { return (node - 1) / 2; }
 		inline size_t GetLeftChild(size_t node) { return 2 * node + 1; }
 		inline size_t GetRightChild(size_t node) { return 2 * node + 2; }
 
+		Less LessCmp;
 		Dynarray<T> Data;
-		std::function<bool(const T&, const T&)> Cmp = [](const T& a, const T& b) { return a < b; };
 	};
 } //namespace Poly
