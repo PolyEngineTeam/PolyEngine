@@ -45,7 +45,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT Physics3DShape : public BaseObject<>
 	{
 		friend void Physics3DSystem::EnsureInit(World* world, Entity* entity);
-		friend Vector Physics3DSystem::CalculateIntertia(const Physics3DShape* shape, float mass);
+		friend Vector Physics3DSystem::CalculateInertia(const Physics3DShape* shape, float mass);
 		friend void Collider3DComponent::SetShape(const Physics3DShape* shape);
 	public:
 		Physics3DShape(ePhysics3DShape type) : ShapeType(type) {}

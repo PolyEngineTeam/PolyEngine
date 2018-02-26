@@ -88,7 +88,7 @@ namespace Poly
 		/// @param mass - mass of object with given shape
 		/// @return three dimensional vector containing intertia for given shape with mass
 		/// @see Rigidbody3DComponentTemplate
-		Vector CalculateIntertia(const Physics3DShape* shape, float mass);
+		Vector ENGINE_DLLEXPORT CalculateInertia(const Physics3DShape* shape, float mass);
 
 
 		// collision groups administration
@@ -99,21 +99,21 @@ namespace Poly
 		/// @param group - new collision group
 		/// @see Trigger3DComponent::GetCollisionGroup
 		/// @see Trigger3DComponent::SetCollisionMask
-		void SetCollisionGroup(World* world, Entity* entity, EnumFlags<eCollisionGroup> group);
+		void ENGINE_DLLEXPORT SetCollisionGroup(World* world, Entity* entity, EnumFlags<eCollisionGroup> group);
 
 		/// Use to change collider collision mask.
 		/// Collision mask determines whith which collision groups this collider will collide.
 		/// @param mask - new collision mask
 		/// @see Trigger3DComponent::GetCollisionMask
 		/// @see Trigger3DComponent::SetCollisionGroup
-		void SetCollisionMask(World* world, Entity* entity, EnumFlags<eCollisionGroup> mask);
+		void ENGINE_DLLEXPORT SetCollisionMask(World* world, Entity* entity, EnumFlags<eCollisionGroup> mask);
 
 
 		// deferred administration
 
 		/// The actual collider or rigibody is created during the first Physics3DSystem::Update call after creation of that component.
 		/// @see Physics3DSystem::Physics3DUpdatePhase
-		void EnsureInit(World* world, Entity* entity);
+		void ENGINE_DLLEXPORT EnsureInit(World* world, Entity* entity);
 
 
 		// registration
