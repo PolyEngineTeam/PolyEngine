@@ -132,16 +132,6 @@ namespace Poly
 		// collisions
 
 
-		/// When You simply want to check if one entity is colliding with anther just call that function.
-		/// Both entities have to contain @see[Trigger3DComponent] or @see[Rigidbody3DComponent].
-		/// @param world - world with entities You want to test
-		/// @param firstID - first enitity
-		/// @param secondID - second enitity
-		/// @return colliding - true if given entities are colliding
-		/// @see ContactPair
-		/// @see Contact
-		bool ENGINE_DLLEXPORT IsColliding(World* world, Entity* firstEntity, Entity* secondEntity);
-
 		/// When You want to get collision points You should use this function.
 		/// Both entities have to contain @see[Trigger3DComponent] or @see[Rigidbody3DComponent].
 		/// @param world - world with entities You want to test
@@ -151,15 +141,6 @@ namespace Poly
 		/// @see IsColliding
 		/// @see Contact
 		ENGINE_DLLEXPORT ContactResult ContactPair(World* world, Entity* firstEntity, Entity* secondEntity);
-
-		/// With this function You can get all entities colliding with given entity.
-		/// Detects collision only if entity contains @see[Trigger3DComponent] or @see[Rigidbody3DComponent].
-		/// @param world - world with entities You want to test
-		/// @param entityID - enitity
-		/// @return result - instance of @see[ContactResult]
-		/// @see IsColliding
-		/// @see ContactPair
-		ENGINE_DLLEXPORT ContactResult Contact(World* world, Entity* entity);
 
 
 		ENGINE_DLLEXPORT ContactPairResults GetAllContactPairs(World* world);

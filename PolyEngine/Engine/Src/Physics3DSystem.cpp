@@ -8,9 +8,6 @@
 #include "Physics3DShapesImpl.hpp"
 #include "Physics3DShapes.hpp"
 
-	// TODO(squares): prevent cases where user removes one 
-	// of components and adds a new one
-
 //------------------------------------------------------------------------------
 void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
 {
@@ -273,6 +270,8 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 			Physics3DSystem::RegisterComponent(world, entity, false);
 	}
 
+	collider->ImplData->BulletTrigger->setUserPointer(entity);
+
 	collider->Initialized = true;
 	rigidbody->Initialized = true;
 }
@@ -292,7 +291,6 @@ void Poly::Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool
 	{
 		worldCmp->DynamicsWorld->addRigidBody(rigidbody->ImplData->BulletRigidBody, 
 			static_cast<int>(collider->Template.CollisionGroup), static_cast<int>(collider->Template.CollisionMask));
-		worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, Entity*>(rigidbody->ImplData->BulletRigidBody, entity));
 
 		rigidbody->Template.Registered = true;
 		collider->Template.Registered = true;
@@ -301,7 +299,6 @@ void Poly::Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool
 	{
 		worldCmp->DynamicsWorld->addCollisionObject(collider->ImplData->BulletTrigger, 
 			static_cast<int>(collider->Template.CollisionGroup), static_cast<int>(collider->Template.CollisionMask));
-		worldCmp->BulletTriggerToEntity.insert(std::pair<const btCollisionObject*, Entity*>(collider->ImplData->BulletTrigger, entity));
 
 		collider->Template.Registered = true;
 	}
@@ -320,7 +317,6 @@ void Poly::Physics3DSystem::UnregisterComponent(World* world, Entity* entity)
 
 	if (rigidbody && rigidbody->Template.Registered)
 	{
-		worldCmp->BulletTriggerToEntity.erase(rigidbody->ImplData->BulletRigidBody);
 		worldCmp->DynamicsWorld->removeRigidBody(rigidbody->ImplData->BulletRigidBody);
 
 		rigidbody->Template.Registered = false;
@@ -328,7 +324,6 @@ void Poly::Physics3DSystem::UnregisterComponent(World* world, Entity* entity)
 	}
 	else
 	{
-		worldCmp->BulletTriggerToEntity.erase(collider->ImplData->BulletTrigger);
 		worldCmp->DynamicsWorld->removeCollisionObject(collider->ImplData->BulletTrigger);
 
 		collider->Template.Registered = false;
@@ -336,38 +331,7 @@ void Poly::Physics3DSystem::UnregisterComponent(World* world, Entity* entity)
 }
 
 //------------------------------------------------------------------------------
-bool Poly::Physics3DSystem::IsColliding(World* world, Entity* firstEntity, Entity* secondEntity)
-{
-	ASSERTE(world->GetComponent<Collider3DComponent>(firstEntity)->Template.Registered && world->GetComponent<Collider3DComponent>(secondEntity)->Template.Registered, "One of the entities was not registered as trigger.");
-
-	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
-
-	int numManifolds = worldCmp->Dispatcher->getNumManifolds();
-	for (int i = 0; i < numManifolds; i++)
-	{
-		btPersistentManifold* contactManifold = worldCmp->Dispatcher->getManifoldByIndexInternal(i);
-		const btCollisionObject* obA = contactManifold->getBody0();
-		const btCollisionObject* obB = contactManifold->getBody1();
-
-		if ((worldCmp->BulletTriggerToEntity[obA] == firstEntity && worldCmp->BulletTriggerToEntity[obB] == secondEntity)
-			|| (worldCmp->BulletTriggerToEntity[obA] == secondEntity && worldCmp->BulletTriggerToEntity[obB] == firstEntity))
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-//------------------------------------------------------------------------------
 Poly::ContactResult Poly::Physics3DSystem::ContactPair(World* world, Entity* firstEntity, Entity* secondEntity)
-{
-		// TODO(squares): implement this
-	return ContactResult();
-}
-
-//------------------------------------------------------------------------------
-Poly::ContactResult Poly::Physics3DSystem::Contact(World* world, Entity* entity)
 {
 		// TODO(squares): implement this
 	return ContactResult();
@@ -404,8 +368,8 @@ Poly::ContactPairResults Poly::Physics3DSystem::GetAllContactPairs(World* world)
 			
 
 		ContactPairResults::ContactPair pair;
-		pair.FirstEntity = worldCmp->BulletTriggerToEntity[contactManifold->getBody0()];
-		pair.SecondEntity = worldCmp->BulletTriggerToEntity[contactManifold->getBody1()];
+		pair.FirstEntity = (Entity*) contactManifold->getBody0()->getUserPointer();
+		pair.SecondEntity = (Entity*) contactManifold->getBody1()->getUserPointer();
 		pair.Normal = normAvg;
 
 		results.ContactPairs.PushBack(pair);
@@ -433,7 +397,7 @@ Poly::RaycastResult Poly::Physics3DSystem::AllHitsRaycast(World* world, const Ve
 
 			// FIXME(squares): try catch something?
 		// get UniqueID
-		hit.HitEntity = worldCmp->BulletTriggerToEntity[r.m_collisionObjects[i]];
+		hit.HitEntity = (Entity*)r.m_collisionObjects[i]->getUserPointer();
 		// get fraction
 		hit.HitFraction = r.m_hitFractions[i];
 		// get normal
@@ -469,7 +433,7 @@ Poly::RaycastResult Poly::Physics3DSystem::ClosestHitRaycast(World* world, const
 
 			// FIXME(squares): try catch something?
 		// get UniqueID
-		hit.HitEntity = worldCmp->BulletTriggerToEntity[r.m_collisionObject];
+		hit.HitEntity = (Entity*)r.m_collisionObject->getUserPointer();
 		// get fraction
 		hit.HitFraction = r.m_closestHitFraction;
 		// get normal

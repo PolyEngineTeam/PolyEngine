@@ -51,7 +51,6 @@ namespace Poly
 		friend void Physics3DSystem::SetCollisionMask(World* world, Entity* entity, EnumFlags<eCollisionGroup> mask);
 		friend void Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool enablePhysics);
 		friend void Physics3DSystem::UnregisterComponent(World * world, Entity* entity);
-		friend bool Physics3DSystem::IsColliding(World* world, Entity* firstEntity, Entity* secondEntity);
 
 	public:
 		// constructors and destructor
