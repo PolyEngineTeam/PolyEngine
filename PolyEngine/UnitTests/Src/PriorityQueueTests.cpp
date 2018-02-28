@@ -6,7 +6,7 @@ using namespace Poly;
 TEST_CASE("PriorityQueue sorted push test", "[PriorityQueue]")
 {
 	PriorityQueue<int> q;
-	const size_t testSize = 100;
+	const size_t testSize = 10;
 
 	for (size_t i = 0; i < testSize; ++i)
 	{
@@ -57,9 +57,14 @@ TEST_CASE("PriorityQueue random push test", "[PriorityQueue]")
 	}
 }
 
+struct CustomTestComparator
+{
+	bool operator()(int a, int b) const { return a > b; }
+};
+
 TEST_CASE("PriorityQueue custom comparator test", "[PriorityQueue]")
 {
-	PriorityQueue<int> q([](size_t a, size_t b) { return a > b; });
+	PriorityQueue<int, CustomTestComparator> q;
 	const size_t testSize = 100;
 
 	for (size_t i = 0; i < testSize; ++i)

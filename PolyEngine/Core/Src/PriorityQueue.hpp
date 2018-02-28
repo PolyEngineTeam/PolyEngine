@@ -9,7 +9,7 @@
 namespace Poly
 {
 	template<typename T>
-	class DefaultCmp
+	struct DefaultCmp
 	{
 		bool operator()(const T& a, const T& b) const { return a < b; }
 	};
@@ -35,8 +35,10 @@ namespace Poly
 
 		T Pop()
 		{
-			Swap(0, GetSize() - 1);
-			T tmp = std::move(Data[GetSize() - 1]);
+			T& first = Data[0];
+			T& last = Data[GetSize() - 1];
+			T tmp = std::move(first);
+			Swap(first, last);
 			Data.PopBack();
 			SiftDown(0);
 			return tmp;
@@ -48,37 +50,47 @@ namespace Poly
 	private:
 		void SiftUp(size_t idx)
 		{
-			while (idx > 0 && Compare(idx, GetParent(idx)))
+			while (idx > 0)
 			{
-				Swap(idx, GetParent(idx));
-				idx = GetParent(idx);
+				T& val = Data[idx];
+				const size_t parentIdx = GetParent(idx);
+				T& parent = Data[parentIdx];
+				if (!Compare(val, parent))
+					break;
+				
+				Swap(val, parent);
+				idx = parentIdx;
 			}
 		}
 
 		void SiftDown(size_t idx)
 		{
-			while (true)
+			while (idx < GetSize())
 			{
 				size_t leftChild = GetLeftChild(idx);
 				size_t rightChild = GetRightChild(idx);
 
+				T& val = Data[idx];
+				T* left = leftChild < GetSize() ? &Data[leftChild] : nullptr;
+				T* right = rightChild < GetSize() ? &Data[rightChild] : nullptr;
+
 				// reached end
-				if (leftChild < GetSize() && Compare(leftChild, idx))
+				if (left && Compare(*left, val))
 				{
-					if (rightChild < GetSize() && Compare(rightChild, leftChild))
+					if (right && Compare(*right, *left))
 					{
-						Swap(idx, rightChild);
+						Swap(val, *right);
 						idx = rightChild;
 					}
 					else
 					{
-						Swap(idx, leftChild);
+						Swap(val, *left);
 						idx = leftChild;
 					}
 				}
-				else if (rightChild < GetSize() && Compare(rightChild, idx))
+				else if (right && Compare(*right, val))
 				{
-					Swap(idx, rightChild);
+					Swap(val, *right);
 					idx = rightChild;
 				}
 				else
@@ -86,14 +98,14 @@ namespace Poly
 			}
 		}
 
-		inline void Swap(size_t idx1, size_t idx2)
+		inline void Swap(T& a, T& b)
 		{
-			T tmp = std::move(Data[idx1]);
-			Data[idx1] = std::move(Data[idx2]);
-			Data[idx2] = std::move(tmp);
+			T tmp = std::move(a);
+			a = std::move(b);
+			b = std::move(tmp);
 		}
 
-		inline bool Compare(size_t idx1, size_t idx2) const { return LessCmp(Data[idx1], Data[idx2]); }
+		inline bool Compare(const T& a, const T& b) const { return LessCmp(a, b); }
 		inline size_t GetParent(size_t node) { return (node - 1) / 2; }
 		inline size_t GetLeftChild(size_t node) { return 2 * node + 1; }
 		inline size_t GetRightChild(size_t node) { return 2 * node + 2; }
