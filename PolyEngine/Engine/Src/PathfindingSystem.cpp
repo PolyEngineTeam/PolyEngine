@@ -2,6 +2,7 @@
 
 #include "PathfindingSystem.hpp"
 #include "PathfindingComponent.hpp"
+#include <OrderedMap.hpp>
 
 using namespace Poly;
 
@@ -36,11 +37,11 @@ Optional<Dynarray<Vector>> CalculateNewPath(const NavGraph* graph, const Vector&
 	Dynarray<PathNode> AllNodes;
 
 	PriorityQueue<std::pair<i64, float>, PathNodeCmp> openList, closedList;
-	std::unordered_map<const NavNode*, float> minCosts;
+	OrderedMap<const NavNode*, float> minCosts;
 
 	AllNodes.PushBack(PathNode(startNode, 0, graph->GetHeuristicCost(startNode, destNode) ));
 	openList.Push(std::make_pair(AllNodes.GetSize() - 1, graph->GetHeuristicCost(startNode, destNode)));
-	minCosts[startNode] = 0;
+	minCosts.Insert(startNode, 0.f);
 
 	i64 bestNodeIdx = -1;
 	Dynarray<const NavNode*> connections(8);
@@ -64,13 +65,17 @@ Optional<Dynarray<Vector>> CalculateNewPath(const NavGraph* graph, const Vector&
 			const float moveCost = graph->GetTravelCost(connection, q.Node);
 			PathNode s{ connection, q.Cost + moveCost, graph->GetHeuristicCost(connection, destNode), qIdx };
 
-			auto& it = minCosts.find(s.Node);
-			if (it != minCosts.end() && it->second < s.Cost)
+			auto& valOpt = minCosts.Get(s.Node);
+			if (valOpt.HasValue() && valOpt.Value() < s.Cost)
 				continue; // node has worse base cost than other (in the same pos) we visited before, skip it
 
 			AllNodes.PushBack(s);
 			openList.Push(std::make_pair(AllNodes.GetSize() - 1, s.TotalCost()));
-			minCosts[s.Node] = s.Cost;
+			auto& entry = minCosts.Entry(s.Node);
+			if (entry.IsVacant())
+				entry.VacantInsert(s.Cost);
+			else
+				entry.OccupiedReplace(s.Cost);
 		}
 
 		closedList.Push(std::make_pair(qIdx, AllNodes[qIdx].TotalCost()));

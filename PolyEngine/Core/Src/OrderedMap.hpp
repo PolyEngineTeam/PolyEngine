@@ -130,8 +130,8 @@ namespace Poly
 		Optional<const V&> Get(const K&  key) const { return GetPimple(key); }
 		Optional<const V&> Get(      K&& key) const { return GetPimple(std::move(key)); }
 
-		const V& operator[](const K& key) const { return Get(key).Value(); }
 		      V& operator[](const K& key)       { return Get(key).Value(); }
+		const V& operator[](const K& key) const { return Get(key).Value(); }
 
 		/// <returns>The number of elements in the map.</returns>
 		size_t GetSize() const { return len; };

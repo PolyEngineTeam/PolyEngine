@@ -55,7 +55,7 @@ namespace Poly
 				T& val = Data[idx];
 				const size_t parentIdx = GetParent(idx);
 				T& parent = Data[parentIdx];
-				if (!Compare(val, parent))
+				if (!LessCmp(val, parent))
 					break;
 				
 				Swap(val, parent);
@@ -67,31 +67,27 @@ namespace Poly
 		{
 			while (idx < GetSize())
 			{
-				size_t leftChild = GetLeftChild(idx);
-				size_t rightChild = GetRightChild(idx);
+				const size_t leftChild = GetLeftChild(idx);
+				const size_t rightChild = GetRightChild(idx);
+
+				const bool leftOk = leftChild < GetSize();
+				const bool rightOk = rightChild < GetSize();
+
+				if (!leftOk && !rightOk)
+					return;
 
 				T& val = Data[idx];
-				T* left = leftChild < GetSize() ? &Data[leftChild] : nullptr;
-				T* right = rightChild < GetSize() ? &Data[rightChild] : nullptr;
+				// assign val, simple trick to bypass null reference limitations
+				T* left = leftOk ? &Data[leftChild] : nullptr;
+				T* right = rightOk ? &Data[rightChild] : nullptr;
 
-				// reached end
-				if (left && Compare(*left, val))
+				const bool rightBetter = !leftOk || (rightOk && LessCmp(*right, *left));
+				T* candidate = rightBetter ? right : left;
+
+				if (candidate && LessCmp(*candidate, val))
 				{
-					if (right && Compare(*right, *left))
-					{
-						Swap(val, *right);
-						idx = rightChild;
-					}
-					else
-					{
-						Swap(val, *left);
-						idx = leftChild;
-					}
-				}
-				else if (right && Compare(*right, val))
-				{
-					Swap(val, *right);
-					idx = rightChild;
+					Swap(val, *candidate);
+					idx = rightBetter ? rightChild : leftChild;
 				}
 				else
 					return;
@@ -105,7 +101,6 @@ namespace Poly
 			b = std::move(tmp);
 		}
 
-		inline bool Compare(const T& a, const T& b) const { return LessCmp(a, b); }
 		inline size_t GetParent(size_t node) { return (node - 1) / 2; }
 		inline size_t GetLeftChild(size_t node) { return 2 * node + 1; }
 		inline size_t GetRightChild(size_t node) { return 2 * node + 2; }
