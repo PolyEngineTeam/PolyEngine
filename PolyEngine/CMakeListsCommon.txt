@@ -106,11 +106,11 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	add_definitions(/DNOMINMAX /D_SCL_SECURE_NO_WARNINGS) #those macros are useless and just keep messing things up, so disable them
 	add_compile_options($<$<CONFIG:Release>:/DFINAL>)
 
-	#add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:/MDd>)
+	add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:/MDd>)
 	add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:/D_DEBUG>)
 	add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:/D_ITERATOR_DEBUG_LEVEL=2>)
 
-	#add_compile_options($<$<OR:$<CONFIG:Testing>,$<CONFIG:Release>>:/MD>)
+	add_compile_options($<$<OR:$<CONFIG:Testing>,$<CONFIG:Release>>:/MD>)
 	add_compile_options($<$<OR:$<CONFIG:Testing>,$<CONFIG:Release>>:/D_ITERATOR_DEBUG_LEVEL=0>)
 	
 	add_compile_options(/EHsc)
