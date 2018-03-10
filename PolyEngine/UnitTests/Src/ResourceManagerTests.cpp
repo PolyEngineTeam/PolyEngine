@@ -1,3 +1,4 @@
+#include <Defines.hpp>
 #include <catch.hpp>
 
 #define _WINDLL
@@ -13,7 +14,7 @@ public:
 };
 
 namespace Poly {
-	DECLARE_RESOURCE(DummyResource, gDummyResourcesMap)
+	TEST_DECLARE_RESOURCE(DummyResource, gDummyResourcesMap)
 }
 DEFINE_RESOURCE(DummyResource, gDummyResourcesMap)
 

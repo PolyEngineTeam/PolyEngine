@@ -1,7 +1,6 @@
 #include "EnginePCH.hpp"
 
-#include <btBulletDynamicsCommon.h>
-#include <btBulletCollisionCommon.h>
+#include "BulletIncludesCommon.hpp"
 
 #include "Rigidbody3DImpl.hpp"
 #include "Collider3DImpl.hpp"

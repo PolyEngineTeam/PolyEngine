@@ -48,7 +48,7 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 		GetProgram().SetUniform("uColor", particleCmp->GetEmitter()->GetSettings().Color);
 		GetProgram().SetUniform("uSpeed", particleCmp->GetEmitter()->GetSettings().Speed);
 
-		int partileLen = particleCmp->GetEmitter()->GetInstances().GetSize() / 16;
+		size_t partileLen = particleCmp->GetEmitter()->GetInstances().GetSize() / 16;
 		const GLParticleDeviceProxy* particleProxy = static_cast<const GLParticleDeviceProxy*>(particleCmp->GetEmitter()->GetParticleProxy());
 		GLuint particleVAO = particleProxy->GetVAO();
 		const TextureResource* Texture = particleCmp->GetSpritesheet();
@@ -63,7 +63,7 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 		glBindTexture(GL_TEXTURE_2D, TextureID);
 
 		glBindVertexArray(particleVAO);
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, partileLen);
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, (GLsizei)partileLen);
 		glBindVertexArray(0);
 		CHECK_GL_ERR();
 

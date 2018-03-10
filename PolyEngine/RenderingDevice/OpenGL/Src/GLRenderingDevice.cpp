@@ -7,6 +7,7 @@
 #include "GLUtils.hpp"
 #include "GLTextureDeviceProxy.hpp"
 #include "GLCubemapDeviceProxy.hpp"
+#include "GLParticleDeviceProxy.hpp"
 #include "GLTextFieldBufferDeviceProxy.hpp"
 #include "GLMeshDeviceProxy.hpp"
 

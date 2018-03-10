@@ -34,6 +34,12 @@ namespace Poly
 		template<> inline std::map<String, std::unique_ptr<type>>& GetResources<type>() { return map_name; } \
 	}
 
+#define TEST_DECLARE_RESOURCE(type, map_name) \
+	namespace Impl { \
+		extern std::map<String, std::unique_ptr<type>> map_name; \
+		template<> inline std::map<String, std::unique_ptr<type>>& GetResources<type>() { return map_name; } \
+	}
+
 #define DEFINE_RESOURCE(type, map_name) namespace Poly { namespace Impl { std::map<String, std::unique_ptr<type>> map_name = {}; }}
 
 	ENGINE_DECLARE_RESOURCE(MeshResource, gMeshResourcesMap)

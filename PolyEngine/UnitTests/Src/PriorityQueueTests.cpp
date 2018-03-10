@@ -1,3 +1,4 @@
+#include <Defines.hpp>
 #include <catch.hpp>
 #include <PriorityQueue.hpp>
 
@@ -6,15 +7,15 @@ using namespace Poly;
 TEST_CASE("PriorityQueue sorted push test", "[PriorityQueue]")
 {
 	PriorityQueue<int> q;
-	const size_t testSize = 10;
+	const int testSize = 10;
 
-	for (size_t i = 0; i < testSize; ++i)
+	for (int i = 0; i < testSize; ++i)
 	{
 		q.Push(i);
 		CHECK(q.GetSize() == i+1);
 	}
 		
-	for (size_t i = 0; i < testSize; ++i)
+	for (int i = 0; i < testSize; ++i)
 	{
 		CHECK(q.Head() == i);
 		CHECK(q.Pop() == i);
@@ -24,15 +25,15 @@ TEST_CASE("PriorityQueue sorted push test", "[PriorityQueue]")
 TEST_CASE("PriorityQueue reverrse sorted push test", "[PriorityQueue]")
 {
 	PriorityQueue<int> q;
-	const size_t testSize = 100;
+	const int testSize = 100;
 
-	for (size_t i = 0; i < testSize; ++i)
+	for (int i = 0; i < testSize; ++i)
 	{
 		q.Push(testSize - i - 1);
 		CHECK(q.GetSize() == i + 1);
 	}
 
-	for (size_t i = 0; i < testSize; ++i)
+	for (int i = 0; i < testSize; ++i)
 	{
 		CHECK(q.Head() == i);
 		CHECK(q.Pop() == i);

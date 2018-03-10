@@ -17,8 +17,8 @@ namespace Poly {
 		const TextureResource* GetSpritesheet() const { return Spritesheet; }
 
 	private:
-		ParticleEmitter* Emitter;
-		TextureResource* Spritesheet;
+		ParticleEmitter* Emitter = nullptr;
+		TextureResource* Spritesheet = nullptr;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, ParticleComponent)
