@@ -96,7 +96,7 @@ void ParticleEmitter::RecreateBufferForProxy()
 	InstancesTransform.Clear();
 	InstancesTransform.Resize(16 * ParticlesPool.GetSize());
 
-	for (int i = 0; i < InstancesTransform.GetSize(); ++i)
+	for (size_t i = 0; i < InstancesTransform.GetSize(); ++i)
 	{
 		InstancesTransform[i] = 0.0f;
 	}

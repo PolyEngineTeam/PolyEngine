@@ -36,7 +36,7 @@ void Poly::Physics3DStaticMeshSource::LoadMesh(const String& meshPath, eResource
 	MeshResource* resource = ResourceManager<MeshResource>::Load(meshPath, source);
 	const Dynarray<MeshResource::SubMesh*>& subMeshes = resource->GetSubMeshes();
 
-	for (int m = 0; m < subMeshes.GetSize(); ++m)
+	for (size_t m = 0; m < subMeshes.GetSize(); ++m)
 	{
 		LoadMesh(*subMeshes[m]);
 	}
@@ -52,7 +52,7 @@ void Poly::Physics3DStaticMeshSource::LoadMesh(const MeshResource::SubMesh& subM
 	const Dynarray<Vector3f>& positions = mesh.GetPositions();
 	const Dynarray<uint32_t>& indices = mesh.GetIndicies();
 
-	for (int i = 0; i < indices.GetSize();)
+	for (size_t i = 0; i < indices.GetSize();)
 	{
 		Vector a = positions[indices[i]].GetVector();
 		Vector b = positions[indices[++i]].GetVector();

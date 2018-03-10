@@ -1,5 +1,6 @@
 #pragma once
 
+#include <IterablePoolAllocator.hpp>
 #include <BaseObject.hpp>
 #include <IRenderingDevice.hpp>
 #include <Dynarray.hpp>

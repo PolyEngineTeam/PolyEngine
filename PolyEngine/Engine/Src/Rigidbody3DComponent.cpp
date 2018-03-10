@@ -46,7 +46,7 @@ void Poly::Rigidbody3DComponent::SetFriction(float friction)
 //------------------------------------------------------------------------------
 void Poly::Rigidbody3DComponent::SetRollingFriction(float friction)
 {
-	Template.RollingFriction;
+	Template.RollingFriction = friction;
 
 	TemplateChanged = true;
 }

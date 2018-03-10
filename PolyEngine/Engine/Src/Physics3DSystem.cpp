@@ -222,6 +222,8 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 				rigidbody->Template.Inertia = Vector(inertia.x(), inertia.y(), inertia.z());
 			}
 			break;
+		default:
+			ASSERTE(false, "Invalid ridgidbody type.");
 		}
 
 		// if gravity for this body was not set then set it as it is in the world

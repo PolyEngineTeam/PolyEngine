@@ -11,6 +11,7 @@
 #include <MovementSystem.hpp>
 #include <SpritesheetComponent.hpp>
 #include <PostprocessSettingsComponent.hpp>
+#include <TextureResource.hpp>
 
 using namespace Poly;
 

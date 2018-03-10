@@ -64,7 +64,7 @@ namespace Poly
 
 		//------------------------------------------------------------------------------
 		template<typename... Args>
-		static T* Load(const String& path, eResourceSource source = eResourceSource::NONE, Args&&... args)
+		static T* Load(const String& path, eResourceSource source, Args&&... args)
 		{
 			auto it = Impl::GetResources<T>().find(path);
 

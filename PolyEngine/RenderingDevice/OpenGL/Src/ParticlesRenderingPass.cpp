@@ -2,6 +2,7 @@
 
 #include "GLMeshDeviceProxy.hpp"
 #include "GLTextureDeviceProxy.hpp"
+#include "GLParticleDeviceProxy.hpp"
 
 #include <World.hpp>
 #include <TimeSystem.hpp>

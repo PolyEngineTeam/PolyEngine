@@ -65,13 +65,13 @@ Optional<Dynarray<Vector>> CalculateNewPath(const NavGraph* graph, const Vector&
 			const float moveCost = graph->GetTravelCost(connection, q.Node);
 			PathNode s{ connection, q.Cost + moveCost, graph->GetHeuristicCost(connection, destNode), qIdx };
 
-			auto& valOpt = minCosts.Get(s.Node);
+			const auto& valOpt = minCosts.Get(s.Node);
 			if (valOpt.HasValue() && valOpt.Value() < s.Cost)
 				continue; // node has worse base cost than other (in the same pos) we visited before, skip it
 
 			AllNodes.PushBack(s);
 			openList.Push(std::make_pair(AllNodes.GetSize() - 1, s.TotalCost()));
-			auto& entry = minCosts.Entry(s.Node);
+			auto entry = minCosts.Entry(s.Node);
 			if (entry.IsVacant())
 				entry.VacantInsert(s.Cost);
 			else
@@ -124,7 +124,7 @@ void SmoothPath(const NavGraph* graph, Dynarray<Vector>& path)
 
 ENGINE_DLLEXPORT void Poly::PathfindingSystem::UpdatePhase(World* world)
 {
-	for (auto& tuple : world->IterateComponents<PathfindingComponent>())
+	for (auto tuple : world->IterateComponents<PathfindingComponent>())
 	{
 		PathfindingComponent* pathfindingCmp = std::get<PathfindingComponent*>(tuple);
 
@@ -142,7 +142,7 @@ ENGINE_DLLEXPORT void Poly::PathfindingSystem::UpdatePhase(World* world)
 			}
 
 			SmoothPath(pathfindingCmp->NavigationGraph, path.Value());
-			pathfindingCmp->CalculatedPath = std::move(path.TakeValue());
+			pathfindingCmp->CalculatedPath = path.TakeValue();
 		}
 	}
 }
