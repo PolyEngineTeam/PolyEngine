@@ -1,5 +1,7 @@
 version: 1.0.{build}
 
+clone_folder: C:\projects\PolyEngine
+
 image:
 - Visual Studio 2017
 - Visual Studio 2015
@@ -32,13 +34,14 @@ init:
 
 before_build:
 - cmd: |-
+    cd C:\projects\PolyEngine\PolyEngine
     mkdir build
     cd build
     cmake --version
     cmake .. -G %generator%
 
 build:
-  project: build\PolyEngine.sln
+  project: C:\projects\PolyEngine\PolyEngine\build\PolyEngine.sln
   verbosity: minimal
   parallel: true
   
