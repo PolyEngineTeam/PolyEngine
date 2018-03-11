@@ -33,7 +33,7 @@ namespace Poly
 			float BurstTimeMax;
 			int BurstSizeMin;
 			int BurstSizeMax;
-			Color Color;
+			Color BaseColor;
 			std::function<void(Particle*)> ParticleInitFunc;
 			std::function<void(Particle*)> ParticleUpdateFunc;
 		};

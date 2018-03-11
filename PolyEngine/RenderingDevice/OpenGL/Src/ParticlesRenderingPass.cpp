@@ -46,7 +46,7 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 		const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
 		Matrix screenTransform = mv * objTransform;
 		GetProgram().SetUniform("uMV", screenTransform);
-		GetProgram().SetUniform("uColor", particleCmp->GetEmitter()->GetSettings().Color);
+		GetProgram().SetUniform("uColor", particleCmp->GetEmitter()->GetSettings().BaseColor);
 		GetProgram().SetUniform("uSpeed", particleCmp->GetEmitter()->GetSettings().Speed);
 
 		size_t partileLen = particleCmp->GetEmitter()->GetInstances().GetSize() / 16;
