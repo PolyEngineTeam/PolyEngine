@@ -81,13 +81,13 @@ TEST_CASE("Floating-point equality comparisons", "[FloatCmp]") {
 	}
 
 	SECTION("Extreme values (overflow potential)") {
-		const float NEG_MAG_FLOAT = - (MAX_FLOAT - FLT_EPSILON);
+		const float NEG_MAX_FLOAT = - (MAX_FLOAT - 1.0f);
 		CHECK(Cmpft(MAX_FLOAT, MAX_FLOAT));
-		CHECK_FALSE(Cmpft(MAX_FLOAT, NEG_MAG_FLOAT));
-		CHECK_FALSE(Cmpft(NEG_MAG_FLOAT, MAX_FLOAT));
+		CHECK_FALSE(Cmpft(MAX_FLOAT, NEG_MAX_FLOAT));
+		CHECK_FALSE(Cmpft(NEG_MAX_FLOAT, MAX_FLOAT));
 		CHECK_FALSE(Cmpft(MAX_FLOAT, MAX_FLOAT / 2));
-		CHECK_FALSE(Cmpft(MAX_FLOAT, NEG_MAG_FLOAT / 2));
-		CHECK_FALSE(Cmpft(NEG_MAG_FLOAT, MAX_FLOAT / 2));
+		CHECK_FALSE(Cmpft(MAX_FLOAT, NEG_MAX_FLOAT / 2));
+		CHECK_FALSE(Cmpft(NEG_MAX_FLOAT, MAX_FLOAT / 2));
 	}
 
 	SECTION("Infinities") {
