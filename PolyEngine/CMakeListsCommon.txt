@@ -43,7 +43,6 @@ endif(CMAKE_SIZEOF_VOID_P EQUAL "8")
 # Make sure qt is defined
 if(DEFINED ENV{QTDIR})
 	list(APPEND CMAKE_PREFIX_PATH $ENV{QTDIR})
-	message("Setting cmake prefix to $ENV{QTDIR}, result ${CMAKE_PREFIX_PATH}")
 elseif(APPLE)
 	list(APPEND CMAKE_PREFIX_PATH /usr/local/opt/qt)
 else()
@@ -104,7 +103,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "(Clang|^GNU$)")
 	link_libraries($<$<PLATFORM_ID:Linux>:-Wl,--enable-new-dtags>) #use DT_RUNPATH instead of DT_RPATH
 	#TODO(vuko): more build type macro definitions (once we decide on them)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-	add_definitions(/DNOMINMAX /D_SCL_SECURE_NO_WARNINGS) #those macros are useless and just keep messing things up, so disable them
+	add_definitions(/DNOMINMAX /D_SCL_SECURE_NO_WARNINGS /D_CRT_SECURE_NO_WARNINGS) #those macros are useless and just keep messing things up, so disable them
 	add_compile_options($<$<CONFIG:Release>:/DFINAL>)
 
 	add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:/MDd>)

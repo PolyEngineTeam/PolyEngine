@@ -46,6 +46,14 @@ build:
   verbosity: minimal
   parallel: true
   
+# scripts to run before tests
+before_test:
+  - cd C:\projects\PolyEngine\PolyEngine\build\UnitTests\%configuration%
+
+# to run your custom scripts instead of automatic tests
+test_script:
+  - PolyUnitTests.exe
+  
 notifications:
 - provider: Slack
   auth_token:
