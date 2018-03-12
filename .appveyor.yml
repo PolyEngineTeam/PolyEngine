@@ -48,7 +48,8 @@ build:
   
 # scripts to run before tests
 before_test:
-  - cd C:\projects\PolyEngine\PolyEngine\build\UnitTests\%configuration%
+  - echo %CONFIGURATION%
+  - cd C:\projects\PolyEngine\PolyEngine\build\UnitTests\%CONFIGURATION%
 
 # to run your custom scripts instead of automatic tests
 test_script:

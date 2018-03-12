@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
 	int result = Catch::Session().run(argc, argv);
 
 // Wait for key press in visual studio
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(CI_BUILD)
 	system("pause");
 #endif
 

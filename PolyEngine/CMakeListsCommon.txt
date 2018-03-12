@@ -20,13 +20,21 @@ if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
 endif()
 
 ##
-# Are we running Travis?
+# Are we running CI?
 ##
+set(CI_BUILD FALSE)
+
 if($ENV{TRAVIS})
 	if($ENV{TRAVIS} STREQUAL "true")
-		set(IS_TRAVIS_BUILD TRUE)
-	endif($ENV{TRAVIS} STREQUAL "true")
-endif($ENV{TRAVIS})
+		set(CI_BUILD TRUE)
+	endif()
+endif()
+
+if($ENV{APPVEYOR})
+	if($ENV{APPVEYOR} STREQUAL "true")
+		set(CI_BUILD TRUE)
+	endif()
+endif()
 
 
 ##
@@ -83,6 +91,9 @@ endif()
 # Build switches
 ##
 if(CMAKE_CXX_COMPILER_ID MATCHES "(Clang|^GNU$)")
+	if(CI_BUILD)
+		add_definitions(-DCI_BUILD)
+	endif()
 	add_compile_options(-pipe)
 	add_compile_options(-Wall)
 	add_compile_options(-Wextra)
@@ -103,6 +114,9 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "(Clang|^GNU$)")
 	link_libraries($<$<PLATFORM_ID:Linux>:-Wl,--enable-new-dtags>) #use DT_RUNPATH instead of DT_RPATH
 	#TODO(vuko): more build type macro definitions (once we decide on them)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+	if(CI_BUILD)
+		add_definitions(/DCI_BUILD)
+	endif()
 	add_definitions(/DNOMINMAX /D_SCL_SECURE_NO_WARNINGS /D_CRT_SECURE_NO_WARNINGS) #those macros are useless and just keep messing things up, so disable them
 	add_compile_options($<$<CONFIG:Release>:/DFINAL>)
 
