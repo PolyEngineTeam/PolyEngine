@@ -43,6 +43,7 @@ endif(CMAKE_SIZEOF_VOID_P EQUAL "8")
 # Make sure qt is defined
 if(DEFINED ENV{QTDIR})
 	list(APPEND CMAKE_PREFIX_PATH $ENV{QTDIR})
+	message("Setting cmake prefix to $ENV{QTDIR}, result ${CMAKE_PREFIX_PATH}")
 elseif(APPLE)
 	list(APPEND CMAKE_PREFIX_PATH /usr/local/opt/qt)
 else()
