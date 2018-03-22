@@ -16,9 +16,12 @@ namespace Poly
 	struct PrimitiveCube;
 	class RenderingPassBase;
 	class RenderingTargetBase;
+	class IRendererInterface;
 
 	class DEVICE_DLLEXPORT GLRenderingDevice : public IRenderingDevice
 	{
+		friend class ForwardRenderer;
+
 	private:
 		enum class eGeometryRenderPassType
 		{
@@ -40,6 +43,13 @@ namespace Poly
 			FOREGROUND,
 			BACKGROUND_LIGHT,
 			FOREGROUND_LIGHT,
+			_COUNT
+		};
+
+		enum class eRendererType
+		{
+			FORWARD,
+//			TILED_FORWARD,
 			_COUNT
 		};
 
@@ -69,17 +79,22 @@ namespace Poly
 		std::unique_ptr<IMeshDeviceProxy> CreateMesh() override;
 
 	private:
+		void GetExtensions();
+
 		void InitPrograms();
 		void EndFrame();
 
+		void Deinit();
 		void CleanUpResources();
 
-		void RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderUnlit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderNormals(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderNormalsWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderDebug(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		IRendererInterface* CreateRenderer();
+
+		// void RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		// void RenderUnlit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		// void RenderWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		// void RenderNormals(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		// void RenderNormalsWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		// void RenderDebug(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 
 		template<typename T>
 		void RegisterGeometryPass(eGeometryRenderPassType type,
@@ -101,6 +116,10 @@ namespace Poly
 		SDL_Window* Window;
 		SDL_GLContext Context;
 		ScreenSize ScreenDim;
+		Dynarray<String> OpenGLExtensions;
+
+		eRendererType RendererType;
+		IRendererInterface* Renderer;
 
 		Dynarray<std::unique_ptr<RenderingTargetBase>> RenderingTargets;
 

@@ -61,6 +61,8 @@ GLRenderingDevice::GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize&
 //------------------------------------------------------------------------------
 GLRenderingDevice::~GLRenderingDevice()
 {
+	Renderer->Deinit();
+
 	CleanUpResources();
 
 	if(Context)
@@ -82,6 +84,22 @@ void GLRenderingDevice::Resize(const ScreenSize& size)
 	ScreenDim = size;
 	for (auto& target : RenderingTargets)
 		target->Resize(size);
+}
+
+void GLRenderingDevice::GetExtensions()
+{
+	int ExtensionsSize = 0;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &ExtensionsSize);
+	OpenGLExtensions.Clear();
+	OpenGLExtensions.Reserve(ExtensionsSize);
+
+	gConsole.LogInfo("OpenGL supported extensions:");
+	for (int i = 0; i<ExtensionsSize; i++)
+	{
+		String extension = String((const char*)glGetStringi(GL_EXTENSIONS, i));
+		OpenGLExtensions.PushBack(extension);
+		gConsole.LogInfo("Ext {}: {}", i, extension);
+	}
 }
 
 //------------------------------------------------------------------------------
