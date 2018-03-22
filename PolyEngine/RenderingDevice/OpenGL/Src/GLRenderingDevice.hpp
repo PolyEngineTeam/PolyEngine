@@ -21,6 +21,7 @@ namespace Poly
 	class DEVICE_DLLEXPORT GLRenderingDevice : public IRenderingDevice
 	{
 		friend class ForwardRenderer;
+		friend class TiledForwardRenderer;
 
 	private:
 		enum class eGeometryRenderPassType
@@ -49,7 +50,7 @@ namespace Poly
 		enum class eRendererType
 		{
 			FORWARD,
-//			TILED_FORWARD,
+			TILED_FORWARD,
 			_COUNT
 		};
 

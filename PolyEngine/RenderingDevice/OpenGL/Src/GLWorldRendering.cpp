@@ -15,6 +15,7 @@
 #include "RenderingPassBase.hpp"
 #include "GLMeshDeviceProxy.hpp"
 #include "ForwardRenderer.hpp"
+#include "TiledForwardRenderer.hpp"
 #include "GLUtils.hpp"
 
 using namespace Poly;
@@ -33,27 +34,24 @@ void GLRenderingDevice::Init()
 
 IRendererInterface* GLRenderingDevice::CreateRenderer()
 {
-	// RendererType = OpenGLExtensions.Contains(String("GL_ARB_compute_shader")) ? eRendererType::TILED_FORWARD : eRendererType::FORWARD;
-	// gConsole.LogInfo("RendererType: {}", (int)RendererType);
+	RendererType = OpenGLExtensions.Contains(String("GL_ARB_compute_shader")) ? eRendererType::TILED_FORWARD : eRendererType::FORWARD;
+	gConsole.LogInfo("RendererType: {}", (int)RendererType);
 
 	IRendererInterface* renderer = nullptr;
-	renderer = new ForwardRenderer(this);
 
-	/*
 	switch (RendererType)
 	{
-	case GLRenderingDevice::eRendererType::FORWARD:
-	renderer = new ForwardRenderer(this);
-	break;
+		case GLRenderingDevice::eRendererType::FORWARD:
+			renderer = new ForwardRenderer(this);
+			break;
 
-	case GLRenderingDevice::eRendererType::TILED_FORWARD:
-	renderer = new TiledForwardRenderer(this);
-	break;
+		case GLRenderingDevice::eRendererType::TILED_FORWARD:
+			renderer = new TiledForwardRenderer(this);
+			break;
 
-	default:
-	ASSERTE(false, "Uknown eRenderingModeType");
+		default:
+			ASSERTE(false, "Uknown eRenderingModeType");
 	}
-	*/
 
 	return renderer;
 }
