@@ -24,6 +24,8 @@ using namespace Poly;
 
 void GLRenderingDevice::Init()
 {
+	gConsole.LogInfo("GLRenderingDevice::Init");
+
 	GetExtensions();
 
 	Renderer = CreateRenderer();
@@ -34,6 +36,9 @@ void GLRenderingDevice::Init()
 
 IRendererInterface* GLRenderingDevice::CreateRenderer()
 {
+	return new TiledForwardRenderer(this);
+	// return new ForwardRenderer(this);
+
 	RendererType = OpenGLExtensions.Contains(String("GL_ARB_compute_shader")) ? eRendererType::TILED_FORWARD : eRendererType::FORWARD;
 	gConsole.LogInfo("RendererType: {}", (int)RendererType);
 
@@ -56,22 +61,17 @@ IRendererInterface* GLRenderingDevice::CreateRenderer()
 	return renderer;
 }
 
-void GLRenderingDevice::Deinit()
-{
-	Renderer->Deinit();
-}
-
 void GLRenderingDevice::RenderWorld(World* world)
 {
 	const ScreenSize screenSize = gEngine->GetRenderingDevice()->GetScreenSize();
 
-	glDepthMask(GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
+// 	glDepthMask(GL_TRUE);
+// 	glEnable(GL_DEPTH_TEST);
 
 	// Clear FBO's
 	for (eGeometryRenderPassType type : IterateEnum<eGeometryRenderPassType>())
 		GeometryRenderingPasses[type]->ClearFBO();
-
+	
 	for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
 		PostprocessRenderingPasses[type]->ClearFBO();
 

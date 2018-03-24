@@ -14,6 +14,7 @@ namespace Poly {
 			VERTEX,
 			GEOMETRY,
 			FRAGMENT,
+			COMPUTE,
 			_COUNT
 		};
 
@@ -35,6 +36,7 @@ namespace Poly {
 			size_t Index = 0;
 		};
 	public:
+		GLShaderProgram(const String& compute);
 		GLShaderProgram(const String& vertex, const String& fragment);
 		GLShaderProgram(const String& vertex, const String& geometry, const String& fragment);
 

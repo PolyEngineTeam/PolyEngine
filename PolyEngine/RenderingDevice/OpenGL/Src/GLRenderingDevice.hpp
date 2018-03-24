@@ -85,7 +85,6 @@ namespace Poly
 		void InitPrograms();
 		void EndFrame();
 
-		void Deinit();
 		void CleanUpResources();
 
 		IRendererInterface* CreateRenderer();
