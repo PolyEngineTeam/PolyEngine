@@ -43,9 +43,21 @@ namespace Poly {
 		GLuint quadVAO = 0;
 		GLuint quadVBO;
 
+		GLShaderProgram depthShader;
+		GLShaderProgram lightCullingShader;
+		GLShaderProgram lightAccumulationShader;
+		GLShaderProgram hdrShader;
+
+		GLShaderProgram depthDebugShader;
+		GLShaderProgram lightDebugShader;
+
+
 		void SetupLights();
+
 		void UpdateLights(World* world);
+
 		void DrawQuad();
+
 
 		inline float Random()
 		{

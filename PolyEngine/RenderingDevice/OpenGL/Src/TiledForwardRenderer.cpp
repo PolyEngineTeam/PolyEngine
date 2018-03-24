@@ -14,13 +14,32 @@
 using namespace Poly;
 
 TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInterface)
-	: IRendererInterface(RenderingDeviceInterface)
+	: IRendererInterface(RenderingDeviceInterface),
+	depthShader(
+		".\\source\\shaders\\depth.vert.glsl",
+		".\\source\\shaders\\depth.frag.glsl"),
+	lightCullingShader(
+		".\\source\\shaders\\light_culling.comp.glsl"),
+	depthDebugShader(
+		".\\source\\shaders\\depth_debug.vert.glsl",
+		".\\source\\shaders\\depth_debug.frag.glsl"),
+	lightDebugShader(
+		".\\source\\shaders\\light_debug.vert.glsl",
+		".\\source\\shaders\\light_debug.frag.glsl"),
+	lightAccumulationShader(
+		".\\source\\shaders\\light_accumulation.vert.glsl",
+		".\\source\\shaders\\light_accumulation.frag.glsl"),
+	hdrShader(
+		".\\source\\shaders\\hdr.vert.glsl",
+		".\\source\\shaders\\hdr.frag.glsl")
 {
+
 }
 
 void TiledForwardRenderer::Init()
 {
 	gConsole.LogInfo("TiledForwardRenderer::Init");
+
 
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
