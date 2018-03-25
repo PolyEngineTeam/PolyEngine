@@ -13,7 +13,7 @@ namespace Poly {
 		String SpritePath;
 		eResourceSource Source = eResourceSource::GAME;
 		Vector2f SubImages = Vector2f(4.0, 4.0);
-		Color Color = Color::WHITE;
+		Color SpriteColor = Color::WHITE;
 		float StartFrame = 0.0f;
 		float Speed = 1.0f;
 		bool IsRandomStartFrame = false;

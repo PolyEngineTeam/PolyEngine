@@ -6,11 +6,11 @@
 using namespace Poly;
 
 ParticleEmitter::ParticleEmitter(const Settings& settings)
-	: settings(settings), ParticlesPool(settings.MaxSize), ToEmit(settings.InitialSize)
+	: settings(settings), ToEmit(settings.InitialSize), ParticlesPool(settings.MaxSize)
 {
 	Spritesheet = ResourceManager<TextureResource>::Load(
-		settings.SpritesheetSettings.SpritePath,
-		settings.SpritesheetSettings.Source,
+		settings.SprsheetSettings.SpritePath,
+		settings.SprsheetSettings.Source,
 		eTextureUsageType::DIFFUSE
 	);
 	ParticleProxy = gEngine->GetRenderingDevice()->CreateParticle();

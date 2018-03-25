@@ -78,7 +78,7 @@ void GLParticleDeviceProxy::SetContent(const ParticleEmitter& emitter)
 	InstancesTransform.Clear();
 	InstancesTransform.Resize(16 * emitter.GetInstancesCount());
 	
-	for (int i = 0; i < InstancesTransform.GetSize(); ++i)
+	for (size_t i = 0; i < InstancesTransform.GetSize(); ++i)
 	{
 		InstancesTransform[i] = 0.0f;
 	}

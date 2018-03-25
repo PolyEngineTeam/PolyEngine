@@ -48,9 +48,9 @@ namespace Poly
 			int BurstSizeMax = 5;
 			eSimulationSpace SimulationSpace = eSimulationSpace::WORLD_SPACE;
 			// TODO: move to material
-			SpritesheetSettings SpritesheetSettings;
+			SpritesheetSettings SprsheetSettings;
 			float Speed = 1.0f;
-			Color Color = Color::WHITE;
+			Color BaseColor = Color::WHITE;
 			// TODO end
 			std::function<void(Particle*)> ParticleInitFunc		= [](ParticleEmitter::Particle* p) {};
 			std::function<void(Particle*)> ParticleUpdateFunc	= [](ParticleEmitter::Particle* p) {};

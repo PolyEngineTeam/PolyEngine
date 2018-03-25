@@ -53,7 +53,7 @@ void SpritesheetRenderingPass::OnRun(World* world, const CameraComponent* camera
 		GetProgram().SetUniform("uMV", screenTransform);
 		GetProgram().SetUniform("uScale", objTransform.m00, objTransform.m11);
 		GetProgram().SetUniform("uSubImages", settings.SubImages.X, settings.SubImages.Y);
-		GetProgram().SetUniform("uColor", settings.Color);
+		GetProgram().SetUniform("uColor", settings.SpriteColor);
 		GetProgram().SetUniform("uStartFrame", startFrame);
 		GetProgram().SetUniform("uSpeed", (float)(settings.Speed));
 
