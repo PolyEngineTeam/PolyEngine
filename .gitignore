@@ -21,7 +21,7 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
-build/
+[Bb]uild/
 cmake-build-*
 
 # Windows specific stuff
@@ -34,6 +34,9 @@ ui_*.h
 
 # Visual Studio 2015 cache/options directory
 .vs/
+
+# VS Code directory
+.vscode/
 
 # CLion project data
 .idea/
