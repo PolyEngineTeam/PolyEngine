@@ -129,8 +129,8 @@ namespace Poly {
 		bool HasValue() const  { return value_storage != nullptr; }
 		operator bool() const { return HasValue(); }
 
-		const V&  Value() const& { ASSERTE(HasValue(), "Attempting to get a value from an empty optional"); return *value_storage; }
-		      V&  Value() &      { ASSERTE(HasValue(), "Attempting to get a value from an empty optional"); return *value_storage; }
+		const V&  Value() const { ASSERTE(HasValue(), "Attempting to get a value from an empty optional"); return *value_storage; }
+		      V&  Value()       { ASSERTE(HasValue(), "Attempting to get a value from an empty optional"); return *value_storage; }
 
 		V& TakeValue() { ASSERTE(HasValue(), "Attempting to take a value from an empty optional"); V& ret = *value_storage; value_storage = nullptr; return ret; }
 

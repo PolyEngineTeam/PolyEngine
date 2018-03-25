@@ -7,6 +7,7 @@
 #include "GLUtils.hpp"
 #include "GLTextureDeviceProxy.hpp"
 #include "GLCubemapDeviceProxy.hpp"
+#include "GLParticleDeviceProxy.hpp"
 #include "GLTextFieldBufferDeviceProxy.hpp"
 #include "GLMeshDeviceProxy.hpp"
 
@@ -16,8 +17,10 @@
 #include "DebugNormalsRenderingPass.hpp"
 #include "DebugNormalsWireframeRenderingPass.hpp"
 #include "DebugRenderingPass.hpp"
+#include "ParticlesRenderingPass.hpp"
 #include "PostprocessRenderingPass.hpp"
 #include "TransparentRenderingPass.hpp"
+#include "SpritesheetRenderingPass.hpp"
 #include "SkyboxRenderingPass.hpp"
 #include "PostprocessQuad.hpp"
 #include "PrimitiveCube.hpp"
@@ -40,6 +43,7 @@ GLRenderingDevice::GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize&
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
 	Context = SDL_GL_CreateContext(Window);
 
@@ -82,8 +86,10 @@ void GLRenderingDevice::EndFrame()
 void GLRenderingDevice::Resize(const ScreenSize& size)
 {
 	ScreenDim = size;
-	for (auto& target : RenderingTargets)
-		target->Resize(size);
+
+	for (eRenderTargetId targetType : IterateEnum<eRenderTargetId>())
+		if(RenderingTargets[targetType]) 
+			RenderingTargets[targetType]->Resize(size);
 }
 
 void GLRenderingDevice::GetExtensions()
@@ -126,10 +132,10 @@ inline void GLRenderingDevice::RegisterGeometryPassWithArgs(eGeometryRenderPassT
 
 //------------------------------------------------------------------------------
 template<typename T, typename... Args>
-T* Poly::GLRenderingDevice::CreateRenderingTarget(Args&&... args)
+T* Poly::GLRenderingDevice::CreateRenderingTarget(eRenderTargetId type, Args&&... args)
 {
 	T* target = new T(std::forward<Args>(args)...);
-	RenderingTargets.PushBack(std::unique_ptr<RenderingTargetBase>(target));
+	RenderingTargets[type].reset(target);
 	return target;
 }
 
@@ -157,8 +163,8 @@ void GLRenderingDevice::InitPrograms()
 	//Texture2DInputTarget* RGBANoise256 = CreateRenderingTarget<Texture2DInputTarget>("Textures/RGBANoise256x256.png");
 
 	// Init programs
-	Texture2DRenderingTarget* texture = CreateRenderingTarget<Texture2DRenderingTarget>(GL_R11F_G11F_B10F);
-	DepthRenderingTarget* depth = CreateRenderingTarget<DepthRenderingTarget>();
+	Texture2DRenderingTarget* texture = CreateRenderingTarget<Texture2DRenderingTarget>(eRenderTargetId::COLOR, GL_R11F_G11F_B10F);
+	DepthRenderingTarget* depth = CreateRenderingTarget<DepthRenderingTarget>(eRenderTargetId::DEPTH);
 	// Texture2DRenderingTarget* depth2 = CreateRenderingTarget<Texture2DRenderingTarget>(GL_R16F);
 
 	RegisterGeometryPass<UnlitRenderingPass>(eGeometryRenderPassType::UNLIT, {}, { { "color", texture },{ "depth", depth } });
@@ -167,10 +173,11 @@ void GLRenderingDevice::InitPrograms()
 	RegisterGeometryPass<DebugRenderingPass>(eGeometryRenderPassType::IMMEDIATE_DEBUG, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPass<DebugNormalsWireframeRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS_WIREFRAME, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, {}, { { "color", texture },{ "depth", depth } });
+	RegisterGeometryPass<ParticlesRenderingPass>(eGeometryRenderPassType::PARTICLES, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPassWithArgs<SkyboxRenderingPass>(eGeometryRenderPassType::SKYBOX, {}, { { "color", texture },{ "depth", depth } }, PrimitiveRenderingCube.get());
+	RegisterGeometryPassWithArgs<SpritesheetRenderingPass>(eGeometryRenderPassType::TRANSPARENT_SPRITESHEET, {}, { { "color", texture },{ "depth", depth } }, PostprocessRenderingQuad.get());
 	RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } }, PostprocessRenderingQuad.get());
-
-
+	
 	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND,			"Shaders/bgFrag.shader",		{}, { { "o_color", texture },	{ "depth", depth } });
 	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND_LIGHT,	"Shaders/bgLightFrag.shader",	{}, { { "o_color", texture },	{ "depth", depth } });
 	RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND,			"Shaders/fgFrag.shader",		{ { "i_color", texture } },		{} );
@@ -181,7 +188,8 @@ void GLRenderingDevice::InitPrograms()
 //------------------------------------------------------------------------------
 void Poly::GLRenderingDevice::CleanUpResources()
 {
-	RenderingTargets.Clear();
+	for (eRenderTargetId targetType : IterateEnum<eRenderTargetId>())
+		RenderingTargets[targetType].reset();
 
 	for (eGeometryRenderPassType passType : IterateEnum<eGeometryRenderPassType>())
 		GeometryRenderingPasses[passType].reset();
@@ -214,4 +222,9 @@ std::unique_ptr<ITextFieldBufferDeviceProxy> GLRenderingDevice::CreateTextFieldB
 std::unique_ptr<IMeshDeviceProxy> GLRenderingDevice::CreateMesh()
 {
 	return std::make_unique<GLMeshDeviceProxy>();
+}
+
+std::unique_ptr<IParticleDeviceProxy> GLRenderingDevice::CreateParticle()
+{
+	return std::make_unique<GLParticleDeviceProxy>();
 }

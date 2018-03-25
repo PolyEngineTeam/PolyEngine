@@ -29,6 +29,8 @@ namespace Poly
 			UNLIT,
 			BLINN_PHONG,
 			TRANSPARENT_GEOMETRY,
+			TRANSPARENT_SPRITESHEET,
+			PARTICLES,
 			DEBUG_NORMALS,
 			DEBUG_NORMALS_WIREFRAME,
 			IMMEDIATE_DEBUG,
@@ -51,6 +53,12 @@ namespace Poly
 		{
 			FORWARD,
 			TILED_FORWARD,
+		};
+
+		enum class eRenderTargetId
+		{
+			COLOR,
+			DEPTH,
 			_COUNT
 		};
 
@@ -78,6 +86,7 @@ namespace Poly
 		std::unique_ptr<ICubemapDeviceProxy> CreateCubemap(size_t width, size_t height) override;
 		std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() override;
 		std::unique_ptr<IMeshDeviceProxy> CreateMesh() override;
+		std::unique_ptr<IParticleDeviceProxy> CreateParticle() override;
 
 	private:
 		void GetExtensions();
@@ -112,7 +121,7 @@ namespace Poly
 			const std::initializer_list<InputOutputBind>& outputs = {});
 
 		template <typename T, typename... Args>
-		T* CreateRenderingTarget(Args&&... args);
+		T* CreateRenderingTarget(eRenderTargetId type, Args&&... args);
 
 		SDL_Window* Window;
 		SDL_GLContext Context;
@@ -122,11 +131,10 @@ namespace Poly
 		eRendererType RendererType;
 		IRendererInterface* Renderer;
 
-		Dynarray<std::unique_ptr<RenderingTargetBase>> RenderingTargets;
-
 		EnumArray<std::unique_ptr<RenderingPassBase>, eGeometryRenderPassType> GeometryRenderingPasses;
 		EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
-
+		EnumArray<std::unique_ptr<RenderingTargetBase>, eRenderTargetId> RenderingTargets;
+		
 		std::unique_ptr<PostprocessQuad> PostprocessRenderingQuad;
 		std::unique_ptr<PrimitiveCube> PrimitiveRenderingCube;
 	};

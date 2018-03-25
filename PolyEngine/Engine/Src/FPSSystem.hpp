@@ -12,7 +12,8 @@ namespace Poly
 		{
 			int FPS;
 			double ElapsedTime;
-			SafePtr<Entity> TextEnt;
+			int LastFPS;
+			String DisplayedFPSText;
 		};
 
 		float ENGINE_DLLEXPORT GetFPS(World* world);

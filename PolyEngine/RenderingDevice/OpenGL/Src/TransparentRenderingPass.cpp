@@ -60,7 +60,7 @@ void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera
 		Matrix objTransform; // = transCmp->GetGlobalTransformationMatrix();
 		objTransform.SetTranslation(trans.GetGlobalTranslation() + Vector(0.0f, 0.0f, 0.5f));
 
-		Matrix screenTransform = camera->GetMVP() * objTransform * objScale;
+		Matrix screenTransform = camera->GetScreenFromWorld() * objTransform * objScale;
 		GetProgram().SetUniform("uTransform", objTransform * objScale);
 		GetProgram().SetUniform("uMVPTransform", screenTransform);
 		

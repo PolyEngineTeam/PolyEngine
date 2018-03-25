@@ -30,6 +30,7 @@
 #include "StringBuilder.hpp"
 #include "Dynarray.hpp"
 #include "Queue.hpp"
+#include "PriorityQueue.hpp"
 
 // Other
 #include "Color.hpp"

@@ -31,6 +31,10 @@ namespace Poly {
 			return Color(R - rhs.R, G - rhs.G, B - rhs.B, A - rhs.A);
 		}
 
+		constexpr Color operator*(const Color& rhs) const {
+			return Color(R * rhs.R, G * rhs.G, B * rhs.B, A * rhs.A);
+		}
+
 		Color& operator+=(const Color& rhs) {
 			R += rhs.R; G += rhs.G; B += rhs.B; A += rhs.A;
 			return *this;

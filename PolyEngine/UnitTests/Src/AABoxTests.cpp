@@ -1,5 +1,5 @@
+#include <Defines.hpp>
 #include <catch.hpp>
-
 #include <AABox.hpp>
 
 using namespace Poly;

@@ -25,8 +25,8 @@ void EntityTransform::UpdateParentTransform()
 	else
 	{
 		// Reset parenting
-		Matrix globalTransform = GetGlobalTransformationMatrix();
-		SetLocalTransformationMatrix(globalTransform);
+		Matrix globalTransform = GetWorldFromModel();
+		SetParentFromModel(globalTransform);
 	}
 }
 
@@ -46,6 +46,13 @@ void EntityTransform::SetLocalTranslation(const Vector& position)
 }
 
 //------------------------------------------------------------------------------
+void Poly::EntityTransform::SetGlobalTranslation(const Vector& position)
+{
+	Vector currentGlobal = GetGlobalTranslation();
+	SetLocalTranslation(GetLocalTranslation() + (position - currentGlobal));
+}
+
+//------------------------------------------------------------------------------
 const Quaternion& EntityTransform::GetGlobalRotation() const
 {
 	UpdateGlobalTransformationCache();
@@ -58,6 +65,12 @@ void EntityTransform::SetLocalRotation(const Quaternion& quaternion)
 	LocalRotation = quaternion;
 	LocalDirty = true;
 	SetGlobalDirty();
+}
+
+void Poly::EntityTransform::SetGlobalRotation(const Quaternion& quaternion)
+{
+	Quaternion currentGlobal = GetGlobalRotation();
+	SetLocalRotation(GetLocalRotation() * (quaternion * currentGlobal.Conjugate()));
 }
 
 //------------------------------------------------------------------------------
@@ -76,24 +89,36 @@ void EntityTransform::SetLocalScale(const Vector& scale)
 }
 
 //------------------------------------------------------------------------------
-const Matrix& EntityTransform::GetLocalTransformationMatrix() const
+void Poly::EntityTransform::SetGlobalScale(const Vector& scale)
+{
+	Vector currentGlobal = GetGlobalScale();
+	Vector currLocal = GetLocalScale();
+	Vector mul;
+	mul.X = currLocal.X * (scale.X / currentGlobal.X);
+	mul.Y = currLocal.Y * (scale.Y / currentGlobal.Y);
+	mul.Z = currLocal.Z * (scale.Z / currentGlobal.Z);
+	SetLocalScale(mul);
+}
+
+//------------------------------------------------------------------------------
+const Matrix& EntityTransform::GetParentFromModel() const
 {
 	UpdateLocalTransformationCache();
-	return LocalTransform;
+	return ParentFromModel;
 }
 
 //------------------------------------------------------------------------------
-const Matrix& EntityTransform::GetGlobalTransformationMatrix() const
+const Matrix& EntityTransform::GetWorldFromModel() const
 {
 	UpdateGlobalTransformationCache();
-	return GlobalTransform;
+	return WorldFromModel;
 }
 
 //------------------------------------------------------------------------------
-void EntityTransform::SetLocalTransformationMatrix(const Matrix& localTransformation)
+void EntityTransform::SetParentFromModel(const Matrix& parentFromModel)
 {
-	LocalTransform = localTransformation;
-	localTransformation.Decompose(LocalTranslation, LocalRotation, LocalScale);
+	ParentFromModel = parentFromModel;
+	parentFromModel.Decompose(LocalTranslation, LocalRotation, LocalScale);
 	LocalDirty = false;
 	SetGlobalDirty();
 }
@@ -108,7 +133,7 @@ bool EntityTransform::UpdateLocalTransformationCache() const
 		Matrix scale;
 		translation.SetTranslation(LocalTranslation);
 		scale.SetScale(LocalScale);
-		LocalTransform = translation * rotation * scale;
+		ParentFromModel = translation * rotation * scale;
 		LocalDirty = false;
 		return true;
 	}
@@ -121,15 +146,16 @@ void EntityTransform::UpdateGlobalTransformationCache() const
 	if (!GlobalDirty) return;
 
 	const Entity* parent = Owner->GetParent();
-	if (parent->IsRoot())
+	if (!parent)
 	{
-		GlobalTransform = GetLocalTransformationMatrix();
+		WorldFromModel = GetParentFromModel();
 	}
 	else
 	{
-		GlobalTransform = parent->GetTransform().GetGlobalTransformationMatrix() * GetLocalTransformationMatrix();
+		Matrix WorldFromParent = parent->GetTransform().GetWorldFromModel();
+		WorldFromModel = WorldFromParent * GetParentFromModel();
 	}
-	GlobalTransform.Decompose(GlobalTranslation, GlobalRotation, GlobalScale);
+	WorldFromModel.Decompose(GlobalTranslation, GlobalRotation, GlobalScale);
 	GlobalDirty = false;
 }
 

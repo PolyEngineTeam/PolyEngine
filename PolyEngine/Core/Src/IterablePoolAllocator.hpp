@@ -212,6 +212,8 @@ namespace Poly {
 		/// <returns>Count of allocated objects.</returns>
 		size_t GetSize() const { return Capacity - FreeBlockCount; }
 
+		size_t GetFreeBlockCount() const { return FreeBlockCount; }
+
 	private:
 		Cell* AddrFromIndex(size_t i) const { return Data + i; }
 		size_t IndexFromAddr(const Cell* p) const { return p - Data; }

@@ -7,35 +7,6 @@
 	// TODO implement all necessary *_s methods here.
 #endif
 
-// STL
-// This is only legal place for STL includes
-#include <ostream>
-#include <cmath>
-#include <cassert>
-#include <cstring>
-#include <type_traits>
-#include <limits>
-#include <array>
-#include <cstddef>
-#include <memory>
-#include <algorithm>
-#include <iostream>
-#include <string>
-
-// Custom type names
-using u8 = uint8_t;
-using u16 = uint16_t;
-using u32 = uint32_t;
-using u64 = uint64_t;
-using i8 = int8_t;
-using i16 = int16_t;
-using i32 = int32_t;
-using i64 = int64_t;
-using f32 = float;
-using f64 = double;
-
-using uint = unsigned int;
-
 // stupid warning in MSVC about template specialization exporting, according to https://msdn.microsoft.com/en-US/library/esew7y1w.aspx it can be ignored
 #if defined(_WIN32)
 	#pragma warning(disable: 4251)
@@ -60,6 +31,40 @@ using uint = unsigned int;
 	#define SILENCE_GCC_WARNING(unused_w, unused_reason)
 	#define UNSILENCE_GCC_WARNING()
 #endif
+
+SILENCE_MSVC_WARNING(4251, "Invalid warning for stl and other template classes.");
+SILENCE_MSVC_WARNING(4530, "Invalid warning for xlocale.");
+SILENCE_MSVC_WARNING(4577, "Invalid warning for xstring (noexcept).");
+
+// STL
+// This is only legal place for STL includes
+#include <ostream>
+#include <cmath>
+#include <cassert>
+#include <cstring>
+#include <type_traits>
+#include <limits>
+#include <array>
+#include <cstddef>
+#include <memory>
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include <functional>
+
+// Custom type names
+using u8 = uint8_t;
+using u16 = uint16_t;
+using u32 = uint32_t;
+using u64 = uint64_t;
+using i8 = int8_t;
+using i16 = int16_t;
+using i32 = int32_t;
+using i64 = int64_t;
+using f32 = float;
+using f64 = double;
+
+using uint = unsigned int;
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846

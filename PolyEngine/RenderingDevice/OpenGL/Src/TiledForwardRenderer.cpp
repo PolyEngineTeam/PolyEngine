@@ -161,12 +161,12 @@ void TiledForwardRenderer::DepthPrePass(World* world, const CameraComponent* cam
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	const Matrix& ScreenFromWorld = cameraCmp->GetMVP();
+	const Matrix& ScreenFromWorld = cameraCmp->GetScreenFromWorld();
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		const EntityTransform& transform = meshCmp->GetTransform();
-		const Matrix& WorldFromModel = transform.GetGlobalTransformationMatrix();
+		const Matrix& WorldFromModel = transform.GetWorldFromModel();
 		depthShader.SetUniform("uScreenFromModel", ScreenFromWorld * WorldFromModel);
 
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
@@ -190,8 +190,8 @@ void TiledForwardRenderer::LightCulling(World* world, const CameraComponent* cam
 {
 	// Step 2: Perform light culling on point lights in the scene
 	lightCullingShader.BindProgram();
-	lightCullingShader.SetUniform("projection", cameraCmp->GetProjectionMatrix());
-	lightCullingShader.SetUniform("view", cameraCmp->GetModelViewMatrix());
+	lightCullingShader.SetUniform("projection", cameraCmp->GetScreenFromView());
+	lightCullingShader.SetUniform("view", cameraCmp->GetViewFromWorld());
 
 	// Bind depth map texture to texture location 4 (which will not be used by any model texture)
 	glActiveTexture(GL_TEXTURE4);
@@ -222,12 +222,12 @@ void Poly::TiledForwardRenderer::DebugLightCulling(World* world, const CameraCom
 	// lightDebugShader.SetUniform("view", cameraCmp->GetModelViewMatrix());
 	// lightDebugShader.SetUniform("viewPosition", cameraCmp->GetOwner()->GetTransform().GetGlobalTranslation());
 
-	const Matrix& ScreenFromWorld = cameraCmp->GetMVP();
+	const Matrix& ScreenFromWorld = cameraCmp->GetScreenFromWorld();
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		const EntityTransform& transform = meshCmp->GetTransform();
-		const Matrix& WorldFromModel = transform.GetGlobalTransformationMatrix();
+		const Matrix& WorldFromModel = transform.GetWorldFromModel();
 		lightDebugShader.SetUniform("uScreenFromModel", ScreenFromWorld * WorldFromModel);
 
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
@@ -259,12 +259,12 @@ void TiledForwardRenderer::DebugDepth(World* world, const CameraComponent* camer
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	const Matrix& ScreenFromWorld = cameraCmp->GetMVP();
+	const Matrix& ScreenFromWorld = cameraCmp->GetScreenFromWorld();
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		const EntityTransform& transform = meshCmp->GetTransform();
-		const Matrix& WorldFromModel = transform.GetGlobalTransformationMatrix();
+		const Matrix& WorldFromModel = transform.GetWorldFromModel();
 		depthDebugShader.SetUniform("uScreenFromModel", ScreenFromWorld * WorldFromModel);
 
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())

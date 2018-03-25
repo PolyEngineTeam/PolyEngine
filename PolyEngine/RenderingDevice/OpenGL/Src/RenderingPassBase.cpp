@@ -251,13 +251,13 @@ GLuint Poly::Texture2DRenderingTarget::GetTextureID()
 }
 
 Poly::DepthRenderingTarget::DepthRenderingTarget()
-	: Texture2DRenderingTarget(GL_DEPTH_COMPONENT16, eInternalTextureUsageType::DEPTH_ATTACHEMENT)
+	: Texture2DRenderingTarget(GL_DEPTH_COMPONENT24, eInternalTextureUsageType::DEPTH_ATTACHEMENT)
 {
 }
 
 Poly::Texture2DInputTarget::Texture2DInputTarget(const String & path)
 {
-	Texture = ResourceManager<TextureResource>::Load(path, eResourceSource::ENGINE);
+	Texture = ResourceManager<TextureResource>::Load(path, eResourceSource::ENGINE, eTextureUsageType::DIFFUSE);
 }
 
 Poly::Texture2DInputTarget::~Texture2DInputTarget()
@@ -284,4 +284,18 @@ void Poly::RenderingPassBase::CreateDummyTexture()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+
+	glGenTextures(1, &FallbackNormalMap);
+	
+	GLubyte dataDefaultNormal[] = { 128, 128, 255 };
+
+	glBindTexture(GL_TEXTURE_2D, FallbackNormalMap);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, dataDefaultNormal);
 }

@@ -171,7 +171,7 @@ SoundResource::SoundResource(const String& path)
 								while ((samples = vorbis_synthesis_pcmout(&vorbisDSPState, &pcm)) > 0)
 								{
 									int j;
-									int clipflag = 0;
+									//int clipflag = 0;
 									int bout = (samples < convsize ? samples : convsize);
 
 									for (i = 0; i < vorbisInfo.channels; i++)
@@ -185,13 +185,13 @@ SoundResource::SoundResource(const String& path)
 											if (val > 32767)
 											{
 												val = 32767;
-												clipflag = 1;
+												//clipflag = 1;
 											}
 
 											if (val < -32768)
 											{
 												val = -32768;
-												clipflag = 1;
+												//clipflag = 1;
 											}
 
 											*ptr = val;
@@ -199,8 +199,8 @@ SoundResource::SoundResource(const String& path)
 										}
 									}
 
-									if (clipflag)
-										gConsole.LogDebug("Clipping in frame {}", (long)(vorbisDSPState.sequence));
+									//if (clipflag)
+									//	gConsole.LogDebug("Clipping in frame {}", (long)(vorbisDSPState.sequence));
 
 									const size_t newBlocksize = 2 * vorbisInfo.channels * bout;
 									const size_t oldDataSize = rawData.GetSize();

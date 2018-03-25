@@ -43,6 +43,9 @@ if (WIN32)
 	find_library(Box2D_LIBRARY  
 				Box2D
 				PATH  "${Box2D_ROOT_DIR}/lib/Release/${Box2D_ARCH}")
+	find_library(Box2D_LIBRARY_DEBUG
+				Box2D
+				PATH  "${Box2D_ROOT_DIR}/lib/Debug/${Box2D_ARCH}")
 	
 else()
 	find_package(Box2D CONFIG QUIET) #note(vuko): frequently faulty, so try to use it just for `BOX2D_ROOT_DIR` and `BOX2D_VERSION_STRING`
@@ -50,11 +53,13 @@ else()
 	unset(Box2D_INCLUDE_DIRS)
 	find_path(Box2D_INCLUDE_DIR  NAMES Box2D/Box2D.h  HINTS ${BOX2D_ROOT_DIR}/include)
 	find_library(Box2D_LIBRARY   NAMES Box2D          HINTS ${BOX2D_ROOT_DIR}/lib/)
+	find_library(Box2D_LIBRARY_DEBUG   NAMES Box2D          HINTS ${BOX2D_ROOT_DIR}/lib/)
 endif()
 
 set(Box2D_INCLUDE_DIRS "${Box2D_INCLUDE_DIR}")
 set(Box2D_LIBRARIES    "${Box2D_LIBRARY}")
-mark_as_advanced(Box2D_INCLUDE_DIR Box2D_LIBRARY)
+set(Box2D_LIBRARIES_DEBUG    "${Box2D_LIBRARY_DEBUG}")
+mark_as_advanced(Box2D_INCLUDE_DIR Box2D_LIBRARY Box2D_LIBRARY_DEBUG)
 
 if (DEFINED BOX2D_VERSION_STRING AND (NOT BOX2D_VERSION_STRING STREQUAL "") AND (BOX2D_VERSION_STRING VERSION_LESS 2.3))
 	message(FATAL_ERROR "Found Box2D ${BOX2D_VERSION_STRING}, which is too old. Required version is 2.3+!")
@@ -63,5 +68,8 @@ find_package_handle_standard_args(Box2D  REQUIRED_VARS Box2D_LIBRARIES Box2D_INC
 
 if (NOT TARGET Box2D::Box2D)
 	add_library(Box2D::Box2D UNKNOWN IMPORTED)
-	set_target_properties(Box2D::Box2D PROPERTIES  INTERFACE_INCLUDE_DIRECTORIES "${Box2D_INCLUDE_DIRS}"  IMPORTED_LOCATION "${Box2D_LIBRARIES}")
+	set_target_properties(Box2D::Box2D PROPERTIES  INTERFACE_INCLUDE_DIRECTORIES "${Box2D_INCLUDE_DIRS}"  
+	IMPORTED_LOCATION "${Box2D_LIBRARIES}"
+	IMPORTED_LOCATION_DEBUG "${Box2D_LIBRARIES_DEBUG}"
+	IMPORTED_LOCATION_DEBUGFAST "${Box2D_LIBRARIES_DEBUG}")
 endif()

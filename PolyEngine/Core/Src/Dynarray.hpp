@@ -206,7 +206,7 @@ namespace Poly
 			HEAVY_ASSERTE(idx <= GetSize(), "Index out of bounds!");
 			if (Size == GetCapacity())
 				Enlarge();
-			std::move_backward(Begin() + idx, End(), End() + 1);
+			MoveDataRight(idx, Size, 1);
 			ObjectLifetimeHelper::CopyCreate(Data + idx, obj);
 			++Size;
 		}
@@ -223,7 +223,7 @@ namespace Poly
 			HEAVY_ASSERTE(idx <= GetSize(), "Index out of bounds!");
 			if (Size == GetCapacity())
 				Enlarge();
-			std::move_backward(Begin() + idx, End(), End() + 1);
+			MoveDataRight(idx, Size, 1);
 			ObjectLifetimeHelper::MoveCreate(Data + idx, std::move(obj));
 			++Size;
 		}
@@ -238,7 +238,8 @@ namespace Poly
 		{
 			HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!");
 			ObjectLifetimeHelper::Destroy(Data + idx);
-			std::move(Begin() + idx + 1, End(), Begin() + idx);
+			MoveDataLeft(idx + 1, Size, 1);
+			//std::move(Begin() + idx + 1, End(), Begin() + idx);
 			--Size;
 		}
 
@@ -419,6 +420,20 @@ namespace Poly
 			rhs.Data = nullptr;
 			rhs.Size = 0;
 			rhs.Capacity = 0;
+		}
+
+		//------------------------------------------------------------------------------
+		void MoveDataRight(size_t start, size_t end, size_t size)
+		{
+			for (size_t currPos = end; currPos > start; --currPos)
+				Data[currPos + size - 1] = std::move(Data[currPos - 1]);
+		}
+
+		//------------------------------------------------------------------------------
+		void MoveDataLeft(size_t start, size_t end, size_t size)
+		{
+			for (size_t currPos = start; currPos < end; ++currPos)
+				Data[currPos - size] = std::move(Data[currPos]);
 		}
 
 		//------------------------------------------------------------------------------

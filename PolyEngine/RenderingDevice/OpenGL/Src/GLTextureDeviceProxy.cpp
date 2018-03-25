@@ -27,6 +27,10 @@ static GLenum GetGLInternalFormat(eTextureUsageType usage) noexcept
 	{
 	case Poly::eTextureUsageType::DIFFUSE:
 		return GL_RGBA;
+	case Poly::eTextureUsageType::NORMAL:
+		return GL_RGB;
+	case Poly::eTextureUsageType::SPECULAR:
+		return GL_RED;
 	case Poly::eTextureUsageType::FONT:
 		return GL_RED;
 	default:
@@ -64,7 +68,7 @@ void GLTextureDeviceProxy::SetContent(eTextureDataFormat format, const unsigned 
 	ASSERTE(TextureID > 0 , "Texture is invalid!");
 	ASSERTE(data, "Data pointer is nullptr!");
 
-	glActiveTexture(GL_TEXTURE0);
+	//glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, TextureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GetGLDataFormat(format), GL_UNSIGNED_BYTE, data);
 
@@ -84,7 +88,7 @@ void GLTextureDeviceProxy::SetSubContent(size_t width, size_t height,
 	ASSERTE(width + offsetX <= Width && height + offsetY <= Height && width > 0 && height > 0, "Invalid arguments!");
 	ASSERTE(data, "Data pointer is nullptr!");
 
-	glActiveTexture(GL_TEXTURE0);
+	//glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, TextureID);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, (GLint)offsetX, (GLint)offsetY, (GLsizei)width, (GLsizei)height, GetGLDataFormat(format), GL_UNSIGNED_BYTE, data);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -96,7 +100,7 @@ void Poly::GLTextureDeviceProxy::Resize(const ScreenSize& size)
 	Width = size.Width;
 	Height = size.Height;
 
-	glActiveTexture(GL_TEXTURE0);
+	//glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, TextureID);
 
 	if (InternalUsage == eInternalTextureUsageType::DEPTH_ATTACHEMENT)
@@ -104,7 +108,7 @@ void Poly::GLTextureDeviceProxy::Resize(const ScreenSize& size)
 	if (InternalUsage == eInternalTextureUsageType::COLOR_ATTACHEMENT)
 		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_RGBA, GL_FLOAT, nullptr);
 	else
-		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, InternalFormat, GL_UNSIGNED_BYTE, nullptr);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	CHECK_GL_ERR();
@@ -114,7 +118,7 @@ void Poly::GLTextureDeviceProxy::InitTextureParams()
 {
 	ASSERTE(Width > 0 && Height > 0, "Invalid arguments!");
 
-	glActiveTexture(GL_TEXTURE0);
+	//glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &TextureID);
 
 	if (TextureID <= 0)
@@ -132,7 +136,7 @@ void Poly::GLTextureDeviceProxy::InitTextureParams()
 	if (InternalUsage == eInternalTextureUsageType::COLOR_ATTACHEMENT)
 		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_RGBA, GL_FLOAT, nullptr);
 	else
-		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_RGBA, GL_FLOAT, nullptr);
+		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, InternalFormat, GL_FLOAT, nullptr);
 
 	if (InternalUsage == eInternalTextureUsageType::COLOR_ATTACHEMENT || InternalUsage == eInternalTextureUsageType::DEPTH_ATTACHEMENT)
 	{

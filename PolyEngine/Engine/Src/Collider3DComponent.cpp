@@ -1,23 +1,29 @@
 #include "EnginePCH.hpp"
 
-#include "btBulletCollisionCommon.h"
+#include "BulletIncludesCommon.hpp"
 
 #include "Collider3DImpl.hpp"
+#include "Physics3DShapes.hpp"
+#include "Physics3DShapesImpl.hpp"
 
 //------------------------------------------------------------------------------
-Poly::Collider3DComponent::Collider3DComponent(World* world, const Collider3DComponentTemplate& tmp)
+Poly::Collider3DComponent::Collider3DComponent(World* world, Collider3DComponentTemplate&& tmp)
 	: BodyWorld(world)
 {
-	Template.Shape = std::make_unique<Physics3DShape>(*tmp.Shape);
+	Template.Shape = std::move(tmp.Shape);
 	Template.Registered = tmp.Registered;
 	Template.CollisionGroup = tmp.CollisionGroup;
 	Template.CollisionMask = tmp.CollisionMask;
 }
+
 //------------------------------------------------------------------------------
 Poly::Collider3DComponent::~Collider3DComponent()
 {
 	Rigidbody3DComponent* rigidbody = GetSibling<Rigidbody3DComponent>();
 
+	// if rigidbody exists and is NOT registered and collider is registered
+	// or
+	// if rigidbody doesnt't exist and collider is registered
 	if ((rigidbody && !rigidbody->IsRegistered() && Template.Registered)
 		|| (!rigidbody && Template.Registered))
 	{
@@ -26,22 +32,20 @@ Poly::Collider3DComponent::~Collider3DComponent()
 }
 
 //------------------------------------------------------------------------------
-void Poly::Collider3DComponent::SetShape(const Physics3DShape& shape)
+void Poly::Collider3DComponent::SetShape(const Physics3DShape* shape)
 {
-	ImplData->BulletTrigger->setCollisionShape(shape.BulletShape);
 	Template.Shape.release();
-	Template.Shape = std::make_unique<Physics3DShape>(shape);
+	Template.Shape = std::make_unique<Physics3DShape>(*shape);
+	ImplData->BulletTrigger->setCollisionShape(Template.Shape->ImplData->BulletShape);
 }
 
 //------------------------------------------------------------------------------
 void Poly::Collider3DComponent::UpdatePosition()
 {
 	const EntityTransform& transform = GetTransform();
-		// TODO: parent can't be nullptr
-	//ASSERTE(transCmp->GetParent() == nullptr, "Physics cannot be applied to child entity");
 
-	Vector localTrans = transform.GetLocalTranslation();
-	Quaternion localRot = transform.GetLocalRotation();
+	Vector localTrans = transform.GetGlobalTranslation();
+	Quaternion localRot = transform.GetGlobalRotation();
 
 	btVector3 position(localTrans.X, localTrans.Y, localTrans.Z);
 	btQuaternion orientation(localRot.X, localRot.Y, localRot.Z, localRot.W);

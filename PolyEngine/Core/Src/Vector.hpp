@@ -12,12 +12,13 @@ namespace Poly
 	{
 	public:
 		static const Vector ZERO;
+		static const Vector ONE;
 		static const Vector UNIT_X;
 		static const Vector UNIT_Y;
 		static const Vector UNIT_Z;
 
 		/// <summary>Creates zero vector.</summary>
-		constexpr Vector() : X(0.f), Y(0.f), Z(0.f), W(1.f) {}
+		constexpr Vector() : X(0.0f), Y(0.0f), Z(0.0f), W(1.0f) {}
 
 		/// <summary>Creates vector from float values.</summary>
 		/// <param name="x"></param>

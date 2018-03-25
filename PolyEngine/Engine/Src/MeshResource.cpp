@@ -61,6 +61,22 @@ Poly::MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMateria
 		}
 	}
 
+	if(mesh->HasTangentsAndBitangents()) {
+		MeshData.Tangents.Resize(mesh->mNumVertices);
+		for(unsigned int i = 0; i < mesh->mNumVertices; ++i) {
+			MeshData.Tangents[i].X = mesh->mTangents[i].x;
+			MeshData.Tangents[i].Y = mesh->mTangents[i].y;
+			MeshData.Tangents[i].Z = mesh->mTangents[i].z;
+		}
+
+		MeshData.Bitangents.Resize(mesh->mNumVertices);
+		for(unsigned int i = 0; i < mesh->mNumVertices; ++i) {
+			MeshData.Bitangents[i].X = mesh->mBitangents[i].x;
+			MeshData.Bitangents[i].Y = mesh->mBitangents[i].y;
+			MeshData.Bitangents[i].Z = mesh->mBitangents[i].z;
+		}
+	}
+
 	if (mesh->HasFaces()) {
 		MeshData.Indices.Resize(mesh->mNumFaces * 3);
 		for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
@@ -94,7 +110,7 @@ Poly::MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMateria
 		String textPath(fullPath.c_str());
 		// end temporary code for extracting path
 
-		MeshData.DiffuseTexture = ResourceManager<TextureResource>::Load(textPath, eResourceSource::NONE);
+		MeshData.DiffuseTexture = ResourceManager<TextureResource>::Load(textPath, eResourceSource::NONE, eTextureUsageType::DIFFUSE);
 		if (!MeshData.DiffuseTexture) {
 			gConsole.LogError("Failed to load diffuse texture: {}", fullPath);
 		} else {
@@ -103,6 +119,56 @@ Poly::MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMateria
 	} else {
 		gConsole.LogError("Failed to load diffuse texture for material: {}", path);
 		MeshData.DiffuseTexture = nullptr;
+	}
+
+	aiString specPath;
+	if(material->GetTexture(aiTextureType_SPECULAR, 0, &specPath) == AI_SUCCESS)
+	{
+		std::string tmpPath = std::string(path.GetCStr());
+		std::replace(tmpPath.begin(), tmpPath.end(), '\\', '/'); // replace all '\' to '/', fix for linux machines
+		std::string fullPath = tmpPath.substr(0, tmpPath.rfind('/') + 1) + std::string(specPath.C_Str());
+		std::replace(fullPath.begin(), fullPath.end(), '\\', '/'); // replace all '\' to '/', fix for linux machines
+		String textPath(fullPath.c_str());
+		// end temporary code for extracting path
+
+		MeshData.SpecularMap = ResourceManager<TextureResource>::Load(textPath, eResourceSource::NONE, eTextureUsageType::SPECULAR);
+		if(!MeshData.SpecularMap)
+		{
+			gConsole.LogError("Failed to load specular map: {}", fullPath);
+		}
+		else
+		{
+			gConsole.LogDebug("Succeded to load specular map: {}", fullPath);
+		}
+	}
+	else {
+		gConsole.LogError("Failed to load specular map for material: {}", path);
+		MeshData.SpecularMap = nullptr;
+	}
+
+	aiString normalPath;
+	if(material->GetTexture(aiTextureType_NORMALS, 0, &normalPath) == AI_SUCCESS)
+	{
+		std::string tmpPath = std::string(path.GetCStr());
+		std::replace(tmpPath.begin(), tmpPath.end(), '\\', '/'); // replace all '\' to '/', fix for linux machines
+		std::string fullPath = tmpPath.substr(0, tmpPath.rfind('/') + 1) + std::string(normalPath.C_Str());
+		std::replace(fullPath.begin(), fullPath.end(), '\\', '/'); // replace all '\' to '/', fix for linux machines
+		String textPath(fullPath.c_str());
+		// end temporary code for extracting path
+
+		MeshData.NormalMap = ResourceManager<TextureResource>::Load(textPath, eResourceSource::NONE, eTextureUsageType::NORMAL);
+		if(!MeshData.NormalMap)
+		{
+			gConsole.LogError("Failed to load normal map: {}", fullPath);
+		}
+		else
+		{
+			gConsole.LogDebug("Succeded to load normal map: {}", fullPath);
+		}
+	}
+	else {
+		gConsole.LogError("Failed to load normal map for material: {}", path);
+		MeshData.NormalMap = nullptr;
 	}
 
 	// Material params loading

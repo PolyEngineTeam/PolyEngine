@@ -11,7 +11,7 @@ class PolyWindow : public QMainWindow
 public:
 	PolyWindow(QWidget* parent = nullptr);
 
-	int WidgetsCount() { return Widgets.GetSize(); }
+	size_t WidgetsCount() { return Widgets.GetSize(); }
 
 	void AddWidget(Qt::DockWidgetArea area, PolyWidget* widget, bool isInitialization = false);
 	void RemoveWidget(PolyWidget* widget);
