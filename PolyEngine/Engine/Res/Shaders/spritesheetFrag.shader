@@ -2,8 +2,12 @@
 
 uniform sampler2D i_color;
 uniform float uTime;
+uniform vec2 uSubImages;
+uniform vec4 uColor;
+uniform float uStartFrame;
+uniform float uSpeed;
 
-in vec2 vTexCoord;
+in vec2 vUV;
 out vec4 color;
 
 vec2 SubUV(vec2 uv, vec2 subImages, float frame)
@@ -19,22 +23,15 @@ vec2 SubUV(vec2 uv, vec2 subImages, float frame)
 
 void main()
 {
-    vec2 uv = vTexCoord.rg;
-    vec2 uSubImages = vec2(4.0, 4.0);
-    float uSpeedTime = 1.0;
-    float uFrame = 0.0;
-    float uSpeed = 0.5;
-    float uSpeedPow = 1.0;
+    float frame = uStartFrame + uSubImages.x * uSubImages.y * fract(-1.0 * uSpeed * uTime);
 
-    float frame = uFrame + uSubImages.x * uSubImages.y * pow(fract(-1.0 * uSpeed * uTime), uSpeedPow);
-
-    vec2 uvTile0 = SubUV(uv, uSubImages, frame);
-    vec2 uvTile1 = SubUV(uv, uSubImages, frame + 1);
+    vec2 uvTile0 = SubUV(vUV, vec2(uSubImages), frame);
+    vec2 uvTile1 = SubUV(vUV, vec2(uSubImages), frame + 1);
 
     vec4 tex0 = texture(i_color, uvTile0);
     vec4 tex1 = texture(i_color, uvTile1);
 
     vec4 tex = mix(tex0, tex1, fract(frame));
 
-    color = vec4(tex);
+    color = uColor * tex;
 }

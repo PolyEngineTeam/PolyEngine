@@ -93,11 +93,11 @@ namespace Poly {
 	}
 
 	template <typename T> inline T Lerp(const T& val1, const T& val2, float t) {
-		return val1 * (1.0f - t) + val2 * t;
+		return (T)(val1 * (1.0f - t) + val2 * t);
 	}
 
 	template <typename T> inline T SmoothStep(const T& edge1, const T& edge2, const T& x) {
 		T t = Clamp((x - edge1) / (edge2 - edge1), 0.0f, 1.0f);
-		return t * t * (3.0f - 2.0f * t);
+		return (T)(t * t * (3.0f - 2.0f * t));
 	}
 }

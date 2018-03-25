@@ -17,8 +17,8 @@ DebugNormalsWireframeRenderingPass::DebugNormalsWireframeRenderingPass()
 
 void DebugNormalsWireframeRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::BY_MATERIAL*/)
 {
-	const Matrix& mModelView = camera->GetMVP();
-	const Matrix& mProjection = camera->GetProjectionMatrix();
+	const Matrix& mModelView = camera->GetScreenFromWorld();
+	const Matrix& mProjection = camera->GetScreenFromView();
 
 	GetProgram().BindProgram();
 	GetProgram().SetUniform("u_projection", mProjection);
@@ -28,7 +28,7 @@ void DebugNormalsWireframeRenderingPass::OnRun(World* world, const CameraCompone
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		const EntityTransform& trans = meshCmp->GetTransform();
 
-		const Matrix& objTransform = trans.GetGlobalTransformationMatrix();
+		const Matrix& objTransform = trans.GetWorldFromModel();
 		Matrix MVPTransform = mModelView * objTransform;
 		Matrix mNormalMatrix = (mModelView * objTransform).GetInversed().GetTransposed();
 		GetProgram().SetUniform("u_MVP", MVPTransform);

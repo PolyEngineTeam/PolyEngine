@@ -131,7 +131,7 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 			if(!gDebugConfig.DebugDrawPresets.IsSet(ddrawCmp->entityPreset))
 				continue;
 
-			const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
+			const Matrix& objTransform = transform.GetWorldFromModel();
 
 			// spawn a box for every mesh, in correct size
 			for(const auto subMesh : meshCmp->GetMesh()->GetSubMeshes())

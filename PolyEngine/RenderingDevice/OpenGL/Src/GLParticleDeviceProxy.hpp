@@ -8,6 +8,7 @@ namespace Poly
 {
 	class GLParticleDeviceProxy : public IParticleDeviceProxy
 	{
+		friend class GLRenderingDevice;
 	private:
 		enum class eBufferType {
 			VERTEX_AND_UV_BUFFER,
@@ -29,12 +30,6 @@ namespace Poly
 		GLuint VBO = 0;
 		unsigned int instanceVBO;
 
-		// static const int instancesLen = 10;
-		// Dynarray<float> instancesTransform;
-
-		// float Random() const;
-		// float Random(float min, float max) const;
-
-		friend class GLRenderingDevice;
+		Dynarray<float> InstancesTransform;
 	};
 }

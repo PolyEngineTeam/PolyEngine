@@ -16,43 +16,50 @@ using namespace Poly;
 ParticlesRenderingPass::ParticlesRenderingPass()
 	: RenderingPassBase("Shaders/instancedVert.shader", "Shaders/instancedFrag.shader")
 {
-	// gConsole.LogInfo("ParticlesRenderingPass::ParticlesRenderingPass");
-
 	GetProgram().RegisterUniform("float", "uTime");
-	GetProgram().RegisterUniform("mat4", "uMV");
-	GetProgram().RegisterUniform("mat4", "uP");
+	GetProgram().RegisterUniform("mat4", "uScreenFromView");
+	GetProgram().RegisterUniform("mat4", "uViewFromWorld");
+	GetProgram().RegisterUniform("mat4", "uWorldFromModel");
 	GetProgram().RegisterUniform("vec4", "uColor");
 }
 
 void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
-	// gConsole.LogInfo("ParticlesRenderingPass::OnRun");
-
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
-	const Matrix& mv = camera->GetModelViewMatrix();
-	const Matrix& p = camera->GetProjectionMatrix();
+	const Matrix& ViewFromWorld = camera->GetViewFromWorld();
+	const Matrix& ScreenFromView = camera->GetScreenFromView();
 
 	glDisable(GL_CULL_FACE);
 
 	GetProgram().BindProgram();
 	GetProgram().SetUniform("uTime", Time);
-	GetProgram().SetUniform("uP", p);
+	GetProgram().SetUniform("uScreenFromView", ScreenFromView);
 
-	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<ParticleComponent>())
 	{
-		ParticleComponent* particleCmp = std::get<ParticleComponent*>(componentsTuple);
+		const ParticleComponent* particleCmp = std::get<ParticleComponent*>(componentsTuple);
 		const EntityTransform& transform = particleCmp->GetTransform();
-		const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
-		Matrix screenTransform = mv * objTransform;
-		GetProgram().SetUniform("uMV", screenTransform);
-		GetProgram().SetUniform("uColor", particleCmp->GetEmitter()->GetSettings().BaseColor);
-		GetProgram().SetUniform("uSpeed", particleCmp->GetEmitter()->GetSettings().Speed);
+		const Matrix& WorldFromModel = particleCmp->GetEmitter()->GetSettings().SimulationSpace == ParticleEmitter::eSimulationSpace::LOCAL_SPACE
+			? transform.GetWorldFromModel()
+			: Matrix();
+		
+		GetProgram().SetUniform("uViewFromWorld", ViewFromWorld);
+		GetProgram().SetUniform("uWorldFromModel", WorldFromModel);
+		
+		ParticleEmitter::Settings emitterSettings = particleCmp->GetEmitter()->GetSettings();
+		GetProgram().SetUniform("uEmitterColor", emitterSettings.Color);
+		
+		SpritesheetSettings spriteSettings = emitterSettings.SpritesheetSettings;
+		GetProgram().SetUniform("uSpriteColor", spriteSettings.Color);
+		float startFrame = spriteSettings.IsRandomStartFrame ? RandomRange(0.0f, spriteSettings.SubImages.X * spriteSettings.SubImages.Y) : spriteSettings.StartFrame;
+		GetProgram().SetUniform("uSpriteStartFrame", startFrame);
+		GetProgram().SetUniform("uSpriteSpeed", spriteSettings.Speed);
+		GetProgram().SetUniform("uSpriteSubImages", spriteSettings.SubImages.X, spriteSettings.SubImages.Y);
 
-		size_t partileLen = particleCmp->GetEmitter()->GetInstances().GetSize() / 16;
+		GLsizei partileLen = (GLsizei)(particleCmp->GetEmitter()->GetInstancesCount());
+		const TextureResource* Texture = particleCmp->GetEmitter()->GetSpritesheet();
 		const GLParticleDeviceProxy* particleProxy = static_cast<const GLParticleDeviceProxy*>(particleCmp->GetEmitter()->GetParticleProxy());
 		GLuint particleVAO = particleProxy->GetVAO();
-		const TextureResource* Texture = particleCmp->GetSpritesheet();
 
 		GLuint TextureID = Texture == nullptr
 			? FallbackWhiteTexture
@@ -64,7 +71,7 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 		glBindTexture(GL_TEXTURE_2D, TextureID);
 
 		glBindVertexArray(particleVAO);
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, (GLsizei)partileLen);
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, partileLen);
 		glBindVertexArray(0);
 		CHECK_GL_ERR();
 

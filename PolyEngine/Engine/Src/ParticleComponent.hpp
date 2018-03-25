@@ -8,17 +8,17 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT ParticleComponent : public ComponentBase
 	{
+		friend void ParticleUpdateSystem::ParticleUpdatePhase(World*);
 	public:
-		ParticleComponent(ParticleEmitter::Settings emitter, const String& spritePath, eResourceSource source);
-		ParticleComponent(ParticleEmitter::Settings emitter);
+		ParticleComponent(const ParticleEmitter::Settings& emitter);
 		virtual ~ParticleComponent();
 		
 		ParticleEmitter* GetEmitter() { return Emitter; }
-		const TextureResource* GetSpritesheet() const { return Spritesheet; }
+
+		const ParticleEmitter* GetEmitter() const { return Emitter; }
 
 	private:
 		ParticleEmitter* Emitter = nullptr;
-		TextureResource* Spritesheet = nullptr;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, ParticleComponent)

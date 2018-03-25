@@ -69,7 +69,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 {
 
 	GetProgram().BindProgram();
-	const Matrix& mvp = camera->GetMVP();
+	const Matrix& mvp = camera->GetScreenFromWorld();
 	
 	const EntityTransform& cameraTrans = camera->GetTransform();
 	Vector CameraPos = cameraTrans.GetGlobalTranslation();
@@ -148,8 +148,8 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 			continue;
 		}
 
-		const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
-		const Matrix& localTransform = transform.GetLocalTransformationMatrix();
+		const Matrix& objTransform = transform.GetWorldFromModel();
+		const Matrix& localTransform = transform.GetParentFromModel();
 		Matrix screenTransform = mvp * objTransform;
 		GetProgram().SetUniform("uTransform", objTransform);
 		GetProgram().SetUniform("uLocalTransform", localTransform);

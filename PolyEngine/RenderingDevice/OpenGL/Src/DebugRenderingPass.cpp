@@ -17,7 +17,7 @@ DebugRenderingPass::DebugRenderingPass()
 void DebugRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType*/)
 {
 	GetProgram().BindProgram();
-	const Matrix& MVP = camera->GetMVP();
+	const Matrix& MVP = camera->GetScreenFromWorld();
 
 	// Render Lines
 	{

@@ -3,34 +3,35 @@
 #include "ComponentBase.hpp"
 #include "RenderingSystem.hpp"
 
+#include <Vector2f.hpp>
+#include <ResourceManager.hpp>
+
 namespace Poly {
+
+	struct ENGINE_DLLEXPORT SpritesheetSettings
+	{
+		String SpritePath;
+		eResourceSource Source = eResourceSource::GAME;
+		Vector2f SubImages = Vector2f(4.0, 4.0);
+		Color Color = Color::WHITE;
+		float StartFrame = 0.0f;
+		float Speed = 1.0f;
+		bool IsRandomStartFrame = false;
+	};
 
 	class ENGINE_DLLEXPORT SpritesheetComponent : public ComponentBase
 	{
 	public:
-
-		struct ENGINE_DLLEXPORT Settings
-		{
-			eResourceSource source;
-			String spritePath;
-			int SizeX;
-			int SizeY;
-			float StartFrame;
-			float Speed;
-			float SpeedExp;
-			float UseRnd;
-		};
-
 		friend void RenderingSystem::RenderingPhase(World*);
 	public:
-		SpritesheetComponent(Settings settings);
+		SpritesheetComponent(const SpritesheetSettings& settings);
 		virtual ~SpritesheetComponent();
 
 		const TextureResource* GetSpritesheet() const { return Spritesheet; }
-		const Settings GetSettings() const { return settings; }
+		const SpritesheetSettings& GetSettings() const { return Settings; }
 
 	private:
-		Settings settings;
+		SpritesheetSettings Settings;
 		TextureResource* Spritesheet; 
 	};
 
