@@ -51,12 +51,21 @@ namespace Poly {
 		GLShaderProgram depthDebugShader;
 		GLShaderProgram lightDebugShader;
 
+		GLuint depthMapFBO;
+		GLuint depthMap;
+
+		GLuint FallbackWhiteTexture;
+
 
 		void SetupLights();
 
 		void UpdateLights(World* world);
 
+		void DebugDepth(World* world, const CameraComponent* cameraCmp);
+
 		void DrawQuad();
+
+		void TiledForwardRenderer::CreateFallbackWhiteTexture();
 
 
 		inline float Random()

@@ -272,7 +272,6 @@ GLuint Poly::Texture2DInputTarget::GetTextureID() const
 
 void Poly::RenderingPassBase::CreateDummyTexture()
 {
-
 	glGenTextures(1, &FallbackWhiteTexture);
 
 	GLubyte data[] = { 255, 255, 255, 255 };

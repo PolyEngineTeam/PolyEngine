@@ -86,6 +86,7 @@ namespace Poly
 		void EndFrame();
 
 		void CleanUpResources();
+		void CreateFallbackWhiteTexture();
 
 		IRendererInterface* CreateRenderer();
 
