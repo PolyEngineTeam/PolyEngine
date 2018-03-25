@@ -29,8 +29,17 @@ layout(std430, binding = 1) readonly buffer VisibleLightIndicesBuffer{
 
 uniform int numberOfTilesX;
 uniform int totalLightCount;
+uniform float near;
+uniform float far;
 
 out vec4 fragColor;
+
+
+float LinearizeDepth(float depth)
+{
+    float z = depth * 2.0 - 1.0;
+    return (2.0 * near * far) / (far + near - z * (far - near));
+}
 
 void main() {
 	// Determine which tile this pixel belongs to
@@ -43,5 +52,10 @@ void main() {
 	for (i = 0; i < 1024 && visibleLightIndicesBuffer.data[offset + i].index != -1; i++);
 
 	float ratio = float(i) / float(totalLightCount);
-	fragColor = vec4(vec3(ratio, ratio, ratio), 1.0);
+    float depth = LinearizeDepth(gl_FragCoord.z) / far;
+
+    // fragColor = vec4(vec3((ratio, depth, 0.5)), 1.0);
+	// fragColor = vec4(vec3(ratio, ratio, ratio), 1.0);
+    // fragColor = vec4(vec3(depth), 1.0);
+    fragColor = vec4(vec3(depth + ratio), 1.0);
 }

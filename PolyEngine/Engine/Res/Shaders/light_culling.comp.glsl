@@ -62,7 +62,7 @@ void main() {
 	vec2 text = vec2(location) / screenSize;
 	float depth = texture(depthMap, text).r;
 	// Linearize the depth value from depth buffer (must do this because we created it using projection)
-	// depth = (0.5 * projection[3][2]) / (depth + 0.5 * projection[2][2] - 0.5);
+	depth = (0.5 * projection[3][2]) / (depth + 0.5 * projection[2][2] - 0.5);
 
 	// Convert depth to uint so we can do atomic min and max comparisons between the threads
 	uint depthInt = floatBitsToUint(depth);
@@ -72,91 +72,85 @@ void main() {
 	barrier();
 
 	// Step 2: One thread should calculate the frustum planes to be used for this tile
-	// if (gl_LocalInvocationIndex == 0) {
-	// 	// Convert the min and max across the entire tile back to float
-	// 	minDepth = uintBitsToFloat(minDepthInt);
-	// 	maxDepth = uintBitsToFloat(maxDepthInt);
-	// 
-	// 	// Steps based on tile sale
-	// 	vec2 negativeStep = (2.0 * vec2(tileID)) / vec2(tileNumber);
-	// 	vec2 positiveStep = (2.0 * vec2(tileID + ivec2(1, 1))) / vec2(tileNumber);
-	// 
-	// 	// Set up starting values for planes using steps and min and max z values
-	// 	frustumPlanes[0] = vec4(1.0, 0.0, 0.0, 1.0 - negativeStep.x); // Left
-	// 	frustumPlanes[1] = vec4(-1.0, 0.0, 0.0, -1.0 + positiveStep.x); // Right
-	// 	frustumPlanes[2] = vec4(0.0, 1.0, 0.0, 1.0 - negativeStep.y); // Bottom
-	// 	frustumPlanes[3] = vec4(0.0, -1.0, 0.0, -1.0 + positiveStep.y); // Top
-	// 	frustumPlanes[4] = vec4(0.0, 0.0, -1.0, -minDepth); // Near
-	// 	frustumPlanes[5] = vec4(0.0, 0.0, 1.0, maxDepth); // Far
-	// 
-	// 	// Transform the first four planes
-	// 	for (uint i = 0; i < 4; i++) {
-	// 		frustumPlanes[i] *= viewProjection;
-	// 		frustumPlanes[i] /= length(frustumPlanes[i].xyz);
-	// 	}
-	// 
-	// 	// Transform the depth planes
-	// 	frustumPlanes[4] *= view;
-	// 	frustumPlanes[4] /= length(frustumPlanes[4].xyz);
-	// 	frustumPlanes[5] *= view;
-	// 	frustumPlanes[5] /= length(frustumPlanes[5].xyz);
-	// }
-	// 
-	// barrier();
-	// 
-	// // Step 3: Cull lights.
-	// // Parallelize the threads against the lights now.
-	// // Can handle 256 simultaniously. Anymore lights than that and additional passes are performed
-	// uint threadCount = TILE_SIZE * TILE_SIZE;
-	// uint passCount = (lightCount + threadCount - 1) / threadCount;
-	// for (uint i = 0; i < passCount; i++) {
-	// 	// Get the lightIndex to test for this thread / pass. If the index is >= light count, then this thread can stop testing lights
-	// 	uint lightIndex = i * threadCount + gl_LocalInvocationIndex;
-	// 	if (lightIndex >= lightCount) {
-	// 		break;
-	// 	}
-	// 
-	// 	vec4 position = lightBuffer.data[lightIndex].position;
-	// 	float radius = lightBuffer.data[lightIndex].paddingAndRadius.w;
-	// 
-	// 	// We check if the light exists in our frustum
-	// 	float distance = 0.0;
-	// 	for (uint j = 0; j < 6; j++) {
-	// 		distance = dot(position, frustumPlanes[j]) + radius;
-	// 
-	// 		// If one of the tests fails, then there is no intersection
-	// 		if (distance <= 0.0) {
-	// 			break;
-	// 		}
-	// 	}
-	// 
-	// 	// If greater than zero, then it is a visible light
-	// 	if (distance > 0.0) {
-	// 		// Add index to the shared array of visible indices
-	// 		uint offset = atomicAdd(visibleLightCount, 1);
-	// 		visibleLightIndices[offset] = int(lightIndex);
-	// 	}
-	// }
+	if (gl_LocalInvocationIndex == 0) {
+		// Convert the min and max across the entire tile back to float
+		minDepth = uintBitsToFloat(minDepthInt);
+		maxDepth = uintBitsToFloat(maxDepthInt);
+
+		// Steps based on tile sale
+		vec2 negativeStep = (2.0 * vec2(tileID)) / vec2(tileNumber);
+		vec2 positiveStep = (2.0 * vec2(tileID + ivec2(1, 1))) / vec2(tileNumber);
+
+		// Set up starting values for planes using steps and min and max z values
+		frustumPlanes[0] = vec4(1.0, 0.0, 0.0, 1.0 - negativeStep.x); // Left
+		frustumPlanes[1] = vec4(-1.0, 0.0, 0.0, -1.0 + positiveStep.x); // Right
+		frustumPlanes[2] = vec4(0.0, 1.0, 0.0, 1.0 - negativeStep.y); // Bottom
+		frustumPlanes[3] = vec4(0.0, -1.0, 0.0, -1.0 + positiveStep.y); // Top
+		frustumPlanes[4] = vec4(0.0, 0.0, -1.0, -minDepth); // Near
+		frustumPlanes[5] = vec4(0.0, 0.0, 1.0, maxDepth); // Far
+
+		// Transform the first four planes
+		for (uint i = 0; i < 4; i++) {
+			frustumPlanes[i] *= viewProjection;
+			frustumPlanes[i] /= length(frustumPlanes[i].xyz);
+		}
+
+		// Transform the depth planes
+		frustumPlanes[4] *= view;
+		frustumPlanes[4] /= length(frustumPlanes[4].xyz);
+		frustumPlanes[5] *= view;
+		frustumPlanes[5] /= length(frustumPlanes[5].xyz);
+	}
+
+	barrier();
+
+	// Step 3: Cull lights.
+	// Parallelize the threads against the lights now.
+	// Can handle 256 simultaniously. Anymore lights than that and additional passes are performed
+	uint threadCount = TILE_SIZE * TILE_SIZE;
+	uint passCount = (lightCount + threadCount - 1) / threadCount;
+	for (uint i = 0; i < passCount; i++) {
+		// Get the lightIndex to test for this thread / pass. If the index is >= light count, then this thread can stop testing lights
+		uint lightIndex = i * threadCount + gl_LocalInvocationIndex;
+		if (lightIndex >= lightCount) {
+			break;
+		}
+
+		vec4 position = lightBuffer.data[lightIndex].position;
+		float radius = lightBuffer.data[lightIndex].paddingAndRadius.w;
+
+		// We check if the light exists in our frustum
+		float distance = 0.0;
+		for (uint j = 0; j < 6; j++) {
+			distance = dot(position, frustumPlanes[j]) + radius;
+
+			// If one of the tests fails, then there is no intersection
+			if (distance <= 0.0) {
+				break;
+			}
+		}
+
+		// If greater than zero, then it is a visible light
+		if (distance > 0.0) {
+			// Add index to the shared array of visible indices
+			uint offset = atomicAdd(visibleLightCount, 1);
+			visibleLightIndices[offset] = int(lightIndex);
+		}
+	}
 
 	barrier();
 
 	// One thread should fill the global light buffer
 	if (gl_LocalInvocationIndex == 0) {
-        // uint offset = index * 1024; // Determine bosition in global buffer
-        uint offset = index * 2; // Determine bosition in global buffer
-		// for (uint i = 0; i < visibleLightCount; i++) {
-		// 	visibleLightIndicesBuffer.data[offset + i].index = visibleLightIndices[i];
-		// }
-		// 
-		// if (visibleLightCount != 1024) {
-		// 	// Unless we have totally filled the entire array, mark it's end with -1
-		// 	// Final shader step will use this to determine where to stop (without having to pass the light count)
-		// 	visibleLightIndicesBuffer.data[offset + visibleLightCount].index = -1;
-		// }
+		uint offset = index * 1024; // Determine bosition in global buffer
+		for (uint i = 0; i < visibleLightCount; i++) {
+			visibleLightIndicesBuffer.data[offset + i].index = visibleLightIndices[i];
+		}
 
-        visibleLightIndicesBuffer.data[offset].index = int(index);
-        visibleLightIndicesBuffer.data[offset + 1].index = int(depth);
-        // visibleLightIndicesBuffer.data[index].index = int(mod(float(index), 2.0));
-        // visibleLightIndicesBuffer.data[offset].index = int(minDepthInt);
-    }
+		if (visibleLightCount != 1024) {
+			// Unless we have totally filled the entire array, mark it's end with -1
+			// Final shader step will use this to determine where to stop (without having to pass the light count)
+			visibleLightIndicesBuffer.data[offset + visibleLightCount].index = -1;
+		}
+	}
 }

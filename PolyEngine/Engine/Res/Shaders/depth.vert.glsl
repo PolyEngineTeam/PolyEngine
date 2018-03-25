@@ -8,4 +8,4 @@ uniform mat4 uScreenFromModel;
 
 void main() {
     gl_Position = uScreenFromModel * aPos;
-}
+}													

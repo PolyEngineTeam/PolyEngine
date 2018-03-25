@@ -27,7 +27,7 @@ namespace Poly {
 			int index;
 		};
 		
-		const size_t NUM_LIGHTS = 10; // 1024;
+		const size_t NUM_LIGHTS = 1024;
 		const float LIGHT_RADIUS = 30.0f;
 
 		GLuint SCREEN_SIZE_X = 800;
@@ -61,8 +61,14 @@ namespace Poly {
 
 		void UpdateLights(World* world);
 
-		void DebugDepth(World* world, const CameraComponent* cameraCmp);
+		void DepthPrePass(World* world, const CameraComponent* cameraCmp);
 
+		void LightCulling(World* world, const CameraComponent* cameraCmp);
+		
+		void DebugLightCulling(World* world, const CameraComponent* cameraCmp);
+
+		void DebugDepth(World* world, const CameraComponent* cameraCmp);
+		
 		void DrawQuad();
 
 		void TiledForwardRenderer::CreateFallbackWhiteTexture();
