@@ -15,7 +15,7 @@ platform:
 environment:
   matrix:
   - arch: Win64
-    QTDIR: C:\Qt\5.10.0\msvc2017_64
+    QTDIR: C:\Qt\5.10.1\msvc2017_64
     PATH: '%PATH%;%QTDIR%\bin;'
 
   # - arch: #does not work, Release|x64 not a valid target
