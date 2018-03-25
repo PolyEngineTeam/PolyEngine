@@ -85,8 +85,13 @@ namespace Poly
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of four functions handling incoming input events.</summary>
+		/// <param name="pos">Mouse delta pos.</param>
+		void UpdateMouseMove(const Vector2i& delta) { InputEventsQueue.PushBack({eInputEventType::MOUSEMOVE, delta }); }
+
+		/// <summary>Pushes input event to an input queue with specified event type and key code.
+		/// One of four functions handling incoming input events.</summary>
 		/// <param name="pos">New mouse position.</param>
-		void UpdateMousePos(const Vector2i& pos) { InputEventsQueue.PushBack({eInputEventType::MOUSEMOVE, pos}); }
+		void UpdateMousePos(const Vector2i& pos) { InputEventsQueue.PushBack({ eInputEventType::MOUSEPOS, pos }); }
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of four functions handling incoming input events.</summary>
@@ -121,6 +126,11 @@ namespace Poly
 		bool IsQuitRequested() const;
 		void RequestGameQuit();
 		
+		bool ShouldCaptureMouse() const { return MouseCaptureEnabled; }
+		void SetMouseCapture(bool enabled) { MouseCaptureEnabled = enabled; }
+
+		bool ShouldMouseBeVisible() const { return MouseVisible; }
+		void SetMouseVisible(bool visible) { MouseVisible = visible; }
 
 		/// <summary>Returns current base world refference.</summary>
 		/// <returns>Pointer to current world.</returns>
@@ -167,6 +177,8 @@ namespace Poly
 		Dynarray<PhaseUpdateFunction> GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];
 
 		bool QuitRequested = false; //stop the game
+		bool MouseCaptureEnabled = false;
+		bool MouseVisible = true;
 	};
 
 	ENGINE_DLLEXPORT extern Engine* gEngine;

@@ -14,7 +14,7 @@ public:
 
 	~CustomSDLWindow();
 
-	inline bool IsValid() const { return MainWindow; }
+	inline bool IsValid() const { return MainWindow != nullptr; }
 	SDL_Window* Get() { return MainWindow; }
 private:
 

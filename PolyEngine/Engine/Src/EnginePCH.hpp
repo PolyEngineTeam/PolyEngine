@@ -59,10 +59,12 @@
 // Systems
 #include "DeferredTaskSystem.hpp"
 #include "SoundSystem.hpp"
+#include "ParticleUpdateSystem.hpp"
 #include "DeferredTaskSystem.hpp"
 #include "Physics2DSystem.hpp"
 #include "Physics3DSystem.hpp"
 #include "DebugDrawSystem.hpp"
+#include "PathfindingSystem.hpp"
 
 // Config
 #include "AssetsPathConfig.hpp"

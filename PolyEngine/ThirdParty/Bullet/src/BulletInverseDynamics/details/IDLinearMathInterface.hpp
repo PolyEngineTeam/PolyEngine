@@ -49,9 +49,9 @@ inline mat33 operator*(const idScalar& s, const mat33& a) { return a * s; }
 
 class vecx : public btVectorX<idScalar> {
 public:
-	vecx(int size) : btVectorX<idScalar>(size) {}
+	vecx(int size) : btVectorX(size) {}
 	const vecx& operator=(const btVectorX<idScalar>& rhs) {
-		*static_cast<btVectorX<idScalar>*>(this) = rhs;
+		*static_cast<btVectorX*>(this) = rhs;
 		return *this;
 	}
 

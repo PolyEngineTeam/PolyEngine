@@ -21,13 +21,13 @@ void Poly::CameraSystem::CameraUpdatePhase(World* world)
 		{
 			cameraCmp->Aspect = aspect;
 			if (cameraCmp->IsPerspective)
-				cameraCmp->Projection.SetPerspective(cameraCmp->Fov, cameraCmp->Aspect, cameraCmp->Near, cameraCmp->Far);
+				cameraCmp->ScreenFromView.SetPerspective(cameraCmp->Fov, cameraCmp->Aspect, cameraCmp->Near, cameraCmp->Far);
 			else
-				cameraCmp->Projection.SetOrthographic(cameraCmp->Top, cameraCmp->Bottom, cameraCmp->Left, cameraCmp->Right, cameraCmp->Near, cameraCmp->Far);
+				cameraCmp->ScreenFromView.SetOrthographic(cameraCmp->Top, cameraCmp->Bottom, cameraCmp->Left, cameraCmp->Right, cameraCmp->Near, cameraCmp->Far);
 		}
 
-		cameraCmp->ModelView = transform.GetGlobalTransformationMatrix().GetInversed();
-		cameraCmp->MVP = cameraCmp->Projection * cameraCmp->ModelView;
+		cameraCmp->ViewFromWorld = transform.GetWorldFromModel().GetInversed();
+		cameraCmp->ScreenFromWorld = cameraCmp->ScreenFromView * cameraCmp->ViewFromWorld;
 
 
 		InputWorldComponent* inputCmp = world->GetWorldComponent<InputWorldComponent>();

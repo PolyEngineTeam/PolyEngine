@@ -4,12 +4,13 @@
 #include <Dynarray.hpp>
 #include <EnumUtils.hpp>
 
-#include "Physics3DShapes.hpp"
-
 namespace Poly
 {
 	//------------------------------------------------------------------------------
 	// helper structures
+
+
+	class Physics3DShape;
 
 
 	enum class eCollisionGroup
@@ -23,6 +24,18 @@ namespace Poly
 		TRIGGER_RED = 0x32,
 		TRIGGER_GREEN = 0x64,
 		TRIGGER_BLUE = 0x128,
+	};
+
+	struct ENGINE_DLLEXPORT ContactPairResults
+	{
+		struct  ContactPair
+		{
+			Entity* FirstEntity;
+			Entity* SecondEntity;
+			Vector Normal;
+		};
+
+		Dynarray<ContactPair> ContactPairs;
 	};
 
 	/// Contains dynarray of contacts. 
@@ -46,7 +59,7 @@ namespace Poly
 	{
 		struct RaycastHit
 		{
-			const Entity* HitEntityID;
+			Entity* HitEntity;
 			Vector WorldHitNormal;
 			Vector WorldHitPoint;
 			float HitFraction;
@@ -75,7 +88,7 @@ namespace Poly
 		/// @param mass - mass of object with given shape
 		/// @return three dimensional vector containing intertia for given shape with mass
 		/// @see Rigidbody3DComponentTemplate
-		Vector CalculateIntertia(const Physics3DShape& shape, float mass);
+		Vector ENGINE_DLLEXPORT CalculateInertia(const Physics3DShape* shape, float mass);
 
 
 		// collision groups administration
@@ -86,21 +99,21 @@ namespace Poly
 		/// @param group - new collision group
 		/// @see Trigger3DComponent::GetCollisionGroup
 		/// @see Trigger3DComponent::SetCollisionMask
-		void SetCollisionGroup(World* world, Entity* entity, EnumFlags<eCollisionGroup> group);
+		void ENGINE_DLLEXPORT SetCollisionGroup(World* world, Entity* entity, EnumFlags<eCollisionGroup> group);
 
 		/// Use to change collider collision mask.
 		/// Collision mask determines whith which collision groups this collider will collide.
 		/// @param mask - new collision mask
 		/// @see Trigger3DComponent::GetCollisionMask
 		/// @see Trigger3DComponent::SetCollisionGroup
-		void SetCollisionMask(World* world, Entity* entity, EnumFlags<eCollisionGroup> mask);
+		void ENGINE_DLLEXPORT SetCollisionMask(World* world, Entity* entity, EnumFlags<eCollisionGroup> mask);
 
 
 		// deferred administration
 
 		/// The actual collider or rigibody is created during the first Physics3DSystem::Update call after creation of that component.
 		/// @see Physics3DSystem::Physics3DUpdatePhase
-		void EnsureInit(World* world, Entity* entity);
+		void ENGINE_DLLEXPORT EnsureInit(World* world, Entity* entity);
 
 
 		// registration
@@ -119,16 +132,6 @@ namespace Poly
 		// collisions
 
 
-		/// When You simply want to check if one entity is colliding with anther just call that function.
-		/// Both entities have to contain @see[Trigger3DComponent] or @see[Rigidbody3DComponent].
-		/// @param world - world with entities You want to test
-		/// @param firstID - first enitity
-		/// @param secondID - second enitity
-		/// @return colliding - true if given entities are colliding
-		/// @see ContactPair
-		/// @see Contact
-		bool ENGINE_DLLEXPORT IsColliding(World* world, Entity* firstEntity, Entity* secondEntity);
-
 		/// When You want to get collision points You should use this function.
 		/// Both entities have to contain @see[Trigger3DComponent] or @see[Rigidbody3DComponent].
 		/// @param world - world with entities You want to test
@@ -139,15 +142,8 @@ namespace Poly
 		/// @see Contact
 		ENGINE_DLLEXPORT ContactResult ContactPair(World* world, Entity* firstEntity, Entity* secondEntity);
 
-		/// With this function You can get all entities colliding with given entity.
-		/// Detects collision only if entity contains @see[Trigger3DComponent] or @see[Rigidbody3DComponent].
-		/// @param world - world with entities You want to test
-		/// @param entityID - enitity
-		/// @return result - instance of @see[ContactResult]
-		/// @see IsColliding
-		/// @see ContactPair
-		ENGINE_DLLEXPORT ContactResult Contact(World* world, Entity* entity);
 
+		ENGINE_DLLEXPORT ContactPairResults GetAllContactPairs(World* world);
 
 		// raytracing
 

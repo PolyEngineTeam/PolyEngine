@@ -181,6 +181,28 @@ def update_config_files(path, name, engine_path, is_new_config):
     replace_tags_in_file(cmake_sln_output_path, [('$PROJECT_PATH$', name), ('$PROJECT_NAME$', name), ('$ENGINE_DIR$', get_cmake_path(os.path.abspath(engine_path)))]) 
     replace_tags_in_file(cmake_proj_output_path, [('$PROJECT_NAME$', name)])
 
+    create_fast_update_script(engine_path, path)
+
+def create_fast_update_script(engine_path, proj_path):
+    abs_engine_path = os.path.abspath(engine_path)
+    script_path = os.sep.join([abs_engine_path, 'Scripts', 'ProjectTool.py'])
+   
+    fileString = 'py {} -e {} -u {}'.format(script_path, abs_engine_path, proj_path)
+    
+    if os.name == 'nt':
+        fileString = 'py {} -e {} -u {}'.format(script_path, abs_engine_path, proj_path)
+        fileName = os.sep.join([proj_path, 'quick_update.bat'])
+    else:
+        fileString = '#!/bin/bash\npython3.6 {} -e {} -u {}'.format(script_path, abs_engine_path, proj_path)
+        fileName = os.sep.join([proj_path, 'quick_update.sh'])
+
+    with open(fileName, 'w') as outfile:
+        outfile.write(fileString)
+
+    if os.name == 'posix':
+        os.system("chmod +x {}".format(fileName))
+        
+
 def create_project(name, path, engine_path):
     print('Creating project', name, 'in', path, 'with engine at', engine_path)
 

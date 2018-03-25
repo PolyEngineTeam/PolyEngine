@@ -1,3 +1,4 @@
+#include <Defines.hpp>
 #include <catch.hpp>
 
 #include <Defines.hpp>
@@ -80,12 +81,13 @@ TEST_CASE("Floating-point equality comparisons", "[FloatCmp]") {
 	}
 
 	SECTION("Extreme values (overflow potential)") {
-		CHECK(Cmpft(MAX_FLOAT, MAX_FLOAT));
-		CHECK_FALSE(Cmpft(MAX_FLOAT, -MAX_FLOAT));
-		CHECK_FALSE(Cmpft(-MAX_FLOAT, MAX_FLOAT));
-		CHECK_FALSE(Cmpft(MAX_FLOAT, MAX_FLOAT / 2));
-		CHECK_FALSE(Cmpft(MAX_FLOAT, -MAX_FLOAT / 2));
-		CHECK_FALSE(Cmpft(-MAX_FLOAT, MAX_FLOAT / 2));
+		const float HALF_MAX_FLOAT = MAX_FLOAT / 2;
+		CHECK(Cmpft(HALF_MAX_FLOAT, HALF_MAX_FLOAT));
+		CHECK_FALSE(Cmpft(HALF_MAX_FLOAT, -HALF_MAX_FLOAT));
+		CHECK_FALSE(Cmpft(-HALF_MAX_FLOAT, HALF_MAX_FLOAT));
+		CHECK_FALSE(Cmpft(HALF_MAX_FLOAT, HALF_MAX_FLOAT / 2));
+		CHECK_FALSE(Cmpft(HALF_MAX_FLOAT, -HALF_MAX_FLOAT / 2));
+		CHECK_FALSE(Cmpft(-HALF_MAX_FLOAT, HALF_MAX_FLOAT / 2));
 	}
 
 	SECTION("Infinities") {

@@ -4,6 +4,7 @@
 
 // Math
 #include "BasicMath.hpp"
+#include "Random.hpp"
 #include "Angle.hpp"
 #include "Vector.hpp"
 #include "Matrix.hpp"

@@ -36,8 +36,8 @@ namespace Poly
 		bool IsClicked(eMouseButton button) const { return (CurrMouseButton[button] && !PrevMouseButton[button]); }
 		bool IsReleased(eMouseButton button) const { return (!CurrMouseButton[button] && PrevMouseButton[button]); }
 
-		const Vector2i& GetMousePos() const { return CurrMouse; }
-		Vector2i GetMousePosDelta() const  { return CurrMouse - PrevMouse; }
+		const Vector2i& GetMousePos() const { return MousePos; }
+		const Vector2i& GetMousePosDelta() const  { return MouseDelta; }
 
 		const Vector2i& GetWheelPos() const { return CurrWheel; }
 		Vector2i GetWheelPosDelta() const { return CurrWheel - PrevWheel; }
@@ -58,8 +58,8 @@ namespace Poly
 		EnumArray<bool, eKey> PrevKey;
 		EnumArray<bool, eMouseButton> CurrMouseButton;
 		EnumArray<bool, eMouseButton> PrevMouseButton;
-		Vector2i CurrMouse;
-		Vector2i PrevMouse;
+		Vector2i MousePos;
+		Vector2i MouseDelta;
 		Vector2i CurrWheel;
 		Vector2i PrevWheel;
 		std::unordered_map<size_t, ControllerState> Controllers;

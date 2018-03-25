@@ -107,9 +107,6 @@ protected:
 
 	void	serializeCollisionObjects(btSerializer* serializer);
 
-	void serializeContactManifolds(btSerializer* serializer);
-
-
 public:
 
 	//this constructor doesn't own the dispatcher and paircache/broadphase

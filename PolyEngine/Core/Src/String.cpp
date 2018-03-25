@@ -30,14 +30,14 @@ String::String(String&& rhs) {
 	Data = std::move(rhs.Data);
 }
 
-String String::From(int var) { return std::move(StringBuilder().Append(var).StealString()); }
-String String::From(float var) { return std::move(StringBuilder().Append(var).StealString()); }
-String String::From(float var, size_t precision) { return std::move(StringBuilder().Append(var, precision).StealString()); }
-String String::From(double var) { return std::move(StringBuilder().Append(var).StealString()); }
-String String::From(double var, size_t precision) { return std::move(StringBuilder().Append(var, precision).StealString()); }
-String String::From(char var) { return std::move(StringBuilder().Append(var).StealString()); }
-String String::From(const char* var) { return std::move(StringBuilder().Append(var).StealString()); }
-String String::From(const std::string& var) { return std::move(StringBuilder().Append(var).StealString()); }
+String String::From(int var) { return StringBuilder().Append(var).StealString(); }
+String String::From(float var) { return StringBuilder().Append(var).StealString(); }
+String String::From(float var, size_t precision) { return StringBuilder().Append(var, precision).StealString(); }
+String String::From(double var) { return StringBuilder().Append(var).StealString(); }
+String String::From(double var, size_t precision) { return StringBuilder().Append(var, precision).StealString(); }
+String String::From(char var) { return StringBuilder().Append(var).StealString(); }
+String String::From(const char* var) { return StringBuilder().Append(var).StealString(); }
+String String::From(const std::string& var) { return StringBuilder().Append(var).StealString(); }
 
 bool String::Contains(const String& var) const {
 	size_t idx2 = 0;

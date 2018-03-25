@@ -22,13 +22,12 @@ UnlitRenderingPass::UnlitRenderingPass()
 void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
 	GetProgram().BindProgram();
-	const Matrix& mvp = camera->GetMVP();
+	const Matrix& ScreenFromWorld = camera->GetScreenFromWorld();
 	
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-		const EntityTransform& transform = meshCmp->GetTransform();
 
 		if (passType == ePassType::BY_MATERIAL &&
 			(meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::UNLIT))
@@ -36,10 +35,11 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 			continue;
 		}
 
-		const Matrix& objTransform = transform.GetGlobalTransformationMatrix();
-		Matrix screenTransform = mvp * objTransform;
-		GetProgram().SetUniform("uTransform", objTransform);
-		GetProgram().SetUniform("uMVPTransform", screenTransform);
+		const EntityTransform& transform = meshCmp->GetTransform();
+		const Matrix& WorldFromModel = transform.GetWorldFromModel();
+		Matrix ScreenFromModel = ScreenFromWorld * WorldFromModel;
+		GetProgram().SetUniform("uTransform", WorldFromModel);
+		GetProgram().SetUniform("uMVPTransform", ScreenFromModel);
 		
 		if (passType == ePassType::BY_MATERIAL)
 		{

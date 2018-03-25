@@ -12,7 +12,7 @@ void InputSystem::InputPhase(World* world)
 	com->PrevKey = com->CurrKey;
 	com->PrevMouseButton = com->CurrMouseButton;
 
-	com->PrevMouse = com->CurrMouse;
+	com->MouseDelta = Vector2i::ZERO;
 	com->PrevWheel = com->CurrWheel;
 
 	for (auto& pair : com->Controllers)
@@ -45,7 +45,10 @@ void InputSystem::InputPhase(World* world)
 				com->CurrMouseButton[ev.MouseButton] = false;
 			break;
 		case eInputEventType::MOUSEMOVE:
-			com->CurrMouse = ev.Pos;
+			com->MouseDelta += ev.Pos;
+			break;
+		case eInputEventType::MOUSEPOS:
+			com->MousePos = ev.Pos;
 			break;
 		case eInputEventType::WHEELMOVE:
 			com->CurrWheel += ev.Pos;

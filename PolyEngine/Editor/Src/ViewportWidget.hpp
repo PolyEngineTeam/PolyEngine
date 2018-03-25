@@ -1,8 +1,5 @@
 #pragma once
 
-#include <QWidget>
-#include <QtGui/QtGui>
-
 #include "CustomSDLWindow.hpp"
 #include "PolyWidget.hpp"
 

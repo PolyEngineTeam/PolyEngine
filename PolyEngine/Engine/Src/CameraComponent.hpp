@@ -23,9 +23,9 @@ namespace Poly {
 		CameraComponent(Angle fov, float zNear, float zFar);
 		CameraComponent(float top, float bottom, float left, float right, float zNear, float zFar);
 
-		const Matrix& GetProjectionMatrix() const { return Projection; }
-		const Matrix& GetModelViewMatrix() const { return ModelView; }
-		const Matrix& GetMVP() const { return MVP; }
+		const Matrix& GetScreenFromView() const { return ScreenFromView; }
+		const Matrix& GetViewFromWorld() const { return ViewFromWorld; }
+		const Matrix& GetScreenFromWorld() const { return ScreenFromWorld; }
 
 		const Angle& GetFOV() const { return Fov; }
 		const Angle& GetTargetFOV() const { return TargetFov; }
@@ -36,9 +36,9 @@ namespace Poly {
 		void SetRenderingMode(eRenderingModeType value) { RenderingMode = value; }
 
 	private:
-		Matrix Projection;
-		Matrix ModelView;
-		Matrix MVP;
+		Matrix ScreenFromView;
+		Matrix ViewFromWorld;
+		Matrix ScreenFromWorld;
 
 		bool IsPerspective = false;
 		// Prerpective

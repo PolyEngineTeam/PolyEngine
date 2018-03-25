@@ -15,10 +15,12 @@ namespace Poly
 		/// Creates vector from float values.
 		explicit constexpr Vector3f(float x, float y, float z) : X(x), Y(y), Z(z) {}
 
+		explicit constexpr Vector3f(Vector v) : X(v.X), Y(v.Y), Z(v.Z) {}
+
 		Vector3f(const Vector3f& rhs) : X(rhs.X), Y(rhs.Y), Z(rhs.Z) {}
 
 		/// Helper method for getting a copy of Vector3f as Vector.
-		Vector GetVector() { return Vector(X, Y, Z); }
+		Vector GetVector() const { return Vector(X, Y, Z); }
 
 		// This structure allows to access vector elements by index or name.
 		float X = 0.0f, Y = 0.0f, Z = 0.0f;
