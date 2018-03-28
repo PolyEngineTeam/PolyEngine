@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Vector.hpp>
+#include <Math/Vector.hpp>
 
 #include "ComponentBase.hpp"
 #include "Physics3DSystem.hpp"

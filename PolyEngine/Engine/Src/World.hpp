@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <Core.hpp>
 
-#include "SafePtr.hpp"
+#include <Memory/SafePtr.hpp>
 #include "Entity.hpp"
 #include "Engine.hpp"
 

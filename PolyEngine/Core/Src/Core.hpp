@@ -3,24 +3,24 @@
 #include "Defines.hpp"
 
 // Math
-#include "BasicMath.hpp"
-#include "Random.hpp"
-#include "Angle.hpp"
-#include "Vector.hpp"
-#include "Matrix.hpp"
-#include "Quaternion.hpp"
+#include "Math/BasicMath.hpp"
+#include "Math/Random.hpp"
+#include "Math/Angle.hpp"
+#include "Math/Vector.hpp"
+#include "Math/Matrix.hpp"
+#include "Math/Quaternion.hpp"
 
 // Memory
 #include "BaseObject.hpp"
-#include "Allocator.hpp"
-#include "PoolAllocator.hpp"
-#include "IterablePoolAllocator.hpp"
+#include "Memory/Allocator.hpp"
+#include "Memory/PoolAllocator.hpp"
+#include "Memory/IterablePoolAllocator.hpp"
 
 // Containers
-#include "String.hpp"
+#include "Collections/String.hpp"
 
 // Other
-#include "Color.hpp"
+#include "Math/Color.hpp"
 #include "FileIO.hpp"
-#include "Logger.hpp"
+#include "Utils/Logger.hpp"
 #include "UniqueID.hpp"

@@ -1,7 +1,7 @@
 #include <Defines.hpp>
 #include <catch.hpp>
 
-#include <RTTI.hpp>
+#include <RTTI/RTTI.hpp>
 #include <DebugConfig.hpp>
 
 using namespace Poly;

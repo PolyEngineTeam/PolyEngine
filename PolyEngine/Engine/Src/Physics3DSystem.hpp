@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Vector.hpp>
-#include <Dynarray.hpp>
-#include <EnumUtils.hpp>
+#include <Math/Vector.hpp>
+#include <Collections/Dynarray.hpp>
+#include <Utils/EnumUtils.hpp>
 
 namespace Poly
 {

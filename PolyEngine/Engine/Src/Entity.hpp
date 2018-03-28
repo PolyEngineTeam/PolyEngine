@@ -3,7 +3,7 @@
 #include <Core.hpp>
 #include <bitset>
 
-#include <SafePtrRoot.hpp>
+#include <Memory/SafePtrRoot.hpp>
 #include "EntityTransform.hpp"
 #include "Engine.hpp"
 

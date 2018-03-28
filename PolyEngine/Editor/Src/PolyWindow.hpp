@@ -2,7 +2,7 @@
 
 #include <QMainWindow>
 
-#include <Dynarray.hpp>
+#include <Collections/Dynarray.hpp>
 
 class PolyWidget;
 

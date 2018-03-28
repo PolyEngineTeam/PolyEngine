@@ -3,8 +3,8 @@
 #include "GLRenderingDevice.hpp"
 #include "GLCubemapDeviceProxy.hpp"
 
-#include <AABox.hpp>
-#include <AARect.hpp>
+#include <Math/AABox.hpp>
+#include <Math/AARect.hpp>
 #include <World.hpp>
 #include <CameraComponent.hpp>
 #include <SkyboxWorldComponent.hpp>

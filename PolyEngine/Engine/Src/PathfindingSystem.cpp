@@ -2,7 +2,7 @@
 
 #include "PathfindingSystem.hpp"
 #include "PathfindingComponent.hpp"
-#include <OrderedMap.hpp>
+#include <Collections/OrderedMap.hpp>
 
 using namespace Poly;
 

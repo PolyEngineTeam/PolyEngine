@@ -1,8 +1,8 @@
 #include <catch.hpp>
 
 #include <Defines.hpp>
-#include <BasicMath.hpp>
-#include <Random.hpp>
+#include <Math/BasicMath.hpp>
+#include <Math/Random.hpp>
 
 using namespace Poly;
 

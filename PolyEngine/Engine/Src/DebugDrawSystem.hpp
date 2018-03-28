@@ -1,5 +1,5 @@
 #pragma once
-#include "Vector.hpp"
+#include "Math/Vector.hpp"
 
 namespace Poly
 {

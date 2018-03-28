@@ -1,7 +1,7 @@
 #include <Defines.hpp>
 #include <catch.hpp>
 
-#include <Queue.hpp>
+#include <Collections/Queue.hpp>
 
 using namespace Poly;
 

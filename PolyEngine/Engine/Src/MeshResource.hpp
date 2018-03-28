@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Dynarray.hpp>
-#include <EnumUtils.hpp>
-#include <Color.hpp>
+#include <Collections/Dynarray.hpp>
+#include <Utils/EnumUtils.hpp>
+#include <Math/Color.hpp>
 
 #include "ResourceBase.hpp"
 #include "TextureResource.hpp"

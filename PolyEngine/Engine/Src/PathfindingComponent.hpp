@@ -2,8 +2,8 @@
 
 #include <Core.hpp>
 #include "ComponentBase.hpp"
-#include "Optional.hpp"
-#include <Vector2f.hpp>
+#include <Utils/Optional.hpp>
+#include <Math/Vector2f.hpp>
 
 #include "PathfindingSystem.hpp"
 

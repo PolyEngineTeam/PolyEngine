@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ComponentBase.hpp"
-#include "Vector.hpp"
-#include "Dynarray.hpp"
+#include <Math/Vector.hpp>
+#include <Collections/Dynarray.hpp>
 #include "SoundEmitterComponent.hpp"
 
 namespace Poly

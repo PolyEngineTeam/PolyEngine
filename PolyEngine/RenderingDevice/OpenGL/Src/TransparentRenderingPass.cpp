@@ -4,7 +4,7 @@
 #include "GLMeshDeviceProxy.hpp"
 #include "GLTextureDeviceProxy.hpp"
 
-#include <AABox.hpp>
+#include <Math/AABox.hpp>
 #include <World.hpp>
 #include <TimeSystem.hpp>
 #include <CameraComponent.hpp>

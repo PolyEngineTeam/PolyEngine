@@ -3,8 +3,8 @@
 #include <exception>
 
 #include <Defines.hpp>
-#include <String.hpp>
-#include <RefCountedBase.hpp>
+#include <Collections/String.hpp>
+#include <Memory/RefCountedBase.hpp>
 
 namespace Poly
 {

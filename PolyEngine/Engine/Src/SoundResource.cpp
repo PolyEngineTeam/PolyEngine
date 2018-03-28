@@ -6,7 +6,7 @@
 #include <fstream>
 
 #include "SoundResource.hpp"
-#include "BinaryBuffer.hpp"
+#include <Memory/BinaryBuffer.hpp>
 
 using namespace Poly;
 

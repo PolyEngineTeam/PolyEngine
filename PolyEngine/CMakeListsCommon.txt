@@ -152,6 +152,17 @@ else()
 endif()
 
 ##
+# Macro that generates source groups
+##
+function(GenerateSourceGoups Sources)
+	foreach(Source ${Sources})
+		get_filename_component(SourcePath "${Source}" PATH)
+		string(REPLACE "/" "\\" CorrectedSourcePath "${SourcePath}")
+		source_group("${CorrectedSourcePath}" FILES "${Source}")
+	endforeach()
+endfunction()
+
+##
 # Enable CCache if found
 ##
 find_program(CCACHE_FOUND ccache)

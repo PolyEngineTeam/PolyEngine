@@ -1,7 +1,7 @@
 #include <Defines.hpp>
 #include <catch.hpp>
 
-#include <Quaternion.hpp>
+#include <Math/Quaternion.hpp>
 //TODO implement
 
 using namespace Poly;

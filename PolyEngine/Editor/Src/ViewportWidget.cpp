@@ -1,6 +1,6 @@
 #include "PolyEditorPCH.hpp"
 #include <Engine.hpp>
-#include <LibraryLoader.hpp>
+#include <Utils/LibraryLoader.hpp>
 #include <AssetsPathConfig.hpp>
 #include <SDL.h>
 

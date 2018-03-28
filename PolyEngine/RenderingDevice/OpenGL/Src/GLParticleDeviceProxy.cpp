@@ -1,5 +1,5 @@
 #include "GLMeshDeviceProxy.hpp"
-#include "Vector3f.hpp"
+#include "Math/Vector3f.hpp"
 #include "GLUtils.hpp"
 #include "GLParticleDeviceProxy.hpp"
 #include "ParticleEmitter.hpp"

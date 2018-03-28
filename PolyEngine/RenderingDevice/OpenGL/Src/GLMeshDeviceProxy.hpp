@@ -1,7 +1,7 @@
 #pragma once
 
 #include <IRenderingDevice.hpp>
-#include <EnumUtils.hpp>
+#include <Utils/EnumUtils.hpp>
 #include "GLUtils.hpp"
 
 namespace Poly

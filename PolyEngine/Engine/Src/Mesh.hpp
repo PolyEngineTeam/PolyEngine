@@ -1,9 +1,9 @@
 #pragma once
 
 #include <BaseObject.hpp>
-#include <Dynarray.hpp>
-#include "Vector3f.hpp"
-#include <Color.hpp>
+#include <Collections/Dynarray.hpp>
+#include "Math/Vector3f.hpp"
+#include <Math/Color.hpp>
 
 namespace Poly
 {

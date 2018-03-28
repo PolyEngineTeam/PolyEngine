@@ -2,7 +2,7 @@
 
 #include <Core.hpp>
 #include <Defines.hpp>
-#include <String.hpp>
+#include <Collections/String.hpp>
 #include <FileIO.hpp>
 
 #include "AssetsPathConfig.hpp"

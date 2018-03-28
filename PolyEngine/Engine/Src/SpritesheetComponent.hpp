@@ -3,7 +3,7 @@
 #include "ComponentBase.hpp"
 #include "RenderingSystem.hpp"
 
-#include <Vector2f.hpp>
+#include <Math/Vector2f.hpp>
 #include <ResourceManager.hpp>
 
 namespace Poly {

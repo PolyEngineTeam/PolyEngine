@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <Logger.hpp>
+#include <Utils/Logger.hpp>
 
 #include "GLUtils.hpp"
 #include "GLTextureDeviceProxy.hpp"

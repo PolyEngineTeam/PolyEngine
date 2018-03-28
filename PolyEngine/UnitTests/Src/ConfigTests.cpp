@@ -1,9 +1,9 @@
 #include <Defines.hpp>
 #include <catch.hpp>
 
-#include <RTTI.hpp>
+#include <RTTI/RTTI.hpp>
 #include <ConfigBase.hpp>
-#include <BasicMath.hpp>
+#include <Math/BasicMath.hpp>
 #include <cstdio>
 
 using namespace Poly;

@@ -1,12 +1,12 @@
 #pragma once
 
 #include <initializer_list>
-#include <Vector2i.hpp>
-#include <EnumUtils.hpp>
+#include <Math/Vector2i.hpp>
+#include <Utils/EnumUtils.hpp>
 #include "ComponentBase.hpp"
 #include "KeyBindings.hpp"
 #include "InputSystem.hpp"
-#include "Optional.hpp"
+#include <Utils/Optional.hpp>
 
 namespace Poly
 {

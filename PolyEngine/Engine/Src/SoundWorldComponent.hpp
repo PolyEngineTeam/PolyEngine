@@ -2,7 +2,7 @@
 
 #include "ComponentBase.hpp"
 #include "SoundSystem.hpp"
-#include "Dynarray.hpp"
+#include <Collections/Dynarray.hpp>
 #include "SoundListenerComponent.hpp"
 
 typedef struct ALCcontext_struct ALCcontext;

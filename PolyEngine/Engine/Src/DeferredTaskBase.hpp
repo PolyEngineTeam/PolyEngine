@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Queue.hpp>
+#include <Collections/Queue.hpp>
 
 namespace Poly
 {

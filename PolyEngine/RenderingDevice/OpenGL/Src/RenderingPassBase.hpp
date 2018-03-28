@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Defines.hpp>
-#include <String.hpp>
+#include <Collections/String.hpp>
 #include <map>
 #include "GLUtils.hpp"
 #include "GLShaderProgram.hpp"

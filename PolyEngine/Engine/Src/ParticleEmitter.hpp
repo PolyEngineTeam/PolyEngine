@@ -1,9 +1,9 @@
 #pragma once
 
-#include <IterablePoolAllocator.hpp>
+#include <Memory/IterablePoolAllocator.hpp>
 #include <BaseObject.hpp>
 #include <IRenderingDevice.hpp>
-#include <Dynarray.hpp>
+#include <Collections/Dynarray.hpp>
 #include <SpritesheetComponent.hpp>
 #include "ParticleUpdateSystem.hpp"
 

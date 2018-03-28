@@ -1,7 +1,7 @@
 #include "EnginePCH.hpp"
 #include "ConfigBase.hpp"
 
-#include <RTTISerialization.hpp>
+#include <RTTI/RTTISerialization.hpp>
 #include <sstream>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
