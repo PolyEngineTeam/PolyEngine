@@ -51,7 +51,10 @@ private:
 
 	bool Opened = false;
 	bool Running = false;
-	Poly::String RunningOperation = "";
+
+	Poly::String Command = "";
+	Poly::String CommandDesc = "";
+
 	Poly::String Name = "";
 	Poly::String ProjectPath = "";
 	Poly::String EnginePath = "";

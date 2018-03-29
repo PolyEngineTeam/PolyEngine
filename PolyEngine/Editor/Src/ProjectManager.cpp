@@ -18,9 +18,10 @@ void ProjectManager::Create(const Poly::String& projectName, const Poly::String&
 	builder.Append(ProjectPath);
 	builder.Append(" ");
 	builder.Append(Name);
-	RunningOperation = "Project creation";
+	Command = builder.GetString();
+	CommandDesc = "Project creation";
 
-	RunCommand(builder.GetString());
+	RunCommand(Command);
 
 	Opened = true;
 }
@@ -115,7 +116,8 @@ void ProjectManager::RunCommand(const Poly::String& cmd)
 	connect(Timer.get(), &QTimer::timeout, this, &ProjectManager::ReadStdout);
 	Timer->start(200);
 
-	*Ostream << "\n\n> ----------     " << RunningOperation << " started...     ----------\n";
+	*Ostream << "\n\n> ----------     " << CommandDesc << " started...     ----------\n";
+	*Ostream << "> ----------     " << Command << "     ----------\n\n";
 
 }
 
@@ -130,7 +132,8 @@ void ProjectManager::ReadStdout()
 	{
 		_pclose(Stream);
 		Running = false;
-		*Ostream << "\n\n> ----------     " << RunningOperation << " ended.     ----------\n";
-		RunningOperation = "";
+		*Ostream << "\n> ----------     " << CommandDesc << " finished.     ----------\n\n";
+		Command = "";
+		CommandDesc = "";
 	}
 }

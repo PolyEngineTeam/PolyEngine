@@ -125,9 +125,19 @@ void EditorUi::InitMainWindow()
 	//ViewportWidget* viewportWidget = new ViewportWidget("Viewport", MainWindow);
 	//MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, viewportWidget, true);
 
-	LoggerWidget* consoleWidget = new LoggerWidget("Console");
-	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, consoleWidget, true);
+	QTabWidget* tabWidget = new QTabWidget();
+	tabWidget->setTabPosition(QTabWidget::South);
 
+	LoggerWidget* consoleWidget = new LoggerWidget("Console");
+	//MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, consoleWidget, true);
+
+	tabWidget->addTab(consoleWidget, "Console");
+
+	consoleWidget = new LoggerWidget("Project Manager");
+	//MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, consoleWidget, true);
+
+	tabWidget->addTab(consoleWidget, "Project Manager");
+	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, tabWidget, true);
 	MainWindow->show();
 }
 
