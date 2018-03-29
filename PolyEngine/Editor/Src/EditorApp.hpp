@@ -4,8 +4,10 @@
 #include <QTimer>
 
 #include "EditorUi.hpp"
-#include "DockManager.hpp"
 #include "GlobalEventFilter.hpp"
+#include "DockManager.hpp"
+#include "ProjectManager.hpp"
+
 
 #include <Engine.hpp>
 
@@ -18,6 +20,7 @@ public:
 	EditorApp(int argc, char *argv[]);
 
 	DockManager DockMgr;
+	ProjectManager ProjectMgr;
 	EditorUi Ui;
 	
 signals:

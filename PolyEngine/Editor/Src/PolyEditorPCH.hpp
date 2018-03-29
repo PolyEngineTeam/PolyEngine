@@ -21,6 +21,7 @@ UNSILENCE_MSVC_WARNING()
 #include "EditorUi.hpp"
 #include "GlobalEventFilter.hpp"
 #include "DockManager.hpp"
+#include "ProjectManager.hpp"
 
 // windows
 #include "PolyWindow.hpp"
@@ -32,6 +33,9 @@ UNSILENCE_MSVC_WARNING()
 // widgets
 #include "ViewportWidget.hpp"
 #include "LoggerWidget.hpp"
+
+// dialogs
+#include "CreateProjectDialog.hpp"
 
 // engine
 #include <Engine.hpp>
