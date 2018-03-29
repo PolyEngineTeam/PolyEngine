@@ -6,7 +6,7 @@
 
 #include "ResourceBase.hpp"
 #include "TextureResource.hpp"
-#include "Mesh.hpp"
+#include "Rendering/Mesh.hpp"
 
 struct aiMesh;
 struct aiMaterial;

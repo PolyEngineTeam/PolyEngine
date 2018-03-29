@@ -5,7 +5,7 @@
 #include <Utils/EnumUtils.hpp>
 #include "ComponentBase.hpp"
 #include "KeyBindings.hpp"
-#include "InputSystem.hpp"
+#include "Input/InputSystem.hpp"
 #include <Utils/Optional.hpp>
 
 namespace Poly

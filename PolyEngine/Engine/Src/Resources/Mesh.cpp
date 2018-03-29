@@ -1,5 +1,5 @@
 #include "EnginePCH.hpp"
-#include "Mesh.hpp"
+#include "Rendering/Mesh.hpp"
 
 
 #include "TextureResource.hpp"

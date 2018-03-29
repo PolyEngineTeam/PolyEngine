@@ -2,7 +2,7 @@
 
 #include <Memory/IterablePoolAllocator.hpp>
 #include <BaseObject.hpp>
-#include <IRenderingDevice.hpp>
+#include <Rendering/IRenderingDevice.hpp>
 #include <Collections/Dynarray.hpp>
 #include <SpritesheetComponent.hpp>
 #include "ParticleUpdateSystem.hpp"

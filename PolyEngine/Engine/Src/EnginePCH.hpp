@@ -13,15 +13,15 @@
 #include "EntityTransform.hpp"
 
 // Rendering
-#include "IRenderingDevice.hpp"
+#include "Rendering/IRenderingDevice.hpp"
 
 // Audio
-#include "OpenALDevice.hpp"
+#include "Audio/OpenALDevice.hpp"
 
 // Utils
 #include "InputQueue.hpp"
 #include "KeyBindings.hpp"
-#include "Mesh.hpp"
+#include "Rendering/Mesh.hpp"
 
 // Resources
 #include "ResourceBase.hpp"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <IRenderingDevice.hpp>
+#include <Rendering/IRenderingDevice.hpp>
 #include <Utils/EnumUtils.hpp>
 #include "GLUtils.hpp"
 

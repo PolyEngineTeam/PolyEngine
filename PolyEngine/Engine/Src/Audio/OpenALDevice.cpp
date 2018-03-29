@@ -1,6 +1,6 @@
 #include "EnginePCH.hpp"
 
-#include "OpenALDevice.hpp"
+#include "Audio/OpenALDevice.hpp"
 
 #include <alc.h>
 #include <al.h>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GLUtils.hpp"
-#include <IRenderingDevice.hpp>
+#include <Rendering/IRenderingDevice.hpp>
 #include "GLShaderProgram.hpp"
 #include <SDL.h>
 

@@ -7,10 +7,10 @@
 #include <memory>
 
 #include <Core.hpp>
-#include "IRenderingDevice.hpp"
-#include "OpenALDevice.hpp"
+#include "Rendering/IRenderingDevice.hpp"
+#include "Audio/OpenALDevice.hpp"
 
-#include "InputSystem.hpp"
+#include "Input/InputSystem.hpp"
 
 namespace Poly
 {

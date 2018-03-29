@@ -1,6 +1,6 @@
 #include "EnginePCH.hpp"
 
-#include "InputSystem.hpp"
+#include "Input/InputSystem.hpp"
 #include "Utils/Optional.hpp"
 
 using namespace Poly;
