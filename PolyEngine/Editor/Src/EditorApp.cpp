@@ -18,8 +18,8 @@ EditorApp::EditorApp(int argc, char *argv[])
 	Ui.InitMainWindow();
 	installEventFilter(&EventFilter);
 	
-	SetupUpdateTimer();
-	CreateEngine();
+	//SetupUpdateTimer();
+	//CreateEngine();
 	
 	Poly::gConsole.LogInfo("PolyEditor succesfully initialized.");
 }

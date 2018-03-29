@@ -95,8 +95,8 @@ void EditorUi::InitMainWindow()
 	//consoleWidget = new LoggerWidget("Object Properties");
 	//consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow); //we need to create new base class for this -> someone created all as loggerwidgets
 
-	ViewportWidget* viewportWidget = new ViewportWidget("Viewport", MainWindow);
-	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, viewportWidget, true);
+	//ViewportWidget* viewportWidget = new ViewportWidget("Viewport", MainWindow);
+	//MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, viewportWidget, true);
 
 	LoggerWidget* consoleWidget = new LoggerWidget("Console");
 	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, consoleWidget, true);
