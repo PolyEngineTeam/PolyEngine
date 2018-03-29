@@ -34,6 +34,31 @@ if(APPLE)
     target_link_libraries(PolyEditor ${Cocoa_LIBRARY})
 endif()
 
+add_custom_command(
+		TARGET PolyEditor
+		POST_BUILD
+			# Inhouse shared library dependancies
+			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:PolyCore>" "$<TARGET_FILE_DIR:PolyEditor>"
+			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:PolyEngine>" "$<TARGET_FILE_DIR:PolyEditor>"
+			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:PolyRenderingDeviceGL>" "$<TARGET_FILE_DIR:PolyEditor>"
+
+			COMMENT "Copying Libs..." VERBATIM
+		)
+
+if(WIN32)
+	# Copy all necessary DLL's on Windows
+	add_custom_command(
+		TARGET PolyEditor
+		POST_BUILD
+			# Thirdparty DLL's
+			COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/SDL2/lib/x64/SDL2.dll" "$<TARGET_FILE_DIR:PolyEditor>"
+			COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/Assimp/lib/Release/x64/assimp-vc140-mt.dll" "$<TARGET_FILE_DIR:PolyEditor>"
+			COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/libepoxy/bin/x64/epoxy-0.dll" "$<TARGET_FILE_DIR:PolyEditor>"
+
+			COMMENT "Copying DLLs..." VERBATIM
+		)
+endif()
+
 # Strange bug in cotire for macOS. Disable it for now. Include paths are not working.
 if(NOT APPLE)
     cotire(PolyEditor)
