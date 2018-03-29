@@ -30,6 +30,7 @@ LoggerWidget::LoggerWidget(const QString& title, QWidget* parent)
 	TextEdit->setReadOnly(true);
 	Layout->addWidget(TextEdit);
 	Poly::gConsole.RegisterStream<EditorOutputStream>("console.log", this);
+	gApp->ProjectMgr.RegisterStream<EditorOutputStream>("projectMgr.log", this);
 }
 
 LoggerWidget::~LoggerWidget()

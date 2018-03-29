@@ -152,23 +152,15 @@ void EditorUi::AddWindow()
 
 void EditorUi::CreateProject()
 {
-	Poly::gConsole.LogInfo("");
-	Poly::gConsole.LogInfo("Project Creator started...");
-
 	CreateProjectDialog dialog;
 	dialog.exec();
 
 	if (dialog.OperationCanceled())
-	{
-		Poly::gConsole.LogInfo("Project creation canceled.");
 		return;
-	}
 
 	gApp->ProjectMgr.Create(&dialog.GetProjectName().toStdString()[0],
 		&dialog.GetProjectDirectory().toStdString()[0],
 		&dialog.GetEngineDirectory().toStdString()[0]);
-
-	Poly::gConsole.LogInfo("Project creation ended.");
 }
 
 void EditorUi::OpenProject()

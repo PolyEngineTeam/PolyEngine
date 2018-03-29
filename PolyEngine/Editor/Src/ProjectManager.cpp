@@ -1,7 +1,5 @@
 #include "PolyEditorPCH.hpp"
 
-#include <cstdlib>
-
 void ProjectManager::Create(const Poly::String& projectName, const Poly::String& projectPath, const Poly::String& enginePath)
 {
 	if (Opened)
@@ -20,8 +18,9 @@ void ProjectManager::Create(const Poly::String& projectName, const Poly::String&
 	builder.Append(ProjectPath);
 	builder.Append(" ");
 	builder.Append(Name);
+	RunningOperation = "Project creation";
 
-	system(builder.GetString().GetCStr());
+	RunCommand(builder.GetString());
 
 	Opened = true;
 }
@@ -96,4 +95,42 @@ void ProjectManager::Close()
 	Name = "";
 	ProjectPath = "";
 	EnginePath = "";
+}
+
+void ProjectManager::RunCommand(const Poly::String& cmd)
+{
+	if (Running)
+		throw new ProjectManagerException("Another process is currently running within ProjectManager.");
+
+	Poly::StringBuilder builder;
+
+	builder.Append(cmd);
+	builder.Append(" 2>&1");
+
+	Stream = _popen(builder.GetString().GetCStr(), "r");
+
+	Running = true;
+	
+	Timer = std::make_unique<QTimer>(this);
+	connect(Timer.get(), &QTimer::timeout, this, &ProjectManager::ReadStdout);
+	Timer->start(200);
+
+	*Ostream << "\n\n> ----------     " << RunningOperation << " started...     ----------\n";
+
+}
+
+void ProjectManager::ReadStdout()
+{
+	if (Stream && !feof(Stream))
+	{
+		if (fgets(Buffer, MaxBuffer, Stream) != NULL)
+			*Ostream << "> " << Buffer;
+	}
+	else
+	{
+		_pclose(Stream);
+		Running = false;
+		*Ostream << "\n\n> ----------     " << RunningOperation << " ended.     ----------\n";
+		RunningOperation = "";
+	}
 }
