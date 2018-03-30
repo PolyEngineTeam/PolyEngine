@@ -5,7 +5,7 @@
 #include <vorbis/vorbisfile.h>
 #include <fstream>
 
-#include "SoundResource.hpp"
+#include "Resources/SoundResource.hpp"
 #include <Memory/BinaryBuffer.hpp>
 
 using namespace Poly;

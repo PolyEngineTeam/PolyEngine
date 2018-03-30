@@ -1,6 +1,6 @@
 #include "EnginePCH.hpp"
 
-#include "LightSourceComponent.hpp"
+#include "Rendering/Lighting/LightSourceComponent.hpp"
 
 Poly::AmbientLightWorldComponent::AmbientLightWorldComponent(const Color& color, float intensity)
 	: LightColor(color), Intensity(intensity)

@@ -1,8 +1,8 @@
 #include "EnginePCH.hpp"
-#include "Rendering/Mesh.hpp"
+#include "Resources/Mesh.hpp"
 
 
-#include "TextureResource.hpp"
+#include "Resources/TextureResource.hpp"
 
 Poly::Mesh::~Mesh()
 {

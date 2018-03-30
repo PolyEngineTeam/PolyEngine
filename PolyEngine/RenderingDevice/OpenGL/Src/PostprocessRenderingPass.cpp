@@ -5,12 +5,12 @@
 #include "GLTextureDeviceProxy.hpp"
 
 #include <Math/AARect.hpp>
-#include <World.hpp>
-#include <TimeSystem.hpp>
-#include <CameraComponent.hpp>
-#include <MovementSystem.hpp>
-#include <MeshRenderingComponent.hpp>
-#include <PostprocessSettingsComponent.hpp>
+#include <ECS/World.hpp>
+#include <Time/TimeSystem.hpp>
+#include <Rendering/Camera/CameraComponent.hpp>
+#include <Movement/MovementSystem.hpp>
+#include <Rendering/MeshRenderingComponent.hpp>
+#include <Rendering/PostprocessSettingsComponent.hpp>
 
 
 using namespace Poly;

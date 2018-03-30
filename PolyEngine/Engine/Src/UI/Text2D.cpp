@@ -1,8 +1,8 @@
 #include "EnginePCH.hpp"
 #include "Text2D.hpp"
 
-#include "FontResource.hpp"
-#include "ResourceManager.hpp"
+#include "Resources/FontResource.hpp"
+#include "Resources/ResourceManager.hpp"
 
 using namespace Poly;
 

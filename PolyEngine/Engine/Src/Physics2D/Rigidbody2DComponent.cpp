@@ -1,10 +1,10 @@
 #include "EnginePCH.hpp"
 
-#include "Rigidbody2DComponent.hpp"
+#include "Physics2D/Rigidbody2DComponent.hpp"
 
-#include "Physics2DWorldComponent.hpp"
-#include "Physics2DColliders.hpp"
-#include "World.hpp"
+#include "Physics2D/Physics2DWorldComponent.hpp"
+#include "Physics2D/Physics2DColliders.hpp"
+#include "ECS/World.hpp"
 #include "RigidBody2DImpl.hpp"
 
 #include <Box2D/Box2D.h>

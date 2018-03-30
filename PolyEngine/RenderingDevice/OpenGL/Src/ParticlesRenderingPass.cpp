@@ -4,12 +4,12 @@
 #include "GLTextureDeviceProxy.hpp"
 #include "GLParticleDeviceProxy.hpp"
 
-#include <World.hpp>
-#include <TimeSystem.hpp>
-#include <CameraComponent.hpp>
-#include <ParticleComponent.hpp>
-#include <MeshRenderingComponent.hpp>
-#include <MovementSystem.hpp>
+#include <ECS/World.hpp>
+#include <Time/TimeSystem.hpp>
+#include <Rendering/Camera/CameraComponent.hpp>
+#include <Rendering/Particles/ParticleComponent.hpp>
+#include <Rendering/MeshRenderingComponent.hpp>
+#include <Movement/MovementSystem.hpp>
 
 using namespace Poly;
 

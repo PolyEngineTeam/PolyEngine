@@ -1,7 +1,7 @@
 #include "EnginePCH.hpp"
 
-#include "TextureResource.hpp"
-#include "ResourceManager.hpp"
+#include "Resources/TextureResource.hpp"
+#include "Resources/ResourceManager.hpp"
 #include "SOIL/SOIL.h"
 
 using namespace Poly;

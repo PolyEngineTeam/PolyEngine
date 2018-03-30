@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 #include <Utils/EnumUtils.hpp>
-#include "ConfigBase.hpp"
+#include "Configs/ConfigBase.hpp"
 
 namespace Poly
 {

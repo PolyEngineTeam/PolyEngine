@@ -1,6 +1,6 @@
 #pragma once
 
-#include "InputQueue.hpp"
+#include "Input/InputQueue.hpp"
 
 namespace Poly
 {

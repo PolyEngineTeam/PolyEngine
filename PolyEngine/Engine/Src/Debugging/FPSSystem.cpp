@@ -1,11 +1,11 @@
 #include "EnginePCH.hpp"
 
 #include "FPSSystem.hpp"
-#include "DeferredTaskSystem.hpp"
+#include "ECS/DeferredTaskSystem.hpp"
 
-#include "DebugWorldComponent.hpp"
-#include "TimeSystem.hpp"
-#include "DebugDrawSystem.hpp"
+#include "Debugging/DebugWorldComponent.hpp"
+#include "Time/TimeSystem.hpp"
+#include "Debugging/DebugDrawSystem.hpp"
 
 using namespace Poly;
 

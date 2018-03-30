@@ -4,10 +4,10 @@
 #include <Core.hpp>
 
 #include <Memory/SafePtr.hpp>
-#include "Entity.hpp"
+#include "ECS/Entity.hpp"
 #include "Engine.hpp"
 
-#include "ComponentBase.hpp"
+#include "ECS/ComponentBase.hpp"
 
 namespace Poly {
 

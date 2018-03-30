@@ -1,7 +1,7 @@
 #include "EnginePCH.hpp"
 
-#include "ParticleUpdateSystem.hpp"
-#include "ParticleComponent.hpp"
+#include "Rendering/Particles/ParticleUpdateSystem.hpp"
+#include "Rendering/Particles/ParticleComponent.hpp"
 
 using namespace Poly;
 

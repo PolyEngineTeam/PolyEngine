@@ -1,6 +1,6 @@
 #include "EnginePCH.hpp"
 
-#include "PathfindingSystem.hpp"
+#include "AI/PathfindingSystem.hpp"
 #include "PathfindingComponent.hpp"
 #include <Collections/OrderedMap.hpp>
 

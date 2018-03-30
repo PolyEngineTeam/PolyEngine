@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ComponentBase.hpp"
-#include "SoundSystem.hpp"
+#include "ECS/ComponentBase.hpp"
+#include "Audio/SoundSystem.hpp"
 
 namespace Poly
 {

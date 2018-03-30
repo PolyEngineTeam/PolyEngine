@@ -5,9 +5,9 @@
 
 #include <Math/AABox.hpp>
 #include <Math/AARect.hpp>
-#include <World.hpp>
-#include <CameraComponent.hpp>
-#include <SkyboxWorldComponent.hpp>
+#include <ECS/World.hpp>
+#include <Rendering/Camera/CameraComponent.hpp>
+#include <Rendering/SkyboxWorldComponent.hpp>
 
 using namespace Poly;
 

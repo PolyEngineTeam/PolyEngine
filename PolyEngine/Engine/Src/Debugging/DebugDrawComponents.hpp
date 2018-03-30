@@ -1,6 +1,6 @@
 #pragma once
-#include "ComponentBase.hpp"
-#include "DebugConfig.hpp"
+#include "ECS/ComponentBase.hpp"
+#include "Configs/DebugConfig.hpp"
 #include <Collections/Dynarray.hpp>
 #include <Math/Color.hpp>
 #include <Math/Vector3f.hpp>

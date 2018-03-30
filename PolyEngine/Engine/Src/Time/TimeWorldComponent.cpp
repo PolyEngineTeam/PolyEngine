@@ -1,6 +1,6 @@
 #include "EnginePCH.hpp"
 
-#include "TimeWorldComponent.hpp"
+#include "Time/TimeWorldComponent.hpp"
 
 
 //------------------------------------------------------------------------------

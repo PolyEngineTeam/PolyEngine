@@ -5,8 +5,8 @@
 #include <Collections/String.hpp>
 #include <FileIO.hpp>
 
-#include "AssetsPathConfig.hpp"
-#include "ResourceBase.hpp"
+#include "Configs/AssetsPathConfig.hpp"
+#include "Resources/ResourceBase.hpp"
 
 #include <map>
 

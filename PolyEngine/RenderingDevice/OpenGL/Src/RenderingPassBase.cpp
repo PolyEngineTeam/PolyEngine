@@ -1,7 +1,7 @@
 #include "RenderingPassBase.hpp"
 
-#include <ResourceManager.hpp>
-#include <TextureResource.hpp>
+#include <Resources/ResourceManager.hpp>
+#include <Resources/TextureResource.hpp>
 
 #include "GLTextureDeviceProxy.hpp"
 #include "GLRenderingDevice.hpp"

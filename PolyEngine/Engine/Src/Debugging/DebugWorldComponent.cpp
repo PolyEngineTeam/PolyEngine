@@ -1,3 +1,3 @@
 #include "EnginePCH.hpp"
 
-#include "DebugWorldComponent.hpp"
+#include "Debugging/DebugWorldComponent.hpp"

@@ -1,5 +1,5 @@
 #include "EnginePCH.hpp"
 
-#include "PostprocessSettingsComponent.hpp"
+#include "Rendering/PostprocessSettingsComponent.hpp"
 
 using namespace Poly;

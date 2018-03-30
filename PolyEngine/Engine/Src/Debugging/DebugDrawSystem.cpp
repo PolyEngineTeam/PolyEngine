@@ -1,8 +1,8 @@
 #include "EnginePCH.hpp"
 #include <cmath>
 
-#include "DebugDrawComponents.hpp"
-#include "DebugDrawSystem.hpp"
+#include "Debugging/DebugDrawComponents.hpp"
+#include "Debugging/DebugDrawSystem.hpp"
 
 using namespace Poly;
 

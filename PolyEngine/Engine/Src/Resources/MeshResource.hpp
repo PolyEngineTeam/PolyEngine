@@ -4,9 +4,9 @@
 #include <Utils/EnumUtils.hpp>
 #include <Math/Color.hpp>
 
-#include "ResourceBase.hpp"
-#include "TextureResource.hpp"
-#include "Rendering/Mesh.hpp"
+#include "Resources/ResourceBase.hpp"
+#include "Resources/TextureResource.hpp"
+#include "Resources/Mesh.hpp"
 
 struct aiMesh;
 struct aiMaterial;

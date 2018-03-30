@@ -2,9 +2,9 @@
 
 #include <chrono>
 #include <unordered_map>
-#include "TimeSystem.hpp"
+#include "Time/TimeSystem.hpp"
 #include "Timer.hpp"
-#include "ComponentBase.hpp"
+#include "ECS/ComponentBase.hpp"
 
 
 namespace Poly

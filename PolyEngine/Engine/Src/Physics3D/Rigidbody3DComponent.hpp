@@ -3,8 +3,8 @@
 #include <Math/Vector.hpp>
 #include <Utils/Optional.hpp>
 
-#include "ComponentBase.hpp"
-#include "Physics3DSystem.hpp"
+#include "ECS/ComponentBase.hpp"
+#include "Physics3D/Physics3DSystem.hpp"
 
 namespace Poly
 {

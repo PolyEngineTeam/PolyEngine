@@ -2,7 +2,7 @@
 
 #include <Collections/Queue.hpp>
 #include <Math/Vector2i.hpp>
-#include "KeyBindings.hpp"
+#include "Input/KeyBindings.hpp"
 
 namespace Poly
 {

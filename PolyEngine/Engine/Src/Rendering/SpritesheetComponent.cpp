@@ -1,9 +1,9 @@
 #include "EnginePCH.hpp"
 
-#include "CameraComponent.hpp"
-#include "SpritesheetComponent.hpp"
-#include "ResourceManager.hpp"
-#include "TextureResource.hpp"
+#include "Rendering/Camera/CameraComponent.hpp"
+#include "Rendering/SpritesheetComponent.hpp"
+#include "Resources/ResourceManager.hpp"
+#include "Resources/TextureResource.hpp"
 
 using namespace Poly;
 

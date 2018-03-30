@@ -1,6 +1,6 @@
 #include "EnginePCH.hpp"
 
-#include "MeshResource.hpp"
+#include "Resources/MeshResource.hpp"
 
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>

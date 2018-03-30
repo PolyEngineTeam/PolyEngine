@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ComponentBase.hpp"
-#include "CameraSystem.hpp"
+#include "ECS/ComponentBase.hpp"
+#include "Rendering/Camera/CameraSystem.hpp"
 
 namespace Poly {
 

@@ -1,6 +1,6 @@
 #include "EnginePCH.hpp"
 
-#include "CameraComponent.hpp"
+#include "Rendering/Camera/CameraComponent.hpp"
 
 using namespace Poly;
 

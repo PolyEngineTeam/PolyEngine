@@ -2,7 +2,7 @@
 
 #include <Collections/Queue.hpp>
 
-#include "ComponentBase.hpp"
+#include "ECS/ComponentBase.hpp"
 #include "DeferredTaskBase.hpp"
 
 namespace Poly

@@ -4,8 +4,8 @@
 #include <BaseObject.hpp>
 #include <Rendering/IRenderingDevice.hpp>
 #include <Collections/Dynarray.hpp>
-#include <SpritesheetComponent.hpp>
-#include "ParticleUpdateSystem.hpp"
+#include <Rendering/SpritesheetComponent.hpp>
+#include "Rendering/Particles/ParticleUpdateSystem.hpp"
 
 typedef unsigned int GLuint;
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ComponentBase.hpp"
-#include "RenderingSystem.hpp"
-#include "ParticleEmitter.hpp"
+#include "ECS/ComponentBase.hpp"
+#include "Rendering/RenderingSystem.hpp"
+#include "Rendering/Particles/ParticleEmitter.hpp"
 
 namespace Poly {
 

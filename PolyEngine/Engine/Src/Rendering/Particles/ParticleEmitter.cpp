@@ -1,5 +1,5 @@
 #include "EnginePCH.hpp"
-#include "ParticleEmitter.hpp"
+#include "Rendering/Particles/ParticleEmitter.hpp"
 
 #include <algorithm>
 

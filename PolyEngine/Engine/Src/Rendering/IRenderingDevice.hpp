@@ -2,7 +2,7 @@
 
 #include <BaseObject.hpp>
 
-#include "Rendering/Mesh.hpp"
+#include "Resources/Mesh.hpp"
 
 namespace Poly
 {

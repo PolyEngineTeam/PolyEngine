@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ResourceBase.hpp"
+#include "Resources/ResourceBase.hpp"
 
 namespace Poly 
 {

@@ -1,5 +1,5 @@
 #include "EnginePCH.hpp"
-#include "DebugConfig.hpp"
+#include "Configs/DebugConfig.hpp"
 
 RTTI_DEFINE_TYPE(Poly::DebugConfig)
 

@@ -3,8 +3,8 @@
 #include <initializer_list>
 #include <Math/Vector2i.hpp>
 #include <Utils/EnumUtils.hpp>
-#include "ComponentBase.hpp"
-#include "KeyBindings.hpp"
+#include "ECS/ComponentBase.hpp"
+#include "Input/KeyBindings.hpp"
 #include "Input/InputSystem.hpp"
 #include <Utils/Optional.hpp>
 

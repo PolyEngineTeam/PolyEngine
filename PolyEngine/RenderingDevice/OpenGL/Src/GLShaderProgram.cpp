@@ -5,7 +5,7 @@ SILENCE_MSVC_WARNING(4805, "Warning originates in std::regex");
 #include <regex>
 UNSILENCE_MSVC_WARNING()
 
-#include <ResourceManager.hpp>
+#include <Resources/ResourceManager.hpp>
 
 using namespace Poly;
 

@@ -2,8 +2,8 @@
 
 #include <map>
 
-#include "ComponentBase.hpp"
-#include "Physics3DSystem.hpp"
+#include "ECS/ComponentBase.hpp"
+#include "Physics3D/Physics3DSystem.hpp"
 
 	// FIXME(squares): this shouldn't be declared here
 class btDiscreteDynamicsWorld;

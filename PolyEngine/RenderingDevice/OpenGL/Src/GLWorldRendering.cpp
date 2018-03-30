@@ -1,14 +1,14 @@
 #include "GLRenderingDevice.hpp"
 
-#include <World.hpp>
-#include <DebugConfig.hpp>
-#include <Viewport.hpp>
+#include <ECS/World.hpp>
+#include <Configs/DebugConfig.hpp>
+#include <Rendering/Viewport.hpp>
 
-#include <CameraComponent.hpp>
-#include <MeshRenderingComponent.hpp>
-#include <ScreenSpaceTextComponent.hpp>
-#include <ViewportWorldComponent.hpp>
-#include <PostprocessSettingsComponent.hpp>
+#include <Rendering/Camera/CameraComponent.hpp>
+#include <Rendering/MeshRenderingComponent.hpp>
+#include <UI/ScreenSpaceTextComponent.hpp>
+#include <Rendering/ViewportWorldComponent.hpp>
+#include <Rendering/PostprocessSettingsComponent.hpp>
 
 #include "GLTextFieldBufferDeviceProxy.hpp"
 #include "GLTextureDeviceProxy.hpp"

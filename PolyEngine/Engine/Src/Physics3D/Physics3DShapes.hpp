@@ -1,9 +1,9 @@
 #pragma once
 
-#include "MeshResource.hpp"
+#include "Resources/MeshResource.hpp"
 
-#include "Physics3DSystem.hpp"
-#include "Collider3DComponent.hpp"
+#include "Physics3D/Physics3DSystem.hpp"
+#include "Physics3D/Collider3DComponent.hpp"
 
 namespace Poly
 {

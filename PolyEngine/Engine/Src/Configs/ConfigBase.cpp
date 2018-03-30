@@ -1,5 +1,5 @@
 #include "EnginePCH.hpp"
-#include "ConfigBase.hpp"
+#include "Configs/ConfigBase.hpp"
 
 #include <RTTI/RTTISerialization.hpp>
 #include <sstream>

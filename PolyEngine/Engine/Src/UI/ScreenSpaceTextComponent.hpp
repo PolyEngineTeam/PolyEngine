@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ComponentBase.hpp"
-#include "RenderingSystem.hpp"
+#include "ECS/ComponentBase.hpp"
+#include "Rendering/RenderingSystem.hpp"
 
 #include "Text2D.hpp"
 

@@ -1,7 +1,7 @@
 #include "EnginePCH.hpp"
 
-#include "CubemapResource.hpp"
-#include "ResourceManager.hpp"
+#include "Resources/CubemapResource.hpp"
+#include "Resources/ResourceManager.hpp"
 #include "SOIL/SOIL.h"
 
 using namespace Poly;

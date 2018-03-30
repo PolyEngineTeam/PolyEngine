@@ -2,7 +2,7 @@
 #include <catch.hpp>
 
 #include <RTTI/RTTI.hpp>
-#include <ConfigBase.hpp>
+#include <Configs/ConfigBase.hpp>
 #include <Math/BasicMath.hpp>
 #include <cstdio>
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ComponentBase.hpp"
-#include "CubemapResource.hpp"
+#include "ECS/ComponentBase.hpp"
+#include "Resources/CubemapResource.hpp"
 
 namespace Poly
 {

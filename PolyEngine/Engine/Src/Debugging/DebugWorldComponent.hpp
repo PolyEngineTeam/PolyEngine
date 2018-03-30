@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ComponentBase.hpp"
+#include "ECS/ComponentBase.hpp"
 #include "FPSSystem.hpp"
-#include "TimeSystem.hpp"
+#include "Time/TimeSystem.hpp"
 
 namespace Poly
 {

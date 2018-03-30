@@ -33,7 +33,7 @@ namespace Poly
 		/// Otherwise the two compilation units (f.ex. Engine and Game)
 		/// won't know about each other templates (i.e. about unique ids for components).
 		/// Definitions are kept in ComponentIDGeneratorImpl.hpp file, which is included once
-		/// in ComponentBase.hpp. This allows compiler to create a definition
+		/// in ECS/ComponentBase.hpp. This allows compiler to create a definition
 		/// of ComponentIDGenerator::GetComponentTypeID<U>() type (where U is a type of the component)
 		/// where the component is used for the first time (f.ex. created).
 		/// https://itk.org/Wiki/Proposals:Explicit_Instantiation#DLL_Symbol_Resolution_on_Windows

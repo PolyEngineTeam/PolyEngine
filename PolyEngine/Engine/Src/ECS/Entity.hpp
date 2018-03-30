@@ -4,7 +4,7 @@
 #include <bitset>
 
 #include <Memory/SafePtrRoot.hpp>
-#include "EntityTransform.hpp"
+#include "ECS/EntityTransform.hpp"
 #include "Engine.hpp"
 
 namespace Poly
@@ -44,12 +44,12 @@ namespace Poly
 		/// <summary>Gets a pointer to a component of a given ID.</summary>
 		/// <returns>A pointer to a component or nullptr if it does not exist.</returns>
 		template<class T>
-		T* GetComponent(); //defined in World.hpp due to circular inclusion problem; FIXME: circular inclusion
+		T* GetComponent(); //defined in ECS/World.hpp due to circular inclusion problem; FIXME: circular inclusion
 
 		/// <summary>Gets a pointer to a component of a given ID.</summary>
 		/// <returns>A pointer to a component or nullptr if it does not exist.</returns>
 		template<class T>
-		const T* GetComponent() const; //defined in World.hpp due to circular inclusion problem; FIXME: circular inclusion
+		const T* GetComponent() const; //defined in ECS/World.hpp due to circular inclusion problem; FIXME: circular inclusion
 
 		/// Returns pointer to parent entity. Returns nullptr if (and only if) this is the root of the scene.
 		/// @return Pointer to parent entity.

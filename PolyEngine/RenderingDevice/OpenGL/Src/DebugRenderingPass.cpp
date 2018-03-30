@@ -2,9 +2,9 @@
 
 #include "DebugRenderingBuffers.hpp"
 
-#include <World.hpp>
-#include <CameraComponent.hpp>
-#include <DebugDrawComponents.hpp>
+#include <ECS/World.hpp>
+#include <Rendering/Camera/CameraComponent.hpp>
+#include <Debugging/DebugDrawComponents.hpp>
 
 using namespace Poly;
 

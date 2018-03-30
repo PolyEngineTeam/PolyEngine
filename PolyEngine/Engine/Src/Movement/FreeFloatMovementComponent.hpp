@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ComponentBase.hpp"
-#include "MovementSystem.hpp"
+#include "ECS/ComponentBase.hpp"
+#include "Movement/MovementSystem.hpp"
 
 namespace Poly {
 

@@ -3,7 +3,7 @@
 
 #include <Engine.hpp>
 #include <Utils/LibraryLoader.hpp>
-#include <AssetsPathConfig.hpp>
+#include <Configs/AssetsPathConfig.hpp>
 
 extern "C"
 {

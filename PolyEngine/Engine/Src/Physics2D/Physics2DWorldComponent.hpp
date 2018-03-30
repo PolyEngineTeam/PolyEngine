@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ComponentBase.hpp"
-#include "Physics2DSystem.hpp"
+#include "ECS/ComponentBase.hpp"
+#include "Physics2D/Physics2DSystem.hpp"
 
 class b2World;
 

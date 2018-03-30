@@ -1,6 +1,6 @@
 #include "EnginePCH.hpp"
 
-#include "InputWorldComponent.hpp"
+#include "Input/InputWorldComponent.hpp"
 
 bool Poly::InputWorldComponent::IsPressed(const std::initializer_list<eKey>& list) const
 {

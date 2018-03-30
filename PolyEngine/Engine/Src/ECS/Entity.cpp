@@ -1,7 +1,7 @@
 #include "EnginePCH.hpp"
 
-#include "Entity.hpp"
-#include "EntityTransform.hpp"
+#include "ECS/Entity.hpp"
+#include "ECS/EntityTransform.hpp"
 
 using namespace Poly;
 

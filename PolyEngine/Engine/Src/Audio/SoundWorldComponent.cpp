@@ -1,6 +1,6 @@
 #include "EnginePCH.hpp"
 
-#include "SoundWorldComponent.hpp"
+#include "Audio/SoundWorldComponent.hpp"
 
 #include <alc.h>
 

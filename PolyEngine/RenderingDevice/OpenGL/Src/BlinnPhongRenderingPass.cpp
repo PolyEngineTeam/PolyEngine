@@ -3,11 +3,11 @@
 #include "GLMeshDeviceProxy.hpp"
 #include "GLTextureDeviceProxy.hpp"
 
-#include <World.hpp>
-#include <CameraComponent.hpp>
-#include <MeshRenderingComponent.hpp>
-#include <LightSourceComponent.hpp>
-#include <MovementSystem.hpp>
+#include <ECS/World.hpp>
+#include <Rendering/Camera/CameraComponent.hpp>
+#include <Rendering/MeshRenderingComponent.hpp>
+#include <Rendering/Lighting/LightSourceComponent.hpp>
+#include <Movement/MovementSystem.hpp>
 
 
 using namespace Poly;

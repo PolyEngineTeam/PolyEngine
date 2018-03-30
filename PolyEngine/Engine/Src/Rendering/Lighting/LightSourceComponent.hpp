@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ComponentBase.hpp"
+#include "ECS/ComponentBase.hpp"
 
 namespace Poly
 {

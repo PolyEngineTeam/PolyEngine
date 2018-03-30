@@ -1,6 +1,6 @@
 ﻿#include "EnginePCH.hpp"
 
-#include "FontResource.hpp"
+#include "Resources/FontResource.hpp"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H

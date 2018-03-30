@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ComponentBase.hpp"
-#include "SoundSystem.hpp"
+#include "ECS/ComponentBase.hpp"
+#include "Audio/SoundSystem.hpp"
 #include <Collections/Dynarray.hpp>
-#include "SoundListenerComponent.hpp"
+#include "Audio/SoundListenerComponent.hpp"
 
 typedef struct ALCcontext_struct ALCcontext;
 

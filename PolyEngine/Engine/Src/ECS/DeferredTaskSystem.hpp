@@ -1,8 +1,8 @@
 #pragma once
 
 #include "DeferredTaskImplementation.hpp"
-#include "DeferredTaskWorldComponent.hpp"
-#include "World.hpp"
+#include "ECS/DeferredTaskWorldComponent.hpp"
+#include "ECS/World.hpp"
 
 namespace Poly
 {

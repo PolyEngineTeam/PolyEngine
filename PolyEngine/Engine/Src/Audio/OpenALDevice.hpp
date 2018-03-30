@@ -2,7 +2,7 @@
 
 #include <BaseObject.hpp>
 
-#include "SoundSystem.hpp"
+#include "Audio/SoundSystem.hpp"
 
 typedef struct ALCdevice_struct ALCdevice;
 

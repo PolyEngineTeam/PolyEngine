@@ -1,11 +1,11 @@
 #pragma once
 
 #include <Core.hpp>
-#include "ComponentBase.hpp"
+#include "ECS/ComponentBase.hpp"
 #include <Utils/Optional.hpp>
 #include <Math/Vector2f.hpp>
 
-#include "PathfindingSystem.hpp"
+#include "AI/PathfindingSystem.hpp"
 
 namespace Poly
 {

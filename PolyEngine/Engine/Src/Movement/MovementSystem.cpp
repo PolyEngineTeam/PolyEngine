@@ -1,7 +1,7 @@
 #include "EnginePCH.hpp"
 
-#include "MovementSystem.hpp"
-#include "EntityTransform.hpp"
+#include "Movement/MovementSystem.hpp"
+#include "ECS/EntityTransform.hpp"
 
 using namespace Poly;
 

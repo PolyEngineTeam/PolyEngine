@@ -2,9 +2,9 @@
 
 #include <al.h>
 
-#include "SoundEmitterComponent.hpp"
-#include "ResourceManager.hpp"
-#include "SoundResource.hpp"
+#include "Audio/SoundEmitterComponent.hpp"
+#include "Resources/ResourceManager.hpp"
+#include "Resources/SoundResource.hpp"
 
 using namespace Poly;
 

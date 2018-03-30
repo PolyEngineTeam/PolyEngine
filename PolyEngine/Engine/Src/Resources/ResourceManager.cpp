@@ -1,8 +1,8 @@
 #include "EnginePCH.hpp"
 
-#include "ResourceManager.hpp"
-#include "MeshResource.hpp"
-#include "SoundResource.hpp"
+#include "Resources/ResourceManager.hpp"
+#include "Resources/MeshResource.hpp"
+#include "Resources/SoundResource.hpp"
 
 #include <fstream>
 

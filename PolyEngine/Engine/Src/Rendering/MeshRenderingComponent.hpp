@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ComponentBase.hpp"
+#include "ECS/ComponentBase.hpp"
 #include "RenderingSystem.hpp"
-#include "MeshResource.hpp"
+#include "Resources/MeshResource.hpp"
 
 namespace Poly {
 

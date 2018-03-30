@@ -2,7 +2,7 @@
 #include "Math/Vector3f.hpp"
 #include "GLUtils.hpp"
 #include "GLParticleDeviceProxy.hpp"
-#include "ParticleEmitter.hpp"
+#include "Rendering/Particles/ParticleEmitter.hpp"
 #include <algorithm>
 
 using namespace Poly;
