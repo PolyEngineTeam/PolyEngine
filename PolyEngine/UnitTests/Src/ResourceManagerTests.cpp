@@ -3,7 +3,7 @@
 
 #define _WINDLL
 #define _GAME //fake being a game for the dllexport macros
-#include <ResourceManager.hpp>
+#include <Resources/ResourceManager.hpp>
 
 using namespace Poly;
 

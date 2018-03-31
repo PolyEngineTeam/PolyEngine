@@ -1,10 +1,14 @@
 find_package(RapidJSON REQUIRED)
 
-file(GLOB_RECURSE POLYCORE_SRCS Src/*.cpp)
 set(POLYCORE_INCLUDE Src)
-file(GLOB_RECURSE POLYCORE_H_FOR_IDE Src/*.hpp Src/*.h)
 
-add_library(PolyCore SHARED ${POLYCORE_SRCS} ${POLYCORE_H_FOR_IDE})
+file(GLOB_RECURSE POLYCORE_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
+	${POLYCORE_INCLUDE}/*.cpp 
+	${POLYCORE_INCLUDE}/*.hpp
+	${POLYCORE_INCLUDE}/*.h)
+GenerateSourceGoups("${POLYCORE_SRCS}")
+
+add_library(PolyCore SHARED ${POLYCORE_SRCS})
 target_compile_options(PolyCore PRIVATE $<$<BOOL:${SIMD}>:${SIMD_FLAGS}>)
 target_compile_definitions(PolyCore PRIVATE _CORE DISABLE_SIMD=$<NOT:$<BOOL:${SIMD}>>)
 target_include_directories(PolyCore PUBLIC ${POLYCORE_INCLUDE})

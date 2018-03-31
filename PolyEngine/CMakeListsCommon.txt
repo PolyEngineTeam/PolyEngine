@@ -152,6 +152,19 @@ else()
 endif()
 
 ##
+# Function that generates source groups
+##
+function(GenerateSourceGoups Sources)
+	foreach(Source ${Sources})
+		get_filename_component(SourcePath "${Source}" PATH)
+		if (WIN32)
+			string(REPLACE "/" "\\" SourcePath "${SourcePath}")
+		endif()
+		source_group("${SourcePath}" FILES "${Source}")
+	endforeach()
+endfunction()
+
+##
 # Enable CCache if found
 ##
 find_program(CCACHE_FOUND ccache)

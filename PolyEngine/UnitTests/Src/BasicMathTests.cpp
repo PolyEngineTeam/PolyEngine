@@ -2,7 +2,7 @@
 #include <catch.hpp>
 
 #include <Defines.hpp>
-#include <BasicMath.hpp>
+#include <Math/BasicMath.hpp>
 
 constexpr auto INF_FLOAT = std::numeric_limits<float>::infinity();
 constexpr auto NAN_FLOAT = std::numeric_limits<float>::quiet_NaN();

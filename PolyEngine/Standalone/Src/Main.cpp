@@ -2,8 +2,8 @@
 #include <SDL.h>
 
 #include <Engine.hpp>
-#include <LibraryLoader.hpp>
-#include <AssetsPathConfig.hpp>
+#include <Utils/LibraryLoader.hpp>
+#include <Configs/AssetsPathConfig.hpp>
 
 extern "C"
 {

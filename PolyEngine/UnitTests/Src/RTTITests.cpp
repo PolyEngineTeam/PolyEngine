@@ -1,8 +1,8 @@
 #include <Defines.hpp>
 #include <catch.hpp>
 
-#include <RTTI.hpp>
-#include <DebugConfig.hpp>
+#include <RTTI/RTTI.hpp>
+#include <Configs/DebugConfig.hpp>
 
 using namespace Poly;
 
