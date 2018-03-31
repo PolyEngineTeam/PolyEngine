@@ -10,11 +10,11 @@
 #include <Rendering/ViewportWorldComponent.hpp>
 #include <Rendering/PostprocessSettingsComponent.hpp>
 
-#include "GLTextFieldBufferDeviceProxy.hpp"
-#include "GLTextureDeviceProxy.hpp"
-#include "RenderingPassBase.hpp"
-#include "GLMeshDeviceProxy.hpp"
-#include "GLUtils.hpp"
+#include "Proxy/GLTextFieldBufferDeviceProxy.hpp"
+#include "Proxy/GLTextureDeviceProxy.hpp"
+#include "Pipeline/RenderingPassBase.hpp"
+#include "Proxy/GLMeshDeviceProxy.hpp"
+#include "Common/GLUtils.hpp"
 
 using namespace Poly;
 

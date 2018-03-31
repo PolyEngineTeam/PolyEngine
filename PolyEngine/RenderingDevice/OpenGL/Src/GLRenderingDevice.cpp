@@ -4,26 +4,28 @@
 
 #include <Utils/Logger.hpp>
 
-#include "GLUtils.hpp"
-#include "GLTextureDeviceProxy.hpp"
-#include "GLCubemapDeviceProxy.hpp"
-#include "GLParticleDeviceProxy.hpp"
-#include "GLTextFieldBufferDeviceProxy.hpp"
-#include "GLMeshDeviceProxy.hpp"
+#include "Common/GLUtils.hpp"
+#include "Common/PostprocessQuad.hpp"
+#include "Common/PrimitiveCube.hpp"
 
-#include "UnlitRenderingPass.hpp"
-#include "BlinnPhongRenderingPass.hpp"
-#include "Text2DRenderingPass.hpp"
-#include "DebugNormalsRenderingPass.hpp"
-#include "DebugNormalsWireframeRenderingPass.hpp"
-#include "DebugRenderingPass.hpp"
-#include "ParticlesRenderingPass.hpp"
-#include "PostprocessRenderingPass.hpp"
-#include "TransparentRenderingPass.hpp"
-#include "SpritesheetRenderingPass.hpp"
-#include "SkyboxRenderingPass.hpp"
-#include "PostprocessQuad.hpp"
-#include "PrimitiveCube.hpp"
+#include "Proxy/GLTextureDeviceProxy.hpp"
+#include "Proxy/GLCubemapDeviceProxy.hpp"
+#include "Proxy/GLParticleDeviceProxy.hpp"
+#include "Proxy/GLTextFieldBufferDeviceProxy.hpp"
+#include "Proxy/GLMeshDeviceProxy.hpp"
+
+#include "Pipeline/UnlitRenderingPass.hpp"
+#include "Pipeline/BlinnPhongRenderingPass.hpp"
+#include "Pipeline/Text2DRenderingPass.hpp"
+#include "Pipeline/DebugNormalsRenderingPass.hpp"
+#include "Pipeline/DebugNormalsWireframeRenderingPass.hpp"
+#include "Pipeline/DebugRenderingPass.hpp"
+#include "Pipeline/ParticlesRenderingPass.hpp"
+#include "Pipeline/PostprocessRenderingPass.hpp"
+#include "Pipeline/TransparentRenderingPass.hpp"
+#include "Pipeline/SpritesheetRenderingPass.hpp"
+#include "Pipeline/SkyboxRenderingPass.hpp"
+
 
 using namespace Poly;
 
