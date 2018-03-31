@@ -122,22 +122,15 @@ void EditorUi::InitMainWindow()
 	//consoleWidget = new LoggerWidget("Object Properties");
 	//consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow); //we need to create new base class for this -> someone created all as loggerwidgets
 
-	//ViewportWidget* viewportWidget = new ViewportWidget("Viewport", MainWindow);
-	//MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, viewportWidget, true);
+	MainViewport = std::make_unique<ViewportWidget>("Viewport", MainWindow);
+	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, MainViewport.get(), true);
 
-	QTabWidget* tabWidget = new QTabWidget();
-	tabWidget->setTabPosition(QTabWidget::South);
+	MainLogger = std::make_unique<LoggerWidget>("Console");
+	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, MainLogger.get(), true);
 
-	LoggerWidget* consoleWidget = new LoggerWidget("Console");
-	//MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, consoleWidget, true);
+	LoggerWidget* consoleWidget = new LoggerWidget("Project Manager");
+	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, consoleWidget, true);
 
-	tabWidget->addTab(consoleWidget, "Console");
-
-	consoleWidget = new LoggerWidget("Project Manager");
-	//MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, consoleWidget, true);
-
-	tabWidget->addTab(consoleWidget, "Project Manager");
-	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, tabWidget, true);
 	MainWindow->show();
 }
 

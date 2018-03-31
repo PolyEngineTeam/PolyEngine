@@ -20,8 +20,10 @@ UNSILENCE_MSVC_WARNING()
 #include "EditorApp.hpp"
 #include "EditorUi.hpp"
 #include "GlobalEventFilter.hpp"
+
 #include "DockManager.hpp"
 #include "ProjectManager.hpp"
+#include "EngineManager.hpp"
 
 // windows
 #include "PolyWindow.hpp"

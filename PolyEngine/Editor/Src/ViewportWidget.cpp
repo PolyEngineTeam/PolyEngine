@@ -7,12 +7,9 @@
 extern "C"
 {
 	using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (SDL_Window*, const Poly::ScreenSize&);
-	using CreateGameFunc = Poly::IGame* (void);
 }
 
 static Poly::LibraryFunctionHandle<CreateRenderingDeviceFunc> LoadRenderingDevice;
-static Poly::LibraryFunctionHandle<CreateGameFunc> LoadGame;
-
 
 // ---------------------------------------------------------------------------------------------------------
 ViewportWidget::ViewportWidget(const QString& title, QWidget* parent) :
@@ -22,30 +19,20 @@ ViewportWidget::ViewportWidget(const QString& title, QWidget* parent) :
 	setMouseTracking(true);
 	setFocusPolicy(Qt::ClickFocus);
 	setMinimumSize(320, 200);
-
-	connect(gApp, &EditorApp::EngineCreated, [this]() { InitializeViewport(); });
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void ViewportWidget::InitializeViewport()
+std::unique_ptr<Poly::IRenderingDevice> ViewportWidget::InitializeViewport()
 {
 	// TODO fix library names differences between platforms
 	if (!LoadRenderingDevice.FunctionValid())
 	{
 		// Load rendering device library
-		LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>(Poly::gAssetsPathConfig.GetRenderingDeviceLibPath().GetCStr(), "PolyCreateRenderingDevice");
+		//LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>(Poly::gAssetsPathConfig.GetRenderingDeviceLibPath().GetCStr(), "PolyCreateRenderingDevice");
+		LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>("Z:/Desktop/Test1/Build/NewPolyPrject/Debug/polyrenderingdevice.dll", "PolyCreateRenderingDevice");
 		ASSERTE(LoadRenderingDevice.FunctionValid(), "Library libRenderingDevice load failed");
 		Poly::gConsole.LogDebug("Library libRenderingDevice loaded.");
 	}
-	
-	if (!LoadGame.FunctionValid())
-	{
-		// Load game library
-		LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>(Poly::gAssetsPathConfig.GetGameLibPath().GetCStr(), "CreateGame");
-		ASSERTE(LoadGame.FunctionValid(), "Library libGame load failed");
-		Poly::gConsole.LogDebug("Library libGame loaded.");
-	}
-	
 	
 	Poly::ScreenSize viewportRect;
 	viewportRect.Width = width();
@@ -60,13 +47,11 @@ void ViewportWidget::InitializeViewport()
 
 	// TODO: catch winId changes (http://doc.qt.io/qt-5/qwidget.html#winId)
 	// TODO: something like addviewport to rendering device
-	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(LoadGame());
 	ASSERTE(!WindowInSDL.IsValid(), "Window already initialized!");
 	WindowInSDL = CustomSDLWindow::CreateSDLWindowFromArgs((void*)winId(), SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	ASSERTE(WindowInSDL.IsValid(), "Window creation failed!");
-	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(WindowInSDL.Get(), viewportRect));
-	Poly::gEngine->Init(std::move(game), std::move(device));
-	Poly::gConsole.LogDebug("Engine loaded successfully");
+
+	return std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(WindowInSDL.Get(), viewportRect));
 }
 
 // ---------------------------------------------------------------------------------------------------------

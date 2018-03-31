@@ -30,17 +30,14 @@ public:
 		Ostream = std::make_unique<std::ostream>(CurrentStream.get());
 	}
 
-	bool IsOpened() { return Opened; }
-	bool IsRunning() { return Running; }
-
 	void Create(const Poly::String& projectName, const Poly::String& projectPath, const Poly::String& enginePath);
 	void Open(const Poly::String& projectPath);
 	void Update();
 	void Update(const Poly::String& enginePath);
-	void Build();
-	void StandaloneRun();
-	void EditorRun();
 	void Close();
+
+	bool IsOpened() { return Opened && !Running; }
+	bool IsRunning() { return Running; }
 
 	const Poly::String& GetProjectName() const { return Name; }
 	const Poly::String& GetProjectPath() const { return ProjectPath; }

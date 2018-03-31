@@ -3,6 +3,8 @@
 #include <QMenu>
 
 #include "PolyMainWindow.hpp"
+#include "ViewportWidget.hpp"
+#include "LoggerWidget.hpp"
 
 class EditorUi : public QObject
 {
@@ -13,6 +15,9 @@ public:
 	EditorUi() = default;
 
 	void InitMainWindow();
+
+	std::unique_ptr<ViewportWidget> MainViewport;
+	std::unique_ptr<LoggerWidget> MainLogger;
 
 private:
 	PolyMainWindow* MainWindow;
