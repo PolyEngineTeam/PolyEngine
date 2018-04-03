@@ -117,27 +117,27 @@ namespace Poly {
 } // namespace Poly
 
 #define RTTI_GENERATE_PROPERTY_LIST_BASE(Type)\
-	friend class Poly::RTTI::PropertyManager<Type>; \
-	virtual Poly::RTTI::PropertyManagerBase* GetPropertyManager() const; \
+	friend class ::Poly::RTTI::PropertyManager<Type>; \
+	virtual ::Poly::RTTI::PropertyManagerBase* GetPropertyManager() const; \
 	template <class T> \
-	static void InitProperties(Poly::RTTI::PropertyManager<T>* mgr)
+	static void InitProperties(::Poly::RTTI::PropertyManager<T>* mgr)
 
 #define RTTI_GENERATE_PROPERTY_LIST(Type)\
-	friend class Poly::RTTI::PropertyManager<Type>; \
-	Poly::RTTI::PropertyManagerBase* GetPropertyManager() const override; \
+	friend class ::Poly::RTTI::PropertyManager<Type>; \
+	::Poly::RTTI::PropertyManagerBase* GetPropertyManager() const override; \
 	template <class T> \
-	static void InitProperties(Poly::RTTI::PropertyManager<T>* mgr)
+	static void InitProperties(::Poly::RTTI::PropertyManager<T>* mgr)
 
 #define RTTI_PROPERTY_MANAGER_IMPL(Type)\
-	Poly::RTTI::PropertyManagerBase* Type::GetPropertyManager() const { static Poly::RTTI::PropertyManager<Type> instance; return &instance; }
+	::Poly::RTTI::PropertyManagerBase* Type::GetPropertyManager() const { static ::Poly::RTTI::PropertyManager<Type> instance; return &instance; }
 
 #define NO_RTTI_PROPERTY() UNUSED(mgr)
 
 // standard RTTIBase deriving (or POD type) property
 #define RTTI_PROPERTY(variable, var_name, flags) \
-	STATIC_ASSERTE(!std::is_pointer<decltype(variable)>::value || Poly::EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE), "Serializable variable cannot be a pointer."); \
-	mgr->AddProperty(Poly::RTTI::CreatePropertyInfo<decltype(variable)>(Poly::RTTI::OffsetOfMember(&T::variable), var_name, flags))
+	STATIC_ASSERTE(!std::is_pointer<decltype(variable)>::value || ::Poly::EnumFlags<::Poly::RTTI::ePropertyFlag>(flags).IsSet(::Poly::RTTI::ePropertyFlag::DONT_SERIALIZE), "Serializable variable cannot be a pointer."); \
+	mgr->AddProperty(::Poly::RTTI::CreatePropertyInfo<decltype(variable)>(::Poly::RTTI::OffsetOfMember(&T::variable), var_name, flags))
 
 #define RTTI_PROPERTY_AUTONAME(variable, flags) \
-	STATIC_ASSERTE(!std::is_pointer<decltype(variable)>::value || Poly::EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE), "Serializable variable cannot be a pointer."); \
-	mgr->AddProperty(Poly::RTTI::CreatePropertyInfo<decltype(variable)>(Poly::RTTI::OffsetOfMember(&T::variable), #variable, flags))
+	STATIC_ASSERTE(!std::is_pointer<decltype(variable)>::value || ::Poly::EnumFlags<::Poly::RTTI::ePropertyFlag>(flags).IsSet(::Poly::RTTI::ePropertyFlag::DONT_SERIALIZE), "Serializable variable cannot be a pointer."); \
+	mgr->AddProperty(::Poly::RTTI::CreatePropertyInfo<decltype(variable)>(::Poly::RTTI::OffsetOfMember(&T::variable), #variable, flags))
