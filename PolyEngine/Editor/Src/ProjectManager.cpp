@@ -46,7 +46,7 @@ void ProjectManager::Open(const Poly::String& projectPath)
 		throw new ProjectManagerException("Another operation is currently running.");
 
 	// TODO (squares): get projectName from json
-	// Name = projectName;
+	ProjectConfig = std::make_unique<::ProjectConfig>(projectPath);
 	ProjectPath = projectPath;
 
 	// load game
@@ -54,7 +54,8 @@ void ProjectManager::Open(const Poly::String& projectPath)
 	{
 		// Load game library
 		//LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>(Poly::gAssetsPathConfig.GetGameLibPath().GetCStr(), "CreateGame");
-		LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("Z:/Desktop/Test1/Build/NewPolyPrject/Debug/NewPolyPrject.dll", "CreateGame");
+		//LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("Z:/Desktop/Test1/Build/NewPolyPrject/Debug/NewPolyPrject.dll", "CreateGame");
+		LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("Z:/Desktop/Debug/PolyJamGame.dll", "CreateGame");
 		ASSERTE(LoadGame.FunctionValid(), "Library libGame load failed");
 		Poly::gConsole.LogDebug("Library libGame loaded.");
 	}

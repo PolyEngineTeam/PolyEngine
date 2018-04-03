@@ -25,6 +25,8 @@ UNSILENCE_MSVC_WARNING()
 #include "ProjectManager.hpp"
 #include "EngineManager.hpp"
 
+#include "ProjectConfig.hpp"
+
 // windows
 #include "PolyWindow.hpp"
 #include "PolyMainWindow.hpp"

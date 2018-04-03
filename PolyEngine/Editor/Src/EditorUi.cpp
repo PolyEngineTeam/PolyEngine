@@ -173,7 +173,6 @@ void EditorUi::OpenProject()
 
 	QFileDialog fileDialog;
 	fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
-	fileDialog.setFileMode(QFileDialog::Directory);
 	if (fileDialog.exec() == QDialog::Accepted)
 		gApp->ProjectMgr.Open(&fileDialog.selectedFiles()[0].toStdString()[0]);
 

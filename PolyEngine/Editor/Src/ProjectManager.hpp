@@ -3,6 +3,8 @@
 #include <Core.hpp>
 #include <QObject>
 
+#include "ProjectConfig.hpp"
+
 class ProjectManagerException : public std::exception
 {
 public:
@@ -34,6 +36,7 @@ public:
 	void Open(const Poly::String& projectPath);
 	void Update();
 	void Update(const Poly::String& enginePath);
+	void Build();
 	void Close();
 
 	bool IsOpened() { return Opened && !Running; }
@@ -49,12 +52,14 @@ private:
 	bool Opened = false;
 	bool Running = false;
 
-	Poly::String Command = "";
-	Poly::String CommandDesc = "";
-
 	Poly::String Name = "";
 	Poly::String ProjectPath = "";
 	Poly::String EnginePath = "";
+
+	std::unique_ptr<ProjectConfig> ProjectConfig;
+
+	Poly::String Command = "";
+	Poly::String CommandDesc = "";
 
 	// things important for getting output from external programs like ProjectTool.py
 	std::unique_ptr<QTimer> Timer = nullptr;
