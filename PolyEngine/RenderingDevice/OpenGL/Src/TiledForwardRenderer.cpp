@@ -90,7 +90,7 @@ void TiledForwardRenderer::Init()
 	workGroupsX = (SCREEN_SIZE_X + (SCREEN_SIZE_X % 16)) / 16;
 	workGroupsY = (SCREEN_SIZE_Y + (SCREEN_SIZE_Y % 16)) / 16;
 	size_t numberOfTiles = workGroupsX * workGroupsY;
-	gConsole.LogInfo("TiledForwardRenderer::Init workGroups: ({},{})", workGroupsX, workGroupsY);
+	gConsole.LogInfo("TiledForwardRenderer::Init workGroups: ({},{}), numberOfTiles: {}", workGroupsX, workGroupsY, numberOfTiles);
 
 	// Generate our shader storage buffers
 	glGenBuffers(1, &lightBuffer);
@@ -109,11 +109,17 @@ void TiledForwardRenderer::Init()
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, inputBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Input) * 16, 0, GL_STATIC_DRAW);
 
+	// for test compute shader
+	// glBindBuffer(GL_SHADER_STORAGE_BUFFER, outputBuffer);
+	// glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Output) * 16 * 4, 0, GL_STATIC_DRAW);
+	
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, outputBuffer);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Output) * 16 * 4, 0, GL_STATIC_DRAW);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Output) * numberOfTiles, 0, GL_STATIC_DRAW);
 
-	// Set the default values for the light buffer
-	SetupLights();
+	// Set the default values for buffers
+	SetupLightsBuffer();
+
+	SetupInputBuffer();
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
@@ -139,21 +145,19 @@ void TiledForwardRenderer::Render(World* world, const AARect& rect, const Camera
 
 	// UpdateLights(world);
 
-	SetupInputBuffer();
-	ComputeTest(world, cameraCmp);
-
+	// ComputeTest(world, cameraCmp);
 
 	DepthPrePass(world, cameraCmp);
 
+	LightCulling(world, cameraCmp);
+
 	// DrawDepthPrepass(cameraCmp);
 
-	// LightCulling(world, cameraCmp);
-
-	// DrawLightCulling(cameraCmp);
+	DrawLightCulling(cameraCmp);
 
 	// DebugLightCulling(world, cameraCmp);
 
-	DebugDepth(world, cameraCmp);
+	// DebugDepth(world, cameraCmp);
 
 	// glDepthMask(GL_TRUE);
 	// glEnable(GL_DEPTH_TEST);
@@ -168,28 +172,6 @@ void TiledForwardRenderer::Render(World* world, const AARect& rect, const Camera
 	// glDisable(GL_DEPTH_TEST);
 	// 
 	// RDI->PostprocessRenderingPasses[GLRenderingDevice::ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
-}
-
-void TiledForwardRenderer::DrawDepthPrepass(const CameraComponent* cameraCmp)
-{
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Weirdly, moving this call drops performance into the floor
-	debugQuadDepthPrepassShader.BindProgram();
-	debugQuadDepthPrepassShader.SetUniform("near", cameraCmp->GetClippingPlaneNear());
-	debugQuadDepthPrepassShader.SetUniform("far", cameraCmp->GetClippingPlaneFar());
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
-	DrawQuad();
-}
-
-void TiledForwardRenderer::DrawLightCulling(const CameraComponent* cameraCmp)
-{
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Weirdly, moving this call drops performance into the floor
-	debugQuadLightCullingShader.BindProgram();
-	debugQuadLightCullingShader.SetUniform("near", cameraCmp->GetClippingPlaneNear());
-	debugQuadLightCullingShader.SetUniform("far", cameraCmp->GetClippingPlaneFar());
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
-	DrawQuad();
 }
 
 void TiledForwardRenderer::DepthPrePass(World* world, const CameraComponent* cameraCmp)
@@ -228,56 +210,29 @@ void TiledForwardRenderer::DepthPrePass(World* world, const CameraComponent* cam
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void TiledForwardRenderer::ComputeTest(World* world, const CameraComponent* cameraCmp)
+void TiledForwardRenderer::DrawDepthPrepass(const CameraComponent* cameraCmp)
 {
-	gConsole.LogInfo("TiledForwardRenderer::ComputeTest");
-
-	ASSERTE(inputBuffer != 0, "TiledForwardRenderer::ComputeTest inputBuffer is null");
-	ASSERTE(outputBuffer != 0, "TiledForwardRenderer::ComputeTest outputBuffer is null");
-
-	computeDebugShader.BindProgram();
-
-	// Bind depth map texture to texture location 4 (which will not be used by any model texture)
-	glActiveTexture(GL_TEXTURE4);
-	glUniform1i(glGetUniformLocation(computeDebugShader.GetProgramHandle(), "depthMap"), 4);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Weirdly, moving this call drops performance into the floor
+	debugQuadDepthPrepassShader.BindProgram();
+	debugQuadDepthPrepassShader.SetUniform("near", cameraCmp->GetClippingPlaneNear());
+	debugQuadDepthPrepassShader.SetUniform("far", cameraCmp->GetClippingPlaneFar());
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
-
-	// Bind shader storage buffer objects for the light and indice buffers
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, inputBuffer);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, outputBuffer);
-
-	// Dispatch the compute shader, using the workgroup values calculated earlier
-	glDispatchCompute(4, 4, 1);
-
-	// Unbind the depth map
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
-
-	gConsole.LogInfo("TiledForwardRenderer::ComputeTest output");
-	// debug
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, outputBuffer);
-	Output *outputBufferMapping = (Output*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
-
-	for (int i = 0; i < 16 * 4; i++) {
-		Output &output = outputBufferMapping[i];
-		gConsole.LogInfo("TiledForwardRenderer::ComputeTest #{}: indexGlobal: {}, indexWorkGroup: {}, indexLocal: {}, input: {}, result: {}",
-			i, output.indexGlobal, output.indexWorkGroup, output.indexLocal, output.input, output.result
-		);
-	}
-
-	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+	DrawQuad();
 }
 
 void TiledForwardRenderer::LightCulling(World* world, const CameraComponent* cameraCmp)
 {
+	gConsole.LogInfo("TiledForwardRenderer::LightCulling workGroupsX: {}, workGroupsY: {}",
+		workGroupsX, workGroupsY
+	);
+
 	// Step 2: Perform light culling on point lights in the scene
 	lightCullingShader.BindProgram();
-	lightCullingShader.SetUniform("projection", cameraCmp->GetScreenFromView());
-	lightCullingShader.SetUniform("view", cameraCmp->GetViewFromWorld());
+	lightCullingShader.SetUniform("near", cameraCmp->GetClippingPlaneNear());
+	lightCullingShader.SetUniform("far", cameraCmp->GetClippingPlaneFar());
+	// lightCullingShader.SetUniform("projection", cameraCmp->GetScreenFromView());
+	// lightCullingShader.SetUniform("view", cameraCmp->GetViewFromWorld());
 
 	// Bind depth map texture to texture location 4 (which will not be used by any model texture)
 	glActiveTexture(GL_TEXTURE4);
@@ -285,15 +240,49 @@ void TiledForwardRenderer::LightCulling(World* world, const CameraComponent* cam
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 
 	// Bind shader storage buffer objects for the light and indice buffers
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, visibleLightIndicesBuffer);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, inputBuffer);
+	// glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
+	// glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, visibleLightIndicesBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, outputBuffer);
 
 	// Dispatch the compute shader, using the workgroup values calculated earlier
 	glDispatchCompute(workGroupsX, workGroupsY, 1);
 
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+
 	// Unbind the depth map
 	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// debug
+	// gConsole.LogInfo("TiledForwardRenderer::LightCulling output");
+	// glBindBuffer(GL_SHADER_STORAGE_BUFFER, outputBuffer);
+	// Output *outputBufferMapping = (Output*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
+	// 
+	// size_t numberOfTiles = workGroupsX * workGroupsY;
+	// for (int i = 0; i < numberOfTiles; ++i) {
+	// 	Output &output = outputBufferMapping[i];
+	// 	gConsole.LogInfo("TiledForwardRenderer::LightCulling #{}: indexGlobal: {}, indexWorkGroup: {}, indexLocal: {}, input: {}, result: {}",
+	// 		i, output.indexGlobal, output.indexWorkGroup, output.indexLocal, output.input, output.result
+	// 	);
+	// }
+	// 
+	// glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+	// glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+}
+
+void TiledForwardRenderer::DrawLightCulling(const CameraComponent* cameraCmp)
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Weirdly, moving this call drops performance into the floor
+	debugQuadLightCullingShader.BindProgram();
+	debugQuadLightCullingShader.SetUniform("workGroupsX", (int)workGroupsX);
+	debugQuadLightCullingShader.SetUniform("workGroupsY", (int)workGroupsY);
+	debugQuadLightCullingShader.SetUniform("near", cameraCmp->GetClippingPlaneNear());
+	debugQuadLightCullingShader.SetUniform("far", cameraCmp->GetClippingPlaneFar());
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, outputBuffer);
+	DrawQuad();
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -369,7 +358,7 @@ void TiledForwardRenderer::DebugDepth(World* world, const CameraComponent* camer
 	}
 }
 
-void TiledForwardRenderer::SetupLights()
+void TiledForwardRenderer::SetupLightsBuffer()
 {
 	if (lightBuffer == 0) {
 		return;
@@ -387,26 +376,6 @@ void TiledForwardRenderer::SetupLights()
 	// 	// gConsole.LogInfo("TiledForwardRenderer::SetupLights Positon: {}, Color: {}, PaddingAndRadius: {}",
 	// 	// 	light.position, light.color, light.paddingAndRadius);
 	// }
-
-	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-}
-
-void TiledForwardRenderer::SetupInputBuffer()
-{
-	if (inputBuffer == 0 || outputBuffer == 0) {
-		return;
-	}
-
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, inputBuffer);
-	Input *inputBufferMapping = (Input*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
-
-	for (int i = 0; i < 16; i++) {
-		Input &input = inputBufferMapping[i];
-		input.value = i;
-		
-		gConsole.LogInfo("TiledForwardRenderer::SetupInputBuffer #{}: {}", i, input.value);
-	}
 
 	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
@@ -484,3 +453,70 @@ void TiledForwardRenderer::CreateFallbackWhiteTexture()
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }
+
+#pragma region Compute Test
+
+void TiledForwardRenderer::SetupInputBuffer()
+{
+	ASSERTE(inputBuffer != 0, "TiledForwardRenderer::SetupInputBuffer inputBuffer is null");
+	ASSERTE(outputBuffer != 0, "TiledForwardRenderer::SetupInputBuffer outputBuffer is null");
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, inputBuffer);
+	Input *inputBufferMapping = (Input*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
+
+	for (int i = 0; i < 16; i++) {
+		Input &input = inputBufferMapping[i];
+		input.value = i;
+		
+		gConsole.LogInfo("TiledForwardRenderer::SetupInputBuffer #{}: {}", i, input.value);
+	}
+
+	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+}
+
+void TiledForwardRenderer::ComputeTest(World* world, const CameraComponent* cameraCmp)
+{
+	gConsole.LogInfo("TiledForwardRenderer::ComputeTest");
+
+	ASSERTE(inputBuffer != 0, "TiledForwardRenderer::ComputeTest inputBuffer is null");
+	ASSERTE(outputBuffer != 0, "TiledForwardRenderer::ComputeTest outputBuffer is null");
+
+	computeDebugShader.BindProgram();
+
+	// Bind depth map texture to texture location 4 (which will not be used by any model texture)
+	glActiveTexture(GL_TEXTURE4);
+	glUniform1i(glGetUniformLocation(computeDebugShader.GetProgramHandle(), "depthMap"), 4);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+
+	// Bind shader storage buffer objects for the light and indice buffers
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, inputBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, outputBuffer);
+
+	// Dispatch the compute shader, using the workgroup values calculated earlier
+	glDispatchCompute(4, 4, 1);
+
+	// Unbind the depth map
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
+
+	gConsole.LogInfo("TiledForwardRenderer::ComputeTest output");
+	// debug
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, outputBuffer);
+	Output *outputBufferMapping = (Output*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
+
+	for (int i = 0; i < 16 * 4; i++) {
+		Output &output = outputBufferMapping[i];
+		gConsole.LogInfo("TiledForwardRenderer::ComputeTest #{}: indexGlobal: {}, indexWorkGroup: {}, indexLocal: {}, input: {}, result: {}",
+			i, output.indexGlobal, output.indexWorkGroup, output.indexLocal, output.input, output.result
+		);
+	}
+
+	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+}
+
+#pragma region end

@@ -19,11 +19,11 @@ struct VisibleIndex {
 };
 
 // Shader storage buffer objects
-layout(std430, binding = 0) readonly buffer LightBuffer{
+layout(std430, binding = 0) readonly buffer LightBuffer {
 	PointLight data[];
 } lightBuffer;
 
-layout(std430, binding = 1) readonly buffer VisibleLightIndicesBuffer{
+layout(std430, binding = 1) readonly buffer VisibleLightIndicesBuffer {
 	VisibleIndex data[];
 } visibleLightIndicesBuffer;
 
