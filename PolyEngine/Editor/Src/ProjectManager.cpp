@@ -1,7 +1,7 @@
 #include "PolyEditorPCH.hpp"
 
-#include <LibraryLoader.hpp>
-#include <AssetsPathConfig.hpp>
+#include <Configs/AssetsPathConfig.hpp>
+#include "Utils/LibraryLoader.hpp"
 
 extern "C"
 {

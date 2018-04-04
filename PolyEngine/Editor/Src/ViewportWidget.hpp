@@ -2,7 +2,7 @@
 
 #include "CustomSDLWindow.hpp"
 #include "PolyWidget.hpp"
-#include "IRenderingDevice.hpp"
+#include "Rendering/IRenderingDevice.hpp"
 
 class ViewportWidget : public PolyWidget
 {

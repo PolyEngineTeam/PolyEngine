@@ -1,8 +1,8 @@
 #pragma once
 
-#include <ConfigBase.hpp>
+#include <Configs/ConfigBase.hpp>
 #include <unordered_map>
-#include <EnumUtils.hpp>
+#include "RTTI/RTTIProperty.hpp"
 
 class ProjectConfig : public Poly::ConfigBase
 {
