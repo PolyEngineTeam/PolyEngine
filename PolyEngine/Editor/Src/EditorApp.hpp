@@ -4,11 +4,12 @@
 #include <QTimer>
 
 #include "EditorUi.hpp"
-#include "DockManager.hpp"
 #include "GlobalEventFilter.hpp"
+#include "DockManager.hpp"
+#include "ProjectManager.hpp"
+#include "EngineManager.hpp"
 
 #include <Engine.hpp>
-
 
 class EditorApp : public QApplication
 {
@@ -17,22 +18,14 @@ class EditorApp : public QApplication
 public:
 	EditorApp(int argc, char *argv[]);
 
-	DockManager DockMgr;
 	EditorUi Ui;
-	
-signals:
-	void EngineCreated();
+
+	DockManager DockMgr;
+	ProjectManager ProjectMgr;
+	EngineManager GameMgr;
 
 private:
-	void SetupUpdateTimer();
-	void CreateEngine();
-
-	std::unique_ptr<QTimer> Updater = nullptr;
-	std::unique_ptr<Poly::Engine> Engine = nullptr;
 	GlobalEventFilter EventFilter;
-	
-private slots:
-	void UpdatePhase();
 };
 
 extern EditorApp* gApp;

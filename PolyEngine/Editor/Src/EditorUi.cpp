@@ -3,6 +3,7 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QAction>
+#include <QFileDialog>
 #include <qdockwidget.h>
 
 void EditorUi::InitMainWindow()
@@ -26,11 +27,6 @@ void EditorUi::InitMainWindow()
 		FileMenu = new QMenu(MenuBar);
 		MenuBar->addAction(FileMenu->menuAction());
 		FileMenu->setTitle(QApplication::translate("EditorMainWindowClass", "File", Q_NULLPTR));
-
-			CloseProjectAction = new QAction(MainWindow);
-			FileMenu->addAction(CloseProjectAction);
-			CloseProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Close Project", Q_NULLPTR));
-			QObject::connect(CloseProjectAction, &QAction::triggered, this, &EditorUi::CloseProject);
 
 			QuitAction = new QAction(MainWindow);
 			FileMenu->addAction(QuitAction);
@@ -65,6 +61,38 @@ void EditorUi::InitMainWindow()
 			QObject::connect(AddWindowAction, &QAction::triggered, this, &EditorUi::AddWindow);
 
 
+		// Project menu
+		ProjectMenu = new QMenu(MenuBar);
+		MenuBar->addAction(ProjectMenu->menuAction());
+		ProjectMenu->setTitle(QApplication::translate("EditorMainWindowClass", "Project", Q_NULLPTR));
+
+			CreateProjectAction = new QAction(MainWindow);
+			ProjectMenu->addAction(CreateProjectAction);
+			CreateProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Create Project", Q_NULLPTR));
+			QObject::connect(CreateProjectAction, &QAction::triggered, this, &EditorUi::CreateProject);
+
+			OpenProjectAction = new QAction(MainWindow);
+			ProjectMenu->addAction(OpenProjectAction);
+			OpenProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Open Project", Q_NULLPTR));
+			QObject::connect(OpenProjectAction, &QAction::triggered, this, &EditorUi::OpenProject);
+
+			UpdateProjectAction = new QAction(MainWindow);
+			ProjectMenu->addAction(UpdateProjectAction);
+			UpdateProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Update Project", Q_NULLPTR));
+			QObject::connect(UpdateProjectAction, &QAction::triggered, this, &EditorUi::UpdateProject);
+
+			UpdateProjectFromEngineAction = new QAction(MainWindow);
+			ProjectMenu->addAction(UpdateProjectFromEngineAction);
+			UpdateProjectFromEngineAction->setText(QApplication::translate("EditorMainWindowClass", "Update Project From Engine", Q_NULLPTR));
+			QObject::connect(UpdateProjectFromEngineAction, &QAction::triggered, this, &EditorUi::UpdateProjectFromEngine);
+
+			CloseProjectAction = new QAction(MainWindow);
+			ProjectMenu->addAction(CloseProjectAction);
+			CloseProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Close Project", Q_NULLPTR));
+			QObject::connect(CloseProjectAction, &QAction::triggered, this, &EditorUi::CloseProject);
+
+
+
 		// build menu
 		BuildMenu = new QMenu(MenuBar);
 		MenuBar->addAction(BuildMenu->menuAction());
@@ -87,7 +115,6 @@ void EditorUi::InitMainWindow()
 			QObject::connect(ContactUsAction, &QAction::triggered, this, &EditorUi::ContactUs);
 
 
-
 	// hardcoded initialization of several widgets.
 	//LoggerWidget* consoleWidget = new LoggerWidget("Assets Explorer");
 	//consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
@@ -95,17 +122,16 @@ void EditorUi::InitMainWindow()
 	//consoleWidget = new LoggerWidget("Object Properties");
 	//consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow); //we need to create new base class for this -> someone created all as loggerwidgets
 
-	ViewportWidget* viewportWidget = new ViewportWidget("Viewport", MainWindow);
-	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, viewportWidget, true);
+	MainViewport = std::make_unique<ViewportWidget>("Viewport", MainWindow);
+	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, MainViewport.get(), true);
 
-	LoggerWidget* consoleWidget = new LoggerWidget("Console");
+	MainLogger = std::make_unique<LoggerWidget>("Console");
+	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, MainLogger.get(), true);
+
+	LoggerWidget* consoleWidget = new LoggerWidget("Project Manager");
 	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, consoleWidget, true);
 
 	MainWindow->show();
-}
-
-void EditorUi::CloseProject()
-{
 }
 
 void EditorUi::Quit()
@@ -127,8 +153,70 @@ void EditorUi::AddWindow()
 	window->show();
 }
 
+void EditorUi::CreateProject()
+{
+	CreateProjectDialog dialog;
+	dialog.exec();
+
+	if (dialog.OperationCanceled())
+		return;
+
+	gApp->ProjectMgr.Create(&dialog.GetProjectName().toStdString()[0],
+		&dialog.GetProjectDirectory().toStdString()[0],
+		&dialog.GetEngineDirectory().toStdString()[0]);
+}
+
+void EditorUi::OpenProject()
+{
+	Poly::gConsole.LogInfo("");
+	Poly::gConsole.LogInfo("Project opening started...");
+
+	QFileDialog fileDialog;
+	fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
+	if (fileDialog.exec() == QDialog::Accepted)
+		gApp->ProjectMgr.Open(&fileDialog.selectedFiles()[0].toStdString()[0]);
+
+	Poly::gConsole.LogInfo("Project opening ended.");
+}
+
+void EditorUi::UpdateProject()
+{
+	Poly::gConsole.LogInfo("");
+	Poly::gConsole.LogInfo("Project updating started...");
+
+	gApp->ProjectMgr.Update();
+
+	Poly::gConsole.LogInfo("Project updating ended.");
+}
+
+void EditorUi::UpdateProjectFromEngine()
+{
+	Poly::gConsole.LogInfo("");
+	Poly::gConsole.LogInfo("Project updating from engine started...");
+
+	QFileDialog fileDialog;
+	fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
+	fileDialog.setFileMode(QFileDialog::Directory);
+	if (fileDialog.exec() == QDialog::Accepted)
+		gApp->ProjectMgr.Update(&fileDialog.selectedFiles()[0].toStdString()[0]);
+
+	Poly::gConsole.LogInfo("Project updating from engine  ended.");
+}
+
+void EditorUi::CloseProject()
+{
+	gApp->ProjectMgr.Close();
+}
+
 void EditorUi::Build()
 {
+	QString program = "cmd";
+	QStringList arguments;
+
+	//QProcess *myProcess = new QProcess(this);
+	//myProcess->start(program, arguments);
+
+	//gApp->ProjectMgr.Build();
 }
 
 void EditorUi::ContactUs()

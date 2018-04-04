@@ -29,7 +29,11 @@ LoggerWidget::LoggerWidget(const QString& title, QWidget* parent)
 	TextEdit = new QTextEdit(this);
 	TextEdit->setReadOnly(true);
 	Layout->addWidget(TextEdit);
-	Poly::gConsole.RegisterStream<EditorOutputStream>("console.log", this);
+
+	if (title == "Console")
+		Poly::gConsole.RegisterStream<EditorOutputStream>("console.log", this);
+	else if (title == "Project Manager")
+		gApp->ProjectMgr.RegisterStream<EditorOutputStream>("projectMgr.log", this);
 }
 
 LoggerWidget::~LoggerWidget()

@@ -2,6 +2,7 @@
 
 #include "CustomSDLWindow.hpp"
 #include "PolyWidget.hpp"
+#include "IRenderingDevice.hpp"
 
 class ViewportWidget : public PolyWidget
 {
@@ -9,7 +10,7 @@ public:
 	// Viewport widget must have parent at initialization otherwise it will appear without title bar
 	explicit ViewportWidget(const QString& title, QWidget* parent);
 
-	void InitializeViewport();
+	std::unique_ptr<Poly::IRenderingDevice> InitializeViewport();
 
 protected:
 	// overriden events
