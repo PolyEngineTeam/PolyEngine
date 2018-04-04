@@ -2,9 +2,9 @@
 
 #include <QMenu>
 
-#include "PolyMainWindow.hpp"
-#include "ViewportWidget.hpp"
-#include "LoggerWidget.hpp"
+#include "Windows/PolyMainWindow.hpp"
+#include "Widgets/ViewportWidget.hpp"
+#include "Widgets/LoggerWidget.hpp"
 
 class EditorUi : public QObject
 {

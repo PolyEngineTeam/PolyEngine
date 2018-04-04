@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CustomSDLWindow.hpp"
+#include "Windows/CustomSDLWindow.hpp"
 #include "PolyWidget.hpp"
 #include "Rendering/IRenderingDevice.hpp"
 

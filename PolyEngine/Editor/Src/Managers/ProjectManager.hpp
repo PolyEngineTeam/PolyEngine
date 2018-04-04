@@ -3,7 +3,7 @@
 #include <Core.hpp>
 #include <QObject>
 
-#include "ProjectConfig.hpp"
+#include "Configs/ProjectConfig.hpp"
 
 class ProjectManagerException : public std::exception
 {

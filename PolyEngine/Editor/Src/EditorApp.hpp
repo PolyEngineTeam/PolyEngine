@@ -5,9 +5,9 @@
 
 #include "EditorUi.hpp"
 #include "GlobalEventFilter.hpp"
-#include "DockManager.hpp"
-#include "ProjectManager.hpp"
-#include "EngineManager.hpp"
+#include "Managers/DockManager.hpp"
+#include "Managers/ProjectManager.hpp"
+#include "Managers/EngineManager.hpp"
 
 #include <Engine.hpp>
 
