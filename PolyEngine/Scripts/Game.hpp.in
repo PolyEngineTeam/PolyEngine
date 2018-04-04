@@ -2,7 +2,7 @@
 
 #include <Core.hpp>
 #include <Engine.hpp>
-#include <World.hpp>
+#include <ECS/World.hpp>
 
 DECLARE_GAME()
 

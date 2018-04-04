@@ -17,6 +17,8 @@ namespace Poly
 	class FontResource;
 	class SoundResource;
 
+	ENGINE_DLLEXPORT String EvaluateFullResourcePath(eResourceSource Source, const String& path);
+
 	ENGINE_DLLEXPORT String LoadTextFileRelative(eResourceSource Source, const String& path);
 	ENGINE_DLLEXPORT void SaveTextFileRelative(eResourceSource Source, const String& path, const String& text);
 

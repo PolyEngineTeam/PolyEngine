@@ -25,7 +25,17 @@ RTTI_DECLARE_PRIMITIVE_TYPE(f64)
 //RTTI_DECLARE_PRIMITIVE_TYPE(uint)
 
 namespace Poly {
+	enum eSerializationType
+	{
+		JSON,
+
+		_COUNT
+	};
+
 	class CORE_DLLEXPORT RTTIBase : public BaseObject<> {
 		RTTI_DECLARE_TYPE(Poly::RTTIBase) { NO_RTTI_PROPERTY(); }
+
+		void SerializeToFile(const String& fileName, eSerializationType type = eSerializationType::JSON);
+		void DeserializeFromFile(const String& fileName, eSerializationType type = eSerializationType::JSON);
 	};
 }

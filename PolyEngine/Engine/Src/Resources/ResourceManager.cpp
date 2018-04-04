@@ -13,12 +13,17 @@ DEFINE_RESOURCE(TextureResource, gTextureResourcesMap)
 DEFINE_RESOURCE(FontResource, gFontResourcesMap)
 DEFINE_RESOURCE(SoundResource, gALSoundResourcesMap)
 
+String Poly::EvaluateFullResourcePath(eResourceSource Source, const String& path)
+{
+	return gAssetsPathConfig.GetAssetsPath(Source) + path;
+}
+
 String Poly::LoadTextFileRelative(eResourceSource Source, const String & path)
 {
 	bool IsNotLoaded = true;
 
 	String FileContent;
-	String AbsolutePath = gAssetsPathConfig.GetAssetsPath(Source) + path;
+	String AbsolutePath = EvaluateFullResourcePath(Source, path);
 	if (FileExists(AbsolutePath))
 	{
 		FileContent = LoadTextFile(AbsolutePath);
@@ -36,6 +41,6 @@ String Poly::LoadTextFileRelative(eResourceSource Source, const String & path)
 
 void Poly::SaveTextFileRelative(eResourceSource Source, const String& path, const String& data)
 {
-	String absolutePath = gAssetsPathConfig.GetAssetsPath(Source) + path;
+	String absolutePath = EvaluateFullResourcePath(Source, path);
 	SaveTextFile(absolutePath, data);
 }
