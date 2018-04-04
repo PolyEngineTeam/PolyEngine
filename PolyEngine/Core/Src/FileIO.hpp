@@ -18,7 +18,7 @@ namespace Poly {
 #endif
 
 	//------------------------------------------------------------------------------
-	class ENGINE_DLLEXPORT FileIOException : public BaseObject<>, public std::exception
+	class CORE_DLLEXPORT FileIOException : public BaseObject<>, public std::exception
 	{
 	public:
 		FileIOException(const String& msg) : Msg(msg) {}

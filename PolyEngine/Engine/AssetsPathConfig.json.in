@@ -1,5 +1,5 @@
 {
-    "Assets Path Config": {
+    "root": {
         "@type": "AssetsPathConfig",
         "EngineAssetsPath": "@ENGINE_ASSETS_PATHS@",
         "GameAssetsPath": "@GAME_ASSETS_PATHS@",
