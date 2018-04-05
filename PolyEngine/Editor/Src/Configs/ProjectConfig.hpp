@@ -1,18 +1,23 @@
 #pragma once
 
-#include <Configs/ConfigBase.hpp>
-#include <unordered_map>
-#include "RTTI/RTTIProperty.hpp"
+#include <RTTI/RTTI.hpp>
+#include <Collections/String.hpp>
 
-class ProjectConfig : public Poly::ConfigBase
+class ProjectConfig : public Poly::RTTIBase
 {
-	RTTI_DECLARE_TYPE_DERIVED(ProjectConfig, Poly::ConfigBase)
+	RTTI_DECLARE_TYPE_DERIVED(ProjectConfig, Poly::RTTIBase)
 	{
+		RTTI_PROPERTY(Path, "Path", Poly::RTTI::ePropertyFlag::DONT_SERIALIZE);
 		RTTI_PROPERTY(ProjectName, "ProjectName", Poly::RTTI::ePropertyFlag::NONE);
 	}
 
 public:
-	ProjectConfig(Poly::String path) : Poly::ConfigBase(path, Poly::eResourceSource::NONE){}
+	ProjectConfig(const Poly::String& path) : Path(path) {}
+
+	void Save();
+	void Load();
+
+	Poly::String Path;
 
 	Poly::String ProjectName;
 };

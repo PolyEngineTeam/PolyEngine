@@ -46,8 +46,9 @@ void ProjectManager::Open(const Poly::String& projectPath)
 		throw new ProjectManagerException("Another operation is currently running.");
 
 	// TODO (squares): get projectName from json
-	ProjectConfig = std::make_unique<::ProjectConfig>(projectPath);
 	ProjectPath = projectPath;
+	ProjectConfig = std::make_unique<::ProjectConfig>(projectPath);
+	ProjectConfig->Load();
 
 	// load game
 	if (!LoadGame.FunctionValid())

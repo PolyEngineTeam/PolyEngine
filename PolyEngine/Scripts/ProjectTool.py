@@ -147,7 +147,8 @@ def run_cmake(path, build_dir_name, proj_name):
 
 def create_project_file(path, proj_name):
     data = {}
-    data['ProjectName'] = proj_name
+    data['root'] = {}
+    data['root']['ProjectName'] = proj_name
     with open(os.sep.join([path, proj_name + '.proj.json']), 'w') as outfile:
         json.dump(data, outfile)
 
