@@ -17,37 +17,12 @@ ConfigBase::ConfigBase(const String& displayName, eResourceSource location)
 
 void ConfigBase::Save()
 {
-	rapidjson::Document DOMObject; // UTF8 by default
-	RTTI::SerializeObject(this, DisplayName, DOMObject);
-	
-	// Save to pretty string
-	rapidjson::StringBuffer buffer;
-	buffer.Clear();
-	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
-	DOMObject.Accept(writer);
-	
-	//gConsole.LogDebug("{} json:\n{}", DisplayName, buffer.GetString());
-	SaveTextFileRelative(Location, GetFileName(), String(buffer.GetString()));
+	SerializeToFile(EvaluateFullResourcePath(Location, GetFileName()));
 }
 
 void ConfigBase::Load()
 {
-	String json;
-	try
-	{
-		json = LoadTextFileRelative(Location, GetFileName());
-	} 
-	catch (std::exception)
-	{
-		gConsole.LogWarning("No configuration file found for {}. Using default values.", DisplayName);
-		Save(); // Create file
-		return;
-	}
-		
-	rapidjson::Document DOMObject;
-	DOMObject.Parse(json.GetCStr());
-	RTTI::DeserializeObject(this, DisplayName, DOMObject);
-
+	DeserializeFromFile(EvaluateFullResourcePath(Location, GetFileName()));
 	// For now, ensure newest state of config file.
 	Save(); 
 }
