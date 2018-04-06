@@ -102,6 +102,26 @@ void ProjectManager::Update(const Poly::String& enginePath)
 	Running = true;
 }
 
+void ProjectManager::Build()
+{
+	if (!Opened)
+		throw new ProjectManagerException("This operation requires any project opened.");
+
+	if (Running)
+		throw new ProjectManagerException("Another operation is currently running.");
+
+	Poly::StringBuilder builder;
+
+	builder.Append("cmake --build ");
+	builder.Append(ProjectPath);
+	builder.Append("/Build");
+
+	Command = builder.GetString();
+	CommandDesc = "Project build";
+
+	RunCommand(Command);
+}
+
 void ProjectManager::Close()
 {
 	if (Running)

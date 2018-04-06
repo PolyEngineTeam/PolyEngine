@@ -195,13 +195,7 @@ void EditorUi::CloseProject()
 
 void EditorUi::Build()
 {
-	QString program = "cmd";
-	QStringList arguments;
-
-	//QProcess *myProcess = new QProcess(this);
-	//myProcess->start(program, arguments);
-
-	//gApp->ProjectMgr.Build();
+	gApp->ProjectMgr.Build();
 }
 
 void EditorUi::ContactUs()

@@ -6,10 +6,10 @@ RTTI_DEFINE_TYPE(ProjectConfig)
 
 void ProjectConfig::Save()
 {
-	SerializeToFile(Poly::EvaluateFullResourcePath(Poly::eResourceSource::NONE, Path));
+	SerializeToFile(Path);
 }
 
 void ProjectConfig::Load()
 {
-	DeserializeFromFile(Poly::EvaluateFullResourcePath(Poly::eResourceSource::NONE, Path));
+	DeserializeFromFile(Path);
 }
