@@ -76,11 +76,6 @@ void EditorUi::InitMainWindow()
 			OpenProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Open Project", Q_NULLPTR));
 			QObject::connect(OpenProjectAction, &QAction::triggered, this, &EditorUi::OpenProject);
 
-			UpdateProjectAction = new QAction(MainWindow);
-			ProjectMenu->addAction(UpdateProjectAction);
-			UpdateProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Update Project", Q_NULLPTR));
-			QObject::connect(UpdateProjectAction, &QAction::triggered, this, &EditorUi::UpdateProject);
-
 			UpdateProjectFromEngineAction = new QAction(MainWindow);
 			ProjectMenu->addAction(UpdateProjectFromEngineAction);
 			UpdateProjectFromEngineAction->setText(QApplication::translate("EditorMainWindowClass", "Update Project From Engine", Q_NULLPTR));
@@ -177,16 +172,6 @@ void EditorUi::OpenProject()
 		gApp->ProjectMgr.Open(&fileDialog.selectedFiles()[0].toStdString()[0]);
 
 	Poly::gConsole.LogInfo("Project opening ended.");
-}
-
-void EditorUi::UpdateProject()
-{
-	Poly::gConsole.LogInfo("");
-	Poly::gConsole.LogInfo("Project updating started...");
-
-	gApp->ProjectMgr.Update();
-
-	Poly::gConsole.LogInfo("Project updating ended.");
 }
 
 void EditorUi::UpdateProjectFromEngine()

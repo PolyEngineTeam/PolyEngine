@@ -1,7 +1,7 @@
 #include "PolyEditorPCH.hpp"
 #include <Engine.hpp>
 #include <Utils/LibraryLoader.hpp>
-#include <Configs/AssetsPathConfig.hpp>
+#include <Configs\AssetsPathConfig.hpp>
 #include <SDL.h>
 
 extern "C"
@@ -28,8 +28,7 @@ std::unique_ptr<Poly::IRenderingDevice> ViewportWidget::InitializeViewport()
 	if (!LoadRenderingDevice.FunctionValid())
 	{
 		// Load rendering device library
-		//LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>(Poly::gAssetsPathConfig.GetRenderingDeviceLibPath().GetCStr(), "PolyCreateRenderingDevice");
-		LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>("Z:/Desktop/Test1/Build/NewPolyPrject/Debug/polyrenderingdevice.dll", "PolyCreateRenderingDevice");
+		LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>(Poly::gAssetsPathConfig.GetRenderingDeviceLibPath().GetCStr(), "PolyCreateRenderingDevice");
 		ASSERTE(LoadRenderingDevice.FunctionValid(), "Library libRenderingDevice load failed");
 		Poly::gConsole.LogDebug("Library libRenderingDevice loaded.");
 	}

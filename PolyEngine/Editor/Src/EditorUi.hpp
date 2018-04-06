@@ -35,7 +35,6 @@ private:
 		QMenu* ProjectMenu;
 			QAction* CreateProjectAction;
 			QAction* OpenProjectAction;
-			QAction* UpdateProjectAction;
 			QAction* UpdateProjectFromEngineAction;
 			QAction* CloseProjectAction;
 		QMenu* BuildMenu;
@@ -57,7 +56,6 @@ private slots:
 	// projhect
 	void CreateProject();
 	void OpenProject();
-	void UpdateProject();
 	void UpdateProjectFromEngine();
 	void CloseProject();
 

@@ -18,18 +18,16 @@ void ProjectManager::Create(const Poly::String& projectName, const Poly::String&
 	if (Running)
 		throw new ProjectManagerException("Another operation is currently running.");
 
-	Name = projectName;
 	ProjectPath = projectPath;
-	EnginePath = enginePath;
 
 	Poly::StringBuilder builder;
 
 	builder.Append("py Z:/Programming/C++/PolyEngine/PolyEngine/Scripts/ProjectTool.py -e ");
-	builder.Append(EnginePath);
+	builder.Append(enginePath);
 	builder.Append(" -c ");
 	builder.Append(ProjectPath);
 	builder.Append(" ");
-	builder.Append(Name);
+	builder.Append(projectName);
 
 	Command = builder.GetString();
 	CommandDesc = "Project creation";
@@ -37,7 +35,7 @@ void ProjectManager::Create(const Poly::String& projectName, const Poly::String&
 	RunCommand(Command);
 }
 
-void ProjectManager::Open(const Poly::String& projectPath)
+void ProjectManager::Open(Poly::String projectPath)
 {
 	if (Opened)
 		throw new ProjectManagerException("Can't open project without closing previous one.");
@@ -45,18 +43,30 @@ void ProjectManager::Open(const Poly::String& projectPath)
 	if (Running)
 		throw new ProjectManagerException("Another operation is currently running.");
 
-	// TODO (squares): get projectName from json
-	ProjectPath = projectPath;
 	ProjectConfig = std::make_unique<::ProjectConfig>(projectPath);
 	ProjectConfig->Load();
+
+	for (size_t i = projectPath.GetLength(); i > 0; --i)
+		if (projectPath[i] == '/')
+		{
+			ProjectPath = projectPath.Substring(i);
+			break;
+		}
+
+	// works for VS
+	Poly::StringBuilder builder;
+	builder.Append(ProjectPath);
+	builder.Append("/Build/");
+	builder.Append(ProjectConfig->ProjectName);
+	builder.Append("/Debug/AssetsPathConfig.json");
+	Poly::gAssetsPathConfig.DeserializeFromFile(builder.GetString());
 
 	// load game
 	if (!LoadGame.FunctionValid())
 	{
-		// Load game library
-		//LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>(Poly::gAssetsPathConfig.GetGameLibPath().GetCStr(), "CreateGame");
-		//LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("Z:/Desktop/Test1/Build/NewPolyPrject/Debug/NewPolyPrject.dll", "CreateGame");
-		LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>("Z:/Desktop/Debug/PolyJamGame.dll", "CreateGame");
+		Poly::String str = Poly::gAssetsPathConfig.GetGameLibPath();
+
+		LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>(Poly::gAssetsPathConfig.GetGameLibPath().GetCStr(), "CreateGame");
 		ASSERTE(LoadGame.FunctionValid(), "Library libGame load failed");
 		Poly::gConsole.LogDebug("Library libGame loaded.");
 	}
@@ -69,29 +79,6 @@ void ProjectManager::Open(const Poly::String& projectPath)
 	Opened = true;
 }
 
-void ProjectManager::Update()
-{
-	if (!Opened)
-		throw new ProjectManagerException("This operation requires any project opened.");
-
-	if (Running)
-		throw new ProjectManagerException("Another operation is currently running.");
-
-	Poly::StringBuilder builder;
-
-	builder.Append("py Z:/Programming/C++/PolyEngine/PolyEngine/Scripts/ProjectTool.py -e ");
-	builder.Append(EnginePath);
-	builder.Append(" -u ");
-	builder.Append(ProjectPath);
-
-	Command = builder.GetString();
-	CommandDesc = "Project update";
-
-	RunCommand(Command);
-
-	Running = true;
-}
-
 void ProjectManager::Update(const Poly::String& enginePath)
 {
 	if (!Opened)
@@ -100,12 +87,10 @@ void ProjectManager::Update(const Poly::String& enginePath)
 	if (Running)
 		throw new ProjectManagerException("Another operation is currently running.");
 
-	EnginePath = enginePath;
-
 	Poly::StringBuilder builder;
 
 	builder.Append("py Z:/Programming/C++/PolyEngine/PolyEngine/Scripts/ProjectTool.py -e ");
-	builder.Append(EnginePath);
+	builder.Append(enginePath);
 	builder.Append(" -u ");
 	builder.Append(ProjectPath);
 
@@ -124,9 +109,7 @@ void ProjectManager::Close()
 
 	Opened = false;
 
-	Name = "";
 	ProjectPath = "";
-	EnginePath = "";
 }
 
 void ProjectManager::RunCommand(const Poly::String& cmd)

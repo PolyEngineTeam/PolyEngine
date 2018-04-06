@@ -33,8 +33,7 @@ public:
 	}
 
 	void Create(const Poly::String& projectName, const Poly::String& projectPath, const Poly::String& enginePath);
-	void Open(const Poly::String& projectPath);
-	void Update();
+	void Open(Poly::String projectPath);
 	void Update(const Poly::String& enginePath);
 	void Build();
 	void Close();
@@ -42,9 +41,8 @@ public:
 	bool IsOpened() { return Opened && !Running; }
 	bool IsRunning() { return Running; }
 
-	const Poly::String& GetProjectName() const { return Name; }
+	const Poly::String& GetProjectName() const { return ProjectConfig->ProjectName; }
 	const Poly::String& GetProjectPath() const { return ProjectPath; }
-	const Poly::String& GetEnginePath() const { return EnginePath; }
 
 private:
 	void RunCommand(const Poly::String& cmd);
@@ -52,9 +50,7 @@ private:
 	bool Opened = false;
 	bool Running = false;
 
-	Poly::String Name = "";
 	Poly::String ProjectPath = "";
-	Poly::String EnginePath = "";
 
 	std::unique_ptr<ProjectConfig> ProjectConfig;
 
