@@ -4,27 +4,32 @@
 #include <QTimer>
 #include <Engine.hpp>
 
+using namespace Poly;
+
 class EngineManagerException : public std::exception
 {
 public:
-	EngineManagerException(const Poly::String& msg) : Msg(msg) {}
+	EngineManagerException(const String& msg) : Msg(msg) {}
 	const char* what() const noexcept override { return Msg.GetCStr(); }
 
 protected:
-	Poly::String Msg;
+	String Msg;
 };
 
-class EngineManager : public QObject
+class EngineManager : public QObject, public IEditorProxy
 {
 public:
 	EngineManager();
 	~EngineManager() = default;
 	
-	void Init(std::unique_ptr<Poly::IGame> game, std::unique_ptr<Poly::IRenderingDevice> device);
+	void Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device
+		, const String& assetsPathConfigPath);
+	const String& GetAssetsPathConfigPath() override { return AssetsPathConfigPath; }
 
 private:
 	std::unique_ptr<QTimer> Updater = nullptr;
-	std::unique_ptr<Poly::Engine> Engine = nullptr; 
+	std::unique_ptr<Engine> Engine = nullptr;
+	String AssetsPathConfigPath = String::EMPTY;
 
 private slots:
 	void UpdatePhase();

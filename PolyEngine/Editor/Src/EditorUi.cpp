@@ -123,7 +123,7 @@ void EditorUi::InitMainWindow()
 	MainLogger = std::make_unique<LoggerWidget>("Console");
 	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, MainLogger.get(), true);
 
-	LoggerWidget* consoleWidget = new LoggerWidget("Project Manager");
+	LoggerWidget* consoleWidget = new LoggerWidget("cmd");
 	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, consoleWidget, true);
 
 	MainWindow->show();

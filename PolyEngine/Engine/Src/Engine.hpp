@@ -7,6 +7,7 @@
 #include <memory>
 
 #include <Core.hpp>
+#include "Editor/IEditorProxy.hpp"
 #include "Rendering/IRenderingDevice.hpp"
 #include "Audio/OpenALDevice.hpp"
 
@@ -46,6 +47,8 @@ namespace Poly
 			POSTUPDATE,
 			_COUNT
 		};
+
+		void RegisterEditor(IEditorProxy* editor) { Editor = editor; }
 
 		/// <summary>Registers engine components. Registers and creates world components.
 		/// Registers engine update phases and initializes game dbject. </summary>
@@ -171,6 +174,7 @@ namespace Poly
 		std::unique_ptr<World> BaseWorld;
 		std::unique_ptr<IGame> Game;
 		std::unique_ptr<IRenderingDevice> RenderingDevice;
+		IEditorProxy* Editor;
 		OpenALDevice AudioDevice;
 		InputQueue InputEventsQueue;
 

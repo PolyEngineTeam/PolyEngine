@@ -32,8 +32,8 @@ LoggerWidget::LoggerWidget(const QString& title, QWidget* parent)
 
 	if (title == "Console")
 		Poly::gConsole.RegisterStream<EditorOutputStream>("console.log", this);
-	else if (title == "Project Manager")
-		gApp->ProjectMgr.RegisterStream<EditorOutputStream>("projectMgr.log", this);
+	else if (title == "cmd")
+		gApp->CommandMgr.RegisterStream<EditorOutputStream>("cmd.log", this);
 }
 
 LoggerWidget::~LoggerWidget()

@@ -21,50 +21,24 @@ public:
 	ProjectManager() {}
 	~ProjectManager() = default;
 
-	template <typename S, typename... Args>
-	void RegisterStream(Args&&... args)
-	{
-		constexpr bool isStream = std::is_base_of<Poly::OutputStream, S>::value; // Strange workaround to STATIC_ASSERTE macro on MSVC
-		STATIC_ASSERTE(isStream, "Provided value is not stream!");
-		if (CurrentStream)
-			CurrentStream->OnUnregister();
-		CurrentStream = std::make_unique<S>(std::forward<Args>(args)...);
-		Ostream = std::make_unique<std::ostream>(CurrentStream.get());
-	}
-
+	// creates and opens project so the game is ready to be played (but you have to build it first)
 	void Create(const Poly::String& projectName, const Poly::String& projectPath, const Poly::String& enginePath);
+	// opens project so the game is playable (you might have to build it first)
 	void Open(Poly::String projectPath);
+	// updates project from given
+	void Update(const Poly::String& projedtPath, const Poly::String& enginePath);
 	void Update(const Poly::String& enginePath);
 	void Build();
 	void Close();
 
-	bool IsOpened() { return Opened && !Running; }
-	bool IsRunning() { return Running; }
+	bool IsOpened() { return Opened; }
 
 	const Poly::String& GetProjectName() const { return ProjectConfig->ProjectName; }
 	const Poly::String& GetProjectPath() const { return ProjectPath; }
 
 private:
-	void RunCommand(const Poly::String& cmd);
-
 	bool Opened = false;
-	bool Running = false;
 
 	Poly::String ProjectPath = "";
-
 	std::unique_ptr<ProjectConfig> ProjectConfig;
-
-	Poly::String Command = "";
-	Poly::String CommandDesc = "";
-
-	// things important for getting output from external programs like ProjectTool.py
-	std::unique_ptr<QTimer> Timer = nullptr;
-	FILE* Stream = nullptr;
-	static const size_t MaxBuffer = 256;
-	char Buffer[MaxBuffer];
-	std::unique_ptr<Poly::OutputStream> CurrentStream;
-	std::unique_ptr<std::ostream> Ostream;
-
-private slots:
-	void ReadStdout();
 };

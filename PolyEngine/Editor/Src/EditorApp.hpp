@@ -8,6 +8,7 @@
 #include "Managers/DockManager.hpp"
 #include "Managers/ProjectManager.hpp"
 #include "Managers/EngineManager.hpp"
+#include "Managers/CommandManager.hpp"
 
 #include <Engine.hpp>
 
@@ -23,6 +24,7 @@ public:
 	DockManager DockMgr;
 	ProjectManager ProjectMgr;
 	EngineManager GameMgr;
+	CommandManager CommandMgr;
 
 private:
 	GlobalEventFilter EventFilter;

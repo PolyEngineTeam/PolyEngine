@@ -14,20 +14,30 @@ const static Angle PLAYER_CAMERA_FOV = 60_deg;
 
 EngineManager::EngineManager()
 {
+	if (Engine)
+		throw new EngineManagerException("Creating Engine twice?");
+
+	// create engine instance
+	Engine = std::make_unique<Poly::Engine>();
+	Engine->RegisterEditor(this);
+	gConsole.LogDebug("Engine created successfully");
+
 	// setup update timer
 	Updater = std::make_unique<QTimer>(this);
 	connect(Updater.get(), &QTimer::timeout, this, &EngineManager::UpdatePhase);
 }
 
-void EngineManager::Init(std::unique_ptr<Poly::IGame> game, std::unique_ptr<Poly::IRenderingDevice> device)
+void EngineManager::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device
+	, const String& assetsPathConfigPath)
 {
-	if (Engine)
-		throw new EngineManagerException("Creating Engine twice?");
+	// set assets path path form engine
+	AssetsPathConfigPath = assetsPathConfigPath;
 
-	Engine = std::make_unique<Poly::Engine>();
+	// initialize engine
 	Engine->Init(std::move(game), std::move(device));
-	Poly::gConsole.LogDebug("Engine created successfully");
+	gConsole.LogDebug("Engine initialized successfully");
 
+	// setup camera for viewport (for testing purposes)
 	Entity* camera = DeferredTaskSystem::SpawnEntityImmediate(Engine->GetWorld());
 	DeferredTaskSystem::AddComponentImmediate<CameraComponent>(gEngine->GetWorld(), camera, PLAYER_CAMERA_FOV, PLAYER_CAMERA_NEAR, PLAYER_CAMERA_FAR);
 	gEngine->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, gEngine->GetWorld()->GetComponent<CameraComponent>(camera));
@@ -36,6 +46,7 @@ void EngineManager::Init(std::unique_ptr<Poly::IGame> game, std::unique_ptr<Poly
 	postCmp->UseBgShader = false;
 	postCmp->UseFgShader = true;
 
+	// start timer to call update on engine (as fast as possible)
 	Updater->start(0);
 }
 

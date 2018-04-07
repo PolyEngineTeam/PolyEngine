@@ -24,6 +24,7 @@ UNSILENCE_MSVC_WARNING()
 #include "Managers/DockManager.hpp"
 #include "Managers/ProjectManager.hpp"
 #include "Managers/EngineManager.hpp"
+#include "CommandManager.hpp"
 
 #include "Configs/ProjectConfig.hpp"
 

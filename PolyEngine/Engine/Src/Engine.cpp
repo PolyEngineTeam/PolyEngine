@@ -11,16 +11,20 @@ Engine::Engine()
 {
 	ASSERTE(gEngine == nullptr, "Creating engine twice?");
 	gEngine = this;
-
-	gAssetsPathConfig.Load();
-	gDebugConfig.Load();
-	// also set presets for debug draw (DebugDrawPresets)
-	// @todo update debug draw presets from GUI
-	gDebugConfig.DebugDrawPresets |= DebugDrawPreset::GFX;
 }
 
 void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device)
 {
+	if (Editor)
+		gAssetsPathConfig.DeserializeFromFile(Editor->GetAssetsPathConfigPath());
+	else 
+		gAssetsPathConfig.Load();
+
+	gDebugConfig.Load();
+	// also set presets for debug draw (DebugDrawPresets)
+	// @todo update debug draw presets from GUI
+	gDebugConfig.DebugDrawPresets |= DebugDrawPreset::GFX;
+
 	Game = std::move(game);
 	RenderingDevice = std::move(device);
 	RenderingDevice->Init();
