@@ -4,6 +4,8 @@
 #include "Utils/EnumUtils.hpp"
 #include "RTTI/RTTITypeInfo.hpp"
 #include "Collections/String.hpp"
+#include "Collections/Dynarray.hpp"
+#include "RTTI/CustomTypeTraits.hpp"
 
 #include <functional>
 #include <initializer_list>
@@ -32,6 +34,7 @@ namespace Poly {
 			DOUBLE,
 			ENUM,
 			STRING,
+			DYNARRAY,
 			_COUNT
 		};
 
@@ -59,13 +62,14 @@ namespace Poly {
 
 		struct Property final : public BaseObjectLiteralType<>
 		{
+			Property() = default;
 			Property(TypeInfo typeInfo, size_t offset, const char* name, ePropertyFlag flags, eCorePropertyType coreType, std::shared_ptr<PropertyImplData>&& implData = nullptr)
 				: Type(typeInfo), Offset(offset), Name(name), Flags(flags), CoreType(coreType), ImplData(std::move(implData)) {}
 			TypeInfo Type;
 			size_t Offset;
 			String Name;
 			EnumFlags<ePropertyFlag> Flags;
-			eCorePropertyType CoreType;
+			eCorePropertyType CoreType = eCorePropertyType::NONE;
 			std::shared_ptr<PropertyImplData> ImplData; // @fixme ugly hack for not working Two-phase lookup in MSVC, should use unique_ptr
 		};
 
@@ -88,10 +92,40 @@ namespace Poly {
 			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::ENUM, std::move(implData)};
 		}
 
+		struct CollectionPropertyImplDataBase : public PropertyImplData
+		{
+			Property PropertyType;
+
+			virtual void Resize(void* collection, size_t size) const = 0;
+			virtual size_t GetSize(const void* collection) const = 0;
+			virtual void* GetValue(void* collection, size_t idx) const = 0;
+			virtual const void* GetValue(const void* collection, size_t idx) const = 0;
+		};
+
+		template <typename ValueType>
+		struct DynarrayPropertyImplData final : public CollectionPropertyImplDataBase
+		{
+			DynarrayPropertyImplData(ePropertyFlag flags) { PropertyType = CreatePropertyInfo<ValueType>(0, "value", flags); }
+
+			void Resize(void* collection, size_t size) const override { reinterpret_cast<Dynarray<ValueType>*>(collection)->Resize(size); }
+			size_t GetSize(const void* collection) const override { return reinterpret_cast<const Dynarray<ValueType>*>(collection)->GetSize(); }
+			void* GetValue(void* collection, size_t idx) const override { return &((*reinterpret_cast<Dynarray<ValueType>*>(collection))[idx]); }
+			const void* GetValue(const void* collection, size_t idx) const override { return &((*reinterpret_cast<const Dynarray<ValueType>*>(collection))[idx]); }
+		};
+
+		template <typename ValueType> Property CreateDynarrayPropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
+		{
+			std::shared_ptr<CollectionPropertyImplDataBase> implData = std::shared_ptr<CollectionPropertyImplDataBase>{ new DynarrayPropertyImplData<ValueType>(flags) };
+
+			// Register EnumInfo object pointer to property
+			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::DYNARRAY, std::move(implData) };
+		}
+
 		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
 		{ 
 			return constexpr_match(
 				std::is_enum<T>{},			[&](auto lazy) { return CreateEnumPropertyInfo<LAZY_TYPE(T)>(offset, name, flags); },
+				Trait::IsDynarray<T>{},		[&](auto lazy) { return CreateDynarrayPropertyInfo<Trait::DynarrayValueType<LAZY_TYPE(T)>::type>(offset, name, flags); },
 				std::is_same<String, T>{},	[&](auto) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<String>() }; },
 				/*default*/					[&](auto lazy) { return Property{ TypeInfo::Get<LAZY_TYPE(T)>(), offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>() }; }
 			);

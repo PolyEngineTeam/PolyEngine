@@ -1,6 +1,7 @@
 #include "CorePCH.hpp"
 #include "RTTISerialization.hpp"
 #include "Collections/String.hpp"
+#include "Collections/Dynarray.hpp"
 
 using namespace Poly;
 
@@ -97,6 +98,15 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 		currentValue.SetString(implData->EnumInfo->GetEnumName(val), alloc);
 		break;
 	}
+	case eCorePropertyType::DYNARRAY:
+	{
+		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid enum impl data!");
+		const CollectionPropertyImplDataBase* implData = static_cast<const CollectionPropertyImplDataBase*>(prop.ImplData.get());
+		currentValue.SetArray();
+		for (size_t i = 0; i < implData->GetSize(value); ++i)
+			currentValue.GetArray().PushBack(GetCorePropertyValue(implData->GetValue(value, i), implData->PropertyType, alloc), alloc);
+	}
+		break;
 	case eCorePropertyType::NONE:
 		ASSERTE(false, "Invalid property type!");
 		break;
@@ -213,6 +223,18 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 			ASSERTE(false, "Unhandled value size!");
 		break;
 	}
+	case eCorePropertyType::DYNARRAY:
+	{
+		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid enum impl data!");
+		const CollectionPropertyImplDataBase* implData = static_cast<const CollectionPropertyImplDataBase*>(prop.ImplData.get());
+		implData->Resize(obj, value.GetArray().Size());
+		for (size_t i = 0; i < value.GetArray().Size(); ++i)
+		{
+			SetCorePropertyValue(implData->GetValue(obj, i), implData->PropertyType, value.GetArray()[(rapidjson::SizeType)i]);
+		}
+	}
+	break;
+
 	case eCorePropertyType::NONE:
 		ASSERTE(false, "Invalid property type!");
 		break;

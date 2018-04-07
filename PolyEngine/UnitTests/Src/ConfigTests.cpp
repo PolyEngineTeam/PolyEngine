@@ -33,6 +33,8 @@ class TestConfig : public ConfigBase
 		RTTI_PROPERTY_AUTONAME(Propf64, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropStr, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropEnum, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropDynarrayInt, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropDynarrayDynarrayInt, RTTI::ePropertyFlag::NONE);
 	}
 public:
 	TestConfig() : ConfigBase("Test", eResourceSource::NONE) {}
@@ -51,6 +53,8 @@ public:
 	double Propf64 = 0.32;
 	String PropStr = "Test string";
 	eConfigTest PropEnum = eConfigTest::VAL_2;
+	Dynarray<int> PropDynarrayInt = { 1, 2, 3 };
+	Dynarray<Dynarray<int>> PropDynarrayDynarrayInt = { {1}, { 2, 3 } };
 };
 RTTI_DEFINE_TYPE(TestConfig)
 
@@ -76,6 +80,17 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(config.Propf64 == Approx(0.32));
 		CHECK(config.PropStr == "Test string");
 		CHECK(config.PropEnum == eConfigTest::VAL_2);
+		REQUIRE(config.PropDynarrayInt.GetSize() == 3);
+		CHECK(config.PropDynarrayInt[0] == 1);
+		CHECK(config.PropDynarrayInt[1] == 2);
+		CHECK(config.PropDynarrayInt[2] == 3);
+
+		REQUIRE(config.PropDynarrayDynarrayInt.GetSize() == 2);
+		REQUIRE(config.PropDynarrayDynarrayInt[0].GetSize() == 1);
+		CHECK(config.PropDynarrayDynarrayInt[0][0] == 1);
+		REQUIRE(config.PropDynarrayDynarrayInt[1].GetSize() == 2);
+		CHECK(config.PropDynarrayDynarrayInt[1][0] == 2);
+		CHECK(config.PropDynarrayDynarrayInt[1][1] == 3);
 
 
 		// Change values
@@ -92,6 +107,8 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		config.Propf64 = 0.64f;
 		config.PropStr = "Test string2";
 		config.PropEnum = eConfigTest::VAL_1;
+		config.PropDynarrayInt = {4, 5, 6, 7};
+		config.PropDynarrayDynarrayInt = { { 1, 2 }, { 3 }, {4, 5, 6} };
 
 		// save them
 		config.Save();
@@ -114,6 +131,17 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(config.Propf64 == Approx(0.32));
 		CHECK(config.PropStr == "Test string");
 		CHECK(config.PropEnum == eConfigTest::VAL_2);
+		REQUIRE(config.PropDynarrayInt.GetSize() == 3);
+		CHECK(config.PropDynarrayInt[0] == 1);
+		CHECK(config.PropDynarrayInt[1] == 2);
+		CHECK(config.PropDynarrayInt[2] == 3);
+
+		REQUIRE(config.PropDynarrayDynarrayInt.GetSize() == 2);
+		REQUIRE(config.PropDynarrayDynarrayInt[0].GetSize() == 1);
+		CHECK(config.PropDynarrayDynarrayInt[0][0] == 1);
+		REQUIRE(config.PropDynarrayDynarrayInt[1].GetSize() == 2);
+		CHECK(config.PropDynarrayDynarrayInt[1][0] == 2);
+		CHECK(config.PropDynarrayDynarrayInt[1][1] == 3);
 
 		// load old values
 		config.Load();
@@ -132,6 +160,22 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(config.Propf64 == Approx(0.64));
 		CHECK(config.PropStr == "Test string2");
 		CHECK(config.PropEnum == eConfigTest::VAL_1);
+		REQUIRE(config.PropDynarrayInt.GetSize() == 4);
+		CHECK(config.PropDynarrayInt[0] == 4);
+		CHECK(config.PropDynarrayInt[1] == 5);
+		CHECK(config.PropDynarrayInt[2] == 6);
+		CHECK(config.PropDynarrayInt[3] == 7);
+
+		REQUIRE(config.PropDynarrayDynarrayInt.GetSize() == 3);
+		REQUIRE(config.PropDynarrayDynarrayInt[0].GetSize() == 2);
+		CHECK(config.PropDynarrayDynarrayInt[0][0] == 1);
+		CHECK(config.PropDynarrayDynarrayInt[0][1] == 2);
+		REQUIRE(config.PropDynarrayDynarrayInt[1].GetSize() == 1);
+		CHECK(config.PropDynarrayDynarrayInt[1][0] == 3);
+		REQUIRE(config.PropDynarrayDynarrayInt[2].GetSize() == 3);
+		CHECK(config.PropDynarrayDynarrayInt[2][0] == 4);
+		CHECK(config.PropDynarrayDynarrayInt[2][1] == 5);
+		CHECK(config.PropDynarrayDynarrayInt[2][2] == 6);
 	}
 
 	// remove the config file
