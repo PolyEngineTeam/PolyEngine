@@ -1,5 +1,11 @@
 #version 430 core
 
+struct Light
+{
+    vec4 Position;
+    float Radius;
+};
+
 struct Output
 {
     uint indexLocal;
@@ -9,17 +15,20 @@ struct Output
     uint result;
 };
 
-layout(std430, binding = 0) readonly buffer OutputBuffer {
+layout(std430, binding = 0) readonly buffer LightBuffer {
+	Light data[];
+} lightBuffer;
+
+layout(std430, binding = 1) readonly buffer OutputBuffer {
 	Output data[];
 } outputBuffer;
 
 uniform float near;
 uniform float far;
-
 uniform int workGroupsX;
 uniform int workGroupsY;
-
 uniform sampler2D uTexture;
+uniform mat4 ScreenFromWorld;
 
 in vec2 vUV;
 out vec4 fragColor;
@@ -40,15 +49,19 @@ void main()
     ivec2 WorkGroupID = (location / WorkGroupSize);
     uint IndexWorkGroup = WorkGroupID.y * NumWorkGroups.x + WorkGroupID.x;
     
-	float minDepth = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].result);
-    float maxDepth = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].input);
+    float minDepth = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].input);
+	float visibleLights = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].result) / 1.0;
 
 	vec3 tex = texture(uTexture, vUV).rgb;
     float depth = LinearizeDepth(tex.r)/far;
-    tex = pow(tex, vec3(0.4545));
+
+    vec4 LightInScreen = ScreenFromWorld * lightBuffer.data[0].Position;
+    float lightRange = fract(0.01 * (LightInScreen - gl_FragCoord.xy));
+    // tex = pow(tex, vec3(0.4545));
     // fragColor = vec4(vec3(depth), 1.0);
     // fragColor = vec4(vec2(location) / vec2(256.0, 192.0), 0.0, 1.0);
     // fragColor = vec4(vec2(WorkGroupID) / NumWorkGroups, 0.0, 1.0);
     // fragColor = vec4(vec3(minDepth), 1.0);
-    fragColor = vec4(depth, minDepth, maxDepth, 1.0);
+    // fragColor = vec4(depth, minDepth, maxDepth, 1.0);
+    fragColor = vec4(depth, minDepth, lightRange, 1.0);
 }

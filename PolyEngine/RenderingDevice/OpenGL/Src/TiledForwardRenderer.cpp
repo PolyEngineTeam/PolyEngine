@@ -100,7 +100,7 @@ void TiledForwardRenderer::Init()
 
 	// Bind light buffer
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, NUM_LIGHTS * sizeof(PointLight), 0, GL_DYNAMIC_DRAW);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Light) * NUM_LIGHTS, 0, GL_DYNAMIC_DRAW);
 
 	// Bind visible light indices buffer
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, visibleLightIndicesBuffer);
@@ -125,9 +125,6 @@ void TiledForwardRenderer::Init()
 
 
 	lightCullingShader.BindProgram();
-	lightCullingShader.SetUniform("lightCount", (int)NUM_LIGHTS);
-	lightCullingShader.SetUniform("screenSizeX", (int)SCREEN_SIZE_X);
-	lightCullingShader.SetUniform("screenSizeY", (int)SCREEN_SIZE_Y);
 
 	lightDebugShader.BindProgram();
 	lightDebugShader.SetUniform("totalLightCount", (int)NUM_LIGHTS);
@@ -143,7 +140,7 @@ void TiledForwardRenderer::Render(World* world, const AARect& rect, const Camera
 {
 	gConsole.LogInfo("TiledForwardRenderer::Render");
 
-	// UpdateLights(world);
+	UpdateLights(world);
 
 	// ComputeTest(world, cameraCmp);
 
@@ -231,8 +228,11 @@ void TiledForwardRenderer::LightCulling(World* world, const CameraComponent* cam
 	lightCullingShader.BindProgram();
 	lightCullingShader.SetUniform("near", cameraCmp->GetClippingPlaneNear());
 	lightCullingShader.SetUniform("far", cameraCmp->GetClippingPlaneFar());
-	// lightCullingShader.SetUniform("projection", cameraCmp->GetScreenFromView());
-	// lightCullingShader.SetUniform("view", cameraCmp->GetViewFromWorld());
+	lightCullingShader.SetUniform("ScreenFromView", cameraCmp->GetScreenFromView());
+	lightCullingShader.SetUniform("ViewFromWorld", cameraCmp->GetViewFromWorld());
+	lightCullingShader.SetUniform("lightCount", (int)NUM_LIGHTS);
+	lightCullingShader.SetUniform("screenSizeX", (int)SCREEN_SIZE_X);
+	lightCullingShader.SetUniform("screenSizeY", (int)SCREEN_SIZE_Y);
 
 	// Bind depth map texture to texture location 4 (which will not be used by any model texture)
 	glActiveTexture(GL_TEXTURE4);
@@ -240,14 +240,15 @@ void TiledForwardRenderer::LightCulling(World* world, const CameraComponent* cam
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 
 	// Bind shader storage buffer objects for the light and indice buffers
-	// glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
 	// glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, visibleLightIndicesBuffer);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, outputBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, outputBuffer);
 
 	// Dispatch the compute shader, using the workgroup values calculated earlier
 	glDispatchCompute(workGroupsX, workGroupsY, 1);
 
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+	// glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+	// glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
 
 	// Unbind the depth map
 	glActiveTexture(GL_TEXTURE4);
@@ -278,11 +279,14 @@ void TiledForwardRenderer::DrawLightCulling(const CameraComponent* cameraCmp)
 	debugQuadLightCullingShader.SetUniform("workGroupsY", (int)workGroupsY);
 	debugQuadLightCullingShader.SetUniform("near", cameraCmp->GetClippingPlaneNear());
 	debugQuadLightCullingShader.SetUniform("far", cameraCmp->GetClippingPlaneFar());
+	debugQuadLightCullingShader.SetUniform("ScreenFromWorld", cameraCmp->GetScreenFromWorld());
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, outputBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, outputBuffer);
 	DrawQuad();
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -365,7 +369,7 @@ void TiledForwardRenderer::SetupLightsBuffer()
 	}
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
-	PointLight *pointLights = (PointLight*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
+	Light *lights = (Light*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
 
 	// for (size_t i = 0; i < NUM_LIGHTS; i++) {
 	// 	PointLight &light = pointLights[i];
@@ -383,26 +387,25 @@ void TiledForwardRenderer::SetupLightsBuffer()
 
 void TiledForwardRenderer::UpdateLights(World* world)
 {
-	float delta = (float)TimeSystem::GetTimerDeltaTime(world, eEngineTimer::GAMEPLAY);
-	gConsole.LogInfo("TiledForwardRenderer::UpdateLights delta: {}", delta);
+	// float delta = (float)TimeSystem::GetTimerDeltaTime(world, eEngineTimer::GAMEPLAY);
+	gConsole.LogInfo("TiledForwardRenderer::UpdateLights");
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
-	PointLight *pointLights = (PointLight*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
+	Light *lights = (Light*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
 
 	int pointLightsCount = 0;
 	for (const auto& componentsTuple : world->IterateComponents<PointLightComponent>())
 	{
 		const PointLightComponent* pointLightCmp = std::get<PointLightComponent*>(componentsTuple);
 		const EntityTransform& transform = pointLightCmp->GetTransform();
-		const Color color = pointLightCmp->GetColor();
 
-		PointLight &light = pointLights[pointLightsCount];
-		light.position = transform.GetGlobalTranslation(); // RandomVector(-100.0f, 100.0f);
-		light.color = Vector(color.R, color.G, color.B);
-		light.paddingAndRadius = Vector(0.0f, 0.0f, 0.0f, pointLightCmp->GetRange());
+		Light &light = lights[pointLightsCount];
+		light.Position = transform.GetGlobalTranslation(); // RandomVector(-100.0f, 100.0f);
+		light.Radius = pointLightCmp->GetRange();
 		
-		gConsole.LogInfo("TiledForwardRenderer::UpdateLights Positon: {}, Color: {}, PaddingAndRadius: {}",
-			light.position, light.color, light.paddingAndRadius);
+		// gConsole.LogInfo("TiledForwardRenderer::UpdateLights Positon: {}, Radius: {}",
+		// 	light.Position, light.Radius
+		// );
 
 		++pointLightsCount;
 		if (pointLightsCount >= NUM_LIGHTS)
