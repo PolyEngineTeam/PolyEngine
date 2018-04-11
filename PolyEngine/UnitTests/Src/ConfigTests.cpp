@@ -16,6 +16,20 @@ enum class eConfigTest
 };
 REGISTER_ENUM_NAMES(eConfigTest, "val_1", "val_2");
 
+class TestRTTIClass : public RTTIBase
+{
+	RTTI_DECLARE_TYPE_DERIVED(TestRTTIClass, RTTIBase)
+	{
+		RTTI_PROPERTY_AUTONAME(Val1, RTTI::ePropertyFlag::NONE);
+	}
+public:
+	TestRTTIClass() {}
+	TestRTTIClass(int val) : Val1(val) {}
+
+	int Val1 = 0;
+};
+RTTI_DEFINE_TYPE(TestRTTIClass)
+
 class TestConfig : public ConfigBase
 {
 	RTTI_DECLARE_TYPE_DERIVED(TestConfig, ConfigBase)
@@ -35,6 +49,8 @@ class TestConfig : public ConfigBase
 		RTTI_PROPERTY_AUTONAME(PropEnum, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropDynarrayInt, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropDynarrayDynarrayInt, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropDynarrayString, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropDynarrayCustom, RTTI::ePropertyFlag::NONE);
 	}
 public:
 	TestConfig() : ConfigBase("Test", eResourceSource::NONE) {}
@@ -55,6 +71,8 @@ public:
 	eConfigTest PropEnum = eConfigTest::VAL_2;
 	Dynarray<int> PropDynarrayInt = { 1, 2, 3 };
 	Dynarray<Dynarray<int>> PropDynarrayDynarrayInt = { {1}, { 2, 3 } };
+	Dynarray<String> PropDynarrayString = { "abc", "efg" };
+	Dynarray<TestRTTIClass> PropDynarrayCustom = { 1, 2 };
 };
 RTTI_DEFINE_TYPE(TestConfig)
 
@@ -92,6 +110,14 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(config.PropDynarrayDynarrayInt[1][0] == 2);
 		CHECK(config.PropDynarrayDynarrayInt[1][1] == 3);
 
+		REQUIRE(config.PropDynarrayString.GetSize() == 2);
+		CHECK(config.PropDynarrayString[0] == "abc");
+		CHECK(config.PropDynarrayString[1] == "efg");
+
+		REQUIRE(config.PropDynarrayCustom.GetSize() == 2);
+		CHECK(config.PropDynarrayCustom[0].Val1 == 1);
+		CHECK(config.PropDynarrayCustom[1].Val1 == 2);
+
 
 		// Change values
 		config.PropBool = false;
@@ -109,6 +135,8 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		config.PropEnum = eConfigTest::VAL_1;
 		config.PropDynarrayInt = {4, 5, 6, 7};
 		config.PropDynarrayDynarrayInt = { { 1, 2 }, { 3 }, {4, 5, 6} };
+		config.PropDynarrayString = { "123", "456", "789" };
+		config.PropDynarrayCustom = { 3, 4, 5, 6 };
 
 		// save them
 		config.Save();
@@ -143,6 +171,14 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(config.PropDynarrayDynarrayInt[1][0] == 2);
 		CHECK(config.PropDynarrayDynarrayInt[1][1] == 3);
 
+		REQUIRE(config.PropDynarrayString.GetSize() == 2);
+		CHECK(config.PropDynarrayString[0] == "abc");
+		CHECK(config.PropDynarrayString[1] == "efg");
+
+		REQUIRE(config.PropDynarrayCustom.GetSize() == 2);
+		CHECK(config.PropDynarrayCustom[0].Val1 == 1);
+		CHECK(config.PropDynarrayCustom[1].Val1 == 2);
+
 		// load old values
 		config.Load();
 
@@ -176,6 +212,17 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(config.PropDynarrayDynarrayInt[2][0] == 4);
 		CHECK(config.PropDynarrayDynarrayInt[2][1] == 5);
 		CHECK(config.PropDynarrayDynarrayInt[2][2] == 6);
+
+		REQUIRE(config.PropDynarrayString.GetSize() == 3);
+		CHECK(config.PropDynarrayString[0] == "123");
+		CHECK(config.PropDynarrayString[1] == "456");
+		CHECK(config.PropDynarrayString[2] == "789");
+
+		REQUIRE(config.PropDynarrayCustom.GetSize() == 4);
+		CHECK(config.PropDynarrayCustom[0].Val1 == 3);
+		CHECK(config.PropDynarrayCustom[1].Val1 == 4);
+		CHECK(config.PropDynarrayCustom[2].Val1 == 5);
+		CHECK(config.PropDynarrayCustom[3].Val1 == 6);
 	}
 
 	// remove the config file
