@@ -13,6 +13,7 @@ struct Output
     uint indexGlobal;
     uint input;
     uint result;
+    vec4 tilePosSS;
 };
 
 layout(std430, binding = 0) readonly buffer LightBuffer {
@@ -28,16 +29,25 @@ uniform float far;
 uniform int workGroupsX;
 uniform int workGroupsY;
 uniform sampler2D uTexture;
-uniform mat4 ScreenFromWorld;
+uniform mat4 ClipFromWorld;
 
 in vec2 vUV;
 out vec4 fragColor;
+
+vec2 ScreenSize = vec2(800.0, 600.0);
 
 // Need to linearize the depth because we are using the projection
 float LinearizeDepth(float depth)
 {
     float z = depth * 2.0 - 1.0;
     return (2.0 * near * far) / (far + near - z * (far - near));
+}
+
+vec4 ScreenFromClip(vec4 posInClip)
+{
+    vec4 posInScreen = vec4(((posInClip.xyz / posInClip.w) + 1.0) * 0.5, 1.0);
+    posInScreen.xy *= ScreenSize;
+    return posInScreen;
 }
 
 void main()
@@ -50,18 +60,26 @@ void main()
     uint IndexWorkGroup = WorkGroupID.y * NumWorkGroups.x + WorkGroupID.x;
     
     float minDepth = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].input);
-	float visibleLights = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].result) / 1.0;
+	float visibleLights = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].result);
 
 	vec3 tex = texture(uTexture, vUV).rgb;
     float depth = LinearizeDepth(tex.r)/far;
 
-    vec4 LightInScreen = ScreenFromWorld * lightBuffer.data[0].Position;
-    float lightRange = fract(0.01 * (LightInScreen - gl_FragCoord.xy));
+    vec2 compTilePosSS = outputBuffer.data[IndexWorkGroup].tilePosSS.xy;
+
+    vec4 LightInClip = ClipFromWorld * lightBuffer.data[0].Position;
+    vec4 LightInScreen = ScreenFromClip(LightInClip);
+    float lightRange = fract(0.01 * length(LightInScreen.xy - gl_FragCoord.xy));
     // tex = pow(tex, vec3(0.4545));
     // fragColor = vec4(vec3(depth), 1.0);
     // fragColor = vec4(vec2(location) / vec2(256.0, 192.0), 0.0, 1.0);
     // fragColor = vec4(vec2(WorkGroupID) / NumWorkGroups, 0.0, 1.0);
     // fragColor = vec4(vec3(minDepth), 1.0);
     // fragColor = vec4(depth, minDepth, maxDepth, 1.0);
-    fragColor = vec4(depth, minDepth, lightRange, 1.0);
+    // fragColor = vec4(depth, minDepth, lightRange, 1.0);
+    // fragColor = vec4(depth, minDepth, 0.0, 1.0);
+    // fragColor = vec4(compTilePosSS/ScreenSize, depth, 1.0);
+    // fragColor = vec4(compTilePosSS / ScreenSize, visibleLights, 1.0);
+    // fragColor = vec4(depth, 0.0, visibleLights, 1.0);
+	fragColor = vec4(depth, minDepth, visibleLights, 1.0);
 }

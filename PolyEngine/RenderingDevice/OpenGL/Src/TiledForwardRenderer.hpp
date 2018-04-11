@@ -36,6 +36,7 @@ namespace Poly {
 			uint indexGlobal;
 			uint input;
 			uint result;
+			Vector tilePosSS;
 		};
 		
 		const size_t NUM_LIGHTS = 1024;

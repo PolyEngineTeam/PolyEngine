@@ -10,6 +10,7 @@ struct Output {
     uint indexGlobal;
     uint input;
     uint result;
+    vec4 tilePosSS;
 };
 
 layout(std430, binding = 0) readonly buffer InputBuffer {
