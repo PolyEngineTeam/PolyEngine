@@ -57,7 +57,7 @@ std::unique_ptr<Poly::IRenderingDevice> ViewportWidget::GetRenderingDevice()
 // ---------------------------------------------------------------------------------------------------------
 void ViewportWidget::resizeEvent(QResizeEvent* resizeEvent)
 {
-	if (!Poly::gEngine)
+	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
 		return;
 
 	Poly::ScreenSize screenSize;
@@ -69,7 +69,7 @@ void ViewportWidget::resizeEvent(QResizeEvent* resizeEvent)
 // ---------------------------------------------------------------------------------------------------------
 void ViewportWidget::wheelEvent(QWheelEvent* wheelEvent)
 {
-	if (!Poly::gEngine)
+	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
 		return;
 	Poly::gEngine->UpdateWheelPos(Poly::Vector2i(wheelEvent->delta(), 0));
 }
@@ -77,7 +77,7 @@ void ViewportWidget::wheelEvent(QWheelEvent* wheelEvent)
 // ---------------------------------------------------------------------------------------------------------
 void ViewportWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 {
-	if (!Poly::gEngine)
+	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
 		return;
 	Poly::gEngine->UpdateMousePos(Poly::Vector2i(mouseEvent->pos().x(), mouseEvent->pos().y()));
 }
@@ -85,8 +85,9 @@ void ViewportWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 // ---------------------------------------------------------------------------------------------------------
 void ViewportWidget::mousePressEvent(QMouseEvent* mouseEvent)
 {
-	if (!Poly::gEngine)
+	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
 		return;
+
 	switch (mouseEvent->button())
 	{
 	case Qt::LeftButton:
@@ -110,7 +111,7 @@ void ViewportWidget::mousePressEvent(QMouseEvent* mouseEvent)
 // ---------------------------------------------------------------------------------------------------------
 void ViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 {
-	if (!Poly::gEngine)
+	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
 		return;
 	switch (mouseEvent->button())
 	{
@@ -135,15 +136,19 @@ void ViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 // ---------------------------------------------------------------------------------------------------------
 void ViewportWidget::keyPressEvent(QKeyEvent* keyEvent)
 {
-	if (!Poly::gEngine)
+	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
 		return;
-	Poly::gEngine->KeyDown(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
+
+	if (keyEvent->isAutoRepeat())
+		keyEvent->ignore();
+	else
+		Poly::gEngine->KeyDown(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
 }
 
 // ---------------------------------------------------------------------------------------------------------
 void ViewportWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 {
-	if (!Poly::gEngine)
+	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
 		return;
 
 	if (keyEvent->isAutoRepeat())
