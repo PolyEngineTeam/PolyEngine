@@ -18,6 +18,5 @@ EditorApp::EditorApp(int argc, char *argv[])
 	Ui.InitMainWindow();
 	installEventFilter(&EventFilter);
 	
-	
 	Poly::gConsole.LogInfo("PolyEditor succesfully initialized.");
 }

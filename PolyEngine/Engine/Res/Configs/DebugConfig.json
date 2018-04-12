@@ -1,5 +1,5 @@
 {
-    "Debug Config": {
+    "root": {
         "@type": "DebugConfig",
         "DisplayFPS": true
     }

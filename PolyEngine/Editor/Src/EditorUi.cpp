@@ -68,35 +68,33 @@ void EditorUi::InitMainWindow()
 
 			CreateProjectAction = new QAction(MainWindow);
 			ProjectMenu->addAction(CreateProjectAction);
-			CreateProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Create Project", Q_NULLPTR));
+			CreateProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Create", Q_NULLPTR));
 			QObject::connect(CreateProjectAction, &QAction::triggered, this, &EditorUi::CreateProject);
 
 			OpenProjectAction = new QAction(MainWindow);
 			ProjectMenu->addAction(OpenProjectAction);
-			OpenProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Open Project", Q_NULLPTR));
+			OpenProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Open", Q_NULLPTR));
 			QObject::connect(OpenProjectAction, &QAction::triggered, this, &EditorUi::OpenProject);
 
 			UpdateProjectFromEngineAction = new QAction(MainWindow);
 			ProjectMenu->addAction(UpdateProjectFromEngineAction);
-			UpdateProjectFromEngineAction->setText(QApplication::translate("EditorMainWindowClass", "Update Project From Engine", Q_NULLPTR));
-			QObject::connect(UpdateProjectFromEngineAction, &QAction::triggered, this, &EditorUi::UpdateProjectFromEngine);
+			UpdateProjectFromEngineAction->setText(QApplication::translate("EditorMainWindowClass", "Update", Q_NULLPTR));
+			QObject::connect(UpdateProjectFromEngineAction, &QAction::triggered, this, &EditorUi::UpdateProject);
+
+			BuildProjectAction = new QAction(MainWindow);
+			ProjectMenu->addAction(BuildProjectAction);
+			BuildProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Build", Q_NULLPTR));
+			QObject::connect(BuildProjectAction, &QAction::triggered, this, &EditorUi::BuildProject);
+
+			PlayProjectAction = new QAction(MainWindow);
+			ProjectMenu->addAction(PlayProjectAction);
+			PlayProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Play", Q_NULLPTR));
+			QObject::connect(PlayProjectAction, &QAction::triggered, this, &EditorUi::PlayProject);
 
 			CloseProjectAction = new QAction(MainWindow);
 			ProjectMenu->addAction(CloseProjectAction);
-			CloseProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Close Project", Q_NULLPTR));
+			CloseProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Close", Q_NULLPTR));
 			QObject::connect(CloseProjectAction, &QAction::triggered, this, &EditorUi::CloseProject);
-
-
-
-		// build menu
-		BuildMenu = new QMenu(MenuBar);
-		MenuBar->addAction(BuildMenu->menuAction());
-		BuildMenu->setTitle(QApplication::translate("EditorMainWindowClass", "Build", Q_NULLPTR));
-
-			BuildAction = new QAction(MainWindow);
-			BuildMenu->addAction(BuildAction);
-			BuildAction->setText(QApplication::translate("EditorMainWindowClass", "Build", Q_NULLPTR));
-			QObject::connect(BuildAction, &QAction::triggered, this, &EditorUi::Build);
 
 
 		// help menu
@@ -163,39 +161,34 @@ void EditorUi::CreateProject()
 
 void EditorUi::OpenProject()
 {
-	Poly::gConsole.LogInfo("");
-	Poly::gConsole.LogInfo("Project opening started...");
-
 	QFileDialog fileDialog;
 	fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
 	if (fileDialog.exec() == QDialog::Accepted)
 		gApp->ProjectMgr.Open(&fileDialog.selectedFiles()[0].toStdString()[0]);
-
-	Poly::gConsole.LogInfo("Project opening ended.");
 }
 
-void EditorUi::UpdateProjectFromEngine()
+void EditorUi::UpdateProject()
 {
-	Poly::gConsole.LogInfo("");
-	Poly::gConsole.LogInfo("Project updating from engine started...");
-
 	QFileDialog fileDialog;
 	fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
 	fileDialog.setFileMode(QFileDialog::Directory);
 	if (fileDialog.exec() == QDialog::Accepted)
 		gApp->ProjectMgr.Update(&fileDialog.selectedFiles()[0].toStdString()[0]);
+}
 
-	Poly::gConsole.LogInfo("Project updating from engine  ended.");
+void EditorUi::BuildProject()
+{
+	gApp->ProjectMgr.Build();
+}
+
+void EditorUi::PlayProject()
+{
+	gApp->ProjectMgr.Play();
 }
 
 void EditorUi::CloseProject()
 {
 	gApp->ProjectMgr.Close();
-}
-
-void EditorUi::Build()
-{
-	gApp->ProjectMgr.Build();
 }
 
 void EditorUi::ContactUs()

@@ -23,7 +23,7 @@ public:
 
 	DockManager DockMgr;
 	ProjectManager ProjectMgr;
-	EngineManager GameMgr;
+	EngineManager EngineMgr;
 	CommandManager CommandMgr;
 
 private:

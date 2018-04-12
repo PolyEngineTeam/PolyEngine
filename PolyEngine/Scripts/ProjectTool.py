@@ -232,7 +232,7 @@ def update_project(path, engine_path):
     if not os.path.exists(path):
         raise Exception('Path', path, 'does not exists. Cannot update project there!')
 
-    name = read_project_file(path)['ProjectName']
+    name = read_project_file(path)['root']['ProjectName']
     print('Project name:', name)
 
     update_config_files(path, name, engine_path, False)

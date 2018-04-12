@@ -30,15 +30,18 @@ private:
 		QMenu* EditMenu;
 			QAction* UndoAction;
 			QAction* RedoAction;
-		QMenu* ViewMenu;
-			QAction* AddWindowAction;
 		QMenu* ProjectMenu;
 			QAction* CreateProjectAction;
 			QAction* OpenProjectAction;
 			QAction* UpdateProjectFromEngineAction;
+			QAction* BuildProjectAction;
+			QAction* EditProjectAction;
+			QAction* PlayProjectAction;
 			QAction* CloseProjectAction;
-		QMenu* BuildMenu;
-			QAction* BuildAction;
+		QMenu* ToolsMenu;
+			QAction* OpenVisualStudioAction;
+		QMenu* ViewMenu;
+			QAction* AddWindowAction;
 		QMenu* HelpMenu;
 			QAction* ContactUsAction;
 
@@ -56,11 +59,10 @@ private slots:
 	// projhect
 	void CreateProject();
 	void OpenProject();
-	void UpdateProjectFromEngine();
+	void UpdateProject();
+	void BuildProject();
+	void PlayProject();
 	void CloseProject();
-
-	// build
-	void Build();
 
 	// help
 	void ContactUs();

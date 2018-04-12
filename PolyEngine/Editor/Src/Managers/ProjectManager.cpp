@@ -5,114 +5,106 @@
 
 extern "C"
 {
-	using CreateGameFunc = Poly::IGame* (void);
+	using CreateGameFunc = IGame* (void);
 }
 
-static Poly::LibraryFunctionHandle<CreateGameFunc> LoadGame;
+static LibraryFunctionHandle<CreateGameFunc> LoadGame;
 
-void ProjectManager::Create(const Poly::String& projectName, const Poly::String& projectPath, const Poly::String& enginePath)
+void ProjectManager::Create(const String& projectName, const String& projectPath, const String& enginePath)
 {
-	if (Opened)
+	if (ProjectConfig)
 		throw new ProjectManagerException("Can't create new project without closing previous one.");
 
-	ProjectPath = projectPath;
-
-	Poly::StringBuilder builder;
+	StringBuilder builder;
 
 	builder.Append("py ");
 	builder.Append(enginePath);
 	builder.Append("/Scripts/ProjectTool.py -e ");
 	builder.Append(enginePath);
 	builder.Append(" -c ");
-	builder.Append(ProjectPath);
+	builder.Append(projectPath);
 	builder.Append(" ");
 	builder.Append(projectName);
 
-	gApp->CommandMgr.RunCommand(builder.GetString(), "Project creation");
+	gApp->CommandMgr.RunCommand(builder.StealString());
 }
 
-void ProjectManager::Open(Poly::String projectPath)
+void ProjectManager::Open(String projectPath)
 {
-	if (Opened)
+	if (ProjectConfig)
 		throw new ProjectManagerException("Can't open project without closing previous one.");
 
+	// create and load project file
 	ProjectConfig = std::make_unique<::ProjectConfig>(projectPath);
 	ProjectConfig->Load();
-
-	for (size_t i = projectPath.GetLength(); i > 0; --i)
-		if (projectPath[i] == '/')
-		{
-			ProjectPath = projectPath.Substring(i);
-			break;
-		}
-
-	// works for VS
-	Poly::StringBuilder builder;
-	builder.Append(ProjectPath);
-	builder.Append("/Build/");
-	builder.Append(ProjectConfig->ProjectName);
-	builder.Append("/Debug/AssetsPathConfig.json");
-	Poly::gAssetsPathConfig.DeserializeFromFile(builder.GetString());
-
-	// load game
-	if (!LoadGame.FunctionValid())
-	{
-		Poly::String str = Poly::gAssetsPathConfig.GetGameLibPath();
-		str = Poly::gAssetsPathConfig.GetRenderingDeviceLibPath();
-		str = Poly::gAssetsPathConfig.GetAssetsPath(Poly::eResourceSource::GAME);
-		str = Poly::gAssetsPathConfig.GetAssetsPath(Poly::eResourceSource::ENGINE);
-
-		LoadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>(Poly::gAssetsPathConfig.GetGameLibPath().GetCStr(), "CreateGame");
-		ASSERTE(LoadGame.FunctionValid(), "Library libGame load failed");
-		Poly::gConsole.LogDebug("Library libGame loaded.");
-	}
-
-	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(LoadGame());
-	std::unique_ptr<Poly::IRenderingDevice> device = gApp->Ui.MainViewport->InitializeViewport();
-
-	gApp->GameMgr.Init(std::move(game), std::move(device));
-
-	Opened = true;
 }
 
-void ProjectManager::Update(const Poly::String& enginePath)
+void ProjectManager::Update(const String& enginePath)
 {
-	if (!Opened)
+	if (!ProjectConfig)
 		throw new ProjectManagerException("This operation requires any project opened.");
 
-	Poly::StringBuilder builder;
+	StringBuilder builder;
 
-	builder.Append("py Z:/Programming/C++/PolyEngine/PolyEngine/Scripts/ProjectTool.py -e ");
+	builder.Append("py ");
+	builder.Append(enginePath);
+	builder.Append("/Scripts/ProjectTool.py -e ");
 	builder.Append(enginePath);
 	builder.Append(" -u ");
-	builder.Append(ProjectPath);
+	builder.Append(ProjectConfig->ProjectPath);
 
-	gApp->CommandMgr.RunCommand(builder.GetString(), "Project update");
+	gApp->CommandMgr.RunCommand(builder.GetString());
 }
 
 void ProjectManager::Build()
 {
-	if (!Opened)
+	if (!ProjectConfig)
 		throw new ProjectManagerException("This operation requires any project opened.");
 
-	if (Running)
-		throw new ProjectManagerException("Another operation is currently running.");
-
-	Poly::StringBuilder builder;
+	StringBuilder builder;
 
 	builder.Append("cmake --build ");
-	builder.Append(ProjectPath);
+	builder.Append(ProjectConfig->ProjectPath);
 	builder.Append("/Build");
 
-	Command = builder.GetString();
-	CommandDesc = "Project build";
+	gApp->CommandMgr.RunCommand(builder.GetString());
+}
 
-	RunCommand(Command);
+void ProjectManager::Play()
+{
+	if (!ProjectConfig)
+		throw new ProjectManagerException("This operation requires any project opened.");
+
+	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
+	{
+		// load game
+		if (!LoadGame.FunctionValid())
+		{
+			LoadGame = LoadFunctionFromSharedLibrary<CreateGameFunc>(ProjectConfig->GetGameDllPath().GetCStr(), "CreateGame");
+			ASSERTE(LoadGame.FunctionValid(), "Library libGame load failed");
+			gConsole.LogDebug("Library libGame loaded.");
+		}
+
+		std::unique_ptr<IGame> game = std::unique_ptr<IGame>(LoadGame());
+		std::unique_ptr<IRenderingDevice> device = gApp->Ui.MainViewport->GetRenderingDevice();
+
+		// works for VS
+		StringBuilder builder;
+		builder.Append(ProjectConfig->ProjectPath);
+		builder.Append("/Build/");
+		builder.Append(ProjectConfig->ProjectName);
+		builder.Append("/Debug/AssetsPathConfig.json");
+
+		gApp->EngineMgr.Init(std::move(game), std::move(device), builder.GetString());
+	}
+		
+	gApp->EngineMgr.Play();
 }
 
 void ProjectManager::Close()
 {
-	Opened = false;
+	if (!ProjectConfig)
+		throw new ProjectManagerException("This operation requires any project opened.");
 
-	ProjectPath = "";
+	ProjectConfig.release();
 }

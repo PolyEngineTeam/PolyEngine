@@ -4,13 +4,15 @@
 #include "PolyWidget.hpp"
 #include "Rendering/IRenderingDevice.hpp"
 
+using namespace Poly;
+
 class ViewportWidget : public PolyWidget
 {
 public:
 	// Viewport widget must have parent at initialization otherwise it will appear without title bar
 	explicit ViewportWidget(const QString& title, QWidget* parent);
 
-	std::unique_ptr<Poly::IRenderingDevice> InitializeViewport();
+	std::unique_ptr<IRenderingDevice> GetRenderingDevice();
 
 protected:
 	// overriden events

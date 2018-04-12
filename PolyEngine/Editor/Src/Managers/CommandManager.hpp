@@ -19,7 +19,7 @@ protected:
 class CommandManager : public QObject
 {
 public:
-	CommandManager() {}
+	CommandManager();
 	~CommandManager() = default;
 
 	template <typename S, typename... Args>
@@ -33,14 +33,12 @@ public:
 		Ostream = std::make_unique<std::ostream>(CurrentStream.get());
 	}
 
-	void RunCommand(const String& cmd, const String& desc);
-	bool IsRunning() { return Running; }
+	void RunCommand(const String& cmd);
 
 private:
 	bool Running = false;
 
-	String Command = "";
-	String CommandDesc = "";
+	String Command;
 
 	std::unique_ptr<QTimer> Timer = nullptr;
 	FILE* Stream = nullptr;

@@ -2,17 +2,20 @@
 
 #include <Core.hpp>
 #include <QObject>
+#include <QTimer>
 
 #include "Configs/ProjectConfig.hpp"
+
+using namespace Poly;
 
 class ProjectManagerException : public std::exception
 {
 public:
-	ProjectManagerException(const Poly::String& msg) : Msg(msg) {}
+	ProjectManagerException(const String& msg) : Msg(msg) {}
 	const char* what() const noexcept override { return Msg.GetCStr(); }
 
 protected:
-	Poly::String Msg;
+	String Msg;
 };
 
 class ProjectManager : public QObject
@@ -21,24 +24,27 @@ public:
 	ProjectManager() {}
 	~ProjectManager() = default;
 
-	// creates and opens project so the game is ready to be played (but you have to build it first)
-	void Create(const Poly::String& projectName, const Poly::String& projectPath, const Poly::String& enginePath);
-	// opens project so the game is playable (you might have to build it first)
-	void Open(Poly::String projectPath);
-	// updates project from given
-	void Update(const Poly::String& projedtPath, const Poly::String& enginePath);
-	void Update(const Poly::String& enginePath);
+	// creates new project with ProjectTool.py
+	void Create(const String& projectName, const String& projectPath, const String& enginePath);
+	// loads ProjectConfig from *.proj.json file 
+	void Open(String projectPath);
+	// updates project from given engine
+	void Update(const String& enginePath);
+	// builds current project
 	void Build();
+	// go into edit mode
+	void Edit();
+	// run game in editor's viewport
+	void Play(); 
+	// closes current project
 	void Close();
 
-	bool IsOpened() { return Opened; }
+	bool IsOpened() { ProjectConfig; }
 
-	const Poly::String& GetProjectName() const { return ProjectConfig->ProjectName; }
-	const Poly::String& GetProjectPath() const { return ProjectPath; }
+	const ProjectConfig& GetProjectConfig() const { return *ProjectConfig; }
+
+	const String& SetProjectName(const String& name) const { return ProjectConfig->ProjectName = name; }
 
 private:
-	bool Opened = false;
-
-	Poly::String ProjectPath = "";
 	std::unique_ptr<ProjectConfig> ProjectConfig;
 };

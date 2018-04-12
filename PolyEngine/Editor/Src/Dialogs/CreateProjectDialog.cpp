@@ -33,7 +33,7 @@ CreateProjectDialog::CreateProjectDialog()
 	ProjectNameField = new QLineEdit(this);
 	ProjectNameField->move(124, 12);
 	ProjectNameField->resize(350, 20);
-	ProjectNameField->setText("NewPolyPrject");
+	ProjectNameField->setText("NewPolyProject");
 
 	// project directory
 	ProjectDirectoryText = new QLabel(this);

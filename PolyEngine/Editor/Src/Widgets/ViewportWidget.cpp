@@ -19,23 +19,6 @@ ViewportWidget::ViewportWidget(const QString& title, QWidget* parent) :
 	setMouseTracking(true);
 	setFocusPolicy(Qt::ClickFocus);
 	setMinimumSize(320, 200);
-}
-
-// ---------------------------------------------------------------------------------------------------------
-std::unique_ptr<Poly::IRenderingDevice> ViewportWidget::InitializeViewport()
-{
-	// TODO fix library names differences between platforms
-	if (!LoadRenderingDevice.FunctionValid())
-	{
-		// Load rendering device library
-		LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>(Poly::gAssetsPathConfig.GetRenderingDeviceLibPath().GetCStr(), "PolyCreateRenderingDevice");
-		ASSERTE(LoadRenderingDevice.FunctionValid(), "Library libRenderingDevice load failed");
-		Poly::gConsole.LogDebug("Library libRenderingDevice loaded.");
-	}
-	
-	Poly::ScreenSize viewportRect;
-	viewportRect.Width = width();
-	viewportRect.Height = height();
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
@@ -43,12 +26,30 @@ std::unique_ptr<Poly::IRenderingDevice> ViewportWidget::InitializeViewport()
 	}
 	Poly::gConsole.LogDebug("SDL initialized.");
 
-
 	// TODO: catch winId changes (http://doc.qt.io/qt-5/qwidget.html#winId)
 	// TODO: something like addviewport to rendering device
 	ASSERTE(!WindowInSDL.IsValid(), "Window already initialized!");
 	WindowInSDL = CustomSDLWindow::CreateSDLWindowFromArgs((void*)winId(), SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	ASSERTE(WindowInSDL.IsValid(), "Window creation failed!");
+
+}
+
+// ---------------------------------------------------------------------------------------------------------
+std::unique_ptr<Poly::IRenderingDevice> ViewportWidget::GetRenderingDevice()
+{
+	// TODO fix library names differences between platforms
+	if (!LoadRenderingDevice.FunctionValid())
+	{
+		// Load rendering device library
+		LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>(
+			gApp->ProjectMgr.GetProjectConfig().GetRenderingDeviceDllPath().GetCStr(), "PolyCreateRenderingDevice");
+		ASSERTE(LoadRenderingDevice.FunctionValid(), "Library libRenderingDevice load failed");
+		Poly::gConsole.LogDebug("Library libRenderingDevice loaded.");
+	}
+
+	Poly::ScreenSize viewportRect;
+	viewportRect.Width = width();
+	viewportRect.Height = height();
 
 	return std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(WindowInSDL.Get(), viewportRect));
 }
