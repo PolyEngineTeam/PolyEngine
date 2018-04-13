@@ -7,7 +7,7 @@
 #include <memory>
 
 #include <Core.hpp>
-#include "Editor/IEditorProxy.hpp"
+#include "Editor/IEditor.hpp"
 #include "Rendering/IRenderingDevice.hpp"
 #include "Audio/OpenALDevice.hpp"
 
@@ -43,12 +43,13 @@ namespace Poly
 		enum class eUpdatePhaseOrder
 		{
 			PREUPDATE,
-			UPDATE,
+			EDITOR,
+			UPDATE, //TODO(squares): rename this to GAME?
 			POSTUPDATE,
 			_COUNT
 		};
 
-		void RegisterEditor(IEditorProxy* editor) { Editor = editor; }
+		void RegisterEditor(IEditor* editor) { Editor = editor; }
 
 		/// <summary>Registers engine components. Registers and creates world components.
 		/// Registers engine update phases and initializes game dbject. </summary>
@@ -61,12 +62,15 @@ namespace Poly
 		/// <summary>Registers a PhaseUpdateFunction to be executed in the update.</summary>
 		/// <param name="phaseFunction"/>
 		void RegisterGameUpdatePhase(const PhaseUpdateFunction& phaseFunction) { RegisterUpdatePhase(phaseFunction, eUpdatePhaseOrder::UPDATE); }
+		void RegisterEditorUpdatePhase(const PhaseUpdateFunction& phaseFunction) { RegisterUpdatePhase(phaseFunction, eUpdatePhaseOrder::EDITOR); }
 
 		/// <summary>Executes update phases functions that were registered in RegisterUpdatePhase().
 		/// Functions are executrd with given order and with given update phase order.</summary>
 		/// <see cref="Engine.RegisterUpdatePhase()"/>
 		/// <see cref="Engine.eUpdatePhaseOrder"/>
 		void Update();
+
+		void Update(Dynarray<eUpdatePhaseOrder> phasesUpdate);
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of four functions handling incoming input events.</summary>
@@ -176,7 +180,7 @@ namespace Poly
 		std::unique_ptr<World> BaseWorld;
 		std::unique_ptr<IGame> Game;
 		std::unique_ptr<IRenderingDevice> RenderingDevice;
-		IEditorProxy* Editor;
+		IEditor* Editor;
 		OpenALDevice AudioDevice;
 		InputQueue InputEventsQueue;
 

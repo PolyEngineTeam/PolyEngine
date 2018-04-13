@@ -86,6 +86,11 @@ void EditorUi::InitMainWindow()
 			BuildProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Build", Q_NULLPTR));
 			QObject::connect(BuildProjectAction, &QAction::triggered, this, &EditorUi::BuildProject);
 
+			EditProjectAction = new QAction(MainWindow);
+			ProjectMenu->addAction(EditProjectAction);
+			EditProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Edit", Q_NULLPTR));
+			QObject::connect(EditProjectAction, &QAction::triggered, this, &EditorUi::EditProject);
+
 			PlayProjectAction = new QAction(MainWindow);
 			ProjectMenu->addAction(PlayProjectAction);
 			PlayProjectAction->setText(QApplication::translate("EditorMainWindowClass", "Play", Q_NULLPTR));
@@ -182,6 +187,11 @@ void EditorUi::UpdateProject()
 void EditorUi::BuildProject()
 {
 	gApp->ProjectMgr.Build();
+}
+
+void EditorUi::EditProject()
+{
+	gApp->ProjectMgr.Edit();
 }
 
 void EditorUi::PlayProject()

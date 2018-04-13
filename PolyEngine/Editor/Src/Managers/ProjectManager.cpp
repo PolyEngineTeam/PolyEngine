@@ -70,6 +70,37 @@ void ProjectManager::Build()
 	gApp->CommandMgr.RunCommand(builder.GetString());
 }
 
+void ProjectManager::Edit()
+{
+	if (!ProjectConfig)
+		throw new ProjectManagerException("This operation requires any project opened.");
+
+	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
+	{
+		// load game
+		if (!LoadGame.FunctionValid())
+		{
+			LoadGame = LoadFunctionFromSharedLibrary<CreateGameFunc>(ProjectConfig->GetGameDllPath().GetCStr(), "CreateGame");
+			ASSERTE(LoadGame.FunctionValid(), "Library libGame load failed");
+			gConsole.LogDebug("Library libGame loaded.");
+		}
+
+		std::unique_ptr<IGame> game = std::unique_ptr<IGame>(LoadGame());
+		std::unique_ptr<IRenderingDevice> device = gApp->Ui.MainViewport->GetRenderingDevice();
+
+		// works for VS
+		StringBuilder builder;
+		builder.Append(ProjectConfig->ProjectPath);
+		builder.Append("/Build/");
+		builder.Append(ProjectConfig->ProjectName);
+		builder.Append("/Debug/AssetsPathConfig.json");
+
+		gApp->EngineMgr.InitEngine(std::move(game), std::move(device), builder.GetString());
+	}
+	else
+		gApp->EngineMgr.Edit();
+}
+
 void ProjectManager::Play()
 {
 	if (!ProjectConfig)
@@ -95,7 +126,7 @@ void ProjectManager::Play()
 		builder.Append(ProjectConfig->ProjectName);
 		builder.Append("/Debug/AssetsPathConfig.json");
 
-		gApp->EngineMgr.Init(std::move(game), std::move(device), builder.GetString());
+		gApp->EngineMgr.InitEngine(std::move(game), std::move(device), builder.GetString());
 	}
 		
 	gApp->EngineMgr.Play();

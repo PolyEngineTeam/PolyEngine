@@ -24,18 +24,21 @@ enum class eEngineState
 	_COUNT
 };
 
-class EngineManager : public QObject, public IEditorProxy
+class EngineManager : public QObject, public IEditor
 {
 public:
 	EngineManager();
 	~EngineManager() = default;
 
-	const String& GetAssetsPathConfigPath() const override { return AssetsPathConfigPath; }
 	eEngineState GetEngineState() { return EngineState; }
-	
-	void Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device
+
+	const String& GetAssetsPathConfigPath() const override { return AssetsPathConfigPath; }
+	void Init() override;
+	void Deinit() override;
+
+	void InitEngine(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device
 		, const String& assetsPathConfigPath);
-	void Deinit();
+	void DeinitEngine();
 
 	void Edit();
 	void Play();
@@ -43,9 +46,9 @@ public:
 private:
 	std::unique_ptr<Engine> Engine = nullptr;
 	QTimer Updater;
-	
-	eEngineState EngineState = eEngineState::NONE;
+
 	String AssetsPathConfigPath = String::EMPTY;
+	eEngineState EngineState = eEngineState::NONE;
 
 private slots:
 	void UpdatePhase();

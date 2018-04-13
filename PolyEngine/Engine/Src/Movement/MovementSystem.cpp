@@ -47,6 +47,12 @@ void MovementSystem::MovementUpdatePhase(World* world)
 		{
 			Vector2i delta = inputCmp->GetMousePosDelta();
 
+			if (delta.X != 0 || delta.Y != 0)
+			{
+				int i = 0;
+				i++;
+			}
+
 			Quaternion rot = Quaternion(Vector::UNIT_Y, Angle::FromRadians(-delta.X * freeFloatMovementCmp->GetAngularVelocity()));
 			rot *= trans.GetLocalRotation();
 			rot *= Quaternion(Vector::UNIT_X, Angle::FromRadians(-delta.Y * freeFloatMovementCmp->GetAngularVelocity()));

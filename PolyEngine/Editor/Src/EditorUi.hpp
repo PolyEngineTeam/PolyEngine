@@ -64,6 +64,7 @@ private slots:
 	void OpenProject();
 	void UpdateProject();
 	void BuildProject();
+	void EditProject();
 	void PlayProject();
 	void CloseProject();
 

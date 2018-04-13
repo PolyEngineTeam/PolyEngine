@@ -64,10 +64,15 @@ void Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice>
 
 	// Init game
 	Game->Init();
+
+	if (Editor)
+		Editor->Init();
 }
 
 void Engine::Restart()
 {
+	if (Editor)
+		Editor->Deinit();
 	Game->Deinit();
 	BaseWorld.reset();
 
@@ -91,6 +96,9 @@ void Engine::Restart()
 
 	// Init game
 	Game->Init();
+
+	if (Editor)
+		Editor->Init();
 }
 
 //------------------------------------------------------------------------------
@@ -116,6 +124,16 @@ void Engine::Update()
 {
 	UpdatePhases(eUpdatePhaseOrder::PREUPDATE);
 	UpdatePhases(eUpdatePhaseOrder::UPDATE);
+	UpdatePhases(eUpdatePhaseOrder::POSTUPDATE);
+}
+
+void Poly::Engine::Update(Dynarray<eUpdatePhaseOrder> phasesToUpdate)
+{
+	//for (auto phase : phasesToUpdate)
+	//	UpdatePhases(phase);
+
+	UpdatePhases(eUpdatePhaseOrder::PREUPDATE);
+	UpdatePhases(eUpdatePhaseOrder::EDITOR);
 	UpdatePhases(eUpdatePhaseOrder::POSTUPDATE);
 }
 

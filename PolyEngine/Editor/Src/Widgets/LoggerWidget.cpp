@@ -32,7 +32,7 @@ LoggerWidget::LoggerWidget(const QString& title, QWidget* parent)
 
 	if (title == "Console")
 		Poly::gConsole.RegisterStream<EditorOutputStream>("console.log", this);
-	else if (title == "cmd")
+	else if (title == "Cmd")
 		gApp->CommandMgr.RegisterStream<EditorOutputStream>("cmd.log", this);
 }
 
