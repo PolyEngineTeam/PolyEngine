@@ -11,18 +11,18 @@ CreateProjectDialog::CreateProjectDialog()
 	setWindowTitle("Project Creator");
 	setFixedSize(600, 156);
 
+	CancelButton = new QPushButton(this);
+	CancelButton->move(430, 124);
+	CancelButton->resize(75, 20);
+	CancelButton->setText("Cancel");
+	QObject::connect(CancelButton, &QPushButton::clicked, this, &CreateProjectDialog::Cancel);
+
 	// ok cancel
 	OkButton = new QPushButton(this);
 	OkButton->move(513, 124);
 	OkButton->resize(75, 20);
 	OkButton->setText("OK");
 	QObject::connect(OkButton, &QPushButton::clicked, this, &CreateProjectDialog::Ok);
-
-	CancelButton = new QPushButton(this);
-	CancelButton->move(430, 124);
-	CancelButton->resize(75, 20);
-	CancelButton->setText("Cancel");
-	QObject::connect(CancelButton, &QPushButton::clicked, this, &CreateProjectDialog::Cancel);
 
 	// project name
 	ProjectNameText = new QLabel(this);

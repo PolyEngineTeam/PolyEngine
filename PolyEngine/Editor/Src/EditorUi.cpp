@@ -118,11 +118,14 @@ void EditorUi::InitMainWindow()
 	MainViewport = std::make_unique<ViewportWidget>("Viewport", MainWindow);
 	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, MainViewport.get(), true);
 
-	MainLogger = std::make_unique<LoggerWidget>("Console");
-	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, MainLogger.get(), true);
+	MainLogger = std::make_unique<LoggerWidget>("Console", MainWindow);
+	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, MainLogger.get(), true);
 
-	LoggerWidget* consoleWidget = new LoggerWidget("cmd");
-	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, consoleWidget, true);
+	CmdLogger = std::make_unique<LoggerWidget>("Cmd", MainWindow);
+	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, CmdLogger.get(), true);
+
+	EntityMgr = std::make_unique<EntityManager>("Entity Manager", MainWindow);
+	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, EntityMgr.get(), true);
 
 	MainWindow->show();
 }

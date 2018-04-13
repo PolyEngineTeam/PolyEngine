@@ -38,6 +38,7 @@ UNSILENCE_MSVC_WARNING()
 // widgets
 #include "Widgets/ViewportWidget.hpp"
 #include "Widgets/LoggerWidget.hpp"
+#include "Widgets/EntityManager.hpp"
 
 // dialogs
 #include "Dialogs/CreateProjectDialog.hpp"
