@@ -128,7 +128,9 @@ void ProjectManager::Play()
 
 		gApp->EngineMgr.InitEngine(std::move(game), std::move(device), builder.GetString());
 	}
-		
+	
+	// TODO(squares): fix problem with physics; Rigidbody and collider components  are initialized in next frame 
+	//		so when next frame never occur we try to delete empty ImplData
 	gApp->EngineMgr.Play();
 }
 
