@@ -4,7 +4,7 @@ const int BEGIN_Y = 20;
 const int DELTA_Y = 18 + 6;
 const int COMPONENTS_OFFSET = 10 + 10 * DELTA_Y;
 
-EntityManager::EntityManager(const QString& title, QWidget* parent) :
+EntityManagerWidget::EntityManagerWidget(const QString& title, QWidget* parent) :
 	PolyWidget(title, parent)
 {
 	setFixedWidth(420);
@@ -139,17 +139,17 @@ EntityManager::EntityManager(const QString& title, QWidget* parent) :
 	ComponentField->setPalette(*disabledEditPalette);
 }
 
-EntityManager::~EntityManager()
+EntityManagerWidget::~EntityManagerWidget()
 {
 }
 
-void EntityManager::SetEntity(::Entity *entity)
+void EntityManagerWidget::SetEntity(::Entity *entity)
 {
 	Entity = entity;
 	Update();
 }
 
-void EntityManager::Update()
+void EntityManagerWidget::Update()
 {
 	// general data
 	UniqueIdField->setText(QString(String::From((int)Entity->GetID().GetHash()).GetCStr()));

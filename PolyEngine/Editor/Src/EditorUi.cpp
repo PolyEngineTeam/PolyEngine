@@ -129,7 +129,7 @@ void EditorUi::InitMainWindow()
 	CmdLogger = std::make_unique<LoggerWidget>("Cmd", MainWindow);
 	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, CmdLogger.get(), true);
 
-	EntityMgr = std::make_unique<EntityManager>("Entity Manager", MainWindow);
+	EntityMgr = std::make_unique<EntityManagerWidget>("Entity Manager", MainWindow);
 	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, EntityMgr.get(), true);
 
 	MainWindow->show();

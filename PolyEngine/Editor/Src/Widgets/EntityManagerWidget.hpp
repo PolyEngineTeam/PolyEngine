@@ -13,11 +13,11 @@
 
 using namespace Poly;
 
-class EntityManager : public PolyWidget
+class EntityManagerWidget : public PolyWidget
 {
 public:
-	EntityManager(const QString& title, QWidget* parent);
-	~EntityManager();
+	EntityManagerWidget(const QString& title, QWidget* parent);
+	~EntityManagerWidget();
 
 	void SetEntity(Entity* entity);
 	void Update();

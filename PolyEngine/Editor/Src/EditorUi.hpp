@@ -5,7 +5,7 @@
 #include "Windows/PolyMainWindow.hpp"
 #include "Widgets/ViewportWidget.hpp"
 #include "Widgets/LoggerWidget.hpp"
-#include "Widgets/EntityManager.hpp"
+#include "Widgets/EntityManagerWidget.hpp"
 
 class EditorUi : public QObject
 {
@@ -20,7 +20,7 @@ public:
 	std::unique_ptr<ViewportWidget> MainViewport;
 	std::unique_ptr<LoggerWidget> MainLogger;
 	std::unique_ptr<LoggerWidget> CmdLogger;
-	std::unique_ptr<EntityManager> EntityMgr;
+	std::unique_ptr<EntityManagerWidget> EntityMgr;
 
 private:
 	PolyMainWindow* MainWindow;
