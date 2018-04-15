@@ -18,6 +18,7 @@ EditorApp::EditorApp(int argc, char *argv[])
 	Ui.InitMainWindow();
 	installEventFilter(&EventFilter);
 
+	// editMgr must be created after ui creation
 	EditMgr = std::make_unique<EditManager>();
 	
 	Poly::gConsole.LogInfo("PolyEditor succesfully initialized.");

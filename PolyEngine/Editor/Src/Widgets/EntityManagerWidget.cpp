@@ -135,10 +135,10 @@ EntityManagerWidget::~EntityManagerWidget()
 void EntityManagerWidget::SetEntity(::Entity *entity)
 {
 	Entity = entity;
-	Update();
+	UpdateWidget();
 }
 
-void EntityManagerWidget::Update()
+void EntityManagerWidget::UpdateWidget()
 {
 	// general data
 	UniqueIdField->setText(QString(String::From((int)Entity->GetID().GetHash()).GetCStr()));

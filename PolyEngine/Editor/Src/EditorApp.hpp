@@ -22,6 +22,7 @@ public:
 
 	EditorUi Ui;
 
+	// TODO(squares): use unique_ptrs
 	DockManager DockMgr;
 	ProjectManager ProjectMgr;
 	EngineManager EngineMgr;

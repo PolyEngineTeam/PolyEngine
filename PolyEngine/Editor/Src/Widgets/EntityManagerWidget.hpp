@@ -20,7 +20,8 @@ public:
 	~EntityManagerWidget();
 
 	void SetEntity(Entity* entity);
-	void Update();
+	void UpdateWidget();
+	void UpdateEntity();
 
 private:
 	Entity* Entity;
