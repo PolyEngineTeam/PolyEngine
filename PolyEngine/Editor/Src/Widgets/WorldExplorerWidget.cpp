@@ -4,32 +4,41 @@ WorldExplorerWidget::WorldExplorerWidget(const QString& title, QWidget* parent)
 	: PolyWidget(title, parent)
 {
 	Tree = std::make_unique<QTreeWidget>(this);
-	Tree->move(12, 120);
+	Tree->move(12, 12);
+	Tree->resize(400, 250);
+	Tree->setHeaderLabels(QStringList() << "Entity ID");
+
+	connect(Tree.get(), &QTreeWidget::itemDoubleClicked, this, &WorldExplorerWidget::SelectionChanged);
 }
 
 void WorldExplorerWidget::SetWorld(::World* world)
 {
-	if (Tree)
-		Tree.release();
+	if (World)
+		Tree->clear();
 	
 	World = world;
-	
-	Tree = std::make_unique<QTreeWidget>(this);
-	Tree->move(12, 12);
-	Tree->resize(400, 600);
-	//Tree->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-	
-	for (auto child : world->GetRoot().GetChildren())
-	{
-		QTreeWidgetItem* entity = new QTreeWidgetItem(Tree.get());
-		//entity->setText(0, String::From((int)child->GetID().GetHash()).GetCStr());
-		entity->setText(0, "dupa");
 
-		for (int i = 0; i < 10; ++i)
-		{
-			QTreeWidgetItem* component = new QTreeWidgetItem(entity);
-			component->setText(0, String::From((int)child->GetID().GetHash()).GetCStr());
-			entity->addChild(component);
-		}
-	}
+	QTreeWidgetItem* entityTree = new QTreeWidgetItem(Tree.get());
+	int id = (int)world->GetRoot()->GetID().GetHash();
+	entityTree->setText(0, String::From(id).GetCStr());
+	EntityFromID.insert(std::pair<int, Entity*>(id, world->GetRoot()));
+
+	for (auto child : world->GetRoot()->GetChildren())
+		AddEntityToTree(entityTree, child);
+}
+
+void WorldExplorerWidget::AddEntityToTree(QTreeWidgetItem* parent, Entity* entity)
+{
+	QTreeWidgetItem* entityTree = new QTreeWidgetItem(parent);
+	int id = (int)entity->GetID().GetHash();
+	entityTree->setText(0, String::From(id).GetCStr());
+	EntityFromID.insert(std::pair<int, Entity*>(id, entity));
+
+	for (auto child : entity->GetChildren())
+		AddEntityToTree(entityTree, child);
+}
+
+void WorldExplorerWidget::SelectionChanged(QTreeWidgetItem* item, int column)
+{
+	emit EntitySelected(EntityFromID[item->text(0).toUInt()]);
 }

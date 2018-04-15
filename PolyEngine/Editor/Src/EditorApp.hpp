@@ -9,6 +9,7 @@
 #include "Managers/ProjectManager.hpp"
 #include "Managers/EngineManager.hpp"
 #include "Managers/CommandManager.hpp"
+#include "Managers/EditManager.hpp"
 
 #include <Engine.hpp>
 
@@ -25,6 +26,8 @@ public:
 	ProjectManager ProjectMgr;
 	EngineManager EngineMgr;
 	CommandManager CommandMgr;
+
+	std::unique_ptr<EditManager> EditMgr;
 
 private:
 	GlobalEventFilter EventFilter;

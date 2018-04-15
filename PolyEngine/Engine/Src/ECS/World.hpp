@@ -37,7 +37,7 @@ namespace Poly {
 
 		virtual ~World();
 
-		const Entity& GetRoot() const { return *rootEntity.Get(); }
+		Entity* GetRoot() const { return rootEntity.Get(); }
 
 		/// <summary>Gets a component of a specified type from entity with given UniqueID.</summary>
 		/// <param name="entityId">UniqueID of the entity.</param>

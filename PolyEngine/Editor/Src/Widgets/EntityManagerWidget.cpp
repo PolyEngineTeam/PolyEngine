@@ -59,11 +59,6 @@ EntityManagerWidget::EntityManagerWidget(const QString& title, QWidget* parent)
 	ChildrenIdField = new QComboBox(GeneralDataGroup);
 	ChildrenIdField->move(124, BEGIN_Y + 2 * DELTA_Y);
 	ChildrenIdField->resize(200, 18);
-	ChildrenIdField->addItem("3");
-	ChildrenIdField->addItem("4");
-	ChildrenIdField->addItem("5");
-	ChildrenIdField->addItem("6");
-	ChildrenIdField->addItem("7");
 	ChildrenIdField->setPalette(*disabledEditPalette);
 
 	ChildrenIdButton = new QPushButton(GeneralDataGroup);
@@ -114,8 +109,7 @@ EntityManagerWidget::EntityManagerWidget(const QString& title, QWidget* parent)
 			TranslationField[a][b] = new QLineEdit(TransformGroup);
 			TranslationField[a][b]->move(124 + 89 * b, BEGIN_Y + (1 + a) * DELTA_Y);
 			TranslationField[a][b]->resize(85, 18);
-			TranslationField[a][b]->setText("0,0000");
-			TranslationField[a][b]->setValidator(new QDoubleValidator(-10000, 10000, 6, TranslationField[a][b]));
+			TranslationField[a][b]->setText("0.0000");
 		}
 
 	ComponentGroup = new QGroupBox(this);
@@ -131,11 +125,6 @@ EntityManagerWidget::EntityManagerWidget(const QString& title, QWidget* parent)
 	ComponentField = new QComboBox(ComponentGroup);
 	ComponentField->move(124, BEGIN_Y + 0 * DELTA_Y);
 	ComponentField->resize(200, 18);
-	ComponentField->addItem("MeshComponent");
-	ComponentField->addItem("PathfindingComponent");
-	ComponentField->addItem("SoundEmitterComponent");
-	ComponentField->addItem("Collider3DComponent");
-	ComponentField->addItem("Rigidbody3DComponent");
 	ComponentField->setPalette(*disabledEditPalette);
 }
 
@@ -154,24 +143,25 @@ void EntityManagerWidget::Update()
 	// general data
 	UniqueIdField->setText(QString(String::From((int)Entity->GetID().GetHash()).GetCStr()));
 	ParentIdField->setText(QString(String::From((int)Entity->GetParent()->GetID().GetHash()).GetCStr()));
+	ChildrenIdField->clear();
 	for (auto child : Entity->GetChildren())
 		ChildrenIdField->addItem(QString(String::From((int)child->GetID().GetHash()).GetCStr()));
 
 	// transform
 	Vector translation = Entity->GetTransform().GetLocalTranslation();
 	TranslationField[0][0]->setText(QString(String::From(translation.X).GetCStr()));
-	TranslationField[1][0]->setText(QString(String::From(translation.Y).GetCStr()));
-	TranslationField[2][0]->setText(QString(String::From(translation.Z).GetCStr()));
+	TranslationField[0][1]->setText(QString(String::From(translation.Y).GetCStr()));
+	TranslationField[0][2]->setText(QString(String::From(translation.Z).GetCStr()));
 
 	EulerAngles rotation = Entity->GetTransform().GetLocalRotation().ToEulerAngles();
-	TranslationField[0][0]->setText(QString(String::From(rotation.X.AsDegrees()).GetCStr()));
-	TranslationField[1][0]->setText(QString(String::From(rotation.Y.AsDegrees()).GetCStr()));
-	TranslationField[2][0]->setText(QString(String::From(rotation.Z.AsDegrees()).GetCStr()));
+	TranslationField[1][0]->setText(QString(String::From(rotation.X.AsDegrees()).GetCStr()));
+	TranslationField[1][1]->setText(QString(String::From(rotation.Y.AsDegrees()).GetCStr()));
+	TranslationField[1][2]->setText(QString(String::From(rotation.Z.AsDegrees()).GetCStr()));
 
 	Vector scale = Entity->GetTransform().GetLocalScale();
-	TranslationField[0][0]->setText(QString(String::From(scale.X).GetCStr()));
-	TranslationField[1][0]->setText(QString(String::From(scale.Y).GetCStr()));
-	TranslationField[2][0]->setText(QString(String::From(scale.Z).GetCStr()));
+	TranslationField[2][0]->setText(QString(String::From(scale.X).GetCStr()));
+	TranslationField[2][1]->setText(QString(String::From(scale.Y).GetCStr()));
+	TranslationField[2][2]->setText(QString(String::From(scale.Z).GetCStr()));
 
 	// components
 	//for (auto component : Entity->GetWorld()->)
