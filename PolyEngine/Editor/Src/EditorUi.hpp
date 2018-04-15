@@ -6,6 +6,7 @@
 #include "Widgets/ViewportWidget.hpp"
 #include "Widgets/LoggerWidget.hpp"
 #include "Widgets/EntityManagerWidget.hpp"
+#include "Widgets/WorldExplorerWidget.hpp"
 
 class EditorUi : public QObject
 {
@@ -20,6 +21,7 @@ public:
 	std::unique_ptr<ViewportWidget> MainViewport;
 	std::unique_ptr<LoggerWidget> MainLogger;
 	std::unique_ptr<LoggerWidget> CmdLogger;
+	std::unique_ptr<WorldExplorerWidget> WorldExplorer;
 	std::unique_ptr<EntityManagerWidget> EntityMgr;
 
 private:

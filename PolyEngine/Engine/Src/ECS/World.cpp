@@ -39,7 +39,7 @@ Entity* World::SpawnEntity()
 }
 
 //------------------------------------------------------------------------------
-Entity * Poly::World::SpawnEntityInternal()
+Entity* Poly::World::SpawnEntityInternal()
 {
 	Entity* ent = EntitiesAllocator.Alloc();
 	::new(ent) Entity(this);

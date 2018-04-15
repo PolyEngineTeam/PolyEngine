@@ -119,7 +119,7 @@ void EditorUi::InitMainWindow()
 
 	//consoleWidget = new LoggerWidget("Object Properties");
 	//consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow); //we need to create new base class for this -> someone created all as loggerwidgets
-
+			
 	MainViewport = std::make_unique<ViewportWidget>("Viewport", MainWindow);
 	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, MainViewport.get(), true);
 
@@ -128,6 +128,9 @@ void EditorUi::InitMainWindow()
 
 	CmdLogger = std::make_unique<LoggerWidget>("Cmd", MainWindow);
 	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, CmdLogger.get(), true);
+
+	WorldExplorer = std::make_unique<WorldExplorerWidget>("World Explorer", MainWindow);
+	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, WorldExplorer.get(), true);
 
 	EntityMgr = std::make_unique<EntityManagerWidget>("Entity Manager", MainWindow);
 	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, EntityMgr.get(), true);
