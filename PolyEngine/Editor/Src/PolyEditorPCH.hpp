@@ -41,6 +41,7 @@ UNSILENCE_MSVC_WARNING()
 #include "Widgets/LoggerWidget.hpp"
 #include "Widgets/EntityManagerWidget.hpp"
 #include "Widgets/WorldExplorerWidget.hpp"
+#include "Widgets/RTTIViewerWidget.hpp"
 
 // dialogs
 #include "Dialogs/CreateProjectDialog.hpp"
