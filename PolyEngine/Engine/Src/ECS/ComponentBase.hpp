@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Core.hpp>
+#include <RTTI/RTTI.hpp>
 #include "ECS/Entity.hpp"
 #include "ComponentIDGenerator.hpp"
 #include "ComponentIDGeneratorImpl.hpp"
@@ -14,8 +15,14 @@ namespace Poly {
 	};
 
 	/// <summary>Base type for every component type</summary>
-	class ENGINE_DLLEXPORT ComponentBase : public BaseObject<>
+	class ENGINE_DLLEXPORT ComponentBase : public RTTIBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(ComponentBase, RTTIBase)
+		{
+			NO_RTTI_PROPERTY();
+			//RTTI_PROPERTY(Flags, "Flags", RTTI::ePropertyFlag::DONT_SERIALIZE);
+		}
+
 	friend class World;
 	public:
 		

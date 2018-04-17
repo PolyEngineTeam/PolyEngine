@@ -25,6 +25,17 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT PathfindingComponent : public ComponentBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(PathfindingComponent, ComponentBase)
+		{
+			//RTTI_PROPERTY(NavigationGraph, "NavigationGraph", RTTI::ePropertyFlag::DONT_SERIALIZE);
+			//RTTI_PROPERTY(CalculatedPath, "CalculatedPath", RTTI::ePropertyFlag::DONT_SERIALIZE);
+			//RTTI_PROPERTY(CurentDestination, "CurentDestination", RTTI::ePropertyFlag::DONT_SERIALIZE);
+			RTTI_PROPERTY(RecalculateRequested, "RecalculateRequested", RTTI::ePropertyFlag::DONT_SERIALIZE);
+			RTTI_PROPERTY(LastPathSearchFailed, "LastPathSearchFailed", RTTI::ePropertyFlag::DONT_SERIALIZE);
+		}
+
+		friend void PathfindingSystem::UpdatePhase(World* world);
+
 	public:
 		PathfindingComponent(const NavGraph* navGraphs) : NavigationGraph(navGraphs) {}
 
@@ -38,8 +49,6 @@ namespace Poly
 		Optional<Vector> CurentDestination;
 		bool RecalculateRequested = false;
 		bool LastPathSearchFailed = false;
-
-		friend void PathfindingSystem::UpdatePhase(World* world);
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, PathfindingComponent)

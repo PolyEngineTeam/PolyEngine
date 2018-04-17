@@ -4,6 +4,8 @@
 
 using namespace Poly;
 
+RTTI_DEFINE_TYPE(Poly::PathfindingComponent)
+
 void Poly::PathfindingComponent::SetDestination(const Vector& pos)
 {
 	if(!CurentDestination.HasValue() || CurentDestination.Value() != pos)
