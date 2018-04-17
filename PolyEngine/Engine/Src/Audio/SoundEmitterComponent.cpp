@@ -8,6 +8,8 @@
 
 using namespace Poly;
 
+RTTI_DEFINE_TYPE(Poly::SoundEmitterComponent)
+
 SoundEmitterComponent::SoundEmitterComponent(const String& path, eResourceSource source, bool relative) :
 	Background(relative)
 {

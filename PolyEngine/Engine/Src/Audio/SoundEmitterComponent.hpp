@@ -15,8 +15,16 @@ namespace Poly
 	/// @see SoundSystem 
 	class ENGINE_DLLEXPORT SoundEmitterComponent : public ComponentBase
 	{
-	friend void SoundSystem::SoundPhase(World* world);
-	friend void SoundSystem::SetEmitterSource(World*, Entity*, const String&, eResourceSource source);
+		RTTI_DECLARE_TYPE_DERIVED(AssetsPathConfig, ConfigBase)
+		{
+			RTTI_PROPERTY(EmitterID, "EmitterID", RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY(Background, "Background", RTTI::ePropertyFlag::NONE);
+			//RTTI_PROPERTY(Resource, "Resource", RTTI::ePropertyFlag::NONE);
+		}
+
+		friend void SoundSystem::SoundPhase(World* world);
+		friend void SoundSystem::SetEmitterSource(World*, Entity*, const String&, eResourceSource source);
+
 	public:
 		/// Loads resource from given path (optimized by resource manager).
 		/// @param path path to sound resource

@@ -2,6 +2,8 @@
 
 using namespace Poly;
 
+RTTI_DEFINE_TYPE(Poly::SoundListenerComponent)
+
 SoundListenerComponent::SoundListenerComponent(SoundWorldComponent* /*worldComponent*/)
 {
 }

@@ -15,6 +15,14 @@ namespace Poly
 	/// @see SoundEmitterComponent
 	class ENGINE_DLLEXPORT SoundListenerComponent : public ComponentBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(AssetsPathConfig, ConfigBase)
+		{
+			RTTI_PROPERTY(Gain, "Gain", RTTI::ePropertyFlag::NONE);
+			//RTTI_PROPERTY(Position, "Position", RTTI::ePropertyFlag::NONE);
+			//RTTI_PROPERTY(Velocity, "Velocity", RTTI::ePropertyFlag::NONE);
+			//RTTI_PROPERTY(Emitters, "Emitters", RTTI::ePropertyFlag::NONE);
+		}
+
 	public:
 		/// Sets everything to 0 and copies SourcesArray from SoundWorldComponent
 		SoundListenerComponent(SoundWorldComponent* worldComponent);
