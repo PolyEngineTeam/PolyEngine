@@ -27,6 +27,7 @@ UNSILENCE_MSVC_WARNING()
 #include "Managers/CommandManager.hpp"
 #include "Managers/EditManager.hpp"
 
+// configs
 #include "Configs/ProjectConfig.hpp"
 
 // windows
@@ -35,6 +36,11 @@ UNSILENCE_MSVC_WARNING()
 
 // widgets base
 #include "Widgets/PolyWidget.hpp"
+
+// controls
+#include "Controls/EnumControl.hpp"
+#include "Controls/RTTIBaseControl.hpp"
+
 
 // widgets
 #include "Widgets/ViewportWidget.hpp"

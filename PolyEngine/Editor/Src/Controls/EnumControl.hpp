@@ -7,46 +7,14 @@ using namespace Poly;
 class EnumControl : public RTTIBaseControl
 {
 public:
-	EnumControl(void*);
+	EnumControl(void* ptr, const RTTI::Property& prop);
 
 	void UpdateObject() override;
 	void UpdateControl() override;
+
+private:
+	std::unique_ptr<QComboBox> ComboBox;
+	void* Object;
 };
 
-class EnumControl1 : public RTTIBaseControl
-{
-public:
-	EnumControl1(void*);
-
-	void UpdateObject() override;
-	void UpdateControl() override;
-};
-
-class EnumControl2 : public RTTIBaseControl
-{
-public:
-	EnumControl2(void*);
-
-	void UpdateObject() override;
-	void UpdateControl() override;
-};
-
-class EnumControl3 : public RTTIBaseControl
-{
-public:
-	EnumControl3(void*);
-
-	void UpdateObject() override;
-	void UpdateControl() override;
-}; 
-
-ASSIGN_CONTROL(EnumControl, RTTI::eCorePropertyType::BOOL)
-ASSIGN_CONTROL(EnumControl1, RTTI::eCorePropertyType::INT8)
-ASSIGN_CONTROL(EnumControl2, RTTI::eCorePropertyType::INT16)
-ASSIGN_CONTROL(EnumControl3, RTTI::eCorePropertyType::INT32)
-
-int dupa()
-{
-	void* v = new int;
-	TypeToControl<RTTI::eCorePropertyType::BOOL>::CreateControl(v);
-}
+ASSIGN_CONTROL(EnumControl, RTTI::eCorePropertyType::ENUM)
