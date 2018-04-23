@@ -17,7 +17,7 @@ namespace Poly
 	{
 	public:
 		/// Sets everything to 0 and copies SourcesArray from SoundWorldComponent
-		SoundListenerComponent(SoundWorldComponent* worldComponent);
+		SoundListenerComponent(SoundWorldComponent* worldComponent = nullptr);
 		~SoundListenerComponent();
 
 		float GetGain() const { return Gain; }
