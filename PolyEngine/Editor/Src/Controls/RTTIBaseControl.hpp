@@ -20,6 +20,6 @@ template<RTTI::eCorePropertyType> struct TypeToControl;
 	{ \
 		static CONTROL* CreateControl(void* ptr, const RTTI::Property& prop) \
 		{ \
-			return new CONTROL(ptr, prop); \
+			return new CONTROL(ptr, prop, PROPERTY_TYPE); \
 		} \
 	};

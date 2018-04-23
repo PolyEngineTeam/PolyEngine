@@ -2,11 +2,11 @@
 
 #include <QComboBox>
 
-EnumControl::EnumControl(void* ptr, const RTTI::Property& prop)
+EnumControl::EnumControl(void* ptr, const RTTI::Property& prop, RTTI::eCorePropertyType)
 {
-	Object = ptr;
+	//Object = ptr;
 	
-	ComboBox = std::make_unique<QComboBox>(this);
+	//ComboBox = std::make_unique<QComboBox>(this);
 	
 	//HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid enum impl data!");
 	//const RTTI::EnumPropertyImplData* implData = static_cast<const RTTI::EnumPropertyImplData*>(prop.ImplData.get());

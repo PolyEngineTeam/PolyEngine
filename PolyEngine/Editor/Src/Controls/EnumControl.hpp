@@ -7,7 +7,7 @@ using namespace Poly;
 class EnumControl : public RTTIBaseControl
 {
 public:
-	EnumControl(void* ptr, const RTTI::Property& prop);
+	EnumControl(void* ptr, const RTTI::Property& prop, RTTI::eCorePropertyType);
 
 	void UpdateObject() override;
 	void UpdateControl() override;

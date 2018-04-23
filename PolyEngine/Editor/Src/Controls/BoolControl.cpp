@@ -1,38 +1,48 @@
-#include "BoolControl.hpp"
+#include "PolyEditorPCH.hpp"
 
-BoolControl::BoolControl(void* ptr, bool initialState = false)
+BoolControl::BoolControl(void* ptr) 
+	: Object(reinterpret_cast<bool*>(ptr))
 {
-	Object = reinterpret_cast<bool*>(ptr);
-
-	InitializeButton(initialState);
+	InitializeControl();
 }
 
-BoolControl::BoolControl(void* ptr, const RTTI::Property & prop)
+BoolControl::BoolControl(void* ptr, const RTTI::Property& prop, RTTI::eCorePropertyType)
+	: Object(reinterpret_cast<bool*>(ptr))
 {
-	Object = reinterpret_cast<bool*>(ptr);
-
-	InitializeButton(*Object);
+	InitializeControl();
 }
 
-void BoolControl::InitializeButton(bool initialState)
+void BoolControl::UpdateObject()
 {
+	*Object = *Machine->configuration().begin() == True.get();
+}
+
+void BoolControl::UpdateControl()
+{
+	Machine->stop();
+	Machine->setInitialState(*Object ? True.get() : False.get());
+	Machine->start();
+}
+
+void BoolControl::InitializeControl()
+{
+	Button = std::make_unique<QPushButton>(this);
+	Machine = std::make_unique<QStateMachine>(this);
+
 	False = std::make_unique<QState>();
-	False->assignProperty(&button, "text", "False");
+	False->assignProperty(Button.get(), "text", "False");
 	False->setObjectName("false");
 
 	True = std::make_unique<QState>();
 	True->setObjectName("true");
-	True->assignProperty(&button, "text", "True");
+	True->assignProperty(Button.get(), "text", "True");
 
-	False->addTransition(&button, SIGNAL(clicked()), True.get());
-	True->addTransition(&button, SIGNAL(clicked()), False.get());
+	False->addTransition(Button.get(), SIGNAL(clicked()), True.get());
+	True->addTransition(Button.get(), SIGNAL(clicked()), False.get());
 
-	machine.addState(False.get());
-	machine.addState(True.get());
+	Machine->addState(False.get());
+	Machine->addState(True.get());
 
-	machine.setInitialState(initialState ? True.get() : False.get());
-	machine.start();
-
-	button.resize(100, 50);
-	button.show();
+	Machine->setInitialState(*Object ? True.get() : False.get());
+	Machine->start();
 }

@@ -8,20 +8,22 @@
 class BoolControl : public RTTIBaseControl
 {
 public:
-	BoolControl(void* ptr, bool initialState = false);
-	BoolControl(void* ptr, const RTTI::Property& prop);
+	BoolControl(void* ptr);
+	BoolControl(void* ptr, const RTTI::Property& prop, RTTI::eCorePropertyType);
 
 	void UpdateObject() override;
 	void UpdateControl() override;
 
 private:
-	void InitializeButton(bool initialState);
+	void InitializeControl();
 
 	bool* Object;
 
-	QPushButton button;
-	QStateMachine machine;
+	std::unique_ptr<QPushButton> Button;
+	std::unique_ptr<QStateMachine> Machine;
 
 	std::unique_ptr<QState> False;
 	std::unique_ptr<QState> True;
 };
+
+ASSIGN_CONTROL(BoolControl, RTTI::eCorePropertyType::BOOL)

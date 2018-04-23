@@ -38,6 +38,8 @@ UNSILENCE_MSVC_WARNING()
 #include "Widgets/PolyWidget.hpp"
 
 // controls
+#include "Controls/BoolControl.hpp"
+#include "Controls/NumberControl.hpp"
 #include "Controls/EnumControl.hpp"
 #include "Controls/RTTIBaseControl.hpp"
 
