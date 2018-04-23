@@ -61,47 +61,74 @@ TEST_CASE("World component iteration tests.", "ComponentIterator")
 
 	int i = 0;
 	for (auto c : w->IterateComponents<SoundListenerComponent>())
+	{
+		UNUSED(c);
 		++i;
+	}
 	REQUIRE(i == 7);
 
 	i = 0;
 	for (auto c : w->IterateComponents<FreeFloatMovementComponent>())
+	{
+		UNUSED(c);
 		++i;
+	}
 	REQUIRE(i == 6);
 
 	i = 0;
 	for (auto c : w->IterateComponents<PostprocessSettingsComponent>())
+	{
+		UNUSED(c);
 		++i;
+	}
 	REQUIRE(i == 4);
 
 	i = 0;
 	for (auto c : w->IterateComponents<SoundListenerComponent, FreeFloatMovementComponent>())
+	{
+		UNUSED(c);
 		++i;
+	}
 	REQUIRE(i == 3);
 
 	i = 0;
 	for (auto c : w->IterateComponents<FreeFloatMovementComponent, SoundListenerComponent>())
+	{
+		UNUSED(c);
 		++i;
+	}
 	REQUIRE(i == 3);
 
 	i = 0;
 	for (auto c : w->IterateComponents<FreeFloatMovementComponent, PostprocessSettingsComponent>())
+	{
+		UNUSED(c);
 		++i;
+	}
 	REQUIRE(i == 4);
 
 	i = 0;
 	for (auto c : w->IterateComponents<PostprocessSettingsComponent, FreeFloatMovementComponent>())
+	{
+		UNUSED(c);
 		++i;
+	}
 	REQUIRE(i == 4);
 
 	i = 0;
 	for (auto c : w->IterateComponents<FreeFloatMovementComponent, SoundListenerComponent, PostprocessSettingsComponent>())
+	{
+		UNUSED(c);
 		++i;
+	}
 	REQUIRE(i == 1);
 
 	i = 0;
 	for (auto c : w->IterateComponents<PostprocessSettingsComponent, FreeFloatMovementComponent, SoundListenerComponent>())
+	{
+		UNUSED(c);
 		++i;
+	}
 	REQUIRE(i == 1);
 
 }
