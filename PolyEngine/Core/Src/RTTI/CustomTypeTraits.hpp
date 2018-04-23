@@ -15,5 +15,7 @@ namespace Poly
 
 		template <typename> struct DynarrayValueType {};
 		template <typename T> struct DynarrayValueType<Dynarray<T>> { using type = T; };
+
+		template <class T> using RawType = std::remove_pointer<typename std::decay<typename std::remove_cv<T>::type >::type>;
 	}
 }

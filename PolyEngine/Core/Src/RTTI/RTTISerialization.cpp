@@ -108,7 +108,8 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	}
 		break;
 	case eCorePropertyType::NONE:
-		ASSERTE(false, "Invalid property type!");
+		currentValue.SetObject();
+		SerializeObject(reinterpret_cast<const RTTIBase*>(value), prop.Name, currentValue, alloc);
 		break;
 	default:
 		ASSERTE(false, "Unknown property type!");
@@ -236,7 +237,7 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 	break;
 
 	case eCorePropertyType::NONE:
-		ASSERTE(false, "Invalid property type!");
+		DeserializeObject(reinterpret_cast<RTTIBase*>(obj), prop.Name, value);
 		break;
 	default:
 		ASSERTE(false, "Unknown property type!");
