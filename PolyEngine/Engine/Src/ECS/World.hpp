@@ -127,44 +127,29 @@ namespace Poly {
 			ComponentIterator operator--(int) { ComponentIterator ret(primary_iter); Decrement(); return ret; }
 
 		private:
+			//------------------------------------------------------------------------------
 			template<int zero = 0>
-			bool HasComponents(const Entity* entity) const
-			{
-				return true;
-			}
+			bool HasComponents(const Entity* entity) const { return true; }
+
+			//------------------------------------------------------------------------------
 			template<typename Component, typename... Rest>
 			bool HasComponents(const Entity* entity) const
 			{
-				if (entity->template GetComponent<Component>())
-					return HasComponents<Rest...>(entity);
-				else
-					return false;
+				return entity->template HasComponent<Component>() && HasComponents<Rest...>(entity);
 			}
+
+			//------------------------------------------------------------------------------
 			void Increment()
 			{
-				do {
-					++primary_iter;
-					if (primary_iter != End)
-					{
-						if (HasComponents<SecondaryComponents...>(&*primary_iter->GetOwner()))
-							break;
-					}
-					else
-						break;
-				} while (true);
+				do { ++primary_iter; } while (primary_iter != End
+					&& !HasComponents<SecondaryComponents...>(&*primary_iter->GetOwner()));
 			}
+
+			//------------------------------------------------------------------------------
 			void Decrement()
 			{
-				do {
-					--primary_iter;
-					if (primary_iter != Begin)
-					{
-						if (HasComponents<SecondaryComponents...>(&*primary_iter->GetOwner()))
-							break;
-					}
-					else
-						break;
-				} while (true);
+				do { --primary_iter; } while (primary_iter != End
+					&& !HasComponents<SecondaryComponents...>(&*primary_iter->GetOwner()));
 			}
 
 
@@ -306,6 +291,12 @@ namespace Poly {
 			return static_cast<T*>(Components[ctypeID]);
 		else
 			return nullptr;
+	}
+
+	template<class T >
+	bool Entity::HasComponent() const
+	{
+		return HasComponent(World::GetComponentID<T>());
 	}
 
 } //namespace Poly

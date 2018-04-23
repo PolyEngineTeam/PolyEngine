@@ -29,6 +29,14 @@ namespace Poly
 		/// <seealso cref="Entity.HasComponents()"/>
 		bool HasComponent(size_t ID) const;
 
+		/// <summary>Checks whether there is a component of a given type in this Entity.</summary>
+		/// <param name="T">Component type.</param>
+		/// <returns>True if has queried component, false otherwise.</summary>
+		/// <seealso cref="Entity.GetComponent()"/>
+		/// <seealso cref="Entity.HasComponents()"/>
+		template<class T>
+		bool HasComponent() const;
+
 		/// <summary>Checks whether there are all of the specified components under this Entity's ID.</summary>
 		/// <param name="IDs">IDs is a bit field of component IDs to be checked for, see macro BIT()</param> 
 		/// <returns>True if has queried components, false otherwise.</summary>
