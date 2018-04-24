@@ -3,11 +3,6 @@
 #include <QIntValidator>
 #include <QDoubleValidator>
 
-NumberControl::NumberControl(void* ptr, RTTI::eCorePropertyType type)
-	: Object(ptr), Type(type)
-{
-}
-
 NumberControl::NumberControl(void* ptr, const RTTI::Property& prop, RTTI::eCorePropertyType type)
 	: Object(ptr), Type(type)
 {
@@ -15,10 +10,81 @@ NumberControl::NumberControl(void* ptr, const RTTI::Property& prop, RTTI::eCoreP
 
 void NumberControl::UpdateObject()
 {
+	switch (Type)
+	{
+	case RTTI::eCorePropertyType::INT8:
+		*reinterpret_cast<i8*>(Object) = (i8)Field->text().toInt();
+		break;
+	case RTTI::eCorePropertyType::INT16:
+		*reinterpret_cast<i16*>(Object) = (i16)Field->text().toInt();
+		break;
+	case RTTI::eCorePropertyType::INT32:
+		ASSERTE(false, "Not supported type");
+		break;
+	case RTTI::eCorePropertyType::INT64:
+		ASSERTE(false, "Not supported type");
+		break;
+	case RTTI::eCorePropertyType::UINT8:
+		*reinterpret_cast<u8*>(Object) = (u8)Field->text().toInt();
+		break;
+	case RTTI::eCorePropertyType::UINT16:
+		*reinterpret_cast<u16*>(Object) = (u16)Field->text().toInt();
+		break;
+	case RTTI::eCorePropertyType::UINT32:
+		ASSERTE(false, "Not supported type");
+		break;
+	case RTTI::eCorePropertyType::UINT64:
+		ASSERTE(false, "Not supported type");
+		break;
+	case RTTI::eCorePropertyType::FLOAT:
+		*reinterpret_cast<f32*>(Object) = (f32)Field->text().toFloat();
+		break;
+	case RTTI::eCorePropertyType::DOUBLE:
+		*reinterpret_cast<f64*>(Object) = (f64)Field->text().toDouble();
+		break;
+	default:
+		ASSERTE(false, "Not supported type");
+	}
+
 }
 
 void NumberControl::UpdateControl()
 {
+	switch (Type)
+	{
+	case RTTI::eCorePropertyType::INT8:
+		Field->setText(QString::number(*reinterpret_cast<i8*>(Object)));
+		break;
+	case RTTI::eCorePropertyType::INT16:
+		Field->setText(QString::number(*reinterpret_cast<i16*>(Object)));
+		break;
+	case RTTI::eCorePropertyType::INT32:
+		ASSERTE(false, "Not supported type");
+		break;
+	case RTTI::eCorePropertyType::INT64:
+		ASSERTE(false, "Not supported type");
+		break;
+	case RTTI::eCorePropertyType::UINT8:
+		Field->setText(QString::number(*reinterpret_cast<u8*>(Object)));
+		break;
+	case RTTI::eCorePropertyType::UINT16:
+		Field->setText(QString::number(*reinterpret_cast<u16*>(Object)));
+		break;
+	case RTTI::eCorePropertyType::UINT32:
+		ASSERTE(false, "Not supported type");
+		break;
+	case RTTI::eCorePropertyType::UINT64:
+		ASSERTE(false, "Not supported type");
+		break;
+	case RTTI::eCorePropertyType::FLOAT:
+		Field->setText(QString::number(*reinterpret_cast<f32*>(Object)));
+		break;
+	case RTTI::eCorePropertyType::DOUBLE:
+		Field->setText(QString::number(*reinterpret_cast<f64*>(Object)));
+		break;
+	default:
+		ASSERTE(false, "Not supported type");
+	}
 }
 
 void NumberControl::InitializeControl()

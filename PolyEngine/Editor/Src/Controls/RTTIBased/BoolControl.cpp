@@ -1,11 +1,5 @@
 #include "PolyEditorPCH.hpp"
 
-BoolControl::BoolControl(void* ptr) 
-	: Object(reinterpret_cast<bool*>(ptr))
-{
-	InitializeControl();
-}
-
 BoolControl::BoolControl(void* ptr, const RTTI::Property& prop, RTTI::eCorePropertyType)
 	: Object(reinterpret_cast<bool*>(ptr))
 {

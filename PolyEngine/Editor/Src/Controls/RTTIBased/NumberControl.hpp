@@ -7,9 +7,6 @@
 class NumberControl : public RTTIBaseControl
 {
 public:
-	// for general purpose
-	NumberControl(void* ptr, RTTI::eCorePropertyType type);
-	// for RTTIViewer
 	NumberControl(void* ptr, const RTTI::Property& prop, RTTI::eCorePropertyType type);
 
 	void UpdateObject() override;

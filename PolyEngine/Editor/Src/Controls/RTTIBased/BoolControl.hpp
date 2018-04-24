@@ -8,7 +8,6 @@
 class BoolControl : public RTTIBaseControl
 {
 public:
-	BoolControl(void* ptr);
 	BoolControl(void* ptr, const RTTI::Property& prop, RTTI::eCorePropertyType);
 
 	void UpdateObject() override;
