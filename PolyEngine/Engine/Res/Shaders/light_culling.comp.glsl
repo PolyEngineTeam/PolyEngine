@@ -29,9 +29,12 @@ layout(std430, binding = 1) writeonly buffer OutputBuffer {
 
 // Uniforms
 uniform sampler2D depthMap;
+uniform float time;
 uniform float near;
 uniform float far;
+uniform mat4 ViewFromWorld;
 uniform mat4 ClipFromWorld;
+uniform mat4 ClipFromView;
 uniform int lightCount;
 uniform int screenSizeX;
 uniform int screenSizeY;
@@ -68,13 +71,8 @@ float insideBox(vec2 v, vec2 bottomLeft, vec2 topRight)
     return s.x * s.y;
 }
 
-float insideAABBAABB(vec2 aCenter, vec2 aExtents, vec2 bCenter, vec2 bExtents)
+float insideAABBAABB(vec2 aMin, vec2 aMax, vec2 bMin, vec2 bMax)
 {
-    vec2 aMax = aCenter + aExtents;
-    vec2 aMin = aCenter - aExtents;
-    vec2 bMax = bCenter + bExtents;
-    vec2 bMin = bCenter - bExtents;
-
 	// TODO: branchless like insideBox
     if (aMax.x < bMin.x || aMin.x > bMax.x) return 0.0;
     if (aMax.y < bMin.y || aMin.y > bMax.y) return 0.0;
@@ -97,19 +95,24 @@ void main()
 	// shared vec4 LightsPosInWorld[NUM_LIGHTS];
 	// shared vec4 LightsBoundsTopLeft[NUM_LIGHTS];
 	// shared vec4 LightsBoundsBottomRight[NUM_LIGHTS];
+        float tmpRadius = 10.0;
 		for (int i = 0; i < NUM_LIGHTS; ++i)
 		{
+			// TODO: works on the right side of the screen,
+			//		because it misses corners that are squeezed on left side
 			Light light = lightBuffer.data[i];
 			vec4 lightInWorld = vec4(light.Position.xyz, 1.0);
 			vec4 lightInClip = ClipFromWorld * lightInWorld;
 			LightsPosInScreen[i] = ScreenFromClip(lightInClip);
+
+            vec4 lightInView = ViewFromWorld * lightInWorld;
 			
-			vec4 topRightInWorld = vec4(light.Position.xyz + vec3(light.Radius, light.Radius, 0.0), 1.0);
-			vec4 topRightInClip = ClipFromWorld * topRightInWorld;
+            vec4 topRightInView = vec4(lightInView.xyz + vec3(tmpRadius), 1.0);
+			vec4 topRightInClip = ClipFromView * topRightInView;
 			LightsBoundsTopRight[i] = ScreenFromClip(topRightInClip);
 
-			vec4 bottomLeftInWorld = vec4(light.Position.xyz - vec3(light.Radius, light.Radius, 0.0), 1.0);
-			vec4 bottomLeftInClip = ClipFromWorld * bottomLeftInWorld;
+            vec4 bottomLeftInView = vec4(lightInView.xyz - vec3(tmpRadius), 1.0);
+            vec4 bottomLeftInClip = ClipFromView * bottomLeftInView;
 			LightsBoundsBottomLeft[i] = ScreenFromClip(bottomLeftInClip);
 		}
 	}
@@ -158,9 +161,14 @@ void main()
 
     // vec2 centerInScreen = 0.5 * vec2(screenSizeX, screenSizeY);
     vec2 tileInScreen = gl_WorkGroupID.xy * vec2(TILE_SIZE);
-    float isLit = insideBox(lightPosInScreen, tileInScreen + vec2(0.0), tileInScreen + vec2(TILE_SIZE, TILE_SIZE));
+	// float insideBox(vec2 v, vec2 bottomLeft, vec2 topRight)
+    float isLit = insideBox(lightPosInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
+    // float isLitMax = insideBox(topRightInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
+    // float isLitMin = insideBox(bottomLeftInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
+    // float insideAABBAABB(vec2 aMin, vec2 aMax, vec2 bMin, vec2 bMax)
+    float isTileLit = insideAABBAABB(bottomLeftInScreen, topRightInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
     // float isInside = insideBox(pixelInScreenSpace, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
-    visibleLightCount = floatBitsToUint(isLit);
+    visibleLightCount = floatBitsToUint(isLit + isTileLit);
 
 	// vec2 diff = abs(pixelInScreenSpace.xy - lightPosInScreen.xy);
 	// outputBuffer.data[IndexWorkGroup].tilePosSS = vec4(diff, 0.0, 0.0);

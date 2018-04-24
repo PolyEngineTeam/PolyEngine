@@ -218,15 +218,20 @@ void TiledForwardRenderer::DrawDepthPrepass(const CameraComponent* cameraCmp)
 
 void TiledForwardRenderer::LightCulling(World* world, const CameraComponent* cameraCmp)
 {
-	gConsole.LogInfo("TiledForwardRenderer::LightCulling workGroupsX: {}, workGroupsY: {}",
-		workGroupsX, workGroupsY
+	float Time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
+	
+	gConsole.LogInfo("TiledForwardRenderer::LightCulling Time: {}, workGroupsX: {}, workGroupsY: {}",
+		Time, workGroupsX, workGroupsY
 	);
 
 	// Step 2: Perform light culling on point lights in the scene
 	lightCullingShader.BindProgram();
+	lightCullingShader.SetUniform("time", Time);
 	lightCullingShader.SetUniform("near", cameraCmp->GetClippingPlaneNear());
 	lightCullingShader.SetUniform("far", cameraCmp->GetClippingPlaneFar());
+	lightCullingShader.SetUniform("ViewFromWorld", cameraCmp->GetViewFromWorld());
 	lightCullingShader.SetUniform("ClipFromWorld", cameraCmp->GetScreenFromWorld());
+	lightCullingShader.SetUniform("ClipFromView", cameraCmp->GetScreenFromView());
 	lightCullingShader.SetUniform("lightCount", (int)NUM_LIGHTS);
 	lightCullingShader.SetUniform("screenSizeX", (int)SCREEN_SIZE_X);
 	lightCullingShader.SetUniform("screenSizeY", (int)SCREEN_SIZE_Y);
