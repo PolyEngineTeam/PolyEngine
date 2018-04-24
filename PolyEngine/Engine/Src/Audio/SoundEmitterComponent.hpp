@@ -15,7 +15,7 @@ namespace Poly
 	/// @see SoundSystem 
 	class ENGINE_DLLEXPORT SoundEmitterComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(AssetsPathConfig, ConfigBase)
+		RTTI_DECLARE_TYPE_DERIVED(SoundEmitterComponent, ComponentBase)
 		{
 			RTTI_PROPERTY(EmitterID, "EmitterID", RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY(Background, "Background", RTTI::ePropertyFlag::NONE);
