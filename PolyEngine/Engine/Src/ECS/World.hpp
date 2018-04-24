@@ -123,16 +123,46 @@ namespace Poly {
 				return **this;
 			}
 
-			ComponentIterator& operator++() { ++primary_iter; return *this; }
-			ComponentIterator operator++(int) { ComponentIterator ret(primary_iter); ++primary_iter; return ret; }
-			ComponentIterator& operator--() { --primary_iter; return *this; }
-			ComponentIterator operator--(int) { ComponentIterator ret(primary_iter); --primary_iter; return ret; }
+			ComponentIterator& operator++() { Increment(); return *this; }
+			ComponentIterator operator++(int) { ComponentIterator ret(primary_iter); Increment(); return ret; }
+			ComponentIterator& operator--() { Decrement(); return *this; }
+			ComponentIterator operator--(int) { ComponentIterator ret(primary_iter); Decrement(); return ret; }
 
-			private:
-			explicit ComponentIterator(typename IterablePoolAllocator<PrimaryComponent>::Iterator parent) : primary_iter(parent) {}
+		private:
+			//------------------------------------------------------------------------------
+			template<int zero = 0>
+			bool HasComponents(const Entity* entity) const { return true; }
+
+			//------------------------------------------------------------------------------
+			template<typename Component, typename... Rest>
+			bool HasComponents(const Entity* entity) const
+			{
+				return entity->template HasComponent<Component>() && HasComponents<Rest...>(entity);
+			}
+
+			//------------------------------------------------------------------------------
+			void Increment()
+			{
+				do { ++primary_iter; } while (primary_iter != End
+					&& !HasComponents<SecondaryComponents...>(&*primary_iter->GetOwner()));
+			}
+
+			//------------------------------------------------------------------------------
+			void Decrement()
+			{
+				do { --primary_iter; } while (primary_iter != End
+					&& !HasComponents<SecondaryComponents...>(&*primary_iter->GetOwner()));
+			}
+
+
+			explicit ComponentIterator(typename IterablePoolAllocator<PrimaryComponent>::Iterator parent, World* const w) : primary_iter(parent), 
+				Begin(w->GetComponentAllocator<PrimaryComponent>()->Begin()),
+				End(w->GetComponentAllocator<PrimaryComponent>()->End()) {}
 			friend struct IteratorProxy<PrimaryComponent, SecondaryComponents...>;
 
 			typename IterablePoolAllocator<PrimaryComponent>::Iterator primary_iter;
+			typename IterablePoolAllocator<PrimaryComponent>::Iterator Begin;
+			typename IterablePoolAllocator<PrimaryComponent>::Iterator End;
 		};
 
 		/// Iterator proxy
@@ -142,11 +172,11 @@ namespace Poly {
 			IteratorProxy(World* w) : W(w) {}
 			World::ComponentIterator<PrimaryComponent, SecondaryComponents...> Begin()
 			{
-				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(W->GetComponentAllocator<PrimaryComponent>()->Begin());
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(W->GetComponentAllocator<PrimaryComponent>()->Begin(), W);
 			}
 			World::ComponentIterator<PrimaryComponent, SecondaryComponents...> End()
 			{
-				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(W->GetComponentAllocator<PrimaryComponent>()->End());
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(W->GetComponentAllocator<PrimaryComponent>()->End(), W);
 			}
 			auto begin() { return Begin(); }
 			auto end() { return End(); }
@@ -263,6 +293,12 @@ namespace Poly {
 			return static_cast<T*>(Components[ctypeID]);
 		else
 			return nullptr;
+	}
+
+	template<class T >
+	bool Entity::HasComponent() const
+	{
+		return HasComponent(World::GetComponentID<T>());
 	}
 
 } //namespace Poly
