@@ -71,11 +71,20 @@ float insideBox(vec2 v, vec2 bottomLeft, vec2 topRight)
     return s.x * s.y;
 }
 
-float insideAABBAABB(vec2 aMin, vec2 aMax, vec2 bMin, vec2 bMax)
+float intersectionAABBAABB(vec2 aMin, vec2 aMax, vec2 bMin, vec2 bMax)
 {
 	// TODO: branchless like insideBox
     if (aMax.x < bMin.x || aMin.x > bMax.x) return 0.0;
     if (aMax.y < bMin.y || aMin.y > bMax.y) return 0.0;
+    return 1.0;
+}
+
+float intersectionAABBAABB2(vec3 aMin, vec3 aMax, vec3 bMin, vec3 bMax)
+{
+	// TODO: branchless like insideBox
+    if (aMax.x < bMin.x || aMin.x > bMax.x) return 0.0;
+    if (aMax.y < bMin.y || aMin.y > bMax.y) return 0.0;
+    if (aMax.z < bMin.z || aMin.z > bMax.z) return 0.0;
     return 1.0;
 }
 
@@ -92,7 +101,7 @@ void main()
 		maxDepthInt = 0;
 		visibleLightCount = 0;
 
-		// TODO: actually distance from center to corner is radius*sqrt(0.33)
+		// TODO: actually distance from center to corner is radius*sqrt(3)
         float tmpRadius = 10.0; 
 		// TODO: do sth with AABB in ex. ClipSpace rather than iterate by each corner
         const vec3 corners[8] = {
@@ -159,42 +168,33 @@ void main()
 	// shared vec4 LightsBoundsTopRight[NUM_LIGHTS];
 	// shared vec4 LightsBoundsBottomLeft[NUM_LIGHTS];
 	vec2 lightPosInScreen = LightsPosInScreen[0].xy;
-	vec2 topRightInScreen = LightsBoundsTopRight[0].xy;
-	vec2 bottomLeftInScreen = LightsBoundsBottomLeft[0].xy;
+	vec3 topRightInScreen = LightsBoundsTopRight[0].xyz;
+	vec3 bottomLeftInScreen = LightsBoundsBottomLeft[0].xyz;
 	 
 	// Step 2: One thread should calculate the frustum planes to be used for this tile
 	if (gl_LocalInvocationIndex == 0)
 	{
-        
-	// vec4 centerInWorld = vec4(0.0, 0.0, 0.0, 1.0);
-	// vec4 centerInClip = ClipFromWorld * centerInWorld;
-	// vec4 centerInScreen = ScreenFromClip(centerInClip);
+        minDepth = uintBitsToFloat(minDepthInt);
+        maxDepth = uintBitsToFloat(maxDepthInt);
+		//	vec2 centerInScreen = 0.5 * vec2(screenSizeX, screenSizeY);
+		//	float isLit = insideBox(lightPosInScreen, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
+		//	float isInside = insideBox(pixelInScreenSpace, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
+		//	visibleLightCount = floatBitsToUint(isInside * isLit);
 
-	// float isLit = insideBox(vec2(pixelInScreenSpace), topRightInScreen, bottomLeftInScreen);
-	// visibleLightCount = floatBitsToUint(isLit);
+		vec2 tileInScreen = gl_WorkGroupID.xy * vec2(TILE_SIZE);
 
-	//	vec2 centerInScreen = 0.5 * vec2(screenSizeX, screenSizeY);
-	//	float isLit = insideBox(lightPosInScreen, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
-	//	float isInside = insideBox(pixelInScreenSpace, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
-	//	visibleLightCount = floatBitsToUint(isInside * isLit);
-
-    // vec2 centerInScreen = 0.5 * vec2(screenSizeX, screenSizeY);
-    vec2 tileInScreen = gl_WorkGroupID.xy * vec2(TILE_SIZE);
-	// float insideBox(vec2 v, vec2 bottomLeft, vec2 topRight)
-    float isLit = insideBox(lightPosInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
-    // float isLitMax = insideBox(topRightInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
-    // float isLitMin = insideBox(bottomLeftInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
-    // float insideAABBAABB(vec2 aMin, vec2 aMax, vec2 bMin, vec2 bMax)
-    float isTileLit = insideAABBAABB(bottomLeftInScreen, topRightInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
-    // float isInside = insideBox(pixelInScreenSpace, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
-    visibleLightCount = floatBitsToUint(isLit + isTileLit);
-
-	// vec2 diff = abs(pixelInScreenSpace.xy - lightPosInScreen.xy);
-	// outputBuffer.data[IndexWorkGroup].tilePosSS = vec4(diff, 0.0, 0.0);
-	// if (length(diff) < 20.0)
-	// {
-	//     visibleLightCount = floatBitsToUint(1.0);
-	// }
+		// float insideBox(vec2 v, vec2 bottomLeft, vec2 topRight)
+		// float intersectionAABBAABB(vec2 aMin, vec2 aMax, vec2 bMin, vec2 bMax)
+		// float isLit = insideBox(lightPosInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
+		// float isLitMax = insideBox(topRightInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
+		// float isLitMin = insideBox(bottomLeftInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
+    
+		float isTileLit = intersectionAABBAABB2(
+			bottomLeftInScreen, topRightInScreen,
+			vec3(tileInScreen, minDepth), vec3(tileInScreen + vec2(TILE_SIZE), maxDepth)
+		);
+		// float isInside = insideBox(pixelInScreenSpace, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
+		visibleLightCount = floatBitsToUint(isTileLit);
 	}
 
 	if (gl_LocalInvocationIndex == 0)
