@@ -43,7 +43,8 @@ shared uint maxDepthInt;
 shared uint visibleLightCount;
 
 shared vec4 LightsPosInScreen[NUM_LIGHTS];
-shared vec4 LightsBoundsInScreen[NUM_LIGHTS];
+shared vec4 LightsBoundsTopRight[NUM_LIGHTS];
+shared vec4 LightsBoundsBottomLeft[NUM_LIGHTS];
 
 vec2 ScreenSize = vec2(800.0, 600.0);
 
@@ -60,40 +61,68 @@ vec4 ScreenFromClip(vec4 posInClip)
     return posInScreen;
 }
 
+// return 1 if v inside the box, return 0 otherwise
+float insideBox(vec2 v, vec2 bottomLeft, vec2 topRight)
+{
+    vec2 s = step(bottomLeft, v) - step(topRight, v);
+    return s.x * s.y;
+}
+
+float insideAABBAABB(vec2 aCenter, vec2 aExtents, vec2 bCenter, vec2 bExtents)
+{
+    vec2 aMax = aCenter + aExtents;
+    vec2 aMin = aCenter - aExtents;
+    vec2 bMax = bCenter + bExtents;
+    vec2 bMin = bCenter - bExtents;
+
+	// TODO: branchless like insideBox
+    if (aMax.x < bMin.x || aMin.x > bMax.x) return 0.0;
+    if (aMax.y < bMin.y || aMin.y > bMax.y) return 0.0;
+    return 1.0;
+}
+
 #define TILE_SIZE 16
 layout(local_size_x = TILE_SIZE, local_size_y = TILE_SIZE, local_size_z = 1) in;
-void main() {
-
-    uint IndexWorkGroup = gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
-    uint IndexGlobal = gl_GlobalInvocationID.y * (gl_NumWorkGroups.x * gl_WorkGroupSize.x) + gl_GlobalInvocationID.x;
+void main()
+{
+	uint IndexWorkGroup = gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
+	uint IndexGlobal = gl_GlobalInvocationID.y * (gl_NumWorkGroups.x * gl_WorkGroupSize.x) + gl_GlobalInvocationID.x;
 
 	if (gl_LocalInvocationIndex == 0)
 	{
 		minDepthInt = 0xFFFFFFFF;
 		maxDepthInt = 0;
-        visibleLightCount = 0;
+		visibleLightCount = 0;
 
-        // shared vec4 LightsPosInWorld[NUM_LIGHTS];
-        // shared vec4 LightsBoundsInWorld[NUM_LIGHTS];
-        for (int i = 0; i < NUM_LIGHTS; ++i)
-        {
-            Light light = lightBuffer.data[i];
-            vec4 lightInWorld = vec4(light.Position.xyz, 1.0);
-            vec4 lightInClip = ClipFromWorld * lightInWorld;
-            LightsPosInScreen[i] = ScreenFromClip(lightInClip);
-        }
-        
-    }
+	// shared vec4 LightsPosInWorld[NUM_LIGHTS];
+	// shared vec4 LightsBoundsTopLeft[NUM_LIGHTS];
+	// shared vec4 LightsBoundsBottomRight[NUM_LIGHTS];
+		for (int i = 0; i < NUM_LIGHTS; ++i)
+		{
+			Light light = lightBuffer.data[i];
+			vec4 lightInWorld = vec4(light.Position.xyz, 1.0);
+			vec4 lightInClip = ClipFromWorld * lightInWorld;
+			LightsPosInScreen[i] = ScreenFromClip(lightInClip);
+			
+			vec4 topRightInWorld = vec4(light.Position.xyz + vec3(light.Radius, light.Radius, 0.0), 1.0);
+			vec4 topRightInClip = ClipFromWorld * topRightInWorld;
+			LightsBoundsTopRight[i] = ScreenFromClip(topRightInClip);
+
+			vec4 bottomLeftInWorld = vec4(light.Position.xyz - vec3(light.Radius, light.Radius, 0.0), 1.0);
+			vec4 bottomLeftInClip = ClipFromWorld * bottomLeftInWorld;
+			LightsBoundsBottomLeft[i] = ScreenFromClip(bottomLeftInClip);
+		}
+	}
 
 	barrier();
 
 	// Step 1: Calculate the minimum and maximum depth values (from the depth buffer) for this group's tile
 	float maxDepth, minDepth;
-    ivec2 pixelInScreenSpace = ivec2(gl_GlobalInvocationID.xy);
-    ivec2 screenSize = ivec2(screenSizeX, screenSizeY);
+	ivec2 pixelInScreenSpace = ivec2(gl_GlobalInvocationID.xy);
+	ivec2 screenSize = ivec2(screenSizeX, screenSizeY);
 	vec2 uv = vec2(pixelInScreenSpace) / screenSize;
 	float depth = texture(depthMap, uv).r;
-    depth = LinearizeDepth(depth) / far;
+	depth = LinearizeDepth(depth) / far;
     
 	uint depthInt = floatBitsToUint(depth);
 
@@ -102,28 +131,51 @@ void main() {
 	
 	barrier();
 	 
+	
+	// float insideBox(vec2 v, vec2 bottomLeft, vec2 topRight)
+	// shared vec4 LightsPosInScreen[NUM_LIGHTS];
+	// shared vec4 LightsBoundsTopRight[NUM_LIGHTS];
+	// shared vec4 LightsBoundsBottomLeft[NUM_LIGHTS];
+	vec2 lightPosInScreen = LightsPosInScreen[0].xy;
+	vec2 topRightInScreen = LightsBoundsTopRight[0].xy;
+	vec2 bottomLeftInScreen = LightsBoundsBottomLeft[0].xy;
 	 
 	// Step 2: One thread should calculate the frustum planes to be used for this tile
-    if (gl_LocalInvocationIndex == 0)
-    {
-        vec4 lightPosInScreen = LightsPosInScreen[0];
-		
-		// outputBuffer.data[IndexWorkGroup].tilePosSS = vec4(pixelInScreenSpace, 0.0, 0.0);
-        vec2 diff = abs(pixelInScreenSpace.xy - lightPosInScreen.xy);
-        outputBuffer.data[IndexWorkGroup].tilePosSS = vec4(diff, 0.0, 0.0);
+	if (gl_LocalInvocationIndex == 0)
+	{
+        
+	// vec4 centerInWorld = vec4(0.0, 0.0, 0.0, 1.0);
+	// vec4 centerInClip = ClipFromWorld * centerInWorld;
+	// vec4 centerInScreen = ScreenFromClip(centerInClip);
 
-        if (length(diff) < 20.0)
-        {
-            visibleLightCount = floatBitsToUint(1.0);
-        }
-    }
+	// float isLit = insideBox(vec2(pixelInScreenSpace), topRightInScreen, bottomLeftInScreen);
+	// visibleLightCount = floatBitsToUint(isLit);
 
-    if (gl_LocalInvocationIndex == 0)
-    {
-        outputBuffer.data[IndexWorkGroup].indexLocal = 0;
-        outputBuffer.data[IndexWorkGroup].indexWorkGroup = IndexWorkGroup;
-        outputBuffer.data[IndexWorkGroup].indexGlobal = 0; // IndexGlobal;
-        outputBuffer.data[IndexWorkGroup].input = minDepthInt;
-        outputBuffer.data[IndexWorkGroup].result = visibleLightCount;
-    }
+	//	vec2 centerInScreen = 0.5 * vec2(screenSizeX, screenSizeY);
+	//	float isLit = insideBox(lightPosInScreen, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
+	//	float isInside = insideBox(pixelInScreenSpace, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
+	//	visibleLightCount = floatBitsToUint(isInside * isLit);
+
+    // vec2 centerInScreen = 0.5 * vec2(screenSizeX, screenSizeY);
+    vec2 tileInScreen = gl_WorkGroupID.xy * vec2(TILE_SIZE);
+    float isLit = insideBox(lightPosInScreen, tileInScreen + vec2(0.0), tileInScreen + vec2(TILE_SIZE, TILE_SIZE));
+    // float isInside = insideBox(pixelInScreenSpace, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
+    visibleLightCount = floatBitsToUint(isLit);
+
+	// vec2 diff = abs(pixelInScreenSpace.xy - lightPosInScreen.xy);
+	// outputBuffer.data[IndexWorkGroup].tilePosSS = vec4(diff, 0.0, 0.0);
+	// if (length(diff) < 20.0)
+	// {
+	//     visibleLightCount = floatBitsToUint(1.0);
+	// }
+	}
+
+	if (gl_LocalInvocationIndex == 0)
+	{
+		outputBuffer.data[IndexWorkGroup].indexLocal = 0;
+		outputBuffer.data[IndexWorkGroup].indexWorkGroup = IndexWorkGroup;
+		outputBuffer.data[IndexWorkGroup].indexGlobal = 0; // IndexGlobal;
+		outputBuffer.data[IndexWorkGroup].input = minDepthInt;
+		outputBuffer.data[IndexWorkGroup].result = visibleLightCount;
+	}
 }
