@@ -46,8 +46,8 @@ shared uint maxDepthInt;
 shared uint visibleLightCount;
 
 shared vec4 LightsPosInScreen[NUM_LIGHTS];
-shared vec4 LightsBoundsTopRight[NUM_LIGHTS];
-shared vec4 LightsBoundsBottomLeft[NUM_LIGHTS];
+shared vec3 LightsBoundsMax[NUM_LIGHTS];
+shared vec3 LightsBoundsMin[NUM_LIGHTS];
 
 vec2 ScreenSize = vec2(800.0, 600.0);
 
@@ -107,6 +107,7 @@ void main()
 			vec3(-1.0, -1.0, -1.0)
         };
 		
+		// TODO: parallelize, each thread per light
 		for (int i = 0; i < NUM_LIGHTS; ++i)
 		{
 			Light light = lightBuffer.data[i];
@@ -116,24 +117,24 @@ void main()
 
             vec4 lightInView = ViewFromWorld * lightInWorld;
 			
-            vec4 lightMinBounds = vec4(0.0);
-            vec4 lightMaxBounds = vec4(0.0);
+            vec3 lightMinBounds = vec3(0.0);
+            vec3 lightMaxBounds = vec3(0.0);
 
             vec4 topRightInView = vec4(lightInView.xyz + tmpRadius * corners[0], 1.0);
 			vec4 topRightInClip = ClipFromView * topRightInView;
-            lightMinBounds = lightMaxBounds = ScreenFromClip(topRightInClip);
+            lightMinBounds = lightMaxBounds = ScreenFromClip(topRightInClip).xyz;
 
 			for (int j = 1; j < 8; ++j)
 			{
                 vec4 lightCornerInView = vec4(lightInView.xyz + tmpRadius * corners[j], 1.0);
                 vec4 lightCornerInClip = ClipFromView * lightCornerInView;
                 vec4 lightCornerInScreen = ScreenFromClip(lightCornerInClip);
-                lightMinBounds = min(lightMinBounds, lightCornerInScreen);
-                lightMaxBounds = max(lightMaxBounds, lightCornerInScreen);
+                lightMinBounds = min(lightMinBounds, lightCornerInScreen.xyz);
+                lightMaxBounds = max(lightMaxBounds, lightCornerInScreen.xyz);
             }
 
-            LightsBoundsBottomLeft[i] = lightMinBounds;
-            LightsBoundsTopRight[i] = lightMaxBounds;
+            LightsBoundsMin[i] = lightMinBounds;
+            LightsBoundsMax[i] = lightMaxBounds;
         }
     }
 
@@ -157,11 +158,11 @@ void main()
 	
 	// float insideBox(vec2 v, vec2 bottomLeft, vec2 topRight)
 	// shared vec4 LightsPosInScreen[NUM_LIGHTS];
-	// shared vec4 LightsBoundsTopRight[NUM_LIGHTS];
-	// shared vec4 LightsBoundsBottomLeft[NUM_LIGHTS];
+	// shared vec4 LightsBoundsMax[NUM_LIGHTS];
+	// shared vec4 LightsBoundsMin[NUM_LIGHTS];
 	vec2 lightPosInScreen = LightsPosInScreen[0].xy;
-	vec3 topRightInScreen = LightsBoundsTopRight[0].xyz;
-	vec3 bottomLeftInScreen = LightsBoundsBottomLeft[0].xyz;
+	vec3 topRightInScreen = LightsBoundsMax[0];
+	vec3 bottomLeftInScreen = LightsBoundsMin[0];
 	 
 	// Step 2: One thread should calculate the frustum planes to be used for this tile
 	if (gl_LocalInvocationIndex == 0)
