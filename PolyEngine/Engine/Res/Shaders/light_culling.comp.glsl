@@ -92,14 +92,22 @@ void main()
 		maxDepthInt = 0;
 		visibleLightCount = 0;
 
-	// shared vec4 LightsPosInWorld[NUM_LIGHTS];
-	// shared vec4 LightsBoundsTopLeft[NUM_LIGHTS];
-	// shared vec4 LightsBoundsBottomRight[NUM_LIGHTS];
-        float tmpRadius = 10.0;
+		// TODO: actually distance from center to corner is radius*sqrt(0.33)
+        float tmpRadius = 10.0; 
+		// TODO: do sth with AABB in ex. ClipSpace rather than iterate by each corner
+        const vec3 corners[8] = {
+            vec3( 1.0,  1.0,  1.0),
+			vec3( 1.0, -1.0,  1.0),
+			vec3(-1.0,  1.0,  1.0),
+			vec3(-1.0, -1.0,  1.0),
+			vec3( 1.0,  1.0, -1.0),
+			vec3( 1.0, -1.0, -1.0),
+			vec3(-1.0,  1.0, -1.0),
+			vec3(-1.0, -1.0, -1.0)
+        };
+		
 		for (int i = 0; i < NUM_LIGHTS; ++i)
 		{
-			// TODO: works on the right side of the screen,
-			//		because it misses corners that are squeezed on left side
 			Light light = lightBuffer.data[i];
 			vec4 lightInWorld = vec4(light.Position.xyz, 1.0);
 			vec4 lightInClip = ClipFromWorld * lightInWorld;
@@ -107,15 +115,26 @@ void main()
 
             vec4 lightInView = ViewFromWorld * lightInWorld;
 			
-            vec4 topRightInView = vec4(lightInView.xyz + vec3(tmpRadius), 1.0);
-			vec4 topRightInClip = ClipFromView * topRightInView;
-			LightsBoundsTopRight[i] = ScreenFromClip(topRightInClip);
+            vec4 lightMinBounds = vec4(0.0);
+            vec4 lightMaxBounds = vec4(0.0);
 
-            vec4 bottomLeftInView = vec4(lightInView.xyz - vec3(tmpRadius), 1.0);
-            vec4 bottomLeftInClip = ClipFromView * bottomLeftInView;
-			LightsBoundsBottomLeft[i] = ScreenFromClip(bottomLeftInClip);
-		}
-	}
+            vec4 topRightInView = vec4(lightInView.xyz + tmpRadius * corners[0], 1.0);
+			vec4 topRightInClip = ClipFromView * topRightInView;
+            lightMinBounds = lightMaxBounds = ScreenFromClip(topRightInClip);
+
+			for (int j = 1; j < 8; ++j)
+			{
+                vec4 lightCornerInView = vec4(lightInView.xyz + tmpRadius * corners[j], 1.0);
+                vec4 lightCornerInClip = ClipFromView * lightCornerInView;
+                vec4 lightCornerInScreen = ScreenFromClip(lightCornerInClip);
+                lightMinBounds = min(lightMinBounds, lightCornerInScreen);
+                lightMaxBounds = max(lightMaxBounds, lightCornerInScreen);
+            }
+
+            LightsBoundsBottomLeft[i] = lightMinBounds;
+            LightsBoundsTopRight[i] = lightMaxBounds;
+        }
+    }
 
 	barrier();
 
