@@ -7,22 +7,18 @@ using namespace Poly;
 
 static const char* JSON_TYPE_ANNOTATION = "@type";
 
-void Poly::RTTI::SerializeObject(const RTTIBase* obj, const String& propertyName, rapidjson::Document& doc)
+void Poly::RTTI::SerializeObject(const RTTIBase* obj, rapidjson::Document& doc)
 {
 	auto& value = doc.SetObject();
-	RTTI::SerializeObject(obj, propertyName, value, doc.GetAllocator());
+	RTTI::SerializeObject(obj, value.GetObject(), doc.GetAllocator());
 }
 
-void RTTI::SerializeObject(const RTTIBase* obj, const String& propertyName, rapidjson::Value& currentValue, rapidjson::Document::AllocatorType& alloc)
+void RTTI::SerializeObject(const RTTIBase* obj, rapidjson::GenericObject<false, rapidjson::Value>& currentValue, rapidjson::Document::AllocatorType& alloc)
 {
 	const TypeInfo typeInfo = obj->GetTypeInfo();
 	const PropertyManagerBase* propMgr = obj->GetPropertyManager();
 
-	HEAVY_ASSERTE(currentValue.IsObject(), "JSON value is not an object!");
-	currentValue.AddMember(rapidjson::StringRef(propertyName.GetCStr()), rapidjson::Value(rapidjson::kObjectType), alloc);
-	rapidjson::Value& object = currentValue[propertyName.GetCStr()];
-
-	object.AddMember(rapidjson::StringRef(JSON_TYPE_ANNOTATION), rapidjson::StringRef(typeInfo.GetTypeName()), alloc);
+	currentValue.AddMember(rapidjson::StringRef(JSON_TYPE_ANNOTATION), rapidjson::StringRef(typeInfo.GetTypeName()), alloc);
 
 	for (auto& child : propMgr->GetPropertyList())
 	{
@@ -31,10 +27,7 @@ void RTTI::SerializeObject(const RTTIBase* obj, const String& propertyName, rapi
 			continue;
 
 		const void* ptr = ((const char*)obj) + child.Offset;
-		if (child.CoreType == eCorePropertyType::NONE)
-			SerializeObject(reinterpret_cast<const RTTIBase*>(ptr), child.Name, object, alloc);
-		else
-			object.AddMember(rapidjson::StringRef(child.Name.GetCStr()), GetCorePropertyValue(ptr, child, alloc), alloc);
+		currentValue.AddMember(rapidjson::StringRef(child.Name.GetCStr()), GetCorePropertyValue(ptr, child, alloc), alloc);
 	}
 }
 
@@ -107,9 +100,9 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 			currentValue.GetArray().PushBack(GetCorePropertyValue(implData->GetValue(value, i), implData->PropertyType, alloc), alloc);
 	}
 		break;
-	case eCorePropertyType::NONE:
+	case eCorePropertyType::CUSTOM:
 		currentValue.SetObject();
-		SerializeObject(reinterpret_cast<const RTTIBase*>(value), prop.Name, currentValue, alloc);
+		SerializeObject(reinterpret_cast<const RTTIBase*>(value), currentValue.GetObject(), alloc);
 		break;
 	default:
 		ASSERTE(false, "Unknown property type!");
@@ -118,19 +111,14 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	return currentValue;
 }
 
-CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const String& propertyName, const rapidjson::Document& doc)
+CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const rapidjson::Document& doc)
 {
-	const auto& it = doc.GetObject().FindMember(propertyName.GetCStr());
-	if(it != doc.GetObject().MemberEnd())
-		RTTI::DeserializeObject(obj, propertyName, it->value);
+	RTTI::DeserializeObject(obj, doc.GetObject());
 }
 
-CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const String& propertyName, const rapidjson::Value& currentValue)
+CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const rapidjson::GenericObject<true, rapidjson::Value>& currentValue)
 {
-	UNUSED(propertyName);
 	const PropertyManagerBase* propMgr = obj->GetPropertyManager();
-
-	HEAVY_ASSERTE(currentValue.IsObject(), "JSON value is not an object!");
 
 	for (auto& child : propMgr->GetPropertyList())
 	{
@@ -142,10 +130,7 @@ CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const String& p
 		const auto& it = currentValue.FindMember(child.Name.GetCStr());
 		if (it != currentValue.MemberEnd())
 		{
-			if (child.CoreType == eCorePropertyType::NONE)
-				DeserializeObject(reinterpret_cast<RTTIBase*>(ptr), child.Name, it->value);
-			else
-				SetCorePropertyValue(ptr, child, it->value);
+			SetCorePropertyValue(ptr, child, it->value);
 		}
 	}
 }
@@ -236,8 +221,8 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 	}
 	break;
 
-	case eCorePropertyType::NONE:
-		DeserializeObject(reinterpret_cast<RTTIBase*>(obj), prop.Name, value);
+	case eCorePropertyType::CUSTOM:
+		DeserializeObject(reinterpret_cast<RTTIBase*>(obj), value.GetObject());
 		break;
 	default:
 		ASSERTE(false, "Unknown property type!");

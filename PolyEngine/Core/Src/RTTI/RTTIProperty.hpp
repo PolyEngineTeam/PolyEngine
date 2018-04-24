@@ -20,7 +20,7 @@ namespace Poly {
 		enum class eCorePropertyType
 		{
 			UNHANDLED,
-			NONE,
+			CUSTOM,
 			BOOL,
 			INT8,
 			INT16,
@@ -38,7 +38,7 @@ namespace Poly {
 			_COUNT
 		};
 
-		template <typename T> inline eCorePropertyType GetCorePropertyType() { return RTTI::Impl::HasGetTypeInfoFunc<T>::value ? eCorePropertyType::NONE : eCorePropertyType::UNHANDLED; };
+		template <typename T> inline eCorePropertyType GetCorePropertyType() { return RTTI::Impl::HasGetTypeInfoFunc<T>::value ? eCorePropertyType::CUSTOM : eCorePropertyType::UNHANDLED; };
 		// specializations
 		template <> inline eCorePropertyType GetCorePropertyType<bool>() { return eCorePropertyType::BOOL; };
 		template <> inline eCorePropertyType GetCorePropertyType<i8>() { return eCorePropertyType::INT8; };
@@ -69,7 +69,7 @@ namespace Poly {
 			size_t Offset;
 			String Name;
 			EnumFlags<ePropertyFlag> Flags;
-			eCorePropertyType CoreType = eCorePropertyType::NONE;
+			eCorePropertyType CoreType = eCorePropertyType::CUSTOM;
 			std::shared_ptr<PropertyImplData> ImplData; // @fixme ugly hack for not working Two-phase lookup in MSVC, should use unique_ptr
 		};
 
