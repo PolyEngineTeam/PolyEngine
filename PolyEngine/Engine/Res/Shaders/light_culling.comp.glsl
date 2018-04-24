@@ -71,15 +71,7 @@ float insideBox(vec2 v, vec2 bottomLeft, vec2 topRight)
     return s.x * s.y;
 }
 
-float intersectionAABBAABB(vec2 aMin, vec2 aMax, vec2 bMin, vec2 bMax)
-{
-	// TODO: branchless like insideBox
-    if (aMax.x < bMin.x || aMin.x > bMax.x) return 0.0;
-    if (aMax.y < bMin.y || aMin.y > bMax.y) return 0.0;
-    return 1.0;
-}
-
-float intersectionAABBAABB2(vec3 aMin, vec3 aMax, vec3 bMin, vec3 bMax)
+float intersectionAABBAABB(vec3 aMin, vec3 aMax, vec3 bMin, vec3 bMax)
 {
 	// TODO: branchless like insideBox
     if (aMax.x < bMin.x || aMin.x > bMax.x) return 0.0;
@@ -189,7 +181,7 @@ void main()
 		// float isLitMax = insideBox(topRightInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
 		// float isLitMin = insideBox(bottomLeftInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
     
-		float isTileLit = intersectionAABBAABB2(
+		float isTileLit = intersectionAABBAABB(
 			bottomLeftInScreen, topRightInScreen,
 			vec3(tileInScreen, minDepth), vec3(tileInScreen + vec2(TILE_SIZE), maxDepth)
 		);
