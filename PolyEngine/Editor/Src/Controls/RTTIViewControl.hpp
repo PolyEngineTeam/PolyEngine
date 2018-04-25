@@ -9,7 +9,7 @@ using namespace Poly;
 class RTTIViewControl : public QWidget
 {
 public:
-	RTTIViewControl();
+	RTTIViewControl(QWidget* parent);
 
 	void SetObject(RTTIBase* obj, bool debug = false);
 

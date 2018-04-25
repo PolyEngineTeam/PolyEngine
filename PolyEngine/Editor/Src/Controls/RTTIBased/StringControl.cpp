@@ -18,11 +18,6 @@ void StringControl::UpdateControl()
 
 void StringControl::InitializeControl()
 {
-	QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	sizePolicy.setVerticalStretch(2);
-	sizePolicy.setHorizontalStretch(2);
-
 	Field = std::make_unique<QLineEdit>(this);
-	Field->setSizePolicy(sizePolicy);
 	Field->setText(Object->GetCStr());
 }

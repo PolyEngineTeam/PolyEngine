@@ -123,11 +123,11 @@ void EditorUi::InitMainWindow()
 	MainViewport = std::make_unique<ViewportWidget>("Viewport", MainWindow);
 	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, MainViewport.get(), true);
 
-	MainLogger = std::make_unique<LoggerWidget>("Console", MainWindow);
-	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, MainLogger.get(), true);
-
-	CmdLogger = std::make_unique<LoggerWidget>("Cmd", MainWindow);
-	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, CmdLogger.get(), true);
+	//MainLogger = std::make_unique<LoggerWidget>("Console", MainWindow);
+	//MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, MainLogger.get(), true);
+	//
+	//CmdLogger = std::make_unique<LoggerWidget>("Cmd", MainWindow);
+	//MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, CmdLogger.get(), true);
 
 	WorldExplorer = std::make_unique<WorldExplorerWidget>("World Explorer", MainWindow);
 	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, WorldExplorer.get(), true);

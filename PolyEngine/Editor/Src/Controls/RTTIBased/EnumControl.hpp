@@ -12,6 +12,8 @@ public:
 	void UpdateObject() override;
 	void UpdateControl() override;
 
+	QWidget* GetField() override { return nullptr; }
+
 private:
 	std::unique_ptr<QComboBox> ComboBox;
 	void* Object;

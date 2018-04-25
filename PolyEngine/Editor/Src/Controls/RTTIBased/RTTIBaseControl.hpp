@@ -13,6 +13,8 @@ public:
 
 	virtual void UpdateObject() = 0;
 	virtual void UpdateControl() = 0;
+
+	virtual QWidget* GetField() = 0;
 };
 
 #define ASSIGN_CONTROL(CONTROL, PROPERTY_TYPE) \

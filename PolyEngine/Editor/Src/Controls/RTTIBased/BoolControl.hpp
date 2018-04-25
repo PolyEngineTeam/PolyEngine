@@ -13,6 +13,8 @@ public:
 	void UpdateObject() override;
 	void UpdateControl() override;
 
+	QWidget* GetField() override { return Button.get(); }
+
 private:
 	void InitializeControl();
 

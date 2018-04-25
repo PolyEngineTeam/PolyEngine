@@ -4,6 +4,7 @@
 #include <QFormLayout>
 
 #include "PolyWidget.hpp"
+#include "Controls/RTTIViewControl.hpp"
 
 using namespace Poly;
 
@@ -14,17 +15,9 @@ public:
 
 	void SetObject(RTTIBase* obj, bool debug = false);
 
-	//void UpdateViewer();
-	//void UpdateObject();
+	void UpdateViewer();
+	void UpdateObject();
 
 private:
-	void AddChild(QFormLayout* parent, const RTTIBase* obj, bool debug);
-	void AddItem(QFormLayout* parent, const void* value, const RTTI::Property& prop);
-
-	RTTIBase* Object;
-	std::unique_ptr<QFormLayout> Layout;
-	Dynarray<QObject*> Fields;
-
-private slots:
-	void OnResize(QResizeEvent *event);
+	std::unique_ptr<RTTIViewControl> Control;
 };

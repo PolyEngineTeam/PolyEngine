@@ -12,6 +12,8 @@ public:
 	void UpdateObject() override;
 	void UpdateControl() override;
 
+	QWidget* GetField() override { return Field.get(); }
+
 private:
 	void InitializeControl();
 
