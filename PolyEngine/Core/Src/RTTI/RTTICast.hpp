@@ -7,6 +7,9 @@
 
 
 namespace Poly {
+
+	class RTTIBase;
+
 	namespace RTTI {
 		namespace Impl {
 			/// <summary>Empty structure to end recurency</summary>
@@ -63,12 +66,24 @@ namespace Poly {
 	} // namespace RTTI
 }
 
+template<typename T, typename U>
+bool IsOfType(U object) {
+	STATIC_ASSERTE(!std::is_pointer<T>::value, "checked type mustn't be a pointer");
+	STATIC_ASSERTE(std::is_pointer<U>::value, "input type must be a pointer");
+	using RawCheckedType = typename ::Poly::Trait::RawType<U>::type;
+	STATIC_ASSERTE((std::is_base_of<::Poly::RTTIBase, RawCheckedType>::value), "Checked type should derive from RTTIBase!");
+	// @fixme(muniu) why this assertion doesn't work?
+	//STATIC_ASSERTE((std::is_same<::Poly::RTTIBase, RawCheckedType>::value || ::Poly::RTTI::Impl::HasGetTypeInfoFunc<U>::value), "no TypeInfo defined");
+
+	return object && object->GetTypeInfo().template isTypeDerivedFrom<T>();
+}
+
+
 /// <summary>Implementation of rtti_cast</summary>
 template<typename T1, typename T2>
 T1 rtti_cast(T2 object) {
 	STATIC_ASSERTE(std::is_pointer<T1>::value, "return type must be a pointer"); // return type must be a pointer
 	STATIC_ASSERTE(std::is_pointer<T2>::value, "input type must be a pointer"); // input type must be a pointer
-	STATIC_ASSERTE(Poly::RTTI::Impl::HasGetTypeInfoFunc<T2>::value, "no TypeInfo defined");
 
 	using ReturnType = typename std::remove_pointer<T1>::type;
 	using InputType = typename std::remove_pointer<T2>::type;
@@ -76,19 +91,10 @@ T1 rtti_cast(T2 object) {
 		(!std::is_const<ReturnType>::value && std::is_const<InputType>::value) ||
 		(!std::is_const<ReturnType>::value && !std::is_const<InputType>::value), "Return type must have const qualifier!");
 
-	if (object && object->GetTypeInfo().template isTypeDerivedFrom<ReturnType>())
+	if (IsOfType<ReturnType>(object))
 		return static_cast<T1>(object);
 	else
 		return nullptr;
-}
-
-template<typename T, typename U>
-bool IsOfType(U object) {
-	STATIC_ASSERTE(!std::is_pointer<T>::value, "checked type mustn't be a pointer");
-	STATIC_ASSERTE(std::is_pointer<U>::value, "input type must be a pointer");
-	STATIC_ASSERTE(Poly::RTTI::Impl::HasGetTypeInfoFunc<U>::value, "no TypeInfo defined");
-
-	return object && object->GetTypeInfo().template isTypeDerivedFrom<T>();
 }
 
 //--------------------------------------------------------------------------------------

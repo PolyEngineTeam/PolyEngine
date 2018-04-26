@@ -25,12 +25,11 @@ RTTI_DEFINE_TYPE(Poly::RTTIBase)
 
 using namespace Poly;
 
-static String ROOT_NAME = "root";
 
 void RTTIBase::SerializeToFile(const String& fileName, eSerializationType type)
 {
 	rapidjson::Document DOMObject; // UTF8 by default
-	RTTI::SerializeObject(this, ROOT_NAME, DOMObject);
+	RTTI::SerializeObject(this, DOMObject);
 
 	// Save to pretty string
 	rapidjson::StringBuffer buffer;
@@ -56,5 +55,5 @@ void RTTIBase::DeserializeFromFile(const String& fileName, eSerializationType ty
 
 	rapidjson::Document DOMObject;
 	DOMObject.Parse(json.GetCStr());
-	RTTI::DeserializeObject(this, ROOT_NAME, DOMObject);
+	RTTI::DeserializeObject(this, DOMObject);
 }

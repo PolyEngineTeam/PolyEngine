@@ -1,6 +1,4 @@
 {
-    "root": {
-        "@type": "DebugConfig",
-        "DisplayFPS": true
-    }
+    "@type": "DebugConfig",
+    "DisplayFPS": true
 }
