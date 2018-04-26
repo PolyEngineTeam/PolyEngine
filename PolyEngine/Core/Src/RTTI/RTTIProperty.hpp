@@ -134,7 +134,7 @@ namespace Poly {
 		{ 
 			return constexpr_match(
 				std::is_enum<T>{},			[&](auto lazy) { return CreateEnumPropertyInfo<LAZY_TYPE(T)>(offset, name, flags); },
-				Trait::IsDynarray<T>{},		[&](auto lazy) { return CreateDynarrayPropertyInfo<Trait::DynarrayValueType<LAZY_TYPE(T)>::type>(offset, name, flags); },
+				Trait::IsDynarray<T>{},		[&](auto lazy) { return CreateDynarrayPropertyInfo<typename Trait::DynarrayValueType<LAZY_TYPE(T)>::type>(offset, name, flags); },
 				std::is_same<String, T>{},	[&](auto) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<String>() }; },
 				/*default*/					[&](auto lazy) { return Property{ TypeInfo::Get<LAZY_TYPE(T)>(), offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>() }; }
 			);
