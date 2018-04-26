@@ -53,6 +53,7 @@ namespace Poly {
 		template <> inline eCorePropertyType GetCorePropertyType<double>() { return eCorePropertyType::DOUBLE; };
 		template <> inline eCorePropertyType GetCorePropertyType<String>() { return eCorePropertyType::STRING; };
 
+		//-----------------------------------------------------------------------------------------------------------------------
 		enum class ePropertyFlag {
 			NONE = 0,
 			DONT_SERIALIZE = BIT(1)
@@ -73,6 +74,12 @@ namespace Poly {
 			std::shared_ptr<PropertyImplData> ImplData; // @fixme ugly hack for not working Two-phase lookup in MSVC, should use unique_ptr
 		};
 
+		//-----------------------------------------------------------------------------------------------------------------------
+		// Declare method first
+		template <typename ValueType> Property CreateDynarrayPropertyInfo(size_t offset, const char* name, ePropertyFlag flags);
+
+		//-----------------------------------------------------------------------------------------------------------------------
+		// Enum serialization property impl
 		struct EnumPropertyImplData final : public PropertyImplData
 		{
 			const ::Poly::Impl::EnumInfoBase* EnumInfo = nullptr;
@@ -92,6 +99,7 @@ namespace Poly {
 			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::ENUM, std::move(implData)};
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------
 		struct CollectionPropertyImplDataBase : public PropertyImplData
 		{
 			Property PropertyType;
@@ -102,6 +110,8 @@ namespace Poly {
 			virtual const void* GetValue(const void* collection, size_t idx) const = 0;
 		};
 
+		//-----------------------------------------------------------------------------------------------------------------------
+		// Dynarray serialization property impl
 		template <typename ValueType>
 		struct DynarrayPropertyImplData final : public CollectionPropertyImplDataBase
 		{
@@ -116,11 +126,10 @@ namespace Poly {
 		template <typename ValueType> Property CreateDynarrayPropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
 		{
 			std::shared_ptr<CollectionPropertyImplDataBase> implData = std::shared_ptr<CollectionPropertyImplDataBase>{ new DynarrayPropertyImplData<ValueType>(flags) };
-
-			// Register EnumInfo object pointer to property
 			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::DYNARRAY, std::move(implData) };
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------
 		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
 		{ 
 			return constexpr_match(
@@ -131,6 +140,7 @@ namespace Poly {
 			);
 		}
 
+		//-----------------------------------------------------------------------------------------------------------------------
 		class CORE_DLLEXPORT PropertyManagerBase : public BaseObject<> {
 		public:
 			void AddProperty(Property&& property) { Properties.PushBack(std::move(property)); }
