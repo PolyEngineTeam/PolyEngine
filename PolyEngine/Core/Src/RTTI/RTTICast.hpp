@@ -7,6 +7,9 @@
 
 
 namespace Poly {
+
+	class RTTIBase;
+
 	namespace RTTI {
 		namespace Impl {
 			/// <summary>Empty structure to end recurency</summary>
