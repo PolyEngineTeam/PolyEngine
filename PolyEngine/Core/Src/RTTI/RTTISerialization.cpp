@@ -9,11 +9,11 @@ static const char* JSON_TYPE_ANNOTATION = "@type";
 
 void Poly::RTTI::SerializeObject(const RTTIBase* obj, rapidjson::Document& doc)
 {
-	auto& value = doc.SetObject();
-	RTTI::SerializeObject(obj, value.GetObject(), doc.GetAllocator());
+	doc.SetObject();
+	RTTI::SerializeObject(obj, doc.GetObject(), doc.GetAllocator());
 }
 
-void RTTI::SerializeObject(const RTTIBase* obj, rapidjson::GenericObject<false, rapidjson::Value>& currentValue, rapidjson::Document::AllocatorType& alloc)
+void RTTI::SerializeObject(const RTTIBase* obj, rapidjson::GenericObject<false, rapidjson::Value> currentValue, rapidjson::Document::AllocatorType& alloc)
 {
 	const TypeInfo typeInfo = obj->GetTypeInfo();
 	const PropertyManagerBase* propMgr = obj->GetPropertyManager();
@@ -116,7 +116,7 @@ CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const rapidjson
 	RTTI::DeserializeObject(obj, doc.GetObject());
 }
 
-CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const rapidjson::GenericObject<true, rapidjson::Value>& currentValue)
+CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const rapidjson::GenericObject<true, rapidjson::Value> currentValue)
 {
 	const PropertyManagerBase* propMgr = obj->GetPropertyManager();
 
