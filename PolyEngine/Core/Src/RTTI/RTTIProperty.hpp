@@ -76,7 +76,7 @@ namespace Poly {
 
 		//-----------------------------------------------------------------------------------------------------------------------
 		// Declare method first
-		template <typename ValueType> Property CreateDynarrayPropertyInfo(size_t offset, const char* name, ePropertyFlag flags);
+		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags);
 
 		//-----------------------------------------------------------------------------------------------------------------------
 		// Enum serialization property impl
