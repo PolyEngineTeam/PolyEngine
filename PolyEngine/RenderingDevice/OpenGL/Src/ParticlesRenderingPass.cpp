@@ -27,7 +27,7 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 {
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	const Matrix& ViewFromWorld = camera->GetViewFromWorld();
-	const Matrix& ScreenFromView = camera->GetScreenFromView();
+	const Matrix& ScreenFromView = camera->GetClipFromView();
 
 	glDisable(GL_CULL_FACE);
 

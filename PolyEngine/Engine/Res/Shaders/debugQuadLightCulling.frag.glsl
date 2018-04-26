@@ -59,11 +59,14 @@ void main()
     ivec2 WorkGroupID = (location / WorkGroupSize);
     uint IndexWorkGroup = WorkGroupID.y * NumWorkGroups.x + WorkGroupID.x;
     
-    float minDepth = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].input);
+    float tileDepth = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].input);
 	float visibleLights = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].result);
+    visibleLights = clamp(visibleLights, 0.0, 1.0);
 
 	vec3 tex = texture(uTexture, vUV).rgb;
     float depth = LinearizeDepth(tex.r)/far;
+    // float depth = tex.r;
+    depth = fract(10.0*depth);
 
     vec2 compTilePosSS = outputBuffer.data[IndexWorkGroup].tilePosSS.xy;
 
@@ -81,5 +84,5 @@ void main()
     // fragColor = vec4(compTilePosSS/ScreenSize, depth, 1.0);
     // fragColor = vec4(compTilePosSS / ScreenSize, visibleLights, 1.0);
     // fragColor = vec4(depth, 0.0, visibleLights, 1.0);
-	fragColor = vec4(depth, minDepth, visibleLights, 1.0);
+	fragColor = vec4(depth, tileDepth, visibleLights, 1.0);
 }

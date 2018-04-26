@@ -23,9 +23,9 @@ namespace Poly {
 		CameraComponent(Angle fov, float zNear, float zFar);
 		CameraComponent(float top, float bottom, float left, float right, float zNear, float zFar);
 
-		const Matrix& GetScreenFromView() const { return ScreenFromView; }
+		const Matrix& GetClipFromView() const { return ScreenFromView; }
 		const Matrix& GetViewFromWorld() const { return ViewFromWorld; }
-		const Matrix& GetScreenFromWorld() const { return ScreenFromWorld; }
+		const Matrix& GetClipFromWorld() const { return ScreenFromWorld; }
 
 		const float GetClippingPlaneNear() const { return Near; }
 		const float GetClippingPlaneFar() const { return Far; }

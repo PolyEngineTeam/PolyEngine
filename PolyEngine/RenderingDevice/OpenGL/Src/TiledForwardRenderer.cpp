@@ -24,9 +24,9 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 	lightDebugShader("Shaders/light_debug.vert.glsl", "Shaders/light_debug.frag.glsl"),
 	debugQuadDepthPrepassShader("Shaders/debugQuadDepthPrepass.vert.glsl", "Shaders/debugQuadDepthPrepass.frag.glsl"),
 	debugQuadLightCullingShader("Shaders/debugQuadLightCulling.vert.glsl", "Shaders/debugQuadLightCulling.frag.glsl"),
-	computeDebugShader("Shaders/test.comp.glsl")
+	computeDebugShader("Shaders/test.comp.glsl"),
+	debugLightAccumShader("Shaders/debugLightAccum.vert.glsl", "Shaders/debugLightAccum.frag.glsl")
 {
-
 }
 
 void TiledForwardRenderer::Init()
@@ -148,7 +148,9 @@ void TiledForwardRenderer::Render(World* world, const AARect& rect, const Camera
 
 	// DrawDepthPrepass(cameraCmp);
 
-	DrawLightCulling(cameraCmp);
+	// DrawLightCulling(cameraCmp);
+
+	DrawLightAccum(world, cameraCmp);
 
 	// DebugLightCulling(world, cameraCmp);
 
@@ -180,7 +182,7 @@ void TiledForwardRenderer::DepthPrePass(World* world, const CameraComponent* cam
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	const Matrix& ScreenFromWorld = cameraCmp->GetScreenFromWorld();
+	const Matrix& ScreenFromWorld = cameraCmp->GetClipFromWorld();
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
@@ -230,8 +232,8 @@ void TiledForwardRenderer::LightCulling(World* world, const CameraComponent* cam
 	lightCullingShader.SetUniform("near", cameraCmp->GetClippingPlaneNear());
 	lightCullingShader.SetUniform("far", cameraCmp->GetClippingPlaneFar());
 	lightCullingShader.SetUniform("ViewFromWorld", cameraCmp->GetViewFromWorld());
-	lightCullingShader.SetUniform("ClipFromWorld", cameraCmp->GetScreenFromWorld());
-	lightCullingShader.SetUniform("ClipFromView", cameraCmp->GetScreenFromView());
+	lightCullingShader.SetUniform("ClipFromWorld", cameraCmp->GetClipFromWorld());
+	lightCullingShader.SetUniform("ClipFromView", cameraCmp->GetClipFromView());
 	lightCullingShader.SetUniform("lightCount", (int)NUM_LIGHTS);
 	lightCullingShader.SetUniform("screenSizeX", (int)SCREEN_SIZE_X);
 	lightCullingShader.SetUniform("screenSizeY", (int)SCREEN_SIZE_Y);
@@ -283,7 +285,7 @@ void TiledForwardRenderer::DrawLightCulling(const CameraComponent* cameraCmp)
 	debugQuadLightCullingShader.SetUniform("workGroupsY", (int)workGroupsY);
 	debugQuadLightCullingShader.SetUniform("near", cameraCmp->GetClippingPlaneNear());
 	debugQuadLightCullingShader.SetUniform("far", cameraCmp->GetClippingPlaneFar());
-	debugQuadLightCullingShader.SetUniform("ClipFromWorld", cameraCmp->GetScreenFromWorld());
+	debugQuadLightCullingShader.SetUniform("ClipFromWorld", cameraCmp->GetClipFromWorld());
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
@@ -305,13 +307,13 @@ void Poly::TiledForwardRenderer::DebugLightCulling(World* world, const CameraCom
 	// lightDebugShader.SetUniform("view", cameraCmp->GetModelViewMatrix());
 	// lightDebugShader.SetUniform("viewPosition", cameraCmp->GetOwner()->GetTransform().GetGlobalTranslation());
 
-	const Matrix& ScreenFromWorld = cameraCmp->GetScreenFromWorld();
+	const Matrix& ClipFromWorld = cameraCmp->GetClipFromWorld();
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		const EntityTransform& transform = meshCmp->GetTransform();
 		const Matrix& WorldFromModel = transform.GetWorldFromModel();
-		lightDebugShader.SetUniform("uScreenFromModel", ScreenFromWorld * WorldFromModel);
+		lightDebugShader.SetUniform("uScreenFromModel", ClipFromWorld * WorldFromModel);
 
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
@@ -343,7 +345,7 @@ void TiledForwardRenderer::DebugDepth(World* world, const CameraComponent* camer
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	const Matrix& ScreenFromWorld = cameraCmp->GetScreenFromWorld();
+	const Matrix& ScreenFromWorld = cameraCmp->GetClipFromWorld();
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
@@ -364,6 +366,47 @@ void TiledForwardRenderer::DebugDepth(World* world, const CameraComponent* camer
 			glBindVertexArray(0);
 		}
 	}
+}
+
+void Poly::TiledForwardRenderer::DrawLightAccum(World* world, const CameraComponent* cameraCmp)
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	debugLightAccumShader.BindProgram();
+	debugLightAccumShader.SetUniform("workGroupsX", (int)workGroupsX);
+	debugLightAccumShader.SetUniform("workGroupsY", (int)workGroupsY);
+	 
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, outputBuffer);
+	 
+	// Bind the depth map's frame buffer and draw the depth map to it
+	// glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	// glClear(GL_DEPTH_BUFFER_BIT);
+	
+	const Matrix& ClipFromWorld = cameraCmp->GetClipFromWorld();
+	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
+	{
+		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
+		const EntityTransform& transform = meshCmp->GetTransform();
+		const Matrix& WorldFromModel = transform.GetWorldFromModel();
+		debugLightAccumShader.SetUniform("uClipFromModel", ClipFromWorld * WorldFromModel);
+	
+		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
+		{
+			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
+			glBindVertexArray(meshProxy->GetVAO());
+	
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, FallbackWhiteTexture);
+	
+			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glBindVertexArray(0);
+		}
+	}
+	 
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
 }
 
 void TiledForwardRenderer::SetupLightsBuffer()

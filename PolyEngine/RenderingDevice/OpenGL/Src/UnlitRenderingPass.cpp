@@ -22,7 +22,7 @@ UnlitRenderingPass::UnlitRenderingPass()
 void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
 	GetProgram().BindProgram();
-	const Matrix& ScreenFromWorld = camera->GetScreenFromWorld();
+	const Matrix& ScreenFromWorld = camera->GetClipFromWorld();
 	
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())

@@ -69,7 +69,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 {
 
 	GetProgram().BindProgram();
-	const Matrix& mvp = camera->GetScreenFromWorld();
+	const Matrix& mvp = camera->GetClipFromWorld();
 	
 	const EntityTransform& cameraTrans = camera->GetTransform();
 	Vector CameraPos = cameraTrans.GetGlobalTranslation();

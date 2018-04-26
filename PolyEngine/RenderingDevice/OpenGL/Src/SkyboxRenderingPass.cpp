@@ -26,7 +26,7 @@ void SkyboxRenderingPass::OnRun(World* world, const CameraComponent* camera, con
 
 void SkyboxRenderingPass::RenderSkybox(const CameraComponent* camera, const SkyboxWorldComponent* SkyboxWorldCmp)
 {
-	const Matrix projection = camera->GetScreenFromView();
+	const Matrix projection = camera->GetClipFromView();
 	Matrix modelView = Matrix(camera->GetViewFromWorld());
 	// center cube in view space by setting translation to 0 for x, y and z. SetTranslation resets Matrix to identity
 	modelView.Data[3] = 0.0f;

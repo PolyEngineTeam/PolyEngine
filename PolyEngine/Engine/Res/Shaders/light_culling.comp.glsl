@@ -25,7 +25,7 @@ layout(std430, binding = 1) writeonly buffer OutputBuffer {
 } outputBuffer;
 
 
-#define NUM_LIGHTS 10
+#define NUM_LIGHTS 110
 
 // Uniforms
 uniform sampler2D depthMap;
@@ -55,6 +55,11 @@ float LinearizeDepth(float depth)
 {
     float z = depth * 2.0 - 1.0;
     return (2.0 * near * far) / (far + near - z * (far - near));
+}
+
+float LinearizeDepth2(float depth)
+{
+    return (0.5 * ClipFromView[3][2]) / (depth + 0.5 * ClipFromView[2][2] - 0.5);
 }
 
 vec4 ScreenFromClip(vec4 posInClip)
@@ -93,8 +98,6 @@ void main()
 		maxDepthInt = 0;
 		visibleLightCount = 0;
 
-		// TODO: actually distance from center to corner is radius*sqrt(3)
-        float tmpRadius = 10.0; 
 		// TODO: do sth with AABB in ex. ClipSpace rather than iterate by each corner
         const vec3 corners[8] = {
             vec3( 1.0,  1.0,  1.0),
@@ -117,18 +120,19 @@ void main()
 
             vec4 lightInView = ViewFromWorld * lightInWorld;
 			
-            vec3 lightMinBounds = vec3(0.0);
-            vec3 lightMaxBounds = vec3(0.0);
-
-            vec4 topRightInView = vec4(lightInView.xyz + tmpRadius * corners[0], 1.0);
+            float cornerLength = light.Radius;
+            vec4 topRightInView = vec4(lightInView.xyz + cornerLength * corners[0], 1.0);
 			vec4 topRightInClip = ClipFromView * topRightInView;
-            lightMinBounds = lightMaxBounds = ScreenFromClip(topRightInClip).xyz;
+            vec3 topRightInScreen = ScreenFromClip(topRightInClip).xyz;
+            vec3 lightMinBounds = topRightInScreen;
+            vec3 lightMaxBounds = topRightInScreen;
 
 			for (int j = 1; j < 8; ++j)
 			{
-                vec4 lightCornerInView = vec4(lightInView.xyz + tmpRadius * corners[j], 1.0);
+                vec4 lightCornerInView = vec4(lightInView.xyz + cornerLength * corners[j], 1.0);
                 vec4 lightCornerInClip = ClipFromView * lightCornerInView;
                 vec4 lightCornerInScreen = ScreenFromClip(lightCornerInClip);
+                lightCornerInScreen.z = LinearizeDepth2(lightCornerInScreen.z);
                 lightMinBounds = min(lightMinBounds, lightCornerInScreen.xyz);
                 lightMaxBounds = max(lightMaxBounds, lightCornerInScreen.xyz);
             }
@@ -146,7 +150,7 @@ void main()
 	ivec2 screenSize = ivec2(screenSizeX, screenSizeY);
 	vec2 uv = vec2(pixelInScreenSpace) / screenSize;
 	float depth = texture(depthMap, uv).r;
-	depth = LinearizeDepth(depth) / far;
+    depth = LinearizeDepth2(depth);
     
 	uint depthInt = floatBitsToUint(depth);
 
@@ -155,40 +159,48 @@ void main()
 	
 	barrier();
 	 
-	
 	// float insideBox(vec2 v, vec2 bottomLeft, vec2 topRight)
 	// shared vec4 LightsPosInScreen[NUM_LIGHTS];
 	// shared vec4 LightsBoundsMax[NUM_LIGHTS];
 	// shared vec4 LightsBoundsMin[NUM_LIGHTS];
-	vec2 lightPosInScreen = LightsPosInScreen[0].xy;
-	vec3 topRightInScreen = LightsBoundsMax[0];
-	vec3 bottomLeftInScreen = LightsBoundsMin[0];
+    if (gl_LocalInvocationIndex == 0)
+    {
+        // for (int i = 0; i < NUM_LIGHTS; i++)
+        for (int i = 0; i < NUM_LIGHTS; i++)
+        {
+            vec2 lightPosInScreen = LightsPosInScreen[i].xy;
+            vec3 topRightInScreen = LightsBoundsMax[i];
+            vec3 bottomLeftInScreen = LightsBoundsMin[i];
 	 
-	// Step 2: One thread should calculate the frustum planes to be used for this tile
-	if (gl_LocalInvocationIndex == 0)
-	{
-        minDepth = uintBitsToFloat(minDepthInt);
-        maxDepth = uintBitsToFloat(maxDepthInt);
-		//	vec2 centerInScreen = 0.5 * vec2(screenSizeX, screenSizeY);
-		//	float isLit = insideBox(lightPosInScreen, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
-		//	float isInside = insideBox(pixelInScreenSpace, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
-		//	visibleLightCount = floatBitsToUint(isInside * isLit);
+			// Step 2: One thread should calculate the frustum planes to be used for this tile
+            minDepth = uintBitsToFloat(minDepthInt);
+            maxDepth = uintBitsToFloat(maxDepthInt);
+			//	vec2 centerInScreen = 0.5 * vec2(screenSizeX, screenSizeY);
+			//	float isLit = insideBox(lightPosInScreen, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
+			//	float isInside = insideBox(pixelInScreenSpace, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
+			//	visibleLightCount = floatBitsToUint(isInside * isLit);
 
-		vec2 tileInScreen = gl_WorkGroupID.xy * vec2(TILE_SIZE);
+            vec2 tileInScreen = gl_WorkGroupID.xy * vec2(TILE_SIZE);
 
-		// float insideBox(vec2 v, vec2 bottomLeft, vec2 topRight)
-		// float intersectionAABBAABB(vec2 aMin, vec2 aMax, vec2 bMin, vec2 bMax)
-		// float isLit = insideBox(lightPosInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
-		// float isLitMax = insideBox(topRightInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
-		// float isLitMin = insideBox(bottomLeftInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
+			// float insideBox(vec2 v, vec2 bottomLeft, vec2 topRight)
+			// float intersectionAABBAABB(vec2 aMin, vec2 aMax, vec2 bMin, vec2 bMax)
+			// float isLit = insideBox(lightPosInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
+			// float isLitMax = insideBox(topRightInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
+			// float isLitMin = insideBox(bottomLeftInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
+			// float isInside = insideBox(pixelInScreenSpace, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
     
-		float isTileLit = intersectionAABBAABB(
-			bottomLeftInScreen, topRightInScreen,
-			vec3(tileInScreen, minDepth), vec3(tileInScreen + vec2(TILE_SIZE), maxDepth)
-		);
-		// float isInside = insideBox(pixelInScreenSpace, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
-		visibleLightCount = floatBitsToUint(isTileLit);
-	}
+            float isTileLit = intersectionAABBAABB(
+				bottomLeftInScreen, topRightInScreen,
+				vec3(tileInScreen, minDepth), vec3(tileInScreen + vec2(TILE_SIZE), maxDepth)
+			);
+            
+            if (isTileLit > 0.0)
+            {
+                // uint offset = atomicAdd(visibleLightCount, uint(1));
+                uint offset = atomicAdd(visibleLightCount, floatBitsToUint(1.0));
+            }
+        }
+    }
 
 	if (gl_LocalInvocationIndex == 0)
 	{

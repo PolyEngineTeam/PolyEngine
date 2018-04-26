@@ -17,7 +17,7 @@ DebugNormalsRenderingPass::DebugNormalsRenderingPass()
 void DebugNormalsRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
 	GetProgram().BindProgram();
-	const Matrix& mvp = camera->GetScreenFromWorld();
+	const Matrix& mvp = camera->GetClipFromWorld();
 	
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())

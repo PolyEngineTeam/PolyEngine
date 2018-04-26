@@ -32,7 +32,7 @@ void SpritesheetRenderingPass::OnRun(World* world, const CameraComponent* camera
 {
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	const Matrix& mv = camera->GetViewFromWorld();
-	const Matrix& p = camera->GetScreenFromView();
+	const Matrix& p = camera->GetClipFromView();
 
 	glDisable(GL_CULL_FACE);
 

@@ -64,6 +64,7 @@ namespace Poly {
 
 		GLShaderProgram debugQuadDepthPrepassShader;
 		GLShaderProgram debugQuadLightCullingShader;
+		GLShaderProgram debugLightAccumShader;
 		GLShaderProgram depthDebugShader;
 		GLShaderProgram lightDebugShader;
 		GLShaderProgram computeDebugShader;
@@ -93,6 +94,8 @@ namespace Poly {
 		void DebugLightCulling(World* world, const CameraComponent* cameraCmp);
 
 		void DebugDepth(World* world, const CameraComponent* cameraCmp);
+
+		void DrawLightAccum(World* world, const CameraComponent* cameraCmp);
 		
 		void DrawQuad();
 
