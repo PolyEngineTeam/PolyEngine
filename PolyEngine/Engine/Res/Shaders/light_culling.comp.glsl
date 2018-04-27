@@ -25,7 +25,7 @@ layout(std430, binding = 1) writeonly buffer OutputBuffer {
 } outputBuffer;
 
 
-#define NUM_LIGHTS 110
+#define NUM_LIGHTS 4
 
 // Uniforms
 uniform sampler2D depthMap;
@@ -48,6 +48,8 @@ shared uint visibleLightCount;
 shared vec4 LightsPosInScreen[NUM_LIGHTS];
 shared vec3 LightsBoundsMax[NUM_LIGHTS];
 shared vec3 LightsBoundsMin[NUM_LIGHTS];
+
+shared vec4 frustumPlanes[6];
 
 vec2 ScreenSize = vec2(800.0, 600.0);
 
@@ -89,125 +91,116 @@ float intersectionAABBAABB(vec3 aMin, vec3 aMax, vec3 bMin, vec3 bMax)
 layout(local_size_x = TILE_SIZE, local_size_y = TILE_SIZE, local_size_z = 1) in;
 void main()
 {
-	uint IndexWorkGroup = gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
-	uint IndexGlobal = gl_GlobalInvocationID.y * (gl_NumWorkGroups.x * gl_WorkGroupSize.x) + gl_GlobalInvocationID.x;
-
-	if (gl_LocalInvocationIndex == 0)
-	{
-		minDepthInt = 0xFFFFFFFF;
-		maxDepthInt = 0;
-		visibleLightCount = 0;
-
-		// TODO: do sth with AABB in ex. ClipSpace rather than iterate by each corner
-        const vec3 corners[8] = {
-            vec3( 1.0,  1.0,  1.0),
-			vec3( 1.0, -1.0,  1.0),
-			vec3(-1.0,  1.0,  1.0),
-			vec3(-1.0, -1.0,  1.0),
-			vec3( 1.0,  1.0, -1.0),
-			vec3( 1.0, -1.0, -1.0),
-			vec3(-1.0,  1.0, -1.0),
-			vec3(-1.0, -1.0, -1.0)
-        };
-		
-		// TODO: parallelize, each thread per light
-		for (int i = 0; i < NUM_LIGHTS; ++i)
-		{
-			Light light = lightBuffer.data[i];
-			vec4 lightInWorld = vec4(light.Position.xyz, 1.0);
-			vec4 lightInClip = ClipFromWorld * lightInWorld;
-			LightsPosInScreen[i] = ScreenFromClip(lightInClip);
-
-            vec4 lightInView = ViewFromWorld * lightInWorld;
-			
-            float cornerLength = light.Radius;
-            vec4 topRightInView = vec4(lightInView.xyz + cornerLength * corners[0], 1.0);
-			vec4 topRightInClip = ClipFromView * topRightInView;
-            vec3 topRightInScreen = ScreenFromClip(topRightInClip).xyz;
-            vec3 lightMinBounds = topRightInScreen;
-            vec3 lightMaxBounds = topRightInScreen;
-
-			for (int j = 1; j < 8; ++j)
-			{
-                vec4 lightCornerInView = vec4(lightInView.xyz + cornerLength * corners[j], 1.0);
-                vec4 lightCornerInClip = ClipFromView * lightCornerInView;
-                vec4 lightCornerInScreen = ScreenFromClip(lightCornerInClip);
-                lightCornerInScreen.z = LinearizeDepth2(lightCornerInScreen.z);
-                lightMinBounds = min(lightMinBounds, lightCornerInScreen.xyz);
-                lightMaxBounds = max(lightMaxBounds, lightCornerInScreen.xyz);
-            }
-
-            LightsBoundsMin[i] = lightMinBounds;
-            LightsBoundsMax[i] = lightMaxBounds;
-        }
-    }
-
-	barrier();
-
-	// Step 1: Calculate the minimum and maximum depth values (from the depth buffer) for this group's tile
-	float maxDepth, minDepth;
-	ivec2 pixelInScreenSpace = ivec2(gl_GlobalInvocationID.xy);
-	ivec2 screenSize = ivec2(screenSizeX, screenSizeY);
-	vec2 uv = vec2(pixelInScreenSpace) / screenSize;
-	float depth = texture(depthMap, uv).r;
-    depth = LinearizeDepth2(depth);
+    uint IndexWorkGroup = gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
     
-	uint depthInt = floatBitsToUint(depth);
+    mat4 view = ViewFromWorld;
+	mat4 projection = ClipFromView;
+    mat4 viewProjection = ClipFromWorld;
 
-	atomicMin(minDepthInt, depthInt);
-	atomicMax(maxDepthInt, depthInt);
-	
-	barrier();
-	 
-	// float insideBox(vec2 v, vec2 bottomLeft, vec2 topRight)
-	// shared vec4 LightsPosInScreen[NUM_LIGHTS];
-	// shared vec4 LightsBoundsMax[NUM_LIGHTS];
-	// shared vec4 LightsBoundsMin[NUM_LIGHTS];
+    ivec2 location = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 itemID = ivec2(gl_LocalInvocationID.xy);
+    ivec2 tileID = ivec2(gl_WorkGroupID.xy);
+    ivec2 tileNumber = ivec2(gl_NumWorkGroups.xy);
+    uint index = tileID.y * tileNumber.x + tileID.x;
+
+	// Initialize shared global values for depth and light count
     if (gl_LocalInvocationIndex == 0)
     {
-        // for (int i = 0; i < NUM_LIGHTS; i++)
-        for (int i = 0; i < NUM_LIGHTS; i++)
+        minDepthInt = 0xFFFFFFFF;
+        maxDepthInt = 0;
+        visibleLightCount = 0;
+        // viewProjection = projection * view;
+    }
+
+    barrier();
+
+	// Step 1: Calculate the minimum and maximum depth values (from the depth buffer) for this group's tile
+    float maxDepth, minDepth;
+    vec2 text = vec2(location) / ScreenSize;
+    float depth = texture(depthMap, text).r;
+	// Linearize the depth value from depth buffer (must do this because we created it using projection)
+    depth = (0.5 * projection[3][2]) / (depth + 0.5 * projection[2][2] - 0.5);
+
+	// Convert depth to uint so we can do atomic min and max comparisons between the threads
+    uint depthInt = floatBitsToUint(depth);
+    atomicMin(minDepthInt, depthInt);
+    atomicMax(maxDepthInt, depthInt);
+
+    barrier();
+
+	// Step 2: One thread should calculate the frustum planes to be used for this tile
+    if (gl_LocalInvocationIndex == 0)
+    {
+		// Convert the min and max across the entire tile back to float
+        minDepth = uintBitsToFloat(minDepthInt);
+        maxDepth = uintBitsToFloat(maxDepthInt);
+
+		// Steps based on tile sale
+        vec2 negativeStep = (2.0 * vec2(tileID)) / vec2(tileNumber);
+        vec2 positiveStep = (2.0 * vec2(tileID + ivec2(1, 1))) / vec2(tileNumber);
+
+		// Set up starting values for planes using steps and min and max z values
+        frustumPlanes[0] = vec4(1.0, 0.0, 0.0, 1.0 - negativeStep.x); // Left
+        frustumPlanes[1] = vec4(-1.0, 0.0, 0.0, -1.0 + positiveStep.x); // Right
+        frustumPlanes[2] = vec4(0.0, 1.0, 0.0, 1.0 - negativeStep.y); // Bottom
+        frustumPlanes[3] = vec4(0.0, -1.0, 0.0, -1.0 + positiveStep.y); // Top
+        frustumPlanes[4] = vec4(0.0, 0.0, -1.0, -minDepth); // Near
+        frustumPlanes[5] = vec4(0.0, 0.0, 1.0, maxDepth); // Far
+        
+		// Transform the first four planes
+        for (uint i = 0; i < 4; i++)
         {
-            vec2 lightPosInScreen = LightsPosInScreen[i].xy;
-            vec3 topRightInScreen = LightsBoundsMax[i];
-            vec3 bottomLeftInScreen = LightsBoundsMin[i];
-	 
-			// Step 2: One thread should calculate the frustum planes to be used for this tile
-            minDepth = uintBitsToFloat(minDepthInt);
-            maxDepth = uintBitsToFloat(maxDepthInt);
-			//	vec2 centerInScreen = 0.5 * vec2(screenSizeX, screenSizeY);
-			//	float isLit = insideBox(lightPosInScreen, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
-			//	float isInside = insideBox(pixelInScreenSpace, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
-			//	visibleLightCount = floatBitsToUint(isInside * isLit);
+            frustumPlanes[i] *= viewProjection;
+            frustumPlanes[i] /= length(frustumPlanes[i].xyz);
+        }
 
-            vec2 tileInScreen = gl_WorkGroupID.xy * vec2(TILE_SIZE);
+		// Transform the depth planes
+        frustumPlanes[4] *= view;
+        frustumPlanes[4] /= length(frustumPlanes[4].xyz);
+        frustumPlanes[5] *= view;
+        frustumPlanes[5] /= length(frustumPlanes[5].xyz);
+    }
 
-			// float insideBox(vec2 v, vec2 bottomLeft, vec2 topRight)
-			// float intersectionAABBAABB(vec2 aMin, vec2 aMax, vec2 bMin, vec2 bMax)
-			// float isLit = insideBox(lightPosInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
-			// float isLitMax = insideBox(topRightInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
-			// float isLitMin = insideBox(bottomLeftInScreen, tileInScreen, tileInScreen + vec2(TILE_SIZE));
-			// float isInside = insideBox(pixelInScreenSpace, centerInScreen - vec2(100.0, 100.0), centerInScreen + vec2(100.0, 100.0));
-    
-            float isTileLit = intersectionAABBAABB(
-				bottomLeftInScreen, topRightInScreen,
-				vec3(tileInScreen, minDepth), vec3(tileInScreen + vec2(TILE_SIZE), maxDepth)
-			);
-            
-            if (isTileLit > 0.0)
+    barrier();
+
+    if (gl_LocalInvocationIndex == 0)
+    {
+        for (uint i = 0; i < NUM_LIGHTS; i++)
+        {
+            vec4 position = lightBuffer.data[i].Position;
+            float radius = lightBuffer.data[i].Radius;
+	
+			// We check if the light exists in our frustum
+            float distance = 0.0;
+            for (uint j = 0; j < 6; j++)
             {
-                // uint offset = atomicAdd(visibleLightCount, uint(1));
+                distance = dot(position, frustumPlanes[j]) + radius;
+	
+				// If one of the tests fails, then there is no intersection
+                if (distance <= 0.0)
+                {
+                    break;
+                }
+            }
+	
+			// If greater than zero, then it is a visible light
+            if (distance > 0.0)
+            {
+				// Add index to the shared array of visible indices
                 uint offset = atomicAdd(visibleLightCount, floatBitsToUint(1.0));
+				// visibleLightIndices[offset] = int(lightIndex);
             }
         }
     }
+
+	barrier();
 
 	if (gl_LocalInvocationIndex == 0)
 	{
 		outputBuffer.data[IndexWorkGroup].indexLocal = 0;
 		outputBuffer.data[IndexWorkGroup].indexWorkGroup = IndexWorkGroup;
 		outputBuffer.data[IndexWorkGroup].indexGlobal = 0; // IndexGlobal;
-		outputBuffer.data[IndexWorkGroup].input = minDepthInt;
+		outputBuffer.data[IndexWorkGroup].input = maxDepthInt;
 		outputBuffer.data[IndexWorkGroup].result = visibleLightCount;
 	}
 }

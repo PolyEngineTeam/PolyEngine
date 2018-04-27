@@ -33,7 +33,7 @@ uniform mat4 uClipFromWorld;
 in vec3 vVertexPos;
 in vec2 vTexCoord;
 
-#define NUM_LIGHTS 110
+#define NUM_LIGHTS 4
 
 layout(location = 0) out vec4 color;
 
@@ -44,21 +44,26 @@ void main()
     ivec2 NumWorkGroups = ivec2(workGroupsX, workGroupsY);
     ivec2 WorkGroupID = (location / WorkGroupSize);
     uint IndexWorkGroup = WorkGroupID.y * NumWorkGroups.x + WorkGroupID.x;
-	float visibleLights = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].result);
-    visibleLights = clamp(visibleLights, 0.0, 1.0);
     
-	float minDistToLight = 100.0;
-    for (int i = 0; i < NUM_LIGHTS; i++)
+	float visibleLights = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].result);
+    float visibleLightsNormalized = clamp(visibleLights / 10.0, 0.0, 1.0);
+    visibleLights = clamp(visibleLights, 0.0, 1.0);
+
+	float minDistToLight = 1000000.0;
+    for (uint i = 0; i < NUM_LIGHTS; i++)
     {
-        Light light = lightBuffer.data[i];
-        float distToLight = length(light.Position.xyz - vVertexPos.xyz) / light.Radius;
+        vec3 position = lightBuffer.data[i].Position.xyz;
+        float radius = lightBuffer.data[i].Radius;
+        float distToLight = min(length(vVertexPos - position) / radius, 1.0);
         minDistToLight = min(minDistToLight, distToLight);
     }
 
     // color = vec4(1.0, 0.0, 0.0, 1.0);
+    // vec3 tileColor = visibleLights * mix(vec3(0.5, 0.0, 0.0), vec3(0.5, 0.0, 0.0), visibleLightsNormalized);
     color = vec4(
-				  vec3(0.01)
-				+ 0.5*vec3(visibleLights)
-				+ 0.5*vec3(smoothstep(0.0, 0.001, 1.0-minDistToLight))
+				  vec3(0.1)
+				+ vec3(0.9) * minDistToLight
+			//		* mix(0.5, 1.0, visibleLightsNormalized)
+			//		* mix(0.5, 1.0, minDistToLight)
 			, 1.0);
 }
