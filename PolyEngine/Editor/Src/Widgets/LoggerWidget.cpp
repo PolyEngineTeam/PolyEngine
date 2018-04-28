@@ -23,7 +23,7 @@ private:
 
 
 LoggerWidget::LoggerWidget(const QString& title, QWidget* parent)
-	: PolyWidget(title, parent)
+	: PolyDockWindow(title, parent)
 {
 	Layout = new QBoxLayout(QBoxLayout::Direction::LeftToRight, this);
 	TextEdit = new QTextEdit(this);

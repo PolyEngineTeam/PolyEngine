@@ -8,7 +8,7 @@ PolyWindow::PolyWindow(QWidget* parent) :
 	setAttribute(Qt::WA_DeleteOnClose);
 }
 
-void PolyWindow::AddWidget(Qt::DockWidgetArea area, PolyWidget* widget, bool isInitialization)
+void PolyWindow::AddWidget(Qt::DockWidgetArea area, PolyDockWindow* widget, bool isInitialization)
 {
 	if(PolyWindow* window = dynamic_cast<PolyWindow*>(widget->parent()))
 		window->RemoveWidget(widget);
@@ -21,7 +21,7 @@ void PolyWindow::AddWidget(Qt::DockWidgetArea area, PolyWidget* widget, bool isI
 	Widgets.PushBack(widget);
 }
 
-void PolyWindow::RemoveWidget(PolyWidget* widget)
+void PolyWindow::RemoveWidget(PolyDockWindow* widget)
 {
 	Widgets.Remove(widget);
 	removeDockWidget(widget->GetDockWidget());

@@ -4,7 +4,7 @@
 
 #include <Collections/Dynarray.hpp>
 
-class PolyWidget;
+class PolyDockWindow;
 
 class PolyWindow : public QMainWindow
 {
@@ -13,11 +13,11 @@ public:
 
 	size_t WidgetsCount() { return Widgets.GetSize(); }
 
-	void AddWidget(Qt::DockWidgetArea area, PolyWidget* widget, bool isInitialization = false);
-	void RemoveWidget(PolyWidget* widget);
+	void AddWidget(Qt::DockWidgetArea area, PolyDockWindow* widget, bool isInitialization = false);
+	void RemoveWidget(PolyDockWindow* widget);
 
 private:
-	Poly::Dynarray<PolyWidget*> Widgets;
+	Poly::Dynarray<PolyDockWindow*> Widgets;
 
 	void closeEvent(QCloseEvent* event) override;
 }; 

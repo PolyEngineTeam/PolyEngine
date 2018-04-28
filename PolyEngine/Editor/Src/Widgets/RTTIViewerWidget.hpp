@@ -3,12 +3,12 @@
 #include <RTTI/RTTI.hpp>
 #include <QFormLayout>
 
-#include "PolyWidget.hpp"
+#include "Windows/PolyDockWindow.hpp"
 #include "Controls/RTTIViewControl.hpp"
 
 using namespace Poly;
 
-class RTTIViewerWidget : public PolyWidget
+class RTTIViewerWidget : public PolyDockWindow
 {
 public:
 	RTTIViewerWidget(const QString& title, QWidget* parent);

@@ -13,7 +13,7 @@ static Poly::LibraryFunctionHandle<CreateRenderingDeviceFunc> LoadRenderingDevic
 
 // ---------------------------------------------------------------------------------------------------------
 ViewportWidget::ViewportWidget(const QString& title, QWidget* parent) :
-	PolyWidget(title, parent)
+	PolyDockWindow(title, parent)
 {
 	setAttribute(Qt::WA_NativeWindow);
 	setMouseTracking(true);

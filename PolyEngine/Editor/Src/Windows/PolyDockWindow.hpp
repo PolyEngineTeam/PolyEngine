@@ -4,10 +4,10 @@
 
 class PolyWindow;
 
-class PolyWidget : public QWidget
+class PolyDockWindow : public QWidget
 {
 public:
-	PolyWidget(const QString& title, QWidget* parent = nullptr);
+	PolyDockWindow(const QString& title, QWidget* parent = nullptr);
 
 	QDockWidget* GetDockWidget() { return DockWidget; }
 	PolyWindow* GetOwner() const { return static_cast<PolyWindow*>(DockWidget->parent()); }

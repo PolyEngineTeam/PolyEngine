@@ -5,7 +5,7 @@ const int DELTA_Y = 18 + 6;
 const int COMPONENTS_OFFSET = 10 + 10 * DELTA_Y;
 
 EntityManagerWidget::EntityManagerWidget(const QString& title, QWidget* parent) 
-	: PolyWidget(title, parent)
+	: PolyDockWindow(title, parent)
 {
 	setFixedWidth(420);
 

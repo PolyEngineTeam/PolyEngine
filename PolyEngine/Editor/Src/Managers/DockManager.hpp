@@ -3,14 +3,14 @@
 #include <QEvent>
 
 class PolyWindow;
-class PolyWidget;
+class PolyDockWindow;
 
 class DockManager
 {
 public:
 	DockManager() = default;
 
-	void WidgetCatchEvent(PolyWidget* catched);
+	void WidgetCatchEvent(PolyDockWindow* catched);
 	void WidgetMoveEvent(QEvent* event);
 	void WidgetDropEvent();
 
@@ -18,6 +18,6 @@ public:
 
 private:
 	PolyWindow* MouseOver = nullptr; // over this window is currently dragged DraggedWidget
-	PolyWidget* DraggedWidget = nullptr;
+	PolyDockWindow* DraggedWidget = nullptr;
 	Qt::DockWidgetArea DraggedWidgetDockArea = Qt::DockWidgetArea::TopDockWidgetArea;
 };

@@ -33,9 +33,7 @@ UNSILENCE_MSVC_WARNING()
 // windows
 #include "Windows/PolyWindow.hpp"
 #include "Windows/PolyMainWindow.hpp"
-
-// widgets base
-#include "Widgets/PolyWidget.hpp"
+#include "Windows/PolyDockWindow.hpp"
 
 // controls
 #include "Controls/RTTIViewControl.hpp"

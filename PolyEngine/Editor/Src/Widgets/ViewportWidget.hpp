@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Windows/CustomSDLWindow.hpp"
-#include "PolyWidget.hpp"
+#include "Windows/PolyDockWindow.hpp"
 #include "Rendering/IRenderingDevice.hpp"
 
 using namespace Poly;
 
-class ViewportWidget : public PolyWidget
+class ViewportWidget : public PolyDockWindow
 {
 public:
 	// Viewport widget must have parent at initialization otherwise it will appear without title bar

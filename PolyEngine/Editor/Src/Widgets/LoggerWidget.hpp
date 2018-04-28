@@ -2,9 +2,9 @@
 
 #include <QTextEdit>
 #include <QBoxLayout>
-#include "PolyWidget.hpp"
+#include "Windows/PolyDockWindow.hpp"
 
-class LoggerWidget : public PolyWidget
+class LoggerWidget : public PolyDockWindow
 {
 public:
 	explicit LoggerWidget(const QString& title, QWidget* parent = nullptr);

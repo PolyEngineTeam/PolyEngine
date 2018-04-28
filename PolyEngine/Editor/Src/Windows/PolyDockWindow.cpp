@@ -1,6 +1,6 @@
 #include "PolyEditorPCH.hpp"
 
-PolyWidget::PolyWidget(const QString& title, QWidget* parent) :
+PolyDockWindow::PolyDockWindow(const QString& title, QWidget* parent) :
 	QWidget(parent)
 {
 	DockWidget = new QDockWidget(title, parent);
