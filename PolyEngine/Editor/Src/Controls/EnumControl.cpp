@@ -2,7 +2,8 @@
 
 #include <QComboBox>
 
-EnumControl::EnumControl(void* ptr, const RTTI::Property& prop, RTTI::eCorePropertyType)
+EnumControl::EnumControl(QWidget* parent)
+	: ControlBase(parent)
 {
 	//Object = ptr;
 	
@@ -26,5 +27,9 @@ void EnumControl::UpdateObject()
 }
 
 void EnumControl::UpdateControl()
+{
+}
+
+void EnumControl::InitializeControl()
 {
 }

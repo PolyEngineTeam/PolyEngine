@@ -3,14 +3,14 @@
 #include <QIntValidator>
 #include <QDoubleValidator>
 
-NumberControl::NumberControl(void* ptr, const RTTI::Property& prop, RTTI::eCorePropertyType type)
-	: Object(ptr), Type(type)
+NumberControl::NumberControl(QWidget* parent)
+	: ControlBase(parent)
 {
 }
 
 void NumberControl::UpdateObject()
 {
-	switch (Type)
+	switch (Property->CoreType)
 	{
 	case RTTI::eCorePropertyType::INT8:
 		*reinterpret_cast<i8*>(Object) = (i8)Field->text().toInt();
@@ -50,7 +50,7 @@ void NumberControl::UpdateObject()
 
 void NumberControl::UpdateControl()
 {
-	switch (Type)
+	switch (Property->CoreType)
 	{
 	case RTTI::eCorePropertyType::INT8:
 		Field->setText(QString::number(*reinterpret_cast<i8*>(Object)));
@@ -98,7 +98,7 @@ void NumberControl::InitializeControl()
 	Field = std::make_unique<QLineEdit>(this);
 	Field->setSizePolicy(sizePolicy);
 
-	switch (Type)
+	switch (Property->CoreType)
 	{
 	case RTTI::eCorePropertyType::INT8:
 		Validator = std::make_unique<QIntValidator>(-128, 127);

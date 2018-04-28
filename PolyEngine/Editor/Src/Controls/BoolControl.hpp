@@ -1,24 +1,20 @@
 #pragma once
 
-#include "RTTIBaseControl.hpp"
+#include "ControlBase.hpp"
 
 #include <qpushbutton.h>
 #include <qstatemachine.h>
 
-class BoolControl : public RTTIBaseControl
+class BoolControl : public ControlBase
 {
 public:
-	BoolControl(void* ptr, const RTTI::Property& prop, RTTI::eCorePropertyType);
+	BoolControl(QWidget* parent);
 
 	void UpdateObject() override;
 	void UpdateControl() override;
 
-	QWidget* GetField() override { return Button.get(); }
-
 private:
-	void InitializeControl();
-
-	bool* Object;
+	void InitializeControl() override;
 
 	std::unique_ptr<QPushButton> Button;
 	std::unique_ptr<QStateMachine> Machine;

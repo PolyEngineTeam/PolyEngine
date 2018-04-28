@@ -1,22 +1,21 @@
 #pragma once
 
-#include "RTTIBaseControl.hpp"
+#include "ControlBase.hpp"
 
 using namespace Poly;
 
-class EnumControl : public RTTIBaseControl
+class EnumControl : public ControlBase
 {
 public:
-	EnumControl(void* ptr, const RTTI::Property& prop, RTTI::eCorePropertyType);
+	EnumControl(QWidget* parent);
 
 	void UpdateObject() override;
 	void UpdateControl() override;
 
-	QWidget* GetField() override { return nullptr; }
-
 private:
+	void InitializeControl() override;
+
 	std::unique_ptr<QComboBox> ComboBox;
-	void* Object;
 };
 
 ASSIGN_CONTROL(EnumControl, RTTI::eCorePropertyType::ENUM)

@@ -1,20 +1,19 @@
 #include "PolyEditorPCH.hpp"
 
-BoolControl::BoolControl(void* ptr, const RTTI::Property& prop, RTTI::eCorePropertyType)
-	: Object(reinterpret_cast<bool*>(ptr))
+BoolControl::BoolControl(QWidget* parent)
+	: ControlBase(parent)
 {
-	InitializeControl();
 }
 
 void BoolControl::UpdateObject()
 {
-	*Object = *Machine->configuration().begin() == True.get();
+	*reinterpret_cast<bool*>(Object) = *Machine->configuration().begin() == True.get();
 }
 
 void BoolControl::UpdateControl()
 {
 	Machine->stop();
-	Machine->setInitialState(*Object ? True.get() : False.get());
+	Machine->setInitialState(*reinterpret_cast<bool*>(Object) ? True.get() : False.get());
 	Machine->start();
 }
 
@@ -37,6 +36,6 @@ void BoolControl::InitializeControl()
 	Machine->addState(False.get());
 	Machine->addState(True.get());
 
-	Machine->setInitialState(*Object ? True.get() : False.get());
+	Machine->setInitialState(*reinterpret_cast<bool*>(Object) ? True.get() : False.get());
 	Machine->start();
 }

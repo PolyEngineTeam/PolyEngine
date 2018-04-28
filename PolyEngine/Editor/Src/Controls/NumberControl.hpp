@@ -1,24 +1,19 @@
 #pragma once
 
-#include "RTTIBaseControl.hpp"
+#include "ControlBase.hpp"
 
 #include <QLineEdit.h>
 
-class NumberControl : public RTTIBaseControl
+class NumberControl : public ControlBase
 {
 public:
-	NumberControl(void* ptr, const RTTI::Property& prop, RTTI::eCorePropertyType type);
+	NumberControl(QWidget* parent);
 
 	void UpdateObject() override;
 	void UpdateControl() override;
 
-	QWidget* GetField() override { return Field.get(); }
-
 private:
-	void InitializeControl();
-
-	void* Object;
-	RTTI::eCorePropertyType Type;
+	void InitializeControl() override;
 
 	std::unique_ptr<QLineEdit> Field;
 	std::unique_ptr<QValidator> Validator;
