@@ -49,7 +49,7 @@ void RTTIViewControl::AddChild(QFormLayout* parent, RTTIBase* obj, bool debug)
 
 void RTTIViewControl::AddItem(QFormLayout* parent, void* ptr, const RTTI::Property& prop)
 {
-	RTTIBaseControl* field;
+	//RTTIBaseControl* field;
 
 	//switch (prop.CoreType)
 	//{
@@ -99,7 +99,7 @@ void RTTIViewControl::AddItem(QFormLayout* parent, void* ptr, const RTTI::Proper
 	//	ASSERTE(false, "Unknown property type!");
 	//}
 
-	field = new StringControl(ptr, prop, RTTI::eCorePropertyType::STRING);
-	Fields.PushBack(field);
-	parent->addRow(prop.Name.GetCStr(), field->GetField());
+	//field = new StringControl(ptr, prop, RTTI::eCorePropertyType::STRING);
+	//Fields.PushBack(field);
+	//parent->addRow(prop.Name.GetCStr(), field->GetField());
 }
