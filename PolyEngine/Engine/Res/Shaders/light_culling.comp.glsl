@@ -6,6 +6,10 @@ struct Light
     float Radius;
 };
 
+struct VisibleIndex {
+	int index;
+};
+
 struct Output
 {
     uint indexLocal;
@@ -23,6 +27,10 @@ layout(std430, binding = 0) readonly buffer LightBuffer {
 layout(std430, binding = 1) writeonly buffer OutputBuffer {
 	Output data[];
 } outputBuffer;
+
+layout(std430, binding = 2) writeonly buffer VisibleLightIndicesBuffer {
+	VisibleIndex data[];
+} visibleLightIndicesBuffer;
 
 
 const uint NUM_LIGHTS = 25;
@@ -44,11 +52,8 @@ shared uint minDepthInt;
 shared uint maxDepthInt;
 shared uint visibleLightCount;
 
-shared vec4 LightsPosInScreen[NUM_LIGHTS];
-shared vec3 LightsBoundsMax[NUM_LIGHTS];
-shared vec3 LightsBoundsMin[NUM_LIGHTS];
-
 shared vec4 frustumPlanes[6];
+shared int visibleLightIndices[NUM_LIGHTS];
 
 vec2 ScreenSize = vec2(800.0, 600.0);
 
@@ -187,7 +192,7 @@ void main()
             {
 				// Add index to the shared array of visible indices
                 uint offset = atomicAdd(visibleLightCount, floatBitsToUint(1.0));
-				// visibleLightIndices[offset] = int(lightIndex);
+				visibleLightIndices[offset] = int(i);
             }
         }
     }
@@ -196,6 +201,21 @@ void main()
 
 	if (gl_LocalInvocationIndex == 0)
 	{
+        uint offset = index * NUM_LIGHTS; // Determine position in global buffer
+		visibleLightIndicesBuffer.data[offset].index = visibleLightIndices[0];
+
+        // for (uint i = 0; i < visibleLightCount; i++)
+        // {
+		//	visibleLightIndicesBuffer.data[offset + i].index = visibleLightIndices[i];
+        // }
+		 
+        // if (visibleLightCount != NUM_LIGHTS)
+        // {
+		//  	// Unless we have totally filled the entire array, mark it's end with -1
+		//  	// Final shader step will use this to determine where to stop (without having to pass the light count)
+        //      visibleLightIndicesBuffer.data[offset + visibleLightCount].index = -1;
+        // }
+
 		outputBuffer.data[IndexWorkGroup].indexLocal = 0;
 		outputBuffer.data[IndexWorkGroup].indexWorkGroup = IndexWorkGroup;
 		outputBuffer.data[IndexWorkGroup].indexGlobal = 0; // IndexGlobal;

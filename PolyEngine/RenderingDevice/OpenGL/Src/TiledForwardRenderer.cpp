@@ -104,7 +104,7 @@ void TiledForwardRenderer::Init()
 
 	// Bind visible light indices buffer
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, visibleLightIndicesBuffer);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(VisibleIndex) * numberOfTiles * 1024, 0, GL_STATIC_DRAW);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(VisibleIndex) * numberOfTiles * (NUM_LIGHTS+1), 0, GL_DYNAMIC_DRAW);
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, inputBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Input) * 16, 0, GL_STATIC_DRAW);
@@ -247,7 +247,7 @@ void TiledForwardRenderer::LightCulling(World* world, const CameraComponent* cam
 	// Bind shader storage buffer objects for the light and indice buffers
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, outputBuffer);
-	// glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, visibleLightIndicesBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, visibleLightIndicesBuffer);
 
 	// Dispatch the compute shader, using the workgroup values calculated earlier
 	glDispatchCompute(workGroupsX, workGroupsY, 1);
@@ -381,6 +381,7 @@ void TiledForwardRenderer::DrawLightAccum(World* world, const CameraComponent* c
 	 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, outputBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, visibleLightIndicesBuffer);
 	 
 	// Bind the depth map's frame buffer and draw the depth map to it
 	// glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
@@ -411,6 +412,7 @@ void TiledForwardRenderer::DrawLightAccum(World* world, const CameraComponent* c
 	 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, 0);
 }
 
 void TiledForwardRenderer::SetupLightsBuffer()
