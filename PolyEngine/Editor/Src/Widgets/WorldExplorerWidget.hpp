@@ -21,6 +21,7 @@ public:
 	WorldExplorerWidget();
 
 	void SetWorld(World* world);
+	void UpdateViewer();
 
 signals:
 	void EntitySelected(Entity* entity);

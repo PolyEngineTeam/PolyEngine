@@ -3,26 +3,31 @@
 WorldExplorerWidget::WorldExplorerWidget()
 {
 	Tree = std::make_unique<QTreeWidget>(this);
-	Tree->move(12, 12);
-	Tree->resize(400, 250);
 	Tree->setHeaderLabels(QStringList() << "Entity ID");
+
+	setLayout(new QGridLayout(this));
+	layout()->addWidget(Tree.get());
 
 	connect(Tree.get(), &QTreeWidget::itemDoubleClicked, this, &WorldExplorerWidget::SelectionChanged);
 }
 
 void WorldExplorerWidget::SetWorld(::World* world)
 {
-	if (World)
-		Tree->clear();
-	
 	World = world;
 
-	QTreeWidgetItem* entityTree = new QTreeWidgetItem(Tree.get());
-	int id = (int)world->GetRoot()->GetID().GetHash();
-	entityTree->setText(0, String::From(id).GetCStr());
-	EntityFromID.insert(std::pair<int, Entity*>(id, world->GetRoot()));
+	UpdateViewer();
+}
 
-	for (auto child : world->GetRoot()->GetChildren())
+void WorldExplorerWidget::UpdateViewer()
+{
+	Tree->clear();
+
+	QTreeWidgetItem* entityTree = new QTreeWidgetItem(Tree.get());
+	int id = (int)World->GetRoot()->GetID().GetHash();
+	entityTree->setText(0, String::From(id).GetCStr());
+	EntityFromID.insert(std::pair<int, Entity*>(id, World->GetRoot()));
+
+	for (auto child : World->GetRoot()->GetChildren())
 		AddEntityToTree(entityTree, child);
 }
 
