@@ -6,6 +6,7 @@
 #include "GLShaderProgram.hpp"
 
 #include <World.hpp>
+#include <BasicMath.hpp>
 #include <AARect.hpp>
 #include <CameraComponent.hpp>
 #include <LightSourceComponent.hpp>
@@ -36,8 +37,7 @@ void TiledForwardRenderer::Init()
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	glEnable(GL_MULTISAMPLE);
-
+	// glEnable(GL_MULTISAMPLE);
 
 	gConsole.LogInfo("TiledForwardRenderer::Init SCREEN_SIZE: ({},{})", SCREEN_SIZE_X, SCREEN_SIZE_Y);
 
@@ -116,7 +116,6 @@ void TiledForwardRenderer::Init()
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, outputBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Output) * numberOfTiles, 0, GL_STATIC_DRAW);
 
-	// Set the default values for buffers
 	SetupLightsBuffer();
 
 	SetupInputBuffer();
@@ -370,11 +369,15 @@ void TiledForwardRenderer::DebugDepth(World* world, const CameraComponent* camer
 
 void TiledForwardRenderer::DrawLightAccum(World* world, const CameraComponent* cameraCmp)
 {
+	float Time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	debugLightAccumShader.BindProgram();
+	debugLightAccumShader.SetUniform("time", Time);
 	debugLightAccumShader.SetUniform("workGroupsX", (int)workGroupsX);
 	debugLightAccumShader.SetUniform("workGroupsY", (int)workGroupsY);
+	debugLightAccumShader.SetUniform("lightCount", (int)NUM_LIGHTS);
 	 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, outputBuffer);
@@ -412,29 +415,31 @@ void TiledForwardRenderer::DrawLightAccum(World* world, const CameraComponent* c
 
 void TiledForwardRenderer::SetupLightsBuffer()
 {
-	if (lightBuffer == 0) {
+	gConsole.LogInfo("TiledForwardRenderer::SetupLightsBuffer");
+
+	if (lightBuffer == 0)
+	{
 		return;
 	}
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
 	Light *lights = (Light*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
 
+	LightsStartPositions.Reserve(NUM_LIGHTS);
+
 	for (int i = 0; i < NUM_LIGHTS; ++i)
 	{
 		Light &light = lights[i];
-		light.Position = Vector(0.0f, 0.0f, 0.0f);
-		light.Radius = 0.0f;
-	}
+		// light.Position = Vector(10.0f * i, 0.0f, 0.0f);
+		Vector position = Vector(Random(-1.0f, 1.0f)*50.0f, 0.0f, Random(-1.0f, 1.0f)*50.0f);
+		light.Position = position;
+		light.Radius = 10.0f;
+	
+		LightsStartPositions.PushBack(position);
 
-	// for (size_t i = 0; i < NUM_LIGHTS; i++) {
-	// 	PointLight &light = pointLights[i];
-	// 	light.position = RandomVector(-100.0f, 100.0f);
-	// 	light.color = RandomVector(0.5f, 1.0f);
-	// 	light.paddingAndRadius = Vector(0.0f, 0.0f, 0.0f, LIGHT_RADIUS);
-	// 
-	// 	// gConsole.LogInfo("TiledForwardRenderer::SetupLights Positon: {}, Color: {}, PaddingAndRadius: {}",
-	// 	// 	light.position, light.color, light.paddingAndRadius);
-	// }
+		gConsole.LogInfo("TiledForwardRenderer::SetupLights #{}: Positon: {}, Radius: {}",
+			i, light.Position, light.Radius);
+	}
 
 	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
@@ -442,29 +447,22 @@ void TiledForwardRenderer::SetupLightsBuffer()
 
 void TiledForwardRenderer::UpdateLights(World* world)
 {
-	// float delta = (float)TimeSystem::GetTimerDeltaTime(world, eEngineTimer::GAMEPLAY);
 	gConsole.LogInfo("TiledForwardRenderer::UpdateLights");
+
+	float Time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
 	Light *lights = (Light*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
 
-	int pointLightsCount = 0;
-	for (const auto& componentsTuple : world->IterateComponents<PointLightComponent>())
+	for (int i = 0; i < NUM_LIGHTS; ++i)
 	{
-		const PointLightComponent* pointLightCmp = std::get<PointLightComponent*>(componentsTuple);
-		const EntityTransform& transform = pointLightCmp->GetTransform();
-
-		Light &light = lights[pointLightsCount];
-		light.Position = transform.GetGlobalTranslation(); // RandomVector(-100.0f, 100.0f);
-		light.Radius = pointLightCmp->GetRange();
-		
-		// gConsole.LogInfo("TiledForwardRenderer::UpdateLights Positon: {}, Radius: {}",
-		// 	light.Position, light.Radius
-		// );
-
-		++pointLightsCount;
-		if (pointLightsCount >= NUM_LIGHTS)
-			break;
+		Vector StartPosition = LightsStartPositions[i];
+		float t = Time + StartPosition.X;
+		float s = Sin(1.0_rad * t);
+		float c = Cos(1.0_rad * t);
+		Vector Offset = Vector(c, 0.0f, s) * 10.0f;
+		Light &light = lights[i];
+		light.Position = StartPosition + Offset;
 	}
 
 	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);

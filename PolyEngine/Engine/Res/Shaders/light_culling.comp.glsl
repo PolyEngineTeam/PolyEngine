@@ -25,7 +25,7 @@ layout(std430, binding = 1) writeonly buffer OutputBuffer {
 } outputBuffer;
 
 
-#define NUM_LIGHTS 4
+const uint NUM_LIGHTS = 25;
 
 // Uniforms
 uniform sampler2D depthMap;
@@ -35,7 +35,6 @@ uniform float far;
 uniform mat4 ViewFromWorld;
 uniform mat4 ClipFromWorld;
 uniform mat4 ClipFromView;
-uniform int lightCount;
 uniform int screenSizeX;
 uniform int screenSizeY;
 uniform int workGroupsX;

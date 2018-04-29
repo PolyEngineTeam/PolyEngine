@@ -45,6 +45,7 @@ namespace Poly {
 		size_t GetProgramHandle() const;
 
 		void SetUniform(const String& name, int val);
+		void SetUniform(const String& name, uint val);
 		void SetUniform(const String& name, float val);
 		void SetUniform(const String& name, float val1, float val2);
 		void SetUniform(const String& name, const Vector& val);

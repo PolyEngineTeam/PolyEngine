@@ -165,6 +165,17 @@ void GLShaderProgram::SetUniform(const String& name, int val)
 }
 
 //------------------------------------------------------------------------------
+void GLShaderProgram::SetUniform(const String& name, uint val)
+{
+	auto it = Uniforms.find(name);
+	if (it != Uniforms.end())
+	{
+		HEAVY_ASSERTE(it->second.TypeName == "uint", "Invalid uniform type!");
+		glUniform1i(it->second.Location, val);
+	}
+}
+
+//------------------------------------------------------------------------------
 void GLShaderProgram::SetUniform(const String& name, float val)
 {
 	auto it = Uniforms.find(name);

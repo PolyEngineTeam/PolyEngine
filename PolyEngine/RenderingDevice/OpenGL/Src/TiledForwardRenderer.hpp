@@ -39,11 +39,11 @@ namespace Poly {
 			Vector tilePosSS;
 		};
 		
-		const size_t NUM_LIGHTS = 1024;
+		const size_t NUM_LIGHTS = 25;
 		const float LIGHT_RADIUS = 30.0f;
 
-		GLuint SCREEN_SIZE_X = 800; // 256; //  1280;
-		GLuint SCREEN_SIZE_Y = 600; // 192; // 720;
+		GLuint SCREEN_SIZE_X = 800; // 1280
+		GLuint SCREEN_SIZE_Y = 600; // 720
 		// X and Y work group dimension variables for compute shader
 		GLuint workGroupsX = 0;
 		GLuint workGroupsY = 0;
@@ -74,6 +74,7 @@ namespace Poly {
 
 		GLuint FallbackWhiteTexture;
 
+		Dynarray<Vector> LightsStartPositions;
 
 		void SetupLightsBuffer();
 
