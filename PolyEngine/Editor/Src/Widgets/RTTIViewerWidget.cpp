@@ -1,7 +1,6 @@
 #include "PolyEditorPCH.hpp"
 
-RTTIViewerWidget::RTTIViewerWidget(const QString& title, QWidget* parent)
-	: PolyDockWindow(title, parent)
+RTTIViewerWidget::RTTIViewerWidget()
 {
 	Control = std::make_unique<RTTIViewControl>(this);
 }

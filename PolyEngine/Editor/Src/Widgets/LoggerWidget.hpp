@@ -2,12 +2,19 @@
 
 #include <QTextEdit>
 #include <QBoxLayout>
-#include "Windows/PolyDockWindow.hpp"
+#include "Widgets/PolyWidget.hpp"
 
-class LoggerWidget : public PolyDockWindow
+enum class eLoggerType
+{
+	CONSOLE, // gConsole output
+	CMD, // command manager output
+	_COUNT
+};
+
+class LoggerWidget : public PolyWidget
 {
 public:
-	explicit LoggerWidget(const QString& title, QWidget* parent = nullptr);
+	explicit LoggerWidget(eLoggerType type);
 	~LoggerWidget();
 
 	void AppendLog(const char* data);

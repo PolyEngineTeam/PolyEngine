@@ -9,16 +9,16 @@
 #include <QLayout>
 #include <QLabel>
 
-#include "Windows/PolyDockWindow.hpp"
+#include "Widgets/PolyWidget.hpp"
 
 using namespace Poly;
 
-class WorldExplorerWidget : public PolyDockWindow
+class WorldExplorerWidget : public PolyWidget
 {
 	Q_OBJECT
 
 public:
-	WorldExplorerWidget(const QString& title, QWidget* parent);
+	WorldExplorerWidget();
 
 	void SetWorld(World* world);
 

@@ -13,20 +13,22 @@ class EditorUi : public QObject
 	friend class DockManager;
 	friend class PolyWindow;
 	Q_OBJECT
+
 public:
 	EditorUi() = default;
 
 	void InitMainWindow();
 
-	std::unique_ptr<ViewportWidget> MainViewport;
-	std::unique_ptr<LoggerWidget> MainLogger;
-	std::unique_ptr<LoggerWidget> CmdLogger;
-	std::unique_ptr<WorldExplorerWidget> WorldExplorer;
-	std::unique_ptr<EntityManagerWidget> EntityMgr;
+	ViewportWidget* MainViewport;
+	LoggerWidget* MainLogger;
+	LoggerWidget* CmdLogger;
+	WorldExplorerWidget* WorldExplorer;
+	EntityManagerWidget* EntityMgr;
 
 private:
 	PolyMainWindow* MainWindow;
 	Poly::Dynarray<PolyWindow*> Windows;
+	Poly::Dynarray<PolyDockWindow*> DockWindows;
 
 	// main window menu actions
 	QMenuBar* MenuBar;

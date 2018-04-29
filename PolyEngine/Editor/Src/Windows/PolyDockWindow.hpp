@@ -3,15 +3,16 @@
 #include <QDockWidget>
 
 class PolyWindow;
+class PolyWidget;
 
-class PolyDockWindow : public QWidget
+class PolyDockWindow : public QDockWidget
 {
 public:
-	PolyDockWindow(const QString& title, QWidget* parent = nullptr);
+	PolyDockWindow(const QString& title, PolyWidget* widget, QWidget* parent = nullptr);
 
-	QDockWidget* GetDockWidget() { return DockWidget; }
-	PolyWindow* GetOwner() const { return static_cast<PolyWindow*>(DockWidget->parent()); }
+	PolyWindow* GetOwner() const { return static_cast<PolyWindow*>(parent()); }
+	PolyWidget* GetContent() const { return static_cast<PolyWidget*>(Layout->children()[0]); }
 
 private:
-	QDockWidget* DockWidget = nullptr;
+	QBoxLayout* Layout = nullptr;
 };

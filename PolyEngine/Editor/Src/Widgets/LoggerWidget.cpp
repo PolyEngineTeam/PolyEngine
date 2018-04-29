@@ -1,5 +1,4 @@
 #include "PolyEditorPCH.hpp"
-#include "LoggerWidget.hpp" 
 
 class LoggerWidget;
 
@@ -22,18 +21,24 @@ private:
 };
 
 
-LoggerWidget::LoggerWidget(const QString& title, QWidget* parent)
-	: PolyDockWindow(title, parent)
+LoggerWidget::LoggerWidget(eLoggerType type)
 {
 	Layout = new QBoxLayout(QBoxLayout::Direction::LeftToRight, this);
 	TextEdit = new QTextEdit(this);
 	TextEdit->setReadOnly(true);
 	Layout->addWidget(TextEdit);
 
-	if (title == "Console")
+	switch (type)
+	{
+	case eLoggerType::CONSOLE:
 		Poly::gConsole.RegisterStream<EditorOutputStream>("console.log", this);
-	else if (title == "Cmd")
+		break;
+	case eLoggerType::CMD:
 		gApp->CommandMgr.RegisterStream<EditorOutputStream>("cmd.log", this);
+		break;
+	default:
+		break;
+	}
 }
 
 LoggerWidget::~LoggerWidget()

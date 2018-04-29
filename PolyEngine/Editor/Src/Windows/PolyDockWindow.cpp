@@ -1,10 +1,14 @@
 #include "PolyEditorPCH.hpp"
 
-PolyDockWindow::PolyDockWindow(const QString& title, QWidget* parent) :
-	QWidget(parent)
+PolyDockWindow::PolyDockWindow(const QString& title, PolyWidget* widget, QWidget* parent) :
+	QDockWidget(title, parent)
 {
-	DockWidget = new QDockWidget(title, parent);
-	DockWidget->setWidget(this);
+	setWidget(widget);
+	widget->setParent(this);
 
-	connect(DockWidget, &QDockWidget::topLevelChanged, this, [object = this ](bool topLevel) { if (topLevel) gApp->DockMgr.WidgetCatchEvent(object);  });
+	Layout = new QBoxLayout(QBoxLayout::Direction::LeftToRight, this);
+	Layout->addWidget(widget);
+
+	connect(this, &QDockWidget::topLevelChanged, this, 
+		[object = this](bool topLevel) { if (topLevel) gApp->DockMgr.WidgetCatchEvent(object); });
 }

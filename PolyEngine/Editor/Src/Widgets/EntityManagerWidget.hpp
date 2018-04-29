@@ -9,14 +9,14 @@
 #include <QListWidget>
 #include <qgroupbox.h>
 
-#include "Windows/PolyDockWindow.hpp"
+#include "Widgets/PolyWidget.hpp"
 
 using namespace Poly;
 
-class EntityManagerWidget : public PolyDockWindow
+class EntityManagerWidget : public PolyWidget
 {
 public:
-	EntityManagerWidget(const QString& title, QWidget* parent);
+	EntityManagerWidget();
 	~EntityManagerWidget();
 
 	void SetEntity(Entity* entity);

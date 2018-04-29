@@ -19,7 +19,7 @@ void DockManager::ProcessEvent(QEvent* event)
 
 void DockManager::WidgetMoveEvent(QEvent* event)
 {
-	QPoint mousePos = ((QMouseEvent*)event)->pos() + DraggedWidget->GetDockWidget()->pos();
+	QPoint mousePos = ((QMouseEvent*)event)->pos() + DraggedWidget->pos();
 	MouseOver = nullptr;
 
 	for (size_t i = 0; i < gApp->Ui.Windows.GetSize(); i++)
@@ -55,7 +55,7 @@ void DockManager::WidgetDropEvent()
 {
 	if (MouseOver)
 	{
-		if (MouseOver == ((PolyWindow*)DraggedWidget->GetDockWidget()->parent()))
+		if (MouseOver == ((PolyWindow*)DraggedWidget->parent()))
 			DraggedWidget = nullptr;
 		else
 		{
@@ -72,8 +72,8 @@ void DockManager::WidgetDropEvent()
 	else
 	{
 		PolyWindow* wnd = new PolyWindow;
-		wnd->resize(DraggedWidget->GetDockWidget()->size());
-		wnd->move(DraggedWidget->GetDockWidget()->pos());
+		wnd->resize(DraggedWidget->size());
+		wnd->move(DraggedWidget->pos());
 		wnd->AddWidget(Qt::DockWidgetArea::TopDockWidgetArea, DraggedWidget);
 		wnd->show();
 		gApp->Ui.Windows.PushBack(std::move(wnd));

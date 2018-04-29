@@ -12,8 +12,7 @@ extern "C"
 static Poly::LibraryFunctionHandle<CreateRenderingDeviceFunc> LoadRenderingDevice;
 
 // ---------------------------------------------------------------------------------------------------------
-ViewportWidget::ViewportWidget(const QString& title, QWidget* parent) :
-	PolyDockWindow(title, parent)
+ViewportWidget::ViewportWidget()
 {
 	setAttribute(Qt::WA_NativeWindow);
 	setMouseTracking(true);

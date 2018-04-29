@@ -113,34 +113,29 @@ void EditorUi::InitMainWindow()
 			QObject::connect(ContactUsAction, &QAction::triggered, this, &EditorUi::ContactUs);
 
 
-	// hardcoded initialization of several widgets.
-	//LoggerWidget* consoleWidget = new LoggerWidget("Assets Explorer");
-	//consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow);
-
-	//consoleWidget = new LoggerWidget("Object Properties");
-	//consoleWidget->Dock(Qt::DockWidgetArea::TopDockWidgetArea, MainWindow); //we need to create new base class for this -> someone created all as loggerwidgets
-			
-	MainViewport = std::make_unique<ViewportWidget>("Viewport", MainWindow);
-	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, MainViewport.get(), true);
-
-	//MainLogger = std::make_unique<LoggerWidget>("Console", MainWindow);
-	//MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, MainLogger.get(), true);
+	MainViewport = new ViewportWidget();
+	PolyDockWindow* window = new PolyDockWindow("Viewport", MainViewport, nullptr);
+	DockWindows.PushBack(window);
+	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, window, true);
+	
+	////MainLogger = std::make_unique<LoggerWidget>("Console", MainWindow);
+	////MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, MainLogger.get(), true);
+	////
+	////CmdLogger = std::make_unique<LoggerWidget>("Cmd", MainWindow);
+	////MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, CmdLogger.get(), true);
 	//
-	//CmdLogger = std::make_unique<LoggerWidget>("Cmd", MainWindow);
-	//MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, CmdLogger.get(), true);
-
-	WorldExplorer = std::make_unique<WorldExplorerWidget>("World Explorer", MainWindow);
-	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, WorldExplorer.get(), true);
-
-	EntityMgr = std::make_unique<EntityManagerWidget>("Entity Manager", MainWindow);
-	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, EntityMgr.get(), true);
-
-	RTTIViewerWidget* rtti = new RTTIViewerWidget("RTTI Viewer", MainWindow);
-	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, rtti, true);
-
-	ProjectConfig* cfg = new ProjectConfig("Z:/Programming/C++/PolyEngineExamples/SGJ2017Game/SGJ2017Game.proj.json");
-	rtti->SetObject(cfg, true);
-
+	//WorldExplorer = std::make_unique<WorldExplorerWidget>("World Explorer", MainWindow);
+	//MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, WorldExplorer.get(), true);
+	//
+	//EntityMgr = std::make_unique<EntityManagerWidget>("Entity Manager", MainWindow);
+	//MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, EntityMgr.get(), true);
+	//
+	//RTTIViewerWidget* rtti = new RTTIViewerWidget("RTTI Viewer", MainWindow);
+	//MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, rtti, true);
+	//
+	//ProjectConfig* cfg = new ProjectConfig("Z:/Programming/C++/PolyEngineExamples/SGJ2017Game/SGJ2017Game.proj.json");
+	//rtti->SetObject(cfg, true);
+	//
 	MainWindow->show();
 }
 

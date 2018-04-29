@@ -2,7 +2,7 @@
 
 EditManager::EditManager()
 {
-	connect(gApp->Ui.WorldExplorer.get(), &WorldExplorerWidget::EntitySelected, this, &EditManager::SelectedEntityChanged);
+	//connect(gApp->Ui.WorldExplorer, &WorldExplorerWidget::EntitySelected, this, &EditManager::SelectedEntityChanged);
 }
 
 void EditManager::SelectedEntityChanged(Entity* entity)

@@ -1,7 +1,6 @@
 #include "PolyEditorPCH.hpp"
 
-WorldExplorerWidget::WorldExplorerWidget(const QString& title, QWidget* parent)
-	: PolyDockWindow(title, parent)
+WorldExplorerWidget::WorldExplorerWidget()
 {
 	Tree = std::make_unique<QTreeWidget>(this);
 	Tree->move(12, 12);

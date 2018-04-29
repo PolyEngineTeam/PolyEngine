@@ -35,6 +35,15 @@ UNSILENCE_MSVC_WARNING()
 #include "Windows/PolyMainWindow.hpp"
 #include "Windows/PolyDockWindow.hpp"
 
+// widgets
+#include "Widgets/PolyWidget.hpp"
+
+#include "Widgets/ViewportWidget.hpp"
+#include "Widgets/LoggerWidget.hpp"
+#include "Widgets/EntityManagerWidget.hpp"
+#include "Widgets/WorldExplorerWidget.hpp"
+#include "Widgets/RTTIViewerWidget.hpp"
+
 // controls
 #include "Controls/RTTIViewControl.hpp"
 #include "Controls/SectionControl.hpp"
@@ -44,13 +53,6 @@ UNSILENCE_MSVC_WARNING()
 #include "Controls/NumberControl.hpp"
 #include "Controls/EnumControl.hpp"
 #include "Controls/StringControl.hpp"
-
-// widgets
-#include "Widgets/ViewportWidget.hpp"
-#include "Widgets/LoggerWidget.hpp"
-#include "Widgets/EntityManagerWidget.hpp"
-#include "Widgets/WorldExplorerWidget.hpp"
-#include "Widgets/RTTIViewerWidget.hpp"
 
 // dialogs
 #include "Dialogs/CreateProjectDialog.hpp"
