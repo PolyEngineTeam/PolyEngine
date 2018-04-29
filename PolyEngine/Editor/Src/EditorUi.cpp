@@ -112,18 +112,24 @@ void EditorUi::InitMainWindow()
 			ContactUsAction->setText(QApplication::translate("EditorMainWindowClass", "Contact Us", Q_NULLPTR));
 			QObject::connect(ContactUsAction, &QAction::triggered, this, &EditorUi::ContactUs);
 
-
+	// viewport
 	MainViewport = new ViewportWidget();
 	PolyDockWindow* window = new PolyDockWindow("Viewport", MainViewport, nullptr);
 	DockWindows.PushBack(window);
 	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, window, true);
+
+	// main logger
+	MainLogger = new LoggerWidget(eLoggerType::CONSOLE);
+	window = new PolyDockWindow("Console", MainLogger, nullptr);
+	DockWindows.PushBack(window);
+	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, window, true);
+
+	// command logger
+	CmdLogger = new LoggerWidget(eLoggerType::CONSOLE);
+	window = new PolyDockWindow("Cmd", CmdLogger, nullptr);
+	DockWindows.PushBack(window);
+	MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, window, true);
 	
-	////MainLogger = std::make_unique<LoggerWidget>("Console", MainWindow);
-	////MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, MainLogger.get(), true);
-	////
-	////CmdLogger = std::make_unique<LoggerWidget>("Cmd", MainWindow);
-	////MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, CmdLogger.get(), true);
-	//
 	//WorldExplorer = std::make_unique<WorldExplorerWidget>("World Explorer", MainWindow);
 	//MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, WorldExplorer.get(), true);
 	//

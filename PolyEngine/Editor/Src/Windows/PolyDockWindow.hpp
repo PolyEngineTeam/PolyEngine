@@ -11,8 +11,5 @@ public:
 	PolyDockWindow(const QString& title, PolyWidget* widget, QWidget* parent = nullptr);
 
 	PolyWindow* GetOwner() const { return static_cast<PolyWindow*>(parent()); }
-	PolyWidget* GetContent() const { return static_cast<PolyWidget*>(Layout->children()[0]); }
-
-private:
-	QBoxLayout* Layout = nullptr;
+	//PolyWidget* GetContent() const { return static_cast<PolyWidget*>(Layout->children()[0]); }
 };
