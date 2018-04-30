@@ -33,7 +33,7 @@ layout(std430, binding = 2) writeonly buffer VisibleLightIndicesBuffer {
 } visibleLightIndicesBuffer;
 
 
-const uint NUM_LIGHTS = 25;
+const uint NUM_LIGHTS = 10;
 
 // Uniforms
 uniform sampler2D depthMap;
@@ -47,49 +47,15 @@ uniform int screenSizeX;
 uniform int screenSizeY;
 uniform int workGroupsX;
 uniform int workGroupsY;
+uniform int lightCount;
 
 shared uint minDepthInt;
 shared uint maxDepthInt;
 shared uint visibleLightCount;
-
 shared vec4 frustumPlanes[6];
-shared int visibleLightIndices[NUM_LIGHTS];
+shared int visibleLightIndices[10];
 
 vec2 ScreenSize = vec2(800.0, 600.0);
-
-float LinearizeDepth(float depth)
-{
-    float z = depth * 2.0 - 1.0;
-    return (2.0 * near * far) / (far + near - z * (far - near));
-}
-
-float LinearizeDepth2(float depth)
-{
-    return (0.5 * ClipFromView[3][2]) / (depth + 0.5 * ClipFromView[2][2] - 0.5);
-}
-
-vec4 ScreenFromClip(vec4 posInClip)
-{
-    vec4 posInScreen = vec4(((posInClip.xyz / posInClip.w) + 1.0) * 0.5, 1.0);
-    posInScreen.xy *= ScreenSize;
-    return posInScreen;
-}
-
-// return 1 if v inside the box, return 0 otherwise
-float insideBox(vec2 v, vec2 bottomLeft, vec2 topRight)
-{
-    vec2 s = step(bottomLeft, v) - step(topRight, v);
-    return s.x * s.y;
-}
-
-float intersectionAABBAABB(vec3 aMin, vec3 aMax, vec3 bMin, vec3 bMax)
-{
-	// TODO: branchless like insideBox
-    if (aMax.x < bMin.x || aMin.x > bMax.x) return 0.0;
-    if (aMax.y < bMin.y || aMin.y > bMax.y) return 0.0;
-    if (aMax.z < bMin.z || aMin.z > bMax.z) return 0.0;
-    return 1.0;
-}
 
 #define TILE_SIZE 16
 layout(local_size_x = TILE_SIZE, local_size_y = TILE_SIZE, local_size_z = 1) in;
@@ -113,7 +79,11 @@ void main()
         minDepthInt = 0xFFFFFFFF;
         maxDepthInt = 0;
         visibleLightCount = 0;
-        // viewProjection = projection * view;
+
+        for (uint i = 0; i < NUM_LIGHTS; i++)
+        {
+            visibleLightIndices[i] = int(-1);
+        }
     }
 
     barrier();
@@ -180,7 +150,7 @@ void main()
             {
                 distance = dot(position, frustumPlanes[j]) + radius;
 	
-				// If one of the tests fails, then there is no intersection
+			// If one of the tests fails, then there is no intersection
                 if (distance <= 0.0)
                 {
                     break;
@@ -190,9 +160,11 @@ void main()
 			// If greater than zero, then it is a visible light
             if (distance > 0.0)
             {
-				// Add index to the shared array of visible indices
-                uint offset = atomicAdd(visibleLightCount, floatBitsToUint(1.0));
-				visibleLightIndices[offset] = int(i);
+			// Add index to the shared array of visible indices
+                // uint offset = atomicAdd(visibleLightCount, floatBitsToUint(1.0));
+                uint offset = visibleLightCount;
+                visibleLightIndices[offset] = int(i);
+                visibleLightCount += 1;
             }
         }
     }
@@ -202,18 +174,41 @@ void main()
 	if (gl_LocalInvocationIndex == 0)
 	{
         uint offset = index * NUM_LIGHTS; // Determine position in global buffer
-		visibleLightIndicesBuffer.data[offset].index = visibleLightIndices[0];
 
-        // for (uint i = 0; i < visibleLightCount; i++)
+		// for (uint i = 0; i < NUM_LIGHTS; i++)
         // {
-		//	visibleLightIndicesBuffer.data[offset + i].index = visibleLightIndices[i];
+        //     visibleLightIndicesBuffer.data[offset + i].index = int(i);
         // }
+
+        // uint range = uint(visibleLightCount);
+        // for (uint i = 0; i < range; i++)
+        // {
+        //     visibleLightIndicesBuffer.data[offset + i].index = visibleLightIndices[i];
+        // }
+
+        // visibleLightIndicesBuffer.data[offset + 0].index = visibleLightIndices[0];
+        // visibleLightIndicesBuffer.data[offset + 1].index = visibleLightIndices[1];
+        // visibleLightIndicesBuffer.data[offset + 2].index = visibleLightIndices[2];
+        // visibleLightIndicesBuffer.data[offset + 3].index = visibleLightIndices[3];
+        // visibleLightIndicesBuffer.data[offset + 4].index = visibleLightIndices[4];
+        // visibleLightIndicesBuffer.data[offset + 5].index = visibleLightIndices[5];
+        // visibleLightIndicesBuffer.data[offset + 6].index = visibleLightIndices[6];
+        // visibleLightIndicesBuffer.data[offset + 7].index = visibleLightIndices[7];
+        // visibleLightIndicesBuffer.data[offset + 8].index = visibleLightIndices[8];
+        // visibleLightIndicesBuffer.data[offset + 9].index = visibleLightIndices[9];
+
+        // visibleLightIndicesBuffer.data[offset].index = int(visibleLightCount);
+
+        for (uint i = 0; i < NUM_LIGHTS; i++)
+        {
+            visibleLightIndicesBuffer.data[offset + i].index = visibleLightIndices[i];
+        }
 		 
         // if (visibleLightCount != NUM_LIGHTS)
         // {
-		//  	// Unless we have totally filled the entire array, mark it's end with -1
-		//  	// Final shader step will use this to determine where to stop (without having to pass the light count)
-        //      visibleLightIndicesBuffer.data[offset + visibleLightCount].index = -1;
+		// 	// Unless we have totally filled the entire array, mark it's end with -1
+		// 	// Final shader step will use this to determine where to stop (without having to pass the light count)
+        //     visibleLightIndicesBuffer.data[offset + visibleLightCount].index = int(-1);
         // }
 
 		outputBuffer.data[IndexWorkGroup].indexLocal = 0;

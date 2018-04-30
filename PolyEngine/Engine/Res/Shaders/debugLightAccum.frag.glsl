@@ -6,6 +6,11 @@ struct Light
     float Radius;
 };
 
+struct VisibleIndex
+{
+    int index;
+};
+
 struct Output
 {
     uint indexLocal;
@@ -23,6 +28,11 @@ layout(std430, binding = 0) readonly buffer LightBuffer {
 layout(std430, binding = 1) readonly buffer OutputBuffer {
 	Output data[];
 } outputBuffer;
+
+layout(std430, binding = 2) readonly buffer VisibleLightIndicesBuffer {
+	VisibleIndex data[];
+} visibleLightIndicesBuffer;
+
 
 uniform float time;
 uniform sampler2D uTexture;
@@ -51,27 +61,36 @@ float distToLight(Light light)
 
 void main()
 {
-
     ivec2 location = ivec2(gl_FragCoord.xy); // (800, 600)
-    ivec2 WorkGroupSize = ivec2(16);
+    ivec2 WorkGroupSize = ivec2(16,16);
     ivec2 NumWorkGroups = ivec2(workGroupsX, workGroupsY);
     ivec2 WorkGroupID = (location / WorkGroupSize);
     uint IndexWorkGroup = WorkGroupID.y * NumWorkGroups.x + WorkGroupID.x;
      
-	float visibleLights = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].result);
-    float visibleLightsNormalized = clamp(visibleLights / 10.0, 0.0, 1.0);
-    visibleLights = clamp(visibleLights, 0.0, 1.0);
-    vec3 tileCount = vec3(0.5) + mix(vec3(0.0, 0.0, 0.5), vec3(0.5, 0.0, 0.0), visibleLightsNormalized);
-    vec3 tileColor = mix(vec3(0.5), tileCount, visibleLights);
+	// float visibleLights = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].result);
+    // float visibleLightsNormalized = clamp(visibleLights / 5.0, 0.0, 1.0);
+    // visibleLights = clamp(visibleLights, 0.0, 1.0);
+    // vec3 tileCount = vec3(0.5) + vec3(0.5 * visibleLightsNormalized, 0.0, 0.0);
+    // vec3 tileColor = mix(vec3(0.1), tileCount, visibleLights);
+
+    uint offset = IndexWorkGroup * lightCount;
 
     float dist = 0.5;
-    uint count = uint(lightCount);
-	for (uint i = 0; i < count; i++)
+	uint count = uint(lightCount);
+    for (uint i = 0; i < count; i++)
     {
-        dist += distToLight(lightBuffer.data[i]);
+        int lightIndex = visibleLightIndicesBuffer.data[offset + i].index;
+        if (lightIndex < 0)
+            break;
+        dist += distToLight(lightBuffer.data[lightIndex]);
     }
+    dist = clamp(dist, 0.0, 1.0);
 
-	color = vec4(fract(vVertexPos), 1.0);
-    color.xyz *= vec3(clamp(dist, 0.0, 1.0));
-    color.xyz *= tileColor;
+    uint i;
+    for (i = 0; i < 1024 && visibleLightIndicesBuffer.data[offset + i].index != -1; i++);
+    float ratio = float(i) / float(lightCount);
+
+    color = vec4(fract(vVertexPos), 1.0);
+    // color.xyz *= tileColor;
+    color.xyz *= ratio ;
 }

@@ -104,7 +104,7 @@ void TiledForwardRenderer::Init()
 
 	// Bind visible light indices buffer
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, visibleLightIndicesBuffer);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(VisibleIndex) * numberOfTiles * (NUM_LIGHTS+1), 0, GL_DYNAMIC_DRAW);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(VisibleIndex) * NUM_LIGHTS * numberOfTiles, 0, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, inputBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Input) * 16, 0, GL_STATIC_DRAW);
@@ -238,6 +238,7 @@ void TiledForwardRenderer::LightCulling(World* world, const CameraComponent* cam
 	lightCullingShader.SetUniform("screenSizeY", (int)SCREEN_SIZE_Y);
 	lightCullingShader.SetUniform("workGroupsX", (int)workGroupsX);
 	lightCullingShader.SetUniform("workGroupsY", (int)workGroupsY);
+	lightCullingShader.SetUniform("lightCount", (int)NUM_LIGHTS);
 
 	// Bind depth map texture to texture location 4 (which will not be used by any model texture)
 	glActiveTexture(GL_TEXTURE4);
@@ -252,8 +253,9 @@ void TiledForwardRenderer::LightCulling(World* world, const CameraComponent* cam
 	// Dispatch the compute shader, using the workgroup values calculated earlier
 	glDispatchCompute(workGroupsX, workGroupsY, 1);
 
-	// glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
-	// glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, 0);
 
 	// Unbind the depth map
 	glActiveTexture(GL_TEXTURE4);
@@ -433,7 +435,7 @@ void TiledForwardRenderer::SetupLightsBuffer()
 	{
 		Light &light = lights[i];
 		// light.Position = Vector(10.0f * i, 0.0f, 0.0f);
-		Vector position = Vector(Random(-1.0f, 1.0f)*50.0f, 0.0f, Random(-1.0f, 1.0f)*50.0f);
+		Vector position = Vector(Random(-1.0f, 1.0f)*10.0f, 0.0f, Random(-1.0f, 1.0f)*10.0f);
 		light.Position = position;
 		light.Radius = 10.0f;
 	
