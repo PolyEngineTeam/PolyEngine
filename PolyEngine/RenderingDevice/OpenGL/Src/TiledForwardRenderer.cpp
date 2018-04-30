@@ -135,7 +135,7 @@ void TiledForwardRenderer::Deinit()
 
 void TiledForwardRenderer::Render(World* world, const AARect& rect, const CameraComponent* cameraCmp)
 {
-	gConsole.LogInfo("TiledForwardRenderer::Render");
+	// gConsole.LogInfo("TiledForwardRenderer::Render");
 
 	UpdateLights(world);
 
@@ -221,9 +221,9 @@ void TiledForwardRenderer::LightCulling(World* world, const CameraComponent* cam
 {
 	float Time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 	
-	gConsole.LogInfo("TiledForwardRenderer::LightCulling Time: {}, workGroupsX: {}, workGroupsY: {}",
-		Time, workGroupsX, workGroupsY
-	);
+	// gConsole.LogInfo("TiledForwardRenderer::LightCulling Time: {}, workGroupsX: {}, workGroupsY: {}",
+	// 	Time, workGroupsX, workGroupsY
+	// );
 
 	// Step 2: Perform light culling on point lights in the scene
 	lightCullingShader.BindProgram();
@@ -419,7 +419,7 @@ void TiledForwardRenderer::DrawLightAccum(World* world, const CameraComponent* c
 
 void TiledForwardRenderer::SetupLightsBuffer()
 {
-	gConsole.LogInfo("TiledForwardRenderer::SetupLightsBuffer");
+	// gConsole.LogInfo("TiledForwardRenderer::SetupLightsBuffer");
 
 	if (lightBuffer == 0)
 	{
@@ -434,8 +434,8 @@ void TiledForwardRenderer::SetupLightsBuffer()
 	for (int i = 0; i < NUM_LIGHTS; ++i)
 	{
 		Light &light = lights[i];
-		// light.Position = Vector(10.0f * i, 0.0f, 0.0f);
-		Vector position = Vector(Random(-1.0f, 1.0f)*10.0f, 0.0f, Random(-1.0f, 1.0f)*10.0f);
+		float radius = 100.0f;
+		Vector position = Vector(Random(-1.0f, 1.0f)*radius, 0.0f, Random(-1.0f, 1.0f)*radius);
 		light.Position = position;
 		light.Radius = 10.0f;
 	
@@ -451,7 +451,7 @@ void TiledForwardRenderer::SetupLightsBuffer()
 
 void TiledForwardRenderer::UpdateLights(World* world)
 {
-	gConsole.LogInfo("TiledForwardRenderer::UpdateLights");
+	// gConsole.LogInfo("TiledForwardRenderer::UpdateLights");
 
 	float Time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 
@@ -461,10 +461,10 @@ void TiledForwardRenderer::UpdateLights(World* world)
 	for (int i = 0; i < NUM_LIGHTS; ++i)
 	{
 		Vector StartPosition = LightsStartPositions[i];
-		float t = Time + StartPosition.X;
+		float t = 2.0f * Time + StartPosition.X;
 		float s = Sin(1.0_rad * t);
 		float c = Cos(1.0_rad * t);
-		Vector Offset = Vector(c, 0.0f, s) * 10.0f;
+		Vector Offset = Vector(c, 0.0f, s) * 20.0f;
 		Light &light = lights[i];
 		light.Position = StartPosition + Offset;
 	}

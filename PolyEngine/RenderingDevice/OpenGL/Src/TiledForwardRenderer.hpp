@@ -39,7 +39,7 @@ namespace Poly {
 			Vector tilePosSS;
 		};
 		
-		const size_t NUM_LIGHTS = 10;
+		const size_t NUM_LIGHTS = 1024;
 
 		GLuint SCREEN_SIZE_X = 800; // 1280
 		GLuint SCREEN_SIZE_Y = 600; // 720

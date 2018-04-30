@@ -33,6 +33,7 @@ layout(std430, binding = 2) readonly buffer VisibleLightIndicesBuffer {
 	VisibleIndex data[];
 } visibleLightIndicesBuffer;
 
+const uint NUM_LIGHTS = 1024;
 
 uniform float time;
 uniform sampler2D uTexture;
@@ -66,31 +67,26 @@ void main()
     ivec2 NumWorkGroups = ivec2(workGroupsX, workGroupsY);
     ivec2 WorkGroupID = (location / WorkGroupSize);
     uint IndexWorkGroup = WorkGroupID.y * NumWorkGroups.x + WorkGroupID.x;
-     
-	// float visibleLights = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].result);
-    // float visibleLightsNormalized = clamp(visibleLights / 5.0, 0.0, 1.0);
-    // visibleLights = clamp(visibleLights, 0.0, 1.0);
-    // vec3 tileCount = vec3(0.5) + vec3(0.5 * visibleLightsNormalized, 0.0, 0.0);
-    // vec3 tileColor = mix(vec3(0.1), tileCount, visibleLights);
-
-    uint offset = IndexWorkGroup * lightCount;
+    uint offset = IndexWorkGroup * NUM_LIGHTS;
 
     float dist = 0.5;
-	uint count = uint(lightCount);
+    uint count = uint(NUM_LIGHTS);
     for (uint i = 0; i < count; i++)
     {
         int lightIndex = visibleLightIndicesBuffer.data[offset + i].index;
         if (lightIndex < 0)
             break;
-        dist += distToLight(lightBuffer.data[lightIndex]);
+        dist += 0.1*distToLight(lightBuffer.data[lightIndex]);
     }
     dist = clamp(dist, 0.0, 1.0);
 
     uint i;
-    for (i = 0; i < 1024 && visibleLightIndicesBuffer.data[offset + i].index != -1; i++);
-    float ratio = float(i) / float(lightCount);
+    for (i = 0; i < count && visibleLightIndicesBuffer.data[offset + i].index != -1; i++);
+    float ratio = float(i) / (0.1 * float(NUM_LIGHTS));
+    ratio = clamp(ratio, 0.0, 1.0);
 
     color = vec4(fract(vVertexPos), 1.0);
-    // color.xyz *= tileColor;
-    color.xyz *= ratio ;
+    
+    float t = smoothstep(0.5, 0.5, sin(time));
+    color.xyz *= mix(ratio, dist, t);
 }

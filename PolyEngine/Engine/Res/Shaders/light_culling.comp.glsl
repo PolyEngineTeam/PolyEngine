@@ -33,7 +33,8 @@ layout(std430, binding = 2) writeonly buffer VisibleLightIndicesBuffer {
 } visibleLightIndicesBuffer;
 
 
-const uint NUM_LIGHTS = 10;
+const uint NUM_LIGHTS = 1024;
+const vec2 ScreenSize = vec2(800.0, 600.0);
 
 // Uniforms
 uniform sampler2D depthMap;
@@ -49,13 +50,11 @@ uniform int workGroupsX;
 uniform int workGroupsY;
 uniform int lightCount;
 
-shared uint minDepthInt;
-shared uint maxDepthInt;
-shared uint visibleLightCount;
+shared uint minDepthInt = 0xFFFFFFFF;
+shared uint maxDepthInt = 0;
+shared uint visibleLightCount = 0;
 shared vec4 frustumPlanes[6];
-shared int visibleLightIndices[10];
-
-vec2 ScreenSize = vec2(800.0, 600.0);
+shared int visibleLightIndices[NUM_LIGHTS];
 
 #define TILE_SIZE 16
 layout(local_size_x = TILE_SIZE, local_size_y = TILE_SIZE, local_size_z = 1) in;
