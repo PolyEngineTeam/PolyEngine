@@ -41,8 +41,8 @@ namespace Poly {
 		
 		const size_t NUM_LIGHTS = 1024;
 
-		GLuint SCREEN_SIZE_X = 800; // 1280
-		GLuint SCREEN_SIZE_Y = 600; // 720
+		GLuint SCREEN_SIZE_X = 1920; // 800; // 1280
+		GLuint SCREEN_SIZE_Y = 1080; // 600; // 720
 		// X and Y work group dimension variables for compute shader
 		GLuint workGroupsX = 0;
 		GLuint workGroupsY = 0;

@@ -34,7 +34,8 @@ layout(std430, binding = 2) writeonly buffer VisibleLightIndicesBuffer {
 
 
 const uint NUM_LIGHTS = 1024;
-const vec2 ScreenSize = vec2(800.0, 600.0);
+// const vec2 ScreenSize = vec2(800.0, 600.0);
+const vec2 ScreenSize = vec2(1920.0, 1080.0);
 
 // Uniforms
 uniform sampler2D depthMap;
