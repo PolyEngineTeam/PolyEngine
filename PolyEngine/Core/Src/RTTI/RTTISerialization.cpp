@@ -93,13 +93,30 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	}
 	case eCorePropertyType::DYNARRAY:
 	{
-		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid enum impl data!");
+		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid dynarray impl data!");
 		const CollectionPropertyImplDataBase* implData = static_cast<const CollectionPropertyImplDataBase*>(prop.ImplData.get());
 		currentValue.SetArray();
 		for (size_t i = 0; i < implData->GetSize(value); ++i)
 			currentValue.GetArray().PushBack(GetCorePropertyValue(implData->GetValue(value, i), implData->PropertyType, alloc), alloc);
 	}
 		break;
+	case eCorePropertyType::ORDERED_MAP:
+	{
+		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid ordered map impl data!");
+		const DictionaryPropertyImplDataBase* implData = static_cast<const DictionaryPropertyImplDataBase*>(prop.ImplData.get());
+		currentValue.SetArray();
+		for (const void* key : implData->GetKeys(value))
+		{
+			rapidjson::Value keyObj = GetCorePropertyValue(key, implData->KeyPropertyType, alloc);
+			rapidjson::Value valObj = GetCorePropertyValue(implData->GetValue(value, key), implData->ValuePropertyType, alloc);
+			rapidjson::Value pair;
+			pair.SetObject();
+			pair.GetObject().AddMember("Key", keyObj, alloc);
+			pair.GetObject().AddMember("Value", valObj, alloc);
+			currentValue.GetArray().PushBack(pair, alloc);
+		}
+	}
+	break;
 	case eCorePropertyType::CUSTOM:
 		currentValue.SetObject();
 		SerializeObject(reinterpret_cast<const RTTIBase*>(value), currentValue.GetObject(), alloc);
@@ -220,7 +237,22 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 		}
 	}
 	break;
-
+	case eCorePropertyType::ORDERED_MAP:
+	{
+		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid ordered map impl data!");
+		const DictionaryPropertyImplDataBase* implData = static_cast<const DictionaryPropertyImplDataBase*>(prop.ImplData.get());
+		implData->Clear(obj);
+		for (size_t i = 0; i < value.GetArray().Size(); ++i)
+		{
+			const rapidjson::Value& pair = value.GetArray()[(rapidjson::SizeType)i];
+			const auto& key = pair.GetObject().FindMember("Key")->value;
+			const auto& val = pair.GetObject().FindMember("Value")->value;
+			SetCorePropertyValue(implData->GetKeyTemporaryStorage(), implData->KeyPropertyType, key);
+			SetCorePropertyValue(implData->GetValueTemporaryStorage(), implData->ValuePropertyType, val);
+			implData->SetValue(obj, implData->GetKeyTemporaryStorage(), implData->GetValueTemporaryStorage());
+		}
+	}
+	break;
 	case eCorePropertyType::CUSTOM:
 		DeserializeObject(reinterpret_cast<RTTIBase*>(obj), value.GetObject());
 		break;

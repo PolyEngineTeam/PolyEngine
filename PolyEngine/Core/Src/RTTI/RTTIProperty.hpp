@@ -35,6 +35,7 @@ namespace Poly {
 			ENUM,
 			STRING,
 			DYNARRAY,
+			ORDERED_MAP,
 			_COUNT
 		};
 
@@ -130,11 +131,74 @@ namespace Poly {
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------
+		struct DictionaryPropertyImplDataBase : public PropertyImplData
+		{
+			Property KeyPropertyType;
+			Property ValuePropertyType;
+
+			virtual void* GetKeyTemporaryStorage() const = 0;
+			virtual void* GetValueTemporaryStorage() const = 0;
+			virtual Dynarray<const void*> GetKeys(const void* collection) const = 0;
+			virtual void Clear(void* collection) const = 0;
+			virtual void SetValue(void* collection, const void* key, const void* value) const = 0;
+			virtual const void* GetValue(const void* collection, const void* key) const = 0;
+		};
+
+		//-----------------------------------------------------------------------------------------------------------------------
+		// OrderedMap serialization property impl
+		template <typename KeyType, typename ValueType>
+		struct OrderedMapPropertyImplData final : public DictionaryPropertyImplDataBase
+		{
+			mutable KeyType TempKey;
+			mutable ValueType TempValue;
+
+			OrderedMapPropertyImplData(ePropertyFlag flags)
+			{
+				KeyPropertyType = CreatePropertyInfo<KeyType>(0, "key", flags);
+				ValuePropertyType = CreatePropertyInfo<ValueType>(0, "value", flags);
+			}
+
+			void Clear(void* collection) const override { reinterpret_cast<OrderedMap<KeyType, ValueType>*>(collection)->Clear(); }
+			void* GetKeyTemporaryStorage() const { return reinterpret_cast<void*>(&TempKey); }
+			void* GetValueTemporaryStorage() const { return reinterpret_cast<void*>(&TempValue); }
+
+			Dynarray<const void*> GetKeys(const void* collection) const override
+			{
+				Dynarray<const void*> ret;
+				const OrderedMap<KeyType, ValueType>& map = *reinterpret_cast<const OrderedMap<KeyType, ValueType>*>(collection);
+				for (const KeyType& key : map.Keys())
+					ret.PushBack((const void*)&key);
+				return ret;
+			}
+
+			void SetValue(void* collection, const void* key, const void* value) const override
+			{
+				const KeyType& keyRef = *reinterpret_cast<const KeyType*>(key);
+				const ValueType& valueRef = *reinterpret_cast<const ValueType*>(value);
+				reinterpret_cast<OrderedMap<KeyType, ValueType>*>(collection)->MustInsert(keyRef, valueRef);
+			}
+
+			const void* GetValue(const void* collection, const void* key) const override
+			{
+				const KeyType& keyRef = *reinterpret_cast<const KeyType*>(key);
+				const ValueType& valueRef = reinterpret_cast<const OrderedMap<KeyType, ValueType>*>(collection)->Get(keyRef).Value();
+				return reinterpret_cast<const void*>(&valueRef);
+			}
+		};
+
+		template <typename KeyType, typename ValueType> Property CreateOrderedMapPropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
+		{
+			std::shared_ptr<DictionaryPropertyImplDataBase> implData = std::shared_ptr<DictionaryPropertyImplDataBase>{ new OrderedMapPropertyImplData<KeyType, ValueType>(flags) };
+			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::ORDERED_MAP, std::move(implData) };
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------
 		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
 		{ 
 			return constexpr_match(
 				std::is_enum<T>{},			[&](auto lazy) { return CreateEnumPropertyInfo<LAZY_TYPE(T)>(offset, name, flags); },
 				Trait::IsDynarray<T>{},		[&](auto lazy) { return CreateDynarrayPropertyInfo<typename Trait::DynarrayValueType<LAZY_TYPE(T)>::type>(offset, name, flags); },
+				Trait::IsOrderedMap<T>{},	[&](auto lazy) { return CreateOrderedMapPropertyInfo<typename Trait::OrderedMapType<LAZY_TYPE(T)>::keyType, typename Trait::OrderedMapType<LAZY_TYPE(T)>::valueType>(offset, name, flags); },
 				std::is_same<String, T>{},	[&](auto) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<String>() }; },
 				/*default*/					[&](auto lazy) { return Property{ TypeInfo::Get<LAZY_TYPE(T)>(), offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>() }; }
 			);
