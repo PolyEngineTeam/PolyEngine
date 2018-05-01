@@ -287,5 +287,5 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 	}
 
 	// remove the config file
-	//remove("TestConfig.json");
+	remove("TestConfig.json");
 }
