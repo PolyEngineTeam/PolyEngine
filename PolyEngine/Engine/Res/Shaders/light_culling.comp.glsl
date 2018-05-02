@@ -1,4 +1,5 @@
 #version 430
+// based on https://github.com/bcrusco/Forward-Plus-Renderer
 
 struct Light
 {
@@ -19,15 +20,10 @@ layout(std430, binding = 1) writeonly buffer VisibleLightIndicesBuffer {
 } visibleLightIndicesBuffer;
 
 
-const uint NUM_LIGHTS = 1024;
-// const vec2 ScreenSize = vec2(800.0, 600.0);
-// const vec2 ScreenSize = vec2(1920.0, 1080.0);
+const uint MAX_NUM_LIGHTS = 1024;
 
 // Uniforms
 uniform sampler2D depthMap;
-uniform float time;
-uniform float near;
-uniform float far;
 uniform mat4 ViewFromWorld;
 uniform mat4 ClipFromWorld;
 uniform mat4 ClipFromView;
@@ -41,17 +37,13 @@ shared uint minDepthInt = 0xFFFFFFFF;
 shared uint maxDepthInt = 0;
 shared uint visibleLightCount = 0;
 shared vec4 frustumPlanes[6];
-shared int visibleLightIndices[NUM_LIGHTS];
+shared int visibleLightIndices[MAX_NUM_LIGHTS];
 
 #define TILE_SIZE 16
 layout(local_size_x = TILE_SIZE, local_size_y = TILE_SIZE, local_size_z = 1) in;
 void main()
 {
     uint IndexWorkGroup = gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
-    
-    mat4 view = ViewFromWorld;
-	mat4 projection = ClipFromView;
-    mat4 viewProjection = ClipFromWorld;
     vec2 ScreenSize = vec2(screenSizeX, screenSizeY);
 
     ivec2 location = ivec2(gl_GlobalInvocationID.xy);
@@ -66,11 +58,6 @@ void main()
         minDepthInt = 0xFFFFFFFF;
         maxDepthInt = 0;
         visibleLightCount = 0;
-
-        for (uint i = 0; i < NUM_LIGHTS; i++)
-        {
-            visibleLightIndices[i] = int(-1);
-        }
     }
 
     barrier();
@@ -80,7 +67,7 @@ void main()
     vec2 text = vec2(location) / ScreenSize;
     float depth = texture(depthMap, text).r;
 	// Linearize the depth value from depth buffer (must do this because we created it using projection)
-    depth = (0.5 * projection[3][2]) / (depth + 0.5 * projection[2][2] - 0.5);
+    depth = (0.5 * ClipFromView[3][2]) / (depth + 0.5 * ClipFromView[2][2] - 0.5);
 
 	// Convert depth to uint so we can do atomic min and max comparisons between the threads
     uint depthInt = floatBitsToUint(depth);
@@ -111,14 +98,14 @@ void main()
 		// Transform the first four planes
         for (uint i = 0; i < 4; i++)
         {
-            frustumPlanes[i] *= viewProjection;
+            frustumPlanes[i] *= ClipFromWorld;
             frustumPlanes[i] /= length(frustumPlanes[i].xyz);
         }
 
 		// Transform the depth planes
-        frustumPlanes[4] *= view;
+        frustumPlanes[4] *= ViewFromWorld;
         frustumPlanes[4] /= length(frustumPlanes[4].xyz);
-        frustumPlanes[5] *= view;
+        frustumPlanes[5] *= ViewFromWorld;
         frustumPlanes[5] /= length(frustumPlanes[5].xyz);
     }
 
@@ -165,14 +152,14 @@ void main()
 
 	if (gl_LocalInvocationIndex == 0)
 	{
-        uint offset = index * NUM_LIGHTS; // Determine position in global buffer
+        uint offset = index * MAX_NUM_LIGHTS; // Determine position in global buffer
 
         for (uint i = 0; i < visibleLightCount; i++)
         {
             visibleLightIndicesBuffer.data[offset + i].index = visibleLightIndices[i];
         }
 		 
-        if (visibleLightCount != NUM_LIGHTS)
+        if (visibleLightCount != MAX_NUM_LIGHTS)
         {
 			// Unless we have totally filled the entire array, mark it's end with -1
 			// Final shader step will use this to determine where to stop (without having to pass the light count)

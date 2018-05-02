@@ -54,13 +54,15 @@ namespace Poly {
 
 		GLuint FallbackWhiteTexture;
 
-		Dynarray<Vector> LightsStartPositions;
+		int DynamicLighsInFrame = 0;
 
-		void SetupLightsBuffer();
+		// Dynarray<Vector> LightsStartPositions;
+
+		// void SetupLightsBuffer();
 
 		void SetupLightsBufferFromScene();
 
-		void UpdateLightsBuffer(World* world);
+		// void UpdateLightsBuffer(World* world);
 
 		void UpdateLightsBufferFromScene(World* world);
 
@@ -82,20 +84,20 @@ namespace Poly {
 
 		void CreateFallbackWhiteTexture();
 
-		inline float Random()
-		{
-			return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		}
+		// inline float Random()
+		// {
+		// 	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		// }
 
-		inline float Random(float min, float max)
-		{
-			float rnd = Random();
-			return Lerp(min, max, rnd);
-		}
+		// inline float Random(float min, float max)
+		// {
+		// 	float rnd = Random();
+		// 	return Lerp(min, max, rnd);
+		// }
 
-		inline Vector RandomVector(float min, float max)
-		{
-			return Vector(Random(min, max), Random(min, max), Random(min, max), 1.0f);
-		}
+		// inline Vector RandomVector(float min, float max)
+		// {
+		// 	return Vector(Random(min, max), Random(min, max), Random(min, max), 1.0f);
+		// }
 	};
 }

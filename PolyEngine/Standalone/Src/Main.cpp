@@ -50,6 +50,9 @@ int main(int argc, char* args[])
 	screenSize.Width = 1280; // 1920; // 800; // 256;
 	screenSize.Height = 720; // 1080; // 600; // 192;
 
+	// screenSize.Width = 1920;
+	// screenSize.Height = 1080;
+
 	// Main standalone window
 	SDL_Window* window = SDL_CreateWindow(
 		"PolyEngine standalone",

@@ -189,18 +189,14 @@ void TiledForwardRenderer::LightCulling(World* world, const CameraComponent* cam
 
 	// Step 2: Perform light culling on point lights in the scene
 	lightCullingShader.BindProgram();
-	lightCullingShader.SetUniform("time", Time);
-	lightCullingShader.SetUniform("near", cameraCmp->GetClippingPlaneNear());
-	lightCullingShader.SetUniform("far", cameraCmp->GetClippingPlaneFar());
 	lightCullingShader.SetUniform("ViewFromWorld", cameraCmp->GetViewFromWorld());
 	lightCullingShader.SetUniform("ClipFromWorld", cameraCmp->GetClipFromWorld());
 	lightCullingShader.SetUniform("ClipFromView", cameraCmp->GetClipFromView());
-	lightCullingShader.SetUniform("lightCount", (int)MAX_NUM_LIGHTS);
 	lightCullingShader.SetUniform("screenSizeX", (int)SCREEN_SIZE_X);
 	lightCullingShader.SetUniform("screenSizeY", (int)SCREEN_SIZE_Y);
 	lightCullingShader.SetUniform("workGroupsX", (int)workGroupsX);
 	lightCullingShader.SetUniform("workGroupsY", (int)workGroupsY);
-	lightCullingShader.SetUniform("lightCount", (int)MAX_NUM_LIGHTS);
+	lightCullingShader.SetUniform("lightCount", (int)DynamicLighsInFrame);
 
 	// Bind depth map texture to texture location 4 (which will not be used by any model texture)
 	glActiveTexture(GL_TEXTURE4);
@@ -270,37 +266,37 @@ void TiledForwardRenderer::DrawLightAccum(World* world, const CameraComponent* c
 	// glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, 0);
 }
 
-void TiledForwardRenderer::SetupLightsBuffer()
-{
-	// gConsole.LogInfo("TiledForwardRenderer::SetupLightsBuffer");
-
-	if (lightBuffer == 0)
-	{
-		return;
-	}
-
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
-	Light *lights = (Light*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
-
-	LightsStartPositions.Reserve(MAX_NUM_LIGHTS);
-
-	for (int i = 0; i < MAX_NUM_LIGHTS; ++i)
-	{
-		Light &light = lights[i];
-		float radius = 100.0f;
-		Vector position = Vector(Random(-1.0f, 1.0f)*radius, 0.0f, Random(-1.0f, 1.0f)*radius);
-		light.Position = position;
-		light.Radius = 10.0f;
-
-		LightsStartPositions.PushBack(position);
-
-		gConsole.LogInfo("TiledForwardRenderer::SetupLights #{}: Positon: {}, Radius: {}",
-			i, light.Position, light.Radius);
-	}
-
-	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-}
+// void TiledForwardRenderer::SetupLightsBuffer()
+// {
+// 	// gConsole.LogInfo("TiledForwardRenderer::SetupLightsBuffer");
+// 
+// 	if (lightBuffer == 0)
+// 	{
+// 		return;
+// 	}
+// 
+// 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
+// 	Light *lights = (Light*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
+// 
+// 	LightsStartPositions.Reserve(MAX_NUM_LIGHTS);
+// 
+// 	for (int i = 0; i < MAX_NUM_LIGHTS; ++i)
+// 	{
+// 		Light &light = lights[i];
+// 		float radius = 100.0f;
+// 		Vector position = Vector(Random(-1.0f, 1.0f)*radius, 0.0f, Random(-1.0f, 1.0f)*radius);
+// 		light.Position = position;
+// 		light.Radius = 10.0f;
+// 
+// 		LightsStartPositions.PushBack(position);
+// 
+// 		gConsole.LogInfo("TiledForwardRenderer::SetupLights #{}: Positon: {}, Radius: {}",
+// 			i, light.Position, light.Radius);
+// 	}
+// 
+// 	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+// 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+// }
 
 void Poly::TiledForwardRenderer::SetupLightsBufferFromScene()
 {
@@ -323,38 +319,38 @@ void Poly::TiledForwardRenderer::SetupLightsBufferFromScene()
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
-void TiledForwardRenderer::UpdateLightsBuffer(World* world)
-{
-	// gConsole.LogInfo("TiledForwardRenderer::UpdateLights");
+// void TiledForwardRenderer::UpdateLightsBuffer(World* world)
+// {
+// 	// gConsole.LogInfo("TiledForwardRenderer::UpdateLights");
+// 
+// 	float Time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
+// 
+// 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
+// 	Light *lights = (Light*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
+// 
+// 	for (int i = 0; i < MAX_NUM_LIGHTS; ++i)
+// 	{
+// 		Vector StartPosition = LightsStartPositions[i];
+// 		float t = 2.0f * Time + StartPosition.X;
+// 		float s = Sin(1.0_rad * t);
+// 		float c = Cos(1.0_rad * t);
+// 		Vector Offset = Vector(c, 0.0f, s) * 20.0f;
+// 		Light &light = lights[i];
+// 		light.Position = StartPosition + Offset;
+// 	}
+// 
+// 	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+// 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+// }
 
-	float Time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
-
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
-	Light *lights = (Light*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
-
-	for (int i = 0; i < MAX_NUM_LIGHTS; ++i)
-	{
-		Vector StartPosition = LightsStartPositions[i];
-		float t = 2.0f * Time + StartPosition.X;
-		float s = Sin(1.0_rad * t);
-		float c = Cos(1.0_rad * t);
-		Vector Offset = Vector(c, 0.0f, s) * 20.0f;
-		Light &light = lights[i];
-		light.Position = StartPosition + Offset;
-	}
-
-	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-}
-
-void TiledForwardRenderer::UpdateLightsBufferFromScene(World* world)
+inline void Poly::TiledForwardRenderer::UpdateLightsBufferFromScene(World* world)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::UpdateLightsBufferFromScene");
 
 	Dynarray<Vector> Positions;
 	Dynarray<float> Radius;
 
-	int lightsCount = 0;
+	DynamicLighsInFrame = 0;
 	for (const auto& componentsTuple : world->IterateComponents<PointLightComponent>())
 	{
 		PointLightComponent* pointLightCmp = std::get<PointLightComponent*>(componentsTuple);
@@ -363,12 +359,12 @@ void TiledForwardRenderer::UpdateLightsBufferFromScene(World* world)
 		Positions.PushBack(transform.GetGlobalTranslation());
 		Radius.PushBack(pointLightCmp->GetRange());
 
-//		gConsole.LogInfo("TiledForwardRenderer::UpdateLightsBufferFromScene get Position: {}, Radius: {}",
-//			transform.GetGlobalTranslation(), pointLightCmp->GetRange());
+		//		gConsole.LogInfo("TiledForwardRenderer::UpdateLightsBufferFromScene get Position: {}, Radius: {}",
+		//			transform.GetGlobalTranslation(), pointLightCmp->GetRange());
 
-		++lightsCount;
+		++DynamicLighsInFrame;
 
-		if (lightsCount >= MAX_NUM_LIGHTS)
+		if (DynamicLighsInFrame >= MAX_NUM_LIGHTS)
 		{
 			gConsole.LogInfo("TiledForwardRenderer::UpdateLightsBufferFromScene more lights than supported by renderer({})", MAX_NUM_LIGHTS);
 			break;
@@ -378,20 +374,20 @@ void TiledForwardRenderer::UpdateLightsBufferFromScene(World* world)
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
 	Light *lights = (Light*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
 
-	for (int i = 0; i < lightsCount; ++i)
+	for (int i = 0; i < DynamicLighsInFrame; ++i)
 	{
 		Light &light = lights[i];
 		light.Position = Positions[i];
 		light.Radius = Radius[i];
 
-// 		gConsole.LogInfo("TiledForwardRenderer::UpdateLightsBufferFromScene set Position: {}, Radius: {}",
-// 			light.Position, light.Radius);
+		// 		gConsole.LogInfo("TiledForwardRenderer::UpdateLightsBufferFromScene set Position: {}, Radius: {}",
+		// 			light.Position, light.Radius);
 	}
 
-	int remainingSlots = MAX_NUM_LIGHTS - lightsCount;
+	int remainingSlots = MAX_NUM_LIGHTS - DynamicLighsInFrame;
 	for (int i = 0; i < remainingSlots; ++i)
 	{
-		Light &light = lights[lightsCount + i];
+		Light &light = lights[DynamicLighsInFrame + i];
 		light.Position = Vector::ZERO;
 		light.Radius = -1.0f;
 	}
