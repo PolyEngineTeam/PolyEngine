@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include "RTTI/CustomTypeTraits.hpp"
 
 // Define this to detect not registered types
 template <typename T>
@@ -18,19 +19,17 @@ struct MetaTypeInfo {
 namespace Poly {
 	namespace RTTI {
 		namespace Impl {
-			template <class T> using RawType = std::remove_pointer<typename std::decay<T>::type>;
-
 			//--------------------------------------------------------------------------
 			template<typename T>
 			class HasGetTypeInfoFunc {
 				template <typename>
-				constexpr static auto evaluate(int) -> decltype(std::declval<T>()->GetTypeInfo(), bool{}) { return true; }
-
+				constexpr static auto evaluate(int) -> decltype(std::declval<T>().GetTypeInfo(), bool{}) { return true; }
+				
 				template <typename>
 				constexpr static auto evaluate(...) -> decltype(bool{}) { return false; }
 
 			public:
-				static const bool value = evaluate<typename RawType<T>::type>(0);
+				static const bool value = evaluate<typename Trait::RawType<T>::type>(0);
 			};
 		} // namespace Impl
 
