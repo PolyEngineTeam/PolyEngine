@@ -26,7 +26,7 @@ namespace Poly {
 			int index;
 		};
 
-		const size_t NUM_LIGHTS = 1024;
+		const size_t MAX_NUM_LIGHTS = 1024;
 
 		GLuint SCREEN_SIZE_X = 1920; // 800; // 1280
 		GLuint SCREEN_SIZE_Y = 1080; // 600; // 720
@@ -48,9 +48,6 @@ namespace Poly {
 
 		GLShaderProgram debugQuadDepthPrepassShader;
 		GLShaderProgram debugLightAccumShader;
-		GLShaderProgram depthDebugShader;
-		GLShaderProgram lightDebugShader;
-		GLShaderProgram computeDebugShader;
 
 		GLuint depthMapFBO;
 		GLuint depthMap;
@@ -61,19 +58,23 @@ namespace Poly {
 
 		void SetupLightsBuffer();
 
-		void UpdateLights(World* world);
+		void SetupLightsBufferFromScene();
+
+		void UpdateLightsBuffer(World* world);
+
+		void UpdateLightsBufferFromScene(World* world);
 
 		void DepthPrePass(World* world, const CameraComponent* cameraCmp);
 
 		void LightCulling(World* world, const CameraComponent* cameraCmp);
 
-		void DebugLightCulling(World * world, const CameraComponent * cameraCmp);
+		// void DebugLightCulling(World * world, const CameraComponent * cameraCmp);
 
 		void DrawDepthPrepass(const CameraComponent* cameraCmp);
 
-		void DrawLightCulling(const CameraComponent* cameraCmp);
+		// void DrawLightCulling(const CameraComponent* cameraCmp);
 
-		void DebugDepth(World* world, const CameraComponent* cameraCmp);
+		// void DebugDepth(World* world, const CameraComponent* cameraCmp);
 
 		void DrawLightAccum(World* world, const CameraComponent* cameraCmp);
 		

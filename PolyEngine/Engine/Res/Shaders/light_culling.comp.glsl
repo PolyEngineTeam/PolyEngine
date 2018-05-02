@@ -159,7 +159,6 @@ void main()
             uint offset = atomicAdd(visibleLightCount, 1);
             visibleLightIndices[offset] = int(lightIndex);
         }
-        
     }
 
 	barrier();
@@ -168,22 +167,16 @@ void main()
 	{
         uint offset = index * NUM_LIGHTS; // Determine position in global buffer
 
-        for (uint i = 0; i < NUM_LIGHTS; i++)
+        for (uint i = 0; i < visibleLightCount; i++)
         {
             visibleLightIndicesBuffer.data[offset + i].index = visibleLightIndices[i];
         }
 		 
-        // if (visibleLightCount != NUM_LIGHTS)
-        // {
-		// 	// Unless we have totally filled the entire array, mark it's end with -1
-		// 	// Final shader step will use this to determine where to stop (without having to pass the light count)
-        //     visibleLightIndicesBuffer.data[offset + visibleLightCount].index = int(-1);
-        // }
-
-		// outputBuffer.data[IndexWorkGroup].indexLocal = 0;
-		// outputBuffer.data[IndexWorkGroup].indexWorkGroup = IndexWorkGroup;
-		// outputBuffer.data[IndexWorkGroup].indexGlobal = 0; // IndexGlobal;
-		// outputBuffer.data[IndexWorkGroup].input = maxDepthInt;
-		// outputBuffer.data[IndexWorkGroup].result = visibleLightCount;
+        if (visibleLightCount != NUM_LIGHTS)
+        {
+			// Unless we have totally filled the entire array, mark it's end with -1
+			// Final shader step will use this to determine where to stop (without having to pass the light count)
+            visibleLightIndicesBuffer.data[offset + visibleLightCount].index = int(-1);
+        }
 	}
 }
