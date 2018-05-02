@@ -41,16 +41,10 @@ shared int sVisibleLightIndices[MAX_NUM_LIGHTS];
 layout(local_size_x = TILE_SIZE, local_size_y = TILE_SIZE, local_size_z = 1) in;
 void main()
 {
-    uint IndexWorkGroup = gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
     vec2 ScreenSize = vec2(uScreenSizeX, uScreenSizeY);
+    ivec2 FragCoord = ivec2(gl_GlobalInvocationID.xy);
+    uint IndexWorkGroup = gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
 
-    ivec2 location = ivec2(gl_GlobalInvocationID.xy);
-    ivec2 itemID = ivec2(gl_LocalInvocationID.xy);
-    ivec2 tileID = ivec2(gl_WorkGroupID.xy);
-    ivec2 tileNumber = ivec2(gl_NumWorkGroups.xy);
-    uint index = tileID.y * tileNumber.x + tileID.x;
-
-	// Initialize shared global values for depth and light count
     if (gl_LocalInvocationIndex == 0)
     {
         sMinDepthInt = 0xFFFFFFFF;
@@ -62,7 +56,7 @@ void main()
 
 	// Step 1: Calculate the minimum and maximum depth values (from the depth buffer) for this group's tile
     float maxDepth, minDepth;
-    vec2 text = vec2(location) / ScreenSize;
+    vec2 text = vec2(FragCoord) / ScreenSize;
     float depth = texture(uDepthMap, text).r;
 	// Linearize the depth value from depth buffer (must do this because we created it using projection)
     depth = (0.5 * uClipFromView[3][2]) / (depth + 0.5 * uClipFromView[2][2] - 0.5);
@@ -77,13 +71,16 @@ void main()
 	// Step 2: One thread should calculate the frustum planes to be used for this tile
     if (gl_LocalInvocationIndex == 0)
     {
+		ivec2 TileID = ivec2(gl_WorkGroupID.xy);
+		ivec2 TileNumber = ivec2(gl_NumWorkGroups.xy);
+
 		// Convert the min and max across the entire tile back to float
         minDepth = uintBitsToFloat(sMinDepthInt);
         maxDepth = uintBitsToFloat(sMaxDepthInt);
 
-		// Steps based on tile sale
-        vec2 negativeStep = (2.0 * vec2(tileID)) / vec2(tileNumber);
-        vec2 positiveStep = (2.0 * vec2(tileID + ivec2(1, 1))) / vec2(tileNumber);
+		// Steps based on tile side
+        vec2 negativeStep = (2.0 * vec2(TileID)) / vec2(TileNumber);
+        vec2 positiveStep = (2.0 * vec2(TileID + ivec2(1, 1))) / vec2(TileNumber);
 
 		// Set up starting values for planes using steps and min and max z values
         sFrustumPlanes[0] = vec4(1.0, 0.0, 0.0, 1.0 - negativeStep.x); // Left
@@ -149,7 +146,7 @@ void main()
 
 	if (gl_LocalInvocationIndex == 0)
 	{
-        uint offset = index * MAX_NUM_LIGHTS; // Determine position in global buffer
+        uint offset = IndexWorkGroup * MAX_NUM_LIGHTS; // Determine position in global buffer
 
         for (uint i = 0; i < sVisibleLightCount; ++i)
         {

@@ -307,7 +307,7 @@ inline void Poly::TiledForwardRenderer::UpdateLightsBufferFromScene(World* world
 
 		++DynamicLighsInFrame;
 
-		if (DynamicLighsInFrame >= MAX_NUM_LIGHTS)
+		if (DynamicLighsInFrame > MAX_NUM_LIGHTS)
 		{
 			gConsole.LogInfo("TiledForwardRenderer::UpdateLightsBufferFromScene more lights than supported by renderer({})", MAX_NUM_LIGHTS);
 			break;
