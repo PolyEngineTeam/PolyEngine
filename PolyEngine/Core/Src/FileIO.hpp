@@ -3,6 +3,7 @@
 #include "Defines.hpp"
 #include "Collections/String.hpp"
 #include "Memory/BinaryBuffer.hpp"
+#include "Utils/Logger.hpp"
 
 
 namespace Poly {
@@ -67,7 +68,8 @@ namespace Poly {
 		}
 		else
 		{
-			throw FileIOException("File save failed");
+			gConsole.LogError("File save failed: {} with path \"{}\".", strerror(errno), path);
+			throw FileIOException("File save failed.");
 		}
 	}
 
