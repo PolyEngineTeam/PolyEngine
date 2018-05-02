@@ -4,7 +4,8 @@
 struct Light
 {
     vec4 Position;
-    float Radius;
+    vec4 Color;
+    vec4 RangeIntensity;
 };
 
 struct VisibleIndex {
@@ -118,7 +119,7 @@ void main()
         }
 
         vec4 position = bLightBuffer.data[lightIndex].Position;
-        float radius = bLightBuffer.data[lightIndex].Radius;
+        float radius = bLightBuffer.data[lightIndex].RangeIntensity.x;
 	
 		// We check if the light exists in our frustum
         float distance = 0.0;

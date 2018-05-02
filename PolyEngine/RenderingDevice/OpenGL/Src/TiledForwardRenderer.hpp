@@ -19,7 +19,8 @@ namespace Poly {
 		// structures defining the data of both buffers
 		struct Light {
 			Vector Position;
-			float Radius;
+			Vector Color;
+			Vector RangeIntensity;
 		};
 
 		struct VisibleIndex {

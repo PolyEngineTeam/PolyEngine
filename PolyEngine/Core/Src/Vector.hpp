@@ -4,6 +4,7 @@
 
 #include "Defines.hpp"
 #include "BasicMath.hpp"
+#include "Color.hpp"
 
 namespace Poly
 {
@@ -26,6 +27,10 @@ namespace Poly
 		/// <param name="z"></param>
 		/// <param name="w">Default value is 1.0f.</param>
 		constexpr Vector(float x, float y, float z, float w = 1.0f) : X(x), Y(y), Z(z), W(w) {}
+
+		/// <summary>Creates vector from Color values.</summary>
+		/// <param name="color"></param>
+		constexpr Vector(Color color) : X(color.R), Y(color.G), Z(color.B), W(color.A) {}
 
 
 		inline Vector(const Vector& rhs) : X(rhs.X), Y(rhs.Y), Z(rhs.Z), W(rhs.W) {}

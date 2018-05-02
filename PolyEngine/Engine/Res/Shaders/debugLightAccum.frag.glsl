@@ -3,7 +3,8 @@
 struct Light
 {
     vec4 Position;
-    float Radius;
+    vec4 Color;
+    vec4 RangeIntensity;
 };
 
 struct VisibleIndex
@@ -37,7 +38,7 @@ float distToLight(Light light)
 {
     float dist = 1.0;
     vec3 position = light.Position.xyz;
-    float radius = light.Radius;
+    float radius = light.RangeIntensity.x;
     if (radius > 0.0)
     {
         dist = min(length(vVertexPos - position) / abs(radius), 1.0);

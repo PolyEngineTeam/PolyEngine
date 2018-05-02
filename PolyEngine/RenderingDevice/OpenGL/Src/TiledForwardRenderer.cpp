@@ -318,7 +318,8 @@ void TiledForwardRenderer::SetupLightsBufferFromScene()
 	{
 		Light &light = lights[i];
 		light.Position = Vector::ZERO;
-		light.Radius = -1.0f;
+		light.Color = Vector::ZERO;
+		light.RangeIntensity = Vector(-1.0f, 0.0f, 0.0f);
 	}
 
 	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
@@ -330,7 +331,8 @@ inline void Poly::TiledForwardRenderer::UpdateLightsBufferFromScene(World* world
 	// gConsole.LogInfo("TiledForwardRenderer::UpdateLightsBufferFromScene");
 
 	Dynarray<Vector> Positions;
-	Dynarray<float> Radius;
+	Dynarray<Vector> Color;
+	Dynarray<Vector> RangeIntensity;
 
 	DynamicLighsInFrame = 0;
 	for (const auto& componentsTuple : world->IterateComponents<PointLightComponent>())
@@ -339,7 +341,8 @@ inline void Poly::TiledForwardRenderer::UpdateLightsBufferFromScene(World* world
 		const EntityTransform& transform = pointLightCmp->GetTransform();
 
 		Positions.PushBack(transform.GetGlobalTranslation());
-		Radius.PushBack(pointLightCmp->GetRange());
+		Color.PushBack(Vector(pointLightCmp->GetColor()));
+		RangeIntensity.PushBack(Vector(pointLightCmp->GetRange(), pointLightCmp->GetIntensity(), 0.0f));
 
 		//		gConsole.LogInfo("TiledForwardRenderer::UpdateLightsBufferFromScene get Position: {}, Radius: {}",
 		//			transform.GetGlobalTranslation(), pointLightCmp->GetRange());
@@ -360,7 +363,8 @@ inline void Poly::TiledForwardRenderer::UpdateLightsBufferFromScene(World* world
 	{
 		Light &light = lights[i];
 		light.Position = Positions[i];
-		light.Radius = Radius[i];
+		light.Color = Color[i];
+		light.RangeIntensity = RangeIntensity[i];
 
 		// 		gConsole.LogInfo("TiledForwardRenderer::UpdateLightsBufferFromScene set Position: {}, Radius: {}",
 		// 			light.Position, light.Radius);
@@ -371,7 +375,8 @@ inline void Poly::TiledForwardRenderer::UpdateLightsBufferFromScene(World* world
 	{
 		Light &light = lights[DynamicLighsInFrame + i];
 		light.Position = Vector::ZERO;
-		light.Radius = -1.0f;
+		light.Color = Vector::ZERO;
+		light.RangeIntensity = Vector(-1.0f, 0.0f, 0.0f);
 	}
 
 	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);

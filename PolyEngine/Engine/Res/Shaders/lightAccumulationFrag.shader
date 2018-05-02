@@ -3,7 +3,8 @@
 struct Light
 {
     vec4 Position;
-    float Radius;
+    vec4 Color;
+    vec4 RangeIntensity;
 };
 
 struct VisibleIndex
@@ -32,37 +33,41 @@ uniform sampler2D uTexture;
 
 layout(location = 0) out vec4 oColor;
 
-float distToLight(Light light)
+vec3 Lighting(Light light)
 {
-    float dist = 1.0;
+	// light faloff based on Real Shading in Unreal Engine 4 http://gamedevs.org/uploads/real-shading-in-unreal-engine-4.pdf
+    
+	vec3 col = vec3(0.0);
+
     vec3 position = light.Position.xyz;
-    float radius = light.Radius;
-    if (radius > 0.0)
+	float range = light.RangeIntensity.x;
+	float dist = length(vVertexPos - position);
+    if (dist < range)
     {
-        dist = min(length(vVertexPos - position) / abs(radius), 1.0);
+        float falloff = pow(clamp(1.0 - pow(dist / range, 4.0), 0.0, 1.0), 2.0) / (pow(dist, 2.0) + 1.0);
+        col = falloff * light.Color.rgb * light.RangeIntensity.y;
     }
-    return fract(radius * dist) * (1.0 - smoothstep(0.99, 1.0, dist));
+	
+    return col;
 }
 
-void main() {
+void main()
+{
     ivec2 WorkGroupSize = ivec2(16, 16);
     ivec2 NumWorkGroups = ivec2(uWorkGroupsX, uWorkGroupsY);
     ivec2 WorkGroupID = (ivec2(gl_FragCoord.xy) / WorkGroupSize);
     uint IndexWorkGroup = WorkGroupID.y * NumWorkGroups.x + WorkGroupID.x;
-    uint offset = IndexWorkGroup * MAX_NUM_LIGHTS;
+    uint TileOffset = IndexWorkGroup * MAX_NUM_LIGHTS;
 
-    float dist = 0.5;
-    uint count = uint(uLightCount);
-    for (uint i = 0; i < count; i++)
+    vec3 col = vec3(0.0);
+    uint Count = uint(uLightCount);
+    for (uint i = 0; i < Count; i++)
     {
-        int lightIndex = bVisibleLightIndicesBuffer.data[offset + i].Index;
+        int lightIndex = bVisibleLightIndicesBuffer.data[TileOffset + i].Index;
         if (lightIndex < 0)
             break;
-        dist += 0.1 * distToLight(bLightBuffer.data[lightIndex]);
+        col += Lighting(bLightBuffer.data[lightIndex]);
     }
-    dist = clamp(dist, 0.0, 1.0);
 
-    oColor = vec4(fract(vVertexPos), 1.0);
-    
-    oColor.xyz *= dist;
+    oColor = vec4(col, 1.0);
 }
