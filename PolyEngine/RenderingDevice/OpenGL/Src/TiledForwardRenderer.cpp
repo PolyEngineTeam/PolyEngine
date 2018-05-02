@@ -21,7 +21,7 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 	lightCullingShader("Shaders/light_culling.comp.glsl"),
 	debugQuadDepthPrepassShader("Shaders/debugQuadDepthPrepass.vert.glsl", "Shaders/debugQuadDepthPrepass.frag.glsl"),
 	debugLightAccumShader("Shaders/debugLightAccum.vert.glsl", "Shaders/debugLightAccum.frag.glsl"),
-	lightAccumulationShader("Shaders/light_accumulation.vert.glsl", "Shaders/light_accumulation.frag.glsl"),
+	lightAccumulationShader("Shaders/lightAccumulationVert.shader", "Shaders/lightAccumulationFrag.shader"),
 	hdrShader("Shaders/hdr.vert.glsl", "Shaders/hdr.frag.glsl")
 {
 }
@@ -219,13 +219,12 @@ void TiledForwardRenderer::DrawLightAccum(World* world, const CameraComponent* c
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	debugLightAccumShader.BindProgram();
-	debugLightAccumShader.SetUniform("time", Time);
-	debugLightAccumShader.SetUniform("workGroupsX", (int)workGroupsX);
-	debugLightAccumShader.SetUniform("workGroupsY", (int)workGroupsY);
-	debugLightAccumShader.SetUniform("lightCount", (int)MAX_NUM_LIGHTS);
+	debugLightAccumShader.SetUniform("uTime", Time);
+	debugLightAccumShader.SetUniform("uWorkGroupsX", (int)workGroupsX);
+	debugLightAccumShader.SetUniform("uWorkGroupsY", (int)workGroupsY);
+	debugLightAccumShader.SetUniform("uLightCount", (int)MAX_NUM_LIGHTS);
 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
-	// glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, outputBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, visibleLightIndicesBuffer);
 
 	// Bind the depth map's frame buffer and draw the depth map to it
@@ -257,7 +256,6 @@ void TiledForwardRenderer::DrawLightAccum(World* world, const CameraComponent* c
 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
-	// glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, 0);
 }
 
 void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent* cameraCmp)

@@ -8,31 +8,30 @@ struct Light
 
 struct VisibleIndex
 {
-    int index;
+    int Index;
 };
 
 layout(std430, binding = 0) readonly buffer LightBuffer {
 	Light data[];
-} lightBuffer;
+} bLightBuffer;
 
 layout(std430, binding = 1) readonly buffer VisibleLightIndicesBuffer {
 	VisibleIndex data[];
-} visibleLightIndicesBuffer;
+} bVisibleLightIndicesBuffer;
 
-const uint NUM_LIGHTS = 1024;
+const uint MAX_NUM_LIGHTS = 1024;
 
-uniform float time;
 uniform sampler2D uTexture;
-uniform vec4 uColor;
-uniform int lightCount;
-uniform int workGroupsX;
-uniform int workGroupsY;
+uniform float uTime;
+uniform int uLightCount;
+uniform int uWorkGroupsX;
+uniform int uWorkGroupsY;
 uniform mat4 uClipFromWorld;
 
 in vec3 vVertexPos;
 in vec2 vTexCoord;
 
-layout(location = 0) out vec4 color;
+layout(location = 0) out vec4 oColor;
 
 float distToLight(Light light)
 {
@@ -48,31 +47,30 @@ float distToLight(Light light)
 
 void main()
 {
-    ivec2 location = ivec2(gl_FragCoord.xy); // (800, 600)
     ivec2 WorkGroupSize = ivec2(16,16);
-    ivec2 NumWorkGroups = ivec2(workGroupsX, workGroupsY);
-    ivec2 WorkGroupID = (location / WorkGroupSize);
+    ivec2 NumWorkGroups = ivec2(uWorkGroupsX, uWorkGroupsY);
+    ivec2 WorkGroupID = (ivec2(gl_FragCoord.xy) / WorkGroupSize);
     uint IndexWorkGroup = WorkGroupID.y * NumWorkGroups.x + WorkGroupID.x;
-    uint offset = IndexWorkGroup * NUM_LIGHTS;
+    uint offset = IndexWorkGroup * MAX_NUM_LIGHTS;
 
     float dist = 0.5;
-    uint count = uint(NUM_LIGHTS);
+    uint count = uint(uLightCount);
     for (uint i = 0; i < count; i++)
     {
-        int lightIndex = visibleLightIndicesBuffer.data[offset + i].index;
+        int lightIndex = bVisibleLightIndicesBuffer.data[offset + i].Index;
         if (lightIndex < 0)
             break;
-        dist += 0.1*distToLight(lightBuffer.data[lightIndex]);
+        dist += 0.1*distToLight(bLightBuffer.data[lightIndex]);
     }
     dist = clamp(dist, 0.0, 1.0);
 
     uint i;
-    for (i = 0; i < count && visibleLightIndicesBuffer.data[offset + i].index != -1; i++);
-    float ratio = float(i) / (0.1 * float(NUM_LIGHTS));
+    for (i = 0; i < count && bVisibleLightIndicesBuffer.data[offset + i].Index != -1; i++);
+    float ratio = float(i) / (0.1 * float(MAX_NUM_LIGHTS));
     ratio = clamp(ratio, 0.0, 1.0);
 
-    color = vec4(fract(vVertexPos), 1.0);
+    oColor = vec4(fract(vVertexPos), 1.0);
     
-    float t = smoothstep(0.5, 0.5, sin(time));
-    color.xyz *= mix(ratio, dist, t);
+    float t = smoothstep(0.5, 0.5, sin(uTime));
+    oColor.xyz *= mix(ratio, dist, t);
 }
