@@ -8,43 +8,41 @@ struct Light
 };
 
 struct VisibleIndex {
-	int index;
+	int Index;
 };
 
 layout(std430, binding = 0) readonly buffer LightBuffer {
 	Light data[];
-} lightBuffer;
+} bLightBuffer;
 
 layout(std430, binding = 1) writeonly buffer VisibleLightIndicesBuffer {
 	VisibleIndex data[];
-} visibleLightIndicesBuffer;
-
+} bVisibleLightIndicesBuffer;
 
 const uint MAX_NUM_LIGHTS = 1024;
 
-// Uniforms
-uniform sampler2D depthMap;
-uniform mat4 ViewFromWorld;
-uniform mat4 ClipFromWorld;
-uniform mat4 ClipFromView;
-uniform int screenSizeX;
-uniform int screenSizeY;
-uniform int workGroupsX;
-uniform int workGroupsY;
-uniform int lightCount;
+uniform sampler2D uDepthMap;
+uniform mat4 uViewFromWorld;
+uniform mat4 uClipFromWorld;
+uniform mat4 uClipFromView;
+uniform int uScreenSizeX;
+uniform int uScreenSizeY;
+uniform int uWorkGroupsX;
+uniform int uWorkGroupsY;
+uniform int uLightCount;
 
-shared uint minDepthInt = 0xFFFFFFFF;
-shared uint maxDepthInt = 0;
-shared uint visibleLightCount = 0;
-shared vec4 frustumPlanes[6];
-shared int visibleLightIndices[MAX_NUM_LIGHTS];
+shared uint sMinDepthInt = 0xFFFFFFFF;
+shared uint sMaxDepthInt = 0;
+shared uint sVisibleLightCount = 0;
+shared vec4 sFrustumPlanes[6];
+shared int sVisibleLightIndices[MAX_NUM_LIGHTS];
 
 #define TILE_SIZE 16
 layout(local_size_x = TILE_SIZE, local_size_y = TILE_SIZE, local_size_z = 1) in;
 void main()
 {
     uint IndexWorkGroup = gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
-    vec2 ScreenSize = vec2(screenSizeX, screenSizeY);
+    vec2 ScreenSize = vec2(uScreenSizeX, uScreenSizeY);
 
     ivec2 location = ivec2(gl_GlobalInvocationID.xy);
     ivec2 itemID = ivec2(gl_LocalInvocationID.xy);
@@ -55,9 +53,9 @@ void main()
 	// Initialize shared global values for depth and light count
     if (gl_LocalInvocationIndex == 0)
     {
-        minDepthInt = 0xFFFFFFFF;
-        maxDepthInt = 0;
-        visibleLightCount = 0;
+        sMinDepthInt = 0xFFFFFFFF;
+        sMaxDepthInt = 0;
+        sVisibleLightCount = 0;
     }
 
     barrier();
@@ -65,14 +63,14 @@ void main()
 	// Step 1: Calculate the minimum and maximum depth values (from the depth buffer) for this group's tile
     float maxDepth, minDepth;
     vec2 text = vec2(location) / ScreenSize;
-    float depth = texture(depthMap, text).r;
+    float depth = texture(uDepthMap, text).r;
 	// Linearize the depth value from depth buffer (must do this because we created it using projection)
-    depth = (0.5 * ClipFromView[3][2]) / (depth + 0.5 * ClipFromView[2][2] - 0.5);
+    depth = (0.5 * uClipFromView[3][2]) / (depth + 0.5 * uClipFromView[2][2] - 0.5);
 
 	// Convert depth to uint so we can do atomic min and max comparisons between the threads
     uint depthInt = floatBitsToUint(depth);
-    atomicMin(minDepthInt, depthInt);
-    atomicMax(maxDepthInt, depthInt);
+    atomicMin(sMinDepthInt, depthInt);
+    atomicMax(sMaxDepthInt, depthInt);
 
     barrier();
 
@@ -80,56 +78,56 @@ void main()
     if (gl_LocalInvocationIndex == 0)
     {
 		// Convert the min and max across the entire tile back to float
-        minDepth = uintBitsToFloat(minDepthInt);
-        maxDepth = uintBitsToFloat(maxDepthInt);
+        minDepth = uintBitsToFloat(sMinDepthInt);
+        maxDepth = uintBitsToFloat(sMaxDepthInt);
 
 		// Steps based on tile sale
         vec2 negativeStep = (2.0 * vec2(tileID)) / vec2(tileNumber);
         vec2 positiveStep = (2.0 * vec2(tileID + ivec2(1, 1))) / vec2(tileNumber);
 
 		// Set up starting values for planes using steps and min and max z values
-        frustumPlanes[0] = vec4(1.0, 0.0, 0.0, 1.0 - negativeStep.x); // Left
-        frustumPlanes[1] = vec4(-1.0, 0.0, 0.0, -1.0 + positiveStep.x); // Right
-        frustumPlanes[2] = vec4(0.0, 1.0, 0.0, 1.0 - negativeStep.y); // Bottom
-        frustumPlanes[3] = vec4(0.0, -1.0, 0.0, -1.0 + positiveStep.y); // Top
-        frustumPlanes[4] = vec4(0.0, 0.0, -1.0, -minDepth); // Near
-        frustumPlanes[5] = vec4(0.0, 0.0, 1.0, maxDepth); // Far
+        sFrustumPlanes[0] = vec4(1.0, 0.0, 0.0, 1.0 - negativeStep.x); // Left
+        sFrustumPlanes[1] = vec4(-1.0, 0.0, 0.0, -1.0 + positiveStep.x); // Right
+        sFrustumPlanes[2] = vec4(0.0, 1.0, 0.0, 1.0 - negativeStep.y); // Bottom
+        sFrustumPlanes[3] = vec4(0.0, -1.0, 0.0, -1.0 + positiveStep.y); // Top
+        sFrustumPlanes[4] = vec4(0.0, 0.0, -1.0, -minDepth); // Near
+        sFrustumPlanes[5] = vec4(0.0, 0.0, 1.0, maxDepth); // Far
         
 		// Transform the first four planes
         for (uint i = 0; i < 4; i++)
         {
-            frustumPlanes[i] *= ClipFromWorld;
-            frustumPlanes[i] /= length(frustumPlanes[i].xyz);
+            sFrustumPlanes[i] *= uClipFromWorld;
+            sFrustumPlanes[i] /= length(sFrustumPlanes[i].xyz);
         }
 
 		// Transform the depth planes
-        frustumPlanes[4] *= ViewFromWorld;
-        frustumPlanes[4] /= length(frustumPlanes[4].xyz);
-        frustumPlanes[5] *= ViewFromWorld;
-        frustumPlanes[5] /= length(frustumPlanes[5].xyz);
+        sFrustumPlanes[4] *= uViewFromWorld;
+        sFrustumPlanes[4] /= length(sFrustumPlanes[4].xyz);
+        sFrustumPlanes[5] *= uViewFromWorld;
+        sFrustumPlanes[5] /= length(sFrustumPlanes[5].xyz);
     }
 
     barrier();
 
     uint threadCount = TILE_SIZE * TILE_SIZE;
-    uint passCount = (lightCount + threadCount - 1) / threadCount;
+    uint passCount = (uLightCount + threadCount - 1) / threadCount;
     for (uint i = 0; i < passCount; i++)
     {
 		// Get the lightIndex to test for this thread / pass. If the index is >= light count, then this thread can stop testing lights
         uint lightIndex = i * threadCount + gl_LocalInvocationIndex;
-        if (lightIndex >= lightCount)
+        if (lightIndex >= uLightCount)
         {
             break;
         }
 
-        vec4 position = lightBuffer.data[lightIndex].Position;
-        float radius = lightBuffer.data[lightIndex].Radius;
+        vec4 position = bLightBuffer.data[lightIndex].Position;
+        float radius = bLightBuffer.data[lightIndex].Radius;
 	
 		// We check if the light exists in our frustum
         float distance = 0.0;
-        for (uint j = 0; j < 6; j++)
+        for (uint j = 0; j < 6; ++j)
         {
-            distance = dot(position, frustumPlanes[j]) + radius;
+            distance = dot(position, sFrustumPlanes[j]) + radius;
 	
 			// If one of the tests fails, then there is no intersection
             if (distance <= 0.0)
@@ -142,9 +140,8 @@ void main()
         if (distance > 0.0)
         {
 			// Add index to the shared array of visible indices
-            // uint offset = atomicAdd(visibleLightCount, floatBitsToUint(1.0));
-            uint offset = atomicAdd(visibleLightCount, 1);
-            visibleLightIndices[offset] = int(lightIndex);
+            uint offset = atomicAdd(sVisibleLightCount, 1);
+            sVisibleLightIndices[offset] = int(lightIndex);
         }
     }
 
@@ -154,16 +151,16 @@ void main()
 	{
         uint offset = index * MAX_NUM_LIGHTS; // Determine position in global buffer
 
-        for (uint i = 0; i < visibleLightCount; i++)
+        for (uint i = 0; i < sVisibleLightCount; ++i)
         {
-            visibleLightIndicesBuffer.data[offset + i].index = visibleLightIndices[i];
+            bVisibleLightIndicesBuffer.data[offset + i].Index = sVisibleLightIndices[i];
         }
 		 
-        if (visibleLightCount != MAX_NUM_LIGHTS)
+        if (sVisibleLightCount != MAX_NUM_LIGHTS)
         {
 			// Unless we have totally filled the entire array, mark it's end with -1
 			// Final shader step will use this to determine where to stop (without having to pass the light count)
-            visibleLightIndicesBuffer.data[offset + visibleLightCount].index = int(-1);
+            bVisibleLightIndicesBuffer.data[offset + sVisibleLightCount].Index = int(-1);
         }
 	}
 }

@@ -56,13 +56,7 @@ namespace Poly {
 
 		int DynamicLighsInFrame = 0;
 
-		// Dynarray<Vector> LightsStartPositions;
-
-		// void SetupLightsBuffer();
-
 		void SetupLightsBufferFromScene();
-
-		// void UpdateLightsBuffer(World* world);
 
 		void UpdateLightsBufferFromScene(World* world);
 
@@ -70,34 +64,14 @@ namespace Poly {
 
 		void LightCulling(World* world, const CameraComponent* cameraCmp);
 
-		// void DebugLightCulling(World * world, const CameraComponent * cameraCmp);
-
 		void DrawDepthPrepass(const CameraComponent* cameraCmp);
 
-		// void DrawLightCulling(const CameraComponent* cameraCmp);
-
-		// void DebugDepth(World* world, const CameraComponent* cameraCmp);
-
 		void DrawLightAccum(World* world, const CameraComponent* cameraCmp);
+
+		void AccumulateLights(World* world, const CameraComponent* cameraCmp);
 		
 		void DrawQuad();
 
 		void CreateFallbackWhiteTexture();
-
-		// inline float Random()
-		// {
-		// 	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		// }
-
-		// inline float Random(float min, float max)
-		// {
-		// 	float rnd = Random();
-		// 	return Lerp(min, max, rnd);
-		// }
-
-		// inline Vector RandomVector(float min, float max)
-		// {
-		// 	return Vector(Random(min, max), Random(min, max), Random(min, max), 1.0f);
-		// }
 	};
 }
