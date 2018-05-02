@@ -50,8 +50,10 @@ namespace Poly {
 		GLShaderProgram debugQuadDepthPrepassShader;
 		GLShaderProgram debugLightAccumShader;
 
-		GLuint depthMapFBO;
 		GLuint depthMap;
+
+		GLuint FBOdepthMap;
+		GLuint FBOhdr;
 
 		GLuint FallbackWhiteTexture;
 

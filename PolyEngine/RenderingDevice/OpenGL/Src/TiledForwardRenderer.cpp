@@ -40,7 +40,7 @@ void TiledForwardRenderer::Init()
 	// So we need to create a depth map FBO
 	// This will be used in the depth pass
 	// Create a depth map frame buffer object and texture
-	glGenFramebuffers(1, &depthMapFBO);
+	glGenFramebuffers(1, &FBOdepthMap);
 
 	const ScreenSize screenSize = RDI->GetScreenSize();
 
@@ -57,7 +57,7 @@ void TiledForwardRenderer::Init()
 	GLfloat borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOdepthMap);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
@@ -65,8 +65,7 @@ void TiledForwardRenderer::Init()
 
 
 	// Create a floating point HDR frame buffer and a floating point color buffer (as a texture)
-	GLuint hdrFBO;
-	glGenFramebuffers(1, &hdrFBO);
+	glGenFramebuffers(1, &FBOhdr);
 
 	GLuint colorBuffer;
 	glGenTextures(1, &colorBuffer);
@@ -81,7 +80,7 @@ void TiledForwardRenderer::Init()
 	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCREEN_SIZE_X, SCREEN_SIZE_Y);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -97,11 +96,9 @@ void TiledForwardRenderer::Init()
 	glGenBuffers(1, &lightBuffer);
 	glGenBuffers(1, &visibleLightIndicesBuffer);
 
-	// Bind light buffer
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Light) * MAX_NUM_LIGHTS, 0, GL_DYNAMIC_DRAW);
-
-	// Bind visible light indices buffer
+	
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, visibleLightIndicesBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(VisibleIndex) * MAX_NUM_LIGHTS * numberOfTiles, 0, GL_STATIC_DRAW);
 
@@ -138,7 +135,7 @@ void TiledForwardRenderer::DepthPrePass(World* world, const CameraComponent* cam
 {
 	depthShader.BindProgram();
 
-	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOdepthMap);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	const Matrix& ScreenFromWorld = cameraCmp->GetClipFromWorld();
@@ -227,10 +224,6 @@ void TiledForwardRenderer::DrawLightAccum(World* world, const CameraComponent* c
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, visibleLightIndicesBuffer);
 
-	// Bind the depth map's frame buffer and draw the depth map to it
-	// glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-	// glClear(GL_DEPTH_BUFFER_BIT);
-
 	const Matrix& ClipFromWorld = cameraCmp->GetClipFromWorld();
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
@@ -262,20 +255,20 @@ void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent*
 {
 	float Time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 
+	// glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	const EntityTransform& cameraTransform = cameraCmp->GetTransform();
 
 	lightAccumulationShader.BindProgram();
-	// lightAccumulationShader.SetUniform("uTime", Time);
+	lightAccumulationShader.SetUniform("uLightCount", (int)DynamicLighsInFrame);
 	lightAccumulationShader.SetUniform("uWorkGroupsX", (int)workGroupsX);
 	lightAccumulationShader.SetUniform("uWorkGroupsY", (int)workGroupsY);
-	lightAccumulationShader.SetUniform("uLightCount", (int)DynamicLighsInFrame);
+	lightAccumulationShader.SetUniform("uViewPosition", cameraTransform.GetGlobalTranslation());
 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, visibleLightIndicesBuffer);
-
-	// Bind the depth map's frame buffer and draw the depth map to it
-	// glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-	// glClear(GL_DEPTH_BUFFER_BIT);
 
 	const Matrix& ClipFromWorld = cameraCmp->GetClipFromWorld();
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
@@ -302,6 +295,8 @@ void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent*
 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
+	
+	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void TiledForwardRenderer::SetupLightsBufferFromScene()

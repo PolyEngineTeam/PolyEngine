@@ -68,14 +68,14 @@ void GLRenderingDevice::RenderWorld(World* world)
 // 	glDepthMask(GL_TRUE);
 // 	glEnable(GL_DEPTH_TEST);
 
-	// Clear FBO's
-	for (eGeometryRenderPassType type : IterateEnum<eGeometryRenderPassType>())
-		if (GeometryRenderingPasses[type])
-			GeometryRenderingPasses[type]->ClearFBO();
-
-	for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
-		if (PostprocessRenderingPasses[type])
-			PostprocessRenderingPasses[type]->ClearFBO();
+// Clear FBO's
+// 	for (eGeometryRenderPassType type : IterateEnum<eGeometryRenderPassType>())
+// 		if (GeometryRenderingPasses[type])
+// 			GeometryRenderingPasses[type]->ClearFBO();
+// 
+// 	for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
+// 		if (PostprocessRenderingPasses[type])
+// 			PostprocessRenderingPasses[type]->ClearFBO();
 
 	// For each visible viewport draw it
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
