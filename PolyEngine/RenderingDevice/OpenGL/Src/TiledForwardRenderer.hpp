@@ -26,19 +26,6 @@ namespace Poly {
 			int index;
 		};
 
-		struct Input {
-			int value;
-		};
-
-		struct Output {
-			uint indexLocal;
-			uint indexWorkGroup;
-			uint indexGlobal;
-			uint input;
-			uint result;
-			Vector tilePosSS;
-		};
-		
 		const size_t NUM_LIGHTS = 1024;
 
 		GLuint SCREEN_SIZE_X = 1920; // 800; // 1280
@@ -49,8 +36,6 @@ namespace Poly {
 		// Used for storage buffer objects to hold light data and visible light indicies data
 		GLuint lightBuffer = 0;
 		GLuint visibleLightIndicesBuffer = 0;
-		GLuint inputBuffer = 0;
-		GLuint outputBuffer = 0;
 
 		// For drawing our 1 x 1 quad
 		GLuint quadVAO = 0;
@@ -62,7 +47,6 @@ namespace Poly {
 		GLShaderProgram hdrShader;
 
 		GLShaderProgram debugQuadDepthPrepassShader;
-		GLShaderProgram debugQuadLightCullingShader;
 		GLShaderProgram debugLightAccumShader;
 		GLShaderProgram depthDebugShader;
 		GLShaderProgram lightDebugShader;
@@ -77,21 +61,17 @@ namespace Poly {
 
 		void SetupLightsBuffer();
 
-		void SetupInputBuffer();
-
 		void UpdateLights(World* world);
 
 		void DepthPrePass(World* world, const CameraComponent* cameraCmp);
 
 		void LightCulling(World* world, const CameraComponent* cameraCmp);
 
-		void ComputeTest(World* world, const CameraComponent* cameraCmp);
-		
+		void DebugLightCulling(World * world, const CameraComponent * cameraCmp);
+
 		void DrawDepthPrepass(const CameraComponent* cameraCmp);
 
 		void DrawLightCulling(const CameraComponent* cameraCmp);
-
-		void DebugLightCulling(World* world, const CameraComponent* cameraCmp);
 
 		void DebugDepth(World* world, const CameraComponent* cameraCmp);
 

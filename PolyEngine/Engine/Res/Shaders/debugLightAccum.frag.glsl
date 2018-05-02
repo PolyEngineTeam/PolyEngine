@@ -11,25 +11,11 @@ struct VisibleIndex
     int index;
 };
 
-struct Output
-{
-    uint indexLocal;
-    uint indexWorkGroup;
-    uint indexGlobal;
-    uint input;
-    uint result;
-    vec4 tilePosSS;
-};
-
 layout(std430, binding = 0) readonly buffer LightBuffer {
 	Light data[];
 } lightBuffer;
 
-layout(std430, binding = 1) readonly buffer OutputBuffer {
-	Output data[];
-} outputBuffer;
-
-layout(std430, binding = 2) readonly buffer VisibleLightIndicesBuffer {
+layout(std430, binding = 1) readonly buffer VisibleLightIndicesBuffer {
 	VisibleIndex data[];
 } visibleLightIndicesBuffer;
 

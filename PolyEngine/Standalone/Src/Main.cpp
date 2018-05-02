@@ -47,8 +47,8 @@ int main(int argc, char* args[])
 
 	// Initial screen size
 	Poly::ScreenSize screenSize;
-	screenSize.Width = 1920; // 800; // 256; // 1280;
-	screenSize.Height = 1080; // 600; // 192; // 720;
+	screenSize.Width = 1280; // 1920; // 800; // 256;
+	screenSize.Height = 720; // 1080; // 600; // 192;
 
 	// Main standalone window
 	SDL_Window* window = SDL_CreateWindow(

@@ -10,32 +10,18 @@ struct VisibleIndex {
 	int index;
 };
 
-struct Output
-{
-    uint indexLocal;
-    uint indexWorkGroup;
-    uint indexGlobal;
-    uint input;
-    uint result;
-    vec4 tilePosSS;
-};
-
 layout(std430, binding = 0) readonly buffer LightBuffer {
 	Light data[];
 } lightBuffer;
 
-layout(std430, binding = 1) writeonly buffer OutputBuffer {
-	Output data[];
-} outputBuffer;
-
-layout(std430, binding = 2) writeonly buffer VisibleLightIndicesBuffer {
+layout(std430, binding = 1) writeonly buffer VisibleLightIndicesBuffer {
 	VisibleIndex data[];
 } visibleLightIndicesBuffer;
 
 
 const uint NUM_LIGHTS = 1024;
 // const vec2 ScreenSize = vec2(800.0, 600.0);
-const vec2 ScreenSize = vec2(1920.0, 1080.0);
+// const vec2 ScreenSize = vec2(1920.0, 1080.0);
 
 // Uniforms
 uniform sampler2D depthMap;
@@ -66,6 +52,7 @@ void main()
     mat4 view = ViewFromWorld;
 	mat4 projection = ClipFromView;
     mat4 viewProjection = ClipFromWorld;
+    vec2 ScreenSize = vec2(screenSizeX, screenSizeY);
 
     ivec2 location = ivec2(gl_GlobalInvocationID.xy);
     ivec2 itemID = ivec2(gl_LocalInvocationID.xy);
@@ -137,36 +124,42 @@ void main()
 
     barrier();
 
-    if (gl_LocalInvocationIndex == 0)
+    uint threadCount = TILE_SIZE * TILE_SIZE;
+    uint passCount = (lightCount + threadCount - 1) / threadCount;
+    for (uint i = 0; i < passCount; i++)
     {
-        for (uint i = 0; i < NUM_LIGHTS; i++)
+		// Get the lightIndex to test for this thread / pass. If the index is >= light count, then this thread can stop testing lights
+        uint lightIndex = i * threadCount + gl_LocalInvocationIndex;
+        if (lightIndex >= lightCount)
         {
-            vec4 position = lightBuffer.data[i].Position;
-            float radius = lightBuffer.data[i].Radius;
+            break;
+        }
+
+        vec4 position = lightBuffer.data[lightIndex].Position;
+        float radius = lightBuffer.data[lightIndex].Radius;
 	
-			// We check if the light exists in our frustum
-            float distance = 0.0;
-            for (uint j = 0; j < 6; j++)
-            {
-                distance = dot(position, frustumPlanes[j]) + radius;
+		// We check if the light exists in our frustum
+        float distance = 0.0;
+        for (uint j = 0; j < 6; j++)
+        {
+            distance = dot(position, frustumPlanes[j]) + radius;
 	
 			// If one of the tests fails, then there is no intersection
-                if (distance <= 0.0)
-                {
-                    break;
-                }
-            }
-	
-			// If greater than zero, then it is a visible light
-            if (distance > 0.0)
+            if (distance <= 0.0)
             {
-			// Add index to the shared array of visible indices
-                // uint offset = atomicAdd(visibleLightCount, floatBitsToUint(1.0));
-                uint offset = visibleLightCount;
-                visibleLightIndices[offset] = int(i);
-                visibleLightCount += 1;
+                break;
             }
         }
+	
+		// If greater than zero, then it is a visible light
+        if (distance > 0.0)
+        {
+			// Add index to the shared array of visible indices
+            // uint offset = atomicAdd(visibleLightCount, floatBitsToUint(1.0));
+            uint offset = atomicAdd(visibleLightCount, 1);
+            visibleLightIndices[offset] = int(lightIndex);
+        }
+        
     }
 
 	barrier();
@@ -174,30 +167,6 @@ void main()
 	if (gl_LocalInvocationIndex == 0)
 	{
         uint offset = index * NUM_LIGHTS; // Determine position in global buffer
-
-		// for (uint i = 0; i < NUM_LIGHTS; i++)
-        // {
-        //     visibleLightIndicesBuffer.data[offset + i].index = int(i);
-        // }
-
-        // uint range = uint(visibleLightCount);
-        // for (uint i = 0; i < range; i++)
-        // {
-        //     visibleLightIndicesBuffer.data[offset + i].index = visibleLightIndices[i];
-        // }
-
-        // visibleLightIndicesBuffer.data[offset + 0].index = visibleLightIndices[0];
-        // visibleLightIndicesBuffer.data[offset + 1].index = visibleLightIndices[1];
-        // visibleLightIndicesBuffer.data[offset + 2].index = visibleLightIndices[2];
-        // visibleLightIndicesBuffer.data[offset + 3].index = visibleLightIndices[3];
-        // visibleLightIndicesBuffer.data[offset + 4].index = visibleLightIndices[4];
-        // visibleLightIndicesBuffer.data[offset + 5].index = visibleLightIndices[5];
-        // visibleLightIndicesBuffer.data[offset + 6].index = visibleLightIndices[6];
-        // visibleLightIndicesBuffer.data[offset + 7].index = visibleLightIndices[7];
-        // visibleLightIndicesBuffer.data[offset + 8].index = visibleLightIndices[8];
-        // visibleLightIndicesBuffer.data[offset + 9].index = visibleLightIndices[9];
-
-        // visibleLightIndicesBuffer.data[offset].index = int(visibleLightCount);
 
         for (uint i = 0; i < NUM_LIGHTS; i++)
         {
@@ -211,10 +180,10 @@ void main()
         //     visibleLightIndicesBuffer.data[offset + visibleLightCount].index = int(-1);
         // }
 
-		outputBuffer.data[IndexWorkGroup].indexLocal = 0;
-		outputBuffer.data[IndexWorkGroup].indexWorkGroup = IndexWorkGroup;
-		outputBuffer.data[IndexWorkGroup].indexGlobal = 0; // IndexGlobal;
-		outputBuffer.data[IndexWorkGroup].input = maxDepthInt;
-		outputBuffer.data[IndexWorkGroup].result = visibleLightCount;
+		// outputBuffer.data[IndexWorkGroup].indexLocal = 0;
+		// outputBuffer.data[IndexWorkGroup].indexWorkGroup = IndexWorkGroup;
+		// outputBuffer.data[IndexWorkGroup].indexGlobal = 0; // IndexGlobal;
+		// outputBuffer.data[IndexWorkGroup].input = maxDepthInt;
+		// outputBuffer.data[IndexWorkGroup].result = visibleLightCount;
 	}
 }
