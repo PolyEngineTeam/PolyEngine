@@ -36,7 +36,7 @@ void RTTIViewControl::AddChild(QFormLayout* parent, RTTIBase* obj, bool debug)
 
 		void* ptr = ((char*)obj) + child.Offset;
 
-		if (child.CoreType == RTTI::eCorePropertyType::NONE)
+		if (child.CoreType == RTTI::eCorePropertyType::CUSTOM)
 		{
 			QFormLayout* layout = new QFormLayout();
 			parent->addItem(layout);
