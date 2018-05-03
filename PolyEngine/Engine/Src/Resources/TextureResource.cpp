@@ -2,7 +2,7 @@
 
 #include "Resources/TextureResource.hpp"
 #include "Resources/ResourceManager.hpp"
-#include "SOIL/SOIL.h"
+#include "SOIL.h"
 
 using namespace Poly;
 
