@@ -1,5 +1,7 @@
 #include "PolyEditorPCH.hpp"
 
+DEFINE_CONTROL(StringControl, RTTI::eCorePropertyType::STRING)
+
 StringControl::StringControl(QWidget* parent)
 	: ControlBase(parent)
 {

@@ -17,5 +17,3 @@ private:
 
 	std::unique_ptr<QLineEdit> Field;
 };
-
-ASSIGN_CONTROL(StringControl, RTTI::eCorePropertyType::STRING)
