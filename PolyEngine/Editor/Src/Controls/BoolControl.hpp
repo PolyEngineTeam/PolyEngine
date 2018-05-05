@@ -22,5 +22,3 @@ private:
 	std::unique_ptr<QState> False;
 	std::unique_ptr<QState> True;
 };
-
-ASSIGN_CONTROL(BoolControl, RTTI::eCorePropertyType::BOOL)

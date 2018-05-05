@@ -1,7 +1,6 @@
 #include "PolyEditorPCH.hpp"
 
-RTTIViewerWidget::RTTIViewerWidget(QWidget* parent)
-	: QWidget(parent)
+RTTIViewerWidget::RTTIViewerWidget()
 {
 }
 

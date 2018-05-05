@@ -2,6 +2,8 @@
 
 #include <QComboBox>
 
+DEFINE_CONTROL(EnumControl, ENUM)
+
 EnumControl::EnumControl(QWidget* parent)
 	: ControlBase(parent)
 {

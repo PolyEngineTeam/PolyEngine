@@ -1,5 +1,14 @@
 #include "PolyEditorPCH.hpp"
 
+//DEFINE_CONTROL(BoolControl, BOOL)
+
+namespace Impl
+{
+	ControlCreatorPtr* BoolControlCreator_BOOL =
+		new(&::Impl::CoreTypeToControlMap[static_cast<int>(RTTI::eCorePropertyType::BOOL)]) \
+			ControlCreatorPtr([](QWidget* parent) -> ControlBase* { return new BoolControl(parent); });
+}
+
 BoolControl::BoolControl(QWidget* parent)
 	: ControlBase(parent)
 {

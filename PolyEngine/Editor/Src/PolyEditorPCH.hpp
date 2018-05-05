@@ -48,8 +48,6 @@ UNSILENCE_MSVC_WARNING()
 #include "Containers/SectionContainer.hpp"
 
 // controls
-#include "Controls/RTTIViewControl.hpp"
-
 #include "Controls/ControlBase.hpp"
 #include "Controls/BoolControl.hpp"
 #include "Controls/NumberControl.hpp"

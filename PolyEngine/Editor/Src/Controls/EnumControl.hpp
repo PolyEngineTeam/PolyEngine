@@ -17,5 +17,3 @@ private:
 
 	std::unique_ptr<QComboBox> ComboBox;
 };
-
-ASSIGN_CONTROL(EnumControl, RTTI::eCorePropertyType::ENUM)

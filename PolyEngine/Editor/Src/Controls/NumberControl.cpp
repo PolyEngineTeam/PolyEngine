@@ -3,6 +3,17 @@
 #include <QIntValidator>
 #include <QDoubleValidator>
 
+DEFINE_CONTROL(NumberControl, INT8)
+DEFINE_CONTROL(NumberControl, INT16)
+DEFINE_CONTROL(NumberControl, INT32)
+DEFINE_CONTROL(NumberControl, INT64)
+DEFINE_CONTROL(NumberControl, UINT8)
+DEFINE_CONTROL(NumberControl, UINT16)
+DEFINE_CONTROL(NumberControl, UINT32)
+DEFINE_CONTROL(NumberControl, UINT64)
+DEFINE_CONTROL(NumberControl, FLOAT)
+DEFINE_CONTROL(NumberControl, DOUBLE)
+
 NumberControl::NumberControl(QWidget* parent)
 	: ControlBase(parent)
 {

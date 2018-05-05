@@ -6,9 +6,13 @@
 
 using namespace Poly;
 
+class ControlBase;
+
 namespace Impl
 {
 	typedef ControlBase* (*ControlCreatorPtr)(QWidget*);
+
+	extern ControlCreatorPtr* CoreTypeToControlMap;
 }
 
 class ControlBase : public QWidget
@@ -22,10 +26,8 @@ public:
 
 	static ControlBase* CreateControl(RTTI::eCorePropertyType type, QWidget* parent) 
 	{ 
-		return Map[static_cast<int>(type)](parent);	
+		return ::Impl::CoreTypeToControlMap[static_cast<int>(type)](parent);
 	}
-
-	static ::Impl::ControlCreatorPtr Map[static_cast<int>(RTTI::eCorePropertyType::_COUNT)];
 
 protected:
 	virtual void InitializeControl() = 0;
@@ -38,5 +40,7 @@ protected:
 #define DEFINE_CONTROL(CONTROL, CORE_TYPE) \
 	namespace Impl \
 	{ \
-		ControlCreatorPtr* CONTROLCreator = new(ControlBase::Map[static_cast<int>(CORE_TYPE)] ControlCreatorPtr ([](QWidget* parent) -> ControlBase* { return new CONTROL(parent); }); \
+		ControlCreatorPtr* CONTROL##Creator_##CORE_TYPE = \
+			new(&::Impl::CoreTypeToControlMap[static_cast<int>(RTTI::eCorePropertyType::##CORE_TYPE)]) \
+				ControlCreatorPtr([](QWidget* parent) -> ControlBase* { return new CONTROL(parent); }); \
 	}

@@ -4,14 +4,13 @@
 #include <QFormLayout>
 
 #include "Widgets/PolyWidget.hpp"
-#include "Controls/RTTIViewControl.hpp"
 
 using namespace Poly;
 
 class RTTIViewerWidget : public PolyWidget
 {
 public:
-	RTTIViewerWidget(QWidget* parent = nullptr);
+	RTTIViewerWidget();
 
 	void SetObject(RTTIBase* obj, bool debug = false);
 

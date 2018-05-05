@@ -159,5 +159,6 @@ void EntityManagerWidget::UpdateWidget()
 	for (int i = 0; i < MAX_COMPONENTS_COUNT; ++i)
 	{
 		ComponentBase* cmp = Entity->GetComponent(i);
+
 	}
 }
