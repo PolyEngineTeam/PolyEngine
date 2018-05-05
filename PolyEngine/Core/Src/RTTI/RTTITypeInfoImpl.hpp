@@ -3,18 +3,6 @@
 #include <type_traits>
 #include "RTTI/CustomTypeTraits.hpp"
 
-// Define this to detect not registered types
-template <typename T>
-struct MetaTypeInfo {
-	static Poly::RTTI::TypeInfo GetTypeInfo() {
-#if defined(_WIN32)
-		STATIC_ASSERTE(false, "Type not declared in rtti system!");
-#else
-		ASSERTE(false, "Type not declared in rtti system!");
-#endif
-		return Poly::RTTI::TypeInfo();
-	}
-};
 
 namespace Poly {
 	namespace RTTI {
@@ -31,28 +19,12 @@ namespace Poly {
 			public:
 				static const bool value = evaluate<typename Trait::RawType<T>::type>(0);
 			};
+
+			template <typename T>
+			constexpr TypeInfo GetTypeInfoFromInstance(const T*) { return T::MetaTypeInfo::GetTypeInfo(); }
 		} // namespace Impl
-
-		template<typename T, typename std::enable_if<std::is_fundamental<T>::value || std::is_enum<T>::value>::type*>
-		constexpr TypeInfo GetUnifiedTypeInfo() { return MetaTypeInfo<T>::GetTypeInfo(); }
-		template<typename T, typename std::enable_if<!std::is_fundamental<T>::value && !std::is_enum<T>::value>::type*>
-		constexpr TypeInfo GetUnifiedTypeInfo() { return T::MetaTypeInfo::GetTypeInfo(); }
-		template <typename T> 
-		constexpr TypeInfo GetUnifiedTypeInfoFromInstance(const T*) { return GetUnifiedTypeInfo<T>(); }
-
 	} // namespace RTTI
 } // namespace Poly
-
-// Macro for declaring new types
-#define RTTI_DECLARE_PRIMITIVE_TYPE(T)              \
-	template <>                               \
-	struct MetaTypeInfo< T > \
-	{                \
-		static Poly::RTTI::TypeInfo GetTypeInfo() \
-		{   \
-			return Poly::RTTI::Impl::TypeManager::Get().RegisterOrGetType(#T, Poly::RTTI::BaseClasses<T>::Retrieve());   \
-		}                                       \
-	};
 
 template <typename T>
 struct AutoRegisterType {
@@ -69,12 +41,8 @@ struct AutoRegisterType {
 #define RTTI_CAT(a,b) RTTI_CAT_IMPL(a,b)
 
 // Macro for defining new types
-#define RTTI_DEFINE_PRIMITIVE_TYPE(T)                       \
-	template <> struct AutoRegisterType<T> { AutoRegisterType() { Poly::RTTI::GetUnifiedTypeInfo<T>(); } }; \
-	static const AutoRegisterType<T> RTTI_CAT(autoRegisterType, __COUNTER__);
-
 #define RTTI_DEFINE_TYPE(T)                       \
-	template <> struct AutoRegisterType<T> { AutoRegisterType() { Poly::RTTI::GetUnifiedTypeInfo<T>(); } }; \
+	template <> struct AutoRegisterType<T> { AutoRegisterType() { T::MetaTypeInfo::GetTypeInfo(); } }; \
 	static const AutoRegisterType<T> RTTI_CAT(autoRegisterType, __COUNTER__); \
 	RTTI_PROPERTY_MANAGER_IMPL(T)
 

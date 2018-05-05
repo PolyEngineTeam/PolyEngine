@@ -12,6 +12,16 @@
 #include <unordered_map>
 
 namespace Poly {
+
+	// Fwd declarations
+	class Vector;
+	class Vector2f;
+	class Vector2i;
+	class Quaternion;
+	class Angle;
+	class Color;
+	class Matrix;
+
 	namespace RTTI {
 
 		template<typename T, typename U>
@@ -19,8 +29,10 @@ namespace Poly {
 
 		enum class eCorePropertyType
 		{
-			UNHANDLED,
-			CUSTOM,
+			UNHANDLED, // for fast failing
+			CUSTOM,	// custom rtti property (user defined class)
+			
+			// fundamental
 			BOOL,
 			INT8,
 			INT16,
@@ -32,10 +44,24 @@ namespace Poly {
 			UINT64,
 			FLOAT,
 			DOUBLE,
+			
+			// other
 			ENUM,
 			STRING,
+			
+			// collections
 			DYNARRAY,
 			ORDERED_MAP,
+
+			// math
+			VECTOR,
+			VECTOR_2F,
+			VECTOR_2I,
+			QUATERNION,
+			ANGLE,
+			COLOR,
+			MATRIX,
+
 			_COUNT
 		};
 
@@ -52,7 +78,16 @@ namespace Poly {
 		template <> inline eCorePropertyType GetCorePropertyType<u64>() { return eCorePropertyType::UINT64; };
 		template <> inline eCorePropertyType GetCorePropertyType<float>() { return eCorePropertyType::FLOAT; };
 		template <> inline eCorePropertyType GetCorePropertyType<double>() { return eCorePropertyType::DOUBLE; };
+		
 		template <> inline eCorePropertyType GetCorePropertyType<String>() { return eCorePropertyType::STRING; };
+
+		template <> inline eCorePropertyType GetCorePropertyType<Vector>() { return eCorePropertyType::VECTOR; };
+		template <> inline eCorePropertyType GetCorePropertyType<Vector2f>() { return eCorePropertyType::VECTOR_2F; };
+		template <> inline eCorePropertyType GetCorePropertyType<Vector2i>() { return eCorePropertyType::VECTOR_2I; };
+		template <> inline eCorePropertyType GetCorePropertyType<Quaternion>() { return eCorePropertyType::QUATERNION; };
+		template <> inline eCorePropertyType GetCorePropertyType<Angle>() { return eCorePropertyType::ANGLE; };
+		template <> inline eCorePropertyType GetCorePropertyType<Color>() { return eCorePropertyType::COLOR; };
+		template <> inline eCorePropertyType GetCorePropertyType<Matrix>() { return eCorePropertyType::MATRIX; };
 
 		//-----------------------------------------------------------------------------------------------------------------------
 		enum class ePropertyFlag {
@@ -66,7 +101,10 @@ namespace Poly {
 		{
 			Property() = default;
 			Property(TypeInfo typeInfo, size_t offset, const char* name, ePropertyFlag flags, eCorePropertyType coreType, std::shared_ptr<PropertyImplData>&& implData = nullptr)
-				: Type(typeInfo), Offset(offset), Name(name), Flags(flags), CoreType(coreType), ImplData(std::move(implData)) {}
+				: Type(typeInfo), Offset(offset), Name(name), Flags(flags), CoreType(coreType), ImplData(std::move(implData)) 
+			{
+				HEAVY_ASSERTE(CoreType != eCorePropertyType::UNHANDLED, "Unhandled property type!");
+			}
 			TypeInfo Type;
 			size_t Offset;
 			String Name;
@@ -199,8 +237,7 @@ namespace Poly {
 				std::is_enum<T>{},			[&](auto lazy) { return CreateEnumPropertyInfo<LAZY_TYPE(T)>(offset, name, flags); },
 				Trait::IsDynarray<T>{},		[&](auto lazy) { return CreateDynarrayPropertyInfo<typename Trait::DynarrayValueType<LAZY_TYPE(T)>::type>(offset, name, flags); },
 				Trait::IsOrderedMap<T>{},	[&](auto lazy) { return CreateOrderedMapPropertyInfo<typename Trait::OrderedMapType<LAZY_TYPE(T)>::keyType, typename Trait::OrderedMapType<LAZY_TYPE(T)>::valueType>(offset, name, flags); },
-				std::is_same<String, T>{},	[&](auto) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<String>() }; },
-				/*default*/					[&](auto lazy) { return Property{ TypeInfo::Get<LAZY_TYPE(T)>(), offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>() }; }
+				/*default*/					[&](auto lazy) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>() }; }
 			);
 		}
 
