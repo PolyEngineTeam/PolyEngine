@@ -10,6 +10,7 @@
 #include <qgroupbox.h>
 
 #include "Widgets/PolyWidget.hpp"
+#include "Containers/SectionContainer.hpp"
 
 using namespace Poly;
 
@@ -26,25 +27,21 @@ public:
 private:
 	Entity* Entity;
 
-	// TODO(squares): use unique_ptr
-	QListWidget* WidgetsList;
+	std::unique_ptr<QLayout> Layout;
 
 	// general data
-	QGroupBox* GeneralDataGroup;
-	QLabel* UniqueIdText;	QLineEdit* UniqueIdField;
-	QLabel* ParentIdText;	QLineEdit* ParentIdField;	QPushButton* ParentIdButton;
-	QLabel* ChildrenIdText;	QComboBox* ChildrenIdField;	QPushButton* ChildrenIdButton;
+	QLabel* NameText;			QLineEdit* NameField;
+	QLabel* UniqueIdText;		QLineEdit* UniqueIdField;
+	QLabel* ParentIdNameText;	QLineEdit* ParentIdNameField;	QPushButton* ParentIdNameButton;
+	QLabel* ChildrenIdNameText;	QComboBox* ChildrenIdNameField;	QPushButton* ChildrenIdNameButton;
 
 	// transform
-	QGroupBox* TransformGroup;
+	SectionContainer* TransformSection;
 							QLabel* XLabel;	QLabel* YLabel;	QLabel* ZLabel;
-	QLabel* TranslationLabel;	QLineEdit* TranslationField[3][3];
-	QLabel* RotationLabel;
-	QLabel* ScaleLabel;
+	QLabel* TranslationLabel;	QLineEdit* TranslationField[3][3];		//	[0][0]  [0][1]  [0][2]
+	QLabel* RotationLabel;												//  [1][0]  [1][1]  [1][2]
+	QLabel* ScaleLabel;													//  [2][0]  [2][1]  [2][2]
 
 	// components
-	QGroupBox* ComponentGroup;
-	QLabel* ComponentText;
-	QComboBox* ComponentField;
-	Dynarray<QObject*> ComponentVars;
+	Dynarray<SectionContainer*> Components;
 };

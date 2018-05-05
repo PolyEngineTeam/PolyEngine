@@ -9,12 +9,12 @@
 
 
 //TODO(squares): create PolyControl
-class SectionControl : public QWidget 
+class SectionContainer : public QWidget 
 {
 public:
-	SectionControl(const QString& title, QWidget* parent, int animationDuration = 100);
+	SectionContainer(const QString& title, QWidget* parent = nullptr, int animationDuration = 100);
 
-	void setContentLayout(QLayout& contentLayout);
+	void SetContentLayout(QLayout* contentLayout);
 
 private:
 	std::unique_ptr<QScrollArea> Content;

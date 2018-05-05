@@ -129,10 +129,18 @@ void EditorUi::InitMainWindow()
 	window = new PolyDockWindow("Console", MainLogger);
 	DockWindows.PushBack(window);
 	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, window, true);
+	window->hide();
 
 	// command logger
 	CmdLogger = new LoggerWidget(eLoggerType::CONSOLE);
 	window = new PolyDockWindow("Cmd", CmdLogger);
+	DockWindows.PushBack(window);
+	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, window, true);
+	window->hide();
+
+	// entity manager
+	EntityMgr = new EntityManagerWidget();
+	window = new PolyDockWindow("Entity Manager", EntityMgr);
 	DockWindows.PushBack(window);
 	MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, window, true);
 	

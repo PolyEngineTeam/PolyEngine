@@ -2,7 +2,7 @@
 
 #include <QPropertyAnimation>
 
-SectionControl::SectionControl(const QString& title, QWidget* parent, int animationDuration)
+SectionContainer::SectionContainer(const QString& title, QWidget* parent, int animationDuration)
 	: QWidget(parent), AnimationDuration(animationDuration)
 {
 	// create main container area
@@ -53,12 +53,12 @@ SectionControl::SectionControl(const QString& title, QWidget* parent, int animat
 	});
 }
 
-void SectionControl::setContentLayout(QLayout& contentLayout)
+void SectionContainer::SetContentLayout(QLayout* contentLayout)
 {
 	delete Content->layout();
-	Content->setLayout(&contentLayout);
+	Content->setLayout(contentLayout);
 	const auto collapsedHeight = sizeHint().height() - Content->maximumHeight();
-	auto contentHeight = contentLayout.sizeHint().height();
+	auto contentHeight = contentLayout->sizeHint().height();
 
 	for (int i = 0; i < Animation->animationCount() - 1; ++i)
 	{

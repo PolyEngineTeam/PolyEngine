@@ -29,12 +29,11 @@ signals:
 private:
 	void AddEntityToTree(QTreeWidgetItem* parent, Entity* entity);
 
-	std::unique_ptr<QLayout> Layout;
+	World* World;
+
 	std::unique_ptr<QTreeWidget> Tree;
 	//TODO(squares): use size_t keys
 	std::map<int, Entity*> EntityFromID;
-
-	World* World;
 
 private slots:
 	void SelectionChanged(QTreeWidgetItem* item, int column);

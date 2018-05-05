@@ -44,9 +44,11 @@ UNSILENCE_MSVC_WARNING()
 #include "Widgets/WorldExplorerWidget.hpp"
 #include "Widgets/RTTIViewerWidget.hpp"
 
+// containers
+#include "Containers/SectionContainer.hpp"
+
 // controls
 #include "Controls/RTTIViewControl.hpp"
-#include "Controls/SectionControl.hpp"
 
 #include "Controls/ControlBase.hpp"
 #include "Controls/BoolControl.hpp"

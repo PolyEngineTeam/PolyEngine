@@ -59,6 +59,10 @@ namespace Poly
 		template<class T>
 		const T* GetComponent() const; //defined in ECS/World.hpp due to circular inclusion problem; FIXME: circular inclusion
 
+		/// We need these two in editor ehere we have to iterate through all components.
+		ComponentBase* GetComponent(size_t ctypeID) { return Components[ctypeID]; }
+		const ComponentBase* GetComponent(size_t ctypeID) const { return Components[ctypeID]; }
+
 		/// Returns pointer to parent entity. Returns nullptr if (and only if) this is the root of the scene.
 		/// @return Pointer to parent entity.
 		const Entity* GetParent() const { return Parent; }
