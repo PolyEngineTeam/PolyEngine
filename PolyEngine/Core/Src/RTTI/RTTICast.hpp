@@ -34,7 +34,7 @@ namespace Poly {
 			{
 				static void Fill(Dynarray<TypeInfo>& v)
 				{
-					v.PushBack(MetaTypeInfo<T>::GetTypeInfo());
+					v.PushBack(TypeInfo::Get<T>());
 					TypeInfoFromBaseClassList<typename T::baseClassList>::Fill(v);
 					TypeInfoFromBaseClassList<U>::Fill(v);
 				}
