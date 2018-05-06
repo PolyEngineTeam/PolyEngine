@@ -2,20 +2,16 @@
 
 EntityManagerWidget::EntityManagerWidget()
 {
-	QGridLayout* mainLayout = new QGridLayout();
+	Layout = new QGridLayout();
 
-	mainLayout->setColumnStretch(0, 3);
-	mainLayout->setColumnStretch(1, 9);
-	mainLayout->setColumnStretch(2, 2);
+	Layout->setColumnStretch(0, 3);
+	Layout->setColumnStretch(1, 9);
+	Layout->setColumnStretch(2, 2);
 
-	mainLayout->setRowStretch(0, 1); // name
-	mainLayout->setRowStretch(1, 1); // id
-	mainLayout->setRowStretch(2, 1); // parent
-	mainLayout->setRowStretch(3, 1); // children
-	mainLayout->setRowStretch(4, 1); // transform
-	mainLayout->setRowStretch(MAX_COMPONENTS_COUNT, 1); // empty 
+	for (int i = 0; i < MAX_COMPONENTS_COUNT + 6; ++i)
+		Layout->setRowStretch(i, 1);
 	
-	setLayout(mainLayout);
+	setLayout(Layout);
 
 	QPalette disabledEditPalette;
 	disabledEditPalette.setColor(QPalette::Base, QColor(218, 218, 218));
@@ -24,53 +20,53 @@ EntityManagerWidget::EntityManagerWidget()
 	// Name
 	NameText = new QLabel();
 	NameText->setText("Name");
-	mainLayout->addWidget(NameText, 0, 0);
+	Layout->addWidget(NameText, 0, 0);
 
 	NameField = new QLineEdit();
 	NameField->setText("some name");
-	mainLayout->addWidget(NameField, 0, 1);
+	Layout->addWidget(NameField, 0, 1);
 
 	// UniqueID
 	UniqueIdText = new QLabel();
 	UniqueIdText->setText("UniqueID");
-	mainLayout->addWidget(UniqueIdText, 1, 0);
+	Layout->addWidget(UniqueIdText, 1, 0);
 
 	UniqueIdField = new QLineEdit();
 	UniqueIdField->setText("235646246");
 	UniqueIdField->setReadOnly(true);
 	UniqueIdField->setPalette(disabledEditPalette);
-	mainLayout->addWidget(UniqueIdField, 1, 1);
+	Layout->addWidget(UniqueIdField, 1, 1);
 
 	// ParentID / Name
 	ParentIdNameText = new QLabel();
-	ParentIdNameText->setText("ParentID / Name");
-	mainLayout->addWidget(ParentIdNameText, 2, 0);
+	ParentIdNameText->setText("Parent ID / Name");
+	Layout->addWidget(ParentIdNameText, 2, 0);
 
 	ParentIdNameField = new QLineEdit();
 	ParentIdNameField->setText("235246 / parent name");
 	ParentIdNameField->setReadOnly(true);
 	ParentIdNameField->setPalette(disabledEditPalette);
-	mainLayout->addWidget(ParentIdNameField, 2, 1);
+	Layout->addWidget(ParentIdNameField, 2, 1);
 
 	ParentIdNameButton = new QPushButton();
 	ParentIdNameButton->setText("Select");
-	mainLayout->addWidget(ParentIdNameButton, 2, 2);
+	Layout->addWidget(ParentIdNameButton, 2, 2);
 
 	// ChildrenID / Name
 	ChildrenIdNameText = new QLabel();
-	ChildrenIdNameText->setText("ParentID / Name");
-	mainLayout->addWidget(ChildrenIdNameText, 3, 0);
+	ChildrenIdNameText->setText("Child ID / Name");
+	Layout->addWidget(ChildrenIdNameText, 3, 0);
 
 	ChildrenIdNameField = new QComboBox();
 	ChildrenIdNameField->addItem("35 / children1 name");
 	ChildrenIdNameField->addItem("235 / children2 name");
 	ChildrenIdNameField->addItem("756 / children3 name");
 	ChildrenIdNameField->addItem("2 / children4 name");
-	mainLayout->addWidget(ChildrenIdNameField, 3, 1);
+	Layout->addWidget(ChildrenIdNameField, 3, 1);
 
 	ChildrenIdNameButton = new QPushButton();
 	ChildrenIdNameButton->setText("Select");
-	mainLayout->addWidget(ChildrenIdNameButton, 3, 2);
+	Layout->addWidget(ChildrenIdNameButton, 3, 2);
 
 	// Transform
 	TransformSection = new SectionContainer("Transform");
@@ -117,7 +113,7 @@ EntityManagerWidget::EntityManagerWidget()
 		}
 
 	TransformSection->SetContentLayout(transformLayout);
-	mainLayout->addWidget(TransformSection, 4, 0, 1, 3);
+	Layout->addWidget(TransformSection, 4, 0, 1, 3);
 }
 
 EntityManagerWidget::~EntityManagerWidget()
@@ -154,9 +150,14 @@ void EntityManagerWidget::UpdateWidget()
 	TranslationField[2][0]->setText(QString(String::From(scale.X).GetCStr()));
 	TranslationField[2][1]->setText(QString(String::From(scale.Y).GetCStr()));
 	TranslationField[2][2]->setText(QString(String::From(scale.Z).GetCStr()));
+
+	for (auto cmp : Components)
+		Layout->removeWidget(cmp);
+
+	Components.Clear();
 	
 	// components
-	for (int i = 0; i < MAX_COMPONENTS_COUNT; ++i)
+	for (int i = 0, row = 5; i < MAX_COMPONENTS_COUNT; ++i)
 	{
 		ComponentBase* cmp = Entity->GetComponent(i);
 		if (!cmp) continue;
@@ -169,5 +170,8 @@ void EntityManagerWidget::UpdateWidget()
 		viewer->SetObject(cmp);
 		section->SetContentLayout(viewer->layout());
 		Components.PushBack(section);
+
+		Layout->addWidget(section, row, 0, 1, 3);
+		++row;
 	}
 }

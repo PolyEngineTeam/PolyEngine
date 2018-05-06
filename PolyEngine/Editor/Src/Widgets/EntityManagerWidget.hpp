@@ -27,7 +27,7 @@ public:
 private:
 	Entity* Entity;
 
-	std::unique_ptr<QLayout> Layout;
+	QGridLayout* Layout;
 
 	// general data
 	QLabel* NameText;			QLineEdit* NameField;
