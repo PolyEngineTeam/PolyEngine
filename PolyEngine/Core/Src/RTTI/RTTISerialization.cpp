@@ -31,6 +31,147 @@ void RTTI::SerializeObject(const RTTIBase* obj, rapidjson::GenericObject<false, 
 	}
 }
 
+namespace Poly 
+{
+	namespace RTTI
+	{
+		rapidjson::Value GetValueFromFundamental(eCorePropertyType type, const void* value)
+		{
+			rapidjson::Value currentValue;
+
+			switch (type)
+			{
+			case eCorePropertyType::BOOL:
+				currentValue.SetBool(*reinterpret_cast<const bool*>(value));
+				break;
+			case eCorePropertyType::INT8:
+				currentValue.SetInt(*reinterpret_cast<const i8*>(value));
+				break;
+			case eCorePropertyType::INT16:
+				currentValue.SetInt(*reinterpret_cast<const i16*>(value));
+				break;
+			case eCorePropertyType::INT32:
+				currentValue.SetInt(*reinterpret_cast<const i32*>(value));
+				break;
+			case eCorePropertyType::INT64:
+				currentValue.SetInt64(*reinterpret_cast<const i64*>(value));
+				break;
+			case eCorePropertyType::UINT8:
+				currentValue.SetUint(*reinterpret_cast<const u8*>(value));
+				break;
+			case eCorePropertyType::UINT16:
+				currentValue.SetUint(*reinterpret_cast<const u16*>(value));
+				break;
+			case eCorePropertyType::UINT32:
+				currentValue.SetUint(*reinterpret_cast<const u32*>(value));
+				break;
+			case eCorePropertyType::UINT64:
+				currentValue.SetUint64(*reinterpret_cast<const u64*>(value));
+				break;
+			case eCorePropertyType::FLOAT:
+				currentValue.SetFloat(*reinterpret_cast<const float*>(value));
+				break;
+			case eCorePropertyType::DOUBLE:
+				currentValue.SetDouble(*reinterpret_cast<const double*>(value));
+				break;
+			default:
+				ASSERTE(false, "Invalid type");
+			}
+
+			return currentValue;
+		}
+
+		void SetFundamentalFromValue(const rapidjson::Value& value, eCorePropertyType type, void* obj)
+		{
+			switch (type)
+			{
+			case eCorePropertyType::BOOL:
+				*reinterpret_cast<bool*>(obj) = value.GetBool();
+				break;
+			case eCorePropertyType::INT8:
+			{
+				int result = value.GetInt();
+				HEAVY_ASSERTE((result < 0) ? ((-result & 0xFF) == -result) : ((result & 0xFF) == result), "Value outside of int8 range");
+				*reinterpret_cast<i8*>(obj) = (i8)result;
+				break;
+			}
+			case eCorePropertyType::INT16:
+			{
+				int result = value.GetInt();
+				HEAVY_ASSERTE((result < 0) ? ((-result & 0xFFFF) == -result) : ((result & 0xFFFF) == result), "Value outside of int16 range");
+				*reinterpret_cast<i16*>(obj) = (i16)result;
+				break;
+			}
+			case eCorePropertyType::INT32:
+				*reinterpret_cast<i32*>(obj) = value.GetInt();
+				break;
+			case eCorePropertyType::INT64:
+				*reinterpret_cast<i64*>(obj) = value.GetInt64();
+				break;
+			case eCorePropertyType::UINT8:
+			{
+				uint result = value.GetUint();
+				HEAVY_ASSERTE((result & 0xFF) == result, "Value outside of uint8 range");
+				*reinterpret_cast<u8*>(obj) = (u8)result;
+				break;
+			}
+			case eCorePropertyType::UINT16:
+			{
+				uint result = value.GetUint();
+				HEAVY_ASSERTE((result & 0xFFFF) == result, "Value outside of uint16 range");
+				*reinterpret_cast<u16*>(obj) = (u16)result;
+				break;
+			}
+			case eCorePropertyType::UINT32:
+				*reinterpret_cast<u32*>(obj) = value.GetUint();
+				break;
+			case eCorePropertyType::UINT64:
+				*reinterpret_cast<u64*>(obj) = value.GetUint64();
+				break;
+			case eCorePropertyType::FLOAT:
+				*reinterpret_cast<float*>(obj) = value.GetFloat();
+				break;
+			case eCorePropertyType::DOUBLE:
+				*reinterpret_cast<double*>(obj) = value.GetDouble();
+				break;
+			default:
+				ASSERTE(false, "Invalid type");
+			}
+		}
+
+		template<typename T>
+		rapidjson::Value GetVectorValueHelper(const RTTI::Property& prop, rapidjson::Document::AllocatorType& alloc, size_t count, const T* data)
+		{
+			HEAVY_ASSERTE(count >= 2, "Invalid vector size!");
+			HEAVY_ASSERTE(data, "Invalid data pointer!");
+			rapidjson::Value currentValue;
+			currentValue.SetArray();
+			
+			eCorePropertyType type = GetCorePropertyType<T>();
+			currentValue.GetArray().Reserve((rapidjson::SizeType)count, alloc);
+			for(size_t i=0; i<count; ++i)
+				currentValue.GetArray().PushBack(GetValueFromFundamental(type, data + i), alloc);
+			
+			return currentValue;
+		}
+
+		template<typename T>
+		void SetVectorValueHelper(const RTTI::Property& prop, const rapidjson::Value& value, size_t count, T* data)
+		{
+			HEAVY_ASSERTE(count >= 2, "Invalid vector size!");
+			HEAVY_ASSERTE(value.IsArray(), "Invalid value type");
+			HEAVY_ASSERTE(value.GetArray().Size() >= 2, "Invalid array size");
+			HEAVY_ASSERTE(value.GetArray().Size() == count, "Invalid array size compared to count");
+			HEAVY_ASSERTE(data, "Invalid data pointer");
+			
+			eCorePropertyType type = GetCorePropertyType<T>();
+			for (size_t i = 0; i < count && i < value.GetArray().Size(); ++i)
+				SetFundamentalFromValue(value.GetArray()[(rapidjson::SizeType)i], type, data + i);
+		}
+	}
+}
+
+
 rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Property& prop, rapidjson::Document::AllocatorType& alloc)
 {
 	rapidjson::Value currentValue;
@@ -38,37 +179,17 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	switch (prop.CoreType)
 	{
 	case eCorePropertyType::BOOL:
-		currentValue.SetBool(*reinterpret_cast<const bool*>(value));
-		break;
 	case eCorePropertyType::INT8:
-		currentValue.SetInt(*reinterpret_cast<const i8*>(value));
-		break;
 	case eCorePropertyType::INT16:
-		currentValue.SetInt(*reinterpret_cast<const i16*>(value));
-		break;
 	case eCorePropertyType::INT32:
-		currentValue.SetInt(*reinterpret_cast<const i32*>(value));
-		break;
 	case eCorePropertyType::INT64:
-		currentValue.SetInt64(*reinterpret_cast<const i64*>(value));
-		break;
 	case eCorePropertyType::UINT8:
-		currentValue.SetUint(*reinterpret_cast<const u8*>(value));
-		break;
 	case eCorePropertyType::UINT16:
-		currentValue.SetUint(*reinterpret_cast<const u16*>(value));
-		break;
 	case eCorePropertyType::UINT32:
-		currentValue.SetUint(*reinterpret_cast<const u32*>(value));
-		break;
 	case eCorePropertyType::UINT64:
-		currentValue.SetUint64(*reinterpret_cast<const u64*>(value));
-		break;
 	case eCorePropertyType::FLOAT:
-		currentValue.SetFloat(*reinterpret_cast<const float*>(value));
-		break;
 	case eCorePropertyType::DOUBLE:
-		currentValue.SetDouble(*reinterpret_cast<const double*>(value));
+		currentValue = GetValueFromFundamental(prop.CoreType, value);
 		break;
 	case eCorePropertyType::STRING:
 	{
@@ -100,6 +221,7 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 			currentValue.GetArray().PushBack(GetCorePropertyValue(implData->GetValue(value, i), implData->PropertyType, alloc), alloc);
 	}
 		break;
+	case eCorePropertyType::ENUM_ARRAY:
 	case eCorePropertyType::ORDERED_MAP:
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid ordered map impl data!");
@@ -115,6 +237,59 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 			pair.GetObject().AddMember("Value", valObj, alloc);
 			currentValue.GetArray().PushBack(pair, alloc);
 		}
+	}
+	break;
+	case eCorePropertyType::VECTOR:
+	{
+		const Vector* vec = reinterpret_cast<const Vector*>(value);
+		currentValue = GetVectorValueHelper(prop, alloc, vec->Data.size(), vec->Data.data());
+	}
+	break;
+	case eCorePropertyType::VECTOR_2F:
+	{
+		const Vector2f* vec = reinterpret_cast<const Vector2f*>(value);
+		currentValue = GetVectorValueHelper(prop, alloc, vec->Data.size(), vec->Data.data());
+	}
+	break;
+	case eCorePropertyType::VECTOR_2I:
+	{
+		const Vector2i* vec = reinterpret_cast<const Vector2i*>(value);
+		currentValue = GetVectorValueHelper(prop, alloc, vec->Data.size(), vec->Data.data());
+	}
+	break;
+	case eCorePropertyType::QUATERNION:
+	{
+		const Quaternion* quat = reinterpret_cast<const Quaternion*>(value);
+		currentValue = GetVectorValueHelper(prop, alloc, quat->Data.size(), quat->Data.data());
+	}
+	break;
+	case eCorePropertyType::ANGLE:
+	{
+		const Angle* angle = reinterpret_cast<const Angle*>(value);
+		auto tmp = angle->AsDegrees();
+		currentValue = GetValueFromFundamental(GetCorePropertyType<decltype(tmp)>(), &tmp);
+	}
+	break;
+	case eCorePropertyType::COLOR:
+	{
+		const Color* color = reinterpret_cast<const Color*>(value);
+		currentValue = GetVectorValueHelper(prop, alloc, color->Data.size(), color->Data.data());
+	}
+	break;
+	case eCorePropertyType::MATRIX:
+	{
+		const Matrix* mat = reinterpret_cast<const Matrix*>(value);
+		currentValue = GetVectorValueHelper(prop, alloc, mat->Data.size(), mat->Data.data());
+	}
+	break;
+	case eCorePropertyType::ENUM_FLAGS:
+	{
+		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid ordered map impl data!");
+		const EnumFlagsPropertyImplDataBase* implData = static_cast<const EnumFlagsPropertyImplDataBase*>(prop.ImplData.get());
+
+		i64 val = implData->GetValue(value);
+		currentValue.SetInt64(val);
+		break;
 	}
 	break;
 	case eCorePropertyType::CUSTOM:
@@ -157,53 +332,17 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 	switch (prop.CoreType)
 	{
 	case eCorePropertyType::BOOL:
-		*reinterpret_cast<bool*>(obj) = value.GetBool();
-		break;
 	case eCorePropertyType::INT8:
-	{
-		int result = value.GetInt();
-		HEAVY_ASSERTE((result < 0) ? ((-result & 0xFF) == -result) : ((result & 0xFF) == result), "Value outside of int8 range");
-		*reinterpret_cast<i8*>(obj) = (i8)result;
-		break;
-	}
 	case eCorePropertyType::INT16:
-	{
-		int result = value.GetInt();
-		HEAVY_ASSERTE((result < 0) ? ((-result & 0xFFFF) == -result) : ((result & 0xFFFF) == result), "Value outside of int16 range");
-		*reinterpret_cast<i16*>(obj) = (i16)result;
-		break;
-	}
 	case eCorePropertyType::INT32:
-		*reinterpret_cast<i32*>(obj) = value.GetInt();
-		break;
 	case eCorePropertyType::INT64:
-		*reinterpret_cast<i64*>(obj) = value.GetInt64();
-		break;
 	case eCorePropertyType::UINT8:
-	{
-		uint result = value.GetUint();
-		HEAVY_ASSERTE((result & 0xFF) == result, "Value outside of uint8 range");
-		*reinterpret_cast<u8*>(obj) = (u8)result;
-		break;
-	}
 	case eCorePropertyType::UINT16:
-	{
-		uint result = value.GetUint();
-		HEAVY_ASSERTE((result & 0xFFFF) == result, "Value outside of uint16 range");
-		*reinterpret_cast<u16*>(obj) = (u16)result;
-		break;
-	}
 	case eCorePropertyType::UINT32:
-		*reinterpret_cast<u32*>(obj) = value.GetUint();
-		break;
 	case eCorePropertyType::UINT64:
-		*reinterpret_cast<u64*>(obj) = value.GetUint64();
-		break;
 	case eCorePropertyType::FLOAT:
-		*reinterpret_cast<float*>(obj) = value.GetFloat();
-		break;
 	case eCorePropertyType::DOUBLE:
-		*reinterpret_cast<double*>(obj) = value.GetDouble();
+		SetFundamentalFromValue(value, prop.CoreType, obj);
 		break;
 	case eCorePropertyType::STRING:
 	{
@@ -237,6 +376,7 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 		}
 	}
 	break;
+	case eCorePropertyType::ENUM_ARRAY:
 	case eCorePropertyType::ORDERED_MAP:
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid ordered map impl data!");
@@ -251,6 +391,59 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 			SetCorePropertyValue(implData->GetValueTemporaryStorage(), implData->ValuePropertyType, val);
 			implData->SetValue(obj, implData->GetKeyTemporaryStorage(), implData->GetValueTemporaryStorage());
 		}
+	}
+	break;
+	case eCorePropertyType::VECTOR:
+	{
+		Vector* vec = reinterpret_cast<Vector*>(obj);
+		SetVectorValueHelper(prop, value, vec->Data.size(), vec->Data.data());
+	}
+	break;
+	case eCorePropertyType::VECTOR_2F:
+	{
+		Vector2f* vec = reinterpret_cast<Vector2f*>(obj);
+		SetVectorValueHelper(prop, value, vec->Data.size(), vec->Data.data());
+	}
+	break;
+	case eCorePropertyType::VECTOR_2I:
+	{
+		Vector2i* vec = reinterpret_cast<Vector2i*>(obj);
+		SetVectorValueHelper(prop, value, vec->Data.size(), vec->Data.data());
+	}
+	break;
+	case eCorePropertyType::QUATERNION:
+	{
+		Quaternion* quat = reinterpret_cast<Quaternion*>(obj);
+		SetVectorValueHelper(prop, value, quat->Data.size(), quat->Data.data());
+	}
+	break;
+	case eCorePropertyType::ANGLE:
+	{
+		Angle* angle = reinterpret_cast<Angle*>(obj);
+		using ValueType = decltype(angle->AsDegrees());
+		ValueType degrees;
+		SetFundamentalFromValue(value, GetCorePropertyType<ValueType>(), &degrees);
+		*angle = Angle::FromDegrees(degrees);
+	}
+	break;
+	case eCorePropertyType::COLOR:
+	{
+		Color* color = reinterpret_cast<Color*>(obj);
+		SetVectorValueHelper(prop, value, color->Data.size(), color->Data.data());
+	}
+	break;
+	case eCorePropertyType::MATRIX:
+	{
+		Matrix* mat = reinterpret_cast<Matrix*>(obj);
+		SetVectorValueHelper(prop, value, mat->Data.size(), mat->Data.data());
+	}
+	break;
+	case eCorePropertyType::ENUM_FLAGS:
+	{
+		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid enum impl data!");
+		const EnumFlagsPropertyImplDataBase* implData = static_cast<const EnumFlagsPropertyImplDataBase*>(prop.ImplData.get());
+		const i64 val = value.GetInt64();
+		implData->SetValue(obj, val);
 	}
 	break;
 	case eCorePropertyType::CUSTOM:

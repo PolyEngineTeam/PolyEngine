@@ -12,6 +12,16 @@
 #include <unordered_map>
 
 namespace Poly {
+
+	// Fwd declarations
+	class Vector;
+	class Vector2f;
+	class Vector2i;
+	class Quaternion;
+	class Angle;
+	class Color;
+	class Matrix;
+
 	namespace RTTI {
 
 		template<typename T, typename U>
@@ -19,8 +29,10 @@ namespace Poly {
 
 		enum class eCorePropertyType
 		{
-			UNHANDLED,
-			CUSTOM,
+			UNHANDLED, // for fast failing
+			CUSTOM,	// custom rtti property (user defined class)
+			
+			// fundamental
 			BOOL,
 			INT8,
 			INT16,
@@ -32,10 +44,26 @@ namespace Poly {
 			UINT64,
 			FLOAT,
 			DOUBLE,
+			
+			// other
 			ENUM,
+			ENUM_FLAGS,
 			STRING,
+			
+			// collections
 			DYNARRAY,
 			ORDERED_MAP,
+			ENUM_ARRAY,
+
+			// math
+			VECTOR,
+			VECTOR_2F,
+			VECTOR_2I,
+			QUATERNION,
+			ANGLE,
+			COLOR,
+			MATRIX,
+
 			_COUNT
 		};
 
@@ -52,7 +80,16 @@ namespace Poly {
 		template <> inline eCorePropertyType GetCorePropertyType<u64>() { return eCorePropertyType::UINT64; };
 		template <> inline eCorePropertyType GetCorePropertyType<float>() { return eCorePropertyType::FLOAT; };
 		template <> inline eCorePropertyType GetCorePropertyType<double>() { return eCorePropertyType::DOUBLE; };
+		
 		template <> inline eCorePropertyType GetCorePropertyType<String>() { return eCorePropertyType::STRING; };
+
+		template <> inline eCorePropertyType GetCorePropertyType<Vector>() { return eCorePropertyType::VECTOR; };
+		template <> inline eCorePropertyType GetCorePropertyType<Vector2f>() { return eCorePropertyType::VECTOR_2F; };
+		template <> inline eCorePropertyType GetCorePropertyType<Vector2i>() { return eCorePropertyType::VECTOR_2I; };
+		template <> inline eCorePropertyType GetCorePropertyType<Quaternion>() { return eCorePropertyType::QUATERNION; };
+		template <> inline eCorePropertyType GetCorePropertyType<Angle>() { return eCorePropertyType::ANGLE; };
+		template <> inline eCorePropertyType GetCorePropertyType<Color>() { return eCorePropertyType::COLOR; };
+		template <> inline eCorePropertyType GetCorePropertyType<Matrix>() { return eCorePropertyType::MATRIX; };
 
 		//-----------------------------------------------------------------------------------------------------------------------
 		enum class ePropertyFlag {
@@ -66,7 +103,10 @@ namespace Poly {
 		{
 			Property() = default;
 			Property(TypeInfo typeInfo, size_t offset, const char* name, ePropertyFlag flags, eCorePropertyType coreType, std::shared_ptr<PropertyImplData>&& implData = nullptr)
-				: Type(typeInfo), Offset(offset), Name(name), Flags(flags), CoreType(coreType), ImplData(std::move(implData)) {}
+				: Type(typeInfo), Offset(offset), Name(name), Flags(flags), CoreType(coreType), ImplData(std::move(implData)) 
+			{
+				HEAVY_ASSERTE(CoreType != eCorePropertyType::UNHANDLED, "Unhandled property type!");
+			}
 			TypeInfo Type;
 			size_t Offset;
 			String Name;
@@ -146,11 +186,13 @@ namespace Poly {
 
 		//-----------------------------------------------------------------------------------------------------------------------
 		// OrderedMap serialization property impl
-		template <typename KeyType, typename ValueType>
+		template <typename KeyType, typename ValueType, size_t Bfactor>
 		struct OrderedMapPropertyImplData final : public DictionaryPropertyImplDataBase
 		{
 			mutable KeyType TempKey;
 			mutable ValueType TempValue;
+
+			using MapType = OrderedMap<KeyType, ValueType, Bfactor>;
 
 			OrderedMapPropertyImplData(ePropertyFlag flags)
 			{
@@ -158,14 +200,14 @@ namespace Poly {
 				ValuePropertyType = CreatePropertyInfo<ValueType>(0, "value", flags);
 			}
 
-			void Clear(void* collection) const override { reinterpret_cast<OrderedMap<KeyType, ValueType>*>(collection)->Clear(); }
+			void Clear(void* collection) const override { reinterpret_cast<MapType*>(collection)->Clear(); }
 			void* GetKeyTemporaryStorage() const { return reinterpret_cast<void*>(&TempKey); }
 			void* GetValueTemporaryStorage() const { return reinterpret_cast<void*>(&TempValue); }
 
 			Dynarray<const void*> GetKeys(const void* collection) const override
 			{
 				Dynarray<const void*> ret;
-				const OrderedMap<KeyType, ValueType>& map = *reinterpret_cast<const OrderedMap<KeyType, ValueType>*>(collection);
+				const MapType& map = *reinterpret_cast<const MapType*>(collection);
 				for (const KeyType& key : map.Keys())
 					ret.PushBack((const void*)&key);
 				return ret;
@@ -175,21 +217,114 @@ namespace Poly {
 			{
 				const KeyType& keyRef = *reinterpret_cast<const KeyType*>(key);
 				const ValueType& valueRef = *reinterpret_cast<const ValueType*>(value);
-				reinterpret_cast<OrderedMap<KeyType, ValueType>*>(collection)->MustInsert(keyRef, valueRef);
+				reinterpret_cast<MapType*>(collection)->MustInsert(keyRef, valueRef);
 			}
 
 			const void* GetValue(const void* collection, const void* key) const override
 			{
 				const KeyType& keyRef = *reinterpret_cast<const KeyType*>(key);
-				const ValueType& valueRef = reinterpret_cast<const OrderedMap<KeyType, ValueType>*>(collection)->Get(keyRef).Value();
+				const ValueType& valueRef = reinterpret_cast<const MapType*>(collection)->Get(keyRef).Value();
 				return reinterpret_cast<const void*>(&valueRef);
 			}
 		};
 
-		template <typename KeyType, typename ValueType> Property CreateOrderedMapPropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
+		template <typename KeyType, typename ValueType, size_t Bfactor> Property CreateOrderedMapPropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
 		{
-			std::shared_ptr<DictionaryPropertyImplDataBase> implData = std::shared_ptr<DictionaryPropertyImplDataBase>{ new OrderedMapPropertyImplData<KeyType, ValueType>(flags) };
+			std::shared_ptr<DictionaryPropertyImplDataBase> implData = std::shared_ptr<DictionaryPropertyImplDataBase>{ new OrderedMapPropertyImplData<KeyType, ValueType, Bfactor>(flags) };
 			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::ORDERED_MAP, std::move(implData) };
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------
+		// OrderedMap serialization property impl
+		template <typename EnumType, typename ValueType>
+		struct EnumArrayPropertyImplData final : public DictionaryPropertyImplDataBase
+		{
+			mutable EnumType TempKey;
+			mutable ValueType TempValue;
+			mutable Dynarray<EnumType> EnumValues;
+
+			using EnumArrayType = EnumArray<ValueType, EnumType>;
+
+			EnumArrayPropertyImplData(ePropertyFlag flags)
+			{
+				KeyPropertyType = CreatePropertyInfo<EnumType>(0, "key", flags);
+				ValuePropertyType = CreatePropertyInfo<ValueType>(0, "value", flags);
+			}
+
+			void Clear(void* collection) const override 
+			{ 
+				EnumArrayType& col = *reinterpret_cast<EnumArrayType*>(collection);
+				for (EnumType e : IterateEnum<EnumType>())
+					col[e] = ValueType{};
+			}
+			void* GetKeyTemporaryStorage() const { return reinterpret_cast<void*>(&TempKey); }
+			void* GetValueTemporaryStorage() const { return reinterpret_cast<void*>(&TempValue); }
+
+			Dynarray<const void*> GetKeys(const void* collection) const override
+			{
+				UNUSED(collection);
+				if (EnumValues.GetSize() == 0)
+				{
+					for (EnumType e : IterateEnum<EnumType>())
+						EnumValues.PushBack(e);
+				}
+
+				Dynarray<const void*> ret;
+				for (const EnumType& key : EnumValues)
+					ret.PushBack((const void*)&key);
+				return ret;
+			}
+
+			void SetValue(void* collection, const void* key, const void* value) const override
+			{
+				const EnumType& keyRef = *reinterpret_cast<const EnumType*>(key);
+				const ValueType& valueRef = *reinterpret_cast<const ValueType*>(value);
+
+				EnumArrayType& col = *reinterpret_cast<EnumArrayType*>(collection);
+				col[keyRef] = valueRef;
+			}
+
+			const void* GetValue(const void* collection, const void* key) const override
+			{
+				const EnumType& keyRef = *reinterpret_cast<const EnumType*>(key);
+
+				const EnumArrayType& col = *reinterpret_cast<const EnumArrayType*>(collection);
+				return reinterpret_cast<const void*>(&col[keyRef]);
+			}
+		};
+
+		template <typename EnumType, typename ValueType> Property CreateEnumArrayPropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
+		{
+			std::shared_ptr<DictionaryPropertyImplDataBase> implData = std::shared_ptr<DictionaryPropertyImplDataBase>{ new EnumArrayPropertyImplData<EnumType, ValueType>(flags) };
+			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::ENUM_ARRAY, std::move(implData) };
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------
+		// Enum flags serialization property impl
+		struct EnumFlagsPropertyImplDataBase : public PropertyImplData
+		{
+			virtual i64 GetValue(const void* collection) const = 0;
+			virtual void SetValue(void* collection, i64 value) const = 0;
+		};
+
+		template<typename E>
+		struct EnumFlagsPropertyImplData final : public EnumFlagsPropertyImplDataBase
+		{
+			i64 GetValue(const void* collection) const override { return (typename EnumFlags<E>::FlagType)*reinterpret_cast<const EnumFlags<E>*>(collection); }
+			void SetValue(void* collection, i64 value) const override { *reinterpret_cast<EnumFlags<E>*>(collection) = EnumFlags<E>((E)value); }
+		};
+
+		template <typename E> Property CreateEnumFlagsPropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
+		{
+			STATIC_ASSERTE(std::is_enum<E>::value, "Enum type is required");
+			using UnderlyingType = typename std::underlying_type<E>::type;
+			STATIC_ASSERTE(std::is_integral<UnderlyingType>::value, "Only enums with integral underlying types are supported");
+			STATIC_ASSERTE(std::is_signed<UnderlyingType>::value, "Only enums with signed underlying types are supported");
+			STATIC_ASSERTE(sizeof(UnderlyingType) <= sizeof(i64), "Only enums with max 64 bit underlying types are supported");
+			std::shared_ptr<EnumFlagsPropertyImplData<E>> implData = std::make_shared<EnumFlagsPropertyImplData<E>>();
+
+			// Register EnumInfo object pointer to property
+			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::ENUM_FLAGS, std::move(implData) };
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------
@@ -198,9 +333,10 @@ namespace Poly {
 			return constexpr_match(
 				std::is_enum<T>{},			[&](auto lazy) { return CreateEnumPropertyInfo<LAZY_TYPE(T)>(offset, name, flags); },
 				Trait::IsDynarray<T>{},		[&](auto lazy) { return CreateDynarrayPropertyInfo<typename Trait::DynarrayValueType<LAZY_TYPE(T)>::type>(offset, name, flags); },
-				Trait::IsOrderedMap<T>{},	[&](auto lazy) { return CreateOrderedMapPropertyInfo<typename Trait::OrderedMapType<LAZY_TYPE(T)>::keyType, typename Trait::OrderedMapType<LAZY_TYPE(T)>::valueType>(offset, name, flags); },
-				std::is_same<String, T>{},	[&](auto) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<String>() }; },
-				/*default*/					[&](auto lazy) { return Property{ TypeInfo::Get<LAZY_TYPE(T)>(), offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>() }; }
+				Trait::IsOrderedMap<T>{},	[&](auto lazy) { return CreateOrderedMapPropertyInfo<typename Trait::OrderedMapType<LAZY_TYPE(T)>::keyType, typename Trait::OrderedMapType<LAZY_TYPE(T)>::valueType, Trait::OrderedMapType<LAZY_TYPE(T)>::bFactor>(offset, name, flags); },
+				Trait::IsEnumArray<T>{},	[&](auto lazy) { return CreateEnumArrayPropertyInfo<typename Trait::EnumArrayType<LAZY_TYPE(T)>::enumType, typename Trait::EnumArrayType<LAZY_TYPE(T)>::valueType>(offset, name, flags); },
+				Trait::IsEnumFlags<T>{},	[&](auto lazy) { return CreateEnumFlagsPropertyInfo<typename Trait::EnumFlagsType<LAZY_TYPE(T)>::type>(offset, name, flags); },
+				/*default*/					[&](auto lazy) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>() }; }
 			);
 		}
 

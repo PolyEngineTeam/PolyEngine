@@ -56,7 +56,7 @@ namespace Poly
 		// This structure allows to access vector elements by index or name.
 		union
 		{
-			VectorIntType Data[2];
+			std::array<VectorIntType, 2> Data;
 			struct { VectorIntType X, Y; };
 		};
 
