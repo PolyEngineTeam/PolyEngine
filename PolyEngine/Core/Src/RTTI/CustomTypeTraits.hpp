@@ -3,11 +3,13 @@
 #include "Defines.hpp"
 #include "BaseObject.hpp"
 
-#include "Collections/Dynarray.hpp"
-#include "Collections/OrderedMap.hpp"
-
 namespace Poly
 {
+	template<typename T> class Dynarray;
+	template<typename K, typename V, size_t Bfactor> class OrderedMap;
+	template<typename T, typename E> class EnumArray;
+	template<typename E> class EnumFlags;
+
 	namespace Trait
 	{
 		// Is dynarray
@@ -19,10 +21,24 @@ namespace Poly
 
 		// Is Ordered map
 		template <typename> struct IsOrderedMap : public std::false_type {};
-		template <typename K, typename V> struct IsOrderedMap<OrderedMap<K,V>> : public std::true_type {};
+		template <typename K, typename V, size_t Bfactor> struct IsOrderedMap<OrderedMap<K,V, Bfactor>> : public std::true_type {};
 
 		template <typename> struct OrderedMapType {};
-		template <typename K, typename V> struct OrderedMapType<OrderedMap<K, V>> { using keyType = K; using valueType = V; };
+		template <typename K, typename V, size_t Bfactor> struct OrderedMapType<OrderedMap<K, V, Bfactor>> { using keyType = K; using valueType = V; };
+
+		// Is enum array
+		template <typename> struct IsEnumArray : public std::false_type {};
+		template <typename T, typename E> struct IsEnumArray<EnumArray<T, E>> : public std::true_type {};
+
+		template <typename> struct EnumArrayType {};
+		template <typename T, typename E> struct EnumArrayType<EnumArray<T, E>> { using enumType = E; using valueType = T; };
+
+		// Is enum flags
+		template <typename> struct IsEnumFlags : public std::false_type {};
+		template <typename E> struct IsEnumFlags<EnumFlags<E>> : public std::true_type {};
+
+		template <typename> struct EnumFlagsType {};
+		template <typename E> struct EnumFlagsType<EnumFlags<E>> { using type = E; };
 
 		template <class T> using RawType = std::remove_pointer<typename std::decay<typename std::remove_cv<T>::type >::type>;
 	}

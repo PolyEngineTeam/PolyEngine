@@ -221,6 +221,7 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 			currentValue.GetArray().PushBack(GetCorePropertyValue(implData->GetValue(value, i), implData->PropertyType, alloc), alloc);
 	}
 		break;
+	case eCorePropertyType::ENUM_ARRAY:
 	case eCorePropertyType::ORDERED_MAP:
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid ordered map impl data!");
@@ -279,6 +280,16 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	{
 		const Matrix* mat = reinterpret_cast<const Matrix*>(value);
 		currentValue = GetVectorValueHelper(prop, alloc, mat->Data.size(), mat->Data.data());
+	}
+	break;
+	case eCorePropertyType::ENUM_FLAGS:
+	{
+		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid ordered map impl data!");
+		const EnumFlagsPropertyImplDataBase* implData = static_cast<const EnumFlagsPropertyImplDataBase*>(prop.ImplData.get());
+
+		i64 val = implData->GetValue(value);
+		currentValue.SetInt64(val);
+		break;
 	}
 	break;
 	case eCorePropertyType::CUSTOM:
@@ -365,6 +376,7 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 		}
 	}
 	break;
+	case eCorePropertyType::ENUM_ARRAY:
 	case eCorePropertyType::ORDERED_MAP:
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid ordered map impl data!");
@@ -424,6 +436,14 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 	{
 		Matrix* mat = reinterpret_cast<Matrix*>(obj);
 		SetVectorValueHelper(prop, value, mat->Data.size(), mat->Data.data());
+	}
+	break;
+	case eCorePropertyType::ENUM_FLAGS:
+	{
+		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid enum impl data!");
+		const EnumFlagsPropertyImplDataBase* implData = static_cast<const EnumFlagsPropertyImplDataBase*>(prop.ImplData.get());
+		const i64 val = value.GetInt64();
+		implData->SetValue(obj, val);
 	}
 	break;
 	case eCorePropertyType::CUSTOM:

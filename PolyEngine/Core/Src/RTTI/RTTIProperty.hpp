@@ -47,11 +47,13 @@ namespace Poly {
 			
 			// other
 			ENUM,
+			ENUM_FLAGS,
 			STRING,
 			
 			// collections
 			DYNARRAY,
 			ORDERED_MAP,
+			ENUM_ARRAY,
 
 			// math
 			VECTOR,
@@ -231,12 +233,107 @@ namespace Poly {
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------
+		// OrderedMap serialization property impl
+		template <typename EnumType, typename ValueType>
+		struct EnumArrayPropertyImplData final : public DictionaryPropertyImplDataBase
+		{
+			mutable EnumType TempKey;
+			mutable ValueType TempValue;
+			mutable Dynarray<EnumType> EnumValues;
+
+			using EnumArrayType = typename EnumArray<ValueType, EnumType>;
+
+			EnumArrayPropertyImplData(ePropertyFlag flags)
+			{
+				KeyPropertyType = CreatePropertyInfo<EnumType>(0, "key", flags);
+				ValuePropertyType = CreatePropertyInfo<ValueType>(0, "value", flags);
+			}
+
+			void Clear(void* collection) const override 
+			{ 
+				EnumArrayType& col = *reinterpret_cast<EnumArrayType*>(collection);
+				for (EnumType e : IterateEnum<EnumType>())
+					col[e] = ValueType{};
+			}
+			void* GetKeyTemporaryStorage() const { return reinterpret_cast<void*>(&TempKey); }
+			void* GetValueTemporaryStorage() const { return reinterpret_cast<void*>(&TempValue); }
+
+			Dynarray<const void*> GetKeys(const void* collection) const override
+			{
+				UNUSED(collection);
+				if (EnumValues.GetSize() == 0)
+				{
+					for (EnumType e : IterateEnum<EnumType>())
+						EnumValues.PushBack(e);
+				}
+
+				Dynarray<const void*> ret;
+				for (const EnumType& key : EnumValues)
+					ret.PushBack((const void*)&key);
+				return ret;
+			}
+
+			void SetValue(void* collection, const void* key, const void* value) const override
+			{
+				const EnumType& keyRef = *reinterpret_cast<const EnumType*>(key);
+				const ValueType& valueRef = *reinterpret_cast<const ValueType*>(value);
+
+				EnumArrayType& col = *reinterpret_cast<EnumArrayType*>(collection);
+				col[keyRef] = valueRef;
+			}
+
+			const void* GetValue(const void* collection, const void* key) const override
+			{
+				const EnumType& keyRef = *reinterpret_cast<const EnumType*>(key);
+
+				const EnumArrayType& col = *reinterpret_cast<const EnumArrayType*>(collection);
+				return reinterpret_cast<const void*>(&col[keyRef]);
+			}
+		};
+
+		template <typename EnumType, typename ValueType> Property CreateEnumArrayPropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
+		{
+			std::shared_ptr<DictionaryPropertyImplDataBase> implData = std::shared_ptr<DictionaryPropertyImplDataBase>{ new EnumArrayPropertyImplData<EnumType, ValueType>(flags) };
+			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::ENUM_ARRAY, std::move(implData) };
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------
+		// Enum flags serialization property impl
+		struct EnumFlagsPropertyImplDataBase : public PropertyImplData
+		{
+			virtual i64 GetValue(const void* collection) const = 0;
+			virtual void SetValue(void* collection, i64 value) const = 0;
+		};
+
+		template<typename E>
+		struct EnumFlagsPropertyImplData final : public EnumFlagsPropertyImplDataBase
+		{
+			i64 GetValue(const void* collection) const override { return (EnumFlags<E>::FlagType)*reinterpret_cast<const EnumFlags<E>*>(collection); }
+			void SetValue(void* collection, i64 value) const override { *reinterpret_cast<EnumFlags<E>*>(collection) = EnumFlags<E>((E)value); }
+		};
+
+		template <typename E> Property CreateEnumFlagsPropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
+		{
+			STATIC_ASSERTE(std::is_enum<E>::value, "Enum type is required");
+			using UnderlyingType = typename std::underlying_type<E>::type;
+			STATIC_ASSERTE(std::is_integral<UnderlyingType>::value, "Only enums with integral underlying types are supported");
+			STATIC_ASSERTE(std::is_signed<UnderlyingType>::value, "Only enums with signed underlying types are supported");
+			STATIC_ASSERTE(sizeof(UnderlyingType) <= sizeof(i64), "Only enums with max 64 bit underlying types are supported");
+			std::shared_ptr<EnumFlagsPropertyImplData<E>> implData = std::make_shared<EnumFlagsPropertyImplData<E>>();
+
+			// Register EnumInfo object pointer to property
+			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::ENUM_FLAGS, std::move(implData) };
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------
 		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
 		{ 
 			return constexpr_match(
 				std::is_enum<T>{},			[&](auto lazy) { return CreateEnumPropertyInfo<LAZY_TYPE(T)>(offset, name, flags); },
 				Trait::IsDynarray<T>{},		[&](auto lazy) { return CreateDynarrayPropertyInfo<typename Trait::DynarrayValueType<LAZY_TYPE(T)>::type>(offset, name, flags); },
 				Trait::IsOrderedMap<T>{},	[&](auto lazy) { return CreateOrderedMapPropertyInfo<typename Trait::OrderedMapType<LAZY_TYPE(T)>::keyType, typename Trait::OrderedMapType<LAZY_TYPE(T)>::valueType>(offset, name, flags); },
+				Trait::IsEnumArray<T>{},	[&](auto lazy) { return CreateEnumArrayPropertyInfo<typename Trait::EnumArrayType<LAZY_TYPE(T)>::enumType, typename Trait::EnumArrayType<LAZY_TYPE(T)>::valueType>(offset, name, flags); },
+				Trait::IsEnumFlags<T>{},	[&](auto lazy) { return CreateEnumFlagsPropertyInfo<typename Trait::EnumFlagsType<LAZY_TYPE(T)>::type>(offset, name, flags); },
 				/*default*/					[&](auto lazy) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>() }; }
 			);
 		}
