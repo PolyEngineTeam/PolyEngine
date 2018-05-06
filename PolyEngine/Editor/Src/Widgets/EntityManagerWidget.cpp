@@ -27,7 +27,7 @@ EntityManagerWidget::EntityManagerWidget()
 	mainLayout->addWidget(NameText, 0, 0);
 
 	NameField = new QLineEdit();
-	NameField->setText("some fucking name");
+	NameField->setText("some name");
 	mainLayout->addWidget(NameField, 0, 1);
 
 	// UniqueID
@@ -159,6 +159,15 @@ void EntityManagerWidget::UpdateWidget()
 	for (int i = 0; i < MAX_COMPONENTS_COUNT; ++i)
 	{
 		ComponentBase* cmp = Entity->GetComponent(i);
+		if (!cmp) continue;
 
+		cmp->GetTypeInfo();
+		cmp->GetTypeInfo().GetTypeName();
+
+		SectionContainer* section = new SectionContainer(cmp->GetTypeInfo().GetTypeName());
+		RTTIViewerWidget* viewer = new RTTIViewerWidget();
+		viewer->SetObject(cmp);
+		section->SetContentLayout(viewer->layout());
+		Components.PushBack(section);
 	}
 }

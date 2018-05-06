@@ -27,9 +27,6 @@ namespace Poly
 	{
 		RTTI_DECLARE_TYPE_DERIVED(PathfindingComponent, ComponentBase)
 		{
-			//RTTI_PROPERTY(NavigationGraph, "NavigationGraph", RTTI::ePropertyFlag::DONT_SERIALIZE);
-			//RTTI_PROPERTY(CalculatedPath, "CalculatedPath", RTTI::ePropertyFlag::DONT_SERIALIZE);
-			//RTTI_PROPERTY(CurentDestination, "CurentDestination", RTTI::ePropertyFlag::DONT_SERIALIZE);
 			RTTI_PROPERTY(RecalculateRequested, "RecalculateRequested", RTTI::ePropertyFlag::DONT_SERIALIZE);
 			RTTI_PROPERTY(LastPathSearchFailed, "LastPathSearchFailed", RTTI::ePropertyFlag::DONT_SERIALIZE);
 		}

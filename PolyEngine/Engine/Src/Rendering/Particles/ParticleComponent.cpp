@@ -5,6 +5,8 @@
 
 using namespace Poly;
 
+RTTI_DEFINE_TYPE(Poly::ParticleComponent)
+
 ParticleComponent::ParticleComponent(const ParticleEmitter::Settings& emitter)
 {
 	Emitter = new ParticleEmitter(emitter);

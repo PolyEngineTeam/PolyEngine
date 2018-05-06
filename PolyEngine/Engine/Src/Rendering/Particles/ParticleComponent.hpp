@@ -8,6 +8,11 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT ParticleComponent : public ComponentBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(ParticleComponent, ComponentBase)
+		{
+			NO_RTTI_PROPERTY()
+		}
+
 		friend void ParticleUpdateSystem::ParticleUpdatePhase(World*);
 	public:
 		ParticleComponent(const ParticleEmitter::Settings& emitter);

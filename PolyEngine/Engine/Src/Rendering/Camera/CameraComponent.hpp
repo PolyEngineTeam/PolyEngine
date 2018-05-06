@@ -18,6 +18,11 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT CameraComponent : public ComponentBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(CameraComponent, ComponentBase)
+		{
+			NO_RTTI_PROPERTY()
+		}
+
 		friend void CameraSystem::CameraUpdatePhase(World*);
 	public:
 		CameraComponent(Angle fov, float zNear, float zFar);

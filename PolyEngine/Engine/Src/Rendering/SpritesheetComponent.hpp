@@ -21,6 +21,11 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT SpritesheetComponent : public ComponentBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(SpritesheetComponent, ComponentBase)
+		{
+			NO_RTTI_PROPERTY()
+		}
+
 	public:
 		friend void RenderingSystem::RenderingPhase(World*);
 	public:

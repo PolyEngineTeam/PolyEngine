@@ -30,6 +30,11 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT MeshRenderingComponent : public ComponentBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(MeshRenderingComponent, ComponentBase)
+		{
+			NO_RTTI_PROPERTY()
+		}
+
 		friend void RenderingSystem::RenderingPhase(World*);
 	public:
 		MeshRenderingComponent(const String& meshPath, eResourceSource source);

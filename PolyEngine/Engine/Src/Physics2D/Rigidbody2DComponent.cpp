@@ -11,6 +11,8 @@
 
 using namespace Poly;
 
+RTTI_DEFINE_TYPE(Poly::RigidBody2DComponent)
+
 Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType type, float density, float friction)
 	: BodyWorld(world), BodyType(type)
 {

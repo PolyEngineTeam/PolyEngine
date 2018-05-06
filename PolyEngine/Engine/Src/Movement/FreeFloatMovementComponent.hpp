@@ -7,6 +7,11 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT FreeFloatMovementComponent : public ComponentBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(FreeFloatMovementComponent, ComponentBase)
+		{
+			NO_RTTI_PROPERTY()
+		}
+
 		friend void MovementSystem::MovementUpdatePhase(World*);
 	public:
 		FreeFloatMovementComponent(float movementSpeed = 1.0f, float rotationSpeed = 1.0f);

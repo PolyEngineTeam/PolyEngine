@@ -48,57 +48,8 @@ void RTTIViewerWidget::AddChild(QFormLayout* parent, RTTIBase* obj, bool debug)
 
 void RTTIViewerWidget::AddItem(QFormLayout* parent, void* ptr, const RTTI::Property& prop)
 {
-	//RTTIBaseControl* field;
+	ControlBase* field = ControlBase::CreateControl(prop.CoreType, this);
 
-	//switch (prop.CoreType)
-	//{
-	//case RTTI::eCorePropertyType::BOOL:
-	//	field = RTTIBaseControl::TypeToControl<RTTI::eCorePropertyType::BOOL>::CreateControl(ptr, prop);
-	//	break;
-	//case RTTI::eCorePropertyType::INT8:
-	//	field = RTTIBaseControl::TypeToControl<RTTI::eCorePropertyType::INT8>::CreateControl(ptr, prop);
-	//	break;
-	//case RTTI::eCorePropertyType::INT16:
-	//	field = RTTIBaseControl::TypeToControl<RTTI::eCorePropertyType::INT16>::CreateControl(ptr, prop);
-	//	break;
-	//case RTTI::eCorePropertyType::INT32:
-	//	field = RTTIBaseControl::TypeToControl<RTTI::eCorePropertyType::INT32>::CreateControl(ptr, prop);
-	//	break;
-	//case RTTI::eCorePropertyType::INT64:
-	//	field = RTTIBaseControl::TypeToControl<RTTI::eCorePropertyType::INT64>::CreateControl(ptr, prop);
-	//	break;
-	//case RTTI::eCorePropertyType::UINT8:
-	//	field = RTTIBaseControl::TypeToControl<RTTI::eCorePropertyType::UINT8>::CreateControl(ptr, prop);
-	//	break;
-	//case RTTI::eCorePropertyType::UINT16:
-	//	field = RTTIBaseControl::TypeToControl<RTTI::eCorePropertyType::UINT16>::CreateControl(ptr, prop);
-	//	break;
-	//case RTTI::eCorePropertyType::UINT32:
-	//	field = RTTIBaseControl::TypeToControl<RTTI::eCorePropertyType::UINT32>::CreateControl(ptr, prop);
-	//	break;
-	//case RTTI::eCorePropertyType::UINT64:
-	//	field = RTTIBaseControl::TypeToControl<RTTI::eCorePropertyType::UINT64>::CreateControl(ptr, prop);
-	//	break;
-	//case RTTI::eCorePropertyType::FLOAT:
-	//	field = RTTIBaseControl::TypeToControl<RTTI::eCorePropertyType::FLOAT>::CreateControl(ptr, prop);
-	//	break;
-	//case RTTI::eCorePropertyType::DOUBLE:
-	//	field = RTTIBaseControl::TypeToControl<RTTI::eCorePropertyType::DOUBLE>::CreateControl(ptr, prop);
-	//	break;
-	//case RTTI::eCorePropertyType::STRING:
-	//	field = RTTIBaseControl::TypeToControl<RTTI::eCorePropertyType::STRING>::CreateControl(ptr, prop);
-	//	break;
-	//case RTTI::eCorePropertyType::ENUM:
-	//	field = RTTIBaseControl::TypeToControl<RTTI::eCorePropertyType::ENUM>::CreateControl(ptr, prop);
-	//	break;
-	//case RTTI::eCorePropertyType::NONE:
-	//	ASSERTE(false, "Invalid property type!");
-	//	break;
-	//default:
-	//	ASSERTE(false, "Unknown property type!");
-	//}
-
-	//field = new StringControl(ptr, prop, RTTI::eCorePropertyType::STRING);
-	//Fields.PushBack(field);
-	//parent->addRow(prop.Name.GetCStr(), field->GetField());
+	Fields.PushBack(field);
+	parent->addRow(prop.Name.GetCStr(), field);
 }

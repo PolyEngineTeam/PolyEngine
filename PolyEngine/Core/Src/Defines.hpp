@@ -152,7 +152,7 @@ constexpr auto MIN_FLOAT = (std::numeric_limits<float>::min)();
 // Utilities
 #define BIT(x) (1u<<x)
 
-#define UNUSED(expr) do { (void)(expr); } while (false)
+#define UNUSED(expr) do { (void)(expr); } while (false);
 
 // Hack for clang compilation, should be used in every lambda in constexpr_match everywhere where T is required.
 // required lambda argument to be "auto lazy"

@@ -11,6 +11,11 @@ namespace Poly
 	/// will be drawn.
 	class ENGINE_DLLEXPORT DebugDrawableComponent : public ComponentBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(DebugDrawableComponent, ComponentBase)
+		{
+			NO_RTTI_PROPERTY()
+		}
+
 	public:
 		DebugDrawableComponent(DebugDrawPreset preset) : entityPreset(preset) { };
 
@@ -21,6 +26,11 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT DebugDrawStateWorldComponent : public ComponentBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(DebugDrawStateWorldComponent, ComponentBase)
+		{
+			NO_RTTI_PROPERTY()
+		}
+
 	public:
 		DebugDrawStateWorldComponent()
 		{ }

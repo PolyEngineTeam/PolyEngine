@@ -19,7 +19,6 @@ namespace Poly
 		{
 			RTTI_PROPERTY(EmitterID, "EmitterID", RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY(Background, "Background", RTTI::ePropertyFlag::NONE);
-			//RTTI_PROPERTY(Resource, "Resource", RTTI::ePropertyFlag::NONE);
 		}
 
 		friend void SoundSystem::SoundPhase(World* world);

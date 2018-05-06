@@ -21,6 +21,11 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT RigidBody2DComponent : public ComponentBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(RigidBody2DComponent, ComponentBase)
+		{
+			NO_RTTI_PROPERTY()
+		}
+
 		friend void Physics2DSystem::Physics2DUpdatePhase(World* world);
 	public:
 		RigidBody2DComponent(World* world, eRigidBody2DType type, float density = 1.0f, float friction = 0.3f);

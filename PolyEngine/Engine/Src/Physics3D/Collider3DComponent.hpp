@@ -41,6 +41,11 @@ namespace Poly
 	/// @see Rigidbody3DComponent
 	class ENGINE_DLLEXPORT Collider3DComponent : public ComponentBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(Collider3DComponent, ComponentBase)
+		{
+			NO_RTTI_PROPERTY()
+		}
+
 		// friendship declarations
 
 

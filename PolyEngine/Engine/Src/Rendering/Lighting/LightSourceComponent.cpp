@@ -2,6 +2,10 @@
 
 #include "Rendering/Lighting/LightSourceComponent.hpp"
 
+RTTI_DEFINE_TYPE(Poly::DirectionalLightComponent)
+RTTI_DEFINE_TYPE(Poly::PointLightComponent)
+RTTI_DEFINE_TYPE(Poly::SpotLightComponent)
+
 Poly::AmbientLightWorldComponent::AmbientLightWorldComponent(const Color& color, float intensity)
 	: LightColor(color), Intensity(intensity)
 {

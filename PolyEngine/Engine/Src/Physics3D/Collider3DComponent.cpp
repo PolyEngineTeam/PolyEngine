@@ -6,6 +6,8 @@
 #include "Physics3DShapes.hpp"
 #include "Physics3DShapesImpl.hpp"
 
+RTTI_DEFINE_TYPE(Poly::Collider3DComponent)
+
 //------------------------------------------------------------------------------
 Poly::Collider3DComponent::Collider3DComponent(World* world, Collider3DComponentTemplate&& tmp)
 	: BodyWorld(world)
