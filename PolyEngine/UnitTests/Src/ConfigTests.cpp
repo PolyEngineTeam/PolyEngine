@@ -5,6 +5,12 @@
 #include <Configs/ConfigBase.hpp>
 #include <Math/BasicMath.hpp>
 #include <Collections/OrderedMap.hpp>
+#include <Math/Vector.hpp>
+#include <Math/Vector2f.hpp>
+#include <Math/Vector2i.hpp>
+#include <Math/Matrix.hpp>
+#include <Math/Color.hpp>
+#include <Math/Quaternion.hpp>
 #include <cstdio>
 
 using namespace Poly;
@@ -55,6 +61,13 @@ class TestConfig : public ConfigBase
 		RTTI_PROPERTY_AUTONAME(PropOMapIntInt, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropOMapStrDynarray, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropOMapStrCustom, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropVector, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropVector2f, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropVector2i, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropQuat, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropAngle, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropColor, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropMatrix, RTTI::ePropertyFlag::NONE);
 	}
 public:
 	TestConfig() : ConfigBase("Test", eResourceSource::NONE) 
@@ -67,6 +80,8 @@ public:
 
 		PropOMapStrCustom.Insert("Val1", 1);
 		PropOMapStrCustom.Insert("Val2", 2);
+
+		PropMatrix.SetRotationZ(60_deg);
 	}
 
 	// Rendering
@@ -92,6 +107,14 @@ public:
 	OrderedMap<int, int> PropOMapIntInt;
 	OrderedMap<String, Dynarray<int>> PropOMapStrDynarray;
 	OrderedMap<String, TestRTTIClass> PropOMapStrCustom;
+
+	Vector PropVector = Vector(1,2,3);
+	Vector2f PropVector2f = Vector2f(1, 2);
+	Vector2i PropVector2i = Vector2i(1, 2);
+	Quaternion PropQuat = Quaternion(Vector::UNIT_Z, 60_deg);
+	Angle PropAngle = 60_deg;
+	Color PropColor = Color(1, 0.5f, 0.3f, 1);
+	Matrix PropMatrix;
 };
 RTTI_DEFINE_TYPE(TestConfig)
 
@@ -153,6 +176,16 @@ void baseValueCheck(const TestConfig& config)
 	CHECK(config.PropOMapStrCustom.Get("Val1").Value().Val1 == 1);
 	REQUIRE(config.PropOMapStrCustom.Get("Val2").HasValue());
 	CHECK(config.PropOMapStrCustom.Get("Val2").Value().Val1 == 2);
+
+	CHECK(config.PropVector == Vector(1, 2, 3));
+	CHECK(config.PropVector2f == Vector2f(1, 2));
+	CHECK(config.PropVector2i == Vector2i(1, 2));
+	CHECK(config.PropQuat == Quaternion(Vector::UNIT_Z, 60_deg));
+	CHECK(config.PropAngle == 60_deg);
+	CHECK(config.PropColor == Color(1, 0.5f, 0.3f, 1));
+	Matrix testMat;
+	testMat.SetRotationZ(60_deg);
+	CHECK(config.PropMatrix == testMat);
 }
 
 TEST_CASE("Config serialization tests", "[ConfigBase]")
@@ -198,6 +231,14 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		config.PropOMapStrCustom.Get("Val2").Value().Val1 = 5;
 		config.PropOMapStrCustom.Insert("Val3", 3);
 		config.PropOMapStrCustom.Insert("Val4", 4);
+
+		config.PropVector = Vector(4, 5, 6);
+		config.PropVector2f = Vector2f(3, 4);
+		config.PropVector2i = Vector2i(3, 4);
+		config.PropQuat = Quaternion(Vector::UNIT_X, 75_deg);
+		config.PropAngle = 75_deg;
+		config.PropColor = Color(0.5f, 1, 0.8f, 1);
+		config.PropMatrix.SetRotationX(75_deg);
 
 		// save them
 		config.Save();
@@ -284,6 +325,16 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(config.PropOMapStrCustom.Get("Val3").Value().Val1 == 3);
 		REQUIRE(config.PropOMapStrCustom.Get("Val4").HasValue());
 		CHECK(config.PropOMapStrCustom.Get("Val4").Value().Val1 == 4);
+
+		CHECK(config.PropVector == Vector(4, 5, 6));
+		CHECK(config.PropVector2f == Vector2f(3, 4));
+		CHECK(config.PropVector2i == Vector2i(3, 4));
+		CHECK(config.PropQuat == Quaternion(Vector::UNIT_X, 75_deg));
+		CHECK(config.PropAngle == 75_deg);
+		CHECK(config.PropColor == Color(0.5f, 1, 0.8f, 1));
+		Matrix testMat;
+		testMat.SetRotationX(75_deg);
+		CHECK(config.PropMatrix == testMat);
 	}
 
 	// remove the config file

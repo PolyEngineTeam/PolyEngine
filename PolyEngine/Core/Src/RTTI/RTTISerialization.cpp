@@ -35,8 +35,10 @@ namespace Poly
 {
 	namespace RTTI
 	{
-		void SetValueFromFundamental(rapidjson::Value& currentValue, eCorePropertyType type, const void* value)
+		rapidjson::Value GetValueFromFundamental(eCorePropertyType type, const void* value)
 		{
+			rapidjson::Value currentValue;
+
 			switch (type)
 			{
 			case eCorePropertyType::BOOL:
@@ -75,6 +77,8 @@ namespace Poly
 			default:
 				ASSERTE(false, "Invalid type");
 			}
+
+			return currentValue;
 		}
 
 		void SetFundamentalFromValue(const rapidjson::Value& value, eCorePropertyType type, void* obj)
@@ -135,33 +139,35 @@ namespace Poly
 			}
 		}
 
-		//TODO implement
-		/*template<typename T>
-		rapidjson::Value GetVectorValueHelper(const RTTI::Property& prop, rapidjson::Document::AllocatorType& alloc, const T* x, const T* y, const T* z, const T* w)
+		template<typename T>
+		rapidjson::Value GetVectorValueHelper(const RTTI::Property& prop, rapidjson::Document::AllocatorType& alloc, size_t count, const T* data)
 		{
-			HEAVY_ASSERTE(count > 1 && count <= 2, "Invalid vector size!");
+			HEAVY_ASSERTE(count >= 2, "Invalid vector size!");
+			HEAVY_ASSERTE(data, "Invalid data pointer!");
 			rapidjson::Value currentValue;
-			currentValue.SetObject();
+			currentValue.SetArray();
+			
 			eCorePropertyType type = GetCorePropertyType<T>();
-			currentValue.GetObject().AddMember("x", x, alloc);
-			currentValue.GetObject().AddMember("y", y, alloc);
-			if (count >= 3) currentValue.GetObject().AddMember("z", z, alloc);
-			if (count >= 4) currentValue.GetObject().AddMember("w", w, alloc);
+			currentValue.GetArray().Reserve((rapidjson::SizeType)count, alloc);
+			for(size_t i=0; i<count; ++i)
+				currentValue.GetArray().PushBack(GetValueFromFundamental(type, data + i), alloc);
+			
 			return currentValue;
 		}
 
 		template<typename T>
-		void SetVectorValueHelper(const RTTI::Property& prop, const rapidjson::Value& value, T* x, T* y, T* z = nullptr, T* w = nullptr)
+		void SetVectorValueHelper(const RTTI::Property& prop, const rapidjson::Value& value, size_t count, T* data)
 		{
-			HEAVY_ASSERTE(count > 1 && count <= 2, "Invalid vector size!");
-			rapidjson::Value currentValue;
-			currentValue.SetObject();
-			currentValue.GetObject().AddMember("x", x, alloc);
-			currentValue.GetObject().AddMember("y", y, alloc);
-			if (z) currentValue.GetObject().AddMember("z", z, alloc);
-			if (w) currentValue.GetObject().AddMember("w", w, alloc);
-			return currentValue;
-		}*/
+			HEAVY_ASSERTE(count >= 2, "Invalid vector size!");
+			HEAVY_ASSERTE(value.IsArray(), "Invalid value type");
+			HEAVY_ASSERTE(value.GetArray().Size() >= 2, "Invalid array size");
+			HEAVY_ASSERTE(value.GetArray().Size() == count, "Invalid array size compared to count");
+			HEAVY_ASSERTE(data, "Invalid data pointer");
+			
+			eCorePropertyType type = GetCorePropertyType<T>();
+			for (size_t i = 0; i < count && i < value.GetArray().Size(); ++i)
+				SetFundamentalFromValue(value.GetArray()[(rapidjson::SizeType)i], type, data + i);
+		}
 	}
 }
 
@@ -183,7 +189,7 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	case eCorePropertyType::UINT64:
 	case eCorePropertyType::FLOAT:
 	case eCorePropertyType::DOUBLE:
-		SetValueFromFundamental(currentValue, prop.CoreType, value);
+		currentValue = GetValueFromFundamental(prop.CoreType, value);
 		break;
 	case eCorePropertyType::STRING:
 	{
@@ -233,14 +239,48 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	}
 	break;
 	case eCorePropertyType::VECTOR:
+	{
+		const Vector* vec = reinterpret_cast<const Vector*>(value);
+		currentValue = GetVectorValueHelper(prop, alloc, vec->Data.size(), vec->Data.data());
+	}
+	break;
 	case eCorePropertyType::VECTOR_2F:
+	{
+		const Vector2f* vec = reinterpret_cast<const Vector2f*>(value);
+		currentValue = GetVectorValueHelper(prop, alloc, vec->Data.size(), vec->Data.data());
+	}
+	break;
 	case eCorePropertyType::VECTOR_2I:
+	{
+		const Vector2i* vec = reinterpret_cast<const Vector2i*>(value);
+		currentValue = GetVectorValueHelper(prop, alloc, vec->Data.size(), vec->Data.data());
+	}
+	break;
 	case eCorePropertyType::QUATERNION:
+	{
+		const Quaternion* quat = reinterpret_cast<const Quaternion*>(value);
+		currentValue = GetVectorValueHelper(prop, alloc, quat->Data.size(), quat->Data.data());
+	}
+	break;
 	case eCorePropertyType::ANGLE:
+	{
+		const Angle* angle = reinterpret_cast<const Angle*>(value);
+		auto tmp = angle->AsDegrees();
+		currentValue = GetValueFromFundamental(GetCorePropertyType<decltype(tmp)>(), &tmp);
+	}
+	break;
 	case eCorePropertyType::COLOR:
+	{
+		const Color* color = reinterpret_cast<const Color*>(value);
+		currentValue = GetVectorValueHelper(prop, alloc, color->Data.size(), color->Data.data());
+	}
+	break;
 	case eCorePropertyType::MATRIX:
-		//TODO implement
-		break;
+	{
+		const Matrix* mat = reinterpret_cast<const Matrix*>(value);
+		currentValue = GetVectorValueHelper(prop, alloc, mat->Data.size(), mat->Data.data());
+	}
+	break;
 	case eCorePropertyType::CUSTOM:
 		currentValue.SetObject();
 		SerializeObject(reinterpret_cast<const RTTIBase*>(value), currentValue.GetObject(), alloc);
@@ -342,14 +382,50 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 	}
 	break;
 	case eCorePropertyType::VECTOR:
+	{
+		Vector* vec = reinterpret_cast<Vector*>(obj);
+		SetVectorValueHelper(prop, value, vec->Data.size(), vec->Data.data());
+	}
+	break;
 	case eCorePropertyType::VECTOR_2F:
+	{
+		Vector2f* vec = reinterpret_cast<Vector2f*>(obj);
+		SetVectorValueHelper(prop, value, vec->Data.size(), vec->Data.data());
+	}
+	break;
 	case eCorePropertyType::VECTOR_2I:
+	{
+		Vector2i* vec = reinterpret_cast<Vector2i*>(obj);
+		SetVectorValueHelper(prop, value, vec->Data.size(), vec->Data.data());
+	}
+	break;
 	case eCorePropertyType::QUATERNION:
+	{
+		Quaternion* quat = reinterpret_cast<Quaternion*>(obj);
+		SetVectorValueHelper(prop, value, quat->Data.size(), quat->Data.data());
+	}
+	break;
 	case eCorePropertyType::ANGLE:
+	{
+		Angle* angle = reinterpret_cast<Angle*>(obj);
+		using ValueType = decltype(angle->AsDegrees());
+		ValueType degrees;
+		SetFundamentalFromValue(value, GetCorePropertyType<ValueType>(), &degrees);
+		*angle = Angle::FromDegrees(degrees);
+	}
+	break;
 	case eCorePropertyType::COLOR:
+	{
+		Color* color = reinterpret_cast<Color*>(obj);
+		SetVectorValueHelper(prop, value, color->Data.size(), color->Data.data());
+	}
+	break;
 	case eCorePropertyType::MATRIX:
-		//TODO implement
-		break;
+	{
+		Matrix* mat = reinterpret_cast<Matrix*>(obj);
+		SetVectorValueHelper(prop, value, mat->Data.size(), mat->Data.data());
+	}
+	break;
 	case eCorePropertyType::CUSTOM:
 		DeserializeObject(reinterpret_cast<RTTIBase*>(obj), value.GetObject());
 		break;
