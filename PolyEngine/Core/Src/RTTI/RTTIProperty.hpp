@@ -200,14 +200,14 @@ namespace Poly {
 				ValuePropertyType = CreatePropertyInfo<ValueType>(0, "value", flags);
 			}
 
-			void Clear(void* collection) const override { reinterpret_cast<MapType*>(collection)->Clear(); }
+			void Clear(void* collection) const override { reinterpret_cast<typename MapType*>(collection)->Clear(); }
 			void* GetKeyTemporaryStorage() const { return reinterpret_cast<void*>(&TempKey); }
 			void* GetValueTemporaryStorage() const { return reinterpret_cast<void*>(&TempValue); }
 
 			Dynarray<const void*> GetKeys(const void* collection) const override
 			{
 				Dynarray<const void*> ret;
-				const MapType& map = *reinterpret_cast<const MapType*>(collection);
+				const MapType& map = *reinterpret_cast<const typename MapType*>(collection);
 				for (const KeyType& key : map.Keys())
 					ret.PushBack((const void*)&key);
 				return ret;
@@ -217,13 +217,13 @@ namespace Poly {
 			{
 				const KeyType& keyRef = *reinterpret_cast<const KeyType*>(key);
 				const ValueType& valueRef = *reinterpret_cast<const ValueType*>(value);
-				reinterpret_cast<MapType*>(collection)->MustInsert(keyRef, valueRef);
+				reinterpret_cast<typename MapType*>(collection)->MustInsert(keyRef, valueRef);
 			}
 
 			const void* GetValue(const void* collection, const void* key) const override
 			{
 				const KeyType& keyRef = *reinterpret_cast<const KeyType*>(key);
-				const ValueType& valueRef = reinterpret_cast<const MapType*>(collection)->Get(keyRef).Value();
+				const ValueType& valueRef = reinterpret_cast<const typename MapType*>(collection)->Get(keyRef).Value();
 				return reinterpret_cast<const void*>(&valueRef);
 			}
 		};
