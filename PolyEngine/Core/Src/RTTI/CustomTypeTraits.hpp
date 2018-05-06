@@ -24,7 +24,7 @@ namespace Poly
 		template <typename K, typename V, size_t Bfactor> struct IsOrderedMap<OrderedMap<K,V, Bfactor>> : public std::true_type {};
 
 		template <typename> struct OrderedMapType {};
-		template <typename K, typename V, size_t Bfactor> struct OrderedMapType<OrderedMap<K, V, Bfactor>> { using keyType = K; using valueType = V; };
+		template <typename K, typename V, size_t Bfactor> struct OrderedMapType<OrderedMap<K, V, Bfactor>> { using keyType = K; using valueType = V; static const size_t bFactor = Bfactor; };
 
 		// Is enum array
 		template <typename> struct IsEnumArray : public std::false_type {};

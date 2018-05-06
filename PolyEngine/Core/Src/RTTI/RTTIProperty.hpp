@@ -186,11 +186,13 @@ namespace Poly {
 
 		//-----------------------------------------------------------------------------------------------------------------------
 		// OrderedMap serialization property impl
-		template <typename KeyType, typename ValueType>
+		template <typename KeyType, typename ValueType, size_t Bfactor>
 		struct OrderedMapPropertyImplData final : public DictionaryPropertyImplDataBase
 		{
 			mutable KeyType TempKey;
 			mutable ValueType TempValue;
+
+			using MapType = typename OrderedMap<KeyType, ValueType, Bfactor>;
 
 			OrderedMapPropertyImplData(ePropertyFlag flags)
 			{
@@ -198,14 +200,14 @@ namespace Poly {
 				ValuePropertyType = CreatePropertyInfo<ValueType>(0, "value", flags);
 			}
 
-			void Clear(void* collection) const override { reinterpret_cast<OrderedMap<KeyType, ValueType>*>(collection)->Clear(); }
+			void Clear(void* collection) const override { reinterpret_cast<MapType*>(collection)->Clear(); }
 			void* GetKeyTemporaryStorage() const { return reinterpret_cast<void*>(&TempKey); }
 			void* GetValueTemporaryStorage() const { return reinterpret_cast<void*>(&TempValue); }
 
 			Dynarray<const void*> GetKeys(const void* collection) const override
 			{
 				Dynarray<const void*> ret;
-				const OrderedMap<KeyType, ValueType>& map = *reinterpret_cast<const OrderedMap<KeyType, ValueType>*>(collection);
+				const MapType& map = *reinterpret_cast<const MapType*>(collection);
 				for (const KeyType& key : map.Keys())
 					ret.PushBack((const void*)&key);
 				return ret;
@@ -215,20 +217,20 @@ namespace Poly {
 			{
 				const KeyType& keyRef = *reinterpret_cast<const KeyType*>(key);
 				const ValueType& valueRef = *reinterpret_cast<const ValueType*>(value);
-				reinterpret_cast<OrderedMap<KeyType, ValueType>*>(collection)->MustInsert(keyRef, valueRef);
+				reinterpret_cast<MapType*>(collection)->MustInsert(keyRef, valueRef);
 			}
 
 			const void* GetValue(const void* collection, const void* key) const override
 			{
 				const KeyType& keyRef = *reinterpret_cast<const KeyType*>(key);
-				const ValueType& valueRef = reinterpret_cast<const OrderedMap<KeyType, ValueType>*>(collection)->Get(keyRef).Value();
+				const ValueType& valueRef = reinterpret_cast<const MapType*>(collection)->Get(keyRef).Value();
 				return reinterpret_cast<const void*>(&valueRef);
 			}
 		};
 
-		template <typename KeyType, typename ValueType> Property CreateOrderedMapPropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
+		template <typename KeyType, typename ValueType, size_t Bfactor> Property CreateOrderedMapPropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
 		{
-			std::shared_ptr<DictionaryPropertyImplDataBase> implData = std::shared_ptr<DictionaryPropertyImplDataBase>{ new OrderedMapPropertyImplData<KeyType, ValueType>(flags) };
+			std::shared_ptr<DictionaryPropertyImplDataBase> implData = std::shared_ptr<DictionaryPropertyImplDataBase>{ new OrderedMapPropertyImplData<KeyType, ValueType, Bfactor>(flags) };
 			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::ORDERED_MAP, std::move(implData) };
 		}
 
@@ -331,7 +333,7 @@ namespace Poly {
 			return constexpr_match(
 				std::is_enum<T>{},			[&](auto lazy) { return CreateEnumPropertyInfo<LAZY_TYPE(T)>(offset, name, flags); },
 				Trait::IsDynarray<T>{},		[&](auto lazy) { return CreateDynarrayPropertyInfo<typename Trait::DynarrayValueType<LAZY_TYPE(T)>::type>(offset, name, flags); },
-				Trait::IsOrderedMap<T>{},	[&](auto lazy) { return CreateOrderedMapPropertyInfo<typename Trait::OrderedMapType<LAZY_TYPE(T)>::keyType, typename Trait::OrderedMapType<LAZY_TYPE(T)>::valueType>(offset, name, flags); },
+				Trait::IsOrderedMap<T>{},	[&](auto lazy) { return CreateOrderedMapPropertyInfo<typename Trait::OrderedMapType<LAZY_TYPE(T)>::keyType, typename Trait::OrderedMapType<LAZY_TYPE(T)>::valueType, Trait::OrderedMapType<LAZY_TYPE(T)>::bFactor>(offset, name, flags); },
 				Trait::IsEnumArray<T>{},	[&](auto lazy) { return CreateEnumArrayPropertyInfo<typename Trait::EnumArrayType<LAZY_TYPE(T)>::enumType, typename Trait::EnumArrayType<LAZY_TYPE(T)>::valueType>(offset, name, flags); },
 				Trait::IsEnumFlags<T>{},	[&](auto lazy) { return CreateEnumFlagsPropertyInfo<typename Trait::EnumFlagsType<LAZY_TYPE(T)>::type>(offset, name, flags); },
 				/*default*/					[&](auto lazy) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>() }; }
