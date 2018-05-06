@@ -14,14 +14,14 @@ class SectionContainer : public QWidget
 public:
 	SectionContainer(const QString& title, QWidget* parent = nullptr, int animationDuration = 100);
 
-	void SetContentLayout(QLayout* contentLayout);
+	void SetLayout(QLayout* layout);
 
 private:
 	std::unique_ptr<QScrollArea> Content;
 
 	std::unique_ptr<QGridLayout> Layout;
 	std::unique_ptr<QToolButton> Button;
-	std::unique_ptr<QFrame> Line;
+	std::unique_ptr<QFrame> HLine;
 	std::unique_ptr<QParallelAnimationGroup> Animation;
 	int AnimationDuration;
 };

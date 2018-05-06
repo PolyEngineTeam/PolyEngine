@@ -2,74 +2,70 @@
 
 EntityManagerWidget::EntityManagerWidget()
 {
-	Layout = new QGridLayout();
+	MainLayout = std::make_unique<QGridLayout>();
 
-	Layout->setColumnStretch(0, 3);
-	Layout->setColumnStretch(1, 9);
-	Layout->setColumnStretch(2, 2);
+	ScrollArea = std::make_unique<QScrollArea>();
+	ScrollArea->setLayout(MainLayout.get());
 
+	MainLayout->setColumnStretch(0, 3);
+	MainLayout->setColumnStretch(1, 9);
+	MainLayout->setColumnStretch(2, 2);
+
+	// TODO(squares): find better way
 	for (int i = 0; i < MAX_COMPONENTS_COUNT + 6; ++i)
-		Layout->setRowStretch(i, 1);
+		MainLayout->setRowStretch(i, 1);
 	
-	setLayout(Layout);
 
 	QPalette disabledEditPalette;
 	disabledEditPalette.setColor(QPalette::Base, QColor(218, 218, 218));
 	disabledEditPalette.setColor(QPalette::Text, Qt::black);
 
 	// Name
-	NameText = new QLabel();
+	NameText = std::make_unique<QLabel>();
 	NameText->setText("Name");
-	Layout->addWidget(NameText, 0, 0);
+	MainLayout->addWidget(NameText.get(), 0, 0);
 
-	NameField = new QLineEdit();
-	NameField->setText("some name");
-	Layout->addWidget(NameField, 0, 1);
+	NameField = std::make_unique<QLineEdit>();
+	MainLayout->addWidget(NameField.get(), 0, 1);
 
 	// UniqueID
-	UniqueIdText = new QLabel();
+	UniqueIdText = std::make_unique<QLabel>();
 	UniqueIdText->setText("UniqueID");
-	Layout->addWidget(UniqueIdText, 1, 0);
+	MainLayout->addWidget(UniqueIdText.get(), 1, 0);
 
-	UniqueIdField = new QLineEdit();
-	UniqueIdField->setText("235646246");
+	UniqueIdField = std::make_unique<QLineEdit>();
 	UniqueIdField->setReadOnly(true);
 	UniqueIdField->setPalette(disabledEditPalette);
-	Layout->addWidget(UniqueIdField, 1, 1);
+	MainLayout->addWidget(UniqueIdField.get(), 1, 1);
 
 	// ParentID / Name
-	ParentIdNameText = new QLabel();
+	ParentIdNameText = std::make_unique<QLabel>();
 	ParentIdNameText->setText("Parent ID / Name");
-	Layout->addWidget(ParentIdNameText, 2, 0);
+	MainLayout->addWidget(ParentIdNameText.get(), 2, 0);
 
-	ParentIdNameField = new QLineEdit();
-	ParentIdNameField->setText("235246 / parent name");
+	ParentIdNameField = std::make_unique<QLineEdit>();
 	ParentIdNameField->setReadOnly(true);
 	ParentIdNameField->setPalette(disabledEditPalette);
-	Layout->addWidget(ParentIdNameField, 2, 1);
+	MainLayout->addWidget(ParentIdNameField.get(), 2, 1);
 
-	ParentIdNameButton = new QPushButton();
+	ParentIdNameButton = std::make_unique<QPushButton>();
 	ParentIdNameButton->setText("Select");
-	Layout->addWidget(ParentIdNameButton, 2, 2);
+	MainLayout->addWidget(ParentIdNameButton.get(), 2, 2);
 
 	// ChildrenID / Name
-	ChildrenIdNameText = new QLabel();
+	ChildrenIdNameText = std::make_unique<QLabel>();
 	ChildrenIdNameText->setText("Child ID / Name");
-	Layout->addWidget(ChildrenIdNameText, 3, 0);
+	MainLayout->addWidget(ChildrenIdNameText.get(), 3, 0);
 
-	ChildrenIdNameField = new QComboBox();
-	ChildrenIdNameField->addItem("35 / children1 name");
-	ChildrenIdNameField->addItem("235 / children2 name");
-	ChildrenIdNameField->addItem("756 / children3 name");
-	ChildrenIdNameField->addItem("2 / children4 name");
-	Layout->addWidget(ChildrenIdNameField, 3, 1);
+	ChildrenIdNameField = std::make_unique<QComboBox>();
+	MainLayout->addWidget(ChildrenIdNameField.get(), 3, 1);
 
-	ChildrenIdNameButton = new QPushButton();
+	ChildrenIdNameButton = std::make_unique<QPushButton>();
 	ChildrenIdNameButton->setText("Select");
-	Layout->addWidget(ChildrenIdNameButton, 3, 2);
+	MainLayout->addWidget(ChildrenIdNameButton.get(), 3, 2);
 
 	// Transform
-	TransformSection = new SectionContainer("Transform");
+	TransformSection = std::make_unique<SectionContainer>("Transform");
 	QGridLayout* transformLayout = new QGridLayout();
 
 	transformLayout->setColumnStretch(0, 1);
@@ -77,43 +73,44 @@ EntityManagerWidget::EntityManagerWidget()
 	transformLayout->setColumnStretch(2, 1);
 	transformLayout->setColumnStretch(3, 1);
 
-	TranslationLabel = new QLabel();
+	TranslationLabel = std::make_unique<QLabel>();
 	TranslationLabel->setText("Translation");
-	transformLayout->addWidget(TranslationLabel, 1, 0);
+	transformLayout->addWidget(TranslationLabel.get(), 1, 0);
 	
-	RotationLabel = new QLabel();
+	RotationLabel = std::make_unique<QLabel>();
 	RotationLabel->setText("Rotation");
-	transformLayout->addWidget(RotationLabel, 2, 0);
+	transformLayout->addWidget(RotationLabel.get(), 2, 0);
 	
-	ScaleLabel = new QLabel();
+	ScaleLabel = std::make_unique<QLabel>();
 	ScaleLabel->setText("Scale");
-	transformLayout->addWidget(ScaleLabel, 3, 0);
+	transformLayout->addWidget(ScaleLabel.get(), 3, 0);
 	
-	XLabel = new QLabel();
+	XLabel = std::make_unique<QLabel>();
 	XLabel->setText("X");
 	XLabel->setAlignment(Qt::AlignCenter);
-	transformLayout->addWidget(XLabel, 0, 1);
+	transformLayout->addWidget(XLabel.get(), 0, 1);
 	
-	YLabel = new QLabel();
+	YLabel = std::make_unique<QLabel>();
 	YLabel->setText("Y");
 	YLabel->setAlignment(Qt::AlignCenter);
-	transformLayout->addWidget(YLabel, 0, 2);
+	transformLayout->addWidget(YLabel.get(), 0, 2);
 	
-	ZLabel = new QLabel();
+	ZLabel = std::make_unique<QLabel>();
 	ZLabel->setText("Z");
 	ZLabel->setAlignment(Qt::AlignCenter);
-	transformLayout->addWidget(ZLabel, 0, 3);
+	transformLayout->addWidget(ZLabel.get(), 0, 3);
 
 	for (int y = 0; y < 3; ++y)
 		for (int x = 0; x < 3; ++x)
 		{
-			TranslationField[y][x] = new QLineEdit();
-			TranslationField[y][x]->setText("0.0000");
-			transformLayout->addWidget(TranslationField[y][x], 1 + y, 1 + x);
+			TranslationField[y][x] = std::make_unique<QLineEdit>();
+			transformLayout->addWidget(TranslationField[y][x].get(), 1 + y, 1 + x);
 		}
 
-	TransformSection->SetContentLayout(transformLayout);
-	Layout->addWidget(TransformSection, 4, 0, 1, 3);
+	TransformSection->SetLayout(transformLayout);
+	MainLayout->addWidget(TransformSection.get(), 4, 0, 1, 3);
+
+	setLayout(MainLayout.get());
 }
 
 EntityManagerWidget::~EntityManagerWidget()
@@ -151,12 +148,19 @@ void EntityManagerWidget::UpdateWidget()
 	TranslationField[2][1]->setText(QString(String::From(scale.Y).GetCStr()));
 	TranslationField[2][2]->setText(QString(String::From(scale.Z).GetCStr()));
 
-	for (auto cmp : Components)
-		Layout->removeWidget(cmp);
+	// remove all old entity component sections
+	for (auto cmp : ComponentSections)
+	{
+		MainLayout->removeWidget(cmp);
+		//delete cmp;
+	}
+	//ComponentSections.Clear();
 
-	Components.Clear();
+	//for (auto cmp : ComponentWidgets)
+	//	delete cmp;
+	//ComponentWidgets.Clear();
 	
-	// components
+	// add component sections
 	for (int i = 0, row = 5; i < MAX_COMPONENTS_COUNT; ++i)
 	{
 		ComponentBase* cmp = Entity->GetComponent(i);
@@ -168,10 +172,11 @@ void EntityManagerWidget::UpdateWidget()
 		SectionContainer* section = new SectionContainer(cmp->GetTypeInfo().GetTypeName());
 		RTTIViewerWidget* viewer = new RTTIViewerWidget();
 		viewer->SetObject(cmp);
-		section->SetContentLayout(viewer->layout());
-		Components.PushBack(section);
+		section->SetLayout(viewer->layout());
+		ComponentSections.PushBack(section);
+		ComponentWidgets.PushBack(viewer);
 
-		Layout->addWidget(section, row, 0, 1, 3);
+		MainLayout->addWidget(section, row, 0, 1, 3);
 		++row;
 	}
 }

@@ -18,10 +18,10 @@ public:
 	void UpdateObject();
 
 private:
-	void AddChild(QFormLayout* parent, RTTIBase* obj, bool debug);
-	void AddItem(QFormLayout* parent, void* ptr, const RTTI::Property& prop);
+	void AddChild(QGridLayout* parent, RTTIBase* obj, bool debug);
+	void AddItem(QGridLayout* parent, void* ptr, const RTTI::Property& prop);
 
 	RTTIBase* Object;
-	std::unique_ptr<QFormLayout> Layout;
+	std::unique_ptr<QGridLayout> Layout;
 	Dynarray<QObject*> Fields;
 };

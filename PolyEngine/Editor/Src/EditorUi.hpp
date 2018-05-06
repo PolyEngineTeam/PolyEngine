@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMenu>
+#include <qstatusbar.h>
 
 #include "Windows/PolyMainWindow.hpp"
 #include "Widgets/ViewportWidget.hpp"
@@ -51,6 +52,11 @@ private:
 			QAction* AddWindowAction;
 		QMenu* HelpMenu;
 			QAction* ContactUsAction;
+
+	// toolbar
+
+	// status bar
+	QStatusBar* StatusBar;
 
 private slots:
 	// file

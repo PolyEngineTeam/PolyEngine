@@ -18,6 +18,7 @@ private:
 
 	std::unique_ptr<QPushButton> Button;
 	std::unique_ptr<QStateMachine> Machine;
+	std::unique_ptr<QGridLayout> Layout;
 
 	std::unique_ptr<QState> False;
 	std::unique_ptr<QState> True;

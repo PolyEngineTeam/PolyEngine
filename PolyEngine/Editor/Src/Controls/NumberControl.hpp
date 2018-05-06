@@ -17,4 +17,5 @@ private:
 
 	std::unique_ptr<QLineEdit> Field;
 	std::unique_ptr<QValidator> Validator;
+	std::unique_ptr<QGridLayout> Layout;
 };

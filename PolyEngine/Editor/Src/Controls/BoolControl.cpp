@@ -1,13 +1,6 @@
 #include "PolyEditorPCH.hpp"
 
-//DEFINE_CONTROL(BoolControl, BOOL)
-
-namespace Impl
-{
-	ControlCreatorPtr* BoolControlCreator_BOOL =
-		new(&::Impl::CoreTypeToControlMap[static_cast<int>(RTTI::eCorePropertyType::BOOL)]) \
-			ControlCreatorPtr([](QWidget* parent) -> ControlBase* { return new BoolControl(parent); });
-}
+DEFINE_CONTROL(BoolControl, BOOL)
 
 BoolControl::BoolControl(QWidget* parent)
 	: ControlBase(parent)
@@ -28,8 +21,13 @@ void BoolControl::UpdateControl()
 
 void BoolControl::InitializeControl()
 {
+	Layout = std::make_unique<QGridLayout>();
+	setLayout(Layout.get());
+
 	Button = std::make_unique<QPushButton>(this);
 	Machine = std::make_unique<QStateMachine>(this);
+
+	Layout->addWidget(Button.get());
 
 	False = std::make_unique<QState>();
 	False->assignProperty(Button.get(), "text", "False");

@@ -19,6 +19,11 @@ void StringControl::UpdateControl()
 
 void StringControl::InitializeControl()
 {
+	Layout = std::make_unique<QGridLayout>();
+	setLayout(Layout.get());
+
 	Field = std::make_unique<QLineEdit>(this);
 	Field->setText(reinterpret_cast<String*>(Object)->GetCStr());
+
+	Layout->addWidget(Field.get());
 }
