@@ -149,16 +149,16 @@ void EntityManagerWidget::UpdateWidget()
 	TranslationField[2][2]->setText(QString(String::From(scale.Z).GetCStr()));
 
 	// remove all old entity component sections
+	for (auto cmp : ComponentWidgets)
+		delete cmp;
+	ComponentWidgets.Clear();
+
 	for (auto cmp : ComponentSections)
 	{
 		MainLayout->removeWidget(cmp);
-		//delete cmp;
+		delete cmp;
 	}
-	//ComponentSections.Clear();
-
-	//for (auto cmp : ComponentWidgets)
-	//	delete cmp;
-	//ComponentWidgets.Clear();
+	ComponentSections.Clear();
 	
 	// add component sections
 	for (int i = 0, row = 5; i < MAX_COMPONENTS_COUNT; ++i)
