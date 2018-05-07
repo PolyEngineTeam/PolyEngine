@@ -7,7 +7,7 @@ using namespace Poly;
 class EnumControl : public ControlBase
 {
 public:
-	EnumControl(QWidget* parent);
+	EnumControl() = default;;
 
 	void UpdateObject() override;
 	void UpdateControl() override;

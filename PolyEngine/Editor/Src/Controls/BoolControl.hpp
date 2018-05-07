@@ -8,7 +8,7 @@
 class BoolControl : public ControlBase
 {
 public:
-	BoolControl(QWidget* parent);
+	BoolControl() = default;
 
 	void UpdateObject() override;
 	void UpdateControl() override;

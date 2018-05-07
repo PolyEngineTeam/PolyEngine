@@ -2,11 +2,6 @@
 
 DEFINE_CONTROL(BoolControl, BOOL)
 
-BoolControl::BoolControl(QWidget* parent)
-	: ControlBase(parent)
-{
-}
-
 void BoolControl::UpdateObject()
 {
 	*reinterpret_cast<bool*>(Object) = *Machine->configuration().begin() == True.get();

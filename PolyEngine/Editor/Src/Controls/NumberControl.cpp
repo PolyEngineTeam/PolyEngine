@@ -14,11 +14,6 @@ DEFINE_CONTROL(NumberControl, UINT64)
 DEFINE_CONTROL(NumberControl, FLOAT)
 DEFINE_CONTROL(NumberControl, DOUBLE)
 
-NumberControl::NumberControl(QWidget* parent)
-	: ControlBase(parent)
-{
-}
-
 void NumberControl::UpdateObject()
 {
 	switch (Property->CoreType)

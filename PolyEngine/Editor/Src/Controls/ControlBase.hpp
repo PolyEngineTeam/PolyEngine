@@ -10,7 +10,7 @@ class ControlBase;
 
 namespace Impl
 {
-	typedef ControlBase* (*ControlCreatorPtr)(QWidget*);
+	typedef ControlBase* (*ControlCreatorPtr)();
 
 	extern ControlCreatorPtr* CoreTypeToControlMap;
 }
@@ -18,25 +18,27 @@ namespace Impl
 class ControlBase : public QWidget
 {
 public:
-	ControlBase(QWidget* parent) : QWidget(parent) {}
+	ControlBase() = default;
 
 	void SetObject(void* ptr, const RTTI::Property* prop) { Object = ptr; Property = prop; InitializeControl(); };
 	virtual void UpdateObject() = 0;
 	virtual void UpdateControl() = 0;
 
-	static ControlBase* CreateControl(RTTI::eCorePropertyType type, QWidget* parent) 
+	static ControlBase* CreateControl(RTTI::eCorePropertyType type) 
 	{ 
-		return ::Impl::CoreTypeToControlMap[static_cast<int>(type)](parent);
+		return ::Impl::CoreTypeToControlMap[static_cast<int>(type)]();
 	}
 
 	bool UpdateOnFocusOut = true;
 
 protected:
-	void focusOutEvent(QFocusEvent*) override { if (UpdateOnFocusOut) UpdateObject(); }
 	virtual void InitializeControl() = 0;
 
 	void* Object;
 	const RTTI::Property* Property;
+
+private:
+	void focusOutEvent(QFocusEvent *event) { if (UpdateOnFocusOut) UpdateControl(); }
 };
 
 #define DEFINE_CONTROL(CONTROL, CORE_TYPE) \
@@ -44,5 +46,5 @@ protected:
 	{ \
 		ControlCreatorPtr* CONTROL##Creator_##CORE_TYPE = \
 			new(&::Impl::CoreTypeToControlMap[static_cast<int>(RTTI::eCorePropertyType::##CORE_TYPE)]) \
-				ControlCreatorPtr([](QWidget* parent) -> ControlBase* { return new CONTROL(parent); }); \
+				ControlCreatorPtr([]() -> ControlBase* { return new CONTROL(); }); \
 	}

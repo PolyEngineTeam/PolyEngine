@@ -54,7 +54,7 @@ void RTTIViewerWidget::AddChild(QGridLayout* parent, RTTIBase* obj, bool debug)
 
 void RTTIViewerWidget::AddItem(QGridLayout* parent, void* ptr, const RTTI::Property& prop)
 {
-	ControlBase* field = ControlBase::CreateControl(prop.CoreType, this);
+	ControlBase* field = ControlBase::CreateControl(prop.CoreType);
 	field->SetObject(ptr, &prop);
 
 	QLabel* label = new QLabel();

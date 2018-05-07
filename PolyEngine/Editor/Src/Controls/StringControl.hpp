@@ -7,7 +7,7 @@
 class StringControl : public ControlBase
 {
 public:
-	StringControl(QWidget* parent);
+	StringControl() = default;
 
 	void UpdateObject() override;
 	void UpdateControl() override;

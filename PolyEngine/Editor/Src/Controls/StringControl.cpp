@@ -2,11 +2,6 @@
 
 DEFINE_CONTROL(StringControl, STRING)
 
-StringControl::StringControl(QWidget* parent)
-	: ControlBase(parent)
-{
-}
-
 void StringControl::UpdateObject()
 {
 	*reinterpret_cast<String*>(Object) = Field->text().toLatin1().data();

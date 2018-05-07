@@ -7,7 +7,7 @@
 class NumberControl : public ControlBase
 {
 public:
-	NumberControl(QWidget* parent);
+	NumberControl() = default;
 
 	void UpdateObject() override;
 	void UpdateControl() override;
