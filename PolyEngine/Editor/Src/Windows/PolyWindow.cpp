@@ -2,33 +2,37 @@
 
 #include <QDockWidget>
 
-PolyWindow::PolyWindow(QWidget* parent) :
-	QMainWindow(parent)
+PolyWindow::PolyWindow()
 {
 	setAttribute(Qt::WA_DeleteOnClose);
 }
 
-void PolyWindow::AddWidget(Qt::DockWidgetArea area, PolyDockWindow* widget, bool isInitialization)
+void PolyWindow::AddDockWindow(Qt::DockWidgetArea area, PolyDockWindow* wnd, bool isInitialization)
 {
-	if(PolyWindow* window = dynamic_cast<PolyWindow*>(widget->parent()))
-		window->RemoveWidget(widget);
+	if(PolyWindow* window = dynamic_cast<PolyWindow*>(wnd->parent()))
+		window->RemoveDockWindow(wnd);
 	
 	if(isInitialization)
-		addDockWidget(area, widget);
+		addDockWidget(area, wnd);
 	else
-		QTimer::singleShot(1, this, [a = area, w = widget, object = this]() { object->addDockWidget(a, w); w->show(); });
+		QTimer::singleShot(1, this, [a = area, w = wnd, object = this]() 
+			{ object->addDockWidget(a, w); w->show(); });
 
-	Widgets.PushBack(widget);
+	DockWindows.PushBack(wnd);
 }
 
-void PolyWindow::RemoveWidget(PolyDockWindow* widget)
+void PolyWindow::RemoveDockWindow(PolyDockWindow* wnd)
 {
-	Widgets.Remove(widget);
-	removeDockWidget(widget);
+	DockWindows.Remove(wnd);
+	removeDockWidget(wnd);
 }
 
 void PolyWindow::closeEvent(QCloseEvent* event)
 {
 	UNUSED(event);
+
+	for (auto wnd : DockWindows)
+		gApp->Ui.MainWindow->AddDockWindow(Qt::DockWidgetArea::LeftDockWidgetArea, wnd);
+
 	gApp->Ui.Windows.Remove(this);
 }

@@ -60,10 +60,10 @@ void DockManager::WidgetDropEvent()
 		else
 		{
 			PolyWindow* oldOwner = DraggedWidget->GetOwner();
-			MouseOver->AddWidget(DraggedWidgetDockArea, DraggedWidget);
+			MouseOver->AddDockWindow(DraggedWidgetDockArea, DraggedWidget);
 
 			if (oldOwner != gApp->Ui.MainWindow
-				&& oldOwner->WidgetsCount() == 1)
+				&& oldOwner->DockWindowsCount() == 1)
 			{
 				oldOwner->close();
 			}
@@ -74,7 +74,7 @@ void DockManager::WidgetDropEvent()
 		PolyWindow* wnd = new PolyWindow;
 		wnd->resize(DraggedWidget->size());
 		wnd->move(DraggedWidget->pos());
-		wnd->AddWidget(Qt::DockWidgetArea::TopDockWidgetArea, DraggedWidget);
+		wnd->AddDockWindow(Qt::DockWidgetArea::TopDockWidgetArea, DraggedWidget);
 		wnd->show();
 		gApp->Ui.Windows.PushBack(std::move(wnd));
 	}

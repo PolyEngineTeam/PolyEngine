@@ -9,15 +9,15 @@ class PolyDockWindow;
 class PolyWindow : public QMainWindow
 {
 public:
-	PolyWindow(QWidget* parent = nullptr);
+	PolyWindow();
 
-	size_t WidgetsCount() { return Widgets.GetSize(); }
+	size_t DockWindowsCount() { return DockWindows.GetSize(); }
 
-	void AddWidget(Qt::DockWidgetArea area, PolyDockWindow* widget, bool isInitialization = false);
-	void RemoveWidget(PolyDockWindow* widget);
+	void AddDockWindow(Qt::DockWidgetArea area, PolyDockWindow* wnd, bool isInitialization = false);
+	void RemoveDockWindow(PolyDockWindow* widget);
 
 private:
-	Poly::Dynarray<PolyDockWindow*> Widgets;
+	Poly::Dynarray<PolyDockWindow*> DockWindows;
 
 	void closeEvent(QCloseEvent* event) override;
-}; 
+};
