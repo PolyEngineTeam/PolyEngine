@@ -31,6 +31,7 @@
 #include "Collections/Dynarray.hpp"
 #include "Collections/Queue.hpp"
 #include "Collections/PriorityQueue.hpp"
+#include "Collections/BitMask.hpp"
 
 // Other
 #include "Math/Color.hpp"
