@@ -201,8 +201,8 @@ namespace Poly {
 			}
 
 			void Clear(void* collection) const override { reinterpret_cast<MapType*>(collection)->Clear(); }
-			void* GetKeyTemporaryStorage() const { return reinterpret_cast<void*>(&TempKey); }
-			void* GetValueTemporaryStorage() const { return reinterpret_cast<void*>(&TempValue); }
+			void* GetKeyTemporaryStorage() const override { return reinterpret_cast<void*>(&TempKey); }
+			void* GetValueTemporaryStorage() const override { return reinterpret_cast<void*>(&TempValue); }
 
 			Dynarray<const void*> GetKeys(const void* collection) const override
 			{
@@ -257,8 +257,8 @@ namespace Poly {
 				for (EnumType e : IterateEnum<EnumType>())
 					col[e] = ValueType{};
 			}
-			void* GetKeyTemporaryStorage() const { return reinterpret_cast<void*>(&TempKey); }
-			void* GetValueTemporaryStorage() const { return reinterpret_cast<void*>(&TempValue); }
+			void* GetKeyTemporaryStorage() const override { return reinterpret_cast<void*>(&TempKey); }
+			void* GetValueTemporaryStorage() const override { return reinterpret_cast<void*>(&TempValue); }
 
 			Dynarray<const void*> GetKeys(const void* collection) const override
 			{
