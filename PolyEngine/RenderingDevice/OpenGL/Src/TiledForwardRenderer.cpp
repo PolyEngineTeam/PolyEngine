@@ -288,18 +288,31 @@ void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent*
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 			glBindVertexArray(meshProxy->GetVAO());
 
-			const Poly::TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
+			const TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
 			GLuint TextureID = DiffuseTexture == nullptr
 				? FallbackWhiteTexture
 				: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, TextureID);
-			lightAccumulationShader.SetUniform("uTexture", 0);
+			lightAccumulationShader.SetUniform("uDiffuseTexture", 0);
+
+			const TextureResource* NormalMap = subMesh->GetMeshData().GetNormalMap();
+			GLuint NormalMapID = NormalMap == nullptr
+				? FallbackNormalMap
+				: static_cast<const GLTextureDeviceProxy*>(NormalMap->GetTextureProxy())->GetTextureID();
+
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, NormalMapID);
+			lightAccumulationShader.SetUniform("uNormalMap", 1);
 
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 			
+			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, 0);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, 0);
+
 			glBindVertexArray(0);
 		}
 	}
@@ -310,7 +323,7 @@ void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent*
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Poly::TiledForwardRenderer::Tonemapper(World* world, const CameraComponent* cameraCmp)
+void TiledForwardRenderer::Tonemapper(World* world, const CameraComponent* cameraCmp)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::Tonemapper");
 
@@ -345,7 +358,7 @@ void TiledForwardRenderer::SetupLightsBufferFromScene()
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
-inline void Poly::TiledForwardRenderer::UpdateLightsBufferFromScene(World* world)
+void TiledForwardRenderer::UpdateLightsBufferFromScene(World* world)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::UpdateLightsBufferFromScene");
 
@@ -427,7 +440,7 @@ void TiledForwardRenderer::DrawQuad() {
 	glBindVertexArray(0);
 }
 
-void TiledForwardRenderer::CreateFallbackWhiteTexture()
+void TiledForwardRenderer::CreateFallbackTextures()
 {
 	glGenTextures(1, &FallbackWhiteTexture);
 
@@ -441,4 +454,17 @@ void TiledForwardRenderer::CreateFallbackWhiteTexture()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+	glGenTextures(1, &FallbackNormalMap);
+
+	GLubyte dataDefaultNormal[] = { 128, 128, 255 };
+
+	glBindTexture(GL_TEXTURE_2D, FallbackNormalMap);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, dataDefaultNormal);
 }

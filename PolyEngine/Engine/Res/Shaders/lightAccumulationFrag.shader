@@ -4,13 +4,10 @@ in VERTEX_OUT{
 	vec3 positionInWorld;
 	vec2 UV;
 	vec3 normal;
+	mat3 TBN;
+	vec3 tangentViewPosition;
+	vec3 tangentFragmentPosition;
 } fragment_in;
-
-struct Irradiance
-{
-    vec3 Diffuse;
-    vec3 Specular;
-};
 
 struct Light
 {
@@ -34,36 +31,28 @@ layout(std430, binding = 1) readonly buffer VisibleLightIndicesBuffer {
 
 const uint MAX_NUM_LIGHTS = 1024;
 
-uniform sampler2D uTexture;
-uniform vec4 uViewPosition;
+uniform sampler2D uDiffuseTexture;
+uniform sampler2D uNormalMap;
 uniform int uLightCount;
 uniform int uWorkGroupsX;
 uniform int uWorkGroupsY;
 
-// in vec3 vVertexInWorld;
-// in vec2 vUV;
-// in vec3 vNormalInWorld;
-// in vec3 vToCamera;
-
 layout(location = 0) out vec4 oColor;
 
-Irradiance GetIrradiance(Light light)
+vec3 GetIrradiance(Light light, vec3 toCamera, vec3 normal, vec3 diffuse)
 {
 	// light faloff based on Real Shading in Unreal Engine 4 http://gamedevs.org/uploads/real-shading-in-unreal-engine-4.pdf
-    
-    Irradiance OUT;
-
-    vec3 toCamera = normalize(uViewPosition.xyz - fragment_in.positionInWorld);
     
 	vec3 position = light.Position.xyz;
 	float range = light.RangeIntensity.x;
     float dist = length(fragment_in.positionInWorld - position);
     
-    vec3 L = normalize(position.xyz - fragment_in.positionInWorld);
-    vec3 V = normalize(toCamera);
-    vec3 N = normalize(fragment_in.normal);
+    vec3 lightPositionInTangent = fragment_in.TBN * position;
 
-    vec3 lightColor = light.RangeIntensity.y* light.Color.rgb;
+    vec3 L = normalize(lightPositionInTangent - fragment_in.tangentFragmentPosition);
+    vec3 V = normalize(toCamera);
+    vec3 N = normalize(normal);
+
 	float falloff = pow(clamp(1.0 - pow(dist / range, 4.0), 0.0, 1.0), 2.0) / (pow(dist, 2.0) + 1.0);
     
 	// diffuse
@@ -72,24 +61,31 @@ Irradiance GetIrradiance(Light light)
 	// specular
     vec3 H = normalize(L + V);
     float NdotH = pow(max(dot(N, H), 0.0), 16.0);
-    
-    OUT.Diffuse = falloff * NdotL * lightColor;
-    OUT.Specular = falloff * NdotH * lightColor;
 
-    return OUT;
+    return light.Color.rgb * light.RangeIntensity.y * (diffuse * NdotL + diffuse * NdotH) * falloff;
+
 }
 
 void main()
 {
     vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
-    vec4 tex = texture(uTexture, fragment_in.UV);
+    vec4 diffuse = texture(uDiffuseTexture, fragment_in.UV);
+    vec3 normal = texture(uNormalMap, fragment_in.UV).rgb;
+    normal = normal * 2.0 - 1.0;
 
-    if (tex.a < 0.5)
+    if (diffuse.a < 0.5)
+    {
         discard;
+    }
 
-    vec3 Iamb = vec3(0.0, 0.0, 0.001);
-    vec3 Idif = vec3(0.0);
-    vec3 Ispe = vec3(0.0);
+    if (isnan(normal.x) || dot(normal, normal) < 0.9)
+    {
+        normal = fragment_in.normal;
+    }
+
+    vec3 toCamera = normalize(fragment_in.tangentViewPosition - fragment_in.tangentFragmentPosition);
+ 
+    color.rgb += vec3(0.0, 0.0, 0.001); // ambient
 
     ivec2 WorkGroupSize = ivec2(16, 16);
     ivec2 NumWorkGroups = ivec2(uWorkGroupsX, uWorkGroupsY);
@@ -101,15 +97,12 @@ void main()
     for (uint i = 0; i < Count; ++i)
 	{
         int lightIndex = bVisibleLightIndicesBuffer.data[TileOffset + i].Index;
-		Irradiance pointIrradiance = GetIrradiance(bLightBuffer.data[lightIndex]);
-        Idif += tex.rgb * pointIrradiance.Diffuse;
-        Ispe += tex.rgb * pointIrradiance.Specular;
+        Light light = bLightBuffer.data[lightIndex];
+        color.rgb += GetIrradiance(light, toCamera, normal, diffuse.rgb);
         
 		if (bVisibleLightIndicesBuffer.data[TileOffset + i + 1].Index == -1)
             break;
-    }
-    
-	color.rgb = Iamb + Idif + Ispe;
+    }		
 
     oColor = color;
 }

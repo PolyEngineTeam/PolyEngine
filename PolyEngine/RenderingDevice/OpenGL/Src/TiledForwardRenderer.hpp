@@ -57,6 +57,7 @@ namespace Poly {
 		GLuint FBOhdr;
 
 		GLuint FallbackWhiteTexture;
+		GLuint FallbackNormalMap;
 
 		float exposure = 1.0f;
 
@@ -80,6 +81,6 @@ namespace Poly {
 		
 		void DrawQuad();
 
-		void CreateFallbackWhiteTexture();
+		void CreateFallbackTextures();
 	};
 }

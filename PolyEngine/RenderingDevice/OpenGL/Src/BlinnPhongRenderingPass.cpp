@@ -176,7 +176,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, TextureID);
-			GetProgram().SetUniform("uTexture", 0);
+			GetProgram().SetUniform("uDiffuseTexture", 0);
 
 			const Poly::TextureResource* SpecularMap = subMesh->GetMeshData().GetSpecularMap();
 			GLuint SpecularMapID = SpecularMap == nullptr

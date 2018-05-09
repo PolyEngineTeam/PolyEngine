@@ -112,9 +112,9 @@ MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* mat
 
 		MeshData.DiffuseTexture = ResourceManager<TextureResource>::Load(textPath, eResourceSource::NONE, eTextureUsageType::DIFFUSE);
 		if (!MeshData.DiffuseTexture) {
-			gConsole.LogError("Failed to load diffuse texture: {}", fullPath);
+			gConsole.LogError("Failed to load diffuse texture: {}", textPath);
 		} else {
-			gConsole.LogDebug("Succeded to load diffuse texture: {}", fullPath);
+			gConsole.LogDebug("Succeded to load diffuse texture: {}", textPath);
 		}
 	} else {
 		gConsole.LogError("Failed to load diffuse texture for material: {}", path);
@@ -134,11 +134,11 @@ MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* mat
 		MeshData.SpecularMap = ResourceManager<TextureResource>::Load(textPath, eResourceSource::NONE, eTextureUsageType::SPECULAR);
 		if(!MeshData.SpecularMap)
 		{
-			gConsole.LogError("Failed to load specular map: {}", fullPath);
+			gConsole.LogError("Failed to load specular map: {}", textPath);
 		}
 		else
 		{
-			gConsole.LogDebug("Succeded to load specular map: {}", fullPath);
+			gConsole.LogDebug("Succeded to load specular map: {}", textPath);
 		}
 	}
 	else {
@@ -147,7 +147,7 @@ MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* mat
 	}
 
 	aiString normalPath;
-	if(material->GetTexture(aiTextureType_NORMALS, 0, &normalPath) == AI_SUCCESS)
+	if(material->GetTexture(aiTextureType_HEIGHT, 0, &normalPath) == AI_SUCCESS)
 	{
 		std::string tmpPath = std::string(path.GetCStr());
 		std::replace(tmpPath.begin(), tmpPath.end(), '\\', '/'); // replace all '\' to '/', fix for linux machines
@@ -159,11 +159,11 @@ MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* mat
 		MeshData.NormalMap = ResourceManager<TextureResource>::Load(textPath, eResourceSource::NONE, eTextureUsageType::NORMAL);
 		if(!MeshData.NormalMap)
 		{
-			gConsole.LogError("Failed to load normal map: {}", fullPath);
+			gConsole.LogError("Failed to load normal map: {}", textPath);
 		}
 		else
 		{
-			gConsole.LogDebug("Succeded to load normal map: {}", fullPath);
+			gConsole.LogDebug("Succeded to load normal map: {}", textPath);
 		}
 	}
 	else {
@@ -187,6 +187,4 @@ MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* mat
 	gConsole.LogDebug("Specular params: {}, {}, [{},{},{}]", MeshData.Mtl.SpecularIntensity,
 		MeshData.Mtl.SpecularPower, MeshData.Mtl.SpecularColor.R, MeshData.Mtl.SpecularColor.G,
 		MeshData.Mtl.SpecularColor.B);
-
-
 }
