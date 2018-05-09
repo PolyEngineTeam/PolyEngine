@@ -25,7 +25,7 @@ MeshResource::MeshResource(const String& path)
 	}
 }
 
-Poly::MeshResource::~MeshResource()
+MeshResource::~MeshResource()
 {
 	for (SubMesh* subMesh : SubMeshes)
 	{
@@ -33,7 +33,7 @@ Poly::MeshResource::~MeshResource()
 	}
 }
 
-Poly::MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* material)
+MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* material)
 {
 	if (mesh->HasPositions()) {
 		MeshData.Positions.Resize(mesh->mNumVertices);

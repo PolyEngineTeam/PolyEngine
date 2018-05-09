@@ -1,5 +1,11 @@
 #version 430 core
 
+in VERTEX_OUT{
+	vec3 positionInWorld;
+	vec2 UV;
+	vec3 normal;
+} fragment_in;
+
 struct Irradiance
 {
     vec3 Diffuse;
@@ -34,10 +40,10 @@ uniform int uLightCount;
 uniform int uWorkGroupsX;
 uniform int uWorkGroupsY;
 
-in vec3 vVertexInWorld;
-in vec2 vUV;
-in vec3 vNormalInWorld;
-in vec3 vToCamera;
+// in vec3 vVertexInWorld;
+// in vec2 vUV;
+// in vec3 vNormalInWorld;
+// in vec3 vToCamera;
 
 layout(location = 0) out vec4 oColor;
 
@@ -47,15 +53,15 @@ Irradiance GetIrradiance(Light light)
     
     Irradiance OUT;
 
-    vec3 toCamera = normalize(uViewPosition.xyz - vVertexInWorld);
+    vec3 toCamera = normalize(uViewPosition.xyz - fragment_in.positionInWorld);
     
 	vec3 position = light.Position.xyz;
 	float range = light.RangeIntensity.x;
-	float dist = length(vVertexInWorld - position);
+    float dist = length(fragment_in.positionInWorld - position);
     
-    vec3 L = normalize(position.xyz - vVertexInWorld);
+    vec3 L = normalize(position.xyz - fragment_in.positionInWorld);
     vec3 V = normalize(toCamera);
-    vec3 N = normalize(vNormalInWorld);
+    vec3 N = normalize(fragment_in.normal);
 
     vec3 lightColor = light.RangeIntensity.y* light.Color.rgb;
 	float falloff = pow(clamp(1.0 - pow(dist / range, 4.0), 0.0, 1.0), 2.0) / (pow(dist, 2.0) + 1.0);
@@ -75,24 +81,28 @@ Irradiance GetIrradiance(Light light)
 
 void main()
 {
+    vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
+    vec4 tex = texture(uTexture, fragment_in.UV);
+
+    if (tex.a < 0.5)
+        discard;
+
+    vec3 Iamb = vec3(0.0, 0.0, 0.01);
+    vec3 Idif = vec3(0.0);
+    vec3 Ispe = vec3(0.0);
+
     ivec2 WorkGroupSize = ivec2(16, 16);
     ivec2 NumWorkGroups = ivec2(uWorkGroupsX, uWorkGroupsY);
     ivec2 WorkGroupID = (ivec2(gl_FragCoord.xy) / WorkGroupSize);
     uint IndexWorkGroup = WorkGroupID.y * NumWorkGroups.x + WorkGroupID.x;
     uint TileOffset = IndexWorkGroup * MAX_NUM_LIGHTS;
 
-    vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
-
-    vec3 Iamb = vec3(0.0, 0.0, 0.01);
-    vec3 Idif = vec3(0.0);
-    vec3 Ispe = vec3(0.0);
-
     uint Count = uint(uLightCount);
     for (uint i = 0; i < Count; ++i)
 	{
         int lightIndex = bVisibleLightIndicesBuffer.data[TileOffset + i].Index;
 		Irradiance pointIrradiance = GetIrradiance(bLightBuffer.data[lightIndex]);
-        Idif += pointIrradiance.Diffuse;
+        Idif += tex.rgb * pointIrradiance.Diffuse;
         Ispe += pointIrradiance.Specular;
         
 		if (bVisibleLightIndicesBuffer.data[TileOffset + i + 1].Index == -1)

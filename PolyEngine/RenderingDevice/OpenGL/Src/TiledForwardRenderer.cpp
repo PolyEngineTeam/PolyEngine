@@ -257,6 +257,8 @@ void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent*
 
 	// glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
 
+	gConsole.LogInfo("TiledForwardRenderer::AccumulateLights");
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	const EntityTransform& cameraTransform = cameraCmp->GetTransform();
@@ -284,10 +286,22 @@ void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent*
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 			glBindVertexArray(meshProxy->GetVAO());
 
+			const Poly::TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
+			GLuint TextureID = DiffuseTexture == nullptr
+				? FallbackWhiteTexture
+				: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
+
+			if ( DiffuseTexture == nullptr)
+			{
+				gConsole.LogInfo("TiledForwardRenderer::AccumulateLights missing texture!" );
+			}
+
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, FallbackWhiteTexture);
+			glBindTexture(GL_TEXTURE_2D, TextureID);
+			lightAccumulationShader.SetUniform("uTexture", 0);
 
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
+			
 			glBindTexture(GL_TEXTURE_2D, 0);
 			glBindVertexArray(0);
 		}
