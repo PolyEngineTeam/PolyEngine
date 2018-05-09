@@ -15,7 +15,7 @@ void MovementSystem::MovementUpdatePhase(World* world)
 		FreeFloatMovementComponent* freeFloatMovementCmp = std::get<FreeFloatMovementComponent*>(freeFloatTuple);
 		EntityTransform& trans = freeFloatMovementCmp->GetTransform();
 
-		int wheelDelta = inputCmp->GetWheelPosDelta().Y;
+		int wheelDelta = 10 * inputCmp->GetWheelPosDelta().Y;
 		float speed = freeFloatMovementCmp->GetMovementSpeed();
 		speed = Clamp(speed + wheelDelta, 0.001f, 10000.0f);
 		freeFloatMovementCmp->SetMovementSpeed(speed);

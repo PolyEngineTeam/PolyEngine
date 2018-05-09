@@ -67,7 +67,7 @@ void TiledForwardRenderer::Init()
 	// Create a floating point HDR frame buffer and a floating point color buffer (as a texture)
 	glGenFramebuffers(1, &FBOhdr);
 
-	GLuint colorBuffer;
+	colorBuffer;
 	glGenTextures(1, &colorBuffer);
 	glBindTexture(GL_TEXTURE_2D, colorBuffer);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCREEN_SIZE_X, SCREEN_SIZE_Y, 0, GL_RGB, GL_FLOAT, NULL);
@@ -129,6 +129,8 @@ void TiledForwardRenderer::Render(World* world, const AARect& rect, const Camera
 	// DrawLightAccum(world, cameraCmp);
 
 	AccumulateLights(world, cameraCmp);
+
+	Tonemapper(world, cameraCmp);
 }
 
 void TiledForwardRenderer::DepthPrePass(World* world, const CameraComponent* cameraCmp)
@@ -255,9 +257,9 @@ void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent*
 {
 	float Time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 
-	// glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
+	// gConsole.LogInfo("TiledForwardRenderer::AccumulateLights");
 
-	gConsole.LogInfo("TiledForwardRenderer::AccumulateLights");
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
@@ -291,11 +293,6 @@ void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent*
 				? FallbackWhiteTexture
 				: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
 
-			if ( DiffuseTexture == nullptr)
-			{
-				gConsole.LogInfo("TiledForwardRenderer::AccumulateLights missing texture!" );
-			}
-
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, TextureID);
 			lightAccumulationShader.SetUniform("uTexture", 0);
@@ -310,7 +307,20 @@ void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent*
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
 	
-	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Poly::TiledForwardRenderer::Tonemapper(World* world, const CameraComponent* cameraCmp)
+{
+	// gConsole.LogInfo("TiledForwardRenderer::Tonemapper");
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Weirdly, moving this call drops performance into the floor
+
+	hdrShader.BindProgram();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, colorBuffer);
+	hdrShader.SetUniform("uExposure", exposure);
+	DrawQuad();
 }
 
 void TiledForwardRenderer::SetupLightsBufferFromScene()

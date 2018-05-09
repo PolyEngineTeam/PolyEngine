@@ -51,11 +51,14 @@ namespace Poly {
 		GLShaderProgram debugLightAccumShader;
 
 		GLuint depthMap;
+		GLuint colorBuffer;
 
 		GLuint FBOdepthMap;
 		GLuint FBOhdr;
 
 		GLuint FallbackWhiteTexture;
+
+		float exposure = 1.0f;
 
 		int DynamicLighsInFrame = 0;
 
@@ -72,6 +75,8 @@ namespace Poly {
 		void DrawLightAccum(World* world, const CameraComponent* cameraCmp);
 
 		void AccumulateLights(World* world, const CameraComponent* cameraCmp);
+
+		void Tonemapper(World* world, const CameraComponent* cameraCmp);
 		
 		void DrawQuad();
 

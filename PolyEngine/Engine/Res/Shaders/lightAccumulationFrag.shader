@@ -87,7 +87,7 @@ void main()
     if (tex.a < 0.5)
         discard;
 
-    vec3 Iamb = vec3(0.0, 0.0, 0.01);
+    vec3 Iamb = vec3(0.0, 0.0, 0.001);
     vec3 Idif = vec3(0.0);
     vec3 Ispe = vec3(0.0);
 
@@ -103,7 +103,7 @@ void main()
         int lightIndex = bVisibleLightIndicesBuffer.data[TileOffset + i].Index;
 		Irradiance pointIrradiance = GetIrradiance(bLightBuffer.data[lightIndex]);
         Idif += tex.rgb * pointIrradiance.Diffuse;
-        Ispe += pointIrradiance.Specular;
+        Ispe += tex.rgb * pointIrradiance.Specular;
         
 		if (bVisibleLightIndicesBuffer.data[TileOffset + i + 1].Index == -1)
             break;
