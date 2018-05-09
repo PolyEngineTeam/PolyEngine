@@ -16,11 +16,12 @@ namespace Poly {
 
 		explicit operator bool() const;
 
-		size_t GetHash() const { return ID; }
-	private:
-		UniqueID(size_t id);
+		size_t GetHash() const;
 
-		size_t ID = 0;
+		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const UniqueID& uuid);
+	private:
+		// 128-bit RFC4122 compliant uuid
+		std::array<unsigned char, 16> UUID;
 	};
 }
 
