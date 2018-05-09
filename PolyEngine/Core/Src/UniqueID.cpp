@@ -1,14 +1,80 @@
 #include "CorePCH.hpp"
 
 #include "UniqueID.hpp"
+#include "Math/Random.hpp"
+
+#include <iomanip>
+#include <sstream>
 
 using namespace Poly;
 
-UniqueID::UniqueID() {}
-UniqueID UniqueID::Generate() { static size_t val = 0; return UniqueID(++val); }
+UniqueID::UniqueID() 
+{
+	UUID.fill(0);
+}
 
-bool UniqueID::operator==(const UniqueID& rhs) const { return ID == rhs.ID; }
+UniqueID UniqueID::Generate() 
+{ 
+	UniqueID ret;
+
+	// 1. Generate 16 random bytes = 128 bits
+	for (size_t i = 0; i < ret.UUID.size(); ++i)
+		ret.UUID[i] = RandomRange(0x00, 0xFF);
+
+	// 2. Adjust certain bits according to RFC 4122 section 4.4.
+	// This just means do the following
+	// (a) set the high nibble of the 7th byte equal to 4 and
+	// (b) set the two most significant bits of the 9th byte to 10'B,
+	//     so the high nibble will be one of {8,9,A,B}.
+	ret.UUID[6] = 0x40 | (ret.UUID[6] & 0xf);
+	ret.UUID[8] = 0x80 | (ret.UUID[8] & 0x3f);
+
+	// Return the UUID string
+	return ret;
+}
+
+bool UniqueID::operator==(const UniqueID& rhs) const 
+{ 
+	for (size_t i = 0; i < UUID.size(); ++i)
+	{
+		if (UUID[i] != rhs.UUID[i])
+			return false;
+	}
+	return true; 
+}
 bool UniqueID::operator!=(const UniqueID& rhs) const { return !(*this == rhs); }
 
-UniqueID::operator bool() const { return ID != 0; }
-UniqueID::UniqueID(size_t id) : ID(id) {}
+UniqueID::operator bool() const
+{
+	bool valid = true;
+	for (size_t i = 0; i < UUID.size(); ++i)
+		valid = valid && UUID[i] != 0;
+	return valid;
+}
+
+size_t Poly::UniqueID::GetHash() const
+{
+	// @fixme(muniu) slow implementation, optimize
+	std::stringstream ss;
+	ss << *this;
+	return std::hash<std::string>{}(ss.str());
+}
+
+
+namespace Poly {
+	#define HEX_PRINT(val) std::setfill('0') << std::setw(2) << std::hex << (u32)val
+
+	//------------------------------------------------------------------------------
+	std::ostream& operator<< (std::ostream& stream, const UniqueID& uuid) 
+	{
+		return stream
+			<< HEX_PRINT(uuid.UUID[0]) << HEX_PRINT(uuid.UUID[1]) 
+			<< HEX_PRINT(uuid.UUID[2]) << HEX_PRINT(uuid.UUID[3]) << "-"
+			<< HEX_PRINT(uuid.UUID[4]) << HEX_PRINT(uuid.UUID[5]) << "-"
+			<< HEX_PRINT(uuid.UUID[6]) << HEX_PRINT(uuid.UUID[7]) << "-"
+			<< HEX_PRINT(uuid.UUID[8]) << HEX_PRINT(uuid.UUID[9]) << "-"
+			<< HEX_PRINT(uuid.UUID[10]) << HEX_PRINT(uuid.UUID[11]) 
+			<< HEX_PRINT(uuid.UUID[12]) << HEX_PRINT(uuid.UUID[13]) 
+			<< HEX_PRINT(uuid.UUID[14]) << HEX_PRINT(uuid.UUID[15]);
+	}
+}

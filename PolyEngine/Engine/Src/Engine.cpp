@@ -11,6 +11,7 @@ Engine::Engine()
 {
 	ASSERTE(gEngine == nullptr, "Creating engine twice?");
 	gEngine = this;
+	RandomSetSeed((int)time(nullptr));
 
 	gAssetsPathConfig.Load();
 	gDebugConfig.Load();
