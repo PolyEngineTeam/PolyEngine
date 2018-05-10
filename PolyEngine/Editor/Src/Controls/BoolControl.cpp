@@ -1,6 +1,6 @@
 #include "PolyEditorPCH.hpp"
 
-DEFINE_CONTROL(BoolControl, BOOL)
+ASSIGN_CONTROL(BoolControl, BOOL)
 
 void BoolControl::UpdateObject()
 {

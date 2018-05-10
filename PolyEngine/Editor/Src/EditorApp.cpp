@@ -15,7 +15,7 @@ EditorApp::EditorApp(int argc, char *argv[])
 	ASSERTE(!gApp, "Creating application twice?!");
 	gApp = this;
 
-	Ui.InitMainWindow();
+	Ui.Init();
 	installEventFilter(&EventFilter);
 
 	// editMgr must be created after ui creation

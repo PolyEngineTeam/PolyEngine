@@ -9,98 +9,98 @@ PolyMainWindow::PolyMainWindow()
 	setDockOptions(QMainWindow::AllowNestedDocks | QMainWindow::AllowTabbedDocks);
 
 	// menu bar
-	MenuBar = new QMenuBar();
-	setMenuBar(MenuBar);
+	MenuBar = std::make_unique<QMenuBar>();
+	setMenuBar(MenuBar.get());
 
 
 		// file menu
-		FileMenu = new QMenu();
+		FileMenu = std::make_unique<QMenu>();
 		MenuBar->addAction(FileMenu->menuAction());
 		FileMenu->setTitle("File");
 
-			QuitAction = new QAction();
-			FileMenu->addAction(QuitAction);
+			QuitAction = std::make_unique<QAction>();
+			FileMenu->addAction(QuitAction.get());
 			QuitAction->setText("Quit");
-			QObject::connect(QuitAction, &QAction::triggered, this, &PolyMainWindow::Quit);
+			QObject::connect(QuitAction.get(), &QAction::triggered, this, &PolyMainWindow::Quit);
 
 
 		// edit menu
-		EditMenu = new QMenu();
+		EditMenu = std::make_unique<QMenu>();
 		MenuBar->addAction(EditMenu->menuAction());
 		EditMenu->setTitle("Edit");
 
-			UndoAction = new QAction();
-			EditMenu->addAction(UndoAction);
+			UndoAction = std::make_unique<QAction>();
+			EditMenu->addAction(UndoAction.get());
 			UndoAction->setText("Undo");
-			QObject::connect(UndoAction, &QAction::triggered, this, &PolyMainWindow::Undo);
+			QObject::connect(UndoAction.get(), &QAction::triggered, this, &PolyMainWindow::Undo);
 
-			RedoAction = new QAction();
-			EditMenu->addAction(RedoAction);
+			RedoAction = std::make_unique<QAction>();
+			EditMenu->addAction(RedoAction.get());
 			RedoAction->setText("Redo");
-			QObject::connect(RedoAction, &QAction::triggered, this, &PolyMainWindow::Redo);
+			QObject::connect(RedoAction.get(), &QAction::triggered, this, &PolyMainWindow::Redo);
 
 
 		// view menu
-		ViewMenu = new QMenu();
+		ViewMenu = std::make_unique<QMenu>();
 		MenuBar->addAction(ViewMenu->menuAction());
 		ViewMenu->setTitle("View");
 
-			AddWindowAction = new QAction();
-			ViewMenu->addAction(AddWindowAction);
+			AddWindowAction = std::make_unique<QAction>();
+			ViewMenu->addAction(AddWindowAction.get());
 			AddWindowAction->setText("Add Window");
-			QObject::connect(AddWindowAction, &QAction::triggered, this, &PolyMainWindow::AddWindow);
+			QObject::connect(AddWindowAction.get(), &QAction::triggered, this, &PolyMainWindow::AddWindow);
 
 
 		// Project menu
-		ProjectMenu = new QMenu();
+		ProjectMenu = std::make_unique<QMenu>();
 		MenuBar->addAction(ProjectMenu->menuAction());
 		ProjectMenu->setTitle("Project");
 
-			CreateProjectAction = new QAction();
-			ProjectMenu->addAction(CreateProjectAction);
+			CreateProjectAction = std::make_unique<QAction>();
+			ProjectMenu->addAction(CreateProjectAction.get());
 			CreateProjectAction->setText("Create");
-			QObject::connect(CreateProjectAction, &QAction::triggered, this, &PolyMainWindow::CreateProject);
+			QObject::connect(CreateProjectAction.get(), &QAction::triggered, this, &PolyMainWindow::CreateProject);
 
-			OpenProjectAction = new QAction();
-			ProjectMenu->addAction(OpenProjectAction);
+			OpenProjectAction = std::make_unique<QAction>();
+			ProjectMenu->addAction(OpenProjectAction.get());
 			OpenProjectAction->setText("Open");
-			QObject::connect(OpenProjectAction, &QAction::triggered, this, &PolyMainWindow::OpenProject);
+			QObject::connect(OpenProjectAction.get(), &QAction::triggered, this, &PolyMainWindow::OpenProject);
 
-			UpdateProjectFromEngineAction = new QAction();
-			ProjectMenu->addAction(UpdateProjectFromEngineAction);
+			UpdateProjectFromEngineAction = std::make_unique<QAction>();
+			ProjectMenu->addAction(UpdateProjectFromEngineAction.get());
 			UpdateProjectFromEngineAction->setText("Update");
-			QObject::connect(UpdateProjectFromEngineAction, &QAction::triggered, this, &PolyMainWindow::UpdateProject);
+			QObject::connect(UpdateProjectFromEngineAction.get(), &QAction::triggered, this, &PolyMainWindow::UpdateProject);
 
-			BuildProjectAction = new QAction();
-			ProjectMenu->addAction(BuildProjectAction);
+			BuildProjectAction = std::make_unique<QAction>();
+			ProjectMenu->addAction(BuildProjectAction.get());
 			BuildProjectAction->setText("Build");
-			QObject::connect(BuildProjectAction, &QAction::triggered, this, &PolyMainWindow::BuildProject);
+			QObject::connect(BuildProjectAction.get(), &QAction::triggered, this, &PolyMainWindow::BuildProject);
 
-			EditProjectAction = new QAction();
-			ProjectMenu->addAction(EditProjectAction);
+			EditProjectAction = std::make_unique<QAction>();
+			ProjectMenu->addAction(EditProjectAction.get());
 			EditProjectAction->setText("Edit");
-			QObject::connect(EditProjectAction, &QAction::triggered, this, &PolyMainWindow::EditProject);
+			QObject::connect(EditProjectAction.get(), &QAction::triggered, this, &PolyMainWindow::EditProject);
 
-			PlayProjectAction = new QAction();
-			ProjectMenu->addAction(PlayProjectAction);
+			PlayProjectAction = std::make_unique<QAction>();
+			ProjectMenu->addAction(PlayProjectAction.get());
 			PlayProjectAction->setText("Play");
-			QObject::connect(PlayProjectAction, &QAction::triggered, this, &PolyMainWindow::PlayProject);
+			QObject::connect(PlayProjectAction.get(), &QAction::triggered, this, &PolyMainWindow::PlayProject);
 
-			CloseProjectAction = new QAction();
-			ProjectMenu->addAction(CloseProjectAction);
+			CloseProjectAction = std::make_unique<QAction>();
+			ProjectMenu->addAction(CloseProjectAction.get());
 			CloseProjectAction->setText("Close");
-			QObject::connect(CloseProjectAction, &QAction::triggered, this, &PolyMainWindow::CloseProject);
+			QObject::connect(CloseProjectAction.get(), &QAction::triggered, this, &PolyMainWindow::CloseProject);
 
 
 		// help menu
-		HelpMenu = new QMenu();
+		HelpMenu = std::make_unique<QMenu>();
 		MenuBar->addAction(HelpMenu->menuAction());
 		HelpMenu->setTitle("Help");
 
-			ContactUsAction = new QAction();
-			HelpMenu->addAction(ContactUsAction);
+			ContactUsAction = std::make_unique<QAction>();
+			HelpMenu->addAction(ContactUsAction.get());
 			ContactUsAction->setText("Contact Us");
-			QObject::connect(ContactUsAction, &QAction::triggered, this, &PolyMainWindow::ContactUs);
+			QObject::connect(ContactUsAction.get(), &QAction::triggered, this, &PolyMainWindow::ContactUs);
 }
 
 void PolyMainWindow::Quit()
@@ -117,9 +117,7 @@ void PolyMainWindow::Redo()
 
 void PolyMainWindow::AddWindow()
 {
-	PolyWindow* window = new PolyWindow();
-	//Windows.PushBack(window);
-	window->show();
+	gApp->Ui.AddWindow();
 }
 
 void PolyMainWindow::CreateProject()

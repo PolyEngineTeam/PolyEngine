@@ -14,7 +14,8 @@ class EditorUi : public QObject
 public:
 	EditorUi() = default;
 
-	void InitMainWindow();
+	void Init();
+	void AddWindow() { PolyWindow* wnd = new PolyWindow(); Windows.PushBack(wnd); wnd->show(); }
 
 	ViewportWidget* MainViewport;
 	LoggerWidget* MainLogger;

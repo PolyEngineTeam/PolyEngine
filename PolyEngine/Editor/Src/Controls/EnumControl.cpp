@@ -2,7 +2,7 @@
 
 #include <QComboBox>
 
-DEFINE_CONTROL(EnumControl, ENUM)
+ASSIGN_CONTROL(EnumControl, ENUM)
 
 void EnumControl::UpdateObject()
 {

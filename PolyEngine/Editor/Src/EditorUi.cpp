@@ -6,7 +6,7 @@
 #include <QFileDialog>
 #include <qdockwidget.h>
 
-void EditorUi::InitMainWindow()
+void EditorUi::Init()
 {
 	MainWindow = new PolyMainWindow();
 	Windows.PushBack(std::move(MainWindow));
@@ -42,15 +42,6 @@ void EditorUi::InitMainWindow()
 	window = new PolyDockWindow("Entity Manager", EntityMgr);
 	DockWindows.PushBack(window);
 	MainWindow->AddDockWindow(Qt::DockWidgetArea::RightDockWidgetArea, window, true);
-	
-	//EntityMgr = std::make_unique<EntityManagerWidget>("Entity Manager", MainWindow);
-	//MainWindow->AddWidget(Qt::DockWidgetArea::RightDockWidgetArea, EntityMgr.get(), true);
-	//
-	//RTTIViewerWidget* rtti = new RTTIViewerWidget("RTTI Viewer", MainWindow);
-	//MainWindow->AddWidget(Qt::DockWidgetArea::LeftDockWidgetArea, rtti, true);
-	//
-	//ProjectConfig* cfg = new ProjectConfig("Z:/Programming/C++/PolyEngineExamples/SGJ2017Game/SGJ2017Game.proj.json");
-	//rtti->SetObject(cfg, true);
-	//
+
 	MainWindow->show();
 }

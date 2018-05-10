@@ -3,16 +3,16 @@
 #include <QIntValidator>
 #include <QDoubleValidator>
 
-DEFINE_CONTROL(NumberControl, INT8)
-DEFINE_CONTROL(NumberControl, INT16)
-DEFINE_CONTROL(NumberControl, INT32)
-DEFINE_CONTROL(NumberControl, INT64)
-DEFINE_CONTROL(NumberControl, UINT8)
-DEFINE_CONTROL(NumberControl, UINT16)
-DEFINE_CONTROL(NumberControl, UINT32)
-DEFINE_CONTROL(NumberControl, UINT64)
-DEFINE_CONTROL(NumberControl, FLOAT)
-DEFINE_CONTROL(NumberControl, DOUBLE)
+ASSIGN_CONTROL(NumberControl, INT8)
+ASSIGN_CONTROL(NumberControl, INT16)
+ASSIGN_CONTROL(NumberControl, INT32)
+ASSIGN_CONTROL(NumberControl, INT64)
+ASSIGN_CONTROL(NumberControl, UINT8)
+ASSIGN_CONTROL(NumberControl, UINT16)
+ASSIGN_CONTROL(NumberControl, UINT32)
+ASSIGN_CONTROL(NumberControl, UINT64)
+ASSIGN_CONTROL(NumberControl, FLOAT)
+ASSIGN_CONTROL(NumberControl, DOUBLE)
 
 void NumberControl::UpdateObject()
 {

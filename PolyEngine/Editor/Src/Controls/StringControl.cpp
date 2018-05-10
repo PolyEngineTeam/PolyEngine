@@ -1,6 +1,6 @@
 #include "PolyEditorPCH.hpp"
 
-DEFINE_CONTROL(StringControl, STRING)
+ASSIGN_CONTROL(StringControl, STRING)
 
 void StringControl::UpdateObject()
 {
