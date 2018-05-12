@@ -8,6 +8,8 @@
 
 using namespace Poly;
 
+const UniqueID UniqueID::INVALID;
+
 UniqueID::UniqueID() 
 {
 	UUID.fill(0);
@@ -44,12 +46,14 @@ bool UniqueID::operator==(const UniqueID& rhs) const
 }
 bool UniqueID::operator!=(const UniqueID& rhs) const { return !(*this == rhs); }
 
+bool Poly::UniqueID::IsValid() const
+{
+	return *this != INVALID;
+}
+
 UniqueID::operator bool() const
 {
-	bool valid = true;
-	for (size_t i = 0; i < UUID.size(); ++i)
-		valid = valid && UUID[i] != 0;
-	return valid;
+	return IsValid();
 }
 
 size_t Poly::UniqueID::GetHash() const

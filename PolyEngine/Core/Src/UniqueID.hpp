@@ -8,12 +8,15 @@ namespace Poly {
 	class CORE_DLLEXPORT UniqueID : public BaseObject<>
 	{
 	public:
+		static const UniqueID INVALID;
+
 		UniqueID();
 		static UniqueID Generate();
 
 		bool operator==(const UniqueID& rhs) const;
 		bool operator!=(const UniqueID& rhs) const;
 
+		bool IsValid() const;
 		explicit operator bool() const;
 
 		size_t GetHash() const;
