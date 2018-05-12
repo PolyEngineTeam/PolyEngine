@@ -87,7 +87,7 @@ namespace Poly
 		#if !DISABLE_SIMD
 		  __m128 SimdData;
 		#endif
-		  float Data[4];
+		  alignas(16) std::array<float, 4> Data;
 		  struct { float X,Y,Z,W; };
 		};
 

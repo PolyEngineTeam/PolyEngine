@@ -45,10 +45,13 @@ namespace Poly {
 			return *this;
 		}
 
+		bool operator==(const Color& rhs) const { return R == rhs.R && G == rhs.G && B == rhs.B && A == rhs.A; }
+		bool operator!=(const Color& rhs) const { return !(*this == rhs); }
+
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Color& color);
 
 		union {
-			float Data[4];
+			std::array<float, 4> Data;
 			struct
 			{
 				float R, G, B, A;

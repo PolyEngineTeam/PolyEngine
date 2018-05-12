@@ -85,7 +85,7 @@ namespace Poly
 		// This structure allows to access vector elements by index or name.
 		union 
 		{
-			float Data[2];
+			std::array<float, 2> Data;
 			struct { float X,Y; };
 		};
 

@@ -5,6 +5,12 @@
 #include <Configs/ConfigBase.hpp>
 #include <Math/BasicMath.hpp>
 #include <Collections/OrderedMap.hpp>
+#include <Math/Vector.hpp>
+#include <Math/Vector2f.hpp>
+#include <Math/Vector2i.hpp>
+#include <Math/Matrix.hpp>
+#include <Math/Color.hpp>
+#include <Math/Quaternion.hpp>
 #include <cstdio>
 
 using namespace Poly;
@@ -17,6 +23,15 @@ enum class eConfigTest
 };
 REGISTER_ENUM_NAMES(eConfigTest, "val_1", "val_2");
 
+enum class eConfigFlagsTest
+{
+	VAL_1 = 0x01,
+	VAL_2 = 0x02,
+	VAL_3 = 0x04,
+	VAL_4 = 0x08,
+	VAL_5 = 0x10
+};
+
 class TestRTTIClass : public RTTIBase
 {
 	RTTI_DECLARE_TYPE_DERIVED(TestRTTIClass, RTTIBase)
@@ -26,6 +41,9 @@ class TestRTTIClass : public RTTIBase
 public:
 	TestRTTIClass() {}
 	TestRTTIClass(int val) : Val1(val) {}
+
+	bool operator==(const TestRTTIClass& rhs) const { return Val1 == rhs.Val1; }
+	bool operator!=(const TestRTTIClass& rhs) const { return !(*this == rhs); }
 
 	int Val1 = 0;
 };
@@ -55,6 +73,18 @@ class TestConfig : public ConfigBase
 		RTTI_PROPERTY_AUTONAME(PropOMapIntInt, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropOMapStrDynarray, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropOMapStrCustom, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropVector, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropVector2f, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropVector2i, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropQuat, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropAngle, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropColor, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropMatrix, RTTI::ePropertyFlag::NONE);
+
+		RTTI_PROPERTY_AUTONAME(PropEnumArrayInt, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropEnumArrayDynarray, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropEnumArrayCustom, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropEnumFlags, RTTI::ePropertyFlag::NONE);
 	}
 public:
 	TestConfig() : ConfigBase("Test", eResourceSource::NONE) 
@@ -67,6 +97,8 @@ public:
 
 		PropOMapStrCustom.Insert("Val1", 1);
 		PropOMapStrCustom.Insert("Val2", 2);
+
+		PropMatrix.SetRotationZ(60_deg);
 	}
 
 	// Rendering
@@ -92,6 +124,19 @@ public:
 	OrderedMap<int, int> PropOMapIntInt;
 	OrderedMap<String, Dynarray<int>> PropOMapStrDynarray;
 	OrderedMap<String, TestRTTIClass> PropOMapStrCustom;
+
+	Vector PropVector = Vector(1,2,3);
+	Vector2f PropVector2f = Vector2f(1, 2);
+	Vector2i PropVector2i = Vector2i(1, 2);
+	Quaternion PropQuat = Quaternion(Vector::UNIT_Z, 60_deg);
+	Angle PropAngle = 60_deg;
+	Color PropColor = Color(1, 0.5f, 0.3f, 1);
+	Matrix PropMatrix;
+
+	EnumArray<int, eConfigTest> PropEnumArrayInt = { { eConfigTest::VAL_1, 1 },{ eConfigTest::VAL_2, 2 } };
+	EnumArray<Dynarray<int>, eConfigTest> PropEnumArrayDynarray = { { eConfigTest::VAL_1, {1, 2} },{ eConfigTest::VAL_2, {2, 3} } };
+	EnumArray<TestRTTIClass, eConfigTest> PropEnumArrayCustom = { { eConfigTest::VAL_1, 1}, { eConfigTest::VAL_2, 2} };
+	EnumFlags<eConfigFlagsTest> PropEnumFlags = (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_3 | eConfigFlagsTest::VAL_5);
 };
 RTTI_DEFINE_TYPE(TestConfig)
 
@@ -153,6 +198,21 @@ void baseValueCheck(const TestConfig& config)
 	CHECK(config.PropOMapStrCustom.Get("Val1").Value().Val1 == 1);
 	REQUIRE(config.PropOMapStrCustom.Get("Val2").HasValue());
 	CHECK(config.PropOMapStrCustom.Get("Val2").Value().Val1 == 2);
+
+	CHECK(config.PropVector == Vector(1, 2, 3));
+	CHECK(config.PropVector2f == Vector2f(1, 2));
+	CHECK(config.PropVector2i == Vector2i(1, 2));
+	CHECK(config.PropQuat == Quaternion(Vector::UNIT_Z, 60_deg));
+	CHECK(config.PropAngle == 60_deg);
+	CHECK(config.PropColor == Color(1, 0.5f, 0.3f, 1));
+	Matrix testMat;
+	testMat.SetRotationZ(60_deg);
+	CHECK(config.PropMatrix == testMat);
+
+	CHECK(config.PropEnumArrayInt == EnumArray<int, eConfigTest>{ { eConfigTest::VAL_1, 1 },{ eConfigTest::VAL_2, 2 } });
+	CHECK(config.PropEnumArrayDynarray == EnumArray<Dynarray<int>, eConfigTest>{ { eConfigTest::VAL_1,{ 1, 2 } },{ eConfigTest::VAL_2,{ 2, 3 } } });
+	CHECK(config.PropEnumArrayCustom == EnumArray<TestRTTIClass, eConfigTest>{ { eConfigTest::VAL_1, 1 },{ eConfigTest::VAL_2, 2 } });
+	CHECK(config.PropEnumFlags == (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_3 | eConfigFlagsTest::VAL_5));
 }
 
 TEST_CASE("Config serialization tests", "[ConfigBase]")
@@ -198,6 +258,19 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		config.PropOMapStrCustom.Get("Val2").Value().Val1 = 5;
 		config.PropOMapStrCustom.Insert("Val3", 3);
 		config.PropOMapStrCustom.Insert("Val4", 4);
+
+		config.PropVector = Vector(4, 5, 6);
+		config.PropVector2f = Vector2f(3, 4);
+		config.PropVector2i = Vector2i(3, 4);
+		config.PropQuat = Quaternion(Vector::UNIT_X, 75_deg);
+		config.PropAngle = 75_deg;
+		config.PropColor = Color(0.5f, 1, 0.8f, 1);
+		config.PropMatrix.SetRotationX(75_deg);
+
+		config.PropEnumArrayInt = { { eConfigTest::VAL_1, 3 },{ eConfigTest::VAL_2, 4 } };
+		config.PropEnumArrayDynarray = { { eConfigTest::VAL_1,{ 3, 4 } },{ eConfigTest::VAL_2,{ 4, 5 } } };
+		config.PropEnumArrayCustom = { { eConfigTest::VAL_1, 3 },{ eConfigTest::VAL_2, 4 } };
+		config.PropEnumFlags = (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_2 | eConfigFlagsTest::VAL_4);
 
 		// save them
 		config.Save();
@@ -284,6 +357,21 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(config.PropOMapStrCustom.Get("Val3").Value().Val1 == 3);
 		REQUIRE(config.PropOMapStrCustom.Get("Val4").HasValue());
 		CHECK(config.PropOMapStrCustom.Get("Val4").Value().Val1 == 4);
+
+		CHECK(config.PropVector == Vector(4, 5, 6));
+		CHECK(config.PropVector2f == Vector2f(3, 4));
+		CHECK(config.PropVector2i == Vector2i(3, 4));
+		CHECK(config.PropQuat == Quaternion(Vector::UNIT_X, 75_deg));
+		CHECK(config.PropAngle == 75_deg);
+		CHECK(config.PropColor == Color(0.5f, 1, 0.8f, 1));
+		Matrix testMat;
+		testMat.SetRotationX(75_deg);
+		CHECK(config.PropMatrix == testMat);
+
+		CHECK(config.PropEnumArrayInt == EnumArray<int, eConfigTest>{ { eConfigTest::VAL_1, 3 }, { eConfigTest::VAL_2, 4 } });
+		CHECK(config.PropEnumArrayDynarray == EnumArray<Dynarray<int>, eConfigTest>{ { eConfigTest::VAL_1, { 3, 4 } }, { eConfigTest::VAL_2,{ 4, 5 } } });
+		CHECK(config.PropEnumArrayCustom == EnumArray<TestRTTIClass, eConfigTest>{ { eConfigTest::VAL_1, 3 }, { eConfigTest::VAL_2, 4 } });
+		CHECK(config.PropEnumFlags == (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_2 | eConfigFlagsTest::VAL_4));
 	}
 
 	// remove the config file

@@ -7,9 +7,10 @@
 namespace Poly {
 
 	/// <summary> Class that enables creation of arrays that are indexed by enum.</summary>
-	template<typename T, typename E, size_t SIZE = static_cast<typename std::underlying_type<E>::type>(E::_COUNT)>
+	template<typename T, typename E>
 	class EnumArray final : public BaseObjectLiteralType<>
 	{
+		static const size_t SIZE = static_cast<typename std::underlying_type<E>::type>(E::_COUNT);
 		using IndexType = typename std::underlying_type<E>::type;
 
 		STATIC_ASSERTE(std::is_enum<E>::value, "Provided EnumArray key is not an enum!");
@@ -39,7 +40,7 @@ namespace Poly {
 
 			size_t Idx = 0;
 			T* Data = nullptr;
-			friend class EnumArray<T, E, SIZE>;
+			friend class EnumArray<T, E>;
 		};
 
 		class ConstIterator final : public BaseObjectLiteralType<>
@@ -65,7 +66,7 @@ namespace Poly {
 
 			size_t Idx = 0;
 			const T* Data = nullptr;
-			friend class EnumArray<T, E, SIZE>;
+			friend class EnumArray<T, E>;
 		};
 
 		EnumArray() : Data{} {}
@@ -84,7 +85,7 @@ namespace Poly {
 		}
 
 		//------------------------------------------------------------------------------
-		bool operator==(const EnumArray<T, E, SIZE>& rhs) const
+		bool operator==(const EnumArray<T, E>& rhs) const
 		{
 			for (size_t idx = 0; idx < GetSize(); ++idx)
 				if (Data[idx] != rhs.Data[idx])
@@ -93,7 +94,7 @@ namespace Poly {
 			return true;
 		}
 
-		bool operator!=(const EnumArray<T, E, SIZE>& rhs) const { return !(*this == rhs); };
+		bool operator!=(const EnumArray<T, E>& rhs) const { return !(*this == rhs); };
 
 		//------------------------------------------------------------------------------
 		size_t GetSize() const { return SIZE; }
@@ -136,18 +137,19 @@ namespace Poly {
 	template<typename E>
 	class EnumFlags final : public BaseObjectLiteralType<>
 	{
+	public:
 		using FlagType = typename std::underlying_type<E>::type;
 
 		STATIC_ASSERTE(std::is_enum<E>::value, "Provided EnumFlags type is not an enum!");
 		STATIC_ASSERTE(std::is_integral<FlagType>::value, "Underlying enum value type is not integral!");
-	public:
+
 		constexpr EnumFlags() {}
 		constexpr EnumFlags(E enumValue) : Flags(static_cast<FlagType>(enumValue)) {}
 		
 		constexpr bool operator==(const EnumFlags& rhs) const { return Flags == rhs.Flags; }
 		constexpr bool operator!=(const EnumFlags& rhs) const { return !(*this == rhs); }
 
-		EnumFlags<E>& operator=(E rhs) { Flags |= rhs; return *this; }
+		EnumFlags<E>& operator=(E rhs) { Flags = (FlagType)rhs; return *this; }
 
 		constexpr EnumFlags operator|(const EnumFlags& rhs) const { return EnumFlags(Flags | rhs.Flags); }
 		constexpr EnumFlags operator&(const EnumFlags& rhs) const { return EnumFlags(Flags & rhs.Flags); }

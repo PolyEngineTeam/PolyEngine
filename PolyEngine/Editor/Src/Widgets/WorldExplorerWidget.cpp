@@ -44,5 +44,5 @@ void WorldExplorerWidget::AddEntityToTree(QTreeWidgetItem* parent, Entity* entit
 
 void WorldExplorerWidget::SelectionChanged(QTreeWidgetItem* item, int column)
 {
-	emit EntitySelected(EntityFromID[item->text(0).toUInt()]);
+	emit EntitySelected(EntityFromID[item->text(0).toInt()]);
 }

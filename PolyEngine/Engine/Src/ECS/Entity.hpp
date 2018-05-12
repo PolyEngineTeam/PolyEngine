@@ -88,6 +88,7 @@ namespace Poly
 		bool IsRoot() const { return Parent == nullptr; }
 		bool IsChildOfRoot() const { return Parent ? Parent->IsRoot() : false; }
 		bool ContainsChildRecursive(Entity* child) const;
+
 	private:
 		Entity(World* world, Entity* parent = nullptr);
 

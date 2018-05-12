@@ -7,7 +7,7 @@ PolyDockWindow::PolyDockWindow(const QString& title, PolyWidget* widget) :
 
 	setWidget(widget);
 	
-	// for now use this to create viewport properly
+	// if you want viewport to behave properly use this
 	//layout()->addWidget(widget);
 
 	connect(this, &QDockWidget::topLevelChanged, this, 

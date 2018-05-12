@@ -34,7 +34,7 @@ namespace Poly {
 			{
 				static void Fill(Dynarray<TypeInfo>& v)
 				{
-					v.PushBack(MetaTypeInfo<T>::GetTypeInfo());
+					v.PushBack(TypeInfo::Get<T>());
 					TypeInfoFromBaseClassList<typename T::baseClassList>::Fill(v);
 					TypeInfoFromBaseClassList<U>::Fill(v);
 				}
@@ -108,7 +108,7 @@ T1 rtti_cast(T2 object) {
 #define RTTI_DECLARE_TYPE(T) \
 	public: \
 	RTTI_GENERATE_TYPE_INFO(T)\
-	virtual Poly::RTTI::TypeInfo GetTypeInfo() const { return Poly::RTTI::GetUnifiedTypeInfoFromInstance(this); } \
+	virtual Poly::RTTI::TypeInfo GetTypeInfo() const { return Poly::RTTI::Impl::GetTypeInfoFromInstance(this); } \
 	typedef TYPE_LIST() baseClassList;\
 	RTTI_GENERATE_PROPERTY_LIST_BASE(T)
 
@@ -117,7 +117,7 @@ T1 rtti_cast(T2 object) {
 #define RTTI_DECLARE_TYPE_DERIVED(T,A) \
 	public: \
 	RTTI_GENERATE_TYPE_INFO(T)\
-	Poly::RTTI::TypeInfo GetTypeInfo() const override { return Poly::RTTI::GetUnifiedTypeInfoFromInstance(this); } \
+	Poly::RTTI::TypeInfo GetTypeInfo() const override { return Poly::RTTI::Impl::GetTypeInfoFromInstance(this); } \
 	typedef TYPE_LIST_1(A) baseClassList;\
 	RTTI_GENERATE_PROPERTY_LIST(T)
 
@@ -125,6 +125,6 @@ T1 rtti_cast(T2 object) {
 /*#define RTTI_DECLARE_TYPE_DERIVED2(T,A,B) \
 	public: \
 	RTTI_GENERATE_TYPE_INFO(T)\
-	Poly::RTTI::TypeInfo GetTypeInfo() const override { return Poly::RTTI::GetUnifiedTypeInfoFromInstance(this); } \
+	Poly::RTTI::TypeInfo GetTypeInfo() const override { return Poly::RTTI::Impl::GetTypeInfoFromInstance(this); } \
 	typedef TYPE_LIST_2(A,B) baseClassList;\
 	RTTI_GENERATE_PROPERTY_LIST(T)*/

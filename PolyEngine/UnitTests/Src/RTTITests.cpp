@@ -72,7 +72,7 @@ TEST_CASE("RTTI property", "[RTTI]") {
 	REQUIRE(properties.GetSize() == 2);
 	
 	const auto& p1 = properties[0];
-	CHECK(properties[0].Type == RTTI::TypeInfo::Get<bool>());
+	CHECK(properties[0].Type == RTTI::TypeInfo::INVALID);
 	CHECK(properties[0].Name == "Val1");
 	CHECK((char*)b + properties[0].Offset == (char*)&(a->val1));
 

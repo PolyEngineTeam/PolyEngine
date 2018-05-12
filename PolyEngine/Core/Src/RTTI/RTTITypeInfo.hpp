@@ -11,12 +11,6 @@ namespace Poly
 	namespace RTTI {
 		class TypeInfo;
 
-		template<typename T, typename std::enable_if<std::is_fundamental<T>::value || std::is_enum<T>::value>::type* = nullptr>
-		constexpr TypeInfo GetUnifiedTypeInfo();
-		template<typename T, typename std::enable_if<!std::is_fundamental<T>::value && !std::is_enum<T>::value>::type* = nullptr>
-		constexpr TypeInfo GetUnifiedTypeInfo();
-
-
 		namespace Impl {
 
 			//--------------------------------------------------------------------------
@@ -59,17 +53,17 @@ namespace Poly
             constexpr bool IsValid() const  { return ID != 0; }
 
 			template<typename T>
-			constexpr static TypeInfo Get() { return GetUnifiedTypeInfo<typename std::remove_cv<T>::type>(); }
+			constexpr static TypeInfo Get() { return T::MetaTypeInfo::GetTypeInfo(); }
 
 			template<typename T>
-			static TypeInfo Get(T* object) { UNUSED(object); return Get<typename std::remove_pointer<T>::type>(); }
+			static TypeInfo Get(T* object) { return object->GetTypeInfo(); }
 
 			template<typename T>
-			static TypeInfo Get(T& object) { UNUSED(object); return Get<typename std::remove_reference<T>::type>(); }
+			static TypeInfo Get(T& object) { return object.GetTypeInfo(); }
 
 			template<typename T>
 			inline bool isTypeDerivedFrom() const {
-				return Impl::TypeManager::Get().IsTypeDerivedFrom(*this, GetUnifiedTypeInfo<T>());
+				return Impl::TypeManager::Get().IsTypeDerivedFrom(*this, Get<T>());
 			}
 
 			const char* GetTypeName() const;

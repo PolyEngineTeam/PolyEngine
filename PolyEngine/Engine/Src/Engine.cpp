@@ -10,6 +10,7 @@ Engine::Engine()
 {
 	ASSERTE(gEngine == nullptr, "Creating engine twice?");
 	gEngine = this;
+	RandomSetSeed((int)time(nullptr));
 }
 
 void Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device)
