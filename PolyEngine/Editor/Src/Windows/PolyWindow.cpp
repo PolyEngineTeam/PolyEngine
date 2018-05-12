@@ -32,7 +32,9 @@ void PolyWindow::closeEvent(QCloseEvent* event)
 {
 	UNUSED(event);
 
-	for (auto wnd : DockWindows)
+	Poly::Dynarray<PolyDockWindow*> windows = DockWindows;
+
+	for (auto wnd : windows)
 		gApp->Ui.MainWindow->AddDockWindow(Qt::DockWidgetArea::LeftDockWidgetArea, wnd);
 
 	gApp->Ui.Windows.Remove(this);
