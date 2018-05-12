@@ -4,10 +4,10 @@
 
 namespace Poly
 {
-	class World;
+	class Scene;
 
 	namespace PathfindingSystem
 	{
-		ENGINE_DLLEXPORT void UpdatePhase(World* world);
+		ENGINE_DLLEXPORT void UpdatePhase(Scene* world);
 	};
 }

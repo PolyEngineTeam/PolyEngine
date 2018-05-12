@@ -11,7 +11,7 @@
 
 using namespace Poly;
 
-Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType type, float density, float friction)
+Poly::RigidBody2DComponent::RigidBody2DComponent(Scene* world, eRigidBody2DType type, float density, float friction)
 	: BodyWorld(world), BodyType(type)
 {
 	ImplData = std::make_unique<RigidBody2DData>();
@@ -31,7 +31,7 @@ Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType 
 		ASSERTE(false, "Invalid body type");
 	}
 
-	ImplData->Body = world->GetWorldComponent<Physics2DWorldComponent>()->World->CreateBody(&ImplData->BodyDef);
+	ImplData->Body = world->GetWorldComponent<Physics2DWorldComponent>()->Scene->CreateBody(&ImplData->BodyDef);
 	ASSERTE(ImplData->Body, "Body failed to create!");
 
 	ImplData->FixtureDef.density = density;
@@ -39,7 +39,7 @@ Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType 
 	ImplData->FixtureDef.userData = this;
 }
 
-Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType type, RigidBody2DSensorTag /*sensorTag*/)
+Poly::RigidBody2DComponent::RigidBody2DComponent(Scene* world, eRigidBody2DType type, RigidBody2DSensorTag /*sensorTag*/)
 	: BodyWorld(world), BodyType(type)
 {
 	ImplData = std::make_unique<RigidBody2DData>();
@@ -59,7 +59,7 @@ Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType 
 		ASSERTE(false, "Invalid body type");
 	}
 
-	ImplData->Body = world->GetWorldComponent<Physics2DWorldComponent>()->World->CreateBody(&ImplData->BodyDef);
+	ImplData->Body = world->GetWorldComponent<Physics2DWorldComponent>()->Scene->CreateBody(&ImplData->BodyDef);
 	ASSERTE(ImplData->Body, "Body failed to create!");
 
 	ImplData->FixtureDef.isSensor = true;
@@ -68,7 +68,7 @@ Poly::RigidBody2DComponent::RigidBody2DComponent(World* world, eRigidBody2DType 
 
 Poly::RigidBody2DComponent::~RigidBody2DComponent()
 {
-	BodyWorld->GetWorldComponent<Physics2DWorldComponent>()->World->DestroyBody(ImplData->Body);
+	BodyWorld->GetWorldComponent<Physics2DWorldComponent>()->Scene->DestroyBody(ImplData->Body);
 }
 
 void Poly::RigidBody2DComponent::EnsureInit()

@@ -48,10 +48,10 @@ namespace Poly {
 }
 
 Physics2DWorldComponent::Physics2DWorldComponent(const Physics2DConfig& config)
-	: Config(config), World(std::make_unique<b2World>(b2Vec2(config.Gravity.X, config.Gravity.Y)))
+	: Config(config), Scene(std::make_unique<b2World>(b2Vec2(config.Gravity.X, config.Gravity.Y)))
 {
 	ContactListener = std::make_unique<Physics2DContactListener>(this);
-	World->SetContactListener(ContactListener.get());
+	Scene->SetContactListener(ContactListener.get());
 }
 
 Poly::Physics2DWorldComponent::~Physics2DWorldComponent()
@@ -69,5 +69,5 @@ const Dynarray<Physics2DWorldComponent::Collision>& Poly::Physics2DWorldComponen
 
 void Poly::Physics2DWorldComponent::SetGravity(const Vector& gravity) const
 {
-	World->SetGravity(b2Vec2(gravity.X, gravity.Y));
+	Scene->SetGravity(b2Vec2(gravity.X, gravity.Y));
 }

@@ -15,12 +15,18 @@ namespace Poly
 	/// <summary>Class that represent entity inside core engine systems. Should not be used anywhere else.</summary>
 	class ENGINE_DLLEXPORT Entity : public SafePtrRoot
 	{
+		RTTI_DECLARE_TYPE_DERIVED(::Poly::Entity, ::Poly::SafePtrRoot)
+		{
+			RTTI_PROPERTY_AUTONAME(NameTemplate, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Name, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(UUID, RTTI::ePropertyFlag::NONE);
+		}
 	public:
 		~Entity();
 
-		const UniqueID& GetID() const { HEAVY_ASSERTE(EntityID, "Entity was not properly initialized");  return EntityID; }
-		const World* GetWorld() const { HEAVY_ASSERTE(EntityID, "Entity was not properly initialized");  return EntityWorld; }
-		World* GetWorld() { HEAVY_ASSERTE(EntityID, "Entity was not properly initialized");  return EntityWorld; }
+		const UniqueID& GetUUID() const { HEAVY_ASSERTE(UUID, "Entity was not properly initialized");  return UUID; }
+		const Scene* GetEntityScene() const { HEAVY_ASSERTE(UUID, "Entity was not properly initialized");  return EntityScene; }
+		Scene* GetEntityScene() { HEAVY_ASSERTE(UUID, "Entity was not properly initialized");  return EntityScene; }
 
 		/// <summary>Checks whether there is a component of a given ID under this Entity's ID.</summary>
 		/// <param name="ID">ID of a component type</param>
@@ -52,12 +58,12 @@ namespace Poly
 		/// <summary>Gets a pointer to a component of a given ID.</summary>
 		/// <returns>A pointer to a component or nullptr if it does not exist.</returns>
 		template<class T>
-		T* GetComponent(); //defined in ECS/World.hpp due to circular inclusion problem; FIXME: circular inclusion
+		T* GetComponent(); //defined in ECS/Scene.hpp due to circular inclusion problem; FIXME: circular inclusion
 
 		/// <summary>Gets a pointer to a component of a given ID.</summary>
 		/// <returns>A pointer to a component or nullptr if it does not exist.</returns>
 		template<class T>
-		const T* GetComponent() const; //defined in ECS/World.hpp due to circular inclusion problem; FIXME: circular inclusion
+		const T* GetComponent() const; //defined in ECS/Scene.hpp due to circular inclusion problem; FIXME: circular inclusion
 
 		/// Returns pointer to parent entity. Returns nullptr if (and only if) this is the root of the scene.
 		/// @return Pointer to parent entity.
@@ -85,18 +91,20 @@ namespace Poly
 		bool IsChildOfRoot() const { return Parent ? Parent->IsRoot() : false; }
 		bool ContainsChildRecursive(Entity* child) const;
 	private:
-		Entity(World* world, Entity* parent = nullptr);
+		Entity(Scene* world, Entity* parent = nullptr);
 
 		Entity* Parent = nullptr;
 		Dynarray<Entity*> Children;
 
-		UniqueID EntityID;
+		String NameTemplate;
+		String Name;
+		UniqueID UUID;
 		EntityTransform Transform;
-		World* EntityWorld = nullptr;
+		Scene* EntityScene = nullptr;
 
 		std::bitset<MAX_COMPONENTS_COUNT> ComponentPosessionFlags;
 		ComponentBase* Components[MAX_COMPONENTS_COUNT];
 
-		friend class World;
+		friend class Scene;
 	};
 } //namespace Poly

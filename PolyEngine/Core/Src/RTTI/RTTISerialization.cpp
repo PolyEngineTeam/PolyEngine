@@ -2,6 +2,7 @@
 #include "RTTISerialization.hpp"
 #include "Collections/String.hpp"
 #include "Collections/Dynarray.hpp"
+#include "UniqueID.hpp"
 
 using namespace Poly;
 
@@ -292,6 +293,10 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 		break;
 	}
 	break;
+	case eCorePropertyType::UUID:
+		currentValue.SetString(reinterpret_cast<const Poly::UniqueID*>(value)->ToString().GetCStr(), alloc);
+		break;
+	break;
 	case eCorePropertyType::CUSTOM:
 		currentValue.SetObject();
 		SerializeObject(reinterpret_cast<const RTTIBase*>(value), currentValue.GetObject(), alloc);
@@ -444,6 +449,13 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 		const EnumFlagsPropertyImplDataBase* implData = static_cast<const EnumFlagsPropertyImplDataBase*>(prop.ImplData.get());
 		const i64 val = value.GetInt64();
 		implData->SetValue(obj, val);
+	}
+	break;
+	case eCorePropertyType::UUID:
+	{
+		Poly::UniqueID& uuid = *reinterpret_cast<Poly::UniqueID*>(obj);
+		uuid = UniqueID::FromString(String(value.GetString())).Value();
+		HEAVY_ASSERTE(uuid.IsValid(), "UniqueID deserialization failed");
 	}
 	break;
 	case eCorePropertyType::CUSTOM:

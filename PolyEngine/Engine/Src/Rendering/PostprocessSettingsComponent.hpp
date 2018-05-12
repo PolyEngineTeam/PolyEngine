@@ -7,7 +7,7 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT PostprocessSettingsComponent : public ComponentBase
 	{
-		friend void CameraSystem::CameraUpdatePhase(World*);
+		friend void CameraSystem::CameraUpdatePhase(Scene*);
 	public:
 
 		bool UseBgShader = true;

@@ -11,7 +11,7 @@ namespace Poly
 {
 	class CameraComponent;
 	class AARect;
-	class World;
+	class Scene;
 	struct PostprocessQuad;
 	struct PrimitiveCube;
 	class RenderingPassBase;
@@ -70,7 +70,7 @@ namespace Poly
 		void Resize(const ScreenSize& size) override;
 		const ScreenSize& GetScreenSize() const override { return ScreenDim; }
 
-		void RenderWorld(World* world) override;
+		void RenderWorld(Scene* world) override;
 		void Init() override;
 
 		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) override;
@@ -85,12 +85,12 @@ namespace Poly
 
 		void CleanUpResources();
 
-		void RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderUnlit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderNormals(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderNormalsWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderDebug(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderLit(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderUnlit(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderWireframe(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderNormals(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderNormalsWireframe(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const;
+		void RenderDebug(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const;
 
 		template<typename T>
 		void RegisterGeometryPass(eGeometryRenderPassType type,

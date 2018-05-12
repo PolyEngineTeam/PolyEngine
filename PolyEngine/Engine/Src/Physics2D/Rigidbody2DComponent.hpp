@@ -5,7 +5,7 @@
 
 namespace Poly
 {
-	class World;
+	class Scene;
 
 	enum class eRigidBody2DType
 	{
@@ -21,10 +21,10 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT RigidBody2DComponent : public ComponentBase
 	{
-		friend void Physics2DSystem::Physics2DUpdatePhase(World* world);
+		friend void Physics2DSystem::Physics2DUpdatePhase(Scene* world);
 	public:
-		RigidBody2DComponent(World* world, eRigidBody2DType type, float density = 1.0f, float friction = 0.3f);
-		RigidBody2DComponent(World* world, eRigidBody2DType type, RigidBody2DSensorTag sensorTag);
+		RigidBody2DComponent(Scene* world, eRigidBody2DType type, float density = 1.0f, float friction = 0.3f);
+		RigidBody2DComponent(Scene* world, eRigidBody2DType type, RigidBody2DSensorTag sensorTag);
 		~RigidBody2DComponent();
 
 		void DebugPrintInfo() const;
@@ -50,7 +50,7 @@ namespace Poly
 	private:
 		void EnsureInit();
 
-		World* BodyWorld;
+		Scene* BodyWorld;
 		eRigidBody2DType BodyType;
 		std::unique_ptr<RigidBody2DData> ImplData;
 	};

@@ -5,8 +5,10 @@
 
 using namespace Poly;
 
-Entity::Entity(World* world, Entity* parent)
-	: EntityID(UniqueID::Generate()), Transform(this), EntityWorld(world), ComponentPosessionFlags(0)
+RTTI_DEFINE_TYPE(::Poly::Entity);
+
+Entity::Entity(Scene* world, Entity* parent)
+	: UUID(UniqueID::Generate()), Transform(this), EntityScene(world), ComponentPosessionFlags(0)
 {
 	memset(Components, 0, sizeof(ComponentBase*) * MAX_COMPONENTS_COUNT);
 

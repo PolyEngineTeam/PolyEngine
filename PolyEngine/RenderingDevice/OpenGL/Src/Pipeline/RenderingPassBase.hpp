@@ -8,7 +8,7 @@
 
 namespace Poly
 {
-	class World;
+	class Scene;
 	class CameraComponent;
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
@@ -39,7 +39,7 @@ namespace Poly
 
 		virtual ~RenderingPassBase();
 
-		void Run(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType = ePassType::BY_MATERIAL);
+		void Run(Scene* world, const CameraComponent* camera, const AARect& rect, ePassType passType = ePassType::BY_MATERIAL);
 		void Finalize();
 
 		void BindOutput(const String& outputName, RenderingTargetBase* target);
@@ -54,7 +54,7 @@ namespace Poly
 		GLuint FallbackWhiteTexture;
 		GLuint FallbackNormalMap;
 
-		virtual void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) = 0;
+		virtual void OnRun(Scene* world, const CameraComponent* camera, const AARect& rect, ePassType passType) = 0;
 
 		RenderingTargetBase* GetInputTarget(const String& name);
 		RenderingTargetBase* GetOutputTarget(const String& name);

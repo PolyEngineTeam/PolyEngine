@@ -5,7 +5,7 @@
 #include "Rigidbody3DImpl.hpp"
 
 //------------------------------------------------------------------------------
-Poly::Rigidbody3DComponent::Rigidbody3DComponent(World* world, const Rigidbody3DComponentTemplate& tmp)
+Poly::Rigidbody3DComponent::Rigidbody3DComponent(Scene* world, const Rigidbody3DComponentTemplate& tmp)
 	: BodyWorld(world)
 {
 	Template = tmp;

@@ -14,7 +14,7 @@ DebugNormalsRenderingPass::DebugNormalsRenderingPass()
 {
 }
 
-void DebugNormalsRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
+void DebugNormalsRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
 	GetProgram().BindProgram();
 	const Matrix& mvp = camera->GetScreenFromWorld();

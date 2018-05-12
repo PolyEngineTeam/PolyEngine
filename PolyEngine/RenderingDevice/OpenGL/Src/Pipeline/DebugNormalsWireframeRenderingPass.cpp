@@ -15,7 +15,7 @@ DebugNormalsWireframeRenderingPass::DebugNormalsWireframeRenderingPass()
 
 }
 
-void DebugNormalsWireframeRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::BY_MATERIAL*/)
+void DebugNormalsWireframeRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::BY_MATERIAL*/)
 {
 	const Matrix& mModelView = camera->GetScreenFromWorld();
 	const Matrix& mProjection = camera->GetScreenFromView();

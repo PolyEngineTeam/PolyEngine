@@ -6,7 +6,7 @@
 
 namespace Poly
 {
-	class World;
+	class Scene;
 	class ParticleEmitter;
 
 	struct ScreenSize
@@ -109,7 +109,7 @@ namespace Poly
 		virtual void Resize(const ScreenSize& size) = 0;
 		virtual const ScreenSize& GetScreenSize() const = 0;
 
-		virtual void RenderWorld(World* world) = 0;
+		virtual void RenderWorld(Scene* world) = 0;
 		virtual void Init() = 0;
 
 		virtual std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) = 0;

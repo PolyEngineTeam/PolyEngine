@@ -23,7 +23,7 @@ ParticlesRenderingPass::ParticlesRenderingPass()
 	GetProgram().RegisterUniform("vec4", "uColor");
 }
 
-void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
+void ParticlesRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	const Matrix& ViewFromWorld = camera->GetViewFromWorld();

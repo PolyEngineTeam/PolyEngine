@@ -30,7 +30,7 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT MeshRenderingComponent : public ComponentBase
 	{
-		friend void RenderingSystem::RenderingPhase(World*);
+		friend void RenderingSystem::RenderingPhase(Scene*);
 	public:
 		MeshRenderingComponent(const String& meshPath, eResourceSource source);
 		virtual ~MeshRenderingComponent();

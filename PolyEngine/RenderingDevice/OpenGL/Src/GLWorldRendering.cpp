@@ -19,7 +19,7 @@
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-void GLRenderingDevice::RenderWorld(World* world)
+void GLRenderingDevice::RenderWorld(Scene* world)
 {
 	const ScreenSize screenSize = gEngine->GetRenderingDevice()->GetScreenSize();
 
@@ -81,7 +81,7 @@ void GLRenderingDevice::RenderWorld(World* world)
 	EndFrame();
 }
 
-void GLRenderingDevice::RenderWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const
+void GLRenderingDevice::RenderWireframe(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -98,7 +98,7 @@ void GLRenderingDevice::RenderWireframe(World* world, const AARect& rect, Camera
 	PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
 }
 
-void GLRenderingDevice::RenderNormalsWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const
+void GLRenderingDevice::RenderNormalsWireframe(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -114,7 +114,7 @@ void GLRenderingDevice::RenderNormalsWireframe(World* world, const AARect& rect,
 	PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
 }
 
-void Poly::GLRenderingDevice::RenderDebug(World* world, const AARect& rect, CameraComponent* cameraCmp) const
+void Poly::GLRenderingDevice::RenderDebug(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const
 {
 	PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
 
@@ -172,7 +172,7 @@ void Poly::GLRenderingDevice::RenderDebug(World* world, const AARect& rect, Came
 		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
 }
 
-void GLRenderingDevice::RenderUnlit(World* world, const AARect& rect, CameraComponent* cameraCmp) const
+void GLRenderingDevice::RenderUnlit(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const
 {
 	PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
 
@@ -220,7 +220,7 @@ void GLRenderingDevice::RenderUnlit(World* world, const AARect& rect, CameraComp
 		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
 }
 
-void GLRenderingDevice::RenderNormals(World* world, const AARect& rect, CameraComponent* cameraCmp) const
+void GLRenderingDevice::RenderNormals(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const
 {
 	PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
 
@@ -268,7 +268,7 @@ void GLRenderingDevice::RenderNormals(World* world, const AARect& rect, CameraCo
 		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
 }
 
-void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp) const
+void GLRenderingDevice::RenderLit(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const
 {
 	PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
 

@@ -15,8 +15,8 @@ namespace Poly
 	/// @see SoundSystem 
 	class ENGINE_DLLEXPORT SoundEmitterComponent : public ComponentBase
 	{
-	friend void SoundSystem::SoundPhase(World* world);
-	friend void SoundSystem::SetEmitterSource(World*, Entity*, const String&, eResourceSource source);
+	friend void SoundSystem::SoundPhase(Scene* world);
+	friend void SoundSystem::SetEmitterSource(Scene*, Entity*, const String&, eResourceSource source);
 	public:
 		/// Loads resource from given path (optimized by resource manager).
 		/// @param path path to sound resource

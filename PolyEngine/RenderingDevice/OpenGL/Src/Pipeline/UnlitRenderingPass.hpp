@@ -5,7 +5,7 @@
 
 namespace Poly
 {
-	class World;
+	class Scene;
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
 	class AARect;
@@ -17,6 +17,6 @@ namespace Poly
 		UnlitRenderingPass();
 
 	protected:
-		void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;
+		void OnRun(Scene* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;
 	};
 }

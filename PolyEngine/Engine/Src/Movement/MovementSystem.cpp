@@ -5,7 +5,7 @@
 
 using namespace Poly;
 
-void MovementSystem::MovementUpdatePhase(World* world)
+void MovementSystem::MovementUpdatePhase(Scene* world)
 {
 	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
 	InputWorldComponent* inputCmp = world->GetWorldComponent<InputWorldComponent>();

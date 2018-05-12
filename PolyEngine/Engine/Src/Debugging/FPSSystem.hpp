@@ -4,7 +4,7 @@
 
 namespace Poly
 {
-	class World;
+	class Scene;
 
 	namespace FPSSystem
 	{
@@ -16,7 +16,7 @@ namespace Poly
 			String DisplayedFPSText;
 		};
 
-		float ENGINE_DLLEXPORT GetFPS(World* world);
-		void FPSUpdatePhase(World*);
+		float ENGINE_DLLEXPORT GetFPS(Scene* world);
+		void FPSUpdatePhase(Scene*);
 	}
 }

@@ -122,7 +122,7 @@ void SmoothPath(const NavGraph* graph, Dynarray<Vector>& path)
 	}
 }
 
-ENGINE_DLLEXPORT void Poly::PathfindingSystem::UpdatePhase(World* world)
+ENGINE_DLLEXPORT void Poly::PathfindingSystem::UpdatePhase(Scene* world)
 {
 	for (auto tuple : world->IterateComponents<PathfindingComponent>())
 	{

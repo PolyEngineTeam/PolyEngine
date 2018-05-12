@@ -16,7 +16,7 @@ namespace Poly {
 	/// <summary>Base type for every component type</summary>
 	class ENGINE_DLLEXPORT ComponentBase : public BaseObject<>
 	{
-	friend class World;
+	friend class Scene;
 	public:
 		
 		/// <summary>Getter for a component of a specified type that shares UniqueID with this one.</summary>

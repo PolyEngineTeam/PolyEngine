@@ -7,7 +7,7 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT FreeFloatMovementComponent : public ComponentBase
 	{
-		friend void MovementSystem::MovementUpdatePhase(World*);
+		friend void MovementSystem::MovementUpdatePhase(Scene*);
 	public:
 		FreeFloatMovementComponent(float movementSpeed = 1.0f, float rotationSpeed = 1.0f);
 

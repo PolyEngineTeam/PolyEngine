@@ -21,6 +21,7 @@ namespace Poly {
 	class Angle;
 	class Color;
 	class Matrix;
+	class UniqueID;
 
 	namespace RTTI {
 
@@ -49,6 +50,7 @@ namespace Poly {
 			ENUM,
 			ENUM_FLAGS,
 			STRING,
+			UUID,
 			
 			// collections
 			DYNARRAY,
@@ -90,6 +92,7 @@ namespace Poly {
 		template <> inline eCorePropertyType GetCorePropertyType<Angle>() { return eCorePropertyType::ANGLE; };
 		template <> inline eCorePropertyType GetCorePropertyType<Color>() { return eCorePropertyType::COLOR; };
 		template <> inline eCorePropertyType GetCorePropertyType<Matrix>() { return eCorePropertyType::MATRIX; };
+		template <> inline eCorePropertyType GetCorePropertyType<UniqueID>() { return eCorePropertyType::UUID; };
 
 		//-----------------------------------------------------------------------------------------------------------------------
 		enum class ePropertyFlag {

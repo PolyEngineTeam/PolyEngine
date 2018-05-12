@@ -46,7 +46,7 @@
 #include "Rendering/PostprocessSettingsComponent.hpp"
 #include "Debugging/DebugDrawComponents.hpp"
 
-// World Components
+// Scene Components
 #include "Debugging/DebugWorldComponent.hpp"
 #include "Input/InputWorldComponent.hpp"
 #include "Audio/SoundWorldComponent.hpp"

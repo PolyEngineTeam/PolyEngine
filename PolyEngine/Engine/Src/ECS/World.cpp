@@ -3,7 +3,7 @@
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-World::World()
+Scene::Scene()
 	: EntitiesAllocator(MAX_ENTITY_COUNT)
 {
 	memset(ComponentAllocators, 0, sizeof(IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
@@ -13,7 +13,7 @@ World::World()
 }
 
 //------------------------------------------------------------------------------
-World::~World()
+Scene::~Scene()
 {
 	// copy entities
 	if(rootEntity)
@@ -31,7 +31,7 @@ World::~World()
 }
 
 //------------------------------------------------------------------------------
-Entity* World::SpawnEntity()
+Entity* Scene::SpawnEntity()
 {
 	Entity* ent = SpawnEntityInternal();
 	ent->SetParent(rootEntity.Get());
@@ -39,7 +39,7 @@ Entity* World::SpawnEntity()
 }
 
 //------------------------------------------------------------------------------
-Entity * Poly::World::SpawnEntityInternal()
+Entity * Poly::Scene::SpawnEntityInternal()
 {
 	Entity* ent = EntitiesAllocator.Alloc();
 	::new(ent) Entity(this);
@@ -47,7 +47,7 @@ Entity * Poly::World::SpawnEntityInternal()
 }
 
 //------------------------------------------------------------------------------
-void World::DestroyEntity(Entity* entity)
+void Scene::DestroyEntity(Entity* entity)
 {
 	HEAVY_ASSERTE(entity, "Invalid entity ID");
 
@@ -66,14 +66,14 @@ void World::DestroyEntity(Entity* entity)
 }
 
 //------------------------------------------------------------------------------
-bool World::HasWorldComponent(size_t ID) const
+bool Scene::HasWorldComponent(size_t ID) const
 {
 	HEAVY_ASSERTE(ID < MAX_WORLD_COMPONENTS_COUNT, "Invalid component ID - greater than MAX_WORLD_COMPONENTS_COUNT.");
 	return WorldComponents[ID] != nullptr;
 }
 
 //------------------------------------------------------------------------------
-void World::RemoveComponentById(Entity* ent, size_t id)
+void Scene::RemoveComponentById(Entity* ent, size_t id)
 {
 	HEAVY_ASSERTE(ent->Components[id], "Removing not present component");
 	ent->Components[id]->~ComponentBase();

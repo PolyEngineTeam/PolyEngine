@@ -19,7 +19,7 @@ UnlitRenderingPass::UnlitRenderingPass()
 	GetProgram().RegisterUniform("vec4", "Color");
 }
 
-void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
+void UnlitRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
 	GetProgram().BindProgram();
 	const Matrix& ScreenFromWorld = camera->GetScreenFromWorld();
