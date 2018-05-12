@@ -21,7 +21,7 @@ UniqueID UniqueID::Generate()
 
 	// 1. Generate 16 random bytes = 128 bits
 	for (size_t i = 0; i < ret.UUID.size(); ++i)
-		ret.UUID[i] = RandomRange(0x01, 0xFF);
+		ret.UUID[i] = RandomRange(0x00, 0xFF);
 
 	// 2. Adjust certain bits according to RFC 4122 section 4.4.
 	// This just means do the following
