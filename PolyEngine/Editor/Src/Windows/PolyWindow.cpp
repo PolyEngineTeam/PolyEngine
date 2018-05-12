@@ -5,6 +5,7 @@
 PolyWindow::PolyWindow()
 {
 	setAttribute(Qt::WA_DeleteOnClose);
+	setDockOptions(QMainWindow::AllowNestedDocks | QMainWindow::AllowTabbedDocks);
 }
 
 void PolyWindow::AddDockWindow(Qt::DockWidgetArea area, PolyDockWindow* wnd, bool isInitialization)

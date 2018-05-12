@@ -3,10 +3,10 @@
 #include <QFileDialog>
 
 PolyMainWindow::PolyMainWindow()
+	: PolyWindow()
 {
 	setWindowTitle("PolyEditor");
 	resize(1280, 720);;
-	setDockOptions(QMainWindow::AllowNestedDocks | QMainWindow::AllowTabbedDocks);
 
 	// menu bar
 	MenuBar = std::make_unique<QMenuBar>();
