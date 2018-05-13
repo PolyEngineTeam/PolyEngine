@@ -10,16 +10,15 @@ void RTTIViewerWidget::SetObject(RTTIBase* obj, bool debug)
 		Layout.release();
 
 	Layout = std::make_unique<QGridLayout>(this);
-	setLayout(Layout.get());
 
 	Layout->setColumnStretch(0, 1);
 	Layout->setColumnStretch(1, 3);
 
-	Layout->setRowStretch(50, 1);
-
 	Object = obj;
 
 	AddChild(Layout.get(), Object, debug);
+
+	setLayout(Layout.get());
 }
 
 void RTTIViewerWidget::UpdateViewer()
