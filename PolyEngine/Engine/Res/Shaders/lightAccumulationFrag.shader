@@ -68,25 +68,24 @@ vec3 GetIrradiance(Light light, vec3 toCamera, vec3 normal, vec3 diffuse)
 
 void main()
 {
-    vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
-    vec4 diffuse = texture(uDiffuseTexture, fragment_in.UV);
+    vec4 base_diffuse = texture(uDiffuseTexture, fragment_in.UV);
+    // vec4 base_specular = texture(texture_specular1, fragment_in.textureCoordinates);
     vec3 normal = texture(uNormalMap, fragment_in.UV).rgb;
-    normal = normal * 2.0 - 1.0;
+    normal = normalize(normal * 2.0 - 1.0);
+    vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
 
-    if (diffuse.a < 0.5)
+    if (base_diffuse.a < 0.5)
     {
         discard;
     }
 
-    if (isnan(normal.x) || dot(normal, normal) < 0.9)
-    {
-        normal = fragment_in.normal;
-    }
+    // if (isnan(normal.x) || dot(normal, normal) < 0.9)
+    // {
+    //     normal = fragment_in.normal;
+    // }
 
-    vec3 toCamera = normalize(fragment_in.tangentViewPosition - fragment_in.tangentFragmentPosition);
+    vec3 viewDirection = normalize(fragment_in.tangentViewPosition - fragment_in.tangentFragmentPosition);
  
-    color.rgb += vec3(0.0, 0.0, 0.001); // ambient
-
     ivec2 WorkGroupSize = ivec2(16, 16);
     ivec2 NumWorkGroups = ivec2(uWorkGroupsX, uWorkGroupsY);
     ivec2 WorkGroupID = (ivec2(gl_FragCoord.xy) / WorkGroupSize);
@@ -98,11 +97,42 @@ void main()
 	{
         int lightIndex = bVisibleLightIndicesBuffer.data[TileOffset + i].Index;
         Light light = bLightBuffer.data[lightIndex];
-        color.rgb += GetIrradiance(light, toCamera, normal, diffuse.rgb);
+
+
+        vec4 lightColor = light.Color;
+        vec3 tangentLightPosition = fragment_in.TBN * light.Position.xyz;
+        float lightRadius = light.RangeIntensity.x;
+        float lightIntensity = light.RangeIntensity.y;
+        float dist = length(fragment_in.positionInWorld.xyz - light.Position.xyz);
+        float falloff = pow(clamp(1.0 - pow(dist / lightRadius, 4.0), 0.0, 1.0), 2.0) / (pow(dist, 2.0) + 1.0);
+
+		// Calculate the light attenuation on the pre-normalized lightDirection
+        vec3 lightDirection = tangentLightPosition - fragment_in.tangentFragmentPosition;
+        // float attenuation = attenuate(lightDirection, lightRadius);
+
+		// Normalize the light direction and calculate the halfway vector
+        lightDirection = normalize(lightDirection);
+        vec3 halfway = normalize(lightDirection + viewDirection);
+
+		// Calculate the diffuse and specular components of the irradiance, then irradiance, and accumulate onto color
+        float diffuse = max(dot(lightDirection, normal), 0.0);
+		// How do I change the material propery for the spec exponent? is it the alpha of the spec texture?
+        float specular = pow(max(dot(normal, halfway), 0.0), 32.0);
+
+		// Hacky fix to handle issue where specular light still effects scene once point light has passed into an object
+        if (diffuse == 0.0)
+        {
+            specular = 0.0;
+        }
+
+        vec3 irradiance = lightIntensity * lightColor.rgb * ((base_diffuse.rgb * diffuse) + (0.1*base_diffuse.rgb * vec3(specular))) * falloff;
+        color.rgb += irradiance;
         
 		if (bVisibleLightIndicesBuffer.data[TileOffset + i + 1].Index == -1)
             break;
-    }		
+    }
+
+    color.rgb += vec3(0.0, 0.0, 0.001); // ambient
 
     oColor = color;
 }
