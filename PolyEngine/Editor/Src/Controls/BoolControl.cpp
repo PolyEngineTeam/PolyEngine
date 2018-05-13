@@ -2,42 +2,51 @@
 
 ASSIGN_CONTROL(BoolControl, BOOL)
 
+BoolControl::~BoolControl()
+{
+	delete True;
+	delete False;
+}
+
 void BoolControl::UpdateObject()
 {
-	*reinterpret_cast<bool*>(Object) = *Machine->configuration().begin() == True.get();
+	*reinterpret_cast<bool*>(Object) = *Machine->configuration().begin() == True;
 }
 
 void BoolControl::UpdateControl()
 {
 	Machine->stop();
-	Machine->setInitialState(*reinterpret_cast<bool*>(Object) ? True.get() : False.get());
+	Machine->setInitialState(*reinterpret_cast<bool*>(Object) ? True : False);
 	Machine->start();
 }
 
 void BoolControl::InitializeControl()
 {
-	Layout = std::make_unique<QGridLayout>();
-	setLayout(Layout.get());
+	Layout = new QGridLayout(this);
+	Layout->setSpacing(0);
+	Layout->setContentsMargins(0, 0, 0, 0);
 
-	Button = std::make_unique<QPushButton>(this);
-	Machine = std::make_unique<QStateMachine>(this);
+	Button = new QPushButton(this);
+	Machine = new QStateMachine(this);
 
-	Layout->addWidget(Button.get());
+	Layout->addWidget(Button);
 
-	False = std::make_unique<QState>();
-	False->assignProperty(Button.get(), "text", "False");
+	False = new QState();
+	False->assignProperty(Button, "text", "False");
 	False->setObjectName("false");
 
-	True = std::make_unique<QState>();
+	True = new QState();
 	True->setObjectName("true");
-	True->assignProperty(Button.get(), "text", "True");
+	True->assignProperty(Button, "text", "True");
 
-	False->addTransition(Button.get(), SIGNAL(clicked()), True.get());
-	True->addTransition(Button.get(), SIGNAL(clicked()), False.get());
+	False->addTransition(Button, SIGNAL(clicked()), True);
+	True->addTransition(Button, SIGNAL(clicked()), False);
 
-	Machine->addState(False.get());
-	Machine->addState(True.get());
+	Machine->addState(False);
+	Machine->addState(True);
 
-	Machine->setInitialState(*reinterpret_cast<bool*>(Object) ? True.get() : False.get());
+	Machine->setInitialState(*reinterpret_cast<bool*>(Object) ? True : False);
 	Machine->start();
+
+	setLayout(Layout);
 }

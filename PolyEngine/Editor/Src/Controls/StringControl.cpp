@@ -14,11 +14,14 @@ void StringControl::UpdateControl()
 
 void StringControl::InitializeControl()
 {
-	Layout = std::make_unique<QGridLayout>();
-	setLayout(Layout.get());
+	Layout = new QGridLayout(this);
+	Layout->setSpacing(0);
+	Layout->setContentsMargins(0, 0, 0, 0);
 
-	Field = std::make_unique<QLineEdit>(this);
+	Field = new QLineEdit(this);
 	Field->setText(reinterpret_cast<String*>(Object)->GetCStr());
 
-	Layout->addWidget(Field.get());
+	Layout->addWidget(Field);
+
+	setLayout(Layout);
 }

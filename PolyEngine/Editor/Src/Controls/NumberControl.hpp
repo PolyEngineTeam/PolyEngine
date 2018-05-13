@@ -15,7 +15,7 @@ public:
 private:
 	void InitializeControl() override;
 
-	std::unique_ptr<QLineEdit> Field;
-	std::unique_ptr<QValidator> Validator;
-	std::unique_ptr<QGridLayout> Layout;
+	QLineEdit* Field;
+	QValidator* Validator;
+	QGridLayout* Layout;
 };

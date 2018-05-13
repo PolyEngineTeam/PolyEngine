@@ -171,11 +171,13 @@ void EntityManagerWidget::UpdateWidget()
 
 		SectionContainer* section = new SectionContainer(cmp->GetTypeInfo().GetTypeName());
 		RTTIViewerWidget* viewer = new RTTIViewerWidget();
+
 		viewer->SetObject(cmp);
-		section->SetLayout(viewer->layout());
+
 		ComponentSections.PushBack(section);
 		ComponentWidgets.PushBack(viewer);
 
+		section->SetLayout(viewer->layout());
 		MainLayout->addWidget(section, row, 0, 1, 3);
 		++row;
 	}

@@ -97,21 +97,22 @@ void NumberControl::InitializeControl()
 {
 	// TODO(squares): write validator for INT32 and INT64
 
-	Layout = std::make_unique<QGridLayout>();
-	setLayout(Layout.get());
+	Layout = new QGridLayout(this);
+	Layout->setSpacing(0);
+	Layout->setContentsMargins(0, 0, 0, 0);
 
-	Field = std::make_unique<QLineEdit>(this);
+	Field = new QLineEdit(this);
 
-	Layout->addWidget(Field.get());
+	Layout->addWidget(Field);
 
 	switch (Property->CoreType)
 	{
 	case RTTI::eCorePropertyType::INT8:
-		//Validator = std::make_unique<QIntValidator>(-128, 127);
+		//Validator = new QIntValidator(-128, 127);
 		Field->setText(QString::number(*reinterpret_cast<i8*>(Object)));
 		break;
 	case RTTI::eCorePropertyType::INT16:
-		//Validator = std::make_unique<QIntValidator>(-32768, 32767);
+		//Validator = new QIntValidator(-32768, 32767);
 		Field->setText(QString::number(*reinterpret_cast<i16*>(Object)));
 		break;
 	case RTTI::eCorePropertyType::INT32:
@@ -121,11 +122,11 @@ void NumberControl::InitializeControl()
 		Field->setText(QString::number(*reinterpret_cast<i64*>(Object)));
 		break;
 	case RTTI::eCorePropertyType::UINT8:
-		//Validator = std::make_unique<QIntValidator>(0, 255);
+		//Validator = new QIntValidator(0, 255);
 		Field->setText(QString::number(*reinterpret_cast<u8*>(Object)));
 		break;
 	case RTTI::eCorePropertyType::UINT16:
-		Validator = std::make_unique<QIntValidator>(0, 65536);
+		Validator = new QIntValidator(0, 65536);
 		Field->setText(QString::number(*reinterpret_cast<u16*>(Object)));
 		break;
 	case RTTI::eCorePropertyType::UINT32:
@@ -135,16 +136,18 @@ void NumberControl::InitializeControl()
 		Field->setText(QString::number(*reinterpret_cast<u64*>(Object)));
 		break;
 	case RTTI::eCorePropertyType::FLOAT:
-		//Validator = std::make_unique<QDoubleValidator>(-3.4E+38, +3.4E+38, 7);
+		//Validator = new QDoubleValidator(-3.4E+38, +3.4E+38, 7);
 		Field->setText(QString::number(*reinterpret_cast<f32*>(Object)));
 		break;
 	case RTTI::eCorePropertyType::DOUBLE:
-		//Validator = std::make_unique<QDoubleValidator>(-1.7E+308, +1.7E+308, 16);
+		//Validator = new QDoubleValidator>(-1.7E+308, +1.7E+308, 16);
 		Field->setText(QString::number(*reinterpret_cast<f64*>(Object)));
 		break;
 	default:
 		ASSERTE(false, "Not supported type");
 	}
 
-	Field->setValidator(Validator.get());
+	Field->setValidator(Validator);
+
+	setLayout(Layout);
 }

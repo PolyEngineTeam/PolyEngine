@@ -15,5 +15,5 @@ public:
 private:
 	void InitializeControl() override;
 
-	std::unique_ptr<QComboBox> ComboBox;
+	QComboBox* ComboBox;
 };

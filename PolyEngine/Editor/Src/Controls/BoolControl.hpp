@@ -9,6 +9,7 @@ class BoolControl : public ControlBase
 {
 public:
 	BoolControl() = default;
+	~BoolControl();
 
 	void UpdateObject() override;
 	void UpdateControl() override;
@@ -16,10 +17,10 @@ public:
 private:
 	void InitializeControl() override;
 
-	std::unique_ptr<QPushButton> Button;
-	std::unique_ptr<QStateMachine> Machine;
-	std::unique_ptr<QGridLayout> Layout;
+	QPushButton* Button;
+	QStateMachine* Machine;
+	QGridLayout* Layout;
 
-	std::unique_ptr<QState> False;
-	std::unique_ptr<QState> True;
+	QState* False;
+	QState* True;
 };

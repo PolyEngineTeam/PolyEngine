@@ -2,17 +2,20 @@
 
 void PlaceHolderControl::InitializeControl()
 {
-	Layout = std::make_unique<QGridLayout>();
-	setLayout(Layout.get());
+	Layout = new QGridLayout(this);
+	Layout->setSpacing(0);
+	Layout->setContentsMargins(0, 0, 0, 0);
 
 	QPalette disabledEditPalette;
 	disabledEditPalette.setColor(QPalette::Base, QColor(218, 218, 218));
 	disabledEditPalette.setColor(QPalette::Text, Qt::black);
 
-	Field = std::make_unique<QLineEdit>(this);
+	Field = new QLineEdit(this);
 	Field->setText("this is placeholder control for some type...");
 	Field->setReadOnly(true);
 	Field->setPalette(disabledEditPalette);
 
-	Layout->addWidget(Field.get());
+	Layout->addWidget(Field);
+
+	setLayout(Layout);
 }
