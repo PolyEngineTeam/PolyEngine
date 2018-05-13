@@ -18,4 +18,5 @@ void PlaceHolderControl::InitializeControl()
 	Layout->addWidget(Field);
 
 	setLayout(Layout);
+	setToolTip(":P");
 }

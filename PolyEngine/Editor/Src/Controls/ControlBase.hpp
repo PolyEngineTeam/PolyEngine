@@ -33,7 +33,7 @@ class ControlBase : public QWidget
 public:
 	ControlBase() = default;
 
-	void SetObject(void* ptr, const RTTI::Property* prop) { Object = ptr; Property = prop; InitializeControl(); };
+	void SetObject(void* ptr, const RTTI::Property* prop);
 	virtual void UpdateObject() = 0;
 	virtual void UpdateControl() = 0;
 

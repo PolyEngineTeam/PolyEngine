@@ -24,4 +24,5 @@ void StringControl::InitializeControl()
 	Layout->addWidget(Field);
 
 	setLayout(Layout);
+	setToolTip("STRING");
 }

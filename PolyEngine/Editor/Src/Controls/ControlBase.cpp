@@ -24,3 +24,10 @@ namespace Impl
 		return where;
 	}
 }
+
+void ControlBase::SetObject(void* ptr, const RTTI::Property* prop)
+{
+	Object = ptr; 
+	Property = prop; 
+	InitializeControl(); 
+}

@@ -49,4 +49,5 @@ void BoolControl::InitializeControl()
 	Machine->start();
 
 	setLayout(Layout);
+	setToolTip("BOOL");
 }
