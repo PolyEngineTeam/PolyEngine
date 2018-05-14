@@ -38,7 +38,7 @@ void EditorUi::Init()
 	window->hide();
 
 	// entity manager
-	EntityMgr = new EntityManagerWidget();
+	EntityMgr = new EntityInspectorWidget();
 	window = new PolyDockWindow("Entity Manager", EntityMgr);
 	DockWindows.PushBack(window);
 	MainWindow->AddDockWindow(Qt::DockWidgetArea::RightDockWidgetArea, window, true);

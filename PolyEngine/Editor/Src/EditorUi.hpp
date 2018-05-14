@@ -3,8 +3,9 @@
 #include "Windows/PolyMainWindow.hpp"
 #include "Widgets/ViewportWidget.hpp"
 #include "Widgets/LoggerWidget.hpp"
-#include "Widgets/EntityManagerWidget.hpp"
-#include "Widgets/WorldExplorerWidget.hpp"
+
+class WorldExplorerWidget;
+class EntityInspectorWidget;
 
 class EditorUi : public QObject
 {
@@ -21,7 +22,7 @@ public:
 	LoggerWidget* MainLogger;
 	LoggerWidget* CmdLogger;
 	WorldExplorerWidget* WorldExplorer;
-	EntityManagerWidget* EntityMgr;
+	EntityInspectorWidget* EntityMgr;
 
 private:
 	PolyMainWindow* MainWindow;
