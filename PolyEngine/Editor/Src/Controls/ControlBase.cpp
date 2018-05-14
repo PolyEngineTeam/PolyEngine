@@ -4,10 +4,12 @@ namespace Impl
 {
 	ControlCreator* CoreTypeToControlMap = 0;
 
+	//------------------------------------------------------------------------------
 	void* ControlCreator::operator new(size_t, void* where)
 	{
 		static bool mapInitialized = false;
 
+		// if cntrol creator is created for the firt time, memory must be allocated for CoreTypeToControlMap
 		if (!mapInitialized)
 		{
 			mapInitialized = true;
@@ -25,6 +27,7 @@ namespace Impl
 	}
 }
 
+//------------------------------------------------------------------------------
 void ControlBase::SetObject(void* ptr, const RTTI::Property* prop)
 {
 	Object = ptr; 
