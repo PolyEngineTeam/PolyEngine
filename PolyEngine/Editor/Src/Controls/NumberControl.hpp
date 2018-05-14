@@ -8,7 +8,6 @@ class NumberControl : public ControlBase
 {
 public:
 	NumberControl();
-	~NumberControl();
 
 	void UpdateObject() override;
 	void UpdateControl() override;

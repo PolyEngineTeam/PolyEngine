@@ -9,6 +9,7 @@ StringControl::StringControl()
 	Layout->setContentsMargins(0, 0, 0, 0);
 
 	Field = new QLineEdit();
+	connect(Field, &QLineEdit::editingFinished, this, &ControlBase::Confirm);
 
 	Layout->addWidget(Field);
 

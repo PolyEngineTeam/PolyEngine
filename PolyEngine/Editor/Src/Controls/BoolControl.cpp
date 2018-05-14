@@ -9,9 +9,10 @@ BoolControl::BoolControl()
 	Layout->setContentsMargins(0, 0, 0, 0);
 
 	Button = new QPushButton(this);
-	Machine = new QStateMachine(this);
-
+	connect(Button, &QPushButton::clicked, this, &ControlBase::Confirm);
 	Layout->addWidget(Button);
+
+	Machine = new QStateMachine(this);
 
 	False = new QState();
 	False->setObjectName("false");
@@ -23,8 +24,6 @@ BoolControl::BoolControl()
 
 	False->addTransition(Button, SIGNAL(clicked()), True);
 	True->addTransition(Button, SIGNAL(clicked()), False);
-
-	connect(Button, &QPushButton::clicked, this, &BoolControl::Clicked);
 
 	Machine->addState(False);
 	Machine->addState(True);

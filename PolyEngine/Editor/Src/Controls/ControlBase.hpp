@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <qtimer.h>
 
 #include <RTTI/RTTI.hpp>
 
@@ -37,18 +38,23 @@ public:
 	virtual void UpdateObject() = 0;
 	virtual void UpdateControl() = 0;
 
-	virtual bool GetUpdateOnFocusOut() { return UpdateOnFocusOut; }
-	virtual void GetUpdateOnFocusOut(bool val) { UpdateOnFocusOut = val; }
-
 	static ControlBase* CreateControl(RTTI::eCorePropertyType type) 
 	{ 
 		return ::Impl::CoreTypeToControlMap[static_cast<int>(type)]();
 	}
 
+	bool ASAPUpdate = true;
+
 protected:
-	bool UpdateOnFocusOut = true;
 	void* Object = nullptr;
 	const RTTI::Property* Property;
+
+public slots:
+	void Confirm()
+	{
+		if (ASAPUpdate)
+			QTimer::singleShot(1, this, [object = this]() { object->UpdateObject(); });
+	}
 };
 
 #define ASSIGN_CONTROL(CONTROL, CORE_TYPE) \

@@ -23,14 +23,11 @@ NumberControl::NumberControl()
 	Layout->setContentsMargins(0, 0, 0, 0);
 
 	Field = new QLineEdit(this);
+	connect(Field, &QLineEdit::editingFinished, this, &ControlBase::Confirm);
 
 	Layout->addWidget(Field);
 
 	setLayout(Layout);
-}
-
-NumberControl::~NumberControl()
-{
 }
 
 void NumberControl::UpdateObject()

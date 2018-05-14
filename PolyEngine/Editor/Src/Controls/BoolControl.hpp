@@ -21,10 +21,4 @@ private:
 
 	QState* False;
 	QState* True;
-
-private slots:
-	void Clicked() 
-	{
-		QTimer::singleShot(1, this, [object = this]() { object->UpdateObject(); });
-	}
 };
