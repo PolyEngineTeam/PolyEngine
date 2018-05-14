@@ -14,8 +14,8 @@ BoolControl::BoolControl()
 	Layout->addWidget(Button);
 
 	False = new QState();
-	False->assignProperty(Button, "text", "False");
 	False->setObjectName("false");
+	False->assignProperty(Button, "text", "False");
 
 	True = new QState();
 	True->setObjectName("true");
@@ -27,7 +27,7 @@ BoolControl::BoolControl()
 	Machine->addState(False);
 	Machine->addState(True);
 
-	Machine->setInitialState(*reinterpret_cast<bool*>(Object) ? True : False);
+	Machine->setInitialState(False);
 	Machine->start();
 
 	setLayout(Layout);
@@ -47,7 +47,5 @@ void BoolControl::UpdateObject()
 
 void BoolControl::UpdateControl()
 {
-	Machine->stop();
 	Machine->setInitialState(*reinterpret_cast<bool*>(Object) ? True : False);
-	Machine->start();
 }

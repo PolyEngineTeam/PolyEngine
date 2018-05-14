@@ -15,6 +15,5 @@ public:
 
 private:
 	QLineEdit* Field;
-	QValidator* Validator;
 	QGridLayout* Layout;
 };

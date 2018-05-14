@@ -9,7 +9,6 @@ StringControl::StringControl()
 	Layout->setContentsMargins(0, 0, 0, 0);
 
 	Field = new QLineEdit();
-	Field->setText(reinterpret_cast<String*>(Object)->GetCStr());
 
 	Layout->addWidget(Field);
 
