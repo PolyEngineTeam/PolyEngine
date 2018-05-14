@@ -7,14 +7,13 @@
 class NumberControl : public ControlBase
 {
 public:
-	NumberControl() = default;
+	NumberControl();
+	~NumberControl();
 
 	void UpdateObject() override;
 	void UpdateControl() override;
 
 private:
-	void InitializeControl() override;
-
 	QLineEdit* Field;
 	QValidator* Validator;
 	QGridLayout* Layout;

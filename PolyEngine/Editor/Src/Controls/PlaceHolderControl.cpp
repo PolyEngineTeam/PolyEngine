@@ -1,6 +1,6 @@
 #include "PlaceHolderControl.hpp"
 
-void PlaceHolderControl::InitializeControl()
+PlaceHolderControl::PlaceHolderControl()
 {
 	Layout = new QGridLayout(this);
 	Layout->setSpacing(0);

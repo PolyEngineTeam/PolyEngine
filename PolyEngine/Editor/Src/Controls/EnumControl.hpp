@@ -13,7 +13,5 @@ public:
 	void UpdateControl() override;
 
 private:
-	void InitializeControl() override;
-
 	QComboBox* ComboBox;
 };

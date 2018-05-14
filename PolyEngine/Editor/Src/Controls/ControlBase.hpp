@@ -37,21 +37,18 @@ public:
 	virtual void UpdateObject() = 0;
 	virtual void UpdateControl() = 0;
 
+	virtual bool GetUpdateOnFocusOut() { return UpdateOnFocusOut; }
+	virtual void GetUpdateOnFocusOut(bool val) { UpdateOnFocusOut = val; }
+
 	static ControlBase* CreateControl(RTTI::eCorePropertyType type) 
 	{ 
 		return ::Impl::CoreTypeToControlMap[static_cast<int>(type)]();
 	}
 
-	bool UpdateOnFocusOut = true;
-
 protected:
-	virtual void InitializeControl() = 0;
-
-	void* Object;
+	bool UpdateOnFocusOut = true;
+	void* Object = nullptr;
 	const RTTI::Property* Property;
-
-private:
-	void focusOutEvent(QFocusEvent *event) { if (UpdateOnFocusOut) UpdateControl(); }
 };
 
 #define ASSIGN_CONTROL(CONTROL, CORE_TYPE) \

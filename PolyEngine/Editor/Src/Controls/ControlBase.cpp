@@ -29,5 +29,5 @@ void ControlBase::SetObject(void* ptr, const RTTI::Property* prop)
 {
 	Object = ptr; 
 	Property = prop; 
-	InitializeControl(); 
+	UpdateControl(); 
 }

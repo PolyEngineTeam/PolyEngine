@@ -1,32 +1,34 @@
 #include "PolyEditorPCH.hpp"
 
-RTTIViewerWidget::RTTIViewerWidget()
-{
-}
-
 void RTTIViewerWidget::SetObject(RTTIBase* obj, bool debug)
 {
 	if (Layout)
-		Layout.release();
+	{
+		delete Layout;
 
-	Layout = std::make_unique<QGridLayout>(this);
+	}
 
+	Layout = new QGridLayout(this);
 	Layout->setColumnStretch(0, 1);
 	Layout->setColumnStretch(1, 3);
 
 	Object = obj;
 
-	AddChild(Layout.get(), Object, debug);
+	AddChild(Layout, Object, debug);
 
-	setLayout(Layout.get());
+	setLayout(Layout);
 }
 
 void RTTIViewerWidget::UpdateViewer()
 {
+	for (auto field : Fields)
+		field->UpdateControl();
 }
 
 void RTTIViewerWidget::UpdateObject()
 {
+	for (auto field : Fields)
+		field->UpdateObject();
 }
 
 void RTTIViewerWidget::AddChild(QGridLayout* parent, RTTIBase* obj, bool debug)
@@ -54,6 +56,7 @@ void RTTIViewerWidget::AddChild(QGridLayout* parent, RTTIBase* obj, bool debug)
 void RTTIViewerWidget::AddItem(QGridLayout* parent, void* ptr, const RTTI::Property& prop)
 {
 	ControlBase* field = ControlBase::CreateControl(prop.CoreType);
+	field->SetObject(ptr, &prop);
 	field->SetObject(ptr, &prop);
 
 	QLabel* label = new QLabel();

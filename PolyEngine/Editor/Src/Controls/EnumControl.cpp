@@ -11,7 +11,3 @@ void EnumControl::UpdateObject()
 void EnumControl::UpdateControl()
 {
 }
-
-void EnumControl::InitializeControl()
-{
-}

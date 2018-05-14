@@ -14,6 +14,81 @@ ASSIGN_CONTROL(NumberControl, UINT64)
 ASSIGN_CONTROL(NumberControl, FLOAT)
 ASSIGN_CONTROL(NumberControl, DOUBLE)
 
+NumberControl::NumberControl()
+{
+	// TODO(squares): write validator for INT32 and INT64
+
+	Layout = new QGridLayout(this);
+	Layout->setSpacing(0);
+	Layout->setContentsMargins(0, 0, 0, 0);
+
+	Field = new QLineEdit(this);
+
+	Layout->addWidget(Field);
+
+	switch (Property->CoreType)
+	{
+	case RTTI::eCorePropertyType::INT8:
+		//Validator = new QIntValidator(-128, 127);
+		Field->setText(QString::number(*reinterpret_cast<i8*>(Object)));
+		setToolTip("INT8");
+		break;
+	case RTTI::eCorePropertyType::INT16:
+		//Validator = new QIntValidator(-32768, 32767);
+		Field->setText(QString::number(*reinterpret_cast<i16*>(Object)));
+		setToolTip("INT16");
+		break;
+	case RTTI::eCorePropertyType::INT32:
+		Field->setText(QString::number(*reinterpret_cast<i32*>(Object)));
+		setToolTip("INT32");
+		break;
+	case RTTI::eCorePropertyType::INT64:
+		Field->setText(QString::number(*reinterpret_cast<i64*>(Object)));
+		setToolTip("INT64");
+		break;
+	case RTTI::eCorePropertyType::UINT8:
+		//Validator = new QIntValidator(0, 255);
+		Field->setText(QString::number(*reinterpret_cast<u8*>(Object)));
+		setToolTip("UINT8");
+		break;
+	case RTTI::eCorePropertyType::UINT16:
+		Validator = new QIntValidator(0, 65536);
+		Field->setText(QString::number(*reinterpret_cast<u16*>(Object)));
+		setToolTip("UINT16");
+		break;
+	case RTTI::eCorePropertyType::UINT32:
+		Field->setText(QString::number(*reinterpret_cast<u32*>(Object)));
+		setToolTip("UINT32");
+		break;
+	case RTTI::eCorePropertyType::UINT64:
+		Field->setText(QString::number(*reinterpret_cast<u64*>(Object)));
+		setToolTip("UINT64");
+		break;
+	case RTTI::eCorePropertyType::FLOAT:
+		//Validator = new QDoubleValidator(-3.4E+38, +3.4E+38, 7);
+		Field->setText(QString::number(*reinterpret_cast<f32*>(Object)));
+		setToolTip("FLOAT");
+		break;
+	case RTTI::eCorePropertyType::DOUBLE:
+		//Validator = new QDoubleValidator>(-1.7E+308, +1.7E+308, 16);
+		Field->setText(QString::number(*reinterpret_cast<f64*>(Object)));
+		setToolTip("DOUBLE");
+		break;
+	default:
+		ASSERTE(false, "Not supported type");
+	}
+
+	Field->setValidator(Validator);
+
+	setLayout(Layout);
+}
+
+NumberControl::~NumberControl()
+{
+	if (Validator)
+		delete Validator;
+}
+
 void NumberControl::UpdateObject()
 {
 	switch (Property->CoreType)
@@ -91,73 +166,4 @@ void NumberControl::UpdateControl()
 	default:
 		ASSERTE(false, "Not supported type");
 	}
-}
-
-void NumberControl::InitializeControl()
-{
-	// TODO(squares): write validator for INT32 and INT64
-
-	Layout = new QGridLayout(this);
-	Layout->setSpacing(0);
-	Layout->setContentsMargins(0, 0, 0, 0);
-
-	Field = new QLineEdit(this);
-
-	Layout->addWidget(Field);
-
-	switch (Property->CoreType)
-	{
-	case RTTI::eCorePropertyType::INT8:
-		//Validator = new QIntValidator(-128, 127);
-		Field->setText(QString::number(*reinterpret_cast<i8*>(Object)));
-		setToolTip("INT8");
-		break;
-	case RTTI::eCorePropertyType::INT16:
-		//Validator = new QIntValidator(-32768, 32767);
-		Field->setText(QString::number(*reinterpret_cast<i16*>(Object)));
-		setToolTip("INT16");
-		break;
-	case RTTI::eCorePropertyType::INT32:
-		Field->setText(QString::number(*reinterpret_cast<i32*>(Object)));
-		setToolTip("INT32");
-		break;
-	case RTTI::eCorePropertyType::INT64:
-		Field->setText(QString::number(*reinterpret_cast<i64*>(Object)));
-		setToolTip("INT64");
-		break;
-	case RTTI::eCorePropertyType::UINT8:
-		//Validator = new QIntValidator(0, 255);
-		Field->setText(QString::number(*reinterpret_cast<u8*>(Object)));
-		setToolTip("UINT8");
-		break;
-	case RTTI::eCorePropertyType::UINT16:
-		Validator = new QIntValidator(0, 65536);
-		Field->setText(QString::number(*reinterpret_cast<u16*>(Object)));
-		setToolTip("UINT16");
-		break;
-	case RTTI::eCorePropertyType::UINT32:
-		Field->setText(QString::number(*reinterpret_cast<u32*>(Object)));
-		setToolTip("UINT32");
-		break;
-	case RTTI::eCorePropertyType::UINT64:
-		Field->setText(QString::number(*reinterpret_cast<u64*>(Object)));
-		setToolTip("UINT64");
-		break;
-	case RTTI::eCorePropertyType::FLOAT:
-		//Validator = new QDoubleValidator(-3.4E+38, +3.4E+38, 7);
-		Field->setText(QString::number(*reinterpret_cast<f32*>(Object)));
-		setToolTip("FLOAT");
-		break;
-	case RTTI::eCorePropertyType::DOUBLE:
-		//Validator = new QDoubleValidator>(-1.7E+308, +1.7E+308, 16);
-		Field->setText(QString::number(*reinterpret_cast<f64*>(Object)));
-		setToolTip("DOUBLE");
-		break;
-	default:
-		ASSERTE(false, "Not supported type");
-	}
-
-	Field->setValidator(Validator);
-
-	setLayout(Layout);
 }

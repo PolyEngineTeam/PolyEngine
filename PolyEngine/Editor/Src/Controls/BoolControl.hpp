@@ -8,15 +8,13 @@
 class BoolControl : public ControlBase
 {
 public:
-	BoolControl() = default;
+	BoolControl();
 	~BoolControl();
 
 	void UpdateObject() override;
 	void UpdateControl() override;
 
 private:
-	void InitializeControl() override;
-
 	QPushButton* Button;
 	QStateMachine* Machine;
 	QGridLayout* Layout;

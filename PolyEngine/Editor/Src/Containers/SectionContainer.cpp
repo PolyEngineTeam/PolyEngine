@@ -6,19 +6,19 @@ SectionContainer::SectionContainer(const QString& title, QWidget* parent, int an
 	: QWidget(parent), AnimationDuration(animationDuration)
 {
 	// create main container area
-	Content = std::make_unique<QScrollArea>();
+	Content = new QScrollArea(this);
 	Content->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	// start out collapsed
 	Content->setMaximumHeight(0);
 	Content->setMinimumHeight(0);
 
 	// create layout for all items like arrow or separator
-	Layout = std::make_unique<QGridLayout>();
+	Layout = new QGridLayout(this);
 	Layout->setVerticalSpacing(0);
 	Layout->setContentsMargins(0, 0, 0, 0);
 
 	// create nice arrow button
-	Button = std::make_unique<QToolButton>();
+	Button = new QToolButton(this);
 	Button->setStyleSheet("QToolButton {border: none;}");
 	Button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 	Button->setArrowType(Qt::ArrowType::RightArrow);
@@ -27,25 +27,25 @@ SectionContainer::SectionContainer(const QString& title, QWidget* parent, int an
 	Button->setChecked(false);
 
 	// create separator
-	HLine = std::make_unique<QFrame>();
+	HLine = new QFrame(this);
 	HLine->setFrameShape(QFrame::HLine);
 	HLine->setFrameShadow(QFrame::Sunken);
 	HLine->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
 
 	// create nice animation
-	Animation = std::make_unique<QParallelAnimationGroup>();
+	Animation = new QParallelAnimationGroup(this);
 	Animation->addAnimation(new QPropertyAnimation(this, "minimumHeight"));
 	Animation->addAnimation(new QPropertyAnimation(this, "maximumHeight"));
-	Animation->addAnimation(new QPropertyAnimation(Content.get(), "maximumHeight"));
+	Animation->addAnimation(new QPropertyAnimation(Content, "maximumHeight"));
 
 	// add everything to main layout
-	Layout->addWidget(Button.get(), 0, 1, 1, 1, Qt::AlignLeft);
-	Layout->addWidget(HLine.get(), 0, 3, 1, 1);
-	Layout->addWidget(Content.get(), 1, 1, 1, 3);
-	setLayout(Layout.get());
+	Layout->addWidget(Button, 0, 1, 1, 1, Qt::AlignLeft);
+	Layout->addWidget(HLine, 0, 3, 1, 1);
+	Layout->addWidget(Content, 1, 1, 1, 3);
+	setLayout(Layout);
 
 	// connect animatiom to button
-	QObject::connect(Button.get(), &QToolButton::clicked, [this](const bool checked)
+	QObject::connect(Button, &QToolButton::clicked, [this](const bool checked)
 	{
 		Button->setArrowType(checked ? Qt::ArrowType::DownArrow : Qt::ArrowType::RightArrow);
 		Animation->setDirection(checked ? QAbstractAnimation::Forward : QAbstractAnimation::Backward);

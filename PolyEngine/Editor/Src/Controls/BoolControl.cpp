@@ -2,25 +2,7 @@
 
 ASSIGN_CONTROL(BoolControl, BOOL)
 
-BoolControl::~BoolControl()
-{
-	delete True;
-	delete False;
-}
-
-void BoolControl::UpdateObject()
-{
-	*reinterpret_cast<bool*>(Object) = *Machine->configuration().begin() == True;
-}
-
-void BoolControl::UpdateControl()
-{
-	Machine->stop();
-	Machine->setInitialState(*reinterpret_cast<bool*>(Object) ? True : False);
-	Machine->start();
-}
-
-void BoolControl::InitializeControl()
+BoolControl::BoolControl()
 {
 	Layout = new QGridLayout(this);
 	Layout->setSpacing(0);
@@ -50,4 +32,22 @@ void BoolControl::InitializeControl()
 
 	setLayout(Layout);
 	setToolTip("BOOL");
+}
+
+BoolControl::~BoolControl()
+{
+	delete True;
+	delete False;
+}
+
+void BoolControl::UpdateObject()
+{
+	*reinterpret_cast<bool*>(Object) = *Machine->configuration().begin() == True;
+}
+
+void BoolControl::UpdateControl()
+{
+	Machine->stop();
+	Machine->setInitialState(*reinterpret_cast<bool*>(Object) ? True : False);
+	Machine->start();
 }

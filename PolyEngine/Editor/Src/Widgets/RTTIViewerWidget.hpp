@@ -5,12 +5,14 @@
 
 #include "Widgets/PolyWidget.hpp"
 
+class ControlBase;
+
 using namespace Poly;
 
 class RTTIViewerWidget : public PolyWidget
 {
 public:
-	RTTIViewerWidget();
+	RTTIViewerWidget() = default;
 
 	void SetObject(RTTIBase* obj, bool debug = false);
 
@@ -22,6 +24,9 @@ private:
 	void AddItem(QGridLayout* parent, void* ptr, const RTTI::Property& prop);
 
 	RTTIBase* Object;
-	std::unique_ptr<QGridLayout> Layout;
-	Dynarray<QObject*> Fields;
+
+	QGridLayout* Layout;
+
+	Dynarray<ControlBase*> Fields;
+	Dynarray<QLabel*> Labels;
 };

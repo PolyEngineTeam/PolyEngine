@@ -17,11 +17,11 @@ public:
 	void SetLayout(QLayout* layout);
 
 private:
-	std::unique_ptr<QScrollArea> Content;
+	QScrollArea* Content;
 
-	std::unique_ptr<QGridLayout> Layout;
-	std::unique_ptr<QToolButton> Button;
-	std::unique_ptr<QFrame> HLine;
-	std::unique_ptr<QParallelAnimationGroup> Animation;
+	QGridLayout* Layout;
+	QToolButton* Button;
+	QFrame* HLine;
+	QParallelAnimationGroup* Animation;
 	int AnimationDuration;
 };
