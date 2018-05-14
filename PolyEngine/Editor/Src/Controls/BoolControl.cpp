@@ -24,6 +24,8 @@ BoolControl::BoolControl()
 	False->addTransition(Button, SIGNAL(clicked()), True);
 	True->addTransition(Button, SIGNAL(clicked()), False);
 
+	connect(Button, &QPushButton::clicked, this, &BoolControl::Clicked);
+
 	Machine->addState(False);
 	Machine->addState(True);
 
