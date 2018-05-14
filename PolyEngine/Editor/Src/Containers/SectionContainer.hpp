@@ -7,19 +7,22 @@
 #include <QToolButton>
 #include <QWidget>
 
-
-//TODO(squares): create PolyControl
 class SectionContainer : public QWidget 
 {
 public:
 	SectionContainer(const QString& title, QWidget* parent = nullptr, int animationDuration = 100);
 
 	void SetLayout(QLayout* layout);
+	void SetWidget(QWidget* widget);
 
 private:
-	QScrollArea* Content;
+	void Init();
 
-	QGridLayout* Layout;
+	QLayout* ContentLayout = nullptr;
+
+	QScrollArea* ScrollArea;
+	QGridLayout* MainLayout;
+
 	QToolButton* Button;
 	QFrame* HLine;
 	QParallelAnimationGroup* Animation;

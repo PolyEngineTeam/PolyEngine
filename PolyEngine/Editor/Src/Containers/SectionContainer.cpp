@@ -6,16 +6,17 @@ SectionContainer::SectionContainer(const QString& title, QWidget* parent, int an
 	: QWidget(parent), AnimationDuration(animationDuration)
 {
 	// create main container area
-	Content = new QScrollArea(this);
-	Content->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	ScrollArea = new QScrollArea(this);
+	ScrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
 	// start out collapsed
-	Content->setMaximumHeight(0);
-	Content->setMinimumHeight(0);
+	ScrollArea->setMaximumHeight(0);
+	ScrollArea->setMinimumHeight(0);
 
 	// create layout for all items like arrow or separator
-	Layout = new QGridLayout(this);
-	Layout->setVerticalSpacing(0);
-	Layout->setContentsMargins(0, 0, 0, 0);
+	MainLayout = new QGridLayout(this);
+	MainLayout->setVerticalSpacing(0);
+	MainLayout->setContentsMargins(0, 0, 0, 0);
 
 	// create nice arrow button
 	Button = new QToolButton(this);
@@ -36,13 +37,13 @@ SectionContainer::SectionContainer(const QString& title, QWidget* parent, int an
 	Animation = new QParallelAnimationGroup(this);
 	Animation->addAnimation(new QPropertyAnimation(this, "minimumHeight"));
 	Animation->addAnimation(new QPropertyAnimation(this, "maximumHeight"));
-	Animation->addAnimation(new QPropertyAnimation(Content, "maximumHeight"));
+	Animation->addAnimation(new QPropertyAnimation(ScrollArea, "maximumHeight"));
 
 	// add everything to main layout
-	Layout->addWidget(Button, 0, 1, 1, 1, Qt::AlignLeft);
-	Layout->addWidget(HLine, 0, 3, 1, 1);
-	Layout->addWidget(Content, 1, 1, 1, 3);
-	setLayout(Layout);
+	MainLayout->addWidget(Button, 0, 1, 1, 1, Qt::AlignLeft);
+	MainLayout->addWidget(HLine, 0, 3, 1, 1);
+	MainLayout->addWidget(ScrollArea, 1, 1, 1, 3);
+	setLayout(MainLayout);
 
 	// connect animatiom to button
 	QObject::connect(Button, &QToolButton::clicked, [this](const bool checked)
@@ -55,10 +56,45 @@ SectionContainer::SectionContainer(const QString& title, QWidget* parent, int an
 
 void SectionContainer::SetLayout(QLayout* layout)
 {
-	delete Content->layout();
-	Content->setLayout(layout);
-	const auto collapsedHeight = sizeHint().height() - Content->maximumHeight();
-	auto contentHeight = layout->sizeHint().height();
+	if (ContentLayout)
+	{
+		QLayoutItem* child;
+
+		while ((child = ContentLayout->takeAt(0)) != 0)
+			delete child;
+
+		delete ContentLayout;
+	}
+
+	ContentLayout = layout;
+	Init();
+}
+
+void SectionContainer::SetWidget(QWidget* widget)
+{
+	if (ContentLayout)
+	{
+		QLayoutItem* child;
+
+		while ((child = ContentLayout->takeAt(0)) != 0)
+			delete child;
+
+		delete ContentLayout;
+	}
+
+	ContentLayout = new QGridLayout();
+	ContentLayout->addWidget(widget);
+	static_cast<QGridLayout*>(ContentLayout)->setVerticalSpacing(0);
+	static_cast<QGridLayout*>(ContentLayout)->setContentsMargins(0, 0, 0, 0);
+
+	Init();
+}
+
+void SectionContainer::Init()
+{
+	ScrollArea->setLayout(ContentLayout);
+	const auto collapsedHeight = sizeHint().height() - ScrollArea->maximumHeight();
+	auto contentHeight = ContentLayout->sizeHint().height();
 
 	for (int i = 0; i < Animation->animationCount() - 1; ++i)
 	{
@@ -73,3 +109,4 @@ void SectionContainer::SetLayout(QLayout* layout)
 	contentAnimation->setStartValue(0);
 	contentAnimation->setEndValue(contentHeight);
 }
+
