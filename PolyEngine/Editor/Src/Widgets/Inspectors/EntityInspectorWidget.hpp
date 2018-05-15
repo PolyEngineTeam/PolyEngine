@@ -37,6 +37,8 @@ private:
 
 	QGridLayout* MainLayout;
 	QMenu* ContextMenu;
+		QAction* AddComponentAction;
+		QAction* RemoveComponentAction;
 
 	QLabel* NameText;			QLineEdit* NameField;
 	QLabel* UniqueIdText;		QLineEdit* UniqueIdField;

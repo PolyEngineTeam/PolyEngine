@@ -57,6 +57,8 @@ UNSILENCE_MSVC_WARNING()
 
 // dialogs
 #include "Dialogs/CreateProjectDialog.hpp"
+#include "Dialogs/ComponentDialog.hpp"
+
 
 // engine
 #include <Engine.hpp>

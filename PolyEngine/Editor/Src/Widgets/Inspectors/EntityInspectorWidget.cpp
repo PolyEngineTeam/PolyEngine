@@ -5,14 +5,22 @@ EntityInspectorWidget::EntityInspectorWidget()
 	setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(this, &EntityInspectorWidget::customContextMenuRequested, this, &EntityInspectorWidget::SpawnContextMenu);
 
+	// main layput
 	MainLayout = new QGridLayout(this);
-	ContextMenu = new QMenu(this);
-	ContextMenu->addAction(new QAction("Add Component", this));
-	ContextMenu->addAction(new QAction("Remove Component", this));
-	
 	MainLayout->setColumnStretch(0, 3);
 	MainLayout->setColumnStretch(1, 9);
 	MainLayout->setColumnStretch(2, 2);
+
+	// context menu
+	ContextMenu = new QMenu(this);
+		
+		AddComponentAction = new QAction("Add Component", this);
+		ContextMenu->addAction(AddComponentAction);
+		connect(AddComponentAction, &QAction::triggered, this, &EntityInspectorWidget::AddComponent);
+
+		RemoveComponentAction = new QAction("Remove Component", this);
+		ContextMenu->addAction(RemoveComponentAction);
+		connect(RemoveComponentAction, &QAction::triggered, this, &EntityInspectorWidget::RemoveComponent);
 	
 	// TODO(squares): find better way
 	for (int i = 0; i < MAX_COMPONENTS_COUNT + 6; ++i)
@@ -117,8 +125,6 @@ EntityInspectorWidget::EntityInspectorWidget()
 	
 	TransformSection->SetLayout(transformLayout);
 	MainLayout->addWidget(TransformSection, 4, 0, 1, 3);
-
-	setLayout(MainLayout);
 }
 
 void EntityInspectorWidget::SetEntity(::Entity *entity)
@@ -194,8 +200,12 @@ void EntityInspectorWidget::SpawnContextMenu(QPoint pos)
 
 void EntityInspectorWidget::AddComponent()
 {
+	ComponentDialog dialog(Entity);
+	dialog.exec();
 }
 
 void EntityInspectorWidget::RemoveComponent()
 {
+	ComponentDialog dialog(Entity, true);
+	dialog.exec();
 }
