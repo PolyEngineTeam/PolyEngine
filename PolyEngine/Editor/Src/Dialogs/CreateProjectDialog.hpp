@@ -7,8 +7,6 @@
 
 class CreateProjectDialog : public QDialog
 {
-	//Q_OBJECT
-
 public:
 	CreateProjectDialog();
 	~CreateProjectDialog();

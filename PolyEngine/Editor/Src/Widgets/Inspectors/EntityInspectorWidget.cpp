@@ -2,7 +2,13 @@
 
 EntityInspectorWidget::EntityInspectorWidget()
 {
+	setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(this, &EntityInspectorWidget::customContextMenuRequested, this, &EntityInspectorWidget::SpawnContextMenu);
+
 	MainLayout = new QGridLayout(this);
+	ContextMenu = new QMenu(this);
+	ContextMenu->addAction(new QAction("Add Component", this));
+	ContextMenu->addAction(new QAction("Remove Component", this));
 	
 	MainLayout->setColumnStretch(0, 3);
 	MainLayout->setColumnStretch(1, 9);
@@ -62,7 +68,7 @@ EntityInspectorWidget::EntityInspectorWidget()
 	MainLayout->addWidget(ChildrenIdNameButton, 3, 2);
 
 	// Transform
-	TransformSection = new SectionContainer("Transform");
+	TransformSection = new SectionContainer("Transform", this);
 	QGridLayout* transformLayout = new QGridLayout();
 	
 	transformLayout->setColumnStretch(0, 1);
@@ -121,6 +127,10 @@ void EntityInspectorWidget::SetEntity(::Entity *entity)
 	UpdateWidget();
 }
 
+void EntityInspectorWidget::UpdateEntity()
+{
+}
+
 void EntityInspectorWidget::UpdateWidget()
 {
 	// general data
@@ -147,10 +157,6 @@ void EntityInspectorWidget::UpdateWidget()
 	ScaleField[2]->setText(QString(String::From(scale.Z).GetCStr()));
 
 	// remove all old entity component sections
-	for (auto cmp : ComponentWidgets)
-		delete cmp;
-	ComponentWidgets.Clear();
-
 	for (auto cmp : ComponentSections)
 	{
 		MainLayout->removeWidget(cmp);
@@ -175,8 +181,21 @@ void EntityInspectorWidget::UpdateWidget()
 		ComponentSections.PushBack(section);
 		ComponentWidgets.PushBack(viewer);
 
-		section->SetLayout(viewer->layout());
+		section->SetWidget(viewer);
 		MainLayout->addWidget(section, row, 0, 1, 3);
 		++row;
 	}
+}
+
+void EntityInspectorWidget::SpawnContextMenu(QPoint pos)
+{
+	ContextMenu->popup(this->mapToGlobal(pos));
+}
+
+void EntityInspectorWidget::AddComponent()
+{
+}
+
+void EntityInspectorWidget::RemoveComponent()
+{
 }

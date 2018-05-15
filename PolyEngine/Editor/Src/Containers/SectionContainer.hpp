@@ -7,6 +7,8 @@
 #include <QToolButton>
 #include <QWidget>
 
+// This container can be collapsed to one line.
+// If deleted deletes its whole content.
 class SectionContainer : public QWidget 
 {
 public:

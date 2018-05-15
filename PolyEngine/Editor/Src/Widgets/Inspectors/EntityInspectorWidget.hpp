@@ -36,6 +36,7 @@ private:
 	Entity* Entity;
 
 	QGridLayout* MainLayout;
+	QMenu* ContextMenu;
 
 	QLabel* NameText;			QLineEdit* NameField;
 	QLabel* UniqueIdText;		QLineEdit* UniqueIdField;
@@ -51,4 +52,9 @@ private:
 	// Component sections
 	Dynarray<SectionContainer*> ComponentSections;
 	Dynarray<RTTIViewerWidget*> ComponentWidgets;
+
+public slots:
+	void SpawnContextMenu(QPoint pos); 
+	void AddComponent(); 
+	void RemoveComponent();
 };
