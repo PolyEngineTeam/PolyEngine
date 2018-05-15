@@ -32,8 +32,7 @@ private:
 	World* World;
 
 	std::unique_ptr<QTreeWidget> Tree;
-	//TODO(squares): use size_t keys
-	std::map<int, Entity*> EntityFromID;
+	std::map<QTreeWidgetItem*, Entity*> EntityFromID;
 
 private slots:
 	void SelectionChanged(QTreeWidgetItem* item, int column);

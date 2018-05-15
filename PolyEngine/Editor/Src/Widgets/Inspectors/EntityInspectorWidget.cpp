@@ -140,11 +140,11 @@ void EntityInspectorWidget::UpdateEntity()
 void EntityInspectorWidget::UpdateWidget()
 {
 	// general data
-	UniqueIdField->setText(QString(String::From((int)Entity->GetID().GetHash()).GetCStr()));
-	ParentIdNameField->setText(QString(String::From((int)Entity->GetParent()->GetID().GetHash()).GetCStr()));
+	UniqueIdField->setText(QString::number(Entity->GetID().GetHash()));
+	ParentIdNameField->setText(QString::number(Entity->GetParent()->GetID().GetHash()));
 	ChildrenIdNameField->clear();
 	for (auto child : Entity->GetChildren())
-		ChildrenIdNameField->addItem(QString(String::From((int)child->GetID().GetHash()).GetCStr()));
+		ChildrenIdNameField->addItem(QString::number(child->GetID().GetHash()));
 	
 	// transform
 	Vector translation = Entity->GetTransform().GetLocalTranslation();

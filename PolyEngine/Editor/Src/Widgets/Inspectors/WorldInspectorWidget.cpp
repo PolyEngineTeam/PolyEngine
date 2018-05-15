@@ -23,9 +23,8 @@ void WorldExplorerWidget::UpdateViewer()
 	Tree->clear();
 
 	QTreeWidgetItem* entityTree = new QTreeWidgetItem(Tree.get());
-	int id = (int)World->GetRoot()->GetID().GetHash();
-	entityTree->setText(0, String::From(id).GetCStr());
-	EntityFromID.insert(std::pair<int, Entity*>(id, World->GetRoot()));
+	entityTree->setText(0, QString::number(World->GetRoot()->GetID().GetHash()));
+	EntityFromID.insert(std::pair<QTreeWidgetItem*, Entity*>(entityTree, World->GetRoot()));
 
 	for (auto child : World->GetRoot()->GetChildren())
 		AddEntityToTree(entityTree, child);
@@ -34,9 +33,8 @@ void WorldExplorerWidget::UpdateViewer()
 void WorldExplorerWidget::AddEntityToTree(QTreeWidgetItem* parent, Entity* entity)
 {
 	QTreeWidgetItem* entityTree = new QTreeWidgetItem(parent);
-	int id = (int)entity->GetID().GetHash();
-	entityTree->setText(0, String::From(id).GetCStr());
-	EntityFromID.insert(std::pair<int, Entity*>(id, entity));
+	entityTree->setText(0, QString::number(entity->GetID().GetHash()));
+	EntityFromID.insert(std::pair<QTreeWidgetItem*, Entity*>(entityTree, entity));
 
 	for (auto child : entity->GetChildren())
 		AddEntityToTree(entityTree, child);
@@ -44,5 +42,5 @@ void WorldExplorerWidget::AddEntityToTree(QTreeWidgetItem* parent, Entity* entit
 
 void WorldExplorerWidget::SelectionChanged(QTreeWidgetItem* item, int column)
 {
-	emit EntitySelected(EntityFromID[item->text(0).toInt()]);
+	emit EntitySelected(EntityFromID[item]);
 }

@@ -23,18 +23,14 @@ private:
 
 	bool Canceled = false;
 
-	QScrollArea* ScrollArea;
 	QGridLayout* MainLayout;
 
-	QGroupBox* GroupBox;
-	QGridLayout* GroupBoxLayout;
-	Dynarray<QCheckBox*> CheckBoxes;
+	QTreeWidget* Tree;
+
 	QLabel* EntityIdNameText;		QLineEdit* EntityIdNameField;
 	QPushButton* CancelButton;		QPushButton* OkButton;
 
 private slots:
-	void BrowseProjectDirectory();
-	void BrowseEngineDirectory();
 	void Ok();
 	void Cancel();
 };
