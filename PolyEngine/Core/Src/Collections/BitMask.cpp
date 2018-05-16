@@ -18,7 +18,7 @@ BitMask::BitMask(size_t size)
 	else
 		arraySize = size / TYPE_BIT;
 
-	for (int i = 0; i < arraySize; i++)
+	for (size_t i = 0; i < arraySize; i++)
 		BitList.PushBack(ZERO);
 }
 
@@ -31,7 +31,7 @@ bool BitMask::Reset()
 
 bool BitMask::Toggle(size_t index)
 {
-	HEAVY_ASSERTE(RangeCheck(index), "Out of bounds");
+	HEAVY_ASSERTE(index <= BitsNumber, "Out of bounds");
 	BitList[index / TYPE_BIT] ^= 1UL << index%TYPE_BIT;
 	return true;
 }
@@ -45,7 +45,7 @@ bool BitMask::operator[](size_t index) const
 
 bool BitMask::Set(size_t index, bool state)
 {
-	HEAVY_ASSERTE(RangeCheck(index), "Out of bounds");
+	HEAVY_ASSERTE(index<=BitsNumber, "Out of bounds");
 
 	size_t bitListIndex = index / TYPE_BIT;
 	size_t bitPosition = index % TYPE_BIT;
@@ -54,13 +54,6 @@ bool BitMask::Set(size_t index, bool state)
 		BitList[bitListIndex] |= (1UL << bitPosition);
 	else
 		BitList[bitListIndex] &= ~(1UL << bitPosition);
-	return true;
-}
-
-bool BitMask::RangeCheck(size_t index)
-{
-	if (index >= BitsNumber || index < 0)
-		return false;
 	return true;
 }
 
@@ -216,7 +209,7 @@ bool BitMask::Resize(const int offset)
 
 	if (offset < 0)
 	{
-		HEAVY_ASSERTE(BitsNumber + offset >= 0 && BitsNumber + offset<BitsNumber, "Out of bounds");
+		HEAVY_ASSERTE(BitsNumber + offset<BitsNumber, "Out of bounds");
 		if (BitsNumber + offset >(GetDynarraySize() - 1)*TYPE_BIT)
 		{
 			BitsNumber += offset;

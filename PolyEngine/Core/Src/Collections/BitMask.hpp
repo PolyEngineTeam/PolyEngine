@@ -39,7 +39,6 @@ namespace Poly {
 		size_t GetSize() { return BitsNumber; }
 		size_t GetDynarraySize() { return BitList.GetSize(); }
 	private:
-		inline bool RangeCheck(size_t index);
 		inline size_t BitListIndex(size_t index);
 
 		Dynarray<DataType> BitList;
