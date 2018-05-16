@@ -20,6 +20,12 @@ namespace Poly
 			RTTI_PROPERTY_AUTONAME(NameTemplate, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(Name, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(UUID, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Transform, RTTI::ePropertyFlag::NONE);
+			//@todo(muniu) rttibase pointers serialization
+			//RTTI_PROPERTY_AUTONAME(EntityScene, RTTI::ePropertyFlag::NONE);
+			//RTTI_PROPERTY_AUTONAME(Parent, RTTI::ePropertyFlag::NONE);
+			//RTTI_PROPERTY_AUTONAME(Children, RTTI::ePropertyFlag::NONE);
+			//RTTI_PROPERTY_AUTONAME(Components, RTTI::ePropertyFlag::NONE);
 		}
 	public:
 		~Entity();

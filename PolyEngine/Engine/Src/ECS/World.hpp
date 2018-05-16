@@ -29,8 +29,16 @@ namespace Poly {
 
 	/// <summary>Scene represents world/scene/level in engine.
 	/// It contains entities, its components and world components.</summary>
-	class ENGINE_DLLEXPORT Scene : public BaseObject<>
+	class ENGINE_DLLEXPORT Scene : public RTTIBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(::Poly::Scene, ::Poly::RTTIBase)
+		{
+			//@todo(muniu) rttibase pointers serialization
+			//RTTI_PROPERTY_AUTONAME(rootEntity, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(EntitiesAllocator, RTTI::ePropertyFlag::NONE);
+			//RTTI_PROPERTY_AUTONAME_ARRAY(ComponentAllocators, MAX_COMPONENTS_COUNT, RTTI::ePropertyFlag::NONE);
+			//RTTI_PROPERTY_AUTONAME_ARRAY(WorldComponents, MAX_COMPONENTS_COUNT, RTTI::ePropertyFlag::NONE);
+		}
 	public:
 		/// <summary>Allocates memory for entities, world components and components allocators.</summary>
 		Scene();

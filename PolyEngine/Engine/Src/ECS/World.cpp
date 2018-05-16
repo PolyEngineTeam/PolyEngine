@@ -2,6 +2,8 @@
 
 using namespace Poly;
 
+RTTI_DEFINE_TYPE(::Poly::Scene);
+
 //------------------------------------------------------------------------------
 Scene::Scene()
 	: EntitiesAllocator(MAX_ENTITY_COUNT)
