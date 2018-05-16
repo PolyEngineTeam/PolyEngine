@@ -9,6 +9,7 @@ namespace Poly
 	template<typename K, typename V, size_t Bfactor> class OrderedMap;
 	template<typename T, typename E> class EnumArray;
 	template<typename E> class EnumFlags;
+	template<typename T> class IterablePoolAllocator;
 
 	namespace Trait
 	{
@@ -39,6 +40,15 @@ namespace Poly
 
 		template <typename> struct EnumFlagsType {};
 		template <typename E> struct EnumFlagsType<EnumFlags<E>> { using type = E; };
+
+		// Is iterable pool allocator
+		template <typename> struct IsIterablePoolAllocator : public std::false_type {};
+		template <typename E> struct IsIterablePoolAllocator<IterablePoolAllocator<E>> : public std::true_type {};
+
+		template <typename> struct IterablePoolAllocatorType {};
+		template <typename E> struct IterablePoolAllocatorType<IterablePoolAllocator<E>> { using type = E; };
+
+		
 
 		template <class T> using RawType = std::remove_pointer<typename std::decay<typename std::remove_cv<T>::type >::type>;
 	}

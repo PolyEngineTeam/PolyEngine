@@ -274,7 +274,7 @@ namespace Poly {
 		SafePtr<Entity> rootEntity = nullptr;
 
 		// Allocators
-		PoolAllocator<Entity> EntitiesAllocator;
+		IterablePoolAllocator<Entity> EntitiesAllocator;
 		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
 
 		ComponentBase* WorldComponents[MAX_COMPONENTS_COUNT];
