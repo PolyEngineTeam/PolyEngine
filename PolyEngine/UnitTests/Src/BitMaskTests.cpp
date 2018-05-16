@@ -1,4 +1,5 @@
 #include <catch.hpp>
+#include <climits>
 
 #include <Collections/BitMask.hpp>
 
