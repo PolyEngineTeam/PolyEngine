@@ -77,59 +77,16 @@ EntityInspectorWidget::EntityInspectorWidget()
 
 	// Transform
 	TransformSection = new SectionContainer("Transform", this);
-	QGridLayout* transformLayout = new QGridLayout();
-	
-	transformLayout->setColumnStretch(0, 1);
-	transformLayout->setColumnStretch(1, 1);
-	transformLayout->setColumnStretch(2, 1);
-	transformLayout->setColumnStretch(3, 1);
-	
-	TranslationLabel = new QLabel();
-	TranslationLabel->setText("Translation");
-	transformLayout->addWidget(TranslationLabel, 1, 0);
-	
-	RotationLabel = new QLabel();
-	RotationLabel->setText("Rotation");
-	transformLayout->addWidget(RotationLabel, 2, 0);
-	
-	ScaleLabel = new QLabel();
-	ScaleLabel->setText("Scale");
-	transformLayout->addWidget(ScaleLabel, 3, 0);
-	
-	XYZLabels[0] = new QLabel();
-	XYZLabels[0]->setText("X");
-	XYZLabels[0]->setAlignment(Qt::AlignCenter);
-	transformLayout->addWidget(XYZLabels[0], 0, 1);
-	
-	XYZLabels[1] = new QLabel();
-	XYZLabels[1]->setText("Y");
-	XYZLabels[1]->setAlignment(Qt::AlignCenter);
-	transformLayout->addWidget(XYZLabels[1], 0, 2);
-	
-	XYZLabels[2] = new QLabel();
-	XYZLabels[2]->setText("Z");
-	XYZLabels[2]->setAlignment(Qt::AlignCenter);
-	transformLayout->addWidget(XYZLabels[2], 0, 3);
-	
-	for (int x = 0; x < 3; ++x)
-	{
-		TranslationField[x] = ControlBase::CreateControl(this, RTTI::eCorePropertyType::FLOAT);
-		transformLayout->addWidget(TranslationField[x], 1, 1 + x);
-	
-		RotationField[x] = ControlBase::CreateControl(this, RTTI::eCorePropertyType::FLOAT);
-		transformLayout->addWidget(RotationField[x], 2, 1 + x);
-	
-		ScaleField[x] = ControlBase::CreateControl(this, RTTI::eCorePropertyType::FLOAT);
-		transformLayout->addWidget(ScaleField[x], 3, 1 + x);
-	}
-	
-	TransformSection->SetLayout(transformLayout);
+	Transform = new TransformControlGroup(this);
+	TransformSection->SetWidget(Transform);
+
 	MainLayout->addWidget(TransformSection, 4, 0, 1, 3);
 }
 
 void EntityInspectorWidget::SetEntity(::Entity *entity)
 {
 	Entity = entity;
+	Transform->SetObject(entity, nullptr); // FIXME(squares): replace this nullptr later
 	UpdateWidget();
 }
 
@@ -146,21 +103,7 @@ void EntityInspectorWidget::UpdateWidget()
 	for (auto child : Entity->GetChildren())
 		ChildrenIdNameField->addItem(QString::number(child->GetID().GetHash()));
 	
-	// transform
-	//Vector translation = Entity->GetTransform().GetLocalTranslation();
-	//TranslationField[0]->setText(QString(String::From(translation.X).GetCStr()));
-	//TranslationField[1]->setText(QString(String::From(translation.Y).GetCStr()));
-	//TranslationField[2]->setText(QString(String::From(translation.Z).GetCStr()));
-	//
-	//EulerAngles rotation = Entity->GetTransform().GetLocalRotation().ToEulerAngles();
-	//RotationField[0]->setText(QString(String::From(rotation.X.AsDegrees()).GetCStr()));
-	//RotationField[1]->setText(QString(String::From(rotation.Y.AsDegrees()).GetCStr()));
-	//RotationField[2]->setText(QString(String::From(rotation.Z.AsDegrees()).GetCStr()));
-	//
-	//Vector scale = Entity->GetTransform().GetLocalScale();
-	//ScaleField[0]->setText(QString(String::From(scale.X).GetCStr()));
-	//ScaleField[1]->setText(QString(String::From(scale.Y).GetCStr()));
-	//ScaleField[2]->setText(QString(String::From(scale.Z).GetCStr()));
+	Transform->UpdateControl();
 
 	// remove all old entity component sections
 	for (auto cmp : ComponentSections)

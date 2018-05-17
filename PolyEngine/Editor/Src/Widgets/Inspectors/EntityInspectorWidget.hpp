@@ -11,6 +11,7 @@
 
 #include "Widgets/PolyWidget.hpp"
 #include "Controls/ControlBase.hpp"
+#include "Controls/ControlGroups/TransformControlGroup.hpp"
 
 class SectionContainer;
 class RTTIViewerWidget;
@@ -47,10 +48,7 @@ private:
 	QLabel* ChildrenIdNameText;	QComboBox* ChildrenIdNameField;	QPushButton* ChildrenIdNameButton;
 
 	SectionContainer* TransformSection;
-								QLabel* XYZLabels[3];
-	QLabel* TranslationLabel;	ControlBase* TranslationField[3];
-	QLabel* RotationLabel;		ControlBase* RotationField[3];
-	QLabel* ScaleLabel;			ControlBase* ScaleField[3];
+	TransformControlGroup* Transform;
 
 	// Component sections
 	Dynarray<SectionContainer*> ComponentSections;
