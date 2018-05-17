@@ -36,7 +36,7 @@ EntityInspectorWidget::EntityInspectorWidget()
 	NameText->setText("Name");
 	MainLayout->addWidget(NameText, 0, 0);
 	
-	NameField = new QLineEdit(this);
+	NameField = ControlBase::CreateControl(this, RTTI::eCorePropertyType::STRING);
 	MainLayout->addWidget(NameField, 0, 1);
 	
 	// UniqueID
@@ -113,13 +113,13 @@ EntityInspectorWidget::EntityInspectorWidget()
 	
 	for (int x = 0; x < 3; ++x)
 	{
-		TranslationField[x] = new QLineEdit();
+		TranslationField[x] = ControlBase::CreateControl(this, RTTI::eCorePropertyType::FLOAT);
 		transformLayout->addWidget(TranslationField[x], 1, 1 + x);
 	
-		RotationField[x] = new QLineEdit();
+		RotationField[x] = ControlBase::CreateControl(this, RTTI::eCorePropertyType::FLOAT);
 		transformLayout->addWidget(RotationField[x], 2, 1 + x);
 	
-		ScaleField[x] = new QLineEdit();
+		ScaleField[x] = ControlBase::CreateControl(this, RTTI::eCorePropertyType::FLOAT);
 		transformLayout->addWidget(ScaleField[x], 3, 1 + x);
 	}
 	
@@ -147,20 +147,20 @@ void EntityInspectorWidget::UpdateWidget()
 		ChildrenIdNameField->addItem(QString::number(child->GetID().GetHash()));
 	
 	// transform
-	Vector translation = Entity->GetTransform().GetLocalTranslation();
-	TranslationField[0]->setText(QString(String::From(translation.X).GetCStr()));
-	TranslationField[1]->setText(QString(String::From(translation.Y).GetCStr()));
-	TranslationField[2]->setText(QString(String::From(translation.Z).GetCStr()));
-	
-	EulerAngles rotation = Entity->GetTransform().GetLocalRotation().ToEulerAngles();
-	RotationField[0]->setText(QString(String::From(rotation.X.AsDegrees()).GetCStr()));
-	RotationField[1]->setText(QString(String::From(rotation.Y.AsDegrees()).GetCStr()));
-	RotationField[2]->setText(QString(String::From(rotation.Z.AsDegrees()).GetCStr()));
-	
-	Vector scale = Entity->GetTransform().GetLocalScale();
-	ScaleField[0]->setText(QString(String::From(scale.X).GetCStr()));
-	ScaleField[1]->setText(QString(String::From(scale.Y).GetCStr()));
-	ScaleField[2]->setText(QString(String::From(scale.Z).GetCStr()));
+	//Vector translation = Entity->GetTransform().GetLocalTranslation();
+	//TranslationField[0]->setText(QString(String::From(translation.X).GetCStr()));
+	//TranslationField[1]->setText(QString(String::From(translation.Y).GetCStr()));
+	//TranslationField[2]->setText(QString(String::From(translation.Z).GetCStr()));
+	//
+	//EulerAngles rotation = Entity->GetTransform().GetLocalRotation().ToEulerAngles();
+	//RotationField[0]->setText(QString(String::From(rotation.X.AsDegrees()).GetCStr()));
+	//RotationField[1]->setText(QString(String::From(rotation.Y.AsDegrees()).GetCStr()));
+	//RotationField[2]->setText(QString(String::From(rotation.Z.AsDegrees()).GetCStr()));
+	//
+	//Vector scale = Entity->GetTransform().GetLocalScale();
+	//ScaleField[0]->setText(QString(String::From(scale.X).GetCStr()));
+	//ScaleField[1]->setText(QString(String::From(scale.Y).GetCStr()));
+	//ScaleField[2]->setText(QString(String::From(scale.Z).GetCStr()));
 
 	// remove all old entity component sections
 	for (auto cmp : ComponentSections)

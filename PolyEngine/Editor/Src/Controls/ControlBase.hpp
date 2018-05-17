@@ -11,14 +11,14 @@ class ControlBase;
 
 namespace Impl
 {
-	typedef ControlBase* (*ControlCreatorPtr)();
+	typedef ControlBase* (*ControlCreatorPtr)(QWidget* parent);
 
 	class ControlCreator
 	{
 	public:
 		ControlCreator() = default;
 		ControlCreator(ControlCreatorPtr ptr) : Ptr(ptr) {}
-		ControlBase* operator()() { return Ptr(); };
+		ControlBase* operator()(QWidget* parent) { return Ptr(parent); };
 
 		void* operator new(size_t, void* where);
 		
@@ -34,7 +34,7 @@ namespace Impl
 class ControlBase : public QWidget
 {
 public:
-	ControlBase() = default;
+	ControlBase(QWidget* parent) : QWidget(parent) {}
 
 	// Sets object assigned to control ans updates this control.
 	// @see ControlBase::UpdateControl;
@@ -51,9 +51,9 @@ public:
 	virtual void UpdateControl() = 0;
 
 	// Returns ptr to newly created proper control for given core type.
-	static ControlBase* CreateControl(RTTI::eCorePropertyType type) 
+	static ControlBase* CreateControl(QWidget* parent, RTTI::eCorePropertyType type)
 	{ 
-		return ::Impl::CoreTypeToControlMap[static_cast<int>(type)]();
+		return ::Impl::CoreTypeToControlMap[static_cast<int>(type)](parent);
 	}
 
 	// if You want this control to update as soon as state is changed, enter pressed or 
@@ -84,5 +84,5 @@ public slots:
 	{ \
 		ControlCreator* CONTROL##Creator_##CORE_TYPE = \
 			new(&::Impl::CoreTypeToControlMap[static_cast<int>(RTTI::eCorePropertyType::##CORE_TYPE)]) \
-				ControlCreator([]() -> ControlBase* { return new CONTROL(); }); \
+				ControlCreator([](QWidget* parent) -> ControlBase* { return new CONTROL(parent); }); \
 	}

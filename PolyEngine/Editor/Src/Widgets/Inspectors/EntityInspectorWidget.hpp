@@ -10,6 +10,7 @@
 #include <qscrollarea.h>
 
 #include "Widgets/PolyWidget.hpp"
+#include "Controls/ControlBase.hpp"
 
 class SectionContainer;
 class RTTIViewerWidget;
@@ -40,16 +41,16 @@ private:
 		QAction* AddComponentAction;
 		QAction* RemoveComponentAction;
 
-	QLabel* NameText;			QLineEdit* NameField;
+	QLabel* NameText;			ControlBase* NameField;
 	QLabel* UniqueIdText;		QLineEdit* UniqueIdField;
 	QLabel* ParentIdNameText;	QLineEdit* ParentIdNameField;	QPushButton* ParentIdNameButton;
 	QLabel* ChildrenIdNameText;	QComboBox* ChildrenIdNameField;	QPushButton* ChildrenIdNameButton;
 
 	SectionContainer* TransformSection;
 								QLabel* XYZLabels[3];
-	QLabel* TranslationLabel;	QLineEdit* TranslationField[3];	
-	QLabel* RotationLabel;		QLineEdit* RotationField[3];
-	QLabel* ScaleLabel;			QLineEdit* ScaleField[3];
+	QLabel* TranslationLabel;	ControlBase* TranslationField[3];
+	QLabel* RotationLabel;		ControlBase* RotationField[3];
+	QLabel* ScaleLabel;			ControlBase* ScaleField[3];
 
 	// Component sections
 	Dynarray<SectionContainer*> ComponentSections;

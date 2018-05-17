@@ -49,11 +49,14 @@ UNSILENCE_MSVC_WARNING()
 
 // controls
 #include "Controls/ControlBase.hpp"
-#include "Controls/PlaceHolderControl.hpp"
-#include "Controls/BoolControl.hpp"
-#include "Controls/NumberControl.hpp"
-#include "Controls/EnumControl.hpp"
-#include "Controls/StringControl.hpp"
+
+#include "Controls/CoreControls/PlaceHolderControl.hpp"
+#include "Controls/CoreControls/BoolControl.hpp"
+#include "Controls/CoreControls/NumberControl.hpp"
+#include "Controls/CoreControls/EnumControl.hpp"
+#include "Controls/CoreControls/StringControl.hpp"
+
+#include "Controls/ControlGroups/TransformControlGroup.hpp"
 
 // dialogs
 #include "Dialogs/CreateProjectDialog.hpp"

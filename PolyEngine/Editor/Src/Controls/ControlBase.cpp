@@ -18,7 +18,7 @@ namespace Impl
 
 			CoreTypeToControlMap = new ControlCreator[static_cast<int>(RTTI::eCorePropertyType::_COUNT)];
 			for (int i = 0; i < static_cast<int>(RTTI::eCorePropertyType::_COUNT); ++i)
-				new(&CoreTypeToControlMap[i]) ControlCreator([]() -> ControlBase* { return new PlaceHolderControl(); });
+				new(&CoreTypeToControlMap[i]) ControlCreator([](QWidget* parent) -> ControlBase* { return new PlaceHolderControl(parent); });
 		
 			return CoreTypeToControlMap + offset;
 		}

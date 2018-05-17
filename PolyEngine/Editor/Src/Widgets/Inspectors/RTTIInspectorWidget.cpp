@@ -5,7 +5,7 @@ void RTTIViewerWidget::SetObject(RTTIBase* obj, bool debug)
 	if (Layout)
 	{
 		delete Layout;
-
+		// TODO(squares): do nice delete of all widgets within this layout
 	}
 
 	Layout = new QGridLayout(this);
@@ -55,7 +55,7 @@ void RTTIViewerWidget::AddChild(QGridLayout* parent, RTTIBase* obj, bool debug)
 
 void RTTIViewerWidget::AddItem(QGridLayout* parent, void* ptr, const RTTI::Property& prop)
 {
-	ControlBase* field = ControlBase::CreateControl(prop.CoreType);
+	ControlBase* field = ControlBase::CreateControl(this, prop.CoreType);
 	field->SetObject(ptr, &prop);
 	field->SetObject(ptr, &prop);
 

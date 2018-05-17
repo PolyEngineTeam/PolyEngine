@@ -2,7 +2,8 @@
 
 ASSIGN_CONTROL(StringControl, STRING)
 
-StringControl::StringControl()
+StringControl::StringControl(QWidget* parent)
+	: ControlBase(parent)
 {
 	Layout = new QGridLayout(this);
 	Layout->setSpacing(0);

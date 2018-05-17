@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ControlBase.hpp"
+#include "Controls/ControlBase.hpp"
 
 #include <qpushbutton.h>
 #include <qstatemachine.h>
@@ -8,7 +8,7 @@
 class BoolControl : public ControlBase
 {
 public:
-	BoolControl();
+	BoolControl(QWidget* parent);
 	~BoolControl();
 
 	void UpdateObject() override;

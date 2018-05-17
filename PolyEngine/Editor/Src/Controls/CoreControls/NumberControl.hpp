@@ -1,13 +1,13 @@
 #pragma once
 
-#include "ControlBase.hpp"
+#include "Controls/ControlBase.hpp"
 
 #include <QLineEdit.h>
 
 class NumberControl : public ControlBase
 {
 public:
-	NumberControl();
+	NumberControl(QWidget* parent);
 
 	void UpdateObject() override;
 	void UpdateControl() override;

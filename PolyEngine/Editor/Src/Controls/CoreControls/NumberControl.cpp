@@ -14,9 +14,10 @@ ASSIGN_CONTROL(NumberControl, UINT64)
 ASSIGN_CONTROL(NumberControl, FLOAT)
 ASSIGN_CONTROL(NumberControl, DOUBLE)
 
-NumberControl::NumberControl()
+NumberControl::NumberControl(QWidget* parent)
+	: ControlBase(parent)
 {
-	// TODO(squares): write validator for INT32 and INT64
+	// TODO(squares): write proper validators
 
 	Layout = new QGridLayout(this);
 	Layout->setSpacing(0);

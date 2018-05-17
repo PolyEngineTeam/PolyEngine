@@ -2,7 +2,8 @@
 
 ASSIGN_CONTROL(BoolControl, BOOL)
 
-BoolControl::BoolControl()
+BoolControl::BoolControl(QWidget* parent)
+	: ControlBase(parent)
 {
 	Layout = new QGridLayout(this);
 	Layout->setSpacing(0);
