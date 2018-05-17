@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-WorldExplorerWidget::WorldExplorerWidget()
+WorldInspectorWidget::WorldInspectorWidget()
 {
 	Tree = std::make_unique<QTreeWidget>(this);
 	Tree->setHeaderLabels(QStringList() << "Entity ID");
@@ -10,17 +10,17 @@ WorldExplorerWidget::WorldExplorerWidget()
 	setLayout(new QGridLayout(this));
 	layout()->addWidget(Tree.get());
 
-	connect(Tree.get(), &QTreeWidget::itemDoubleClicked, this, &WorldExplorerWidget::SelectionChanged);
+	connect(Tree.get(), &QTreeWidget::itemDoubleClicked, this, &WorldInspectorWidget::SelectionChanged);
 }
 
-void WorldExplorerWidget::SetWorld(::World* world)
+void WorldInspectorWidget::SetWorld(::World* world)
 {
 	World = world;
 
 	UpdateViewer();
 }
 
-void WorldExplorerWidget::UpdateViewer()
+void WorldInspectorWidget::UpdateViewer()
 {
 	Tree->clear();
 	std::stringstream ss;
@@ -34,7 +34,7 @@ void WorldExplorerWidget::UpdateViewer()
 		AddEntityToTree(entityTree, child);
 }
 
-void WorldExplorerWidget::AddEntityToTree(QTreeWidgetItem* parent, Entity* entity)
+void WorldInspectorWidget::AddEntityToTree(QTreeWidgetItem* parent, Entity* entity)
 {
 	std::stringstream ss;
 	ss << entity->GetID();
@@ -47,7 +47,7 @@ void WorldExplorerWidget::AddEntityToTree(QTreeWidgetItem* parent, Entity* entit
 		AddEntityToTree(entityTree, child);
 }
 
-void WorldExplorerWidget::SelectionChanged(QTreeWidgetItem* item, int column)
+void WorldInspectorWidget::SelectionChanged(QTreeWidgetItem* item, int column)
 {
 	emit EntitySelected(EntityFromID[item]);
 }

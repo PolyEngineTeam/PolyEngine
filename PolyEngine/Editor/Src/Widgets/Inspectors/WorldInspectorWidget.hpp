@@ -13,12 +13,12 @@
 
 using namespace Poly;
 
-class WorldExplorerWidget : public PolyWidget
+class WorldInspectorWidget : public PolyWidget
 {
 	Q_OBJECT
 
 public:
-	WorldExplorerWidget();
+	WorldInspectorWidget();
 
 	void SetWorld(World* world);
 	void UpdateViewer();

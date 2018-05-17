@@ -9,10 +9,10 @@ class ControlBase;
 
 using namespace Poly;
 
-class RTTIViewerWidget : public PolyWidget
+class RTTIInspectorWidget : public PolyWidget
 {
 public:
-	RTTIViewerWidget() = default;
+	RTTIInspectorWidget() = default;
 
 	void SetObject(RTTIBase* obj, bool debug = false);
 

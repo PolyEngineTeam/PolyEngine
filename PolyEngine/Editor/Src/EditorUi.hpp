@@ -4,7 +4,7 @@
 #include "Widgets/ViewportWidget.hpp"
 #include "Widgets/LoggerWidget.hpp"
 
-class WorldExplorerWidget;
+class WorldInspectorWidget;
 class EntityInspectorWidget;
 
 class EditorUi : public QObject
@@ -21,7 +21,7 @@ public:
 	ViewportWidget* MainViewport;
 	LoggerWidget* MainLogger;
 	LoggerWidget* CmdLogger;
-	WorldExplorerWidget* WorldExplorer;
+	WorldInspectorWidget* WorldExplorer;
 	EntityInspectorWidget* EntityMgr;
 
 private:

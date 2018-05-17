@@ -1,6 +1,6 @@
 #include "PolyEditorPCH.hpp"
 
-void RTTIViewerWidget::SetObject(RTTIBase* obj, bool debug)
+void RTTIInspectorWidget::SetObject(RTTIBase* obj, bool debug)
 {
 	if (Layout)
 	{
@@ -19,19 +19,19 @@ void RTTIViewerWidget::SetObject(RTTIBase* obj, bool debug)
 	setLayout(Layout);
 }
 
-void RTTIViewerWidget::UpdateViewer()
+void RTTIInspectorWidget::UpdateViewer()
 {
 	for (auto field : Fields)
 		field->UpdateControl();
 }
 
-void RTTIViewerWidget::UpdateObject()
+void RTTIInspectorWidget::UpdateObject()
 {
 	for (auto field : Fields)
 		field->UpdateObject();
 }
 
-void RTTIViewerWidget::AddChild(QGridLayout* parent, RTTIBase* obj, bool debug)
+void RTTIInspectorWidget::AddChild(QGridLayout* parent, RTTIBase* obj, bool debug)
 {
 	for (auto& child : obj->GetPropertyManager()->GetPropertyList())
 	{
@@ -53,7 +53,7 @@ void RTTIViewerWidget::AddChild(QGridLayout* parent, RTTIBase* obj, bool debug)
 	}
 }
 
-void RTTIViewerWidget::AddItem(QGridLayout* parent, void* ptr, const RTTI::Property& prop)
+void RTTIInspectorWidget::AddItem(QGridLayout* parent, void* ptr, const RTTI::Property& prop)
 {
 	ControlBase* field = ControlBase::CreateControl(this, prop.CoreType);
 	field->SetObject(ptr, &prop);
