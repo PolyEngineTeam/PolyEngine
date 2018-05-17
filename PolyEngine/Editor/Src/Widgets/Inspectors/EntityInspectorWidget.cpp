@@ -1,5 +1,7 @@
 #include "PolyEditorPCH.hpp"
 
+#include <sstream>
+
 EntityInspectorWidget::EntityInspectorWidget()
 {
 	setContextMenuPolicy(Qt::CustomContextMenu);
@@ -36,7 +38,8 @@ EntityInspectorWidget::EntityInspectorWidget()
 	NameText->setText("Name");
 	MainLayout->addWidget(NameText, 0, 0);
 	
-	NameField = ControlBase::CreateControl(this, RTTI::eCorePropertyType::STRING);
+	//NameField = ControlBase::CreateControl(this, RTTI::eCorePropertyType::STRING);
+	NameField = new QLineEdit(this);
 	MainLayout->addWidget(NameField, 0, 1);
 	
 	// UniqueID
@@ -96,12 +99,23 @@ void EntityInspectorWidget::UpdateEntity()
 
 void EntityInspectorWidget::UpdateWidget()
 {
+	std::stringstream ss;
+
 	// general data
-	UniqueIdField->setText(QString::number(Entity->GetID().GetHash()));
-	ParentIdNameField->setText(QString::number(Entity->GetParent()->GetID().GetHash()));
+	ss << Entity->GetID();
+	UniqueIdField->setText(&ss.str()[0]);
+
+	ss.str(std::string());
+	ss << Entity->GetParent()->GetID();
+	ParentIdNameField->setText(&ss.str()[0]);
+
 	ChildrenIdNameField->clear();
 	for (auto child : Entity->GetChildren())
-		ChildrenIdNameField->addItem(QString::number(child->GetID().GetHash()));
+	{
+		ss.str(std::string());
+		ss << child->GetID();
+		ChildrenIdNameField->addItem(&ss.str()[0]);
+	}
 	
 	Transform->UpdateControl();
 

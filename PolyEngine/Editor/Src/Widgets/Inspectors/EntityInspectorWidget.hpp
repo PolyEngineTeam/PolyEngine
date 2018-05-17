@@ -42,7 +42,7 @@ private:
 		QAction* AddComponentAction;
 		QAction* RemoveComponentAction;
 
-	QLabel* NameText;			ControlBase* NameField;
+	QLabel* NameText;			QLineEdit* NameField;
 	QLabel* UniqueIdText;		QLineEdit* UniqueIdField;
 	QLabel* ParentIdNameText;	QLineEdit* ParentIdNameField;	QPushButton* ParentIdNameButton;
 	QLabel* ChildrenIdNameText;	QComboBox* ChildrenIdNameField;	QPushButton* ChildrenIdNameButton;

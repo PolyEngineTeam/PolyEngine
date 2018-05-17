@@ -1,5 +1,7 @@
 #include "PolyEditorPCH.hpp"
 
+#include <sstream>
+
 WorldExplorerWidget::WorldExplorerWidget()
 {
 	Tree = std::make_unique<QTreeWidget>(this);
@@ -21,9 +23,11 @@ void WorldExplorerWidget::SetWorld(::World* world)
 void WorldExplorerWidget::UpdateViewer()
 {
 	Tree->clear();
+	std::stringstream ss;
+	ss << World->GetRoot()->GetID();
 
 	QTreeWidgetItem* entityTree = new QTreeWidgetItem(Tree.get());
-	entityTree->setText(0, QString::number(World->GetRoot()->GetID().GetHash()));
+	entityTree->setText(0, (&ss.str()[0]));
 	EntityFromID.insert(std::pair<QTreeWidgetItem*, Entity*>(entityTree, World->GetRoot()));
 
 	for (auto child : World->GetRoot()->GetChildren())
@@ -32,8 +36,11 @@ void WorldExplorerWidget::UpdateViewer()
 
 void WorldExplorerWidget::AddEntityToTree(QTreeWidgetItem* parent, Entity* entity)
 {
+	std::stringstream ss;
+	ss << entity->GetID();
+
 	QTreeWidgetItem* entityTree = new QTreeWidgetItem(parent);
-	entityTree->setText(0, QString::number(entity->GetID().GetHash()));
+	entityTree->setText(0, (&ss.str()[0]));
 	EntityFromID.insert(std::pair<QTreeWidgetItem*, Entity*>(entityTree, entity));
 
 	for (auto child : entity->GetChildren())
