@@ -6,8 +6,13 @@ namespace Poly
 {
 	class Entity;
 
-	class ENGINE_DLLEXPORT EntityTransform final : public BaseObjectLiteralType<>
+	class ENGINE_DLLEXPORT EntityTransform final : public BaseObjectLiteralType<>, public RTTIBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(EntityTransform, RTTIBase)
+		{
+			NO_RTTI_PROPERTY();
+		}
+
 	public:
 		EntityTransform(Entity* owner) : Owner(owner) {};
 		~EntityTransform();

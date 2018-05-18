@@ -16,7 +16,7 @@ namespace Poly
 	};
 
 	//------------------------------------------------------------------------------
-	class ENGINE_DLLEXPORT ResourceBase : public RefCountedBase
+	class ENGINE_DLLEXPORT ResourceBase : public RefCountedBase, public RTTIBase
 	{
 	public:
 		const String& GetPath() const { return Path; }

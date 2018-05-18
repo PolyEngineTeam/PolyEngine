@@ -1,5 +1,7 @@
 #include "PolyEditorPCH.hpp"
 
+#include <Resources/ResourceBase.hpp>
+
 void RTTIInspectorWidget::SetObject(RTTIBase* obj, bool debug)
 {
 	if (Layout)
@@ -55,8 +57,20 @@ void RTTIInspectorWidget::AddChild(QGridLayout* parent, RTTIBase* obj, bool debu
 
 void RTTIInspectorWidget::AddItem(QGridLayout* parent, void* ptr, const RTTI::Property& prop)
 {
-	ControlBase* field = ControlBase::CreateControl(this, prop.CoreType);
-	field->SetObject(ptr, &prop);
+	ControlBase* field;
+
+	if (prop.CoreType == RTTI::eCorePropertyType::CUSTOM)
+	{
+		if (prop.Type == EntityTransform::MetaTypeInfo::GetTypeInfo())
+			field = new TransformControlGroup(this);
+		else if (prop.Type.isTypeDerivedFrom<ResourceBase>())
+			field = nullptr;
+		else
+			field = new PlaceHolderControl(this);
+	}
+	else
+		field = ControlBase::CreateControl(this, prop.CoreType);
+
 	field->SetObject(ptr, &prop);
 
 	QLabel* label = new QLabel();
