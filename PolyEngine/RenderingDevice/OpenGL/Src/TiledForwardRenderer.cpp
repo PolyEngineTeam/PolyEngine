@@ -442,29 +442,21 @@ void TiledForwardRenderer::DrawQuad() {
 
 void TiledForwardRenderer::CreateFallbackTextures()
 {
-	glGenTextures(1, &FallbackWhiteTexture);
-
 	GLubyte data[] = { 255, 255, 255, 255 };
-
+	glGenTextures(1, &FallbackWhiteTexture);
 	glBindTexture(GL_TEXTURE_2D, FallbackWhiteTexture);
-
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
-	glGenTextures(1, &FallbackNormalMap);
-
 	GLubyte dataDefaultNormal[] = { 128, 128, 255 };
-
+	glGenTextures(1, &FallbackNormalMap);
 	glBindTexture(GL_TEXTURE_2D, FallbackNormalMap);
-
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, dataDefaultNormal);
 }

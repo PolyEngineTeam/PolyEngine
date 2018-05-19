@@ -61,6 +61,10 @@ vec3 GetIrradiance(Light light, vec3 toCamera, vec3 normal, vec3 diffuse)
 	// specular
     vec3 H = normalize(L + V);
     float NdotH = pow(max(dot(N, H), 0.0), 16.0);
+    if (NdotL <= 0.0)
+    {
+        NdotH = 0.0;
+    }
 
     return light.Color.rgb * light.RangeIntensity.y * (diffuse * NdotL + diffuse * NdotH) * falloff;
 
@@ -71,6 +75,7 @@ void main()
     vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
     vec4 diffuse = texture(uDiffuseTexture, fragment_in.UV);
     vec3 normal = texture(uNormalMap, fragment_in.UV).rgb;
+    // oColor.rgb = normal; return;
     normal = normal * 2.0 - 1.0;
 
     if (diffuse.a < 0.5)
