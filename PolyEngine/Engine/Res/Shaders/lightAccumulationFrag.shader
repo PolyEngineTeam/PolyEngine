@@ -32,6 +32,7 @@ layout(std430, binding = 1) readonly buffer VisibleLightIndicesBuffer {
 const uint MAX_NUM_LIGHTS = 1024;
 
 uniform sampler2D uDiffuseTexture;
+uniform sampler2D uSpecularTexture;
 uniform sampler2D uNormalMap;
 uniform int uLightCount;
 uniform int uWorkGroupsX;
@@ -39,7 +40,7 @@ uniform int uWorkGroupsY;
 
 layout(location = 0) out vec4 oColor;
 
-vec3 GetIrradiance(Light light, vec3 toCamera, vec3 normal, vec3 diffuse)
+vec3 GetIrradiance(Light light, vec3 toCamera, vec3 normal, vec3 diffuse, float specular)
 {
 	// light faloff based on Real Shading in Unreal Engine 4 http://gamedevs.org/uploads/real-shading-in-unreal-engine-4.pdf
     
@@ -83,15 +84,15 @@ vec3 GetIrradiance(Light light, vec3 toCamera, vec3 normal, vec3 diffuse)
 	// Calculate the diffuse and specular components of the irradiance, then irradiance, and accumulate onto color
     float NdotL = max(dot(lightDirection, normal), 0.0);
 	// How do I change the material propery for the spec exponent? is it the alpha of the spec texture?
-    float specular = pow(max(dot(normal, halfway), 0.0), 32.0);
+    float NdotH = pow(max(dot(normal, halfway), 0.0), 32.0);
 	
 	// Hacky fix to handle issue where specular light still effects scene once point light has passed into an object
     if (NdotL == 0.0)
     {
-        specular = 0.0;
+        NdotH = 0.0;
     }
 	
-    return light.Color.rgb * light.RangeIntensity.y * ((diffuse.rgb * NdotL) + (diffuse.rgb * specular)) * falloff;
+    return light.Color.rgb * light.RangeIntensity.y * ((diffuse.rgb * NdotL) + (diffuse.rgb * specular * NdotH)) * falloff;
 }
 
 void main()
@@ -99,7 +100,11 @@ void main()
     vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
     vec4 diffuse = texture(uDiffuseTexture, fragment_in.UV);
     vec3 normal = texture(uNormalMap, fragment_in.UV).rgb;
+    float specular = texture(uSpecularTexture, fragment_in.UV).r;
+	// oColor.rgb = diffuse.rgb; return;
     // oColor.rgb = normal; return;
+    // oColor.rgb = vec3(specular); return;
+
     normal = normalize(normal * 2.0 - 1.0);
 
     if (diffuse.a < 0.5)
@@ -128,7 +133,7 @@ void main()
 	{
         int lightIndex = bVisibleLightIndicesBuffer.data[TileOffset + i].Index;
         Light light = bLightBuffer.data[lightIndex];
-        color.rgb += GetIrradiance(light, toCamera, normal, diffuse.rgb);
+        color.rgb += GetIrradiance(light, toCamera, normal, diffuse.rgb, specular);
         
 		if (bVisibleLightIndicesBuffer.data[TileOffset + i + 1].Index == -1)
             break;

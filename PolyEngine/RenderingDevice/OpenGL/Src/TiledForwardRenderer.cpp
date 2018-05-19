@@ -289,33 +289,41 @@ void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent*
 			glBindVertexArray(meshProxy->GetVAO());
 
 			const TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
-			GLuint TextureID = DiffuseTexture == nullptr
+			GLuint DiffuseID = DiffuseTexture == nullptr
 				? FallbackWhiteTexture
 				: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
-
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, TextureID);
+			glBindTexture(GL_TEXTURE_2D, DiffuseID);
 			lightAccumulationShader.SetUniform("uDiffuseTexture", 0);
 
 			const TextureResource* NormalMap = subMesh->GetMeshData().GetNormalMap();
 			GLuint NormalMapID = NormalMap == nullptr
 				? FallbackNormalMap
 				: static_cast<const GLTextureDeviceProxy*>(NormalMap->GetTextureProxy())->GetTextureID();
-
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, NormalMapID);
 			lightAccumulationShader.SetUniform("uNormalMap", 1);
 
-			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
-			
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, 0);
+			const TextureResource* SpecularTexture = subMesh->GetMeshData().GetSpecularMap();
+			GLuint SpecularID = SpecularTexture == nullptr
+				? FallbackWhiteTexture
+				: static_cast<const GLTextureDeviceProxy*>(SpecularTexture->GetTextureProxy())->GetTextureID();
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, SpecularID);
+			lightAccumulationShader.SetUniform("uSpecularTexture", 2);
 
-			glBindVertexArray(0);
+			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 		}
 	}
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glBindVertexArray(0);
 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
