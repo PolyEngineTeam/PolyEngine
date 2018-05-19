@@ -46,28 +46,52 @@ vec3 GetIrradiance(Light light, vec3 toCamera, vec3 normal, vec3 diffuse)
 	vec3 position = light.Position.xyz;
 	float range = light.RangeIntensity.x;
     float dist = length(fragment_in.positionInWorld - position);
-    
-    vec3 lightPositionInTangent = fragment_in.TBN * position;
-
-    vec3 L = normalize(lightPositionInTangent - fragment_in.tangentFragmentPosition);
-    vec3 V = normalize(toCamera);
-    vec3 N = normalize(normal);
-
 	float falloff = pow(clamp(1.0 - pow(dist / range, 4.0), 0.0, 1.0), 2.0) / (pow(dist, 2.0) + 1.0);
-    
-	// diffuse
-    float NdotL = max(dot(N, L), 0.0);
+     
+    // vec3 lightPositionInTangent = fragment_in.TBN * position;
+	// 
+    // vec3 L = normalize(lightPositionInTangent - fragment_in.tangentFragmentPosition);
+    // vec3 V = normalize(toCamera);
+    // vec3 N = normalize(normal);
+	// 
+    // 
+	// // diffuse
+    // float NdotL = max(dot(N, L), 0.0);
+	// 
+	// // specular
+    // vec3 H = normalize(L + V);
+    // float NdotH = pow(max(dot(N, H), 0.0), 16.0);
+    // if (NdotL <= 0.0)
+    // {
+    //     NdotH = 0.0;
+    // }
+	// 
+    // return light.Color.rgb * light.RangeIntensity.y * (diffuse * NdotL + diffuse * NdotH) * falloff;
 
-	// specular
-    vec3 H = normalize(L + V);
-    float NdotH = pow(max(dot(N, H), 0.0), 16.0);
-    if (NdotL <= 0.0)
+    // vec4 lightColor = light.color;
+    vec3 tangentLightPosition = fragment_in.TBN * light.Position.xyz;
+    // float lightRadius = light.paddingAndRadius.w;
+	
+	// Calculate the light attenuation on the pre-normalized lightDirection
+    vec3 lightDirection = tangentLightPosition - fragment_in.tangentFragmentPosition;
+    // float attenuation = attenuate(lightDirection, lightRadius);
+	
+	// Normalize the light direction and calculate the halfway vector
+    lightDirection = normalize(lightDirection);
+    vec3 halfway = normalize(lightDirection + toCamera);
+	
+	// Calculate the diffuse and specular components of the irradiance, then irradiance, and accumulate onto color
+    float NdotL = max(dot(lightDirection, normal), 0.0);
+	// How do I change the material propery for the spec exponent? is it the alpha of the spec texture?
+    float specular = pow(max(dot(normal, halfway), 0.0), 32.0);
+	
+	// Hacky fix to handle issue where specular light still effects scene once point light has passed into an object
+    if (NdotL == 0.0)
     {
-        NdotH = 0.0;
+        specular = 0.0;
     }
-
-    return light.Color.rgb * light.RangeIntensity.y * (diffuse * NdotL + diffuse * NdotH) * falloff;
-
+	
+    return light.Color.rgb * light.RangeIntensity.y * ((diffuse.rgb * NdotL) + (diffuse.rgb * specular)) * falloff;
 }
 
 void main()
@@ -76,18 +100,19 @@ void main()
     vec4 diffuse = texture(uDiffuseTexture, fragment_in.UV);
     vec3 normal = texture(uNormalMap, fragment_in.UV).rgb;
     // oColor.rgb = normal; return;
-    normal = normal * 2.0 - 1.0;
+    normal = normalize(normal * 2.0 - 1.0);
 
     if (diffuse.a < 0.5)
     {
         discard;
     }
 
-    if (isnan(normal.x) || dot(normal, normal) < 0.9)
-    {
-        normal = fragment_in.normal;
-    }
+    // if (isnan(normal.x) || dot(normal, normal) < 0.9)
+    // {
+    //     normal = fragment_in.normal;
+    // }
 
+    // vec3 viewDirection = normalize(fragment_in.tangentViewPosition - fragment_in.tangentFragmentPosition);
     vec3 toCamera = normalize(fragment_in.tangentViewPosition - fragment_in.tangentFragmentPosition);
  
     color.rgb += vec3(0.0, 0.0, 0.001); // ambient
