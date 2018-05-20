@@ -16,7 +16,8 @@ out vec4 fragColor;
 
 void main()
 {
-    vec3 color = texture(hdrBuffer, vUV).rgb;
+    vec3 color = textureMultisample(hdrBuffer, vUV).rgb;
+    // vec3 color = texelFetch(hdrBuffer, vUV, 0).rgb;
     vec3 result = vec3(1.0) - exp(-color * uExposure);
 
 	// Minor gamma correction. Need to expand on it

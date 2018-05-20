@@ -294,7 +294,7 @@ void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent*
 				: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, DiffuseID);
-			lightAccumulationShader.SetUniform("uDiffuseTexture", 0);
+			lightAccumulationShader.SetUniform("uAlbedoMap", 0);
 
 			const TextureResource* NormalMap = subMesh->GetMeshData().GetNormalMap();
 			GLuint NormalMapID = NormalMap == nullptr
@@ -310,7 +310,7 @@ void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent*
 				: static_cast<const GLTextureDeviceProxy*>(SpecularTexture->GetTextureProxy())->GetTextureID();
 			glActiveTexture(GL_TEXTURE2);
 			glBindTexture(GL_TEXTURE_2D, SpecularID);
-			lightAccumulationShader.SetUniform("uSpecularTexture", 2);
+			lightAccumulationShader.SetUniform("uSpecularMap", 2);
 
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 		}
