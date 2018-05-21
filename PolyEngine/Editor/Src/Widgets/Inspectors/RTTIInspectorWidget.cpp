@@ -61,11 +61,11 @@ void RTTIInspectorWidget::AddItem(QGridLayout* parent, void* ptr, const RTTI::Pr
 
 	if (prop.CoreType == RTTI::eCorePropertyType::CUSTOM)
 	{
-		if (IsOfType<EntityTransform>(prop))
-			field = new TransformControlGroup(this);
-		else if (prop.Type.isTypeDerivedFrom<ResourceBase>())
-			field = new ResourceControl(this);
-		else
+		//if (IsOfType<EntityTransform>(&prop))
+		//	field = new TransformControlGroup(this);
+		//else if (prop.Type.isTypeDerivedFrom<ResourceBase>())
+		//	field = new ResourceControl(this);
+		//else
 			field = new PlaceHolderControl(this);
 	}
 	else

@@ -37,6 +37,8 @@ void ProjectManager::Open(String projectPath)
 	// create and load project file
 	ProjectConfig = std::make_unique<::ProjectConfig>(projectPath);
 	ProjectConfig->Load();
+
+	emit ProjectOpened();
 }
 
 void ProjectManager::Update(const String& enginePath)

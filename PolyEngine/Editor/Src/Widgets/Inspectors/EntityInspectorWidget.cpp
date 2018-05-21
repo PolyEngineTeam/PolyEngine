@@ -137,12 +137,11 @@ void EntityInspectorWidget::UpdateWidget()
 		cmp->GetTypeInfo().GetTypeName();
 
 		SectionContainer* section = new SectionContainer(cmp->GetTypeInfo().GetTypeName());
-		RTTIViewerWidget* viewer = new RTTIViewerWidget();
+		RTTIInspectorWidget* viewer = new RTTIInspectorWidget();
 
 		viewer->SetObject(cmp);
 
 		ComponentSections.PushBack(section);
-		ComponentWidgets.PushBack(viewer);
 
 		section->SetWidget(viewer);
 		MainLayout->addWidget(section, row, 0, 1, 3);

@@ -20,6 +20,8 @@ protected:
 
 class ProjectManager : public QObject
 {
+	Q_OBJECT
+
 public:
 	ProjectManager() {}
 	~ProjectManager() = default;
@@ -47,4 +49,7 @@ public:
 
 private:
 	std::unique_ptr<ProjectConfig> ProjectConfig;
+
+signals:
+	void ProjectOpened();
 };

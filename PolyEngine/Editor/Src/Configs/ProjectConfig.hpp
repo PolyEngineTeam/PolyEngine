@@ -22,6 +22,9 @@ public:
 	void Save();
 	void Load();
 
+	const String& GetProjectPath() const { return ProjectPath; }
+	const String& GetProjectName() const { return ProjectName; }
+
 	// for now these functions always return Debug configuration output files
 	String GetGameDllPath() const;
 	String GetRenderingDeviceDllPath() const;
@@ -29,9 +32,9 @@ public:
 private:
 	// Path to *.proj.json file
 	String Path;
+
 	// Path to directory where *.proj.json file is stored
 	String ProjectPath;
-
 	// project name loaded from *.proj.json
 	String ProjectName;
 };

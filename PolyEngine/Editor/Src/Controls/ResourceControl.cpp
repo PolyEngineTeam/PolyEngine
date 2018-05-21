@@ -1,6 +1,7 @@
-#include "ResourceControl.hpp"
+#include "PolyEditorPCH.hpp"
 
 ResourceControl::ResourceControl(QWidget* parent)
+	: ControlBase(parent)
 {
 	Layout = new QGridLayout(this);
 	Layout->setSpacing(0);

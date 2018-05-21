@@ -19,7 +19,7 @@ namespace Poly
 		{
 			RTTI_PROPERTY_AUTONAME(EmitterID, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(Background, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(Resource, RTTI::ePropertyFlag::NONE);
+			//RTTI_PROPERTY_AUTONAME(Resource, RTTI::ePropertyFlag::NONE);
 		}
 
 		friend void SoundSystem::SoundPhase(World* world);
