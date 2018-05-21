@@ -61,10 +61,10 @@ void RTTIInspectorWidget::AddItem(QGridLayout* parent, void* ptr, const RTTI::Pr
 
 	if (prop.CoreType == RTTI::eCorePropertyType::CUSTOM)
 	{
-		if (prop.Type == EntityTransform::MetaTypeInfo::GetTypeInfo())
+		if (IsOfType<EntityTransform>(prop))
 			field = new TransformControlGroup(this);
 		else if (prop.Type.isTypeDerivedFrom<ResourceBase>())
-			field = nullptr;
+			field = new ResourceControl(this);
 		else
 			field = new PlaceHolderControl(this);
 	}

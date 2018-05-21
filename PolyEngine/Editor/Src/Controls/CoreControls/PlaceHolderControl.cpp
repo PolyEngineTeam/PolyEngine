@@ -19,5 +19,4 @@ PlaceHolderControl::PlaceHolderControl(QWidget* parent)
 	Layout->addWidget(Field);
 
 	setLayout(Layout);
-	setToolTip(":P");
 }

@@ -14,7 +14,6 @@
 #include "Controls/ControlGroups/TransformControlGroup.hpp"
 
 class SectionContainer;
-class RTTIInspectorWidget;
 
 using namespace Poly;
 
@@ -52,7 +51,6 @@ private:
 
 	// Component sections
 	Dynarray<SectionContainer*> ComponentSections;
-	Dynarray<RTTIInspectorWidget*> ComponentWidgets;
 
 public slots:
 	void SpawnContextMenu(QPoint pos); 

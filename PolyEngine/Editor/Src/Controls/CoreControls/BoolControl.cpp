@@ -33,7 +33,6 @@ BoolControl::BoolControl(QWidget* parent)
 	Machine->start();
 
 	setLayout(Layout);
-	setToolTip("BOOL");
 }
 
 BoolControl::~BoolControl()

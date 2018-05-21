@@ -76,43 +76,33 @@ void NumberControl::UpdateControl()
 	{
 	case RTTI::eCorePropertyType::INT8:
 		Field->setText(QString::number(*reinterpret_cast<i8*>(Object)));
-		setToolTip("INT8");
 		break;
 	case RTTI::eCorePropertyType::INT16:
 		Field->setText(QString::number(*reinterpret_cast<i16*>(Object)));
-		setToolTip("INT16");
 		break;
 	case RTTI::eCorePropertyType::INT32:
 		Field->setText(QString::number(*reinterpret_cast<i32*>(Object)));
-		setToolTip("INT32");
 		break;
 	case RTTI::eCorePropertyType::INT64:
 		Field->setText(QString::number(*reinterpret_cast<i64*>(Object)));
-		setToolTip("INT64");
 		break;
 	case RTTI::eCorePropertyType::UINT8:
 		Field->setText(QString::number(*reinterpret_cast<u8*>(Object)));
-		setToolTip("UINT8");
 		break;
 	case RTTI::eCorePropertyType::UINT16:
 		Field->setText(QString::number(*reinterpret_cast<u16*>(Object)));
-		setToolTip("UINT16");
 		break;
 	case RTTI::eCorePropertyType::UINT32:
 		Field->setText(QString::number(*reinterpret_cast<u32*>(Object)));
-		setToolTip("UINT32");
 		break;
 	case RTTI::eCorePropertyType::UINT64:
 		Field->setText(QString::number(*reinterpret_cast<u64*>(Object)));
-		setToolTip("UINT64");
 		break;
 	case RTTI::eCorePropertyType::FLOAT:
 		Field->setText(QString::number(*reinterpret_cast<f32*>(Object)));
-		setToolTip("FLOAT");
 		break;
 	case RTTI::eCorePropertyType::DOUBLE:
 		Field->setText(QString::number(*reinterpret_cast<f64*>(Object)));
-		setToolTip("DOUBLE");
 		break;
 	default:
 		ASSERTE(false, "Not supported type");

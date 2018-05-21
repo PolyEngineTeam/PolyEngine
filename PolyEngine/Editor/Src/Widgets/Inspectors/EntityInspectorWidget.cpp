@@ -137,7 +137,7 @@ void EntityInspectorWidget::UpdateWidget()
 		cmp->GetTypeInfo().GetTypeName();
 
 		SectionContainer* section = new SectionContainer(cmp->GetTypeInfo().GetTypeName());
-		RTTIInspectorWidget* viewer = new RTTIInspectorWidget();
+		RTTIViewerWidget* viewer = new RTTIViewerWidget();
 
 		viewer->SetObject(cmp);
 

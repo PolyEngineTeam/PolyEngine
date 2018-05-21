@@ -15,7 +15,6 @@ StringControl::StringControl(QWidget* parent)
 	Layout->addWidget(Field);
 
 	setLayout(Layout);
-	setToolTip("STRING");
 }
 
 void StringControl::UpdateObject()
