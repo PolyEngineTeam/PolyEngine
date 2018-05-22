@@ -24,6 +24,17 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 	lightAccumulationShader("Shaders/lightAccumulationVert.shader", "Shaders/lightAccumulationFrag.shader"),
 	hdrShader("Shaders/hdr.vert.glsl", "Shaders/hdr.frag.glsl")
 {
+	for (size_t i = 0; i < 8; ++i)
+	{
+		String baseName = String("uDirectionalLight[") + String::From(static_cast<int>(i)) + String("].");
+		lightAccumulationShader.RegisterUniform("vec4", baseName + "ColorIntensity");
+		lightAccumulationShader.RegisterUniform("vec4", baseName + "Direction");
+	}
+	lightAccumulationShader.RegisterUniform("int", "uDirectionalLightCount");
+
+	lightAccumulationShader.RegisterUniform("int", "uLightCount");
+	lightAccumulationShader.RegisterUniform("int", "uWorkGroupsX");
+	lightAccumulationShader.RegisterUniform("int", "uWorkGroupsY");
 }
 
 void TiledForwardRenderer::Init()
@@ -270,6 +281,24 @@ void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent*
 	lightAccumulationShader.SetUniform("uWorkGroupsX", (int)workGroupsX);
 	lightAccumulationShader.SetUniform("uWorkGroupsY", (int)workGroupsY);
 	lightAccumulationShader.SetUniform("uViewPosition", cameraTransform.GetGlobalTranslation());
+
+	static const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
+	int dirLightsCount = 0;
+	for (const auto& componentsTuple : world->IterateComponents<DirectionalLightComponent>())
+	{
+		DirectionalLightComponent* dirLightCmp = std::get<DirectionalLightComponent*>(componentsTuple);
+		const EntityTransform& transform = dirLightCmp->GetTransform();
+		String baseName = String("uDirectionalLight[") + String::From(dirLightsCount) + String("].");
+		Color ColorIntensity = dirLightCmp->GetColor();
+		ColorIntensity.A = dirLightCmp->GetIntensity();
+		lightAccumulationShader.SetUniform(baseName + "ColorIntensity", ColorIntensity);
+		lightAccumulationShader.SetUniform(baseName + "Direction", MovementSystem::GetGlobalForward(transform));
+
+		++dirLightsCount;
+		if (dirLightsCount == MAX_LIGHT_COUNT_DIRECTIONAL)
+			break;
+	}
+	lightAccumulationShader.SetUniform("uDirectionalLightCount", dirLightsCount);
 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, visibleLightIndicesBuffer);

@@ -1,5 +1,9 @@
 #version 430 core
 
+#ifndef MAX_DIRLIGHT_COUNT
+#define MAX_DIRLIGHT_COUNT 8
+#endif
+
 in VERTEX_OUT{
 	vec3 positionInWorld;
 	vec2 UV;
@@ -8,6 +12,13 @@ in VERTEX_OUT{
 	vec3 tangentViewPosition;
 	vec3 tangentFragmentPosition;
 } fragment_in;
+
+
+struct DirectionalLight
+{
+    vec4 ColorIntensity;
+    vec4 Direction;
+};
 
 struct Light
 {
@@ -34,6 +45,11 @@ const uint MAX_NUM_LIGHTS = 1024;
 uniform sampler2D uAlbedoMap;
 uniform sampler2D uSpecularMap;
 uniform sampler2D uNormalMap;
+
+// uniform DirectionalLight uDirectionalLight[MAX_DIRLIGHT_COUNT];
+uniform DirectionalLight uDirectionalLight[8];
+uniform int uDirectionalLightCount;
+
 uniform int uLightCount;
 uniform int uWorkGroupsX;
 uniform int uWorkGroupsY;
@@ -97,6 +113,23 @@ void main()
         
 		if (bVisibleLightIndicesBuffer.data[TileOffset + i + 1].Index == -1)
             break;
+    }
+
+    for (int i = 0; i < uDirectionalLightCount; ++i)
+    {
+		DirectionalLight dirLight = uDirectionalLight[i];
+		vec3 tangentLightDir = fragment_in.TBN * dirLight.Direction.xyz;
+		vec3 L = normalize(tangentLightDir);
+		vec3 H = normalize(L + V);
+		vec3 N = normal;
+	
+		float NdotL = max(dot(L, N), 0.0);
+		float NdotH = pow(max(dot(N, H), 0.0), 32.0);
+	
+		// Hacky fix to handle issue where specular light still effects scene once point light has passed into an object
+		NdotH *= step(0.0, NdotL);
+	
+        color.rgb += dirLight.ColorIntensity.rgb * dirLight.ColorIntensity.w * ((diffuse.rgb * NdotL) + (diffuse.rgb * specular * NdotH));
     }
 
     oColor = color;
