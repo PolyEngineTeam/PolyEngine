@@ -42,9 +42,19 @@ layout(std430, binding = 1) readonly buffer VisibleLightIndicesBuffer {
 
 const uint MAX_NUM_LIGHTS = 1024;
 
+struct Material
+{
+    vec4 Ambient;
+    vec4 Diffuse;
+    vec4 Specular;
+    float Shininess;
+};
+
 uniform sampler2D uAlbedoMap;
 uniform sampler2D uSpecularMap;
 uniform sampler2D uNormalMap;
+
+uniform Material uMaterial;
 
 // uniform DirectionalLight uDirectionalLight[MAX_DIRLIGHT_COUNT];
 uniform DirectionalLight uDirectionalLight[8];
@@ -69,12 +79,12 @@ vec3 GetIrradiance(Light light, vec3 V, vec3 N, vec3 diffuse, float specular)
     vec3 H = normalize(L + V);
 	
     float NdotL = max(dot(L, N), 0.0);
-    float NdotH = pow(max(dot(N, H), 0.0), 32.0);
+    float NdotH = pow(max(dot(N, H), 0.0), uMaterial.Shininess);
 	
 	// Hacky fix to handle issue where specular light still effects scene once point light has passed into an object
     NdotH *= step(0.0, NdotL);
 	
-    return light.Color.rgb * light.RangeIntensity.y * ((diffuse.rgb * NdotL) + (diffuse.rgb * specular * NdotH)) * falloff;
+    return light.Color.rgb * light.RangeIntensity.y * ((diffuse.rgb * uMaterial.Diffuse.rgb * NdotL) + (diffuse.rgb * uMaterial.Specular.rgb * specular * NdotH)) * falloff;
 }
 
 void main()
@@ -96,7 +106,7 @@ void main()
 
     vec3 V = normalize(fragment_in.tangentViewPosition - fragment_in.tangentFragmentPosition);
  
-    color.rgb += vec3(0.0, 0.0, 0.001); // ambient
+    color.rgb += uMaterial.Ambient.rgb;
 
     ivec2 WorkGroupSize = ivec2(16, 16);
     ivec2 NumWorkGroups = ivec2(uWorkGroupsX, uWorkGroupsY);
@@ -124,12 +134,12 @@ void main()
 		vec3 N = normal;
 	
 		float NdotL = max(dot(L, N), 0.0);
-		float NdotH = pow(max(dot(N, H), 0.0), 32.0);
+        float NdotH = pow(max(dot(N, H), 0.0), uMaterial.Shininess);
 	
 		// Hacky fix to handle issue where specular light still effects scene once point light has passed into an object
 		NdotH *= step(0.0, NdotL);
 	
-        color.rgb += dirLight.ColorIntensity.rgb * dirLight.ColorIntensity.w * ((diffuse.rgb * NdotL) + (diffuse.rgb * specular * NdotH));
+        color.rgb += dirLight.ColorIntensity.rgb * dirLight.ColorIntensity.w * ((diffuse.rgb * uMaterial.Diffuse.rgb * NdotL) + (diffuse.rgb * uMaterial.Specular.rgb * specular * NdotH));
     }
 
     oColor = color;

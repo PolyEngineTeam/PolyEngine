@@ -24,6 +24,12 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 	lightAccumulationShader("Shaders/lightAccumulationVert.shader", "Shaders/lightAccumulationFrag.shader"),
 	hdrShader("Shaders/hdr.vert.glsl", "Shaders/hdr.frag.glsl")
 {
+
+	lightAccumulationShader.RegisterUniform("vec4", "uMaterial.Ambient");
+	lightAccumulationShader.RegisterUniform("vec4", "uMaterial.Diffuse");
+	lightAccumulationShader.RegisterUniform("vec4", "uMaterial.Specular");
+	lightAccumulationShader.RegisterUniform("float", "uMaterial.Shininess");
+
 	for (size_t i = 0; i < 8; ++i)
 	{
 		String baseName = String("uDirectionalLight[") + String::From(static_cast<int>(i)) + String("].");
@@ -311,9 +317,16 @@ void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent*
 		const Matrix& WorldFromModel = transform.GetWorldFromModel();
 		lightAccumulationShader.SetUniform("uClipFromModel", ClipFromWorld * WorldFromModel);
 		lightAccumulationShader.SetUniform("uWorldFromModel", WorldFromModel);
-
+		
+		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
+			PhongMaterial material = meshCmp->GetMaterial(i);
+			lightAccumulationShader.SetUniform("uMaterial.Ambient", material.AmbientColor);
+			lightAccumulationShader.SetUniform("uMaterial.Diffuse", material.DiffuseColor);
+			lightAccumulationShader.SetUniform("uMaterial.Specular", material.SpecularColor);
+			lightAccumulationShader.SetUniform("uMaterial.Shininess", material.Shininess);
+
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 			glBindVertexArray(meshProxy->GetVAO());
 
@@ -342,6 +355,7 @@ void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent*
 			lightAccumulationShader.SetUniform("uSpecularMap", 2);
 
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
+			++i;
 		}
 	}
 
