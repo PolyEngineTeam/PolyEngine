@@ -1,21 +1,20 @@
 #include "GLRenderingDevice.hpp"
 
-#include <World.hpp>
-#include <DebugConfig.hpp>
-#include <Viewport.hpp>
+#include <ECS/World.hpp>
+#include <Configs/DebugConfig.hpp>
+#include <Rendering/Viewport.hpp>
 
-#include <CameraComponent.hpp>
-#include <MeshRenderingComponent.hpp>
-#include <TransformComponent.hpp>
-#include <ScreenSpaceTextComponent.hpp>
-#include <ViewportWorldComponent.hpp>
-#include <PostprocessSettingsComponent.hpp>
+#include <Rendering/Camera/CameraComponent.hpp>
+#include <Rendering/MeshRenderingComponent.hpp>
+#include <UI/ScreenSpaceTextComponent.hpp>
+#include <Rendering/ViewportWorldComponent.hpp>
+#include <Rendering/PostprocessSettingsComponent.hpp>
 
-#include "GLTextFieldBufferDeviceProxy.hpp"
-#include "GLTextureDeviceProxy.hpp"
-#include "RenderingPassBase.hpp"
-#include "GLMeshDeviceProxy.hpp"
-#include "GLUtils.hpp"
+#include "Proxy/GLTextFieldBufferDeviceProxy.hpp"
+#include "Proxy/GLTextureDeviceProxy.hpp"
+#include "Pipeline/RenderingPassBase.hpp"
+#include "Proxy/GLMeshDeviceProxy.hpp"
+#include "Common/GLUtils.hpp"
 
 using namespace Poly;
 
@@ -29,10 +28,12 @@ void GLRenderingDevice::RenderWorld(World* world)
 
 	// Clear FBO's
 	for (eGeometryRenderPassType type : IterateEnum<eGeometryRenderPassType>())
-		GeometryRenderingPasses[type]->ClearFBO();
+		if (GeometryRenderingPasses[type])
+			GeometryRenderingPasses[type]->ClearFBO();
 
 	for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
-		PostprocessRenderingPasses[type]->ClearFBO();
+		if (PostprocessRenderingPasses[type])
+			PostprocessRenderingPasses[type]->ClearFBO();
 
 	// For each visible viewport draw it
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
@@ -106,7 +107,6 @@ void GLRenderingDevice::RenderNormalsWireframe(World* world, const AARect& rect,
 	GeometryRenderingPasses[eGeometryRenderPassType::DEBUG_NORMALS_WIREFRAME]->Run(world, cameraCmp, rect, ePassType::GLOBAL);
 
 	glDepthMask(GL_FALSE);
-	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);
 
@@ -292,16 +292,26 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 	// Render meshes with unlit shader
 	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
 
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	GeometryRenderingPasses[eGeometryRenderPassType::SKYBOX]->Run(world, cameraCmp, rect);
+	
 	glDepthMask(GL_FALSE);
 
-	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
-
+	glEnable(GL_DEPTH_TEST);
 	// TODO test these blending options
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glBlendFunc(GL_ONE, GL_ONE);
-	//glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
+	// glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
+	// glBlendFunc(GL_ONE, GL_ONE);
+	// glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
+
 	GeometryRenderingPasses[eGeometryRenderPassType::TRANSPARENT_GEOMETRY]->Run(world, cameraCmp, rect);
+	
+	GeometryRenderingPasses[eGeometryRenderPassType::TRANSPARENT_SPRITESHEET]->Run(world, cameraCmp, rect);
+
+	GeometryRenderingPasses[eGeometryRenderPassType::PARTICLES]->Run(world, cameraCmp, rect);
 
 	glDisable(GL_BLEND);
 
@@ -310,7 +320,6 @@ void GLRenderingDevice::RenderLit(World* world, const AARect& rect, CameraCompon
 	// Run postprocess passes
 	// for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
 
-	GeometryRenderingPasses[eGeometryRenderPassType::SKYBOX]->Run(world, cameraCmp, rect);
 
 	// Render text
 	GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);

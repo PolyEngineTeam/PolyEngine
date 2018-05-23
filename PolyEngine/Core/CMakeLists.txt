@@ -1,75 +1,14 @@
 find_package(RapidJSON REQUIRED)
 
-set(POLYCORE_SRCS
-	Src/AABox.cpp
-	Src/AARect.cpp
-	Src/BaseObject.cpp
-	Src/BinaryBuffer.cpp
-	Src/Color.cpp
-	Src/Logger.cpp
-	Src/Matrix.cpp
-	Src/OutputStream.cpp
-	Src/Quaternion.cpp
-	Src/RefCountedBase.cpp
-	Src/RTTI.cpp
-	Src/RTTISerialization.cpp
-	Src/RTTITypeInfo.cpp
-	Src/SafePtrRoot.cpp
-	Src/SimdMath.cpp
-	Src/String.cpp
-	Src/StringBuilder.cpp
-	Src/UniqueID.cpp
-	Src/Vector.cpp
-	Src/Vector2f.cpp
-	Src/Vector2i.cpp
-)
 set(POLYCORE_INCLUDE Src)
-set(POLYCORE_H_FOR_IDE
-	Src/AABox.hpp
-	Src/AARect.hpp
-	Src/Allocator.hpp
-	Src/Angle.hpp
-	Src/OrderedMap.hpp
-	Src/BTreePrimitives.hpp
-	Src/BaseObject.hpp
-	Src/BasicMath.hpp
-	Src/BinaryBuffer.hpp
-	Src/Color.hpp
-	Src/Core.hpp
-	Src/CorePCH.hpp
-	Src/Defines.hpp
-	Src/Dynarray.hpp
-	Src/EnumUtils.hpp
-	Src/FileIO.hpp
-	Src/IterablePoolAllocator.hpp
-	Src/Logger.hpp
-	Src/Matrix.hpp
-	Src/Optional.hpp
-	Src/OutputStream.hpp
-	Src/PoolAllocator.hpp
-	Src/Quaternion.hpp
-	Src/Queue.hpp
-	Src/RefCountedBase.hpp
-	Src/RTTI.hpp
-	Src/RTTICast.hpp
-	Src/RTTIProperty.hpp
-	Src/RTTISerialization.hpp
-	Src/RTTITypeInfo.hpp
-	Src/RTTITypeInfoImpl.hpp
-	Src/SafePtr.hpp
-	Src/SafePtrRoot.hpp
-	Src/SimdMath.hpp
-	Src/String.hpp
-	Src/StringBuilder.hpp
-	Src/UniqueID.hpp
-	Src/UnsafeStorage.hpp
-	Src/Vector.hpp
-	Src/Vector2f.hpp
-	Src/Vector2i.hpp
-	Src/Vector3f.hpp
-)
 
-add_library(PolyCore SHARED ${POLYCORE_SRCS} ${POLYCORE_H_FOR_IDE})
+file(GLOB_RECURSE POLYCORE_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
+	${POLYCORE_INCLUDE}/*.cpp 
+	${POLYCORE_INCLUDE}/*.hpp
+	${POLYCORE_INCLUDE}/*.h)
+GenerateSourceGoups("${POLYCORE_SRCS}")
+
+add_library(PolyCore SHARED ${POLYCORE_SRCS})
 target_compile_options(PolyCore PRIVATE $<$<BOOL:${SIMD}>:${SIMD_FLAGS}>)
 target_compile_definitions(PolyCore PRIVATE _CORE DISABLE_SIMD=$<NOT:$<BOOL:${SIMD}>>)
 target_include_directories(PolyCore PUBLIC ${POLYCORE_INCLUDE})

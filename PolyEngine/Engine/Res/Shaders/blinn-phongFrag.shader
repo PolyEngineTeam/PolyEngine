@@ -56,6 +56,8 @@ struct Material
 };
 
 uniform sampler2D uTexture;
+uniform sampler2D uSpecularMap;
+uniform sampler2D uNormalMap;
 uniform vec4 uCameraForward;
 uniform vec4 uCameraPosition;
 
@@ -71,7 +73,8 @@ uniform int uSpotLightCount;
 
 in vec3 vVertexPos;
 in vec2 vTexCoord;
-in vec3 vNormal;
+in vec3 vNormal; // to remove
+in mat3 TBN;
 
 layout(location = 0) out vec4 color;
 
@@ -166,7 +169,17 @@ void main() {
 	if (texDiffuse.a < 0.1)
 		discard;
 
+	vec4 texSpecular = texture(uSpecularMap, vTexCoord);
+	vec3 normal = texture(uNormalMap, vTexCoord).rgb;
+	normal = normalize(normal * 2.0 - 1.0);
+
+	vec3 normalTBN = normalize(TBN * normal);
 	vec3 normalWS = normalize(vNormal);
+
+	// if normals, tangents or something else were trash
+	if(isnan(normalTBN.x))
+		normalTBN = normalWS;
+
 	vec3 positionWS = vVertexPos;
 	
 	vec3 Iamb = ambientLighting();
@@ -177,25 +190,25 @@ void main() {
 
 	for (int i = 0; i < uDirectionalLightCount; ++i)
 	{
-		Lighting lighting = directionalLighting(uDirectionalLight[i], positionWS, normalWS, toCamera);
+		Lighting lighting = directionalLighting(uDirectionalLight[i], positionWS, normalTBN, toCamera);
 		Idif += lighting.Diffuse;
 		Ispe += lighting.Specular;
 	}
 	
 	for (int i = 0; i < uPointLightCount; ++i)
 	{
-		Lighting lighting = pointLighting(uPointLight[i], positionWS, normalWS, toCamera);
+		Lighting lighting = pointLighting(uPointLight[i], positionWS, normalTBN, toCamera);
 		Idif += lighting.Diffuse;
 		Ispe += lighting.Specular;
 	}
 
 	for (int i = 0; i < uSpotLightCount; ++i)
 	{
-		Lighting lighting = spotLighting(uSpotLight[i], positionWS, normalWS, toCamera);
+		Lighting lighting = spotLighting(uSpotLight[i], positionWS, normalTBN, toCamera);
 		Idif += lighting.Diffuse;
 		Ispe += lighting.Specular;
 	}
 
-	color.rgb = texDiffuse.rgb * (Iamb + Idif + Ispe);
+	color.rgb = texDiffuse.rgb * (Iamb + Idif + Ispe * texSpecular.rgb);
 	color.a = 1.0;
 }

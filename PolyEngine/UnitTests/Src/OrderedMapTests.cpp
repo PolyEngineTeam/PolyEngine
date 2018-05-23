@@ -1,7 +1,8 @@
+#include <Defines.hpp>
 #include <catch.hpp>
 
-#include <OrderedMap.hpp>
-#include <Dynarray.hpp>
+#include <Collections/OrderedMap.hpp>
+#include <Collections/Dynarray.hpp>
 #include <random>
 
 

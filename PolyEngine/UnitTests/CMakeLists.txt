@@ -1,28 +1,11 @@
-set(POLYTESTS_SRCS
-	Src/AABoxTests.cpp
-	Src/AARectTests.cpp
-	Src/AllocatorTests.cpp
-	Src/AngleTests.cpp
-	Src/BasicMathTests.cpp
-	Src/ConfigTests.cpp
-	Src/OrderedMapTests.cpp
-	Src/DynarrayTests.cpp
-	Src/EnumUtilsTests.cpp
-	Src/MatrixTests.cpp
-	Src/OptionalTests.cpp
-	Src/QuaternionTests.cpp
-	Src/QueueTests.cpp
-	Src/ResourceManagerTests.cpp
-	Src/RTTITests.cpp
-	Src/SafePtrTests.cpp
-	Src/StringTests.cpp
-	Src/TransformComponentTests.cpp
-	Src/UnsafeStorageTests.cpp
-	Src/VectorTests.cpp
-	Src/Vector2fTests.cpp
-	Src/Vector2iTests.cpp
-	Src/main.cpp
-)
+
+set(POLYTESTS_INCLUDE Src)
+
+file(GLOB_RECURSE POLYTESTS_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
+	${POLYTESTS_INCLUDE}/*.cpp 
+	${POLYTESTS_INCLUDE}/*.hpp
+	${POLYTESTS_INCLUDE}/*.h)
+GenerateSourceGoups("${POLYTESTS_SRCS}")
 
 # Catch include
 add_library(Catch INTERFACE)

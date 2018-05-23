@@ -1,6 +1,7 @@
-#include "catch.hpp"
+#include <Defines.hpp>
+#include <catch.hpp>
 
-#include "String.hpp"
+#include <Collections/String.hpp>
 
 using namespace Poly;
 

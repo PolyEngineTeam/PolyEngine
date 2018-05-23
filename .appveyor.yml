@@ -1,0 +1,66 @@
+version: 1.0.{build}
+
+clone_folder: C:\projects\PolyEngine
+
+image:
+- Visual Studio 2017
+
+configuration:
+- Release
+- Debug
+
+platform:
+- x64
+
+environment:
+  matrix:
+  - arch: Win64
+    QTDIR: C:\Qt\5.10.1\msvc2017_64
+    PATH: '%PATH%;%QTDIR%\bin;'
+
+  # - arch: #does not work, Release|x64 not a valid target
+matrix:
+  fast_finish: true
+
+# skip unsupported combinations
+init:
+- set arch=
+- if "%arch%"=="Win64" ( set arch= Win64)
+- echo %arch%
+- echo %QTDIR%
+- echo %APPVEYOR_BUILD_WORKER_IMAGE%
+- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" ( set generator="Visual Studio 15 2017%arch%" )
+- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" ( set generator="Visual Studio 14 2015%arch%" )
+- echo %generator%
+
+before_build:
+- cmd: |-
+    cd C:\projects\PolyEngine\PolyEngine
+    mkdir build
+    cd build
+    cmake --version
+    cmake .. -G %generator%
+
+build:
+  project: C:\projects\PolyEngine\PolyEngine\build\PolyEngine.sln
+  verbosity: minimal
+  parallel: true
+  
+# scripts to run before tests
+#before_test:
+#  - echo %CONFIGURATION%
+#  - cd C:\projects\PolyEngine\PolyEngine\build\UnitTests\%CONFIGURATION%
+
+# to run your custom scripts instead of automatic tests
+#test_script:
+#  - PolyUnitTests.exe
+  
+notifications:
+- provider: Slack
+  auth_token:
+    secure: DWi4NgrRL7/v8v7PyZ03XRepd1bk7t482/T7SpHCaELiOt8hWu/pZpgjfUDfXsZA
+  channel: ci-build
+  on_build_success: true
+  on_build_failure: true
+  on_build_status_changed: false
+  

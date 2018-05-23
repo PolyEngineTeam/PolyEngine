@@ -1,6 +1,7 @@
+#include <Defines.hpp>
 #include <catch.hpp>
 
-#include <Vector.hpp>
+#include <Math/Vector.hpp>
 
 using namespace Poly;
 

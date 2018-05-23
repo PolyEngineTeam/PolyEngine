@@ -1,8 +1,8 @@
 #pragma once
 
-#include "GLUtils.hpp"
-#include <IRenderingDevice.hpp>
-#include "GLShaderProgram.hpp"
+#include "Common/GLUtils.hpp"
+#include <Rendering/IRenderingDevice.hpp>
+#include "Common/GLShaderProgram.hpp"
 #include <SDL.h>
 
 struct SDL_Window;
@@ -16,6 +16,7 @@ namespace Poly
 	struct PrimitiveCube;
 	class RenderingPassBase;
 	class RenderingTargetBase;
+	class RenderingTargetBase;
 
 	class DEVICE_DLLEXPORT GLRenderingDevice : public IRenderingDevice
 	{
@@ -25,6 +26,8 @@ namespace Poly
 			UNLIT,
 			BLINN_PHONG,
 			TRANSPARENT_GEOMETRY,
+			TRANSPARENT_SPRITESHEET,
+			PARTICLES,
 			DEBUG_NORMALS,
 			DEBUG_NORMALS_WIREFRAME,
 			IMMEDIATE_DEBUG,
@@ -40,6 +43,13 @@ namespace Poly
 			FOREGROUND,
 			BACKGROUND_LIGHT,
 			FOREGROUND_LIGHT,
+			_COUNT
+		};
+
+		enum class eRenderTargetId
+		{
+			COLOR,
+			DEPTH,
 			_COUNT
 		};
 
@@ -67,6 +77,7 @@ namespace Poly
 		std::unique_ptr<ICubemapDeviceProxy> CreateCubemap(size_t width, size_t height) override;
 		std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() override;
 		std::unique_ptr<IMeshDeviceProxy> CreateMesh() override;
+		std::unique_ptr<IParticleDeviceProxy> CreateParticle() override;
 
 	private:
 		void InitPrograms();
@@ -96,17 +107,16 @@ namespace Poly
 			const std::initializer_list<InputOutputBind>& outputs = {});
 
 		template <typename T, typename... Args>
-		T* CreateRenderingTarget(Args&&... args);
+		T* CreateRenderingTarget(eRenderTargetId type, Args&&... args);
 
 		SDL_Window* Window;
 		SDL_GLContext Context;
 		ScreenSize ScreenDim;
 
-		Dynarray<std::unique_ptr<RenderingTargetBase>> RenderingTargets;
-
 		EnumArray<std::unique_ptr<RenderingPassBase>, eGeometryRenderPassType> GeometryRenderingPasses;
 		EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
-
+		EnumArray<std::unique_ptr<RenderingTargetBase>, eRenderTargetId> RenderingTargets;
+		
 		std::unique_ptr<PostprocessQuad> PostprocessRenderingQuad;
 		std::unique_ptr<PrimitiveCube> PrimitiveRenderingCube;
 	};

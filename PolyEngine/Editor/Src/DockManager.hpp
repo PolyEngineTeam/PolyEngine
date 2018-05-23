@@ -1,6 +1,6 @@
 #pragma once
 
-#include <qevent.h>
+#include <QEvent>
 
 class PolyWindow;
 class PolyWidget;
