@@ -97,6 +97,12 @@ void EntityInspectorWidget::SetObject(::Entity *entity)
 
 void EntityInspectorWidget::UpdateObject()
 {
+	// TODO(squares): set entity name here
+
+	Transform->UpdateControl();
+
+	for (RTTIInspectorWidget* inspector : ComponentInspectors)
+		inspector->UpdateObject();
 }
 
 void EntityInspectorWidget::UpdateInspector()
@@ -128,6 +134,7 @@ void EntityInspectorWidget::UpdateInspector()
 		delete cmp;
 	}
 	ComponentSections.Clear();
+	ComponentInspectors.Clear();
 	
 	// add component sections
 	for (int i = 0, row = 5; i < MAX_COMPONENTS_COUNT; ++i)
@@ -144,6 +151,7 @@ void EntityInspectorWidget::UpdateInspector()
 		viewer->SetObject(cmp);
 
 		ComponentSections.PushBack(section);
+		ComponentInspectors.PushBack(viewer);
 
 		section->SetWidget(viewer);
 		MainLayout->addWidget(section, row, 0, 1, 3);
