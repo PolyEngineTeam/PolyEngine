@@ -4,6 +4,8 @@
 
 EntityInspectorWidget::EntityInspectorWidget()
 {
+	connect(gApp->Ui.WorldExplorer, &WorldInspectorWidget::EntitySelected, this, &EntityInspectorWidget::SetObject);
+
 	setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(this, &EntityInspectorWidget::customContextMenuRequested, this, &EntityInspectorWidget::SpawnContextMenu);
 
@@ -86,18 +88,18 @@ EntityInspectorWidget::EntityInspectorWidget()
 	MainLayout->addWidget(TransformSection, 4, 0, 1, 3);
 }
 
-void EntityInspectorWidget::SetEntity(::Entity *entity)
+void EntityInspectorWidget::SetObject(::Entity *entity)
 {
 	Entity = entity;
-	Transform->SetObject(entity, nullptr); // FIXME(squares): replace this nullptr later
-	UpdateWidget();
+	Transform->SetObject(entity, &entity->GetPropertyManager()->GetPropertyList()[0]);
+	UpdateInspector();
 }
 
-void EntityInspectorWidget::UpdateEntity()
+void EntityInspectorWidget::UpdateObject()
 {
 }
 
-void EntityInspectorWidget::UpdateWidget()
+void EntityInspectorWidget::UpdateInspector()
 {
 	std::stringstream ss;
 

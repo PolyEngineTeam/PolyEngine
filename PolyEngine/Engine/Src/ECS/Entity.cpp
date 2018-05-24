@@ -5,6 +5,8 @@
 
 using namespace Poly;
 
+RTTI_DEFINE_TYPE(Entity)
+
 Entity::Entity(World* world, Entity* parent)
 	: EntityID(UniqueID::Generate()), Transform(this), EntityWorld(world), ComponentPosessionFlags(0)
 {

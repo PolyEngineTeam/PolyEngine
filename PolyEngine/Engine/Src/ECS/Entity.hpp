@@ -15,6 +15,11 @@ namespace Poly
 	/// <summary>Class that represent entity inside core engine systems. Should not be used anywhere else.</summary>
 	class ENGINE_DLLEXPORT Entity : public SafePtrRoot
 	{
+		RTTI_DECLARE_TYPE_DERIVED(Entity, SafePtrRoot)
+		{
+			RTTI_PROPERTY_AUTONAME(Transform, RTTI::ePropertyFlag::NONE);
+		}
+
 	public:
 		~Entity();
 

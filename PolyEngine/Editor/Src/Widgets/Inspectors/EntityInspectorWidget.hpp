@@ -24,13 +24,13 @@ public:
 	EntityInspectorWidget();
 
 	// Set entity to display; updates automatically.
-	void SetEntity(Entity* entity);
+	void SetObject(Entity* entity);
 
 	// Updates every property of entity and its components from widget fields.
-	void UpdateEntity();
+	void UpdateObject();
 
 	// Updates every field within widget from currently set entity.
-	void UpdateWidget();
+	void UpdateInspector();
 
 private:
 	Entity* Entity;
