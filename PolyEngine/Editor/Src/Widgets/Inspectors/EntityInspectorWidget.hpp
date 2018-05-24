@@ -10,10 +10,9 @@
 #include <qscrollarea.h>
 
 #include "Widgets/PolyWidget.hpp"
-#include "Controls/ControlBase.hpp"
-#include "Controls/ControlGroups/TransformControlGroup.hpp"
 
 class SectionContainer;
+class TransformControl;
 
 using namespace Poly;
 
@@ -47,7 +46,7 @@ private:
 	QLabel* ChildrenIdNameText;	QComboBox* ChildrenIdNameField;	QPushButton* ChildrenIdNameButton;
 
 	SectionContainer* TransformSection;
-	TransformControlGroup* Transform;
+	TransformControl* Transform;
 
 	// Component sections
 	Dynarray<SectionContainer*> ComponentSections;

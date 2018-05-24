@@ -59,9 +59,8 @@ UNSILENCE_MSVC_WARNING()
 #include "Controls/CoreControls/EnumControl.hpp"
 #include "Controls/CoreControls/StringControl.hpp"
 
-#include "Controls/ResourceControl.hpp"
-
-#include "Controls/ControlGroups/TransformControlGroup.hpp"
+#include "Controls/EngineControls/ResourceControl.hpp"
+#include "Controls/EngineControls/TransformControl.hpp"
 
 // dialogs
 #include "Dialogs/CreateProjectDialog.hpp"

@@ -26,18 +26,19 @@ enum class eEngineState
 
 class EngineManager : public QObject, public IEditor
 {
+	Q_OBJECT
+
 public:
 	EngineManager();
 	~EngineManager() = default;
-
-	eEngineState GetEngineState() { return EngineState; }
 
 	const String& GetAssetsPathConfigPath() const override { return AssetsPathConfigPath; }
 	void Init() override;
 	void Deinit() override;
 
-	void InitEngine(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device
-		, const String& assetsPathConfigPath);
+	eEngineState GetEngineState() { return EngineState; }
+
+	void InitEngine(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device, const String& assetsPathConfigPath);
 	void DeinitEngine();
 
 	void Edit();

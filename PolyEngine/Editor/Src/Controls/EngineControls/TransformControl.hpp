@@ -6,10 +6,10 @@
 #include <qlabel.h>
 #include <qgridlayout.h>
 
-class TransformControlGroup : public ControlBase
+class TransformControl : public ControlBase
 {
 public:
-	TransformControlGroup(QWidget* parent);
+	TransformControl(QWidget* parent);
 
 	void UpdateObject() override;
 	void UpdateControl() override;

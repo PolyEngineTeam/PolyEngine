@@ -80,7 +80,7 @@ EntityInspectorWidget::EntityInspectorWidget()
 
 	// Transform
 	TransformSection = new SectionContainer("Transform", this);
-	Transform = new TransformControlGroup(this);
+	Transform = new TransformControl(this);
 	TransformSection->SetWidget(Transform);
 
 	MainLayout->addWidget(TransformSection, 4, 0, 1, 3);

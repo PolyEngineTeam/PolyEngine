@@ -1,6 +1,6 @@
 #include "PolyEditorPCH.hpp"
 
-TransformControlGroup::TransformControlGroup(QWidget * parent)
+TransformControl::TransformControl(QWidget * parent)
 	: ControlBase(parent)
 {
 	// TODO(squares): write proper validator
@@ -43,26 +43,26 @@ TransformControlGroup::TransformControlGroup(QWidget * parent)
 	{
 		TranslationField[x] = new QLineEdit(this);
 		Layout->addWidget(TranslationField[x], 1, 1 + x);
-		connect(TranslationField[x], &QLineEdit::editingFinished, this, &TransformControlGroup::ConfirmTranslation);
+		connect(TranslationField[x], &QLineEdit::editingFinished, this, &TransformControl::ConfirmTranslation);
 
 		RotationField[x] = new QLineEdit(this);
 		Layout->addWidget(RotationField[x], 2, 1 + x);
-		connect(RotationField[x], &QLineEdit::editingFinished, this, &TransformControlGroup::ConfirmRotation);
+		connect(RotationField[x], &QLineEdit::editingFinished, this, &TransformControl::ConfirmRotation);
 
 		ScaleField[x] = new QLineEdit(this);
 		Layout->addWidget(ScaleField[x], 3, 1 + x);
-		connect(ScaleField[x], &QLineEdit::editingFinished, this, &TransformControlGroup::ConfirmScale);
+		connect(ScaleField[x], &QLineEdit::editingFinished, this, &TransformControl::ConfirmScale);
 	}
 }
 
-void TransformControlGroup::UpdateObject()
+void TransformControl::UpdateObject()
 {
 	UodateTranslation();
 	UodateRotation();
 	UodateScale();
 }
 
-void TransformControlGroup::UpdateControl()
+void TransformControl::UpdateControl()
 {
 	EntityTransform& transform = static_cast<Entity*>(Object)->GetTransform();
 
@@ -82,7 +82,7 @@ void TransformControlGroup::UpdateControl()
 	ScaleField[2]->setText(QString(String::From(scale.Z).GetCStr()));
 }
 
-void TransformControlGroup::UodateTranslation()
+void TransformControl::UodateTranslation()
 {
 	EntityTransform& transform = static_cast<Entity*>(Object)->GetTransform();
 
@@ -93,7 +93,7 @@ void TransformControlGroup::UodateTranslation()
 	transform.SetLocalTranslation(translation);
 }
 
-void TransformControlGroup::UodateRotation()
+void TransformControl::UodateRotation()
 {
 	EntityTransform& transform = static_cast<Entity*>(Object)->GetTransform();
 
@@ -104,7 +104,7 @@ void TransformControlGroup::UodateRotation()
 	transform.SetLocalRotation(Quaternion(rotation));
 }
 
-void TransformControlGroup::UodateScale()
+void TransformControl::UodateScale()
 {
 	EntityTransform& transform = static_cast<Entity*>(Object)->GetTransform();
 
