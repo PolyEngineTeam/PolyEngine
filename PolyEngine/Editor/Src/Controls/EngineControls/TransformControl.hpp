@@ -14,6 +14,8 @@ public:
 	void UpdateObject() override;
 	void UpdateControl() override;
 
+	bool ContainsLabel() override { return true; }
+
 private:
 	void UodateTranslation();
 	void UodateRotation();

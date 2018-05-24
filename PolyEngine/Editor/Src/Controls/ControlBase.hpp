@@ -50,11 +50,16 @@ public:
 	// @see ControlBase::SetObject;
 	virtual void UpdateControl() = 0;
 
+	// If label is set by control this function returns false.
+	// For example TransformControl looks better when label is set by control.
+	virtual bool ContainsLabel() { return false; }
+
 	// Returns ptr to newly created proper control for given core type.
 	static ControlBase* CreateControl(QWidget* parent, RTTI::eCorePropertyType type)
 	{ 
 		return ::Impl::CoreTypeToControlMap[static_cast<int>(type)](parent);
 	}
+
 
 	// if You want this control to update as soon as state is changed, enter pressed or 
 	// focus lost set this to true. Otherwise You will have to update it calling UpdateObject.
