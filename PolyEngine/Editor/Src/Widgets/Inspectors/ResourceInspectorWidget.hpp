@@ -6,10 +6,10 @@
 
 #include "Widgets/PolyWidget.hpp"
 
-class ResourceManagerWidget : public PolyWidget
+class ResourceInspectorWidget : public PolyWidget
 {
 public:
-	ResourceManagerWidget();
+	ResourceInspectorWidget();
 
 	void UpdateWidget();
 

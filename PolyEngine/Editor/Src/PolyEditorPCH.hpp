@@ -44,8 +44,7 @@ UNSILENCE_MSVC_WARNING()
 #include "Widgets/Inspectors/EntityInspectorWidget.hpp"
 #include "Widgets/Inspectors/WorldInspectorWidget.hpp"
 #include "Widgets/Inspectors/RTTIInspectorWidget.hpp"
-
-#include "Widgets/Managers/ResourceManagerWidget.hpp"
+#include "Widgets/Inspectors/ResourceInspectorWidget.hpp"
 
 // containers
 #include "Containers/SectionContainer.hpp"

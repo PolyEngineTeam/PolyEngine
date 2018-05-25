@@ -1,6 +1,6 @@
 #include "PolyEditorPCH.hpp"
 
-ResourceManagerWidget::ResourceManagerWidget()
+ResourceInspectorWidget::ResourceInspectorWidget()
 {
 	Layout = new QGridLayout(this);
 
@@ -10,10 +10,10 @@ ResourceManagerWidget::ResourceManagerWidget()
 	Tree->setModel(Model);
 	Layout->addWidget(Tree);
 
-	connect(&gApp->ProjectMgr, &ProjectManager::ProjectOpened, this, &ResourceManagerWidget::ProjectOpened);
+	connect(&gApp->ProjectMgr, &ProjectManager::ProjectOpened, this, &ResourceInspectorWidget::ProjectOpened);
 }
 
-void ResourceManagerWidget::UpdateWidget()
+void ResourceInspectorWidget::UpdateWidget()
 {
 	StringBuilder b;
 
@@ -27,7 +27,7 @@ void ResourceManagerWidget::UpdateWidget()
 	Tree->setRootIndex(Model->index(dir.absolutePath()));
 }
 
-void ResourceManagerWidget::ProjectOpened()
+void ResourceInspectorWidget::ProjectOpened()
 {
 	UpdateWidget();
 }

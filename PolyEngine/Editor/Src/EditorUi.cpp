@@ -44,7 +44,7 @@ void EditorUi::Init()
 	MainWindow->AddDockWindow(Qt::DockWidgetArea::RightDockWidgetArea, window, true);
 
 	// resource manager
-	ResourceMgr = new ResourceManagerWidget();
+	ResourceMgr = new ResourceInspectorWidget();
 	window = new PolyDockWindow("Resource Manager", ResourceMgr);
 	DockWindows.PushBack(window);
 	MainWindow->AddDockWindow(Qt::DockWidgetArea::BottomDockWidgetArea, window, true);

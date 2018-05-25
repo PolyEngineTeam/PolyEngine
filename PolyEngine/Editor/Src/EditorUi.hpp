@@ -6,7 +6,7 @@
 
 class WorldInspectorWidget;
 class EntityInspectorWidget;
-class ResourceManagerWidget;
+class ResourceInspectorWidget;
 
 class EditorUi : public QObject
 {
@@ -24,7 +24,7 @@ public:
 	LoggerWidget* CmdLogger;
 	WorldInspectorWidget* WorldExplorer;
 	EntityInspectorWidget* EntityMgr;
-	ResourceManagerWidget* ResourceMgr;
+	ResourceInspectorWidget* ResourceMgr;
 
 private:
 	PolyMainWindow* MainWindow;
