@@ -44,6 +44,11 @@ public:
 	void Edit();
 	void Play();
 
+signals:
+	void Initialized(World* world);
+	void StateChanged(eEngineState state);
+	void Deinitialized();
+
 private:
 	std::unique_ptr<Engine> Engine = nullptr;
 	QTimer Updater;

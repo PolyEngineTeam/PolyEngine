@@ -60,7 +60,6 @@ public:
 		return ::Impl::CoreTypeToControlMap[static_cast<int>(type)](parent);
 	}
 
-
 	// if You want this control to update as soon as state is changed, enter pressed or 
 	// focus lost set this to true. Otherwise You will have to update it calling UpdateObject.
 	// @see ControlBase::UpdateObject

@@ -57,4 +57,6 @@ public slots:
 	void SpawnContextMenu(QPoint pos); 
 	void AddComponent(); 
 	void RemoveComponent();
+
+	void Reset();
 };

@@ -6,6 +6,9 @@
 WorldInspectorWidget::WorldInspectorWidget(QWidget* parent)
 	: PolyWidget(parent)
 {
+	connect(&gApp->EngineMgr, &EngineManager::Initialized, this, &WorldInspectorWidget::SetObject);
+	connect(&gApp->EngineMgr, &EngineManager::Deinitialized, this, &WorldInspectorWidget::Reset);
+
 	Tree = std::make_unique<QTreeWidget>(this);
 	Tree->setHeaderLabels(QStringList() << "Entity ID");
 
@@ -20,36 +23,43 @@ void WorldInspectorWidget::SetObject(::World* world)
 {
 	World = world;
 
-	UpdateViewer();
+	UpdateInspector();
 }
 
 //------------------------------------------------------------------------------
-void WorldInspectorWidget::UpdateViewer()
+void WorldInspectorWidget::UpdateInspector()
 {
 	Tree->clear();
-	std::stringstream ss;
-	ss << World->GetRoot()->GetID();
-
-	QTreeWidgetItem* entityTree = new QTreeWidgetItem(Tree.get());
-	entityTree->setText(0, (&ss.str()[0]));
-	EntityFromID.insert(std::pair<QTreeWidgetItem*, Entity*>(entityTree, World->GetRoot()));
+	EntityFromID.clear();
 
 	for (auto child : World->GetRoot()->GetChildren())
-		AddEntityToTree(entityTree, child);
+		AddEntityToTree(child);
 }
 
 //------------------------------------------------------------------------------
-void WorldInspectorWidget::AddEntityToTree(QTreeWidgetItem* parent, Entity* entity)
+void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* parent)
 {
+	QTreeWidgetItem* entityTree;
+
+	if (parent == nullptr)
+		entityTree = new QTreeWidgetItem(Tree.get());
+	else
+		entityTree = new QTreeWidgetItem(parent);
+
 	std::stringstream ss;
 	ss << entity->GetID();
-
-	QTreeWidgetItem* entityTree = new QTreeWidgetItem(parent);
 	entityTree->setText(0, (&ss.str()[0]));
 	EntityFromID.insert(std::pair<QTreeWidgetItem*, Entity*>(entityTree, entity));
 
 	for (auto child : entity->GetChildren())
-		AddEntityToTree(entityTree, child);
+		AddEntityToTree(child, entityTree);
+}
+
+void WorldInspectorWidget::Reset()
+{
+	Tree->clear();
+	EntityFromID.clear();
+	emit EntityDeselected();
 }
 
 //------------------------------------------------------------------------------

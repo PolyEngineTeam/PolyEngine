@@ -25,14 +25,16 @@ public:
 	void SetObject(World* world);
 
 	// Updates content of the inspector.
-	void UpdateViewer();
+	void UpdateInspector();
 
 signals:
 	// When entity is double clicked then this signal is emitted.
 	void EntitySelected(Entity* entity);
+	// When we don't want to display any entity or engine is deinitialized.
+	void EntityDeselected();
 
 private:
-	void AddEntityToTree(QTreeWidgetItem* parent, Entity* entity);
+	void AddEntityToTree(Entity* entity, QTreeWidgetItem* parent = nullptr);
 
 	World* World;
 
@@ -41,4 +43,6 @@ private:
 
 private slots:
 	void SelectionChanged(QTreeWidgetItem* item, int column);
+
+	void Reset();
 };

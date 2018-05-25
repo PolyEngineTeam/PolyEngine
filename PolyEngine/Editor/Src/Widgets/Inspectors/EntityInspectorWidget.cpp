@@ -7,6 +7,7 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 	: PolyWidget(parent)
 {
 	connect(gApp->Ui.WorldExplorer, &WorldInspectorWidget::EntitySelected, this, &EntityInspectorWidget::SetObject);
+	connect(gApp->Ui.WorldExplorer, &WorldInspectorWidget::EntityDeselected, this, &EntityInspectorWidget::Reset);
 
 	setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(this, &EntityInspectorWidget::customContextMenuRequested, this, &EntityInspectorWidget::SpawnContextMenu);
@@ -88,12 +89,14 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 	TransformSection->SetWidget(Transform);
 
 	MainLayout->addWidget(TransformSection, 4, 0, 1, 3);
+	TransformSection->hide();
 }
 
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::SetObject(::Entity *entity)
 {
 	Entity = entity;
+	TransformSection->show();
 	Transform->SetObject(entity, &entity->GetPropertyManager()->GetPropertyList()[0]);
 	UpdateInspector();
 }
@@ -182,4 +185,23 @@ void EntityInspectorWidget::RemoveComponent()
 {
 	ComponentDialog dialog(Entity, true);
 	dialog.exec();
+}
+
+void EntityInspectorWidget::Reset()
+{
+	NameField->setText("");
+	UniqueIdField->setText("");
+	ParentIdNameField->setText("");
+	ChildrenIdNameField->clear();
+
+	TransformSection->hide();
+
+	// remove all old entity component sections
+	for (auto cmp : ComponentSections)
+	{
+		MainLayout->removeWidget(cmp);
+		delete cmp;
+	}
+	ComponentSections.Clear();
+	ComponentInspectors.Clear();
 }
