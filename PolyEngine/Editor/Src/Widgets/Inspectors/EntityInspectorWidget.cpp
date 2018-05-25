@@ -154,7 +154,7 @@ void EntityInspectorWidget::UpdateInspector()
 		cmp->GetTypeInfo().GetTypeName();
 
 		SectionContainer* section = new SectionContainer(cmp->GetTypeInfo().GetTypeName());
-		RTTIInspectorWidget* viewer = new RTTIInspectorWidget();
+		RTTIInspectorWidget* viewer = new RTTIInspectorWidget(this);
 
 		viewer->SetObject(cmp);
 
@@ -187,6 +187,7 @@ void EntityInspectorWidget::RemoveComponent()
 	dialog.exec();
 }
 
+//------------------------------------------------------------------------------
 void EntityInspectorWidget::Reset()
 {
 	NameField->setText("");

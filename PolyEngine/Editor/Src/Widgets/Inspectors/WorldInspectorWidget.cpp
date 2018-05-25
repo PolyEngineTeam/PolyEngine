@@ -55,6 +55,7 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 		AddEntityToTree(child, entityTree);
 }
 
+//------------------------------------------------------------------------------
 void WorldInspectorWidget::Reset()
 {
 	Tree->clear();
