@@ -63,7 +63,7 @@ void EngineManager::Init()
 		//Engine->GetWorld()->GetWorldComponent<TimeWorldComponent>()->SetPaused(true);
 	}
 
-	gApp->Ui.WorldExplorer->SetWorld(Engine->GetWorld());
+	gApp->Ui.WorldExplorer->SetObject(Engine->GetWorld());
 
 	// start timer to call update on engine (as fast as possible)
 	Updater.start(0);

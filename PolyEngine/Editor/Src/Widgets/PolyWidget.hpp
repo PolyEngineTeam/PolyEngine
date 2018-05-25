@@ -5,4 +5,5 @@
 class PolyWidget : public QWidget
 {
 public:
+	PolyWidget(QWidget* parent = nullptr) : QWidget(parent) {}
 };

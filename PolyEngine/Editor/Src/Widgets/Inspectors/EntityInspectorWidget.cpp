@@ -2,7 +2,9 @@
 
 #include <sstream>
 
-EntityInspectorWidget::EntityInspectorWidget()
+//------------------------------------------------------------------------------
+EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
+	: PolyWidget(parent)
 {
 	connect(gApp->Ui.WorldExplorer, &WorldInspectorWidget::EntitySelected, this, &EntityInspectorWidget::SetObject);
 
@@ -88,6 +90,7 @@ EntityInspectorWidget::EntityInspectorWidget()
 	MainLayout->addWidget(TransformSection, 4, 0, 1, 3);
 }
 
+//------------------------------------------------------------------------------
 void EntityInspectorWidget::SetObject(::Entity *entity)
 {
 	Entity = entity;
@@ -95,6 +98,7 @@ void EntityInspectorWidget::SetObject(::Entity *entity)
 	UpdateInspector();
 }
 
+//------------------------------------------------------------------------------
 void EntityInspectorWidget::UpdateObject()
 {
 	// TODO(squares): set entity name here
@@ -105,6 +109,7 @@ void EntityInspectorWidget::UpdateObject()
 		inspector->UpdateObject();
 }
 
+//------------------------------------------------------------------------------
 void EntityInspectorWidget::UpdateInspector()
 {
 	std::stringstream ss;
@@ -159,17 +164,20 @@ void EntityInspectorWidget::UpdateInspector()
 	}
 }
 
+//------------------------------------------------------------------------------
 void EntityInspectorWidget::SpawnContextMenu(QPoint pos)
 {
 	ContextMenu->popup(this->mapToGlobal(pos));
 }
 
+//------------------------------------------------------------------------------
 void EntityInspectorWidget::AddComponent()
 {
 	ComponentDialog dialog(Entity);
 	dialog.exec();
 }
 
+//------------------------------------------------------------------------------
 void EntityInspectorWidget::RemoveComponent()
 {
 	ComponentDialog dialog(Entity, true);

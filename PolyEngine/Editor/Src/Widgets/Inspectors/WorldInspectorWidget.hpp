@@ -13,17 +13,22 @@
 
 using namespace Poly;
 
+// Displays tree of entities in the world. Enables adding, removing and reparenting entities.
 class WorldInspectorWidget : public PolyWidget
 {
 	Q_OBJECT
 
 public:
-	WorldInspectorWidget();
+	WorldInspectorWidget(QWidget* parent);
 
-	void SetWorld(World* world);
+	// Sets currently viewed world to given object and updates inspector.
+	void SetObject(World* world);
+
+	// Updates content of the inspector.
 	void UpdateViewer();
 
 signals:
+	// When entity is double clicked then this signal is emitted.
 	void EntitySelected(Entity* entity);
 
 private:

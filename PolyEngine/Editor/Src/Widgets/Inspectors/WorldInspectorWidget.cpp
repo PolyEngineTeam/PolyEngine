@@ -2,7 +2,9 @@
 
 #include <sstream>
 
-WorldInspectorWidget::WorldInspectorWidget()
+//------------------------------------------------------------------------------
+WorldInspectorWidget::WorldInspectorWidget(QWidget* parent)
+	: PolyWidget(parent)
 {
 	Tree = std::make_unique<QTreeWidget>(this);
 	Tree->setHeaderLabels(QStringList() << "Entity ID");
@@ -13,13 +15,15 @@ WorldInspectorWidget::WorldInspectorWidget()
 	connect(Tree.get(), &QTreeWidget::itemDoubleClicked, this, &WorldInspectorWidget::SelectionChanged);
 }
 
-void WorldInspectorWidget::SetWorld(::World* world)
+//------------------------------------------------------------------------------
+void WorldInspectorWidget::SetObject(::World* world)
 {
 	World = world;
 
 	UpdateViewer();
 }
 
+//------------------------------------------------------------------------------
 void WorldInspectorWidget::UpdateViewer()
 {
 	Tree->clear();
@@ -34,6 +38,7 @@ void WorldInspectorWidget::UpdateViewer()
 		AddEntityToTree(entityTree, child);
 }
 
+//------------------------------------------------------------------------------
 void WorldInspectorWidget::AddEntityToTree(QTreeWidgetItem* parent, Entity* entity)
 {
 	std::stringstream ss;
@@ -47,6 +52,7 @@ void WorldInspectorWidget::AddEntityToTree(QTreeWidgetItem* parent, Entity* enti
 		AddEntityToTree(entityTree, child);
 }
 
+//------------------------------------------------------------------------------
 void WorldInspectorWidget::SelectionChanged(QTreeWidgetItem* item, int column)
 {
 	emit EntitySelected(EntityFromID[item]);

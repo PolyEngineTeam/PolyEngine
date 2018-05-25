@@ -22,7 +22,7 @@ using namespace Poly;
 class EntityInspectorWidget : public PolyWidget
 {
 public:
-	EntityInspectorWidget();
+	EntityInspectorWidget(QWidget* parent);
 
 	// Set entity to display; updates automatically.
 	void SetObject(Entity* entity);
