@@ -12,7 +12,7 @@ void EditorUi::Init()
 	Windows.PushBack(std::move(MainWindow));
 
 	// world explorer
-	WorldExplorer = new WorldInspectorWidget();
+	WorldExplorer = new WorldInspectorWidget(MainWindow);
 	PolyDockWindow* window = new PolyDockWindow("World Inspector", WorldExplorer);
 	DockWindows.PushBack(window);
 	MainWindow->AddDockWindow(Qt::DockWidgetArea::LeftDockWidgetArea, window, true);
@@ -38,7 +38,7 @@ void EditorUi::Init()
 	window->hide();
 
 	// entity manager
-	EntityMgr = new EntityInspectorWidget();
+	EntityMgr = new EntityInspectorWidget(MainWindow);
 	window = new PolyDockWindow("Entity Inspector", EntityMgr);
 	DockWindows.PushBack(window);
 	MainWindow->AddDockWindow(Qt::DockWidgetArea::RightDockWidgetArea, window, true);
