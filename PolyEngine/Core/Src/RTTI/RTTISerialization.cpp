@@ -296,7 +296,13 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	case eCorePropertyType::UUID:
 		currentValue.SetString(reinterpret_cast<const Poly::UniqueID*>(value)->ToString().GetCStr(), alloc);
 		break;
-	break;
+	case eCorePropertyType::UNIQUE_PTR:
+	{
+		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid unique ptr impl data!");
+		const UniquePtrPropertyImplDataBase* implData = static_cast<const UniquePtrPropertyImplDataBase*>(prop.ImplData.get());
+		currentValue = GetCorePropertyValue(implData->Get(value), implData->PropertyType, alloc);
+		break;
+	}
 	case eCorePropertyType::CUSTOM:
 		currentValue.SetObject();
 		SerializeObject(reinterpret_cast<const RTTIBase*>(value), currentValue.GetObject(), alloc);
@@ -456,6 +462,15 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 		Poly::UniqueID& uuid = *reinterpret_cast<Poly::UniqueID*>(obj);
 		uuid = UniqueID::FromString(String(value.GetString())).Value();
 		HEAVY_ASSERTE(uuid.IsValid(), "UniqueID deserialization failed");
+	}
+	break;
+	case eCorePropertyType::UNIQUE_PTR:
+	{
+		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid unique ptr impl data!");
+		const UniquePtrPropertyImplDataBase* implData = static_cast<const UniquePtrPropertyImplDataBase*>(prop.ImplData.get());
+		implData->Create(obj);
+		//@todo(muniu) store guid in some register for non-owning pointer deserialization
+		SetCorePropertyValue(implData->Get(obj), implData->PropertyType, value);
 	}
 	break;
 	case eCorePropertyType::CUSTOM:

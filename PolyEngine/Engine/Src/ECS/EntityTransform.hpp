@@ -25,7 +25,7 @@ namespace Poly
 			RTTI_PROPERTY_AUTONAME(GlobalDirty, RTTI::ePropertyFlag::DONT_SERIALIZE);
 		}
 	public:
-		EntityTransform(Entity* owner) : Owner(owner) {};
+		EntityTransform(Entity* owner = nullptr) : Owner(owner) {};
 		~EntityTransform();
 
 		const Vector& GetGlobalTranslation() const;

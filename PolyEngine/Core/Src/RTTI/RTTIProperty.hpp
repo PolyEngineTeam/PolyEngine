@@ -52,6 +52,7 @@ namespace Poly {
 			STRING,
 			UUID,
 			ITERABLE_POOL_ALLOCATOR,
+			UNIQUE_PTR,
 			
 			// collections
 			DYNARRAY,
@@ -332,7 +333,7 @@ namespace Poly {
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------
-		// Enum flags serialization property impl
+		// Iterable Pool Allocator serialization property impl
 		struct IterablePoolAllocatorPropertyImplDataBase : public PropertyImplData
 		{
 			virtual const void* GetNextValue(const void* collection, const void* obj) const = 0;
@@ -373,6 +374,35 @@ namespace Poly {
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------
+		// Unique ptr serialization property impl
+		struct UniquePtrPropertyImplDataBase : public PropertyImplData
+		{
+			Property PropertyType;
+
+			virtual void Create(void* ptr) const = 0;
+			virtual void* Get(void* ptr) const = 0;
+			virtual const void* Get(const void* ptr) const = 0;
+		};
+
+		template<typename T>
+		struct UniquePtrPropertyImplData final : public UniquePtrPropertyImplDataBase
+		{
+			UniquePtrPropertyImplData(ePropertyFlag flags) { PropertyType = CreatePropertyInfo<T>(0, "value", flags); }
+
+			void Create(void* ptr) const override { *reinterpret_cast<std::unique_ptr<T>*>(ptr) = std::make_unique<T>(); }
+			void* Get(void* ptr) const override { return reinterpret_cast<std::unique_ptr<T>*>(ptr)->get(); }
+			const void* Get(const void* ptr) const override { return reinterpret_cast<const std::unique_ptr<T>*>(ptr)->get(); }
+		};
+
+		template <typename T> Property CreateUniquePtrPropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
+		{
+			std::shared_ptr<UniquePtrPropertyImplData<T>> implData = std::make_shared<UniquePtrPropertyImplData<T>>(flags);
+
+			// Register unique ptr object pointer to property
+			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::UNIQUE_PTR, std::move(implData) };
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------
 		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags)
 		{ 
 			return constexpr_match(
@@ -382,6 +412,7 @@ namespace Poly {
 				Trait::IsEnumArray<T>{},	[&](auto lazy) { return CreateEnumArrayPropertyInfo<typename Trait::EnumArrayType<LAZY_TYPE(T)>::enumType, typename Trait::EnumArrayType<LAZY_TYPE(T)>::valueType>(offset, name, flags); },
 				Trait::IsEnumFlags<T>{},	[&](auto lazy) { return CreateEnumFlagsPropertyInfo<typename Trait::EnumFlagsType<LAZY_TYPE(T)>::type>(offset, name, flags); },
 				Trait::IsIterablePoolAllocator<T>{}, [&](auto lazy) { return CreateIterablePoolAllocatorPropertyInfo<typename Trait::IterablePoolAllocatorType<LAZY_TYPE(T)>::type>(offset, name, flags); },
+				Trait::IsUniquePtr<T>{},	[&](auto lazy) { return CreateUniquePtrPropertyInfo<typename Trait::UniquePtrType<LAZY_TYPE(T)>::type>(offset, name, flags); },
 				/*default*/					[&](auto lazy) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>() }; }
 			);
 		}

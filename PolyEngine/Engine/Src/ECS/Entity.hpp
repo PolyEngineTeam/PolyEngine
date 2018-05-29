@@ -28,6 +28,7 @@ namespace Poly
 			//RTTI_PROPERTY_AUTONAME(Components, RTTI::ePropertyFlag::NONE);
 		}
 	public:
+		Entity() = default;
 		~Entity();
 
 		const UniqueID& GetUUID() const { HEAVY_ASSERTE(UUID, "Entity was not properly initialized");  return UUID; }
@@ -104,7 +105,7 @@ namespace Poly
 
 		String NameTemplate;
 		String Name;
-		UniqueID UUID;
+		UniqueID UUID = UniqueID::INVALID;
 		EntityTransform Transform;
 		Scene* EntityScene = nullptr;
 

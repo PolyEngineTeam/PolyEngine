@@ -48,7 +48,12 @@ namespace Poly
 		template <typename> struct IterablePoolAllocatorType {};
 		template <typename E> struct IterablePoolAllocatorType<IterablePoolAllocator<E>> { using type = E; };
 
-		
+		// Is unique ptr
+		template <typename> struct IsUniquePtr : public std::false_type {};
+		template <typename T> struct IsUniquePtr<std::unique_ptr<T>> : public std::true_type {};
+
+		template <typename> struct UniquePtrType {};
+		template <typename T> struct UniquePtrType<std::unique_ptr<T>> { using type = T; };
 
 		template <class T> using RawType = std::remove_pointer<typename std::decay<typename std::remove_cv<T>::type >::type>;
 	}

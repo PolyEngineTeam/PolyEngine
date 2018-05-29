@@ -88,6 +88,10 @@ class TestConfig : public ConfigBase
 		RTTI_PROPERTY_AUTONAME(PropEnumFlags, RTTI::ePropertyFlag::NONE);
 
 		RTTI_PROPERTY_AUTONAME(PropUUID, RTTI::ePropertyFlag::NONE);
+
+		RTTI_PROPERTY_AUTONAME(PropUniquePtrInt, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropUniquePtrDynarrayInt, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropUniquePtrCustom, RTTI::ePropertyFlag::NONE);
 	}
 public:
 	TestConfig() : ConfigBase("Test", eResourceSource::NONE) 
@@ -102,6 +106,10 @@ public:
 		PropOMapStrCustom.Insert("Val2", 2);
 
 		PropMatrix.SetRotationZ(60_deg);
+
+		PropUniquePtrInt = std::make_unique<int>(5);
+		PropUniquePtrDynarrayInt = std::make_unique<Dynarray<int>>(Dynarray<int>{ 1,2,3 });
+		PropUniquePtrCustom = std::make_unique<TestRTTIClass>(3);
 	}
 
 	// Rendering
@@ -142,6 +150,10 @@ public:
 	EnumFlags<eConfigFlagsTest> PropEnumFlags = (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_3 | eConfigFlagsTest::VAL_5);
 
 	UniqueID PropUUID = UniqueID::FromString("01234567-89ab-cdef-0123-456789abcdef").Value();
+
+	std::unique_ptr<int> PropUniquePtrInt;
+	std::unique_ptr<Dynarray<int>> PropUniquePtrDynarrayInt;
+	std::unique_ptr<TestRTTIClass> PropUniquePtrCustom;
 };
 RTTI_DEFINE_TYPE(TestConfig)
 
@@ -220,6 +232,10 @@ void baseValueCheck(const TestConfig& config)
 	CHECK(config.PropEnumFlags == (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_3 | eConfigFlagsTest::VAL_5));
 
 	CHECK(config.PropUUID == UniqueID::FromString("01234567-89ab-cdef-0123-456789abcdef").Value());
+
+	CHECK(*config.PropUniquePtrInt == 5);
+	CHECK(*config.PropUniquePtrDynarrayInt == Dynarray<int>{1,2,3});
+	CHECK(config.PropUniquePtrCustom->Val1 == 3);
 }
 
 TEST_CASE("Config serialization tests", "[ConfigBase]")
@@ -280,6 +296,10 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		config.PropEnumFlags = (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_2 | eConfigFlagsTest::VAL_4);
 
 		config.PropUUID = UniqueID::FromString("abcdef01-2345-6789-abcd-ef0123456789").Value();
+
+		config.PropUniquePtrInt = std::make_unique<int>(7);
+		config.PropUniquePtrDynarrayInt = std::make_unique<Dynarray<int>>(Dynarray<int>{ 4, 5, 6 });
+		config.PropUniquePtrCustom = std::make_unique<TestRTTIClass>(8);
 
 		// save them
 		config.Save();
@@ -383,6 +403,10 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(config.PropEnumFlags == (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_2 | eConfigFlagsTest::VAL_4));
 
 		CHECK(config.PropUUID == UniqueID::FromString("abcdef01-2345-6789-abcd-ef0123456789").Value());
+
+		CHECK(*config.PropUniquePtrInt == 7);
+		CHECK(*config.PropUniquePtrDynarrayInt == Dynarray<int>{4,5,6});
+		CHECK(config.PropUniquePtrCustom->Val1 == 8);
 	}
 
 	// remove the config file
