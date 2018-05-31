@@ -98,7 +98,7 @@ void EntityInspectorWidget::SetObject(::Entity *entity)
 	Entity = entity;
 	TransformSection->show();
 	Transform->SetObject(entity, &entity->GetPropertyManager()->GetPropertyList()[0]);
-	UpdateInspector();
+	ReloadInspector();
 }
 
 //------------------------------------------------------------------------------
@@ -125,6 +125,23 @@ void EntityInspectorWidget::UpdateInspector()
 	ss << Entity->GetParent()->GetID();
 	ParentIdNameField->setText(&ss.str()[0]);
 
+	for (RTTIInspectorWidget* inspector : ComponentInspectors)
+		inspector->UpdateInspector();
+}
+
+//------------------------------------------------------------------------------
+void EntityInspectorWidget::ReloadInspector()
+{
+	std::stringstream ss;
+
+	// general data
+	ss << Entity->GetID();
+	UniqueIdField->setText(&ss.str()[0]);
+
+	ss.str(std::string());
+	ss << Entity->GetParent()->GetID();
+	ParentIdNameField->setText(&ss.str()[0]);
+
 	ChildrenIdNameField->clear();
 	for (auto child : Entity->GetChildren())
 	{
@@ -132,7 +149,7 @@ void EntityInspectorWidget::UpdateInspector()
 		ss << child->GetID();
 		ChildrenIdNameField->addItem(&ss.str()[0]);
 	}
-	
+
 	Transform->UpdateControl();
 
 	// remove all old entity component sections
@@ -143,7 +160,7 @@ void EntityInspectorWidget::UpdateInspector()
 	}
 	ComponentSections.Clear();
 	ComponentInspectors.Clear();
-	
+
 	// add component sections
 	for (int i = 0, row = 5; i < MAX_COMPONENTS_COUNT; ++i)
 	{

@@ -22,7 +22,10 @@ public:
 	void Save();
 	void Load();
 
+	// Path to directory where *.proj.json file is stored
 	const String& GetProjectPath() const { return ProjectPath; }
+
+	// project name loaded from *.proj.json
 	const String& GetProjectName() const { return ProjectName; }
 
 	// for now these functions always return Debug configuration output files

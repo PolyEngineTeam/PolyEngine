@@ -10,6 +10,7 @@
 #include "Managers/EngineManager.hpp"
 #include "Managers/CommandManager.hpp"
 #include "Managers/EditManager.hpp"
+#include "Managers/InspectorManager.hpp"
 
 #include <Engine.hpp>
 
@@ -27,6 +28,7 @@ public:
 	ProjectManager ProjectMgr;
 	EngineManager EngineMgr;
 	CommandManager CommandMgr;
+	InspectorManager InspectorMgr;
 
 	std::unique_ptr<EditManager> EditMgr;
 

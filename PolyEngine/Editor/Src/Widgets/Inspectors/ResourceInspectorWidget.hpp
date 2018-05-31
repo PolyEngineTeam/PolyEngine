@@ -20,5 +20,5 @@ private:
 	QTreeView* Tree;
 
 private slots:
-	void ProjectOpened();
+	void EngineInitialized();
 };

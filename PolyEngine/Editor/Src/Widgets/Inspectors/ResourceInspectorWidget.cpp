@@ -2,6 +2,8 @@
 
 ResourceInspectorWidget::ResourceInspectorWidget()
 {
+	connect(&gApp->InspectorMgr, &InspectorManager::EngineInitialized, this, &ResourceInspectorWidget::EngineInitialized);
+	
 	Layout = new QGridLayout(this);
 
 	Model = new QFileSystemModel(this);
@@ -9,8 +11,6 @@ ResourceInspectorWidget::ResourceInspectorWidget()
 	Tree = new QTreeView(this);
 	Tree->setModel(Model);
 	Layout->addWidget(Tree);
-
-	connect(&gApp->ProjectMgr, &ProjectManager::ProjectOpened, this, &ResourceInspectorWidget::ProjectOpened);
 }
 
 void ResourceInspectorWidget::UpdateWidget()
@@ -27,7 +27,7 @@ void ResourceInspectorWidget::UpdateWidget()
 	Tree->setRootIndex(Model->index(dir.absolutePath()));
 }
 
-void ResourceInspectorWidget::ProjectOpened()
+void ResourceInspectorWidget::EngineInitialized()
 {
 	UpdateWidget();
 }
