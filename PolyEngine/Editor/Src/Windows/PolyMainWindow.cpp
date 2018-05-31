@@ -128,7 +128,7 @@ void PolyMainWindow::CreateProject()
 	if (dialog.OperationCanceled())
 		return;
 
-	gApp->ProjectMgr.Create(&dialog.GetProjectName().toStdString()[0],
+	gApp->ProjectMgr->Create(&dialog.GetProjectName().toStdString()[0],
 		&dialog.GetProjectDirectory().toStdString()[0],
 		&dialog.GetEngineDirectory().toStdString()[0]);
 }
@@ -138,7 +138,7 @@ void PolyMainWindow::OpenProject()
 	QFileDialog fileDialog;
 	fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
 	if (fileDialog.exec() == QDialog::Accepted)
-		gApp->ProjectMgr.Open(&fileDialog.selectedFiles()[0].toStdString()[0]);
+		gApp->ProjectMgr->Open(&fileDialog.selectedFiles()[0].toStdString()[0]);
 }
 
 void PolyMainWindow::UpdateProject()
@@ -147,27 +147,27 @@ void PolyMainWindow::UpdateProject()
 	fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
 	fileDialog.setFileMode(QFileDialog::Directory);
 	if (fileDialog.exec() == QDialog::Accepted)
-		gApp->ProjectMgr.Update(&fileDialog.selectedFiles()[0].toStdString()[0]);
+		gApp->ProjectMgr->Update(&fileDialog.selectedFiles()[0].toStdString()[0]);
 }
 
 void PolyMainWindow::BuildProject()
 {
-	gApp->ProjectMgr.Build();
+	gApp->ProjectMgr->Build();
 }
 
 void PolyMainWindow::EditProject()
 {
-	gApp->ProjectMgr.Edit();
+	gApp->ProjectMgr->Edit();
 }
 
 void PolyMainWindow::PlayProject()
 {
-	gApp->ProjectMgr.Play();
+	gApp->ProjectMgr->Play();
 }
 
 void PolyMainWindow::CloseProject()
 {
-	gApp->ProjectMgr.Close();
+	gApp->ProjectMgr->Close();
 }
 
 void PolyMainWindow::ContactUs()

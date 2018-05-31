@@ -25,8 +25,8 @@ public:
 
 	// TODO(squares): use unique_ptrs
 	DockManager DockMgr;
-	ProjectManager ProjectMgr;
 	CommandManager CommandMgr;
+	ProjectManager* ProjectMgr;
 	EngineManager* EngineMgr;
 	InspectorManager* InspectorMgr;
 

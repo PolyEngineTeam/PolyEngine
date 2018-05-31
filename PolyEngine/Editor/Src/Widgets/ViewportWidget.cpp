@@ -41,7 +41,7 @@ std::unique_ptr<Poly::IRenderingDevice> ViewportWidget::GetRenderingDevice()
 	{
 		// Load rendering device library
 		LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>(
-			gApp->ProjectMgr.GetProjectConfig().GetRenderingDeviceDllPath().GetCStr(), "PolyCreateRenderingDevice");
+			gApp->ProjectMgr->GetProjectConfig().GetRenderingDeviceDllPath().GetCStr(), "PolyCreateRenderingDevice");
 		ASSERTE(LoadRenderingDevice.FunctionValid(), "Library libRenderingDevice load failed");
 		Poly::gConsole.LogDebug("Library libRenderingDevice loaded.");
 	}
