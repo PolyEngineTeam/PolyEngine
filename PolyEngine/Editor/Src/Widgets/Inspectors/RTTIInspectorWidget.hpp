@@ -21,11 +21,14 @@ public:
 	// user even when property is not serialized.
 	void SetObject(RTTIBase* obj, bool debug = false);
 
-	// Update inspector view fromobject.
-	void UpdateInspector(bool debug = false);
-
 	// Updates object from inspector.
 	void UpdateObject();
+
+	// Update inspector view from object.
+	void UpdateInspector();
+
+	// Sestroys everything and creates again
+	void ReloadInspector(bool debug = false);
 
 private:
 	// Add SectionContainer.

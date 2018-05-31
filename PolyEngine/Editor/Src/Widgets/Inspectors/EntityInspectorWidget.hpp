@@ -19,7 +19,7 @@ using namespace Poly;
 
 // This widget allows user change entity and its components properties.
 // User also can add and remove any component.
-// Updates every field ASAP.
+// Updates object ASAP.
 class EntityInspectorWidget : public PolyWidget
 {
 public:

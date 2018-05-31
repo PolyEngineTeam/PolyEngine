@@ -1,8 +1,10 @@
 #include "PolyEditorPCH.hpp"
 
+//------------------------------------------------------------------------------
 ResourceInspectorWidget::ResourceInspectorWidget()
 {
-	connect(&gApp->InspectorMgr, &InspectorManager::EngineInitialized, this, &ResourceInspectorWidget::EngineInitialized);
+	connect(gApp->InspectorMgr, &InspectorManager::ProjectOpened, this, &ResourceInspectorWidget::SetObject);
+	connect(gApp->InspectorMgr, &InspectorManager::ProjectClosed, this, &ResourceInspectorWidget::Reset);
 	
 	Layout = new QGridLayout(this);
 
@@ -13,13 +15,16 @@ ResourceInspectorWidget::ResourceInspectorWidget()
 	Layout->addWidget(Tree);
 }
 
-void ResourceInspectorWidget::UpdateWidget()
+//------------------------------------------------------------------------------
+void ResourceInspectorWidget::SetObject(const ProjectConfig* config)
 {
+	Config = config;
+
 	StringBuilder b;
 
-	b.Append(gApp->ProjectMgr.GetProjectConfig().GetProjectPath());
+	b.Append(Config->GetProjectPath());
 	b.Append("/");
-	b.Append(gApp->ProjectMgr.GetProjectConfig().GetProjectName());
+	b.Append(Config->GetProjectName());
 	b.Append("/Res");
 
 	QDir dir(b.StealString().GetCStr());
@@ -27,7 +32,11 @@ void ResourceInspectorWidget::UpdateWidget()
 	Tree->setRootIndex(Model->index(dir.absolutePath()));
 }
 
-void ResourceInspectorWidget::EngineInitialized()
+//------------------------------------------------------------------------------
+void ResourceInspectorWidget::Reset()
 {
-	UpdateWidget();
+	Config = nullptr;
+	delete Model;
+	Model = new QFileSystemModel(this);
+	Tree->setModel(Model);
 }

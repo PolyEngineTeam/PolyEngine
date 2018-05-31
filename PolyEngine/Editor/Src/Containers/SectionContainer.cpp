@@ -54,6 +54,19 @@ SectionContainer::SectionContainer(const QString& title, QWidget* parent, int an
 	});
 }
 
+SectionContainer::~SectionContainer()
+{
+	if (ContentLayout)
+	{
+		QLayoutItem* child;
+
+		while ((child = ContentLayout->takeAt(0)) != 0)
+			delete child;
+
+		delete ContentLayout;
+	}
+}
+
 void SectionContainer::SetLayout(QLayout* layout)
 {
 	if (ContentLayout)

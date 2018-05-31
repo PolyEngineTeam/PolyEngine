@@ -21,12 +21,32 @@ void RTTIInspectorWidget::SetObject(RTTIBase* obj, bool debug)
 		delete child;
 
 	Object = obj;
-	UpdateInspector(debug);
+	ReloadInspector(debug);
 }
 
 //------------------------------------------------------------------------------
-void RTTIInspectorWidget::UpdateInspector(bool debug)
+void RTTIInspectorWidget::UpdateObject()
 {
+	for (auto field : Fields)
+		field->UpdateObject();
+}
+
+//------------------------------------------------------------------------------
+void RTTIInspectorWidget::UpdateInspector()
+{
+	for (auto field : Fields)
+		field->UpdateControl();
+}
+
+//------------------------------------------------------------------------------
+void RTTIInspectorWidget::ReloadInspector(bool debug)
+{
+	Fields.Clear();
+	Labels.Clear();
+	for (SectionContainer* s : Sections)
+		delete s;
+	Sections.Clear();
+
 	int row = 0;
 
 	for (auto& child : Object->GetPropertyManager()->GetPropertyList())
@@ -47,13 +67,6 @@ void RTTIInspectorWidget::UpdateInspector(bool debug)
 
 		++row;
 	}
-}
-
-//------------------------------------------------------------------------------
-void RTTIInspectorWidget::UpdateObject()
-{
-	for (auto field : Fields)
-		field->UpdateObject();
 }
 
 //------------------------------------------------------------------------------

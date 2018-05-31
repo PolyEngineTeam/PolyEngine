@@ -38,7 +38,7 @@ void ProjectManager::Open(String projectPath)
 	ProjectConfig = std::make_unique<::ProjectConfig>(projectPath);
 	ProjectConfig->Load();
 
-	emit ProjectOpened();
+	//emit ProjectOpened(ProjectConfig.get());
 }
 
 void ProjectManager::Update(const String& enginePath)
@@ -77,7 +77,7 @@ void ProjectManager::Edit()
 	if (!ProjectConfig)
 		throw new ProjectManagerException("This operation requires any project opened.");
 
-	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
 	{
 		// load game
 		if (!LoadGame.FunctionValid())
@@ -97,10 +97,10 @@ void ProjectManager::Edit()
 		builder.Append(ProjectConfig->ProjectName);
 		builder.Append("/Debug/AssetsPathConfig.json");
 
-		gApp->EngineMgr.InitEngine(std::move(game), std::move(device), builder.GetString());
+		gApp->EngineMgr->InitEngine(std::move(game), std::move(device), builder.GetString());
 	}
 	else
-		gApp->EngineMgr.Edit();
+		gApp->EngineMgr->Edit();
 }
 
 void ProjectManager::Play()
@@ -108,7 +108,7 @@ void ProjectManager::Play()
 	if (!ProjectConfig)
 		throw new ProjectManagerException("This operation requires any project opened.");
 
-	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
 	{
 		// load game
 		if (!LoadGame.FunctionValid())
@@ -128,12 +128,12 @@ void ProjectManager::Play()
 		builder.Append(ProjectConfig->ProjectName);
 		builder.Append("/Debug/AssetsPathConfig.json");
 
-		gApp->EngineMgr.InitEngine(std::move(game), std::move(device), builder.GetString());
+		gApp->EngineMgr->InitEngine(std::move(game), std::move(device), builder.GetString());
 	}
 	
 	// TODO(squares): fix problem with physics; Rigidbody and collider components  are initialized in next frame 
 	//		so when next frame never occur we try to delete empty ImplData
-	gApp->EngineMgr.Play();
+	gApp->EngineMgr->Play();
 }
 
 void ProjectManager::Close()

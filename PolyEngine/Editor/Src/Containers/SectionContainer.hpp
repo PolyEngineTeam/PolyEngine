@@ -13,6 +13,7 @@ class SectionContainer : public QWidget
 {
 public:
 	SectionContainer(const QString& title, QWidget* parent = nullptr, int animationDuration = 100);
+	~SectionContainer();
 
 	void SetLayout(QLayout* layout);
 	void SetWidget(QWidget* widget);

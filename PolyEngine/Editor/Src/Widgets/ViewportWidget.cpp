@@ -56,7 +56,7 @@ std::unique_ptr<Poly::IRenderingDevice> ViewportWidget::GetRenderingDevice()
 // ---------------------------------------------------------------------------------------------------------
 void ViewportWidget::resizeEvent(QResizeEvent* resizeEvent)
 {
-	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
 		return;
 
 	Poly::ScreenSize screenSize;
@@ -68,7 +68,7 @@ void ViewportWidget::resizeEvent(QResizeEvent* resizeEvent)
 // ---------------------------------------------------------------------------------------------------------
 void ViewportWidget::wheelEvent(QWheelEvent* wheelEvent)
 {
-	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
 		return;
 	Poly::gEngine->UpdateWheelPos(Poly::Vector2i(wheelEvent->delta(), 0));
 }
@@ -76,7 +76,7 @@ void ViewportWidget::wheelEvent(QWheelEvent* wheelEvent)
 // ---------------------------------------------------------------------------------------------------------
 void ViewportWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 {
-	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
 		return;
 	Poly::gEngine->UpdateMousePos(Poly::Vector2i(mouseEvent->pos().x(), mouseEvent->pos().y()));
 }
@@ -84,7 +84,7 @@ void ViewportWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 // ---------------------------------------------------------------------------------------------------------
 void ViewportWidget::mousePressEvent(QMouseEvent* mouseEvent)
 {
-	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
 		return;
 
 	switch (mouseEvent->button())
@@ -110,7 +110,7 @@ void ViewportWidget::mousePressEvent(QMouseEvent* mouseEvent)
 // ---------------------------------------------------------------------------------------------------------
 void ViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 {
-	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
 		return;
 	switch (mouseEvent->button())
 	{
@@ -135,7 +135,7 @@ void ViewportWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 // ---------------------------------------------------------------------------------------------------------
 void ViewportWidget::keyPressEvent(QKeyEvent* keyEvent)
 {
-	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
 		return;
 
 	if (keyEvent->isAutoRepeat())
@@ -147,7 +147,7 @@ void ViewportWidget::keyPressEvent(QKeyEvent* keyEvent)
 // ---------------------------------------------------------------------------------------------------------
 void ViewportWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 {
-	if (gApp->EngineMgr.GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
 		return;
 
 	if (keyEvent->isAutoRepeat())

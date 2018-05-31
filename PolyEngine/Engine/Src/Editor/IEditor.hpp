@@ -4,7 +4,7 @@
 
 namespace Poly
 {
-	class ENGINE_DLLEXPORT IEditor : BaseObject<>
+	class ENGINE_DLLEXPORT IEditor
 	{
 	public:
 		virtual const Poly::String& GetAssetsPathConfigPath() const = 0;

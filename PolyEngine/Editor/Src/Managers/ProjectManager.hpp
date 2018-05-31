@@ -47,9 +47,10 @@ public:
 
 	const String& SetProjectName(const String& name) const { return ProjectConfig->ProjectName = name; }
 
+signals:
+	//void ProjectOpened(const ProjectConfig* config);
+	//void ProjectClosed();
+
 private:
 	std::unique_ptr<ProjectConfig> ProjectConfig;
-
-signals:
-	void ProjectOpened();
 };

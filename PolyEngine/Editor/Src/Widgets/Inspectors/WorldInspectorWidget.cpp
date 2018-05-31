@@ -6,8 +6,8 @@
 WorldInspectorWidget::WorldInspectorWidget(QWidget* parent)
 	: PolyWidget(parent)
 {
-	connect(&gApp->EngineMgr, &EngineManager::Initialized, this, &WorldInspectorWidget::SetObject);
-	connect(&gApp->EngineMgr, &EngineManager::Deinitialized, this, &WorldInspectorWidget::Reset);
+	connect(gApp->InspectorMgr, &InspectorManager::EngineInitialized, this, &WorldInspectorWidget::SetObject);
+	connect(gApp->InspectorMgr, &InspectorManager::EngineDeinitialized, this, &WorldInspectorWidget::Reset);
 
 	Tree = new QTreeWidget(this);
 	Tree->setHeaderLabels(QStringList() << "Visible" << "Name" << "ID");
@@ -48,7 +48,7 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 
 	std::stringstream ss;
 	ss << entity->GetID();
-	entityTree->setText(0, (&ss.str()[0]));
+	entityTree->setText(2, (&ss.str()[0]));
 	EntityFromID.insert(std::pair<QTreeWidgetItem*, Entity*>(entityTree, entity));
 
 	for (auto child : entity->GetChildren())

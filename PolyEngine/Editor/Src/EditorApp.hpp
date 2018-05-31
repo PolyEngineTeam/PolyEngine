@@ -26,9 +26,9 @@ public:
 	// TODO(squares): use unique_ptrs
 	DockManager DockMgr;
 	ProjectManager ProjectMgr;
-	EngineManager EngineMgr;
 	CommandManager CommandMgr;
-	InspectorManager InspectorMgr;
+	EngineManager* EngineMgr;
+	InspectorManager* InspectorMgr;
 
 	std::unique_ptr<EditManager> EditMgr;
 

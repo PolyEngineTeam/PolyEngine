@@ -12,6 +12,9 @@ EditorApp* gApp = nullptr;
 EditorApp::EditorApp(int argc, char *argv[])
 	: QApplication(argc, argv)
 {
+	EngineMgr = new EngineManager();
+	InspectorMgr = new InspectorManager(this);
+
 	ASSERTE(!gApp, "Creating application twice?!");
 	gApp = this;
 
