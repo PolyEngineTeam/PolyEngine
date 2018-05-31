@@ -9,13 +9,13 @@ WorldInspectorWidget::WorldInspectorWidget(QWidget* parent)
 	connect(&gApp->EngineMgr, &EngineManager::Initialized, this, &WorldInspectorWidget::SetObject);
 	connect(&gApp->EngineMgr, &EngineManager::Deinitialized, this, &WorldInspectorWidget::Reset);
 
-	Tree = std::make_unique<QTreeWidget>(this);
-	Tree->setHeaderLabels(QStringList() << "Entity ID");
+	Tree = new QTreeWidget(this);
+	Tree->setHeaderLabels(QStringList() << "Visible" << "Name" << "ID");
 
 	setLayout(new QGridLayout(this));
-	layout()->addWidget(Tree.get());
+	layout()->addWidget(Tree);
 
-	connect(Tree.get(), &QTreeWidget::itemDoubleClicked, this, &WorldInspectorWidget::SelectionChanged);
+	connect(Tree, &QTreeWidget::itemDoubleClicked, this, &WorldInspectorWidget::SelectionChanged);
 }
 
 //------------------------------------------------------------------------------
@@ -23,11 +23,11 @@ void WorldInspectorWidget::SetObject(::World* world)
 {
 	World = world;
 
-	UpdateInspector();
+	ReloadInspector();
 }
 
 //------------------------------------------------------------------------------
-void WorldInspectorWidget::UpdateInspector()
+void WorldInspectorWidget::ReloadInspector()
 {
 	Tree->clear();
 	EntityFromID.clear();
@@ -42,7 +42,7 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 	QTreeWidgetItem* entityTree;
 
 	if (parent == nullptr)
-		entityTree = new QTreeWidgetItem(Tree.get());
+		entityTree = new QTreeWidgetItem(Tree);
 	else
 		entityTree = new QTreeWidgetItem(parent);
 
@@ -56,15 +56,16 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 }
 
 //------------------------------------------------------------------------------
-void WorldInspectorWidget::Reset()
-{
-	Tree->clear();
-	EntityFromID.clear();
-	emit EntityDeselected();
-}
-
-//------------------------------------------------------------------------------
 void WorldInspectorWidget::SelectionChanged(QTreeWidgetItem* item, int column)
 {
 	emit EntitySelected(EntityFromID[item]);
+}
+
+//------------------------------------------------------------------------------
+void WorldInspectorWidget::Reset()
+{
+	World = nullptr;
+	Tree->clear();
+	EntityFromID.clear();
+	emit EntityDeselected();
 }

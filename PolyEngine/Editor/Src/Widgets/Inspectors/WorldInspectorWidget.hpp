@@ -24,12 +24,13 @@ public:
 	// Sets currently viewed world to given object and updates inspector.
 	void SetObject(World* world);
 
-	// Updates content of the inspector.
-	void UpdateInspector();
+	// Removes all entities from list and loads them again.
+	void ReloadInspector();
 
 signals:
 	// When entity is double clicked then this signal is emitted.
 	void EntitySelected(Entity* entity);
+
 	// When we don't want to display any entity or engine is deinitialized.
 	void EntityDeselected();
 
@@ -38,11 +39,12 @@ private:
 
 	World* World;
 
-	std::unique_ptr<QTreeWidget> Tree;
+	QTreeWidget* Tree;
 	std::map<QTreeWidgetItem*, Entity*> EntityFromID;
 
 private slots:
 	void SelectionChanged(QTreeWidgetItem* item, int column);
 
+	// Removes all entities from list.
 	void Reset();
 };

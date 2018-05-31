@@ -43,7 +43,6 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 	NameText->setText("Name");
 	MainLayout->addWidget(NameText, 0, 0);
 	
-	//NameField = ControlBase::CreateControl(this, RTTI::eCorePropertyType::STRING);
 	NameField = new QLineEdit(this);
 	MainLayout->addWidget(NameField, 0, 1);
 	
@@ -97,19 +96,9 @@ void EntityInspectorWidget::SetObject(::Entity *entity)
 {
 	Entity = entity;
 	TransformSection->show();
+	// TODO(squares): hardcoded for current order in entity class
 	Transform->SetObject(entity, &entity->GetPropertyManager()->GetPropertyList()[0]);
 	ReloadInspector();
-}
-
-//------------------------------------------------------------------------------
-void EntityInspectorWidget::UpdateObject()
-{
-	// TODO(squares): set entity name here
-
-	Transform->UpdateControl();
-
-	for (RTTIInspectorWidget* inspector : ComponentInspectors)
-		inspector->UpdateObject();
 }
 
 //------------------------------------------------------------------------------
@@ -207,6 +196,8 @@ void EntityInspectorWidget::RemoveComponent()
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::Reset()
 {
+	Entity = nullptr;
+
 	NameField->setText("");
 	UniqueIdField->setText("");
 	ParentIdNameField->setText("");
