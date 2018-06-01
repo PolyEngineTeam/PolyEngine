@@ -26,7 +26,7 @@ void ProjectManager::Create(const String& projectName, const String& projectPath
 	builder.Append(" ");
 	builder.Append(projectName);
 
-	gApp->CommandMgr.RunCommand(builder.StealString());
+	gApp->CommandMgr->RunCommand(builder.StealString());
 }
 
 void ProjectManager::Open(String projectPath)
@@ -55,7 +55,7 @@ void ProjectManager::Update(const String& enginePath)
 	builder.Append(" -u ");
 	builder.Append(ProjectConfig->ProjectPath);
 
-	gApp->CommandMgr.RunCommand(builder.GetString());
+	gApp->CommandMgr->RunCommand(builder.GetString());
 }
 
 void ProjectManager::Build()
@@ -69,7 +69,7 @@ void ProjectManager::Build()
 	builder.Append(ProjectConfig->ProjectPath);
 	builder.Append("/Build");
 
-	gApp->CommandMgr.RunCommand(builder.GetString());
+	gApp->CommandMgr->RunCommand(builder.GetString());
 }
 
 void ProjectManager::Edit()

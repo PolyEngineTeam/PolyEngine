@@ -23,14 +23,11 @@ public:
 
 	EditorUi Ui;
 
-	// TODO(squares): use unique_ptrs
-	DockManager DockMgr;
-	CommandManager CommandMgr;
+	DockManager* DockMgr;
+	CommandManager* CommandMgr;
 	ProjectManager* ProjectMgr;
 	EngineManager* EngineMgr;
 	InspectorManager* InspectorMgr;
-
-	std::unique_ptr<EditManager> EditMgr;
 
 private:
 	GlobalEventFilter EventFilter;

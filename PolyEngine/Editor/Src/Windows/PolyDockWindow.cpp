@@ -11,5 +11,5 @@ PolyDockWindow::PolyDockWindow(const QString& title, PolyWidget* widget) :
 	//layout()->addWidget(widget);
 
 	connect(this, &QDockWidget::topLevelChanged, this, 
-		[object = this](bool topLevel) { if (topLevel) gApp->DockMgr.WidgetCatchEvent(object); });
+		[object = this](bool topLevel) { if (topLevel) gApp->DockMgr->WidgetCatchEvent(object); });
 }

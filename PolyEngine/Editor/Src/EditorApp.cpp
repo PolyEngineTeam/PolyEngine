@@ -12,6 +12,8 @@ EditorApp* gApp = nullptr;
 EditorApp::EditorApp(int argc, char *argv[])
 	: QApplication(argc, argv)
 {
+	DockMgr = new DockManager();
+	CommandMgr = new CommandManager();
 	ProjectMgr = new ProjectManager();
 	EngineMgr = new EngineManager();
 	InspectorMgr = new InspectorManager(this);
@@ -21,9 +23,6 @@ EditorApp::EditorApp(int argc, char *argv[])
 
 	Ui.Init();
 	installEventFilter(&EventFilter);
-
-	// editMgr must be created after ui creation
-	EditMgr = std::make_unique<EditManager>();
 	
 	Poly::gConsole.LogInfo("PolyEditor succesfully initialized.");
 }

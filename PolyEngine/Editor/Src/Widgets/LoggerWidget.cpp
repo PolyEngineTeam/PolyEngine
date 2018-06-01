@@ -34,7 +34,7 @@ LoggerWidget::LoggerWidget(eLoggerType type)
 		Poly::gConsole.RegisterStream<EditorOutputStream>("console.log", this);
 		break;
 	case eLoggerType::CMD:
-		gApp->CommandMgr.RegisterStream<EditorOutputStream>("cmd.log", this);
+		gApp->CommandMgr->RegisterStream<EditorOutputStream>("cmd.log", this);
 		break;
 	default:
 		break;
