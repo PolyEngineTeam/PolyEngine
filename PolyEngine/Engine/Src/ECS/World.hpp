@@ -8,6 +8,7 @@
 #include "Engine.hpp"
 
 #include "ECS/ComponentBase.hpp"
+#include <Collections/OrderedMap.hpp>
 
 namespace Poly {
 
@@ -34,10 +35,10 @@ namespace Poly {
 		RTTI_DECLARE_TYPE_DERIVED(::Poly::Scene, ::Poly::RTTIBase)
 		{
 			//@todo(muniu) rttibase pointers serialization
-			//RTTI_PROPERTY_AUTONAME(rootEntity, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(EntitiesAllocator, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(rootEntity, RTTI::ePropertyFlag::NONE);
+			//RTTI_PROPERTY_AUTONAME(EntitiesAllocator, RTTI::ePropertyFlag::NONE);
 			//RTTI_PROPERTY_AUTONAME_ARRAY(ComponentAllocators, MAX_COMPONENTS_COUNT, RTTI::ePropertyFlag::NONE);
-			//RTTI_PROPERTY_AUTONAME_ARRAY(WorldComponents, MAX_COMPONENTS_COUNT, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(WorldComponents, RTTI::ePropertyFlag::NONE);
 		}
 	public:
 		/// <summary>Allocates memory for entities, world components and components allocators.</summary>
@@ -69,7 +70,7 @@ namespace Poly {
 		{
 			const auto ctypeID = GetWorldComponentID<T>();
 			if(HasWorldComponent(ctypeID))
-				return static_cast<T*>(WorldComponents[ctypeID]);
+				return static_cast<T*>(WorldComponents[ctypeID].get());
 			return nullptr;
 		}
 
@@ -255,7 +256,7 @@ namespace Poly {
 		{
 			const auto ctypeID = GetWorldComponentID<T>();
 			HEAVY_ASSERTE(!HasWorldComponent(ctypeID), "Failed at AddWorldComponent() - a world component of a given type already exists!");
-			WorldComponents[ctypeID] = new T(std::forward<Args>(args)...);
+			WorldComponents[ctypeID] = std::make_unique<T>(std::forward<Args>(args)...);
 		}
 
 		//------------------------------------------------------------------------------
@@ -271,13 +272,13 @@ namespace Poly {
 
 		void RemoveComponentById(Entity* ent, size_t id);
 
-		SafePtr<Entity> rootEntity = nullptr;
+		std::unique_ptr<Entity> rootEntity = nullptr;
+		//@todo change to hash map
+		OrderedMap<size_t, std::unique_ptr<ComponentBase>> WorldComponents;
 
 		// Allocators
 		IterablePoolAllocator<Entity> EntitiesAllocator;
 		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
-
-		ComponentBase* WorldComponents[MAX_COMPONENTS_COUNT];
 	};
 
 	//defined here due to circular inclusion problem; FIXME: circular inclusion

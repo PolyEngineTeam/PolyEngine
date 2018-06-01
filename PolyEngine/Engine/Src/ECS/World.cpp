@@ -9,34 +9,35 @@ Scene::Scene()
 	: EntitiesAllocator(MAX_ENTITY_COUNT)
 {
 	memset(ComponentAllocators, 0, sizeof(IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
-	memset(WorldComponents, 0, sizeof(ComponentBase*) * MAX_WORLD_COMPONENTS_COUNT);
+	//memset(WorldComponents, 0, sizeof(ComponentBase*) * MAX_WORLD_COMPONENTS_COUNT);
+	//WorldComponents.Resize(MAX_WORLD_COMPONENTS_COUNT);
 
-	rootEntity = SpawnEntityInternal();
+	rootEntity.reset(SpawnEntityInternal());
 }
 
 //------------------------------------------------------------------------------
 Scene::~Scene()
 {
 	// copy entities
-	if(rootEntity)
-		DestroyEntity(rootEntity.Get());
+	if (rootEntity)
+	{
+		DestroyEntity(rootEntity.release());
+	}
+	
+	Entity t;
 	
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT; ++i)
 	{
 		if (ComponentAllocators[i])
 			delete ComponentAllocators[i];
 	}
-
-	for (size_t i = 0; i < MAX_WORLD_COMPONENTS_COUNT; i++)
-		if (WorldComponents[i])
-			delete (WorldComponents[i]);
 }
 
 //------------------------------------------------------------------------------
 Entity* Scene::SpawnEntity()
 {
 	Entity* ent = SpawnEntityInternal();
-	ent->SetParent(rootEntity.Get());
+	ent->SetParent(rootEntity.get());
 	return ent;
 }
 

@@ -300,7 +300,10 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid unique ptr impl data!");
 		const UniquePtrPropertyImplDataBase* implData = static_cast<const UniquePtrPropertyImplDataBase*>(prop.ImplData.get());
-		currentValue = GetCorePropertyValue(implData->Get(value), implData->PropertyType, alloc);
+		if (implData->Get(value))
+			currentValue = GetCorePropertyValue(implData->Get(value), implData->PropertyType, alloc);
+		else
+			currentValue.SetNull();
 		break;
 	}
 	case eCorePropertyType::CUSTOM:
@@ -470,7 +473,8 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, const RTTI::Prop
 		const UniquePtrPropertyImplDataBase* implData = static_cast<const UniquePtrPropertyImplDataBase*>(prop.ImplData.get());
 		implData->Create(obj);
 		//@todo(muniu) store guid in some register for non-owning pointer deserialization
-		SetCorePropertyValue(implData->Get(obj), implData->PropertyType, value);
+		if(!value.IsNull())
+			SetCorePropertyValue(implData->Get(obj), implData->PropertyType, value);
 	}
 	break;
 	case eCorePropertyType::CUSTOM:

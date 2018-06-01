@@ -299,6 +299,9 @@ namespace Poly
 
 				struct SplitResult final
 				{
+					SplitResult() {}
+					SplitResult(NodeRef nodeLeft, K&& k, V&& v, Edge edge)
+						: oldNodeLeft(std::move(nodeLeft)), key(std::move(k)), value(std::move(v)), newEdgeRight(std::move(edge)) {}
 					NodeRef oldNodeLeft; //old node truncated to only contain key/value pairs (and possibly edges) to the left of the handle
 					K key;               //pointed to by the handle, extracted
 					V value;             //pointed to by the handle, extracted
@@ -321,8 +324,8 @@ namespace Poly
 					const auto new_len = oldNode->len - idx - 1u;
 					oldNode->len = static_cast<uint16_t>(idx);
 					newNode->len = static_cast<uint16_t>(new_len);
-
-					return SplitResult{nodeRef, std::move(k), std::move(v), Edge{newNode, 0}};
+					SplitResult r;
+					return r;// SplitResult(nodeRef, std::move(k), std::move(v), Edge{ newNode, 0 });
 				}
 
 				SplitResult SplitBranch() //mark: kv
@@ -349,8 +352,8 @@ namespace Poly
 					{
 						KVERef{newEdge.AsNodeRef(), i}.CorrectParentLink();
 					}
-
-					return SplitResult{nodeRef, std::move(k), std::move(v), newEdge};
+					SplitResult r;
+					return std::move(r);// SplitResult(nodeRef, std::move(k), std::move(v), newEdge);
 				}
 
 				struct InsertResult final : public BaseObjectLiteralType<>

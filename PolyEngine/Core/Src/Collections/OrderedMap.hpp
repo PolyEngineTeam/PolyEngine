@@ -479,7 +479,7 @@ namespace Poly
 				{
 					if (ascensionResult.succeeded)
 					{
-						insertResult = ascensionResult.parent.BranchInsert(insertResult.splitResult.key, insertResult.splitResult.value, insertResult.splitResult.newEdgeRight);
+						insertResult = ascensionResult.parent.BranchInsert(std::move(insertResult.splitResult.key), std::move(insertResult.splitResult.value), insertResult.splitResult.newEdgeRight);
 						if (insertResult.fit)
 						{
 							return *v;
@@ -489,7 +489,7 @@ namespace Poly
 					else
 					{
 						Root* root = ascensionResult.self.root;
-						root->PushLevel().PushBack(insertResult.splitResult.key, insertResult.splitResult.value, insertResult.splitResult.newEdgeRight);
+						root->PushLevel().PushBack(std::move(insertResult.splitResult.key), std::move(insertResult.splitResult.value), insertResult.splitResult.newEdgeRight);
 						return *v;
 					}
 				}
