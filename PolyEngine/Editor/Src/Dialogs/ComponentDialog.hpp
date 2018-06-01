@@ -15,11 +15,13 @@ class ComponentDialog : public QDialog
 {
 public:
 	ComponentDialog(::Entity* entity, bool removeComponents = false);
+	ComponentDialog(::World* world, bool removeComponents = false);
 
 	bool OperationCanceled() { return Canceled; }
 
 private:
-	Entity* Entity;
+	Entity * Entity;
+	World* World;
 
 	bool Canceled = false;
 

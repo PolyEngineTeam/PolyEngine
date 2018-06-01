@@ -68,6 +68,14 @@ namespace Poly {
 		}
 
 		//------------------------------------------------------------------------------
+		ComponentBase* GetWorldComponent(size_t ctypeID)
+		{
+			if (HasWorldComponent(ctypeID))
+				return WorldComponents[ctypeID];
+			return nullptr;
+		}
+
+		//------------------------------------------------------------------------------
 		/// <summary>Returns statically set component type ID.</summary>
 		/// <tparam name="T">Type of requested component.</tparam>
 		/// <returns>Associated ID.</returns>

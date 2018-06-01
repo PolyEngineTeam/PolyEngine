@@ -75,7 +75,10 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::SelectionChanged(QTreeWidgetItem* item, int column)
 {
-	emit EntitySelected(EntityFromID[item]);
+	Entity* e = EntityFromID[item];
+
+	if (e != World->GetRoot())
+		emit EntitySelected(e);
 }
 
 //------------------------------------------------------------------------------
