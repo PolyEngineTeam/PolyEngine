@@ -11,8 +11,13 @@ namespace Poly
 	/// <summary>WorldComponent that holds data for debug system.</summary>
 	class ENGINE_DLLEXPORT DebugWorldComponent : public ComponentBase
 	{
-	friend void FPSSystem::FPSUpdatePhase(World*);
-	friend float FPSSystem::GetFPS(World*);
+		RTTI_DECLARE_TYPE_DERIVED(DebugWorldComponent, ComponentBase)
+		{
+			NO_RTTI_PROPERTY();
+		}
+
+		friend void FPSSystem::FPSUpdatePhase(World*);
+		friend float FPSSystem::GetFPS(World*);
 
 	private:
 		FPSSystem::FPSData FPSData;

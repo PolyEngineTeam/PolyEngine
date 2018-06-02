@@ -20,9 +20,15 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT Physics2DWorldComponent : public ComponentBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(Physics2DWorldComponent, ComponentBase)
+		{
+			NO_RTTI_PROPERTY();
+		}
+
 		friend void Physics2DSystem::Physics2DUpdatePhase(World* world);
 		friend class Physics2DContactListener;
 		friend class RigidBody2DComponent;
+
 	public:
 		struct Collision
 		{

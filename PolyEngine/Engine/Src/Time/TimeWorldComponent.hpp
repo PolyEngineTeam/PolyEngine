@@ -11,6 +11,11 @@ namespace Poly
 {
 	class ENGINE_DLLEXPORT TimeWorldComponent : public ComponentBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(TimeWorldComponent, ComponentBase)
+		{
+			NO_RTTI_PROPERTY();
+		}
+
 		friend void TimeSystem::TimeUpdatePhase(World* world);
 		friend void TimeSystem::RegisterTimer(World* world, size_t id, bool isPausable, double multiplier);
 		friend double TimeSystem::GetTimerDeltaTime(World* world, size_t id);

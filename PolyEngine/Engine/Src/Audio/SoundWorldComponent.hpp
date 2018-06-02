@@ -17,11 +17,9 @@ namespace Poly
 	/// @see SoundSystem
 	class ENGINE_DLLEXPORT SoundWorldComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(AssetsPathConfig, ConfigBase)
+		RTTI_DECLARE_TYPE_DERIVED(SoundWorldComponent, ComponentBase)
 		{
 			NO_RTTI_PROPERTY();
-			//RTTI_PROPERTY(Context, "Context", RTTI::ePropertyFlag::NONE);
-			//RTTI_PROPERTY(Listeners, "Listeners", RTTI::ePropertyFlag::NONE);
 		}
 
 		friend void SoundSystem::SetWorldCurrent(World* world);

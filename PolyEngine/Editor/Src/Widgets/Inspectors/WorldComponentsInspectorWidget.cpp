@@ -73,7 +73,7 @@ void WorldComponentsInspectorWidget::ReloadInspector()
 		ComponentInspectors.PushBack(viewer);
 
 		section->SetWidget(viewer);
-		MainLayout->addWidget(section, i, 0);
+		MainLayout->addWidget(section, (int)i, 0);
 	}
 }
 

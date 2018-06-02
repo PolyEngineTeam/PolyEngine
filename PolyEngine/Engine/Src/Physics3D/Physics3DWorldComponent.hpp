@@ -34,6 +34,11 @@ namespace Poly
 	/// @see Rigidbody3DComponent
 	class ENGINE_DLLEXPORT Physics3DWorldComponent : public ComponentBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(Physics3DWorldComponent, ComponentBase)
+		{
+			NO_RTTI_PROPERTY();
+		}
+
 		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
 		friend void Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool enablePhysics);
 		friend void Physics3DSystem::UnregisterComponent(World * world, Entity* entity);
@@ -41,6 +46,7 @@ namespace Poly
 		friend ContactResult Physics3DSystem::ContactPair(World* world, Entity* firstEntity, Entity* secondEntity);
 		friend RaycastResult Physics3DSystem::AllHitsRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 		friend RaycastResult Physics3DSystem::ClosestHitRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
+	
 	public:
 		Physics3DWorldComponent(Physics3DConfig config);
 		~Physics3DWorldComponent();

@@ -2,6 +2,8 @@
 
 #include "Input/InputWorldComponent.hpp"
 
+RTTI_DEFINE_TYPE(Poly::InputWorldComponent)
+
 bool Poly::InputWorldComponent::IsPressed(const std::initializer_list<eKey>& list) const
 {
 	bool result = true;

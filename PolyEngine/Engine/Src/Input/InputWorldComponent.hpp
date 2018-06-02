@@ -10,19 +10,26 @@
 
 namespace Poly
 {
-		struct ControllerState {
+	struct ControllerState 
+	{
 		ControllerState() = default;
 
 		EnumArray<bool, eControllerButton> CurrButton;
 		EnumArray<bool, eControllerButton> PrevButton;
 		EnumArray<float, eControllerAxis> CurrAxis;
 		EnumArray<float, eControllerAxis> PrevAxis;
-		};
+	};
 
 	/// <summary>World component that holds input data.</summary>
 	class ENGINE_DLLEXPORT InputWorldComponent : public ComponentBase
 	{
-	friend void InputSystem::InputPhase(World*);
+		RTTI_DECLARE_TYPE_DERIVED(InputWorldComponent, ComponentBase)
+		{
+			NO_RTTI_PROPERTY();
+		}
+
+		friend void InputSystem::InputPhase(World*);
+
 	public:
 		InputWorldComponent() = default;
 
@@ -53,7 +60,7 @@ namespace Poly
 		Dynarray<size_t> GetConnectedControllersIDs() const;
 		bool IsControllerConnected(size_t idx) const;
 
-		private:
+	private:
 		EnumArray<bool, eKey> CurrKey;
 		EnumArray<bool, eKey> PrevKey;
 		EnumArray<bool, eMouseButton> CurrMouseButton;

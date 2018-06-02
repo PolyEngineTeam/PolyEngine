@@ -2,6 +2,8 @@
 
 using namespace Poly;
 
+RTTI_DEFINE_TYPE(Poly::ViewportWorldComponent)
+
 ViewportWorldComponent::ViewportWorldComponent()
 {
 	AddViewport(AARect(Vector2f(0, 0), Vector2f(1, 1)));

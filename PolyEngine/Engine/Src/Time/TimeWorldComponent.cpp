@@ -2,6 +2,7 @@
 
 #include "Time/TimeWorldComponent.hpp"
 
+RTTI_DEFINE_TYPE(Poly::TimeWorldComponent)
 
 //------------------------------------------------------------------------------
 Poly::TimeWorldComponent::TimeWorldComponent()
