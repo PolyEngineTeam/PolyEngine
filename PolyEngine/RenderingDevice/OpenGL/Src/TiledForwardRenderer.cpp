@@ -1,17 +1,17 @@
 #include "TiledForwardRenderer.hpp"
 
 #include "GLRenderingDevice.hpp"
-#include "GLMeshDeviceProxy.hpp"
-#include "RenderingPassBase.hpp"
-#include "GLShaderProgram.hpp"
+#include "Proxy/GLMeshDeviceProxy.hpp"
+#include "Pipeline/RenderingPassBase.hpp"
+#include "Common/GLShaderProgram.hpp"
 
-#include <World.hpp>
-#include <BasicMath.hpp>
-#include <AARect.hpp>
-#include <CameraComponent.hpp>
-#include <LightSourceComponent.hpp>
-#include <MeshRenderingComponent.hpp>
-#include <TimeWorldComponent.hpp>
+#include <ECS/World.hpp>
+#include <Math/BasicMath.hpp>
+#include <Math/AARect.hpp>
+#include <Rendering/Camera/CameraComponent.hpp>
+#include <Rendering/Lighting/LightSourceComponent.hpp>
+#include <Rendering/MeshRenderingComponent.hpp>
+#include <Time/TimeWorldComponent.hpp>
 
 using namespace Poly;
 

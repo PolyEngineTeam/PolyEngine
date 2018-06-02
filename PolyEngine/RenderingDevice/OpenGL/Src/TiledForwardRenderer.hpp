@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IRendererInterface.hpp"
-#include "GLUtils.hpp"
+#include "Common/GLUtils.hpp"
 
 namespace Poly {
 

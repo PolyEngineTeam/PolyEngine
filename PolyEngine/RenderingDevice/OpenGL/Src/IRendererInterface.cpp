@@ -1,10 +1,10 @@
 // #include "ForwardRenderer.hpp"
 
 #include "GLRenderingDevice.hpp"
-#include "RenderingPassBase.hpp"
+#include "Pipeline/RenderingPassBase.hpp"
 
-#include <CameraComponent.hpp>
-#include <AARect.hpp>
+#include <Rendering/Camera/CameraComponent.hpp>
+#include <Math/AARect.hpp>
 #include "IRendererInterface.hpp"
 
 using namespace Poly;
