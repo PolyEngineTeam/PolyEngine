@@ -66,7 +66,7 @@ UNSILENCE_MSVC_WARNING()
 // dialogs
 #include "Dialogs/CreateProjectDialog.hpp"
 
-#include "Dialogs/Inspectors/EntityDialog.hpp"
+#include "Dialogs/Inspectors/AddEntityDialog.hpp"
 #include "Dialogs/Inspectors/ComponentDialog.hpp"
 
 

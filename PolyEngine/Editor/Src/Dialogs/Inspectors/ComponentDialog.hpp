@@ -20,7 +20,7 @@ public:
 	bool OperationCanceled() { return Canceled; }
 
 private:
-	Entity * Entity;
+	Entity* Entity;
 	World* World;
 
 	bool Canceled = false;

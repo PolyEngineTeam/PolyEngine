@@ -45,7 +45,7 @@ private:
 		QAction* ReparentEntityAction;
 
 	QTreeWidget* Tree;
-	std::map<QTreeWidgetItem*, Entity*> EntityFromID;
+	std::map<QTreeWidgetItem*, Entity*> EntityFromItem;
 
 private slots:
 	void SelectionChanged(QTreeWidgetItem* item, int column);

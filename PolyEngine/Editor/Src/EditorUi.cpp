@@ -22,6 +22,7 @@ void EditorUi::Init()
 	window = new PolyDockWindow("World Components Inspector", WorldComponentsExplorer);
 	DockWindows.PushBack(window);
 	MainWindow->AddDockWindow(Qt::DockWidgetArea::LeftDockWidgetArea, window, true);
+	window->hide();
 
 	// viewport
 	MainViewport = new ViewportWidget();
@@ -54,6 +55,7 @@ void EditorUi::Init()
 	window = new PolyDockWindow("Resource Manager", ResourceMgr);
 	DockWindows.PushBack(window);
 	MainWindow->AddDockWindow(Qt::DockWidgetArea::BottomDockWidgetArea, window, true);
+	window->hide();
 
 	MainWindow->show();
 }

@@ -9,6 +9,9 @@ WorldInspectorWidget::WorldInspectorWidget(QWidget* parent)
 	connect(gApp->InspectorMgr, &InspectorManager::EngineInitialized, this, &WorldInspectorWidget::SetObject);
 	connect(gApp->InspectorMgr, &InspectorManager::EngineDeinitialized, this, &WorldInspectorWidget::Reset);
 
+	setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(this, &EntityInspectorWidget::customContextMenuRequested, this, &WorldInspectorWidget::SpawnContextMenu);
+
 	Tree = new QTreeWidget(this);
 	Tree->setHeaderLabels(QStringList() << "Visible" << "Name" << "ID");
 
@@ -45,14 +48,14 @@ void WorldInspectorWidget::SetObject(::World* world)
 void WorldInspectorWidget::ReloadInspector()
 {
 	Tree->clear();
-	EntityFromID.clear();
+	EntityFromItem.clear();
 
 	QTreeWidgetItem* root = new QTreeWidgetItem(Tree);
 
 	std::stringstream ss;
 	ss << World->GetRoot()->GetID();
 	root->setText(2, (&ss.str()[0]));
-	EntityFromID.insert(std::pair<QTreeWidgetItem*, Entity*>(root, World->GetRoot()));
+	EntityFromItem.insert(std::pair<QTreeWidgetItem*, Entity*>(root, World->GetRoot()));
 
 	for (auto child : World->GetRoot()->GetChildren())
 		AddEntityToTree(child, root);
@@ -66,7 +69,7 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 	std::stringstream ss;
 	ss << entity->GetID();
 	entityTree->setText(2, (&ss.str()[0]));
-	EntityFromID.insert(std::pair<QTreeWidgetItem*, Entity*>(entityTree, entity));
+	EntityFromItem.insert(std::pair<QTreeWidgetItem*, Entity*>(entityTree, entity));
 
 	for (auto child : entity->GetChildren())
 		AddEntityToTree(child, entityTree);
@@ -75,7 +78,7 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::SelectionChanged(QTreeWidgetItem* item, int column)
 {
-	Entity* e = EntityFromID[item];
+	Entity* e = EntityFromItem[item];
 
 	if (e != World->GetRoot())
 		emit EntitySelected(e);
@@ -90,6 +93,8 @@ void WorldInspectorWidget::SpawnContextMenu(QPoint pos)
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::AddEntity()
 {
+	AddEntityDialog dialog(World, EntityFromItem[Tree->itemAt(QCursor::pos())]);
+	dialog.exec();
 }
 
 //------------------------------------------------------------------------------
@@ -107,6 +112,6 @@ void WorldInspectorWidget::Reset()
 {
 	World = nullptr;
 	Tree->clear();
-	EntityFromID.clear();
+	EntityFromItem.clear();
 	emit EntityDeselected();
 }
