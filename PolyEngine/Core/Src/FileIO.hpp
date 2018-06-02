@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Defines.hpp"
-#include "String.hpp"
-#include "BinaryBuffer.hpp"
+#include "Collections/String.hpp"
+#include "Memory/BinaryBuffer.hpp"
 
 
 namespace Poly {
@@ -18,7 +18,7 @@ namespace Poly {
 #endif
 
 	//------------------------------------------------------------------------------
-	class ENGINE_DLLEXPORT FileIOException : public BaseObject<>, public std::exception
+	class CORE_DLLEXPORT FileIOException : public BaseObject<>, public std::exception
 	{
 	public:
 		FileIOException(const String& msg) : Msg(msg) {}

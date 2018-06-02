@@ -1,41 +1,41 @@
 #pragma once
 
 #include "Defines.hpp"
-#include "RTTI.hpp"
+#include "RTTI/RTTI.hpp"
 
 // Math
-#include "BasicMath.hpp"
-#include "Angle.hpp"
-#include "Vector.hpp"
-#include "Vector2f.hpp"
-#include "Vector2i.hpp"
-#include "Vector3f.hpp"
-#include "Matrix.hpp"
-#include "Quaternion.hpp"
-#include "SimdMath.hpp"
+#include "Math/BasicMath.hpp"
+#include "Math/Angle.hpp"
+#include "Math/Vector.hpp"
+#include "Math/Vector2f.hpp"
+#include "Math/Vector2i.hpp"
+#include "Math/Vector3f.hpp"
+#include "Math/Matrix.hpp"
+#include "Math/Quaternion.hpp"
+#include "Math/SimdMath.hpp"
 
 // Geometry
-#include "AABox.hpp"
-#include "AARect.hpp"
+#include "Math/AABox.hpp"
+#include "Math/AARect.hpp"
 
 // Memory
 #include "BaseObject.hpp"
-#include "Allocator.hpp"
-#include "PoolAllocator.hpp"
-#include "IterablePoolAllocator.hpp"
-#include "RefCountedBase.hpp"
+#include "Memory/Allocator.hpp"
+#include "Memory/PoolAllocator.hpp"
+#include "Memory/IterablePoolAllocator.hpp"
+#include "Memory/RefCountedBase.hpp"
 
 // Containers
-#include "String.hpp"
-#include "StringBuilder.hpp"
-#include "Dynarray.hpp"
-#include "Queue.hpp"
-#include "PriorityQueue.hpp"
+#include "Collections/String.hpp"
+#include "Collections/StringBuilder.hpp"
+#include "Collections/Dynarray.hpp"
+#include "Collections/Queue.hpp"
+#include "Collections/PriorityQueue.hpp"
 
 // Other
-#include "Color.hpp"
+#include "Math/Color.hpp"
 #include "FileIO.hpp"
-#include "Logger.hpp"
+#include "Utils/Logger.hpp"
 #include "UniqueID.hpp"
-#include "EnumUtils.hpp"
-#include "OutputStream.hpp"
+#include "Utils/EnumUtils.hpp"
+#include "Utils/OutputStream.hpp"

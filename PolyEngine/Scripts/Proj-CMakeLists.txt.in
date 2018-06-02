@@ -1,10 +1,15 @@
-file(GLOB_RECURSE GAME_SRCS Src/*.cpp)
+
 set(GAME_INCLUDE Src)
-file(GLOB_RECURSE GAME_H_FOR_IDE Src/*.hpp Src/*.h)
+
+file(GLOB_RECURSE GAME_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
+	${GAME_INCLUDE}/*.cpp 
+	${GAME_INCLUDE}/*.hpp
+	${GAME_INCLUDE}/*.h)
+GenerateSourceGoups("${GAME_SRCS}")
 
 set(GAME_NAME $PROJECT_NAME$)
 
-add_library(${GAME_NAME} SHARED ${GAME_SRCS} ${GAME_H_FOR_IDE})
+add_library(${GAME_NAME} SHARED ${GAME_SRCS})
 target_compile_definitions(${GAME_NAME} PRIVATE _GAME)
 target_include_directories(${GAME_NAME} PRIVATE ${GAME_INCLUDE})
 target_link_libraries(${GAME_NAME} PRIVATE PolyEngine PolyCore)

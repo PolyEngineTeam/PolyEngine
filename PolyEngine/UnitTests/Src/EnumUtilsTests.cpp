@@ -1,7 +1,7 @@
 #include <Defines.hpp>
 #include <catch.hpp>
 
-#include <EnumUtils.hpp>
+#include <Utils/EnumUtils.hpp>
 
 using namespace Poly;
 
@@ -19,8 +19,6 @@ TEST_CASE("EnumArray tests", "[EnumArray]")
 {
 	EnumArray<int, eTestEnum> a1;
 	REQUIRE(a1.GetSize() == (int)eTestEnum::_COUNT);
-	EnumArray<int, eTestEnum, 2> a2;
-	REQUIRE(a2.GetSize() == 2);
 
 	a1[eTestEnum::VAL_1] = 4;
 	a1[eTestEnum::VAL_2] = 48;

@@ -1,22 +1,23 @@
 #include "GLRenderingDevice.hpp"
 
-#include <World.hpp>
-#include <DebugConfig.hpp>
-#include <Viewport.hpp>
+#include <ECS/World.hpp>
+#include <Configs/DebugConfig.hpp>
+#include <Rendering/Viewport.hpp>
 
-#include <CameraComponent.hpp>
-#include <MeshRenderingComponent.hpp>
-#include <ScreenSpaceTextComponent.hpp>
-#include <ViewportWorldComponent.hpp>
-#include <PostprocessSettingsComponent.hpp>
+#include <Rendering/Camera/CameraComponent.hpp>
+#include <Rendering/MeshRenderingComponent.hpp>
+#include <UI/ScreenSpaceTextComponent.hpp>
+#include <Rendering/ViewportWorldComponent.hpp>
+#include <Rendering/PostprocessSettingsComponent.hpp>
 
-#include "GLTextFieldBufferDeviceProxy.hpp"
-#include "GLTextureDeviceProxy.hpp"
-#include "RenderingPassBase.hpp"
-#include "GLMeshDeviceProxy.hpp"
+#include "Proxy/GLTextFieldBufferDeviceProxy.hpp"
+#include "Proxy/GLTextureDeviceProxy.hpp"
+#include "Pipeline/RenderingPassBase.hpp"
+#include "Proxy/GLMeshDeviceProxy.hpp"
+#include "Common/GLUtils.hpp"
+
 #include "ForwardRenderer.hpp"
 #include "TiledForwardRenderer.hpp"
-#include "GLUtils.hpp"
 
 using namespace Poly;
 
