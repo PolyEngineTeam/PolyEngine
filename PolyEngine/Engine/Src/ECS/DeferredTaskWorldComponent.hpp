@@ -15,6 +15,11 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT DeferredTaskWorldComponent : public ComponentBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(DeferredTaskWorldComponent, ComponentBase)
+		{
+			NO_RTTI_PROPERTY();
+		}
+
 		friend void DeferredTaskSystem::DeferredTaskPhase(World*);
 		template<typename T, typename ...Args> friend T* DeferredTaskSystem::AddComponentImmediate(World* w, Entity* entity, Args && ...args);
 	public:
