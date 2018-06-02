@@ -14,7 +14,14 @@ AddEntityDialog::AddEntityDialog(::World* world, Entity* parent)
 
 	// create list
 	List = new QListWidget(this);
+	MainLayout->addWidget(List, 0, 0, 1, 3);
 	List->addItem(new QListWidgetItem(tr("Empty entity"), List));
+	List->addItem(new QListWidgetItem(tr("SpikesLeft"), List));
+	List->addItem(new QListWidgetItem(tr("SpikesRight"), List));
+	List->addItem(new QListWidgetItem(tr("SpikesTop"), List));
+	List->addItem(new QListWidgetItem(tr("SpikesBottom"), List));
+	List->addItem(new QListWidgetItem(tr("Tile"), List));
+	List->addItem(new QListWidgetItem(tr("Powerup"), List));
 
 	CancelButton = new QPushButton(this);
 	CancelButton->setText("Cancel");
@@ -30,7 +37,13 @@ AddEntityDialog::AddEntityDialog(::World* world, Entity* parent)
 void AddEntityDialog::Ok()
 {
 	// apply changes
-
+	if (List->selectedItems()[0] == List->item(0))
+	{
+		Result = DeferredTaskSystem::SpawnEntityImmediate(World);
+		
+		if (Parent)
+			Result->SetParent(Parent);
+	}
 
 	close();
 }

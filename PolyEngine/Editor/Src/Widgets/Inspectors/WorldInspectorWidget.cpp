@@ -13,7 +13,7 @@ WorldInspectorWidget::WorldInspectorWidget(QWidget* parent)
 	connect(this, &EntityInspectorWidget::customContextMenuRequested, this, &WorldInspectorWidget::SpawnContextMenu);
 
 	Tree = new QTreeWidget(this);
-	Tree->setHeaderLabels(QStringList() << "Visible" << "Name" << "ID");
+	Tree->setHeaderLabels(QStringList() << "" << "Visible" << "Name" << "ID");
 
 	setLayout(new QGridLayout(this));
 	layout()->addWidget(Tree);
@@ -54,7 +54,7 @@ void WorldInspectorWidget::ReloadInspector()
 
 	std::stringstream ss;
 	ss << World->GetRoot()->GetID();
-	root->setText(2, (&ss.str()[0]));
+	root->setText(3, (&ss.str()[0]));
 	EntityFromItem.insert(std::pair<QTreeWidgetItem*, Entity*>(root, World->GetRoot()));
 
 	for (auto child : World->GetRoot()->GetChildren())
@@ -68,7 +68,7 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 
 	std::stringstream ss;
 	ss << entity->GetID();
-	entityTree->setText(2, (&ss.str()[0]));
+	entityTree->setText(3, (&ss.str()[0]));
 	EntityFromItem.insert(std::pair<QTreeWidgetItem*, Entity*>(entityTree, entity));
 
 	for (auto child : entity->GetChildren())
@@ -93,8 +93,11 @@ void WorldInspectorWidget::SpawnContextMenu(QPoint pos)
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::AddEntity()
 {
-	AddEntityDialog dialog(World, EntityFromItem[Tree->itemAt(QCursor::pos())]);
+	AddEntityDialog dialog(World, EntityFromItem[Tree->selectedItems()[0]]);
 	dialog.exec();
+
+	if (!dialog.OperationCanceled())
+		AddEntityToTree(dialog.GetResult(), Tree->selectedItems()[0]);
 }
 
 //------------------------------------------------------------------------------
