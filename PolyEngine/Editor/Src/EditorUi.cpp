@@ -17,6 +17,12 @@ void EditorUi::Init()
 	DockWindows.PushBack(window);
 	MainWindow->AddDockWindow(Qt::DockWidgetArea::LeftDockWidgetArea, window, true);
 
+	// world components explorer
+	WorldComponentsExplorer = new WorldComponentsInspectorWidget(MainWindow);
+	window = new PolyDockWindow("World Components Inspector", WorldComponentsExplorer);
+	DockWindows.PushBack(window);
+	MainWindow->AddDockWindow(Qt::DockWidgetArea::LeftDockWidgetArea, window, true);
+
 	// viewport
 	MainViewport = new ViewportWidget();
 	window = new PolyDockWindow("Viewport", MainViewport);

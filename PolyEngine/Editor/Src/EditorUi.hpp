@@ -5,6 +5,7 @@
 #include "Widgets/LoggerWidget.hpp"
 
 class WorldInspectorWidget;
+class WorldComponentsInspectorWidget;
 class EntityInspectorWidget;
 class ResourceInspectorWidget;
 
@@ -23,6 +24,7 @@ public:
 	LoggerWidget* MainLogger;
 	LoggerWidget* CmdLogger;
 	WorldInspectorWidget* WorldExplorer;
+	WorldComponentsInspectorWidget* WorldComponentsExplorer;
 	EntityInspectorWidget* EntityMgr;
 	ResourceInspectorWidget* ResourceMgr;
 
