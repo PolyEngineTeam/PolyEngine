@@ -35,15 +35,24 @@ signals:
 	void EntityDeselected();
 
 private:
-	void AddEntityToTree(Entity* entity, QTreeWidgetItem* parent = nullptr);
+	void AddEntityToTree(Entity* entity, QTreeWidgetItem* parent);
 
 	World* World;
+
+	QMenu* ContextMenu;
+		QAction* AddEntityAction;
+		QAction* RemoveEntityAction;
+		QAction* ReparentEntityAction;
 
 	QTreeWidget* Tree;
 	std::map<QTreeWidgetItem*, Entity*> EntityFromID;
 
 private slots:
 	void SelectionChanged(QTreeWidgetItem* item, int column);
+	void SpawnContextMenu(QPoint pos);
+		void AddEntity();
+		void RemoveEntity();
+		void ReparentEntity();
 
 	// Removes all entities from list.
 	void Reset();

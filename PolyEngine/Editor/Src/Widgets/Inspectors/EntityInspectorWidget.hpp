@@ -12,8 +12,8 @@
 #include "Widgets/PolyWidget.hpp"
 
 class SectionContainer;
-class TransformControl;
 class RTTIInspectorWidget;
+class TransformControl;
 
 using namespace Poly;
 
@@ -59,8 +59,8 @@ private:
 
 public slots:
 	void SpawnContextMenu(QPoint pos); 
-	void AddComponent(); 
-	void RemoveComponent();
+		void AddComponent(); 
+		void RemoveComponent();
 
 	// clears all fields and destroys all component sections.
 	void Reset();

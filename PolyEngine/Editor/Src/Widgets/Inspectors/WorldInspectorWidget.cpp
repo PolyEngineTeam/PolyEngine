@@ -15,6 +15,21 @@ WorldInspectorWidget::WorldInspectorWidget(QWidget* parent)
 	setLayout(new QGridLayout(this));
 	layout()->addWidget(Tree);
 
+	// context menu
+	ContextMenu = new QMenu(this);
+
+		AddEntityAction = new QAction("Add Entity", this);
+		ContextMenu->addAction(AddEntityAction);
+		connect(AddEntityAction, &QAction::triggered, this, &WorldInspectorWidget::AddEntity);
+
+		RemoveEntityAction = new QAction("Remove Entity", this);
+		ContextMenu->addAction(RemoveEntityAction);
+		connect(RemoveEntityAction, &QAction::triggered, this, &WorldInspectorWidget::RemoveEntity);
+
+		ReparentEntityAction = new QAction("Reparent Entity", this);
+		ContextMenu->addAction(ReparentEntityAction);
+		connect(ReparentEntityAction, &QAction::triggered, this, &WorldInspectorWidget::ReparentEntity);
+
 	connect(Tree, &QTreeWidget::itemDoubleClicked, this, &WorldInspectorWidget::SelectionChanged);
 }
 
@@ -32,19 +47,21 @@ void WorldInspectorWidget::ReloadInspector()
 	Tree->clear();
 	EntityFromID.clear();
 
+	QTreeWidgetItem* root = new QTreeWidgetItem(Tree);
+
+	std::stringstream ss;
+	ss << World->GetRoot()->GetID();
+	root->setText(2, (&ss.str()[0]));
+	EntityFromID.insert(std::pair<QTreeWidgetItem*, Entity*>(root, World->GetRoot()));
+
 	for (auto child : World->GetRoot()->GetChildren())
-		AddEntityToTree(child);
+		AddEntityToTree(child, root);
 }
 
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* parent)
 {
-	QTreeWidgetItem* entityTree;
-
-	if (parent == nullptr)
-		entityTree = new QTreeWidgetItem(Tree);
-	else
-		entityTree = new QTreeWidgetItem(parent);
+	QTreeWidgetItem* entityTree = new QTreeWidgetItem(parent);
 
 	std::stringstream ss;
 	ss << entity->GetID();
@@ -59,6 +76,27 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 void WorldInspectorWidget::SelectionChanged(QTreeWidgetItem* item, int column)
 {
 	emit EntitySelected(EntityFromID[item]);
+}
+
+//------------------------------------------------------------------------------
+void WorldInspectorWidget::SpawnContextMenu(QPoint pos)
+{
+	ContextMenu->popup(this->mapToGlobal(pos));
+}
+
+//------------------------------------------------------------------------------
+void WorldInspectorWidget::AddEntity()
+{
+}
+
+//------------------------------------------------------------------------------
+void WorldInspectorWidget::RemoveEntity()
+{
+}
+
+//------------------------------------------------------------------------------
+void WorldInspectorWidget::ReparentEntity()
+{
 }
 
 //------------------------------------------------------------------------------
