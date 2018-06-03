@@ -72,7 +72,7 @@ void Scene::DestroyEntity(Entity* entity)
 bool Scene::HasWorldComponent(size_t ID) const
 {
 	HEAVY_ASSERTE(ID < MAX_WORLD_COMPONENTS_COUNT, "Invalid component ID - greater than MAX_WORLD_COMPONENTS_COUNT.");
-	return WorldComponents[ID] != nullptr;
+	return WorldComponents.Get(ID).HasValue();
 }
 
 //------------------------------------------------------------------------------

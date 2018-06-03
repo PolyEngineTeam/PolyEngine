@@ -256,7 +256,7 @@ namespace Poly {
 		{
 			const auto ctypeID = GetWorldComponentID<T>();
 			HEAVY_ASSERTE(!HasWorldComponent(ctypeID), "Failed at AddWorldComponent() - a world component of a given type already exists!");
-			WorldComponents[ctypeID] = std::make_unique<T>(std::forward<Args>(args)...);
+			WorldComponents.Insert(ctypeID, std::make_unique<T>(std::forward<Args>(args)...));
 		}
 
 		//------------------------------------------------------------------------------
@@ -265,9 +265,7 @@ namespace Poly {
 		{
 			const auto ctypeID = GetComponentID<T>();
 			HEAVY_ASSERTE(HasWorldComponent(ctypeID), "Failed at RemoveWorldComponent() - a component of a given type does not exist!");
-			T* component = reinterpret_cast<T*>(WorldComponents[ctypeID]);
-			WorldComponents[ctypeID] = nullptr;
-			component->~T();
+			WorldComponents.Remove(ctypeID);
 		}
 
 		void RemoveComponentById(Entity* ent, size_t id);

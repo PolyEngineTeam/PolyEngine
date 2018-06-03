@@ -185,7 +185,7 @@ namespace Poly {
 			virtual void* GetValueTemporaryStorage() const = 0;
 			virtual Dynarray<const void*> GetKeys(const void* collection) const = 0;
 			virtual void Clear(void* collection) const = 0;
-			virtual void SetValue(void* collection, const void* key, const void* value) const = 0;
+			virtual void SetValue(void* collection, void* key, void* value) const = 0;
 			virtual const void* GetValue(const void* collection, const void* key) const = 0;
 		};
 
@@ -218,11 +218,11 @@ namespace Poly {
 				return ret;
 			}
 
-			void SetValue(void* collection, const void* key, const void* value) const override
+			void SetValue(void* collection, void* key, void* value) const override
 			{
-				const KeyType& keyRef = *reinterpret_cast<const KeyType*>(key);
-				const ValueType& valueRef = *reinterpret_cast<const ValueType*>(value);
-				reinterpret_cast<MapType*>(collection)->MustInsert(keyRef, valueRef);
+				KeyType& keyRef = *reinterpret_cast<KeyType*>(key);
+				ValueType& valueRef = *reinterpret_cast<ValueType*>(value);
+				reinterpret_cast<MapType*>(collection)->MustInsert(std::move(keyRef), std::move(valueRef));
 			}
 
 			const void* GetValue(const void* collection, const void* key) const override
@@ -280,13 +280,13 @@ namespace Poly {
 				return ret;
 			}
 
-			void SetValue(void* collection, const void* key, const void* value) const override
+			void SetValue(void* collection, void* key, void* value) const override
 			{
 				const EnumType& keyRef = *reinterpret_cast<const EnumType*>(key);
-				const ValueType& valueRef = *reinterpret_cast<const ValueType*>(value);
+				ValueType& valueRef = *reinterpret_cast<ValueType*>(value);
 
 				EnumArrayType& col = *reinterpret_cast<EnumArrayType*>(collection);
-				col[keyRef] = valueRef;
+				col[keyRef] = std::move(valueRef);
 			}
 
 			const void* GetValue(const void* collection, const void* key) const override
