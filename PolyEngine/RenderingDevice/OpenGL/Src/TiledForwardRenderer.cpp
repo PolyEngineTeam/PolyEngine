@@ -162,7 +162,7 @@ void TiledForwardRenderer::Render(World* world, const AARect& rect, const Camera
 
 	AccumulateLights(world, cameraCmp);
 
-	// RenderSkybox(world, cameraCmp);
+	RenderSkybox(world, cameraCmp);
 
 	Tonemapper(world, rect, cameraCmp);
 
@@ -173,51 +173,6 @@ void TiledForwardRenderer::Render(World* world, const AARect& rect, const Camera
 	// RDI->GeometryRenderingPasses[GLRenderingDevice::eGeometryRenderPassType::SKYBOX]->Run(world, cameraCmp, rect);
 	// RDI->GeometryRenderingPasses[GLRenderingDevice::eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);
 	// RDI->PostprocessRenderingPasses[GLRenderingDevice::ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
-}
-
-void TiledForwardRenderer::RenderSkybox(Poly::World * world, const Poly::CameraComponent * cameraCmp)
-{
-	const SkyboxWorldComponent* SkyboxWorldCmp = world->GetWorldComponent<SkyboxWorldComponent>();
-	if (SkyboxWorldCmp != nullptr)
-	{
-		const Matrix ClipFromView = cameraCmp->GetClipFromView();
-		Matrix ViewFromWorld = cameraCmp->GetViewFromWorld();
-		// center cube in view space by setting translation to 0 for x, y and z.
-		// SetTranslation resets Matrix to identity
-		ViewFromWorld.Data[3] = 0.0f;
-		ViewFromWorld.Data[7] = 0.0f;
-		ViewFromWorld.Data[11] = 0.0f;
-
-		Matrix ClipFromWorld = ClipFromView * ViewFromWorld;
-
-		SkyboxShader.BindProgram();
-		SkyboxShader.SetUniform("uMVP", ClipFromWorld);
-
-		GLuint CubemapID = static_cast<const GLCubemapDeviceProxy*>(SkyboxWorldCmp->GetCubemap().GetTextureProxy())->GetTextureID();
-
-		glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
-
-		// glDepthMask(GL_FALSE);
-		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_CULL_FACE);
-		glDepthFunc(GL_LEQUAL);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapID);
-
-		glBindVertexArray(RDI->PrimitiveRenderingCube->VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
-
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-		glEnable(GL_CULL_FACE);
-		glDepthFunc(GL_LESS);
-		glDisable(GL_DEPTH_TEST);
-		// glDepthMask(GL_TRUE);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
 }
 
 void TiledForwardRenderer::DepthPrePass(World* world, const CameraComponent* cameraCmp)
@@ -445,6 +400,55 @@ void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent*
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void TiledForwardRenderer::RenderSkybox(Poly::World * world, const Poly::CameraComponent * cameraCmp)
+{
+	const SkyboxWorldComponent* SkyboxWorldCmp = world->GetWorldComponent<SkyboxWorldComponent>();
+	if (SkyboxWorldCmp != nullptr)
+	{
+		const Matrix ClipFromView = cameraCmp->GetClipFromView();
+		Matrix ViewFromWorld = cameraCmp->GetViewFromWorld();
+		// center cube in view space by setting translation to 0 for x, y and z.
+		// SetTranslation resets Matrix to identity
+		ViewFromWorld.Data[3] = 0.0f;
+		ViewFromWorld.Data[7] = 0.0f;
+		ViewFromWorld.Data[11] = 0.0f;
+
+		Matrix ClipFromWorld = ClipFromView * ViewFromWorld;
+
+		SkyboxShader.BindProgram();
+		SkyboxShader.SetUniform("uMVP", ClipFromWorld);
+
+		GLuint CubemapID = static_cast<const GLCubemapDeviceProxy*>(SkyboxWorldCmp->GetCubemap().GetTextureProxy())->GetTextureID();
+
+		glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
+
+		// glDepthMask(GL_TRUE);
+		// glEnable(GL_DEPTH_TEST);
+		// glEnable(GL_CULL_FACE);
+
+		// glDepthMask(GL_FALSE);
+		// glEnable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+		glDepthFunc(GL_LEQUAL);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapID);
+
+		glBindVertexArray(RDI->PrimitiveRenderingCube->VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+		glEnable(GL_CULL_FACE);
+		glDepthFunc(GL_LESS);
+		// glDisable(GL_DEPTH_TEST);
+		// glDepthMask(GL_TRUE);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
 }
 
 void TiledForwardRenderer::Tonemapper(World* world, const AARect& rect, const CameraComponent* cameraCmp)

@@ -143,8 +143,9 @@ void main()
         color.rgb += dirLight.ColorIntensity.rgb * dirLight.ColorIntensity.w * ((diffuse.rgb * uMaterial.Diffuse.rgb * NdotL) + (diffuse.rgb * uMaterial.Specular.rgb * specular * NdotH));
     }
 
-    mat3 WorldFromTangent = inverse(fragment_in.TBN);
 
     oColor = color;
+
+    mat3 WorldFromTangent = inverse(fragment_in.TBN);
     oNormal.rgb = WorldFromTangent * normal;
 }
