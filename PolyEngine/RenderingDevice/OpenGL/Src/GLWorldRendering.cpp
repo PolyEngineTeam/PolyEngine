@@ -21,8 +21,6 @@
 
 using namespace Poly;
 
-//------------------------------------------------------------------------------
-
 void GLRenderingDevice::Init()
 {
 	gConsole.LogInfo("GLRenderingDevice::Init");
@@ -38,6 +36,7 @@ void GLRenderingDevice::Init()
 IRendererInterface* GLRenderingDevice::CreateRenderer()
 {
 	IRendererInterface* renderer = nullptr;
+	// RendererType = GLRenderingDevice::eRendererType::FORWARD;
 
 	switch (RendererType)
 	{

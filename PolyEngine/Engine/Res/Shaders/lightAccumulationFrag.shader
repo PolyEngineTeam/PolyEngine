@@ -65,6 +65,7 @@ uniform int uWorkGroupsX;
 uniform int uWorkGroupsY;
 
 layout(location = 0) out vec4 oColor;
+layout(location = 1) out vec4 oNormal;
 
 vec3 GetIrradiance(Light light, vec3 V, vec3 N, vec3 diffuse, float specular)
 {
@@ -82,7 +83,7 @@ vec3 GetIrradiance(Light light, vec3 V, vec3 N, vec3 diffuse, float specular)
     float NdotH = pow(max(dot(N, H), 0.0), uMaterial.Shininess);
 	
 	// Hacky fix to handle issue where specular light still effects scene once point light has passed into an object
-    NdotH *= step(0.0, NdotL);
+    NdotH *= step(NdotL, 0.0);
 	
     return light.Color.rgb * light.RangeIntensity.y * ((diffuse.rgb * uMaterial.Diffuse.rgb * NdotL) + (diffuse.rgb * uMaterial.Specular.rgb * specular * NdotH)) * falloff;
 }
@@ -137,10 +138,13 @@ void main()
         float NdotH = pow(max(dot(N, H), 0.0), uMaterial.Shininess);
 	
 		// Hacky fix to handle issue where specular light still effects scene once point light has passed into an object
-		NdotH *= step(0.0, NdotL);
+        NdotH *= step(NdotL, 0.0);
 	
         color.rgb += dirLight.ColorIntensity.rgb * dirLight.ColorIntensity.w * ((diffuse.rgb * uMaterial.Diffuse.rgb * NdotL) + (diffuse.rgb * uMaterial.Specular.rgb * specular * NdotH));
     }
 
+    mat3 WorldFromTangent = inverse(fragment_in.TBN);
+
     oColor = color;
+    oNormal.rgb = WorldFromTangent * normal;
 }

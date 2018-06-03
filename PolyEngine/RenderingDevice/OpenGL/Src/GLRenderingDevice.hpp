@@ -91,6 +91,9 @@ namespace Poly
 		std::unique_ptr<IMeshDeviceProxy> CreateMesh() override;
 		std::unique_ptr<IParticleDeviceProxy> CreateParticle() override;
 
+		std::unique_ptr<PostprocessQuad> PostprocessRenderingQuad;
+		std::unique_ptr<PrimitiveCube> PrimitiveRenderingCube;
+
 	private:
 		void GetExtensions();
 
@@ -137,9 +140,6 @@ namespace Poly
 		EnumArray<std::unique_ptr<RenderingPassBase>, eGeometryRenderPassType> GeometryRenderingPasses;
 		EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
 		EnumArray<std::unique_ptr<RenderingTargetBase>, eRenderTargetId> RenderingTargets;
-		
-		std::unique_ptr<PostprocessQuad> PostprocessRenderingQuad;
-		std::unique_ptr<PrimitiveCube> PrimitiveRenderingCube;
 	};
 
 	extern GLRenderingDevice* gRenderingDevice;

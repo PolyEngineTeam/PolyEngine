@@ -46,12 +46,14 @@ namespace Poly {
 		GLShaderProgram lightCullingShader;
 		GLShaderProgram lightAccumulationShader;
 		GLShaderProgram hdrShader;
+		GLShaderProgram SkyboxShader;
 
 		GLShaderProgram debugQuadDepthPrepassShader;
 		GLShaderProgram debugLightAccumShader;
 
 		GLuint depthMap;
 		GLuint colorBuffer;
+		GLuint normalBuffer;
 
 		GLuint FBOdepthMap;
 		GLuint FBOhdr;
@@ -77,7 +79,9 @@ namespace Poly {
 
 		void AccumulateLights(World* world, const CameraComponent* cameraCmp);
 
-		void Tonemapper(World* world, const CameraComponent* cameraCmp);
+		void Tonemapper(World* world, const AARect& rect, const CameraComponent* cameraCmp);
+
+		void RenderSkybox(World* world, const CameraComponent* cameraCmp);
 		
 		void DrawQuad();
 
