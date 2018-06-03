@@ -39,8 +39,27 @@ GLRenderingDevice::GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize&
 	ASSERTE(window, "Invalid window passed to rendering device.");
 	ASSERTE(gRenderingDevice == nullptr, "Creating device twice?");
 	gRenderingDevice = this;
+	
+	if (!CreateContextHighend()) {
+		CreateContextFallback();
+	}
 
-	// Setup SDL OpenLG attributes
+	ASSERTE(Context, "OpenGL context creation failed!");
+
+	gConsole.LogInfo("OpenGL context set up successfully");
+	gConsole.LogInfo("GL Renderer: {}", glGetString(GL_RENDERER));
+	gConsole.LogInfo("GL Version: {}", glGetString(GL_VERSION));
+	gConsole.LogInfo("GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	gConsole.LogInfo("Fitting renderer (0 - Fallback, 1 - Highend): {}", (int)RendererType);
+
+	// Setup V-Sync
+	SDL_GL_SetSwapInterval(1);
+}
+
+bool GLRenderingDevice::CreateContextHighend()
+{
+	bool isSuccessfull = false;
+
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
@@ -48,20 +67,47 @@ GLRenderingDevice::GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize&
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
 	Context = SDL_GL_CreateContext(Window);
+	isSuccessfull = (bool)Context;
 
-    if(!Context)
-    {
-        gConsole.LogError("Context setup failed, err: {}", SDL_GetError());
-        ASSERTE(Context, "OpenGL context creation failed!");
-    }
+	if (Context)
+	{
+		RendererType = eRendererType::TILED_FORWARD;
+		gConsole.LogInfo("HighEnd context created");
+	}
 
-	gConsole.LogInfo("OpenGL context set up successfully");
-	gConsole.LogInfo("GL Renderer: {}", glGetString(GL_RENDERER));
-	gConsole.LogInfo("GL Version: {}", glGetString(GL_VERSION));
-	gConsole.LogInfo("GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	if (!Context)
+	{
+		gConsole.LogInfo("HighEnd context setup failed, err: {}", SDL_GetError());
+	}
 
-	// Setup V-Sync
-	SDL_GL_SetSwapInterval(1);
+	return isSuccessfull;
+}
+
+bool GLRenderingDevice::CreateContextFallback()
+{
+	bool isSuccessfull = false;
+
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
+	Context = SDL_GL_CreateContext(Window);
+	isSuccessfull = (bool)Context;
+
+	if (Context)
+	{
+		RendererType = eRendererType::FORWARD;
+		gConsole.LogInfo("Fallback context created");
+	}
+
+	if (!Context)
+	{
+		gConsole.LogInfo("Fallback context setup failed, err: {}", SDL_GetError());
+	}
+
+	return isSuccessfull;
 }
 
 //------------------------------------------------------------------------------

@@ -76,6 +76,9 @@ namespace Poly
 		GLRenderingDevice(const GLRenderingDevice&) = delete;
 		void operator=(const GLRenderingDevice&) = delete;
 
+		bool CreateContextHighend();
+		bool CreateContextFallback();
+
 		void Resize(const ScreenSize& size) override;
 		const ScreenSize& GetScreenSize() const override { return ScreenDim; }
 
