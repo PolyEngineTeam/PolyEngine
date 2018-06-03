@@ -62,7 +62,6 @@ void PostprocessRenderingPass::OnRun(World* world, const CameraComponent* camera
 		//gConsole.LogInfo("void PostprocessRenderingPass::OnRun: UseCashetes: {}", PostprocessSettings->UseCashetes);
 	}
 
-
 	glBindVertexArray(Quad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);

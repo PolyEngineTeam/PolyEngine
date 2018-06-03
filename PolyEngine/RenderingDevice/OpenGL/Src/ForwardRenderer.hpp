@@ -11,7 +11,7 @@ namespace Poly {
 
 		void Init() override;
 		void Render(World* world, const AARect& rect, const CameraComponent* cameraCmp) override;
-		void PostRender(Poly::World * &world, const Poly::CameraComponent * &cameraCmp, const Poly::AARect & rect);
+		void PostRender(World* world, const CameraComponent* cameraCmp, const AARect& rect);
 		void Deinit() override;
 
 	private:

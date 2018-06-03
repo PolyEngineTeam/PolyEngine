@@ -37,12 +37,6 @@ void GLRenderingDevice::Init()
 
 IRendererInterface* GLRenderingDevice::CreateRenderer()
 {
-	// return new TiledForwardRenderer(this);
-	// return new ForwardRenderer(this);
-
-	// RendererType = OpenGLExtensions.Contains(String("GL_ARB_compute_shader")) ? eRendererType::TILED_FORWARD : eRendererType::FORWARD;
-	// gConsole.LogInfo("RendererType: {}", (int)RendererType);
-
 	IRendererInterface* renderer = nullptr;
 
 	switch (RendererType)
