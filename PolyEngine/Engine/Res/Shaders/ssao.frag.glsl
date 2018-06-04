@@ -7,14 +7,15 @@ uniform sampler2D uNormal;
 uniform sampler2D uDepth;
 
 uniform float uFarClippingPlane;
+uniform float uBias;
 uniform mat4 uViewFromWorld;
 
 out vec4 oColor;
 
 #define HASHSCALE3 vec3(.1031, .1030, .0973)
 #define COUNT 16
-#define FARCLIP 10.0
-#define BIAS 0.3
+// #define FARCLIP 10.0
+// #define BIAS 0.3
 
 vec3 hash32(vec2 p)
 {
@@ -48,7 +49,7 @@ void main()
         float depthDelta = depth - sampleDepth * uFarClippingPlane;
         
         vec3 sampleDir = vec3(randNor.xy * radius, depthDelta);
-        float occ = max(0.0, dot(normalize(normal.xyz), normalize(sampleDir)) - BIAS) / (length(sampleDir) + 1.0);
+        float occ = max(0.0, dot(normalize(normal.xyz), normalize(sampleDir)) - uBias) / (length(sampleDir) + 1.0);
         ao += 1.0 - occ;
     }
     ao /= float(COUNT);

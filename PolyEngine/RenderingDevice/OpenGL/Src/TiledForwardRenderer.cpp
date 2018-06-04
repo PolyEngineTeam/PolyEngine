@@ -499,6 +499,7 @@ void TiledForwardRenderer::Tonemapper(World* world, const AARect& rect, const Ca
 	glBindTexture(GL_TEXTURE_2D, preDepthBuffer);
 	SSAOShader.SetUniform("uDepth", 2);
 	SSAOShader.SetUniform("uFarClippingPlane", cameraCmp->GetClippingPlaneFar());
+	SSAOShader.SetUniform("uBias", 0.3f);
 	SSAOShader.SetUniform("uViewFromWorld", cameraCmp->GetViewFromWorld());
 	DrawQuad();
 
