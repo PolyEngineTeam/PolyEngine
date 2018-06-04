@@ -23,6 +23,8 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 	debugLightAccumShader("Shaders/debugLightAccum.vert.glsl", "Shaders/debugLightAccum.frag.glsl"),
 	lightAccumulationShader("Shaders/lightAccumulationVert.shader", "Shaders/lightAccumulationFrag.shader"),
 	hdrShader("Shaders/hdr.vert.glsl", "Shaders/hdr.frag.glsl"),
+	SSAOShader("Shaders/hdr.vert.glsl", "Shaders/ssao.frag.glsl"),
+	GammaShader("Shaders/hdr.vert.glsl", "Shaders/gamma.frag.glsl"),
 	SkyboxShader("Shaders/skyboxVert.shader", "Shaders/skyboxFrag.shader")
 {
 
@@ -67,8 +69,8 @@ void TiledForwardRenderer::Init()
 	SCREEN_SIZE_X = screenSize.Width;
 	SCREEN_SIZE_Y = screenSize.Height;
 
-	glGenTextures(1, &depthMap);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glGenTextures(1, &preDepthBuffer);
+	glBindTexture(GL_TEXTURE_2D, preDepthBuffer);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SCREEN_SIZE_X, SCREEN_SIZE_Y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -78,23 +80,20 @@ void TiledForwardRenderer::Init()
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOdepthMap);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, preDepthBuffer, 0);
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-
 	// Create a floating point HDR frame buffer and a floating point color buffer (as a texture)
 	glGenFramebuffers(1, &FBOhdr);
 
-	colorBuffer;
 	glGenTextures(1, &colorBuffer);
 	glBindTexture(GL_TEXTURE_2D, colorBuffer);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCREEN_SIZE_X, SCREEN_SIZE_Y, 0, GL_RGB, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	normalBuffer;
 	glGenTextures(1, &normalBuffer);
 	glBindTexture(GL_TEXTURE_2D, normalBuffer);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCREEN_SIZE_X, SCREEN_SIZE_Y, 0, GL_RGB, GL_FLOAT, NULL);
@@ -114,6 +113,33 @@ void TiledForwardRenderer::Init()
 
 	GLenum buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 	glDrawBuffers(2, buffers);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Create pair of frame buffers for post process to swap
+	glGenFramebuffers(1, &FBOpost0);
+
+	glGenTextures(1, &postColorBuffer0);
+	glBindTexture(GL_TEXTURE_2D, postColorBuffer0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCREEN_SIZE_X, SCREEN_SIZE_Y, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, postColorBuffer0, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glGenFramebuffers(1, &FBOpost1);
+
+	glGenTextures(1, &postColorBuffer1);
+	glBindTexture(GL_TEXTURE_2D, postColorBuffer1);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCREEN_SIZE_X, SCREEN_SIZE_Y, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost1);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, postColorBuffer1, 0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -166,7 +192,6 @@ void TiledForwardRenderer::Render(World* world, const AARect& rect, const Camera
 
 	Tonemapper(world, rect, cameraCmp);
 
-
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	// glDisable(GL_BLEND);
 	// glDisable(GL_DEPTH_TEST);
@@ -214,7 +239,7 @@ void TiledForwardRenderer::DrawDepthPrepass(const CameraComponent* cameraCmp)
 	debugQuadDepthPrepassShader.SetUniform("uNear", cameraCmp->GetClippingPlaneNear());
 	debugQuadDepthPrepassShader.SetUniform("uFar", cameraCmp->GetClippingPlaneFar());
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glBindTexture(GL_TEXTURE_2D, preDepthBuffer);
 	DrawQuad();
 }
 
@@ -239,7 +264,7 @@ void TiledForwardRenderer::LightCulling(World* world, const CameraComponent* cam
 	// Bind depth map texture to texture location 4 (which will not be used by any model texture)
 	glActiveTexture(GL_TEXTURE4);
 	glUniform1i(glGetUniformLocation(lightCullingShader.GetProgramHandle(), "uDepthMap"), 4);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glBindTexture(GL_TEXTURE_2D, preDepthBuffer);
 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, visibleLightIndicesBuffer);
@@ -451,11 +476,39 @@ void TiledForwardRenderer::Tonemapper(World* world, const AARect& rect, const Ca
 	// gConsole.LogInfo("TiledForwardRenderer::Tonemapper");
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Weirdly, moving this call drops performance into the floor
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost0);
 
 	hdrShader.BindProgram();
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, colorBuffer);
 	hdrShader.SetUniform("uExposure", exposure);
+	DrawQuad();
+
+	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost1);
+
+	SSAOShader.BindProgram();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, postColorBuffer0);
+	SSAOShader.SetUniform("uBeauty", 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, normalBuffer);
+	SSAOShader.SetUniform("uNormal", 1);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, preDepthBuffer);
+	SSAOShader.SetUniform("uDepth", 2);
+	SSAOShader.SetUniform("uFarClippingPlane", cameraCmp->GetClippingPlaneFar());
+	SSAOShader.SetUniform("uViewFromWorld", cameraCmp->GetViewFromWorld());
+	DrawQuad();
+
+	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	GammaShader.BindProgram();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, postColorBuffer1);
+	GammaShader.SetUniform("uGamma", 2.2f);
 	DrawQuad();
 }
 

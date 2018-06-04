@@ -47,16 +47,22 @@ namespace Poly {
 		GLShaderProgram lightAccumulationShader;
 		GLShaderProgram hdrShader;
 		GLShaderProgram SkyboxShader;
+		GLShaderProgram SSAOShader;
+		GLShaderProgram GammaShader;
 
 		GLShaderProgram debugQuadDepthPrepassShader;
 		GLShaderProgram debugLightAccumShader;
 
-		GLuint depthMap;
+		GLuint preDepthBuffer;
 		GLuint colorBuffer;
 		GLuint normalBuffer;
+		GLuint postColorBuffer0;
+		GLuint postColorBuffer1;
 
 		GLuint FBOdepthMap;
 		GLuint FBOhdr;
+		GLuint FBOpost0;
+		GLuint FBOpost1;
 
 		GLuint FallbackWhiteTexture;
 		GLuint FallbackNormalMap;

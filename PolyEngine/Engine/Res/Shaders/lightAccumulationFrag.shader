@@ -147,5 +147,5 @@ void main()
     oColor = color;
 
     mat3 WorldFromTangent = inverse(fragment_in.TBN);
-    oNormal.rgb = WorldFromTangent * normal;
+    oNormal.rgb = (WorldFromTangent * normal) * 0.5 + 0.5;
 }
