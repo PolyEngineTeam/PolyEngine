@@ -14,8 +14,6 @@ out vec4 oColor;
 
 #define HASHSCALE3 vec3(.1031, .1030, .0973)
 #define COUNT 16
-// #define FARCLIP 10.0
-// #define BIAS 0.3
 
 vec3 hash32(vec2 p)
 {
@@ -24,6 +22,11 @@ vec3 hash32(vec2 p)
     return fract((p3.xxy + p3.yzz) * p3.zyx);
 }
 
+// based on:
+// - https://www.shadertoy.com/view/4ltSz2
+// - http://www.gamedev.net/page/resources/_/technical/graphics-programming-and-theory/a-simple-and-practical-approach-to-ssao-r2753
+// - https://www.shadertoy.com/view/Ms23Wm 
+// - UnityEngine Screen Space Ambient Occlusion
 void main()
 {
     mat3 ViewFromWorld = mat3(uViewFromWorld);
@@ -55,6 +58,5 @@ void main()
     ao /= float(COUNT);
     
     vec3 color = texture(uBeauty, vUV).rgb;
-    // oColor = vec4(normal, 1.0);
     oColor = vec4(ao * color, 1.0);
 }
