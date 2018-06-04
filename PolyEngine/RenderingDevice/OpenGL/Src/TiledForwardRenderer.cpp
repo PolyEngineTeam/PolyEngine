@@ -190,14 +190,11 @@ void TiledForwardRenderer::Render(World* world, const AARect& rect, const Camera
 
 	RenderSkybox(world, cameraCmp);
 
-	Tonemapper(world, rect, cameraCmp);
+	PostTonemapper(world, rect, cameraCmp);
 
-	// glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	// glDisable(GL_BLEND);
-	// glDisable(GL_DEPTH_TEST);
-	// RDI->GeometryRenderingPasses[GLRenderingDevice::eGeometryRenderPassType::SKYBOX]->Run(world, cameraCmp, rect);
-	// RDI->GeometryRenderingPasses[GLRenderingDevice::eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);
-	// RDI->PostprocessRenderingPasses[GLRenderingDevice::ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
+	PostSSAO(cameraCmp);
+
+	PostGamma();
 }
 
 void TiledForwardRenderer::DepthPrePass(World* world, const CameraComponent* cameraCmp)
@@ -471,7 +468,7 @@ void TiledForwardRenderer::RenderSkybox(Poly::World * world, const Poly::CameraC
 	}
 }
 
-void TiledForwardRenderer::Tonemapper(World* world, const AARect& rect, const CameraComponent* cameraCmp)
+void TiledForwardRenderer::PostTonemapper(World* world, const AARect& rect, const CameraComponent* cameraCmp)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::Tonemapper");
 
@@ -485,7 +482,20 @@ void TiledForwardRenderer::Tonemapper(World* world, const AARect& rect, const Ca
 	hdrShader.SetUniform("uExposure", exposure);
 	DrawQuad();
 
-	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void TiledForwardRenderer::PostGamma()
+{
+	GammaShader.BindProgram();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, postColorBuffer1);
+	GammaShader.SetUniform("uGamma", 2.2f);
+	DrawQuad();
+}
+
+void TiledForwardRenderer::PostSSAO(const CameraComponent* cameraCmp)
+{
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost1);
 
 	SSAOShader.BindProgram();
@@ -503,14 +513,7 @@ void TiledForwardRenderer::Tonemapper(World* world, const AARect& rect, const Ca
 	SSAOShader.SetUniform("uViewFromWorld", cameraCmp->GetViewFromWorld());
 	DrawQuad();
 
-	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	GammaShader.BindProgram();
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, postColorBuffer1);
-	GammaShader.SetUniform("uGamma", 2.2f);
-	DrawQuad();
 }
 
 void TiledForwardRenderer::SetupLightsBufferFromScene()

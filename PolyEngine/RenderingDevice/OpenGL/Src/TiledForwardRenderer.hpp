@@ -85,9 +85,13 @@ namespace Poly {
 
 		void AccumulateLights(World* world, const CameraComponent* cameraCmp);
 
-		void Tonemapper(World* world, const AARect& rect, const CameraComponent* cameraCmp);
-
 		void RenderSkybox(World* world, const CameraComponent* cameraCmp);
+
+		void PostTonemapper(World* world, const AARect& rect, const CameraComponent* cameraCmp);
+
+		void PostSSAO(const Poly::CameraComponent * cameraCmp);
+
+		void PostGamma();
 		
 		void DrawQuad();
 
