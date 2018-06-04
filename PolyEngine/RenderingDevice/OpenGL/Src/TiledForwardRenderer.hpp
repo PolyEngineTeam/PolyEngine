@@ -75,15 +75,15 @@ namespace Poly {
 
 		void UpdateLightsBufferFromScene(World* world);
 
-		void DepthPrePass(World* world, const CameraComponent* cameraCmp);
-
-		void LightCulling(World* world, const CameraComponent* cameraCmp);
+		void RenderDepthPrePass(World* world, const CameraComponent* cameraCmp);
 
 		void DrawDepthPrepass(const CameraComponent* cameraCmp);
 
+		void ComputeLightCulling(World* world, const CameraComponent* cameraCmp);
+
 		void DrawLightAccum(World* world, const CameraComponent* cameraCmp);
 
-		void AccumulateLights(World* world, const CameraComponent* cameraCmp);
+		void RenderOpaqueLit(World* world, const CameraComponent* cameraCmp);
 
 		void RenderSkybox(World* world, const CameraComponent* cameraCmp);
 

@@ -176,9 +176,9 @@ void TiledForwardRenderer::Render(World* world, const AARect& rect, const Camera
 
 	UpdateLightsBufferFromScene(world);
 
-	DepthPrePass(world, cameraCmp);
+	RenderDepthPrePass(world, cameraCmp);
 
-	LightCulling(world, cameraCmp);
+	ComputeLightCulling(world, cameraCmp);
 
 	// DrawDepthPrepass(cameraCmp);
 
@@ -186,7 +186,7 @@ void TiledForwardRenderer::Render(World* world, const AARect& rect, const Camera
 
 	// DrawLightAccum(world, cameraCmp);
 
-	AccumulateLights(world, cameraCmp);
+	RenderOpaqueLit(world, cameraCmp);
 
 	RenderSkybox(world, cameraCmp);
 
@@ -197,7 +197,7 @@ void TiledForwardRenderer::Render(World* world, const AARect& rect, const Camera
 	PostGamma();
 }
 
-void TiledForwardRenderer::DepthPrePass(World* world, const CameraComponent* cameraCmp)
+void TiledForwardRenderer::RenderDepthPrePass(World* world, const CameraComponent* cameraCmp)
 {
 	depthShader.BindProgram();
 
@@ -240,7 +240,7 @@ void TiledForwardRenderer::DrawDepthPrepass(const CameraComponent* cameraCmp)
 	DrawQuad();
 }
 
-void TiledForwardRenderer::LightCulling(World* world, const CameraComponent* cameraCmp)
+void TiledForwardRenderer::ComputeLightCulling(World* world, const CameraComponent* cameraCmp)
 {
 	float Time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 
@@ -317,7 +317,7 @@ void TiledForwardRenderer::DrawLightAccum(World* world, const CameraComponent* c
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
 }
 
-void TiledForwardRenderer::AccumulateLights(World* world, const CameraComponent* cameraCmp)
+void TiledForwardRenderer::RenderOpaqueLit(World* world, const CameraComponent* cameraCmp)
 {
 	float Time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 
