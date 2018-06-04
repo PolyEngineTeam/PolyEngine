@@ -2,11 +2,13 @@
 
 in vec3 vUV;
 
-out vec4 color;
-
 uniform samplerCube uCubemap;
+
+layout(location = 0) out vec4 color;
+layout(location = 1) out vec4 normal;
 
 void main()
 {
     color = vec4(texture(uCubemap, vUV).rgb, 1.0);
+    normal = vec4(0.0);
 }

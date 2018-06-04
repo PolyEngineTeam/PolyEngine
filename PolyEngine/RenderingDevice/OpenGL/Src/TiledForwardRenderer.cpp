@@ -423,6 +423,9 @@ void TiledForwardRenderer::RenderSkybox(Poly::World * world, const Poly::CameraC
 		GLuint CubemapID = static_cast<const GLCubemapDeviceProxy*>(SkyboxWorldCmp->GetCubemap().GetTextureProxy())->GetTextureID();
 
 		glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
+		
+		glBindFragDataLocation(lightAccumulationShader.GetProgramHandle(), 0, "color");
+		glBindFragDataLocation(lightAccumulationShader.GetProgramHandle(), 1, "normal");
 
 		// glDepthMask(GL_TRUE);
 		// glEnable(GL_DEPTH_TEST);
