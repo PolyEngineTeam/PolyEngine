@@ -14,7 +14,7 @@ using namespace Poly;
 SkyboxRenderingPass::SkyboxRenderingPass(const PrimitiveCube* cube)
 	: RenderingPassBase("Shaders/skyboxVert.shader", "Shaders/skyboxFrag.shader"), Cube(cube)
 {
-	GetProgram().RegisterUniform("mat4", "uMVP");
+	GetProgram().RegisterUniform("mat4", "uClipFromWorld");
 }
 
 void SkyboxRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
@@ -36,7 +36,7 @@ void SkyboxRenderingPass::RenderSkybox(const CameraComponent* camera, const Skyb
 	Matrix mvp = projection * modelView;
 
 	GetProgram().BindProgram();
-	GetProgram().SetUniform("uMVP", mvp);
+	GetProgram().SetUniform("uClipFromWorld", mvp);
 
 	GLuint CubemapID = static_cast<const GLCubemapDeviceProxy*>(SkyboxWorldCmp->GetCubemap().GetTextureProxy())->GetTextureID();
 

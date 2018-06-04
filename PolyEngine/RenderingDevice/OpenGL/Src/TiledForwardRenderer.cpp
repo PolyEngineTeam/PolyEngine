@@ -43,7 +43,7 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 	lightAccumulationShader.RegisterUniform("int", "uWorkGroupsX");
 	lightAccumulationShader.RegisterUniform("int", "uWorkGroupsY");
 
-	SkyboxShader.RegisterUniform("mat4", "uMVP");
+	SkyboxShader.RegisterUniform("mat4", "uClipFromWorld");
 }
 
 void TiledForwardRenderer::Init()
@@ -418,7 +418,7 @@ void TiledForwardRenderer::RenderSkybox(Poly::World * world, const Poly::CameraC
 		Matrix ClipFromWorld = ClipFromView * ViewFromWorld;
 
 		SkyboxShader.BindProgram();
-		SkyboxShader.SetUniform("uMVP", ClipFromWorld);
+		SkyboxShader.SetUniform("uClipFromWorld", ClipFromWorld);
 
 		GLuint CubemapID = static_cast<const GLCubemapDeviceProxy*>(SkyboxWorldCmp->GetCubemap().GetTextureProxy())->GetTextureID();
 
@@ -426,13 +426,7 @@ void TiledForwardRenderer::RenderSkybox(Poly::World * world, const Poly::CameraC
 		
 		glBindFragDataLocation(lightAccumulationShader.GetProgramHandle(), 0, "color");
 		glBindFragDataLocation(lightAccumulationShader.GetProgramHandle(), 1, "normal");
-
-		// glDepthMask(GL_TRUE);
-		// glEnable(GL_DEPTH_TEST);
-		// glEnable(GL_CULL_FACE);
-
-		// glDepthMask(GL_FALSE);
-		// glEnable(GL_DEPTH_TEST);
+		
 		glDisable(GL_CULL_FACE);
 		glDepthFunc(GL_LEQUAL);
 
@@ -447,8 +441,6 @@ void TiledForwardRenderer::RenderSkybox(Poly::World * world, const Poly::CameraC
 
 		glEnable(GL_CULL_FACE);
 		glDepthFunc(GL_LESS);
-		// glDisable(GL_DEPTH_TEST);
-		// glDepthMask(GL_TRUE);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
