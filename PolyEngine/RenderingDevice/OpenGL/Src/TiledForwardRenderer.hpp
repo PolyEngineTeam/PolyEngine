@@ -50,6 +50,7 @@ namespace Poly {
 		GLShaderProgram SSAOShader;
 		GLShaderProgram GammaShader;
 		GLShaderProgram ParticleShader;
+		GLShaderProgram TranslucentShader;
 
 		GLShaderProgram debugQuadDepthPrepassShader;
 		GLShaderProgram debugLightAccumShader;
@@ -87,7 +88,9 @@ namespace Poly {
 
 		void RenderSkybox(World* world, const CameraComponent* cameraCmp);
 
-		void RenderTranslucentLit(World* world, const CameraComponent* cameraCmp);
+		void RenderTranslucentUnlit(World* world, const CameraComponent* cameraCmp);
+		
+		void RenderParticleUnlit(World* world, const CameraComponent* cameraCmp);
 
 		void PostTonemapper(World* world, const AARect& rect, const CameraComponent* cameraCmp);
 

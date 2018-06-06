@@ -26,6 +26,7 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 	SSAOShader("Shaders/hdr.vert.glsl", "Shaders/ssao.frag.glsl"),
 	GammaShader("Shaders/hdr.vert.glsl", "Shaders/gamma.frag.glsl"),
 	ParticleShader("Shaders/instancedVert.shader", "Shaders/instancedFrag.shader"),
+	TranslucentShader("Shaders/transparentVert.shader", "Shaders/transparentFrag.shader"),
 	SkyboxShader("Shaders/skyboxVert.shader", "Shaders/skyboxFrag.shader")
 {
 
@@ -193,7 +194,9 @@ void TiledForwardRenderer::Render(World* world, const AARect& rect, const Camera
 
 	RenderSkybox(world, cameraCmp);
 
-	RenderTranslucentLit(world, cameraCmp);
+	RenderTranslucentUnlit(world, cameraCmp);
+
+	RenderParticleUnlit(world, cameraCmp);
 
 	PostTonemapper(world, rect, cameraCmp);
 
@@ -213,6 +216,8 @@ void TiledForwardRenderer::RenderDepthPrePass(World* world, const CameraComponen
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
+		if (meshCmp->IsTransparent()) continue;
+
 		const EntityTransform& transform = meshCmp->GetTransform();
 		const Matrix& WorldFromModel = transform.GetWorldFromModel();
 		depthShader.SetUniform("uScreenFromModel", ScreenFromWorld * WorldFromModel);
@@ -324,8 +329,6 @@ void TiledForwardRenderer::DebugLightAccum(World* world, const CameraComponent* 
 
 void TiledForwardRenderer::RenderOpaqueLit(World* world, const CameraComponent* cameraCmp)
 {
-	float Time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
-
 	// gConsole.LogInfo("TiledForwardRenderer::AccumulateLights");
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
@@ -368,6 +371,8 @@ void TiledForwardRenderer::RenderOpaqueLit(World* world, const CameraComponent* 
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
+		if (meshCmp->IsTransparent()) continue;
+
 		const EntityTransform& transform = meshCmp->GetTransform();
 		const Matrix& WorldFromModel = transform.GetWorldFromModel();
 		lightAccumulationShader.SetUniform("uClipFromModel", ClipFromWorld * WorldFromModel);
@@ -473,9 +478,93 @@ void TiledForwardRenderer::RenderSkybox(World* world, const CameraComponent* cam
 	}
 }
 
-void TiledForwardRenderer::RenderTranslucentLit(World* world, const CameraComponent* cameraCmp)
+void TiledForwardRenderer::RenderTranslucentUnlit(World* world, const CameraComponent* cameraCmp)
 {
-	gConsole.LogInfo("TiledForwardRenderer::RenderTranslucentLit");
+	gConsole.LogInfo("TiledForwardRenderer::RenderTranslucentUnlit");
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
+
+	glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	const EntityTransform& cameraTransform = cameraCmp->GetTransform();
+	TranslucentShader.BindProgram();
+	TranslucentShader.SetUniform("uViewPosition", cameraTransform.GetGlobalTranslation());
+
+	const Matrix& ClipFromWorld = cameraCmp->GetClipFromWorld();
+	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
+	{
+		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
+		if (!meshCmp->IsTransparent()) continue;
+
+		const EntityTransform& transform = meshCmp->GetTransform();
+		const Matrix& WorldFromModel = transform.GetWorldFromModel();
+		TranslucentShader.SetUniform("uClipFromModel", ClipFromWorld * WorldFromModel);
+		TranslucentShader.SetUniform("uWorldFromModel", WorldFromModel);
+
+		int i = 0;
+		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
+		{
+			PhongMaterial material = meshCmp->GetMaterial(i);
+			TranslucentShader.SetUniform("uMaterial.Ambient", material.AmbientColor);
+			TranslucentShader.SetUniform("uMaterial.Diffuse", material.DiffuseColor);
+			TranslucentShader.SetUniform("uMaterial.Specular", material.SpecularColor);
+			TranslucentShader.SetUniform("uMaterial.Shininess", material.Shininess);
+
+			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
+			glBindVertexArray(meshProxy->GetVAO());
+
+			const TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
+			GLuint DiffuseID = DiffuseTexture == nullptr
+				? FallbackWhiteTexture
+				: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, DiffuseID);
+			TranslucentShader.SetUniform("uAlbedoMap", 0);
+
+			const TextureResource* NormalMap = subMesh->GetMeshData().GetNormalMap();
+			GLuint NormalMapID = NormalMap == nullptr
+				? FallbackNormalMap
+				: static_cast<const GLTextureDeviceProxy*>(NormalMap->GetTextureProxy())->GetTextureID();
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, NormalMapID);
+			TranslucentShader.SetUniform("uNormalMap", 1);
+
+			const TextureResource* SpecularTexture = subMesh->GetMeshData().GetSpecularMap();
+			GLuint SpecularID = SpecularTexture == nullptr
+				? FallbackWhiteTexture
+				: static_cast<const GLTextureDeviceProxy*>(SpecularTexture->GetTextureProxy())->GetTextureID();
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, SpecularID);
+			TranslucentShader.SetUniform("uSpecularMap", 2);
+
+			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
+			++i;
+		}
+		
+	}
+	
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glBindVertexArray(0);
+
+	glEnable(GL_CULL_FACE);
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void TiledForwardRenderer::RenderParticleUnlit(World* world, const CameraComponent* cameraCmp)
+{
+	// gConsole.LogInfo("TiledForwardRenderer::RenderParticleUnlit");
 
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	const Matrix& ViewFromWorld = cameraCmp->GetViewFromWorld();
