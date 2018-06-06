@@ -11,7 +11,9 @@ uniform float uHasSprite;
 
 in vec2 vTexCoord;
 in float vInstanceID;
-out vec4 color;
+
+layout(location = 0) out vec4 color;
+layout(location = 1) out vec4 normal;
 
 vec2 SubUV(vec2 uv, vec2 subImages, float frame)
 {
@@ -41,4 +43,5 @@ void main()
 
     color = mix(vec4(mask), tex, uHasSprite);
     color *= uEmitterColor;
+	normal = vec4(0.0);
 }

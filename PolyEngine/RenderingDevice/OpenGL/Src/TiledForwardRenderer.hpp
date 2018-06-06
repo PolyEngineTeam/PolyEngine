@@ -29,8 +29,8 @@ namespace Poly {
 
 		const size_t MAX_NUM_LIGHTS = 1024;
 
-		GLuint SCREEN_SIZE_X = 1920; // 800; // 1280
-		GLuint SCREEN_SIZE_Y = 1080; // 600; // 720
+		GLuint SCREEN_SIZE_X = 1280; // 1920; // 800
+		GLuint SCREEN_SIZE_Y = 720; // 1080; // 600
 		// X and Y work group dimension variables for compute shader
 		GLuint workGroupsX = 0;
 		GLuint workGroupsY = 0;
@@ -88,7 +88,7 @@ namespace Poly {
 
 		void RenderSkybox(World* world, const CameraComponent* cameraCmp);
 
-		void RenderTranslucentUnlit(World* world, const CameraComponent* cameraCmp);
+		void RenderTranslucentLit(World* world, const CameraComponent* cameraCmp);
 		
 		void RenderParticleUnlit(World* world, const CameraComponent* cameraCmp);
 

@@ -49,6 +49,14 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 
 	SkyboxShader.RegisterUniform("mat4", "uClipFromWorld");
 
+	TranslucentShader.RegisterUniform("vec4", "uViewPosition");
+	TranslucentShader.RegisterUniform("mat4", "uClipFromModel");
+	TranslucentShader.RegisterUniform("mat4", "uWorldFromModel");
+	TranslucentShader.RegisterUniform("vec4", "uMaterial.Ambient");
+	TranslucentShader.RegisterUniform("vec4", "uMaterial.Diffuse");
+	TranslucentShader.RegisterUniform("vec4", "uMaterial.Specular");
+	TranslucentShader.RegisterUniform("float", "uMaterial.Shininess");
+
 	ParticleShader.RegisterUniform("float", "uTime");
 	ParticleShader.RegisterUniform("mat4", "uScreenFromView");
 	ParticleShader.RegisterUniform("mat4", "uViewFromWorld");
@@ -194,7 +202,7 @@ void TiledForwardRenderer::Render(World* world, const AARect& rect, const Camera
 
 	RenderSkybox(world, cameraCmp);
 
-	RenderTranslucentUnlit(world, cameraCmp);
+	RenderTranslucentLit(world, cameraCmp);
 
 	RenderParticleUnlit(world, cameraCmp);
 
@@ -478,20 +486,31 @@ void TiledForwardRenderer::RenderSkybox(World* world, const CameraComponent* cam
 	}
 }
 
-void TiledForwardRenderer::RenderTranslucentUnlit(World* world, const CameraComponent* cameraCmp)
+void TiledForwardRenderer::RenderTranslucentLit(World* world, const CameraComponent* cameraCmp)
 {
-	gConsole.LogInfo("TiledForwardRenderer::RenderTranslucentUnlit");
+	// gConsole.LogInfo("TiledForwardRenderer::RenderTranslucenLit");
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
 
-	glDepthMask(GL_FALSE);
+	// glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
-	glDisable(GL_CULL_FACE);
+	// glDisable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	const EntityTransform& cameraTransform = cameraCmp->GetTransform();
 	TranslucentShader.BindProgram();
+	TranslucentShader.SetUniform("uLightCount", (int)DynamicLighsInFrame);
+	TranslucentShader.SetUniform("uWorkGroupsX", (int)workGroupsX);
+	TranslucentShader.SetUniform("uWorkGroupsY", (int)workGroupsY);
 	TranslucentShader.SetUniform("uViewPosition", cameraTransform.GetGlobalTranslation());
+
+	glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 0, "color");
+	glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 1, "normal");
+	// glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 0, "oColor");
+	// glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 1, "oNormal");
+
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, visibleLightIndicesBuffer);
 
 	const Matrix& ClipFromWorld = cameraCmp->GetClipFromWorld();
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
@@ -543,7 +562,6 @@ void TiledForwardRenderer::RenderTranslucentUnlit(World* world, const CameraComp
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 			++i;
 		}
-		
 	}
 	
 	glActiveTexture(GL_TEXTURE0);
@@ -555,8 +573,11 @@ void TiledForwardRenderer::RenderTranslucentUnlit(World* world, const CameraComp
 
 	glBindVertexArray(0);
 
-	glEnable(GL_CULL_FACE);
-	glDepthMask(GL_TRUE);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
+
+	// glEnable(GL_CULL_FACE);
+	// glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -583,6 +604,11 @@ void TiledForwardRenderer::RenderParticleUnlit(World* world, const CameraCompone
 	ParticleShader.BindProgram();
 	ParticleShader.SetUniform("uTime", Time);
 	ParticleShader.SetUniform("uScreenFromView", ScreenFromView);
+
+	glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 0, "color");
+	glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 1, "normal");
+	// glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 0, "oColor");
+	// glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 1, "oNormal");
 
 	for (auto componentsTuple : world->IterateComponents<ParticleComponent>())
 	{
