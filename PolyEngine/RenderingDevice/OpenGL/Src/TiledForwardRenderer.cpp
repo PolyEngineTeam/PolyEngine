@@ -30,11 +30,13 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 	SkyboxShader("Shaders/skyboxVert.shader", "Shaders/skyboxFrag.shader")
 {
 
+	lightAccumulationShader.RegisterUniform("vec4", "uViewPosition");
+	lightAccumulationShader.RegisterUniform("mat4", "uClipFromModel");
+	lightAccumulationShader.RegisterUniform("mat4", "uWorldFromModel");
 	lightAccumulationShader.RegisterUniform("vec4", "uMaterial.Ambient");
 	lightAccumulationShader.RegisterUniform("vec4", "uMaterial.Diffuse");
 	lightAccumulationShader.RegisterUniform("vec4", "uMaterial.Specular");
 	lightAccumulationShader.RegisterUniform("float", "uMaterial.Shininess");
-
 	for (size_t i = 0; i < 8; ++i)
 	{
 		String baseName = String("uDirectionalLight[") + String::From(static_cast<int>(i)) + String("].");
@@ -42,7 +44,6 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 		lightAccumulationShader.RegisterUniform("vec4", baseName + "Direction");
 	}
 	lightAccumulationShader.RegisterUniform("int", "uDirectionalLightCount");
-
 	lightAccumulationShader.RegisterUniform("int", "uLightCount");
 	lightAccumulationShader.RegisterUniform("int", "uWorkGroupsX");
 	lightAccumulationShader.RegisterUniform("int", "uWorkGroupsY");
@@ -56,6 +57,16 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 	TranslucentShader.RegisterUniform("vec4", "uMaterial.Diffuse");
 	TranslucentShader.RegisterUniform("vec4", "uMaterial.Specular");
 	TranslucentShader.RegisterUniform("float", "uMaterial.Shininess");
+	for (size_t i = 0; i < 8; ++i)
+	{
+		String baseName = String("uDirectionalLight[") + String::From(static_cast<int>(i)) + String("].");
+		TranslucentShader.RegisterUniform("vec4", baseName + "ColorIntensity");
+		TranslucentShader.RegisterUniform("vec4", baseName + "Direction");
+	}
+	TranslucentShader.RegisterUniform("int", "uDirectionalLightCount");
+	TranslucentShader.RegisterUniform("int", "uLightCount");
+	TranslucentShader.RegisterUniform("int", "uWorkGroupsX");
+	TranslucentShader.RegisterUniform("int", "uWorkGroupsY");
 
 	ParticleShader.RegisterUniform("float", "uTime");
 	ParticleShader.RegisterUniform("mat4", "uScreenFromView");
@@ -220,7 +231,7 @@ void TiledForwardRenderer::RenderDepthPrePass(World* world, const CameraComponen
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOdepthMap);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	const Matrix& ScreenFromWorld = cameraCmp->GetClipFromWorld();
+	const Matrix& ClipFromWorld = cameraCmp->GetClipFromWorld();
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
@@ -228,7 +239,7 @@ void TiledForwardRenderer::RenderDepthPrePass(World* world, const CameraComponen
 
 		const EntityTransform& transform = meshCmp->GetTransform();
 		const Matrix& WorldFromModel = transform.GetWorldFromModel();
-		depthShader.SetUniform("uScreenFromModel", ScreenFromWorld * WorldFromModel);
+		depthShader.SetUniform("uScreenFromModel", ClipFromWorld * WorldFromModel);
 
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
@@ -492,25 +503,37 @@ void TiledForwardRenderer::RenderTranslucentLit(World* world, const CameraCompon
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
 
-	// glDepthMask(GL_FALSE);
+	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
 	// glDisable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	const EntityTransform& cameraTransform = cameraCmp->GetTransform();
 	TranslucentShader.BindProgram();
-	TranslucentShader.SetUniform("uLightCount", (int)DynamicLighsInFrame);
-	TranslucentShader.SetUniform("uWorkGroupsX", (int)workGroupsX);
-	TranslucentShader.SetUniform("uWorkGroupsY", (int)workGroupsY);
 	TranslucentShader.SetUniform("uViewPosition", cameraTransform.GetGlobalTranslation());
+
+	static const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
+	int dirLightsCount = 0;
+	for (const auto& componentsTuple : world->IterateComponents<DirectionalLightComponent>())
+	{
+		DirectionalLightComponent* dirLightCmp = std::get<DirectionalLightComponent*>(componentsTuple);
+		const EntityTransform& transform = dirLightCmp->GetTransform();
+		String baseName = String("uDirectionalLight[") + String::From(dirLightsCount) + String("].");
+		Color ColorIntensity = dirLightCmp->GetColor();
+		ColorIntensity.A = dirLightCmp->GetIntensity();
+		TranslucentShader.SetUniform(baseName + "ColorIntensity", ColorIntensity);
+		TranslucentShader.SetUniform(baseName + "Direction", MovementSystem::GetGlobalForward(transform));
+
+		++dirLightsCount;
+		if (dirLightsCount == MAX_LIGHT_COUNT_DIRECTIONAL)
+			break;
+	}
+	TranslucentShader.SetUniform("uDirectionalLightCount", dirLightsCount);
 
 	glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 0, "color");
 	glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 1, "normal");
 	// glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 0, "oColor");
 	// glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 1, "oNormal");
-
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, visibleLightIndicesBuffer);
 
 	const Matrix& ClipFromWorld = cameraCmp->GetClipFromWorld();
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
@@ -573,11 +596,8 @@ void TiledForwardRenderer::RenderTranslucentLit(World* world, const CameraCompon
 
 	glBindVertexArray(0);
 
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
-
 	// glEnable(GL_CULL_FACE);
-	// glDepthMask(GL_TRUE);
+	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
