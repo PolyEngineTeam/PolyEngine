@@ -6,24 +6,23 @@
 #include <qgroupbox.h>
 #include <QPushButton>
 #include <qcheckbox.h>
+#include <qtreewidget.h>
 
-#include <ECS/Entity.hpp>
+#include <ECS/World.hpp>
 
 using namespace Poly;
 
-class ComponentDialog : public QDialog
+class WorldComponentDialog : public QDialog
 {
 public:
-	ComponentDialog(::Entity* entity, bool removeComponents = false);
+	WorldComponentDialog(::World* world, bool removeComponents = false);
 
 	bool OperationCanceled() { return Canceled; }
 
 private:
-	Entity* Entity;
-	bool Canceled = false;
+	World* World;
 
-	typedef ComponentBase* (*ComponentCreator)();
-	std::map<QString, ComponentCreator> ComponentCreators;
+	bool Canceled = false;
 
 	QGridLayout* MainLayout;
 

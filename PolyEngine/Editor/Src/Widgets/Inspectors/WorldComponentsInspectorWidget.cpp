@@ -86,15 +86,11 @@ void WorldComponentsInspectorWidget::SpawnContextMenu(QPoint pos)
 //------------------------------------------------------------------------------
 void WorldComponentsInspectorWidget::AddComponent()
 {
-	ComponentDialog dialog(World);
-	dialog.exec();
 }
 
 //------------------------------------------------------------------------------
 void WorldComponentsInspectorWidget::RemoveComponent()
 {
-	ComponentDialog dialog(World, true);
-	dialog.exec();
 }
 
 //------------------------------------------------------------------------------

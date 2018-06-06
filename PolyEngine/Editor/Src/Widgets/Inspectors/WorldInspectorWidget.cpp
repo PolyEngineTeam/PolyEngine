@@ -69,6 +69,7 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 	std::stringstream ss;
 	ss << entity->GetID();
 	entityTree->setText(3, (&ss.str()[0]));
+	entityTree->setCheckState(0, Qt::Checked);
 	EntityFromItem.insert(std::pair<QTreeWidgetItem*, Entity*>(entityTree, entity));
 
 	for (auto child : entity->GetChildren())
