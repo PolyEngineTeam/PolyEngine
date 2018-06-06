@@ -48,7 +48,7 @@ namespace Poly
 			int BurstSizeMax = 5;
 			eSimulationSpace SimulationSpace = eSimulationSpace::WORLD_SPACE;
 			// TODO: move to material
-			SpritesheetSettings SprsheetSettings;
+			SpritesheetSettings SpritesheetSettings;
 			float Speed = 1.0f;
 			Color BaseColor = Color::WHITE;
 			// TODO end

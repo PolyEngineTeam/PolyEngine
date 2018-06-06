@@ -49,7 +49,7 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 		ParticleEmitter::Settings emitterSettings = particleCmp->GetEmitter()->GetSettings();
 		GetProgram().SetUniform("uEmitterColor", emitterSettings.BaseColor);
 		
-		SpritesheetSettings spriteSettings = emitterSettings.SprsheetSettings;
+		SpritesheetSettings spriteSettings = emitterSettings.SpritesheetSettings;
 		GetProgram().SetUniform("uSpriteColor", spriteSettings.SpriteColor);
 		float startFrame = spriteSettings.IsRandomStartFrame ? RandomRange(0.0f, spriteSettings.SubImages.X * spriteSettings.SubImages.Y) : spriteSettings.StartFrame;
 		GetProgram().SetUniform("uSpriteStartFrame", startFrame);

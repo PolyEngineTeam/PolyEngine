@@ -9,8 +9,8 @@ ParticleEmitter::ParticleEmitter(const Settings& settings)
 	: settings(settings), ToEmit(settings.InitialSize), ParticlesPool(settings.MaxSize)
 {
 	Spritesheet = ResourceManager<TextureResource>::Load(
-		settings.SprsheetSettings.SpritePath,
-		settings.SprsheetSettings.Source,
+		settings.SpritesheetSettings.SpritePath,
+		settings.SpritesheetSettings.Source,
 		eTextureUsageType::DIFFUSE
 	);
 	ParticleProxy = gEngine->GetRenderingDevice()->CreateParticle();

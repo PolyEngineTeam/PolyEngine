@@ -51,6 +51,7 @@ namespace Poly
 		Vector& operator-=(const Vector& rhs);
 
 		// Operators with floats
+		Vector operator+(float rhs) const;
 		Vector operator*(float rhs) const;
 		Vector operator/(float rhs) const;
 		Vector& operator*=(float rhs);

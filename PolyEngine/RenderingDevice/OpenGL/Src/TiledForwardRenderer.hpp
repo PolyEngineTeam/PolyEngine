@@ -49,6 +49,7 @@ namespace Poly {
 		GLShaderProgram SkyboxShader;
 		GLShaderProgram SSAOShader;
 		GLShaderProgram GammaShader;
+		GLShaderProgram ParticleShader;
 
 		GLShaderProgram debugQuadDepthPrepassShader;
 		GLShaderProgram debugLightAccumShader;
@@ -66,8 +67,7 @@ namespace Poly {
 
 		GLuint FallbackWhiteTexture;
 		GLuint FallbackNormalMap;
-
-		float exposure = 1.0f;
+		GLuint SSAONoiseMap;
 
 		int DynamicLighsInFrame = 0;
 
@@ -77,24 +77,26 @@ namespace Poly {
 
 		void RenderDepthPrePass(World* world, const CameraComponent* cameraCmp);
 
-		void DrawDepthPrepass(const CameraComponent* cameraCmp);
+		void DebugDepthPrepass(const CameraComponent* cameraCmp);
 
 		void ComputeLightCulling(World* world, const CameraComponent* cameraCmp);
 
-		void DrawLightAccum(World* world, const CameraComponent* cameraCmp);
+		void DebugLightAccum(World* world, const CameraComponent* cameraCmp);
 
 		void RenderOpaqueLit(World* world, const CameraComponent* cameraCmp);
 
 		void RenderSkybox(World* world, const CameraComponent* cameraCmp);
 
+		void RenderTranslucentLit(World* world, const CameraComponent* cameraCmp);
+
 		void PostTonemapper(World* world, const AARect& rect, const CameraComponent* cameraCmp);
 
-		void PostSSAO(const Poly::CameraComponent * cameraCmp);
+		void PostSSAO(const CameraComponent* cameraCmp);
 
 		void PostGamma();
 		
 		void DrawQuad();
 
-		void CreateFallbackTextures();
+		void CreateUtilityTextures();
 	};
 }
