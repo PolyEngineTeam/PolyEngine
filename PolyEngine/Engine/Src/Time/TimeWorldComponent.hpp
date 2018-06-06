@@ -13,7 +13,11 @@ namespace Poly
 	{
 		RTTI_DECLARE_TYPE_DERIVED(TimeWorldComponent, ComponentBase)
 		{
-			NO_RTTI_PROPERTY();
+			//RTTI_PROPERTY_AUTONAME(MIN_TIME_STEP_MS, RTTI::ePropertyFlag::NONE)
+			//RTTI_PROPERTY_AUTONAME(LastFrameTime, RTTI::ePropertyFlag::NONE)
+			//RTTI_PROPERTY_AUTONAME(Timers, RTTI::ePropertyFlag::NONE)
+			//RTTI_PROPERTY_AUTONAME(Paused, RTTI::ePropertyFlag::NONE)
+			NO_RTTI_PROPERTY()
 		}
 
 		friend void TimeSystem::TimeUpdatePhase(World* world);
