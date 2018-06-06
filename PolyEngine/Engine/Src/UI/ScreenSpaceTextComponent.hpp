@@ -12,8 +12,7 @@ namespace Poly {
 	{
 		RTTI_DECLARE_TYPE_DERIVED(ScreenSpaceTextComponent, ComponentBase)
 		{
-			RTTI_PROPERTY_AUTONAME(Text, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(ScreenPosition, RTTI::ePropertyFlag::NONE);
+			NO_RTTI_PROPERTY()
 		}
 
 	public:
