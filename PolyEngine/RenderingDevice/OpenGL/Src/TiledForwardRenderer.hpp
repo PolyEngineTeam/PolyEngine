@@ -78,11 +78,7 @@ namespace Poly {
 
 		void RenderDepthPrePass(World* world, const CameraComponent* cameraCmp);
 
-		void DebugDepthPrepass(const CameraComponent* cameraCmp);
-
 		void ComputeLightCulling(World* world, const CameraComponent* cameraCmp);
-
-		void DebugLightAccum(World* world, const CameraComponent* cameraCmp);
 
 		void RenderOpaqueLit(World* world, const CameraComponent* cameraCmp);
 
@@ -99,6 +95,10 @@ namespace Poly {
 		void PostGamma();
 		
 		void DrawQuad();
+
+		void DebugDepthPrepass(const CameraComponent* cameraCmp);
+
+		void DebugLightAccum(World* world, const CameraComponent* cameraCmp);
 
 		void CreateUtilityTextures();
 	};

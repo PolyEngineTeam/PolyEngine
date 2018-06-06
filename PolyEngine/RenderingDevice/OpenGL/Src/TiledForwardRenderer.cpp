@@ -64,10 +64,7 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 		TranslucentShader.RegisterUniform("vec4", baseName + "Direction");
 	}
 	TranslucentShader.RegisterUniform("int", "uDirectionalLightCount");
-	TranslucentShader.RegisterUniform("int", "uLightCount");
-	TranslucentShader.RegisterUniform("int", "uWorkGroupsX");
-	TranslucentShader.RegisterUniform("int", "uWorkGroupsY");
-
+	
 	ParticleShader.RegisterUniform("float", "uTime");
 	ParticleShader.RegisterUniform("mat4", "uScreenFromView");
 	ParticleShader.RegisterUniform("mat4", "uViewFromWorld");
@@ -258,17 +255,6 @@ void TiledForwardRenderer::RenderDepthPrePass(World* world, const CameraComponen
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void TiledForwardRenderer::DebugDepthPrepass(const CameraComponent* cameraCmp)
-{
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Weirdly, moving this call drops performance into the floor
-	debugQuadDepthPrepassShader.BindProgram();
-	debugQuadDepthPrepassShader.SetUniform("uNear", cameraCmp->GetClippingPlaneNear());
-	debugQuadDepthPrepassShader.SetUniform("uFar", cameraCmp->GetClippingPlaneFar());
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, preDepthBuffer);
-	DrawQuad();
-}
-
 void TiledForwardRenderer::ComputeLightCulling(World* world, const CameraComponent* cameraCmp)
 {
 	float Time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
@@ -302,48 +288,6 @@ void TiledForwardRenderer::ComputeLightCulling(World* world, const CameraCompone
 
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-void TiledForwardRenderer::DebugLightAccum(World* world, const CameraComponent* cameraCmp)
-{
-	float Time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	debugLightAccumShader.BindProgram();
-	debugLightAccumShader.SetUniform("uTime", Time);
-	debugLightAccumShader.SetUniform("uWorkGroupsX", (int)workGroupsX);
-	debugLightAccumShader.SetUniform("uWorkGroupsY", (int)workGroupsY);
-	debugLightAccumShader.SetUniform("uLightCount", (int)DynamicLighsInFrame);
-
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, visibleLightIndicesBuffer);
-
-	const Matrix& ClipFromWorld = cameraCmp->GetClipFromWorld();
-	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
-	{
-		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-		const EntityTransform& transform = meshCmp->GetTransform();
-		const Matrix& WorldFromModel = transform.GetWorldFromModel();
-		debugLightAccumShader.SetUniform("uClipFromModel", ClipFromWorld * WorldFromModel);
-		debugLightAccumShader.SetUniform("uWorldFromModel", WorldFromModel);
-
-		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
-		{
-			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
-			glBindVertexArray(meshProxy->GetVAO());
-
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, FallbackWhiteTexture);
-
-			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glBindVertexArray(0);
-		}
-	}
-
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
 }
 
 void TiledForwardRenderer::RenderOpaqueLit(World* world, const CameraComponent* cameraCmp)
@@ -703,15 +647,6 @@ void TiledForwardRenderer::PostTonemapper(World* world, const AARect& rect, cons
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void TiledForwardRenderer::PostGamma()
-{
-	GammaShader.BindProgram();
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, postColorBuffer0);
-	GammaShader.SetUniform("uGamma", 2.2f);
-	DrawQuad();
-}
-
 void TiledForwardRenderer::PostSSAO(const CameraComponent* cameraCmp)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost1);
@@ -763,6 +698,40 @@ void TiledForwardRenderer::PostSSAO(const CameraComponent* cameraCmp)
 	DrawQuad();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void TiledForwardRenderer::PostGamma()
+{
+	GammaShader.BindProgram();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, postColorBuffer0);
+	GammaShader.SetUniform("uGamma", 2.2f);
+	DrawQuad();
+}
+
+void TiledForwardRenderer::DrawQuad() {
+	if (quadVAO == 0) {
+		GLfloat quadVertices[] = {
+			-1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+			1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+		};
+
+		glGenVertexArrays(1, &quadVAO);
+		glGenBuffers(1, &quadVBO);
+		glBindVertexArray(quadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	}
+
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindVertexArray(0);
 }
 
 void TiledForwardRenderer::SetupLightsBufferFromScene()
@@ -844,29 +813,57 @@ void TiledForwardRenderer::UpdateLightsBufferFromScene(World* world)
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
-void TiledForwardRenderer::DrawQuad() {
-	if (quadVAO == 0) {
-		GLfloat quadVertices[] = {
-			-1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-			1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-			1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-		};
+void TiledForwardRenderer::DebugDepthPrepass(const CameraComponent* cameraCmp)
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Weirdly, moving this call drops performance into the floor
+	debugQuadDepthPrepassShader.BindProgram();
+	debugQuadDepthPrepassShader.SetUniform("uNear", cameraCmp->GetClippingPlaneNear());
+	debugQuadDepthPrepassShader.SetUniform("uFar", cameraCmp->GetClippingPlaneFar());
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, preDepthBuffer);
+	DrawQuad();
+}
 
-		glGenVertexArrays(1, &quadVAO);
-		glGenBuffers(1, &quadVBO);
-		glBindVertexArray(quadVAO);
-		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+void TiledForwardRenderer::DebugLightAccum(World* world, const CameraComponent* cameraCmp)
+{
+	float Time = (float)(world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	debugLightAccumShader.BindProgram();
+	debugLightAccumShader.SetUniform("uTime", Time);
+	debugLightAccumShader.SetUniform("uWorkGroupsX", (int)workGroupsX);
+	debugLightAccumShader.SetUniform("uWorkGroupsY", (int)workGroupsY);
+	debugLightAccumShader.SetUniform("uLightCount", (int)DynamicLighsInFrame);
+
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, visibleLightIndicesBuffer);
+
+	const Matrix& ClipFromWorld = cameraCmp->GetClipFromWorld();
+	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
+	{
+		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
+		const EntityTransform& transform = meshCmp->GetTransform();
+		const Matrix& WorldFromModel = transform.GetWorldFromModel();
+		debugLightAccumShader.SetUniform("uClipFromModel", ClipFromWorld * WorldFromModel);
+		debugLightAccumShader.SetUniform("uWorldFromModel", WorldFromModel);
+
+		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
+		{
+			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
+			glBindVertexArray(meshProxy->GetVAO());
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, FallbackWhiteTexture);
+
+			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glBindVertexArray(0);
+		}
 	}
 
-	glBindVertexArray(quadVAO);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glBindVertexArray(0);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
 }
 
 void TiledForwardRenderer::CreateUtilityTextures()
