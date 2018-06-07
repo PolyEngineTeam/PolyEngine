@@ -79,12 +79,10 @@ namespace Poly
 		bool CreateContextHighend();
 		bool CreateContextFallback();
 
-		void Resize(const ScreenSize& size) override;
-		const ScreenSize& GetScreenSize() const override { return ScreenDim; }
-
-		void RenderWorld(World* world) override;
-		void FillSceneView(SceneView& sceneView);
 		void Init() override;
+		void Resize(const ScreenSize& size) override;
+		void RenderWorld(World* world) override;
+		const ScreenSize& GetScreenSize() const override { return ScreenDim; }
 
 		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) override;
 		std::unique_ptr<ICubemapDeviceProxy> CreateCubemap(size_t width, size_t height) override;
@@ -95,23 +93,20 @@ namespace Poly
 		std::unique_ptr<PostprocessQuad> PostprocessRenderingQuad;
 		std::unique_ptr<PrimitiveCube> PrimitiveRenderingCube;
 
+		GLuint FallbackWhiteTexture;
+		GLuint FallbackNormalMap;
+		GLuint SSAONoiseMap;
+
 	private:
 		void GetExtensions();
-
+		IRendererInterface* CreateRenderer();
+		void CreateUtilityTextures();
 		void InitPrograms();
+
+		void FillSceneView(SceneView& sceneView);
 		void EndFrame();
 
 		void CleanUpResources();
-		void CreateFallbackWhiteTexture();
-
-		IRendererInterface* CreateRenderer();
-
-		// void RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		// void RenderUnlit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		// void RenderWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		// void RenderNormals(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		// void RenderNormalsWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		// void RenderDebug(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 
 		template<typename T>
 		void RegisterGeometryPass(eGeometryRenderPassType type,

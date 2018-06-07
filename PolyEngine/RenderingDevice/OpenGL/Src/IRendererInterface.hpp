@@ -37,7 +37,7 @@ namespace Poly {
 	public:
 		IRendererInterface(GLRenderingDevice* RenderingDeviceInterface);
 
-		virtual void Init() = 0;
+		virtual void Init() = 0;		
 		virtual void Render(const SceneView& sceneView) = 0;
 		virtual void Deinit() = 0;
 

@@ -30,6 +30,8 @@ void GLRenderingDevice::Init()
 	Renderer = CreateRenderer();
 	Renderer->Init();
 
+	CreateUtilityTextures();
+
 	InitPrograms();
 }
 
@@ -116,4 +118,56 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 	{
 		sceneView.PointLights.PushBack(std::get<PointLightComponent*>(componentsTuple));
 	}
+}
+
+void GLRenderingDevice::CreateUtilityTextures()
+{
+	gConsole.LogInfo("GLRenderingDevice::CreateUtilityTextures");
+
+	GLubyte data[] = { 255, 255, 255, 255 };
+	glGenTextures(1, &FallbackWhiteTexture);
+	glBindTexture(GL_TEXTURE_2D, FallbackWhiteTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	CHECK_GL_ERR();
+
+	GLubyte dataDefaultNormal[] = { 128, 128, 255 };
+	glGenTextures(1, &FallbackNormalMap);
+	glBindTexture(GL_TEXTURE_2D, FallbackNormalMap);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, dataDefaultNormal);
+	CHECK_GL_ERR();
+
+	Vector noise[16];
+	for (int i = 0; i < 16; ++i) {
+		noise[i] = Vector(
+			RandomRange(-1.0f, 1.0f),
+			RandomRange(-1.0f, 1.0f),
+			0.0f
+		);
+		noise[i].Normalize();
+	}
+
+	GLubyte dataSSAONoise[16 * 3];
+	for (int i = 0; i < 16; i += 3) {
+		Vector positive = noise[i] * 0.5f + 0.5f;
+		dataSSAONoise[i + 0] = (GLbyte)Clamp((int)(positive.X * 255.0f), 0, 255);
+		dataSSAONoise[i + 1] = (GLbyte)Clamp((int)(positive.Y * 255.0f), 0, 255);
+		dataSSAONoise[i + 2] = (GLbyte)Clamp((int)(positive.Z * 255.0f), 0, 255);
+	}
+
+	glGenTextures(1, &SSAONoiseMap);
+	glBindTexture(GL_TEXTURE_2D, SSAONoiseMap);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 4, 4, 0, GL_RGB, GL_UNSIGNED_BYTE, dataSSAONoise);
+	CHECK_GL_ERR();
 }

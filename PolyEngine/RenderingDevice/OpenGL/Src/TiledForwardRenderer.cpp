@@ -76,8 +76,6 @@ void TiledForwardRenderer::Init()
 {
 	gConsole.LogInfo("TiledForwardRenderer::Init");
 
-	CreateUtilityTextures();
-
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -242,7 +240,7 @@ void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 			glBindVertexArray(meshProxy->GetVAO());
 		
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, FallbackWhiteTexture);
+			glBindTexture(GL_TEXTURE_2D, RDI->FallbackWhiteTexture);
 		
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 			glBindTexture(GL_TEXTURE_2D, 0);
@@ -349,7 +347,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 			const TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
 			GLuint DiffuseID = DiffuseTexture == nullptr
-				? FallbackWhiteTexture
+				? RDI->FallbackWhiteTexture
 				: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, DiffuseID);
@@ -357,7 +355,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 			const TextureResource* NormalMap = subMesh->GetMeshData().GetNormalMap();
 			GLuint NormalMapID = NormalMap == nullptr
-				? FallbackNormalMap
+				? RDI->FallbackNormalMap
 				: static_cast<const GLTextureDeviceProxy*>(NormalMap->GetTextureProxy())->GetTextureID();
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, NormalMapID);
@@ -365,7 +363,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 			const TextureResource* SpecularTexture = subMesh->GetMeshData().GetSpecularMap();
 			GLuint SpecularID = SpecularTexture == nullptr
-				? FallbackWhiteTexture
+				? RDI->FallbackWhiteTexture
 				: static_cast<const GLTextureDeviceProxy*>(SpecularTexture->GetTextureProxy())->GetTextureID();
 			glActiveTexture(GL_TEXTURE2);
 			glBindTexture(GL_TEXTURE_2D, SpecularID);
@@ -494,7 +492,7 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 
 			const TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
 			GLuint DiffuseID = DiffuseTexture == nullptr
-				? FallbackWhiteTexture
+				? RDI->FallbackWhiteTexture
 				: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, DiffuseID);
@@ -502,7 +500,7 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 
 			const TextureResource* NormalMap = subMesh->GetMeshData().GetNormalMap();
 			GLuint NormalMapID = NormalMap == nullptr
-				? FallbackNormalMap
+				? RDI->FallbackNormalMap
 				: static_cast<const GLTextureDeviceProxy*>(NormalMap->GetTextureProxy())->GetTextureID();
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, NormalMapID);
@@ -510,7 +508,7 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 
 			const TextureResource* SpecularTexture = subMesh->GetMeshData().GetSpecularMap();
 			GLuint SpecularID = SpecularTexture == nullptr
-				? FallbackWhiteTexture
+				? RDI->FallbackWhiteTexture
 				: static_cast<const GLTextureDeviceProxy*>(SpecularTexture->GetTextureProxy())->GetTextureID();
 			glActiveTexture(GL_TEXTURE2);
 			glBindTexture(GL_TEXTURE_2D, SpecularID);
@@ -591,7 +589,7 @@ void TiledForwardRenderer::RenderParticleUnlit(World* world, const CameraCompone
 		GLuint particleVAO = particleProxy->GetVAO();
 
 		GLuint TextureID = Texture == nullptr
-			? FallbackWhiteTexture
+			? RDI->FallbackWhiteTexture
 			: static_cast<const GLTextureDeviceProxy*>(Texture->GetTextureProxy())->GetTextureID();
 
 		ParticleShader.SetUniform("uHasSprite", Texture == nullptr ? 0.0f : 1.0f);
@@ -674,7 +672,7 @@ void TiledForwardRenderer::PostSSAO(const CameraComponent* cameraCmp)
 	glBindTexture(GL_TEXTURE_2D, preDepthBuffer);
 	SSAOShader.SetUniform("uDepth", 2);
 	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, SSAONoiseMap);
+	glBindTexture(GL_TEXTURE_2D, RDI->SSAONoiseMap);
 	SSAOShader.SetUniform("uNoise", 3);
 	SSAOShader.SetUniform("uScreenRes", Vector(
 		RDI->GetScreenSize().Width,
@@ -840,7 +838,7 @@ void TiledForwardRenderer::DebugLightAccum(World* world, const CameraComponent* 
 			glBindVertexArray(meshProxy->GetVAO());
 
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, FallbackWhiteTexture);
+			glBindTexture(GL_TEXTURE_2D, RDI->FallbackWhiteTexture);
 
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 			glBindTexture(GL_TEXTURE_2D, 0);
@@ -852,6 +850,7 @@ void TiledForwardRenderer::DebugLightAccum(World* world, const CameraComponent* 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
 }
 
+/*
 void TiledForwardRenderer::CreateUtilityTextures()
 {
 	gConsole.LogInfo("TiledForwardRenderer::CreateUtilityTextures");
@@ -903,3 +902,4 @@ void TiledForwardRenderer::CreateUtilityTextures()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 4, 4, 0, GL_RGB, GL_UNSIGNED_BYTE, dataSSAONoise);
 	CHECK_GL_ERR();
 }
+*/

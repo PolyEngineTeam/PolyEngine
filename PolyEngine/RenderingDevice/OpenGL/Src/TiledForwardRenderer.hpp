@@ -66,9 +66,9 @@ namespace Poly {
 		GLuint FBOpost0;
 		GLuint FBOpost1;
 
-		GLuint FallbackWhiteTexture;
-		GLuint FallbackNormalMap;
-		GLuint SSAONoiseMap;
+		// GLuint FallbackWhiteTexture;
+		// GLuint FallbackNormalMap;
+		// GLuint SSAONoiseMap;
 
 		int DynamicLighsInFrame = 0;
 
@@ -100,6 +100,6 @@ namespace Poly {
 
 		void DebugLightAccum(World* world, const CameraComponent* cameraCmp);
 
-		void CreateUtilityTextures();
+		// void CreateUtilityTextures();
 	};
 }
