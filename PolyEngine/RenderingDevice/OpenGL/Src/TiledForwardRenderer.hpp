@@ -38,10 +38,6 @@ namespace Poly {
 		GLuint lightBuffer = 0;
 		GLuint visibleLightIndicesBuffer = 0;
 
-		// For drawing our 1 x 1 quad
-		GLuint quadVAO = 0;
-		GLuint quadVBO = 0;
-
 		GLShaderProgram depthShader;
 		GLShaderProgram lightCullingShader;
 		GLShaderProgram lightAccumulationShader;
@@ -66,11 +62,7 @@ namespace Poly {
 		GLuint FBOpost0;
 		GLuint FBOpost1;
 
-		// GLuint FallbackWhiteTexture;
-		// GLuint FallbackNormalMap;
-		// GLuint SSAONoiseMap;
-
-		int DynamicLighsInFrame = 0;
+		// int DynamicLighsInFrame = 0;
 
 		void SetupLightsBufferFromScene();
 
@@ -78,7 +70,7 @@ namespace Poly {
 
 		void RenderDepthPrePass(const SceneView& sceneView);
 
-		void ComputeLightCulling(World* world, const CameraComponent* cameraCmp);
+		void ComputeLightCulling(const SceneView& sceneView);
 
 		void RenderOpaqueLit(const SceneView& sceneView);
 
@@ -98,8 +90,6 @@ namespace Poly {
 
 		void DebugDepthPrepass(const CameraComponent* cameraCmp);
 
-		void DebugLightAccum(World* world, const CameraComponent* cameraCmp);
-
-		// void CreateUtilityTextures();
+		void DebugLightAccum(const SceneView& sceneView);
 	};
 }
