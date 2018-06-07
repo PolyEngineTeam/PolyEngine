@@ -9,8 +9,8 @@
 
 using namespace Poly;
 
-DebugNormalsWireframeRenderingPass::DebugNormalsWireframeRenderingPass()
-: RenderingPassBase("Shaders/debugNormalsVert.shader", "Shaders/debugNormalsGeom.shader", "Shaders/debugNormalsFrag.shader")
+DebugNormalsWireframeRenderingPass::DebugNormalsWireframeRenderingPass(const GLRenderingDevice* rdi)
+: RenderingPassBase(rdi, "Shaders/debugNormalsVert.shader", "Shaders/debugNormalsGeom.shader", "Shaders/debugNormalsFrag.shader")
 {
 
 }

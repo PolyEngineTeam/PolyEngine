@@ -167,7 +167,7 @@ inline void GLRenderingDevice::RegisterGeometryPass(eGeometryRenderPassType type
 template<typename T, class... Args_t>
 inline void GLRenderingDevice::RegisterGeometryPassWithArgs(eGeometryRenderPassType type, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs, Args_t&&... args)
 {
-	GeometryRenderingPasses[type] = std::make_unique<T>(std::forward<Args_t>(args)...);
+	GeometryRenderingPasses[type] = std::make_unique<T>(this, std::forward<Args_t>(args)...);
 
 	for (const InputOutputBind& bind : outputs)
 		GeometryRenderingPasses[type]->BindOutput(bind.Name, bind.Target);
@@ -190,7 +190,7 @@ T* Poly::GLRenderingDevice::CreateRenderingTarget(eRenderTargetId type, Args&&..
 //------------------------------------------------------------------------------
 void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
 {
-	PostprocessRenderingPasses[type] = std::make_unique<PostprocessRenderingPass>(PostprocessRenderingQuad.get(), fragShaderName);
+	PostprocessRenderingPasses[type] = std::make_unique<PostprocessRenderingPass>(this, fragShaderName);
 
 	for (const InputOutputBind& bind : outputs)
 		PostprocessRenderingPasses[type]->BindOutput(bind.Name, bind.Target);
@@ -204,7 +204,7 @@ void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType
 //------------------------------------------------------------------------------
 void GLRenderingDevice::InitPrograms()
 {
-	PostprocessRenderingQuad = std::make_unique<PostprocessQuad>();
+	PrimitiveRenderingQuad = std::make_unique<PostprocessQuad>();
 	PrimitiveRenderingCube = std::make_unique<PrimitiveCube>();
 	
 	// Init input textures
@@ -222,9 +222,9 @@ void GLRenderingDevice::InitPrograms()
 	RegisterGeometryPass<DebugNormalsWireframeRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS_WIREFRAME, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPass<ParticlesRenderingPass>(eGeometryRenderPassType::PARTICLES, {}, { { "color", texture },{ "depth", depth } });
-	RegisterGeometryPassWithArgs<SkyboxRenderingPass>(eGeometryRenderPassType::SKYBOX, {}, { { "color", texture },{ "depth", depth } }, PrimitiveRenderingCube.get());
-	RegisterGeometryPassWithArgs<SpritesheetRenderingPass>(eGeometryRenderPassType::TRANSPARENT_SPRITESHEET, {}, { { "color", texture },{ "depth", depth } }, PostprocessRenderingQuad.get());
-	RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } }, PostprocessRenderingQuad.get());
+	RegisterGeometryPassWithArgs<SkyboxRenderingPass>(eGeometryRenderPassType::SKYBOX, {}, { { "color", texture },{ "depth", depth } });
+	RegisterGeometryPassWithArgs<SpritesheetRenderingPass>(eGeometryRenderPassType::TRANSPARENT_SPRITESHEET, {}, { { "color", texture },{ "depth", depth } });
+	RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } });
 	
 	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND,			"Shaders/bgFrag.shader",		{}, { { "o_color", texture },	{ "depth", depth } });
 	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND_LIGHT,	"Shaders/bgLightFrag.shader",	{}, { { "o_color", texture },	{ "depth", depth } });
@@ -245,7 +245,7 @@ void Poly::GLRenderingDevice::CleanUpResources()
 	for (ePostprocessRenderPassType passType : IterateEnum<ePostprocessRenderPassType>())
 		PostprocessRenderingPasses[passType].reset();
 
-	PostprocessRenderingQuad.reset();
+	PrimitiveRenderingQuad.reset();
 	PrimitiveRenderingCube.reset();
 }
 

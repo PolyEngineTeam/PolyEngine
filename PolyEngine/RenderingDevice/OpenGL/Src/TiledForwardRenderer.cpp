@@ -83,18 +83,51 @@ void TiledForwardRenderer::Init()
 	glEnable(GL_CULL_FACE);
 	// glEnable(GL_MULTISAMPLE);
 
+	const ScreenSize screenSize = RDI->GetScreenSize();
+	GLuint SCREEN_SIZE_X = screenSize.Width;
+	GLuint SCREEN_SIZE_Y = screenSize.Height;
+
 	gConsole.LogInfo("TiledForwardRenderer::Init SCREEN_SIZE: ({},{})", SCREEN_SIZE_X, SCREEN_SIZE_Y);
 
-	// So we need to create a depth map FBO
-	// This will be used in the depth pass
-	// Create a depth map frame buffer object and texture
+	CreateRenderTargets(SCREEN_SIZE_X, SCREEN_SIZE_Y);
+
+	CreateLightBuffers(SCREEN_SIZE_X, SCREEN_SIZE_Y);
+
+	SetupLightsBufferFromScene();
+}
+
+void TiledForwardRenderer::CreateLightBuffers(const GLuint &SCREEN_SIZE_X, const GLuint &SCREEN_SIZE_Y)
+{
+	// Define work group sizes in x and y direction based off screen size and tile size (in pixels)
+	workGroupsX = (SCREEN_SIZE_X + (SCREEN_SIZE_X % 16)) / 16;
+	workGroupsY = (SCREEN_SIZE_Y + (SCREEN_SIZE_Y % 16)) / 16;
+	size_t numberOfTiles = workGroupsX * workGroupsY;
+	gConsole.LogInfo("TiledForwardRenderer::Init workGroups: ({},{}), numberOfTiles: {}", workGroupsX, workGroupsY, numberOfTiles);
+
+	// Generate our shader storage buffers
+	glGenBuffers(1, &lightBuffer);
+	glGenBuffers(1, &visibleLightIndicesBuffer);
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Light) * MAX_NUM_LIGHTS, 0, GL_DYNAMIC_DRAW);
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, visibleLightIndicesBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(VisibleIndex) * MAX_NUM_LIGHTS * numberOfTiles, 0, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+	CHECK_GL_ERR();
+}
+
+void TiledForwardRenderer::DeleteLightBuffers()
+{
+	glDeleteBuffers(1, &lightBuffer);
+	glDeleteBuffers(1, &visibleLightIndicesBuffer);
+}
+
+void TiledForwardRenderer::CreateRenderTargets(const GLuint &SCREEN_SIZE_X, const GLuint &SCREEN_SIZE_Y)
+{
 	glGenFramebuffers(1, &FBOdepthMap);
-
-	const ScreenSize screenSize = RDI->GetScreenSize();
-
-	SCREEN_SIZE_X = screenSize.Width;
-	SCREEN_SIZE_Y = screenSize.Height;
-
 	glGenTextures(1, &preDepthBuffer);
 	glBindTexture(GL_TEXTURE_2D, preDepthBuffer);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SCREEN_SIZE_X, SCREEN_SIZE_Y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
@@ -110,6 +143,9 @@ void TiledForwardRenderer::Init()
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	CHECK_GL_ERR();
+	CHECK_FBO_STATUS();
 
 	// Create a floating point HDR frame buffer and a floating point color buffer (as a texture)
 	glGenFramebuffers(1, &FBOhdr);
@@ -142,6 +178,9 @@ void TiledForwardRenderer::Init()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	CHECK_GL_ERR();
+	CHECK_FBO_STATUS();
+
 	// Create pair of frame buffers for post process to swap
 	glGenFramebuffers(1, &FBOpost0);
 
@@ -156,6 +195,9 @@ void TiledForwardRenderer::Init()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	CHECK_GL_ERR();
+	CHECK_FBO_STATUS();
+
 	glGenFramebuffers(1, &FBOpost1);
 
 	glGenTextures(1, &postColorBuffer1);
@@ -169,26 +211,8 @@ void TiledForwardRenderer::Init()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-
-	// Define work group sizes in x and y direction based off screen size and tile size (in pixels)
-	workGroupsX = (SCREEN_SIZE_X + (SCREEN_SIZE_X % 16)) / 16;
-	workGroupsY = (SCREEN_SIZE_Y + (SCREEN_SIZE_Y % 16)) / 16;
-	size_t numberOfTiles = workGroupsX * workGroupsY;
-	gConsole.LogInfo("TiledForwardRenderer::Init workGroups: ({},{}), numberOfTiles: {}", workGroupsX, workGroupsY, numberOfTiles);
-
-	// Generate our shader storage buffers
-	glGenBuffers(1, &lightBuffer);
-	glGenBuffers(1, &visibleLightIndicesBuffer);
-
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Light) * MAX_NUM_LIGHTS, 0, GL_DYNAMIC_DRAW);
-	
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, visibleLightIndicesBuffer);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(VisibleIndex) * MAX_NUM_LIGHTS * numberOfTiles, 0, GL_STATIC_DRAW);
-
-	SetupLightsBufferFromScene();
-
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+	CHECK_GL_ERR();
+	CHECK_FBO_STATUS();
 }
 
 void TiledForwardRenderer::Resize(const ScreenSize & size)
@@ -199,6 +223,8 @@ void TiledForwardRenderer::Resize(const ScreenSize & size)
 void TiledForwardRenderer::Deinit()
 {
 	gConsole.LogInfo("TiledForwardRenderer::Deinit");
+
+	DeleteLightBuffers();
 }
 
 void TiledForwardRenderer::Render(const SceneView& sceneView)
@@ -270,8 +296,8 @@ void TiledForwardRenderer::ComputeLightCulling(const SceneView& sceneView)
 	lightCullingShader.SetUniform("uViewFromWorld", sceneView.cameraCmp->GetViewFromWorld());
 	lightCullingShader.SetUniform("uClipFromWorld", sceneView.cameraCmp->GetClipFromWorld());
 	lightCullingShader.SetUniform("uClipFromView",  sceneView.cameraCmp->GetClipFromView());
-	lightCullingShader.SetUniform("uScreenSizeX", (int)SCREEN_SIZE_X);
-	lightCullingShader.SetUniform("uScreenSizeY", (int)SCREEN_SIZE_Y);
+	lightCullingShader.SetUniform("uScreenSizeX", RDI->GetScreenSize().Width);
+	lightCullingShader.SetUniform("uScreenSizeY", RDI->GetScreenSize().Height);
 	lightCullingShader.SetUniform("uWorkGroupsX", (int)workGroupsX);
 	lightCullingShader.SetUniform("uWorkGroupsY", (int)workGroupsY);
 	lightCullingShader.SetUniform("uLightCount", (int)std::min(sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
@@ -637,7 +663,10 @@ void TiledForwardRenderer::PostTonemapper(World* world, const AARect& rect, cons
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, colorBuffer);
 	hdrShader.SetUniform("uExposure", exposure);
-	DrawQuad();
+
+	glBindVertexArray(RDI->PrimitiveRenderingQuad->VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -690,7 +719,10 @@ void TiledForwardRenderer::PostSSAO(const CameraComponent* cameraCmp)
 	SSAOShader.SetUniform("uFarClippingPlane", cameraCmp->GetClippingPlaneFar());
 	SSAOShader.SetUniform("uBias", 0.3f);
 	SSAOShader.SetUniform("uViewFromWorld", cameraCmp->GetViewFromWorld());
-	DrawQuad();
+
+	glBindVertexArray(RDI->PrimitiveRenderingQuad->VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -701,12 +733,8 @@ void TiledForwardRenderer::PostGamma()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, postColorBuffer0);
 	GammaShader.SetUniform("uGamma", 2.2f);
-	DrawQuad();
-}
 
-void TiledForwardRenderer::DrawQuad()
-{
-	glBindVertexArray(RDI->PostprocessRenderingQuad->VAO);
+	glBindVertexArray(RDI->PrimitiveRenderingQuad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 }
@@ -792,7 +820,10 @@ void TiledForwardRenderer::DebugDepthPrepass(const CameraComponent* cameraCmp)
 	debugQuadDepthPrepassShader.SetUniform("uFar", cameraCmp->GetClippingPlaneFar());
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, preDepthBuffer);
-	DrawQuad();
+
+	glBindVertexArray(RDI->PrimitiveRenderingQuad->VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
 }
 
 void TiledForwardRenderer::DebugLightAccum(const SceneView& sceneView)

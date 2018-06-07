@@ -6,23 +6,19 @@
 namespace Poly
 {
 	class World;
+	class AARect;
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
-	class AARect;
+	class GLRenderingDevice;
 
 	//------------------------------------------------------------------------------
 	class BlinnPhongRenderingPass : public RenderingPassBase
 	{
 	public:
-		BlinnPhongRenderingPass();
+		BlinnPhongRenderingPass(const GLRenderingDevice* rdi);
 
 	protected:
 
 		void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;
-
-		void CreateDummyTexture();
-
-	private:
-		GLuint WhiteDummyTexture;
 	};
 }

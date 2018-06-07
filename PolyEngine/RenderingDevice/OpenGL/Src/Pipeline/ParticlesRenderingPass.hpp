@@ -14,7 +14,7 @@ namespace Poly
 	class ParticlesRenderingPass : public RenderingPassBase
 	{
 	public:
-		ParticlesRenderingPass();
+		ParticlesRenderingPass(const GLRenderingDevice* rdi);
 
 	protected:
 		void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;

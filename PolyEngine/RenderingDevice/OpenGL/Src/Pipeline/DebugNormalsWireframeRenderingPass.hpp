@@ -14,7 +14,7 @@ namespace Poly
 	class DebugNormalsWireframeRenderingPass : public RenderingPassBase
 	{
 	public:
-		DebugNormalsWireframeRenderingPass();
+		DebugNormalsWireframeRenderingPass(const GLRenderingDevice* rdi);
 
 	protected:
 		virtual void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType = ePassType::BY_MATERIAL) override;

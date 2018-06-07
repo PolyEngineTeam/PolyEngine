@@ -14,11 +14,10 @@
 
 using namespace Poly;
 
-TransparentRenderingPass::TransparentRenderingPass(const PostprocessQuad* quad)
-	: RenderingPassBase("Shaders/transparentVert.shader", "Shaders/transparentFrag.shader"), Quad(quad)
+TransparentRenderingPass::TransparentRenderingPass(const GLRenderingDevice* rdi)
+	: RenderingPassBase(rdi, "Shaders/transparentVert.shader", "Shaders/transparentFrag.shader")
 {
 }
-
 
 void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
 {
@@ -71,7 +70,7 @@ void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera
 			UNUSED(subMesh);
 			//const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 
-			glBindVertexArray(Quad->VAO);
+			glBindVertexArray(RDI->PrimitiveRenderingQuad->VAO);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 			glBindVertexArray(0);
 

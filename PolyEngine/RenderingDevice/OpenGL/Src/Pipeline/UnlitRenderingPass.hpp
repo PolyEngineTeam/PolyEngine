@@ -14,7 +14,7 @@ namespace Poly
 	class UnlitRenderingPass : public RenderingPassBase
 	{
 	public:
-		UnlitRenderingPass();
+		UnlitRenderingPass(const GLRenderingDevice* rdi);
 
 	protected:
 		void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;

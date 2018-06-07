@@ -11,8 +11,8 @@
 
 using namespace Poly;
 
-SkyboxRenderingPass::SkyboxRenderingPass(const PrimitiveCube* cube)
-	: RenderingPassBase("Shaders/skyboxVert.shader", "Shaders/skyboxFrag.shader"), Cube(cube)
+SkyboxRenderingPass::SkyboxRenderingPass(const GLRenderingDevice* rdi)
+	: RenderingPassBase(rdi, "Shaders/skyboxVert.shader", "Shaders/skyboxFrag.shader")
 {
 	GetProgram().RegisterUniform("mat4", "uClipFromWorld");
 }
@@ -48,7 +48,7 @@ void SkyboxRenderingPass::RenderSkybox(const CameraComponent* camera, const Skyb
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapID);
 
-	glBindVertexArray(Cube->VAO);
+	glBindVertexArray(RDI->PrimitiveRenderingCube->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 

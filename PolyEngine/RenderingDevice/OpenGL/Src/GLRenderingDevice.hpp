@@ -90,7 +90,7 @@ namespace Poly
 		std::unique_ptr<IMeshDeviceProxy> CreateMesh() override;
 		std::unique_ptr<IParticleDeviceProxy> CreateParticle() override;
 
-		std::unique_ptr<PostprocessQuad> PostprocessRenderingQuad;
+		std::unique_ptr<PostprocessQuad> PrimitiveRenderingQuad;
 		std::unique_ptr<PrimitiveCube> PrimitiveRenderingCube;
 
 		GLuint FallbackWhiteTexture;

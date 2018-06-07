@@ -9,8 +9,8 @@
 
 using namespace Poly;
 
-DebugNormalsRenderingPass::DebugNormalsRenderingPass()
-: RenderingPassBase("Shaders/normalsVert.shader", "Shaders/normalsFrag.shader")
+DebugNormalsRenderingPass::DebugNormalsRenderingPass(const GLRenderingDevice* rdi)
+: RenderingPassBase(rdi, "Shaders/normalsVert.shader", "Shaders/normalsFrag.shader")
 {
 }
 

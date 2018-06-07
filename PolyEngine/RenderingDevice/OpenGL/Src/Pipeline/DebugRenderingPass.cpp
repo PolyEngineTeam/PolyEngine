@@ -8,8 +8,8 @@
 
 using namespace Poly;
 
-DebugRenderingPass::DebugRenderingPass()
-	: RenderingPassBase("Shaders/debugVert.shader", "Shaders/debugFrag.shader")
+DebugRenderingPass::DebugRenderingPass(const GLRenderingDevice* rdi)
+	: RenderingPassBase(rdi, "Shaders/debugVert.shader", "Shaders/debugFrag.shader")
 {
 	GetProgram().RegisterUniform("mat4", "MVP");
 }

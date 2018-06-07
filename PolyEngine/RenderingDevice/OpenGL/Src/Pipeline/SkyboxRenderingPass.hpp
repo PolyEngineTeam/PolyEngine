@@ -15,13 +15,11 @@ namespace Poly
 	class SkyboxRenderingPass : public RenderingPassBase
 	{
 	public:
-		SkyboxRenderingPass(const PrimitiveCube* cube);
+		SkyboxRenderingPass(const GLRenderingDevice* rdi);
 
 	protected:
 		void OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType) override;
 
 		void RenderSkybox(const CameraComponent* camera, const SkyboxWorldComponent* SkyboxWorldCmp);
-
-		const PrimitiveCube* Cube;
 	};
 }

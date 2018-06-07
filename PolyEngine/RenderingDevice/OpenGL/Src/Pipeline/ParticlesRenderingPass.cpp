@@ -13,8 +13,8 @@
 
 using namespace Poly;
 
-ParticlesRenderingPass::ParticlesRenderingPass()
-	: RenderingPassBase("Shaders/instancedVert.shader", "Shaders/instancedFrag.shader")
+ParticlesRenderingPass::ParticlesRenderingPass(const GLRenderingDevice* rdi)
+	: RenderingPassBase(rdi, "Shaders/instancedVert.shader", "Shaders/instancedFrag.shader")
 {
 	GetProgram().RegisterUniform("float", "uTime");
 	GetProgram().RegisterUniform("mat4", "uScreenFromView");
@@ -62,7 +62,7 @@ void ParticlesRenderingPass::OnRun(World* world, const CameraComponent* camera, 
 		GLuint particleVAO = particleProxy->GetVAO();
 
 		GLuint TextureID = Texture == nullptr
-			? FallbackWhiteTexture
+			? RDI->FallbackWhiteTexture
 			: static_cast<const GLTextureDeviceProxy*>(Texture->GetTextureProxy())->GetTextureID();
 
 		GetProgram().SetUniform("uHasSprite", Texture == nullptr ? 0.0f : 1.0f );

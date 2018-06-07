@@ -10,7 +10,7 @@ namespace Poly {
 
 	public:
 		TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInterface);
-
+		
 		void Init() override;
 		void Resize(const ScreenSize& size) override;
 		void Render(const SceneView& sceneView) override;
@@ -30,11 +30,10 @@ namespace Poly {
 
 		const size_t MAX_NUM_LIGHTS = 1024;
 
-		GLuint SCREEN_SIZE_X = 1280; // 1920; // 800
-		GLuint SCREEN_SIZE_Y = 720; // 1080; // 600
 		// X and Y work group dimension variables for compute shader
 		GLuint workGroupsX = 0;
 		GLuint workGroupsY = 0;
+		
 		// Used for storage buffer objects to hold light data and visible light indicies data
 		GLuint lightBuffer = 0;
 		GLuint visibleLightIndicesBuffer = 0;
@@ -62,8 +61,12 @@ namespace Poly {
 		GLuint FBOhdr;
 		GLuint FBOpost0;
 		GLuint FBOpost1;
-
-		// int DynamicLighsInFrame = 0;
+		
+		void CreateLightBuffers(const GLuint &SCREEN_SIZE_X, const GLuint &SCREEN_SIZE_Y);
+		
+		void DeleteLightBuffers();
+		
+		void CreateRenderTargets(const GLuint &SCREEN_SIZE_X, const GLuint &SCREEN_SIZE_Y);
 
 		void SetupLightsBufferFromScene();
 
@@ -87,8 +90,6 @@ namespace Poly {
 
 		void PostGamma();
 		
-		void DrawQuad();
-
 		void DebugDepthPrepass(const CameraComponent* cameraCmp);
 
 		void DebugLightAccum(const SceneView& sceneView);

@@ -15,11 +15,10 @@ namespace Poly
 	class TransparentRenderingPass : public RenderingPassBase
 	{
 	public:
-		TransparentRenderingPass(const PostprocessQuad* quad);
+		TransparentRenderingPass(const GLRenderingDevice* rdi);
 
 	protected:
-		void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;
 
-		const PostprocessQuad* Quad;
+		void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;
 	};
 }

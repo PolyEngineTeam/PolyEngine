@@ -34,8 +34,8 @@ namespace Poly
 		};
 
 	public:
-		RenderingPassBase(const String& vertex, const String& fragment);
-		RenderingPassBase(const String& vertex, const String& geometry, const String& fragment);
+		RenderingPassBase(const GLRenderingDevice* RDI, const String& vertex, const String& fragment);
+		RenderingPassBase(const GLRenderingDevice* RDI, const String& vertex, const String& geometry, const String& fragment);
 
 		virtual ~RenderingPassBase();
 
@@ -51,9 +51,6 @@ namespace Poly
 	
 	protected:
 
-		GLuint FallbackWhiteTexture;
-		GLuint FallbackNormalMap;
-
 		virtual void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) = 0;
 
 		RenderingTargetBase* GetInputTarget(const String& name);
@@ -63,14 +60,14 @@ namespace Poly
 		const std::map<String, RenderingTargetBase*>& GetOutputs() const { return Outputs; }
 		GLShaderProgram& GetProgram() { return Program; }
 
+		const GLRenderingDevice* RDI;
+
 	private:
 		std::map<String, RenderingTargetBase*> Inputs;
 		std::map<String, RenderingTargetBase*> Outputs;
 
 		GLShaderProgram Program;
 		GLuint FBO = 0;
-
-		void CreateDummyTexture();
 	};
 
 	//------------------------------------------------------------------------------

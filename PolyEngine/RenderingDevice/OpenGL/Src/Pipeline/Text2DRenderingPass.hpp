@@ -14,7 +14,7 @@ namespace Poly
 	class Text2DRenderingPass : public RenderingPassBase
 	{
 	public:
-		Text2DRenderingPass();
+		Text2DRenderingPass(const GLRenderingDevice* rdi);
 
 	protected:
 		void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;

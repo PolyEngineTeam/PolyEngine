@@ -23,8 +23,8 @@
 
 using namespace Poly;
 
-Text2DRenderingPass::Text2DRenderingPass()
-: RenderingPassBase("Shaders/text2DVert.shader", "Shaders/text2DFrag.shader")
+Text2DRenderingPass::Text2DRenderingPass(const GLRenderingDevice* rdi)
+: RenderingPassBase(rdi, "Shaders/text2DVert.shader", "Shaders/text2DFrag.shader")
 {
 
 }

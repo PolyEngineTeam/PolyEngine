@@ -11,8 +11,8 @@
 
 using namespace Poly;
 
-UnlitRenderingPass::UnlitRenderingPass()
-	: RenderingPassBase("Shaders/unlitVert.shader", "Shaders/unlitFrag.shader")
+UnlitRenderingPass::UnlitRenderingPass(const GLRenderingDevice* rdi)
+	: RenderingPassBase(rdi, "Shaders/unlitVert.shader", "Shaders/unlitFrag.shader")
 {
 	GetProgram().RegisterUniform("mat4", "uTransform");
 	GetProgram().RegisterUniform("mat4", "uMVPTransform");
@@ -57,7 +57,7 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 
 			const Poly::TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
 			GLuint TextureID = DiffuseTexture == nullptr
-				? FallbackWhiteTexture
+				? RDI->FallbackWhiteTexture
 				: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
 
 			glActiveTexture(GL_TEXTURE0);

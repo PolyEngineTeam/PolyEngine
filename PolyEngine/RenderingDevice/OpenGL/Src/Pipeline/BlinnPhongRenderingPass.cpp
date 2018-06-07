@@ -16,8 +16,8 @@ const size_t MAX_LIGHT_COUNT_POINT = 8;
 const size_t MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 const size_t MAX_LIGHT_COUNT_SPOT = 8;
 
-BlinnPhongRenderingPass::BlinnPhongRenderingPass()
-: RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
+BlinnPhongRenderingPass::BlinnPhongRenderingPass(const GLRenderingDevice* rdi)
+: RenderingPassBase(rdi, "Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
 {
 	GetProgram().RegisterUniform("vec4", "uCameraPosition");
 	GetProgram().RegisterUniform("vec4", "uCameraForward");
@@ -171,7 +171,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 
 			const Poly::TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
 			GLuint TextureID = DiffuseTexture == nullptr
-				? FallbackWhiteTexture
+				? RDI->FallbackWhiteTexture
 				: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
 
 			glActiveTexture(GL_TEXTURE0);
@@ -180,7 +180,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 
 			const Poly::TextureResource* SpecularMap = subMesh->GetMeshData().GetSpecularMap();
 			GLuint SpecularMapID = SpecularMap == nullptr
-				? FallbackWhiteTexture
+				? RDI->FallbackWhiteTexture
 				: static_cast<const GLTextureDeviceProxy*>(SpecularMap->GetTextureProxy())->GetTextureID();
 
 			glActiveTexture(GL_TEXTURE1);
@@ -189,7 +189,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 
 			const Poly::TextureResource* NormalMap = subMesh->GetMeshData().GetNormalMap();
 			GLuint NormalMapID = NormalMap == nullptr
-				? FallbackNormalMap
+				? RDI->FallbackNormalMap
 				: static_cast<const GLTextureDeviceProxy*>(NormalMap->GetTextureProxy())->GetTextureID();
 
 			glActiveTexture(GL_TEXTURE2);

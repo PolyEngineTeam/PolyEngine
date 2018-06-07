@@ -15,8 +15,8 @@
 
 using namespace Poly;
 
-SpritesheetRenderingPass::SpritesheetRenderingPass(const PostprocessQuad* quad)
-	: RenderingPassBase("Shaders/spritesheetVert.shader", "Shaders/spritesheetFrag.shader"), Quad(quad)
+SpritesheetRenderingPass::SpritesheetRenderingPass(const GLRenderingDevice* rdi)
+	: RenderingPassBase(rdi, "Shaders/spritesheetVert.shader", "Shaders/spritesheetFrag.shader")
 {
 	GetProgram().RegisterUniform("float", "uTime");
 	GetProgram().RegisterUniform("mat4", "uP");
@@ -59,13 +59,13 @@ void SpritesheetRenderingPass::OnRun(World* world, const CameraComponent* camera
 
 		const TextureResource* Spritesheet = spritesheetCmp->GetSpritesheet();
 		GLuint TextureID = Spritesheet == nullptr
-			? FallbackWhiteTexture
+			? RDI->FallbackWhiteTexture
 			: static_cast<const GLTextureDeviceProxy*>(Spritesheet->GetTextureProxy())->GetTextureID();
 			
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, TextureID);
 
-		glBindVertexArray(Quad->VAO);
+		glBindVertexArray(RDI->PrimitiveRenderingQuad->VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
 	}
