@@ -12,11 +12,12 @@ namespace Poly {
 		TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInterface);
 
 		void Init() override;
+		void Resize(const ScreenSize& size) override;
 		void Render(const SceneView& sceneView) override;
 		void Deinit() override;
 
 	private:
-		// structures defining the data of both buffers
+		// structures defining the data of OpenGL buffers
 		struct Light {
 			Vector Position;
 			Vector Color;

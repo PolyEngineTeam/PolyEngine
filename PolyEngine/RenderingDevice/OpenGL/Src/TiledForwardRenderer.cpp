@@ -191,6 +191,11 @@ void TiledForwardRenderer::Init()
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
+void TiledForwardRenderer::Resize(const ScreenSize & size)
+{
+	gConsole.LogInfo("TiledForwardRenderer::Resize ({}, {})", size.Width, size.Height);
+}
+
 void TiledForwardRenderer::Deinit()
 {
 	gConsole.LogInfo("TiledForwardRenderer::Deinit");

@@ -10,6 +10,7 @@ namespace Poly {
 		ForwardRenderer(GLRenderingDevice* RenderingDeviceInterface);
 
 		void Init() override;
+		void Resize(const ScreenSize& size) override;
 		void Render(const SceneView& sceneView) override;
 		void Deinit() override;
 

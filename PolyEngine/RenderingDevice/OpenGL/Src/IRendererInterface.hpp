@@ -9,9 +9,10 @@ namespace Poly {
 
 	class GLRenderingDevice;
 
-	class CameraComponent;
+	struct ScreenSize;
 	class World;
 	class AARect;
+	class CameraComponent;
 	class MeshRenderingComponent;
 	class DirectionalLightComponent;
 	class PointLightComponent;
@@ -38,6 +39,7 @@ namespace Poly {
 		IRendererInterface(GLRenderingDevice* RenderingDeviceInterface);
 
 		virtual void Init() = 0;		
+		virtual void Resize(const ScreenSize& size) = 0;
 		virtual void Render(const SceneView& sceneView) = 0;
 		virtual void Deinit() = 0;
 

@@ -19,6 +19,11 @@ void ForwardRenderer::Init()
 	gConsole.LogInfo("ForwardRenderer::Init");
 }
 
+void ForwardRenderer::Resize(const ScreenSize & size)
+{
+	gConsole.LogInfo("ForwardRenderer::Resize");
+}
+
 void ForwardRenderer::Deinit()
 {
 	gConsole.LogInfo("ForwardRenderer::Deinit");
