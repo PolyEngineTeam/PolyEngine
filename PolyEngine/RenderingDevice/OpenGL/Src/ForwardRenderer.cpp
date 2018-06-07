@@ -24,39 +24,39 @@ void ForwardRenderer::Deinit()
 	gConsole.LogInfo("ForwardRenderer::Deinit");
 }
 
-void ForwardRenderer::Render(World* world, const AARect& rect, const CameraComponent* cameraCmp)
+void ForwardRenderer::Render(const SceneView& sceneView)
 {
 	gConsole.LogInfo("ForwardRenderer::Render");
 
-	const eRenderingModeType renderingMode = cameraCmp->GetRenderingMode();
+	const eRenderingModeType renderingMode = sceneView.cameraCmp->GetRenderingMode();
 
 	switch (renderingMode)
 	{
 		case eRenderingModeType::LIT:
-			RenderLit(world, rect, cameraCmp);
+			RenderLit(sceneView.world, sceneView.rect, sceneView.cameraCmp);
 			break;
 
 		case eRenderingModeType::UNLIT:
-			RenderUnlit(world, rect, cameraCmp);
+			RenderUnlit(sceneView.world, sceneView.rect, sceneView.cameraCmp);
 			break;
 
 		case eRenderingModeType::WIREFRAME:
-			RenderWireframe(world, rect, cameraCmp);
+			RenderWireframe(sceneView.world, sceneView.rect, sceneView.cameraCmp);
 			break;
 
 		case eRenderingModeType::DEBUG_NORMALS:
-			RenderNormals(world, rect, cameraCmp);
+			RenderNormals(sceneView.world, sceneView.rect, sceneView.cameraCmp);
 			break;
 
 		case eRenderingModeType::DEBUG_NORMALS_WIREFRAME:
-			RenderNormalsWireframe(world, rect, cameraCmp);
+			RenderNormalsWireframe(sceneView.world, sceneView.rect, sceneView.cameraCmp);
 			break;
 
 		default:
 			ASSERTE(false, "Uknown eRenderingModeType");
 	}
 
-	PostRender(world, cameraCmp, rect);
+	PostRender(sceneView.world, sceneView.cameraCmp, sceneView.rect);
 }
 
 void ForwardRenderer::PostRender(World* world, const CameraComponent* cameraCmp, const AARect& rect)

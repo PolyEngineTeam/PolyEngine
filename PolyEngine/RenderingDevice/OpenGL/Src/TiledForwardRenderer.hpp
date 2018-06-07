@@ -12,7 +12,7 @@ namespace Poly {
 		TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInterface);
 
 		void Init() override;
-		void Render(World* world, const AARect& rect, const CameraComponent* cameraCmp) override;
+		void Render(const SceneView& sceneView) override;
 		void Deinit() override;
 
 	private:
@@ -74,17 +74,17 @@ namespace Poly {
 
 		void SetupLightsBufferFromScene();
 
-		void UpdateLightsBufferFromScene(World* world);
+		void UpdateLightsBufferFromScene(const SceneView& sceneView);
 
-		void RenderDepthPrePass(World* world, const CameraComponent* cameraCmp);
+		void RenderDepthPrePass(const SceneView& sceneView);
 
 		void ComputeLightCulling(World* world, const CameraComponent* cameraCmp);
 
-		void RenderOpaqueLit(World* world, const CameraComponent* cameraCmp);
+		void RenderOpaqueLit(const SceneView& sceneView);
 
 		void RenderSkybox(World* world, const CameraComponent* cameraCmp);
 
-		void RenderTranslucentLit(World* world, const CameraComponent* cameraCmp);
+		void RenderTranslucentLit(const SceneView& sceneView);
 		
 		void RenderParticleUnlit(World* world, const CameraComponent* cameraCmp);
 

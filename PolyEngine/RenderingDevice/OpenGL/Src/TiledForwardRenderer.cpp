@@ -196,56 +196,54 @@ void TiledForwardRenderer::Deinit()
 	gConsole.LogInfo("TiledForwardRenderer::Deinit");
 }
 
-void TiledForwardRenderer::Render(World* world, const AARect& rect, const CameraComponent* cameraCmp)
+void TiledForwardRenderer::Render(const SceneView& sceneView)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::Render");
 
-	UpdateLightsBufferFromScene(world);
+	UpdateLightsBufferFromScene(sceneView);
 
-	RenderDepthPrePass(world, cameraCmp);
+	RenderDepthPrePass(sceneView);
 
-	ComputeLightCulling(world, cameraCmp);
+	ComputeLightCulling(sceneView.world, sceneView.cameraCmp);
 
-	RenderOpaqueLit(world, cameraCmp);
+	RenderOpaqueLit(sceneView);
 
-	RenderSkybox(world, cameraCmp);
+	RenderSkybox(sceneView.world, sceneView.cameraCmp);
 
-	RenderTranslucentLit(world, cameraCmp);
+	RenderTranslucentLit(sceneView);
 
-	RenderParticleUnlit(world, cameraCmp);
+	RenderParticleUnlit(sceneView.world, sceneView.cameraCmp);
 
-	PostTonemapper(world, rect, cameraCmp);
+	PostTonemapper(sceneView.world, sceneView.rect, sceneView.cameraCmp);
 
 	// PostSSAO(cameraCmp);
 
 	PostGamma();
 }
 
-void TiledForwardRenderer::RenderDepthPrePass(World* world, const CameraComponent* cameraCmp)
+void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 {
 	depthShader.BindProgram();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOdepthMap);
 	glClear(GL_DEPTH_BUFFER_BIT);
-
-	const Matrix& ClipFromWorld = cameraCmp->GetClipFromWorld();
-	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
+	
+	const Matrix& ClipFromWorld = sceneView.cameraCmp->GetClipFromWorld();
+	
+	for (const MeshRenderingComponent* meshCmp : sceneView.OpaqueQueue)
 	{
-		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-		if (meshCmp->IsTransparent()) continue;
-
 		const EntityTransform& transform = meshCmp->GetTransform();
 		const Matrix& WorldFromModel = transform.GetWorldFromModel();
 		depthShader.SetUniform("uScreenFromModel", ClipFromWorld * WorldFromModel);
-
+		
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 			glBindVertexArray(meshProxy->GetVAO());
-
+		
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, FallbackWhiteTexture);
-
+		
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 			glBindTexture(GL_TEXTURE_2D, 0);
 			glBindVertexArray(0);
@@ -290,7 +288,7 @@ void TiledForwardRenderer::ComputeLightCulling(World* world, const CameraCompone
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void TiledForwardRenderer::RenderOpaqueLit(World* world, const CameraComponent* cameraCmp)
+void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::AccumulateLights");
 
@@ -298,7 +296,7 @@ void TiledForwardRenderer::RenderOpaqueLit(World* world, const CameraComponent* 
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	const EntityTransform& cameraTransform = cameraCmp->GetTransform();
+	const EntityTransform& cameraTransform = sceneView.cameraCmp->GetTransform();
 
 	lightAccumulationShader.BindProgram();
 	lightAccumulationShader.SetUniform("uLightCount", (int)DynamicLighsInFrame);
@@ -311,9 +309,8 @@ void TiledForwardRenderer::RenderOpaqueLit(World* world, const CameraComponent* 
 
 	static const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 	int dirLightsCount = 0;
-	for (const auto& componentsTuple : world->IterateComponents<DirectionalLightComponent>())
-	{
-		DirectionalLightComponent* dirLightCmp = std::get<DirectionalLightComponent*>(componentsTuple);
+	for ( const DirectionalLightComponent* dirLightCmp : sceneView.DirectionalLights)
+	{		
 		const EntityTransform& transform = dirLightCmp->GetTransform();
 		String baseName = String("uDirectionalLight[") + String::From(dirLightsCount) + String("].");
 		Color ColorIntensity = dirLightCmp->GetColor();
@@ -330,12 +327,9 @@ void TiledForwardRenderer::RenderOpaqueLit(World* world, const CameraComponent* 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, visibleLightIndicesBuffer);
 
-	const Matrix& ClipFromWorld = cameraCmp->GetClipFromWorld();
-	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
+	const Matrix& ClipFromWorld = sceneView.cameraCmp->GetClipFromWorld();
+	for (const MeshRenderingComponent* meshCmp : sceneView.OpaqueQueue)
 	{
-		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-		if (meshCmp->IsTransparent()) continue;
-
 		const EntityTransform& transform = meshCmp->GetTransform();
 		const Matrix& WorldFromModel = transform.GetWorldFromModel();
 		lightAccumulationShader.SetUniform("uClipFromModel", ClipFromWorld * WorldFromModel);
@@ -441,7 +435,7 @@ void TiledForwardRenderer::RenderSkybox(World* world, const CameraComponent* cam
 	}
 }
 
-void TiledForwardRenderer::RenderTranslucentLit(World* world, const CameraComponent* cameraCmp)
+void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::RenderTranslucenLit");
 	
@@ -452,15 +446,14 @@ void TiledForwardRenderer::RenderTranslucentLit(World* world, const CameraCompon
 	// glDisable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	const EntityTransform& cameraTransform = cameraCmp->GetTransform();
+	const EntityTransform& cameraTransform = sceneView.cameraCmp->GetTransform();
 	TranslucentShader.BindProgram();
 	TranslucentShader.SetUniform("uViewPosition", cameraTransform.GetGlobalTranslation());
 
 	static const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 	int dirLightsCount = 0;
-	for (const auto& componentsTuple : world->IterateComponents<DirectionalLightComponent>())
+	for (const DirectionalLightComponent* dirLightCmp: sceneView.DirectionalLights)
 	{
-		DirectionalLightComponent* dirLightCmp = std::get<DirectionalLightComponent*>(componentsTuple);
 		const EntityTransform& transform = dirLightCmp->GetTransform();
 		String baseName = String("uDirectionalLight[") + String::From(dirLightsCount) + String("].");
 		Color ColorIntensity = dirLightCmp->GetColor();
@@ -479,12 +472,9 @@ void TiledForwardRenderer::RenderTranslucentLit(World* world, const CameraCompon
 	// glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 0, "oColor");
 	// glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 1, "oNormal");
 
-	const Matrix& ClipFromWorld = cameraCmp->GetClipFromWorld();
-	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
+	const Matrix& ClipFromWorld = sceneView.cameraCmp->GetClipFromWorld();
+	for (const MeshRenderingComponent* meshCmp : sceneView.TranslucentQueue)
 	{
-		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-		if (!meshCmp->IsTransparent()) continue;
-
 		const EntityTransform& transform = meshCmp->GetTransform();
 		const Matrix& WorldFromModel = transform.GetWorldFromModel();
 		TranslucentShader.SetUniform("uClipFromModel", ClipFromWorld * WorldFromModel);
@@ -756,7 +746,7 @@ void TiledForwardRenderer::SetupLightsBufferFromScene()
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
-void TiledForwardRenderer::UpdateLightsBufferFromScene(World* world)
+void TiledForwardRenderer::UpdateLightsBufferFromScene(const SceneView& sceneView)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::UpdateLightsBufferFromScene");
 
@@ -765,17 +755,13 @@ void TiledForwardRenderer::UpdateLightsBufferFromScene(World* world)
 	Dynarray<Vector> RangeIntensity;
 
 	DynamicLighsInFrame = 0;
-	for (const auto& componentsTuple : world->IterateComponents<PointLightComponent>())
+	for (const PointLightComponent* pointLightCmp : sceneView.PointLights)
 	{
-		PointLightComponent* pointLightCmp = std::get<PointLightComponent*>(componentsTuple);
 		const EntityTransform& transform = pointLightCmp->GetTransform();
 
 		Positions.PushBack(transform.GetGlobalTranslation());
 		Color.PushBack(Vector(pointLightCmp->GetColor()));
 		RangeIntensity.PushBack(Vector(pointLightCmp->GetRange(), pointLightCmp->GetIntensity(), 0.0f));
-
-		//		gConsole.LogInfo("TiledForwardRenderer::UpdateLightsBufferFromScene get Position: {}, Radius: {}",
-		//			transform.GetGlobalTranslation(), pointLightCmp->GetRange());
 
 		++DynamicLighsInFrame;
 

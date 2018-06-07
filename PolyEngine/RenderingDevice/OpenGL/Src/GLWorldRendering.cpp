@@ -81,9 +81,39 @@ void GLRenderingDevice::RenderWorld(World* world)
 		glViewport((int)(rect.GetMin().X * screenSize.Width), (int)(rect.GetMin().Y * screenSize.Height),
 			(int)(rect.GetSize().X * screenSize.Width), (int)(rect.GetSize().Y * screenSize.Height));
 
-		Renderer->Render(world, rect, cameraCmp);
+		SceneView sceneView(world, kv.second);
+		
+		FillSceneView(sceneView);
+
+		Renderer->Render(sceneView);
 	}
 
 	// Signal frame end
 	EndFrame();
+}
+
+void GLRenderingDevice::FillSceneView(SceneView& sceneView)
+{
+	for (auto componentsTuple : sceneView.world->IterateComponents<MeshRenderingComponent>())
+	{
+		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
+		if (meshCmp->IsTransparent())
+		{
+			sceneView.TranslucentQueue.PushBack(meshCmp);
+		}
+		else
+		{
+			sceneView.OpaqueQueue.PushBack(meshCmp);
+		}
+	}
+
+	for (auto componentsTuple : sceneView.world->IterateComponents<DirectionalLightComponent>())
+	{
+		sceneView.DirectionalLights.PushBack(std::get<DirectionalLightComponent*>(componentsTuple));
+	}
+
+	for (auto componentsTuple : sceneView.world->IterateComponents<PointLightComponent>())
+	{
+		sceneView.PointLights.PushBack(std::get<PointLightComponent*>(componentsTuple));
+	}
 }
