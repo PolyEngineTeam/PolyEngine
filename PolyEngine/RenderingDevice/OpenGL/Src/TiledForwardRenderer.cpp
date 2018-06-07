@@ -87,18 +87,21 @@ void TiledForwardRenderer::Init()
 	GLuint SCREEN_SIZE_X = screenSize.Width;
 	GLuint SCREEN_SIZE_Y = screenSize.Height;
 
-	gConsole.LogInfo("TiledForwardRenderer::Init SCREEN_SIZE: ({},{})", SCREEN_SIZE_X, SCREEN_SIZE_Y);
+	gConsole.LogInfo("TiledForwardRenderer::Init SCREEN_SIZE: ({},{})", screenSize.Width, screenSize.Height);
 
-	CreateRenderTargets(SCREEN_SIZE_X, SCREEN_SIZE_Y);
+	CreateRenderTargets(screenSize);
 
-	CreateLightBuffers(SCREEN_SIZE_X, SCREEN_SIZE_Y);
+	CreateLightBuffers(screenSize);
 
 	SetupLightsBufferFromScene();
 }
 
-void TiledForwardRenderer::CreateLightBuffers(const GLuint &SCREEN_SIZE_X, const GLuint &SCREEN_SIZE_Y)
+void TiledForwardRenderer::CreateLightBuffers(const ScreenSize& size)
 {
 	// Define work group sizes in x and y direction based off screen size and tile size (in pixels)
+	GLuint SCREEN_SIZE_X = size.Width;
+	GLuint SCREEN_SIZE_Y = size.Height;
+
 	workGroupsX = (SCREEN_SIZE_X + (SCREEN_SIZE_X % 16)) / 16;
 	workGroupsY = (SCREEN_SIZE_Y + (SCREEN_SIZE_Y % 16)) / 16;
 	size_t numberOfTiles = workGroupsX * workGroupsY;
@@ -121,12 +124,18 @@ void TiledForwardRenderer::CreateLightBuffers(const GLuint &SCREEN_SIZE_X, const
 
 void TiledForwardRenderer::DeleteLightBuffers()
 {
-	glDeleteBuffers(1, &lightBuffer);
-	glDeleteBuffers(1, &visibleLightIndicesBuffer);
+	if(lightBuffer > 0)
+		glDeleteBuffers(1, &lightBuffer);
+
+	if(visibleLightIndicesBuffer > 0)
+		glDeleteBuffers(1, &visibleLightIndicesBuffer);
 }
 
-void TiledForwardRenderer::CreateRenderTargets(const GLuint &SCREEN_SIZE_X, const GLuint &SCREEN_SIZE_Y)
+void TiledForwardRenderer::CreateRenderTargets(const ScreenSize& size)
 {
+	GLuint SCREEN_SIZE_X = size.Width;
+	GLuint SCREEN_SIZE_Y = size.Height;
+
 	glGenFramebuffers(1, &FBOdepthMap);
 	glGenTextures(1, &preDepthBuffer);
 	glBindTexture(GL_TEXTURE_2D, preDepthBuffer);
@@ -163,7 +172,6 @@ void TiledForwardRenderer::CreateRenderTargets(const GLuint &SCREEN_SIZE_X, cons
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// It will also need a depth component as a render buffer, attached to the hdrFBO
-	GLuint rboDepth;
 	glGenRenderbuffers(1, &rboDepth);
 	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCREEN_SIZE_X, SCREEN_SIZE_Y);
@@ -215,9 +223,17 @@ void TiledForwardRenderer::CreateRenderTargets(const GLuint &SCREEN_SIZE_X, cons
 	CHECK_FBO_STATUS();
 }
 
-void TiledForwardRenderer::Resize(const ScreenSize & size)
+void TiledForwardRenderer::Resize(const ScreenSize& size)
 {
 	gConsole.LogInfo("TiledForwardRenderer::Resize ({}, {})", size.Width, size.Height);
+
+	DeleteLightBuffers();
+
+	DeleteRenderTargets();
+
+	CreateLightBuffers(size);
+
+	CreateRenderTargets(size);
 }
 
 void TiledForwardRenderer::Deinit()
@@ -225,6 +241,44 @@ void TiledForwardRenderer::Deinit()
 	gConsole.LogInfo("TiledForwardRenderer::Deinit");
 
 	DeleteLightBuffers();
+
+	DeleteRenderTargets();
+}
+
+void TiledForwardRenderer::DeleteRenderTargets()
+{
+	if (preDepthBuffer > 0)
+		glDeleteTextures(1, &preDepthBuffer);
+
+	if (FBOdepthMap>0)
+		glDeleteFramebuffers(1, &FBOdepthMap);
+
+	if (colorBuffer > 0)
+		glDeleteTextures(1, &colorBuffer);
+
+	if (normalBuffer > 0)
+		glDeleteTextures(1, &normalBuffer);
+
+	if (rboDepth > 0)
+		glDeleteRenderbuffers(1, &rboDepth);
+
+	if (FBOhdr > 0)
+		glDeleteFramebuffers(1, &FBOhdr);
+
+	if (postColorBuffer0 > 0)
+		glDeleteTextures(1, &postColorBuffer0);
+
+	if (FBOpost0 > 0)
+		glDeleteFramebuffers(1, &FBOpost0);
+
+	if (postColorBuffer1 > 0)
+		glDeleteTextures(1, &postColorBuffer1);
+
+	if (FBOpost1 > 0)
+		glDeleteFramebuffers(1, &FBOpost1);
+
+	CHECK_GL_ERR();
+	CHECK_FBO_STATUS();
 }
 
 void TiledForwardRenderer::Render(const SceneView& sceneView)
@@ -730,7 +784,7 @@ void TiledForwardRenderer::PostSSAO(const CameraComponent* cameraCmp)
 void TiledForwardRenderer::PostGamma()
 {
 	GammaShader.BindProgram();
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE0);	
 	glBindTexture(GL_TEXTURE_2D, postColorBuffer0);
 	GammaShader.SetUniform("uGamma", 2.2f);
 

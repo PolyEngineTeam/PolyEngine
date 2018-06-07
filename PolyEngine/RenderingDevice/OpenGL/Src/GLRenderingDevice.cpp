@@ -136,8 +136,17 @@ void GLRenderingDevice::Resize(const ScreenSize& size)
 	ScreenDim = size;
 
 	for (eRenderTargetId targetType : IterateEnum<eRenderTargetId>())
-		if(RenderingTargets[targetType]) 
+	{
+		if (RenderingTargets[targetType])
+		{
 			RenderingTargets[targetType]->Resize(size);
+		}
+	}
+
+	if (Renderer)
+	{
+		Renderer->Resize(size);
+	}
 }
 
 void GLRenderingDevice::GetExtensions()

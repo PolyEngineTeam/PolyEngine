@@ -54,6 +54,7 @@ namespace Poly {
 		GLuint preDepthBuffer;
 		GLuint colorBuffer;
 		GLuint normalBuffer;
+		GLuint rboDepth;
 		GLuint postColorBuffer0;
 		GLuint postColorBuffer1;
 
@@ -62,11 +63,13 @@ namespace Poly {
 		GLuint FBOpost0;
 		GLuint FBOpost1;
 		
-		void CreateLightBuffers(const GLuint &SCREEN_SIZE_X, const GLuint &SCREEN_SIZE_Y);
+		void CreateLightBuffers(const ScreenSize& size);
 		
 		void DeleteLightBuffers();
 		
-		void CreateRenderTargets(const GLuint &SCREEN_SIZE_X, const GLuint &SCREEN_SIZE_Y);
+		void CreateRenderTargets(const ScreenSize& size);
+
+		void DeleteRenderTargets();
 
 		void SetupLightsBufferFromScene();
 
