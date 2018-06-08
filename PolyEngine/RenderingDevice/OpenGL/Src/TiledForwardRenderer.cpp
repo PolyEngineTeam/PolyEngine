@@ -36,9 +36,9 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 	lightAccumulationShader.RegisterUniform("mat4", "uClipFromModel");
 	lightAccumulationShader.RegisterUniform("mat4", "uWorldFromModel");
 	lightAccumulationShader.RegisterUniform("vec4", "uMaterial.Ambient");
-	lightAccumulationShader.RegisterUniform("vec4", "uMaterial.Diffuse");
-	lightAccumulationShader.RegisterUniform("vec4", "uMaterial.Specular");
-	lightAccumulationShader.RegisterUniform("float", "uMaterial.Shininess");
+	lightAccumulationShader.RegisterUniform("vec4", "uMaterial.Albedo");
+	lightAccumulationShader.RegisterUniform("float", "uMaterial.Roughness");
+	lightAccumulationShader.RegisterUniform("float", "uMaterial.Metallic");
 	for (size_t i = 0; i < 8; ++i)
 	{
 		String baseName = String("uDirectionalLight[") + String::From(static_cast<int>(i)) + String("].");
@@ -81,7 +81,7 @@ void TiledForwardRenderer::Init()
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	// glEnable(GL_MULTISAMPLE);
+	glEnable(GL_MULTISAMPLE);
 
 	const ScreenSize screenSize = RDI->GetScreenSize();
 	GLuint SCREEN_SIZE_X = screenSize.Width;
@@ -423,41 +423,50 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
-			PhongMaterial material = meshCmp->GetMaterial(i);
-			lightAccumulationShader.SetUniform("uMaterial.Ambient", material.AmbientColor);
-			lightAccumulationShader.SetUniform("uMaterial.Diffuse", material.DiffuseColor);
-			lightAccumulationShader.SetUniform("uMaterial.Specular", material.SpecularColor);
-			lightAccumulationShader.SetUniform("uMaterial.Shininess", material.Shininess);
+			if (meshCmp->GetShadingModel() == eShadingModel::PBR)
+			{
+				// PhongMaterial material = meshCmp->GetMaterial(i);
+				// lightAccumulationShader.SetUniform("uMaterial.Ambient", material.AmbientColor);
+				// lightAccumulationShader.SetUniform("uMaterial.Diffuse", material.DiffuseColor);
+				// lightAccumulationShader.SetUniform("uMaterial.Specular", material.SpecularColor);
+				// lightAccumulationShader.SetUniform("uMaterial.Shininess", material.Shininess);
 
-			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
-			glBindVertexArray(meshProxy->GetVAO());
+				PBRMaterial material = meshCmp->GetPBRMaterial(i);
+				lightAccumulationShader.SetUniform("uMaterial.Ambient", material.AmbientColor);
+				lightAccumulationShader.SetUniform("uMaterial.Albedo", material.AlbedoColor);
+				lightAccumulationShader.SetUniform("uMaterial.Roughness", material.Roughness);
+				lightAccumulationShader.SetUniform("uMaterial.Metallic", material.Metallic);
 
-			const TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
-			GLuint DiffuseID = DiffuseTexture == nullptr
-				? RDI->FallbackWhiteTexture
-				: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, DiffuseID);
-			lightAccumulationShader.SetUniform("uAlbedoMap", 0);
+				const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
+				glBindVertexArray(meshProxy->GetVAO());
 
-			const TextureResource* NormalMap = subMesh->GetMeshData().GetNormalMap();
-			GLuint NormalMapID = NormalMap == nullptr
-				? RDI->FallbackNormalMap
-				: static_cast<const GLTextureDeviceProxy*>(NormalMap->GetTextureProxy())->GetTextureID();
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, NormalMapID);
-			lightAccumulationShader.SetUniform("uNormalMap", 1);
+				const TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
+				GLuint DiffuseID = DiffuseTexture == nullptr
+					? RDI->FallbackWhiteTexture
+					: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, DiffuseID);
+				lightAccumulationShader.SetUniform("uAlbedoMap", 0);
 
-			const TextureResource* SpecularTexture = subMesh->GetMeshData().GetSpecularMap();
-			GLuint SpecularID = SpecularTexture == nullptr
-				? RDI->FallbackWhiteTexture
-				: static_cast<const GLTextureDeviceProxy*>(SpecularTexture->GetTextureProxy())->GetTextureID();
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, SpecularID);
-			lightAccumulationShader.SetUniform("uSpecularMap", 2);
+				const TextureResource* NormalMap = subMesh->GetMeshData().GetNormalMap();
+				GLuint NormalMapID = NormalMap == nullptr
+					? RDI->FallbackNormalMap
+					: static_cast<const GLTextureDeviceProxy*>(NormalMap->GetTextureProxy())->GetTextureID();
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, NormalMapID);
+				lightAccumulationShader.SetUniform("uNormalMap", 1);
 
-			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
-			++i;
+				const TextureResource* SpecularTexture = subMesh->GetMeshData().GetSpecularMap();
+				GLuint SpecularID = SpecularTexture == nullptr
+					? RDI->FallbackWhiteTexture
+					: static_cast<const GLTextureDeviceProxy*>(SpecularTexture->GetTextureProxy())->GetTextureID();
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_2D, SpecularID);
+				lightAccumulationShader.SetUniform("uSpecularMap", 2);
+
+				glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
+				++i;
+			}
 		}
 	}
 

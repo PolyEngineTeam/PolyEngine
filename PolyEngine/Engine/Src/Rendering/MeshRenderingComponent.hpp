@@ -11,6 +11,7 @@ namespace Poly {
 		NONE,
 		LIT,
 		UNLIT,
+		PBR,
 		_COUNT
 	};
 
@@ -28,6 +29,20 @@ namespace Poly {
 		float Shininess;
 	};
 
+	struct ENGINE_DLLEXPORT PBRMaterial
+	{
+		PBRMaterial()
+			: AmbientColor(1.0f, 1.0f, 1.0f), AlbedoColor(1.0f, 1.0f, 1.0f), Roughness(0.5f), Metallic(0.0f) {}
+
+		PBRMaterial(const Color& ambient, const Color& diffuse, float roughness, float metallic)
+			: AmbientColor(ambient), AlbedoColor(diffuse), Roughness(roughness), Metallic(metallic) {}
+
+		Color AmbientColor;
+		Color AlbedoColor;
+		float Roughness;
+		float Metallic;
+	};
+
 	class ENGINE_DLLEXPORT MeshRenderingComponent : public ComponentBase
 	{
 		friend void RenderingSystem::RenderingPhase(World*);
@@ -37,15 +52,19 @@ namespace Poly {
 
 		const MeshResource* GetMesh() const { return Mesh; }
 		const PhongMaterial& GetMaterial(int i) const { return Materials[i]; }
+		const PBRMaterial& GetPBRMaterial(int i) const { return PBRMaterials[i]; }
 		void SetMaterial(int i, const PhongMaterial& value) { Materials[i] = value; }
+		void SetPBRMaterial(int i, const PBRMaterial& value) { PBRMaterials[i] = value; }
 		bool GetIsWireframe() const { return IsWireframe; }
 		void SetIsWireframe(bool value) { IsWireframe = value; }
 		eShadingModel GetShadingModel() const { return ShadingModel; }
 		void SetShadingModel(eShadingModel value) { ShadingModel = value; }
 		bool IsTransparent() const { return Materials[0].DiffuseColor.A < 1.0f; } // HACK replace with better solution for transloucent objects.
+
 	private:
 		MeshResource* Mesh = nullptr;
 		Dynarray<PhongMaterial> Materials;
+		Dynarray<PBRMaterial> PBRMaterials;
 		eShadingModel ShadingModel = eShadingModel::LIT;
 		bool IsWireframe = false;
 	};
