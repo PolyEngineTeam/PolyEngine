@@ -24,6 +24,7 @@ namespace Poly
 		Matrix();
 		Matrix(const float data[16], bool rowOrder = true);
 		Matrix(const Matrix& rhs);
+		Matrix(const Vector& pos, const Vector& lookAt, const Vector& up = Vector::UNIT_Y);
 		Matrix& operator=(const Matrix& rhs);
 
 		bool operator==(const Matrix& rhs) const;

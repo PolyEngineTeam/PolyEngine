@@ -70,7 +70,7 @@ void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera
 			UNUSED(subMesh);
 			//const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 
-			glBindVertexArray(RDI->PrimitiveRenderingQuad->VAO);
+			glBindVertexArray(RDI->PrimitivesQuad->VAO);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 			glBindVertexArray(0);
 

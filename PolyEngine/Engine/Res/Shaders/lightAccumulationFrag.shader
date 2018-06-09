@@ -50,6 +50,7 @@ struct Material
     float Metallic;
 };
 
+uniform samplerCube uIrradianceMap;
 uniform sampler2D uAlbedoMap;
 uniform sampler2D uSpecularMap;
 uniform sampler2D uNormalMap;
@@ -107,6 +108,11 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
 	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+}
+
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
 }
 
 void main()
@@ -230,7 +236,12 @@ void main()
 
 	// ambient lighting (note that the next IBL tutorial will replace 
 	// this ambient lighting with environment lighting).
-	vec3 ambient = uMaterial.Ambient.rgb;
+	// vec3 ambient = uMaterial.Ambient.rgb;
+    vec3 kS = fresnelSchlickRoughness(max(dot(normal, V), 0.0), F0, roughness);
+    vec3 kD = 1.0 - kS;
+    vec3 irradiance = texture(uIrradianceMap, normal).rgb;
+    vec3 diffuse = irradiance * albedo.rgb;
+    vec3 ambient = (kD * diffuse); // * ao;
 
     oColor.rgb = ambient + Lo;
 	// oColor.rgb = ambient + vec3(uMaterial.Albedo.r, uMaterial.Metallic, uMaterial.Roughness);

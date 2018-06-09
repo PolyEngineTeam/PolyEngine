@@ -48,6 +48,9 @@ namespace Poly {
 		GLShaderProgram ParticleShader;
 		GLShaderProgram TranslucentShader;
 		GLShaderProgram equiToCubemapShader;
+		GLShaderProgram equirectangularToCubemapShader;
+		GLShaderProgram cubemapIrradianceShader;
+		GLShaderProgram debugLightAccumShader;
 		GLShaderProgram debugQuadDepthPrepassShader;
 
 		GLuint preDepthBuffer;
@@ -58,6 +61,8 @@ namespace Poly {
 		GLuint postColorBuffer1;
 		
 		GLuint hdrTexture;
+		GLuint envCubemap;
+		GLuint irradianceMap;
 
 		GLuint FBOdepthMap;
 		GLuint FBOhdr;
@@ -65,6 +70,10 @@ namespace Poly {
 		GLuint FBOpost1;
 		
 		void LoadHDR();
+
+		void CaptureCubemap();
+
+		void CaptureIrradiance();
 
 		void CreateLightBuffers(const ScreenSize& size);
 		

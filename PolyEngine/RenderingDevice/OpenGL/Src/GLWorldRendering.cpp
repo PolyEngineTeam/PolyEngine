@@ -26,13 +26,16 @@ void GLRenderingDevice::Init()
 	gConsole.LogInfo("GLRenderingDevice::Init");
 
 	GetExtensions();
-
-	Renderer = CreateRenderer();
-	Renderer->Init();
+	
+	PrimitivesQuad = std::make_unique<PostprocessQuad>();
+	PrimitivesCube = std::make_unique<PrimitiveCube>();
 
 	CreateUtilityTextures();
 
 	InitPrograms();
+
+	Renderer = CreateRenderer();
+	Renderer->Init();
 }
 
 IRendererInterface* GLRenderingDevice::CreateRenderer()

@@ -215,9 +215,6 @@ void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType
 //------------------------------------------------------------------------------
 void GLRenderingDevice::InitPrograms()
 {
-	PrimitiveRenderingQuad = std::make_unique<PostprocessQuad>();
-	PrimitiveRenderingCube = std::make_unique<PrimitiveCube>();
-	
 	// Init input textures
 	//Texture2DInputTarget* RGBANoise256 = CreateRenderingTarget<Texture2DInputTarget>("Textures/RGBANoise256x256.png");
 
@@ -256,8 +253,8 @@ void Poly::GLRenderingDevice::CleanUpResources()
 	for (ePostprocessRenderPassType passType : IterateEnum<ePostprocessRenderPassType>())
 		PostprocessRenderingPasses[passType].reset();
 
-	PrimitiveRenderingQuad.reset();
-	PrimitiveRenderingCube.reset();
+	PrimitivesQuad.reset();
+	PrimitivesCube.reset();
 }
 
 //------------------------------------------------------------------------------

@@ -48,7 +48,7 @@ void SkyboxRenderingPass::RenderSkybox(const CameraComponent* camera, const Skyb
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapID);
 
-	glBindVertexArray(RDI->PrimitiveRenderingCube->VAO);
+	glBindVertexArray(RDI->PrimitivesCube->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 

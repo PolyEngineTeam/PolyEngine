@@ -65,7 +65,7 @@ void SpritesheetRenderingPass::OnRun(World* world, const CameraComponent* camera
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, TextureID);
 
-		glBindVertexArray(RDI->PrimitiveRenderingQuad->VAO);
+		glBindVertexArray(RDI->PrimitivesQuad->VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
 	}

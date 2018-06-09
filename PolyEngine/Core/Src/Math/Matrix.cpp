@@ -17,6 +17,27 @@ Matrix::Matrix(const float data[16], bool rowOrder) {
 //------------------------------------------------------------------------------
 Matrix::Matrix(const Matrix& rhs) { *this = rhs; }
 
+Matrix::Matrix(const Vector& pos, const Vector& lookAt, const Vector& up)
+{
+	SetIdentity();
+
+	Vector zAxis = (pos - lookAt).GetNormalized();
+	Vector xAxis = up.Cross(zAxis).GetNormalized();
+	Vector yAxis = zAxis.Cross(xAxis);
+
+	Data[0] = xAxis.X;
+	Data[1] = yAxis.X;
+	Data[2] = zAxis.X;
+
+	Data[4] = xAxis.Y;
+	Data[5] = yAxis.Y;
+	Data[6] = zAxis.Y;
+
+	Data[8] = xAxis.Z;
+	Data[9] = yAxis.Z;
+	Data[10] = zAxis.Z;
+}
+
 //------------------------------------------------------------------------------
 Matrix& Matrix::operator=(const Matrix& rhs) {
   if (&rhs == this) return *this;

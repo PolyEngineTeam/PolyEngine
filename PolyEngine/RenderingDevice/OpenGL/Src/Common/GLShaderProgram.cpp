@@ -159,7 +159,7 @@ void GLShaderProgram::SetUniform(const String& name, int val)
 	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
 	{
-		HEAVY_ASSERTE(it->second.TypeName == "int" || it->second.TypeName == "sampler2D", "Invalid uniform type!");
+		HEAVY_ASSERTE(it->second.TypeName == "int" || it->second.TypeName == "sampler2D" || it->second.TypeName == "samplerCube", "Invalid uniform type!");
 		glUniform1i(it->second.Location, val);
 	}
 }
