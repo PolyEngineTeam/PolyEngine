@@ -15,6 +15,9 @@
 #include <Rendering/MeshRenderingComponent.hpp>
 #include <Time/TimeWorldComponent.hpp>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "Common/stb_image.hpp"
+
 using namespace Poly;
 
 TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInterface)
@@ -77,15 +80,8 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 void TiledForwardRenderer::Init()
 {
 	gConsole.LogInfo("TiledForwardRenderer::Init");
-
-	glDepthMask(GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_MULTISAMPLE);
-
+	
 	const ScreenSize screenSize = RDI->GetScreenSize();
-	GLuint SCREEN_SIZE_X = screenSize.Width;
-	GLuint SCREEN_SIZE_Y = screenSize.Height;
 
 	gConsole.LogInfo("TiledForwardRenderer::Init SCREEN_SIZE: ({},{})", screenSize.Width, screenSize.Height);
 
@@ -94,6 +90,37 @@ void TiledForwardRenderer::Init()
 	CreateLightBuffers(screenSize);
 
 	SetupLightsBufferFromScene();
+
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_MULTISAMPLE);
+
+
+	// Models/Primitives/Sphere_HighPoly.obj
+	String absoluteHDRPath = gAssetsPathConfig.GetAssetsPath(eResourceSource::GAME) + "HDR/fin4_Env.hdr";
+	gConsole.LogInfo("TiledForwardRenderer::Init absoluteHDRPath: {}", absoluteHDRPath);
+	stbi_set_flip_vertically_on_load(true);
+	int width, height, nrComponents;
+	float *data = stbi_loadf(absoluteHDRPath.GetCStr(), &width, &height, &nrComponents, 0);
+	unsigned int hdrTexture;
+	if (data)
+	{
+		glGenTextures(1, &hdrTexture);
+		glBindTexture(GL_TEXTURE_2D, hdrTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		stbi_image_free(data);
+	}
+	else
+	{
+		gConsole.LogInfo("TiledForwardRenderer::Init Failed to load HDR image.");
+	}
 }
 
 void TiledForwardRenderer::CreateLightBuffers(const ScreenSize& size)

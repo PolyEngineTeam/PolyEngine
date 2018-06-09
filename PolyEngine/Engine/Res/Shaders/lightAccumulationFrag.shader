@@ -199,7 +199,7 @@ void main()
 		vec3 H = normalize(L + V);
 		vec3 N = normal;
 
-		vec3 radiance = dirLight.ColorIntensity.rgb;
+        vec3 radiance = dirLight.ColorIntensity.rgb * dirLight.ColorIntensity.w;
 
 		// Cook-Torrance BRDF
 		float NDF = DistributionGGX(N, H, roughness);
