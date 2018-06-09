@@ -32,9 +32,9 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 	GammaShader("Shaders/hdr.vert.glsl", "Shaders/gamma.frag.glsl"),
 	ParticleShader("Shaders/instancedVert.shader", "Shaders/instancedFrag.shader"),
 	TranslucentShader("Shaders/transparentVert.shader", "Shaders/transparentFrag.shader"),
-	SkyboxShader("Shaders/skyboxVert.shader", "Shaders/skyboxFrag.shader")
+	SkyboxShader("Shaders/skyboxVert.shader", "Shaders/skyboxFrag.shader"),
+	equiToCubemapShader("Shaders/equiToCubemapVert.shader", "Shaders/equiToCubemapFrag.shader")
 {
-
 	lightAccumulationShader.RegisterUniform("vec4", "uViewPosition");
 	lightAccumulationShader.RegisterUniform("mat4", "uClipFromModel");
 	lightAccumulationShader.RegisterUniform("mat4", "uWorldFromModel");
@@ -85,6 +85,8 @@ void TiledForwardRenderer::Init()
 
 	gConsole.LogInfo("TiledForwardRenderer::Init SCREEN_SIZE: ({},{})", screenSize.Width, screenSize.Height);
 
+	LoadHDR();
+
 	CreateRenderTargets(screenSize);
 
 	CreateLightBuffers(screenSize);
@@ -95,15 +97,16 @@ void TiledForwardRenderer::Init()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_MULTISAMPLE);
+}
 
-
-	// Models/Primitives/Sphere_HighPoly.obj
-	String absoluteHDRPath = gAssetsPathConfig.GetAssetsPath(eResourceSource::GAME) + "HDR/fin4_Env.hdr";
+void Poly::TiledForwardRenderer::LoadHDR()
+{
+	String absoluteHDRPath = gAssetsPathConfig.GetAssetsPath(eResourceSource::GAME) + "HDR/Barce_Rooftop_C_3k.hdr";
+	// String absoluteHDRPath = gAssetsPathConfig.GetAssetsPath(eResourceSource::GAME) + "HDR/fin4_BG.jpg";
 	gConsole.LogInfo("TiledForwardRenderer::Init absoluteHDRPath: {}", absoluteHDRPath);
 	stbi_set_flip_vertically_on_load(true);
 	int width, height, nrComponents;
 	float *data = stbi_loadf(absoluteHDRPath.GetCStr(), &width, &height, &nrComponents, 0);
-	unsigned int hdrTexture;
 	if (data)
 	{
 		glGenTextures(1, &hdrTexture);
@@ -322,6 +325,8 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 
 	RenderSkybox(sceneView.world, sceneView.cameraCmp);
 
+	RenderEquiCube(sceneView);
+
 	RenderTranslucentLit(sceneView);
 
 	RenderParticleUnlit(sceneView.world, sceneView.cameraCmp);
@@ -331,6 +336,40 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 	// PostSSAO(cameraCmp);
 
 	PostGamma();
+}
+
+void TiledForwardRenderer::RenderEquiCube(const SceneView& sceneView)
+{
+		const Matrix ClipFromWorld = sceneView.cameraCmp->GetClipFromWorld();
+
+		equiToCubemapShader.BindProgram();
+		equiToCubemapShader.SetUniform("uClipFromModel", ClipFromWorld);
+
+		// GLuint CubemapID = static_cast<const GLCubemapDeviceProxy*>(SkyboxWorldCmp->GetCubemap().GetTextureProxy())->GetTextureID();
+
+		glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
+
+		glBindFragDataLocation(equiToCubemapShader.GetProgramHandle(), 0, "color");
+		glBindFragDataLocation(equiToCubemapShader.GetProgramHandle(), 1, "normal");
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, hdrTexture);
+		equiToCubemapShader.SetUniform("uEquirectangularMap", 0);
+
+		// glDisable(GL_CULL_FACE);
+		glDepthMask(GL_FALSE);
+
+		glBindVertexArray(RDI->PrimitiveRenderingCube->VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+
+		// glEnable(GL_CULL_FACE);
+		glDepthMask(GL_TRUE);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)

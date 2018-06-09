@@ -47,9 +47,8 @@ namespace Poly {
 		GLShaderProgram GammaShader;
 		GLShaderProgram ParticleShader;
 		GLShaderProgram TranslucentShader;
-
+		GLShaderProgram equiToCubemapShader;
 		GLShaderProgram debugQuadDepthPrepassShader;
-		GLShaderProgram debugLightAccumShader;
 
 		GLuint preDepthBuffer;
 		GLuint colorBuffer;
@@ -57,12 +56,16 @@ namespace Poly {
 		GLuint rboDepth;
 		GLuint postColorBuffer0;
 		GLuint postColorBuffer1;
+		
+		GLuint hdrTexture;
 
 		GLuint FBOdepthMap;
 		GLuint FBOhdr;
 		GLuint FBOpost0;
 		GLuint FBOpost1;
 		
+		void LoadHDR();
+
 		void CreateLightBuffers(const ScreenSize& size);
 		
 		void DeleteLightBuffers();
@@ -82,6 +85,8 @@ namespace Poly {
 		void RenderOpaqueLit(const SceneView& sceneView);
 
 		void RenderSkybox(World* world, const CameraComponent* cameraCmp);
+
+		void RenderEquiCube(const SceneView& sceneView);
 
 		void RenderTranslucentLit(const SceneView& sceneView);
 		
