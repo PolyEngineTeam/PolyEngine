@@ -42,11 +42,13 @@ UNSILENCE_MSVC_WARNING()
 #include "Widgets/ViewportWidget.hpp"
 #include "Widgets/LoggerWidget.hpp"
 
-#include "Widgets/Inspectors/EntityInspectorWidget.hpp"
 #include "Widgets/Inspectors/WorldInspectorWidget.hpp"
-#include "Widgets/Inspectors/RTTIInspectorWidget.hpp"
-#include "Widgets/Inspectors/ResourceInspectorWidget.hpp"
 #include "Widgets/Inspectors/WorldComponentsInspectorWidget.hpp"
+#include "Widgets/Inspectors/ResourceInspectorWidget.hpp"
+#include "Widgets/Inspectors/PrefabInspectorWidget.hpp"
+#include "Widgets/Inspectors/ViewportInspectorWidget.hpp"
+#include "Widgets/Inspectors/EntityInspectorWidget.hpp"
+#include "Widgets/Inspectors/RTTIInspectorWidget.hpp"
 
 // containers
 #include "Containers/SectionContainer.hpp"
@@ -69,6 +71,9 @@ UNSILENCE_MSVC_WARNING()
 #include "Dialogs/Inspectors/AddEntityDialog.hpp"
 #include "Dialogs/Inspectors/ComponentDialog.hpp"
 
+// systems
+#include "Systems/Gizmo/GizmoSystem.hpp"
+#include "Systems/Gizmo/GizmoWorldComponent.hpp"
 
 // engine
 #include <Engine.hpp>

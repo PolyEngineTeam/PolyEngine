@@ -25,6 +25,7 @@ class EntityInspectorWidget : public PolyWidget
 public:
 	EntityInspectorWidget(QWidget* parent);
 
+	// TODO(squares): use list for future multiple selection support
 	// Set entity to display; updates automatically.
 	void SetObject(Entity* entity);
 

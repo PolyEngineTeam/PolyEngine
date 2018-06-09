@@ -6,16 +6,6 @@
 
 using namespace Poly;
 
-class EngineManagerException : public std::exception
-{
-public:
-	EngineManagerException(const String& msg) : Msg(msg) {}
-	const char* what() const noexcept override { return Msg.GetCStr(); }
-
-protected:
-	String Msg;
-};
-
 enum class eEngineState
 {
 	EDIT,
@@ -24,21 +14,16 @@ enum class eEngineState
 	_COUNT
 };
 
-class EngineManager : public QObject, public IEditor
+class EngineManager : public QObject
 {
 	Q_OBJECT
 
 public:
 	EngineManager();
-	~EngineManager() = default;
-
-	const String& GetAssetsPathConfigPath() const override { return AssetsPathConfigPath; }
-	void Init() override;
-	void Deinit() override;
 
 	eEngineState GetEngineState() { return EngineState; }
 
-	void InitEngine(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device, const String& assetsPathConfigPath);
+	void InitEngine(std::unique_ptr<IGame> game, const String& assetsPathConfigPath);
 	void DeinitEngine();
 
 	void Edit();
@@ -51,10 +36,9 @@ signals:
 
 private:
 	std::unique_ptr<Engine> Engine = nullptr;
-	QTimer Updater;
-
-	String AssetsPathConfigPath = String::EMPTY;
 	eEngineState EngineState = eEngineState::NONE;
+
+	QTimer Updater;
 
 private slots:
 	void UpdatePhase();

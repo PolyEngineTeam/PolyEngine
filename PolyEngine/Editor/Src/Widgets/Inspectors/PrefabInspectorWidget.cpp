@@ -1,5 +1,6 @@
 #include "PrefabInspectorWidget.hpp"
 
-PrefabInspectorWidget::PrefabInspectorWidget()
+PrefabInspectorWidget::PrefabInspectorWidget(QWidget* parent)
+	: PolyWidget(parent)
 {
 }

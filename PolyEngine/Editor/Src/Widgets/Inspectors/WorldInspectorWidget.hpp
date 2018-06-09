@@ -28,6 +28,7 @@ public:
 	void ReloadInspector();
 
 signals:
+	// TODO(squares): pass UniqueID not entity
 	// When entity is double clicked then this signal is emitted.
 	void EntitySelected(Entity* entity);
 

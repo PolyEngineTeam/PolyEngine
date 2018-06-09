@@ -1,7 +1,8 @@
 #include "PolyEditorPCH.hpp"
 
 //------------------------------------------------------------------------------
-ResourceInspectorWidget::ResourceInspectorWidget()
+ResourceInspectorWidget::ResourceInspectorWidget(QWidget* parent)
+	: PolyWidget(parent)
 {
 	connect(gApp->InspectorMgr, &InspectorManager::ProjectOpened, this, &ResourceInspectorWidget::SetObject);
 	connect(gApp->InspectorMgr, &InspectorManager::ProjectClosed, this, &ResourceInspectorWidget::Reset);

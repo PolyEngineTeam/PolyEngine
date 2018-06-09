@@ -11,7 +11,7 @@
 class ResourceInspectorWidget : public PolyWidget
 {
 public:
-	ResourceInspectorWidget();
+	ResourceInspectorWidget(QWidget* parent);
 
 	void SetObject(const ProjectConfig* config);
 

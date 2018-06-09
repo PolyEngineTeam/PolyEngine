@@ -2,10 +2,10 @@
 
 #include "Widgets/PolyWidget.hpp"
 
-class PrefabInspectorWidget : PolyWidget
+class PrefabInspectorWidget : public PolyWidget
 {
 public:
-	PrefabInspectorWidget();
+	PrefabInspectorWidget(QWidget* parent);
 
 private:
 

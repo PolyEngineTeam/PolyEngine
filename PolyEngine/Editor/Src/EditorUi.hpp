@@ -20,16 +20,12 @@ public:
 	void Init();
 	void AddWindow() { PolyWindow* wnd = new PolyWindow(); Windows.PushBack(wnd); wnd->show(); }
 
-	ViewportWidget* MainViewport;
 	LoggerWidget* MainLogger;
 	LoggerWidget* CmdLogger;
-	WorldInspectorWidget* WorldExplorer;
-	WorldComponentsInspectorWidget* WorldComponentsExplorer;
-	EntityInspectorWidget* EntityMgr;
-	ResourceInspectorWidget* ResourceMgr;
+
+	PolyMainWindow* MainWindow;
 
 private:
-	PolyMainWindow* MainWindow;
 	Poly::Dynarray<PolyWindow*> Windows;
 	Poly::Dynarray<PolyDockWindow*> DockWindows;
 };
