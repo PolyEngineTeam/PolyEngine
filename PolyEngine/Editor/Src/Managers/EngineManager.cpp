@@ -16,15 +16,14 @@ void EngineManager::InitEngine(std::unique_ptr<IGame> game, const String& assets
 	if (Engine)
 		throw new std::exception("Creating Engine twice?");
 
-	EngineState = eEngineState::EDIT;
-
 	// get editor inserface and set path to assets
-	IEditor* ed = gApp->InspectorMgr->GetEditor();
-	ed->SetAssetsPathConfigPath(assetsPathConfigPath);
+	Editor = gApp->InspectorMgr->GetEditor();
+	Editor->SetAssetsPathConfigPath(assetsPathConfigPath);
+	Editor->SetEngineState(eEngineState::EDIT);
 
 	// create and initialize engine instance
 	Engine = std::make_unique<Poly::Engine>();
-	Engine->RegisterEditor(ed);
+	Engine->RegisterEditor(Editor);
 	Engine->Init(std::move(game), std::move(gApp->InspectorMgr->GetRenderingDevice()));
 	gConsole.LogDebug("Engine initialized successfully");
 	Updater.start(0);
@@ -37,7 +36,8 @@ void EngineManager::DeinitEngine()
 {
 	Engine.release();
 
-	EngineState = eEngineState::NONE;
+	Editor->SetEngineState(eEngineState::NONE);
+	Editor = nullptr;
 	Updater.stop();
 
 	emit Deinitialized();
@@ -46,7 +46,7 @@ void EngineManager::DeinitEngine()
 //------------------------------------------------------------------------------
 void EngineManager::Edit()
 {
-	switch (EngineState)
+	switch (Editor->GetEngineState())
 	{
 	case eEngineState::NONE:
 		throw new std::exception("To switch to edit mode engine must be initialized.");
@@ -56,7 +56,7 @@ void EngineManager::Edit()
 		break;
 
 	case eEngineState::GAMEPLAY:
-		EngineState = eEngineState::EDIT;
+		Editor->SetEngineState(eEngineState::EDIT);
 		Engine->Restart();
 		break;
 
@@ -70,13 +70,13 @@ void EngineManager::Edit()
 //------------------------------------------------------------------------------
 void EngineManager::Play()
 {
-	switch (EngineState)
+	switch (Editor->GetEngineState())
 	{
 	case eEngineState::NONE:
 		throw new std::exception("To switch to gameplay mode engine must be initialized");
 
 	case eEngineState::EDIT:
-		EngineState = eEngineState::GAMEPLAY;
+		Editor->SetEngineState(eEngineState::GAMEPLAY);
 		Engine->Restart();
 		break;
 
@@ -100,7 +100,7 @@ void EngineManager::UpdatePhase()
 	//updatePhases.PushBack(Engine::eUpdatePhaseOrder::EDITOR);
 	//updatePhases.PushBack(Engine::eUpdatePhaseOrder::POSTUPDATE);
 
-	if (EngineState == eEngineState::EDIT)
+	if (Editor->GetEngineState() == eEngineState::EDIT)
 		Engine->Update(updatePhases);
 	else
 		Engine->Update();

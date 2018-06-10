@@ -26,6 +26,8 @@ const static Angle PLAYER_CAMERA_FOV = 60_deg;
 // ---------------------------------------------------------------------------------------------------------
 ViewportInspectorWidget::ViewportInspectorWidget(QWidget* parent)
 {
+	//connect(gApp->InspectorMgr, &InspectorManager::EngineInitialized, this, &ViewportInspectorWidget::SetObject);
+
 	setAttribute(Qt::WA_NativeWindow);
 	setMouseTracking(true);
 	setFocusPolicy(Qt::ClickFocus);
@@ -40,6 +42,10 @@ ViewportInspectorWidget::ViewportInspectorWidget(QWidget* parent)
 	new QGridLayout(this);
 	SDLWidget = new QWidget(this);
 	layout()->addWidget(SDLWidget);
+
+	SDLWidget->setAttribute(Qt::WA_NativeWindow);
+	SDLWidget->setMouseTracking(true);
+	SDLWidget->setFocusPolicy(Qt::ClickFocus);
 
 	// TODO: catch winId changes (http://doc.qt.io/qt-5/qwidget.html#winId)
 	// TODO: something like addviewport to rendering device
@@ -138,6 +144,8 @@ void ViewportInspectorWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
 		return;
 	Poly::gEngine->UpdateMousePos(Poly::Vector2i(mouseEvent->pos().x(), mouseEvent->pos().y()));
+
+	gConsole.LogDebug("{}; {}", mouseEvent->pos().x(), mouseEvent->pos().y());
 }
 
 // ---------------------------------------------------------------------------------------------------------

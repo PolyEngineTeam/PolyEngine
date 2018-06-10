@@ -4,6 +4,14 @@
 
 namespace Poly
 {
+	enum class eEngineState
+	{
+		EDIT,
+		GAMEPLAY,
+		NONE,
+		_COUNT
+	};
+
 	class ENGINE_DLLEXPORT IEditor
 	{
 	public:
@@ -27,5 +35,11 @@ namespace Poly
 
 		// If we are in edit mode and user used gizmo then this method is called.
 		virtual void UpdateInspectors() = 0;
+
+		virtual void SetEngineState(eEngineState state) { EngineState = state; }
+		virtual eEngineState GetEngineState() { return EngineState; }
+
+	protected:
+		eEngineState EngineState = eEngineState::NONE;
 	};
 } // namespace Poly

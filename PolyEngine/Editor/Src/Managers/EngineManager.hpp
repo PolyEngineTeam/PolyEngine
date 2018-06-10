@@ -6,14 +6,6 @@
 
 using namespace Poly;
 
-enum class eEngineState
-{
-	EDIT,
-	GAMEPLAY,
-	NONE,
-	_COUNT
-};
-
 class EngineManager : public QObject
 {
 	Q_OBJECT
@@ -21,7 +13,7 @@ class EngineManager : public QObject
 public:
 	EngineManager();
 
-	eEngineState GetEngineState() { return EngineState; }
+	eEngineState GetEngineState() { return Editor ? Editor->GetEngineState() : eEngineState::NONE; }
 
 	void InitEngine(std::unique_ptr<IGame> game, const String& assetsPathConfigPath);
 	void DeinitEngine();
@@ -36,7 +28,7 @@ signals:
 
 private:
 	std::unique_ptr<Engine> Engine = nullptr;
-	eEngineState EngineState = eEngineState::NONE;
+	IEditor* Editor = nullptr;
 
 	QTimer Updater;
 

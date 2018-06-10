@@ -33,7 +33,6 @@ public:
 private:
 	Entity* Entities;
 	String AssetsPathConfigPath;
-	eEngineState EngineState = eEngineState::NONE;
 
 	void resizeEvent(QResizeEvent* resizeEvent) override;
 	void wheelEvent(QWheelEvent* wheelEvent) override;
