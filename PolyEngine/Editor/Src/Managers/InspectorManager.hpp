@@ -6,21 +6,22 @@
 
 #include "Managers/EngineManager.hpp"
 #include "Configs/ProjectConfig.hpp"
+#include "Widgets/Inspectors/ViewportInspectorWidget.hpp"
 
 using namespace Poly;
 
 class EditorApp;
 
-class EntityInspectorWidget;
-class PrefabInspectorWidget;
-class ResourceInspectorWidget;
-class ViewportInspectorWidget;
-class WorldComponentsInspectorWidget;
-class WorldInspectorWidget;
-
 class InspectorManager : public QObject
 {
 	Q_OBJECT
+
+	friend class ViewportInspectorWidget;
+	friend class EntityInspectorWidget;
+	friend class PrefabInspectorWidget;
+	friend class ResourceInspectorWidget;
+	friend class WorldComponentsInspectorWidget;
+	friend class WorldInspectorWidget;
 
 public:
 	InspectorManager(EditorApp* app);

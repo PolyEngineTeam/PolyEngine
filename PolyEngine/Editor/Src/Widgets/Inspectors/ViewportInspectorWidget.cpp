@@ -95,7 +95,7 @@ void ViewportInspectorWidget::Deinit()
 // ---------------------------------------------------------------------------------------------------------
 const Dynarray<UniqueID>& ViewportInspectorWidget::GetSelectedEntitiesIds()
 {
-	// TODO: insert return statement here
+	return *new Dynarray<UniqueID>();
 }
 
 // ---------------------------------------------------------------------------------------------------------

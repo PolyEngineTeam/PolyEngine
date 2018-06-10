@@ -88,7 +88,6 @@ void ProjectManager::Edit()
 		}
 
 		std::unique_ptr<IGame> game = std::unique_ptr<IGame>(LoadGame());
-		std::unique_ptr<IRenderingDevice> device = gApp->Ui.MainViewport->GetRenderingDevice();
 
 		// works for VS
 		StringBuilder builder;
@@ -97,7 +96,7 @@ void ProjectManager::Edit()
 		builder.Append(ProjectConfig->ProjectName);
 		builder.Append("/Debug/AssetsPathConfig.json");
 
-		gApp->EngineMgr->InitEngine(std::move(game), std::move(device), builder.GetString());
+		gApp->EngineMgr->InitEngine(std::move(game), builder.GetString());
 	}
 	else
 		gApp->EngineMgr->Edit();
@@ -119,7 +118,6 @@ void ProjectManager::Play()
 		}
 
 		std::unique_ptr<IGame> game = std::unique_ptr<IGame>(LoadGame());
-		std::unique_ptr<IRenderingDevice> device = gApp->Ui.MainViewport->GetRenderingDevice();
 
 		// works for VS
 		StringBuilder builder;
@@ -128,7 +126,7 @@ void ProjectManager::Play()
 		builder.Append(ProjectConfig->ProjectName);
 		builder.Append("/Debug/AssetsPathConfig.json");
 
-		gApp->EngineMgr->InitEngine(std::move(game), std::move(device), builder.GetString());
+		gApp->EngineMgr->InitEngine(std::move(game), builder.GetString());
 	}
 	
 	// TODO(squares): fix problem with physics; Rigidbody and collider components  are initialized in next frame 

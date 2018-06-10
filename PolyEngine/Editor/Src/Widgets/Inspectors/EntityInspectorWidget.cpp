@@ -6,8 +6,8 @@
 EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 	: PolyWidget(parent)
 {
-	connect(gApp->Ui.WorldExplorer, &WorldInspectorWidget::EntitySelected, this, &EntityInspectorWidget::SetObject);
-	connect(gApp->Ui.WorldExplorer, &WorldInspectorWidget::EntityDeselected, this, &EntityInspectorWidget::Reset);
+	connect(gApp->InspectorMgr->WorldInspector, &WorldInspectorWidget::EntitySelected, this, &EntityInspectorWidget::SetObject);
+	connect(gApp->InspectorMgr->WorldInspector, &WorldInspectorWidget::EntityDeselected, this, &EntityInspectorWidget::Reset);
 
 	setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(this, &EntityInspectorWidget::customContextMenuRequested, this, &EntityInspectorWidget::SpawnContextMenu);
