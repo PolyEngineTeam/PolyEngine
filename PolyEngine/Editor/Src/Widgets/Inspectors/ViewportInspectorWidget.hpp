@@ -43,5 +43,6 @@ private:
 	void keyPressEvent(QKeyEvent* keyEvent) override;
 	void keyReleaseEvent(QKeyEvent* keyEvent) override;
 
+	QWidget* SDLWidget;
 	CustomSDLWindow WindowInSDL;
 };

@@ -37,10 +37,14 @@ ViewportInspectorWidget::ViewportInspectorWidget(QWidget* parent)
 	}
 	Poly::gConsole.LogDebug("SDL initialized.");
 
+	new QGridLayout(this);
+	SDLWidget = new QWidget(this);
+	layout()->addWidget(SDLWidget);
+
 	// TODO: catch winId changes (http://doc.qt.io/qt-5/qwidget.html#winId)
 	// TODO: something like addviewport to rendering device
 	ASSERTE(!WindowInSDL.IsValid(), "Window already initialized!");
-	WindowInSDL = CustomSDLWindow::CreateSDLWindowFromArgs((void*)winId(), SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	WindowInSDL = CustomSDLWindow::CreateSDLWindowFromArgs((void*)SDLWidget->winId(), SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	ASSERTE(WindowInSDL.IsValid(), "Window creation failed!");
 }
 
