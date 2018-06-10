@@ -51,6 +51,6 @@ struct AutoRegisterType {
 	struct MetaTypeInfo { \
 		static Poly::RTTI::TypeInfo GetTypeInfo() \
 		{ \
-			return Poly::RTTI::Impl::TypeManager::Get().RegisterOrGetType(#T, Poly::RTTI::BaseClasses<T>::Retrieve()); \
+			return Poly::RTTI::Impl::TypeManager::Get().RegisterOrGetType<T>(#T, Poly::RTTI::BaseClasses<T>::Retrieve()); \
 		} \
 	};

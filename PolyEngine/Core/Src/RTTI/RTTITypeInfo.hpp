@@ -6,6 +6,8 @@
 #include <map>
 #include <vector>
 
+#include "Memory/ObjectLifetimeHelpers.hpp"
+
 namespace Poly 
 {
 	namespace RTTI {
@@ -17,10 +19,29 @@ namespace Poly
 			class CORE_DLLEXPORT TypeManager final : public BaseObjectLiteralType<> {
 			public:
 				static TypeManager& Get();
-				TypeInfo RegisterOrGetType(const char* name, const Dynarray<TypeInfo>& baseClassList);
+				
+				template <typename T>
+				TypeInfo RegisterOrGetType(const char* name, const Dynarray<TypeInfo>& baseClassList)
+				{
+					if (NameToTypeMap.find(name) != NameToTypeMap.end())
+						return NameToTypeMap[name];
+					else {
+						TypeInfo ti(++Counter);
+						NameToTypeMap.insert(std::make_pair(name, ti));
+						TypeToNameMap.insert(std::make_pair(ti, name));
+
+						ConstructorsMap.insert(std::make_pair(ti, [](void* memory) 
+							{ 
+								return (void*)ObjectLifetimeHelper::DefaultAllocateAndCreate<T>((T*)memory);
+							}));
+						InheritanceListMap[ti] = baseClassList;
+						return ti;
+					}
+				}
 				bool IsTypeDerivedFrom(const TypeInfo& checked, const TypeInfo& from) const;
 
 				const char* GetTypeName(const TypeInfo& typeInfo) const;
+				const std::function<void*(void*)>& GetConstructor(const TypeInfo& typeInfo) const;
 			private:
 				TypeManager() = default;
 				TypeManager(const TypeManager& rhs) = delete;
@@ -30,6 +51,7 @@ namespace Poly
 				std::map<const char*, TypeInfo> NameToTypeMap;
 				std::map<TypeInfo, const char*> TypeToNameMap;
 				std::map<TypeInfo, Dynarray<TypeInfo>> InheritanceListMap;
+				std::map<TypeInfo, std::function<void*(void*)>> ConstructorsMap;
 			};
 
 		} // namespace Impl
@@ -67,6 +89,9 @@ namespace Poly
 			}
 
 			const char* GetTypeName() const;
+
+			void* CreateInstance() { return Impl::TypeManager::Get().GetConstructor(*this)(nullptr); }
+			void* CreateInstanceInPlace(void* ptr) { return Impl::TypeManager::Get().GetConstructor(*this)(ptr); }
 
 			CORE_DLLEXPORT friend std::ostream& operator<<(std::ostream& stream, const TypeInfo& typeInfo);
 

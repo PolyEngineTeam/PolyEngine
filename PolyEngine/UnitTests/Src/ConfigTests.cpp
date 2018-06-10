@@ -13,6 +13,7 @@
 #include <Math/Quaternion.hpp>
 #include <UniqueID.hpp>
 #include <cstdio>
+#include <Utils/Logger.hpp>
 
 using namespace Poly;
 
@@ -89,9 +90,9 @@ class TestConfig : public ConfigBase
 
 		RTTI_PROPERTY_AUTONAME(PropUUID, RTTI::ePropertyFlag::NONE);
 
-		RTTI_PROPERTY_AUTONAME(PropUniquePtrInt, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrInt, [](Poly::RTTI::TypeInfo info) { gConsole.LogError("asdassdassd"); return new int; }, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropUniquePtrDynarrayInt, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropUniquePtrCustom, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrCustom, [](Poly::RTTI::TypeInfo info) { gConsole.LogError("asdassdassd"); return info.CreateInstance(); }, RTTI::ePropertyFlag::NONE);
 	}
 public:
 	TestConfig() : ConfigBase("Test", eResourceSource::NONE) 
