@@ -7,9 +7,6 @@ PolyDockWindow::PolyDockWindow(const QString& title, PolyWidget* widget) :
 
 	setWidget(widget);
 	
-	// if you want viewport to behave properly use this
-	//layout()->addWidget(widget);
-
 	connect(this, &QDockWidget::topLevelChanged, this, 
 		[object = this](bool topLevel) { if (topLevel) gApp->DockMgr->WidgetCatchEvent(object); });
 }
