@@ -51,6 +51,9 @@ struct Material
 };
 
 uniform samplerCube uIrradianceMap;
+uniform samplerCube uPrefilterMap;
+uniform sampler2D uBrdfLUT;
+
 uniform sampler2D uAlbedoMap;
 uniform sampler2D uSpecularMap;
 uniform sampler2D uNormalMap;
@@ -132,8 +135,10 @@ void main()
     {
         discard;
     }
-
+    
+    vec3 N = normal;
     vec3 V = normalize(fragment_in.tangentViewPosition - fragment_in.tangentFragmentPosition);
+    vec3 R = reflect(-V, N);
 
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
 	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
@@ -160,8 +165,7 @@ void main()
 		vec3 tangentLightPosition = fragment_in.TBN * light.Position.xyz;
 		vec3 L = normalize(tangentLightPosition - fragment_in.tangentFragmentPosition);
 		// vec3 L = normalize(light.Position.xyz - fragment_in.positionInWorld);
-		vec3 H = normalize(V + L);
-		vec3 N = normal;
+		vec3 H = normalize(V + L);		
 		float range = light.RangeIntensity.x;
 		float dist = length(light.Position.xyz - fragment_in.positionInWorld);
 		float attenuation = pow(clamp(1.0 - pow(dist / range, 4.0), 0.0, 1.0), 2.0) / (pow(dist, 2.0) + 1.0);
@@ -203,7 +207,6 @@ void main()
 		vec3 tangentLightDir = fragment_in.TBN * dirLight.Direction.xyz;
 		vec3 L = normalize(tangentLightDir);
 		vec3 H = normalize(L + V);
-		vec3 N = normal;
 
         vec3 radiance = dirLight.ColorIntensity.rgb * dirLight.ColorIntensity.w;
 
@@ -233,15 +236,22 @@ void main()
 		// add to outgoing radiance Lo
 		Lo += (kD * albedo.rgb / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
 	}
+    
+    vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
 
 	// ambient lighting (note that the next IBL tutorial will replace 
 	// this ambient lighting with environment lighting).
-	// vec3 ambient = uMaterial.Ambient.rgb;
-    vec3 kS = fresnelSchlickRoughness(max(dot(normal, V), 0.0), F0, roughness);
+    vec3 kS = F;
     vec3 kD = 1.0 - kS;
-    vec3 irradiance = texture(uIrradianceMap, normal).rgb;
+    vec3 irradiance = texture(uIrradianceMap, N).rgb;
     vec3 diffuse = irradiance * albedo.rgb;
-    vec3 ambient = (kD * diffuse); // * ao;
+
+    const float MAX_REFLECTION_LOD = 4.0;
+    vec3 prefilteredColor = textureLod(uPrefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
+    vec2 envBRDF = texture(uBrdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
+    vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
+
+    vec3 ambient = (kD * diffuse + specular); // * ao;
 
     oColor.rgb = ambient + Lo;
 	// oColor.rgb = ambient + vec3(uMaterial.Albedo.r, uMaterial.Metallic, uMaterial.Roughness);

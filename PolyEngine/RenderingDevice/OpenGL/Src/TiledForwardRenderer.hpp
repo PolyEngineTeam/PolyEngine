@@ -12,6 +12,7 @@ namespace Poly {
 		TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInterface);
 		
 		void Init() override;
+		void PreintegrateBRDF();
 		void Resize(const ScreenSize& size) override;
 		void Render(const SceneView& sceneView) override;
 		void Deinit() override;
@@ -50,6 +51,8 @@ namespace Poly {
 		GLShaderProgram equiToCubemapShader;
 		GLShaderProgram equirectangularToCubemapShader;
 		GLShaderProgram cubemapIrradianceShader;
+		GLShaderProgram prefilterCubemapShader;
+		GLShaderProgram integrateBRDFShader;
 		GLShaderProgram debugLightAccumShader;
 		GLShaderProgram debugQuadDepthPrepassShader;
 
@@ -63,6 +66,8 @@ namespace Poly {
 		GLuint hdrTexture;
 		GLuint envCubemap;
 		GLuint irradianceMap;
+		GLuint prefilterMap;
+		GLuint preintegratedBrdfLUT;
 
 		GLuint FBOdepthMap;
 		GLuint FBOhdr;
@@ -73,7 +78,9 @@ namespace Poly {
 
 		void CaptureCubemap();
 
-		void CaptureIrradiance();
+		void CaptureDifuseIrradiance();
+
+		void CaptureSpecularPrefilteredMap();
 
 		void CreateLightBuffers(const ScreenSize& size);
 		
@@ -93,7 +100,7 @@ namespace Poly {
 
 		void RenderOpaqueLit(const SceneView& sceneView);
 
-		void RenderSkybox(World* world, const CameraComponent* cameraCmp);
+		void RenderSkybox(const SceneView& sceneView);
 
 		void RenderEquiCube(const SceneView& sceneView);
 

@@ -30,12 +30,14 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 	hdrShader("Shaders/hdr.vert.glsl", "Shaders/hdr.frag.glsl"),
 	SSAOShader("Shaders/hdr.vert.glsl", "Shaders/ssao.frag.glsl"),
 	GammaShader("Shaders/hdr.vert.glsl", "Shaders/gamma.frag.glsl"),
+	integrateBRDFShader("Shaders/hdr.vert.glsl", "Shaders/integrateBRDF.frag.glsl"),
 	ParticleShader("Shaders/instancedVert.shader", "Shaders/instancedFrag.shader"),
 	TranslucentShader("Shaders/transparentVert.shader", "Shaders/transparentFrag.shader"),
 	SkyboxShader("Shaders/skyboxVert.shader", "Shaders/skyboxFrag.shader"),
 	equiToCubemapShader("Shaders/equiHdrVert.shader", "Shaders/equiHdrFrag.shader"),
 	equirectangularToCubemapShader("Shaders/equiToCubemapVert.shader", "Shaders/equiToCubemapFrag.shader"),
-	cubemapIrradianceShader("Shaders/cubemapIrradianceVert.shader", "Shaders/cubemapIrradianceFrag.shader")
+	cubemapIrradianceShader("Shaders/cubemapIrradianceVert.shader", "Shaders/cubemapIrradianceFrag.shader"),
+	prefilterCubemapShader("Shaders/prefilterCubemapVert.shader", "Shaders/prefilterCubemapFrag.shader")
 {
 	lightAccumulationShader.RegisterUniform("vec4", "uViewPosition");
 	lightAccumulationShader.RegisterUniform("mat4", "uClipFromModel");
@@ -44,9 +46,9 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 	lightAccumulationShader.RegisterUniform("vec4", "uMaterial.Albedo");
 	lightAccumulationShader.RegisterUniform("float", "uMaterial.Roughness");
 	lightAccumulationShader.RegisterUniform("float", "uMaterial.Metallic");
-	for (size_t i = 0; i < 8; ++i)
+	for (int i = 0; i < 8; ++i)
 	{
-		String baseName = String("uDirectionalLight[") + String::From(static_cast<int>(i)) + String("].");
+		String baseName = String("uDirectionalLight[") + String::From(i) + String("].");
 		lightAccumulationShader.RegisterUniform("vec4", baseName + "ColorIntensity");
 		lightAccumulationShader.RegisterUniform("vec4", baseName + "Direction");
 	}
@@ -56,6 +58,7 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 	lightAccumulationShader.RegisterUniform("int", "uWorkGroupsY");
 
 	SkyboxShader.RegisterUniform("mat4", "uClipFromWorld");
+	SkyboxShader.RegisterUniform("float", "uTime");
 
 	TranslucentShader.RegisterUniform("vec4", "uViewPosition");
 	TranslucentShader.RegisterUniform("mat4", "uClipFromModel");
@@ -64,9 +67,9 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInt
 	TranslucentShader.RegisterUniform("vec4", "uMaterial.Diffuse");
 	TranslucentShader.RegisterUniform("vec4", "uMaterial.Specular");
 	TranslucentShader.RegisterUniform("float", "uMaterial.Shininess");
-	for (size_t i = 0; i < 8; ++i)
+	for (int i = 0; i < 8; ++i)
 	{
-		String baseName = String("uDirectionalLight[") + String::From(static_cast<int>(i)) + String("].");
+		String baseName = String("uDirectionalLight[") + String::From(i) + String("].");
 		TranslucentShader.RegisterUniform("vec4", baseName + "ColorIntensity");
 		TranslucentShader.RegisterUniform("vec4", baseName + "Direction");
 	}
@@ -91,7 +94,11 @@ void TiledForwardRenderer::Init()
 
 	CaptureCubemap();
 
-	CaptureIrradiance();
+	CaptureDifuseIrradiance();
+
+	CaptureSpecularPrefilteredMap();
+
+	PreintegrateBRDF();
 
 	CreateRenderTargets(screenSize);
 
@@ -104,6 +111,48 @@ void TiledForwardRenderer::Init()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+}
+
+void TiledForwardRenderer::PreintegrateBRDF()
+{
+	// Create texture resource
+	gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Create texture resource");
+	glGenTextures(1, &preintegratedBrdfLUT);
+	glBindTexture(GL_TEXTURE_2D, preintegratedBrdfLUT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
+	CHECK_GL_ERR();
+
+	// Create FBO for BRDF preintegration
+	gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Create capture FBO");
+	GLuint captureFBO;
+	GLuint captureRBO;
+	glGenFramebuffers(1, &captureFBO);
+	glGenRenderbuffers(1, &captureRBO);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+	gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Capture FBO created");
+
+	// Render preintegrated BRDF
+	gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Render preintegrated BRDF");
+	glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
+	integrateBRDFShader.BindProgram();
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, preintegratedBrdfLUT, 0);	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glBindVertexArray(RDI->PrimitivesQuad->VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap preintegrated BRDF rendered");
 }
 
 void TiledForwardRenderer::LoadHDR()
@@ -146,7 +195,8 @@ void TiledForwardRenderer::CaptureCubemap()
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	// glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap cubemap resource created");
 
@@ -202,9 +252,14 @@ void TiledForwardRenderer::CaptureCubemap()
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap cubemap rendered");
+
+	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap generate env cubemap mipmaps");
+	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap env cubemap mipmaps generated");
 }
 
-void TiledForwardRenderer::CaptureIrradiance()
+void TiledForwardRenderer::CaptureDifuseIrradiance()
 {
 	glGenTextures(1, &irradianceMap);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
@@ -270,6 +325,90 @@ void TiledForwardRenderer::CaptureIrradiance()
 		glBindVertexArray(0);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void TiledForwardRenderer::CaptureSpecularPrefilteredMap()
+{
+	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap create cubemap resource");
+	glGenTextures(1, &prefilterMap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		// glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 128, 128, 0, GL_RGB, GL_FLOAT, nullptr);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap cubemap resource created");
+
+	// Create FBO for HDR capture
+	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap Create capture FBO");
+	GLuint captureFBO;
+	GLuint captureRBO;
+	glGenFramebuffers(1, &captureFBO);
+	glGenRenderbuffers(1, &captureRBO);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap Capture FBO created");
+
+	// Projection
+	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap create matrices");
+	Matrix uClipFromView;
+	uClipFromView.SetPerspective(90.0_deg, 1.0f, 0.1f, 10.0f);
+
+	Matrix ViewFromModel[] =
+	{
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
+	};
+	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap matrices created");
+
+	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap capture prefiltered cubemap");
+	prefilterCubemapShader.BindProgram();
+	prefilterCubemapShader.SetUniform("uEnvironmentMap", 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	unsigned int maxMipLevels = 5;
+	for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
+	{
+		// reisze framebuffer according to mip-level size.
+		// unsigned int mipWidth = 128 * std::pow(0.5, mip);
+		// unsigned int mipHeight = 128 * std::pow(0.5, mip);
+		unsigned int mipWidth = 512 * std::pow(0.5, mip);
+		unsigned int mipHeight = 512 * std::pow(0.5, mip);
+		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
+		glViewport(0, 0, mipWidth, mipHeight);
+
+		float roughness = (float)mip / (float)(maxMipLevels - 1);
+		prefilterCubemapShader.SetUniform("uRoughness", roughness);
+		for (unsigned int i = 0; i < 6; ++i)
+		{
+			prefilterCubemapShader.SetUniform("uClipFromModel", uClipFromView * ViewFromModel[i]);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			
+			glBindVertexArray(RDI->PrimitivesCube->VAO);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+			glBindVertexArray(0);
+		}
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap prefiltered cubemap captured");
 }
 
 void TiledForwardRenderer::CreateLightBuffers(const ScreenSize& size)
@@ -469,7 +608,7 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 
 	RenderOpaqueLit(sceneView);
 
-	RenderSkybox(sceneView.world, sceneView.cameraCmp);
+	RenderSkybox(sceneView);
 
 	RenderEquiCube(sceneView);
 
@@ -680,6 +819,14 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 				glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
 				lightAccumulationShader.SetUniform("uIrradianceMap", 3);
 
+				glActiveTexture(GL_TEXTURE4);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+				lightAccumulationShader.SetUniform("uPrefilterMap", 4);
+
+				glActiveTexture(GL_TEXTURE5);
+				glBindTexture(GL_TEXTURE_2D, preintegratedBrdfLUT);
+				lightAccumulationShader.SetUniform("uBrdfLUT", 5);
+
 				glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 				++i;
 			}
@@ -701,13 +848,15 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void TiledForwardRenderer::RenderSkybox(World* world, const CameraComponent* cameraCmp)
+void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 {
+	float Time = (float)(sceneView.world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
+
 	// const SkyboxWorldComponent* SkyboxWorldCmp = world->GetWorldComponent<SkyboxWorldComponent>();
 	// if (SkyboxWorldCmp != nullptr)
 	// {
-		const Matrix ClipFromView = cameraCmp->GetClipFromView();
-		Matrix ViewFromWorld = cameraCmp->GetViewFromWorld();
+		const Matrix ClipFromView = sceneView.cameraCmp->GetClipFromView();
+		Matrix ViewFromWorld = sceneView.cameraCmp->GetViewFromWorld();
 		// center cube in view space by setting translation to 0 for x, y and z.
 		// SetTranslation resets Matrix to identity
 		ViewFromWorld.Data[3] = 0.0f;
@@ -718,6 +867,7 @@ void TiledForwardRenderer::RenderSkybox(World* world, const CameraComponent* cam
 
 		SkyboxShader.BindProgram();
 		SkyboxShader.SetUniform("uClipFromWorld", ClipFromWorld);
+		// SkyboxShader.SetUniform("uTime", Time);
 
 		// GLuint CubemapID = static_cast<const GLCubemapDeviceProxy*>(SkyboxWorldCmp->GetCubemap().GetTextureProxy())->GetTextureID();
 
@@ -731,8 +881,9 @@ void TiledForwardRenderer::RenderSkybox(World* world, const CameraComponent* cam
 
 		glActiveTexture(GL_TEXTURE0);
 		// glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapID);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+		// glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
 		// glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
 
 		glBindVertexArray(RDI->PrimitivesCube->VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
