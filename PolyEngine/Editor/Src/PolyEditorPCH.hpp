@@ -38,6 +38,7 @@ UNSILENCE_MSVC_WARNING()
 // widgets
 #include "Widgets/PolyWidget.hpp"
 
+#include "Widgets/ViewportWidget.hpp"
 #include "Widgets/LoggerWidget.hpp"
 
 #include "Widgets/Inspectors/WorldInspectorWidget.hpp"
