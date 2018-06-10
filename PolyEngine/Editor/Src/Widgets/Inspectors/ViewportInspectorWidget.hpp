@@ -23,8 +23,8 @@ public:
 	void SetAssetsPathConfigPath(const String& path) override { AssetsPathConfigPath = path; }
 	void Init() override;
 	void Deinit() override;
-	virtual const Dynarray<UniqueID>& GetSelectedEntitiesIds() override;
-	virtual void SetSelectedEntitiesIds(Dynarray<UniqueID>) override;
+	virtual const Dynarray<Entity*>& GetSelectedEntities() override;
+	virtual void SetSelectedEntities(Dynarray<Entity*>) override;
 	virtual void UpdateInspectors() override;
 
 private:

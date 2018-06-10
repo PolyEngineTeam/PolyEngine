@@ -4,6 +4,8 @@
 
 namespace Poly
 {
+	class Entity;
+
 	enum class eEngineState
 	{
 		EDIT,
@@ -28,10 +30,10 @@ namespace Poly
 		virtual void Deinit() = 0;
 
 		// Get all ID's of currently selected entties.
-		virtual const Dynarray<UniqueID>& GetSelectedEntitiesIds() = 0;
+		virtual const Dynarray<Entity*>& GetSelectedEntities() = 0;
 		
 		// Set entities selection.
-		virtual void SetSelectedEntitiesIds(Dynarray<UniqueID>) = 0;
+		virtual void SetSelectedEntities(Dynarray<Entity*>) = 0;
 
 		// If we are in edit mode and user used gizmo then this method is called.
 		virtual void UpdateInspectors() = 0;

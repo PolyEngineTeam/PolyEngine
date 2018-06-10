@@ -14,6 +14,7 @@ void EditorCameraMovementSystem::Update(World* world)
 		EditorCameraMovementComponent* freeFloatMovementCmp = std::get<EditorCameraMovementComponent*>(freeFloatTuple);
 		EntityTransform& trans = freeFloatMovementCmp->GetTransform();
 
+		// move
 		int wheelDelta = inputCmp->GetWheelPosDelta().Y;
 		float speed = freeFloatMovementCmp->GetMovementSpeed();
 		speed = Clamp(speed + wheelDelta, 0.001f, 10000.0f);
@@ -42,7 +43,8 @@ void EditorCameraMovementSystem::Update(World* world)
 
 		trans.SetLocalTranslation(trans.GetLocalTranslation() + trans.GetLocalRotation() * move);
 
-		if (inputCmp->IsPressed(eMouseButton::LEFT))
+		// rotate
+		if (inputCmp->IsPressed(eMouseButton::MIDDLE))
 		{
 			Vector2i delta = inputCmp->GetMousePosDelta();
 
@@ -54,6 +56,22 @@ void EditorCameraMovementSystem::Update(World* world)
 				rot.Normalize();
 				trans.SetLocalRotation(rot);
 			}
+		}
+
+		// TODO(squares): implement this
+		// pane
+		if (inputCmp->IsPressed(eMouseButton::RIGHT))
+		{
+			//Vector2i delta = inputCmp->GetMousePosDelta();
+			//
+			//Quaternion rot = Quaternion(Vector::UNIT_Y, Angle::FromRadians(-delta.X * freeFloatMovementCmp->GetAngularVelocity()));
+			//rot *= trans.GetLocalRotation();
+			//rot *= Quaternion(Vector::UNIT_X, Angle::FromRadians(-delta.Y * freeFloatMovementCmp->GetAngularVelocity()));
+			//
+			//if (rot != Quaternion()) {
+			//	rot.Normalize();
+			//	trans.SetLocalRotation(rot);
+			//}
 		}
 	}
 }

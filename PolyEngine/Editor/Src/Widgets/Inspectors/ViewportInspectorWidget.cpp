@@ -80,6 +80,7 @@ void ViewportInspectorWidget::Init()
 	if (EngineState == eEngineState::EDIT)
 	{
 		gEngine->RegisterEditorUpdatePhase(EditorCameraMovementSystem::Update);
+		gEngine->RegisterEditorUpdatePhase(GizmoSystem::Update);
 
 		// create camera
 		// create entity
@@ -94,8 +95,6 @@ void ViewportInspectorWidget::Init()
 		DeferredTaskSystem::AddComponentImmediate<PostprocessSettingsComponent>(gEngine->GetWorld(), Camera);
 		gEngine->GetWorld()->GetComponent<PostprocessSettingsComponent>(Camera)->UseFgShader = true;
 		gEngine->GetWorld()->GetComponent<PostprocessSettingsComponent>(Camera)->UseBgShader = true;
-	
-		//Engine->GetWorld()->GetWorldComponent<TimeWorldComponent>()->SetPaused(true);
 	}
 }
 
@@ -106,13 +105,13 @@ void ViewportInspectorWidget::Deinit()
 }
 
 // ---------------------------------------------------------------------------------------------------------
-const Dynarray<UniqueID>& ViewportInspectorWidget::GetSelectedEntitiesIds()
+const Dynarray<Entity*>& ViewportInspectorWidget::GetSelectedEntities()
 {
-	return *new Dynarray<UniqueID>();
+	return *new Dynarray<Entity*>();
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void ViewportInspectorWidget::SetSelectedEntitiesIds(Dynarray<UniqueID>)
+void ViewportInspectorWidget::SetSelectedEntities(Dynarray<Entity*>)
 {
 }
 

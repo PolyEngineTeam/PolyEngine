@@ -145,6 +145,8 @@ namespace Poly
 		/// <returns>Pointer to current world.</returns>
 		World* GetWorld() { return BaseWorld.get(); }
 
+		IEditor* GetEditor() { return Editor; }
+
 		/// <summary>Returns pointer to rendering device.</summary>
 		/// <returns>Pointer to IRenderingDevice instance.</returns>
 		IRenderingDevice* GetRenderingDevice() const { return RenderingDevice.get(); }
