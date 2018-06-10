@@ -5,12 +5,12 @@
 #endif
 
 in VERTEX_OUT{
-	vec3 positionInWorld;
-	vec2 UV;
-	vec3 normal;
-	mat3 TBN;
-	vec3 tangentViewPosition;
-	vec3 tangentFragmentPosition;
+    vec3 positionInWorld;
+    vec2 uv;
+    vec3 normalInModel;
+    mat3 tangentFromWorld;
+    vec3 viewPositionInTangent;
+    vec3 fragmentPositionInTangent;
 } fragment_in;
 
 
@@ -63,6 +63,8 @@ uniform Material uMaterial;
 // uniform DirectionalLight uDirectionalLight[MAX_DIRLIGHT_COUNT];
 uniform DirectionalLight uDirectionalLight[8];
 uniform int uDirectionalLightCount;
+
+// uniform mat4 uWorldFromModel;
 
 uniform int uLightCount;
 uniform int uWorkGroupsX;
@@ -121,9 +123,9 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 void main()
 {
     vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
-    vec4 albedo = uMaterial.Albedo * texture(uAlbedoMap, fragment_in.UV);
-	float roughness = uMaterial.Roughness * texture(uSpecularMap, fragment_in.UV).r;
-    vec3 normal = texture(uNormalMap, fragment_in.UV).rgb;
+    vec4 albedo = uMaterial.Albedo * texture(uAlbedoMap, fragment_in.uv);
+	float roughness = uMaterial.Roughness * texture(uSpecularMap, fragment_in.uv).r;
+    vec3 normal = texture(uNormalMap, fragment_in.uv).rgb;
 
 	// oColor.rgb = diffuse.rgb; return;
     // oColor.rgb = normal; return;
@@ -136,9 +138,11 @@ void main()
         discard;
     }
     
+    mat3 WorldFromTangent = inverse(fragment_in.tangentFromWorld);
+
     vec3 N = normal;
-    vec3 V = normalize(fragment_in.tangentViewPosition - fragment_in.tangentFragmentPosition);
-    vec3 R = reflect(-V, N);
+    vec3 V = normalize(fragment_in.viewPositionInTangent - fragment_in.fragmentPositionInTangent);
+    vec3 R = WorldFromTangent * reflect(-V, N);
 
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
 	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
@@ -162,8 +166,8 @@ void main()
 
 		// light attenuation based on Real Shading in Unreal Engine 4 http://gamedevs.org/uploads/real-shading-in-unreal-engine-4.pdf
 		// calculate per-light radiance
-		vec3 tangentLightPosition = fragment_in.TBN * light.Position.xyz;
-		vec3 L = normalize(tangentLightPosition - fragment_in.tangentFragmentPosition);
+		vec3 tangentLightPosition = fragment_in.tangentFromWorld * light.Position.xyz;
+        vec3 L = normalize(tangentLightPosition - fragment_in.fragmentPositionInTangent);
 		// vec3 L = normalize(light.Position.xyz - fragment_in.positionInWorld);
 		vec3 H = normalize(V + L);		
 		float range = light.RangeIntensity.x;
@@ -204,7 +208,7 @@ void main()
 	for (int i = 0; i < uDirectionalLightCount; ++i)
 	{
 		DirectionalLight dirLight = uDirectionalLight[i];
-		vec3 tangentLightDir = fragment_in.TBN * dirLight.Direction.xyz;
+		vec3 tangentLightDir = fragment_in.tangentFromWorld * dirLight.Direction.xyz;
 		vec3 L = normalize(tangentLightDir);
 		vec3 H = normalize(L + V);
 
@@ -256,6 +260,5 @@ void main()
     oColor.rgb = ambient + Lo;
 	// oColor.rgb = ambient + vec3(uMaterial.Albedo.r, uMaterial.Metallic, uMaterial.Roughness);
 
-    mat3 WorldFromTangent = inverse(fragment_in.TBN);
     oNormal.rgb = (WorldFromTangent * normal) * 0.5 + 0.5;
 }
