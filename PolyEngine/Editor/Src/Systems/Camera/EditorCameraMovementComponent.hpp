@@ -1,20 +1,20 @@
 #pragma once
 
 #include "ECS/ComponentBase.hpp"
-#include "Systems/Camera/EditorCameraSystem.hpp"
+#include "Systems/Camera/EditorCameraMovementSystem.hpp"
 
 using namespace Poly;
 
-class EditorCameraComponent : public ComponentBase
+class EditorCameraMovementComponent : public ComponentBase
 {
-	RTTI_DECLARE_TYPE_DERIVED(EditorCameraComponent, ComponentBase)
+	RTTI_DECLARE_TYPE_DERIVED(EditorCameraMovementComponent, ComponentBase)
 	{
 		NO_RTTI_PROPERTY()
 	}
 
-	friend void EditorCameraSystem::Update(World*);
+	friend void EditorCameraMovementSystem::Update(World*);
 public:
-	EditorCameraComponent(float movementSpeed = 1.0f, float rotationSpeed = 1.0f);
+	EditorCameraMovementComponent(float movementSpeed = 1.0f, float rotationSpeed = 1.0f);
 
 	float GetMovementSpeed() const { return MovementSpeed; }
 	void SetMovementSpeed(float value) { MovementSpeed = value; }

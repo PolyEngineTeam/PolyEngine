@@ -10,7 +10,7 @@ namespace Poly
 	
 using namespace Poly;
 
-namespace EditorCameraSystem
+namespace EditorCameraMovementSystem
 {
 	void Update(World* world);
 

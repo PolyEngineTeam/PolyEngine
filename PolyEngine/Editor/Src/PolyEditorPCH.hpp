@@ -74,8 +74,8 @@ UNSILENCE_MSVC_WARNING()
 #include "Systems/Gizmo/GizmoSystem.hpp"
 #include "Systems/Gizmo/GizmoWorldComponent.hpp"
 
-#include "Systems/Camera/EditorCameraSystem.hpp"
-#include "Systems/Camera/EditorCameraComponent.hpp"
+#include "Systems/Camera/EditorCameraMovementSystem.hpp"
+#include "Systems/Camera/EditorCameraMovementComponent.hpp"
 
 // engine
 #include <Engine.hpp>

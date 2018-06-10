@@ -4,14 +4,14 @@
 #include "Input/InputWorldComponent.hpp"
 
 //------------------------------------------------------------------------------
-void EditorCameraSystem::Update(World* world)
+void EditorCameraMovementSystem::Update(World* world)
 {
 	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
 	InputWorldComponent* inputCmp = world->GetWorldComponent<InputWorldComponent>();
 
-	for (auto freeFloatTuple : world->IterateComponents<EditorCameraComponent>())
+	for (auto freeFloatTuple : world->IterateComponents<EditorCameraMovementComponent>())
 	{
-		EditorCameraComponent* freeFloatMovementCmp = std::get<EditorCameraComponent*>(freeFloatTuple);
+		EditorCameraMovementComponent* freeFloatMovementCmp = std::get<EditorCameraMovementComponent*>(freeFloatTuple);
 		EntityTransform& trans = freeFloatMovementCmp->GetTransform();
 
 		int wheelDelta = inputCmp->GetWheelPosDelta().Y;
@@ -59,37 +59,37 @@ void EditorCameraSystem::Update(World* world)
 }
 
 //------------------------------------------------------------------------------
-Vector EditorCameraSystem::GetLocalForward(const EntityTransform& transform)
+Vector EditorCameraMovementSystem::GetLocalForward(const EntityTransform& transform)
 {
 	return transform.GetLocalRotation() * -Vector::UNIT_Z;
 }
 
 //------------------------------------------------------------------------------
-Vector EditorCameraSystem::GetLocalRight(const EntityTransform& transform)
+Vector EditorCameraMovementSystem::GetLocalRight(const EntityTransform& transform)
 {
 	return transform.GetLocalRotation() * Vector::UNIT_X;
 }
 
 //------------------------------------------------------------------------------
-Vector EditorCameraSystem::GetLocalUp(const EntityTransform& transform)
+Vector EditorCameraMovementSystem::GetLocalUp(const EntityTransform& transform)
 {
 	return transform.GetLocalRotation() * Vector::UNIT_Y;
 }
 
 //------------------------------------------------------------------------------
-Vector EditorCameraSystem::GetGlobalForward(const EntityTransform& transform)
+Vector EditorCameraMovementSystem::GetGlobalForward(const EntityTransform& transform)
 {
 	return transform.GetGlobalRotation() * -Vector::UNIT_Z;
 }
 
 //------------------------------------------------------------------------------
-Vector EditorCameraSystem::GetGlobalRight(const EntityTransform& transform)
+Vector EditorCameraMovementSystem::GetGlobalRight(const EntityTransform& transform)
 {
 	return transform.GetGlobalRotation() * Vector::UNIT_X;
 }
 
 //------------------------------------------------------------------------------
-Vector EditorCameraSystem::GetGlobalUp(const EntityTransform& transform)
+Vector EditorCameraMovementSystem::GetGlobalUp(const EntityTransform& transform)
 {
 	return transform.GetGlobalRotation() * Vector::UNIT_Y;
 }

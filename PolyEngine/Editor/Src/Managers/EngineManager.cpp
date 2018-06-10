@@ -96,12 +96,18 @@ void EngineManager::UpdatePhase()
 {
 	Dynarray<Engine::eUpdatePhaseOrder> updatePhases;
 
-	//updatePhases.PushBack(Engine::eUpdatePhaseOrder::PREUPDATE);
-	//updatePhases.PushBack(Engine::eUpdatePhaseOrder::EDITOR);
-	//updatePhases.PushBack(Engine::eUpdatePhaseOrder::POSTUPDATE);
-
 	if (Editor->GetEngineState() == eEngineState::EDIT)
-		Engine->Update(updatePhases);
+	{
+		updatePhases.PushBack(Engine::eUpdatePhaseOrder::PREUPDATE);
+		updatePhases.PushBack(Engine::eUpdatePhaseOrder::EDITOR);
+		updatePhases.PushBack(Engine::eUpdatePhaseOrder::POSTUPDATE);
+	}
 	else
-		Engine->Update();
+	{
+		updatePhases.PushBack(Engine::eUpdatePhaseOrder::PREUPDATE);
+		updatePhases.PushBack(Engine::eUpdatePhaseOrder::UPDATE);
+		updatePhases.PushBack(Engine::eUpdatePhaseOrder::POSTUPDATE);
+	}
+
+	Engine->Update(updatePhases);
 }

@@ -39,6 +39,8 @@ private:
 	void keyPressEvent(QKeyEvent* keyEvent) override;
 	void keyReleaseEvent(QKeyEvent* keyEvent) override;
 
+	Entity* Camera = nullptr;
+
 	QWidget* SDLWidget;
 	CustomSDLWindow WindowInSDL;
 };

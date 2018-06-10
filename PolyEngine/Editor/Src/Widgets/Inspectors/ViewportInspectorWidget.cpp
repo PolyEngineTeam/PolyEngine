@@ -79,11 +79,13 @@ void ViewportInspectorWidget::Init()
 {
 	if (EngineState == eEngineState::EDIT)
 	{
+		gEngine->RegisterEditorUpdatePhase(EditorCameraMovementSystem::Update);
+
 		// create camera
 		// create entity
-		Entity* Camera = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
+		Camera = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
 		// add free float movement component
-		DeferredTaskSystem::AddComponentImmediate<FreeFloatMovementComponent>(gEngine->GetWorld(), Camera, 25.f, 0.01f);
+		DeferredTaskSystem::AddComponentImmediate<EditorCameraMovementComponent>(gEngine->GetWorld(), Camera, 25.f, 0.01f);
 		// add camera component
 		DeferredTaskSystem::AddComponentImmediate<CameraComponent>(gEngine->GetWorld(), Camera, 60_deg, 1.0f, 1000.f);
 		// set camera in world component
@@ -100,6 +102,7 @@ void ViewportInspectorWidget::Init()
 // ---------------------------------------------------------------------------------------------------------
 void ViewportInspectorWidget::Deinit()
 {
+	DeferredTaskSystem::DestroyEntityImmediate(gEngine->GetWorld(), Camera);
 }
 
 // ---------------------------------------------------------------------------------------------------------
