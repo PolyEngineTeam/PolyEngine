@@ -15,9 +15,6 @@ class ViewportInspectorWidget : public PolyWidget, public IEditor
 public:
 	ViewportInspectorWidget(QWidget* parent);
 
-	// inspector functions
-	void SetObject(Entity* entity);
-
 	// viewport functions
 	std::unique_ptr<IRenderingDevice> GetRenderingDevice();
 
