@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Windows/PolyMainWindow.hpp"
-#include "Widgets/ViewportWidget.hpp"
 #include "Widgets/LoggerWidget.hpp"
 
 class WorldInspectorWidget;
