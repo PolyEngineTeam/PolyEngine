@@ -809,7 +809,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 				const TextureResource* SpecularTexture = subMesh->GetMeshData().GetSpecularMap();
 				GLuint SpecularID = SpecularTexture == nullptr
-					? RDI->FallbackWhiteTexture
+					? RDI->FallbackBlackTexture
 					: static_cast<const GLTextureDeviceProxy*>(SpecularTexture->GetTextureProxy())->GetTextureID();
 				glActiveTexture(GL_TEXTURE2);
 				glBindTexture(GL_TEXTURE_2D, SpecularID);

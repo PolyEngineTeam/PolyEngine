@@ -127,14 +127,24 @@ void GLRenderingDevice::CreateUtilityTextures()
 {
 	gConsole.LogInfo("GLRenderingDevice::CreateUtilityTextures");
 
-	GLubyte data[] = { 255, 255, 255, 255 };
+	GLubyte dataWhite[] = { 255, 255, 255, 255 };
 	glGenTextures(1, &FallbackWhiteTexture);
 	glBindTexture(GL_TEXTURE_2D, FallbackWhiteTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, dataWhite);
+	CHECK_GL_ERR();
+
+	GLubyte dataBlack[] = { 0, 0, 0, 0 };
+	glGenTextures(1, &FallbackBlackTexture);
+	glBindTexture(GL_TEXTURE_2D, FallbackBlackTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, dataBlack);
 	CHECK_GL_ERR();
 
 	GLubyte dataDefaultNormal[] = { 128, 128, 255 };

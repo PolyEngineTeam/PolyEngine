@@ -124,7 +124,7 @@ void main()
 {
     vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
     vec4 albedo = uMaterial.Albedo * texture(uAlbedoMap, fragment_in.uv);
-	float roughness = uMaterial.Roughness * texture(uSpecularMap, fragment_in.uv).r;
+    float roughness = uMaterial.Roughness * (1.0f - texture(uSpecularMap, fragment_in.uv).r);
     vec3 normal = texture(uNormalMap, fragment_in.uv).rgb;
 
 	// oColor.rgb = diffuse.rgb; return;

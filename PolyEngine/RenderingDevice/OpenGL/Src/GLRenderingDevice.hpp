@@ -94,6 +94,7 @@ namespace Poly
 		std::unique_ptr<PrimitiveCube> PrimitivesCube;
 
 		GLuint FallbackWhiteTexture;
+		GLuint FallbackBlackTexture;
 		GLuint FallbackNormalMap;
 		GLuint SSAONoiseMap;
 
