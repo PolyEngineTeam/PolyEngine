@@ -169,7 +169,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 			glBindVertexArray(meshProxy->GetVAO());
 
-			const Poly::TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
+			const Poly::TextureResource* DiffuseTexture = subMesh->GetMeshData().GetAlbedoMap();
 			GLuint TextureID = DiffuseTexture == nullptr
 				? RDI->FallbackWhiteTexture
 				: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
@@ -178,7 +178,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 			glBindTexture(GL_TEXTURE_2D, TextureID);
 			GetProgram().SetUniform("uDiffuseTexture", 0);
 
-			const Poly::TextureResource* SpecularMap = subMesh->GetMeshData().GetSpecularMap();
+			const Poly::TextureResource* SpecularMap = subMesh->GetMeshData().GetRoughnessMap();
 			GLuint SpecularMapID = SpecularMap == nullptr
 				? RDI->FallbackWhiteTexture
 				: static_cast<const GLTextureDeviceProxy*>(SpecularMap->GetTextureProxy())->GetTextureID();

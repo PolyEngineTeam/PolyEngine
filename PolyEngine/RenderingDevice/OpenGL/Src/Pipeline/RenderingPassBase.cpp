@@ -255,7 +255,7 @@ Poly::DepthRenderingTarget::DepthRenderingTarget()
 
 Poly::Texture2DInputTarget::Texture2DInputTarget(const String & path)
 {
-	Texture = ResourceManager<TextureResource>::Load(path, eResourceSource::ENGINE, eTextureUsageType::DIFFUSE);
+	Texture = ResourceManager<TextureResource>::Load(path, eResourceSource::ENGINE, eTextureUsageType::ALBEDO);
 }
 
 Poly::Texture2DInputTarget::~Texture2DInputTarget()

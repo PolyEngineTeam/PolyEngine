@@ -26,8 +26,11 @@ namespace Poly
 	//------------------------------------------------------------------------------
 	enum class eTextureUsageType
 	{
-		DIFFUSE,
-		SPECULAR,
+		ALBEDO,
+		METALLIC,
+		ROUGHNESS,
+		AMBIENT_OCCLUSION,
+		EMISSIVE,
 		NORMAL,
 		FONT,
 		_COUNT

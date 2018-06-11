@@ -10,6 +10,7 @@
 
 struct aiMesh;
 struct aiMaterial;
+enum aiTextureType;
 
 typedef unsigned int GLuint;
  
@@ -22,6 +23,9 @@ namespace Poly
 		{
 		public:
 			SubMesh(const String& path, aiMesh* mesh, aiMaterial* material);
+
+			void LoadGeometry(aiMesh* mesh);
+			TextureResource* LoadTexture(aiMaterial* material, const String& path, aiTextureType aiType, eTextureUsageType textureType);
 
 			const Mesh& GetMeshData() const { return MeshData; }
 			const IMeshDeviceProxy* GetMeshProxy() const { return MeshProxy.get(); }

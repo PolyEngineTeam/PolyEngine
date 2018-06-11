@@ -12,7 +12,6 @@ namespace Poly {
 		TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInterface);
 		
 		void Init() override;
-		void PreintegrateBRDF();
 		void Resize(const ScreenSize& size) override;
 		void Render(const SceneView& sceneView) override;
 		void Deinit() override;
@@ -81,6 +80,8 @@ namespace Poly {
 		void CaptureDifuseIrradiance();
 
 		void CaptureSpecularPrefilteredMap();
+
+		void CapturePreintegratedBRDF();
 
 		void CreateLightBuffers(const ScreenSize& size);
 		

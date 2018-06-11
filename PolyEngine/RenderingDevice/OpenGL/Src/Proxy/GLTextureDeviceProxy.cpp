@@ -25,12 +25,14 @@ static GLenum GetGLInternalFormat(eTextureUsageType usage) noexcept
 {
 	switch (usage)
 	{
-	case Poly::eTextureUsageType::DIFFUSE:
+	case Poly::eTextureUsageType::ALBEDO:
 		return GL_RGBA;
+	case Poly::eTextureUsageType::EMISSIVE:
 	case Poly::eTextureUsageType::NORMAL:
 		return GL_RGB;
-	case Poly::eTextureUsageType::SPECULAR:
-		return GL_RED;
+	case Poly::eTextureUsageType::METALLIC:
+	case Poly::eTextureUsageType::ROUGHNESS:
+	case Poly::eTextureUsageType::AMBIENT_OCCLUSION:
 	case Poly::eTextureUsageType::FONT:
 		return GL_RED;
 	default:

@@ -32,13 +32,13 @@ namespace Poly {
 	struct ENGINE_DLLEXPORT PBRMaterial
 	{
 		PBRMaterial()
-			: AmbientColor(1.0f, 1.0f, 1.0f), AlbedoColor(1.0f, 1.0f, 1.0f), Roughness(0.5f), Metallic(0.0f) {}
+			: Emissive(0.0f, 0.0f, 0.0f), Albedo(1.0f, 1.0f, 1.0f), Roughness(1.0f), Metallic(1.0f) {}
 
-		PBRMaterial(const Color& ambient, const Color& diffuse, float roughness, float metallic)
-			: AmbientColor(ambient), AlbedoColor(diffuse), Roughness(roughness), Metallic(metallic) {}
+		PBRMaterial(const Color& emissive, const Color& albedo, float roughness, float metallic)
+			: Emissive(emissive), Albedo(albedo), Roughness(roughness), Metallic(metallic) {}
 
-		Color AmbientColor;
-		Color AlbedoColor;
+		Color Emissive;
+		Color Albedo;
 		float Roughness;
 		float Metallic;
 	};

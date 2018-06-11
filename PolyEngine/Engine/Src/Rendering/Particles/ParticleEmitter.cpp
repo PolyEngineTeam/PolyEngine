@@ -11,7 +11,7 @@ ParticleEmitter::ParticleEmitter(const Settings& settings)
 	Spritesheet = ResourceManager<TextureResource>::Load(
 		settings.SpritesheetSettings.SpritePath,
 		settings.SpritesheetSettings.Source,
-		eTextureUsageType::DIFFUSE
+		eTextureUsageType::ALBEDO
 	);
 	ParticleProxy = gEngine->GetRenderingDevice()->CreateParticle();
 }
