@@ -98,7 +98,7 @@ void TiledForwardRenderer::Init()
 
 	CaptureSpecularPrefilteredMap();
 
-	PreintegrateBRDF();
+	CapturePreintegratedBRDF();
 
 	CreateRenderTargets(screenSize);
 
@@ -111,48 +111,6 @@ void TiledForwardRenderer::Init()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-}
-
-void TiledForwardRenderer::PreintegrateBRDF()
-{
-	// Create texture resource
-	gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Create texture resource");
-	glGenTextures(1, &preintegratedBrdfLUT);
-	glBindTexture(GL_TEXTURE_2D, preintegratedBrdfLUT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
-	CHECK_GL_ERR();
-
-	// Create FBO for BRDF preintegration
-	gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Create capture FBO");
-	GLuint captureFBO;
-	GLuint captureRBO;
-	glGenFramebuffers(1, &captureFBO);
-	glGenRenderbuffers(1, &captureRBO);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-	gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Capture FBO created");
-
-	// Render preintegrated BRDF
-	gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Render preintegrated BRDF");
-	glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
-	integrateBRDFShader.BindProgram();
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, preintegratedBrdfLUT, 0);	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glBindVertexArray(RDI->PrimitivesQuad->VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindVertexArray(0);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap preintegrated BRDF rendered");
 }
 
 void TiledForwardRenderer::LoadHDR()
@@ -409,6 +367,48 @@ void TiledForwardRenderer::CaptureSpecularPrefilteredMap()
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap prefiltered cubemap captured");
+}
+
+void TiledForwardRenderer::CapturePreintegratedBRDF()
+{
+	// Create texture resource
+	gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Create texture resource");
+	glGenTextures(1, &preintegratedBrdfLUT);
+	glBindTexture(GL_TEXTURE_2D, preintegratedBrdfLUT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
+	CHECK_GL_ERR();
+
+	// Create FBO for BRDF preintegration
+	gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Create capture FBO");
+	GLuint captureFBO;
+	GLuint captureRBO;
+	glGenFramebuffers(1, &captureFBO);
+	glGenRenderbuffers(1, &captureRBO);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+	gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Capture FBO created");
+
+	// Render preintegrated BRDF
+	gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Render preintegrated BRDF");
+	glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
+	integrateBRDFShader.BindProgram();
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, preintegratedBrdfLUT, 0);	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glBindVertexArray(RDI->PrimitivesQuad->VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap preintegrated BRDF rendered");
 }
 
 void TiledForwardRenderer::CreateLightBuffers(const ScreenSize& size)
