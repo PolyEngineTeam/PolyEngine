@@ -10,6 +10,7 @@
 #include <ECS/DeferredTaskSystem.hpp>
 #include <SDL.h>
 
+// ---------------------------------------------------------------------------------------------------------
 extern "C"
 {
 	using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (SDL_Window*, const Poly::ScreenSize&);
@@ -26,7 +27,8 @@ const static Angle PLAYER_CAMERA_FOV = 60_deg;
 // ---------------------------------------------------------------------------------------------------------
 ViewportInspectorWidget::ViewportInspectorWidget(QWidget* parent)
 {
-	//connect(gApp->InspectorMgr, &InspectorManager::EngineInitialized, this, &ViewportInspectorWidget::SetObject);
+	connect(gApp->InspectorMgr->WorldInspector, &WorldInspectorWidget::EntitySelected, this, &ViewportInspectorWidget::SetObject);
+	connect(gApp->InspectorMgr->WorldInspector, &WorldInspectorWidget::EntityDeselected, this, &ViewportInspectorWidget::Reset);
 
 	setAttribute(Qt::WA_NativeWindow);
 	setMouseTracking(true);
@@ -52,6 +54,13 @@ ViewportInspectorWidget::ViewportInspectorWidget(QWidget* parent)
 	ASSERTE(!WindowInSDL.IsValid(), "Window already initialized!");
 	WindowInSDL = CustomSDLWindow::CreateSDLWindowFromArgs((void*)SDLWidget->winId(), SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	ASSERTE(WindowInSDL.IsValid(), "Window creation failed!");
+}
+
+// ---------------------------------------------------------------------------------------------------------
+void ViewportInspectorWidget::SetObject(Entity* entity)
+{
+	Entities.Clear();
+	Entities.PushBack(entity);
 }
 
 // ---------------------------------------------------------------------------------------------------------
@@ -105,13 +114,7 @@ void ViewportInspectorWidget::Deinit()
 }
 
 // ---------------------------------------------------------------------------------------------------------
-const Dynarray<Entity*>& ViewportInspectorWidget::GetSelectedEntities()
-{
-	return *new Dynarray<Entity*>();
-}
-
-// ---------------------------------------------------------------------------------------------------------
-void ViewportInspectorWidget::SetSelectedEntities(Dynarray<Entity*>)
+void ViewportInspectorWidget::SetSelectedEntities(Dynarray<Entity*> entities)
 {
 }
 
@@ -223,4 +226,9 @@ void ViewportInspectorWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 		keyEvent->ignore();
 	else
 		Poly::gEngine->KeyUp(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
+}
+
+// ---------------------------------------------------------------------------------------------------------
+void ViewportInspectorWidget::Reset()
+{
 }

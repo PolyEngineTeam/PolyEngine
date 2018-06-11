@@ -15,6 +15,8 @@ class ViewportInspectorWidget : public PolyWidget, public IEditor
 public:
 	ViewportInspectorWidget(QWidget* parent);
 
+	void SetObject(Entity* entity);
+
 	// viewport functions
 	std::unique_ptr<IRenderingDevice> GetRenderingDevice();
 
@@ -23,12 +25,12 @@ public:
 	void SetAssetsPathConfigPath(const String& path) override { AssetsPathConfigPath = path; }
 	void Init() override;
 	void Deinit() override;
-	virtual const Dynarray<Entity*>& GetSelectedEntities() override;
+	virtual const Dynarray<Entity*>& GetSelectedEntities() override { return Entities; }
 	virtual void SetSelectedEntities(Dynarray<Entity*>) override;
 	virtual void UpdateInspectors() override;
 
 private:
-	Entity* Entities;
+	Dynarray<Entity*> Entities;
 	String AssetsPathConfigPath;
 
 	void resizeEvent(QResizeEvent* resizeEvent) override;
@@ -43,4 +45,7 @@ private:
 
 	QWidget* SDLWidget;
 	CustomSDLWindow WindowInSDL;
+
+//private slots:
+	void Reset();
 };
