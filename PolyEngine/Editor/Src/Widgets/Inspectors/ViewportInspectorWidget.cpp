@@ -114,11 +114,6 @@ void ViewportInspectorWidget::Deinit()
 }
 
 // ---------------------------------------------------------------------------------------------------------
-void ViewportInspectorWidget::SetSelectedEntities(Dynarray<Entity*> entities)
-{
-}
-
-// ---------------------------------------------------------------------------------------------------------
 void ViewportInspectorWidget::UpdateInspectors()
 {
 }
@@ -231,4 +226,5 @@ void ViewportInspectorWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 // ---------------------------------------------------------------------------------------------------------
 void ViewportInspectorWidget::Reset()
 {
+	Entities.Clear();
 }

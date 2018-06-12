@@ -26,7 +26,7 @@ public:
 	void Init() override;
 	void Deinit() override;
 	virtual const Dynarray<Entity*>& GetSelectedEntities() override { return Entities; }
-	virtual void SetSelectedEntities(Dynarray<Entity*>) override;
+	virtual void SetSelectedEntities(Dynarray<Entity*> entities) override { Entities = std::move(entities); }
 	virtual void UpdateInspectors() override;
 
 private:
@@ -46,6 +46,6 @@ private:
 	QWidget* SDLWidget;
 	CustomSDLWindow WindowInSDL;
 
-//private slots:
+private slots:
 	void Reset();
 };
