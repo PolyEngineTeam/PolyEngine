@@ -40,10 +40,11 @@ namespace Poly {
 
 		GLShaderProgram depthShader;
 		GLShaderProgram lightCullingShader;
-		GLShaderProgram lightAccumulationShader;
+		GLShaderProgram LightAccumulationShader;
 		GLShaderProgram hdrShader;
 		GLShaderProgram SkyboxShader;
 		GLShaderProgram SSAOShader;
+		GLShaderProgram LinearizeDepthShader;
 		GLShaderProgram GammaShader;
 		GLShaderProgram ParticleShader;
 		GLShaderProgram TranslucentShader;
@@ -55,19 +56,23 @@ namespace Poly {
 		GLShaderProgram debugLightAccumShader;
 		GLShaderProgram debugQuadDepthPrepassShader;
 
+		// Render Targets
 		GLuint preDepthBuffer;
 		GLuint colorBuffer;
 		GLuint normalBuffer;
 		GLuint rboDepth;
 		GLuint postColorBuffer0;
 		GLuint postColorBuffer1;
+		GLuint linearDepth;
 		
+		// IBL textures and cubemaps
 		GLuint hdrTexture;
 		GLuint envCubemap;
 		GLuint irradianceMap;
 		GLuint prefilterMap;
 		GLuint preintegratedBrdfLUT;
 
+		// Framebufers
 		GLuint FBOdepthMap;
 		GLuint FBOhdr;
 		GLuint FBOpost0;
@@ -109,13 +114,15 @@ namespace Poly {
 		
 		void RenderParticleUnlit(World* world, const CameraComponent* cameraCmp);
 
-		void PostTonemapper(World* world, const AARect& rect, const CameraComponent* cameraCmp);
+		void LinearizeDepth(const SceneView& sceneView);
 
-		void PostSSAO(const CameraComponent* cameraCmp);
+		void PostTonemapper(const SceneView& sceneView);
+
+		void PostSSAO(const SceneView& sceneView);
 
 		void PostGamma();
 		
-		void DebugDepthPrepass(const CameraComponent* cameraCmp);
+		void DebugDepthPrepass(const SceneView& sceneView);
 
 		void DebugLightAccum(const SceneView& sceneView);
 	};
