@@ -2,11 +2,8 @@
 
 //------------------------------------------------------------------------------
 ResourceInspectorWidget::ResourceInspectorWidget(QWidget* parent)
-	: PolyWidget(parent)
+	: InspectorWidgetBase(parent)
 {
-	connect(gApp->InspectorMgr, &InspectorManager::ProjectOpened, this, &ResourceInspectorWidget::SetObject);
-	connect(gApp->InspectorMgr, &InspectorManager::ProjectClosed, this, &ResourceInspectorWidget::Reset);
-	
 	Layout = new QGridLayout(this);
 
 	Model = new QFileSystemModel(this);
@@ -14,6 +11,22 @@ ResourceInspectorWidget::ResourceInspectorWidget(QWidget* parent)
 	Tree = new QTreeView(this);
 	Tree->setModel(Model);
 	Layout->addWidget(Tree);
+}
+
+//------------------------------------------------------------------------------
+void ResourceInspectorWidget::InitializeConnections()
+{
+	connect(gApp->InspectorMgr, &InspectorManager::ProjectOpened, this, &ResourceInspectorWidget::SetObject);
+	connect(gApp->InspectorMgr, &InspectorManager::ProjectClosed, this, &ResourceInspectorWidget::Reset);
+}
+
+//------------------------------------------------------------------------------
+void ResourceInspectorWidget::Reset()
+{
+	Config = nullptr;
+	delete Model;
+	Model = new QFileSystemModel(this);
+	Tree->setModel(Model);
 }
 
 //------------------------------------------------------------------------------
@@ -31,13 +44,4 @@ void ResourceInspectorWidget::SetObject(const ProjectConfig* config)
 	QDir dir(b.StealString().GetCStr());
 	Model->setRootPath(dir.absolutePath());
 	Tree->setRootIndex(Model->index(dir.absolutePath()));
-}
-
-//------------------------------------------------------------------------------
-void ResourceInspectorWidget::Reset()
-{
-	Config = nullptr;
-	delete Model;
-	Model = new QFileSystemModel(this);
-	Tree->setModel(Model);
 }

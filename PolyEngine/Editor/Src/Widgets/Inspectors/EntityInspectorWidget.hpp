@@ -9,7 +9,7 @@
 #include <QComboBox>
 #include <qscrollarea.h>
 
-#include "Widgets/PolyWidget.hpp"
+#include "Widgets/Inspectors/InspectorWidgetBase.hpp"
 
 class SectionContainer;
 class RTTIInspectorWidget;
@@ -20,14 +20,19 @@ using namespace Poly;
 // This widget allows user change entity and its components properties.
 // User also can add and remove any component.
 // Updates object ASAP.
-class EntityInspectorWidget : public PolyWidget
+class EntityInspectorWidget : public InspectorWidgetBase
 {
 public:
 	EntityInspectorWidget(QWidget* parent);
 
-	// TODO(squares): use list for future multiple selection support
 	// Set entity to display; updates automatically.
-	void SetObject(Entity* entity);
+	void SetSelectedEntities(Dynarray<Entity*> entities);
+
+	// Initializes object connections with other inspectors and inspector manager.
+	void InitializeConnections() override;
+
+	// Sets default empty view.
+	void Reset() override;
 
 	// Updates every field within widget from currently set entity.
 	// If there was any component added it will not show up after update.
@@ -39,7 +44,7 @@ public:
 	void ReloadInspector();
 
 private:
-	Entity* Entity;
+	Dynarray<Entity*> Entities;
 
 	QGridLayout* MainLayout;
 	QMenu* ContextMenu;
@@ -62,7 +67,4 @@ public slots:
 	void SpawnContextMenu(QPoint pos); 
 		void AddComponent(); 
 		void RemoveComponent();
-
-	// clears all fields and destroys all component sections.
-	void Reset();
 };

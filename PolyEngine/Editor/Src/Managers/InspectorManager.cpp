@@ -31,12 +31,6 @@ void InspectorManager::InitUi()
 	gApp->Ui.MainWindow->AddDockWindow(Qt::DockWidgetArea::BottomDockWidgetArea, window, true);
 	window->hide();
 
-	// prefab inspector
-	PrefabInspector = new PrefabInspectorWidget(gApp->Ui.MainWindow);
-	window = new PolyDockWindow("Prefab Inspector", PrefabInspector);
-	gApp->Ui.MainWindow->AddDockWindow(Qt::DockWidgetArea::BottomDockWidgetArea, window, true);
-	window->hide();
-
 	// viewport inspector
 	ViewportInspector = new ViewportInspectorWidget(gApp->Ui.MainWindow);
 	window = new PolyDockWindow("Viewport Inspector", ViewportInspector);
@@ -46,6 +40,13 @@ void InspectorManager::InitUi()
 	EntityInspector = new EntityInspectorWidget(gApp->Ui.MainWindow);
 	window = new PolyDockWindow("Entity Inspector", EntityInspector);
 	gApp->Ui.MainWindow->AddDockWindow(Qt::DockWidgetArea::RightDockWidgetArea, window, true);
+
+
+	WorldInspector->InitializeConnections();
+	WorldComponentsInspector->InitializeConnections();
+	ResourceInspector->InitializeConnections();
+	ViewportInspector->InitializeConnections();
+	EntityInspector->InitializeConnections();
 }
 
 //------------------------------------------------------------------------------

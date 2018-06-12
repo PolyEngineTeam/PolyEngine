@@ -43,7 +43,6 @@ UNSILENCE_MSVC_WARNING()
 #include "Widgets/Inspectors/WorldInspectorWidget.hpp"
 #include "Widgets/Inspectors/WorldComponentsInspectorWidget.hpp"
 #include "Widgets/Inspectors/ResourceInspectorWidget.hpp"
-#include "Widgets/Inspectors/PrefabInspectorWidget.hpp"
 #include "Widgets/Inspectors/ViewportInspectorWidget.hpp"
 #include "Widgets/Inspectors/EntityInspectorWidget.hpp"
 #include "Widgets/Inspectors/RTTIInspectorWidget.hpp"

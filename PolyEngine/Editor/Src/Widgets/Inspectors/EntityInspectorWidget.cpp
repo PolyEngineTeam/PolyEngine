@@ -4,11 +4,8 @@
 
 //------------------------------------------------------------------------------
 EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
-	: PolyWidget(parent)
+	: InspectorWidgetBase(parent)
 {
-	connect(gApp->InspectorMgr->WorldInspector, &WorldInspectorWidget::EntitySelected, this, &EntityInspectorWidget::SetObject);
-	connect(gApp->InspectorMgr->WorldInspector, &WorldInspectorWidget::EntityDeselected, this, &EntityInspectorWidget::Reset);
-
 	setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(this, &EntityInspectorWidget::customContextMenuRequested, this, &EntityInspectorWidget::SpawnContextMenu);
 
@@ -92,13 +89,19 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 }
 
 //------------------------------------------------------------------------------
-void EntityInspectorWidget::SetObject(::Entity *entity)
+void EntityInspectorWidget::SetSelectedEntities(Dynarray<Entity*> entities)
 {
-	Entity = entity;
+	Entities = entities;
 	TransformSection->show();
-	// TODO(squares): hardcoded for current order in entity class
-	Transform->SetObject(entity, &entity->GetPropertyManager()->GetPropertyList()[0]);
+
+	Transform->SetObject(Entities[0], &Entities[0]->GetPropertyManager()->GetPropertyList()[0]);
 	ReloadInspector();
+}
+
+//------------------------------------------------------------------------------
+void EntityInspectorWidget::InitializeConnections()
+{
+	connect(gApp->InspectorMgr->WorldInspector, &WorldInspectorWidget::EntitiesSelectionChanged, this, &EntityInspectorWidget::SetSelectedEntities);
 }
 
 //------------------------------------------------------------------------------
@@ -107,11 +110,11 @@ void EntityInspectorWidget::UpdateInspector()
 	std::stringstream ss;
 
 	// general data
-	ss << Entity->GetID();
+	ss << Entities[0]->GetID();
 	UniqueIdField->setText(&ss.str()[0]);
 
 	ss.str(std::string());
-	ss << Entity->GetParent()->GetID();
+	ss << Entities[0]->GetParent()->GetID();
 	ParentIdNameField->setText(&ss.str()[0]);
 
 	for (RTTIInspectorWidget* inspector : ComponentInspectors)
@@ -124,15 +127,15 @@ void EntityInspectorWidget::ReloadInspector()
 	std::stringstream ss;
 
 	// general data
-	ss << Entity->GetID();
+	ss << Entities[0]->GetID();
 	UniqueIdField->setText(&ss.str()[0]);
 
 	ss.str(std::string());
-	ss << Entity->GetParent()->GetID();
+	ss << Entities[0]->GetParent()->GetID();
 	ParentIdNameField->setText(&ss.str()[0]);
 
 	ChildrenIdNameField->clear();
-	for (auto child : Entity->GetChildren())
+	for (auto child : Entities[0]->GetChildren())
 	{
 		ss.str(std::string());
 		ss << child->GetID();
@@ -153,7 +156,7 @@ void EntityInspectorWidget::ReloadInspector()
 	// add component sections
 	for (int i = 0, row = 5; i < MAX_COMPONENTS_COUNT; ++i)
 	{
-		ComponentBase* cmp = Entity->GetComponent(i);
+		ComponentBase* cmp = Entities[0]->GetComponent(i);
 		if (!cmp) continue;
 
 		cmp->GetTypeInfo();
@@ -182,21 +185,21 @@ void EntityInspectorWidget::SpawnContextMenu(QPoint pos)
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::AddComponent()
 {
-	ComponentDialog dialog(Entity);
+	ComponentDialog dialog(Entities[0]);
 	dialog.exec();
 }
 
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::RemoveComponent()
 {
-	ComponentDialog dialog(Entity, true);
+	ComponentDialog dialog(Entities[0], true);
 	dialog.exec();
 }
 
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::Reset()
 {
-	Entity = nullptr;
+	Entities.Clear();
 
 	NameField->setText("");
 	UniqueIdField->setText("");

@@ -18,7 +18,6 @@ class InspectorManager : public QObject
 
 	friend class ViewportInspectorWidget;
 	friend class EntityInspectorWidget;
-	friend class PrefabInspectorWidget;
 	friend class ResourceInspectorWidget;
 	friend class WorldComponentsInspectorWidget;
 	friend class WorldInspectorWidget;
@@ -32,8 +31,11 @@ public:
 	IEditor* GetEditor() { return ViewportInspector; }
 
 signals:
+	// project signals
 	void ProjectOpened(const ProjectConfig* config);
 	void ProjectClosed();
+
+	// engine signals
 	void EngineInitialized(World* world);
 	void EngineDeinitialized();
 	void StateChanged(eEngineState state);
@@ -42,7 +44,6 @@ private:
 	WorldInspectorWidget* WorldInspector;
 	WorldComponentsInspectorWidget* WorldComponentsInspector;
 	ResourceInspectorWidget* ResourceInspector;
-	PrefabInspectorWidget* PrefabInspector;
 	ViewportInspectorWidget* ViewportInspector;
 	EntityInspectorWidget* EntityInspector;
 

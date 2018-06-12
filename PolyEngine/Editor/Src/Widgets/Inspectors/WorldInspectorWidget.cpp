@@ -4,11 +4,8 @@
 
 //------------------------------------------------------------------------------
 WorldInspectorWidget::WorldInspectorWidget(QWidget* parent)
-	: PolyWidget(parent)
+	: InspectorWidgetBase(parent)
 {
-	connect(gApp->InspectorMgr, &InspectorManager::EngineInitialized, this, &WorldInspectorWidget::SetObject);
-	connect(gApp->InspectorMgr, &InspectorManager::EngineDeinitialized, this, &WorldInspectorWidget::Reset);
-
 	setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(this, &EntityInspectorWidget::customContextMenuRequested, this, &WorldInspectorWidget::SpawnContextMenu);
 
@@ -33,7 +30,26 @@ WorldInspectorWidget::WorldInspectorWidget(QWidget* parent)
 		ContextMenu->addAction(ReparentEntityAction);
 		connect(ReparentEntityAction, &QAction::triggered, this, &WorldInspectorWidget::ReparentEntity);
 
-	connect(Tree, &QTreeWidget::itemDoubleClicked, this, &WorldInspectorWidget::SelectionChanged);
+	connect(Tree, &QTreeWidget::itemClicked, this, &WorldInspectorWidget::SelectionChanged);
+}
+
+//------------------------------------------------------------------------------
+void WorldInspectorWidget::InitializeConnections()
+{
+	connect(gApp->InspectorMgr, &InspectorManager::EngineInitialized, this, &WorldInspectorWidget::SetObject);
+	connect(gApp->InspectorMgr, &InspectorManager::EngineDeinitialized, this, &WorldInspectorWidget::Reset);
+
+	connect(gApp->InspectorMgr->ViewportInspector, &ViewportInspectorWidget::EntitiesSelectionChanged, this, &WorldInspectorWidget::SetSelectedEntities);
+}
+
+//------------------------------------------------------------------------------
+void WorldInspectorWidget::Reset()
+{
+	World = nullptr;
+	Tree->clear();
+	EntityFromItem.clear();
+	SelectedEntities.Clear();
+	emit EntitiesSelectionChanged(SelectedEntities);
 }
 
 //------------------------------------------------------------------------------
@@ -42,6 +58,16 @@ void WorldInspectorWidget::SetObject(::World* world)
 	World = world;
 
 	ReloadInspector();
+}
+
+//------------------------------------------------------------------------------
+void WorldInspectorWidget::SetSelectedEntities(Dynarray<Entity*> entities)
+{
+}
+
+//------------------------------------------------------------------------------
+void WorldInspectorWidget::UpdateInspector()
+{
 }
 
 //------------------------------------------------------------------------------
@@ -79,10 +105,12 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::SelectionChanged(QTreeWidgetItem* item, int column)
 {
-	Entity* e = EntityFromItem[item];
+	SelectedEntities.Clear();
 
-	if (e != World->GetRoot())
-		emit EntitySelected(e);
+	for (QTreeWidgetItem* i : Tree->selectedItems())
+		SelectedEntities.PushBack(EntityFromItem[item]);
+
+	emit EntitiesSelectionChanged(SelectedEntities);
 }
 
 //------------------------------------------------------------------------------
@@ -109,13 +137,4 @@ void WorldInspectorWidget::RemoveEntity()
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::ReparentEntity()
 {
-}
-
-//------------------------------------------------------------------------------
-void WorldInspectorWidget::Reset()
-{
-	World = nullptr;
-	Tree->clear();
-	EntityFromItem.clear();
-	emit EntityDeselected();
 }

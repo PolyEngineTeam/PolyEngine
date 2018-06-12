@@ -2,11 +2,8 @@
 
 //------------------------------------------------------------------------------
 WorldComponentsInspectorWidget::WorldComponentsInspectorWidget(QWidget* parent)
-	: PolyWidget(parent)
+	: InspectorWidgetBase(parent)
 {
-	connect(gApp->InspectorMgr, &InspectorManager::EngineInitialized, this, &WorldComponentsInspectorWidget::SetObject);
-	connect(gApp->InspectorMgr, &InspectorManager::EngineDeinitialized, this, &WorldComponentsInspectorWidget::Reset);
-
 	setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(this, &WorldComponentsInspectorWidget::customContextMenuRequested, this, &WorldComponentsInspectorWidget::SpawnContextMenu);
 
@@ -27,6 +24,26 @@ WorldComponentsInspectorWidget::WorldComponentsInspectorWidget(QWidget* parent)
 	// TODO(squares): find better way
 	for (int i = 0; i < MAX_COMPONENTS_COUNT + 6; ++i)
 		MainLayout->setRowStretch(i, 1);
+}
+
+//------------------------------------------------------------------------------
+void WorldComponentsInspectorWidget::InitializeConnections()
+{
+	connect(gApp->InspectorMgr, &InspectorManager::EngineInitialized, this, &WorldComponentsInspectorWidget::SetObject);
+	connect(gApp->InspectorMgr, &InspectorManager::EngineDeinitialized, this, &WorldComponentsInspectorWidget::Reset);
+}
+
+//------------------------------------------------------------------------------
+void WorldComponentsInspectorWidget::Reset()
+{
+	// remove all old entity component sections
+	for (auto cmp : ComponentSections)
+	{
+		MainLayout->removeWidget(cmp);
+		delete cmp;
+	}
+	ComponentSections.Clear();
+	ComponentInspectors.Clear();
 }
 
 //------------------------------------------------------------------------------
@@ -91,17 +108,4 @@ void WorldComponentsInspectorWidget::AddComponent()
 //------------------------------------------------------------------------------
 void WorldComponentsInspectorWidget::RemoveComponent()
 {
-}
-
-//------------------------------------------------------------------------------
-void WorldComponentsInspectorWidget::Reset()
-{
-	// remove all old entity component sections
-	for (auto cmp : ComponentSections)
-	{
-		MainLayout->removeWidget(cmp);
-		delete cmp;
-	}
-	ComponentSections.Clear();
-	ComponentInspectors.Clear();
 }

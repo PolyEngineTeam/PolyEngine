@@ -9,36 +9,46 @@
 #include <QLayout>
 #include <QLabel>
 
-#include "Widgets/PolyWidget.hpp"
+#include "Widgets/Inspectors/InspectorWidgetBase.hpp"
 
 using namespace Poly;
 
 // Displays tree of entities in the world. Enables adding, removing and reparenting entities.
-class WorldInspectorWidget : public PolyWidget
+class WorldInspectorWidget : public InspectorWidgetBase
 {
 	Q_OBJECT
 
 public:
 	WorldInspectorWidget(QWidget* parent);
 
+	// Initializes object connections with other inspectors and inspector manager.
+	void InitializeConnections() override;
+
+	// Removes all entities from list.
+	void Reset() override;
+
 	// Sets currently viewed world to given object and updates inspector.
 	void SetObject(World* world);
+
+	// Sets selected entities.
+	void SetSelectedEntities(Dynarray<Entity*> entities);
+
+	// TODO(squares): use controls for easy update
+	// Updates names.
+	void UpdateInspector();
 
 	// Removes all entities from list and loads them again.
 	void ReloadInspector();
 
 signals:
-	// TODO(squares): pass UniqueID not entity
-	// When entity is double clicked then this signal is emitted.
-	void EntitySelected(Entity* entity);
-
-	// When we don't want to display any entity or engine is deinitialized.
-	void EntityDeselected();
+	// When entity is clicked then this signal is emitted.
+	void EntitiesSelectionChanged(Dynarray<Entity*> entities);
 
 private:
 	void AddEntityToTree(Entity* entity, QTreeWidgetItem* parent);
 
 	World* World;
+	Dynarray<Entity*> SelectedEntities;
 
 	QMenu* ContextMenu;
 		QAction* AddEntityAction;
@@ -54,7 +64,4 @@ private slots:
 		void AddEntity();
 		void RemoveEntity();
 		void ReparentEntity();
-
-	// Removes all entities from list.
-	void Reset();
 };

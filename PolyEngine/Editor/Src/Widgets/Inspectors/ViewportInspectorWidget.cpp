@@ -10,7 +10,7 @@
 #include <ECS/DeferredTaskSystem.hpp>
 #include <SDL.h>
 
-// ---------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 extern "C"
 {
 	using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (SDL_Window*, const Poly::ScreenSize&);
@@ -24,21 +24,18 @@ const static float PLAYER_CAMERA_NEAR = 0.1f;
 const static float PLAYER_CAMERA_FAR = 300.f;
 const static Angle PLAYER_CAMERA_FOV = 60_deg;
 
-// ---------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 ViewportInspectorWidget::ViewportInspectorWidget(QWidget* parent)
+	: InspectorWidgetBase(parent)
 {
-	connect(gApp->InspectorMgr->WorldInspector, &WorldInspectorWidget::EntitySelected, this, &ViewportInspectorWidget::SetObject);
-	connect(gApp->InspectorMgr->WorldInspector, &WorldInspectorWidget::EntityDeselected, this, &ViewportInspectorWidget::Reset);
-
 	setAttribute(Qt::WA_NativeWindow);
 	setMouseTracking(true);
 	setFocusPolicy(Qt::ClickFocus);
 	setMinimumSize(320, 200);
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-	{
 		ASSERTE(false, "SDL initialization failed!");
-	}
+
 	Poly::gConsole.LogDebug("SDL initialized.");
 
 	new QGridLayout(this);
@@ -56,14 +53,19 @@ ViewportInspectorWidget::ViewportInspectorWidget(QWidget* parent)
 	ASSERTE(WindowInSDL.IsValid(), "Window creation failed!");
 }
 
-// ---------------------------------------------------------------------------------------------------------
-void ViewportInspectorWidget::SetObject(Entity* entity)
+//------------------------------------------------------------------------------
+void ViewportInspectorWidget::InitializeConnections()
 {
-	Entities.Clear();
-	Entities.PushBack(entity);
+	connect(gApp->InspectorMgr->WorldInspector, &WorldInspectorWidget::EntitiesSelectionChanged, this, &ViewportInspectorWidget::SetSelectedEntities);
 }
 
-// ---------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+void ViewportInspectorWidget::Reset()
+{
+	SelectedEntities.Clear();
+}
+
+//------------------------------------------------------------------------------
 std::unique_ptr<Poly::IRenderingDevice> ViewportInspectorWidget::GetRenderingDevice()
 {
 	// TODO fix library names differences between platforms
@@ -83,7 +85,7 @@ std::unique_ptr<Poly::IRenderingDevice> ViewportInspectorWidget::GetRenderingDev
 	return std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(WindowInSDL.Get(), viewportRect));
 }
 
-// ---------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void ViewportInspectorWidget::Init()
 {
 	if (EngineState == eEngineState::EDIT)
@@ -92,9 +94,8 @@ void ViewportInspectorWidget::Init()
 		gEngine->RegisterEditorUpdatePhase(GizmoSystem::Update);
 
 		// create camera
-		// create entity
 		Camera = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
-		// add free float movement component
+		// add EditorCameraMovementComponent
 		DeferredTaskSystem::AddComponentImmediate<EditorCameraMovementComponent>(gEngine->GetWorld(), Camera, 25.f, 0.01f);
 		// add camera component
 		DeferredTaskSystem::AddComponentImmediate<CameraComponent>(gEngine->GetWorld(), Camera, 60_deg, 1.0f, 1000.f);
@@ -107,18 +108,18 @@ void ViewportInspectorWidget::Init()
 	}
 }
 
-// ---------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void ViewportInspectorWidget::Deinit()
 {
 	DeferredTaskSystem::DestroyEntityImmediate(gEngine->GetWorld(), Camera);
 }
 
-// ---------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void ViewportInspectorWidget::UpdateInspectors()
 {
 }
 
-// ---------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void ViewportInspectorWidget::resizeEvent(QResizeEvent* resizeEvent)
 {
 	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
@@ -130,7 +131,7 @@ void ViewportInspectorWidget::resizeEvent(QResizeEvent* resizeEvent)
 	Poly::gEngine->ResizeScreen(screenSize);
 }
 
-// ---------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void ViewportInspectorWidget::wheelEvent(QWheelEvent* wheelEvent)
 {
 	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
@@ -138,7 +139,7 @@ void ViewportInspectorWidget::wheelEvent(QWheelEvent* wheelEvent)
 	Poly::gEngine->UpdateWheelPos(Poly::Vector2i(wheelEvent->delta(), 0));
 }
 
-// ---------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void ViewportInspectorWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 {
 	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
@@ -148,7 +149,7 @@ void ViewportInspectorWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 	gConsole.LogDebug("{}; {}", mouseEvent->pos().x(), mouseEvent->pos().y());
 }
 
-// ---------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void ViewportInspectorWidget::mousePressEvent(QMouseEvent* mouseEvent)
 {
 	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
@@ -174,7 +175,7 @@ void ViewportInspectorWidget::mousePressEvent(QMouseEvent* mouseEvent)
 	}
 }
 
-// ---------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void ViewportInspectorWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 {
 	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
@@ -199,7 +200,7 @@ void ViewportInspectorWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 	}
 }
 
-// ---------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void ViewportInspectorWidget::keyPressEvent(QKeyEvent* keyEvent)
 {
 	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
@@ -211,7 +212,7 @@ void ViewportInspectorWidget::keyPressEvent(QKeyEvent* keyEvent)
 		Poly::gEngine->KeyDown(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
 }
 
-// ---------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void ViewportInspectorWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 {
 	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
@@ -221,10 +222,4 @@ void ViewportInspectorWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 		keyEvent->ignore();
 	else
 		Poly::gEngine->KeyUp(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
-}
-
-// ---------------------------------------------------------------------------------------------------------
-void ViewportInspectorWidget::Reset()
-{
-	Entities.Clear();
 }

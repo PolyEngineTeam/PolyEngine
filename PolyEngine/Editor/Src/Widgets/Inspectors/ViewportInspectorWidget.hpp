@@ -6,18 +6,23 @@
 
 #include "Windows/CustomSDLWindow.hpp"
 #include "Rendering/IRenderingDevice.hpp"
-#include "Widgets/PolyWidget.hpp"
+#include "Widgets/Inspectors/InspectorWidgetBase.hpp"
 
 using namespace Poly;
 
-class ViewportInspectorWidget : public PolyWidget, public IEditor
+class ViewportInspectorWidget : public InspectorWidgetBase, public IEditor
 {
+	Q_OBJECT
+
 public:
 	ViewportInspectorWidget(QWidget* parent);
 
-	void SetObject(Entity* entity);
+	// Initializes object connections with other inspectors and inspector manager.
+	void InitializeConnections() override;
 
-	// viewport functions
+	// TODO(squares): decide what this method should do
+	void Reset() override;
+
 	std::unique_ptr<IRenderingDevice> GetRenderingDevice();
 
 	// IEditor functions
@@ -25,12 +30,15 @@ public:
 	void SetAssetsPathConfigPath(const String& path) override { AssetsPathConfigPath = path; }
 	void Init() override;
 	void Deinit() override;
-	virtual const Dynarray<Entity*>& GetSelectedEntities() override { return Entities; }
-	virtual void SetSelectedEntities(Dynarray<Entity*> entities) override { Entities = std::move(entities); }
+	virtual const Dynarray<Entity*>& GetSelectedEntities() override { return SelectedEntities; }
+	virtual void SetSelectedEntities(Dynarray<Entity*> entities) override { SelectedEntities = std::move(entities); }
 	virtual void UpdateInspectors() override;
 
+signals:
+	void EntitiesSelectionChanged(Dynarray<Entity*> entities);
+
 private:
-	Dynarray<Entity*> Entities;
+	Dynarray<Entity*> SelectedEntities;
 	String AssetsPathConfigPath;
 
 	void resizeEvent(QResizeEvent* resizeEvent) override;
@@ -45,7 +53,4 @@ private:
 
 	QWidget* SDLWidget;
 	CustomSDLWindow WindowInSDL;
-
-private slots:
-	void Reset();
 };
