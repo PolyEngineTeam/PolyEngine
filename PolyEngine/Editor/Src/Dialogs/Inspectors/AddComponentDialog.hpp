@@ -24,7 +24,7 @@ private:
 	Entity* Entity;
 	bool Canceled = false;
 
-	typedef ComponentBase* (*ComponentCreator)();
+	typedef void* (*ComponentCreator)(::Entity* e);
 	std::map<QString, ComponentCreator> ComponentCreators;
 
 	QGridLayout* MainLayout;

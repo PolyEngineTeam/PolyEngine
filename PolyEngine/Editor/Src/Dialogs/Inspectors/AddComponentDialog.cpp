@@ -24,6 +24,8 @@
 		QTreeWidgetItem* cmp = new QTreeWidgetItem(Tree); \
 		cmp->setText(1, #COMPONENT); \
 		cmp->setCheckState(0, Qt::Unchecked); \
+		ComponentCreators.insert(std::pair<QString, ComponentCreator>("", [](::Entity* e) \
+		{ DeferredTaskSystem::AddComponentImmediate<COMPONENT>(e->GetWorld(), e); }) \
 	}
 
 AddComponentDialog::AddComponentDialog(::Entity* entity)
@@ -87,7 +89,7 @@ AddComponentDialog::AddComponentDialog(::Entity* entity)
 	EntityIdNameField->setReadOnly(true);
 	std::stringstream ss;
 	ss << Entity->GetID();
-	EntityIdNameField->setText(&ss.str()[0]);
+	EntityIdNameField->setText(QString(Entity->Name.GetCStr()) + QString(&ss.str()[0]));
 	EntityIdNameField->setPalette(disabledEditPalette);
 	MainLayout->addWidget(EntityIdNameField, 1, 1, 1, 2);
 
@@ -104,7 +106,7 @@ AddComponentDialog::AddComponentDialog(::Entity* entity)
 
 void AddComponentDialog::Ok()
 {
-	// apply changes
+	ComponentCreators[Tree->selectedItems()[0]->text(0)](Entity);
 
 	close();
 }
