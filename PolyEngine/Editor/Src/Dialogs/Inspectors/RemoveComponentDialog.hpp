@@ -5,6 +5,8 @@
 #include <qgridlayout.h>
 #include <qlistwidget.h>
 #include <qlineedit.h>
+#include <qtreewidget.h>
+#include <qpushbutton.h>
 
 #include <ECS/World.hpp>
 #include <ECS/Entity.hpp>
@@ -19,12 +21,17 @@ public:
 	bool OperationCanceled() { return Canceled; }
 
 private:
-	Entity * entity;;
-
+	Entity * Entity;
 	bool Canceled = false;
 
+	typedef void (*ComponentDestroyer)(::Entity* e);
+	std::map<QString, ComponentDestroyer> ComponentDestroyers;
+
 	QGridLayout* MainLayout;
-	QListWidget* List;
+
+	QTreeWidget* Tree;
+
+	QLabel* EntityIdNameText;		QLineEdit* EntityIdNameField;
 	QPushButton* CancelButton;		QPushButton* OkButton;
 
 private slots:

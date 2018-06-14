@@ -1,4 +1,4 @@
-#include "AddComponentDialog.hpp"
+#include "PolyEditorPCH.hpp"
 
 #include "AI/PathfindingComponent.hpp"
 #include "Audio/SoundEmitterComponent.hpp"
