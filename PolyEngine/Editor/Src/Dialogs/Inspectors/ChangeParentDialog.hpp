@@ -19,12 +19,17 @@ public:
 	bool OperationCanceled() { return Canceled; }
 
 private:
+	void AddEntity(Entity* entity);
+
 	Dynarray<Entity*> Entities;
 
 	bool Canceled = false;
 
 	QGridLayout* MainLayout;
-	QListWidget* List;
+
+	QTreeWidget* Tree;
+
+	QLabel* EntityIdNameText;		QLineEdit* EntityIdNameField;
 	QPushButton* CancelButton;		QPushButton* OkButton;
 
 private slots:

@@ -273,6 +273,7 @@ void EntityInspectorWidget::RemoveComponent()
 		ReloadInspector()
 }
 
+//------------------------------------------------------------------------------
 void EntityInspectorWidget::ChangeParent()
 {
 	ChangeParentDialog dialog(Entities);
@@ -282,11 +283,13 @@ void EntityInspectorWidget::ChangeParent()
 		UpdateInspector();
 }
 
+//------------------------------------------------------------------------------
 void EntityInspectorWidget::SelectParent()
 {
 	SetSelectedEntities({ Entities[0]->GetParent() });
 }
 
+//------------------------------------------------------------------------------
 void EntityInspectorWidget::SelectChild()
 {
 	SetSelectedEntities({ Entities[0]->GetChildren[ChildrenIdNameField->currentIndex() });
