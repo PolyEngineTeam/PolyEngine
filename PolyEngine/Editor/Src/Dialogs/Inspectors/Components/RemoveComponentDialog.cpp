@@ -16,6 +16,16 @@
 #include "Rendering/SpritesheetComponent.hpp"
 #include "UI/ScreenSpaceTextComponent.hpp"
 
+#include "Audio/SoundWorldComponent.hpp"
+#include "Debugging/DebugWorldComponent.hpp"
+#include "ECS/DeferredTaskWorldComponent.hpp"
+#include "Input/InputWorldComponent.hpp"
+#include "Physics2D/Physics2DWorldComponent.hpp"
+#include "Physics3D/Physics3DWorldComponent.hpp"
+#include "Rendering/SkyboxWorldComponent.hpp"
+#include "Rendering/ViewportWorldComponent.hpp"
+#include "Time/TimeWorldComponent.hpp"
+
 #include <sstream>
 
 #define ADD_COMPONENT(COMPONENT) \
@@ -28,33 +38,21 @@
 		{ Poly::DeferredTaskSystem::RemoveComponent<COMPONENT>(e->GetWorld(), e); }) \
 	}
 
+#define ADD_WORLD_COMPONENT(COMPONENT) \
+	if (world->HasWorldComponent<COMPONENT>()) \
+	{ \
+		QTreeWidgetItem* cmp = new QTreeWidgetItem(Tree); \
+		cmp->setText(1, #COMPONENT); \
+		cmp->setCheckState(0, Qt::Unchecked); \
+		WorldComponentDestroyers.insert(std::pair<QString, WorldComponentDestroyer>(#COMPONENT, [](::World* w) \
+		{ Poly::DeferredTaskSystem::RemoveWorldComponentImmediate<COMPONENT>(w); })); \
+	}
+
 RemoveComponentDialog::RemoveComponentDialog(::Entity* entity)
 {
-	setModal(true);
-	setMaximumHeight(800);
-
 	Entity = entity;
 
-	// create main layout
-	MainLayout = new QGridLayout(this);
-	MainLayout->setColumnStretch(0, 1);
-	MainLayout->setColumnStretch(1, 1);
-	MainLayout->setColumnStretch(2, 1);
-
-	// create group box
-	Tree = new QTreeWidget(this);
-	Tree->setHeaderLabels(QStringList() << "Remove" << "Component Name");
-
-	//for (int i = 0; i < MAX_COMPONENTS_COUNT; ++i)
-	//	if ((removeComponents && entity->HasComponent(i))
-	//		|| (!removeComponents && !entity->HasComponent(i)))
-	//	{
-	//		// create component from ID, get its name and delete it
-	//
-	//		QTreeWidgetItem* entityTree = new QTreeWidgetItem(Tree);
-	//		entityTree->setText(1, QString::number(i).toLatin1());
-	//		entityTree->setCheckState(0, Qt::Unchecked);
-	//	}
+	InitControls();
 
 	ADD_COMPONENT(PathfindingComponent)
 	ADD_COMPONENT(SoundEmitterComponent)
@@ -75,7 +73,16 @@ RemoveComponentDialog::RemoveComponentDialog(::Entity* entity)
 	ADD_COMPONENT(SpritesheetComponent)
 	ADD_COMPONENT(ScreenSpaceTextComponent)
 
-	MainLayout->addWidget(Tree, 0, 0, 1, 3);
+	//for (int i = 0; i < MAX_COMPONENTS_COUNT; ++i)
+	//	if ((removeComponents && entity->HasComponent(i))
+	//		|| (!removeComponents && !entity->HasComponent(i)))
+	//	{
+	//		// create component from ID, get its name and delete it
+	//
+	//		QTreeWidgetItem* entityTree = new QTreeWidgetItem(Tree);
+	//		entityTree->setText(1, QString::number(i).toLatin1());
+	//		entityTree->setCheckState(0, Qt::Unchecked);
+	//	}
 
 	QPalette disabledEditPalette;
 	disabledEditPalette.setColor(QPalette::Base, QColor(218, 218, 218));
@@ -92,6 +99,41 @@ RemoveComponentDialog::RemoveComponentDialog(::Entity* entity)
 	EntityIdNameField->setText(QString(Entity->Name.GetCStr()) + QString(&ss.str()[0]));
 	EntityIdNameField->setPalette(disabledEditPalette);
 	MainLayout->addWidget(EntityIdNameField, 1, 1, 1, 2);
+}
+
+RemoveComponentDialog::RemoveComponentDialog(::World* world)
+{
+	World = world;
+
+	InitControls();
+
+	ADD_WORLD_COMPONENT(SoundWorldComponent)
+	ADD_WORLD_COMPONENT(DebugWorldComponent)
+	ADD_WORLD_COMPONENT(DeferredTaskWorldComponent)
+	ADD_WORLD_COMPONENT(InputWorldComponent)
+	ADD_WORLD_COMPONENT(Physics2DWorldComponent)
+	ADD_WORLD_COMPONENT(Physics3DWorldComponent)
+	ADD_WORLD_COMPONENT(SkyboxWorldComponent)
+	ADD_WORLD_COMPONENT(ViewportWorldComponent)
+	ADD_WORLD_COMPONENT(TimeWorldComponent)
+}
+
+void RemoveComponentDialog::InitControls()
+{
+	setModal(true);
+	setMaximumHeight(800);
+
+	// create main layout
+	MainLayout = new QGridLayout(this);
+	MainLayout->setColumnStretch(0, 1);
+	MainLayout->setColumnStretch(1, 1);
+	MainLayout->setColumnStretch(2, 1);
+
+	// create group box
+	Tree = new QTreeWidget(this);
+	Tree->setHeaderLabels(QStringList() << "Remove" << "Component Name");
+
+	MainLayout->addWidget(Tree, 0, 0, 1, 3);
 
 	CancelButton = new QPushButton(this);
 	CancelButton->setText("Cancel");
@@ -106,7 +148,10 @@ RemoveComponentDialog::RemoveComponentDialog(::Entity* entity)
 
 void RemoveComponentDialog::Ok()
 {
-	ComponentDestroyers[Tree->selectedItems()[0]->text(0)](Entity);
+	if (Entity)
+		ComponentDestroyers[Tree->selectedItems()[0]->text(0)](Entity);
+	else
+		WorldComponentDestroyers[Tree->selectedItems()[0]->text(0)](World);
 
 	close();
 }
