@@ -4,6 +4,11 @@
 
 //ASSIGN_CONTROL(EnumControl, ENUM)
 
+void EnumControl::Reset()
+{
+	Object = nullptr;
+}
+
 void EnumControl::UpdateObject()
 {
 }

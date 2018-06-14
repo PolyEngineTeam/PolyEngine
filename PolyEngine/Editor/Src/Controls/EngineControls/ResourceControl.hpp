@@ -10,6 +10,8 @@ class ResourceControl : public ControlBase
 public:
 	ResourceControl(QWidget* parent);
 
+	void Reset() override;
+
 	void UpdateObject() override;
 	void UpdateControl() override;
 

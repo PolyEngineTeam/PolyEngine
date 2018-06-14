@@ -17,6 +17,13 @@ StringControl::StringControl(QWidget* parent)
 	setLayout(Layout);
 }
 
+void StringControl::Reset()
+{
+	Object = nullptr;
+
+	Field->setText("");
+}
+
 void StringControl::UpdateObject()
 {
 	*reinterpret_cast<String*>(Object) = Field->text().toLatin1().data();

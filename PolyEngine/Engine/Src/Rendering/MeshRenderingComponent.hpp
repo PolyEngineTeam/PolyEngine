@@ -37,6 +37,7 @@ namespace Poly {
 
 		friend void RenderingSystem::RenderingPhase(World*);
 	public:
+		MeshRenderingComponent() {}
 		MeshRenderingComponent(const String& meshPath, eResourceSource source);
 		virtual ~MeshRenderingComponent();
 

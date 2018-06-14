@@ -15,6 +15,7 @@ namespace Poly {
 
 		friend void ParticleUpdateSystem::ParticleUpdatePhase(World*);
 	public:
+		ParticleComponent() {}
 		ParticleComponent(const ParticleEmitter::Settings& emitter);
 		virtual ~ParticleComponent();
 		

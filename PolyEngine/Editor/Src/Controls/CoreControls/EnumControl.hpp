@@ -9,6 +9,8 @@ class EnumControl : public ControlBase
 public:
 	EnumControl(QWidget* parent) : ControlBase(parent) {}
 
+	void Reset() override;
+
 	void UpdateObject() override;
 	void UpdateControl() override;
 

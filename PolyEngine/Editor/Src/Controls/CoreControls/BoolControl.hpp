@@ -11,6 +11,8 @@ public:
 	BoolControl(QWidget* parent);
 	~BoolControl();
 
+	void Reset() override;
+
 	void UpdateObject() override;
 	void UpdateControl() override;
 

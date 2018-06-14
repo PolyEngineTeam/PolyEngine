@@ -16,6 +16,7 @@ namespace Poly {
 		}
 
 	public:
+		ScreenSpaceTextComponent() {}
 		ScreenSpaceTextComponent(const Vector2i& pos, const String& fontName, eResourceSource source, size_t fontSize, const String& text = "", const Color& fontColor = Color(1, 1, 1))
 			: Text(fontName, source, fontSize, text, fontColor), ScreenPosition(pos) {}
 

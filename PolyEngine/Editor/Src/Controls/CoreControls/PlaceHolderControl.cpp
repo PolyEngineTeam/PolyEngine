@@ -20,3 +20,7 @@ PlaceHolderControl::PlaceHolderControl(QWidget* parent)
 
 	setLayout(Layout);
 }
+
+void PlaceHolderControl::Reset()
+{
+}

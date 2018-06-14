@@ -41,6 +41,11 @@ BoolControl::~BoolControl()
 	delete False;
 }
 
+void BoolControl::Reset()
+{
+	Object = nullptr;
+}
+
 void BoolControl::UpdateObject()
 {
 	*reinterpret_cast<bool*>(Object) = *Machine->configuration().begin() == True;

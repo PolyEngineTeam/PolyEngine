@@ -26,6 +26,7 @@ namespace Poly
 		friend void SoundSystem::SetEmitterSource(World*, Entity*, const String&, eResourceSource source);
 
 	public:
+		SoundEmitterComponent() {}
 		/// Loads resource from given path (optimized by resource manager).
 		/// @param path path to sound resource
 		/// @see SoundListenerComponent

@@ -10,6 +10,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT Box2DColliderComponent : public ComponentBase
 	{
 	public:
+		Box2DColliderComponent() {}
 		Box2DColliderComponent(const Vector& size);
 		~Box2DColliderComponent();
 
@@ -25,6 +26,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT Circle2DColliderComponent : public ComponentBase
 	{
 	public:
+		Circle2DColliderComponent() {}
 		Circle2DColliderComponent(float size);
 		~Circle2DColliderComponent();
 

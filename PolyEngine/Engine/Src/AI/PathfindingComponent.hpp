@@ -34,6 +34,7 @@ namespace Poly
 		friend void PathfindingSystem::UpdatePhase(World* world);
 
 	public:
+		PathfindingComponent() {}
 		PathfindingComponent(const NavGraph* navGraphs) : NavigationGraph(navGraphs) {}
 
 		void SetDestination(const Vector& pos);

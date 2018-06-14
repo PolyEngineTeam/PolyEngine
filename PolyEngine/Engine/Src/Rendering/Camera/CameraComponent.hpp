@@ -34,6 +34,7 @@ namespace Poly {
 
 		friend void CameraSystem::CameraUpdatePhase(World*);
 	public:
+		CameraComponent() {}
 		CameraComponent(Angle fov, float zNear, float zFar);
 		CameraComponent(float top, float bottom, float left, float right, float zNear, float zFar);
 

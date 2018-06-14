@@ -31,6 +31,13 @@ NumberControl::NumberControl(QWidget* parent)
 	setLayout(Layout);
 }
 
+void NumberControl::Reset()
+{
+	Object = nullptr;
+
+	Field->setText("");
+}
+
 void NumberControl::UpdateObject()
 {
 	switch (Property->CoreType)

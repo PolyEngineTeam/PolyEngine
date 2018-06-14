@@ -10,6 +10,8 @@ class StringControl : public ControlBase
 public:
 	StringControl(QWidget* parent);
 
+	void Reset() override;
+
 	void UpdateObject() override;
 	void UpdateControl() override;
 

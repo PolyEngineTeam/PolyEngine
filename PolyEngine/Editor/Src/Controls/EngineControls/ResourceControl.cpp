@@ -15,6 +15,10 @@ ResourceControl::ResourceControl(QWidget* parent)
 	setLayout(Layout);
 }
 
+void ResourceControl::Reset()
+{
+}
+
 void ResourceControl::UpdateObject()
 {
 	//*reinterpret_cast<String*>(Object) = Field->text().toLatin1().data();

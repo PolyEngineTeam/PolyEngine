@@ -55,6 +55,23 @@ TransformControl::TransformControl(QWidget * parent)
 	}
 }
 
+void TransformControl::Reset()
+{
+	Object = nullptr;
+
+	TranslationField[0]->setText("");
+	TranslationField[1]->setText("");
+	TranslationField[2]->setText("");
+
+	RotationField[0]->setText("");
+	RotationField[1]->setText("");
+	RotationField[2]->setText("");
+
+	ScaleField[0]->setText("");
+	ScaleField[1]->setText("");
+	ScaleField[2]->setText("");
+}
+
 void TransformControl::UpdateObject()
 {
 	UodateTranslation();

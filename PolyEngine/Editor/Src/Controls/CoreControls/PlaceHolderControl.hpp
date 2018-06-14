@@ -10,6 +10,8 @@ class PlaceHolderControl : public ControlBase
 public:
 	PlaceHolderControl(QWidget* parent);
 
+	void Reset() override;
+
 	void UpdateObject() override {};
 	void UpdateControl() override {};
 
