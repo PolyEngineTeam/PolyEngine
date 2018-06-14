@@ -11,9 +11,10 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 
 	// main layput
 	MainLayout = new QGridLayout(this);
-	MainLayout->setColumnStretch(0, 3);
-	MainLayout->setColumnStretch(1, 9);
-	MainLayout->setColumnStretch(2, 2);
+	MainLayout->setColumnStretch(0, 5);
+	MainLayout->setColumnStretch(1, 15);
+	MainLayout->setColumnStretch(2, 3);
+	MainLayout->setColumnStretch(3, 3);
 
 	// context menu
 	ContextMenu = new QMenu(this);
@@ -40,7 +41,7 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 	NameText->setText("Name");
 	MainLayout->addWidget(NameText, 0, 0);
 	
-	NameField = new QLineEdit(this);
+	NameField = new StringControl();
 	MainLayout->addWidget(NameField, 0, 1);
 	
 	// UniqueID
@@ -55,7 +56,7 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 	
 	// ParentID / Name
 	ParentIdNameText = new QLabel(this);
-	ParentIdNameText->setText("Parent ID / Name");
+	ParentIdNameText->setText("Name / Parent ID");
 	MainLayout->addWidget(ParentIdNameText, 2, 0);
 	
 	ParentIdNameField = new QLineEdit(this);
@@ -63,21 +64,28 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 	ParentIdNameField->setPalette(disabledEditPalette);
 	MainLayout->addWidget(ParentIdNameField, 2, 1);
 	
-	ParentIdNameButton = new QPushButton(this);
-	ParentIdNameButton->setText("Select");
-	MainLayout->addWidget(ParentIdNameButton, 2, 2);
-	
+	ParentSelectButton = new QPushButton(this);
+	ParentSelectButton->setText("Select");
+	MainLayout->addWidget(ParentSelectButton, 2, 2);
+	connect(ParentSelectButton, &QPushButton::clicked, this, &EntityInspectorWidget::SelectParent);
+
+	ParentChangeButton = new QPushButton(this);
+	ParentChangeButton->setText("Change");
+	MainLayout->addWidget(ParentChangeButton, 2, 3);
+	connect(ParentChangeButton, &QPushButton::clicked, this, &EntityInspectorWidget::ChangeParent);
+
 	// ChildrenID / Name
 	ChildrenIdNameText = new QLabel(this);
-	ChildrenIdNameText->setText("Child ID / Name");
+	ChildrenIdNameText->setText("Name / Child ID");
 	MainLayout->addWidget(ChildrenIdNameText, 3, 0);
 	
 	ChildrenIdNameField = new QComboBox(this);
 	MainLayout->addWidget(ChildrenIdNameField, 3, 1);
 	
-	ChildrenIdNameButton = new QPushButton(this);
-	ChildrenIdNameButton->setText("Select");
-	MainLayout->addWidget(ChildrenIdNameButton, 3, 2);
+	ChildrenSelectButton = new QPushButton(this);
+	ChildrenSelectButton->setText("Select");
+	MainLayout->addWidget(ChildrenSelectButton, 3, 2);
+	connect(ChildrenSelectButton, &QPushButton::clicked, this, &EntityInspectorWidget::SelectChild);
 
 	// Transform
 	TransformSection = new SectionContainer("Transform", this);
@@ -85,64 +93,26 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 	TransformSection->SetWidget(Transform);
 
 	MainLayout->addWidget(TransformSection, 4, 0, 1, 3);
-	TransformSection->hide();
-}
-
-//------------------------------------------------------------------------------
-void EntityInspectorWidget::SetSelectedEntities(Dynarray<Entity*> entities)
-{
-	Entities = entities;
-	TransformSection->show();
-
-	Transform->SetObject(Entities[0], &Entities[0]->GetPropertyManager()->GetPropertyList()[0]);
-	ReloadInspector();
 }
 
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::InitializeConnections()
 {
-	connect(gApp->InspectorMgr->WorldInspector, &WorldInspectorWidget::EntitiesSelectionChanged, this, &EntityInspectorWidget::SetSelectedEntities);
+	connect(gApp->InspectorMgr->WorldInspector, &WorldInspectorWidget::EntitiesSelectionChanged,
+		this, &EntityInspectorWidget::SetSelectedEntities);
+	connect(gApp->InspectorMgr->ViewportInspector, &ViewportInspectorWidget::EntitiesSelectionChanged,
+		this, &EntityInspectorWidget::SetSelectedEntities);
 }
 
 //------------------------------------------------------------------------------
-void EntityInspectorWidget::UpdateInspector()
+void EntityInspectorWidget::Reset()
 {
-	std::stringstream ss;
+	Entities.Clear();
 
-	// general data
-	ss << Entities[0]->GetID();
-	UniqueIdField->setText(&ss.str()[0]);
-
-	ss.str(std::string());
-	ss << Entities[0]->GetParent()->GetID();
-	ParentIdNameField->setText(&ss.str()[0]);
-
-	for (RTTIInspectorWidget* inspector : ComponentInspectors)
-		inspector->UpdateInspector();
-}
-
-//------------------------------------------------------------------------------
-void EntityInspectorWidget::ReloadInspector()
-{
-	std::stringstream ss;
-
-	// general data
-	ss << Entities[0]->GetID();
-	UniqueIdField->setText(&ss.str()[0]);
-
-	ss.str(std::string());
-	ss << Entities[0]->GetParent()->GetID();
-	ParentIdNameField->setText(&ss.str()[0]);
-
+	NameField->Reset();
+	UniqueIdField->setText("");
+	ParentIdNameField->setText("");
 	ChildrenIdNameField->clear();
-	for (auto child : Entities[0]->GetChildren())
-	{
-		ss.str(std::string());
-		ss << child->GetID();
-		ChildrenIdNameField->addItem(&ss.str()[0]);
-	}
-
-	Transform->UpdateControl();
 
 	// remove all old entity component sections
 	for (auto cmp : ComponentSections)
@@ -152,28 +122,129 @@ void EntityInspectorWidget::ReloadInspector()
 	}
 	ComponentSections.Clear();
 	ComponentInspectors.Clear();
+}
 
-	// add component sections
-	for (int i = 0, row = 5; i < MAX_COMPONENTS_COUNT; ++i)
+//------------------------------------------------------------------------------
+void EntityInspectorWidget::UpdateInspector()
+{
+	if (Entities.GetSize() == 1)
 	{
-		ComponentBase* cmp = Entities[0]->GetComponent(i);
-		if (!cmp) continue;
+		std::stringstream ss;
 
-		cmp->GetTypeInfo();
-		cmp->GetTypeInfo().GetTypeName();
+		NameField->UpdateControl();
 
-		SectionContainer* section = new SectionContainer(cmp->GetTypeInfo().GetTypeName());
-		RTTIInspectorWidget* viewer = new RTTIInspectorWidget(this);
+		ss << Entities[0]->GetID();
+		UniqueIdField->setText(&ss.str()[0]);
 
-		viewer->SetObject(cmp);
-
-		ComponentSections.PushBack(section);
-		ComponentInspectors.PushBack(viewer);
-
-		section->SetWidget(viewer);
-		MainLayout->addWidget(section, row, 0, 1, 3);
-		++row;
+		ss.str(std::string());
+		ss << Entities[0]->GetParent()->GetID();
+		ParentIdNameField->setText(&ss.str()[0]);
+		ParentChangeButton->show();
+		ChildrenSelectButton->show();
+		TransformSection->show();
 	}
+
+	for (RTTIInspectorWidget* inspector : ComponentInspectors)
+		inspector->UpdateInspector();
+}
+
+//------------------------------------------------------------------------------
+void EntityInspectorWidget::ReloadInspector()
+{
+	// no entity selected
+	if (Entities.GetSize() == 0)
+	{
+		NameField->Reset();
+
+		UniqueIdField->setText("");
+
+		ParentIdNameField->setText("");
+		ParentChangeButton->hide();
+
+		ChildrenIdNameField->clear();
+		ChildrenSelectButton->hide();
+
+		Transform->Reset();
+		TransformSection->hide();
+	}
+	else if (Entities.GetSize() > 1)
+	{
+		NameField->SetText("< multiple selection >");
+		UniqueIdField->setText("< multiple selection >");
+		ParentIdNameField->setText("< multiple selection >");
+		ParentChangeButton->hide();
+		ChildrenSelectButton->hide();
+
+		Transform->Reset();
+		TransformSection->hide();
+	}
+	else
+	{
+		// general data
+		std::stringstream ss;
+
+		NameField->UpdateControl();
+
+		ss << Entities[0]->GetID();
+		UniqueIdField->setText(&ss.str()[0]);
+
+		ss.str(std::string());
+		ss << Entities[0]->GetParent()->GetID();
+		ParentIdNameField->setText(&ss.str()[0]);
+		ParentChangeButton->show();
+
+		ChildrenIdNameField->clear();
+		for (auto child : Entities[0]->GetChildren())
+		{
+			ss.str(std::string());
+			ss << child->GetID();
+			ChildrenIdNameField->addItem(&ss.str()[0]);
+		}
+		ChildrenSelectButton->show();
+
+		TransformSection->show();
+		Transform->SetObject(Entities[0], &Entities[0]->GetPropertyManager()->GetPropertyList()[0]);
+
+		// component sections
+
+		// remove all old entity component sections
+		for (auto cmp : ComponentSections)
+		{
+			MainLayout->removeWidget(cmp);
+			delete cmp;
+		}
+		ComponentSections.Clear();
+		ComponentInspectors.Clear();
+
+		// add component sections
+		for (int i = 0, row = 5; i < MAX_COMPONENTS_COUNT; ++i)
+		{
+			ComponentBase* cmp = Entities[0]->GetComponent(i);
+			if (!cmp) continue;
+
+			cmp->GetTypeInfo();
+			cmp->GetTypeInfo().GetTypeName();
+
+			SectionContainer* section = new SectionContainer(cmp->GetTypeInfo().GetTypeName());
+			RTTIInspectorWidget* viewer = new RTTIInspectorWidget(this);
+
+			viewer->SetObject(cmp);
+
+			ComponentSections.PushBack(section);
+			ComponentInspectors.PushBack(viewer);
+
+			section->SetWidget(viewer);
+			MainLayout->addWidget(section, row, 0, 1, 3);
+			++row;
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+void EntityInspectorWidget::SetSelectedEntities(Dynarray<Entity*> entities)
+{
+	Entities = entities;
+	ReloadInspector();
 }
 
 //------------------------------------------------------------------------------
@@ -185,35 +256,38 @@ void EntityInspectorWidget::SpawnContextMenu(QPoint pos)
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::AddComponent()
 {
-	ComponentDialog dialog(Entities[0]);
+	AddComponentDialog dialog(Entities[0]);
 	dialog.exec();
+
+	if (!dialog.OperationCanceled())
+		ReloadInspector()
 }
 
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::RemoveComponent()
 {
-	ComponentDialog dialog(Entities[0], true);
+	RemoveComponentDialog dialog(Entities[0]);
 	dialog.exec();
+
+	if (!dialog.OperationCanceled())
+		ReloadInspector()
 }
 
-//------------------------------------------------------------------------------
-void EntityInspectorWidget::Reset()
+void EntityInspectorWidget::ChangeParent()
 {
-	Entities.Clear();
+	ChangeParentDialog dialog(Entities);
+	dialog.exec();
 
-	NameField->setText("");
-	UniqueIdField->setText("");
-	ParentIdNameField->setText("");
-	ChildrenIdNameField->clear();
+	if (!dialog.OperationCanceled())
+		UpdateInspector();
+}
 
-	TransformSection->hide();
+void EntityInspectorWidget::SelectParent()
+{
+	SetSelectedEntities({ Entities[0]->GetParent() });
+}
 
-	// remove all old entity component sections
-	for (auto cmp : ComponentSections)
-	{
-		MainLayout->removeWidget(cmp);
-		delete cmp;
-	}
-	ComponentSections.Clear();
-	ComponentInspectors.Clear();
+void EntityInspectorWidget::SelectChild()
+{
+	SetSelectedEntities({ Entities[0]->GetChildren[ChildrenIdNameField->currentIndex() });
 }

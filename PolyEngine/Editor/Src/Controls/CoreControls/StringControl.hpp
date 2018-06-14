@@ -13,6 +13,8 @@ public:
 	void UpdateObject() override;
 	void UpdateControl() override;
 
+	void SetText(String text) { Reset(); Field->setText(text.GetCStr); }
+
 private:
 	QGridLayout* Layout;
 	QLineEdit* Field;

@@ -40,6 +40,8 @@ public:
 	// @see ControlBase::UpdateControl;
 	void SetObject(void* ptr, const RTTI::Property* prop);
 
+	virtual void Reset() = 0;
+
 	// Call this to update assigned object from current control state.
 	// If ControlBase::ASAPUpdate is set to true probably You will never need to use this fnction.
 	virtual void UpdateObject() = 0;

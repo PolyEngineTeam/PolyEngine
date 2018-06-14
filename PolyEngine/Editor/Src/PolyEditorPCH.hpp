@@ -69,6 +69,10 @@ UNSILENCE_MSVC_WARNING()
 #include "Dialogs/Inspectors/ComponentDialog.hpp"
 #include "Dialogs/Inspectors/WorldComponentDialog.hpp"
 
+#include "Dialogs/Inspectors/ChangeParentDialog.hpp"
+#include "Dialogs/Inspectors/AddComponentDialog.hpp"
+#include "Dialogs/Inspectors/RemoveComponentDialog.hpp"
+
 // systems
 #include "Systems/Gizmo/GizmoSystem.hpp"
 #include "Systems/Gizmo/GizmoWorldComponent.hpp"
