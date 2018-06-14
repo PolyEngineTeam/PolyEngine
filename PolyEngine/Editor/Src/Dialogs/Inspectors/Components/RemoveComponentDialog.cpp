@@ -26,6 +26,8 @@
 #include "Rendering/ViewportWorldComponent.hpp"
 #include "Time/TimeWorldComponent.hpp"
 
+#include "ECS/DeferredTaskSystem.hpp"
+
 #include <sstream>
 
 #define ADD_COMPONENT(COMPONENT) \
@@ -35,7 +37,7 @@
 		cmp->setText(1, #COMPONENT); \
 		cmp->setCheckState(0, Qt::Unchecked); \
 		ComponentDestroyers.insert(std::pair<QString, ComponentDestroyer>(#COMPONENT, [](::Entity* e) \
-		{ Poly::DeferredTaskSystem::RemoveComponent<COMPONENT>(e->GetWorld(), e); }) \
+		{ Poly::DeferredTaskSystem::RemoveComponent<COMPONENT>(e->GetWorld(), e); })); \
 	}
 
 #define ADD_WORLD_COMPONENT(COMPONENT) \

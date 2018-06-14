@@ -14,7 +14,6 @@ namespace Poly {
 
 		friend void MovementSystem::MovementUpdatePhase(World*);
 	public:
-		FreeFloatMovementComponent() {}
 		FreeFloatMovementComponent(float movementSpeed = 1.0f, float rotationSpeed = 1.0f);
 
 		float GetMovementSpeed() const { return MovementSpeed; }

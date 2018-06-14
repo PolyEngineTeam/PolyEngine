@@ -35,7 +35,7 @@
 		cmp->setText(1, #COMPONENT); \
 		cmp->setCheckState(0, Qt::Unchecked); \
 		ComponentCreators.insert(std::pair<QString, ComponentCreator>(#COMPONENT, [](::Entity* e) \
-		{ Poly::DeferredTaskSystem::AddComponentImmediate<COMPONENT>(e->GetWorld(), e); }) \
+		{ Poly::DeferredTaskSystem::AddComponentImmediate<COMPONENT>(e->GetWorld(), e); })); \
 	}
 
 #define ADD_WORLD_COMPONENT(COMPONENT) \
@@ -70,24 +70,24 @@ AddComponentDialog::AddComponentDialog(::Entity* entity)
 	EntityIdNameField->setPalette(disabledEditPalette);
 	MainLayout->addWidget(EntityIdNameField, 1, 1, 1, 2);
 
-	ADD_COMPONENT(PathfindingComponent)
-	ADD_COMPONENT(SoundEmitterComponent)
-	ADD_COMPONENT(SoundListenerComponent)
-	ADD_COMPONENT(FreeFloatMovementComponent)
-	ADD_COMPONENT(Box2DColliderComponent)
-	ADD_COMPONENT(Circle2DColliderComponent)
-	ADD_COMPONENT(RigidBody2DComponent)
-	ADD_COMPONENT(Collider3DComponent)
-	ADD_COMPONENT(Rigidbody3DComponent)
-	ADD_COMPONENT(CameraComponent)
-	ADD_COMPONENT(AmbientLightWorldComponent)
-	ADD_COMPONENT(DirectionalLightComponent)
-	ADD_COMPONENT(PointLightComponent)
-	ADD_COMPONENT(SpotLightComponent)
-	ADD_COMPONENT(MeshRenderingComponent)
-	ADD_COMPONENT(PostprocessSettingsComponent)
-	ADD_COMPONENT(SpritesheetComponent)
-	ADD_COMPONENT(ScreenSpaceTextComponent)
+	//ADD_COMPONENT(PathfindingComponent)
+	//ADD_COMPONENT(SoundEmitterComponent)
+	//ADD_COMPONENT(SoundListenerComponent)
+	//ADD_COMPONENT(FreeFloatMovementComponent)
+	//ADD_COMPONENT(Box2DColliderComponent)
+	//ADD_COMPONENT(Circle2DColliderComponent)
+	//ADD_COMPONENT(RigidBody2DComponent)
+	//ADD_COMPONENT(Collider3DComponent)
+	//ADD_COMPONENT(Rigidbody3DComponent)
+	//ADD_COMPONENT(CameraComponent)
+	//ADD_COMPONENT(AmbientLightWorldComponent)
+	//ADD_COMPONENT(DirectionalLightComponent)
+	//ADD_COMPONENT(PointLightComponent)
+	//ADD_COMPONENT(SpotLightComponent)
+	//ADD_COMPONENT(MeshRenderingComponent)
+	//ADD_COMPONENT(PostprocessSettingsComponent)
+	//ADD_COMPONENT(SpritesheetComponent)
+	//ADD_COMPONENT(ScreenSpaceTextComponent)
 }
 
 AddComponentDialog::AddComponentDialog(::World* world)

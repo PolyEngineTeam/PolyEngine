@@ -18,6 +18,7 @@ namespace Poly
 		RTTI_DECLARE_TYPE_DERIVED(Entity, SafePtrRoot)
 		{
 			RTTI_PROPERTY_AUTONAME(Transform, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Name, RTTI::ePropertyFlag::NONE);
 		}
 
 	public:

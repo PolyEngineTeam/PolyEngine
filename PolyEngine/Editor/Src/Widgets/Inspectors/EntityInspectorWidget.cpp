@@ -41,7 +41,7 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 	NameText->setText("Name");
 	MainLayout->addWidget(NameText, 0, 0);
 	
-	NameField = new StringControl();
+	NameField = new StringControl(this);
 	MainLayout->addWidget(NameField, 0, 1);
 	
 	// UniqueID
@@ -93,6 +93,8 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 	TransformSection->SetWidget(Transform);
 
 	MainLayout->addWidget(TransformSection, 4, 0, 1, 3);
+
+	ReloadInspector();
 }
 
 //------------------------------------------------------------------------------
@@ -151,6 +153,15 @@ void EntityInspectorWidget::UpdateInspector()
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::ReloadInspector()
 {
+	// remove all old entity component sections
+	for (auto cmp : ComponentSections)
+	{
+		MainLayout->removeWidget(cmp);
+		delete cmp;
+	}
+	ComponentSections.Clear();
+	ComponentInspectors.Clear();
+
 	// no entity selected
 	if (Entities.GetSize() == 0)
 	{
@@ -160,6 +171,7 @@ void EntityInspectorWidget::ReloadInspector()
 
 		ParentIdNameField->setText("");
 		ParentChangeButton->hide();
+		ParentSelectButton->hide();
 
 		ChildrenIdNameField->clear();
 		ChildrenSelectButton->hide();
@@ -183,7 +195,7 @@ void EntityInspectorWidget::ReloadInspector()
 		// general data
 		std::stringstream ss;
 
-		NameField->UpdateControl();
+		NameField->SetObject(&Entities[0]->Name, &Entities[0]->GetPropertyManager()->GetPropertyList()[1]);
 
 		ss << Entities[0]->GetID();
 		UniqueIdField->setText(&ss.str()[0]);
@@ -192,6 +204,7 @@ void EntityInspectorWidget::ReloadInspector()
 		ss << Entities[0]->GetParent()->GetID();
 		ParentIdNameField->setText(&ss.str()[0]);
 		ParentChangeButton->show();
+		ParentSelectButton->show();
 
 		ChildrenIdNameField->clear();
 		for (auto child : Entities[0]->GetChildren())
@@ -204,17 +217,6 @@ void EntityInspectorWidget::ReloadInspector()
 
 		TransformSection->show();
 		Transform->SetObject(Entities[0], &Entities[0]->GetPropertyManager()->GetPropertyList()[0]);
-
-		// component sections
-
-		// remove all old entity component sections
-		for (auto cmp : ComponentSections)
-		{
-			MainLayout->removeWidget(cmp);
-			delete cmp;
-		}
-		ComponentSections.Clear();
-		ComponentInspectors.Clear();
 
 		// add component sections
 		for (int i = 0, row = 5; i < MAX_COMPONENTS_COUNT; ++i)
@@ -260,7 +262,7 @@ void EntityInspectorWidget::AddComponent()
 	dialog.exec();
 
 	if (!dialog.OperationCanceled())
-		ReloadInspector()
+		ReloadInspector();
 }
 
 //------------------------------------------------------------------------------
@@ -270,7 +272,7 @@ void EntityInspectorWidget::RemoveComponent()
 	dialog.exec();
 
 	if (!dialog.OperationCanceled())
-		ReloadInspector()
+		ReloadInspector();
 }
 
 //------------------------------------------------------------------------------
@@ -292,5 +294,5 @@ void EntityInspectorWidget::SelectParent()
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::SelectChild()
 {
-	SetSelectedEntities({ Entities[0]->GetChildren[ChildrenIdNameField->currentIndex() });
+	SetSelectedEntities({ Entities[0]->GetChildren()[ChildrenIdNameField->currentIndex()] });
 }

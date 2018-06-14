@@ -43,7 +43,7 @@ ChangeParentDialog::ChangeParentDialog(Dynarray<Entity*> entities, Entity* paren
 
 	EntityIdNameField = new QLineEdit(this);
 	EntityIdNameField->setReadOnly(true);
-	if (entities.GetSize == 1)
+	if (entities.GetSize() == 1)
 	{
 		std::stringstream ss;
 		ss << entities[0]->GetID();
@@ -80,12 +80,12 @@ void ChangeParentDialog::AddEntity(Entity* entity)
 
 void ChangeParentDialog::Ok()
 {
-	Entity* parent; Tree->selectedItems()[0]->text(1);
-
-	for (Entity* e : Entities)
-		e->SetParent(parent);
-
-	close();
+	//Entity* parent; Tree->selectedItems()[0]->text(1);
+	//
+	//for (Entity* e : Entities)
+	//	e->SetParent(parent);
+	//
+	//close();
 }
 
 void ChangeParentDialog::Cancel()

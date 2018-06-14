@@ -35,10 +35,3 @@ void ControlBase::SetObject(void* ptr, const RTTI::Property* prop)
 	UpdateControl();
 	setToolTip(Property->Name.GetCStr());
 }
-
-void ControlBase::SetObject(void* ptr)
-{
-	Object = ptr;
-	UpdateControl();
-	setToolTip(Property->Name.GetCStr());
-}

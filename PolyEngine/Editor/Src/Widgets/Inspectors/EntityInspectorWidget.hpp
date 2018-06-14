@@ -14,6 +14,7 @@
 class SectionContainer;
 class RTTIInspectorWidget;
 class TransformControl;
+class StringControl;
 
 using namespace Poly;
 

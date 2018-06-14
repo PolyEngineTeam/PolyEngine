@@ -76,7 +76,6 @@ namespace Poly
 
 	public:
 		// constructors and destructor
-		Rigidbody3DComponent() {}
 
 		/// Creates Rigidbody3DComponent from provided template parameters.
 		/// @param world - world where owner entity exists

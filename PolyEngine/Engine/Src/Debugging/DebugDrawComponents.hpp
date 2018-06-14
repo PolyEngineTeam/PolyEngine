@@ -17,10 +17,9 @@ namespace Poly
 		}
 
 	public:
-		DebugDrawableComponent() {}
 		DebugDrawableComponent(DebugDrawPreset preset) : entityPreset(preset) { };
 
-		DebugDrawPreset entityPreset;
+		const DebugDrawPreset entityPreset;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, DebugDrawableComponent)

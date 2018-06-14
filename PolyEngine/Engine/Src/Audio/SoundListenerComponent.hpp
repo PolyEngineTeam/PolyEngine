@@ -21,7 +21,6 @@ namespace Poly
 		}
 
 	public:
-		SoundListenerComponent{}
 		/// Sets everything to 0 and copies SourcesArray from SoundWorldComponent
 		SoundListenerComponent(SoundWorldComponent* worldComponent = nullptr);
 		~SoundListenerComponent();
