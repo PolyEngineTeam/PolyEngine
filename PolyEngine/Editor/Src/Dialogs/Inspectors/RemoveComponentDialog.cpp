@@ -24,7 +24,7 @@
 		QTreeWidgetItem* cmp = new QTreeWidgetItem(Tree); \
 		cmp->setText(1, #COMPONENT); \
 		cmp->setCheckState(0, Qt::Unchecked); \
-		ComponentDestroyers.insert(std::pair<QString, ComponentDestroyer>("", [](::Entity* e) \
+		ComponentDestroyers.insert(std::pair<QString, ComponentDestroyer>(#COMPONENT, [](::Entity* e) \
 		{ Poly::DeferredTaskSystem::RemoveComponent<COMPONENT>(e->GetWorld(), e); }) \
 	}
 
@@ -43,7 +43,7 @@ RemoveComponentDialog::RemoveComponentDialog(::Entity* entity)
 
 	// create group box
 	Tree = new QTreeWidget(this);
-	Tree->setHeaderLabels(QStringList() << "Add" << "Component Name");
+	Tree->setHeaderLabels(QStringList() << "Remove" << "Component Name");
 
 	//for (int i = 0; i < MAX_COMPONENTS_COUNT; ++i)
 	//	if ((removeComponents && entity->HasComponent(i))

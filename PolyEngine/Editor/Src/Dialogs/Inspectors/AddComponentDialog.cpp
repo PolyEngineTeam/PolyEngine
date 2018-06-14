@@ -24,8 +24,8 @@
 		QTreeWidgetItem* cmp = new QTreeWidgetItem(Tree); \
 		cmp->setText(1, #COMPONENT); \
 		cmp->setCheckState(0, Qt::Unchecked); \
-		ComponentCreators.insert(std::pair<QString, ComponentCreator>("", [](::Entity* e) \
-		{ DeferredTaskSystem::AddComponentImmediate<COMPONENT>(e->GetWorld(), e); }) \
+		ComponentCreators.insert(std::pair<QString, ComponentCreator>(#COMPONENT, [](::Entity* e) \
+		{ Poly::DeferredTaskSystem::AddComponentImmediate<COMPONENT>(e->GetWorld(), e); }) \
 	}
 
 AddComponentDialog::AddComponentDialog(::Entity* entity)
