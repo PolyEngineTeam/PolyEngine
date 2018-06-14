@@ -289,10 +289,12 @@ void EntityInspectorWidget::ChangeParent()
 void EntityInspectorWidget::SelectParent()
 {
 	SetSelectedEntities({ Entities[0]->GetParent() });
+	emit gApp->InspectorMgr->EntitiesSelectionChanged(Entities);
 }
 
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::SelectChild()
 {
 	SetSelectedEntities({ Entities[0]->GetChildren()[ChildrenIdNameField->currentIndex()] });
+	emit gApp->InspectorMgr->EntitiesSelectionChanged(Entities);
 }

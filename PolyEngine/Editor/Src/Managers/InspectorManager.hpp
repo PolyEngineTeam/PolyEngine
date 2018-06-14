@@ -40,6 +40,10 @@ signals:
 	void EngineDeinitialized();
 	void StateChanged(eEngineState state);
 
+	// entity signals
+	void EntitiesSelectionChanged(Dynarray<Entity*> entities);
+	void EntitiesReparented(Dynarray<Entity*> entities);
+
 private:
 	WorldInspectorWidget* WorldInspector;
 	WorldComponentsInspectorWidget* WorldComponentsInspector;

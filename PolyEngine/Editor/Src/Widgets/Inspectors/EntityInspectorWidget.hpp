@@ -46,9 +46,6 @@ public:
 	// Set entity to display; updates automatically.
 	void SetSelectedEntities(Dynarray<Entity*> entities);
 
-signals:
-	void EntitiesSelectionChanged(Dynarray<Entity*> entities);
-
 private:
 	Dynarray<Entity*> Entities;
 
