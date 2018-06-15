@@ -85,7 +85,7 @@ void EngineManager::Play()
 		break;
 
 	default:
-		throw new std::n();
+		throw new std::exception();
 	}
 
 	emit StateChanged(eEngineState::GAMEPLAY);
