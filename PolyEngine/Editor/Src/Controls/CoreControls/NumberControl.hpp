@@ -2,7 +2,7 @@
 
 #include "Controls/ControlBase.hpp"
 
-#include <QLineEdit.h>
+#include <QtWidgets/qlineedit.h>
 
 class NumberControl : public ControlBase
 {

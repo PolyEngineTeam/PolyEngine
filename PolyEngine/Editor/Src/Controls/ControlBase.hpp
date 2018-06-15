@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QWidget>
-#include <qtimer.h>
+#include <QtWidgets/qwidget.h>
+#include <QtCore/qtimer.h>
 
 #include <RTTI/RTTI.hpp>
 

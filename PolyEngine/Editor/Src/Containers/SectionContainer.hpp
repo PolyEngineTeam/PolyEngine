@@ -5,7 +5,7 @@
 #include <QParallelAnimationGroup>
 #include <QScrollArea>
 #include <QToolButton>
-#include <QWidget>
+#include <QtWidgets/qwidget.h>
 
 // This container can be collapsed to one line.
 // If deleted deletes its whole content.

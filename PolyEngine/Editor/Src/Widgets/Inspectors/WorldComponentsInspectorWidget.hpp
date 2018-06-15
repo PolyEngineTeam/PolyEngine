@@ -4,7 +4,7 @@
 #include <ECS/World.hpp>
 
 #include <qmenu.h>
-#include <qgridlayout.h>
+#include <QtWidgets/qgridlayout.h>
 
 #include "Widgets/Inspectors/InspectorWidgetBase.hpp"
 

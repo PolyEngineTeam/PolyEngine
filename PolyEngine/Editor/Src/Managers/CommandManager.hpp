@@ -2,7 +2,7 @@
 
 #include <Core.hpp>
 #include <QObject>
-#include <qtimer.h>
+#include <QtCore/qtimer.h>
 
 using namespace Poly;
 

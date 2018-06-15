@@ -12,7 +12,7 @@ SILENCE_MSVC_WARNING(4800, "")
 #include <QBoxLayout>
 #include <QDockWidget>
 #include <QMainWindow>
-#include <QWidget>
+#include <QtWidgets/qwidget.h>
 UNSILENCE_MSVC_WARNING()
 UNSILENCE_MSVC_WARNING()
 

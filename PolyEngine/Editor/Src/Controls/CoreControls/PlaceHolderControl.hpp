@@ -2,8 +2,8 @@
 
 #include "Controls/ControlBase.hpp"
 
-#include <QLineEdit.h>
-#include <QGridLayout.h>
+#include <QtWidgets/qgridlayout.h>
+#include <QtWidgets/qlineedit.h>
 
 class PlaceHolderControl : public ControlBase
 {

@@ -2,9 +2,9 @@
 
 #include <qdialog.h>
 #include <qlabel.h>
-#include <qgridlayout.h>
+#include <QtWidgets/qgridlayout.h>
 #include <qlistwidget.h>
-#include <qlineedit.h>
+#include <QtWidgets/qlineedit.h>
 #include <qtreewidget.h>
 #include <qpushbutton.h>
 
