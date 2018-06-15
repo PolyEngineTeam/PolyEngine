@@ -28,7 +28,7 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 		connect(RemoveComponentAction, &QAction::triggered, this, &EntityInspectorWidget::RemoveComponent);
 	
 	// TODO(squares): find better way
-	for (int i = 0; i < MAX_COMPONENTS_COUNT + 6; ++i)
+	for (size_t i = 0; i < MAX_COMPONENTS_COUNT + 6; ++i)
 		MainLayout->setRowStretch(i, 1);
 	
 	
@@ -269,7 +269,7 @@ void EntityInspectorWidget::ReloadInspector()
 		Transform->SetObject(Entities[0], &Entities[0]->GetPropertyManager()->GetPropertyList()[0]);
 
 		// add component sections
-		for (int i = 0, row = 5; i < MAX_COMPONENTS_COUNT; ++i)
+		for (size_t i = 0, row = 5; i < MAX_COMPONENTS_COUNT; ++i)
 		{
 			ComponentBase* cmp = Entities[0]->GetComponent(i);
 			if (!cmp) continue;
