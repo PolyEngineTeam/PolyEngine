@@ -41,16 +41,16 @@ public:
 	// closes current project
 	void Close();
 
-	bool IsOpened() { ProjectConfig; }
+	bool IsOpened() { ProjectCfg; }
 
-	const ProjectConfig& GetProjectConfig() const { return *ProjectConfig; }
+	const ProjectConfig& GetProjectConfig() const { return *ProjectCfg; }
 
-	const String& SetProjectName(const String& name) const { return ProjectConfig->ProjectName = name; }
+	const String& SetProjectName(const String& name) const { return ProjectCfg->ProjectName = name; }
 
 signals:
 	void ProjectOpened(::ProjectConfig* config);
 	void ProjectClosed();
 
 private:
-	std::unique_ptr<ProjectConfig> ProjectConfig;
+	std::unique_ptr<ProjectConfig> ProjectCfg;
 };

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <qdialog.h>
+#include <QtWidgets/qdialog.h>
 #include <qlabel.h>
 #include <QtWidgets/qgridlayout.h>
 #include <qlistwidget.h>

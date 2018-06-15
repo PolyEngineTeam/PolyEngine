@@ -12,7 +12,7 @@ static LibraryFunctionHandle<CreateGameFunc> LoadGame;
 
 void ProjectManager::Create(const String& projectName, const String& projectPath, const String& enginePath)
 {
-	if (ProjectConfig)
+	if (ProjectCfg)
 		throw new ProjectManagerException("Can't create new project without closing previous one.");
 
 	StringBuilder builder;
@@ -31,19 +31,19 @@ void ProjectManager::Create(const String& projectName, const String& projectPath
 
 void ProjectManager::Open(String projectPath)
 {
-	if (ProjectConfig)
+	if (ProjectCfg)
 		throw new ProjectManagerException("Can't open project without closing previous one.");
 
 	// create and load project file
-	ProjectConfig = std::make_unique<::ProjectConfig>(projectPath);
-	ProjectConfig->Load();
+	ProjectCfg = std::make_unique<::ProjectConfig>(projectPath);
+	ProjectCfg->Load();
 
-	emit ProjectOpened(ProjectConfig.get());
+	emit ProjectOpened(ProjectCfg.get());
 }
 
 void ProjectManager::Update(const String& enginePath)
 {
-	if (!ProjectConfig)
+	if (!ProjectCfg)
 		throw new ProjectManagerException("This operation requires any project opened.");
 
 	StringBuilder builder;
@@ -53,20 +53,20 @@ void ProjectManager::Update(const String& enginePath)
 	builder.Append("/Scripts/ProjectTool.py -e ");
 	builder.Append(enginePath);
 	builder.Append(" -u ");
-	builder.Append(ProjectConfig->ProjectPath);
+	builder.Append(ProjectCfg->ProjectPath);
 
 	gApp->CommandMgr->RunCommand(builder.GetString());
 }
 
 void ProjectManager::Build()
 {
-	if (!ProjectConfig)
+	if (!ProjectCfg)
 		throw new ProjectManagerException("This operation requires any project opened.");
 
 	StringBuilder builder;
 
 	builder.Append("cmake --build ");
-	builder.Append(ProjectConfig->ProjectPath);
+	builder.Append(ProjectCfg->ProjectPath);
 	builder.Append("/Build");
 
 	gApp->CommandMgr->RunCommand(builder.GetString());
@@ -74,7 +74,7 @@ void ProjectManager::Build()
 
 void ProjectManager::Edit()
 {
-	if (!ProjectConfig)
+	if (!ProjectCfg)
 		throw new ProjectManagerException("This operation requires any project opened.");
 
 	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
@@ -82,7 +82,7 @@ void ProjectManager::Edit()
 		// load game
 		if (!LoadGame.FunctionValid())
 		{
-			LoadGame = LoadFunctionFromSharedLibrary<CreateGameFunc>(ProjectConfig->GetGameDllPath().GetCStr(), "CreateGame");
+			LoadGame = LoadFunctionFromSharedLibrary<CreateGameFunc>(ProjectCfg->GetGameDllPath().GetCStr(), "CreateGame");
 			ASSERTE(LoadGame.FunctionValid(), "Library libGame load failed");
 			gConsole.LogDebug("Library libGame loaded.");
 		}
@@ -91,9 +91,9 @@ void ProjectManager::Edit()
 
 		// works for VS
 		StringBuilder builder;
-		builder.Append(ProjectConfig->ProjectPath);
+		builder.Append(ProjectCfg->ProjectPath);
 		builder.Append("/Build/");
-		builder.Append(ProjectConfig->ProjectName);
+		builder.Append(ProjectCfg->ProjectName);
 		builder.Append("/Debug/AssetsPathConfig.json");
 
 		gApp->EngineMgr->InitEngine(std::move(game), builder.GetString());
@@ -104,7 +104,7 @@ void ProjectManager::Edit()
 
 void ProjectManager::Play()
 {
-	if (!ProjectConfig)
+	if (!ProjectCfg)
 		throw new ProjectManagerException("This operation requires any project opened.");
 
 	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
@@ -112,7 +112,7 @@ void ProjectManager::Play()
 		// load game
 		if (!LoadGame.FunctionValid())
 		{
-			LoadGame = LoadFunctionFromSharedLibrary<CreateGameFunc>(ProjectConfig->GetGameDllPath().GetCStr(), "CreateGame");
+			LoadGame = LoadFunctionFromSharedLibrary<CreateGameFunc>(ProjectCfg->GetGameDllPath().GetCStr(), "CreateGame");
 			ASSERTE(LoadGame.FunctionValid(), "Library libGame load failed");
 			gConsole.LogDebug("Library libGame loaded.");
 		}
@@ -121,9 +121,9 @@ void ProjectManager::Play()
 
 		// works for VS
 		StringBuilder builder;
-		builder.Append(ProjectConfig->ProjectPath);
+		builder.Append(ProjectCfg->ProjectPath);
 		builder.Append("/Build/");
-		builder.Append(ProjectConfig->ProjectName);
+		builder.Append(ProjectCfg->ProjectName);
 		builder.Append("/Debug/AssetsPathConfig.json");
 
 		gApp->EngineMgr->InitEngine(std::move(game), builder.GetString());
@@ -136,8 +136,8 @@ void ProjectManager::Play()
 
 void ProjectManager::Close()
 {
-	if (!ProjectConfig)
+	if (!ProjectCfg)
 		throw new ProjectManagerException("This operation requires any project opened.");
 
-	ProjectConfig.release();
+	ProjectCfg.release();
 }
