@@ -3,7 +3,6 @@
 #include <Core.hpp>
 #include <ECS/World.hpp>
 
-#include <qmenu.h>
 #include <QtWidgets/qgridlayout.h>
 
 #include "Widgets/Inspectors/InspectorWidgetBase.hpp"

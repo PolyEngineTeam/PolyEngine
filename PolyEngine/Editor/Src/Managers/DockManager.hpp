@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QEvent>
+#include <QtCore/qcoreevent.h>
 
 class PolyWindow;
 class PolyDockWindow;

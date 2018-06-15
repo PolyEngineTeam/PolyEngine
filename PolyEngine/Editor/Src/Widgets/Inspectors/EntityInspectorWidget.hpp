@@ -3,11 +3,11 @@
 #include <ECS/Entity.hpp>
 #include <Core.hpp>
 
-#include <QLineEdit>
 #include <QtWidgets/qlabel.h>
-#include <QPushButton>
 #include <QtWidgets/qcombobox.h>
-#include <qscrollarea.h>
+#include <QtWidgets/qscrollarea.h>
+#include <QtWidgets/qlineedit.h>
+#include <QtWidgets/qpushbutton.h>
 
 #include "Widgets/Inspectors/InspectorWidgetBase.hpp"
 

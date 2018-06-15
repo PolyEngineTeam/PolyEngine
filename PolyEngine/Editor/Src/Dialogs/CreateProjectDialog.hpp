@@ -1,9 +1,9 @@
 #pragma once
 
 #include <QDialog>
-#include <QLineEdit>
+#include <QtWidgets/qlineedit.h>
 #include <QtWidgets/qlabel.h>
-#include <QPushButton>
+#include <QtWidgets/qpushbutton.h>
 
 class CreateProjectDialog : public QDialog
 {

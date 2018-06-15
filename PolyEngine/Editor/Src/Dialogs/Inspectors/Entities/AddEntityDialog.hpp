@@ -21,7 +21,7 @@ public:
 
 private:
 	Entity* Parent;
-	World* World;
+	World* WorldObj;
 
 	Entity* Result = nullptr;
 	bool Canceled = false;

@@ -1,7 +1,7 @@
 #include "PolyEditorPCH.hpp"
 
 AddEntityDialog::AddEntityDialog(::World* world, Entity* parent)
-	: World(world), Parent(parent)
+	: WorldObj(world), Parent(parent)
 {
 	setModal(true);
 	setMaximumHeight(800);
@@ -39,7 +39,7 @@ void AddEntityDialog::Ok()
 	// apply changes
 	if (List->selectedItems()[0] == List->item(0))
 	{
-		Result = DeferredTaskSystem::SpawnEntityImmediate(World);
+		Result = DeferredTaskSystem::SpawnEntityImmediate(WorldObj);
 		
 		if (Parent)
 			Result->SetParent(Parent);

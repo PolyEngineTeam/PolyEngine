@@ -2,7 +2,7 @@
 
 #include <QFileSystemModel>
 #include <QFileSystemWatcher>
-#include <QTimer>
+#include <QtCore/qtimer.h>
 
 #include <Core.hpp>
 

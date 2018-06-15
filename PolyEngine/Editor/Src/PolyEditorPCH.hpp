@@ -4,9 +4,9 @@
 SILENCE_MSVC_WARNING(4244, "")
 SILENCE_MSVC_WARNING(4800, "")
 #include <QKeyEvent>
-#include <QEvent>
+#include <QtCore/qcoreevent.h>
 #include <QApplication>
-#include <QTimer>
+#include <QtCore/qtimer.h>
 #include <QMenu>
 #include <QtWidgets/qtextedit.h>
 #include <QtWidgets/qboxlayout.h>

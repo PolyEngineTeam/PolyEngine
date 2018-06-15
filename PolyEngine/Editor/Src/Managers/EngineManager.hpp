@@ -1,8 +1,8 @@
 #pragma once
 
-#include <QObject>
-#include <QTimer>
 #include <Engine.hpp>
+#include <QtCore/qobject.h>
+#include <QtCore/qtimer.h>
 
 using namespace Poly;
 

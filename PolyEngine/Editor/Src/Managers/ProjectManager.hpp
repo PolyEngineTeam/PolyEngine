@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Core.hpp>
-#include <QObject>
-#include <QTimer>
+#include <QtCore/qobject.h>
+#include <QtCore/qtimer.h>
 
 #include "Configs/ProjectConfig.hpp"
 

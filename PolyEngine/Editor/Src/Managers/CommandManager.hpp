@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Core.hpp>
-#include <QObject>
+#include <QtCore/qobject.h>
 #include <QtCore/qtimer.h>
 
 using namespace Poly;

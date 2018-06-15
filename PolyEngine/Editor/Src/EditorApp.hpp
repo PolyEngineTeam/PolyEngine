@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QApplication>
-#include <QTimer>
+#include <QtCore/qtimer.h>
 
 #include "EditorUi.hpp"
 #include "GlobalEventFilter.hpp"
