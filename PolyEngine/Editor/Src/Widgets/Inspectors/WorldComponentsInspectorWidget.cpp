@@ -49,7 +49,7 @@ void WorldComponentsInspectorWidget::Reset()
 //------------------------------------------------------------------------------
 void WorldComponentsInspectorWidget::SetObject(::World* world)
 {
-	World = world;
+	WorldObj = world;
 	ReloadInspector();
 }
 
@@ -75,7 +75,7 @@ void WorldComponentsInspectorWidget::ReloadInspector()
 	// add component sections
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT; ++i)
 	{
-		ComponentBase* cmp = World->GetWorldComponent(i);
+		ComponentBase* cmp = WorldObj->GetWorldComponent(i);
 		if (!cmp) continue;
 
 		cmp->GetTypeInfo();

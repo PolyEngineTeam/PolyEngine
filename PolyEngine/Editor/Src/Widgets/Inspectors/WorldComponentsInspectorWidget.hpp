@@ -36,7 +36,7 @@ public:
 	void ReloadInspector();
 
 private:
-	World* World;
+	World* WorldObj;
 
 	QGridLayout* MainLayout;
 
