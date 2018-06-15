@@ -123,7 +123,7 @@ void WorldInspectorWidget::SelectionChanged(QTreeWidgetItem* item, int column)
 	SelectedEntities.Clear();
 
 	for (QTreeWidgetItem* i : Tree->selectedItems())
-		SelectedEntities.PushBack(EntityFromItem[item]);
+		SelectedEntities.PushBack(EntityFromItem[i]);
 
 	emit gApp->InspectorMgr->EntitiesSelectionChanged(SelectedEntities);
 }
