@@ -1,6 +1,6 @@
 #include "PolyEditorPCH.hpp"
 
-ASSIGN_CONTROL(BoolControl, BOOL)
+ASSIGN_CONTROL(BoolControl, RTTI::eCorePropertyType::BOOL, BOOL)
 
 BoolControl::BoolControl(QWidget* parent)
 	: ControlBase(parent)

@@ -85,10 +85,10 @@ public slots:
 };
 
 // Use this to add Your control to map from core type to control creator function.
-#define ASSIGN_CONTROL(CONTROL, CORE_TYPE) \
+#define ASSIGN_CONTROL(CONTROL, CORE_TYPE, NAME) \
 	namespace Impl \
 	{ \
-		ControlCreator* CONTROL##Creator_##CORE_TYPE = \
-			new(&::Impl::CoreTypeToControlMap[static_cast<int>(RTTI::eCorePropertyType::##CORE_TYPE)]) \
+		ControlCreator* CONTROL##Creator_##NAME = \
+			new(&::Impl::CoreTypeToControlMap[static_cast<int>(CORE_TYPE)]) \
 				ControlCreator([](QWidget* parent) -> ControlBase* { return new CONTROL(parent); }); \
 	}

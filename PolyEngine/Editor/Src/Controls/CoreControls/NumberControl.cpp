@@ -3,16 +3,16 @@
 #include <QIntValidator>
 #include <QDoubleValidator>
 
-ASSIGN_CONTROL(NumberControl, INT8)
-ASSIGN_CONTROL(NumberControl, INT16)
-ASSIGN_CONTROL(NumberControl, INT32)
-ASSIGN_CONTROL(NumberControl, INT64)
-ASSIGN_CONTROL(NumberControl, UINT8)
-ASSIGN_CONTROL(NumberControl, UINT16)
-ASSIGN_CONTROL(NumberControl, UINT32)
-ASSIGN_CONTROL(NumberControl, UINT64)
-ASSIGN_CONTROL(NumberControl, FLOAT)
-ASSIGN_CONTROL(NumberControl, DOUBLE)
+ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::INT8, INT8)
+ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::INT16, INT16)
+ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::INT32, INT32)
+ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::INT64, INT64)
+ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::UINT8, UINT8)
+ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::UINT16, UINT16)
+ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::UINT32, UINT32)
+ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::UINT64, UINT64)
+ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::FLOAT, FLOAT)
+ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::DOUBLE, DOUBLE)
 
 NumberControl::NumberControl(QWidget* parent)
 	: ControlBase(parent)
