@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QTextEdit>
-#include <QBoxLayout>
+#include <QtWidgets/qtextedit.h>
+#include <QtWidgets/qboxlayout.h>
 #include "Widgets/PolyWidget.hpp"
 
 enum class eLoggerType

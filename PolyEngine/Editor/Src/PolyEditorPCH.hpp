@@ -8,8 +8,8 @@ SILENCE_MSVC_WARNING(4800, "")
 #include <QApplication>
 #include <QTimer>
 #include <QMenu>
-#include <QTextEdit>
-#include <QBoxLayout>
+#include <QtWidgets/qtextedit.h>
+#include <QtWidgets/qboxlayout.h>
 #include <QDockWidget>
 #include <QMainWindow>
 #include <QtWidgets/qwidget.h>
