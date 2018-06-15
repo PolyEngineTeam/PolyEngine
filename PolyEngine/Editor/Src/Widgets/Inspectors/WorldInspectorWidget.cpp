@@ -76,7 +76,7 @@ void WorldInspectorWidget::ReloadInspector()
 	root->setText(3, (&ss.str()[0]));
 	EntityFromItem.insert(std::pair<QTreeWidgetItem*, Entity*>(root, WorldObj->GetRoot()));
 
-	for (auto child : World->GetRoot()->GetChildren())
+	for (auto child : WorldObj->GetRoot()->GetChildren())
 		AddEntityToTree(child, root);
 }
 

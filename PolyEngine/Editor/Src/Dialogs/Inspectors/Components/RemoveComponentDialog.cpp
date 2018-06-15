@@ -52,7 +52,7 @@
 
 RemoveComponentDialog::RemoveComponentDialog(::Entity* entity)
 {
-	Entity = entity;
+	EntityObj = entity;
 
 	InitControls();
 
@@ -97,8 +97,8 @@ RemoveComponentDialog::RemoveComponentDialog(::Entity* entity)
 	EntityIdNameField = new QLineEdit(this);
 	EntityIdNameField->setReadOnly(true);
 	std::stringstream ss;
-	ss << Entity->GetID();
-	EntityIdNameField->setText(QString(Entity->Name.GetCStr()) + QString(&ss.str()[0]));
+	ss << EntityObj->GetID();
+	EntityIdNameField->setText(QString(EntityObj->Name.GetCStr()) + QString(&ss.str()[0]));
 	EntityIdNameField->setPalette(disabledEditPalette);
 	MainLayout->addWidget(EntityIdNameField, 1, 1, 1, 2);
 }
@@ -150,8 +150,8 @@ void RemoveComponentDialog::InitControls()
 
 void RemoveComponentDialog::Ok()
 {
-	if (Entity)
-		ComponentDestroyers[Tree->selectedItems()[0]->text(0)](Entity);
+	if (EntityObj)
+		ComponentDestroyers[Tree->selectedItems()[0]->text(0)](EntityObj);
 	else
 		WorldComponentDestroyers[Tree->selectedItems()[0]->text(0)](WorldObj);
 

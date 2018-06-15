@@ -8,8 +8,6 @@
 #include <QtWidgets/qpushbutton.h>
 #include <QtWidgets/qtreewidget.h>
 
-#include <QtWidgets/qtreewidget.h>
-
 #include <ECS/World.hpp>
 #include <ECS/Entity.hpp>
 

@@ -4,7 +4,7 @@
 #include <Core.hpp>
 
 #include <QLineEdit>
-#include <QLabel>
+#include <QtWidgets/qlabel.h>
 #include <QPushButton>
 #include <QtWidgets/qcombobox.h>
 #include <qscrollarea.h>

@@ -2,7 +2,7 @@
 
 #include <QDialog>
 #include <QLineEdit>
-#include <QLabel>
+#include <QtWidgets/qlabel.h>
 #include <QPushButton>
 
 class CreateProjectDialog : public QDialog

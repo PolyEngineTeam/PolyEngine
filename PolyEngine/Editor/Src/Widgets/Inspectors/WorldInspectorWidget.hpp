@@ -3,11 +3,11 @@
 #include <ECS/World.hpp>
 #include <ECS/Entity.hpp>
 #include <UniqueID.hpp>
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
+
 #include <QtWidgets/qcombobox.h>
-#include <QLayout>
-#include <QLabel>
+#include <QtWidgets/qtreewidget.h>
+#include <QtWidgets/qlayout.h>
+#include <QtWidgets/qlabel.h>
 
 #include "Widgets/Inspectors/InspectorWidgetBase.hpp"
 
