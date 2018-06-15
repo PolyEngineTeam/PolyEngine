@@ -165,7 +165,7 @@ void EntityInspectorWidget::UpdateInspector()
 		}
 	}
 	else
-		throw new std::exception((const char*)"Unsupported case.");
+		throw new std::exception();
 
 	for (RTTIInspectorWidget* inspector : ComponentInspectors)
 		inspector->UpdateInspector();
