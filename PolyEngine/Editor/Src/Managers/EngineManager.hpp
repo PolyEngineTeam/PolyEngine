@@ -27,7 +27,7 @@ signals:
 	void Deinitialized();
 
 private:
-	std::unique_ptr<Engine> Engine = nullptr;
+	std::unique_ptr<Engine> EngineObj;
 	IEditor* Editor = nullptr;
 
 	QTimer Updater;

@@ -105,7 +105,7 @@ RemoveComponentDialog::RemoveComponentDialog(::Entity* entity)
 
 RemoveComponentDialog::RemoveComponentDialog(::World* world)
 {
-	World = world;
+	WorldObj = world;
 
 	InitControls();
 
@@ -153,7 +153,7 @@ void RemoveComponentDialog::Ok()
 	if (Entity)
 		ComponentDestroyers[Tree->selectedItems()[0]->text(0)](Entity);
 	else
-		WorldComponentDestroyers[Tree->selectedItems()[0]->text(0)](World);
+		WorldComponentDestroyers[Tree->selectedItems()[0]->text(0)](WorldObj);
 
 	close();
 }

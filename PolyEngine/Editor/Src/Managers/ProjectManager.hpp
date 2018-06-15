@@ -41,7 +41,7 @@ public:
 	// closes current project
 	void Close();
 
-	bool IsOpened() { ProjectCfg; }
+	bool IsOpened() { return Opened; }
 
 	const ProjectConfig& GetProjectConfig() const { return *ProjectCfg; }
 
@@ -52,5 +52,6 @@ signals:
 	void ProjectClosed();
 
 private:
+	bool Opened;
 	std::unique_ptr<ProjectConfig> ProjectCfg;
 };

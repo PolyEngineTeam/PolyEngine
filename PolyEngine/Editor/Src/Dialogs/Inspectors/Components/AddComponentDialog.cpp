@@ -92,7 +92,7 @@ AddComponentDialog::AddComponentDialog(::Entity* entity)
 
 AddComponentDialog::AddComponentDialog(::World* world)
 {
-	World = world;
+	WorldObj = world;
 
 	InitControls();
 
@@ -152,7 +152,7 @@ void AddComponentDialog::Ok()
 	if (Entity)
 		ComponentCreators[Tree->selectedItems()[0]->text(0)](Entity);
 	else
-		WorldComponentCreators[Tree->selectedItems()[0]->text(0)](World);
+		WorldComponentCreators[Tree->selectedItems()[0]->text(0)](WorldObj);
 
 	close();
 }

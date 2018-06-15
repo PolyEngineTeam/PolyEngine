@@ -51,7 +51,7 @@ void WorldInspectorWidget::InitializeConnections()
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::Reset()
 {
-	World = nullptr;
+	WorldObj = nullptr;
 	Tree->clear();
 	EntityFromItem.clear();
 	SelectedEntities.Clear();
@@ -72,9 +72,9 @@ void WorldInspectorWidget::ReloadInspector()
 	QTreeWidgetItem* root = new QTreeWidgetItem(Tree);
 
 	std::stringstream ss;
-	ss << World->GetRoot()->GetID();
+	ss << WorldObj->GetRoot()->GetID();
 	root->setText(3, (&ss.str()[0]));
-	EntityFromItem.insert(std::pair<QTreeWidgetItem*, Entity*>(root, World->GetRoot()));
+	EntityFromItem.insert(std::pair<QTreeWidgetItem*, Entity*>(root, WorldObj->GetRoot()));
 
 	for (auto child : World->GetRoot()->GetChildren())
 		AddEntityToTree(child, root);
@@ -83,7 +83,7 @@ void WorldInspectorWidget::ReloadInspector()
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::SetObject(::World* world)
 {
-	World = world;
+	WorldObj = world;
 
 	ReloadInspector();
 }
@@ -151,7 +151,7 @@ void WorldInspectorWidget::SpawnContextMenu(QPoint pos)
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::AddEntity()
 {
-	AddEntityDialog dialog(World, EntityFromItem[Tree->selectedItems()[0]]);
+	AddEntityDialog dialog(WorldObj, EntityFromItem[Tree->selectedItems()[0]]);
 	dialog.exec();
 
 	if (!dialog.OperationCanceled())

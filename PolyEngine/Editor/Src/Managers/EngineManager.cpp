@@ -13,7 +13,7 @@ EngineManager::EngineManager()
 //------------------------------------------------------------------------------
 void EngineManager::InitEngine(std::unique_ptr<IGame> game, const String& assetsPathConfigPath)
 {
-	if (Engine)
+	if (EngineObj)
 		throw new std::exception("Creating Engine twice?");
 
 	// get editor inserface and set path to assets
@@ -22,19 +22,19 @@ void EngineManager::InitEngine(std::unique_ptr<IGame> game, const String& assets
 	Editor->SetEngineState(eEngineState::EDIT);
 
 	// create and initialize engine instance
-	Engine = std::make_unique<Poly::Engine>();
-	Engine->RegisterEditor(Editor);
-	Engine->Init(std::move(game), std::move(gApp->InspectorMgr->GetRenderingDevice()));
+	EngineObj = std::make_unique<Poly::Engine>();
+	EngineObj->RegisterEditor(Editor);
+	EngineObj->Init(std::move(game), std::move(gApp->InspectorMgr->GetRenderingDevice()));
 	gConsole.LogDebug("Engine initialized successfully");
 	Updater.start(0);
 
-	emit Initialized(Engine->GetWorld());
+	emit Initialized(EngineObj->GetWorld());
 }
 
 //------------------------------------------------------------------------------
 void EngineManager::DeinitEngine()
 {
-	Engine.release();
+	EngineObj.release();
 
 	Editor->SetEngineState(eEngineState::NONE);
 	Editor = nullptr;
@@ -57,7 +57,7 @@ void EngineManager::Edit()
 
 	case eEngineState::GAMEPLAY:
 		Editor->SetEngineState(eEngineState::EDIT);
-		Engine->Restart();
+		EngineObj->Restart();
 		break;
 
 	default:
@@ -77,7 +77,7 @@ void EngineManager::Play()
 
 	case eEngineState::EDIT:
 		Editor->SetEngineState(eEngineState::GAMEPLAY);
-		Engine->Restart();
+		EngineObj->Restart();
 		break;
 
 	case eEngineState::GAMEPLAY:
@@ -109,5 +109,5 @@ void EngineManager::UpdatePhase()
 		updatePhases.PushBack(Engine::eUpdatePhaseOrder::POSTUPDATE);
 	}
 
-	Engine->Update(updatePhases);
+	EngineObj->Update(updatePhases);
 }

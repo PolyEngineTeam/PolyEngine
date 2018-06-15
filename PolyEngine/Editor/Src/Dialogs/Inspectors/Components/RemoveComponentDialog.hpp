@@ -24,8 +24,8 @@ public:
 private:
 	void InitControls();
 
-	Entity* Entity = nullptr;
-	World* World = nullptr;
+	Entity* EntityObj = nullptr;
+	World* WorldObj = nullptr;
 	bool Canceled = false;
 
 	typedef void (*ComponentDestroyer)(::Entity* e);

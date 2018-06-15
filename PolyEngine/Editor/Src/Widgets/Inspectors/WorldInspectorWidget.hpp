@@ -56,7 +56,7 @@ public:
 private:
 	void AddEntityToTree(Entity* entity, QTreeWidgetItem* parent);
 
-	World* World;
+	World* WorldObj;
 	Dynarray<Entity*> SelectedEntities;
 
 	QMenu* ContextMenu;
