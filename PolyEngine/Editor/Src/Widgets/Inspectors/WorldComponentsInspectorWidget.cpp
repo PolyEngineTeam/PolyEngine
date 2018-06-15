@@ -22,7 +22,7 @@ WorldComponentsInspectorWidget::WorldComponentsInspectorWidget(QWidget* parent)
 		connect(RemoveComponentAction, &QAction::triggered, this, &WorldComponentsInspectorWidget::RemoveComponent);
 		
 	// TODO(squares): find better way
-	for (int i = 0; i < MAX_COMPONENTS_COUNT + 6; ++i)
+	for (size_t i = 0; i < MAX_COMPONENTS_COUNT + 6; ++i)
 		MainLayout->setRowStretch(i, 1);
 }
 
