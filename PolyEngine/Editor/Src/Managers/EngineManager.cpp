@@ -14,7 +14,7 @@ EngineManager::EngineManager()
 void EngineManager::InitEngine(std::unique_ptr<IGame> game, const String& assetsPathConfigPath)
 {
 	if (EngineObj)
-		throw new std::exception("Creating Engine twice?");
+		throw new std::exception((const char*)"Creating Engine twice?");
 
 	// get editor inserface and set path to assets
 	Editor = gApp->InspectorMgr->GetEditor();
@@ -49,7 +49,7 @@ void EngineManager::Edit()
 	switch (Editor->GetEngineState())
 	{
 	case eEngineState::NONE:
-		throw new std::exception("To switch to edit mode engine must be initialized.");
+		throw new std::exception((const char*)"To switch to edit mode engine must be initialized.");
 
 	case eEngineState::EDIT:
 		// do nothing
@@ -61,7 +61,7 @@ void EngineManager::Edit()
 		break;
 
 	default:
-		throw new std::exception("Unhandled engine state.");
+		throw new std::exception((const char*)"Unhandled engine state.");
 	}
 
 	emit StateChanged(eEngineState::EDIT);
@@ -73,7 +73,7 @@ void EngineManager::Play()
 	switch (Editor->GetEngineState())
 	{
 	case eEngineState::NONE:
-		throw new std::exception("To switch to gameplay mode engine must be initialized");
+		throw new std::exception((const char*)"To switch to gameplay mode engine must be initialized");
 
 	case eEngineState::EDIT:
 		Editor->SetEngineState(eEngineState::GAMEPLAY);
@@ -85,7 +85,7 @@ void EngineManager::Play()
 		break;
 
 	default:
-		throw new std::exception("Unhandled engine state.");
+		throw new std::exception((const char*)"Unhandled engine state.");
 	}
 
 	emit StateChanged(eEngineState::GAMEPLAY);

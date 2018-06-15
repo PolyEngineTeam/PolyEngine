@@ -9,7 +9,7 @@ using namespace Poly;
 class CommandManagerException : public std::exception
 {
 public:
-	CommandManagerException(const String& msg) : Msg(msg) {}
+	CommandManagerException(const String& msg) : Msg((const char*)msg.GetCStr()) {}
 	const char* what() const noexcept override { return Msg.GetCStr(); }
 
 protected:

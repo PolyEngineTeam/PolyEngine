@@ -11,7 +11,7 @@ using namespace Poly;
 class ProjectManagerException : public std::exception
 {
 public:
-	ProjectManagerException(const String& msg) : Msg(msg) {}
+	ProjectManagerException(const String& msg) : Msg((const char*)msg.GetCStr()) {}
 	const char* what() const noexcept override { return Msg.GetCStr(); }
 
 protected:
