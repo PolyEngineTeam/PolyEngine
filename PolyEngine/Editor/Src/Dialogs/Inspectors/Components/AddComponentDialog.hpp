@@ -1,12 +1,14 @@
 #pragma once
 
 #include <QtWidgets/qdialog.h>
-#include <qlabel.h>
+#include <QtWidgets/qlabel.h>
 #include <QtWidgets/qgridlayout.h>
-#include <qlistwidget.h>
+#include <QtWidgets/qlistwidget.h>
 #include <QtWidgets/qlineedit.h>
-#include <qtreewidget.h>
 #include <QtWidgets/qpushbutton.h>
+#include <QtWidgets/qtreewidget.h>
+
+#include <QtWidgets/qtreewidget.h>
 
 #include <ECS/World.hpp>
 #include <ECS/Entity.hpp>
