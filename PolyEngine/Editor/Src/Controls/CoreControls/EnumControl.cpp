@@ -1,6 +1,6 @@
 #include "PolyEditorPCH.hpp"
 
-#include <QComboBox>
+#include <QtWidgets/qcombobox.h>
 
 //ASSIGN_CONTROL(EnumControl, ENUM)
 

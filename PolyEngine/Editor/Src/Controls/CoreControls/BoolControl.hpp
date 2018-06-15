@@ -2,8 +2,8 @@
 
 #include "Controls/ControlBase.hpp"
 
-#include <qpushbutton.h>
-#include <qstatemachine.h>
+#include <QtWidgets/qpushbutton.h>
+#include <QtCore/qstatemachine.h>
 
 class BoolControl : public ControlBase
 {

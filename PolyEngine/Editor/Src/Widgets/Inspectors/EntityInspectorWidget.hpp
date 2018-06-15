@@ -6,7 +6,7 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QPushButton>
-#include <QComboBox>
+#include <QtWidgets/qcombobox.h>
 #include <qscrollarea.h>
 
 #include "Widgets/Inspectors/InspectorWidgetBase.hpp"

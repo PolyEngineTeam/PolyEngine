@@ -5,7 +5,7 @@
 #include <UniqueID.hpp>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
-#include <QComboBox>
+#include <QtWidgets/qcombobox.h>
 #include <QLayout>
 #include <QLabel>
 

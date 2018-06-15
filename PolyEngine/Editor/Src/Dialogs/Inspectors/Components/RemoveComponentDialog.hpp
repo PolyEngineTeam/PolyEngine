@@ -6,7 +6,7 @@
 #include <qlistwidget.h>
 #include <QtWidgets/qlineedit.h>
 #include <qtreewidget.h>
-#include <qpushbutton.h>
+#include <QtWidgets/qpushbutton.h>
 
 #include <ECS/World.hpp>
 #include <ECS/Entity.hpp>
