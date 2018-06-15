@@ -20,8 +20,8 @@ public:
 	bool OperationCanceled() { return Canceled; }
 
 private:
-	Entity* Parent;
-	World* WorldObj;
+	World* WorldObj = nullptr;
+	Entity* Parent = nullptr;
 
 	Entity* Result = nullptr;
 	bool Canceled = false;
