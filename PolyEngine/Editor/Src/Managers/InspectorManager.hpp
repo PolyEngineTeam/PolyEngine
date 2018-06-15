@@ -42,7 +42,7 @@ signals:
 
 	// entity signals
 	void EntitiesSelectionChanged(Dynarray<Entity*> entities);
-	void EntitiesReparented(Dynarray<Entity*> entities);
+	void EntitiesReparented(Entity* parent);
 
 private:
 	WorldInspectorWidget* WorldInspector;

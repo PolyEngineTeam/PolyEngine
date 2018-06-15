@@ -100,9 +100,7 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::InitializeConnections()
 {
-	connect(gApp->InspectorMgr->WorldInspector, &WorldInspectorWidget::EntitiesSelectionChanged,
-		this, &EntityInspectorWidget::SetSelectedEntities);
-	connect(gApp->InspectorMgr->ViewportInspector, &ViewportInspectorWidget::EntitiesSelectionChanged,
+	connect(gApp->InspectorMgr, &InspectorManager::EntitiesSelectionChanged,
 		this, &EntityInspectorWidget::SetSelectedEntities);
 }
 
@@ -141,10 +139,33 @@ void EntityInspectorWidget::UpdateInspector()
 		ss.str(std::string());
 		ss << Entities[0]->GetParent()->GetID();
 		ParentIdNameField->setText(&ss.str()[0]);
-		ParentChangeButton->show();
-		ChildrenSelectButton->show();
-		TransformSection->show();
 	}
+	else if (Entities.GetSize() > 1)
+	{
+		bool sameParent = true;
+		Entity* parent = Entities[0]->GetParent();
+
+		for (Entity* e : Entities)
+			if (e->GetParent() != parent)
+			{
+				sameParent = false;
+				break;
+			}
+
+		if (sameParent)
+		{
+			std::stringstream ss;
+			ss.str(std::string());
+			ss << Entities[0]->GetParent()->GetID();
+			ParentIdNameField->setText(&ss.str()[0]);
+		}
+		else
+		{
+			ParentIdNameField->setText("< multiple selection >");
+		}
+	}
+	else
+		throw new std::exception("Unsupported case.");
 
 	for (RTTIInspectorWidget* inspector : ComponentInspectors)
 		inspector->UpdateInspector();
@@ -182,9 +203,38 @@ void EntityInspectorWidget::ReloadInspector()
 	else if (Entities.GetSize() > 1)
 	{
 		NameField->SetText("< multiple selection >");
+
 		UniqueIdField->setText("< multiple selection >");
-		ParentIdNameField->setText("< multiple selection >");
-		ParentChangeButton->hide();
+
+
+		bool sameParent = true;
+		Entity* parent = Entities[0]->GetParent();
+
+		for (Entity* e : Entities)
+			if (e->GetParent() != parent)
+			{
+				sameParent = false;
+				break;
+			}
+
+
+		if (sameParent)
+		{
+			std::stringstream ss;
+			ss.str(std::string());
+			ss << Entities[0]->GetParent()->GetID();
+			ParentIdNameField->setText(&ss.str()[0]);
+			ParentChangeButton->show();
+			ParentSelectButton->show();
+		}
+		else
+		{
+			ParentIdNameField->setText("< multiple selection >");
+			ParentChangeButton->show();
+			ParentSelectButton->hide();
+		}
+
+		ChildrenIdNameField->clear();
 		ChildrenSelectButton->hide();
 
 		Transform->Reset();
@@ -288,13 +338,12 @@ void EntityInspectorWidget::ChangeParent()
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::SelectParent()
 {
-	SetSelectedEntities({ Entities[0]->GetParent() });
-	emit gApp->InspectorMgr->EntitiesSelectionChanged(Entities);
+	emit gApp->InspectorMgr->EntitiesSelectionChanged({ Entities[0]->GetParent() });
 }
 
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::SelectChild()
 {
-	SetSelectedEntities({ Entities[0]->GetChildren()[ChildrenIdNameField->currentIndex()] });
-	emit gApp->InspectorMgr->EntitiesSelectionChanged(Entities);
+	emit gApp->InspectorMgr->EntitiesSelectionChanged(
+		{ Entities[0]->GetChildren()[ChildrenIdNameField->currentIndex()] });
 }

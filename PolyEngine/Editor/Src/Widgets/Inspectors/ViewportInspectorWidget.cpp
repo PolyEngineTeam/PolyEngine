@@ -56,7 +56,7 @@ ViewportInspectorWidget::ViewportInspectorWidget(QWidget* parent)
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::InitializeConnections()
 {
-	connect(gApp->InspectorMgr->WorldInspector, &WorldInspectorWidget::EntitiesSelectionChanged, this, &ViewportInspectorWidget::SetSelectedEntities);
+	connect(gApp->InspectorMgr, &InspectorManager::EntitiesSelectionChanged, this, &ViewportInspectorWidget::SetSelectedEntities);
 }
 
 //------------------------------------------------------------------------------
