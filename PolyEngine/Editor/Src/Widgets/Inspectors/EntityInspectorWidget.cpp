@@ -29,7 +29,7 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 	
 	// TODO(squares): find better way
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT + 6; ++i)
-		MainLayout->setRowStretch(i, 1);
+		MainLayout->setRowStretch((int)i, 1);
 	
 	
 	QPalette disabledEditPalette;
@@ -286,7 +286,7 @@ void EntityInspectorWidget::ReloadInspector()
 			ComponentInspectors.PushBack(viewer);
 
 			section->SetWidget(viewer);
-			MainLayout->addWidget(section, row, 0, 1, 3);
+			MainLayout->addWidget(section, (int)row, 0, 1, 3);
 			++row;
 		}
 	}

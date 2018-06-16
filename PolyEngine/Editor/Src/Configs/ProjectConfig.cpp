@@ -30,20 +30,22 @@ String ProjectConfig::GetGameDllPath() const
 {
 	StringBuilder builder;
 
-#ifdef WIN32
+#if defined(_WIN32)
 	builder.Append(ProjectPath);
 	builder.Append("/Build/");
 	builder.Append(ProjectName);
 	builder.Append("/Debug/");
 	builder.Append(ProjectName);
 	builder.Append(".dll");
-#else
+#elif defined(__linux__) || defined(__APPLE__)
 	builder.Append(ProjectPath)
-			.Append("/Build/")
-			.Append(ProjectName)
-			.Append("/lib")
-			.Append(ProjectName)
-			.Append(".so");
+		.Append("/Build/")
+		.Append(ProjectName)
+		.Append("/lib")
+		.Append(ProjectName)
+		.Append(".so");
+#else
+#error "Unsupported platform :("
 #endif
 
 	return builder.StealString();
@@ -53,16 +55,18 @@ String ProjectConfig::GetRenderingDeviceDllPath() const
 {
 	StringBuilder builder;
 
-#ifdef WIN32
+#if defined(_WIN32)
 	builder.Append(ProjectPath);
 	builder.Append("/Build/");
 	builder.Append(ProjectName);
 	builder.Append("/Debug/polyrenderingdevice.dll");
-#else
+#elif defined(__linux__) || defined(__APPLE__)
 	builder.Append(ProjectPath)
-			.Append("/Build/")
-			.Append(ProjectName)
-			.Append("/libpolyrenderingdevice.so");
+		.Append("/Build/")
+		.Append(ProjectName)
+		.Append("/libpolyrenderingdevice.so");
+#else
+#error "Unsupported platform :("
 #endif
 
 	return builder.StealString();

@@ -23,7 +23,7 @@ WorldComponentsInspectorWidget::WorldComponentsInspectorWidget(QWidget* parent)
 		
 	// TODO(squares): find better way
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT + 6; ++i)
-		MainLayout->setRowStretch(i, 1);
+		MainLayout->setRowStretch((int)i, 1);
 }
 
 //------------------------------------------------------------------------------
