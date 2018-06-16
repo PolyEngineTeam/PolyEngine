@@ -30,12 +30,21 @@ String ProjectConfig::GetGameDllPath() const
 {
 	StringBuilder builder;
 
+#ifdef WIN32
 	builder.Append(ProjectPath);
 	builder.Append("/Build/");
 	builder.Append(ProjectName);
 	builder.Append("/Debug/");
 	builder.Append(ProjectName);
 	builder.Append(".dll");
+#else
+	builder.Append(ProjectPath)
+			.Append("/Build/")
+			.Append(ProjectName)
+			.Append("/lib")
+			.Append(ProjectName)
+			.Append(".so");
+#endif
 
 	return builder.StealString();
 }
@@ -44,10 +53,17 @@ String ProjectConfig::GetRenderingDeviceDllPath() const
 {
 	StringBuilder builder;
 
+#ifdef WIN32
 	builder.Append(ProjectPath);
 	builder.Append("/Build/");
 	builder.Append(ProjectName);
 	builder.Append("/Debug/polyrenderingdevice.dll");
+#else
+	builder.Append(ProjectPath)
+			.Append("/Build/")
+			.Append(ProjectName)
+			.Append("/libpolyrenderingdevice.so");
+#endif
 
 	return builder.StealString();
 }
