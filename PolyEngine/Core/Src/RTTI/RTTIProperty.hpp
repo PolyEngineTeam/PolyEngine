@@ -423,6 +423,7 @@ namespace Poly {
 				Trait::IsEnumFlags<T>{},	[&](auto lazy) { return CreateEnumFlagsPropertyInfo<typename Trait::EnumFlagsType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsIterablePoolAllocator<T>{}, [&](auto lazy) { return CreateIterablePoolAllocatorPropertyInfo<typename Trait::IterablePoolAllocatorType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsUniquePtr<T>{},	[&](auto lazy) { return CreateUniquePtrPropertyInfo<typename Trait::UniquePtrType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
+				std::is_base_of<RTTIBase, T>{}, [&](auto lazy) { return Property{ TypeInfo::Get<LAZY_TYPE(T)>(), offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>(), nullptr, std::move(factory_func) }; },
 				//TODO add RTTIBase specialization!
 				/*default*/					[&](auto lazy) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>(), nullptr, std::move(factory_func) }; }
 			);
