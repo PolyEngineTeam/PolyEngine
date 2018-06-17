@@ -391,7 +391,12 @@ namespace Poly {
 		template<typename T>
 		struct UniquePtrPropertyImplData final : public UniquePtrPropertyImplDataBase
 		{
-			UniquePtrPropertyImplData(ePropertyFlag flags, FactoryFunc_t&& factory_func) { PropertyType = CreatePropertyInfo<T>(0, "value", flags, std::move(factory_func)); }
+			UniquePtrPropertyImplData(ePropertyFlag flags, FactoryFunc_t&& factory_func)
+			{
+				// Stop propagation of factory function
+				PropertyType = CreatePropertyInfo<T>(0, "value", flags, nullptr);
+				PropertyType.FactoryFunc = std::move(factory_func);
+			}
 
 			void Create(void* ptr) const override { 
 				std::unique_ptr<T>& uptr = *reinterpret_cast<std::unique_ptr<T>*>(ptr);
@@ -409,7 +414,7 @@ namespace Poly {
 			std::shared_ptr<UniquePtrPropertyImplData<T>> implData = std::make_shared<UniquePtrPropertyImplData<T>>(flags, std::move(factory_func));
 
 			// Register unique ptr object pointer to property
-			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::UNIQUE_PTR, std::move(implData) };
+			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::UNIQUE_PTR, std::move(implData)};
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------
@@ -466,15 +471,24 @@ namespace Poly {
 
 #define NO_RTTI_PROPERTY() UNUSED(mgr)
 
-// standard RTTIBase deriving (or POD type) property
-#define RTTI_PROPERTY(variable, var_name, flags) \
-	STATIC_ASSERTE(!std::is_pointer<decltype(variable)>::value || EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE), "Serializable variable cannot be a pointer."); \
-	mgr->AddProperty(Poly::RTTI::CreatePropertyInfo<decltype(variable)>(Poly::RTTI::OffsetOfMember(&T::variable), var_name, flags))
 
+namespace Poly::RTTI::Impl {
+	template<typename T>
+	void RegisterProperty(PropertyManagerBase* mgr, size_t offset, const char* var_name, FactoryFunc_t factory_func, ePropertyFlag flags)
+	{
+		STATIC_ASSERTE(!std::is_pointer<T>::value
+			|| EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE),
+			"Serializable variable cannot be a pointer.");
+		mgr->AddProperty(Poly::RTTI::CreatePropertyInfo<T>(offset, var_name, flags, factory_func));
+	}
+}
+
+// Standard RTTIBase deriving (or POD type) property
+#define RTTI_PROPERTY(variable, var_name, flags) ::Poly::RTTI::Impl::RegisterProperty<decltype(variable)>(mgr, ::Poly::RTTI::OffsetOfMember(&T::variable), var_name, nullptr, flags)
 #define RTTI_PROPERTY_AUTONAME(variable, flags) RTTI_PROPERTY(variable, #variable, flags)
 
-#define RTTI_PROPERTY_FACTORY(variable, var_name, factory_func, flags) \
-	STATIC_ASSERTE(!std::is_pointer<decltype(variable)>::value || EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE), "Serializable variable cannot be a pointer."); \
-	mgr->AddProperty(Poly::RTTI::CreatePropertyInfo<decltype(variable)>(Poly::RTTI::OffsetOfMember(&T::variable), var_name, flags, factory_func))
-	
+// Factory supported rtti property
+#define RTTI_PROPERTY_FACTORY(variable, var_name, factory_func, flags) ::Poly::RTTI::Impl::RegisterProperty<decltype(variable)>(mgr, ::Poly::RTTI::OffsetOfMember(&T::variable), var_name, factory_func, flags)
 #define RTTI_PROPERTY_FACTORY_AUTONAME(variable, factory_func, flags) RTTI_PROPERTY_FACTORY(variable, #variable, factory_func, flags)
+
+

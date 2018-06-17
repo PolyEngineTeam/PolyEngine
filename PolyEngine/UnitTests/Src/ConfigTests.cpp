@@ -34,6 +34,11 @@ enum class eConfigFlagsTest
 	VAL_5 = 0x10
 };
 
+static size_t gFactoryCounterInt = 0;
+static size_t gFactoryCounterDynarrayInt = 0;
+static size_t gFactoryCounterCustom = 0;
+
+
 class TestRTTIClass : public RTTIBase
 {
 	RTTI_DECLARE_TYPE_DERIVED(TestRTTIClass, RTTIBase)
@@ -90,9 +95,9 @@ class TestConfig : public ConfigBase
 
 		RTTI_PROPERTY_AUTONAME(PropUUID, RTTI::ePropertyFlag::NONE);
 
-		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrInt, [](Poly::RTTI::TypeInfo info) { gConsole.LogError("asdassdassd"); return new int; }, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropUniquePtrDynarrayInt, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrCustom, [](Poly::RTTI::TypeInfo info) { gConsole.LogError("asdassdassd"); return info.CreateInstance(); }, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrInt, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterInt; return new int; }, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrDynarrayInt, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterDynarrayInt; return new Dynarray<int>; }, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrCustom, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterCustom; return info.CreateInstance(); }, RTTI::ePropertyFlag::NONE);
 	}
 public:
 	TestConfig() : ConfigBase("Test", eResourceSource::NONE) 
@@ -241,12 +246,20 @@ void baseValueCheck(const TestConfig& config)
 
 TEST_CASE("Config serialization tests", "[ConfigBase]")
 {
+	REQUIRE(gFactoryCounterInt == 0);
+	REQUIRE(gFactoryCounterDynarrayInt == 0);
+	REQUIRE(gFactoryCounterCustom == 0);
+
 	{
 		TestConfig config;
 		// perform first basic save, to ensure file is created, and with proper values
 		config.Save();
 		// load it
 		config.Load();
+
+		REQUIRE(gFactoryCounterInt == 1);
+		REQUIRE(gFactoryCounterDynarrayInt == 1);
+		REQUIRE(gFactoryCounterCustom == 1);
 
 		baseValueCheck(config);
 
@@ -314,6 +327,10 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 
 		// load old values
 		config.Load();
+
+		REQUIRE(gFactoryCounterInt == 2);
+		REQUIRE(gFactoryCounterDynarrayInt == 2);
+		REQUIRE(gFactoryCounterCustom == 2);
 
 		// check values again after load
 		CHECK(config.PropBool == false);
