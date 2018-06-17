@@ -20,25 +20,25 @@
 
 using namespace Poly;
 
-TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInterface)
-	: IRendererInterface(RenderingDeviceInterface),
+TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
+	: IRendererInterface(rdi),
 	depthShader("Shaders/depth.vert.glsl", "Shaders/depth.frag.glsl"),
 	lightCullingShader("Shaders/light_culling.comp.glsl"),
 	debugQuadDepthPrepassShader("Shaders/debugQuadDepthPrepass.vert.glsl", "Shaders/debugQuadDepthPrepass.frag.glsl"),
 	debugLightAccumShader("Shaders/debugLightAccum.vert.glsl", "Shaders/debugLightAccum.frag.glsl"),
-	LightAccumulationShader("Shaders/lightAccumulationVert.shader", "Shaders/lightAccumulationFrag.shader"),
+	LightAccumulationShader("Shaders/lightAccumulation.vert.glsl", "Shaders/lightAccumulation.frag.glsl"),
 	hdrShader("Shaders/hdr.vert.glsl", "Shaders/hdr.frag.glsl"),
 	SSAOShader("Shaders/hdr.vert.glsl", "Shaders/ssao.frag.glsl"),
 	GammaShader("Shaders/hdr.vert.glsl", "Shaders/gamma.frag.glsl"),
 	LinearizeDepthShader("Shaders/hdr.vert.glsl", "Shaders/linearizeDepth.frag.glsl"),
 	integrateBRDFShader("Shaders/hdr.vert.glsl", "Shaders/integrateBRDF.frag.glsl"),
-	ParticleShader("Shaders/instancedVert.shader", "Shaders/instancedFrag.shader"),
-	TranslucentShader("Shaders/transparentVert.shader", "Shaders/transparentFrag.shader"),
-	SkyboxShader("Shaders/skyboxVert.shader", "Shaders/skyboxFrag.shader"),
-	equiToCubemapShader("Shaders/equiHdrVert.shader", "Shaders/equiHdrFrag.shader"),
-	equirectangularToCubemapShader("Shaders/equiToCubemapVert.shader", "Shaders/equiToCubemapFrag.shader"),
-	cubemapIrradianceShader("Shaders/cubemapIrradianceVert.shader", "Shaders/cubemapIrradianceFrag.shader"),
-	prefilterCubemapShader("Shaders/prefilterCubemapVert.shader", "Shaders/prefilterCubemapFrag.shader")
+	ParticleShader("Shaders/instanced.vert.glsl", "Shaders/instanced.frag.glsl"),
+	TranslucentShader("Shaders/transparent.vert.glsl", "Shaders/transparent.frag.glsl"),
+	SkyboxShader("Shaders/skybox.vert.glsl", "Shaders/skybox.frag.glsl"),
+	equiToCubemapShader("Shaders/equiHdr.vert.glsl", "Shaders/equiHdr.frag.glsl"),
+	equirectangularToCubemapShader("Shaders/equiToCubemap.vert.glsl", "Shaders/equiToCubemap.frag.glsl"),
+	cubemapIrradianceShader("Shaders/cubemapIrradiance.vert.glsl", "Shaders/cubemapIrradiance.frag.glsl"),
+	prefilterCubemapShader("Shaders/prefilterCubemap.vert.glsl", "Shaders/prefilterCubemap.frag.glsl")
 {
 	LightAccumulationShader.RegisterUniform("vec4", "uViewPosition");
 	LightAccumulationShader.RegisterUniform("mat4", "uClipFromModel");

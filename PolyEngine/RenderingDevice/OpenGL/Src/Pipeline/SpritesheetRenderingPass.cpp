@@ -16,7 +16,7 @@
 using namespace Poly;
 
 SpritesheetRenderingPass::SpritesheetRenderingPass(const GLRenderingDevice* rdi)
-	: RenderingPassBase(rdi, "Shaders/spritesheetVert.shader", "Shaders/spritesheetFrag.shader")
+	: RenderingPassBase(rdi, "Shaders/spritesheet.vert.glsl", "Shaders/spritesheet.frag.glsl")
 {
 	GetProgram().RegisterUniform("float", "uTime");
 	GetProgram().RegisterUniform("mat4", "uP");

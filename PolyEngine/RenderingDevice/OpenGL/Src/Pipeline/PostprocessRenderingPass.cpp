@@ -16,12 +16,12 @@
 using namespace Poly;
 
 PostprocessRenderingPass::PostprocessRenderingPass(const GLRenderingDevice* rdi, const String& fragment)
-	: RenderingPassBase(rdi, "Shaders/postprocessCommonVert.shader", fragment)
+	: RenderingPassBase(rdi, "Shaders/postprocessCommon.vert.glsl", fragment)
 {
 }
 
 PostprocessRenderingPass::PostprocessRenderingPass(const GLRenderingDevice* rdi, const String& geometry, const String& fragment)
-	: RenderingPassBase(rdi, "Shaders/postprocessCommonVert.shader", geometry, fragment)
+	: RenderingPassBase(rdi, "Shaders/postprocessCommon.vert.glsl", geometry, fragment)
 {
 }
 

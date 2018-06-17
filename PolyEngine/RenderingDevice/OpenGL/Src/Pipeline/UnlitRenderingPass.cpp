@@ -12,7 +12,7 @@
 using namespace Poly;
 
 UnlitRenderingPass::UnlitRenderingPass(const GLRenderingDevice* rdi)
-	: RenderingPassBase(rdi, "Shaders/unlitVert.shader", "Shaders/unlitFrag.shader")
+	: RenderingPassBase(rdi, "Shaders/unlit.vert.glsl", "Shaders/unlit.frag.glsl")
 {
 	GetProgram().RegisterUniform("mat4", "uTransform");
 	GetProgram().RegisterUniform("mat4", "uMVPTransform");

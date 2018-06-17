@@ -234,11 +234,11 @@ void GLRenderingDevice::InitPrograms()
 	RegisterGeometryPassWithArgs<SpritesheetRenderingPass>(eGeometryRenderPassType::TRANSPARENT_SPRITESHEET, {}, { { "color", texture },{ "depth", depth } });
 	RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } });
 	
-	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND,			"Shaders/bgFrag.shader",		{}, { { "o_color", texture },	{ "depth", depth } });
-	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND_LIGHT,	"Shaders/bgLightFrag.shader",	{}, { { "o_color", texture },	{ "depth", depth } });
-	RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND,			"Shaders/fgFrag.shader",		{ { "i_color", texture } },		{} );
-	RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND_LIGHT,	"Shaders/fgLightFrag.shader",	{ { "i_color", texture } },		{} );
-	RegisterPostprocessPass(ePostprocessRenderPassType::VINETTE,			"Shaders/vinetteFrag.shader",	{ { "i_color", texture } } );
+	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND,			"Shaders/bg.frag.glsl",		{}, { { "o_color", texture },	{ "depth", depth } });
+	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND_LIGHT,	"Shaders/bgLight.frag.glsl",	{}, { { "o_color", texture },	{ "depth", depth } });
+	RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND,			"Shaders/fg.frag.glsl",		{ { "i_color", texture } },		{} );
+	RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND_LIGHT,	"Shaders/fgLight.frag.glsl",	{ { "i_color", texture } },		{} );
+	RegisterPostprocessPass(ePostprocessRenderPassType::VINETTE,			"Shaders/vinette.frag.glsl",	{ { "i_color", texture } } );
 }
 
 //------------------------------------------------------------------------------

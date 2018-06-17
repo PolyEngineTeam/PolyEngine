@@ -14,7 +14,7 @@
 using namespace Poly;
 
 ParticlesRenderingPass::ParticlesRenderingPass(const GLRenderingDevice* rdi)
-	: RenderingPassBase(rdi, "Shaders/instancedVert.shader", "Shaders/instancedFrag.shader")
+	: RenderingPassBase(rdi, "Shaders/instanced.vert.glsl", "Shaders/instanced.frag.glsl")
 {
 	GetProgram().RegisterUniform("float", "uTime");
 	GetProgram().RegisterUniform("mat4", "uScreenFromView");

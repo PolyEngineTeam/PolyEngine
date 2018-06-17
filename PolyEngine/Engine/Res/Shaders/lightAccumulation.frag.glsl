@@ -40,8 +40,6 @@ layout(std430, binding = 1) readonly buffer VisibleLightIndicesBuffer {
 	VisibleIndex data[];
 } bVisibleLightIndicesBuffer;
 
-const uint MAX_NUM_LIGHTS = 1024;
-
 struct Material
 {
     vec4 Emissive;
@@ -49,6 +47,8 @@ struct Material
     float Roughness;
     float Metallic;
 };
+
+const uint MAX_NUM_LIGHTS = 1024;
 
 uniform samplerCube uIrradianceMap;
 uniform samplerCube uPrefilterMap;
@@ -133,10 +133,6 @@ void main()
     vec3 normal = texture(uNormalMap, fragment_in.uv).rgb;
     float ao = texture(uAmbientOcclusionMap, fragment_in.uv).r;
 
-	// oColor.rgb = diffuse.rgb; return;
-    // oColor.rgb = normal; return;
-    // oColor.rgb = vec3(specular); return;
-
     normal = normalize(normal * 2.0 - 1.0);
 
     if (albedo.a < 0.5)
@@ -170,7 +166,8 @@ void main()
         int lightIndex = bVisibleLightIndicesBuffer.data[TileOffset + i].Index;
         Light light = bLightBuffer.data[lightIndex];
 
-		// light attenuation based on Real Shading in Unreal Engine 4 http://gamedevs.org/uploads/real-shading-in-unreal-engine-4.pdf
+		// light attenuation based on Real Shading in Unreal Engine 4:
+        // http://gamedevs.org/uploads/real-shading-in-unreal-engine-4.pdf
 		// calculate per-light radiance
 		vec3 tangentLightPosition = fragment_in.tangentFromWorld * light.Position.xyz;
         vec3 L = normalize(tangentLightPosition - fragment_in.fragmentPositionInTangent);

@@ -17,7 +17,7 @@ const size_t MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 const size_t MAX_LIGHT_COUNT_SPOT = 8;
 
 BlinnPhongRenderingPass::BlinnPhongRenderingPass(const GLRenderingDevice* rdi)
-: RenderingPassBase(rdi, "Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
+: RenderingPassBase(rdi, "Shaders/blinn-phong.vert.glsl", "Shaders/blinn-phong.frag.glsl")
 {
 	GetProgram().RegisterUniform("vec4", "uCameraPosition");
 	GetProgram().RegisterUniform("vec4", "uCameraForward");

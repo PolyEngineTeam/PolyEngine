@@ -10,7 +10,7 @@
 using namespace Poly;
 
 DebugNormalsWireframeRenderingPass::DebugNormalsWireframeRenderingPass(const GLRenderingDevice* rdi)
-: RenderingPassBase(rdi, "Shaders/debugNormalsVert.shader", "Shaders/debugNormalsGeom.shader", "Shaders/debugNormalsFrag.shader")
+: RenderingPassBase(rdi, "Shaders/debugNormals.vert.glsl", "Shaders/debugNormals.geom.glsl", "Shaders/debugNormals.frag.glsl")
 {
 
 }

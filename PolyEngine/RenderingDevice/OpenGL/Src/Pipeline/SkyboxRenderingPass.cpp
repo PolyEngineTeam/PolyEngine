@@ -12,7 +12,7 @@
 using namespace Poly;
 
 SkyboxRenderingPass::SkyboxRenderingPass(const GLRenderingDevice* rdi)
-	: RenderingPassBase(rdi, "Shaders/skyboxVert.shader", "Shaders/skyboxFrag.shader")
+	: RenderingPassBase(rdi, "Shaders/skybox.vert.glsl", "Shaders/skybox.frag.glsl")
 {
 	GetProgram().RegisterUniform("mat4", "uClipFromWorld");
 }

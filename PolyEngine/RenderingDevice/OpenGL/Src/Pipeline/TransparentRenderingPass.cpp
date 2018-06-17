@@ -15,7 +15,7 @@
 using namespace Poly;
 
 TransparentRenderingPass::TransparentRenderingPass(const GLRenderingDevice* rdi)
-	: RenderingPassBase(rdi, "Shaders/transparentVert.shader", "Shaders/transparentFrag.shader")
+	: RenderingPassBase(rdi, "Shaders/transparent.vert.glsl", "Shaders/transparent.frag.glsl")
 {
 }
 
