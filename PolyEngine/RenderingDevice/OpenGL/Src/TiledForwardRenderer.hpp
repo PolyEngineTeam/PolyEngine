@@ -25,54 +25,54 @@ namespace Poly {
 		};
 
 		struct VisibleIndex {
-			int index;
+			int Index;
 		};
 
 		const size_t MAX_NUM_LIGHTS = 1024;
 
 		// X and Y work group dimension variables for compute shader
-		GLuint workGroupsX = 0;
-		GLuint workGroupsY = 0;
+		GLuint WorkGroupsX = 0;
+		GLuint WorkGroupsY = 0;
 		
 		// Used for storage buffer objects to hold light data and visible light indicies data
-		GLuint lightBuffer = 0;
-		GLuint visibleLightIndicesBuffer = 0;
+		GLuint LightBuffer = 0;
+		GLuint VisibleLightIndicesBuffer = 0;
 
-		GLShaderProgram depthShader;
-		GLShaderProgram lightCullingShader;
+		GLShaderProgram DepthShader;
+		GLShaderProgram LightCullingShader;
 		GLShaderProgram LightAccumulationShader;
-		GLShaderProgram hdrShader;
+		GLShaderProgram HDRShader;
 		GLShaderProgram SkyboxShader;
 		GLShaderProgram SSAOShader;
 		GLShaderProgram LinearizeDepthShader;
 		GLShaderProgram GammaShader;
 		GLShaderProgram ParticleShader;
 		GLShaderProgram TranslucentShader;
-		GLShaderProgram equiToCubemapShader;
-		GLShaderProgram equirectangularToCubemapShader;
-		GLShaderProgram cubemapIrradianceShader;
-		GLShaderProgram prefilterCubemapShader;
-		GLShaderProgram integrateBRDFShader;
-		GLShaderProgram text2DShader;
-		GLShaderProgram editorDebugShader;
-		GLShaderProgram debugLightAccumShader;
-		GLShaderProgram debugQuadDepthPrepassShader;
+		GLShaderProgram EquiToCubemapShader;
+		GLShaderProgram EquirectangularToCubemapShader;
+		GLShaderProgram CubemapIrradianceShader;
+		GLShaderProgram PrefilterCubemapShader;
+		GLShaderProgram IntegrateBRDFShader;
+		GLShaderProgram Text2DShader;
+		GLShaderProgram EditorDebugShader;
+		GLShaderProgram DebugLightAccumShader;
+		GLShaderProgram DebugQuadDepthPrepassShader;
 
 		// Render Targets
-		GLuint preDepthBuffer;
-		GLuint colorBuffer;
-		GLuint normalBuffer;
-		GLuint rboDepth;
-		GLuint postColorBuffer0;
-		GLuint postColorBuffer1;
-		GLuint linearDepth;
+		GLuint PreDepthBuffer;
+		GLuint ColorBuffer;
+		GLuint NormalBuffer;
+		GLuint RboDepth;
+		GLuint PostColorBuffer0;
+		GLuint PostColorBuffer1;
+		GLuint LinearDepth;
 		
 		// IBL textures and cubemaps
-		GLuint hdrTexture;
-		GLuint envCubemap;
-		GLuint irradianceMap;
-		GLuint prefilterMap;
-		GLuint preintegratedBrdfLUT;
+		GLuint HDRTexture;
+		GLuint EnvCubemap;
+		GLuint IrradianceMap;
+		GLuint PrefilterMap;
+		GLuint PreintegratedBrdfLUT;
 
 		// Framebufers
 		GLuint FBOdepthMap;
