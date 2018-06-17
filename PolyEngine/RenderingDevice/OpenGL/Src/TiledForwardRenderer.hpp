@@ -53,6 +53,7 @@ namespace Poly {
 		GLShaderProgram cubemapIrradianceShader;
 		GLShaderProgram prefilterCubemapShader;
 		GLShaderProgram integrateBRDFShader;
+		GLShaderProgram text2DShader;
 		GLShaderProgram debugLightAccumShader;
 		GLShaderProgram debugQuadDepthPrepassShader;
 
@@ -119,6 +120,8 @@ namespace Poly {
 		void PostTonemapper(const SceneView& sceneView);
 
 		void PostSSAO(const SceneView& sceneView);
+
+		void UIText2D(const SceneView& sceneView);
 
 		void PostGamma();
 		

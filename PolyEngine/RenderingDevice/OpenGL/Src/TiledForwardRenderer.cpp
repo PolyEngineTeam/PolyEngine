@@ -38,7 +38,8 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	equiToCubemapShader("Shaders/equiHdr.vert.glsl", "Shaders/equiHdr.frag.glsl"),
 	equirectangularToCubemapShader("Shaders/equiToCubemap.vert.glsl", "Shaders/equiToCubemap.frag.glsl"),
 	cubemapIrradianceShader("Shaders/cubemapIrradiance.vert.glsl", "Shaders/cubemapIrradiance.frag.glsl"),
-	prefilterCubemapShader("Shaders/prefilterCubemap.vert.glsl", "Shaders/prefilterCubemap.frag.glsl")
+	prefilterCubemapShader("Shaders/prefilterCubemap.vert.glsl", "Shaders/prefilterCubemap.frag.glsl"),
+	text2DShader("Shaders/text2D.vert.glsl", "Shaders/text2D.frag.glsl")
 {
 	LightAccumulationShader.RegisterUniform("vec4", "uViewPosition");
 	LightAccumulationShader.RegisterUniform("mat4", "uClipFromModel");
@@ -636,6 +637,8 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 
 	// PostSSAO(cameraCmp);
 
+	UIText2D(sceneView);
+
 	PostGamma();
 }
 
@@ -1219,6 +1222,57 @@ void TiledForwardRenderer::PostSSAO(const SceneView& sceneView)
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void TiledForwardRenderer::UIText2D(const SceneView& sceneView)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost0);
+	
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	ScreenSize screen = RDI->GetScreenSize();
+	Matrix ortho;
+	ortho.SetOrthographic(
+		sceneView.rect.GetMin().Y * screen.Height,
+		sceneView.rect.GetMax().Y * screen.Height,
+		sceneView.rect.GetMin().X * screen.Width,
+		sceneView.rect.GetMax().X * screen.Width,
+		-1,
+		 1
+	);
+	text2DShader.BindProgram();
+	text2DShader.SetUniform("u_projection", ortho);
+
+	for (auto componentsTuple : sceneView.world->IterateComponents<ScreenSpaceTextComponent>())
+	{
+		ScreenSpaceTextComponent* textCmp = std::get<ScreenSpaceTextComponent*>(componentsTuple);
+		Text2D& text = textCmp->GetText();
+		text2DShader.SetUniform("u_textColor", text.GetFontColor());
+		text2DShader.SetUniform("u_position", Vector((float)textCmp->GetScreenPosition().X, (float)textCmp->GetScreenPosition().Y, 0));
+		text.UpdateDeviceBuffers();
+
+		const GLTextFieldBufferDeviceProxy* textFieldBuffer = static_cast<const GLTextFieldBufferDeviceProxy*>(text.GetTextFieldBuffer());
+
+		glBindVertexArray(textFieldBuffer->GetVAO());
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, static_cast<const GLTextureDeviceProxy*>(text.GetFontTextureProxy())->GetTextureID());
+
+		// Render glyph texture over quad
+		glDrawArrays(GL_TRIANGLES, 0, (GLsizei)(6 * textFieldBuffer->GetSize()));
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindVertexArray(0);
+	}
+	CHECK_GL_ERR();
+
+	glPolygonMode(GL_FRONT, GL_FILL);
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
