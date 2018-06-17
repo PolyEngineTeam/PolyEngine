@@ -39,7 +39,8 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	equirectangularToCubemapShader("Shaders/equiToCubemap.vert.glsl", "Shaders/equiToCubemap.frag.glsl"),
 	cubemapIrradianceShader("Shaders/cubemapIrradiance.vert.glsl", "Shaders/cubemapIrradiance.frag.glsl"),
 	prefilterCubemapShader("Shaders/prefilterCubemap.vert.glsl", "Shaders/prefilterCubemap.frag.glsl"),
-	text2DShader("Shaders/text2D.vert.glsl", "Shaders/text2D.frag.glsl")
+	text2DShader("Shaders/text2D.vert.glsl", "Shaders/text2D.frag.glsl"),
+	editorDebugShader("Shaders/debug.vert.glsl", "Shaders/debug.frag.glsl")
 {
 	LightAccumulationShader.RegisterUniform("vec4", "uViewPosition");
 	LightAccumulationShader.RegisterUniform("mat4", "uClipFromModel");
@@ -85,6 +86,8 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 
 	LinearizeDepthShader.RegisterUniform("float", "uNear");
 	LinearizeDepthShader.RegisterUniform("float", "uFar");
+
+	editorDebugShader.RegisterUniform("mat4", "uMVP");
 }
 
 void TiledForwardRenderer::Init()
@@ -636,6 +639,8 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 	PostTonemapper(sceneView);
 
 	// PostSSAO(cameraCmp);
+
+	EditorDebug(sceneView);
 
 	UIText2D(sceneView);
 
@@ -1222,6 +1227,45 @@ void TiledForwardRenderer::PostSSAO(const SceneView& sceneView)
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void TiledForwardRenderer::EditorDebug(const SceneView& sceneView)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost0);
+
+	const Matrix& MVP = sceneView.cameraCmp->GetClipFromWorld();
+	editorDebugShader.BindProgram();
+	editorDebugShader.SetUniform("uMVP", MVP);
+
+	// Render Lines
+	{
+		auto debugLinesComponent = sceneView.world->GetWorldComponent<DebugDrawStateWorldComponent>();
+		auto& debugLines = debugLinesComponent->DebugLines;
+		auto& debugLinesColors = debugLinesComponent->DebugLinesColors;
+
+		DebugRenderingBuffers debugLinesBuffers; // vertex and color buffer
+
+												 // set up buffer
+		glBindVertexArray(debugLinesBuffers.VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, debugLinesBuffers.VBO);
+		glBufferData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLine)
+			+ debugLinesColors.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLineColor), NULL, GL_STATIC_DRAW);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, debugLines.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLine), (GLvoid*)debugLines.GetData());
+		glBufferSubData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLine), debugLinesColors.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLineColor), (GLvoid*)debugLinesColors.GetData());
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), NULL);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Color), (GLvoid*)(debugLines.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLine)));
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		glDrawArrays(GL_LINES, 0, (GLsizei)debugLines.GetSize() * 2);
+		glBindVertexArray(0);
+
+		debugLines.Clear();
+		debugLinesColors.Clear();
+	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
