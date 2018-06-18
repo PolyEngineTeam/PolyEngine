@@ -1,11 +1,10 @@
 #pragma once
 
 #include "IRendererInterface.hpp"
+#include "Common/GLShaderProgram.hpp"
 #include "Common/GLUtils.hpp"
 
 namespace Poly {
-
-	class GLShaderProgram;
 
 	class TiledForwardRenderer : public IRendererInterface
 	{
