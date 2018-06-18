@@ -8,6 +8,7 @@
 #include "Proxy/GLMeshDeviceProxy.hpp"
 #include "Proxy/GLParticleDeviceProxy.hpp"
 #include "Pipeline/RenderingPassBase.hpp"
+#include "Common/DebugRenderingBuffers.hpp"
 #include "Common/GLShaderProgram.hpp"
 #include "Common/PrimitiveCube.hpp"
 #include "Common/PrimitiveQuad.hpp"
@@ -15,6 +16,7 @@
 #include <ECS/World.hpp>
 #include <Math/BasicMath.hpp>
 #include <Math/AARect.hpp>
+#include <Debugging/DebugDrawComponents.hpp>
 #include <Rendering/PostprocessSettingsComponent.hpp>
 #include <Rendering/Camera/CameraComponent.hpp>
 #include <Rendering/Lighting/LightSourceComponent.hpp>
