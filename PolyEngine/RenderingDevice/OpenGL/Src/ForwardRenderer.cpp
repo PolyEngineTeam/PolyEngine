@@ -38,30 +38,30 @@ void ForwardRenderer::Render(const SceneView& sceneView)
 	switch (renderingMode)
 	{
 		case eRenderingModeType::LIT:
-			RenderLit(sceneView.World, sceneView.Rect, sceneView.CameraCmp);
+			RenderLit(sceneView.WorldData, sceneView.Rect, sceneView.CameraCmp);
 			break;
 
 		case eRenderingModeType::UNLIT:
-			RenderUnlit(sceneView.World, sceneView.Rect, sceneView.CameraCmp);
+			RenderUnlit(sceneView.WorldData, sceneView.Rect, sceneView.CameraCmp);
 			break;
 
 		case eRenderingModeType::WIREFRAME:
-			RenderWireframe(sceneView.World, sceneView.Rect, sceneView.CameraCmp);
+			RenderWireframe(sceneView.WorldData, sceneView.Rect, sceneView.CameraCmp);
 			break;
 
 		case eRenderingModeType::DEBUG_NORMALS:
-			RenderNormals(sceneView.World, sceneView.Rect, sceneView.CameraCmp);
+			RenderNormals(sceneView.WorldData, sceneView.Rect, sceneView.CameraCmp);
 			break;
 
 		case eRenderingModeType::DEBUG_NORMALS_WIREFRAME:
-			RenderNormalsWireframe(sceneView.World, sceneView.Rect, sceneView.CameraCmp);
+			RenderNormalsWireframe(sceneView.WorldData, sceneView.Rect, sceneView.CameraCmp);
 			break;
 
 		default:
 			ASSERTE(false, "Uknown eRenderingModeType");
 	}
 
-	PostRender(sceneView.World, sceneView.CameraCmp, sceneView.Rect);
+	PostRender(sceneView.WorldData, sceneView.CameraCmp, sceneView.Rect);
 }
 
 void ForwardRenderer::PostRender(World* world, const CameraComponent* cameraCmp, const AARect& rect)

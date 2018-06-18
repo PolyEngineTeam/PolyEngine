@@ -724,7 +724,7 @@ void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 
 void TiledForwardRenderer::ComputeLightCulling(const SceneView& sceneView)
 {
-	float tme = (float)(sceneView.World->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
+	float tme = (float)(sceneView.WorldData->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 
 	// gConsole.LogInfo("TiledForwardRenderer::LightCulling Time: {}, workGroupsX: {}, workGroupsY: {}",
 	// 	Time, workGroupsX, workGroupsY
@@ -906,7 +906,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 {
-	float time = (float)(sceneView.World->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
+	float time = (float)(sceneView.WorldData->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 
 	// const SkyboxWorldComponent* skyboxWorldCmp = world->GetWorldComponent<SkyboxWorldComponent>();
 	// if (skyboxWorldCmp != nullptr)
@@ -1243,7 +1243,7 @@ void TiledForwardRenderer::EditorDebug(const SceneView& sceneView)
 
 	// Render Lines
 	{
-		auto debugLinesComponent = sceneView.World->GetWorldComponent<DebugDrawStateWorldComponent>();
+		auto debugLinesComponent = sceneView.WorldData->GetWorldComponent<DebugDrawStateWorldComponent>();
 		auto& debugLines = debugLinesComponent->DebugLines;
 		auto& debugLinesColors = debugLinesComponent->DebugLinesColors;
 
@@ -1294,7 +1294,7 @@ void TiledForwardRenderer::UIText2D(const SceneView& sceneView)
 	Text2DShader.BindProgram();
 	Text2DShader.SetUniform("u_projection", ortho);
 
-	for (auto componentsTuple : sceneView.World->IterateComponents<ScreenSpaceTextComponent>())
+	for (auto componentsTuple : sceneView.WorldData->IterateComponents<ScreenSpaceTextComponent>())
 	{
 		ScreenSpaceTextComponent* textCmp = std::get<ScreenSpaceTextComponent*>(componentsTuple);
 		Text2D& text = textCmp->GetText();
@@ -1425,7 +1425,7 @@ void TiledForwardRenderer::DebugDepthPrepass(const SceneView& sceneView)
 
 void TiledForwardRenderer::DebugLightAccum(const SceneView& sceneView)
 {
-	float time = (float)(sceneView.World->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
+	float time = (float)(sceneView.WorldData->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -1439,7 +1439,7 @@ void TiledForwardRenderer::DebugLightAccum(const SceneView& sceneView)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, VisibleLightIndicesBuffer);
 
 	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
-	for (auto componentsTuple : sceneView.World->IterateComponents<MeshRenderingComponent>())
+	for (auto componentsTuple : sceneView.WorldData->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		const EntityTransform& transform = meshCmp->GetTransform();

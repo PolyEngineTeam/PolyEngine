@@ -15,14 +15,12 @@ namespace Poly {
 	class AARect;
 	class CameraComponent;
 	class MeshRenderingComponent;
-	// class DirectionalLightComponent;
-	class PointLightComponent;
 
 	struct SceneView : public BaseObject<> {
-		SceneView(World* world, const Viewport& viewport)
-			: World(world), Viewport(viewport), Rect(viewport.GetRect()), CameraCmp(viewport.GetCamera()) {};
+		SceneView(World* w, const Viewport& v)
+			: WorldData(w), Viewport(v), Rect(v.GetRect()), CameraCmp(v.GetCamera()) {};
 
-		World* World;
+		World* WorldData;
 		const Viewport& Viewport;
 		const AARect& Rect;
 		const CameraComponent* CameraCmp;
