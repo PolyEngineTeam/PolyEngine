@@ -91,6 +91,8 @@ namespace Poly
 		};
 
 		virtual void SetContent(size_t count, const TextFieldLetter* letters) = 0;
+		virtual unsigned int GetResourceID() const = 0;
+		virtual unsigned int GetResourceSize() const = 0;
 	};
 
 	//------------------------------------------------------------------------------

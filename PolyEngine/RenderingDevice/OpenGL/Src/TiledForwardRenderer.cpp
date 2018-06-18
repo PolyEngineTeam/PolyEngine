@@ -1302,14 +1302,15 @@ void TiledForwardRenderer::UIText2D(const SceneView& sceneView)
 		Text2DShader.SetUniform("u_position", Vector((float)textCmp->GetScreenPosition().X, (float)textCmp->GetScreenPosition().Y, 0));
 		text.UpdateDeviceBuffers();
 
-		const GLTextFieldBufferDeviceProxy* textFieldBuffer = static_cast<const GLTextFieldBufferDeviceProxy*>(text.GetTextFieldBuffer());
+		GLuint textVAO = (GLuint)(text.GetTextFieldBuffer()->GetResourceID());
+		GLuint textBufferSize = (GLuint)(text.GetTextFieldBuffer()->GetResourceSize());
 
-		glBindVertexArray(textFieldBuffer->GetVAO());
+		glBindVertexArray(textVAO);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, (GLuint)(text.GetFontTextureProxy()->GetResourceID()));
 
 		// Render glyph texture over quad
-		glDrawArrays(GL_TRIANGLES, 0, (GLsizei)(6 * textFieldBuffer->GetSize()));
+		glDrawArrays(GL_TRIANGLES, 0, (GLsizei)(6 * textBufferSize));
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
