@@ -1,5 +1,7 @@
 #pragma once
 
+#include "EnginePCH.hpp"
+
 #include <Collections/Dynarray.hpp>
 #include <Utils/EnumUtils.hpp>
 #include <Math/Color.hpp>
@@ -10,7 +12,6 @@
 
 struct aiMesh;
 struct aiMaterial;
-enum aiTextureType;
 
 typedef unsigned int GLuint;
  
@@ -25,7 +26,7 @@ namespace Poly
 			SubMesh(const String& path, aiMesh* mesh, aiMaterial* material);
 
 			void LoadGeometry(aiMesh* mesh);
-			TextureResource* LoadTexture(aiMaterial* material, const String& path, aiTextureType aiType, eTextureUsageType textureType);
+			TextureResource* LoadTexture(const aiMaterial* material, const String& path, const unsigned int aiType, const eTextureUsageType textureType);
 
 			const Mesh& GetMeshData() const { return MeshData; }
 			const IMeshDeviceProxy* GetMeshProxy() const { return MeshProxy.get(); }

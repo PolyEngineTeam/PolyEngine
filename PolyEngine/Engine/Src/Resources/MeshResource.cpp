@@ -37,12 +37,12 @@ MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* mat
 {
 	LoadGeometry(mesh);
 	
-	MeshData.EmissiveMap = LoadTexture(material, path, aiTextureType_EMISSIVE, eTextureUsageType::EMISSIVE);
-	MeshData.AlbedoMap = LoadTexture(material, path, aiTextureType_DIFFUSE, eTextureUsageType::ALBEDO);
-	MeshData.MetallicMap = LoadTexture(material, path, aiTextureType_SPECULAR, eTextureUsageType::METALLIC);
-	MeshData.RoughnessMap = LoadTexture(material, path, aiTextureType_SHININESS, eTextureUsageType::ROUGHNESS);
-	MeshData.NormalMap = LoadTexture(material, path, aiTextureType_HEIGHT, eTextureUsageType::NORMAL);
-	MeshData.AmbientOcclusionMap = LoadTexture(material, path, aiTextureType_AMBIENT, eTextureUsageType::AMBIENT_OCCLUSION);
+	MeshData.EmissiveMap			= LoadTexture(material, path, (unsigned int)aiTextureType_EMISSIVE,		eTextureUsageType::EMISSIVE);
+	MeshData.AlbedoMap				= LoadTexture(material, path, (unsigned int)aiTextureType_DIFFUSE,		eTextureUsageType::ALBEDO);
+	MeshData.MetallicMap			= LoadTexture(material, path, (unsigned int)aiTextureType_SPECULAR,		eTextureUsageType::METALLIC);
+	MeshData.RoughnessMap			= LoadTexture(material, path, (unsigned int)aiTextureType_SHININESS,	eTextureUsageType::ROUGHNESS);
+	MeshData.NormalMap				= LoadTexture(material, path, (unsigned int)aiTextureType_HEIGHT,		eTextureUsageType::NORMAL);
+	MeshData.AmbientOcclusionMap	= LoadTexture(material, path, (unsigned int)aiTextureType_AMBIENT,		eTextureUsageType::AMBIENT_OCCLUSION);
 }
 
 void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
@@ -110,12 +110,13 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 		mesh->HasNormals() ? "on" : "off", mesh->HasFaces() ? "on" : "off");
 }
 
-TextureResource* MeshResource::SubMesh::LoadTexture(aiMaterial* material, const String& path, aiTextureType aiType, eTextureUsageType textureType)
+TextureResource* MeshResource::SubMesh::LoadTexture(const aiMaterial* material, const String& path, const unsigned int aiType, const eTextureUsageType textureType)
 {
 	TextureResource* texture = nullptr;
 
+	aiTextureType type = (aiTextureType)aiType;
 	aiString texturePath;
-	if (material->GetTexture(aiType, 0, &texturePath) == AI_SUCCESS)
+	if (material->GetTexture(type, 0, &texturePath) == AI_SUCCESS)
 	{
 		//TODO load textures, this requires Path class
 		// temporary code for extracting path

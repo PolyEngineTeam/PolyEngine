@@ -15,13 +15,14 @@
 #include <ECS/World.hpp>
 #include <Math/BasicMath.hpp>
 #include <Math/AARect.hpp>
+#include <Rendering/PostprocessSettingsComponent.hpp>
 #include <Rendering/Camera/CameraComponent.hpp>
 #include <Rendering/Lighting/LightSourceComponent.hpp>
 #include <Rendering/MeshRenderingComponent.hpp>
-#include <Rendering/PostprocessSettingsComponent.hpp>
 #include <Rendering/Particles/ParticleComponent.hpp>
 #include <Movement//MovementSystem.hpp>
 #include <Time/TimeWorldComponent.hpp>
+#include <UI/ScreenSpaceTextComponent.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "Common/stb_image.hpp"
@@ -158,7 +159,7 @@ void TiledForwardRenderer::LoadHDR()
 
 void TiledForwardRenderer::CaptureCubemap()
 {
-	// create cubemap resource for capture
+	// create cube map resource for capture
 	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap create cubemap resource");
 	glGenTextures(1, &EnvCubemap);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, EnvCubemap);
@@ -1190,7 +1191,7 @@ void TiledForwardRenderer::PostSSAO(const SceneView& sceneView)
 			));
 			ssaoKernel[i].Normalize();
 			ssaoKernel[i] *= RandomRange(0.0f, 1.0f);
-			float scale = float(i) / 16.0;
+			float scale = float(i) / 16.0f;
 			scale = Lerp(0.1f, 1.0f, scale * scale);
 			ssaoKernel[i] *= scale;
 			gConsole.LogInfo("TiledForwardRenderer::PostSSAO kernel #{} {}", i, ssaoKernel[i]);
