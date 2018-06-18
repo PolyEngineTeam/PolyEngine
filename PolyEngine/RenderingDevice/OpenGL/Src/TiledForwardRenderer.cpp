@@ -1215,8 +1215,8 @@ void TiledForwardRenderer::PostSSAO(const SceneView& sceneView)
 	glBindTexture(GL_TEXTURE_2D, RDI->SSAONoiseMap);
 	SSAOShader.SetUniform("uNoise", 3);
 	SSAOShader.SetUniform("uScreenRes", Vector(
-		RDI->GetScreenSize().Width,
-		RDI->GetScreenSize().Height,
+		(float)(RDI->GetScreenSize().Width),
+		(float)(RDI->GetScreenSize().Height),
 		1.0f / ((float)RDI->GetScreenSize().Width),
 		1.0f / ((float)RDI->GetScreenSize().Height))
 	);
