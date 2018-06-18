@@ -9,11 +9,12 @@ struct SDL_Window;
 
 namespace Poly
 {
+	struct PostprocessQuad;
+	struct PrimitiveCube;
+	struct SceneView;
 	class CameraComponent;
 	class AARect;
 	class World;
-	struct PostprocessQuad;
-	struct PrimitiveCube;
 	class RenderingPassBase;
 	class RenderingTargetBase;
 	class IRendererInterface;
