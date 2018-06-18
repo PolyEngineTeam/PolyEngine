@@ -17,6 +17,7 @@
 #include <Rendering/Camera/CameraComponent.hpp>
 #include <Rendering/Lighting/LightSourceComponent.hpp>
 #include <Rendering/MeshRenderingComponent.hpp>
+#include <Movement//MovementSystem.hpp>
 #include <Time/TimeWorldComponent.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -660,8 +661,8 @@ void TiledForwardRenderer::RenderEquiCube(const SceneView& sceneView)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
 
-	glBindFragDataLocation(EquiToCubemapShader.GetProgramHandle(), 0, "color");
-	glBindFragDataLocation(EquiToCubemapShader.GetProgramHandle(), 1, "normal");
+	glBindFragDataLocation(EquiToCubemapShader.GetProgramHandle(), (GLuint)0, "color");
+	glBindFragDataLocation(EquiToCubemapShader.GetProgramHandle(), (GLuint)1, "normal");
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, HDRTexture);
