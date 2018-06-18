@@ -69,6 +69,7 @@ namespace Poly
 	public:
 		virtual void SetContent(eTextureDataFormat format, const unsigned char* data) = 0;
 		virtual void SetSubContent(size_t width, size_t height, size_t offsetX, size_t offsetY, eTextureDataFormat format, const unsigned char* data) = 0;
+		virtual unsigned int GetResourceID() const = 0;
 	};
 
 	class ENGINE_DLLEXPORT ICubemapDeviceProxy : public BaseObject<>

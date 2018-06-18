@@ -21,6 +21,7 @@ namespace Poly
 		int GetChannels() const { return Channels; }
 
 		const ITextureDeviceProxy* GetTextureProxy() const { return TextureProxy.get(); }
+
 	private:
 		std::unique_ptr<ITextureDeviceProxy> TextureProxy;
 		unsigned char* Image;

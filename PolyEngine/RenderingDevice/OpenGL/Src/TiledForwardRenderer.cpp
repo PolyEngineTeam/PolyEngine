@@ -832,7 +832,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 				const TextureResource* emissiveTexture = subMesh->GetMeshData().GetEmissiveMap();
 				GLuint emissiveID = emissiveTexture == nullptr
 					? RDI->FallbackBlackTexture
-					: static_cast<const GLTextureDeviceProxy*>(emissiveTexture->GetTextureProxy())->GetTextureID();
+					: (GLuint)(emissiveTexture->GetTextureProxy()->GetResourceID());
 				glActiveTexture(GL_TEXTURE3);
 				glBindTexture(GL_TEXTURE_2D, emissiveID);
 				LightAccumulationShader.SetUniform("uEmissiveMap", 3);

@@ -24,10 +24,12 @@ namespace Poly
 		
 		void SetContent(eTextureDataFormat inputFormat, const unsigned char* data) override;
 		void SetSubContent(size_t width, size_t height, size_t offsetX, size_t offsetY, eTextureDataFormat format, const unsigned char* data) override;
+		unsigned int GetResourceID() const override { return TextureID; };
 
 		GLuint GetTextureID() const { return TextureID; }
 
 		void Resize(const ScreenSize& size);
+
 	private:
 		void InitTextureParams();
 
@@ -39,5 +41,6 @@ namespace Poly
 		eTextureUsageType Usage = eTextureUsageType::_COUNT;
 
 		friend class GLRenderingDevice;
+
 	};
 }
