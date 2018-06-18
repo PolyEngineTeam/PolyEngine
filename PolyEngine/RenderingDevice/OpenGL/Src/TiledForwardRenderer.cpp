@@ -6,6 +6,7 @@
 
 #include "GLRenderingDevice.hpp"
 #include "Proxy/GLMeshDeviceProxy.hpp"
+#include "Proxy/GLParticleDeviceProxy.hpp"
 #include "Pipeline/RenderingPassBase.hpp"
 #include "Common/GLShaderProgram.hpp"
 #include "Common/PrimitiveCube.hpp"
