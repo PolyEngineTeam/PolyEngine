@@ -2,6 +2,8 @@
 
 #include <math.h>
 
+#include "Configs/AssetsPathConfig.hpp"
+
 #include "GLRenderingDevice.hpp"
 #include "Proxy/GLMeshDeviceProxy.hpp"
 #include "Pipeline/RenderingPassBase.hpp"
