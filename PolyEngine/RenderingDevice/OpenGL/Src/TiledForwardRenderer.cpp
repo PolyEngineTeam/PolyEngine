@@ -764,7 +764,6 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	glBindFragDataLocation(LightAccumulationShader.GetProgramHandle(), 0, "oColor");
 	glBindFragDataLocation(LightAccumulationShader.GetProgramHandle(), 1, "oNormal");
 
-	static const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 	int dirLightsCount = 0;
 	for ( const DirectionalLightComponent* dirLightCmp : sceneView.DirectionalLights)
 	{		
@@ -958,7 +957,6 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 	TranslucentShader.BindProgram();
 	TranslucentShader.SetUniform("uViewPosition", cameraTransform.GetGlobalTranslation());
 
-	static const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 	int dirLightsCount = 0;
 	for (const DirectionalLightComponent* dirLightCmp: sceneView.DirectionalLights)
 	{

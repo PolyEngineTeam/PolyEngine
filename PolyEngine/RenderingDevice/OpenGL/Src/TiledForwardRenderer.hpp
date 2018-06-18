@@ -29,6 +29,7 @@ namespace Poly {
 		};
 
 		const size_t MAX_NUM_LIGHTS = 1024;
+		const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 
 		// X and Y work group dimension variables for compute shader
 		GLuint WorkGroupsX = 0;
