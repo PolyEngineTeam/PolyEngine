@@ -2,7 +2,7 @@
 
 #include "Pipeline/RenderingPassBase.hpp"
 #include "Common/GLShaderProgram.hpp"
-#include "Common/PostprocessQuad.hpp"
+#include "Common/PrimitiveQuad.hpp"
 
 namespace Poly
 {

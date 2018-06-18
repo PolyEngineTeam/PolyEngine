@@ -5,7 +5,7 @@
 #include <Utils/Logger.hpp>
 
 #include "Common/GLUtils.hpp"
-#include "Common/PostprocessQuad.hpp"
+#include "Common/PrimitiveQuad.hpp"
 #include "Common/PrimitiveCube.hpp"
 
 #include "Proxy/GLTextureDeviceProxy.hpp"

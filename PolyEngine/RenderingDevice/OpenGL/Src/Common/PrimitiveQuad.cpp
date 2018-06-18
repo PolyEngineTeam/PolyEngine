@@ -1,8 +1,8 @@
-#include "Common/PostprocessQuad.hpp"
+#include "Common/PrimitiveQuad.hpp"
 
 using namespace Poly;
 
-PostprocessQuad::PostprocessQuad()
+PrimitiveQuad::PrimitiveQuad()
 {
 	// quad with uv mapping
 	static const float vertices[] = {
@@ -17,10 +17,10 @@ PostprocessQuad::PostprocessQuad()
 	};
 
 	glGenVertexArrays(1, &VAO);
-	ASSERTE(VAO > 0, "PostprocessQuad VAO creation failed!");
+	ASSERTE(VAO > 0, "PrimitiveQuad VAO creation failed!");
 	glBindVertexArray(VAO);
 	glGenBuffers(1, &VBO);
-	ASSERTE(VBO > 0, "PostprocessQuad VBO creation failed!");
+	ASSERTE(VBO > 0, "PrimitiveQuad VBO creation failed!");
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, 30 * sizeof(float), vertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), NULL);
@@ -31,7 +31,7 @@ PostprocessQuad::PostprocessQuad()
 	glBindVertexArray(0);
 }
 
-PostprocessQuad::~PostprocessQuad()
+PrimitiveQuad::~PrimitiveQuad()
 {
 	if (VBO)
 		glDeleteBuffers(1, &VBO);

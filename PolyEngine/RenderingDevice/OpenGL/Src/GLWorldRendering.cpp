@@ -15,6 +15,8 @@
 #include "Pipeline/RenderingPassBase.hpp"
 #include "Proxy/GLMeshDeviceProxy.hpp"
 #include "Common/GLUtils.hpp"
+#include "Common/PrimitiveCube.hpp"
+#include "Common/PrimitiveQuad.hpp"
 
 #include "ForwardRenderer.hpp"
 #include "TiledForwardRenderer.hpp"
@@ -27,7 +29,7 @@ void GLRenderingDevice::Init()
 
 	GetExtensions();
 	
-	PrimitivesQuad = std::make_unique<PostprocessQuad>();
+	PrimitivesQuad = std::make_unique<PrimitiveQuad>();
 	PrimitivesCube = std::make_unique<PrimitiveCube>();
 
 	CreateUtilityTextures();

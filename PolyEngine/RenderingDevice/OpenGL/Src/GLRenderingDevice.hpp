@@ -9,7 +9,7 @@ struct SDL_Window;
 
 namespace Poly
 {
-	struct PostprocessQuad;
+	struct PrimitiveQuad;
 	struct PrimitiveCube;
 	struct SceneView;
 	class CameraComponent;
@@ -91,7 +91,7 @@ namespace Poly
 		std::unique_ptr<IMeshDeviceProxy> CreateMesh() override;
 		std::unique_ptr<IParticleDeviceProxy> CreateParticle() override;
 
-		std::unique_ptr<PostprocessQuad> PrimitivesQuad;
+		std::unique_ptr<PrimitiveQuad> PrimitivesQuad;
 		std::unique_ptr<PrimitiveCube> PrimitivesCube;
 
 		GLuint FallbackWhiteTexture;
