@@ -17,6 +17,7 @@
 #include <Rendering/Camera/CameraComponent.hpp>
 #include <Rendering/Lighting/LightSourceComponent.hpp>
 #include <Rendering/MeshRenderingComponent.hpp>
+#include <Rendering/Particles/ParticleComponent.hpp>
 #include <Movement//MovementSystem.hpp>
 #include <Time/TimeWorldComponent.hpp>
 
