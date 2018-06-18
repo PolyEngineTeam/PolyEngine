@@ -26,6 +26,7 @@
 #include "Pipeline/SpritesheetRenderingPass.hpp"
 #include "Pipeline/SkyboxRenderingPass.hpp"
 
+#include "IRendererInterface.hpp"
 
 using namespace Poly;
 
