@@ -738,7 +738,7 @@ void TiledForwardRenderer::ComputeLightCulling(const SceneView& sceneView)
 	LightCullingShader.SetUniform("uScreenSizeY", RDI->GetScreenSize().Height);
 	LightCullingShader.SetUniform("uWorkGroupsX", (int)WorkGroupsX);
 	LightCullingShader.SetUniform("uWorkGroupsY", (int)WorkGroupsY);
-	LightCullingShader.SetUniform("uLightCount", (int)std::min(sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
+	LightCullingShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
 
 	// Bind depth map texture to texture location 4 (which will not be used by any model texture)
 	glActiveTexture(GL_TEXTURE4);
@@ -768,7 +768,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	const EntityTransform& cameraTransform = sceneView.CameraCmp->GetTransform();
 
 	LightAccumulationShader.BindProgram();
-	LightAccumulationShader.SetUniform("uLightCount", (int)std::min(sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
+	LightAccumulationShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
 	LightAccumulationShader.SetUniform("uWorkGroupsX", (int)WorkGroupsX);
 	LightAccumulationShader.SetUniform("uWorkGroupsY", (int)WorkGroupsY);
 	LightAccumulationShader.SetUniform("uViewPosition", cameraTransform.GetGlobalTranslation());
@@ -1433,7 +1433,7 @@ void TiledForwardRenderer::DebugLightAccum(const SceneView& sceneView)
 	DebugLightAccumShader.SetUniform("uTime", time);
 	DebugLightAccumShader.SetUniform("uWorkGroupsX", (int)WorkGroupsX);
 	DebugLightAccumShader.SetUniform("uWorkGroupsY", (int)WorkGroupsY);
-	DebugLightAccumShader.SetUniform("uLightCount", (int)std::min(sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
+	DebugLightAccumShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, LightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, VisibleLightIndicesBuffer);
