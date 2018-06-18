@@ -2,6 +2,7 @@
 
 #include <Core.hpp>
 #include <Rendering/Viewport.hpp>
+#include <Rendering/Lighting/LightSourceComponent.hpp>
 
 // TODO: inherit from BaseRenderPass - make multipass RenderPass
 
@@ -14,7 +15,7 @@ namespace Poly {
 	class AARect;
 	class CameraComponent;
 	class MeshRenderingComponent;
-	class DirectionalLightComponent;
+	// class DirectionalLightComponent;
 	class PointLightComponent;
 
 	struct SceneView : public BaseObject<> {

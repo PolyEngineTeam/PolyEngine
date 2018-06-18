@@ -990,11 +990,11 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
-			PhongMaterial material = meshCmp->GetMaterial(i);
-			TranslucentShader.SetUniform("uMaterial.Ambient", material.AmbientColor);
-			TranslucentShader.SetUniform("uMaterial.Diffuse", material.DiffuseColor);
-			TranslucentShader.SetUniform("uMaterial.Specular", material.SpecularColor);
-			TranslucentShader.SetUniform("uMaterial.Shininess", material.Shininess);
+			PBRMaterial material = meshCmp->GetPBRMaterial(i);
+			TranslucentShader.SetUniform("uMaterial.Ambient", Color::BLACK);
+			TranslucentShader.SetUniform("uMaterial.Diffuse", material.Albedo);
+			TranslucentShader.SetUniform("uMaterial.Specular", material.Albedo);
+			TranslucentShader.SetUniform("uMaterial.Shininess", 16.0f);
 
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 			glBindVertexArray(meshProxy->GetVAO());

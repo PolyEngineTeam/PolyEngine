@@ -10,7 +10,6 @@ MeshRenderingComponent::MeshRenderingComponent(const String& meshPath, eResource
 {
 	Mesh = ResourceManager<MeshResource>::Load(meshPath, source);
 	if (Mesh) {
-		Materials.Resize(Mesh->GetSubMeshes().GetSize());
 		PBRMaterials.Resize(Mesh->GetSubMeshes().GetSize());
 	}
 }

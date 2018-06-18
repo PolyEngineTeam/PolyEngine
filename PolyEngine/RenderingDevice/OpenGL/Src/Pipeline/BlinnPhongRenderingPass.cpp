@@ -143,7 +143,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		const EntityTransform& transform = meshCmp->GetTransform();
 
 		if ( passType == ePassType::BY_MATERIAL &&
-			(meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::LIT))
+			(meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::PHONG))
 		{
 			continue;
 		}
@@ -160,11 +160,11 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
-			PhongMaterial material = meshCmp->GetMaterial(i);
-			GetProgram().SetUniform("uMaterial.Ambient", material.AmbientColor);
-			GetProgram().SetUniform("uMaterial.Diffuse", material.DiffuseColor);
-			GetProgram().SetUniform("uMaterial.Specular", material.SpecularColor);
-			GetProgram().SetUniform("uMaterial.Shininess", material.Shininess);
+			PBRMaterial material = meshCmp->GetPBRMaterial(i);
+			GetProgram().SetUniform("uMaterial.Ambient", Color::BLACK);
+			GetProgram().SetUniform("uMaterial.Diffuse", material.Albedo);
+			GetProgram().SetUniform("uMaterial.Specular", material.Albedo);
+			GetProgram().SetUniform("uMaterial.Shininess", 16.0f);
 
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 			glBindVertexArray(meshProxy->GetVAO());

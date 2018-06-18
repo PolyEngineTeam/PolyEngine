@@ -49,8 +49,8 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
-			PhongMaterial material = meshCmp->GetMaterial(i);
-			GetProgram().SetUniform("uColor", material.DiffuseColor);
+			PBRMaterial material = meshCmp->GetPBRMaterial(i);
+			GetProgram().SetUniform("uColor", material.Albedo);
 
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 			glBindVertexArray(meshProxy->GetVAO());
