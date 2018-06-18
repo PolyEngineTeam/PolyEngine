@@ -358,8 +358,8 @@ void TiledForwardRenderer::CaptureSpecularPrefilteredMap()
 		// reisze framebuffer according to mip-level size.
 		// unsigned int mipWidth = 128 * std::pow(0.5, mip);
 		// unsigned int mipHeight = 128 * std::pow(0.5, mip);
-		unsigned int mipWidth = 512 * std::pow(0.5, mip);
-		unsigned int mipHeight = 512 * std::pow(0.5, mip);
+		unsigned int mipWidth = 512 * (unsigned int)std::pow(0.5f, mip);
+		unsigned int mipHeight = 512 * (unsigned int)std::pow(0.5f, mip);
 		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
 		glViewport(0, 0, mipWidth, mipHeight);
