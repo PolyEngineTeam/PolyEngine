@@ -736,7 +736,7 @@ void TiledForwardRenderer::ComputeLightCulling(const SceneView& sceneView)
 
 	// Bind depth map texture to texture location 4 (which will not be used by any model texture)
 	glActiveTexture(GL_TEXTURE4);
-	glUniform1i(glGetUniformLocation(LightCullingShader.GetProgramHandle(), "uDepthMap"), 4);
+	glUniform1i(glGetUniformLocation((GLuint)LightCullingShader.GetProgramHandle(), "uDepthMap"), 4);
 	glBindTexture(GL_TEXTURE_2D, PreDepthBuffer);
 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, LightBuffer);
