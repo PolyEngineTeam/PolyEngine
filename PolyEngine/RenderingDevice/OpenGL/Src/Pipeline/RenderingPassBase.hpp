@@ -15,6 +15,7 @@ namespace Poly
 	class AARect;
 	class TextureResource;
 	struct ScreenSize;
+	class GLRenderingDevice;
 	enum class eInternalTextureUsageType;
 
 	enum class ePassType
