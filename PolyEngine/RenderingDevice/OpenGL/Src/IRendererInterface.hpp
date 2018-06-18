@@ -18,10 +18,10 @@ namespace Poly {
 
 	struct SceneView : public BaseObject<> {
 		SceneView(World* w, const Viewport& v)
-			: WorldData(w), Viewport(v), Rect(v.GetRect()), CameraCmp(v.GetCamera()) {};
+			: WorldData(w), ViewportData(v), Rect(v.GetRect()), CameraCmp(v.GetCamera()) {};
 
 		World* WorldData;
-		const Viewport& Viewport;
+		const Viewport& ViewportData;
 		const AARect& Rect;
 		const CameraComponent* CameraCmp;
 
