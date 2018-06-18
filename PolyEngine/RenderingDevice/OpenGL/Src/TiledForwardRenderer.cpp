@@ -123,6 +123,7 @@ void TiledForwardRenderer::Init()
 
 void TiledForwardRenderer::LoadHDR()
 {
+	// TODO: move to texture resource
 	String absoluteHDRPath = gAssetsPathConfig.GetAssetsPath(eResourceSource::GAME) + "HDR/HDR.hdr";
 	gConsole.LogInfo("TiledForwardRenderer::Init absoluteHDRPath: {}", absoluteHDRPath);
 	stbi_set_flip_vertically_on_load(true);
