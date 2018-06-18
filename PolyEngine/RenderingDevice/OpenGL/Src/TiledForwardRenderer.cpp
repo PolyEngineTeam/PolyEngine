@@ -657,7 +657,7 @@ void TiledForwardRenderer::RenderEquiCube(const SceneView& sceneView)
 	EquiToCubemapShader.BindProgram();
 	EquiToCubemapShader.SetUniform("uClipFromModel", clipFromWorld);
 
-	// GLuint CubemapID = static_cast<const GLCubemapDeviceProxy*>(SkyboxWorldCmp->GetCubemap().GetTextureProxy())->GetTextureID();
+	// GLuint CubemapID = static_cast<const GLCubemapDeviceProxy*>(SkyboxWorldCmp->GetCubemap().GetTextureProxy(->GetResourceID());
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
 
@@ -840,7 +840,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 				const TextureResource* albedoTexture = subMesh->GetMeshData().GetAlbedoMap();
 				GLuint albedoID = albedoTexture == nullptr
 					? RDI->FallbackWhiteTexture
-					: static_cast<const GLTextureDeviceProxy*>(albedoTexture->GetTextureProxy())->GetTextureID();
+					: (GLuint)(albedoTexture->GetTextureProxy()->GetResourceID());
 				glActiveTexture(GL_TEXTURE4);
 				glBindTexture(GL_TEXTURE_2D, albedoID);
 				LightAccumulationShader.SetUniform("uAlbedoMap", 4);
@@ -848,7 +848,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 				const TextureResource* normalMap = subMesh->GetMeshData().GetNormalMap();
 				GLuint normalMapID = normalMap == nullptr
 					? RDI->FallbackNormalMap
-					: static_cast<const GLTextureDeviceProxy*>(normalMap->GetTextureProxy())->GetTextureID();
+					: (GLuint)(normalMap->GetTextureProxy()->GetResourceID());
 				glActiveTexture(GL_TEXTURE5);
 				glBindTexture(GL_TEXTURE_2D, normalMapID);
 				LightAccumulationShader.SetUniform("uNormalMap", 5);
@@ -856,7 +856,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 				const TextureResource* roughnessTexture = subMesh->GetMeshData().GetRoughnessMap();
 				GLuint roughnessID = roughnessTexture == nullptr
 					? RDI->FallbackBlackTexture
-					: static_cast<const GLTextureDeviceProxy*>(roughnessTexture->GetTextureProxy())->GetTextureID();
+					: (GLuint)(roughnessTexture->GetTextureProxy()->GetResourceID());
 				glActiveTexture(GL_TEXTURE6);
 				glBindTexture(GL_TEXTURE_2D, roughnessID);
 				LightAccumulationShader.SetUniform("uRoughnessMap", 6);
@@ -864,7 +864,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 				const TextureResource* metallicTexture = subMesh->GetMeshData().GetMetallicMap();
 				GLuint metallicID = metallicTexture == nullptr
 					? RDI->FallbackBlackTexture
-					: static_cast<const GLTextureDeviceProxy*>(metallicTexture->GetTextureProxy())->GetTextureID();
+					: (GLuint)(metallicTexture->GetTextureProxy()->GetResourceID());
 				glActiveTexture(GL_TEXTURE7);
 				glBindTexture(GL_TEXTURE_2D, metallicID);
 				LightAccumulationShader.SetUniform("uMetallicMap", 7);
@@ -872,7 +872,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 				const TextureResource* ambientOcclusionTexture = subMesh->GetMeshData().GetAmbientOcclusionMap();
 				GLuint ambientOcclusionID = ambientOcclusionTexture == nullptr
 					? RDI->FallbackWhiteTexture
-					: static_cast<const GLTextureDeviceProxy*>(ambientOcclusionTexture->GetTextureProxy())->GetTextureID();
+					: (GLuint)(ambientOcclusionTexture->GetTextureProxy()->GetResourceID());
 				glActiveTexture(GL_TEXTURE8);
 				glBindTexture(GL_TEXTURE_2D, ambientOcclusionID);
 				LightAccumulationShader.SetUniform("uAmbientOcclusionMap", 8);
@@ -919,7 +919,7 @@ void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 		SkyboxShader.SetUniform("uClipFromWorld", clipFromWorld);
 		// SkyboxShader.SetUniform("uTime", Time);
 
-		// GLuint CubemapID = static_cast<const GLCubemapDeviceProxy*>(SkyboxWorldCmp->GetCubemap().GetTextureProxy())->GetTextureID();
+		// GLuint CubemapID = static_cast<const GLCubemapDeviceProxy*>(SkyboxWorldCmp->GetCubemap().GetTextureProxy(->GetResourceID());
 
 		glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
 		
@@ -1005,7 +1005,7 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 			const TextureResource* diffuseTexture = subMesh->GetMeshData().GetAlbedoMap();
 			GLuint diffuseID = diffuseTexture == nullptr
 				? RDI->FallbackWhiteTexture
-				: static_cast<const GLTextureDeviceProxy*>(diffuseTexture->GetTextureProxy())->GetTextureID();
+				: (GLuint)(diffuseTexture->GetTextureProxy()->GetResourceID());
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, diffuseID);
 			TranslucentShader.SetUniform("uAlbedoMap", 0);
@@ -1013,7 +1013,7 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 			const TextureResource* normalMap = subMesh->GetMeshData().GetNormalMap();
 			GLuint normalMapID = normalMap == nullptr
 				? RDI->FallbackNormalMap
-				: static_cast<const GLTextureDeviceProxy*>(normalMap->GetTextureProxy())->GetTextureID();
+				: (GLuint)(normalMap->GetTextureProxy()->GetResourceID());
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, normalMapID);
 			TranslucentShader.SetUniform("uNormalMap", 1);
@@ -1021,7 +1021,7 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 			const TextureResource* specularTexture = subMesh->GetMeshData().GetRoughnessMap();
 			GLuint specularID = specularTexture == nullptr
 				? RDI->FallbackWhiteTexture
-				: static_cast<const GLTextureDeviceProxy*>(specularTexture->GetTextureProxy())->GetTextureID();
+				: (GLuint)(specularTexture->GetTextureProxy()->GetResourceID());
 			glActiveTexture(GL_TEXTURE2);
 			glBindTexture(GL_TEXTURE_2D, specularID);
 			TranslucentShader.SetUniform("uSpecularMap", 2);
@@ -1100,7 +1100,7 @@ void TiledForwardRenderer::RenderParticleUnlit(World* world, const CameraCompone
 
 		GLuint textureID = texture == nullptr
 			? RDI->FallbackWhiteTexture
-			: static_cast<const GLTextureDeviceProxy*>(texture->GetTextureProxy())->GetTextureID();
+			: (GLuint)(texture->GetTextureProxy()->GetResourceID());
 
 		ParticleShader.SetUniform("uHasSprite", texture == nullptr ? 0.0f : 1.0f);
 
@@ -1300,7 +1300,7 @@ void TiledForwardRenderer::UIText2D(const SceneView& sceneView)
 
 		glBindVertexArray(textFieldBuffer->GetVAO());
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, static_cast<const GLTextureDeviceProxy*>(text.GetFontTextureProxy())->GetTextureID());
+		glBindTexture(GL_TEXTURE_2D, (GLuint)(text.GetFontTextureProxy()->GetResourceID()));
 
 		// Render glyph texture over quad
 		glDrawArrays(GL_TRIANGLES, 0, (GLsizei)(6 * textFieldBuffer->GetSize()));
