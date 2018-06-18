@@ -1092,7 +1092,7 @@ void TiledForwardRenderer::RenderParticleUnlit(World* world, const CameraCompone
 		ParticleEmitter::Settings emitterSettings = particleCmp->GetEmitter()->GetSettings();
 		ParticleShader.SetUniform("uEmitterColor", emitterSettings.BaseColor);
 
-		SpritesheetSettings spriteSettings = emitterSettings.SpritesheetSettings;
+		SpritesheetSettings spriteSettings = emitterSettings.Spritesheet;
 		ParticleShader.SetUniform("uSpriteColor", spriteSettings.SpriteColor);
 		float startFrame = spriteSettings.IsRandomStartFrame ? RandomRange(0.0f, spriteSettings.SubImages.X * spriteSettings.SubImages.Y) : spriteSettings.StartFrame;
 		ParticleShader.SetUniform("uSpriteStartFrame", startFrame);
