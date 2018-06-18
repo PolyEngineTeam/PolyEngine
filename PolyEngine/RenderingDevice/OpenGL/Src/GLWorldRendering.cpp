@@ -41,7 +41,6 @@ void GLRenderingDevice::Init()
 IRendererInterface* GLRenderingDevice::CreateRenderer()
 {
 	IRendererInterface* renderer = nullptr;
-	// RendererType = GLRenderingDevice::eRendererType::FORWARD;
 
 	switch (RendererType)
 	{
@@ -63,9 +62,6 @@ IRendererInterface* GLRenderingDevice::CreateRenderer()
 void GLRenderingDevice::RenderWorld(World* world)
 {
 	const ScreenSize screenSize = gEngine->GetRenderingDevice()->GetScreenSize();
-
-// 	glDepthMask(GL_TRUE);
-// 	glEnable(GL_DEPTH_TEST);
 
 // Clear FBO's
 // 	for (eGeometryRenderPassType type : IterateEnum<eGeometryRenderPassType>())
@@ -99,7 +95,7 @@ void GLRenderingDevice::RenderWorld(World* world)
 
 void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 {
-	for (auto componentsTuple : sceneView.world->IterateComponents<MeshRenderingComponent>())
+	for (auto componentsTuple : sceneView.World->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		if (meshCmp->IsTransparent())
@@ -112,12 +108,12 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 		}
 	}
 
-	for (auto componentsTuple : sceneView.world->IterateComponents<DirectionalLightComponent>())
+	for (auto componentsTuple : sceneView.World->IterateComponents<DirectionalLightComponent>())
 	{
 		sceneView.DirectionalLights.PushBack(std::get<DirectionalLightComponent*>(componentsTuple));
 	}
 
-	for (auto componentsTuple : sceneView.world->IterateComponents<PointLightComponent>())
+	for (auto componentsTuple : sceneView.World->IterateComponents<PointLightComponent>())
 	{
 		sceneView.PointLights.PushBack(std::get<PointLightComponent*>(componentsTuple));
 	}

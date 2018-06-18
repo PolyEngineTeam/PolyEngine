@@ -646,7 +646,7 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 
 void TiledForwardRenderer::RenderEquiCube(const SceneView& sceneView)
 {
-	const Matrix clipFromWorld = sceneView.cameraCmp->GetClipFromWorld();
+	const Matrix clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 
 	EquiToCubemapShader.BindProgram();
 	EquiToCubemapShader.SetUniform("uClipFromModel", clipFromWorld);
@@ -685,7 +685,7 @@ void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOdepthMap);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
-	const Matrix& clipFromWorld = sceneView.cameraCmp->GetClipFromWorld();
+	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	
 	for (const MeshRenderingComponent* meshCmp : sceneView.OpaqueQueue)
 	{
@@ -712,16 +712,16 @@ void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 
 void TiledForwardRenderer::ComputeLightCulling(const SceneView& sceneView)
 {
-	float tme = (float)(sceneView.world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
+	float tme = (float)(sceneView.World->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 
 	// gConsole.LogInfo("TiledForwardRenderer::LightCulling Time: {}, workGroupsX: {}, workGroupsY: {}",
 	// 	Time, workGroupsX, workGroupsY
 	// );
 
 	LightCullingShader.BindProgram();
-	LightCullingShader.SetUniform("uViewFromWorld", sceneView.cameraCmp->GetViewFromWorld());
-	LightCullingShader.SetUniform("uClipFromWorld", sceneView.cameraCmp->GetClipFromWorld());
-	LightCullingShader.SetUniform("uClipFromView",  sceneView.cameraCmp->GetClipFromView());
+	LightCullingShader.SetUniform("uViewFromWorld", sceneView.CameraCmp->GetViewFromWorld());
+	LightCullingShader.SetUniform("uClipFromWorld", sceneView.CameraCmp->GetClipFromWorld());
+	LightCullingShader.SetUniform("uClipFromView",  sceneView.CameraCmp->GetClipFromView());
 	LightCullingShader.SetUniform("uScreenSizeX", RDI->GetScreenSize().Width);
 	LightCullingShader.SetUniform("uScreenSizeY", RDI->GetScreenSize().Height);
 	LightCullingShader.SetUniform("uWorkGroupsX", (int)WorkGroupsX);
@@ -753,7 +753,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	const EntityTransform& cameraTransform = sceneView.cameraCmp->GetTransform();
+	const EntityTransform& cameraTransform = sceneView.CameraCmp->GetTransform();
 
 	LightAccumulationShader.BindProgram();
 	LightAccumulationShader.SetUniform("uLightCount", (int)std::min(sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
@@ -783,7 +783,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, LightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, VisibleLightIndicesBuffer);
 
-	const Matrix& clipFromWorld = sceneView.cameraCmp->GetClipFromWorld();
+	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	for (const MeshRenderingComponent* meshCmp : sceneView.OpaqueQueue)
 	{
 		const EntityTransform& transform = meshCmp->GetTransform();
@@ -894,13 +894,13 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 {
-	float time = (float)(sceneView.world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
+	float time = (float)(sceneView.World->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 
 	// const SkyboxWorldComponent* skyboxWorldCmp = world->GetWorldComponent<SkyboxWorldComponent>();
 	// if (skyboxWorldCmp != nullptr)
 	// {
-		const Matrix clipFromView = sceneView.cameraCmp->GetClipFromView();
-		Matrix viewFromWorld = sceneView.cameraCmp->GetViewFromWorld();
+		const Matrix clipFromView = sceneView.CameraCmp->GetClipFromView();
+		Matrix viewFromWorld = sceneView.CameraCmp->GetViewFromWorld();
 		// center cube in view space by setting translation to 0 for x, y and z.
 		// SetTranslation resets Matrix to identity
 		viewFromWorld.Data[3] = 0.0f;
@@ -953,7 +953,7 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 	// glDisable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	const EntityTransform& cameraTransform = sceneView.cameraCmp->GetTransform();
+	const EntityTransform& cameraTransform = sceneView.CameraCmp->GetTransform();
 	TranslucentShader.BindProgram();
 	TranslucentShader.SetUniform("uViewPosition", cameraTransform.GetGlobalTranslation());
 
@@ -978,7 +978,7 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 	// glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 0, "oColor");
 	// glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 1, "oNormal");
 
-	const Matrix& clipFromWorld = sceneView.cameraCmp->GetClipFromWorld();
+	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	for (const MeshRenderingComponent* meshCmp : sceneView.TranslucentQueue)
 	{
 		const EntityTransform& transform = meshCmp->GetTransform();
@@ -1131,8 +1131,8 @@ void TiledForwardRenderer::LinearizeDepth(const SceneView& sceneView)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, PreDepthBuffer);
 	LinearizeDepthShader.SetUniform("uDepth", 0);
-	LinearizeDepthShader.SetUniform("uNear", sceneView.cameraCmp->GetClippingPlaneNear());
-	LinearizeDepthShader.SetUniform("uFar", sceneView.cameraCmp->GetClippingPlaneFar());
+	LinearizeDepthShader.SetUniform("uNear", sceneView.CameraCmp->GetClippingPlaneNear());
+	LinearizeDepthShader.SetUniform("uFar", sceneView.CameraCmp->GetClippingPlaneFar());
 
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -1148,7 +1148,7 @@ void TiledForwardRenderer::PostTonemapper(const SceneView& sceneView)
 	// gConsole.LogInfo("TiledForwardRenderer::Tonemapper");
 
 	float exposure = 1.0f;
-	const PostprocessSettingsComponent* postCmp = sceneView.cameraCmp->GetSibling<PostprocessSettingsComponent>();
+	const PostprocessSettingsComponent* postCmp = sceneView.CameraCmp->GetSibling<PostprocessSettingsComponent>();
 	if (postCmp) {
 		exposure = postCmp->Exposure;
 	}
@@ -1214,9 +1214,9 @@ void TiledForwardRenderer::PostSSAO(const SceneView& sceneView)
 		1.0f / ((float)RDI->GetScreenSize().Width),
 		1.0f / ((float)RDI->GetScreenSize().Height))
 	);
-	SSAOShader.SetUniform("uFarClippingPlane", sceneView.cameraCmp->GetClippingPlaneFar());
+	SSAOShader.SetUniform("uFarClippingPlane", sceneView.CameraCmp->GetClippingPlaneFar());
 	SSAOShader.SetUniform("uBias", 0.3f);
-	SSAOShader.SetUniform("uViewFromWorld", sceneView.cameraCmp->GetViewFromWorld());
+	SSAOShader.SetUniform("uViewFromWorld", sceneView.CameraCmp->GetViewFromWorld());
 
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -1229,13 +1229,13 @@ void TiledForwardRenderer::EditorDebug(const SceneView& sceneView)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost0);
 
-	const Matrix& clipFromWorld = sceneView.cameraCmp->GetClipFromWorld();
+	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	EditorDebugShader.BindProgram();
 	EditorDebugShader.SetUniform("uMVP", clipFromWorld);
 
 	// Render Lines
 	{
-		auto debugLinesComponent = sceneView.world->GetWorldComponent<DebugDrawStateWorldComponent>();
+		auto debugLinesComponent = sceneView.World->GetWorldComponent<DebugDrawStateWorldComponent>();
 		auto& debugLines = debugLinesComponent->DebugLines;
 		auto& debugLinesColors = debugLinesComponent->DebugLinesColors;
 
@@ -1276,17 +1276,17 @@ void TiledForwardRenderer::UIText2D(const SceneView& sceneView)
 	ScreenSize screen = RDI->GetScreenSize();
 	Matrix ortho;
 	ortho.SetOrthographic(
-		sceneView.rect.GetMin().Y * screen.Height,
-		sceneView.rect.GetMax().Y * screen.Height,
-		sceneView.rect.GetMin().X * screen.Width,
-		sceneView.rect.GetMax().X * screen.Width,
+		sceneView.Rect.GetMin().Y * screen.Height,
+		sceneView.Rect.GetMax().Y * screen.Height,
+		sceneView.Rect.GetMin().X * screen.Width,
+		sceneView.Rect.GetMax().X * screen.Width,
 		-1,
 		 1
 	);
 	Text2DShader.BindProgram();
 	Text2DShader.SetUniform("u_projection", ortho);
 
-	for (auto componentsTuple : sceneView.world->IterateComponents<ScreenSpaceTextComponent>())
+	for (auto componentsTuple : sceneView.World->IterateComponents<ScreenSpaceTextComponent>())
 	{
 		ScreenSpaceTextComponent* textCmp = std::get<ScreenSpaceTextComponent*>(componentsTuple);
 		Text2D& text = textCmp->GetText();
@@ -1404,8 +1404,8 @@ void TiledForwardRenderer::DebugDepthPrepass(const SceneView& sceneView)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Weirdly, moving this call drops performance into the floor
 	DebugQuadDepthPrepassShader.BindProgram();
-	DebugQuadDepthPrepassShader.SetUniform("uNear", sceneView.cameraCmp->GetClippingPlaneNear());
-	DebugQuadDepthPrepassShader.SetUniform("uFar", sceneView.cameraCmp->GetClippingPlaneFar());
+	DebugQuadDepthPrepassShader.SetUniform("uNear", sceneView.CameraCmp->GetClippingPlaneNear());
+	DebugQuadDepthPrepassShader.SetUniform("uFar", sceneView.CameraCmp->GetClippingPlaneFar());
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, PreDepthBuffer);
 
@@ -1416,7 +1416,7 @@ void TiledForwardRenderer::DebugDepthPrepass(const SceneView& sceneView)
 
 void TiledForwardRenderer::DebugLightAccum(const SceneView& sceneView)
 {
-	float time = (float)(sceneView.world->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
+	float time = (float)(sceneView.World->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -1429,8 +1429,8 @@ void TiledForwardRenderer::DebugLightAccum(const SceneView& sceneView)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, LightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, VisibleLightIndicesBuffer);
 
-	const Matrix& clipFromWorld = sceneView.cameraCmp->GetClipFromWorld();
-	for (auto componentsTuple : sceneView.world->IterateComponents<MeshRenderingComponent>())
+	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
+	for (auto componentsTuple : sceneView.World->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		const EntityTransform& transform = meshCmp->GetTransform();

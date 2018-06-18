@@ -153,13 +153,13 @@ void GLRenderingDevice::Resize(const ScreenSize& size)
 
 void GLRenderingDevice::GetExtensions()
 {
-	int ExtensionsSize = 0;
-	glGetIntegerv(GL_NUM_EXTENSIONS, &ExtensionsSize);
+	int extensionsSize = 0;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &extensionsSize);
 	OpenGLExtensions.Clear();
-	OpenGLExtensions.Reserve(ExtensionsSize);
+	OpenGLExtensions.Reserve(extensionsSize);
 
 	gConsole.LogInfo("OpenGL supported extensions:");
-	for (int i = 0; i<ExtensionsSize; i++)
+	for (int i = 0; i<extensionsSize; i++)
 	{
 		String extension = String((const char*)glGetStringi(GL_EXTENSIONS, i));
 		OpenGLExtensions.PushBack(extension);
