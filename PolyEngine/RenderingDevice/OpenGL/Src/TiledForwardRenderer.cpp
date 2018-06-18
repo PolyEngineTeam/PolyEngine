@@ -661,8 +661,8 @@ void TiledForwardRenderer::RenderEquiCube(const SceneView& sceneView)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
 
-	glBindFragDataLocation(EquiToCubemapShader.GetProgramHandle(), (GLuint)0, "color");
-	glBindFragDataLocation(EquiToCubemapShader.GetProgramHandle(), (GLuint)1, "normal");
+	glBindFragDataLocation((GLuint)EquiToCubemapShader.GetProgramHandle(), (GLuint)0, "color");
+	glBindFragDataLocation((GLuint)EquiToCubemapShader.GetProgramHandle(), (GLuint)1, "normal");
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, HDRTexture);
@@ -767,8 +767,8 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	LightAccumulationShader.SetUniform("uWorkGroupsY", (int)WorkGroupsY);
 	LightAccumulationShader.SetUniform("uViewPosition", cameraTransform.GetGlobalTranslation());
 
-	glBindFragDataLocation(LightAccumulationShader.GetProgramHandle(), 0, "oColor");
-	glBindFragDataLocation(LightAccumulationShader.GetProgramHandle(), 1, "oNormal");
+	glBindFragDataLocation((GLuint)LightAccumulationShader.GetProgramHandle(), 0, "oColor");
+	glBindFragDataLocation((GLuint)LightAccumulationShader.GetProgramHandle(), 1, "oNormal");
 
 	int dirLightsCount = 0;
 	for ( const DirectionalLightComponent* dirLightCmp : sceneView.DirectionalLights)
@@ -923,8 +923,8 @@ void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 
 		glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
 		
-		glBindFragDataLocation(LightAccumulationShader.GetProgramHandle(), 0, "color");
-		glBindFragDataLocation(LightAccumulationShader.GetProgramHandle(), 1, "normal");
+		glBindFragDataLocation((GLuint)LightAccumulationShader.GetProgramHandle(), 0, "color");
+		glBindFragDataLocation((GLuint)LightAccumulationShader.GetProgramHandle(), 1, "normal");
 		
 		glDisable(GL_CULL_FACE);
 		glDepthFunc(GL_LEQUAL);
@@ -979,10 +979,8 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 	}
 	TranslucentShader.SetUniform("uDirectionalLightCount", dirLightsCount);
 
-	glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 0, "color");
-	glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 1, "normal");
-	// glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 0, "oColor");
-	// glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 1, "oNormal");
+	glBindFragDataLocation((GLuint)TranslucentShader.GetProgramHandle(), 0, "color");
+	glBindFragDataLocation((GLuint)TranslucentShader.GetProgramHandle(), 1, "normal");
 
 	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	for (const MeshRenderingComponent* meshCmp : sceneView.TranslucentQueue)
@@ -1071,10 +1069,8 @@ void TiledForwardRenderer::RenderParticleUnlit(World* world, const CameraCompone
 	ParticleShader.SetUniform("uTime", time);
 	ParticleShader.SetUniform("uScreenFromView", screenFromView);
 
-	glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 0, "color");
-	glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 1, "normal");
-	// glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 0, "oColor");
-	// glBindFragDataLocation(TranslucentShader.GetProgramHandle(), 1, "oNormal");
+	glBindFragDataLocation((GLuint)TranslucentShader.GetProgramHandle(), 0, "color");
+	glBindFragDataLocation((GLuint)TranslucentShader.GetProgramHandle(), 1, "normal");
 
 	for (auto componentsTuple : world->IterateComponents<ParticleComponent>())
 	{
