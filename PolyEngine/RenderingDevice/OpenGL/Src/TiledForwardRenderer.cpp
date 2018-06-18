@@ -8,6 +8,8 @@
 #include "Proxy/GLMeshDeviceProxy.hpp"
 #include "Pipeline/RenderingPassBase.hpp"
 #include "Common/GLShaderProgram.hpp"
+#include "Common/PrimitiveCube.hpp"
+#include "Common/PrimitiveQuad.hpp"
 
 #include <ECS/World.hpp>
 #include <Math/BasicMath.hpp>
