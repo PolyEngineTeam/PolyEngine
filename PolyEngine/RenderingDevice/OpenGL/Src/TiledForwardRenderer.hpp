@@ -5,6 +5,8 @@
 
 namespace Poly {
 
+	class GLShaderProgram;
+
 	class TiledForwardRenderer : public IRendererInterface
 	{
 

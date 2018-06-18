@@ -2,6 +2,7 @@
 
 #include "Proxy/GLMeshDeviceProxy.hpp"
 #include "Proxy/GLTextureDeviceProxy.hpp"
+#include <GLRenderingDevice.hpp>
 
 #include <ECS/Entity.hpp>
 #include <ECS/World.hpp>
