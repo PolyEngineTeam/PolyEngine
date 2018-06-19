@@ -724,8 +724,6 @@ void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 
 void TiledForwardRenderer::ComputeLightCulling(const SceneView& sceneView)
 {
-	float tme = (float)(sceneView.WorldData->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
-
 	// gConsole.LogInfo("TiledForwardRenderer::LightCulling Time: {}, workGroupsX: {}, workGroupsY: {}",
 	// 	Time, workGroupsX, workGroupsY
 	// );
