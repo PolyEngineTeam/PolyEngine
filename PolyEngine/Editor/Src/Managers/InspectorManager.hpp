@@ -40,9 +40,18 @@ signals:
 	void EngineDeinitialized();
 	void StateChanged(eEngineState state);
 
+	// world signals
+	void WorldChanged(World* world);
+
 	// entity signals
-	void EntitiesSelectionChanged(Dynarray<Entity*> entities);
+	void EntitiesSpawned(Dynarray<Entity*> entities);
+	void EntitiesDestroyed();
+	void EntitiesModified();
 	void EntitiesReparented(Entity* parent);
+	void EntitiesSelectionChanged(Dynarray<Entity*> entities);
+
+	// fields update
+	void SoftUpdate();
 
 private:
 	WorldInspectorWidget* WorldInspector;

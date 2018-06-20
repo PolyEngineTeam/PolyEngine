@@ -5,31 +5,33 @@
 #include <QtWidgets/qgridlayout.h>
 #include <QtWidgets/qlistwidget.h>
 #include <QtWidgets/qlineedit.h>
+#include <QtCore/qstring.h>
 
 #include <ECS/World.hpp>
 #include <ECS/Entity.hpp>
 
 using namespace Poly;
 
-class ChangeParentDialog : public QDialog
+class EntityDialog : public QDialog
 {
 public:
-	ChangeParentDialog(Dynarray<Entity*> entities, Entity* parent = nullptr);
+	EntityDialog() {}
+
+	Dynarray<Entity*> SpawnEntities(World* world, Dynarray<Entity*> parents);
+	void DestroyEntities(Dynarray<Entity*> parents);
+	Entity* ReparentEntities(Dynarray<Entity*> entities, Entity* parent = nullptr);
 
 	bool OperationCanceled() { return Canceled; }
 
 private:
 	void AddEntity(Entity* entity);
+	void AddPrefab(QString prefabName);
 
-	Dynarray<Entity*> Entities;
-
-	bool Canceled = false;
+	bool Canceled = true;
 
 	QGridLayout* MainLayout;
-
-	QTreeWidget* Tree;
-
-	QLabel* EntityIdNameText;		QLineEdit* EntityIdNameField;
+	QTreeWidget* EntitiesTree;
+	QTreeWidget* PrefabTree;
 	QPushButton* CancelButton;		QPushButton* OkButton;
 
 private slots:

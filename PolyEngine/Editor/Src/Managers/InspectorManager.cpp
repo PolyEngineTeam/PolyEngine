@@ -65,6 +65,7 @@ void InspectorManager::ProjectClosedSlot()
 void InspectorManager::EngineInitializedSlot(World* world)
 {
 	emit EngineInitialized(world);
+	emit WorldChanged(world);
 }
 
 //------------------------------------------------------------------------------

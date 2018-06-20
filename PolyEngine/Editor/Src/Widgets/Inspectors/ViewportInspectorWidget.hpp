@@ -23,8 +23,8 @@ public:
 	// TODO(squares): decide what this method should do
 	void Reset() override;
 
-	void UpdateInspector() override {}
-	void ReloadInspector() override {}
+	void UpdateInspector() {}
+	void ReloadInspector() {}
 
 	std::unique_ptr<IRenderingDevice> GetRenderingDevice();
 

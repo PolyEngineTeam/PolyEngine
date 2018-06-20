@@ -328,11 +328,6 @@ void EntityInspectorWidget::RemoveComponent()
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::ChangeParent()
 {
-	ChangeParentDialog dialog(Entities);
-	dialog.exec();
-
-	if (!dialog.OperationCanceled())
-		UpdateInspector();
 }
 
 //------------------------------------------------------------------------------

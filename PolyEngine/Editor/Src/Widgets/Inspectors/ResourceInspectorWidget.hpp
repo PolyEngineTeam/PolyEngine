@@ -19,8 +19,8 @@ public:
 	// Removes all items from viewer.
 	void Reset() override;
 
-	void UpdateInspector() override {}
-	void ReloadInspector() override {}
+	void UpdateInspector() {}
+	void ReloadInspector() {}
 
 	// Fills layout with list of found resources
 	void SetObject(const ProjectConfig* config);

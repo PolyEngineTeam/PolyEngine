@@ -41,20 +41,30 @@ public:
 	// Removes all entities from list.
 	void Reset() override;
 
-	// Updates names.
-	void UpdateInspector() override;
 
-	// Removes all entities from list and loads them again.
-	void ReloadInspector() override;
-
+public slots:
 	// Sets currently viewed world to given object and updates inspector.
-	void SetObject(World* world);
+	void WorldChanged(World* world);
+
+	// Adds this new entity to tree.
+	void EntitiesSpawned(Dynarray<Entity*> entities);
+
+	void EntitiesDestroyed();
+
+	// Reparents all currently selected entities to new parent.
+	void EntitiesReparented(Entity* parent);
 
 	// Sets selected entities.
-	void SetSelectedEntities(Dynarray<Entity*> entities);
+	void EntitiesSelectionChanged(Dynarray<Entity*> entities);
+
+	// Updates fields within tree items.
+	void SoftUpdate();
+
 
 private:
+	// Called recursively to add entity and all its chiildren to tree
 	void AddEntityToTree(Entity* entity, QTreeWidgetItem* parent);
+
 
 	World* WorldObj;
 	Dynarray<Entity*> SelectedEntities;
@@ -69,10 +79,10 @@ private:
 
 private slots:
 	void SelectionChanged(QTreeWidgetItem* item, int column);
-	void EntitiesReparented(QDropEvent* e);
+	void Drop(QDropEvent* e);
 
 	void SpawnContextMenu(QPoint pos);
-		void AddEntity();
-		void RemoveEntity();
-		void ReparentEntity();
+		void SpawnEntities();
+		void DestroyEntities();
+		void ReparentEntities();
 };
