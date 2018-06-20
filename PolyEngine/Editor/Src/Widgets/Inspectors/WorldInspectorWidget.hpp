@@ -8,6 +8,7 @@
 #include <QtWidgets/qtreewidget.h>
 #include <QtWidgets/qlayout.h>
 #include <QtWidgets/qlabel.h>
+#include <QtGui/qstandarditemmodel.h>
 
 #include "Widgets/Inspectors/InspectorWidgetBase.hpp"
 
@@ -18,13 +19,23 @@ class CustomTree : public QTreeWidget
 	Q_OBJECT
 
 public:
-	CustomTree(QWidget* parent) : QTreeWidget(parent) {}
+	CustomTree(QWidget* parent) : QTreeWidget(parent) {	}
 
 signals:
-	void Dropped(QDropEvent* e);
+	void Dropped(Dynarray<QTreeWidgetItem*> droppedItems);
 
 private:
-	void dropEvent(QDropEvent* e) override { emit Dropped(e);  QTreeWidget::dropEvent(e); }
+	void dropEvent(QDropEvent* e) override 
+	{ 
+		Dynarray<QTreeWidgetItem*> droppedItems;
+
+		for (QTreeWidgetItem* i : selectedItems())
+			droppedItems.PushBack(i);
+
+		QTreeWidget::dropEvent(e);  
+
+		emit Dropped(droppedItems);
+	}
 };
 
 // Displays tree of entities in the world. Enables adding, removing and reparenting entities.
@@ -49,6 +60,7 @@ public slots:
 	// Adds this new entity to tree.
 	void EntitiesSpawned(Dynarray<Entity*> entities);
 
+	// removed items from list
 	void EntitiesDestroyed();
 
 	// Reparents all currently selected entities to new parent.
@@ -75,11 +87,11 @@ private:
 		QAction* ReparentEntityAction;
 
 	CustomTree* Tree;
-	std::map<QTreeWidgetItem*, Entity*> EntityFromItem;
+	std::map<QTreeWidgetItem*, Entity*> ItemToEntity;
 
 private slots:
-	void SelectionChanged(QTreeWidgetItem* item, int column);
-	void Drop(QDropEvent* e);
+	void SelectionChanged();
+	void Drop(Dynarray<QTreeWidgetItem*> droppedItems);
 
 	void SpawnContextMenu(QPoint pos);
 		void SpawnEntities();

@@ -29,6 +29,7 @@ void Poly::Entity::SetParent(Entity* parent)
 {
 	ASSERTE(parent, "New parent cannot be null");
 	ASSERTE(parent != this, "Cannot parent myself!");
+	ASSERTE(parent->Parent != this, "Detected parenting cycle!");
 	HEAVY_ASSERTE(!ContainsChildRecursive(parent), "Detected parenting cycle!");
 
 	if (Parent)
