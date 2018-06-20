@@ -11,7 +11,7 @@ WorldInspectorWidget::WorldInspectorWidget(QWidget* parent)
 
 	Tree = new CustomTree(this);
 	Tree->setSelectionMode(QAbstractItemView::SelectionMode::ExtendedSelection);
-	Tree->setHeaderLabels(QStringList() << "" << "Visible" << "Name" << "ID");
+	Tree->setHeaderLabels(QStringList() << "Visible" << "Name" << "ID");
 	Tree->setAcceptDrops(true);
 	Tree->setDragEnabled(true);
 	Tree->setDragDropMode(QAbstractItemView::InternalMove);
@@ -22,11 +22,11 @@ WorldInspectorWidget::WorldInspectorWidget(QWidget* parent)
 	// context menu
 	ContextMenu = new QMenu(this);
 
-		AddEntityAction = new QAction("Add Entities", this);
+		AddEntityAction = new QAction("Spawn Entities", this);
 		ContextMenu->addAction(AddEntityAction);
 		connect(AddEntityAction, &QAction::triggered, this, &WorldInspectorWidget::SpawnEntities);
 
-		RemoveEntityAction = new QAction("Remove Entities", this);
+		RemoveEntityAction = new QAction("Destroy Entities", this);
 		ContextMenu->addAction(RemoveEntityAction);
 		connect(RemoveEntityAction, &QAction::triggered, this, &WorldInspectorWidget::DestroyEntities);
 
@@ -176,8 +176,8 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 
 	std::stringstream ss;
 	ss << entity->GetID();
-	entityTree->setText(3, (&ss.str()[0]));
-	entityTree->setText(2, entity->Name.GetCStr());
+	entityTree->setText(2, (&ss.str()[0]));
+	entityTree->setText(1, entity->Name.GetCStr());
 	entityTree->setCheckState(0, Qt::Checked);
 	ItemToEntity.insert(std::pair<QTreeWidgetItem*, Entity*>(entityTree, entity));
 

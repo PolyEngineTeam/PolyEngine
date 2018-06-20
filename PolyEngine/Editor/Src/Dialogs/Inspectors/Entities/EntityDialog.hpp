@@ -28,6 +28,8 @@ private:
 	void AddPrefab(QString prefabName);
 
 	bool Canceled = true;
+	Dynarray<Entity*> PredefinedEntities;
+	std::map<QTreeWidgetItem*, Entity*> ItemToEntity;
 
 	QGridLayout* MainLayout;
 	QTreeWidget* EntitiesTree;
