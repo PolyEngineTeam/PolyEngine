@@ -18,20 +18,28 @@ Dynarray<Entity*> EntityDialog::SpawnEntities(World* world, Dynarray<Entity*> pa
 	MainLayout->setColumnStretch(1, 1);
 	MainLayout->setColumnStretch(2, 1);
 
+	FirstLabel = new QLabel(this);
+	FirstLabel->setText("Choose where you want to spawn new entities.");
+	MainLayout->addWidget(FirstLabel, 0, 0, 1, 3);
+
 	// create potential parents list 
 	EntitiesTree = new QTreeWidget(this);
 	EntitiesTree->setSelectionMode(QAbstractItemView::SelectionMode::ExtendedSelection);
 	EntitiesTree->setHeaderLabels(QStringList() << "Name" << "ID");
-	MainLayout->addWidget(EntitiesTree, 0, 0, 1, 3);
+	MainLayout->addWidget(EntitiesTree, 1, 0, 1, 3);
 
 	for (auto child : world->GetRoot()->GetChildren())
 		AddEntity(child);
+
+	SecondLabel = new QLabel(this);
+	SecondLabel->setText("Choose prefabs to spawn in each selected parent.");
+	MainLayout->addWidget(SecondLabel, 2, 0, 1, 3);
 
 	// create prefabs list
 	PrefabTree = new QTreeWidget(this);
 	PrefabTree->setSelectionMode(QAbstractItemView::SelectionMode::ExtendedSelection);
 	PrefabTree->setHeaderLabels(QStringList() << "Name" << "ID");
-	MainLayout->addWidget(PrefabTree, 1, 0, 1, 3);
+	MainLayout->addWidget(PrefabTree, 3, 0, 1, 3);
 	AddPrefab("Empty entity");
 	AddPrefab("SpikesLeft");
 	AddPrefab("SpikesRight");
@@ -44,12 +52,12 @@ Dynarray<Entity*> EntityDialog::SpawnEntities(World* world, Dynarray<Entity*> pa
 	CancelButton = new QPushButton(this);
 	CancelButton->setText("Cancel");
 	connect(CancelButton, &QPushButton::clicked, this, &EntityDialog::Cancel);
-	MainLayout->addWidget(CancelButton, 2, 0);
+	MainLayout->addWidget(CancelButton, 4, 0);
 
 	OkButton = new QPushButton(this);
 	OkButton->setText("Spawn");
 	connect(OkButton, &QPushButton::clicked, this, &EntityDialog::Ok);
-	MainLayout->addWidget(OkButton, 2, 2);
+	MainLayout->addWidget(OkButton, 4, 2);
 
 	// input from user
 	exec();
@@ -90,11 +98,15 @@ void EntityDialog::DestroyEntities(World* world, Dynarray<Entity*> entities)
 	MainLayout->setColumnStretch(1, 1);
 	MainLayout->setColumnStretch(2, 1);
 
+	FirstLabel = new QLabel(this);
+	FirstLabel->setText("Choose entities to destroy (as well as all their children).");
+	MainLayout->addWidget(FirstLabel, 0, 0, 1, 3);
+
 	// create potential parents list 
 	EntitiesTree = new QTreeWidget(this);
 	EntitiesTree->setSelectionMode(QAbstractItemView::SelectionMode::ExtendedSelection);
 	EntitiesTree->setHeaderLabels(QStringList() << "Name" << "ID");
-	MainLayout->addWidget(EntitiesTree, 0, 0, 1, 3);
+	MainLayout->addWidget(EntitiesTree, 1, 0, 1, 3);
 
 	for (auto child : world->GetRoot()->GetChildren())
 		AddEntity(child);
@@ -133,9 +145,14 @@ Entity* EntityDialog::ReparentEntities(World* world, Dynarray<Entity*> entities,
 	MainLayout->setColumnStretch(2, 1);
 
 	// create potential parents list 
+
+	FirstLabel = new QLabel(this);
+	FirstLabel->setText("Select one new parent.");
+	MainLayout->addWidget(FirstLabel, 0, 0, 1, 3);
+
 	EntitiesTree = new QTreeWidget(this);
 	EntitiesTree->setHeaderLabels(QStringList() << "Name" << "ID");
-	MainLayout->addWidget(EntitiesTree, 0, 0, 1, 3);
+	MainLayout->addWidget(EntitiesTree, 1, 0, 1, 3);
 
 	for (auto child : world->GetRoot()->GetChildren())
 		AddEntity(child);
@@ -143,11 +160,14 @@ Entity* EntityDialog::ReparentEntities(World* world, Dynarray<Entity*> entities,
 	QTreeWidget* potentialParents = EntitiesTree;
 
 
+	SecondLabel = new QLabel(this);
+	SecondLabel->setText("Select entities to reparent.");
+	MainLayout->addWidget(SecondLabel, 2, 0, 1, 3);
 
 	// create entities list 
 	EntitiesTree = new QTreeWidget(this);
 	EntitiesTree->setHeaderLabels(QStringList() << "Name" << "ID");
-	MainLayout->addWidget(EntitiesTree, 1, 0, 1, 3);
+	MainLayout->addWidget(EntitiesTree, 3, 0, 1, 3);
 	PredefinedEntities = entities;
 
 	for (auto child : world->GetRoot()->GetChildren())
@@ -157,12 +177,12 @@ Entity* EntityDialog::ReparentEntities(World* world, Dynarray<Entity*> entities,
 	CancelButton = new QPushButton(this);
 	CancelButton->setText("Cancel");
 	connect(CancelButton, &QPushButton::clicked, this, &EntityDialog::Cancel);
-	MainLayout->addWidget(CancelButton, 2, 0);
+	MainLayout->addWidget(CancelButton, 4, 0);
 
 	OkButton = new QPushButton(this);
 	OkButton->setText("Reparent");
 	connect(OkButton, &QPushButton::clicked, this, &EntityDialog::Ok);
-	MainLayout->addWidget(OkButton, 2, 2);
+	MainLayout->addWidget(OkButton, 4, 2);
 
 	// input from user
 	exec();

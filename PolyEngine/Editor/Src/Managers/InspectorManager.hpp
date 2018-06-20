@@ -16,12 +16,6 @@ class InspectorManager : public QObject
 {
 	Q_OBJECT
 
-	friend class ViewportInspectorWidget;
-	friend class EntityInspectorWidget;
-	friend class ResourceInspectorWidget;
-	friend class WorldComponentsInspectorWidget;
-	friend class WorldInspectorWidget;
-
 public:
 	InspectorManager(EditorApp* app);
 

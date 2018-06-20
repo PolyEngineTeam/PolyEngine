@@ -32,7 +32,9 @@ private:
 	std::map<QTreeWidgetItem*, Entity*> ItemToEntity;
 
 	QGridLayout* MainLayout;
+	QLabel* FirstLabel;
 	QTreeWidget* EntitiesTree;
+	QLabel* SecondLabel;
 	QTreeWidget* PrefabTree;
 	QPushButton* CancelButton;		QPushButton* OkButton;
 
