@@ -18,8 +18,8 @@ public:
 	EntityDialog() {}
 
 	Dynarray<Entity*> SpawnEntities(World* world, Dynarray<Entity*> parents);
-	void DestroyEntities(Dynarray<Entity*> parents);
-	Entity* ReparentEntities(Dynarray<Entity*> entities, Entity* parent = nullptr);
+	void DestroyEntities(World* world, Dynarray<Entity*> entities);
+	Entity* ReparentEntities(World* world, Dynarray<Entity*> entities, Entity* parent = nullptr);
 
 	bool OperationCanceled() { return Canceled; }
 

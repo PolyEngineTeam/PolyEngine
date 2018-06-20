@@ -47,7 +47,7 @@ Dynarray<Entity*> EntityDialog::SpawnEntities(World* world, Dynarray<Entity*> pa
 	MainLayout->addWidget(CancelButton, 2, 0);
 
 	OkButton = new QPushButton(this);
-	OkButton->setText("Ok");
+	OkButton->setText("Spawn");
 	connect(OkButton, &QPushButton::clicked, this, &EntityDialog::Ok);
 	MainLayout->addWidget(OkButton, 2, 2);
 
@@ -69,7 +69,8 @@ Dynarray<Entity*> EntityDialog::SpawnEntities(World* world, Dynarray<Entity*> pa
 				else
 				{
 					QMessageBox msgBox;
-					msgBox.setText("\"" + p->text(0) + "is currently not supported, it will be skipped.");
+					msgBox.setText("\"" + p->text(0) + "is currently not supported, it will be skipped for " +
+						i->text(0) + " (" + i->text(1) + ").");
 					msgBox.exec();
 				}
 
@@ -77,9 +78,11 @@ Dynarray<Entity*> EntityDialog::SpawnEntities(World* world, Dynarray<Entity*> pa
 }
 
 //------------------------------------------------------------------------------
-void EntityDialog::DestroyEntities(Dynarray<Entity*> parents)
+void EntityDialog::DestroyEntities(World* world, Dynarray<Entity*> entities)
 {
 	setModal(true);
+	Canceled = true;
+	PredefinedEntities = entities;
 
 	// create main layout
 	MainLayout = new QGridLayout(this);
@@ -89,21 +92,12 @@ void EntityDialog::DestroyEntities(Dynarray<Entity*> parents)
 
 	// create potential parents list 
 	EntitiesTree = new QTreeWidget(this);
+	EntitiesTree->setSelectionMode(QAbstractItemView::SelectionMode::ExtendedSelection);
+	EntitiesTree->setHeaderLabels(QStringList() << "Name" << "ID");
 	MainLayout->addWidget(EntitiesTree, 0, 0, 1, 3);
 
-	//for (auto child : world->GetRoot()->GetChildren())
-	//	AddEntity(child);
-
-	// create prefabs list
-	PrefabTree = new QTreeWidget(this);
-	MainLayout->addWidget(EntitiesTree, 1, 0, 1, 3);
-	AddPrefab("Empty entity");
-	AddPrefab("SpikesLeft");
-	AddPrefab("SpikesRight");
-	AddPrefab("SpikesTop");
-	AddPrefab("SpikesBottom");
-	AddPrefab("Tile");
-	AddPrefab("Powerup");
+	for (auto child : world->GetRoot()->GetChildren())
+		AddEntity(child);
 
 	// create and link buttons
 	CancelButton = new QPushButton(this);
@@ -112,7 +106,7 @@ void EntityDialog::DestroyEntities(Dynarray<Entity*> parents)
 	MainLayout->addWidget(CancelButton, 2, 0);
 
 	OkButton = new QPushButton(this);
-	OkButton->setText("Ok");
+	OkButton->setText("Destroy");
 	connect(OkButton, &QPushButton::clicked, this, &EntityDialog::Ok);
 	MainLayout->addWidget(OkButton, 2, 2);
 
@@ -120,12 +114,17 @@ void EntityDialog::DestroyEntities(Dynarray<Entity*> parents)
 	exec();
 
 	// apply
+	if (!Canceled)
+		for (auto i : EntitiesTree->selectedItems())
+			DeferredTaskSystem::DestroyEntityImmediate(world, ItemToEntity[i]);
 }
 
 //------------------------------------------------------------------------------
-Entity* EntityDialog::ReparentEntities(Dynarray<Entity*> entities, Entity* parent)
+Entity* EntityDialog::ReparentEntities(World* world, Dynarray<Entity*> entities, Entity* parent)
 {
 	setModal(true);
+	Canceled = true;
+	PredefinedEntities.PushBack(parent);
 
 	// create main layout
 	MainLayout = new QGridLayout(this);
@@ -135,21 +134,24 @@ Entity* EntityDialog::ReparentEntities(Dynarray<Entity*> entities, Entity* paren
 
 	// create potential parents list 
 	EntitiesTree = new QTreeWidget(this);
+	EntitiesTree->setHeaderLabels(QStringList() << "Name" << "ID");
 	MainLayout->addWidget(EntitiesTree, 0, 0, 1, 3);
 
-	//for (auto child : world->GetRoot()->GetChildren())
-	//	AddEntity(child);
+	for (auto child : world->GetRoot()->GetChildren())
+		AddEntity(child);
 
-	// create prefabs list
-	PrefabTree = new QTreeWidget(this);
+	QTreeWidget* potentialParents = EntitiesTree;
+
+
+
+	// create entities list 
+	EntitiesTree = new QTreeWidget(this);
+	EntitiesTree->setHeaderLabels(QStringList() << "Name" << "ID");
 	MainLayout->addWidget(EntitiesTree, 1, 0, 1, 3);
-	AddPrefab("Empty entity");
-	AddPrefab("SpikesLeft");
-	AddPrefab("SpikesRight");
-	AddPrefab("SpikesTop");
-	AddPrefab("SpikesBottom");
-	AddPrefab("Tile");
-	AddPrefab("Powerup");
+	PredefinedEntities = entities;
+
+	for (auto child : world->GetRoot()->GetChildren())
+		AddEntity(child);
 
 	// create and link buttons
 	CancelButton = new QPushButton(this);
@@ -158,7 +160,7 @@ Entity* EntityDialog::ReparentEntities(Dynarray<Entity*> entities, Entity* paren
 	MainLayout->addWidget(CancelButton, 2, 0);
 
 	OkButton = new QPushButton(this);
-	OkButton->setText("Ok");
+	OkButton->setText("Reparent");
 	connect(OkButton, &QPushButton::clicked, this, &EntityDialog::Ok);
 	MainLayout->addWidget(OkButton, 2, 2);
 
@@ -166,7 +168,43 @@ Entity* EntityDialog::ReparentEntities(Dynarray<Entity*> entities, Entity* paren
 	exec();
 
 	// apply
-	return nullptr;
+	if (!Canceled)
+	{
+		parent = ItemToEntity[potentialParents->selectedItems()[0]];
+
+		if (!parent)
+		{
+			QMessageBox msgBox;
+			msgBox.setText("Parent can't be null, parenting will be skipped for all entities.");
+			msgBox.exec();
+
+			return parent;
+		}
+
+		for (auto i : EntitiesTree->selectedItems())
+		{
+			Entity* child = ItemToEntity[i];
+
+			if (parent == child)
+			{
+				QMessageBox msgBox;
+				msgBox.setText("Child can't be set as its own parent, parenting will be skipped for " +
+					i->text(0) + " (" + i->text(1) + ").");
+				msgBox.exec();
+			}
+			else if (child->ContainsChildRecursive(parent))
+			{
+				QMessageBox msgBox;
+				msgBox.setText("Child can't be ancestor of parent, parenting will be skipped for " +
+					i->text(0) + " (" + i->text(1) + ").");
+				msgBox.exec();
+			}
+			else
+				child->SetParent(parent);
+		}
+	}
+
+	return parent;
 }
 
 //------------------------------------------------------------------------------

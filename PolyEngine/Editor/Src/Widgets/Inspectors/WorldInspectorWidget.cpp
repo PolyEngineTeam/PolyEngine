@@ -231,7 +231,7 @@ void WorldInspectorWidget::SpawnEntities()
 void WorldInspectorWidget::DestroyEntities()
 {
 	EntityDialog dialog;
-	dialog.DestroyEntities(SelectedEntities);
+	dialog.DestroyEntities(WorldObj, SelectedEntities);
 
 	emit gApp->InspectorMgr->EntitiesDestroyed();
 }
@@ -240,7 +240,7 @@ void WorldInspectorWidget::DestroyEntities()
 void WorldInspectorWidget::ReparentEntities()
 {
 	EntityDialog dialog;
-	Entity* result = dialog.ReparentEntities(SelectedEntities);
+	Entity* result = dialog.ReparentEntities(WorldObj, SelectedEntities);
 	
 	emit gApp->InspectorMgr->EntitiesReparented(result);
 }
