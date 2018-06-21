@@ -94,14 +94,16 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 
 	MainLayout->addWidget(TransformSection, 4, 0, 1, 3);
 
-	ReloadInspector();
+	EntitiesSelectionChanged(Entities);
 }
 
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::InitializeConnections()
 {
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesSelectionChanged,
-		this, &EntityInspectorWidget::SetSelectedEntities);
+	connect(gApp->InspectorMgr, &InspectorManager::EntitiesSelectionChanged, this, &EntityInspectorWidget::EntitiesSelectionChanged);
+	connect(gApp->InspectorMgr, &InspectorManager::EntitiesDestroyed, this, &EntityInspectorWidget::SoftUpdate);
+	connect(gApp->InspectorMgr, &InspectorManager::EntitiesModified, this, &EntityInspectorWidget::SoftUpdate);
+	connect(gApp->InspectorMgr, &InspectorManager::EntitiesReparented, this, &EntityInspectorWidget::SoftUpdate);
 }
 
 //------------------------------------------------------------------------------
@@ -109,71 +111,14 @@ void EntityInspectorWidget::Reset()
 {
 	Entities.Clear();
 
-	NameField->Reset();
-	UniqueIdField->setText("");
-	ParentIdNameField->setText("");
-	ChildrenIdNameField->clear();
-
-	// remove all old entity component sections
-	for (auto cmp : ComponentSections)
-	{
-		MainLayout->removeWidget(cmp);
-		delete cmp;
-	}
-	ComponentSections.Clear();
-	ComponentInspectors.Clear();
+	emit gApp->InspectorMgr->EntitiesSelectionChanged(Entities);
 }
 
 //------------------------------------------------------------------------------
-void EntityInspectorWidget::UpdateInspector()
+void EntityInspectorWidget::EntitiesSelectionChanged(Dynarray<Entity*> entities)
 {
-	if (Entities.GetSize() == 1)
-	{
-		std::stringstream ss;
+	Entities = entities;
 
-		NameField->UpdateControl();
-
-		ss << Entities[0]->GetID();
-		UniqueIdField->setText(&ss.str()[0]);
-
-		ss.str(std::string());
-		ss << Entities[0]->GetParent()->GetID();
-		ParentIdNameField->setText(&ss.str()[0]);
-	}
-	else if (Entities.GetSize() > 1)
-	{
-		bool sameParent = true;
-		Entity* parent = Entities[0]->GetParent();
-
-		for (Entity* e : Entities)
-			if (e->GetParent() != parent)
-			{
-				sameParent = false;
-				break;
-			}
-
-		if (sameParent)
-		{
-			std::stringstream ss;
-			ss.str(std::string());
-			ss << Entities[0]->GetParent()->GetID();
-			ParentIdNameField->setText(&ss.str()[0]);
-		}
-		else
-		{
-			ParentIdNameField->setText("< multiple selection >");
-		}
-	}
-	else
-		throw new std::exception();
-
-	for (RTTIInspectorWidget* inspector : ComponentInspectors)
-		inspector->UpdateInspector();
-}
-
-//------------------------------------------------------------------------------
-void EntityInspectorWidget::ReloadInspector()
-{
 	// remove all old entity component sections
 	for (auto cmp : ComponentSections)
 	{
@@ -293,10 +238,48 @@ void EntityInspectorWidget::ReloadInspector()
 }
 
 //------------------------------------------------------------------------------
-void EntityInspectorWidget::SetSelectedEntities(Dynarray<Entity*> entities)
+void EntityInspectorWidget::SoftUpdate()
 {
-	Entities = entities;
-	ReloadInspector();
+	if (Entities.GetSize() == 1)
+	{
+		std::stringstream ss;
+
+		NameField->UpdateControl();
+
+		ss << Entities[0]->GetID();
+		UniqueIdField->setText(&ss.str()[0]);
+
+		ss.str(std::string());
+		ss << Entities[0]->GetParent()->GetID();
+		ParentIdNameField->setText(&ss.str()[0]);
+	}
+	else if (Entities.GetSize() > 1)
+	{
+		bool sameParent = true;
+		Entity* parent = Entities[0]->GetParent();
+
+		for (Entity* e : Entities)
+			if (e->GetParent() != parent)
+			{
+				sameParent = false;
+				break;
+			}
+
+		if (sameParent)
+		{
+			std::stringstream ss;
+			ss.str(std::string());
+			ss << Entities[0]->GetParent()->GetID();
+			ParentIdNameField->setText(&ss.str()[0]);
+		}
+		else
+		{
+			ParentIdNameField->setText("< multiple selection >");
+		}
+	}
+
+	for (RTTIInspectorWidget* inspector : ComponentInspectors)
+		inspector->UpdateInspector();
 }
 
 //------------------------------------------------------------------------------
@@ -312,7 +295,7 @@ void EntityInspectorWidget::AddComponent()
 	dialog.exec();
 
 	if (!dialog.OperationCanceled())
-		ReloadInspector();
+		EntitiesSelectionChanged(Entities);
 }
 
 //------------------------------------------------------------------------------
@@ -322,7 +305,7 @@ void EntityInspectorWidget::RemoveComponent()
 	dialog.exec();
 
 	if (!dialog.OperationCanceled())
-		ReloadInspector();
+		EntitiesSelectionChanged(Entities);
 }
 
 //------------------------------------------------------------------------------

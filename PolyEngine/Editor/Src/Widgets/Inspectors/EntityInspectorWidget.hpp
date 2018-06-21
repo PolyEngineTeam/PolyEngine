@@ -35,18 +35,11 @@ public:
 	void Reset() override;
 
 public slots:
+	// Sets selected entities.
+	void EntitiesSelectionChanged(Dynarray<Entity*> entities);
 
-	// Updates every field within widget from currently set entity.
-	// If there was any component added it will not show up after update.
-	// If thre aren't any new component use this one rather than ReloadInspector.
-	void UpdateInspector();
-
-	// Releases all controls and creates everything again.
-	// If any component was added you should use this one rather than UpdateInspector.
-	void ReloadInspector();
-
-	// Set entity to display; updates automatically.
-	void SetSelectedEntities(Dynarray<Entity*> entities);
+	// Updates fields within sections and general data fields.
+	void SoftUpdate();
 
 private:
 	Dynarray<Entity*> Entities;

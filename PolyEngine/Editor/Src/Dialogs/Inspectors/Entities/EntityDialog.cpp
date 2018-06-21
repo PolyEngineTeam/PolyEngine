@@ -192,7 +192,10 @@ Entity* EntityDialog::ReparentEntities(World* world, Dynarray<Entity*> entities,
 	// apply
 	if (!Canceled)
 	{
-		parent = ItemToEntity[potentialParents->selectedItems()[0]];
+		parent = nullptr;
+
+		if (potentialParents->selectedItems().size() > 0)
+			parent = ItemToEntity[potentialParents->selectedItems()[0]];
 
 		if (!parent)
 		{

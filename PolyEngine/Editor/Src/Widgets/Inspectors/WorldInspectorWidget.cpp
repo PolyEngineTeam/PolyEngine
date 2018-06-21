@@ -68,7 +68,6 @@ void WorldInspectorWidget::Reset()
 void WorldInspectorWidget::WorldChanged(::World* world)
 {
 	WorldObj = nullptr;
-	SelectedEntities.Clear();
 
 	Tree->clear();
 	ItemToEntity.clear();
@@ -116,8 +115,6 @@ void WorldInspectorWidget::EntitiesDestroyed()
 				ItemToEntity.erase(i.first);
 				break;
 			}
-
-	SelectedEntities.Clear();
 }
 
 //------------------------------------------------------------------------------

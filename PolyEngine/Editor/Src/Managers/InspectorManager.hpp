@@ -38,12 +38,13 @@ signals:
 	void WorldChanged(World* world);
 
 	// entity signals
-	// when spawned new entities are the selected ones
 	void EntitiesSpawned(Dynarray<Entity*> entities);
 	void EntitiesDestroyed();
 	void EntitiesModified();
 	void EntitiesReparented(Entity* parent);
 	void EntitiesSelectionChanged(Dynarray<Entity*> entities);
+	
+	// for now only EntityInspectorWidget uses components so there's no need for component signals
 
 	// fields update
 	void SoftUpdate();
