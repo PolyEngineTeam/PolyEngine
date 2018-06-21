@@ -143,6 +143,9 @@ void WorldInspectorWidget::EntitiesReparented(Entity* parent)
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::EntitiesSelectionChanged(Dynarray<Entity*> entities)
 {
+	DisableSelectionChangedSlot = true;
+	Tree->clearSelection();
+
 	SelectedEntities = entities;
 
 	for (Entity* e : entities)
@@ -152,6 +155,8 @@ void WorldInspectorWidget::EntitiesSelectionChanged(Dynarray<Entity*> entities)
 				Tree->setItemSelected(i.first, true);
 				break;
 			}
+
+	DisableSelectionChangedSlot = false;
 }
 
 //------------------------------------------------------------------------------
@@ -185,6 +190,9 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::SelectionChanged()
 {
+	if (DisableSelectionChangedSlot)
+		return;
+
 	SelectedEntities.Clear();
 
 	for (QTreeWidgetItem* i : Tree->selectedItems())

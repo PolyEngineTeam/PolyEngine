@@ -13,8 +13,7 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 	MainLayout = new QGridLayout(this);
 	MainLayout->setColumnStretch(0, 5);
 	MainLayout->setColumnStretch(1, 15);
-	MainLayout->setColumnStretch(2, 3);
-	MainLayout->setColumnStretch(3, 3);
+	MainLayout->setColumnStretch(2, 2);
 
 	// context menu
 	ContextMenu = new QMenu(this);
@@ -68,11 +67,6 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 	ParentSelectButton->setText("Select");
 	MainLayout->addWidget(ParentSelectButton, 2, 2);
 	connect(ParentSelectButton, &QPushButton::clicked, this, &EntityInspectorWidget::SelectParent);
-
-	ParentChangeButton = new QPushButton(this);
-	ParentChangeButton->setText("Change");
-	MainLayout->addWidget(ParentChangeButton, 2, 3);
-	connect(ParentChangeButton, &QPushButton::clicked, this, &EntityInspectorWidget::ChangeParent);
 
 	// ChildrenID / Name
 	ChildrenIdNameText = new QLabel(this);
@@ -136,7 +130,6 @@ void EntityInspectorWidget::EntitiesSelectionChanged(Dynarray<Entity*> entities)
 		UniqueIdField->setText("");
 
 		ParentIdNameField->setText("");
-		ParentChangeButton->hide();
 		ParentSelectButton->hide();
 
 		ChildrenIdNameField->clear();
@@ -169,13 +162,11 @@ void EntityInspectorWidget::EntitiesSelectionChanged(Dynarray<Entity*> entities)
 			ss.str(std::string());
 			ss << Entities[0]->GetParent()->GetID();
 			ParentIdNameField->setText(&ss.str()[0]);
-			ParentChangeButton->show();
 			ParentSelectButton->show();
 		}
 		else
 		{
 			ParentIdNameField->setText("< multiple selection >");
-			ParentChangeButton->show();
 			ParentSelectButton->hide();
 		}
 
@@ -198,7 +189,6 @@ void EntityInspectorWidget::EntitiesSelectionChanged(Dynarray<Entity*> entities)
 		ss.str(std::string());
 		ss << Entities[0]->GetParent()->GetID();
 		ParentIdNameField->setText(&ss.str()[0]);
-		ParentChangeButton->show();
 		ParentSelectButton->show();
 
 		ChildrenIdNameField->clear();
@@ -208,7 +198,10 @@ void EntityInspectorWidget::EntitiesSelectionChanged(Dynarray<Entity*> entities)
 			ss << child->GetID();
 			ChildrenIdNameField->addItem(&ss.str()[0]);
 		}
-		ChildrenSelectButton->show();
+		if ((int)Entities[0]->GetChildren().GetSize() > 0)
+			ChildrenSelectButton->show();
+		else
+			ChildrenSelectButton->hide();
 
 		TransformSection->show();
 		Transform->SetObject(Entities[0], &Entities[0]->GetPropertyManager()->GetPropertyList()[0]);
@@ -306,11 +299,6 @@ void EntityInspectorWidget::RemoveComponent()
 
 	if (!dialog.OperationCanceled())
 		EntitiesSelectionChanged(Entities);
-}
-
-//------------------------------------------------------------------------------
-void EntityInspectorWidget::ChangeParent()
-{
 }
 
 //------------------------------------------------------------------------------

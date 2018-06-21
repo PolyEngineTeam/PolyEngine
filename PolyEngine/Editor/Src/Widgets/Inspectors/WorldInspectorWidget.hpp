@@ -89,6 +89,8 @@ private:
 	CustomTree* Tree;
 	std::map<QTreeWidgetItem*, Entity*> ItemToEntity;
 
+	bool DisableSelectionChangedSlot = false;
+
 private slots:
 	void SelectionChanged();
 	void Drop(Dynarray<QTreeWidgetItem*> droppedItems);

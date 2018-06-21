@@ -51,7 +51,7 @@ private:
 
 	QLabel* NameText;			StringControl* NameField;
 	QLabel* UniqueIdText;		QLineEdit* UniqueIdField;
-	QLabel* ParentIdNameText;	QLineEdit* ParentIdNameField;	QPushButton* ParentChangeButton;	QPushButton* ParentSelectButton;
+	QLabel* ParentIdNameText;	QLineEdit* ParentIdNameField;	QPushButton* ParentSelectButton;
 	QLabel* ChildrenIdNameText;	QComboBox* ChildrenIdNameField;	QPushButton* ChildrenSelectButton;
 
 	SectionContainer* TransformSection;
@@ -66,7 +66,6 @@ private slots:
 		void AddComponent(); 
 		void RemoveComponent();
 
-	void ChangeParent();
 	void SelectParent();
 	void SelectChild();
 };
