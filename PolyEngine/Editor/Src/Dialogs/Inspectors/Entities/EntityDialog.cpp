@@ -66,6 +66,7 @@ Dynarray<Entity*> EntityDialog::SpawnEntities(World* world, Dynarray<Entity*> pa
 
 	// apply
 	if (!Canceled)
+	{
 		for (auto i : EntitiesTree->selectedItems())
 			for (auto p : PrefabTree->selectedItems())
 				if (p->text(0) == "Empty entity")
@@ -81,6 +82,7 @@ Dynarray<Entity*> EntityDialog::SpawnEntities(World* world, Dynarray<Entity*> pa
 						i->text(0) + " (" + i->text(1) + ").");
 					msgBox.exec();
 				}
+	}
 
 	return result;
 }

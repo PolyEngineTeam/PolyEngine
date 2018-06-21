@@ -19,11 +19,11 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 	// context menu
 	ContextMenu = new QMenu(this);
 		
-		AddComponentAction = new QAction("Add Component", this);
+		AddComponentAction = new QAction("Add Components", this);
 		ContextMenu->addAction(AddComponentAction);
 		connect(AddComponentAction, &QAction::triggered, this, &EntityInspectorWidget::AddComponent);
 
-		RemoveComponentAction = new QAction("Remove Component", this);
+		RemoveComponentAction = new QAction("Remove Components", this);
 		ContextMenu->addAction(RemoveComponentAction);
 		connect(RemoveComponentAction, &QAction::triggered, this, &EntityInspectorWidget::RemoveComponent);
 	

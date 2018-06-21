@@ -34,6 +34,8 @@ public:
 	// Sets default empty view.
 	void Reset() override;
 
+public slots:
+
 	// Updates every field within widget from currently set entity.
 	// If there was any component added it will not show up after update.
 	// If thre aren't any new component use this one rather than ReloadInspector.

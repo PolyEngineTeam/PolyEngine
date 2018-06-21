@@ -38,6 +38,7 @@ signals:
 	void WorldChanged(World* world);
 
 	// entity signals
+	// when spawned new entities are the selected ones
 	void EntitiesSpawned(Dynarray<Entity*> entities);
 	void EntitiesDestroyed();
 	void EntitiesModified();

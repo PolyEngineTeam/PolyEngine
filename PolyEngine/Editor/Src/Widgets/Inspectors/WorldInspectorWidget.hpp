@@ -77,7 +77,7 @@ private:
 	// Called recursively to add entity and all its chiildren to tree
 	void AddEntityToTree(Entity* entity, QTreeWidgetItem* parent);
 
-
+	// TODO(squares): reprace asserts to exceptions in engine and make use of them.
 	World* WorldObj;
 	Dynarray<Entity*> SelectedEntities;
 
