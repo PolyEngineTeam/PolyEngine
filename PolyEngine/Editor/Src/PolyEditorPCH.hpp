@@ -67,8 +67,7 @@ UNSILENCE_MSVC_WARNING()
 
 #include "Dialogs/Inspectors/Entities/EntityDialog.hpp"
 
-#include "Dialogs/Inspectors/Components/AddComponentDialog.hpp"
-#include "Dialogs/Inspectors/Components/RemoveComponentDialog.hpp"
+#include "Dialogs/Inspectors/Components/ComponentDialog.hpp"
 
 // systems
 #include "Systems/Gizmo/GizmoSystem.hpp"

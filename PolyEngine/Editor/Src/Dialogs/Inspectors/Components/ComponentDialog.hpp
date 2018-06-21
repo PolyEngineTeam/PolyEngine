@@ -13,29 +13,41 @@
 
 using namespace Poly;
 
-class AddComponentDialog : public QDialog
+class ComponentDialog : public QDialog
 {
 public:
-	AddComponentDialog(Entity* entity);
-	AddComponentDialog(World* world);
+	void AddComponent(Entity* entity);
+	void RemoveComponent(Entity* entity);
+
+	void AddWorldComponent(World* world);
+	void RemoveWorldComponent(World* world);
 
 	bool OperationCanceled() { return Canceled; }
 
 private:
-	void InitControls();
+	enum class eMode
+	{
+		ADD,
+		REMOVE,
+		_COUNT
+	};
 
-	Entity* EntityObj = nullptr;
-	World* WorldObj = nullptr;
-	bool Canceled = false;
+	void InitUi(eMode mode);
+	bool Canceled = true;
 
 	typedef void (*ComponentCreator)(::Entity* e);
+	typedef void(*ComponentDestroyer)(::Entity* e);
 	typedef void (*WorldComponentCreator)(::World* w);
+	typedef void(*WorldComponentDestroyer)(::World* w);
+
 	std::map<QString, ComponentCreator> ComponentCreators;
 	std::map<QString, WorldComponentCreator> WorldComponentCreators;
+	std::map<QString, ComponentDestroyer> ComponentDestroyers;
+	std::map<QString, WorldComponentDestroyer> WorldComponentDestroyers;
 
 	QGridLayout* MainLayout;
 
-	QTreeWidget* Tree;
+	QTreeWidget* ComponentsTree;
 
 	QLabel* EntityIdNameText;		QLineEdit* EntityIdNameField;
 	QPushButton* CancelButton;		QPushButton* OkButton;

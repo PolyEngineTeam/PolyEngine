@@ -284,21 +284,15 @@ void EntityInspectorWidget::SpawnContextMenu(QPoint pos)
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::AddComponent()
 {
-	AddComponentDialog dialog(Entities[0]);
-	dialog.exec();
-
-	if (!dialog.OperationCanceled())
-		EntitiesSelectionChanged(Entities);
+	ComponentDialog dialog;
+	dialog.AddComponent(Entities[0]);
 }
 
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::RemoveComponent()
 {
-	RemoveComponentDialog dialog(Entities[0]);
-	dialog.exec();
-
-	if (!dialog.OperationCanceled())
-		EntitiesSelectionChanged(Entities);
+	ComponentDialog dialog;
+	dialog.RemoveComponent(Entities[0]);
 }
 
 //------------------------------------------------------------------------------

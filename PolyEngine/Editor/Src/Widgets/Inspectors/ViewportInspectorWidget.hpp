@@ -20,7 +20,6 @@ public:
 	// Initializes object connections with other inspectors and inspector manager.
 	void InitializeConnections() override;
 
-	// TODO(squares): decide what this method should do
 	void Reset() override;
 
 	void UpdateInspector() {}
