@@ -2,9 +2,10 @@
 
 #include <sstream>
 
+//		general
 //------------------------------------------------------------------------------
-WorldInspectorWidget::WorldInspectorWidget(QWidget* parent)
-	: InspectorWidgetBase(parent)
+WorldInspectorWidget::WorldInspectorWidget(QWidget* parent, World* world, const Dynarray<Entity*>& selectedEntities)
+	: InspectorWidgetBase(parent, world, selectedEntities)
 {
 	setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(this, &EntityInspectorWidget::customContextMenuRequested, this, &WorldInspectorWidget::SpawnContextMenu);
@@ -45,47 +46,49 @@ void WorldInspectorWidget::InitializeConnections()
 
 	connect(gApp->InspectorMgr, &InspectorManager::EntitiesSpawned, this, &WorldInspectorWidget::EntitiesSpawned);
 	connect(gApp->InspectorMgr, &InspectorManager::EntitiesDestroyed, this, &WorldInspectorWidget::EntitiesDestroyed);
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesModified, this, &WorldInspectorWidget::SoftUpdate);
+	connect(gApp->InspectorMgr, &InspectorManager::EntitiesModified, this, &WorldInspectorWidget::Update);
 	connect(gApp->InspectorMgr, &InspectorManager::EntitiesReparented, this, &WorldInspectorWidget::EntitiesReparented);
 	connect(gApp->InspectorMgr, &InspectorManager::EntitiesSelectionChanged, this, &WorldInspectorWidget::EntitiesSelectionChanged);
 	
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesModified, this, &WorldInspectorWidget::SoftUpdate);
+	connect(gApp->InspectorMgr, &InspectorManager::Update, this, &WorldInspectorWidget::Update);
+}
+
+//------------------------------------------------------------------------------
+void WorldInspectorWidget::Reload()
+{
+	EntitiesSelectionChanged(SelectedEntities);
 }
 
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::Reset()
 {
-	WorldObj = nullptr;
-	SelectedEntities.Clear();
-
 	Tree->clear();
 	ItemToEntity.clear();
 
-	emit gApp->InspectorMgr->EntitiesSelectionChanged(SelectedEntities);
+	emit gApp->InspectorMgr->EntitiesSelectionChanged({});
 }
 
+
+
+//		slots
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::WorldChanged(::World* world)
 {
-	WorldObj = nullptr;
-
 	Tree->clear();
 	ItemToEntity.clear();
 
-	WorldObj = world;
+	if (WorldObj)
+	{
+		QTreeWidgetItem* root = new QTreeWidgetItem(Tree);
 
-	Tree->clear();
-	ItemToEntity.clear();
+		std::stringstream ss;
+		ss << WorldObj->GetRoot()->GetID();
+		root->setText(3, (&ss.str()[0]));
+		ItemToEntity.insert(std::pair<QTreeWidgetItem*, Entity*>(root, WorldObj->GetRoot()));
 
-	QTreeWidgetItem* root = new QTreeWidgetItem(Tree);
-
-	std::stringstream ss;
-	ss << WorldObj->GetRoot()->GetID();
-	root->setText(3, (&ss.str()[0]));
-	ItemToEntity.insert(std::pair<QTreeWidgetItem*, Entity*>(root, WorldObj->GetRoot()));
-
-	for (auto child : WorldObj->GetRoot()->GetChildren())
-		AddEntityToTree(child, root);
+		for (auto child : WorldObj->GetRoot()->GetChildren())
+			AddEntityToTree(child, root);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -146,8 +149,6 @@ void WorldInspectorWidget::EntitiesSelectionChanged(Dynarray<Entity*> entities)
 	DisableSelectionChangedSlot = true;
 	Tree->clearSelection();
 
-	SelectedEntities = entities;
-
 	for (Entity* e : entities)
 		for (auto i : ItemToEntity)
 			if (i.second == e)
@@ -160,7 +161,7 @@ void WorldInspectorWidget::EntitiesSelectionChanged(Dynarray<Entity*> entities)
 }
 
 //------------------------------------------------------------------------------
-void WorldInspectorWidget::SoftUpdate()
+void WorldInspectorWidget::Update()
 {
 	for (auto i : ItemToEntity)
 	{
@@ -171,6 +172,9 @@ void WorldInspectorWidget::SoftUpdate()
 	}
 }
 
+
+
+//		internal
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* parent)
 {
@@ -188,17 +192,26 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 }
 
 //------------------------------------------------------------------------------
+void WorldInspectorWidget::SpawnContextMenu(QPoint pos)
+{
+	ContextMenu->popup(this->mapToGlobal(pos));
+}
+
+
+
+//		functions modifying state (should emit events)
+//------------------------------------------------------------------------------
 void WorldInspectorWidget::SelectionChanged()
 {
 	if (DisableSelectionChangedSlot)
 		return;
 
-	SelectedEntities.Clear();
+	Dynarray<Entity*> entities;
 
 	for (QTreeWidgetItem* i : Tree->selectedItems())
-		SelectedEntities.PushBack(ItemToEntity[i]);
+		entities.PushBack(ItemToEntity[i]);
 
-	emit gApp->InspectorMgr->EntitiesSelectionChanged(SelectedEntities);
+	emit gApp->InspectorMgr->EntitiesSelectionChanged(entities);
 }
 
 //------------------------------------------------------------------------------
@@ -206,20 +219,15 @@ void WorldInspectorWidget::Drop(Dynarray<QTreeWidgetItem*> droppedItems)
 {
 	Entity* parent = ItemToEntity[droppedItems[0]->parent()];
 
+	Dynarray<Entity*> e;
+
 	for (QTreeWidgetItem* i : droppedItems)
 	{
 		Entity* e = ItemToEntity[i];
-		SelectedEntities.PushBack(e);
 		e->SetParent(parent);
 	}
 
 	emit gApp->InspectorMgr->EntitiesReparented(parent);
-}
-
-//------------------------------------------------------------------------------
-void WorldInspectorWidget::SpawnContextMenu(QPoint pos)
-{
-	ContextMenu->popup(this->mapToGlobal(pos));
 }
 
 //------------------------------------------------------------------------------
@@ -238,7 +246,8 @@ void WorldInspectorWidget::DestroyEntities()
 	EntityDialog dialog;
 	dialog.DestroyEntities(WorldObj, SelectedEntities);
 
-	emit gApp->InspectorMgr->EntitiesDestroyed();
+	if (!dialog.OperationCanceled())
+		emit gApp->InspectorMgr->EntitiesDestroyed();
 }
 
 //------------------------------------------------------------------------------
@@ -246,6 +255,7 @@ void WorldInspectorWidget::ReparentEntities()
 {
 	EntityDialog dialog;
 	Entity* result = dialog.ReparentEntities(WorldObj, SelectedEntities);
-	
-	emit gApp->InspectorMgr->EntitiesReparented(result);
+
+	if (!dialog.OperationCanceled())
+		emit gApp->InspectorMgr->EntitiesReparented(result);
 }

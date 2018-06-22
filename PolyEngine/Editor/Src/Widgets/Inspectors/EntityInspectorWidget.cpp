@@ -3,8 +3,8 @@
 #include <sstream>
 
 //------------------------------------------------------------------------------
-EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
-	: InspectorWidgetBase(parent)
+EntityInspectorWidget::EntityInspectorWidget(QWidget* parent, const World* world, const Dynarray<Entity*>& selectedEntities)
+	: InspectorWidgetBase(parent, world, selectedEntities)
 {
 	setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(this, &EntityInspectorWidget::customContextMenuRequested, this, &EntityInspectorWidget::SpawnContextMenu);
@@ -94,10 +94,16 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent)
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::InitializeConnections()
 {
+	connect(gApp->InspectorMgr, &InspectorManager::EntitiesSpawned, this, &EntityInspectorWidget::Update);
+	connect(gApp->InspectorMgr, &InspectorManager::EntitiesDestroyed, this, &EntityInspectorWidget::Update);
+	connect(gApp->InspectorMgr, &InspectorManager::EntitiesModified, this, &EntityInspectorWidget::Update);
+	connect(gApp->InspectorMgr, &InspectorManager::EntitiesReparented, this, &EntityInspectorWidget::Update);
 	connect(gApp->InspectorMgr, &InspectorManager::EntitiesSelectionChanged, this, &EntityInspectorWidget::EntitiesSelectionChanged);
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesDestroyed, this, &EntityInspectorWidget::SoftUpdate);
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesModified, this, &EntityInspectorWidget::SoftUpdate);
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesReparented, this, &EntityInspectorWidget::SoftUpdate);
+
+	connect(gApp->InspectorMgr, &InspectorManager::ComponentsAdded, this, &EntityInspectorWidget::Update);
+	connect(gApp->InspectorMgr, &InspectorManager::ComponentsRemoved, this, &EntityInspectorWidget::Update);
+
+	connect(gApp->InspectorMgr, &InspectorManager::Update, this, &EntityInspectorWidget::Update);
 }
 
 //------------------------------------------------------------------------------

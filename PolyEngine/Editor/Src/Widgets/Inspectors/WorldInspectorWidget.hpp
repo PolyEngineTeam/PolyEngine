@@ -38,16 +38,20 @@ private:
 	}
 };
 
-// Displays tree of entities in the world. Enables adding, removing and reparenting entities.
+// Displays tree of entities in the world. Enables adding, 
+// removing, reparenting and selecting entities.
 class WorldInspectorWidget : public InspectorWidgetBase
 {
 	Q_OBJECT
 
 public:
-	WorldInspectorWidget(QWidget* parent);
+	WorldInspectorWidget(QWidget* parent, World* world, const Dynarray<Entity*>& selectedEntities);
 
 	// Initializes object connections with other inspectors and inspector manager.
 	void InitializeConnections() override;
+
+	// Reloads whole content.
+	void Reload() override;
 
 	// Removes all entities from list.
 	void Reset() override;
@@ -69,27 +73,23 @@ public slots:
 	// Sets selected entities.
 	void EntitiesSelectionChanged(Dynarray<Entity*> entities);
 
-	// Updates fields within tree items.
-	void SoftUpdate();
+	// Updates entities names.
+	void Update();
 
 
 private:
 	// Called recursively to add entity and all its chiildren to tree
 	void AddEntityToTree(Entity* entity, QTreeWidgetItem* parent);
 
-	// TODO(squares): reprace asserts to exceptions in engine and make use of them.
-	World* WorldObj;
-	Dynarray<Entity*> SelectedEntities;
+	CustomTree* Tree;
+	std::map<QTreeWidgetItem*, Entity*> ItemToEntity;
+
+	bool DisableSelectionChangedSlot = false;
 
 	QMenu* ContextMenu;
 		QAction* AddEntityAction;
 		QAction* RemoveEntityAction;
 		QAction* ReparentEntityAction;
-
-	CustomTree* Tree;
-	std::map<QTreeWidgetItem*, Entity*> ItemToEntity;
-
-	bool DisableSelectionChangedSlot = false;
 
 private slots:
 	void SelectionChanged();
