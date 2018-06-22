@@ -35,3 +35,15 @@ void ControlBase::SetObject(void* ptr, const RTTI::Property* prop)
 	UpdateControl();
 	setToolTip(Property->Name.GetCStr());
 }
+
+//------------------------------------------------------------------------------
+void ControlBase::SetDisableEdit(bool disable)
+{
+	DisableEdit = disable;
+
+	QPalette disabledEditPalette;
+	disabledEditPalette.setColor(QPalette::Base, QColor(218, 218, 218));
+	disabledEditPalette.setColor(QPalette::Text, Qt::black);
+
+	setPalette(disabledEditPalette);
+}

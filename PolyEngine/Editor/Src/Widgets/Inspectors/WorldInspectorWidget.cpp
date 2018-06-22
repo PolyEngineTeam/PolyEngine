@@ -56,23 +56,14 @@ void WorldInspectorWidget::InitializeConnections()
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::Reload()
 {
-	EntitiesSelectionChanged(SelectedEntities);
-}
-
-//------------------------------------------------------------------------------
-void WorldInspectorWidget::Reset()
-{
-	Tree->clear();
-	ItemToEntity.clear();
-
-	emit gApp->InspectorMgr->EntitiesSelectionChanged({});
+	EntitiesSelectionChanged();
 }
 
 
 
 //		slots
 //------------------------------------------------------------------------------
-void WorldInspectorWidget::WorldChanged(::World* world)
+void WorldInspectorWidget::WorldChanged()
 {
 	Tree->clear();
 	ItemToEntity.clear();
@@ -92,9 +83,9 @@ void WorldInspectorWidget::WorldChanged(::World* world)
 }
 
 //------------------------------------------------------------------------------
-void WorldInspectorWidget::EntitiesSpawned(Dynarray<Entity*> entities)
+void WorldInspectorWidget::EntitiesSpawned()
 {
-	for (Entity* e : entities)
+	for (Entity* e : SelectedEntities)
 	{
 		Entity* parent = e->GetParent();
 
@@ -121,12 +112,13 @@ void WorldInspectorWidget::EntitiesDestroyed()
 }
 
 //------------------------------------------------------------------------------
-void WorldInspectorWidget::EntitiesReparented(Entity* parent)
+void WorldInspectorWidget::EntitiesReparented()
 {
 	QTreeWidgetItem* parentWidget;
 
+
 	for (auto i : ItemToEntity)
-		if (i.second == parent)
+		if (i.second == SelectedEntities[0]->GetParent())
 		{
 			parentWidget = i.first;
 			break;
@@ -144,12 +136,12 @@ void WorldInspectorWidget::EntitiesReparented(Entity* parent)
 }
 
 //------------------------------------------------------------------------------
-void WorldInspectorWidget::EntitiesSelectionChanged(Dynarray<Entity*> entities)
+void WorldInspectorWidget::EntitiesSelectionChanged()
 {
 	DisableSelectionChangedSlot = true;
 	Tree->clearSelection();
 
-	for (Entity* e : entities)
+	for (Entity* e : SelectedEntities)
 		for (auto i : ItemToEntity)
 			if (i.second == e)
 			{

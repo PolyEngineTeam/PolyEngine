@@ -16,8 +16,8 @@ using namespace Poly;
 class ComponentDialog : public QDialog
 {
 public:
-	void AddComponent(Entity* entity);
-	void RemoveComponent(Entity* entity);
+	void AddComponents(Entity* entity);
+	void RemoveComponents(Entity* entity);
 
 	void AddWorldComponent(World* world);
 	void RemoveWorldComponent(World* world);
@@ -36,9 +36,9 @@ private:
 	bool Canceled = true;
 
 	typedef void (*ComponentCreator)(::Entity* e);
-	typedef void(*ComponentDestroyer)(::Entity* e);
+	typedef void (*ComponentDestroyer)(::Entity* e);
 	typedef void (*WorldComponentCreator)(::World* w);
-	typedef void(*WorldComponentDestroyer)(::World* w);
+	typedef void (*WorldComponentDestroyer)(::World* w);
 
 	std::map<QString, ComponentCreator> ComponentCreators;
 	std::map<QString, WorldComponentCreator> WorldComponentCreators;

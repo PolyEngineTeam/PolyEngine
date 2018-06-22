@@ -40,10 +40,11 @@ public:
 	// @see ControlBase::UpdateControl;
 	void SetObject(void* ptr, const RTTI::Property* prop);
 
+	// Reset control to initial state;
 	virtual void Reset() = 0;
 
 	// Call this to update assigned object from current control state.
-	// If ControlBase::ASAPUpdate is set to true probably You will never need to use this fnction.
+	// If ControlBase::ASAPUpdate is set to true You probably won't need to use this fnction.
 	virtual void UpdateObject() = 0;
 
 	// Call this to update control state from assigned object.
@@ -54,7 +55,12 @@ public:
 
 	// If label is set by control this function returns false.
 	// For example TransformControl looks better when label is set by control.
+	// Label is set automatically by control
 	virtual bool ContainsLabel() { return false; }
+
+	virtual void SetDisableEdit(bool disable);
+
+	bool GetDisableEdit() { return DisableEdit; }
 
 	// Returns ptr to newly created proper control for given core type.
 	static ControlBase* CreateControl(QWidget* parent, RTTI::eCorePropertyType type)
@@ -62,8 +68,9 @@ public:
 		return ::Impl::CoreTypeToControlMap[static_cast<int>(type)](parent);
 	}
 
-	// if You want this control to update as soon as state is changed, enter pressed or 
+	// if You want this control to update object as soon as state is changed, enter pressed or 
 	// focus lost set this to true. Otherwise You will have to update it calling UpdateObject.
+	// This applies only for object opdate; you still have to update control "manually"
 	// @see ControlBase::UpdateObject
 	bool ASAPUpdate = true;
 
@@ -74,6 +81,8 @@ protected:
 	// Property of assigned object. Useful when one control is assigned to multiple core types
 	// like NumberControl.
 	const RTTI::Property* Property;
+
+	bool DisableEdit = false;
 
 public slots:
 	// Use this as slot to connect to Your fields' signals like editingFinished in QLineEdit.

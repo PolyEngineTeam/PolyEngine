@@ -26,7 +26,7 @@ class EntityInspectorWidget : public InspectorWidgetBase
 	Q_OBJECT
 
 public:
-	EntityInspectorWidget(QWidget* parent, const World* world, const Dynarray<Entity*>& selectedEntities);
+	EntityInspectorWidget(QWidget* parent, World* world, const Dynarray<Entity*>& selectedEntities);
 
 	// Initializes object connections with other inspectors and inspector manager.
 	void InitializeConnections() override;
@@ -34,24 +34,21 @@ public:
 	// Reloads whole content.
 	void Reload() override;
 
-	// Sets default empty view.
-	void Reset() override;
-
 public slots:
 	// Sets selected entities.
-	void EntitiesSelectionChanged(Dynarray<Entity*> entities);
+	void EntitiesSelectionChanged();
 
 	// Reloads component sections
-	void ComponentsAdded(Dynarray<ComponentBase*> components);
+	void ComponentsAdded();
 
 	// Reloads component sections
-	void ComponentsRemoved(Dynarray<ComponentBase*> components);
+	void ComponentsRemoved();
 
 	// Updates fields within sections and general data fields.
 	void Update();
 
 private:
-	Dynarray<Entity*> Entities;
+	void ReloadComponentSections();
 
 	QGridLayout* MainLayout;
 	QMenu* ContextMenu;

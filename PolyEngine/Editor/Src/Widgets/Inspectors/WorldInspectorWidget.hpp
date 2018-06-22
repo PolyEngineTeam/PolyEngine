@@ -53,25 +53,22 @@ public:
 	// Reloads whole content.
 	void Reload() override;
 
-	// Removes all entities from list.
-	void Reset() override;
-
 
 public slots:
 	// Sets currently viewed world to given object and updates inspector.
-	void WorldChanged(World* world);
+	void WorldChanged();
 
 	// Adds this new entity to tree.
-	void EntitiesSpawned(Dynarray<Entity*> entities);
+	void EntitiesSpawned();
 
 	// removed items from list
 	void EntitiesDestroyed();
 
 	// Reparents all currently selected entities to new parent.
-	void EntitiesReparented(Entity* parent);
+	void EntitiesReparented();
 
 	// Sets selected entities.
-	void EntitiesSelectionChanged(Dynarray<Entity*> entities);
+	void EntitiesSelectionChanged();
 
 	// Updates entities names.
 	void Update();

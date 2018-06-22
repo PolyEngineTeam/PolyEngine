@@ -70,7 +70,7 @@
 	}
 
 //------------------------------------------------------------------------------
-void ComponentDialog::AddComponent(Entity* entity)
+void ComponentDialog::AddComponents(Entity* entity)
 {
 	InitUi(eMode::ADD);
 
@@ -114,7 +114,7 @@ void ComponentDialog::AddComponent(Entity* entity)
 }
 
 //------------------------------------------------------------------------------
-void ComponentDialog::RemoveComponent(Entity* entity)
+void ComponentDialog::RemoveComponents(Entity* entity)
 {
 	InitUi(eMode::REMOVE);
 

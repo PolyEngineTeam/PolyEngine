@@ -6,7 +6,7 @@ class InspectorWidgetBase : public PolyWidget
 {
 public:
 	InspectorWidgetBase(QWidget* parent, World* world, const Dynarray<Entity*>& selectedEntities)
-		: PolyWidget(parent), WorldObjjjj(world), SelectedEntities(selectedEntities) {}
+		: PolyWidget(parent), WorldObj(world), SelectedEntities(selectedEntities) {}
 
 	virtual void InitializeConnections() = 0;
 	virtual void Reload() = 0;
