@@ -70,6 +70,7 @@ namespace Poly
 	{
 	public:
 		virtual void SetContent(const float* data) = 0;
+		virtual void SetContent(const unsigned char* data) = 0;
 		virtual void SetSubContent(size_t width, size_t height, size_t offsetX, size_t offsetY, eTextureDataFormat format, const unsigned char* data) = 0;
 		virtual unsigned int GetResourceID() const = 0;
 	};

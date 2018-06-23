@@ -22,8 +22,11 @@ namespace Poly
 	ENGINE_DLLEXPORT String LoadTextFileRelative(eResourceSource Source, const String& path);
 	ENGINE_DLLEXPORT void SaveTextFileRelative(eResourceSource Source, const String& path, const String& text);
 
-	ENGINE_DLLEXPORT float* LoadImage(const String& path, int* width, int* height, int* channels);
-	ENGINE_DLLEXPORT void FreeImage(float* data);
+	ENGINE_DLLEXPORT float* LoadImageHDR(const String& path, int* width, int* height, int* channels);
+	ENGINE_DLLEXPORT void FreeImageHDR(float* data);
+	ENGINE_DLLEXPORT unsigned char* LoadImage(const String& path, int* width, int* height, int* channels);
+	ENGINE_DLLEXPORT void FreeImage(unsigned char* data);
+
 
 	namespace Impl { template<typename T> std::map<String, std::unique_ptr<T>>& GetResources(); }
 

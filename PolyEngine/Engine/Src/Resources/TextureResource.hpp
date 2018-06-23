@@ -25,11 +25,11 @@ namespace Poly
 	private:
 		std::unique_ptr<ITextureDeviceProxy> TextureProxy;
 		// float* Image;
-		int Width;
-		int Height;
-		int Channels;
+		int Width = 0;
+		int Height = 0;
+		int Channels = 0;
 
-		eTextureDataFormat GetFormat(int channels);
+		// eTextureDataFormat GetFormat(int channels);
 	};
 }
 

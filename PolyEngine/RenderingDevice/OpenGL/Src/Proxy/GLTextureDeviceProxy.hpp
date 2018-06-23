@@ -23,6 +23,7 @@ namespace Poly
 		virtual ~GLTextureDeviceProxy();
 		
 		void SetContent(const float* data) override;
+		void SetContent(const unsigned char* data) override;
 		void SetSubContent(size_t width, size_t height, size_t offsetX, size_t offsetY, eTextureDataFormat format, const unsigned char* data) override;
 		unsigned int GetResourceID() const override { return TextureID; };
 

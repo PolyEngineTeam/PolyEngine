@@ -18,7 +18,7 @@ CubemapResource::CubemapResource(const EnumArray<String, eCubemapSide> paths)
 		int fileWidth;
 		int fileHeight;
 
-		Images[side] = LoadImage(absolutePath, &fileWidth, &fileHeight, &fileChannels);
+		Images[side] = LoadImageHDR(absolutePath, &fileWidth, &fileHeight, &fileChannels);
 
 		Width = std::max(Width, fileWidth);
 		Height = std::max(Height, fileHeight);
@@ -33,7 +33,7 @@ CubemapResource::CubemapResource(const EnumArray<String, eCubemapSide> paths)
 
 	for (auto side : IterateEnum<eCubemapSide>())
 	{
-		FreeImage(Images[side]);
+		FreeImageHDR(Images[side]);
 	}
 }
 

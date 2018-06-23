@@ -6,8 +6,6 @@
 
 #include <fstream>
 
-// #include "SOIL/SOIL.h"
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
@@ -35,7 +33,6 @@ String Poly::LoadTextFileRelative(eResourceSource Source, const String & path)
 		IsNotLoaded = false;
 	}
 
-
 	if (IsNotLoaded)
 	{
 		throw FileIOException("File load failed from all sources, check config");
@@ -50,7 +47,7 @@ void Poly::SaveTextFileRelative(eResourceSource Source, const String& path, cons
 	SaveTextFile(absolutePath, data);
 }
 
-float* Poly::LoadImage(const String& path, int* width, int* height, int* channels)
+float* Poly::LoadImageHDR(const String& path, int* width, int* height, int* channels)
 {
 	stbi_set_flip_vertically_on_load(true);
 	float *data = stbi_loadf(path.GetCStr(), width, height, channels, 0);
@@ -61,7 +58,29 @@ float* Poly::LoadImage(const String& path, int* width, int* height, int* channel
 	return data;
 }
 
-void Poly::FreeImage(float* data) 
+void Poly::FreeImageHDR(float* data) 
+{
+	stbi_image_free(data);
+}
+
+unsigned char* Poly::LoadImage(const String& path, int* width, int* height, int* channels)
+{
+	stbi_set_flip_vertically_on_load(true);
+	unsigned char *data = stbi_load(path.GetCStr(), width, height, channels, 0);
+	// ... process data if not NULL ...
+	// ... x = width, y = height, n = # 8-bit components per pixel ...
+	// ... replace '0' with '1'..'4' to force that many components per pixel
+	// ... but 'n' will always be the number that it would have been if you said 0
+	// stbi_image_free(data)
+
+	if (!data)
+	{
+	 gConsole.LogInfo("Poly::LoadImage Failed to load: {}", path);
+	}
+	return data;
+}
+
+void Poly::FreeImage(unsigned char* data)
 {
 	stbi_image_free(data);
 }
