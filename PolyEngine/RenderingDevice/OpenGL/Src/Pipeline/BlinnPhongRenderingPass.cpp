@@ -161,7 +161,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
-			PBRMaterial material = meshCmp->GetPBRMaterial(i);
+			Material material = meshCmp->GetMaterial(i);
 			GetProgram().SetUniform("uMaterial.Ambient", Color::BLACK);
 			GetProgram().SetUniform("uMaterial.Diffuse", material.Albedo);
 			GetProgram().SetUniform("uMaterial.Specular", material.Albedo);

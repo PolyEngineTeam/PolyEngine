@@ -10,8 +10,9 @@ layout(location = 1) out vec4 normal;
 
 void main()
 {
-    float mipLevel = 5.0 * fract(0.1 * uTime);
-    vec3 envColor = texture(uCubemap, vUV, mipLevel - fract(mipLevel)).rgb;
+    // float mipLevel = 5.0 * fract(0.1 * uTime);
+    // vec3 envColor = texture(uCubemap, vUV, mipLevel - fract(mipLevel)).rgb;
+    vec3 envColor = texture(uCubemap, vUV).rgb;
     // envColor = envColor / (envColor / vec3(1.0));    // HDR -> LDR
     // envColor = pow(envColor, vec3(1.0, 2.2));        // linear -> gamma
 

@@ -66,7 +66,7 @@ void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
-			GetProgram().SetUniform("uBaseColor", meshCmp->GetPBRMaterial(i).Albedo);
+			GetProgram().SetUniform("uBaseColor", meshCmp->GetMaterial(i).Albedo);
 			UNUSED(subMesh);
 			//const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 

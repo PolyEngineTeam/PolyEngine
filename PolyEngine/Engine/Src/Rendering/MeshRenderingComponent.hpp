@@ -15,12 +15,12 @@ namespace Poly {
 		_COUNT
 	};
 
-	struct ENGINE_DLLEXPORT PBRMaterial
+	struct ENGINE_DLLEXPORT Material
 	{
-		PBRMaterial()
+		Material()
 			: Emissive(0.0f, 0.0f, 0.0f), Albedo(1.0f, 1.0f, 1.0f), Roughness(1.0f), Metallic(1.0f) {}
 
-		PBRMaterial(const Color& emissive, const Color& albedo, float roughness, float metallic)
+		Material(const Color& emissive, const Color& albedo, float roughness, float metallic)
 			: Emissive(emissive), Albedo(albedo), Roughness(roughness), Metallic(metallic) {}
 
 		Color Emissive;
@@ -31,23 +31,22 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT MeshRenderingComponent : public ComponentBase
 	{
-		friend void RenderingSystem::RenderingPhase(World*);
 	public:
 		MeshRenderingComponent(const String& meshPath, eResourceSource source);
 		virtual ~MeshRenderingComponent();
 
 		const MeshResource* GetMesh() const { return Mesh; }
-		const PBRMaterial& GetPBRMaterial(int i) const { return PBRMaterials[i]; }
-		void SetPBRMaterial(int i, const PBRMaterial& value) { PBRMaterials[i] = value; }
+		const Material& GetMaterial(int i) const { return Materials[i]; }
+		void SetMaterial(size_t i, const Material& value) { Materials[i] = value; }
 		bool GetIsWireframe() const { return IsWireframe; }
 		void SetIsWireframe(bool value) { IsWireframe = value; }
 		eShadingModel GetShadingModel() const { return ShadingModel; }
 		void SetShadingModel(eShadingModel value) { ShadingModel = value; }
-		bool IsTransparent() const { return PBRMaterials.GetCapacity() > 0 && PBRMaterials[0].Albedo.A < 1.0f; } // HACK replace with better solution for translucent objects.
+		bool IsTransparent() const { return Materials.GetCapacity() > 0 && Materials[0].Albedo.A < 1.0f; } // HACK replace with better solution for translucent objects.
 
 	private:
 		MeshResource* Mesh = nullptr;
-		Dynarray<PBRMaterial> PBRMaterials;
+		Dynarray<Material> Materials;
 		eShadingModel ShadingModel = eShadingModel::PBR;
 		bool IsWireframe = false;
 	};

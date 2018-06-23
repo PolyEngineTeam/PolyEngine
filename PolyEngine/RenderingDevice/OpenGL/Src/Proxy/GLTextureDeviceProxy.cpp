@@ -3,21 +3,21 @@
 
 using namespace Poly;
 
-// static GLenum GetFormat(size_t channels) noexcept
-// {
-// 	switch (channels)
-// 	{
-// 	case 1:
-// 		return GL_RED;
-// 	case 3:
-// 		return GL_RGB;
-// 	case 4:
-// 		return GL_RGBA;
-// 	default:
-// 		ASSERTE(false, "Invalid Channels!");
-// 	}
-// 	return 0;
-// }
+static GLenum GetFormat(size_t channels) noexcept
+{
+	switch (channels)
+	{
+	case 1:
+		return GL_RED;
+	case 3:
+		return GL_RGB;
+	case 4:
+		return GL_RGBA;
+	default:
+		ASSERTE(false, "Invalid Channels!");
+	}
+	return 0;
+}
 
 // static GLenum GetFormat(eTextureDataFormat format) noexcept
 // {
@@ -156,18 +156,17 @@ void GLTextureDeviceProxy::InitTextureParams()
 		return;
 	}
 
-	gConsole.LogInfo("GLTextureDeviceProxy::InitTextureParams usage: {}", (int)Usage);
+	// gConsole.LogInfo("GLTextureDeviceProxy::InitTextureParams usage: {}", (int)Usage);
 
 	switch (Usage)
 	{
 		case eTextureUsageType::ALBEDO:
 		case eTextureUsageType::EMISSIVE:
-		case eTextureUsageType::METALLIC:
-		case eTextureUsageType::ROUGHNESS:
-		case eTextureUsageType::AMBIENT_OCCLUSION:
 			InitTextureGamma();
 			break;
-		case eTextureUsageType::RENDER_TARGET:
+		case eTextureUsageType::AMBIENT_OCCLUSION:
+		case eTextureUsageType::METALLIC:
+		case eTextureUsageType::ROUGHNESS:
 			InitTextureLinear();
 			break;
 		case eTextureUsageType::NORMAL:
@@ -178,6 +177,9 @@ void GLTextureDeviceProxy::InitTextureParams()
 			break;
 		case eTextureUsageType::FONT:
 			InitTextureFont();
+			break;
+		case eTextureUsageType::RENDER_TARGET:
+			InitTextureRenderTarget();
 			break;
 		default:
 			ASSERTE(false, "Uknown eTextureUsageType!");
@@ -263,8 +265,8 @@ void GLTextureDeviceProxy::InitTextureGamma()
 	Format = Channels > 3 ? GL_RGBA : GL_RGB;
 	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, Format, GL_UNSIGNED_BYTE, nullptr);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -280,9 +282,57 @@ void GLTextureDeviceProxy::InitTextureLinear()
 		throw RenderingDeviceProxyCreationFailedException();
 
 	glBindTexture(GL_TEXTURE_2D, TextureID);
+	switch (Channels)
+	{
+		case 1:
+			InternalFormat = GL_R8;
+			break;
+		case 3:
+			InternalFormat = GL_RGB8;
+			break;
+		case 4:
+			InternalFormat = GL_RGBA8;
+			break;
+		default:
+			ASSERTE(false, "Invalid Channels!");
+	}
+	Format = GetFormat(Channels);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, Format, GL_UNSIGNED_BYTE, nullptr);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	CHECK_GL_ERR();
+}
+
+void GLTextureDeviceProxy::InitTextureRenderTarget()
+{
+	glGenTextures(1, &TextureID);
+
+	if (TextureID <= 0)
+		throw RenderingDeviceProxyCreationFailedException();
+
+	glBindTexture(GL_TEXTURE_2D, TextureID);
 	InternalFormat = Channels > 3 ? GL_RGBA8 : GL_RGB8;
 	Format = Channels > 3 ? GL_RGBA : GL_RGB;
 	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, Format, GL_UNSIGNED_BYTE, nullptr);
+
+	// if(InternalUsage == eInternalTextureUsageType::DEPTH_ATTACHEMENT)
+	// 	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+	// if (InternalUsage == eInternalTextureUsageType::COLOR_ATTACHEMENT)
+	// 	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_RGBA, GL_FLOAT, nullptr);
+	// else
+	// 	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, InternalFormat, GL_FLOAT, nullptr);
+	// 
+	// if (InternalUsage == eInternalTextureUsageType::COLOR_ATTACHEMENT || InternalUsage == eInternalTextureUsageType::DEPTH_ATTACHEMENT)
+	// {
+	// 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	// 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	// }
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -291,20 +341,6 @@ void GLTextureDeviceProxy::InitTextureLinear()
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	CHECK_GL_ERR();
-
-	// RenderTarget code:
-	// 	if(InternalUsage == eInternalTextureUsageType::DEPTH_ATTACHEMENT)
-	// 		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-	// 	if (InternalUsage == eInternalTextureUsageType::COLOR_ATTACHEMENT)
-	// 		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_RGBA, GL_FLOAT, nullptr);
-	// 	else
-	// 		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, InternalFormat, GL_FLOAT, nullptr);
-	// 
-	// 	if (InternalUsage == eInternalTextureUsageType::COLOR_ATTACHEMENT || InternalUsage == eInternalTextureUsageType::DEPTH_ATTACHEMENT)
-	// 	{
-	// 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	// 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	// 	}
 
 }
 
@@ -320,8 +356,8 @@ void GLTextureDeviceProxy::InitTextureNormal()
 	Format = GL_RGB;
 	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, Format, GL_UNSIGNED_BYTE, nullptr);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 

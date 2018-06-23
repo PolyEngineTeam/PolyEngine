@@ -50,9 +50,9 @@ struct Material
 
 const uint MAX_NUM_LIGHTS = 1024;
 
+uniform sampler2D uBrdfLUT;
 uniform samplerCube uIrradianceMap;
 uniform samplerCube uPrefilterMap;
-uniform sampler2D uBrdfLUT;
 
 uniform sampler2D uEmissiveMap;
 uniform sampler2D uAlbedoMap;
@@ -63,11 +63,8 @@ uniform sampler2D uAmbientOcclusionMap;
 
 uniform Material uMaterial;
 
-// uniform DirectionalLight uDirectionalLight[MAX_DIRLIGHT_COUNT];
 uniform DirectionalLight uDirectionalLight[8];
 uniform int uDirectionalLightCount;
-
-// uniform mat4 uWorldFromModel;
 
 uniform int uLightCount;
 uniform int uWorkGroupsX;
@@ -125,7 +122,6 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 
 void main()
 {
-    vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
     vec4 emissive = uMaterial.Emissive * texture(uEmissiveMap, fragment_in.uv);
     vec4 albedo = uMaterial.Albedo * texture(uAlbedoMap, fragment_in.uv);
     float roughness = uMaterial.Roughness * texture(uRoughnessMap, fragment_in.uv).r;
@@ -149,7 +145,7 @@ void main()
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
 	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
 	vec3 F0 = vec3(0.04);
-	F0 = mix(F0, albedo.rgb, vec3(uMaterial.Metallic));
+	F0 = mix(F0, albedo.rgb, vec3(metallic));
 
 	// reflectance equation
 	vec3 Lo = vec3(0.0);
@@ -196,7 +192,7 @@ void main()
 		// multiply kD by the inverse metalness such that only non-metals 
 		// have diffuse lighting, or a linear blend if partly metal (pure metals
 		// have no diffuse light).
-		kD *= 1.0 - uMaterial.Metallic;
+		kD *= 1.0 - metallic;
 
 		// scale light by NdotL
 		float NdotL = max(dot(N, L), 0.0);
@@ -235,7 +231,7 @@ void main()
 		// multiply kD by the inverse metalness such that only non-metals 
 		// have diffuse lighting, or a linear blend if partly metal (pure metals
 		// have no diffuse light).
-		kD *= 1.0 - uMaterial.Metallic;
+		kD *= 1.0 - metallic;
 
 		// scale light by NdotL
 		float NdotL = max(dot(N, L), 0.0);
@@ -260,16 +256,16 @@ void main()
     
     vec3 ambient = (kD * diffuse + specular) * ao;
 
-    oColor.rgb = ambient + Lo;
+    oColor.rgb = ambient + emissive.rgb + Lo;
 
     // Debug texture input
-    // oColor.rgb = emissive.rgb;
-    // oColor.rgb = albedo.rgb;
-    // oColor.rgb = normal.rgb * 0.5 + 0.5;
+    // oColor.rgb = emissive.rgb; // missing
+    // oColor.rgb = albedo.rgb; // ok
+    // oColor.rgb = normal.rgb * 0.5 + 0.5; // ok
     // oColor.rgb = (WorldFromTangent * normal.rgb) * 0.5 + 0.5;
-    // oColor.rgb = vec3(roughness);
-    // oColor.rgb = vec3(metallic);
-    // oColor.rgb = vec3(ao);
+    // oColor.rgb = vec3(roughness); // ok
+    // oColor.rgb = vec3(metallic); // ok
+    // oColor.rgb = vec3(ao); // ok
 
     oNormal.rgb = (WorldFromTangent * normal) * 0.5 + 0.5;
 }

@@ -37,6 +37,7 @@ namespace Poly
 		void InitTextureFont();
 		void InitTextureGamma();
 		void InitTextureLinear();
+		void InitTextureRenderTarget();
 		void InitTextureNormal();
 
 		size_t Width = 0;
@@ -47,8 +48,5 @@ namespace Poly
 		GLuint Format = 0;
 		eRenderTargetType RenderTargetType = eRenderTargetType::NONE;
 		eTextureUsageType Usage = eTextureUsageType::_COUNT;
-
-		friend class GLRenderingDevice;
-
 	};
 }

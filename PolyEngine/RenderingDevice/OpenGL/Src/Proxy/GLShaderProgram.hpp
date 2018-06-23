@@ -53,8 +53,8 @@ namespace Poly
 		void SetUniform(const String& name, const Vector& val);
 		void SetUniform(const String& name, const Color& val);
 		void SetUniform(const String& name, const Matrix& val);
-		void BindSampler(const String& name, const unsigned int samplerID, const unsigned int textureID);
-		void BindSamplerCube(const String& name, const unsigned int samplerID, const unsigned int cubemapID);
+		void BindSampler(const String& name, const unsigned int samplerID, const int textureID);
+		void BindSamplerCube(const String& name, const unsigned int samplerID, const int cubemapID);
 
 		const std::map<String, OutputInfo>& GetOutputsInfo() const { return Outputs; }
 		const std::map<String, UniformInfo>& GetUniformsInfo() const { return Uniforms; }

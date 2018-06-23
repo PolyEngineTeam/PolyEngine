@@ -170,7 +170,7 @@ void GLShaderProgram::SetUniform(const String& name, uint val)
 	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
 	{
-		HEAVY_ASSERTE(it->second.TypeName == "uint", "Invalid uniform type!");
+		HEAVY_ASSERTE(it->second.TypeName == "uint" || it->second.TypeName == "sampler2D" || it->second.TypeName == "samplerCube", "Invalid uniform type!");
 		glUniform1i(it->second.Location, val);
 	}
 }
@@ -230,14 +230,14 @@ void GLShaderProgram::SetUniform(const String& name, const Matrix& val)
 	}
 }
 
-void GLShaderProgram::BindSampler(const String& name, const unsigned int samplerID, const unsigned int textureID)
+void GLShaderProgram::BindSampler(const String& name, const unsigned int samplerID, const int textureID)
 {
 	glActiveTexture(GL_TEXTURE0 + samplerID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	SetUniform(name, samplerID);
 }
 
-void GLShaderProgram::BindSamplerCube(const String& name, const unsigned int samplerID, const unsigned int cubemapID)
+void GLShaderProgram::BindSamplerCube(const String& name, const unsigned int samplerID, const int cubemapID)
 {
 	glActiveTexture(GL_TEXTURE0 + samplerID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapID);

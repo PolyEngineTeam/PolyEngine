@@ -8,7 +8,7 @@ namespace Poly
 {
 	class GLMeshDeviceProxy : public IMeshDeviceProxy
 	{
-		friend class GLRenderingDevice;
+		// friend class GLRenderingDevice;
 
 	private:
 		enum class eBufferType {

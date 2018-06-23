@@ -110,6 +110,8 @@ void TiledForwardRenderer::Init()
 	 
 	CreateLightBuffers(screenSize);
 	 
+	CapturePreintegratedBRDF();
+
 	SetupLightsBufferFromScene();
 
 	glDepthMask(GL_TRUE);
@@ -117,6 +119,28 @@ void TiledForwardRenderer::Init()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+}
+
+void TiledForwardRenderer::Resize(const ScreenSize& size)
+{
+	gConsole.LogInfo("TiledForwardRenderer::Resize ({}, {})", size.Width, size.Height);
+
+	DeleteLightBuffers();
+
+	DeleteRenderTargets();
+
+	CreateLightBuffers(size);
+
+	CreateRenderTargets(size);
+}
+
+void TiledForwardRenderer::Deinit()
+{
+	gConsole.LogInfo("TiledForwardRenderer::Deinit");
+
+	DeleteLightBuffers();
+
+	DeleteRenderTargets();
 }
 
 void TiledForwardRenderer::CapturePreintegratedBRDF()
@@ -293,28 +317,6 @@ void TiledForwardRenderer::CreateRenderTargets(const ScreenSize& size)
 	CHECK_FBO_STATUS();
 }
 
-void TiledForwardRenderer::Resize(const ScreenSize& size)
-{
-	gConsole.LogInfo("TiledForwardRenderer::Resize ({}, {})", size.Width, size.Height);
-
-	DeleteLightBuffers();
-
-	DeleteRenderTargets();
-
-	CreateLightBuffers(size);
-
-	CreateRenderTargets(size);
-}
-
-void TiledForwardRenderer::Deinit()
-{
-	gConsole.LogInfo("TiledForwardRenderer::Deinit");
-
-	DeleteLightBuffers();
-
-	DeleteRenderTargets();
-}
-
 void TiledForwardRenderer::DeleteRenderTargets()
 {
 	if (PreDepthBuffer > 0)
@@ -394,7 +396,7 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 
 void TiledForwardRenderer::UpdateEnvCapture(const SceneView& sceneView)
 {
-	gConsole.LogInfo("TiledForwardRenderer::UpdateEnvCapture");
+	// gConsole.LogInfo("TiledForwardRenderer::UpdateEnvCapture");
 
 	if (SkyboxCapture.GetIsDirty())
 	{
@@ -547,6 +549,11 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, LightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, VisibleLightIndicesBuffer);
 
+	// PBR and IBL textures
+	LightAccumulationShader.BindSampler("uBrdfLUT", 8, PreintegratedBrdfLUT);
+	LightAccumulationShader.BindSamplerCube("uIrradianceMap", 9, SkyboxCapture.GetIrradianceMap() ? SkyboxCapture.GetIrradianceMap() : RDI->FallbackWhiteTexture);
+	LightAccumulationShader.BindSamplerCube("uPrefilterMap", 10, SkyboxCapture.GetPrefilterMap() ? SkyboxCapture.GetPrefilterMap() : RDI->FallbackWhiteTexture);
+
 	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	for (const MeshRenderingComponent* meshCmp : sceneView.OpaqueQueue)
 	{
@@ -558,40 +565,32 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
-			if (meshCmp->GetShadingModel() == eShadingModel::PBR)
-			{
-				PBRMaterial material = meshCmp->GetPBRMaterial(i);
-				LightAccumulationShader.SetUniform("uMaterial.Emissive", material.Emissive);
-				LightAccumulationShader.SetUniform("uMaterial.Albedo", material.Albedo);
-				LightAccumulationShader.SetUniform("uMaterial.Roughness", material.Roughness);
-				LightAccumulationShader.SetUniform("uMaterial.Metallic", material.Metallic);
+			Material material = meshCmp->GetMaterial(i);
+			LightAccumulationShader.SetUniform("uMaterial.Emissive", material.Emissive);
+			LightAccumulationShader.SetUniform("uMaterial.Albedo", material.Albedo);
+			LightAccumulationShader.SetUniform("uMaterial.Roughness", material.Roughness);
+			LightAccumulationShader.SetUniform("uMaterial.Metallic", material.Metallic);
 
-				const TextureResource* emissiveMap = subMesh->GetMeshData().GetEmissiveMap();
-				const TextureResource* albedoMap = subMesh->GetMeshData().GetAlbedoMap();
-				const TextureResource* normalMap = subMesh->GetMeshData().GetNormalMap();
-				const TextureResource* roughnessMap = subMesh->GetMeshData().GetRoughnessMap();
-				const TextureResource* metallicMap = subMesh->GetMeshData().GetMetallicMap();
-				const TextureResource* ambientOcclusionMap = subMesh->GetMeshData().GetAmbientOcclusionMap();
+			const TextureResource* emissiveMap = subMesh->GetMeshData().GetEmissiveMap();
+			const TextureResource* albedoMap = subMesh->GetMeshData().GetAlbedoMap();
+			const TextureResource* roughnessMap = subMesh->GetMeshData().GetRoughnessMap();
+			const TextureResource* metallicMap = subMesh->GetMeshData().GetMetallicMap();
+			const TextureResource* normalMap = subMesh->GetMeshData().GetNormalMap();
+			const TextureResource* ambientOcclusionMap = subMesh->GetMeshData().GetAmbientOcclusionMap();
 
-				 // Material textures
-				LightAccumulationShader.BindSampler("uEmissiveMap", 0, emissiveMap ? (GLuint)(emissiveMap->GetTextureProxy()->GetResourceID()) : RDI->FallbackBlackTexture);
-				LightAccumulationShader.BindSampler("uAlbedoMap", 1, albedoMap ? (GLuint)(albedoMap->GetTextureProxy()->GetResourceID()) : RDI->FallbackWhiteTexture);
-				LightAccumulationShader.BindSampler("uNormalMap", 2, normalMap ? (GLuint)(normalMap->GetTextureProxy()->GetResourceID()) : RDI->FallbackNormalMap);
-				LightAccumulationShader.BindSampler("uRoughnessMap", 3, roughnessMap ? (GLuint)(roughnessMap->GetTextureProxy()->GetResourceID()) : RDI->FallbackBlackTexture);
-				LightAccumulationShader.BindSampler("uMetallicMap", 4, metallicMap ? (GLuint)(metallicMap->GetTextureProxy()->GetResourceID()) : RDI->FallbackBlackTexture);
-				LightAccumulationShader.BindSampler("uAmbientOcclusionMap", 5, ambientOcclusionMap ? (GLuint)(ambientOcclusionMap->GetTextureProxy()->GetResourceID()) : RDI->FallbackWhiteTexture);
+			// Material textures
+			LightAccumulationShader.BindSampler("uEmissiveMap",			0, emissiveMap			? (GLuint)(emissiveMap->GetTextureProxy()->GetResourceID())			: RDI->FallbackBlackTexture);
+			LightAccumulationShader.BindSampler("uAlbedoMap",			1, albedoMap			? (GLuint)(albedoMap->GetTextureProxy()->GetResourceID())			: RDI->FallbackWhiteTexture);
+			LightAccumulationShader.BindSampler("uRoughnessMap",		2, roughnessMap			? (GLuint)(roughnessMap->GetTextureProxy()->GetResourceID())		: RDI->FallbackWhiteTexture);
+			LightAccumulationShader.BindSampler("uMetallicMap",			3, metallicMap			? (GLuint)(metallicMap->GetTextureProxy()->GetResourceID())			: RDI->FallbackWhiteTexture);
+			LightAccumulationShader.BindSampler("uNormalMap",			4, normalMap			? (GLuint)(normalMap->GetTextureProxy()->GetResourceID())			: RDI->FallbackNormalMap);
+			LightAccumulationShader.BindSampler("uAmbientOcclusionMap",	5, ambientOcclusionMap	? (GLuint)(ambientOcclusionMap->GetTextureProxy()->GetResourceID())	: RDI->FallbackWhiteTexture);
 
-				// PBR and IBL textures
-				LightAccumulationShader.BindSampler("uBrdfLUT", 8, PreintegratedBrdfLUT);
-				LightAccumulationShader.BindSamplerCube("uIrradianceMap", 9, SkyboxCapture.GetIrradianceMap() ? SkyboxCapture.GetIrradianceMap() : RDI->FallbackWhiteTexture);
-				LightAccumulationShader.BindSamplerCube("uPrefilterMap", 10, SkyboxCapture.GetPrefilterMap() ? SkyboxCapture.GetPrefilterMap() : RDI->FallbackWhiteTexture);
+			const GLuint subMeshVAO = (GLuint)(subMesh->GetMeshProxy()->GetResourceID());
+			glBindVertexArray(subMeshVAO);
 
-				const GLuint subMeshVAO = (GLuint)(subMesh->GetMeshProxy()->GetResourceID());
-				glBindVertexArray(subMeshVAO);
-
-				glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
-				++i;
-			}
+			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
+			++i;
 		}
 	}
 
@@ -601,6 +600,19 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE8);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE9);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE10);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 
 	glBindVertexArray(0);
 
@@ -702,7 +714,7 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
-			PBRMaterial material = meshCmp->GetPBRMaterial(i);
+			Material material = meshCmp->GetMaterial(i);
 			TranslucentShader.SetUniform("uMaterial.Ambient", Color::BLACK);
 			TranslucentShader.SetUniform("uMaterial.Diffuse", material.Albedo);
 			TranslucentShader.SetUniform("uMaterial.Specular", material.Albedo);
