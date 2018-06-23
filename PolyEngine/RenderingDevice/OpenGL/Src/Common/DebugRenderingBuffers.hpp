@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common/GLUtils.hpp"
+#include "Proxy/GLUtils.hpp"
 #include <Collections/Dynarray.hpp>
 
 namespace Poly

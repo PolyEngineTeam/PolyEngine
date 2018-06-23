@@ -9,7 +9,7 @@
 #include "Proxy/GLParticleDeviceProxy.hpp"
 #include "Pipeline/RenderingPassBase.hpp"
 #include "Common/DebugRenderingBuffers.hpp"
-#include "Common/GLShaderProgram.hpp"
+#include "Proxy/GLShaderProgram.hpp"
 #include "Common/PrimitiveCube.hpp"
 #include "Common/PrimitiveQuad.hpp"
 
@@ -560,80 +560,34 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 		{
 			if (meshCmp->GetShadingModel() == eShadingModel::PBR)
 			{
-				// PhongMaterial material = meshCmp->GetMaterial(i);
-				// lightAccumulationShader.SetUniform("uMaterial.Ambient", material.AmbientColor);
-				// lightAccumulationShader.SetUniform("uMaterial.Diffuse", material.DiffuseColor);
-				// lightAccumulationShader.SetUniform("uMaterial.Specular", material.SpecularColor);
-				// lightAccumulationShader.SetUniform("uMaterial.Shininess", material.Shininess);
-
 				PBRMaterial material = meshCmp->GetPBRMaterial(i);
 				LightAccumulationShader.SetUniform("uMaterial.Emissive", material.Emissive);
 				LightAccumulationShader.SetUniform("uMaterial.Albedo", material.Albedo);
 				LightAccumulationShader.SetUniform("uMaterial.Roughness", material.Roughness);
 				LightAccumulationShader.SetUniform("uMaterial.Metallic", material.Metallic);
 
-				const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
-				glBindVertexArray(meshProxy->GetVAO());
-
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_CUBE_MAP, SkyboxCapture.GetIrradianceMap() ? SkyboxCapture.GetIrradianceMap() : RDI->FallbackWhiteTexture);
-				LightAccumulationShader.SetUniform("uIrradianceMap", 0);
-
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_CUBE_MAP, SkyboxCapture.GetPrefilterMap() ? SkyboxCapture.GetPrefilterMap() : RDI->FallbackWhiteTexture);
-				LightAccumulationShader.SetUniform("uPrefilterMap", 1);
-
-				glActiveTexture(GL_TEXTURE2);
-				glBindTexture(GL_TEXTURE_2D, PreintegratedBrdfLUT);
-				LightAccumulationShader.SetUniform("uBrdfLUT", 2);
-
-				const TextureResource* emissiveTexture = subMesh->GetMeshData().GetEmissiveMap();
-				GLuint emissiveID = emissiveTexture == nullptr
-					? RDI->FallbackBlackTexture
-					: (GLuint)(emissiveTexture->GetTextureProxy()->GetResourceID());
-				glActiveTexture(GL_TEXTURE3);
-				glBindTexture(GL_TEXTURE_2D, emissiveID);
-				LightAccumulationShader.SetUniform("uEmissiveMap", 3);
-
-				const TextureResource* albedoTexture = subMesh->GetMeshData().GetAlbedoMap();
-				GLuint albedoID = albedoTexture == nullptr
-					? RDI->FallbackWhiteTexture
-					: (GLuint)(albedoTexture->GetTextureProxy()->GetResourceID());
-				glActiveTexture(GL_TEXTURE4);
-				glBindTexture(GL_TEXTURE_2D, albedoID);
-				LightAccumulationShader.SetUniform("uAlbedoMap", 4);
-				
+				const TextureResource* emissiveMap = subMesh->GetMeshData().GetEmissiveMap();
+				const TextureResource* albedoMap = subMesh->GetMeshData().GetAlbedoMap();
 				const TextureResource* normalMap = subMesh->GetMeshData().GetNormalMap();
-				GLuint normalMapID = normalMap == nullptr
-					? RDI->FallbackNormalMap
-					: (GLuint)(normalMap->GetTextureProxy()->GetResourceID());
-				glActiveTexture(GL_TEXTURE5);
-				glBindTexture(GL_TEXTURE_2D, normalMapID);
-				LightAccumulationShader.SetUniform("uNormalMap", 5);
-				 
-				const TextureResource* roughnessTexture = subMesh->GetMeshData().GetRoughnessMap();
-				GLuint roughnessID = roughnessTexture == nullptr
-					? RDI->FallbackBlackTexture
-					: (GLuint)(roughnessTexture->GetTextureProxy()->GetResourceID());
-				glActiveTexture(GL_TEXTURE6);
-				glBindTexture(GL_TEXTURE_2D, roughnessID);
-				LightAccumulationShader.SetUniform("uRoughnessMap", 6);
-				
-				const TextureResource* metallicTexture = subMesh->GetMeshData().GetMetallicMap();
-				GLuint metallicID = metallicTexture == nullptr
-					? RDI->FallbackBlackTexture
-					: (GLuint)(metallicTexture->GetTextureProxy()->GetResourceID());
-				glActiveTexture(GL_TEXTURE7);
-				glBindTexture(GL_TEXTURE_2D, metallicID);
-				LightAccumulationShader.SetUniform("uMetallicMap", 7);
-				
-				const TextureResource* ambientOcclusionTexture = subMesh->GetMeshData().GetAmbientOcclusionMap();
-				GLuint ambientOcclusionID = ambientOcclusionTexture == nullptr
-					? RDI->FallbackWhiteTexture
-					: (GLuint)(ambientOcclusionTexture->GetTextureProxy()->GetResourceID());
-				glActiveTexture(GL_TEXTURE8);
-				glBindTexture(GL_TEXTURE_2D, ambientOcclusionID);
-				LightAccumulationShader.SetUniform("uAmbientOcclusionMap", 8);
+				const TextureResource* roughnessMap = subMesh->GetMeshData().GetRoughnessMap();
+				const TextureResource* metallicMap = subMesh->GetMeshData().GetMetallicMap();
+				const TextureResource* ambientOcclusionMap = subMesh->GetMeshData().GetAmbientOcclusionMap();
+
+				 // Material textures
+				LightAccumulationShader.BindSampler("uEmissiveMap", 0, emissiveMap ? (GLuint)(emissiveMap->GetTextureProxy()->GetResourceID()) : RDI->FallbackBlackTexture);
+				LightAccumulationShader.BindSampler("uAlbedoMap", 1, albedoMap ? (GLuint)(albedoMap->GetTextureProxy()->GetResourceID()) : RDI->FallbackWhiteTexture);
+				LightAccumulationShader.BindSampler("uNormalMap", 2, normalMap ? (GLuint)(normalMap->GetTextureProxy()->GetResourceID()) : RDI->FallbackNormalMap);
+				LightAccumulationShader.BindSampler("uRoughnessMap", 3, roughnessMap ? (GLuint)(roughnessMap->GetTextureProxy()->GetResourceID()) : RDI->FallbackBlackTexture);
+				LightAccumulationShader.BindSampler("uMetallicMap", 4, metallicMap ? (GLuint)(metallicMap->GetTextureProxy()->GetResourceID()) : RDI->FallbackBlackTexture);
+				LightAccumulationShader.BindSampler("uAmbientOcclusionMap", 5, ambientOcclusionMap ? (GLuint)(ambientOcclusionMap->GetTextureProxy()->GetResourceID()) : RDI->FallbackWhiteTexture);
+
+				// PBR and IBL textures
+				LightAccumulationShader.BindSampler("uBrdfLUT", 8, PreintegratedBrdfLUT);
+				LightAccumulationShader.BindSamplerCube("uIrradianceMap", 9, SkyboxCapture.GetIrradianceMap() ? SkyboxCapture.GetIrradianceMap() : RDI->FallbackWhiteTexture);
+				LightAccumulationShader.BindSamplerCube("uPrefilterMap", 10, SkyboxCapture.GetPrefilterMap() ? SkyboxCapture.GetPrefilterMap() : RDI->FallbackWhiteTexture);
+
+				const GLuint subMeshVAO = (GLuint)(subMesh->GetMeshProxy()->GetResourceID());
+				glBindVertexArray(subMeshVAO);
 
 				glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 				++i;

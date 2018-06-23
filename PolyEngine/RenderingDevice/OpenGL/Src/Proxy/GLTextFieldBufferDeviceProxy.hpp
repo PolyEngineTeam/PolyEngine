@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Rendering/IRenderingDevice.hpp>
-#include "Common/GLUtils.hpp"
+#include "Proxy/GLUtils.hpp"
 
 namespace Poly
 {

@@ -6,7 +6,8 @@
 typedef unsigned int GLuint;
 typedef unsigned int GLenum;
 
-namespace Poly {
+namespace Poly
+{
 	class GLShaderProgram : public BaseObject<>
 	{
 		enum class eShaderUnitType
@@ -35,6 +36,7 @@ namespace Poly {
 			String TypeName;
 			size_t Index = 0;
 		};
+
 	public:
 		GLShaderProgram(const String& compute);
 		GLShaderProgram(const String& vertex, const String& fragment);
@@ -51,11 +53,14 @@ namespace Poly {
 		void SetUniform(const String& name, const Vector& val);
 		void SetUniform(const String& name, const Color& val);
 		void SetUniform(const String& name, const Matrix& val);
+		void BindSampler(const String& name, const unsigned int samplerID, const unsigned int textureID);
+		void BindSamplerCube(const String& name, const unsigned int samplerID, const unsigned int cubemapID);
 
 		const std::map<String, OutputInfo>& GetOutputsInfo() const { return Outputs; }
 		const std::map<String, UniformInfo>& GetUniformsInfo() const { return Uniforms; }
 
 		void RegisterUniform(const String& type, const String& name);
+
 	private:
 		void CompileProgram();
 		void Validate();

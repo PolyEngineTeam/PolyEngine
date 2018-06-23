@@ -1,8 +1,8 @@
 #pragma once
 
 #include "IRendererInterface.hpp"
-#include "Common/GLShaderProgram.hpp"
-#include "Common/GLUtils.hpp"
+#include "Proxy/GLShaderProgram.hpp"
+#include "Proxy/GLUtils.hpp"
 
 namespace Poly {
 

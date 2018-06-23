@@ -16,7 +16,7 @@ TextureResource::TextureResource(const String& path, eTextureUsageType usage)
 		gConsole.LogInfo("TextureResource::TextureResource loaded width: {}, height: {}, channels: {}", Width, Height, Channels);
 
 		TextureProxy = gEngine->GetRenderingDevice()->CreateTexture(Width, Height, Channels, usage);
-		TextureProxy->SetContent(Image);
+		TextureProxy->SetContentHDR(Image);
 		FreeImageHDR(Image);
 	}
 	else

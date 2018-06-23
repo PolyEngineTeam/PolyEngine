@@ -69,9 +69,9 @@ namespace Poly
 	class ENGINE_DLLEXPORT ITextureDeviceProxy : public BaseObject<>
 	{
 	public:
-		virtual void SetContent(const float* data) = 0;
 		virtual void SetContent(const unsigned char* data) = 0;
-		virtual void SetSubContent(size_t width, size_t height, size_t offsetX, size_t offsetY, eTextureDataFormat format, const unsigned char* data) = 0;
+		virtual void SetContentHDR(const float* data) = 0;
+		virtual void SetSubContent(size_t width, size_t height, size_t offsetX, size_t offsetY, const unsigned char* data) = 0;
 		virtual unsigned int GetResourceID() const = 0;
 	};
 
@@ -103,6 +103,7 @@ namespace Poly
 	{
 	public:
 		virtual void SetContent(const Mesh& mesh) = 0;
+		virtual unsigned int GetResourceID() const = 0;
 	};
 
 	class ENGINE_DLLEXPORT IParticleDeviceProxy : public BaseObject<>

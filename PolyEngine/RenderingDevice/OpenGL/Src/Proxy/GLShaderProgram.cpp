@@ -1,5 +1,5 @@
-#include "Common/GLShaderProgram.hpp"
-#include "Common/GLUtils.hpp"
+#include "Proxy/GLShaderProgram.hpp"
+#include "Proxy/GLUtils.hpp"
 
 SILENCE_MSVC_WARNING(4805, "Warning originates in std::regex");
 #include <regex>
@@ -9,7 +9,7 @@ UNSILENCE_MSVC_WARNING()
 
 using namespace Poly;
 
-//------------------------------------------------------------------------------
+
 GLShaderProgram::GLShaderProgram(const String& compute)
 {
 	gConsole.LogDebug("Creating shader program {}", compute);
@@ -55,13 +55,13 @@ GLShaderProgram::GLShaderProgram(const String& vertex, const String& geometry, c
 			AnalyzeShaderCode(type);
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::BindProgram() const
 {
 	glUseProgram(ProgramHandle);
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::CompileProgram()
 {
 	glLinkProgram(ProgramHandle);
@@ -80,7 +80,7 @@ void GLShaderProgram::CompileProgram()
 	}
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::Validate()
 {
 	int status = 0;
@@ -98,7 +98,7 @@ void GLShaderProgram::Validate()
 	}
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 {
 	GLuint shader = glCreateShader(GetEnumFromShaderUnitType(type));
@@ -130,13 +130,13 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 	CHECK_GL_ERR();
 }
 
-//------------------------------------------------------------------------------
+
 size_t GLShaderProgram::GetProgramHandle() const
 {
 	return ProgramHandle;
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::RegisterUniform(const String& type, const String& name)
 {
 	if (Uniforms.find(name) != Uniforms.end())
@@ -153,7 +153,7 @@ void GLShaderProgram::RegisterUniform(const String& type, const String& name)
 	CHECK_GL_ERR();
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::SetUniform(const String& name, int val)
 {
 	auto it = Uniforms.find(name);
@@ -164,7 +164,7 @@ void GLShaderProgram::SetUniform(const String& name, int val)
 	}
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::SetUniform(const String& name, uint val)
 {
 	auto it = Uniforms.find(name);
@@ -175,7 +175,7 @@ void GLShaderProgram::SetUniform(const String& name, uint val)
 	}
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::SetUniform(const String& name, float val)
 {
 	auto it = Uniforms.find(name);
@@ -186,7 +186,7 @@ void GLShaderProgram::SetUniform(const String& name, float val)
 	}
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::SetUniform(const String & name, float val1, float val2)
 {
 	auto it = Uniforms.find(name);
@@ -197,7 +197,7 @@ void GLShaderProgram::SetUniform(const String & name, float val1, float val2)
 	}
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::SetUniform(const String& name, const Vector& val)
 {
 	auto it = Uniforms.find(name);
@@ -208,7 +208,7 @@ void GLShaderProgram::SetUniform(const String& name, const Vector& val)
 	}
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::SetUniform(const String& name, const Color& val)
 {
 	auto it = Uniforms.find(name);
@@ -219,7 +219,7 @@ void GLShaderProgram::SetUniform(const String& name, const Color& val)
 	}
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::SetUniform(const String& name, const Matrix& val)
 {
 	auto it = Uniforms.find(name);
@@ -230,7 +230,20 @@ void GLShaderProgram::SetUniform(const String& name, const Matrix& val)
 	}
 }
 
-//------------------------------------------------------------------------------
+void GLShaderProgram::BindSampler(const String& name, const unsigned int samplerID, const unsigned int textureID)
+{
+	glActiveTexture(GL_TEXTURE0 + samplerID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	SetUniform(name, samplerID);
+}
+
+void GLShaderProgram::BindSamplerCube(const String& name, const unsigned int samplerID, const unsigned int cubemapID)
+{
+	glActiveTexture(GL_TEXTURE0 + samplerID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapID);
+	SetUniform(name, samplerID);
+}
+
 GLenum GLShaderProgram::GetEnumFromShaderUnitType(eShaderUnitType type)
 {
 	switch (type)
@@ -245,7 +258,7 @@ GLenum GLShaderProgram::GetEnumFromShaderUnitType(eShaderUnitType type)
 	}
 }
 
-//------------------------------------------------------------------------------
+
 void Poly::GLShaderProgram::AnalyzeShaderCode(eShaderUnitType type)
 {
 	static const std::regex uniformRegex(R"(uniform\s+(\w+)\s+(\w+)\s*;)", std::regex::ECMAScript);

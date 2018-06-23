@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common/GLUtils.hpp"
+#include "Proxy/GLUtils.hpp"
 
 namespace Poly
 {

@@ -1,5 +1,5 @@
 #include "Proxy/GLTextFieldBufferDeviceProxy.hpp"
-#include "Common/GLUtils.hpp"
+#include "Proxy/GLUtils.hpp"
 
 using namespace Poly;
 

@@ -1,6 +1,6 @@
 #include "Proxy/GLCubemapDeviceProxy.hpp"
 #include "Proxy/GLTextureDeviceProxy.hpp"
-#include "Common/GLUtils.hpp"
+#include "Proxy/GLUtils.hpp"
 
 using namespace Poly;
 

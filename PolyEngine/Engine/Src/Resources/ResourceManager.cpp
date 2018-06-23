@@ -49,11 +49,16 @@ void Poly::SaveTextFileRelative(eResourceSource Source, const String& path, cons
 
 float* Poly::LoadImageHDR(const String& path, int* width, int* height, int* channels)
 {
+	if (!stbi_is_hdr(path.GetCStr()))
+	{
+		gConsole.LogWarning("Poly::LoadImageHDR LDR file spotted, scalling to HDR and gamma change may appear!");
+	}
+
 	stbi_set_flip_vertically_on_load(true);
 	float *data = stbi_loadf(path.GetCStr(), width, height, channels, 0);
 	if (!data)
 	{
-		gConsole.LogInfo("Poly::LoadImageHDR Failed to load: {}", path);
+		gConsole.LogInfo("Poly::LoadImageHDR Failed to load: {}, reason: {}", path, stbi_failure_reason());
 	}
 	return data;
 }
@@ -65,6 +70,11 @@ void Poly::FreeImageHDR(float* data)
 
 unsigned char* Poly::LoadImage(const String& path, int* width, int* height, int* channels)
 {
+	if (stbi_is_hdr(path.GetCStr()))
+	{
+		gConsole.LogWarning("Poly::LoadImageHDR HDR file spotted, scalling to LDR and gamma change may appear!");
+	}
+
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char *data = stbi_load(path.GetCStr(), width, height, channels, 0);
 	// ... process data if not NULL ...
@@ -75,7 +85,7 @@ unsigned char* Poly::LoadImage(const String& path, int* width, int* height, int*
 
 	if (!data)
 	{
-	 gConsole.LogInfo("Poly::LoadImage Failed to load: {}", path);
+	 gConsole.LogInfo("Poly::LoadImage Failed to load: {}, reason: {}", path, stbi_failure_reason());
 	}
 	return data;
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Rendering/IRenderingDevice.hpp>
-#include "Common/GLUtils.hpp"
+#include "Proxy/GLUtils.hpp"
 
 namespace Poly
 {
@@ -22,9 +22,9 @@ namespace Poly
 		GLTextureDeviceProxy(size_t width, size_t height, size_t channels, eTextureUsageType usage);
 		virtual ~GLTextureDeviceProxy();
 		
-		void SetContent(const float* data) override;
 		void SetContent(const unsigned char* data) override;
-		void SetSubContent(size_t width, size_t height, size_t offsetX, size_t offsetY, eTextureDataFormat format, const unsigned char* data) override;
+		void SetContentHDR(const float* data) override;
+		void SetSubContent(size_t width, size_t height, size_t offsetX, size_t offsetY, const unsigned char* data) override;
 		unsigned int GetResourceID() const override { return TextureID; };
 
 		GLuint GetTextureID() const { return TextureID; }
@@ -33,7 +33,6 @@ namespace Poly
 
 	private:
 		void InitTextureParams();
-
 		void InitTextureHDR();
 		void InitTextureFont();
 		void InitTextureGamma();

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Common/GLUtils.hpp"
+#include "Proxy/GLUtils.hpp"
 #include <Rendering/IRenderingDevice.hpp>
-#include "Common/GLShaderProgram.hpp"
+#include "Proxy/GLShaderProgram.hpp"
 #include <SDL.h>
 
 struct SDL_Window;

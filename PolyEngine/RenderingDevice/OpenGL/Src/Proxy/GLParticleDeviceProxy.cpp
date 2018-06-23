@@ -1,6 +1,6 @@
 #include "Proxy/GLMeshDeviceProxy.hpp"
 #include "Math/Vector3f.hpp"
-#include "Common/GLUtils.hpp"
+#include "Proxy/GLUtils.hpp"
 #include "Proxy/GLParticleDeviceProxy.hpp"
 #include "Rendering/Particles/ParticleEmitter.hpp"
 #include <algorithm>

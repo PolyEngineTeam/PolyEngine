@@ -171,7 +171,7 @@ void Poly::FontResource::LoadFace(size_t height) const
 		ASSERTE(face.FTFace->glyph->bitmap.pitch >= 0 , "Negative pitch is not supported!");
 
 		if(glyphSize.width > 0 && glyphSize.height > 0)
-			face.TextureProxy->SetSubContent(glyphSize.width, glyphSize.height, xoffset, yoffset, eTextureDataFormat::RED, face.FTFace->glyph->bitmap.buffer);
+			face.TextureProxy->SetSubContent(glyphSize.width, glyphSize.height, xoffset, yoffset, face.FTFace->glyph->bitmap.buffer);
 	}
 
 	gConsole.LogDebug("Face of size {} for font {} loaded sucessfully! Texture size: {} x {}", height, FontPath, TEXTURE_WIDTH, estimatedTextureHeight);
