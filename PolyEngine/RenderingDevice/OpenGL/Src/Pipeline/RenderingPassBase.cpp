@@ -227,11 +227,11 @@ RenderingTargetBase* RenderingPassBase::GetOutputTarget(const String& name)
 }
 
 Poly::Texture2DRenderingTarget::Texture2DRenderingTarget(GLuint format)
-	: Texture2DRenderingTarget(format, eInternalTextureUsageType::COLOR_ATTACHEMENT)
+	: Texture2DRenderingTarget(format, eRenderTargetType::COLOR_ATTACHEMENT)
 {
 }
 
-Poly::Texture2DRenderingTarget::Texture2DRenderingTarget(GLuint format, eInternalTextureUsageType internalUsage)
+Poly::Texture2DRenderingTarget::Texture2DRenderingTarget(GLuint format, eRenderTargetType internalUsage)
 	: /*Format(format),*/ InternalUsage(internalUsage)
 {
 	ScreenSize size = gRenderingDevice->GetScreenSize();
@@ -249,7 +249,7 @@ GLuint Poly::Texture2DRenderingTarget::GetTextureID()
 }
 
 Poly::DepthRenderingTarget::DepthRenderingTarget()
-	: Texture2DRenderingTarget(GL_DEPTH_COMPONENT24, eInternalTextureUsageType::DEPTH_ATTACHEMENT)
+	: Texture2DRenderingTarget(GL_DEPTH_COMPONENT24, eRenderTargetType::DEPTH_ATTACHEMENT)
 {
 }
 

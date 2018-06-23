@@ -15,7 +15,7 @@ namespace Poly
 		TextureResource(const String& path, eTextureUsageType textureUsageType);
 		~TextureResource() override;
 
-		unsigned char* GetImage() const { return Image; }
+		// float* GetImage() const { return Image; }
 		int GetWidth() const { return Width; }
 		int GetHeight() const { return Height; }
 		int GetChannels() const { return Channels; }
@@ -24,10 +24,12 @@ namespace Poly
 
 	private:
 		std::unique_ptr<ITextureDeviceProxy> TextureProxy;
-		unsigned char* Image;
+		// float* Image;
 		int Width;
 		int Height;
 		int Channels;
+
+		eTextureDataFormat GetFormat(int channels);
 	};
 }
 

@@ -11,7 +11,7 @@ namespace Poly
 		GLCubemapDeviceProxy(size_t width, size_t height);
 		virtual ~GLCubemapDeviceProxy();
 		
-		void SetContent(const eCubemapSide side, const unsigned char* data) override;
+		void SetContent(const eCubemapSide side, const float* data) override;
 
 		GLuint GetTextureID() const { return TextureID; }
 

@@ -113,7 +113,7 @@ bool GLRenderingDevice::CreateContextFallback()
 	return isSuccessfull;
 }
 
-//------------------------------------------------------------------------------
+
 GLRenderingDevice::~GLRenderingDevice()
 {
 	Renderer->Deinit();
@@ -126,14 +126,14 @@ GLRenderingDevice::~GLRenderingDevice()
 	gRenderingDevice = nullptr;
 }
 
-//------------------------------------------------------------------------------
+
 void GLRenderingDevice::EndFrame()
 {
 	if(Window && Context)
 		SDL_GL_SwapWindow(Window);
 }
 
-//------------------------------------------------------------------------------
+
 void GLRenderingDevice::Resize(const ScreenSize& size)
 {
 	ScreenDim = size;
@@ -168,14 +168,14 @@ void GLRenderingDevice::GetExtensions()
 	}
 }
 
-//------------------------------------------------------------------------------
+
 template<typename T>
 inline void GLRenderingDevice::RegisterGeometryPass(eGeometryRenderPassType type, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
 {
 	RegisterGeometryPassWithArgs<T>(type, inputs, outputs);
 }
 
-//------------------------------------------------------------------------------
+
 template<typename T, class... Args_t>
 inline void GLRenderingDevice::RegisterGeometryPassWithArgs(eGeometryRenderPassType type, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs, Args_t&&... args)
 {
@@ -190,7 +190,7 @@ inline void GLRenderingDevice::RegisterGeometryPassWithArgs(eGeometryRenderPassT
 	GeometryRenderingPasses[type]->Finalize();
 }
 
-//------------------------------------------------------------------------------
+
 template<typename T, typename... Args>
 T* Poly::GLRenderingDevice::CreateRenderingTarget(eRenderTargetId type, Args&&... args)
 {
@@ -199,7 +199,7 @@ T* Poly::GLRenderingDevice::CreateRenderingTarget(eRenderTargetId type, Args&&..
 	return target;
 }
 
-//------------------------------------------------------------------------------
+
 void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
 {
 	PostprocessRenderingPasses[type] = std::make_unique<PostprocessRenderingPass>(this, fragShaderName);
@@ -213,36 +213,36 @@ void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType
 	PostprocessRenderingPasses[type]->Finalize();
 }
 
-//------------------------------------------------------------------------------
+
 void GLRenderingDevice::InitPrograms()
 {
 	// Init input textures
 	//Texture2DInputTarget* RGBANoise256 = CreateRenderingTarget<Texture2DInputTarget>("Textures/RGBANoise256x256.png");
 
 	// Init programs
-	Texture2DRenderingTarget* texture = CreateRenderingTarget<Texture2DRenderingTarget>(eRenderTargetId::COLOR, GL_R11F_G11F_B10F);
-	DepthRenderingTarget* depth = CreateRenderingTarget<DepthRenderingTarget>(eRenderTargetId::DEPTH);
+	// Texture2DRenderingTarget* texture = CreateRenderingTarget<Texture2DRenderingTarget>(eRenderTargetId::COLOR, GL_R11F_G11F_B10F);
+	// DepthRenderingTarget* depth = CreateRenderingTarget<DepthRenderingTarget>(eRenderTargetId::DEPTH);
 	// Texture2DRenderingTarget* depth2 = CreateRenderingTarget<Texture2DRenderingTarget>(GL_R16F);
 
-	RegisterGeometryPass<UnlitRenderingPass>(eGeometryRenderPassType::UNLIT, {}, { { "color", texture },{ "depth", depth } });
-	RegisterGeometryPass<BlinnPhongRenderingPass>(eGeometryRenderPassType::BLINN_PHONG, {}, { { "color", texture }, { "depth", depth } });
-	RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS, {}, { { "color", texture },{ "depth", depth } });
-	RegisterGeometryPass<DebugRenderingPass>(eGeometryRenderPassType::IMMEDIATE_DEBUG, {}, { { "color", texture },{ "depth", depth } });
-	RegisterGeometryPass<DebugNormalsWireframeRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS_WIREFRAME, {}, { { "color", texture },{ "depth", depth } });
-	RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, {}, { { "color", texture },{ "depth", depth } });
-	RegisterGeometryPass<ParticlesRenderingPass>(eGeometryRenderPassType::PARTICLES, {}, { { "color", texture },{ "depth", depth } });
-	RegisterGeometryPassWithArgs<SkyboxRenderingPass>(eGeometryRenderPassType::SKYBOX, {}, { { "color", texture },{ "depth", depth } });
-	RegisterGeometryPassWithArgs<SpritesheetRenderingPass>(eGeometryRenderPassType::TRANSPARENT_SPRITESHEET, {}, { { "color", texture },{ "depth", depth } });
-	RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } });
-	
-	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND,			"Shaders/bg.frag.glsl",		{}, { { "o_color", texture },	{ "depth", depth } });
-	RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND_LIGHT,	"Shaders/bgLight.frag.glsl",	{}, { { "o_color", texture },	{ "depth", depth } });
-	RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND,			"Shaders/fg.frag.glsl",		{ { "i_color", texture } },		{} );
-	RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND_LIGHT,	"Shaders/fgLight.frag.glsl",	{ { "i_color", texture } },		{} );
-	RegisterPostprocessPass(ePostprocessRenderPassType::VINETTE,			"Shaders/vinette.frag.glsl",	{ { "i_color", texture } } );
+	// RegisterGeometryPass<UnlitRenderingPass>(eGeometryRenderPassType::UNLIT, {}, { { "color", texture },{ "depth", depth } });
+	// RegisterGeometryPass<BlinnPhongRenderingPass>(eGeometryRenderPassType::BLINN_PHONG, {}, { { "color", texture }, { "depth", depth } });
+	// RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS, {}, { { "color", texture },{ "depth", depth } });
+	// RegisterGeometryPass<DebugRenderingPass>(eGeometryRenderPassType::IMMEDIATE_DEBUG, {}, { { "color", texture },{ "depth", depth } });
+	// RegisterGeometryPass<DebugNormalsWireframeRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS_WIREFRAME, {}, { { "color", texture },{ "depth", depth } });
+	// RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, {}, { { "color", texture },{ "depth", depth } });
+	// RegisterGeometryPass<ParticlesRenderingPass>(eGeometryRenderPassType::PARTICLES, {}, { { "color", texture },{ "depth", depth } });
+	// RegisterGeometryPassWithArgs<SkyboxRenderingPass>(eGeometryRenderPassType::SKYBOX, {}, { { "color", texture },{ "depth", depth } });
+	// RegisterGeometryPassWithArgs<SpritesheetRenderingPass>(eGeometryRenderPassType::TRANSPARENT_SPRITESHEET, {}, { { "color", texture },{ "depth", depth } });
+	// RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } });
+	// 
+	// RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND,			"Shaders/bg.frag.glsl",		{}, { { "o_color", texture },	{ "depth", depth } });
+	// RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND_LIGHT,	"Shaders/bgLight.frag.glsl",	{}, { { "o_color", texture },	{ "depth", depth } });
+	// RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND,			"Shaders/fg.frag.glsl",		{ { "i_color", texture } },		{} );
+	// RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND_LIGHT,	"Shaders/fgLight.frag.glsl",	{ { "i_color", texture } },		{} );
+	// RegisterPostprocessPass(ePostprocessRenderPassType::VINETTE,			"Shaders/vinette.frag.glsl",	{ { "i_color", texture } } );
 }
 
-//------------------------------------------------------------------------------
+
 void Poly::GLRenderingDevice::CleanUpResources()
 {
 	for (eRenderTargetId targetType : IterateEnum<eRenderTargetId>())
@@ -258,10 +258,10 @@ void Poly::GLRenderingDevice::CleanUpResources()
 	PrimitivesCube.reset();
 }
 
-//------------------------------------------------------------------------------
-std::unique_ptr<ITextureDeviceProxy> GLRenderingDevice::CreateTexture(size_t width, size_t height, eTextureUsageType usage)
+
+std::unique_ptr<ITextureDeviceProxy> GLRenderingDevice::CreateTexture(size_t width, size_t height, size_t channels, eTextureUsageType usage)
 {
-	return std::make_unique<GLTextureDeviceProxy>(width, height, usage);
+	return std::make_unique<GLTextureDeviceProxy>(width, height, channels, usage);
 }
 
 std::unique_ptr<ICubemapDeviceProxy> Poly::GLRenderingDevice::CreateCubemap(size_t width, size_t height)
@@ -269,13 +269,13 @@ std::unique_ptr<ICubemapDeviceProxy> Poly::GLRenderingDevice::CreateCubemap(size
 	return std::make_unique<GLCubemapDeviceProxy>(width, height);
 }
 
-//------------------------------------------------------------------------------
+
 std::unique_ptr<ITextFieldBufferDeviceProxy> GLRenderingDevice::CreateTextFieldBuffer()
 {
 	return std::make_unique<GLTextFieldBufferDeviceProxy>();
 }
 
-//------------------------------------------------------------------------------
+
 std::unique_ptr<IMeshDeviceProxy> GLRenderingDevice::CreateMesh()
 {
 	return std::make_unique<GLMeshDeviceProxy>();

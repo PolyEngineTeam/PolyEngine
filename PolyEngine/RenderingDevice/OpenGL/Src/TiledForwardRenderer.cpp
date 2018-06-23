@@ -26,13 +26,13 @@
 #include <Time/TimeWorldComponent.hpp>
 #include <UI/ScreenSpaceTextComponent.hpp>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "Common/stb_image.hpp"
+// #define STB_IMAGE_IMPLEMENTATION
+// #include "Common/stb_image.hpp"
 
 using namespace Poly;
 
 TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
-	: IRendererInterface(rdi),
+	: IRendererInterface(rdi), SkyboxCapture(rdi),
 	DepthShader("Shaders/depth.vert.glsl", "Shaders/depth.frag.glsl"),
 	LightCullingShader("Shaders/light_culling.comp.glsl"),
 	LightAccumulationShader("Shaders/lightAccumulation.vert.glsl", "Shaders/lightAccumulation.frag.glsl"),
@@ -44,9 +44,6 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	ParticleShader("Shaders/instanced.vert.glsl", "Shaders/instanced.frag.glsl"),
 	TranslucentShader("Shaders/transparent.vert.glsl", "Shaders/transparent.frag.glsl"),
 	EquiToCubemapShader("Shaders/equiHdr.vert.glsl", "Shaders/equiHdr.frag.glsl"),
-	EquirectangularToCubemapShader("Shaders/equiToCubemap.vert.glsl", "Shaders/equiToCubemap.frag.glsl"),
-	CubemapIrradianceShader("Shaders/cubemapIrradiance.vert.glsl", "Shaders/cubemapIrradiance.frag.glsl"),
-	PrefilterCubemapShader("Shaders/prefilterCubemap.vert.glsl", "Shaders/prefilterCubemap.frag.glsl"),
 	IntegrateBRDFShader("Shaders/hdr.vert.glsl", "Shaders/integrateBRDF.frag.glsl"),
 	Text2DShader("Shaders/text2D.vert.glsl", "Shaders/text2D.frag.glsl"),
 	EditorDebugShader("Shaders/debug.vert.glsl", "Shaders/debug.frag.glsl"),
@@ -109,20 +106,10 @@ void TiledForwardRenderer::Init()
 
 	gConsole.LogInfo("TiledForwardRenderer::Init SCREEN_SIZE: ({},{})", screenSize.Width, screenSize.Height);
 
-	LoadHDR();
-
-	CaptureCubemap();
-
-	CaptureDifuseIrradiance();
-
-	CaptureSpecularPrefilteredMap();
-
-	CapturePreintegratedBRDF();
-
 	CreateRenderTargets(screenSize);
-
+	 
 	CreateLightBuffers(screenSize);
-
+	 
 	SetupLightsBufferFromScene();
 
 	glDepthMask(GL_TRUE);
@@ -130,262 +117,6 @@ void TiledForwardRenderer::Init()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-}
-
-void TiledForwardRenderer::LoadHDR()
-{
-	// TODO: move to texture resource
-	String absoluteHDRPath = gAssetsPathConfig.GetAssetsPath(eResourceSource::GAME) + "HDR/HDR.hdr";
-	gConsole.LogInfo("TiledForwardRenderer::Init absoluteHDRPath: {}", absoluteHDRPath);
-	stbi_set_flip_vertically_on_load(true);
-	int width, height, nrComponents;
-	float *data = stbi_loadf(absoluteHDRPath.GetCStr(), &width, &height, &nrComponents, 0);
-	if (data)
-	{
-		glGenTextures(1, &HDRTexture);
-		glBindTexture(GL_TEXTURE_2D, HDRTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		stbi_image_free(data);
-	}
-	else
-	{
-		gConsole.LogInfo("TiledForwardRenderer::Init Failed to load HDR image.");
-	}
-}
-
-void TiledForwardRenderer::CaptureCubemap()
-{
-	// create cube map resource for capture
-	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap create cubemap resource");
-	glGenTextures(1, &EnvCubemap);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, EnvCubemap);
-	for (GLuint i = 0; i < 6; ++i)
-	{
-		// note that we store each face with 16 bit floating point values
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
-	}
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	// glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap cubemap resource created");
-
-	// Create FBO for HDR capture
-	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap Create capture FBO");
-	GLuint captureFBO;
-	GLuint captureRBO;
-	glGenFramebuffers(1, &captureFBO);
-	glGenRenderbuffers(1, &captureRBO);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap Capture FBO created");
-
-	// Projection
-	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap create matrices");
-	Matrix uClipFromView;
-	uClipFromView.SetPerspective(90.0_deg, 1.0f, 0.1f, 10.0f);
-
-	Matrix ViewFromModel[] =
-	{
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector( 1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector( 0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector( 0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector( 0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector( 0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
-	};
-	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap matrices created");
-	
-	// convert HDR equirectangular environment map to cubemap equivalent
-	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap start cubemap rendering loop");
-	EquirectangularToCubemapShader.BindProgram();
-	EquirectangularToCubemapShader.SetUniform("uEquirectangularMap", 0);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, HDRTexture);
-	 
-	glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	for (unsigned int i = 0; i < 6; ++i)
-	{
-		gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap cubemap rendering: {}", i);
-		EquirectangularToCubemapShader.SetUniform("uClipFromModel", uClipFromView * ViewFromModel[i]);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, EnvCubemap, 0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		 
-		// renderCube(); // renders a 1x1 cube
-		glBindVertexArray(RDI->PrimitivesCube->VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
-	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap cubemap rendered");
-
-	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap generate env cubemap mipmaps");
-	glBindTexture(GL_TEXTURE_CUBE_MAP, EnvCubemap);
-	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-	gConsole.LogInfo("TiledForwardRenderer::CaptureCubemap env cubemap mipmaps generated");
-}
-
-void TiledForwardRenderer::CaptureDifuseIrradiance()
-{
-	glGenTextures(1, &IrradianceMap);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, IrradianceMap);
-	for (unsigned int i = 0; i < 6; ++i)
-	{
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 32, 32, 0, GL_RGB, GL_FLOAT, nullptr);
-	}
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	// Create FBO for HDR capture
-	gConsole.LogInfo("TiledForwardRenderer::CaptureIrradiance Create capture FBO");
-	GLuint captureFBO;
-	GLuint captureRBO;
-	glGenFramebuffers(1, &captureFBO);
-	glGenRenderbuffers(1, &captureRBO);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-	gConsole.LogInfo("TiledForwardRenderer::CaptureIrradiance Capture FBO created");
-
-	// Projection
-	gConsole.LogInfo("TiledForwardRenderer::CaptureIrradiance create matrices");
-	Matrix uClipFromView;
-	uClipFromView.SetPerspective(90.0_deg, 1.0f, 0.1f, 10.0f);
-
-	Matrix ViewFromModel[] =
-	{
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
-	};
-	gConsole.LogInfo("TiledForwardRenderer::CaptureIrradiance matrices created");
-
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
-
-	CubemapIrradianceShader.BindProgram();
-	CubemapIrradianceShader.SetUniform("uEnvCubemap", 0);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, EnvCubemap);
-
-	glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	for (unsigned int i = 0; i < 6; ++i)
-	{
-		CubemapIrradianceShader.SetUniform("uClipFromModel", uClipFromView * ViewFromModel[i]);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, IrradianceMap, 0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		glBindVertexArray(RDI->PrimitivesCube->VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
-	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void TiledForwardRenderer::CaptureSpecularPrefilteredMap()
-{
-	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap create cubemap resource");
-	glGenTextures(1, &PrefilterMap);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, PrefilterMap);
-	for (unsigned int i = 0; i < 6; ++i)
-	{
-		// glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 128, 128, 0, GL_RGB, GL_FLOAT, nullptr);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
-	}
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap cubemap resource created");
-
-	// Create FBO for HDR capture
-	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap Create capture FBO");
-	GLuint captureFBO;
-	GLuint captureRBO;
-	glGenFramebuffers(1, &captureFBO);
-	glGenRenderbuffers(1, &captureRBO);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap Capture FBO created");
-
-	// Projection
-	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap create matrices");
-	Matrix uClipFromView;
-	uClipFromView.SetPerspective(90.0_deg, 1.0f, 0.1f, 10.0f);
-
-	Matrix ViewFromModel[] =
-	{
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
-	};
-	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap matrices created");
-
-	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap capture prefiltered cubemap");
-	PrefilterCubemapShader.BindProgram();
-	PrefilterCubemapShader.SetUniform("uEnvironmentMap", 0);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, EnvCubemap);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	unsigned int maxMipLevels = 5;
-	for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
-	{
-		// reisze framebuffer according to mip-level size.
-		// unsigned int mipWidth = 128 * std::pow(0.5, mip);
-		// unsigned int mipHeight = 128 * std::pow(0.5, mip);
-		unsigned int mipWidth = 512 * (unsigned int)std::pow(0.5f, mip);
-		unsigned int mipHeight = 512 * (unsigned int)std::pow(0.5f, mip);
-		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
-		glViewport(0, 0, mipWidth, mipHeight);
-
-		float roughness = (float)mip / (float)(maxMipLevels - 1);
-		PrefilterCubemapShader.SetUniform("uRoughness", roughness);
-		for (unsigned int i = 0; i < 6; ++i)
-		{
-			PrefilterCubemapShader.SetUniform("uClipFromModel", uClipFromView * ViewFromModel[i]);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, PrefilterMap, mip);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			
-			glBindVertexArray(RDI->PrimitivesCube->VAO);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-			glBindVertexArray(0);
-		}
-	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	gConsole.LogInfo("TiledForwardRenderer::CaptureSpecularPrefilteredMap prefiltered cubemap captured");
 }
 
 void TiledForwardRenderer::CapturePreintegratedBRDF()
@@ -629,22 +360,27 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 
 	UpdateLightsBufferFromScene(sceneView);
 
+	UpdateEnvCapture(sceneView);
+	
+	const ScreenSize screenSize = RDI->GetScreenSize();
+
+	glViewport((int)(sceneView.Rect.GetMin().X * screenSize.Width), (int)(sceneView.Rect.GetMin().Y * screenSize.Height),
+		(int)(sceneView.Rect.GetSize().X * screenSize.Width), (int)(sceneView.Rect.GetSize().Y * screenSize.Height));
+	
 	RenderDepthPrePass(sceneView);
-
+	
 	ComputeLightCulling(sceneView);
-
+	
 	RenderOpaqueLit(sceneView);
-
+	
 	RenderSkybox(sceneView);
-
-	// RenderEquiCube(sceneView);
 
 	// RenderTranslucentLit(sceneView);
 
 	// RenderParticleUnlit(sceneView.world, sceneView.cameraCmp);
 
 	LinearizeDepth(sceneView);
-
+	
 	PostTonemapper(sceneView);
 
 	// PostSSAO(cameraCmp);
@@ -654,6 +390,24 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 	UIText2D(sceneView);
 
 	PostGamma();
+}
+
+void TiledForwardRenderer::UpdateEnvCapture(const SceneView& sceneView)
+{
+	gConsole.LogInfo("TiledForwardRenderer::UpdateEnvCapture");
+
+	if (SkyboxCapture.GetIsDirty())
+	{
+		const SkyboxWorldComponent* skyboxWorldCmp = sceneView.WorldData->GetWorldComponent<SkyboxWorldComponent>();
+		if (skyboxWorldCmp != nullptr)
+		{
+			SkyboxCapture.UpdateEnv(skyboxWorldCmp);
+		}
+		else
+		{
+			gConsole.LogInfo("TiledForwardRenderer::UpdateEnvCapture SkyboxWorldComponent not found!");
+		}
+	}
 }
 
 void TiledForwardRenderer::RenderEquiCube(const SceneView& sceneView)
@@ -822,11 +576,11 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 				glBindVertexArray(meshProxy->GetVAO());
 
 				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_CUBE_MAP, IrradianceMap);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, SkyboxCapture.GetIrradianceMap() ? SkyboxCapture.GetIrradianceMap() : RDI->FallbackWhiteTexture);
 				LightAccumulationShader.SetUniform("uIrradianceMap", 0);
 
 				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_CUBE_MAP, PrefilterMap);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, SkyboxCapture.GetPrefilterMap() ? SkyboxCapture.GetPrefilterMap() : RDI->FallbackWhiteTexture);
 				LightAccumulationShader.SetUniform("uPrefilterMap", 1);
 
 				glActiveTexture(GL_TEXTURE2);
@@ -904,6 +658,8 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 {
+	float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.WorldData, eEngineTimer::GAMEPLAY);
+	 
 	// const SkyboxWorldComponent* skyboxWorldCmp = world->GetWorldComponent<SkyboxWorldComponent>();
 	// if (skyboxWorldCmp != nullptr)
 	// {
@@ -919,9 +675,7 @@ void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 
 		SkyboxShader.BindProgram();
 		SkyboxShader.SetUniform("uClipFromWorld", clipFromWorld);
-		// SkyboxShader.SetUniform("uTime", Time);
-
-		// GLuint CubemapID = static_cast<const GLCubemapDeviceProxy*>(SkyboxWorldCmp->GetCubemap().GetTextureProxy(->GetResourceID());
+		SkyboxShader.SetUniform("uTime", time);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
 		
@@ -932,10 +686,9 @@ void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 		glDepthFunc(GL_LEQUAL);
 
 		glActiveTexture(GL_TEXTURE0);
-		// glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapID);
-		// glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
-		// glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, EnvCubemap);
+		// glBindTexture(GL_TEXTURE_CUBE_MAP, SkyboxCapture.GetEnvCubemap());
+		// glBindTexture(GL_TEXTURE_CUBE_MAP, SkyboxCapture.GetIrradianceMap());
+		glBindTexture(GL_TEXTURE_CUBE_MAP, SkyboxCapture.GetPrefilterMap());
 
 		glBindVertexArray(RDI->PrimitivesCube->VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -1311,7 +1064,7 @@ void TiledForwardRenderer::UIText2D(const SceneView& sceneView)
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
 	}
-	CHECK_GL_ERR();
+	// CHECK_GL_ERR();
 
 	glPolygonMode(GL_FRONT, GL_FILL);
 	glDisable(GL_BLEND);
@@ -1459,4 +1212,271 @@ void TiledForwardRenderer::DebugLightAccum(const SceneView& sceneView)
 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
+}
+
+
+EnvCapture::EnvCapture(GLRenderingDevice* rdi)
+	: RDI(rdi),
+	EquirectangularToCubemapShader("Shaders/equiToCubemap.vert.glsl", "Shaders/equiToCubemap.frag.glsl"),
+	CubemapIrradianceShader("Shaders/cubemapIrradiance.vert.glsl", "Shaders/cubemapIrradiance.frag.glsl"),
+	PrefilterCubemapShader("Shaders/prefilterCubemap.vert.glsl", "Shaders/prefilterCubemap.frag.glsl")
+{
+}
+
+void EnvCapture::UpdateEnv(const SkyboxWorldComponent* skyboxCmp)
+{
+	if (skyboxCmp->GetPanorama() == nullptr)
+	{		
+		gConsole.LogInfo("r::UpdateEnv SkyboxWorldComponent panorama is null! Abording!");
+		return;
+	}
+
+	CaptureCubemap(skyboxCmp);
+
+	CaptureDiffuseIrradiance();
+
+	CaptureSpecularPrefilteredMap();
+
+	IsDirty = false;
+}
+
+void EnvCapture::CaptureCubemap(const SkyboxWorldComponent* skyboxCmp)
+{
+	// create cube map resource for capture
+	gConsole.LogInfo("EnvCapture::CaptureCubemap create cubemap resource");
+	glGenTextures(1, &EnvCubemap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, EnvCubemap);
+	for (GLuint i = 0; i < 6; ++i)
+	{
+		// note that we store each face with 16 bit floating point values
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	// glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	gConsole.LogInfo("EnvCapture::CaptureCubemap cubemap resource created");
+
+	// Create FBO for HDR capture
+	gConsole.LogInfo("EnvCapture::CaptureCubemap Create capture FBO");
+	GLuint captureFBO;
+	GLuint captureRBO;
+	glGenFramebuffers(1, &captureFBO);
+	glGenRenderbuffers(1, &captureRBO);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+	gConsole.LogInfo("EnvCapture::CaptureCubemap Capture FBO created");
+
+	// Projection
+	gConsole.LogInfo("EnvCapture::CaptureCubemap create matrices");
+	Matrix uClipFromView;
+	uClipFromView.SetPerspective(90.0_deg, 1.0f, 0.1f, 10.0f);
+
+	Matrix ViewFromModel[] =
+	{
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
+	};
+	gConsole.LogInfo("EnvCapture::CaptureCubemap matrices created");
+
+	// convert HDR equirectangular environment map to cubemap equivalent
+	gConsole.LogInfo("EnvCapture::CaptureCubemap start cubemap rendering loop");
+	EquirectangularToCubemapShader.BindProgram();
+	EquirectangularToCubemapShader.SetUniform("uEquirectangularMap", 0);
+	glActiveTexture(GL_TEXTURE0);
+	GLuint HDRTexture = (GLuint)(skyboxCmp->GetPanorama()->GetTextureProxy()->GetResourceID());
+	glBindTexture(GL_TEXTURE_2D, HDRTexture);
+
+	glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		gConsole.LogInfo("EnvCapture::CaptureCubemap cubemap rendering: {}", i);
+		EquirectangularToCubemapShader.SetUniform("uClipFromModel", uClipFromView * ViewFromModel[i]);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, EnvCubemap, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// renderCube(); // renders a 1x1 cube
+		glBindVertexArray(RDI->PrimitivesCube->VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	gConsole.LogInfo("EnvCapture::CaptureCubemap cubemap rendered");
+
+	gConsole.LogInfo("EnvCapture::CaptureCubemap generate env cubemap mipmaps");
+	glBindTexture(GL_TEXTURE_CUBE_MAP, EnvCubemap);
+	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+	gConsole.LogInfo("EnvCapture::CaptureCubemap env cubemap mipmaps generated");
+}
+
+void EnvCapture::CaptureDiffuseIrradiance()
+{
+	glGenTextures(1, &IrradianceMap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, IrradianceMap);
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 32, 32, 0, GL_RGB, GL_FLOAT, nullptr);
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// Create FBO for HDR capture
+	gConsole.LogInfo("EnvCapture::CaptureIrradiance Create capture FBO");
+	GLuint captureFBO;
+	GLuint captureRBO;
+	glGenFramebuffers(1, &captureFBO);
+	glGenRenderbuffers(1, &captureRBO);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+	gConsole.LogInfo("EnvCapture::CaptureIrradiance Capture FBO created");
+
+	// Projection
+	gConsole.LogInfo("EnvCapture::CaptureIrradiance create matrices");
+	Matrix uClipFromView;
+	uClipFromView.SetPerspective(90.0_deg, 1.0f, 0.1f, 10.0f);
+
+	Matrix ViewFromModel[] =
+	{
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
+	};
+	gConsole.LogInfo("EnvCapture::CaptureIrradiance matrices created");
+
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
+
+	CubemapIrradianceShader.BindProgram();
+	CubemapIrradianceShader.SetUniform("uEnvCubemap", 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, EnvCubemap);
+
+	glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		CubemapIrradianceShader.SetUniform("uClipFromModel", uClipFromView * ViewFromModel[i]);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, IrradianceMap, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glBindVertexArray(RDI->PrimitivesCube->VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+	}
+	
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+}
+
+void EnvCapture::CaptureSpecularPrefilteredMap()
+{
+	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap create cubemap resource");
+	glGenTextures(1, &PrefilterMap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, PrefilterMap);
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		// glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 128, 128, 0, GL_RGB, GL_FLOAT, nullptr);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap cubemap resource created");
+
+	// Create FBO for HDR capture
+	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap Create capture FBO");
+	GLuint captureFBO;
+	GLuint captureRBO;
+	glGenFramebuffers(1, &captureFBO);
+	glGenRenderbuffers(1, &captureRBO);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap Capture FBO created");
+
+	// Projection
+	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap create matrices");
+	Matrix uClipFromView;
+	uClipFromView.SetPerspective(90.0_deg, 1.0f, 0.1f, 10.0f);
+
+	Matrix ViewFromModel[] =
+	{
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
+		Matrix(Vector(0.0f, 0.0f, 0.0f), Vector(0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
+	};	
+
+	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap capture prefiltered cubemap");
+	PrefilterCubemapShader.BindProgram();
+	PrefilterCubemapShader.SetUniform("uEnvironmentMap", 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, EnvCubemap);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	unsigned int maxMipLevels = 5;
+	for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
+	{
+		// reisze framebuffer according to mip-level size.
+		// unsigned int mipWidth = 128 * std::pow(0.5, mip);
+		// unsigned int mipHeight = 128 * std::pow(0.5, mip);
+		unsigned int mipWidth = (unsigned int)(512.0f * std::pow(0.5f, mip)); // why not bitshift?
+		unsigned int mipHeight = (unsigned int)(512.0f * std::pow(0.5f, mip));
+		gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap capture prefiltered cubemap mip: {}, width: {}, height: {}", mip, mipWidth, mipHeight);
+		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
+		glViewport(0, 0, mipWidth, mipHeight);
+
+		float roughness = (float)mip / (float)(maxMipLevels - 1);
+		PrefilterCubemapShader.SetUniform("uRoughness", roughness);
+		for (unsigned int i = 0; i < 6; ++i)
+		{
+			PrefilterCubemapShader.SetUniform("uClipFromModel", uClipFromView * ViewFromModel[i]);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, PrefilterMap, mip);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			glBindVertexArray(RDI->PrimitivesCube->VAO);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+			glBindVertexArray(0);
+		}
+	}
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap prefiltered cubemap captured");
 }

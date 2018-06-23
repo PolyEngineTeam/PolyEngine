@@ -3,13 +3,15 @@
 in vec3 vUV;
 
 uniform samplerCube uCubemap;
+uniform float uTime;
 
 layout(location = 0) out vec4 color;
 layout(location = 1) out vec4 normal;
 
 void main()
 {
-    vec3 envColor = texture(uCubemap, vUV).rgb;
+    float mipLevel = 5.0 * fract(0.1 * uTime);
+    vec3 envColor = texture(uCubemap, vUV, mipLevel - fract(mipLevel)).rgb;
     // envColor = envColor / (envColor / vec3(1.0));    // HDR -> LDR
     // envColor = pow(envColor, vec3(1.0, 2.2));        // linear -> gamma
 

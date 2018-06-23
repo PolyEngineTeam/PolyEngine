@@ -16,7 +16,7 @@ namespace Poly
 	class TextureResource;
 	struct ScreenSize;
 	class GLRenderingDevice;
-	enum class eInternalTextureUsageType;
+	enum class eRenderTargetType;
 
 	enum class ePassType
 	{
@@ -95,7 +95,7 @@ namespace Poly
 	{
 	public:
 		Texture2DRenderingTarget(GLuint format);
-		Texture2DRenderingTarget(GLuint format, eInternalTextureUsageType internalUsage);
+		Texture2DRenderingTarget(GLuint format, eRenderTargetType internalUsage);
 
 		eRenderingTargetType GetType() const override { return eRenderingTargetType::TEXTURE_2D; }
 		void Resize(const ScreenSize& /*size*/) override;
@@ -103,7 +103,7 @@ namespace Poly
 		GLuint GetTextureID();
 	private:
 		//GLuint Format;
-		eInternalTextureUsageType InternalUsage = eInternalTextureUsageType(0);
+		eRenderTargetType InternalUsage = eRenderTargetType(0);
 		std::unique_ptr<GLTextureDeviceProxy> Texture;
 	};
 

@@ -6,15 +6,60 @@
 
 namespace Poly {
 
+	class EnvCapture : public BaseObject<> 
+	{
+		// TODO: inherit from multipass RenderingPass, need access to RDI
+		// TODO: Init / Deinit
+
+		public:
+			
+			EnvCapture(GLRenderingDevice* rdi);
+
+			void UpdateEnv(const SkyboxWorldComponent* skyboxCmp);
+
+			bool GetIsDirty() const { return IsDirty; };
+
+			GLuint GetEnvCubemap() const { return EnvCubemap; };
+
+			GLuint GetIrradianceMap() const { return IrradianceMap; };
+
+			GLuint GetPrefilterMap() const { return PrefilterMap; };
+
+		private:
+
+			bool IsDirty = true;
+			
+			GLRenderingDevice* RDI;
+
+			// IBL textures and cubemaps
+			GLuint EnvCubemap;
+			GLuint IrradianceMap;
+			GLuint PrefilterMap;
+
+			GLShaderProgram EquirectangularToCubemapShader;
+			GLShaderProgram CubemapIrradianceShader;
+			GLShaderProgram PrefilterCubemapShader;
+
+			void CaptureCubemap(const SkyboxWorldComponent* skyboxCmp);
+
+			void CaptureDiffuseIrradiance();
+
+			void CaptureSpecularPrefilteredMap();
+	};
+
 	class TiledForwardRenderer : public IRendererInterface
 	{
 
 	public:
+
 		TiledForwardRenderer(GLRenderingDevice* RenderingDeviceInterface);
 		
 		void Init() override;
+
 		void Resize(const ScreenSize& size) override;
-		void Render(const SceneView& sceneView) override;
+
+		void Render(const SceneView& sceneView) override;		
+
 		void Deinit() override;
 
 	private:
@@ -51,9 +96,6 @@ namespace Poly {
 		GLShaderProgram ParticleShader;
 		GLShaderProgram TranslucentShader;
 		GLShaderProgram EquiToCubemapShader;
-		GLShaderProgram EquirectangularToCubemapShader;
-		GLShaderProgram CubemapIrradianceShader;
-		GLShaderProgram PrefilterCubemapShader;
 		GLShaderProgram IntegrateBRDFShader;
 		GLShaderProgram Text2DShader;
 		GLShaderProgram EditorDebugShader;
@@ -71,9 +113,6 @@ namespace Poly {
 		
 		// IBL textures and cubemaps
 		GLuint HDRTexture;
-		GLuint EnvCubemap;
-		GLuint IrradianceMap;
-		GLuint PrefilterMap;
 		GLuint PreintegratedBrdfLUT;
 
 		// Framebufers
@@ -81,15 +120,9 @@ namespace Poly {
 		GLuint FBOhdr;
 		GLuint FBOpost0;
 		GLuint FBOpost1;
+
+		EnvCapture SkyboxCapture;
 		
-		void LoadHDR();
-
-		void CaptureCubemap();
-
-		void CaptureDifuseIrradiance();
-
-		void CaptureSpecularPrefilteredMap();
-
 		void CapturePreintegratedBRDF();
 
 		void CreateLightBuffers(const ScreenSize& size);
@@ -103,6 +136,8 @@ namespace Poly {
 		void SetupLightsBufferFromScene();
 
 		void UpdateLightsBufferFromScene(const SceneView& sceneView);
+
+		void UpdateEnvCapture(const SceneView& sceneView);
 
 		void RenderDepthPrePass(const SceneView& sceneView);
 

@@ -107,7 +107,8 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 		mesh->mName.C_Str(), MeshData.Positions.GetSize(), mesh->mNumFaces,
 		mesh->HasPositions() ? "on" : "off",
 		mesh->HasTextureCoords(0) ? "on" : "off",
-		mesh->HasNormals() ? "on" : "off", mesh->HasFaces() ? "on" : "off");
+		mesh->HasNormals() ? "on" : "off",
+		mesh->HasFaces() ? "on" : "off");
 }
 
 TextureResource* MeshResource::SubMesh::LoadTexture(const aiMaterial* material, const String& path, const unsigned int aiType, const eTextureUsageType textureType)

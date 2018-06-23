@@ -2,50 +2,39 @@
 
 #include "Resources/TextureResource.hpp"
 #include "Resources/ResourceManager.hpp"
-#include "SOIL/SOIL.h"
 
 using namespace Poly;
 
-//------------------------------------------------------------------------------
-TextureResource::TextureResource(const String& path, eTextureUsageType textureUsageType)
+TextureResource::TextureResource(const String& path, eTextureUsageType usage)
 {
-	Channels = 4;
+	gConsole.LogInfo("TextureResource::TextureResource path: {} usage: {}", path, (int)usage);
 
-	int FileChannels;
-	Image = SOIL_load_image(path.GetCStr(), &Width, &Height, &FileChannels, SOIL_LOAD_AUTO);
-	if (Image == nullptr)
-	{
-		throw ResourceLoadFailedException();
-	}
+	float* Image = LoadImage(path.GetCStr(), &Width, &Height, &Channels);
+	
+	gConsole.LogInfo("TextureResource::TextureResource loaded width: {}, height: {}, channels: {}", Width, Height, Channels);
 
-	// Flip Y axis
-	int rowSize = Width*FileChannels;
-	static Dynarray<unsigned char> row;
-	row.Resize(rowSize);
-	for (int i = 0; i < Height/2; ++i) {
-		memcpy(row.GetData(), Image + ((Height - i - 1) * Width*FileChannels), sizeof(unsigned char) * rowSize);
-		memcpy(Image + ((Height - i - 1) * Width*FileChannels), Image + (i * Width*FileChannels), sizeof(unsigned char) * rowSize);
-		memcpy(Image + (i * Width*FileChannels), row.GetData(), sizeof(unsigned char) * rowSize);
-	}
+	TextureProxy = gEngine->GetRenderingDevice()->CreateTexture(Width, Height, Channels, usage);
+	TextureProxy->SetContent(Image);
 
-	TextureProxy = gEngine->GetRenderingDevice()->CreateTexture(Width, Height, textureUsageType); //HACK, remove deffise from here
+	FreeImage(Image);
+}
 
-	switch(FileChannels)
+eTextureDataFormat TextureResource::GetFormat(int channels)
+{
+	switch (channels)
 	{
 		case 1:
-			TextureProxy->SetContent(eTextureDataFormat::RED, Image);
-			break;
+			return eTextureDataFormat::RED;
 		case 3:
-			TextureProxy->SetContent(eTextureDataFormat::RGB, Image);
-			break;
+			return eTextureDataFormat::RGB;
 		case 4:
-			TextureProxy->SetContent(eTextureDataFormat::RGBA, Image);
-			break;
+			return eTextureDataFormat::RGBA;
+		default:
+			ASSERTE(false, "TextureResource::GetFormat uknown channels value");
+			throw ResourceLoadFailedException();
 	}
 }
 
-//-----------------------------------------------------------------------------
 TextureResource::~TextureResource()
 {
-	SOIL_free_image_data(Image);
 }

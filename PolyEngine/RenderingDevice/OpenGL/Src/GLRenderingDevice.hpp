@@ -85,7 +85,7 @@ namespace Poly
 		void RenderWorld(World* world) override;
 		const ScreenSize& GetScreenSize() const override { return ScreenDim; }
 
-		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) override;
+		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, size_t channels, eTextureUsageType usage) override;
 		std::unique_ptr<ICubemapDeviceProxy> CreateCubemap(size_t width, size_t height) override;
 		std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() override;
 		std::unique_ptr<IMeshDeviceProxy> CreateMesh() override;

@@ -22,6 +22,9 @@ namespace Poly
 	ENGINE_DLLEXPORT String LoadTextFileRelative(eResourceSource Source, const String& path);
 	ENGINE_DLLEXPORT void SaveTextFileRelative(eResourceSource Source, const String& path, const String& text);
 
+	ENGINE_DLLEXPORT float* LoadImage(const String& path, int* width, int* height, int* channels);
+	ENGINE_DLLEXPORT void FreeImage(float* data);
+
 	namespace Impl { template<typename T> std::map<String, std::unique_ptr<T>>& GetResources(); }
 
 #define ENGINE_DECLARE_RESOURCE(type, map_name) \
@@ -49,7 +52,6 @@ namespace Poly
 	ENGINE_DECLARE_RESOURCE(FontResource, gFontResourcesMap)
 	ENGINE_DECLARE_RESOURCE(SoundResource, gALSoundResourcesMap)
 
-	//------------------------------------------------------------------------------
 	template<typename T>
 	class ResourceManager
 	{
@@ -64,7 +66,6 @@ namespace Poly
 			return Load(path, true, eResourceSource::GAME);
 		}
 
-		//------------------------------------------------------------------------------
 		template<typename... Args>
 		static T* Load(const String& path, eResourceSource source, Args&&... args)
 		{
@@ -79,9 +80,9 @@ namespace Poly
 			}
 
 			// Load the resource
-			gConsole.LogInfo("ResourceManager: Loading: {}", path);
 			T* resource = nullptr;
 			String absolutePath = gAssetsPathConfig.GetAssetsPath(source) + path;
+			gConsole.LogInfo("ResourceManager: Loading: {}", absolutePath);
 
 			try
 			{
@@ -106,7 +107,6 @@ namespace Poly
 			return resource;
 		}
 
-		//------------------------------------------------------------------------------
 		static void Release(T* resource)
 		{
 			if (resource->RemoveRef())

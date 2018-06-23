@@ -2,7 +2,6 @@
 
 #include "Resources/CubemapResource.hpp"
 #include "Resources/ResourceManager.hpp"
-#include "SOIL/SOIL.h"
 
 using namespace Poly;
 
@@ -14,7 +13,15 @@ CubemapResource::CubemapResource(const EnumArray<String, eCubemapSide> paths)
 	for (auto side : IterateEnum<eCubemapSide>())
 	{
 		String absolutePath = gAssetsPathConfig.GetAssetsPath(eResourceSource::ENGINE) + paths[side];
-		Images[side] = LoadImage(absolutePath);
+		
+		int fileChannels;
+		int fileWidth;
+		int fileHeight;
+
+		Images[side] = LoadImage(absolutePath, &fileWidth, &fileHeight, &fileChannels);
+
+		Width = std::max(Width, fileWidth);
+		Height = std::max(Height, fileHeight);
 	}
 
 	TextureProxy = gEngine->GetRenderingDevice()->CreateCubemap(Width, Height);
@@ -23,36 +30,13 @@ CubemapResource::CubemapResource(const EnumArray<String, eCubemapSide> paths)
 	{
 		TextureProxy->SetContent(side, Images[side]);
 	}
-}
 
-unsigned char* CubemapResource::LoadImage(const String& path)
-{
-	unsigned char* image;
-	Channels = 3;
-
-	int fileChannels;
-	int fileWidth;
-	int fileHeight;
-	image = SOIL_load_image(path.GetCStr(), &fileWidth, &fileHeight, &fileChannels, SOIL_LOAD_RGB);
-	if (image == nullptr)
+	for (auto side : IterateEnum<eCubemapSide>())
 	{
-		throw ResourceLoadFailedException();
+		FreeImage(Images[side]);
 	}
-
-	gConsole.LogInfo("CubemapResource::LoadImage {}x{}:{} path:{}", fileWidth, fileHeight, fileChannels, path);
-
-	Width = std::max(Width, fileWidth);
-	Height = std::max(Height, fileHeight);
-
-	return image;
 }
 
 CubemapResource::~CubemapResource()
 {
-	gConsole.LogInfo("CubemapResource::~CubemapResource");
-
-	for (auto side : IterateEnum<eCubemapSide>())
-	{
-		SOIL_free_image_data(Images[side]);
-	}
 }

@@ -8,6 +8,7 @@
 #include <ECS/World.hpp>
 #include <Rendering/Camera/CameraComponent.hpp>
 #include <Rendering/SkyboxWorldComponent.hpp>
+#include <Resources/CubemapResource.hpp>
 
 using namespace Poly;
 
@@ -38,7 +39,7 @@ void SkyboxRenderingPass::RenderSkybox(const CameraComponent* camera, const Skyb
 	GetProgram().BindProgram();
 	GetProgram().SetUniform("uClipFromWorld", mvp);
 
-	GLuint CubemapID = static_cast<const GLCubemapDeviceProxy*>(SkyboxWorldCmp->GetCubemap().GetTextureProxy())->GetTextureID();
+	GLuint CubemapID = static_cast<const GLCubemapDeviceProxy*>(SkyboxWorldCmp->GetCubemap()->GetTextureProxy())->GetTextureID();
 
 	glDepthMask(GL_FALSE);
 	glEnable(GL_DEPTH_TEST);
