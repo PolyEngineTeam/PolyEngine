@@ -6,18 +6,12 @@ constexpr u64 ZERO = 0UL;
 
 using namespace Poly;
 
-constexpr BitMask::DataType TYPE_BIT = CHAR_BIT * sizeof(BitMask::DataType);
+constexpr size_t TYPE_BIT = CHAR_BIT * sizeof(BitMask::DataType);
 
 BitMask::BitMask(size_t size)
 	: BitsNumber(size)
 {
-	size_t arraySize = 0;
-
-	if (size%TYPE_BIT)
-		arraySize = size / TYPE_BIT + 1;
-	else
-		arraySize = size / TYPE_BIT;
-
+	size_t arraySize = (size + TYPE_BIT - 1) / TYPE_BIT;
 	for (size_t i = 0; i < arraySize; i++)
 		BitList.PushBack(ZERO);
 }
@@ -73,7 +67,6 @@ BitMask BitMask::operator|(const BitMask& rhs) const
 			temp.BitList[i] = BitList[i] | rhs.BitList[i];
 		return temp;
 	}
-
 	else if (BitList.GetSize() > rhs.BitList.GetSize())
 	{
 		BitMask temp(BitsNumber);
@@ -83,7 +76,6 @@ BitMask BitMask::operator|(const BitMask& rhs) const
 			temp.BitList[i] = BitList[i];
 		return temp;
 	}
-
 	else if (BitList.GetSize() < rhs.BitList.GetSize())
 	{
 		BitMask temp(rhs.BitsNumber);
@@ -170,17 +162,23 @@ BitMask BitMask::operator&(const BitMask& rhs) const
 	return BitMask(0);
 }
 
-BitMask& BitMask::operator~()
+BitMask BitMask::operator~() const
 {
-	for (auto& x : BitList)
+	BitMask temp = *this;
+
+	for (auto& x : temp.BitList)
 		x = ~x;
 
-	return *this;
+	return temp;
 }
 
 
-bool BitMask::Resize(const int offset)
+bool BitMask::Resize(size_t size)
 {
+	BitsNumber = size;
+	BitList.Resize((size + TYPE_BIT - 1) / TYPE_BIT);
+	return true;
+	/*
 	if (offset > 0)
 	{
 		if (BitsNumber + offset <= GetDynarraySize()*TYPE_BIT)
@@ -239,6 +237,7 @@ bool BitMask::Resize(const int offset)
 		return false;
 	}
 	return false;
+	*/
 }
 
 size_t BitMask::BitListIndex(size_t index)
@@ -248,6 +247,10 @@ size_t BitMask::BitListIndex(size_t index)
 
 BitMask& BitMask::operator|=(const BitMask& rhs)
 {
+	*this = *this | rhs;
+
+	return *this;
+	/*
 	//Equal Dynarray sizes
 	if (BitList.GetSize() == rhs.BitList.GetSize())
 	{
@@ -285,10 +288,15 @@ BitMask& BitMask::operator|=(const BitMask& rhs)
 		return *this;
 	}
 	return *this;
+	*/
 }
 
 BitMask& BitMask::operator^=(const BitMask& rhs)
 {
+	*this = *this ^ rhs;
+
+	return *this;
+	/*
 	if (BitList.GetSize() == rhs.BitList.GetSize())
 	{
 		for (size_t i = 0; i < BitList.GetSize(); i++)
@@ -323,11 +331,15 @@ BitMask& BitMask::operator^=(const BitMask& rhs)
 		return *this;
 	}
 	return *this;
+	*/
 }
 
 BitMask& BitMask::operator&=(const BitMask& rhs)
 {
+	*this = *this & rhs;
 
+	return *this;
+	/*
 	if (BitList.GetSize() == rhs.BitList.GetSize())
 	{
 		for (size_t i = 0; i < BitList.GetSize(); i++)
@@ -364,6 +376,7 @@ BitMask& BitMask::operator&=(const BitMask& rhs)
 		return *this;
 	}
 	return *this;
+	*/
 }
 
 bool BitMask::operator==(const BitMask rhs) const
@@ -379,4 +392,19 @@ bool BitMask::operator==(const BitMask rhs) const
 		return true;
 	}
 	return false;
+}
+
+/*
+BitMaskProxy BitMaskProxy::operator=(bool index)
+{
+	BitMaskProxy proxy;
+	proxy.bitValue = this[index];
+	return proxy;
+}*/
+
+BitMaskProxy BitMaskProxy::operator[](size_t index)
+{
+	BitMaskProxy temp;
+	temp.bitValue = BitMask::operator[](index);
+	return temp;
 }

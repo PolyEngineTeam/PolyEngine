@@ -5,7 +5,7 @@
 
 using namespace Poly;
 
-constexpr BitMask::DataType TYPE_BIT = CHAR_BIT * sizeof(BitMask::DataType);
+constexpr size_t TYPE_BIT = CHAR_BIT * sizeof(BitMask::DataType);
 
 //Function calculating expected Dynarray size ,for debugging purposes 
 size_t DynarraySize(BitMask mask)
@@ -230,7 +230,7 @@ TEST_CASE("Negate operator", "[BitMask]")
 		if (i % 2) //Toggle for odd numbers
 			a.Toggle(i);
 
-	~a;
+	a=~a;
 	for (size_t i = 0; i < a.GetSize(); i++)
 		if (i % 2)
 			CHECK(a[i] == false);
@@ -432,6 +432,29 @@ TEST_CASE("Negation operator", "[BitMask]")
 
 TEST_CASE("Resize function", "[BitMask]")
 {
+	BitMask a(10);
+	CHECK(a.GetSize() == 10);
+	CHECK(a.GetDynarraySize() == DynarraySize(a));
+	
+	a.Toggle(1); a.Toggle(4); a.Toggle(6); a.Toggle(0);
+	a.Resize(5);
+	CHECK(a.GetSize() == 5);
+	CHECK(a.GetDynarraySize() == DynarraySize(a));
+}
+
+TEST_CASE("Proxy functions", "[BitMaskProxy]")
+{
+	bool value = false;
+	BitMaskProxy a(5);
+	a.Toggle(2);
+	value = a[2];
+	CHECK(value == true);
+	value = a[1];
+	CHECK(value == false);
+}
+/*
+TEST_CASE("Resize function", "[BitMask]")
+{
 	BitMask a(14);
 	CHECK(a.GetSize() == 14);
 	CHECK(a.GetDynarraySize() == DynarraySize(a));
@@ -475,4 +498,4 @@ TEST_CASE("Resize function", "[BitMask]")
 	a.Resize(-1);
 	CHECK(a.GetSize() == 0);
 	CHECK(a.GetDynarraySize() == DynarraySize(a));
-}
+}*/
