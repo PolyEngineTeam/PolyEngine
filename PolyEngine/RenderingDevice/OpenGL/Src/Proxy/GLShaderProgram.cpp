@@ -131,7 +131,7 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 }
 
 
-size_t GLShaderProgram::GetProgramHandle() const
+unsigned int GLShaderProgram::GetProgramHandle() const
 {
 	return ProgramHandle;
 }
@@ -159,7 +159,12 @@ void GLShaderProgram::SetUniform(const String& name, int val)
 	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
 	{
-		HEAVY_ASSERTE(it->second.TypeName == "int" || it->second.TypeName == "sampler2D" || it->second.TypeName == "samplerCube", "Invalid uniform type!");
+		bool assert = it->second.TypeName == "int" || it->second.TypeName == "sampler2D" || it->second.TypeName == "samplerCube";
+		if (!assert)
+		{
+			gConsole.LogError("Invalid uniform type int for {}", name);
+		}
+		HEAVY_ASSERTE(assert, "Invalid uniform type!");
 		glUniform1i(it->second.Location, val);
 	}
 }
@@ -170,7 +175,12 @@ void GLShaderProgram::SetUniform(const String& name, uint val)
 	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
 	{
-		HEAVY_ASSERTE(it->second.TypeName == "uint" || it->second.TypeName == "sampler2D" || it->second.TypeName == "samplerCube", "Invalid uniform type!");
+		bool assert = it->second.TypeName == "uint";
+		if (!assert)
+		{
+			gConsole.LogError("Invalid uniform type uint for {}", name);
+		}
+		HEAVY_ASSERTE(it->second.TypeName == "uint", "Invalid uniform type!");
 		glUniform1i(it->second.Location, val);
 	}
 }
@@ -230,14 +240,14 @@ void GLShaderProgram::SetUniform(const String& name, const Matrix& val)
 	}
 }
 
-void GLShaderProgram::BindSampler(const String& name, const unsigned int samplerID, const int textureID)
+void GLShaderProgram::BindSampler(const String& name, int samplerID, int textureID)
 {
 	glActiveTexture(GL_TEXTURE0 + samplerID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	SetUniform(name, samplerID);
 }
 
-void GLShaderProgram::BindSamplerCube(const String& name, const unsigned int samplerID, const int cubemapID)
+void GLShaderProgram::BindSamplerCube(const String& name, int samplerID, int cubemapID)
 {
 	glActiveTexture(GL_TEXTURE0 + samplerID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapID);

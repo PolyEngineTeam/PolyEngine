@@ -61,6 +61,7 @@ uniform sampler2D uMetallicMap;
 uniform sampler2D uNormalMap;
 uniform sampler2D uAmbientOcclusionMap;
 
+uniform float uTime;
 uniform Material uMaterial;
 
 uniform DirectionalLight uDirectionalLight[8];
@@ -122,14 +123,21 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 
 void main()
 {
-    vec4 emissive = uMaterial.Emissive * texture(uEmissiveMap, fragment_in.uv);
-    vec4 albedo = uMaterial.Albedo * texture(uAlbedoMap, fragment_in.uv);
-    float roughness = uMaterial.Roughness * texture(uRoughnessMap, fragment_in.uv).r;
-    float metallic = uMaterial.Metallic * texture(uMetallicMap, fragment_in.uv).r;
-    vec3 normal = texture(uNormalMap, fragment_in.uv).rgb;
-    float ao = texture(uAmbientOcclusionMap, fragment_in.uv).r;
+    // vec4 emissive = uMaterial.Emissive * texture(uEmissiveMap, fragment_in.uv);
+    // vec4 albedo = uMaterial.Albedo * texture(uAlbedoMap, fragment_in.uv);
+    // float roughness = uMaterial.Roughness * texture(uRoughnessMap, fragment_in.uv).r;
+    // float metallic = uMaterial.Metallic * texture(uMetallicMap, fragment_in.uv).r;
+    // vec3 normal = texture(uNormalMap, fragment_in.uv).rgb;
+    // float ao = texture(uAmbientOcclusionMap, fragment_in.uv).r;
 
-    normal = normalize(normal * 2.0 - 1.0);
+    // vec4 emissive = uMaterial.Emissive;
+    vec4 albedo = uMaterial.Albedo;
+    float roughness = uMaterial.Roughness;
+    float metallic = uMaterial.Metallic;
+    vec3 normal = fragment_in.normalInModel;
+    float ao = 1.0f;
+
+    // normal = normalize(normal * 2.0 - 1.0);
 
     if (albedo.a < 0.5)
     {
@@ -155,7 +163,8 @@ void main()
     ivec2 WorkGroupID = (ivec2(gl_FragCoord.xy) / WorkGroupSize);
     uint IndexWorkGroup = WorkGroupID.y * NumWorkGroups.x + WorkGroupID.x;
     uint TileOffset = IndexWorkGroup * MAX_NUM_LIGHTS;
-
+    
+    
     uint Count = uint(uLightCount);
     for (uint i = 0; i < Count; ++i)
 	{
@@ -238,8 +247,8 @@ void main()
 
 		// add to outgoing radiance Lo
 		Lo += (kD * albedo.rgb / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
-	}
-    
+	}    
+
     vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
 
 	// ambient lighting (note that the next IBL tutorial will replace 
@@ -256,8 +265,7 @@ void main()
     
     vec3 ambient = (kD * diffuse + specular) * ao;
 
-    oColor.rgb = ambient + emissive.rgb + Lo;
-
+    // oColor.rgb = ambient + emissive.rgb +Lo;
     // Debug texture input
     // oColor.rgb = emissive.rgb; // missing
     // oColor.rgb = albedo.rgb; // ok
@@ -266,6 +274,57 @@ void main()
     // oColor.rgb = vec3(roughness); // ok
     // oColor.rgb = vec3(metallic); // ok
     // oColor.rgb = vec3(ao); // ok
+    // oColor.rgb = fragment_in.normalInModel * 0.5 + 0.5;
+    
+    vec3 normalInModel = fragment_in.normalInModel * 0.5 + 0.5;
+    vec3 brdf = vec3(texture(uBrdfLUT, fragment_in.uv).rg, 0.0);
+    vec3 irr = texture(uIrradianceMap, fragment_in.normalInModel).rgb;
+    vec3 pref = texture(uPrefilterMap, fragment_in.normalInModel).rgb;
+    vec3 em = 0.5*texture(uEmissiveMap, fragment_in.uv).rgb;
+    vec3 al = texture(uAlbedoMap, fragment_in.uv).rgb;
+    vec3 rg = texture(uRoughnessMap, fragment_in.uv).rrr;
+    vec3 mt = texture(uMetallicMap, fragment_in.uv).rrr;
+    vec3 nn = texture(uNormalMap, fragment_in.uv).rgb;
+    vec3 aa = texture(uAmbientOcclusionMap, fragment_in.uv).rrr;
+    oColor.rgb = mix(brdf, normalInModel, smoothstep(-0.5, 0.5, sin(4.0 * uTime)));
+    
+    int t = int(floor(10.0 * fract(0.1*uTime)));
+    switch (t)
+    {
+        case 0:
+            oColor.rgb = brdf;
+            break;
+        case 1:
+            oColor.rgb = irr;
+            break;
+        case 2:
+            oColor.rgb = pref;
+            break;
+        case 3:
+            oColor.rgb = em;
+            break;
+        case 4:
+            oColor.rgb = al;
+            break;
+        case 5:
+            oColor.rgb = rg;
+            break;
+        case 6:
+            oColor.rgb = mt;
+            break;
+        case 7:
+            oColor.rgb = nn;
+            break;
+        case 9:
+            oColor.rgb = aa;
+            break;
+        case 8:
+            oColor.rgb = normalInModel;
+            break;
+        default:
+            oColor.rgb = normalInModel;
+            break;
+    }
 
     oNormal.rgb = (WorldFromTangent * normal) * 0.5 + 0.5;
 }

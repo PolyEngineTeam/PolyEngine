@@ -19,10 +19,9 @@ namespace Poly {
 
 			bool GetIsDirty() const { return IsDirty; };
 
+			GLuint GetHDRPanorama() const { return HDRPanorama; };
 			GLuint GetEnvCubemap() const { return EnvCubemap; };
-
 			GLuint GetIrradianceMap() const { return IrradianceMap; };
-
 			GLuint GetPrefilterMap() const { return PrefilterMap; };
 
 		private:
@@ -32,9 +31,10 @@ namespace Poly {
 			GLRenderingDevice* RDI;
 
 			// IBL textures and cubemaps
-			GLuint EnvCubemap;
-			GLuint IrradianceMap;
-			GLuint PrefilterMap;
+			GLuint HDRPanorama = 0;
+			GLuint EnvCubemap = 0;
+			GLuint IrradianceMap = 0;
+			GLuint PrefilterMap = 0;
 
 			GLShaderProgram EquirectangularToCubemapShader;
 			GLShaderProgram CubemapIrradianceShader;
@@ -112,7 +112,7 @@ namespace Poly {
 		GLuint LinearDepth;
 		
 		// IBL textures and cubemaps
-		GLuint HDRTexture;
+		// GLuint HDRTexture;
 		GLuint PreintegratedBrdfLUT;
 
 		// Framebufers
