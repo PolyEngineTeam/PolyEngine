@@ -5,31 +5,31 @@
 #endif
 
 in VERTEX_OUT{
-    vec3 positionInWorld;
-    vec2 uv;
-    vec3 normalInModel;
-    mat3 tangentFromWorld;
-    vec3 viewPositionInTangent;
-    vec3 fragmentPositionInTangent;
+	vec3 positionInWorld;
+	vec2 uv;
+	vec3 normalInModel;
+	mat3 tangentFromWorld;
+	vec3 viewPositionInTangent;
+	vec3 fragmentPositionInTangent;
 } fragment_in;
 
 
 struct DirectionalLight
 {
-    vec4 ColorIntensity;
-    vec4 Direction;
+	vec4 ColorIntensity;
+	vec4 Direction;
 };
 
 struct Light
 {
-    vec4 Position;
-    vec4 Color;
-    vec4 RangeIntensity;
+	vec4 Position;
+	vec4 Color;
+	vec4 RangeIntensity;
 };
 
 struct VisibleIndex
 {
-    int Index;
+	int Index;
 };
 
 layout(std430, binding = 0) readonly buffer LightBuffer {
@@ -42,10 +42,11 @@ layout(std430, binding = 1) readonly buffer VisibleLightIndicesBuffer {
 
 struct Material
 {
-    vec4 Emissive;
-    vec4 Albedo;
-    float Roughness;
-    float Metallic;
+	vec4 Emissive;
+	vec4 Albedo;
+	float Roughness;
+	float Metallic;
+	float OpacityMaskThreshold;
 };
 
 const uint MAX_NUM_LIGHTS = 1024;
@@ -118,37 +119,28 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 {
-    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
+	return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
 }
 
 void main()
 {
-    // vec4 emissive = uMaterial.Emissive * texture(uEmissiveMap, fragment_in.uv);
-    // vec4 albedo = uMaterial.Albedo * texture(uAlbedoMap, fragment_in.uv);
-    // float roughness = uMaterial.Roughness * texture(uRoughnessMap, fragment_in.uv).r;
-    // float metallic = uMaterial.Metallic * texture(uMetallicMap, fragment_in.uv).r;
-    // vec3 normal = texture(uNormalMap, fragment_in.uv).rgb;
-    // float ao = texture(uAmbientOcclusionMap, fragment_in.uv).r;
+	vec4 emissive = uMaterial.Emissive * texture(uEmissiveMap, fragment_in.uv);
+	vec4 albedo = uMaterial.Albedo * texture(uAlbedoMap, fragment_in.uv);
+	float roughness = uMaterial.Roughness * texture(uRoughnessMap, fragment_in.uv).r;
+	float metallic = uMaterial.Metallic * texture(uMetallicMap, fragment_in.uv).r;
+	vec3 normal = normalize(texture(uNormalMap, fragment_in.uv).rgb * 2.0 - 1.0);
+	float ao = texture(uAmbientOcclusionMap, fragment_in.uv).r;
 
-    // vec4 emissive = uMaterial.Emissive;
-    vec4 albedo = uMaterial.Albedo;
-    float roughness = uMaterial.Roughness;
-    float metallic = uMaterial.Metallic;
-    vec3 normal = fragment_in.normalInModel;
-    float ao = 1.0f;
+	if (albedo.a < uMaterial.OpacityMaskThreshold)
+	{
+		discard;
+	}
+	
+	mat3 WorldFromTangent = inverse(fragment_in.tangentFromWorld);
 
-    // normal = normalize(normal * 2.0 - 1.0);
-
-    if (albedo.a < 0.5)
-    {
-        discard;
-    }
-    
-    mat3 WorldFromTangent = inverse(fragment_in.tangentFromWorld);
-
-    vec3 N = normal;
-    vec3 V = normalize(fragment_in.viewPositionInTangent - fragment_in.fragmentPositionInTangent);
-    vec3 R = WorldFromTangent * reflect(-V, N);
+	vec3 N = normal;
+	vec3 V = normalize(fragment_in.viewPositionInTangent - fragment_in.fragmentPositionInTangent);
+	vec3 R = WorldFromTangent * reflect(-V, N);
 
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
 	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
@@ -158,24 +150,24 @@ void main()
 	// reflectance equation
 	vec3 Lo = vec3(0.0);
 
-    ivec2 WorkGroupSize = ivec2(16, 16);
-    ivec2 NumWorkGroups = ivec2(uWorkGroupsX, uWorkGroupsY);
-    ivec2 WorkGroupID = (ivec2(gl_FragCoord.xy) / WorkGroupSize);
-    uint IndexWorkGroup = WorkGroupID.y * NumWorkGroups.x + WorkGroupID.x;
-    uint TileOffset = IndexWorkGroup * MAX_NUM_LIGHTS;
-    
-    
-    uint Count = uint(uLightCount);
-    for (uint i = 0; i < Count; ++i)
+	ivec2 WorkGroupSize = ivec2(16, 16);
+	ivec2 NumWorkGroups = ivec2(uWorkGroupsX, uWorkGroupsY);
+	ivec2 WorkGroupID = (ivec2(gl_FragCoord.xy) / WorkGroupSize);
+	uint IndexWorkGroup = WorkGroupID.y * NumWorkGroups.x + WorkGroupID.x;
+	uint TileOffset = IndexWorkGroup * MAX_NUM_LIGHTS;
+	
+	
+	uint Count = uint(uLightCount);
+	for (uint i = 0; i < Count; ++i)
 	{
-        int lightIndex = bVisibleLightIndicesBuffer.data[TileOffset + i].Index;
-        Light light = bLightBuffer.data[lightIndex];
+		int lightIndex = bVisibleLightIndicesBuffer.data[TileOffset + i].Index;
+		Light light = bLightBuffer.data[lightIndex];
 
 		// light attenuation based on Real Shading in Unreal Engine 4:
-        // http://gamedevs.org/uploads/real-shading-in-unreal-engine-4.pdf
+		// http://gamedevs.org/uploads/real-shading-in-unreal-engine-4.pdf
 		// calculate per-light radiance
 		vec3 tangentLightPosition = fragment_in.tangentFromWorld * light.Position.xyz;
-        vec3 L = normalize(tangentLightPosition - fragment_in.fragmentPositionInTangent);
+		vec3 L = normalize(tangentLightPosition - fragment_in.fragmentPositionInTangent);
 		// vec3 L = normalize(light.Position.xyz - fragment_in.positionInWorld);
 		vec3 H = normalize(V + L);		
 		float range = light.RangeIntensity.x;
@@ -208,10 +200,10 @@ void main()
 
 		// add to outgoing radiance Lo
 		Lo += (kD * albedo.rgb / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
-        
+		
 		if (bVisibleLightIndicesBuffer.data[TileOffset + i + 1].Index == -1)
-            break;
-    }
+			break;
+	}
 
 	for (int i = 0; i < uDirectionalLightCount; ++i)
 	{
@@ -220,7 +212,7 @@ void main()
 		vec3 L = normalize(tangentLightDir);
 		vec3 H = normalize(L + V);
 
-        vec3 radiance = dirLight.ColorIntensity.rgb * dirLight.ColorIntensity.w;
+		vec3 radiance = dirLight.ColorIntensity.rgb * dirLight.ColorIntensity.w;
 
 		// Cook-Torrance BRDF
 		float NDF = DistributionGGX(N, H, roughness);
@@ -249,82 +241,22 @@ void main()
 		Lo += (kD * albedo.rgb / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
 	}    
 
-    vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
+	vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
 
 	// ambient lighting (note that the next IBL tutorial will replace 
 	// this ambient lighting with environment lighting).
-    vec3 kS = F;
-    vec3 kD = 1.0 - kS;
-    vec3 irradiance = texture(uIrradianceMap, N).rgb;
-    vec3 diffuse = irradiance * albedo.rgb;
+	vec3 kS = F;
+	vec3 kD = 1.0 - kS;
+	vec3 irradiance = texture(uIrradianceMap, N).rgb;
+	vec3 diffuse = irradiance * albedo.rgb;
 
-    const float MAX_REFLECTION_LOD = 4.0;
-    vec3 prefilteredColor = textureLod(uPrefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
-    vec2 envBRDF = texture(uBrdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
-    vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
-    
-    vec3 ambient = (kD * diffuse + specular) * ao;
+	const float MAX_REFLECTION_LOD = 4.0;
+	vec3 prefilteredColor = textureLod(uPrefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
+	vec2 envBRDF = texture(uBrdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
+	vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
+	
+	vec3 ambient = (kD * diffuse + specular) * ao;
 
-    // oColor.rgb = ambient + emissive.rgb +Lo;
-    // Debug texture input
-    // oColor.rgb = emissive.rgb; // missing
-    // oColor.rgb = albedo.rgb; // ok
-    // oColor.rgb = normal.rgb * 0.5 + 0.5; // ok
-    // oColor.rgb = (WorldFromTangent * normal.rgb) * 0.5 + 0.5;
-    // oColor.rgb = vec3(roughness); // ok
-    // oColor.rgb = vec3(metallic); // ok
-    // oColor.rgb = vec3(ao); // ok
-    // oColor.rgb = fragment_in.normalInModel * 0.5 + 0.5;
-    
-    vec3 normalInModel = fragment_in.normalInModel * 0.5 + 0.5;
-    vec3 brdf = vec3(texture(uBrdfLUT, fragment_in.uv).rg, 0.0);
-    vec3 irr = texture(uIrradianceMap, fragment_in.normalInModel).rgb;
-    vec3 pref = texture(uPrefilterMap, fragment_in.normalInModel).rgb;
-    vec3 em = 0.5*texture(uEmissiveMap, fragment_in.uv).rgb;
-    vec3 al = texture(uAlbedoMap, fragment_in.uv).rgb;
-    vec3 rg = texture(uRoughnessMap, fragment_in.uv).rrr;
-    vec3 mt = texture(uMetallicMap, fragment_in.uv).rrr;
-    vec3 nn = texture(uNormalMap, fragment_in.uv).rgb;
-    vec3 aa = texture(uAmbientOcclusionMap, fragment_in.uv).rrr;
-    oColor.rgb = mix(brdf, normalInModel, smoothstep(-0.5, 0.5, sin(4.0 * uTime)));
-    
-    int t = int(floor(10.0 * fract(0.1*uTime)));
-    switch (t)
-    {
-        case 0:
-            oColor.rgb = brdf;
-            break;
-        case 1:
-            oColor.rgb = irr;
-            break;
-        case 2:
-            oColor.rgb = pref;
-            break;
-        case 3:
-            oColor.rgb = em;
-            break;
-        case 4:
-            oColor.rgb = al;
-            break;
-        case 5:
-            oColor.rgb = rg;
-            break;
-        case 6:
-            oColor.rgb = mt;
-            break;
-        case 7:
-            oColor.rgb = nn;
-            break;
-        case 9:
-            oColor.rgb = aa;
-            break;
-        case 8:
-            oColor.rgb = normalInModel;
-            break;
-        default:
-            oColor.rgb = normalInModel;
-            break;
-    }
-
-    oNormal.rgb = (WorldFromTangent * normal) * 0.5 + 0.5;
+	oColor.rgb = ambient + emissive.rgb + Lo;
+	oNormal.rgb = (WorldFromTangent * normal) * 0.5 + 0.5;
 }

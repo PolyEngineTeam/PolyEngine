@@ -18,15 +18,18 @@ namespace Poly {
 	struct ENGINE_DLLEXPORT Material
 	{
 		Material()
-			: Emissive(0.0f, 0.0f, 0.0f), Albedo(1.0f, 1.0f, 1.0f), Roughness(1.0f), Metallic(1.0f) {}
+			: Emissive(0.0f, 0.0f, 0.0f), Albedo(1.0f, 1.0f, 1.0f), Roughness(1.0f), Metallic(1.0f), OpacityMaskThreshold(0.5f)
+		{}
 
-		Material(const Color& emissive, const Color& albedo, float roughness, float metallic)
-			: Emissive(emissive), Albedo(albedo), Roughness(roughness), Metallic(metallic) {}
+		Material(const Color& emissive, const Color& albedo, float roughness, float metallic, float opacityMaskThreshold)
+			: Emissive(emissive), Albedo(albedo), Roughness(roughness), Metallic(metallic), OpacityMaskThreshold(opacityMaskThreshold)
+		{}
 
 		Color Emissive;
 		Color Albedo;
 		float Roughness;
 		float Metallic;
+		float OpacityMaskThreshold;
 	};
 
 	class ENGINE_DLLEXPORT MeshRenderingComponent : public ComponentBase

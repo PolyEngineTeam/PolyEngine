@@ -578,6 +578,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	glUniform1i(glGetUniformLocation((GLuint)(LightAccumulationShader.GetProgramHandle()), "uIrradianceMap"), 0);
 	glUniform1i(glGetUniformLocation((GLuint)(LightAccumulationShader.GetProgramHandle()), "uPrefilterMap"), 1);
 	glUniform1i(glGetUniformLocation((GLuint)(LightAccumulationShader.GetProgramHandle()), "uBrdfLUT"), 2);
+
 	glUniform1i(glGetUniformLocation((GLuint)(LightAccumulationShader.GetProgramHandle()), "uEmissiveMap"), 3);
 	glUniform1i(glGetUniformLocation((GLuint)(LightAccumulationShader.GetProgramHandle()), "uAlbedoMap"), 4);
 	glUniform1i(glGetUniformLocation((GLuint)(LightAccumulationShader.GetProgramHandle()), "uRoughnessMap"), 5);
@@ -616,6 +617,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 			LightAccumulationShader.SetUniform("uMaterial.Albedo", material.Albedo);
 			LightAccumulationShader.SetUniform("uMaterial.Roughness", material.Roughness); 
 			LightAccumulationShader.SetUniform("uMaterial.Metallic", material.Metallic);
+			LightAccumulationShader.SetUniform("uMaterial.OpacityMaskThreshold", material.OpacityMaskThreshold);
 
 			const TextureResource* emissiveMap = subMesh->GetMeshData().GetEmissiveMap();
 			const TextureResource* albedoMap = subMesh->GetMeshData().GetAlbedoMap();
@@ -628,19 +630,19 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 			glBindTexture(GL_TEXTURE_2D, emissiveMap == nullptr ? RDI->FallbackBlackTexture : (GLuint)(emissiveMap->GetTextureProxy()->GetResourceID()));
 
 			glActiveTexture(GL_TEXTURE4);
-			glBindTexture(GL_TEXTURE_2D, albedoMap == nullptr ? RDI->FallbackBlackTexture : (GLuint)(albedoMap->GetTextureProxy()->GetResourceID()));
+			glBindTexture(GL_TEXTURE_2D, albedoMap == nullptr ? RDI->FallbackWhiteTexture : (GLuint)(albedoMap->GetTextureProxy()->GetResourceID()));
 
 			glActiveTexture(GL_TEXTURE5);
-			glBindTexture(GL_TEXTURE_2D, roughnessMap == nullptr ? RDI->FallbackBlackTexture : (GLuint)(roughnessMap->GetTextureProxy()->GetResourceID()));
+			glBindTexture(GL_TEXTURE_2D, roughnessMap == nullptr ? RDI->FallbackWhiteTexture : (GLuint)(roughnessMap->GetTextureProxy()->GetResourceID()));
 
 			glActiveTexture(GL_TEXTURE6);
-			glBindTexture(GL_TEXTURE_2D, metallicMap == nullptr ? RDI->FallbackBlackTexture : (GLuint)(metallicMap->GetTextureProxy()->GetResourceID()));
+			glBindTexture(GL_TEXTURE_2D, metallicMap == nullptr ? RDI->FallbackWhiteTexture : (GLuint)(metallicMap->GetTextureProxy()->GetResourceID()));
 
 			glActiveTexture(GL_TEXTURE7);
-			glBindTexture(GL_TEXTURE_2D, normalMap == nullptr ? RDI->FallbackBlackTexture : (GLuint)(normalMap->GetTextureProxy()->GetResourceID()));
+			glBindTexture(GL_TEXTURE_2D, normalMap == nullptr ? RDI->FallbackNormalMap : (GLuint)(normalMap->GetTextureProxy()->GetResourceID()));
 			
 			glActiveTexture(GL_TEXTURE8);
-			glBindTexture(GL_TEXTURE_2D, ambientOcclusionMap == nullptr ? RDI->FallbackBlackTexture : (GLuint)(ambientOcclusionMap->GetTextureProxy()->GetResourceID()));
+			glBindTexture(GL_TEXTURE_2D, ambientOcclusionMap == nullptr ? RDI->FallbackWhiteTexture : (GLuint)(ambientOcclusionMap->GetTextureProxy()->GetResourceID()));
 
 			// Material textures
 			// LightAccumulationShader.BindSampler("uEmissiveMap",			3, emissiveMap			? emissiveMap->GetTextureProxy()->GetResourceID()			: RDI->FallbackBlackTexture);
