@@ -19,7 +19,7 @@
 #include "Proxy/GLTextFieldBufferDeviceProxy.hpp"
 #include "Proxy/GLTextureDeviceProxy.hpp"
 #include "Proxy/GLMeshDeviceProxy.hpp"
-#include "Proxy/GLUtils.hpp"
+#include "Common/GLUtils.hpp"
 
 using namespace Poly;
 

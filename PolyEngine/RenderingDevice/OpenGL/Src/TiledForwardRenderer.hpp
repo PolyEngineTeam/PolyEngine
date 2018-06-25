@@ -2,50 +2,10 @@
 
 #include "IRendererInterface.hpp"
 #include "Proxy/GLShaderProgram.hpp"
-#include "Proxy/GLUtils.hpp"
+#include "Common/GLUtils.hpp"
+#include "Pipeline/EnvCapture.hpp"
 
 namespace Poly {
-
-	class EnvCapture : public BaseObject<> 
-	{
-		// TODO: inherit from multipass RenderingPass, need access to RDI
-		// TODO: Init / Deinit
-
-		public:
-			
-			EnvCapture(GLRenderingDevice* rdi);
-
-			void UpdateEnv(const SkyboxWorldComponent* skyboxCmp);
-
-			bool GetIsDirty() const { return IsDirty; };
-
-			GLuint GetHDRPanorama() const { return HDRPanorama; };
-			GLuint GetEnvCubemap() const { return EnvCubemap; };
-			GLuint GetIrradianceMap() const { return IrradianceMap; };
-			GLuint GetPrefilterMap() const { return PrefilterMap; };
-
-		private:
-
-			bool IsDirty = true;
-			
-			GLRenderingDevice* RDI;
-
-			// IBL textures and cubemaps
-			GLuint HDRPanorama = 0;
-			GLuint EnvCubemap = 0;
-			GLuint IrradianceMap = 0;
-			GLuint PrefilterMap = 0;
-
-			GLShaderProgram EquirectangularToCubemapShader;
-			GLShaderProgram CubemapIrradianceShader;
-			GLShaderProgram PrefilterCubemapShader;
-
-			void CaptureCubemap(const SkyboxWorldComponent* skyboxCmp);
-
-			void CaptureDiffuseIrradiance();
-
-			void CaptureSpecularPrefilteredMap();
-	};
 
 	class TiledForwardRenderer : public IRendererInterface
 	{

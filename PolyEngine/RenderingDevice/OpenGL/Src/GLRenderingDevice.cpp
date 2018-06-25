@@ -4,7 +4,7 @@
 
 #include <Utils/Logger.hpp>
 
-#include "Proxy/GLUtils.hpp"
+#include "Common/GLUtils.hpp"
 #include "Common/PrimitiveQuad.hpp"
 #include "Common/PrimitiveCube.hpp"
 

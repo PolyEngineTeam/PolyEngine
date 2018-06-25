@@ -14,7 +14,7 @@
 #include "Proxy/GLTextureDeviceProxy.hpp"
 #include "Pipeline/RenderingPassBase.hpp"
 #include "Proxy/GLMeshDeviceProxy.hpp"
-#include "Proxy/GLUtils.hpp"
+#include "Common/GLUtils.hpp"
 #include "Common/PrimitiveCube.hpp"
 #include "Common/PrimitiveQuad.hpp"
 

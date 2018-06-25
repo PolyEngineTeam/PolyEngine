@@ -3,7 +3,7 @@
 #include <Defines.hpp>
 #include <Collections/String.hpp>
 #include <map>
-#include "Proxy/GLUtils.hpp"
+#include "Common/GLUtils.hpp"
 #include "Proxy/GLShaderProgram.hpp"
 
 namespace Poly

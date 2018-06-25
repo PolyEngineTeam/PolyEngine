@@ -1,5 +1,5 @@
 #include "Proxy/GLTextureDeviceProxy.hpp"
-#include "Proxy/GLUtils.hpp"
+#include "Common/GLUtils.hpp"
 
 using namespace Poly;
 

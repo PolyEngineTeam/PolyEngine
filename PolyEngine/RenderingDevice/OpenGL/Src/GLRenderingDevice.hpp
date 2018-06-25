@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Proxy/GLUtils.hpp"
+#include "Common/GLUtils.hpp"
 #include <Rendering/IRenderingDevice.hpp>
 #include "Proxy/GLShaderProgram.hpp"
 #include <SDL.h>
