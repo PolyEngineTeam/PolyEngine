@@ -18,7 +18,6 @@ void EngineManager::InitEngine(std::unique_ptr<IGame> game, const String& assets
 
 	// get editor inserface and set path to assets
 	Editor = gApp->InspectorMgr->GetEditor();
-	Editor->SetAssetsPathConfigPath(assetsPathConfigPath);
 	Editor->SetEngineState(eEngineState::EDIT);
 
 	// create and initialize engine instance

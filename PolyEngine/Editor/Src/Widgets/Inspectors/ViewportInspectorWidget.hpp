@@ -9,6 +9,11 @@
 #include "Widgets/Inspectors/InspectorWidgetBase.hpp"
 #include "Managers/InspectorManager.hpp"
 
+namespace Poly
+{
+	class CameraComponent;
+}
+
 using namespace Poly;
 
 class ViewportInspectorWidget : public InspectorWidgetBase, public IEditor
@@ -27,7 +32,7 @@ public:
 	//		IEditor functions
 	// When engine checks if there is iEditor object registered it will obtain assets path from here.
 	// It is important because when we run a game it is executed from engine folder not game folder.
-	const String& GetAssetsPathConfigPath() override { return Config->GetProjectPath + ""; }
+	const String& GetAssetsPathConfigPath() override { return Config->GetProjectPath(); }
 
 	// This function is similar to iGame::Init function; it is called after game initialization.
 	void Init() override;

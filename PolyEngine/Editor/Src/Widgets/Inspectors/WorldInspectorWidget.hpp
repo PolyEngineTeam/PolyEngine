@@ -45,10 +45,12 @@ class WorldInspectorWidget : public InspectorWidgetBase
 	Q_OBJECT
 
 public:
-	WorldInspectorWidget(QWidget* parent, World* world, const Dynarray<Entity*>& selectedEntities);
+	WorldInspectorWidget(QWidget* parent, InspectorManager* mgr);
 
 	// Initializes object connections with other inspectors and inspector manager.
 	void InitializeConnections() override;
+
+	void Reset() override {}
 
 	// Reloads whole content.
 	void Reload() override;

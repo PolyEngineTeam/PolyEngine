@@ -41,7 +41,6 @@ UNSILENCE_MSVC_WARNING()
 #include "Widgets/LoggerWidget.hpp"
 
 #include "Widgets/Inspectors/WorldInspectorWidget.hpp"
-#include "Widgets/Inspectors/WorldComponentsInspectorWidget.hpp"
 #include "Widgets/Inspectors/ResourceInspectorWidget.hpp"
 #include "Widgets/Inspectors/ViewportInspectorWidget.hpp"
 #include "Widgets/Inspectors/EntityInspectorWidget.hpp"

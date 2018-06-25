@@ -36,7 +36,7 @@ CameraComponent* ViewportWorldComponent::GetCamera(ViewportID id)
 {
 	auto it = Viewports.find(id);
 	ASSERTE(it != Viewports.end(), "Viewport doesn't exist.");
-	it->second.GetCamera();
+	return it->second.GetCamera();
 }
 
 void ViewportWorldComponent::SetCamera(ViewportID id, CameraComponent* cam)

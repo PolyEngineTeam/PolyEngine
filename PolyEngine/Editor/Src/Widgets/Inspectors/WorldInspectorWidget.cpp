@@ -4,8 +4,8 @@
 
 //		general
 //------------------------------------------------------------------------------
-WorldInspectorWidget::WorldInspectorWidget(QWidget* parent, World* world, const Dynarray<Entity*>& selectedEntities)
-	: InspectorWidgetBase(parent, world, selectedEntities)
+WorldInspectorWidget::WorldInspectorWidget(QWidget* parent, InspectorManager* mgr)
+	: InspectorWidgetBase(parent, mgr)
 {
 	setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(this, &EntityInspectorWidget::customContextMenuRequested, this, &WorldInspectorWidget::SpawnContextMenu);
@@ -203,7 +203,7 @@ void WorldInspectorWidget::SelectionChanged()
 	for (QTreeWidgetItem* i : Tree->selectedItems())
 		entities.PushBack(ItemToEntity[i]);
 
-	emit gApp->InspectorMgr->EntitiesSelectionChanged(entities);
+	gApp->InspectorMgr->EntitiesSelectionChangedSlot(entities);
 }
 
 //------------------------------------------------------------------------------
@@ -219,7 +219,7 @@ void WorldInspectorWidget::Drop(Dynarray<QTreeWidgetItem*> droppedItems)
 		e->SetParent(parent);
 	}
 
-	emit gApp->InspectorMgr->EntitiesReparented(parent);
+	gApp->InspectorMgr->EntitiesReparentedSlot();
 }
 
 //------------------------------------------------------------------------------
@@ -229,7 +229,7 @@ void WorldInspectorWidget::SpawnEntities()
 	Dynarray<Entity*> result = dialog.SpawnEntities(WorldObj, SelectedEntities);
 
 	if (!dialog.OperationCanceled())
-		emit gApp->InspectorMgr->EntitiesSpawned(result);
+		gApp->InspectorMgr->EntitiesSpawnedSlot();
 }
 
 //------------------------------------------------------------------------------
@@ -239,7 +239,7 @@ void WorldInspectorWidget::DestroyEntities()
 	dialog.DestroyEntities(WorldObj, SelectedEntities);
 
 	if (!dialog.OperationCanceled())
-		emit gApp->InspectorMgr->EntitiesDestroyed();
+		emit gApp->InspectorMgr->EntitiesDestroyedSlot();
 }
 
 //------------------------------------------------------------------------------
@@ -249,5 +249,5 @@ void WorldInspectorWidget::ReparentEntities()
 	Entity* result = dialog.ReparentEntities(WorldObj, SelectedEntities);
 
 	if (!dialog.OperationCanceled())
-		emit gApp->InspectorMgr->EntitiesReparented(result);
+		emit gApp->InspectorMgr->EntitiesReparentedSlot();
 }

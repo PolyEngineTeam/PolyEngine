@@ -20,9 +20,6 @@ namespace Poly
 		// Returns path to config file with assets paths (serialized AssetsPathConfig).
 		virtual const Poly::String& GetAssetsPathConfigPath() = 0;
 
-		// It was not meant to use in engine.
-		virtual void  SetAssetsPathConfigPath(const String& path) = 0;
-
 		// Initialize editor systems and components here.
 		virtual void Init() = 0;
 

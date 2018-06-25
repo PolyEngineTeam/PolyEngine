@@ -26,13 +26,15 @@ class EntityInspectorWidget : public InspectorWidgetBase
 	Q_OBJECT
 
 public:
-	EntityInspectorWidget(QWidget* parent, World* world, const Dynarray<Entity*>& selectedEntities);
+	EntityInspectorWidget(QWidget* parent, InspectorManager* mgr);
 
 	// Initializes object connections with other inspectors and inspector manager.
 	void InitializeConnections() override;
 
-	// Reloads whole content.
 	void Reload() override;
+
+	// Reloads whole content.
+	void Reset() override {};
 
 public slots:
 	// Sets selected entities.

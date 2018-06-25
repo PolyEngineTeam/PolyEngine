@@ -4,8 +4,8 @@
 
 //		general
 //------------------------------------------------------------------------------
-EntityInspectorWidget::EntityInspectorWidget(QWidget* parent, World* world, const Dynarray<Entity*>& selectedEntities)
-	: InspectorWidgetBase(parent, world, selectedEntities)
+EntityInspectorWidget::EntityInspectorWidget(QWidget* parent, InspectorManager* mgr)
+	: InspectorWidgetBase(parent, mgr)
 {
 	setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(this, &EntityInspectorWidget::customContextMenuRequested, this, &EntityInspectorWidget::SpawnContextMenu);
@@ -346,12 +346,12 @@ void EntityInspectorWidget::RemoveComponent()
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::SelectParent()
 {
-	emit gApp->InspectorMgr->EntitiesSelectionChanged({ SelectedEntities[0]->GetParent() });
+	gApp->InspectorMgr->EntitiesSelectionChangedSlot({ SelectedEntities[0]->GetParent() });
 }
 
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::SelectChild()
 {
-	emit gApp->InspectorMgr->EntitiesSelectionChanged(
+	gApp->InspectorMgr->EntitiesSelectionChangedSlot(
 		{ SelectedEntities[0]->GetChildren()[ChildrenIdNameField->currentIndex()] });
 }
