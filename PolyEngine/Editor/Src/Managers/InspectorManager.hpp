@@ -26,11 +26,11 @@ public:
 	std::unique_ptr<IRenderingDevice> GetRenderingDevice() { return ViewportInspector->GetRenderingDevice(); }
 	IEditor* GetEditor() { return ViewportInspector; }
 
-	//		slots
+public slots:
 	void ProjectOpenedSlot(const ProjectConfig* config);
 	void ProjectClosedSlot();
 
-	void EngineInitializedSlot(World* world);
+	void EngineInitializedSlot(Engine* engine);
 	void EngineDeinitializedSlot();
 	void StateChangedSlot(eEngineState state);
 
@@ -80,6 +80,7 @@ signals:
 	void Reset();
 
 private:
+	Engine* EngineObj;
 	World* WorldObj;
 	Dynarray<Entity*> SelectedEntities;
 	ProjectConfig* Config;

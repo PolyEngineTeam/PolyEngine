@@ -32,6 +32,13 @@ void ViewportWorldComponent::ResizeViewport(ViewportID id, const AARect& rect)
 	it->second.Resize(rect);
 }
 
+CameraComponent* ViewportWorldComponent::GetCamera(ViewportID id)
+{
+	auto it = Viewports.find(id);
+	ASSERTE(it != Viewports.end(), "Viewport doesn't exist.");
+	it->second.GetCamera();
+}
+
 void ViewportWorldComponent::SetCamera(ViewportID id, CameraComponent* cam)
 {
 	auto it = Viewports.find(id);

@@ -24,9 +24,12 @@ const static float PLAYER_CAMERA_NEAR = 0.1f;
 const static float PLAYER_CAMERA_FAR = 300.f;
 const static Angle PLAYER_CAMERA_FOV = 60_deg;
 
+
+
+//		general
 //------------------------------------------------------------------------------
-ViewportInspectorWidget::ViewportInspectorWidget(QWidget* parent)
-	: InspectorWidgetBase(parent)
+ViewportInspectorWidget::ViewportInspectorWidget(QWidget* parent, InspectorManager* mgr)
+	: InspectorWidgetBase(parent, mgr)
 {
 	setAttribute(Qt::WA_NativeWindow);
 	setMouseTracking(true);
@@ -56,13 +59,7 @@ ViewportInspectorWidget::ViewportInspectorWidget(QWidget* parent)
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::InitializeConnections()
 {
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesSelectionChanged, this, &ViewportInspectorWidget::SetSelectedEntities);
-}
-
-//------------------------------------------------------------------------------
-void ViewportInspectorWidget::Reset()
-{
-	SelectedEntities.Clear();
+	connect(gApp->InspectorMgr, &InspectorManager::StateChanged, this, &ViewportInspectorWidget::StateChanged);
 }
 
 //------------------------------------------------------------------------------
@@ -85,40 +82,88 @@ std::unique_ptr<Poly::IRenderingDevice> ViewportInspectorWidget::GetRenderingDev
 	return std::unique_ptr<Poly::IRenderingDevice>(LoadRenderingDevice(WindowInSDL.Get(), viewportRect));
 }
 
+
+
+//		iEditor
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::Init()
 {
-	if (EngineState == eEngineState::EDIT)
-	{
-		gEngine->RegisterEditorUpdatePhase(EditorCameraMovementSystem::Update);
-		gEngine->RegisterEditorUpdatePhase(GizmoSystem::Update);
+	//		register editor phases
+	EngineObj->RegisterEditorUpdatePhase(EditorCameraMovementSystem::Update);
+	EngineObj->RegisterEditorUpdatePhase(GizmoSystem::Update);
 
-		// create camera
-		Camera = DeferredTaskSystem::SpawnEntityImmediate(gEngine->GetWorld());
-		// add EditorCameraMovementComponent
-		DeferredTaskSystem::AddComponentImmediate<EditorCameraMovementComponent>(gEngine->GetWorld(), Camera, 25.f, 0.01f);
-		// add camera component
-		DeferredTaskSystem::AddComponentImmediate<CameraComponent>(gEngine->GetWorld(), Camera, 60_deg, 1.0f, 1000.f);
-		// set camera in world component
-		gEngine->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, gEngine->GetWorld()->GetComponent<CameraComponent>(Camera));
-		// add postprocess settings component
-		DeferredTaskSystem::AddComponentImmediate<PostprocessSettingsComponent>(gEngine->GetWorld(), Camera);
-		gEngine->GetWorld()->GetComponent<PostprocessSettingsComponent>(Camera)->UseFgShader = true;
-		gEngine->GetWorld()->GetComponent<PostprocessSettingsComponent>(Camera)->UseBgShader = true;
+	//		create camera
+	EditorCameraEnt = DeferredTaskSystem::SpawnEntityImmediate(EngineObj->GetWorld());
+	// add EditorCameraMovementComponent
+	DeferredTaskSystem::AddComponentImmediate<EditorCameraMovementComponent>(EngineObj->GetWorld(), EditorCameraEnt, 25.f, 0.01f);
+	// add camera component
+	DeferredTaskSystem::AddComponentImmediate<CameraComponent>(EngineObj->GetWorld(), EditorCameraEnt, 60_deg, 1.0f, 1000.f);
+	// add postprocess settings component
+	DeferredTaskSystem::AddComponentImmediate<PostprocessSettingsComponent>(EngineObj->GetWorld(), EditorCameraEnt);
+	EngineObj->GetWorld()->GetComponent<PostprocessSettingsComponent>(EditorCameraEnt)->UseFgShader = true;
+	EngineObj->GetWorld()->GetComponent<PostprocessSettingsComponent>(EditorCameraEnt)->UseBgShader = true;
+
+	//		obtain game camera
+	GameCamera = EngineObj->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->GetCamera(0);
+}
+
+void ViewportInspectorWidget::Deinit()
+{
+	DeferredTaskSystem::DestroyEntity(WorldObj, EditorCameraEnt);
+}
+
+void ViewportInspectorWidget::SetSelectedEntities(Dynarray<Entity*> entities)
+{
+	Manager->EntitiesSelectionChangedSlot(std::move(entities));
+}
+
+void ViewportInspectorWidget::UpdateInspectors()
+{
+	Manager->EntitiesModifiedSlot();
+}
+
+void ViewportInspectorWidget::SetEngineState(eEngineState state)
+
+{
+	EngineState = state;
+	Manager->StateChangedSlot(state);
+}
+
+
+
+//		slots
+//------------------------------------------------------------------------------
+void ViewportInspectorWidget::StateChanged()
+{
+	switch (EngineState)
+	{
+	case eEngineState::EDIT:
+	{
+		// set editor camera
+		EngineObj->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(
+			0, EngineObj->GetWorld()->GetComponent<CameraComponent>(EditorCameraEnt));
+
+		break;
+	}
+	case eEngineState::GAMEPLAY:
+	{
+		// set gameplay camera
+		EngineObj->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, GameCamera);
+
+		break;
+	}
+	case eEngineState::NONE:
+	{
+		break;
+	}
+	default:
+		throw new std::exception(); // unknown engine state
 	}
 }
 
-//------------------------------------------------------------------------------
-void ViewportInspectorWidget::Deinit()
-{
-	DeferredTaskSystem::DestroyEntityImmediate(gEngine->GetWorld(), Camera);
-}
 
-//------------------------------------------------------------------------------
-void ViewportInspectorWidget::UpdateInspectors()
-{
-}
 
+//		viewport functions
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::resizeEvent(QResizeEvent* resizeEvent)
 {
@@ -128,7 +173,7 @@ void ViewportInspectorWidget::resizeEvent(QResizeEvent* resizeEvent)
 	Poly::ScreenSize screenSize;
 	screenSize.Width = resizeEvent->size().width();
 	screenSize.Height = resizeEvent->size().height();
-	Poly::gEngine->ResizeScreen(screenSize);
+	EngineObj->ResizeScreen(screenSize);
 }
 
 //------------------------------------------------------------------------------
@@ -136,7 +181,7 @@ void ViewportInspectorWidget::wheelEvent(QWheelEvent* wheelEvent)
 {
 	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
 		return;
-	Poly::gEngine->UpdateWheelPos(Poly::Vector2i(wheelEvent->delta(), 0));
+	EngineObj->UpdateWheelPos(Poly::Vector2i(wheelEvent->delta(), 0));
 }
 
 //------------------------------------------------------------------------------
@@ -144,7 +189,7 @@ void ViewportInspectorWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 {
 	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
 		return;
-	Poly::gEngine->UpdateMousePos(Poly::Vector2i(mouseEvent->pos().x(), mouseEvent->pos().y()));
+	EngineObj->UpdateMousePos(Poly::Vector2i(mouseEvent->pos().x(), mouseEvent->pos().y()));
 
 	gConsole.LogDebug("{}; {}", mouseEvent->pos().x(), mouseEvent->pos().y());
 }
@@ -158,15 +203,15 @@ void ViewportInspectorWidget::mousePressEvent(QMouseEvent* mouseEvent)
 	switch (mouseEvent->button())
 	{
 	case Qt::LeftButton:
-		Poly::gEngine->MouseButtonDown(static_cast<Poly::eMouseButton>(Poly::eMouseButton::LEFT));
+		EngineObj->MouseButtonDown(static_cast<Poly::eMouseButton>(Poly::eMouseButton::LEFT));
 		break;
 
 	case Qt::RightButton:
-		Poly::gEngine->MouseButtonDown(static_cast<Poly::eMouseButton>(Poly::eMouseButton::RIGHT));
+		EngineObj->MouseButtonDown(static_cast<Poly::eMouseButton>(Poly::eMouseButton::RIGHT));
 		break;
 
 	case Qt::MiddleButton:
-		Poly::gEngine->MouseButtonDown(static_cast<Poly::eMouseButton>(Poly::eMouseButton::MIDDLE));
+		EngineObj->MouseButtonDown(static_cast<Poly::eMouseButton>(Poly::eMouseButton::MIDDLE));
 		break;
 
 	default:
@@ -183,15 +228,15 @@ void ViewportInspectorWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 	switch (mouseEvent->button())
 	{
 	case Qt::LeftButton:
-		Poly::gEngine->MouseButtonUp(static_cast<Poly::eMouseButton>(Poly::eMouseButton::LEFT));
+		EngineObj->MouseButtonUp(static_cast<Poly::eMouseButton>(Poly::eMouseButton::LEFT));
 		break;
 
 	case Qt::RightButton:
-		Poly::gEngine->MouseButtonUp(static_cast<Poly::eMouseButton>(Poly::eMouseButton::RIGHT));
+		EngineObj->MouseButtonUp(static_cast<Poly::eMouseButton>(Poly::eMouseButton::RIGHT));
 		break;
 
 	case Qt::MiddleButton:
-		Poly::gEngine->MouseButtonUp(static_cast<Poly::eMouseButton>(Poly::eMouseButton::MIDDLE));
+		EngineObj->MouseButtonUp(static_cast<Poly::eMouseButton>(Poly::eMouseButton::MIDDLE));
 		break;
 
 	default:
@@ -209,7 +254,7 @@ void ViewportInspectorWidget::keyPressEvent(QKeyEvent* keyEvent)
 	if (keyEvent->isAutoRepeat())
 		keyEvent->ignore();
 	else
-		Poly::gEngine->KeyDown(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
+		EngineObj->KeyDown(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
 }
 
 //------------------------------------------------------------------------------
@@ -221,5 +266,5 @@ void ViewportInspectorWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 	if (keyEvent->isAutoRepeat())
 		keyEvent->ignore();
 	else
-		Poly::gEngine->KeyUp(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
+		EngineObj->KeyUp(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
 }

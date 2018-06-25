@@ -27,7 +27,7 @@ public:
 	// Update inspector view from object.
 	void UpdateInspector();
 
-	// Sestroys everything and creates again
+	// Destroys everything and creates again
 	void ReloadInspector(bool debug = false);
 
 private:

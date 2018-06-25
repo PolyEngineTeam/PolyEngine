@@ -27,6 +27,7 @@ namespace Poly
 		void RemoveViewport(ViewportID);
 		void ResizeViewport(ViewportID, const AARect&);
 		void SetCamera(ViewportID, CameraComponent*);
+		CameraComponent* GetCamera(ViewportID);
 
 		const std::unordered_map<size_t, Viewport>& GetViewports() const { return Viewports; }
 	private:

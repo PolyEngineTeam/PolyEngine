@@ -7,6 +7,7 @@
 #include "Windows/CustomSDLWindow.hpp"
 #include "Rendering/IRenderingDevice.hpp"
 #include "Widgets/Inspectors/InspectorWidgetBase.hpp"
+#include "Managers/InspectorManager.hpp"
 
 using namespace Poly;
 
@@ -15,33 +16,46 @@ class ViewportInspectorWidget : public InspectorWidgetBase, public IEditor
 	Q_OBJECT
 
 public:
-	ViewportInspectorWidget(QWidget* parent);
+	ViewportInspectorWidget(QWidget* parent, InspectorManager* mgr);
 
-	// Initializes object connections with other inspectors and inspector manager.
 	void InitializeConnections() override;
-
-	void Reset() override;
-
-	void UpdateInspector() {}
-	void ReloadInspector() {}
+	void Reload() override {}
+	void Reset() override {}
 
 	std::unique_ptr<IRenderingDevice> GetRenderingDevice();
 
-	// IEditor functions
-	const String& GetAssetsPathConfigPath() override { return AssetsPathConfigPath; }
-	void SetAssetsPathConfigPath(const String& path) override { AssetsPathConfigPath = path; }
-	void Init() override;
-	void Deinit() override;
-	virtual const Dynarray<Entity*>& GetSelectedEntities() override { return SelectedEntities; }
-	virtual void SetSelectedEntities(Dynarray<Entity*> entities) override { SelectedEntities = std::move(entities); }
-	virtual void UpdateInspectors() override;
+	//		IEditor functions
+	// When engine checks if there is iEditor object registered it will obtain assets path from here.
+	// It is important because when we run a game it is executed from engine folder not game folder.
+	const String& GetAssetsPathConfigPath() override { return Config->GetProjectPath + ""; }
 
-signals:
-	void EntitiesSelectionChanged(Dynarray<Entity*> entities);
+	// This function is similar to iGame::Init function; it is called after game initialization.
+	void Init() override;
+
+	// Same as above; it is called before game deinitialization.
+	void Deinit() override;
+
+	// If any system needs currently selected entities list it should use this function.
+	const Dynarray<Entity*>& GetSelectedEntities() override { return SelectedEntities; }
+
+	// If system wants to set new list of selected entities it hould call this one.
+	void SetSelectedEntities(Dynarray<Entity*> entities) override;
+
+	// Can be called from systems to update inspectors content 
+	void UpdateInspectors() override;
+
+	void SetEngineState(eEngineState state) override;
+
+public slots:
+	// engine
+	void StateChanged();
 
 private:
-	Dynarray<Entity*> SelectedEntities;
-	String AssetsPathConfigPath;
+	Entity* EditorCameraEnt = nullptr;
+	CameraComponent* GameCamera = nullptr;
+
+	QWidget* SDLWidget;
+	CustomSDLWindow WindowInSDL;
 
 	void resizeEvent(QResizeEvent* resizeEvent) override;
 	void wheelEvent(QWheelEvent* wheelEvent) override;
@@ -50,9 +64,4 @@ private:
 	void mouseReleaseEvent(QMouseEvent* mouseREvent) override;
 	void keyPressEvent(QKeyEvent* keyEvent) override;
 	void keyReleaseEvent(QKeyEvent* keyEvent) override;
-
-	Entity* Camera = nullptr;
-
-	QWidget* SDLWidget;
-	CustomSDLWindow WindowInSDL;
 };
