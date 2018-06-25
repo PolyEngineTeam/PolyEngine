@@ -50,10 +50,7 @@ public:
 	// Initializes object connections with other inspectors and inspector manager.
 	void InitializeConnections() override;
 
-	void Reset() override {}
-
-	// Reloads whole content.
-	void Reload() override;
+	void Reset() override;
 
 
 public slots:
@@ -74,6 +71,9 @@ public slots:
 
 	// Updates entities names.
 	void Update();
+
+	// Reloads whole content.
+	void Reload();
 
 
 private:

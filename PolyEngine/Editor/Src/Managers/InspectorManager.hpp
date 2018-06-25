@@ -81,7 +81,6 @@ signals:
 	//		other
 	void Update();
 	void Reload();
-	void Reset();
 
 private:
 	Engine* EngineObj;

@@ -1,6 +1,7 @@
 #include "PolyEditorPCH.hpp"
 
 #include <sstream>
+#include <QtWidgets/qmessagebox.h>
 
 //		general
 //------------------------------------------------------------------------------
@@ -51,12 +52,14 @@ void WorldInspectorWidget::InitializeConnections()
 	connect(gApp->InspectorMgr, &InspectorManager::EntitiesSelectionChanged, this, &WorldInspectorWidget::EntitiesSelectionChanged);
 	
 	connect(gApp->InspectorMgr, &InspectorManager::Update, this, &WorldInspectorWidget::Update);
+	connect(gApp->InspectorMgr, &InspectorManager::Reload, this, &WorldInspectorWidget::Reload);
 }
 
 //------------------------------------------------------------------------------
-void WorldInspectorWidget::Reload()
+void WorldInspectorWidget::Reset()
 {
-	EntitiesSelectionChanged();
+	Tree->clear();
+	ItemToEntity.clear();
 }
 
 
@@ -164,6 +167,12 @@ void WorldInspectorWidget::Update()
 	}
 }
 
+//------------------------------------------------------------------------------
+void WorldInspectorWidget::Reload()
+{
+	EntitiesSelectionChanged();
+}
+
 
 
 //		internal
@@ -225,29 +234,63 @@ void WorldInspectorWidget::Drop(Dynarray<QTreeWidgetItem*> droppedItems)
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::SpawnEntities()
 {
+	if (!WorldObj)
+	{
+		QMessageBox msgBox;
+		msgBox.setText("Can't spawn entities without world.");
+		msgBox.exec();
+		
+		return;
+	}
+
 	EntityDialog dialog;
 	Dynarray<Entity*> result = dialog.SpawnEntities(WorldObj, SelectedEntities);
 
-	if (!dialog.OperationCanceled())
-		gApp->InspectorMgr->EntitiesSpawnedSlot();
+	if (!dialog.OperationCanceled()) 
+	{
+		Manager->EntitiesSelectionChangedSlot(result);
+		Manager->EntitiesSpawnedSlot();
+	}
+
 }
 
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::DestroyEntities()
 {
+	if (!WorldObj)
+	{
+		QMessageBox msgBox;
+		msgBox.setText("Can't destroy entities without world.");
+		msgBox.exec();
+
+		return;
+	}
+
 	EntityDialog dialog;
 	dialog.DestroyEntities(WorldObj, SelectedEntities);
 
 	if (!dialog.OperationCanceled())
-		emit gApp->InspectorMgr->EntitiesDestroyedSlot();
+		Manager->EntitiesDestroyedSlot();
 }
 
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::ReparentEntities()
 {
+	if (!WorldObj)
+	{
+		QMessageBox msgBox;
+		msgBox.setText("Can't reparent entities without selected world.");
+		msgBox.exec();
+
+		return;
+	}
+
 	EntityDialog dialog;
-	Entity* result = dialog.ReparentEntities(WorldObj, SelectedEntities);
+	Dynarray<Entity*> result = dialog.ReparentEntities(WorldObj, SelectedEntities);
 
 	if (!dialog.OperationCanceled())
-		emit gApp->InspectorMgr->EntitiesReparentedSlot();
+	{
+		Manager->EntitiesSelectionChangedSlot(result);
+		Manager->EntitiesReparentedSlot();
+	}
 }

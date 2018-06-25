@@ -134,7 +134,7 @@ void EntityDialog::DestroyEntities(World* world, Dynarray<Entity*> entities)
 }
 
 //------------------------------------------------------------------------------
-Entity* EntityDialog::ReparentEntities(World* world, Dynarray<Entity*> entities, Entity* parent)
+Dynarray<Entity*> EntityDialog::ReparentEntities(World* world, Dynarray<Entity*> entities, Entity* parent)
 {
 	setModal(true);
 	Canceled = true;
@@ -189,6 +189,8 @@ Entity* EntityDialog::ReparentEntities(World* world, Dynarray<Entity*> entities,
 	// input from user
 	exec();
 
+	Dynarray<Entity*> result;
+
 	// apply
 	if (!Canceled)
 	{
@@ -203,12 +205,13 @@ Entity* EntityDialog::ReparentEntities(World* world, Dynarray<Entity*> entities,
 			msgBox.setText("Parent can't be null, parenting will be skipped for all entities.");
 			msgBox.exec();
 
-			return parent;
+			return {};
 		}
 
 		for (auto i : EntitiesTree->selectedItems())
 		{
 			Entity* child = ItemToEntity[i];
+			result.PushBack(child);
 
 			if (parent == child)
 			{
@@ -229,7 +232,7 @@ Entity* EntityDialog::ReparentEntities(World* world, Dynarray<Entity*> entities,
 		}
 	}
 
-	return parent;
+	return result;
 }
 
 //------------------------------------------------------------------------------
