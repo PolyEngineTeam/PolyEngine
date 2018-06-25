@@ -242,6 +242,9 @@ void GLShaderProgram::SetUniform(const String& name, const Matrix& val)
 
 void GLShaderProgram::BindSampler(const String& name, int samplerID, int textureID)
 {
+	HEAVY_ASSERTE(samplerID >= 0, "Invalid sampler ID!");
+	HEAVY_ASSERTE(textureID > 0, "Invalid texture resource ID!");
+
 	glActiveTexture(GL_TEXTURE0 + samplerID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	SetUniform(name, samplerID);
@@ -249,6 +252,9 @@ void GLShaderProgram::BindSampler(const String& name, int samplerID, int texture
 
 void GLShaderProgram::BindSamplerCube(const String& name, int samplerID, int cubemapID)
 {
+	HEAVY_ASSERTE(samplerID >= 0, "Invalid sampler ID!");
+	HEAVY_ASSERTE(cubemapID > 0, "Invalid cubemap resource ID!");
+
 	glActiveTexture(GL_TEXTURE0 + samplerID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapID);
 	SetUniform(name, samplerID);
