@@ -11,19 +11,19 @@
 class ResourceInspectorWidget : public InspectorWidgetBase
 {
 public:
-	ResourceInspectorWidget(QWidget* parent);
+	ResourceInspectorWidget(QWidget* parent, InspectorManager* mgr);
 
 	// Initializes object connections with other inspectors and inspector manager.
 	void InitializeConnections() override;
 
+	void Reload() override;
+
 	// Removes all items from viewer.
 	void Reset() override;
 
-	void UpdateInspector() {}
-	void ReloadInspector() {}
-
-	// Fills layout with list of found resources
-	void SetObject(const ProjectConfig* config);
+public slots:
+	void ProjectOpened();
+	void ProjectClosed();
 
 private:
 	const ProjectConfig* Config;

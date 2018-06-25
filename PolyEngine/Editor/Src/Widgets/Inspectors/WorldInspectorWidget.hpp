@@ -78,10 +78,10 @@ private:
 	// Called recursively to add entity and all its chiildren to tree
 	void AddEntityToTree(Entity* entity, QTreeWidgetItem* parent);
 
-	CustomTree* Tree;
 	std::map<QTreeWidgetItem*, Entity*> ItemToEntity;
-
 	bool DisableSelectionChangedSlot = false;
+
+	CustomTree* Tree;
 
 	QMenu* ContextMenu;
 		QAction* AddEntityAction;

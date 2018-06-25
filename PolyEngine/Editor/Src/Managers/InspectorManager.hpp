@@ -16,6 +16,8 @@ class InspectorManager : public QObject
 {
 	Q_OBJECT
 
+	friend class InspectorWidgetBase;
+
 public:
 	InspectorManager(EditorApp* app);
 
@@ -25,22 +27,23 @@ public:
 	IEditor* GetEditor() { return ViewportInspector; }
 
 	//		slots
-	void ProjectOpened(const ProjectConfig* config);
-	void ProjectClosed();
+	void ProjectOpenedSlot(const ProjectConfig* config);
+	void ProjectClosedSlot();
 
-	void EngineInitialized(World* world);
-	void EngineDeinitialized();
-	void StateChanged(eEngineState state);
+	void EngineInitializedSlot(World* world);
+	void EngineDeinitializedSlot();
+	void StateChangedSlot(eEngineState state);
 
-	void WorldChanged(World* world);
-	void EntitiesSpawned(Dynarray<Entity*> entities);
-	void EntitiesDestroyed();
-	void EntitiesModified();
-	void EntitiesReparented(Entity* parent);
-	void EntitiesSelectionChanged(Dynarray<Entity*> entities);
+	void WorldChangedSlot(World* world);
 
-	void ComponentsAdded(Dynarray<ComponentBase*> components);
-	void ComponentsRemoved(Dynarray<ComponentBase*> components);
+	void EntitiesSpawnedSlot();
+	void EntitiesDestroyedSlot();
+	void EntitiesModifiedSlot();
+	void EntitiesReparentedSlot();
+	void EntitiesSelectionChangedSlot(Dynarray<Entity*> entities);
+
+	void ComponentsAddedSlot(Dynarray<ComponentBase*> components);
+	void ComponentsRemovedSlot(Dynarray<ComponentBase*> components);
 
 signals:
 	//		project signals
@@ -77,6 +80,10 @@ signals:
 	void Reset();
 
 private:
+	World* WorldObj;
+	Dynarray<Entity*> SelectedEntities;
+	ProjectConfig* Config;
+
 	WorldInspectorWidget* WorldInspector;
 	WorldComponentsInspectorWidget* WorldComponentsInspector;
 	ResourceInspectorWidget* ResourceInspector;
