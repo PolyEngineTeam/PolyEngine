@@ -37,7 +37,7 @@ namespace Poly {
 
 		virtual ~World();
 
-		Entity* GetRoot() const { return rootEntity.Get(); }
+		Entity* GetRoot() const { return RootEntity.Get(); }
 
 		/// <summary>Gets a component of a specified type from entity with given UniqueID.</summary>
 		/// <param name="entityId">UniqueID of the entity.</param>
@@ -78,7 +78,7 @@ namespace Poly {
 		ComponentBase* GetWorldComponent(size_t ctypeID)
 		{
 			if (HasWorldComponent(ctypeID))
-				return WorldComponents[ctypeID];
+				return RootEntity->Components[ctypeID];
 			return nullptr;
 		}
 
