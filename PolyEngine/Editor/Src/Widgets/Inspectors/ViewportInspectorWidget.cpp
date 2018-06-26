@@ -59,7 +59,7 @@ ViewportInspectorWidget::ViewportInspectorWidget(QWidget* parent, InspectorManag
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::InitializeConnections()
 {
-	connect(gApp->InspectorMgr, &InspectorManager::StateChanged, this, &ViewportInspectorWidget::StateChanged);
+	connect(Manager, &InspectorManager::StateChanged, this, &ViewportInspectorWidget::StateChanged);
 }
 
 //------------------------------------------------------------------------------

@@ -17,8 +17,8 @@ ResourceInspectorWidget::ResourceInspectorWidget(QWidget* parent, InspectorManag
 //------------------------------------------------------------------------------
 void ResourceInspectorWidget::InitializeConnections()
 {
-	connect(gApp->InspectorMgr, &InspectorManager::ProjectOpened, this, &ResourceInspectorWidget::ProjectOpened);
-	connect(gApp->InspectorMgr, &InspectorManager::ProjectClosed, this, &ResourceInspectorWidget::ProjectClosed);
+	connect(Manager, &InspectorManager::ProjectOpened, this, &ResourceInspectorWidget::ProjectOpened);
+	connect(Manager, &InspectorManager::ProjectClosed, this, &ResourceInspectorWidget::ProjectClosed);
 }
 
 //------------------------------------------------------------------------------

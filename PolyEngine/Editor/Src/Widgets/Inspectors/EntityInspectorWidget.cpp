@@ -95,16 +95,16 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent, InspectorManager* 
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::InitializeConnections()
 {
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesSpawned, this, &EntityInspectorWidget::Update);
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesDestroyed, this, &EntityInspectorWidget::Update);
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesModified, this, &EntityInspectorWidget::Update);
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesReparented, this, &EntityInspectorWidget::Update);
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesSelectionChanged, this, &EntityInspectorWidget::EntitiesSelectionChanged);
+	connect(Manager, &InspectorManager::EntitiesSpawned, this, &EntityInspectorWidget::Update);
+	connect(Manager, &InspectorManager::EntitiesDestroyed, this, &EntityInspectorWidget::Update);
+	connect(Manager, &InspectorManager::EntitiesModified, this, &EntityInspectorWidget::Update);
+	connect(Manager, &InspectorManager::EntitiesReparented, this, &EntityInspectorWidget::Update);
+	connect(Manager, &InspectorManager::EntitiesSelectionChanged, this, &EntityInspectorWidget::EntitiesSelectionChanged);
 
-	connect(gApp->InspectorMgr, &InspectorManager::ComponentsAdded, this, &EntityInspectorWidget::Update);
-	connect(gApp->InspectorMgr, &InspectorManager::ComponentsRemoved, this, &EntityInspectorWidget::Update);
+	connect(Manager, &InspectorManager::ComponentsAdded, this, &EntityInspectorWidget::Update);
+	connect(Manager, &InspectorManager::ComponentsRemoved, this, &EntityInspectorWidget::Update);
 
-	connect(gApp->InspectorMgr, &InspectorManager::Update, this, &EntityInspectorWidget::Update);
+	connect(Manager, &InspectorManager::Update, this, &EntityInspectorWidget::Update);
 }
 
 //------------------------------------------------------------------------------

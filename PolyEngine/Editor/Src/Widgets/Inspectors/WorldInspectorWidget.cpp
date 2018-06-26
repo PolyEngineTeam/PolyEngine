@@ -43,16 +43,16 @@ WorldInspectorWidget::WorldInspectorWidget(QWidget* parent, InspectorManager* mg
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::InitializeConnections()
 {
-	connect(gApp->InspectorMgr, &InspectorManager::WorldChanged, this, &WorldInspectorWidget::WorldChanged);
+	connect(Manager, &InspectorManager::WorldChanged, this, &WorldInspectorWidget::WorldChanged);
 
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesSpawned, this, &WorldInspectorWidget::EntitiesSpawned);
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesDestroyed, this, &WorldInspectorWidget::EntitiesDestroyed);
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesModified, this, &WorldInspectorWidget::Update);
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesReparented, this, &WorldInspectorWidget::EntitiesReparented);
-	connect(gApp->InspectorMgr, &InspectorManager::EntitiesSelectionChanged, this, &WorldInspectorWidget::EntitiesSelectionChanged);
+	connect(Manager, &InspectorManager::EntitiesSpawned, this, &WorldInspectorWidget::EntitiesSpawned);
+	connect(Manager, &InspectorManager::EntitiesDestroyed, this, &WorldInspectorWidget::EntitiesDestroyed);
+	connect(Manager, &InspectorManager::EntitiesModified, this, &WorldInspectorWidget::Update);
+	connect(Manager, &InspectorManager::EntitiesReparented, this, &WorldInspectorWidget::EntitiesReparented);
+	connect(Manager, &InspectorManager::EntitiesSelectionChanged, this, &WorldInspectorWidget::EntitiesSelectionChanged);
 	
-	connect(gApp->InspectorMgr, &InspectorManager::Update, this, &WorldInspectorWidget::Update);
-	connect(gApp->InspectorMgr, &InspectorManager::Reload, this, &WorldInspectorWidget::Reload);
+	connect(Manager, &InspectorManager::Update, this, &WorldInspectorWidget::Update);
+	connect(Manager, &InspectorManager::Reload, this, &WorldInspectorWidget::Reload);
 }
 
 //------------------------------------------------------------------------------
@@ -212,7 +212,7 @@ void WorldInspectorWidget::SelectionChanged()
 	for (QTreeWidgetItem* i : Tree->selectedItems())
 		entities.PushBack(ItemToEntity[i]);
 
-	gApp->InspectorMgr->EntitiesSelectionChangedSlot(entities);
+	Manager->EntitiesSelectionChangedSlot(entities);
 }
 
 //------------------------------------------------------------------------------
@@ -229,8 +229,8 @@ void WorldInspectorWidget::Drop(Dynarray<QTreeWidgetItem*> droppedItems)
 		ents.PushBack(e);
 	}
 
-	gApp->InspectorMgr->EntitiesSelectionChangedSlot(ents);
-	gApp->InspectorMgr->EntitiesReparentedSlot();
+	Manager->EntitiesSelectionChangedSlot(ents);
+	Manager->EntitiesReparentedSlot();
 }
 
 //------------------------------------------------------------------------------
