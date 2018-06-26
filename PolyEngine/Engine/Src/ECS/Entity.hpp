@@ -108,7 +108,7 @@ namespace Poly
 		World* EntityWorld = nullptr;
 
 		std::bitset<MAX_COMPONENTS_COUNT> ComponentPosessionFlags;
-		ComponentBase* Components[MAX_COMPONENTS_COUNT];
+		ComponentBase** Components;
 
 		friend class World;
 	};

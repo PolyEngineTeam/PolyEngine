@@ -70,7 +70,7 @@ namespace Poly {
 		{
 			const auto ctypeID = GetWorldComponentID<T>();
 			if(HasWorldComponent(ctypeID))
-				return static_cast<T*>(WorldComponents[ctypeID]);
+				return static_cast<T*>(RootEntity->Components[ctypeID]);
 			return nullptr;
 		}
 
@@ -264,7 +264,7 @@ namespace Poly {
 		{
 			const auto ctypeID = GetWorldComponentID<T>();
 			HEAVY_ASSERTE(!HasWorldComponent(ctypeID), "Failed at AddWorldComponent() - a world component of a given type already exists!");
-			WorldComponents[ctypeID] = new T(std::forward<Args>(args)...);
+			RootEntity->Components[ctypeID] = new T(std::forward<Args>(args)...);
 		}
 
 		//------------------------------------------------------------------------------
@@ -273,20 +273,18 @@ namespace Poly {
 		{
 			const auto ctypeID = GetComponentID<T>();
 			HEAVY_ASSERTE(HasWorldComponent(ctypeID), "Failed at RemoveWorldComponent() - a component of a given type does not exist!");
-			T* component = reinterpret_cast<T*>(WorldComponents[ctypeID]);
-			WorldComponents[ctypeID] = nullptr;
+			T* component = reinterpret_cast<T*>(RootEntity->Components[ctypeID]);
+			RootEntity->Components[ctypeID] = nullptr;
 			component->~T();
 		}
 
 		void RemoveComponentById(Entity* ent, size_t id);
 
-		SafePtr<Entity> rootEntity = nullptr;
+		SafePtr<Entity> RootEntity = nullptr;
 
 		// Allocators
 		PoolAllocator<Entity> EntitiesAllocator;
 		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
-
-		ComponentBase* WorldComponents[MAX_COMPONENTS_COUNT];
 	};
 
 	//defined here due to circular inclusion problem; FIXME: circular inclusion
