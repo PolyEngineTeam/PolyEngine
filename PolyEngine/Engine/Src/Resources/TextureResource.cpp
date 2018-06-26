@@ -34,19 +34,3 @@ TextureResource::TextureResource(const String& path, eTextureUsageType usage)
 TextureResource::~TextureResource()
 {
 }
-
-// eTextureDataFormat TextureResource::GetFormat(int channels)
-// {
-// 	switch (channels)
-// 	{
-// 		case 1:
-// 			return eTextureDataFormat::RED;
-// 		case 3:
-// 			return eTextureDataFormat::RGB;
-// 		case 4:
-// 			return eTextureDataFormat::RGBA;
-// 		default:
-// 			ASSERTE(false, "TextureResource::GetFormat uknown channels value");
-// 			throw ResourceLoadFailedException();
-// 	}
-// }
