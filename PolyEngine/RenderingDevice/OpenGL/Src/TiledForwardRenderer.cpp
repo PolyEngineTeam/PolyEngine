@@ -18,6 +18,7 @@
 #include <Math/AARect.hpp>
 #include <Debugging/DebugDrawComponents.hpp>
 #include <Rendering/PostprocessSettingsComponent.hpp>
+#include <Rendering/SkyboxWorldComponent.hpp>
 #include <Rendering/Camera/CameraComponent.hpp>
 #include <Rendering/Lighting/LightSourceComponent.hpp>
 #include <Rendering/MeshRenderingComponent.hpp>

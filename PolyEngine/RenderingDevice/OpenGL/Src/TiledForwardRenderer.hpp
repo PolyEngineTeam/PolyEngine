@@ -18,7 +18,7 @@ namespace Poly {
 
 		void Resize(const ScreenSize& size) override;
 
-		void Render(const SceneView& sceneView) override;		
+		void Render(const SceneView& sceneView) override;
 
 		void Deinit() override;
 
