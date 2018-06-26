@@ -128,14 +128,10 @@ void Engine::Update()
 	UpdatePhases(eUpdatePhaseOrder::POSTUPDATE);
 }
 
-void Poly::Engine::Update(Dynarray<eUpdatePhaseOrder> phasesToUpdate)
+void Engine::Update(Dynarray<eUpdatePhaseOrder> phasesToUpdate)
 {
-	//for (auto phase : phasesToUpdate)
-	//	UpdatePhases(phase);
-
-	UpdatePhases(eUpdatePhaseOrder::PREUPDATE);
-	UpdatePhases(eUpdatePhaseOrder::EDITOR);
-	UpdatePhases(eUpdatePhaseOrder::POSTUPDATE);
+	for (auto phase : phasesToUpdate)
+		UpdatePhases(phase);
 }
 
 //------------------------------------------------------------------------------

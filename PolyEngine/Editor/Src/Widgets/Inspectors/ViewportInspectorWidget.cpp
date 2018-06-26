@@ -121,7 +121,6 @@ void ViewportInspectorWidget::Init()
 
 void ViewportInspectorWidget::Deinit()
 {
-	DeferredTaskSystem::DestroyEntity(WorldObj, EditorCameraEnt);
 }
 
 void ViewportInspectorWidget::SetSelectedEntities(Dynarray<Entity*> entities)

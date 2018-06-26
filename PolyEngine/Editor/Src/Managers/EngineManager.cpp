@@ -104,7 +104,7 @@ void EngineManager::UpdatePhase()
 		updatePhases.PushBack(Engine::eUpdatePhaseOrder::EDITOR);
 		updatePhases.PushBack(Engine::eUpdatePhaseOrder::POSTUPDATE);
 	}
-	else
+	else if (Editor->GetEngineState() == eEngineState::GAMEPLAY)
 	{
 		updatePhases.PushBack(Engine::eUpdatePhaseOrder::PREUPDATE);
 		updatePhases.PushBack(Engine::eUpdatePhaseOrder::UPDATE);
