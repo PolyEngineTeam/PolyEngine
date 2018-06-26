@@ -182,7 +182,7 @@ namespace Poly
 		std::unique_ptr<World> BaseWorld;
 		std::unique_ptr<IGame> Game;
 		std::unique_ptr<IRenderingDevice> RenderingDevice;
-		IEditor* Editor;
+		IEditor* Editor = nullptr;
 		OpenALDevice AudioDevice;
 		InputQueue InputEventsQueue;
 

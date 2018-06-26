@@ -11,14 +11,13 @@ Engine::Engine()
 	ASSERTE(gEngine == nullptr, "Creating engine twice?");
 	gEngine = this;
 	RandomSetSeed((int)time(nullptr));
+	gAssetsPathConfig.Load();
 }
 
 void Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device)
 {
 	if (Editor)
 		gAssetsPathConfig.DeserializeFromFile(Editor->GetAssetsPathConfigPath());
-	else 
-		gAssetsPathConfig.Load();
 
 	gDebugConfig.Load();
 	// also set presets for debug draw (DebugDrawPresets)
