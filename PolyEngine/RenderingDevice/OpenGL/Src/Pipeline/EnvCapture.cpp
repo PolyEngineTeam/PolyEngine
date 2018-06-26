@@ -1,13 +1,13 @@
 #include "Pipeline/EnvCapture.hpp"
 
-#include <GLRenderingDevice.hpp>
+#include "GLRenderingDevice.hpp"
+#include "Common/PrimitiveCube.hpp"
 
 #include <ECS/Entity.hpp>
 #include <Resources/TextureResource.hpp>
 #include <Rendering/SkyboxWorldComponent.hpp>
 
 using namespace Poly;
-
 
 EnvCapture::EnvCapture(GLRenderingDevice* rdi)
 	: RDI(rdi),
