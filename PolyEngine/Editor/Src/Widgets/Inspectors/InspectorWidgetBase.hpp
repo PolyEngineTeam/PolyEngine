@@ -13,7 +13,7 @@ public:
 	virtual void Reset() = 0;
 
 protected:
-	InspectorManager*& Manager;
+	InspectorManager* Manager;
 
 	Engine*& EngineObj;
 	World*& WorldObj;

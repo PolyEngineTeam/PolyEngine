@@ -18,7 +18,6 @@ void EngineManager::InitEngine(std::unique_ptr<IGame> game, const String& assets
 
 	// get editor inserface and set path to assets
 	Editor = gApp->InspectorMgr->GetEditor();
-	Editor->SetEngineState(eEngineState::EDIT);
 
 	// create and initialize engine instance
 	EngineObj = std::make_unique<Poly::Engine>();
@@ -30,6 +29,8 @@ void EngineManager::InitEngine(std::unique_ptr<IGame> game, const String& assets
 	Updater.start(0);
 
 	emit Initialized();
+
+	Editor->SetEngineState(eEngineState::EDIT);
 }
 
 //------------------------------------------------------------------------------

@@ -220,14 +220,16 @@ void WorldInspectorWidget::Drop(Dynarray<QTreeWidgetItem*> droppedItems)
 {
 	Entity* parent = ItemToEntity[droppedItems[0]->parent()];
 
-	Dynarray<Entity*> e;
+	Dynarray<Entity*> ents;
 
 	for (QTreeWidgetItem* i : droppedItems)
 	{
 		Entity* e = ItemToEntity[i];
 		e->SetParent(parent);
+		ents.PushBack(e);
 	}
 
+	gApp->InspectorMgr->EntitiesSelectionChangedSlot(ents);
 	gApp->InspectorMgr->EntitiesReparentedSlot();
 }
 
