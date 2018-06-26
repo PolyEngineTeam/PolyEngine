@@ -63,17 +63,9 @@ IRendererInterface* GLRenderingDevice::CreateRenderer()
 
 void GLRenderingDevice::RenderWorld(World* world)
 {
-	const ScreenSize screenSize = gEngine->GetRenderingDevice()->GetScreenSize();
-
 	// For each visible viewport draw it
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
 	{
-		// Set viewport rect (TOOO change it to propper rect, not box)
-		// const AARect& rect = kv.second.GetRect();
-		// 
-		// glViewport((int)(rect.GetMin().X * screenSize.Width), (int)(rect.GetMin().Y * screenSize.Height),
-		// 	(int)(rect.GetSize().X * screenSize.Width), (int)(rect.GetSize().Y * screenSize.Height));
-
 		SceneView sceneView(world, kv.second);
 		
 		FillSceneView(sceneView);
