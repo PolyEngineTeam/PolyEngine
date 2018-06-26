@@ -41,26 +41,10 @@ namespace Poly {
 		GLuint WorkGroupsX = 0;
 		GLuint WorkGroupsY = 0;
 		
+
 		// Used for storage buffer objects to hold light data and visible light indicies data
 		GLuint LightBuffer = 0;
 		GLuint VisibleLightIndicesBuffer = 0;
-
-		GLShaderProgram DepthShader;
-		GLShaderProgram LightCullingShader;
-		GLShaderProgram LightAccumulationShader;
-		GLShaderProgram HDRShader;
-		GLShaderProgram SkyboxShader;
-		GLShaderProgram SSAOShader;
-		GLShaderProgram LinearizeDepthShader;
-		GLShaderProgram GammaShader;
-		GLShaderProgram ParticleShader;
-		GLShaderProgram TranslucentShader;
-		GLShaderProgram EquiToCubemapShader;
-		GLShaderProgram IntegrateBRDFShader;
-		GLShaderProgram Text2DShader;
-		GLShaderProgram EditorDebugShader;
-		GLShaderProgram DebugLightAccumShader;
-		GLShaderProgram DebugQuadDepthPrepassShader;
 
 		// Render Targets
 		GLuint PreDepthBuffer;
@@ -81,8 +65,27 @@ namespace Poly {
 		GLuint FBOpost0;
 		GLuint FBOpost1;
 
+		// Render pass for IBL environment
 		EnvCapture SkyboxCapture;
-		
+
+		// Shader programs
+		GLShaderProgram DepthShader;
+		GLShaderProgram LightCullingShader;
+		GLShaderProgram LightAccumulationShader;
+		GLShaderProgram HDRShader;
+		GLShaderProgram SkyboxShader;
+		GLShaderProgram SSAOShader;
+		GLShaderProgram LinearizeDepthShader;
+		GLShaderProgram GammaShader;
+		GLShaderProgram ParticleShader;
+		GLShaderProgram TranslucentShader;
+		GLShaderProgram EquiToCubemapShader;
+		GLShaderProgram IntegrateBRDFShader;
+		GLShaderProgram Text2DShader;
+		GLShaderProgram EditorDebugShader;
+		GLShaderProgram DebugLightAccumShader;
+		GLShaderProgram DebugQuadDepthPrepassShader;
+
 		void CapturePreintegratedBRDF();
 
 		void CreateLightBuffers(const ScreenSize& size);

@@ -412,10 +412,10 @@ void TiledForwardRenderer::UpdateEnvCapture(const SceneView& sceneView)
 
 	if (SkyboxCapture.GetIsDirty())
 	{
-		const SkyboxWorldComponent* skyboxWorldCmp = sceneView.WorldData->GetWorldComponent<SkyboxWorldComponent>();
-		if (skyboxWorldCmp != nullptr)
+		const SkyboxWorldComponent* SkyboxWorldCmp = sceneView.WorldData->GetWorldComponent<SkyboxWorldComponent>();
+		if (SkyboxWorldCmp != nullptr)
 		{
-			SkyboxCapture.UpdateEnv(skyboxWorldCmp);
+			SkyboxCapture.UpdateEnv(SkyboxWorldCmp);
 		}
 		else
 		{
