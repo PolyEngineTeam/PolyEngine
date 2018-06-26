@@ -21,7 +21,6 @@ static GLenum GetFormat(size_t channels) noexcept
 
 GLTextureDeviceProxy::GLTextureDeviceProxy(size_t width, size_t height, eRenderTargetType internalUsage, GLuint internalFormat)
 	: Width(width), Height(height),
-	// InternalFormat(internalFormat), Format(GL_RGB),
 	Usage(eTextureUsageType::RENDER_TARGET), RenderTargetType(internalUsage)
 {
 	InitTextureParams();
@@ -29,7 +28,6 @@ GLTextureDeviceProxy::GLTextureDeviceProxy(size_t width, size_t height, eRenderT
 
 GLTextureDeviceProxy::GLTextureDeviceProxy(size_t width, size_t height, size_t channels, eTextureUsageType usage)
 	: Width(width), Height(height), Channels(channels),
-	// InternalFormat(GetGLInternalFormat(usage)), Format(GetFormat(channels)),
 	Usage(usage), RenderTargetType(eRenderTargetType::NONE)
 {
 	InitTextureParams();

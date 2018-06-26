@@ -46,7 +46,7 @@ namespace Poly
 		GLuint TextureID = 0;
 		GLuint InternalFormat = 0;
 		GLuint Format = 0;
-		eRenderTargetType RenderTargetType = eRenderTargetType::NONE;
 		eTextureUsageType Usage = eTextureUsageType::_COUNT;
+		eRenderTargetType RenderTargetType = eRenderTargetType::NONE;
 	};
 }
