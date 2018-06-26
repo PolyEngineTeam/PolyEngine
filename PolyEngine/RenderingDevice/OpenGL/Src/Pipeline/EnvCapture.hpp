@@ -1,5 +1,9 @@
 #pragma once
 
+#include <Defines.hpp>
+#include "Common/GLUtils.hpp"
+#include "Proxy/GLShaderProgram.hpp"
+
 namespace Poly
 {
 	class SkyboxWorldComponent;
