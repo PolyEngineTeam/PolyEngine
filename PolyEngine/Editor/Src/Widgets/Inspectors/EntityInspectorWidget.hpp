@@ -31,10 +31,8 @@ public:
 	// Initializes object connections with other inspectors and inspector manager.
 	void InitializeConnections() override;
 
-	void Reload() override;
-
 	// Reloads whole content.
-	void Reset() override {};
+	void Reset() override;
 
 public slots:
 	// Sets selected entities.
@@ -48,6 +46,8 @@ public slots:
 
 	// Updates fields within sections and general data fields.
 	void Update();
+
+	void Reload();
 
 private:
 	void ReloadComponentSections();

@@ -31,23 +31,23 @@ public:
 	IEditor* GetEditor() { return ViewportInspector; }
 
 public slots:
-	void ProjectOpenedSlot(const ProjectConfig* config) {}
-	void ProjectClosedSlot() {}
+	void ProjectOpenedSlot(const ProjectConfig* config);
+	void ProjectClosedSlot();
 
-	void EngineInitializedSlot(Engine* engine) {}
-	void EngineDeinitializedSlot() {}
-	void StateChangedSlot(eEngineState state) {}
+	void EngineInitializedSlot(Engine* engine);
+	void EngineDeinitializedSlot();
+	void StateChangedSlot(eEngineState state);
 
-	void WorldChangedSlot(World* world) {}
+	void WorldChangedSlot(World* world);
 
-	void EntitiesSpawnedSlot() {}
-	void EntitiesDestroyedSlot() {}
-	void EntitiesModifiedSlot() {}
-	void EntitiesReparentedSlot() {}
-	void EntitiesSelectionChangedSlot(Dynarray<Entity*> entities) {}
+	void EntitiesSpawnedSlot();
+	void EntitiesDestroyedSlot();
+	void EntitiesModifiedSlot();
+	void EntitiesReparentedSlot();
+	void EntitiesSelectionChangedSlot(Dynarray<Entity*> entities);
 
-	void ComponentsAddedSlot(Dynarray<ComponentBase*> components) {}
-	void ComponentsRemovedSlot(Dynarray<ComponentBase*> components) {}
+	void ComponentsAddedSlot(Dynarray<ComponentBase*> components);
+	void ComponentsRemovedSlot(Dynarray<ComponentBase*> components);
 
 signals:
 	//		project signals

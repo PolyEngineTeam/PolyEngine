@@ -1,5 +1,6 @@
 #include "PolyEditorPCH.hpp"
 
+//		general
 //------------------------------------------------------------------------------
 InspectorManager::InspectorManager(EditorApp* app)
 {
@@ -40,4 +41,111 @@ void InspectorManager::InitUi()
 	ResourceInspector->InitializeConnections();
 	ViewportInspector->InitializeConnections();
 	EntityInspector->InitializeConnections();
+}
+
+
+
+//		project slots
+//------------------------------------------------------------------------------
+void InspectorManager::ProjectOpenedSlot(const ProjectConfig* config)
+{
+	Config = config;
+
+	emit ProjectOpened();
+}
+
+//------------------------------------------------------------------------------
+void InspectorManager::ProjectClosedSlot()
+{
+	Config = nullptr;
+
+	emit ProjectClosed();
+}
+
+
+
+//		engine slots
+//------------------------------------------------------------------------------
+void InspectorManager::EngineInitializedSlot(Engine* engine)
+{
+	EngineObj = engine;
+
+	emit EngineInitialized();
+}
+
+//------------------------------------------------------------------------------
+void InspectorManager::EngineDeinitializedSlot()
+{
+	EngineObj = nullptr;
+
+	emit EngineDeinitialized();
+}
+
+//------------------------------------------------------------------------------
+void InspectorManager::StateChangedSlot(eEngineState state)
+{
+	EngineState = state;
+
+	emit StateChanged();
+}
+
+
+
+//		world slots
+//------------------------------------------------------------------------------
+void InspectorManager::WorldChangedSlot(World* world)
+{
+	WorldObj = world;
+
+	emit WorldChanged();
+}
+
+
+
+//		entities slots
+//------------------------------------------------------------------------------
+void InspectorManager::EntitiesSpawnedSlot()
+{
+	emit EntitiesSpawned();
+}
+
+//------------------------------------------------------------------------------
+void InspectorManager::EntitiesDestroyedSlot()
+{
+	emit EntitiesDestroyed();
+}
+
+//------------------------------------------------------------------------------
+void InspectorManager::EntitiesModifiedSlot()
+{
+	emit EntitiesModified();
+}
+
+//------------------------------------------------------------------------------
+void InspectorManager::EntitiesReparentedSlot()
+{
+	emit EntitiesReparented();
+}
+
+//------------------------------------------------------------------------------
+void InspectorManager::EntitiesSelectionChangedSlot(Dynarray<Entity*> entities)
+{
+	SelectedEntities = entities;
+
+	EntitiesSelectionChanged();
+}
+
+
+
+//		components slots
+//------------------------------------------------------------------------------
+void InspectorManager::ComponentsAddedSlot(Dynarray<ComponentBase*> components)
+{
+	emit ComponentsAdded();
+}
+
+//------------------------------------------------------------------------------
+void InspectorManager::ComponentsRemovedSlot(Dynarray<ComponentBase*> components)
+{
+	emit ComponentsRemoved();
 }

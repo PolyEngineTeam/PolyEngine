@@ -108,9 +108,29 @@ void EntityInspectorWidget::InitializeConnections()
 }
 
 //------------------------------------------------------------------------------
-void EntityInspectorWidget::Reload()
+void EntityInspectorWidget::Reset()
 {
-	emit gApp->InspectorMgr->EntitiesSelectionChanged();
+	for (auto cmp : ComponentSections)
+	{
+		MainLayout->removeWidget(cmp);
+		delete cmp;
+	}
+	ComponentSections.Clear();
+	ComponentInspectors.Clear();
+
+	NameField->Reset();
+	NameField->SetDisableEdit(true);
+
+	UniqueIdField->setText("");
+
+	ParentIdNameField->setText("");
+	ParentSelectButton->hide();
+
+	ChildrenIdNameField->clear();
+	ChildrenSelectButton->hide();
+
+	Transform->Reset();
+	TransformSection->hide();
 }
 
 
@@ -274,6 +294,12 @@ void EntityInspectorWidget::Update()
 		inspector->UpdateInspector();
 }
 
+//------------------------------------------------------------------------------
+void EntityInspectorWidget::Reload()
+{
+	EntitiesSelectionChanged();
+}
+
 
 
 //		internal
@@ -329,7 +355,7 @@ void EntityInspectorWidget::AddComponent()
 
 	// TODO(squares): return components ids
 	if (!dialog.OperationCanceled())
-		emit gApp->InspectorMgr->ComponentsAdded();
+		Manager->ComponentsAdded();
 }
 
 //------------------------------------------------------------------------------
@@ -340,18 +366,18 @@ void EntityInspectorWidget::RemoveComponent()
 
 	// TODO(squares): return components ids
 	if (!dialog.OperationCanceled())
-		emit gApp->InspectorMgr->ComponentsRemoved();
+		Manager->ComponentsRemoved();
 }
 
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::SelectParent()
 {
-	gApp->InspectorMgr->EntitiesSelectionChangedSlot({ SelectedEntities[0]->GetParent() });
+	Manager->EntitiesSelectionChangedSlot({ SelectedEntities[0]->GetParent() });
 }
 
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::SelectChild()
 {
-	gApp->InspectorMgr->EntitiesSelectionChangedSlot(
+	Manager->EntitiesSelectionChangedSlot(
 		{ SelectedEntities[0]->GetChildren()[ChildrenIdNameField->currentIndex()] });
 }

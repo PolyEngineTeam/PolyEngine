@@ -35,10 +35,9 @@ namespace Poly
 		// If we are in edit mode and user used gizmo then this method is called.
 		virtual void UpdateInspectors() = 0;
 
-		virtual void SetEngineState(eEngineState state) { EngineState = state; }
-		virtual eEngineState GetEngineState() { return EngineState; }
+		virtual void SetEngineState(eEngineState state) = 0;
+		virtual eEngineState GetEngineState() = 0;
 
 	protected:
-		eEngineState EngineState = eEngineState::NONE;
 	};
 } // namespace Poly

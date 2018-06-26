@@ -16,8 +16,6 @@ public:
 	// Initializes object connections with other inspectors and inspector manager.
 	void InitializeConnections() override;
 
-	void Reload() override;
-
 	// Removes all items from viewer.
 	void Reset() override;
 

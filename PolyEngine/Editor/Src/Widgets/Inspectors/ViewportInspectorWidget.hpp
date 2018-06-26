@@ -49,6 +49,7 @@ public:
 	void UpdateInspectors() override;
 
 	void SetEngineState(eEngineState state) override;
+	eEngineState GetEngineState() override { return EngineState; }
 
 public slots:
 	// engine

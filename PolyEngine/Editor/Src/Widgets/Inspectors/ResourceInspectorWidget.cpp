@@ -21,12 +21,6 @@ void ResourceInspectorWidget::InitializeConnections()
 	connect(gApp->InspectorMgr, &InspectorManager::ProjectClosed, this, &ResourceInspectorWidget::ProjectClosed);
 }
 
-void ResourceInspectorWidget::Reload()
-{
-	ProjectClosed();
-	ProjectOpened();
-}
-
 //------------------------------------------------------------------------------
 void ResourceInspectorWidget::Reset()
 {

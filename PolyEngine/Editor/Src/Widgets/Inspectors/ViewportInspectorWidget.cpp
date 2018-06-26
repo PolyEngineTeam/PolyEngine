@@ -135,9 +135,7 @@ void ViewportInspectorWidget::UpdateInspectors()
 }
 
 void ViewportInspectorWidget::SetEngineState(eEngineState state)
-
 {
-	EngineState = state;
 	Manager->StateChangedSlot(state);
 }
 
