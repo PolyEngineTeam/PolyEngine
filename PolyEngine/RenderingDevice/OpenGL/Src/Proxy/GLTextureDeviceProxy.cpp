@@ -19,43 +19,6 @@ static GLenum GetFormat(size_t channels) noexcept
 	return 0;
 }
 
-// static GLenum GetFormat(eTextureDataFormat format) noexcept
-// {
-// 	switch (format)
-// 	{
-// 		case Poly::eTextureDataFormat::RED:
-// 			return GL_RED;
-// 		case Poly::eTextureDataFormat::RGB:
-// 			return GL_RGB;
-// 		case Poly::eTextureDataFormat::RGBA:
-// 			return GL_RGBA;
-// 		default:
-// 			ASSERTE(false, "Invalid format!");
-// 	}
-// 	return 0;
-// }
-
-// static GLenum GetGLInternalFormat(eTextureUsageType usage) noexcept
-// {
-// 	switch (usage)
-// 	{
-// 		case Poly::eTextureUsageType::ALBEDO:
-// 		case Poly::eTextureUsageType::EMISSIVE:
-// 		case Poly::eTextureUsageType::METALLIC:
-// 		case Poly::eTextureUsageType::ROUGHNESS:
-// 		case Poly::eTextureUsageType::AMBIENT_OCCLUSION:
-// 			return GL_RGBA;
-// 		case Poly::eTextureUsageType::NORMAL:
-// 		case Poly::eTextureUsageType::HDR:
-// 			return GL_RGB;
-// 		case Poly::eTextureUsageType::FONT:
-// 			return GL_RED;
-// 		default:
-// 			ASSERTE(false, "Invalid usage!");
-// 	}
-// 	return 0;
-// }
-
 GLTextureDeviceProxy::GLTextureDeviceProxy(size_t width, size_t height, eRenderTargetType internalUsage, GLuint internalFormat)
 	: Width(width), Height(height),
 	// InternalFormat(internalFormat), Format(GL_RGB),
@@ -184,52 +147,6 @@ void GLTextureDeviceProxy::InitTextureParams()
 		default:
 			ASSERTE(false, "Uknown eTextureUsageType!");
 	}
-
-	// else
-	// {
-	// 	glGenTextures(1, &TextureID);
-	// 
-	// 	if (TextureID <= 0)
-	// 		throw RenderingDeviceProxyCreationFailedException();
-	// 
-	// 	if (Usage == eTextureUsageType::FONT)
-	// 	{
-	// 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	// 	}
-	// 
-	// 	glBindTexture(GL_TEXTURE_2D, TextureID);
-	// 
-	// 	if(InternalUsage == eInternalTextureUsageType::DEPTH_ATTACHEMENT)
-	// 		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-	// 	if (InternalUsage == eInternalTextureUsageType::COLOR_ATTACHEMENT)
-	// 		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_RGBA, GL_FLOAT, nullptr);
-	// 	else
-	// 		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, InternalFormat, GL_FLOAT, nullptr);
-	// 
-	// 	if (InternalUsage == eInternalTextureUsageType::COLOR_ATTACHEMENT || InternalUsage == eInternalTextureUsageType::DEPTH_ATTACHEMENT)
-	// 	{
-	// 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	// 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	// 	}
-	// 	else if (Usage == eTextureUsageType::FONT)
-	// 	{
-	// 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	// 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	// 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	// 	}
-	// 	else
-	// 	{
-	// 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	// 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 16);
-	// 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	// 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// 	}
-	// 
-	// 	glBindTexture(GL_TEXTURE_2D, 0);
-	// 	CHECK_GL_ERR();
-	// }
 }
 
 void GLTextureDeviceProxy::InitTextureHDR()

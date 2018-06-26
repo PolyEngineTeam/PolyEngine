@@ -3,6 +3,7 @@
 #include <GLRenderingDevice.hpp>
 
 #include <ECS/Entity.hpp>
+#include <Resources/TextureResource.hpp>
 #include <Rendering/SkyboxWorldComponent.hpp>
 
 using namespace Poly;

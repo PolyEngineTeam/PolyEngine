@@ -22,12 +22,9 @@
 #include <Rendering/Lighting/LightSourceComponent.hpp>
 #include <Rendering/MeshRenderingComponent.hpp>
 #include <Rendering/Particles/ParticleComponent.hpp>
-#include <Movement//MovementSystem.hpp>
+#include <Movement/MovementSystem.hpp>
 #include <Time/TimeWorldComponent.hpp>
 #include <UI/ScreenSpaceTextComponent.hpp>
-
-// #define STB_IMAGE_IMPLEMENTATION
-// #include "Common/stb_image.hpp"
 
 using namespace Poly;
 
