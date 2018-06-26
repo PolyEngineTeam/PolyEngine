@@ -31,7 +31,7 @@ public:
 	//		IEditor functions
 	// When engine checks if there is iEditor object registered it will obtain assets path from here.
 	// It is important because when we run a game it is executed from engine folder not game folder.
-	const String& GetAssetsPathConfigPath() override;
+	String GetAssetsPathConfigPath() override;
 
 	// This function is similar to iGame::Init function; it is called after game initialization.
 	void Init() override;

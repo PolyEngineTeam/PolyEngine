@@ -24,8 +24,6 @@ public slots:
 	void ProjectClosed();
 
 private:
-	const ProjectConfig* Config;
-
 	QGridLayout* Layout;
 
 	QFileSystemModel* Model;

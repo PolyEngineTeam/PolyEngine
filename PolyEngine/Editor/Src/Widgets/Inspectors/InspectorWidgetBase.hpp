@@ -19,5 +19,5 @@ protected:
 	World*& WorldObj;
 	const Dynarray<Entity*>& SelectedEntities;
 	const ProjectConfig*& Config;
-	const eEngineState& EngineState
+	const eEngineState& EngineState;
 };

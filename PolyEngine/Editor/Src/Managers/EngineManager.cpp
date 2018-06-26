@@ -22,12 +22,14 @@ void EngineManager::InitEngine(std::unique_ptr<IGame> game, const String& assets
 
 	// create and initialize engine instance
 	EngineObj = std::make_unique<Poly::Engine>();
+	emit Created(EngineObj.get());
+
 	EngineObj->RegisterEditor(Editor);
 	EngineObj->Init(std::move(game), std::move(gApp->InspectorMgr->GetRenderingDevice()));
 	gConsole.LogDebug("Engine initialized successfully");
 	Updater.start(0);
 
-	emit Initialized(EngineObj->GetWorld());
+	emit Initialized();
 }
 
 //------------------------------------------------------------------------------

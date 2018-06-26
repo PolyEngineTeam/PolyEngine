@@ -34,7 +34,8 @@ public slots:
 	void ProjectOpenedSlot(const ProjectConfig* config);
 	void ProjectClosedSlot();
 
-	void EngineInitializedSlot(Engine* engine);
+	void EngineCreatedSlot(Engine* engine);
+	void EngineInitializedSlot();
 	void EngineDeinitializedSlot();
 	void StateChangedSlot(eEngineState state);
 
@@ -55,6 +56,7 @@ signals:
 	void ProjectClosed();
 
 	//		engine signals
+	void EngineCreated();
 	void EngineInitialized();
 	void EngineDeinitialized();
 	void StateChanged();
@@ -88,6 +90,8 @@ private:
 	Dynarray<Entity*> SelectedEntities;
 	const ProjectConfig* Config;
 	eEngineState EngineState = eEngineState::NONE;
+
+	const ProjectConfig*& ConfigRef;
 
 	WorldInspectorWidget* WorldInspector;
 	WorldComponentsInspectorWidget* WorldComponentsInspector;

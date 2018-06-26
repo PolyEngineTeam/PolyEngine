@@ -87,12 +87,12 @@ std::unique_ptr<Poly::IRenderingDevice> ViewportInspectorWidget::GetRenderingDev
 //		iEditor
 //------------------------------------------------------------------------------
 
-const String& ViewportInspectorWidget::GetAssetsPathConfigPath()
+String ViewportInspectorWidget::GetAssetsPathConfigPath()
 {
 	StringBuilder builder;
 	builder.Append(Config->GetProjectPath());
 	builder.Append("/Build/");
-	builder.Append(Config->GetProjectName);
+	builder.Append(Config->GetProjectName());
 	builder.Append("/Debug/AssetsPathConfig.json");
 
 	return builder.StealString();

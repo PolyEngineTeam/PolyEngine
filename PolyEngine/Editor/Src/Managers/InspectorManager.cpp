@@ -3,13 +3,15 @@
 //		general
 //------------------------------------------------------------------------------
 InspectorManager::InspectorManager(EditorApp* app)
+	: ConfigRef(Config)
 {
-	//connect(app->ProjectMgr, &ProjectManager::ProjectOpened, this, &InspectorManager::ProjectOpenedSlot);
-	//connect(app->ProjectMgr, &ProjectManager::ProjectClosed, this, &InspectorManager::ProjectClosedSlot);
-	//
-	//connect(app->EngineMgr, &EngineManager::Initialized, this, &InspectorManager::EngineInitializedSlot);
-	//connect(app->EngineMgr, &EngineManager::Deinitialized, this, &InspectorManager::EngineDeinitializedSlot);
-	//connect(app->EngineMgr, &EngineManager::StateChanged, this, &InspectorManager::StateChangedSlot);
+	connect(app->ProjectMgr, &ProjectManager::ProjectOpened, this, &InspectorManager::ProjectOpenedSlot);
+	connect(app->ProjectMgr, &ProjectManager::ProjectClosed, this, &InspectorManager::ProjectClosedSlot);
+	
+	connect(app->EngineMgr, &EngineManager::Created, this, &InspectorManager::EngineCreatedSlot);
+	connect(app->EngineMgr, &EngineManager::Initialized, this, &InspectorManager::EngineInitializedSlot);
+	connect(app->EngineMgr, &EngineManager::Deinitialized, this, &InspectorManager::EngineDeinitializedSlot);
+	connect(app->EngineMgr, &EngineManager::StateChanged, this, &InspectorManager::StateChangedSlot);
 }
 
 //------------------------------------------------------------------------------
@@ -66,11 +68,18 @@ void InspectorManager::ProjectClosedSlot()
 
 //		engine slots
 //------------------------------------------------------------------------------
-void InspectorManager::EngineInitializedSlot(Engine* engine)
+void InspectorManager::EngineCreatedSlot(Engine* engine)
 {
 	EngineObj = engine;
 
+	emit EngineCreated();
+	WorldChangedSlot(EngineObj->GetWorld());
+}
+
+void InspectorManager::EngineInitializedSlot()
+{
 	emit EngineInitialized();
+	WorldChangedSlot(EngineObj->GetWorld());
 }
 
 //------------------------------------------------------------------------------

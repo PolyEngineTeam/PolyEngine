@@ -22,9 +22,10 @@ public:
 	void Play();
 
 signals:
-	void Initialized(World* world);
-	void StateChanged(eEngineState state);
+	void Created(Engine* engine);
+	void Initialized();
 	void Deinitialized();
+	void StateChanged(eEngineState state);
 
 private:
 	std::unique_ptr<Engine> EngineObj;
