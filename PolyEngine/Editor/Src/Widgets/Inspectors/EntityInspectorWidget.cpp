@@ -248,8 +248,16 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 			ChildrenSelectButton->hide();
 
 		// transform
-		TransformSection->show();
-		Transform->SetObject(SelectedEntities[0], &SelectedEntities[0]->GetPropertyManager()->GetPropertyList()[0]);
+		if (SelectedEntities[0]->IsRoot())
+		{
+			TransformSection->hide();
+			Transform->Reset();
+		}
+		else
+		{
+			TransformSection->show();
+			Transform->SetObject(SelectedEntities[0], &SelectedEntities[0]->GetPropertyManager()->GetPropertyList()[0]);
+		}
 
 		// components
 		ReloadComponentSections();
@@ -288,6 +296,9 @@ void EntityInspectorWidget::Update()
 			ss << SelectedEntities[0]->GetParent()->GetID();
 			ParentIdNameField->setText(&ss.str()[0]);
 		}
+
+		if (!SelectedEntities[0]->IsRoot())
+			Transform->UpdateControl();
 	}
 	else if (SelectedEntities.GetSize() > 1)
 	{
