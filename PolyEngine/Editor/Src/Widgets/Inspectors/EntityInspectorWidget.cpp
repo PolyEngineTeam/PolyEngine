@@ -152,6 +152,7 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 	if (SelectedEntities.GetSize() == 0)
 	{
 		NameField->Reset();
+		NameField->SetText("");
 		NameField->SetDisableEdit(true);
 
 		UniqueIdField->setText("");
@@ -167,7 +168,9 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 	}
 	else if (SelectedEntities.GetSize() > 1)
 	{
+		NameField->Reset();
 		NameField->SetText("< multiple selection >");
+		NameField->SetDisableEdit(true);
 
 		UniqueIdField->setText("< multiple selection >");
 
@@ -209,6 +212,7 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		std::stringstream ss;
 
 		NameField->SetObject(&SelectedEntities[0]->Name, &SelectedEntities[0]->GetPropertyManager()->GetPropertyList()[1]);
+		NameField->SetDisableEdit(false);
 
 		ss << SelectedEntities[0]->GetID();
 		UniqueIdField->setText(&ss.str()[0]);

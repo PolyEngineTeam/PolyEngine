@@ -1,7 +1,8 @@
 #include "PolyEditorPCH.hpp"
 
-ASSIGN_CONTROL(StringControl, RTTI::eCorePropertyType::STRING ,STRING)
+ASSIGN_CONTROL(StringControl, RTTI::eCorePropertyType::STRING, STRING)
 
+//------------------------------------------------------------------------------
 StringControl::StringControl(QWidget* parent)
 	: ControlBase(parent)
 {
@@ -17,6 +18,7 @@ StringControl::StringControl(QWidget* parent)
 	setLayout(Layout);
 }
 
+//------------------------------------------------------------------------------
 void StringControl::Reset()
 {
 	Object = nullptr;
@@ -24,11 +26,13 @@ void StringControl::Reset()
 	Field->setText("");
 }
 
+//------------------------------------------------------------------------------
 void StringControl::UpdateObject()
 {
 	*reinterpret_cast<String*>(Object) = Field->text().toLatin1().data();
 }
 
+//------------------------------------------------------------------------------
 void StringControl::UpdateControl()
 {
 	Field->setText(reinterpret_cast<String*>(Object)->GetCStr());

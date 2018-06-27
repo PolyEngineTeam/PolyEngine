@@ -58,7 +58,7 @@ public:
 	// Label is set automatically by control
 	virtual bool ContainsLabel() { return false; }
 
-	virtual void SetDisableEdit(bool disable);
+	void SetDisableEdit(bool disable);
 
 	bool GetDisableEdit() { return DisableEdit; }
 
