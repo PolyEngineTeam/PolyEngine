@@ -19,7 +19,11 @@ class CustomTree : public QTreeWidget
 	Q_OBJECT
 
 public:
-	CustomTree(QWidget* parent) : QTreeWidget(parent) {	}
+	CustomTree(QWidget* parent) : QTreeWidget(parent) 
+	{
+		auto rooItem = invisibleRootItem();
+		rooItem->setFlags(rooItem->flags() ^ Qt::ItemIsDropEnabled);
+	}
 
 signals:
 	void Dropped(Dynarray<QTreeWidgetItem*> droppedItems);
