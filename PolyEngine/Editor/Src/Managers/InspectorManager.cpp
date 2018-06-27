@@ -139,7 +139,7 @@ void InspectorManager::EntitiesReparentedSlot()
 //------------------------------------------------------------------------------
 void InspectorManager::EntitiesSelectionChangedSlot(Dynarray<Entity*> entities)
 {
-	// controls must get updated before signal is emitted and those controls are reset.
+	// controls must be updated before signal is emitted and those controls are reset.
 	QTimer::singleShot(50, this, [e = entities, object = this]()
 		{ 
 			object->SelectedEntities = e;

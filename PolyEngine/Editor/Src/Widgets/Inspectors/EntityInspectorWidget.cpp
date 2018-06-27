@@ -208,20 +208,31 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 	}
 	else
 	{
-		// general data
 		std::stringstream ss;
 
+		// name
 		NameField->SetObject(&SelectedEntities[0]->Name, &SelectedEntities[0]->GetPropertyManager()->GetPropertyList()[1]);
 		NameField->SetDisableEdit(false);
 
+		// id
 		ss << SelectedEntities[0]->GetID();
 		UniqueIdField->setText(&ss.str()[0]);
 
-		ss.str(std::string());
-		ss << SelectedEntities[0]->GetParent()->GetID();
-		ParentIdNameField->setText(&ss.str()[0]);
-		ParentSelectButton->show();
+		// parent
+		if (SelectedEntities[0]->IsRoot())
+		{
+			ParentIdNameField->setText("");
+			ParentSelectButton->hide();
+		}
+		else
+		{
+			ss.str(std::string());
+			ss << SelectedEntities[0]->GetParent()->GetID();
+			ParentIdNameField->setText(&ss.str()[0]);
+			ParentSelectButton->show();
+		}
 
+		//children
 		ChildrenIdNameField->clear();
 		for (auto child : SelectedEntities[0]->GetChildren())
 		{
@@ -234,9 +245,11 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		else
 			ChildrenSelectButton->hide();
 
+		// transform
 		TransformSection->show();
 		Transform->SetObject(SelectedEntities[0], &SelectedEntities[0]->GetPropertyManager()->GetPropertyList()[0]);
 
+		// components
 		ReloadComponentSections();
 	}
 }

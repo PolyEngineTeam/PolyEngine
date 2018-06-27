@@ -22,6 +22,7 @@ Entity::Entity(World* world, Entity* parent)
 	{
 		Components = new ComponentBase*[MAX_WORLD_COMPONENTS_COUNT];
 		memset(Components, 0, sizeof(ComponentBase*) * MAX_WORLD_COMPONENTS_COUNT);
+		Name = "root";
 	}
 }
 

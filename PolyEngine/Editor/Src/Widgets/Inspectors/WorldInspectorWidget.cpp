@@ -77,7 +77,9 @@ void WorldInspectorWidget::WorldChanged()
 
 		std::stringstream ss;
 		ss << WorldObj->GetRoot()->GetID();
-		root->setText(3, (&ss.str()[0]));
+		root->setText(2, (&ss.str()[0]));
+		root->setText(1, WorldObj->GetRoot()->Name.GetCStr());
+		root->setCheckState(0, Qt::Checked);
 		ItemToEntity.insert(std::pair<QTreeWidgetItem*, Entity*>(root, WorldObj->GetRoot()));
 
 		for (auto child : WorldObj->GetRoot()->GetChildren())
