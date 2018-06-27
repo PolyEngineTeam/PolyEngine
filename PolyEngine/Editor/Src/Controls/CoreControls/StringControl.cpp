@@ -30,6 +30,7 @@ void StringControl::Reset()
 void StringControl::UpdateObject()
 {
 	*reinterpret_cast<String*>(Object) = Field->text().toLatin1().data();
+	emit ObjectUpdated();
 }
 
 //------------------------------------------------------------------------------

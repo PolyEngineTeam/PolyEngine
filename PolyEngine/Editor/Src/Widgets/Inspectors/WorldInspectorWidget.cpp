@@ -164,8 +164,8 @@ void WorldInspectorWidget::Update()
 	{
 		std::stringstream ss;
 		ss << i.second->GetID();
-		i.first->setText(3, (&ss.str()[0]));
-		i.first->setText(2, i.second->Name.GetCStr());
+		i.first->setText(2, (&ss.str()[0]));
+		i.first->setText(1, i.second->Name.GetCStr());
 	}
 }
 

@@ -33,6 +33,8 @@ namespace Impl
 // @see Poly::RTTI::eCorePropertyType
 class ControlBase : public QWidget
 {
+	Q_OBJECT
+
 public:
 	ControlBase(QWidget* parent) : QWidget(parent) {}
 
@@ -73,6 +75,9 @@ public:
 	// This applies only for object opdate; you still have to update control "manually"
 	// @see ControlBase::UpdateObject
 	bool ASAPUpdate = true;
+
+signals:
+	void ObjectUpdated();
 
 protected:
 	// Pointer to an object which is assigned to this control.

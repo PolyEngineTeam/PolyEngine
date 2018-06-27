@@ -70,6 +70,8 @@ private:
 	Dynarray<RTTIInspectorWidget*> ComponentInspectors;
 
 private slots:
+	void ControlObjectUpdated();
+
 	void SpawnContextMenu(QPoint pos); 
 		void AddComponent(); 
 		void RemoveComponent();

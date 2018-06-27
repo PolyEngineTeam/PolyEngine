@@ -11,6 +11,7 @@ void EnumControl::Reset()
 
 void EnumControl::UpdateObject()
 {
+	emit ObjectUpdated();
 }
 
 void EnumControl::UpdateControl()

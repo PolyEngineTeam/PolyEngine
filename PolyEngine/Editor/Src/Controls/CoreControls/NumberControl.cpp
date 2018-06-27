@@ -75,6 +75,7 @@ void NumberControl::UpdateObject()
 	default:
 		ASSERTE(false, "Not supported type");
 	}
+	emit ObjectUpdated();
 }
 
 void NumberControl::UpdateControl()

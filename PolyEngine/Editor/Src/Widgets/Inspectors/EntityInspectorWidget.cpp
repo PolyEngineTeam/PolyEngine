@@ -43,6 +43,7 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent, InspectorManager* 
 	
 	NameField = new StringControl(this);
 	MainLayout->addWidget(NameField, 0, 1);
+	connect(NameField, &ControlBase::ObjectUpdated, this, &EntityInspectorWidget::ControlObjectUpdated);
 	
 	// UniqueID
 	UniqueIdText = new QLabel(this);
@@ -85,6 +86,7 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent, InspectorManager* 
 	// Transform
 	TransformSection = new SectionContainer("Transform", this);
 	Transform = new TransformControl(this);
+	connect(Transform, &ControlBase::ObjectUpdated, this, &EntityInspectorWidget::ControlObjectUpdated);
 	TransformSection->SetWidget(Transform);
 
 	MainLayout->addWidget(TransformSection, 4, 0, 1, 3);
@@ -279,8 +281,13 @@ void EntityInspectorWidget::Update()
 		UniqueIdField->setText(&ss.str()[0]);
 
 		ss.str(std::string());
-		ss << SelectedEntities[0]->GetParent()->GetID();
-		ParentIdNameField->setText(&ss.str()[0]);
+		if (SelectedEntities[0]->IsRoot())
+			ParentIdNameField->setText("");
+		else
+		{
+			ss << SelectedEntities[0]->GetParent()->GetID();
+			ParentIdNameField->setText(&ss.str()[0]);
+		}
 	}
 	else if (SelectedEntities.GetSize() > 1)
 	{
@@ -364,6 +371,12 @@ void EntityInspectorWidget::SpawnContextMenu(QPoint pos)
 
 
 //		functions modifying state (should emit events)
+//------------------------------------------------------------------------------
+void EntityInspectorWidget::ControlObjectUpdated()
+{
+	Manager->EntitiesModifiedSlot();
+}
+
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::AddComponent()
 {

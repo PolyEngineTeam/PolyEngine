@@ -49,6 +49,7 @@ void BoolControl::Reset()
 void BoolControl::UpdateObject()
 {
 	*reinterpret_cast<bool*>(Object) = *Machine->configuration().begin() == True;
+	emit ObjectUpdated();
 }
 
 void BoolControl::UpdateControl()
