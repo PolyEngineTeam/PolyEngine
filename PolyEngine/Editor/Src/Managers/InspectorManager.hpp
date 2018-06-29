@@ -22,6 +22,8 @@ class InspectorManager : public QObject
 
 	friend class InspectorWidgetBase;
 
+	friend class EntitiesSelectionChangedCommand;
+
 public:
 	InspectorManager(EditorApp* app);
 

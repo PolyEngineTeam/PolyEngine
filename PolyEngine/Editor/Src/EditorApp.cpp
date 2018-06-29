@@ -17,6 +17,7 @@ EditorApp::EditorApp(int argc, char *argv[])
 	ProjectMgr = new ProjectManager();
 	EngineMgr = new EngineManager();
 	InspectorMgr = new InspectorManager(this);
+	UndoRedoMgr = new UndoRedoManager();
 
 	ASSERTE(!gApp, "Creating application twice?!");
 	gApp = this;

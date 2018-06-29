@@ -45,10 +45,6 @@ ViewportInspectorWidget::ViewportInspectorWidget(QWidget* parent, InspectorManag
 	SDLWidget = new QWidget(this);
 	layout()->addWidget(SDLWidget);
 
-	SDLWidget->setAttribute(Qt::WA_NativeWindow);
-	SDLWidget->setMouseTracking(true);
-	SDLWidget->setFocusPolicy(Qt::ClickFocus);
-
 	// TODO: catch winId changes (http://doc.qt.io/qt-5/qwidget.html#winId)
 	// TODO: something like addviewport to rendering device
 	ASSERTE(!WindowInSDL.IsValid(), "Window already initialized!");

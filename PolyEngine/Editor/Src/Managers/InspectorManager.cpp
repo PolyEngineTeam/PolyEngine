@@ -1,5 +1,24 @@
 #include "PolyEditorPCH.hpp"
 
+class EntitiesSelectionChangedCommand : public Command
+{
+public:
+	void Undo() override
+	{
+		Manager->SelectedEntities = OldEntities;
+		Manager->EntitiesSelectionChanged();
+	}
+	void Redo() override
+	{
+		Manager->SelectedEntities = NewEntities;
+		Manager->EntitiesSelectionChanged();
+	}
+
+	Dynarray<Entity*> OldEntities;
+	Dynarray<Entity*> NewEntities;
+	InspectorManager* Manager;
+};
+
 //		general
 //------------------------------------------------------------------------------
 InspectorManager::InspectorManager(EditorApp* app)
@@ -140,8 +159,14 @@ void InspectorManager::EntitiesReparentedSlot()
 void InspectorManager::EntitiesSelectionChangedSlot(Dynarray<Entity*> entities)
 {
 	// controls must be updated before signal is emitted and those controls are reset.
-	QTimer::singleShot(50, this, [e = entities, object = this]()
+	QTimer::singleShot(50, this, [e = entities, object = this, old = SelectedEntities]()
 		{ 
+			EntitiesSelectionChangedCommand* c = new EntitiesSelectionChangedCommand();
+			c->OldEntities = old;
+			c->NewEntities = e;
+			c->Manager = object;
+			gApp->UndoRedoMgr->AddCommand(c);
+
 			object->SelectedEntities = e;
 			object->EntitiesSelectionChanged();
 		});

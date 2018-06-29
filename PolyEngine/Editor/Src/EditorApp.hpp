@@ -10,6 +10,7 @@
 #include "Managers/EngineManager.hpp"
 #include "Managers/CommandManager.hpp"
 #include "Managers/InspectorManager.hpp"
+#include "Managers/UndoRedoManager.hpp"
 
 #include <Engine.hpp>
 
@@ -27,6 +28,7 @@ public:
 	ProjectManager* ProjectMgr;
 	EngineManager* EngineMgr;
 	InspectorManager* InspectorMgr;
+	UndoRedoManager* UndoRedoMgr;
 
 private:
 	GlobalEventFilter EventFilter;
