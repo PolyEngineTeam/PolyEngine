@@ -1,14 +1,8 @@
-#include "UndoRedoManager.hpp"
+#include "PolyEditorPCH.hpp"
+
+#include "Managers/CommandsImpl.hpp"
 
 #include <QKeyEvent>
-
-//------------------------------------------------------------------------------
-class VoidCommand : public Command
-{
-public:
-	void Undo() override {}
-	void Redo() override {}
-};
 
 //------------------------------------------------------------------------------
 UndoRedoManager::UndoRedoManager()

@@ -6,14 +6,7 @@
 
 using namespace Poly;
 
-class Command
-{
-public:
-	virtual ~Command() = default;
-
-	virtual void Undo() = 0;
-	virtual void Redo() = 0;
-};
+class Command;
 
 class UndoRedoManager
 {

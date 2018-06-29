@@ -1,23 +1,6 @@
 #include "PolyEditorPCH.hpp"
 
-class EntitiesSelectionChangedCommand : public Command
-{
-public:
-	void Undo() override
-	{
-		Manager->SelectedEntities = OldEntities;
-		Manager->EntitiesSelectionChanged();
-	}
-	void Redo() override
-	{
-		Manager->SelectedEntities = NewEntities;
-		Manager->EntitiesSelectionChanged();
-	}
-
-	Dynarray<Entity*> OldEntities;
-	Dynarray<Entity*> NewEntities;
-	InspectorManager* Manager;
-};
+#include "Managers/CommandsImpl.hpp"
 
 //		general
 //------------------------------------------------------------------------------
@@ -95,6 +78,7 @@ void InspectorManager::EngineCreatedSlot(Engine* engine)
 	WorldChangedSlot(EngineObj->GetWorld());
 }
 
+//------------------------------------------------------------------------------
 void InspectorManager::EngineInitializedSlot()
 {
 	emit EngineInitialized();
