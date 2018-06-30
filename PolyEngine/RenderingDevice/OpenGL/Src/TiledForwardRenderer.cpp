@@ -32,7 +32,7 @@ using namespace Poly;
 TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	: IRendererInterface(rdi), SkyboxCapture(rdi),
 	DepthShader("Shaders/depth.vert.glsl", "Shaders/depth.frag.glsl"),
-	LightCullingShader("Shaders/light_culling.comp.glsl"),
+	LightCullingShader("Shaders/lightCulling.comp.glsl"),
 	LightAccumulationShader("Shaders/lightAccumulation.vert.glsl", "Shaders/lightAccumulation.frag.glsl"),
 	// LightAccumulationShader("Shaders/lightAccumulation.vert.glsl", "Shaders/lightAccumulationTexDebug.frag.glsl"),
 	HDRShader("Shaders/hdr.vert.glsl", "Shaders/hdr.frag.glsl"),

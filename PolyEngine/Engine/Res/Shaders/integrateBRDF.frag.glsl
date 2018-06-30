@@ -5,6 +5,7 @@ out vec4 oColor;
 
 const float PI = 3.14159265359;
 
+// used to generate Hammersley sampling points, see Hammersley()
 float RadicalInverse_VdC(uint bits)
 {
     bits = (bits << 16u) | (bits >> 16u);
@@ -15,6 +16,7 @@ float RadicalInverse_VdC(uint bits)
     return float(bits) * 2.3283064365386963e-10; // / 0x100000000
 }
 
+// see: http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
 vec2 Hammersley(uint i, uint N)
 {
     return vec2(float(i) / float(N), RadicalInverse_VdC(i));
