@@ -10,20 +10,10 @@ RTTI_DEFINE_TYPE(Entity)
 Entity::Entity(World* world, Entity* parent)
 	: EntityID(UniqueID::Generate()), Transform(this), EntityWorld(world), ComponentPosessionFlags(0)
 {
-	// ordinary entity
+	memset(Components, 0, sizeof(ComponentBase*) * MAX_COMPONENTS_COUNT);
+
 	if (parent)
-	{
-		Components = new ComponentBase*[MAX_COMPONENTS_COUNT];
-		memset(Components, 0, sizeof(ComponentBase*) * MAX_COMPONENTS_COUNT);
 		SetParent(parent);
-	}
-	// or root
-	else
-	{
-		Components = new ComponentBase*[MAX_WORLD_COMPONENTS_COUNT];
-		memset(Components, 0, sizeof(ComponentBase*) * MAX_WORLD_COMPONENTS_COUNT);
-		Name = "root";
-	}
 }
 
 

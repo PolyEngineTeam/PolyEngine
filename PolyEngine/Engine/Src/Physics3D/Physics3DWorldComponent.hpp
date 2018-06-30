@@ -71,5 +71,5 @@ namespace Poly
 		float LastDeltaOverflow = 0.f;
 	};
 
-	REGISTER_COMPONENT(WorldComponentsIDGroup, Physics3DWorldComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, Physics3DWorldComponent)
 } // namespace Poly

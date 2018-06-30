@@ -35,5 +35,5 @@ namespace Poly
 		ViewportID IDCounter = 0;
 	};
 
-	REGISTER_COMPONENT(WorldComponentsIDGroup, ViewportWorldComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, ViewportWorldComponent)
 }

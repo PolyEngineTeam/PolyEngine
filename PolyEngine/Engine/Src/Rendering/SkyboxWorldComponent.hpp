@@ -20,5 +20,5 @@ namespace Poly
 		CubemapResource Cubemap;
 	};
 
-	REGISTER_COMPONENT(WorldComponentsIDGroup, SkyboxWorldComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, SkyboxWorldComponent)
 }

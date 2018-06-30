@@ -74,5 +74,5 @@ namespace Poly
 		std::unordered_map<size_t, size_t> JoystickIDToPlayerID;
 	};
 
-	REGISTER_COMPONENT(WorldComponentsIDGroup, InputWorldComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, InputWorldComponent)
 }

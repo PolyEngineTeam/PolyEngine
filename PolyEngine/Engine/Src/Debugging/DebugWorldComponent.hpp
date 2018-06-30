@@ -22,5 +22,5 @@ namespace Poly
 	private:
 		FPSSystem::FPSData FPSData;
 	};
-	REGISTER_COMPONENT(WorldComponentsIDGroup, DebugWorldComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, DebugWorldComponent)
 }
