@@ -47,5 +47,5 @@ namespace Poly
 		std::unordered_map<RigidBody2DComponent*, Dynarray<Collision>> OverlapingBodies;
 	};
 
-	REGISTER_COMPONENT(WorldComponentsIDGroup, Physics2DWorldComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, Physics2DWorldComponent)
 }

@@ -7,34 +7,28 @@ World::World()
 	: EntitiesAllocator(MAX_ENTITY_COUNT)
 {
 	memset(ComponentAllocators, 0, sizeof(IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
-	memset(WorldComponents, 0, sizeof(ComponentBase*) * MAX_WORLD_COMPONENTS_COUNT);
 
-	rootEntity = SpawnEntityInternal();
+	RootEntity = SpawnEntityInternal();
 }
 
 //------------------------------------------------------------------------------
 World::~World()
 {
 	// copy entities
-	if(rootEntity)
-		DestroyEntity(rootEntity.Get());
+	if(RootEntity)
+		DestroyEntity(RootEntity.Get());
 	
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT; ++i)
 	{
 		if (ComponentAllocators[i])
 			delete ComponentAllocators[i];
 	}
-
-	for (size_t i = 0; i < MAX_WORLD_COMPONENTS_COUNT; i++)
-		if (WorldComponents[i])
-			delete (WorldComponents[i]);
 }
 
 //------------------------------------------------------------------------------
 Entity* World::SpawnEntity()
 {
 	Entity* ent = SpawnEntityInternal();
-	ent->SetParent(rootEntity.Get());
 	return ent;
 }
 
@@ -42,7 +36,7 @@ Entity* World::SpawnEntity()
 Entity * Poly::World::SpawnEntityInternal()
 {
 	Entity* ent = EntitiesAllocator.Alloc();
-	::new(ent) Entity(this);
+	::new(ent) Entity(this, RootEntity.Get());
 	return ent;
 }
 
@@ -68,8 +62,7 @@ void World::DestroyEntity(Entity* entity)
 //------------------------------------------------------------------------------
 bool World::HasWorldComponent(size_t ID) const
 {
-	HEAVY_ASSERTE(ID < MAX_WORLD_COMPONENTS_COUNT, "Invalid component ID - greater than MAX_WORLD_COMPONENTS_COUNT.");
-	return WorldComponents[ID] != nullptr;
+	return RootEntity->HasComponent(ID);
 }
 
 //------------------------------------------------------------------------------
