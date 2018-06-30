@@ -39,7 +39,7 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	LinearizeDepthShader("Shaders/hdr.vert.glsl", "Shaders/linearizeDepth.frag.glsl"),
 	GammaShader("Shaders/hdr.vert.glsl", "Shaders/gamma.frag.glsl"),
 	ParticleShader("Shaders/instanced.vert.glsl", "Shaders/instanced.frag.glsl"),
-	TranslucentShader("Shaders/transparent.vert.glsl", "Shaders/transparent.frag.glsl"),
+	TranslucentShader("Shaders/translucent.vert.glsl", "Shaders/translucent.frag.glsl"),
 	EquiToCubemapShader("Shaders/equiHdr.vert.glsl", "Shaders/equiHdr.frag.glsl"),
 	IntegrateBRDFShader("Shaders/hdr.vert.glsl", "Shaders/integrateBRDF.frag.glsl"),
 	Text2DShader("Shaders/text2D.vert.glsl", "Shaders/text2D.frag.glsl"),
@@ -395,7 +395,7 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 	
 	RenderSkybox(sceneView);
 
-	// RenderTranslucentLit(sceneView);
+	RenderTranslucentLit(sceneView);
 
 	// RenderParticleUnlit(sceneView.world, sceneView.cameraCmp);
 

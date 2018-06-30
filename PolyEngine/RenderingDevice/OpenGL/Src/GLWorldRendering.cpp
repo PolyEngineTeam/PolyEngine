@@ -77,25 +77,25 @@ void GLRenderingDevice::RenderWorld(Scene* world)
 
 void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 {
-	for (const auto& componentsTuple : sceneView.WorldData->IterateComponents<MeshRenderingComponent>())
+	for (const auto componentsTuple : sceneView.WorldData->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-		if (meshCmp->IsTransparent())
-		{
-			sceneView.TranslucentQueue.PushBack(meshCmp);
-		}
-		else
+		if (meshCmp->GetBlendingMode() == eBlendingMode::OPAUQE)
 		{
 			sceneView.OpaqueQueue.PushBack(meshCmp);
 		}
+		else if (meshCmp->GetBlendingMode() == eBlendingMode::TRANSLUCENT)
+		{
+			sceneView.TranslucentQueue.PushBack(meshCmp);
+		}
 	}
 
-	for (const auto& componentsTuple : sceneView.WorldData->IterateComponents<DirectionalLightComponent>())
+	for (const auto componentsTuple : sceneView.WorldData->IterateComponents<DirectionalLightComponent>())
 	{
 		sceneView.DirectionalLights.PushBack(std::get<DirectionalLightComponent*>(componentsTuple));
 	}
 
-	for (const auto& componentsTuple : sceneView.WorldData->IterateComponents<PointLightComponent>())
+	for (const auto componentsTuple : sceneView.WorldData->IterateComponents<PointLightComponent>())
 	{
 		sceneView.PointLights.PushBack(std::get<PointLightComponent*>(componentsTuple));
 	}

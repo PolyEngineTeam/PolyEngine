@@ -41,40 +41,40 @@ void TransparentRenderingPass::OnRun(Scene* world, const CameraComponent* camera
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		const EntityTransform& trans = meshCmp->GetTransform();
 
-		if (!meshCmp->IsTransparent())
-			continue;
-
-		Vector objPos = trans.GetGlobalTranslation();
-
-		bool shouldCull = objPos.Y > cameraPos.Y + verticalSpan;
-		shouldCull = shouldCull || objPos.Y < cameraPos.Y - verticalSpan;
-		shouldCull = shouldCull || objPos.X > cameraPos.X + horizontalSpan;
-		shouldCull = shouldCull || objPos.X < cameraPos.X - horizontalSpan;
-		if (shouldCull)
-			continue;
-
-		Matrix objScale;
-		objScale.SetScale(Vector(1.0f, 1.0f, 1.0f));
-
-		Matrix objTransform; // = transCmp->GetGlobalTransformationMatrix();
-		objTransform.SetTranslation(trans.GetGlobalTranslation() + Vector(0.0f, 0.0f, 0.5f));
-
-		Matrix screenTransform = camera->GetClipFromWorld() * objTransform * objScale;
-		GetProgram().SetUniform("uTransform", objTransform * objScale);
-		GetProgram().SetUniform("uMVPTransform", screenTransform);
-		
-		int i = 0;
-		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
+		if (meshCmp->GetBlendingMode() == eBlendingMode::TRANSLUCENT)
 		{
-			GetProgram().SetUniform("uBaseColor", meshCmp->GetMaterial(i).Albedo);
-			UNUSED(subMesh);
-			//const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
+			Vector objPos = trans.GetGlobalTranslation();
 
-			glBindVertexArray(RDI->PrimitivesQuad->VAO);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-			glBindVertexArray(0);
+			bool shouldCull = objPos.Y > cameraPos.Y + verticalSpan;
+			shouldCull = shouldCull || objPos.Y < cameraPos.Y - verticalSpan;
+			shouldCull = shouldCull || objPos.X > cameraPos.X + horizontalSpan;
+			shouldCull = shouldCull || objPos.X < cameraPos.X - horizontalSpan;
+			if (shouldCull)
+				continue;
 
-			++i;
+			Matrix objScale;
+			objScale.SetScale(Vector(1.0f, 1.0f, 1.0f));
+
+			Matrix objTransform; // = transCmp->GetGlobalTransformationMatrix();
+			objTransform.SetTranslation(trans.GetGlobalTranslation() + Vector(0.0f, 0.0f, 0.5f));
+
+			Matrix screenTransform = camera->GetClipFromWorld() * objTransform * objScale;
+			GetProgram().SetUniform("uTransform", objTransform * objScale);
+			GetProgram().SetUniform("uMVPTransform", screenTransform);
+		
+			int i = 0;
+			for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
+			{
+				GetProgram().SetUniform("uBaseColor", meshCmp->GetMaterial(i).Albedo);
+				UNUSED(subMesh);
+				//const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
+
+				glBindVertexArray(RDI->PrimitivesQuad->VAO);
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+				glBindVertexArray(0);
+
+				++i;
+			}
 		}
 	}
 }
