@@ -20,7 +20,7 @@ namespace Poly
 		float Intensity = 1.0f;
 	};
 
-	REGISTER_COMPONENT(WorldComponentsIDGroup, AmbientLightWorldComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, AmbientLightWorldComponent)
 
 	class ENGINE_DLLEXPORT DirectionalLightComponent : public ComponentBase
 	{

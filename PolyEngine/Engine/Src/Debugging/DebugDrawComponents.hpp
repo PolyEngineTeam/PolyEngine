@@ -63,5 +63,5 @@ namespace Poly
 		Dynarray<SafePtr<Entity>> Text2DEntityPool;
 	};
 
-	REGISTER_COMPONENT(WorldComponentsIDGroup, DebugDrawStateWorldComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, DebugDrawStateWorldComponent)
 }
