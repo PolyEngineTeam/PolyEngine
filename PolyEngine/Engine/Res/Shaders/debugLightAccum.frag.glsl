@@ -1,5 +1,7 @@
 #version 430 core
 
+const uint MAX_NUM_LIGHTS = 1024;
+
 struct Light
 {
     vec4 Position;
@@ -12,15 +14,15 @@ struct VisibleIndex
     int Index;
 };
 
-layout(std430, binding = 0) readonly buffer LightBuffer {
-	Light data[];
-} bLightBuffer;
+layout(std430, binding = 0) readonly buffer bLightBuffer
+{
+    Light bLights[];
+};
 
-layout(std430, binding = 1) readonly buffer VisibleLightIndicesBuffer {
-	VisibleIndex data[];
-} bVisibleLightIndicesBuffer;
-
-const uint MAX_NUM_LIGHTS = 1024;
+layout(std430, binding = 1) readonly buffer bVisibleLightIndicesBuffer
+{
+	VisibleIndex bVisibleIndicies[];
+};
 
 uniform sampler2D uTexture;
 uniform float uTime;
@@ -58,15 +60,15 @@ void main()
     uint count = uint(uLightCount);
     for (uint i = 0; i < count; i++)
     {
-        int lightIndex = bVisibleLightIndicesBuffer.data[offset + i].Index;
+        int lightIndex = bVisibleIndicies[offset + i].Index;
         if (lightIndex < 0)
             break;
-        dist += 0.1*distToLight(bLightBuffer.data[lightIndex]);
+        dist += 0.1*distToLight(bLights[lightIndex]);
     }
     dist = clamp(dist, 0.0, 1.0);
 
     uint i;
-    for (i = 0; i < count && bVisibleLightIndicesBuffer.data[offset + i].Index != -1; i++);
+    for (i = 0; i < count && bVisibleIndicies[offset + i].Index != -1; i++);
     float ratio = float(i) / (0.1 * float(MAX_NUM_LIGHTS));
     ratio = clamp(ratio, 0.0, 1.0);
 
