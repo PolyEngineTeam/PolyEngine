@@ -19,7 +19,6 @@ namespace Poly
 		{
 			RTTI_PROPERTY_AUTONAME(NameTemplate, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(Name, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(UUID, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(Transform, RTTI::ePropertyFlag::NONE);
 			//@todo(muniu) rttibase pointers serialization
 			//RTTI_PROPERTY_AUTONAME(EntityScene, RTTI::ePropertyFlag::NONE);
@@ -31,9 +30,8 @@ namespace Poly
 		Entity() = default;
 		~Entity();
 
-		const UniqueID& GetUUID() const { HEAVY_ASSERTE(UUID, "Entity was not properly initialized");  return UUID; }
-		const Scene* GetEntityScene() const { HEAVY_ASSERTE(UUID, "Entity was not properly initialized");  return EntityScene; }
-		Scene* GetEntityScene() { HEAVY_ASSERTE(UUID, "Entity was not properly initialized");  return EntityScene; }
+		const Scene* GetEntityScene() const { HEAVY_ASSERTE(GetUUID(), "Entity was not properly initialized");  return EntityScene; }
+		Scene* GetEntityScene() { HEAVY_ASSERTE(GetUUID(), "Entity was not properly initialized");  return EntityScene; }
 
 		/// <summary>Checks whether there is a component of a given ID under this Entity's ID.</summary>
 		/// <param name="ID">ID of a component type</param>
@@ -105,7 +103,6 @@ namespace Poly
 
 		String NameTemplate;
 		String Name;
-		UniqueID UUID = UniqueID::INVALID;
 		EntityTransform Transform;
 		Scene* EntityScene = nullptr;
 
