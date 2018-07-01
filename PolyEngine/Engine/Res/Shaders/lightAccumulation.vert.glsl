@@ -9,13 +9,14 @@ uniform mat4 uClipFromModel;
 uniform mat4 uWorldFromModel;
 uniform vec4 uViewPosition;
 
-out VERTEX_OUT {
+out VERTEX_OUT
+{
 	vec3 positionInWorld;
 	vec2 uv;
 	vec3 normalInModel;
-    mat3 tangentFromWorld;
-    vec3 viewPositionInTangent;
-    vec3 fragmentPositionInTangent;
+	mat3 tangentFromWorld;
+	vec3 viewPositionInTangent;
+	vec3 fragmentPositionInTangent;
 } vertex_out;
 
 void main()
@@ -30,12 +31,12 @@ void main()
 	vertex_out.normalInModel = normalize(transposedModelFromWorld * aNormal /*InModel*/);
 
 	vec3 tangentInWorld = normalize(transposedModelFromWorld * aTangent);
-    vec3 bitangentInWorld = normalize(transposedModelFromWorld * aBitangent);
-    vec3 normalInWorld = normalize(transposedModelFromWorld * aNormal);
+	vec3 bitangentInWorld = normalize(transposedModelFromWorld * aBitangent);
+	vec3 normalInWorld = normalize(transposedModelFromWorld * aNormal);
 
 	// For tangent space normal mapping
-    mat3 tangentFromWorld = transpose(mat3(tangentInWorld, bitangentInWorld, normalInWorld));
-    vertex_out.viewPositionInTangent = tangentFromWorld * uViewPosition.xyz;
-    vertex_out.fragmentPositionInTangent = tangentFromWorld * vertex_out.positionInWorld;
-    vertex_out.tangentFromWorld = tangentFromWorld;
+	mat3 tangentFromWorld = transpose(mat3(tangentInWorld, bitangentInWorld, normalInWorld));
+	vertex_out.viewPositionInTangent = tangentFromWorld * uViewPosition.xyz;
+	vertex_out.fragmentPositionInTangent = tangentFromWorld * vertex_out.positionInWorld;
+	vertex_out.tangentFromWorld = tangentFromWorld;
 }

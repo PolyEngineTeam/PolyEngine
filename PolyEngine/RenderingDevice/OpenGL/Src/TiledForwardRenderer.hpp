@@ -24,13 +24,15 @@ namespace Poly {
 
 	private:
 		// structures defining the data of OpenGL buffers
-		struct Light {
+		struct Light
+		{
 			Vector Position;
 			Vector Color;
 			Vector RangeIntensity;
 		};
 
-		struct VisibleIndex {
+		struct VisibleIndex
+		{
 			int Index;
 		};
 
@@ -40,7 +42,6 @@ namespace Poly {
 		// X and Y work group dimension variables for compute shader
 		GLuint WorkGroupsX = 0;
 		GLuint WorkGroupsY = 0;
-		
 
 		// Used for storage buffer objects to hold light data and visible light indicies data
 		GLuint LightBuffer = 0;
@@ -56,7 +57,6 @@ namespace Poly {
 		GLuint LinearDepth;
 		
 		// IBL textures and cubemaps
-		// GLuint HDRTexture;
 		GLuint PreintegratedBrdfLUT;
 
 		// Framebufers
@@ -74,7 +74,6 @@ namespace Poly {
 		GLShaderProgram LightAccumulationShader;
 		GLShaderProgram HDRShader;
 		GLShaderProgram SkyboxShader;
-		GLShaderProgram SSAOShader;
 		GLShaderProgram LinearizeDepthShader;
 		GLShaderProgram GammaShader;
 		GLShaderProgram ParticleShader;
@@ -83,8 +82,10 @@ namespace Poly {
 		GLShaderProgram IntegrateBRDFShader;
 		GLShaderProgram Text2DShader;
 		GLShaderProgram EditorDebugShader;
-		GLShaderProgram DebugLightAccumShader;
 		GLShaderProgram DebugQuadDepthPrepassShader;
+		GLShaderProgram DebugQuadLightCullingShader;
+		GLShaderProgram DebugLightAccumShader;
+		GLShaderProgram DebugTextureInputsShader;
 
 		void CapturePreintegratedBRDF();
 
@@ -119,8 +120,6 @@ namespace Poly {
 		void LinearizeDepth(const SceneView& sceneView);
 
 		void PostTonemapper(const SceneView& sceneView);
-
-		void PostSSAO(const SceneView& sceneView);
 
 		void EditorDebug(const SceneView& sceneView);
 

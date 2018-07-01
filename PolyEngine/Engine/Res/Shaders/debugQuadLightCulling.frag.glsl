@@ -16,13 +16,15 @@ struct Output
     vec4 tilePosSS;
 };
 
-layout(std430, binding = 0) readonly buffer LightBuffer {
-	Light data[];
-} lightBuffer;
+layout(std430, binding = 0) readonly buffer LightBuffer
+{
+    Light bLights[];
+};
 
-layout(std430, binding = 1) readonly buffer OutputBuffer {
-	Output data[];
-} outputBuffer;
+layout(std430, binding = 1) readonly buffer OutputBuffer 
+{
+    Output bOutputs[];
+};
 
 uniform float near;
 uniform float far;
@@ -59,10 +61,10 @@ void main()
     ivec2 WorkGroupID = (location / WorkGroupSize);
     uint IndexWorkGroup = WorkGroupID.y * NumWorkGroups.x + WorkGroupID.x;
     
-    float tileDepth = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].input);
+    float tileDepth = uintBitsToFloat(bOutputs[IndexWorkGroup].input);
     tileDepth = fract(0.1 * tileDepth);
 
-	float visibleLights = uintBitsToFloat(outputBuffer.data[IndexWorkGroup].result);
+	float visibleLights = uintBitsToFloat(bOutputs[IndexWorkGroup].result);
     visibleLights = clamp(visibleLights, 0.0, 1.0);
 
 	vec3 tex = texture(uTexture, vUV).rgb;
@@ -70,9 +72,9 @@ void main()
     // float depth = tex.r;
     depth = fract(10.0 * depth);
 
-    vec2 compTilePosSS = outputBuffer.data[IndexWorkGroup].tilePosSS.xy;
+    vec2 compTilePosSS = bOutputs[IndexWorkGroup].tilePosSS.xy;
 
-    vec4 LightInClip = ClipFromWorld * lightBuffer.data[0].Position;
+    vec4 LightInClip = ClipFromWorld * bLights[0].Position;
     vec4 LightInScreen = ScreenFromClip(LightInClip);
     float lightRange = fract(0.01 * length(LightInScreen.xy - gl_FragCoord.xy));
     // tex = pow(tex, vec3(0.4545));

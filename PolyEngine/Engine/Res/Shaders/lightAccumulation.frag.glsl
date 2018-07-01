@@ -4,7 +4,8 @@
 #define MAX_DIRLIGHT_COUNT 8
 #endif
 
-in VERTEX_OUT{
+in VERTEX_OUT
+{
 	vec3 positionInWorld;
 	vec2 uv;
 	vec3 normalInModel;
@@ -32,13 +33,17 @@ struct VisibleIndex
 	int Index;
 };
 
-layout(std430, binding = 0) readonly buffer LightBuffer {
-	Light data[];
-} bLightBuffer;
+// in VERTEX_OUT fragment_in;
 
-layout(std430, binding = 1) readonly buffer VisibleLightIndicesBuffer {
-	VisibleIndex data[];
-} bVisibleLightIndicesBuffer;
+layout(std430, binding = 0) readonly buffer LightBuffer
+{
+	Light bLights[];
+};
+
+layout(std430, binding = 1) readonly buffer VisibleLightIndicesBuffer
+{
+    VisibleIndex bVisibleIndicies[];
+};
 
 struct Material
 {
@@ -160,8 +165,8 @@ void main()
 	uint Count = uint(uLightCount);
 	for (uint i = 0; i < Count; ++i)
 	{
-		int lightIndex = bVisibleLightIndicesBuffer.data[TileOffset + i].Index;
-		Light light = bLightBuffer.data[lightIndex];
+		int lightIndex = bVisibleIndicies[TileOffset + i].Index;
+		Light light = bLights[lightIndex];
 
 		// light attenuation based on Real Shading in Unreal Engine 4:
 		// http://gamedevs.org/uploads/real-shading-in-unreal-engine-4.pdf
@@ -201,7 +206,7 @@ void main()
 		// add to outgoing radiance Lo
 		Lo += (kD * albedo.rgb / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
 		
-		if (bVisibleLightIndicesBuffer.data[TileOffset + i + 1].Index == -1)
+		if (bVisibleIndicies[TileOffset + i + 1].Index == -1)
 			break;
 	}
 
