@@ -8,7 +8,7 @@
 #include <ECS/World.hpp>
 #include <Rendering/Camera/CameraComponent.hpp>
 #include <Rendering/SkyboxWorldComponent.hpp>
-#include <Resources/CubemapResource.hpp>
+#include <Resources/TextureResource.hpp>
 
 using namespace Poly;
 
