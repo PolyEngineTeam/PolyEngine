@@ -22,6 +22,7 @@ namespace Poly {
 	class Color;
 	class Matrix;
 	class UniqueID;
+	class RTTIBase;
 
 	namespace RTTI {
 
@@ -53,6 +54,7 @@ namespace Poly {
 			UUID,
 			ITERABLE_POOL_ALLOCATOR,
 			UNIQUE_PTR,
+			RAW_PTR, // Only for RTTIBase objects
 			
 			// collections
 			DYNARRAY,
@@ -418,6 +420,46 @@ namespace Poly {
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------
+		// Raw ptr serialization property impl
+		struct RawPtrPropertyImplDataBase : public PropertyImplData
+		{
+			Property PropertyType;
+
+			virtual void* GetPtr(RTTIBase* ptr) const = 0;
+			virtual void SetPtr(RTTIBase** ptr_dest, RTTIBase* ptr_src) const = 0;
+		};
+
+		template<typename T>
+		struct RawPtrPropertyImplData final : public RawPtrPropertyImplDataBase
+		{
+			RawPtrPropertyImplData(ePropertyFlag flags, FactoryFunc_t&& factory_func)
+			{
+				// Stop propagation of factory function
+				PropertyType = CreatePropertyInfo<T>(0, "value", flags, nullptr);
+				PropertyType.FactoryFunc = std::move(factory_func);
+			}
+
+			void* GetPtr(RTTIBase* ptr) const override
+			{
+				return rtti_cast<T*>(ptr);
+			}
+			
+			void SetPtr(RTTIBase** ptr_dest, RTTIBase* ptr_src) const override
+			{
+				T** p = reinterpret_cast<T**>(ptr_dest);
+				*p = rtti_cast<T*>(ptr_src);
+			}
+		};
+
+		template <typename T> Property CreateRawPtrPropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t&& factory_func)
+		{
+			std::shared_ptr<RawPtrPropertyImplData<T>> implData = std::make_shared<RawPtrPropertyImplData<T>>(flags, std::move(factory_func));
+
+			// Register unique ptr object pointer to property
+			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::RAW_PTR, std::move(implData) };
+		}
+
+		//-----------------------------------------------------------------------------------------------------------------------
 		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t factory_func = nullptr)
 		{ 
 			return constexpr_match(
@@ -428,6 +470,7 @@ namespace Poly {
 				Trait::IsEnumFlags<T>{},	[&](auto lazy) { return CreateEnumFlagsPropertyInfo<typename Trait::EnumFlagsType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsIterablePoolAllocator<T>{}, [&](auto lazy) { return CreateIterablePoolAllocatorPropertyInfo<typename Trait::IterablePoolAllocatorType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsUniquePtr<T>{},	[&](auto lazy) { return CreateUniquePtrPropertyInfo<typename Trait::UniquePtrType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
+				std::is_pointer<T>{},		[&](auto lazy) { return CreateRawPtrPropertyInfo<typename std::remove_pointer<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
 				std::is_base_of<RTTIBase, T>{}, [&](auto lazy) { return Property{ TypeInfo::Get<LAZY_TYPE(T)>(), offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>(), nullptr, std::move(factory_func) }; },
 				//TODO add RTTIBase specialization!
 				/*default*/					[&](auto lazy) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>(), nullptr, std::move(factory_func) }; }
@@ -447,7 +490,7 @@ namespace Poly {
 		template<class T>
 		class PropertyManager : public PropertyManagerBase {
 		public:
-			PropertyManager() { T::InitProperties(this); }
+			PropertyManager() { T::InitPropertiesBase(this); T::InitProperties(this); }
 			~PropertyManager() { }
 		};
 
@@ -458,11 +501,15 @@ namespace Poly {
 	friend class Poly::RTTI::PropertyManager<Type>; \
 	virtual Poly::RTTI::PropertyManagerBase* GetPropertyManager() const; \
 	template <class T> \
+	static void InitPropertiesBase(Poly::RTTI::PropertyManager<T>*) {} \
+	template <class T> \
 	static void InitProperties(Poly::RTTI::PropertyManager<T>* mgr)
 
-#define RTTI_GENERATE_PROPERTY_LIST(Type)\
+#define RTTI_GENERATE_PROPERTY_LIST(Type, BaseType)\
 	friend class Poly::RTTI::PropertyManager<Type>; \
 	Poly::RTTI::PropertyManagerBase* GetPropertyManager() const override; \
+	template <class T> \
+	static void InitPropertiesBase(Poly::RTTI::PropertyManager<T>* mgr) { BaseType::InitPropertiesBase(mgr); BaseType::InitProperties(mgr); } \
 	template <class T> \
 	static void InitProperties(Poly::RTTI::PropertyManager<T>* mgr)
 
@@ -476,9 +523,9 @@ namespace Poly::RTTI::Impl {
 	template<typename T>
 	void RegisterProperty(PropertyManagerBase* mgr, size_t offset, const char* var_name, FactoryFunc_t factory_func, ePropertyFlag flags)
 	{
-		STATIC_ASSERTE(!std::is_pointer<T>::value
-			|| EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE),
-			"Serializable variable cannot be a pointer.");
+		ASSERTE((!std::is_pointer<T>::value 
+			|| EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE) 
+			|| std::is_base_of<RTTIBase, typename std::remove_pointer<T>::type>::value), "Serializable variable cannot be a pointer of not RTTIBase deriving type.");
 		mgr->AddProperty(Poly::RTTI::CreatePropertyInfo<T>(offset, var_name, flags, factory_func));
 	}
 }

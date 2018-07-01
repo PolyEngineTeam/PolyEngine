@@ -39,7 +39,12 @@ namespace Poly {
 		static RTTIObjectsManager& Get();
 
 		void Register(RTTIBase* obj);
-		void Unregister(RTTIBase* obj);
+		void Unregister(const UniqueID& id);
+		void FixMapingAfterDeserialization(RTTIBase* obj, const UniqueID& oldID)
+		{
+			Unregister(oldID);
+			Register(obj);
+		}
 
 		RTTIBase* GetObjectByID(const UniqueID& id);
 	private:

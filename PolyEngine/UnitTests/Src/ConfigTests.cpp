@@ -98,6 +98,8 @@ class TestConfig : public ConfigBase
 		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrInt, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterInt; return new int; }, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrDynarrayInt, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterDynarrayInt; return new Dynarray<int>; }, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrCustom, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterCustom; return info.CreateInstance(); }, RTTI::ePropertyFlag::NONE);
+
+		RTTI_PROPERTY_AUTONAME(PropRawPtrCustom, RTTI::ePropertyFlag::NONE);
 	}
 public:
 	TestConfig() : ConfigBase("Test", eResourceSource::NONE) 
@@ -116,6 +118,8 @@ public:
 		PropUniquePtrInt = std::make_unique<int>(5);
 		PropUniquePtrDynarrayInt = std::make_unique<Dynarray<int>>(Dynarray<int>{ 1,2,3 });
 		PropUniquePtrCustom = std::make_unique<TestRTTIClass>(3);
+
+		PropRawPtrCustom = PropUniquePtrCustom.get();
 	}
 
 	// Rendering
@@ -160,6 +164,8 @@ public:
 	std::unique_ptr<int> PropUniquePtrInt;
 	std::unique_ptr<Dynarray<int>> PropUniquePtrDynarrayInt;
 	std::unique_ptr<TestRTTIClass> PropUniquePtrCustom;
+
+	TestRTTIClass* PropRawPtrCustom;
 };
 RTTI_DEFINE_TYPE(TestConfig)
 
@@ -242,6 +248,8 @@ void baseValueCheck(const TestConfig& config)
 	CHECK(*config.PropUniquePtrInt == 5);
 	CHECK(*config.PropUniquePtrDynarrayInt == Dynarray<int>{1,2,3});
 	CHECK(config.PropUniquePtrCustom->Val1 == 3);
+
+	CHECK(config.PropRawPtrCustom == config.PropUniquePtrCustom.get());
 }
 
 TEST_CASE("Config serialization tests", "[ConfigBase]")
@@ -314,6 +322,8 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		config.PropUniquePtrInt = std::make_unique<int>(7);
 		config.PropUniquePtrDynarrayInt = std::make_unique<Dynarray<int>>(Dynarray<int>{ 4, 5, 6 });
 		config.PropUniquePtrCustom = std::make_unique<TestRTTIClass>(8);
+
+		config.PropRawPtrCustom = config.PropUniquePtrCustom.get();
 
 		// save them
 		config.Save();
@@ -425,6 +435,8 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(*config.PropUniquePtrInt == 7);
 		CHECK(*config.PropUniquePtrDynarrayInt == Dynarray<int>{4,5,6});
 		CHECK(config.PropUniquePtrCustom->Val1 == 8);
+
+		CHECK(config.PropRawPtrCustom == config.PropUniquePtrCustom.get());
 	}
 
 	// remove the config file

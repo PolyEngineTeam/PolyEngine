@@ -19,7 +19,7 @@ Poly::RTTIBase::RTTIBase()
 
 Poly::RTTIBase::~RTTIBase()
 {
-	RTTIObjectsManager::Get().Unregister(this);
+	RTTIObjectsManager::Get().Unregister(GetUUID());
 }
 
 void RTTIBase::SerializeToFile(const String& fileName, eSerializationType type)
@@ -66,10 +66,10 @@ void Poly::RTTIObjectsManager::Register(RTTIBase* obj)
 	DeserializedObjectsById.insert({ obj->GetUUID(), obj });
 }
 
-void Poly::RTTIObjectsManager::Unregister(RTTIBase* obj)
+void Poly::RTTIObjectsManager::Unregister(const UniqueID& id)
 {
-	HEAVY_ASSERTE(obj, "Pointer to RTTIBase object is null!");
-	DeserializedObjectsById.erase(obj->GetUUID());
+	HEAVY_ASSERTE(id.IsValid(), "Pointer to RTTIBase object is null!");
+	DeserializedObjectsById.erase(id);
 }
 
 RTTIBase* Poly::RTTIObjectsManager::GetObjectByID(const UniqueID& id)

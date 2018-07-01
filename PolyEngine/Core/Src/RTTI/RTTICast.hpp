@@ -74,8 +74,11 @@ bool IsOfType(U object) {
 	STATIC_ASSERTE((std::is_base_of<::Poly::RTTIBase, RawCheckedType>::value), "Checked type should derive from RTTIBase!");
 	// @fixme(muniu) why this assertion doesn't work?
 	//STATIC_ASSERTE((std::is_same<::Poly::RTTIBase, RawCheckedType>::value || ::Poly::RTTI::Impl::HasGetTypeInfoFunc<U>::value), "no TypeInfo defined");
+	if (!object)
+		return false;
 
-	return object && object->GetTypeInfo().template isTypeDerivedFrom<T>();
+	RTTI::TypeInfo ti = object->GetTypeInfo();
+	return ti.template isTypeDerivedFrom<T>();
 }
 
 
@@ -119,7 +122,7 @@ T1 rtti_cast(T2 object) {
 	RTTI_GENERATE_TYPE_INFO(T)\
 	Poly::RTTI::TypeInfo GetTypeInfo() const override { return Poly::RTTI::Impl::GetTypeInfoFromInstance(this); } \
 	typedef TYPE_LIST_1(A) baseClassList;\
-	RTTI_GENERATE_PROPERTY_LIST(T)
+	RTTI_GENERATE_PROPERTY_LIST(T,A)
 
 // Declares type with two base classes. Disabled for now.
 /*#define RTTI_DECLARE_TYPE_DERIVED2(T,A,B) \
