@@ -4,7 +4,7 @@
 
 using namespace Poly;
 
-Poly::FreeFloatMovementComponent::FreeFloatMovementComponent(float movementSpeed, float rotationSpeed)
-	: MovementSpeed(movementSpeed), RotationSpeed(rotationSpeed)
+Poly::FreeFloatMovementComponent::FreeFloatMovementComponent(float movementSpeed, float rotationSpeed, float wheelSensitivity)
+	: MovementSpeed(movementSpeed), RotationSpeed(rotationSpeed), WheelSensitivity(wheelSensitivity)
 {
 }

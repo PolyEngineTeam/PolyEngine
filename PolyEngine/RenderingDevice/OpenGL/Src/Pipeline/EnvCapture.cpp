@@ -171,7 +171,7 @@ void EnvCapture::CaptureDiffuseIrradiance()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 	gConsole.LogInfo("EnvCapture::CaptureIrradiance Capture FBO created");
 
@@ -223,12 +223,14 @@ void EnvCapture::CaptureDiffuseIrradiance()
 void EnvCapture::CaptureSpecularPrefilteredMap()
 {
 	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap create cubemap resource");
+
+	int maxCaptureSize = 512;
+
 	glGenTextures(1, &PrefilterMap);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, PrefilterMap);
 	for (unsigned int i = 0; i < 6; ++i)
 	{
-		// glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 128, 128, 0, GL_RGB, GL_FLOAT, nullptr);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, maxCaptureSize, maxCaptureSize, 0, GL_RGB, GL_FLOAT, nullptr);
 	}
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -248,7 +250,7 @@ void EnvCapture::CaptureSpecularPrefilteredMap()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, maxCaptureSize, maxCaptureSize);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap Capture FBO created");
 
@@ -278,10 +280,8 @@ void EnvCapture::CaptureSpecularPrefilteredMap()
 	for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
 	{
 		// reisze framebuffer according to mip-level size.
-		// unsigned int mipWidth = 128 * std::pow(0.5, mip);
-		// unsigned int mipHeight = 128 * std::pow(0.5, mip);
-		unsigned int mipWidth = (unsigned int)(512.0f * std::pow(0.5f, mip)); // why not bitshift?
-		unsigned int mipHeight = (unsigned int)(512.0f * std::pow(0.5f, mip));
+		unsigned int mipWidth = (unsigned int)((float)maxCaptureSize * std::pow(0.5f, mip)); // why not bitshift?
+		unsigned int mipHeight = (unsigned int)((float)maxCaptureSize * std::pow(0.5f, mip));
 		gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap capture prefiltered cubemap mip: {}, width: {}, height: {}", mip, mipWidth, mipHeight);
 		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);

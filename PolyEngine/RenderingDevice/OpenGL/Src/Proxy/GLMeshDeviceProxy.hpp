@@ -8,8 +8,6 @@ namespace Poly
 {
 	class GLMeshDeviceProxy : public IMeshDeviceProxy
 	{
-		// friend class GLRenderingDevice;
-
 	private:
 		enum class eBufferType {
 			VERTEX_BUFFER,

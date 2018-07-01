@@ -159,12 +159,12 @@ void GLShaderProgram::SetUniform(const String& name, int val)
 	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
 	{
-		bool assert = it->second.TypeName == "int" || it->second.TypeName == "sampler2D" || it->second.TypeName == "samplerCube";
-		if (!assert)
+		bool isTypeValid = it->second.TypeName == "int" || it->second.TypeName == "sampler2D" || it->second.TypeName == "samplerCube";
+		if (!isTypeValid)
 		{
 			gConsole.LogError("Invalid uniform type int for {}", name);
 		}
-		HEAVY_ASSERTE(assert, "Invalid uniform type!");
+		HEAVY_ASSERTE(isTypeValid, "Invalid uniform type!");
 		glUniform1i(it->second.Location, val);
 	}
 }
@@ -175,12 +175,12 @@ void GLShaderProgram::SetUniform(const String& name, uint val)
 	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
 	{
-		bool assert = it->second.TypeName == "uint";
-		if (!assert)
+		bool isTypeValid = it->second.TypeName == "uint";
+		if (!isTypeValid)
 		{
 			gConsole.LogError("Invalid uniform type uint for {}", name);
 		}
-		HEAVY_ASSERTE(it->second.TypeName == "uint", "Invalid uniform type!");
+		HEAVY_ASSERTE(isTypeValid, "Invalid uniform type!");
 		glUniform1i(it->second.Location, val);
 	}
 }

@@ -25,16 +25,9 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 	GetProgram().BindProgram();
 	const Matrix& ScreenFromWorld = camera->GetClipFromWorld();
 	
-	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-
-		// if (passType == ePassType::BY_MATERIAL &&
-		// 	(meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::UNLIT))
-		// {
-		// 	continue;
-		// }
 
 		const EntityTransform& transform = meshCmp->GetTransform();
 		const Matrix& WorldFromModel = transform.GetWorldFromModel();
@@ -42,11 +35,6 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 		GetProgram().SetUniform("uTransform", WorldFromModel);
 		GetProgram().SetUniform("uMVPTransform", ScreenFromModel);
 		
-		// if (passType == ePassType::BY_MATERIAL)
-		// {
-		// 	glPolygonMode(GL_FRONT_AND_BACK, meshCmp->GetIsWireframe() ? GL_LINE : GL_FILL);
-		// }
-
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
@@ -71,10 +59,5 @@ void UnlitRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 
 			++i;
 		}
-		
-		// if (passType == ePassType::BY_MATERIAL)
-		// {
-		// 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		// }
 	}
 }

@@ -889,11 +889,8 @@ void TiledForwardRenderer::PostTonemapper(const SceneView& sceneView)
 	const PostprocessSettingsComponent* postCmp = sceneView.CameraCmp->GetSibling<PostprocessSettingsComponent>();
 	if (postCmp) {
 		exposure = postCmp->Exposure;
-		gConsole.LogInfo("TiledForwardRenderer::PostTonemapper exposure: {}", exposure);
 	}
 
-	// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Weirdly, moving this call drops performance into the floor
-	
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost0);
 
 	HDRShader.BindProgram();
@@ -1001,8 +998,7 @@ void TiledForwardRenderer::UIText2D(const SceneView& sceneView)
 void TiledForwardRenderer::PostGamma()
 {
 	GammaShader.BindProgram();
-	glActiveTexture(GL_TEXTURE0);	
-	glBindTexture(GL_TEXTURE_2D, PostColorBuffer0);
+	GammaShader.BindSampler("uImage", 0, PostColorBuffer0);
 	GammaShader.SetUniform("uGamma", 2.2f);
 
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);

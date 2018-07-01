@@ -8,8 +8,9 @@ uniform mat4 uScreenFromModel;
 out vec3 vVertexPos;
 out vec2 vTexCoord;
 
-void main() {
-    gl_Position = uScreenFromModel * aPos;
+void main()
+{
+	gl_Position = uScreenFromModel * aPos;
 	vTexCoord = aTexCoord;
 	vVertexPos = aPos.xyz;
 }

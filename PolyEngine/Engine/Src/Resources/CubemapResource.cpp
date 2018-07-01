@@ -28,7 +28,7 @@ CubemapResource::CubemapResource(const EnumArray<String, eCubemapSide> paths)
 
 	for (auto side : IterateEnum<eCubemapSide>())
 	{
-		TextureProxy->SetContent(side, Images[side]);
+		TextureProxy->SetContentHDR(side, Images[side]);
 	}
 
 	for (auto side : IterateEnum<eCubemapSide>())

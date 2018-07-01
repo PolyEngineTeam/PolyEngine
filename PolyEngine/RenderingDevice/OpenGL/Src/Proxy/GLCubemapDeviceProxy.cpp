@@ -32,7 +32,7 @@ void GLCubemapDeviceProxy::InitCubemapParams()
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
-void GLCubemapDeviceProxy::SetContent(const eCubemapSide side, const float* data)
+void GLCubemapDeviceProxy::SetContentHDR(const eCubemapSide side, const float* data)
 {
 	ASSERTE(Width > 0 && Height > 0, "Invalid arguments!");
 	ASSERTE(TextureID > 0, "Texture is invalid!");

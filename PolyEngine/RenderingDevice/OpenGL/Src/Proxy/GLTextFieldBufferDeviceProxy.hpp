@@ -7,7 +7,6 @@ namespace Poly
 {
 	class GLTextFieldBufferDeviceProxy : public ITextFieldBufferDeviceProxy
 	{
-		friend class GLRenderingDevice;
 	public:
 		GLTextFieldBufferDeviceProxy();
 		virtual ~GLTextFieldBufferDeviceProxy();

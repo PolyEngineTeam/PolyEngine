@@ -78,7 +78,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT ICubemapDeviceProxy : public BaseObject<>
 	{
 	public:
-		virtual void SetContent(const eCubemapSide side, const float* data) = 0;
+		virtual void SetContentHDR(const eCubemapSide side, const float* data) = 0;
 	};
 
 	//------------------------------------------------------------------------------
