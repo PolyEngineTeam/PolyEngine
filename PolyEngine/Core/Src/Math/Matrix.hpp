@@ -77,6 +77,13 @@ namespace Poly
 		/// <returns>Reference to itself.</returns>
 		Matrix& SetScale(const Vector& scale);
 
+		/// <summary>Initializes matrix with rotation based on look at position.</summary>
+		/// <param name="pos">Origin of rotation.</param>
+		/// <param name="lookAt">Position to look at.</param>
+		/// <param name="up">Up axis.</param>
+		/// <returns>Reference to itself.</returns>
+		Matrix& SetLookAt(const Vector& pos, const Vector& lookAt, const Vector& up = Vector::UNIT_Y);
+
 		/// <summary>Initializes matrix with perspective projection.</summary>
 		/// <param name="fov">Field of view angle.</param>
 		/// <param name="aspect">Aspect ratio.</param>
