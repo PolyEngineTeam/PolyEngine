@@ -639,11 +639,10 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 {
-	float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.WorldData, eEngineTimer::GAMEPLAY);
+	if (SkyboxCapture.GetEnvCubemap() > 0)
+	{
+		float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.WorldData, eEngineTimer::GAMEPLAY);
 	 
-	// const SkyboxWorldComponent* skyboxWorldCmp = world->GetWorldComponent<SkyboxWorldComponent>();
-	// if (skyboxWorldCmp != nullptr)
-	// {
 		const Matrix clipFromView = sceneView.CameraCmp->GetClipFromView();
 		Matrix viewFromWorld = sceneView.CameraCmp->GetViewFromWorld();
 		// center cube in view space by setting translation to 0 for x, y and z.
@@ -654,22 +653,18 @@ void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 
 		Matrix clipFromWorld = clipFromView * viewFromWorld;
 
+		glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
+
 		SkyboxShader.BindProgram();
 		SkyboxShader.SetUniform("uClipFromWorld", clipFromWorld);
 		SkyboxShader.SetUniform("uTime", time);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
+		SkyboxShader.BindSamplerCube("uCubemap", 0, SkyboxCapture.GetEnvCubemap());
 		
 		glBindFragDataLocation((GLuint)LightAccumulationShader.GetProgramHandle(), 0, "color");
 		glBindFragDataLocation((GLuint)LightAccumulationShader.GetProgramHandle(), 1, "normal");
 		
 		glDisable(GL_CULL_FACE);
 		glDepthFunc(GL_LEQUAL);
-
-		glActiveTexture(GL_TEXTURE0);
-		// glBindTexture(GL_TEXTURE_CUBE_MAP, SkyboxCapture.GetEnvCubemap());
-		// glBindTexture(GL_TEXTURE_CUBE_MAP, SkyboxCapture.GetIrradianceMap());
-		glBindTexture(GL_TEXTURE_CUBE_MAP, SkyboxCapture.GetPrefilterMap());
 
 		glBindVertexArray(RDI->PrimitivesCube->VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -681,7 +676,7 @@ void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 		glDepthFunc(GL_LESS);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	// }
+	}
 }
 
 void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
