@@ -9,22 +9,16 @@ Scene::Scene()
 	: EntitiesAllocator(MAX_ENTITY_COUNT)
 {
 	memset(ComponentAllocators, 0, sizeof(IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
-	//memset(WorldComponents, 0, sizeof(ComponentBase*) * MAX_WORLD_COMPONENTS_COUNT);
-	//WorldComponents.Resize(MAX_WORLD_COMPONENTS_COUNT);
 
-	rootEntity.reset(SpawnEntityInternal());
+	RootEntity.reset(SpawnEntityInternal());
 }
 
 //------------------------------------------------------------------------------
 Scene::~Scene()
 {
 	// copy entities
-	if (rootEntity)
-	{
-		DestroyEntity(rootEntity.release());
-	}
-	
-	Entity t;
+	if(RootEntity)
+		DestroyEntity(RootEntity.release());
 	
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT; ++i)
 	{
@@ -37,7 +31,7 @@ Scene::~Scene()
 Entity* Scene::SpawnEntity()
 {
 	Entity* ent = SpawnEntityInternal();
-	ent->SetParent(rootEntity.get());
+	ent->SetParent(RootEntity.get());
 	return ent;
 }
 
@@ -71,8 +65,7 @@ void Scene::DestroyEntity(Entity* entity)
 //------------------------------------------------------------------------------
 bool Scene::HasWorldComponent(size_t ID) const
 {
-	HEAVY_ASSERTE(ID < MAX_WORLD_COMPONENTS_COUNT, "Invalid component ID - greater than MAX_WORLD_COMPONENTS_COUNT.");
-	return WorldComponents.Get(ID).HasValue();
+	return RootEntity->HasComponent(ID);
 }
 
 //------------------------------------------------------------------------------

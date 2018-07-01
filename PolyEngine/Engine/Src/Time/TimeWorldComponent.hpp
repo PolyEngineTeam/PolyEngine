@@ -39,5 +39,5 @@ namespace Poly
 		bool Paused = false;
 	};
 
-	REGISTER_COMPONENT(WorldComponentsIDGroup, TimeWorldComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, TimeWorldComponent)
 }

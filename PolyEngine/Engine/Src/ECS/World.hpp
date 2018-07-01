@@ -25,9 +25,6 @@ namespace Poly {
 	/// <summary>Entities per world limit.</summary>
 	constexpr size_t MAX_ENTITY_COUNT = 65536;
 
-	/// <summary>Scene components in limit.</summary>
-	constexpr size_t MAX_WORLD_COMPONENTS_COUNT = 64;
-
 	/// <summary>Scene represents world/scene/level in engine.
 	/// It contains entities, its components and world components.</summary>
 	class ENGINE_DLLEXPORT Scene : public RTTIBase
@@ -35,10 +32,9 @@ namespace Poly {
 		RTTI_DECLARE_TYPE_DERIVED(::Poly::Scene, ::Poly::RTTIBase)
 		{
 			//@todo(muniu) rttibase pointers serialization
-			RTTI_PROPERTY_AUTONAME(rootEntity, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(RootEntity, RTTI::ePropertyFlag::NONE);
 			//RTTI_PROPERTY_AUTONAME(EntitiesAllocator, RTTI::ePropertyFlag::NONE);
 			//RTTI_PROPERTY_AUTONAME_ARRAY(ComponentAllocators, MAX_COMPONENTS_COUNT, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(WorldComponents, RTTI::ePropertyFlag::NONE);
 		}
 	public:
 		/// <summary>Allocates memory for entities, world components and components allocators.</summary>
@@ -68,10 +64,7 @@ namespace Poly {
 		template<typename T>
 		T* GetWorldComponent()
 		{
-			const auto ctypeID = GetWorldComponentID<T>();
-			if(HasWorldComponent(ctypeID))
-				return static_cast<T*>(WorldComponents[ctypeID].get());
-			return nullptr;
+			return RootEntity->GetComponent<T>();
 		}
 
 		//------------------------------------------------------------------------------
@@ -89,7 +82,7 @@ namespace Poly {
 		/// <returns>Associated ID.</returns>
 		template<typename T> static size_t GetWorldComponentID() noexcept
 		{
-			return WorldComponentsIDGroup::GetComponentTypeID<T>();
+			return ComponentsIDGroup::GetComponentTypeID<T>();
 		}
 
 		template<typename PrimaryComponent, typename... SecondaryComponents>
@@ -254,25 +247,19 @@ namespace Poly {
 		template<typename T, typename... Args>
 		void AddWorldComponent(Args&&... args)
 		{
-			const auto ctypeID = GetWorldComponentID<T>();
-			HEAVY_ASSERTE(!HasWorldComponent(ctypeID), "Failed at AddWorldComponent() - a world component of a given type already exists!");
-			WorldComponents.Insert(ctypeID, std::make_unique<T>(std::forward<Args>(args)...));
+			AddComponent<T>(RootEntity.get(), std::forward<Args>(args)...);
 		}
 
 		//------------------------------------------------------------------------------
 		template<typename T>
 		void RemoveWorldComponent()
 		{
-			const auto ctypeID = GetComponentID<T>();
-			HEAVY_ASSERTE(HasWorldComponent(ctypeID), "Failed at RemoveWorldComponent() - a component of a given type does not exist!");
-			WorldComponents.Remove(ctypeID);
+			RemoveComponent<T>(RootEntity.Get());
 		}
 
 		void RemoveComponentById(Entity* ent, size_t id);
 
-		std::unique_ptr<Entity> rootEntity = nullptr;
-		//@todo change to hash map
-		OrderedMap<size_t, std::unique_ptr<ComponentBase>> WorldComponents;
+		std::unique_ptr<Entity> RootEntity = nullptr;
 
 		// Allocators
 		IterablePoolAllocator<Entity> EntitiesAllocator;
