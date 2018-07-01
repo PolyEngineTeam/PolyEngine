@@ -30,7 +30,7 @@ namespace Poly
 
 
 		inline Vector(const Vector& rhs) : X(rhs.X), Y(rhs.Y), Z(rhs.Z), W(rhs.W) {}
-		inline Vector(const Color& rhs) : X(rhs.R), Y(rhs.G), Z(rhs.B), W(rhs.A) {}
+		explicit inline Vector(const Color& rhs) : X(rhs.R), Y(rhs.G), Z(rhs.B), W(rhs.A) {}
 	#if !DISABLE_SIMD
 		inline Vector& operator=(const Vector& rhs) { SimdData = rhs.SimdData; return *this; }
 	#else
@@ -52,8 +52,11 @@ namespace Poly
 
 		// Operators with floats
 		Vector operator+(float rhs) const;
+		Vector operator-(float rhs) const;
 		Vector operator*(float rhs) const;
 		Vector operator/(float rhs) const;
+		Vector& operator+=(float rhs);
+		Vector& operator-=(float rhs);
 		Vector& operator*=(float rhs);
 		Vector& operator/=(float rhs);
 
