@@ -141,6 +141,8 @@ void EntityInspectorWidget::Reset()
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::EntitiesSelectionChanged()
 {
+	Dynarray<Entity*> selectedEntities = Manager->GetSelectedEntities();
+
 	// remove all old entity component sections
 	for (auto cmp : ComponentSections)
 	{
@@ -151,7 +153,7 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 	ComponentInspectors.Clear();
 
 	// no entity selected
-	if (SelectedEntities.GetSize() == 0)
+	if (selectedEntities.GetSize() == 0)
 	{
 		NameField->Reset();
 		NameField->SetText("");
@@ -168,7 +170,7 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		Transform->Reset();
 		TransformSection->hide();
 	}
-	else if (SelectedEntities.GetSize() > 1)
+	else if (selectedEntities.GetSize() > 1)
 	{
 		NameField->Reset();
 		NameField->SetText("< multiple selection >");
@@ -178,9 +180,9 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 
 
 		bool sameParent = true;
-		Entity* parent = SelectedEntities[0]->GetParent();
+		Entity* parent = selectedEntities[0]->GetParent();
 
-		for (Entity* e : SelectedEntities)
+		for (Entity* e : selectedEntities)
 			if (e->GetParent() != parent)
 			{
 				sameParent = false;
@@ -192,7 +194,7 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		{
 			std::stringstream ss;
 			ss.str(std::string());
-			ss << SelectedEntities[0]->GetParent()->GetID();
+			ss << selectedEntities[0]->GetParent()->GetID();
 			ParentIdNameField->setText(&ss.str()[0]);
 			ParentSelectButton->show();
 		}
@@ -213,15 +215,15 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		std::stringstream ss;
 
 		// name
-		NameField->SetObject(&SelectedEntities[0]->Name, &SelectedEntities[0]->GetPropertyManager()->GetPropertyList()[1]);
+		NameField->SetObject(&selectedEntities[0]->Name, &selectedEntities[0]->GetPropertyManager()->GetPropertyList()[1]);
 		NameField->SetDisableEdit(false);
 
 		// id
-		ss << SelectedEntities[0]->GetID();
+		ss << selectedEntities[0]->GetID();
 		UniqueIdField->setText(&ss.str()[0]);
 
 		// parent
-		if (SelectedEntities[0]->IsRoot())
+		if (selectedEntities[0]->IsRoot())
 		{
 			ParentIdNameField->setText("");
 			ParentSelectButton->hide();
@@ -229,26 +231,26 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		else
 		{
 			ss.str(std::string());
-			ss << SelectedEntities[0]->GetParent()->GetID();
+			ss << selectedEntities[0]->GetParent()->GetID();
 			ParentIdNameField->setText(&ss.str()[0]);
 			ParentSelectButton->show();
 		}
 
 		//children
 		ChildrenIdNameField->clear();
-		for (auto child : SelectedEntities[0]->GetChildren())
+		for (auto child : selectedEntities[0]->GetChildren())
 		{
 			ss.str(std::string());
 			ss << child->GetID();
 			ChildrenIdNameField->addItem(&ss.str()[0]);
 		}
-		if ((int)SelectedEntities[0]->GetChildren().GetSize() > 0)
+		if ((int)selectedEntities[0]->GetChildren().GetSize() > 0)
 			ChildrenSelectButton->show();
 		else
 			ChildrenSelectButton->hide();
 
 		// transform
-		if (SelectedEntities[0]->IsRoot())
+		if (selectedEntities[0]->IsRoot())
 		{
 			TransformSection->hide();
 			Transform->Reset();
@@ -256,7 +258,7 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		else
 		{
 			TransformSection->show();
-			Transform->SetObject(SelectedEntities[0], &SelectedEntities[0]->GetPropertyManager()->GetPropertyList()[0]);
+			Transform->SetObject(selectedEntities[0], &selectedEntities[0]->GetPropertyManager()->GetPropertyList()[0]);
 		}
 
 		// components
@@ -279,33 +281,35 @@ void EntityInspectorWidget::ComponentsRemoved()
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::Update()
 {
-	if (SelectedEntities.GetSize() == 1)
+	Dynarray<Entity*> selectedEntities = Manager->GetSelectedEntities();
+
+	if (selectedEntities.GetSize() == 1)
 	{
 		std::stringstream ss;
 
 		NameField->UpdateControl();
 
-		ss << SelectedEntities[0]->GetID();
+		ss << selectedEntities[0]->GetID();
 		UniqueIdField->setText(&ss.str()[0]);
 
 		ss.str(std::string());
-		if (SelectedEntities[0]->IsRoot())
+		if (selectedEntities[0]->IsRoot())
 			ParentIdNameField->setText("");
 		else
 		{
-			ss << SelectedEntities[0]->GetParent()->GetID();
+			ss << selectedEntities[0]->GetParent()->GetID();
 			ParentIdNameField->setText(&ss.str()[0]);
 		}
 
-		if (!SelectedEntities[0]->IsRoot())
+		if (!selectedEntities[0]->IsRoot())
 			Transform->UpdateControl();
 	}
-	else if (SelectedEntities.GetSize() > 1)
+	else if (selectedEntities.GetSize() > 1)
 	{
 		bool sameParent = true;
-		Entity* parent = SelectedEntities[0]->GetParent();
+		Entity* parent = selectedEntities[0]->GetParent();
 
-		for (Entity* e : SelectedEntities)
+		for (Entity* e : selectedEntities)
 			if (e->GetParent() != parent)
 			{
 				sameParent = false;
@@ -316,7 +320,7 @@ void EntityInspectorWidget::Update()
 		{
 			std::stringstream ss;
 			ss.str(std::string());
-			ss << SelectedEntities[0]->GetParent()->GetID();
+			ss << selectedEntities[0]->GetParent()->GetID();
 			ParentIdNameField->setText(&ss.str()[0]);
 		}
 		else
@@ -353,7 +357,7 @@ void EntityInspectorWidget::ReloadComponentSections()
 	// add component sections
 	for (size_t i = 0, row = 5; i < MAX_COMPONENTS_COUNT; ++i)
 	{
-		ComponentBase* cmp = SelectedEntities[0]->GetComponent(i);
+		ComponentBase* cmp = Manager->GetSelectedEntities()[0]->GetComponent(i);
 		if (!cmp) continue;
 
 		cmp->GetTypeInfo();
@@ -392,7 +396,7 @@ void EntityInspectorWidget::ControlObjectUpdated()
 void EntityInspectorWidget::AddComponent()
 {
 	ComponentDialog dialog;
-	dialog.AddComponents(SelectedEntities[0]);
+	dialog.AddComponents(Manager->GetSelectedEntities()[0]);
 
 	// TODO(squares): return components ids
 	if (!dialog.OperationCanceled())
@@ -403,7 +407,7 @@ void EntityInspectorWidget::AddComponent()
 void EntityInspectorWidget::RemoveComponent()
 {
 	ComponentDialog dialog;
-	dialog.RemoveComponents(SelectedEntities[0]);
+	dialog.RemoveComponents(Manager->GetSelectedEntities()[0]);
 
 	// TODO(squares): return components ids
 	if (!dialog.OperationCanceled())
@@ -413,12 +417,12 @@ void EntityInspectorWidget::RemoveComponent()
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::SelectParent()
 {
-	Manager->EntitiesSelectionChangedSlot({ SelectedEntities[0]->GetParent() });
+	Manager->EntitiesSelectionChangedSlot({ Manager->GetSelectedEntities()[0]->GetParent() });
 }
 
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::SelectChild()
 {
 	Manager->EntitiesSelectionChangedSlot(
-		{ SelectedEntities[0]->GetChildren()[ChildrenIdNameField->currentIndex()] });
+		{ Manager->GetSelectedEntities()[0]->GetChildren()[ChildrenIdNameField->currentIndex()] });
 }

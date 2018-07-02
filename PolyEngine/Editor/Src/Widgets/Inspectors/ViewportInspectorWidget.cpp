@@ -82,56 +82,74 @@ std::unique_ptr<Poly::IRenderingDevice> ViewportInspectorWidget::GetRenderingDev
 
 //		iEditor
 //------------------------------------------------------------------------------
-
 String ViewportInspectorWidget::GetAssetsPathConfigPath()
 {
 	StringBuilder builder;
-	builder.Append(Config->GetProjectPath());
+	builder.Append(Manager->GetConfig()->GetProjectPath());
 	builder.Append("/Build/");
-	builder.Append(Config->GetProjectName());
+	builder.Append(Manager->GetConfig()->GetProjectName());
 	builder.Append("/Debug/AssetsPathConfig.json");
 
 	return builder.StealString();
 }
 
+//------------------------------------------------------------------------------
 void ViewportInspectorWidget::Init()
 {
+	World* w = Manager->GetEngine()->GetWorld();
+
 	//		register editor phases
-	EngineObj->RegisterEditorUpdatePhase(EditorCameraMovementSystem::Update);
-	EngineObj->RegisterEditorUpdatePhase(GizmoSystem::Update);
+	Manager->GetEngine()->RegisterEditorUpdatePhase(EditorCameraMovementSystem::Update);
+	Manager->GetEngine()->RegisterEditorUpdatePhase(GizmoSystem::Update);
 
 	//		create camera
-	EditorCameraEnt = DeferredTaskSystem::SpawnEntityImmediate(EngineObj->GetWorld());
+	EditorCameraEnt = DeferredTaskSystem::SpawnEntityImmediate(w);
 	// add EditorCameraMovementComponent
-	DeferredTaskSystem::AddComponentImmediate<EditorCameraMovementComponent>(EngineObj->GetWorld(), EditorCameraEnt, 25.f, 0.01f);
+	DeferredTaskSystem::AddComponentImmediate<EditorCameraMovementComponent>(w, EditorCameraEnt, 25.f, 0.01f);
 	// add camera component
-	DeferredTaskSystem::AddComponentImmediate<CameraComponent>(EngineObj->GetWorld(), EditorCameraEnt, 60_deg, 1.0f, 1000.f);
+	DeferredTaskSystem::AddComponentImmediate<CameraComponent>(w, EditorCameraEnt, 60_deg, 1.0f, 1000.f);
 	// add postprocess settings component
-	DeferredTaskSystem::AddComponentImmediate<PostprocessSettingsComponent>(EngineObj->GetWorld(), EditorCameraEnt);
-	EngineObj->GetWorld()->GetComponent<PostprocessSettingsComponent>(EditorCameraEnt)->UseFgShader = true;
-	EngineObj->GetWorld()->GetComponent<PostprocessSettingsComponent>(EditorCameraEnt)->UseBgShader = true;
+	DeferredTaskSystem::AddComponentImmediate<PostprocessSettingsComponent>(w, EditorCameraEnt);
+	w->GetComponent<PostprocessSettingsComponent>(EditorCameraEnt)->UseFgShader = true;
+	w->GetComponent<PostprocessSettingsComponent>(EditorCameraEnt)->UseBgShader = true;
 
 	//		obtain game camera
-	GameCamera = EngineObj->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->GetCamera(0);
+	GameCamera = w->GetWorldComponent<ViewportWorldComponent>()->GetCamera(0);
 }
 
+//------------------------------------------------------------------------------
 void ViewportInspectorWidget::Deinit()
 {
 }
 
+//------------------------------------------------------------------------------
+Dynarray<Entity*> ViewportInspectorWidget::GetSelectedEntities()
+{
+	return Manager->GetSelectedEntities();
+}
+
+//------------------------------------------------------------------------------
 void ViewportInspectorWidget::SetSelectedEntities(Dynarray<Entity*> entities)
 {
 	Manager->EntitiesSelectionChangedSlot(std::move(entities));
 }
 
+//------------------------------------------------------------------------------
 void ViewportInspectorWidget::UpdateInspectors()
 {
 	Manager->EntitiesModifiedSlot();
 }
 
+//------------------------------------------------------------------------------
 void ViewportInspectorWidget::SetEngineState(eEngineState state)
 {
 	Manager->StateChangedSlot(state);
+}
+
+//------------------------------------------------------------------------------
+eEngineState ViewportInspectorWidget::GetEngineState()
+{
+	return Manager->GetEngineState();
 }
 
 
@@ -140,20 +158,20 @@ void ViewportInspectorWidget::SetEngineState(eEngineState state)
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::StateChanged()
 {
-	switch (EngineState)
+	switch (Manager->GetEngineState())
 	{
 	case eEngineState::EDIT:
 	{
 		// set editor camera
-		EngineObj->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(
-			0, EngineObj->GetWorld()->GetComponent<CameraComponent>(EditorCameraEnt));
+		Manager->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(
+			0, Manager->GetWorld()->GetComponent<CameraComponent>(EditorCameraEnt));
 
 		break;
 	}
 	case eEngineState::GAMEPLAY:
 	{
 		// set gameplay camera
-		EngineObj->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, GameCamera);
+		Manager->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, GameCamera);
 
 		break;
 	}
@@ -178,7 +196,7 @@ void ViewportInspectorWidget::resizeEvent(QResizeEvent* resizeEvent)
 	Poly::ScreenSize screenSize;
 	screenSize.Width = resizeEvent->size().width();
 	screenSize.Height = resizeEvent->size().height();
-	EngineObj->ResizeScreen(screenSize);
+	Manager->GetEngine()->ResizeScreen(screenSize);
 }
 
 //------------------------------------------------------------------------------
@@ -186,7 +204,7 @@ void ViewportInspectorWidget::wheelEvent(QWheelEvent* wheelEvent)
 {
 	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
 		return;
-	EngineObj->UpdateWheelPos(Poly::Vector2i(wheelEvent->delta(), 0));
+	Manager->GetEngine()->UpdateWheelPos(Poly::Vector2i(wheelEvent->delta(), 0));
 }
 
 //------------------------------------------------------------------------------
@@ -194,7 +212,7 @@ void ViewportInspectorWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 {
 	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
 		return;
-	EngineObj->UpdateMousePos(Poly::Vector2i(mouseEvent->pos().x(), mouseEvent->pos().y()));
+	Manager->GetEngine()->UpdateMousePos(Poly::Vector2i(mouseEvent->pos().x(), mouseEvent->pos().y()));
 
 	gConsole.LogDebug("{}; {}", mouseEvent->pos().x(), mouseEvent->pos().y());
 }
@@ -208,15 +226,15 @@ void ViewportInspectorWidget::mousePressEvent(QMouseEvent* mouseEvent)
 	switch (mouseEvent->button())
 	{
 	case Qt::LeftButton:
-		EngineObj->MouseButtonDown(static_cast<Poly::eMouseButton>(Poly::eMouseButton::LEFT));
+		Manager->GetEngine()->MouseButtonDown(static_cast<Poly::eMouseButton>(Poly::eMouseButton::LEFT));
 		break;
 
 	case Qt::RightButton:
-		EngineObj->MouseButtonDown(static_cast<Poly::eMouseButton>(Poly::eMouseButton::RIGHT));
+		Manager->GetEngine()->MouseButtonDown(static_cast<Poly::eMouseButton>(Poly::eMouseButton::RIGHT));
 		break;
 
 	case Qt::MiddleButton:
-		EngineObj->MouseButtonDown(static_cast<Poly::eMouseButton>(Poly::eMouseButton::MIDDLE));
+		Manager->GetEngine()->MouseButtonDown(static_cast<Poly::eMouseButton>(Poly::eMouseButton::MIDDLE));
 		break;
 
 	default:
@@ -233,15 +251,15 @@ void ViewportInspectorWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 	switch (mouseEvent->button())
 	{
 	case Qt::LeftButton:
-		EngineObj->MouseButtonUp(static_cast<Poly::eMouseButton>(Poly::eMouseButton::LEFT));
+		Manager->GetEngine()->MouseButtonUp(static_cast<Poly::eMouseButton>(Poly::eMouseButton::LEFT));
 		break;
 
 	case Qt::RightButton:
-		EngineObj->MouseButtonUp(static_cast<Poly::eMouseButton>(Poly::eMouseButton::RIGHT));
+		Manager->GetEngine()->MouseButtonUp(static_cast<Poly::eMouseButton>(Poly::eMouseButton::RIGHT));
 		break;
 
 	case Qt::MiddleButton:
-		EngineObj->MouseButtonUp(static_cast<Poly::eMouseButton>(Poly::eMouseButton::MIDDLE));
+		Manager->GetEngine()->MouseButtonUp(static_cast<Poly::eMouseButton>(Poly::eMouseButton::MIDDLE));
 		break;
 
 	default:
@@ -259,7 +277,7 @@ void ViewportInspectorWidget::keyPressEvent(QKeyEvent* keyEvent)
 	if (keyEvent->isAutoRepeat())
 		keyEvent->ignore();
 	else
-		EngineObj->KeyDown(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
+		Manager->GetEngine()->KeyDown(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
 }
 
 //------------------------------------------------------------------------------
@@ -271,5 +289,5 @@ void ViewportInspectorWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 	if (keyEvent->isAutoRepeat())
 		keyEvent->ignore();
 	else
-		EngineObj->KeyUp(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
+		Manager->GetEngine()->KeyUp(static_cast<Poly::eKey>(SDL_GetScancodeFromKey(QtKeyEventToSDLKeycode((Qt::Key)keyEvent->key()))));
 }

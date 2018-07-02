@@ -14,10 +14,4 @@ public:
 
 protected:
 	InspectorManager* Manager;
-
-	Engine*& EngineObj;
-	World*& WorldObj;
-	const Dynarray<Entity*>& SelectedEntities;
-	const ProjectConfig*& Config;
-	const eEngineState& EngineState;
 };

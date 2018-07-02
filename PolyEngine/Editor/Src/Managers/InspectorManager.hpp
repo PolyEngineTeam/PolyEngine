@@ -21,7 +21,6 @@ class InspectorManager : public QObject
 	Q_OBJECT
 
 	friend class InspectorWidgetBase;
-
 	friend class EntitiesSelectionChangedCommand;
 
 public:
@@ -31,6 +30,12 @@ public:
 
 	std::unique_ptr<IRenderingDevice> GetRenderingDevice() { return ViewportInspector->GetRenderingDevice(); }
 	IEditor* GetEditor() { return ViewportInspector; }
+
+	Engine* GetEngine() { return EngineObj; }
+	World* GetWorld() { return WorldObj; }
+	Dynarray<Entity*> GetSelectedEntities() { return SelectedEntities; }
+	const ProjectConfig* GetConfig() { return Config; }
+	eEngineState GetEngineState() { return EngineState; }
 
 public slots:
 	void ProjectOpenedSlot(const ProjectConfig* config);

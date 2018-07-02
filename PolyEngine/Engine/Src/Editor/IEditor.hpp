@@ -27,7 +27,7 @@ namespace Poly
 		virtual void Deinit() = 0;
 
 		// Get all ID's of currently selected entties.
-		virtual const Dynarray<Entity*>& GetSelectedEntities() = 0;
+		virtual Dynarray<Entity*> GetSelectedEntities() = 0;
 		
 		// Set entities selection.
 		virtual void SetSelectedEntities(Dynarray<Entity*>) = 0;

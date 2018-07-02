@@ -24,7 +24,6 @@ void ResourceInspectorWidget::InitializeConnections()
 //------------------------------------------------------------------------------
 void ResourceInspectorWidget::Reset()
 {
-	Config = nullptr;
 	delete Model;
 	Model = new QFileSystemModel(this);
 	Tree->setModel(Model);
@@ -38,9 +37,9 @@ void ResourceInspectorWidget::ProjectOpened()
 {
 	StringBuilder b;
 
-	b.Append(Config->GetProjectPath());
+	b.Append(Manager->GetConfig()->GetProjectPath());
 	b.Append("/");
-	b.Append(Config->GetProjectName());
+	b.Append(Manager->GetConfig()->GetProjectName());
 	b.Append("/Res");
 
 	QDir dir(b.StealString().GetCStr());
@@ -51,7 +50,6 @@ void ResourceInspectorWidget::ProjectOpened()
 //------------------------------------------------------------------------------
 void ResourceInspectorWidget::ProjectClosed()
 {
-	Config = nullptr;
 	delete Model;
 	Model = new QFileSystemModel(this);
 	Tree->setModel(Model);

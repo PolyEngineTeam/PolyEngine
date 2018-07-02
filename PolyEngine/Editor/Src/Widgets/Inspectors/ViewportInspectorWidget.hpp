@@ -40,7 +40,7 @@ public:
 	void Deinit() override;
 
 	// If any system needs currently selected entities list it should use this function.
-	const Dynarray<Entity*>& GetSelectedEntities() override { return SelectedEntities; }
+	Dynarray<Entity*> GetSelectedEntities() override;
 
 	// If system wants to set new list of selected entities it hould call this one.
 	void SetSelectedEntities(Dynarray<Entity*> entities) override;
@@ -49,7 +49,7 @@ public:
 	void UpdateInspectors() override;
 
 	void SetEngineState(eEngineState state) override;
-	eEngineState GetEngineState() override { return EngineState; }
+	eEngineState GetEngineState() override;
 
 public slots:
 	// engine

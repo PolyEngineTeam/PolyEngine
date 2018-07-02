@@ -71,18 +71,18 @@ void WorldInspectorWidget::WorldChanged()
 	Tree->clear();
 	ItemToEntity.clear();
 
-	if (WorldObj)
+	if (Manager->GetWorld())
 	{
 		QTreeWidgetItem* root = new QTreeWidgetItem(Tree);
 
 		std::stringstream ss;
-		ss << WorldObj->GetRoot()->GetID();
+		ss << Manager->GetWorld()->GetRoot()->GetID();
 		root->setText(2, (&ss.str()[0]));
-		root->setText(1, WorldObj->GetRoot()->Name.GetCStr());
+		root->setText(1, Manager->GetWorld()->GetRoot()->Name.GetCStr());
 		root->setCheckState(0, Qt::Checked);
-		ItemToEntity.insert(std::pair<QTreeWidgetItem*, Entity*>(root, WorldObj->GetRoot()));
+		ItemToEntity.insert(std::pair<QTreeWidgetItem*, Entity*>(root, Manager->GetWorld()->GetRoot()));
 
-		for (auto child : WorldObj->GetRoot()->GetChildren())
+		for (auto child : Manager->GetWorld()->GetRoot()->GetChildren())
 			AddEntityToTree(child, root);
 	}
 }
@@ -90,7 +90,7 @@ void WorldInspectorWidget::WorldChanged()
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::EntitiesSpawned()
 {
-	for (Entity* e : SelectedEntities)
+	for (Entity* e : Manager->GetSelectedEntities())
 	{
 		Entity* parent = e->GetParent();
 
@@ -106,7 +106,7 @@ void WorldInspectorWidget::EntitiesSpawned()
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::EntitiesDestroyed()
 {
-	for (Entity* e : SelectedEntities)
+	for (Entity* e : Manager->GetSelectedEntities())
 		for (auto i : ItemToEntity)
 			if (i.second == e)
 			{
@@ -123,14 +123,14 @@ void WorldInspectorWidget::EntitiesReparented()
 
 
 	for (auto i : ItemToEntity)
-		if (i.second == SelectedEntities[0]->GetParent())
+		if (i.second == Manager->GetSelectedEntities()[0]->GetParent())
 		{
 			parentWidget = i.first;
 			break;
 		}
 
 	int counter = 0;
-	for (Entity* e : SelectedEntities)
+	for (Entity* e : Manager->GetSelectedEntities())
 		for (auto i : ItemToEntity)
 			if (i.second == e)
 			{
@@ -146,7 +146,7 @@ void WorldInspectorWidget::EntitiesSelectionChanged()
 	DisableSelectionChangedSlot = true;
 	Tree->clearSelection();
 
-	for (Entity* e : SelectedEntities)
+	for (Entity* e : Manager->GetSelectedEntities())
 		for (auto i : ItemToEntity)
 			if (i.second == e)
 			{
@@ -238,7 +238,7 @@ void WorldInspectorWidget::Drop(Dynarray<QTreeWidgetItem*> droppedItems)
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::SpawnEntities()
 {
-	if (!WorldObj)
+	if (!Manager->GetWorld())
 	{
 		QMessageBox msgBox;
 		msgBox.setText("Can't spawn entities without world.");
@@ -248,7 +248,7 @@ void WorldInspectorWidget::SpawnEntities()
 	}
 
 	EntityDialog dialog;
-	Dynarray<Entity*> result = dialog.SpawnEntities(WorldObj, SelectedEntities);
+	Dynarray<Entity*> result = dialog.SpawnEntities(Manager->GetWorld(), Manager->GetSelectedEntities());
 
 	if (!dialog.OperationCanceled()) 
 	{
@@ -261,7 +261,7 @@ void WorldInspectorWidget::SpawnEntities()
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::DestroyEntities()
 {
-	if (!WorldObj)
+	if (!Manager->GetWorld())
 	{
 		QMessageBox msgBox;
 		msgBox.setText("Can't destroy entities without world.");
@@ -271,7 +271,7 @@ void WorldInspectorWidget::DestroyEntities()
 	}
 
 	EntityDialog dialog;
-	dialog.DestroyEntities(WorldObj, SelectedEntities);
+	dialog.DestroyEntities(Manager->GetWorld(), Manager->GetSelectedEntities());
 
 	if (!dialog.OperationCanceled())
 		Manager->EntitiesDestroyedSlot();
@@ -280,7 +280,7 @@ void WorldInspectorWidget::DestroyEntities()
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::ReparentEntities()
 {
-	if (!WorldObj)
+	if (!Manager->GetWorld())
 	{
 		QMessageBox msgBox;
 		msgBox.setText("Can't reparent entities without selected world.");
@@ -290,7 +290,7 @@ void WorldInspectorWidget::ReparentEntities()
 	}
 
 	EntityDialog dialog;
-	Dynarray<Entity*> result = dialog.ReparentEntities(WorldObj, SelectedEntities);
+	Dynarray<Entity*> result = dialog.ReparentEntities(Manager->GetWorld(), Manager->GetSelectedEntities());
 
 	if (!dialog.OperationCanceled())
 	{
