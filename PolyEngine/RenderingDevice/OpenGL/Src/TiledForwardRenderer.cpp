@@ -86,13 +86,26 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	SkyboxShader.RegisterUniform("mat4", "uClipFromWorld");
 	SkyboxShader.RegisterUniform("float", "uTime");
 
+	TranslucentShader.RegisterUniform("float", "uTime");
 	TranslucentShader.RegisterUniform("vec4", "uViewPosition");
 	TranslucentShader.RegisterUniform("mat4", "uClipFromModel");
 	TranslucentShader.RegisterUniform("mat4", "uWorldFromModel");
-	TranslucentShader.RegisterUniform("vec4", "uMaterial.Ambient");
-	TranslucentShader.RegisterUniform("vec4", "uMaterial.Diffuse");
-	TranslucentShader.RegisterUniform("vec4", "uMaterial.Specular");
-	TranslucentShader.RegisterUniform("float", "uMaterial.Shininess");
+	TranslucentShader.RegisterUniform("vec4", "uMaterial.Emissive");
+	TranslucentShader.RegisterUniform("vec4", "uMaterial.Albedo");
+	TranslucentShader.RegisterUniform("float", "uMaterial.Roughness");
+	TranslucentShader.RegisterUniform("float", "uMaterial.Metallic");
+
+	TranslucentShader.RegisterUniform("sampler2D", "uBrdfLUT");
+	TranslucentShader.RegisterUniform("samplerCube", "uIrradianceMap");
+	TranslucentShader.RegisterUniform("samplerCube", "uPrefilterMap");
+
+	TranslucentShader.RegisterUniform("sampler2D", "uEmissiveMap");
+	TranslucentShader.RegisterUniform("sampler2D", "uAlbedoMap");
+	TranslucentShader.RegisterUniform("sampler2D", "uRoughnessMap");
+	TranslucentShader.RegisterUniform("sampler2D", "uMetallicMap");
+	TranslucentShader.RegisterUniform("sampler2D", "uNormalMap");
+	TranslucentShader.RegisterUniform("sampler2D", "uAmbientOcclusionMap");
+
 	for (int i = 0; i < 8; ++i)
 	{
 		String baseName = String("uDirectionalLight[") + String::From(i) + String("].");
@@ -100,7 +113,10 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 		TranslucentShader.RegisterUniform("vec4", baseName + "Direction");
 	}
 	TranslucentShader.RegisterUniform("int", "uDirectionalLightCount");
-	
+	TranslucentShader.RegisterUniform("int", "uLightCount");
+	TranslucentShader.RegisterUniform("int", "uWorkGroupsX");
+	TranslucentShader.RegisterUniform("int", "uWorkGroupsY");
+
 	ParticleShader.RegisterUniform("float", "uTime");
 	ParticleShader.RegisterUniform("mat4", "uScreenFromView");
 	ParticleShader.RegisterUniform("mat4", "uViewFromWorld");
@@ -683,19 +699,27 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::RenderTranslucenLit");
 	
+	for (int i = 8; i > 0; --i)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
 
 	glDepthMask(GL_FALSE);
-	glEnable(GL_BLEND);
-	// glDisable(GL_CULL_FACE);
+	glEnable(GL_BLEND);	
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	const EntityTransform& cameraTransform = sceneView.CameraCmp->GetTransform();
 	TranslucentShader.BindProgram();
+	TranslucentShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
+	TranslucentShader.SetUniform("uWorkGroupsX", (int)WorkGroupsX);
+	TranslucentShader.SetUniform("uWorkGroupsY", (int)WorkGroupsY);
 	TranslucentShader.SetUniform("uViewPosition", cameraTransform.GetGlobalTranslation());
 
 	int dirLightsCount = 0;
-	for (const DirectionalLightComponent* dirLightCmp: sceneView.DirectionalLights)
+	for (const DirectionalLightComponent* dirLightCmp : sceneView.DirectionalLights)
 	{
 		const EntityTransform& transform = dirLightCmp->GetTransform();
 		String baseName = String("uDirectionalLight[") + String::From(dirLightsCount) + String("].");
@@ -710,8 +734,12 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 	}
 	TranslucentShader.SetUniform("uDirectionalLightCount", dirLightsCount);
 
-	glBindFragDataLocation((GLuint)TranslucentShader.GetProgramHandle(), 0, "color");
-	glBindFragDataLocation((GLuint)TranslucentShader.GetProgramHandle(), 1, "normal");
+	TranslucentShader.BindSamplerCube("uIrradianceMap", 0, SkyboxCapture.GetIrradianceMap());
+	TranslucentShader.BindSamplerCube("uPrefilterMap", 1, SkyboxCapture.GetPrefilterMap());
+	TranslucentShader.BindSampler("uBrdfLUT", 2, PreintegratedBrdfLUT);
+
+	glBindFragDataLocation((GLuint)TranslucentShader.GetProgramHandle(), 0, "oColor");
+	glBindFragDataLocation((GLuint)TranslucentShader.GetProgramHandle(), 1, "oNormal");
 
 	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	for (const MeshRenderingComponent* meshCmp : sceneView.TranslucentQueue)
@@ -725,57 +753,52 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
 			Material material = meshCmp->GetMaterial(i);
-			TranslucentShader.SetUniform("uMaterial.Ambient", Color::BLACK);
-			TranslucentShader.SetUniform("uMaterial.Diffuse", material.Albedo);
-			TranslucentShader.SetUniform("uMaterial.Specular", material.Albedo);
-			TranslucentShader.SetUniform("uMaterial.Shininess", 16.0f);
+			TranslucentShader.SetUniform("uMaterial.Emissive", material.Emissive);
+			TranslucentShader.SetUniform("uMaterial.Albedo", material.Albedo);
+			TranslucentShader.SetUniform("uMaterial.Roughness", material.Roughness);
+			TranslucentShader.SetUniform("uMaterial.Metallic", material.Metallic);
+			TranslucentShader.SetUniform("uMaterial.OpacityMaskThreshold", material.OpacityMaskThreshold);
 
-			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
-			glBindVertexArray(meshProxy->GetVAO());
-
-			const TextureResource* diffuseTexture = subMesh->GetMeshData().GetAlbedoMap();
-			GLuint diffuseID = diffuseTexture == nullptr
-				? RDI->FallbackWhiteTexture
-				: (GLuint)(diffuseTexture->GetTextureProxy()->GetResourceID());
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, diffuseID);
-			TranslucentShader.SetUniform("uAlbedoMap", 0);
-
+			const TextureResource* emissiveMap = subMesh->GetMeshData().GetEmissiveMap();
+			const TextureResource* albedoMap = subMesh->GetMeshData().GetAlbedoMap();
+			const TextureResource* roughnessMap = subMesh->GetMeshData().GetRoughnessMap();
+			const TextureResource* metallicMap = subMesh->GetMeshData().GetMetallicMap();
 			const TextureResource* normalMap = subMesh->GetMeshData().GetNormalMap();
-			GLuint normalMapID = normalMap == nullptr
-				? RDI->FallbackNormalMap
-				: (GLuint)(normalMap->GetTextureProxy()->GetResourceID());
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, normalMapID);
-			TranslucentShader.SetUniform("uNormalMap", 1);
+			const TextureResource* ambientOcclusionMap = subMesh->GetMeshData().GetAmbientOcclusionMap();
 
-			const TextureResource* specularTexture = subMesh->GetMeshData().GetRoughnessMap();
-			GLuint specularID = specularTexture == nullptr
-				? RDI->FallbackWhiteTexture
-				: (GLuint)(specularTexture->GetTextureProxy()->GetResourceID());
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, specularID);
-			TranslucentShader.SetUniform("uSpecularMap", 2);
+			// Material textures
+			TranslucentShader.BindSampler("uEmissiveMap",			3, emissiveMap			? emissiveMap->GetTextureProxy()->GetResourceID()			: RDI->FallbackBlackTexture);
+			TranslucentShader.BindSampler("uAlbedoMap",				4, albedoMap			? albedoMap->GetTextureProxy()->GetResourceID()				: RDI->FallbackWhiteTexture);
+			TranslucentShader.BindSampler("uRoughnessMap",			5, roughnessMap			? roughnessMap->GetTextureProxy()->GetResourceID()			: RDI->FallbackWhiteTexture);
+			TranslucentShader.BindSampler("uMetallicMap",			6, metallicMap			? metallicMap->GetTextureProxy()->GetResourceID()			: RDI->FallbackWhiteTexture);
+			TranslucentShader.BindSampler("uNormalMap",				7, normalMap			? normalMap->GetTextureProxy()->GetResourceID()				: RDI->FallbackNormalMap);
+			TranslucentShader.BindSampler("uAmbientOcclusionMap",	8, ambientOcclusionMap	? ambientOcclusionMap->GetTextureProxy()->GetResourceID()	: RDI->FallbackWhiteTexture);
+
+			const GLuint subMeshVAO = (GLuint)(subMesh->GetMeshProxy()->GetResourceID());
+			glBindVertexArray(subMeshVAO);
 
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
 			++i;
 		}
 	}
 	
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	CHECK_GL_ERR();
 
+	// Clear bound resources
 	glBindVertexArray(0);
 
-	// glEnable(GL_CULL_FACE);
+	for (int i = 8; i > 0; --i)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	CHECK_GL_ERR();
 }
 
 void TiledForwardRenderer::RenderParticleUnlit(Scene* world, const CameraComponent* cameraCmp)
