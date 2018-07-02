@@ -15,6 +15,7 @@ class WorldInspectorWidget;
 class WorldComponentsInspectorWidget;
 class ResourceInspectorWidget;
 class EntityInspectorWidget;
+class Command;
 
 class InspectorManager : public QObject
 {

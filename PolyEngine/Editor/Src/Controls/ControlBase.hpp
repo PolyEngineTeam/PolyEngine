@@ -124,16 +124,18 @@ protected:
 // @param CONTROL - control type to register
 // @param CORE_TYPE - core type that will be paired with given control type so 
 //		we can easily map from RTTI::eCorePropertyType to control.
+// @param NAME - we don't need it much but all pointers have to have different names.
+//		It is a problem when we try to assign more than one core types to single control.
 //
 // 1. Here we create new global pointer to ControlCreator object which only purpose is to 
 //		let us call placement new on ControlCreator.
 // 2. We pass address of one cell from Impl::CoreTypeToControlMap that corresponds with given 
 //		type (RTTI::eCorePropertyType) as an argument to placement new.
 // 3. As an argument to ControlCreator constructor we pass a function that creates new instance of CONTROL.
-#define ASSIGN_CONTROL(CONTROL, CORE_TYPE) \
+#define ASSIGN_CONTROL(CONTROL, CORE_TYPE, NAME) \
 	namespace Impl \
 	{ \
-		ControlCreator* CONTROL##Creator = \
+		ControlCreator* CONTROL##Creator##NAME = \
 			new(&::Impl::CoreTypeToControlMap[static_cast<int>(CORE_TYPE)]) \
 				ControlCreator([](QWidget* parent) -> ControlBase* { return new CONTROL(parent); }); \
 	}
