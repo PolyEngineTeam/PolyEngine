@@ -83,6 +83,9 @@ void UndoRedoManager::ProcessEvent(QEvent* event)
 //------------------------------------------------------------------------------
 void UndoRedoManager::AddCommand(Command* cmd)
 {
+	if (Commands[CurrentCommand] == cmd)
+		return;
+
 	for (int i = (int)CurrentCommand + 1; i < Commands.GetSize();)
 	{
 		delete Commands[Commands.GetSize() - 1];

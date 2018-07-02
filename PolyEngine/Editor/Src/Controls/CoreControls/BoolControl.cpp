@@ -1,5 +1,7 @@
 #include "PolyEditorPCH.hpp"
 
+#include "Managers/CommandsImpl.hpp"
+
 ASSIGN_CONTROL(BoolControl, RTTI::eCorePropertyType::BOOL, BOOL)
 
 BoolControl::BoolControl(QWidget* parent)
@@ -48,8 +50,27 @@ void BoolControl::Reset()
 
 void BoolControl::UpdateObject()
 {
+	ControlCommand* cmd = new ControlCommand();
+	cmd->Object = this;
+	cmd->Control = this;
+	cmd->UndoValue = new bool(*reinterpret_cast<bool*>(Object));
+
 	*reinterpret_cast<bool*>(Object) = *Machine->configuration().begin() == True;
-	emit ObjectUpdated();
+
+	cmd->RedoValue = new bool(*reinterpret_cast<bool*>(Object));
+
+	cmd->UndoPtr = [](ControlCommand* c)
+	{
+		*reinterpret_cast<bool*>(c->Object) = *reinterpret_cast<bool*>(c->UndoValue);
+		emit c->Control->ObjectUpdated(c);
+	};
+	cmd->RedoPtr = [](ControlCommand* c)
+	{
+		*reinterpret_cast<bool*>(c->Object) = *reinterpret_cast<bool*>(c->RedoValue);
+		emit c->Control->ObjectUpdated(c);
+	};
+
+	emit ObjectUpdated(cmd);
 }
 
 void BoolControl::UpdateControl()

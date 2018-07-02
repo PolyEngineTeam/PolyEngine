@@ -15,6 +15,7 @@ class SectionContainer;
 class RTTIInspectorWidget;
 class TransformControl;
 class StringControl;
+class Command;
 
 using namespace Poly;
 
@@ -70,7 +71,7 @@ private:
 	Dynarray<RTTIInspectorWidget*> ComponentInspectors;
 
 private slots:
-	void ControlObjectUpdated();
+	void ControlObjectUpdated(Command* c);
 
 	void SpawnContextMenu(QPoint pos); 
 		void AddComponent(); 

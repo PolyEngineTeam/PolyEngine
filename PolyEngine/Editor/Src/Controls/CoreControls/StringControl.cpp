@@ -1,5 +1,7 @@
 #include "PolyEditorPCH.hpp"
 
+#include "Managers/CommandsImpl.hpp"
+
 ASSIGN_CONTROL(StringControl, RTTI::eCorePropertyType::STRING, STRING)
 
 //------------------------------------------------------------------------------
@@ -29,8 +31,27 @@ void StringControl::Reset()
 //------------------------------------------------------------------------------
 void StringControl::UpdateObject()
 {
+	ControlCommand* cmd = new ControlCommand();
+	cmd->Object = Object;
+	cmd->Control = this;
+	cmd->UndoValue = new String(*reinterpret_cast<String*>(Object));
+
 	*reinterpret_cast<String*>(Object) = Field->text().toLatin1().data();
-	emit ObjectUpdated();
+
+	cmd->RedoValue = new String(*reinterpret_cast<String*>(Object));
+
+	cmd->UndoPtr = [](ControlCommand* c)
+	{
+		*reinterpret_cast<String*>(c->Object) = *reinterpret_cast<String*>(c->UndoValue);
+		emit c->Control->ObjectUpdated(c);
+	};
+	cmd->RedoPtr = [](ControlCommand* c)
+	{
+		*reinterpret_cast<String*>(c->Object) = *reinterpret_cast<String*>(c->RedoValue);
+		emit c->Control->ObjectUpdated(c);
+	};
+
+	emit ObjectUpdated(cmd);
 }
 
 //------------------------------------------------------------------------------

@@ -2,6 +2,8 @@
 
 #include <sstream>
 
+#include "Managers/CommandsImpl.hpp"
+
 //		general
 //------------------------------------------------------------------------------
 EntityInspectorWidget::EntityInspectorWidget(QWidget* parent, InspectorManager* mgr)
@@ -387,9 +389,9 @@ void EntityInspectorWidget::SpawnContextMenu(QPoint pos)
 
 //		functions modifying state (should emit events)
 //------------------------------------------------------------------------------
-void EntityInspectorWidget::ControlObjectUpdated()
+void EntityInspectorWidget::ControlObjectUpdated(Command* c)
 {
-	Manager->EntitiesModifiedSlot();
+	Manager->EntitiesModifiedSlot(c);
 }
 
 //------------------------------------------------------------------------------

@@ -137,7 +137,7 @@ void ViewportInspectorWidget::SetSelectedEntities(Dynarray<Entity*> entities)
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::UpdateInspectors()
 {
-	Manager->EntitiesModifiedSlot();
+	//Manager->EntitiesModifiedSlot();
 }
 
 //------------------------------------------------------------------------------

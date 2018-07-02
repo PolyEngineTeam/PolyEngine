@@ -5,9 +5,12 @@
 
 #include <RTTI/RTTI.hpp>
 
+#include <Utils/Logger.hpp>
+
 using namespace Poly;
 
 class ControlBase;
+class Command;
 
 namespace Impl
 {
@@ -100,13 +103,14 @@ signals:
 	// @param cmd - pointer to command object to enable undo/redo actions.
 	void ObjectUpdated(Command* cmd);
 
-protected slots:
+public slots:
 	// Use this as slot to connect to Your custom controls' signals like editingFinished in QLineEdit.
 	// @see StringControl::StringControl
 	void Confirm()
 	{
-		if (ASAPUpdate)
+		if (ASAPUpdate && !DisableEdit)
 			QTimer::singleShot(1, this, [object = this]() { object->UpdateObject(); });
+			//UpdateObject();
 	}
 
 protected:

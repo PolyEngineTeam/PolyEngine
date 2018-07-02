@@ -44,3 +44,32 @@ public:
 	Dynarray<Entity*> NewEntities;
 	InspectorManager* Manager;
 };
+
+//------------------------------------------------------------------------------
+class ControlCommand : public Command
+{
+public:
+	~ControlCommand()
+	{
+		delete UndoValue;
+		delete RedoValue;
+	}
+
+	void Undo() override
+	{
+		UndoPtr(this);
+	}
+	void Redo() override
+	{
+		RedoPtr(this);
+	}
+
+	void (*UndoPtr)(ControlCommand*);
+	void (*RedoPtr)(ControlCommand*);
+
+	void* Object;
+	ControlBase* Control;
+
+	void* UndoValue;
+	void* RedoValue;
+};
