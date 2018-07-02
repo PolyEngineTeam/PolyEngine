@@ -50,7 +50,7 @@ public slots:
 
 	void EntitiesSpawnedSlot();
 	void EntitiesDestroyedSlot();
-	void EntitiesModifiedSlot();
+	void EntitiesModifiedSlot(Command* cmd);
 	void EntitiesReparentedSlot();
 	void EntitiesSelectionChangedSlot(Dynarray<Entity*> entities);
 

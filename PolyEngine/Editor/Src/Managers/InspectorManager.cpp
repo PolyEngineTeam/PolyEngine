@@ -128,8 +128,10 @@ void InspectorManager::EntitiesDestroyedSlot()
 }
 
 //------------------------------------------------------------------------------
-void InspectorManager::EntitiesModifiedSlot()
+void InspectorManager::EntitiesModifiedSlot(Command* cmd)
 {
+	gApp->UndoRedoMgr->AddCommand(cmd);
+
 	emit EntitiesModified();
 }
 
