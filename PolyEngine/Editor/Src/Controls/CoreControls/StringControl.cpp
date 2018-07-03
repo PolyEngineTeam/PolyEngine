@@ -31,6 +31,22 @@ void StringControl::Reset()
 //------------------------------------------------------------------------------
 void StringControl::UpdateObject()
 {
+	*reinterpret_cast<String*>(Object) = Field->text().toLatin1().data();
+}
+
+//------------------------------------------------------------------------------
+void StringControl::UpdateControl()
+{
+	Field->setText(reinterpret_cast<String*>(Object)->GetCStr());
+}
+
+//------------------------------------------------------------------------------
+void StringControl::Confirm()
+{
+	String data = Field->text().toLatin1().data();
+	if (data == *reinterpret_cast<String*>(Object) || DisableEdit)
+		return;
+
 	ControlCommand* cmd = new ControlCommand();
 	cmd->Object = Object;
 	cmd->Control = this;
@@ -52,10 +68,4 @@ void StringControl::UpdateObject()
 	};
 
 	emit ObjectUpdated(cmd);
-}
-
-//------------------------------------------------------------------------------
-void StringControl::UpdateControl()
-{
-	Field->setText(reinterpret_cast<String*>(Object)->GetCStr());
 }

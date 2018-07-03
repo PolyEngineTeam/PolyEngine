@@ -27,7 +27,6 @@ void UndoRedoManager::ProcessEvent(QEvent* event)
 		if (((QKeyEvent*)event)->isAutoRepeat())
 			((QKeyEvent*)event)->ignore();
 		else
-		{
 			switch (((QKeyEvent*)event)->key())
 			{
 			case Qt::Key::Key_Control:
@@ -53,7 +52,6 @@ void UndoRedoManager::ProcessEvent(QEvent* event)
 				DuringEvent = true;
 				Undo();
 			}
-		}
 	}
 	else if (event->type() == QEvent::Type::KeyRelease)
 	{

@@ -15,6 +15,9 @@ public:
 	void UpdateObject() override {};
 	void UpdateControl() override {};
 
+protected:
+	void Confirm() override {};
+
 private:
 	QLineEdit* Field;
 	QGridLayout* Layout;

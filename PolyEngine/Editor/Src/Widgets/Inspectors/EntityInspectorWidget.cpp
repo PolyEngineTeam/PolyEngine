@@ -369,6 +369,8 @@ void EntityInspectorWidget::ReloadComponentSections()
 		RTTIInspectorWidget* viewer = new RTTIInspectorWidget(this);
 
 		viewer->SetObject(cmp);
+		connect(viewer, &RTTIInspectorWidget::ControlObjectUpdated,
+			this, &EntityInspectorWidget::ControlObjectUpdated);
 
 		ComponentSections.PushBack(section);
 		ComponentInspectors.PushBack(viewer);

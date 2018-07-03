@@ -4,6 +4,7 @@
 
 ASSIGN_CONTROL(BoolControl, RTTI::eCorePropertyType::BOOL, BOOL)
 
+//------------------------------------------------------------------------------
 BoolControl::BoolControl(QWidget* parent)
 	: ControlBase(parent)
 {
@@ -37,21 +38,40 @@ BoolControl::BoolControl(QWidget* parent)
 	setLayout(Layout);
 }
 
+//------------------------------------------------------------------------------
 BoolControl::~BoolControl()
 {
 	delete True;
 	delete False;
 }
 
+//------------------------------------------------------------------------------
 void BoolControl::Reset()
 {
 	Object = nullptr;
 }
 
+//------------------------------------------------------------------------------
 void BoolControl::UpdateObject()
 {
+	*reinterpret_cast<bool*>(Object) = *Machine->configuration().begin() == True;
+}
+
+//------------------------------------------------------------------------------
+void BoolControl::UpdateControl()
+{
+	if ((*Machine->configuration().begin() == True) != *reinterpret_cast<bool*>(Object))
+		emit Button->clicked();
+}
+
+//------------------------------------------------------------------------------
+void BoolControl::Confirm()
+{
+	if ((*Machine->configuration().begin() == True) != *reinterpret_cast<bool*>(Object) || DisableEdit)
+		return;
+
 	ControlCommand* cmd = new ControlCommand();
-	cmd->Object = this;
+	cmd->Object = Object;
 	cmd->Control = this;
 	cmd->UndoValue = new bool(*reinterpret_cast<bool*>(Object));
 
@@ -71,9 +91,4 @@ void BoolControl::UpdateObject()
 	};
 
 	emit ObjectUpdated(cmd);
-}
-
-void BoolControl::UpdateControl()
-{
-	Machine->setInitialState(*reinterpret_cast<bool*>(Object) ? True : False);
 }

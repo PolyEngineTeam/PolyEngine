@@ -7,6 +7,7 @@
 
 class ControlBase;
 class SectionContainer;
+class Command;
 
 using namespace Poly;
 
@@ -14,6 +15,8 @@ using namespace Poly;
 // If any property has its own properties then SectionContainer is created.
 class RTTIInspectorWidget : public PolyWidget
 {
+	Q_OBJECT
+
 public:
 	RTTIInspectorWidget(QWidget* parent);
 
@@ -30,7 +33,12 @@ public:
 	// Destroys everything and creates again
 	void ReloadInspector(bool debug = false);
 
+signals:
+	void ControlObjectUpdated(Command* c);
+
 private:
+	void ControlObjectUpdatedSlot(Command* c);
+
 	// Add SectionContainer.
 	SectionContainer* AddChild(RTTIBase* obj, const RTTI::Property& prop, bool debug);
 

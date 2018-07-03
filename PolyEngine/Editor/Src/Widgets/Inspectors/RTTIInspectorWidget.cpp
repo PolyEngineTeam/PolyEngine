@@ -2,6 +2,8 @@
 
 #include <Resources/ResourceBase.hpp>
 
+#include "Managers/CommandsImpl.hpp"
+
 RTTIInspectorWidget::RTTIInspectorWidget(QWidget* parent)
 	: PolyWidget(parent)
 {
@@ -70,6 +72,12 @@ void RTTIInspectorWidget::ReloadInspector(bool debug)
 }
 
 //------------------------------------------------------------------------------
+void RTTIInspectorWidget::ControlObjectUpdatedSlot(Command* c)
+{
+	emit ControlObjectUpdated(c);
+}
+
+//------------------------------------------------------------------------------
 SectionContainer* RTTIInspectorWidget::AddChild(RTTIBase* obj, const RTTI::Property& prop, bool debug)
 {
 	SectionContainer* section = new SectionContainer(prop.Name.GetCStr(), this);
@@ -130,6 +138,8 @@ void RTTIInspectorWidget::AddItem(QGridLayout* parent, int row, void* ptr, const
 		parent->addWidget(label, row, 0);
 		parent->addWidget(field, row, 1);
 	}
+
+	connect(field, &ControlBase::ObjectUpdated, this, &RTTIInspectorWidget::ControlObjectUpdatedSlot);
 
 	Fields.PushBack(field);
 }

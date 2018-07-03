@@ -17,8 +17,8 @@ namespace Impl
 	// @TODO(squares): use using
 	typedef ControlBase* (*ControlCreatorPtr)(QWidget* parent);
 
-	// ControlCreator is a functor which stores pointer to function that creates and returns pointer to 
-	// an object of particular control. This method is called with operator() function.
+	// ControlCreator stores pointer to function that creates and returns pointer to 
+	// an object of particular control. This method is called with operator().
 	// This class is needed because we needed to override operator new to enable adding new controls within
 	// global scope (using ASSIGN_CONTROL macro somewhere in that control *.cpp file).
 	// Otherwise when designing new control class we would need to add control to map in some 
@@ -33,12 +33,12 @@ namespace Impl
 		// Initializes pointer to function with given value.
 		ControlCreator(ControlCreatorPtr ptr) : Ptr(ptr) {}
 
-		// @param parent - parent of newly created control.
+		// @param parent - parent for newly created control.
 		ControlBase* operator()(QWidget* parent) { return Ptr(parent); };
 
-		// We need to override placement new here because we want to add this object to array so we can easily 
+		// We need to override placement new because we want to add this object to array so we can easily 
 		// map from type enum to control creators but firstly this array must be initialized and all
-		// additions to this array happens in global scope using placement new in different *.cpp files
+		// insertions to this array happens in global scope using placement new in different *.cpp files
 		// so we don't know which code is called first so the first creator that is created also initializes 
 		// our array.
 		void* operator new(size_t, void* where);
@@ -86,6 +86,10 @@ public:
 
 	bool GetDisableEdit() { return DisableEdit; }
 
+	// Use this as slot to connect to Your custom controls' signals like editingFinished in QLineEdit.
+	// @see StringControl::StringControl
+	virtual void Confirm() = 0;
+
 	// Returns ptr to newly created proper control for given core type.
 	static ControlBase* CreateControl(QWidget* parent, RTTI::eCorePropertyType type)
 	{ 
@@ -102,16 +106,6 @@ signals:
 	// After object is updated this signal is emitted.
 	// @param cmd - pointer to command object to enable undo/redo actions.
 	void ObjectUpdated(Command* cmd);
-
-public slots:
-	// Use this as slot to connect to Your custom controls' signals like editingFinished in QLineEdit.
-	// @see StringControl::StringControl
-	void Confirm()
-	{
-		if (ASAPUpdate && !DisableEdit)
-			QTimer::singleShot(1, this, [object = this]() { object->UpdateObject(); });
-			//UpdateObject();
-	}
 
 protected:
 	// Pointer to an object which is assigned to this control.
@@ -141,5 +135,5 @@ protected:
 	{ \
 		ControlCreator* CONTROL##Creator##NAME = \
 			new(&::Impl::CoreTypeToControlMap[static_cast<int>(CORE_TYPE)]) \
-				ControlCreator([](QWidget* parent) -> ControlBase* { return new CONTROL(parent); }); \
+			ControlCreator([](QWidget* parent) -> ControlBase* { return new CONTROL(parent); }); \
 	}

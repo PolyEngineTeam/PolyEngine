@@ -5,6 +5,8 @@
 #include <QtWidgets/qpushbutton.h>
 #include <QtCore/qstatemachine.h>
 
+class Command;
+
 class BoolControl : public ControlBase
 {
 public:
@@ -15,6 +17,8 @@ public:
 
 	void UpdateObject() override;
 	void UpdateControl() override;
+
+	void Confirm() override;
 
 private:
 	QPushButton* Button;

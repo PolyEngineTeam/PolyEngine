@@ -18,6 +18,8 @@ public:
 
 	bool ContainsLabel() override { return true; }
 
+	void Confirm() override {};
+
 private:
 	void UodateTranslation();
 	void UodateRotation();
