@@ -22,9 +22,9 @@ namespace Poly
 	ENGINE_DLLEXPORT String LoadTextFileRelative(eResourceSource Source, const String& path);
 	ENGINE_DLLEXPORT void SaveTextFileRelative(eResourceSource Source, const String& path, const String& text);
 
-	ENGINE_DLLEXPORT float* LoadImageHDR(const String& path, int* width, int* height, int* channels);
+	ENGINE_DLLEXPORT float* LoadImageHDR(const String& path, int* width, int* height, int* fileChannels);
 	ENGINE_DLLEXPORT void FreeImageHDR(float* data);
-	ENGINE_DLLEXPORT unsigned char* LoadImage(const String& path, int* width, int* height, int* channels);
+	ENGINE_DLLEXPORT unsigned char* LoadImage(const String& path, int* width, int* height, int* fileChannels, int desiredChannels = 0);
 	ENGINE_DLLEXPORT void FreeImage(unsigned char* data);
 
 

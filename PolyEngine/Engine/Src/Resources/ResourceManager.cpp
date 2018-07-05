@@ -47,7 +47,7 @@ void Poly::SaveTextFileRelative(eResourceSource Source, const String& path, cons
 	SaveTextFile(absolutePath, data);
 }
 
-float* Poly::LoadImageHDR(const String& path, int* width, int* height, int* channels)
+float* Poly::LoadImageHDR(const String& path, int* width, int* height, int* fileChannels)
 {
 	if (!stbi_is_hdr(path.GetCStr()))
 	{
@@ -55,7 +55,7 @@ float* Poly::LoadImageHDR(const String& path, int* width, int* height, int* chan
 	}
 
 	stbi_set_flip_vertically_on_load(true);
-	float *data = stbi_loadf(path.GetCStr(), width, height, channels, 0);	
+	float *data = stbi_loadf(path.GetCStr(), width, height, fileChannels, 0);
 	if (!data)
 	{
 		gConsole.LogInfo("Poly::LoadImageHDR Failed to load: {}, reason: {}", path, stbi_failure_reason());
@@ -69,7 +69,7 @@ void Poly::FreeImageHDR(float* data)
 	stbi_image_free(data);
 }
 
-unsigned char* Poly::LoadImage(const String& path, int* width, int* height, int* channels)
+unsigned char* Poly::LoadImage(const String& path, int* width, int* height, int* fileChannels, int desiredChannels)
 {
 	if (stbi_is_hdr(path.GetCStr()))
 	{
@@ -77,7 +77,7 @@ unsigned char* Poly::LoadImage(const String& path, int* width, int* height, int*
 	}
 
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char *data = stbi_load(path.GetCStr(), width, height, channels, 0);
+	unsigned char *data = stbi_load(path.GetCStr(), width, height, fileChannels, desiredChannels);
 	if (!data)
 	{
 	 gConsole.LogInfo("Poly::LoadImage Failed to load: {}, reason: {}", path, stbi_failure_reason());
