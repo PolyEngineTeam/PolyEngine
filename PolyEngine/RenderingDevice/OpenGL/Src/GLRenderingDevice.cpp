@@ -42,7 +42,7 @@ GLRenderingDevice::GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize&
 	gRenderingDevice = this;
 	
 	if (!CreateContextHighend()) {
-		CreateContextFallback();
+		ASSERTE(Context, "Context creation failed! OpenGL 4.3 is required! Sorry we probably do not support your GPU and Mac OS.");
 	}
 
 	ASSERTE(Context, "OpenGL context creation failed!");
@@ -85,34 +85,6 @@ bool GLRenderingDevice::CreateContextHighend()
 
 	return isSuccessfull;
 }
-
-bool GLRenderingDevice::CreateContextFallback()
-{
-	bool isSuccessfull = false;
-
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-
-	Context = SDL_GL_CreateContext(Window);
-	isSuccessfull = (bool)Context;
-
-	if (Context)
-	{
-		RendererType = eRendererType::FORWARD;
-		gConsole.LogInfo("Fallback context created");
-	}
-
-	if (!Context)
-	{
-		gConsole.LogInfo("Fallback context setup failed, err: {}", SDL_GetError());
-	}
-
-	return isSuccessfull;
-}
-
 
 GLRenderingDevice::~GLRenderingDevice()
 {
@@ -211,35 +183,6 @@ void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType
 		PostprocessRenderingPasses[type]->BindInput(bind.Name, bind.Target);
 
 	PostprocessRenderingPasses[type]->Finalize();
-}
-
-
-void GLRenderingDevice::InitPrograms()
-{
-	// Init input textures
-	//Texture2DInputTarget* RGBANoise256 = CreateRenderingTarget<Texture2DInputTarget>("Textures/RGBANoise256x256.png");
-
-	// Init programs
-	// Texture2DRenderingTarget* texture = CreateRenderingTarget<Texture2DRenderingTarget>(eRenderTargetId::COLOR, GL_R11F_G11F_B10F);
-	// DepthRenderingTarget* depth = CreateRenderingTarget<DepthRenderingTarget>(eRenderTargetId::DEPTH);
-	// Texture2DRenderingTarget* depth2 = CreateRenderingTarget<Texture2DRenderingTarget>(GL_R16F);
-
-	// RegisterGeometryPass<UnlitRenderingPass>(eGeometryRenderPassType::UNLIT, {}, { { "color", texture },{ "depth", depth } });
-	// RegisterGeometryPass<BlinnPhongRenderingPass>(eGeometryRenderPassType::BLINN_PHONG, {}, { { "color", texture }, { "depth", depth } });
-	// RegisterGeometryPass<DebugNormalsRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS, {}, { { "color", texture },{ "depth", depth } });
-	// RegisterGeometryPass<DebugRenderingPass>(eGeometryRenderPassType::IMMEDIATE_DEBUG, {}, { { "color", texture },{ "depth", depth } });
-	// RegisterGeometryPass<DebugNormalsWireframeRenderingPass>(eGeometryRenderPassType::DEBUG_NORMALS_WIREFRAME, {}, { { "color", texture },{ "depth", depth } });
-	// RegisterGeometryPass<Text2DRenderingPass>(eGeometryRenderPassType::TEXT_2D, {}, { { "color", texture },{ "depth", depth } });
-	// RegisterGeometryPass<ParticlesRenderingPass>(eGeometryRenderPassType::PARTICLES, {}, { { "color", texture },{ "depth", depth } });
-	// RegisterGeometryPassWithArgs<SkyboxRenderingPass>(eGeometryRenderPassType::SKYBOX, {}, { { "color", texture },{ "depth", depth } });
-	// RegisterGeometryPassWithArgs<SpritesheetRenderingPass>(eGeometryRenderPassType::TRANSPARENT_SPRITESHEET, {}, { { "color", texture },{ "depth", depth } });
-	// RegisterGeometryPassWithArgs<TransparentRenderingPass>(eGeometryRenderPassType::TRANSPARENT_GEOMETRY, {}, { { "color", texture },{ "depth", depth } });
-	// 
-	// RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND,			"Shaders/bg.frag.glsl",		{}, { { "o_color", texture },	{ "depth", depth } });
-	// RegisterPostprocessPass(ePostprocessRenderPassType::BACKGROUND_LIGHT,	"Shaders/bgLight.frag.glsl",	{}, { { "o_color", texture },	{ "depth", depth } });
-	// RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND,			"Shaders/fg.frag.glsl",		{ { "i_color", texture } },		{} );
-	// RegisterPostprocessPass(ePostprocessRenderPassType::FOREGROUND_LIGHT,	"Shaders/fgLight.frag.glsl",	{ { "i_color", texture } },		{} );
-	// RegisterPostprocessPass(ePostprocessRenderPassType::VINETTE,			"Shaders/vinette.frag.glsl",	{ { "i_color", texture } } );
 }
 
 

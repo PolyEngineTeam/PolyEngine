@@ -78,7 +78,6 @@ namespace Poly
 		void operator=(const GLRenderingDevice&) = delete;
 
 		bool CreateContextHighend();
-		bool CreateContextFallback();
 
 		void Init() override;
 		void Resize(const ScreenSize& size) override;
@@ -103,7 +102,6 @@ namespace Poly
 		void GetExtensions();
 		IRendererInterface* CreateRenderer();
 		void CreateUtilityTextures();
-		void InitPrograms();
 
 		void FillSceneView(SceneView& sceneView);
 		void EndFrame();

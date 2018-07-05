@@ -34,8 +34,6 @@ void GLRenderingDevice::Init()
 
 	CreateUtilityTextures();
 
-	InitPrograms();
-
 	Renderer = CreateRenderer();
 	Renderer->Init();
 }
