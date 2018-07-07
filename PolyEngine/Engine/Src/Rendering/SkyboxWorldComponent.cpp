@@ -7,6 +7,7 @@
 using namespace Poly;
 
 SkyboxWorldComponent::SkyboxWorldComponent(const String& panoramaPath, const eResourceSource source)
+	: Tint(Color::WHITE)
 {
 	EquirectPanorama = ResourceManager<TextureResource>::Load(panoramaPath, source, eTextureUsageType::HDR);
 

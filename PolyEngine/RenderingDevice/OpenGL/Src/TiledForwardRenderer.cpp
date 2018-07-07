@@ -84,7 +84,7 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	HDRShader.RegisterUniform("float", "uExposure");
 
 	SkyboxShader.RegisterUniform("mat4", "uClipFromWorld");
-	SkyboxShader.RegisterUniform("float", "uTime");
+	SkyboxShader.RegisterUniform("vec4", "uTint");
 
 	TranslucentShader.RegisterUniform("float", "uTime");
 	TranslucentShader.RegisterUniform("vec4", "uViewPosition");
@@ -655,10 +655,18 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 {
+
 	if (SkyboxCapture.GetEnvCubemap() > 0)
 	{
 		float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.WorldData, eEngineTimer::GAMEPLAY);
 	 
+		Color tint = Color::WHITE;
+		SkyboxWorldComponent* skyboxCmp = sceneView.WorldData->GetWorldComponent<SkyboxWorldComponent>();
+		if (skyboxCmp)
+		{
+			tint = skyboxCmp->GetTint();
+		}
+
 		const Matrix clipFromView = sceneView.CameraCmp->GetClipFromView();
 		Matrix viewFromWorld = sceneView.CameraCmp->GetViewFromWorld();
 		// center cube in view space by setting translation to 0 for x, y and z.
@@ -670,10 +678,10 @@ void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 		Matrix clipFromWorld = clipFromView * viewFromWorld;
 
 		glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
-
+		
 		SkyboxShader.BindProgram();
+		SkyboxShader.SetUniform("uTint", tint);
 		SkyboxShader.SetUniform("uClipFromWorld", clipFromWorld);
-		SkyboxShader.SetUniform("uTime", time);
 		SkyboxShader.BindSamplerCube("uCubemap", 0, SkyboxCapture.GetEnvCubemap());
 		
 		glBindFragDataLocation((GLuint)LightAccumulationShader.GetProgramHandle(), 0, "color");
