@@ -43,7 +43,7 @@ void RTTIBase::DeserializeFromFile(const String& fileName, eSerializationType ty
 	{
 		json = LoadTextFile(fileName);
 	}
-	catch (std::exception)
+	catch (const std::exception&)
 	{
 		gConsole.LogError("No file {} found for {}.", fileName, GetTypeInfo().GetTypeName());
 		return;

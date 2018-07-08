@@ -254,7 +254,7 @@ namespace Poly {
 		template<typename T>
 		void RemoveWorldComponent()
 		{
-			RemoveComponent<T>(RootEntity.Get());
+			RemoveComponent<T>(RootEntity.get());
 		}
 
 		void RemoveComponentById(Entity* ent, size_t id);

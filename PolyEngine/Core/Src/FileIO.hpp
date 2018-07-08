@@ -18,6 +18,7 @@ namespace Poly {
 #endif
 
 	//------------------------------------------------------------------------------
+	SILENCE_MSVC_WARNING(4275, "Exporting stl may cause incompatibility. We use same CRT so it's ok.")
 	class CORE_DLLEXPORT FileIOException : public BaseObject<>, public std::exception
 	{
 	public:
@@ -26,6 +27,7 @@ namespace Poly {
 	protected:
 		String Msg;
 	};
+	UNSILENCE_MSVC_WARNING()
 
 	//------------------------------------------------------------------------------
 	inline String LoadTextFile(const String& path)

@@ -3,6 +3,7 @@
 #include "Defines.hpp"
 #include "Utils/EnumUtils.hpp"
 #include "RTTI/RTTITypeInfo.hpp"
+#include "RTTI/RTTICast.hpp"
 #include "Collections/String.hpp"
 #include "Collections/Dynarray.hpp"
 #include "RTTI/CustomTypeTraits.hpp"
@@ -127,7 +128,7 @@ namespace Poly {
 
 		//-----------------------------------------------------------------------------------------------------------------------
 		// Declare method first
-		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t factory_func);
+		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t factory_func = nullptr);
 
 		//-----------------------------------------------------------------------------------------------------------------------
 		// Enum serialization property impl
@@ -460,7 +461,7 @@ namespace Poly {
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------
-		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t factory_func = nullptr)
+		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t factory_func)
 		{ 
 			return constexpr_match(
 				std::is_enum<T>{},			[&](auto lazy) { return CreateEnumPropertyInfo<LAZY_TYPE(T)>(offset, name, flags, std::move(factory_func)); },
@@ -496,6 +497,32 @@ namespace Poly {
 
 	} // namespace RTTI
 } // namespace Poly
+
+  // Declares type with no base class
+#define RTTI_DECLARE_TYPE(T) \
+	public: \
+	RTTI_GENERATE_TYPE_INFO(T)\
+	virtual Poly::RTTI::TypeInfo GetTypeInfo() const { return Poly::RTTI::Impl::GetTypeInfoFromInstance(this); } \
+	typedef TYPE_LIST() baseClassList;\
+	RTTI_GENERATE_PROPERTY_LIST_BASE(T)
+
+
+  // Declares type with one base class
+#define RTTI_DECLARE_TYPE_DERIVED(T,A) \
+	public: \
+	RTTI_GENERATE_TYPE_INFO(T)\
+	Poly::RTTI::TypeInfo GetTypeInfo() const override { return Poly::RTTI::Impl::GetTypeInfoFromInstance(this); } \
+	typedef TYPE_LIST_1(A) baseClassList;\
+	RTTI_GENERATE_PROPERTY_LIST(T,A)
+
+  // Declares type with two base classes. Disabled for now.
+  /*#define RTTI_DECLARE_TYPE_DERIVED2(T,A,B) \
+  public: \
+  RTTI_GENERATE_TYPE_INFO(T)\
+  Poly::RTTI::TypeInfo GetTypeInfo() const override { return Poly::RTTI::Impl::GetTypeInfoFromInstance(this); } \
+  typedef TYPE_LIST_2(A,B) baseClassList;\
+  RTTI_GENERATE_PROPERTY_LIST(T)*/
+
 
 #define RTTI_GENERATE_PROPERTY_LIST_BASE(Type)\
 	friend class Poly::RTTI::PropertyManager<Type>; \

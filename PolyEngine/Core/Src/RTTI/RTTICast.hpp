@@ -3,7 +3,6 @@
 #include "Defines.hpp"
 #include "Collections/Dynarray.hpp"
 #include "RTTITypeInfo.hpp"
-#include "RTTIProperty.hpp"
 
 
 namespace Poly {
@@ -77,7 +76,7 @@ bool IsOfType(U object) {
 	if (!object)
 		return false;
 
-	RTTI::TypeInfo ti = object->GetTypeInfo();
+	Poly::RTTI::TypeInfo ti = object->GetTypeInfo();
 	return ti.template isTypeDerivedFrom<T>();
 }
 
@@ -104,30 +103,3 @@ T1 rtti_cast(T2 object) {
 #define TYPE_LIST() Poly::RTTI::Impl::Typelist<Poly::RTTI::Impl::nil_t>
 #define TYPE_LIST_1(A) Poly::RTTI::Impl::Typelist< A, TYPE_LIST() >
 #define TYPE_LIST_2(A,B) Poly::RTTI::Impl::Typelist< A, TYPE_LIST_1(B) >
-
-//--------------------------------------------------------------------------------------
-
-// Declares type with no base class
-#define RTTI_DECLARE_TYPE(T) \
-	public: \
-	RTTI_GENERATE_TYPE_INFO(T)\
-	virtual Poly::RTTI::TypeInfo GetTypeInfo() const { return Poly::RTTI::Impl::GetTypeInfoFromInstance(this); } \
-	typedef TYPE_LIST() baseClassList;\
-	RTTI_GENERATE_PROPERTY_LIST_BASE(T)
-
-
-// Declares type with one base class
-#define RTTI_DECLARE_TYPE_DERIVED(T,A) \
-	public: \
-	RTTI_GENERATE_TYPE_INFO(T)\
-	Poly::RTTI::TypeInfo GetTypeInfo() const override { return Poly::RTTI::Impl::GetTypeInfoFromInstance(this); } \
-	typedef TYPE_LIST_1(A) baseClassList;\
-	RTTI_GENERATE_PROPERTY_LIST(T,A)
-
-// Declares type with two base classes. Disabled for now.
-/*#define RTTI_DECLARE_TYPE_DERIVED2(T,A,B) \
-	public: \
-	RTTI_GENERATE_TYPE_INFO(T)\
-	Poly::RTTI::TypeInfo GetTypeInfo() const override { return Poly::RTTI::Impl::GetTypeInfoFromInstance(this); } \
-	typedef TYPE_LIST_2(A,B) baseClassList;\
-	RTTI_GENERATE_PROPERTY_LIST(T)*/

@@ -26,9 +26,11 @@ matrix:
       addons:
         apt:
           sources:
+            - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-5.0
           packages:
             - clang-5.0
+            - g++-8 # Need g++-8 alongside clang for libstdc++
       env:
         - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
     - os: osx
@@ -53,18 +55,26 @@ before_install:
   - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
   # Workaround for not working `sudo apt-get install -qq libsdl2-dev` https://github.com/travis-ci/travis-ci/issues/8317
   - (wget https://www.libsdl.org/release/SDL2-2.0.7.tar.gz -O SDL2-2.0.7.tar.gz && tar -xzf SDL2-2.0.7.tar.gz)
+  - (wget https://github.com/erincatto/Box2D/archive/v2.3.1.tar.gz -O Box2D-2.3.1.tar.gz && tar -xzf Box2D-2.3.1.tar.gz)
   - git clone https://github.com/kbranigan/Simple-OpenGL-Image-Library SOIL
 
 install:
   - cd ${DEPS_DIR}
-  - (cd SDL2-2.0.7 && ./configure && make && sudo make install && cd ..)
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then (cd SDL2-2.0.7 && ./configure && make && sudo make install && cd ${DEPS_DIR}); fi
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      cd Box2D-2.3.1/Box2D/Build
+      cmake -DBOX2D_INSTALL=ON -DBOX2D_BUILD_SHARED=ON -DBOX2D_BUILD_EXAMPLES=OFF ..
+      make && sudo make install
+      cd ${DEPS_DIR}
+    fi
   - |
     if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       cd SOIL
       make && sudo make install
       sudo mkdir /usr/local/include/SOIL
       sudo mv /usr/local/include/SOIL.h /usr/local/include/SOIL/SOIL.h
-      cd ..
+      cd ${DEPS_DIR}
     fi
   ############################################################################
   # Install a recent CMake
@@ -93,6 +103,6 @@ before_script:
   - cd PolyEngine/build
 
 script:
-  - cmake -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX  -DUSE_BUNDLED_CATCH=ON ..
+  - cmake -D CMAKE_C_COMPILER=$CC -D CMAKE_CXX_COMPILER=$CXX ..
   - make
   - UnitTests/PolyUnitTests

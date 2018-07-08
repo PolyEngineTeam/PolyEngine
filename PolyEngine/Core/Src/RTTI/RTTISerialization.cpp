@@ -324,8 +324,7 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	}
 	case eCorePropertyType::RAW_PTR:
 	{
-		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid unique ptr impl data!");
-		const RawPtrPropertyImplDataBase* implData = static_cast<const RawPtrPropertyImplDataBase*>(prop.ImplData.get());
+		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid raw ptr impl data!");
 		const UniqueID& uuid = (*reinterpret_cast<RTTIBase* const*>(value))->GetUUID();
 		currentValue.SetString(uuid.ToString().GetCStr(), alloc);
 		break;

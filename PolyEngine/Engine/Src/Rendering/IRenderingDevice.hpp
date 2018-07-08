@@ -46,6 +46,7 @@ namespace Poly
 
 	// REGISTER_ENUM_NAMES(eCubemapSide, "RIGHT", "LEFT", "TOP", "BOTTOM", "BACK", "FRONT");
 
+	SILENCE_MSVC_WARNING(4275, "Exporting stl may cause incompatibility. We use same CRT so it's ok.")
 	//------------------------------------------------------------------------------
 	class ENGINE_DLLEXPORT RenderingDeviceSetupFailedException : public BaseObject<>, public std::exception
 	{
@@ -59,6 +60,7 @@ namespace Poly
 	public:
 		RenderingDeviceProxyCreationFailedException() {}
 	};
+	UNSILENCE_MSVC_WARNING()
 
 	//------------------------------------------------------------------------------
 	class ENGINE_DLLEXPORT ITextureDeviceProxy : public BaseObject<>

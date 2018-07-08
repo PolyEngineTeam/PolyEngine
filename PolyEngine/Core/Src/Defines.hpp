@@ -7,10 +7,17 @@
 	// TODO implement all necessary *_s methods here.
 #endif
 
-// stupid warning in MSVC about template specialization exporting, according to https://msdn.microsoft.com/en-US/library/esew7y1w.aspx it can be ignored
+#if defined(__GNUC__) && !defined(__clang__)
+	#define GCC_COMPILER 
+#endif
+
+
 #if defined(_WIN32)
+	// Invalid warning in MSVC about template specialization exporting, 
+	// according to https://msdn.microsoft.com/en-US/library/esew7y1w.aspx it can be ignored since we use same CRT within project
 	#pragma warning(disable: 4251)
-	#pragma warning(disable: 4275)
+
+	
 	#define SILENCE_MSVC_WARNING(warning_id, reason) \
 		__pragma(warning(push))                      \
 		__pragma(warning(disable:warning_id))
@@ -20,21 +27,29 @@
 	#define UNSILENCE_MSVC_WARNING()
 #endif
 
-#ifdef __GNUC__ //todo(vuko): add a reason parameter to the warning-silencing macro
-	#define IMPL_SAVE_WARNING_SETTINGS _Pragma("GCC diagnostic push")
-	#define IMPL_SILENCE_WARNING(w) _Pragma(#w)
+#if defined(GCC_COMPILER) //todo(vuko): add a reason parameter to the warning-silencing macro
+	#define IMPL_GCC_SAVE_WARNING_SETTINGS _Pragma("GCC diagnostic push")
+	#define IMPL_GCC_SILENCE_WARNING(w) _Pragma(#w)
 	#define SILENCE_GCC_WARNING(w, reason)             \
-		IMPL_SAVE_WARNING_SETTINGS                     \
-		IMPL_SILENCE_WARNING(GCC diagnostic ignored #w)
+		IMPL_GCC_SAVE_WARNING_SETTINGS                     \
+		IMPL_GCC_SILENCE_WARNING(GCC diagnostic ignored #w)
 	#define UNSILENCE_GCC_WARNING() _Pragma("GCC diagnostic pop")
 #else
 	#define SILENCE_GCC_WARNING(unused_w, unused_reason)
 	#define UNSILENCE_GCC_WARNING()
 #endif
 
-SILENCE_MSVC_WARNING(4251, "Invalid warning for stl and other template classes.");
-SILENCE_MSVC_WARNING(4530, "Invalid warning for xlocale.");
-SILENCE_MSVC_WARNING(4577, "Invalid warning for xstring (noexcept).");
+#if defined(__clang__)
+	#define IMPL_CLANG_SAVE_WARNING_SETTINGS _Pragma("clang diagnostic push")
+	#define IMPL_CLANG_SILENCE_WARNING(w) _Pragma(#w)
+	#define SILENCE_CLANG_WARNING(w, reason)             \
+		IMPL_CLANG_SAVE_WARNING_SETTINGS                     \
+		IMPL_CLANG_SILENCE_WARNING(clang diagnostic ignored #w)
+	#define UNSILENCE_CLANG_WARNING() _Pragma("clang diagnostic pop")
+#else
+	#define SILENCE_CLANG_WARNING(unused_w, unused_reason)
+	#define UNSILENCE_CLANG_WARNING()
+#endif
 
 // STL
 // This is only legal place for STL includes
