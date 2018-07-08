@@ -87,6 +87,7 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	DOFShader.RegisterUniform("vec4", "uRes");
 	DOFShader.RegisterUniform("sampler", "uImage");
 	DOFShader.RegisterUniform("sampler", "uDepth");
+	DOFShader.RegisterUniform("float", "uTime");
 	DOFShader.RegisterUniform("float", "uDOFpoint");
 	DOFShader.RegisterUniform("float", "uDOFrange");
 	DOFShader.RegisterUniform("float", "uDOFsize");
@@ -929,6 +930,8 @@ void TiledForwardRenderer::LinearizeDepth(const SceneView& sceneView)
 
 void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
 {
+	float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.WorldData, eEngineTimer::GAMEPLAY);
+
 	float DOFpoint = 1000.0f;
 	float DOFrange = 800.0f;
 	float DOFsize = 0.2f;
@@ -948,6 +951,7 @@ void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
 	DOFShader.SetUniform("uDOFpoint", DOFpoint);
 	DOFShader.SetUniform("uDOFrange", DOFrange);
 	DOFShader.SetUniform("uDOFsize", DOFsize);
+	DOFShader.SetUniform("uTime", time);
 	DOFShader.BindSampler("uImage", 0, ColorBuffer);
 	DOFShader.BindSampler("uDepth", 1, LinearDepth);
 
