@@ -413,7 +413,7 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 
 	RenderTranslucentLit(sceneView);
 
-	// RenderParticleUnlit(sceneView.world, sceneView.cameraCmp);
+	RenderParticleUnlit(sceneView.WorldData, sceneView.CameraCmp);
 
 	LinearizeDepth(sceneView);
 	
