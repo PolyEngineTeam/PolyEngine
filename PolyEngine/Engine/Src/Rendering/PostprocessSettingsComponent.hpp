@@ -22,7 +22,9 @@ namespace Poly {
 		float Stripes = 0.15f;
 		float Vignette = 0.15f;
 		float Exposure = 1.0f;
-
+		float DOFpoint = 1000.0f;
+		float DOFrange = 800.0f;
+		float DOFsize = 0.2f;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, PostprocessSettingsComponent)

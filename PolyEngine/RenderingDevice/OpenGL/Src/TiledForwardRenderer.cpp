@@ -87,6 +87,9 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	DOFShader.RegisterUniform("vec4", "uRes");
 	DOFShader.RegisterUniform("sampler", "uImage");
 	DOFShader.RegisterUniform("sampler", "uDepth");
+	DOFShader.RegisterUniform("float", "uDOFpoint");
+	DOFShader.RegisterUniform("float", "uDOFrange");
+	DOFShader.RegisterUniform("float", "uDOFsize");
 
 	SkyboxShader.RegisterUniform("mat4", "uClipFromWorld");
 	SkyboxShader.RegisterUniform("vec4", "uTint");
@@ -926,11 +929,15 @@ void TiledForwardRenderer::LinearizeDepth(const SceneView& sceneView)
 
 void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
 {
-	// float exposure = 1.0f;
+	float DOFpoint = 1000.0f;
+	float DOFrange = 800.0f;
+	float DOFsize = 0.2f;
 	const PostprocessSettingsComponent* postCmp = sceneView.CameraCmp->GetSibling<PostprocessSettingsComponent>();
-	// if (postCmp) {
-	// 	exposure = postCmp->Exposure;
-	// }
+	if (postCmp) {
+		DOFpoint = postCmp->DOFpoint;
+		DOFrange = postCmp->DOFrange;
+		DOFsize = postCmp->DOFsize;
+	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost0);
 
@@ -938,6 +945,9 @@ void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
 
 	DOFShader.BindProgram();
 	DOFShader.SetUniform("uRes", Vector(screenSize.Width, screenSize.Height, 1.0f / screenSize.Width, 1.0f / screenSize.Height));
+	DOFShader.SetUniform("uDOFpoint", DOFpoint);
+	DOFShader.SetUniform("uDOFrange", DOFrange);
+	DOFShader.SetUniform("uDOFsize", DOFsize);
 	DOFShader.BindSampler("uImage", 0, ColorBuffer);
 	DOFShader.BindSampler("uDepth", 1, LinearDepth);
 

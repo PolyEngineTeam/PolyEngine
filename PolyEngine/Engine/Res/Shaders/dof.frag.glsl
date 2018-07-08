@@ -6,6 +6,9 @@ uniform sampler2D uImage;
 uniform sampler2D uDepth;
 
 uniform vec4 uRes;
+uniform float uDOFpoint;
+uniform float uDOFrange;
+uniform float uDOFsize;
 
 out vec4 oColor;
 
@@ -31,9 +34,9 @@ vec3 sharpen()
 
 float depthToMask(float depth)
 {
-    float DOFpoint = 1000.0;
-    float DOFramp = 800.0;
-    float d = clamp(abs(depth - DOFpoint) / DOFramp, 0.0f, 1.0f);
+    // float DOFpoint = 1000.0;
+    // float DOFramp = 800.0;
+    float d = clamp(abs(depth - uDOFpoint) / uDOFrange, 0.0f, 1.0f);
     return smoothstep(0.5, 1.0, d);
 }
 
@@ -58,13 +61,13 @@ vec3 bokeh(vec2 uv, float rad)
     // }
     // return acc;
 
-    float size = 0.2;
+    // float uDOFsize = 0.2;
 
     const float GA = 2.399;
     const mat2 rot = mat2(cos(GA), sin(GA), -sin(GA), cos(GA));
 
     vec3 acc = vec3(0);
-    vec2 pixel = size * vec2(.002 * uRes.y / uRes.x, .002), angle = vec2(0, rad);;
+    vec2 pixel = uDOFsize * vec2(.002 * uRes.y / uRes.x, .002), angle = vec2(0, rad);;
     rad = 1.;
     for (int j = 0; j < 80; j++)
     {
