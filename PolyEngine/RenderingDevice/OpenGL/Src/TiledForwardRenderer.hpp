@@ -80,6 +80,7 @@ namespace Poly {
 		GLShaderProgram TranslucentShader;
 		GLShaderProgram EquiToCubemapShader;
 		GLShaderProgram IntegrateBRDFShader;
+		GLShaderProgram DOFShader;
 		GLShaderProgram Text2DShader;
 		GLShaderProgram EditorDebugShader;
 		GLShaderProgram DebugQuadDepthPrepassShader;
@@ -118,6 +119,8 @@ namespace Poly {
 		void RenderParticleUnlit(Scene* world, const CameraComponent* cameraCmp);
 
 		void LinearizeDepth(const SceneView& sceneView);
+
+		void PostDepthOfField(const SceneView& sceneView);
 
 		void PostTonemapper(const SceneView& sceneView);
 
