@@ -48,6 +48,16 @@ namespace Poly {
 
 		const char* TypeInfo::GetTypeName() const { return Impl::TypeManager::Get().GetTypeName(*this); }
 
+		void * TypeInfo::CreateInstance()
+		{
+			return Impl::TypeManager::Get().GetConstructor(*this)(nullptr);
+		}
+
+		void * TypeInfo::CreateInstanceInPlace(void * ptr)
+		{
+			return Impl::TypeManager::Get().GetConstructor(*this)(ptr);
+		}
+
 		//------------------------------------------------------------------------------
 		std::ostream& operator<< (std::ostream& stream, const TypeInfo& typeInfo) {
 			return stream << "TypeInfo["<< typeInfo.ID << ", " << typeInfo.GetTypeName() << "]";
