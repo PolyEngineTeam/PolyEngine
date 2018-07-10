@@ -22,7 +22,7 @@ public:
 
 	// Sets current object, if debug flag is true then all properties are displayed and can be edited by 
 	// user even when property is not serialized.
-	void SetObject(RTTIBase* obj, bool debug = false);
+	void SetObject(RTTIBase* obj, bool debug);
 
 	// Updates object from inspector.
 	void UpdateObject();

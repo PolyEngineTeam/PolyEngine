@@ -105,7 +105,7 @@ namespace Poly {
 			Property(TypeInfo typeInfo, size_t offset, const char* name, ePropertyFlag flags, eCorePropertyType coreType, std::shared_ptr<PropertyImplData>&& implData = nullptr)
 				: Type(typeInfo), Offset(offset), Name(name), Flags(flags), CoreType(coreType), ImplData(std::move(implData)) 
 			{
-				HEAVY_ASSERTE(CoreType != eCorePropertyType::UNHANDLED, "Unhandled property type!");
+				HEAVY_ASSERTE(CoreType != eCorePropertyType::UNHANDLED || EnumFlags<ePropertyFlag>(Flags).IsSet(ePropertyFlag::DONT_SERIALIZE), "Unhandled property type!");
 			}
 			TypeInfo Type;
 			size_t Offset;

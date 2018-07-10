@@ -32,7 +32,7 @@ namespace Poly {
 	{
 		RTTI_DECLARE_TYPE_DERIVED(MeshRenderingComponent, ComponentBase)
 		{
-			NO_RTTI_PROPERTY()
+			RTTI_PROPERTY_AUTONAME(Mesh, RTTI::ePropertyFlag::DONT_SERIALIZE);
 		}
 
 		friend void RenderingSystem::RenderingPhase(World*);

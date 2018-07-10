@@ -15,7 +15,14 @@ public:
 	void UpdateObject() override;
 	void UpdateControl() override;
 
+	void Confirm() override;
+
 private:
-	QGridLayout * Layout;
+	void ChangeResourceDialog();
+
+	eResourceSource Location;
+
+	QGridLayout* Layout;
 	QLineEdit* Field;
+	QPushButton* Button;
 };
