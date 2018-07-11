@@ -5,10 +5,10 @@
 #include <QtWidgets/qlineedit.h>
 #include <QtWidgets/qgridlayout.h>
 
-class ResourceControl : public ControlBase
+class MeshResourceControl : public ControlBase
 {
 public:
-	ResourceControl(QWidget* parent);
+	MeshResourceControl(QWidget* parent);
 
 	void Reset() override;
 
@@ -18,11 +18,12 @@ public:
 	void Confirm() override;
 
 private:
-	void ChangeResourceDialog();
-
-	eResourceSource Location;
-
 	QGridLayout* Layout;
 	QLineEdit* Field;
-	QPushButton* Button;
+	QPushButton* BrowseButton;
+	QComboBox* ResourceSourceComboBox;
+	QPushButton* ConfirmButon;
+
+private slots:
+	void BrowseButtonClicked();
 };
