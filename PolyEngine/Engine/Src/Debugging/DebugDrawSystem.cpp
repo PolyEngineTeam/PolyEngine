@@ -136,7 +136,7 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* world)
 			// spawn a box for every mesh, in correct size
 			for(const auto subMesh : meshCmp->GetMesh()->GetSubMeshes())
 			{
-				const auto & meshVerticesPositions = subMesh->GetMeshData().GetPositions();
+				const auto& meshVerticesPositions = subMesh->GetMeshData().GetPositions();
 
 				// find mins and maxs of each mesh coordinates
 				// in order to create AABB

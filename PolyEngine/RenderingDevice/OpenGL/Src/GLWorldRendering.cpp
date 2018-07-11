@@ -15,322 +15,150 @@
 #include "Pipeline/RenderingPassBase.hpp"
 #include "Proxy/GLMeshDeviceProxy.hpp"
 #include "Common/GLUtils.hpp"
+#include "Common/PrimitiveCube.hpp"
+#include "Common/PrimitiveQuad.hpp"
+
+#include "ForwardRenderer.hpp"
+#include "TiledForwardRenderer.hpp"
 
 using namespace Poly;
 
-//------------------------------------------------------------------------------
+void GLRenderingDevice::Init()
+{
+	gConsole.LogInfo("GLRenderingDevice::Init");
+
+	GetExtensions();
+	
+	PrimitivesQuad = std::make_unique<PrimitiveQuad>();
+	PrimitivesCube = std::make_unique<PrimitiveCube>();
+
+	CreateUtilityTextures();
+
+	Renderer = CreateRenderer();
+	Renderer->Init();
+}
+
+IRendererInterface* GLRenderingDevice::CreateRenderer()
+{
+	IRendererInterface* renderer = nullptr;
+
+	switch (RendererType)
+	{
+		case GLRenderingDevice::eRendererType::FORWARD:
+			renderer = new ForwardRenderer(this);
+			break;
+
+		case GLRenderingDevice::eRendererType::TILED_FORWARD:
+			renderer = new TiledForwardRenderer(this);
+			break;
+
+		default:
+			ASSERTE(false, "Uknown eRenderingModeType");
+	}
+
+	return renderer;
+}
+
 void GLRenderingDevice::RenderWorld(Scene* world)
 {
-	const ScreenSize screenSize = gEngine->GetRenderingDevice()->GetScreenSize();
-
-	glDepthMask(GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
-
-	// Clear FBO's
-	for (eGeometryRenderPassType type : IterateEnum<eGeometryRenderPassType>())
-		if (GeometryRenderingPasses[type])
-			GeometryRenderingPasses[type]->ClearFBO();
-
-	for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
-		if (PostprocessRenderingPasses[type])
-			PostprocessRenderingPasses[type]->ClearFBO();
-
 	// For each visible viewport draw it
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
 	{
-		// Set viewport rect (TOOO change it to propper rect, not box)
-		CameraComponent* cameraCmp = kv.second.GetCamera();
-		const AARect& rect = kv.second.GetRect();
-		const eRenderingModeType renderingMode = cameraCmp->GetRenderingMode();
+		SceneView sceneView(world, kv.second);
+		
+		FillSceneView(sceneView);
 
-		glViewport((int)(rect.GetMin().X * screenSize.Width), (int)(rect.GetMin().Y * screenSize.Height),
-			(int)(rect.GetSize().X * screenSize.Width), (int)(rect.GetSize().Y * screenSize.Height));
-
-		switch (renderingMode)
-		{
-			case eRenderingModeType::LIT:
-				RenderLit(world, rect, cameraCmp);
-				break;
-
-			case eRenderingModeType::UNLIT:
-				RenderUnlit(world, rect, cameraCmp);
-				break;
-
-			case eRenderingModeType::WIREFRAME:
-				RenderWireframe(world, rect, cameraCmp);
-				break;
-
-			case eRenderingModeType::DEBUG_NORMALS:
-				RenderNormals(world, rect, cameraCmp);
-				break;
-
-			case eRenderingModeType::DEBUG_NORMALS_WIREFRAME:
-				RenderNormalsWireframe(world, rect, cameraCmp);
-				break;
-
-			case eRenderingModeType::IMMEDIATE_DEBUG:
-				RenderDebug(world, rect, cameraCmp);
-				break;
-
-			default:
-				ASSERTE(false, "Uknown eRenderingModeType");
-		}
+		Renderer->Render(sceneView);
 	}
 
 	// Signal frame end
 	EndFrame();
 }
 
-void GLRenderingDevice::RenderWireframe(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const
+void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	for (const auto& componentsTuple : sceneView.WorldData->IterateComponents<MeshRenderingComponent>())
+	{
+		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
+		if (meshCmp->IsTransparent())
+		{
+			sceneView.TranslucentQueue.PushBack(meshCmp);
+		}
+		else
+		{
+			sceneView.OpaqueQueue.PushBack(meshCmp);
+		}
+	}
 
-	glDepthMask(GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
-	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect, ePassType::GLOBAL);
+	for (const auto& componentsTuple : sceneView.WorldData->IterateComponents<DirectionalLightComponent>())
+	{
+		sceneView.DirectionalLights.PushBack(std::get<DirectionalLightComponent*>(componentsTuple));
+	}
 
-	glDepthMask(GL_FALSE);
-	glDisable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
-	GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
+	for (const auto& componentsTuple : sceneView.WorldData->IterateComponents<PointLightComponent>())
+	{
+		sceneView.PointLights.PushBack(std::get<PointLightComponent*>(componentsTuple));
+	}
 }
 
-void GLRenderingDevice::RenderNormalsWireframe(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const
+void GLRenderingDevice::CreateUtilityTextures()
 {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	gConsole.LogInfo("GLRenderingDevice::CreateUtilityTextures");
 
-	glDepthMask(GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
-	GeometryRenderingPasses[eGeometryRenderPassType::DEBUG_NORMALS_WIREFRAME]->Run(world, cameraCmp, rect, ePassType::GLOBAL);
+	GLubyte dataWhite[] = { 255, 255, 255, 255 };
+	glGenTextures(1, &FallbackWhiteTexture);
+	glBindTexture(GL_TEXTURE_2D, FallbackWhiteTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, dataWhite);
+	CHECK_GL_ERR();
 
-	glDepthMask(GL_FALSE);
-	glDisable(GL_DEPTH_TEST);
-	GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);
+	GLubyte dataBlack[] = { 0, 0, 0, 0 };
+	glGenTextures(1, &FallbackBlackTexture);
+	glBindTexture(GL_TEXTURE_2D, FallbackBlackTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, dataBlack);
+	CHECK_GL_ERR();
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
-}
+	GLubyte dataDefaultNormal[] = { 128, 128, 255 };
+	glGenTextures(1, &FallbackNormalMap);
+	glBindTexture(GL_TEXTURE_2D, FallbackNormalMap);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, dataDefaultNormal);
+	CHECK_GL_ERR();
 
-void Poly::GLRenderingDevice::RenderDebug(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const
-{
-	PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
+	Vector noise[16];
+	for (int i = 0; i < 16; ++i) {
+		noise[i] = Vector(
+			RandomRange(-1.0f, 1.0f),
+			RandomRange(-1.0f, 1.0f),
+			0.0f
+		);
+		noise[i].Normalize();
+	}
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDepthMask(GL_FALSE);
-	glDisable(GL_DEPTH_TEST);
+	GLubyte dataSSAONoise[16 * 3];
+	for (int i = 0; i < 16; i += 3) {
+		Vector positive = noise[i] * 0.5f + 0.5f;
+		dataSSAONoise[i + 0] = (GLbyte)Clamp((int)(positive.X * 255.0f), 0, 255);
+		dataSSAONoise[i + 1] = (GLbyte)Clamp((int)(positive.Y * 255.0f), 0, 255);
+		dataSSAONoise[i + 2] = (GLbyte)Clamp((int)(positive.Z * 255.0f), 0, 255);
+	}
 
-	if (post && post->UseBgShader)
-		PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND]->Run(world, cameraCmp, rect);
-	else
-		PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND_LIGHT]->Run(world, cameraCmp, rect);
-
-	glDepthMask(GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-
-	// Render meshes with blin-phong shader
-	GeometryRenderingPasses[eGeometryRenderPassType::BLINN_PHONG]->Run(world, cameraCmp, rect);
-
-	// Render meshes with unlit shader
-	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
-
-	glDisable(GL_CULL_FACE);
-
-	// Render debug geometry
-	GeometryRenderingPasses[eGeometryRenderPassType::IMMEDIATE_DEBUG]->Run(world, cameraCmp, rect);
-
-	glEnable(GL_CULL_FACE);
-
-	glDepthMask(GL_FALSE);
-
-	glEnable(GL_BLEND);
-	glDisable(GL_CULL_FACE);
-
-	// TODO test these blending options
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glBlendFunc(GL_ONE, GL_ONE);
-	//glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
-	GeometryRenderingPasses[eGeometryRenderPassType::TRANSPARENT_GEOMETRY]->Run(world, cameraCmp, rect);
-
-	glDisable(GL_BLEND);
-
-	glDisable(GL_DEPTH_TEST);
-
-	// Run postprocess passes
-	// for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
-
-	// Render text
-	GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);
-
-	if (post && post->UseFgShader)
-		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND]->Run(world, cameraCmp, rect);
-	else
-		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
-}
-
-void GLRenderingDevice::RenderUnlit(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const
-{
-	PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDepthMask(GL_FALSE);
-	glDisable(GL_DEPTH_TEST);
-
-	if (post && post->UseBgShader)
-		PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND]->Run(world, cameraCmp, rect);
-	else
-		PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND_LIGHT]->Run(world, cameraCmp, rect);
-
-	glDepthMask(GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-
-	// Render meshes with blin-phong shader
-	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect, ePassType::GLOBAL);
-
-	glDepthMask(GL_FALSE);
-
-	glEnable(GL_BLEND);
-	glDisable(GL_CULL_FACE);
-	// TODO test these blending options
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glBlendFunc(GL_ONE, GL_ONE);
-	//glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
-
-	GeometryRenderingPasses[eGeometryRenderPassType::TRANSPARENT_GEOMETRY]->Run(world, cameraCmp, rect);
-
-	glDisable(GL_BLEND);
-
-	glDisable(GL_DEPTH_TEST);
-
-	// Run postprocess passes
-	// for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
-
-	// Render text
-	GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);
-
-	if (post && post->UseFgShader)
-		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND]->Run(world, cameraCmp, rect);
-	else
-		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
-}
-
-void GLRenderingDevice::RenderNormals(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const
-{
-	PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDepthMask(GL_FALSE);
-	glDisable(GL_DEPTH_TEST);
-
-	if (post && post->UseBgShader)
-		PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND]->Run(world, cameraCmp, rect);
-	else
-		PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND_LIGHT]->Run(world, cameraCmp, rect);
-
-	glDepthMask(GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-
-	// Render meshes with blin-phong shader
-	GeometryRenderingPasses[eGeometryRenderPassType::DEBUG_NORMALS]->Run(world, cameraCmp, rect, ePassType::GLOBAL);
-
-	glDepthMask(GL_FALSE);
-
-	glEnable(GL_BLEND);
-	glDisable(GL_CULL_FACE);
-	// TODO test these blending options
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glBlendFunc(GL_ONE, GL_ONE);
-	//glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
-
-	GeometryRenderingPasses[eGeometryRenderPassType::TRANSPARENT_GEOMETRY]->Run(world, cameraCmp, rect);
-
-	glDisable(GL_BLEND);
-
-	glDisable(GL_DEPTH_TEST);
-
-	// Run postprocess passes
-	// for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
-
-	// Render text
-	GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);
-
-	if (post && post->UseFgShader)
-		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND]->Run(world, cameraCmp, rect);
-	else
-		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
-}
-
-void GLRenderingDevice::RenderLit(Scene* world, const AARect& rect, CameraComponent* cameraCmp) const
-{
-	PostprocessSettingsComponent* post = cameraCmp->GetSibling<PostprocessSettingsComponent>();
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDepthMask(GL_FALSE);
-	glDisable(GL_DEPTH_TEST);
-
-	if (post && post->UseBgShader)
-		PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND]->Run(world, cameraCmp, rect);
-	else
-		PostprocessRenderingPasses[ePostprocessRenderPassType::BACKGROUND_LIGHT]->Run(world, cameraCmp, rect);
-
-	glDepthMask(GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-
-	// Render meshes with blin-phong shader
-	GeometryRenderingPasses[eGeometryRenderPassType::BLINN_PHONG]->Run(world, cameraCmp, rect);
-
-	// Render meshes with unlit shader
-	GeometryRenderingPasses[eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
-
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
-	GeometryRenderingPasses[eGeometryRenderPassType::SKYBOX]->Run(world, cameraCmp, rect);
-	
-	glDepthMask(GL_FALSE);
-
-	glDisable(GL_CULL_FACE);
-	glEnable(GL_DEPTH_TEST);
-	// TODO test these blending options
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	// glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
-	// glBlendFunc(GL_ONE, GL_ONE);
-	// glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
-
-	GeometryRenderingPasses[eGeometryRenderPassType::TRANSPARENT_GEOMETRY]->Run(world, cameraCmp, rect);
-	
-	GeometryRenderingPasses[eGeometryRenderPassType::TRANSPARENT_SPRITESHEET]->Run(world, cameraCmp, rect);
-
-	GeometryRenderingPasses[eGeometryRenderPassType::PARTICLES]->Run(world, cameraCmp, rect);
-
-	glDisable(GL_BLEND);
-
-	glDisable(GL_DEPTH_TEST);
-
-	// Run postprocess passes
-	// for (ePostprocessRenderPassType type : IterateEnum<ePostprocessRenderPassType>())
-
-
-	// Render text
-	GeometryRenderingPasses[eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);
-
-	if (post && post->UseFgShader)
-		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND]->Run(world, cameraCmp, rect);
-	else
-		PostprocessRenderingPasses[ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
-}
-
-void GLRenderingDevice::Init()
-{
-	InitPrograms();
+	glGenTextures(1, &SSAONoiseMap);
+	glBindTexture(GL_TEXTURE_2D, SSAONoiseMap);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 4, 4, 0, GL_RGB, GL_UNSIGNED_BYTE, dataSSAONoise);
+	CHECK_GL_ERR();
 }

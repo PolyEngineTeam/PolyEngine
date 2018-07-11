@@ -4,7 +4,7 @@
 #include <Collections/String.hpp>
 #include <map>
 #include "Common/GLUtils.hpp"
-#include "Common/GLShaderProgram.hpp"
+#include "Proxy/GLShaderProgram.hpp"
 
 namespace Poly
 {
@@ -15,7 +15,8 @@ namespace Poly
 	class AARect;
 	class TextureResource;
 	struct ScreenSize;
-	enum class eInternalTextureUsageType;
+	class GLRenderingDevice;
+	enum class eRenderTargetType;
 
 	enum class ePassType
 	{
@@ -34,8 +35,8 @@ namespace Poly
 		};
 
 	public:
-		RenderingPassBase(const String& vertex, const String& fragment);
-		RenderingPassBase(const String& vertex, const String& geometry, const String& fragment);
+		RenderingPassBase(const GLRenderingDevice* RDI, const String& vertex, const String& fragment);
+		RenderingPassBase(const GLRenderingDevice* RDI, const String& vertex, const String& geometry, const String& fragment);
 
 		virtual ~RenderingPassBase();
 
@@ -51,9 +52,6 @@ namespace Poly
 	
 	protected:
 
-		GLuint FallbackWhiteTexture;
-		GLuint FallbackNormalMap;
-
 		virtual void OnRun(Scene* world, const CameraComponent* camera, const AARect& rect, ePassType passType) = 0;
 
 		RenderingTargetBase* GetInputTarget(const String& name);
@@ -63,14 +61,14 @@ namespace Poly
 		const std::map<String, RenderingTargetBase*>& GetOutputs() const { return Outputs; }
 		GLShaderProgram& GetProgram() { return Program; }
 
+		const GLRenderingDevice* RDI;
+
 	private:
 		std::map<String, RenderingTargetBase*> Inputs;
 		std::map<String, RenderingTargetBase*> Outputs;
 
 		GLShaderProgram Program;
 		GLuint FBO = 0;
-
-		void CreateDummyTexture();
 	};
 
 	//------------------------------------------------------------------------------
@@ -97,7 +95,7 @@ namespace Poly
 	{
 	public:
 		Texture2DRenderingTarget(GLuint format);
-		Texture2DRenderingTarget(GLuint format, eInternalTextureUsageType internalUsage);
+		Texture2DRenderingTarget(GLuint format, eRenderTargetType internalUsage);
 
 		eRenderingTargetType GetType() const override { return eRenderingTargetType::TEXTURE_2D; }
 		void Resize(const ScreenSize& /*size*/) override;
@@ -105,7 +103,7 @@ namespace Poly
 		GLuint GetTextureID();
 	private:
 		//GLuint Format;
-		eInternalTextureUsageType InternalUsage = eInternalTextureUsageType(0);
+		eRenderTargetType InternalUsage = eRenderTargetType(0);
 		std::unique_ptr<GLTextureDeviceProxy> Texture;
 	};
 

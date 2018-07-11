@@ -3,15 +3,14 @@ layout(location = 0) in vec4 aPos;
 layout(location = 1) in vec2 aTexCoord;
 layout(location = 2) in vec3 aNormal;
 
-uniform mat4 uMVPTransform;
+uniform mat4 uScreenFromModel;
 
 out vec3 vVertexPos;
 out vec2 vTexCoord;
-out vec3 vNormal;
 
-void main(){
-  gl_Position = uMVPTransform * aPos;
-  vTexCoord = aTexCoord;
-  vNormal = aNormal;
-  vVertexPos = aPos.xyz;
+void main()
+{
+	gl_Position = uScreenFromModel * aPos;
+	vTexCoord = aTexCoord;
+	vVertexPos = aPos.xyz;
 }

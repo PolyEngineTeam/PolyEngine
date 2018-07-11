@@ -3,6 +3,7 @@
 #include "Proxy/GLMeshDeviceProxy.hpp"
 #include "Proxy/GLTextureDeviceProxy.hpp"
 #include "Proxy/GLParticleDeviceProxy.hpp"
+#include <GLRenderingDevice.hpp>
 
 #include <ECS/World.hpp>
 #include <Time/TimeSystem.hpp>
@@ -13,8 +14,8 @@
 
 using namespace Poly;
 
-ParticlesRenderingPass::ParticlesRenderingPass()
-	: RenderingPassBase("Shaders/instancedVert.shader", "Shaders/instancedFrag.shader")
+ParticlesRenderingPass::ParticlesRenderingPass(const GLRenderingDevice* rdi)
+	: RenderingPassBase(rdi, "Shaders/instanced.vert.glsl", "Shaders/instanced.frag.glsl")
 {
 	GetProgram().RegisterUniform("float", "uTime");
 	GetProgram().RegisterUniform("mat4", "uScreenFromView");
@@ -27,7 +28,7 @@ void ParticlesRenderingPass::OnRun(Scene* world, const CameraComponent* camera, 
 {
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	const Matrix& ViewFromWorld = camera->GetViewFromWorld();
-	const Matrix& ScreenFromView = camera->GetScreenFromView();
+	const Matrix& ScreenFromView = camera->GetClipFromView();
 
 	glDisable(GL_CULL_FACE);
 
@@ -49,7 +50,7 @@ void ParticlesRenderingPass::OnRun(Scene* world, const CameraComponent* camera, 
 		ParticleEmitter::Settings emitterSettings = particleCmp->GetEmitter()->GetSettings();
 		GetProgram().SetUniform("uEmitterColor", emitterSettings.BaseColor);
 		
-		SpritesheetSettings spriteSettings = emitterSettings.SprsheetSettings;
+		SpritesheetSettings spriteSettings = emitterSettings.Spritesheet;
 		GetProgram().SetUniform("uSpriteColor", spriteSettings.SpriteColor);
 		float startFrame = spriteSettings.IsRandomStartFrame ? RandomRange(0.0f, spriteSettings.SubImages.X * spriteSettings.SubImages.Y) : spriteSettings.StartFrame;
 		GetProgram().SetUniform("uSpriteStartFrame", startFrame);
@@ -62,7 +63,7 @@ void ParticlesRenderingPass::OnRun(Scene* world, const CameraComponent* camera, 
 		GLuint particleVAO = particleProxy->GetVAO();
 
 		GLuint TextureID = Texture == nullptr
-			? FallbackWhiteTexture
+			? RDI->FallbackWhiteTexture
 			: static_cast<const GLTextureDeviceProxy*>(Texture->GetTextureProxy())->GetTextureID();
 
 		GetProgram().SetUniform("uHasSprite", Texture == nullptr ? 0.0f : 1.0f );

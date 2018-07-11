@@ -14,11 +14,10 @@
 
 using namespace Poly;
 
-TransparentRenderingPass::TransparentRenderingPass(const PostprocessQuad* quad)
-	: RenderingPassBase("Shaders/transparentVert.shader", "Shaders/transparentFrag.shader"), Quad(quad)
+TransparentRenderingPass::TransparentRenderingPass(const GLRenderingDevice* rdi)
+	: RenderingPassBase(rdi, "Shaders/transparent.vert.glsl", "Shaders/transparent.frag.glsl")
 {
 }
-
 
 void TransparentRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
 {
@@ -60,18 +59,18 @@ void TransparentRenderingPass::OnRun(Scene* world, const CameraComponent* camera
 		Matrix objTransform; // = transCmp->GetGlobalTransformationMatrix();
 		objTransform.SetTranslation(trans.GetGlobalTranslation() + Vector(0.0f, 0.0f, 0.5f));
 
-		Matrix screenTransform = camera->GetScreenFromWorld() * objTransform * objScale;
+		Matrix screenTransform = camera->GetClipFromWorld() * objTransform * objScale;
 		GetProgram().SetUniform("uTransform", objTransform * objScale);
 		GetProgram().SetUniform("uMVPTransform", screenTransform);
 		
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
-			GetProgram().SetUniform("uBaseColor", meshCmp->GetMaterial(i).DiffuseColor);
+			GetProgram().SetUniform("uBaseColor", meshCmp->GetMaterial(i).Albedo);
 			UNUSED(subMesh);
 			//const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 
-			glBindVertexArray(Quad->VAO);
+			glBindVertexArray(RDI->PrimitivesQuad->VAO);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 			glBindVertexArray(0);
 

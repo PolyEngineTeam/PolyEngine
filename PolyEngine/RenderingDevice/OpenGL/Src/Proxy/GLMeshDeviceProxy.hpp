@@ -24,14 +24,14 @@ namespace Poly
 		virtual ~GLMeshDeviceProxy();
 
 		void SetContent(const Mesh& mesh);
+		unsigned int GetResourceID() const { return VAO; };
 
 		GLuint GetVAO() const { return VAO; }
+
 	private:
 		void EnsureVBOCreated(eBufferType type);
 
 		GLuint VAO = 0;
 		EnumArray<GLuint, eBufferType> VBO;
-
-		friend class GLRenderingDevice;
 	};
 }

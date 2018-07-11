@@ -9,44 +9,48 @@ namespace Poly {
 	enum class eShadingModel
 	{
 		NONE,
-		LIT,
+		PHONG,
 		UNLIT,
+		PBR,
 		_COUNT
 	};
 
-	struct ENGINE_DLLEXPORT PhongMaterial
+	struct ENGINE_DLLEXPORT Material
 	{
-		PhongMaterial()
-			: AmbientColor(1.0f, 1.0f, 1.0f), DiffuseColor(1.0f, 1.0f, 1.0f), SpecularColor(1.0f, 1.0f, 1.0f), Shininess(0.1f) {}
+		Material()
+			: Emissive(0.0f, 0.0f, 0.0f), Albedo(1.0f, 1.0f, 1.0f), Roughness(1.0f), Metallic(1.0f), OpacityMaskThreshold(0.5f)
+		{}
 
-		PhongMaterial(const Color& ambient, const Color& diffuse, const Color& specular, float shininess)
-			: AmbientColor(ambient), DiffuseColor(diffuse), SpecularColor(specular), Shininess(shininess) {}
+		Material(const Color& emissive, const Color& albedo, float roughness, float metallic, float opacityMaskThreshold)
+			: Emissive(emissive), Albedo(albedo), Roughness(roughness), Metallic(metallic), OpacityMaskThreshold(opacityMaskThreshold)
+		{}
 
-		Color AmbientColor;
-		Color DiffuseColor;
-		Color SpecularColor;
-		float Shininess;
+		Color Emissive;
+		Color Albedo;
+		float Roughness;
+		float Metallic;
+		float OpacityMaskThreshold;
 	};
 
 	class ENGINE_DLLEXPORT MeshRenderingComponent : public ComponentBase
 	{
-		friend void RenderingSystem::RenderingPhase(Scene*);
 	public:
 		MeshRenderingComponent(const String& meshPath, eResourceSource source);
 		virtual ~MeshRenderingComponent();
 
 		const MeshResource* GetMesh() const { return Mesh; }
-		const PhongMaterial& GetMaterial(int i) const { return Materials[i]; }
-		void SetMaterial(int i, const PhongMaterial& value) { Materials[i] = value; }
+		const Material& GetMaterial(int i) const { return Materials[i]; }
+		void SetMaterial(size_t i, const Material& value) { Materials[i] = value; }
 		bool GetIsWireframe() const { return IsWireframe; }
 		void SetIsWireframe(bool value) { IsWireframe = value; }
 		eShadingModel GetShadingModel() const { return ShadingModel; }
 		void SetShadingModel(eShadingModel value) { ShadingModel = value; }
-		bool IsTransparent() const { return Materials[0].DiffuseColor.A < 1.0f; } // HACK replace with better solution for transloucent objects.
+		bool IsTransparent() const { return Materials.GetCapacity() > 0 && Materials[0].Albedo.A < 1.0f; } // HACK replace with better solution for translucent objects.
+
 	private:
 		MeshResource* Mesh = nullptr;
-		Dynarray<PhongMaterial> Materials;
-		eShadingModel ShadingModel = eShadingModel::LIT;
+		Dynarray<Material> Materials;
+		eShadingModel ShadingModel = eShadingModel::PBR;
 		bool IsWireframe = false;
 	};
 

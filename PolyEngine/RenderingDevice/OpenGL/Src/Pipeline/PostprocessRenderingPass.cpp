@@ -15,16 +15,15 @@
 
 using namespace Poly;
 
-PostprocessRenderingPass::PostprocessRenderingPass(const PostprocessQuad* quad, const String& fragment)
-	: RenderingPassBase("Shaders/postprocessCommonVert.shader", fragment), Quad(quad)
+PostprocessRenderingPass::PostprocessRenderingPass(const GLRenderingDevice* rdi, const String& fragment)
+	: RenderingPassBase(rdi, "Shaders/postprocessCommon.vert.glsl", fragment)
 {
 }
 
-PostprocessRenderingPass::PostprocessRenderingPass(const PostprocessQuad* quad, const String& geometry, const String& fragment)
-	: RenderingPassBase("Shaders/postprocessCommonVert.shader", geometry, fragment), Quad(quad)
+PostprocessRenderingPass::PostprocessRenderingPass(const GLRenderingDevice* rdi, const String& geometry, const String& fragment)
+	: RenderingPassBase(rdi, "Shaders/postprocessCommon.vert.glsl", geometry, fragment)
 {
 }
-
 
 void PostprocessRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& rect, ePassType /*passType = ePassType::GLOBAL*/)
 {
@@ -62,8 +61,7 @@ void PostprocessRenderingPass::OnRun(Scene* world, const CameraComponent* camera
 		//gConsole.LogInfo("void PostprocessRenderingPass::OnRun: UseCashetes: {}", PostprocessSettings->UseCashetes);
 	}
 
-
-	glBindVertexArray(Quad->VAO);
+	glBindVertexArray(RDI->PrimitivesQuad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 }
