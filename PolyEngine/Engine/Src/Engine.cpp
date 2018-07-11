@@ -23,7 +23,6 @@ void Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice>
 	// also set presets for debug draw (DebugDrawPresets)
 	// @todo update debug draw presets from GUI
 	gDebugConfig.DebugDrawPresets |= eDebugDrawPreset::GFX;
-}
 
 	Game = std::move(game);
 	RenderingDevice = std::move(device);
