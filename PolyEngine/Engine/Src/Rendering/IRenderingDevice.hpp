@@ -26,10 +26,15 @@ namespace Poly
 	//------------------------------------------------------------------------------
 	enum class eTextureUsageType
 	{
-		DIFFUSE,
-		SPECULAR,
+		ALBEDO,
+		METALLIC,
+		ROUGHNESS,
+		AMBIENT_OCCLUSION,
+		EMISSIVE,
 		NORMAL,
 		FONT,
+		HDR,
+		RENDER_TARGET,
 		_COUNT
 	};
 
@@ -64,14 +69,16 @@ namespace Poly
 	class ENGINE_DLLEXPORT ITextureDeviceProxy : public BaseObject<>
 	{
 	public:
-		virtual void SetContent(eTextureDataFormat format, const unsigned char* data) = 0;
-		virtual void SetSubContent(size_t width, size_t height, size_t offsetX, size_t offsetY, eTextureDataFormat format, const unsigned char* data) = 0;
+		virtual void SetContent(const unsigned char* data) = 0;
+		virtual void SetContentHDR(const float* data) = 0;
+		virtual void SetSubContent(size_t width, size_t height, size_t offsetX, size_t offsetY, const unsigned char* data) = 0;
+		virtual unsigned int GetResourceID() const = 0;
 	};
 
 	class ENGINE_DLLEXPORT ICubemapDeviceProxy : public BaseObject<>
 	{
 	public:
-		virtual void SetContent(const eCubemapSide side, const unsigned char* data) = 0;
+		virtual void SetContentHDR(const eCubemapSide side, const float* data) = 0;
 	};
 
 	//------------------------------------------------------------------------------
@@ -87,6 +94,8 @@ namespace Poly
 		};
 
 		virtual void SetContent(size_t count, const TextFieldLetter* letters) = 0;
+		virtual unsigned int GetResourceID() const = 0;
+		virtual unsigned int GetResourceSize() const = 0;
 	};
 
 	//------------------------------------------------------------------------------
@@ -94,6 +103,7 @@ namespace Poly
 	{
 	public:
 		virtual void SetContent(const Mesh& mesh) = 0;
+		virtual unsigned int GetResourceID() const = 0;
 	};
 
 	class ENGINE_DLLEXPORT IParticleDeviceProxy : public BaseObject<>
@@ -112,7 +122,7 @@ namespace Poly
 		virtual void RenderWorld(World* world) = 0;
 		virtual void Init() = 0;
 
-		virtual std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) = 0;
+		virtual std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, size_t channels, eTextureUsageType usage) = 0;
 		virtual std::unique_ptr<ICubemapDeviceProxy> CreateCubemap(size_t width, size_t height) = 0;
 		virtual std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() = 0;
 		virtual std::unique_ptr<IMeshDeviceProxy> CreateMesh() = 0;

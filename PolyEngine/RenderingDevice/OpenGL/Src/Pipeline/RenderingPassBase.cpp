@@ -88,17 +88,15 @@ void Poly::RenderingPassBase::ClearFBO(GLenum flags)
 }
 
 //------------------------------------------------------------------------------
-Poly::RenderingPassBase::RenderingPassBase(const String& vertex, const String& fragment)
-	: Program(vertex, fragment)
+Poly::RenderingPassBase::RenderingPassBase(const GLRenderingDevice* rdi, const String& vertex, const String& fragment)
+	: RDI(rdi), Program(vertex, fragment)
 {
-	CreateDummyTexture();
 }
 
 //------------------------------------------------------------------------------
-Poly::RenderingPassBase::RenderingPassBase(const String& vertex, const String& geometry, const String& fragment)
-	: Program(vertex, geometry, fragment)
+Poly::RenderingPassBase::RenderingPassBase(const GLRenderingDevice* rdi, const String& vertex, const String& geometry, const String& fragment)
+	: RDI(rdi), Program(vertex, geometry, fragment)
 {
-	CreateDummyTexture();
 }
 
 //------------------------------------------------------------------------------
@@ -229,11 +227,11 @@ RenderingTargetBase* RenderingPassBase::GetOutputTarget(const String& name)
 }
 
 Poly::Texture2DRenderingTarget::Texture2DRenderingTarget(GLuint format)
-	: Texture2DRenderingTarget(format, eInternalTextureUsageType::COLOR_ATTACHEMENT)
+	: Texture2DRenderingTarget(format, eRenderTargetType::COLOR_ATTACHEMENT)
 {
 }
 
-Poly::Texture2DRenderingTarget::Texture2DRenderingTarget(GLuint format, eInternalTextureUsageType internalUsage)
+Poly::Texture2DRenderingTarget::Texture2DRenderingTarget(GLuint format, eRenderTargetType internalUsage)
 	: /*Format(format),*/ InternalUsage(internalUsage)
 {
 	ScreenSize size = gRenderingDevice->GetScreenSize();
@@ -251,13 +249,13 @@ GLuint Poly::Texture2DRenderingTarget::GetTextureID()
 }
 
 Poly::DepthRenderingTarget::DepthRenderingTarget()
-	: Texture2DRenderingTarget(GL_DEPTH_COMPONENT24, eInternalTextureUsageType::DEPTH_ATTACHEMENT)
+	: Texture2DRenderingTarget(GL_DEPTH_COMPONENT24, eRenderTargetType::DEPTH_ATTACHEMENT)
 {
 }
 
 Poly::Texture2DInputTarget::Texture2DInputTarget(const String & path)
 {
-	Texture = ResourceManager<TextureResource>::Load(path, eResourceSource::ENGINE, eTextureUsageType::DIFFUSE);
+	Texture = ResourceManager<TextureResource>::Load(path, eResourceSource::ENGINE, eTextureUsageType::ALBEDO);
 }
 
 Poly::Texture2DInputTarget::~Texture2DInputTarget()
@@ -268,34 +266,4 @@ Poly::Texture2DInputTarget::~Texture2DInputTarget()
 GLuint Poly::Texture2DInputTarget::GetTextureID() const
 {
 	return static_cast<const GLTextureDeviceProxy*>(Texture->GetTextureProxy())->GetTextureID();
-}
-
-void Poly::RenderingPassBase::CreateDummyTexture()
-{
-	glGenTextures(1, &FallbackWhiteTexture);
-
-	GLubyte data[] = { 255, 255, 255, 255 };
-
-	glBindTexture(GL_TEXTURE_2D, FallbackWhiteTexture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-
-	glGenTextures(1, &FallbackNormalMap);
-	
-	GLubyte dataDefaultNormal[] = { 128, 128, 255 };
-
-	glBindTexture(GL_TEXTURE_2D, FallbackNormalMap);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, dataDefaultNormal);
 }

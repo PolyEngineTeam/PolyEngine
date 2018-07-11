@@ -9,7 +9,7 @@ using namespace Poly;
 
 SpritesheetComponent::SpritesheetComponent(const SpritesheetSettings& settings) : Settings(settings)
 {
-	Spritesheet = ResourceManager<TextureResource>::Load(settings.SpritePath, settings.Source, eTextureUsageType::DIFFUSE);
+	Spritesheet = ResourceManager<TextureResource>::Load(settings.SpritePath, settings.Source, eTextureUsageType::ALBEDO);
 }
 
 SpritesheetComponent::~SpritesheetComponent()

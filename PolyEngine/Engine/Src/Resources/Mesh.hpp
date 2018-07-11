@@ -15,18 +15,13 @@ namespace Poly
 		virtual ~Mesh();
 
 		struct ENGINE_DLLEXPORT TextCoord { float U = 0, V = 0; };
-		struct ENGINE_DLLEXPORT Material
-		{
-			float SpecularIntensity;
-			float SpecularPower;
-			Color SpecularColor;
-		};
 
-		
-		const TextureResource* GetDiffTexture() const { return DiffuseTexture; }
-		const TextureResource* GetSpecularMap() const { return SpecularMap; }
+		const TextureResource* GetAlbedoMap() const { return AlbedoMap; }
+		const TextureResource* GetRoughnessMap() const { return RoughnessMap; }
+		const TextureResource* GetMetallicMap() const { return MetallicMap; }
+		const TextureResource* GetAmbientOcclusionMap() const { return AmbientOcclusionMap; }
 		const TextureResource* GetNormalMap() const { return NormalMap; }
-		const Material& GetMaterial() { return Mtl; }
+		const TextureResource* GetEmissiveMap() const { return EmissiveMap; }
 		size_t GetVertexCount() const { return Positions.GetSize(); }
 		size_t GetTriangleCount() const { return Indices.GetSize() / 3; }
 
@@ -45,10 +40,12 @@ namespace Poly
 		bool HasIndicies() const { return Indices.GetSize() != 0; }
 
 	private:
-		Material Mtl;
-		TextureResource* DiffuseTexture;
-		TextureResource* SpecularMap;
+		TextureResource* AlbedoMap;
+		TextureResource* RoughnessMap;
+		TextureResource* MetallicMap;
+		TextureResource* AmbientOcclusionMap;
 		TextureResource* NormalMap;
+		TextureResource* EmissiveMap;
 		Dynarray<Vector3f> Positions;
 		Dynarray<Vector3f> Normals;
 		Dynarray<Vector3f> Tangents;

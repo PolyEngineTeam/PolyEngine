@@ -1,9 +1,19 @@
 #include "EnginePCH.hpp"
 
 #include "Rendering/SkyboxWorldComponent.hpp"
+#include "Resources/ResourceManager.hpp"
+#include "Resources/TextureResource.hpp"
 
-Poly::SkyboxWorldComponent::SkyboxWorldComponent(const EnumArray<String, eCubemapSide> cubemapPath)
-	: Cubemap(cubemapPath)
+using namespace Poly;
+
+SkyboxWorldComponent::SkyboxWorldComponent(const String& panoramaPath, const eResourceSource source)
 {
-	gConsole.LogInfo("SkyboxWorldComponent::SkyboxWorldComponent cubemapPath: {}", cubemapPath[eCubemapSide::LEFT]);
+	EquirectPanorama = ResourceManager<TextureResource>::Load(panoramaPath, source, eTextureUsageType::HDR);
+
+	gConsole.LogInfo("SkyboxWorldComponent::SkyboxWorldComponent panoramaPath: {}", panoramaPath);
+}
+
+SkyboxWorldComponent::~SkyboxWorldComponent()
+{
+	ResourceManager<TextureResource>::Release(EquirectPanorama);
 }

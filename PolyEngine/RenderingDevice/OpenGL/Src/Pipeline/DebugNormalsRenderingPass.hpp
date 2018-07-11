@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Pipeline/RenderingPassBase.hpp"
-#include "Common/GLShaderProgram.hpp"
+#include "Proxy/GLShaderProgram.hpp"
 
 namespace Poly
 {
@@ -14,7 +14,7 @@ namespace Poly
 	class DebugNormalsRenderingPass : public RenderingPassBase
 	{
 	public:
-		DebugNormalsRenderingPass();
+		DebugNormalsRenderingPass(const GLRenderingDevice* rdi);
 
 	protected:
 		void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;

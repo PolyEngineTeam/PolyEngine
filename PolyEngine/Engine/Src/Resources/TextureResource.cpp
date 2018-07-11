@@ -2,50 +2,59 @@
 
 #include "Resources/TextureResource.hpp"
 #include "Resources/ResourceManager.hpp"
-#include "SOIL/SOIL.h"
 
 using namespace Poly;
 
-//------------------------------------------------------------------------------
-TextureResource::TextureResource(const String& path, eTextureUsageType textureUsageType)
+static int GetDesiredChannel(eTextureUsageType usage) noexcept
 {
-	Channels = 4;
-
-	int FileChannels;
-	Image = SOIL_load_image(path.GetCStr(), &Width, &Height, &FileChannels, SOIL_LOAD_AUTO);
-	if (Image == nullptr)
+	switch (usage)
 	{
-		throw ResourceLoadFailedException();
+	case eTextureUsageType::ALBEDO:
+	case eTextureUsageType::EMISSIVE:
+	case eTextureUsageType::RENDER_TARGET:
+		return 4;
+	case eTextureUsageType::AMBIENT_OCCLUSION:
+	case eTextureUsageType::METALLIC:
+	case eTextureUsageType::ROUGHNESS:
+	case eTextureUsageType::NORMAL:
+	case eTextureUsageType::HDR:
+	case eTextureUsageType::FONT:
+		return 3;
+	default:
+		ASSERTE(false, "Uknown eTextureUsageType!");
 	}
+	return 0;
+}
 
-	// Flip Y axis
-	int rowSize = Width*FileChannels;
-	static Dynarray<unsigned char> row;
-	row.Resize(rowSize);
-	for (int i = 0; i < Height/2; ++i) {
-		memcpy(row.GetData(), Image + ((Height - i - 1) * Width*FileChannels), sizeof(unsigned char) * rowSize);
-		memcpy(Image + ((Height - i - 1) * Width*FileChannels), Image + (i * Width*FileChannels), sizeof(unsigned char) * rowSize);
-		memcpy(Image + (i * Width*FileChannels), row.GetData(), sizeof(unsigned char) * rowSize);
-	}
+TextureResource::TextureResource(const String& path, eTextureUsageType usage)
+{
+	gConsole.LogInfo("TextureResource::TextureResource path: {} usage: {}", path, (int)usage);
 
-	TextureProxy = gEngine->GetRenderingDevice()->CreateTexture(Width, Height, textureUsageType); //HACK, remove deffise from here
+	int desiredChannels = GetDesiredChannel(usage);
 
-	switch(FileChannels)
+	if (usage == eTextureUsageType::HDR) 
 	{
-		case 1:
-			TextureProxy->SetContent(eTextureDataFormat::RED, Image);
-			break;
-		case 3:
-			TextureProxy->SetContent(eTextureDataFormat::RGB, Image);
-			break;
-		case 4:
-			TextureProxy->SetContent(eTextureDataFormat::RGBA, Image);
-			break;
+		float* Image = LoadImageHDR(path.GetCStr(), &Width, &Height, &Channels);
+	
+		gConsole.LogInfo("TextureResource::TextureResource loaded width: {}, height: {}, channels: {}", Width, Height, Channels);
+
+		TextureProxy = gEngine->GetRenderingDevice()->CreateTexture(Width, Height, desiredChannels, usage);
+		TextureProxy->SetContentHDR(Image);
+		FreeImageHDR(Image);
+	}
+	else
+	{
+		unsigned char* Image = LoadImage(path.GetCStr(), &Width, &Height, &Channels, desiredChannels);
+
+		gConsole.LogInfo("TextureResource::TextureResource loaded width: {}, height: {}, channels: {}, desiredChannels: {}",
+			Width, Height, Channels, desiredChannels);
+
+		TextureProxy = gEngine->GetRenderingDevice()->CreateTexture(Width, Height, desiredChannels, usage);
+		TextureProxy->SetContent(Image);
+		FreeImage(Image);
 	}
 }
 
-//-----------------------------------------------------------------------------
 TextureResource::~TextureResource()
 {
-	SOIL_free_image_data(Image);
 }

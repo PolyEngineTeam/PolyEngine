@@ -60,6 +60,26 @@ Vector& Vector::operator-=(const Vector& rhs){
 }
 
 //------------------------------------------------------------------------------
+Vector Vector::operator+(float rhs) const {
+#if DISABLE_SIMD
+	return Vector(X+rhs, Y+rhs, Z+rhs);
+#else
+	__m128 v = _mm_set_ps1(rhs);
+	return Vector(_mm_add_ps(SimdData, v));
+#endif
+}
+
+//------------------------------------------------------------------------------
+Vector Vector::operator-(float rhs) const {
+#if DISABLE_SIMD
+	return Vector(X - rhs, Y - rhs, Z - rhs);
+#else
+	__m128 v = _mm_set_ps1(rhs);
+	return Vector(_mm_sub_ps(SimdData, v));
+#endif
+}
+
+//------------------------------------------------------------------------------
 Vector Vector::operator*(float rhs) const {
 #if DISABLE_SIMD
   return Vector(X*rhs, Y*rhs, Z*rhs);
@@ -77,6 +97,30 @@ Vector Vector::operator/(float rhs) const {
   __m128 v = _mm_set_ps1(rhs);
   return Vector(_mm_div_ps(SimdData, v));
 #endif
+}
+
+//------------------------------------------------------------------------------
+Vector& Vector::operator+=(float rhs) {
+#if DISABLE_SIMD
+	X += rhs; Y += rhs; Z += rhs;
+#else
+	__m128 v = _mm_set_ps1(rhs);
+	SimdData = _mm_add_ps(SimdData, v);
+	W = 1.0f;
+#endif
+	return *this;
+}
+
+//------------------------------------------------------------------------------
+Vector& Vector::operator-=(float rhs) {
+#if DISABLE_SIMD
+	X -= rhs; Y -= rhs; Z -= rhs;
+#else
+	__m128 v = _mm_set_ps1(rhs);
+	SimdData = _mm_sub_ps(SimdData, v);
+	W = 1.0f;
+#endif
+	return *this;
 }
 
 //------------------------------------------------------------------------------

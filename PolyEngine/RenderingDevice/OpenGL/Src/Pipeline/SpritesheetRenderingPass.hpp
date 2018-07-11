@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Pipeline/RenderingPassBase.hpp"
-#include "Common/GLShaderProgram.hpp"
-#include "Common/PostprocessQuad.hpp"
+#include "Proxy/GLShaderProgram.hpp"
+#include "Common/PrimitiveQuad.hpp"
 
 namespace Poly
 {
@@ -15,11 +15,9 @@ namespace Poly
 	class SpritesheetRenderingPass : public RenderingPassBase
 	{
 	public:
-		SpritesheetRenderingPass(const PostprocessQuad* quad);
+		SpritesheetRenderingPass(const GLRenderingDevice* rdi);
 
 	protected:
 		void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;
-
-		const PostprocessQuad* Quad;
 	};
 }
