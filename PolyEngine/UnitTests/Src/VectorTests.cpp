@@ -102,6 +102,18 @@ TEST_CASE("Vector-scalar operators", "[Vector]") {
 		v2 /= s1;
 		REQUIRE(v2 == v1 / s1);
 	}
+
+	SECTION("Sum operator") {
+		REQUIRE(v1 + s1 == Vector(3.0f, 4.0f, 5.0f));
+		v2 += s1;
+		REQUIRE(v2 == v1 + s1);
+	}
+
+	SECTION("Subtraction operator") {
+		REQUIRE(v1 - s1 == Vector(-1.0f, 0.0f, 1.0f));
+		v2 -= s1;
+		REQUIRE(v2 == v1 - s1);
+	}
 }
 
 TEST_CASE("Vector algebraic methods", "[Vector]") {

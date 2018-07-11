@@ -11,7 +11,7 @@ RTTI_DEFINE_TYPE(Poly::SpritesheetComponent)
 
 SpritesheetComponent::SpritesheetComponent(const SpritesheetSettings& settings) : Settings(settings)
 {
-	Spritesheet = ResourceManager<TextureResource>::Load(settings.SpritePath, settings.Source, eTextureUsageType::DIFFUSE);
+	Spritesheet = ResourceManager<TextureResource>::Load(settings.SpritePath, settings.Source, eTextureUsageType::ALBEDO);
 }
 
 SpritesheetComponent::~SpritesheetComponent()

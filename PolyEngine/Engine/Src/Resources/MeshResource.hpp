@@ -1,5 +1,7 @@
 #pragma once
 
+#include "EnginePCH.hpp"
+
 #include <Collections/Dynarray.hpp>
 #include <Utils/EnumUtils.hpp>
 #include <Math/Color.hpp>
@@ -22,6 +24,9 @@ namespace Poly
 		{
 		public:
 			SubMesh(const String& path, aiMesh* mesh, aiMaterial* material);
+
+			void LoadGeometry(aiMesh* mesh);
+			TextureResource* LoadTexture(const aiMaterial* material, const String& path, const unsigned int aiType, const eTextureUsageType textureType);
 
 			const Mesh& GetMeshData() const { return MeshData; }
 			const IMeshDeviceProxy* GetMeshProxy() const { return MeshProxy.get(); }

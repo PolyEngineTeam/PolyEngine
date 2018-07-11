@@ -1,11 +1,21 @@
 #include "EnginePCH.hpp"
 
 #include "Rendering/SkyboxWorldComponent.hpp"
+#include "Resources/ResourceManager.hpp"
+#include "Resources/TextureResource.hpp"
+
+using namespace Poly;
 
 RTTI_DEFINE_TYPE(Poly::SkyboxWorldComponent)
 
-Poly::SkyboxWorldComponent::SkyboxWorldComponent(const EnumArray<String, eCubemapSide> cubemapPath)
-	: Cubemap(cubemapPath)
+SkyboxWorldComponent::SkyboxWorldComponent(const String& panoramaPath, const eResourceSource source)
 {
-	gConsole.LogInfo("SkyboxWorldComponent::SkyboxWorldComponent cubemapPath: {}", cubemapPath[eCubemapSide::LEFT]);
+	EquirectPanorama = ResourceManager<TextureResource>::Load(panoramaPath, source, eTextureUsageType::HDR);
+
+	gConsole.LogInfo("SkyboxWorldComponent::SkyboxWorldComponent panoramaPath: {}", panoramaPath);
+}
+
+SkyboxWorldComponent::~SkyboxWorldComponent()
+{
+	ResourceManager<TextureResource>::Release(EquirectPanorama);
 }

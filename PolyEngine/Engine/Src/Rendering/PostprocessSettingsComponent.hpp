@@ -36,6 +36,7 @@ namespace Poly {
 		float Grain = 0.05f;
 		float Stripes = 0.15f;
 		float Vignette = 0.15f;
+		float Exposure = 1.0f;
 
 	};
 

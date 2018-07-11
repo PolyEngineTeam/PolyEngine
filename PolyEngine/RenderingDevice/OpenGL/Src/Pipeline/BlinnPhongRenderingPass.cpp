@@ -2,6 +2,7 @@
 
 #include "Proxy/GLMeshDeviceProxy.hpp"
 #include "Proxy/GLTextureDeviceProxy.hpp"
+#include <GLRenderingDevice.hpp>
 
 #include <ECS/World.hpp>
 #include <Rendering/Camera/CameraComponent.hpp>
@@ -16,8 +17,8 @@ const size_t MAX_LIGHT_COUNT_POINT = 8;
 const size_t MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 const size_t MAX_LIGHT_COUNT_SPOT = 8;
 
-BlinnPhongRenderingPass::BlinnPhongRenderingPass()
-: RenderingPassBase("Shaders/blinn-phongVert.shader", "Shaders/blinn-phongFrag.shader")
+BlinnPhongRenderingPass::BlinnPhongRenderingPass(const GLRenderingDevice* rdi)
+: RenderingPassBase(rdi, "Shaders/blinn-phong.vert.glsl", "Shaders/blinn-phong.frag.glsl")
 {
 	GetProgram().RegisterUniform("vec4", "uCameraPosition");
 	GetProgram().RegisterUniform("vec4", "uCameraForward");
@@ -69,7 +70,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 {
 
 	GetProgram().BindProgram();
-	const Matrix& mvp = camera->GetScreenFromWorld();
+	const Matrix& mvp = camera->GetClipFromWorld();
 	
 	const EntityTransform& cameraTrans = camera->GetTransform();
 	Vector CameraPos = cameraTrans.GetGlobalTranslation();
@@ -143,7 +144,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		const EntityTransform& transform = meshCmp->GetTransform();
 
 		if ( passType == ePassType::BY_MATERIAL &&
-			(meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::LIT))
+			(meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::PHONG))
 		{
 			continue;
 		}
@@ -160,27 +161,27 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
-			PhongMaterial material = meshCmp->GetMaterial(i);
-			GetProgram().SetUniform("uMaterial.Ambient", material.AmbientColor);
-			GetProgram().SetUniform("uMaterial.Diffuse", material.DiffuseColor);
-			GetProgram().SetUniform("uMaterial.Specular", material.SpecularColor);
-			GetProgram().SetUniform("uMaterial.Shininess", material.Shininess);
+			Material material = meshCmp->GetMaterial(i);
+			GetProgram().SetUniform("uMaterial.Ambient", Color::BLACK);
+			GetProgram().SetUniform("uMaterial.Diffuse", material.Albedo);
+			GetProgram().SetUniform("uMaterial.Specular", material.Albedo);
+			GetProgram().SetUniform("uMaterial.Shininess", 16.0f);
 
 			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
 			glBindVertexArray(meshProxy->GetVAO());
 
-			const Poly::TextureResource* DiffuseTexture = subMesh->GetMeshData().GetDiffTexture();
+			const Poly::TextureResource* DiffuseTexture = subMesh->GetMeshData().GetAlbedoMap();
 			GLuint TextureID = DiffuseTexture == nullptr
-				? FallbackWhiteTexture
+				? RDI->FallbackWhiteTexture
 				: static_cast<const GLTextureDeviceProxy*>(DiffuseTexture->GetTextureProxy())->GetTextureID();
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, TextureID);
-			GetProgram().SetUniform("uTexture", 0);
+			GetProgram().SetUniform("uDiffuseTexture", 0);
 
-			const Poly::TextureResource* SpecularMap = subMesh->GetMeshData().GetSpecularMap();
+			const Poly::TextureResource* SpecularMap = subMesh->GetMeshData().GetRoughnessMap();
 			GLuint SpecularMapID = SpecularMap == nullptr
-				? FallbackWhiteTexture
+				? RDI->FallbackWhiteTexture
 				: static_cast<const GLTextureDeviceProxy*>(SpecularMap->GetTextureProxy())->GetTextureID();
 
 			glActiveTexture(GL_TEXTURE1);
@@ -189,7 +190,7 @@ void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera,
 
 			const Poly::TextureResource* NormalMap = subMesh->GetMeshData().GetNormalMap();
 			GLuint NormalMapID = NormalMap == nullptr
-				? FallbackNormalMap
+				? RDI->FallbackNormalMap
 				: static_cast<const GLTextureDeviceProxy*>(NormalMap->GetTextureProxy())->GetTextureID();
 
 			glActiveTexture(GL_TEXTURE2);
