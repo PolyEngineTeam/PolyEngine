@@ -188,6 +188,18 @@ void ViewportInspectorWidget::StateChanged()
 
 //		viewport functions
 //------------------------------------------------------------------------------
+void ViewportInspectorWidget::enterEvent(QEvent* e)
+{
+	setFocus();
+}
+
+//------------------------------------------------------------------------------
+void ViewportInspectorWidget::leaveEvent(QEvent* e)
+{
+	clearFocus();
+}
+
+//------------------------------------------------------------------------------
 void ViewportInspectorWidget::resizeEvent(QResizeEvent* resizeEvent)
 {
 	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
@@ -213,8 +225,6 @@ void ViewportInspectorWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
 		return;
 	Manager->GetEngine()->UpdateMousePos(Poly::Vector2i(mouseEvent->pos().x(), mouseEvent->pos().y()));
-
-	gConsole.LogDebug("{}; {}", mouseEvent->pos().x(), mouseEvent->pos().y());
 }
 
 //------------------------------------------------------------------------------

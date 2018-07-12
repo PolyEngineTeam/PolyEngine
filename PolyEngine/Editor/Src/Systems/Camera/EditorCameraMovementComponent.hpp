@@ -14,13 +14,17 @@ class EditorCameraMovementComponent : public ComponentBase
 
 	friend void EditorCameraMovementSystem::Update(World*);
 public:
-	EditorCameraMovementComponent(float movementSpeed = 1.0f, float rotationSpeed = 1.0f);
+	EditorCameraMovementComponent(float movementSpeed = 1.0f, float rotationSpeed = 1.0f, float wheelSensitivity = 1.0f);
 
 	float GetMovementSpeed() const { return MovementSpeed; }
 	void SetMovementSpeed(float value) { MovementSpeed = value; }
 	float GetAngularVelocity() const { return RotationSpeed; }
+	void SetAngularVelocity(float value) { RotationSpeed = value; }
+	float GetWheelSensitivity() const { return WheelSensitivity; }
+	void SetWheelSensitivity(float value) { WheelSensitivity = value; }
 
 private:
 	float MovementSpeed = 1.0f;
 	float RotationSpeed = 1.0f;
+	float WheelSensitivity = 1.0f;
 };

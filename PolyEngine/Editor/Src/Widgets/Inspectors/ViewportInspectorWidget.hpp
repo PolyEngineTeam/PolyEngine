@@ -62,6 +62,8 @@ private:
 	QWidget* SDLWidget;
 	CustomSDLWindow WindowInSDL;
 
+	void enterEvent(QEvent *e) override;
+	void leaveEvent(QEvent *e) override;
 	void resizeEvent(QResizeEvent* resizeEvent) override;
 	void wheelEvent(QWheelEvent* wheelEvent) override;
 	void mouseMoveEvent(QMouseEvent* mouseEvent) override;
