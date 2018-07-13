@@ -2,7 +2,8 @@
 
 #include <QFileDialog>
 
-CreateProjectDialog::CreateProjectDialog()
+CreateProjectDialog::CreateProjectDialog(QWidget* parent)
+	: QDialog(parent)
 {
 	setSizeGripEnabled(false);
 	setModal(true);

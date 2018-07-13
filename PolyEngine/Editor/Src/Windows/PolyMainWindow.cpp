@@ -1,6 +1,7 @@
 #include "PolyEditorPCH.hpp"
 
 #include <QFileDialog>
+#include <QtWidgets/QStyleFactory>
 
 PolyMainWindow::PolyMainWindow()
 	: PolyWindow()
@@ -122,7 +123,7 @@ void PolyMainWindow::AddWindow()
 
 void PolyMainWindow::CreateProject()
 {
-	CreateProjectDialog dialog;
+	CreateProjectDialog dialog(this);
 	dialog.exec();
 
 	if (dialog.OperationCanceled())
@@ -135,7 +136,7 @@ void PolyMainWindow::CreateProject()
 
 void PolyMainWindow::OpenProject()
 {
-	QFileDialog fileDialog;
+	QFileDialog fileDialog(this);
 	fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
 	if (fileDialog.exec() == QDialog::Accepted)
 		gApp->ProjectMgr->Open(&fileDialog.selectedFiles()[0].toStdString()[0]);
@@ -143,7 +144,7 @@ void PolyMainWindow::OpenProject()
 
 void PolyMainWindow::UpdateProject()
 {
-	QFileDialog fileDialog;
+	QFileDialog fileDialog(this);
 	fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
 	fileDialog.setFileMode(QFileDialog::Directory);
 	if (fileDialog.exec() == QDialog::Accepted)

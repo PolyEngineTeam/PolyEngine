@@ -8,7 +8,7 @@
 class CreateProjectDialog : public QDialog
 {
 public:
-	CreateProjectDialog();
+	CreateProjectDialog(QWidget* parent);
 	~CreateProjectDialog();
 
 	bool OperationCanceled() { return Canceled; }
