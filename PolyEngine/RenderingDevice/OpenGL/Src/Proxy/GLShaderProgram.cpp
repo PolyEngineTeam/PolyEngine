@@ -1,4 +1,4 @@
-#include "Common/GLShaderProgram.hpp"
+#include "Proxy/GLShaderProgram.hpp"
 #include "Common/GLUtils.hpp"
 
 SILENCE_MSVC_WARNING(4805, "Warning originates in std::regex");
@@ -9,8 +9,22 @@ UNSILENCE_MSVC_WARNING()
 
 using namespace Poly;
 
-//------------------------------------------------------------------------------
-GLShaderProgram::GLShaderProgram(const String & vertex, const String & fragment)
+
+GLShaderProgram::GLShaderProgram(const String& compute)
+{
+	gConsole.LogDebug("Creating shader program {}", compute);
+	ProgramHandle = glCreateProgram();
+	if (ProgramHandle == 0) {
+		ASSERTE(false, "Creation of shader program failed! Exiting...");
+	}
+	LoadShader(eShaderUnitType::COMPUTE, compute);
+	CompileProgram();
+
+	for (eShaderUnitType type : IterateEnum<eShaderUnitType>())
+		AnalyzeShaderCode(type);
+}
+
+GLShaderProgram::GLShaderProgram(const String& vertex, const String& fragment)
 {
 	gConsole.LogDebug("Creating shader program {} {}", vertex, fragment);
 	ProgramHandle = glCreateProgram();
@@ -25,7 +39,6 @@ GLShaderProgram::GLShaderProgram(const String & vertex, const String & fragment)
 		AnalyzeShaderCode(type);
 }
 
-//------------------------------------------------------------------------------
 GLShaderProgram::GLShaderProgram(const String& vertex, const String& geometry, const String& fragment)
 {
 	gConsole.LogDebug("Creating shader program {} {} {}", vertex, geometry, fragment);
@@ -42,13 +55,13 @@ GLShaderProgram::GLShaderProgram(const String& vertex, const String& geometry, c
 			AnalyzeShaderCode(type);
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::BindProgram() const
 {
 	glUseProgram(ProgramHandle);
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::CompileProgram()
 {
 	glLinkProgram(ProgramHandle);
@@ -67,7 +80,7 @@ void GLShaderProgram::CompileProgram()
 	}
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::Validate()
 {
 	int status = 0;
@@ -85,7 +98,7 @@ void GLShaderProgram::Validate()
 	}
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 {
 	GLuint shader = glCreateShader(GetEnumFromShaderUnitType(type));
@@ -117,13 +130,13 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 	CHECK_GL_ERR();
 }
 
-//------------------------------------------------------------------------------
-size_t GLShaderProgram::GetProgramHandle() const
+
+unsigned int GLShaderProgram::GetProgramHandle() const
 {
 	return ProgramHandle;
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::RegisterUniform(const String& type, const String& name)
 {
 	if (Uniforms.find(name) != Uniforms.end())
@@ -140,18 +153,39 @@ void GLShaderProgram::RegisterUniform(const String& type, const String& name)
 	CHECK_GL_ERR();
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::SetUniform(const String& name, int val)
 {
 	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
 	{
-		HEAVY_ASSERTE(it->second.TypeName == "int" || it->second.TypeName == "sampler2D", "Invalid uniform type!");
+		bool isTypeValid = it->second.TypeName == "int" || it->second.TypeName == "sampler2D" || it->second.TypeName == "samplerCube";
+		if (!isTypeValid)
+		{
+			gConsole.LogError("Invalid uniform type int for {}", name);
+		}
+		HEAVY_ASSERTE(isTypeValid, "Invalid uniform type!");
 		glUniform1i(it->second.Location, val);
 	}
 }
 
-//------------------------------------------------------------------------------
+
+void GLShaderProgram::SetUniform(const String& name, uint val)
+{
+	auto it = Uniforms.find(name);
+	if (it != Uniforms.end())
+	{
+		bool isTypeValid = it->second.TypeName == "uint";
+		if (!isTypeValid)
+		{
+			gConsole.LogError("Invalid uniform type uint for {}", name);
+		}
+		HEAVY_ASSERTE(isTypeValid, "Invalid uniform type!");
+		glUniform1i(it->second.Location, val);
+	}
+}
+
+
 void GLShaderProgram::SetUniform(const String& name, float val)
 {
 	auto it = Uniforms.find(name);
@@ -162,7 +196,7 @@ void GLShaderProgram::SetUniform(const String& name, float val)
 	}
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::SetUniform(const String & name, float val1, float val2)
 {
 	auto it = Uniforms.find(name);
@@ -173,7 +207,7 @@ void GLShaderProgram::SetUniform(const String & name, float val1, float val2)
 	}
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::SetUniform(const String& name, const Vector& val)
 {
 	auto it = Uniforms.find(name);
@@ -184,7 +218,7 @@ void GLShaderProgram::SetUniform(const String& name, const Vector& val)
 	}
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::SetUniform(const String& name, const Color& val)
 {
 	auto it = Uniforms.find(name);
@@ -195,7 +229,7 @@ void GLShaderProgram::SetUniform(const String& name, const Color& val)
 	}
 }
 
-//------------------------------------------------------------------------------
+
 void GLShaderProgram::SetUniform(const String& name, const Matrix& val)
 {
 	auto it = Uniforms.find(name);
@@ -206,7 +240,26 @@ void GLShaderProgram::SetUniform(const String& name, const Matrix& val)
 	}
 }
 
-//------------------------------------------------------------------------------
+void GLShaderProgram::BindSampler(const String& name, int samplerID, int textureID)
+{
+	HEAVY_ASSERTE(samplerID >= 0, "Invalid sampler ID!");
+	HEAVY_ASSERTE(textureID > 0, "Invalid texture resource ID!");
+
+	glActiveTexture(GL_TEXTURE0 + samplerID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	SetUniform(name, samplerID);
+}
+
+void GLShaderProgram::BindSamplerCube(const String& name, int samplerID, int cubemapID)
+{
+	HEAVY_ASSERTE(samplerID >= 0, "Invalid sampler ID!");
+	HEAVY_ASSERTE(cubemapID > 0, "Invalid cubemap resource ID!");
+
+	glActiveTexture(GL_TEXTURE0 + samplerID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapID);
+	SetUniform(name, samplerID);
+}
+
 GLenum GLShaderProgram::GetEnumFromShaderUnitType(eShaderUnitType type)
 {
 	switch (type)
@@ -214,13 +267,14 @@ GLenum GLShaderProgram::GetEnumFromShaderUnitType(eShaderUnitType type)
 		case eShaderUnitType::VERTEX: return GL_VERTEX_SHADER;
 		case eShaderUnitType::GEOMETRY: return GL_GEOMETRY_SHADER;
 		case eShaderUnitType::FRAGMENT: return GL_FRAGMENT_SHADER;
+		case eShaderUnitType::COMPUTE: return GL_COMPUTE_SHADER;
 		default:
 			ASSERTE(false, "Invalid type!");
 			return -1;
 	}
 }
 
-//------------------------------------------------------------------------------
+
 void Poly::GLShaderProgram::AnalyzeShaderCode(eShaderUnitType type)
 {
 	static const std::regex uniformRegex(R"(uniform\s+(\w+)\s+(\w+)\s*;)", std::regex::ECMAScript);

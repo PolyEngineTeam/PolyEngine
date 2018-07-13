@@ -72,7 +72,7 @@ void Text2D::UpdateDeviceBuffers() const
 		TextFieldBufferProxy->SetContent(letters.GetSize(), letters.GetData());
 }
 
-const ITextureDeviceProxy * Poly::Text2D::GetFontTextureProxy() const
+const ITextureDeviceProxy* Poly::Text2D::GetFontTextureProxy() const
 {
 	return Font->GetFace(FontSize).TextureProxy.get();
 }

@@ -61,7 +61,7 @@ UNSILENCE_MSVC_WARNING()
 #include "Controls/CoreControls/VectorControl.hpp"
 #include "Controls/CoreControls/Vector2Control.hpp"
 
-#include "Controls/EngineControls/ResourceControl.hpp"
+#include "Controls/EngineControls/MeshResourceControl.hpp"
 #include "Controls/EngineControls/TransformControl.hpp"
 
 // dialogs

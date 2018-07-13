@@ -1,10 +1,11 @@
 #pragma once
 
 #include "ECS/ComponentBase.hpp"
-#include "Resources/CubemapResource.hpp"
 
 namespace Poly
 {
+	class TextureResource;
+
 	class ENGINE_DLLEXPORT SkyboxWorldComponent : public ComponentBase
 	{
 		RTTI_DECLARE_TYPE_DERIVED(SkyboxWorldComponent, ComponentBase)
@@ -13,11 +14,13 @@ namespace Poly
 		}
 
 	public:
-		SkyboxWorldComponent(const EnumArray<String, eCubemapSide> cubemapPath);
-		const CubemapResource& GetCubemap() const { return Cubemap; }
+		SkyboxWorldComponent(const String& panoramaPath, const eResourceSource source);
+		~SkyboxWorldComponent();
+		
+		const TextureResource* GetPanorama() const { return EquirectPanorama; }
 
 	private:
-		CubemapResource Cubemap;
+		TextureResource* EquirectPanorama = nullptr;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, SkyboxWorldComponent)

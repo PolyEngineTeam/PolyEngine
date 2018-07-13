@@ -8,7 +8,6 @@ namespace Poly
 {
 	class GLParticleDeviceProxy : public IParticleDeviceProxy
 	{
-		friend class GLRenderingDevice;
 	private:
 		enum class eBufferType {
 			VERTEX_AND_UV_BUFFER,

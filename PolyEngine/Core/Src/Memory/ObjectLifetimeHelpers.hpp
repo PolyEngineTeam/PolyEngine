@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 namespace Poly
 {
 	//wondering(vuko): proposed names: Object (Object::Create, Object::Destroy), ???

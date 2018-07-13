@@ -59,8 +59,6 @@ void RTTIInspectorWidget::ReloadInspector(bool debug)
 		void* ptr = ((char*)Object) + child.Offset;
 
 		if (child.CoreType == RTTI::eCorePropertyType::CUSTOM)
-			//&& !IsOfType<EntityTransform>(&child)
-			//&& !child.Type.isTypeDerivedFrom<ResourceBase>())
 		{
 			Layout->addWidget(AddChild((RTTIBase*)ptr, child, debug), row, 0, 1, 2);
 		}
@@ -93,8 +91,6 @@ SectionContainer* RTTIInspectorWidget::AddChild(RTTIBase* obj, const RTTI::Prope
 		void* ptr = ((char*)Object) + child.Offset;
 
 		if (child.CoreType == RTTI::eCorePropertyType::CUSTOM)
-			//&& !IsOfType<EntityTransform>(&child)
-			//&& !child.Type.isTypeDerivedFrom<ResourceBase>())
 		{
 			Layout->addWidget(AddChild((RTTIBase*)ptr, child, debug), row, 0, 1, 2);
 		}
@@ -112,25 +108,15 @@ void RTTIInspectorWidget::AddItem(QGridLayout* parent, int row, void* ptr, const
 {
 	ControlBase* field;
 
-	if (prop.CoreType == RTTI::eCorePropertyType::CUSTOM)
-	{
-		// TODO(squares): uncomment this when ptr serilization will be available
-		//if (IsOfType<EntityTransform>(&prop))
-		//	field = new TransformControl(this);
-		//else if (prop.Type.isTypeDerivedFrom<ResourceBase>())
-		//	field = new ResourceControl(this);
-		//else
-			field = new PlaceHolderControl(this);
-	}
+	if (prop.CoreType == RTTI::eCorePropertyType::UNHANDLED)
+		field = new MeshResourceControl(this);
 	else
 		field = ControlBase::CreateControl(this, prop.CoreType);
 
 	field->SetObject(ptr, &prop);
 
 	if (field->ContainsLabel())
-	{
 		parent->addWidget(field, row, 0, 1, 2);
-	}
 	else
 	{
 		QLabel* label = new QLabel();

@@ -121,7 +121,7 @@ void Poly::FontResource::LoadFace(size_t height) const
 	ASSERTE(estimatedTextureHeight > 0, "Texture packing for font failed!");
 
 	// Create texture 2D for the face
-	face.TextureProxy = gEngine->GetRenderingDevice()->CreateTexture(TEXTURE_WIDTH, estimatedTextureHeight, eTextureUsageType::FONT);
+	face.TextureProxy = gEngine->GetRenderingDevice()->CreateTexture(TEXTURE_WIDTH, estimatedTextureHeight, 1, eTextureUsageType::FONT);
 
 	// Store all glyphs in it and maintain the references in Characters map
 	currRowLen = 0;
@@ -171,7 +171,7 @@ void Poly::FontResource::LoadFace(size_t height) const
 		ASSERTE(face.FTFace->glyph->bitmap.pitch >= 0 , "Negative pitch is not supported!");
 
 		if(glyphSize.width > 0 && glyphSize.height > 0)
-			face.TextureProxy->SetSubContent(glyphSize.width, glyphSize.height, xoffset, yoffset, eTextureDataFormat::RED, face.FTFace->glyph->bitmap.buffer);
+			face.TextureProxy->SetSubContent(glyphSize.width, glyphSize.height, xoffset, yoffset, face.FTFace->glyph->bitmap.buffer);
 	}
 
 	gConsole.LogDebug("Face of size {} for font {} loaded sucessfully! Texture size: {} x {}", height, FontPath, TEXTURE_WIDTH, estimatedTextureHeight);

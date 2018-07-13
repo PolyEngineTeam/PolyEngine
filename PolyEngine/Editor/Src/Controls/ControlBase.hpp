@@ -64,7 +64,7 @@ public:
 	void SetObject(void* ptr, const RTTI::Property* prop);
 
 	// Reset control to initial state;
-	virtual void Reset() = 0;
+	virtual void Reset() { Object = nullptr; DisableEdit = false; Property = nullptr; ASAPUpdate = true; }
 
 	// Call this to update assigned object from current control state.
 	// If ControlBase::ASAPUpdate is set to true You probably won't need to use this fnction
@@ -88,7 +88,7 @@ public:
 
 	// Use this as slot to connect to Your custom controls' signals like editingFinished in QLineEdit.
 	// @see StringControl::StringControl
-	virtual void Confirm() = 0;
+	virtual void Confirm() {};
 
 	// Returns ptr to newly created proper control for given core type.
 	static ControlBase* CreateControl(QWidget* parent, RTTI::eCorePropertyType type)

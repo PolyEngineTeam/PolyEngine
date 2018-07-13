@@ -17,7 +17,6 @@ public:
 
 	void SetText(String text) { Field->setText(text.GetCStr()); }
 
-protected:
 	void Confirm() override;
 
 private:

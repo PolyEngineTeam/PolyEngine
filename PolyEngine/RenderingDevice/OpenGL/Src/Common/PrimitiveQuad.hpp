@@ -4,10 +4,10 @@
 
 namespace Poly
 {
-	struct PostprocessQuad : public BaseObject<>
+	struct PrimitiveQuad : public BaseObject<>
 	{
-		PostprocessQuad();
-		~PostprocessQuad();
+		PrimitiveQuad();
+		~PrimitiveQuad();
 	
 		GLuint VAO = 0;
 		GLuint VBO = 0;
