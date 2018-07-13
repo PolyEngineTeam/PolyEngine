@@ -1,5 +1,7 @@
 #include "PolyEditorPCH.hpp"
 
+#include "Math/Vector2f.hpp"
+
 ASSIGN_CONTROL(Vector2Control, RTTI::eCorePropertyType::VECTOR_2F, Vector2f)
 ASSIGN_CONTROL(Vector2Control, RTTI::eCorePropertyType::VECTOR_2I, Vector2i)
 
@@ -30,14 +32,20 @@ void Vector2Control::UpdateObject() {
 	switch (Property->CoreType)
 	{
 	case RTTI::eCorePropertyType::VECTOR_2F:
-		reinterpret_cast<Vector2f*>(Object)->X = Field[0]->text().toFloat();
-		reinterpret_cast<Vector2f*>(Object)->Y = Field[1]->text().toFloat();
+	{
+		Vector2f* vector = reinterpret_cast<Vector2f*>(Object);
+		vector->X = Field[0]->text().toFloat();
+		vector->Y = Field[1]->text().toFloat();
 		break;
+	}
 
 	case RTTI::eCorePropertyType::VECTOR_2I:
-		reinterpret_cast<Vector2i*>(Object)->X = Field[0]->text().toInt();
-		reinterpret_cast<Vector2i*>(Object)->Y = Field[1]->text().toInt();
+	{
+		Vector2i* vector = reinterpret_cast<Vector2i*>(Object);
+		vector->X = Field[0]->text().toInt();
+		vector->Y = Field[1]->text().toInt();
 		break;
+	}
 
 	default:
 		ASSERTE(false, "Not supported type");
@@ -50,14 +58,20 @@ void Vector2Control::UpdateControl() {
 	switch (Property->CoreType)
 	{
 	case RTTI::eCorePropertyType::VECTOR_2F:
-		Field[0]->setText(QString::number(reinterpret_cast<Vector2f*>(Object)->X));
-		Field[1]->setText(QString::number(reinterpret_cast<Vector2f*>(Object)->Y));
+	{
+		Vector2f* vector = reinterpret_cast<Vector2f*>(Object);
+		Field[0]->setText(QString::number(vector->X));
+		Field[1]->setText(QString::number(vector->Y));
 		break;
+	}
 
 	case RTTI::eCorePropertyType::VECTOR_2I:
-		Field[0]->setText(QString::number(reinterpret_cast<Vector2i*>(Object)->X));
-		Field[1]->setText(QString::number(reinterpret_cast<Vector2i*>(Object)->Y));
+	{
+		Vector2i* vector = reinterpret_cast<Vector2i*>(Object);
+		Field[0]->setText(QString::number(vector->X));
+		Field[1]->setText(QString::number(vector->Y));
 		break;
+	}
 
 	default:
 		ASSERTE(false, "Not supported type");

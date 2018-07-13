@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Controls/ControlBase.hpp"
-#include "Math/Vector2f.hpp"
 
 #include <QtWidgets/qlineedit.h>
 #include <QtWidgets/qlabel.h>
