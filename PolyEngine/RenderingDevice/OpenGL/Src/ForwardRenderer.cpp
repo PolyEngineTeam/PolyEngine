@@ -64,7 +64,7 @@ void ForwardRenderer::Render(const SceneView& sceneView)
 	PostRender(sceneView.WorldData, sceneView.CameraCmp, sceneView.Rect);
 }
 
-void ForwardRenderer::PostRender(World* world, const CameraComponent* cameraCmp, const AARect& rect)
+void ForwardRenderer::PostRender(Scene* world, const CameraComponent* cameraCmp, const AARect& rect)
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDisable(GL_BLEND);
@@ -74,7 +74,7 @@ void ForwardRenderer::PostRender(World* world, const CameraComponent* cameraCmp,
 	RDI->PostprocessRenderingPasses[GLRenderingDevice::ePostprocessRenderPassType::FOREGROUND_LIGHT]->Run(world, cameraCmp, rect);
 }
 
-void ForwardRenderer::RenderLit(World* world, const AARect& rect, const CameraComponent* cameraCmp) const
+void ForwardRenderer::RenderLit(Scene* world, const AARect& rect, const CameraComponent* cameraCmp) const
 {
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
@@ -88,7 +88,7 @@ void ForwardRenderer::RenderLit(World* world, const AARect& rect, const CameraCo
 	RDI->GeometryRenderingPasses[GLRenderingDevice::eGeometryRenderPassType::UNLIT]->Run(world, cameraCmp, rect);
 }
 
-void ForwardRenderer::RenderUnlit(World* world, const AARect& rect, const CameraComponent* cameraCmp) const
+void ForwardRenderer::RenderUnlit(Scene* world, const AARect& rect, const CameraComponent* cameraCmp) const
 {
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
@@ -109,7 +109,7 @@ void ForwardRenderer::RenderUnlit(World* world, const AARect& rect, const Camera
 	RDI->GeometryRenderingPasses[GLRenderingDevice::eGeometryRenderPassType::TRANSPARENT_GEOMETRY]->Run(world, cameraCmp, rect);
 }
 
-void ForwardRenderer::RenderWireframe(World* world, const AARect& rect, const CameraComponent* cameraCmp) const
+void ForwardRenderer::RenderWireframe(Scene* world, const AARect& rect, const CameraComponent* cameraCmp) const
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -123,7 +123,7 @@ void ForwardRenderer::RenderWireframe(World* world, const AARect& rect, const Ca
 	RDI->GeometryRenderingPasses[GLRenderingDevice::eGeometryRenderPassType::TEXT_2D]->Run(world, cameraCmp, rect);
 }
 
-void ForwardRenderer::RenderNormals(World* world, const AARect& rect, const CameraComponent* cameraCmp) const
+void ForwardRenderer::RenderNormals(Scene* world, const AARect& rect, const CameraComponent* cameraCmp) const
 {
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
@@ -144,7 +144,7 @@ void ForwardRenderer::RenderNormals(World* world, const AARect& rect, const Came
 	RDI->GeometryRenderingPasses[GLRenderingDevice::eGeometryRenderPassType::TRANSPARENT_GEOMETRY]->Run(world, cameraCmp, rect);
 }
 
-void ForwardRenderer::RenderNormalsWireframe(World* world, const AARect& rect, const CameraComponent* cameraCmp) const
+void ForwardRenderer::RenderNormalsWireframe(Scene* world, const AARect& rect, const CameraComponent* cameraCmp) const
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 

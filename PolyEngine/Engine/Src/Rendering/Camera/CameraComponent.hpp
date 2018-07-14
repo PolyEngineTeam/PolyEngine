@@ -18,7 +18,7 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT CameraComponent : public ComponentBase
 	{
-		friend void CameraSystem::CameraUpdatePhase(World*);
+		friend void CameraSystem::CameraUpdatePhase(Scene*);
 	public:
 		CameraComponent(Angle fov, float zNear, float zFar);
 		CameraComponent(float top, float bottom, float left, float right, float zNear, float zFar);

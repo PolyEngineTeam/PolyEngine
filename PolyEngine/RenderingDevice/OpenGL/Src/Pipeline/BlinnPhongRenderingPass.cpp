@@ -66,7 +66,7 @@ BlinnPhongRenderingPass::BlinnPhongRenderingPass(const GLRenderingDevice* rdi)
 	GetProgram().RegisterUniform("int", "uSpotLightCount");
 }
 
-void BlinnPhongRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
+void BlinnPhongRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
 
 	GetProgram().BindProgram();

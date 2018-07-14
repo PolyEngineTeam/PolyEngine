@@ -14,7 +14,7 @@ namespace Poly
 	struct SceneView;
 	class CameraComponent;
 	class AARect;
-	class World;
+	class Scene;
 	class RenderingPassBase;
 	class RenderingTargetBase;
 	class IRendererInterface;
@@ -81,7 +81,7 @@ namespace Poly
 
 		void Init() override;
 		void Resize(const ScreenSize& size) override;
-		void RenderWorld(World* world) override;
+		void RenderWorld(Scene* world) override;
 		const ScreenSize& GetScreenSize() const override { return ScreenDim; }
 
 		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, size_t channels, eTextureUsageType usage) override;

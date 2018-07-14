@@ -19,7 +19,7 @@ TransparentRenderingPass::TransparentRenderingPass(const GLRenderingDevice* rdi)
 {
 }
 
-void TransparentRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
+void TransparentRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
 {
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	//const TransformComponent* CameraTransform = camera->GetSibling<TransformComponent>();

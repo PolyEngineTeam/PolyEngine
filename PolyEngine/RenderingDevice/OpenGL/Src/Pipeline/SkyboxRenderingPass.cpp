@@ -18,7 +18,7 @@ SkyboxRenderingPass::SkyboxRenderingPass(const GLRenderingDevice* rdi)
 	GetProgram().RegisterUniform("mat4", "uClipFromWorld");
 }
 
-void SkyboxRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
+void SkyboxRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
 {
 	const SkyboxWorldComponent* SkyboxWorldCmp = world->GetWorldComponent<SkyboxWorldComponent>();
 	if (SkyboxWorldCmp != nullptr)

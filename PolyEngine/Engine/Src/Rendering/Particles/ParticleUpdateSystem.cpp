@@ -5,7 +5,7 @@
 
 using namespace Poly;
 
-void ParticleUpdateSystem::ParticleUpdatePhase(World* world)
+void ParticleUpdateSystem::ParticleUpdatePhase(Scene* world)
 {
 	// Render meshes
 	for (auto compTuple : world->IterateComponents<ParticleComponent>())
@@ -18,7 +18,7 @@ void ParticleUpdateSystem::ParticleUpdatePhase(World* world)
 	}
 }
 
-void ParticleUpdateSystem::EmitterEmit(World* world, ParticleEmitter* emitter, ParticleComponent* particleCmp)
+void ParticleUpdateSystem::EmitterEmit(Scene* world, ParticleEmitter* emitter, ParticleComponent* particleCmp)
 {
 	size_t size = emitter->ToEmit;
 	emitter->ToEmit = 0;
@@ -53,7 +53,7 @@ void ParticleUpdateSystem::EmitterEmit(World* world, ParticleEmitter* emitter, P
 	}
 }
 
-void ParticleUpdateSystem::EmitterUpdate(World* world, ParticleEmitter* emitter)
+void ParticleUpdateSystem::EmitterUpdate(Scene* world, ParticleEmitter* emitter)
 {
 	// gConsole.LogInfo("ParticleEmitter::Update {}/{}", emitter->ParticlesPool.GetSize(), emitter->settings.MaxSize);
 
@@ -103,7 +103,7 @@ void ParticleUpdateSystem::EmitterUpdate(World* world, ParticleEmitter* emitter)
 	}
 }
 
-void ParticleUpdateSystem::EmitterRecreateBuffer(World* world, ParticleEmitter* emitter)
+void ParticleUpdateSystem::EmitterRecreateBuffer(Scene* world, ParticleEmitter* emitter)
 {
 	emitter->ParticleProxy->SetContent(*emitter);
 }

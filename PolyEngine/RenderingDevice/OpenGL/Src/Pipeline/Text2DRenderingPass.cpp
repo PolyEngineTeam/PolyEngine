@@ -29,7 +29,7 @@ Text2DRenderingPass::Text2DRenderingPass(const GLRenderingDevice* rdi)
 
 }
 
-void Text2DRenderingPass::OnRun(World* world, const CameraComponent* /*camera*/, const AARect& rect, ePassType /*passType = ePassType::GLOBAL*/ )
+void Text2DRenderingPass::OnRun(Scene* world, const CameraComponent* /*camera*/, const AARect& rect, ePassType /*passType = ePassType::GLOBAL*/ )
 {
 	// Text drawing
 	glEnable(GL_BLEND);

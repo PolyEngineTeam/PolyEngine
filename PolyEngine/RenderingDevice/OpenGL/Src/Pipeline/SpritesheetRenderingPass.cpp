@@ -28,7 +28,7 @@ SpritesheetRenderingPass::SpritesheetRenderingPass(const GLRenderingDevice* rdi)
 	GetProgram().RegisterUniform("vec4", "uColor");
 }
 
-void SpritesheetRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
+void SpritesheetRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
 {
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	const Matrix& mv = camera->GetViewFromWorld();

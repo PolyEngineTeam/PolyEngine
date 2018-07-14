@@ -12,18 +12,6 @@ namespace Poly {
 				return instance;
 			}
 
-			TypeInfo TypeManager::RegisterOrGetType(const char* name, const Dynarray<TypeInfo>& baseClassList) {
-				if (NameToTypeMap.find(name) != NameToTypeMap.end())
-					return NameToTypeMap[name];
-				else {
-					TypeInfo ti(++Counter);
-					NameToTypeMap.insert(std::make_pair(name, ti));
-					TypeToNameMap.insert(std::make_pair(ti, name));
-					InheritanceListMap[ti] = baseClassList;
-					return ti;
-				}
-			}
-
 			bool TypeManager::IsTypeDerivedFrom(const TypeInfo& checked, const TypeInfo& from) const {
 				ASSERTE(checked.IsValid(), "Checked type is not a valid TypeInfo");
 				ASSERTE(from.IsValid(), "From type is not a valid TypeInfo");
@@ -47,11 +35,28 @@ namespace Poly {
 				return it->second;
 			}
 
+			const std::function<void*(void*)>& TypeManager::GetConstructor(const TypeInfo & typeInfo) const
+			{
+				const auto& it = ConstructorsMap.find(typeInfo);
+				ASSERTE(it != ConstructorsMap.end(), "Type has no name! Not registered?");
+				return it->second;
+			}
+
 		} // namespace Impl
 
 		TypeInfo::TypeInfo(long long id) : ID(id) {}
 
 		const char* TypeInfo::GetTypeName() const { return Impl::TypeManager::Get().GetTypeName(*this); }
+
+		void * TypeInfo::CreateInstance()
+		{
+			return Impl::TypeManager::Get().GetConstructor(*this)(nullptr);
+		}
+
+		void * TypeInfo::CreateInstanceInPlace(void * ptr)
+		{
+			return Impl::TypeManager::Get().GetConstructor(*this)(ptr);
+		}
 
 		//------------------------------------------------------------------------------
 		std::ostream& operator<< (std::ostream& stream, const TypeInfo& typeInfo) {

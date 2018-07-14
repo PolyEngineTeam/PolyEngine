@@ -2,10 +2,10 @@
 
 namespace Poly
 {
-	class World;
+	class Scene;
 
 	namespace CameraSystem
 	{
-		void CameraUpdatePhase(World* world);
+		void CameraUpdatePhase(Scene* world);
 	}
 }

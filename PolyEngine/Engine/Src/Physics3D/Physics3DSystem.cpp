@@ -8,7 +8,7 @@
 #include "Physics3DShapes.hpp"
 
 //------------------------------------------------------------------------------
-void Poly::Physics3DSystem::Physics3DUpdatePhase(World* world)
+void Poly::Physics3DSystem::Physics3DUpdatePhase(Scene* world)
 {
 	// get physics world component and add telta time to delta overflow
 	Physics3DWorldComponent* physicsWorldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
@@ -135,7 +135,7 @@ Poly::Vector Poly::Physics3DSystem::CalculateInertia(const Physics3DShape* shape
 }
 
 //------------------------------------------------------------------------------
-void Poly::Physics3DSystem::SetCollisionGroup(World* world, Entity* entity, EnumFlags<eCollisionGroup> group)
+void Poly::Physics3DSystem::SetCollisionGroup(Scene* world, Entity* entity, EnumFlags<eCollisionGroup> group)
 {
 	// get template
 	Collider3DComponent* cmp = world->GetComponent<Collider3DComponent>(entity);
@@ -155,7 +155,7 @@ void Poly::Physics3DSystem::SetCollisionGroup(World* world, Entity* entity, Enum
 }
 
 //------------------------------------------------------------------------------
-void Poly::Physics3DSystem::SetCollisionMask(World* world, Entity* entity, EnumFlags<eCollisionGroup> mask)
+void Poly::Physics3DSystem::SetCollisionMask(Scene* world, Entity* entity, EnumFlags<eCollisionGroup> mask)
 {
 	// get template
 	Collider3DComponent* cmp = world->GetComponent<Collider3DComponent>(entity);
@@ -176,7 +176,7 @@ void Poly::Physics3DSystem::SetCollisionMask(World* world, Entity* entity, EnumF
 }
 
 //------------------------------------------------------------------------------
-void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
+void Poly::Physics3DSystem::EnsureInit(Scene* world, Entity* entity)
 {
 	Collider3DComponent* collider = world->GetComponent<Collider3DComponent>(entity);
 	Rigidbody3DComponent* rigidbody = world->GetComponent<Rigidbody3DComponent>(entity);
@@ -278,7 +278,7 @@ void Poly::Physics3DSystem::EnsureInit(World* world, Entity* entity)
 }
 
 //------------------------------------------------------------------------------
-void Poly::Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool enablePhysics)
+void Poly::Physics3DSystem::RegisterComponent(Scene* world, Entity* entity, bool enablePhysics)
 {
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
 	Rigidbody3DComponent* rigidbody = world->GetComponent<Rigidbody3DComponent>(entity);
@@ -307,7 +307,7 @@ void Poly::Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool
 }
 
 //------------------------------------------------------------------------------
-void Poly::Physics3DSystem::UnregisterComponent(World* world, Entity* entity)
+void Poly::Physics3DSystem::UnregisterComponent(Scene* world, Entity* entity)
 {
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
 	Rigidbody3DComponent* rigidbody = world->GetComponent<Rigidbody3DComponent>(entity);
@@ -332,14 +332,14 @@ void Poly::Physics3DSystem::UnregisterComponent(World* world, Entity* entity)
 }
 
 //------------------------------------------------------------------------------
-Poly::ContactResult Poly::Physics3DSystem::ContactPair(World* world, Entity* firstEntity, Entity* secondEntity)
+Poly::ContactResult Poly::Physics3DSystem::ContactPair(Scene* world, Entity* firstEntity, Entity* secondEntity)
 {
 		// TODO(squares): implement this
 	return ContactResult();
 }
 
 //------------------------------------------------------------------------------
-Poly::ContactPairResults Poly::Physics3DSystem::GetAllContactPairs(World* world)
+Poly::ContactPairResults Poly::Physics3DSystem::GetAllContactPairs(Scene* world)
 {
 	Physics3DWorldComponent* worldCmp = world->GetWorldComponent<Physics3DWorldComponent>();
 
@@ -380,7 +380,7 @@ Poly::ContactPairResults Poly::Physics3DSystem::GetAllContactPairs(World* world)
 }
 
 //------------------------------------------------------------------------------
-Poly::RaycastResult Poly::Physics3DSystem::AllHitsRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith)
+Poly::RaycastResult Poly::Physics3DSystem::AllHitsRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith)
 {
 	RaycastResult result;
 
@@ -416,7 +416,7 @@ Poly::RaycastResult Poly::Physics3DSystem::AllHitsRaycast(World* world, const Ve
 }
 
 //------------------------------------------------------------------------------
-Poly::RaycastResult Poly::Physics3DSystem::ClosestHitRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith)
+Poly::RaycastResult Poly::Physics3DSystem::ClosestHitRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith)
 {
 	RaycastResult result;
 

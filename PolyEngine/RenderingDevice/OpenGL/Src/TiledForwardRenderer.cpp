@@ -778,7 +778,7 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void TiledForwardRenderer::RenderParticleUnlit(World* world, const CameraComponent* cameraCmp)
+void TiledForwardRenderer::RenderParticleUnlit(Scene* world, const CameraComponent* cameraCmp)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::RenderParticleUnlit");
 

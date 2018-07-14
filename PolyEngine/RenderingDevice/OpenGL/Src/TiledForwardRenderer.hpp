@@ -115,7 +115,7 @@ namespace Poly {
 
 		void RenderTranslucentLit(const SceneView& sceneView);
 		
-		void RenderParticleUnlit(World* world, const CameraComponent* cameraCmp);
+		void RenderParticleUnlit(Scene* world, const CameraComponent* cameraCmp);
 
 		void LinearizeDepth(const SceneView& sceneView);
 

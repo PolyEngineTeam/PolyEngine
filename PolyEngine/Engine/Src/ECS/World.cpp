@@ -2,21 +2,23 @@
 
 using namespace Poly;
 
+RTTI_DEFINE_TYPE(::Poly::Scene);
+
 //------------------------------------------------------------------------------
-World::World()
+Scene::Scene()
 	: EntitiesAllocator(MAX_ENTITY_COUNT)
 {
 	memset(ComponentAllocators, 0, sizeof(IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
 
-	RootEntity = SpawnEntityInternal();
+	RootEntity.reset(SpawnEntityInternal());
 }
 
 //------------------------------------------------------------------------------
-World::~World()
+Scene::~Scene()
 {
 	// copy entities
 	if(RootEntity)
-		DestroyEntity(RootEntity.Get());
+		DestroyEntity(RootEntity.release());
 	
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT; ++i)
 	{
@@ -26,22 +28,23 @@ World::~World()
 }
 
 //------------------------------------------------------------------------------
-Entity* World::SpawnEntity()
+Entity* Scene::SpawnEntity()
 {
 	Entity* ent = SpawnEntityInternal();
+	ent->SetParent(RootEntity.get());
 	return ent;
 }
 
 //------------------------------------------------------------------------------
-Entity * Poly::World::SpawnEntityInternal()
+Entity * Poly::Scene::SpawnEntityInternal()
 {
 	Entity* ent = EntitiesAllocator.Alloc();
-	::new(ent) Entity(this, RootEntity.Get());
+	::new(ent) Entity(this);
 	return ent;
 }
 
 //------------------------------------------------------------------------------
-void World::DestroyEntity(Entity* entity)
+void Scene::DestroyEntity(Entity* entity)
 {
 	HEAVY_ASSERTE(entity, "Invalid entity ID");
 
@@ -60,13 +63,13 @@ void World::DestroyEntity(Entity* entity)
 }
 
 //------------------------------------------------------------------------------
-bool World::HasWorldComponent(size_t ID) const
+bool Scene::HasWorldComponent(size_t ID) const
 {
 	return RootEntity->HasComponent(ID);
 }
 
 //------------------------------------------------------------------------------
-void World::RemoveComponentById(Entity* ent, size_t id)
+void Scene::RemoveComponentById(Entity* ent, size_t id)
 {
 	HEAVY_ASSERTE(ent->Components[id], "Removing not present component");
 	ent->Components[id]->~ComponentBase();

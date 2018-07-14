@@ -4,7 +4,7 @@
 
 #include "CameraSystem.hpp"
 
-void Poly::CameraSystem::CameraUpdatePhase(World* world)
+void Poly::CameraSystem::CameraUpdatePhase(Scene* world)
 {
 	ScreenSize screen = gEngine->GetRenderingDevice()->GetScreenSize();
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())

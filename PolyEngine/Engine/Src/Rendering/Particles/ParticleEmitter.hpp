@@ -16,9 +16,9 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT ParticleEmitter : public BaseObject<>
 	{
-		friend void ParticleUpdateSystem::EmitterEmit(World*, ParticleEmitter*, ParticleComponent*);
-		friend void ParticleUpdateSystem::EmitterUpdate(World*, ParticleEmitter*);
-		friend void ParticleUpdateSystem::EmitterRecreateBuffer(World*, ParticleEmitter*);
+		friend void ParticleUpdateSystem::EmitterEmit(Scene*, ParticleEmitter*, ParticleComponent*);
+		friend void ParticleUpdateSystem::EmitterUpdate(Scene*, ParticleEmitter*);
+		friend void ParticleUpdateSystem::EmitterRecreateBuffer(Scene*, ParticleEmitter*);
 	public:
 
 		enum class eSimulationSpace

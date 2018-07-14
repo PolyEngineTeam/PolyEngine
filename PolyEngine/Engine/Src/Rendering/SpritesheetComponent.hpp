@@ -22,7 +22,7 @@ namespace Poly {
 	class ENGINE_DLLEXPORT SpritesheetComponent : public ComponentBase
 	{
 	public:
-		friend void RenderingSystem::RenderingPhase(World*);
+		friend void RenderingSystem::RenderingPhase(Scene*);
 	public:
 		SpritesheetComponent(const SpritesheetSettings& settings);
 		virtual ~SpritesheetComponent();

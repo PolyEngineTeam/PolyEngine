@@ -2,16 +2,16 @@
 
 namespace Poly
 {
-	class World;
+	class Scene;
 	class EntityTransform;
 	class ParticleComponent;
 	class ParticleEmitter;
 
 	namespace ParticleUpdateSystem
 	{
-		void ParticleUpdatePhase(World* world);
-		void EmitterEmit(World*, ParticleEmitter*, ParticleComponent*);
-		void EmitterUpdate(World*, ParticleEmitter*);
-		void EmitterRecreateBuffer(World*, ParticleEmitter*);
+		void ParticleUpdatePhase(Scene* world);
+		void EmitterEmit(Scene*, ParticleEmitter*, ParticleComponent*);
+		void EmitterUpdate(Scene*, ParticleEmitter*);
+		void EmitterRecreateBuffer(Scene*, ParticleEmitter*);
 	}
 }

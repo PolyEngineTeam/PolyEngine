@@ -14,7 +14,7 @@ DebugRenderingPass::DebugRenderingPass(const GLRenderingDevice* rdi)
 	GetProgram().RegisterUniform("mat4", "uMVP");
 }
 
-void DebugRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType*/)
+void DebugRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType*/)
 {
 	GetProgram().BindProgram();
 	const Matrix& MVP = camera->GetClipFromWorld();

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <type_traits>
+#include "Defines.hpp"
 
 namespace Poly
 {
@@ -65,6 +65,25 @@ namespace Poly
 		void Destroy(T* t, typename std::enable_if<!std::is_trivially_destructible<T>::value>::type* = 0)
 		{
 			t->~T();
+		}
+
+		template<typename T>
+		T* DefaultAllocateAndCreate(T* memory = nullptr, typename std::enable_if<std::is_default_constructible<T>::value>::type* = 0)
+		{
+			if (memory != nullptr)
+			{
+				ObjectLifetimeHelper::DefaultCreate<T>((T*)memory);
+				return memory;
+			}
+			else
+				return new T;
+		}
+
+		template<typename T>
+		T* DefaultAllocateAndCreate(T* memory = nullptr, typename std::enable_if<!std::is_default_constructible<T>::value>::type* = 0)
+		{
+			ASSERTE(false, "Type is not default constructible!");
+			return nullptr;
 		}
 	}
 }

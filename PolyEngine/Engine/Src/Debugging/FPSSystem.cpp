@@ -9,7 +9,7 @@
 
 using namespace Poly;
 
-void FPSSystem::FPSUpdatePhase(World* world)
+void FPSSystem::FPSUpdatePhase(Scene* world)
 {
 	DebugWorldComponent* com = world->GetWorldComponent<DebugWorldComponent>();
 	
@@ -29,7 +29,7 @@ void FPSSystem::FPSUpdatePhase(World* world)
 	DebugDrawSystem::DrawText2D(world, Vector2i(300, 300), com->FPSData.DisplayedFPSText, 32);
 }
 
-float FPSSystem::GetFPS(World * world)
+float FPSSystem::GetFPS(Scene * world)
 {
 	return (float)world->GetWorldComponent<DebugWorldComponent>()->FPSData.LastFPS;
 }

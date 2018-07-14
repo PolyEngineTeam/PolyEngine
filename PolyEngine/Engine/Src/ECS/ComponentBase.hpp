@@ -14,9 +14,14 @@ namespace Poly {
 	};
 
 	/// <summary>Base type for every component type</summary>
-	class ENGINE_DLLEXPORT ComponentBase : public BaseObject<>
+	class ENGINE_DLLEXPORT ComponentBase : public RTTIBase
 	{
-	friend class World;
+		RTTI_DECLARE_TYPE_DERIVED(::Poly::ComponentBase, ::Poly::RTTIBase) 
+		{ 
+			//@todo(muniu) rttibase pointers serialization
+			//RTTI_PROPERTY_AUTONAME(Owner, RTTI::ePropertyFlag::NONE);
+		}
+	friend class Scene;
 	public:
 		
 		/// <summary>Getter for a component of a specified type that shares UniqueID with this one.</summary>

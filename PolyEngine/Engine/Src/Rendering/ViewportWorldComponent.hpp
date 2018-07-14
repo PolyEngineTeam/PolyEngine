@@ -13,7 +13,7 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT ViewportWorldComponent : public ComponentBase
 	{
-	friend void CameraSystem::CameraUpdatePhase(World*);
+	friend void CameraSystem::CameraUpdatePhase(Scene*);
 	public:
 		ViewportWorldComponent();
 
