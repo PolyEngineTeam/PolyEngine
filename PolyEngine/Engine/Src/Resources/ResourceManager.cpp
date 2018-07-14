@@ -6,8 +6,10 @@
 
 #include <fstream>
 
+SILENCE_CLANG_WARNING(-Wparentheses - equality, "Surpressing clang warnings in stb_image")
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
+UNSILENCE_CLANG_WARNING()
 
 using namespace Poly;
 
