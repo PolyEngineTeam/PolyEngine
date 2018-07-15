@@ -108,7 +108,7 @@ namespace Poly
 		Scene* EntityScene = nullptr;
 
 		std::bitset<MAX_COMPONENTS_COUNT> ComponentPosessionFlags;
-		//Dynarray<std::unique_ptr<ComponentBase>> Components;
+		Dynarray<std::unique_ptr<ComponentBase>> Components;
 
 		friend class Scene;
 	};

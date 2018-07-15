@@ -72,8 +72,8 @@ bool Scene::HasWorldComponent(size_t ID) const
 //------------------------------------------------------------------------------
 void Scene::RemoveComponentById(Entity* ent, size_t id)
 {
-	//HEAVY_ASSERTE(ent->Components[id], "Removing not present component");
-	//ent->Components[id].reset();
+	HEAVY_ASSERTE(ent->Components[id], "Removing not present component");
+	ent->Components[id].reset();
 }
 
 //------------------------------------------------------------------------------

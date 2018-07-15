@@ -233,7 +233,7 @@ namespace Poly {
 			HEAVY_ASSERTE(entity, "Invalid entity ID");
 			HEAVY_ASSERTE(!entity->HasComponent(ctypeID), "Failed at AddComponent() - a component of a given UniqueID already exists!");
 			entity->ComponentPosessionFlags.set(ctypeID, true);
-			//entity->Components[ctypeID].reset(ptr);
+			entity->Components[ctypeID].reset(ptr);
 			ptr->Owner = entity;
 			HEAVY_ASSERTE(entity->HasComponent(ctypeID), "Failed at AddComponent() - the component was not added!");
 		}
@@ -246,7 +246,7 @@ namespace Poly {
 			HEAVY_ASSERTE(entity, "Invalid entity ID");
 			HEAVY_ASSERTE(entity->HasComponent(ctypeID), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
 			entity->ComponentPosessionFlags.set(ctypeID, false);
-			//entity->Components[ctypeID].reset(nullptr);
+			entity->Components[ctypeID].reset(nullptr);
 			HEAVY_ASSERTE(!entity->HasComponent(ctypeID), "Failed at AddComponent() - the component was not removed!");
 		}
 
