@@ -5,7 +5,7 @@
 #include <GLRenderingDevice.hpp>
 
 #include <ECS/Entity.hpp>
-#include <ECS/World.hpp>
+#include <ECS/Scene.hpp>
 #include <Rendering/Camera/CameraComponent.hpp>
 #include <Rendering/MeshRenderingComponent.hpp>
 #include <Movement/MovementSystem.hpp>

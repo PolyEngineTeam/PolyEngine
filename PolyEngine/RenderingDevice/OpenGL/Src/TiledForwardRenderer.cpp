@@ -13,7 +13,7 @@
 #include "Common/PrimitiveCube.hpp"
 #include "Common/PrimitiveQuad.hpp"
 
-#include <ECS/World.hpp>
+#include <ECS/Scene.hpp>
 #include <Math/BasicMath.hpp>
 #include <Math/AARect.hpp>
 #include <Debugging/DebugDrawComponents.hpp>

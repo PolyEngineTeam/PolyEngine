@@ -4,7 +4,7 @@
 
 #include "Physics2D/Physics2DWorldComponent.hpp"
 #include "Physics2D/Physics2DColliders.hpp"
-#include "ECS/World.hpp"
+#include "ECS/Scene.hpp"
 #include "RigidBody2DImpl.hpp"
 
 #include <Box2D/Box2D.h>

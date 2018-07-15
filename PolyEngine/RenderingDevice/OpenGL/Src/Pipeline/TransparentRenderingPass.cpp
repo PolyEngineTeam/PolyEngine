@@ -5,7 +5,7 @@
 #include "Proxy/GLTextureDeviceProxy.hpp"
 
 #include <Math/AABox.hpp>
-#include <ECS/World.hpp>
+#include <ECS/Scene.hpp>
 #include <Time/TimeSystem.hpp>
 #include <Rendering/Camera/CameraComponent.hpp>
 #include <Movement/MovementSystem.hpp>

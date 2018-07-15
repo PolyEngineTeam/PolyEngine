@@ -4,7 +4,7 @@
 #include "Proxy/GLTextureDeviceProxy.hpp"
 #include <GLRenderingDevice.hpp>
 
-#include <ECS/World.hpp>
+#include <ECS/Scene.hpp>
 #include <Rendering/Camera/CameraComponent.hpp>
 #include <Rendering/MeshRenderingComponent.hpp>
 #include <Rendering/Lighting/LightSourceComponent.hpp>

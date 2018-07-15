@@ -1,7 +1,7 @@
 #include <Defines.hpp>
 #include <catch.hpp>
 
-#include <ECS/World.hpp>
+#include <ECS/Scene.hpp>
 #include <ECS/DeferredTaskSystem.hpp>
 // test components
 #include <Audio/SoundListenerComponent.hpp>

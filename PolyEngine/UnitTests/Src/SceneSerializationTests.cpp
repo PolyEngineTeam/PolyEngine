@@ -2,7 +2,7 @@
 #include <catch.hpp>
 
 #include <RTTI/RTTI.hpp>
-#include <ECS/World.hpp>
+#include <ECS/Scene.hpp>
 #include <cstdio>
 
 using namespace Poly;

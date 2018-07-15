@@ -5,7 +5,7 @@
 
 #include <Math/AABox.hpp>
 #include <Math/AARect.hpp>
-#include <ECS/World.hpp>
+#include <ECS/Scene.hpp>
 #include <Rendering/Camera/CameraComponent.hpp>
 #include <Rendering/SkyboxWorldComponent.hpp>
 #include <Resources/TextureResource.hpp>

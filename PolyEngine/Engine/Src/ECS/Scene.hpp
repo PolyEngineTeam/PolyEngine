@@ -31,12 +31,33 @@ namespace Poly {
 	{
 		RTTI_DECLARE_TYPE_DERIVED(::Poly::Scene, ::Poly::RTTIBase)
 		{
-			//@todo(muniu) rttibase pointers serialization
 			RTTI_PROPERTY_AUTONAME(RootEntity, RTTI::ePropertyFlag::NONE);
-			//RTTI_PROPERTY_AUTONAME(EntitiesAllocator, RTTI::ePropertyFlag::NONE);
-			//RTTI_PROPERTY_AUTONAME_ARRAY(ComponentAllocators, MAX_COMPONENTS_COUNT, RTTI::ePropertyFlag::NONE);
 		}
 	public:
+		struct ENGINE_DLLEXPORT ComponentDeleter final : public BaseObjectLiteralType<>
+		{
+			ComponentDeleter(Scene* s) : SceneHandle(s) {}
+
+			template <typename T>
+			void operator()(T* c)
+			{
+				DeleteComponentImpl(c, GetComponentID<T>());
+			}
+
+			void DeleteComponentImpl(ComponentBase* c, size_t componentID);
+
+			Scene* SceneHandle = nullptr;
+		};
+
+		struct ENGINE_DLLEXPORT EntityDeleter final : public BaseObjectLiteralType<>
+		{
+			EntityDeleter(Scene* s) : SceneHandle(s) {}
+
+			void operator()(Entity*);
+
+			Scene* SceneHandle = nullptr;
+		};
+
 		/// <summary>Allocates memory for entities, world components and components allocators.</summary>
 		Scene();
 
@@ -212,7 +233,7 @@ namespace Poly {
 			HEAVY_ASSERTE(entity, "Invalid entity ID");
 			HEAVY_ASSERTE(!entity->HasComponent(ctypeID), "Failed at AddComponent() - a component of a given UniqueID already exists!");
 			entity->ComponentPosessionFlags.set(ctypeID, true);
-			entity->Components[ctypeID] = ptr;
+			//entity->Components[ctypeID].reset(ptr);
 			ptr->Owner = entity;
 			HEAVY_ASSERTE(entity->HasComponent(ctypeID), "Failed at AddComponent() - the component was not added!");
 		}
@@ -225,10 +246,7 @@ namespace Poly {
 			HEAVY_ASSERTE(entity, "Invalid entity ID");
 			HEAVY_ASSERTE(entity->HasComponent(ctypeID), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
 			entity->ComponentPosessionFlags.set(ctypeID, false);
-			T* component = static_cast<T*>(entity->Components[ctypeID]);
-			entity->Components[ctypeID] = nullptr;
-			component->~T();
-			GetComponentAllocator<T>()->Free(component);
+			//entity->Components[ctypeID].reset(nullptr);
 			HEAVY_ASSERTE(!entity->HasComponent(ctypeID), "Failed at AddComponent() - the component was not removed!");
 		}
 
@@ -259,11 +277,14 @@ namespace Poly {
 
 		void RemoveComponentById(Entity* ent, size_t id);
 
-		std::unique_ptr<Entity> RootEntity = nullptr;
+		std::unique_ptr<Entity, EntityDeleter> RootEntity;
 
 		// Allocators
 		IterablePoolAllocator<Entity> EntitiesAllocator;
 		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
+
+		ComponentDeleter ComponentDel;
+		EntityDeleter EntityDel;
 	};
 
 	//defined here due to circular inclusion problem; FIXME: circular inclusion
@@ -272,7 +293,7 @@ namespace Poly {
 	{
 		const auto ctypeID = Scene::GetComponentID<T>();
 		if (HasComponent(ctypeID))
-			return static_cast<T*>(Components[ctypeID]);
+			return static_cast<T*>(Components[ctypeID].get());
 		else
 			return nullptr;
 	}
@@ -282,7 +303,7 @@ namespace Poly {
 	{
 		const auto ctypeID = Scene::GetComponentID<T>();
 		if (HasComponent(ctypeID))
-			return static_cast<T*>(Components[ctypeID]);
+			return static_cast<T*>(Components[ctypeID].get());
 		else
 			return nullptr;
 	}

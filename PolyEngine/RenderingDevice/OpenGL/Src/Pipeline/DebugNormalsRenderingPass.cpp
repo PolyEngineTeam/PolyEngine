@@ -3,7 +3,7 @@
 #include "Proxy/GLMeshDeviceProxy.hpp"
 #include "Proxy/GLTextureDeviceProxy.hpp"
 
-#include <ECS/World.hpp>
+#include <ECS/Scene.hpp>
 #include <Rendering/Camera/CameraComponent.hpp>
 #include <Rendering/MeshRenderingComponent.hpp>
 

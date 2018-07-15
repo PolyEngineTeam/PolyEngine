@@ -10,7 +10,8 @@ RTTI_DEFINE_TYPE(::Poly::Entity);
 Entity::Entity(Scene* world, Entity* parent)
 	: Transform(this), EntityScene(world), ComponentPosessionFlags(0)
 {
-	memset(Components, 0, sizeof(ComponentBase*) * MAX_COMPONENTS_COUNT);
+	//Components.Resize(MAX_COMPONENTS_COUNT);
+	//std::fill(Components.Begin(), Components.End(), nullptr);
 
 	if (parent)
 		SetParent(parent);
@@ -21,7 +22,7 @@ Poly::Entity::~Entity()
 {
 	if (Parent != nullptr)
 	{
-		Parent->Children.Remove(this);
+		Parent->Children.Remove([this](const std::unique_ptr<Entity>& p) { return p.get() == this; });
 	}
 }
 
@@ -33,22 +34,22 @@ void Poly::Entity::SetParent(Entity* parent)
 
 	if (Parent)
 	{
-		Parent->Children.Remove(this);
+		Parent->Children.Remove([this](const std::unique_ptr<Entity>& p) { return p.get() == this; });
 		Parent = nullptr;
 		Transform.UpdateParentTransform();
 	}
 
 	Parent = parent;
-	Parent->Children.PushBack(this);
+	Parent->Children.PushBack(std::unique_ptr<Entity>(this));
 	Transform.UpdateParentTransform();
 }
 
 bool Poly::Entity::ContainsChildRecursive(Entity* child) const
 {
-	if (Children.Contains(child))
+	if (Children.Contains([child](const std::unique_ptr<Entity>& p) { return p.get() == child; }))
 		return true;
 
-	for (Entity* myChild : Children)
+	for (const std::unique_ptr<Entity>& myChild : Children)
 		if (myChild->ContainsChildRecursive(child))
 			return true;
 

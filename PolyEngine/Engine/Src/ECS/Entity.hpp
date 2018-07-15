@@ -28,6 +28,7 @@ namespace Poly
 		}
 	public:
 		Entity() = default;
+		Entity(const Entity&) = delete;
 		~Entity();
 
 		const Scene* GetEntityScene() const { HEAVY_ASSERTE(GetUUID(), "Entity was not properly initialized");  return EntityScene; }
@@ -77,7 +78,7 @@ namespace Poly
 
 		/// Returns collection of children of this entity.
 		/// @return Collection of children.
-		const Dynarray<Entity*>& GetChildren() const { return Children; }
+		const Dynarray<std::unique_ptr<Entity>>& GetChildren() const { return Children; }
 
 		/// Reparents this entity. Entity cannot be parented to his children, to himself or to nothing (with exception to scene root).
 		/// @param Entity* Pointer to new parent
@@ -99,7 +100,7 @@ namespace Poly
 		Entity(Scene* world, Entity* parent = nullptr);
 
 		Entity* Parent = nullptr;
-		Dynarray<Entity*> Children;
+		Dynarray<std::unique_ptr<Entity>> Children;
 
 		String NameTemplate;
 		String Name;
@@ -107,7 +108,7 @@ namespace Poly
 		Scene* EntityScene = nullptr;
 
 		std::bitset<MAX_COMPONENTS_COUNT> ComponentPosessionFlags;
-		ComponentBase* Components[MAX_COMPONENTS_COUNT];
+		//Dynarray<std::unique_ptr<ComponentBase>> Components;
 
 		friend class Scene;
 	};
