@@ -277,14 +277,14 @@ namespace Poly {
 
 		void RemoveComponentById(Entity* ent, size_t id);
 
-		std::unique_ptr<Entity, EntityDeleter> RootEntity;
-
 		// Allocators
 		IterablePoolAllocator<Entity> EntitiesAllocator;
 		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
 
 		ComponentDeleter ComponentDel;
 		EntityDeleter EntityDel;
+
+		std::unique_ptr<Entity, EntityDeleter> RootEntity;
 	};
 
 	//defined here due to circular inclusion problem; FIXME: circular inclusion
