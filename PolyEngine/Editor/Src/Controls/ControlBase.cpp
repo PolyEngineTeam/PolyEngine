@@ -51,12 +51,6 @@ void ControlBase::SetDisableEdit(bool disable)
 
 	if (disable)
 	{
-		QPalette disabledEditPalette;
-		disabledEditPalette.setColor(QPalette::Base, QColor(218, 218, 218));
-		disabledEditPalette.setColor(QPalette::Text, Qt::black);
-
-		setPalette(disabledEditPalette);
-
 		setDisabled(true);
 	}
 	else

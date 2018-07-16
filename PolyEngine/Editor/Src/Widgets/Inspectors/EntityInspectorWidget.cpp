@@ -34,10 +34,6 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent, InspectorManager* 
 		MainLayout->setRowStretch((int)i, 1);
 	
 	
-	QPalette disabledEditPalette;
-	disabledEditPalette.setColor(QPalette::Base, QColor(218, 218, 218));
-	disabledEditPalette.setColor(QPalette::Text, Qt::black);
-	
 	// Name
 	NameText = new QLabel(this);
 	NameText->setText("Name");
@@ -53,18 +49,16 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent, InspectorManager* 
 	MainLayout->addWidget(UniqueIdText, 1, 0);
 	
 	UniqueIdField = new QLineEdit(this);
-	UniqueIdField->setReadOnly(true);
-	UniqueIdField->setPalette(disabledEditPalette);
+	UniqueIdField->setDisabled(true);
 	MainLayout->addWidget(UniqueIdField, 1, 1);
 	
 	// ParentID / Name
 	ParentIdNameText = new QLabel(this);
-	ParentIdNameText->setText("Name / Parent ID");
+	ParentIdNameText->setText("Name <Parent ID>");
 	MainLayout->addWidget(ParentIdNameText, 2, 0);
 	
 	ParentIdNameField = new QLineEdit(this);
-	ParentIdNameField->setReadOnly(true);
-	ParentIdNameField->setPalette(disabledEditPalette);
+	ParentIdNameField->setDisabled(true);
 	MainLayout->addWidget(ParentIdNameField, 2, 1);
 	
 	ParentSelectButton = new QPushButton(this);
@@ -196,7 +190,9 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		{
 			std::stringstream ss;
 			ss.str(std::string());
+			ss << selectedEntities[0]->GetParent()->Name + "\t<";
 			ss << selectedEntities[0]->GetParent()->GetID();
+			ss << "> ";
 			ParentIdNameField->setText(&ss.str()[0]);
 			ParentSelectButton->show();
 		}
@@ -233,7 +229,9 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		else
 		{
 			ss.str(std::string());
+			ss << selectedEntities[0]->GetParent()->Name + "\t<";
 			ss << selectedEntities[0]->GetParent()->GetID();
+			ss << "> ";
 			ParentIdNameField->setText(&ss.str()[0]);
 			ParentSelectButton->show();
 		}
@@ -243,7 +241,9 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		for (auto child : selectedEntities[0]->GetChildren())
 		{
 			ss.str(std::string());
+			ss << child->Name + " <";
 			ss << child->GetID();
+			ss << "> ";
 			ChildrenIdNameField->addItem(&ss.str()[0]);
 		}
 		if ((int)selectedEntities[0]->GetChildren().GetSize() > 0)
@@ -294,13 +294,27 @@ void EntityInspectorWidget::Update()
 		ss << selectedEntities[0]->GetID();
 		UniqueIdField->setText(&ss.str()[0]);
 
+		// parent
 		ss.str(std::string());
 		if (selectedEntities[0]->IsRoot())
 			ParentIdNameField->setText("");
 		else
 		{
+			ss << selectedEntities[0]->GetParent()->Name + "\t<";
 			ss << selectedEntities[0]->GetParent()->GetID();
+			ss << "> ";
 			ParentIdNameField->setText(&ss.str()[0]);
+		}
+
+		//children
+		ChildrenIdNameField->clear();
+		for (auto child : selectedEntities[0]->GetChildren())
+		{
+			ss.str(std::string());
+			ss << child->Name + "  <";
+			ss << child->GetID();
+			ss << "> ";
+			ChildrenIdNameField->addItem(&ss.str()[0]);
 		}
 
 		if (!selectedEntities[0]->IsRoot())
@@ -322,7 +336,9 @@ void EntityInspectorWidget::Update()
 		{
 			std::stringstream ss;
 			ss.str(std::string());
+			ss << selectedEntities[0]->GetParent()->Name + "\t<";
 			ss << selectedEntities[0]->GetParent()->GetID();
+			ss << "> ";
 			ParentIdNameField->setText(&ss.str()[0]);
 		}
 		else
