@@ -15,6 +15,7 @@ ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::UINT32, UINT32)
 ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::UINT64, UINT64)
 ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::FLOAT, FLOAT)
 ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::DOUBLE, DOUBLE)
+ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::ANGLE, ANGLE)
 
 #define UPDATE_OBJECT(T, V)\
 	cmd->UndoValue = new T(*reinterpret_cast<T*>(Object));\
@@ -108,6 +109,10 @@ void NumberControl::UpdateObject()
 		*reinterpret_cast<f64*>(Object) = (f64)Field->text().toDouble();
 		break;
 
+	case RTTI::eCorePropertyType::ANGLE:
+		*reinterpret_cast<Angle*>(Object) = Angle::FromDegrees((f32)Field->text().toDouble());
+		break;
+
 	default:
 		ASSERTE(false, "Not supported type");
 	}
@@ -147,6 +152,9 @@ void NumberControl::UpdateControl()
 		break;
 	case RTTI::eCorePropertyType::DOUBLE:
 		Field->setText(QString::number(*reinterpret_cast<f64*>(Object)));
+		break;
+	case RTTI::eCorePropertyType::ANGLE:
+		Field->setText(QString::number(reinterpret_cast<Angle*>(Object)->AsDegrees()));
 		break;
 	default:
 		ASSERTE(false, "Not supported type");
@@ -200,6 +208,10 @@ void NumberControl::Confirm()
 
 	case RTTI::eCorePropertyType::DOUBLE:
 		UPDATE_OBJECT(f64, (f64)Field->text().toDouble())
+			break;
+
+	case RTTI::eCorePropertyType::ANGLE:
+		UPDATE_OBJECT(Angle, Angle::FromDegrees((f32)Field->text().toDouble()))
 			break;
 
 	default:
