@@ -81,19 +81,19 @@ void TransformControl::UpdateObject()
 
 void TransformControl::UpdateControl()
 {
-	EntityTransform& transform = static_cast<Entity*>(Object)->GetTransform();
+	EntityTransform* transform = static_cast<EntityTransform*>(Object);
 
-	Vector translation = transform.GetLocalTranslation();
+	Vector translation = transform->GetLocalTranslation();
 	TranslationField[0]->setText(QString(String::From(translation.X).GetCStr()));
 	TranslationField[1]->setText(QString(String::From(translation.Y).GetCStr()));
 	TranslationField[2]->setText(QString(String::From(translation.Z).GetCStr()));
 	
-	EulerAngles rotation = transform.GetLocalRotation().ToEulerAngles();
+	EulerAngles rotation = transform->GetLocalRotation().ToEulerAngles();
 	RotationField[0]->setText(QString(String::From(rotation.X.AsDegrees()).GetCStr()));
 	RotationField[1]->setText(QString(String::From(rotation.Y.AsDegrees()).GetCStr()));
 	RotationField[2]->setText(QString(String::From(rotation.Z.AsDegrees()).GetCStr()));
 	
-	Vector scale = transform.GetLocalScale();
+	Vector scale = transform->GetLocalScale();
 	ScaleField[0]->setText(QString(String::From(scale.X).GetCStr()));
 	ScaleField[1]->setText(QString(String::From(scale.Y).GetCStr()));
 	ScaleField[2]->setText(QString(String::From(scale.Z).GetCStr()));
@@ -101,33 +101,33 @@ void TransformControl::UpdateControl()
 
 void TransformControl::UodateTranslation()
 {
-	EntityTransform& transform = static_cast<Entity*>(Object)->GetTransform();
+	EntityTransform* transform = static_cast<EntityTransform*>(Object);
 
 	Vector translation;
 	translation.X = TranslationField[0]->text().toFloat();
 	translation.Y = TranslationField[1]->text().toFloat();
 	translation.Z = TranslationField[2]->text().toFloat();
-	transform.SetLocalTranslation(translation);
+	transform->SetLocalTranslation(translation);
 }
 
 void TransformControl::UodateRotation()
 {
-	EntityTransform& transform = static_cast<Entity*>(Object)->GetTransform();
+	EntityTransform* transform = static_cast<EntityTransform*>(Object);
 
 	EulerAngles rotation;
 	rotation.X = Angle::FromDegrees(RotationField[0]->text().toFloat());
 	rotation.Y = Angle::FromDegrees(RotationField[1]->text().toFloat());
 	rotation.Z = Angle::FromDegrees(RotationField[2]->text().toFloat());
-	transform.SetLocalRotation(Quaternion(rotation));
+	transform->SetLocalRotation(Quaternion(rotation));
 }
 
 void TransformControl::UodateScale()
 {
-	EntityTransform& transform = static_cast<Entity*>(Object)->GetTransform();
+	EntityTransform* transform = static_cast<EntityTransform*>(Object);
 
 	Vector scale;
 	scale.X = ScaleField[0]->text().toFloat();
 	scale.Y = ScaleField[1]->text().toFloat();
 	scale.Z = ScaleField[2]->text().toFloat();
-	transform.SetLocalScale(scale);
+	transform->SetLocalScale(scale);
 }
