@@ -213,7 +213,8 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		std::stringstream ss;
 
 		// name
-		NameField->SetObject(&selectedEntities[0], &selectedEntities[0]->GetPropertyManager()->GetPropertyList()[1]);
+		void* ptr = reinterpret_cast<void*>(&selectedEntities[0] + selectedEntities[0]->GetPropertyManager()->GetPropertyList()[1].Offset);
+		NameField->SetObject(ptr, &selectedEntities[0]->GetPropertyManager()->GetPropertyList()[1]);
 		NameField->SetDisableEdit(false);
 
 		// id
@@ -260,7 +261,8 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		else
 		{
 			TransformSection->show();
-			Transform->SetObject(selectedEntities[0], &selectedEntities[0]->GetPropertyManager()->GetPropertyList()[2]);
+			void* ptr = reinterpret_cast<void*>(&selectedEntities[0] + selectedEntities[0]->GetPropertyManager()->GetPropertyList()[2].Offset);
+			Transform->SetObject(ptr, &selectedEntities[0]->GetPropertyManager()->GetPropertyList()[2]);
 		}
 
 		// components
