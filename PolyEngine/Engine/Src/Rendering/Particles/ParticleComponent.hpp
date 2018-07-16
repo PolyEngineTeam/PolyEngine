@@ -10,10 +10,10 @@ namespace Poly {
 	{
 		RTTI_DECLARE_TYPE_DERIVED(ParticleComponent, ComponentBase)
 		{
-			NO_RTTI_PROPERTY()
+			NO_RTTI_PROPERTY();
 		}
 
-		friend void ParticleUpdateSystem::ParticleUpdatePhase(World*);
+		friend void ParticleUpdateSystem::ParticleUpdatePhase(Scene*);
 	public:
 		ParticleComponent() {}
 		ParticleComponent(const ParticleEmitter::Settings& emitter);

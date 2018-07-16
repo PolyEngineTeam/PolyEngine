@@ -17,9 +17,9 @@ class EntityDialog : public QDialog
 public:
 	EntityDialog() {}
 
-	Dynarray<Entity*> SpawnEntities(World* world, Dynarray<Entity*> parents);
-	void DestroyEntities(World* world, Dynarray<Entity*> entities);
-	Dynarray<Entity*> ReparentEntities(World* world, Dynarray<Entity*> entities, Entity* parent = nullptr);
+	Dynarray<Entity*> SpawnEntities(Scene* scene, Dynarray<Entity*> parents);
+	void DestroyEntities(Scene* scene, Dynarray<Entity*> entities);
+	Dynarray<Entity*> ReparentEntities(Scene* scene, Dynarray<Entity*> entities, Entity* parent = nullptr);
 
 	bool OperationCanceled() { return Canceled; }
 

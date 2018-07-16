@@ -4,10 +4,10 @@
 
 namespace Poly
 {
-	class World;
+	class Scene;
 
 	namespace InputSystem
 	{
-		void InputPhase(World*);
+		void InputPhase(Scene*);
 	}
 }

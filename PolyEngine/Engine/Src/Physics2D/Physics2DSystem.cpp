@@ -9,7 +9,7 @@
 
 using namespace Poly;
 
-void Poly::Physics2DSystem::Physics2DUpdatePhase(World* world)
+void Poly::Physics2DSystem::Physics2DUpdatePhase(Scene* world)
 {
 	float deltaTime = (float)TimeSystem::GetTimerDeltaTime(world, eEngineTimer::GAMEPLAY);
 	Physics2DWorldComponent* physicsCmp = world->GetWorldComponent<Physics2DWorldComponent>();
@@ -27,7 +27,7 @@ void Poly::Physics2DSystem::Physics2DUpdatePhase(World* world)
 	while (physicsCmp->LastDeltaOverflow >= physicsCmp->Config.TimeStep)
 	{
 		physicsCmp->LastDeltaOverflow -= physicsCmp->Config.TimeStep;
-		physicsCmp->World->Step(physicsCmp->Config.TimeStep, physicsCmp->Config.VelocityIterations, physicsCmp->Config.PositionIterations);
+		physicsCmp->Scene->Step(physicsCmp->Config.TimeStep, physicsCmp->Config.VelocityIterations, physicsCmp->Config.PositionIterations);
 	}
 
 	// Store physics position to engine translation

@@ -3,11 +3,11 @@
 #include "Time/TimeSystem.hpp"
 #include "Input/InputWorldComponent.hpp"
 
-void GizmoSystem::Update(World* world)
+void GizmoSystem::Update(Scene* scene)
 {
 	Dynarray<Entity*> entities = gEngine->GetEditor()->GetSelectedEntities();
-	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
-	InputWorldComponent* inputCmp = world->GetWorldComponent<InputWorldComponent>();
+	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(scene, Poly::eEngineTimer::GAMEPLAY));
+	InputWorldComponent* inputCmp = scene->GetWorldComponent<InputWorldComponent>();
 	float delta = (float)inputCmp->GetMousePosDelta().Y;
 
 	if (inputCmp->IsPressed(eKey::LCTRL))

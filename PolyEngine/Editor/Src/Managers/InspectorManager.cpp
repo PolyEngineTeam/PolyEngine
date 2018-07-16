@@ -75,14 +75,14 @@ void InspectorManager::EngineCreatedSlot(Engine* engine)
 	EngineObj = engine;
 
 	emit EngineCreated();
-	WorldChangedSlot(EngineObj->GetWorld());
+	SceneChangedSlot(EngineObj->GetActiveScene());
 }
 
 //------------------------------------------------------------------------------
 void InspectorManager::EngineInitializedSlot()
 {
 	emit EngineInitialized();
-	WorldChangedSlot(EngineObj->GetWorld());
+	SceneChangedSlot(EngineObj->GetActiveScene());
 }
 
 //------------------------------------------------------------------------------
@@ -105,9 +105,9 @@ void InspectorManager::StateChangedSlot(eEngineState state)
 
 //		world slots
 //------------------------------------------------------------------------------
-void InspectorManager::WorldChangedSlot(World* world)
+void InspectorManager::SceneChangedSlot(Scene* scene)
 {
-	WorldObj = world;
+	SceneObj = scene;
 
 	emit WorldChanged();
 }

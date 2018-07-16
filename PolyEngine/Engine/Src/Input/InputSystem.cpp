@@ -5,7 +5,7 @@
 
 using namespace Poly;
 
-void InputSystem::InputPhase(World* world)
+void InputSystem::InputPhase(Scene* world)
 {
 	InputWorldComponent* com = world->GetWorldComponent<InputWorldComponent>();
 

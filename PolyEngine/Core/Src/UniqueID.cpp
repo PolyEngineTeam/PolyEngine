@@ -2,6 +2,7 @@
 
 #include "UniqueID.hpp"
 #include "Math/Random.hpp"
+#include "Utils/HexUtils.hpp"
 
 #include <iomanip>
 #include <sstream>
@@ -62,6 +63,38 @@ size_t Poly::UniqueID::GetHash() const
 	std::stringstream ss;
 	ss << *this;
 	return std::hash<std::string>{}(ss.str());
+}
+
+String Poly::UniqueID::ToString() const
+{
+	StringBuilder sb;
+	sb.Append(*this);
+	return sb.StealString();
+}
+
+Optional<UniqueID> Poly::UniqueID::FromString(const String& str)
+{
+	if (str.GetLength() != 36)
+		return {};
+	
+	UniqueID uuid;
+	size_t count = 0;
+	for (size_t i = 0; i < str.GetLength(); i += 2)
+	{
+		if (str[i] == '-') ++i;
+		auto a = str[i];
+		if (str[i + 1] == '-') ++i;
+		auto b = str[i + 1];
+
+		if(!IsValidHex(a) || !IsValidHex(b))
+			return {};
+
+		uuid.UUID[count] = (HexCharToValue(a) << 4) | HexCharToValue(b);
+		++count;
+	}
+	
+	HEAVY_ASSERTE(str.ToLower() == uuid.ToString(), "");
+	return uuid;
 }
 
 

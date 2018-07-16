@@ -10,6 +10,8 @@ namespace Poly {
 	/// <summary>Base class for all objects which require safe pointer</summary>
 	class CORE_DLLEXPORT SafePtrRoot : public RTTIBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(::Poly::SafePtrRoot, ::Poly::RTTIBase) 
+		{ NO_RTTI_PROPERTY(); }
 	public:
 		/// <summary>Registers given pointer</summary>
 		/// <param name="pointer">Pointer to be registered</param>

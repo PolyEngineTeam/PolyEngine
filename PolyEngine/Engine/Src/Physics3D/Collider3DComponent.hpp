@@ -50,12 +50,12 @@ namespace Poly
 
 
 		friend class Rigidbody3DComponent;
-		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
-		friend void Physics3DSystem::EnsureInit(World* world, Entity* entity);
-		friend void Physics3DSystem::SetCollisionGroup(World* world, Entity* entity, EnumFlags<eCollisionGroup> group);
-		friend void Physics3DSystem::SetCollisionMask(World* world, Entity* entity, EnumFlags<eCollisionGroup> mask);
-		friend void Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool enablePhysics);
-		friend void Physics3DSystem::UnregisterComponent(World * world, Entity* entity);
+		friend void Physics3DSystem::Physics3DUpdatePhase(Scene* world);
+		friend void Physics3DSystem::EnsureInit(Scene* world, Entity* entity);
+		friend void Physics3DSystem::SetCollisionGroup(Scene* world, Entity* entity, EnumFlags<eCollisionGroup> group);
+		friend void Physics3DSystem::SetCollisionMask(Scene* world, Entity* entity, EnumFlags<eCollisionGroup> mask);
+		friend void Physics3DSystem::RegisterComponent(Scene* world, Entity* entity, bool enablePhysics);
+		friend void Physics3DSystem::UnregisterComponent(Scene * world, Entity* entity);
 
 	public:
 		// constructors and destructor
@@ -64,7 +64,7 @@ namespace Poly
 		/// @param world - world where owner entity exists
 		/// @param tmp - template with collider properties
 		/// @see Collider3DComponentTemplate
-		Collider3DComponent(World* world, Collider3DComponentTemplate&& tmp);
+		Collider3DComponent(Scene* world, Collider3DComponentTemplate&& tmp);
 
 		/// If collider is registered it will be unregistered.
 		/// @see Physics3DSystem::RegisterComponent
@@ -128,7 +128,7 @@ namespace Poly
 
 		/// Needed for destructuion and re-registration.
 		/// @see Trigger3DComponent::~Trigger3DComponent
-		World* BodyWorld;
+		Scene* BodyWorld;
 		Collider3DComponentTemplate Template;
 
 		/// Thanks to this structure we don't need to declare implementation dependent structures in headers.

@@ -12,7 +12,7 @@ class EditorCameraMovementComponent : public ComponentBase
 		NO_RTTI_PROPERTY()
 	}
 
-	friend void EditorCameraMovementSystem::Update(World*);
+	friend void EditorCameraMovementSystem::Update(Scene*);
 public:
 	EditorCameraMovementComponent(float movementSpeed = 1.0f, float rotationSpeed = 1.0f, float wheelSensitivity = 1.0f);
 

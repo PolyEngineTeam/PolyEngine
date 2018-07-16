@@ -27,7 +27,7 @@ namespace Poly {
 		}
 
 	public:
-		friend void RenderingSystem::RenderingPhase(World*);
+		friend void RenderingSystem::RenderingPhase(Scene*);
 	public:
 		SpritesheetComponent(const SpritesheetSettings& settings);
 		virtual ~SpritesheetComponent();

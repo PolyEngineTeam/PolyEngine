@@ -14,13 +14,13 @@ namespace Poly {
 		void Render(const SceneView& sceneView) override;
 		void Deinit() override;
 
-		void PostRender(World* world, const CameraComponent* cameraCmp, const AARect& rect);
+		void PostRender(Scene* world, const CameraComponent* cameraCmp, const AARect& rect);
 
 	private:
-		void RenderLit(World* world, const AARect& rect, const CameraComponent* cameraCmp) const;
-		void RenderUnlit(World* world, const AARect& rect, const CameraComponent* cameraCmp) const;
-		void RenderWireframe(World* world, const AARect& rect, const CameraComponent* cameraCmp) const;
-		void RenderNormals(World* world, const AARect& rect, const CameraComponent* cameraCmp) const;
-		void RenderNormalsWireframe(World* world, const AARect& rect, const CameraComponent* cameraCmp) const;
+		void RenderLit(Scene* world, const AARect& rect, const CameraComponent* cameraCmp) const;
+		void RenderUnlit(Scene* world, const AARect& rect, const CameraComponent* cameraCmp) const;
+		void RenderWireframe(Scene* world, const AARect& rect, const CameraComponent* cameraCmp) const;
+		void RenderNormals(Scene* world, const AARect& rect, const CameraComponent* cameraCmp) const;
+		void RenderNormalsWireframe(Scene* world, const AARect& rect, const CameraComponent* cameraCmp) const;
 	};
 }

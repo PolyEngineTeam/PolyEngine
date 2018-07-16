@@ -2,10 +2,10 @@
 
 namespace Poly
 {
-	class World;
+	class Scene;
 
 	namespace RenderingSystem
 	{
-		void RenderingPhase(World* world);
+		void RenderingPhase(Scene* world);
 	}
 }

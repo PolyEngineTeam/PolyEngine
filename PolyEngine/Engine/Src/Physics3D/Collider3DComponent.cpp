@@ -9,7 +9,7 @@
 RTTI_DEFINE_TYPE(Poly::Collider3DComponent)
 
 //------------------------------------------------------------------------------
-Poly::Collider3DComponent::Collider3DComponent(World* world, Collider3DComponentTemplate&& tmp)
+Poly::Collider3DComponent::Collider3DComponent(Scene* world, Collider3DComponentTemplate&& tmp)
 	: BodyWorld(world)
 {
 	Template.Shape = std::move(tmp.Shape);

@@ -19,8 +19,8 @@ public:
 	void AddComponents(Entity* entity);
 	void RemoveComponents(Entity* entity);
 
-	void AddWorldComponent(World* world);
-	void RemoveWorldComponent(World* world);
+	void AddWorldComponent(Scene* scene);
+	void RemoveWorldComponent(Scene* scene);
 
 	bool OperationCanceled() { return Canceled; }
 
@@ -37,8 +37,8 @@ private:
 
 	typedef void (*ComponentCreator)(::Entity* e);
 	typedef void (*ComponentDestroyer)(::Entity* e);
-	typedef void (*WorldComponentCreator)(::World* w);
-	typedef void (*WorldComponentDestroyer)(::World* w);
+	typedef void (*WorldComponentCreator)(::Scene* w);
+	typedef void (*WorldComponentDestroyer)(::Scene* w);
 
 	std::map<QString, ComponentCreator> ComponentCreators;
 	std::map<QString, WorldComponentCreator> WorldComponentCreators;

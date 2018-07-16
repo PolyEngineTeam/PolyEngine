@@ -3,12 +3,12 @@
 #include "Time/TimeSystem.hpp"
 #include "Input/InputWorldComponent.hpp"
 
-void EditorCameraMovementSystem::Update(World* world)
+void EditorCameraMovementSystem::Update(Scene* scene)
 {
-	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
-	InputWorldComponent* inputCmp = world->GetWorldComponent<InputWorldComponent>();
+	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(scene, Poly::eEngineTimer::GAMEPLAY));
+	InputWorldComponent* inputCmp = scene->GetWorldComponent<InputWorldComponent>();
 
-	for (auto freeFloatTuple : world->IterateComponents<EditorCameraMovementComponent>())
+	for (auto freeFloatTuple : scene->IterateComponents<EditorCameraMovementComponent>())
 	{
 		EditorCameraMovementComponent* freeFloatMovementCmp = std::get<EditorCameraMovementComponent*>(freeFloatTuple);
 		EntityTransform& trans = freeFloatMovementCmp->GetTransform();

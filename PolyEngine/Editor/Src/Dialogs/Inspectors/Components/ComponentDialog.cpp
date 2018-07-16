@@ -36,7 +36,7 @@
 		cmp->setText(1, #COMPONENT); \
 		cmp->setCheckState(0, Qt::Unchecked); \
 		ComponentCreators.insert(std::pair<QString, ComponentCreator>(#COMPONENT, [](::Entity* e) \
-		{ Poly::DeferredTaskSystem::AddComponentImmediate<COMPONENT>(e->GetWorld(), e); })); \
+		{ Poly::DeferredTaskSystem::AddComponentImmediate<COMPONENT>(e->GetEntityScene(), e); })); \
 	}
 
 #define ADD_COMPONENT_DESTROYER(COMPONENT) \
@@ -46,26 +46,26 @@
 		cmp->setText(1, #COMPONENT); \
 		cmp->setCheckState(0, Qt::Unchecked); \
 		ComponentDestroyers.insert(std::pair<QString, ComponentDestroyer>(#COMPONENT, [](::Entity* e) \
-		{ Poly::DeferredTaskSystem::RemoveComponent<COMPONENT>(e->GetWorld(), e); })); \
+		{ Poly::DeferredTaskSystem::RemoveComponent<COMPONENT>(e->GetEntityScene(), e); })); \
 	}
 
 #define ADD_WORLD_COMPONENT(COMPONENT) \
-	if (world->HasWorldComponent<COMPONENT>()) \
+	if (scene->HasWorldComponent<COMPONENT>()) \
 	{ \
 		QTreeWidgetItem* cmp = new QTreeWidgetItem(ComponentsTree); \
 		cmp->setText(1, #COMPONENT); \
 		cmp->setCheckState(0, Qt::Unchecked); \
-		WorldComponentCreators.insert(std::pair<QString, WorldComponentCreator>(#COMPONENT, [](::World* w) \
+		WorldComponentCreators.insert(std::pair<QString, WorldComponentCreator>(#COMPONENT, [](::Scene* w) \
 		{ Poly::DeferredTaskSystem::RemoveWorldComponentImmediate<COMPONENT>(w); })); \
 	}
 
 #define ADD_WORLD_COMPONENT_DESTROYER(COMPONENT) \
-	if (world->HasWorldComponent<COMPONENT>()) \
+	if (scene->HasWorldComponent<COMPONENT>()) \
 	{ \
 		QTreeWidgetItem* cmp = new QTreeWidgetItem(ComponentsTree); \
 		cmp->setText(1, #COMPONENT); \
 		cmp->setCheckState(0, Qt::Unchecked); \
-		WorldComponentDestroyers.insert(std::pair<QString, WorldComponentDestroyer>(#COMPONENT, [](::World* w) \
+		WorldComponentDestroyers.insert(std::pair<QString, WorldComponentDestroyer>(#COMPONENT, [](::Scene* w) \
 		{ Poly::DeferredTaskSystem::RemoveWorldComponentImmediate<COMPONENT>(w); })); \
 	}
 
@@ -86,8 +86,8 @@ void ComponentDialog::AddComponents(Entity* entity)
 	EntityIdNameField = new QLineEdit(this);
 	EntityIdNameField->setReadOnly(true);
 	std::stringstream ss;
-	ss << entity->GetID();
-	EntityIdNameField->setText(QString(entity->Name.GetCStr()) + QString(&ss.str()[0]));
+	ss << entity->GetUUID();
+	EntityIdNameField->setText(QString(entity->GetName().GetCStr()) + QString(&ss.str()[0]));
 	EntityIdNameField->setPalette(disabledEditPalette);
 	MainLayout->addWidget(EntityIdNameField, 1, 1, 1, 2);
 
@@ -130,8 +130,8 @@ void ComponentDialog::RemoveComponents(Entity* entity)
 	EntityIdNameField = new QLineEdit(this);
 	EntityIdNameField->setReadOnly(true);
 	std::stringstream ss;
-	ss << entity->GetID();
-	EntityIdNameField->setText(QString(entity->Name.GetCStr()) + QString(&ss.str()[0]));
+	ss << entity->GetUUID();
+	EntityIdNameField->setText(QString(entity->GetName().GetCStr()) + QString(&ss.str()[0]));
 	EntityIdNameField->setPalette(disabledEditPalette);
 	MainLayout->addWidget(EntityIdNameField, 1, 1, 1, 2);
 
@@ -158,7 +158,7 @@ void ComponentDialog::RemoveComponents(Entity* entity)
 }
 
 //------------------------------------------------------------------------------
-void ComponentDialog::AddWorldComponent(World* world)
+void ComponentDialog::AddWorldComponent(Scene* scene)
 {
 	InitUi(eMode::ADD);
 
@@ -176,7 +176,7 @@ void ComponentDialog::AddWorldComponent(World* world)
 }
 
 //------------------------------------------------------------------------------
-void ComponentDialog::RemoveWorldComponent(World* world)
+void ComponentDialog::RemoveWorldComponent(Scene* scene)
 {
 	InitUi(eMode::REMOVE);
 

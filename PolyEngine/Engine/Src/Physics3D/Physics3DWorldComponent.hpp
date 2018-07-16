@@ -26,7 +26,7 @@ namespace Poly
 		Vector Gravity = Vector(0.f, -9.81f, 0.f);
 	};
 
-	/// World component contains configuration for physics simulation and 
+	/// Scene component contains configuration for physics simulation and 
 	/// many other important things per world but only thing the user has to be 
 	/// concerned about is gravity.
 	/// @see Physics3DConfig
@@ -39,14 +39,13 @@ namespace Poly
 			NO_RTTI_PROPERTY();
 		}
 
-		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
-		friend void Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool enablePhysics);
-		friend void Physics3DSystem::UnregisterComponent(World * world, Entity* entity);
-		friend ContactPairResults GetAllContactPairs(World* world);
-		friend ContactResult Physics3DSystem::ContactPair(World* world, Entity* firstEntity, Entity* secondEntity);
-		friend RaycastResult Physics3DSystem::AllHitsRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
-		friend RaycastResult Physics3DSystem::ClosestHitRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
-	
+		friend void Physics3DSystem::Physics3DUpdatePhase(Scene* world);
+		friend void Physics3DSystem::RegisterComponent(Scene* world, Entity* entity, bool enablePhysics);
+		friend void Physics3DSystem::UnregisterComponent(Scene * world, Entity* entity);
+		friend ContactPairResults GetAllContactPairs(Scene* world);
+		friend ContactResult Physics3DSystem::ContactPair(Scene* world, Entity* firstEntity, Entity* secondEntity);
+		friend RaycastResult Physics3DSystem::AllHitsRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
+		friend RaycastResult Physics3DSystem::ClosestHitRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 	public:
 		Physics3DWorldComponent(Physics3DConfig config);
 		~Physics3DWorldComponent();

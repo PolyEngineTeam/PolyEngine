@@ -20,7 +20,7 @@ namespace Poly
 		EnumArray<float, eControllerAxis> PrevAxis;
 	};
 
-	/// <summary>World component that holds input data.</summary>
+	/// <summary>Scene component that holds input data.</summary>
 	class ENGINE_DLLEXPORT InputWorldComponent : public ComponentBase
 	{
 		RTTI_DECLARE_TYPE_DERIVED(InputWorldComponent, ComponentBase)
@@ -28,8 +28,7 @@ namespace Poly
 			NO_RTTI_PROPERTY();
 		}
 
-		friend void InputSystem::InputPhase(World*);
-
+		friend void InputSystem::InputPhase(Scene*);
 	public:
 		InputWorldComponent() = default;
 

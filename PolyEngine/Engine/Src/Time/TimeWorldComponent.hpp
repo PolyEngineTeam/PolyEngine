@@ -16,14 +16,14 @@ namespace Poly
 			NO_RTTI_PROPERTY();
 		}
 
-		friend void TimeSystem::TimeUpdatePhase(World* world);
-		friend void TimeSystem::RegisterTimer(World* world, size_t id, bool isPausable, double multiplier);
-		friend double TimeSystem::GetTimerDeltaTime(World* world, size_t id);
-		friend double TimeSystem::GetTimerDeltaTime(World* world, eEngineTimer timerType);
-		friend double TimeSystem::GetTimerElapsedTime(World* world, size_t id);
-		friend double TimeSystem::GetTimerElapsedTime(World* world, eEngineTimer timerType);
-		friend double TimeSystem::GetTimerMultiplier(World* world, size_t id);
-		friend double TimeSystem::GetTimerMultiplier(World* world, eEngineTimer timerType);
+		friend void TimeSystem::TimeUpdatePhase(Scene* world);
+		friend void TimeSystem::RegisterTimer(Scene* world, size_t id, bool isPausable, double multiplier);
+		friend double TimeSystem::GetTimerDeltaTime(Scene* world, size_t id);
+		friend double TimeSystem::GetTimerDeltaTime(Scene* world, eEngineTimer timerType);
+		friend double TimeSystem::GetTimerElapsedTime(Scene* world, size_t id);
+		friend double TimeSystem::GetTimerElapsedTime(Scene* world, eEngineTimer timerType);
+		friend double TimeSystem::GetTimerMultiplier(Scene* world, size_t id);
+		friend double TimeSystem::GetTimerMultiplier(Scene* world, eEngineTimer timerType);
 	public:	
 		TimeWorldComponent();
 

@@ -11,17 +11,17 @@ namespace Poly {
 	class GLRenderingDevice;
 
 	struct ScreenSize;
-	class World;
+	class Scene;
 	class AARect;
 	class CameraComponent;
 	class MeshRenderingComponent;
 
 	struct SceneView : public BaseObject<> {
-		SceneView(World* w, const Viewport& v)
+		SceneView(Scene* w, const Viewport& v)
 			: WorldData(w), ViewportData(v), Rect(v.GetRect()), CameraCmp(v.GetCamera())
 		{};
 
-		World* WorldData;
+		Scene* WorldData;
 		const Viewport& ViewportData;
 		const AARect& Rect;
 		const CameraComponent* CameraCmp;

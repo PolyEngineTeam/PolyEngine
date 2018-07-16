@@ -96,7 +96,7 @@ String ViewportInspectorWidget::GetAssetsPathConfigPath()
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::Init()
 {
-	World* w = Manager->GetEngine()->GetWorld();
+	Scene* w = Manager->GetEngine()->GetActiveScene();
 
 	//		register editor phases
 	Manager->GetEngine()->RegisterEditorUpdatePhase(EditorCameraMovementSystem::Update);
@@ -163,15 +163,15 @@ void ViewportInspectorWidget::StateChanged()
 	case eEngineState::EDIT:
 	{
 		// set editor camera
-		Manager->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(
-			0, Manager->GetWorld()->GetComponent<CameraComponent>(EditorCameraEnt));
+		Manager->GetScene()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(
+			0, Manager->GetScene()->GetComponent<CameraComponent>(EditorCameraEnt));
 
 		break;
 	}
 	case eEngineState::GAMEPLAY:
 	{
 		// set gameplay camera
-		Manager->GetWorld()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, GameCamera);
+		Manager->GetScene()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, GameCamera);
 
 		break;
 	}

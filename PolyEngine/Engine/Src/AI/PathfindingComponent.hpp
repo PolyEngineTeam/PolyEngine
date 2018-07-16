@@ -31,7 +31,7 @@ namespace Poly
 			RTTI_PROPERTY(LastPathSearchFailed, "LastPathSearchFailed", RTTI::ePropertyFlag::DONT_SERIALIZE);
 		}
 
-		friend void PathfindingSystem::UpdatePhase(World* world);
+		friend void PathfindingSystem::UpdatePhase(Scene* world);
 
 	public:
 		PathfindingComponent() {}
@@ -47,6 +47,8 @@ namespace Poly
 		Optional<Vector> CurentDestination;
 		bool RecalculateRequested = false;
 		bool LastPathSearchFailed = false;
+
+		friend void PathfindingSystem::UpdatePhase(Scene* world);
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, PathfindingComponent)

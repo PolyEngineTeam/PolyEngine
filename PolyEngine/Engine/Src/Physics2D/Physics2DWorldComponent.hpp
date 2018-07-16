@@ -25,10 +25,9 @@ namespace Poly
 			NO_RTTI_PROPERTY();
 		}
 
-		friend void Physics2DSystem::Physics2DUpdatePhase(World* world);
+		friend void Physics2DSystem::Physics2DUpdatePhase(Scene* world);
 		friend class Physics2DContactListener;
 		friend class RigidBody2DComponent;
-
 	public:
 		struct Collision
 		{
@@ -47,7 +46,7 @@ namespace Poly
 		float LastDeltaOverflow = 0.f;
 
 		const Physics2DConfig Config;
-		std::unique_ptr<b2World> World;
+		std::unique_ptr<b2World> Scene;
 		std::unique_ptr<Physics2DContactListener> ContactListener;
 
 		std::unordered_map<RigidBody2DComponent*, Dynarray<Collision>> OverlapingBodies;

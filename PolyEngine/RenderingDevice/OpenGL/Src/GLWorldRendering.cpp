@@ -59,7 +59,7 @@ IRendererInterface* GLRenderingDevice::CreateRenderer()
 	return renderer;
 }
 
-void GLRenderingDevice::RenderWorld(World* world)
+void GLRenderingDevice::RenderWorld(Scene* world)
 {
 	// For each visible viewport draw it
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())

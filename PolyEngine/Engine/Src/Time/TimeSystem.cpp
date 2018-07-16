@@ -10,7 +10,7 @@ using std::chrono::duration;
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-void TimeSystem::TimeUpdatePhase(World * world)
+void TimeSystem::TimeUpdatePhase(Scene * world)
 {
 	TimeWorldComponent* timeComponent = world->GetWorldComponent<TimeWorldComponent>();
 
@@ -39,7 +39,7 @@ void TimeSystem::TimeUpdatePhase(World * world)
 }
 
 //------------------------------------------------------------------------------
-void TimeSystem::RegisterTimer(World * world, size_t id, bool isPausable, double multiplier)
+void TimeSystem::RegisterTimer(Scene * world, size_t id, bool isPausable, double multiplier)
 {
 	TimeWorldComponent* timeComponent = world->GetWorldComponent<TimeWorldComponent>();
 	ASSERTE(timeComponent->Timers.count(id) == 0, "Same timer id provided twice!");
@@ -47,7 +47,7 @@ void TimeSystem::RegisterTimer(World * world, size_t id, bool isPausable, double
 }
 
 //------------------------------------------------------------------------------
-double TimeSystem::GetTimerDeltaTime(World * world, size_t id)
+double TimeSystem::GetTimerDeltaTime(Scene * world, size_t id)
 {
 	TimeWorldComponent* timeComponent = world->GetWorldComponent<TimeWorldComponent>();
 	if(timeComponent->Timers.count(id) == 0)
@@ -57,13 +57,13 @@ double TimeSystem::GetTimerDeltaTime(World * world, size_t id)
 }
 
 //------------------------------------------------------------------------------
-double TimeSystem::GetTimerDeltaTime(World * world, eEngineTimer timerType)
+double TimeSystem::GetTimerDeltaTime(Scene * world, eEngineTimer timerType)
 {
 	return world->GetWorldComponent<TimeWorldComponent>()->Timers.at((size_t)timerType).GetDeltaTime();
 }
 
 //------------------------------------------------------------------------------
-double TimeSystem::GetTimerElapsedTime(World * world, size_t id)
+double TimeSystem::GetTimerElapsedTime(Scene * world, size_t id)
 {
 	TimeWorldComponent* timeComponent = world->GetWorldComponent<TimeWorldComponent>();
 	if(timeComponent->Timers.count(id) == 0)
@@ -73,13 +73,13 @@ double TimeSystem::GetTimerElapsedTime(World * world, size_t id)
 }
 
 //------------------------------------------------------------------------------
-double TimeSystem::GetTimerElapsedTime(World * world, eEngineTimer timerType)
+double TimeSystem::GetTimerElapsedTime(Scene * world, eEngineTimer timerType)
 {
 	return world->GetWorldComponent<TimeWorldComponent>()->Timers.at((size_t)timerType).GetTime();
 }
 
 //------------------------------------------------------------------------------
-double TimeSystem::GetTimerMultiplier(World * world, size_t id)
+double TimeSystem::GetTimerMultiplier(Scene * world, size_t id)
 {
 	TimeWorldComponent* timeComponent = world->GetWorldComponent<TimeWorldComponent>();
 	if(timeComponent->Timers.count(id) == 0)
@@ -89,7 +89,7 @@ double TimeSystem::GetTimerMultiplier(World * world, size_t id)
 }
 
 //------------------------------------------------------------------------------
-double TimeSystem::GetTimerMultiplier(World * world, eEngineTimer timerType)
+double TimeSystem::GetTimerMultiplier(Scene * world, eEngineTimer timerType)
 {
 	return world->GetWorldComponent<TimeWorldComponent>()->Timers.at((size_t)timerType).GetMultiplier();
 }

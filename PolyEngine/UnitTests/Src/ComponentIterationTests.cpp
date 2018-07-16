@@ -10,9 +10,9 @@
 
 using namespace Poly;
 
-TEST_CASE("World component iteration tests.", "ComponentIterator")
+TEST_CASE("Scene component iteration tests.", "ComponentIterator")
 {
-	World* w = new World();
+	Scene* w = new Scene();
 	DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(w);
 	Entity* e[10];
 

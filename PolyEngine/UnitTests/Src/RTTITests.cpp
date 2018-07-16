@@ -69,15 +69,16 @@ TEST_CASE("RTTI property", "[RTTI]") {
 	REQUIRE(propMgr != nullptr);
 	
 	const auto& properties = propMgr->GetPropertyList();
-	REQUIRE(properties.GetSize() == 2);
+	REQUIRE(properties.GetSize() == 2+1); // Val1, Val2 + UUID
 	
-	const auto& p1 = properties[0];
 	CHECK(properties[0].Type == RTTI::TypeInfo::INVALID);
-	CHECK(properties[0].Name == "Val1");
-	CHECK((char*)b + properties[0].Offset == (char*)&(a->val1));
+	CHECK(properties[0].Name == "UUID");
 
-	const auto& p2 = properties[1];
 	CHECK(properties[1].Type == RTTI::TypeInfo::INVALID);
-	CHECK(properties[1].Name == "Val2");
-	CHECK((char*)b + properties[1].Offset == (char*)&(a->val2));
+	CHECK(properties[1].Name == "Val1");
+	CHECK((char*)b + properties[1].Offset == (char*)&(a->val1));
+
+	CHECK(properties[2].Type == RTTI::TypeInfo::INVALID);
+	CHECK(properties[2].Name == "Val2");
+	CHECK((char*)b + properties[2].Offset == (char*)&(a->val2));
 }

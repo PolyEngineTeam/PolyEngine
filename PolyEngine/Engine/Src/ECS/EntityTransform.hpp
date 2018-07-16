@@ -6,15 +6,26 @@ namespace Poly
 {
 	class Entity;
 
-	class ENGINE_DLLEXPORT EntityTransform final : public BaseObjectLiteralType<>, public RTTIBase
+	class ENGINE_DLLEXPORT EntityTransform final : public RTTIBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(EntityTransform, RTTIBase)
+		RTTI_DECLARE_TYPE_DERIVED(::Poly::EntityTransform, ::Poly::RTTIBase)
 		{
-			NO_RTTI_PROPERTY();
+			//@todo(muniu) rttibase pointers serialization
+			//RTTI_PROPERTY_AUTONAME(Owner, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(LocalTranslation, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(LocalRotation, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(LocalScale, RTTI::ePropertyFlag::NONE);
+		
+			RTTI_PROPERTY_AUTONAME(GlobalTranslation, RTTI::ePropertyFlag::DONT_SERIALIZE);
+			RTTI_PROPERTY_AUTONAME(GlobalRotation, RTTI::ePropertyFlag::DONT_SERIALIZE);
+			RTTI_PROPERTY_AUTONAME(GlobalScale, RTTI::ePropertyFlag::DONT_SERIALIZE);
+			RTTI_PROPERTY_AUTONAME(ParentFromModel, RTTI::ePropertyFlag::DONT_SERIALIZE);
+			RTTI_PROPERTY_AUTONAME(WorldFromModel, RTTI::ePropertyFlag::DONT_SERIALIZE);
+			RTTI_PROPERTY_AUTONAME(LocalDirty, RTTI::ePropertyFlag::DONT_SERIALIZE);
+			RTTI_PROPERTY_AUTONAME(GlobalDirty, RTTI::ePropertyFlag::DONT_SERIALIZE);
 		}
-
 	public:
-		EntityTransform(Entity* owner) : Owner(owner) {};
+		EntityTransform(Entity* owner = nullptr) : Owner(owner) {};
 		~EntityTransform();
 
 		const Vector& GetGlobalTranslation() const;
@@ -50,8 +61,8 @@ namespace Poly
 
 		mutable Matrix ParentFromModel;
 		mutable Matrix WorldFromModel;
-		mutable bool LocalDirty = false;
-		mutable bool GlobalDirty = false;
+		mutable bool LocalDirty = true;
+		mutable bool GlobalDirty = true;
 
 		bool UpdateLocalTransformationCache() const;
 		void UpdateGlobalTransformationCache() const;

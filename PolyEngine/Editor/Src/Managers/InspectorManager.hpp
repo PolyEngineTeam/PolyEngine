@@ -33,7 +33,7 @@ public:
 	IEditor* GetEditor() { return ViewportInspector; }
 
 	Engine* GetEngine() { return EngineObj; }
-	World* GetWorld() { return WorldObj; }
+	Scene* GetScene() { return SceneObj; }
 	Dynarray<Entity*> GetSelectedEntities() { return SelectedEntities; }
 	const ProjectConfig* GetConfig() { return Config; }
 	eEngineState GetEngineState() { return EngineState; }
@@ -47,7 +47,7 @@ public slots:
 	void EngineDeinitializedSlot();
 	void StateChangedSlot(eEngineState state);
 
-	void WorldChangedSlot(World* world);
+	void SceneChangedSlot(Scene* world);
 
 	void EntitiesSpawnedSlot();
 	void EntitiesDestroyedSlot();
@@ -94,7 +94,7 @@ signals:
 
 private:
 	Engine* EngineObj;
-	World* WorldObj;
+	Scene* SceneObj;
 	Dynarray<Entity*> SelectedEntities;
 	const ProjectConfig* Config;
 	eEngineState EngineState = eEngineState::NONE;

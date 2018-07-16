@@ -6,5 +6,5 @@ using namespace Poly;
 
 namespace GizmoSystem
 {
-	void Update(World* world);
+	void Update(Scene* scene);
 }

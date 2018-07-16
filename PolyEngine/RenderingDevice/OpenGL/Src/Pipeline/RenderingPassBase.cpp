@@ -107,7 +107,7 @@ Poly::RenderingPassBase::~RenderingPassBase()
 }
 
 //------------------------------------------------------------------------------
-void RenderingPassBase::Run(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType)
+void RenderingPassBase::Run(Scene* world, const CameraComponent* camera, const AARect& rect, ePassType passType)
 {
 	// Bind inputs
 	Program.BindProgram();

@@ -18,8 +18,7 @@ namespace Poly
 			NO_RTTI_PROPERTY();
 		}
 
-		friend void CameraSystem::CameraUpdatePhase(World*);
-
+		friend void CameraSystem::CameraUpdatePhase(Scene*);
 	public:
 		ViewportWorldComponent();
 

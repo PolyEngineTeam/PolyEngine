@@ -11,7 +11,9 @@
 #include <Math/Matrix.hpp>
 #include <Math/Color.hpp>
 #include <Math/Quaternion.hpp>
+#include <UniqueID.hpp>
 #include <cstdio>
+#include <Utils/Logger.hpp>
 
 using namespace Poly;
 
@@ -31,6 +33,11 @@ enum class eConfigFlagsTest
 	VAL_4 = 0x08,
 	VAL_5 = 0x10
 };
+
+static size_t gFactoryCounterInt = 0;
+static size_t gFactoryCounterDynarrayInt = 0;
+static size_t gFactoryCounterCustom = 0;
+
 
 class TestRTTIClass : public RTTIBase
 {
@@ -85,6 +92,14 @@ class TestConfig : public ConfigBase
 		RTTI_PROPERTY_AUTONAME(PropEnumArrayDynarray, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropEnumArrayCustom, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropEnumFlags, RTTI::ePropertyFlag::NONE);
+
+		RTTI_PROPERTY_AUTONAME(PropUUID, RTTI::ePropertyFlag::NONE);
+
+		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrInt, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterInt; return new int; }, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrDynarrayInt, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterDynarrayInt; return new Dynarray<int>; }, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrCustom, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterCustom; return info.CreateInstance(); }, RTTI::ePropertyFlag::NONE);
+
+		RTTI_PROPERTY_AUTONAME(PropRawPtrCustom, RTTI::ePropertyFlag::NONE);
 	}
 public:
 	TestConfig() : ConfigBase("Test", eResourceSource::NONE) 
@@ -99,6 +114,12 @@ public:
 		PropOMapStrCustom.Insert("Val2", 2);
 
 		PropMatrix.SetRotationZ(60_deg);
+
+		PropUniquePtrInt = std::make_unique<int>(5);
+		PropUniquePtrDynarrayInt = std::make_unique<Dynarray<int>>(Dynarray<int>{ 1,2,3 });
+		PropUniquePtrCustom = std::make_unique<TestRTTIClass>(3);
+
+		PropRawPtrCustom = PropUniquePtrCustom.get();
 	}
 
 	// Rendering
@@ -137,6 +158,14 @@ public:
 	EnumArray<Dynarray<int>, eConfigTest> PropEnumArrayDynarray = { { eConfigTest::VAL_1, {1, 2} },{ eConfigTest::VAL_2, {2, 3} } };
 	EnumArray<TestRTTIClass, eConfigTest> PropEnumArrayCustom = { { eConfigTest::VAL_1, 1}, { eConfigTest::VAL_2, 2} };
 	EnumFlags<eConfigFlagsTest> PropEnumFlags = (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_3 | eConfigFlagsTest::VAL_5);
+
+	UniqueID PropUUID = UniqueID::FromString("01234567-89ab-cdef-0123-456789abcdef").Value();
+
+	std::unique_ptr<int> PropUniquePtrInt;
+	std::unique_ptr<Dynarray<int>> PropUniquePtrDynarrayInt;
+	std::unique_ptr<TestRTTIClass> PropUniquePtrCustom;
+
+	TestRTTIClass* PropRawPtrCustom;
 };
 RTTI_DEFINE_TYPE(TestConfig)
 
@@ -213,16 +242,32 @@ void baseValueCheck(const TestConfig& config)
 	CHECK(config.PropEnumArrayDynarray == EnumArray<Dynarray<int>, eConfigTest>{ { eConfigTest::VAL_1,{ 1, 2 } },{ eConfigTest::VAL_2,{ 2, 3 } } });
 	CHECK(config.PropEnumArrayCustom == EnumArray<TestRTTIClass, eConfigTest>{ { eConfigTest::VAL_1, 1 },{ eConfigTest::VAL_2, 2 } });
 	CHECK(config.PropEnumFlags == (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_3 | eConfigFlagsTest::VAL_5));
+
+	CHECK(config.PropUUID == UniqueID::FromString("01234567-89ab-cdef-0123-456789abcdef").Value());
+
+	CHECK(*config.PropUniquePtrInt == 5);
+	CHECK(*config.PropUniquePtrDynarrayInt == Dynarray<int>{1,2,3});
+	CHECK(config.PropUniquePtrCustom->Val1 == 3);
+
+	CHECK(config.PropRawPtrCustom == config.PropUniquePtrCustom.get());
 }
 
 TEST_CASE("Config serialization tests", "[ConfigBase]")
 {
+	REQUIRE(gFactoryCounterInt == 0);
+	REQUIRE(gFactoryCounterDynarrayInt == 0);
+	REQUIRE(gFactoryCounterCustom == 0);
+
 	{
 		TestConfig config;
 		// perform first basic save, to ensure file is created, and with proper values
 		config.Save();
 		// load it
 		config.Load();
+
+		REQUIRE(gFactoryCounterInt == 1);
+		REQUIRE(gFactoryCounterDynarrayInt == 1);
+		REQUIRE(gFactoryCounterCustom == 1);
 
 		baseValueCheck(config);
 
@@ -272,6 +317,14 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		config.PropEnumArrayCustom = { { eConfigTest::VAL_1, 3 },{ eConfigTest::VAL_2, 4 } };
 		config.PropEnumFlags = (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_2 | eConfigFlagsTest::VAL_4);
 
+		config.PropUUID = UniqueID::FromString("abcdef01-2345-6789-abcd-ef0123456789").Value();
+
+		config.PropUniquePtrInt = std::make_unique<int>(7);
+		config.PropUniquePtrDynarrayInt = std::make_unique<Dynarray<int>>(Dynarray<int>{ 4, 5, 6 });
+		config.PropUniquePtrCustom = std::make_unique<TestRTTIClass>(8);
+
+		config.PropRawPtrCustom = config.PropUniquePtrCustom.get();
+
 		// save them
 		config.Save();
 	}
@@ -284,6 +337,10 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 
 		// load old values
 		config.Load();
+
+		REQUIRE(gFactoryCounterInt == 2);
+		REQUIRE(gFactoryCounterDynarrayInt == 2);
+		REQUIRE(gFactoryCounterCustom == 2);
 
 		// check values again after load
 		CHECK(config.PropBool == false);
@@ -372,6 +429,14 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(config.PropEnumArrayDynarray == EnumArray<Dynarray<int>, eConfigTest>{ { eConfigTest::VAL_1, { 3, 4 } }, { eConfigTest::VAL_2,{ 4, 5 } } });
 		CHECK(config.PropEnumArrayCustom == EnumArray<TestRTTIClass, eConfigTest>{ { eConfigTest::VAL_1, 3 }, { eConfigTest::VAL_2, 4 } });
 		CHECK(config.PropEnumFlags == (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_2 | eConfigFlagsTest::VAL_4));
+
+		CHECK(config.PropUUID == UniqueID::FromString("abcdef01-2345-6789-abcd-ef0123456789").Value());
+
+		CHECK(*config.PropUniquePtrInt == 7);
+		CHECK(*config.PropUniquePtrDynarrayInt == Dynarray<int>{4,5,6});
+		CHECK(config.PropUniquePtrCustom->Val1 == 8);
+
+		CHECK(config.PropRawPtrCustom == config.PropUniquePtrCustom.get());
 	}
 
 	// remove the config file

@@ -9,20 +9,10 @@ namespace Poly {
 	{
 		RTTI_DECLARE_TYPE_DERIVED(PostprocessSettingsComponent, ComponentBase)
 		{
-			RTTI_PROPERTY(UseBgShader, "UseBgShader", RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY(UseFgShader, "UseFgShader", RTTI::ePropertyFlag::NONE);
-
-			RTTI_PROPERTY(UseCashetes, "UseCashetes", RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY(Distortion, "Distortion", RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY(ColorTempValue, "ColorTempValue", RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY(ColorTempLuminancePreservation, "ColorTempLuminancePreservation", RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY(Saturation, "Saturation", RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY(Grain, "Grain", RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY(Stripes, "Stripes", RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY(Vignette, "Vignette", RTTI::ePropertyFlag::NONE);
+			NO_RTTI_PROPERTY();
 		}
 
-		friend void CameraSystem::CameraUpdatePhase(World*);
+		friend void CameraSystem::CameraUpdatePhase(Scene*);
 	public:
 
 		bool UseBgShader = true;

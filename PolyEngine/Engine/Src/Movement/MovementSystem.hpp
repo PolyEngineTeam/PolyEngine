@@ -2,12 +2,12 @@
 
 namespace Poly
 {
-	class World;
+	class Scene;
 	class EntityTransform;
 
 	namespace MovementSystem
 	{
-		void MovementUpdatePhase(World* world);
+		void MovementUpdatePhase(Scene* world);
 
 		Vector ENGINE_DLLEXPORT GetLocalForward(const EntityTransform& transform);
 		Vector ENGINE_DLLEXPORT GetLocalRight(const EntityTransform& transform);

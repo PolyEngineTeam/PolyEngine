@@ -15,9 +15,9 @@
 
 namespace Poly
 {
-	class World;
+	class Scene;
 	class Engine;
-	typedef std::function<void(World*)> PhaseUpdateFunction;
+	typedef std::function<void(Scene*)> PhaseUpdateFunction;
 
 	/// <summary>Abstract class that every game has to inherit from.</summary>
 	class ENGINE_DLLEXPORT IGame : public BaseObject<>
@@ -143,7 +143,8 @@ namespace Poly
 
 		/// <summary>Returns current base world refference.</summary>
 		/// <returns>Pointer to current world.</returns>
-		World* GetWorld() { return BaseWorld.get(); }
+		Scene* GetActiveScene() { return ActiveScene.get(); }
+		void LoadDefaultScene();
 
 		IEditor* GetEditor() { return Editor; }
 
@@ -169,17 +170,17 @@ namespace Poly
 		{
 			HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "_COUNT enum value passed to UpdatePhases(), which is an invalid value");
 			for (auto& update : GameUpdatePhases[static_cast<int>(order)])
-				update(GetWorld());
+				update(GetActiveScene());
 		}
 
 		/// Registers a PhaseUpdateFunction to be executed in the update.
 		/// part of a single frame in the same order as they were passed in.
-		/// @param phaseFunction - void function(World*)
+		/// @param phaseFunction - void function(Scene*)
 		/// @param order - enum eUpdatePhaseOrder value
 		/// @see eUpdatePhaseOrder
 		void RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order);
 
-		std::unique_ptr<World> BaseWorld;
+		std::unique_ptr<Scene> ActiveScene;
 		std::unique_ptr<IGame> Game;
 		std::unique_ptr<IRenderingDevice> RenderingDevice;
 		IEditor* Editor = nullptr;

@@ -310,8 +310,8 @@ namespace Poly
 					auto newNode = new LeafNode();
 					auto oldNode = nodeRef.node;
 
-					const auto k = std::move(oldNode->keys  [idx]);
-					const auto v = std::move(oldNode->values[idx]);
+					auto k = std::move(oldNode->keys  [idx]);
+					auto v = std::move(oldNode->values[idx]);
 					oldNode->keys  .DestructAt(idx);
 					oldNode->values.DestructAt(idx);
 
@@ -330,8 +330,8 @@ namespace Poly
 					auto newNode = new BranchNode();
 					auto oldNode = nodeRef.node;
 
-					const auto k = std::move(oldNode->keys  [idx]);
-					const auto v = std::move(oldNode->values[idx]);
+					auto k = std::move(oldNode->keys  [idx]);
+					auto v = std::move(oldNode->values[idx]);
 					oldNode->keys  .DestructAt(idx);
 					oldNode->values.DestructAt(idx);
 

@@ -20,19 +20,10 @@ namespace Poly {
 	{
 		RTTI_DECLARE_TYPE_DERIVED(CameraComponent, ComponentBase)
 		{
-			RTTI_PROPERTY(IsPerspective, "IsPerspective", RTTI::ePropertyFlag::NONE);
-
-			RTTI_PROPERTY(Top, "Top", RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY(Bottom, "Bottom", RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY(Left, "Left", RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY(Right, "Right", RTTI::ePropertyFlag::NONE);
-
-			RTTI_PROPERTY(Near, "Near", RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY(Far, "Far", RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY(Aspect, "Aspect", RTTI::ePropertyFlag::NONE);
+			NO_RTTI_PROPERTY();
 		}
 
-		friend void CameraSystem::CameraUpdatePhase(World*);
+		friend void CameraSystem::CameraUpdatePhase(Scene*);
 	public:
 		CameraComponent() {}
 		CameraComponent(Angle fov, float zNear, float zFar);

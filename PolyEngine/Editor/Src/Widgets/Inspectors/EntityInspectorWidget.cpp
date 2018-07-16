@@ -190,8 +190,8 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		{
 			std::stringstream ss;
 			ss.str(std::string());
-			ss << selectedEntities[0]->GetParent()->Name + "\t<";
-			ss << selectedEntities[0]->GetParent()->GetID();
+			ss << selectedEntities[0]->GetParent()->GetName() + "\t<";
+			ss << selectedEntities[0]->GetParent()->GetUUID();
 			ss << "> ";
 			ParentIdNameField->setText(&ss.str()[0]);
 			ParentSelectButton->show();
@@ -213,11 +213,11 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		std::stringstream ss;
 
 		// name
-		NameField->SetObject(&selectedEntities[0]->Name, &selectedEntities[0]->GetPropertyManager()->GetPropertyList()[1]);
+		NameField->SetObject(&selectedEntities[0], &selectedEntities[0]->GetPropertyManager()->GetPropertyList()[1]);
 		NameField->SetDisableEdit(false);
 
 		// id
-		ss << selectedEntities[0]->GetID();
+		ss << selectedEntities[0]->GetUUID();
 		UniqueIdField->setText(&ss.str()[0]);
 
 		// parent
@@ -229,8 +229,8 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		else
 		{
 			ss.str(std::string());
-			ss << selectedEntities[0]->GetParent()->Name + "\t<";
-			ss << selectedEntities[0]->GetParent()->GetID();
+			ss << selectedEntities[0]->GetParent()->GetName() + "\t<";
+			ss << selectedEntities[0]->GetParent()->GetUUID();
 			ss << "> ";
 			ParentIdNameField->setText(&ss.str()[0]);
 			ParentSelectButton->show();
@@ -241,8 +241,8 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		for (auto child : selectedEntities[0]->GetChildren())
 		{
 			ss.str(std::string());
-			ss << child->Name + " <";
-			ss << child->GetID();
+			ss << child->GetName() + " <";
+			ss << child->GetUUID();
 			ss << "> ";
 			ChildrenIdNameField->addItem(&ss.str()[0]);
 		}
@@ -260,7 +260,7 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		else
 		{
 			TransformSection->show();
-			Transform->SetObject(selectedEntities[0], &selectedEntities[0]->GetPropertyManager()->GetPropertyList()[0]);
+			Transform->SetObject(selectedEntities[0], &selectedEntities[0]->GetPropertyManager()->GetPropertyList()[2]);
 		}
 
 		// components
@@ -291,7 +291,7 @@ void EntityInspectorWidget::Update()
 
 		NameField->UpdateControl();
 
-		ss << selectedEntities[0]->GetID();
+		ss << selectedEntities[0]->GetUUID();
 		UniqueIdField->setText(&ss.str()[0]);
 
 		// parent
@@ -300,8 +300,8 @@ void EntityInspectorWidget::Update()
 			ParentIdNameField->setText("");
 		else
 		{
-			ss << selectedEntities[0]->GetParent()->Name + "\t<";
-			ss << selectedEntities[0]->GetParent()->GetID();
+			ss << selectedEntities[0]->GetParent()->GetName() + "\t<";
+			ss << selectedEntities[0]->GetParent()->GetUUID();
 			ss << "> ";
 			ParentIdNameField->setText(&ss.str()[0]);
 		}
@@ -311,8 +311,8 @@ void EntityInspectorWidget::Update()
 		for (auto child : selectedEntities[0]->GetChildren())
 		{
 			ss.str(std::string());
-			ss << child->Name + "  <";
-			ss << child->GetID();
+			ss << child->GetName() + "  <";
+			ss << child->GetUUID();
 			ss << "> ";
 			ChildrenIdNameField->addItem(&ss.str()[0]);
 		}
@@ -336,8 +336,8 @@ void EntityInspectorWidget::Update()
 		{
 			std::stringstream ss;
 			ss.str(std::string());
-			ss << selectedEntities[0]->GetParent()->Name + "\t<";
-			ss << selectedEntities[0]->GetParent()->GetID();
+			ss << selectedEntities[0]->GetParent()->GetName() + "\t<";
+			ss << selectedEntities[0]->GetParent()->GetUUID();
 			ss << "> ";
 			ParentIdNameField->setText(&ss.str()[0]);
 		}

@@ -71,18 +71,18 @@ void WorldInspectorWidget::WorldChanged()
 	Tree->clear();
 	ItemToEntity.clear();
 
-	if (Manager->GetWorld())
+	if (Manager->GetScene())
 	{
 		QTreeWidgetItem* root = new QTreeWidgetItem(Tree);
 
 		std::stringstream ss;
-		ss << Manager->GetWorld()->GetRoot()->GetID();
+		ss << Manager->GetScene()->GetRoot()->GetUUID();
 		root->setText(2, (&ss.str()[0]));
-		root->setText(1, Manager->GetWorld()->GetRoot()->Name.GetCStr());
+		root->setText(1, Manager->GetScene()->GetRoot()->GetName().GetCStr());
 		root->setCheckState(0, Qt::Checked);
-		ItemToEntity.insert(std::pair<QTreeWidgetItem*, Entity*>(root, Manager->GetWorld()->GetRoot()));
+		ItemToEntity.insert(std::pair<QTreeWidgetItem*, Entity*>(root, Manager->GetScene()->GetRoot()));
 
-		for (auto child : Manager->GetWorld()->GetRoot()->GetChildren())
+		for (auto child : Manager->GetScene()->GetRoot()->GetChildren())
 			AddEntityToTree(child, root);
 	}
 }
@@ -163,9 +163,9 @@ void WorldInspectorWidget::Update()
 	for (auto i : ItemToEntity)
 	{
 		std::stringstream ss;
-		ss << i.second->GetID();
+		ss << i.second->GetUUID();
 		i.first->setText(2, (&ss.str()[0]));
-		i.first->setText(1, i.second->Name.GetCStr());
+		i.first->setText(1, i.second->GetName().GetCStr());
 	}
 }
 
@@ -184,9 +184,9 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 	QTreeWidgetItem* entityTree = new QTreeWidgetItem(parent);
 
 	std::stringstream ss;
-	ss << entity->GetID();
+	ss << entity->GetUUID();
 	entityTree->setText(2, (&ss.str()[0]));
-	entityTree->setText(1, entity->Name.GetCStr());
+	entityTree->setText(1, entity->GetName().GetCStr());
 	entityTree->setCheckState(0, Qt::Checked);
 	ItemToEntity.insert(std::pair<QTreeWidgetItem*, Entity*>(entityTree, entity));
 
@@ -238,7 +238,7 @@ void WorldInspectorWidget::Drop(Dynarray<QTreeWidgetItem*> droppedItems)
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::SpawnEntities()
 {
-	if (!Manager->GetWorld())
+	if (!Manager->GetScene())
 	{
 		QMessageBox msgBox;
 		msgBox.setText("Can't spawn entities without world.");
@@ -248,7 +248,7 @@ void WorldInspectorWidget::SpawnEntities()
 	}
 
 	EntityDialog dialog;
-	Dynarray<Entity*> result = dialog.SpawnEntities(Manager->GetWorld(), Manager->GetSelectedEntities());
+	Dynarray<Entity*> result = dialog.SpawnEntities(Manager->GetScene(), Manager->GetSelectedEntities());
 
 	if (!dialog.OperationCanceled()) 
 	{
@@ -261,7 +261,7 @@ void WorldInspectorWidget::SpawnEntities()
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::DestroyEntities()
 {
-	if (!Manager->GetWorld())
+	if (!Manager->GetScene())
 	{
 		QMessageBox msgBox;
 		msgBox.setText("Can't destroy entities without world.");
@@ -271,7 +271,7 @@ void WorldInspectorWidget::DestroyEntities()
 	}
 
 	EntityDialog dialog;
-	dialog.DestroyEntities(Manager->GetWorld(), Manager->GetSelectedEntities());
+	dialog.DestroyEntities(Manager->GetScene(), Manager->GetSelectedEntities());
 
 	if (!dialog.OperationCanceled())
 		Manager->EntitiesDestroyedSlot();
@@ -280,7 +280,7 @@ void WorldInspectorWidget::DestroyEntities()
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::ReparentEntities()
 {
-	if (!Manager->GetWorld())
+	if (!Manager->GetScene())
 	{
 		QMessageBox msgBox;
 		msgBox.setText("Can't reparent entities without selected world.");
@@ -290,7 +290,7 @@ void WorldInspectorWidget::ReparentEntities()
 	}
 
 	EntityDialog dialog;
-	Dynarray<Entity*> result = dialog.ReparentEntities(Manager->GetWorld(), Manager->GetSelectedEntities());
+	Dynarray<Entity*> result = dialog.ReparentEntities(Manager->GetScene(), Manager->GetSelectedEntities());
 
 	if (!dialog.OperationCanceled())
 	{

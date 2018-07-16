@@ -4,7 +4,7 @@
 
 namespace Poly
 {
-	class World;
+	class Scene;
 	class EntityTransform;
 }
 	
@@ -12,7 +12,7 @@ using namespace Poly;
 
 namespace EditorCameraMovementSystem
 {
-	void Update(World* world);
+	void Update(Scene* scene);
 
 	Vector GetLocalForward(const EntityTransform& transform);
 	Vector GetLocalRight(const EntityTransform& transform);

@@ -9,7 +9,7 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT Timer : public BaseObject<>
 	{
-		friend void TimeSystem::TimeUpdatePhase(World * world);
+		friend void TimeSystem::TimeUpdatePhase(Scene * world);
 	public:
 		//------------------------------------------------------------------------------
 		Timer(bool isPausable = false, double multiplier = 1) :

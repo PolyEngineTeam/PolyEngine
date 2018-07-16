@@ -6,7 +6,7 @@
 #include <QtWidgets/qmessagebox.h>
 
 //------------------------------------------------------------------------------
-Dynarray<Entity*> EntityDialog::SpawnEntities(World* world, Dynarray<Entity*> parents)
+Dynarray<Entity*> EntityDialog::SpawnEntities(Scene* scene, Dynarray<Entity*> parents)
 {
 	setModal(true);
 	Canceled = true;
@@ -28,7 +28,7 @@ Dynarray<Entity*> EntityDialog::SpawnEntities(World* world, Dynarray<Entity*> pa
 	EntitiesTree->setHeaderLabels(QStringList() << "Name" << "ID");
 	MainLayout->addWidget(EntitiesTree, 1, 0, 1, 3);
 
-	for (auto child : world->GetRoot()->GetChildren())
+	for (auto child : scene->GetRoot()->GetChildren())
 		AddEntity(child);
 
 	SecondLabel = new QLabel(this);
@@ -71,7 +71,7 @@ Dynarray<Entity*> EntityDialog::SpawnEntities(World* world, Dynarray<Entity*> pa
 			for (auto p : PrefabTree->selectedItems())
 				if (p->text(0) == "Empty entity")
 				{
-					Entity* e = DeferredTaskSystem::SpawnEntityImmediate(world);
+					Entity* e = DeferredTaskSystem::SpawnEntityImmediate(scene);
 					e->SetParent(ItemToEntity[i]);
 					result.PushBack(e);
 				}
@@ -88,7 +88,7 @@ Dynarray<Entity*> EntityDialog::SpawnEntities(World* world, Dynarray<Entity*> pa
 }
 
 //------------------------------------------------------------------------------
-void EntityDialog::DestroyEntities(World* world, Dynarray<Entity*> entities)
+void EntityDialog::DestroyEntities(Scene* scene, Dynarray<Entity*> entities)
 {
 	setModal(true);
 	Canceled = true;
@@ -110,7 +110,7 @@ void EntityDialog::DestroyEntities(World* world, Dynarray<Entity*> entities)
 	EntitiesTree->setHeaderLabels(QStringList() << "Name" << "ID");
 	MainLayout->addWidget(EntitiesTree, 1, 0, 1, 3);
 
-	for (auto child : world->GetRoot()->GetChildren())
+	for (auto child : scene->GetRoot()->GetChildren())
 		AddEntity(child);
 
 	// create and link buttons
@@ -130,11 +130,11 @@ void EntityDialog::DestroyEntities(World* world, Dynarray<Entity*> entities)
 	// apply
 	if (!Canceled)
 		for (auto i : EntitiesTree->selectedItems())
-			DeferredTaskSystem::DestroyEntityImmediate(world, ItemToEntity[i]);
+			DeferredTaskSystem::DestroyEntityImmediate(scene, ItemToEntity[i]);
 }
 
 //------------------------------------------------------------------------------
-Dynarray<Entity*> EntityDialog::ReparentEntities(World* world, Dynarray<Entity*> entities, Entity* parent)
+Dynarray<Entity*> EntityDialog::ReparentEntities(Scene* scene, Dynarray<Entity*> entities, Entity* parent)
 {
 	setModal(true);
 	Canceled = true;
@@ -156,7 +156,7 @@ Dynarray<Entity*> EntityDialog::ReparentEntities(World* world, Dynarray<Entity*>
 	EntitiesTree->setHeaderLabels(QStringList() << "Name" << "ID");
 	MainLayout->addWidget(EntitiesTree, 1, 0, 1, 3);
 
-	for (auto child : world->GetRoot()->GetChildren())
+	for (auto child : scene->GetRoot()->GetChildren())
 		AddEntity(child);
 
 	QTreeWidget* potentialParents = EntitiesTree;
@@ -172,7 +172,7 @@ Dynarray<Entity*> EntityDialog::ReparentEntities(World* world, Dynarray<Entity*>
 	MainLayout->addWidget(EntitiesTree, 3, 0, 1, 3);
 	PredefinedEntities = entities;
 
-	for (auto child : world->GetRoot()->GetChildren())
+	for (auto child : scene->GetRoot()->GetChildren())
 		AddEntity(child);
 
 	// create and link buttons
@@ -241,9 +241,9 @@ void EntityDialog::AddEntity(Entity* entity)
 	QTreeWidgetItem* item = new QTreeWidgetItem(EntitiesTree);
 
 	std::stringstream ss;
-	ss << entity->GetID();
+	ss << entity->GetUUID();
 	item->setText(1, (&ss.str()[0]));
-	item->setText(0, entity->Name.GetCStr());
+	item->setText(0, entity->GetName().GetCStr());
 	ItemToEntity.insert(std::pair<QTreeWidgetItem*, Entity*>(item, entity));
 
 	for (Entity* e : PredefinedEntities)

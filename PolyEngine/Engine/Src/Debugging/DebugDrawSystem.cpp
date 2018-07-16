@@ -40,7 +40,7 @@ namespace Util
 	}
 }
 
-void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
+void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* world)
 {
 	gDebugConfig.DebugRender = false;
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
@@ -204,7 +204,7 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(World* world)
 	}
 }
 
-void Poly::DebugDrawSystem::DrawLine(World* world, const Vector& begin, const Vector& end, const Color& color)
+void Poly::DebugDrawSystem::DrawLine(Scene* world, const Vector& begin, const Vector& end, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
@@ -215,7 +215,7 @@ void Poly::DebugDrawSystem::DrawLine(World* world, const Vector& begin, const Ve
 	debugLinesComponent->DebugLinesColors.PushBack(DebugDrawStateWorldComponent::DebugLineColor{ color, color });
 }
 
-void Poly::DebugDrawSystem::DrawBox(World* world, const Vector& mins, const Vector& maxs, const Color& color)
+void Poly::DebugDrawSystem::DrawBox(Scene* world, const Vector& mins, const Vector& maxs, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
@@ -258,7 +258,7 @@ void Poly::DebugDrawSystem::DrawBox(World* world, const Vector& mins, const Vect
 	DrawLine(world, points[5], points[6], color);
 }
 
-void Poly::DebugDrawSystem::DrawCircle(World* world, const Vector& position, float radius, Vector orientation, const Color& color)
+void Poly::DebugDrawSystem::DrawCircle(Scene* world, const Vector& position, float radius, Vector orientation, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
@@ -285,7 +285,7 @@ void Poly::DebugDrawSystem::DrawCircle(World* world, const Vector& position, flo
 	DrawArrow(world, position, right, color);
 }
 
-void Poly::DebugDrawSystem::DrawSphere(World* world, const Vector& position, float radius, const Color& color)
+void Poly::DebugDrawSystem::DrawSphere(Scene* world, const Vector& position, float radius, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
@@ -295,7 +295,7 @@ void Poly::DebugDrawSystem::DrawSphere(World* world, const Vector& position, flo
 	DrawCircle(world, position, radius, Vector(0.0f, 0.0f, 1.0f), color);
 }
 
-void Poly::DebugDrawSystem::DrawArrow(World* world, Vector position, Vector directionVector, const Color& color)
+void Poly::DebugDrawSystem::DrawArrow(Scene* world, Vector position, Vector directionVector, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
@@ -330,7 +330,7 @@ void Poly::DebugDrawSystem::DrawArrow(World* world, Vector position, Vector dire
 	}
 }
 
-void Poly::DebugDrawSystem::DrawText2D(World* world, const Vector2i& screenPosition, String text, size_t fontSize, const Color& color)
+void Poly::DebugDrawSystem::DrawText2D(Scene* world, const Vector2i& screenPosition, String text, size_t fontSize, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
