@@ -88,9 +88,10 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	DOFShader.RegisterUniform("sampler", "uImage");
 	DOFShader.RegisterUniform("sampler", "uDepth");
 	DOFShader.RegisterUniform("float", "uTime");
-	DOFShader.RegisterUniform("float", "uDOFpoint");
-	DOFShader.RegisterUniform("float", "uDOFrange");
-	DOFShader.RegisterUniform("float", "uDOFsize");
+	DOFShader.RegisterUniform("float", "uDOFPoint");
+	DOFShader.RegisterUniform("float", "uDOFRange");
+	DOFShader.RegisterUniform("float", "uDOFSize");
+	DOFShader.RegisterUniform("float", "uDOFShow");
 
 	SkyboxShader.RegisterUniform("mat4", "uClipFromWorld");
 	SkyboxShader.RegisterUniform("vec4", "uTint");
@@ -676,11 +677,8 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 {
-
 	if (SkyboxCapture.GetEnvCubemap() > 0)
 	{
-		float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.WorldData, eEngineTimer::GAMEPLAY);
-	 
 		Color tint = Color::WHITE;
 		SkyboxWorldComponent* skyboxCmp = sceneView.WorldData->GetWorldComponent<SkyboxWorldComponent>();
 		if (skyboxCmp)
@@ -932,14 +930,16 @@ void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
 {
 	float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.WorldData, eEngineTimer::GAMEPLAY);
 
-	float DOFpoint = 1000.0f;
-	float DOFrange = 800.0f;
-	float DOFsize = 0.2f;
+	float DOFPoint = 1000.0f;
+	float DOFRange = 800.0f;
+	float DOFSize = 0.2f;
+	float DOFShow = 0.2f;
 	const PostprocessSettingsComponent* postCmp = sceneView.CameraCmp->GetSibling<PostprocessSettingsComponent>();
 	if (postCmp) {
-		DOFpoint = postCmp->DOFpoint;
-		DOFrange = postCmp->DOFrange;
-		DOFsize = postCmp->DOFsize;
+		DOFPoint = postCmp->DOFPoint;
+		DOFRange = postCmp->DOFRange;
+		DOFSize = postCmp->DOFSize;
+		DOFShow = postCmp->DOFShow;
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost0);
@@ -947,10 +947,11 @@ void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
 	const ScreenSize screenSize = RDI->GetScreenSize();
 
 	DOFShader.BindProgram();
-	DOFShader.SetUniform("uRes", Vector(screenSize.Width, screenSize.Height, 1.0f / screenSize.Width, 1.0f / screenSize.Height));
-	DOFShader.SetUniform("uDOFpoint", DOFpoint);
-	DOFShader.SetUniform("uDOFrange", DOFrange);
-	DOFShader.SetUniform("uDOFsize", DOFsize);
+	DOFShader.SetUniform("uRes", Vector((float)screenSize.Width, (float)screenSize.Height, 1.0f / screenSize.Width, 1.0f / screenSize.Height));
+	DOFShader.SetUniform("uDOFPoint", DOFPoint);
+	DOFShader.SetUniform("uDOFRange", DOFRange);
+	DOFShader.SetUniform("uDOFSize", DOFSize);
+	DOFShader.SetUniform("uDOFShow", DOFShow);
 	DOFShader.SetUniform("uTime", time);
 	DOFShader.BindSampler("uImage", 0, ColorBuffer);
 	DOFShader.BindSampler("uDepth", 1, LinearDepth);
