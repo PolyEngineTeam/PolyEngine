@@ -71,6 +71,10 @@ PolyMainWindow::PolyMainWindow()
 			ProjectMenu->addAction(CloseProjectAction.get());
 			CloseProjectAction->setText("Close");
 			connect(CloseProjectAction.get(), &QAction::triggered, this, &PolyMainWindow::CloseProject);
+
+	EditProjectAction->setVisible(false);
+	PlayProjectAction->setVisible(false);
+	CloseProjectAction->setVisible(false);
 }
 
 void PolyMainWindow::Quit()
@@ -110,6 +114,14 @@ void PolyMainWindow::OpenProject()
 	fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
 	if (fileDialog.exec() == QDialog::Accepted)
 		gApp->ProjectMgr->Open(&fileDialog.selectedFiles()[0].toStdString()[0]);
+
+	CreateProjectAction->setVisible(false);
+	OpenProjectAction->setVisible(false);
+	UpdateProjectFromEngineAction->setVisible(false);
+
+	EditProjectAction->setVisible(true);
+	PlayProjectAction->setVisible(true);
+	CloseProjectAction->setVisible(true);
 }
 
 void PolyMainWindow::UpdateProject()
@@ -139,6 +151,14 @@ void PolyMainWindow::PlayProject()
 void PolyMainWindow::CloseProject()
 {
 	gApp->ProjectMgr->Close();
+
+	CreateProjectAction->setVisible(true);
+	OpenProjectAction->setVisible(true);
+	UpdateProjectFromEngineAction->setVisible(true);
+
+	EditProjectAction->setVisible(false);
+	PlayProjectAction->setVisible(false);
+	CloseProjectAction->setVisible(false);
 }
 
 void PolyMainWindow::ContactUs()
