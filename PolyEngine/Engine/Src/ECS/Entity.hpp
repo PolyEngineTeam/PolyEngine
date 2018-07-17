@@ -6,6 +6,7 @@
 #include <Memory/SafePtrRoot.hpp>
 #include "ECS/EntityTransform.hpp"
 #include "Engine.hpp"
+#include "Collections/Dynarray.hpp"
 
 namespace Poly
 {
@@ -28,8 +29,11 @@ namespace Poly
 		}
 	public:
 		Entity() = default;
-		Entity(const Entity&) = delete;
 		~Entity();
+		Entity(const Entity&) = delete;
+		Entity(Entity&&) = delete;
+		Entity* operator=(const Entity&) = delete;
+		Entity* operator=(Entity&&) = delete;
 
 		const Scene* GetEntityScene() const { HEAVY_ASSERTE(GetUUID(), "Entity was not properly initialized");  return EntityScene; }
 		Scene* GetEntityScene() { HEAVY_ASSERTE(GetUUID(), "Entity was not properly initialized");  return EntityScene; }
@@ -109,7 +113,7 @@ namespace Poly
 
 		std::bitset<MAX_COMPONENTS_COUNT> ComponentPosessionFlags;
 		Dynarray<std::unique_ptr<ComponentBase>> Components;
-
+		std::vector<std::unique_ptr<ComponentBase>> TTT;
 		friend class Scene;
 	};
 } //namespace Poly

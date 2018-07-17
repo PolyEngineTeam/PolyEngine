@@ -96,10 +96,12 @@ namespace Poly
 
 		/// <summary>Basic copy constructor</summary>
 		/// <param name="rhs">Reference to Dynarray instance which state should be copied.</param>
-		Dynarray(const Dynarray<T>& rhs) { Copy(rhs); }
+		template<typename Type, typename std::enable_if<std::is_copy_constructible<Type>::value && std::is_same<Type, T>::value>::type* = 0>
+		Dynarray(const Dynarray<Type>& rhs) { Copy(rhs); }
 
 		/// <summary>Basic move constructor</summary>
 		/// <param name="rhs">R-value reference to Dynarray instance which state should be moved.</param>
+		template<typename Type, typename std::enable_if<std::is_move_constructible<Type>::value && std::is_same<Type, T>::value>::type* = 0>
 		Dynarray(Dynarray<T>&& rhs) { Move(std::forward<Dynarray<T>>(rhs)); }
 
 		/// <summary>Basic destructor.</summary>
@@ -111,7 +113,8 @@ namespace Poly
 
 		/// <summary>Basic copy operator</summary>
 		/// <param name="rhs">Reference to Dynarray instance which state should be copied.</param>
-		Dynarray<T>& operator=(const Dynarray<T>& rhs)
+		template<typename Type, typename std::enable_if<std::is_copy_assignable<Type>::value && std::is_same<Type, T>::value>::type* = 0>
+		Dynarray<Type>& operator=(const Dynarray<Type>& rhs)
 		{
 			Clear();
 			Copy(rhs);
@@ -120,6 +123,7 @@ namespace Poly
 
 		/// <summary>Basic move operator</summary>
 		/// <param name="rhs">R-value reference to Dynarray instance which state should be moved.</param>
+		template<typename Type, typename std::enable_if<std::is_move_assignable<Type>::value && std::is_same<Type, T>::value>::type* = 0>
 		Dynarray<T>& operator=(Dynarray<T>&& rhs)
 		{
 			Clear();
