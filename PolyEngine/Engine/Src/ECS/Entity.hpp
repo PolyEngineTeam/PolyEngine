@@ -113,7 +113,7 @@ namespace Poly
 
 		std::bitset<MAX_COMPONENTS_COUNT> ComponentPosessionFlags;
 		Dynarray<std::unique_ptr<ComponentBase>> Components;
-		std::vector<std::unique_ptr<ComponentBase>> TTT;
+
 		friend class Scene;
 	};
 } //namespace Poly
