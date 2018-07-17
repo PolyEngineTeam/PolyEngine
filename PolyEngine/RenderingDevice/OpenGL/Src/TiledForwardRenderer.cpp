@@ -65,6 +65,7 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	SkyboxShader("Shaders/skybox.vert.glsl", "Shaders/skybox.frag.glsl"),
 	LinearizeDepthShader("Shaders/hdr.vert.glsl", "Shaders/linearizeDepth.frag.glsl"),
 	GammaShader("Shaders/hdr.vert.glsl", "Shaders/gamma.frag.glsl"),
+	DOFShader("Shaders/hdr.vert.glsl", "Shaders/dof.frag.glsl"),
 	BloomBrightShader("Shaders/hdr.vert.glsl", "Shaders/bloom_pass_bright.frag.glsl"),
 	BloomBlurShader("Shaders/hdr.vert.glsl", "Shaders/bloom_pass_blur.frag.glsl"),
 	BloomApplyShader("Shaders/hdr.vert.glsl", "Shaders/bloom_pass_apply.frag.glsl"),
@@ -72,7 +73,6 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	TranslucentShader("Shaders/translucent.vert.glsl", "Shaders/translucent.frag.glsl"),
 	EquiToCubemapShader("Shaders/equiHdr.vert.glsl", "Shaders/equiHdr.frag.glsl"),
 	IntegrateBRDFShader("Shaders/hdr.vert.glsl", "Shaders/integrateBRDF.frag.glsl"),
-	DOFShader("Shaders/hdr.vert.glsl", "Shaders/dof.frag.glsl"),
 	Text2DShader("Shaders/text2D.vert.glsl", "Shaders/text2D.frag.glsl"),
 	EditorDebugShader("Shaders/debug.vert.glsl", "Shaders/debug.frag.glsl"),
 	DebugQuadDepthPrepassShader("Shaders/debugQuadDepthPrepass.vert.glsl", "Shaders/debugQuadDepthPrepass.frag.glsl"),
@@ -404,7 +404,7 @@ void TiledForwardRenderer::CreateRenderTargets(const ScreenSize& size)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	RTBloom.Init(screenSizeX, screenSizeY);
+	RTBloom.Init(screenSizeX / 2, screenSizeY / 2);
 
 	CHECK_GL_ERR();
 	CHECK_FBO_STATUS();
@@ -1006,6 +1006,9 @@ void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
 
 void TiledForwardRenderer::PostBloom(const SceneView& sceneView)
 {
+	const ScreenSize screenSize = RDI->GetScreenSize();
+	glViewport(0, 0, screenSize.Width / 2, screenSize.Height / 2);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, RTBloom.GetWriteFBO());
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, RTBloom.GetWriteTarget(), 0);
 
@@ -1017,7 +1020,7 @@ void TiledForwardRenderer::PostBloom(const SceneView& sceneView)
 	glBindVertexArray(0);
 
 	RTBloom.Flip();
-
+	
 	BloomBlurShader.BindProgram();
 	for (size_t i = 0; i < 6; ++i)
 	{
@@ -1030,9 +1033,12 @@ void TiledForwardRenderer::PostBloom(const SceneView& sceneView)
 		glBindVertexArray(RDI->PrimitivesQuad->VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
+		glFinish();
 
 		RTBloom.Flip();
 	}
+	
+	glViewport(0, 0, screenSize.Width, screenSize.Height);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost1);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, PostColorBuffer1, 0);
