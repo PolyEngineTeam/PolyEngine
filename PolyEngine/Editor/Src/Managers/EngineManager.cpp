@@ -4,10 +4,11 @@ using namespace Poly;
 
 //------------------------------------------------------------------------------
 EngineManager::EngineManager()
-	: Updater(this)
+	: Updater(this), EditorUpdater(this)
 {
 	// setup update timer
 	connect(&Updater, &QTimer::timeout, this, &EngineManager::UpdatePhase);
+	connect(&EditorUpdater, &QTimer::timeout, this, &EngineManager::EditorUpdatePhase);
 }
 
 //------------------------------------------------------------------------------
@@ -37,6 +38,7 @@ void EngineManager::DeinitEngine()
 	Editor->SetEngineState(eEngineState::NONE);
 	Editor = nullptr;
 	Updater.stop();
+	EditorUpdater.stop();
 
 	emit Deinitialized();
 }
@@ -45,6 +47,7 @@ void EngineManager::DeinitEngine()
 void EngineManager::Edit()
 {
 	Updater.stop();
+	EditorUpdater.stop();
 	switch (Editor->GetEngineState())
 	{
 	case eEngineState::NONE:
@@ -63,6 +66,7 @@ void EngineManager::Edit()
 		throw new std::exception();
 	}
 
+	emit Initialized();
 	emit StateChanged(eEngineState::EDIT);
 	Updater.start(0);
 }
@@ -71,6 +75,7 @@ void EngineManager::Edit()
 void EngineManager::Play()
 {
 	Updater.stop();
+	EditorUpdater.stop();
 	switch (Editor->GetEngineState())
 	{
 	case eEngineState::NONE:
@@ -89,13 +94,18 @@ void EngineManager::Play()
 		throw new std::exception();
 	}
 
+	emit Initialized();
 	emit StateChanged(eEngineState::GAMEPLAY);
 	Updater.start(0);
+	EditorUpdater.start(250);
 }
 
 //------------------------------------------------------------------------------
 void EngineManager::UpdatePhase()
 {
+	if (!EngineObj)
+		return;
+
 	Dynarray<Engine::eUpdatePhaseOrder> updatePhases;
 
 	if (Editor->GetEngineState() == eEngineState::EDIT)
@@ -112,4 +122,10 @@ void EngineManager::UpdatePhase()
 	}
 
 	EngineObj->Update(updatePhases);
+}
+
+//------------------------------------------------------------------------------
+void EngineManager::EditorUpdatePhase()
+{
+	emit gApp->InspectorMgr->Update();
 }

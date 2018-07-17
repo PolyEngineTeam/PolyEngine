@@ -32,7 +32,9 @@ private:
 	IEditor* Editor = nullptr;
 
 	QTimer Updater;
+	QTimer EditorUpdater;
 
 private slots:
 	void UpdatePhase();
+	void EditorUpdatePhase();
 };

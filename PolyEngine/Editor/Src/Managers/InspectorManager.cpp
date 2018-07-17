@@ -90,6 +90,11 @@ void InspectorManager::EngineDeinitializedSlot()
 {
 	EngineObj = nullptr;
 
+	WorldInspector->Reset();
+	ResourceInspector->Reset();
+	ViewportInspector->Reset();
+	EntityInspector->Reset();
+	
 	emit EngineDeinitialized();
 }
 
@@ -109,6 +114,7 @@ void InspectorManager::SceneChangedSlot(Scene* scene)
 {
 	SceneObj = scene;
 
+	emit EntitiesSelectionChangedSlot({});
 	emit WorldChanged();
 }
 
