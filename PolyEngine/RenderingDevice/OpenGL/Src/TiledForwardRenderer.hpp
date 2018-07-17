@@ -7,6 +7,37 @@
 
 namespace Poly {
 
+	class RenderTargetPingPong : public BaseObject<>
+	{
+	public:
+		RenderTargetPingPong() {};
+		~RenderTargetPingPong();
+
+		void Init(int width, int height);
+
+		GLuint GetWriteFBO() const { return pingpongFBO[Uses % 2]; };
+		GLuint GetReadFBO() const { return pingpongFBO[(Uses + 1) % 2]; };
+
+		GLuint GetWriteTarget() const { return pingpongTarget[Uses % 2]; };
+		GLuint GetReadTarget() const { return pingpongTarget[(Uses + 1) % 2]; };
+
+		void Flip()
+		{
+			// gConsole.LogInfo("RenderTargetPingPong::Flip Uses: {}, Write: {}, Read: {}",
+			//	Uses, (Uses % 2), (Uses + 1) % 2);
+
+			Uses++;
+		};
+
+	private:
+		GLuint pingpongFBO[2];
+		GLuint pingpongTarget[2];
+
+		int Uses = 0;
+		int Width = 0;
+		int Height = 0;
+	};
+
 	class TiledForwardRenderer : public IRendererInterface
 	{
 
@@ -67,6 +98,7 @@ namespace Poly {
 
 		// Render pass for IBL environment
 		EnvCapture SkyboxCapture;
+		RenderTargetPingPong RTBloom;
 
 		// Shader programs
 		GLShaderProgram DepthShader;
@@ -81,6 +113,9 @@ namespace Poly {
 		GLShaderProgram EquiToCubemapShader;
 		GLShaderProgram IntegrateBRDFShader;
 		GLShaderProgram DOFShader;
+		GLShaderProgram BloomBrightShader;
+		GLShaderProgram BloomBlurShader;
+		GLShaderProgram BloomApplyShader;
 		GLShaderProgram Text2DShader;
 		GLShaderProgram EditorDebugShader;
 		GLShaderProgram DebugQuadDepthPrepassShader;
@@ -121,6 +156,8 @@ namespace Poly {
 		void LinearizeDepth(const SceneView& sceneView);
 
 		void PostDepthOfField(const SceneView& sceneView);
+
+		void PostBloom(const SceneView& sceneView);
 
 		void PostTonemapper(const SceneView& sceneView);
 

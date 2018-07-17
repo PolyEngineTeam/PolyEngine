@@ -52,10 +52,10 @@ vec3 bokeh(vec2 uv, float rad)
 
     vec3 acc = vec3(0);
     vec2 pixel = uDOFSize * vec2(.002 * uRes.y / uRes.x, .002), angle = vec2(0, rad);;
-    rad = 1.;
+    // rad = 1.;
     for (int j = 0; j < 80; j++)
     {
-        rad += 1. / rad;
+        rad += 1. / (rad + 0.0001);
         angle *= rot;
         vec2 offset = pixel * (rad - 1.) * angle;
         vec4 col = texture(uImage, uv + offset);
