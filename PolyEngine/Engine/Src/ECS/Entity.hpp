@@ -28,7 +28,7 @@ namespace Poly
 			//RTTI_PROPERTY_AUTONAME(Components, RTTI::ePropertyFlag::NONE);
 		}
 	public:
-		Entity() = default;
+		Entity();
 		~Entity();
 		Entity(const Entity&) = delete;
 		Entity(Entity&&) = delete;

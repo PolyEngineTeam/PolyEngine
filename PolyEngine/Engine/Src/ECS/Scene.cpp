@@ -16,9 +16,7 @@ Scene::Scene()
 //------------------------------------------------------------------------------
 Scene::~Scene()
 {
-	// copy entities
-	if(RootEntity)
-		DestroyEntity(RootEntity.release());
+	RootEntity.reset();
 	
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT; ++i)
 	{

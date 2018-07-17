@@ -10,5 +10,5 @@ using namespace Poly;
 TEST_CASE("Scene serialization tests", "[Scene]")
 {
 	Scene s;
-	s.SerializeToFile("Scene.test");
+	//s.SerializeToFile("Scene.test");
 }

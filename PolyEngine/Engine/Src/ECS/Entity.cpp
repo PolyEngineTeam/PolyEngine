@@ -10,13 +10,19 @@ RTTI_DEFINE_TYPE(::Poly::Entity);
 Entity::Entity(Scene* world, Entity* parent)
 	: Transform(this), EntityScene(world), ComponentPosessionFlags(0)
 {
-	//Components.Resize(MAX_COMPONENTS_COUNT);
-	//std::fill(Components.Begin(), Components.End(), nullptr);
+	Components.Resize(MAX_COMPONENTS_COUNT);
+	std::fill(Components.Begin(), Components.End(), nullptr);
 
 	if (parent)
 		SetParent(parent);
 }
 
+
+Poly::Entity::Entity()
+{
+	Components.Resize(MAX_COMPONENTS_COUNT);
+	std::fill(Components.Begin(), Components.End(), nullptr);
+}
 
 Poly::Entity::~Entity()
 {
