@@ -125,7 +125,7 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 
 	BloomBrightShader.RegisterUniform("sampler2D", "uImage");
 
-	BloomBlurShader.RegisterUniform("int", "uHorizontal");
+	BloomBlurShader.RegisterUniform("float", "uIsHorizontal");
 	BloomBlurShader.RegisterUniform("sampler2D", "uImage");
 
 	BloomApplyShader.RegisterUniform("sampler2D", "uImage");
@@ -1025,7 +1025,7 @@ void TiledForwardRenderer::PostBloom(const SceneView& sceneView)
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, RTBloom.GetWriteTarget(), 0);
 
 		BloomBlurShader.BindSampler("uImage", 0, RTBloom.GetReadTarget());
-		BloomBlurShader.SetUniform("uHorizontal", i % 2 > 0 ? 1 : 0);
+		BloomBlurShader.SetUniform("uIsHorizontal", (i % 2 > 0) ? 1.0f : 0.0f);
 
 		glBindVertexArray(RDI->PrimitivesQuad->VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 6);

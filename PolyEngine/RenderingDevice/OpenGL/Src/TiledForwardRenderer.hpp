@@ -108,14 +108,14 @@ namespace Poly {
 		GLShaderProgram SkyboxShader;
 		GLShaderProgram LinearizeDepthShader;
 		GLShaderProgram GammaShader;
-		GLShaderProgram ParticleShader;
-		GLShaderProgram TranslucentShader;
-		GLShaderProgram EquiToCubemapShader;
-		GLShaderProgram IntegrateBRDFShader;
 		GLShaderProgram DOFShader;
 		GLShaderProgram BloomBrightShader;
 		GLShaderProgram BloomBlurShader;
 		GLShaderProgram BloomApplyShader;
+		GLShaderProgram ParticleShader;
+		GLShaderProgram TranslucentShader;
+		GLShaderProgram EquiToCubemapShader;
+		GLShaderProgram IntegrateBRDFShader;
 		GLShaderProgram Text2DShader;
 		GLShaderProgram EditorDebugShader;
 		GLShaderProgram DebugQuadDepthPrepassShader;
