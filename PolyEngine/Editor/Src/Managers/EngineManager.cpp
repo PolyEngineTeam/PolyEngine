@@ -13,9 +13,6 @@ EngineManager::EngineManager()
 //------------------------------------------------------------------------------
 void EngineManager::InitEngine(std::unique_ptr<IGame> game, const String& assetsPathConfigPath)
 {
-	if (EngineObj)
-		throw new std::exception();
-
 	// get editor inserface and set path to assets
 	Editor = gApp->InspectorMgr->GetEditor();
 
@@ -35,7 +32,7 @@ void EngineManager::InitEngine(std::unique_ptr<IGame> game, const String& assets
 //------------------------------------------------------------------------------
 void EngineManager::DeinitEngine()
 {
-	EngineObj.release();
+	EngineObj.reset();
 
 	Editor->SetEngineState(eEngineState::NONE);
 	Editor = nullptr;

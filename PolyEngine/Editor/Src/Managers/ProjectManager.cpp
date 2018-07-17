@@ -127,7 +127,9 @@ void ProjectManager::Close()
 	if (!ProjectCfg)
 		throw new ProjectManagerException("This operation requires any project opened.");
 
-	gApp->EngineMgr->DeinitEngine();
+	if (gApp->EngineMgr->GetEngineState() != eEngineState::NONE)
+		gApp->EngineMgr->DeinitEngine();
+
 	ProjectCfg.release();
 	emit ProjectClosed();
 }
