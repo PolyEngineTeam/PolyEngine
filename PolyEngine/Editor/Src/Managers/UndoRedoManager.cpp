@@ -22,6 +22,8 @@ UndoRedoManager::~UndoRedoManager()
 //------------------------------------------------------------------------------
 void UndoRedoManager::ProcessEvent(QEvent* event)
 {
+	return;
+
 	if (event->type() == QEvent::Type::KeyPress)
 	{
 		if (((QKeyEvent*)event)->isAutoRepeat())

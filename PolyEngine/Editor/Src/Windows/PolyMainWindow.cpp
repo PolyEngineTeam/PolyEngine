@@ -2,6 +2,7 @@
 
 #include <QFileDialog>
 #include <QtWidgets/QStyleFactory>
+#include <QtWidgets/QMessageBox>
 
 PolyMainWindow::PolyMainWindow()
 	: PolyWindow()
@@ -23,22 +24,6 @@ PolyMainWindow::PolyMainWindow()
 			FileMenu->addAction(QuitAction.get());
 			QuitAction->setText("Quit");
 			connect(QuitAction.get(), &QAction::triggered, this, &PolyMainWindow::Quit);
-
-
-		// edit menu
-		EditMenu = std::make_unique<QMenu>();
-		MenuBar->addAction(EditMenu->menuAction());
-		EditMenu->setTitle("Edit");
-
-			UndoAction = std::make_unique<QAction>();
-			EditMenu->addAction(UndoAction.get());
-			UndoAction->setText("Undo");
-			connect(UndoAction.get(), &QAction::triggered, this, &PolyMainWindow::Undo);
-
-			RedoAction = std::make_unique<QAction>();
-			EditMenu->addAction(RedoAction.get());
-			RedoAction->setText("Redo");
-			connect(RedoAction.get(), &QAction::triggered, this, &PolyMainWindow::Redo);
 
 
 		// view menu
@@ -72,11 +57,6 @@ PolyMainWindow::PolyMainWindow()
 			UpdateProjectFromEngineAction->setText("Update");
 			connect(UpdateProjectFromEngineAction.get(), &QAction::triggered, this, &PolyMainWindow::UpdateProject);
 
-			BuildProjectAction = std::make_unique<QAction>();
-			ProjectMenu->addAction(BuildProjectAction.get());
-			BuildProjectAction->setText("Build");
-			connect(BuildProjectAction.get(), &QAction::triggered, this, &PolyMainWindow::BuildProject);
-
 			EditProjectAction = std::make_unique<QAction>();
 			ProjectMenu->addAction(EditProjectAction.get());
 			EditProjectAction->setText("Edit");
@@ -91,21 +71,11 @@ PolyMainWindow::PolyMainWindow()
 			ProjectMenu->addAction(CloseProjectAction.get());
 			CloseProjectAction->setText("Close");
 			connect(CloseProjectAction.get(), &QAction::triggered, this, &PolyMainWindow::CloseProject);
-
-
-		// help menu
-		HelpMenu = std::make_unique<QMenu>();
-		MenuBar->addAction(HelpMenu->menuAction());
-		HelpMenu->setTitle("Help");
-
-			ContactUsAction = std::make_unique<QAction>();
-			HelpMenu->addAction(ContactUsAction.get());
-			ContactUsAction->setText("Contact Us");
-			connect(ContactUsAction.get(), &QAction::triggered, this, &PolyMainWindow::ContactUs);
 }
 
 void PolyMainWindow::Quit()
 {
+	close();
 }
 
 void PolyMainWindow::Undo()
@@ -173,4 +143,42 @@ void PolyMainWindow::CloseProject()
 
 void PolyMainWindow::ContactUs()
 {
+}
+
+void PolyMainWindow::closeEvent(QCloseEvent* event)
+{
+	if (gApp->ProjectMgr->IsOpened())
+	{
+		QMessageBox::StandardButton resBtn = QMessageBox::question(this, "PolyEditor",
+			tr("Do you want to save your changes before closing?\n"),
+			QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+			QMessageBox::Yes);
+
+		if (resBtn == QMessageBox::Yes)
+		{
+			gApp->ProjectMgr->Save();
+			gApp->ProjectMgr->Close();
+			event->accept();
+		}
+		else if (resBtn == QMessageBox::No)
+		{
+			gApp->ProjectMgr->Close();
+			event->accept();
+		}
+		else
+			event->ignore();
+
+	}
+	else
+	{
+		QMessageBox::StandardButton resBtn = QMessageBox::question(this, "PolyEditor",
+			tr("Do you really want to exit?\n"),
+			QMessageBox::No | QMessageBox::Yes,
+			QMessageBox::Yes);
+
+		if (resBtn != QMessageBox::Yes)
+			event->ignore();
+		else 
+			event->accept();
+	}
 }

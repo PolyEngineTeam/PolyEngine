@@ -29,9 +29,13 @@ public:
 	// creates new project with ProjectTool.py
 	void Create(const String& projectName, const String& projectPath, const String& enginePath);
 	// loads ProjectConfig from *.proj.json file 
-	void Open(String projectPath);
+	void Open(const String& projectPath);
 	// updates project from given engine
 	void Update(const String& enginePath);
+	// ordinary save
+	void Save();
+	// save current project in given directory with given name
+	void SaveAs(const String& path, const String& Name);
 	// builds current project
 	void Build();
 	// go into edit mode
@@ -48,10 +52,12 @@ public:
 	const String& SetProjectName(const String& name) const { return ProjectCfg->ProjectName = name; }
 
 signals:
-	void ProjectOpened(::ProjectConfig* config);
+	void ProjectOpened(ProjectConfig* config);
 	void ProjectClosed();
 
 private:
-	bool Opened;
+	void InitEngine();
+
+	bool Opened = false;
 	std::unique_ptr<ProjectConfig> ProjectCfg;
 };

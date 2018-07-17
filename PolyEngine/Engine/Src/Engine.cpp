@@ -103,6 +103,8 @@ void Engine::Restart()
 //------------------------------------------------------------------------------
 Engine::~Engine()
 {
+	if (Editor)
+		Editor->Deinit();
 	Game->Deinit();
 	ActiveScene.reset();
 	Game.reset();
