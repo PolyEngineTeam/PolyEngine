@@ -61,12 +61,22 @@ void ProjectManager::Update(const String& enginePath)
 //------------------------------------------------------------------------------
 void ProjectManager::Save()
 {
+	if (!ProjectCfg)
+		throw new ProjectManagerException("This operation requires any project opened.");
 }
 
 //------------------------------------------------------------------------------
 void ProjectManager::SaveAs(const String& path, const String& Name)
 {
+	if (!ProjectCfg)
+		throw new ProjectManagerException("This operation requires any project opened.");
+}
 
+//------------------------------------------------------------------------------
+void ProjectManager::SaveAsRelease(const String& path, const String& Name)
+{
+	if (!ProjectCfg)
+		throw new ProjectManagerException("This operation requires any project opened.");
 }
 
 //------------------------------------------------------------------------------
@@ -107,6 +117,7 @@ void ProjectManager::Play()
 	
 	// TODO(squares): fix problem with physics; Rigidbody and collider components  are initialized in next frame 
 	//		so when next frame never occur we try to delete empty ImplData
+	Save();
 	gApp->EngineMgr->Play();
 }
 

@@ -32,10 +32,13 @@ public:
 	void Open(const String& projectPath);
 	// updates project from given engine
 	void Update(const String& enginePath);
-	// ordinary save
+	// ordinary save (saves only scene json file) does not update dlls and redistributeblaes
 	void Save();
-	// save current project in given directory with given name
+	// save current project in given directory with given name ( saves project json and copies game dll)
 	void SaveAs(const String& path, const String& Name);
+	// save current project in given directory with given name ( saves project json and copies game dll)
+	// additionally copies all engine dlls, polyStandalone and all redistributables
+	void SaveAsRelease(const String& path, const String& Name);
 	// builds current project
 	void Build();
 	// go into edit mode

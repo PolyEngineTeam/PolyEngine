@@ -26,7 +26,6 @@ void EngineManager::InitEngine(std::unique_ptr<IGame> game, const String& assets
 	EngineObj->RegisterEditor(Editor);
 	EngineObj->Init(std::move(game), std::move(gApp->InspectorMgr->GetRenderingDevice()));
 	gConsole.LogDebug("Engine initialized successfully");
-	Updater.start(0);
 
 	emit Initialized();
 
@@ -48,6 +47,7 @@ void EngineManager::DeinitEngine()
 //------------------------------------------------------------------------------
 void EngineManager::Edit()
 {
+	Updater.stop();
 	switch (Editor->GetEngineState())
 	{
 	case eEngineState::NONE:
@@ -67,11 +67,13 @@ void EngineManager::Edit()
 	}
 
 	emit StateChanged(eEngineState::EDIT);
+	Updater.start(0);
 }
 
 //------------------------------------------------------------------------------
 void EngineManager::Play()
 {
+	Updater.stop();
 	switch (Editor->GetEngineState())
 	{
 	case eEngineState::NONE:
@@ -83,7 +85,7 @@ void EngineManager::Play()
 		break;
 
 	case eEngineState::GAMEPLAY:
-		// do nothing
+		EngineObj->Restart();
 		break;
 
 	default:
@@ -91,6 +93,7 @@ void EngineManager::Play()
 	}
 
 	emit StateChanged(eEngineState::GAMEPLAY);
+	Updater.start(0);
 }
 
 //------------------------------------------------------------------------------

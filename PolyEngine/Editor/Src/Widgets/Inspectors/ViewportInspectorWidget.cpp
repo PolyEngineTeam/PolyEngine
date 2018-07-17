@@ -96,25 +96,6 @@ String ViewportInspectorWidget::GetAssetsPathConfigPath()
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::Init()
 {
-	Scene* w = Manager->GetEngine()->GetActiveScene();
-
-	//		register editor phases
-	Manager->GetEngine()->RegisterEditorUpdatePhase(EditorCameraMovementSystem::Update);
-	Manager->GetEngine()->RegisterEditorUpdatePhase(GizmoSystem::Update);
-
-	//		create camera
-	EditorCameraEnt = DeferredTaskSystem::SpawnEntityImmediate(w);
-	// add EditorCameraMovementComponent
-	DeferredTaskSystem::AddComponentImmediate<EditorCameraMovementComponent>(w, EditorCameraEnt, 25.f, 0.01f);
-	// add camera component
-	DeferredTaskSystem::AddComponentImmediate<CameraComponent>(w, EditorCameraEnt, 60_deg, 1.0f, 1000.f);
-	// add postprocess settings component
-	DeferredTaskSystem::AddComponentImmediate<PostprocessSettingsComponent>(w, EditorCameraEnt);
-	w->GetComponent<PostprocessSettingsComponent>(EditorCameraEnt)->UseFgShader = true;
-	w->GetComponent<PostprocessSettingsComponent>(EditorCameraEnt)->UseBgShader = true;
-
-	//		obtain game camera
-	GameCamera = w->GetWorldComponent<ViewportWorldComponent>()->GetCamera(0);
 }
 
 //------------------------------------------------------------------------------
@@ -162,16 +143,36 @@ void ViewportInspectorWidget::StateChanged()
 	{
 	case eEngineState::EDIT:
 	{
+		Scene* w = Manager->GetEngine()->GetActiveScene();
+
+		//		register editor phases
+		Manager->GetEngine()->RegisterEditorUpdatePhase(EditorCameraMovementSystem::Update);
+		Manager->GetEngine()->RegisterEditorUpdatePhase(GizmoSystem::Update);
+
+		//		create camera
+		EditorCameraEnt = DeferredTaskSystem::SpawnEntityImmediate(w);
+		// add EditorCameraMovementComponent
+		DeferredTaskSystem::AddComponentImmediate<EditorCameraMovementComponent>(w, EditorCameraEnt, 25.f, 0.01f);
+		// add camera component
+		DeferredTaskSystem::AddComponentImmediate<CameraComponent>(w, EditorCameraEnt, 60_deg, 1.0f, 1000.f);
+		// add postprocess settings component
+		DeferredTaskSystem::AddComponentImmediate<PostprocessSettingsComponent>(w, EditorCameraEnt);
+		w->GetComponent<PostprocessSettingsComponent>(EditorCameraEnt)->UseFgShader = true;
+		w->GetComponent<PostprocessSettingsComponent>(EditorCameraEnt)->UseBgShader = true;
+
+		//		obtain game camera
+		GameCamera = w->GetWorldComponent<ViewportWorldComponent>()->GetCamera(0);
+
 		// set editor camera
-		Manager->GetScene()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(
-			0, Manager->GetScene()->GetComponent<CameraComponent>(EditorCameraEnt));
+		//Manager->GetScene()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(
+		//	0, Manager->GetScene()->GetComponent<CameraComponent>(EditorCameraEnt));
 
 		break;
 	}
 	case eEngineState::GAMEPLAY:
 	{
-		// set gameplay camera
-		Manager->GetScene()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, GameCamera);
+		// set gameplay camera (probably don't need to because this camera is set when game is restarted)
+		//Manager->GetScene()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, GameCamera);
 
 		break;
 	}
