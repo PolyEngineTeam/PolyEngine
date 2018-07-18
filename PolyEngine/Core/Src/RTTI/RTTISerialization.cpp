@@ -15,8 +15,8 @@ void ResolveUninitializedPointers(const Dynarray<RTTI::UninitializedPointerEntry
 	{
 		HEAVY_ASSERTE(entry.Property.ImplData.get() != nullptr, "Invalid unique ptr impl data!");
 		const Poly::RTTI::RawPtrPropertyImplDataBase* implData = static_cast<const Poly::RTTI::RawPtrPropertyImplDataBase*>(entry.Property.ImplData.get());
-		implData->SetPtr(entry.Ptr, RTTIObjectsManager::Get().GetObjectByID(entry.UUID));
-		if (implData->GetPtr(*entry.Ptr) != nullptr)
+		implData->SetPtr(entry.Ptr, RTTIObjectsManager::Get().TryGetObjectByID(entry.UUID));
+		if (implData->GetPtr(*entry.Ptr) != nullptr || !entry.UUID.IsValid())
 			++initCount;
 		else
 			gConsole.LogError("Pointer [{}] of RTTIBase object with UUID: {} was not properly deserialized!", entry.Property.Name, entry.UUID);
@@ -514,6 +514,12 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj,
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid unique ptr impl data!");
 		const UniquePtrPropertyImplDataBase* implData = static_cast<const UniquePtrPropertyImplDataBase*>(prop.ImplData.get());
 		
+		if (value.IsNull())
+		{
+			implData->Clear(obj);
+			break;
+		}
+
 		if (implData->PropertyType.Type.IsValid()) // RTTI type
 		{
 			String typeName;
@@ -526,17 +532,15 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj,
 		else // Fundamental
 			implData->Create(obj);
 		
-		//@todo(muniu) store guid in some register for non-owning pointer deserialization
-		if(!value.IsNull())
-			SetCorePropertyValue(implData->Get(obj), implData->PropertyType, value, uninitializedPointers);
+		SetCorePropertyValue(implData->Get(obj), implData->PropertyType, value, uninitializedPointers);
 	}
 	break;
 	case eCorePropertyType::RAW_PTR:
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid unique ptr impl data!");
 		UninitializedPointerEntry entry;
-		entry.UUID = UniqueID::FromString(String(value.GetString())).Value();
-		HEAVY_ASSERTE(entry.UUID, "UniqueID deserialization failed");
+		entry.UUID = value.IsNull() ? UniqueID::INVALID : UniqueID::FromString(String(value.GetString())).Value();
+		HEAVY_ASSERTE(value.IsNull() || entry.UUID, "UniqueID deserialization failed");
 		entry.Ptr = (RTTIBase**)obj;
 		entry.Property = prop;
 		uninitializedPointers.PushBack(std::move(entry));

@@ -46,6 +46,7 @@ namespace Poly {
 			Register(obj);
 		}
 
+		RTTIBase* TryGetObjectByID(const UniqueID& id);
 		RTTIBase* GetObjectByID(const UniqueID& id);
 	private:
 		RTTIObjectsManager() = default;

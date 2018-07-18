@@ -388,6 +388,7 @@ namespace Poly {
 
 			virtual void Create(void* ptr) const = 0;
 			virtual void CreatePolymorphic(void* ptr, const char* typeName) const = 0;
+			virtual void Clear(void* ptr) const = 0;
 			virtual void* Get(void* ptr) const = 0;
 			virtual const void* Get(const void* ptr) const = 0;
 		};
@@ -427,7 +428,7 @@ namespace Poly {
 
 			}
 
-
+			void Clear(void* ptr) const override { return (*reinterpret_cast<std::unique_ptr<T, D>*>(ptr)).reset(); }
 			void* Get(void* ptr) const override { return (*reinterpret_cast<std::unique_ptr<T,D>*>(ptr)).get(); }
 			const void* Get(const void* ptr) const override { return (*reinterpret_cast<const std::unique_ptr<T,D>*>(ptr)).get(); }
 		};

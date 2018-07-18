@@ -18,8 +18,7 @@ namespace Poly {
 	{
 		RTTI_DECLARE_TYPE_DERIVED(::Poly::ComponentBase, ::Poly::RTTIBase) 
 		{ 
-			//@todo(muniu) rttibase pointers serialization
-			//RTTI_PROPERTY_AUTONAME(Owner, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Owner, RTTI::ePropertyFlag::NONE);
 		}
 	friend class Scene;
 	public:

@@ -31,6 +31,7 @@ namespace Poly {
 	{
 		RTTI_DECLARE_TYPE_DERIVED(::Poly::Scene, ::Poly::RTTIBase)
 		{
+			//@todo add factory creation
 			RTTI_PROPERTY_AUTONAME(RootEntity, RTTI::ePropertyFlag::NONE);
 		}
 	public:

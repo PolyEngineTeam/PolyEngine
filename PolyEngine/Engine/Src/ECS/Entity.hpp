@@ -15,13 +15,7 @@ namespace Poly
 
 	struct ENGINE_DLLEXPORT ComponentDeleter final : public BaseObjectLiteralType<>
 	{
-		template <typename T>
-		void operator()(T* c)
-		{
-			DeleteComponentImpl(c, GetComponentID<T>());
-		}
-
-		void DeleteComponentImpl(ComponentBase* c, size_t componentID);
+		void operator()(ComponentBase* c);
 	};
 
 	struct ENGINE_DLLEXPORT EntityDeleter final : public BaseObjectLiteralType<>
@@ -39,6 +33,7 @@ namespace Poly
 			RTTI_PROPERTY_AUTONAME(Transform, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(EntityScene, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(Parent, RTTI::ePropertyFlag::NONE);
+			//@todo add factory creation
 			RTTI_PROPERTY_AUTONAME(Children, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(Components, RTTI::ePropertyFlag::NONE);
 		}
@@ -132,7 +127,7 @@ namespace Poly
 		Scene* EntityScene = nullptr;
 
 		std::bitset<MAX_COMPONENTS_COUNT> ComponentPosessionFlags;
-		Dynarray<std::unique_ptr<ComponentBase>> Components;
+		Dynarray<ComponentUniquePtr> Components;
 
 		friend class Scene;
 	};

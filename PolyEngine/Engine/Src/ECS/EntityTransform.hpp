@@ -10,8 +10,7 @@ namespace Poly
 	{
 		RTTI_DECLARE_TYPE_DERIVED(::Poly::EntityTransform, ::Poly::RTTIBase)
 		{
-			//@todo(muniu) rttibase pointers serialization
-			//RTTI_PROPERTY_AUTONAME(Owner, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Owner, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(LocalTranslation, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(LocalRotation, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(LocalScale, RTTI::ePropertyFlag::NONE);
