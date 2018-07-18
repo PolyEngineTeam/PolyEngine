@@ -178,5 +178,6 @@ void main()
     vec3 ambient = (kD * diffuse + specular) * ao;
 
     oColor = vec4(ambient + emissive.rgb + Lo, albedo.a);
+    oColor.rgb *= oColor.a;
     oNormal = vec4((WorldFromTangent * normal) * 0.5 + 0.5, 0.0);
 }

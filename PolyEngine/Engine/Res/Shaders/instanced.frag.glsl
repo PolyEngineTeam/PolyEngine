@@ -43,5 +43,6 @@ void main()
 	tex *= uSpriteColor;
 
     color = mix(vec4(mask), tex, uHasSprite) * uEmitterAlbedo + uEmitterEmissive;
+    color.rgb *= color.a;
 	normal = vec4(0.0);
 }

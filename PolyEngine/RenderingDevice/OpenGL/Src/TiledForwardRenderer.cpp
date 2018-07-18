@@ -803,7 +803,7 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 
 	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
 	const EntityTransform& cameraTransform = sceneView.CameraCmp->GetTransform();
 	TranslucentShader.BindProgram();
@@ -909,7 +909,7 @@ void TiledForwardRenderer::RenderParticleUnlit(Scene* world, const CameraCompone
 	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
 	// TODO test these blending options
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	//glBlendFunc(GL_ONE, GL_ONE);
 	//glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
 
