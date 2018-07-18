@@ -9,6 +9,7 @@ namespace Poly {
 	{
 		friend void CameraSystem::CameraUpdatePhase(Scene*);
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::PostprocessSettingsComponent) { NO_RTTI_PROPERTY(); }
 
 		bool UseBgShader = true;
 		bool UseFgShader = true;

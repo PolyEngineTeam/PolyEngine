@@ -9,6 +9,13 @@
 #define REGISTER_COMPONENT(GROUP, COMPONENT) \
 	EXPORT_TEMPLATE template size_t ENGINE_DLLEXPORT GROUP::GetComponentTypeID<COMPONENT>() noexcept;
 
+#define RTTI_DECLARE_COMPONENT(TYPE) \
+	public: \
+	size_t GetComponentID() const override { return ::Poly::GetComponentID<TYPE>(); }	\
+	RTTI_DECLARE_TYPE_DERIVED(TYPE, ::Poly::ComponentBase)
+
+#define RTTI_DEFINE_COMPONENT(TYPE) RTTI_DEFINE_TYPE(TYPE)
+
 namespace Poly
 {
 	namespace Impl
@@ -53,4 +60,13 @@ namespace Poly
 	}
 
 	using ComponentsIDGroup = Impl::ComponentIDGenerator<struct ComponentsGroupType>;
+
+	//------------------------------------------------------------------------------
+	/// <summary>Returns statically set component type ID.</summary>
+	/// <tparam name="T">Type of requested component.</tparam>
+	/// <returns>Associated ID.</returns>
+	template<typename T> size_t GetComponentID() noexcept
+	{
+		return ComponentsIDGroup::GetComponentTypeID<T>();
+	}
 }

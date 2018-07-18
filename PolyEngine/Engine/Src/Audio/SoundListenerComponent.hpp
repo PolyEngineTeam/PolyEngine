@@ -16,6 +16,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT SoundListenerComponent : public ComponentBase
 	{
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::SoundListenerComponent) { NO_RTTI_PROPERTY(); }
 		/// Sets everything to 0 and copies SourcesArray from SoundWorldComponent
 		SoundListenerComponent(SoundWorldComponent* worldComponent = nullptr);
 		~SoundListenerComponent();

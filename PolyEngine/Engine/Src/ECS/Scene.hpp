@@ -34,30 +34,6 @@ namespace Poly {
 			RTTI_PROPERTY_AUTONAME(RootEntity, RTTI::ePropertyFlag::NONE);
 		}
 	public:
-		struct ENGINE_DLLEXPORT ComponentDeleter final : public BaseObjectLiteralType<>
-		{
-			ComponentDeleter(Scene* s) : SceneHandle(s) {}
-
-			template <typename T>
-			void operator()(T* c)
-			{
-				DeleteComponentImpl(c, GetComponentID<T>());
-			}
-
-			void DeleteComponentImpl(ComponentBase* c, size_t componentID);
-
-			Scene* SceneHandle = nullptr;
-		};
-
-		struct ENGINE_DLLEXPORT EntityDeleter final : public BaseObjectLiteralType<>
-		{
-			EntityDeleter(Scene* s) : SceneHandle(s) {}
-
-			void operator()(Entity*);
-
-			Scene* SceneHandle = nullptr;
-		};
-
 		/// <summary>Allocates memory for entities, world components and components allocators.</summary>
 		Scene();
 
@@ -88,14 +64,8 @@ namespace Poly {
 			return RootEntity->GetComponent<T>();
 		}
 
-		//------------------------------------------------------------------------------
-		/// <summary>Returns statically set component type ID.</summary>
-		/// <tparam name="T">Type of requested component.</tparam>
-		/// <returns>Associated ID.</returns>
-		template<typename T> static size_t GetComponentID() noexcept
-		{
-			return ComponentsIDGroup::GetComponentTypeID<T>();
-		}
+		ComponentDeleter& GetComponentDeleter() { return ComponentDel; }
+		EntityDeleter& GetEntityDeleter() { return EntityDel; }
 
 		//------------------------------------------------------------------------------
 		/// <summary>Returns statically set component type ID from 'Scene' group.</summary>
@@ -207,6 +177,8 @@ namespace Poly {
 	private:
 		friend class SpawnEntityDeferredTask;
 		friend class DestroyEntityDeferredTask;
+		friend struct EntityDeleter;
+		friend struct ComponentDeleter;
 		template<typename T,typename... Args> friend class AddComponentDeferredTask;
 		template<typename T> friend class RemoveComponentDeferredTask;
 
@@ -284,34 +256,6 @@ namespace Poly {
 		ComponentDeleter ComponentDel;
 		EntityDeleter EntityDel;
 
-		std::unique_ptr<Entity, EntityDeleter> RootEntity;
+		Entity::EntityUniquePtr RootEntity;
 	};
-
-	//defined here due to circular inclusion problem; FIXME: circular inclusion
-	template<typename T>
-	T* Entity::GetComponent()
-	{
-		const auto ctypeID = Scene::GetComponentID<T>();
-		if (HasComponent(ctypeID))
-			return static_cast<T*>(Components[ctypeID].get());
-		else
-			return nullptr;
-	}
-
-	template<typename T>
-	const T* Entity::GetComponent() const
-	{
-		const auto ctypeID = Scene::GetComponentID<T>();
-		if (HasComponent(ctypeID))
-			return static_cast<T*>(Components[ctypeID].get());
-		else
-			return nullptr;
-	}
-
-	template<class T >
-	bool Entity::HasComponent() const
-	{
-		return HasComponent(Scene::GetComponentID<T>());
-	}
-
 } //namespace Poly

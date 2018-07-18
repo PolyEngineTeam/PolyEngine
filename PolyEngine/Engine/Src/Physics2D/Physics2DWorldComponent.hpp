@@ -24,6 +24,8 @@ namespace Poly
 		friend class Physics2DContactListener;
 		friend class RigidBody2DComponent;
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::Physics2DWorldComponent) { NO_RTTI_PROPERTY(); }
+
 		struct Collision
 		{
 			RigidBody2DComponent* rb;

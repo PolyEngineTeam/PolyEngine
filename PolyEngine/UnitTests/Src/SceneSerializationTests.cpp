@@ -10,5 +10,7 @@ using namespace Poly;
 TEST_CASE("Scene serialization tests", "[Scene]")
 {
 	Scene s;
-	//s.SerializeToFile("Scene.test");
+	DeferredTaskSystem::SpawnEntityImmediate(&s);
+
+	s.SerializeToFile("Scene.test");
 }

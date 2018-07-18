@@ -166,7 +166,7 @@ void EntityTransform::SetGlobalDirty() const
 {
 	GlobalDirty = true;
 	const auto& children = Owner->GetChildren();
-	for (const std::unique_ptr<Entity>& c : children)
+	for (const Entity::EntityUniquePtr& c : children)
 	{
 		c->GetTransform().SetGlobalDirty();
 	}

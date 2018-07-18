@@ -5,6 +5,8 @@
 
 using namespace Poly;
 
+RTTI_DEFINE_COMPONENT(::Poly::Physics2DWorldComponent)
+
 namespace Poly {
 	class Physics2DContactListener : public b2ContactListener
 	{

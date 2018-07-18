@@ -24,6 +24,8 @@ namespace Poly
 	{
 	friend void InputSystem::InputPhase(Scene*);
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::InputWorldComponent) { NO_RTTI_PROPERTY(); }
+
 		InputWorldComponent() = default;
 
 		bool IsPressed(eKey key) const { return CurrKey[key]; }

@@ -4,6 +4,8 @@
 
 using namespace Poly;
 
+RTTI_DEFINE_COMPONENT(::Poly::CameraComponent)
+
 CameraComponent::CameraComponent(Angle fov,  float zNear, float zFar)
 	: IsPerspective(true), Fov(fov), Near(zNear), Far(zFar), RenderingMode(eRenderingModeType::LIT)
 {

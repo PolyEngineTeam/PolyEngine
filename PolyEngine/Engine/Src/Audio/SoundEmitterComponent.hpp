@@ -18,6 +18,8 @@ namespace Poly
 	friend void SoundSystem::SoundPhase(Scene* world);
 	friend void SoundSystem::SetEmitterSource(Scene*, Entity*, const String&, eResourceSource source);
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::SoundEmitterComponent) { NO_RTTI_PROPERTY(); }
+
 		/// Loads resource from given path (optimized by resource manager).
 		/// @param path path to sound resource
 		/// @see SoundListenerComponent

@@ -23,7 +23,10 @@ namespace Poly {
 		}
 	friend class Scene;
 	public:
-		
+		// @todo change to pure virtual
+		virtual size_t GetComponentID() const { ASSERTE(false, "This shouldn't be called!"); return 0; };
+
+
 		/// <summary>Getter for a component of a specified type that shares UniqueID with this one.</summary>
 		/// <returns>Pointer to a component of a specified type or a nullptr, if it does not exist.</returns>
 		template<typename T>

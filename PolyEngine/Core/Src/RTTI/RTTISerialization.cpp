@@ -325,8 +325,16 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	case eCorePropertyType::RAW_PTR:
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid raw ptr impl data!");
-		const UniqueID& uuid = (*reinterpret_cast<RTTIBase* const*>(value))->GetUUID();
-		currentValue.SetString(uuid.ToString().GetCStr(), alloc);
+		const RTTIBase* ptr = *reinterpret_cast<RTTIBase* const*>(value);
+
+		if (ptr)
+		{
+			const UniqueID& uuid = ptr->GetUUID();
+			currentValue.SetString(uuid.ToString().GetCStr(), alloc);
+		}
+		else
+			currentValue.SetNull();
+		
 		break;
 	}
 	case eCorePropertyType::CUSTOM:
@@ -505,7 +513,19 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj,
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid unique ptr impl data!");
 		const UniquePtrPropertyImplDataBase* implData = static_cast<const UniquePtrPropertyImplDataBase*>(prop.ImplData.get());
-		implData->Create(obj);
+		
+		if (implData->PropertyType.Type.IsValid()) // RTTI type
+		{
+			String typeName;
+			if (implData->PropertyType.CoreType == eCorePropertyType::CUSTOM)
+				typeName = value.GetObject().FindMember(JSON_TYPE_ANNOTATION)->value.GetString();
+			else
+				typeName = implData->PropertyType.Type.GetTypeName();
+			implData->CreatePolymorphic(obj, typeName.GetCStr());
+		}
+		else // Fundamental
+			implData->Create(obj);
+		
 		//@todo(muniu) store guid in some register for non-owning pointer deserialization
 		if(!value.IsNull())
 			SetCorePropertyValue(implData->Get(obj), implData->PropertyType, value, uninitializedPointers);

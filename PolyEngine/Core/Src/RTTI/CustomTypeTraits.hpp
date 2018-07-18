@@ -53,7 +53,7 @@ namespace Poly
 		template <typename T, typename D> struct IsUniquePtr<std::unique_ptr<T, D>> : public std::true_type {};
 
 		template <typename> struct UniquePtrType {};
-		template <typename T, typename D> struct UniquePtrType<std::unique_ptr<T, D>> { using type = T; };
+		template <typename T, typename D> struct UniquePtrType<std::unique_ptr<T, D>> { using type = T; using deleter = D; };
 
 		template <class T> using RawType = std::remove_pointer<typename std::decay<typename std::remove_cv<T>::type >::type>;
 	}

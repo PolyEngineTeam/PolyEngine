@@ -11,6 +11,8 @@ namespace Poly {
 	class ENGINE_DLLEXPORT ScreenSpaceTextComponent : public ComponentBase
 	{
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::ScreenSpaceTextComponent) { NO_RTTI_PROPERTY(); }
+
 		ScreenSpaceTextComponent(const Vector2i& pos, const String& fontName, eResourceSource source, size_t fontSize, const String& text = "", const Color& fontColor = Color(1, 1, 1))
 			: Text(fontName, source, fontSize, text, fontColor), ScreenPosition(pos) {}
 

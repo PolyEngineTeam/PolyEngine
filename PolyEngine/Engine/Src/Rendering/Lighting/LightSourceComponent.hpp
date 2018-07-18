@@ -8,6 +8,8 @@ namespace Poly
 	class ENGINE_DLLEXPORT AmbientLightWorldComponent : public ComponentBase
 	{
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::AmbientLightWorldComponent) { NO_RTTI_PROPERTY(); }
+
 		AmbientLightWorldComponent(const Color& color = Color::WHITE, float intensity = 1.0f);
 
 		const Color& GetColor() const { return LightColor; }
@@ -25,6 +27,8 @@ namespace Poly
 	class ENGINE_DLLEXPORT DirectionalLightComponent : public ComponentBase
 	{
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::DirectionalLightComponent) { NO_RTTI_PROPERTY(); }
+
 		DirectionalLightComponent(const Color& color = Color::WHITE, float intensity = 1.0f);
 
 		const Color& GetColor() const { return LightColor; }
@@ -39,6 +43,8 @@ namespace Poly
 	class ENGINE_DLLEXPORT PointLightComponent : public ComponentBase
 	{
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::PointLightComponent) { NO_RTTI_PROPERTY(); }
+
 		PointLightComponent(const Color& color = Color::WHITE, float intensity = 1.0f, float range = 10.0f);
 
 		const Color& GetColor() const { return LightColor; }
@@ -56,6 +62,8 @@ namespace Poly
 	class ENGINE_DLLEXPORT SpotLightComponent : public ComponentBase
 	{
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::SpotLightComponent) { NO_RTTI_PROPERTY(); }
+
 		SpotLightComponent(const Color& color = Color::WHITE, float intensity = 1.0f, float range = 10.0f, float cutoff = 12.0f, float outerCutOff = 17.0f);
 		const Color& GetColor() const { return LightColor; }
 		float GetIntensity() const { return Intensity; }
