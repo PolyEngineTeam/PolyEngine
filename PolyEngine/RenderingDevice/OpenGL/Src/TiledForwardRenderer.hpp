@@ -65,6 +65,8 @@ namespace Poly {
 			int Index;
 		};
 
+		Matrix PreviousFrameCameraClipFromWorld;
+
 		const int MAX_NUM_LIGHTS = 1024;
 		const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 
@@ -107,6 +109,7 @@ namespace Poly {
 		GLShaderProgram SkyboxShader;
 		GLShaderProgram LinearizeDepthShader;
 		GLShaderProgram GammaShader;
+		GLShaderProgram MotionBlurShader;
 		GLShaderProgram DOFBokehShader;
 		GLShaderProgram DOFApplyShader;
 		GLShaderProgram BloomBrightShader;
@@ -156,6 +159,8 @@ namespace Poly {
 		void LinearizeDepth(const SceneView& sceneView);
 
 		void PostDepthOfField(const SceneView& sceneView);
+
+		void PostMotionBlur(const SceneView& sceneView);
 
 		void PostBloom(const SceneView& sceneView);
 

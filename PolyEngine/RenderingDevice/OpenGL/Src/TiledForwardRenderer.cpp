@@ -65,6 +65,7 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	SkyboxShader("Shaders/skybox.vert.glsl", "Shaders/skybox.frag.glsl"),
 	LinearizeDepthShader("Shaders/hdr.vert.glsl", "Shaders/linearizeDepth.frag.glsl"),
 	GammaShader("Shaders/hdr.vert.glsl", "Shaders/gamma.frag.glsl"),
+	MotionBlurShader("Shaders/hdr.vert.glsl", "Shaders/motionblur.frag.glsl"),
 	DOFBokehShader("Shaders/hdr.vert.glsl", "Shaders/dof_pass_bokeh.frag.glsl"),
 	DOFApplyShader("Shaders/hdr.vert.glsl", "Shaders/dof_pass_apply.frag.glsl"),
 	BloomBrightShader("Shaders/hdr.vert.glsl", "Shaders/bloom_pass_bright.frag.glsl"),
@@ -115,6 +116,12 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	HDRShader.RegisterUniform("sampler2D", "uHdrBuffer");
 	HDRShader.RegisterUniform("float", "uExposure");
 	
+	MotionBlurShader.RegisterUniform("sampler2D", "uImage");
+	MotionBlurShader.RegisterUniform("sampler2D", "uDepth");
+	MotionBlurShader.RegisterUniform("mat4", "uWorldFromView");
+	MotionBlurShader.RegisterUniform("mat4", "uPrevClipFromWorld");
+	MotionBlurShader.RegisterUniform("float", "uScale");
+
 	DOFBokehShader.RegisterUniform("vec4", "uRes");
 	DOFBokehShader.RegisterUniform("sampler2D", "uImage");
 	DOFBokehShader.RegisterUniform("sampler2D", "uDepth");
@@ -483,11 +490,6 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 
 	UpdateEnvCapture(sceneView);
 	
-	const ScreenSize screenSize = RDI->GetScreenSize();
-
-	glViewport((int)(sceneView.Rect.GetMin().X * screenSize.Width), (int)(sceneView.Rect.GetMin().Y * screenSize.Height),
-		(int)(sceneView.Rect.GetSize().X * screenSize.Width), (int)(sceneView.Rect.GetSize().Y * screenSize.Height));
-	
 	RenderDepthPrePass(sceneView);
 	
 	ComputeLightCulling(sceneView);
@@ -502,17 +504,22 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 
 	LinearizeDepth(sceneView);
 
-	PostDepthOfField(sceneView);
-	
-	PostBloom(sceneView);
+	PostMotionBlur(sceneView);
 
-	PostTonemapper(sceneView);
+	// PostDepthOfField(sceneView);
+	// 
+	// PostBloom(sceneView);
+	// 
+	// PostTonemapper(sceneView);
+	// 
+	// PostGamma(sceneView);
+	// 
+	// EditorDebug(sceneView);
+	// 
+	// UIText2D(sceneView);
 
-	PostGamma(sceneView);
-
-	EditorDebug(sceneView);
-
-	UIText2D(sceneView);
+	// ensure that copy is stored
+	PreviousFrameCameraClipFromWorld = Matrix(sceneView.CameraCmp->GetClipFromWorld().GetDataPtr());
 }
 
 void TiledForwardRenderer::UpdateEnvCapture(const SceneView& sceneView)
@@ -574,6 +581,11 @@ void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOdepthMap);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
+	const ScreenSize screenSize = RDI->GetScreenSize();
+
+	glViewport((int)(sceneView.Rect.GetMin().X * screenSize.Width), (int)(sceneView.Rect.GetMin().Y * screenSize.Height),
+		(int)(sceneView.Rect.GetSize().X * screenSize.Width), (int)(sceneView.Rect.GetSize().Y * screenSize.Height));
+
 	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	
 	for (const MeshRenderingComponent* meshCmp : sceneView.OpaqueQueue)
@@ -989,6 +1001,32 @@ void TiledForwardRenderer::LinearizeDepth(const SceneView& sceneView)
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, PostColorBuffer1, 0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void TiledForwardRenderer::PostMotionBlur(const SceneView& sceneView)
+{
+	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(sceneView.WorldData, Poly::eEngineTimer::GAMEPLAY));
+	float currentFPS = 1.0f / deltaTime;
+	float targetFPS = 60.0f;
+	// gConsole.LogInfo("TiledForwardRenderer::PostMotionBlur FPS: {}", currentFPS);
+	
+	// glBindFramebuffer(GL_FRAMEBUFFER, FBOpost1);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	
+	float motionBlurScale = 1.0f;
+	 
+	MotionBlurShader.BindProgram();
+	MotionBlurShader.BindSampler("uImage", 0, ColorBuffer);
+	MotionBlurShader.BindSampler("uDepth", 1, LinearDepth);
+	MotionBlurShader.SetUniform("uPrevClipFromWorld", PreviousFrameCameraClipFromWorld);
+	MotionBlurShader.SetUniform("uWorldFromView", sceneView.CameraCmp->GetViewFromWorld().GetInversed());
+	MotionBlurShader.SetUniform("uScale", (currentFPS / targetFPS) * motionBlurScale);
+	 
+	glBindVertexArray(RDI->PrimitivesQuad->VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
+	
+	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
