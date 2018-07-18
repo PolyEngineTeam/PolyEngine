@@ -9,14 +9,8 @@ uniform vec4 uRes;
 uniform float uDOFPoint;
 uniform float uDOFRange;
 uniform float uDOFSize;
-uniform float uDOFShow;
-uniform float uTime;
 
 out vec4 oColor;
-
-#define T uTime
-#define R uRes
-#define F gl_FragCoord
 
 float depthToMask(float depth)
 {
@@ -45,8 +39,6 @@ vec3 bokeh(vec2 uv, float rad)
     // }
     // return acc;
 
-    // float uDOFSize = 0.2;
-
     const float GA = 2.399;
     const mat2 rot = mat2(cos(GA), sin(GA), -sin(GA), cos(GA));
 
@@ -68,6 +60,5 @@ void main()
 {
     float depth = texture(uDepth, vUV).g;
     float dofMask = depthToMask(depth);
-    vec3 dof = bokeh(vUV, dofMask);
-    oColor = vec4( uDOFShow * vec3(dofMask, 0.0, 0.0) + dof, 1.0);
+    oColor = vec4(bokeh(vUV, dofMask), dofMask);
 }

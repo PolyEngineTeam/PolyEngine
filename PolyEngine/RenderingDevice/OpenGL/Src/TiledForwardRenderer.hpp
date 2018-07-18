@@ -10,10 +10,8 @@ namespace Poly {
 	class RenderTargetPingPong : public BaseObject<>
 	{
 	public:
-		RenderTargetPingPong() {};
-		~RenderTargetPingPong();
-
 		void Init(int width, int height);
+		void Deinit();
 
 		GLuint GetWriteFBO() const { return pingpongFBO[Uses % 2]; };
 		GLuint GetReadFBO() const { return pingpongFBO[(Uses + 1) % 2]; };
@@ -85,6 +83,7 @@ namespace Poly {
 		GLuint RboDepth;
 		GLuint PostColorBuffer0;
 		GLuint PostColorBuffer1;
+		GLuint PostColorBufferHalfRes;
 		GLuint LinearDepth;
 		
 		// IBL textures and cubemaps
@@ -108,7 +107,8 @@ namespace Poly {
 		GLShaderProgram SkyboxShader;
 		GLShaderProgram LinearizeDepthShader;
 		GLShaderProgram GammaShader;
-		GLShaderProgram DOFShader;
+		GLShaderProgram DOFBokehShader;
+		GLShaderProgram DOFApplyShader;
 		GLShaderProgram BloomBrightShader;
 		GLShaderProgram BloomBlurShader;
 		GLShaderProgram BloomApplyShader;

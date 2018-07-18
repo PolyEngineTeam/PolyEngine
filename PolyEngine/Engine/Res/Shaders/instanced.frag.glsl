@@ -2,7 +2,8 @@
 
 uniform sampler2D i_color;
 uniform float uTime;
-uniform vec4 uEmitterColor;
+uniform vec4 uEmitterAlbedo;
+uniform vec4 uEmitterEmissive;
 uniform float uSpriteSpeed;
 uniform float uSpriteStartFrame;
 uniform vec2 uSpriteSubImages;
@@ -41,7 +42,6 @@ void main()
 	vec4 tex = mix(tex0, tex1, fract(frame));
 	tex *= uSpriteColor;
 
-	color = mix(vec4(mask), tex, uHasSprite);
-	color *= uEmitterColor;
+    color = mix(vec4(mask), tex, uHasSprite) * uEmitterAlbedo + uEmitterEmissive;
 	normal = vec4(0.0);
 }

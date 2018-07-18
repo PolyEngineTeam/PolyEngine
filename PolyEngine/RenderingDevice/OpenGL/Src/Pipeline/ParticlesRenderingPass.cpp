@@ -48,7 +48,7 @@ void ParticlesRenderingPass::OnRun(Scene* world, const CameraComponent* camera, 
 		GetProgram().SetUniform("uWorldFromModel", WorldFromModel);
 		
 		ParticleEmitter::Settings emitterSettings = particleCmp->GetEmitter()->GetSettings();
-		GetProgram().SetUniform("uEmitterColor", emitterSettings.BaseColor);
+		GetProgram().SetUniform("uEmitterColor", emitterSettings.Albedo);
 		
 		SpritesheetSettings spriteSettings = emitterSettings.Spritesheet;
 		GetProgram().SetUniform("uSpriteColor", spriteSettings.SpriteColor);
