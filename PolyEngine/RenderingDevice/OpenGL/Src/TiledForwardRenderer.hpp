@@ -165,7 +165,7 @@ namespace Poly {
 
 		void UIText2D(const SceneView& sceneView);
 
-		void PostGamma();
+		void PostGamma(const SceneView& sceneView);
 		
 		void DebugDepthPrepass(const SceneView& sceneView);
 

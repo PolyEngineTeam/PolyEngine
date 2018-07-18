@@ -18,6 +18,12 @@ namespace Poly {
 
 		float BloomThreshold = 1.0f; // luminance
 		float BloomScale = 1.0f;
+
+		float GrainScale = 0.1f;
+		float VignetteScale = 1.0f;
+		float AbberationScale = 1.0f;
+
+		float Gamma = 2.2f;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, PostprocessSettingsComponent)
