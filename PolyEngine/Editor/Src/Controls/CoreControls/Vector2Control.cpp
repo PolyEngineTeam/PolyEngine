@@ -17,7 +17,7 @@ Vector2Control::Vector2Control(QWidget* parent) : ControlBase(parent)
 	{
 		Field[x] = new QLineEdit(this);
 		Layout->addWidget(Field[x], 0, x);
-		connect(Field[x], &QLineEdit::editingFinished, this, &Vector2Control::Confirm);
+		connect(Field[x], &QLineEdit::returnPressed, this, &Vector2Control::Confirm);
 	}
 }
 

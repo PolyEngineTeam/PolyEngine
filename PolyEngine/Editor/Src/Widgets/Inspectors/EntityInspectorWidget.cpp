@@ -402,7 +402,8 @@ void EntityInspectorWidget::ReloadComponentSections()
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::SpawnContextMenu(QPoint pos)
 {
-	ContextMenu->popup(this->mapToGlobal(pos));
+	if (Manager->GetEngine())
+		ContextMenu->popup(this->mapToGlobal(pos));
 }
 
 

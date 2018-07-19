@@ -113,15 +113,17 @@ void PolyMainWindow::OpenProject()
 	QFileDialog fileDialog(this);
 	fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
 	if (fileDialog.exec() == QDialog::Accepted)
+	{
 		gApp->ProjectMgr->Open(&fileDialog.selectedFiles()[0].toStdString()[0]);
 
-	CreateProjectAction->setVisible(false);
-	OpenProjectAction->setVisible(false);
-	UpdateProjectFromEngineAction->setVisible(false);
+		CreateProjectAction->setVisible(false);
+		OpenProjectAction->setVisible(false);
+		UpdateProjectFromEngineAction->setVisible(false);
 
-	EditProjectAction->setVisible(true);
-	PlayProjectAction->setVisible(true);
-	CloseProjectAction->setVisible(true);
+		EditProjectAction->setVisible(true);
+		PlayProjectAction->setVisible(true);
+		CloseProjectAction->setVisible(true);
+	}
 }
 
 void PolyMainWindow::UpdateProject()

@@ -88,7 +88,7 @@ Dynarray<Entity*> EntityDialog::SpawnEntities(Scene* scene, Dynarray<Entity*> pa
 }
 
 //------------------------------------------------------------------------------
-void EntityDialog::DestroyEntities(Scene* scene, Dynarray<Entity*> entities)
+Dynarray<Entity*> EntityDialog::GetEntitiesToDestroy(Scene* scene, Dynarray<Entity*> entities)
 {
 	setModal(true);
 	Canceled = true;
@@ -127,10 +127,14 @@ void EntityDialog::DestroyEntities(Scene* scene, Dynarray<Entity*> entities)
 	// input from user
 	exec();
 
+	Dynarray<Entity*> result;
+
 	// apply
 	if (!Canceled)
 		for (auto i : EntitiesTree->selectedItems())
-			DeferredTaskSystem::DestroyEntityImmediate(scene, ItemToEntity[i]);
+			result.PushBack(ItemToEntity[i]);
+
+	return result;
 }
 
 //------------------------------------------------------------------------------

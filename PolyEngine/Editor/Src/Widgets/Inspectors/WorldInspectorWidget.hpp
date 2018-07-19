@@ -100,6 +100,6 @@ private slots:
 
 	void SpawnContextMenu(QPoint pos);
 		void SpawnEntities();
-		void DestroyEntities();
+		void GetEntitiesToDestroy();
 		void ReparentEntities();
 };

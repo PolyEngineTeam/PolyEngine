@@ -30,7 +30,7 @@ WorldInspectorWidget::WorldInspectorWidget(QWidget* parent, InspectorManager* mg
 
 		RemoveEntityAction = new QAction("Destroy Entities", this);
 		ContextMenu->addAction(RemoveEntityAction);
-		connect(RemoveEntityAction, &QAction::triggered, this, &WorldInspectorWidget::DestroyEntities);
+		connect(RemoveEntityAction, &QAction::triggered, this, &WorldInspectorWidget::GetEntitiesToDestroy);
 
 		ReparentEntityAction = new QAction("Reparent Entities", this);
 		ContextMenu->addAction(ReparentEntityAction);
@@ -106,6 +106,8 @@ void WorldInspectorWidget::EntitiesSpawned()
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::EntitiesDestroyed()
 {
+	DisableSelectionChangedSlot = true;
+
 	for (Entity* e : Manager->GetSelectedEntities())
 		for (auto i : ItemToEntity)
 			if (i.second == e)
@@ -114,6 +116,8 @@ void WorldInspectorWidget::EntitiesDestroyed()
 				ItemToEntity.erase(i.first);
 				break;
 			}
+
+	DisableSelectionChangedSlot = false;
 }
 
 //------------------------------------------------------------------------------
@@ -197,7 +201,8 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 //------------------------------------------------------------------------------
 void WorldInspectorWidget::SpawnContextMenu(QPoint pos)
 {
-	ContextMenu->popup(this->mapToGlobal(pos));
+	if (Manager->GetEngine())
+		ContextMenu->popup(this->mapToGlobal(pos));
 }
 
 
@@ -259,8 +264,10 @@ void WorldInspectorWidget::SpawnEntities()
 }
 
 //------------------------------------------------------------------------------
-void WorldInspectorWidget::DestroyEntities()
+void WorldInspectorWidget::GetEntitiesToDestroy()
 {
+	DisableSelectionChangedSlot = true;
+
 	if (!Manager->GetScene())
 	{
 		QMessageBox msgBox;
@@ -271,10 +278,14 @@ void WorldInspectorWidget::DestroyEntities()
 	}
 
 	EntityDialog dialog;
-	dialog.DestroyEntities(Manager->GetScene(), Manager->GetSelectedEntities());
+	Dynarray<Entity*> result = dialog.GetEntitiesToDestroy(Manager->GetScene(), Manager->GetSelectedEntities());
 
 	if (!dialog.OperationCanceled())
+	{
+		Manager->EntitiesSelectionChangedSlot(result);
 		Manager->EntitiesDestroyedSlot();
+	}
+	DisableSelectionChangedSlot = false;
 }
 
 //------------------------------------------------------------------------------

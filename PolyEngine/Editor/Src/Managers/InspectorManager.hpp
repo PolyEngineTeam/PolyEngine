@@ -92,10 +92,10 @@ signals:
 	void Reload();
 
 private:
-	Engine* EngineObj;
-	Scene* SceneObj;
+	Engine* EngineObj = nullptr;
+	Scene* SceneObj = nullptr;
 	Dynarray<Entity*> SelectedEntities;
-	const ProjectConfig* Config;
+	const ProjectConfig* Config = nullptr;
 	eEngineState EngineState = eEngineState::NONE;
 
 	const ProjectConfig*& ConfigRef;

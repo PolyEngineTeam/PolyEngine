@@ -129,7 +129,12 @@ void InspectorManager::EntitiesSpawnedSlot()
 //------------------------------------------------------------------------------
 void InspectorManager::EntitiesDestroyedSlot()
 {
-	emit EntitiesDestroyed();
+	EntitiesDestroyed();
+
+	for (Entity* ent : SelectedEntities)
+		DeferredTaskSystem::DestroyEntityImmediate(SceneObj, ent);
+
+	EntitiesSelectionChangedSlot({});
 }
 
 //------------------------------------------------------------------------------
@@ -149,18 +154,14 @@ void InspectorManager::EntitiesReparentedSlot()
 //------------------------------------------------------------------------------
 void InspectorManager::EntitiesSelectionChangedSlot(Dynarray<Entity*> entities)
 {
-	// controls must be updated before signal is emitted and those controls are reset.
-	QTimer::singleShot(50, this, [e = entities, object = this, old = SelectedEntities]()
-		{ 
-			EntitiesSelectionChangedCommand* c = new EntitiesSelectionChangedCommand();
-			c->OldEntities = old;
-			c->NewEntities = e;
-			c->Manager = object;
-			gApp->UndoRedoMgr->AddCommand(c);
+	EntitiesSelectionChangedCommand* c = new EntitiesSelectionChangedCommand();
+	c->OldEntities = SelectedEntities;
+	c->NewEntities = entities;
+	c->Manager = this;
+	gApp->UndoRedoMgr->AddCommand(c);
 
-			object->SelectedEntities = e;
-			object->EntitiesSelectionChanged();
-		});
+	SelectedEntities = entities;
+	EntitiesSelectionChanged();
 }
 
 
