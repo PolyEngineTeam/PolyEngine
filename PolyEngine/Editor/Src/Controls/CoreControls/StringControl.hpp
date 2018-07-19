@@ -19,9 +19,6 @@ public:
 
 	void Confirm() override;
 
-protected:
-	void focusOutEvent(QFocusEvent* e) { UpdateControl(); ControlBase::focusOutEvent(e); }
-
 private:
 	QGridLayout* Layout;
 	QLineEdit* Field;

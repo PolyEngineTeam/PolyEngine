@@ -121,6 +121,9 @@ void NumberControl::UpdateObject()
 //------------------------------------------------------------------------------
 void NumberControl::UpdateControl()
 {
+	if (!Field->hasFocus())
+		return;
+
 	switch (Property->CoreType)
 	{
 	case RTTI::eCorePropertyType::INT8:

@@ -116,6 +116,7 @@ protected:
 	const RTTI::Property* Property;
 
 	bool DisableEdit = false;
+	bool DisableUpdateControl = false;
 };
 
 // Use this to add Your control to map from core type to control creator function.

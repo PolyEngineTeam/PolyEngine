@@ -37,7 +37,7 @@ void StringControl::UpdateObject()
 //------------------------------------------------------------------------------
 void StringControl::UpdateControl()
 {
-	if (gApp->focusWidget() != this)
+	if (!Field->hasFocus())
 		Field->setText(reinterpret_cast<String*>(Object)->GetCStr());
 }
 

@@ -83,20 +83,29 @@ void TransformControl::UpdateControl()
 {
 	EntityTransform* transform = static_cast<EntityTransform*>(Object);
 
-	Vector translation = transform->GetLocalTranslation();
-	TranslationField[0]->setText(QString(String::From(translation.X).GetCStr()));
-	TranslationField[1]->setText(QString(String::From(translation.Y).GetCStr()));
-	TranslationField[2]->setText(QString(String::From(translation.Z).GetCStr()));
-	
-	EulerAngles rotation = transform->GetLocalRotation().ToEulerAngles();
-	RotationField[0]->setText(QString(String::From(rotation.X.AsDegrees()).GetCStr()));
-	RotationField[1]->setText(QString(String::From(rotation.Y.AsDegrees()).GetCStr()));
-	RotationField[2]->setText(QString(String::From(rotation.Z.AsDegrees()).GetCStr()));
-	
-	Vector scale = transform->GetLocalScale();
-	ScaleField[0]->setText(QString(String::From(scale.X).GetCStr()));
-	ScaleField[1]->setText(QString(String::From(scale.Y).GetCStr()));
-	ScaleField[2]->setText(QString(String::From(scale.Z).GetCStr()));
+	if (!(TranslationField[0]->hasFocus() || TranslationField[1]->hasFocus() || TranslationField[2]->hasFocus()))
+	{
+		Vector translation = transform->GetLocalTranslation();
+		TranslationField[0]->setText(QString(String::From(translation.X).GetCStr()));
+		TranslationField[1]->setText(QString(String::From(translation.Y).GetCStr()));
+		TranslationField[2]->setText(QString(String::From(translation.Z).GetCStr()));
+	}
+
+	if (!(RotationField[0]->hasFocus() || RotationField[1]->hasFocus() || RotationField[2]->hasFocus()))
+	{
+		EulerAngles rotation = transform->GetLocalRotation().ToEulerAngles();
+		RotationField[0]->setText(QString(String::From(rotation.X.AsDegrees()).GetCStr()));
+		RotationField[1]->setText(QString(String::From(rotation.Y.AsDegrees()).GetCStr()));
+		RotationField[2]->setText(QString(String::From(rotation.Z.AsDegrees()).GetCStr()));
+	}
+
+	if (!(ScaleField[0]->hasFocus() || ScaleField[1]->hasFocus() || ScaleField[2]->hasFocus()))
+	{
+		Vector scale = transform->GetLocalScale();
+		ScaleField[0]->setText(QString(String::From(scale.X).GetCStr()));
+		ScaleField[1]->setText(QString(String::From(scale.Y).GetCStr()));
+		ScaleField[2]->setText(QString(String::From(scale.Z).GetCStr()));
+	}
 }
 
 void TransformControl::UodateTranslation()
