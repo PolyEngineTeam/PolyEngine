@@ -164,6 +164,9 @@ void NumberControl::UpdateControl()
 //------------------------------------------------------------------------------
 void NumberControl::Confirm()
 {
+	if (DisableEdit)
+		return;
+
 	ControlCommand* cmd = new ControlCommand();
 	cmd->Object = Object;
 	cmd->Control = this;

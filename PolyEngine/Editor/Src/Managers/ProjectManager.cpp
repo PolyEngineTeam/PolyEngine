@@ -63,6 +63,8 @@ void ProjectManager::Save()
 {
 	if (!ProjectCfg)
 		throw new ProjectManagerException("This operation requires any project opened.");
+
+
 }
 
 //------------------------------------------------------------------------------

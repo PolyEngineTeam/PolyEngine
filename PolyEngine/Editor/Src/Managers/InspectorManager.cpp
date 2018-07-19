@@ -107,7 +107,6 @@ void InspectorManager::StateChangedSlot(eEngineState state)
 }
 
 
-
 //		world slots
 //------------------------------------------------------------------------------
 void InspectorManager::SceneChangedSlot(Scene* scene)
