@@ -11,6 +11,8 @@ namespace Poly {
 
 		float Exposure = 1.0f;
 
+		float MotionBlurScale = 1.0f;
+
 		float DOFPoint = 1000.0f;
 		float DOFRange = 800.0f;
 		float DOFSize = 0.2f;

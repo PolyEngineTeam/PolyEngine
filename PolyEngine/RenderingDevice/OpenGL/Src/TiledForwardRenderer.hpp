@@ -65,6 +65,7 @@ namespace Poly {
 			int Index;
 		};
 
+		Matrix PreviousFrameCameraTransform;
 		Matrix PreviousFrameCameraClipFromWorld;
 
 		const int MAX_NUM_LIGHTS = 1024;

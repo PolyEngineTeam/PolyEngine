@@ -506,20 +506,21 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 
 	PostMotionBlur(sceneView);
 
-	// PostDepthOfField(sceneView);
-	// 
-	// PostBloom(sceneView);
-	// 
-	// PostTonemapper(sceneView);
-	// 
-	// PostGamma(sceneView);
-	// 
-	// EditorDebug(sceneView);
-	// 
-	// UIText2D(sceneView);
+	PostDepthOfField(sceneView);
+	
+	PostBloom(sceneView);
+	
+	PostTonemapper(sceneView);
+	
+	PostGamma(sceneView);
+	
+	EditorDebug(sceneView);
+	
+	UIText2D(sceneView);
 
-	// ensure that copy is stored
+	// ensure that copy of matrix is stored
 	PreviousFrameCameraClipFromWorld = Matrix(sceneView.CameraCmp->GetClipFromWorld().GetDataPtr());
+	PreviousFrameCameraTransform = Matrix(sceneView.CameraCmp->GetViewFromWorld().GetDataPtr());
 }
 
 void TiledForwardRenderer::UpdateEnvCapture(const SceneView& sceneView)
@@ -1005,42 +1006,55 @@ void TiledForwardRenderer::LinearizeDepth(const SceneView& sceneView)
 
 void TiledForwardRenderer::PostMotionBlur(const SceneView& sceneView)
 {
+	float motionBlurScale = 1.0f;
+	const PostprocessSettingsComponent* postCmp = sceneView.CameraCmp->GetSibling<PostprocessSettingsComponent>();
+	if (postCmp) {
+		motionBlurScale = postCmp->MotionBlurScale;
+	}
+
 	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(sceneView.WorldData, Poly::eEngineTimer::GAMEPLAY));
 	float currentFPS = 1.0f / deltaTime;
 	float targetFPS = 60.0f;
-	// gConsole.LogInfo("TiledForwardRenderer::PostMotionBlur FPS: {}", currentFPS);
-	
-	// glBindFramebuffer(GL_FRAMEBUFFER, FBOpost1);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	
-	float motionBlurScale = 1.0f;
+
+	float maxDiff = 0.0f;
+	float maxDiffThreshold = 0.001f;
+	const float* matrixArray = sceneView.CameraCmp->GetViewFromWorld().GetDataPtr();
+	const float* prevMatrixArray = PreviousFrameCameraTransform.GetDataPtr();
+	for(size_t i = 0; i < 16; ++i)
+	{
+		maxDiff = std::max(maxDiff, std::abs(matrixArray[i] - prevMatrixArray[i]));
+	}
+
+	float jitterFix = maxDiff > maxDiffThreshold ? 1.0f : 0.0f;
 	 
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost1);
+
 	MotionBlurShader.BindProgram();
 	MotionBlurShader.BindSampler("uImage", 0, ColorBuffer);
 	MotionBlurShader.BindSampler("uDepth", 1, LinearDepth);
 	MotionBlurShader.SetUniform("uPrevClipFromWorld", PreviousFrameCameraClipFromWorld);
 	MotionBlurShader.SetUniform("uWorldFromView", sceneView.CameraCmp->GetViewFromWorld().GetInversed());
-	MotionBlurShader.SetUniform("uScale", (currentFPS / targetFPS) * motionBlurScale);
+	MotionBlurShader.SetUniform("uScale", (currentFPS / targetFPS) * motionBlurScale * jitterFix);
 	 
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 	
-	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
 {
-	float DOFPoint = 1000.0f;
-	float DOFRange = 800.0f;
-	float DOFSize = 0.2f;
-	float DOFShow = 0.2f;
+	float dofPoint = 1000.0f;
+	float dofRange = 800.0f;
+	float dofSize = 0.2f;
+	float dofShow = 0.2f;
 	const PostprocessSettingsComponent* postCmp = sceneView.CameraCmp->GetSibling<PostprocessSettingsComponent>();
 	if (postCmp) {
-		DOFPoint = postCmp->DOFPoint;
-		DOFRange = postCmp->DOFRange;
-		DOFSize = postCmp->DOFSize;
-		DOFShow = postCmp->DOFShow;
+		dofPoint = postCmp->DOFPoint;
+		dofRange = postCmp->DOFRange;
+		dofSize = postCmp->DOFSize;
+		dofShow = postCmp->DOFShow;
 	}
 
 	const ScreenSize screenSize = RDI->GetScreenSize();
@@ -1052,10 +1066,10 @@ void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
 
 	DOFBokehShader.BindProgram();
 	DOFBokehShader.SetUniform("uRes", Vector(0.5f * (float)screenSize.Width, 0.5f * (float)screenSize.Height, 2.0f / screenSize.Width, 2.0f / screenSize.Height));
-	DOFBokehShader.SetUniform("uDOFPoint", DOFPoint);
-	DOFBokehShader.SetUniform("uDOFRange", DOFRange);
-	DOFBokehShader.SetUniform("uDOFSize", DOFSize);
-	DOFBokehShader.BindSampler("uImage", 0, ColorBuffer);
+	DOFBokehShader.SetUniform("uDOFPoint", dofPoint);
+	DOFBokehShader.SetUniform("uDOFRange", dofRange);
+	DOFBokehShader.SetUniform("uDOFSize", dofSize);
+	DOFBokehShader.BindSampler("uImage", 0, PostColorBuffer1);
 	DOFBokehShader.BindSampler("uDepth", 1, LinearDepth);
 
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);
@@ -1066,12 +1080,12 @@ void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, PostColorBuffer0, 0);
 
 	DOFApplyShader.BindProgram();
-	DOFApplyShader.BindSampler("uImage", 0, ColorBuffer);
+	DOFApplyShader.BindSampler("uImage", 0, PostColorBuffer1);
 	DOFApplyShader.BindSampler("uDOF", 1, PostColorBufferHalfRes);
 	DOFApplyShader.BindSampler("uDepth", 2, LinearDepth);
-	DOFApplyShader.SetUniform("uDOFPoint", DOFPoint);
-	DOFApplyShader.SetUniform("uDOFRange", DOFRange);
-	DOFApplyShader.SetUniform("uDOFShow", DOFShow);
+	DOFApplyShader.SetUniform("uDOFPoint", dofPoint);
+	DOFApplyShader.SetUniform("uDOFRange", dofRange);
+	DOFApplyShader.SetUniform("uDOFShow", dofShow);
 
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -1082,12 +1096,12 @@ void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
 
 void TiledForwardRenderer::PostBloom(const SceneView& sceneView)
 {
-	float BloomThreshold = 1.0f;
-	float BloomScale = 1.0f;
+	float bloomThreshold = 1.0f;
+	float bloomScale = 1.0f;
 	const PostprocessSettingsComponent* postCmp = sceneView.CameraCmp->GetSibling<PostprocessSettingsComponent>();
 	if (postCmp) {
-		BloomThreshold = postCmp->BloomThreshold;
-		BloomScale = postCmp->BloomScale;
+		bloomThreshold = postCmp->BloomThreshold;
+		bloomScale = postCmp->BloomScale;
 	}
 
 	const ScreenSize screenSize = RDI->GetScreenSize();
@@ -1097,7 +1111,7 @@ void TiledForwardRenderer::PostBloom(const SceneView& sceneView)
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, RTBloom.GetWriteTarget(), 0);
 
 	BloomBrightShader.BindProgram();
-	BloomBrightShader.SetUniform("uBrightThreshold", BloomThreshold);
+	BloomBrightShader.SetUniform("uBrightThreshold", bloomThreshold);
 	BloomBrightShader.BindSampler("uImage", 0, PostColorBuffer0);
 	// BloomBrightShader.BindSampler("uImage", 0, ColorBuffer);
 	
@@ -1131,7 +1145,7 @@ void TiledForwardRenderer::PostBloom(const SceneView& sceneView)
 	BloomApplyShader.BindProgram();
 	BloomApplyShader.BindSampler("uImage", 0, PostColorBuffer0);
 	BloomApplyShader.BindSampler("uBloom", 1, RTBloom.GetReadTarget());
-	BloomApplyShader.SetUniform("uBloomScale", BloomScale);
+	BloomApplyShader.SetUniform("uBloomScale", bloomScale);
 
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -1169,26 +1183,26 @@ void TiledForwardRenderer::PostGamma(const SceneView& sceneView)
 
 	const ScreenSize screenSize = RDI->GetScreenSize();
 
-	float GrainScale = 0.1f;
-	float VignetteScale = 1.0f;
-	float AbberationScale = 1.0f;
-	float Gamma = 2.2f;
+	float grainScale = 0.1f;
+	float vignetteScale = 1.0f;
+	float abberationScale = 1.0f;
+	float gamma = 2.2f;
 	const PostprocessSettingsComponent* postCmp = sceneView.CameraCmp->GetSibling<PostprocessSettingsComponent>();
 	if (postCmp) {
-		GrainScale = postCmp->GrainScale;
-		VignetteScale = postCmp->VignetteScale;
-		AbberationScale = postCmp->AbberationScale;
-		Gamma = postCmp->Gamma;
+		grainScale = postCmp->GrainScale;
+		vignetteScale = postCmp->VignetteScale;
+		abberationScale = postCmp->AbberationScale;
+		gamma = postCmp->Gamma;
 	}
 
 	GammaShader.BindProgram();
 	GammaShader.BindSampler("uImage", 0, PostColorBuffer0);
 	GammaShader.SetUniform("uTime", time);
 	GammaShader.SetUniform("uRes", Vector((float)screenSize.Width, (float)screenSize.Height, 1.0f / screenSize.Width, 1.0f / screenSize.Height));
-	GammaShader.SetUniform("uGrainScale", GrainScale);
-	GammaShader.SetUniform("uVignetteScale", VignetteScale);
-	GammaShader.SetUniform("uAbberationScale", AbberationScale);
-	GammaShader.SetUniform("uGamma", Gamma);
+	GammaShader.SetUniform("uGrainScale", grainScale);
+	GammaShader.SetUniform("uVignetteScale", vignetteScale);
+	GammaShader.SetUniform("uAbberationScale", abberationScale);
+	GammaShader.SetUniform("uGamma", gamma);
 
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
