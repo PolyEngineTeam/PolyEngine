@@ -9,7 +9,22 @@ namespace Poly {
 	{
 		RTTI_DECLARE_TYPE_DERIVED(PostprocessSettingsComponent, ComponentBase)
 		{
-			NO_RTTI_PROPERTY();
+			RTTI_PROPERTY_AUTONAME(Exposure, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(MotionBlurScale, RTTI::ePropertyFlag::NONE);
+
+			RTTI_PROPERTY_AUTONAME(DOFPoint, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(DOFRange, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(DOFSize, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(DOFShow, RTTI::ePropertyFlag::NONE);
+
+			RTTI_PROPERTY_AUTONAME(BloomThreshold, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(BloomScale, RTTI::ePropertyFlag::NONE);
+
+			RTTI_PROPERTY_AUTONAME(GrainScale, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(VignetteScale, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(AbberationScale, RTTI::ePropertyFlag::NONE);
+
+			RTTI_PROPERTY_AUTONAME(Gamma, RTTI::ePropertyFlag::NONE);
 		}
 
 		friend void CameraSystem::CameraUpdatePhase(Scene*);
