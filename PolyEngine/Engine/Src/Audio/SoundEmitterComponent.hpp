@@ -17,7 +17,9 @@ namespace Poly
 	{
 		RTTI_DECLARE_TYPE_DERIVED(SoundEmitterComponent, ComponentBase)
 		{
-			NO_RTTI_PROPERTY();
+			RTTI_PROPERTY_AUTONAME(EmitterID, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Background, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Resource, RTTI::ePropertyFlag::NONE);
 		}
 
 		friend void SoundSystem::SoundPhase(Scene* world);
