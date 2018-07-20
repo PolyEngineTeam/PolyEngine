@@ -47,19 +47,6 @@ void PostprocessRenderingPass::OnRun(Scene* world, const CameraComponent* camera
 	{
 		gConsole.LogInfo("void PostprocessRenderingPass::OnRun: PostprocessSettings is NULL");
 	}
-	else
-	{
-		GetProgram().SetUniform("uUseCashetes",						PostprocessSettings->UseCashetes);
-		GetProgram().SetUniform("uDistortionPower",					PostprocessSettings->Distortion);
-		GetProgram().SetUniform("uColorTempValue",					PostprocessSettings->ColorTempValue);
-		GetProgram().SetUniform("uColorTempLuminancePreservation",	PostprocessSettings->ColorTempLuminancePreservation);
-		GetProgram().SetUniform("uSaturationPower",					PostprocessSettings->Saturation);
-		GetProgram().SetUniform("uGrainPower",						PostprocessSettings->Grain);
-		GetProgram().SetUniform("uStripesPower",					PostprocessSettings->Stripes);
-			
-		
-		//gConsole.LogInfo("void PostprocessRenderingPass::OnRun: UseCashetes: {}", PostprocessSettings->UseCashetes);
-	}
 
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);

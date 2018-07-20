@@ -43,6 +43,7 @@ namespace Poly
 
 		const Color& GetColor() const { return LightColor; }
 		float GetIntensity() const { return Intensity; }
+		void SetIntensity(float value) { Intensity = value; }
 		void SetRange(float value) { Range = value; }
 		float GetRange() const { return Range; }
 	private:
