@@ -386,7 +386,7 @@ void EntityInspectorWidget::ReloadComponentSections()
 		SectionContainer* section = new SectionContainer(cmp->GetTypeInfo().GetTypeName());
 		RTTIInspectorWidget* viewer = new RTTIInspectorWidget(this);
 
-		viewer->SetObject(cmp, true);
+		viewer->SetObject(cmp, false);
 		connect(viewer, &RTTIInspectorWidget::ControlObjectUpdated,
 			this, &EntityInspectorWidget::ControlObjectUpdated);
 

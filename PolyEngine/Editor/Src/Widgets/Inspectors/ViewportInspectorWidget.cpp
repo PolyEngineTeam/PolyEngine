@@ -161,8 +161,6 @@ void ViewportInspectorWidget::StateChanged()
 		DeferredTaskSystem::AddComponentImmediate<CameraComponent>(w, EditorCameraEnt, 60_deg, 1.0f, 1000.f);
 		// add postprocess settings component
 		DeferredTaskSystem::AddComponentImmediate<PostprocessSettingsComponent>(w, EditorCameraEnt);
-		w->GetComponent<PostprocessSettingsComponent>(EditorCameraEnt)->UseFgShader = true;
-		w->GetComponent<PostprocessSettingsComponent>(EditorCameraEnt)->UseBgShader = true;
 
 		//		obtain game camera
 		GameCamera = w->GetWorldComponent<ViewportWorldComponent>()->GetCamera(0);

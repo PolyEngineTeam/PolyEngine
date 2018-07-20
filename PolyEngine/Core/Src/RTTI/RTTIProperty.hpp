@@ -102,6 +102,7 @@ namespace Poly {
 		//-----------------------------------------------------------------------------------------------------------------------
 		enum class ePropertyFlag {
 			NONE = 0,
+			EDITOR_DEBUG_ONLY,
 			DONT_SERIALIZE = BIT(1)
 		};
 

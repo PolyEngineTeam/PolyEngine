@@ -54,7 +54,7 @@ void RTTIInspectorWidget::ReloadInspector(bool debug)
 
 	for (auto& child : Object->GetPropertyManager()->GetPropertyList())
 	{
-		if (!debug && child.Flags.IsSet(RTTI::ePropertyFlag::DONT_SERIALIZE))
+		if (!debug && child.Flags.IsSet(RTTI::ePropertyFlag::EDITOR_DEBUG_ONLY))
 			continue;
 
 		void* ptr = ((char*)Object) + child.Offset;
@@ -86,7 +86,7 @@ SectionContainer* RTTIInspectorWidget::AddChild(RTTIBase* obj, const RTTI::Prope
 
 	for (auto& child : Object->GetPropertyManager()->GetPropertyList())
 	{
-		if (!debug && child.Flags.IsSet(RTTI::ePropertyFlag::DONT_SERIALIZE))
+		if (!debug && child.Flags.IsSet(RTTI::ePropertyFlag::EDITOR_DEBUG_ONLY))
 			continue;
 
 		void* ptr = ((char*)Object) + child.Offset;
