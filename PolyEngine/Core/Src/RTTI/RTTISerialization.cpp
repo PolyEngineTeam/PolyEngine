@@ -529,3 +529,18 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj,
 		ASSERTE(false, "Unknown property type!");
 	}
 }
+
+CORE_DLLEXPORT void Poly::RTTI::TraverseAndCall(RTTIBase* obj, const std::function<void(RTTIBase*)>& func)
+{
+	const PropertyManagerBase* propMgr = obj->GetPropertyManager();
+
+	for (auto& child : propMgr->GetPropertyList())
+	{
+		ASSERTE(child.CoreType != eCorePropertyType::UNHANDLED, "Invalid type in property declaration!");
+		if (child.Flags.IsSet(ePropertyFlag::DONT_SERIALIZE) || child.CoreType != eCorePropertyType::CUSTOM)
+			continue;
+		RTTIBase* ptr = reinterpret_cast<RTTIBase*>(((char*)obj) + child.Offset);
+		TraverseAndCall(ptr, func);
+	}
+	func(obj);
+}

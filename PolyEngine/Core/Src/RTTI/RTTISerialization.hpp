@@ -34,5 +34,7 @@ namespace Poly
 			const RTTI::Property& prop, 
 			const rapidjson::Value& value,
 			Dynarray<UninitializedPointerEntry>& uninitializedPointers);
+
+		CORE_DLLEXPORT void TraverseAndCall(RTTIBase* obj, const std::function<void(RTTIBase*)>& func);
 	}
 }
