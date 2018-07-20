@@ -14,6 +14,7 @@ class EditorApp;
 class WorldInspectorWidget;
 class ResourceInspectorWidget;
 class EntityInspectorWidget;
+class ViewportInspectorWidget;
 class Command;
 
 class InspectorManager : public QObject
@@ -28,8 +29,8 @@ public:
 
 	void InitUi();
 
-	std::unique_ptr<IRenderingDevice> GetRenderingDevice() { return ViewportInspector->GetRenderingDevice(); }
-	IEditor* GetEditor() { return ViewportInspector; }
+	std::unique_ptr<IRenderingDevice> GetRenderingDevice();
+	IEditor* GetEditor();
 
 	Engine* GetEngine() { return EngineObj; }
 	Scene* GetScene() { return SceneObj; }
