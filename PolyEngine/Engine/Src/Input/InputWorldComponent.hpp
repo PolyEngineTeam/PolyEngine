@@ -25,7 +25,10 @@ namespace Poly
 	{
 		RTTI_DECLARE_TYPE_DERIVED(InputWorldComponent, ComponentBase)
 		{
-			NO_RTTI_PROPERTY();
+			RTTI_PROPERTY_AUTONAME(MousePos, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(MouseDelta, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(CurrWheel, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(PrevWheel, RTTI::ePropertyFlag::NONE);
 		}
 
 		friend void InputSystem::InputPhase(Scene*);

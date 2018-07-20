@@ -21,14 +21,16 @@ VectorControl::VectorControl(QWidget* parent) : ControlBase(parent)
 	}
 }
 
-void VectorControl::Reset() {
+void VectorControl::Reset() 
+{
 	Object = nullptr;
 	Field[0]->setText("");
 	Field[1]->setText("");
 	Field[2]->setText("");
 }
 
-void VectorControl::UpdateObject() {
+void VectorControl::UpdateObject() 
+{
 
 	switch (Property->CoreType)
 	{
@@ -65,7 +67,10 @@ void VectorControl::UpdateObject() {
 	}
 }
 
-void VectorControl::UpdateControl() {
+void VectorControl::UpdateControl() 
+{
+	if (Field[0]->hasFocus() || Field[1]->hasFocus() || Field[3]->hasFocus())
+		return;
 
 	switch (Property->CoreType)
 	{
