@@ -8,6 +8,7 @@
 #include <QtWidgets/qscrollarea.h>
 #include <QtWidgets/qlineedit.h>
 #include <QtWidgets/qpushbutton.h>
+#include <QtWidgets/qgridlayout.h>
 
 #include "Widgets/Inspectors/InspectorWidgetBase.hpp"
 

@@ -47,7 +47,8 @@ void InspectorManager::InitUi()
 	EntityInspector->InitializeConnections();
 }
 
-
+std::unique_ptr<IRenderingDevice> InspectorManager::GetRenderingDevice() { return ViewportInspector->GetRenderingDevice(); }
+IEditor* InspectorManager::GetEditor() { return ViewportInspector; }
 
 //		project slots
 //------------------------------------------------------------------------------
