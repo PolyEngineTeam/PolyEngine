@@ -11,7 +11,7 @@ struct Output
     uint indexLocal;
     uint indexWorkGroup;
     uint indexGlobal;
-    uint input;
+    uint inputVal;
     uint result;
     vec4 tilePosSS;
 };
@@ -61,7 +61,7 @@ void main()
     ivec2 WorkGroupID = (location / WorkGroupSize);
     uint IndexWorkGroup = WorkGroupID.y * NumWorkGroups.x + WorkGroupID.x;
     
-    float tileDepth = uintBitsToFloat(bOutputs[IndexWorkGroup].input);
+    float tileDepth = uintBitsToFloat(bOutputs[IndexWorkGroup].inputVal);
     tileDepth = fract(0.1 * tileDepth);
 
 	float visibleLights = uintBitsToFloat(bOutputs[IndexWorkGroup].result);
