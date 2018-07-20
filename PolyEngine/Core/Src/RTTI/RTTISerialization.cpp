@@ -346,7 +346,7 @@ CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const rapidjson
 	Dynarray<UninitializedPointerEntry> uninitializedPointers;
 	RTTI::DeserializeObject(obj, doc.GetObject(), uninitializedPointers);
 	ResolveUninitializedPointers(uninitializedPointers);
-	TraverseAndCall(obj, [](RTTIBase* obj) {obj->AfterSerializationCallback(); });
+	TraverseAndCall(obj, [](RTTIBase* obj) {obj->AfterDeSerializationCallback(); });
 }
 
 CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, 
