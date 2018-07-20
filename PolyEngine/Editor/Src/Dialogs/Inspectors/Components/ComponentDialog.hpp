@@ -29,10 +29,15 @@ private:
 	{
 		ADD,
 		REMOVE,
+		ADD_WORLD,
+		REMOVE_WORLD,
 		_COUNT
 	};
 
 	void InitUi(eMode mode);
+	eMode Mode;
+	Entity* EntityObj;
+	Scene* SceneObj;
 	bool Canceled = true;
 
 	typedef void (*ComponentCreator)(::Entity* e);

@@ -41,12 +41,6 @@ Dynarray<Entity*> EntityDialog::SpawnEntities(Scene* scene, Dynarray<Entity*> pa
 	PrefabTree->setHeaderLabels(QStringList() << "Name" << "ID");
 	MainLayout->addWidget(PrefabTree, 3, 0, 1, 3);
 	AddPrefab("Empty entity");
-	AddPrefab("SpikesLeft");
-	AddPrefab("SpikesRight");
-	AddPrefab("SpikesTop");
-	AddPrefab("SpikesBottom");
-	AddPrefab("Tile");
-	AddPrefab("Powerup");
 
 	// create and link buttons
 	CancelButton = new QPushButton(this);
@@ -101,7 +95,7 @@ Dynarray<Entity*> EntityDialog::GetEntitiesToDestroy(Scene* scene, Dynarray<Enti
 	MainLayout->setColumnStretch(2, 1);
 
 	FirstLabel = new QLabel(this);
-	FirstLabel->setText("Choose entities to destroy (as well as all their children).");
+	FirstLabel->setText("Choose entities to destroy (all children will be destroyed recursively).");
 	MainLayout->addWidget(FirstLabel, 0, 0, 1, 3);
 
 	// create potential parents list 

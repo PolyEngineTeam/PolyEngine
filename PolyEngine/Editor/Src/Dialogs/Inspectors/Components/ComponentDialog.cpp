@@ -73,6 +73,7 @@
 void ComponentDialog::AddComponents(Entity* entity)
 {
 	InitUi(eMode::ADD);
+	EntityObj = entity;
 
 	// entity info
 	QPalette disabledEditPalette;
@@ -117,6 +118,7 @@ void ComponentDialog::AddComponents(Entity* entity)
 void ComponentDialog::RemoveComponents(Entity* entity)
 {
 	InitUi(eMode::REMOVE);
+	EntityObj = entity;
 
 	// entity info
 	QPalette disabledEditPalette;
@@ -160,7 +162,8 @@ void ComponentDialog::RemoveComponents(Entity* entity)
 //------------------------------------------------------------------------------
 void ComponentDialog::AddWorldComponent(Scene* scene)
 {
-	InitUi(eMode::ADD);
+	InitUi(eMode::ADD_WORLD);
+	SceneObj = scene;
 
 	//ADD_WORLD_COMPONENT(SoundWorldComponent)
 	//ADD_WORLD_COMPONENT(DebugWorldComponent)
@@ -178,7 +181,8 @@ void ComponentDialog::AddWorldComponent(Scene* scene)
 //------------------------------------------------------------------------------
 void ComponentDialog::RemoveWorldComponent(Scene* scene)
 {
-	InitUi(eMode::REMOVE);
+	InitUi(eMode::REMOVE_WORLD);
+	SceneObj = scene;
 
 	ADD_WORLD_COMPONENT_DESTROYER(SoundWorldComponent)
 	ADD_WORLD_COMPONENT_DESTROYER(DebugWorldComponent)
@@ -197,6 +201,7 @@ void ComponentDialog::RemoveWorldComponent(Scene* scene)
 void ComponentDialog::InitUi(eMode mode)
 {
 	setModal(true);
+	Mode = mode;
 
 	// create main layout
 	MainLayout = new QGridLayout(this);
@@ -209,10 +214,12 @@ void ComponentDialog::InitUi(eMode mode)
 	switch (mode)
 	{
 	case ComponentDialog::eMode::ADD:
+	case ComponentDialog::eMode::ADD_WORLD:
 		ComponentsTree->setHeaderLabels(QStringList() << "Add" << "Component Name");
 		break;
 
 	case ComponentDialog::eMode::REMOVE:
+	case ComponentDialog::eMode::REMOVE_WORLD:
 		ComponentsTree->setHeaderLabels(QStringList() << "Remove" << "Component Name");
 		break;
 	default:
@@ -235,10 +242,12 @@ void ComponentDialog::InitUi(eMode mode)
 	switch (mode)
 	{
 	case ComponentDialog::eMode::ADD:
+	case ComponentDialog::eMode::ADD_WORLD:
 		OkButton->setText("Add");
 		break;
 
 	case ComponentDialog::eMode::REMOVE:
+	case ComponentDialog::eMode::REMOVE_WORLD:
 		OkButton->setText("Remove");
 		break;
 	default:
@@ -252,6 +261,31 @@ void ComponentDialog::InitUi(eMode mode)
 void ComponentDialog::Ok()
 {
 	Canceled = false;
+
+	switch (Mode)
+	{
+	case eMode::ADD:
+		break;
+
+	case eMode::REMOVE:
+		for (auto i = 0; i < ComponentsTree->topLevelItemCount(); ++i)
+			if (ComponentsTree->topLevelItem(i)->checkState(0))
+				ComponentDestroyers[ComponentsTree->topLevelItem(i)->text(1)](EntityObj);
+		break;
+
+	case eMode::ADD_WORLD:
+		break;
+
+	case eMode::REMOVE_WORLD:
+		for (auto cmp : ComponentsTree->selectedItems())
+		{
+			for (auto i = 0; i < ComponentsTree->topLevelItemCount(); ++i)
+				if (ComponentsTree->topLevelItem(i)->checkState(0))
+					WorldComponentDestroyers[ComponentsTree->topLevelItem(i)->text(1)](SceneObj);
+		}
+		break;
+	}
+
 	close();
 }
 

@@ -99,8 +99,8 @@ void EntityInspectorWidget::InitializeConnections()
 	connect(Manager, &InspectorManager::EntitiesReparented, this, &EntityInspectorWidget::Update);
 	connect(Manager, &InspectorManager::EntitiesSelectionChanged, this, &EntityInspectorWidget::EntitiesSelectionChanged);
 
-	connect(Manager, &InspectorManager::ComponentsAdded, this, &EntityInspectorWidget::Update);
-	connect(Manager, &InspectorManager::ComponentsRemoved, this, &EntityInspectorWidget::Update);
+	connect(Manager, &InspectorManager::ComponentsAdded, this, &EntityInspectorWidget::Reload);
+	connect(Manager, &InspectorManager::ComponentsRemoved, this, &EntityInspectorWidget::Reload);
 
 	connect(Manager, &InspectorManager::Update, this, &EntityInspectorWidget::Update);
 }
