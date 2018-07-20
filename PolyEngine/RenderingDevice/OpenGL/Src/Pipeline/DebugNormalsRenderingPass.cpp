@@ -26,7 +26,7 @@ void DebugNormalsRenderingPass::OnRun(Scene* world, const CameraComponent* camer
 		const EntityTransform& trans = meshCmp->GetTransform();
 
 		if (passType == ePassType::BY_MATERIAL &&
-			(meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::PHONG))
+			(meshCmp->GetBlendingMode() == eBlendingMode::TRANSLUCENT || meshCmp->GetShadingModel() != eShadingMode::PBR))
 		{
 		 	continue;
 		}
