@@ -402,7 +402,7 @@ void EntityInspectorWidget::ReloadComponentSections()
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::SpawnContextMenu(QPoint pos)
 {
-	if (Manager->GetEngine())
+	if (Manager->GetSelectedEntities().GetSize() == 1)
 		ContextMenu->popup(this->mapToGlobal(pos));
 }
 
