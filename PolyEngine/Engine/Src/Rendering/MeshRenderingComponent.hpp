@@ -39,7 +39,7 @@ namespace Poly {
 			RTTI_PROPERTY_AUTONAME(Mesh, RTTI::ePropertyFlag::DONT_SERIALIZE);
 		}
 	public:
-		MeshRenderingComponent() {}
+		MeshRenderingComponent();
 		MeshRenderingComponent(const String& meshPath, eResourceSource source);
 		virtual ~MeshRenderingComponent();
 

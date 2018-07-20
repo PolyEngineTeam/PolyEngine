@@ -91,7 +91,8 @@ namespace Poly
 		/// @param Entity* Pointer to new child
 		inline void AddChild(Entity* child) { ASSERTE(child, "Child cannot be null!"); child->SetParent(this); }
 
-		const String& GetName() { return Name; }
+		const String& GetName() const { return Name; }
+		void SetName(const String& name) { Name = name; }
 
 		/// Returns transformation data of this entity.
 		/// @return Transformation data of this entity.

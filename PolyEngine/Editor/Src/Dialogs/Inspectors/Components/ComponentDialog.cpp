@@ -33,8 +33,7 @@
 	if (!entity->HasComponent<COMPONENT>()) \
 	{ \
 		QTreeWidgetItem* cmp = new QTreeWidgetItem(ComponentsTree); \
-		cmp->setText(1, #COMPONENT); \
-		cmp->setCheckState(0, Qt::Unchecked); \
+		cmp->setText(0, #COMPONENT); \
 		ComponentCreators.insert(std::pair<QString, ComponentCreator>(#COMPONENT, [](::Entity* e) \
 		{ Poly::DeferredTaskSystem::AddComponentImmediate<COMPONENT>(e->GetEntityScene(), e); })); \
 	}
@@ -43,8 +42,7 @@
 	if (entity->HasComponent<COMPONENT>()) \
 	{ \
 		QTreeWidgetItem* cmp = new QTreeWidgetItem(ComponentsTree); \
-		cmp->setText(1, #COMPONENT); \
-		cmp->setCheckState(0, Qt::Unchecked); \
+		cmp->setText(0, #COMPONENT); \
 		ComponentDestroyers.insert(std::pair<QString, ComponentDestroyer>(#COMPONENT, [](::Entity* e) \
 		{ Poly::DeferredTaskSystem::RemoveComponent<COMPONENT>(e->GetEntityScene(), e); })); \
 	}
@@ -53,8 +51,7 @@
 	if (scene->HasWorldComponent<COMPONENT>()) \
 	{ \
 		QTreeWidgetItem* cmp = new QTreeWidgetItem(ComponentsTree); \
-		cmp->setText(1, #COMPONENT); \
-		cmp->setCheckState(0, Qt::Unchecked); \
+		cmp->setText(0, #COMPONENT); \
 		WorldComponentCreators.insert(std::pair<QString, WorldComponentCreator>(#COMPONENT, [](::Scene* w) \
 		{ Poly::DeferredTaskSystem::RemoveWorldComponentImmediate<COMPONENT>(w); })); \
 	}
@@ -63,8 +60,7 @@
 	if (scene->HasWorldComponent<COMPONENT>()) \
 	{ \
 		QTreeWidgetItem* cmp = new QTreeWidgetItem(ComponentsTree); \
-		cmp->setText(1, #COMPONENT); \
-		cmp->setCheckState(0, Qt::Unchecked); \
+		cmp->setText(0, #COMPONENT); \
 		WorldComponentDestroyers.insert(std::pair<QString, WorldComponentDestroyer>(#COMPONENT, [](::Scene* w) \
 		{ Poly::DeferredTaskSystem::RemoveWorldComponentImmediate<COMPONENT>(w); })); \
 	}
@@ -106,7 +102,7 @@ void ComponentDialog::AddComponents(Entity* entity)
 	//ADD_COMPONENT(DirectionalLightComponent)
 	//ADD_COMPONENT(PointLightComponent)
 	//ADD_COMPONENT(SpotLightComponent)
-	//ADD_COMPONENT(MeshRenderingComponent)
+	ADD_COMPONENT(MeshRenderingComponent)
 	//ADD_COMPONENT(PostprocessSettingsComponent)
 	//ADD_COMPONENT(SpritesheetComponent)
 	//ADD_COMPONENT(ScreenSpaceTextComponent)
@@ -211,16 +207,17 @@ void ComponentDialog::InitUi(eMode mode)
 
 	// create components tree
 	ComponentsTree = new QTreeWidget(this);
+	ComponentsTree->setSelectionMode(QAbstractItemView::SelectionMode::ExtendedSelection);
 	switch (mode)
 	{
 	case ComponentDialog::eMode::ADD:
 	case ComponentDialog::eMode::ADD_WORLD:
-		ComponentsTree->setHeaderLabels(QStringList() << "Add" << "Component Name");
+		ComponentsTree->setHeaderLabels(QStringList() << "Component Name");
 		break;
 
 	case ComponentDialog::eMode::REMOVE:
 	case ComponentDialog::eMode::REMOVE_WORLD:
-		ComponentsTree->setHeaderLabels(QStringList() << "Remove" << "Component Name");
+		ComponentsTree->setHeaderLabels(QStringList() << "Component Name");
 		break;
 	default:
 		throw new std::exception();
@@ -265,24 +262,23 @@ void ComponentDialog::Ok()
 	switch (Mode)
 	{
 	case eMode::ADD:
+		for (auto item : ComponentsTree->selectedItems())
+			ComponentCreators[item->text(0)](EntityObj);
 		break;
 
 	case eMode::REMOVE:
-		for (auto i = 0; i < ComponentsTree->topLevelItemCount(); ++i)
-			if (ComponentsTree->topLevelItem(i)->checkState(0))
-				ComponentDestroyers[ComponentsTree->topLevelItem(i)->text(1)](EntityObj);
+		for (auto item : ComponentsTree->selectedItems())
+			ComponentDestroyers[item->text(0)](EntityObj);
 		break;
 
 	case eMode::ADD_WORLD:
+		for (auto item : ComponentsTree->selectedItems())
+			WorldComponentCreators[item->text(0)](SceneObj);
 		break;
 
 	case eMode::REMOVE_WORLD:
-		for (auto cmp : ComponentsTree->selectedItems())
-		{
-			for (auto i = 0; i < ComponentsTree->topLevelItemCount(); ++i)
-				if (ComponentsTree->topLevelItem(i)->checkState(0))
-					WorldComponentDestroyers[ComponentsTree->topLevelItem(i)->text(1)](SceneObj);
-		}
+		for (auto item : ComponentsTree->selectedItems())
+			WorldComponentDestroyers[item->text(0)](SceneObj);
 		break;
 	}
 
