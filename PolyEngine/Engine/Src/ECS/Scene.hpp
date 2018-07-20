@@ -32,13 +32,16 @@ namespace Poly {
 		RTTI_DECLARE_TYPE_DERIVED(::Poly::Scene, ::Poly::RTTIBase)
 		{
 			//@todo add factory creation
-			RTTI_PROPERTY_AUTONAME(RootEntity, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_FACTORY_AUTONAME(RootEntity, &Entity::AllocateEntity, RTTI::ePropertyFlag::NONE);
 		}
 	public:
 		/// <summary>Allocates memory for entities, world components and components allocators.</summary>
 		Scene();
 
 		virtual ~Scene();
+
+		void BeforeDeserializationCallback() override;
+		void AfterDeserializationCallback() override;
 
 		/// <summary>Gets a component of a specified type from entity with given UniqueID.</summary>
 		/// <param name="entityId">UniqueID of the entity.</param>
@@ -65,8 +68,18 @@ namespace Poly {
 			return RootEntity->GetComponent<T>();
 		}
 
+		IterablePoolAllocatorBase* GetComponentAllocator(size_t componentID) 
+		{
+			HEAVY_ASSERTE(componentID < MAX_COMPONENTS_COUNT, "Invalid component ID");
+			if (ComponentAllocators[componentID] == nullptr)
+				ComponentAllocators[componentID] = ComponentManager::Get().CreateAllocator(componentID, MAX_ENTITY_COUNT);
+			return ComponentAllocators[componentID];
+		}
 		ComponentDeleter& GetComponentDeleter() { return ComponentDel; }
+
+		IterablePoolAllocator<Entity>& GetEntityAllocator() { return EntitiesAllocator; }
 		EntityDeleter& GetEntityDeleter() { return EntityDel; }
+
 
 		//------------------------------------------------------------------------------
 		/// <summary>Returns statically set component type ID from 'Scene' group.</summary>
@@ -228,10 +241,7 @@ namespace Poly {
 		IterablePoolAllocator<T>* GetComponentAllocator()
 		{
 			const auto ctypeID = GetComponentID<T>();
-			HEAVY_ASSERTE(ctypeID < MAX_COMPONENTS_COUNT, "Invalid component ID");
-			if (ComponentAllocators[ctypeID] == nullptr)
-				ComponentAllocators[ctypeID] = new IterablePoolAllocator<T>(MAX_ENTITY_COUNT);
-			return static_cast<IterablePoolAllocator<T>*>(ComponentAllocators[ctypeID]);
+			return static_cast<IterablePoolAllocator<T>*>(GetComponentAllocator(ctypeID));
 		}
 
 		//------------------------------------------------------------------------------

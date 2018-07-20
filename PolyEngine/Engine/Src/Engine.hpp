@@ -32,7 +32,7 @@ namespace Poly
 	{
 	public:
 		/// <summary>Constructs engine instance.</summary>
-		Engine();
+		Engine(bool testRun = false);
 
 		/// <summary>Deletes engine instance.</summary>
 		~Engine();
@@ -137,6 +137,9 @@ namespace Poly
 		Scene* GetActiveScene() { return ActiveScene.get(); }
 		void LoadDefaultScene();
 
+		Scene* GetCurrentlySerializedScene() { return SerializedScene; }
+		void SetCurrentlySerializedScene(Scene* s) { ASSERTE(SerializedScene == nullptr || s == nullptr, "Setting scene again!"); SerializedScene = s; }
+
 		/// <summary>Returns pointer to rendering device.</summary>
 		/// <returns>Pointer to IRenderingDevice instance.</returns>
 		IRenderingDevice* GetRenderingDevice() const { return RenderingDevice.get(); }
@@ -170,6 +173,7 @@ namespace Poly
 		void RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order);
 
 		std::unique_ptr<Scene> ActiveScene;
+		Scene* SerializedScene = nullptr;
 		std::unique_ptr<IGame> Game;
 		std::unique_ptr<IRenderingDevice> RenderingDevice;
 		OpenALDevice AudioDevice;

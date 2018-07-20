@@ -6,18 +6,22 @@ using namespace Poly;
 Engine* Poly::gEngine = nullptr;
 
 //------------------------------------------------------------------------------
-Engine::Engine() 
+Engine::Engine(bool testRun)
 	: Game()
 {
 	ASSERTE(gEngine == nullptr, "Creating engine twice?");
 	gEngine = this;
-	RandomSetSeed((int)time(nullptr));
 
-	gAssetsPathConfig.Load();
-	gDebugConfig.Load();
-	// also set presets for debug draw (DebugDrawPresets)
-	// @todo update debug draw presets from GUI
-	gDebugConfig.DebugDrawPresets |= eDebugDrawPreset::GFX;
+	if (!testRun)
+	{
+		RandomSetSeed((int)time(nullptr));
+
+		gAssetsPathConfig.Load();
+		gDebugConfig.Load();
+		// also set presets for debug draw (DebugDrawPresets)
+		// @todo update debug draw presets from GUI
+		gDebugConfig.DebugDrawPresets |= eDebugDrawPreset::GFX;
+	}
 }
 
 void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device)

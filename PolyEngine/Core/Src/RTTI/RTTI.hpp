@@ -29,7 +29,10 @@ namespace Poly {
 		void DeserializeFromFile(const String& fileName, eSerializationType type = eSerializationType::JSON);
 
 		virtual void BeforeSerializationCallback() {}
-		virtual void AfterDeSerializationCallback() {}
+		virtual void AfterSerializationCallback() {}
+
+		virtual void BeforeDeserializationCallback() {}
+		virtual void AfterDeserializationCallback() {}
 
 		inline const UniqueID& GetUUID() const { return UUID; }
 	private:

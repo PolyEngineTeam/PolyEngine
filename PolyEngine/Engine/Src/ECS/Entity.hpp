@@ -34,8 +34,8 @@ namespace Poly
 			RTTI_PROPERTY_AUTONAME(EntityScene, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(Parent, RTTI::ePropertyFlag::NONE);
 			//@todo add factory creation
-			RTTI_PROPERTY_AUTONAME(Children, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(Components, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_FACTORY_AUTONAME(Children, &Entity::AllocateEntity, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_FACTORY_AUTONAME(Components, &Entity::AllocateComponent, RTTI::ePropertyFlag::NONE);
 		}
 	public:
 		using EntityUniquePtr = std::unique_ptr<Entity, EntityDeleter>;
@@ -47,6 +47,9 @@ namespace Poly
 		Entity(Entity&&) = delete;
 		Entity* operator=(const Entity&) = delete;
 		Entity* operator=(Entity&&) = delete;
+
+		static void* AllocateEntity(RTTI::TypeInfo t);
+		static void* AllocateComponent(RTTI::TypeInfo t);
 
 		const Scene* GetEntityScene() const { HEAVY_ASSERTE(GetUUID(), "Entity was not properly initialized");  return EntityScene; }
 		Scene* GetEntityScene() { HEAVY_ASSERTE(GetUUID(), "Entity was not properly initialized");  return EntityScene; }

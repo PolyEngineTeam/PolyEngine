@@ -29,6 +29,7 @@ void Poly::RTTI::SerializeObject(RTTIBase* obj, rapidjson::Document& doc)
 	TraverseAndCall(obj, [](RTTIBase* obj) {obj->BeforeSerializationCallback(); });
 	doc.SetObject();
 	RTTI::SerializeObject(obj, doc.GetObject(), doc.GetAllocator());
+	TraverseAndCall(obj, [](RTTIBase* obj) {obj->AfterSerializationCallback(); });
 }
 
 void RTTI::SerializeObject(const RTTIBase* obj, rapidjson::GenericObject<false, rapidjson::Value> currentValue, rapidjson::Document::AllocatorType& alloc)
@@ -351,10 +352,11 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 
 CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const rapidjson::Document& doc)
 {
+	TraverseAndCall(obj, [](RTTIBase* obj) { obj->BeforeDeserializationCallback(); });
 	Dynarray<UninitializedPointerEntry> uninitializedPointers;
 	RTTI::DeserializeObject(obj, doc.GetObject(), uninitializedPointers);
 	ResolveUninitializedPointers(uninitializedPointers);
-	TraverseAndCall(obj, [](RTTIBase* obj) {obj->AfterDeSerializationCallback(); });
+	TraverseAndCall(obj, [](RTTIBase* obj) { obj->AfterDeserializationCallback(); });
 }
 
 CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, 

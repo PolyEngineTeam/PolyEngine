@@ -12,12 +12,20 @@ using namespace Poly;
 
 TEST_CASE("Scene serialization tests", "[Scene]")
 {
-	Scene s;
-	DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(&s);
+	// @todo fix this abomination
+	Engine* engine = new Engine(true);
 	
-	Entity* e = DeferredTaskSystem::SpawnEntityImmediate(&s);
-	DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(&s, e);
+	{
+		Scene s;
+		DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(&s);
 
-	s.SerializeToFile("Scene.test");
-	s.DeserializeFromFile("Scene.test");
+		Entity* e = DeferredTaskSystem::SpawnEntityImmediate(&s);
+		DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(&s, e);
+
+		s.SerializeToFile("Scene.test");
+	}
+	{
+		Scene s;
+		s.DeserializeFromFile("Scene.test");
+	}
 }

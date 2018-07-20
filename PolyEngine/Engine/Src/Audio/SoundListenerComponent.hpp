@@ -30,4 +30,5 @@ namespace Poly
 		Dynarray<SoundEmitterComponent*> Emitters;
 	};
 
+	REGISTER_COMPONENT(ComponentsIDGroup, SoundListenerComponent)
 } // namespace Poly

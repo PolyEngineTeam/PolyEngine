@@ -26,6 +26,18 @@ Scene::~Scene()
 }
 
 //------------------------------------------------------------------------------
+void Poly::Scene::BeforeDeserializationCallback()
+{
+	gEngine->SetCurrentlySerializedScene(this);
+}
+
+//------------------------------------------------------------------------------
+void Poly::Scene::AfterDeserializationCallback()
+{
+	gEngine->SetCurrentlySerializedScene(nullptr);
+}
+
+//------------------------------------------------------------------------------
 Entity* Scene::SpawnEntity()
 {
 	Entity* ent = SpawnEntityInternal();
@@ -58,6 +70,7 @@ void Scene::DestroyEntity(Entity* entity)
 
 	entity->~Entity();
 	EntitiesAllocator.Free(entity);*/
+	entity->ReleaseFromParent();
 	EntityDel(entity);
 }
 

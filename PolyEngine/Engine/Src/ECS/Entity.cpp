@@ -59,8 +59,27 @@ Poly::Entity::Entity()
 
 Poly::Entity::~Entity()
 {
-	ReleaseFromParent();
+	//ReleaseFromParent();
 	Children.Clear();
+	Components.Clear();
+}
+
+void* Poly::Entity::AllocateEntity(RTTI::TypeInfo t)
+{
+	Scene* s = gEngine->GetCurrentlySerializedScene();
+	Entity* ent = s->GetEntityAllocator().Alloc();
+	::new(ent) Entity();
+	return ent;
+}
+
+void* Poly::Entity::AllocateComponent(RTTI::TypeInfo t)
+{
+	Scene* s = gEngine->GetCurrentlySerializedScene();
+	const size_t id = ComponentManager::Get().GetComponentID(t).Value();
+	gConsole.LogInfo("Allocationg component: {} with ID {} and typeID {}", t.GetTypeName(), id, t);
+	void* ptr = s->GetComponentAllocator(id)->GenericAlloc();
+	t.CreateInstanceInPlace(ptr);
+	return ptr;
 }
 
 void Poly::Entity::SetParent(Entity* parent)
