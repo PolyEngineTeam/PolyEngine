@@ -1,6 +1,7 @@
 #include "PolyEditorPCH.hpp"
 
 #include <Resources/ResourceBase.hpp>
+#include <Resources/MeshResource.hpp>
 
 #include "Managers/CommandsImpl.hpp"
 
@@ -91,8 +92,13 @@ SectionContainer* RTTIInspectorWidget::AddChild(RTTIBase* obj, const RTTI::Prope
 		void* ptr = ((char*)Object) + child.Offset;
 
 		if (child.CoreType == RTTI::eCorePropertyType::CUSTOM)
-		{
 			Layout->addWidget(AddChild((RTTIBase*)ptr, child, debug), row, 0, 1, 2);
+		else if (child.CoreType == RTTI::eCorePropertyType::RAW_PTR)
+		{
+			void* p = *((void**)ptr);
+
+			if (prop.Name == "Mesh")
+				AddItem(Layout, row, p, child);
 		}
 		else
 			AddItem(Layout, row, ptr, child);
@@ -108,8 +114,11 @@ void RTTIInspectorWidget::AddItem(QGridLayout* parent, int row, void* ptr, const
 {
 	ControlBase* field;
 
-	if (prop.CoreType == RTTI::eCorePropertyType::UNHANDLED)
-		field = new MeshResourceControl(this);
+	if (prop.CoreType == RTTI::eCorePropertyType::RAW_PTR)
+	{
+		if (prop.Name == "Mesh")
+			field = new MeshResourceControl(this);
+	}
 	else
 		field = ControlBase::CreateControl(this, prop.CoreType);
 

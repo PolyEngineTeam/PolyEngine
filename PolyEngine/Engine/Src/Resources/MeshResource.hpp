@@ -19,6 +19,10 @@ namespace Poly
 {
 	class ENGINE_DLLEXPORT MeshResource : public ResourceBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(MeshResource, ResourceBase)
+		{
+			NO_RTTI_PROPERTY();
+		}
 	public:
 		class ENGINE_DLLEXPORT SubMesh : public BaseObject<>
 		{

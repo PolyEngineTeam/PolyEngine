@@ -38,7 +38,7 @@ signals:
 
 private:
 	void ControlObjectUpdatedSlot(Command* c);
-
+	
 	// Add SectionContainer.
 	SectionContainer* AddChild(RTTIBase* obj, const RTTI::Property& prop, bool debug);
 
