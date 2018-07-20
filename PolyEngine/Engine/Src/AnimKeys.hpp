@@ -12,18 +12,15 @@ namespace Poly
 			AnimKeys()
 			{}
 
-			AnimKeys(Dynarray<Vector>& positions, Dynarray<Quaternion>& rotations, Dynarray<Vector>& scales)
-				: Positions(positions), Rotations(rotations), Scales(scales)
+			AnimKeys(Dynarray<Vector>& positions, Dynarray<Quaternion>& rotations, Dynarray<Vector>& scales, int ticksPerSecond)
+				: Positions(positions), Rotations(rotations), Scales(scales), TicksPerSecond(ticksPerSecond)
 			{
-				gConsole.LogDebug("positions size: {}", positions.GetSize());
-				gConsole.LogDebug("rotations size: {}", rotations.GetSize());
-				gConsole.LogDebug("scales size: {}", scales.GetSize());
 				ASSERTE(Positions.GetSize() == Rotations.GetSize() && Positions.GetSize() == Scales.GetSize(), "size of key arrays missmatch!");
 			}
-
 
 			Dynarray<Vector> Positions;
 			Dynarray<Quaternion> Rotations;
 			Dynarray<Vector> Scales;
+			int TicksPerSecond;
 	};
 }

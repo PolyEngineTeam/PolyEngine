@@ -13,20 +13,22 @@ void KeyFrameAnimationSystem::KeyFrameAnimationUpdatePhase(Scene* scene)
 OrderedMap<String, AnimKeys> KeyFrameAnimationSystem::LoadAnimTracks(String path)
 {
 	gConsole.LogInfo("GameManagerSystem::LoadAnimTrack");
-	// FIXME change eResourceSource
 	String animSrc = LoadTextFileRelative(eResourceSource::GAME, path);
 	// gConsole.LogInfo("GameManagerSystem::CreateAnimTrack AnimSrc: {}", animSrc);
 
 	OrderedMap<String, AnimKeys> keys;
 
 	String name;
+	int animTicksPerSecond;
 	Dynarray<Vector> positions;
 	Dynarray<Vector> scales;
 	Dynarray<Quaternion> rotations;
 
+	bool hasAnimTicksPerSecond = false;
 	bool hasAnimationKeyRotation = false;
 	bool hasAnimationKeyScale = false;
 	bool hasAnimationKeyPosition = false;
+	int rowCounterAnimTicksPerSecond = 0;
 	int rowCounterRotation = 0;
 	int rowCounterScale = 0;
 	int rowCounterPosition = 0;
@@ -39,7 +41,7 @@ OrderedMap<String, AnimKeys> KeyFrameAnimationSystem::LoadAnimTracks(String path
 		if (positions.GetSize() > 0 && scales.GetSize() > 0 && rotations.GetSize() > 0 && !hasAnimationKeyPosition && !hasAnimationKeyRotation && !hasAnimationKeyScale)
 		{
 			gConsole.LogDebug("Saving transform animation for mesh {}", name);
-			AnimKeys animKeys = AnimKeys(positions, rotations, scales);
+			AnimKeys animKeys = AnimKeys(positions, rotations, scales, animTicksPerSecond);
 			keys.Insert(name, animKeys);
 			positions.Clear();
 			rotations.Clear();
@@ -64,6 +66,11 @@ OrderedMap<String, AnimKeys> KeyFrameAnimationSystem::LoadAnimTracks(String path
 			continue;
 		}
 
+		if (row.Contains("AnimTicksPerSecond") && !row.Contains("template") && !row.Contains("DWORD"))
+		{
+			hasAnimTicksPerSecond = true;
+		}
+
 		if (row.Contains("Rotation"))
 		{
 			hasAnimationKeyRotation = true;
@@ -84,6 +91,18 @@ OrderedMap<String, AnimKeys> KeyFrameAnimationSystem::LoadAnimTracks(String path
 			hasAnimationKeyRotation = false;
 			hasAnimationKeyScale = false;
 			hasAnimationKeyPosition = false;
+			hasAnimTicksPerSecond = false;
+		}
+
+		if (hasAnimTicksPerSecond)
+		{
+			if (rowCounterAnimTicksPerSecond == 1)
+			{
+				String trimmed = row.GetTrimmed();
+				animTicksPerSecond = (int)std::atoi(trimmed.Substring(0, trimmed.GetLength()).GetCStr());
+			}
+
+			rowCounterAnimTicksPerSecond++;
 		}
 
 		if (hasAnimationKeyRotation)
@@ -148,33 +167,12 @@ OrderedMap<String, AnimKeys> KeyFrameAnimationSystem::LoadAnimTracks(String path
 		
 	}
 
-	gConsole.LogInfo("GameManagerSystem::CreateAnimTrack Print loaded rotations:");
-	for (size_t i = 0; i < rotations.GetSize(); ++i)
-	{
-		gConsole.LogInfo("GameManagerSystem::CreateAnimTrack rotation[{}]: {}", i, rotations[i]);
-	}
-
-	gConsole.LogInfo("GameManagerSystem::CreateAnimTrack Print loaded scales:");
-	for (size_t i = 0; i < scales.GetSize(); ++i)
-	{
-		gConsole.LogInfo("GameManagerSystem::CreateAnimTrack scale[{}]: {}", i, scales[i]);
-	}
-
-	gConsole.LogInfo("GameManagerSystem::CreateAnimTrack Print loaded positions:");
-	for (size_t i = 0; i < positions.GetSize(); ++i)
-	{
-		gConsole.LogInfo("GameManagerSystem::CreateAnimTrack position[{}]: {}", i, positions[i]);
-	}
-
-	// ASSERTE(false, "Stop at AnimTrack loading for easier debugging ;)");
-
 	return keys;
 }
 
 Quaternion KeyFrameAnimationSystem::AnimTrack_ReadQuternion4FromRow(String row)
 {
 	// 0;4;0.000000, 0.000000, 0.000000, 0.000000;;,
-	gConsole.LogDebug("Rotation row: {}", row);
 	Dynarray<String> tokens = row.Split(';'); // values are at token with index 2 
 	Dynarray<String> channels = tokens[2].Split(',');
 	float x = (float)std::atof(channels[0].GetCStr());
