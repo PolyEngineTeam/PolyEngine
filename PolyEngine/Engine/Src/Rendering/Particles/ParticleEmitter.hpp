@@ -50,7 +50,8 @@ namespace Poly
 			// TODO: move to material
 			SpritesheetSettings Spritesheet;
 			float Speed = 1.0f;
-			Color BaseColor = Color::WHITE;
+			Color Albedo = Color::WHITE;
+			Color Emissive = Color::BLACK;
 			// TODO end
 			std::function<void(Particle*)> ParticleInitFunc		= [](ParticleEmitter::Particle* p) {};
 			std::function<void(Particle*)> ParticleUpdateFunc	= [](ParticleEmitter::Particle* p) {};

@@ -6,12 +6,19 @@
 
 namespace Poly {
 
-	enum class eShadingModel
+	enum class eShadingMode
 	{
 		NONE,
-		PHONG,
 		UNLIT,
 		PBR,
+		_COUNT
+	};
+
+	enum class eBlendingMode
+	{
+		NONE,
+		OPAUQE,
+		TRANSLUCENT,
 		_COUNT
 	};
 
@@ -45,17 +52,20 @@ namespace Poly {
 
 		const MeshResource* GetMesh() const { return Mesh; }
 		const Material& GetMaterial(int i) const { return Materials[i]; }
-		void SetMaterial(size_t i, const Material& value) { Materials[i] = value; }
 		bool GetIsWireframe() const { return IsWireframe; }
+		eShadingMode GetShadingModel() const { return ShadingMode; }
+		eBlendingMode GetBlendingMode() const { return BlendingMode; }
+		
+		void SetMaterial(size_t i, const Material& value) { Materials[i] = value; }
 		void SetIsWireframe(bool value) { IsWireframe = value; }
-		eShadingModel GetShadingModel() const { return ShadingModel; }
-		void SetShadingModel(eShadingModel value) { ShadingModel = value; }
-		bool IsTransparent() const { return Materials.GetCapacity() > 0 && Materials[0].Albedo.A < 1.0f; } // HACK replace with better solution for translucent objects.
+		void SetShadingModel(eShadingMode value) { ShadingMode = value; }
+		void SetBlendingMode(eBlendingMode value) { BlendingMode = value; }
 
 	private:
 		MeshResource* Mesh = nullptr;
 		Dynarray<Material> Materials;
-		eShadingModel ShadingModel = eShadingModel::PBR;
+		eShadingMode ShadingMode = eShadingMode::PBR;
+		eBlendingMode BlendingMode = eBlendingMode::OPAUQE;
 		bool IsWireframe = false;
 	};
 

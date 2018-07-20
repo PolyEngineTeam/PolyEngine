@@ -17,7 +17,10 @@ namespace Poly
 	{
 		RTTI_DECLARE_TYPE_DERIVED(SoundListenerComponent, ComponentBase)
 		{
-			RTTI_PROPERTY(Gain, "Gain", RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Gain, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Position, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Velocity, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Emitters, RTTI::ePropertyFlag::NONE);
 		}
 
 	public:

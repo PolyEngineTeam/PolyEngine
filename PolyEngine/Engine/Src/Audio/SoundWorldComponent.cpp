@@ -6,6 +6,8 @@
 
 using namespace Poly;
 
+RTTI_DEFINE_TYPE(Poly::SoundWorldComponent)
+
 SoundWorldComponent::SoundWorldComponent(Scene* /*world*/)
 {
 	Context = alcCreateContext(gEngine->GetAudioDevice().Device, nullptr);

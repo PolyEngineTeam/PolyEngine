@@ -15,5 +15,6 @@ float LinearizeDepth(float depth) {
 void main()
 {
     float depth = texture(uDepth, vUV).r;
-	oColor = vec4(depth, LinearizeDepth(depth)/uFar, 0.0, 1.0 );
+    float linDepth = LinearizeDepth(depth);
+    oColor = vec4(depth, linDepth, linDepth / uFar, 1.0);
 }

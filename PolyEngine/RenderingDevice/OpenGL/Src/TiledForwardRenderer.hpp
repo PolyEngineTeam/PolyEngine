@@ -7,6 +7,35 @@
 
 namespace Poly {
 
+	class RenderTargetPingPong : public BaseObject<>
+	{
+	public:
+		void Init(int width, int height);
+		void Deinit();
+
+		GLuint GetWriteFBO() const { return pingpongFBO[Uses % 2]; };
+		GLuint GetReadFBO() const { return pingpongFBO[(Uses + 1) % 2]; };
+
+		GLuint GetWriteTarget() const { return pingpongTarget[Uses % 2]; };
+		GLuint GetReadTarget() const { return pingpongTarget[(Uses + 1) % 2]; };
+
+		void Flip()
+		{
+			// gConsole.LogInfo("RenderTargetPingPong::Flip Uses: {}, Write: {}, Read: {}",
+			//	Uses, (Uses % 2), (Uses + 1) % 2);
+
+			Uses++;
+		};
+
+	private:
+		GLuint pingpongFBO[2];
+		GLuint pingpongTarget[2];
+
+		int Uses = 0;
+		int Width = 0;
+		int Height = 0;
+	};
+
 	class TiledForwardRenderer : public IRendererInterface
 	{
 
@@ -36,6 +65,9 @@ namespace Poly {
 			int Index;
 		};
 
+		Matrix PreviousFrameCameraTransform;
+		Matrix PreviousFrameCameraClipFromWorld;
+
 		const int MAX_NUM_LIGHTS = 1024;
 		const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 
@@ -54,6 +86,7 @@ namespace Poly {
 		GLuint RboDepth;
 		GLuint PostColorBuffer0;
 		GLuint PostColorBuffer1;
+		GLuint PostColorBufferHalfRes;
 		GLuint LinearDepth;
 		
 		// IBL textures and cubemaps
@@ -67,6 +100,7 @@ namespace Poly {
 
 		// Render pass for IBL environment
 		EnvCapture SkyboxCapture;
+		RenderTargetPingPong RTBloom;
 
 		// Shader programs
 		GLShaderProgram DepthShader;
@@ -76,6 +110,12 @@ namespace Poly {
 		GLShaderProgram SkyboxShader;
 		GLShaderProgram LinearizeDepthShader;
 		GLShaderProgram GammaShader;
+		GLShaderProgram MotionBlurShader;
+		GLShaderProgram DOFBokehShader;
+		GLShaderProgram DOFApplyShader;
+		GLShaderProgram BloomBrightShader;
+		GLShaderProgram BloomBlurShader;
+		GLShaderProgram BloomApplyShader;
 		GLShaderProgram ParticleShader;
 		GLShaderProgram TranslucentShader;
 		GLShaderProgram EquiToCubemapShader;
@@ -119,13 +159,19 @@ namespace Poly {
 
 		void LinearizeDepth(const SceneView& sceneView);
 
+		void PostDepthOfField(const SceneView& sceneView);
+
+		void PostMotionBlur(const SceneView& sceneView);
+
+		void PostBloom(const SceneView& sceneView);
+
 		void PostTonemapper(const SceneView& sceneView);
 
 		void EditorDebug(const SceneView& sceneView);
 
 		void UIText2D(const SceneView& sceneView);
 
-		void PostGamma();
+		void PostGamma(const SceneView& sceneView);
 		
 		void DebugDepthPrepass(const SceneView& sceneView);
 

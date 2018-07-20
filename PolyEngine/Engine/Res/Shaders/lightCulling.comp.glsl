@@ -35,9 +35,9 @@ uniform int uWorkGroupsX;
 uniform int uWorkGroupsY;
 uniform int uLightCount;
 
-shared uint sMinDepthInt = 0xFFFFFFFF;
-shared uint sMaxDepthInt = 0;
-shared uint sVisibleLightCount = 0;
+shared uint sMinDepthInt;
+shared uint sMaxDepthInt;
+shared uint sVisibleLightCount;
 shared vec4 sFrustumPlanes[6];
 shared int sVisibleLightIndices[MAX_NUM_LIGHTS];
 
