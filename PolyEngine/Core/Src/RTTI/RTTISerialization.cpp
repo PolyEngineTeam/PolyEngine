@@ -24,8 +24,9 @@ void ResolveUninitializedPointers(const Dynarray<RTTI::UninitializedPointerEntry
 	ASSERTE(initCount == uninitializedPointers.GetSize(), "Not all raw pointers were initialized!");
 }
 
-void Poly::RTTI::SerializeObject(const RTTIBase* obj, rapidjson::Document& doc)
+void Poly::RTTI::SerializeObject(RTTIBase* obj, rapidjson::Document& doc)
 {
+	TraverseAndCall(obj, [](RTTIBase* obj) {obj->BeforeSerializationCallback(); });
 	doc.SetObject();
 	RTTI::SerializeObject(obj, doc.GetObject(), doc.GetAllocator());
 }
@@ -345,6 +346,7 @@ CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const rapidjson
 	Dynarray<UninitializedPointerEntry> uninitializedPointers;
 	RTTI::DeserializeObject(obj, doc.GetObject(), uninitializedPointers);
 	ResolveUninitializedPointers(uninitializedPointers);
+	TraverseAndCall(obj, [](RTTIBase* obj) {obj->AfterSerializationCallback(); });
 }
 
 CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, 

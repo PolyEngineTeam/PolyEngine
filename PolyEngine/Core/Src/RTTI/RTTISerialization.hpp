@@ -16,7 +16,7 @@ namespace Poly
 		};
 
 
-		CORE_DLLEXPORT void SerializeObject(const RTTIBase* obj, 
+		CORE_DLLEXPORT void SerializeObject(RTTIBase* obj, 
 			rapidjson::Document& doc);
 		CORE_DLLEXPORT void SerializeObject(const RTTIBase* obj, 
 			rapidjson::GenericObject<false, rapidjson::Value> currentValue, 
