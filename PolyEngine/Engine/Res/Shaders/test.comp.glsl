@@ -10,7 +10,7 @@ struct Output
     uint indexLocal;
     uint indexWorkGroup;
     uint indexGlobal;
-    uint input;
+    uint inputVal;
     uint result;
     vec4 tilePosSS;
 };
@@ -39,12 +39,12 @@ void main() {
     // bOutputs[IndexGlobal].indexLocal = gl_LocalInvocationIndex;
     // bOutputs[IndexGlobal].indexWorkGroup = IndexWorkGroup;
     // bOutputs[IndexGlobal].indexGlobal = IndexGlobal;
-    // bOutputs[IndexGlobal].input = bInputs[IndexWorkGroup].value;
+    // bOutputs[IndexGlobal].inputVal = bInputs[IndexWorkGroup].value;
     // bOutputs[IndexGlobal].result = gl_LocalInvocationIndex + bInputs[IndexWorkGroup].value;
 
     bOutputs[IndexGlobal].indexLocal = gl_LocalInvocationIndex;
     bOutputs[IndexGlobal].indexWorkGroup = IndexWorkGroup;
     bOutputs[IndexGlobal].indexGlobal = IndexGlobal;
-    bOutputs[IndexGlobal].input = bInputs[IndexWorkGroup].value;
+    bOutputs[IndexGlobal].inputVal = bInputs[IndexWorkGroup].value;
     bOutputs[IndexGlobal].result = gl_LocalInvocationIndex + bInputs[IndexWorkGroup].value;
 }

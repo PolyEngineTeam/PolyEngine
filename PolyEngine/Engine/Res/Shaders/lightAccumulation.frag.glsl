@@ -119,22 +119,29 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
-	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+    return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.001, 1.0), 5.0); // clamp to prevent NaNs
 }
 
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 {
-	return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.001, 1.0), 5.0); // clamp to prevent NaNs
 }
 
 void main()
 {
+    float debugLightCount = 0.0;
+
 	vec4 emissive = uMaterial.Emissive * texture(uEmissiveMap, fragment_in.uv);
 	vec4 albedo = uMaterial.Albedo * texture(uAlbedoMap, fragment_in.uv);
 	float roughness = uMaterial.Roughness * texture(uRoughnessMap, fragment_in.uv).r;
 	float metallic = uMaterial.Metallic * texture(uMetallicMap, fragment_in.uv).r;
 	vec3 normal = normalize(texture(uNormalMap, fragment_in.uv).rgb * 2.0 - 1.0);
 	float ao = texture(uAmbientOcclusionMap, fragment_in.uv).r;
+
+    albedo = clamp(albedo, vec4(0.0), vec4(1.0));
+    roughness = clamp(roughness, 0.0, 1.0);
+    metallic = clamp(metallic, 0.0, 1.0);
+    ao = clamp(ao, 0.0, 1.0);
 
 	if (albedo.a < uMaterial.OpacityMaskThreshold)
 	{
@@ -185,8 +192,8 @@ void main()
 		float G = GeometrySmith(N, V, L, roughness);
 		vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
 
-		vec3 nominator = NDF * G * F;
-		float denominator = 4 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001; // 0.001 to prevent divide by zero.
+        vec3 nominator = clamp(NDF * G * F, 0.0, 1000.0); // clamp to prevent NaN from fireflies
+		float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001; // 0.001 to prevent divide by zero.
 		vec3 specular = nominator / denominator;
 
 		// kS is equal to Fresnel
@@ -224,7 +231,7 @@ void main()
 		float G = GeometrySmith(N, V, L, roughness);
 		vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
 
-		vec3 nominator = NDF * G * F;
+        vec3 nominator = min(NDF * G * F, 1000.0); // clamp to prevent NaN from fireflies
 		float denominator = 4 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001; // 0.001 to prevent divide by zero.
 		vec3 specular = nominator / denominator;
 
@@ -246,21 +253,21 @@ void main()
 		Lo += (kD * albedo.rgb / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
 	}    
 
-	vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
+	vec3 amF = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
 
 	// ambient lighting (note that the next IBL tutorial will replace 
 	// this ambient lighting with environment lighting).
-	vec3 kS = F;
-	vec3 kD = 1.0 - kS;
+    vec3 amkS = amF;
+	vec3 amkD = 1.0 - amkS;
 	vec3 irradiance = texture(uIrradianceMap, N).rgb;
 	vec3 diffuse = irradiance * albedo.rgb;
 
 	const float MAX_REFLECTION_LOD = 4.0;
 	vec3 prefilteredColor = textureLod(uPrefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
 	vec2 envBRDF = texture(uBrdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
-	vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
+    vec3 specular = prefilteredColor * (amF * envBRDF.x + envBRDF.y);
 	
-	vec3 ambient = (kD * diffuse + specular) * ao;
+	vec3 ambient = (amkD * diffuse + specular) * ao;
 
 	oColor.rgb = ambient + emissive.rgb + Lo;
 	oNormal.rgb = (WorldFromTangent * normal) * 0.5 + 0.5;
