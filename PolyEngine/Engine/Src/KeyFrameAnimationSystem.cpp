@@ -57,7 +57,6 @@ OrderedMap<String, AnimKeys> KeyFrameAnimationSystem::LoadAnimTracks(String path
 			size_t startIdx = row.Find('{');
 			size_t endIdx = row.Find('}');
 			name = row.Substring(startIdx + 1, endIdx);
-			gConsole.LogDebug("Mesh name: {}", name);
 			continue;
 		}
 		if (row.IsEmpty())
