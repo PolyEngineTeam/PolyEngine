@@ -2,6 +2,7 @@
 
 #include "Rendering/Lighting/LightSourceComponent.hpp"
 
+RTTI_DEFINE_TYPE(Poly::AmbientLightWorldComponent)
 RTTI_DEFINE_TYPE(Poly::DirectionalLightComponent)
 RTTI_DEFINE_TYPE(Poly::PointLightComponent)
 RTTI_DEFINE_TYPE(Poly::SpotLightComponent)

@@ -7,6 +7,12 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT AmbientLightWorldComponent : public ComponentBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(AmbientLightWorldComponent, ComponentBase)
+		{
+			RTTI_PROPERTY_AUTONAME(LightColor, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Intensity, RTTI::ePropertyFlag::NONE);
+		}
+
 	public:
 		AmbientLightWorldComponent(const Color& color = Color::WHITE, float intensity = 1.0f);
 
@@ -26,7 +32,8 @@ namespace Poly
 	{
 		RTTI_DECLARE_TYPE_DERIVED(DirectionalLightComponent, ComponentBase)
 		{
-			NO_RTTI_PROPERTY()
+			RTTI_PROPERTY_AUTONAME(LightColor, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Intensity, RTTI::ePropertyFlag::NONE);
 		}
 
 	public:
@@ -45,7 +52,9 @@ namespace Poly
 	{
 		RTTI_DECLARE_TYPE_DERIVED(PointLightComponent, ComponentBase)
 		{
-			NO_RTTI_PROPERTY()
+			RTTI_PROPERTY_AUTONAME(LightColor, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Intensity, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Range, RTTI::ePropertyFlag::NONE);
 		}
 
 	public:
@@ -68,7 +77,11 @@ namespace Poly
 	{
 		RTTI_DECLARE_TYPE_DERIVED(SpotLightComponent, ComponentBase)
 		{
-			NO_RTTI_PROPERTY()
+			RTTI_PROPERTY_AUTONAME(LightColor, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Intensity, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Range, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(CutOff, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(OuterCutOff, RTTI::ePropertyFlag::NONE);
 		}
 
 	public:

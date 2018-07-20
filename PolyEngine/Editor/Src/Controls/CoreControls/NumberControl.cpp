@@ -121,7 +121,7 @@ void NumberControl::UpdateObject()
 //------------------------------------------------------------------------------
 void NumberControl::UpdateControl()
 {
-	if (!Field->hasFocus())
+	if (Field->hasFocus())
 		return;
 
 	switch (Property->CoreType)

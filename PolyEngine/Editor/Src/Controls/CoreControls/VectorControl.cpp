@@ -31,7 +31,6 @@ void VectorControl::Reset()
 
 void VectorControl::UpdateObject() 
 {
-
 	switch (Property->CoreType)
 	{
 	case RTTI::eCorePropertyType::VECTOR:
@@ -69,7 +68,7 @@ void VectorControl::UpdateObject()
 
 void VectorControl::UpdateControl() 
 {
-	if (Field[0]->hasFocus() || Field[1]->hasFocus() || Field[3]->hasFocus())
+	if (Field[0]->hasFocus() || Field[1]->hasFocus() || Field[2]->hasFocus())
 		return;
 
 	switch (Property->CoreType)

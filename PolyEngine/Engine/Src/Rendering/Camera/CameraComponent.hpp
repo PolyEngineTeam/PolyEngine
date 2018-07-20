@@ -20,7 +20,19 @@ namespace Poly {
 	{
 		RTTI_DECLARE_TYPE_DERIVED(CameraComponent, ComponentBase)
 		{
-			NO_RTTI_PROPERTY();
+			RTTI_PROPERTY_AUTONAME(ScreenFromView, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(ViewFromWorld, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(ScreenFromWorld, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(IsPerspective, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Fov, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(TargetFov, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Top, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Bottom, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Left, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Right, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Near, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Far, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Aspect, RTTI::ePropertyFlag::NONE);
 		}
 
 		friend void CameraSystem::CameraUpdatePhase(Scene*);
