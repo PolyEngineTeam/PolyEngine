@@ -27,7 +27,7 @@ namespace Poly
 			//RTTI_PROPERTY_AUTONAME(Components, RTTI::ePropertyFlag::NONE);
 		}
 	public:
-		Entity() = default;
+		Entity() : Transform(this) {};
 		~Entity();
 
 		const Scene* GetEntityScene() const { HEAVY_ASSERTE(GetUUID(), "Entity was not properly initialized");  return EntityScene; }
