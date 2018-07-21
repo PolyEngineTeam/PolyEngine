@@ -280,6 +280,8 @@ void ComponentDialog::Ok()
 		for (auto item : ComponentsTree->selectedItems())
 			WorldComponentDestroyers[item->text(0)](SceneObj);
 		break;
+	default:
+		ASSERTE(false, "Not supported Mode");
 	}
 
 	close();

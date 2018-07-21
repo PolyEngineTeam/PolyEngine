@@ -46,10 +46,11 @@ public:
 };
 
 //------------------------------------------------------------------------------
+template <typename T>
 class ControlCommand : public Command
 {
 public:
-	~ControlCommand()
+	virtual ~ControlCommand() 
 	{
 		delete UndoValue;
 		delete RedoValue;
@@ -57,19 +58,19 @@ public:
 
 	void Undo() override
 	{
-		UndoPtr(this);
-	}
-	void Redo() override
-	{
-		RedoPtr(this);
+		*reinterpret_cast<T*>(Object) = *UndoValue;
+		emit Control->ObjectUpdated(this);
 	}
 
-	void (*UndoPtr)(ControlCommand*);
-	void (*RedoPtr)(ControlCommand*);
+	void Redo() override
+	{
+		*reinterpret_cast<T*>(Object) = *RedoValue;
+		emit Control->ObjectUpdated(this);
+	}
 
 	void* Object;
 	ControlBase* Control;
 
-	void* UndoValue;
-	void* RedoValue;
+	T* UndoValue;
+	T* RedoValue;
 };

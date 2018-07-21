@@ -18,21 +18,19 @@ ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::DOUBLE, DOUBLE)
 ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::ANGLE, ANGLE)
 
 #define UPDATE_OBJECT(T, V)\
+{ \
+	ControlCommand<T>* cmd = new ControlCommand<T>(); \
+	cmd->Object = Object; \
+	cmd->Control = this; \
+\
 	cmd->UndoValue = new T(*reinterpret_cast<T*>(Object));\
 	cmd->RedoValue = new T(V);\
 \
 	*reinterpret_cast<T*>(Object) = V; \
 \
-	cmd->UndoPtr = [](ControlCommand* c)\
-	{\
-		*reinterpret_cast<T*>(c->Object) = *reinterpret_cast<T*>(c->UndoValue);\
-		emit c->Control->ObjectUpdated(c);\
-	};\
-	cmd->RedoPtr = [](ControlCommand* c)\
-	{\
-		*reinterpret_cast<T*>(c->Object) = *reinterpret_cast<T*>(c->RedoValue);\
-		emit c->Control->ObjectUpdated(c);\
-	};
+	emit ObjectUpdated(cmd);\
+} 
+
 
 //------------------------------------------------------------------------------
 NumberControl::NumberControl(QWidget* parent)
@@ -182,10 +180,6 @@ void NumberControl::Confirm()
 	if (DisableEdit)
 		return;
 
-	ControlCommand* cmd = new ControlCommand();
-	cmd->Object = Object;
-	cmd->Control = this;
-
 	switch (Property->CoreType)
 	{
 	case RTTI::eCorePropertyType::INT8:
@@ -235,6 +229,4 @@ void NumberControl::Confirm()
 	default:
 		ASSERTE(false, "Not supported type");
 	}
-
-	emit ObjectUpdated(cmd);
 }

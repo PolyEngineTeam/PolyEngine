@@ -83,24 +83,13 @@ void BoolControl::Confirm()
 	if (DisableEdit || InitializationConfirm)
 		return;
 
-	ControlCommand* cmd = new ControlCommand();
+	ControlCommand<bool>* cmd = new ControlCommand<bool>();
 	cmd->Object = Object;
 	cmd->Control = this;
 	cmd->UndoValue = new bool(*reinterpret_cast<bool*>(Object));
 	cmd->RedoValue = new bool(*Machine->configuration().begin() == True);
 
 	*reinterpret_cast<bool*>(Object) = *Machine->configuration().begin() == True;
-
-	cmd->UndoPtr = [](ControlCommand* c)
-	{
-		*reinterpret_cast<bool*>(c->Object) = *reinterpret_cast<bool*>(c->UndoValue);
-		emit c->Control->ObjectUpdated(c);
-	};
-	cmd->RedoPtr = [](ControlCommand* c)
-	{
-		*reinterpret_cast<bool*>(c->Object) = *reinterpret_cast<bool*>(c->RedoValue);
-		emit c->Control->ObjectUpdated(c);
-	};
 
 	emit ObjectUpdated(cmd);
 }

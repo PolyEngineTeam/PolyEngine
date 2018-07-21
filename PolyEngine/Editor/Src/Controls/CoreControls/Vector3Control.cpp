@@ -6,6 +6,18 @@ ASSIGN_CONTROL(Vector3Control, RTTI::eCorePropertyType::VECTOR, Vector)
 ASSIGN_CONTROL(Vector3Control, RTTI::eCorePropertyType::COLOR, Color)
 ASSIGN_CONTROL(Vector3Control, RTTI::eCorePropertyType::QUATERNION, Quaternion)
 
+#define UPDATE_OBJECT(T, V)\
+	ControlCommand<T>* cmd = new ControlCommand<T>(); \
+	cmd->Object = Object; \
+	cmd->Control = this; \
+\
+	cmd->UndoValue = new T(*reinterpret_cast<T*>(Object));\
+	cmd->RedoValue = new T(V);\
+\
+	*reinterpret_cast<T*>(Object) = V; \
+\
+	emit ObjectUpdated(cmd);
+
 //------------------------------------------------------------------------------
 Vector3Control::Vector3Control(QWidget* parent) : ControlBase(parent)
 {
@@ -118,88 +130,33 @@ void Vector3Control::Confirm()
 	if (DisableEdit)
 		return;
 
-	ControlCommand* cmd = new ControlCommand();
-	cmd->Object = Object;
-	cmd->Control = this;
-
 	switch (Property->CoreType)
 	{
 	case RTTI::eCorePropertyType::VECTOR:
 	{
-		cmd->UndoValue = new Vector(*reinterpret_cast<Vector*>(Object));
-		cmd->RedoValue = new Vector((float)Field[0]->text().toDouble()
+		UPDATE_OBJECT(Vector, Vector((float)Field[0]->text().toDouble()
 			, (float)Field[1]->text().toDouble()
-			, (float)Field[2]->text().toDouble());
-
-		*reinterpret_cast<Vector*>(Object) = Vector((float)Field[0]->text().toDouble()
-			, (float)Field[1]->text().toDouble()
-			, (float)Field[2]->text().toDouble());
-
-		cmd->UndoPtr = [](ControlCommand* c)
-		{
-			*reinterpret_cast<Vector*>(c->Object) = *reinterpret_cast<Vector*>(c->UndoValue);
-			emit c->Control->ObjectUpdated(c);
-		};
-		cmd->RedoPtr = [](ControlCommand* c)
-		{
-			*reinterpret_cast<Vector*>(c->Object) = *reinterpret_cast<Vector*>(c->RedoValue);
-			emit c->Control->ObjectUpdated(c);
-		};
+			, (float)Field[2]->text().toDouble()));
 		break;
 	}
 
 	case RTTI::eCorePropertyType::COLOR:
 	{
-		cmd->UndoValue = new Color(*reinterpret_cast<Color*>(Object));
-		cmd->RedoValue = new Color((float)Field[0]->text().toDouble()
+		UPDATE_OBJECT(Color, Color((float)Field[0]->text().toDouble()
 			, (float)Field[1]->text().toDouble()
-			, (float)Field[2]->text().toDouble());
-
-		*reinterpret_cast<Color*>(Object) = Color((float)Field[0]->text().toDouble()
-			, (float)Field[1]->text().toDouble()
-			, (float)Field[2]->text().toDouble());
-
-		cmd->UndoPtr = [](ControlCommand* c)
-		{
-			*reinterpret_cast<Color*>(c->Object) = *reinterpret_cast<Color*>(c->UndoValue);
-			emit c->Control->ObjectUpdated(c);
-		};
-		cmd->RedoPtr = [](ControlCommand* c)
-		{
-			*reinterpret_cast<Color*>(c->Object) = *reinterpret_cast<Color*>(c->RedoValue);
-			emit c->Control->ObjectUpdated(c);
-		};
+			, (float)Field[2]->text().toDouble()));
 		break;
 	}
 
 	case RTTI::eCorePropertyType::QUATERNION:
 	{
-		cmd->UndoValue = new Quaternion(*reinterpret_cast<Quaternion*>(Object));
-		cmd->RedoValue = new Quaternion(EulerAngles(Angle::FromDegrees((float)Field[0]->text().toDouble())
+		UPDATE_OBJECT(Quaternion, Quaternion(EulerAngles(Angle::FromDegrees((float)Field[0]->text().toDouble())
 			, Angle::FromDegrees((float)Field[1]->text().toDouble())
-			, Angle::FromDegrees((float)Field[2]->text().toDouble())));
-
-		*reinterpret_cast<Quaternion*>(Object) = Quaternion(EulerAngles(Angle::FromDegrees((float)Field[0]->text().toDouble())
-			, Angle::FromDegrees((float)Field[1]->text().toDouble())
-			, Angle::FromDegrees((float)Field[2]->text().toDouble())));
-
-		cmd->UndoPtr = [](ControlCommand* c)
-		{
-			*reinterpret_cast<Quaternion*>(c->Object) = *reinterpret_cast<Quaternion*>(c->UndoValue);
-			emit c->Control->ObjectUpdated(c);
-		};
-		cmd->RedoPtr = [](ControlCommand* c)
-		{
-			*reinterpret_cast<Quaternion*>(c->Object) = *reinterpret_cast<Quaternion*>(c->RedoValue);
-			emit c->Control->ObjectUpdated(c);
-		};
+			, Angle::FromDegrees((float)Field[2]->text().toDouble()))));
 		break;
 	}
 
 	default:
 		ASSERTE(false, "Unknown type.");
 	}
-
-
-	emit ObjectUpdated(cmd);
 }
