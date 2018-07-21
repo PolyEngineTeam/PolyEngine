@@ -5,14 +5,15 @@
 
 #include "EditorUi.hpp"
 #include "GlobalEventFilter.hpp"
-#include "Managers/DockManager.hpp"
-#include "Managers/ProjectManager.hpp"
-#include "Managers/EngineManager.hpp"
-#include "Managers/CommandManager.hpp"
-#include "Managers/InspectorManager.hpp"
-#include "Managers/UndoRedoManager.hpp"
 
 #include <Engine.hpp>
+
+class DockManager;
+class CmdManager;
+class ProjectManager;
+class EngineManager;
+class InspectorManager;
+class UndoRedoManager;
 
 class EditorApp : public QApplication
 {

@@ -24,7 +24,7 @@ UNSILENCE_MSVC_WARNING()
 #include "Managers/DockManager.hpp"
 #include "Managers/ProjectManager.hpp"
 #include "Managers/EngineManager.hpp"
-#include "Managers/CommandManager.hpp"
+#include "Managers/CmdManager.hpp"
 #include "Managers/InspectorManager.hpp"
 #include "Managers/UndoRedoManager.hpp"
 
