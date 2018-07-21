@@ -18,5 +18,5 @@ protected:
 	void Confirm() override;
 
 private:
-	QComboBox* ComboBox;
+	//QComboBox* ComboBox; fix for clang compiler (unused private field)
 };
