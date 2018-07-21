@@ -104,6 +104,17 @@ void Vector2Control::Confirm()
 		cmd->RedoValue = new Vector2f((float)Field[0]->text().toDouble(), (float)Field[1]->text().toDouble());
 
 		*reinterpret_cast<Vector2f*>(Object) = Vector2f((float)Field[0]->text().toDouble(), (float)Field[1]->text().toDouble());
+
+		cmd->UndoPtr = [](ControlCommand* c)
+		{
+			*reinterpret_cast<Vector2f*>(c->Object) = *reinterpret_cast<Vector2f*>(c->UndoValue);
+			emit c->Control->ObjectUpdated(c);
+		};
+		cmd->RedoPtr = [](ControlCommand* c)
+		{
+			*reinterpret_cast<Vector2f*>(c->Object) = *reinterpret_cast<Vector2f*>(c->RedoValue);
+			emit c->Control->ObjectUpdated(c);
+		};
 		break;
 	}
 
@@ -111,21 +122,25 @@ void Vector2Control::Confirm()
 	{
 		cmd->UndoValue = new Vector2i(*reinterpret_cast<Vector2i*>(Object));
 		cmd->RedoValue = new Vector2i(Field[0]->text().toInt(), Field[1]->text().toInt());
-		*reinterpret_cast<Vector2i*>(Object) = Vector2i((float)Field[0]->text().toInt(), (float)Field[1]->text().toInt());
+		*reinterpret_cast<Vector2i*>(Object) = Vector2i((VectorIntType)Field[0]->text().toInt(), (VectorIntType)Field[1]->text().toInt());
+
+		cmd->UndoPtr = [](ControlCommand* c)
+		{
+			*reinterpret_cast<Vector2i*>(c->Object) = *reinterpret_cast<Vector2i*>(c->UndoValue);
+			emit c->Control->ObjectUpdated(c);
+		};
+		cmd->RedoPtr = [](ControlCommand* c)
+		{
+			*reinterpret_cast<Vector2i*>(c->Object) = *reinterpret_cast<Vector2i*>(c->RedoValue);
+			emit c->Control->ObjectUpdated(c);
+		};
 		break;
 	}
+
+	default:
+		ASSERTE(false, "DDDDDDDDDDDDDDDDDDDDDDDDDDD");
 	}
 
-	cmd->UndoPtr = [](ControlCommand* c)
-	{
-		*reinterpret_cast<Vector2i*>(c->Object) = *reinterpret_cast<Vector2i*>(c->UndoValue);
-		emit c->Control->ObjectUpdated(c);
-	};
-	cmd->RedoPtr = [](ControlCommand* c)
-	{
-		*reinterpret_cast<Vector2i*>(c->Object) = *reinterpret_cast<Vector2i*>(c->RedoValue);
-		emit c->Control->ObjectUpdated(c);
-	};
 
 	emit ObjectUpdated(cmd);
 }

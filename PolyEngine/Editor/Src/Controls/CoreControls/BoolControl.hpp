@@ -25,4 +25,6 @@ private:
 
 	QState* False;
 	QState* True;
+
+	bool InitializationConfirm = false;
 };
