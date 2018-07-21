@@ -5,13 +5,13 @@
 #include <QKeyEvent>
 
 //------------------------------------------------------------------------------
-UndoRedoManager::UndoRedoManager()
+CommandManager::CommandManager()
 {
 	Commands.PushBack(new VoidCommand());
 }
 
 //------------------------------------------------------------------------------
-UndoRedoManager::~UndoRedoManager()
+CommandManager::~CommandManager()
 {
 	for (Command* cmd : Commands)
 		delete cmd;
@@ -20,7 +20,7 @@ UndoRedoManager::~UndoRedoManager()
 }
 
 //------------------------------------------------------------------------------
-void UndoRedoManager::ProcessEvent(QEvent* event)
+void CommandManager::ProcessEvent(QEvent* event)
 {
 	return;
 
@@ -81,7 +81,7 @@ void UndoRedoManager::ProcessEvent(QEvent* event)
 }
 
 //------------------------------------------------------------------------------
-void UndoRedoManager::AddCommand(Command* cmd)
+void CommandManager::AddCommand(Command* cmd)
 {
 	if (Commands[CurrentCommand] == cmd)
 		return;
@@ -98,7 +98,7 @@ void UndoRedoManager::AddCommand(Command* cmd)
 }
 
 //------------------------------------------------------------------------------
-void UndoRedoManager::Undo()
+void CommandManager::Undo()
 {
 	gConsole.LogDebug("Undo: {}", CurrentCommand);
 
@@ -110,7 +110,7 @@ void UndoRedoManager::Undo()
 }
 
 //------------------------------------------------------------------------------
-void UndoRedoManager::Redo()
+void CommandManager::Redo()
 {
 	if (CurrentCommand == Commands.GetSize() - 1)
 		return;

@@ -13,7 +13,7 @@ class CmdManager;
 class ProjectManager;
 class EngineManager;
 class InspectorManager;
-class UndoRedoManager;
+class CommandManager;
 
 class EditorApp : public QApplication
 {
@@ -29,7 +29,7 @@ public:
 	ProjectManager* ProjectMgr;
 	EngineManager* EngineMgr;
 	InspectorManager* InspectorMgr;
-	UndoRedoManager* UndoRedoMgr;
+	CommandManager* UndoRedoMgr;
 
 private:
 	GlobalEventFilter EventFilter;

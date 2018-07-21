@@ -8,11 +8,11 @@ using namespace Poly;
 
 class Command;
 
-class UndoRedoManager
+class CommandManager
 {
 public:
-	UndoRedoManager();
-	~UndoRedoManager();
+	CommandManager();
+	~CommandManager();
 
 	void ProcessEvent(QEvent* event);
 
