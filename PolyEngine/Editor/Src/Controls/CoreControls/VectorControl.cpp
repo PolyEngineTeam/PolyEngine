@@ -96,5 +96,7 @@ void VectorControl::UpdateControl() {
 		Field[2]->setText(QString::number(angles.Z.AsDegrees()));
 		break;
 	}
+	default:
+		ASSERTE(false, "Not supported type");
 	}
 }
