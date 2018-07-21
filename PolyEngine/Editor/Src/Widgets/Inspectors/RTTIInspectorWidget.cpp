@@ -114,10 +114,9 @@ void RTTIInspectorWidget::AddItem(QGridLayout* parent, int row, void* ptr, const
 {
 	ControlBase* field;
 
-	if (prop.CoreType == RTTI::eCorePropertyType::RAW_PTR)
+	if (prop.CoreType == RTTI::eCorePropertyType::RAW_PTR && prop.Name == "Mesh")
 	{
-		if (prop.Name == "Mesh")
-			field = new MeshResourceControl(this);
+		field = new MeshResourceControl(this);
 	}
 	else
 		field = ControlBase::CreateControl(this, prop.CoreType);
