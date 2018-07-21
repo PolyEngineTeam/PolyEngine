@@ -51,20 +51,20 @@ void StringControl::Confirm()
 	ControlCommand* cmd = new ControlCommand();
 	cmd->Object = Object;
 	cmd->Control = this;
-	cmd->UndoValue = new String(*reinterpret_cast<String*>(Object));
+	cmd->UndoValue = PointerWrapper(new String(*reinterpret_cast<String*>(Object)));
 
 	*reinterpret_cast<String*>(Object) = Field->text().toLatin1().data();
 
-	cmd->RedoValue = new String(*reinterpret_cast<String*>(Object));
+	cmd->RedoValue = PointerWrapper(new String(*reinterpret_cast<String*>(Object)));
 
 	cmd->UndoPtr = [](ControlCommand* c)
 	{
-		*reinterpret_cast<String*>(c->Object) = *reinterpret_cast<String*>(c->UndoValue);
+		*reinterpret_cast<String*>(c->Object) = *reinterpret_cast<String*>(c->UndoValue.Ptr);
 		emit c->Control->ObjectUpdated(c);
 	};
 	cmd->RedoPtr = [](ControlCommand* c)
 	{
-		*reinterpret_cast<String*>(c->Object) = *reinterpret_cast<String*>(c->RedoValue);
+		*reinterpret_cast<String*>(c->Object) = *reinterpret_cast<String*>(c->RedoValue.Ptr);
 		emit c->Control->ObjectUpdated(c);
 	};
 

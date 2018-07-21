@@ -73,20 +73,21 @@ void BoolControl::Confirm()
 	ControlCommand* cmd = new ControlCommand();
 	cmd->Object = Object;
 	cmd->Control = this;
-	cmd->UndoValue = new bool(*reinterpret_cast<bool*>(Object));
+	cmd->UndoValue = PointerWrapper(new bool(*reinterpret_cast<bool*>(Object)));
+
 
 	*reinterpret_cast<bool*>(Object) = *Machine->configuration().begin() == True;
 
-	cmd->RedoValue = new bool(*reinterpret_cast<bool*>(Object));
+	cmd->RedoValue = PointerWrapper(new bool(*reinterpret_cast<bool*>(Object)));
 
 	cmd->UndoPtr = [](ControlCommand* c)
 	{
-		*reinterpret_cast<bool*>(c->Object) = *reinterpret_cast<bool*>(c->UndoValue);
+		*reinterpret_cast<bool*>(c->Object) = *reinterpret_cast<bool*>(c->UndoValue.Ptr);
 		emit c->Control->ObjectUpdated(c);
 	};
 	cmd->RedoPtr = [](ControlCommand* c)
 	{
-		*reinterpret_cast<bool*>(c->Object) = *reinterpret_cast<bool*>(c->RedoValue);
+		*reinterpret_cast<bool*>(c->Object) = *reinterpret_cast<bool*>(c->RedoValue.Ptr);
 		emit c->Control->ObjectUpdated(c);
 	};
 

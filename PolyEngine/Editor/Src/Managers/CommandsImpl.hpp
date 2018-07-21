@@ -7,6 +7,31 @@
 
 using namespace Poly;
 
+
+struct PointerWrapper
+{
+	void* Ptr;
+	size_t Sz;
+
+	template<typename T>
+	PointerWrapper(T* pointer)
+	{
+		Sz = sizeof(T);
+		Ptr = pointer;
+	}
+
+	PointerWrapper()
+	{
+		Ptr = nullptr;
+		Sz = 0;
+	}
+
+	~PointerWrapper()
+	{
+		operator delete(Ptr, Sz);
+	}
+};
+
 //------------------------------------------------------------------------------
 class Command
 {
@@ -49,11 +74,7 @@ public:
 class ControlCommand : public Command
 {
 public:
-	~ControlCommand()
-	{
-		delete UndoValue;
-		delete RedoValue;
-	}
+	~ControlCommand() {}
 
 	void Undo() override
 	{
@@ -70,6 +91,6 @@ public:
 	void* Object;
 	ControlBase* Control;
 
-	void* UndoValue;
-	void* RedoValue;
+	PointerWrapper UndoValue;
+	PointerWrapper RedoValue;
 };

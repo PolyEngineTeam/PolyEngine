@@ -18,20 +18,20 @@ ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::DOUBLE, DOUBLE)
 ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::ANGLE, ANGLE)
 
 #define UPDATE_OBJECT(T, V)\
-	cmd->UndoValue = new T(*reinterpret_cast<T*>(Object));\
+	cmd->UndoValue = PointerWrapper(new T(*reinterpret_cast<T*>(Object)));\
 \
 	*reinterpret_cast<T*>(Object) = V;\
 \
-	cmd->RedoValue = new T(*reinterpret_cast<T*>(Object));\
+	cmd->RedoValue = PointerWrapper(new T(*reinterpret_cast<T*>(Object)));\
 \
 	cmd->UndoPtr = [](ControlCommand* c)\
 	{\
-		*reinterpret_cast<T*>(c->Object) = *reinterpret_cast<T*>(c->UndoValue);\
+		*reinterpret_cast<T*>(c->Object) = *reinterpret_cast<T*>(c->UndoValue.Ptr);\
 		emit c->Control->ObjectUpdated(c);\
 	};\
 	cmd->RedoPtr = [](ControlCommand* c)\
 	{\
-		*reinterpret_cast<T*>(c->Object) = *reinterpret_cast<T*>(c->RedoValue);\
+		*reinterpret_cast<T*>(c->Object) = *reinterpret_cast<T*>(c->RedoValue.Ptr);\
 		emit c->Control->ObjectUpdated(c);\
 	};
 
