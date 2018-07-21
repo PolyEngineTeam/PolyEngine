@@ -58,29 +58,25 @@ std::array<Vector, 8> Poly::AABox::GetVertices() const
 
 AABox Poly::AABox::GetTransformed(const Matrix& transform) const
 {
-	// Start with position
-	Vector center;// = GetCenter();
-	Vector correctedPos = Pos - center;
-
-	Vector min = transform * correctedPos + center;
+	Vector min = transform * Pos;
 	Vector max = min;
 
 	// Gather other 7 points
 	std::array<Vector, 7> points =
 	{
-		correctedPos + Vector(Size.X, 0, 0),
-		correctedPos + Vector(Size.X, Size.Y, 0),
-		correctedPos + Vector(Size.X, Size.Y, Size.Z),
-		correctedPos + Vector(0, Size.Y, Size.Z),
-		correctedPos + Vector(0, 0, Size.Z),
-		correctedPos + Vector(0, Size.Y, 0),
-		correctedPos + Vector(Size.X, 0, Size.Z)
+		Pos + Vector(Size.X, 0, 0),
+		Pos + Vector(Size.X, Size.Y, 0),
+		Pos + Vector(Size.X, Size.Y, Size.Z),
+		Pos + Vector(0, Size.Y, Size.Z),
+		Pos + Vector(0, 0, Size.Z),
+		Pos + Vector(0, Size.Y, 0),
+		Pos + Vector(Size.X, 0, Size.Z)
 	};
 
 	// Iterate other 7 points
 	for (Vector v : points)
 	{
-		v = transform * v + center;
+		v = transform * v;
 		min = Vector::Min(min, v);
 		max = Vector::Max(max, v);
 	}

@@ -37,7 +37,7 @@ namespace Poly {
 
 		void Update(Angle fov, float aspect, float zNear, float zFar);
 
-		eObjectLocation GetObjectLocation(const AABox& box, const Matrix& frustumTransformation) const;
+		eObjectLocation GetObjectLocation(const AABox& box, const Matrix& boxToFrustumTransformation) const;
 
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Frustum& color);
 
