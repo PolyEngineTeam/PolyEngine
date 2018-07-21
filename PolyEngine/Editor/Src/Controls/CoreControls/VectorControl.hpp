@@ -21,7 +21,7 @@ private:
 	QLineEdit* Field[3];
 
 	public slots:
-	void Confirm() 
+	void Confirm() override
 	{
 		if (ASAPUpdate)
 			QTimer::singleShot(1, this, [object = this]() { object->UpdateObject(); });

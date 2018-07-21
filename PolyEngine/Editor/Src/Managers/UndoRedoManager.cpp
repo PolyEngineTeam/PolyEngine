@@ -29,6 +29,7 @@ void UndoRedoManager::ProcessEvent(QEvent* event)
 		if (((QKeyEvent*)event)->isAutoRepeat())
 			((QKeyEvent*)event)->ignore();
 		else
+		{
 			switch (((QKeyEvent*)event)->key())
 			{
 			case Qt::Key::Key_Control:
@@ -43,17 +44,18 @@ void UndoRedoManager::ProcessEvent(QEvent* event)
 				ZPressed = true;
 				break;
 			}
+		}
 
-			if (CtrlPressed && ShiftPressed && ZPressed && !DuringEvent)
-			{
-				DuringEvent = true;
-				Redo();
-			}
-			else if (CtrlPressed && ZPressed && !DuringEvent)
-			{
-				DuringEvent = true;
-				Undo();
-			}
+		if (CtrlPressed && ShiftPressed && ZPressed && !DuringEvent)
+		{
+			DuringEvent = true;
+			Redo();
+		}
+		else if (CtrlPressed && ZPressed && !DuringEvent)
+		{
+			DuringEvent = true;
+			Undo();
+		}
 	}
 	else if (event->type() == QEvent::Type::KeyRelease)
 	{
@@ -86,7 +88,7 @@ void UndoRedoManager::AddCommand(Command* cmd)
 	if (Commands[CurrentCommand] == cmd)
 		return;
 
-	for (int i = (int)CurrentCommand + 1; i < Commands.GetSize();)
+	for (int i = (int)CurrentCommand + 1; i < (int)Commands.GetSize();)
 	{
 		delete Commands[Commands.GetSize() - 1];
 		Commands.PopBack();
