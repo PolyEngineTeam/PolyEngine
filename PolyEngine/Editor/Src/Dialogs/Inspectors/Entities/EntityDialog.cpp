@@ -28,8 +28,7 @@ Dynarray<Entity*> EntityDialog::SpawnEntities(Scene* scene, Dynarray<Entity*> pa
 	EntitiesTree->setHeaderLabels(QStringList() << "Name" << "ID");
 	MainLayout->addWidget(EntitiesTree, 1, 0, 1, 3);
 
-	for (auto child : scene->GetRoot()->GetChildren())
-		AddEntity(child);
+	AddEntity(scene->GetRoot());
 
 	SecondLabel = new QLabel(this);
 	SecondLabel->setText("Choose prefabs to spawn in each selected parent.");
