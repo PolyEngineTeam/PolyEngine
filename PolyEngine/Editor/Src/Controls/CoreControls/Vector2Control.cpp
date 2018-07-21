@@ -1,10 +1,14 @@
 #include "PolyEditorPCH.hpp"
 
+#include "Managers/CommandsImpl.hpp"
+
 #include "Math/Vector2f.hpp"
+#include "Math/Vector2i.hpp"
 
 ASSIGN_CONTROL(Vector2Control, RTTI::eCorePropertyType::VECTOR_2F, Vector2f)
 ASSIGN_CONTROL(Vector2Control, RTTI::eCorePropertyType::VECTOR_2I, Vector2i)
 
+//------------------------------------------------------------------------------
 Vector2Control::Vector2Control(QWidget* parent) : ControlBase(parent)
 {
 	Layout = new QGridLayout(this);
@@ -21,6 +25,7 @@ Vector2Control::Vector2Control(QWidget* parent) : ControlBase(parent)
 	}
 }
 
+//------------------------------------------------------------------------------
 void Vector2Control::Reset() 
 {
 	Object = nullptr;
@@ -28,9 +33,9 @@ void Vector2Control::Reset()
 	Field[1]->setText("");
 }
 
+//------------------------------------------------------------------------------
 void Vector2Control::UpdateObject() 
 {
-
 	switch (Property->CoreType)
 	{
 	case RTTI::eCorePropertyType::VECTOR_2F:
@@ -55,6 +60,7 @@ void Vector2Control::UpdateObject()
 
 }
 
+//------------------------------------------------------------------------------
 void Vector2Control::UpdateControl() 
 {
 	if (Field[0]->hasFocus() || Field[1]->hasFocus())
@@ -77,8 +83,46 @@ void Vector2Control::UpdateControl()
 		Field[1]->setText(QString::number(vector->Y));
 		break;
 	}
-
-	default:
-		ASSERTE(false, "Not supported type");
 	}
+}
+
+//------------------------------------------------------------------------------
+void Vector2Control::Confirm()
+{
+	if (DisableEdit)
+		return;
+
+	ControlCommand* cmd = new ControlCommand();
+	cmd->Object = Object;
+	cmd->Control = this;
+
+	switch (Property->CoreType)
+	{
+	case RTTI::eCorePropertyType::VECTOR_2F:
+	{
+		cmd->UndoValue = new Vector2f(*reinterpret_cast<Vector2f*>(Object));
+		cmd->RedoValue = new Vector2f((float)Field[0]->text().toDouble(), (float)Field[1]->text().toDouble());
+		break;
+	}
+
+	case RTTI::eCorePropertyType::VECTOR_2I:
+	{
+		cmd->UndoValue = new Vector2i(*reinterpret_cast<Vector2i*>(Object));
+		cmd->RedoValue = new Vector2i(Field[0]->text().toInt(), Field[1]->text().toInt());
+		break;
+	}
+	}
+
+	cmd->UndoPtr = [](ControlCommand* c)
+	{
+		*reinterpret_cast<Vector2i*>(c->Object) = *reinterpret_cast<Vector2i*>(c->UndoValue);
+		emit c->Control->ObjectUpdated(c);
+	};
+	cmd->RedoPtr = [](ControlCommand* c)
+	{
+		*reinterpret_cast<Vector2i*>(c->Object) = *reinterpret_cast<Vector2i*>(c->RedoValue);
+		emit c->Control->ObjectUpdated(c);
+	};
+
+	emit ObjectUpdated(cmd);
 }

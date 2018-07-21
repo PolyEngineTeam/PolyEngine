@@ -37,15 +37,16 @@ void StringControl::UpdateObject()
 //------------------------------------------------------------------------------
 void StringControl::UpdateControl()
 {
-	if (!Field->hasFocus())
-		Field->setText(reinterpret_cast<String*>(Object)->GetCStr());
+	if (Field->hasFocus())
+		return;
+
+	Field->setText(reinterpret_cast<String*>(Object)->GetCStr());
 }
 
 //------------------------------------------------------------------------------
 void StringControl::Confirm()
 {
-	String data = Field->text().toLatin1().data();
-	if (DisableEdit || data == *reinterpret_cast<String*>(Object))
+	if (DisableEdit)
 		return;
 
 	ControlCommand* cmd = new ControlCommand();
