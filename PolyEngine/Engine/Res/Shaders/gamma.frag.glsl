@@ -7,6 +7,7 @@ uniform sampler2D uImage;
 
 uniform float uTime;
 uniform vec4 uRes;
+uniform vec4 uTint;
 uniform float uGrainScale;
 uniform float uVignetteScale;
 uniform float uAbberationScale;
@@ -55,6 +56,6 @@ void main()
     float noise = uGrainScale * .012 * vec3(hash(length(p) * uTime)).x;
     color = mix(color, color * vignette, uVignetteScale) + noise;
 
-    vec3 result = pow(color.rgb, vec3(1.0 / uGamma));
+    vec3 result = pow(color.rgb * uTint.rgb, vec3(1.0 / uGamma));
     oColor = vec4(result, 1.0);
 }

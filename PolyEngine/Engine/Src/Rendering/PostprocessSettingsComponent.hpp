@@ -25,6 +25,7 @@ namespace Poly {
 		float VignetteScale = 1.0f;
 		float AbberationScale = 1.0f;
 
+		Color Tint = Color::WHITE;
 		float Gamma = 2.2f;
 	};
 
