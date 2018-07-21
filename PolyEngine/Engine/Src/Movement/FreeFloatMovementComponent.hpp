@@ -9,7 +9,9 @@ namespace Poly {
 	{
 		RTTI_DECLARE_TYPE_DERIVED(FreeFloatMovementComponent, ComponentBase)
 		{
-			NO_RTTI_PROPERTY();
+			RTTI_PROPERTY_AUTONAME(MovementSpeed, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(RotationSpeed, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(WheelSensitivity, RTTI::ePropertyFlag::NONE);
 		}
 
 		friend void MovementSystem::MovementUpdatePhase(Scene*);
