@@ -20,9 +20,19 @@ MeshResource::MeshResource(const String& path)
 	}
 
 	gConsole.LogDebug("Loading model {} sucessfull.", path);
+
+	const float maxFloat = std::numeric_limits<float>::max();
+	Vector min(maxFloat, maxFloat, maxFloat);
+	Vector max(-maxFloat, -maxFloat, -maxFloat);
+	
 	for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
 		SubMeshes.PushBack(new SubMesh(path, scene->mMeshes[i], scene->mMaterials[scene->mMeshes[i]->mMaterialIndex]));
+
+		min = Vector::Min(min, SubMeshes[i]->GetAABox().GetMin());
+		max = Vector::Max(max, SubMeshes[i]->GetAABox().GetMax());
 	}
+
+	AxisAlignedBoundingBox = AABox(min, max - min);
 }
 
 MeshResource::~MeshResource()
@@ -47,14 +57,23 @@ MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* mat
 
 void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 {
+	const float maxFloat = std::numeric_limits<float>::max();
+	Vector min(maxFloat, maxFloat, maxFloat);
+	Vector max(-maxFloat, -maxFloat, -maxFloat);
+
 	if (mesh->HasPositions()) {
 		MeshData.Positions.Resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 			MeshData.Positions[i].X = mesh->mVertices[i].x;
 			MeshData.Positions[i].Y = mesh->mVertices[i].y;
 			MeshData.Positions[i].Z = mesh->mVertices[i].z;
+
+			min = Vector::Min(min, Vector(MeshData.Positions[i].GetVector()));
+			max = Vector::Max(max, Vector(MeshData.Positions[i].GetVector()));
 		}
 	}
+	// Set bounding box for sub mesh
+	AxisAlignedBoundingBox = AABox(min, max - min);
 
 	if (mesh->HasTextureCoords(0)) {
 		MeshData.TextCoords.Resize(mesh->mNumVertices);

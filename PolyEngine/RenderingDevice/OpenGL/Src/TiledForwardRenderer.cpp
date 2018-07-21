@@ -1221,6 +1221,7 @@ void TiledForwardRenderer::PostGamma(const SceneView& sceneView)
 void TiledForwardRenderer::EditorDebug(const SceneView& sceneView)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDisable(GL_DEPTH_TEST);
 
 	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	EditorDebugShader.BindProgram();
@@ -1253,6 +1254,8 @@ void TiledForwardRenderer::EditorDebug(const SceneView& sceneView)
 		debugLines.Clear();
 		debugLinesColors.Clear();
 	}
+
+	glEnable(GL_DEPTH_TEST);
 }
 
 void TiledForwardRenderer::UIText2D(const SceneView& sceneView)

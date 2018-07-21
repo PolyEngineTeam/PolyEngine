@@ -7,6 +7,7 @@ using namespace Poly;
 AABox::AABox(const Vector& position, const Vector& size)
 	: Pos(position), Size(size)
 {
+	ASSERTE(Size.X >= 0 && Size.Y >= 0 && Size.Z >= 0, "Invalid aabox size!");
 }
 
 //------------------------------------------------------------------------------
@@ -39,6 +40,61 @@ AABox AABox::GetIntersectionVolume(const AABox& rhs) const
 	}
 	else
 		return AABox(Vector::ZERO, Vector::ZERO);
+}
+
+std::array<Vector, 8> Poly::AABox::GetVertices() const
+{
+	return {
+		Pos,
+		Pos + Vector(Size.X, 0, 0),
+		Pos + Vector(Size.X, Size.Y, 0),
+		Pos + Vector(Size.X, Size.Y, Size.Z),
+		Pos + Vector(0, Size.Y, Size.Z),
+		Pos + Vector(0, 0, Size.Z),
+		Pos + Vector(0, Size.Y, 0),
+		Pos + Vector(Size.X, 0, Size.Z)
+	};
+}
+
+AABox Poly::AABox::GetTransformed(const Matrix& transform) const
+{
+	// Start with position
+	Vector center;// = GetCenter();
+	Vector correctedPos = Pos - center;
+
+	Vector min = transform * correctedPos + center;
+	Vector max = min;
+
+	// Gather other 7 points
+	std::array<Vector, 7> points =
+	{
+		correctedPos + Vector(Size.X, 0, 0),
+		correctedPos + Vector(Size.X, Size.Y, 0),
+		correctedPos + Vector(Size.X, Size.Y, Size.Z),
+		correctedPos + Vector(0, Size.Y, Size.Z),
+		correctedPos + Vector(0, 0, Size.Z),
+		correctedPos + Vector(0, Size.Y, 0),
+		correctedPos + Vector(Size.X, 0, Size.Z)
+	};
+
+	// Iterate other 7 points
+	for (Vector v : points)
+	{
+		v = transform * v + center;
+		min = Vector::Min(min, v);
+		max = Vector::Max(max, v);
+	}
+
+	return AABox(min, max - min);
+}
+
+Poly::AABox& Poly::AABox::Expand(const AABox& rhs)
+{
+	Vector min = Vector::Min(GetMin(), rhs.GetMin());
+	Vector max = Vector::Max(GetMax(), rhs.GetMax());
+	Pos = min;
+	Size = max - min;
+	return *this;
 }
 
 //------------------------------------------------------------------------------

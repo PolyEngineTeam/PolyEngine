@@ -209,6 +209,7 @@ namespace Poly {
 			entity->Components[ctypeID] = ptr;
 			ptr->Owner = entity;
 			HEAVY_ASSERTE(entity->HasComponent(ctypeID), "Failed at AddComponent() - the component was not added!");
+			entity->SetBBoxDirty();
 		}
 
 		//------------------------------------------------------------------------------
@@ -224,6 +225,7 @@ namespace Poly {
 			component->~T();
 			GetComponentAllocator<T>()->Free(component);
 			HEAVY_ASSERTE(!entity->HasComponent(ctypeID), "Failed at AddComponent() - the component was not removed!");
+			entity->SetBBoxDirty();
 		}
 
 		//------------------------------------------------------------------------------

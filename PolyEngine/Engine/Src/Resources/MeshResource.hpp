@@ -30,7 +30,9 @@ namespace Poly
 
 			const Mesh& GetMeshData() const { return MeshData; }
 			const IMeshDeviceProxy* GetMeshProxy() const { return MeshProxy.get(); }
+			const AABox& GetAABox() const { return AxisAlignedBoundingBox; }
 		private:
+			AABox AxisAlignedBoundingBox;
 			Mesh MeshData;
 			std::unique_ptr<IMeshDeviceProxy> MeshProxy;
 		};
@@ -40,7 +42,9 @@ namespace Poly
 
 
 		const Dynarray<SubMesh*>& GetSubMeshes() const { return SubMeshes; }
+		const AABox& GetAABox() const { return AxisAlignedBoundingBox; }
 	private:
 		Dynarray<SubMesh*> SubMeshes;
+		AABox AxisAlignedBoundingBox;
 	};
 }
