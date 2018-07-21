@@ -24,7 +24,7 @@ public:
 	EditorUi Ui;
 
 	DockManager* DockMgr;
-	CommandManager* CommandMgr;
+	CmdManager* CommandMgr;
 	ProjectManager* ProjectMgr;
 	EngineManager* EngineMgr;
 	InspectorManager* InspectorMgr;

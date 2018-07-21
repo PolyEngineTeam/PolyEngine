@@ -1,13 +1,13 @@
 #include <PolyEditorPCH.hpp>
 
-CommandManager::CommandManager()
+CmdManager::CmdManager()
 {
 	// setup timer for reading from stream
 	Timer = std::make_unique<QTimer>(this);
-	connect(Timer.get(), &QTimer::timeout, this, &CommandManager::ReadStdout);
+	connect(Timer.get(), &QTimer::timeout, this, &CmdManager::ReadStdout);
 }
 
-void CommandManager::RunCommand(const String& cmd)
+void CmdManager::RunCommand(const String& cmd)
 {
 	Command = cmd;
 
@@ -25,7 +25,7 @@ void CommandManager::RunCommand(const String& cmd)
 	Timer->start(0);
 }
 
-void CommandManager::ReadStdout()
+void CmdManager::ReadStdout()
 {
 	if (Running && !feof(Stream))
 	{

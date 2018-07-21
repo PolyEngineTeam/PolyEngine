@@ -6,21 +6,21 @@
 
 using namespace Poly;
 
-class CommandManagerException : public std::exception
+class CmdManagerException : public std::exception
 {
 public:
-	CommandManagerException(const String& msg) : Msg((const char*)msg.GetCStr()) {}
+	CmdManagerException(const String& msg) : Msg((const char*)msg.GetCStr()) {}
 	const char* what() const noexcept override { return Msg.GetCStr(); }
 
 protected:
 	String Msg;
 };
 
-class CommandManager : public QObject
+class CmdManager : public QObject
 {
 public:
-	CommandManager();
-	~CommandManager() = default;
+	CmdManager();
+	~CmdManager() = default;
 
 	template <typename S, typename... Args>
 	void RegisterStream(Args&&... args)

@@ -14,7 +14,7 @@ EditorApp::EditorApp(int argc, char *argv[])
 	: QApplication(argc, argv)
 {
 	DockMgr = new DockManager();
-	CommandMgr = new CommandManager();
+	CommandMgr = new CmdManager();
 	ProjectMgr = new ProjectManager();
 	EngineMgr = new EngineManager();
 	InspectorMgr = new InspectorManager(this);
