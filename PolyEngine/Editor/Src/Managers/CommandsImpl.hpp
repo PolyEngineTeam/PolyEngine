@@ -58,17 +58,17 @@ public:
 
 	void Undo() override
 	{
-		*reinterpret_cast<T*>(Object) = *UndoValue;
+		*Object = *UndoValue;
 		emit Control->ObjectUpdated(this);
 	}
 
 	void Redo() override
 	{
-		*reinterpret_cast<T*>(Object) = *RedoValue;
+		*Object = *RedoValue;
 		emit Control->ObjectUpdated(this);
 	}
 
-	void* Object;
+	T* Object;
 	ControlBase* Control;
 
 	T* UndoValue;

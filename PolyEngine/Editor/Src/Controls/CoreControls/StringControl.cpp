@@ -50,7 +50,7 @@ void StringControl::Confirm()
 		return;
 
 	ControlCommand<String>* cmd = new ControlCommand<String>();
-	cmd->Object = Object;
+	cmd->Object = reinterpret_cast<String*>(Object);
 	cmd->Control = this;
 	cmd->UndoValue = new String(*reinterpret_cast<String*>(Object));
 	cmd->RedoValue = new String(Field->text().toLatin1().data());

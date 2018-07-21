@@ -147,6 +147,9 @@ void ViewportInspectorWidget::StateChanged()
 	{
 	case eEngineState::EDIT:
 	{
+		if (EditorCameraEnt)
+			break;
+
 		Scene* w = Manager->GetEngine()->GetActiveScene();
 
 		//		register editor phases
@@ -155,6 +158,7 @@ void ViewportInspectorWidget::StateChanged()
 
 		//		create camera
 		EditorCameraEnt = DeferredTaskSystem::SpawnEntityImmediate(w);
+		EditorCameraEnt->SetName("Editor Camera");
 		// add EditorCameraMovementComponent
 		DeferredTaskSystem::AddComponentImmediate<EditorCameraMovementComponent>(w, EditorCameraEnt, 25.f, 0.01f);
 		// add camera component
@@ -173,6 +177,7 @@ void ViewportInspectorWidget::StateChanged()
 	}
 	case eEngineState::GAMEPLAY:
 	{
+		EditorCameraEnt = nullptr;
 		// set gameplay camera (probably don't need to because this camera is set when game is restarted)
 		//Manager->GetScene()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(0, GameCamera);
 

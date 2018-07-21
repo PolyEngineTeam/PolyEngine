@@ -20,7 +20,7 @@ ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::ANGLE, ANGLE)
 #define UPDATE_OBJECT(T, V)\
 { \
 	ControlCommand<T>* cmd = new ControlCommand<T>(); \
-	cmd->Object = Object; \
+	cmd->Object = reinterpret_cast<T*>(Object); \
 	cmd->Control = this; \
 \
 	cmd->UndoValue = new T(*reinterpret_cast<T*>(Object));\

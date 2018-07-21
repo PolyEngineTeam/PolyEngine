@@ -3,3 +3,8 @@
 using namespace Poly;
 
 DEFINE_GAME($GAME_CLASS_NAME$)
+
+void Game::Init()
+{
+	DeferredTaskSystem::AddWorldComponentImmediate<SkyboxWorldComponent>(gEngine->GetActiveScene(), "HDR/HDR.hdr", eResourceSource::ENGINE);
+}

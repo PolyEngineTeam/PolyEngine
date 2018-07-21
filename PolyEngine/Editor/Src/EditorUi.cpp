@@ -18,7 +18,7 @@ void EditorUi::Init()
 	window->hide();
 
 	// command logger
-	CmdLogger = new LoggerWidget(eLoggerType::CONSOLE);
+	CmdLogger = new LoggerWidget(eLoggerType::CMD);
 	window = new PolyDockWindow("Cmd", CmdLogger);
 	MainWindow->AddDockWindow(Qt::DockWidgetArea::RightDockWidgetArea, window, true);
 	window->hide();

@@ -25,11 +25,11 @@ public:
 	EditorUi Ui;
 
 	DockManager* DockMgr;
-	CmdManager* CommandMgr;
+	CmdManager* CmdMgr;
 	ProjectManager* ProjectMgr;
 	EngineManager* EngineMgr;
 	InspectorManager* InspectorMgr;
-	CommandManager* UndoRedoMgr;
+	CommandManager* CommandMgr;
 
 private:
 	GlobalEventFilter EventFilter;

@@ -141,7 +141,7 @@ void InspectorManager::EntitiesDestroyedSlot()
 //------------------------------------------------------------------------------
 void InspectorManager::EntitiesModifiedSlot(Command* cmd)
 {
-	gApp->UndoRedoMgr->AddCommand(cmd);
+	gApp->CommandMgr->AddCommand(cmd);
 
 	emit EntitiesModified();
 }
@@ -159,7 +159,7 @@ void InspectorManager::EntitiesSelectionChangedSlot(Dynarray<Entity*> entities)
 	c->OldEntities = SelectedEntities;
 	c->NewEntities = entities;
 	c->Manager = this;
-	gApp->UndoRedoMgr->AddCommand(c);
+	gApp->CommandMgr->AddCommand(c);
 
 	SelectedEntities = entities;
 	EntitiesSelectionChanged();

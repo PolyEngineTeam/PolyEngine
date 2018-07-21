@@ -14,11 +14,11 @@ EditorApp::EditorApp(int argc, char *argv[])
 	: QApplication(argc, argv)
 {
 	DockMgr = new DockManager();
-	CommandMgr = new CmdManager();
+	CmdMgr = new CmdManager();
 	ProjectMgr = new ProjectManager();
 	EngineMgr = new EngineManager();
 	InspectorMgr = new InspectorManager(this);
-	UndoRedoMgr = new CommandManager();
+	CommandMgr = new CommandManager();
 
 	ASSERTE(!gApp, "Creating application twice?!");
 	gApp = this;

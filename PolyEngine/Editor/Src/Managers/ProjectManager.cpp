@@ -21,12 +21,14 @@ void ProjectManager::Create(const String& projectName, const String& projectPath
 
 	builder.Append("py ");
 	builder.Append(enginePath);
-	builder.Append("/Scripts/ProjectTool.py -c ");
+	builder.Append("/Scripts/ProjectTool.py -e ");
+	builder.Append(enginePath);
+	builder.Append(" -c ");
 	builder.Append(projectPath);
 	builder.Append(" ");
 	builder.Append(projectName);
 
-	gApp->CommandMgr->RunCommand(builder.StealString());
+	gApp->CmdMgr->RunCommand(builder.StealString());
 }
 
 //------------------------------------------------------------------------------
@@ -55,7 +57,7 @@ void ProjectManager::Update(const String& enginePath)
 	builder.Append("/Scripts/ProjectTool.py -u ");
 	builder.Append(ProjectCfg->ProjectPath);
 
-	gApp->CommandMgr->RunCommand(builder.GetString());
+	gApp->CmdMgr->RunCommand(builder.GetString());
 }
 
 //------------------------------------------------------------------------------
@@ -93,7 +95,7 @@ void ProjectManager::Build()
 	builder.Append(ProjectCfg->ProjectPath);
 	builder.Append("/Build");
 
-	gApp->CommandMgr->RunCommand(builder.GetString());
+	gApp->CmdMgr->RunCommand(builder.GetString());
 }
 
 //------------------------------------------------------------------------------

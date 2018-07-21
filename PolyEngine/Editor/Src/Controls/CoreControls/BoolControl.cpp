@@ -84,7 +84,7 @@ void BoolControl::Confirm()
 		return;
 
 	ControlCommand<bool>* cmd = new ControlCommand<bool>();
-	cmd->Object = Object;
+	cmd->Object = reinterpret_cast<bool*>(Object);
 	cmd->Control = this;
 	cmd->UndoValue = new bool(*reinterpret_cast<bool*>(Object));
 	cmd->RedoValue = new bool(*Machine->configuration().begin() == True);
