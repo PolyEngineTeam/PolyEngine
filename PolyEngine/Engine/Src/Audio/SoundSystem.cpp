@@ -156,8 +156,9 @@ void SoundSystem::DeactivateListener(Scene* /*world*/, Entity* /*entity*/)
 {
 }
 
-void SoundSystem::SetListenerGain(Scene* /*world*/, Entity* /*entity*/, float /*gain*/)
+void SoundSystem::SetListenerPosition(Vector vec)
 {
+	alListener3f(AL_POSITION, vec.X, vec.Y, vec.Z);
 }
 
 bool ENGINE_DLLEXPORT Poly::SoundSystem::IsEmmiterActive(Scene* world, Entity* entity)
