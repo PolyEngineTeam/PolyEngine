@@ -72,7 +72,7 @@ void EntityTransform::SetLocalRotation(const Quaternion& quaternion)
 void Poly::EntityTransform::SetGlobalRotation(const Quaternion& quaternion)
 {
 	Quaternion currentGlobal = GetGlobalRotation();
-	SetLocalRotation(GetLocalRotation() * (quaternion * currentGlobal.Conjugate()));
+	SetLocalRotation(GetLocalRotation() * (currentGlobal.Conjugate() * quaternion));
 }
 
 //------------------------------------------------------------------------------
