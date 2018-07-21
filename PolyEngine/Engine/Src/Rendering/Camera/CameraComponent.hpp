@@ -34,6 +34,8 @@ namespace Poly {
 		void SetTargetFOV(const Angle& Value) { TargetFov = Value; }
 		void SetFOV(const Angle& Value) { Fov = Value; }
 		float GetAspect() const { return Aspect; }
+		bool GetForcedRatio() const { return IsForcedRatio; }
+		void SetForcedRatio(bool value) { IsForcedRatio = value; }
 		eRenderingModeType GetRenderingMode() const { return RenderingMode; }
 		void SetRenderingMode(eRenderingModeType value) { RenderingMode = value; }
 
@@ -43,6 +45,7 @@ namespace Poly {
 		Matrix ScreenFromWorld;
 
 		bool IsPerspective = false;
+
 		// Prerpective
 		Angle Fov = 0_deg;
 		Angle TargetFov = 0_deg;
@@ -57,7 +60,9 @@ namespace Poly {
 		float Near = 0.f;
 		float Far = 0.f;
 		float Aspect = 1.f;
-
+		
+		bool IsForcedRatio = false;
+		
 		// RenderingMode
 		eRenderingModeType RenderingMode;
 	};
