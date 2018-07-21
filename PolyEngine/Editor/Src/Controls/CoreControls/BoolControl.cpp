@@ -63,9 +63,6 @@ void BoolControl::UpdateControl()
 	if (Button->hasFocus())
 		return;
 
-	auto control = *Machine->configuration().begin() == True;
-	auto object = *reinterpret_cast<bool*>(Object);
-
 	if ((*Machine->configuration().begin() == True) != *reinterpret_cast<bool*>(Object))
 	{
 		auto tmp = DisableEdit;
