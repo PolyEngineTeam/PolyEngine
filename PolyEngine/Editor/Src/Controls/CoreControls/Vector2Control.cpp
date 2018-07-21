@@ -102,6 +102,8 @@ void Vector2Control::Confirm()
 	{
 		cmd->UndoValue = new Vector2f(*reinterpret_cast<Vector2f*>(Object));
 		cmd->RedoValue = new Vector2f((float)Field[0]->text().toDouble(), (float)Field[1]->text().toDouble());
+
+		*reinterpret_cast<Vector2f*>(Object) = Vector2f((float)Field[0]->text().toDouble(), (float)Field[1]->text().toDouble());
 		break;
 	}
 
@@ -109,6 +111,7 @@ void Vector2Control::Confirm()
 	{
 		cmd->UndoValue = new Vector2i(*reinterpret_cast<Vector2i*>(Object));
 		cmd->RedoValue = new Vector2i(Field[0]->text().toInt(), Field[1]->text().toInt());
+		*reinterpret_cast<Vector2i*>(Object) = Vector2i((float)Field[0]->text().toInt(), (float)Field[1]->text().toInt());
 		break;
 	}
 	}

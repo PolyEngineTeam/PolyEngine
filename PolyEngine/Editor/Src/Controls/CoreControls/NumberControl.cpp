@@ -21,6 +21,8 @@ ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::ANGLE, ANGLE)
 	cmd->UndoValue = new T(*reinterpret_cast<T*>(Object));\
 	cmd->RedoValue = new T(V);\
 \
+	*reinterpret_cast<T*>(Object) = *Machine->configuration().begin() == True; \
+\
 	cmd->UndoPtr = [](ControlCommand* c)\
 	{\
 		*reinterpret_cast<T*>(c->Object) = *reinterpret_cast<T*>(c->UndoValue);\

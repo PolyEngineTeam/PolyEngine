@@ -55,6 +55,8 @@ void StringControl::Confirm()
 	cmd->UndoValue = new String(*reinterpret_cast<String*>(Object));
 	cmd->RedoValue = new String(Field->text().toLatin1().data());
 
+	*reinterpret_cast<String*>(Object) = Field->text().toLatin1().data();
+
 	cmd->UndoPtr = [](ControlCommand* c)
 	{
 		*reinterpret_cast<String*>(c->Object) = *reinterpret_cast<String*>(c->UndoValue);

@@ -79,6 +79,8 @@ void BoolControl::Confirm()
 	cmd->UndoValue = new bool(*reinterpret_cast<bool*>(Object));
 	cmd->RedoValue = new bool(*Machine->configuration().begin() == True);
 
+	*reinterpret_cast<bool*>(Object) = *Machine->configuration().begin() == True;
+
 	cmd->UndoPtr = [](ControlCommand* c)
 	{
 		*reinterpret_cast<bool*>(c->Object) = *reinterpret_cast<bool*>(c->UndoValue);
