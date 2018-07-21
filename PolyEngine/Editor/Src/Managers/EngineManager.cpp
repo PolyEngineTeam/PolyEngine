@@ -22,7 +22,7 @@ void EngineManager::InitEngine(std::unique_ptr<IGame> game, const String& assets
 	emit Created(EngineObj.get());
 
 	EngineObj->RegisterEditor(Editor);
-	EngineObj->Init(std::move(game), std::move(gApp->InspectorMgr->GetRenderingDevice()));
+	EngineObj->Init(std::move(game), gApp->InspectorMgr->GetRenderingDevice());
 	gConsole.LogDebug("Engine initialized successfully");
 
 	emit Initialized();
