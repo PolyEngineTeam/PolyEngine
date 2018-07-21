@@ -10,11 +10,8 @@ public:
 	NumberControl(QWidget* parent);
 
 	void Reset() override;
-
 	void UpdateObject() override;
 	void UpdateControl() override;
-
-protected:
 	void Confirm() override;
 
 private:
