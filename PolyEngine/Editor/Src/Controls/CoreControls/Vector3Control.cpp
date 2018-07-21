@@ -1,10 +1,10 @@
 #include "PolyEditorPCH.hpp"
 
-ASSIGN_CONTROL(VectorControl, RTTI::eCorePropertyType::VECTOR, Vector)
-ASSIGN_CONTROL(VectorControl, RTTI::eCorePropertyType::COLOR, Color)
-ASSIGN_CONTROL(VectorControl, RTTI::eCorePropertyType::QUATERNION, Quaternion)
+ASSIGN_CONTROL(Vector3Control, RTTI::eCorePropertyType::VECTOR, Vector)
+ASSIGN_CONTROL(Vector3Control, RTTI::eCorePropertyType::COLOR, Color)
+ASSIGN_CONTROL(Vector3Control, RTTI::eCorePropertyType::QUATERNION, Quaternion)
 
-VectorControl::VectorControl(QWidget* parent) : ControlBase(parent)
+Vector3Control::Vector3Control(QWidget* parent) : ControlBase(parent)
 {
 	Layout = new QGridLayout(this);
 
@@ -17,11 +17,11 @@ VectorControl::VectorControl(QWidget* parent) : ControlBase(parent)
 	{
 		Field[x] = new QLineEdit(this);
 		Layout->addWidget(Field[x], 0, x);
-		connect(Field[x], &QLineEdit::returnPressed, this, &VectorControl::Confirm);
+		connect(Field[x], &QLineEdit::returnPressed, this, &Vector3Control::Confirm);
 	}
 }
 
-void VectorControl::Reset() 
+void Vector3Control::Reset() 
 {
 	Object = nullptr;
 	Field[0]->setText("");
@@ -29,7 +29,7 @@ void VectorControl::Reset()
 	Field[2]->setText("");
 }
 
-void VectorControl::UpdateObject() 
+void Vector3Control::UpdateObject() 
 {
 	switch (Property->CoreType)
 	{
@@ -66,7 +66,7 @@ void VectorControl::UpdateObject()
 	}
 }
 
-void VectorControl::UpdateControl() 
+void Vector3Control::UpdateControl() 
 {
 	if (Field[0]->hasFocus() || Field[1]->hasFocus() || Field[2]->hasFocus())
 		return;

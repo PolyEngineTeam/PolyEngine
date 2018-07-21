@@ -6,10 +6,10 @@
 #include <QtWidgets/qlabel.h>
 #include <QtWidgets/qgridlayout.h>
 
-class VectorControl : public ControlBase
+class Vector3Control : public ControlBase
 {
 public:
-	VectorControl(QWidget* parent);
+	Vector3Control(QWidget* parent);
 
 	void Reset() override;
 

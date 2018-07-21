@@ -15,7 +15,7 @@ public:
 	void UpdateControl() override;
 	void Confirm() override;
 
-	void SetText(String text) { Field->setText(text.GetCStr()); UpdateObject(); }
+	void SetText(String text) { Field->setText(text.GetCStr()); }
 
 private:
 	QGridLayout* Layout;
