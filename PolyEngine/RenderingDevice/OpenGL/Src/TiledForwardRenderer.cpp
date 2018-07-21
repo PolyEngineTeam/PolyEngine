@@ -486,8 +486,8 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::Render");
 
-	gConsole.LogInfo("TiledForwardRenderer::Render Aspect: {}, IsForcedRatio: {}, FOV: {}",
-		sceneView.CameraCmp->GetAspect(), sceneView.CameraCmp->GetForcedRatio(), sceneView.CameraCmp->GetFOV());
+	// gConsole.LogInfo("TiledForwardRenderer::Render Aspect: {}, IsForcedRatio: {}, FOV: {}",
+	// 	sceneView.CameraCmp->GetAspect(), sceneView.CameraCmp->GetForcedRatio(), sceneView.CameraCmp->GetFOV());
 
 	// glViewport((int)(sceneView.Rect.GetMin().X * screenSize.Width), (int)(sceneView.Rect.GetMin().Y * screenSize.Height),
 	// 	(int)(sceneView.Rect.GetSize().X * screenSize.Width), (int)(sceneView.Rect.GetSize().Y * screenSize.Height));  
@@ -590,8 +590,8 @@ void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 	
 	const ScreenSize screenSize = RDI->GetScreenSize();
 
-	glViewport((int)(sceneView.Rect.GetMin().X * screenSize.Width), (int)(sceneView.Rect.GetMin().Y * screenSize.Height),
-		(int)(sceneView.Rect.GetSize().X * screenSize.Width), (int)(sceneView.Rect.GetSize().Y * screenSize.Height));
+// 	glViewport((int)(sceneView.Rect.GetMin().X * screenSize.Width), (int)(sceneView.Rect.GetMin().Y * screenSize.Height),
+// 		(int)(sceneView.Rect.GetSize().X * screenSize.Width), (int)(sceneView.Rect.GetSize().Y * screenSize.Height));
 
 	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	
@@ -1012,7 +1012,7 @@ void TiledForwardRenderer::LinearizeDepth(const SceneView& sceneView)
 
 void TiledForwardRenderer::PostMotionBlur(const SceneView& sceneView)
 {
-	float motionBlurScale = 1.0f;
+	float motionBlurScale = 0.0f;
 	const PostprocessSettingsComponent* postCmp = sceneView.CameraCmp->GetSibling<PostprocessSettingsComponent>();
 	if (postCmp) {
 		motionBlurScale = postCmp->MotionBlurScale;
@@ -1053,8 +1053,8 @@ void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
 {
 	float dofPoint = 1000.0f;
 	float dofRange = 800.0f;
-	float dofSize = 0.2f;
-	float dofShow = 0.2f;
+	float dofSize = 0.0f;
+	float dofShow = 0.0f;
 	const PostprocessSettingsComponent* postCmp = sceneView.CameraCmp->GetSibling<PostprocessSettingsComponent>();
 	if (postCmp) {
 		dofPoint = postCmp->DOFPoint;
@@ -1103,7 +1103,7 @@ void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
 void TiledForwardRenderer::PostBloom(const SceneView& sceneView)
 {
 	float bloomThreshold = 1.0f;
-	float bloomScale = 1.0f;
+	float bloomScale = 0.1f;
 	const PostprocessSettingsComponent* postCmp = sceneView.CameraCmp->GetSibling<PostprocessSettingsComponent>();
 	if (postCmp) {
 		bloomThreshold = postCmp->BloomThreshold;
@@ -1189,9 +1189,9 @@ void TiledForwardRenderer::PostGamma(const SceneView& sceneView)
 
 	const ScreenSize screenSize = RDI->GetScreenSize();
 
-	float grainScale = 0.1f;
-	float vignetteScale = 1.0f;
-	float abberationScale = 1.0f;
+	float grainScale = 0.01f;
+	float vignetteScale = 0.1f;
+	float abberationScale = 0.1f;
 	Color tint = Color::WHITE;
 	float gamma = 2.2f;
 	const PostprocessSettingsComponent* postCmp = sceneView.CameraCmp->GetSibling<PostprocessSettingsComponent>();
