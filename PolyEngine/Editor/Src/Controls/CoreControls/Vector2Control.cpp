@@ -95,6 +95,8 @@ void Vector2Control::UpdateControl()
 		Field[1]->setText(QString::number(vector->Y));
 		break;
 	}
+	default:
+		ASSERTE(false, "Unknown type.");
 	}
 }
 
