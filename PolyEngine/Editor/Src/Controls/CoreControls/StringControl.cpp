@@ -13,7 +13,7 @@ StringControl::StringControl(QWidget* parent)
 	Layout->setContentsMargins(0, 0, 0, 0);
 
 	Field = new QLineEdit();
-	connect(Field, &QLineEdit::returnPressed, this, &ControlBase::Confirm);
+	connect(Field, &QLineEdit::editingFinished, this, &ControlBase::Confirm);
 
 	Layout->addWidget(Field);
 

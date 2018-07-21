@@ -20,7 +20,7 @@ Vector3Control::Vector3Control(QWidget* parent) : ControlBase(parent)
 	{
 		Field[x] = new QLineEdit(this);
 		Layout->addWidget(Field[x], 0, x);
-		connect(Field[x], &QLineEdit::returnPressed, this, &Vector3Control::Confirm);
+		connect(Field[x], &QLineEdit::editingFinished, this, &Vector3Control::Confirm);
 	}
 }
 

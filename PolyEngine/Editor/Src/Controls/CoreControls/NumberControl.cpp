@@ -43,7 +43,7 @@ NumberControl::NumberControl(QWidget* parent)
 	Layout->setContentsMargins(0, 0, 0, 0);
 
 	Field = new QLineEdit(this);
-	connect(Field, &QLineEdit::returnPressed, this, &ControlBase::Confirm);
+	connect(Field, &QLineEdit::editingFinished, this, &ControlBase::Confirm);
 
 	Layout->addWidget(Field);
 
