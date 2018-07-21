@@ -20,9 +20,10 @@ static Poly::LibraryFunctionHandle<CreateRenderingDeviceFunc> LoadRenderingDevic
 
 using namespace Poly;
 
-const static float PLAYER_CAMERA_NEAR = 0.1f;
-const static float PLAYER_CAMERA_FAR = 300.f;
-const static Angle PLAYER_CAMERA_FOV = 60_deg;
+// unused variables
+//const static float PLAYER_CAMERA_NEAR = 0.1f;
+//const static float PLAYER_CAMERA_FAR = 300.f;
+//const static Angle PLAYER_CAMERA_FOV = 60_deg;
 
 
 
