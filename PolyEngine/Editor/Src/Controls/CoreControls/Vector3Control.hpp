@@ -12,18 +12,11 @@ public:
 	Vector3Control(QWidget* parent);
 
 	void Reset() override;
-
 	void UpdateObject() override;
 	void UpdateControl() override;
+	void Confirm() override;
 
 private:
 	QGridLayout* Layout;
 	QLineEdit* Field[3];
-
-	public slots:
-	void Confirm() 
-	{
-		if (ASAPUpdate)
-			QTimer::singleShot(1, this, [object = this]() { object->UpdateObject(); });
-	}
 };
