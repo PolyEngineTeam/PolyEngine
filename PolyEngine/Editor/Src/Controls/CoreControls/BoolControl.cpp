@@ -60,6 +60,9 @@ void BoolControl::UpdateObject()
 //------------------------------------------------------------------------------
 void BoolControl::UpdateControl()
 {
+	if (Button->hasFocus())
+		return;
+
 	if ((*Machine->configuration().begin() == True) != *reinterpret_cast<bool*>(Object))
 		emit Button->clicked();
 }
@@ -67,17 +70,14 @@ void BoolControl::UpdateControl()
 //------------------------------------------------------------------------------
 void BoolControl::Confirm()
 {
-	if (DisableEdit || (*Machine->configuration().begin() == True) != *reinterpret_cast<bool*>(Object))
+	if (DisableEdit)
 		return;
 
 	ControlCommand* cmd = new ControlCommand();
 	cmd->Object = Object;
 	cmd->Control = this;
 	cmd->UndoValue = new bool(*reinterpret_cast<bool*>(Object));
-
-	*reinterpret_cast<bool*>(Object) = *Machine->configuration().begin() != True;
-
-	cmd->RedoValue = new bool(*reinterpret_cast<bool*>(Object));
+	cmd->RedoValue = new bool(*Machine->configuration().begin() == True);
 
 	cmd->UndoPtr = [](ControlCommand* c)
 	{

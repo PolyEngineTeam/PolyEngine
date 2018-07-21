@@ -20,4 +20,8 @@ protected:
 private:
 	QLineEdit* Field;
 	QGridLayout* Layout;
+
+	QRegExpValidator* UIntValidator;
+	QRegExpValidator* IntValidator;
+	QRegExpValidator* FloatValidator;
 };

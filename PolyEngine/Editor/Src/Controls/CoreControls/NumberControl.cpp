@@ -19,10 +19,7 @@ ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::ANGLE, ANGLE)
 
 #define UPDATE_OBJECT(T, V)\
 	cmd->UndoValue = new T(*reinterpret_cast<T*>(Object));\
-\
-	*reinterpret_cast<T*>(Object) = V;\
-\
-	cmd->RedoValue = new T(*reinterpret_cast<T*>(Object));\
+	cmd->RedoValue = new T(V);\
 \
 	cmd->UndoPtr = [](ControlCommand* c)\
 	{\
@@ -39,8 +36,6 @@ ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::ANGLE, ANGLE)
 NumberControl::NumberControl(QWidget* parent)
 	: ControlBase(parent)
 {
-	// TODO(squares): write proper validators
-
 	Layout = new QGridLayout(this);
 	Layout->setSpacing(0);
 	Layout->setContentsMargins(0, 0, 0, 0);
@@ -51,6 +46,10 @@ NumberControl::NumberControl(QWidget* parent)
 	Layout->addWidget(Field);
 
 	setLayout(Layout);
+
+	UIntValidator = new QRegExpValidator(QRegExp("[0-9]+"), 0);
+	IntValidator = new QRegExpValidator(QRegExp("[-,+]{0,1}[0-9]+"), 0);
+	FloatValidator = new QRegExpValidator(QRegExp("[-,+]{0,1}[0-9]+[.][0-9]+"), 0);
 }
 
 //------------------------------------------------------------------------------
@@ -71,46 +70,57 @@ void NumberControl::UpdateObject()
 	{
 	case RTTI::eCorePropertyType::INT8:
 		*reinterpret_cast<i8*>(Object) = (i8)Field->text().toInt();
+		Field->setValidator(IntValidator);
 		break;
 
 	case RTTI::eCorePropertyType::INT16:
 		*reinterpret_cast<i16*>(Object) = (i16)Field->text().toInt();
+		Field->setValidator(IntValidator);
 		break;
 
 	case RTTI::eCorePropertyType::INT32:
 		*reinterpret_cast<i32*>(Object) = (i32)Field->text().toInt();
+		Field->setValidator(IntValidator);
 		break;
 
 	case RTTI::eCorePropertyType::INT64:
 		*reinterpret_cast<i64*>(Object) = (i64)Field->text().toInt();
+		Field->setValidator(IntValidator);
 		break;
 
 	case RTTI::eCorePropertyType::UINT8:
 		*reinterpret_cast<u8*>(Object) = (u8)Field->text().toInt();
+		Field->setValidator(UIntValidator);
 		break;
 
 	case RTTI::eCorePropertyType::UINT16:
 		*reinterpret_cast<u16*>(Object) = (u16)Field->text().toInt();
+		Field->setValidator(UIntValidator);
 		break;
 
 	case RTTI::eCorePropertyType::UINT32:
 		*reinterpret_cast<u32*>(Object) = (u32)Field->text().toInt();
+		Field->setValidator(UIntValidator);
 		break;
 
 	case RTTI::eCorePropertyType::UINT64:
 		*reinterpret_cast<u64*>(Object) = (u64)Field->text().toInt();
+		Field->setValidator(UIntValidator);
 		break;
 
 	case RTTI::eCorePropertyType::FLOAT:
 		*reinterpret_cast<f32*>(Object) = (f32)Field->text().toFloat();
+		Field->setValidator(FloatValidator);
 		break;
 
 	case RTTI::eCorePropertyType::DOUBLE:
 		*reinterpret_cast<f64*>(Object) = (f64)Field->text().toDouble();
+		Field->setValidator(FloatValidator);
 		break;
 
 	case RTTI::eCorePropertyType::ANGLE:
 		*reinterpret_cast<Angle*>(Object) = Angle::FromDegrees((f32)Field->text().toDouble());
+		Field->setValidator(FloatValidator);
 		break;
 
 	default:
