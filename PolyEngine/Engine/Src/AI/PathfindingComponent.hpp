@@ -28,7 +28,7 @@ namespace Poly
 		RTTI_DECLARE_TYPE_DERIVED(PathfindingComponent, ComponentBase)
 		{
 			RTTI_PROPERTY_AUTONAME(CalculatedPath, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(CurentDestination, RTTI::ePropertyFlag::NONE);
+			//RTTI_PROPERTY_AUTONAME(CurentDestination, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(RecalculateRequested, RTTI::ePropertyFlag::DONT_SERIALIZE);
 			RTTI_PROPERTY_AUTONAME(LastPathSearchFailed, RTTI::ePropertyFlag::DONT_SERIALIZE);
 		}
