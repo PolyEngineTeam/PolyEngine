@@ -32,6 +32,10 @@ MeshResource::MeshResource(const String& path)
 		max = Vector::Max(max, SubMeshes[i]->GetAABox().GetMax());
 	}
 
+	for (size_t i = 0; i < scene->mNumAnimations; ++i) {
+		Animations.PushBack(new Animation(scene->mAnimations[i]));
+	}
+
 	AxisAlignedBoundingBox = AABox(min, max - min);
 }
 
@@ -41,11 +45,16 @@ MeshResource::~MeshResource()
 	{
 		delete subMesh;
 	}
+	for (Animation* animation : Animations)
+	{
+		delete animation;
+	}
 }
 
 MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* material)
 {
 	LoadGeometry(mesh);
+	LoadBones(mesh);
 	
 	MeshData.EmissiveMap			= LoadTexture(material, path, (unsigned int)aiTextureType_EMISSIVE,		eTextureUsageType::EMISSIVE);
 	MeshData.AlbedoMap				= LoadTexture(material, path, (unsigned int)aiTextureType_DIFFUSE,		eTextureUsageType::ALBEDO);
@@ -53,6 +62,21 @@ MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* mat
 	MeshData.RoughnessMap			= LoadTexture(material, path, (unsigned int)aiTextureType_SHININESS,	eTextureUsageType::ROUGHNESS);
 	MeshData.NormalMap				= LoadTexture(material, path, (unsigned int)aiTextureType_HEIGHT,		eTextureUsageType::NORMAL);
 	MeshData.AmbientOcclusionMap	= LoadTexture(material, path, (unsigned int)aiTextureType_AMBIENT,		eTextureUsageType::AMBIENT_OCCLUSION);
+}
+
+void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
+{
+	if (mesh->HasBones())
+	{
+		for (size_t i = 0; i < mesh->mNumBones; ++i)
+		{
+			Bones.PushBack({ String(mesh->mBones[i]->mName.C_Str()) });
+		}
+	}
+	else
+	{
+		gConsole.LogWarning("No bones");
+	}
 }
 
 void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
@@ -160,4 +184,32 @@ TextureResource* MeshResource::SubMesh::LoadTexture(const aiMaterial* material, 
 	}
 
 	return texture;
+}
+
+Poly::MeshResource::Animation::Animation(aiAnimation * anim)
+{
+	Duration = (float)anim->mDuration;
+	TicksPerSecond = (float)anim->mTicksPerSecond;
+
+	for (size_t i = 0; i < anim->mNumChannels; ++i)
+	{
+		Channel c;
+		c.Name = String(anim->mChannels[i]->mNodeName.C_Str());
+		for (size_t j = 0; j < anim->mChannels[i]->mNumPositionKeys; ++j)
+		{
+			Vector vector = { anim->mChannels[i]->mPositionKeys[j].mValue.x, anim->mChannels[i]->mPositionKeys[j].mValue.y, anim->mChannels[i]->mPositionKeys[j].mValue.z };
+			c.Positions.PushBack({ vector, (float)anim->mChannels[i]->mPositionKeys[j].mTime });
+		}
+		for (size_t j = 0; j < anim->mChannels[i]->mNumRotationKeys; ++j)
+		{
+			Quaternion q = { anim->mChannels[i]->mRotationKeys[j].mValue.x, anim->mChannels[i]->mRotationKeys[j].mValue.y, anim->mChannels[i]->mRotationKeys[j].mValue.z, anim->mChannels[i]->mRotationKeys[j].mValue.w };
+			c.Rotations.PushBack({ q, (float)anim->mChannels[i]->mRotationKeys[j].mTime });
+		}
+		for (size_t j = 0; j < anim->mChannels[i]->mNumScalingKeys; ++j)
+		{
+			Vector vector = { anim->mChannels[i]->mScalingKeys[j].mValue.x, anim->mChannels[i]->mScalingKeys[j].mValue.y, anim->mChannels[i]->mScalingKeys[j].mValue.z };
+			c.Scales.PushBack({ vector, (float)anim->mChannels[i]->mScalingKeys[j].mTime });
+		}
+		channels.PushBack(std::move(c));
+	}
 }
