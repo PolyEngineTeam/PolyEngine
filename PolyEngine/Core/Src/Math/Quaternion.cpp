@@ -57,19 +57,35 @@ Vector Quaternion::operator*(const Vector& rhs) const {
 }
 
 //------------------------------------------------------------------------------
-Quaternion Poly::Quaternion::LookAt(const Vector& pos, const Vector& target, const Vector& up)
+Quaternion Poly::Quaternion::LookAt(const Vector& pos, const Vector& target, const Vector& oldUp)
 {
 	Vector forward = (target - pos).Normalize();
-	float dot = forward.Dot(-Vector::UNIT_Z);
+	Vector side = forward.Cross(oldUp).Normalize();
+	Vector up = side.Cross(forward).Normalize();
 
-	if (Cmpf(dot, 1.0f))
-		return Quaternion::IDENTITY;
-	if (Cmpf(dot, -1.0f))
-		return Quaternion(up, 180_deg);
-	Quaternion q;
-	Angle rotAngle = Acos(dot);
-	Vector rotAxis = (-Vector::UNIT_Z).Cross(forward).Normalize();
-	return Quaternion(rotAxis, rotAngle);
+	Matrix m;
+	m.Data[0] = side.Data[0];
+	m.Data[4] = side.Data[1];
+	m.Data[8] = side.Data[2];
+	m.Data[12] = 0.0;
+	// --------------------
+	m.Data[1] = up.Data[0];
+	m.Data[5] = up.Data[1];
+	m.Data[9] = up.Data[2];
+	m.Data[13] = 0.0;
+	// --------------------
+	m.Data[2] = -forward.Data[0];
+	m.Data[6] = -forward.Data[1];
+	m.Data[10] = -forward.Data[2];
+	m.Data[14] = 0.0;
+	// --------------------
+	m.Data[3] = m.Data[7] = m.Data[11] = 0.0;
+	m.Data[15] = 1.0;
+
+	Vector v, s;
+	Quaternion rot;
+	m.Decompose(v, rot, s);
+	return rot;
 }
 
 //------------------------------------------------------------------------------
