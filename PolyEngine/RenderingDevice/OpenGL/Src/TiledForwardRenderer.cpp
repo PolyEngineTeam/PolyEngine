@@ -191,6 +191,8 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 
 	EditorDebugShader.RegisterUniform("mat4", "uMVP");
 
+	GammaShader.RegisterUniform("sampler2D", "uSplashImage");
+	GammaShader.RegisterUniform("vec4", "uSplashTint");
 	GammaShader.RegisterUniform("sampler2D", "uImage");
 	GammaShader.RegisterUniform("float", "uTime");
 	GammaShader.RegisterUniform("vec4", "uRes");
@@ -218,6 +220,8 @@ void TiledForwardRenderer::Init()
 
 	SetupLightsBufferFromScene();
 
+	Splash = ResourceManager<TextureResource>::Load("Textures/splash_00.png", eResourceSource::ENGINE, eTextureUsageType::ALBEDO);
+
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -243,6 +247,11 @@ void TiledForwardRenderer::Deinit()
 	DeleteLightBuffers();
 
 	DeleteRenderTargets();
+
+	if (Splash)
+	{
+		ResourceManager<TextureResource>::Release(Splash);
+	}
 }
 
 void TiledForwardRenderer::CapturePreintegratedBRDF()
@@ -1205,6 +1214,8 @@ void TiledForwardRenderer::PostGamma(const SceneView& sceneView)
 
 	GammaShader.BindProgram();
 	GammaShader.BindSampler("uImage", 0, PostColorBuffer0);
+	GammaShader.BindSampler("uSplashImage", 1, Splash->GetTextureProxy()->GetResourceID());
+	GammaShader.SetUniform("uSplashTint", Color(1.0f, 0.0f, 0.0f, 1.0f) * 0.8f);
 	GammaShader.SetUniform("uTime", time);
 	GammaShader.SetUniform("uRes", Vector((float)screenSize.Width, (float)screenSize.Height, 1.0f / screenSize.Width, 1.0f / screenSize.Height));
 	GammaShader.SetUniform("uTint", tint);

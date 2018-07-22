@@ -4,7 +4,8 @@
 in vec2 vUV;
 
 uniform sampler2D uImage;
-
+uniform sampler2D uSplashImage;
+uniform vec4 uSplashTint;
 uniform float uTime;
 uniform vec4 uRes;
 uniform vec4 uTint;
@@ -46,8 +47,17 @@ void main()
 {
     vec2 p = 1. - 2. * vUV;
     p.y *= uRes.y / uRes.x;
-   
+
+    vec2 splashUV = vUV;
+    splashUV *= 5.0;
+    splashUV.y += 0.1;
+    
+    float maskX = step(splashUV.x, 1.0) * step(0.0, splashUV.x);
+    float maskY = step(splashUV.y, 1.0) * step(0.0, splashUV.y);
+
     vec4 image = texture(uImage, vUV);
+    vec4 splash = texture(uSplashImage, splashUV);
+    // vec4 splash = texture(uSplashImage, vUV);
 	vec3 color = ca(uImage, vUV, image, uAbberationScale);
     
 	float vignette = 1.25 / (1.1 + 1.1 * dot(p, p));
@@ -57,5 +67,8 @@ void main()
     color = mix(color, color * vignette, uVignetteScale) + noise;
 
     vec3 result = pow(color.rgb * uTint.rgb, vec3(1.0 / uGamma));
+
+    // result.rgb = vec3(splash.a);
+    result = mix(result.rgb, uSplashTint.rgb, splash.r * maskX * maskY);
     oColor = vec4(result, 1.0);
 }
