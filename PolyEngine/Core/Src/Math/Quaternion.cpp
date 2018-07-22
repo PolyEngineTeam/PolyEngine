@@ -79,28 +79,33 @@ Quaternion Poly::Quaternion::Lerp(const Quaternion& q1, const Quaternion& q2, fl
 }
 
 //------------------------------------------------------------------------------
-Quaternion Poly::Quaternion::Slerp(const Quaternion& q1, Quaternion q2, float t)
+Quaternion Poly::Quaternion::Slerp(const Quaternion& q1, const Quaternion& q2, float t)
 {
+	HEAVY_ASSERTE(t >= 0.f && t <= 1.f, "Invalid slerp time!");
+
 	// Calculate angle between them.
-	float cosHalfTheta = q1.W * q2.W + q1.X * q2.X + q1.Y * q2.Y + q1.Z * q2.Z;
-	
-	// if q1=q2 or q1=-q2 then theta = 0 and we can return q1
-	if (Cmpf(cosHalfTheta, 1.f)) {
-		return q1;
-	}
-	// Calculate temporary values.
-	Angle halfTheta = Acos(cosHalfTheta);
-	float sinHalfTheta = sqrt(1.0f - cosHalfTheta*cosHalfTheta);
-	// if theta = 180 degrees then result is not fully defined
-	// we could rotate around any axis normal to q1 or q2
-	if (Cmpf(sinHalfTheta, 0.f))
-	{ // fabs is floating point absolute
-		return Quaternion::Lerp(q1, q2, 0.5f);
+	const float rawCosHalfTheta = q1.W * q2.W + q1.X * q2.X + q1.Y * q2.Y + q1.Z * q2.Z;
+
+	// Quaternions are unaligned, we need to flip it so we perform the shorter rotation
+	const float cosHalfTheta = rawCosHalfTheta >= 0 ? rawCosHalfTheta : -rawCosHalfTheta;
+
+	// Default to Lerp in case something goes wrong
+	float ratioA = 1.0f - t;
+	float ratioB = t;
+
+	// Correct slerp situation, calc slerp ratios
+	if(cosHalfTheta < 1.f - CMPF_EPS)
+	{
+		const Angle halfTheta = Acos(cosHalfTheta);
+		const float invSinHalfTheta = 1.0f / Sin(halfTheta);
+		ratioA = Sin(halfTheta * (1.0f - t)) * invSinHalfTheta;
+		ratioB = Sin(halfTheta * t) * invSinHalfTheta;
 	}
 
-	float ratioA = Sin(halfTheta * (1.0f - t)) / sinHalfTheta;
-	float ratioB = Sin(halfTheta * t) / sinHalfTheta;
-	//calculate Quaternion.
+	// Stick to flipped CosHalfTheta
+	ratioB = rawCosHalfTheta >= 0 ? ratioB :-ratioB;
+
+	// Calculate resulting Quaternion.
 	Quaternion q;
 	q.W = (q1.W * ratioA + q2.W * ratioB);
 	q.X = (q1.X * ratioA + q2.X * ratioB);
