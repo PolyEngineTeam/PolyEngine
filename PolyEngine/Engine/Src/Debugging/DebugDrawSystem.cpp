@@ -253,13 +253,13 @@ void Poly::DebugDrawSystem::DrawBox(Scene * world, const AABox & box, const Colo
 	DrawBox(world, box.GetMin(), box.GetMax(), color);
 }
 
-void Poly::DebugDrawSystem::DrawFrustum(Scene* world, const Frustum& frust, const Color& color, bool withNormals)
+void Poly::DebugDrawSystem::DrawFrustum(Scene* world, const Frustum& frust, const Vector& pos, const Quaternion& rot, const Color& color, bool withNormals)
 {
 	const Quaternion rY = Quaternion(Vector::UNIT_Y, (frust.GetFov() / 2) * frust.GetAspect());
 	const Quaternion rX = Quaternion(Vector::UNIT_X, (frust.GetFov() / 2));
 
-	const Vector origin = Vector::ZERO;
-	const Vector lookDir = -Vector::UNIT_Z;
+	const Vector origin = pos;
+	const Vector lookDir = rot * -Vector::UNIT_Z;
 
 	std::array<Vector, 4> v;
 	v[0] = rY * rX * lookDir;
@@ -293,12 +293,12 @@ void Poly::DebugDrawSystem::DrawFrustum(Scene* world, const Frustum& frust, cons
 
 	if (withNormals)
 	{
-		DrawArrow(world, (n[0] + n[1] + f[0] + f[1]) / 4, frust.GetPlanes()[eFrustumPlane::LEFT].GetNormal(), color);
-		DrawArrow(world, (n[1] + n[2] + f[1] + f[2]) / 4, frust.GetPlanes()[eFrustumPlane::UP].GetNormal(), color);
-		DrawArrow(world, (n[2] + n[3] + f[2] + f[3]) / 4, frust.GetPlanes()[eFrustumPlane::RIGHT].GetNormal(), color);
-		DrawArrow(world, (n[3] + n[0] + f[3] + f[0]) / 4, frust.GetPlanes()[eFrustumPlane::DOWN].GetNormal(), color);
-		DrawArrow(world, origin + lookDir * frust.GetZNear(), frust.GetPlanes()[eFrustumPlane::ZNEAR].GetNormal(), color);
-		DrawArrow(world, origin + lookDir * frust.GetZFar(), frust.GetPlanes()[eFrustumPlane::ZFAR].GetNormal(), color);
+		DrawArrow(world, (n[0] + n[1] + f[0] + f[1]) / 4, rot * frust.GetPlanes()[eFrustumPlane::LEFT].GetNormal(), color);
+		DrawArrow(world, (n[1] + n[2] + f[1] + f[2]) / 4, rot * frust.GetPlanes()[eFrustumPlane::UP].GetNormal(), color);
+		DrawArrow(world, (n[2] + n[3] + f[2] + f[3]) / 4, rot * frust.GetPlanes()[eFrustumPlane::RIGHT].GetNormal(), color);
+		DrawArrow(world, (n[3] + n[0] + f[3] + f[0]) / 4, rot * frust.GetPlanes()[eFrustumPlane::DOWN].GetNormal(), color);
+		DrawArrow(world, origin + lookDir * frust.GetZNear(), rot * frust.GetPlanes()[eFrustumPlane::ZNEAR].GetNormal(), color);
+		DrawArrow(world, origin + lookDir * frust.GetZFar(), rot * frust.GetPlanes()[eFrustumPlane::ZFAR].GetNormal(), color);
 	}
 }
 

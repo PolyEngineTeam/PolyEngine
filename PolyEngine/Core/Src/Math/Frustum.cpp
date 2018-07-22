@@ -41,14 +41,14 @@ void Poly::Frustum::Update(Angle fov, float aspect, float zNear, float zFar)
 	Planes[eFrustumPlane::DOWN] = Plane(Vector::ZERO, downNorm);
 }
 
-Frustum::eObjectLocation Frustum::GetObjectLocation(const AABox& box, const Matrix& frustumTransformation) const
+Frustum::eObjectLocation Frustum::GetObjectLocation(const AABox& box, const Matrix& boxToFrustumTransformation) const
 {
-	AABox transformedBox = box.GetTransformed(frustumTransformation.GetInversed());
+	AABox transformedBox = box.GetTransformed(boxToFrustumTransformation);
 	bool atLeastOneIntersects = false;
 	for (eFrustumPlane type : IterateEnum<eFrustumPlane>())
 	{
 		const Plane& plane = Planes[type];
-		Plane::eObjectLocation loc = plane.GetAABoxLocation(box);
+		Plane::eObjectLocation loc = plane.GetAABoxLocation(transformedBox);
 
 		if (loc == Plane::eObjectLocation::BEHIND)
 			return eObjectLocation::OUTSIDE;
