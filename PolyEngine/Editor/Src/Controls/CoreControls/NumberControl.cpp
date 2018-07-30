@@ -70,57 +70,46 @@ void NumberControl::UpdateObject()
 	{
 	case RTTI::eCorePropertyType::INT8:
 		*reinterpret_cast<i8*>(Object) = (i8)Field->text().toInt();
-		Field->setValidator(IntValidator);
 		break;
 
 	case RTTI::eCorePropertyType::INT16:
 		*reinterpret_cast<i16*>(Object) = (i16)Field->text().toInt();
-		Field->setValidator(IntValidator);
 		break;
 
 	case RTTI::eCorePropertyType::INT32:
 		*reinterpret_cast<i32*>(Object) = (i32)Field->text().toInt();
-		Field->setValidator(IntValidator);
 		break;
 
 	case RTTI::eCorePropertyType::INT64:
 		*reinterpret_cast<i64*>(Object) = (i64)Field->text().toInt();
-		Field->setValidator(IntValidator);
 		break;
 
 	case RTTI::eCorePropertyType::UINT8:
 		*reinterpret_cast<u8*>(Object) = (u8)Field->text().toInt();
-		Field->setValidator(UIntValidator);
 		break;
 
 	case RTTI::eCorePropertyType::UINT16:
 		*reinterpret_cast<u16*>(Object) = (u16)Field->text().toInt();
-		Field->setValidator(UIntValidator);
 		break;
 
 	case RTTI::eCorePropertyType::UINT32:
 		*reinterpret_cast<u32*>(Object) = (u32)Field->text().toInt();
-		Field->setValidator(UIntValidator);
 		break;
 
 	case RTTI::eCorePropertyType::UINT64:
 		*reinterpret_cast<u64*>(Object) = (u64)Field->text().toInt();
-		Field->setValidator(UIntValidator);
 		break;
 
 	case RTTI::eCorePropertyType::FLOAT:
 		*reinterpret_cast<f32*>(Object) = (f32)Field->text().toFloat();
-		Field->setValidator(FloatValidator);
 		break;
 
 	case RTTI::eCorePropertyType::DOUBLE:
 		*reinterpret_cast<f64*>(Object) = (f64)Field->text().toDouble();
-		Field->setValidator(FloatValidator);
 		break;
 
 	case RTTI::eCorePropertyType::ANGLE:
 		*reinterpret_cast<Angle*>(Object) = Angle::FromDegrees((f32)Field->text().toDouble());
-		Field->setValidator(FloatValidator);
 		break;
 
 	default:
@@ -184,46 +173,57 @@ void NumberControl::Confirm()
 	{
 	case RTTI::eCorePropertyType::INT8:
 		UPDATE_OBJECT(i8, (i8)Field->text().toInt())
+			Field->setValidator(IntValidator);
 			break;
 
 	case RTTI::eCorePropertyType::INT16:
 		UPDATE_OBJECT(i16, (i16)Field->text().toInt())
+			Field->setValidator(IntValidator);
 			break;
 
 	case RTTI::eCorePropertyType::INT32:
 		UPDATE_OBJECT(i32, (i32)Field->text().toInt())
+			Field->setValidator(IntValidator);
 			break;
 
 	case RTTI::eCorePropertyType::INT64:
 		UPDATE_OBJECT(i64, (i64)Field->text().toInt())
+			Field->setValidator(IntValidator);
 			break;
 
 	case RTTI::eCorePropertyType::UINT8:
 		UPDATE_OBJECT(u8, (u8)Field->text().toInt())
+			Field->setValidator(UIntValidator);
 			break;
 
 	case RTTI::eCorePropertyType::UINT16:
 		UPDATE_OBJECT(u16, (u16)Field->text().toInt())
+			Field->setValidator(UIntValidator);
 			break;
 
 	case RTTI::eCorePropertyType::UINT32:
 		UPDATE_OBJECT(u32, (u32)Field->text().toInt())
+			Field->setValidator(UIntValidator);
 			break;
 
 	case RTTI::eCorePropertyType::UINT64:
 		UPDATE_OBJECT(u64, (u64)Field->text().toInt())
+			Field->setValidator(UIntValidator);
 			break;
 
 	case RTTI::eCorePropertyType::FLOAT:
 		UPDATE_OBJECT(f32, (f32)Field->text().toFloat())
+			Field->setValidator(FloatValidator);
 			break;
 
 	case RTTI::eCorePropertyType::DOUBLE:
 		UPDATE_OBJECT(f64, (f64)Field->text().toDouble())
+			Field->setValidator(FloatValidator);
 			break;
 
 	case RTTI::eCorePropertyType::ANGLE:
 		UPDATE_OBJECT(Angle, Angle::FromDegrees((f32)Field->text().toDouble()))
+			Field->setValidator(FloatValidator);
 			break;
 
 	default:
