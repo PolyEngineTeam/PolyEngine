@@ -83,8 +83,8 @@ namespace Poly
 			RTTI::TypeInfo typeinfo = RTTI::TypeInfo::Get<T>();
 			TypeToIDMap.insert({ typeinfo, id });
 			IDToTypeMap.insert({ id, typeinfo});
-			//IDToCreatorMap.insert({id,
-			//	[](size_t count) { return static_cast<IterablePoolAllocatorBase*>(new IterablePoolAllocator<T>(count)); } });
+			IDToCreatorMap.insert({id,
+				[](size_t count) { return static_cast<IterablePoolAllocatorBase*>(new IterablePoolAllocator<T>(count)); } });
 		}
 
 		Optional<size_t> GetComponentID(const RTTI::TypeInfo& typeinfo) const;
@@ -95,7 +95,7 @@ namespace Poly
 	private:
 		std::map<RTTI::TypeInfo, size_t> TypeToIDMap;
 		std::map < size_t, RTTI::TypeInfo> IDToTypeMap;
-		//std::map < size_t, std::function<IterablePoolAllocatorBase*(size_t)>> IDToCreatorMap;
+		std::map < size_t, std::function<IterablePoolAllocatorBase*(size_t)>> IDToCreatorMap;
 	};
 }
 

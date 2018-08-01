@@ -38,8 +38,8 @@ Dynarray<std::pair<RTTI::TypeInfo, size_t>> Poly::ComponentManager::GetComponent
 
 IterablePoolAllocatorBase* Poly::ComponentManager::CreateAllocator(size_t id, size_t componentCount) const
 {
-	//const auto& it = IDToCreatorMap.find(id);
-	//if (it == IDToCreatorMap.end())
+	const auto& it = IDToCreatorMap.find(id);
+	if (it == IDToCreatorMap.end())
 		return nullptr;
-	//return it->second(componentCount);
+	return it->second(componentCount);
 }

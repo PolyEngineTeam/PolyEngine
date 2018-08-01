@@ -7,6 +7,7 @@
 #include "Collections/String.hpp"
 #include "Collections/Dynarray.hpp"
 #include "RTTI/CustomTypeTraits.hpp"
+#include "Utils/Logger.hpp"
 
 #include <functional>
 #include <initializer_list>

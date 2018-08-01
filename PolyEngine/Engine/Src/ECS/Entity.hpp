@@ -7,6 +7,7 @@
 #include "ECS/EntityTransform.hpp"
 #include "Engine.hpp"
 #include "Collections/Dynarray.hpp"
+#include "ECS/ComponentIDGenerator.hpp"
 
 namespace Poly
 {

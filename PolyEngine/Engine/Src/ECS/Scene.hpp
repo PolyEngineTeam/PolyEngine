@@ -73,6 +73,7 @@ namespace Poly {
 			HEAVY_ASSERTE(componentID < MAX_COMPONENTS_COUNT, "Invalid component ID");
 			if (ComponentAllocators[componentID] == nullptr)
 				ComponentAllocators[componentID] = ComponentManager::Get().CreateAllocator(componentID, MAX_ENTITY_COUNT);
+			HEAVY_ASSERTE(ComponentAllocators[componentID], "Component allocator not created!");
 			return ComponentAllocators[componentID];
 		}
 		ComponentDeleter& GetComponentDeleter() { return ComponentDel; }
