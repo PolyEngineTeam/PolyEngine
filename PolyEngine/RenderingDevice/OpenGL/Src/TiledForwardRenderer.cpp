@@ -492,7 +492,8 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 	
 	RenderDepthPrePass(sceneView);
 	
-	ComputeLightCulling(sceneView);
+	// commented out because of problems with nvoglv64.dll
+	//ComputeLightCulling(sceneView);
 	
 	RenderOpaqueLit(sceneView);
 	
