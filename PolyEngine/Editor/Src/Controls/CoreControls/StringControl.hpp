@@ -5,7 +5,7 @@
 #include <QtWidgets/qlineedit.h>
 #include <QtWidgets/qgridlayout.h>
 
-class StringControl : public ControlBase
+class StringControl : public IControlBase
 {
 public:
 	StringControl(QWidget* parent);

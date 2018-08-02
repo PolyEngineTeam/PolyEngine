@@ -4,10 +4,10 @@
 
 using namespace Poly;
 
-class EnumControl : public ControlBase
+class EnumControl : public IControlBase
 {
 public:
-	EnumControl(QWidget* parent) : ControlBase(parent) {}
+	EnumControl(QWidget* parent) : IControlBase(parent) {}
 
 	void Reset() override;
 

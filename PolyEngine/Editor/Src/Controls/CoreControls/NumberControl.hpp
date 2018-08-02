@@ -4,7 +4,7 @@
 
 #include <QtWidgets/qlineedit.h>
 
-class NumberControl : public ControlBase
+class NumberControl : public IControlBase
 {
 public:
 	NumberControl(QWidget* parent);

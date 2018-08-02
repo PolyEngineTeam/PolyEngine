@@ -6,7 +6,7 @@
 #include <QtWidgets/qlabel.h>
 #include <QtWidgets/qgridlayout.h>
 
-class Vector2Control : public ControlBase
+class Vector2Control : public IControlBase
 {
 public:
 	Vector2Control(QWidget* parent);

@@ -6,7 +6,7 @@
 
 //------------------------------------------------------------------------------
 MeshResourceControl::MeshResourceControl(QWidget* parent)
-	: ControlBase(parent)
+	: IControlBase(parent)
 { 
 	Layout = new QGridLayout(this);
 	Layout->setSpacing(0);
@@ -48,7 +48,7 @@ MeshResourceControl::MeshResourceControl(QWidget* parent)
 //------------------------------------------------------------------------------
 void MeshResourceControl::Reset()
 {
-	ControlBase::Reset();
+	IControlBase::Reset();
 	Field->setText("");
 }
 

@@ -37,14 +37,14 @@ ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::ANGLE, ANGLE)
 
 //------------------------------------------------------------------------------
 NumberControl::NumberControl(QWidget* parent)
-	: ControlBase(parent)
+	: IControlBase(parent)
 {
 	Layout = new QGridLayout(this);
 	Layout->setSpacing(0);
 	Layout->setContentsMargins(0, 0, 0, 0);
 
 	Field = new QLineEdit(this);
-	connect(Field, &QLineEdit::editingFinished, this, &ControlBase::Confirm);
+	connect(Field, &QLineEdit::editingFinished, this, &IControlBase::Confirm);
 
 	Layout->addWidget(Field);
 

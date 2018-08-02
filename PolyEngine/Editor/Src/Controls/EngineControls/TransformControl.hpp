@@ -6,7 +6,7 @@
 #include <QtWidgets/qlabel.h>
 #include <QtWidgets/qgridlayout.h>
 
-class TransformControl : public ControlBase
+class TransformControl : public IControlBase
 {
 public:
 	TransformControl(QWidget* parent);

@@ -22,7 +22,7 @@ ASSIGN_CONTROL(Vector3Control, RTTI::eCorePropertyType::QUATERNION, Quaternion)
 	emit ObjectUpdated(cmd);
 
 //------------------------------------------------------------------------------
-Vector3Control::Vector3Control(QWidget* parent) : ControlBase(parent)
+Vector3Control::Vector3Control(QWidget* parent) : IControlBase(parent)
 {
 	Layout = new QGridLayout(this);
 

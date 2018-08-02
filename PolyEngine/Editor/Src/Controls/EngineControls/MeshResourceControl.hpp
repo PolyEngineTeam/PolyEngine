@@ -5,7 +5,7 @@
 #include <QtWidgets/qlineedit.h>
 #include <QtWidgets/qgridlayout.h>
 
-class MeshResourceControl : public ControlBase
+class MeshResourceControl : public IControlBase
 {
 public:
 	MeshResourceControl(QWidget* parent);

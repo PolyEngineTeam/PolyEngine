@@ -6,14 +6,14 @@ ASSIGN_CONTROL(BoolControl, RTTI::eCorePropertyType::BOOL, BOOL)
 
 //------------------------------------------------------------------------------
 BoolControl::BoolControl(QWidget* parent)
-	: ControlBase(parent)
+	: IControlBase(parent)
 {
 	Layout = new QGridLayout(this);
 	Layout->setSpacing(0);
 	Layout->setContentsMargins(0, 0, 0, 0);
 
 	Button = new QPushButton(this);
-	connect(Button, &QPushButton::clicked, this, &ControlBase::Confirm);
+	connect(Button, &QPushButton::clicked, this, &IControlBase::Confirm);
 	Layout->addWidget(Button);
 
 	Machine = new QStateMachine(this);

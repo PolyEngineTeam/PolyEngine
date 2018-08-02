@@ -6,14 +6,14 @@ ASSIGN_CONTROL(StringControl, RTTI::eCorePropertyType::STRING, STRING)
 
 //------------------------------------------------------------------------------
 StringControl::StringControl(QWidget* parent)
-	: ControlBase(parent)
+	: IControlBase(parent)
 {
 	Layout = new QGridLayout(this);
 	Layout->setSpacing(0);
 	Layout->setContentsMargins(0, 0, 0, 0);
 
 	Field = new QLineEdit();
-	connect(Field, &QLineEdit::editingFinished, this, &ControlBase::Confirm);
+	connect(Field, &QLineEdit::editingFinished, this, &IControlBase::Confirm);
 
 	Layout->addWidget(Field);
 

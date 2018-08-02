@@ -1,7 +1,7 @@
 #include "PolyEditorPCH.hpp"
 
 TransformControl::TransformControl(QWidget* parent)
-	: ControlBase(parent)
+	: IControlBase(parent)
 {
 	// TODO(squares): write proper validator
 

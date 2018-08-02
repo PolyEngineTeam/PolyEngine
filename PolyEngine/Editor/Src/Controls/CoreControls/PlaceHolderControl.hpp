@@ -5,7 +5,7 @@
 #include <QtWidgets/qgridlayout.h>
 #include <QtWidgets/qlineedit.h>
 
-class PlaceHolderControl : public ControlBase
+class PlaceHolderControl : public IControlBase
 {
 public:
 	PlaceHolderControl(QWidget* parent);

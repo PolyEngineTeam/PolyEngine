@@ -7,7 +7,7 @@
 
 class Command;
 
-class BoolControl : public ControlBase
+class BoolControl : public IControlBase
 {
 public:
 	BoolControl(QWidget* parent);

@@ -24,7 +24,7 @@ ASSIGN_CONTROL(Vector2Control, RTTI::eCorePropertyType::VECTOR_2I, Vector2i)
 	emit ObjectUpdated(cmd);
 
 //------------------------------------------------------------------------------
-Vector2Control::Vector2Control(QWidget* parent) : ControlBase(parent)
+Vector2Control::Vector2Control(QWidget* parent) : IControlBase(parent)
 {
 	Layout = new QGridLayout(this);
 

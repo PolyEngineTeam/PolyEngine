@@ -9,13 +9,13 @@
 
 using namespace Poly;
 
-class ControlBase;
+class IControlBase;
 class Command;
 
 namespace Impl
 {
 	// @TODO(squares): use using
-	typedef ControlBase* (*ControlCreatorPtr)(QWidget* parent);
+	typedef IControlBase* (*ControlCreatorPtr)(QWidget* parent);
 
 	// ControlCreator stores pointer to function that creates and returns pointer to 
 	// an object of particular control. This method is called with operator().
@@ -34,7 +34,7 @@ namespace Impl
 		ControlCreator(ControlCreatorPtr ptr) : Ptr(ptr) {}
 
 		// @param parent - parent for newly created control.
-		ControlBase* operator()(QWidget* parent) { return Ptr(parent); };
+		IControlBase* operator()(QWidget* parent) { return Ptr(parent); };
 
 		// We need to override placement new because we want to add this object to array so we can easily 
 		// map from type enum to control creators but firstly this array must be initialized and all
@@ -52,12 +52,12 @@ namespace Impl
 
 // This is base class for all controls for core types such as int, string or vector.
 // @see Poly::RTTI::eCorePropertyType
-class ControlBase : public QWidget
+class IControlBase : public QWidget
 {
 	Q_OBJECT
 
 public:
-	ControlBase(QWidget* parent) : QWidget(parent) {}
+	IControlBase(QWidget* parent) : QWidget(parent) {}
 
 	// Sets object assigned to control and updates this control.
 	// @see ControlBase::UpdateControl;
@@ -91,7 +91,7 @@ public:
 	virtual void Confirm() {};
 
 	// Returns ptr to newly created proper control for given core type.
-	static ControlBase* CreateControl(QWidget* parent, RTTI::eCorePropertyType type)
+	static IControlBase* CreateControl(QWidget* parent, RTTI::eCorePropertyType type)
 	{ 
 		return ::Impl::CoreTypeToControlMap[static_cast<int>(type)](parent);
 	}
@@ -136,5 +136,5 @@ protected:
 	{ \
 		ControlCreator* CONTROL##Creator##NAME = \
 			new(&::Impl::CoreTypeToControlMap[static_cast<int>(CORE_TYPE)]) \
-			ControlCreator([](QWidget* parent) -> ControlBase* { return new CONTROL(parent); }); \
+			ControlCreator([](QWidget* parent) -> IControlBase* { return new CONTROL(parent); }); \
 	}

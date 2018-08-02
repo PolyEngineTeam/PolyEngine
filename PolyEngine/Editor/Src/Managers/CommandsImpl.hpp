@@ -67,7 +67,7 @@ public:
 	}
 
 	T* Object;
-	ControlBase* Control;
+	IControlBase* Control;
 	InspectorManager* Manager;
 
 	T* UndoValue;

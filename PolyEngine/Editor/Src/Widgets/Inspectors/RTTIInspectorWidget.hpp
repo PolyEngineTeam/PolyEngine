@@ -5,7 +5,7 @@
 
 #include "Widgets/PolyWidget.hpp"
 
-class ControlBase;
+class IControlBase;
 class SectionContainer;
 class Command;
 
@@ -49,7 +49,7 @@ private:
 
 	QGridLayout* Layout;
 
-	Dynarray<ControlBase*> Fields;
+	Dynarray<IControlBase*> Fields;
 	Dynarray<QLabel*> Labels;
 	Dynarray<SectionContainer*> Sections;
 };
