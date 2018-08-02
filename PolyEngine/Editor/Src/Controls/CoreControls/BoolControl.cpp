@@ -77,7 +77,7 @@ void BoolControl::UpdateControl()
 //------------------------------------------------------------------------------
 void BoolControl::Confirm()
 {
-	if (DisableEdit || InitializationConfirm)
+	if (DisableEdit || InitializationConfirm || *reinterpret_cast<bool*>(Object) == (*Machine->configuration().begin() == True))
 		return;
 
 	ControlCommand<bool>* cmd = new ControlCommand<bool>();

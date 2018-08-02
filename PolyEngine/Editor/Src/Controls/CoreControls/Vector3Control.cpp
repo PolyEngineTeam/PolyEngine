@@ -7,6 +7,9 @@ ASSIGN_CONTROL(Vector3Control, RTTI::eCorePropertyType::COLOR, Color)
 ASSIGN_CONTROL(Vector3Control, RTTI::eCorePropertyType::QUATERNION, Quaternion)
 
 #define UPDATE_OBJECT(T, V)\
+	if (*reinterpret_cast<T*>(Object) == V) \
+		break; \
+\
 	ControlCommand<T>* cmd = new ControlCommand<T>(); \
 	cmd->Object = reinterpret_cast<T*>(Object); \
 	cmd->Control = this; \

@@ -9,6 +9,9 @@ ASSIGN_CONTROL(Vector2Control, RTTI::eCorePropertyType::VECTOR_2F, Vector2f)
 ASSIGN_CONTROL(Vector2Control, RTTI::eCorePropertyType::VECTOR_2I, Vector2i)
 
 #define UPDATE_OBJECT(T, V)\
+	if (*reinterpret_cast<T*>(Object) == V) \
+		break; \
+\
 	ControlCommand<T>* cmd = new ControlCommand<T>(); \
 	cmd->Object = reinterpret_cast<T*>(Object); \
 	cmd->Control = this; \

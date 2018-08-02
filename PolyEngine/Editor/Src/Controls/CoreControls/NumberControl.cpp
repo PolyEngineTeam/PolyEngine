@@ -17,8 +17,11 @@ ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::FLOAT, FLOAT)
 ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::DOUBLE, DOUBLE)
 ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::ANGLE, ANGLE)
 
-#define UPDATE_OBJECT(T, V)\
+#define UPDATE_OBJECT(T, V) \
 { \
+	if (*reinterpret_cast<T*>(Object) == V) \
+		break; \
+\
 	ControlCommand<T>* cmd = new ControlCommand<T>(); \
 	cmd->Object = reinterpret_cast<T*>(Object); \
 	cmd->Control = this; \
