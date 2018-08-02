@@ -16,7 +16,7 @@ public:
 		Layout->setContentsMargins(0, 0, 0, 0);
 
 		Field = new QLineEdit(this);
-		Field->setValidator(new QRegExpValidator(QRegExp("[-,+]{0,1}[0-9]+[.][0-9]+"), 0));
+		//Field->setValidator(new QRegExpValidator(QRegExp("[-,+]{0,1}[0-9]+[.][0-9]+"), 0));
 		connect(Field, &QLineEdit::editingFinished, this, &NumberControl::UpdateObject);
 
 		Layout->addWidget(Field);
