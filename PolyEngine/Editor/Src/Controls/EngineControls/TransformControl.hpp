@@ -1,24 +1,23 @@
 #pragma once
 
-#include "Controls/IControlBase.hpp"
+#include "Controls/ControlBase.hpp"
 
 #include <QtWidgets/qlineedit.h>
 #include <QtWidgets/qlabel.h>
 #include <QtWidgets/qgridlayout.h>
 
-class TransformControl : public IControlBase
+class TransformControl : public ControlBase
 {
 public:
 	TransformControl(QWidget* parent);
 
 	void Reset() override;
 
-	void UpdateObject() override;
 	void UpdateControl() override;
 
 	bool ContainsLabel() override { return true; }
 
-	void Confirm() override {};
+	void Confirm() {};
 
 private:
 	void UodateTranslation();
@@ -34,19 +33,16 @@ private:
 public slots:
 	void ConfirmTranslation()
 	{
-		if (ASAPUpdate)
-			QTimer::singleShot(1, this, [object = this]() { object->UodateTranslation(); });
+		QTimer::singleShot(1, this, [object = this]() { object->UodateTranslation(); });
 	}
 
 	void ConfirmRotation()
 	{
-		if (ASAPUpdate)
-			QTimer::singleShot(1, this, [object = this]() { object->UodateRotation(); });
+		QTimer::singleShot(1, this, [object = this]() { object->UodateRotation(); });
 	}
 
 	void ConfirmScale()
 	{
-		if (ASAPUpdate)
-			QTimer::singleShot(1, this, [object = this]() { object->UodateScale(); });
+		QTimer::singleShot(1, this, [object = this]() { object->UodateScale(); });
 	}
 };

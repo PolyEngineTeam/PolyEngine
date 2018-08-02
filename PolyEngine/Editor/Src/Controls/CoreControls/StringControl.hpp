@@ -1,19 +1,18 @@
 #pragma once
 
-#include "Controls/IControlBase.hpp"
+#include "Controls/ControlBase.hpp"
 
 #include <QtWidgets/qlineedit.h>
 #include <QtWidgets/qgridlayout.h>
 
-class StringControl : public IControlBase
+class StringControl : public ControlBase
 {
 public:
 	StringControl(QWidget* parent);
 
 	void Reset() override;
-	void UpdateObject() override;
 	void UpdateControl() override;
-	void Confirm() override;
+	void Confirm();
 
 	void SetText(String text) { Field->setText(text.GetCStr()); }
 

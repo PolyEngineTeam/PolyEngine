@@ -1,20 +1,19 @@
 #pragma once
 
-#include "Controls/IControlBase.hpp"
+#include "Controls/ControlBase.hpp"
 
 #include <QtWidgets/qlineedit.h>
 #include <QtWidgets/qlabel.h>
 #include <QtWidgets/qgridlayout.h>
 
-class Vector3Control : public IControlBase
+class Vector3Control : public ControlBase
 {
 public:
 	Vector3Control(QWidget* parent);
 
 	void Reset() override;
-	void UpdateObject() override;
 	void UpdateControl() override;
-	void Confirm() override;
+	void Confirm();
 
 private:
 	QGridLayout* Layout;

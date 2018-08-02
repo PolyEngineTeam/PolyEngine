@@ -28,13 +28,6 @@ void RTTIInspectorWidget::SetObject(RTTIBase* obj, bool debug)
 }
 
 //------------------------------------------------------------------------------
-void RTTIInspectorWidget::UpdateObject()
-{
-	for (auto field : Fields)
-		field->UpdateObject();
-}
-
-//------------------------------------------------------------------------------
 void RTTIInspectorWidget::UpdateInspector()
 {
 	for (auto field : Fields)
@@ -119,7 +112,7 @@ void RTTIInspectorWidget::AddItem(QGridLayout* parent, int row, void* ptr, const
 		field = new MeshResourceControl(this);
 	}
 	else
-		field = IControlBase::CreateControl(this, prop.CoreType);
+		field = ControlBase::CreateControl(this, prop.CoreType);
 
 	field->SetObject(ptr, &prop);
 
@@ -133,7 +126,7 @@ void RTTIInspectorWidget::AddItem(QGridLayout* parent, int row, void* ptr, const
 		parent->addWidget(field, row, 1);
 	}
 
-	connect(field, &IControlBase::ObjectUpdated, this, &RTTIInspectorWidget::ControlObjectUpdatedSlot);
+	connect(field, &ControlBase::ObjectUpdated, this, &RTTIInspectorWidget::ControlObjectUpdatedSlot);
 
 	Fields.PushBack(field);
 }

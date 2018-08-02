@@ -1,7 +1,7 @@
 #include "PolyEditorPCH.hpp"
 
 TransformControl::TransformControl(QWidget* parent)
-	: IControlBase(parent)
+	: ControlBase(parent)
 {
 	// TODO(squares): write proper validator
 
@@ -70,13 +70,6 @@ void TransformControl::Reset()
 	ScaleField[0]->setText("");
 	ScaleField[1]->setText("");
 	ScaleField[2]->setText("");
-}
-
-void TransformControl::UpdateObject()
-{
-	UodateTranslation();
-	UodateRotation();
-	UodateScale();
 }
 
 void TransformControl::UpdateControl()

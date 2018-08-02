@@ -60,15 +60,14 @@ public:
 	IControlBase(QWidget* parent) : QWidget(parent) {}
 
 	// Sets object assigned to control and updates this control.
-	// @see ControlBase::UpdateControl;
+	// @see IControlBase::UpdateControl;
 	virtual void SetObject(void* ptr, const RTTI::Property* prop) = 0;
 
 	// Reset control to initial state;
 	virtual void Reset() = 0;
 
 	// Call this to update control state from assigned object.
-	// Unlike ControlBase::UpdateObject You have to call this function by yourself.
-	// @see ControlBase::SetObject;
+	// @see IControlBase::SetObject;
 	virtual void UpdateControl() = 0;
 
 	// If label is set by control this function returns false.

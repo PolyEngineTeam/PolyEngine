@@ -1,21 +1,20 @@
 #pragma once
 
-#include "Controls/IControlBase.hpp"
+#include "Controls/ControlBase.hpp"
 
 #include <QtWidgets/qlineedit.h>
 #include <QtWidgets/qgridlayout.h>
 
-class MeshResourceControl : public IControlBase
+class MeshResourceControl : public ControlBase
 {
 public:
 	MeshResourceControl(QWidget* parent);
 
 	void Reset() override;
 
-	void UpdateObject() override;
 	void UpdateControl() override;
 
-	void Confirm() override;
+	void Confirm();
 
 private:
 	QGridLayout* Layout;

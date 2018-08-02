@@ -6,7 +6,7 @@
 
 //------------------------------------------------------------------------------
 MeshResourceControl::MeshResourceControl(QWidget* parent)
-	: IControlBase(parent)
+	: ControlBase(parent)
 { 
 	Layout = new QGridLayout(this);
 	Layout->setSpacing(0);
@@ -48,12 +48,17 @@ MeshResourceControl::MeshResourceControl(QWidget* parent)
 //------------------------------------------------------------------------------
 void MeshResourceControl::Reset()
 {
-	IControlBase::Reset();
+	ControlBase::Reset();
 	Field->setText("");
 }
 
 //------------------------------------------------------------------------------
-void MeshResourceControl::UpdateObject()
+void MeshResourceControl::UpdateControl()
+{
+}
+
+//------------------------------------------------------------------------------
+void MeshResourceControl::Confirm()
 {
 	eResourceSource source;
 
@@ -77,17 +82,6 @@ void MeshResourceControl::UpdateObject()
 	}
 
 	*reinterpret_cast<MeshResource**>(Object) = ResourceManager<MeshResource>::Load(Field->text().toLatin1().data(), source);
-}
-
-//------------------------------------------------------------------------------
-void MeshResourceControl::UpdateControl()
-{
-}
-
-//------------------------------------------------------------------------------
-void MeshResourceControl::Confirm()
-{
-	UpdateObject();
 }
 
 //------------------------------------------------------------------------------

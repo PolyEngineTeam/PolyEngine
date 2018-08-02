@@ -24,9 +24,6 @@ public:
 	// user even when property is not serialized.
 	void SetObject(RTTIBase* obj, bool debug);
 
-	// Updates object from inspector.
-	void UpdateObject();
-
 	// Update inspector view from object.
 	void UpdateInspector();
 

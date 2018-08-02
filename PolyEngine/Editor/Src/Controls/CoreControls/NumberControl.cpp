@@ -37,14 +37,14 @@ ASSIGN_CONTROL(NumberControl, RTTI::eCorePropertyType::ANGLE, ANGLE)
 
 //------------------------------------------------------------------------------
 NumberControl::NumberControl(QWidget* parent)
-	: IControlBase(parent)
+	: ControlBase(parent)
 {
 	Layout = new QGridLayout(this);
 	Layout->setSpacing(0);
 	Layout->setContentsMargins(0, 0, 0, 0);
 
 	Field = new QLineEdit(this);
-	connect(Field, &QLineEdit::editingFinished, this, &IControlBase::Confirm);
+	connect(Field, &QLineEdit::editingFinished, this, &NumberControl::Confirm);
 
 	Layout->addWidget(Field);
 
@@ -61,63 +61,6 @@ void NumberControl::Reset()
 	Object = nullptr;
 
 	Field->setText("");
-}
-
-//------------------------------------------------------------------------------
-void NumberControl::UpdateObject()
-{
-	if (DisableEdit)
-		return;
-
-	switch (Property->CoreType)
-	{
-	case RTTI::eCorePropertyType::INT8:
-		*reinterpret_cast<i8*>(Object) = (i8)Field->text().toInt();
-		break;
-
-	case RTTI::eCorePropertyType::INT16:
-		*reinterpret_cast<i16*>(Object) = (i16)Field->text().toInt();
-		break;
-
-	case RTTI::eCorePropertyType::INT32:
-		*reinterpret_cast<i32*>(Object) = (i32)Field->text().toInt();
-		break;
-
-	case RTTI::eCorePropertyType::INT64:
-		*reinterpret_cast<i64*>(Object) = (i64)Field->text().toInt();
-		break;
-
-	case RTTI::eCorePropertyType::UINT8:
-		*reinterpret_cast<u8*>(Object) = (u8)Field->text().toInt();
-		break;
-
-	case RTTI::eCorePropertyType::UINT16:
-		*reinterpret_cast<u16*>(Object) = (u16)Field->text().toInt();
-		break;
-
-	case RTTI::eCorePropertyType::UINT32:
-		*reinterpret_cast<u32*>(Object) = (u32)Field->text().toInt();
-		break;
-
-	case RTTI::eCorePropertyType::UINT64:
-		*reinterpret_cast<u64*>(Object) = (u64)Field->text().toInt();
-		break;
-
-	case RTTI::eCorePropertyType::FLOAT:
-		*reinterpret_cast<f32*>(Object) = (f32)Field->text().toFloat();
-		break;
-
-	case RTTI::eCorePropertyType::DOUBLE:
-		*reinterpret_cast<f64*>(Object) = (f64)Field->text().toDouble();
-		break;
-
-	case RTTI::eCorePropertyType::ANGLE:
-		*reinterpret_cast<Angle*>(Object) = Angle::FromDegrees((f32)Field->text().toDouble());
-		break;
-
-	default:
-		ASSERTE(false, "Not supported type");
-	}
 }
 
 //------------------------------------------------------------------------------

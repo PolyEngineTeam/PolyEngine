@@ -22,7 +22,7 @@ ASSIGN_CONTROL(Vector3Control, RTTI::eCorePropertyType::QUATERNION, Quaternion)
 	emit ObjectUpdated(cmd);
 
 //------------------------------------------------------------------------------
-Vector3Control::Vector3Control(QWidget* parent) : IControlBase(parent)
+Vector3Control::Vector3Control(QWidget* parent) : ControlBase(parent)
 {
 	Layout = new QGridLayout(this);
 
@@ -46,44 +46,6 @@ void Vector3Control::Reset()
 	Field[0]->setText("");
 	Field[1]->setText("");
 	Field[2]->setText("");
-}
-
-//------------------------------------------------------------------------------
-void Vector3Control::UpdateObject() 
-{
-	switch (Property->CoreType)
-	{
-	case RTTI::eCorePropertyType::VECTOR:
-	{
-		Vector* vector = reinterpret_cast<Vector*>(Object);
-		vector->X = Field[0]->text().toFloat();
-		vector->Y = Field[1]->text().toFloat();
-		vector->Z = Field[2]->text().toFloat();
-		break;
-	}
-
-	case RTTI::eCorePropertyType::COLOR:
-	{
-		Color* color = reinterpret_cast<Color*>(Object);
-		color->R = Field[0]->text().toFloat();
-		color->G = Field[1]->text().toFloat();
-		color->B = Field[2]->text().toFloat();
-		break;
-	}
-
-	case RTTI::eCorePropertyType::QUATERNION:
-	{
-		Angle angleX = Angle::FromDegrees(Field[0]->text().toFloat());
-		Angle angleY = Angle::FromDegrees(Field[1]->text().toFloat());
-		Angle angleZ = Angle::FromDegrees(Field[2]->text().toFloat());
-		EulerAngles angles = EulerAngles(angleX, angleY, angleZ);
-		*reinterpret_cast<Quaternion*>(Object) = Quaternion(angles);
-		break;
-	}
-
-	default:
-		ASSERTE(false, "Not supported type");
-	}
 }
 
 //------------------------------------------------------------------------------

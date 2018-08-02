@@ -13,7 +13,6 @@ void ControlBase::Reset()
 	Object = nullptr; 
 	DisableEdit = false; 
 	Property = nullptr; 
-	ASAPUpdate = true;
 }
 
 bool ControlBase::ContainsLabel()

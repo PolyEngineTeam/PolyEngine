@@ -1,7 +1,7 @@
 #include "PlaceHolderControl.hpp"
 
 PlaceHolderControl::PlaceHolderControl(QWidget* parent)
-	: IControlBase(parent)
+	: ControlBase(parent)
 {
 	Layout = new QGridLayout(this);
 	Layout->setSpacing(0);

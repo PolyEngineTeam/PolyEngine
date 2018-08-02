@@ -13,7 +13,7 @@ public:
 	virtual void SetDisableEdit(bool disable) override;
 	virtual bool GetDisableEdit() override;
 
-private:
+protected:
 	// Pointer to an object which is assigned to this control.
 	void* Object = nullptr;
 

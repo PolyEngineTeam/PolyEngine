@@ -24,7 +24,7 @@ ASSIGN_CONTROL(Vector2Control, RTTI::eCorePropertyType::VECTOR_2I, Vector2i)
 	emit ObjectUpdated(cmd);
 
 //------------------------------------------------------------------------------
-Vector2Control::Vector2Control(QWidget* parent) : IControlBase(parent)
+Vector2Control::Vector2Control(QWidget* parent) : ControlBase(parent)
 {
 	Layout = new QGridLayout(this);
 
@@ -46,33 +46,6 @@ void Vector2Control::Reset()
 	Object = nullptr;
 	Field[0]->setText("");
 	Field[1]->setText("");
-}
-
-//------------------------------------------------------------------------------
-void Vector2Control::UpdateObject() 
-{
-	switch (Property->CoreType)
-	{
-	case RTTI::eCorePropertyType::VECTOR_2F:
-	{
-		Vector2f* vector = reinterpret_cast<Vector2f*>(Object);
-		vector->X = Field[0]->text().toFloat();
-		vector->Y = Field[1]->text().toFloat();
-		break;
-	}
-
-	case RTTI::eCorePropertyType::VECTOR_2I:
-	{
-		Vector2i* vector = reinterpret_cast<Vector2i*>(Object);
-		vector->X = Field[0]->text().toInt();
-		vector->Y = Field[1]->text().toInt();
-		break;
-	}
-
-	default:
-		ASSERTE(false, "Not supported type");
-	}
-
 }
 
 //------------------------------------------------------------------------------
