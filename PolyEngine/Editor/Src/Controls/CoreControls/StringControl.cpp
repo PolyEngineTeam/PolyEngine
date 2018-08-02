@@ -13,7 +13,7 @@ StringControl::StringControl(QWidget* parent)
 	Layout->setContentsMargins(0, 0, 0, 0);
 
 	Field = new QLineEdit();
-	connect(Field, &QLineEdit::editingFinished, this, &StringControl::Confirm);
+	connect(Field, &QLineEdit::editingFinished, this, &StringControl::UpdateObject);
 
 	Layout->addWidget(Field);
 
@@ -23,7 +23,7 @@ StringControl::StringControl(QWidget* parent)
 //------------------------------------------------------------------------------
 void StringControl::Reset()
 {
-	Object = nullptr;
+	ControlBase<Poly::String>::Reset();
 
 	Field->setText("");
 }
@@ -34,22 +34,22 @@ void StringControl::UpdateControl()
 	if (Field->hasFocus())
 		return;
 
-	Field->setText(reinterpret_cast<String*>(Object)->GetCStr());
+	Field->setText(Object->GetCStr());
 }
 
 //------------------------------------------------------------------------------
-void StringControl::Confirm()
+void StringControl::UpdateObject()
 {
-	if (DisableEdit || *reinterpret_cast<String*>(Object) == Field->text().toLatin1().data())
+	if (DisableEdit || *Object == Field->text().toLatin1().data())
 		return;
 
 	ControlCommand<String>* cmd = new ControlCommand<String>();
-	cmd->Object = reinterpret_cast<String*>(Object);
+	cmd->Object = Object;
 	cmd->Control = this;
-	cmd->UndoValue = new String(*reinterpret_cast<String*>(Object));
+	cmd->UndoValue = new String(*Object);
 	cmd->RedoValue = new String(Field->text().toLatin1().data());
 
-	*reinterpret_cast<String*>(Object) = Field->text().toLatin1().data();
+	*Object = Field->text().toLatin1().data();
 
 	emit ObjectUpdated(cmd);
 }

@@ -6,16 +6,17 @@
 #include <QtWidgets/qlabel.h>
 #include <QtWidgets/qgridlayout.h>
 
-class Vector3Control : public ControlBase
+class Vector3Control : public ControlBase<Poly::Vector>
 {
 public:
 	Vector3Control(QWidget* parent);
 
 	void Reset() override;
 	void UpdateControl() override;
-	void Confirm();
 
 private:
+	void UpdateObject();
+
 	QGridLayout* Layout;
 	QLineEdit* Field[3];
 };

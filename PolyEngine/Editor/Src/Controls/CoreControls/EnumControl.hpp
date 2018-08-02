@@ -4,7 +4,7 @@
 
 using namespace Poly;
 
-class EnumControl : public ControlBase
+class EnumControl : public ControlBase<void>
 {
 public:
 	EnumControl(QWidget* parent) : ControlBase(parent) {}
@@ -14,7 +14,7 @@ public:
 	void UpdateControl() override;
 
 protected:
-	void Confirm();
+	void UpdateObject();
 
 private:
 	//QComboBox* ComboBox; fix for clang compiler (unused private field)

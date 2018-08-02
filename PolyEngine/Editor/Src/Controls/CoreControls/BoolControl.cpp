@@ -13,7 +13,7 @@ BoolControl::BoolControl(QWidget* parent)
 	Layout->setContentsMargins(0, 0, 0, 0);
 
 	Button = new QPushButton(this);
-	connect(Button, &QPushButton::clicked, this, &BoolControl::Confirm);
+	connect(Button, &QPushButton::clicked, this, &BoolControl::UpdateObject);
 	Layout->addWidget(Button);
 
 	Machine = new QStateMachine(this);
@@ -39,25 +39,12 @@ BoolControl::BoolControl(QWidget* parent)
 }
 
 //------------------------------------------------------------------------------
-BoolControl::~BoolControl()
-{
-	delete True;
-	delete False;
-}
-
-//------------------------------------------------------------------------------
-void BoolControl::Reset()
-{
-	Object = nullptr;
-}
-
-//------------------------------------------------------------------------------
 void BoolControl::UpdateControl()
 {
 	if (Button->hasFocus())
 		return;
 
-	if ((*Machine->configuration().begin() == True) != *reinterpret_cast<bool*>(Object))
+	if ((*Machine->configuration().begin() == True) != *Object)
 	{
 		auto tmp = DisableEdit;
 		DisableEdit = false;
@@ -69,18 +56,18 @@ void BoolControl::UpdateControl()
 }
 
 //------------------------------------------------------------------------------
-void BoolControl::Confirm()
+void BoolControl::UpdateObject()
 {
-	if (DisableEdit || InitializationConfirm || *reinterpret_cast<bool*>(Object) == (*Machine->configuration().begin() == True))
+	if (DisableEdit || InitializationConfirm || *Object == (*Machine->configuration().begin() == True))
 		return;
 
 	ControlCommand<bool>* cmd = new ControlCommand<bool>();
-	cmd->Object = reinterpret_cast<bool*>(Object);
+	cmd->Object = Object;
 	cmd->Control = this;
-	cmd->UndoValue = new bool(*reinterpret_cast<bool*>(Object));
+	cmd->UndoValue = new bool(*Object);
 	cmd->RedoValue = new bool(*Machine->configuration().begin() == True);
 
-	*reinterpret_cast<bool*>(Object) = *Machine->configuration().begin() == True;
+	*Object = *Machine->configuration().begin() == True;
 
 	emit ObjectUpdated(cmd);
 }

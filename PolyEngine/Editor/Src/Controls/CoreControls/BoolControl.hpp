@@ -7,17 +7,16 @@
 
 class Command;
 
-class BoolControl : public ControlBase
+class BoolControl : public ControlBase<bool>
 {
 public:
 	BoolControl(QWidget* parent);
-	~BoolControl();
 
-	void Reset() override;
 	void UpdateControl() override;
-	void Confirm();
 
 private:
+	void UpdateObject();
+
 	QPushButton* Button;
 	QStateMachine* Machine;
 	QGridLayout* Layout;

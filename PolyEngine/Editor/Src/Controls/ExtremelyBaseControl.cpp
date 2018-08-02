@@ -23,9 +23,9 @@ namespace Impl
 			// for each cell create control creator for placement control so if any type has no assigned control
 			// it will display placeholder control
 			for (int i = 0; i < static_cast<int>(RTTI::eCorePropertyType::_COUNT); ++i)
-				new(&CoreTypeToControlMap[i]) ControlCreator([](QWidget* parent) -> IControlBase*
-					{ return new PlaceHolderControl(parent); });
-		
+				new(&CoreTypeToControlMap[i]) ControlCreator([](QWidget* parent) -> ExtremelyBaseControl*
+			{ return new PlaceHolderControl(parent); });
+
 			// return pointer to cell where we want to add new control creator
 			return CoreTypeToControlMap + offset;
 		}

@@ -15,6 +15,6 @@ void EnumControl::UpdateControl()
 }
 
 //------------------------------------------------------------------------------
-void EnumControl::Confirm()
+void EnumControl::UpdateObject()
 {
 }

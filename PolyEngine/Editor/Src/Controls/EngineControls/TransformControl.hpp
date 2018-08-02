@@ -6,7 +6,7 @@
 #include <QtWidgets/qlabel.h>
 #include <QtWidgets/qgridlayout.h>
 
-class TransformControl : public ControlBase
+class TransformControl : public ControlBase<Poly::EntityTransform>
 {
 public:
 	TransformControl(QWidget* parent);
@@ -17,7 +17,7 @@ public:
 
 	bool ContainsLabel() override { return true; }
 
-	void Confirm() {};
+	void UpdateObject() {};
 
 private:
 	void UodateTranslation();

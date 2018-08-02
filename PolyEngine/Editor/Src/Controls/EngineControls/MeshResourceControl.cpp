@@ -39,7 +39,7 @@ MeshResourceControl::MeshResourceControl(QWidget* parent)
 	ConfirmButon = new QPushButton(this);
 	ConfirmButon->setText("Reload Resource");
 	ConfirmButon->setMaximumWidth(100);
-	connect(ConfirmButon, &QPushButton::pressed, this, &MeshResourceControl::Confirm);
+	connect(ConfirmButon, &QPushButton::pressed, this, &MeshResourceControl::UpdateObject);
 	Layout->addWidget(ConfirmButon, 0, 5);
 
 	setLayout(Layout);
@@ -58,7 +58,7 @@ void MeshResourceControl::UpdateControl()
 }
 
 //------------------------------------------------------------------------------
-void MeshResourceControl::Confirm()
+void MeshResourceControl::UpdateObject()
 {
 	eResourceSource source;
 
@@ -81,7 +81,7 @@ void MeshResourceControl::Confirm()
 		break;
 	}
 
-	*reinterpret_cast<MeshResource**>(Object) = ResourceManager<MeshResource>::Load(Field->text().toLatin1().data(), source);
+	*Object = ResourceManager<MeshResource>::Load(Field->text().toLatin1().data(), source);
 }
 
 //------------------------------------------------------------------------------
@@ -114,6 +114,6 @@ void MeshResourceControl::BrowseButtonClicked()
 	if (fileDialog.exec() == QDialog::Accepted)
 	{
 		Field->setText(((QString)fileDialog.selectedFiles()[0]).remove(0, basePath.length()));
-		Confirm();
+		UpdateObject();
 	}
 }

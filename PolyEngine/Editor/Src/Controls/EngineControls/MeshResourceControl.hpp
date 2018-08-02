@@ -5,7 +5,7 @@
 #include <QtWidgets/qlineedit.h>
 #include <QtWidgets/qgridlayout.h>
 
-class MeshResourceControl : public ControlBase
+class MeshResourceControl : public ControlBase<Poly::MeshResource*>
 {
 public:
 	MeshResourceControl(QWidget* parent);
@@ -14,7 +14,7 @@ public:
 
 	void UpdateControl() override;
 
-	void Confirm();
+	void UpdateObject();
 
 private:
 	QGridLayout* Layout;

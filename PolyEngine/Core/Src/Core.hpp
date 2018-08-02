@@ -19,6 +19,9 @@
 // Containers
 #include "Collections/String.hpp"
 
+// RTTI
+#include "RTTI/RTTI.hpp"
+
 // Other
 #include "Math/Color.hpp"
 #include "FileIO.hpp"

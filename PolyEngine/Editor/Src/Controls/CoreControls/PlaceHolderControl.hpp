@@ -5,7 +5,7 @@
 #include <QtWidgets/qgridlayout.h>
 #include <QtWidgets/qlineedit.h>
 
-class PlaceHolderControl : public ControlBase
+class PlaceHolderControl : public ControlBase<void>
 {
 public:
 	PlaceHolderControl(QWidget* parent);
@@ -15,7 +15,7 @@ public:
 	void UpdateControl() override {};
 
 protected:
-	void Confirm() {};
+	void UpdateObject() {};
 
 private:
 	QLineEdit* Field;
