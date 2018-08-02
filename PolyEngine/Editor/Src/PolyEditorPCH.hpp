@@ -51,7 +51,7 @@ UNSILENCE_MSVC_WARNING()
 #include "Containers/SectionContainer.hpp"
 
 // controls
-#include "Controls/ControlBase.hpp"
+#include "Controls/IControlBase.hpp"
 
 #include "Controls/CoreControls/PlaceHolderControl.hpp"
 #include "Controls/CoreControls/BoolControl.hpp"

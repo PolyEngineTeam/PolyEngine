@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Controls/ControlBase.hpp"
+#include "Controls/IControlBase.hpp"
 
 #include <QtWidgets/qpushbutton.h>
 #include <QtCore/qstatemachine.h>
