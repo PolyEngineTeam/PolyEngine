@@ -46,7 +46,7 @@ void StringControl::UpdateControl()
 //------------------------------------------------------------------------------
 void StringControl::Confirm()
 {
-	if (DisableEdit)
+	if (DisableEdit || *reinterpret_cast<String*>(Object) == Field->text().toLatin1().data())
 		return;
 
 	ControlCommand<String>* cmd = new ControlCommand<String>();
