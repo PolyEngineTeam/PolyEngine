@@ -34,29 +34,3 @@ namespace Impl
 			return where;
 	}
 }
-
-//------------------------------------------------------------------------------
-void IControlBase::SetObject(void* ptr, const RTTI::Property* prop)
-{
-	Object = ptr; 
-	Property = prop; 
-	UpdateControl();
-	setToolTip(Property->Name.GetCStr());
-}
-
-//------------------------------------------------------------------------------
-void IControlBase::SetDisableEdit(bool disable)
-{
-	DisableEdit = disable;
-
-	if (disable)
-	{
-		setDisabled(true);
-	}
-	else
-	{
-		setPalette(style()->standardPalette());
-
-		setDisabled(false);
-	}
-}

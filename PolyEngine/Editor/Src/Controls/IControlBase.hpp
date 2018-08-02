@@ -61,15 +61,10 @@ public:
 
 	// Sets object assigned to control and updates this control.
 	// @see ControlBase::UpdateControl;
-	void SetObject(void* ptr, const RTTI::Property* prop);
+	virtual void SetObject(void* ptr, const RTTI::Property* prop) = 0;
 
 	// Reset control to initial state;
-	virtual void Reset() { Object = nullptr; DisableEdit = false; Property = nullptr; ASAPUpdate = true; }
-
-	// Call this to update assigned object from current control state.
-	// If ControlBase::ASAPUpdate is set to true You probably won't need to use this fnction
-	// unless you change control content programmatically.
-	virtual void UpdateObject() = 0;
+	virtual void Reset() = 0;
 
 	// Call this to update control state from assigned object.
 	// Unlike ControlBase::UpdateObject You have to call this function by yourself.
@@ -79,16 +74,12 @@ public:
 	// If label is set by control this function returns false.
 	// For example TransformControl looks better when label is set by control.
 	// Label is set automatically by control.
-	virtual bool ContainsLabel() { return false; }
+	virtual bool ContainsLabel() = 0;
 
 	// With disabled edit control changes its color and becomes inactive.
-	void SetDisableEdit(bool disable);
+	virtual void SetDisableEdit(bool disable) = 0;
 
-	bool GetDisableEdit() { return DisableEdit; }
-
-	// Use this as slot to connect to Your custom controls' signals like editingFinished in QLineEdit.
-	// @see StringControl::StringControl
-	virtual void Confirm() {};
+	virtual bool GetDisableEdit() = 0;
 
 	// Returns ptr to newly created proper control for given core type.
 	static IControlBase* CreateControl(QWidget* parent, RTTI::eCorePropertyType type)
@@ -96,27 +87,12 @@ public:
 		return ::Impl::CoreTypeToControlMap[static_cast<int>(type)](parent);
 	}
 
-	// if You want this control to update object as soon as state is changed, enter pressed or 
-	// focus lost set this to true. Otherwise You will have to update it calling UpdateObject.
-	// This applies only for OBJECT opdate; you still have to update CONTROL "manually"
-	// @see ControlBase::UpdateObject
-	bool ASAPUpdate = true;
-
 signals:
 	// After object is updated this signal is emitted.
 	// @param cmd - pointer to command object to enable undo/redo actions.
 	void ObjectUpdated(Command* cmd);
 
 protected:
-	// Pointer to an object which is assigned to this control.
-	void* Object = nullptr;
-
-	// Property of assigned object. Useful when one control is assigned to multiple core types
-	// like NumberControl.
-	const RTTI::Property* Property;
-
-	bool DisableEdit = false;
-	bool DisableUpdateControl = false;
 };
 
 // Use this to add Your control to map from core type to control creator function.
