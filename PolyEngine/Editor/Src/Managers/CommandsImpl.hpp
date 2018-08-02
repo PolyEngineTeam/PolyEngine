@@ -59,17 +59,16 @@ public:
 	void Undo() override
 	{
 		*Object = *UndoValue;
-		emit Control->ObjectUpdated(this);
 	}
 
 	void Redo() override
 	{
 		*Object = *RedoValue;
-		emit Control->ObjectUpdated(this);
 	}
 
 	T* Object;
 	ControlBase* Control;
+	InspectorManager* Manager;
 
 	T* UndoValue;
 	T* RedoValue;

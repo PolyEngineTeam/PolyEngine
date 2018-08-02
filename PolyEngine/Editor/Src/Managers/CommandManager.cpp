@@ -22,8 +22,6 @@ CommandManager::~CommandManager()
 //------------------------------------------------------------------------------
 void CommandManager::ProcessEvent(QEvent* event)
 {
-	return;
-
 	if (event->type() == QEvent::Type::KeyPress)
 	{
 		if (((QKeyEvent*)event)->isAutoRepeat())
@@ -119,5 +117,6 @@ void CommandManager::Redo()
 		return;
 
 	++CurrentCommand;
-	Commands[CurrentCommand]->Redo();
+	Commands[CurrentCommand]->Redo(); 
+	gApp->InspectorMgr->Update();
 }
