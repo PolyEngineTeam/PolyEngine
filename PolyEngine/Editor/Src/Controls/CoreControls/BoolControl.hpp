@@ -4,6 +4,7 @@
 
 #include <QtWidgets/qpushbutton.h>
 #include <QtCore/qstatemachine.h>
+#include <QtWidgets/qgridlayout.h>
 
 class Command;
 
