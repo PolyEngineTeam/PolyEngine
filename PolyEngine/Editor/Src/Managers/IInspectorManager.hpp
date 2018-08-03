@@ -2,6 +2,8 @@
 
 #include <QtCore/qobject.h>
 
+#include "Configs/ProjectConfig.hpp"
+
 #include "Widgets/Inspectors/EntityInspectorWidget.hpp"
 #include "Widgets/Inspectors/WorldInspectorWidget.hpp"
 #include "Widgets/Inspectors/ResourceInspectorWidget.hpp"
@@ -19,6 +21,33 @@ public:
 	void SetViewportInspector(std::unique_ptr<ViewportInspectorWidget> viewportInspector) { ViewportInspector = std::move(viewportInspector); }
 	void SetEntityInspector(std::unique_ptr<EntityInspectorWidget> entityInspector) { EntityInspector = std::move(entityInspector); }
 
+	virtual const ProjectConfig& GetProjectConfig() = 0;
+	virtual const Poly::Engine* GetEngine() = 0;
+	virtual const Poly::Scene* GetScene() = 0;
+	virtual const Poly::Dynarray<const Poly::Entity*> GetSelectedEntities() = 0;
+
+	// Opens SceneDialog.
+	virtual void AddScene() = 0;
+	// Opens SceneDialog.
+	virtual void RemoveScene() = 0;
+	// Change current scene to given.
+	virtual void ChangeScene(Poly::Scene* scene) = 0;
+
+	// Opens EntityDialog.
+	virtual void SpawnEntities() = 0;
+	// Opens EntityDialog.
+	virtual void DestroyEntities() = 0;
+	// Opens EntityDialog.
+	virtual void ReparentEntities() = 0;
+	// Changes currently selected entities to given.
+	virtual void ChangeEntitiesSelection(Poly::Dynarray<Poly::Entity*> entities) = 0;
+	// Calls 'do" or something like that and stores cmd at undo/redo stack.
+	virtual void ModifyEntity(std::unique_ptr<Command> cmd) = 0;
+
+	// Opens ComponentDialog.
+	virtual void AddComponents() = 0;
+	// Opens ComponentDialog
+	virtual void RemoveComponents() = 0;
 
 slots
 	virtual void ProjectOpened(const ProjectConfig& config) = 0;
@@ -27,17 +56,6 @@ slots
 	virtual void EngineInitialized(Engine* engine) = 0;
 	virtual void EngineDeinitialized() = 0;
 	virtual void EngineStateChanged(eEngineState state) = 0;
-
-	virtual void SceneChanged(Scene* scene) = 0;
-
-	virtual void EntitiesSpawned() = 0;
-	virtual void EntitiesDestroyed() = 0;
-	virtual void EntitiesModified(std::unique_ptr<Command> cmd) = 0;
-	virtual void EntitiesReparented() = 0;
-	virtual void EntitiesSelectionChanged(Dynarray<Entity*> entities) = 0;
-
-	virtual void ComponentsAdded(Dynarray<ComponentBase*> components) = 0;
-	virtual void ComponentsRemoved(Dynarray<ComponentBase*> components) = 0;
 
 signals:
 	//		project signals
@@ -49,8 +67,10 @@ signals:
 	void EngineDeinitializedSignalSignal();
 	void StateChangedSignal();
 
-	//		world signals
-	void ScenehangedSignal();
+	//		scene signals
+	void SceneAddedSignal();
+	void SceneRemovedSignal();
+	void SceneChangedSignal();
 
 	//		entity signals
 	void EntitiesSpawnedSignal();
