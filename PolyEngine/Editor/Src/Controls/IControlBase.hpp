@@ -26,10 +26,6 @@ public:
 	// Call this to update control state from assigned object.
 	virtual void UpdateControl() = 0;
 
-	// If label is set by control this function returns false.
-	// For example TransformControl looks better when label is set by control.
-	virtual bool ContainsLabel() = 0;
-
 	// With disabled edit control changes its color and becomes inactive.
 	virtual void SetDisableEdit(bool disable) = 0;
 	virtual bool GetDisableEdit() = 0;

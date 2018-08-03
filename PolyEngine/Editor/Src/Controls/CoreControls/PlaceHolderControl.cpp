@@ -3,10 +3,6 @@
 PlaceHolderControl::PlaceHolderControl(QWidget* parent)
 	: ControlBase(parent)
 {
-	Layout = new QGridLayout(this);
-	Layout->setSpacing(0);
-	Layout->setContentsMargins(0, 0, 0, 0);
-
 	QPalette disabledEditPalette;
 	disabledEditPalette.setColor(QPalette::Base, QColor(218, 218, 218));
 	disabledEditPalette.setColor(QPalette::Text, Qt::black);
@@ -16,9 +12,7 @@ PlaceHolderControl::PlaceHolderControl(QWidget* parent)
 	Field->setReadOnly(true);
 	Field->setPalette(disabledEditPalette);
 
-	Layout->addWidget(Field);
-
-	setLayout(Layout);
+	Layout->addWidget(Field, 0, 1);
 }
 
 void PlaceHolderControl::Reset()

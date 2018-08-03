@@ -55,7 +55,6 @@ public:
 	// These two functions are here only because wee need to call these in RTTIViewer using ExtremelyBaseControl pointers.
 	virtual void SetObject(void* ptr, ::Poly::String name, ::Poly::String type) = 0;
 	virtual void UpdateControl() = 0;
-	virtual bool ContainsLabel() = 0;
 
 	// Returns ptr to newly created proper control for given core type.
 	static ExtremelyBaseControl* CreateControl(QWidget* parent, ::Poly::RTTI::eCorePropertyType type)

@@ -4,7 +4,6 @@
 
 #include <QtWidgets/qpushbutton.h>
 #include <QtCore/qstatemachine.h>
-#include <QtWidgets/qgridlayout.h>
 
 class Command;
 
@@ -20,7 +19,6 @@ private:
 
 	QPushButton* Button;
 	QStateMachine* Machine;
-	QGridLayout* Layout;
 
 	QState* False;
 	QState* True;

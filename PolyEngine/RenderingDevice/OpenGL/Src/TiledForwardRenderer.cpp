@@ -486,16 +486,16 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::Render");
 
-	UpdateLightsBufferFromScene(sceneView);
-
-	UpdateEnvCapture(sceneView);
-	
 	// commented out because of problems with nvoglv64.dll
+	//UpdateLightsBufferFromScene(sceneView);
+	//
+	//UpdateEnvCapture(sceneView);
+	//
 	//RenderDepthPrePass(sceneView);
-	
-	ComputeLightCulling(sceneView);
-	
-	RenderOpaqueLit(sceneView);
+	//
+	//ComputeLightCulling(sceneView);
+	//
+	//RenderOpaqueLit(sceneView);
 	
 	RenderSkybox(sceneView);
 

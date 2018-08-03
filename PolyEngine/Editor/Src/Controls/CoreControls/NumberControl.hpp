@@ -11,16 +11,10 @@ public:
 	NumberControl(QWidget* parent)
 		: ControlBase<T>(parent)
 	{
-		Layout = new QGridLayout(this);
-		Layout->setSpacing(0);
-		Layout->setContentsMargins(0, 0, 0, 0);
-
 		Field = new QLineEdit(this);
 		connect(Field, &QLineEdit::editingFinished, this, &NumberControl<T>::UpdateObject);
 
-		Layout->addWidget(Field);
-
-		setLayout(Layout);
+		Layout->addWidget(Field, 0, 1);
 	}
 
 	void Reset() override
@@ -59,7 +53,6 @@ private:
 	}
 
 	QLineEdit* Field;
-	QGridLayout* Layout;
 
 	QValidator* Validator;
 };

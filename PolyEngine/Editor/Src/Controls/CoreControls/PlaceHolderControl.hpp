@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Controls/ControlBase.hpp"
-
-#include <QtWidgets/qgridlayout.h>
 #include <QtWidgets/qlineedit.h>
+
+#include "Controls/ControlBase.hpp"
 
 class PlaceHolderControl : public ControlBase<void>
 {
@@ -19,5 +18,4 @@ protected:
 
 private:
 	QLineEdit* Field;
-	QGridLayout* Layout;
 };

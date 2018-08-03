@@ -3,8 +3,6 @@
 #include "Controls/ControlBase.hpp"
 
 #include <QtWidgets/qlineedit.h>
-#include <QtWidgets/qlabel.h>
-#include <QtWidgets/qgridlayout.h>
 
 class TransformControl : public ControlBase<Poly::EntityTransform>
 {
@@ -14,8 +12,6 @@ public:
 	void Reset() override;
 
 	void UpdateControl() override;
-
-	bool ContainsLabel() override { return true; }
 
 	void UpdateObject() {};
 

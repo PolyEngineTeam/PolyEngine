@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Controls/ControlBase.hpp"
-
 #include <QtWidgets/qlineedit.h>
-#include <QtWidgets/qgridlayout.h>
+
+#include "Controls/ControlBase.hpp"
 
 class StringControl : public ControlBase<Poly::String>
 {
@@ -18,6 +17,5 @@ public:
 private:
 	void UpdateObject();
 
-	QGridLayout* Layout;
 	QLineEdit* Field;
 };

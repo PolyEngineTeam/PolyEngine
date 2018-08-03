@@ -1,8 +1,6 @@
 #pragma once
 
 #include <QtWidgets/qlineedit.h>
-#include <QtWidgets/qlabel.h>
-#include <QtWidgets/qgridlayout.h>
 
 #include <Core.hpp>
 
@@ -15,16 +13,14 @@ public:
 	Vector2Control(QWidget* parent)
 		: ControlBase(parent)
 	{
-		Layout = new QGridLayout(this);
-
 		Layout->setColumnStretch(0, 1);
-		Layout->setColumnStretch(1, 1);
-		Layout->setContentsMargins(0, 0, 0, 0);
+		Layout->setColumnStretch(1, 2);
+		Layout->setColumnStretch(2, 2);
 
 		for (int x = 0; x < 2; ++x)
 		{
 			Field[x] = new QLineEdit(this);
-			Layout->addWidget(Field[x], 0, x);
+			Layout->addWidget(Field[x], 0, x + 1);
 			connect(Field[x], &QLineEdit::editingFinished, this, &Vector2Control::UpdateObject);
 		}
 	}
@@ -66,6 +62,5 @@ private:
 		emit ObjectUpdated(cmd);
 	}
 
-	QGridLayout* Layout;
 	QLineEdit* Field[2];
 };

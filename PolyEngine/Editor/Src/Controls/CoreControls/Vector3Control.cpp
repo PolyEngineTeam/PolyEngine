@@ -7,17 +7,16 @@ ASSIGN_CONTROL(Vector3Control, RTTI::eCorePropertyType::VECTOR, Vector)
 //------------------------------------------------------------------------------
 Vector3Control::Vector3Control(QWidget* parent) : ControlBase(parent)
 {
-	Layout = new QGridLayout(this);
-
 	Layout->setColumnStretch(0, 1);
 	Layout->setColumnStretch(1, 1);
 	Layout->setColumnStretch(2, 1);
+	Layout->setColumnStretch(3, 1);
 	Layout->setContentsMargins(0, 0, 0, 0);
 
 	for (int x = 0; x < 3; ++x)
 	{
 		Field[x] = new QLineEdit(this);
-		Layout->addWidget(Field[x], 0, x);
+		Layout->addWidget(Field[x], 0, x + 1);
 		connect(Field[x], &QLineEdit::editingFinished, this, &Vector3Control::UpdateObject);
 	}
 }

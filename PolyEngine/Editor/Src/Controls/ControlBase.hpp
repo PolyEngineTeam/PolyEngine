@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QtWidgets/qstyle.h>
+#include <QtWidgets/qlabel.h>
+#include <QtWidgets/qgridlayout.h>
 
 #include "Controls/IControlBase.hpp"
 
@@ -8,24 +10,42 @@ template <typename T>
 class ControlBase : public IControlBase
 {
 public:
-	ControlBase(QWidget* parent) : IControlBase(parent) { Reset(); }
+	ControlBase(QWidget* parent) : IControlBase(parent) 
+	{
+		// create lauout
+		Layout = new QGridLayout(this);
+		Layout->setSpacing(0);
+		Layout->setContentsMargins(0, 0, 0, 0);
+		Layout->setColumnStretch(0, 1);
+		Layout->setColumnStretch(1, 3);
+
+		// create label
+		Label = new QLabel(this);
+		
+		// add label
+		Layout->addWidget(Label, 0, 0);
+
+		// set defaults
+		Reset(); 
+	}
 
 	virtual void SetObject(void* ptr, String name, String type) override
 	{
 		Object = reinterpret_cast<T*>(ptr);
+
+		Label->setText(name.GetCStr());
+		setToolTip(type.GetCStr());
+
 		UpdateControl();
-		setToolTip("type");
 	}
 
 	virtual void Reset() override
 	{
 		Object = nullptr;
 		DisableEdit = false;
-	}
 
-	virtual bool ContainsLabel() override
-	{
-		return false;
+		Label->setText("Unassigned");
+		setToolTip("Unassigned");
 	}
 
 	virtual void SetDisableEdit(bool disable) override
@@ -55,4 +75,8 @@ protected:
 
 	bool DisableEdit = false;
 	bool DisableUpdateControl = false;
+
+	// ui things
+	QGridLayout* Layout;
+	QLabel* Label;
 };

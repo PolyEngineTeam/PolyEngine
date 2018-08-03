@@ -8,16 +8,10 @@ ASSIGN_CONTROL(StringControl, RTTI::eCorePropertyType::STRING, STRING)
 StringControl::StringControl(QWidget* parent)
 	: ControlBase(parent)
 {
-	Layout = new QGridLayout(this);
-	Layout->setSpacing(0);
-	Layout->setContentsMargins(0, 0, 0, 0);
-
 	Field = new QLineEdit();
 	connect(Field, &QLineEdit::editingFinished, this, &StringControl::UpdateObject);
 
-	Layout->addWidget(Field);
-
-	setLayout(Layout);
+	Layout->addWidget(Field, 0, 1);
 }
 
 //------------------------------------------------------------------------------

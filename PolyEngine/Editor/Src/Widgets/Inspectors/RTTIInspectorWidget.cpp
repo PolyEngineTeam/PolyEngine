@@ -116,15 +116,7 @@ void RTTIInspectorWidget::AddItem(QGridLayout* parent, int row, void* ptr, const
 
 	field->SetObject(ptr, prop.Name, "SomeCoreType");
 
-	if (field->ContainsLabel())
-		parent->addWidget(field, row, 0, 1, 2);
-	else
-	{
-		QLabel* label = new QLabel();
-		label->setText(prop.Name.GetCStr());
-		parent->addWidget(label, row, 0);
-		parent->addWidget(field, row, 1);
-	}
+	parent->addWidget(field, row, 0, 1, 2);
 
 	connect(field, &ExtremelyBaseControl::ObjectUpdated, this, &RTTIInspectorWidget::ControlObjectUpdatedSlot);
 
