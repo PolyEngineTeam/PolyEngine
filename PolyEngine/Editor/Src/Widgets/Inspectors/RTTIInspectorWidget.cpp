@@ -114,7 +114,9 @@ void RTTIInspectorWidget::AddItem(QGridLayout* parent, int row, void* ptr, const
 	else
 		field = ExtremelyBaseControl::CreateControl(this, prop.CoreType);
 
-	field->SetObject(ptr, prop.Name, "SomeCoreType");
+	field->SetObject(ptr);
+	field->SetName(prop.Name);
+	field->SetType("SomeCoreType");
 
 	parent->addWidget(field, row, 0, 1, 2);
 

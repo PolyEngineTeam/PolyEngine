@@ -27,25 +27,32 @@ public:
 
 		// set defaults
 		Reset(); 
+
+		Label->setText("Unassigned");
+		setToolTip("Unassigned");
 	}
 
-	virtual void SetObject(void* ptr, String name, String type) override
+	virtual void SetObject(void* ptr) override
 	{
 		Object = reinterpret_cast<T*>(ptr);
-
-		Label->setText(name.GetCStr());
-		setToolTip(type.GetCStr());
-
 		UpdateControl();
+		SetDisableEdit(false);
+	}
+
+	virtual void SetName(String name) override
+	{
+		Label->setText(name.GetCStr());
+	}
+
+	virtual void SetType(String type) override
+	{
+		setToolTip(type.GetCStr());
 	}
 
 	virtual void Reset() override
 	{
 		Object = nullptr;
-		DisableEdit = false;
-
-		Label->setText("Unassigned");
-		setToolTip("Unassigned");
+		SetDisableEdit(true);
 	}
 
 	virtual void SetDisableEdit(bool disable) override
@@ -62,11 +69,6 @@ public:
 
 			setDisabled(false);
 		}
-	}
-
-	virtual bool GetDisableEdit() override
-	{
-		return DisableEdit;
 	}
 
 protected:

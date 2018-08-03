@@ -17,7 +17,6 @@ public:
 	void UpdateObject();
 
 private:
-	QGridLayout* Layout;
 	QLineEdit* Field;
 	QPushButton* BrowseButton;
 	QComboBox* ResourceSourceComboBox;

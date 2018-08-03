@@ -8,25 +8,22 @@
 MeshResourceControl::MeshResourceControl(QWidget* parent)
 	: ControlBase(parent)
 { 
-	Layout = new QGridLayout(this);
-	Layout->setSpacing(0);
-	Layout->setContentsMargins(0, 0, 0, 0);
-
-	Layout->setColumnStretch(0, 20);
-	Layout->setColumnStretch(1, 1);
+	Layout->setColumnStretch(2, 5);
+	Layout->setColumnStretch(1, 20);
 	Layout->setColumnStretch(2, 1);
-	Layout->setColumnStretch(3, 5);
+	Layout->setColumnStretch(3, 1);
 	Layout->setColumnStretch(4, 5);
 	Layout->setColumnStretch(5, 5);
+	Layout->setColumnStretch(6, 5);
 
 	Field = new QLineEdit(this);
-	Layout->addWidget(Field, 0, 0);
+	Layout->addWidget(Field, 0, 1);
 
 	BrowseButton = new QPushButton(this);
 	BrowseButton->setText("...");
 	BrowseButton->setMaximumWidth(30);
 	connect(BrowseButton, &QPushButton::pressed, this, &MeshResourceControl::BrowseButtonClicked);
-	Layout->addWidget(BrowseButton, 0, 1);
+	Layout->addWidget(BrowseButton, 0, 2);
 
 	ResourceSourceComboBox = new QComboBox(this);
 	ResourceSourceComboBox->addItem("Runtime Dir.");
@@ -34,15 +31,13 @@ MeshResourceControl::MeshResourceControl(QWidget* parent)
 	ResourceSourceComboBox->addItem("Game");
 	ResourceSourceComboBox->addItem("User Local");
 	ResourceSourceComboBox->setMaximumWidth(80);
-	Layout->addWidget(ResourceSourceComboBox, 0, 3);
+	Layout->addWidget(ResourceSourceComboBox, 0, 4);
 
 	ConfirmButon = new QPushButton(this);
 	ConfirmButon->setText("Reload Resource");
 	ConfirmButon->setMaximumWidth(100);
 	connect(ConfirmButon, &QPushButton::pressed, this, &MeshResourceControl::UpdateObject);
 	Layout->addWidget(ConfirmButon, 0, 5);
-
-	setLayout(Layout);
 }
 
 //------------------------------------------------------------------------------

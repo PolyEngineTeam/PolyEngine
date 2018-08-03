@@ -35,12 +35,10 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent, InspectorManager* 
 	
 	
 	// Name
-	NameText = new QLabel(this);
-	NameText->setText("Name");
-	MainLayout->addWidget(NameText, 0, 0);
-	
 	NameField = new StringControl(this);
-	MainLayout->addWidget(NameField, 0, 1);
+	NameField->SetName("Name");
+	NameField->SetType("String");
+	MainLayout->addWidget(NameField, 0, 0, 1, 2);
 	connect(NameField, &StringControl::ObjectUpdated, this, &EntityInspectorWidget::ControlObjectUpdated);
 	
 	// UniqueID
@@ -82,6 +80,8 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent, InspectorManager* 
 	// Transform
 	TransformSection = new SectionContainer("Transform", this);
 	Transform = new TransformControl(this);
+	Transform->SetName("Transform");
+	Transform->SetType("EntityTransform");
 	connect(Transform, &TransformControl::ObjectUpdated, this, &EntityInspectorWidget::ControlObjectUpdated);
 	TransformSection->SetWidget(Transform);
 
@@ -214,7 +214,7 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 
 		// name
 		void* ptr = ((char*)selectedEntities[0]) + selectedEntities[0]->GetPropertyManager()->GetPropertyList()[2].Offset;
-		NameField->SetObject(ptr, "Name", "String");
+		NameField->SetObject(ptr);
 		NameField->SetDisableEdit(false);
 
 		// id
@@ -262,7 +262,7 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		{
 			TransformSection->show();
 			void* ptr = ((char*)selectedEntities[0]) + selectedEntities[0]->GetPropertyManager()->GetPropertyList()[3].Offset;
-			Transform->SetObject(ptr, "Transform", "EntityTransform");
+			Transform->SetObject(ptr);
 		}
 
 		// components
