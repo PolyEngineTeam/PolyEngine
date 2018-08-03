@@ -18,7 +18,7 @@ public:
 	IControlBase(QWidget* parent) : ExtremelyBaseControl(parent) {}
 
 	// Assigns given object to control and updates this control.
-	virtual void SetObject(void* ptr, const RTTI::Property* prop) = 0;
+	virtual void SetObject(void* ptr, String name, String type) = 0;
 
 	// Resets this control to initial state;
 	virtual void Reset() = 0;

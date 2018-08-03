@@ -214,7 +214,7 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 
 		// name
 		void* ptr = ((char*)selectedEntities[0]) + selectedEntities[0]->GetPropertyManager()->GetPropertyList()[2].Offset;
-		NameField->SetObject(ptr, &selectedEntities[0]->GetPropertyManager()->GetPropertyList()[2]);
+		NameField->SetObject(ptr, "Name", "String");
 		NameField->SetDisableEdit(false);
 
 		// id
@@ -262,7 +262,7 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		{
 			TransformSection->show();
 			void* ptr = ((char*)selectedEntities[0]) + selectedEntities[0]->GetPropertyManager()->GetPropertyList()[3].Offset;
-			Transform->SetObject(ptr, &selectedEntities[0]->GetPropertyManager()->GetPropertyList()[3]);
+			Transform->SetObject(ptr, "Transform", "EntityTransform");
 		}
 
 		// components
