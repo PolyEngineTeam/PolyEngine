@@ -3,41 +3,39 @@
 #include <RTTI/RTTI.hpp>
 #include <Collections/String.hpp>
 
-using namespace Poly;
-
-class ProjectConfig : public RTTIBase
+class ProjectConfig : public Poly::RTTIBase
 {
 	friend class ProjectManager;
 
-	RTTI_DECLARE_TYPE_DERIVED(ProjectConfig, RTTIBase)
+	RTTI_DECLARE_TYPE_DERIVED(ProjectConfig, Poly::RTTIBase)
 	{
-		RTTI_PROPERTY(Path, "Path", RTTI::ePropertyFlag::DONT_SERIALIZE);
-		RTTI_PROPERTY(ProjectPath, "ProjectPath", RTTI::ePropertyFlag::DONT_SERIALIZE);
-		RTTI_PROPERTY(ProjectName, "ProjectName", RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY(Path, "Path", Poly::RTTI::ePropertyFlag::DONT_SERIALIZE);
+		RTTI_PROPERTY(ProjectPath, "ProjectPath", Poly::RTTI::ePropertyFlag::DONT_SERIALIZE);
+		RTTI_PROPERTY(ProjectName, "ProjectName", Poly::RTTI::ePropertyFlag::NONE);
 	}
 
 public:
-	ProjectConfig(const String& path);
+	ProjectConfig(const Poly::String& path);
 
 	void Save();
 	void Load();
 
 	// Path to directory where *.proj.json file is stored
-	const String& GetProjectPath() const { return ProjectPath; }
+	const Poly::String& GetProjectPath() const { return ProjectPath; }
 
 	// project name loaded from *.proj.json
-	const String& GetProjectName() const { return ProjectName; }
+	const Poly::String& GetProjectName() const { return ProjectName; }
 
 	// for now these functions always return Debug configuration output files
-	String GetGameDllPath() const;
-	String GetRenderingDeviceDllPath() const;
+	Poly::String GetGameDllPath() const;
+	Poly::String GetRenderingDeviceDllPath() const;
 
 private:
 	// Path to *.proj.json file
-	String Path;
+	Poly::String Path;
 
 	// Path to directory where *.proj.json file is stored
-	String ProjectPath;
+	Poly::String ProjectPath;
 	// project name loaded from *.proj.json
-	String ProjectName;
+	Poly::String ProjectName;
 };
