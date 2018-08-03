@@ -9,15 +9,14 @@ class NumberControl : public ControlBase<T>
 {
 public:
 	NumberControl(QWidget* parent)
-		: ControlBase(parent)
+		: ControlBase<T>(parent)
 	{
 		Layout = new QGridLayout(this);
 		Layout->setSpacing(0);
 		Layout->setContentsMargins(0, 0, 0, 0);
 
 		Field = new QLineEdit(this);
-		//Field->setValidator(new QRegExpValidator(QRegExp("[-,+]{0,1}[0-9]+[.][0-9]+"), 0));
-		connect(Field, &QLineEdit::editingFinished, this, &NumberControl::UpdateObject);
+		connect(Field, &QLineEdit::editingFinished, this, &NumberControl<T>::UpdateObject);
 
 		Layout->addWidget(Field);
 
