@@ -44,8 +44,9 @@ AABox AABox::GetIntersectionVolume(const AABox& rhs) const
 
 std::array<Vector, 8> Poly::AABox::GetVertices() const
 {
-	return {
-		Pos,
+    SILENCE_CLANG_WARNING(-Wmissing-braces, "Everything is ok here.");
+	return std::array<Vector, 8>{
+	    Pos,
 		Pos + Vector(Size.X, 0, 0),
 		Pos + Vector(Size.X, Size.Y, 0),
 		Pos + Vector(Size.X, Size.Y, Size.Z),
@@ -54,6 +55,7 @@ std::array<Vector, 8> Poly::AABox::GetVertices() const
 		Pos + Vector(0, Size.Y, 0),
 		Pos + Vector(Size.X, 0, Size.Z)
 	};
+    UNSILENCE_CLANG_WARNING();
 }
 
 AABox Poly::AABox::GetTransformed(const Matrix& transform) const
@@ -62,16 +64,18 @@ AABox Poly::AABox::GetTransformed(const Matrix& transform) const
 	Vector max = min;
 
 	// Gather other 7 points
+    SILENCE_CLANG_WARNING(-Wmissing-braces, "Everything is ok here.");
 	std::array<Vector, 7> points =
 	{
 		Pos + Vector(Size.X, 0, 0),
 		Pos + Vector(Size.X, Size.Y, 0),
 		Pos + Vector(Size.X, Size.Y, Size.Z),
-		Pos + Vector(0, Size.Y, Size.Z),
+		Pos + Vector(0, Size.Y, Size.Z),c
 		Pos + Vector(0, 0, Size.Z),
 		Pos + Vector(0, Size.Y, 0),
 		Pos + Vector(Size.X, 0, Size.Z)
 	};
+    UNSILENCE_CLANG_WARNING();
 
 	// Iterate other 7 points
 	for (Vector v : points)
