@@ -70,7 +70,7 @@ AABox Poly::AABox::GetTransformed(const Matrix& transform) const
 		Pos + Vector(Size.X, 0, 0),
 		Pos + Vector(Size.X, Size.Y, 0),
 		Pos + Vector(Size.X, Size.Y, Size.Z),
-		Pos + Vector(0, Size.Y, Size.Z),c
+		Pos + Vector(0, Size.Y, Size.Z),
 		Pos + Vector(0, 0, Size.Z),
 		Pos + Vector(0, Size.Y, 0),
 		Pos + Vector(Size.X, 0, Size.Z)
