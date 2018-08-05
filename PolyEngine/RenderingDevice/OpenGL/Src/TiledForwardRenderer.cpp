@@ -597,8 +597,7 @@ void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOdepthMap);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
-	const ScreenSize screenSize = RDI->GetScreenSize();
-
+//	const ScreenSize screenSize = RDI->GetScreenSize();
 // 	glViewport((int)(sceneView.Rect.GetMin().X * screenSize.Width), (int)(sceneView.Rect.GetMin().Y * screenSize.Height),
 // 		(int)(sceneView.Rect.GetSize().X * screenSize.Width), (int)(sceneView.Rect.GetSize().Y * screenSize.Height));
 
