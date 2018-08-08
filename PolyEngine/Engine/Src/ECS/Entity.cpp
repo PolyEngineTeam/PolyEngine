@@ -36,6 +36,14 @@ Entity::Entity(Scene* world, Entity* parent)
 		SetParent(parent);
 }
 
+void Poly::Entity::SetBBoxDirty()
+{
+	for (eEntityBoundingChannel channel : IterateEnum<eEntityBoundingChannel>())
+		BBoxDirty[channel] = true;
+	if (Parent)
+		Parent->SetBBoxDirty();
+}
+
 void Poly::Entity::ReleaseFromParent()
 {
 	if (Parent != nullptr)
@@ -52,6 +60,7 @@ void Poly::Entity::ReleaseFromParent()
 }
 
 Poly::Entity::Entity()
+ : Transform(this)
 {
 	Components.Resize(MAX_COMPONENTS_COUNT);
 	std::fill(Components.Begin(), Components.End(), nullptr);
@@ -92,6 +101,8 @@ void Poly::Entity::SetParent(Entity* parent)
 
 	Parent = parent;
 	Parent->Children.PushBack(EntityUniquePtr(this, EntityScene->GetEntityDeleter()));
+	Parent->SetBBoxDirty();
+
 	Transform.UpdateParentTransform();
 }
 
@@ -105,6 +116,40 @@ bool Poly::Entity::ContainsChildRecursive(Entity* child) const
 			return true;
 
 	return false;
+}
+
+const AABox& Poly::Entity::GetLocalBoundingBox(eEntityBoundingChannel channel) const
+{
+	if (BBoxDirty[channel])
+	{
+		LocalBBox[channel].SetPosition(Vector::ZERO);
+		LocalBBox[channel].SetSize(Vector::ZERO);
+
+		// Update bounding box by children boxes
+		for (auto& child : Children)
+		{
+			AABox childBox = child->GetLocalBoundingBox(channel);
+			LocalBBox[channel].Expand(childBox.GetTransformed(child->GetTransform().GetParentFromModel()));
+		}
+
+		// Components that affect bounding box
+		for (auto& component : Components)
+		{
+			if (!component)
+				continue;
+
+			auto bboxOpt = component->GetBoundingBox(channel);
+			if (bboxOpt.HasValue())
+				LocalBBox[channel].Expand(bboxOpt.Value());
+		}
+		BBoxDirty[channel] = false;
+	}
+	return LocalBBox[channel];
+}
+
+AABox Poly::Entity::GetGlobalBoundingBox(eEntityBoundingChannel channel) const
+{
+	return GetLocalBoundingBox(channel).GetTransformed(GetTransform().GetWorldFromModel());
 }
 
 bool Entity::HasComponent(size_t ID) const

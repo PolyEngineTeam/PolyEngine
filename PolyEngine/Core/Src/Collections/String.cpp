@@ -187,6 +187,11 @@ String String::GetTrimmed() const {
 	return this->Substring(start, end + 1);
 }
 
+size_t String::Find(char c) const
+{
+	return Data.FindIdx(c);
+}
+
 String& String::operator=(const String& rhs) {
 	Data = rhs.Data;
 	return *this;

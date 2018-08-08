@@ -215,6 +215,36 @@ Vector Vector::GetNormalized() const {
 #endif
 }
 
+//------------------------------------------------------------------------------
+Vector Vector::Max(const Vector& a, const Vector& b)
+{
+#if DISABLE_SIMD
+	Vector v;
+	v.X = std::max(a.X, b.X);
+	v.Y = std::max(a.Y, b.Y);
+	v.Z = std::max(a.Z, b.Z);
+	v.W = std::max(a.W, b.W);
+	return v;
+#else
+	return Vector(_mm_max_ps(a.SimdData, b.SimdData));
+#endif
+}
+
+//------------------------------------------------------------------------------
+Vector Vector::Min(const Vector& a, const Vector& b)
+{
+#if DISABLE_SIMD
+	Vector v;
+	v.X = std::min(a.X, b.X);
+	v.Y = std::min(a.Y, b.Y);
+	v.Z = std::min(a.Z, b.Z);
+	v.W = std::min(a.W, b.W);
+	return v;
+#else
+	return Vector(_mm_min_ps(a.SimdData, b.SimdData));
+#endif
+}
+
 namespace Poly {
 	//------------------------------------------------------------------------------
 	std::ostream& operator<< (std::ostream& stream, const Vector& vec) {

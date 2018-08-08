@@ -420,6 +420,14 @@ namespace Poly
 			return false;
 		}
 
+		friend std::ostream& operator<< (std::ostream& stream, const Dynarray<T>& rhs)
+		{
+			stream << "Dynarray[ ";
+			for (size_t i = 0; i < rhs.GetSize(); ++i)
+				stream << rhs[i] << " ";
+			return stream << "]";
+		}
+
 	private:
 		//------------------------------------------------------------------------------
 		void Realloc(size_t capacity)

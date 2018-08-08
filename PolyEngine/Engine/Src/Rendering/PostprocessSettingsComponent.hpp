@@ -12,20 +12,21 @@ namespace Poly {
 
 		float Exposure = 1.0f;
 
-		float MotionBlurScale = 1.0f;
+		float MotionBlurScale = 0.1f;
 
 		float DOFPoint = 1000.0f;
 		float DOFRange = 800.0f;
-		float DOFSize = 0.2f;
+		float DOFSize = 0.1f;
 		float DOFShow = 0.0f;
 
 		float BloomThreshold = 1.0f; // luminance
-		float BloomScale = 1.0f;
+		float BloomScale = 0.1f;
 
-		float GrainScale = 0.1f;
-		float VignetteScale = 1.0f;
-		float AbberationScale = 1.0f;
+		float GrainScale = 0.01f;
+		float VignetteScale = 0.1f;
+		float AbberationScale = 0.1f;
 
+		Color Tint = Color::WHITE;
 		float Gamma = 2.2f;
 	};
 

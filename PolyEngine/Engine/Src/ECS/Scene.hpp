@@ -113,7 +113,7 @@ namespace Poly {
 		/// Component iterator.
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		class ComponentIterator : public BaseObject<>,
-		                          public std::iterator<std::bidirectional_iterator_tag, std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...>>
+		                          public std::iterator<std::forward_iterator_tag, std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...>>
 		{
 			public:
 			bool operator==(const ComponentIterator& rhs) const { return primary_iter == rhs.primary_iter; }
@@ -131,8 +131,6 @@ namespace Poly {
 
 			ComponentIterator& operator++() { Increment(); return *this; }
 			ComponentIterator operator++(int) { ComponentIterator ret(primary_iter); Increment(); return ret; }
-			ComponentIterator& operator--() { Decrement(); return *this; }
-			ComponentIterator operator--(int) { ComponentIterator ret(primary_iter); Decrement(); return ret; }
 
 		private:
 			//------------------------------------------------------------------------------
@@ -149,21 +147,17 @@ namespace Poly {
 			//------------------------------------------------------------------------------
 			void Increment()
 			{
-				do { ++primary_iter; } while (primary_iter != End
-					&& !HasComponents<SecondaryComponents...>(&*primary_iter->GetOwner()));
+				do { ++primary_iter; } 
+				while (primary_iter != End && !HasComponents<SecondaryComponents...>(primary_iter->GetOwner()));
 			}
-
-			//------------------------------------------------------------------------------
-			void Decrement()
-			{
-				do { --primary_iter; } while (primary_iter != End
-					&& !HasComponents<SecondaryComponents...>(&*primary_iter->GetOwner()));
-			}
-
 
 			explicit ComponentIterator(typename IterablePoolAllocator<PrimaryComponent>::Iterator parent, Scene* const w) : primary_iter(parent), 
 				Begin(w->GetComponentAllocator<PrimaryComponent>()->Begin()),
-				End(w->GetComponentAllocator<PrimaryComponent>()->End()) {}
+				End(w->GetComponentAllocator<PrimaryComponent>()->End())
+			{
+				if (primary_iter != End && !HasComponents<SecondaryComponents...>(primary_iter->GetOwner()))
+					Increment();
+			}
 			friend struct IteratorProxy<PrimaryComponent, SecondaryComponents...>;
 
 			typename IterablePoolAllocator<PrimaryComponent>::Iterator primary_iter;
@@ -223,6 +217,7 @@ namespace Poly {
 			entity->Components[ctypeID].reset(ptr);
 			ptr->Owner = entity;
 			HEAVY_ASSERTE(entity->HasComponent(ctypeID), "Failed at AddComponent() - the component was not added!");
+			entity->SetBBoxDirty();
 		}
 
 		//------------------------------------------------------------------------------
@@ -235,6 +230,7 @@ namespace Poly {
 			entity->ComponentPosessionFlags.set(ctypeID, false);
 			entity->Components[ctypeID].reset(nullptr);
 			HEAVY_ASSERTE(!entity->HasComponent(ctypeID), "Failed at AddComponent() - the component was not removed!");
+			entity->SetBBoxDirty();
 		}
 
 		//------------------------------------------------------------------------------

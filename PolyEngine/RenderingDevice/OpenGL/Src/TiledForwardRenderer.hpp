@@ -101,6 +101,7 @@ namespace Poly {
 		// Render pass for IBL environment
 		EnvCapture SkyboxCapture;
 		RenderTargetPingPong RTBloom;
+		TextureResource* Splash;
 
 		// Shader programs
 		GLShaderProgram DepthShader;

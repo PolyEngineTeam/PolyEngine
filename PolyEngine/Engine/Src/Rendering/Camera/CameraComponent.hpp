@@ -2,6 +2,7 @@
 
 #include "ECS/ComponentBase.hpp"
 #include "CameraSystem.hpp"
+#include "Math/Frustum.hpp"
 
 namespace Poly {
 
@@ -34,17 +35,24 @@ namespace Poly {
 		const Angle& GetFOV() const { return Fov; }
 		const Angle& GetTargetFOV() const { return TargetFov; }
 		void SetTargetFOV(const Angle& Value) { TargetFov = Value; }
-		void SetFOV(const Angle& Value) { Fov = Value; }
+		void SetFOV(const Angle& Value) { Fov = Value; UpdateProjection(); }
 		float GetAspect() const { return Aspect; }
+		void SetAspect(float aspect) { Aspect = aspect; UpdateProjection(); }
+		bool GetForcedRatio() const { return IsForcedRatio; }
+		void SetForcedRatio(bool value) { IsForcedRatio = value; }
 		eRenderingModeType GetRenderingMode() const { return RenderingMode; }
 		void SetRenderingMode(eRenderingModeType value) { RenderingMode = value; }
 
+		void UpdateProjection();
+
+		bool IsVisibleToCamera(const Entity* ent) const;
 	private:
 		Matrix ScreenFromView;
 		Matrix ViewFromWorld;
 		Matrix ScreenFromWorld;
 
 		bool IsPerspective = false;
+
 		// Prerpective
 		Angle Fov = 0_deg;
 		Angle TargetFov = 0_deg;
@@ -59,9 +67,13 @@ namespace Poly {
 		float Near = 0.f;
 		float Far = 0.f;
 		float Aspect = 1.f;
-
+		
+		bool IsForcedRatio = false;
+		
 		// RenderingMode
 		eRenderingModeType RenderingMode;
+
+		Optional<Frustum> CameraFrustum;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, CameraComponent)

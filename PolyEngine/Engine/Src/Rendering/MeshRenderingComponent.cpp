@@ -26,3 +26,10 @@ Poly::MeshRenderingComponent::~MeshRenderingComponent()
 	if (Mesh)
 		ResourceManager<MeshResource>::Release(Mesh);
 }
+
+Optional<AABox> Poly::MeshRenderingComponent::GetBoundingBox(eEntityBoundingChannel channel)
+{
+	if (channel != eEntityBoundingChannel::RENDERING || !Mesh)
+		return {};
+	return Mesh->GetAABox();
+}
