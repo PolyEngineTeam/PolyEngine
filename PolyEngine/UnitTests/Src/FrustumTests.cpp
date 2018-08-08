@@ -26,8 +26,8 @@ std::pair<Vector, bool> RandomBoxPosition(const Vector& size, Angle fov, float a
 	const float xExtend = maxValue(position.Z, fov * aspect);
 	const float yExtend = maxValue(position.Z, fov);
 
-	const bool correct = position.X == Clamp(position.X, -xExtend, xExtend)
-		&& position.Y == Clamp(position.Y, -yExtend, yExtend);
+	const bool correct = position.X == Clamp(position.X, -xExtend - size.X, xExtend)
+		&& position.Y == Clamp(position.Y, -yExtend - size.Y, yExtend);
 	return { position, correct };
 }
 
@@ -36,7 +36,7 @@ TEST_CASE("Frustum position tests", "[Frustum]") {
 	const float aspect = 4.f / 3.f;
 	const float zNear = 1.f;
 	const float zFar = 1000.f;
-	const size_t testCount = 100;
+	const size_t testCount = 10000;
 	
 	Frustum f(fov, aspect, zNear, zFar);
 	Vector size(1, 1, 1);
