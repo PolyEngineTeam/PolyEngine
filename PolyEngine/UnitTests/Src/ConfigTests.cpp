@@ -52,6 +52,11 @@ public:
 	bool operator==(const TestRTTIClass& rhs) const { return Val1 == rhs.Val1; }
 	bool operator!=(const TestRTTIClass& rhs) const { return !(*this == rhs); }
 
+	friend std::ostream& operator<< (std::ostream& stream, const TestRTTIClass& rhs)
+	{
+		return stream << "TestRTTIClass[ " << rhs.Val1 << " ]";
+	}
+
 	int Val1 = 0;
 };
 RTTI_DEFINE_TYPE(TestRTTIClass)

@@ -4,6 +4,7 @@
 #include <bitset>
 
 #include <Memory/SafePtrRoot.hpp>
+#include <Math/AABox.hpp>
 #include "ECS/EntityTransform.hpp"
 #include "Engine.hpp"
 
@@ -11,6 +12,12 @@ namespace Poly
 {
 	class ComponentBase;
 	constexpr unsigned int MAX_COMPONENTS_COUNT = 64;
+
+	enum class eEntityBoundingChannel
+	{
+		RENDERING,
+		_COUNT
+	};
 
 	/// <summary>Class that represent entity inside core engine systems. Should not be used anywhere else.</summary>
 	class ENGINE_DLLEXPORT Entity : public SafePtrRoot
@@ -95,8 +102,15 @@ namespace Poly
 		bool IsRoot() const { return Parent == nullptr; }
 		bool IsChildOfRoot() const { return Parent ? Parent->IsRoot() : false; }
 		bool ContainsChildRecursive(Entity* child) const;
+	
+	
+		const AABox& GetLocalBoundingBox(eEntityBoundingChannel channel) const;
+		AABox GetGlobalBoundingBox(eEntityBoundingChannel channel) const;
+
 	private:
 		Entity(Scene* world, Entity* parent = nullptr);
+
+		void SetBBoxDirty();
 
 		Entity* Parent = nullptr;
 		Dynarray<Entity*> Children;
@@ -105,6 +119,9 @@ namespace Poly
 		String Name;
 		EntityTransform Transform;
 		Scene* EntityScene = nullptr;
+
+		mutable EnumArray<AABox, eEntityBoundingChannel> LocalBBox;
+		mutable EnumArray<bool, eEntityBoundingChannel> BBoxDirty;
 
 		std::bitset<MAX_COMPONENTS_COUNT> ComponentPosessionFlags;
 		ComponentBase* Components[MAX_COMPONENTS_COUNT];

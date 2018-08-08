@@ -41,7 +41,7 @@ namespace Poly
 		// Listener
 		void ENGINE_DLLEXPORT ActivateListener(Scene*, Entity*);
 		void ENGINE_DLLEXPORT DeactivateListener(Scene*, Entity*);
-		void ENGINE_DLLEXPORT SetListenerGain(Scene*, Entity*, float);
+		void ENGINE_DLLEXPORT SetListenerPosition(Vector);
 		bool ENGINE_DLLEXPORT IsEmmiterActive(Scene*, Entity*);
 	}
 } // namespace Poly

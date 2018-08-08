@@ -17,13 +17,9 @@ void Poly::CameraSystem::CameraUpdatePhase(Scene* world)
 		EntityTransform& transform = cameraCmp->GetTransform();
 
 		// reinit perspective
-		if (cameraCmp->CheckFlags(eComponentBaseFlags::NEWLY_CREATED) || cameraCmp->Aspect != aspect)
+		if (cameraCmp->CheckFlags(eComponentBaseFlags::NEWLY_CREATED) || cameraCmp->GetAspect() != aspect)
 		{
-			cameraCmp->Aspect = aspect;
-			if (cameraCmp->IsPerspective)
-				cameraCmp->ScreenFromView.SetPerspective(cameraCmp->Fov, cameraCmp->Aspect, cameraCmp->Near, cameraCmp->Far);
-			else
-				cameraCmp->ScreenFromView.SetOrthographic(cameraCmp->Top, cameraCmp->Bottom, cameraCmp->Left, cameraCmp->Right, cameraCmp->Near, cameraCmp->Far);
+			cameraCmp->SetAspect(aspect);
 		}
 
 		cameraCmp->ViewFromWorld = transform.GetWorldFromModel().GetInversed();

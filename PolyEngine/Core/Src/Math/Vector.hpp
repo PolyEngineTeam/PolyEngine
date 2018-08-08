@@ -86,6 +86,9 @@ namespace Poly
 		/// <returns>Normalized vector.</returns>
 		Vector GetNormalized() const;
 
+		static Vector Max(const Vector& a, const Vector& b);
+		static Vector Min(const Vector& a, const Vector& b);
+
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Vector& vec);
 
 		// This structure allows to access vector elements by index or name.

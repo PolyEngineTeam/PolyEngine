@@ -12,6 +12,7 @@
 
 struct aiMesh;
 struct aiMaterial;
+struct aiAnimation;
 
 typedef unsigned int GLuint;
  
@@ -25,14 +26,45 @@ namespace Poly
 		public:
 			SubMesh(const String& path, aiMesh* mesh, aiMaterial* material);
 
+			struct ENGINE_DLLEXPORT Bone {
+				String name;
+			};
+
 			void LoadGeometry(aiMesh* mesh);
+			void LoadBones(aiMesh* mesh);
 			TextureResource* LoadTexture(const aiMaterial* material, const String& path, const unsigned int aiType, const eTextureUsageType textureType);
 
 			const Mesh& GetMeshData() const { return MeshData; }
 			const IMeshDeviceProxy* GetMeshProxy() const { return MeshProxy.get(); }
+			const AABox& GetAABox() const { return AxisAlignedBoundingBox; }
 		private:
+			AABox AxisAlignedBoundingBox;
 			Mesh MeshData;
+			Dynarray<Bone> Bones;
 			std::unique_ptr<IMeshDeviceProxy> MeshProxy;
+		};
+
+		struct ENGINE_DLLEXPORT Animation {
+
+			Animation(aiAnimation* anim);
+
+			struct ENGINE_DLLEXPORT Channel {
+
+				template<typename T>
+				struct KeyValue
+				{
+					T Value;
+					float Time;
+				};
+				String Name;
+				Dynarray<KeyValue<Vector>> Positions;
+				Dynarray<KeyValue<Quaternion>> Rotations;
+				Dynarray<KeyValue<Vector>> Scales;
+			};
+
+			float Duration;
+			float TicksPerSecond;
+			Dynarray<Channel> channels;
 		};
 
 		MeshResource(const String& path);
@@ -40,7 +72,11 @@ namespace Poly
 
 
 		const Dynarray<SubMesh*>& GetSubMeshes() const { return SubMeshes; }
+		const Dynarray<Animation*>& GetAnimations() const { return Animations; }
+		const AABox& GetAABox() const { return AxisAlignedBoundingBox; }
 	private:
+		Dynarray<Animation*> Animations;
 		Dynarray<SubMesh*> SubMeshes;
+		AABox AxisAlignedBoundingBox;
 	};
 }

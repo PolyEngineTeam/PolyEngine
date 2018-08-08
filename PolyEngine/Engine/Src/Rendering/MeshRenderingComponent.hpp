@@ -56,6 +56,8 @@ namespace Poly {
 		void SetShadingModel(eShadingMode value) { ShadingMode = value; }
 		void SetBlendingMode(eBlendingMode value) { BlendingMode = value; }
 
+
+		Optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) override;
 	private:
 		MeshResource* Mesh = nullptr;
 		Dynarray<Material> Materials;

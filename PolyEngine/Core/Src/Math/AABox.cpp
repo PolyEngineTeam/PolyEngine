@@ -7,6 +7,7 @@ using namespace Poly;
 AABox::AABox(const Vector& position, const Vector& size)
 	: Pos(position), Size(size)
 {
+	ASSERTE(Size.X >= 0 && Size.Y >= 0 && Size.Z >= 0, "Invalid aabox size!");
 }
 
 //------------------------------------------------------------------------------
@@ -39,6 +40,61 @@ AABox AABox::GetIntersectionVolume(const AABox& rhs) const
 	}
 	else
 		return AABox(Vector::ZERO, Vector::ZERO);
+}
+
+std::array<Vector, 8> Poly::AABox::GetVertices() const
+{
+    SILENCE_CLANG_WARNING(-Wmissing-braces, "Everything is ok here.");
+	return std::array<Vector, 8>{
+	    Pos,
+		Pos + Vector(Size.X, 0, 0),
+		Pos + Vector(Size.X, Size.Y, 0),
+		Pos + Vector(Size.X, Size.Y, Size.Z),
+		Pos + Vector(0, Size.Y, Size.Z),
+		Pos + Vector(0, 0, Size.Z),
+		Pos + Vector(0, Size.Y, 0),
+		Pos + Vector(Size.X, 0, Size.Z)
+	};
+    UNSILENCE_CLANG_WARNING();
+}
+
+AABox Poly::AABox::GetTransformed(const Matrix& transform) const
+{
+	Vector min = transform * Pos;
+	Vector max = min;
+
+	// Gather other 7 points
+    SILENCE_CLANG_WARNING(-Wmissing-braces, "Everything is ok here.");
+	std::array<Vector, 7> points =
+	{
+		Pos + Vector(Size.X, 0, 0),
+		Pos + Vector(Size.X, Size.Y, 0),
+		Pos + Vector(Size.X, Size.Y, Size.Z),
+		Pos + Vector(0, Size.Y, Size.Z),
+		Pos + Vector(0, 0, Size.Z),
+		Pos + Vector(0, Size.Y, 0),
+		Pos + Vector(Size.X, 0, Size.Z)
+	};
+    UNSILENCE_CLANG_WARNING();
+
+	// Iterate other 7 points
+	for (Vector v : points)
+	{
+		v = transform * v;
+		min = Vector::Min(min, v);
+		max = Vector::Max(max, v);
+	}
+
+	return AABox(min, max - min);
+}
+
+Poly::AABox& Poly::AABox::Expand(const AABox& rhs)
+{
+	Vector min = Vector::Min(GetMin(), rhs.GetMin());
+	Vector max = Vector::Max(GetMax(), rhs.GetMax());
+	Pos = min;
+	Size = max - min;
+	return *this;
 }
 
 //------------------------------------------------------------------------------

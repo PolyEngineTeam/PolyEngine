@@ -113,7 +113,6 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* world)
 		debugDrawWorldCmp->DebugTexts2D.Clear();
 	}
 
-
 	enum class RenderMode : int { /*POINT = 1,*/ LINE = 1, /*STRING,*/ _COUNT };
 
 	// iterate RenderMode::_COUNT times to create shapes defining debug primitives
@@ -136,24 +135,15 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* world)
 			// spawn a box for every mesh, in correct size
 			for(const auto subMesh : meshCmp->GetMesh()->GetSubMeshes())
 			{
-				const auto& meshVerticesPositions = subMesh->GetMeshData().GetPositions();
-
-				// find mins and maxs of each mesh coordinates
-				// in order to create AABB
-				auto minMeshVector = Util::FindExtremum(meshVerticesPositions, std::less<float>());
-				auto maxMeshVector = Util::FindExtremum(meshVerticesPositions, std::greater<float>());
-
-				Vector minVector(minMeshVector.X, minMeshVector.Y, minMeshVector.Z);
-				Vector maxVector(maxMeshVector.X, maxMeshVector.Y, maxMeshVector.Z);
-
-				minVector = objTransform * minVector;
-				maxVector = objTransform * maxVector;
+				AABox box = subMesh->GetAABox();
+				Vector minVector = objTransform * box.GetMin();
+				Vector maxVector = objTransform * box.GetMax();
 
 				const auto boundingOffset = Vector(0.04f, 0.04f, 0.04f);
 				// move vector away a little bit from a mesh
 				minVector -= boundingOffset;
 				maxVector += boundingOffset;
-
+				
 				DrawBox(world, minVector, maxVector, Color::GREEN);
 			}
 		}
@@ -258,6 +248,60 @@ void Poly::DebugDrawSystem::DrawBox(Scene* world, const Vector& mins, const Vect
 	DrawLine(world, points[5], points[6], color);
 }
 
+void Poly::DebugDrawSystem::DrawBox(Scene * world, const AABox & box, const Color & color)
+{
+	DrawBox(world, box.GetMin(), box.GetMax(), color);
+}
+
+void Poly::DebugDrawSystem::DrawFrustum(Scene* world, const Frustum& frust, const Vector& pos, const Quaternion& rot, const Color& color, bool withNormals)
+{
+	const Quaternion rY = Quaternion(Vector::UNIT_Y, (frust.GetFov() / 2) * frust.GetAspect());
+	const Quaternion rX = Quaternion(Vector::UNIT_X, (frust.GetFov() / 2));
+
+	const Vector origin = pos;
+	const Vector lookDir = rot * -Vector::UNIT_Z;
+
+	std::array<Vector, 4> v;
+	v[0] = rY * rX * lookDir;
+	v[1] = rY * rX.GetConjugated() * lookDir;
+	v[2] = rY.GetConjugated() * rX.GetConjugated() * lookDir;
+	v[3] = rY.GetConjugated() * rX * lookDir;
+
+	const float cosHalfFovW = Cos(frust.GetFov() / 2 * frust.GetAspect());
+	const float cosHalfFovH = Cos(frust.GetFov() / 2);
+
+	const float nDist = frust.GetZNear() / (cosHalfFovW * cosHalfFovH);
+	std::array<Vector, 4> n;
+	for (size_t i = 0; i < 4; ++i)
+		n[i] = origin + v[i] * nDist;
+
+	const float fDist = frust.GetZFar() / (cosHalfFovW * cosHalfFovH);
+	std::array<Vector, 4> f;
+	for (size_t i = 0; i < 4; ++i)
+		f[i] = origin + v[i] * fDist;
+
+	for (size_t i = 0; i < 4; ++i)
+	{
+		size_t nextI = (i + 1) % 4;
+
+		DrawLine(world, origin, n[i], color);
+		DrawLine(world, n[i], f[i], color);
+
+		DrawLine(world, n[i], n[nextI], color);
+		DrawLine(world, f[i], f[nextI], color);
+	}
+
+	if (withNormals)
+	{
+		DrawArrow(world, (n[0] + n[1] + f[0] + f[1]) / 4, rot * frust.GetPlanes()[eFrustumPlane::LEFT].GetNormal(), color);
+		DrawArrow(world, (n[1] + n[2] + f[1] + f[2]) / 4, rot * frust.GetPlanes()[eFrustumPlane::UP].GetNormal(), color);
+		DrawArrow(world, (n[2] + n[3] + f[2] + f[3]) / 4, rot * frust.GetPlanes()[eFrustumPlane::RIGHT].GetNormal(), color);
+		DrawArrow(world, (n[3] + n[0] + f[3] + f[0]) / 4, rot * frust.GetPlanes()[eFrustumPlane::DOWN].GetNormal(), color);
+		DrawArrow(world, origin + lookDir * frust.GetZNear(), rot * frust.GetPlanes()[eFrustumPlane::ZNEAR].GetNormal(), color);
+		DrawArrow(world, origin + lookDir * frust.GetZFar(), rot * frust.GetPlanes()[eFrustumPlane::ZFAR].GetNormal(), color);
+	}
+}
+
 void Poly::DebugDrawSystem::DrawCircle(Scene* world, const Vector& position, float radius, Vector orientation, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
@@ -301,7 +345,7 @@ void Poly::DebugDrawSystem::DrawArrow(Scene* world, Vector position, Vector dire
 		return;
 
 	constexpr float arrowLengthScale = 0.5f;
-	constexpr float arrowheadScale = 0.5f;
+	constexpr float arrowheadScale = 0.2f;
 	
 	// body line
 	auto arrowTip = position + directionVector*arrowLengthScale;
@@ -309,7 +353,7 @@ void Poly::DebugDrawSystem::DrawArrow(Scene* world, Vector position, Vector dire
 	directionVector.Normalize();
 
 	// arrowhead
-	const auto rotationStep = Angle::FromDegrees(24.0f);
+	const auto rotationStep = Angle::FromDegrees(60.0f);
 	Quaternion rotAroundDirectionVector;
 	rotAroundDirectionVector.SetRotation(directionVector, rotationStep);
 
@@ -318,15 +362,20 @@ void Poly::DebugDrawSystem::DrawArrow(Scene* world, Vector position, Vector dire
 	}
 
 	// calculate point which sets edge points around the arrowhead
-	auto arrowTipEdgePoint = position.Cross(directionVector);
-	arrowTipEdgePoint.Normalize();
-	arrowTipEdgePoint *= arrowheadScale; // scale the arrowhead (cone base diameter)
+	Vector perp[2];
+	perp[0] = Vector(directionVector.Z, directionVector.Z, -directionVector.X - directionVector.Y);
+	perp[1] = Vector(-directionVector.Y - directionVector.Z, directionVector.X, directionVector.X);
+	int selectIndex = ((directionVector.Z != 0) && (-directionVector.X != directionVector.Y)); // this is not a branch
+	Vector perpendicularVector = perp[selectIndex];
+
+	perpendicularVector.Normalize();
+	perpendicularVector *= arrowheadScale; // scale the arrowhead (cone base diameter)
 
 	for (float degrees = 0.0f; degrees < 360.0f; degrees += rotationStep.AsDegrees())
 	{
-		DrawLine(world, arrowTip, arrowTip + arrowTipEdgePoint, color);
-		DrawLine(world, arrowTip + arrowTipEdgePoint, arrowTip + directionVector*arrowheadScale, color);
-		arrowTipEdgePoint = rotAroundDirectionVector*arrowTipEdgePoint;
+		DrawLine(world, arrowTip, arrowTip + perpendicularVector, color);
+		DrawLine(world, arrowTip + perpendicularVector, arrowTip + directionVector*arrowheadScale, color);
+		perpendicularVector = rotAroundDirectionVector* perpendicularVector;
 	}
 }
 

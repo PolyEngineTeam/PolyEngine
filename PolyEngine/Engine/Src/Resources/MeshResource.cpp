@@ -20,9 +20,23 @@ MeshResource::MeshResource(const String& path)
 	}
 
 	gConsole.LogDebug("Loading model {} sucessfull.", path);
+
+	const float maxFloat = std::numeric_limits<float>::max();
+	Vector min(maxFloat, maxFloat, maxFloat);
+	Vector max(-maxFloat, -maxFloat, -maxFloat);
+	
 	for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
 		SubMeshes.PushBack(new SubMesh(path, scene->mMeshes[i], scene->mMaterials[scene->mMeshes[i]->mMaterialIndex]));
+
+		min = Vector::Min(min, SubMeshes[i]->GetAABox().GetMin());
+		max = Vector::Max(max, SubMeshes[i]->GetAABox().GetMax());
 	}
+
+	for (size_t i = 0; i < scene->mNumAnimations; ++i) {
+		Animations.PushBack(new Animation(scene->mAnimations[i]));
+	}
+
+	AxisAlignedBoundingBox = AABox(min, max - min);
 }
 
 MeshResource::~MeshResource()
@@ -31,11 +45,16 @@ MeshResource::~MeshResource()
 	{
 		delete subMesh;
 	}
+	for (Animation* animation : Animations)
+	{
+		delete animation;
+	}
 }
 
 MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* material)
 {
 	LoadGeometry(mesh);
+	LoadBones(mesh);
 	
 	MeshData.EmissiveMap			= LoadTexture(material, path, (unsigned int)aiTextureType_EMISSIVE,		eTextureUsageType::EMISSIVE);
 	MeshData.AlbedoMap				= LoadTexture(material, path, (unsigned int)aiTextureType_DIFFUSE,		eTextureUsageType::ALBEDO);
@@ -45,16 +64,40 @@ MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* mat
 	MeshData.AmbientOcclusionMap	= LoadTexture(material, path, (unsigned int)aiTextureType_AMBIENT,		eTextureUsageType::AMBIENT_OCCLUSION);
 }
 
+void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
+{
+	if (mesh->HasBones())
+	{
+		for (size_t i = 0; i < mesh->mNumBones; ++i)
+		{
+			Bones.PushBack({ String(mesh->mBones[i]->mName.C_Str()) });
+		}
+	}
+	else
+	{
+		gConsole.LogWarning("No bones");
+	}
+}
+
 void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 {
+	const float maxFloat = std::numeric_limits<float>::max();
+	Vector min(maxFloat, maxFloat, maxFloat);
+	Vector max(-maxFloat, -maxFloat, -maxFloat);
+
 	if (mesh->HasPositions()) {
 		MeshData.Positions.Resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 			MeshData.Positions[i].X = mesh->mVertices[i].x;
 			MeshData.Positions[i].Y = mesh->mVertices[i].y;
 			MeshData.Positions[i].Z = mesh->mVertices[i].z;
+
+			min = Vector::Min(min, Vector(MeshData.Positions[i].GetVector()));
+			max = Vector::Max(max, Vector(MeshData.Positions[i].GetVector()));
 		}
 	}
+	// Set bounding box for sub mesh
+	AxisAlignedBoundingBox = AABox(min, max - min);
 
 	if (mesh->HasTextureCoords(0)) {
 		MeshData.TextCoords.Resize(mesh->mNumVertices);
@@ -141,4 +184,32 @@ TextureResource* MeshResource::SubMesh::LoadTexture(const aiMaterial* material, 
 	}
 
 	return texture;
+}
+
+Poly::MeshResource::Animation::Animation(aiAnimation * anim)
+{
+	Duration = (float)anim->mDuration;
+	TicksPerSecond = (float)anim->mTicksPerSecond;
+
+	for (size_t i = 0; i < anim->mNumChannels; ++i)
+	{
+		Channel c;
+		c.Name = String(anim->mChannels[i]->mNodeName.C_Str());
+		for (size_t j = 0; j < anim->mChannels[i]->mNumPositionKeys; ++j)
+		{
+			Vector vector = { anim->mChannels[i]->mPositionKeys[j].mValue.x, anim->mChannels[i]->mPositionKeys[j].mValue.y, anim->mChannels[i]->mPositionKeys[j].mValue.z };
+			c.Positions.PushBack({ vector, (float)anim->mChannels[i]->mPositionKeys[j].mTime });
+		}
+		for (size_t j = 0; j < anim->mChannels[i]->mNumRotationKeys; ++j)
+		{
+			Quaternion q = { anim->mChannels[i]->mRotationKeys[j].mValue.x, anim->mChannels[i]->mRotationKeys[j].mValue.y, anim->mChannels[i]->mRotationKeys[j].mValue.z, anim->mChannels[i]->mRotationKeys[j].mValue.w };
+			c.Rotations.PushBack({ q, (float)anim->mChannels[i]->mRotationKeys[j].mTime });
+		}
+		for (size_t j = 0; j < anim->mChannels[i]->mNumScalingKeys; ++j)
+		{
+			Vector vector = { anim->mChannels[i]->mScalingKeys[j].mValue.x, anim->mChannels[i]->mScalingKeys[j].mValue.y, anim->mChannels[i]->mScalingKeys[j].mValue.z };
+			c.Scales.PushBack({ vector, (float)anim->mChannels[i]->mScalingKeys[j].mTime });
+		}
+		channels.PushBack(std::move(c));
+	}
 }
