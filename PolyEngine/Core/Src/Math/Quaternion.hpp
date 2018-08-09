@@ -101,7 +101,7 @@ namespace Poly {
 
 		static Quaternion LookAt(const Vector& pos, const Vector& target, const Vector& up = Vector::UNIT_Y);
 		static Quaternion Lerp(const Quaternion& q1, const Quaternion& q2, float t);
-		static Quaternion Slerp(const Quaternion& q1, Quaternion q2, float t);
+		static Quaternion Slerp(const Quaternion& q1, const Quaternion& q2, float t);
 
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Quaternion& quat);
 

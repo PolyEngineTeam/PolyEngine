@@ -5,7 +5,7 @@
 
 using namespace Poly;
 
-void MovementSystem::MovementUpdatePhase(World* world)
+void MovementSystem::MovementUpdatePhase(Scene* world)
 {
 	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
 	InputWorldComponent* inputCmp = world->GetWorldComponent<InputWorldComponent>();
@@ -15,11 +15,11 @@ void MovementSystem::MovementUpdatePhase(World* world)
 		FreeFloatMovementComponent* freeFloatMovementCmp = std::get<FreeFloatMovementComponent*>(freeFloatTuple);
 		EntityTransform& trans = freeFloatMovementCmp->GetTransform();
 
-		int wheelDelta = inputCmp->GetWheelPosDelta().Y;
-		float speed = freeFloatMovementCmp->GetMovementSpeed();
-		speed = Clamp(speed + wheelDelta, 0.001f, 10000.0f);
-		freeFloatMovementCmp->SetMovementSpeed(speed);
-
+		float wheelDelta = freeFloatMovementCmp->GetWheelSensitivity() * inputCmp->GetWheelPosDelta().Y;
+		float currSpeed = freeFloatMovementCmp->GetMovementSpeed();
+		float newSpeed = Clamp(currSpeed + wheelDelta, 0.001f, 10000.0f);
+		freeFloatMovementCmp->SetMovementSpeed(newSpeed);
+		
 		Vector move;
 		if (inputCmp->IsPressed(eKey::KEY_W))
 			move -= Vector::UNIT_Z;
@@ -39,7 +39,7 @@ void MovementSystem::MovementUpdatePhase(World* world)
 		if (move.LengthSquared() > 0)
 			move.Normalize();
 
-		move *= speed * deltaTime;
+		move *= freeFloatMovementCmp->GetMovementSpeed() * deltaTime;
 
 		trans.SetLocalTranslation(trans.GetLocalTranslation() + trans.GetLocalRotation() * move);
 		

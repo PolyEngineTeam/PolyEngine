@@ -4,26 +4,26 @@
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-Entity* DeferredTaskSystem::SpawnEntityImmediate(World* w)
+Entity* DeferredTaskSystem::SpawnEntityImmediate(Scene* w)
 {
 	return w->SpawnEntity();
 }
 
 //------------------------------------------------------------------------------
-void DeferredTaskSystem::DestroyEntityImmediate(World* w, Entity* entity)
+void DeferredTaskSystem::DestroyEntityImmediate(Scene* w, Entity* entity)
 {
 	w->DestroyEntity(entity);
 }
 
 //------------------------------------------------------------------------------
-void DeferredTaskSystem::DestroyEntity(World* w, Entity* entity)
+void DeferredTaskSystem::DestroyEntity(Scene* w, Entity* entity)
 {
 	DeferredTaskWorldComponent* cmp = w->GetWorldComponent<DeferredTaskWorldComponent>();
 	cmp->ScheduleTask(new DestroyEntityDeferredTask(entity));
 }
 
 //------------------------------------------------------------------------------
-void DeferredTaskSystem::DeferredTaskPhase(World* w)
+void DeferredTaskSystem::DeferredTaskPhase(Scene* w)
 {
 	DeferredTaskWorldComponent* worldCmp = w->GetWorldComponent<DeferredTaskWorldComponent>();
 

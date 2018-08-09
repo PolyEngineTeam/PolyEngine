@@ -23,13 +23,13 @@
 
 using namespace Poly;
 
-Text2DRenderingPass::Text2DRenderingPass()
-: RenderingPassBase("Shaders/text2DVert.shader", "Shaders/text2DFrag.shader")
+Text2DRenderingPass::Text2DRenderingPass(const GLRenderingDevice* rdi)
+: RenderingPassBase(rdi, "Shaders/text2D.vert.glsl", "Shaders/text2D.frag.glsl")
 {
 
 }
 
-void Text2DRenderingPass::OnRun(World* world, const CameraComponent* /*camera*/, const AARect& rect, ePassType /*passType = ePassType::GLOBAL*/ )
+void Text2DRenderingPass::OnRun(Scene* world, const CameraComponent* /*camera*/, const AARect& rect, ePassType /*passType = ePassType::GLOBAL*/ )
 {
 	// Text drawing
 	glEnable(GL_BLEND);

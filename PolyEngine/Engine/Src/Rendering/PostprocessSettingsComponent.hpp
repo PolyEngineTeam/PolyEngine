@@ -7,21 +7,26 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT PostprocessSettingsComponent : public ComponentBase
 	{
-		friend void CameraSystem::CameraUpdatePhase(World*);
 	public:
 
-		bool UseBgShader = true;
-		bool UseFgShader = true;
+		float Exposure = 1.0f;
 
-		int UseCashetes = 0;
-		float Distortion = 0.05f;
-		float ColorTempValue = 7500.0f; // 6500.0 from [1000.0, 40000.0]
-		float ColorTempLuminancePreservation = 0.75f;
-		float Saturation = 1.0f;
-		float Grain = 0.05f;
-		float Stripes = 0.15f;
-		float Vignette = 0.15f;
+		float MotionBlurScale = 0.1f;
 
+		float DOFPoint = 1000.0f;
+		float DOFRange = 800.0f;
+		float DOFSize = 0.1f;
+		float DOFShow = 0.0f;
+
+		float BloomThreshold = 1.0f; // luminance
+		float BloomScale = 0.1f;
+
+		float GrainScale = 0.01f;
+		float VignetteScale = 0.1f;
+		float AbberationScale = 0.1f;
+
+		Color Tint = Color::WHITE;
+		float Gamma = 2.2f;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, PostprocessSettingsComponent)

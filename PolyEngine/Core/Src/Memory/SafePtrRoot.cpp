@@ -2,6 +2,8 @@
 
 #include "SafePtrRoot.hpp"
 
+RTTI_DEFINE_TYPE(::Poly::SafePtrRoot);
+
 using namespace Poly;
 
 //------------------------------------------------------------------------------

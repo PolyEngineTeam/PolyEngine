@@ -2,7 +2,7 @@
 
 using namespace Poly;
 
-void RenderingSystem::RenderingPhase(World* world)
+void RenderingSystem::RenderingPhase(Scene* world)
 {	
 	IRenderingDevice* device = gEngine->GetRenderingDevice();
 	device->RenderWorld(world);

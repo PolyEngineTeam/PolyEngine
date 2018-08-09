@@ -9,8 +9,8 @@ using namespace Poly;
 TEST_CASE("Matrix constructors", "[Matrix]") {
   // empty constructor
   Matrix m1;
-  for(int i=0; i<16; ++i)
-    REQUIRE(m1.Data[i] == (i%5==0?1:0));
+  for(int i=0; i<16; ++i)   
+	  REQUIRE(m1.Data[i] == (i % 5 == 0 ? 1 : 0));
 
   // basic constructor
   float data[] = {0,1,2,3,
@@ -30,6 +30,11 @@ TEST_CASE("Matrix constructors", "[Matrix]") {
   m1 = m2;
   for(int i=0; i<16; ++i)
     REQUIRE(m1.Data[i] == i);
+
+  // look at contructor
+  Matrix m4(Vector::ZERO, Vector(0.0f, 0.0f, -1.0f), Vector(0.0f, 1.0f, 0.0f));
+  for (int i = 0; i<16; ++i)
+	  REQUIRE(m4.Data[i] == (i % 5 == 0 ? 1 : 0));
 }
 
 TEST_CASE("Matrix comparison operators", "[Matrix]") {
@@ -234,6 +239,26 @@ TEST_CASE("Matrix set methods","[Matrix]") {
     Matrix m2(data);
     m1.SetScale(Vector(2,3,4));
     REQUIRE(m1 == m2);
+  }
+  
+  SECTION("Set rotation with look at method") {
+	  float data2[] = { 1, 0, 0, 0,
+						0, 1, 0, 0,
+						0, 0, 1, 0,
+						0, 0, 0, 1 };
+	  Matrix m2(data2);
+	  // by default we look at -Z with +Y as up axis
+	  m1.SetLookAt(Vector::ZERO, Vector(0.0f, 0.0f, -1.0f), Vector(0.0f, 1.0f, 0.0f));
+	  REQUIRE(m1 == m2);
+
+	  float data3[] = { 0, 0, 1, 0,
+						0, 1, 0, 0,
+					   -1, 0, 0, 0,
+						0, 0, 0, 1 };
+	  Matrix m3(data3);
+	  // rotate by 90_deg about Y axis
+	  m1.SetLookAt(Vector::ZERO, Vector(-1.0f, 0.0f, 0.0f), Vector(0.0f, 1.0f, 0.0f));
+	  REQUIRE(m1 == m3);
   }
 }
 

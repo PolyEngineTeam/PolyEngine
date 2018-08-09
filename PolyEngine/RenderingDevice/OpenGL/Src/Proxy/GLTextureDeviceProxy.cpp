@@ -3,74 +3,51 @@
 
 using namespace Poly;
 
-//---------------------------------------------------------------
-static GLenum GetGLDataFormat(eTextureDataFormat format) noexcept
+static GLenum GetFormat(size_t channels) noexcept
 {
-	switch (format)
+	switch (channels)
 	{
-	case Poly::eTextureDataFormat::RED:
+	case 1:
 		return GL_RED;
-	case Poly::eTextureDataFormat::RGB:
+	case 3:
 		return GL_RGB;
-	case Poly::eTextureDataFormat::RGBA:
+	case 4:
 		return GL_RGBA;
 	default:
-		ASSERTE(false, "Invalid format!");
+		ASSERTE(false, "Invalid Channels!");
 	}
 	return 0;
 }
 
-//---------------------------------------------------------------
-static GLenum GetGLInternalFormat(eTextureUsageType usage) noexcept
-{
-	switch (usage)
-	{
-	case Poly::eTextureUsageType::DIFFUSE:
-		return GL_RGBA;
-	case Poly::eTextureUsageType::NORMAL:
-		return GL_RGB;
-	case Poly::eTextureUsageType::SPECULAR:
-		return GL_RED;
-	case Poly::eTextureUsageType::FONT:
-		return GL_RED;
-	default:
-		ASSERTE(false, "Invalid usage!");
-	}
-	return 0;
-}
-
-//-------------------------------------------------------------- -
-Poly::GLTextureDeviceProxy::GLTextureDeviceProxy(size_t width, size_t height, eInternalTextureUsageType internalUsage, GLuint internalFormat)
-	: Width(width), Height(height), InternalFormat(internalFormat), InternalUsage(internalUsage)
+GLTextureDeviceProxy::GLTextureDeviceProxy(size_t width, size_t height, eRenderTargetType internalUsage, GLuint internalFormat)
+	: Width(width), Height(height),
+	Usage(eTextureUsageType::RENDER_TARGET), RenderTargetType(internalUsage)
 {
 	InitTextureParams();
 }
 
-//---------------------------------------------------------------
-GLTextureDeviceProxy::GLTextureDeviceProxy(size_t width, size_t height, eTextureUsageType usage)
-	: GLTextureDeviceProxy(width, height, eInternalTextureUsageType::NONE, GetGLInternalFormat(usage))
+GLTextureDeviceProxy::GLTextureDeviceProxy(size_t width, size_t height, size_t channels, eTextureUsageType usage)
+	: Width(width), Height(height), Channels(channels),
+	Usage(usage), RenderTargetType(eRenderTargetType::NONE)
 {
-	Usage = usage;
 	InitTextureParams();
 }
 
-//---------------------------------------------------------------
 GLTextureDeviceProxy::~GLTextureDeviceProxy()
 {
 	if(TextureID > 0)
 		glDeleteTextures(1, &TextureID);
 }
 
-//---------------------------------------------------------------
-void GLTextureDeviceProxy::SetContent(eTextureDataFormat format, const unsigned char* data)
+void GLTextureDeviceProxy::SetContent(const unsigned char* data)
 {
+	ASSERTE(Usage != eTextureUsageType::HDR, "Invalid texture usage type, unsigned char* is for LDR image data");
 	ASSERTE(Width > 0 && Height > 0, "Invalid arguments!");
-	ASSERTE(TextureID > 0 , "Texture is invalid!");
+	ASSERTE(TextureID > 0, "Texture is invalid!");
 	ASSERTE(data, "Data pointer is nullptr!");
 
-	//glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, TextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GetGLDataFormat(format), GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, Format, GL_UNSIGNED_BYTE, data);
 
 	if (Usage != eTextureUsageType::FONT)
 	{
@@ -81,21 +58,39 @@ void GLTextureDeviceProxy::SetContent(eTextureDataFormat format, const unsigned 
 	CHECK_GL_ERR();
 }
 
-//---------------------------------------------------------------
-void GLTextureDeviceProxy::SetSubContent(size_t width, size_t height,
-	size_t offsetX, size_t offsetY, eTextureDataFormat format, const unsigned char* data)
+void GLTextureDeviceProxy::SetContentHDR(const float* data)
 {
-	ASSERTE(width + offsetX <= Width && height + offsetY <= Height && width > 0 && height > 0, "Invalid arguments!");
+	ASSERTE(Usage == eTextureUsageType::HDR, "Invalid texture usage type, float* is for HDR image data");
+	ASSERTE(Width > 0 && Height > 0, "Invalid arguments!");
+	ASSERTE(TextureID > 0 , "Texture is invalid!");
 	ASSERTE(data, "Data pointer is nullptr!");
 
-	//glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, TextureID);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, (GLint)offsetX, (GLint)offsetY, (GLsizei)width, (GLsizei)height, GetGLDataFormat(format), GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, Format, GL_FLOAT, data);
+
+	if (Usage != eTextureUsageType::FONT)
+	{
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+
 	glBindTexture(GL_TEXTURE_2D, 0);
 	CHECK_GL_ERR();
 }
 
-void Poly::GLTextureDeviceProxy::Resize(const ScreenSize& size)
+void GLTextureDeviceProxy::SetSubContent(size_t width, size_t height,
+	size_t offsetX, size_t offsetY, const unsigned char* data)
+{
+	ASSERTE(Usage != eTextureUsageType::HDR, "Invalid texture usage type, unsigned char* is for LDR image data");
+	ASSERTE(width + offsetX <= Width && height + offsetY <= Height && width > 0 && height > 0, "Invalid arguments!");
+	ASSERTE(data, "Data pointer is nullptr!");
+
+	glBindTexture(GL_TEXTURE_2D, TextureID);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, (GLint)offsetX, (GLint)offsetY, (GLsizei)width, (GLsizei)height, Format, GL_UNSIGNED_BYTE, data);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	CHECK_GL_ERR();
+}
+
+void GLTextureDeviceProxy::Resize(const ScreenSize& size)
 {
 	Width = size.Width;
 	Height = size.Height;
@@ -103,9 +98,9 @@ void Poly::GLTextureDeviceProxy::Resize(const ScreenSize& size)
 	//glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, TextureID);
 
-	if (InternalUsage == eInternalTextureUsageType::DEPTH_ATTACHEMENT)
+	if (RenderTargetType == eRenderTargetType::DEPTH_ATTACHEMENT)
 		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-	if (InternalUsage == eInternalTextureUsageType::COLOR_ATTACHEMENT)
+	if (RenderTargetType == eRenderTargetType::COLOR_ATTACHEMENT)
 		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_RGBA, GL_FLOAT, nullptr);
 	else
 		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, InternalFormat, GL_UNSIGNED_BYTE, nullptr);
@@ -114,50 +109,198 @@ void Poly::GLTextureDeviceProxy::Resize(const ScreenSize& size)
 	CHECK_GL_ERR();
 }
 
-void Poly::GLTextureDeviceProxy::InitTextureParams()
+void GLTextureDeviceProxy::InitTextureParams()
 {
 	ASSERTE(Width > 0 && Height > 0, "Invalid arguments!");
+	if (TextureID > 0)
+	{
+		return;
+	}
 
-	//glActiveTexture(GL_TEXTURE0);
+	// gConsole.LogInfo("GLTextureDeviceProxy::InitTextureParams usage: {}", (int)Usage);
+
+	switch (Usage)
+	{
+		case eTextureUsageType::ALBEDO:
+		case eTextureUsageType::EMISSIVE:
+			InitTextureGamma();
+			break;
+		case eTextureUsageType::AMBIENT_OCCLUSION:
+		case eTextureUsageType::METALLIC:
+		case eTextureUsageType::ROUGHNESS:
+			InitTextureLinear();
+			break;
+		case eTextureUsageType::NORMAL:
+			InitTextureNormal();
+			break;
+		case eTextureUsageType::HDR:
+			InitTextureHDR();
+			break;
+		case eTextureUsageType::FONT:
+			InitTextureFont();
+			break;
+		case eTextureUsageType::RENDER_TARGET:
+			InitTextureRenderTarget();
+			break;
+		default:
+			ASSERTE(false, "Uknown eTextureUsageType!");
+	}
+}
+
+void GLTextureDeviceProxy::InitTextureHDR()
+{
 	glGenTextures(1, &TextureID);
 
 	if (TextureID <= 0)
 		throw RenderingDeviceProxyCreationFailedException();
 
-	if (Usage == eTextureUsageType::FONT)
+	glBindTexture(GL_TEXTURE_2D, TextureID);
+	InternalFormat = GL_RGB16F;
+	Format = GL_RGB;
+	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_RGB, GL_FLOAT, nullptr);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	CHECK_GL_ERR();
+}
+
+void GLTextureDeviceProxy::InitTextureGamma()
+{
+	glGenTextures(1, &TextureID);
+
+	if (TextureID <= 0)
+		throw RenderingDeviceProxyCreationFailedException();
+
+	glBindTexture(GL_TEXTURE_2D, TextureID);
+	InternalFormat = Channels > 3 ? GL_SRGB8_ALPHA8 : GL_SRGB8;
+	Format = Channels > 3 ? GL_RGBA : GL_RGB;
+	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, Format, GL_UNSIGNED_BYTE, nullptr);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	CHECK_GL_ERR();
+}
+
+void GLTextureDeviceProxy::InitTextureLinear()
+{
+	glGenTextures(1, &TextureID);
+
+	if (TextureID <= 0)
+		throw RenderingDeviceProxyCreationFailedException();
+
+	glBindTexture(GL_TEXTURE_2D, TextureID);
+	switch (Channels)
 	{
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		case 1:
+			InternalFormat = GL_R8;
+			break;
+		case 3:
+			InternalFormat = GL_RGB8;
+			break;
+		case 4:
+			InternalFormat = GL_RGBA8;
+			break;
+		default:
+			ASSERTE(false, "Invalid Channels!");
 	}
+	Format = GetFormat(Channels);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, Format, GL_UNSIGNED_BYTE, nullptr);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	CHECK_GL_ERR();
+}
+
+void GLTextureDeviceProxy::InitTextureRenderTarget()
+{
+	glGenTextures(1, &TextureID);
+
+	if (TextureID <= 0)
+		throw RenderingDeviceProxyCreationFailedException();
 
 	glBindTexture(GL_TEXTURE_2D, TextureID);
 
-	if(InternalUsage == eInternalTextureUsageType::DEPTH_ATTACHEMENT)
-		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-	if (InternalUsage == eInternalTextureUsageType::COLOR_ATTACHEMENT)
-		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, GL_RGBA, GL_FLOAT, nullptr);
-	else
-		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, InternalFormat, GL_FLOAT, nullptr);
+	switch (RenderTargetType)
+	{
+		case eRenderTargetType::COLOR_ATTACHEMENT:
+			InternalFormat = Channels > 3 ? GL_RGBA8 : GL_RGB8;
+			Format = Channels > 3 ? GL_RGBA : GL_RGB;
+			glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, Format, GL_FLOAT, nullptr);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			break;
 
-	if (InternalUsage == eInternalTextureUsageType::COLOR_ATTACHEMENT || InternalUsage == eInternalTextureUsageType::DEPTH_ATTACHEMENT)
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		case eRenderTargetType::DEPTH_ATTACHEMENT:
+			InternalFormat = GL_DEPTH_COMPONENT;
+			Format = GL_DEPTH_COMPONENT;
+			glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, Format, GL_FLOAT, nullptr);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			break;
+
+		default:
+			ASSERTE(false, "Invalid RenderTargetType!");
 	}
-	else if (Usage == eTextureUsageType::FONT)
-	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	}
-	else
-	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 16);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	}
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	CHECK_GL_ERR();
+}
+
+void GLTextureDeviceProxy::InitTextureNormal()
+{
+	glGenTextures(1, &TextureID);
+
+	if (TextureID <= 0)
+		throw RenderingDeviceProxyCreationFailedException();
+
+	glBindTexture(GL_TEXTURE_2D, TextureID);
+	InternalFormat = GL_RGB;
+	Format = GL_RGB;
+	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, Format, GL_UNSIGNED_BYTE, nullptr);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	CHECK_GL_ERR();
+}
+
+void GLTextureDeviceProxy::InitTextureFont()
+{
+	glGenTextures(1, &TextureID);
+
+	if (TextureID <= 0)
+		throw RenderingDeviceProxyCreationFailedException();
+
+	glBindTexture(GL_TEXTURE_2D, TextureID);
+	InternalFormat = GL_R8;
+	Format = GL_RED;
+	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, (GLsizei)Width, (GLsizei)Height, 0, Format, GL_UNSIGNED_BYTE, nullptr);
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	CHECK_GL_ERR();

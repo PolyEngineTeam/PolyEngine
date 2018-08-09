@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Pipeline/RenderingPassBase.hpp"
-#include "Common/GLShaderProgram.hpp"
+#include "Proxy/GLShaderProgram.hpp"
 #include "Common/PrimitiveCube.hpp"
 
 namespace Poly
 {
-	class World;
+	class Scene;
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
 	class AARect;
@@ -15,13 +15,11 @@ namespace Poly
 	class SkyboxRenderingPass : public RenderingPassBase
 	{
 	public:
-		SkyboxRenderingPass(const PrimitiveCube* cube);
+		SkyboxRenderingPass(const GLRenderingDevice* rdi);
 
 	protected:
-		void OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType) override;
+		void OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType) override;
 
 		void RenderSkybox(const CameraComponent* camera, const SkyboxWorldComponent* SkyboxWorldCmp);
-
-		const PrimitiveCube* Cube;
 	};
 }

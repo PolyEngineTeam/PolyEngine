@@ -2,24 +2,28 @@
 
 #include "Common/GLUtils.hpp"
 #include <Rendering/IRenderingDevice.hpp>
-#include "Common/GLShaderProgram.hpp"
+#include "Proxy/GLShaderProgram.hpp"
 #include <SDL.h>
 
 struct SDL_Window;
 
 namespace Poly
 {
+	struct PrimitiveQuad;
+	struct PrimitiveCube;
+	struct SceneView;
 	class CameraComponent;
 	class AARect;
-	class World;
-	struct PostprocessQuad;
-	struct PrimitiveCube;
+	class Scene;
 	class RenderingPassBase;
 	class RenderingTargetBase;
-	class RenderingTargetBase;
+	class IRendererInterface;
 
 	class DEVICE_DLLEXPORT GLRenderingDevice : public IRenderingDevice
 	{
+		friend class ForwardRenderer;
+		friend class TiledForwardRenderer;
+
 	private:
 		enum class eGeometryRenderPassType
 		{
@@ -46,6 +50,12 @@ namespace Poly
 			_COUNT
 		};
 
+		enum class eRendererType
+		{
+			FORWARD,
+			TILED_FORWARD,
+		};
+
 		enum class eRenderTargetId
 		{
 			COLOR,
@@ -67,30 +77,36 @@ namespace Poly
 		GLRenderingDevice(const GLRenderingDevice&) = delete;
 		void operator=(const GLRenderingDevice&) = delete;
 
+		bool CreateContextHighend();
+
+		void Init() override;
 		void Resize(const ScreenSize& size) override;
+		void RenderWorld(Scene* world) override;
 		const ScreenSize& GetScreenSize() const override { return ScreenDim; }
 
-		void RenderWorld(World* world) override;
-		void Init() override;
-
-		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, eTextureUsageType usage) override;
+		std::unique_ptr<ITextureDeviceProxy> CreateTexture(size_t width, size_t height, size_t channels, eTextureUsageType usage) override;
 		std::unique_ptr<ICubemapDeviceProxy> CreateCubemap(size_t width, size_t height) override;
 		std::unique_ptr<ITextFieldBufferDeviceProxy> CreateTextFieldBuffer() override;
 		std::unique_ptr<IMeshDeviceProxy> CreateMesh() override;
 		std::unique_ptr<IParticleDeviceProxy> CreateParticle() override;
 
+		std::unique_ptr<PrimitiveQuad> PrimitivesQuad;
+		std::unique_ptr<PrimitiveCube> PrimitivesCube;
+
+		GLuint FallbackWhiteTexture;
+		GLuint FallbackBlackTexture;
+		GLuint FallbackNormalMap;
+		GLuint SSAONoiseMap;
+
 	private:
-		void InitPrograms();
+		void GetExtensions();
+		IRendererInterface* CreateRenderer();
+		void CreateUtilityTextures();
+
+		void FillSceneView(SceneView& sceneView);
 		void EndFrame();
 
 		void CleanUpResources();
-
-		void RenderLit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderUnlit(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderNormals(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderNormalsWireframe(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
-		void RenderDebug(World* world, const AARect& rect, CameraComponent* cameraCmp) const;
 
 		template<typename T>
 		void RegisterGeometryPass(eGeometryRenderPassType type,
@@ -112,13 +128,14 @@ namespace Poly
 		SDL_Window* Window;
 		SDL_GLContext Context;
 		ScreenSize ScreenDim;
+		Dynarray<String> OpenGLExtensions;
+
+		eRendererType RendererType;
+		IRendererInterface* Renderer;
 
 		EnumArray<std::unique_ptr<RenderingPassBase>, eGeometryRenderPassType> GeometryRenderingPasses;
 		EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
 		EnumArray<std::unique_ptr<RenderingTargetBase>, eRenderTargetId> RenderingTargets;
-		
-		std::unique_ptr<PostprocessQuad> PostprocessRenderingQuad;
-		std::unique_ptr<PrimitiveCube> PrimitiveRenderingCube;
 	};
 
 	extern GLRenderingDevice* gRenderingDevice;

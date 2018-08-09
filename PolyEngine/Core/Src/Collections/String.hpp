@@ -151,6 +151,8 @@ namespace Poly {
 		/// <returns>Trimmed String instance</returns>
 		String GetTrimmed() const;
 
+		size_t Find(char c) const;
+
 
 		/// <summary>Copies String state to another String instance</summary>
 		/// <param name="rhs">String reference which should be used as source</param>

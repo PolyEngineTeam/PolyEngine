@@ -3,6 +3,7 @@
 #include "Defines.hpp"
 #include "Math/BasicMath.hpp"
 #include "Math/Vector.hpp"
+#include "Math/Matrix.hpp"
 
 namespace Poly {
 
@@ -15,6 +16,7 @@ namespace Poly {
 		/// <param name="position">Position of the min point of the box.</param>
 		/// <param name="size">Size (extent) of the box in each of the directions.</param>
 		AABox(const Vector& position, const Vector& size);
+		AABox() = default;
 
 		/// <summary>Calculates center of the box.</summary>
 		/// <returns>Center of the box.</returns>
@@ -60,11 +62,17 @@ namespace Poly {
 			&& (abs(Pos.Z - rhs.Pos.Z) * 2 < (Size.Z + rhs.Size.Z));
 		}
 
+		std::array<Vector, 8> GetVertices() const;
+
 		/// <summary>Calculates the intersection volume of 2 AABoxes.</summary>
 		/// <param name="rhs">Other box to calculate intersection with.</param>
 		/// <returns>Box representing the intersection volume.</returns>
 		/// <see cref="AABox.Intersects()"/>
 		AABox GetIntersectionVolume(const AABox& rhs) const;
+
+		AABox GetTransformed(const Matrix& transform) const;
+
+		AABox& Expand(const AABox& rhs);
 
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const AABox& color);
 	private:

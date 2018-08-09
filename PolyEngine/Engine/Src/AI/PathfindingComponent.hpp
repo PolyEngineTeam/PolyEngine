@@ -39,7 +39,7 @@ namespace Poly
 		bool RecalculateRequested = false;
 		bool LastPathSearchFailed = false;
 
-		friend void PathfindingSystem::UpdatePhase(World* world);
+		friend void PathfindingSystem::UpdatePhase(Scene* world);
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, PathfindingComponent)

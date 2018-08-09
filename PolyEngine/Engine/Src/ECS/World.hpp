@@ -8,40 +8,45 @@
 #include "Engine.hpp"
 
 #include "ECS/ComponentBase.hpp"
+#include <Collections/OrderedMap.hpp>
 
 namespace Poly {
 
 	namespace DeferredTaskSystem
 	{
-		ENGINE_DLLEXPORT Entity* SpawnEntityImmediate(World* w);
-		ENGINE_DLLEXPORT void DestroyEntityImmediate(World* w, Entity* entity);
-		template<typename T, typename ...Args> T* AddComponentImmediate(World* w, Entity* entity, Args && ...args);
-		template<typename T, typename ...Args> T* AddWorldComponentImmediate(World* w, Args && ...args);
-		template<typename T> void RemoveWorldComponentImmediate(World* w);
+		ENGINE_DLLEXPORT Entity* SpawnEntityImmediate(Scene* w);
+		ENGINE_DLLEXPORT void DestroyEntityImmediate(Scene* w, Entity* entity);
+		template<typename T, typename ...Args> T* AddComponentImmediate(Scene* w, Entity* entity, Args && ...args);
+		template<typename T, typename ...Args> T* AddWorldComponentImmediate(Scene* w, Args && ...args);
+		template<typename T> void RemoveWorldComponentImmediate(Scene* w);
 	}
 	struct InputState;
 
 	/// <summary>Entities per world limit.</summary>
 	constexpr size_t MAX_ENTITY_COUNT = 65536;
 
-	/// <summary>World components in limit.</summary>
-	constexpr size_t MAX_WORLD_COMPONENTS_COUNT = 64;
-
-	/// <summary>World represents world/scene/level in engine.
+	/// <summary>Scene represents world/scene/level in engine.
 	/// It contains entities, its components and world components.</summary>
-	class ENGINE_DLLEXPORT World : public BaseObject<>
+	class ENGINE_DLLEXPORT Scene : public RTTIBase
 	{
+		RTTI_DECLARE_TYPE_DERIVED(::Poly::Scene, ::Poly::RTTIBase)
+		{
+			//@todo(muniu) rttibase pointers serialization
+			RTTI_PROPERTY_AUTONAME(RootEntity, RTTI::ePropertyFlag::NONE);
+			//RTTI_PROPERTY_AUTONAME(EntitiesAllocator, RTTI::ePropertyFlag::NONE);
+			//RTTI_PROPERTY_AUTONAME_ARRAY(ComponentAllocators, MAX_COMPONENTS_COUNT, RTTI::ePropertyFlag::NONE);
+		}
 	public:
 		/// <summary>Allocates memory for entities, world components and components allocators.</summary>
-		World();
+		Scene();
 
-		virtual ~World();
+		virtual ~Scene();
 
 		/// <summary>Gets a component of a specified type from entity with given UniqueID.</summary>
 		/// <param name="entityId">UniqueID of the entity.</param>
 		/// <returns>Pointer to a specified component or a nullptr, if none was found.</returns>
-		/// <see cref="World.AddComponent()">
-		/// <see cref="World.RemoveComponent()">
+		/// <see cref="Scene.AddComponent()">
+		/// <see cref="Scene.RemoveComponent()">
 		template<typename T>
 		T* GetComponent(Entity* entity)
 		{
@@ -59,10 +64,7 @@ namespace Poly {
 		template<typename T>
 		T* GetWorldComponent()
 		{
-			const auto ctypeID = GetWorldComponentID<T>();
-			if(HasWorldComponent(ctypeID))
-				return static_cast<T*>(WorldComponents[ctypeID]);
-			return nullptr;
+			return RootEntity->GetComponent<T>();
 		}
 
 		//------------------------------------------------------------------------------
@@ -75,12 +77,12 @@ namespace Poly {
 		}
 
 		//------------------------------------------------------------------------------
-		/// <summary>Returns statically set component type ID from 'World' group.</summary>
+		/// <summary>Returns statically set component type ID from 'Scene' group.</summary>
 		/// <tparam name="T">Type of requested component.</tparam>
 		/// <returns>Associated ID.</returns>
 		template<typename T> static size_t GetWorldComponentID() noexcept
 		{
-			return WorldComponentsIDGroup::GetComponentTypeID<T>();
+			return ComponentsIDGroup::GetComponentTypeID<T>();
 		}
 
 		template<typename PrimaryComponent, typename... SecondaryComponents>
@@ -95,7 +97,7 @@ namespace Poly {
 		/// <param name="PrimaryComponent">At least one component type must be specified</param>
 		/// <param name="SecondaryComponents">Additional component types (warning: returned pointers might be null!)</param>
 		/// <returns>A proxy object that can be used in a range-for loop.</returns>
-		/// <see cref="World.ComponentIterator"/>
+		/// <see cref="Scene.ComponentIterator"/>
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		IteratorProxy<PrimaryComponent, SecondaryComponents...> IterateComponents()
 		{
@@ -105,7 +107,7 @@ namespace Poly {
 		/// Component iterator.
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		class ComponentIterator : public BaseObject<>,
-		                          public std::iterator<std::bidirectional_iterator_tag, std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...>>
+		                          public std::iterator<std::forward_iterator_tag, std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...>>
 		{
 			public:
 			bool operator==(const ComponentIterator& rhs) const { return primary_iter == rhs.primary_iter; }
@@ -123,8 +125,6 @@ namespace Poly {
 
 			ComponentIterator& operator++() { Increment(); return *this; }
 			ComponentIterator operator++(int) { ComponentIterator ret(primary_iter); Increment(); return ret; }
-			ComponentIterator& operator--() { Decrement(); return *this; }
-			ComponentIterator operator--(int) { ComponentIterator ret(primary_iter); Decrement(); return ret; }
 
 		private:
 			//------------------------------------------------------------------------------
@@ -141,21 +141,17 @@ namespace Poly {
 			//------------------------------------------------------------------------------
 			void Increment()
 			{
-				do { ++primary_iter; } while (primary_iter != End
-					&& !HasComponents<SecondaryComponents...>(&*primary_iter->GetOwner()));
+				do { ++primary_iter; } 
+				while (primary_iter != End && !HasComponents<SecondaryComponents...>(primary_iter->GetOwner()));
 			}
 
-			//------------------------------------------------------------------------------
-			void Decrement()
-			{
-				do { --primary_iter; } while (primary_iter != End
-					&& !HasComponents<SecondaryComponents...>(&*primary_iter->GetOwner()));
-			}
-
-
-			explicit ComponentIterator(typename IterablePoolAllocator<PrimaryComponent>::Iterator parent, World* const w) : primary_iter(parent), 
+			explicit ComponentIterator(typename IterablePoolAllocator<PrimaryComponent>::Iterator parent, Scene* const w) : primary_iter(parent), 
 				Begin(w->GetComponentAllocator<PrimaryComponent>()->Begin()),
-				End(w->GetComponentAllocator<PrimaryComponent>()->End()) {}
+				End(w->GetComponentAllocator<PrimaryComponent>()->End())
+			{
+				if (primary_iter != End && !HasComponents<SecondaryComponents...>(primary_iter->GetOwner()))
+					Increment();
+			}
 			friend struct IteratorProxy<PrimaryComponent, SecondaryComponents...>;
 
 			typename IterablePoolAllocator<PrimaryComponent>::Iterator primary_iter;
@@ -167,18 +163,18 @@ namespace Poly {
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		struct IteratorProxy : BaseObject<>
 		{
-			IteratorProxy(World* w) : W(w) {}
-			World::ComponentIterator<PrimaryComponent, SecondaryComponents...> Begin()
+			IteratorProxy(Scene* w) : W(w) {}
+			Scene::ComponentIterator<PrimaryComponent, SecondaryComponents...> Begin()
 			{
 				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(W->GetComponentAllocator<PrimaryComponent>()->Begin(), W);
 			}
-			World::ComponentIterator<PrimaryComponent, SecondaryComponents...> End()
+			Scene::ComponentIterator<PrimaryComponent, SecondaryComponents...> End()
 			{
 				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(W->GetComponentAllocator<PrimaryComponent>()->End(), W);
 			}
 			auto begin() { return Begin(); }
 			auto end() { return End(); }
-			World* const W;
+			Scene* const W;
 		};
 
 	private:
@@ -187,11 +183,11 @@ namespace Poly {
 		template<typename T,typename... Args> friend class AddComponentDeferredTask;
 		template<typename T> friend class RemoveComponentDeferredTask;
 
-		friend Entity* DeferredTaskSystem::SpawnEntityImmediate(World*);
-		friend void DeferredTaskSystem::DestroyEntityImmediate(World* w, Entity* entity);
-		template<typename T, typename ...Args> friend T* DeferredTaskSystem::AddComponentImmediate(World* w, Entity* entity, Args && ...args);
-		template<typename T, typename ...Args> friend T* DeferredTaskSystem::AddWorldComponentImmediate(World* w, Args&&... args);
-		template<typename T> friend void DeferredTaskSystem::RemoveWorldComponentImmediate(World* w);
+		friend Entity* DeferredTaskSystem::SpawnEntityImmediate(Scene*);
+		friend void DeferredTaskSystem::DestroyEntityImmediate(Scene* w, Entity* entity);
+		template<typename T, typename ...Args> friend T* DeferredTaskSystem::AddComponentImmediate(Scene* w, Entity* entity, Args && ...args);
+		template<typename T, typename ...Args> friend T* DeferredTaskSystem::AddWorldComponentImmediate(Scene* w, Args&&... args);
+		template<typename T> friend void DeferredTaskSystem::RemoveWorldComponentImmediate(Scene* w);
 
 		//------------------------------------------------------------------------------
 		Entity* SpawnEntity();
@@ -213,6 +209,7 @@ namespace Poly {
 			entity->Components[ctypeID] = ptr;
 			ptr->Owner = entity;
 			HEAVY_ASSERTE(entity->HasComponent(ctypeID), "Failed at AddComponent() - the component was not added!");
+			entity->SetBBoxDirty();
 		}
 
 		//------------------------------------------------------------------------------
@@ -228,6 +225,7 @@ namespace Poly {
 			component->~T();
 			GetComponentAllocator<T>()->Free(component);
 			HEAVY_ASSERTE(!entity->HasComponent(ctypeID), "Failed at AddComponent() - the component was not removed!");
+			entity->SetBBoxDirty();
 		}
 
 		//------------------------------------------------------------------------------
@@ -245,38 +243,30 @@ namespace Poly {
 		template<typename T, typename... Args>
 		void AddWorldComponent(Args&&... args)
 		{
-			const auto ctypeID = GetWorldComponentID<T>();
-			HEAVY_ASSERTE(!HasWorldComponent(ctypeID), "Failed at AddWorldComponent() - a world component of a given type already exists!");
-			WorldComponents[ctypeID] = new T(std::forward<Args>(args)...);
+			AddComponent<T>(RootEntity.get(), std::forward<Args>(args)...);
 		}
 
 		//------------------------------------------------------------------------------
 		template<typename T>
 		void RemoveWorldComponent()
 		{
-			const auto ctypeID = GetComponentID<T>();
-			HEAVY_ASSERTE(HasWorldComponent(ctypeID), "Failed at RemoveWorldComponent() - a component of a given type does not exist!");
-			T* component = reinterpret_cast<T*>(WorldComponents[ctypeID]);
-			WorldComponents[ctypeID] = nullptr;
-			component->~T();
+			RemoveComponent<T>(RootEntity.get());
 		}
 
 		void RemoveComponentById(Entity* ent, size_t id);
 
-		SafePtr<Entity> rootEntity = nullptr;
+		std::unique_ptr<Entity> RootEntity = nullptr;
 
 		// Allocators
-		PoolAllocator<Entity> EntitiesAllocator;
+		IterablePoolAllocator<Entity> EntitiesAllocator;
 		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
-
-		ComponentBase* WorldComponents[MAX_COMPONENTS_COUNT];
 	};
 
 	//defined here due to circular inclusion problem; FIXME: circular inclusion
 	template<typename T>
 	T* Entity::GetComponent()
 	{
-		const auto ctypeID = World::GetComponentID<T>();
+		const auto ctypeID = Scene::GetComponentID<T>();
 		if (HasComponent(ctypeID))
 			return static_cast<T*>(Components[ctypeID]);
 		else
@@ -286,7 +276,7 @@ namespace Poly {
 	template<typename T>
 	const T* Entity::GetComponent() const
 	{
-		const auto ctypeID = World::GetComponentID<T>();
+		const auto ctypeID = Scene::GetComponentID<T>();
 		if (HasComponent(ctypeID))
 			return static_cast<T*>(Components[ctypeID]);
 		else
@@ -296,7 +286,7 @@ namespace Poly {
 	template<class T >
 	bool Entity::HasComponent() const
 	{
-		return HasComponent(World::GetComponentID<T>());
+		return HasComponent(Scene::GetComponentID<T>());
 	}
 
 } //namespace Poly

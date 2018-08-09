@@ -6,16 +6,16 @@
 
 namespace Poly
 {
-	class World;
+	class Scene;
 
 	/// <summary>WorldComponent that holds data for debug system.</summary>
 	class ENGINE_DLLEXPORT DebugWorldComponent : public ComponentBase
 	{
-	friend void FPSSystem::FPSUpdatePhase(World*);
-	friend float FPSSystem::GetFPS(World*);
+	friend void FPSSystem::FPSUpdatePhase(Scene*);
+	friend float FPSSystem::GetFPS(Scene*);
 
 	private:
 		FPSSystem::FPSData FPSData;
 	};
-	REGISTER_COMPONENT(WorldComponentsIDGroup, DebugWorldComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, DebugWorldComponent)
 }

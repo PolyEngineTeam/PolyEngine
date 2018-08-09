@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.2)
 list(INSERT CMAKE_MODULE_PATH 0 "${ENGINE_ROOT_DIR}/CMakeModules")
 
 ##C++ standard
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) #for portability
 
@@ -100,6 +100,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "(Clang|^GNU$)")
 	add_compile_options(-Werror)
 	add_compile_options(-Wno-unused-parameter)
 	add_compile_options(-Wno-ignored-qualifiers)
+	add_compile_options(-Wno-unused-command-line-argument)
 	add_compile_options(-fvisibility=hidden)
 	add_compile_options(-fvisibility-inlines-hidden)
 	add_compile_options($<$<STREQUAL:${CMAKE_GENERATOR},Ninja>:-fdiagnostics-color=always>)
@@ -117,7 +118,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	if(CI_BUILD)
 		add_definitions(/DCI_BUILD)
 	endif()
-	add_definitions(/DNOMINMAX /D_SCL_SECURE_NO_WARNINGS /D_CRT_SECURE_NO_WARNINGS) #those macros are useless and just keep messing things up, so disable them
+	add_definitions(/DNOMINMAX /D_SCL_SECURE_NO_WARNINGS /D_CRT_SECURE_NO_WARNINGS /D_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING /D_SILENCE_CXX17_UNCAUGHT_EXCEPTION_DEPRECATION_WARNING) #those macros are useless and just keep messing things up, so disable them
 	add_compile_options($<$<CONFIG:Release>:/DFINAL>)
 
 	add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:/MDd>)
@@ -130,14 +131,14 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	add_compile_options(/EHsc)
 	set(SIMD_FLAGS "") #doesn't seem we need them
 	if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
-		add_compile_options(/W3 /WX) #warning level 3 (includes lower levels), treat warnings as errors
+		add_compile_options(/W3 /WX /Zc:__cplusplus) #warning level 3 (includes lower levels), treat warnings as errors
 		add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:/Zi>) #debug symbols
 		add_compile_options($<$<CONFIG:Debug>:/Od>)
 		add_compile_options($<$<CONFIG:DebugFast>:/O1>)
 		add_compile_options($<$<OR:$<CONFIG:Testing>,$<CONFIG:Release>>:/Ox>) #max optimizations
 	else()
 		#NOTE(vuko): need to define those variables, otherwise CMake encounters internal errors
-		set(CMAKE_CXX_FLAGS  "/W3 /WX")
+		set(CMAKE_CXX_FLAGS  "/W3 /WX /Zc:__cplusplus")
 		set(CMAKE_CXX_FLAGS_DEBUG "/Zi /Od")
 		set(CMAKE_CXX_FLAGS_DEBUGFAST "/Zi /O1")
 		set(CMAKE_CXX_FLAGS_TESTING "/Ox")

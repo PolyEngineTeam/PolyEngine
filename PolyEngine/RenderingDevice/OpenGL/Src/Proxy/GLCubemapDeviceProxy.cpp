@@ -32,7 +32,7 @@ void GLCubemapDeviceProxy::InitCubemapParams()
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
-void GLCubemapDeviceProxy::SetContent(const eCubemapSide side, const unsigned char* data)
+void GLCubemapDeviceProxy::SetContentHDR(const eCubemapSide side, const float* data)
 {
 	ASSERTE(Width > 0 && Height > 0, "Invalid arguments!");
 	ASSERTE(TextureID > 0, "Texture is invalid!");
@@ -41,7 +41,7 @@ void GLCubemapDeviceProxy::SetContent(const eCubemapSide side, const unsigned ch
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, TextureID);
 	
-	glTexImage2D( GetEnumFromCubemapSide(side), 0, GL_RGB, (GLsizei)Width, (GLsizei)Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	glTexImage2D( GetEnumFromCubemapSide(side), 0, GL_RGB, (GLsizei)Width, (GLsizei)Height, 0, GL_RGB, GL_FLOAT, data);
 	
 	glGenerateMipmap(GL_TEXTURE_2D);
 	

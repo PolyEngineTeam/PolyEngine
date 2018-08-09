@@ -9,15 +9,15 @@
 
 using namespace Poly;
 
-DebugNormalsRenderingPass::DebugNormalsRenderingPass()
-: RenderingPassBase("Shaders/normalsVert.shader", "Shaders/normalsFrag.shader")
+DebugNormalsRenderingPass::DebugNormalsRenderingPass(const GLRenderingDevice* rdi)
+: RenderingPassBase(rdi, "Shaders/normals.vert.glsl", "Shaders/normals.frag.glsl")
 {
 }
 
-void DebugNormalsRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
+void DebugNormalsRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
 	GetProgram().BindProgram();
-	const Matrix& mvp = camera->GetScreenFromWorld();
+	const Matrix& mvp = camera->GetClipFromWorld();
 	
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
@@ -26,7 +26,7 @@ void DebugNormalsRenderingPass::OnRun(World* world, const CameraComponent* camer
 		const EntityTransform& trans = meshCmp->GetTransform();
 
 		if (passType == ePassType::BY_MATERIAL &&
-			(meshCmp->IsTransparent() || meshCmp->GetShadingModel() != eShadingModel::LIT))
+			(meshCmp->GetBlendingMode() == eBlendingMode::TRANSLUCENT || meshCmp->GetShadingModel() != eShadingMode::PBR))
 		{
 		 	continue;
 		}

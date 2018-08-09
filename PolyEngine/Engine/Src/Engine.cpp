@@ -17,7 +17,7 @@ Engine::Engine()
 	gDebugConfig.Load();
 	// also set presets for debug draw (DebugDrawPresets)
 	// @todo update debug draw presets from GUI
-	gDebugConfig.DebugDrawPresets |= DebugDrawPreset::GFX;
+	gDebugConfig.DebugDrawPresets |= eDebugDrawPreset::GFX;
 }
 
 void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device)
@@ -25,22 +25,22 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	Game = std::move(game);
 	RenderingDevice = std::move(device);
 	RenderingDevice->Init();
-	BaseWorld = std::make_unique<World>();
+	LoadDefaultScene();
 	Game->RegisterEngine(this);
 
 	// Add WorldComponents
-	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(BaseWorld.get());
-	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(BaseWorld.get());
-	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(BaseWorld.get());
-	DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(BaseWorld.get());
-	DeferredTaskSystem::AddWorldComponentImmediate<SoundWorldComponent>(BaseWorld.get(), BaseWorld.get());
-	DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(BaseWorld.get());
+	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(GetActiveScene());
+	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(GetActiveScene());
+	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(GetActiveScene());
+	DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(GetActiveScene());
+	DeferredTaskSystem::AddWorldComponentImmediate<SoundWorldComponent>(GetActiveScene(), GetActiveScene());
+	DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(GetActiveScene());
 	Physics2DConfig physicsConfig;
-	DeferredTaskSystem::AddWorldComponentImmediate<Physics2DWorldComponent>(BaseWorld.get(), physicsConfig);
+	DeferredTaskSystem::AddWorldComponentImmediate<Physics2DWorldComponent>(GetActiveScene(), physicsConfig);
 	Physics3DConfig physics3DConfig;
-	DeferredTaskSystem::AddWorldComponentImmediate<Physics3DWorldComponent>(BaseWorld.get(), physics3DConfig);
-	DeferredTaskSystem::AddWorldComponentImmediate<AmbientLightWorldComponent>(BaseWorld.get(), Color(1,1,1,1), 0.2f);
-	DeferredTaskSystem::AddWorldComponentImmediate<DebugDrawStateWorldComponent>(BaseWorld.get());
+	DeferredTaskSystem::AddWorldComponentImmediate<Physics3DWorldComponent>(GetActiveScene(), physics3DConfig);
+	DeferredTaskSystem::AddWorldComponentImmediate<AmbientLightWorldComponent>(GetActiveScene(), Color(1,1,1,1), 0.2f);
+	DeferredTaskSystem::AddWorldComponentImmediate<DebugDrawStateWorldComponent>(GetActiveScene());
 
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
@@ -58,7 +58,7 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	RegisterUpdatePhase(DeferredTaskSystem::DeferredTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(FPSSystem::FPSUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 
-	SoundSystem::SetWorldCurrent(BaseWorld.get());
+	SoundSystem::SetWorldCurrent(GetActiveScene());
 
 	// Init game
 	Game->Init();
@@ -68,7 +68,7 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 Engine::~Engine()
 {
 	Game->Deinit();
-	BaseWorld.reset();
+	ActiveScene.reset();
 	Game.reset();
 	RenderingDevice.reset();
 	gEngine = nullptr;
@@ -100,6 +100,13 @@ void Engine::ResizeScreen(const ScreenSize & size)
 void Engine::RequestGameQuit()
 {
 	QuitRequested = true;
+}
+
+void Poly::Engine::LoadDefaultScene()
+{
+	//@todo(muniu) implement entities staying across scenes.
+	//@todo(muniu) implement loading custom scenes.
+	ActiveScene = std::make_unique<Scene>();
 }
 
 bool Engine::IsQuitRequested() const { return QuitRequested; }

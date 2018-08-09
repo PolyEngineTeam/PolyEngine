@@ -8,7 +8,7 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT ParticleComponent : public ComponentBase
 	{
-		friend void ParticleUpdateSystem::ParticleUpdatePhase(World*);
+		friend void ParticleUpdateSystem::ParticleUpdatePhase(Scene*);
 	public:
 		ParticleComponent(const ParticleEmitter::Settings& emitter);
 		virtual ~ParticleComponent();

@@ -12,9 +12,9 @@ namespace Poly
 	class ENGINE_DLLEXPORT DebugDrawableComponent : public ComponentBase
 	{
 	public:
-		DebugDrawableComponent(DebugDrawPreset preset) : entityPreset(preset) { };
+		DebugDrawableComponent(eDebugDrawPreset preset) : entityPreset(preset) { };
 
-		const DebugDrawPreset entityPreset;
+		const eDebugDrawPreset entityPreset;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, DebugDrawableComponent)
@@ -63,5 +63,5 @@ namespace Poly
 		Dynarray<SafePtr<Entity>> Text2DEntityPool;
 	};
 
-	REGISTER_COMPONENT(WorldComponentsIDGroup, DebugDrawStateWorldComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, DebugDrawStateWorldComponent)
 }

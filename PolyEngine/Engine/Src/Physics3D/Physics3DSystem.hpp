@@ -80,7 +80,7 @@ namespace Poly
 		/// @see Physics3DWorldComponent
 		/// @see Trigger3DComponent
 		/// @see Rigidbody3DComponent
-		void ENGINE_DLLEXPORT Physics3DUpdatePhase(World* world);
+		void ENGINE_DLLEXPORT Physics3DUpdatePhase(Scene* world);
 
 
 		/// Use this when you need proper intertia for shape with mass.
@@ -99,34 +99,34 @@ namespace Poly
 		/// @param group - new collision group
 		/// @see Trigger3DComponent::GetCollisionGroup
 		/// @see Trigger3DComponent::SetCollisionMask
-		void ENGINE_DLLEXPORT SetCollisionGroup(World* world, Entity* entity, EnumFlags<eCollisionGroup> group);
+		void ENGINE_DLLEXPORT SetCollisionGroup(Scene* world, Entity* entity, EnumFlags<eCollisionGroup> group);
 
 		/// Use to change collider collision mask.
 		/// Collision mask determines whith which collision groups this collider will collide.
 		/// @param mask - new collision mask
 		/// @see Trigger3DComponent::GetCollisionMask
 		/// @see Trigger3DComponent::SetCollisionGroup
-		void ENGINE_DLLEXPORT SetCollisionMask(World* world, Entity* entity, EnumFlags<eCollisionGroup> mask);
+		void ENGINE_DLLEXPORT SetCollisionMask(Scene* world, Entity* entity, EnumFlags<eCollisionGroup> mask);
 
 
 		// deferred administration
 
 		/// The actual collider or rigibody is created during the first Physics3DSystem::Update call after creation of that component.
 		/// @see Physics3DSystem::Physics3DUpdatePhase
-		void ENGINE_DLLEXPORT EnsureInit(World* world, Entity* entity);
+		void ENGINE_DLLEXPORT EnsureInit(Scene* world, Entity* entity);
 
 
 		// registration
 
 
-		void ENGINE_DLLEXPORT RegisterComponent(World* world, Entity* entity, bool enablePhysics);
+		void ENGINE_DLLEXPORT RegisterComponent(Scene* world, Entity* entity, bool enablePhysics);
 
 		/// You can unregister your entity with this method so it won't be further
 		/// considered during the simulation ((until You call @see[RegisterColliderComponent])
 		/// @param world - world where exists component You want to unregister
 		/// @param entityID- @see[UniqueID] of entity that contains @see[Trigger3DComponent] You want to unregister
 		/// @see UnregisterRigidBody
-		void ENGINE_DLLEXPORT UnregisterComponent(World* world, Entity* entity);
+		void ENGINE_DLLEXPORT UnregisterComponent(Scene* world, Entity* entity);
 
 
 		// collisions
@@ -140,10 +140,10 @@ namespace Poly
 		/// @return result - instance of @see[ContactResult]
 		/// @see IsColliding
 		/// @see Contact
-		ENGINE_DLLEXPORT ContactResult ContactPair(World* world, Entity* firstEntity, Entity* secondEntity);
+		ENGINE_DLLEXPORT ContactResult ContactPair(Scene* world, Entity* firstEntity, Entity* secondEntity);
 
 
-		ENGINE_DLLEXPORT ContactPairResults GetAllContactPairs(World* world);
+		ENGINE_DLLEXPORT ContactPairResults GetAllContactPairs(Scene* world);
 
 		// raytracing
 
@@ -154,7 +154,7 @@ namespace Poly
 		/// @param to - cast destination
 		/// @return result - instance of @see[RaycastResult]
 		/// @see ClosestHitRaycast
-		ENGINE_DLLEXPORT RaycastResult AllHitsRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
+		ENGINE_DLLEXPORT RaycastResult AllHitsRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 
 		/// This function returns only first hit encountered within one raycast.
 		/// Only entities with @see[Trigger3DComponent] or @see[Rigidbody3DComponent] will be considered.
@@ -163,6 +163,6 @@ namespace Poly
 		/// @param to - cast destination
 		/// @return result - instance of @see[RaycastResult]
 		/// @see AllHitsRaycast
-		ENGINE_DLLEXPORT RaycastResult ClosestHitRaycast(World* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
+		ENGINE_DLLEXPORT RaycastResult ClosestHitRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 	}
 } // namespace poly

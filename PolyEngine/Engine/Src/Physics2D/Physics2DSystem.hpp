@@ -4,7 +4,7 @@ namespace Poly
 {
 	namespace Physics2DSystem
 	{
-		void Physics2DUpdatePhase(World* world);
+		void Physics2DUpdatePhase(Scene* world);
 
 
 	}

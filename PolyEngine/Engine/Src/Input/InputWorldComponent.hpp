@@ -19,10 +19,10 @@ namespace Poly
 		EnumArray<float, eControllerAxis> PrevAxis;
 		};
 
-	/// <summary>World component that holds input data.</summary>
+	/// <summary>Scene component that holds input data.</summary>
 	class ENGINE_DLLEXPORT InputWorldComponent : public ComponentBase
 	{
-	friend void InputSystem::InputPhase(World*);
+	friend void InputSystem::InputPhase(Scene*);
 	public:
 		InputWorldComponent() = default;
 
@@ -67,5 +67,5 @@ namespace Poly
 		std::unordered_map<size_t, size_t> JoystickIDToPlayerID;
 	};
 
-	REGISTER_COMPONENT(WorldComponentsIDGroup, InputWorldComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, InputWorldComponent)
 }

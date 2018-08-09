@@ -20,7 +20,7 @@ namespace Poly
 		float Intensity = 1.0f;
 	};
 
-	REGISTER_COMPONENT(WorldComponentsIDGroup, AmbientLightWorldComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, AmbientLightWorldComponent)
 
 	class ENGINE_DLLEXPORT DirectionalLightComponent : public ComponentBase
 	{
@@ -43,6 +43,7 @@ namespace Poly
 
 		const Color& GetColor() const { return LightColor; }
 		float GetIntensity() const { return Intensity; }
+		void SetIntensity(float value) { Intensity = value; }
 		void SetRange(float value) { Range = value; }
 		float GetRange() const { return Range; }
 	private:

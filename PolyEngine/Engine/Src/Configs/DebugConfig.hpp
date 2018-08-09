@@ -3,7 +3,7 @@
 
 namespace Poly
 {
-	enum class DebugDrawPreset
+	enum class eDebugDrawPreset
 	{
 		NONE = 0,
 		PLAYER = BIT(1),
@@ -23,13 +23,13 @@ namespace Poly
 		DebugConfig() : ConfigBase("Debug Config", eResourceSource::ENGINE)
 		{
 			DebugDrawPresets.Clear();
-			DebugDrawPresets |= DebugDrawPreset::PLAYER;
+			DebugDrawPresets |= eDebugDrawPreset::PLAYER;
 			//DebugDrawPresets |= DebugDrawPreset::DYNAMIC;
 			//DebugDrawPresets |= DebugDrawPreset::STATIC;
 		}
 
 		// Debug rendering
-		EnumFlags<DebugDrawPreset> DebugDrawPresets;
+		EnumFlags<eDebugDrawPreset> DebugDrawPresets;
 		bool DebugRender = true;
 		// Rendering
 		bool DisplayFPS = true;

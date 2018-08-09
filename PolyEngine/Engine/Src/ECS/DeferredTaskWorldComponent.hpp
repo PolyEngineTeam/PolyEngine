@@ -9,14 +9,14 @@ namespace Poly
 {
 	namespace DeferredTaskSystem
 	{
-		void DeferredTaskPhase(World* w);
-		template<typename T, typename ...Args> T* AddComponentImmediate(World* w, Entity* entity, Args && ...args);
+		void DeferredTaskPhase(Scene* w);
+		template<typename T, typename ...Args> T* AddComponentImmediate(Scene* w, Entity* entity, Args && ...args);
 	}
 
 	class ENGINE_DLLEXPORT DeferredTaskWorldComponent : public ComponentBase
 	{
-		friend void DeferredTaskSystem::DeferredTaskPhase(World*);
-		template<typename T, typename ...Args> friend T* DeferredTaskSystem::AddComponentImmediate(World* w, Entity* entity, Args && ...args);
+		friend void DeferredTaskSystem::DeferredTaskPhase(Scene*);
+		template<typename T, typename ...Args> friend T* DeferredTaskSystem::AddComponentImmediate(Scene* w, Entity* entity, Args && ...args);
 	public:
 		DeferredTaskWorldComponent() = default;
 
@@ -29,5 +29,5 @@ namespace Poly
 		Dynarray<ComponentBase*> NewlyCreatedComponents;
 	};
 
-	REGISTER_COMPONENT(WorldComponentsIDGroup, DeferredTaskWorldComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, DeferredTaskWorldComponent)
 }

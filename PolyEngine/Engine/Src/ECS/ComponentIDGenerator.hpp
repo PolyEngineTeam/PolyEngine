@@ -53,5 +53,4 @@ namespace Poly
 	}
 
 	using ComponentsIDGroup = Impl::ComponentIDGenerator<struct ComponentsGroupType>;
-	using WorldComponentsIDGroup = Impl::ComponentIDGenerator<struct WorldComponentsGroupType>;
 }

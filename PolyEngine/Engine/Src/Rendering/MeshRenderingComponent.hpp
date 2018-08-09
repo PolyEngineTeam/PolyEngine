@@ -6,47 +6,63 @@
 
 namespace Poly {
 
-	enum class eShadingModel
+	enum class eShadingMode
 	{
 		NONE,
-		LIT,
 		UNLIT,
+		PBR,
 		_COUNT
 	};
 
-	struct ENGINE_DLLEXPORT PhongMaterial
+	enum class eBlendingMode
 	{
-		PhongMaterial()
-			: AmbientColor(1.0f, 1.0f, 1.0f), DiffuseColor(1.0f, 1.0f, 1.0f), SpecularColor(1.0f, 1.0f, 1.0f), Shininess(0.1f) {}
+		NONE,
+		OPAUQE,
+		TRANSLUCENT,
+		_COUNT
+	};
 
-		PhongMaterial(const Color& ambient, const Color& diffuse, const Color& specular, float shininess)
-			: AmbientColor(ambient), DiffuseColor(diffuse), SpecularColor(specular), Shininess(shininess) {}
+	struct ENGINE_DLLEXPORT Material
+	{
+		Material()
+			: Emissive(0.0f, 0.0f, 0.0f), Albedo(1.0f, 1.0f, 1.0f), Roughness(1.0f), Metallic(1.0f), OpacityMaskThreshold(0.5f)
+		{}
 
-		Color AmbientColor;
-		Color DiffuseColor;
-		Color SpecularColor;
-		float Shininess;
+		Material(const Color& emissive, const Color& albedo, float roughness, float metallic, float opacityMaskThreshold)
+			: Emissive(emissive), Albedo(albedo), Roughness(roughness), Metallic(metallic), OpacityMaskThreshold(opacityMaskThreshold)
+		{}
+
+		Color Emissive;
+		Color Albedo;
+		float Roughness;
+		float Metallic;
+		float OpacityMaskThreshold;
 	};
 
 	class ENGINE_DLLEXPORT MeshRenderingComponent : public ComponentBase
 	{
-		friend void RenderingSystem::RenderingPhase(World*);
 	public:
 		MeshRenderingComponent(const String& meshPath, eResourceSource source);
 		virtual ~MeshRenderingComponent();
 
 		const MeshResource* GetMesh() const { return Mesh; }
-		const PhongMaterial& GetMaterial(int i) const { return Materials[i]; }
-		void SetMaterial(int i, const PhongMaterial& value) { Materials[i] = value; }
+		const Material& GetMaterial(int i) const { return Materials[i]; }
 		bool GetIsWireframe() const { return IsWireframe; }
+		eShadingMode GetShadingModel() const { return ShadingMode; }
+		eBlendingMode GetBlendingMode() const { return BlendingMode; }
+		
+		void SetMaterial(size_t i, const Material& value) { Materials[i] = value; }
 		void SetIsWireframe(bool value) { IsWireframe = value; }
-		eShadingModel GetShadingModel() const { return ShadingModel; }
-		void SetShadingModel(eShadingModel value) { ShadingModel = value; }
-		bool IsTransparent() const { return Materials[0].DiffuseColor.A < 1.0f; } // HACK replace with better solution for transloucent objects.
+		void SetShadingModel(eShadingMode value) { ShadingMode = value; }
+		void SetBlendingMode(eBlendingMode value) { BlendingMode = value; }
+
+
+		Optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) override;
 	private:
 		MeshResource* Mesh = nullptr;
-		Dynarray<PhongMaterial> Materials;
-		eShadingModel ShadingModel = eShadingModel::LIT;
+		Dynarray<Material> Materials;
+		eShadingMode ShadingMode = eShadingMode::PBR;
+		eBlendingMode BlendingMode = eBlendingMode::OPAUQE;
 		bool IsWireframe = false;
 	};
 

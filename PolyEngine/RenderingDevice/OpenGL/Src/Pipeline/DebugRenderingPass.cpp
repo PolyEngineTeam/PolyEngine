@@ -8,16 +8,16 @@
 
 using namespace Poly;
 
-DebugRenderingPass::DebugRenderingPass()
-	: RenderingPassBase("Shaders/debugVert.shader", "Shaders/debugFrag.shader")
+DebugRenderingPass::DebugRenderingPass(const GLRenderingDevice* rdi)
+	: RenderingPassBase(rdi, "Shaders/debug.vert.glsl", "Shaders/debug.frag.glsl")
 {
-	GetProgram().RegisterUniform("mat4", "MVP");
+	GetProgram().RegisterUniform("mat4", "uMVP");
 }
 
-void DebugRenderingPass::OnRun(World* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType*/)
+void DebugRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType*/)
 {
 	GetProgram().BindProgram();
-	const Matrix& MVP = camera->GetScreenFromWorld();
+	const Matrix& MVP = camera->GetClipFromWorld();
 
 	// Render Lines
 	{
@@ -40,7 +40,7 @@ void DebugRenderingPass::OnRun(World* world, const CameraComponent* camera, cons
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		GetProgram().SetUniform("MVP", MVP);
+		GetProgram().SetUniform("uMVP", MVP);
 
 		glDrawArrays(GL_LINES, 0, (GLsizei)debugLines.GetSize() * 2);
 		glBindVertexArray(0);

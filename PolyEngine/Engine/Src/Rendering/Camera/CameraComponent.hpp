@@ -2,6 +2,7 @@
 
 #include "ECS/ComponentBase.hpp"
 #include "CameraSystem.hpp"
+#include "Math/Frustum.hpp"
 
 namespace Poly {
 
@@ -18,29 +19,38 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT CameraComponent : public ComponentBase
 	{
-		friend void CameraSystem::CameraUpdatePhase(World*);
+		friend void CameraSystem::CameraUpdatePhase(Scene*);
 	public:
 		CameraComponent(Angle fov, float zNear, float zFar);
 		CameraComponent(float top, float bottom, float left, float right, float zNear, float zFar);
 
-		const Matrix& GetScreenFromView() const { return ScreenFromView; }
+		const Matrix& GetClipFromView() const { return ScreenFromView; }
 		const Matrix& GetViewFromWorld() const { return ViewFromWorld; }
-		const Matrix& GetScreenFromWorld() const { return ScreenFromWorld; }
+		const Matrix& GetClipFromWorld() const { return ScreenFromWorld; }
 
+		const float GetClippingPlaneNear() const { return Near; }
+		const float GetClippingPlaneFar() const { return Far; }
 		const Angle& GetFOV() const { return Fov; }
 		const Angle& GetTargetFOV() const { return TargetFov; }
 		void SetTargetFOV(const Angle& Value) { TargetFov = Value; }
-		void SetFOV(const Angle& Value) { Fov = Value; }
+		void SetFOV(const Angle& Value) { Fov = Value; UpdateProjection(); }
 		float GetAspect() const { return Aspect; }
+		void SetAspect(float aspect) { Aspect = aspect; UpdateProjection(); }
+		bool GetForcedRatio() const { return IsForcedRatio; }
+		void SetForcedRatio(bool value) { IsForcedRatio = value; }
 		eRenderingModeType GetRenderingMode() const { return RenderingMode; }
 		void SetRenderingMode(eRenderingModeType value) { RenderingMode = value; }
 
+		void UpdateProjection();
+
+		bool IsVisibleToCamera(const Entity* ent) const;
 	private:
 		Matrix ScreenFromView;
 		Matrix ViewFromWorld;
 		Matrix ScreenFromWorld;
 
 		bool IsPerspective = false;
+
 		// Prerpective
 		Angle Fov = 0_deg;
 		Angle TargetFov = 0_deg;
@@ -55,9 +65,13 @@ namespace Poly {
 		float Near = 0.f;
 		float Far = 0.f;
 		float Aspect = 1.f;
-
+		
+		bool IsForcedRatio = false;
+		
 		// RenderingMode
 		eRenderingModeType RenderingMode;
+
+		Optional<Frustum> CameraFrustum;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, CameraComponent)

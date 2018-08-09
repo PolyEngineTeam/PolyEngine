@@ -64,10 +64,10 @@ namespace Poly
 		// friendship declarations
 
 
-		friend void Physics3DSystem::Physics3DUpdatePhase(World* world);
-		friend void Physics3DSystem::EnsureInit(World* world, Entity* entity);
-		friend void Physics3DSystem::RegisterComponent(World* world, Entity* entity, bool enablePhysics);
-		friend void Physics3DSystem::UnregisterComponent(World * world, Entity* entity);
+		friend void Physics3DSystem::Physics3DUpdatePhase(Scene* world);
+		friend void Physics3DSystem::EnsureInit(Scene* world, Entity* entity);
+		friend void Physics3DSystem::RegisterComponent(Scene* world, Entity* entity, bool enablePhysics);
+		friend void Physics3DSystem::UnregisterComponent(Scene * world, Entity* entity);
 
 	public:
 		// constructors and destructor
@@ -77,7 +77,7 @@ namespace Poly
 		/// @param world - world where owner entity exists
 		/// @param tmp - template with rigid body properties
 		/// @see Rigidbody3DComponentTemplate
-		Rigidbody3DComponent(World* world, const Rigidbody3DComponentTemplate& tmp);
+		Rigidbody3DComponent(Scene* world, const Rigidbody3DComponentTemplate& tmp);
 
 		/// If rigid body is registered destructor will unregister it on component destruction.
 		~Rigidbody3DComponent();
@@ -135,7 +135,7 @@ namespace Poly
 		void UpdatePosition();
 
 		bool Initialized = false;
-		World* BodyWorld;
+		Scene* BodyWorld;
 		std::unique_ptr<Rigidbody3DImpl> ImplData;
 
 		bool TemplateChanged = true;

@@ -20,7 +20,7 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT Physics2DWorldComponent : public ComponentBase
 	{
-		friend void Physics2DSystem::Physics2DUpdatePhase(World* world);
+		friend void Physics2DSystem::Physics2DUpdatePhase(Scene* world);
 		friend class Physics2DContactListener;
 		friend class RigidBody2DComponent;
 	public:
@@ -41,11 +41,11 @@ namespace Poly
 		float LastDeltaOverflow = 0.f;
 
 		const Physics2DConfig Config;
-		std::unique_ptr<b2World> World;
+		std::unique_ptr<b2World> Scene;
 		std::unique_ptr<Physics2DContactListener> ContactListener;
 
 		std::unordered_map<RigidBody2DComponent*, Dynarray<Collision>> OverlapingBodies;
 	};
 
-	REGISTER_COMPONENT(WorldComponentsIDGroup, Physics2DWorldComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, Physics2DWorldComponent)
 }

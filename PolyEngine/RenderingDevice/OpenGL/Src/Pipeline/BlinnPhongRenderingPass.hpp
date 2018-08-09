@@ -1,28 +1,24 @@
 #pragma once
 
 #include "Pipeline/RenderingPassBase.hpp"
-#include "Common/GLShaderProgram.hpp"
+#include "Proxy/GLShaderProgram.hpp"
 
 namespace Poly
 {
-	class World;
+	class Scene;
+	class AARect;
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
-	class AARect;
+	class GLRenderingDevice;
 
 	//------------------------------------------------------------------------------
 	class BlinnPhongRenderingPass : public RenderingPassBase
 	{
 	public:
-		BlinnPhongRenderingPass();
+		BlinnPhongRenderingPass(const GLRenderingDevice* rdi);
 
 	protected:
 
-		void OnRun(World* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;
-
-		void CreateDummyTexture();
-
-	private:
-		GLuint WhiteDummyTexture;
+		void OnRun(Scene* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;
 	};
 }

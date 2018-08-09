@@ -6,12 +6,21 @@
 
 Poly::Mesh::~Mesh()
 {
-	if (DiffuseTexture)
-		ResourceManager<TextureResource>::Release(DiffuseTexture);
+	if (AlbedoMap)
+		ResourceManager<TextureResource>::Release(AlbedoMap);
 
-	if (SpecularMap)
-		ResourceManager<TextureResource>::Release(SpecularMap);
+	if (RoughnessMap)
+		ResourceManager<TextureResource>::Release(RoughnessMap);
 
-	if(NormalMap)
+	if (MetallicMap)
+		ResourceManager<TextureResource>::Release(MetallicMap);
+
+	if (AmbientOcclusionMap)
+		ResourceManager<TextureResource>::Release(AmbientOcclusionMap);
+
+	if (NormalMap)
 		ResourceManager<TextureResource>::Release(NormalMap);
+
+	if (EmissiveMap)
+		ResourceManager<TextureResource>::Release(EmissiveMap);
 }

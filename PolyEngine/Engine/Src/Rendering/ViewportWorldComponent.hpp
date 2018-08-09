@@ -13,7 +13,7 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT ViewportWorldComponent : public ComponentBase
 	{
-	friend void CameraSystem::CameraUpdatePhase(World*);
+	friend void CameraSystem::CameraUpdatePhase(Scene*);
 	public:
 		ViewportWorldComponent();
 
@@ -28,5 +28,5 @@ namespace Poly
 		ViewportID IDCounter = 0;
 	};
 
-	REGISTER_COMPONENT(WorldComponentsIDGroup, ViewportWorldComponent)
+	REGISTER_COMPONENT(ComponentsIDGroup, ViewportWorldComponent)
 }

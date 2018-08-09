@@ -4,6 +4,7 @@
 
 #include "Defines.hpp"
 #include "Math/BasicMath.hpp"
+#include "Math/Color.hpp"
 
 namespace Poly
 {
@@ -29,6 +30,7 @@ namespace Poly
 
 
 		inline Vector(const Vector& rhs) : X(rhs.X), Y(rhs.Y), Z(rhs.Z), W(rhs.W) {}
+		explicit inline Vector(const Color& rhs) : X(rhs.R), Y(rhs.G), Z(rhs.B), W(rhs.A) {}
 	#if !DISABLE_SIMD
 		inline Vector& operator=(const Vector& rhs) { SimdData = rhs.SimdData; return *this; }
 	#else
@@ -49,8 +51,12 @@ namespace Poly
 		Vector& operator-=(const Vector& rhs);
 
 		// Operators with floats
+		Vector operator+(float rhs) const;
+		Vector operator-(float rhs) const;
 		Vector operator*(float rhs) const;
 		Vector operator/(float rhs) const;
+		Vector& operator+=(float rhs);
+		Vector& operator-=(float rhs);
 		Vector& operator*=(float rhs);
 		Vector& operator/=(float rhs);
 
@@ -79,6 +85,9 @@ namespace Poly
 		/// <summary>Creates normalized vector.</summary>
 		/// <returns>Normalized vector.</returns>
 		Vector GetNormalized() const;
+
+		static Vector Max(const Vector& a, const Vector& b);
+		static Vector Min(const Vector& a, const Vector& b);
 
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Vector& vec);
 

@@ -10,15 +10,14 @@
 
 using namespace Poly;
 
-TEST_CASE("World component iteration tests.", "ComponentIterator")
+TEST_CASE("Scene component iteration tests.", "ComponentIterator")
 {
-	World* w = new World();
+	Scene* w = new Scene();
 	DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(w);
 	Entity* e[10];
 
 	e[0] = DeferredTaskSystem::SpawnEntityImmediate(w);
 	DeferredTaskSystem::AddComponentImmediate<SoundListenerComponent>(w, e[0]);
-	DeferredTaskSystem::AddComponentImmediate<FreeFloatMovementComponent>(w, e[0]);
 	DeferredTaskSystem::AddComponentImmediate<PostprocessSettingsComponent>(w, e[0]);
 
 	e[1] = DeferredTaskSystem::SpawnEntityImmediate(w);
@@ -30,6 +29,7 @@ TEST_CASE("World component iteration tests.", "ComponentIterator")
 	DeferredTaskSystem::AddComponentImmediate<FreeFloatMovementComponent>(w, e[2]);
 
 	e[3] = DeferredTaskSystem::SpawnEntityImmediate(w);
+	DeferredTaskSystem::AddComponentImmediate<SoundListenerComponent>(w, e[3]);
 	DeferredTaskSystem::AddComponentImmediate<FreeFloatMovementComponent>(w, e[3]);
 	DeferredTaskSystem::AddComponentImmediate<PostprocessSettingsComponent>(w, e[3]);
 
@@ -54,8 +54,8 @@ TEST_CASE("World component iteration tests.", "ComponentIterator")
 	DeferredTaskSystem::AddComponentImmediate<SoundListenerComponent>(w, e[9]);
 
 	//	
-	//	SoundListenerComponent			|	0 1 2       6 7 8 9
-	//	FreeFloatMovementComponent		|	0 1 2 3 4 5
+	//	SoundListenerComponent			|	0 1 2 3      6 7 8 9
+	//	FreeFloatMovementComponent		|	  1 2 3 4 5
 	//	PostprocessSettingsComponent	|	0 	  3 4 5
 	//
 
@@ -65,7 +65,7 @@ TEST_CASE("World component iteration tests.", "ComponentIterator")
 		UNUSED(c);
 		++i;
 	}
-	REQUIRE(i == 7);
+	REQUIRE(i == 8);
 
 	i = 0;
 	for (auto c : w->IterateComponents<FreeFloatMovementComponent>())
@@ -73,7 +73,7 @@ TEST_CASE("World component iteration tests.", "ComponentIterator")
 		UNUSED(c);
 		++i;
 	}
-	REQUIRE(i == 6);
+	REQUIRE(i == 5);
 
 	i = 0;
 	for (auto c : w->IterateComponents<PostprocessSettingsComponent>())
@@ -105,7 +105,7 @@ TEST_CASE("World component iteration tests.", "ComponentIterator")
 		UNUSED(c);
 		++i;
 	}
-	REQUIRE(i == 4);
+	REQUIRE(i == 3);
 
 	i = 0;
 	for (auto c : w->IterateComponents<PostprocessSettingsComponent, FreeFloatMovementComponent>())
@@ -113,7 +113,7 @@ TEST_CASE("World component iteration tests.", "ComponentIterator")
 		UNUSED(c);
 		++i;
 	}
-	REQUIRE(i == 4);
+	REQUIRE(i == 3);
 
 	i = 0;
 	for (auto c : w->IterateComponents<FreeFloatMovementComponent, SoundListenerComponent, PostprocessSettingsComponent>())

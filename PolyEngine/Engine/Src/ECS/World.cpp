@@ -2,44 +2,41 @@
 
 using namespace Poly;
 
+RTTI_DEFINE_TYPE(::Poly::Scene);
+
 //------------------------------------------------------------------------------
-World::World()
+Scene::Scene()
 	: EntitiesAllocator(MAX_ENTITY_COUNT)
 {
 	memset(ComponentAllocators, 0, sizeof(IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
-	memset(WorldComponents, 0, sizeof(ComponentBase*) * MAX_WORLD_COMPONENTS_COUNT);
 
-	rootEntity = SpawnEntityInternal();
+	RootEntity.reset(SpawnEntityInternal());
 }
 
 //------------------------------------------------------------------------------
-World::~World()
+Scene::~Scene()
 {
 	// copy entities
-	if(rootEntity)
-		DestroyEntity(rootEntity.Get());
+	if(RootEntity)
+		DestroyEntity(RootEntity.release());
 	
 	for (size_t i = 0; i < MAX_COMPONENTS_COUNT; ++i)
 	{
 		if (ComponentAllocators[i])
 			delete ComponentAllocators[i];
 	}
-
-	for (size_t i = 0; i < MAX_WORLD_COMPONENTS_COUNT; i++)
-		if (WorldComponents[i])
-			delete (WorldComponents[i]);
 }
 
 //------------------------------------------------------------------------------
-Entity* World::SpawnEntity()
+Entity* Scene::SpawnEntity()
 {
 	Entity* ent = SpawnEntityInternal();
-	ent->SetParent(rootEntity.Get());
+	ent->SetParent(RootEntity.get());
 	return ent;
 }
 
 //------------------------------------------------------------------------------
-Entity * Poly::World::SpawnEntityInternal()
+Entity * Poly::Scene::SpawnEntityInternal()
 {
 	Entity* ent = EntitiesAllocator.Alloc();
 	::new(ent) Entity(this);
@@ -47,7 +44,7 @@ Entity * Poly::World::SpawnEntityInternal()
 }
 
 //------------------------------------------------------------------------------
-void World::DestroyEntity(Entity* entity)
+void Scene::DestroyEntity(Entity* entity)
 {
 	HEAVY_ASSERTE(entity, "Invalid entity ID");
 
@@ -66,14 +63,13 @@ void World::DestroyEntity(Entity* entity)
 }
 
 //------------------------------------------------------------------------------
-bool World::HasWorldComponent(size_t ID) const
+bool Scene::HasWorldComponent(size_t ID) const
 {
-	HEAVY_ASSERTE(ID < MAX_WORLD_COMPONENTS_COUNT, "Invalid component ID - greater than MAX_WORLD_COMPONENTS_COUNT.");
-	return WorldComponents[ID] != nullptr;
+	return RootEntity->HasComponent(ID);
 }
 
 //------------------------------------------------------------------------------
-void World::RemoveComponentById(Entity* ent, size_t id)
+void Scene::RemoveComponentById(Entity* ent, size_t id)
 {
 	HEAVY_ASSERTE(ent->Components[id], "Removing not present component");
 	ent->Components[id]->~ComponentBase();
