@@ -22,11 +22,11 @@ UNSILENCE_MSVC_WARNING()
 #include "GlobalEventFilter.hpp"
 
 #include "Managers/DockManager.hpp"
-#include "Managers/ProjectManager.hpp"
-#include "Managers/EngineManager.hpp"
 #include "Managers/CmdManager.hpp"
-#include "Managers/InspectorManager.hpp"
 #include "Managers/CommandManager.hpp"
+#include "Managers/Project/InspectorManager.hpp"
+#include "Managers/Project/ProjectManager.hpp"
+#include "Managers/Project/EngineManager.hpp"
 
 // configs
 #include "Configs/ProjectConfig.hpp"
@@ -66,11 +66,10 @@ UNSILENCE_MSVC_WARNING()
 #include "Controls/EngineControls/TransformControl.hpp"
 
 // dialogs
-#include "Dialogs/CreateProjectDialog.hpp"
-
-#include "Dialogs/Inspectors/Entities/EntityDialog.hpp"
-
-#include "Dialogs/Inspectors/Components/ComponentDialog.hpp"
+#include "Dialogs/IDialog.h"
+#include "Managers/Project/Dialogs/CreateProjectDialog.hpp"
+#include "Managers/Project/Dialogs/EntityDialog.hpp"
+#include "Managers/Project/Dialogs/ComponentDialog.hpp"
 
 // systems
 #include "Systems/Gizmo/GizmoSystem.hpp"

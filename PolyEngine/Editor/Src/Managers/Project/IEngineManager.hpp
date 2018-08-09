@@ -9,8 +9,6 @@ class IEngineManager : public QObject
 	Q_OBJECT;
 
 public:
-	IEngineManager() = default;
-
 	virtual Poly::eEngineState GetEngineState() = 0;
 
 	virtual void InitEngine(std::unique_ptr<Poly::IGame> game, const Poly::String& assetsPathConfigPath) = 0;

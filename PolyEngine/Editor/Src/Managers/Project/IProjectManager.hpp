@@ -5,7 +5,7 @@
 #include <Core.hpp>
 
 #include "Configs/ProjectConfig.hpp"
-#include "Managers/IEngineManager.hpp"
+#include "Managers/Project/IEngineManager.hpp"
 
 class IProjectManager : public QObject
 {
@@ -51,5 +51,5 @@ signals:
 	void ProjectClosed();
 
 protected:
-	std::unique_ptr<IEngineManager> EngineManager
+	std::unique_ptr<IEngineManager> EngineManager;
 };

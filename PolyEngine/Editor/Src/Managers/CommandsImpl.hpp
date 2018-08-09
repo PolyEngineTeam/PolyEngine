@@ -3,7 +3,7 @@
 #include <Core.hpp>
 #include <ECS/Entity.hpp>
 
-#include "Managers/InspectorManager.hpp"
+class InspectorManager;
 
 using namespace Poly;
 

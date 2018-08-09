@@ -9,22 +9,32 @@
 #include "Widgets/Inspectors/ResourceInspectorWidget.hpp"
 #include "Widgets/Inspectors/ViewportInspectorWidget.hpp"
 
+#include "Managers/Project/Dialogs/ISceneDialog.hpp"
+#include "Managers/Project/Dialogs/IEntityDialog.hpp"
+#include "Managers/Project/Dialogs/IComponentDialog.hpp"
+
 class IInspectorManager : public QObject
 {
 	Q_OBJECT
 
 public:
-	IInspectorManager() = default;
-
 	void SetWorldInspector(std::unique_ptr<WorldInspectorWidget> worldInspector) { WorldInspector = std::move(worldInspector); }
 	void SetResourceInspector(std::unique_ptr<ResourceInspectorWidget> resourceInspector) { ResourceInspector = std::move(resourceInspector); }
 	void SetViewportInspector(std::unique_ptr<ViewportInspectorWidget> viewportInspector) { ViewportInspector = std::move(viewportInspector); }
 	void SetEntityInspector(std::unique_ptr<EntityInspectorWidget> entityInspector) { EntityInspector = std::move(entityInspector); }
 
+	void SetWorldInspector(std::unique_ptr<ISceneDialog> sceneDialog) { SceneDialog = std::move(sceneDialog); }
+	void SetResourceInspector(std::unique_ptr<IEntityDialog> entityDialog) { EntityDialog = std::move(entityDialog); }
+	void SetViewportInspector(std::unique_ptr<IComponentDialog> componentDialog) { ComponentDialog = std::move(componentDialog); }
+
+
+
 	virtual const ProjectConfig& GetProjectConfig() = 0;
 	virtual const Poly::Engine* GetEngine() = 0;
 	virtual const Poly::Scene* GetScene() = 0;
 	virtual const Poly::Dynarray<const Poly::Entity*> GetSelectedEntities() = 0;
+
+
 
 	// Opens SceneDialog.
 	virtual void AddScene() = 0;
@@ -49,7 +59,7 @@ public:
 	// Opens ComponentDialog
 	virtual void RemoveComponents() = 0;
 
-slots
+public slots:
 	virtual void ProjectOpened(const ProjectConfig& config) = 0;
 	virtual void ProjectClosed() = 0;
 
@@ -92,4 +102,8 @@ protected:
 	std::unique_ptr<ResourceInspectorWidget> ResourceInspector;
 	std::unique_ptr<ViewportInspectorWidget> ViewportInspector;
 	std::unique_ptr<EntityInspectorWidget> EntityInspector;
+
+	std::unique_ptr<ISceneDialog> SceneDialog;
+	std::unique_ptr<IEntityDialog> EntityDialog;
+	std::unique_ptr<IComponentDialog> ComponentDialog;
 };

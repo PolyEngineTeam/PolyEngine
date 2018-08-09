@@ -7,7 +7,6 @@
 #include "Windows/CustomSDLWindow.hpp"
 #include "Rendering/IRenderingDevice.hpp"
 #include "Widgets/Inspectors/InspectorWidgetBase.hpp"
-#include "Managers/InspectorManager.hpp"
 
 namespace Poly
 {
@@ -15,6 +14,8 @@ namespace Poly
 }
 
 using namespace Poly;
+
+class InspectorManager;
 
 class ViewportInspectorWidget : public InspectorWidgetBase, public IEditor
 {

@@ -4,7 +4,6 @@
 
 #include <ECS/World.hpp>
 
-#include "Managers/EngineManager.hpp"
 #include "Configs/ProjectConfig.hpp"
 #include "Widgets/Inspectors/ViewportInspectorWidget.hpp"
 

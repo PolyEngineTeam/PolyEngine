@@ -484,18 +484,17 @@ void TiledForwardRenderer::DeleteRenderTargets()
 
 void TiledForwardRenderer::Render(const SceneView& sceneView)
 {
-	// gConsole.LogInfo("TiledForwardRenderer::Render");
+	//gConsole.LogInfo("TiledForwardRenderer::Render");
 
-	// commented out because of problems with nvoglv64.dll
-	//UpdateLightsBufferFromScene(sceneView);
-	//
-	//UpdateEnvCapture(sceneView);
-	//
-	//RenderDepthPrePass(sceneView);
-	//
-	//ComputeLightCulling(sceneView);
-	//
-	//RenderOpaqueLit(sceneView);
+	UpdateLightsBufferFromScene(sceneView);
+	
+	UpdateEnvCapture(sceneView);
+	
+	RenderDepthPrePass(sceneView);
+	
+	ComputeLightCulling(sceneView);
+	
+	RenderOpaqueLit(sceneView);
 	
 	RenderSkybox(sceneView);
 
