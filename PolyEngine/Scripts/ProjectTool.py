@@ -10,7 +10,8 @@ import xml.etree.ElementTree as ET
 
 class ActionType(Enum):
     CREATE = 'Create',
-    UPDATE = 'Update'
+    UPDATE = 'Update',
+    BUMP = 'Bump'
 
     def __str__(self):
         return self.name
@@ -38,6 +39,16 @@ class UpdateProjectAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, ActionType.UPDATE)
         setattr(namespace, self.metavar, values[0])
+
+
+class BumpVersionAction(argparse.Action):
+    def __init__(self, option_strings, dest, nargs, **kwargs):
+        if nargs is not 0:
+            raise ValueError("Nargs must be 0 !")
+        super(BumpVersionAction, self).__init__(option_strings, dest, nargs, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, ActionType.BUMP)
 
 # Functions
 # Create project function
@@ -271,6 +282,13 @@ def update_project(path, engine_path, checkout_required):
     run_cmake(path, 'Build', name)
 
 
+def bump_version(path, engine_path):
+    project_file = read_project_file(path)
+    name = project_file['ProjectName']
+    tag = get_latest_tag(engine_path)
+    create_project_file(path, name, tag)
+
+
 def get_latest_tag(engine_path):
     checkout(engine_path, 'dev')
     tag_raw = subprocess.check_output('cd {} && git describe --tags --abbrev=0'.format(engine_path), shell=True)
@@ -301,6 +319,9 @@ if __name__ == "__main__":
     MTX.add_argument('-u', '--update', action=UpdateProjectAction, dest='action_to_perform',
                      nargs=1, metavar='project_path',
                      help='update project at given path')
+    MTX.add_argument('-b', '--bump-version', action=BumpVersionAction, dest='action_to_perform',
+                     nargs=0,
+                     help='sets engine version in game project file to latest')
 
     ARGS = PARSER.parse_args()
 
@@ -308,3 +329,6 @@ if __name__ == "__main__":
         create_project(ARGS.project_name, ARGS.project_path, ARGS.engine_path)
     elif ARGS.action_to_perform == ActionType.UPDATE:
         update_project(ARGS.project_path, ARGS.engine_path, ARGS.checkout)
+    elif ARGS.action_to_perform == ActionType.BUMP:
+        bump_version(ARGS.project_path, ARGS.engine_path)
+        update_project(ARGS.project_path, ARGS.engine_path, True)
