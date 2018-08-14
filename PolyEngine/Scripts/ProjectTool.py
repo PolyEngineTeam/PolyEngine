@@ -250,13 +250,20 @@ def create_project(name, path, engine_path):
     run_cmake(path, 'Build', name)
 
 
-def update_project(path, engine_path):
+def update_project(path, engine_path, checkout_required):
+    project_file = read_project_file(path)
+    if checkout_required:
+        tag = project_file.get('EngineVersion', None)
+        if tag is not None:
+            checkout(engine_path, tag)
+        else:
+            raise RuntimeError("There is no 'EngineVersion' defined in game project file")
     print('Updating project at', path, 'with engine at', engine_path)
 
     if not os.path.exists(path):
-        raise Exception('Path', path, 'does not exists. Cannot update project there!')
+        raise RuntimeError('Path', path, 'does not exists. Cannot update project there!')
 
-    name = read_project_file(path)['ProjectName']
+    name = project_file['ProjectName']
     print('Project name:', name)
 
     update_config_files(path, name, engine_path, False)
@@ -280,13 +287,15 @@ def checkout(engine_path, identifier):
 if __name__ == "__main__":
     PARSER = argparse.ArgumentParser(description='PolyEngine project management tool')
 
-    PARSER.add_argument("-e", "--engine", action='store', dest='enginePath',
+    PARSER.add_argument("-e", "--engine", action='store', dest='engine_path',
                         default='..',
                         metavar='engine_path',
                         help='provide custom engine path')
+    PARSER.add_argument('-c', '--checkout', action='store_true', dest='checkout',
+                        help='TODO help')
 
     MTX = PARSER.add_mutually_exclusive_group()
-    MTX.add_argument('-c', '--create', action=CreateProjectAction, dest='action_to_perform',
+    MTX.add_argument('-co', '--create', action=CreateProjectAction, dest='action_to_perform',
                      nargs=2, metavar=('project_path', 'project_name'),
                      help='create project of given name at provided path')
     MTX.add_argument('-u', '--update', action=UpdateProjectAction, dest='action_to_perform',
@@ -296,6 +305,6 @@ if __name__ == "__main__":
     ARGS = PARSER.parse_args()
 
     if ARGS.action_to_perform == ActionType.CREATE:
-        create_project(ARGS.project_name, ARGS.project_path, ARGS.enginePath)
+        create_project(ARGS.project_name, ARGS.project_path, ARGS.engine_path)
     elif ARGS.action_to_perform == ActionType.UPDATE:
-        update_project(ARGS.project_path, ARGS.enginePath)
+        update_project(ARGS.project_path, ARGS.engine_path, ARGS.checkout)
