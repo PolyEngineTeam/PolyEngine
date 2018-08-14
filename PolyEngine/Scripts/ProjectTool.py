@@ -291,11 +291,11 @@ if __name__ == "__main__":
                         default='..',
                         metavar='engine_path',
                         help='provide custom engine path')
-    PARSER.add_argument('-c', '--checkout', action='store_true', dest='checkout',
+    PARSER.add_argument('-co', '--checkout', action='store_true', dest='checkout',
                         help='TODO help')
 
     MTX = PARSER.add_mutually_exclusive_group()
-    MTX.add_argument('-co', '--create', action=CreateProjectAction, dest='action_to_perform',
+    MTX.add_argument('-c', '--create', action=CreateProjectAction, dest='action_to_perform',
                      nargs=2, metavar=('project_path', 'project_name'),
                      help='create project of given name at provided path')
     MTX.add_argument('-u', '--update', action=UpdateProjectAction, dest='action_to_perform',
