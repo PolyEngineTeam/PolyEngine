@@ -20,7 +20,7 @@ class ActionType(Enum):
 # Custom action for project creation
 class CreateProjectAction(argparse.Action):
     def __init__(self, option_strings, dest, nargs, **kwargs):
-        if nargs is not 2:
+        if nargs == 2:
             raise ValueError("Nargs must be 2 !")
         super(CreateProjectAction, self).__init__(option_strings, dest, nargs, **kwargs)
 
@@ -32,7 +32,7 @@ class CreateProjectAction(argparse.Action):
 
 class UpdateProjectAction(argparse.Action):
     def __init__(self, option_strings, dest, nargs, **kwargs):
-        if nargs is not 1:
+        if nargs == 1:
             raise ValueError("Nargs must be 1 !")
         super(UpdateProjectAction, self).__init__(option_strings, dest, nargs, **kwargs)
 
@@ -43,12 +43,13 @@ class UpdateProjectAction(argparse.Action):
 
 class BumpVersionAction(argparse.Action):
     def __init__(self, option_strings, dest, nargs, **kwargs):
-        if nargs is not 0:
-            raise ValueError("Nargs must be 0 !")
+        if nargs == 1:
+            raise ValueError("Nargs must be 1 !")
         super(BumpVersionAction, self).__init__(option_strings, dest, nargs, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, ActionType.BUMP)
+        setattr(namespace, self.metavar, values[0])
 
 # Functions
 # Create project function
@@ -320,7 +321,7 @@ if __name__ == "__main__":
                      nargs=1, metavar='project_path',
                      help='update project at given path')
     MTX.add_argument('-b', '--bump-version', action=BumpVersionAction, dest='action_to_perform',
-                     nargs=0,
+                     nargs=1, metavar='project_path',
                      help='sets engine version in game project file to latest')
 
     ARGS = PARSER.parse_args()
