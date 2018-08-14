@@ -20,7 +20,7 @@ class ActionType(Enum):
 # Custom action for project creation
 class CreateProjectAction(argparse.Action):
     def __init__(self, option_strings, dest, nargs, **kwargs):
-        if nargs == 2:
+        if nargs != 2:
             raise ValueError("Nargs must be 2 !")
         super(CreateProjectAction, self).__init__(option_strings, dest, nargs, **kwargs)
 
@@ -32,7 +32,7 @@ class CreateProjectAction(argparse.Action):
 
 class UpdateProjectAction(argparse.Action):
     def __init__(self, option_strings, dest, nargs, **kwargs):
-        if nargs == 1:
+        if nargs != 1:
             raise ValueError("Nargs must be 1 !")
         super(UpdateProjectAction, self).__init__(option_strings, dest, nargs, **kwargs)
 
@@ -43,7 +43,7 @@ class UpdateProjectAction(argparse.Action):
 
 class BumpVersionAction(argparse.Action):
     def __init__(self, option_strings, dest, nargs, **kwargs):
-        if nargs == 1:
+        if nargs != 1:
             raise ValueError("Nargs must be 1 !")
         super(BumpVersionAction, self).__init__(option_strings, dest, nargs, **kwargs)
 
