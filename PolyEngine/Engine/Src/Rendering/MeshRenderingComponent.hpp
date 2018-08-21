@@ -44,6 +44,10 @@ namespace Poly {
 		RTTI_DECLARE_TYPE_DERIVED(MeshRenderingComponent, ComponentBase)
 		{
 			RTTI_PROPERTY_AUTONAME(Mesh, RTTI::ePropertyFlag::DONT_SERIALIZE);
+			RTTI_PROPERTY_AUTONAME(IsWireframe, RTTI::ePropertyFlag::DONT_SERIALIZE);
+			RTTI_PROPERTY_AUTONAME(Materials, RTTI::ePropertyFlag::DONT_SERIALIZE);
+		//	RTTI_PROPERTY_AUTONAME(ShadingMode, RTTI::ePropertyFlag::DONT_SERIALIZE);
+		//	RTTI_PROPERTY_AUTONAME(BlendingMode, RTTI::ePropertyFlag::DONT_SERIALIZE);
 		}
 	public:
 		MeshRenderingComponent();

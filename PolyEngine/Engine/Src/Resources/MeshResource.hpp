@@ -21,7 +21,7 @@ namespace Poly
 	{
 		RTTI_DECLARE_TYPE_DERIVED(MeshResource, ResourceBase)
 		{
-			NO_RTTI_PROPERTY();
+			//RTTI_PROPERTY_AUTONAME(SubMeshes, RTTI::ePropertyFlag::NONE);
 		}
 	public:
 		class ENGINE_DLLEXPORT SubMesh : public BaseObject<>
