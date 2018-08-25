@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Defines.hpp>
 #include <Math/Vector.hpp>
 #include <Collections/Dynarray.hpp>
 #include <Utils/EnumUtils.hpp>
