@@ -19,6 +19,7 @@ namespace Poly
 			return value;
 		}
 
+SILENCE_GCC_WARNING(-Wattributes, "Invalid warning about attributes")
 		EXPORT_TEMPLATE template class
 #if (defined(_GAME) && (defined(__GNUC__) || defined(__clang__)))
 
@@ -35,4 +36,5 @@ namespace Poly
 #endif
 			ComponentIDGenerator<struct WorldComponentsGroupType>;
 	}
+UNSILENCE_GCC_WARNING()
 }
