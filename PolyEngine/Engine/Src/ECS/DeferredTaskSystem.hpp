@@ -2,7 +2,7 @@
 
 #include "DeferredTaskImplementation.hpp"
 #include "ECS/DeferredTaskWorldComponent.hpp"
-#include "ECS/World.hpp"
+#include "ECS/Scene.hpp"
 
 namespace Poly
 {

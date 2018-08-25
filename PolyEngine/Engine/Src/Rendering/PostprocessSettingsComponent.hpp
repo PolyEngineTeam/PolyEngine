@@ -8,6 +8,7 @@ namespace Poly {
 	class ENGINE_DLLEXPORT PostprocessSettingsComponent : public ComponentBase
 	{
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::PostprocessSettingsComponent) { NO_RTTI_PROPERTY(); }
 
 		float Exposure = 1.0f;
 

@@ -9,6 +9,8 @@ namespace Poly {
 	{
 		friend void MovementSystem::MovementUpdatePhase(Scene*);
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::FreeFloatMovementComponent) { NO_RTTI_PROPERTY(); }
+
 		FreeFloatMovementComponent(float movementSpeed = 1.0f, float rotationSpeed = 1.0f, float wheelSensitivity = 1.0f);
 
 		float GetMovementSpeed() const { return MovementSpeed; }

@@ -21,6 +21,8 @@ namespace Poly {
 	{
 		friend void CameraSystem::CameraUpdatePhase(Scene*);
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::CameraComponent) { NO_RTTI_PROPERTY(); }
+
 		CameraComponent(Angle fov, float zNear, float zFar);
 		CameraComponent(float top, float bottom, float left, float right, float zNear, float zFar);
 

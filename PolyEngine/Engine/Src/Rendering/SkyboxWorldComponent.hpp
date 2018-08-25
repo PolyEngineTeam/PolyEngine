@@ -9,6 +9,8 @@ namespace Poly
 	class ENGINE_DLLEXPORT SkyboxWorldComponent : public ComponentBase
 	{
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::SkyboxWorldComponent) { NO_RTTI_PROPERTY(); }
+
 		SkyboxWorldComponent(const String& panoramaPath, const eResourceSource source);
 		~SkyboxWorldComponent();
 		

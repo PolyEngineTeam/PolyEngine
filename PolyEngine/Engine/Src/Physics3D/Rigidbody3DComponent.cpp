@@ -4,6 +4,8 @@
 
 #include "Rigidbody3DImpl.hpp"
 
+RTTI_DEFINE_COMPONENT(::Poly::Rigidbody3DComponent)
+
 //------------------------------------------------------------------------------
 Poly::Rigidbody3DComponent::Rigidbody3DComponent(Scene* world, const Rigidbody3DComponentTemplate& tmp)
 	: BodyWorld(world)

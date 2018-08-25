@@ -4,12 +4,14 @@
 
 #include "Physics2D/Physics2DWorldComponent.hpp"
 #include "Physics2D/Physics2DColliders.hpp"
-#include "ECS/World.hpp"
+#include "ECS/Scene.hpp"
 #include "RigidBody2DImpl.hpp"
 
 #include <Box2D/Box2D.h>
 
 using namespace Poly;
+
+RTTI_DEFINE_COMPONENT(::Poly::RigidBody2DComponent)
 
 Poly::RigidBody2DComponent::RigidBody2DComponent(Scene* world, eRigidBody2DType type, float density, float friction)
 	: BodyWorld(world), BodyType(type)

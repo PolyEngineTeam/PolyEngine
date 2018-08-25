@@ -13,6 +13,7 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT ViewportWorldComponent : public ComponentBase
 	{
+		RTTI_DECLARE_COMPONENT(::Poly::ViewportWorldComponent) { NO_RTTI_PROPERTY(); }
 	friend void CameraSystem::CameraUpdatePhase(Scene*);
 	public:
 		ViewportWorldComponent();

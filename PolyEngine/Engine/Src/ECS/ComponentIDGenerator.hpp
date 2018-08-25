@@ -1,16 +1,17 @@
 #pragma once
 
+#include <RTTI/RTTITypeInfo.hpp>
+#include <Utils/Optional.hpp>
+
 #if defined(_ENGINE)
 #    define EXPORT_TEMPLATE
 #else
 #    define EXPORT_TEMPLATE extern
 #endif
 
-#define REGISTER_COMPONENT(GROUP, COMPONENT) \
-	EXPORT_TEMPLATE template size_t ENGINE_DLLEXPORT GROUP::GetComponentTypeID<COMPONENT>() noexcept;
-
 namespace Poly
 {
+
 	namespace Impl
 	{
 		/// <summary>Component ID generator.
@@ -53,4 +54,72 @@ namespace Poly
 	}
 
 	using ComponentsIDGroup = Impl::ComponentIDGenerator<struct ComponentsGroupType>;
+
+	//------------------------------------------------------------------------------
+	/// <summary>Returns statically set component type ID.</summary>
+	/// <tparam name="T">Type of requested component.</tparam>
+	/// <returns>Associated ID.</returns>
+	template<typename T> size_t GetComponentID() noexcept
+	{
+		return ComponentsIDGroup::GetComponentTypeID<T>();
+	}
+
+	class ENGINE_DLLEXPORT ComponentManager
+	{
+	public:
+		static ComponentManager& Get();
+
+		ComponentManager() = default;
+
+		ComponentManager(const ComponentManager&) = delete;
+		ComponentManager(ComponentManager&&) = delete;
+		ComponentManager operator=(const ComponentManager&) = delete;
+		ComponentManager operator=(ComponentManager&&) = delete;
+
+		template<typename T>
+		void RegisterComponent()
+		{
+			size_t id = ::Poly::GetComponentID<T>();
+			RTTI::TypeInfo typeinfo = RTTI::TypeInfo::Get<T>();
+			TypeToIDMap.insert({ typeinfo, id });
+			IDToTypeMap.insert({ id, typeinfo});
+			IDToCreatorMap.insert({id,
+				[](size_t count) { return static_cast<IterablePoolAllocatorBase*>(new IterablePoolAllocator<T>(count)); } });
+		}
+
+		Optional<size_t> GetComponentID(const RTTI::TypeInfo& typeinfo) const;
+		RTTI::TypeInfo GetComponentType(size_t id) const;
+		Dynarray<std::pair<RTTI::TypeInfo, size_t>> GetComponentTypesList() const;
+
+		IterablePoolAllocatorBase* CreateAllocator(size_t id, size_t componentCount) const;
+	private:
+		std::map<RTTI::TypeInfo, size_t> TypeToIDMap;
+		std::map < size_t, RTTI::TypeInfo> IDToTypeMap;
+		std::map < size_t, std::function<IterablePoolAllocatorBase*(size_t)>> IDToCreatorMap;
+	};
 }
+
+template <typename T>
+struct AutoRegisterComponent {
+	AutoRegisterComponent() {
+#if defined(_WIN32)
+		STATIC_ASSERTE(false, "Component not defined in rtti system!");
+#else
+		ASSERTE(false, "Component not defined in rtti system!");
+#endif
+	}
+};
+
+#define REGISTER_COMPONENT(GROUP, COMPONENT) \
+	EXPORT_TEMPLATE template size_t ENGINE_DLLEXPORT GROUP::GetComponentTypeID<COMPONENT>() noexcept;
+
+#define RTTI_DECLARE_COMPONENT(TYPE) \
+	public: \
+	size_t GetComponentID() const override { return ::Poly::GetComponentID<TYPE>(); }	\
+	RTTI_DECLARE_TYPE_DERIVED(TYPE, ::Poly::ComponentBase)
+
+#define RTTI_DEFINE_COMPONENT(TYPE) \
+	template <> struct AutoRegisterComponent<TYPE> { AutoRegisterComponent() \
+	{ ::Poly::ComponentManager::Get().RegisterComponent<TYPE>(); } }; \
+	static const AutoRegisterComponent<TYPE> RTTI_CAT(autoRegisterComponent, __COUNTER__); \
+	RTTI_DEFINE_TYPE(TYPE)

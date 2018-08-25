@@ -42,18 +42,29 @@ namespace Poly {
 				return it->second;
 			}
 
+			TypeInfo TypeManager::GetTypeByName(const char* name) const
+			{
+				const auto& it = NameToTypeMap.find(name);
+				if (it == NameToTypeMap.end())
+				{
+					return TypeInfo::INVALID;
+					HEAVY_ASSERTE(false, "Type has no name! Not registered?");
+				}
+				return it->second;
+			}
+
 		} // namespace Impl
 
 		TypeInfo::TypeInfo(long long id) : ID(id) {}
 
 		const char* TypeInfo::GetTypeName() const { return Impl::TypeManager::Get().GetTypeName(*this); }
 
-		void * TypeInfo::CreateInstance()
+		void * TypeInfo::CreateInstance() const
 		{
 			return Impl::TypeManager::Get().GetConstructor(*this)(nullptr);
 		}
 
-		void * TypeInfo::CreateInstanceInPlace(void * ptr)
+		void * TypeInfo::CreateInstanceInPlace(void * ptr) const
 		{
 			return Impl::TypeManager::Get().GetConstructor(*this)(ptr);
 		}

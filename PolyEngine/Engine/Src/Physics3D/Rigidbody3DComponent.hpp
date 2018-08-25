@@ -70,6 +70,8 @@ namespace Poly
 		friend void Physics3DSystem::UnregisterComponent(Scene * world, Entity* entity);
 
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::Rigidbody3DComponent) { NO_RTTI_PROPERTY(); }
+
 		// constructors and destructor
 
 

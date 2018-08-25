@@ -42,6 +42,8 @@ namespace Poly
 		friend RaycastResult Physics3DSystem::AllHitsRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 		friend RaycastResult Physics3DSystem::ClosestHitRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::Physics3DWorldComponent) { NO_RTTI_PROPERTY(); }
+
 		Physics3DWorldComponent(Physics3DConfig config);
 		~Physics3DWorldComponent();
 

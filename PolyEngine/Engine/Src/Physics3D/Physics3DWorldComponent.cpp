@@ -2,6 +2,8 @@
 
 #include "BulletIncludesCommon.hpp"
 
+RTTI_DEFINE_COMPONENT(::Poly::Physics3DWorldComponent)
+
 //------------------------------------------------------------------------------
 Poly::Physics3DWorldComponent::Physics3DWorldComponent(Physics3DConfig config)
 	: Config(config)

@@ -2,7 +2,7 @@
 
 #include "Common/DebugRenderingBuffers.hpp"
 
-#include <ECS/World.hpp>
+#include <ECS/Scene.hpp>
 #include <Rendering/Camera/CameraComponent.hpp>
 #include <Debugging/DebugDrawComponents.hpp>
 

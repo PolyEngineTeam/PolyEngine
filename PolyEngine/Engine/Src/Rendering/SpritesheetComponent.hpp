@@ -21,6 +21,7 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT SpritesheetComponent : public ComponentBase
 	{
+		RTTI_DECLARE_COMPONENT(::Poly::SpritesheetComponent) { NO_RTTI_PROPERTY(); }
 	public:
 		friend void RenderingSystem::RenderingPhase(Scene*);
 	public:

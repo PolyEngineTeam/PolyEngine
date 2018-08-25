@@ -7,11 +7,23 @@
 #include <Math/AABox.hpp>
 #include "ECS/EntityTransform.hpp"
 #include "Engine.hpp"
+#include "Collections/Dynarray.hpp"
+#include "ECS/ComponentIDGenerator.hpp"
 
 namespace Poly
 {
 	class ComponentBase;
 	constexpr unsigned int MAX_COMPONENTS_COUNT = 64;
+
+	struct ENGINE_DLLEXPORT ComponentDeleter final : public BaseObjectLiteralType<>
+	{
+		void operator()(ComponentBase* c);
+	};
+
+	struct ENGINE_DLLEXPORT EntityDeleter final : public BaseObjectLiteralType<>
+	{
+		void operator()(Entity*);
+	};
 
 	enum class eEntityBoundingChannel
 	{
@@ -27,15 +39,24 @@ namespace Poly
 			RTTI_PROPERTY_AUTONAME(NameTemplate, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(Name, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(Transform, RTTI::ePropertyFlag::NONE);
-			//@todo(muniu) rttibase pointers serialization
-			//RTTI_PROPERTY_AUTONAME(EntityScene, RTTI::ePropertyFlag::NONE);
-			//RTTI_PROPERTY_AUTONAME(Parent, RTTI::ePropertyFlag::NONE);
-			//RTTI_PROPERTY_AUTONAME(Children, RTTI::ePropertyFlag::NONE);
-			//RTTI_PROPERTY_AUTONAME(Components, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(EntityScene, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Parent, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_FACTORY_AUTONAME(Children, &Entity::AllocateEntity, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_FACTORY_AUTONAME(Components, &Entity::AllocateComponent, RTTI::ePropertyFlag::NONE);
 		}
 	public:
-		Entity() : Transform(this) {};
+		using EntityUniquePtr = std::unique_ptr<Entity, EntityDeleter>;
+		using ComponentUniquePtr = std::unique_ptr<ComponentBase, ComponentDeleter>;
+
+		Entity();
 		~Entity();
+		Entity(const Entity&) = delete;
+		Entity(Entity&&) = delete;
+		Entity* operator=(const Entity&) = delete;
+		Entity* operator=(Entity&&) = delete;
+
+		static void* AllocateEntity(RTTI::TypeInfo t);
+		static void* AllocateComponent(RTTI::TypeInfo t);
 
 		const Scene* GetEntityScene() const { HEAVY_ASSERTE(GetUUID(), "Entity was not properly initialized");  return EntityScene; }
 		Scene* GetEntityScene() { HEAVY_ASSERTE(GetUUID(), "Entity was not properly initialized");  return EntityScene; }
@@ -84,7 +105,7 @@ namespace Poly
 
 		/// Returns collection of children of this entity.
 		/// @return Collection of children.
-		const Dynarray<Entity*>& GetChildren() const { return Children; }
+		const Dynarray<EntityUniquePtr>& GetChildren() const { return Children; }
 
 		/// Reparents this entity. Entity cannot be parented to his children, to himself or to nothing (with exception to scene root).
 		/// @param Entity* Pointer to new parent
@@ -110,10 +131,11 @@ namespace Poly
 	private:
 		Entity(Scene* world, Entity* parent = nullptr);
 
+		void ReleaseFromParent();
 		void SetBBoxDirty();
 
 		Entity* Parent = nullptr;
-		Dynarray<Entity*> Children;
+		Dynarray<EntityUniquePtr> Children;
 
 		String NameTemplate;
 		String Name;
@@ -124,8 +146,35 @@ namespace Poly
 		mutable EnumArray<bool, eEntityBoundingChannel> BBoxDirty;
 
 		std::bitset<MAX_COMPONENTS_COUNT> ComponentPosessionFlags;
-		ComponentBase* Components[MAX_COMPONENTS_COUNT];
+		Dynarray<ComponentUniquePtr> Components;
 
 		friend class Scene;
 	};
+
+	//defined here due to circular inclusion problem; FIXME: circular inclusion
+	template<typename T>
+	T* Entity::GetComponent()
+	{
+		const auto ctypeID = GetComponentID<T>();
+		if (HasComponent(ctypeID))
+			return static_cast<T*>(Components[ctypeID].get());
+		else
+			return nullptr;
+	}
+
+	template<typename T>
+	const T* Entity::GetComponent() const
+	{
+		const auto ctypeID = GetComponentID<T>();
+		if (HasComponent(ctypeID))
+			return static_cast<T*>(Components[ctypeID].get());
+		else
+			return nullptr;
+	}
+
+	template<class T >
+	bool Entity::HasComponent() const
+	{
+		return HasComponent(GetComponentID<T>());
+	}
 } //namespace Poly

@@ -15,6 +15,8 @@ namespace Poly
 	{
 	public:
 
+		using FindPred = std::function<bool(const T&)>;
+
 		/// <summary>Dynarray's Iterator class provides basic random access mutable iterator API for traversing dynarray memory</summary>
 		class Iterator final : public BaseObjectLiteralType<>, public std::iterator<std::random_access_iterator_tag, T>
 		{
@@ -256,6 +258,16 @@ namespace Poly
 			return GetSize();
 		}
 
+		size_t FindIdx(const FindPred& pred) const
+		{
+			for (size_t idx = 0; idx < GetSize(); ++idx)
+			{
+				if (pred(Data[idx]))
+					return idx;
+			}
+			return GetSize();
+		}
+
 		/// <summary>Finds indexes of all encountered objects from the cointainer that are equal to provided object.</summary>
 		/// <param name="rhs">Searched object.</param>
 		/// <returns>DynArray of indexes of searched objects or empty DynArray if object was not found.</returns>
@@ -265,6 +277,17 @@ namespace Poly
 			for (size_t idx = 0; idx < GetSize(); ++idx)
 			{
 				if (Data[idx] == rhs)
+					r.PushBack(idx);
+			}
+			return r;
+		}
+
+		Dynarray<size_t> FindAllIdx(const FindPred& pred) const
+		{
+			Dynarray<size_t> r;
+			for (size_t idx = 0; idx < GetSize(); ++idx)
+			{
+				if (pred(Data[idx]))
 					r.PushBack(idx);
 			}
 			return r;
@@ -346,16 +369,19 @@ namespace Poly
 		/// <param name="rhs">Searched object.</param>
 		/// <returns>Iterator Iterator to the searched object or End().</returns>
 		Iterator Find(const T& rhs) { return Iterator(Data, FindIdx(rhs)); }
+		Iterator Find(const FindPred& pred) { return Iterator(Data, FindIdx(pred)); }
 
 		/// <summary>Getter for the const iterator that points to the first encountered searched element in collection.</summary>
 		/// <param name="rhs">Searched object.</param>
 		/// <returns>ConstIterator Const iterator to the searched object or End().</returns>
 		ConstIterator Find(const T& rhs) const { return ConstIterator(Data, FindIdx(rhs)); }
+		ConstIterator Find(const FindPred& pred) const { return ConstIterator(Data, FindIdx(pred)); }
 
 		/// <summary>Checks whether provided object is present in the collection at least once.</summary>
 		/// <param name="rhs">Searched object.</param>
 		/// <returns>True if present, false otherwise.</returns>
 		bool Contains(const T& rhs) const { return FindIdx(rhs) < GetSize(); }
+		bool Contains(const FindPred& pred) const { return FindIdx(pred) < GetSize(); }
 
 		/// <summary>
 		/// Remove the first encountered object of provided value from the collection.
@@ -364,6 +390,7 @@ namespace Poly
 		/// </summary>
 		/// <param name="rhs">Object to be removed.</param>
 		void Remove(const T& rhs) { RemoveByIdx(FindIdx(rhs)); }
+		void Remove(const FindPred& pred) { RemoveByIdx(FindIdx(pred)); }
 
 		/// <summary>
 		/// Try to remove the first encountered object of provided value from the collection.
@@ -374,6 +401,17 @@ namespace Poly
 		bool TryRemove(const T& rhs)
 		{
 			size_t idx = FindIdx(rhs);
+			if (idx < GetSize())
+			{
+				RemoveByIdx(idx);
+				return true;
+			}
+			return false;
+		}
+
+		bool TryRemove(const FindPred& pred)
+		{
+			size_t idx = FindIdx(pred);
 			if (idx < GetSize())
 			{
 				RemoveByIdx(idx);

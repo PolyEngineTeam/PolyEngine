@@ -1,6 +1,6 @@
 #include "GLRenderingDevice.hpp"
 
-#include <ECS/World.hpp>
+#include <ECS/Scene.hpp>
 #include <Configs/DebugConfig.hpp>
 #include <Rendering/Viewport.hpp>
 

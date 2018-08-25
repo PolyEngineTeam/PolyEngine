@@ -5,7 +5,7 @@
 #include "Proxy/GLParticleDeviceProxy.hpp"
 #include <GLRenderingDevice.hpp>
 
-#include <ECS/World.hpp>
+#include <ECS/Scene.hpp>
 #include <Time/TimeSystem.hpp>
 #include <Rendering/Camera/CameraComponent.hpp>
 #include <Rendering/Particles/ParticleComponent.hpp>

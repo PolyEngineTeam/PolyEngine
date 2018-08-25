@@ -10,6 +10,8 @@ namespace Poly {
 	{
 		friend void ParticleUpdateSystem::ParticleUpdatePhase(Scene*);
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::ParticleComponent) { NO_RTTI_PROPERTY(); }
+
 		ParticleComponent(const ParticleEmitter::Settings& emitter);
 		virtual ~ParticleComponent();
 		

@@ -61,6 +61,20 @@ public:
 };
 RTTI_DEFINE_TYPE(TestRTTIClass)
 
+class TestRTTIClassPolymorphic : public TestRTTIClass
+{
+	RTTI_DECLARE_TYPE_DERIVED(TestRTTIClassPolymorphic, TestRTTIClass)
+	{
+		RTTI_PROPERTY_AUTONAME(Val2, RTTI::ePropertyFlag::NONE);
+	}
+public:
+	TestRTTIClassPolymorphic() {}
+	TestRTTIClassPolymorphic(int val, float val2) : TestRTTIClass(val), Val2(val2) {}
+
+	float Val2 = 0.f;
+};
+RTTI_DEFINE_TYPE(TestRTTIClassPolymorphic)
+
 class TestConfig : public ConfigBase
 {
 	RTTI_DECLARE_TYPE_DERIVED(TestConfig, ConfigBase)
@@ -103,6 +117,7 @@ class TestConfig : public ConfigBase
 		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrInt, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterInt; return new int; }, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrDynarrayInt, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterDynarrayInt; return new Dynarray<int>; }, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrCustom, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterCustom; return info.CreateInstance(); }, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropUniquePtrPolymorphicCustom, RTTI::ePropertyFlag::NONE);
 
 		RTTI_PROPERTY_AUTONAME(PropRawPtrCustom, RTTI::ePropertyFlag::NONE);
 	}
@@ -123,6 +138,7 @@ public:
 		PropUniquePtrInt = std::make_unique<int>(5);
 		PropUniquePtrDynarrayInt = std::make_unique<Dynarray<int>>(Dynarray<int>{ 1,2,3 });
 		PropUniquePtrCustom = std::make_unique<TestRTTIClass>(3);
+		PropUniquePtrPolymorphicCustom = std::make_unique<TestRTTIClass>(12);
 
 		PropRawPtrCustom = PropUniquePtrCustom.get();
 	}
@@ -169,6 +185,7 @@ public:
 	std::unique_ptr<int> PropUniquePtrInt;
 	std::unique_ptr<Dynarray<int>> PropUniquePtrDynarrayInt;
 	std::unique_ptr<TestRTTIClass> PropUniquePtrCustom;
+	std::unique_ptr<RTTIBase> PropUniquePtrPolymorphicCustom;
 
 	TestRTTIClass* PropRawPtrCustom;
 };
@@ -253,6 +270,9 @@ void baseValueCheck(const TestConfig& config)
 	CHECK(*config.PropUniquePtrInt == 5);
 	CHECK(*config.PropUniquePtrDynarrayInt == Dynarray<int>{1,2,3});
 	CHECK(config.PropUniquePtrCustom->Val1 == 3);
+	TestRTTIClass* ptr = rtti_cast<TestRTTIClass*>(config.PropUniquePtrPolymorphicCustom.get());
+	REQUIRE(ptr != nullptr);
+	CHECK(ptr->Val1 == 12);
 
 	CHECK(config.PropRawPtrCustom == config.PropUniquePtrCustom.get());
 }
@@ -327,6 +347,7 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		config.PropUniquePtrInt = std::make_unique<int>(7);
 		config.PropUniquePtrDynarrayInt = std::make_unique<Dynarray<int>>(Dynarray<int>{ 4, 5, 6 });
 		config.PropUniquePtrCustom = std::make_unique<TestRTTIClass>(8);
+		config.PropUniquePtrPolymorphicCustom = std::make_unique<TestRTTIClassPolymorphic>(17, 1.5f);
 
 		config.PropRawPtrCustom = config.PropUniquePtrCustom.get();
 
@@ -440,6 +461,10 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(*config.PropUniquePtrInt == 7);
 		CHECK(*config.PropUniquePtrDynarrayInt == Dynarray<int>{4,5,6});
 		CHECK(config.PropUniquePtrCustom->Val1 == 8);
+		TestRTTIClassPolymorphic* ptr = rtti_cast<TestRTTIClassPolymorphic*>(config.PropUniquePtrPolymorphicCustom.get());
+		REQUIRE(ptr != nullptr);
+		CHECK(ptr->Val1 == 17);
+		CHECK(ptr->Val2 == 1.5f);
 
 		CHECK(config.PropRawPtrCustom == config.PropUniquePtrCustom.get());
 	}

@@ -9,7 +9,7 @@
 // ECS
 #include "ECS/ComponentBase.hpp"
 #include "ECS/Entity.hpp"
-#include "ECS/World.hpp"
+#include "ECS/Scene.hpp"
 #include "ECS/EntityTransform.hpp"
 
 // Rendering

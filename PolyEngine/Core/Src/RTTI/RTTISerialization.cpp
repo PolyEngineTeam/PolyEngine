@@ -15,8 +15,8 @@ void ResolveUninitializedPointers(const Dynarray<RTTI::UninitializedPointerEntry
 	{
 		HEAVY_ASSERTE(entry.Property.ImplData.get() != nullptr, "Invalid unique ptr impl data!");
 		const Poly::RTTI::RawPtrPropertyImplDataBase* implData = static_cast<const Poly::RTTI::RawPtrPropertyImplDataBase*>(entry.Property.ImplData.get());
-		implData->SetPtr(entry.Ptr, RTTIObjectsManager::Get().GetObjectByID(entry.UUID));
-		if (implData->GetPtr(*entry.Ptr) != nullptr)
+		implData->SetPtr(entry.Ptr, RTTIObjectsManager::Get().TryGetObjectByID(entry.UUID));
+		if (implData->GetPtr(*entry.Ptr) != nullptr || !entry.UUID.IsValid())
 			++initCount;
 		else
 			gConsole.LogError("Pointer [{}] of RTTIBase object with UUID: {} was not properly deserialized!", entry.Property.Name, entry.UUID);
@@ -29,6 +29,7 @@ void Poly::RTTI::SerializeObject(RTTIBase* obj, rapidjson::Document& doc)
 	TraverseAndCall(obj, [](RTTIBase* obj) {obj->BeforeSerializationCallback(); });
 	doc.SetObject();
 	RTTI::SerializeObject(obj, doc.GetObject(), doc.GetAllocator());
+	TraverseAndCall(obj, [](RTTIBase* obj) {obj->AfterSerializationCallback(); });
 }
 
 void RTTI::SerializeObject(const RTTIBase* obj, rapidjson::GenericObject<false, rapidjson::Value> currentValue, rapidjson::Document::AllocatorType& alloc)
@@ -326,8 +327,16 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	case eCorePropertyType::RAW_PTR:
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid raw ptr impl data!");
-		const UniqueID& uuid = (*reinterpret_cast<RTTIBase* const*>(value))->GetUUID();
-		currentValue.SetString(uuid.ToString().GetCStr(), alloc);
+		const RTTIBase* ptr = *reinterpret_cast<RTTIBase* const*>(value);
+
+		if (ptr)
+		{
+			const UniqueID& uuid = ptr->GetUUID();
+			currentValue.SetString(uuid.ToString().GetCStr(), alloc);
+		}
+		else
+			currentValue.SetNull();
+		
 		break;
 	}
 	case eCorePropertyType::CUSTOM:
@@ -343,10 +352,11 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 
 CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const rapidjson::Document& doc)
 {
+	TraverseAndCall(obj, [](RTTIBase* obj) { obj->BeforeDeserializationCallback(); });
 	Dynarray<UninitializedPointerEntry> uninitializedPointers;
 	RTTI::DeserializeObject(obj, doc.GetObject(), uninitializedPointers);
 	ResolveUninitializedPointers(uninitializedPointers);
-	TraverseAndCall(obj, [](RTTIBase* obj) {obj->AfterDeSerializationCallback(); });
+	TraverseAndCall(obj, [](RTTIBase* obj) { obj->AfterDeserializationCallback(); });
 }
 
 CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, 
@@ -507,18 +517,34 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj,
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid unique ptr impl data!");
 		const UniquePtrPropertyImplDataBase* implData = static_cast<const UniquePtrPropertyImplDataBase*>(prop.ImplData.get());
-		implData->Create(obj);
-		//@todo(muniu) store guid in some register for non-owning pointer deserialization
-		if(!value.IsNull())
-			SetCorePropertyValue(implData->Get(obj), implData->PropertyType, value, uninitializedPointers);
+		
+		if (value.IsNull())
+		{
+			implData->Clear(obj);
+			break;
+		}
+
+		if (implData->PropertyType.Type.IsValid()) // RTTI type
+		{
+			String typeName;
+			if (implData->PropertyType.CoreType == eCorePropertyType::CUSTOM)
+				typeName = value.GetObject().FindMember(JSON_TYPE_ANNOTATION)->value.GetString();
+			else
+				typeName = implData->PropertyType.Type.GetTypeName();
+			implData->CreatePolymorphic(obj, typeName.GetCStr());
+		}
+		else // Fundamental
+			implData->Create(obj);
+		
+		SetCorePropertyValue(implData->Get(obj), implData->PropertyType, value, uninitializedPointers);
 	}
 	break;
 	case eCorePropertyType::RAW_PTR:
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid unique ptr impl data!");
 		UninitializedPointerEntry entry;
-		entry.UUID = UniqueID::FromString(String(value.GetString())).Value();
-		HEAVY_ASSERTE(entry.UUID, "UniqueID deserialization failed");
+		entry.UUID = value.IsNull() ? UniqueID::INVALID : UniqueID::FromString(String(value.GetString())).Value();
+		HEAVY_ASSERTE(value.IsNull() || entry.UUID, "UniqueID deserialization failed");
 		entry.Ptr = (RTTIBase**)obj;
 		entry.Property = prop;
 		uninitializedPointers.PushBack(std::move(entry));

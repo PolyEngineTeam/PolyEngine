@@ -19,7 +19,9 @@ namespace Poly
 		friend double TimeSystem::GetTimerElapsedTime(Scene* world, eEngineTimer timerType);
 		friend double TimeSystem::GetTimerMultiplier(Scene* world, size_t id);
 		friend double TimeSystem::GetTimerMultiplier(Scene* world, eEngineTimer timerType);
-	public:	
+	public:
+		RTTI_DECLARE_COMPONENT(::Poly::TimeWorldComponent) { NO_RTTI_PROPERTY(); }
+
 		TimeWorldComponent();
 
 		double GetSystemTime() const { return Timers.at((size_t) eEngineTimer::SYSTEM).GetTime(); };

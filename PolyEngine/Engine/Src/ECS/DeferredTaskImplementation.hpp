@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DeferredTaskBase.hpp"
-#include "ECS/World.hpp"
+#include "ECS/Scene.hpp"
 
 namespace Poly
 {

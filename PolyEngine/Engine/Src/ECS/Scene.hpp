@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Defines.hpp>
+
 #include <unordered_map>
 #include <Core.hpp>
 
@@ -31,16 +33,17 @@ namespace Poly {
 	{
 		RTTI_DECLARE_TYPE_DERIVED(::Poly::Scene, ::Poly::RTTIBase)
 		{
-			//@todo(muniu) rttibase pointers serialization
-			RTTI_PROPERTY_AUTONAME(RootEntity, RTTI::ePropertyFlag::NONE);
-			//RTTI_PROPERTY_AUTONAME(EntitiesAllocator, RTTI::ePropertyFlag::NONE);
-			//RTTI_PROPERTY_AUTONAME_ARRAY(ComponentAllocators, MAX_COMPONENTS_COUNT, RTTI::ePropertyFlag::NONE);
+			//@todo add factory creation
+			RTTI_PROPERTY_FACTORY_AUTONAME(RootEntity, &Entity::AllocateEntity, RTTI::ePropertyFlag::NONE);
 		}
 	public:
 		/// <summary>Allocates memory for entities, world components and components allocators.</summary>
 		Scene();
 
 		virtual ~Scene();
+
+		void BeforeDeserializationCallback() override;
+		void AfterDeserializationCallback() override;
 
 		/// <summary>Gets a component of a specified type from entity with given UniqueID.</summary>
 		/// <param name="entityId">UniqueID of the entity.</param>
@@ -67,14 +70,19 @@ namespace Poly {
 			return RootEntity->GetComponent<T>();
 		}
 
-		//------------------------------------------------------------------------------
-		/// <summary>Returns statically set component type ID.</summary>
-		/// <tparam name="T">Type of requested component.</tparam>
-		/// <returns>Associated ID.</returns>
-		template<typename T> static size_t GetComponentID() noexcept
+		IterablePoolAllocatorBase* GetComponentAllocator(size_t componentID) 
 		{
-			return ComponentsIDGroup::GetComponentTypeID<T>();
+			HEAVY_ASSERTE(componentID < MAX_COMPONENTS_COUNT, "Invalid component ID");
+			if (ComponentAllocators[componentID] == nullptr)
+				ComponentAllocators[componentID] = ComponentManager::Get().CreateAllocator(componentID, MAX_ENTITY_COUNT);
+			HEAVY_ASSERTE(ComponentAllocators[componentID], "Component allocator not created!");
+			return ComponentAllocators[componentID];
 		}
+		ComponentDeleter& GetComponentDeleter() { return ComponentDel; }
+
+		IterablePoolAllocator<Entity>& GetEntityAllocator() { return EntitiesAllocator; }
+		EntityDeleter& GetEntityDeleter() { return EntityDel; }
+
 
 		//------------------------------------------------------------------------------
 		/// <summary>Returns statically set component type ID from 'Scene' group.</summary>
@@ -180,6 +188,8 @@ namespace Poly {
 	private:
 		friend class SpawnEntityDeferredTask;
 		friend class DestroyEntityDeferredTask;
+		friend struct EntityDeleter;
+		friend struct ComponentDeleter;
 		template<typename T,typename... Args> friend class AddComponentDeferredTask;
 		template<typename T> friend class RemoveComponentDeferredTask;
 
@@ -206,7 +216,7 @@ namespace Poly {
 			HEAVY_ASSERTE(entity, "Invalid entity ID");
 			HEAVY_ASSERTE(!entity->HasComponent(ctypeID), "Failed at AddComponent() - a component of a given UniqueID already exists!");
 			entity->ComponentPosessionFlags.set(ctypeID, true);
-			entity->Components[ctypeID] = ptr;
+			entity->Components[ctypeID].reset(ptr);
 			ptr->Owner = entity;
 			HEAVY_ASSERTE(entity->HasComponent(ctypeID), "Failed at AddComponent() - the component was not added!");
 			entity->SetBBoxDirty();
@@ -220,10 +230,7 @@ namespace Poly {
 			HEAVY_ASSERTE(entity, "Invalid entity ID");
 			HEAVY_ASSERTE(entity->HasComponent(ctypeID), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
 			entity->ComponentPosessionFlags.set(ctypeID, false);
-			T* component = static_cast<T*>(entity->Components[ctypeID]);
-			entity->Components[ctypeID] = nullptr;
-			component->~T();
-			GetComponentAllocator<T>()->Free(component);
+			entity->Components[ctypeID].reset(nullptr);
 			HEAVY_ASSERTE(!entity->HasComponent(ctypeID), "Failed at AddComponent() - the component was not removed!");
 			entity->SetBBoxDirty();
 		}
@@ -233,10 +240,7 @@ namespace Poly {
 		IterablePoolAllocator<T>* GetComponentAllocator()
 		{
 			const auto ctypeID = GetComponentID<T>();
-			HEAVY_ASSERTE(ctypeID < MAX_COMPONENTS_COUNT, "Invalid component ID");
-			if (ComponentAllocators[ctypeID] == nullptr)
-				ComponentAllocators[ctypeID] = new IterablePoolAllocator<T>(MAX_ENTITY_COUNT);
-			return static_cast<IterablePoolAllocator<T>*>(ComponentAllocators[ctypeID]);
+			return static_cast<IterablePoolAllocator<T>*>(GetComponentAllocator(ctypeID));
 		}
 
 		//------------------------------------------------------------------------------
@@ -255,38 +259,13 @@ namespace Poly {
 
 		void RemoveComponentById(Entity* ent, size_t id);
 
-		std::unique_ptr<Entity> RootEntity = nullptr;
-
 		// Allocators
 		IterablePoolAllocator<Entity> EntitiesAllocator;
 		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
+
+		ComponentDeleter ComponentDel;
+		EntityDeleter EntityDel;
+
+		Entity::EntityUniquePtr RootEntity;
 	};
-
-	//defined here due to circular inclusion problem; FIXME: circular inclusion
-	template<typename T>
-	T* Entity::GetComponent()
-	{
-		const auto ctypeID = Scene::GetComponentID<T>();
-		if (HasComponent(ctypeID))
-			return static_cast<T*>(Components[ctypeID]);
-		else
-			return nullptr;
-	}
-
-	template<typename T>
-	const T* Entity::GetComponent() const
-	{
-		const auto ctypeID = Scene::GetComponentID<T>();
-		if (HasComponent(ctypeID))
-			return static_cast<T*>(Components[ctypeID]);
-		else
-			return nullptr;
-	}
-
-	template<class T >
-	bool Entity::HasComponent() const
-	{
-		return HasComponent(Scene::GetComponentID<T>());
-	}
-
 } //namespace Poly
