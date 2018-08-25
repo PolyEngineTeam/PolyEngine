@@ -22,7 +22,7 @@ void Poly::ComponentDeleter::operator()(ComponentBase* c)
 	const size_t componentID = c->GetComponentID();
 	Scene* scene = c->GetOwner()->GetEntityScene();
 	c->~ComponentBase();
-	scene->ComponentAllocators[componentID]->Free(c);
+	scene->ComponentAllocators[componentID]->GenericFree(c);
 }
 
 

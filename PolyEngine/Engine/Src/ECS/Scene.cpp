@@ -58,18 +58,6 @@ void Scene::DestroyEntity(Entity* entity)
 {
 	HEAVY_ASSERTE(entity, "Invalid entity ID");
 
-	/*auto childrenCopy = entity->GetChildren();
-	for (Entity* child : childrenCopy)
-		DestroyEntity(child);
-
-	for (size_t i = 0; i < MAX_COMPONENTS_COUNT; ++i)
-	{
-		if (entity->Components[i])
-			RemoveComponentById(entity, i);
-	}
-
-	entity->~Entity();
-	EntitiesAllocator.Free(entity);*/
 	entity->ReleaseFromParent();
 	EntityDel(entity);
 }

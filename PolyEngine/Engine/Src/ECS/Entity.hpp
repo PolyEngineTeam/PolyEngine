@@ -41,7 +41,6 @@ namespace Poly
 			RTTI_PROPERTY_AUTONAME(Transform, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(EntityScene, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(Parent, RTTI::ePropertyFlag::NONE);
-			//@todo add factory creation
 			RTTI_PROPERTY_FACTORY_AUTONAME(Children, &Entity::AllocateEntity, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_FACTORY_AUTONAME(Components, &Entity::AllocateComponent, RTTI::ePropertyFlag::NONE);
 		}
