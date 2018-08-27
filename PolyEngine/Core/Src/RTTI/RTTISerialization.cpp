@@ -1,8 +1,13 @@
 #include "CorePCH.hpp"
+
 #include "RTTISerialization.hpp"
 #include "Collections/String.hpp"
 #include "Collections/Dynarray.hpp"
 #include "UniqueID.hpp"
+#include "Math/Quaternion.hpp"
+#include "Math/Vector.hpp"
+#include "Math/Vector2f.hpp"
+#include "Math/Vector2i.hpp"
 
 using namespace Poly;
 

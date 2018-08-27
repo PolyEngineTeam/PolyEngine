@@ -9,10 +9,6 @@
 #include "RTTI/CustomTypeTraits.hpp"
 #include "Utils/Logger.hpp"
 
-#include <functional>
-#include <initializer_list>
-#include <unordered_map>
-
 namespace Poly {
 
 	// Fwd declarations

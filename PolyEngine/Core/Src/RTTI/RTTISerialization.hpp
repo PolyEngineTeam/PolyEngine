@@ -2,7 +2,7 @@
 
 #include "RTTI/RTTI.hpp"
 #include "RTTIProperty.hpp"
-#include <rapidjson/document.h>
+
 
 namespace Poly
 {

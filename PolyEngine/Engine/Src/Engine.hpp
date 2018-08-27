@@ -6,7 +6,6 @@
 #include <unordered_map>
 #include <memory>
 
-#include <Core.hpp>
 #include "Rendering/IRenderingDevice.hpp"
 #include "Audio/OpenALDevice.hpp"
 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Defines.hpp"
-#include "Containers/String.hpp"
-#include "Containers/BinaryBuffer.hpp"
+#include "Collections/String.hpp"
+#include "Memory/BinaryBuffer.hpp"
 
 
 namespace Poly {

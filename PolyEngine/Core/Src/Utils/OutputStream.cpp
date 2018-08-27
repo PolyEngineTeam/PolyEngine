@@ -1,5 +1,7 @@
 #include "CorePCH.hpp"
 
+#include"OutputStream.hpp"
+
 using namespace Poly;
 
 std::streamsize OutputStream::xsputn(const char_type* s, std::streamsize n)

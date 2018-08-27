@@ -1,7 +1,5 @@
 #pragma once
 
-#include <pmmintrin.h>
-
 #include "Defines.hpp"
 #include "Math/BasicMath.hpp"
 #include "Math/Color.hpp"
