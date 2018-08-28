@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Math/AARect.hpp>
-#include <BaseObject.hpp>
+#include <Defines.hpp>
 
 namespace Poly
 {

@@ -1,10 +1,6 @@
 #pragma once
 
-#include <exception>
-
 #include <Defines.hpp>
-#include <Collections/String.hpp>
-#include <Memory/RefCountedBase.hpp>
 
 namespace Poly
 {

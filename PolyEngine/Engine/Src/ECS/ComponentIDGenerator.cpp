@@ -1,5 +1,5 @@
 #include "EnginePCH.hpp"
-#include "ComponentIDGenerator.hpp"
+#include "ECS/ComponentIDGenerator.hpp"
 
 using namespace Poly;
 

@@ -1,4 +1,6 @@
 #pragma once
+
+#include <Defines.hpp>
 #include "Configs/ConfigBase.hpp"
 
 namespace Poly

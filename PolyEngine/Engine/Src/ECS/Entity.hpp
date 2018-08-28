@@ -1,14 +1,10 @@
 #pragma once
 
-#include <Core.hpp>
-#include <bitset>
-
-#include <Memory/SafePtrRoot.hpp>
-#include <Math/AABox.hpp>
+#include <Defines.hpp>
 #include "ECS/EntityTransform.hpp"
-#include "Engine.hpp"
-#include "Collections/Dynarray.hpp"
 #include "ECS/ComponentIDGenerator.hpp"
+#include "Collections/Dynarray.hpp"
+#include "Engine.hpp"
 
 namespace Poly
 {

@@ -1,7 +1,5 @@
 #include "EnginePCH.hpp"
 
-#include <al.h>
-
 #include "Audio/SoundEmitterComponent.hpp"
 #include "Resources/ResourceManager.hpp"
 #include "Resources/SoundResource.hpp"

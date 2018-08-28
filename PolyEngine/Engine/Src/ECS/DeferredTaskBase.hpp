@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Collections/Queue.hpp>
+#include <Defines.hpp>
+#include "ECS/Scene.hpp"
 
 namespace Poly
 {

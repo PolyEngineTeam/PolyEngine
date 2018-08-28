@@ -1,7 +1,6 @@
 #pragma once
 
-#include <RTTI/RTTITypeInfo.hpp>
-#include <Utils/Optional.hpp>
+#include <Defines.hpp>
 
 #if defined(_ENGINE)
 #    define EXPORT_TEMPLATE

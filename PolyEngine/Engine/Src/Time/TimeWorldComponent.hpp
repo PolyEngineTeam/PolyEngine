@@ -1,7 +1,6 @@
 #pragma once
 
-#include <chrono>
-#include <unordered_map>
+#include <Defines.hpp>
 #include "Time/TimeSystem.hpp"
 #include "Timer.hpp"
 #include "ECS/ComponentBase.hpp"

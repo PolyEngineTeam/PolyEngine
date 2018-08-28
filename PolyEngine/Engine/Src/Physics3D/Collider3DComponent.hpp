@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Math/Vector.hpp>
-
+#include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
 #include "Physics3D/Physics3DSystem.hpp"
 

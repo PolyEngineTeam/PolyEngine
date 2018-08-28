@@ -1,9 +1,9 @@
 #pragma once
 
+#include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
 #include "Rendering/RenderingSystem.hpp"
-
-#include "Text2D.hpp"
+#include "UI/Text2D.hpp"
 
 namespace Poly {
 

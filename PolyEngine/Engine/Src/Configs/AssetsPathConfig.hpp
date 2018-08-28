@@ -1,7 +1,6 @@
 #pragma once
 
-#include <unordered_map>
-#include <Utils/EnumUtils.hpp>
+#include <Defines.hpp>
 #include "Configs/ConfigBase.hpp"
 
 namespace Poly

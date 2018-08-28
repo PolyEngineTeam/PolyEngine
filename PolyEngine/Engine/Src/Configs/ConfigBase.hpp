@@ -1,7 +1,6 @@
 #pragma once
 
-#include <RTTI/RTTI.hpp>
-#include <Collections/String.hpp>
+#include <Defines.hpp>
 
 namespace Poly
 {

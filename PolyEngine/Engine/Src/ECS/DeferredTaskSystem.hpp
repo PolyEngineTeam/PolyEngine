@@ -1,6 +1,7 @@
 #pragma once
 
-#include "DeferredTaskImplementation.hpp"
+#include <Defines.hpp>
+#include "ECS/DeferredTaskImplementation.hpp"
 #include "ECS/DeferredTaskWorldComponent.hpp"
 #include "ECS/Scene.hpp"
 

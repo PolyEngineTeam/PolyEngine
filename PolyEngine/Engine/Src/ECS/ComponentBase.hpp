@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Core.hpp>
+#include <Defines.hpp>
 #include "ECS/Entity.hpp"
-#include "ComponentIDGenerator.hpp"
-#include "ComponentIDGeneratorImpl.hpp"
+#include "ECS/ComponentIDGenerator.hpp"
+#include "ECS/ComponentIDGeneratorImpl.hpp"
 
 namespace Poly {
 	enum class eComponentBaseFlags

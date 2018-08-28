@@ -2,8 +2,6 @@
 
 #include "Audio/SoundWorldComponent.hpp"
 
-#include <alc.h>
-
 using namespace Poly;
 
 RTTI_DEFINE_COMPONENT(::Poly::SoundWorldComponent)

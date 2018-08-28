@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Collections/Queue.hpp>
-#include <Math/Vector2i.hpp>
+#include <Defines.hpp>
 #include "Input/KeyBindings.hpp"
 
 namespace Poly

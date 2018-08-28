@@ -6,6 +6,3 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/document.h>
-
-// other
-#include <pmmintrin.h>

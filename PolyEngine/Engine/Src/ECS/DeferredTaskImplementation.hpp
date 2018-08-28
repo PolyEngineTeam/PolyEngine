@@ -1,6 +1,7 @@
 #pragma once
 
-#include "DeferredTaskBase.hpp"
+#include <Defines.hpp>
+#include "ECS/DeferredTaskBase.hpp"
 #include "ECS/Scene.hpp"
 
 namespace Poly

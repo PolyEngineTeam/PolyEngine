@@ -1,9 +1,7 @@
 ﻿#include "EnginePCH.hpp"
 
 #include "Resources/FontResource.hpp"
-
-#include <ft2build.h>
-#include FT_FREETYPE_H
+#include "ECS/Scene.hpp"
 
 using namespace Poly;
 

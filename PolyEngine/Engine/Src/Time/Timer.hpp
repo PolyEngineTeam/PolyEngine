@@ -1,7 +1,6 @@
 #pragma once
 
-#include <chrono>
-#include <Core.hpp>
+#include <Defines.hpp>
 #include "Time/TimeSystem.hpp"
 
 namespace Poly

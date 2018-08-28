@@ -3,6 +3,7 @@
 #include "Defines.hpp"
 #include "Math/BasicMath.hpp"
 #include "Math/Color.hpp"
+#include <pmmintrin.h> //SIMD library
 
 namespace Poly
 {

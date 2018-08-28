@@ -1,11 +1,9 @@
 #pragma once
 
-#include <Memory/IterablePoolAllocator.hpp>
-#include <BaseObject.hpp>
-#include <Rendering/IRenderingDevice.hpp>
-#include <Collections/Dynarray.hpp>
-#include <Rendering/SpritesheetComponent.hpp>
+#include <Defines.hpp>
 #include "Rendering/Particles/ParticleUpdateSystem.hpp"
+#include "Rendering/IRenderingDevice.hpp"
+#include "Rendering/SpritesheetComponent.hpp"
 
 typedef unsigned int GLuint;
 

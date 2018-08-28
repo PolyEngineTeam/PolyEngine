@@ -1,7 +1,6 @@
 #include "EnginePCH.hpp"
 
 #include "Physics2D/Physics2DWorldComponent.hpp"
-#include <Box2D/Box2D.h>
 
 using namespace Poly;
 

@@ -56,6 +56,7 @@
 #include <ostream>
 #include <sstream>
 #include <cmath>
+#include <bitset>
 #include <cassert>
 #include <cstring>
 #include <type_traits>
@@ -73,6 +74,9 @@
 #include <iomanip>
 #include <unordered_map>
 #include <initializer_list>
+#include <chrono>
+#include <typeindex>
+#include <typeinfo>
 
 // Custom type names
 using u8 = uint8_t;

@@ -2,9 +2,6 @@
 
 #include "Audio/OpenALDevice.hpp"
 
-#include <alc.h>
-#include <al.h>
-
 using namespace Poly;
 
 OpenALDevice::OpenALDevice()

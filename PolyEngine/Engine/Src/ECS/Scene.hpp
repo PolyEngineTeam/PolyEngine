@@ -1,16 +1,10 @@
 #pragma once
 
 #include <Defines.hpp>
-
-#include <unordered_map>
-#include <Core.hpp>
-
-#include <Memory/SafePtr.hpp>
 #include "ECS/Entity.hpp"
-#include "Engine.hpp"
-
 #include "ECS/ComponentBase.hpp"
-#include <Collections/OrderedMap.hpp>
+#include "Audio/SoundWorldComponent.hpp"
+#include "Engine.hpp"
 
 namespace Poly {
 

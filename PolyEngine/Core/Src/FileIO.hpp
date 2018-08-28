@@ -4,7 +4,6 @@
 #include "Collections/String.hpp"
 #include "Memory/BinaryBuffer.hpp"
 
-
 namespace Poly {
 
 	//TODO add creation of folders if necessary
