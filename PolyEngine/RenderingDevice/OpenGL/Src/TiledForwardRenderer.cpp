@@ -1,7 +1,6 @@
+#include "PolyRenderingDeviceGLPCH.hpp"
+
 #include "TiledForwardRenderer.hpp"
-
-#include <math.h>
-
 #include "Configs/AssetsPathConfig.hpp"
 
 #include "GLRenderingDevice.hpp"
@@ -12,20 +11,6 @@
 #include "Proxy/GLShaderProgram.hpp"
 #include "Common/PrimitiveCube.hpp"
 #include "Common/PrimitiveQuad.hpp"
-
-#include <ECS/Scene.hpp>
-#include <Math/BasicMath.hpp>
-#include <Math/AARect.hpp>
-#include <Debugging/DebugDrawComponents.hpp>
-#include <Rendering/PostprocessSettingsComponent.hpp>
-#include <Rendering/SkyboxWorldComponent.hpp>
-#include <Rendering/Camera/CameraComponent.hpp>
-#include <Rendering/Lighting/LightSourceComponent.hpp>
-#include <Rendering/MeshRenderingComponent.hpp>
-#include <Rendering/Particles/ParticleComponent.hpp>
-#include <Movement/MovementSystem.hpp>
-#include <Time/TimeWorldComponent.hpp>
-#include <UI/ScreenSpaceTextComponent.hpp>
 
 using namespace Poly;
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core.hpp>
+#include <Defines.hpp>
 #include <Rendering/Viewport.hpp>
 #include <Rendering/Lighting/LightSourceComponent.hpp>
 

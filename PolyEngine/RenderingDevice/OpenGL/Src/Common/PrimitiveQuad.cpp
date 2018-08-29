@@ -1,3 +1,5 @@
+#include "PolyRenderingDeviceGLPCH.hpp"
+
 #include "Common/PrimitiveQuad.hpp"
 
 using namespace Poly;

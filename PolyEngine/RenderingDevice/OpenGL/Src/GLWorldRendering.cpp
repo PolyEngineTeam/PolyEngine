@@ -1,14 +1,6 @@
+#include "PolyRenderingDeviceGLPCH.hpp"
+
 #include "GLRenderingDevice.hpp"
-
-#include <ECS/Scene.hpp>
-#include <Configs/DebugConfig.hpp>
-#include <Rendering/Viewport.hpp>
-
-#include <Rendering/Camera/CameraComponent.hpp>
-#include <Rendering/MeshRenderingComponent.hpp>
-#include <UI/ScreenSpaceTextComponent.hpp>
-#include <Rendering/ViewportWorldComponent.hpp>
-#include <Rendering/PostprocessSettingsComponent.hpp>
 
 #include "Proxy/GLTextFieldBufferDeviceProxy.hpp"
 #include "Proxy/GLTextureDeviceProxy.hpp"

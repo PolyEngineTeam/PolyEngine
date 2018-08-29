@@ -1,3 +1,5 @@
+#include "PolyRenderingDeviceGLPCH.hpp"
+
 #include "Proxy/GLTextFieldBufferDeviceProxy.hpp"
 #include "Common/GLUtils.hpp"
 

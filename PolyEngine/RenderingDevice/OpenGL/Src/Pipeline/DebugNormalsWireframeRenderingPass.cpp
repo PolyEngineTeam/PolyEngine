@@ -1,11 +1,8 @@
-#include "Pipeline/DebugNormalsWireframeRenderingPass.hpp"
+#include "PolyRenderingDeviceGLPCH.hpp"
 
+#include "Pipeline/DebugNormalsWireframeRenderingPass.hpp"
 #include "Proxy/GLMeshDeviceProxy.hpp"
 #include "Proxy/GLTextureDeviceProxy.hpp"
-
-#include <ECS/Scene.hpp>
-#include <Rendering/Camera/CameraComponent.hpp>
-#include <Rendering/MeshRenderingComponent.hpp>
 
 using namespace Poly;
 
