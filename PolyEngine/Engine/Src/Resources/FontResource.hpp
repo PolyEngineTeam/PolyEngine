@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Defines.hpp>
+#include <Math/Vector.hpp>
 #include "Resources/ResourceBase.hpp"
 #include "Resources/TextureResource.hpp"
 

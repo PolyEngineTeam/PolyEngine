@@ -1,7 +1,7 @@
 #pragma once
 
 // Core
-#include <CorePCH.hpp>
+#include <Defines.hpp>
 #include <RTTI/RTTI.hpp>
 
 // Math

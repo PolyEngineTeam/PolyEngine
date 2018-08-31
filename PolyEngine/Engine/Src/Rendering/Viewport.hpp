@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Defines.hpp>
+#include <Math/AARect.hpp>
+#include <Rendering/Camera/CameraComponent.hpp>
 
 namespace Poly
 {

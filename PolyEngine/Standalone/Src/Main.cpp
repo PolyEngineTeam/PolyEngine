@@ -1,11 +1,14 @@
 // include the basic windows header file
+#pragma once
 #include <SDL.h>
 
-#include <EnginePCH.hpp>
 #include "Engine.hpp"
 #include <Rendering/IRenderingDevice.hpp>
 #include <Utils/LibraryLoader.hpp>
 #include <Configs/AssetsPathConfig.hpp>
+#include <Utils/OutputStream.hpp>
+#include <Utils/Logger.hpp>
+#include <Math/Vector2i.hpp>
 
 extern "C"
 {

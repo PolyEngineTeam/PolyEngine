@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Defines.hpp>
+#include <Collections/Dynarray.hpp>
+#include <Math/Vector3f.hpp>
 
 namespace Poly
 {

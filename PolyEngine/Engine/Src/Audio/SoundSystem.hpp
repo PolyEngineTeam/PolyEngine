@@ -1,5 +1,7 @@
 #pragma once
 #include <Defines.hpp>
+#include <Collections/String.hpp>
+#include <Collections/Dynarray.hpp>
 
 namespace Poly
 {

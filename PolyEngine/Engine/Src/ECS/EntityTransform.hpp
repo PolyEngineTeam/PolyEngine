@@ -1,6 +1,9 @@
 #pragma once
 
 #include <Defines.hpp>
+#include <RTTI/RTTI.hpp>
+#include <Math/Vector.hpp>
+#include <Math/Quaternion.hpp>
 
 namespace Poly 
 {

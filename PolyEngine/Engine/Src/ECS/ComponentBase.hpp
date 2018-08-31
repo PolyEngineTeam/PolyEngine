@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Defines.hpp>
+#include <Utils/Optional.hpp>
 #include "ECS/Entity.hpp"
 #include "ECS/ComponentIDGenerator.hpp"
 #include "ECS/ComponentIDGeneratorImpl.hpp"

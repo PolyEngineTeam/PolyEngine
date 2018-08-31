@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Defines.hpp>
+#include <Collections/Dynarray.hpp>
 #include "Rendering/IRenderingDevice.hpp"
 #include "Audio/OpenALDevice.hpp"
 #include "Input/InputSystem.hpp"

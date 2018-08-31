@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Defines.hpp>
+#include <Memory/IterablePoolAllocator.hpp>
 
 #if defined(_ENGINE)
 #    define EXPORT_TEMPLATE
