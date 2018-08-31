@@ -59,7 +59,6 @@
 #include <bitset>
 #include <cassert>
 #include <cstring>
-#include <type_traits>
 #include <limits>
 #include <array>
 #include <cstddef>
@@ -77,6 +76,7 @@
 #include <chrono>
 #include <typeindex>
 #include <typeinfo>
+#include <cstdio>
 
 // Custom type names
 using u8 = uint8_t;
