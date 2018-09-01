@@ -3,13 +3,8 @@
 #include "Defines.hpp"
 
 // rapidjson
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wclass-memaccess"
-#endif
+SILENCE_GCC_WARNING(-Wclass-memaccess, "Rapidjson has no release containing fix to this issue (01.09.18).")
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/document.h>
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic pop
-#endif
+UNSILENCE_GCC_WARNING()
