@@ -26,6 +26,7 @@ namespace Poly {
 	protected:
 		String Msg;
 	};
+	UNSILENCE_MSVC_WARNING()
 
 	//------------------------------------------------------------------------------
 	inline String LoadTextFile(const String& path)
