@@ -1,5 +1,4 @@
 // include the basic windows header file
-#pragma once
 #include <SDL.h>
 
 #include "Engine.hpp"
