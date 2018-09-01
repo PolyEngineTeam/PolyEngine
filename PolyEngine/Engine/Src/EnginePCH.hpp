@@ -58,8 +58,8 @@
 #include <Box2D/Box2D.h>
 
 // Bullet
-SILENCE_MSVC_WARNING(4305, <Surpressing msvc warnings in bullet.<)
-SILENCE_CLANG_WARNING(-Woverloaded - virtual, <Surpressing clang warnings in bullet.<)
+SILENCE_MSVC_WARNING(4305, "Surpressing msvc warnings in bullet.")
+SILENCE_CLANG_WARNING(-Woverloaded - virtual, "Surpressing clang warnings in bullet.")
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
 UNSILENCE_CLANG_WARNING()
