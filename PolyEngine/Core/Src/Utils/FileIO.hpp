@@ -4,7 +4,6 @@
 #include "Collections/String.hpp"
 #include "Memory/BinaryBuffer.hpp"
 
-
 namespace Poly {
 
 	//TODO add creation of folders if necessary
@@ -18,6 +17,7 @@ namespace Poly {
 #endif
 
 	//------------------------------------------------------------------------------
+	SILENCE_MSVC_WARNING(4275, "Exporting stl may cause incompatibility. We use same CRT so it's ok.")
 	class ENGINE_DLLEXPORT FileIOException : public BaseObject<>, public std::exception
 	{
 	public:
