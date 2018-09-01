@@ -5,7 +5,7 @@
 // rapidjson
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wclass-memaccess"
 #endif
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
