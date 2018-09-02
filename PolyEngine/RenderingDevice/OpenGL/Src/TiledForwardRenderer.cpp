@@ -58,6 +58,7 @@ void RenderTargetPingPong::Deinit()
 
 TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	: IRendererInterface(rdi), SkyboxCapture(rdi),
+	ShadowMapShader("Shaders/shadowMap.vert.glsl", "Shaders/shadowMap.frag.glsl"),
 	DepthShader("Shaders/depth.vert.glsl", "Shaders/depth.frag.glsl"),
 	LightCullingShader("Shaders/lightCulling.comp.glsl"),
 	LightAccumulationShader("Shaders/lightAccumulation.vert.glsl", "Shaders/lightAccumulation.frag.glsl"),
@@ -445,6 +446,24 @@ void TiledForwardRenderer::CreateRenderTargets(const ScreenSize& size)
 
 	// CHECK_GL_ERR();
 	CHECK_FBO_STATUS();
+
+	glGenTextures(1, &DirShadowMap);
+	glBindTexture(GL_TEXTURE_2D, DirShadowMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glGenFramebuffers(1, &FBOShadowDepthMap);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowDepthMap);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DirShadowMap, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	
+	// CHECK_GL_ERR();
+	CHECK_FBO_STATUS();
 }
 
 void TiledForwardRenderer::DeleteRenderTargets()
@@ -485,6 +504,9 @@ void TiledForwardRenderer::DeleteRenderTargets()
 	if (FBOpost1 > 0)
 		glDeleteFramebuffers(1, &FBOpost1);
 
+	if (FBOShadowDepthMap > 0)
+		glDeleteFramebuffers(1, &FBOShadowDepthMap);
+
 	RTBloom.Deinit();
 
 	// CHECK_GL_ERR();
@@ -504,6 +526,8 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 	UpdateLightsBufferFromScene(sceneView);
 
 	UpdateEnvCapture(sceneView);
+
+	RenderShadowMap(sceneView);
 	
 	RenderDepthPrePass(sceneView);
 	
@@ -590,12 +614,69 @@ void TiledForwardRenderer::RenderEquiCube(const SceneView& sceneView)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void TiledForwardRenderer::RenderShadowMap(const SceneView& sceneView)
+{
+	gConsole.LogInfo("TiledForwardRenderer::RenderShadowMap");
+
+	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowDepthMap);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	// make sure contains all the objects
+	float near_plane = 1.0f, far_plane = 1000.0f;
+	Matrix lightProjection;
+	lightProjection.SetOrthographic(-1000.0f, 1000.0f, -1000.0f, 1000.0f, near_plane, far_plane);
+	
+	Matrix ligthView;
+	ligthView.SetLookAt(Vector::ZERO, Vector(0.5f, -1.0f, 0.0f).Normalize(), Vector::UNIT_Y);
+
+	Matrix dirLightFromWorld = lightProjection * ligthView;
+	
+	ShadowMapShader.BindProgram();
+
+	for (const MeshRenderingComponent* meshCmp : sceneView.OpaqueQueue)
+	{
+		const Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
+		ShadowMapShader.SetUniform("uClipFromModel", dirLightFromWorld * worldFromModel);
+
+		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
+		{			
+			glBindVertexArray(subMesh->GetMeshProxy()->GetResourceID());
+
+			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glBindVertexArray(0);
+		}
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// int dirLightsCountMax = 1;
+	// int dirLightsCount = 0;
+	// for (const DirectionalLightComponent* dirLightCmp : sceneView.DirectionalLights)
+	// {
+	// 	const EntityTransform& transform = dirLightCmp->GetTransform();
+	// 	String baseName = String("uDirectionalLight[") + String::From(dirLightsCount) + String("].");
+	// 	Color colorIntensity = dirLightCmp->GetColor();
+	// 	colorIntensity.A = dirLightCmp->GetIntensity();
+	// 	LightAccumulationShader.SetUniform(baseName + "ColorIntensity", colorIntensity);
+	// 	LightAccumulationShader.SetUniform(baseName + "Direction", MovementSystem::GetGlobalForward(transform));
+	// 
+	// 	++dirLightsCount;
+	// 	if (dirLightsCount == dirLightsCountMax)
+	// 		break;
+	// }
+}
+
 void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 {
-	DepthShader.BindProgram();
+	ScreenSize screenSize = RDI->GetScreenSize();
+	glViewport(0, 0, screenSize.Width, screenSize.Height);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOdepthMap);
 	glClear(GL_DEPTH_BUFFER_BIT);
+
+	DepthShader.BindProgram();
 	
 //	const ScreenSize screenSize = RDI->GetScreenSize();
 // 	glViewport((int)(sceneView.Rect.GetMin().X * screenSize.Width), (int)(sceneView.Rect.GetMin().Y * screenSize.Height),
@@ -605,14 +686,12 @@ void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 	
 	for (const MeshRenderingComponent* meshCmp : sceneView.OpaqueQueue)
 	{
-		const EntityTransform& transform = meshCmp->GetTransform();
-		const Matrix& worldFromModel = transform.GetWorldFromModel();
+		const Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
 		DepthShader.SetUniform("uScreenFromModel", clipFromWorld * worldFromModel);
 		
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
-			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
-			glBindVertexArray(meshProxy->GetVAO());
+			glBindVertexArray(subMesh->GetMeshProxy()->GetResourceID());
 		
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, RDI->FallbackWhiteTexture);
@@ -664,7 +743,10 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	// gConsole.LogInfo("TiledForwardRenderer::AccumulateLights");
 	float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.WorldData, eEngineTimer::GAMEPLAY);
 
-	for (int i = 8; i > 0; --i)
+	ScreenSize screenSize = RDI->GetScreenSize();
+	glViewport(0, 0, screenSize.Width, screenSize.Height);
+
+	for (int i = 9; i > 0; --i)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -674,9 +756,20 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	LightAccumulationShader.BindProgram();
+
+	// Shadow map
+	float near_plane = 1.0f, far_plane = 1000.0f;
+	Matrix lightProjection;
+	lightProjection.SetOrthographic(-1000.0f, 1000.0f, -1000.0f, 1000.0f, near_plane, far_plane);
+	Matrix ligthView;
+	ligthView.SetLookAt(Vector::ZERO, Vector(0.5f, -1.0f, 0.0f).Normalize(), Vector::UNIT_Y);
+	Matrix dirLightFromWorld = lightProjection * ligthView;
+	LightAccumulationShader.SetUniform("uDirLightFromWorld", dirLightFromWorld);
+	LightAccumulationShader.BindSampler("uDirShadowMap", 9, DirShadowMap);
+
 	const EntityTransform& cameraTransform = sceneView.CameraCmp->GetTransform();
 
-	LightAccumulationShader.BindProgram();
 	LightAccumulationShader.SetUniform("uTime", time);
 	LightAccumulationShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
 	LightAccumulationShader.SetUniform("uWorkGroupsX", (int)WorkGroupsX);
@@ -755,7 +848,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	// Clear bound resources
 	glBindVertexArray(0);
 
-	for (int i = 8; i > 0; --i)
+	for (int i = 9; i > 0; --i)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, 0);

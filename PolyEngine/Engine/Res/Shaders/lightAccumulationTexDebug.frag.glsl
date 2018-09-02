@@ -12,6 +12,7 @@ in VERTEX_OUT
 	mat3 tangentFromWorld;
 	vec3 viewPositionInTangent;
 	vec3 fragmentPositionInTangent;
+	vec4 fragmentPositionInDirLight;
 } fragment_in;
 
 

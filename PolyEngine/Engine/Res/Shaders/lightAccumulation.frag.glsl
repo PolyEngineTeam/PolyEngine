@@ -12,6 +12,7 @@ in VERTEX_OUT
 	mat3 tangentFromWorld;
 	vec3 viewPositionInTangent;
 	vec3 fragmentPositionInTangent;
+ 	vec4 fragmentPositionInDirLight;
 } fragment_in;
 
 
@@ -59,6 +60,7 @@ const uint MAX_NUM_LIGHTS = 1024;
 uniform sampler2D uBrdfLUT;
 uniform samplerCube uIrradianceMap;
 uniform samplerCube uPrefilterMap;
+uniform sampler2D uDirShadowMap;
 
 uniform sampler2D uEmissiveMap;
 uniform sampler2D uAlbedoMap;
@@ -66,6 +68,7 @@ uniform sampler2D uRoughnessMap;
 uniform sampler2D uMetallicMap;
 uniform sampler2D uNormalMap;
 uniform sampler2D uAmbientOcclusionMap;
+
 
 uniform float uTime;
 uniform Material uMaterial;
@@ -125,6 +128,23 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 {
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.001, 1.0), 5.0); // clamp to prevent NaNs
+}
+
+float calcShadow(vec4 fragPosInDirLight)
+{
+	// perform perspective divide
+    // vec3 projCoords = fragPosInDirLight.xyz / fragPosInDirLight.w;
+    vec3 projCoords = fragPosInDirLight.xyz;
+	// transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(uDirShadowMap, projCoords.xy).r;
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    // check whether current frag pos is in shadow
+    float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+
+    return shadow;
 }
 
 void main()
@@ -266,9 +286,10 @@ void main()
 	vec3 prefilteredColor = textureLod(uPrefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
 	vec2 envBRDF = texture(uBrdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (amF * envBRDF.x + envBRDF.y);
-	
-	vec3 ambient = (amkD * diffuse + specular) * ao;
 
-	oColor.rgb = ambient + emissive.rgb + Lo;
+    float shadow = calcShadow(fragment_in.fragmentPositionInDirLight);
+	vec3 ambient = (amkD * diffuse + specular) * ao;
+    oColor.rgb = ambient + emissive.rgb + Lo * (1.0 - shadow);
+
 	oNormal.rgb = (WorldFromTangent * normal) * 0.5 + 0.5;
 }
