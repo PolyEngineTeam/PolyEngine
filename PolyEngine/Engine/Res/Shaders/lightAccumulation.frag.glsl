@@ -137,6 +137,10 @@ float calcShadow(vec4 fragPosInDirLight, float NdotL)
     vec3 projCoords = fragPosInDirLight.xyz;
 	// transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
+
+    if (projCoords.z > 1.0)
+        return 1.0;
+
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
     float closestDepth = texture(uDirShadowMap, projCoords.xy).r;
     // get depth of current fragment from light's perspective
@@ -145,6 +149,7 @@ float calcShadow(vec4 fragPosInDirLight, float NdotL)
 	// float bias = max(0.05 * (1.0 - NdotL), 0.005);
 	float bias = 0.005;
     float shadow = currentDepth - bias > closestDepth ? 0.0 : 1.0;
+    
 
     return shadow;
 }

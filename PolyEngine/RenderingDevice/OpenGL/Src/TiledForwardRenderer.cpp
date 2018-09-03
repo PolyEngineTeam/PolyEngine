@@ -455,8 +455,10 @@ void TiledForwardRenderer::CreateRenderTargets(const ScreenSize& size)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	float shadowBorderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, shadowBorderColor);
 
 	glGenFramebuffers(1, &FBOShadowDepthMap);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowDepthMap);
@@ -627,9 +629,9 @@ void TiledForwardRenderer::RenderShadowMap(const SceneView& sceneView)
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	// make sure contains all the objects
-	float near_plane = 1.0f, far_plane = 1000.0f;
+	float near_plane = 1.0f, far_plane = 1024.0f;
 	Matrix lightProjection;
-	lightProjection.SetOrthographic(-500.0f, 500.0f, -500.0f, 500.0f, near_plane, far_plane);
+	lightProjection.SetOrthographic(-1024.0f, 1024.0f, -1024.0f, 1024.0f, near_plane, far_plane);
 	
 	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLights[0];
 	// Matrix ligthView;
@@ -651,6 +653,21 @@ void TiledForwardRenderer::RenderShadowMap(const SceneView& sceneView)
 
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{			
+			glBindVertexArray(subMesh->GetMeshProxy()->GetResourceID());
+
+			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glBindVertexArray(0);
+		}
+	}
+
+	for (const MeshRenderingComponent* meshCmp : sceneView.DirShadowOpaqueQueue)
+	{
+		const Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
+		ShadowMapShader.SetUniform("uClipFromModel", dirLightFromWorld * worldFromModel);
+
+		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
+		{
 			glBindVertexArray(subMesh->GetMeshProxy()->GetResourceID());
 
 			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
@@ -753,10 +770,10 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 	LightAccumulationShader.BindProgram();
 
-	// make sure contains all the objects
-	float near_plane = 1.0f, far_plane = 1000.0f;
+	// make sure contains all the objects	
+	float near_plane = 1.0f, far_plane = 1024.0f;
 	Matrix lightProjection;
-	lightProjection.SetOrthographic(-500.0f, 500.0f, -500.0f, 500.0f, near_plane, far_plane);
+	lightProjection.SetOrthographic(-1024.0f, 1024.0f, -1024.0f, 1024.0f, near_plane, far_plane);
 
 	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLights[0];
 	// Matrix ligthView;
