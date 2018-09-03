@@ -130,7 +130,7 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.001, 1.0), 5.0); // clamp to prevent NaNs
 }
 
-float calcShadow(vec4 fragPosInDirLight)
+float calcShadow(vec4 fragPosInDirLight, float NdotL)
 {
 	// perform perspective divide
     // vec3 projCoords = fragPosInDirLight.xyz / fragPosInDirLight.w;
@@ -140,9 +140,11 @@ float calcShadow(vec4 fragPosInDirLight)
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
     float closestDepth = texture(uDirShadowMap, projCoords.xy).r;
     // get depth of current fragment from light's perspective
-    float currentDepth = projCoords.z;
+    float currentDepth = projCoords.z;    
     // check whether current frag pos is in shadow
-    float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+	// float bias = max(0.05 * (1.0 - NdotL), 0.005);
+	float bias = 0.005;
+    float shadow = currentDepth - bias > closestDepth ? 0.0 : 1.0;
 
     return shadow;
 }
@@ -268,10 +270,16 @@ void main()
 
 		// scale light by NdotL
 		float NdotL = max(dot(N, L), 0.0);
+        
+        float shadow = 1.0;
+        if (i == 0)
+        {
+            shadow = calcShadow(fragment_in.fragmentPositionInDirLight, NdotL);
+        }
 
 		// add to outgoing radiance Lo
-		Lo += (kD * albedo.rgb / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
-	}    
+        Lo += shadow * (kD * albedo.rgb / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+    }
 
 	vec3 amF = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
 
@@ -286,10 +294,9 @@ void main()
 	vec3 prefilteredColor = textureLod(uPrefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
 	vec2 envBRDF = texture(uBrdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (amF * envBRDF.x + envBRDF.y);
-
-    float shadow = calcShadow(fragment_in.fragmentPositionInDirLight);
+    
 	vec3 ambient = (amkD * diffuse + specular) * ao;
-    oColor.rgb = ambient + emissive.rgb + Lo * (1.0 - shadow);
+    oColor.rgb = ambient + emissive.rgb + Lo;
 
 	oNormal.rgb = (WorldFromTangent * normal) * 0.5 + 0.5;
 }

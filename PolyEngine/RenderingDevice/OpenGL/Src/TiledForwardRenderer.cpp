@@ -83,6 +83,8 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	DebugLightAccumShader("Shaders/debugLightAccum.vert.glsl", "Shaders/debugLightAccum.frag.glsl"),
 	DebugTextureInputsShader("Shaders/lightAccumulation.vert.glsl", "Shaders/lightAccumulationTexDebug.frag.glsl")
 {
+	ShadowMapShader.RegisterUniform("mat4", "uClipFromModel");
+
 	LightAccumulationShader.RegisterUniform("float", "uTime");
 	LightAccumulationShader.RegisterUniform("vec4", "uViewPosition");
 	LightAccumulationShader.RegisterUniform("mat4", "uClipFromModel");
@@ -102,6 +104,7 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	LightAccumulationShader.RegisterUniform("sampler2D", "uMetallicMap");
 	LightAccumulationShader.RegisterUniform("sampler2D", "uNormalMap");
 	LightAccumulationShader.RegisterUniform("sampler2D", "uAmbientOcclusionMap");
+	LightAccumulationShader.RegisterUniform("sampler2D", "uDirShadowMap");
 	
 	for (int i = 0; i < 8; ++i)
 	{
@@ -168,7 +171,7 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	TranslucentShader.RegisterUniform("sampler2D", "uRoughnessMap");
 	TranslucentShader.RegisterUniform("sampler2D", "uMetallicMap");
 	TranslucentShader.RegisterUniform("sampler2D", "uNormalMap");
-	TranslucentShader.RegisterUniform("sampler2D", "uAmbientOcclusionMap");
+	TranslucentShader.RegisterUniform("sampler2D", "uAmbientOcclusionMap");	
 
 	for (int i = 0; i < 8; ++i)
 	{
@@ -619,18 +622,25 @@ void TiledForwardRenderer::RenderShadowMap(const SceneView& sceneView)
 	gConsole.LogInfo("TiledForwardRenderer::RenderShadowMap");
 
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+	glCullFace(GL_FRONT);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowDepthMap);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	// make sure contains all the objects
 	float near_plane = 1.0f, far_plane = 1000.0f;
 	Matrix lightProjection;
-	lightProjection.SetOrthographic(-1000.0f, 1000.0f, -1000.0f, 1000.0f, near_plane, far_plane);
+	lightProjection.SetOrthographic(-500.0f, 500.0f, -500.0f, 500.0f, near_plane, far_plane);
 	
-	Matrix ligthView;
-	ligthView.SetLookAt(Vector::ZERO, Vector(0.5f, -1.0f, 0.0f).Normalize(), Vector::UNIT_Y);
+	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLights[0];
+	// Matrix ligthView;
+	// ligthView.SetLookAt(
+	// 	Vector::ZERO,
+	// 	MovementSystem::GetGlobalForward(dirLightCmp->GetTransform()) * -1.0f,
+	// 	MovementSystem::GetGlobalUp(dirLightCmp->GetTransform())
+	// );
 
-	Matrix dirLightFromWorld = lightProjection * ligthView;
+	// Matrix dirLightFromWorld = lightProjection * ligthView;
+	Matrix dirLightFromWorld = dirLightCmp->GetTransform().GetWorldFromModel().GetInversed() * lightProjection;
 	
 	ShadowMapShader.BindProgram();
 
@@ -650,22 +660,7 @@ void TiledForwardRenderer::RenderShadowMap(const SceneView& sceneView)
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// int dirLightsCountMax = 1;
-	// int dirLightsCount = 0;
-	// for (const DirectionalLightComponent* dirLightCmp : sceneView.DirectionalLights)
-	// {
-	// 	const EntityTransform& transform = dirLightCmp->GetTransform();
-	// 	String baseName = String("uDirectionalLight[") + String::From(dirLightsCount) + String("].");
-	// 	Color colorIntensity = dirLightCmp->GetColor();
-	// 	colorIntensity.A = dirLightCmp->GetIntensity();
-	// 	LightAccumulationShader.SetUniform(baseName + "ColorIntensity", colorIntensity);
-	// 	LightAccumulationShader.SetUniform(baseName + "Direction", MovementSystem::GetGlobalForward(transform));
-	// 
-	// 	++dirLightsCount;
-	// 	if (dirLightsCount == dirLightsCountMax)
-	// 		break;
-	// }
+	glCullFace(GL_BACK);
 }
 
 void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
@@ -758,13 +753,21 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 	LightAccumulationShader.BindProgram();
 
-	// Shadow map
+	// make sure contains all the objects
 	float near_plane = 1.0f, far_plane = 1000.0f;
 	Matrix lightProjection;
-	lightProjection.SetOrthographic(-1000.0f, 1000.0f, -1000.0f, 1000.0f, near_plane, far_plane);
-	Matrix ligthView;
-	ligthView.SetLookAt(Vector::ZERO, Vector(0.5f, -1.0f, 0.0f).Normalize(), Vector::UNIT_Y);
-	Matrix dirLightFromWorld = lightProjection * ligthView;
+	lightProjection.SetOrthographic(-500.0f, 500.0f, -500.0f, 500.0f, near_plane, far_plane);
+
+	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLights[0];
+	// Matrix ligthView;
+	// ligthView.SetLookAt(
+	// 	Vector::ZERO,
+	// 	MovementSystem::GetGlobalForward(dirLightCmp->GetTransform()) * -1.0f,
+	// 	MovementSystem::GetGlobalUp(dirLightCmp->GetTransform())
+	// );
+
+	Matrix dirLightFromWorld = dirLightCmp->GetTransform().GetWorldFromModel().GetInversed() * lightProjection;
+
 	LightAccumulationShader.SetUniform("uDirLightFromWorld", dirLightFromWorld);
 	LightAccumulationShader.BindSampler("uDirShadowMap", 9, DirShadowMap);
 
