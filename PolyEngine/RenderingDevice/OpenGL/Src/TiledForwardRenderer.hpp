@@ -71,8 +71,8 @@ namespace Poly {
 		const int MAX_NUM_LIGHTS = 1024;
 		const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 
-		const unsigned int SHADOW_WIDTH = 1024;
-		const unsigned int SHADOW_HEIGHT = 1024;
+		const unsigned int SHADOW_WIDTH = 4096;
+		const unsigned int SHADOW_HEIGHT = 4096;
 
 		// X and Y work group dimension variables for compute shader
 		GLuint WorkGroupsX = 0;
@@ -159,6 +159,8 @@ namespace Poly {
 		void RenderSkybox(const SceneView& sceneView);
 		
 		void RenderShadowMap(const SceneView& sceneView);
+
+		Matrix GetProjectionForShadowMap(const DirectionalLightComponent* dirLightCmp) const;
 
 		void RenderEquiCube(const SceneView& sceneView);
 

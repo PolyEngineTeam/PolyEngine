@@ -619,37 +619,33 @@ void TiledForwardRenderer::RenderEquiCube(const SceneView& sceneView)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+Matrix TiledForwardRenderer::GetProjectionForShadowMap(const DirectionalLightComponent* dirLightCmp) const
+{
+	// TODO: calc bounding box and then determine projection size
+	// make sure contains all the objects
+	float near_plane = -4096.0f, far_plane = 4096.0f;
+	Matrix dirLightProjection;
+	dirLightProjection.SetOrthographic(-4096.0f, 4096.0f, -4096.0f, 4096.0f, near_plane, far_plane);
+	
+	Matrix dirLightFromWorld = dirLightCmp->GetTransform().GetWorldFromModel().GetInversed();
+	return dirLightFromWorld * dirLightProjection;
+}
+
 void TiledForwardRenderer::RenderShadowMap(const SceneView& sceneView)
 {
-	gConsole.LogInfo("TiledForwardRenderer::RenderShadowMap");
-
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 	glCullFace(GL_FRONT);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowDepthMap);
 	glClear(GL_DEPTH_BUFFER_BIT);
-
-	// make sure contains all the objects
-	float near_plane = 1.0f, far_plane = 1024.0f;
-	Matrix lightProjection;
-	lightProjection.SetOrthographic(-1024.0f, 1024.0f, -1024.0f, 1024.0f, near_plane, far_plane);
 	
-	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLights[0];
-	// Matrix ligthView;
-	// ligthView.SetLookAt(
-	// 	Vector::ZERO,
-	// 	MovementSystem::GetGlobalForward(dirLightCmp->GetTransform()) * -1.0f,
-	// 	MovementSystem::GetGlobalUp(dirLightCmp->GetTransform())
-	// );
-
-	// Matrix dirLightFromWorld = lightProjection * ligthView;
-	Matrix dirLightFromWorld = dirLightCmp->GetTransform().GetWorldFromModel().GetInversed() * lightProjection;
+	Matrix projDirLightFromWorld = GetProjectionForShadowMap(sceneView.DirectionalLights[0]);
 	
 	ShadowMapShader.BindProgram();
 
 	for (const MeshRenderingComponent* meshCmp : sceneView.OpaqueQueue)
 	{
 		const Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
-		ShadowMapShader.SetUniform("uClipFromModel", dirLightFromWorld * worldFromModel);
+		ShadowMapShader.SetUniform("uClipFromModel", projDirLightFromWorld * worldFromModel);
 
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{			
@@ -664,7 +660,7 @@ void TiledForwardRenderer::RenderShadowMap(const SceneView& sceneView)
 	for (const MeshRenderingComponent* meshCmp : sceneView.DirShadowOpaqueQueue)
 	{
 		const Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
-		ShadowMapShader.SetUniform("uClipFromModel", dirLightFromWorld * worldFromModel);
+		ShadowMapShader.SetUniform("uClipFromModel", projDirLightFromWorld * worldFromModel);
 
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
@@ -770,22 +766,9 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 	LightAccumulationShader.BindProgram();
 
-	// make sure contains all the objects	
-	float near_plane = 1.0f, far_plane = 1024.0f;
-	Matrix lightProjection;
-	lightProjection.SetOrthographic(-1024.0f, 1024.0f, -1024.0f, 1024.0f, near_plane, far_plane);
+	Matrix projDirLightFromWorld = GetProjectionForShadowMap(sceneView.DirectionalLights[0]);
 
-	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLights[0];
-	// Matrix ligthView;
-	// ligthView.SetLookAt(
-	// 	Vector::ZERO,
-	// 	MovementSystem::GetGlobalForward(dirLightCmp->GetTransform()) * -1.0f,
-	// 	MovementSystem::GetGlobalUp(dirLightCmp->GetTransform())
-	// );
-
-	Matrix dirLightFromWorld = dirLightCmp->GetTransform().GetWorldFromModel().GetInversed() * lightProjection;
-
-	LightAccumulationShader.SetUniform("uDirLightFromWorld", dirLightFromWorld);
+	LightAccumulationShader.SetUniform("uDirLightFromWorld", projDirLightFromWorld);
 	LightAccumulationShader.BindSampler("uDirShadowMap", 9, DirShadowMap);
 
 	const EntityTransform& cameraTransform = sceneView.CameraCmp->GetTransform();
