@@ -101,7 +101,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "(Clang|^GNU$)")
 	add_compile_options(-Wno-unused-parameter)
 	add_compile_options(-Wno-ignored-qualifiers)
 	add_compile_options(-Wno-unused-command-line-argument)
-	if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+	if(CMAKE_CXX_COMPILER_ID MATCHES "GNU") #note(celeborth): this is because as of 09.2018 rapidjson does not provide release which does not raise this errors, and gcc would not accept this as a macro
 		add_compile_options(-Wno-class-memaccess)
 	endif()
 	add_compile_options(-fvisibility=hidden)

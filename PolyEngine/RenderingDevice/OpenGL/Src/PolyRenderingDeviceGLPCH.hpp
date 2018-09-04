@@ -2,11 +2,8 @@
 
 // Core
 #include <Defines.hpp>
-#include <RTTI/RTTI.hpp>
 
 // Math
-#include <Math/BasicMath.hpp>
-#include <Math/Angle.hpp>
 #include <Math/Vector.hpp>
 #include <Math/Vector2f.hpp>
 #include <Math/Vector2i.hpp>
@@ -21,42 +18,20 @@
 #include <Math/AARect.hpp>
 
 // Memory
-#include <BaseObject.hpp>
-#include <Memory/Allocator.hpp>
-#include <Memory/PoolAllocator.hpp>
-#include <Memory/IterablePoolAllocator.hpp>
-#include <Memory/RefCountedBase.hpp>
 #include <Memory/SafePtr.hpp>
 #include <Memory/SafePtrRoot.hpp>
 
 // Containers
-#include <Collections/String.hpp>
-#include <Collections/StringBuilder.hpp>
 #include <Collections/Dynarray.hpp>
-#include <Collections/Queue.hpp>
-#include <Collections/PriorityQueue.hpp>
-#include <Collections/OrderedMap.hpp>
 
 // Other
-#include <Math/Color.hpp>
 #include <FileIO.hpp>
 #include <Utils/Logger.hpp>
-#include <UniqueID.hpp>
-#include <Utils/EnumUtils.hpp>
-#include <Utils/OutputStream.hpp> 
-
 
 // ECS
 #include <ECS/Scene.hpp>
-#include <ECS/Entity.hpp>
-#include <ECS/EntityTransform.hpp>
-#include <ECS/DeferredTaskBase.hpp>
-#include <ECS/ComponentBase.hpp>
 
 // Rendering
-#include <Rendering/Camera/CameraComponent.hpp>
-#include <Rendering/Camera/CameraSystem.hpp>
-#include <Rendering/Viewport.hpp>
 #include <Rendering/ViewportWorldComponent.hpp>
 #include <Rendering/Particles/ParticleComponent.hpp>
 #include <Rendering/Particles/ParticleEmitter.hpp>

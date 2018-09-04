@@ -4,7 +4,7 @@
 #include "Resources/MeshResource.hpp"
 #include "Resources/SoundResource.hpp"
 
-SILENCE_CLANG_WARNING(-Wparentheses-equality, "Surpressing clang warnings in stb_image") //FIXME: (celeborth) if put in PCH it throws violation of ODR linker error
+SILENCE_CLANG_WARNING(-Wparentheses-equality, "Surpressing clang warnings in stb_image") //@fixme(celeborth) if put in PCH it throws violation of ODR linker error
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 UNSILENCE_CLANG_WARNING()
