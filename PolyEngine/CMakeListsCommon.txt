@@ -118,7 +118,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	if(CI_BUILD)
 		add_definitions(/DCI_BUILD)
 	endif()
-	add_definitions(/DNOMINMAX /D_SCL_SECURE_NO_WARNINGS /D_CRT_SECURE_NO_WARNINGS /D_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING /D_SILENCE_CXX17_UNCAUGHT_EXCEPTION_DEPRECATION_WARNING) #those macros are useless and just keep messing things up, so disable them
+	add_definitions(/DNOMINMAX /D_SCL_SECURE_NO_WARNINGS /D_CRT_SECURE_NO_WARNINGS /D_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING /D_SILENCE_CXX17_UNCAUGHT_EXCEPTION_DEPRECATION_WARNING /D_ENABLE_EXTENDED_ALIGNED_STORAGE) #those macros are useless and just keep messing things up, so disable them
 	add_compile_options($<$<CONFIG:Release>:/DFINAL>)
 
 	add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:/MDd>)
