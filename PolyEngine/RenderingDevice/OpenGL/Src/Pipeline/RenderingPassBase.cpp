@@ -1,11 +1,8 @@
+#include "PolyRenderingDeviceGLPCH.hpp"
+
 #include "Pipeline/RenderingPassBase.hpp"
-
-#include <Resources/ResourceManager.hpp>
-#include <Resources/TextureResource.hpp>
-
 #include "Proxy/GLTextureDeviceProxy.hpp"
 #include "GLRenderingDevice.hpp"
-
 
 using namespace Poly;
 

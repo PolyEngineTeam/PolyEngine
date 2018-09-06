@@ -1,14 +1,12 @@
 #pragma once
 
-#include "EnginePCH.hpp"
-
+#include <Defines.hpp>
 #include <Collections/Dynarray.hpp>
-#include <Utils/EnumUtils.hpp>
-#include <Math/Color.hpp>
-
+#include <Collections/String.hpp>
 #include "Resources/ResourceBase.hpp"
 #include "Resources/TextureResource.hpp"
 #include "Resources/Mesh.hpp"
+#include "Rendering/IRenderingDevice.hpp"
 
 struct aiMesh;
 struct aiMaterial;

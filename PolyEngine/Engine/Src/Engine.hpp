@@ -1,15 +1,9 @@
 #pragma once
 
-#include <functional>
-#include <typeindex>
-#include <typeinfo>
-#include <unordered_map>
-#include <memory>
-
-#include <Core.hpp>
+#include <Defines.hpp>
+#include <Collections/Dynarray.hpp>
 #include "Rendering/IRenderingDevice.hpp"
 #include "Audio/OpenALDevice.hpp"
-
 #include "Input/InputSystem.hpp"
 
 namespace Poly

@@ -1,5 +1,7 @@
 #include "EnginePCH.hpp"
 
+#include "ECS/Scene.hpp"
+
 using namespace Poly;
 
 RTTI_DEFINE_TYPE(::Poly::Scene);

@@ -1,7 +1,7 @@
 #include "EnginePCH.hpp"
-#include "Rendering/Particles/ParticleEmitter.hpp"
 
-#include <algorithm>
+#include "Rendering/Particles/ParticleEmitter.hpp"
+#include "Resources/ResourceManager.hpp"
 
 using namespace Poly;
 

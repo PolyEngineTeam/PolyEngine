@@ -1,6 +1,6 @@
 #pragma once
 
-#include <type_traits>
+#include "Defines.hpp"
 #include "RTTI/CustomTypeTraits.hpp"
 
 

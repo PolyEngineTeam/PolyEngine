@@ -1,5 +1,7 @@
 #include "EnginePCH.hpp"
 
+#include "Configs/AssetsPathConfig.hpp"
+
 RTTI_DEFINE_TYPE(Poly::AssetsPathConfig)
 
 namespace Poly

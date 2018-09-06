@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Defines.hpp>
 #include "IRendererInterface.hpp"
 
 namespace Poly {

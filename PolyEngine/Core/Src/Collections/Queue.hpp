@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Memory/ObjectLifetimeHelpers.hpp"
 #include "Defines.hpp"
+#include "Memory/ObjectLifetimeHelpers.hpp"
+
 #include "Memory/Allocator.hpp"
 
 namespace Poly

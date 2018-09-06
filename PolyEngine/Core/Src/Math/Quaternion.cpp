@@ -1,5 +1,8 @@
 #include "CorePCH.hpp"
 
+#include "Math/Quaternion.hpp"
+#include "Math/SimdMath.hpp"
+
 using namespace Poly;
 
 const Quaternion Quaternion::IDENTITY = Quaternion();

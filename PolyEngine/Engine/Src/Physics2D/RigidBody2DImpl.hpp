@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Box2D/Box2D.h>
+#include <Defines.hpp>
 
 using namespace Poly;
 

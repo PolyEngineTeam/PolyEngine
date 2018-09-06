@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Defines.hpp"
 #include "ECS/ComponentBase.hpp"
 #include "Audio/SoundSystem.hpp"
-#include <Collections/Dynarray.hpp>
 #include "Audio/SoundListenerComponent.hpp"
 
 typedef struct ALCcontext_struct ALCcontext;

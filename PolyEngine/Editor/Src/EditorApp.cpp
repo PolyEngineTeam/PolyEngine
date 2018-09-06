@@ -3,8 +3,7 @@
 #include <QFileSystemModel>
 #include <QFileSystemWatcher>
 #include <QTimer>
-
-#include <Core.hpp>
+#include <Utils/Logger.hpp>
 
 EditorApp* gApp = nullptr;
 

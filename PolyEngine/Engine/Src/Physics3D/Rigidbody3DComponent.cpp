@@ -1,7 +1,6 @@
 #include "EnginePCH.hpp"
 
-#include "BulletIncludesCommon.hpp"
-
+#include "Rigidbody3DComponent.hpp"
 #include "Rigidbody3DImpl.hpp"
 
 RTTI_DEFINE_COMPONENT(::Poly::Rigidbody3DComponent)

@@ -1,5 +1,8 @@
 #include "EnginePCH.hpp"
 
+#include "ECS/EntityTransform.hpp"
+#include "ECS/Entity.hpp"
+
 using namespace Poly;
 
 RTTI_DEFINE_TYPE(::Poly::EntityTransform);

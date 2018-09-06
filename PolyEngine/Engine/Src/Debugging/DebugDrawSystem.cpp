@@ -1,8 +1,16 @@
 #include "EnginePCH.hpp"
-#include <cmath>
 
 #include "Debugging/DebugDrawComponents.hpp"
 #include "Debugging/DebugDrawSystem.hpp"
+#include "Rendering/ViewportWorldComponent.hpp"
+#include "Rendering/Camera/CameraComponent.hpp"
+#include "Rendering/MeshRenderingComponent.hpp"
+#include "Rendering/Lighting/LightSourceComponent.hpp"
+#include "ECS/Scene.hpp"
+#include "ECS/DeferredTaskSystem.hpp"
+#include "Movement/MovementSystem.hpp"
+#include "UI/ScreenSpaceTextComponent.hpp"
+#include "Physics2D/Rigidbody2DComponent.hpp"
 
 using namespace Poly;
 

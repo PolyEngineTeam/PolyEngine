@@ -1,6 +1,8 @@
 #include "CorePCH.hpp"
 
 #include "Math/Matrix.hpp"
+#include "Math/SimdMath.hpp"
+#include "Math/Quaternion.hpp"
 
 using namespace Poly;
 

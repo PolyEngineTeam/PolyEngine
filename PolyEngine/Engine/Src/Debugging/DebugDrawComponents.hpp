@@ -1,9 +1,8 @@
 #pragma once
+
+#include "Defines.hpp"
 #include "ECS/ComponentBase.hpp"
 #include "Configs/DebugConfig.hpp"
-#include <Collections/Dynarray.hpp>
-#include <Math/Color.hpp>
-#include <Math/Vector3f.hpp>
 
 namespace Poly
 {

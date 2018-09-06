@@ -4,8 +4,6 @@
 #include "Dynarray.hpp"
 #include "Utils/Optional.hpp"
 
-#include <functional>
-
 namespace Poly
 {
 	template<typename T>

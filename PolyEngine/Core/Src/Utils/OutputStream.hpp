@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "Defines.hpp"
-#include <ostream>
 
 namespace Poly {
 

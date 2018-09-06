@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Defines.hpp>
+
 namespace Poly
 {
 	enum class eControllerAxis

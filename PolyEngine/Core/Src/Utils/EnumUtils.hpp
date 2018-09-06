@@ -2,7 +2,6 @@
 
 #include "Defines.hpp"
 #include "Collections/String.hpp"
-#include <map>
 
 namespace Poly {
 

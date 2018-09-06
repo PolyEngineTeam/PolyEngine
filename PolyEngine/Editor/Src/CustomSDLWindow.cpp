@@ -1,5 +1,6 @@
 #include "PolyEditorPCH.hpp"
 #include "CustomSDLWindow.hpp"
+#include <Utils/Logger.hpp>
 #include <SDL.h>
 
 #if defined(__APPLE__)

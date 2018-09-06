@@ -1,9 +1,8 @@
 #pragma once
 
-#include <Collections/Queue.hpp>
-
+#include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
-#include "DeferredTaskBase.hpp"
+#include "ECS/DeferredTaskBase.hpp"
 
 namespace Poly
 {

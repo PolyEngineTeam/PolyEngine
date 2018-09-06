@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Defines.hpp"
+#include "Utils/Logger.hpp"
 
 #if defined(_WIN32)
 #include <windows.h>

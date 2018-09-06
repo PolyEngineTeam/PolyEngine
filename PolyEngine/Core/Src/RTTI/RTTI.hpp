@@ -2,9 +2,7 @@
 
 #include "Defines.hpp"
 #include "BaseObject.hpp"
-
 #include "RTTICast.hpp"
-#include "RTTITypeInfo.hpp"
 #include "RTTIProperty.hpp"
 #include "UniqueID.hpp"
 

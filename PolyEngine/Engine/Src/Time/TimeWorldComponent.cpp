@@ -2,7 +2,6 @@
 
 #include "Time/TimeWorldComponent.hpp"
 
-
 RTTI_DEFINE_COMPONENT(::Poly::TimeWorldComponent)
 
 //------------------------------------------------------------------------------

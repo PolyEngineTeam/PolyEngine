@@ -1,7 +1,6 @@
 #pragma once
 
-#include <map>
-#include <Core.hpp>
+#include <Defines.hpp>
 
 typedef unsigned int GLuint;
 typedef unsigned int GLenum;

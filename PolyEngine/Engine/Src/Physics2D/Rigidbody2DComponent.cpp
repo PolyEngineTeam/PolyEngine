@@ -1,13 +1,10 @@
 #include "EnginePCH.hpp"
 
 #include "Physics2D/Rigidbody2DComponent.hpp"
-
 #include "Physics2D/Physics2DWorldComponent.hpp"
 #include "Physics2D/Physics2DColliders.hpp"
+#include "Physics2D/RigidBody2DImpl.hpp"
 #include "ECS/Scene.hpp"
-#include "RigidBody2DImpl.hpp"
-
-#include <Box2D/Box2D.h>
 
 using namespace Poly;
 

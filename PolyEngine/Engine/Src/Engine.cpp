@@ -1,5 +1,22 @@
 #include "EnginePCH.hpp"
 
+#include "Engine.hpp"
+#include "Configs/AssetsPathConfig.hpp"
+#include "Configs/DebugConfig.hpp"
+#include "ECS/DeferredTaskSystem.hpp"
+#include "Input/InputWorldComponent.hpp"
+#include "Movement/FreeFloatMovementComponent.hpp"
+#include "AI/PathfindingSystem.hpp"
+#include "Rendering/ViewportWorldComponent.hpp"
+#include "Rendering/Lighting/LightSourceComponent.hpp"
+#include "Rendering/RenderingSystem.hpp"
+#include "Rendering/Particles/ParticleUpdateSystem.hpp"
+#include "Time/TimeWorldComponent.hpp"
+#include "Debugging/DebugWorldComponent.hpp"
+#include "Debugging/DebugDrawComponents.hpp"
+#include "Physics2D/Physics2DWorldComponent.hpp"
+#include "Physics3D/Physics3DWorldComponent.hpp"
+#include "Debugging/DebugDrawSystem.hpp"
 
 using namespace Poly;
 

@@ -1,9 +1,7 @@
 #pragma once
 
-#include <Collections/Dynarray.hpp>
-#include <Utils/EnumUtils.hpp>
-#include <Math/Color.hpp>
-
+#include <Defines.hpp>
+#include <Math/Vector.hpp>
 #include "Resources/ResourceBase.hpp"
 #include "Resources/TextureResource.hpp"
 
