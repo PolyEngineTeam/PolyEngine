@@ -5,7 +5,7 @@
 
 namespace Poly
 {
-	class DeferredTaskBase : public BaseObject<>
+	class ENGINE_DLLEXPORT DeferredTaskBase : public BaseObject<>
 	{
 	public:
 		virtual void Execute(Scene* w) = 0;
