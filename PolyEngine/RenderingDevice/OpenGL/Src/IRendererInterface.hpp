@@ -25,7 +25,8 @@ namespace Poly {
 		const Viewport& ViewportData;
 		const AARect& Rect;
 		const CameraComponent* CameraCmp;
-
+		
+		Dynarray<const MeshRenderingComponent*> DirShadowOpaqueQueue;
 		Dynarray<const MeshRenderingComponent*> OpaqueQueue;
 		Dynarray<const MeshRenderingComponent*> TranslucentQueue;
 

@@ -73,16 +73,20 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 
-		if (!sceneView.CameraCmp->IsVisibleToCamera(meshCmp->GetOwner()))
-			continue; // Skip rendering, entity not visible
-
-		if (meshCmp->GetBlendingMode() == eBlendingMode::OPAUQE)
+		if (sceneView.CameraCmp->IsVisibleToCamera(meshCmp->GetOwner()))
 		{
-			sceneView.OpaqueQueue.PushBack(meshCmp);
+			if (meshCmp->GetBlendingMode() == eBlendingMode::OPAUQE)
+			{
+				sceneView.OpaqueQueue.PushBack(meshCmp);
+			}
+			else if (meshCmp->GetBlendingMode() == eBlendingMode::TRANSLUCENT)
+			{
+				sceneView.TranslucentQueue.PushBack(meshCmp);
+			}
 		}
-		else if (meshCmp->GetBlendingMode() == eBlendingMode::TRANSLUCENT)
+		else
 		{
-			sceneView.TranslucentQueue.PushBack(meshCmp);
+			sceneView.DirShadowOpaqueQueue.PushBack(meshCmp);
 		}
 	}
 
