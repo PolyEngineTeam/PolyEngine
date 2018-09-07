@@ -2,8 +2,7 @@
 
 #include <Defines.hpp>
 #include <ECS/Entity.hpp>
-
-class InspectorManager;
+#include "Managers/Project/InspectorManager.hpp"
 
 using namespace Poly;
 
