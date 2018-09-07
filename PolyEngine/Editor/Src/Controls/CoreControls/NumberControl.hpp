@@ -7,6 +7,8 @@
 template <typename T>
 class NumberControl : public ControlBase<T>
 {
+	using Base = ControlBase<T>;
+
 public:
 	NumberControl(QWidget* parent)
 		: ControlBase<T>(parent)
@@ -14,22 +16,22 @@ public:
 		Field = new QLineEdit(this);
 		connect(Field, &QLineEdit::editingFinished, this, &NumberControl<T>::UpdateObject);
 
-		ControlBase<T>::Layout->addWidget(Field, 0, 1);
+		Base::Layout->addWidget(Field, 0, 1);
 	}
 
 	void Reset() override
 	{
-		ControlBase<T>::Reset();
+		Base::Reset();
 
 		Field->setText("");
 	}
 
 	void UpdateControl() override
 	{
-		if (Field->hasFocus())
+		if (Field->hasFocus() || Base::DisableUpdateControl)
 			return;
 
-		Field->setText(QString::number(*Object));
+		Field->setText(QString::number(*Base::Object));
 	}
 
 private:
@@ -37,17 +39,17 @@ private:
 	{
 		auto val = (T)Field->text().toDouble();
 
-		if (DisableEdit || *Object == val)
+		if (Base::DisableEdit || *Base::Object == val)
 			return;
 		
 		ControlCommand<T>* cmd = new ControlCommand<T>(); 
-		cmd->Object = Object; 
+		cmd->Object = Base::Object;
 		cmd->Control = this; 
 		
-		cmd->UndoValue = new T(*Object);
+		cmd->UndoValue = new T(*Base::Object);
 		cmd->RedoValue = new T(val);
 		
-		*Object = val; 
+		*Base::Object = val;
 		
 		emit ObjectUpdated(cmd);
 	}

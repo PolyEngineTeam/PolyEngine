@@ -34,7 +34,7 @@ public:
 
 	virtual void SetObject(void* ptr) override
 	{
-		Object = reinterpret_cast<T*>(ptr);
+		Object = static_cast<T*>(ptr);
 		UpdateControl();
 		SetDisableEdit(false);
 	}

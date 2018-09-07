@@ -37,7 +37,7 @@ void Vector3Control::UpdateControl()
 	if (Field[0]->hasFocus() || Field[1]->hasFocus() || Field[2]->hasFocus())
 		return;
 
-	Vector* vector = reinterpret_cast<Vector*>(Object);
+	Vector* vector = static_cast<Vector*>(Object);
 	Field[0]->setText(QString::number(vector->X));
 	Field[1]->setText(QString::number(vector->Y));
 	Field[2]->setText(QString::number(vector->Z));
