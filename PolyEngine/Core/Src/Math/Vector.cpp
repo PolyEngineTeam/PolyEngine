@@ -1,6 +1,8 @@
 ﻿#include "CorePCH.hpp"
 
 #include "Math/Vector.hpp"
+#include "Math/BasicMath.hpp"
+#include "Math/SimdMath.hpp"
 
 using namespace Poly;
 
@@ -212,6 +214,36 @@ Vector Vector::GetNormalized() const {
 #else
   __m128 dot = _mm_dot_ps(SimdData, SimdData);
   return Vector(_mm_div_ps(SimdData, _mm_sqrt_ps(dot)));
+#endif
+}
+
+//------------------------------------------------------------------------------
+Vector Vector::Max(const Vector& a, const Vector& b)
+{
+#if DISABLE_SIMD
+	Vector v;
+	v.X = std::max(a.X, b.X);
+	v.Y = std::max(a.Y, b.Y);
+	v.Z = std::max(a.Z, b.Z);
+	v.W = std::max(a.W, b.W);
+	return v;
+#else
+	return Vector(_mm_max_ps(a.SimdData, b.SimdData));
+#endif
+}
+
+//------------------------------------------------------------------------------
+Vector Vector::Min(const Vector& a, const Vector& b)
+{
+#if DISABLE_SIMD
+	Vector v;
+	v.X = std::min(a.X, b.X);
+	v.Y = std::min(a.Y, b.Y);
+	v.Z = std::min(a.Z, b.Z);
+	v.W = std::min(a.W, b.W);
+	return v;
+#else
+	return Vector(_mm_min_ps(a.SimdData, b.SimdData));
 #endif
 }
 

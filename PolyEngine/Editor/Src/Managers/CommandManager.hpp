@@ -2,7 +2,7 @@
 
 #include <QtCore/qcoreevent.h>
 
-#include <Core.hpp>
+#include <Defines.hpp>
 
 using namespace Poly;
 

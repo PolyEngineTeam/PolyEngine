@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Core.hpp>
-#include <RTTI/RTTI.hpp>
+#include <Defines.hpp>
+#include <Utils/Optional.hpp>
 #include "ECS/Entity.hpp"
-#include "ComponentIDGenerator.hpp"
-#include "ComponentIDGeneratorImpl.hpp"
+#include "ECS/ComponentIDGenerator.hpp"
+#include "ECS/ComponentIDGeneratorImpl.hpp"
 
 namespace Poly {
 	enum class eComponentBaseFlags
@@ -19,12 +19,14 @@ namespace Poly {
 	{
 		RTTI_DECLARE_TYPE_DERIVED(::Poly::ComponentBase, ::Poly::RTTIBase) 
 		{ 
-			//@todo(muniu) rttibase pointers serialization
-			//RTTI_PROPERTY_AUTONAME(Owner, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Owner, RTTI::ePropertyFlag::NONE);
 		}
 	friend class Scene;
 	public:
-		
+		// @todo change to pure virtual
+		virtual size_t GetComponentID() const { ASSERTE(false, "This shouldn't be called!"); return 0; };
+
+
 		/// <summary>Getter for a component of a specified type that shares UniqueID with this one.</summary>
 		/// <returns>Pointer to a component of a specified type or a nullptr, if it does not exist.</returns>
 		template<typename T>
@@ -62,6 +64,8 @@ namespace Poly {
 		void ResetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags &= ~rhs; }
 		const EnumFlags<eComponentBaseFlags>& GetFlags() { return Flags; }
 		bool CheckFlags(const EnumFlags<eComponentBaseFlags>& rhs) const { return (Flags & rhs) == rhs; }
+
+		virtual Optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) { return {}; }
 
 	private:
 		Entity* Owner = nullptr;

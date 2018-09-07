@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Core.hpp>
-#include <ECS/World.hpp>
+#include <Defines.hpp>
+#include <ECS/Scene.hpp>
 #include <Editor/IEditor.hpp>
 
 #include "Windows/CustomSDLWindow.hpp"

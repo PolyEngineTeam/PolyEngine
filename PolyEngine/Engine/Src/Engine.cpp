@@ -1,17 +1,44 @@
 #include "EnginePCH.hpp"
 
+#include "Engine.hpp"
+#include "Configs/AssetsPathConfig.hpp"
+#include "Configs/DebugConfig.hpp"
+#include "ECS/DeferredTaskSystem.hpp"
+#include "Input/InputWorldComponent.hpp"
+#include "Movement/FreeFloatMovementComponent.hpp"
+#include "AI/PathfindingSystem.hpp"
+#include "Rendering/ViewportWorldComponent.hpp"
+#include "Rendering/Lighting/LightSourceComponent.hpp"
+#include "Rendering/RenderingSystem.hpp"
+#include "Rendering/Particles/ParticleUpdateSystem.hpp"
+#include "Time/TimeWorldComponent.hpp"
+#include "Debugging/DebugWorldComponent.hpp"
+#include "Debugging/DebugDrawComponents.hpp"
+#include "Physics2D/Physics2DWorldComponent.hpp"
+#include "Physics3D/Physics3DWorldComponent.hpp"
+#include "Debugging/DebugDrawSystem.hpp"
+
 using namespace Poly;
 
 Engine* Poly::gEngine = nullptr;
 
 //------------------------------------------------------------------------------
-Engine::Engine() 
+Engine::Engine(bool testRun)
 	: Game()
 {
 	ASSERTE(gEngine == nullptr, "Creating engine twice?");
 	gEngine = this;
-	RandomSetSeed((int)time(nullptr));
-	gAssetsPathConfig.Load();
+
+	if (!testRun)
+	{
+		RandomSetSeed((int)time(nullptr));
+
+		gAssetsPathConfig.Load();
+		gDebugConfig.Load();
+		// also set presets for debug draw (DebugDrawPresets)
+		// @todo update debug draw presets from GUI
+		gDebugConfig.DebugDrawPresets |= eDebugDrawPreset::GFX;
+	}
 }
 
 void Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device)
@@ -23,7 +50,6 @@ void Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice>
 	// also set presets for debug draw (DebugDrawPresets)
 	// @todo update debug draw presets from GUI
 	gDebugConfig.DebugDrawPresets |= eDebugDrawPreset::GFX;
-
 	Game = std::move(game);
 	RenderingDevice = std::move(device);
 	RenderingDevice->Init();

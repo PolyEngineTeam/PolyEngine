@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
 
 namespace Poly
@@ -7,13 +8,9 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT AmbientLightWorldComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(AmbientLightWorldComponent, ComponentBase)
-		{
-			RTTI_PROPERTY_AUTONAME(LightColor, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(Intensity, RTTI::ePropertyFlag::NONE);
-		}
-
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::AmbientLightWorldComponent) { NO_RTTI_PROPERTY(); }
+
 		AmbientLightWorldComponent(const Color& color = Color::WHITE, float intensity = 1.0f);
 
 		const Color& GetColor() const { return LightColor; }
@@ -30,13 +27,9 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT DirectionalLightComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(DirectionalLightComponent, ComponentBase)
-		{
-			RTTI_PROPERTY_AUTONAME(LightColor, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(Intensity, RTTI::ePropertyFlag::NONE);
-		}
-
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::DirectionalLightComponent) { NO_RTTI_PROPERTY(); }
+
 		DirectionalLightComponent(const Color& color = Color::WHITE, float intensity = 1.0f);
 
 		const Color& GetColor() const { return LightColor; }
@@ -50,14 +43,9 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT PointLightComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(PointLightComponent, ComponentBase)
-		{
-			RTTI_PROPERTY_AUTONAME(LightColor, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(Intensity, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(Range, RTTI::ePropertyFlag::NONE);
-		}
-
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::PointLightComponent) { NO_RTTI_PROPERTY(); }
+
 		PointLightComponent(const Color& color = Color::WHITE, float intensity = 1.0f, float range = 10.0f);
 
 		const Color& GetColor() const { return LightColor; }
@@ -75,16 +63,9 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT SpotLightComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(SpotLightComponent, ComponentBase)
-		{
-			RTTI_PROPERTY_AUTONAME(LightColor, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(Intensity, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(Range, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(CutOff, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(OuterCutOff, RTTI::ePropertyFlag::NONE);
-		}
-
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::SpotLightComponent) { NO_RTTI_PROPERTY(); }
+
 		SpotLightComponent(const Color& color = Color::WHITE, float intensity = 1.0f, float range = 10.0f, float cutoff = 12.0f, float outerCutOff = 17.0f);
 
 		const Color& GetColor() const { return LightColor; }

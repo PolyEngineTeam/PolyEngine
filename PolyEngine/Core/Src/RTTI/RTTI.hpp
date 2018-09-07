@@ -2,9 +2,7 @@
 
 #include "Defines.hpp"
 #include "BaseObject.hpp"
-
 #include "RTTICast.hpp"
-#include "RTTITypeInfo.hpp"
 #include "RTTIProperty.hpp"
 #include "UniqueID.hpp"
 
@@ -29,7 +27,10 @@ namespace Poly {
 		void DeserializeFromFile(const String& fileName, eSerializationType type = eSerializationType::JSON);
 
 		virtual void BeforeSerializationCallback() {}
-		virtual void AfterDeSerializationCallback() {}
+		virtual void AfterSerializationCallback() {}
+
+		virtual void BeforeDeserializationCallback() {}
+		virtual void AfterDeserializationCallback() {}
 
 		inline const UniqueID& GetUUID() const { return UUID; }
 	private:
@@ -49,6 +50,7 @@ namespace Poly {
 			Register(obj);
 		}
 
+		RTTIBase* TryGetObjectByID(const UniqueID& id);
 		RTTIBase* GetObjectByID(const UniqueID& id);
 	private:
 		RTTIObjectsManager() = default;

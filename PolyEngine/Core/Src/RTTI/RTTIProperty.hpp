@@ -7,10 +7,7 @@
 #include "Collections/String.hpp"
 #include "Collections/Dynarray.hpp"
 #include "RTTI/CustomTypeTraits.hpp"
-
-#include <functional>
-#include <initializer_list>
-#include <unordered_map>
+#include "Utils/Logger.hpp"
 
 namespace Poly {
 
@@ -388,11 +385,13 @@ namespace Poly {
 			Property PropertyType;
 
 			virtual void Create(void* ptr) const = 0;
+			virtual void CreatePolymorphic(void* ptr, const char* typeName) const = 0;
+			virtual void Clear(void* ptr) const = 0;
 			virtual void* Get(void* ptr) const = 0;
 			virtual const void* Get(const void* ptr) const = 0;
 		};
 
-		template<typename T>
+		template<typename T, typename D>
 		struct UniquePtrPropertyImplData final : public UniquePtrPropertyImplDataBase
 		{
 			UniquePtrPropertyImplData(ePropertyFlag flags, FactoryFunc_t&& factory_func)
@@ -403,19 +402,38 @@ namespace Poly {
 			}
 
 			void Create(void* ptr) const override { 
-				std::unique_ptr<T>& uptr = *reinterpret_cast<std::unique_ptr<T>*>(ptr);
+				std::unique_ptr<T,D>& uptr = *reinterpret_cast<std::unique_ptr<T,D>*>(ptr);
+
 				if (PropertyType.FactoryFunc)
 					uptr.reset((T*)PropertyType.FactoryFunc(PropertyType.Type));
 				else
-					uptr = std::make_unique<T>();
+					uptr.reset(new T());
 			}
-			void* Get(void* ptr) const override { return reinterpret_cast<std::unique_ptr<T>*>(ptr)->get(); }
-			const void* Get(const void* ptr) const override { return reinterpret_cast<const std::unique_ptr<T>*>(ptr)->get(); }
+
+			void CreatePolymorphic(void* ptr, const char* typeName) const override {
+				std::unique_ptr<T, D>& uptr = *reinterpret_cast<std::unique_ptr<T, D>*>(ptr);
+
+				TypeInfo type = RTTI::Impl::TypeManager::Get().GetTypeByName(typeName);
+				if (type.IsValid())
+				{
+					if (PropertyType.FactoryFunc)
+						uptr.reset((T*)PropertyType.FactoryFunc(type));
+					else
+						uptr.reset((T*)type.CreateInstance());
+				}
+				else
+					gConsole.LogError("Failed to create instance of type {}. Probably not registered!", typeName);
+
+			}
+
+			void Clear(void* ptr) const override { return (*reinterpret_cast<std::unique_ptr<T, D>*>(ptr)).reset(); }
+			void* Get(void* ptr) const override { return (*reinterpret_cast<std::unique_ptr<T,D>*>(ptr)).get(); }
+			const void* Get(const void* ptr) const override { return (*reinterpret_cast<const std::unique_ptr<T,D>*>(ptr)).get(); }
 		};
 
-		template <typename T> Property CreateUniquePtrPropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t&& factory_func)
+		template <typename T, typename D> Property CreateUniquePtrPropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t&& factory_func)
 		{
-			std::shared_ptr<UniquePtrPropertyImplData<T>> implData = std::make_shared<UniquePtrPropertyImplData<T>>(flags, std::move(factory_func));
+			std::shared_ptr<UniquePtrPropertyImplData<T, D>> implData = std::make_shared<UniquePtrPropertyImplData<T, D>>(flags, std::move(factory_func));
 
 			// Register unique ptr object pointer to property
 			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::UNIQUE_PTR, std::move(implData)};
@@ -471,7 +489,7 @@ namespace Poly {
 				Trait::IsEnumArray<T>{},	[&](auto lazy) { return CreateEnumArrayPropertyInfo<typename Trait::EnumArrayType<LAZY_TYPE(T)>::enumType, typename Trait::EnumArrayType<LAZY_TYPE(T)>::valueType>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsEnumFlags<T>{},	[&](auto lazy) { return CreateEnumFlagsPropertyInfo<typename Trait::EnumFlagsType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsIterablePoolAllocator<T>{}, [&](auto lazy) { return CreateIterablePoolAllocatorPropertyInfo<typename Trait::IterablePoolAllocatorType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
-				Trait::IsUniquePtr<T>{},	[&](auto lazy) { return CreateUniquePtrPropertyInfo<typename Trait::UniquePtrType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
+				Trait::IsUniquePtr<T>{},	[&](auto lazy) { return CreateUniquePtrPropertyInfo<typename Trait::UniquePtrType<LAZY_TYPE(T)>::type, typename Trait::UniquePtrType<LAZY_TYPE(T)>::deleter>(offset, name, flags, std::move(factory_func)); },
 				std::is_pointer<T>{},		[&](auto lazy) { return CreateRawPtrPropertyInfo<typename std::remove_pointer<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
 				std::is_base_of<RTTIBase, T>{}, [&](auto lazy) { return Property{ TypeInfo::Get<LAZY_TYPE(T)>(), offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>(), nullptr, std::move(factory_func) }; },
 				//TODO add RTTIBase specialization!

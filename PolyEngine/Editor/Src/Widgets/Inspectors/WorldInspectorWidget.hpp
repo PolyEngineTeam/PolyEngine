@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ECS/World.hpp>
+#include <ECS/Scene.hpp>
 #include <ECS/Entity.hpp>
 #include <UniqueID.hpp>
 

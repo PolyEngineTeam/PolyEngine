@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Dynarray.hpp"
 #include "Defines.hpp"
+#include "Dynarray.hpp"
 
 namespace Poly {
 
@@ -150,6 +150,8 @@ namespace Poly {
 		/// <summary>Removes whitespaces from the beginning and the end of String</summary>
 		/// <returns>Trimmed String instance</returns>
 		String GetTrimmed() const;
+
+		size_t Find(char c) const;
 
 
 		/// <summary>Copies String state to another String instance</summary>

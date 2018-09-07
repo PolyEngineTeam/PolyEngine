@@ -1,12 +1,9 @@
 #pragma once
 
-#include <initializer_list>
-#include <Math/Vector2i.hpp>
-#include <Utils/EnumUtils.hpp>
+#include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
 #include "Input/KeyBindings.hpp"
 #include "Input/InputSystem.hpp"
-#include <Utils/Optional.hpp>
 
 namespace Poly
 {
@@ -23,16 +20,10 @@ namespace Poly
 	/// <summary>Scene component that holds input data.</summary>
 	class ENGINE_DLLEXPORT InputWorldComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(InputWorldComponent, ComponentBase)
-		{
-			RTTI_PROPERTY_AUTONAME(MousePos, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(MouseDelta, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(CurrWheel, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(PrevWheel, RTTI::ePropertyFlag::NONE);
-		}
-
 		friend void InputSystem::InputPhase(Scene*);
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::InputWorldComponent) { NO_RTTI_PROPERTY(); }
+
 		InputWorldComponent() = default;
 
 		bool IsPressed(eKey key) const { return CurrKey[key]; }

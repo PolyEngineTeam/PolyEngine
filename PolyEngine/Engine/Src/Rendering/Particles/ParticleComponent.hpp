@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
 #include "Rendering/RenderingSystem.hpp"
 #include "Rendering/Particles/ParticleEmitter.hpp"
@@ -8,14 +9,10 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT ParticleComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(ParticleComponent, ComponentBase)
-		{
-			NO_RTTI_PROPERTY();
-		}
-
 		friend void ParticleUpdateSystem::ParticleUpdatePhase(Scene*);
 	public:
-		ParticleComponent() {}
+		RTTI_DECLARE_COMPONENT(::Poly::ParticleComponent) { NO_RTTI_PROPERTY(); }
+
 		ParticleComponent(const ParticleEmitter::Settings& emitter);
 		virtual ~ParticleComponent();
 		

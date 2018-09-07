@@ -82,8 +82,8 @@ void WorldInspectorWidget::WorldChanged()
 		root->setCheckState(0, Qt::Checked);
 		ItemToEntity.insert(std::pair<QTreeWidgetItem*, Entity*>(root, Manager->GetScene()->GetRoot()));
 
-		for (auto child : Manager->GetScene()->GetRoot()->GetChildren())
-			AddEntityToTree(child, root);
+		for (auto& child : Manager->GetScene()->GetRoot()->GetChildren())
+			AddEntityToTree(child.get(), root);
 	}
 }
 
@@ -194,8 +194,8 @@ void WorldInspectorWidget::AddEntityToTree(Entity* entity, QTreeWidgetItem* pare
 	entityTree->setCheckState(0, Qt::Checked);
 	ItemToEntity.insert(std::pair<QTreeWidgetItem*, Entity*>(entityTree, entity));
 
-	for (auto child : entity->GetChildren())
-		AddEntityToTree(child, entityTree);
+	for (auto& child : entity->GetChildren())
+		AddEntityToTree(child.get(), entityTree);
 }
 
 //------------------------------------------------------------------------------

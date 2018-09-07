@@ -14,7 +14,7 @@
 	#error "Unsupported platform :("
 #endif
 
-#include <Utils/Logger.hpp>
+#include <Defines.hpp>
 
 namespace Poly {
 	//---------------------------------------------------------------

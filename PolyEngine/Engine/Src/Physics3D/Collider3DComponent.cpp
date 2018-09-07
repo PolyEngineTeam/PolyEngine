@@ -1,10 +1,9 @@
 #include "EnginePCH.hpp"
 
-#include "BulletIncludesCommon.hpp"
-
-#include "Collider3DImpl.hpp"
-#include "Physics3DShapes.hpp"
-#include "Physics3DShapesImpl.hpp"
+#include "Physics3D/Collider3DImpl.hpp"
+#include "Physics3D/Physics3DShapes.hpp"
+#include "Physics3D/Physics3DShapesImpl.hpp"
+#include "Physics3D/Rigidbody3DComponent.hpp"
 
 RTTI_DEFINE_TYPE(Poly::Collider3DComponent)
 

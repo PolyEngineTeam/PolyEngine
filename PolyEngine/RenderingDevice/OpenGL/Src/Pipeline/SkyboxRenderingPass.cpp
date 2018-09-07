@@ -1,14 +1,8 @@
-#include "Pipeline/SkyboxRenderingPass.hpp"
+#include "PolyRenderingDeviceGLPCH.hpp"
 
+#include "Pipeline/SkyboxRenderingPass.hpp"
 #include "GLRenderingDevice.hpp"
 #include "Proxy/GLCubemapDeviceProxy.hpp"
-
-#include <Math/AABox.hpp>
-#include <Math/AARect.hpp>
-#include <ECS/World.hpp>
-#include <Rendering/Camera/CameraComponent.hpp>
-#include <Rendering/SkyboxWorldComponent.hpp>
-#include <Resources/TextureResource.hpp>
 
 using namespace Poly;
 

@@ -2,11 +2,9 @@
 
 #include "Audio/SoundWorldComponent.hpp"
 
-#include <alc.h>
-
 using namespace Poly;
 
-RTTI_DEFINE_TYPE(Poly::SoundWorldComponent)
+RTTI_DEFINE_COMPONENT(::Poly::SoundWorldComponent)
 
 SoundWorldComponent::SoundWorldComponent(Scene* /*world*/)
 {

@@ -1,10 +1,9 @@
 #pragma once
 
+#include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
-#include "RenderingSystem.hpp"
-
-#include <Math/Vector2f.hpp>
-#include <Resources/ResourceManager.hpp>
+#include "Rendering/RenderingSystem.hpp"
+#include "Configs/ConfigBase.hpp"
 
 namespace Poly {
 
@@ -21,11 +20,7 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT SpritesheetComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(SpritesheetComponent, ComponentBase)
-		{
-			NO_RTTI_PROPERTY()
-		}
-
+		RTTI_DECLARE_COMPONENT(::Poly::SpritesheetComponent) { NO_RTTI_PROPERTY(); }
 	public:
 		friend void RenderingSystem::RenderingPhase(Scene*);
 	public:

@@ -1,8 +1,10 @@
 #include "EnginePCH.hpp"
 
+#include "Rendering/ViewportWorldComponent.hpp"
+
 using namespace Poly;
 
-RTTI_DEFINE_TYPE(Poly::ViewportWorldComponent)
+RTTI_DEFINE_COMPONENT(::Poly::ViewportWorldComponent)
 
 ViewportWorldComponent::ViewportWorldComponent()
 {
@@ -30,13 +32,6 @@ void ViewportWorldComponent::ResizeViewport(ViewportID id, const AARect& rect)
 	auto it = Viewports.find(id);
 	ASSERTE(it != Viewports.end(), "Viewport doesn't exist.");
 	it->second.Resize(rect);
-}
-
-CameraComponent* ViewportWorldComponent::GetCamera(ViewportID id)
-{
-	auto it = Viewports.find(id);
-	ASSERTE(it != Viewports.end(), "Viewport doesn't exist.");
-	return it->second.GetCamera();
 }
 
 void ViewportWorldComponent::SetCamera(ViewportID id, CameraComponent* cam)

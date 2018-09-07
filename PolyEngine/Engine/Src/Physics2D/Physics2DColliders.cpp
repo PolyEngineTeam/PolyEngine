@@ -1,6 +1,10 @@
 #include "EnginePCH.hpp"
+
 #include "Box2D/Box2D.h"
 #include "Physics2D/Physics2DColliders.hpp"
+
+RTTI_DEFINE_COMPONENT(::Poly::Box2DColliderComponent)
+RTTI_DEFINE_COMPONENT(::Poly::Circle2DColliderComponent)
 
 Poly::Box2DColliderComponent::Box2DColliderComponent(const Vector& size)
 {

@@ -1,9 +1,12 @@
 #include "EnginePCH.hpp"
 
 #include "Audio/SoundSystem.hpp"
-
-#include <al.h>
-#include <alc.h>
+#include "Audio/SoundEmitterComponent.hpp"
+#include "Audio/SoundWorldComponent.hpp"
+#include "ECS/Scene.hpp"
+#include "Resources/ResourceBase.hpp"
+#include "Resources/SoundResource.hpp"
+#include "Resources/ResourceManager.hpp"
 
 using namespace Poly;
 
@@ -156,8 +159,9 @@ void SoundSystem::DeactivateListener(Scene* /*world*/, Entity* /*entity*/)
 {
 }
 
-void SoundSystem::SetListenerGain(Scene* /*world*/, Entity* /*entity*/, float /*gain*/)
+void SoundSystem::SetListenerPosition(Vector vec)
 {
+	alListener3f(AL_POSITION, vec.X, vec.Y, vec.Z);
 }
 
 bool ENGINE_DLLEXPORT Poly::SoundSystem::IsEmmiterActive(Scene* world, Entity* entity)

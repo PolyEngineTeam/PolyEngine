@@ -1,10 +1,7 @@
 #pragma once
 
-#include <Core.hpp>
+#include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
-#include <Utils/Optional.hpp>
-#include <Math/Vector2f.hpp>
-
 #include "AI/PathfindingSystem.hpp"
 
 namespace Poly
@@ -25,18 +22,9 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT PathfindingComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(PathfindingComponent, ComponentBase)
-		{
-			RTTI_PROPERTY_AUTONAME(CalculatedPath, RTTI::ePropertyFlag::NONE);
-			//RTTI_PROPERTY_AUTONAME(CurentDestination, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(RecalculateRequested, RTTI::ePropertyFlag::DONT_SERIALIZE);
-			RTTI_PROPERTY_AUTONAME(LastPathSearchFailed, RTTI::ePropertyFlag::DONT_SERIALIZE);
-		}
-
-		friend void PathfindingSystem::UpdatePhase(Scene* world);
-
 	public:
-		PathfindingComponent() {}
+		RTTI_DECLARE_COMPONENT(::Poly::PathfindingComponent) { NO_RTTI_PROPERTY(); }
+
 		PathfindingComponent(const NavGraph* navGraphs) : NavigationGraph(navGraphs) {}
 
 		void SetDestination(const Vector& pos);
@@ -53,5 +41,5 @@ namespace Poly
 		friend void PathfindingSystem::UpdatePhase(Scene* world);
 	};
 
-	REGISTER_COMPONENT(ComponentsIDGroup, PathfindingComponent)
+	REGISTER_COMPONENT(::Poly::ComponentsIDGroup, PathfindingComponent)
 }

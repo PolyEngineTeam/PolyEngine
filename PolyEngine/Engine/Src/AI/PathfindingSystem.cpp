@@ -2,7 +2,7 @@
 
 #include "AI/PathfindingSystem.hpp"
 #include "PathfindingComponent.hpp"
-#include <Collections/OrderedMap.hpp>
+#include "ECS/Scene.hpp"
 
 using namespace Poly;
 

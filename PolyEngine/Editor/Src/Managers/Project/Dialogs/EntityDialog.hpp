@@ -7,7 +7,7 @@
 #include <QtWidgets/qlineedit.h>
 #include <QtCore/qstring.h>
 
-#include <ECS/World.hpp>
+#include <ECS/Scene.hpp>
 #include <ECS/Entity.hpp>
 
 using namespace Poly;

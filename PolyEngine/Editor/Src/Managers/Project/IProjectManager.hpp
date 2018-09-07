@@ -2,7 +2,7 @@
 
 #include <QtCore/qobject.h>
 
-#include <Core.hpp>
+#include <Defines.hpp>
 
 #include "Configs/ProjectConfig.hpp"
 #include "Managers/Project/IEngineManager.hpp"

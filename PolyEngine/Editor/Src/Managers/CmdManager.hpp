@@ -1,8 +1,10 @@
 #pragma once
 
-#include <Core.hpp>
+#include <Defines.hpp>
 #include <QtCore/qobject.h>
 #include <QtCore/qtimer.h>
+#include <Utils/OutputStream.hpp>
+#include <Utils/Logger.hpp>
 
 using namespace Poly;
 

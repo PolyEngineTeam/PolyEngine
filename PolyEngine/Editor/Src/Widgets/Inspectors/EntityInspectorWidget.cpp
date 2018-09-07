@@ -239,7 +239,7 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 
 		//children
 		ChildrenIdNameField->clear();
-		for (auto child : selectedEntities[0]->GetChildren())
+		for (auto& child : selectedEntities[0]->GetChildren())
 		{
 			ss.str(std::string());
 			ss << child->GetName() + " <";
@@ -310,7 +310,7 @@ void EntityInspectorWidget::Update()
 
 		//children
 		ChildrenIdNameField->clear();
-		for (auto child : selectedEntities[0]->GetChildren())
+		for (auto& child : selectedEntities[0]->GetChildren())
 		{
 			ss.str(std::string());
 			ss << child->GetName() + "  <";
@@ -446,6 +446,6 @@ void EntityInspectorWidget::SelectParent()
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::SelectChild()
 {
-	Manager->EntitiesSelectionChangedSlot(
-		{ Manager->GetSelectedEntities()[0]->GetChildren()[ChildrenIdNameField->currentIndex()] });
+	//Manager->EntitiesSelectionChangedSlot(
+	//	{ Manager->GetSelectedEntities()[0]->GetChildren()[ChildrenIdNameField->currentIndex()] });
 }

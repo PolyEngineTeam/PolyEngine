@@ -4,5 +4,4 @@
 
 using namespace Poly;
 
-RTTI_DEFINE_TYPE(Poly::PostprocessSettingsComponent)
-
+RTTI_DEFINE_COMPONENT(::Poly::PostprocessSettingsComponent)

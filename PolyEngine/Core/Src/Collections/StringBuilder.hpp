@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Dynarray.hpp"
 #include "Defines.hpp"
+#include "Dynarray.hpp"
 #include "String.hpp"
-#include <ostream>
 
 namespace Poly
 {

@@ -2,7 +2,7 @@
 
 #include <qobject.h>
 
-#include <ECS/World.hpp>
+#include <ECS/Scene.hpp>
 
 #include "Configs/ProjectConfig.hpp"
 #include "Widgets/Inspectors/ViewportInspectorWidget.hpp"

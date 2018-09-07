@@ -5,7 +5,6 @@
 #include "Memory/BinaryBuffer.hpp"
 #include "Utils/Logger.hpp"
 
-
 namespace Poly {
 
 	//TODO add creation of folders if necessary

@@ -2,6 +2,7 @@
 
 #include "Resources/CubemapResource.hpp"
 #include "Resources/ResourceManager.hpp"
+#include "ECS/Scene.hpp"
 
 using namespace Poly;
 

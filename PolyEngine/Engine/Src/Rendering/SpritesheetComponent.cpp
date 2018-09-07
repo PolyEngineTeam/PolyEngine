@@ -7,7 +7,7 @@
 
 using namespace Poly;
 
-RTTI_DEFINE_TYPE(Poly::SpritesheetComponent)
+RTTI_DEFINE_COMPONENT(::Poly::SpritesheetComponent)
 
 SpritesheetComponent::SpritesheetComponent(const SpritesheetSettings& settings) : Settings(settings)
 {

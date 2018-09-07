@@ -2,6 +2,8 @@
 
 #include "Resources/TextureResource.hpp"
 #include "Resources/ResourceManager.hpp"
+#include "Rendering/IRenderingDevice.hpp"
+#include "ECS/Scene.hpp"
 
 using namespace Poly;
 

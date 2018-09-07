@@ -1,7 +1,9 @@
 #pragma once
 
+#include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
 #include "Physics2D/Physics2DSystem.hpp"
+#include "Physics2D/Rigidbody2DComponent.hpp"
 
 class b2World;
 
@@ -20,15 +22,12 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT Physics2DWorldComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(Physics2DWorldComponent, ComponentBase)
-		{
-			NO_RTTI_PROPERTY();
-		}
-
 		friend void Physics2DSystem::Physics2DUpdatePhase(Scene* world);
 		friend class Physics2DContactListener;
 		friend class RigidBody2DComponent;
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::Physics2DWorldComponent) { NO_RTTI_PROPERTY(); }
+
 		struct Collision
 		{
 			RigidBody2DComponent* rb;

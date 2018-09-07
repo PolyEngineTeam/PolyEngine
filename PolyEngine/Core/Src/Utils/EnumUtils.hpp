@@ -2,7 +2,6 @@
 
 #include "Defines.hpp"
 #include "Collections/String.hpp"
-#include <map>
 
 namespace Poly {
 
@@ -35,6 +34,7 @@ namespace Poly {
 			Iterator operator-(size_t val) const { return Iterator(Data, Idx - val); }
 			Iterator& operator+=(size_t val) { Idx += val; return *this; }
 			Iterator& operator-=(size_t val) { Idx -= val; return *this; }
+
 		private:
 			Iterator(T* data, size_t idx) : Data(data), Idx(idx) {}
 
@@ -117,7 +117,19 @@ namespace Poly {
 		ConstIterator Begin() const { return ConstIterator(Data, 0); }
 		ConstIterator End() const { return ConstIterator(Data, GetSize()); }
 
-
+		friend std::ostream& operator<< (std::ostream& stream, const EnumArray<T, E>& arr)
+		{
+			stream << "EnumArray[ ";
+			for (size_t i = 0; i < (size_t)E::_COUNT; ++i)
+			{
+				if(i == 0)
+					stream << arr[(E)i];
+				else
+					stream << ", " << arr[(E)i];
+			}
+			stream << " ]";
+			return stream;
+		}
 	private:
 		//------------------------------------------------------------------------------
 		T& operator[](size_t idx) { HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!"); return Data[idx]; }

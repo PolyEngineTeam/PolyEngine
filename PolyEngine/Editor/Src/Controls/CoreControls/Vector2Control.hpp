@@ -2,7 +2,7 @@
 
 #include <QtWidgets/qlineedit.h>
 
-#include <Core.hpp>
+#include <Defines.hpp>
 
 #include "Controls/ControlBase.hpp"
 

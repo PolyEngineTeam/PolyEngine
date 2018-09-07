@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Rendering/IRenderingDevice.hpp>
-#include <Utils/EnumUtils.hpp>
+#include <Defines.hpp>
 #include "Common/GLUtils.hpp"
 
 namespace Poly

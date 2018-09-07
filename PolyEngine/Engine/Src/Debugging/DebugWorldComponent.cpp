@@ -1,3 +1,5 @@
 #include "EnginePCH.hpp"
 
-RTTI_DEFINE_TYPE(Poly::DebugWorldComponent)
+#include "Debugging/DebugWorldComponent.hpp"
+
+RTTI_DEFINE_COMPONENT(::Poly::DebugWorldComponent)

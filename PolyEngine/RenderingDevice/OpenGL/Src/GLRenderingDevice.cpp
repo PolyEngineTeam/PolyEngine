@@ -1,8 +1,6 @@
+#include "PolyRenderingDeviceGLPCH.hpp"
+
 #include "GLRenderingDevice.hpp"
-
-#include <memory>
-
-#include <Utils/Logger.hpp>
 
 #include "Common/GLUtils.hpp"
 #include "Common/PrimitiveQuad.hpp"

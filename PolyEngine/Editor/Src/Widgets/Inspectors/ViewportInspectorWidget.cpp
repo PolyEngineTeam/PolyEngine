@@ -168,7 +168,7 @@ void ViewportInspectorWidget::StateChanged()
 		DeferredTaskSystem::AddComponentImmediate<PostprocessSettingsComponent>(w, EditorCameraEnt);
 
 		//		obtain game camera
-		GameCamera = w->GetWorldComponent<ViewportWorldComponent>()->GetCamera(0);
+		//GameCamera = w->GetWorldComponent<ViewportWorldComponent>()->GetCamera(0);
 
 		// set editor camera
 		Manager->GetScene()->GetWorldComponent<ViewportWorldComponent>()->SetCamera(

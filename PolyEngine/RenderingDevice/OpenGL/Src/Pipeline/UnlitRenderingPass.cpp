@@ -1,14 +1,9 @@
-#include "Pipeline/UnlitRenderingPass.hpp"
+#include "PolyRenderingDeviceGLPCH.hpp"
 
+#include "Pipeline/UnlitRenderingPass.hpp"
 #include "Proxy/GLMeshDeviceProxy.hpp"
 #include "Proxy/GLTextureDeviceProxy.hpp"
-#include <GLRenderingDevice.hpp>
-
-#include <ECS/Entity.hpp>
-#include <ECS/World.hpp>
-#include <Rendering/Camera/CameraComponent.hpp>
-#include <Rendering/MeshRenderingComponent.hpp>
-#include <Movement/MovementSystem.hpp>
+#include "GLRenderingDevice.hpp"
 
 using namespace Poly;
 

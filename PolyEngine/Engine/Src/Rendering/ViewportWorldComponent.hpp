@@ -1,7 +1,6 @@
 #pragma once
 
-#include <unordered_map>
-
+#include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
 #include "Rendering/Camera/CameraSystem.hpp"
 #include "Rendering/Viewport.hpp"
@@ -13,12 +12,8 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT ViewportWorldComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(ViewportWorldComponent, ComponentBase)
-		{
-			NO_RTTI_PROPERTY();
-		}
-
-		friend void CameraSystem::CameraUpdatePhase(Scene*);
+		RTTI_DECLARE_COMPONENT(::Poly::ViewportWorldComponent) { NO_RTTI_PROPERTY(); }
+	friend void CameraSystem::CameraUpdatePhase(Scene*);
 	public:
 		ViewportWorldComponent();
 
@@ -26,7 +21,6 @@ namespace Poly
 		void RemoveViewport(ViewportID);
 		void ResizeViewport(ViewportID, const AARect&);
 		void SetCamera(ViewportID, CameraComponent*);
-		CameraComponent* GetCamera(ViewportID);
 
 		const std::unordered_map<size_t, Viewport>& GetViewports() const { return Viewports; }
 	private:

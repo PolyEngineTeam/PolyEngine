@@ -2,6 +2,8 @@
 
 #include "Rendering/Particles/ParticleUpdateSystem.hpp"
 #include "Rendering/Particles/ParticleComponent.hpp"
+#include "ECS/Scene.hpp"
+#include "Time/TimeSystem.hpp"
 
 using namespace Poly;
 

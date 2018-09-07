@@ -8,6 +8,7 @@ layout (location = 4) in vec3 aBitangent;
 uniform mat4 uClipFromModel;
 uniform mat4 uWorldFromModel;
 uniform vec4 uViewPosition;
+uniform mat4 uDirLightFromWorld;
 
 out VERTEX_OUT
 {
@@ -17,6 +18,7 @@ out VERTEX_OUT
 	mat3 tangentFromWorld;
 	vec3 viewPositionInTangent;
 	vec3 fragmentPositionInTangent;
+	vec4 fragmentPositionInDirLight;
 } vertex_out;
 
 void main()
@@ -39,4 +41,6 @@ void main()
 	vertex_out.viewPositionInTangent = tangentFromWorld * uViewPosition.xyz;
 	vertex_out.fragmentPositionInTangent = tangentFromWorld * vertex_out.positionInWorld;
 	vertex_out.tangentFromWorld = tangentFromWorld;
+
+    vertex_out.fragmentPositionInDirLight = uDirLightFromWorld * vec4(vertex_out.positionInWorld, 1.0);
 }

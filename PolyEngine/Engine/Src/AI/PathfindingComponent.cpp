@@ -4,7 +4,7 @@
 
 using namespace Poly;
 
-RTTI_DEFINE_TYPE(Poly::PathfindingComponent)
+RTTI_DEFINE_COMPONENT(::Poly::PathfindingComponent)
 
 void Poly::PathfindingComponent::SetDestination(const Vector& pos)
 {

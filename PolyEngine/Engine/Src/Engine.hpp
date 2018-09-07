@@ -1,17 +1,11 @@
 #pragma once
 
-#include <functional>
-#include <typeindex>
-#include <typeinfo>
-#include <unordered_map>
-#include <memory>
-
-#include <Core.hpp>
-#include "Editor/IEditor.hpp"
+#include <Defines.hpp>
+#include <Collections/Dynarray.hpp>
 #include "Rendering/IRenderingDevice.hpp"
 #include "Audio/OpenALDevice.hpp"
-
 #include "Input/InputSystem.hpp"
+#include "Editor/IEditor.hpp"
 
 namespace Poly
 {
@@ -33,7 +27,7 @@ namespace Poly
 	{
 	public:
 		/// <summary>Constructs engine instance.</summary>
-		Engine();
+		Engine(bool testRun = false);
 
 		/// <summary>Deletes engine instance.</summary>
 		~Engine();
@@ -148,6 +142,9 @@ namespace Poly
 
 		IEditor* GetEditor() { return Editor; }
 
+		Scene* GetCurrentlySerializedScene() { return SerializedScene; }
+		void SetCurrentlySerializedScene(Scene* s) { ASSERTE(SerializedScene == nullptr || s == nullptr, "Setting scene again!"); SerializedScene = s; }
+
 		/// <summary>Returns pointer to rendering device.</summary>
 		/// <returns>Pointer to IRenderingDevice instance.</returns>
 		IRenderingDevice* GetRenderingDevice() const { return RenderingDevice.get(); }
@@ -181,6 +178,7 @@ namespace Poly
 		void RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order);
 
 		std::unique_ptr<Scene> ActiveScene;
+		Scene* SerializedScene = nullptr;
 		std::unique_ptr<IGame> Game;
 		std::unique_ptr<IRenderingDevice> RenderingDevice;
 		IEditor* Editor = nullptr;

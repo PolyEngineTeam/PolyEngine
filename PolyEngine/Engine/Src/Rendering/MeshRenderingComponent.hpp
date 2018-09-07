@@ -1,7 +1,8 @@
 #pragma once
 
+#include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
-#include "RenderingSystem.hpp"
+#include "Rendering/RenderingSystem.hpp"
 #include "Resources/MeshResource.hpp"
 
 namespace Poly {
@@ -41,16 +42,9 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT MeshRenderingComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(MeshRenderingComponent, ComponentBase)
-		{
-			RTTI_PROPERTY_AUTONAME(Mesh, RTTI::ePropertyFlag::DONT_SERIALIZE);
-			RTTI_PROPERTY_AUTONAME(IsWireframe, RTTI::ePropertyFlag::DONT_SERIALIZE);
-			RTTI_PROPERTY_AUTONAME(Materials, RTTI::ePropertyFlag::DONT_SERIALIZE);
-		//	RTTI_PROPERTY_AUTONAME(ShadingMode, RTTI::ePropertyFlag::DONT_SERIALIZE);
-		//	RTTI_PROPERTY_AUTONAME(BlendingMode, RTTI::ePropertyFlag::DONT_SERIALIZE);
-		}
 	public:
-		MeshRenderingComponent();
+		RTTI_DECLARE_COMPONENT(::Poly::MeshRenderingComponent) { NO_RTTI_PROPERTY(); }
+
 		MeshRenderingComponent(const String& meshPath, eResourceSource source);
 		virtual ~MeshRenderingComponent();
 
@@ -65,6 +59,8 @@ namespace Poly {
 		void SetShadingModel(eShadingMode value) { ShadingMode = value; }
 		void SetBlendingMode(eBlendingMode value) { BlendingMode = value; }
 
+
+		Optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) override;
 	private:
 		MeshResource* Mesh = nullptr;
 		Dynarray<Material> Materials;

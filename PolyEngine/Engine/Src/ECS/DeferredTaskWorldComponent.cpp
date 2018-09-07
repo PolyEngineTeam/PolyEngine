@@ -1,3 +1,5 @@
 #include "EnginePCH.hpp"
 
-RTTI_DEFINE_TYPE(Poly::DeferredTaskWorldComponent)
+#include "ECS/DeferredTaskWorldComponent.hpp"
+
+RTTI_DEFINE_COMPONENT(::Poly::DeferredTaskWorldComponent)

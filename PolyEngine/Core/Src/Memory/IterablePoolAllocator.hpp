@@ -8,7 +8,8 @@ namespace Poly {
 	class IterablePoolAllocatorBase : public BaseObject<>
 	{
 	public:
-		virtual void Free(void* ptr) = 0;
+		virtual void* GenericAlloc() = 0;
+		virtual void GenericFree(void* ptr) = 0;
 	};
 
 	/// <summary>Fast pool allocator, that enables iteration.</summary>
@@ -165,7 +166,8 @@ namespace Poly {
 		}
 
 		//------------------------------------------------------------------------------
-		void Free(void* p) override { Free(reinterpret_cast<T*>(p)); }
+		void GenericFree(void* p) override { Free(reinterpret_cast<T*>(p)); }
+		void* GenericAlloc() override { return Alloc(); }
 
 		/// <summary>Method for freeing allocated memory. Allocator does not call any object destructors!</summary>
 		/// <param name="p">Pointer to memory to free.</param>

@@ -1,6 +1,6 @@
 #include "EnginePCH.hpp"
 
-#include "BulletIncludesCommon.hpp"
+#include "Physics3D/Physics3DWorldComponent.hpp"
 
 RTTI_DEFINE_TYPE(Poly::Physics3DWorldComponent)
 

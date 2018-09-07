@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Math/Vector.hpp>
-
+#include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
 #include "Physics3D/Physics3DSystem.hpp"
 
@@ -41,11 +40,6 @@ namespace Poly
 	/// @see Rigidbody3DComponent
 	class ENGINE_DLLEXPORT Collider3DComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(Collider3DComponent, ComponentBase)
-		{
-			NO_RTTI_PROPERTY()
-		}
-
 		// friendship declarations
 
 
@@ -58,6 +52,8 @@ namespace Poly
 		friend void Physics3DSystem::UnregisterComponent(Scene * world, Entity* entity);
 
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::Collider3DComponent) { NO_RTTI_PROPERTY(); }
+
 		// constructors and destructor
 
 		/// Creates Collider3DComponent from provided template parameters.

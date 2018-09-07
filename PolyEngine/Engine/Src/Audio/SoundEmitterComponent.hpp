@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
 #include "Audio/SoundSystem.hpp"
 
@@ -15,17 +16,11 @@ namespace Poly
 	/// @see SoundSystem 
 	class ENGINE_DLLEXPORT SoundEmitterComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(SoundEmitterComponent, ComponentBase)
-		{
-			RTTI_PROPERTY_AUTONAME(EmitterID, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(Background, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(Resource, RTTI::ePropertyFlag::NONE);
-		}
-
-		friend void SoundSystem::SoundPhase(Scene* world);
-		friend void SoundSystem::SetEmitterSource(Scene*, Entity*, const String&, eResourceSource source);
+	friend void SoundSystem::SoundPhase(Scene* world);
+	friend void SoundSystem::SetEmitterSource(Scene*, Entity*, const String&, eResourceSource source);
 	public:
-		SoundEmitterComponent() {}
+		RTTI_DECLARE_COMPONENT(::Poly::SoundEmitterComponent) { NO_RTTI_PROPERTY(); }
+
 		/// Loads resource from given path (optimized by resource manager).
 		/// @param path path to sound resource
 		/// @see SoundListenerComponent

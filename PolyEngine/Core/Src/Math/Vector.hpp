@@ -1,10 +1,9 @@
 #pragma once
 
-#include <pmmintrin.h>
-
 #include "Defines.hpp"
 #include "Math/BasicMath.hpp"
 #include "Math/Color.hpp"
+#include <pmmintrin.h> //SIMD library
 
 namespace Poly
 {
@@ -85,6 +84,9 @@ namespace Poly
 		/// <summary>Creates normalized vector.</summary>
 		/// <returns>Normalized vector.</returns>
 		Vector GetNormalized() const;
+
+		static Vector Max(const Vector& a, const Vector& b);
+		static Vector Min(const Vector& a, const Vector& b);
 
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Vector& vec);
 

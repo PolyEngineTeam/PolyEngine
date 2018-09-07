@@ -1,14 +1,6 @@
+#include "PolyRenderingDeviceGLPCH.hpp"
+
 #include "GLRenderingDevice.hpp"
-
-#include <ECS/World.hpp>
-#include <Configs/DebugConfig.hpp>
-#include <Rendering/Viewport.hpp>
-
-#include <Rendering/Camera/CameraComponent.hpp>
-#include <Rendering/MeshRenderingComponent.hpp>
-#include <UI/ScreenSpaceTextComponent.hpp>
-#include <Rendering/ViewportWorldComponent.hpp>
-#include <Rendering/PostprocessSettingsComponent.hpp>
 
 #include "Proxy/GLTextFieldBufferDeviceProxy.hpp"
 #include "Proxy/GLTextureDeviceProxy.hpp"
@@ -80,13 +72,21 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 	for (const auto componentsTuple : sceneView.WorldData->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-		if (meshCmp->GetBlendingMode() == eBlendingMode::OPAUQE)
+
+		if (sceneView.CameraCmp->IsVisibleToCamera(meshCmp->GetOwner()))
 		{
-			sceneView.OpaqueQueue.PushBack(meshCmp);
+			if (meshCmp->GetBlendingMode() == eBlendingMode::OPAUQE)
+			{
+				sceneView.OpaqueQueue.PushBack(meshCmp);
+			}
+			else if (meshCmp->GetBlendingMode() == eBlendingMode::TRANSLUCENT)
+			{
+				sceneView.TranslucentQueue.PushBack(meshCmp);
+			}
 		}
-		else if (meshCmp->GetBlendingMode() == eBlendingMode::TRANSLUCENT)
+		else
 		{
-			sceneView.TranslucentQueue.PushBack(meshCmp);
+			sceneView.DirShadowOpaqueQueue.PushBack(meshCmp);
 		}
 	}
 

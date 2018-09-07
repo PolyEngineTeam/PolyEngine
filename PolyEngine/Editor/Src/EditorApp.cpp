@@ -2,10 +2,9 @@
 
 #include <QFileSystemModel>
 #include <QFileSystemWatcher>
-#include <QtCore/qtimer.h>
+#include <QTimer>
+#include <Utils/Logger.hpp>
 #include <QtWidgets/QStyleFactory>
-
-#include <Core.hpp>
 
 EditorApp* gApp = nullptr;
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
 #include "Movement/MovementSystem.hpp"
 
@@ -7,15 +8,10 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT FreeFloatMovementComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(FreeFloatMovementComponent, ComponentBase)
-		{
-			RTTI_PROPERTY_AUTONAME(MovementSpeed, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(RotationSpeed, RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(WheelSensitivity, RTTI::ePropertyFlag::NONE);
-		}
-
 		friend void MovementSystem::MovementUpdatePhase(Scene*);
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::FreeFloatMovementComponent) { NO_RTTI_PROPERTY(); }
+
 		FreeFloatMovementComponent(float movementSpeed = 1.0f, float rotationSpeed = 1.0f, float wheelSensitivity = 1.0f);
 
 		float GetMovementSpeed() const { return MovementSpeed; }

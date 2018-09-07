@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
 
 namespace Poly
@@ -8,12 +9,9 @@ namespace Poly
 
 	class ENGINE_DLLEXPORT SkyboxWorldComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(SkyboxWorldComponent, ComponentBase)
-		{
-			NO_RTTI_PROPERTY();
-		}
-
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::SkyboxWorldComponent) { NO_RTTI_PROPERTY(); }
+
 		SkyboxWorldComponent(const String& panoramaPath, const eResourceSource source);
 		~SkyboxWorldComponent();
 		

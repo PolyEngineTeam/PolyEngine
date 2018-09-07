@@ -2,7 +2,7 @@
 
 #include <QtWidgets/qwidget.h>
 
-#include <Core.hpp>
+#include <Defines.hpp>
 
 #include "Controls/IControlBase.hpp"
 

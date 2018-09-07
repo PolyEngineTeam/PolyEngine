@@ -1,14 +1,9 @@
 #pragma once
 
-#include <Core.hpp>
 #include <Defines.hpp>
-#include <Collections/String.hpp>
-#include <FileIO.hpp>
-
 #include "Configs/AssetsPathConfig.hpp"
 #include "Resources/ResourceBase.hpp"
-
-#include <map>
+#include "Resources/FontResource.hpp"
 
 namespace Poly
 {

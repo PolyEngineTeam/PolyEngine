@@ -103,8 +103,8 @@ Dynarray<Entity*> EntityDialog::GetEntitiesToDestroy(Scene* scene, Dynarray<Enti
 	EntitiesTree->setHeaderLabels(QStringList() << "Name" << "ID");
 	MainLayout->addWidget(EntitiesTree, 1, 0, 1, 3);
 
-	for (auto child : scene->GetRoot()->GetChildren())
-		AddEntity(child);
+	for (auto& child : scene->GetRoot()->GetChildren())
+		AddEntity(child.get());
 
 	// create and link buttons
 	CancelButton = new QPushButton(this);
@@ -153,8 +153,8 @@ Dynarray<Entity*> EntityDialog::ReparentEntities(Scene* scene, Dynarray<Entity*>
 	EntitiesTree->setHeaderLabels(QStringList() << "Name" << "ID");
 	MainLayout->addWidget(EntitiesTree, 1, 0, 1, 3);
 
-	for (auto child : scene->GetRoot()->GetChildren())
-		AddEntity(child);
+	for (auto& child : scene->GetRoot()->GetChildren())
+		AddEntity(child.get());
 
 	QTreeWidget* potentialParents = EntitiesTree;
 
@@ -169,8 +169,8 @@ Dynarray<Entity*> EntityDialog::ReparentEntities(Scene* scene, Dynarray<Entity*>
 	MainLayout->addWidget(EntitiesTree, 3, 0, 1, 3);
 	PredefinedEntities = entities;
 
-	for (auto child : scene->GetRoot()->GetChildren())
-		AddEntity(child);
+	for (auto& child : scene->GetRoot()->GetChildren())
+		AddEntity(child.get());
 
 	// create and link buttons
 	CancelButton = new QPushButton(this);
@@ -247,8 +247,8 @@ void EntityDialog::AddEntity(Entity* entity)
 		if (e == entity)
 			item->setSelected(true);
 
-	for (auto child : entity->GetChildren())
-		AddEntity(child);
+	for (auto& child : entity->GetChildren())
+		AddEntity(child.get());
 }
 
 //------------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 #include "EnginePCH.hpp"
 
-using namespace Poly;
+#include "UI/ScreenSpaceTextComponent.hpp"
 
-RTTI_DEFINE_TYPE(Poly::ScreenSpaceTextComponent)
+RTTI_DEFINE_COMPONENT(::Poly::ScreenSpaceTextComponent)

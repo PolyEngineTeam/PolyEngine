@@ -54,10 +54,11 @@
 // STL
 // This is only legal place for STL includes
 #include <ostream>
+#include <sstream>
 #include <cmath>
+#include <bitset>
 #include <cassert>
 #include <cstring>
-#include <type_traits>
 #include <limits>
 #include <array>
 #include <cstddef>
@@ -66,6 +67,16 @@
 #include <iostream>
 #include <string>
 #include <functional>
+#include <type_traits>
+#include <map>
+#include <vector>
+#include <iomanip>
+#include <unordered_map>
+#include <initializer_list>
+#include <chrono>
+#include <typeindex>
+#include <typeinfo>
+#include <cstdio>
 
 // Custom type names
 using u8 = uint8_t;

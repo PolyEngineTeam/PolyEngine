@@ -8,7 +8,7 @@
 #include <QtWidgets/qpushbutton.h>
 #include <QtWidgets/qtreewidget.h>
 
-#include <ECS/World.hpp>
+#include <ECS/Scene.hpp>
 #include <ECS/Entity.hpp>
 
 using namespace Poly;

@@ -1,7 +1,6 @@
 #pragma once
 
-#include <chrono>
-#include <unordered_map>
+#include <Defines.hpp>
 #include "Time/TimeSystem.hpp"
 #include "Timer.hpp"
 #include "ECS/ComponentBase.hpp"
@@ -11,11 +10,6 @@ namespace Poly
 {
 	class ENGINE_DLLEXPORT TimeWorldComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(TimeWorldComponent, ComponentBase)
-		{
-			RTTI_PROPERTY_AUTONAME(Paused, RTTI::ePropertyFlag::NONE);
-		}
-
 		friend void TimeSystem::TimeUpdatePhase(Scene* world);
 		friend void TimeSystem::RegisterTimer(Scene* world, size_t id, bool isPausable, double multiplier);
 		friend double TimeSystem::GetTimerDeltaTime(Scene* world, size_t id);
@@ -24,7 +18,9 @@ namespace Poly
 		friend double TimeSystem::GetTimerElapsedTime(Scene* world, eEngineTimer timerType);
 		friend double TimeSystem::GetTimerMultiplier(Scene* world, size_t id);
 		friend double TimeSystem::GetTimerMultiplier(Scene* world, eEngineTimer timerType);
-	public:	
+	public:
+		RTTI_DECLARE_COMPONENT(::Poly::TimeWorldComponent) { NO_RTTI_PROPERTY(); }
+
 		TimeWorldComponent();
 
 		double GetSystemTime() const { return Timers.at((size_t) eEngineTimer::SYSTEM).GetTime(); };

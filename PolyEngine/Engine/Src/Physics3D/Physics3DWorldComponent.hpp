@@ -1,7 +1,6 @@
 #pragma once
 
-#include <map>
-
+#include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
 #include "Physics3D/Physics3DSystem.hpp"
 
@@ -34,11 +33,6 @@ namespace Poly
 	/// @see Rigidbody3DComponent
 	class ENGINE_DLLEXPORT Physics3DWorldComponent : public ComponentBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(Physics3DWorldComponent, ComponentBase)
-		{
-			NO_RTTI_PROPERTY();
-		}
-
 		friend void Physics3DSystem::Physics3DUpdatePhase(Scene* world);
 		friend void Physics3DSystem::RegisterComponent(Scene* world, Entity* entity, bool enablePhysics);
 		friend void Physics3DSystem::UnregisterComponent(Scene * world, Entity* entity);
@@ -47,6 +41,8 @@ namespace Poly
 		friend RaycastResult Physics3DSystem::AllHitsRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 		friend RaycastResult Physics3DSystem::ClosestHitRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::Physics3DWorldComponent) { NO_RTTI_PROPERTY(); }
+
 		Physics3DWorldComponent(Physics3DConfig config);
 		~Physics3DWorldComponent();
 

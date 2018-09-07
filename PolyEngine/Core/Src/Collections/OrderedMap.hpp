@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Defines.hpp"
 #include "BTreePrimitives.hpp"
 #include "Utils/Optional.hpp"
 
