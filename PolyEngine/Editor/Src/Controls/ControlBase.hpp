@@ -4,6 +4,7 @@
 #include <QtWidgets/qlabel.h>
 #include <QtWidgets/qgridlayout.h>
 
+#include "Managers/CommandsImpl.hpp"
 #include "Controls/RTTIRegisteredControl.hpp"
 
 template <typename T>
