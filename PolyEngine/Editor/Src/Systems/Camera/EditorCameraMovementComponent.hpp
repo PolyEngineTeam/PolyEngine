@@ -7,10 +7,7 @@ using namespace Poly;
 
 class EditorCameraMovementComponent : public ComponentBase
 {
-	RTTI_DECLARE_TYPE_DERIVED(EditorCameraMovementComponent, ComponentBase)
-	{
-		NO_RTTI_PROPERTY()
-	}
+	RTTI_DECLARE_COMPONENT(EditorCameraMovementComponent) { NO_RTTI_PROPERTY(); }
 
 	friend void EditorCameraMovementSystem::Update(Scene*);
 public:
