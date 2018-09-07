@@ -13,7 +13,7 @@ class Vector2Control : public ControlBase<T>
 
 public:
 	Vector2Control(QWidget* parent)
-		: ControlBase(parent)
+		: Base(parent)
 	{
 		Base::Layout->setColumnStretch(0, 1);
 		Base::Layout->setColumnStretch(1, 2);
