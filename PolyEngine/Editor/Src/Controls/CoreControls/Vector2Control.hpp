@@ -61,7 +61,7 @@ private:
 			
 		*Base::Object = val;
 			
-		emit ObjectUpdated(cmd);
+		emit Base::ObjectUpdated(cmd);
 	}
 
 	QLineEdit* Field[2];
