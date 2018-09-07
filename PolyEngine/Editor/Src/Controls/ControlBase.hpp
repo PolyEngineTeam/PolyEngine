@@ -4,13 +4,13 @@
 #include <QtWidgets/qlabel.h>
 #include <QtWidgets/qgridlayout.h>
 
-#include "Controls/IControlBase.hpp"
+#include "Controls/RTTIRegisteredControl.hpp"
 
 template <typename T>
-class ControlBase : public IControlBase
+class ControlBase : public RTTIRegisteredControl
 {
 public:
-	ControlBase(QWidget* parent) : IControlBase(parent) 
+	ControlBase(QWidget* parent) : RTTIRegisteredControl(parent)
 	{
 		// create lauout
 		Layout = new QGridLayout(this);

@@ -105,14 +105,14 @@ SectionContainer* RTTIInspectorWidget::AddChild(RTTIBase* obj, const RTTI::Prope
 //------------------------------------------------------------------------------
 void RTTIInspectorWidget::AddItem(QGridLayout* parent, int row, void* ptr, const RTTI::Property& prop)
 {
-	ExtremelyBaseControl* control;
+	RTTIRegisteredControl* control;
 
 	if (prop.CoreType == RTTI::eCorePropertyType::RAW_PTR && prop.Name == "Mesh")
 	{
 		control = new MeshResourceControl(this);
 	}
 	else
-		control = ExtremelyBaseControl::CreateControl(this, prop.CoreType);
+		control = RTTIRegisteredControl::CreateControl(this, prop.CoreType);
 
 	control->SetObject(ptr);
 	control->SetName(prop.Name);
@@ -120,7 +120,7 @@ void RTTIInspectorWidget::AddItem(QGridLayout* parent, int row, void* ptr, const
 
 	parent->addWidget(control, row, 0, 1, 2);
 
-	connect(control, &ExtremelyBaseControl::ObjectUpdated, this, &RTTIInspectorWidget::ControlObjectUpdatedSlot);
+	connect(control, &RTTIRegisteredControl::ObjectUpdated, this, &RTTIInspectorWidget::ControlObjectUpdatedSlot);
 
 	Fields.PushBack(control);
 }

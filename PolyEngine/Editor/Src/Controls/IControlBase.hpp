@@ -6,17 +6,13 @@
 #include <RTTI/RTTI.hpp>
 #include <Utils/Logger.hpp>
 
-#include "Controls/ExtremelyBaseControl.hpp"
-
 using namespace Poly;
 
 // This is base class for all controls for core types such as int, string or vector.
 // @see Poly::RTTI::eCorePropertyType
-class IControlBase : public ExtremelyBaseControl
+class IControlBase
 {
 public:
-	IControlBase(QWidget* parent) : ExtremelyBaseControl(parent) {}
-
 	// Assigns given object to control and updates this control.
 	virtual void SetObject(void* ptr) = 0;
 

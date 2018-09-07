@@ -50,7 +50,7 @@ UNSILENCE_MSVC_WARNING()
 #include "Widgets/Inspectors/RTTIInspectorWidget.hpp"
 
 // controls
-#include "Controls/ExtremelyBaseControl.hpp"
+#include "Controls/RTTIRegisteredControl.hpp"
 #include "Controls/IControlBase.hpp"
 #include "Controls/ControlBase.hpp"
 

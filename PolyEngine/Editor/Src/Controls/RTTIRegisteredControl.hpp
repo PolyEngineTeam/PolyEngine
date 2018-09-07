@@ -4,13 +4,15 @@
 
 #include <Core.hpp>
 
-class ExtremelyBaseControl;
+#include "Controls/IControlBase.hpp"
+
+class RTTIRegisteredControl;
 class Command;
 
 namespace Impl
 {
 	// @TODO(squares): use using
-	typedef ExtremelyBaseControl* (*ControlCreatorPtr)(QWidget* parent);
+	typedef RTTIRegisteredControl* (*ControlCreatorPtr)(QWidget* parent);
 
 	// ControlCreator stores pointer to function that creates and returns pointer to 
 	// an object of particular control. This method is called with operator().
@@ -29,7 +31,7 @@ namespace Impl
 		ControlCreator(ControlCreatorPtr ptr) : Ptr(ptr) {}
 
 		// @param parent - parent for newly created control.
-		ExtremelyBaseControl* operator()(QWidget* parent) { return Ptr(parent); };
+		RTTIRegisteredControl* operator()(QWidget* parent) { return Ptr(parent); };
 
 		// We need to override placement new because we want to add this object to array so we can easily 
 		// map from type enum to control creators but firstly this array must be initialized and all
@@ -45,21 +47,15 @@ namespace Impl
 	extern ControlCreator* CoreTypeToControlMap;
 }
 
-class ExtremelyBaseControl : public QWidget
+class RTTIRegisteredControl : public QWidget, public IControlBase
 {
 	Q_OBJECT
 
 public:
-	ExtremelyBaseControl(QWidget* parent) : QWidget(parent) {}
-	
-	// These two functions are here only because wee need to call these in RTTIViewer using ExtremelyBaseControl pointers.
-	virtual void SetObject(void* ptr) = 0;
-	virtual void SetName(::Poly::String name) = 0;
-	virtual void SetType(::Poly::String type) = 0;
-	virtual void UpdateControl() = 0;
+	RTTIRegisteredControl(QWidget* parent) : QWidget(parent) {}
 
 	// Returns ptr to newly created proper control for given core type.
-	static ExtremelyBaseControl* CreateControl(QWidget* parent, ::Poly::RTTI::eCorePropertyType type)
+	static RTTIRegisteredControl* CreateControl(QWidget* parent, ::Poly::RTTI::eCorePropertyType type)
 	{
 		return ::Impl::CoreTypeToControlMap[static_cast<int>(type)](parent);
 	}
@@ -87,7 +83,7 @@ signals:
 	{ \
 		ControlCreator* CONTROL##Creator##NAME = \
 			new(&::Impl::CoreTypeToControlMap[static_cast<int>(CORE_TYPE)]) \
-			ControlCreator([](QWidget* parent) -> ExtremelyBaseControl* { return new CONTROL(parent); }); \
+			ControlCreator([](QWidget* parent) -> RTTIRegisteredControl* { return new CONTROL(parent); }); \
 	}
 
 #define ASSIGN_PARAMETRIZED_CONTROL(CONTROL, PARAM, CORE_TYPE, NAME) \
@@ -95,5 +91,5 @@ signals:
 	{ \
 		ControlCreator* CONTROL##Creator##NAME = \
 			new(&::Impl::CoreTypeToControlMap[static_cast<int>(CORE_TYPE)]) \
-			ControlCreator([](QWidget* parent) -> ExtremelyBaseControl* { return new CONTROL<PARAM>(parent); }); \
+			ControlCreator([](QWidget* parent) -> RTTIRegisteredControl* { return new CONTROL<PARAM>(parent); }); \
 	}
