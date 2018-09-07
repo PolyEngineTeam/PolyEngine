@@ -14,7 +14,7 @@ public:
 		: ControlBase<T>(parent)
 	{
 		Field = new QLineEdit(this);
-		connect(Field, &QLineEdit::editingFinished, this, &NumberControl<T>::UpdateObject);
+		Base::connect(Field, &QLineEdit::editingFinished, this, &NumberControl<T>::UpdateObject);
 
 		Base::Layout->addWidget(Field, 0, 1);
 	}

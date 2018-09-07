@@ -23,7 +23,7 @@ public:
 		{
 			Field[x] = new QLineEdit(this);
 			Base::Layout->addWidget(Field[x], 0, x + 1);
-			connect(Field[x], &QLineEdit::editingFinished, this, &Vector2Control::UpdateObject);
+			Base::connect(Field[x], &QLineEdit::editingFinished, this, &Vector2Control::UpdateObject);
 		}
 	}
 
