@@ -7,6 +7,8 @@ class InspectorManager;
 
 using namespace Poly;
 
+template <typename T> class ControlBase;
+
 //------------------------------------------------------------------------------
 class Command
 {
