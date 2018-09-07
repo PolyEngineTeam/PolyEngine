@@ -14,7 +14,7 @@ public:
 		Field = new QLineEdit(this);
 		connect(Field, &QLineEdit::editingFinished, this, &NumberControl<T>::UpdateObject);
 
-		Layout->addWidget(Field, 0, 1);
+		ControlBase<T>::Layout->addWidget(Field, 0, 1);
 	}
 
 	void Reset() override
