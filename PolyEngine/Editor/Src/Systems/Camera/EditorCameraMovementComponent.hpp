@@ -7,8 +7,6 @@ using namespace Poly;
 
 class EditorCameraMovementComponent : public ComponentBase
 {
-	RTTI_DECLARE_COMPONENT(EditorCameraMovementComponent) { NO_RTTI_PROPERTY(); }
-
 	friend void EditorCameraMovementSystem::Update(Scene*);
 public:
 	EditorCameraMovementComponent(float movementSpeed = 1.0f, float rotationSpeed = 1.0f, float wheelSensitivity = 1.0f);
@@ -25,5 +23,3 @@ private:
 	float RotationSpeed = 1.0f;
 	float WheelSensitivity = 1.0f;
 };
-
-REGISTER_COMPONENT(ComponentsIDGroup, EditorCameraMovementComponent)
