@@ -608,9 +608,9 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const DirectionalLightCom
 {
 	// TODO: calc bounding box and then determine projection size
 	// make sure contains all the objects
-	float near_plane = -4096.0f, far_plane = 4096.0f;
+	float near_plane = -1024.0f, far_plane = 1024.0f;
 	Matrix dirLightProjection;
-	dirLightProjection.SetOrthographic(-4096.0f, 4096.0f, -4096.0f, 4096.0f, near_plane, far_plane);
+	dirLightProjection.SetOrthographic(-1024.0f, 1024.0f, -1024.0f, 1024.0f, near_plane, far_plane);
 	
 	Matrix dirLightFromWorld = dirLightCmp->GetTransform().GetWorldFromModel().GetInversed();
 	return dirLightFromWorld * dirLightProjection;
