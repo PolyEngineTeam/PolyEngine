@@ -15,7 +15,7 @@ namespace Poly
 		template<typename U>
 		size_t ComponentIDGenerator<T>::GetComponentTypeID() noexcept
 		{
-			static const size_t value = ComponentIDGenerator<T>::GenerateID();
+			static const size_t value = GenerateID();
 			return value;
 		}
 
