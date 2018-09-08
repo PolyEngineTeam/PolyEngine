@@ -271,41 +271,29 @@ namespace Poly {
 	}
 }
 
-//NOTE(vuko): apparently defining specializations in a namespace from global/other namespace is illegal C++ and GCC complains
-//Unfortunately being compliant causes problems when using the macro in a namespace. Use _IN_POLY variant then.
-#define REGISTER_ENUM_NAMES_IN_POLY(Type, ...)                                            			\
-	namespace Impl 																					\
-	{																								\
-		template<> struct EnumInfo<Type> : public EnumInfoBase														\
-		{                                                    										\
-			STATIC_ASSERTE(std::is_enum<Type>::value, "Enum type is required");\
-			using ValueType = typename std::underlying_type<Type>::type;\
-			STATIC_ASSERTE(std::is_integral<ValueType>::value, "Only enums with integral underlying types are supported");\
-			STATIC_ASSERTE(std::is_signed<ValueType>::value, "Only enums with signed underlying types are supported");\
-			STATIC_ASSERTE(sizeof(ValueType) <= sizeof(i64), "Only enums with max 64 bit underlying types are supported");\
-			static EnumInfo<Type>& Get() { static EnumInfo<Type> instance({__VA_ARGS__}); return instance; } 		\
-			EnumInfo(std::initializer_list<const char*> namesList)	\
-			{\
-				int idx = 0;	\
-				for(const char* name : namesList)	\
-				{	\
-					ValueToNameMap[(Type)idx] = name;\
-					NameToValueMap[String(name)] = (Type)idx;\
-					++idx;\
-				}	\
-			}\
-			const char* GetEnumName(i64 value) const override { return ValueToNameMap[(Type)value]; }	\
-			i64 GetEnumValue(const String& name) const override { return (i64)NameToValueMap.at(name); }	\
-			size_t GetUnderlyingValueSize() const override { return sizeof(Type); }\
-			private: \
-				EnumArray<const char*, Type> ValueToNameMap;\
-				std::map<String, Type> NameToValueMap;\
-		};                                                                                    		\
-	} /* namespace Impl */			
-
-#define REGISTER_ENUM_NAMES(Type, ...)                                                    			\
-	namespace Poly																					\
-	{																								\
-		REGISTER_ENUM_NAMES_IN_POLY(Type, __VA_ARGS__)												\
-	} //namespace Poly
-																																									
+#define REGISTER_ENUM_NAMES(Type, ...)                                            			\
+template<> struct ::Poly::Impl::EnumInfo<Type> : public EnumInfoBase														\
+{                                                    										\
+	STATIC_ASSERTE(std::is_enum<Type>::value, "Enum type is required");\
+	using ValueType = typename std::underlying_type<Type>::type;\
+	STATIC_ASSERTE(std::is_integral<ValueType>::value, "Only enums with integral underlying types are supported");\
+	STATIC_ASSERTE(std::is_signed<ValueType>::value, "Only enums with signed underlying types are supported");\
+	STATIC_ASSERTE(sizeof(ValueType) <= sizeof(i64), "Only enums with max 64 bit underlying types are supported");\
+	static EnumInfo<Type>& Get() { static EnumInfo<Type> instance({__VA_ARGS__}); return instance; } 		\
+	EnumInfo(std::initializer_list<const char*> namesList)	\
+	{\
+		int idx = 0;	\
+		for(const char* name : namesList)	\
+		{	\
+			ValueToNameMap[(Type)idx] = name;\
+			NameToValueMap[String(name)] = (Type)idx;\
+			++idx;\
+		}	\
+	}\
+	const char* GetEnumName(i64 value) const override { return ValueToNameMap[(Type)value]; }	\
+	i64 GetEnumValue(const String& name) const override { return (i64)NameToValueMap.at(name); }	\
+	size_t GetUnderlyingValueSize() const override { return sizeof(Type); }\
+	private: \
+		EnumArray<const char*, Type> ValueToNameMap;\
+		std::map<String, Type> NameToValueMap;\
+};
