@@ -3,11 +3,9 @@
 #include "ECS/ComponentBase.hpp"
 #include "Systems/Camera/EditorCameraMovementSystem.hpp"
 
-using namespace Poly;
-
 class EditorCameraMovementComponent : public ComponentBase
 {
-	friend void EditorCameraMovementSystem::Update(Scene*);
+	friend void EditorCameraMovementSystem::Update(Poly::Scene*);
 public:
 	RTTI_DECLARE_COMPONENT(EditorCameraMovementComponent) { NO_RTTI_PROPERTY(); }
 

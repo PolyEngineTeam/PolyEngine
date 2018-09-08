@@ -5,20 +5,17 @@
 namespace Poly
 {
 	class Scene;
-	class EntityTransform;
 }
-	
-using namespace Poly;
 
 namespace EditorCameraMovementSystem
 {
-	void Update(Scene* scene);
+	void Update(Poly::Scene* scene);
 
-	Vector GetLocalForward(const EntityTransform& transform);
-	Vector GetLocalRight(const EntityTransform& transform);
-	Vector GetLocalUp(const EntityTransform& transform);
+	Vector GetLocalForward(const Poly::EntityTransform& transform);
+	Vector GetLocalRight(const Poly::EntityTransform& transform);
+	Vector GetLocalUp(const Poly::EntityTransform& transform);
 
-	Vector GetGlobalForward(const EntityTransform& transform);
-	Vector GetGlobalRight(const EntityTransform& transform);
-	Vector GetGlobalUp(const EntityTransform& transform);
+	Vector GetGlobalForward(const Poly::EntityTransform& transform);
+	Vector GetGlobalRight(const Poly::EntityTransform& transform);
+	Vector GetGlobalUp(const Poly::EntityTransform& transform);
 }
