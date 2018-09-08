@@ -9,6 +9,8 @@ class EditorCameraMovementComponent : public ComponentBase
 {
 	friend void EditorCameraMovementSystem::Update(Scene*);
 public:
+	RTTI_DECLARE_COMPONENT(EditorCameraMovementComponent) { NO_RTTI_PROPERTY(); }
+
 	EditorCameraMovementComponent(float movementSpeed = 1.0f, float rotationSpeed = 1.0f, float wheelSensitivity = 1.0f);
 
 	float GetMovementSpeed() const { return MovementSpeed; }
