@@ -272,8 +272,9 @@ namespace Poly {
 }
 
 #if defined(__GNUC__)
+typedef ::Poly PolyHidden;
 #define REGISTER_ENUM_NAMES(Type, ...)                                            			\
-template<> struct < ::Poly >::Impl::EnumInfo<Type> : public EnumInfoBase														\
+template<> struct PolyHidden::Impl::EnumInfo<Type> : public EnumInfoBase														\
 {                                                    										\
 	STATIC_ASSERTE(std::is_enum<Type>::value, "Enum type is required");\
 	using ValueType = typename std::underlying_type<Type>::type;\
