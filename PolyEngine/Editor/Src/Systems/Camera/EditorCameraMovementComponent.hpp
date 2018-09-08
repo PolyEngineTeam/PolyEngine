@@ -25,3 +25,5 @@ private:
 	float RotationSpeed = 1.0f;
 	float WheelSensitivity = 1.0f;
 };
+
+REGISTER_COMPONENT(ComponentsIDGroup, EditorCameraMovementComponent)
