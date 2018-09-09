@@ -5,6 +5,7 @@
 #include "Rendering/IRenderingDevice.hpp"
 #include "Audio/OpenALDevice.hpp"
 #include "Input/InputSystem.hpp"
+#include "ECS/ISystem.hpp"
 
 namespace Poly
 {
@@ -50,6 +51,8 @@ namespace Poly
 		/// <summary>Registers a PhaseUpdateFunction to be executed in the update.</summary>
 		/// <param name="phaseFunction"/>
 		void RegisterGameUpdatePhase(const PhaseUpdateFunction& phaseFunction) { RegisterUpdatePhase(phaseFunction, eUpdatePhaseOrder::UPDATE); }
+
+		void RegisterGameUpdatePhase(ISystem* system) { RegisterUpdatePhase(system, eUpdatePhaseOrder::UPDATE); }
 
 		/// <summary>Executes update phases functions that were registered in RegisterUpdatePhase().
 		/// Functions are executrd with given order and with given update phase order.</summary>
@@ -155,8 +158,8 @@ namespace Poly
 		inline void UpdatePhases(eUpdatePhaseOrder order)
 		{
 			HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "_COUNT enum value passed to UpdatePhases(), which is an invalid value");
-			for (auto& update : GameUpdatePhases[static_cast<int>(order)])
-				update(GetActiveScene());
+			for (auto&  update : GameUpdatePhases[static_cast<int>(order)])
+				update->OnUpdate(GetActiveScene());
 		}
 
 		/// Registers a PhaseUpdateFunction to be executed in the update.
@@ -164,7 +167,9 @@ namespace Poly
 		/// @param phaseFunction - void function(Scene*)
 		/// @param order - enum eUpdatePhaseOrder value
 		/// @see eUpdatePhaseOrder
-		void RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order);
+		void RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order); //add for Isystems
+
+		void RegisterUpdatePhase(ISystem* system, eUpdatePhaseOrder order);
 
 		std::unique_ptr<Scene> ActiveScene;
 		Scene* SerializedScene = nullptr;
@@ -173,7 +178,7 @@ namespace Poly
 		OpenALDevice AudioDevice;
 		InputQueue InputEventsQueue;
 
-		Dynarray<PhaseUpdateFunction> GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];
+		Dynarray<ISystem*> GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)]; //change to array of uniqueptrs
 
 		bool QuitRequested = false; //stop the game
 		bool MouseCaptureEnabled = false;

@@ -4,6 +4,7 @@
 #include "Configs/AssetsPathConfig.hpp"
 #include "Configs/DebugConfig.hpp"
 #include "ECS/DeferredTaskSystem.hpp"
+#include "ECS/LambdaSystem.hpp"
 #include "Input/InputWorldComponent.hpp"
 #include "Movement/FreeFloatMovementComponent.hpp"
 #include "AI/PathfindingSystem.hpp"
@@ -99,9 +100,19 @@ Engine::~Engine()
 void Engine::RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order)
 {
 	HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "_COUNT enum value passed to RegisterUpdatePhase(), which is an invalid value");
-	Dynarray<PhaseUpdateFunction>& UpdatePhases = GameUpdatePhases[static_cast<int>(order)];
-	UpdatePhases.PushBack(phaseFunction);
+	Dynarray<ISystem*>& UpdatePhases = GameUpdatePhases[static_cast<int>(order)];
+	std::unique_ptr<ISystem> system = std::make_unique<ISystem>(LambdaSystem(phaseFunction));
+	UpdatePhases.PushBack(system.get());
 }
+
+//------------------------------------------------------------------------------
+void Engine::RegisterUpdatePhase(ISystem* system, eUpdatePhaseOrder order)
+{
+	HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "_COUNT enum value passed to RegisterUpdatePhase(), which is an invalid value");
+	Dynarray<ISystem*>& UpdatePhases = GameUpdatePhases[static_cast<int>(order)];
+	UpdatePhases.PushBack(system);
+}
+
 
 //------------------------------------------------------------------------------
 void Engine::Update()
