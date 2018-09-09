@@ -21,11 +21,11 @@ void Poly::CameraComponent::UpdateProjection()
 {
 	if (IsPerspective)
 	{
-		ScreenFromView.SetPerspective(Fov, Aspect, Near, Far);
+		ClipFromView.SetPerspective(Fov, Aspect, Near, Far);
 		CameraFrustum.Value().Update(Fov, Aspect, Near, Far);
 	}
 	else
-		ScreenFromView.SetOrthographic(Top, Bottom, Left, Right, Near, Far);
+		ClipFromView.SetOrthographic(Top, Bottom, Left, Right, Near, Far);
 }
 
 bool Poly::CameraComponent::IsVisibleToCamera(const Entity* ent) const

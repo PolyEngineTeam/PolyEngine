@@ -1314,7 +1314,13 @@ void TiledForwardRenderer::PostGamma(const SceneView& sceneView)
 
 void TiledForwardRenderer::EditorDebug(const SceneView& sceneView)
 {
+	// gConsole.LogInfo("TiledForwardRenderer::EditorDebug");
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	
+	ScreenSize screenSize = RDI->GetScreenSize();
+	glViewport(0, 0, screenSize.Width, screenSize.Height);
+	
 	glDisable(GL_DEPTH_TEST);
 
 	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
