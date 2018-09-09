@@ -1,7 +1,7 @@
 #pragma once
 
-#include "CustomSDLWindow.hpp"
-#include "PolyWidget.hpp"
+#include <CustomSDLWindow.hpp>
+#include <PolyWidget.hpp>
 
 class ViewportWidget : public PolyWidget
 {

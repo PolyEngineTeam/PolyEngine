@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "Utils/EnumUtils.hpp"
-#include "Utils/OutputStream.hpp"
-#include "Collections/StringBuilder.hpp"
+#include <Defines.hpp>
+#include <Utils/EnumUtils.hpp>
+#include <Utils/OutputStream.hpp>
+#include <Collections/StringBuilder.hpp>
 
 namespace Poly 
 {

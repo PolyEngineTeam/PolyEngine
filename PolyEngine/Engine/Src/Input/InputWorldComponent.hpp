@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "ECS/ComponentBase.hpp"
-#include "Input/KeyBindings.hpp"
-#include "Input/InputSystem.hpp"
+#include <ECS/ComponentBase.hpp>
+#include <Input/KeyBindings.hpp>
+#include <Input/InputSystem.hpp>
 
 namespace Poly
 {

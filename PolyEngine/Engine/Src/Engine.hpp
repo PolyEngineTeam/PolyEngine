@@ -2,11 +2,11 @@
 
 #include <Defines.hpp>
 #include <Collections/Dynarray.hpp>
-#include <Utils/EnumUtils.hpp>
-#include "Rendering/IRenderingDevice.hpp"
-#include "Audio/OpenALDevice.hpp"
-#include "Input/InputSystem.hpp"
+#include <Rendering/IRenderingDevice.hpp>
+#include <Audio/OpenALDevice.hpp>
+#include <Input/InputSystem.hpp>
 #include <ECS/ISystem.hpp>
+#include <Utils/EnumUtils.hpp>
 
 namespace Poly
 {

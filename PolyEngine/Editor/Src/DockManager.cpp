@@ -1,5 +1,5 @@
-#include "DockManager.hpp"
-#include "PolyEditorPCH.hpp"
+#include <DockManager.hpp>
+#include <PolyEditorPCH.hpp>
 
 void DockManager::WidgetCatchEvent(PolyWidget* catched)
 {

@@ -1,4 +1,4 @@
-#include "ComponentIDGenerator.hpp"
+#include <ECS/ComponentIDGenerator.hpp>
 
 namespace Poly
 {

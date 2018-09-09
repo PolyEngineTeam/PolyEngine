@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "Pipeline/RenderingPassBase.hpp"
-#include "Proxy/GLShaderProgram.hpp"
+#include <Pipeline/RenderingPassBase.hpp>
+#include <Proxy/GLShaderProgram.hpp>
 
 namespace Poly
 {
