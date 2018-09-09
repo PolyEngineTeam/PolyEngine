@@ -18,7 +18,7 @@ namespace Poly {
 
 	//------------------------------------------------------------------------------
 	SILENCE_MSVC_WARNING(4275, "Exporting stl may cause incompatibility. We use same CRT so it's ok.")
-	class ENGINE_DLLEXPORT FileIOException : public BaseObject<>, public std::exception
+	class FileIOException : public BaseObject<>, public std::exception
 	{
 	public:
 		FileIOException(const String& msg) : Msg(msg) {}
