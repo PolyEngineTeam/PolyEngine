@@ -148,6 +148,8 @@ using uint = unsigned int;
 	#define DEVICE_DLLEXPORT
 #endif
 
+#define DECLARE_STD_HASHER(Type) namespace std { template <> struct hash<Type> { std::size_t operator()(const Type& obj) const { return obj.GetHash(); } }; }
+
 #if defined(_WIN32)
 #define POLY_STDCALL __stdcall
 #else
