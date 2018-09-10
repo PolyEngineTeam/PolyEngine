@@ -5,6 +5,7 @@ import fileinput
 import json
 import subprocess
 from enum import Enum
+from operator import attrgetter
 import xml.etree.ElementTree as ET
 
 
@@ -20,9 +21,9 @@ class ActionType(Enum):
 class Tag:
     def __init__(self, version_string):
         splitted = version_string.split('.')
-        self.major = splitted[0]
-        self.minor = splitted[1]
-        # self.fix = splitted[2]
+        self.major = int(splitted[0])
+        self.minor = int(splitted[1])
+        self.fix = int(splitted[2])
 
 
 # Custom action for project creation
@@ -290,6 +291,15 @@ def update_project(path, engine_path, checkout_required):
     update_config_files(path, name, engine_path, False)
 
     run_cmake(path, 'Build', name)
+
+
+def get_latest_tag_with_major(tags, current_tag):
+    major = current_tag.major
+    tags = [tag for tag in tags if tag.major == major]
+    minor = max(tags, key=attrgetter('minor')).minor
+    tags = [tag for tag in tags if tag.minor == minor]
+    fix = max(tags, key=attrgetter('fix')).fix
+    return Tag('{}.{}.{}'.format(major, minor, fixx))
 
 
 def get_tags(engine_path):
