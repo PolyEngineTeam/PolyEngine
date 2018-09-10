@@ -8,6 +8,9 @@ from enum import Enum
 from operator import attrgetter
 import xml.etree.ElementTree as ET
 
+# FIXME should be 'master'
+DEFAULT_BRANCH = 'dev'
+
 
 class ActionType(Enum):
     CREATE = 'Create',
@@ -20,10 +23,16 @@ class ActionType(Enum):
 
 class Tag:
     def __init__(self, version_string):
-        splitted = version_string.split('.')
-        self.major = int(splitted[0])
-        self.minor = int(splitted[1])
-        self.fix = int(splitted[2])
+        try:
+            splitted = version_string.split('.')
+            self.major = int(splitted[0])
+            self.minor = int(splitted[1])
+            self.fix = int(splitted[2])
+        except ValueError:
+            raise RuntimeError('Invalid tag found in repository: {}'.format(version_string))
+
+    def __str__(self):
+        return '{}.{}.{}'.format(self.major, self.minor, self.fix)
 
 
 # Custom action for project creation
@@ -274,9 +283,10 @@ def create_project(name, path, engine_path):
 def update_project(path, engine_path, checkout_required):
     project_file = read_project_file(path)
     if checkout_required:
-        tag = project_file.get('EngineMajorVersion', None)
-        print(project_file)
-        if tag is not None:
+        major_version = project_file.get('EngineMajorVersion', None)
+        if major_version is not None:
+            tags = get_tags(engine_path)
+            tag = get_latest_tag_with_major(tags, major_version)
             checkout(engine_path, tag)
         else:
             raise RuntimeError("There is no 'EngineMajorVersion' defined in game project file")
@@ -293,20 +303,20 @@ def update_project(path, engine_path, checkout_required):
     run_cmake(path, 'Build', name)
 
 
-def get_latest_tag_with_major(tags, current_tag):
-    major = current_tag.major
+def get_latest_tag_with_major(tags, major):
     tags = [tag for tag in tags if tag.major == major]
     minor = max(tags, key=attrgetter('minor')).minor
     tags = [tag for tag in tags if tag.minor == minor]
     fix = max(tags, key=attrgetter('fix')).fix
-    return Tag('{}.{}.{}'.format(major, minor, fixx))
+    return Tag('{}.{}.{}'.format(major, minor, fix))
 
 
 def get_tags(engine_path):
-    checkout(engine_path, 'dev')
-    tags_raw = subprocess.check_output('cd {} && git -c pager.tag=false tag'.format(engine_path), shell=True)
+    checkout(engine_path, DEFAULT_BRANCH)
+    tags_raw = subprocess.check_output('cd {} && git -c pager.tag=false tag'.format(engine_path), shell=True)\
+        .decode('utf-8')
     print('Available engine versions: {}'.format(tags_raw))
-    return [Tag(tag_raw.decode('utf-8').strip()) for tag_raw in tags_raw.split('\n')]
+    return [Tag(tag_raw.strip()) for tag_raw in tags_raw.split('\n') if tag_raw]
 
 
 def bump_version(path, engine_path):
