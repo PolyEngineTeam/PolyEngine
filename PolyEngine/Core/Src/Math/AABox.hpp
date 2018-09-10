@@ -74,6 +74,8 @@ namespace Poly {
 
 		AABox& Expand(const AABox& rhs);
 
+		AABox& Expand(const Vector& rhs);
+
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const AABox& color);
 	private:
 		Vector Pos;

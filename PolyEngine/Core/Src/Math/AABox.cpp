@@ -98,6 +98,15 @@ Poly::AABox& Poly::AABox::Expand(const AABox& rhs)
 	return *this;
 }
 
+Poly::AABox& Poly::AABox::Expand(const Vector& rhs)
+{
+	Vector min = Vector::Min(GetMin(), rhs);
+	Vector max = Vector::Max(GetMax(), rhs);
+	Pos = min;
+	Size = max - min;
+	return *this;
+}
+
 //------------------------------------------------------------------------------
 namespace Poly {
 	std::ostream & operator<<(std::ostream& stream, const AABox& rect)

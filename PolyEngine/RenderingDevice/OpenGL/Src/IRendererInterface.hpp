@@ -18,13 +18,15 @@ namespace Poly {
 
 	struct SceneView : public BaseObject<> {
 		SceneView(Scene* w, const Viewport& v)
-			: WorldData(w), ViewportData(v), Rect(v.GetRect()), CameraCmp(v.GetCamera())
+			: SceneData(w), ViewportData(v), Rect(v.GetRect()), CameraCmp(v.GetCamera())
 		{};
 
-		Scene* WorldData;
+		Scene* SceneData;
 		const Viewport& ViewportData;
 		const AARect& Rect;
 		const CameraComponent* CameraCmp;
+
+		AABox ShadowAABB;
 		
 		Dynarray<const MeshRenderingComponent*> DirShadowOpaqueQueue;
 		Dynarray<const MeshRenderingComponent*> OpaqueQueue;

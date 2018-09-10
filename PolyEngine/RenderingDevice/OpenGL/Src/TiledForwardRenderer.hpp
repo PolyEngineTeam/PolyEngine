@@ -161,7 +161,7 @@ namespace Poly {
 		
 		void RenderShadowMap(const SceneView& sceneView);
 
-		Matrix GetProjectionForShadowMap(const DirectionalLightComponent* dirLightCmp) const;
+		Matrix GetProjectionForShadowMap(const SceneView& sceneView) const;
 
 		void RenderEquiCube(const SceneView& sceneView);
 

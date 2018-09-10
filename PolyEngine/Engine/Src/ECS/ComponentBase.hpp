@@ -65,7 +65,7 @@ namespace Poly {
 		const EnumFlags<eComponentBaseFlags>& GetFlags() { return Flags; }
 		bool CheckFlags(const EnumFlags<eComponentBaseFlags>& rhs) const { return (Flags & rhs) == rhs; }
 
-		virtual Optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) { return {}; }
+		virtual Optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) const { return {}; }
 
 	private:
 		Entity* Owner = nullptr;

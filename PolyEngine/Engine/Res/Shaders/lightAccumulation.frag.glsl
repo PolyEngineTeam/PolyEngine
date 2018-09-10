@@ -85,6 +85,44 @@ layout(location = 1) out vec4 oNormal;
 
 const float PI = 3.14159265359;
 
+// 64 samples of poisson disk at:
+// https://www.geeks3d.com/20100628/3d-programming-ready-to-use-64-sample-poisson-disc/
+// 32 samples produce similar results on shadow PCF
+uniform vec2 poissonDisk[32] = vec2[] (
+	vec2(-0.613392,  0.617481),
+	vec2( 0.170019, -0.040254),
+	vec2(-0.299417,  0.791925),
+	vec2( 0.645680,  0.493210),
+	vec2(-0.651784,  0.717887),
+	vec2( 0.421003,  0.027070),
+	vec2(-0.817194, -0.271096),
+	vec2(-0.705374, -0.668203),
+	vec2( 0.977050, -0.108615),
+	vec2( 0.063326,  0.142369),
+	vec2( 0.203528,  0.214331),
+	vec2(-0.667531,  0.326090),
+	vec2(-0.098422, -0.295755),
+	vec2(-0.885922,  0.215369),
+	vec2( 0.566637,  0.605213),
+	vec2( 0.039766, -0.396100),
+	vec2( 0.751946,  0.453352),
+	vec2( 0.078707, -0.715323),
+	vec2(-0.075838, -0.529344),
+	vec2( 0.724479, -0.580798),
+	vec2( 0.222999, -0.215125),
+	vec2(-0.467574, -0.405438),
+	vec2(-0.248268, -0.814753),
+	vec2( 0.354411, -0.887570),
+	vec2( 0.175817,  0.382366),
+	vec2( 0.487472, -0.063082),
+	vec2(-0.084078,  0.898312),
+	vec2( 0.488876, -0.783441),
+	vec2( 0.470016,  0.217933),
+	vec2(-0.696890, -0.549791),
+	vec2(-0.149693,  0.605762),
+	vec2( 0.034211,  0.979980)
+);
+
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
 	float a = roughness*roughness;
@@ -130,6 +168,12 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.001, 1.0), 5.0); // clamp to prevent NaNs
 }
 
+float hash(vec4 seed)
+{
+    float dot_product = dot(seed, vec4(12.9898, 78.233, 45.164, 94.673));
+    return fract(sin(dot_product) * 43758.5453);
+}
+
 float calcShadow(vec4 fragPosInDirLight, float NdotL)
 {
 	// perform perspective divide
@@ -150,16 +194,12 @@ float calcShadow(vec4 fragPosInDirLight, float NdotL)
 	
     float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(uDirShadowMap, 0);
-    for (int x = -1; x <= 1; ++x)
+    for (int i = 0; i <= 5; ++i)
     {
-        for (int y = -1; y <= 1; ++y)
-        {
-            float pcfDepth = texture(uDirShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
-            shadow += currentDepth - bias > pcfDepth ? 0.0 : 1.0;
-        }
+        int index = int(32.0 * hash(vec4(gl_FragCoord.xyy, i))) % 32;
+        float pcfDepth = texture(uDirShadowMap, projCoords.xy + poissonDisk[index] * texelSize).r;
+        shadow += currentDepth - bias > pcfDepth ? 0.0 : 0.2;
     }
-    shadow /= 9.0;
-    
 
     return shadow;
 }
