@@ -17,6 +17,14 @@ class ActionType(Enum):
         return self.name
 
 
+class Tag:
+    def __init__(self, version_string):
+        splitted = version_string.split('.')
+        self.major = splitted[0]
+        self.minor = splitted[1]
+        # self.fix = splitted[2]
+
+
 # Custom action for project creation
 class CreateProjectAction(argparse.Action):
     def __init__(self, option_strings, dest, nargs, **kwargs):
@@ -170,10 +178,10 @@ def run_cmake(path, build_dir_name, proj_name):
         patch_usr_proj(path, proj_name)
 
 
-def create_project_file(path, proj_name, tag=None):
+def create_project_file(path, proj_name, tag):
     data = {
         'ProjectName': proj_name,
-        'EngineVersion': tag
+        'EngineMajorVersion': tag.major
     }
     with open(os.sep.join([path, proj_name + '.proj.json']), 'w') as outfile:
         json.dump(data, outfile)
@@ -239,8 +247,8 @@ def create_fast_update_script(engine_path, proj_path):
 def create_project(name, path, engine_path):
     print('Creating project', name, 'in', path, 'with engine at', engine_path)
 
-    tag = get_latest_tag(engine_path)
-    checkout(engine_path, tag)
+    tag = get_current_tag(engine_path)
+    checkout(engine_path, tag) #or maybe checkout latest major version instead?
 
     if os.path.exists(path):
         raise Exception('Path', path, 'already exists. Cannot create project there!')
@@ -265,11 +273,12 @@ def create_project(name, path, engine_path):
 def update_project(path, engine_path, checkout_required):
     project_file = read_project_file(path)
     if checkout_required:
-        tag = project_file.get('EngineVersion', None)
+        tag = project_file.get('EngineMajorVersion', None)
+        print(project_file)
         if tag is not None:
             checkout(engine_path, tag)
         else:
-            raise RuntimeError("There is no 'EngineVersion' defined in game project file")
+            raise RuntimeError("There is no 'EngineMajorVersion' defined in game project file")
     print('Updating project at', path, 'with engine at', engine_path)
 
     if not os.path.exists(path):
@@ -283,19 +292,26 @@ def update_project(path, engine_path, checkout_required):
     run_cmake(path, 'Build', name)
 
 
+def get_tags(engine_path):
+    checkout(engine_path, 'dev')
+    tags_raw = subprocess.check_output('cd {} && git -c pager.tag=false tag'.format(engine_path), shell=True)
+    print('Available engine versions: {}'.format(tags_raw))
+    return [Tag(tag_raw.decode('utf-8').strip()) for tag_raw in tags_raw.split('\n')]
+
+
 def bump_version(path, engine_path):
     project_file = read_project_file(path)
     name = project_file['ProjectName']
-    tag = get_latest_tag(engine_path)
+    tag = get_current_tag(engine_path)
     create_project_file(path, name, tag)
 
 
-def get_latest_tag(engine_path):
+def get_current_tag(engine_path):
     checkout(engine_path, 'dev')
-    tag_raw = subprocess.check_output('cd {} && git describe --tags --abbrev=0'.format(engine_path), shell=True)
-    tag = tag_raw.decode('utf-8').strip()
-    print('Latest engine version: {}'.format(tag))
-    return tag
+    tag_raw = subprocess.check_output('cd {} && git describe --tags --abbrev=0'.format(engine_path), shell=True)\
+        .decode('utf-8').strip()
+    print('Latest engine version: {}'.format(tag_raw))
+    return Tag(tag_raw)
 
 
 def checkout(engine_path, identifier):
