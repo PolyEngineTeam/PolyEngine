@@ -327,10 +327,9 @@ def bump_version(path, engine_path):
 
 
 def get_current_tag(engine_path):
-    checkout(engine_path, 'dev')
     tag_raw = subprocess.check_output('cd {} && git describe --tags --abbrev=0'.format(engine_path), shell=True)\
         .decode('utf-8').strip()
-    print('Latest engine version: {}'.format(tag_raw))
+    print('Current engine version: {}'.format(tag_raw))
     return Tag(tag_raw)
 
 
