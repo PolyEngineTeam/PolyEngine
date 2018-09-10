@@ -101,7 +101,7 @@ void Engine::RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpda
 {
 	HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "_COUNT enum value passed to RegisterUpdatePhase(), which is an invalid value");
 	Dynarray<std::unique_ptr<ISystem>>& UpdatePhases = GameUpdatePhases[static_cast<int>(order)];
-	UpdatePhases.PushBack(std::move(std::make_unique<LambdaSystem>(LambdaSystem(phaseFunction))));
+	UpdatePhases.PushBack(std::make_unique<LambdaSystem>(LambdaSystem(phaseFunction)));
 }
 
 //------------------------------------------------------------------------------
