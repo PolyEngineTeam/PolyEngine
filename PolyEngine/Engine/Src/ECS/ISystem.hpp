@@ -8,6 +8,6 @@ namespace Poly
 	class ISystem
 	{
 	public:
-		virtual void OnUpdate(Scene* world) {};
+		virtual void OnUpdate(Scene* scene) = 0;
 	};
 }

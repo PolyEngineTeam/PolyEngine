@@ -5,7 +5,7 @@
 #include "Rendering/IRenderingDevice.hpp"
 #include "Audio/OpenALDevice.hpp"
 #include "Input/InputSystem.hpp"
-#include "ECS/ISystem.hpp"
+#include <ECS/ISystem.hpp>
 
 namespace Poly
 {
@@ -52,7 +52,9 @@ namespace Poly
 		/// <param name="phaseFunction"/>
 		void RegisterGameUpdatePhase(const PhaseUpdateFunction& phaseFunction) { RegisterUpdatePhase(phaseFunction, eUpdatePhaseOrder::UPDATE); }
 
-		void RegisterGameUpdatePhase(ISystem* system) { RegisterUpdatePhase(system, eUpdatePhaseOrder::UPDATE); }
+		/// <summary>Registers a System's PhaseUpdateFunction to be executed in the update.</summary>
+		/// <param name="system"/>
+		void RegisterGameUpdatePhase(std::unique_ptr<ISystem> system) { RegisterSystem(std::move(system), eUpdatePhaseOrder::UPDATE); }
 
 		/// <summary>Executes update phases functions that were registered in RegisterUpdatePhase().
 		/// Functions are executrd with given order and with given update phase order.</summary>
@@ -167,9 +169,9 @@ namespace Poly
 		/// @param phaseFunction - void function(Scene*)
 		/// @param order - enum eUpdatePhaseOrder value
 		/// @see eUpdatePhaseOrder
-		void RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order); //add for Isystems
+		void RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order);
 
-		void RegisterUpdatePhase(ISystem* system, eUpdatePhaseOrder order);
+		void RegisterSystem(std::unique_ptr<ISystem> system, eUpdatePhaseOrder order);
 
 		std::unique_ptr<Scene> ActiveScene;
 		Scene* SerializedScene = nullptr;
@@ -178,7 +180,7 @@ namespace Poly
 		OpenALDevice AudioDevice;
 		InputQueue InputEventsQueue;
 
-		Dynarray<ISystem*> GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)]; //change to array of uniqueptrs
+		Dynarray<std::unique_ptr<ISystem>> GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)]; //change to array of uniqueptrs
 
 		bool QuitRequested = false; //stop the game
 		bool MouseCaptureEnabled = false;

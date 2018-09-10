@@ -1,19 +1,19 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "ECS/ISystem.hpp"
+#include <ECS/ISystem.hpp>
 
 namespace Poly
 {
 	class Scene;
-	typedef std::function<void(Scene*)> PhaseUpdateFunction;
+	using PhaseUpdateFunction = std::function<void(Scene*)>;
 
 	class LambdaSystem : public ISystem
 	{
 	public:
-		LambdaSystem(PhaseUpdateFunction func) { Payload = func; }
-		void OnUpdate(Scene* world) { Payload(world); }
+		LambdaSystem(PhaseUpdateFunction func) { UpdateFunctionObject = std::move(func); }
+		void OnUpdate(Scene* scene) { UpdateFunctionObject(scene); }
 	private:
-		PhaseUpdateFunction Payload;
+		PhaseUpdateFunction UpdateFunctionObject;
 	};
 }
