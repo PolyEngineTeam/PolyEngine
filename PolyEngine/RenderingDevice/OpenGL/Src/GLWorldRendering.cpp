@@ -220,7 +220,8 @@ void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<c
 	// sceneView.ShadowAABB = dirLightAABB.GetTransformed(dirLight->GetTransform().GetWorldFromModel());
 	sceneView.ShadowAABB = dirLightAABB;
 
-	// gConsole.LogInfo("GLRenderingDevice::FillDirLightQueue shadowCastersCounter: {}", shadowCastersCounter);
+	// TODO: rendering stats?
+	gConsole.LogInfo("GLRenderingDevice::FillDirLightQueue shadowCastersCounter: {}", shadowCastersCounter);
 }
 
 void GLRenderingDevice::CreateUtilityTextures()
