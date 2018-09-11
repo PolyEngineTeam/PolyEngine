@@ -111,7 +111,7 @@ void RTTIInspectorWidget::AddItem(QGridLayout* parent, int row, void* ptr, const
 
 	control->SetObject(ptr);
 	control->SetName(prop.Name);
-	control->SetType("SomeCoreType");
+	control->SetToolTip("SomeCoreType");
 
 	parent->addWidget(control, row, 0, 1, 2);
 

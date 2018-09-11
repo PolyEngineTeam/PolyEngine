@@ -37,7 +37,7 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent, InspectorManager* 
 	// Name
 	NameField = new StringControl(this);
 	NameField->SetName("Name");
-	NameField->SetType("String");
+	NameField->SetToolTip("String");
 	MainLayout->addWidget(NameField, 0, 0, 1, 2);
 	connect(NameField, &StringControl::ObjectUpdated, this, &EntityInspectorWidget::ControlObjectUpdated);
 	
@@ -81,7 +81,7 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent, InspectorManager* 
 	TransformSection = new SectionContainer("Transform", this);
 	Transform = new TransformControl(this);
 	Transform->SetName("Transform");
-	Transform->SetType("EntityTransform");
+	Transform->SetToolTip("EntityTransform");
 	connect(Transform, &TransformControl::ObjectUpdated, this, &EntityInspectorWidget::ControlObjectUpdated);
 	TransformSection->SetWidget(Transform);
 

@@ -99,12 +99,12 @@ String ViewportInspectorWidget::GetAssetsPathConfigPath()
 }
 
 //------------------------------------------------------------------------------
-void ViewportInspectorWidget::Init()
+void ViewportInspectorWidget::OnGameInit()
 {
 }
 
 //------------------------------------------------------------------------------
-void ViewportInspectorWidget::Deinit()
+void ViewportInspectorWidget::OnGameDeinit()
 {
 }
 
@@ -127,13 +127,13 @@ void ViewportInspectorWidget::UpdateInspectors()
 }
 
 //------------------------------------------------------------------------------
-void ViewportInspectorWidget::SetEngineState(eEngineState state)
+void ViewportInspectorWidget::SetEngineState(PolyEditor::eEngineState state)
 {
 	Manager->StateChangedSlot(state);
 }
 
 //------------------------------------------------------------------------------
-eEngineState ViewportInspectorWidget::GetEngineState()
+PolyEditor::eEngineState ViewportInspectorWidget::GetEngineState()
 {
 	return Manager->GetEngineState();
 }
@@ -146,7 +146,7 @@ void ViewportInspectorWidget::StateChanged()
 {
 	switch (Manager->GetEngineState())
 	{
-	case eEngineState::EDIT:
+	case PolyEditor::eEngineState::EDIT:
 	{
 		if (EditorCameraEnt)
 			break;
@@ -176,7 +176,7 @@ void ViewportInspectorWidget::StateChanged()
 
 		break;
 	}
-	case eEngineState::GAMEPLAY:
+	case PolyEditor::eEngineState::GAMEPLAY:
 	{
 		EditorCameraEnt = nullptr;
 		// set gameplay camera (probably don't need to because this camera is set when game is restarted)
@@ -184,7 +184,7 @@ void ViewportInspectorWidget::StateChanged()
 
 		break;
 	}
-	case eEngineState::NONE:
+	case PolyEditor::eEngineState::NONE:
 	{
 		break;
 	}
@@ -211,7 +211,7 @@ void ViewportInspectorWidget::leaveEvent(QEvent* e)
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::resizeEvent(QResizeEvent* resizeEvent)
 {
-	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == PolyEditor::eEngineState::NONE)
 		return;
 
 	Poly::ScreenSize screenSize;
@@ -223,7 +223,7 @@ void ViewportInspectorWidget::resizeEvent(QResizeEvent* resizeEvent)
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::wheelEvent(QWheelEvent* wheelEvent)
 {
-	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == PolyEditor::eEngineState::NONE)
 		return;
 	Manager->GetEngine()->UpdateWheelPos(Poly::Vector2i(wheelEvent->delta(), 0));
 }
@@ -231,7 +231,7 @@ void ViewportInspectorWidget::wheelEvent(QWheelEvent* wheelEvent)
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 {
-	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == PolyEditor::eEngineState::NONE)
 		return;
 	Manager->GetEngine()->UpdateMousePos(Poly::Vector2i(mouseEvent->pos().x(), mouseEvent->pos().y()));
 }
@@ -239,7 +239,7 @@ void ViewportInspectorWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::mousePressEvent(QMouseEvent* mouseEvent)
 {
-	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == PolyEditor::eEngineState::NONE)
 		return;
 
 	switch (mouseEvent->button())
@@ -265,7 +265,7 @@ void ViewportInspectorWidget::mousePressEvent(QMouseEvent* mouseEvent)
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 {
-	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == PolyEditor::eEngineState::NONE)
 		return;
 	switch (mouseEvent->button())
 	{
@@ -290,7 +290,7 @@ void ViewportInspectorWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::keyPressEvent(QKeyEvent* keyEvent)
 {
-	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == PolyEditor::eEngineState::NONE)
 		return;
 
 	if (keyEvent->isAutoRepeat())
@@ -302,7 +302,7 @@ void ViewportInspectorWidget::keyPressEvent(QKeyEvent* keyEvent)
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 {
-	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == PolyEditor::eEngineState::NONE)
 		return;
 
 	if (keyEvent->isAutoRepeat())

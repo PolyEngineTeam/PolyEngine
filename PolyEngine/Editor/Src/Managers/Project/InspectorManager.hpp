@@ -29,13 +29,13 @@ public:
 	void InitUi();
 
 	std::unique_ptr<IRenderingDevice> GetRenderingDevice();
-	IEditor* GetEditor();
+	PolyEditor::IEditor* GetEditor();
 
 	Engine* GetEngine() { return EngineObj; }
 	Scene* GetScene() { return SceneObj; }
 	Dynarray<Entity*> GetSelectedEntities() { return SelectedEntities; }
 	const ProjectConfig* GetConfig() { return Config; }
-	eEngineState GetEngineState() { return EngineState; }
+	PolyEditor::eEngineState GetEngineState() { return EngineState; }
 
 public slots:
 	void ProjectOpenedSlot(const ProjectConfig* config);
@@ -44,7 +44,7 @@ public slots:
 	void EngineCreatedSlot(Engine* engine);
 	void EngineInitializedSlot();
 	void EngineDeinitializedSlot();
-	void StateChangedSlot(eEngineState state);
+	void StateChangedSlot(PolyEditor::eEngineState state);
 
 	void SceneChangedSlot(Scene* world);
 
@@ -96,7 +96,7 @@ private:
 	Scene* SceneObj = nullptr;
 	Dynarray<Entity*> SelectedEntities;
 	const ProjectConfig* Config = nullptr;
-	eEngineState EngineState = eEngineState::NONE;
+	PolyEditor::eEngineState EngineState = PolyEditor::eEngineState::NONE;
 
 	const ProjectConfig*& ConfigRef;
 

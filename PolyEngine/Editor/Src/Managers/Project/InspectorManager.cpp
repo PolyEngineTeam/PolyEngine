@@ -48,7 +48,7 @@ void InspectorManager::InitUi()
 }
 
 std::unique_ptr<IRenderingDevice> InspectorManager::GetRenderingDevice() { return ViewportInspector->GetRenderingDevice(); }
-IEditor* InspectorManager::GetEditor() { return ViewportInspector; }
+PolyEditor::IEditor* InspectorManager::GetEditor() { return ViewportInspector; }
 
 //		project slots
 //------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ void InspectorManager::EngineDeinitializedSlot()
 }
 
 //------------------------------------------------------------------------------
-void InspectorManager::StateChangedSlot(eEngineState state)
+void InspectorManager::StateChangedSlot(PolyEditor::eEngineState state)
 {
 	EngineState = state;
 

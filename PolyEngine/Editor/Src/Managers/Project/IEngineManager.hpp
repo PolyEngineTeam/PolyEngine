@@ -3,13 +3,14 @@
 #include <QtCore/qobject.h>
 
 #include <Engine.hpp>
+#include "IEditor.hpp"
 
 class IEngineManager : public QObject
 {
 	Q_OBJECT;
 
 public:
-	virtual Poly::eEngineState GetEngineState() = 0;
+	virtual PolyEditor::eEngineState GetEngineState() = 0;
 
 	virtual void InitEngine(std::unique_ptr<Poly::IGame> game, const Poly::String& assetsPathConfigPath) = 0;
 	virtual void DeinitEngine() = 0;
@@ -20,5 +21,5 @@ public:
 signals:
 	void EngineInitialized(Poly::Engine* engine);
 	void EngineDeinitialized();
-	void StateChanged(Poly::eEngineState state);
+	void StateChanged(PolyEditor::eEngineState state);
 };

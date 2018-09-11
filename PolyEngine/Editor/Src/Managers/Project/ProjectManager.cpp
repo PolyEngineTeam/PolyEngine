@@ -104,7 +104,7 @@ void ProjectManager::Edit()
 	if (!ProjectCfg)
 		throw new ProjectManagerException("This operation requires any project opened.");
 
-	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == PolyEditor::eEngineState::NONE)
 		InitEngine();
 
 	gApp->EngineMgr->Edit();
@@ -116,7 +116,7 @@ void ProjectManager::Play()
 	if (!ProjectCfg)
 		throw new ProjectManagerException("This operation requires any project opened.");
 
-	if (gApp->EngineMgr->GetEngineState() == eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() == PolyEditor::eEngineState::NONE)
 		InitEngine();
 	
 	// TODO(squares): fix problem with physics; Rigidbody and collider components  are initialized in next frame 
@@ -131,7 +131,7 @@ void ProjectManager::Close()
 	if (!ProjectCfg)
 		throw new ProjectManagerException("This operation requires any project opened.");
 
-	if (gApp->EngineMgr->GetEngineState() != eEngineState::NONE)
+	if (gApp->EngineMgr->GetEngineState() != PolyEditor::eEngineState::NONE)
 		gApp->EngineMgr->DeinitEngine();
 
 	ProjectCfg.release();

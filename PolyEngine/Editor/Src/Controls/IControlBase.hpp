@@ -18,8 +18,8 @@ public:
 
 	// Name of assigned property.
 	virtual void SetName(String name) = 0;
-	// Type of assigned property.
-	virtual void SetType(String type) = 0;
+	// Tool tip for this control.
+	virtual void SetToolTip(String type) = 0;
 	// If set to true then control will not permit changing its content.
 	virtual void SetDisableEdit(bool disable) = 0;
 

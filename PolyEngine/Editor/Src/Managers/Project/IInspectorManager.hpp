@@ -65,7 +65,7 @@ public slots:
 
 	virtual void EngineInitialized(Engine* engine) = 0;
 	virtual void EngineDeinitialized() = 0;
-	virtual void EngineStateChanged(eEngineState state) = 0;
+	virtual void EngineStateChanged(PolyEditor::eEngineState state) = 0;
 
 signals:
 	//		project signals

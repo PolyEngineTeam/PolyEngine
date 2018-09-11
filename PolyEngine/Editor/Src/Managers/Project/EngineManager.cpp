@@ -26,7 +26,7 @@ void EngineManager::InitEngine(std::unique_ptr<IGame> game, const String& assets
 
 	emit Initialized();
 
-	Editor->SetEngineState(eEngineState::EDIT);
+	Editor->SetEngineState(PolyEditor::eEngineState::EDIT);
 }
 
 //------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ void EngineManager::DeinitEngine()
 {
 	EngineObj.reset();
 
-	Editor->SetEngineState(eEngineState::NONE);
+	Editor->SetEngineState(PolyEditor::eEngineState::NONE);
 	Editor = nullptr;
 	Updater.stop();
 	EditorUpdater.stop();
@@ -49,15 +49,15 @@ void EngineManager::Edit()
 	EditorUpdater.stop();
 	switch (Editor->GetEngineState())
 	{
-	case eEngineState::NONE:
+	case PolyEditor::eEngineState::NONE:
 		throw new std::exception();
 
-	case eEngineState::EDIT:
+	case PolyEditor::eEngineState::EDIT:
 		// do nothing
 		break;
 
-	case eEngineState::GAMEPLAY:
-		Editor->SetEngineState(eEngineState::EDIT);
+	case PolyEditor::eEngineState::GAMEPLAY:
+		Editor->SetEngineState(PolyEditor::eEngineState::EDIT);
 		EngineObj->Restart();
 		break;
 
@@ -66,7 +66,7 @@ void EngineManager::Edit()
 	}
 
 	emit Initialized();
-	emit StateChanged(eEngineState::EDIT);
+	emit StateChanged(PolyEditor::eEngineState::EDIT);
 	Updater.start(0);
 }
 
@@ -77,15 +77,15 @@ void EngineManager::Play()
 	EditorUpdater.stop();
 	switch (Editor->GetEngineState())
 	{
-	case eEngineState::NONE:
+	case PolyEditor::eEngineState::NONE:
 		throw new std::exception();
 
-	case eEngineState::EDIT:
-		Editor->SetEngineState(eEngineState::GAMEPLAY);
+	case PolyEditor::eEngineState::EDIT:
+		Editor->SetEngineState(PolyEditor::eEngineState::GAMEPLAY);
 		EngineObj->Restart();
 		break;
 
-	case eEngineState::GAMEPLAY:
+	case PolyEditor::eEngineState::GAMEPLAY:
 		EngineObj->Restart();
 		break;
 
@@ -94,7 +94,7 @@ void EngineManager::Play()
 	}
 
 	emit Initialized();
-	emit StateChanged(eEngineState::GAMEPLAY);
+	emit StateChanged(PolyEditor::eEngineState::GAMEPLAY);
 	Updater.start(0);
 	EditorUpdater.start(250);
 }
@@ -107,13 +107,13 @@ void EngineManager::UpdatePhase()
 
 	Dynarray<Engine::eUpdatePhaseOrder> updatePhases;
 
-	if (Editor->GetEngineState() == eEngineState::EDIT)
+	if (Editor->GetEngineState() == PolyEditor::eEngineState::EDIT)
 	{
 		updatePhases.PushBack(Engine::eUpdatePhaseOrder::PREUPDATE);
 		updatePhases.PushBack(Engine::eUpdatePhaseOrder::EDITOR);
 		updatePhases.PushBack(Engine::eUpdatePhaseOrder::POSTUPDATE);
 	}
-	else if (Editor->GetEngineState() == eEngineState::GAMEPLAY)
+	else if (Editor->GetEngineState() == PolyEditor::eEngineState::GAMEPLAY)
 	{
 		updatePhases.PushBack(Engine::eUpdatePhaseOrder::PREUPDATE);
 		updatePhases.PushBack(Engine::eUpdatePhaseOrder::UPDATE);

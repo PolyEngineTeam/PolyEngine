@@ -3,6 +3,7 @@
 #include <Engine.hpp>
 #include <QtCore/qobject.h>
 #include <QtCore/qtimer.h>
+#include "IEditor.hpp"
 
 using namespace Poly;
 
@@ -13,7 +14,7 @@ class EngineManager : public QObject
 public:
 	EngineManager();
 
-	eEngineState GetEngineState() { return Editor ? Editor->GetEngineState() : eEngineState::NONE; }
+	PolyEditor::eEngineState GetEngineState() { return Editor ? Editor->GetEngineState() : PolyEditor::eEngineState::NONE; }
 
 	void InitEngine(std::unique_ptr<IGame> game, const String& assetsPathConfigPath);
 	void DeinitEngine();
@@ -25,11 +26,11 @@ signals:
 	void Created(Engine* engine);
 	void Initialized();
 	void Deinitialized();
-	void StateChanged(eEngineState state);
+	void StateChanged(PolyEditor::eEngineState state);
 
 private:
 	std::unique_ptr<Engine> EngineObj;
-	IEditor* Editor = nullptr;
+	PolyEditor::IEditor* Editor = nullptr;
 
 	QTimer Updater;
 	QTimer EditorUpdater;

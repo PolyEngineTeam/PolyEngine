@@ -45,7 +45,7 @@ public:
 		Label->setText(name.GetCStr());
 	}
 
-	virtual void SetType(String type) override
+	virtual void SetToolTip(String type) override
 	{
 		setToolTip(type.GetCStr());
 	}

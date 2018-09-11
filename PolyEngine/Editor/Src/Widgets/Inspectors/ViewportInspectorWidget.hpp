@@ -2,11 +2,11 @@
 
 #include <Defines.hpp>
 #include <ECS/Scene.hpp>
-#include <Editor/IEditor.hpp>
 
 #include "Windows/CustomSDLWindow.hpp"
 #include "Rendering/IRenderingDevice.hpp"
 #include "Widgets/Inspectors/InspectorWidgetBase.hpp"
+#include "IEditor.hpp"
 
 namespace Poly
 {
@@ -17,7 +17,7 @@ using namespace Poly;
 
 class InspectorManager;
 
-class ViewportInspectorWidget : public InspectorWidgetBase, public IEditor
+class ViewportInspectorWidget : public InspectorWidgetBase, public PolyEditor::IEditor
 {
 	Q_OBJECT
 
@@ -35,10 +35,10 @@ public:
 	String GetAssetsPathConfigPath() override;
 
 	// This function is similar to iGame::Init function; it is called after game initialization.
-	void Init() override;
+	void OnGameInit() override;
 
 	// Same as above; it is called before game deinitialization.
-	void Deinit() override;
+	void OnGameDeinit() override;
 
 	// If any system needs currently selected entities list it should use this function.
 	Dynarray<Entity*> GetSelectedEntities() override;
@@ -49,8 +49,8 @@ public:
 	// Can be called from systems to update inspectors content 
 	void UpdateInspectors() override;
 
-	void SetEngineState(eEngineState state) override;
-	eEngineState GetEngineState() override;
+	void SetEngineState(PolyEditor::eEngineState state) override;
+	PolyEditor::eEngineState GetEngineState() override;
 
 public slots:
 	// engine
