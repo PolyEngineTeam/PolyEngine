@@ -27,7 +27,7 @@ namespace Poly
 	{
 	public:
 		/// <summary>Constructs engine instance.</summary>
-		Engine(bool testRun = false);
+		Engine(bool testRun = false, IEditor* editor = nullptr);
 
 		/// <summary>Deletes engine instance.</summary>
 		~Engine();
@@ -42,8 +42,6 @@ namespace Poly
 			POSTUPDATE,
 			_COUNT
 		};
-
-		void RegisterEditor(IEditor* editor) { Editor = editor; }
 
 		/// <summary>Registers engine components. Registers and creates world components.
 		/// Registers engine update phases and initializes game dbject. </summary>

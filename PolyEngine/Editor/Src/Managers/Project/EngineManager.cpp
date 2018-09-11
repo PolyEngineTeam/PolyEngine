@@ -18,10 +18,9 @@ void EngineManager::InitEngine(std::unique_ptr<IGame> game, const String& assets
 	Editor = gApp->InspectorMgr->GetEditor();
 
 	// create and initialize engine instance
-	EngineObj = std::make_unique<Poly::Engine>();
+	EngineObj = std::make_unique<Poly::Engine>(false, Editor);
 	emit Created(EngineObj.get());
 
-	EngineObj->RegisterEditor(Editor);
 	EngineObj->Init(std::move(game), gApp->InspectorMgr->GetRenderingDevice());
 	gConsole.LogDebug("Engine initialized successfully");
 

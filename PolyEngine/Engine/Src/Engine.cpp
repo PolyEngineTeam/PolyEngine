@@ -23,8 +23,8 @@ using namespace Poly;
 Engine* Poly::gEngine = nullptr;
 
 //------------------------------------------------------------------------------
-Engine::Engine(bool testRun)
-	: Game()
+Engine::Engine(bool testRun, IEditor* editor)
+	: Game(), Editor(editor)
 {
 	ASSERTE(gEngine == nullptr, "Creating engine twice?");
 	gEngine = this;
@@ -33,7 +33,11 @@ Engine::Engine(bool testRun)
 	{
 		RandomSetSeed((int)time(nullptr));
 
-		gAssetsPathConfig.Load();
+		if (Editor)
+			gAssetsPathConfig.DeserializeFromFile(Editor->GetAssetsPathConfigPath());
+		else
+			gAssetsPathConfig.Load();
+
 		gDebugConfig.Load();
 		// also set presets for debug draw (DebugDrawPresets)
 		// @todo update debug draw presets from GUI
@@ -43,13 +47,6 @@ Engine::Engine(bool testRun)
 
 void Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device)
 {
-	if (Editor)
-		gAssetsPathConfig.DeserializeFromFile(Editor->GetAssetsPathConfigPath());
-
-	gDebugConfig.Load();
-	// also set presets for debug draw (DebugDrawPresets)
-	// @todo update debug draw presets from GUI
-	gDebugConfig.DebugDrawPresets |= eDebugDrawPreset::GFX;
 	Game = std::move(game);
 	RenderingDevice = std::move(device);
 	RenderingDevice->Init();

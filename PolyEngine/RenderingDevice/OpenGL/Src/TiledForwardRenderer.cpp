@@ -618,6 +618,9 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const DirectionalLightCom
 
 void TiledForwardRenderer::RenderShadowMap(const SceneView& sceneView)
 {
+	if (sceneView.DirectionalLights.GetSize() < 1)
+		return;
+
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 	glCullFace(GL_FRONT);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowDepthMap);
@@ -751,7 +754,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 	LightAccumulationShader.BindProgram();
 
-	Matrix projDirLightFromWorld = GetProjectionForShadowMap(sceneView.DirectionalLights[0]);
+	Matrix projDirLightFromWorld = sceneView.DirectionalLights.IsEmpty() ? Matrix() : GetProjectionForShadowMap(sceneView.DirectionalLights[0]);
 
 	LightAccumulationShader.SetUniform("uDirLightFromWorld", projDirLightFromWorld);
 	LightAccumulationShader.BindSampler("uDirShadowMap", 9, DirShadowMap);
