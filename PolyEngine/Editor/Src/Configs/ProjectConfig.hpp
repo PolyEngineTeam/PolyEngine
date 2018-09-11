@@ -1,9 +1,9 @@
 #pragma once
 
-#include <RTTI/RTTI.hpp>
 #include <Collections/String.hpp>
+#include <Configs\ConfigBase.hpp>
 
-class ProjectConfig : public Poly::RTTIBase
+class ProjectConfig : public Poly::ConfigBase
 {
 	friend class ProjectManager;
 
@@ -16,9 +16,6 @@ class ProjectConfig : public Poly::RTTIBase
 
 public:
 	ProjectConfig(const Poly::String& path);
-
-	void Save();
-	void Load();
 
 	// Path to directory where *.proj.json file is stored
 	const Poly::String& GetProjectPath() const { return ProjectPath; }

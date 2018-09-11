@@ -5,8 +5,10 @@
 RTTI_DEFINE_TYPE(ProjectConfig)
 
 ProjectConfig::ProjectConfig(const String& path)
-	: Path(path)
+	: Path(path), Poly::ConfigBase(path, Poly::eResourceSource::NONE)
 {
+	FileName = path;
+
 	// get Project directory path
 	for (size_t i = path.GetLength(); i > 0; --i)
 		if (path[i] == '/')
@@ -14,16 +16,6 @@ ProjectConfig::ProjectConfig(const String& path)
 			ProjectPath = path.Substring(i);
 			break;
 		}
-}
-
-void ProjectConfig::Save()
-{
-	SerializeToFile(Path);
-}
-
-void ProjectConfig::Load()
-{
-	DeserializeFromFile(Path);
 }
 
 String ProjectConfig::GetGameDllPath() const
