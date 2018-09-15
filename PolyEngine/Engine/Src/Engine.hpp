@@ -48,7 +48,8 @@ namespace Poly
 		/// <param name="device">Pointer to IRenderingDevice instance.</param>
 		void Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device);
 
-		/// <summary>Registers a PhaseUpdateFunction to be executed in the update.</summary>
+		/// <summary>DEPRECATED!!! Do not use!
+		/// Registers a PhaseUpdateFunction to be executed in the update.</summary>
 		/// <param name="phaseFunction"/>
 		void RegisterGameUpdatePhase(const PhaseUpdateFunction& phaseFunction) { RegisterUpdatePhase(phaseFunction, eUpdatePhaseOrder::UPDATE); }
 
@@ -164,6 +165,7 @@ namespace Poly
 				update->OnUpdate(GetActiveScene());
 		}
 
+		/// DEPRECATED!!! Do not use! 
 		/// Registers a PhaseUpdateFunction to be executed in the update.
 		/// part of a single frame in the same order as they were passed in.
 		/// @param phaseFunction - void function(Scene*)
@@ -171,6 +173,11 @@ namespace Poly
 		/// @see eUpdatePhaseOrder
 		void RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order);
 
+		/// Registers a ISystem containing PhaseUpdateFunction to be executed in the update.
+		/// part of a single frame in the same order as they were passed in.
+		/// @param system - std::unique_ptr<ISystem> containing void function(Scene*)
+		/// @param order - enum eUpdatePhaseOrder value
+		/// @see eUpdatePhaseOrder
 		void RegisterSystem(std::unique_ptr<ISystem> system, eUpdatePhaseOrder order);
 
 		std::unique_ptr<Scene> ActiveScene;
