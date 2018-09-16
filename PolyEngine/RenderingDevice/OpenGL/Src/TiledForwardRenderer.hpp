@@ -117,6 +117,7 @@ namespace Poly {
 		GLShaderProgram HDRShader;
 		GLShaderProgram SkyboxShader;
 		GLShaderProgram LinearizeDepthShader;
+		GLShaderProgram FXAAShader;
 		GLShaderProgram GammaShader;
 		GLShaderProgram MotionBlurShader;
 		GLShaderProgram DOFBokehShader;
@@ -182,6 +183,8 @@ namespace Poly {
 		void EditorDebug(const SceneView& sceneView);
 
 		void UIText2D(const SceneView& sceneView);
+
+		void PostFXAA(const SceneView& sceneView);
 
 		void PostGamma(const SceneView& sceneView);
 		
