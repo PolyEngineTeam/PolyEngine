@@ -11,8 +11,8 @@ namespace Poly
 	class LambdaSystem : public ISystem
 	{
 	public:
-		LambdaSystem(PhaseUpdateFunction func) { UpdateFunctionObject = std::move(func); }
-		void OnUpdate(Scene* scene) { UpdateFunctionObject(scene); }
+		explicit LambdaSystem(PhaseUpdateFunction func) { UpdateFunctionObject = std::move(func); }
+		void OnUpdate(Scene* scene) override { UpdateFunctionObject(scene); }
 	private:
 		PhaseUpdateFunction UpdateFunctionObject;
 	};
