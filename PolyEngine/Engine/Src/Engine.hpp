@@ -2,9 +2,11 @@
 
 #include <Defines.hpp>
 #include <Collections/Dynarray.hpp>
+#include <Utils/EnumUtils.hpp>
 #include "Rendering/IRenderingDevice.hpp"
 #include "Audio/OpenALDevice.hpp"
 #include "Input/InputSystem.hpp"
+#include <ECS/ISystem.hpp>
 
 namespace Poly
 {
@@ -47,9 +49,14 @@ namespace Poly
 		/// <param name="device">Pointer to IRenderingDevice instance.</param>
 		void Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device);
 
-		/// <summary>Registers a PhaseUpdateFunction to be executed in the update.</summary>
+		/// <summary>@deprecated
+		/// Registers a PhaseUpdateFunction to be executed in the update.</summary>
 		/// <param name="phaseFunction"/>
 		void RegisterGameUpdatePhase(const PhaseUpdateFunction& phaseFunction) { RegisterUpdatePhase(phaseFunction, eUpdatePhaseOrder::UPDATE); }
+
+		/// <summary>Registers a System's PhaseUpdateFunction to be executed in the update.</summary>
+		/// <param name="system"/>
+		void RegisterGameUpdatePhase(std::unique_ptr<ISystem> system) { RegisterSystem(std::move(system), eUpdatePhaseOrder::UPDATE); }
 
 		/// <summary>Executes update phases functions that were registered in RegisterUpdatePhase().
 		/// Functions are executrd with given order and with given update phase order.</summary>
@@ -155,16 +162,24 @@ namespace Poly
 		inline void UpdatePhases(eUpdatePhaseOrder order)
 		{
 			HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "_COUNT enum value passed to UpdatePhases(), which is an invalid value");
-			for (auto& update : GameUpdatePhases[static_cast<int>(order)])
-				update(GetActiveScene());
+			for (auto&  update : GameUpdatePhases[order])
+				update->OnUpdate(GetActiveScene());
 		}
 
+		/// @deprecated
 		/// Registers a PhaseUpdateFunction to be executed in the update.
 		/// part of a single frame in the same order as they were passed in.
 		/// @param phaseFunction - void function(Scene*)
 		/// @param order - enum eUpdatePhaseOrder value
 		/// @see eUpdatePhaseOrder
 		void RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order);
+
+		/// Registers a ISystem containing PhaseUpdateFunction to be executed in the update.
+		/// part of a single frame in the same order as they were passed in.
+		/// @param system - std::unique_ptr<ISystem> containing void function(Scene*)
+		/// @param order - enum eUpdatePhaseOrder value
+		/// @see eUpdatePhaseOrder
+		void RegisterSystem(std::unique_ptr<ISystem> system, eUpdatePhaseOrder order);
 
 		std::unique_ptr<Scene> ActiveScene;
 		Scene* SerializedScene = nullptr;
@@ -173,7 +188,7 @@ namespace Poly
 		OpenALDevice AudioDevice;
 		InputQueue InputEventsQueue;
 
-		Dynarray<PhaseUpdateFunction> GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];
+		EnumArray<Dynarray<std::unique_ptr<ISystem>>, eUpdatePhaseOrder> GameUpdatePhases;
 
 		bool QuitRequested = false; //stop the game
 		bool MouseCaptureEnabled = false;
