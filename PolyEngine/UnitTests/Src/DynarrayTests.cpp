@@ -222,3 +222,42 @@ TEST_CASE("Dynarray find all idx", "[Dynarray]")
 	REQUIRE(result[0] == 0);
 	REQUIRE(result[1] == 2);
 }
+
+TEST_CASE("Dynarray insert operations", "[Dynarray]")
+{
+	SECTION("Insert single element at index")
+	{
+		Dynarray<int> a{ 2, 3, 4 };
+		Dynarray<int> b{ 1, 3, 4 };
+		Dynarray<int> c{ 1, 2, 3 };
+		Dynarray<int> d{ 1, 2, 3, 4 };
+
+		a.Insert(0, 1);
+		REQUIRE(a == d);
+
+		b.Insert(1, 2);
+		REQUIRE(b == d);
+
+		c.Insert(3, 4);
+		REQUIRE(c == d);
+	}
+	
+	SECTION("Insert array of elements at index")
+	{
+		Dynarray<int> e{ 1, 2, 6 };
+		Dynarray<int> f{ 3, 4, 5 };
+		Dynarray<int> g{ 1, 2, 3 };
+		Dynarray<int> h{ 1, 2, 3 };
+		Dynarray<int> i{ 4, 5, 6 };
+		Dynarray<int> j{ 1, 2, 3, 4, 5, 6 };
+
+		e.Insert(2, f);
+		REQUIRE(e == j);
+
+		g.Insert(3, i);
+		REQUIRE(g == j);
+
+		i.Insert(0, h);
+		REQUIRE(i == j);
+	}
+}
