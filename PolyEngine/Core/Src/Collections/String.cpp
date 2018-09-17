@@ -7,6 +7,8 @@ using namespace Poly;
 
 const String String::EMPTY = String();
 
+const String String::WHITESPACES = String(" \t\r\n");
+
 size_t Poly::StrLen(const char* str) {
 	size_t len = 0;
 	while (str[len] != 0)
@@ -173,17 +175,19 @@ String String::Substring(size_t start, size_t end) const {
 
 String String::GetTrimmed() const {
 	size_t start = 0;
-	size_t end = this->GetLength();
-	String whitespaces = String(" \n\t\r");
+	size_t end = GetLength();
 
-	while (whitespaces.Contains(this->Data[start])) {
+	while (start <= GetLength() && WHITESPACES.Contains(Data[start]))
+	{
 		++start;
 	}
-	while (whitespaces.Contains(this->Data[end])) {
+
+	while (end > start && WHITESPACES.Contains(Data[end]))
+	{
 		--end;
 	}
 
-	return this->Substring(start, end + 1);
+	return Substring(start, end + 1);
 }
 
 size_t String::Find(char c) const

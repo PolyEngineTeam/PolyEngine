@@ -74,9 +74,21 @@ TEST_CASE("String operations", "[String]") {
 	REQUIRE(test.Substring(4) == substring1);
 	REQUIRE(test.Substring(2, 8) == substring2);
 
-	String trimTest = String(" \nsda\t \r");
-	String trimmed = String("sda");
-	REQUIRE(trimTest.GetTrimmed() == trimmed);
+	String trimTest0 = String(" \nsda\t \r");
+	String trimmed0 = String("sda");
+	REQUIRE(trimTest0.GetTrimmed() == trimmed0);
+
+	String trimTest1 = String("");
+	String trimmed1 = String("");
+	REQUIRE(trimTest1.GetTrimmed() == trimmed1);
+
+	String trimTest2 = String("\r");
+	String trimmed2 = String("");
+	REQUIRE(trimTest2.GetTrimmed() == trimmed2);
+
+	String trimTest3 = String(" \t  \r\n \r \n");
+	String trimmed3 = String("");
+	REQUIRE(trimTest3.GetTrimmed() == trimmed3);
 
 	String strArr[3];
 	strArr[0] = String("String0");
