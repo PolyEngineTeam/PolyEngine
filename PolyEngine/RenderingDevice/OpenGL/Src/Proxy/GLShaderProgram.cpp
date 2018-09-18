@@ -9,6 +9,8 @@ UNSILENCE_MSVC_WARNING()
 
 using namespace Poly;
 
+const String GLShaderProgram::SHADERS_INCLUDE_DIR = "Shaders/";
+
 GLShaderProgram::GLShaderProgram(const String& compute)
 {
 	gConsole.LogDebug("Creating shader program {}", compute);
@@ -16,7 +18,10 @@ GLShaderProgram::GLShaderProgram(const String& compute)
 	if (ProgramHandle == 0) {
 		ASSERTE(false, "Creation of shader program failed! Exiting...");
 	}
+
 	LoadShader(eShaderUnitType::COMPUTE, compute);
+	CompileShader(eShaderUnitType::COMPUTE);
+	
 	CompileProgram();
 
 	for (eShaderUnitType type : IterateEnum<eShaderUnitType>())
@@ -27,11 +32,17 @@ GLShaderProgram::GLShaderProgram(const String& vertex, const String& fragment)
 {
 	gConsole.LogDebug("Creating shader program {} {}", vertex, fragment);
 	ProgramHandle = glCreateProgram();
-	if (ProgramHandle == 0) {
+	if (ProgramHandle == 0)
+	{
 		ASSERTE(false, "Creation of shader program failed! Exiting...");
 	}
+
 	LoadShader(eShaderUnitType::VERTEX, vertex);
+	CompileShader(eShaderUnitType::VERTEX);
+	
 	LoadShader(eShaderUnitType::FRAGMENT, fragment);
+	CompileShader(eShaderUnitType::FRAGMENT);
+	
 	CompileProgram();
 
 	for (eShaderUnitType type : IterateEnum<eShaderUnitType>())
@@ -45,9 +56,16 @@ GLShaderProgram::GLShaderProgram(const String& vertex, const String& geometry, c
 	if (ProgramHandle == 0) {
 		ASSERTE(false, "Creation of shader program failed! Exiting...");
 	}
+
 	LoadShader(eShaderUnitType::VERTEX, vertex);
+	CompileShader(eShaderUnitType::VERTEX);
+
 	LoadShader(eShaderUnitType::GEOMETRY, geometry);
+	CompileShader(eShaderUnitType::GEOMETRY);
+
 	LoadShader(eShaderUnitType::FRAGMENT, fragment);
+	CompileShader(eShaderUnitType::FRAGMENT);
+
 	CompileProgram();
 
 	for(eShaderUnitType type : IterateEnum<eShaderUnitType>())
@@ -59,26 +77,6 @@ void GLShaderProgram::BindProgram() const
 {
 	glUseProgram(ProgramHandle);
 }
-
-
-void GLShaderProgram::CompileProgram()
-{
-	glLinkProgram(ProgramHandle);
-	int linkStatus = 0;
-
-	glGetProgramiv(ProgramHandle, GL_LINK_STATUS, &linkStatus);
-
-	if (linkStatus == 0) {
-		GLint infoLogLength = 0;
-		glGetProgramiv(ProgramHandle, GL_INFO_LOG_LENGTH, &infoLogLength);
-		Dynarray<char> errorMessage;
-		errorMessage.Resize(static_cast<size_t>(infoLogLength + 1));
-		glGetProgramInfoLog(ProgramHandle, infoLogLength, NULL, &errorMessage[0]);
-		gConsole.LogError("Program linking: {}", std::string(&errorMessage[0]));
-		ASSERTE(false, "Program linking failed!");
-	}
-}
-
 
 void GLShaderProgram::Validate()
 {
@@ -97,24 +95,68 @@ void GLShaderProgram::Validate()
 	}
 }
 
-
 void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 {
+	String rawCode = LoadTextFileRelative(eResourceSource::ENGINE, shaderName);
+
+	if (rawCode.IsEmpty())
+		return;
+		
+	Dynarray<String> includedFiles;
+	Dynarray<String> linesToProcess = rawCode.Split("\n");
+	StringBuilder sb;
+	int lineCounter = 0;
+	while(lineCounter < linesToProcess.GetSize())
+	{
+		String currLine = linesToProcess[lineCounter].GetTrimmed();
+
+		std::regex includeRegex(R"(^#pragma include\s*\"(\w.*)\")", std::regex::ECMAScript); // regex: ^#pragma include\s*"(\w.*)"
+		auto regex_begin = std::cregex_iterator(currLine.GetCStr(), currLine.GetCStr() + currLine.GetLength(), includeRegex);
+		auto regex_end = std::cregex_iterator();
+
+		if (regex_begin != regex_end)
+		{
+			for (std::cregex_iterator i = regex_begin; i != regex_end; ++i)
+			{
+				const std::cmatch& match = *i;
+
+				String includePath = SHADERS_INCLUDE_DIR + String(match[1].str().c_str());
+				ASSERTE(!includedFiles.Contains(includePath), "LoadShader failed, found recursive includes!");
+				includedFiles.PushBack(includePath);
+					
+				String rawInclude = LoadTextFileRelative(eResourceSource::ENGINE, includePath);
+				linesToProcess.Insert(lineCounter + 1, rawInclude.Split('\n'));
+			}
+		}
+		else
+		{
+			sb.Append(currLine).Append("\n");
+		}
+
+		lineCounter++;
+	}
+
+	ShaderCode[type] = sb.GetString();
+}
+
+void GLShaderProgram::CompileShader(GLShaderProgram::eShaderUnitType type)
+{
 	GLuint shader = glCreateShader(GetEnumFromShaderUnitType(type));
-	if (shader == 0) {
+	if (shader == 0)
+	{
 		ASSERTE(false, "Creation of shader failed!");
 	}
 
-	ShaderCode[type] = LoadTextFileRelative(eResourceSource::ENGINE, shaderName);
-
 	const char *code = ShaderCode[type].GetCStr();
+
 	glShaderSource(shader, 1, &code, NULL);
 	glCompileShader(shader);
 
 	int compileStatus = 0;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus);
 
-	if (compileStatus == 0) {
+	if (compileStatus == 0)
+	{
 		int infoLogLength = 0;
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
 		Dynarray<char> errorMessage;
@@ -125,10 +167,27 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 	}
 
 	glAttachShader(ProgramHandle, shader);
-	glDeleteShader(shader);  // is it ok to do it here?
+	glDeleteShader(shader);
 	CHECK_GL_ERR();
 }
 
+void GLShaderProgram::CompileProgram()
+{
+	glLinkProgram(ProgramHandle);
+	int linkStatus = 0;
+
+	glGetProgramiv(ProgramHandle, GL_LINK_STATUS, &linkStatus);
+
+	if (linkStatus == 0) {
+		GLint infoLogLength = 0;
+		glGetProgramiv(ProgramHandle, GL_INFO_LOG_LENGTH, &infoLogLength);
+		Dynarray<char> errorMessage;
+		errorMessage.Resize(static_cast<size_t>(infoLogLength + 1));
+		glGetProgramInfoLog(ProgramHandle, infoLogLength, NULL, &errorMessage[0]);
+		gConsole.LogError("Program linking: {}", std::string(&errorMessage[0]));
+		ASSERTE(false, "Program linking failed!");
+	}
+}
 
 unsigned int GLShaderProgram::GetProgramHandle() const
 {
@@ -273,9 +332,9 @@ GLenum GLShaderProgram::GetEnumFromShaderUnitType(eShaderUnitType type)
 	}
 }
 
-
-void Poly::GLShaderProgram::AnalyzeShaderCode(eShaderUnitType type)
+void GLShaderProgram::AnalyzeShaderCode(eShaderUnitType type)
 {
+	
 	static const std::regex uniformRegex(R"(uniform\s+(\w+)\s+(\w+)\s*;)", std::regex::ECMAScript);
 	static const std::regex outRegex(R"(out\s+(\w+)\s+(\w+)\s*;)", std::regex::ECMAScript);
 	//TODO parse attributes for sanity checks
