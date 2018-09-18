@@ -72,7 +72,6 @@ GLShaderProgram::GLShaderProgram(const String& vertex, const String& geometry, c
 			AnalyzeShaderCode(type);
 }
 
-
 void GLShaderProgram::BindProgram() const
 {
 	glUseProgram(ProgramHandle);
@@ -105,7 +104,7 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 	Dynarray<String> includedFiles;
 	Dynarray<String> linesToProcess = rawCode.Split("\n");
 	StringBuilder sb;
-	int lineCounter = 0;
+	size_t lineCounter = 0;
 	while(lineCounter < linesToProcess.GetSize())
 	{
 		String currLine = linesToProcess[lineCounter].GetTrimmed();
@@ -194,7 +193,6 @@ unsigned int GLShaderProgram::GetProgramHandle() const
 	return ProgramHandle;
 }
 
-
 void GLShaderProgram::RegisterUniform(const String& type, const String& name)
 {
 	if (Uniforms.find(name) != Uniforms.end())
@@ -211,7 +209,6 @@ void GLShaderProgram::RegisterUniform(const String& type, const String& name)
 	CHECK_GL_ERR();
 }
 
-
 void GLShaderProgram::SetUniform(const String& name, int val)
 {
 	auto it = Uniforms.find(name);
@@ -226,7 +223,6 @@ void GLShaderProgram::SetUniform(const String& name, int val)
 		glUniform1i(it->second.Location, val);
 	}
 }
-
 
 void GLShaderProgram::SetUniform(const String& name, uint val)
 {
@@ -243,7 +239,6 @@ void GLShaderProgram::SetUniform(const String& name, uint val)
 	}
 }
 
-
 void GLShaderProgram::SetUniform(const String& name, float val)
 {
 	auto it = Uniforms.find(name);
@@ -253,7 +248,6 @@ void GLShaderProgram::SetUniform(const String& name, float val)
 		glUniform1f(it->second.Location, val);
 	}
 }
-
 
 void GLShaderProgram::SetUniform(const String & name, float val1, float val2)
 {
@@ -265,7 +259,6 @@ void GLShaderProgram::SetUniform(const String & name, float val1, float val2)
 	}
 }
 
-
 void GLShaderProgram::SetUniform(const String& name, const Vector& val)
 {
 	auto it = Uniforms.find(name);
@@ -276,7 +269,6 @@ void GLShaderProgram::SetUniform(const String& name, const Vector& val)
 	}
 }
 
-
 void GLShaderProgram::SetUniform(const String& name, const Color& val)
 {
 	auto it = Uniforms.find(name);
@@ -286,7 +278,6 @@ void GLShaderProgram::SetUniform(const String& name, const Color& val)
 		glUniform4f(it->second.Location, val.R, val.G, val.B, val.A);
 	}
 }
-
 
 void GLShaderProgram::SetUniform(const String& name, const Matrix& val)
 {
