@@ -250,11 +250,11 @@ TEST_CASE("Dynarray insert operations", "[Dynarray]")
 		Dynarray<String> c{ "foo", "bar", "asdf" };
 		Dynarray<String> d{ "foo", "bar", "asdf", "lorem ipsum" };
 
-		a.Insert(0, "bar");
+		a.Insert(0, "foo");
 		for(int i = 0; i < d.GetSize(); ++i)
 			REQUIRE(a[i] == d[i]);
 
-		b.Insert(1, "asdf");
+		b.Insert(1, "bar");
 		for (int i = 0; i < d.GetSize(); ++i)
 			REQUIRE(b[i] == d[i]);
 
@@ -263,23 +263,42 @@ TEST_CASE("Dynarray insert operations", "[Dynarray]")
 			REQUIRE(c[i] == d[i]);
 	}
 
-	/*
 	SECTION("Insert array of elements at index")
 	{
-		Dynarray<int> e{ 1, 2, 6 };
-		Dynarray<int> f{ 3, 4, 5 };
-		Dynarray<int> g{ 1, 2, 3 };
-		Dynarray<int> h{ 1, 2, 3 };
-		Dynarray<int> i{ 4, 5, 6 };
-		Dynarray<int> j{ 1, 2, 3, 4, 5, 6 };
+		Dynarray<int> a{ 1, 2, 6 };
+		Dynarray<int> b{ 3, 4, 5 };
+		Dynarray<int> c{ 1, 2, 3 };
+		Dynarray<int> d{ 1, 2, 3 };
+		Dynarray<int> e{ 4, 5, 6 };
+		Dynarray<int> f{ 1, 2, 3, 4, 5, 6 };
 
-		e.Insert(2, f);
-		REQUIRE(e == j);
+		a.Insert(2, b);
+		REQUIRE(a == f);
 
-		g.Insert(3, i);
-		REQUIRE(g == j);
+		c.Insert(3, e);
+		REQUIRE(c == f);
 
-		i.Insert(0, h);
-		REQUIRE(i == j);
+		e.Insert(0, d);
+		REQUIRE(e == f);
+	}
+
+	SECTION("Insert rvalue array of elements at index")
+	{
+		Dynarray<String> a{ "foo", "bar", "consectetur, adipisci velit" };
+		Dynarray<String> b{ "foo", "bar", "asdf" };
+		Dynarray<String> c{ "lorem ipsum", "dolor sit amet", "consectetur, adipisci velit" };
+		Dynarray<String> d{ "foo", "bar", "asdf", "lorem ipsum", "dolor sit amet", "consectetur, adipisci velit" };
+
+		a.Insert(2, { "asdf", "lorem ipsum", "dolor sit amet" });
+		for (int i = 0; i < d.GetSize(); ++i)
+			REQUIRE(a[i] == d[i]);
+
+		b.Insert(3, { "lorem ipsum", "dolor sit amet", "consectetur, adipisci velit" });
+		for (int i = 0; i < d.GetSize(); ++i)
+			REQUIRE(b[i] == d[i]);
+
+		c.Insert(0, { "foo", "bar", "asdf" });
+		for (int i = 0; i < d.GetSize(); ++i)
+			REQUIRE(c[i] == d[i]);
 	}
 }

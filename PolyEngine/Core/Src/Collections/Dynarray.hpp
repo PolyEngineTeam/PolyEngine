@@ -212,20 +212,6 @@ namespace Poly
 		}
 
 		/// <summary>
-		/// Copies provided array of objects to the specified location in the dynarray.
-		/// Objects already present that are in position >= idx will be moved to the right by number of elements in array.
-		/// Insertion with idx > size results in undefined behaviour.
-		/// </summary>
-		/// <param name="idx">Index in which object should be created.</param>
-		/// <param name="arr">Const reference to array of objects that should be copied to the container.</param>
-		void Insert(size_t idx, const Dynarray<T>& arr)
-		{
-			HEAVY_ASSERTE(idx <= GetSize(), "Index out of bounds!");
-			for (size_t i = 0; i < arr.GetSize(); i++)
-				Insert(idx + i, arr[i]);
-		}
-
-		/// <summary>
 		/// Moved provided object to the specified location in the dynarray.
 		/// Objects already present that are in position >= idx will be moved one position to the right.
 		/// Insertion with idx > size results in undefined behaviour.
@@ -240,6 +226,43 @@ namespace Poly
 			MoveDataRight(idx, Size, 1);
 			ObjectLifetimeHelper::MoveCreate(Data + idx, std::move(obj));
 			++Size;
+		}
+
+
+		/// <summary>
+		/// Copies provided array of objects to the specified location in the dynarray.
+		/// Objects already present that are in position >= idx will be moved to the right by number of elements in array.
+		/// Insertion with idx > size results in undefined behaviour.
+		/// </summary>
+		/// <param name="idx">Index in which object should be created.</param>
+		/// <param name="arr">Const reference to array of objects that should be copied to the container.</param>
+		void Insert(size_t idx, const Dynarray<T>& arr)
+		{
+			HEAVY_ASSERTE(idx <= GetSize(), "Index out of bounds!");
+			if (Size + arr.GetSize() >= GetCapacity())
+				Reserve(Size + arr.GetSize());
+			MoveDataRight(idx, Size, arr.GetSize());
+			for (int i = 0; i < arr.GetSize(); ++i)
+				ObjectLifetimeHelper::CopyCreate(Data + idx + i, arr[i]);
+			Size += arr.GetSize();
+		}
+
+		/// <summary>
+		/// Copies provided array of objects to the specified location in the dynarray.
+		/// Objects already present that are in position >= idx will be moved to the right by number of elements in array.
+		/// Insertion with idx > size results in undefined behaviour.
+		/// </summary>
+		/// <param name="idx">Index in which object should be created.</param>
+		/// <param name="arr">R-value reference to array of objects that should be copied to the container.</param>
+		void Insert(size_t idx, const Dynarray<T>&& arr)
+		{
+			HEAVY_ASSERTE(idx <= GetSize(), "Index out of bounds!");
+			if (Size + arr.GetSize() >= GetCapacity())
+				Reserve(Size + arr.GetSize());
+			MoveDataRight(idx, Size, arr.GetSize());
+			for (int i = 0; i < arr.GetSize(); ++i)
+				ObjectLifetimeHelper::CopyCreate(Data + idx + i, std::move(arr[i]));
+			Size += arr.GetSize();
 		}
 
 		/// <summary>
