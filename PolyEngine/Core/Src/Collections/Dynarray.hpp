@@ -122,6 +122,8 @@ namespace Poly
 		/// <param name="rhs">R-value reference to Dynarray instance which state should be moved.</param>
 		Dynarray<T>& operator=(Dynarray<T>&& rhs)
 		{
+			Clear();
+			Free();
 			Move(std::forward<Dynarray<T>>(rhs));
 			return *this;
 		}
@@ -276,7 +278,6 @@ namespace Poly
 			HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!");
 			ObjectLifetimeHelper::Destroy(Data + idx);
 			MoveDataLeft(idx + 1, Size, 1);
-			//std::move(Begin() + idx + 1, End(), Begin() + idx);
 			--Size;
 		}
 
@@ -507,14 +508,14 @@ namespace Poly
 		void MoveDataRight(size_t start, size_t end, size_t size)
 		{
 			for (size_t currPos = end; currPos > start; --currPos)
-				Data[currPos + size - 1] = std::move(Data[currPos - 1]);
+				ObjectLifetimeHelper::MoveCreate(Data + currPos + size - 1, std::move(Data[currPos - 1]));
 		}
 
 		//------------------------------------------------------------------------------
 		void MoveDataLeft(size_t start, size_t end, size_t size)
 		{
 			for (size_t currPos = start; currPos < end; ++currPos)
-				Data[currPos - size] = std::move(Data[currPos]);
+				ObjectLifetimeHelper::MoveCreate(Data + currPos - size, std::move(Data[currPos]));
 		}
 
 		//------------------------------------------------------------------------------
