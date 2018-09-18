@@ -244,7 +244,7 @@ namespace Poly
 			if (Size + arr.GetSize() >= GetCapacity())
 				Reserve(Size + arr.GetSize());
 			MoveDataRight(idx, Size, arr.GetSize());
-			for (int i = 0; i < arr.GetSize(); ++i)
+			for (size_t i = 0; i < arr.GetSize(); ++i)
 				ObjectLifetimeHelper::CopyCreate(Data + idx + i, arr[i]);
 			Size += arr.GetSize();
 		}
@@ -262,7 +262,7 @@ namespace Poly
 			if (Size + arr.GetSize() >= GetCapacity())
 				Reserve(Size + arr.GetSize());
 			MoveDataRight(idx, Size, arr.GetSize());
-			for (int i = 0; i < arr.GetSize(); ++i)
+			for (size_t i = 0; i < arr.GetSize(); ++i)
 				ObjectLifetimeHelper::CopyCreate(Data + idx + i, std::move(arr[i]));
 			Size += arr.GetSize();
 		}
