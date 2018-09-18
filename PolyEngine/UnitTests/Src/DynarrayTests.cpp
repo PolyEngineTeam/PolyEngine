@@ -2,6 +2,7 @@
 #include <catch.hpp>
 
 #include <Collections/Dynarray.hpp>
+#include <Collections/String.hpp>
 //TODO implement
 
 using namespace Poly;
@@ -241,7 +242,27 @@ TEST_CASE("Dynarray insert operations", "[Dynarray]")
 		c.Insert(3, 4);
 		REQUIRE(c == d);
 	}
-	
+
+	SECTION("Insert single object at index")
+	{
+		Dynarray<String> a{ "bar", "asdf", "lorem ipsum" };
+		Dynarray<String> b{ "foo", "asdf", "lorem ipsum" };
+		Dynarray<String> c{ "foo", "bar", "asdf" };
+		Dynarray<String> d{ "foo", "bar", "asdf", "lorem ipsum" };
+
+		a.Insert(0, "bar");
+		for(int i = 0; i < d.GetSize(); ++i)
+			REQUIRE(a[i] == d[i]);
+
+		b.Insert(1, "asdf");
+		for (int i = 0; i < d.GetSize(); ++i)
+			REQUIRE(b[i] == d[i]);
+
+		c.Insert(3, "lorem ipsum");
+		for (int i = 0; i < d.GetSize(); ++i)
+			REQUIRE(c[i] == d[i]);
+	}
+
 	SECTION("Insert array of elements at index")
 	{
 		Dynarray<int> e{ 1, 2, 6 };
