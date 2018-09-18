@@ -263,6 +263,7 @@ TEST_CASE("Dynarray insert operations", "[Dynarray]")
 			REQUIRE(c[i] == d[i]);
 	}
 
+	/*
 	SECTION("Insert array of elements at index")
 	{
 		Dynarray<int> e{ 1, 2, 6 };
