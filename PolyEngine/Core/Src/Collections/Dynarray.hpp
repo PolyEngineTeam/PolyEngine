@@ -122,8 +122,6 @@ namespace Poly
 		/// <param name="rhs">R-value reference to Dynarray instance which state should be moved.</param>
 		Dynarray<T>& operator=(Dynarray<T>&& rhs)
 		{
-			Clear();
-			Free();
 			Move(std::forward<Dynarray<T>>(rhs));
 			return *this;
 		}
