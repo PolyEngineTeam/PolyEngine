@@ -251,15 +251,15 @@ TEST_CASE("Dynarray insert operations", "[Dynarray]")
 		Dynarray<String> d{ "foo", "bar", "asdf", "lorem ipsum" };
 
 		a.Insert(0, "foo");
-		for(int i = 0; i < d.GetSize(); ++i)
+		for(size_t i = 0; i < d.GetSize(); ++i)
 			REQUIRE(a[i] == d[i]);
 
 		b.Insert(1, "bar");
-		for (int i = 0; i < d.GetSize(); ++i)
+		for (size_t i = 0; i < d.GetSize(); ++i)
 			REQUIRE(b[i] == d[i]);
 
 		c.Insert(3, "lorem ipsum");
-		for (int i = 0; i < d.GetSize(); ++i)
+		for (size_t i = 0; i < d.GetSize(); ++i)
 			REQUIRE(c[i] == d[i]);
 	}
 
@@ -290,15 +290,15 @@ TEST_CASE("Dynarray insert operations", "[Dynarray]")
 		Dynarray<String> d{ "foo", "bar", "asdf", "lorem ipsum", "dolor sit amet", "consectetur, adipisci velit" };
 
 		a.Insert(2, { "asdf", "lorem ipsum", "dolor sit amet" });
-		for (int i = 0; i < d.GetSize(); ++i)
+		for (size_t i = 0; i < d.GetSize(); ++i)
 			REQUIRE(a[i] == d[i]);
 
 		b.Insert(3, { "lorem ipsum", "dolor sit amet", "consectetur, adipisci velit" });
-		for (int i = 0; i < d.GetSize(); ++i)
+		for (size_t i = 0; i < d.GetSize(); ++i)
 			REQUIRE(b[i] == d[i]);
 
 		c.Insert(0, { "foo", "bar", "asdf" });
-		for (int i = 0; i < d.GetSize(); ++i)
+		for (size_t i = 0; i < d.GetSize(); ++i)
 			REQUIRE(c[i] == d[i]);
 	}
 }
