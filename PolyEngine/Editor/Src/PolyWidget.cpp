@@ -1,4 +1,4 @@
-#include "PolyEditorPCH.hpp"
+#include <PolyEditorPCH.hpp>
 
 PolyWidget::PolyWidget(const QString& title, QWidget* parent) :
 	QWidget(parent)

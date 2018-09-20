@@ -1,7 +1,7 @@
 // include the basic windows header file
 #include <SDL.h>
 
-#include "Engine.hpp"
+#include <Engine.hpp>
 #include <Rendering/IRenderingDevice.hpp>
 #include <Utils/LibraryLoader.hpp>
 #include <Configs/AssetsPathConfig.hpp>

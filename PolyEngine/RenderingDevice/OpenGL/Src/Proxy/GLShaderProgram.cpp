@@ -1,7 +1,7 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "Proxy/GLShaderProgram.hpp"
-#include "Common/GLUtils.hpp"
+#include <Proxy/GLShaderProgram.hpp>
+#include <Common/GLUtils.hpp>
 
 SILENCE_MSVC_WARNING(4805, "Warning originates in std::regex");
 #include <regex>

@@ -2,7 +2,7 @@
 
 #include <QTextEdit>
 #include <QBoxLayout>
-#include "PolyWidget.hpp"
+#include <PolyWidget.hpp>
 
 class LoggerWidget : public PolyWidget
 {

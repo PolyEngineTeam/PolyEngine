@@ -1,7 +1,7 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Rendering/Particles/ParticleComponent.hpp"
-#include "Rendering/Camera/CameraComponent.hpp"
+#include <Rendering/Particles/ParticleComponent.hpp>
+#include <Rendering/Camera/CameraComponent.hpp>
 
 using namespace Poly;
 

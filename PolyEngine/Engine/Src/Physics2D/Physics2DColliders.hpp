@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "ECS/ComponentBase.hpp"
+#include <ECS/ComponentBase.hpp>
 
 class b2PolygonShape;
 class b2CircleShape;

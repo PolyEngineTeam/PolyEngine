@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Defines.hpp"
+#include <Defines.hpp>
 
-#include "Memory/ObjectLifetimeHelpers.hpp"
-#include "Collections/Dynarray.hpp"
+#include <Memory/ObjectLifetimeHelpers.hpp>
+#include <Collections/Dynarray.hpp>
 
 namespace Poly 
 {
@@ -112,4 +112,4 @@ namespace Poly
 	} // namespace RTTI
 } // namespace Poly
 
-#include "RTTITypeInfoImpl.hpp"
+#include <RTTI/RTTITypeInfoImpl.hpp>

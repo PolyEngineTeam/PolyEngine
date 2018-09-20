@@ -1,8 +1,8 @@
-#include "CorePCH.hpp"
+#include <CorePCH.hpp>
 
-#include "RTTI/RTTI.hpp"
-#include "RTTI/RTTISerialization.hpp"
-#include "Utils/FileIO.hpp"
+#include <RTTI/RTTI.hpp>
+#include <RTTI/RTTISerialization.hpp>
+#include <Utils/FileIO.hpp>
 
 RTTI_DEFINE_TYPE(Poly::RTTIBase)
 

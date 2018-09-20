@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "Dynarray.hpp"
+#include <Defines.hpp>
+#include <Collections/Dynarray.hpp>
 
 namespace Poly {
 

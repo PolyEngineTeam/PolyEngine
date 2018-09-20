@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "Rendering/IRenderingDevice.hpp"
+#include <Rendering/IRenderingDevice.hpp>
 
 typedef unsigned GLuint;
 

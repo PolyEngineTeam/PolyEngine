@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "ECS/ComponentBase.hpp"
-#include "Physics2D/Physics2DSystem.hpp"
-#include "Physics2D/Rigidbody2DComponent.hpp"
+#include <ECS/ComponentBase.hpp>
+#include <Physics2D/Physics2DSystem.hpp>
+#include <Physics2D/Rigidbody2DComponent.hpp>
 
 class b2World;
 

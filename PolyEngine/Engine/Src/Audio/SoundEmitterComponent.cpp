@@ -1,8 +1,8 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Audio/SoundEmitterComponent.hpp"
-#include "Resources/ResourceManager.hpp"
-#include "Resources/SoundResource.hpp"
+#include <Audio/SoundEmitterComponent.hpp>
+#include <Resources/ResourceManager.hpp>
+#include <Resources/SoundResource.hpp>
 
 using namespace Poly;
 

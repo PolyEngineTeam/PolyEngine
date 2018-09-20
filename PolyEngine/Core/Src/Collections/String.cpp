@@ -1,7 +1,7 @@
-#include "CorePCH.hpp"
+#include <CorePCH.hpp>
 
-#include "String.hpp"
-#include "StringBuilder.hpp"
+#include <Collections/String.hpp>
+#include <Collections/StringBuilder.hpp>
 
 using namespace Poly;
 

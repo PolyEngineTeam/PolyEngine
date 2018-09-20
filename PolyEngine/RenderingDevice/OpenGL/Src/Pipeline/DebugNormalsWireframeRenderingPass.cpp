@@ -1,8 +1,8 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "Pipeline/DebugNormalsWireframeRenderingPass.hpp"
-#include "Proxy/GLMeshDeviceProxy.hpp"
-#include "Proxy/GLTextureDeviceProxy.hpp"
+#include <Pipeline/DebugNormalsWireframeRenderingPass.hpp>
+#include <Proxy/GLMeshDeviceProxy.hpp>
+#include <Proxy/GLTextureDeviceProxy.hpp>
 
 using namespace Poly;
 

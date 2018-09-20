@@ -1,22 +1,23 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Engine.hpp"
-#include "Configs/AssetsPathConfig.hpp"
-#include "Configs/DebugConfig.hpp"
-#include "ECS/DeferredTaskSystem.hpp"
-#include "Input/InputWorldComponent.hpp"
-#include "Movement/FreeFloatMovementComponent.hpp"
-#include "AI/PathfindingSystem.hpp"
-#include "Rendering/ViewportWorldComponent.hpp"
-#include "Rendering/Lighting/LightSourceComponent.hpp"
-#include "Rendering/RenderingSystem.hpp"
-#include "Rendering/Particles/ParticleUpdateSystem.hpp"
-#include "Time/TimeWorldComponent.hpp"
-#include "Debugging/DebugWorldComponent.hpp"
-#include "Debugging/DebugDrawComponents.hpp"
-#include "Physics2D/Physics2DWorldComponent.hpp"
-#include "Physics3D/Physics3DWorldComponent.hpp"
-#include "Debugging/DebugDrawSystem.hpp"
+#include <Engine.hpp>
+#include <Configs/AssetsPathConfig.hpp>
+#include <Configs/DebugConfig.hpp>
+#include <ECS/DeferredTaskSystem.hpp>
+#include <Input/InputWorldComponent.hpp>
+#include <Movement/FreeFloatMovementComponent.hpp>
+#include <AI/PathfindingSystem.hpp>
+#include <Rendering/ViewportWorldComponent.hpp>
+#include <Rendering/Lighting/LightSourceComponent.hpp>
+#include <Rendering/RenderingSystem.hpp>
+#include <Rendering/Particles/ParticleUpdateSystem.hpp>
+#include <Time/TimeWorldComponent.hpp>
+#include <Debugging/DebugWorldComponent.hpp>
+#include <Debugging/DebugDrawComponents.hpp>
+#include <Physics2D/Physics2DWorldComponent.hpp>
+#include <Physics3D/Physics3DWorldComponent.hpp>
+#include <Debugging/DebugDrawSystem.hpp>
+#include <ECS/LambdaSystem.hpp>
 
 using namespace Poly;
 
@@ -99,9 +100,18 @@ Engine::~Engine()
 void Engine::RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order)
 {
 	HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "_COUNT enum value passed to RegisterUpdatePhase(), which is an invalid value");
-	Dynarray<PhaseUpdateFunction>& UpdatePhases = GameUpdatePhases[static_cast<int>(order)];
-	UpdatePhases.PushBack(phaseFunction);
+	Dynarray<std::unique_ptr<ISystem>>& UpdatePhases = GameUpdatePhases[order];
+	UpdatePhases.PushBack(std::make_unique<LambdaSystem>(phaseFunction));
 }
+
+//------------------------------------------------------------------------------
+void Engine::RegisterSystem(std::unique_ptr<ISystem> system, eUpdatePhaseOrder order)
+{
+	HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "_COUNT enum value passed to RegisterUpdatePhase(), which is an invalid value");
+	Dynarray<std::unique_ptr<ISystem>>& UpdatePhases = GameUpdatePhases[order];
+	UpdatePhases.PushBack(std::move(system));
+}
+
 
 //------------------------------------------------------------------------------
 void Engine::Update()

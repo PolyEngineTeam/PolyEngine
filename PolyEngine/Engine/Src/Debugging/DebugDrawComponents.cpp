@@ -1,6 +1,6 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "DebugDrawComponents.hpp"
+#include <Debugging/DebugDrawComponents.hpp>
 
 RTTI_DEFINE_COMPONENT(::Poly::DebugDrawableComponent)
 RTTI_DEFINE_COMPONENT(::Poly::DebugDrawStateWorldComponent)

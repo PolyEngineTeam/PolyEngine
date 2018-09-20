@@ -1,6 +1,6 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Resources/SoundResource.hpp"
+#include <Resources/SoundResource.hpp>
 
 using namespace Poly;
 

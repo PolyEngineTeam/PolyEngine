@@ -1,9 +1,9 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "UI/Text2D.hpp"
-#include "Resources/FontResource.hpp"
-#include "Resources/ResourceManager.hpp"
-#include "ECS/Scene.hpp"
+#include <UI/Text2D.hpp>
+#include <Resources/FontResource.hpp>
+#include <Resources/ResourceManager.hpp>
+#include <ECS/Scene.hpp>
 
 using namespace Poly;
 
