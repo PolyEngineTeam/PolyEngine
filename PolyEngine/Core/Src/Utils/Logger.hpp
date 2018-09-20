@@ -84,7 +84,7 @@ namespace Poly
 				static StringBuilder sb;
 				String fullFmt = StringBuilder().AppendFormat("[{}] {}", levelStr, fmt).StealString();
 				sb.AppendFormat(fullFmt.GetCStr(), std::forward<Args>(args)...);
-				*Ostream << sb.GetString() << std::endl;
+				*Ostream << sb.StealString() << std::endl;
 				sb.Clear();
 			}
 		}

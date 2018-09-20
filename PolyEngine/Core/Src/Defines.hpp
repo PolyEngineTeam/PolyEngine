@@ -16,6 +16,8 @@
 	// Invalid warning in MSVC about template specialization exporting, 
 	// according to https://msdn.microsoft.com/en-US/library/esew7y1w.aspx it can be ignored since we use same CRT within project
 	#pragma warning(disable: 4251)
+
+	// Push changes to prevent others from discarding them easily.
 	#pragma warning(push)
 
 	
