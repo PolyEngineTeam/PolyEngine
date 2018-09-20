@@ -218,7 +218,7 @@ void TiledForwardRenderer::Init()
 
 void TiledForwardRenderer::Resize(const ScreenSize& size)
 {
-	gConsole.LogInfo("TiledForwardRenderer::Resize ({}, {})", size.Width, size.Height);
+	gConsole.LogInfo("TiledForwardRenderer::Resize ({}, {}), LastRect: {}", size.Width, size.Height, LastViewportRect);
 
 	DeleteLightBuffers();
 
@@ -505,7 +505,9 @@ void TiledForwardRenderer::DeleteRenderTargets()
 
 void TiledForwardRenderer::Render(const SceneView& sceneView)
 {
-	// gConsole.LogInfo("TiledForwardRenderer::Render");
+	gConsole.LogInfo("TiledForwardRenderer::Render Rect: {}", sceneView.Rect);
+
+	LastViewportRect = sceneView.Rect;
 
 	// gConsole.LogInfo("TiledForwardRenderer::Render Aspect: {}, IsForcedRatio: {}, FOV: {}",
 	// 	sceneView.CameraCmp->GetAspect(), sceneView.CameraCmp->GetForcedRatio(), sceneView.CameraCmp->GetFOV());

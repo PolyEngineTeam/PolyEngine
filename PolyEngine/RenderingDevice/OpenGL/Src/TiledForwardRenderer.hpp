@@ -69,6 +69,8 @@ namespace Poly {
 		Matrix PreviousFrameCameraTransform;
 		Matrix PreviousFrameCameraClipFromWorld;
 
+		AARect LastViewportRect;
+
 		const int MAX_NUM_LIGHTS = 1024;
 		const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 
