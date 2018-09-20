@@ -256,14 +256,14 @@ namespace Poly
 		/// </summary>
 		/// <param name="idx">Index in which object should be created.</param>
 		/// <param name="arr">R-value reference to array of objects that should be copied to the container.</param>
-		void Insert(size_t idx, const Dynarray<T>&& arr)
+		void Insert(size_t idx, Dynarray<T>&& arr)
 		{
 			HEAVY_ASSERTE(idx <= GetSize(), "Index out of bounds!");
 			if (Size + arr.GetSize() >= GetCapacity())
 				Reserve(Size + arr.GetSize());
 			MoveDataRight(idx, Size, arr.GetSize());
 			for (size_t i = 0; i < arr.GetSize(); ++i)
-				ObjectLifetimeHelper::CopyCreate(Data + idx + i, std::move(arr[i]));
+				ObjectLifetimeHelper::MoveCreate(Data + idx + i, std::move(arr[i]));
 			Size += arr.GetSize();
 		}
 
