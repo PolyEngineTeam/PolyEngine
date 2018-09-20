@@ -1,9 +1,9 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
-// #include "ForwardRenderer.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
+// #include <ForwardRenderer.hpp>
 
-#include "IRendererInterface.hpp"
-#include "GLRenderingDevice.hpp"
-#include "Pipeline/RenderingPassBase.hpp"
+#include <IRendererInterface.hpp>
+#include <GLRenderingDevice.hpp>
+#include <Pipeline/RenderingPassBase.hpp>
 
 using namespace Poly;
 

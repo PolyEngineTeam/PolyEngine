@@ -1,6 +1,6 @@
-#include "CorePCH.hpp"
+#include <CorePCH.hpp>
 
-#include "SafePtrRoot.hpp"
+#include <Memory/SafePtrRoot.hpp>
 
 RTTI_DEFINE_TYPE(::Poly::SafePtrRoot);
 

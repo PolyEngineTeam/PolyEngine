@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "Collections/String.hpp"
+#include <Defines.hpp>
+#include <Collections/String.hpp>
 
 namespace Poly {
 

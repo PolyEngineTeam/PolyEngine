@@ -1,9 +1,9 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "Pipeline/BlinnPhongRenderingPass.hpp"
-#include "Proxy/GLMeshDeviceProxy.hpp"
-#include "Proxy/GLTextureDeviceProxy.hpp"
-#include "GLRenderingDevice.hpp"
+#include <Pipeline/BlinnPhongRenderingPass.hpp>
+#include <Proxy/GLMeshDeviceProxy.hpp>
+#include <Proxy/GLTextureDeviceProxy.hpp>
+#include <GLRenderingDevice.hpp>
 
 using namespace Poly;
 

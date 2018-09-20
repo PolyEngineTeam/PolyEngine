@@ -1,4 +1,4 @@
-#include "PolyEditorPCH.hpp"
+#include <PolyEditorPCH.hpp>
 
 #include <QDockWidget>
 

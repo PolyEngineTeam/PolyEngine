@@ -1,10 +1,10 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "Pipeline/Text2DRenderingPass.hpp"
-#include "Proxy/GLTextFieldBufferDeviceProxy.hpp"
-#include "Proxy/GLTextureDeviceProxy.hpp"
-#include "Proxy/GLMeshDeviceProxy.hpp"
-#include "Common/GLUtils.hpp"
+#include <Pipeline/Text2DRenderingPass.hpp>
+#include <Proxy/GLTextFieldBufferDeviceProxy.hpp>
+#include <Proxy/GLTextureDeviceProxy.hpp>
+#include <Proxy/GLMeshDeviceProxy.hpp>
+#include <Common/GLUtils.hpp>
 
 using namespace Poly;
 

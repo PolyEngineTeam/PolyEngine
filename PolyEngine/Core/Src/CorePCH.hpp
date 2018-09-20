@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Defines.hpp"
+#include <Defines.hpp>
 
 // rapidjson
 SILENCE_GCC_WARNING(-Wclass-memaccess, "Rapidjson has no release containing fix to this issue (01.09.18).")

@@ -1,30 +1,30 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "GLRenderingDevice.hpp"
+#include <GLRenderingDevice.hpp>
 
-#include "Common/GLUtils.hpp"
-#include "Common/PrimitiveQuad.hpp"
-#include "Common/PrimitiveCube.hpp"
+#include <Common/GLUtils.hpp>
+#include <Common/PrimitiveQuad.hpp>
+#include <Common/PrimitiveCube.hpp>
 
-#include "Proxy/GLTextureDeviceProxy.hpp"
-#include "Proxy/GLCubemapDeviceProxy.hpp"
-#include "Proxy/GLParticleDeviceProxy.hpp"
-#include "Proxy/GLTextFieldBufferDeviceProxy.hpp"
-#include "Proxy/GLMeshDeviceProxy.hpp"
+#include <Proxy/GLTextureDeviceProxy.hpp>
+#include <Proxy/GLCubemapDeviceProxy.hpp>
+#include <Proxy/GLParticleDeviceProxy.hpp>
+#include <Proxy/GLTextFieldBufferDeviceProxy.hpp>
+#include <Proxy/GLMeshDeviceProxy.hpp>
 
-#include "Pipeline/UnlitRenderingPass.hpp"
-#include "Pipeline/BlinnPhongRenderingPass.hpp"
-#include "Pipeline/Text2DRenderingPass.hpp"
-#include "Pipeline/DebugNormalsRenderingPass.hpp"
-#include "Pipeline/DebugNormalsWireframeRenderingPass.hpp"
-#include "Pipeline/DebugRenderingPass.hpp"
-#include "Pipeline/ParticlesRenderingPass.hpp"
-#include "Pipeline/PostprocessRenderingPass.hpp"
-#include "Pipeline/TransparentRenderingPass.hpp"
-#include "Pipeline/SpritesheetRenderingPass.hpp"
-#include "Pipeline/SkyboxRenderingPass.hpp"
+#include <Pipeline/UnlitRenderingPass.hpp>
+#include <Pipeline/BlinnPhongRenderingPass.hpp>
+#include <Pipeline/Text2DRenderingPass.hpp>
+#include <Pipeline/DebugNormalsRenderingPass.hpp>
+#include <Pipeline/DebugNormalsWireframeRenderingPass.hpp>
+#include <Pipeline/DebugRenderingPass.hpp>
+#include <Pipeline/ParticlesRenderingPass.hpp>
+#include <Pipeline/PostprocessRenderingPass.hpp>
+#include <Pipeline/TransparentRenderingPass.hpp>
+#include <Pipeline/SpritesheetRenderingPass.hpp>
+#include <Pipeline/SkyboxRenderingPass.hpp>
 
-#include "IRendererInterface.hpp"
+#include <IRendererInterface.hpp>
 
 using namespace Poly;
 

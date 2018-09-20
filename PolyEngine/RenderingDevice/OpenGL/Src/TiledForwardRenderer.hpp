@@ -1,10 +1,10 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "IRendererInterface.hpp"
-#include "Proxy/GLShaderProgram.hpp"
-#include "Common/GLUtils.hpp"
-#include "Pipeline/EnvCapture.hpp"
+#include <IRendererInterface.hpp>
+#include <Proxy/GLShaderProgram.hpp>
+#include <Common/GLUtils.hpp>
+#include <Pipeline/EnvCapture.hpp>
 
 namespace Poly {
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "Memory/Allocator.hpp"
+#include <Defines.hpp>
+#include <Memory/Allocator.hpp>
 
 namespace Poly {
 

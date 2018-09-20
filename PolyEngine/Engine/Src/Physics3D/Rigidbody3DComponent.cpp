@@ -1,7 +1,7 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Rigidbody3DComponent.hpp"
-#include "Rigidbody3DImpl.hpp"
+#include <Physics3D/Rigidbody3DComponent.hpp>
+#include <Physics3D/Rigidbody3DImpl.hpp>
 
 RTTI_DEFINE_COMPONENT(::Poly::Rigidbody3DComponent)
 

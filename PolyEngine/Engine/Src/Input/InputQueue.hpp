@@ -4,7 +4,7 @@
 #include <Math/Vector2f.hpp>
 #include <Math/Vector2i.hpp>
 #include <Collections/Queue.hpp>
-#include "Input/KeyBindings.hpp"
+#include <Input/KeyBindings.hpp>
 
 namespace Poly
 {

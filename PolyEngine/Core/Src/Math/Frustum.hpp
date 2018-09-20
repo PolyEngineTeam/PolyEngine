@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "Math/BasicMath.hpp"
-#include "Math/Vector.hpp"
-#include "Math/Matrix.hpp"
-#include "Math/Plane.hpp"
-#include "Utils/EnumUtils.hpp"
+#include <Defines.hpp>
+#include <Math/BasicMath.hpp>
+#include <Math/Vector.hpp>
+#include <Math/Matrix.hpp>
+#include <Math/Plane.hpp>
+#include <Utils/EnumUtils.hpp>
 
 namespace Poly {
 

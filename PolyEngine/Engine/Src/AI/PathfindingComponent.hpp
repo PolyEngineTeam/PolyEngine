@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "ECS/ComponentBase.hpp"
-#include "AI/PathfindingSystem.hpp"
+#include <ECS/ComponentBase.hpp>
+#include <AI/PathfindingSystem.hpp>
 
 namespace Poly
 {

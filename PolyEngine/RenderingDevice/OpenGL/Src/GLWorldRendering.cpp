@@ -1,17 +1,17 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "GLRenderingDevice.hpp"
+#include <GLRenderingDevice.hpp>
 
-#include "Proxy/GLTextFieldBufferDeviceProxy.hpp"
-#include "Proxy/GLTextureDeviceProxy.hpp"
-#include "Pipeline/RenderingPassBase.hpp"
-#include "Proxy/GLMeshDeviceProxy.hpp"
-#include "Common/GLUtils.hpp"
-#include "Common/PrimitiveCube.hpp"
-#include "Common/PrimitiveQuad.hpp"
+#include <Proxy/GLTextFieldBufferDeviceProxy.hpp>
+#include <Proxy/GLTextureDeviceProxy.hpp>
+#include <Pipeline/RenderingPassBase.hpp>
+#include <Proxy/GLMeshDeviceProxy.hpp>
+#include <Common/GLUtils.hpp>
+#include <Common/PrimitiveCube.hpp>
+#include <Common/PrimitiveQuad.hpp>
 
-#include "ForwardRenderer.hpp"
-#include "TiledForwardRenderer.hpp"
+#include <ForwardRenderer.hpp>
+#include <TiledForwardRenderer.hpp>
 
 using namespace Poly;
 

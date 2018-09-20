@@ -1,6 +1,6 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "PathfindingComponent.hpp"
+#include <AI/PathfindingComponent.hpp>
 
 using namespace Poly;
 

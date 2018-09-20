@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PolyWindow.hpp"
+#include <PolyWindow.hpp>
 
 class PolyMainWindow : public PolyWindow
 {

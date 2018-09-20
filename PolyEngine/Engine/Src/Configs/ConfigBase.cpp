@@ -1,7 +1,7 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Configs/ConfigBase.hpp"
-#include "Resources/ResourceManager.hpp"
+#include <Configs/ConfigBase.hpp>
+#include <Resources/ResourceManager.hpp>
 
 using namespace Poly;
 

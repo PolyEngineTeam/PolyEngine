@@ -2,7 +2,7 @@
 
 #include <QMenu>
 
-#include "PolyMainWindow.hpp"
+#include <PolyMainWindow.hpp>
 
 class EditorUi : public QObject
 {
