@@ -100,7 +100,8 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 
 	if (rawCode.IsEmpty())
 		return;
-		
+	
+	// @fixme optimize this, spliting lines of every opened file is not fastest way to do it
 	Dynarray<String> includedFiles;
 	Dynarray<String> linesToProcess = rawCode.Split("\n");
 	StringBuilder sb;
@@ -123,8 +124,17 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 				ASSERTE(!includedFiles.Contains(includePath), "LoadShader failed, found recursive includes!");
 				includedFiles.PushBack(includePath);
 					
-				String rawInclude = LoadTextFileRelative(eResourceSource::ENGINE, includePath);
-				linesToProcess.Insert(lineCounter + 1, rawInclude.Split('\n'));
+				try
+				{
+					String rawInclude = LoadTextFileRelative(eResourceSource::ENGINE, includePath);
+					linesToProcess.Insert(lineCounter + 1, rawInclude.Split('\n'));
+				}
+				catch(FileIOException ex)
+				{
+					gConsole.LogError("GLShaderProgram::LoadShader shaderName: {}, type: {}, failed loading include: {}", shaderName, (size_t)type, includePath);
+					gConsole.LogError("GLShaderProgram::LoadShader Exception Message: {}", ex.what());
+					throw ex;
+				}
 			}
 		}
 		else
@@ -136,6 +146,8 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 	}
 
 	ShaderCode[type] = sb.GetString();
+
+	SaveTextFileRelative(eResourceSource::ENGINE, shaderName + ".dump", ShaderCode[type]);
 }
 
 void GLShaderProgram::CompileShader(GLShaderProgram::eShaderUnitType type)
