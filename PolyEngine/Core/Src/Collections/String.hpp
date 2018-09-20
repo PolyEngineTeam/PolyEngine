@@ -196,8 +196,6 @@ namespace Poly {
 
 	private:
 
-		static const String WHITESPACES;
-
 		String(Dynarray<char> rawData) : Data(std::move(rawData)) { Data.PushBack('\0'); }
 
 		Dynarray<char> Data;

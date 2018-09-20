@@ -7,7 +7,7 @@ using namespace Poly;
 
 const String String::EMPTY = String();
 
-const String String::WHITESPACES = String(" \t\r\n");
+static const Dynarray<char> WHITESPACES { ' ', '\t', '\r', '\n', '\0' };
 
 size_t Poly::StrLen(const char* str) {
 	size_t len = 0;
@@ -177,7 +177,7 @@ String String::GetTrimmed() const {
 	size_t start = 0;
 	size_t end = GetLength();
 
-	while (start <= GetLength() && WHITESPACES.Contains(Data[start]))
+	while (start < Data.GetSize() && WHITESPACES.Contains(Data[start]))
 	{
 		++start;
 	}

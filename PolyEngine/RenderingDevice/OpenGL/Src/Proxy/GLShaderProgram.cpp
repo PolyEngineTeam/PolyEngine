@@ -9,7 +9,7 @@ UNSILENCE_MSVC_WARNING()
 
 using namespace Poly;
 
-const String GLShaderProgram::SHADERS_INCLUDE_DIR = "Shaders/";
+const String SHADERS_INCLUDE_DIR = "Shaders/";
 
 GLShaderProgram::GLShaderProgram(const String& compute)
 {

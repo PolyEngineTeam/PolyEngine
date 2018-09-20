@@ -61,7 +61,6 @@ namespace Poly
 		void RegisterUniform(const String& type, const String& name);
 
 	private:
-		static const String SHADERS_INCLUDE_DIR;
 
 		void LoadShader(eShaderUnitType type, const String &shaderName);
 		void CompileShader(GLShaderProgram::eShaderUnitType type);
