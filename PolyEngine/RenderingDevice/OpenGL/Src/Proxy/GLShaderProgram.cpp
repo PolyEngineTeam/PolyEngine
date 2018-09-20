@@ -146,8 +146,6 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 	}
 
 	ShaderCode[type] = sb.GetString();
-
-	SaveTextFileRelative(eResourceSource::ENGINE, shaderName + ".dump", ShaderCode[type]);
 }
 
 void GLShaderProgram::CompileShader(GLShaderProgram::eShaderUnitType type)
