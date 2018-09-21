@@ -25,14 +25,15 @@ class Tag:
     def __init__(self, version_string):
         try:
             splitted = version_string.split('.')
-            self.major = int(splitted[0])
-            self.minor = int(splitted[1])
-            self.fix = int(splitted[2])
+            self.revision = int(splitted[0])
+            self.major = int(splitted[1])
+            self.minor = int(splitted[2])
+            self.fix = int(splitted[3])
         except ValueError:
             raise RuntimeError('Invalid tag found in repository: {}'.format(version_string))
 
     def __str__(self):
-        return '{}.{}.{}'.format(self.major, self.minor, self.fix)
+        return '{}.{}.{}.{}'.format(self.revision, self.major, self.minor, self.fix)
 
 
 # Custom action for project creation
@@ -191,6 +192,7 @@ def run_cmake(path, build_dir_name, proj_name):
 def create_project_file(path, proj_name, tag):
     data = {
         'ProjectName': proj_name,
+        'EngineRevision': tag.revision,
         'EngineMajorVersion': tag.major
     }
     with open(os.sep.join([path, proj_name + '.proj.json']), 'w') as outfile:
@@ -283,10 +285,11 @@ def create_project(name, path, engine_path):
 def update_project(path, engine_path, checkout_required):
     project_file = read_project_file(path)
     if checkout_required:
+        revision = project_file.get('EngineRevision', None)
         major_version = project_file.get('EngineMajorVersion', None)
-        if major_version is not None:
+        if major_version is not None and revision is not None:
             tags = get_tags(engine_path)
-            tag = get_latest_tag_with_major(tags, major_version)
+            tag = get_latest_tag_with_revision_and_major(tags, revision, major_version)
             checkout(engine_path, tag)
         else:
             raise RuntimeError("There is no 'EngineMajorVersion' defined in game project file")
@@ -303,7 +306,8 @@ def update_project(path, engine_path, checkout_required):
     run_cmake(path, 'Build', name)
 
 
-def get_latest_tag_with_major(tags, major):
+def get_latest_tag_with_revision_and_major(tags, revision, major):
+    tags = [tag for tag in tags if tag.revision == revision]
     tags = [tag for tag in tags if tag.major == major]
     minor = max(tags, key=attrgetter('minor')).minor
     tags = [tag for tag in tags if tag.minor == minor]
