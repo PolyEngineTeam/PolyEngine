@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "BaseObject.hpp"
-#include "RTTICast.hpp"
-#include "RTTIProperty.hpp"
-#include "UniqueID.hpp"
+#include <Defines.hpp>
+#include <BaseObject.hpp>
+#include <RTTI/RTTICast.hpp>
+#include <RTTI/RTTIProperty.hpp>
+#include <UniqueID.hpp>
 
 namespace Poly {
 	enum eSerializationType

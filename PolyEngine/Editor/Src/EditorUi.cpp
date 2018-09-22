@@ -1,4 +1,4 @@
-#include "PolyEditorPCH.hpp"
+#include <PolyEditorPCH.hpp>
 
 #include <QMenuBar>
 #include <QMenu>

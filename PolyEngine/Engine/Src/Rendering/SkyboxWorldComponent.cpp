@@ -1,8 +1,8 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Rendering/SkyboxWorldComponent.hpp"
-#include "Resources/ResourceManager.hpp"
-#include "Resources/TextureResource.hpp"
+#include <Rendering/SkyboxWorldComponent.hpp>
+#include <Resources/ResourceManager.hpp>
+#include <Resources/TextureResource.hpp>
 
 using namespace Poly;
 

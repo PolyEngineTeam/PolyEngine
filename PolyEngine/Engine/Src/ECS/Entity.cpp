@@ -1,8 +1,8 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "ECS/Entity.hpp"
-#include "ECS/EntityTransform.hpp"
-#include "ECS/Scene.hpp"
+#include <ECS/Entity.hpp>
+#include <ECS/EntityTransform.hpp>
+#include <ECS/Scene.hpp>
 
 using namespace Poly;
 

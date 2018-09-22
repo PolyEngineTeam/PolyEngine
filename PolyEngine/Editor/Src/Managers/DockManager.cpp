@@ -1,5 +1,4 @@
-#include "DockManager.hpp"
-#include "PolyEditorPCH.hpp"
+#include <PolyEditorPCH.hpp>
 
 void DockManager::WidgetCatchEvent(PolyDockWindow* catched)
 {

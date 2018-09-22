@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "Resources/Mesh.hpp"
+#include <Resources/Mesh.hpp>
 
 namespace Poly
 {

@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "ECS/ComponentBase.hpp"
-#include "Rendering/Camera/CameraSystem.hpp"
-#include "Rendering/Viewport.hpp"
+#include <ECS/ComponentBase.hpp>
+#include <Rendering/Camera/CameraSystem.hpp>
+#include <Rendering/Viewport.hpp>
 
 namespace Poly
 {

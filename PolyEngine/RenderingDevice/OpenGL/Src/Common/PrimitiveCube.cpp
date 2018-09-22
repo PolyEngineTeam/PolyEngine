@@ -1,6 +1,6 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "Common/PrimitiveCube.hpp"
+#include <Common/PrimitiveCube.hpp>
 
 using namespace Poly;
 

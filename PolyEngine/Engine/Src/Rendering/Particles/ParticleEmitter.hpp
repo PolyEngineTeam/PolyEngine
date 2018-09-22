@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "Rendering/Particles/ParticleUpdateSystem.hpp"
-#include "Rendering/IRenderingDevice.hpp"
-#include "Rendering/SpritesheetComponent.hpp"
+#include <Rendering/Particles/ParticleUpdateSystem.hpp>
+#include <Rendering/IRenderingDevice.hpp>
+#include <Rendering/SpritesheetComponent.hpp>
 
 typedef unsigned int GLuint;
 

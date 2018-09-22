@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "Memory/ObjectLifetimeHelpers.hpp"
+#include <Defines.hpp>
+#include <Memory/ObjectLifetimeHelpers.hpp>
 
 namespace Poly {
 	namespace Impl {

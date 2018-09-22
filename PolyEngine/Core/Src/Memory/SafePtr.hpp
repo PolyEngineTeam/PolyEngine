@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "SafePtrRoot.hpp"
+#include <Defines.hpp>
+#include <Memory/SafePtrRoot.hpp>
 
 namespace Poly
 {

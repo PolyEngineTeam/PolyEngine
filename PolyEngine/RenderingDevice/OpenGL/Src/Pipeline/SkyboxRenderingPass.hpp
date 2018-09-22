@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "Pipeline/RenderingPassBase.hpp"
-#include "Proxy/GLShaderProgram.hpp"
-#include "Common/PrimitiveCube.hpp"
+#include <Pipeline/RenderingPassBase.hpp>
+#include <Proxy/GLShaderProgram.hpp>
+#include <Common/PrimitiveCube.hpp>
 
 namespace Poly
 {

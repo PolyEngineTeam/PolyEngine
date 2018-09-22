@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "Common/GLUtils.hpp"
+#include <Common/GLUtils.hpp>
 
 namespace Poly
 {

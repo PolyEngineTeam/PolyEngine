@@ -5,10 +5,10 @@
 #include <Math/AABox.hpp>
 #include <Utils/EnumUtils.hpp>
 #include <RTTI/RTTI.hpp>
-#include "ECS/EntityTransform.hpp"
-#include "ECS/ComponentIDGenerator.hpp"
-#include "Collections/Dynarray.hpp"
-#include "Engine.hpp"
+#include <ECS/EntityTransform.hpp>
+#include <ECS/ComponentIDGenerator.hpp>
+#include <Collections/Dynarray.hpp>
+#include <Engine.hpp>
 
 namespace Poly
 {

@@ -1,10 +1,9 @@
-#include "PolyEditorPCH.hpp"
-#include "CustomSDLWindow.hpp"
+#include <PolyEditorPCH.hpp>
 #include <Utils/Logger.hpp>
 #include <SDL.h>
 
 #if defined(__APPLE__)
-    #include "MacOSHelper.hpp"
+    #include <MacOSHelper.hpp>
 #endif
 
 CustomSDLWindow::CustomSDLWindow(SDL_Window* mainWin, SDL_Window* helperWin)

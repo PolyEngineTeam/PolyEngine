@@ -1,8 +1,8 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "Pipeline/EnvCapture.hpp"
-#include "GLRenderingDevice.hpp"
-#include "Common/PrimitiveCube.hpp"
+#include <Pipeline/EnvCapture.hpp>
+#include <GLRenderingDevice.hpp>
+#include <Common/PrimitiveCube.hpp>
 
 using namespace Poly;
 

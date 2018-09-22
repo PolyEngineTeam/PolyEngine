@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "Utils/EnumUtils.hpp"
-#include "RTTI/RTTITypeInfo.hpp"
-#include "RTTI/RTTICast.hpp"
-#include "Collections/String.hpp"
-#include "Collections/Dynarray.hpp"
-#include "RTTI/CustomTypeTraits.hpp"
-#include "Utils/Logger.hpp"
+#include <Defines.hpp>
+#include <Utils/EnumUtils.hpp>
+#include <RTTI/RTTITypeInfo.hpp>
+#include <RTTI/RTTICast.hpp>
+#include <Collections/String.hpp>
+#include <Collections/Dynarray.hpp>
+#include <RTTI/CustomTypeTraits.hpp>
+#include <Utils/Logger.hpp>
 
 namespace Poly {
 
