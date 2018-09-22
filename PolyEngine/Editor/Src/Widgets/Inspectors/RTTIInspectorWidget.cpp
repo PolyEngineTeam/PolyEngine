@@ -107,7 +107,7 @@ void RTTIInspectorWidget::AddItem(QGridLayout* parent, int row, void* ptr, const
 {
 	RTTIRegisteredControl* control;
 
-	control = RTTIRegisteredControl::CreateControl(this, prop.CoreType);
+	control = ControlCreatorsManager::CreateControl(this, prop.CoreType);
 
 	control->SetObject(ptr);
 	control->SetName(prop.Name);

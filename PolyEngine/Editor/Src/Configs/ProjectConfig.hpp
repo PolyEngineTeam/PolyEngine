@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Collections/String.hpp>
-#include <Configs\ConfigBase.hpp>
+#include <Configs/ConfigBase.hpp>
 
 class ProjectConfig : public Poly::ConfigBase
 {
