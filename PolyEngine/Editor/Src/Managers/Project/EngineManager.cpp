@@ -58,7 +58,8 @@ void EngineManager::Edit()
 
 	case PolyEditor::eEngineState::GAMEPLAY:
 		Editor->SetEngineState(PolyEditor::eEngineState::EDIT);
-		EngineObj->Restart();
+		EngineObj->EndGane();
+		EngineObj->StartGame();
 		break;
 
 	default:
@@ -82,11 +83,13 @@ void EngineManager::Play()
 
 	case PolyEditor::eEngineState::EDIT:
 		Editor->SetEngineState(PolyEditor::eEngineState::GAMEPLAY);
-		EngineObj->Restart();
+		EngineObj->EndGane();
+		EngineObj->StartGame();
 		break;
 
 	case PolyEditor::eEngineState::GAMEPLAY:
-		EngineObj->Restart();
+		EngineObj->EndGane();
+		EngineObj->StartGame();
 		break;
 
 	default:

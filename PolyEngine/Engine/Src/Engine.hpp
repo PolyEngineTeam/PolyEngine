@@ -51,9 +51,9 @@ namespace Poly
 		/// <param name="device">Pointer to IRenderingDevice instance.</param>
 		void Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device);
 
-		/// <summary>@deprecated
-		/// Registers a PhaseUpdateFunction to be executed in the update.</summary>
-		void Restart();
+		void StartGame();
+
+		void EndGane();
 
 		/// <summary>Registers a PhaseUpdateFunction to be executed in the update.</summary>
 		/// <param name="phaseFunction"/>
