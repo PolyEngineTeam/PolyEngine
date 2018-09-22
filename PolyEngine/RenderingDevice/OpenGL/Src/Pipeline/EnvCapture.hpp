@@ -21,13 +21,6 @@ namespace Poly
 
 		void PrecalculateResourcesIBL(const SkyboxWorldComponent* skyboxCmp);
 
-		// bool GetIsDirty() const { return IsDirty; };
-
-		// GLuint GetCurrentHDRPanorama() const { return HDRPanorama; };
-		// GLuint GetCurrentEnvCubemap() const { return EnvCubemap; };
-		// GLuint GetCurrentIrradianceMap() const { return IrradianceMap; };
-		// GLuint GetCurrentPrefilterMap() const { return PrefilterMap; };
-
 		GLuint GetCurrentHDRPanorama() const { return HDRPanoramas[CurrentEnviroment]; };
 		GLuint GetCurrentEnvCubemap() const { return EnvCubemaps[CurrentEnviroment]; };
 		GLuint GetCurrentIrradianceMap() const { return IrradianceMaps[CurrentEnviroment]; };
@@ -40,12 +33,6 @@ namespace Poly
 		size_t CurrentEnviroment;
 
 		GLRenderingDevice* RDI;
-
-		// // IBL textures and cubemaps
-		// GLuint HDRPanorama = 0;
-		// GLuint EnvCubemap = 0;
-		// GLuint IrradianceMap = 0;
-		// GLuint PrefilterMap = 0;
 
 		Dynarray<GLuint> HDRPanoramas;
 		Dynarray<GLuint> EnvCubemaps;

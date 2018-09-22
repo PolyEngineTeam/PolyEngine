@@ -25,18 +25,6 @@ EnvCapture::EnvCapture(GLRenderingDevice* rdi)
 
 EnvCapture::~EnvCapture()
 {
-	// if (HDRPanorama > 0)
-	// 	glDeleteTextures(1, &HDRPanorama);
-	// 
-	// if (EnvCubemap > 0)
-	// 	glDeleteTextures(1, &EnvCubemap);
-	// 
-	// if (IrradianceMap > 0)
-	// 	glDeleteTextures(1, &IrradianceMap);
-	// 
-	// if (PrefilterMap > 0)
-	// 	glDeleteTextures(1, &PrefilterMap);
-
 	for (auto p : HDRPanoramas)
 	{
 		if (p > 0)
