@@ -129,7 +129,7 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 					String rawInclude = LoadTextFileRelative(eResourceSource::ENGINE, includePath);
 					linesToProcess.Insert(lineCounter + 1, rawInclude.Split('\n'));
 				}
-				catch(FileIOException ex)
+				catch(FileIOException& ex)
 				{
 					gConsole.LogError("GLShaderProgram::LoadShader shaderName: {}, type: {}, failed loading include: {}", shaderName, (size_t)type, includePath);
 					gConsole.LogError("GLShaderProgram::LoadShader Exception Message: {}", ex.what());
