@@ -1,10 +1,10 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "IRendererInterface.hpp"
-#include "Proxy/GLShaderProgram.hpp"
-#include "Common/GLUtils.hpp"
-#include "Pipeline/EnvCapture.hpp"
+#include <IRendererInterface.hpp>
+#include <Proxy/GLShaderProgram.hpp>
+#include <Common/GLUtils.hpp>
+#include <Pipeline/EnvCapture.hpp>
 
 namespace Poly {
 
@@ -119,6 +119,7 @@ namespace Poly {
 		GLShaderProgram HDRShader;
 		GLShaderProgram SkyboxShader;
 		GLShaderProgram LinearizeDepthShader;
+		GLShaderProgram FXAAShader;
 		GLShaderProgram GammaShader;
 		GLShaderProgram MotionBlurShader;
 		GLShaderProgram DOFBokehShader;
@@ -184,6 +185,8 @@ namespace Poly {
 		void EditorDebug(const SceneView& sceneView);
 
 		void UIText2D(const SceneView& sceneView);
+
+		void PostFXAA(const SceneView& sceneView);
 
 		void PostGamma(const SceneView& sceneView);
 		

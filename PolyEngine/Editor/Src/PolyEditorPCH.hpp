@@ -17,21 +17,21 @@ UNSILENCE_MSVC_WARNING()
 UNSILENCE_MSVC_WARNING()
 
 // application
-#include "EditorApp.hpp"
-#include "EditorUi.hpp"
-#include "GlobalEventFilter.hpp"
-#include "DockManager.hpp"
+#include <EditorApp.hpp>
+#include <EditorUi.hpp>
+#include <GlobalEventFilter.hpp>
+#include <DockManager.hpp>
 
 // windows
-#include "PolyWindow.hpp"
-#include "PolyMainWindow.hpp"
+#include <PolyWindow.hpp>
+#include <PolyMainWindow.hpp>
 
 // widgets base
-#include "PolyWidget.hpp"
+#include <PolyWidget.hpp>
 
 // widgets
-#include "ViewportWidget.hpp"
-#include "LoggerWidget.hpp"
+#include <ViewportWidget.hpp>
+#include <LoggerWidget.hpp>
 
 // engine
 #include <Engine.hpp>

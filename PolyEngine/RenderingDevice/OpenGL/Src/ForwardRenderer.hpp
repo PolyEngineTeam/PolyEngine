@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "IRendererInterface.hpp"
+#include <IRendererInterface.hpp>
 
 namespace Poly {
 

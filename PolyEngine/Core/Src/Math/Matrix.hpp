@@ -2,10 +2,10 @@
 
 #include <pmmintrin.h>
 
-#include "Defines.hpp"
-#include "Math/BasicMath.hpp"
-#include "Math/Vector.hpp"
-#include "Math/Angle.hpp"
+#include <Defines.hpp>
+#include <Math/BasicMath.hpp>
+#include <Math/Vector.hpp>
+#include <Math/Angle.hpp>
 
 namespace Poly
 {

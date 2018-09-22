@@ -1,8 +1,8 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Time/TimeSystem.hpp"
-#include "Time/TimeWorldComponent.hpp"
-#include "ECS/Scene.hpp"
+#include <Time/TimeSystem.hpp>
+#include <Time/TimeWorldComponent.hpp>
+#include <ECS/Scene.hpp>
 
 using std::chrono::steady_clock;
 using std::chrono::duration_cast;

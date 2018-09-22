@@ -3,9 +3,9 @@
 #include <QApplication>
 #include <QTimer>
 
-#include "EditorUi.hpp"
-#include "DockManager.hpp"
-#include "GlobalEventFilter.hpp"
+#include <EditorUi.hpp>
+#include <DockManager.hpp>
+#include <GlobalEventFilter.hpp>
 
 #include <Engine.hpp>
 

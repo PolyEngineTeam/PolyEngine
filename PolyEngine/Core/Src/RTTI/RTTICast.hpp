@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "Collections/Dynarray.hpp"
-#include "RTTITypeInfo.hpp"
+#include <Defines.hpp>
+#include <Collections/Dynarray.hpp>
+#include <RTTI/RTTITypeInfo.hpp>
 
 
 namespace Poly {

@@ -1,16 +1,16 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "TiledForwardRenderer.hpp"
-#include "Configs/AssetsPathConfig.hpp"
+#include <TiledForwardRenderer.hpp>
+#include <Configs/AssetsPathConfig.hpp>
 
-#include "GLRenderingDevice.hpp"
-#include "Proxy/GLMeshDeviceProxy.hpp"
-#include "Proxy/GLParticleDeviceProxy.hpp"
-#include "Pipeline/RenderingPassBase.hpp"
-#include "Common/DebugRenderingBuffers.hpp"
-#include "Proxy/GLShaderProgram.hpp"
-#include "Common/PrimitiveCube.hpp"
-#include "Common/PrimitiveQuad.hpp"
+#include <GLRenderingDevice.hpp>
+#include <Proxy/GLMeshDeviceProxy.hpp>
+#include <Proxy/GLParticleDeviceProxy.hpp>
+#include <Pipeline/RenderingPassBase.hpp>
+#include <Common/DebugRenderingBuffers.hpp>
+#include <Proxy/GLShaderProgram.hpp>
+#include <Common/PrimitiveCube.hpp>
+#include <Common/PrimitiveQuad.hpp>
 
 using namespace Poly;
 
@@ -50,6 +50,7 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	HDRShader("Shaders/hdr.vert.glsl", "Shaders/hdr.frag.glsl"),
 	SkyboxShader("Shaders/skybox.vert.glsl", "Shaders/skybox.frag.glsl"),
 	LinearizeDepthShader("Shaders/hdr.vert.glsl", "Shaders/linearizeDepth.frag.glsl"),
+	FXAAShader("Shaders/hdr.vert.glsl", "Shaders/fxaa.frag.glsl"),
 	GammaShader("Shaders/hdr.vert.glsl", "Shaders/gamma.frag.glsl"),
 	MotionBlurShader("Shaders/hdr.vert.glsl", "Shaders/motionblur.frag.glsl"),
 	DOFBokehShader("Shaders/hdr.vert.glsl", "Shaders/dof_pass_bokeh.frag.glsl"),
@@ -542,6 +543,8 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 	PostBloom(sceneView);
 	
 	PostTonemapper(sceneView);
+
+	PostFXAA(sceneView);
 	
 	PostGamma(sceneView);
 	
@@ -1277,6 +1280,22 @@ void TiledForwardRenderer::PostTonemapper(const SceneView& sceneView)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void TiledForwardRenderer::PostFXAA(const SceneView& sceneView)
+{
+	// gConsole.LogInfo("TiledForwardRenderer::PostFXAA");
+
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost1);
+
+	FXAAShader.BindProgram();
+	FXAAShader.BindSampler("uImage", 0, PostColorBuffer0);
+
+	glBindVertexArray(RDI->PrimitivesQuad->VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void TiledForwardRenderer::PostGamma(const SceneView& sceneView)
 {
 	float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.WorldData, eEngineTimer::GAMEPLAY);
@@ -1298,7 +1317,7 @@ void TiledForwardRenderer::PostGamma(const SceneView& sceneView)
 	}
 
 	GammaShader.BindProgram();
-	GammaShader.BindSampler("uImage", 0, PostColorBuffer0);
+	GammaShader.BindSampler("uImage", 0, PostColorBuffer1);
 	GammaShader.BindSampler("uSplashImage", 1, Splash->GetTextureProxy()->GetResourceID());
 	GammaShader.SetUniform("uSplashTint", Color(1.0f, 0.0f, 0.0f, 1.0f) * 0.8f);
 	GammaShader.SetUniform("uTime", time);

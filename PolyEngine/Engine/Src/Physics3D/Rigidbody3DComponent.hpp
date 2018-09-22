@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "ECS/ComponentBase.hpp"
-#include "Physics3D/Physics3DSystem.hpp"
+#include <ECS/ComponentBase.hpp>
+#include <Physics3D/Physics3DSystem.hpp>
 
 namespace Poly
 {

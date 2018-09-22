@@ -1,6 +1,6 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "Common/DebugRenderingBuffers.hpp"
+#include <Common/DebugRenderingBuffers.hpp>
 
 Poly::DebugRenderingBuffers::DebugRenderingBuffers()
 {
