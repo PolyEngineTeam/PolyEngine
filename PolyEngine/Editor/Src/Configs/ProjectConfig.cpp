@@ -5,7 +5,7 @@
 RTTI_DEFINE_TYPE(ProjectConfig)
 
 ProjectConfig::ProjectConfig(const String& path)
-	: Path(path), Poly::ConfigBase(path, Poly::eResourceSource::NONE)
+	: Poly::ConfigBase(path, Poly::eResourceSource::NONE), Path(path)
 {
 	FileName = path;
 
