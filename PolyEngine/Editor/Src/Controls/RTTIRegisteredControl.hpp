@@ -31,7 +31,7 @@ public:
 	}
 
 private:
-	inline static std::array<ControlCreatorPtr, (size_t)RTTI::eCorePropertyType::_COUNT> ControlCreators = std::array<ControlCreatorPtr, (size_t)RTTI::eCorePropertyType::_COUNT>();
+	inline static std::array<ControlCreatorPtr, (size_t)RTTI::eCorePropertyType::_COUNT> ControlCreators;
 };
 
 
