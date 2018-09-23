@@ -71,7 +71,8 @@ int main(int argc, char* args[])
 	Poly::gConsole.LogDebug("Engine created.");
 
 	// Load rendering device library
-	auto loadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>(Poly::gAssetsPathConfig.GetRenderingDeviceLibPath().GetCStr(), "PolyCreateRenderingDevice");
+	Poly::String p = Poly::gAssetsPathConfig.GetRenderingDeviceLibPath();
+	auto loadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>(p.GetCStr(), "PolyCreateRenderingDevice");
 	if (!loadRenderingDevice.FunctionValid())
 		return 1;
 	Poly::gConsole.LogDebug("Library libRenderingDevice loaded.");

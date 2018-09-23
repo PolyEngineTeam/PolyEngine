@@ -67,6 +67,7 @@ namespace Poly
 		RTTI_DECLARE_COMPONENT(::Poly::SpotLightComponent) { NO_RTTI_PROPERTY(); }
 
 		SpotLightComponent(const Color& color = Color::WHITE, float intensity = 1.0f, float range = 10.0f, float cutoff = 12.0f, float outerCutOff = 17.0f);
+
 		const Color& GetColor() const { return LightColor; }
 		float GetIntensity() const { return Intensity; }
 		void SetRange(float value) { Range = value; }

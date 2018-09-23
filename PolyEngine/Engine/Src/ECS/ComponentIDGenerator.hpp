@@ -39,8 +39,7 @@ namespace Poly
 		/// where the component is used for the first time (f.ex. created).
 		/// https://itk.org/Wiki/Proposals:Explicit_Instantiation#DLL_Symbol_Resolution_on_Windows
 		/// </para>
-		template<typename T>
-		class ComponentIDGenerator
+		class ENGINE_DLLEXPORT ComponentIDGenerator
 		{
 			static size_t GenerateID() noexcept;
 
@@ -53,7 +52,7 @@ namespace Poly
 		};
 	}
 
-	using ComponentsIDGroup = Impl::ComponentIDGenerator<struct ComponentsGroupType>;
+	using ComponentsIDGroup = Impl::ComponentIDGenerator;
 
 	//------------------------------------------------------------------------------
 	/// <summary>Returns statically set component type ID.</summary>

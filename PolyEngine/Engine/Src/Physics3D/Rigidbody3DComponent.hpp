@@ -59,6 +59,7 @@ namespace Poly
 	/// @see Rigidbody3DComponentTemplate
 	class ENGINE_DLLEXPORT Rigidbody3DComponent : public ComponentBase
 	{
+
 		// friendship declarations
 
 
@@ -71,7 +72,6 @@ namespace Poly
 		RTTI_DECLARE_COMPONENT(::Poly::Rigidbody3DComponent) { NO_RTTI_PROPERTY(); }
 
 		// constructors and destructor
-
 
 		/// Creates Rigidbody3DComponent from provided template parameters.
 		/// @param world - world where owner entity exists

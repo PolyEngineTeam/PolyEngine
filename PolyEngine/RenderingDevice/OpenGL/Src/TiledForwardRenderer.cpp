@@ -506,7 +506,7 @@ void TiledForwardRenderer::DeleteRenderTargets()
 
 void TiledForwardRenderer::Render(const SceneView& sceneView)
 {
-	// gConsole.LogInfo("TiledForwardRenderer::Render");
+	//gConsole.LogInfo("TiledForwardRenderer::Render");
 
 	// gConsole.LogInfo("TiledForwardRenderer::Render Aspect: {}, IsForcedRatio: {}, FOV: {}",
 	// 	sceneView.CameraCmp->GetAspect(), sceneView.CameraCmp->GetForcedRatio(), sceneView.CameraCmp->GetFOV());
@@ -515,7 +515,7 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 	// 	(int)(sceneView.Rect.GetSize().X * screenSize.Width), (int)(sceneView.Rect.GetSize().Y * screenSize.Height));  
 
 	UpdateLightsBufferFromScene(sceneView);
-
+	
 	UpdateEnvCapture(sceneView);
 
 	RenderShadowMap(sceneView);

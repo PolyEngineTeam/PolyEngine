@@ -7,6 +7,7 @@
 #include <Input/InputSystem.hpp>
 #include <ECS/ISystem.hpp>
 #include <Utils/EnumUtils.hpp>
+#include "Editor/IEditor.hpp"
 
 namespace Poly
 {
@@ -28,7 +29,7 @@ namespace Poly
 	{
 	public:
 		/// <summary>Constructs engine instance.</summary>
-		Engine(bool testRun = false);
+		Engine(bool testRun = false, IEditor* editor = nullptr);
 
 		/// <summary>Deletes engine instance.</summary>
 		~Engine();
@@ -38,7 +39,8 @@ namespace Poly
 		enum class eUpdatePhaseOrder
 		{
 			PREUPDATE,
-			UPDATE,
+			EDITOR,
+			UPDATE, //TODO(squares): rename this to GAME?
 			POSTUPDATE,
 			_COUNT
 		};
@@ -49,10 +51,14 @@ namespace Poly
 		/// <param name="device">Pointer to IRenderingDevice instance.</param>
 		void Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device);
 
-		/// <summary>@deprecated
-		/// Registers a PhaseUpdateFunction to be executed in the update.</summary>
+		void StartGame();
+
+		void EndGane();
+
+		/// <summary>Registers a PhaseUpdateFunction to be executed in the update.</summary>
 		/// <param name="phaseFunction"/>
 		void RegisterGameUpdatePhase(const PhaseUpdateFunction& phaseFunction) { RegisterUpdatePhase(phaseFunction, eUpdatePhaseOrder::UPDATE); }
+		void RegisterEditorUpdatePhase(const PhaseUpdateFunction& phaseFunction) { RegisterUpdatePhase(phaseFunction, eUpdatePhaseOrder::EDITOR); }
 
 		/// <summary>Registers a System's PhaseUpdateFunction to be executed in the update.</summary>
 		/// <param name="system"/>
@@ -63,6 +69,8 @@ namespace Poly
 		/// <see cref="Engine.RegisterUpdatePhase()"/>
 		/// <see cref="Engine.eUpdatePhaseOrder"/>
 		void Update();
+
+		void Update(Dynarray<eUpdatePhaseOrder> phasesUpdate);
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of four functions handling incoming input events.</summary>
@@ -138,6 +146,8 @@ namespace Poly
 		Scene* GetActiveScene() { return ActiveScene.get(); }
 		void LoadDefaultScene();
 
+		IEditor* GetEditor() { return Editor; }
+
 		Scene* GetCurrentlySerializedScene() { return SerializedScene; }
 		void SetCurrentlySerializedScene(Scene* s) { ASSERTE(SerializedScene == nullptr || s == nullptr, "Setting scene again!"); SerializedScene = s; }
 
@@ -185,6 +195,7 @@ namespace Poly
 		Scene* SerializedScene = nullptr;
 		std::unique_ptr<IGame> Game;
 		std::unique_ptr<IRenderingDevice> RenderingDevice;
+		IEditor* Editor = nullptr;
 		OpenALDevice AudioDevice;
 		InputQueue InputEventsQueue;
 

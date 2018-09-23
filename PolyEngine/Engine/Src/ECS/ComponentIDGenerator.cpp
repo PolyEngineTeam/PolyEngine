@@ -43,3 +43,9 @@ IterablePoolAllocatorBase* Poly::ComponentManager::CreateAllocator(size_t id, si
 		return nullptr;
 	return it->second(componentCount);
 }
+
+size_t Poly::Impl::ComponentIDGenerator::GenerateID() noexcept
+{
+	static size_t value = 0;
+	return value++;
+}
