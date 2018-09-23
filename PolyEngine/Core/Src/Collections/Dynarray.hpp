@@ -230,6 +230,43 @@ namespace Poly
 			++Size;
 		}
 
+
+		/// <summary>
+		/// Copies provided array of objects to the specified location in the dynarray.
+		/// Objects already present that are in position >= idx will be moved to the right by number of elements in array.
+		/// Insertion with idx > size results in undefined behaviour.
+		/// </summary>
+		/// <param name="idx">Index in which object should be created.</param>
+		/// <param name="arr">Const reference to array of objects that should be copied to the container.</param>
+		void Insert(size_t idx, const Dynarray<T>& arr)
+		{
+			HEAVY_ASSERTE(idx <= GetSize(), "Index out of bounds!");
+			if (Size + arr.GetSize() >= GetCapacity())
+				Reserve(Size + arr.GetSize());
+			MoveDataRight(idx, Size, arr.GetSize());
+			for (size_t i = 0; i < arr.GetSize(); ++i)
+				ObjectLifetimeHelper::CopyCreate(Data + idx + i, arr[i]);
+			Size += arr.GetSize();
+		}
+
+		/// <summary>
+		/// Copies provided array of objects to the specified location in the dynarray.
+		/// Objects already present that are in position >= idx will be moved to the right by number of elements in array.
+		/// Insertion with idx > size results in undefined behaviour.
+		/// </summary>
+		/// <param name="idx">Index in which object should be created.</param>
+		/// <param name="arr">R-value reference to array of objects that should be copied to the container.</param>
+		void Insert(size_t idx, Dynarray<T>&& arr)
+		{
+			HEAVY_ASSERTE(idx <= GetSize(), "Index out of bounds!");
+			if (Size + arr.GetSize() >= GetCapacity())
+				Reserve(Size + arr.GetSize());
+			MoveDataRight(idx, Size, arr.GetSize());
+			for (size_t i = 0; i < arr.GetSize(); ++i)
+				ObjectLifetimeHelper::MoveCreate(Data + idx + i, std::move(arr[i]));
+			Size += arr.GetSize();
+		}
+
 		/// <summary>
 		/// Removes element from the collection with specified index.
 		/// Objects in position > idx will be moved one position to the left.
@@ -241,7 +278,6 @@ namespace Poly
 			HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!");
 			ObjectLifetimeHelper::Destroy(Data + idx);
 			MoveDataLeft(idx + 1, Size, 1);
-			//std::move(Begin() + idx + 1, End(), Begin() + idx);
 			--Size;
 		}
 
@@ -472,14 +508,14 @@ namespace Poly
 		void MoveDataRight(size_t start, size_t end, size_t size)
 		{
 			for (size_t currPos = end; currPos > start; --currPos)
-				Data[currPos + size - 1] = std::move(Data[currPos - 1]);
+				ObjectLifetimeHelper::MoveCreate(Data + currPos + size - 1, std::move(Data[currPos - 1]));
 		}
 
 		//------------------------------------------------------------------------------
 		void MoveDataLeft(size_t start, size_t end, size_t size)
 		{
 			for (size_t currPos = start; currPos < end; ++currPos)
-				Data[currPos - size] = std::move(Data[currPos]);
+				ObjectLifetimeHelper::MoveCreate(Data + currPos - size, std::move(Data[currPos]));
 		}
 
 		//------------------------------------------------------------------------------
