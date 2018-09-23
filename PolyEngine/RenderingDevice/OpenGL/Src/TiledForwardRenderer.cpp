@@ -42,7 +42,7 @@ void RenderTargetPingPong::Deinit()
 
 
 TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
-	: IRendererInterface(rdi), SkyboxCapture(rdi),
+	: IRendererInterface(rdi), SkyboxCapture(rdi), LastViewportRect(Vector2f::ZERO, Vector2f::ONE),
 	ShadowMapShader("Shaders/shadowMap.vert.glsl", "Shaders/shadowMap.frag.glsl"),
 	DepthShader("Shaders/depth.vert.glsl", "Shaders/depth.frag.glsl"),
 	LightCullingShader("Shaders/lightCulling.comp.glsl"),
@@ -197,8 +197,13 @@ void TiledForwardRenderer::Init()
 	gConsole.LogInfo("TiledForwardRenderer::Init");
 	
 	const ScreenSize screenSize = RDI->GetScreenSize();
+	Vector2f viewportSize = LastViewportRect.GetSize();
+	ScreenSize targetsSize;
+	targetsSize.Width = (int)(viewportSize.X * screenSize.Width);
+	targetsSize.Height = (int)(viewportSize.Y * screenSize.Height);
 
-	gConsole.LogInfo("TiledForwardRenderer::Init SCREEN_SIZE: ({},{})", screenSize.Width, screenSize.Height);
+	gConsole.LogInfo("TiledForwardRenderer::Init screenSize: ({},{}), targetSize: ({},{}),",
+		screenSize.Width, screenSize.Height, targetsSize.Width, targetsSize.Height);
 
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
@@ -220,14 +225,19 @@ void TiledForwardRenderer::Init()
 void TiledForwardRenderer::Resize(const ScreenSize& size)
 {
 	gConsole.LogInfo("TiledForwardRenderer::Resize ({}, {}), LastRect: {}", size.Width, size.Height, LastViewportRect);
-
+	
+	Vector2f ViewportSize = LastViewportRect.GetSize();
+	ScreenSize targetsSize;
+	targetsSize.Width = (int)(ViewportSize.X * size.Width);
+	targetsSize.Height = (int)(ViewportSize.Y * size.Height);
+	
 	DeleteLightBuffers();
 
 	DeleteRenderTargets();
 
-	CreateLightBuffers(size);
+	CreateLightBuffers(targetsSize);
 
-	CreateRenderTargets(size);
+	CreateRenderTargets(targetsSize);
 }
 
 void TiledForwardRenderer::Deinit()
@@ -247,7 +257,7 @@ void TiledForwardRenderer::Deinit()
 void TiledForwardRenderer::CapturePreintegratedBRDF()
 {
 	// Create texture resource
-	gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Create texture resource");
+	// gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Create texture resource");
 	glGenTextures(1, &PreintegratedBrdfLUT);
 	glBindTexture(GL_TEXTURE_2D, PreintegratedBrdfLUT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -258,7 +268,7 @@ void TiledForwardRenderer::CapturePreintegratedBRDF()
 	// CHECK_GL_ERR();
 
 	// Create FBO for BRDF preintegration
-	gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Create capture FBO");
+	// gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Create capture FBO");
 	GLuint captureFBO;
 	GLuint captureRBO;
 	glGenFramebuffers(1, &captureFBO);
@@ -268,10 +278,10 @@ void TiledForwardRenderer::CapturePreintegratedBRDF()
 	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-	gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Capture FBO created");
+	// gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Capture FBO created");
 
 	// Render preintegrated BRDF
-	gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Render preintegrated BRDF");
+	// gConsole.LogInfo("TiledForwardRenderer::PreintegrateBRDF Render preintegrated BRDF");
 	glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
 	IntegrateBRDFShader.BindProgram();
 	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
@@ -289,7 +299,6 @@ void TiledForwardRenderer::CapturePreintegratedBRDF()
 void TiledForwardRenderer::CreateLightBuffers(const ScreenSize& size)
 {
 	// Define work group sizes in x and y direction based off screen size and tile size (in pixels)
-
 	WorkGroupsX = (size.Width + (size.Width % 16)) / 16;
 	WorkGroupsY = (size.Height + (size.Height % 16)) / 16;
 	size_t numberOfTiles = WorkGroupsX * WorkGroupsY;
@@ -508,13 +517,17 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 {
 	gConsole.LogInfo("TiledForwardRenderer::Render Rect: {}", sceneView.Rect);
 
-	LastViewportRect = sceneView.Rect;
+	if (LastViewportRect != sceneView.Rect)
+	{
+		LastViewportRect = sceneView.Rect;
+		Resize(RDI->GetScreenSize());
+	}
 
 	// gConsole.LogInfo("TiledForwardRenderer::Render Aspect: {}, IsForcedRatio: {}, FOV: {}",
 	// 	sceneView.CameraCmp->GetAspect(), sceneView.CameraCmp->GetForcedRatio(), sceneView.CameraCmp->GetFOV());
 
 	// glViewport((int)(sceneView.Rect.GetMin().X * screenSize.Width), (int)(sceneView.Rect.GetMin().Y * screenSize.Height),
-	// 	(int)(sceneView.Rect.GetSize().X * screenSize.Width), (int)(sceneView.Rect.GetSize().Y * screenSize.Height));  
+	// 	(int)(sceneView.Rect.GetSize().X * screenSize.Width), (int)(sceneView.Rect.GetSize().Y * screenSize.Height));
 
 	UpdateLightsBufferFromScene(sceneView);
 
@@ -529,25 +542,25 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 	RenderOpaqueLit(sceneView);
 	
 	RenderSkybox(sceneView);
-
+	
 	RenderTranslucentLit(sceneView);
-
+	
 	RenderParticleUnlit(sceneView.WorldData, sceneView.CameraCmp);
-
+	
 	LinearizeDepth(sceneView);
-
+	
 	PostMotionBlur(sceneView);
-
+	
 	PostDepthOfField(sceneView);
 	
 	PostBloom(sceneView);
 	
 	PostTonemapper(sceneView);
-
+	
 	PostFXAA(sceneView);
-	
+	 
 	PostGamma(sceneView);
-	
+	 
 	EditorDebug(sceneView);
 	
 	UIText2D(sceneView);
@@ -671,9 +684,11 @@ void TiledForwardRenderer::RenderShadowMap(const SceneView& sceneView)
 
 void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 {
-	ScreenSize screenSize = RDI->GetScreenSize();
-	glViewport(0, 0, screenSize.Width, screenSize.Height);
-
+	const ScreenSize screenSize = RDI->GetScreenSize();
+	GLsizei viewportWidth = (GLsizei)(sceneView.Rect.GetSize().X * screenSize.Width);
+	GLsizei viewportHeight = (GLsizei)(sceneView.Rect.GetSize().Y * screenSize.Height);
+	glViewport(0, 0, viewportWidth, viewportHeight);
+	
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOdepthMap);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -712,12 +727,16 @@ void TiledForwardRenderer::ComputeLightCulling(const SceneView& sceneView)
 	// 	Time, workGroupsX, workGroupsY
 	// );
 
+	const ScreenSize screenSize = RDI->GetScreenSize();
+	int viewportWidth = (int)(sceneView.Rect.GetSize().X * screenSize.Width);
+	int viewportHeight = (int)(sceneView.Rect.GetSize().Y * screenSize.Height);
+
 	LightCullingShader.BindProgram();
 	LightCullingShader.SetUniform("uViewFromWorld", sceneView.CameraCmp->GetViewFromWorld());
 	LightCullingShader.SetUniform("uClipFromWorld", sceneView.CameraCmp->GetClipFromWorld());
 	LightCullingShader.SetUniform("uClipFromView",  sceneView.CameraCmp->GetClipFromView());
-	LightCullingShader.SetUniform("uScreenSizeX", RDI->GetScreenSize().Width);
-	LightCullingShader.SetUniform("uScreenSizeY", RDI->GetScreenSize().Height);
+	LightCullingShader.SetUniform("uScreenSizeX", viewportWidth);
+	LightCullingShader.SetUniform("uScreenSizeY", viewportHeight);
 	LightCullingShader.SetUniform("uWorkGroupsX", (int)WorkGroupsX);
 	LightCullingShader.SetUniform("uWorkGroupsY", (int)WorkGroupsY);
 	LightCullingShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
@@ -744,8 +763,10 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	// gConsole.LogInfo("TiledForwardRenderer::AccumulateLights");
 	float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.WorldData, eEngineTimer::GAMEPLAY);
 
-	ScreenSize screenSize = RDI->GetScreenSize();
-	glViewport(0, 0, screenSize.Width, screenSize.Height);
+	const ScreenSize screenSize = RDI->GetScreenSize();
+	GLsizei viewportWidth = (GLsizei)(sceneView.Rect.GetSize().X * screenSize.Width);
+	GLsizei viewportHeight = (GLsizei)(sceneView.Rect.GetSize().Y * screenSize.Height);
+	glViewport(0, 0, viewportWidth, viewportHeight);
 
 	for (int i = 9; i > 0; --i)
 	{
@@ -1090,6 +1111,11 @@ void TiledForwardRenderer::LinearizeDepth(const SceneView& sceneView)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	const ScreenSize screenSize = RDI->GetScreenSize();
+	GLsizei viewportWidth = (GLsizei)(sceneView.Rect.GetSize().X * screenSize.Width);
+	GLsizei viewportHeight = (GLsizei)(sceneView.Rect.GetSize().Y * screenSize.Height);
+	glViewport(0, 0, viewportWidth, viewportHeight);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost1);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, LinearDepth, 0);
 
@@ -1132,6 +1158,11 @@ void TiledForwardRenderer::PostMotionBlur(const SceneView& sceneView)
 	 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost1);
 
+	const ScreenSize screenSize = RDI->GetScreenSize();
+	GLsizei viewportWidth = (GLsizei)(sceneView.Rect.GetSize().X * screenSize.Width);
+	GLsizei viewportHeight = (GLsizei)(sceneView.Rect.GetSize().Y * screenSize.Height);
+	glViewport(0, 0, viewportWidth, viewportHeight);
+	
 	MotionBlurShader.BindProgram();
 	MotionBlurShader.BindSampler("uImage", 0, ColorBuffer);
 	MotionBlurShader.BindSampler("uDepth", 1, LinearDepth);
@@ -1152,23 +1183,26 @@ void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
 	float dofRange = 800.0f;
 	float dofSize = 0.0f;
 	float dofShow = 0.0f;
+
 	const PostprocessSettingsComponent* postCmp = sceneView.CameraCmp->GetSibling<PostprocessSettingsComponent>();
-	if (postCmp) {
+	if (postCmp)
+	{
 		dofPoint = postCmp->DOFPoint;
 		dofRange = postCmp->DOFRange;
 		dofSize = postCmp->DOFSize;
 		dofShow = postCmp->DOFShow;
 	}
 
-	const ScreenSize screenSize = RDI->GetScreenSize();
-
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, PostColorBufferHalfRes, 0);
 
-	glViewport(0, 0, screenSize.Width / 2, screenSize.Height / 2);
+	const ScreenSize screenSize = RDI->GetScreenSize();
+	GLsizei viewportWidth = (GLsizei)(screenSize.Width * sceneView.Rect.GetSize().X);
+	GLsizei viewportHeight = (GLsizei)(screenSize.Height * sceneView.Rect.GetSize().Y);
+	glViewport(0, 0, (GLsizei)(0.5f * viewportWidth), (GLsizei)(0.5f * viewportHeight));
 
 	DOFBokehShader.BindProgram();
-	DOFBokehShader.SetUniform("uRes", Vector(0.5f * (float)screenSize.Width, 0.5f * (float)screenSize.Height, 2.0f / screenSize.Width, 2.0f / screenSize.Height));
+	DOFBokehShader.SetUniform("uRes", Vector(0.5f * viewportWidth, 0.5f * viewportHeight, 2.0f / viewportWidth, 2.0f / viewportHeight));
 	DOFBokehShader.SetUniform("uDOFPoint", dofPoint);
 	DOFBokehShader.SetUniform("uDOFRange", dofRange);
 	DOFBokehShader.SetUniform("uDOFSize", dofSize);
@@ -1179,7 +1213,7 @@ void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 	
-	glViewport(0, 0, screenSize.Width, screenSize.Height);
+	glViewport(0, 0, viewportWidth, viewportHeight);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, PostColorBuffer0, 0);
 
 	DOFApplyShader.BindProgram();
@@ -1208,7 +1242,9 @@ void TiledForwardRenderer::PostBloom(const SceneView& sceneView)
 	}
 
 	const ScreenSize screenSize = RDI->GetScreenSize();
-	glViewport(0, 0, screenSize.Width / 2, screenSize.Height / 2);
+	GLsizei viewportWidth = (GLsizei)(screenSize.Width * sceneView.Rect.GetSize().X);
+	GLsizei viewportHeight = (GLsizei)(screenSize.Height * sceneView.Rect.GetSize().Y);
+	glViewport(0, 0, (GLsizei)(0.5f * viewportWidth), (GLsizei)(0.5f * viewportHeight));
 
 	glBindFramebuffer(GL_FRAMEBUFFER, RTBloom.GetWriteFBO());
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, RTBloom.GetWriteTarget(), 0);
@@ -1240,7 +1276,7 @@ void TiledForwardRenderer::PostBloom(const SceneView& sceneView)
 		RTBloom.Flip();
 	}
 	
-	glViewport(0, 0, screenSize.Width, screenSize.Height);
+	glViewport(0, 0, viewportWidth, viewportHeight);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOpost1);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, PostColorBuffer1, 0);
@@ -1301,6 +1337,8 @@ void TiledForwardRenderer::PostGamma(const SceneView& sceneView)
 	float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.WorldData, eEngineTimer::GAMEPLAY);
 
 	const ScreenSize screenSize = RDI->GetScreenSize();
+	float viewportWidth = sceneView.Rect.GetSize().X * screenSize.Width;
+	float viewportHeight = sceneView.Rect.GetSize().Y * screenSize.Height;
 
 	float grainScale = 0.01f;
 	float vignetteScale = 0.1f;
@@ -1321,12 +1359,19 @@ void TiledForwardRenderer::PostGamma(const SceneView& sceneView)
 	GammaShader.BindSampler("uSplashImage", 1, Splash->GetTextureProxy()->GetResourceID());
 	GammaShader.SetUniform("uSplashTint", Color(1.0f, 0.0f, 0.0f, 1.0f) * 0.8f);
 	GammaShader.SetUniform("uTime", time);
-	GammaShader.SetUniform("uRes", Vector((float)screenSize.Width, (float)screenSize.Height, 1.0f / screenSize.Width, 1.0f / screenSize.Height));
+	GammaShader.SetUniform("uRes", Vector(viewportWidth, viewportHeight, 1.0f / viewportWidth, 1.0f / viewportHeight));
 	GammaShader.SetUniform("uTint", tint);
 	GammaShader.SetUniform("uGrainScale", grainScale);
 	GammaShader.SetUniform("uVignetteScale", vignetteScale);
 	GammaShader.SetUniform("uAbberationScale", abberationScale);
 	GammaShader.SetUniform("uGamma", gamma);
+
+	glViewport(
+		(GLint)(sceneView.Rect.GetMin().X * screenSize.Width),
+		(GLint)(sceneView.Rect.GetMin().Y * screenSize.Height),
+		(GLsizei)viewportWidth,
+		(GLsizei)viewportHeight
+	);
 
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);

@@ -6,6 +6,7 @@
 using namespace Poly;
 
 const Vector2f Vector2f::ZERO = Vector2f(0.f, 0.f);
+const Vector2f Vector2f::ONE = Vector2f(1.f, 1.f);
 const Vector2f Vector2f::UNIT_X = Vector2f(1.f, 0.f);
 const Vector2f Vector2f::UNIT_Y = Vector2f(0.f, 1.f);
 

@@ -12,6 +12,7 @@ namespace Poly
 	{
 	public:
 		static const Vector2f ZERO;
+		static const Vector2f ONE;
 		static const Vector2f UNIT_X;
 		static const Vector2f UNIT_Y;
 
