@@ -515,7 +515,7 @@ void TiledForwardRenderer::DeleteRenderTargets()
 
 void TiledForwardRenderer::Render(const SceneView& sceneView)
 {
-	gConsole.LogInfo("TiledForwardRenderer::Render Rect: {}", sceneView.Rect);
+	// gConsole.LogInfo("TiledForwardRenderer::Render Rect: {}", sceneView.Rect);
 
 	if (LastViewportRect != sceneView.Rect)
 	{
