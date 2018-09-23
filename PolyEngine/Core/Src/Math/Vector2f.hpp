@@ -45,6 +45,11 @@ namespace Poly
 		Vector2f& operator+=(const Vector2f& rhs);
 		Vector2f& operator-=(const Vector2f& rhs);
 
+		Vector2f operator*(const Vector2f& rhs) const;
+		Vector2f operator/(const Vector2f& rhs) const;
+		Vector2f& operator*=(const Vector2f& rhs);
+		Vector2f& operator/=(const Vector2f& rhs);
+
 		// Operators with floats
 		Vector2f operator*(float rhs) const;
 		Vector2f operator/(float rhs) const;

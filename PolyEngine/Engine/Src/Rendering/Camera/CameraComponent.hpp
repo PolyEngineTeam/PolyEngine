@@ -39,7 +39,7 @@ namespace Poly {
 		void SetFOV(const Angle& Value) { Fov = Value; UpdateProjection(); }
 		float GetAspect() const { return Aspect; }
 		void SetAspect(float aspect) { Aspect = aspect; UpdateProjection(); }
-		bool GetForcedRatio() const { return IsForcedRatio; }
+		bool GetIsForcedRatio() const { return IsForcedRatio; }
 		void SetForcedRatio(bool value) { IsForcedRatio = value; }
 		eRenderingModeType GetRenderingMode() const { return RenderingMode; }
 		void SetRenderingMode(eRenderingModeType value) { RenderingMode = value; }

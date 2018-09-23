@@ -17,13 +17,13 @@ namespace Poly {
 	class MeshRenderingComponent;
 
 	struct SceneView : public BaseObject<> {
-		SceneView(Scene* w, const Viewport& v)
+		SceneView(Scene* w, Viewport& v)
 			: WorldData(w), ViewportData(v), Rect(v.GetRect()), CameraCmp(v.GetCamera())
 		{};
 
 		Scene* WorldData;
-		const Viewport& ViewportData;
-		const AARect& Rect;
+		Viewport& ViewportData;
+		AARect& Rect;
 		const CameraComponent* CameraCmp;
 		
 		Dynarray<const MeshRenderingComponent*> DirShadowOpaqueQueue;

@@ -12,22 +12,45 @@ void Poly::CameraSystem::CameraUpdatePhase(Scene* world)
 	ScreenSize screen = gEngine->GetRenderingDevice()->GetScreenSize();
 	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
 	{
-		const AARect& rect = kv.second.GetRect();
-		float aspect = (rect.GetSize().X * screen.Width) / (rect.GetSize().Y * screen.Height);
-
 		CameraComponent* cameraCmp = kv.second.GetCamera();
-		ASSERTE(cameraCmp, "Viewport without camera?");
-		EntityTransform& transform = cameraCmp->GetTransform();
+		ASSERTE(cameraCmp, "Viewport without camera	?");
 
-		// reinit perspective
-		if (cameraCmp->CheckFlags(eComponentBaseFlags::NEWLY_CREATED) || cameraCmp->GetAspect() != aspect)
+		AARect& rect = kv.second.GetRect();	
+		float aspectWindow = (float)(screen.Width) / (float)(screen.Height);
+		float aspectCamera = cameraCmp->GetAspect();
+
+		if (cameraCmp->GetIsForcedRatio())
 		{
-			cameraCmp->SetAspect(aspect);
+			if (Abs(aspectCamera - aspectWindow) > 0.001f)
+			{
+				// if scaled height is less than current height, add letterbox
+				float scaleHeight = aspectWindow / aspectCamera;
+				if (scaleHeight < 1.0f)
+				{
+					rect.SetSize(Vector2f(1.0f, scaleHeight));
+					rect.SetPosition(Vector2f(0.0f, (1.0f - scaleHeight) / 2.0f));
+				}
+				else // add pillarbox
+				{
+					float scaleWidth = 1.0f / scaleHeight;
+					rect.SetSize(Vector2f(scaleWidth, 1.0f));
+					rect.SetPosition(Vector2f((1.0f - scaleWidth) / 2.0f, 0.0f));
+				}
+			}
+		}
+		else
+		{
+			// reinit perspective
+			if (cameraCmp->CheckFlags(eComponentBaseFlags::NEWLY_CREATED)
+				|| Abs(aspectCamera - aspectWindow) > 0.001f)
+			{
+				cameraCmp->SetAspect(aspectWindow);
+			}
 		}
 
+		EntityTransform& transform = cameraCmp->GetTransform();
 		cameraCmp->ViewFromWorld = transform.GetWorldFromModel().GetInversed();
 		cameraCmp->ScreenFromWorld = cameraCmp->ScreenFromView * cameraCmp->ViewFromWorld;
-
 
 		InputWorldComponent* inputCmp = world->GetWorldComponent<InputWorldComponent>();
 		if (inputCmp->IsPressed(eKey::F5))
