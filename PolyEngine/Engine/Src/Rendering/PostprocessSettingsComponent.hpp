@@ -27,6 +27,9 @@ namespace Poly {
 		float VignetteScale = 0.1f;
 		float AbberationScale = 0.1f;
 
+		Color FogColor = Color::WHITE;
+		float FogDensity = 0.66f;
+
 		Color Tint = Color::WHITE;
 		float Gamma = 2.2f;
 	};
