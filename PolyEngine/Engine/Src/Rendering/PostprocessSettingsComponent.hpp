@@ -25,11 +25,15 @@ namespace Poly {
 		float BloomBlurScaleX = 1.0f;
 		float BloomBlurScaleY = 1.0f;
 
+		Color FogColor = Color::WHITE;
+		float FogDensity = 0.66f;
+
 		float GrainScale = 0.01f;
 		float VignetteScale = 0.1f;
 		float AbberationScale = 0.1f;
 
 		Color Tint = Color::WHITE;
+		float Temperature = 6500.0f;
 		float Gamma = 2.2f;
 	};
 

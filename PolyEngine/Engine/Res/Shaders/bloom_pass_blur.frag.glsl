@@ -19,11 +19,11 @@ vec2 hash22(vec2 p) {
 
 void main()
 {	
-	vec2 rnd = hash22(vUV + 0.1*uTime);
+    float rnd = hash22(vUV + vec2(0.01 * uTime)).x; 
     vec2 texelSize = 1.0 / textureSize(uImage, 0); // gets size of single texel
     vec3 result = texture(uImage, vUV).rgb * weight[0]; // current fragment's contribution
     vec2 blurDir = mix(vec2(1.0, 0.0), vec2(0.0, 1.0), step(0.5, uIsHorizontal));	
-	blurDir *= uBlurScale * mix(1.0, rnd.x, step(1.0, uBlurScale));
+    blurDir *= mix(uBlurScale, 1.0 + ((uBlurScale - 1.0) * rnd), step(1.0, uBlurScale));
 	float offset = mix(texelSize.x, texelSize.y, step(0.5, uIsHorizontal));
     for(int i = 1; i < 5; ++i)
     {
