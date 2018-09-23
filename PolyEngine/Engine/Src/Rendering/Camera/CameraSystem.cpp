@@ -15,7 +15,7 @@ void Poly::CameraSystem::CameraUpdatePhase(Scene* world)
 		CameraComponent* cameraCmp = kv.second.GetCamera();
 		ASSERTE(cameraCmp, "Viewport without camera	?");
 
-		AARect& rect = kv.second.GetRect();	
+		AARect& rect = kv.second.GetRect();
 		float aspectWindow = (float)(screen.Width) / (float)(screen.Height);
 		float aspectCamera = cameraCmp->GetAspect();
 

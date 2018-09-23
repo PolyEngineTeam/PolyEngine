@@ -1233,12 +1233,18 @@ void TiledForwardRenderer::PostDepthOfField(const SceneView& sceneView)
 
 void TiledForwardRenderer::PostBloom(const SceneView& sceneView)
 {
+	float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.WorldData, eEngineTimer::GAMEPLAY);
+
 	float bloomThreshold = 1.0f;
 	float bloomScale = 0.1f;
+	float bloomBlurScaleX = 1.0f;
+	float bloomBlurScaleY = 1.0f;
 	const PostprocessSettingsComponent* postCmp = sceneView.CameraCmp->GetSibling<PostprocessSettingsComponent>();
 	if (postCmp) {
-		bloomThreshold = postCmp->BloomThreshold;
-		bloomScale = postCmp->BloomScale;
+		bloomThreshold	= postCmp->BloomThreshold;
+		bloomScale		= postCmp->BloomScale;
+		bloomBlurScaleX = postCmp->BloomBlurScaleX;
+		bloomBlurScaleY = postCmp->BloomBlurScaleY;
 	}
 
 	const ScreenSize screenSize = RDI->GetScreenSize();
@@ -1252,7 +1258,6 @@ void TiledForwardRenderer::PostBloom(const SceneView& sceneView)
 	BloomBrightShader.BindProgram();
 	BloomBrightShader.SetUniform("uBrightThreshold", bloomThreshold);
 	BloomBrightShader.BindSampler("uImage", 0, PostColorBuffer0);
-	// BloomBrightShader.BindSampler("uImage", 0, ColorBuffer);
 	
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -1268,6 +1273,8 @@ void TiledForwardRenderer::PostBloom(const SceneView& sceneView)
 
 		BloomBlurShader.BindSampler("uImage", 0, RTBloom.GetReadTarget());
 		BloomBlurShader.SetUniform("uIsHorizontal", (i % 2 > 0) ? 1.0f : 0.0f);
+		BloomBlurShader.SetUniform("uBlurScale", (i % 2 > 0) ? bloomBlurScaleX : bloomBlurScaleY);
+		BloomBlurShader.SetUniform("uTime", time);
 
 		glBindVertexArray(RDI->PrimitivesQuad->VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
