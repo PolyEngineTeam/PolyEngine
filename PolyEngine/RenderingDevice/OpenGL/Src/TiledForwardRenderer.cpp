@@ -12,6 +12,8 @@
 #include <Common/PrimitiveCube.hpp>
 #include <Common/PrimitiveQuad.hpp>
 
+#include "Proxy/imgui_impl_opengl3.h"
+
 using namespace Poly;
 
 void RenderTargetPingPong::Init(int width, int height)
@@ -549,6 +551,37 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 	EditorDebug(sceneView);
 	
 	UIText2D(sceneView);
+	
+
+	static bool IsImguiInit = false;
+	gConsole.LogInfo("TiledForwardRenderer::Render IsImguiInit: {}, GetCurrentContext: {}",
+		IsImguiInit, ImGui::GetCurrentContext() != nullptr);
+
+	if (!IsImguiInit && ImGui::GetCurrentContext() != nullptr)
+	{
+		gConsole.LogInfo("TiledForwardRenderer::Render CreateDeviceObjects");
+		ImGui_ImplOpenGL3_CreateDeviceObjects();
+		IsImguiInit = true;
+	}
+
+	if (IsImguiInit)
+	{
+		ImDrawData* draw_data = ImGui::GetDrawData();
+		if (draw_data == nullptr)
+		{
+			gConsole.LogInfo("TiledForwardRenderer::Render draw_data is null");
+		}
+		else
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+			// glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+			// glClearColor(1.0f, 0.0f, 0.0f, 0.5f);
+			// glClear(GL_COLOR_BUFFER_BIT);
+
+			ImGui_ImplOpenGL3_RenderDrawData(draw_data);
+		}
+	}
 
 	// ensure that copy of matrix is stored
 	PreviousFrameCameraClipFromWorld = Matrix(sceneView.CameraCmp->GetClipFromWorld().GetDataPtr());

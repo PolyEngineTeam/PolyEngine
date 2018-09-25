@@ -5,6 +5,8 @@
 #include <Configs/DebugConfig.hpp>
 #include <ECS/DeferredTaskSystem.hpp>
 #include <Input/InputWorldComponent.hpp>
+#include <Imgui/ImguiWorldComponent.hpp>
+#include <Imgui/ImguiSystem.hpp>
 #include <Movement/FreeFloatMovementComponent.hpp>
 #include <AI/PathfindingSystem.hpp>
 #include <Rendering/ViewportWorldComponent.hpp>
@@ -52,6 +54,7 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 
 	// Add WorldComponents
 	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(GetActiveScene());
+	DeferredTaskSystem::AddWorldComponentImmediate<ImguiWorldComponent>(GetActiveScene());
 	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(GetActiveScene());
 	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(GetActiveScene());
 	DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(GetActiveScene());
@@ -67,6 +70,7 @@ void Poly::Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingD
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(InputSystem::InputPhase, eUpdatePhaseOrder::PREUPDATE);
+	RegisterUpdatePhase(ImguiSystem::ImguiUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(Physics2DSystem::Physics2DUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(Physics3DSystem::Physics3DUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(MovementSystem::MovementUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
