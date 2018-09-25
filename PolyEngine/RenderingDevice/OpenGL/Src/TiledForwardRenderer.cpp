@@ -575,7 +575,8 @@ void TiledForwardRenderer::UIImgui()
 	// resource creation when frame is not yet started.
 	if (IsImguiInit)
 	{
-		// Rendering
+		// Creating geometry.
+		// Ending imgui frame after update of engine and game systems.
 		ImGui::Render();
 
 		ImDrawData* draw_data = ImGui::GetDrawData();
@@ -587,6 +588,7 @@ void TiledForwardRenderer::UIImgui()
 		{
 			ImGuiIO& io = ImGui::GetIO();
 			glViewport(0, 0, (GLsizei)io.DisplaySize.x, (GLsizei)io.DisplaySize.y);
+			// drawing geometry to framebuffer
 			ImGui_ImplOpenGL3_RenderDrawData(draw_data);
 		}
 	}
