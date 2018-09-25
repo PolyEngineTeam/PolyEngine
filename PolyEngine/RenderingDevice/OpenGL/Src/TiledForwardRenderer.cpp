@@ -236,6 +236,10 @@ void TiledForwardRenderer::Deinit()
 {
 	gConsole.LogInfo("TiledForwardRenderer::Deinit");
 	
+	// Imgui context is needed to propertly deinit textures.
+	// Deinit is called after engine resources we need  destroy
+	// imgui pass textures and objects and then end Imgui context
+	// started in ImguiResource owned by ImguiWorldComponent
 	ImGui_ImplOpenGL3_DestroyDeviceObjects();
 	ImGui::DestroyContext();
 
@@ -566,6 +570,9 @@ void TiledForwardRenderer::UIImgui()
 {
 	static bool IsImguiInit = false;
 
+	// Doing rendering part before pass resources init
+	// we avoid falling into rendering pass code just after
+	// resource creation when frame is not yet started.
 	if (IsImguiInit)
 	{
 		// Rendering
@@ -587,6 +594,9 @@ void TiledForwardRenderer::UIImgui()
 	gConsole.LogInfo("TiledForwardRenderer::Render IsImguiInit: {}, GetCurrentContext: {}",
 		IsImguiInit, ImGui::GetCurrentContext() != nullptr);
 
+	// ImguiSystem with input receiver and window drawing module
+	// need initialized imgui font atlas on first frame. We create 
+	// font atlas since render init is done before ResourceInit.
 	if (!IsImguiInit && ImGui::GetCurrentContext() != nullptr)
 	{
 		gConsole.LogInfo("TiledForwardRenderer::Render CreateDeviceObjects");
