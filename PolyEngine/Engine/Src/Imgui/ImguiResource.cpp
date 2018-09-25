@@ -86,9 +86,11 @@ ImguiResource::ImguiResource()
 
 ImguiResource::~ImguiResource()
 {
+	gConsole.LogInfo("ImguiResource::~ImguiResource");
+
 	// ImGui_ImplOpenGL3_Shutdown();
 	// ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
+	
 
 	// SDL_GL_DeleteContext(gl_context);
 	// SDL_DestroyWindow(window);

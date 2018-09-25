@@ -116,6 +116,8 @@ bool    ImGui_ImplOpenGL3_Init(const char* glsl_version)
 
 void    ImGui_ImplOpenGL3_Shutdown()
 {
+	
+
     ImGui_ImplOpenGL3_DestroyDeviceObjects();
 }
 

@@ -235,6 +235,9 @@ void TiledForwardRenderer::Resize(const ScreenSize& size)
 void TiledForwardRenderer::Deinit()
 {
 	gConsole.LogInfo("TiledForwardRenderer::Deinit");
+	
+	ImGui_ImplOpenGL3_DestroyDeviceObjects();
+	ImGui::DestroyContext();
 
 	DeleteLightBuffers();
 
@@ -534,7 +537,7 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 
 	RenderParticleUnlit(sceneView.WorldData, sceneView.CameraCmp);
 
-	LinearizeDepth(sceneView);
+	PostLinearizeDepth(sceneView);
 
 	PostMotionBlur(sceneView);
 
@@ -552,8 +555,35 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 	
 	UIText2D(sceneView);
 	
+	UIImgui();
 
+	// ensure that copy of matrix is stored
+	PreviousFrameCameraClipFromWorld = Matrix(sceneView.CameraCmp->GetClipFromWorld().GetDataPtr());
+	PreviousFrameCameraTransform = Matrix(sceneView.CameraCmp->GetViewFromWorld().GetDataPtr());
+}
+
+void TiledForwardRenderer::UIImgui()
+{
 	static bool IsImguiInit = false;
+
+	if (IsImguiInit)
+	{
+		// Rendering
+		ImGui::Render();
+
+		ImDrawData* draw_data = ImGui::GetDrawData();
+		if (draw_data == nullptr)
+		{
+			gConsole.LogInfo("TiledForwardRenderer::Render draw_data is null");
+		}
+		else
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			glViewport(0, 0, (GLsizei)io.DisplaySize.x, (GLsizei)io.DisplaySize.y);
+			ImGui_ImplOpenGL3_RenderDrawData(draw_data);
+		}
+	}
+
 	gConsole.LogInfo("TiledForwardRenderer::Render IsImguiInit: {}, GetCurrentContext: {}",
 		IsImguiInit, ImGui::GetCurrentContext() != nullptr);
 
@@ -563,29 +593,6 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 		ImGui_ImplOpenGL3_CreateDeviceObjects();
 		IsImguiInit = true;
 	}
-
-	if (IsImguiInit)
-	{
-		ImDrawData* draw_data = ImGui::GetDrawData();
-		if (draw_data == nullptr)
-		{
-			gConsole.LogInfo("TiledForwardRenderer::Render draw_data is null");
-		}
-		else
-		{
-			ImGuiIO& io = ImGui::GetIO();
-			glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-			// glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-			// glClearColor(1.0f, 0.0f, 0.0f, 0.5f);
-			// glClear(GL_COLOR_BUFFER_BIT);
-
-			ImGui_ImplOpenGL3_RenderDrawData(draw_data);
-		}
-	}
-
-	// ensure that copy of matrix is stored
-	PreviousFrameCameraClipFromWorld = Matrix(sceneView.CameraCmp->GetClipFromWorld().GetDataPtr());
-	PreviousFrameCameraTransform = Matrix(sceneView.CameraCmp->GetViewFromWorld().GetDataPtr());
 }
 
 void TiledForwardRenderer::UpdateEnvCapture(const SceneView& sceneView)
@@ -1117,7 +1124,7 @@ void TiledForwardRenderer::RenderParticleUnlit(Scene* world, const CameraCompone
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void TiledForwardRenderer::LinearizeDepth(const SceneView& sceneView)
+void TiledForwardRenderer::PostLinearizeDepth(const SceneView& sceneView)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
