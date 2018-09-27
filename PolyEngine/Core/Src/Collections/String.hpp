@@ -195,6 +195,7 @@ namespace Poly {
 		/*CORE_DLLEXPORT*/ friend std::ostream& operator<< (std::ostream& stream, const String& rhs) { return stream << rhs.GetCStr(); }
 
 	private:
+
 		String(Dynarray<char> rawData) : Data(std::move(rawData)) { Data.PushBack('\0'); }
 
 		Dynarray<char> Data;

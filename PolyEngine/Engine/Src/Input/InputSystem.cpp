@@ -47,9 +47,11 @@ void InputSystem::InputPhase(Scene* world)
 				com->CurrMouseButton[ev.MouseButton] = false;
 			break;
 		case eInputEventType::MOUSEMOVE:
-			com->MouseDelta += ev.Pos;
+			com->MousePos += ev.Pos;
+			com->MouseDelta = ev.Pos;
 			break;
 		case eInputEventType::MOUSEPOS:
+			com->MouseDelta = ev.Pos - com->MousePos;
 			com->MousePos = ev.Pos;
 			break;
 		case eInputEventType::WHEELMOVE:

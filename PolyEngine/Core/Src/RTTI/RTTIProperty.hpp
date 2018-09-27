@@ -99,6 +99,7 @@ namespace Poly {
 		//-----------------------------------------------------------------------------------------------------------------------
 		enum class ePropertyFlag {
 			NONE = 0,
+			EDITOR_DEBUG_ONLY,
 			DONT_SERIALIZE = BIT(1)
 		};
 
@@ -112,7 +113,7 @@ namespace Poly {
 			Property(TypeInfo typeInfo, size_t offset, const char* name, ePropertyFlag flags, eCorePropertyType coreType, std::shared_ptr<PropertyImplData>&& implData = nullptr, FactoryFunc_t&& factory_func = nullptr)
 				: Type(typeInfo), Offset(offset), Name(name), Flags(flags), CoreType(coreType), ImplData(std::move(implData)), FactoryFunc(std::move(factory_func))
 			{
-				HEAVY_ASSERTE(CoreType != eCorePropertyType::UNHANDLED, "Unhandled property type!");
+				HEAVY_ASSERTE(CoreType != eCorePropertyType::UNHANDLED || EnumFlags<ePropertyFlag>(Flags).IsSet(ePropertyFlag::DONT_SERIALIZE), "Unhandled property type!");
 			}
 			TypeInfo Type;
 			size_t Offset;
@@ -543,8 +544,8 @@ namespace Poly {
 
 
 #define RTTI_GENERATE_PROPERTY_LIST_BASE(Type)\
-	friend class Poly::RTTI::PropertyManager<Type>; \
-	virtual Poly::RTTI::PropertyManagerBase* GetPropertyManager() const; \
+	friend class ::Poly::RTTI::PropertyManager<Type>; \
+	virtual ::Poly::RTTI::PropertyManagerBase* GetPropertyManager() const; \
 	template <class T> \
 	static void InitPropertiesBase(Poly::RTTI::PropertyManager<T>*) {} \
 	template <class T> \
@@ -559,7 +560,7 @@ namespace Poly {
 	static void InitProperties(Poly::RTTI::PropertyManager<T>* mgr)
 
 #define RTTI_PROPERTY_MANAGER_IMPL(Type)\
-	Poly::RTTI::PropertyManagerBase* Type::GetPropertyManager() const { static Poly::RTTI::PropertyManager<Type> instance; return &instance; }
+	::Poly::RTTI::PropertyManagerBase* Type::GetPropertyManager() const { static ::Poly::RTTI::PropertyManager<Type> instance; return &instance; }
 
 #define NO_RTTI_PROPERTY() UNUSED(mgr)
 

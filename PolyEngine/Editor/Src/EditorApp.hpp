@@ -1,14 +1,19 @@
 #pragma once
 
 #include <QApplication>
-#include <QTimer>
+#include <QtCore/qtimer.h>
 
-#include <EditorUi.hpp>
-#include <DockManager.hpp>
-#include <GlobalEventFilter.hpp>
+#include "EditorUi.hpp"
+#include "GlobalEventFilter.hpp"
 
 #include <Engine.hpp>
 
+class DockManager;
+class CmdManager;
+class ProjectManager;
+class EngineManager;
+class InspectorManager;
+class CommandManager;
 
 class EditorApp : public QApplication
 {
@@ -17,22 +22,17 @@ class EditorApp : public QApplication
 public:
 	EditorApp(int argc, char *argv[]);
 
-	DockManager DockMgr;
 	EditorUi Ui;
-	
-signals:
-	void EngineCreated();
+
+	DockManager* DockMgr;
+	CmdManager* CmdMgr;
+	ProjectManager* ProjectMgr;
+	EngineManager* EngineMgr;
+	InspectorManager* InspectorMgr;
+	CommandManager* CommandMgr;
 
 private:
-	void SetupUpdateTimer();
-	void CreateEngine();
-
-	std::unique_ptr<QTimer> Updater = nullptr;
-	std::unique_ptr<Poly::Engine> Engine = nullptr;
 	GlobalEventFilter EventFilter;
-	
-private slots:
-	void UpdatePhase();
 };
 
 extern EditorApp* gApp;
