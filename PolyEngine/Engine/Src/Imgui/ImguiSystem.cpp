@@ -17,8 +17,8 @@ void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(scene, Poly::eEngineTimer::GAMEPLAY));
 	// float time = (float)(TimeSystem::GetTimerElapsedTime(scene, Poly::eEngineTimer::GAMEPLAY));
 
-	ImguiWorldComponent* imguiCmp = scene->GetWorldComponent<ImguiWorldComponent>();
-	// InputWorldComponent* inputCmp = scene->GetWorldComponent<InputWorldComponent>();
+	// ImguiWorldComponent* imguiCmp = scene->GetWorldComponent<ImguiWorldComponent>();
+	InputWorldComponent* inputCmp = scene->GetWorldComponent<InputWorldComponent>();
 
 	// Poll and handle events (inputs, window resize, etc.)
 	// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
