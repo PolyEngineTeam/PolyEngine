@@ -42,7 +42,7 @@ ImguiResource::ImguiResource()
 	//IM_ASSERT(font != NULL);
 
 
-#pragma region Init
+// region Init
 	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;       // We can honor GetMouseCursor() values (optional)
 	io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;        // We can honor io.WantSetMousePos requests (optional, rarely used)
 																// Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
@@ -80,8 +80,7 @@ ImguiResource::ImguiResource()
 	// g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
 	// g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
 	// g_MouseCursors[ImGuiMouseCursor_Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-
-#pragma endregion
+// endregion
 }
 
 ImguiResource::~ImguiResource()
