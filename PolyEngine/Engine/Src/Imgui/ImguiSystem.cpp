@@ -34,7 +34,7 @@ void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 		return;
 	}
 
-// #pragma region Imgui ProcessEvent
+//  region Imgui ProcessEvent
 	if (inputCmp->GetWheelPosDelta().X > 0) io.MouseWheelH += 1;
 	if (inputCmp->GetWheelPosDelta().X < 0) io.MouseWheelH -= 1;
 	if (inputCmp->GetWheelPosDelta().Y > 0) io.MouseWheel += 1;
@@ -54,9 +54,9 @@ void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 			io.KeySuper = inputCmp->IsPressed(eKey::LGUI) || inputCmp->IsPressed(eKey::RGUI);
 		}
 	}
-// #pragma endregion
+//  endregion
 		
-// #pragma	region UpdateMousePosAndButtons
+// 	region UpdateMousePosAndButtons
 
 	// Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
 	// if (io.WantSetMousePos)
@@ -96,9 +96,9 @@ void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 // #endif
 // }
 
-// #pragma endregion
+//  endregion
 
-// #pragma region UpdateMouseCursor
+//  region UpdateMouseCursor
 	if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)
 		return;
 
@@ -115,9 +115,9 @@ void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 	// 	SDL_SetCursor(g_MouseCursors[imgui_cursor] ? g_MouseCursors[imgui_cursor] : g_MouseCursors[ImGuiMouseCursor_Arrow]);
 	// 	SDL_ShowCursor(SDL_TRUE);
 	// }
-// #pragma endregion
+//  endregion
 
-// #pragma region Imgui NewFrame
+//  region Imgui NewFrame
 	IM_ASSERT(io.Fonts->IsBuilt());     // Font atlas needs to be built, call renderer _NewFrame() function e.g. ImGui_ImplOpenGL3_NewFrame()
 										// Setup display size (every frame to accommodate for window resizing)
 	int w, h;
@@ -140,7 +140,7 @@ void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 	// io.DeltaTime = g_Time > 0 ? (float)((double)(current_time - g_Time) / frequency) : (float)(1.0f / 60.0f);
 	io.DeltaTime = deltaTime;
 	// g_Time = time;
-// #pragma endregion
+//  endregion
 
 	static bool show_demo_window = true;
 	// static bool show_another_window = false;
