@@ -607,67 +607,18 @@ void TiledForwardRenderer::RenderEquiCube(const SceneView& sceneView)
 
 Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneView) const
 {
-	// based on:
-	// https://docs.microsoft.com/pl-pl/windows/desktop/DxTechArts/common-techniques-to-improve-shadow-depth-maps
-	
 	ASSERTE(sceneView.DirectionalLights.GetSize() > 0, "GetProjectionForShadowMap has no directional light in scene view");
 	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLights[0];
 	
-	Vector shadowAABBSize = sceneView.ShadowAABB.GetSize();
-	Vector shadowAABBPosition = sceneView.ShadowAABB.GetCenter();
-	DebugDrawSystem::DrawBox(sceneView.SceneData, sceneView.ShadowAABB, Color::WHITE);
+	// TODO: calc bounding box and then determine projection size
+	// make sure contains all the objects
+	float near_plane = -4096.0f, far_plane = 4096.0f;
+	Matrix dirLightProjection;
+	dirLightProjection.SetOrthographic(-4096.0f, 4096.0f, -4096.0f, 4096.0f, near_plane, far_plane);
 
-	// Shimmering shadow edges fix by clamping ShadowSize to WorldUnitPerTexel
-	// safe when texture is 1 pixel bigger than shadow bounds
-	float worldUnitsPerTexelX = shadowAABBSize.X / (float)(SHADOW_WIDTH  - 1);
-	float worldUnitsPerTexelY = shadowAABBSize.Y / (float)(SHADOW_HEIGHT - 1);
+	Matrix dirLightFromWorld = dirLightCmp->GetTransform().GetWorldFromModel().GetInversed();
+	return dirLightFromWorld * dirLightProjection;
 
-	shadowAABBSize.X = floor(shadowAABBSize.X / worldUnitsPerTexelX) * worldUnitsPerTexelX;
-	shadowAABBSize.Y = floor(shadowAABBSize.Y / worldUnitsPerTexelY) * worldUnitsPerTexelY;
-
-	Matrix clipFromView;
-	clipFromView.SetOrthographic(
-		-shadowAABBSize.Y,	// bottom
-		 shadowAABBSize.Y,	// top
-		-shadowAABBSize.X,	// left
-		 shadowAABBSize.X,	// right
-		-shadowAABBSize.Z,	// near
-		 shadowAABBSize.Z	// far
-	);
-
-	// Matrix dirLightFromWorld = dirLightCmp->GetTransform().GetWorldFromModel().GetInversed();
-	// avoiding matrix inverting by calculating look with inverted axes
-	Matrix viewFromCamera(
-		Vector::ZERO, // position
-		dirLightCmp->GetTransform().GetGlobalRotation() *  Vector::UNIT_Z,	// look at: global back of dir light
-		dirLightCmp->GetTransform().GetGlobalRotation() * -Vector::UNIT_Y	// vertical: global down of dir light
-	);
-
-	// float time = (float)(sceneView.SceneData->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
-	// float anim = abs(Sin(100_rad * time));
-
-	// shimmering shadow edges fix by clamping camera movement only in texel increments
-	shadowAABBPosition.X = floor(shadowAABBPosition.X / worldUnitsPerTexelX) * worldUnitsPerTexelX;
-	shadowAABBPosition.Y = floor(shadowAABBPosition.Y / worldUnitsPerTexelY) * worldUnitsPerTexelY;
-	
-	Matrix cameraFromWorld;
-	cameraFromWorld.SetTranslation(shadowAABBPosition);
-
-	// cameraCmp->ViewFromWorld = transform.GetWorldFromModel().GetInversed();
-	// cameraCmp->ClipFromWorld = cameraCmp->ClipFromView * cameraCmp->ViewFromWorld;
-	
-	// Matrix orthoFromWorld = dirLightFromWorld * orthoFromDirLight;
-	// Matrix clipFromWorld = viewFromCamera * cameraFromWorld * clipFromView;
-	Matrix clipFromWorld = clipFromView * viewFromCamera * cameraFromWorld;
-
-	// shimmering shadow edges fix by clamping camera movement only in texel increments
-	// clipFromWorld.Data[3] = floor(clipFromWorld.Data[3] / worldUnitsPerTexelX) * worldUnitsPerTexelX;
-	// clipFromWorld.Data[7] = floor(clipFromWorld.Data[7] / worldUnitsPerTexelY) * worldUnitsPerTexelY;
-	// clipFromWorld.Data[11] = floor(clipFromWorld.Data[11] / worldUnitsPerTexelY) * worldUnitsPerTexelY;
-
-	// gConsole.LogInfo("TiledForwardRenderer::GetProjectionForShadowMap shadowAABBPosition: {}", shadowAABBPosition);
-	
-	return clipFromWorld;
 }
 
 void TiledForwardRenderer::RenderShadowMap(const SceneView& sceneView)

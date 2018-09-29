@@ -48,8 +48,8 @@ namespace Poly {
 		inline bool Contains(const Vector& point) const 
 		{ 
 			return point.X >= Pos.X && point.X <= (Pos.X + Size.X) 
-			&& point.Y >= Pos.Y && point.Y <= (Pos.Y + Size.Y) 
-			&& point.Z >= Pos.Z && point.Z <= (Pos.Z + Size.Z);
+				&& point.Y >= Pos.Y && point.Y <= (Pos.Y + Size.Y) 
+				&& point.Z >= Pos.Z && point.Z <= (Pos.Z + Size.Z);
 		}
 
 		/// <summary>Checks whether a given AABox is interecting with this AABox.</summary>
@@ -58,8 +58,8 @@ namespace Poly {
 		inline bool Intersects(const AABox& rhs) const
 		{	
 			return (abs(Pos.X - rhs.Pos.X) * 2 < (Size.X + rhs.Size.X))
-			&& (abs(Pos.Y - rhs.Pos.Y) * 2 < (Size.Y + rhs.Size.Y))
-			&& (abs(Pos.Z - rhs.Pos.Z) * 2 < (Size.Z + rhs.Size.Z));
+				&& (abs(Pos.Y - rhs.Pos.Y) * 2 < (Size.Y + rhs.Size.Y))
+				&& (abs(Pos.Z - rhs.Pos.Z) * 2 < (Size.Z + rhs.Size.Z));
 		}
 
 		std::array<Vector, 8> GetVertices() const;
