@@ -16,6 +16,7 @@ namespace Poly
 		/// Emitters of elementary shapes
 		void ENGINE_DLLEXPORT DrawLine(Scene* world, const Vector& begin, const Vector& end, const Color& color = Color::WHITE);
 		void ENGINE_DLLEXPORT DrawBox(Scene* world, const Vector& mins, const Vector& maxs, const Color& color = Color::WHITE);
+		void ENGINE_DLLEXPORT DrawBox(Scene* world, const Vector& mins, const Vector& maxs, const Matrix& worldFromSpace, const Color& color = Color::WHITE);
 		void ENGINE_DLLEXPORT DrawBox(Scene* world, const AABox& box, const Color& color = Color::WHITE);
 		void ENGINE_DLLEXPORT DrawFrustum(Scene* world, const Frustum& frust, 
 			const Vector& pos = Vector::ZERO, const Quaternion& rot = Quaternion::IDENTITY, const Color& color = Color::WHITE, bool withNormals = false);

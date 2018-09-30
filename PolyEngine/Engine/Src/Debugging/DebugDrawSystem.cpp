@@ -256,6 +256,50 @@ void Poly::DebugDrawSystem::DrawBox(Scene* world, const Vector& mins, const Vect
 	DrawLine(world, points[5], points[6], color);
 }
 
+void DebugDrawSystem::DrawBox(Scene* world, const Vector& mins, const Vector& maxs, const Matrix& worldFromSpace, const Color& color)
+{
+	if (!gDebugConfig.DebugRender)
+		return;
+
+	std::array<Vector, 8> points;
+	std::array<Vector, 2> minmaxVector = { { mins, maxs } };
+
+	for (unsigned int i = 0; i < points.size(); ++i)
+	{
+		points[i].X = minmaxVector[(i ^ (i >> 1)) & 1].X;
+		points[i].Y = minmaxVector[(i >> 1) & 1].Y;
+		points[i].Z = minmaxVector[(i >> 2) & 1].Z;
+	}
+	// i: X Y Z
+	// 0: 0 0 0
+	// 1: 1 0 0
+	// 2: 1 1 0
+	// 3: 0 1 0
+	// 4: 0 0 1
+	// 5: 1 0 1
+	// 6: 1 1 1
+	// 7: 0 1 1
+
+	// bottom
+	DebugDrawSystem::DrawLine(world, worldFromSpace * points[0], worldFromSpace * points[4], color);
+	DebugDrawSystem::DrawLine(world, worldFromSpace * points[0], worldFromSpace * points[1], color);
+	DebugDrawSystem::DrawLine(world, worldFromSpace * points[5], worldFromSpace * points[4], color);
+	DebugDrawSystem::DrawLine(world, worldFromSpace * points[5], worldFromSpace * points[1], color);
+
+	// top
+	DebugDrawSystem::DrawLine(world, worldFromSpace * points[3], worldFromSpace * points[7], color);
+	DebugDrawSystem::DrawLine(world, worldFromSpace * points[3], worldFromSpace * points[2], color);
+	DebugDrawSystem::DrawLine(world, worldFromSpace * points[6], worldFromSpace * points[7], color);
+	DebugDrawSystem::DrawLine(world, worldFromSpace * points[6], worldFromSpace * points[2], color);
+
+	// top-bottom lines
+	DebugDrawSystem::DrawLine(world, worldFromSpace * points[0], worldFromSpace * points[3], color);
+	DebugDrawSystem::DrawLine(world, worldFromSpace * points[1], worldFromSpace * points[2], color);
+	DebugDrawSystem::DrawLine(world, worldFromSpace * points[4], worldFromSpace * points[7], color);
+	DebugDrawSystem::DrawLine(world, worldFromSpace * points[5], worldFromSpace * points[6], color);
+}
+
+
 void Poly::DebugDrawSystem::DrawBox(Scene * world, const AABox & box, const Color & color)
 {
 	DrawBox(world, box.GetMin(), box.GetMax(), color);

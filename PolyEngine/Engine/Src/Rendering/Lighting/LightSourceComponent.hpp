@@ -2,10 +2,11 @@
 
 #include <Defines.hpp>
 #include "ECS/ComponentBase.hpp"
+#include "Math/Frustum.hpp"
+#include "Math/Matrix.hpp"
 
 namespace Poly
 {
-
 	class ENGINE_DLLEXPORT AmbientLightWorldComponent : public ComponentBase
 	{
 	public:
@@ -34,6 +35,12 @@ namespace Poly
 
 		const Color& GetColor() const { return LightColor; }
 		float GetIntensity() const { return Intensity; }
+
+		// Debug only
+		Frustum DebugFrustum;
+		Matrix DebugFrustumWorldFromModel;
+		// Debug only end
+
 	private:
 		Color LightColor;
 		float Intensity = 1.0f;
