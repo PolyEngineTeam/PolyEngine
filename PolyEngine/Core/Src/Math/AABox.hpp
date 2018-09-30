@@ -71,30 +71,30 @@ namespace Poly {
 				&& (abs(Pos.Y - rhs.Pos.Y) * 2 < (Size.Y + rhs.Size.Y));
 		}
 
-		// inline bool OverlapsXY(const AABox& rhs)
-		// {
-		// 	if (Pos.X >= rhs.GetMax().X) return false;
-		// 	if (GetMax().X <= rhs.Pos.X) return false;
-		// 
-		// 	if (Pos.Y >= rhs.GetMax().Y) return false;
-		// 	if (GetMax().Y <= rhs.Pos.Y) return false;
-		// 
-		// 	return true;
-		// }
+		inline bool OverlapsXY(const AABox& rhs)
+		{
+			if (Pos.X >= rhs.GetMax().X) return false;
+			if (GetMax().X <= rhs.Pos.X) return false;
+		
+			if (Pos.Y >= rhs.GetMax().Y) return false;
+			if (GetMax().Y <= rhs.Pos.Y) return false;
+		
+			return true;
+		}
 
-		// inline bool Overlaps(const AABox& rhs)
-		// {
-		// 	if (GetMin().X >= rhs.GetMax().X) return false;
-		// 	if (GetMax().X <= rhs.GetMin().X) return false;
-		// 					  
-		// 	if (GetMin().Y >= rhs.GetMax().Y) return false;
-		// 	if (GetMax().Y <= rhs.GetMin().Y) return false;
-		// 					  
-		// 	if (GetMin().Z >= rhs.GetMax().Z) return false;
-		// 	if (GetMax().Z <= rhs.GetMin().Z) return false;
-		// 
-		// 	return true;
-		// }
+		inline bool Overlaps(const AABox& rhs)
+		{
+			if (GetMin().X >= rhs.GetMax().X) return false;
+			if (GetMax().X <= rhs.GetMin().X) return false;
+							  
+			if (GetMin().Y >= rhs.GetMax().Y) return false;
+			if (GetMax().Y <= rhs.GetMin().Y) return false;
+							  
+			if (GetMin().Z >= rhs.GetMax().Z) return false;
+			if (GetMax().Z <= rhs.GetMin().Z) return false;
+		
+			return true;
+		}
 
 		std::array<Vector, 8> GetVertices() const;
 

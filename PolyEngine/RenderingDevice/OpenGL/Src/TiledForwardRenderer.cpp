@@ -622,8 +622,8 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
 	float worldUnitsPerTexelY = shadowAABBSize.Y / (float)(SHADOW_HEIGHT - 1);
 
 	// shimmering shadow edges fix by clamping camera movement only in texel increments
-	shadowAABBPosition.X = floor(shadowAABBPosition.X / worldUnitsPerTexelX) * worldUnitsPerTexelX;
-	shadowAABBPosition.Y = floor(shadowAABBPosition.Y / worldUnitsPerTexelY) * worldUnitsPerTexelY;
+	// shadowAABBPosition.X = floor(shadowAABBPosition.X / worldUnitsPerTexelX) * worldUnitsPerTexelX;
+	// shadowAABBPosition.Y = floor(shadowAABBPosition.Y / worldUnitsPerTexelY) * worldUnitsPerTexelY;
 
 	shadowAABBSize.X = floor(shadowAABBSize.X / worldUnitsPerTexelX) * worldUnitsPerTexelX;
 	shadowAABBSize.Y = floor(shadowAABBSize.Y / worldUnitsPerTexelY) * worldUnitsPerTexelY;
@@ -638,20 +638,20 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
 
 	DebugDrawSystem::DrawBox(
 		sceneView.SceneData,
-		(shadowAABBPosition - shadowAABBSize * 0.5f) + Vector::ONE,
-		(shadowAABBPosition + shadowAABBSize * 0.5f) + Vector::ONE,
+		(shadowAABBPosition - shadowAABBSize * 0.5f),
+		(shadowAABBPosition + shadowAABBSize * 0.5f),
 		worldFromDirLight,
 		Color(1.0f, 0.0, 1.0f)
 	);
 
 	Matrix clipFromView;
 	clipFromView.SetOrthographic(
-		-shadowAABBSize.Y,	// bottom
-		 shadowAABBSize.Y,	// top
-		-shadowAABBSize.X,	// left
-		 shadowAABBSize.X,	// right
-		-shadowAABBSize.Z,	// near
-		 shadowAABBSize.Z	// far
+		0.5f * -shadowAABBSize.Y,	// bottom
+		0.5f *  shadowAABBSize.Y,	// top
+		0.5f * -shadowAABBSize.X,	// left
+		0.5f *  shadowAABBSize.X,	// right
+		0.5f * -shadowAABBSize.Z,	// near
+		0.5f *  shadowAABBSize.Z	// far
 	);
 
 	Matrix cameraFromWorld;
@@ -664,7 +664,6 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
 	clipFromWorld.Data[7]  = (floor(clipFromWorld.Data[7]  / worldUnitsPerTexelY)) * worldUnitsPerTexelY;
 	clipFromWorld.Data[11] = (floor(clipFromWorld.Data[11] / worldUnitsPerTexelY)) * worldUnitsPerTexelY;
 
-	// return dirLightFromWorld * clipFromView;
 	return clipFromWorld;
 }
 

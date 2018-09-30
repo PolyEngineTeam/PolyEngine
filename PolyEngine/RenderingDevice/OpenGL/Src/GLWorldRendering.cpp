@@ -131,19 +131,13 @@ void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<c
 	ASSERTE(sceneView.DirectionalLights.GetSize() > 0, "FillDirLightQueue when scene view has no directional lights");
 	const DirectionalLightComponent* dirLight = sceneView.DirectionalLights[0];
 	
-	// // DEBUG: Recreate camera matrices for test
-	// Vector position = Vector::UNIT_Z * 100.0f + Vector::UNIT_X * 2000.0f * Cos(40_deg * time);
-	// Quaternion rotationQuat = Quaternion(Vector::UNIT_X, 120_deg * Sin(5_deg * time))
-	// 	* Quaternion(Vector::UNIT_Y, 120_deg * Sin(-10_deg * time));
-	
+	const CameraComponent* cameraCmp = sceneView.CameraCmp;
+	Frustum frustum = cameraCmp->GetCameraFrustum();
+
 	Matrix clipFromView;
-	clipFromView.SetPerspective(
-		dirLight->DebugFrustum.GetFov(),
-		dirLight->DebugFrustum.GetAspect(),
-		dirLight->DebugFrustum.GetZNear(),
-		dirLight->DebugFrustum.GetZFar()
-	);
-	Matrix viewFromWorld = dirLight->DebugFrustumWorldFromModel.GetInversed();
+	clipFromView.SetPerspective(frustum.GetFov(), frustum.GetAspect(), frustum.GetZNear(), frustum.GetZFar());
+	// Matrix viewFromWorld = dirLight->DebugFrustumWorldFromModel.GetInversed();
+	Matrix viewFromWorld = cameraCmp->GetViewFromWorld();
 	Matrix clipFromWorld = clipFromView * viewFromWorld;
 
 	// Transform frustum corners to DirLightSpace
@@ -216,7 +210,7 @@ void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<c
 	for (const auto& kv : meshBoxes)
 	{
 		AABox box = std::get<0>(kv);
-		if (!(box.IntersectsXY(dirLightAABB))) // extend dir light AAbox only in Z based on objects in rect defined on dir light AABob XY plane
+		if (!(box.OverlapsXY(dirLightAABB))) // extend dir light AAbox only in Z based on objects in rect defined on dir light AABob XY plane
 			continue;
 
 		minZ = std::min(minZ, box.GetMin().Z);
@@ -230,22 +224,26 @@ void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<c
 	DebugDrawSystem::DrawBox(sceneView.SceneData, dirLightAABB.GetMin(), dirLightAABB.GetMax(), worldFromDirLight, Color(1.0f, 1.0f, 0.0f));
 
 	// find all meshes that are inside extended DirLights AABB box
+	AABox drawCallMeshesAABB(dirLightAABB);
 	int shadowCastersCounter = 0;
 	for (auto kv : meshBoxes)
 	{
 		AABox box = std::get<0>(kv);
 		const MeshRenderingComponent* meshCmp = std::get<1>(kv);
 
-		if (box.Intersects(dirLightAABB))
+		// if (box.Intersects(dirLightAABB))
+		if (box.Overlaps(dirLightAABB))
 		{
 			sceneView.DirShadowOpaqueQueue.PushBack(meshCmp);
 
-			DebugDrawSystem::DrawBox(sceneView.SceneData, box.GetMin(), box.GetMax(), worldFromDirLight, Color::GREEN);
+			drawCallMeshesAABB.Expand(box);
 			shadowCastersCounter++;
+
+			DebugDrawSystem::DrawBox(sceneView.SceneData, box.GetMin(), box.GetMax(), worldFromDirLight, Color::GREEN);
 		}
 	}
 
-	sceneView.ShadowAABB = dirLightAABB;
+	sceneView.ShadowAABB = drawCallMeshesAABB;
 
 	gConsole.LogInfo("GLRenderingDevice::FillDirLightQueue casters: {}/{}", shadowCastersCounter, meshCmps.GetSize());
 }

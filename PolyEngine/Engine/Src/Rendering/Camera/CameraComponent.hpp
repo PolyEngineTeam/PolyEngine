@@ -43,7 +43,7 @@ namespace Poly {
 		void SetForcedRatio(bool value) { IsForcedRatio = value; }
 		eRenderingModeType GetRenderingMode() const { return RenderingMode; }
 		void SetRenderingMode(eRenderingModeType value) { RenderingMode = value; }
-		Optional<Frustum> GetCameraFrustum() const { return CameraFrustum; };
+		Frustum GetCameraFrustum() const { return CameraFrustum; };
 
 		void UpdateProjection();
 
@@ -75,7 +75,7 @@ namespace Poly {
 		// RenderingMode
 		eRenderingModeType RenderingMode;
 
-		Optional<Frustum> CameraFrustum;
+		Frustum CameraFrustum;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, CameraComponent)
