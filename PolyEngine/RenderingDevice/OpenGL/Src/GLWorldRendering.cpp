@@ -224,7 +224,7 @@ void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<c
 	DebugDrawSystem::DrawBox(sceneView.SceneData, dirLightAABB.GetMin(), dirLightAABB.GetMax(), worldFromDirLight, Color(1.0f, 1.0f, 0.0f));
 
 	// find all meshes that are inside extended DirLights AABB box
-	AABox drawCallMeshesAABB(dirLightAABB);
+	// AABox drawCallMeshesAABB(dirLightAABB);
 	int shadowCastersCounter = 0;
 	for (auto kv : meshBoxes)
 	{
@@ -236,14 +236,14 @@ void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<c
 		{
 			sceneView.DirShadowOpaqueQueue.PushBack(meshCmp);
 
-			drawCallMeshesAABB.Expand(box);
+			// drawCallMeshesAABB.Expand(box);
 			shadowCastersCounter++;
 
 			DebugDrawSystem::DrawBox(sceneView.SceneData, box.GetMin(), box.GetMax(), worldFromDirLight, Color::GREEN);
 		}
 	}
 
-	sceneView.ShadowAABB = drawCallMeshesAABB;
+	sceneView.ShadowAABB = dirLightAABB;
 
 	gConsole.LogInfo("GLRenderingDevice::FillDirLightQueue casters: {}/{}", shadowCastersCounter, meshCmps.GetSize());
 }
