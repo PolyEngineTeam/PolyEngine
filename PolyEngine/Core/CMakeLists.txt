@@ -26,3 +26,5 @@ endif(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 
 set_target_properties(PolyCore PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "Src/CorePCH.hpp")
 cotire(PolyCore)
+
+CopyArtifacts(PolyCore)

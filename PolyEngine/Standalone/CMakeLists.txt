@@ -14,3 +14,5 @@ target_link_libraries(PolyStandalone PRIVATE PolyEngine PolyCore ${SDL2_LIBRARIE
 add_dependencies(PolyStandalone PolyRenderingDeviceGL) #dynamically loaded
 
 cotire(PolyStandalone)
+
+CopyArtifacts(PolyStandalone)

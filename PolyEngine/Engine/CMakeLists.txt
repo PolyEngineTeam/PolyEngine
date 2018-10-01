@@ -33,4 +33,6 @@ if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 endif(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 
 set_target_properties(PolyEngine PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "Src/EnginePCH.hpp")
-cotire(PolyEngine)
+cotire()
+
+CopyArtifacts(PolyEngine)

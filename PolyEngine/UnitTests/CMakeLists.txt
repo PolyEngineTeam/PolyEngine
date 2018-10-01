@@ -53,3 +53,5 @@ if(WIN32)
 endif()
 
 cotire(PolyUnitTests)
+
+CopyArtifacts(PolyUnitTests)

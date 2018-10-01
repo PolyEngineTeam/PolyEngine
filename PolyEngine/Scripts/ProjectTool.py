@@ -118,7 +118,7 @@ def patch_usr_proj(path, proj_name):
         dbg_work_dir = project_property_group.find('ns:LocalDebuggerWorkingDirectory', xml_namespace)
         if dbg_work_dir == None:
             dbg_work_dir = ET.SubElement(project_property_group, namespace_str + 'LocalDebuggerWorkingDirectory')
-        dbg_work_dir.text = '$(OutputPath)'
+        dbg_work_dir.text = os.sep.join(['$(SolutionDir)..', 'Dist', '$(Configuration)', ''])
         print('\tset LocalDebuggerWorkingDirectory to', dbg_work_dir.text)
 
         dbg_flavor = project_property_group.find('ns:DebuggerFlavor', xml_namespace)

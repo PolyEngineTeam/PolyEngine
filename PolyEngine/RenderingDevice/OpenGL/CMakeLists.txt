@@ -13,7 +13,8 @@ add_library(PolyRenderingDeviceGL SHARED ${POLYGLDEVICE_SRCS})
 target_compile_definitions(PolyRenderingDeviceGL PRIVATE _DEVICE)
 target_include_directories(PolyRenderingDeviceGL PUBLIC ${POLYGLDEVICE_INCLUDE} ${SDL2_INCLUDE_DIRS})
 target_link_libraries(PolyRenderingDeviceGL PRIVATE PolyEngine epoxy::gl ${SDL2_LIBRARIES})
-set_target_properties(PolyRenderingDeviceGL PROPERTIES OUTPUT_NAME polyrenderingdevice)
 
-set_target_properties(PolyRenderingDeviceGL PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "Src/PolyRenderingDeviceGLPCH.hpp")
+#set_target_properties(PolyRenderingDeviceGL PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "Src/PolyRenderingDeviceGLPCH.hpp")
 cotire(PolyRenderingDeviceGL)
+
+CopyArtifacts(PolyRenderingDeviceGL)

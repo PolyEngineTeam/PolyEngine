@@ -3,13 +3,32 @@ project($PROJECT_NAME$ VERSION 0.1 LANGUAGES CXX C) #note(vuko): without C older
 
 ## Need to setup $ENGINE_DIR$ and $PROJECT_PATH$
 set(ENGINE_ROOT_DIR $ENGINE_DIR$)
+set(DIST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Dist")
 
 include(${ENGINE_ROOT_DIR}/CMakeListsCommon.txt)
+
+add_custom_target(
+    Prerequisites ALL
+    # Make distribution directory
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${DIST_DIR}/${BUILD_CONFIG_NAME}"
+    COMMENT "Ensuring build prerequisites are met..." VERBATIM
+)
+
+if(WIN32)
+    add_custom_command(
+        TARGET Prerequisites POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/SDL2/lib/x64/SDL2.dll" "${DIST_DIR}/${BUILD_CONFIG_NAME}"
+        COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/Assimp/lib/Release/x64/assimp-vc140-mt.dll" "${DIST_DIR}/${BUILD_CONFIG_NAME}"
+        COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/libepoxy/bin/x64/epoxy-0.dll" "${DIST_DIR}/${BUILD_CONFIG_NAME}"
+
+        COMMENT "Copying thirdparty dlls..." VERBATIM
+    )
+endif()
 
 ##
 # Finally, meat and potatoes
 ##
-#add_subdirectory(${ENGINE_ROOT_DIR}/Editor "${CMAKE_CURRENT_BINARY_DIR}/editor_build")
+add_subdirectory(${ENGINE_ROOT_DIR}/Editor "${CMAKE_CURRENT_BINARY_DIR}/editor_build")
 add_subdirectory(${ENGINE_ROOT_DIR}/Core "${CMAKE_CURRENT_BINARY_DIR}/core_build")
 add_subdirectory(${ENGINE_ROOT_DIR}/Engine "${CMAKE_CURRENT_BINARY_DIR}/engine_build")
 add_subdirectory(${ENGINE_ROOT_DIR}/RenderingDevice/OpenGL "${CMAKE_CURRENT_BINARY_DIR}/renderingdevice_build")

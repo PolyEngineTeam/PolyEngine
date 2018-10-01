@@ -19,6 +19,14 @@ if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
 	mark_as_advanced(CMAKE_CONFIGURATION_TYPES)
 endif()
 
+if (DEFINED CMAKE_CONFIGURATION_TYPES)
+  # multi-config handling
+  set (BUILD_CONFIG_NAME ${CMAKE_CFG_INTDIR})
+else()
+  # mono config handling
+  set (BUILD_CONFIG_NAME ${CMAKE_BUILD_TYPE})
+endif()
+
 ##
 # Are we running CI?
 ##
@@ -166,6 +174,21 @@ function(GenerateSourceGoups Sources)
 		endif()
 		source_group("${SourcePath}" FILES "${Source}")
 	endforeach()
+endfunction()
+
+##
+# Function that copies DLLs to Dist folder
+##
+function(CopyArtifacts TargetName)
+	if (DEFINED DIST_DIR)
+		add_dependencies(${TargetName} Prerequisites)
+		add_custom_command(
+			TARGET ${TargetName} POST_BUILD
+			# Inhouse shared library dependancies
+			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:${TargetName}>" "${DIST_DIR}/${BUILD_CONFIG_NAME}"
+			COMMENT "Copying ${TargetName} artifacts to ${DIST_DIR}/${BUILD_CONFIG_NAME}" VERBATIM
+			)
+	endif ()
 endfunction()
 
 ##

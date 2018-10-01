@@ -154,9 +154,7 @@ void ProjectManager::InitEngine()
 	// works for VS
 	StringBuilder builder;
 	builder.Append(ProjectCfg->ProjectPath);
-	builder.Append("/Build/");
-	builder.Append(ProjectCfg->ProjectName);
-	builder.Append("/Debug/AssetsPathConfig.json");
+	builder.Append("/Dist/Debug/AssetsPathConfig.json");
 
 	gApp->EngineMgr->InitEngine(std::move(game), builder.GetString());
 }
