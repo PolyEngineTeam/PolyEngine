@@ -53,8 +53,11 @@ if(DEFINED ENV{QTDIR})
 	list(APPEND CMAKE_PREFIX_PATH $ENV{QTDIR})
 elseif(APPLE)
 	list(APPEND CMAKE_PREFIX_PATH /usr/local/opt/qt)
-else()
-	message(FATAL_ERROR "Please setup QTDIR environment variable to point to Qt5 toolchain instalation")
+endif()
+
+find_package(Qt5 COMPONENTS Core Widgets)
+if(NOT DEFINED Qt5_FOUND)
+	message(FATAL_ERROR "Qt5 not found. When using a standalone Qt5 toolchain, please setup QTDIR environment variable to point to it.")
 endif()
 
 if (WIN32)
