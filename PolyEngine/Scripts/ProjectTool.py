@@ -3,6 +3,7 @@ import os
 import shutil
 import fileinput
 import json
+import re
 from enum import Enum
 import xml.etree.ElementTree as ET
 
@@ -37,6 +38,7 @@ class UpdateProjectAction(argparse.Action):
 # Create project function
 
 # Setup:
+# $DIST_DIR$ - distribution directory for artifacts copying
 # $PROJECT_NAME$ - name of the project
 # $PROJECT_PATH$ - relative path of the project (game) directory (relative to root project dir)
 # $GAME_CLASS_NAME$ - name of the game class
@@ -71,7 +73,7 @@ def xml_indent(elem, level=0):
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
 
-def patch_usr_proj(path, proj_name):
+def patch_usr_proj(path, proj_name, dist_dir):
     usr_proj_path = os.sep.join([path, 'Build', proj_name, proj_name + '.vcxproj.user'])
     xml_namespace = { 'ns' : 'http://schemas.microsoft.com/developer/msbuild/2003' }
     namespace_str = '{' + xml_namespace['ns'] + '}'
@@ -107,18 +109,28 @@ def patch_usr_proj(path, proj_name):
 
     # patch all property groups info
     for project_property_group in root.findall('ns:PropertyGroup', xml_namespace):
-        print('Patching property group:', project_property_group.attrib['Condition'])
+        property_group_name = project_property_group.attrib['Condition']
+        m = re.search("'\$\(Configuration\)\|\$\(Platform\)'=='(.*)\|(.*)'", property_group_name)
+        dbg_config_type = m.group(1) # Release, debug, etc.
+        dbg_config_platform = m.group(2) # x64, etc.
+        print('Patching property group, type: {}, platform: {}'.format(dbg_config_type, dbg_config_platform))
         
         dbg_cmd = project_property_group.find('ns:LocalDebuggerCommand', xml_namespace)
         if dbg_cmd == None:
             dbg_cmd = ET.SubElement(project_property_group, namespace_str + 'LocalDebuggerCommand')
         dbg_cmd.text = 'PolyStandalone.exe'
         print('\tset LocalDebuggerCommand to', dbg_cmd.text)
+
+        dbg_args = project_property_group.find('ns:LocalDebuggerCommandArguments', xml_namespace)
+        if dbg_args == None:
+            dbg_args = ET.SubElement(project_property_group, namespace_str + 'LocalDebuggerCommandArguments')
+        dbg_args.text = os.sep.join([path, proj_name + '.proj.json']) + ' ' + dbg_config_type
+        print('\tset LocalDebuggerCommandArguments to', dbg_args.text)
         
         dbg_work_dir = project_property_group.find('ns:LocalDebuggerWorkingDirectory', xml_namespace)
         if dbg_work_dir == None:
             dbg_work_dir = ET.SubElement(project_property_group, namespace_str + 'LocalDebuggerWorkingDirectory')
-        dbg_work_dir.text = os.sep.join(['$(SolutionDir)..', 'Dist', '$(Configuration)', ''])
+        dbg_work_dir.text = os.sep.join(['$(SolutionDir)..', dist_dir, '$(Configuration)', ''])
         print('\tset LocalDebuggerWorkingDirectory to', dbg_work_dir.text)
 
         dbg_flavor = project_property_group.find('ns:DebuggerFlavor', xml_namespace)
@@ -130,7 +142,7 @@ def patch_usr_proj(path, proj_name):
     xml_indent(root)
     xml_data.write(usr_proj_path, encoding='utf-8', xml_declaration=True)
 
-def run_cmake(path, build_dir_name, proj_name):
+def run_cmake(path, build_dir_name, proj_name, dist_dir):
     build_dir_path = os.sep.join([path, build_dir_name])
     if not os.path.exists(build_dir_path):
         os.makedirs(build_dir_path)
@@ -143,12 +155,11 @@ def run_cmake(path, build_dir_name, proj_name):
     
     # Patch project proj.user file to contain proper runtime info
     if os.name == 'nt':
-        patch_usr_proj(path, proj_name)
+        patch_usr_proj(path, proj_name, dist_dir)
 
 def create_project_file(path, proj_name):
     data = {}
-    data['root'] = {}
-    data['root']['ProjectName'] = proj_name
+    data['ProjectName'] = proj_name
     with open(os.sep.join([path, proj_name + '.proj.json']), 'w') as outfile:
         json.dump(data, outfile)
 
@@ -159,7 +170,7 @@ def read_project_file(path):
                     data = json.load(json_file)
             return data
 
-def update_config_files(path, name, engine_path, is_new_config):
+def update_config_files(path, name, engine_path, is_new_config, dist_dir):
     project_path = os.sep.join([path, name])
     project_sources_path = os.sep.join([project_path, 'Src'])
 
@@ -179,7 +190,7 @@ def update_config_files(path, name, engine_path, is_new_config):
         replace_tags_in_file(game_hpp_output_path, [('$GAME_CLASS_NAME$', 'Game')])
         replace_tags_in_file(game_cpp_output_path, [('$GAME_CLASS_NAME$', 'Game')])
     # Cmake needs paths with '/' (instead of '\') regardles of platform
-    replace_tags_in_file(cmake_sln_output_path, [('$PROJECT_PATH$', name), ('$PROJECT_NAME$', name), ('$ENGINE_DIR$', get_cmake_path(os.path.abspath(engine_path)))]) 
+    replace_tags_in_file(cmake_sln_output_path, [('$PROJECT_PATH$', name), ('$PROJECT_NAME$', name), ('$DIST_DIR$', dist_dir), ('$ENGINE_DIR$', get_cmake_path(os.path.abspath(engine_path)))]) 
     replace_tags_in_file(cmake_proj_output_path, [('$PROJECT_NAME$', name)])
 
     create_fast_update_script(engine_path, path)
@@ -221,10 +232,11 @@ def create_project(name, path, engine_path):
     project_sources_path = os.sep.join([project_path, 'Src'])
     os.makedirs(project_sources_path)
 
-    update_config_files(path, name, engine_path, True)
+    dist_dir = 'Dist'
+    update_config_files(path, name, engine_path, True, dist_dir)
 
     create_project_file(path, name)
-    run_cmake(path, 'Build', name)
+    run_cmake(path, 'Build', name, dist_dir)
 
 def update_project(path, engine_path):
     print('Updating project at', path, 'with engine at', engine_path)
@@ -235,9 +247,10 @@ def update_project(path, engine_path):
     name = read_project_file(path)['ProjectName']
     print('Project name:', name)
 
-    update_config_files(path, name, engine_path, False)
+    dist_dir = 'Dist'
+    update_config_files(path, name, engine_path, False, dist_dir)
 
-    run_cmake(path, 'Build', name)
+    run_cmake(path, 'Build', name, dist_dir)
 
 #################### SCRIPT START ####################
 if __name__ == "__main__":

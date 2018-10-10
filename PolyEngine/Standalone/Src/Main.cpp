@@ -39,6 +39,11 @@ public:
 
 int main(int argc, char* args[])
 {
+	for(int i=0; i<argc; ++i)
+	{
+		Poly::gConsole.LogDebug("Runtime arg[{}] = {}", i, args[i]);
+	}
+
 	Poly::gConsole.RegisterStream<FileAndCoutStream>("console.log");
 	UNUSED(argc);
 	UNUSED(args);
@@ -90,6 +95,7 @@ int main(int argc, char* args[])
 	Poly::gConsole.LogDebug("Device created.");
 
 	Engine->Init(std::move(game), std::move(device));
+	Engine->StartGame();
 	Poly::gConsole.LogDebug("Engine initialization and handshake successfull. Starting main loop...");
 
 	bool quitRequested = false;

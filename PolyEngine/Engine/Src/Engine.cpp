@@ -52,15 +52,7 @@ void Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice>
 	Game = std::move(game);
 	RenderingDevice = std::move(device);
 	RenderingDevice->Init();
-	LoadDefaultScene();
-	Game->RegisterEngine(this);
 
-	StartGame();
-}
-
-//------------------------------------------------------------------------------
-void Poly::Engine::StartGame()
-{
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(InputSystem::InputPhase, eUpdatePhaseOrder::PREUPDATE);
@@ -77,6 +69,17 @@ void Poly::Engine::StartGame()
 	RegisterUpdatePhase(DeferredTaskSystem::DeferredTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(FPSSystem::FPSUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 
+	LoadDefaultScene();
+
+	Game->RegisterEngine(this);
+}
+
+//------------------------------------------------------------------------------
+void Poly::Engine::StartGame()
+{
+	// Placeholder for real scene system
+	LoadDefaultScene();
+
 	SoundSystem::SetWorldCurrent(GetActiveScene());
 
 	// Init game
@@ -87,7 +90,7 @@ void Poly::Engine::StartGame()
 }
 
 //------------------------------------------------------------------------------
-void Poly::Engine::EndGane()
+void Poly::Engine::EndGame()
 {
 	if (Editor)
 		Editor->OnGameDeinit();
@@ -97,9 +100,7 @@ void Poly::Engine::EndGane()
 //------------------------------------------------------------------------------
 Engine::~Engine()
 {
-	if (Editor)
-		Editor->OnGameDeinit();
-	Game->Deinit();
+	EndGame();
 	ActiveScene.reset();
 	Game.reset();
 	RenderingDevice.reset();
