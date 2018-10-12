@@ -1,5 +1,13 @@
 cmake_minimum_required(VERSION 3.2)
 
+# Target names
+set(CORE_TARGET PolyCore)
+set(ENGINE_TARGET PolyEngine)
+set(GLDEVICE_TARGET PolyRenderingDeviceGL)
+set(EDITOR_TARGET PolyEditor)
+set(UNITTESTS_TARGET PolyUnitTests)
+set(STANDALONE_TARGET PolyStandalone)
+
 # Prepend our modules dir to the path
 list(INSERT CMAKE_MODULE_PATH 0 "${ENGINE_ROOT_DIR}/CMakeModules")
 

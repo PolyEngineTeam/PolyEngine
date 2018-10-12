@@ -12,9 +12,9 @@ include(${ENGINE_ROOT_DIR}/CMakeListsCommon.txt)
 # Finally, meat and potatoes
 ##
 add_subdirectory(Core)
-add_subdirectory(Editor)
 add_subdirectory(Engine)
 add_subdirectory(RenderingDevice/OpenGL)
+add_subdirectory(Editor)
 add_subdirectory(Standalone)
 enable_testing()
 add_subdirectory(UnitTests)

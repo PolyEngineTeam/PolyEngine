@@ -17,12 +17,12 @@ file(GLOB_RECURSE EDITOR_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     ${EDITOR_INCLUDE}/*.h)
 GenerateSourceGoups("${EDITOR_SRCS}")
 
-add_executable(PolyEditor ${EDITOR_SRCS} ${AUTOGEN_SOURCE_GROUP})
-target_include_directories(PolyEditor PUBLIC ${EDITOR_INCLUDE} ${SDL2_INCLUDE_DIRS})
-target_link_libraries(PolyEditor PolyEngine PolyCore ${SDL2_LIBRARIES} ${CMAKE_DL_LIBS})
-target_link_libraries(PolyEditor Qt5::Widgets Qt5::Core)
-add_dependencies(PolyEditor PolyRenderingDeviceGL) #dynamically loaded
-qt5_use_modules(PolyEditor Widgets Core)
+add_executable(${EDITOR_TARGET} ${EDITOR_SRCS} ${AUTOGEN_SOURCE_GROUP})
+target_include_directories(${EDITOR_TARGET} PUBLIC ${EDITOR_INCLUDE} ${SDL2_INCLUDE_DIRS})
+target_link_libraries(${EDITOR_TARGET} ${ENGINE_TARGET} ${CORE_TARGET} ${SDL2_LIBRARIES} ${CMAKE_DL_LIBS})
+target_link_libraries(${EDITOR_TARGET} Qt5::Widgets Qt5::Core)
+add_dependencies(${EDITOR_TARGET} ${GLDEVICE_TARGET}) #dynamically loaded
+qt5_use_modules(${EDITOR_TARGET} Widgets Core)
 
 if(APPLE)
     set(EDITOR_INCLUDE_FOR_APPLE Src-macOS)
@@ -37,14 +37,14 @@ if(APPLE)
     find_library(Cocoa_LIBRARY Cocoa)
     mark_as_advanced(Cocoa_LIBRARY)
 
-    target_sources(PolyEditor PRIVATE ${EDITOR_SRCS_FOR_APPLE})
-    target_include_directories(PolyEditor PRIVATE ${EDITOR_INCLUDE_FOR_APPLE})
-    target_link_libraries(PolyEditor ${Cocoa_LIBRARY})
+    target_sources(${EDITOR_TARGET} PRIVATE ${EDITOR_SRCS_FOR_APPLE})
+    target_include_directories(${EDITOR_TARGET} PRIVATE ${EDITOR_INCLUDE_FOR_APPLE})
+    target_link_libraries(${EDITOR_TARGET} ${Cocoa_LIBRARY})
 endif()
 
 # Strange bug in cotire for macOS. Disable it for now. Include paths are not working.
 if(NOT APPLE)
-    cotire(PolyEditor)
+    cotire(${EDITOR_TARGET})
 endif()
 
-CopyArtifacts(PolyEditor)
+CopyArtifacts(${EDITOR_TARGET})
