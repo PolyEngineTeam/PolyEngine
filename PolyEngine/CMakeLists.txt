@@ -5,6 +5,7 @@ project(PolyEngine VERSION 0.1.2 LANGUAGES CXX C) #note(vuko): without C older C
 # Initial setup: C++ standard version, build types, CMake modules
 ##
 set(ENGINE_ROOT_DIR ${CMAKE_SOURCE_DIR})
+set(DIST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Dist")
 
 include(${ENGINE_ROOT_DIR}/CMakeListsCommon.txt)
 

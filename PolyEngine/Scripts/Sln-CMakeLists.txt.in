@@ -7,24 +7,6 @@ set(DIST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/$DIST_DIR$")
 
 include(${ENGINE_ROOT_DIR}/CMakeListsCommon.txt)
 
-add_custom_target(
-    Prerequisites ALL
-    # Make distribution directory
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${DIST_DIR}/${BUILD_CONFIG_NAME}"
-    COMMENT "Ensuring build prerequisites are met..." VERBATIM
-)
-
-if(WIN32)
-    add_custom_command(
-        TARGET Prerequisites POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/SDL2/lib/x64/SDL2.dll" "${DIST_DIR}/${BUILD_CONFIG_NAME}"
-        COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/Assimp/lib/Release/x64/assimp-vc140-mt.dll" "${DIST_DIR}/${BUILD_CONFIG_NAME}"
-        COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/libepoxy/bin/x64/epoxy-0.dll" "${DIST_DIR}/${BUILD_CONFIG_NAME}"
-
-        COMMENT "Copying thirdparty dlls..." VERBATIM
-    )
-endif()
-
 ##
 # Finally, meat and potatoes
 ##
