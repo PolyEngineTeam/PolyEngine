@@ -542,7 +542,7 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 
 	RenderTranslucentLit(sceneView);
 
-	RenderParticleUnlit(sceneView.WorldData, sceneView.CameraCmp);
+	RenderParticleUnlit(sceneView);
 
 	PostLinearizeDepth(sceneView);
 
@@ -575,7 +575,7 @@ void TiledForwardRenderer::UpdateEnvCapture(const SceneView& sceneView)
 
 	if (SkyboxCapture.GetIsDirty())
 	{
-		const SkyboxWorldComponent* SkyboxWorldCmp = sceneView.WorldData->GetWorldComponent<SkyboxWorldComponent>();
+		const SkyboxWorldComponent* SkyboxWorldCmp = sceneView.SceneData->GetWorldComponent<SkyboxWorldComponent>();
 		if (SkyboxWorldCmp != nullptr)
 		{
 			SkyboxCapture.UpdateEnv(SkyboxWorldCmp);
@@ -754,7 +754,7 @@ void TiledForwardRenderer::ComputeLightCulling(const SceneView& sceneView)
 void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::AccumulateLights");
-	float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.WorldData, eEngineTimer::GAMEPLAY);
+	float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.SceneData, eEngineTimer::GAMEPLAY);
 
 	ScreenSize screenSize = RDI->GetScreenSize();
 	glViewport(0, 0, screenSize.Width, screenSize.Height);
@@ -875,7 +875,7 @@ void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 	if (SkyboxCapture.GetEnvCubemap() > 0)
 	{
 		Color tint = Color::WHITE;
-		SkyboxWorldComponent* skyboxCmp = sceneView.WorldData->GetWorldComponent<SkyboxWorldComponent>();
+		SkyboxWorldComponent* skyboxCmp = sceneView.SceneData->GetWorldComponent<SkyboxWorldComponent>();
 		if (skyboxCmp)
 		{
 			tint = skyboxCmp->GetTint();
@@ -1024,13 +1024,13 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 	// CHECK_GL_ERR();
 }
 
-void TiledForwardRenderer::RenderParticleUnlit(Scene* world, const CameraComponent* cameraCmp)
+void TiledForwardRenderer::RenderParticleUnlit(const SceneView& sceneView)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::RenderParticleUnlit");
 
-	float time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
-	const Matrix& viewFromWorld = cameraCmp->GetViewFromWorld();
-	const Matrix& screenFromView = cameraCmp->GetClipFromView();
+	float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.SceneData, eEngineTimer::GAMEPLAY);
+	const Matrix& viewFromWorld = sceneView.CameraCmp->GetViewFromWorld();
+	const Matrix& screenFromView = sceneView.CameraCmp->GetClipFromView();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
 
@@ -1047,9 +1047,8 @@ void TiledForwardRenderer::RenderParticleUnlit(Scene* world, const CameraCompone
 	glBindFragDataLocation((GLuint)TranslucentShader.GetProgramHandle(), 0, "color");
 	glBindFragDataLocation((GLuint)TranslucentShader.GetProgramHandle(), 1, "normal");
 
-	for (auto componentsTuple : world->IterateComponents<ParticleComponent>())
+	for (auto [particleCmp] : sceneView.SceneData->IterateComponents<ParticleComponent>())
 	{
-		const ParticleComponent* particleCmp = std::get<ParticleComponent*>(componentsTuple);
 		const EntityTransform& transform = particleCmp->GetTransform();
 		const Matrix& worldFromModel = particleCmp->GetEmitter()->GetSettings().SimulationSpace == ParticleEmitter::eSimulationSpace::LOCAL_SPACE
 			? transform.GetWorldFromModel()
@@ -1127,7 +1126,7 @@ void TiledForwardRenderer::PostMotionBlur(const SceneView& sceneView)
 		motionBlurScale = postCmp->MotionBlurScale;
 	}
 
-	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(sceneView.WorldData, Poly::eEngineTimer::GAMEPLAY));
+	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(sceneView.SceneData, Poly::eEngineTimer::GAMEPLAY));
 	float currentFPS = 1.0f / deltaTime;
 	float targetFPS = 60.0f;
 
@@ -1310,7 +1309,7 @@ void TiledForwardRenderer::PostFXAA(const SceneView& sceneView)
 
 void TiledForwardRenderer::PostGamma(const SceneView& sceneView)
 {
-	float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.WorldData, eEngineTimer::GAMEPLAY);
+	float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.SceneData, eEngineTimer::GAMEPLAY);
 
 	const ScreenSize screenSize = RDI->GetScreenSize();
 
@@ -1356,7 +1355,7 @@ void TiledForwardRenderer::EditorDebug(const SceneView& sceneView)
 
 	// Render Lines
 	{
-		auto debugLinesComponent = sceneView.WorldData->GetWorldComponent<DebugDrawStateWorldComponent>();
+		auto debugLinesComponent = sceneView.SceneData->GetWorldComponent<DebugDrawStateWorldComponent>();
 		auto& debugLines = debugLinesComponent->DebugLines;
 		auto& debugLinesColors = debugLinesComponent->DebugLinesColors;
 
@@ -1407,7 +1406,7 @@ void TiledForwardRenderer::UIText2D(const SceneView& sceneView)
 	Text2DShader.BindProgram();
 	Text2DShader.SetUniform("u_projection", ortho);
 
-	for (auto componentsTuple : sceneView.WorldData->IterateComponents<ScreenSpaceTextComponent>())
+	for (auto componentsTuple : sceneView.SceneData->IterateComponents<ScreenSpaceTextComponent>())
 	{
 		ScreenSpaceTextComponent* textCmp = std::get<ScreenSpaceTextComponent*>(componentsTuple);
 		Text2D& text = textCmp->GetText();
@@ -1478,7 +1477,7 @@ void TiledForwardRenderer::UIImgui()
 
 void TiledForwardRenderer::DebugLightAccum(const SceneView& sceneView)
 {
-	float time = (float)(sceneView.WorldData->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
+	float time = (float)(sceneView.SceneData->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -1492,7 +1491,7 @@ void TiledForwardRenderer::DebugLightAccum(const SceneView& sceneView)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, VisibleLightIndicesBuffer);
 
 	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
-	for (auto componentsTuple : sceneView.WorldData->IterateComponents<MeshRenderingComponent>())
+	for (auto componentsTuple : sceneView.SceneData->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		const EntityTransform& transform = meshCmp->GetTransform();

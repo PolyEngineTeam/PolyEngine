@@ -16,19 +16,41 @@ namespace Poly {
 	class CameraComponent;
 	class MeshRenderingComponent;
 
-	struct SceneView : public BaseObject<> {
-		SceneView(Scene* w, const Viewport& v)
-			: WorldData(w), ViewportData(v), Rect(v.GetRect()), CameraCmp(v.GetCamera())
-		{};
 
-		Scene* WorldData;
-		const Viewport& ViewportData;
-		const AARect& Rect;
+	struct SceneView : public BaseObject<> {
+		SceneView(Scene* w, Viewport v)
+			: SceneData(w), ViewportData(v), Rect(v.GetRect()), CameraCmp(v.GetCamera()),
+			ParticleQueue(TranslucentComparator(v.GetCamera()->GetTransform().GetGlobalTranslation()), 0)
+		{
+		};
+
+		/// Sorts geometry from far to near based on component pivot and camera postion
+		struct TranslucentComparator
+		{
+			TranslucentComparator(Vector cameraPosition) 
+				: CameraPosition(cameraPosition)
+			{
+			}
+
+			Vector CameraPosition = Vector::ZERO;
+
+			bool operator()(const ParticleComponent* a, const ParticleComponent* b) const
+			{
+				float aDistToCamera = (a->GetTransform().GetGlobalTranslation() - CameraPosition).LengthSquared();
+				float bDistToCamera = (b->GetTransform().GetGlobalTranslation() - CameraPosition).LengthSquared();
+				return aDistToCamera > bDistToCamera;
+			}
+		};
+
+		Scene* SceneData;
+		Viewport ViewportData;
+		AARect Rect;
 		const CameraComponent* CameraCmp;
 		
 		Dynarray<const MeshRenderingComponent*> DirShadowOpaqueQueue;
 		Dynarray<const MeshRenderingComponent*> OpaqueQueue;
-		Dynarray<const MeshRenderingComponent*> TranslucentQueue;
+		Dynarray<const MeshRenderingComponent*> TranslucentQueue; // TODO: make translucent and particles one queue with common priority
+		PriorityQueue<const ParticleComponent*, TranslucentComparator> ParticleQueue;
 
 		Dynarray<const DirectionalLightComponent*> DirectionalLights;
 		Dynarray<const PointLightComponent*> PointLights;

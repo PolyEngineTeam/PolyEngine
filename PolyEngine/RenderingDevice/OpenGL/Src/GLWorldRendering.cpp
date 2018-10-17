@@ -69,7 +69,7 @@ void GLRenderingDevice::RenderWorld(Scene* world)
 
 void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 {
-	for (const auto componentsTuple : sceneView.WorldData->IterateComponents<MeshRenderingComponent>())
+	for (const auto componentsTuple : sceneView.SceneData->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 
@@ -90,14 +90,19 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 		}
 	}
 
-	for (const auto componentsTuple : sceneView.WorldData->IterateComponents<DirectionalLightComponent>())
+	for (const auto [particleCmp] : sceneView.SceneData->IterateComponents<ParticleComponent>())
 	{
-		sceneView.DirectionalLights.PushBack(std::get<DirectionalLightComponent*>(componentsTuple));
+		sceneView.ParticleQueue.Push(particleCmp);
 	}
 
-	for (const auto componentsTuple : sceneView.WorldData->IterateComponents<PointLightComponent>())
+	for (const auto [dirLightCmp] : sceneView.SceneData->IterateComponents<DirectionalLightComponent>())
 	{
-		sceneView.PointLights.PushBack(std::get<PointLightComponent*>(componentsTuple));
+		sceneView.DirectionalLights.PushBack(dirLightCmp);
+	}
+
+	for (const auto [pointLightCmp] : sceneView.SceneData->IterateComponents<PointLightComponent>())
+	{
+		sceneView.PointLights.PushBack(pointLightCmp);
 	}
 }
 
