@@ -54,7 +54,7 @@ IRendererInterface* GLRenderingDevice::CreateRenderer()
 void GLRenderingDevice::RenderWorld(Scene* world)
 {
 	// For each visible viewport draw it
-	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
+	for (auto kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
 	{
 		SceneView sceneView(world, kv.second);
 		
@@ -77,16 +77,17 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 		{
 			if (meshCmp->GetBlendingMode() == eBlendingMode::OPAUQE)
 			{
-				sceneView.OpaqueQueue.PushBack(meshCmp);
+				sceneView.OpaqueQueue.Push(meshCmp);
 			}
 			else if (meshCmp->GetBlendingMode() == eBlendingMode::TRANSLUCENT)
 			{
-				sceneView.TranslucentQueue.PushBack(meshCmp);
+				sceneView.TranslucentQueue.Push(meshCmp);
 			}
 		}
-		else
+
+		if (meshCmp->GetBlendingMode() == eBlendingMode::OPAUQE)
 		{
-			sceneView.DirShadowOpaqueQueue.PushBack(meshCmp);
+			sceneView.DirShadowOpaqueList.PushBack(meshCmp);
 		}
 	}
 
@@ -102,7 +103,7 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 
 	for (const auto [pointLightCmp] : sceneView.SceneData->IterateComponents<PointLightComponent>())
 	{
-		sceneView.PointLights.PushBack(pointLightCmp);
+		sceneView.PointLightList.PushBack(pointLightCmp);
 	}
 }
 
