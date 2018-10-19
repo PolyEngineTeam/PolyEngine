@@ -1,5 +1,13 @@
 cmake_minimum_required(VERSION 3.2)
 
+# Target names
+set(CORE_TARGET PolyCore)
+set(ENGINE_TARGET PolyEngine)
+set(GLDEVICE_TARGET PolyRenderingDeviceGL)
+set(EDITOR_TARGET PolyEditor)
+set(UNITTESTS_TARGET PolyUnitTests)
+set(STANDALONE_TARGET PolyStandalone)
+
 # Prepend our modules dir to the path
 list(INSERT CMAKE_MODULE_PATH 0 "${ENGINE_ROOT_DIR}/CMakeModules")
 
@@ -8,34 +16,25 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) #for portability
 
-##Build types
-set(CMAKE_CONFIGURATION_TYPES "Debug;DebugFast;Testing;Release" CACHE STRING "" FORCE)
-#Tell CMake which configurations are debug
-set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS "Debug;DebugFast")
-#CMAKE_BUILD_TYPE is not applicable to VS generators
-if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
-	#CMake GUIs may use this to provide a selection widget instead of generic text field
-	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "DebugFast" "Testing" "Release")
-	mark_as_advanced(CMAKE_CONFIGURATION_TYPES)
-endif()
-
 ##
 # Are we running CI?
 ##
 set(CI_BUILD FALSE)
 
 if($ENV{TRAVIS})
-	if($ENV{TRAVIS} STREQUAL "true")
+	string( TOLOWER "$ENV{TRAVIS}" TRAVIS_LOWER )
+	if(${TRAVIS_LOWER} STREQUAL "true")
 		set(CI_BUILD TRUE)
 	endif()
 endif()
 
 if($ENV{APPVEYOR})
-	if($ENV{APPVEYOR} STREQUAL "true")
+	string( TOLOWER "$ENV{APPVEYOR}" APPVEYOR_LOWER )
+	if(${APPVEYOR_LOWER} STREQUAL "true")
 		set(CI_BUILD TRUE)
 	endif()
 endif()
-
+message("CI Build: ${CI_BUILD}")
 
 ##
 # 32 or 64-bit?
@@ -70,9 +69,9 @@ endif()
 ##
 
 ##build type, SIMD
-set(CMAKE_BUILD_TYPE "Debug" CACHE STRING
-    "Build type. One of: Debug, DebugFast (debug with some optimizations), Testing (heavy optimizations, no debug info), Release (same as Testing, but with all assertions off)"
-)
+#set(CMAKE_BUILD_TYPE "Debug" CACHE STRING
+#    "Build type. One of: Debug, DebugFast (debug with some optimizations), Testing (heavy optimizations, no debug info), Release (same as Testing, but with all assertions off)"
+#)
 if(ARCH_X64)
 	option(SIMD "Enable SSE4.2 extensions for faster code (requires a compatible CPU)" ON)
 endif()
@@ -80,15 +79,35 @@ endif()
 ##tests, coverage, documentation
 option(GENERATE_DOXYGEN "Generate API documentation if Doxygen is available" ON)
 
+##Build types
+set(CMAKE_CONFIGURATION_TYPES "Debug;DebugFast;Testing;Release" CACHE STRING "" FORCE)
+#Tell CMake which configurations are debug
+set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS "Debug;DebugFast")
+#CMAKE_BUILD_TYPE is not applicable to VS generators
+if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
+	#CMake GUIs may use this to provide a selection widget instead of generic text field
+	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "DebugFast" "Testing" "Release")
+	mark_as_advanced(CMAKE_CONFIGURATION_TYPES)
+endif()
+
 ##normalize build type settings
 string(STRIP "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
 if(NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
 	message(STATUS "Setting build type to Debug as none was specified")
-	set(CMAKE_BUILD_TYPE Debug)
+	set(CMAKE_BUILD_TYPE "Debug")
 elseif(NOT CMAKE_BUILD_TYPE MATCHES "(^Debug$|^DebugFast$|^Testing$|^Release$)")
 	message(WARNING "Invalid build type \"${CMAKE_BUILD_TYPE}\" specified!\nValid values are: Debug, DebugFast, Testing, Release.\nDefaulting to Debug.")
-	set(CMAKE_BUILD_TYPE Debug)
+	set(CMAKE_BUILD_TYPE "Debug")
 endif()
+
+if (DEFINED CMAKE_CONFIGURATION_TYPES AND NOT ${CMAKE_CFG_INTDIR} STREQUAL ".")
+  # multi-config handling
+  set (BUILD_CONFIG_NAME ${CMAKE_CFG_INTDIR})
+else()
+  # mono config handling
+  set (BUILD_CONFIG_NAME ${CMAKE_BUILD_TYPE})
+endif()
+message("Build configuration name: ${BUILD_CONFIG_NAME}")
 
 ##
 # Build switches
@@ -172,6 +191,21 @@ function(GenerateSourceGoups Sources)
 endfunction()
 
 ##
+# Function that copies DLLs to Dist folder
+##
+function(CopyArtifacts TargetName)
+	if (DEFINED DIST_DIR)
+		add_dependencies(${TargetName} Prerequisites)
+		add_custom_command(
+			TARGET ${TargetName} POST_BUILD
+			# Inhouse shared library dependancies
+			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:${TargetName}>" "${DIST_DIR}/${BUILD_CONFIG_NAME}"
+			COMMENT "Copying ${TargetName} artifacts to ${DIST_DIR}/${BUILD_CONFIG_NAME}" VERBATIM
+			)
+	endif ()
+endfunction()
+
+##
 # Enable CCache if found
 ##
 find_program(CCACHE_FOUND ccache)
@@ -189,3 +223,24 @@ set(COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j")
 if(CCACHE_FOUND AND COMMAND cotire)
 	set(ENV{CCACHE_SLOPPINESS} "pch_defines,time_macros")
 endif(CCACHE_FOUND AND COMMAND cotire)
+
+##
+# Custom targets with prerequisites
+##
+add_custom_target(
+    Prerequisites ALL
+    # Make distribution directory
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${DIST_DIR}/${BUILD_CONFIG_NAME}"
+    COMMENT "Ensuring build prerequisites are met..." VERBATIM
+)
+
+if(WIN32)
+    add_custom_command(
+        TARGET Prerequisites POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/SDL2/lib/x64/SDL2.dll" "${DIST_DIR}/${BUILD_CONFIG_NAME}"
+        COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/Assimp/lib/Release/x64/assimp-vc140-mt.dll" "${DIST_DIR}/${BUILD_CONFIG_NAME}"
+        COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/libepoxy/bin/x64/epoxy-0.dll" "${DIST_DIR}/${BUILD_CONFIG_NAME}"
+
+        COMMENT "Copying thirdparty dlls..." VERBATIM
+    )
+endif()

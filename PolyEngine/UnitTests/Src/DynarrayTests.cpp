@@ -181,10 +181,6 @@ TEST_CASE("Dynarray with BaseObject", "[Dynarray]")
 	public:
 		Test() {}
 		~Test() {}
-
-	private:
-		int i = 0;
-
 	};
 
 	Dynarray<Test> q;
