@@ -13,6 +13,7 @@ namespace Poly {
 		eResourceSource Source = eResourceSource::GAME;
 		Vector2f SubImages = Vector2f(4.0, 4.0);
 		Color SpriteColor = Color::WHITE;
+		float SpriteDepthFade = 0.0f;
 		float StartFrame = 0.0f;
 		float Speed = 1.0f;
 		bool IsRandomStartFrame = false;
