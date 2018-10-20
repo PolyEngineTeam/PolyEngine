@@ -61,6 +61,8 @@ namespace Poly {
 
 		Optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) const override;
 
+		bool IsShadowCaster = false;
+
 	private:
 		MeshResource* Mesh = nullptr;
 		Dynarray<Material> Materials;

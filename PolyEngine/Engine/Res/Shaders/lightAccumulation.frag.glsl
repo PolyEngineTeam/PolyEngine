@@ -192,16 +192,17 @@ float calcShadow(vec4 fragPosInDirLight, float NdotL)
     // check whether current frag pos is in shadow
 	float bias = max(0.05 * (1.0 - NdotL), 0.005);
 	
-    float shadow = 0.0;
-    vec2 texelSize = 1.0 / textureSize(uDirShadowMap, 0);
-    for (int i = 0; i <= 5; ++i)
-    {
-        int index = int(32.0 * hash(vec4(gl_FragCoord.xyy, i))) % 32;
-        float pcfDepth = texture(uDirShadowMap, projCoords.xy + poissonDisk[index] * texelSize).r;
-        shadow += currentDepth - bias > pcfDepth ? 0.0 : 0.2;
-    }
+	float pcfDepth = texture(uDirShadowMap, projCoords.xy).r;
+    // float shadow = 0.0;	
+    // vec2 texelSize = 1.0 / textureSize(uDirShadowMap, 0);
+    // for (int i = 0; i <= 5; ++i)
+    // {
+    //     int index = int(32.0 * hash(vec4(gl_FragCoord.xyy, i))) % 32;
+    //     float pcfDepth = texture(uDirShadowMap, projCoords.xy + poissonDisk[index] * texelSize).r;
+    //     shadow += currentDepth - bias > pcfDepth ? 0.0 : 0.2;
+    // }
 
-    return shadow;
+    return step(currentDepth - bias, pcfDepth);
 }
 
 void main()

@@ -102,11 +102,11 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 				sceneView.TranslucentQueue.PushBack(meshCmp);
 			}
 		}
-	}
 
-	if (sceneView.DirectionalLights.GetSize() > 0)
-	{
-		FillDirLightQueue(sceneView, meshCmps);
+		if (meshCmp->IsShadowCaster && meshCmp->GetBlendingMode() == eBlendingMode::OPAUQE)
+		{
+			sceneView.DirShadowOpaqueQueue.PushBack(meshCmp);
+		}
 	}
 }
 

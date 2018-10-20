@@ -613,36 +613,22 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
 	Matrix worldFromDirLight = dirLightCmp->GetTransform().GetWorldFromModel();
 	Matrix dirLightFromWorld = worldFromDirLight.GetInversed();
 
-	Vector shadowAABBSize = sceneView.ShadowAABB.GetSize();
-	Vector shadowAABBPosition = sceneView.ShadowAABB.GetCenter();
+	Vector shadowAABBSize = dirLightCmp->DebugShadowAABB.GetSize();
+	Vector shadowAABBCenter = dirLightCmp->DebugShadowAABB.GetCenter();
 
 	// Shimmering shadow edges fix by clamping ShadowSize to WorldUnitPerTexel
 	// safe when texture is 1 pixel bigger than shadow bounds
-	float worldUnitsPerTexelX = shadowAABBSize.X / (float)(SHADOW_WIDTH - 1);
-	float worldUnitsPerTexelY = shadowAABBSize.Y / (float)(SHADOW_HEIGHT - 1);
+	// float worldUnitsPerTexelX = shadowAABBSize.X / (float)(SHADOW_WIDTH - 1);
+	// float worldUnitsPerTexelY = shadowAABBSize.Y / (float)(SHADOW_HEIGHT - 1);
+	 
+	// // shimmering shadow edges fix by clamping camera movement only in texel increments
+	// shadowAABBCenter.X = floor(shadowAABBCenter.X / worldUnitsPerTexelX) * worldUnitsPerTexelX;
+	// shadowAABBCenter.Y = floor(shadowAABBCenter.Y / worldUnitsPerTexelY) * worldUnitsPerTexelY;
+	 
+	// shadowAABBSize.X = floor(shadowAABBSize.X / worldUnitsPerTexelX) * worldUnitsPerTexelX;
+	// shadowAABBSize.Y = floor(shadowAABBSize.Y / worldUnitsPerTexelY) * worldUnitsPerTexelY;
 
-	// shimmering shadow edges fix by clamping camera movement only in texel increments
-	shadowAABBPosition.X = floor(shadowAABBPosition.X / worldUnitsPerTexelX) * worldUnitsPerTexelX;
-	shadowAABBPosition.Y = floor(shadowAABBPosition.Y / worldUnitsPerTexelY) * worldUnitsPerTexelY;
-
-	shadowAABBSize.X = floor(shadowAABBSize.X / worldUnitsPerTexelX) * worldUnitsPerTexelX;
-	shadowAABBSize.Y = floor(shadowAABBSize.Y / worldUnitsPerTexelY) * worldUnitsPerTexelY;
-
-	// DebugDrawSystem::DrawBox(
-	// 	sceneView.SceneData,
-	// 	sceneView.ShadowAABB.GetMin() + Vector::ONE,
-	// 	sceneView.ShadowAABB.GetMax() + Vector::ONE,
-	// 	worldFromDirLight,
-	// 	Color::BLUE
-	// );
-
-	DebugDrawSystem::DrawBox(
-		sceneView.SceneData,
-		(shadowAABBPosition - shadowAABBSize * 0.5f) + Vector::ONE,
-		(shadowAABBPosition + shadowAABBSize * 0.5f) + Vector::ONE,
-		worldFromDirLight,
-		Color(1.0f, 0.0, 1.0f)
-	);
+	DebugDrawSystem::DrawBox(sceneView.SceneData, shadowAABBCenter - shadowAABBSize, shadowAABBCenter + shadowAABBSize, worldFromDirLight, Color(1.0f, 0.0f, 1.0f));
 
 	Matrix clipFromView;
 	clipFromView.SetOrthographic(
@@ -655,16 +641,15 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
 	);
 
 	Matrix cameraFromWorld;
-	cameraFromWorld.SetTranslation(-shadowAABBPosition);
+	cameraFromWorld.SetTranslation(-shadowAABBCenter);
 
 	Matrix clipFromWorld = clipFromView * dirLightFromWorld * cameraFromWorld;
 
 	// shimmering shadow edges fix by clamping camera movement only in texel increments
-	clipFromWorld.Data[3]  = (floor(clipFromWorld.Data[3]  / worldUnitsPerTexelX)) * worldUnitsPerTexelX;
-	clipFromWorld.Data[7]  = (floor(clipFromWorld.Data[7]  / worldUnitsPerTexelY)) * worldUnitsPerTexelY;
-	clipFromWorld.Data[11] = (floor(clipFromWorld.Data[11] / worldUnitsPerTexelY)) * worldUnitsPerTexelY;
+	// clipFromWorld.Data[3]  = (floor(clipFromWorld.Data[3]  / worldUnitsPerTexelX)) * worldUnitsPerTexelX;
+	// clipFromWorld.Data[7]  = (floor(clipFromWorld.Data[7]  / worldUnitsPerTexelY)) * worldUnitsPerTexelY;
+	// clipFromWorld.Data[11] = (floor(clipFromWorld.Data[11] / worldUnitsPerTexelY)) * worldUnitsPerTexelY;
 
-	// return dirLightFromWorld * clipFromView;
 	return clipFromWorld;
 }
 
