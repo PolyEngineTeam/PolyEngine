@@ -438,7 +438,7 @@ void TiledForwardRenderer::CreateRenderTargets(const ScreenSize& size)
 
 	glGenTextures(1, &DirShadowMap);
 	glBindTexture(GL_TEXTURE_2D, DirShadowMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOWMAP_SIZE, SHADOWMAP_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -611,46 +611,61 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
 	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLights[0];
 	
 	Matrix worldFromDirLight = dirLightCmp->GetTransform().GetWorldFromModel();
-	Matrix dirLightFromWorld = worldFromDirLight.GetInversed();
+	// Matrix dirLightView = worldFromDirLight.GetInversed();
 
-	Vector shadowAABBSize = dirLightCmp->DebugShadowAABB.GetSize();
+	Vector shadowAABBExtents = dirLightCmp->DebugShadowAABB.GetSize() * 0.5f;
 	Vector shadowAABBCenter = dirLightCmp->DebugShadowAABB.GetCenter();
 
-	// Shimmering shadow edges fix by clamping ShadowSize to WorldUnitPerTexel
-	// safe when texture is 1 pixel bigger than shadow bounds
-	// float worldUnitsPerTexelX = shadowAABBSize.X / (float)(SHADOW_WIDTH - 1);
-	// float worldUnitsPerTexelY = shadowAABBSize.Y / (float)(SHADOW_HEIGHT - 1);
-	 
-	// // shimmering shadow edges fix by clamping camera movement only in texel increments
-	// shadowAABBCenter.X = floor(shadowAABBCenter.X / worldUnitsPerTexelX) * worldUnitsPerTexelX;
-	// shadowAABBCenter.Y = floor(shadowAABBCenter.Y / worldUnitsPerTexelY) * worldUnitsPerTexelY;
-	 
-	// shadowAABBSize.X = floor(shadowAABBSize.X / worldUnitsPerTexelX) * worldUnitsPerTexelX;
-	// shadowAABBSize.Y = floor(shadowAABBSize.Y / worldUnitsPerTexelY) * worldUnitsPerTexelY;
+	Matrix dirLightViewFromWorld = Matrix(
+		shadowAABBCenter,
+		shadowAABBCenter - MovementSystem::GetGlobalForward(dirLightCmp->GetTransform()),
+		Vector::UNIT_Y
+	);
 
-	DebugDrawSystem::DrawBox(sceneView.SceneData, shadowAABBCenter - shadowAABBSize, shadowAABBCenter + shadowAABBSize, worldFromDirLight, Color(1.0f, 0.0f, 1.0f));
-
+	// Real-Time Rendering 4th Edition, page 94
+	// "It is important to realize that n > f, because we are looking down the
+	// negative z - axis at this volume of space."
 	Matrix clipFromView;
 	clipFromView.SetOrthographic(
-		-shadowAABBSize.Y,	// bottom
-		 shadowAABBSize.Y,	// top
-		-shadowAABBSize.X,	// left
-		 shadowAABBSize.X,	// right
-		-shadowAABBSize.Z,	// near
-		 shadowAABBSize.Z	// far
+		-shadowAABBExtents.Y,	// bottom
+		 shadowAABBExtents.Y,	// top
+		-shadowAABBExtents.X,	// left
+		 shadowAABBExtents.X,	// right
+		 shadowAABBExtents.Z,	// near
+		-shadowAABBExtents.Z	// far
 	);
 
 	Matrix cameraFromWorld;
 	cameraFromWorld.SetTranslation(-shadowAABBCenter);
 
-	Matrix clipFromWorld = clipFromView * dirLightFromWorld * cameraFromWorld;
+	Matrix clipFromWorld = clipFromView * dirLightViewFromWorld * cameraFromWorld;
+	
+	// based on https://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
+	// Stabilize shadow map: move in texel size increments
+	// round matrix translation to texel size increments
+	float shadowmapSize = (float)SHADOWMAP_SIZE;
+	Vector shadowOrigin = clipFromWorld * Vector::ZERO;
+	shadowOrigin *= shadowmapSize * 0.5f;
 
-	// shimmering shadow edges fix by clamping camera movement only in texel increments
-	// clipFromWorld.Data[3]  = (floor(clipFromWorld.Data[3]  / worldUnitsPerTexelX)) * worldUnitsPerTexelX;
-	// clipFromWorld.Data[7]  = (floor(clipFromWorld.Data[7]  / worldUnitsPerTexelY)) * worldUnitsPerTexelY;
-	// clipFromWorld.Data[11] = (floor(clipFromWorld.Data[11] / worldUnitsPerTexelY)) * worldUnitsPerTexelY;
+	Vector roundedOrigin = Vector(
+		roundf(shadowOrigin.X),
+		roundf(shadowOrigin.Y),
+		roundf(shadowOrigin.Z)
+	);
 
-	return clipFromWorld;
+	Vector roundOffset = roundedOrigin - shadowOrigin;
+	roundOffset *= 2.0f / shadowmapSize;
+	// roundOffset.Z = 0.0f;
+	roundOffset.W = 0.0f;
+
+	Matrix shadowProj = clipFromWorld;
+	shadowProj.Data[3]	+= roundOffset.X;
+	shadowProj.Data[7]	+= roundOffset.Y;
+	shadowProj.Data[11]	+= roundOffset.Z;
+
+	// DebugDrawSystem::DrawBox(sceneView.SceneData, -shadowAABBExtents, shadowAABBExtents, dirLightViewFromWorld * cameraFromWorld, Color(1.0f, 0.0f, 1.0f));
+
+	return shadowProj;
 }
 
 void TiledForwardRenderer::RenderShadowMap(const SceneView& sceneView)
@@ -658,7 +673,7 @@ void TiledForwardRenderer::RenderShadowMap(const SceneView& sceneView)
 	if (sceneView.DirectionalLights.GetSize() < 1)
 		return;
 
-	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+	glViewport(0, 0, SHADOWMAP_SIZE, SHADOWMAP_SIZE);
 	glCullFace(GL_FRONT);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowDepthMap);
 	glClear(GL_DEPTH_BUFFER_BIT);

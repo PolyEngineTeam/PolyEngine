@@ -72,8 +72,7 @@ namespace Poly {
 		const int MAX_NUM_LIGHTS = 1024;
 		const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 
-		const unsigned int SHADOW_WIDTH = 64;
-		const unsigned int SHADOW_HEIGHT = 64;
+		const unsigned int SHADOWMAP_SIZE = 512;
 
 		// X and Y work group dimension variables for compute shader
 		GLuint WorkGroupsX = 0;
