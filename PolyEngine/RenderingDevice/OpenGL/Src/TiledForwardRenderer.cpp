@@ -610,36 +610,42 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
 	ASSERTE(sceneView.DirectionalLights.GetSize() > 0, "GetProjectionForShadowMap has no directional light in scene view");
 	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLights[0];
 	
-	Matrix worldFromDirLight = dirLightCmp->GetTransform().GetWorldFromModel();
-	// Matrix dirLightView = worldFromDirLight.GetInversed();
+	Vector shadowAABBExtents = dirLightCmp->DebugShadowAABBInWS.GetSize() * 0.5f;
+	Vector shadowAABBCenter = dirLightCmp->DebugShadowAABBInWS.GetCenter();
+	Vector lightDirection = MovementSystem::GetGlobalForward(dirLightCmp->GetTransform());
 
-	Vector shadowAABBExtents = dirLightCmp->DebugShadowAABB.GetSize() * 0.5f;
-	Vector shadowAABBCenter = dirLightCmp->DebugShadowAABB.GetCenter();
-
-	Matrix dirLightViewFromWorld = Matrix(
-		shadowAABBCenter,
-		shadowAABBCenter - MovementSystem::GetGlobalForward(dirLightCmp->GetTransform()),
+	// Inverse of WorldFromModel of dirLight Entity
+	Matrix lightViewFromModel = Matrix(
+		Vector::ZERO,
+		-lightDirection,
 		Vector::UNIT_Y
 	);
 
 	// Real-Time Rendering 4th Edition, page 94
 	// "It is important to realize that n > f, because we are looking down the
 	// negative z - axis at this volume of space."
-	Matrix clipFromView;
-	clipFromView.SetOrthographic(
-		-shadowAABBExtents.Y,	// bottom
-		 shadowAABBExtents.Y,	// top
-		-shadowAABBExtents.X,	// left
-		 shadowAABBExtents.X,	// right
-		 shadowAABBExtents.Z,	// near
-		-shadowAABBExtents.Z	// far
+	Matrix clipFromLightView;
+	clipFromLightView.SetOrthographic(
+		-shadowAABBExtents.Y,		// bottom
+		shadowAABBExtents.Y,		// top
+		-shadowAABBExtents.X,		// left
+		shadowAABBExtents.X,		// right
+		0.0f,						// near
+		-shadowAABBExtents.Z * 2.0f	// far
 	);
 
-	Matrix cameraFromWorld;
-	cameraFromWorld.SetTranslation(-shadowAABBCenter);
+	Matrix lightModelFromWorld;
+	lightModelFromWorld.SetTranslation(-shadowAABBCenter - lightDirection * shadowAABBExtents.Z);
 
-	Matrix clipFromWorld = clipFromView * dirLightViewFromWorld * cameraFromWorld;
+	Matrix clipFromWorld = clipFromLightView * lightViewFromModel * lightModelFromWorld;
 	
+	StablizeShadowProjection(clipFromWorld);
+
+	return clipFromWorld;
+}
+
+void TiledForwardRenderer::StablizeShadowProjection(Matrix &clipFromWorld) const
+{
 	// based on https://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
 	// Stabilize shadow map: move in texel size increments
 	// round matrix translation to texel size increments
@@ -650,22 +656,16 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
 	Vector roundedOrigin = Vector(
 		roundf(shadowOrigin.X),
 		roundf(shadowOrigin.Y),
-		roundf(shadowOrigin.Z)
+		0.0f
 	);
 
 	Vector roundOffset = roundedOrigin - shadowOrigin;
 	roundOffset *= 2.0f / shadowmapSize;
-	// roundOffset.Z = 0.0f;
+	roundOffset.Z = 0.0f;
 	roundOffset.W = 0.0f;
 
-	Matrix shadowProj = clipFromWorld;
-	shadowProj.Data[3]	+= roundOffset.X;
-	shadowProj.Data[7]	+= roundOffset.Y;
-	shadowProj.Data[11]	+= roundOffset.Z;
-
-	// DebugDrawSystem::DrawBox(sceneView.SceneData, -shadowAABBExtents, shadowAABBExtents, dirLightViewFromWorld * cameraFromWorld, Color(1.0f, 0.0f, 1.0f));
-
-	return shadowProj;
+	clipFromWorld.Data[3] += roundOffset.X;
+	clipFromWorld.Data[7] += roundOffset.Y;
 }
 
 void TiledForwardRenderer::RenderShadowMap(const SceneView& sceneView)

@@ -72,7 +72,7 @@ namespace Poly {
 		const int MAX_NUM_LIGHTS = 1024;
 		const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 
-		const unsigned int SHADOWMAP_SIZE = 2048;
+		const unsigned int SHADOWMAP_SIZE = 256;
 
 		// X and Y work group dimension variables for compute shader
 		GLuint WorkGroupsX = 0;
@@ -161,6 +161,8 @@ namespace Poly {
 		void RenderShadowMap(const SceneView& sceneView);
 
 		Matrix GetProjectionForShadowMap(const SceneView& sceneView) const;
+
+		void StablizeShadowProjection(Poly::Matrix &clipFromWorld) const;
 
 		void RenderEquiCube(const SceneView& sceneView);
 

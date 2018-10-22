@@ -184,11 +184,11 @@ float calcShadow(vec4 fragPosInDirLight, float NdotL)
     float currentDepth = projCoords.z;    
     // check whether current frag pos is in shadow
 	float bias = max(0.05 * (1.0 - NdotL), 0.005);
-	
-	float pcfDepth = texture(uDirShadowMap, projCoords.xy).r;
 	vec2 size = textureSize(uDirShadowMap, 0);
 	
-	return PCF(uDirShadowMap, size, projCoords.xy, currentDepth - bias);
+	// return texture(uDirShadowMap, projCoords.xy).r; // raw depth value for debuging
+	// return step(currentDepth - bias, texture(uDirShadowMap, projCoords.xy).r); // raw occlusion value for debugging 
+	return PCF(uDirShadowMap, size, projCoords.xy, currentDepth - bias); // pretty shadow for rendering
 }
 
 void main()
