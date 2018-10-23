@@ -61,7 +61,7 @@ namespace Poly {
 
 		Optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) const override;
 
-		bool IsShadowCaster = false;
+		bool IsShadowCaster = true;
 
 	private:
 		MeshResource* Mesh = nullptr;

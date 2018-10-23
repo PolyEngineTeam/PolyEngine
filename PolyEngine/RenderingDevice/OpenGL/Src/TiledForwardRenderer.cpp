@@ -624,18 +624,29 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
 	// Real-Time Rendering 4th Edition, page 94
 	// "It is important to realize that n > f, because we are looking down the
 	// negative z - axis at this volume of space."
+//	Matrix clipFromLightView;
+// 	clipFromLightView.SetOrthographic(
+// 		-shadowAABBExtents.Y,		// bottom
+// 		shadowAABBExtents.Y,		// top
+// 		-shadowAABBExtents.X,		// left
+// 		shadowAABBExtents.X,		// right
+// 		shadowAABBExtents.Z,		// near
+// 		-shadowAABBExtents.Z			// far
+// 	);
+
 	Matrix clipFromLightView;
 	clipFromLightView.SetOrthographic(
-		-shadowAABBExtents.Y,		// bottom
-		shadowAABBExtents.Y,		// top
-		-shadowAABBExtents.X,		// left
-		shadowAABBExtents.X,		// right
-		0.0f,						// near
-		-shadowAABBExtents.Z * 2.0f	// far
+		-1024.0f,	// bottom
+		 1024.0f,	// top
+		-1024.0f,	// left
+		 1024.0f,	// right
+		-1024.0f,	// near
+		 1024.0f	// far
 	);
 
 	Matrix lightModelFromWorld;
-	lightModelFromWorld.SetTranslation(-shadowAABBCenter - lightDirection * shadowAABBExtents.Z);
+// 	lightModelFromWorld.SetTranslation(-shadowAABBCenter - lightDirection * shadowAABBExtents.Z);
+ 	lightModelFromWorld.SetTranslation(-shadowAABBCenter);
 
 	Matrix clipFromWorld = clipFromLightView * lightViewFromModel * lightModelFromWorld;
 	
@@ -811,7 +822,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 		Color colorIntensity = dirLightCmp->GetColor();
 		colorIntensity.A = dirLightCmp->GetIntensity();
 		LightAccumulationShader.SetUniform(baseName + "ColorIntensity", colorIntensity);
-		LightAccumulationShader.SetUniform(baseName + "Direction", MovementSystem::GetGlobalForward(transform));
+		LightAccumulationShader.SetUniform(baseName + "Direction", -MovementSystem::GetGlobalForward(transform));
 
 		++dirLightsCount;
 		if (dirLightsCount == MAX_LIGHT_COUNT_DIRECTIONAL)
@@ -968,7 +979,7 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 		Color colorIntensity = dirLightCmp->GetColor();
 		colorIntensity.A = dirLightCmp->GetIntensity();
 		TranslucentShader.SetUniform(baseName + "ColorIntensity", colorIntensity);
-		TranslucentShader.SetUniform(baseName + "Direction", MovementSystem::GetGlobalForward(transform));
+		TranslucentShader.SetUniform(baseName + "Direction", -MovementSystem::GetGlobalForward(transform));
 
 		++dirLightsCount;
 		if (dirLightsCount == MAX_LIGHT_COUNT_DIRECTIONAL)
