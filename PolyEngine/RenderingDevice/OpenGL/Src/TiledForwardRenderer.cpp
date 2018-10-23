@@ -1041,10 +1041,12 @@ void TiledForwardRenderer::RenderParticleUnlit(const SceneView& sceneView)
 	glBlendEquation(GL_FUNC_ADD);
 
 	const ScreenSize screenSize = RDI->GetScreenSize();
+	float viewportWidth = sceneView.Rect.GetSize().X * screenSize.Width;
+	float viewportHeight = sceneView.Rect.GetSize().Y * screenSize.Height;
 
 	ParticleShader.BindProgram();
 	ParticleShader.SetUniform("uTime", time);
-	ParticleShader.SetUniform("uScreenSize", Vector((float)screenSize.Width, (float)screenSize.Height, 1.0f / screenSize.Width, 1.0f / screenSize.Height));
+	ParticleShader.SetUniform("uScreenSize", Vector(viewportWidth, viewportHeight, 1.0f / viewportWidth, 1.0f / viewportHeight));
 	ParticleShader.SetUniform("uNear", sceneView.CameraCmp->GetClippingPlaneNear());
 	ParticleShader.SetUniform("uFar", sceneView.CameraCmp->GetClippingPlaneFar());
 	ParticleShader.SetUniform("uScreenFromView", screenFromView);
