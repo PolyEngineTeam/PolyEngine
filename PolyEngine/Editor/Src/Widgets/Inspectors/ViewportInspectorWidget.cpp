@@ -91,9 +91,7 @@ String ViewportInspectorWidget::GetAssetsPathConfigPath()
 {
 	StringBuilder builder;
 	builder.Append(Manager->GetConfig()->GetProjectPath());
-	builder.Append("/Build/");
-	builder.Append(Manager->GetConfig()->GetProjectName());
-	builder.Append("/Debug/AssetsPathConfig.json");
+	builder.Append("/Dist/Debug/AssetsPathConfig.json");
 
 	return builder.StealString();
 }

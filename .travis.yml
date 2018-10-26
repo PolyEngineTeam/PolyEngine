@@ -102,7 +102,8 @@ before_script:
   - mkdir -p PolyEngine/build
   - cd PolyEngine/build
 
+# TODO move to using ProjectTool.py
 script:
   - cmake -D CMAKE_C_COMPILER=$CC -D CMAKE_CXX_COMPILER=$CXX ..
   - make
-  - UnitTests/PolyUnitTests
+  - ${TRAVIS_BUILD_DIR}/PolyEngine/Dist/Debug/PolyUnitTests

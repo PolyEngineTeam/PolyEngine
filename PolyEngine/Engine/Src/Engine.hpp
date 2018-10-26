@@ -53,7 +53,7 @@ namespace Poly
 
 		void StartGame();
 
-		void EndGane();
+		void EndGame();
 
 		/// <summary>Registers a PhaseUpdateFunction to be executed in the update.</summary>
 		/// <param name="phaseFunction"/>
