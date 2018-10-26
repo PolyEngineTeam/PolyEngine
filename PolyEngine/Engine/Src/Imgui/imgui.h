@@ -30,7 +30,7 @@
 // Define attributes of all API symbols declarations (e.g. for DLL under Windows)
 // IMGUI_API is used for core imgui functions, IMGUI_IMPL_API is used for the default bindings files (imgui_impl_xxx.h)
 #ifndef IMGUI_API
-#define IMGUI_API ENGINE_DLLEXPORT // ENGINE_DLLEXPORT dllexport from polyngine allows to access imgui methods from renderer dll
+#define IMGUI_API __declspec(dllexport) // allows to access imgui methods from renderer dll
 #endif
 #ifndef IMGUI_IMPL_API
 #define IMGUI_IMPL_API              IMGUI_API
@@ -114,6 +114,7 @@ typedef int ImGuiTreeNodeFlags;     // -> enum ImGuiTreeNodeFlags_   // Flags: f
 typedef int ImGuiWindowFlags;       // -> enum ImGuiWindowFlags_     // Flags: for Begin*()
 typedef int (*ImGuiInputTextCallback)(ImGuiInputTextCallbackData *data);
 typedef void (*ImGuiSizeCallback)(ImGuiSizeCallbackData* data);
+
 
 // Scalar data types
 typedef signed int          ImS32;  // 32-bit signed integer == int

@@ -569,7 +569,7 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 void TiledForwardRenderer::UIImgui()
 {
 	static bool IsImguiInit = false;
-
+	
 	// Doing rendering part before pass resources init
 	// we avoid falling into rendering pass code just after
 	// resource creation when frame is not yet started.
@@ -578,7 +578,7 @@ void TiledForwardRenderer::UIImgui()
 		// Creating geometry.
 		// Ending imgui frame after update of engine and game systems.
 		ImGui::Render();
-
+	
 		ImDrawData* draw_data = ImGui::GetDrawData();
 		if (draw_data == nullptr)
 		{
@@ -592,10 +592,10 @@ void TiledForwardRenderer::UIImgui()
 			ImGui_ImplOpenGL3_RenderDrawData(draw_data);
 		}
 	}
-
+	
 	gConsole.LogInfo("TiledForwardRenderer::Render IsImguiInit: {}, GetCurrentContext: {}",
 		IsImguiInit, ImGui::GetCurrentContext() != nullptr);
-
+	
 	// ImguiSystem with input receiver and window drawing module
 	// need initialized imgui font atlas on first frame. We create 
 	// font atlas since render init is done before ResourceInit.
