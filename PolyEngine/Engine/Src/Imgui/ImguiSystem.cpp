@@ -24,7 +24,7 @@ void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 	// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
 	// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
 	
-	gConsole.LogInfo("ImguiSystem::ImguiUpdatePhase GetCurrentContext: {}", ImGui::GetCurrentContext() != nullptr);
+	// gConsole.LogInfo("ImguiSystem::ImguiUpdatePhase GetCurrentContext: {}", ImGui::GetCurrentContext() != nullptr);
 
 	ImGuiIO& io = ImGui::GetIO();
 	if (!io.Fonts->IsBuilt())
@@ -146,7 +146,7 @@ void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 	static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	ImGui::NewFrame();
-	gConsole.LogInfo("ImguiSystem::ImguiUpdatePhase ImGui::NewFrame()");
+	// gConsole.LogInfo("ImguiSystem::ImguiUpdatePhase ImGui::NewFrame()");
 
 	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
 	if (show_demo_window)

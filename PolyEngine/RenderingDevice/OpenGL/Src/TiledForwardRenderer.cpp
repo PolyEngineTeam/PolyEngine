@@ -1459,8 +1459,8 @@ void TiledForwardRenderer::UIImgui()
 		}
 	}
 	
-	gConsole.LogInfo("TiledForwardRenderer::UIImgui IsImguiInit: {}, GetCurrentContext: {}",
-		IsImguiInit, ImGui::GetCurrentContext() != nullptr);
+	// gConsole.LogInfo("TiledForwardRenderer::UIImgui IsImguiInit: {}, GetCurrentContext: {}",
+	// 	IsImguiInit, ImGui::GetCurrentContext() != nullptr);
 	
 	// ImguiSystem with input receiver and window drawing module
 	// need initialized imgui font atlas on first frame. We create 
