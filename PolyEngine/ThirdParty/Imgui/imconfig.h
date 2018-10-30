@@ -20,6 +20,17 @@
 //---- Define attributes of all API symbols declarations, e.g. for DLL under Windows.
 //#define IMGUI_API __declspec( dllexport )
 //#define IMGUI_API __declspec( dllimport )
+#ifndef IMGUI_API
+#if defined(_WIN32)
+#define IMGUI_API __declspec(dllexport)
+#elif defined(__GNUC__) || defined(__clang__)
+//NOTE(vuko): dllexport and dllimport are the same as far as GCC and Clang are concerned
+#define IMGUI_API __attribute__ ((visibility ("default")))
+#else
+#define IMGUI_API
+#endif
+#endif
+
 
 //---- Don't define obsolete functions/enums names. Consider enabling from time to time after updating to avoid using soon-to-be obsolete function/names.
 //#define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
