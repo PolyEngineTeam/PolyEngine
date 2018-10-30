@@ -17,9 +17,6 @@ namespace Poly
 		ImguiWorldComponent();
 		~ImguiWorldComponent();
 
-		ImGuiIO& GetImguiIO();
-		ImDrawData* GetDrawData();
-
 	private:
 		
 		ImguiResource* ImguiRes;

@@ -19,13 +19,3 @@ ImguiWorldComponent::~ImguiWorldComponent()
 {
 	delete ImguiRes;
 }
-
-ImGuiIO& ImguiWorldComponent::GetImguiIO()
-{
-	return ImGui::GetIO();
-}
-
-ImDrawData* ImguiWorldComponent::GetDrawData()
-{
-	return ImGui::GetDrawData();
-}
