@@ -1,9 +1,6 @@
 #include <EnginePCH.hpp>
 
 #include <Imgui/ImguiResource.hpp>
-#include <Resources/ResourceManager.hpp>
-// #include <Rendering/IRenderingDevice.hpp>
-// #include <ECS/Scene.hpp>
 #include <Input/KeyBindings.hpp>
 #include <imgui.h>
 
@@ -18,9 +15,6 @@ ImguiResource::ImguiResource()
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); // (void)io;
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
-
-	// ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
-	// ImGui_ImplOpenGL3_Init(glsl_version);
 
 	// Setup style
 	ImGui::StyleColorsDark();
@@ -42,7 +36,6 @@ ImguiResource::ImguiResource()
 	//IM_ASSERT(font != NULL);
 
 
-// region Init
 	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;       // We can honor GetMouseCursor() values (optional)
 	io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;        // We can honor io.WantSetMousePos requests (optional, rarely used)
 																// Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
@@ -82,18 +75,9 @@ ImguiResource::ImguiResource()
 	// g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
 	// g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
 	// g_MouseCursors[ImGuiMouseCursor_Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-// endregion
 }
 
 ImguiResource::~ImguiResource()
 {
 	gConsole.LogInfo("ImguiResource::~ImguiResource");
-
-	// ImGui_ImplOpenGL3_Shutdown();
-	// ImGui_ImplSDL2_Shutdown();
-	
-
-	// SDL_GL_DeleteContext(gl_context);
-	// SDL_DestroyWindow(window);
-	// SDL_Quit();
 }
