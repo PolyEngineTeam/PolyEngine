@@ -13,9 +13,7 @@ using namespace Poly;
 void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 {
 	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(scene, Poly::eEngineTimer::GAMEPLAY));
-	// float time = (float)(TimeSystem::GetTimerElapsedTime(scene, Poly::eEngineTimer::GAMEPLAY));
 
-	// ImguiWorldComponent* imguiCmp = scene->GetWorldComponent<ImguiWorldComponent>();
 	InputWorldComponent* inputCmp = scene->GetWorldComponent<InputWorldComponent>();
 
 	// Poll and handle events (inputs, window resize, etc.)
@@ -33,7 +31,6 @@ void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 		return;
 	}
 
-//  region Imgui ProcessEvent
 	if (inputCmp->GetWheelPosDelta().X > 0) io.MouseWheelH += 1;
 	if (inputCmp->GetWheelPosDelta().X < 0) io.MouseWheelH -= 1;
 	if (inputCmp->GetWheelPosDelta().Y > 0) io.MouseWheel += 1;
@@ -53,10 +50,7 @@ void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 			io.KeySuper = inputCmp->IsPressed(eKey::LGUI) || inputCmp->IsPressed(eKey::RGUI);
 		}
 	}
-//  endregion
 		
-// 	region UpdateMousePosAndButtons
-
 	// Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
 	// if (io.WantSetMousePos)
 	// 	SDL_WarpMouseInWindow(g_Window, (int)io.MousePos.x, (int)io.MousePos.y);
@@ -66,7 +60,8 @@ void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 
 	// int mx, my;
 	// Uint32 mouse_buttons = SDL_GetMouseState(&mx, &my);
-	io.MouseDown[0] = inputCmp->IsPressed(eMouseButton::LEFT);  // If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
+	// If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
+	io.MouseDown[0] = inputCmp->IsPressed(eMouseButton::LEFT);
 	io.MouseDown[1] = inputCmp->IsPressed(eMouseButton::RIGHT);
 	io.MouseDown[2] = inputCmp->IsPressed(eMouseButton::MIDDLE);
 
@@ -95,9 +90,7 @@ void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 // #endif
 // }
 
-//  endregion
 
-//  region UpdateMouseCursor
 	if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)
 		return;
 
@@ -114,9 +107,8 @@ void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 	// 	SDL_SetCursor(g_MouseCursors[imgui_cursor] ? g_MouseCursors[imgui_cursor] : g_MouseCursors[ImGuiMouseCursor_Arrow]);
 	// 	SDL_ShowCursor(SDL_TRUE);
 	// }
-//  endregion
 
-//  region Imgui NewFrame
+
 	IM_ASSERT(io.Fonts->IsBuilt());     // Font atlas needs to be built, call renderer _NewFrame() function e.g. ImGui_ImplOpenGL3_NewFrame()
 										// Setup display size (every frame to accommodate for window resizing)
 	int w, h;
@@ -139,14 +131,11 @@ void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 	// io.DeltaTime = g_Time > 0 ? (float)((double)(current_time - g_Time) / frequency) : (float)(1.0f / 60.0f);
 	io.DeltaTime = deltaTime;
 	// g_Time = time;
-//  endregion
 
 	static bool show_demo_window = true;
-	// static bool show_another_window = false;
 	static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	ImGui::NewFrame();
-	// gConsole.LogInfo("ImguiSystem::ImguiUpdatePhase ImGui::NewFrame()");
 
 	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
 	if (show_demo_window)
@@ -175,14 +164,4 @@ void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}
-
-	// 3. Show another simple window.
-	// if (show_another_window)
-	// {
-	// 	ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-	// 	ImGui::Text("Hello from another window!");
-	// 	if (ImGui::Button("Close Me"))
-	// 		show_another_window = false;
-	// 	ImGui::End();
-	// }
 }
