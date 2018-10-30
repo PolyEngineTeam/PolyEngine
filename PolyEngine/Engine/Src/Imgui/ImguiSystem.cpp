@@ -1,6 +1,6 @@
 #include <EnginePCH.hpp>
 
-#include <Imgui/imgui.h>
+#include <imgui.h>
 // #include <Imgui/imgui_impl_opengl3.h>
 #include <Imgui/ImguiSystem.hpp>
 #include <Time/TimeSystem.hpp>
@@ -12,8 +12,6 @@ using namespace Poly;
 
 void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 {
-	gConsole.LogInfo("ImguiSystem::ImguiUpdatePhase");
-	
 	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(scene, Poly::eEngineTimer::GAMEPLAY));
 	// float time = (float)(TimeSystem::GetTimerElapsedTime(scene, Poly::eEngineTimer::GAMEPLAY));
 
@@ -26,8 +24,9 @@ void ImguiSystem::ImguiUpdatePhase(Scene* scene)
 	// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
 	// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
 	
+	gConsole.LogInfo("ImguiSystem::ImguiUpdatePhase GetCurrentContext: {}", ImGui::GetCurrentContext() != nullptr);
+
 	ImGuiIO& io = ImGui::GetIO();
-	
 	if (!io.Fonts->IsBuilt())
 	{
 		gConsole.LogInfo("ImguiSystem::ImguiUpdatePhase fonts are not build yet, returning");

@@ -1,3 +1,4 @@
+find_package(Imgui REQUIRED)
 
 set(GAME_INCLUDE Src)
 
@@ -12,7 +13,7 @@ set(GAME_TARGET $PROJECT_NAME$)
 add_library(${GAME_TARGET} SHARED ${GAME_SRCS})
 target_compile_definitions(${GAME_TARGET} PRIVATE _GAME)
 target_include_directories(${GAME_TARGET} PRIVATE ${GAME_INCLUDE})
-target_link_libraries(${GAME_TARGET} PRIVATE ${ENGINE_TARGET} ${CORE_TARGET})
+target_link_libraries(${GAME_TARGET} PRIVATE ${ENGINE_TARGET} ${CORE_TARGET} Imgui)
 add_dependencies(${GAME_TARGET} ${STANDALONE_TARGET} ${GLDEVICE_TARGET} ${EDITOR_TARGET})
 
 #note(vuko): we can't use configure_file() directly because there is no reliable way to get an output artifact location at configure-time

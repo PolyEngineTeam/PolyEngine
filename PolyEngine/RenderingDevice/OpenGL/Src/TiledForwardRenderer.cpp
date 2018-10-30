@@ -566,47 +566,6 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 	PreviousFrameCameraTransform = Matrix(sceneView.CameraCmp->GetViewFromWorld().GetDataPtr());
 }
 
-void TiledForwardRenderer::UIImgui()
-{
-	static bool IsImguiInit = false;
-	
-	// Doing rendering part before pass resources init
-	// we avoid falling into rendering pass code just after
-	// resource creation when frame is not yet started.
-	if (IsImguiInit)
-	{
-		// Creating geometry.
-		// Ending imgui frame after update of engine and game systems.
-		ImGui::Render();
-	
-		ImDrawData* draw_data = ImGui::GetDrawData();
-		if (draw_data == nullptr)
-		{
-			gConsole.LogInfo("TiledForwardRenderer::Render draw_data is null");
-		}
-		else
-		{
-			ImGuiIO& io = ImGui::GetIO();
-			glViewport(0, 0, (GLsizei)io.DisplaySize.x, (GLsizei)io.DisplaySize.y);
-			// drawing geometry to framebuffer
-			ImGui_ImplOpenGL3_RenderDrawData(draw_data);
-		}
-	}
-	
-	gConsole.LogInfo("TiledForwardRenderer::Render IsImguiInit: {}, GetCurrentContext: {}",
-		IsImguiInit, ImGui::GetCurrentContext() != nullptr);
-	
-	// ImguiSystem with input receiver and window drawing module
-	// need initialized imgui font atlas on first frame. We create 
-	// font atlas since render init is done before ResourceInit.
-	if (!IsImguiInit && ImGui::GetCurrentContext() != nullptr)
-	{
-		gConsole.LogInfo("TiledForwardRenderer::Render CreateDeviceObjects");
-		ImGui_ImplOpenGL3_CreateDeviceObjects();
-		IsImguiInit = true;
-	}
-}
-
 void TiledForwardRenderer::UpdateEnvCapture(const SceneView& sceneView)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::UpdateEnvCapture");
@@ -1473,6 +1432,90 @@ void TiledForwardRenderer::UIText2D(const SceneView& sceneView)
 	glEnable(GL_DEPTH_TEST);
 }
 
+void TiledForwardRenderer::UIImgui()
+{
+	static bool IsImguiInit = false;
+	
+	// Doing rendering part before pass resources init
+	// we avoid falling into rendering pass code just after
+	// resource creation when frame is not yet started.
+	if (IsImguiInit)
+	{
+		// Creating geometry.
+		// Ending imgui frame after update of engine and game systems.
+		ImGui::Render();
+	
+		ImDrawData* draw_data = ImGui::GetDrawData();
+		if (draw_data == nullptr)
+		{
+			gConsole.LogInfo("TiledForwardRenderer::UIImgui draw_data is null");
+		}
+		else
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			glViewport(0, 0, (GLsizei)io.DisplaySize.x, (GLsizei)io.DisplaySize.y);
+			// drawing geometry to framebuffer
+			ImGui_ImplOpenGL3_RenderDrawData(draw_data);
+		}
+	}
+	
+	gConsole.LogInfo("TiledForwardRenderer::UIImgui IsImguiInit: {}, GetCurrentContext: {}",
+		IsImguiInit, ImGui::GetCurrentContext() != nullptr);
+	
+	// ImguiSystem with input receiver and window drawing module
+	// need initialized imgui font atlas on first frame. We create 
+	// font atlas since render init is done before ResourceInit.
+	if (!IsImguiInit && ImGui::GetCurrentContext() != nullptr)
+	{
+		gConsole.LogInfo("TiledForwardRenderer::Render ImGui_ImplOpenGL3_CreateDeviceObjects");
+		ImGui_ImplOpenGL3_CreateDeviceObjects();
+		IsImguiInit = true;
+	}
+}
+
+void TiledForwardRenderer::DebugLightAccum(const SceneView& sceneView)
+{
+	float time = (float)(sceneView.WorldData->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	DebugLightAccumShader.BindProgram();
+	DebugLightAccumShader.SetUniform("uTime", time);
+	DebugLightAccumShader.SetUniform("uWorkGroupsX", (int)WorkGroupsX);
+	DebugLightAccumShader.SetUniform("uWorkGroupsY", (int)WorkGroupsY);
+	DebugLightAccumShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
+
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, LightBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, VisibleLightIndicesBuffer);
+
+	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
+	for (auto componentsTuple : sceneView.WorldData->IterateComponents<MeshRenderingComponent>())
+	{
+		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
+		const EntityTransform& transform = meshCmp->GetTransform();
+		const Matrix& worldFromModel = transform.GetWorldFromModel();
+		DebugLightAccumShader.SetUniform("uClipFromModel", clipFromWorld * worldFromModel);
+		DebugLightAccumShader.SetUniform("uWorldFromModel", worldFromModel);
+
+		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
+		{
+			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
+			glBindVertexArray(meshProxy->GetVAO());
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, RDI->FallbackWhiteTexture);
+
+			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glBindVertexArray(0);
+		}
+	}
+
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
+
+}
+
 void TiledForwardRenderer::SetupLightsBufferFromScene()
 {
 	if (LightBuffer == 0)
@@ -1558,46 +1601,4 @@ void TiledForwardRenderer::DebugDepthPrepass(const SceneView& sceneView)
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
-}
-
-void TiledForwardRenderer::DebugLightAccum(const SceneView& sceneView)
-{
-	float time = (float)(sceneView.WorldData->GetWorldComponent<TimeWorldComponent>()->GetGameplayTime());
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	DebugLightAccumShader.BindProgram();
-	DebugLightAccumShader.SetUniform("uTime", time);
-	DebugLightAccumShader.SetUniform("uWorkGroupsX", (int)WorkGroupsX);
-	DebugLightAccumShader.SetUniform("uWorkGroupsY", (int)WorkGroupsY);
-	DebugLightAccumShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
-
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, LightBuffer);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, VisibleLightIndicesBuffer);
-
-	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
-	for (auto componentsTuple : sceneView.WorldData->IterateComponents<MeshRenderingComponent>())
-	{
-		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
-		const EntityTransform& transform = meshCmp->GetTransform();
-		const Matrix& worldFromModel = transform.GetWorldFromModel();
-		DebugLightAccumShader.SetUniform("uClipFromModel", clipFromWorld * worldFromModel);
-		DebugLightAccumShader.SetUniform("uWorldFromModel", worldFromModel);
-
-		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
-		{
-			const GLMeshDeviceProxy* meshProxy = static_cast<const GLMeshDeviceProxy*>(subMesh->GetMeshProxy());
-			glBindVertexArray(meshProxy->GetVAO());
-
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, RDI->FallbackWhiteTexture);
-
-			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glBindVertexArray(0);
-		}
-	}
-
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
 }

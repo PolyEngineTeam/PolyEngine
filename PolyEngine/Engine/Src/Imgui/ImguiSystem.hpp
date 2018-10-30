@@ -5,7 +5,6 @@
 namespace Poly
 {
 	class Scene;
-	// class EntityTransform;
 
 	namespace ImguiSystem
 	{

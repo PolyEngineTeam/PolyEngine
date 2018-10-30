@@ -5,7 +5,7 @@
 // #include <Rendering/IRenderingDevice.hpp>
 // #include <ECS/Scene.hpp>
 #include <Input/KeyBindings.hpp>
-#include <Imgui/imgui.h>
+#include <imgui.h>
 
 using namespace Poly;
 
@@ -67,6 +67,8 @@ ImguiResource::ImguiResource()
 	io.KeyMap[ImGuiKey_X] = (int)eKey::KEY_X; // SDL_SCANCODE_X;
 	io.KeyMap[ImGuiKey_Y] = (int)eKey::KEY_Y; // SDL_SCANCODE_Y;
 	io.KeyMap[ImGuiKey_Z] = (int)eKey::KEY_Z; // SDL_SCANCODE_Z;
+
+	gConsole.LogInfo("ImguiResource::Ctor GetCurrentContext: {}", ImGui::GetCurrentContext() != nullptr);
 
 	// io.SetClipboardTextFn = ImGui_ImplSDL2_SetClipboardText;
 	// io.GetClipboardTextFn = ImGui_ImplSDL2_GetClipboardText;

@@ -2,7 +2,7 @@
 
 #include <Defines.hpp>
 #include <ECS/ComponentBase.hpp>
-#include <Imgui/imgui.h>
+#include <imgui.h>
 
 namespace Poly
 {
@@ -22,7 +22,7 @@ namespace Poly
 
 	private:
 		
-		ImguiResource* ImguiRes = nullptr;
+		ImguiResource* ImguiRes;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, ImguiWorldComponent)
