@@ -52,17 +52,6 @@
 #include "imgui_impl_opengl3.h"
 #include <Common/GLUtils.hpp>
 
-// #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
-// #define _CRT_SECURE_NO_WARNINGS
-// #endif
-// 
-// #include <stdio.h>
-// #if defined(_MSC_VER) && _MSC_VER <= 1500 // MSVC 2008 or earlier
-// #include <stddef.h>     // intptr_t
-// #else
-// #include <stdint.h>     // intptr_t
-// #endif
-
 // OpenGL Data
 static GLuint       g_FontTexture = 0;
 static GLuint       g_ShaderHandle = 0, g_VertHandle = 0, g_FragHandle = 0;
@@ -309,53 +298,6 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
     glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
     glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
 
-    // Parse GLSL version string
-    // int glsl_version = 130;
-    // sscanf(g_GlslVersionString, "#version %d", &glsl_version);
-
-    // const GLchar* vertex_shader_glsl_120 =
-    //     "uniform mat4 ProjMtx;\n"
-    //     "attribute vec2 Position;\n"
-    //     "attribute vec2 UV;\n"
-    //     "attribute vec4 Color;\n"
-    //     "varying vec2 Frag_UV;\n"
-    //     "varying vec4 Frag_Color;\n"
-    //     "void main()\n"
-    //     "{\n"
-    //     "    Frag_UV = UV;\n"
-    //     "    Frag_Color = Color;\n"
-    //     "    gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
-    //     "}\n";
-
-    // const GLchar* vertex_shader_glsl_130 =
-    //     "uniform mat4 ProjMtx;\n"
-    //     "in vec2 Position;\n"
-    //     "in vec2 UV;\n"
-    //     "in vec4 Color;\n"
-    //     "out vec2 Frag_UV;\n"
-    //     "out vec4 Frag_Color;\n"
-    //     "void main()\n"
-    //     "{\n"
-    //     "    Frag_UV = UV;\n"
-    //     "    Frag_Color = Color;\n"
-    //     "    gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
-    //     "}\n";
-
-    // const GLchar* vertex_shader_glsl_300_es =
-    //     "precision mediump float;\n"
-    //     "layout (location = 0) in vec2 Position;\n"
-    //     "layout (location = 1) in vec2 UV;\n"
-    //     "layout (location = 2) in vec4 Color;\n"
-    //     "uniform mat4 ProjMtx;\n"
-    //     "out vec2 Frag_UV;\n"
-    //     "out vec4 Frag_Color;\n"
-    //     "void main()\n"
-    //     "{\n"
-    //     "    Frag_UV = UV;\n"
-    //     "    Frag_Color = Color;\n"
-    //     "    gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
-    //     "}\n";
-
     const GLchar* vertex_shader_glsl_410_core =
 		"#version 410 core\n"
         "in vec2 Position;\n"
@@ -371,39 +313,6 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
         "    gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
         "}\n";
 
-    // const GLchar* fragment_shader_glsl_120 =
-    //     "#ifdef GL_ES\n"
-    //     "    precision mediump float;\n"
-    //     "#endif\n"
-    //     "uniform sampler2D Texture;\n"
-    //     "varying vec2 Frag_UV;\n"
-    //     "varying vec4 Frag_Color;\n"
-    //     "void main()\n"
-    //     "{\n"
-    //     "    gl_FragColor = Frag_Color * texture2D(Texture, Frag_UV.st);\n"
-    //     "}\n";
-
-    // const GLchar* fragment_shader_glsl_130 =
-    //     "uniform sampler2D Texture;\n"
-    //     "in vec2 Frag_UV;\n"
-    //     "in vec4 Frag_Color;\n"
-    //     "out vec4 Out_Color;\n"
-    //     "void main()\n"
-    //     "{\n"
-    //     "    Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n"
-    //     "}\n";
-
-    // const GLchar* fragment_shader_glsl_300_es =
-    //     "precision mediump float;\n"
-    //     "uniform sampler2D Texture;\n"
-    //     "in vec2 Frag_UV;\n"
-    //     "in vec4 Frag_Color;\n"
-    //     "layout (location = 0) out vec4 Out_Color;\n"
-    //     "void main()\n"
-    //     "{\n"
-    //     "    Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n"
-    //     "}\n";
-
     const GLchar* fragment_shader_glsl_410_core =
 		"#version 410 core\n"
         "in vec2 Frag_UV;\n"
@@ -418,27 +327,9 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
     // Select shaders matching our GLSL versions
     const GLchar* vertex_shader = NULL;
     const GLchar* fragment_shader = NULL;
-    // if (glsl_version < 130)
-    // {
-    //     vertex_shader = vertex_shader_glsl_120;
-    //     fragment_shader = fragment_shader_glsl_120;
-    // }
-    // else if (glsl_version == 410)
-    // {
     vertex_shader = vertex_shader_glsl_410_core;
     fragment_shader = fragment_shader_glsl_410_core;
-    // }
-    // else if (glsl_version == 300)
-    // {
-    //     vertex_shader = vertex_shader_glsl_300_es;
-    //     fragment_shader = fragment_shader_glsl_300_es;
-    // }
-    // else
-    // {
-    //     vertex_shader = vertex_shader_glsl_130;
-    //     fragment_shader = fragment_shader_glsl_130;
-    // }
-
+    
     // Create shaders
     // const GLchar* vertex_shader_with_version[2] = { g_GlslVersionString, vertex_shader };
     g_VertHandle = glCreateShader(GL_VERTEX_SHADER);
