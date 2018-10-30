@@ -47,22 +47,21 @@
 //  ES 3.0    300       "#version 300 es"
 //----------------------------------------
 
-#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
-#define _CRT_SECURE_NO_WARNINGS
-#endif
+#include <PolyRenderingDeviceGLPCH.hpp>
 
 #include "imgui_impl_opengl3.h"
-#include <stdio.h>
-#if defined(_MSC_VER) && _MSC_VER <= 1500 // MSVC 2008 or earlier
-#include <stddef.h>     // intptr_t
-#else
-#include <stdint.h>     // intptr_t
-#endif
-#if defined(__APPLE__)
-#include "TargetConditionals.h"
-#endif
+#include <Common/GLUtils.hpp>
 
-#include <PolyRenderingDeviceGLPCH.hpp>
+// #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
+// #define _CRT_SECURE_NO_WARNINGS
+// #endif
+// 
+// #include <stdio.h>
+// #if defined(_MSC_VER) && _MSC_VER <= 1500 // MSVC 2008 or earlier
+// #include <stddef.h>     // intptr_t
+// #else
+// #include <stdint.h>     // intptr_t
+// #endif
 
 // OpenGL Data
 static GLuint       g_FontTexture = 0;
@@ -81,7 +80,7 @@ void    ImGui_ImplOpenGL3_Shutdown()
 void    ImGui_ImplOpenGL3_NewFrame()
 {
     if (!g_FontTexture)
-        ImGui_ImplOpenGL3_CreateDeviceObjects();
+		ImGui_ImplOpenGL3_CreateDeviceObjects();
 }
 
 // OpenGL3 Render function.
