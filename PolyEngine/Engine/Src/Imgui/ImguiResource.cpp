@@ -2,7 +2,6 @@
 
 #include <Imgui/ImguiResource.hpp>
 #include <Input/KeyBindings.hpp>
-#include <imgui.h>
 
 using namespace Poly;
 

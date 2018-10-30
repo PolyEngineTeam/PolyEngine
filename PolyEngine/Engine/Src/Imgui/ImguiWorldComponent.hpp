@@ -2,7 +2,6 @@
 
 #include <Defines.hpp>
 #include <ECS/ComponentBase.hpp>
-#include <imgui.h>
 
 namespace Poly
 {

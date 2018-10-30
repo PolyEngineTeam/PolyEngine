@@ -74,3 +74,7 @@ UNSILENCE_MSVC_WARNING()
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
+
+SILENCE_GCC_WARNING(-Wimplicit-fallthrough=, "Surpressing clang warnings in imstb_truetype")
+#include <imgui.h>
+UNSILENCE_GCC_WARNING()
