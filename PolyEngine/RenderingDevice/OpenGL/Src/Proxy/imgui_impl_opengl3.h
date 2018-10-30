@@ -20,7 +20,9 @@
 // Only override if your GL version doesn't handle this GLSL version. See GLSL version table at the top of imgui_impl_opengl3.cpp.
 
 #include <Defines.hpp>
-#include <imgui.h>
+#include <Common/GLUtils.hpp>
+
+struct ImDrawData;
 
 void     ImGui_ImplOpenGL3_Shutdown();
 void     ImGui_ImplOpenGL3_NewFrame();

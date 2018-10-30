@@ -62,7 +62,7 @@
 #include "TargetConditionals.h"
 #endif
 
-#include <Common/GLUtils.hpp>
+#include <PolyRenderingDeviceGLPCH.hpp>
 
 // OpenGL Data
 static GLuint       g_FontTexture = 0;
