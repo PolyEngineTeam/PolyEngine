@@ -34,6 +34,8 @@ file(GLOB IMGUI_HEADERS "${ENGINE_ROOT_DIR}/ThirdParty/Imgui/*.h")
 # avoid building target twice when Imgui is used by multiple projects: Engine and RenderingDevice
 if (NOT TARGET Imgui)
 	add_library(Imgui STATIC ${IMGUI_SOURCES} ${IMGUI_HEADERS})
+	# GCC complains during linking of shared libraries that use this target (Engine, RenderingDevice)
+	set_property(TARGET Imgui PROPERTY POSITION_INDEPENDENT_CODE ON)
 endif()
 
 find_package_handle_standard_args(Imgui IMGUI_SOURCES IMGUI_HEADERS IMGUI_INCLUDE_DIRS)
