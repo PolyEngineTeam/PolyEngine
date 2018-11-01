@@ -12,7 +12,6 @@
 #include <Rendering/RenderingSystem.hpp>
 #include <Rendering/Particles/ParticleUpdateSystem.hpp>
 #include <Time/TimeWorldComponent.hpp>
-#include <Imgui/ImguiWorldComponent.hpp>
 #include <Imgui/ImguiSystem.hpp>
 #include <Debugging/DebugWorldComponent.hpp>
 #include <Debugging/DebugDrawComponents.hpp>
@@ -58,7 +57,7 @@ void Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice>
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(InputSystem::InputPhase, eUpdatePhaseOrder::PREUPDATE);
-	RegisterUpdatePhase(ImguiSystem::ImguiUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
+	RegisterSystem(std::make_unique<ImguiSystem>(), eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(Physics2DSystem::Physics2DUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(Physics3DSystem::Physics3DUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(MovementSystem::MovementUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
@@ -161,7 +160,6 @@ void Poly::Engine::LoadDefaultScene()
 
 	// Add WorldComponents
 	DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(GetActiveScene());
-	DeferredTaskSystem::AddWorldComponentImmediate<ImguiWorldComponent>(GetActiveScene());
 	DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(GetActiveScene());
 	DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(GetActiveScene());
 	DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(GetActiveScene());

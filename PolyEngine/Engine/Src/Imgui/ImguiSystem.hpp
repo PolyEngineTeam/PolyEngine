@@ -1,13 +1,17 @@
 #pragma once
 
 #include <Defines.hpp>
+#include <ECS/ISystem.hpp>
 
 namespace Poly
 {
 	class Scene;
 
-	namespace ImguiSystem
+	class ImguiSystem : public ISystem
 	{
-		void ImguiUpdatePhase(Scene* world);
-	}
+	public:
+		ImguiSystem();
+
+		void OnUpdate(Scene* scene) override;
+	};
 }
