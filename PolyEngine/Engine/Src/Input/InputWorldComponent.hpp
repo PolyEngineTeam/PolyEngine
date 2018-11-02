@@ -55,6 +55,8 @@ namespace Poly
 
 		bool GetIsConsumed() const { return IsConsumed; }
 		void SetConsumed() { IsConsumed = true; }
+		
+		char* GetCharUTF8() { return CharUTF8; }
 
 	private:
 		EnumArray<bool, eKey> CurrKey;
@@ -69,6 +71,7 @@ namespace Poly
 		Dynarray<Optional<size_t>> PlayerIDToJoystickID;
 		std::unordered_map<size_t, size_t> JoystickIDToPlayerID;
 		bool IsConsumed;
+		char* CharUTF8;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, InputWorldComponent)

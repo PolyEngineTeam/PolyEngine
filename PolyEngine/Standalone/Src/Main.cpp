@@ -15,6 +15,8 @@ extern "C"
 	using CreateGameFunc = Poly::IGame* (void);
 }
 
+int main(int argc, char * args[]);
+
 void HandleWindowEvent(const SDL_WindowEvent& windowEvent);
 
 enum eMouseStateChange {
@@ -134,6 +136,9 @@ int main(int argc, char* args[])
 				break;
 			case SDL_KEYUP:
 				Engine->KeyUp(static_cast<Poly::eKey>(event.key.keysym.scancode));
+				break;
+			case SDL_TEXTINPUT:
+				Engine->AddCharacterUTF8(event.text.text);
 				break;
 			case SDL_MOUSEMOTION:
 			{

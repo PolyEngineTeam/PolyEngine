@@ -117,6 +117,11 @@ void ImguiSystem::OnUpdate(Scene* scene)
 		io.KeySuper = inputCmp->IsPressed(eKey::LGUI) || inputCmp->IsPressed(eKey::RGUI);
 		// }
 	}
+
+	if (inputCmp->GetCharUTF8() != '\0')
+	{
+		io.AddInputCharactersUTF8(inputCmp->GetCharUTF8());
+	}
 		
 	// Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
 	// if (io.WantSetMousePos)

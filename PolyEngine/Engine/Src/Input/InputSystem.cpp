@@ -15,6 +15,8 @@ void InputSystem::InputPhase(Scene* world)
 	com->PrevKey = com->CurrKey;
 	com->PrevMouseButton = com->CurrMouseButton;
 
+	com->CharUTF8 = '\0';
+
 	com->MouseDelta = Vector2i::ZERO;
 	com->PrevWheel = com->CurrWheel;
 
@@ -37,6 +39,9 @@ void InputSystem::InputPhase(Scene* world)
 		case eInputEventType::KEYUP:
 			if(ev.Key < eKey::_COUNT)
 				com->CurrKey[ev.Key] = false;
+			break;
+		case eInputEventType::TEXTCHAR:
+			com->CharUTF8 = ev.CharUTF8;
 			break;
 		case eInputEventType::MOUSEBUTTONDOWN:
 			if(ev.MouseButton < eMouseButton::_COUNT)
