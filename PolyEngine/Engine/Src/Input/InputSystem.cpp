@@ -10,6 +10,7 @@ using namespace Poly;
 void InputSystem::InputPhase(Scene* world)
 {
 	InputWorldComponent* com = world->GetWorldComponent<InputWorldComponent>();
+	com->IsConsumed = false;
 
 	com->PrevKey = com->CurrKey;
 	com->PrevMouseButton = com->CurrMouseButton;
@@ -24,7 +25,6 @@ void InputSystem::InputPhase(Scene* world)
 	}
 
 	InputQueue& InputEventsQueue = gEngine->GetInputQueue();
-
 	while (!InputEventsQueue.IsEmpty())
 	{
 		InputEvent& ev = InputEventsQueue.Front();
@@ -51,7 +51,7 @@ void InputSystem::InputPhase(Scene* world)
 			com->MouseDelta = ev.Pos;
 			break;
 		case eInputEventType::MOUSEPOS:
-			com->MouseDelta = ev.Pos - com->MousePos;
+			// com->MouseDelta = ev.Pos - com->MousePos;
 			com->MousePos = ev.Pos;
 			break;
 		case eInputEventType::WHEELMOVE:
@@ -104,7 +104,4 @@ void InputSystem::InputPhase(Scene* world)
 		}
 		InputEventsQueue.PopFront();
 	}
-
-
 }
-

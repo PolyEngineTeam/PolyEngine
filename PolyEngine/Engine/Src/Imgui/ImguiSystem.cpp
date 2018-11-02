@@ -9,7 +9,7 @@ using namespace Poly;
 
 ImguiSystem::ImguiSystem()
 {
-	gConsole.LogInfo("ImguiResource::ImguiResource");
+	gConsole.LogInfo("ImguiSystem::ImguiSystem");
 
 	// Setup Dear ImGui binding
 	IMGUI_CHECKVERSION();
@@ -17,7 +17,7 @@ ImguiSystem::ImguiSystem()
 	ImGuiIO& io = ImGui::GetIO(); // (void)io;
 								  //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
 
-								  // Setup style
+	// Setup style
 	ImGui::StyleColorsDark();
 	//ImGui::StyleColorsClassic();
 
@@ -38,8 +38,8 @@ ImguiSystem::ImguiSystem()
 
 
 	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;       // We can honor GetMouseCursor() values (optional)
-	io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;        // We can honor io.WantSetMousePos requests (optional, rarely used)
-																// Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
+	// io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;        // We can honor io.WantSetMousePos requests (optional, rarely used)
+	// Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
 	io.KeyMap[ImGuiKey_Tab] = (int)eKey::TAB; // SDL_SCANCODE_TAB;
 	io.KeyMap[ImGuiKey_LeftArrow] = (int)eKey::LEFT; // SDL_SCANCODE_LEFT;
 	io.KeyMap[ImGuiKey_RightArrow] = (int)eKey::RIGHT; // SDL_SCANCODE_RIGHT;
@@ -62,11 +62,11 @@ ImguiSystem::ImguiSystem()
 	io.KeyMap[ImGuiKey_Y] = (int)eKey::KEY_Y; // SDL_SCANCODE_Y;
 	io.KeyMap[ImGuiKey_Z] = (int)eKey::KEY_Z; // SDL_SCANCODE_Z;
 
-	gConsole.LogInfo("ImguiResource::Ctor GetCurrentContext: {}", ImGui::GetCurrentContext() != nullptr);
+	gConsole.LogInfo("ImguiSystem::Ctor GetCurrentContext: {}", ImGui::GetCurrentContext() != nullptr);
 
-	// io.SetClipboardTextFn = ImGui_ImplSDL2_SetClipboardText;
-	// io.GetClipboardTextFn = ImGui_ImplSDL2_GetClipboardText;
-	// io.ClipboardUserData = NULL;
+	io.SetClipboardTextFn = gEngine->SetClipboardTextFunction;
+	io.GetClipboardTextFn = gEngine->GetClipboardTextFunction;
+	io.ClipboardUserData = NULL;
 
 	// g_MouseCursors[ImGuiMouseCursor_Arrow] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
 	// g_MouseCursors[ImGuiMouseCursor_TextInput] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
@@ -90,8 +90,6 @@ void ImguiSystem::OnUpdate(Scene* scene)
 	// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
 	// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
 	
-	// gConsole.LogInfo("ImguiSystem::ImguiUpdatePhase GetCurrentContext: {}", ImGui::GetCurrentContext() != nullptr);
-
 	ImGuiIO& io = ImGui::GetIO();
 	if (!io.Fonts->IsBuilt())
 	{
@@ -105,18 +103,19 @@ void ImguiSystem::OnUpdate(Scene* scene)
 	if (inputCmp->GetWheelPosDelta().Y < 0) io.MouseWheel -= 1;
 	
 	// dummy loop over key codes
-	for (int key = 0; key < (int)eKey::_COUNT; ++key)
+	for (int key = ((int)eKey::_COUNT) - 1; key >= 0; --key)
 	{
-		if (inputCmp->IsPressed((eKey)key)
-			|| inputCmp->IsReleased((eKey)key))
-		{
-			IM_ASSERT(key >= 0 && key < IM_ARRAYSIZE(io.KeysDown));
-			io.KeysDown[key] = inputCmp->IsPressed((eKey)key);
-			io.KeyShift = inputCmp->IsPressed(eKey::LSHIFT) || inputCmp->IsPressed(eKey::RSHIFT);
-			io.KeyCtrl = inputCmp->IsPressed(eKey::LCTRL) || inputCmp->IsPressed(eKey::RCTRL);
-			io.KeyAlt = inputCmp->IsPressed(eKey::LALT) || inputCmp->IsPressed(eKey::RALT);
-			io.KeySuper = inputCmp->IsPressed(eKey::LGUI) || inputCmp->IsPressed(eKey::RGUI);
-		}
+		// if (inputCmp->IsPressed((eKey)key)
+		// 	|| inputCmp->IsReleased((eKey)key))
+		// {
+		IM_ASSERT(key >= 0 && key < IM_ARRAYSIZE(io.KeysDown));
+		if (inputCmp->IsPressed((eKey)key)) gConsole.LogInfo("ImguiSystem::OnUpdate key: {}, {}", key, inputCmp->IsPressed((eKey)key));
+		io.KeysDown[key] = inputCmp->IsPressed((eKey)key);
+		io.KeyShift = inputCmp->IsPressed(eKey::LSHIFT) || inputCmp->IsPressed(eKey::RSHIFT);
+		io.KeyCtrl = inputCmp->IsPressed(eKey::LCTRL) || inputCmp->IsPressed(eKey::RCTRL);
+		io.KeyAlt = inputCmp->IsPressed(eKey::LALT) || inputCmp->IsPressed(eKey::RALT);
+		io.KeySuper = inputCmp->IsPressed(eKey::LGUI) || inputCmp->IsPressed(eKey::RGUI);
+		// }
 	}
 		
 	// Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
@@ -158,7 +157,6 @@ void ImguiSystem::OnUpdate(Scene* scene)
 // #endif
 // }
 
-
 	if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)
 		return;
 
@@ -193,12 +191,7 @@ void ImguiSystem::OnUpdate(Scene* scene)
 		h > 0 ? ((float)display_h / h) : 0
 	);
 
-	// Setup time step (we don't use SDL_GetTicks() because it is using millisecond resolution)
-	// static Uint64 frequency = SDL_GetPerformanceFrequency();
-	// Uint64 current_time = SDL_GetPerformanceCounter();
-	// io.DeltaTime = g_Time > 0 ? (float)((double)(current_time - g_Time) / frequency) : (float)(1.0f / 60.0f);
 	io.DeltaTime = deltaTime;
-	// g_Time = time;
 
 	static bool show_demo_window = true;
 	static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
@@ -232,4 +225,12 @@ void ImguiSystem::OnUpdate(Scene* scene)
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}
+
+	if (io.WantCaptureMouse)
+	{
+		inputCmp->SetConsumed();
+	}
+
+	// gConsole.LogInfo("ImguiSystem::ImguiUpdatePhase GetCurrentContext: {}, Imgui.io.WantCaptureMouse: {}, Imgui.io.WantCaptureKeyboard: {}",
+	// 	ImGui::GetCurrentContext() != nullptr, io.WantCaptureMouse, io.WantCaptureKeyboard);
 }

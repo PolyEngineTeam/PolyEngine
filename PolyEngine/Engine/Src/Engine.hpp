@@ -168,6 +168,10 @@ namespace Poly
 		/// <param name="size">New screen size</param>
 		void ResizeScreen(const ScreenSize& size);
 
+		const char* (*GetClipboardTextFunction)(void* user_data);
+		
+		void(*SetClipboardTextFunction)(void* user_data, const char* text);
+
 	private:
 		inline void UpdatePhases(eUpdatePhaseOrder order)
 		{

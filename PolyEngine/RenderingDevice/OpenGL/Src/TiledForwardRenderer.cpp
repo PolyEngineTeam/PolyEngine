@@ -236,12 +236,15 @@ void TiledForwardRenderer::Deinit()
 {
 	gConsole.LogInfo("TiledForwardRenderer::Deinit");
 	
-	// Imgui context is needed to propertly deinit textures.
-	// Deinit is called after engine resources we need  destroy
-	// imgui pass textures and objects and then end Imgui context
-	// started in ImguiResource owned by ImguiWorldComponent
-	ImGui_ImplOpenGL3_DestroyDeviceObjects();
-	ImGui::DestroyContext();
+	if (ImGui::GetCurrentContext() != nullptr)
+	{
+		// Imgui context is needed to propertly deinit textures.
+		// Deinit is called after engine resources we need  destroy
+		// imgui pass textures and objects and then end Imgui context
+		// started in ImguiResource owned by ImguiWorldComponent
+		ImGui_ImplOpenGL3_DestroyDeviceObjects();
+		ImGui::DestroyContext();
+	}
 
 	DeleteLightBuffers();
 

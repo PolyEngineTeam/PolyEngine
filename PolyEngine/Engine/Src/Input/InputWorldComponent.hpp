@@ -53,6 +53,9 @@ namespace Poly
 		Dynarray<size_t> GetConnectedControllersIDs() const;
 		bool IsControllerConnected(size_t idx) const;
 
+		bool GetIsConsumed() const { return IsConsumed; }
+		void SetConsumed() { IsConsumed = true; }
+
 	private:
 		EnumArray<bool, eKey> CurrKey;
 		EnumArray<bool, eKey> PrevKey;
@@ -65,6 +68,7 @@ namespace Poly
 		std::unordered_map<size_t, ControllerState> Controllers;
 		Dynarray<Optional<size_t>> PlayerIDToJoystickID;
 		std::unordered_map<size_t, size_t> JoystickIDToPlayerID;
+		bool IsConsumed;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, InputWorldComponent)

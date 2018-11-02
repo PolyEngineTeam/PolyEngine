@@ -37,6 +37,20 @@ public:
 	}
 };
 
+static char* g_ClipboardTextData = NULL;
+static const char* HandleGetClipboardText(void*)
+{
+	if (g_ClipboardTextData)
+		SDL_free(g_ClipboardTextData);
+	g_ClipboardTextData = SDL_GetClipboardText();
+	return g_ClipboardTextData;
+}
+
+static void HandleSetClipboardText(void*, const char* text)
+{
+	SDL_SetClipboardText(text);
+}
+
 int main(int argc, char* args[])
 {
 	for(int i=0; i<argc; ++i)
@@ -97,6 +111,11 @@ int main(int argc, char* args[])
 	Engine->Init(std::move(game), std::move(device));
 	Engine->StartGame();
 	Poly::gConsole.LogDebug("Engine initialization and handshake successfull. Starting main loop...");
+
+	SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+
+	Engine->SetClipboardTextFunction = HandleSetClipboardText;
+	Engine->GetClipboardTextFunction = HandleGetClipboardText;
 
 	bool quitRequested = false;
 	while (!quitRequested)
@@ -232,7 +251,6 @@ void HandleWindowEvent(const SDL_WindowEvent& windowEvent)
 		break;
 	}
 }
-
 
 void UpdateMouseState(eMouseStateChange change)
 {
