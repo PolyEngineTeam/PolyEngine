@@ -1,6 +1,5 @@
 find_package(SDL2 REQUIRED)
 find_package(epoxy REQUIRED)
-find_package(Imgui REQUIRED)
 
 set(POLYGLDEVICE_INCLUDE Src)
 
@@ -12,8 +11,8 @@ GenerateSourceGoups("${POLYGLDEVICE_SRCS}")
 
 add_library(${GLDEVICE_TARGET} SHARED ${POLYGLDEVICE_SRCS})
 target_compile_definitions(${GLDEVICE_TARGET} PRIVATE _DEVICE)
-target_include_directories(${GLDEVICE_TARGET} PUBLIC ${POLYGLDEVICE_INCLUDE} ${SDL2_INCLUDE_DIRS} ${IMGUI_INCLUDE_DIRS})
-target_link_libraries(${GLDEVICE_TARGET} PRIVATE ${ENGINE_TARGET} epoxy::gl ${SDL2_LIBRARIES} Imgui)
+target_include_directories(${GLDEVICE_TARGET} PUBLIC ${POLYGLDEVICE_INCLUDE} ${SDL2_INCLUDE_DIRS})
+target_link_libraries(${GLDEVICE_TARGET} PRIVATE ${ENGINE_TARGET} epoxy::gl ${SDL2_LIBRARIES})
 
 #set_target_properties(${GLDEVICE_TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "Src/${GLDEVICE_TARGET}PCH.hpp")
 cotire(${GLDEVICE_TARGET})

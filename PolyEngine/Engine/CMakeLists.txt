@@ -5,9 +5,9 @@ find_package(OGG REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(Box2D REQUIRED)
 find_package(Bullet REQUIRED)
-find_package(Imgui REQUIRED)
 find_package(RapidJSON REQUIRED)
 find_package(STB REQUIRED)
+add_subdirectory("${ENGINE_ROOT_DIR}/ThirdParty/Imgui" "${CMAKE_CURRENT_BINARY_DIR}/Imgui")
 
 set(POLYENGINE_INCLUDE Src)
 
@@ -21,7 +21,7 @@ GenerateSourceGoups("${POLYENGINE_SRCS}")
 
 add_library(${ENGINE_TARGET} SHARED ${POLYENGINE_SRCS})
 target_compile_definitions(${ENGINE_TARGET} PRIVATE _ENGINE)
-target_include_directories(${ENGINE_TARGET} PUBLIC ${POLYENGINE_INCLUDE} ${BULLET_INCLUDE_DIRS} ${STB_INCLUDE_DIRS} ${IMGUI_INCLUDE_DIRS})
+target_include_directories(${ENGINE_TARGET} PUBLIC ${POLYENGINE_INCLUDE} ${BULLET_INCLUDE_DIRS} ${STB_INCLUDE_DIRS} "${ENGINE_ROOT_DIR}/ThirdParty/Imgui")
 target_link_libraries(${ENGINE_TARGET} PUBLIC ${CORE_TARGET} PRIVATE ass::imp Freetype::FT2 OpenAL::AL OGG::OGG Vorbis::Vorbis Vorbis::File Box2D::Box2D Rapid::JSON ${BULLET_LIBRARIES} Imgui)
 
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
