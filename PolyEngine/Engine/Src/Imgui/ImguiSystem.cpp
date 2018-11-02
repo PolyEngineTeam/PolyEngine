@@ -14,12 +14,10 @@ ImguiSystem::ImguiSystem()
 	// Setup Dear ImGui binding
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); // (void)io;
-								  //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
 
-	// Setup style
 	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsClassic();
 
 	// Load Fonts
 	// - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them. 
@@ -80,8 +78,6 @@ ImguiSystem::ImguiSystem()
 
 void ImguiSystem::OnUpdate(Scene* scene)
 {
-	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(scene, Poly::eEngineTimer::GAMEPLAY));
-
 	InputWorldComponent* inputCmp = scene->GetWorldComponent<InputWorldComponent>();
 
 	// Poll and handle events (inputs, window resize, etc.)
@@ -105,30 +101,25 @@ void ImguiSystem::OnUpdate(Scene* scene)
 	// dummy loop over key codes
 	for (int key = ((int)eKey::_COUNT) - 1; key >= 0; --key)
 	{
-		// if (inputCmp->IsPressed((eKey)key)
-		// 	|| inputCmp->IsReleased((eKey)key))
-		// {
-		IM_ASSERT(key >= 0 && key < IM_ARRAYSIZE(io.KeysDown));
-		if (inputCmp->IsPressed((eKey)key)) gConsole.LogInfo("ImguiSystem::OnUpdate key: {}, {}", key, inputCmp->IsPressed((eKey)key));
-		io.KeysDown[key] = inputCmp->IsPressed((eKey)key);
-		io.KeyShift = inputCmp->IsPressed(eKey::LSHIFT) || inputCmp->IsPressed(eKey::RSHIFT);
-		io.KeyCtrl = inputCmp->IsPressed(eKey::LCTRL) || inputCmp->IsPressed(eKey::RCTRL);
-		io.KeyAlt = inputCmp->IsPressed(eKey::LALT) || inputCmp->IsPressed(eKey::RALT);
-		io.KeySuper = inputCmp->IsPressed(eKey::LGUI) || inputCmp->IsPressed(eKey::RGUI);
-		// }
+		if (inputCmp->IsPressed((eKey)key) || inputCmp->IsReleased((eKey)key))
+		{
+			IM_ASSERT(key >= 0 && key < IM_ARRAYSIZE(io.KeysDown));
+			if (inputCmp->IsPressed((eKey)key)) gConsole.LogInfo("ImguiSystem::OnUpdate key: {}, {}", key, inputCmp->IsPressed((eKey)key));
+			io.KeysDown[key] = inputCmp->IsPressed((eKey)key);
+			io.KeyShift = inputCmp->IsPressed(eKey::LSHIFT) || inputCmp->IsPressed(eKey::RSHIFT);
+			io.KeyCtrl = inputCmp->IsPressed(eKey::LCTRL) || inputCmp->IsPressed(eKey::RCTRL);
+			io.KeyAlt = inputCmp->IsPressed(eKey::LALT) || inputCmp->IsPressed(eKey::RALT);
+			io.KeySuper = inputCmp->IsPressed(eKey::LGUI) || inputCmp->IsPressed(eKey::RGUI);
+		}
 	}
 
-	if (inputCmp->GetCharUTF8() != '\0')
+	if (inputCmp->GetCharUTF8() != nullptr)
 	{
-		io.AddInputCharactersUTF8(inputCmp->GetCharUTF8());
+		const char* charUTF8 = inputCmp->GetCharUTF8();
+		size_t length = StrLen(charUTF8);
+		if (length > 0 && charUTF8[0] != '\0')
+			io.AddInputCharactersUTF8(inputCmp->GetCharUTF8());
 	}
-		
-	// Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
-	// if (io.WantSetMousePos)
-	// 	SDL_WarpMouseInWindow(g_Window, (int)io.MousePos.x, (int)io.MousePos.y);
-	// else
-	//	io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
-	io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
 
 	// int mx, my;
 	// Uint32 mouse_buttons = SDL_GetMouseState(&mx, &my);
@@ -137,30 +128,15 @@ void ImguiSystem::OnUpdate(Scene* scene)
 	io.MouseDown[1] = inputCmp->IsPressed(eMouseButton::RIGHT);
 	io.MouseDown[2] = inputCmp->IsPressed(eMouseButton::MIDDLE);
 
-// #if SDL_HAS_CAPTURE_MOUSE && !defined(__EMSCRIPTEN__)
-// 	SDL_Window* focused_window = SDL_GetKeyboardFocus();
-// 	if (g_Window == focused_window)
-// 	{
-// 		// SDL_GetMouseState() gives mouse position seemingly based on the last window entered/focused(?)
-// 		// The creation of a new windows at runtime and SDL_CaptureMouse both seems to severely mess up with that, so we retrieve that position globally.
-// 		int wx, wy;
-// 		SDL_GetWindowPosition(focused_window, &wx, &wy);
-// 		SDL_GetGlobalMouseState(&mx, &my);
-// 		mx -= wx;
-// 		my -= wy;
-// 		io.MousePos = ImVec2((float)mx, (float)my);
-// 	}
-// 
-// 	// SDL_CaptureMouse() let the OS know e.g. that our imgui drag outside the SDL window boundaries shouldn't e.g. trigger the OS window resize cursor. 
-// 	// The function is only supported from SDL 2.0.4 (released Jan 2016)
-// 	bool any_mouse_button_down = ImGui::IsAnyMouseDown();
-// 	SDL_CaptureMouse(any_mouse_button_down ? SDL_TRUE : SDL_FALSE);
-// #else
-	// if (SDL_GetWindowFlags(g_Window) & SDL_WINDOW_INPUT_FOCUS)
+//	Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
+//	if (io.WantSetMousePos)
+//		SDL_WarpMouseInWindow(g_Window, (int)io.MousePos.x, (int)io.MousePos.y);
+//	else
+//		io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
+	io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
+
 	Vector2i mousePos = inputCmp->GetMousePos();
 	io.MousePos = ImVec2((float)mousePos.X, (float)mousePos.Y);
-// #endif
-// }
 
 	if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)
 		return;
@@ -179,63 +155,23 @@ void ImguiSystem::OnUpdate(Scene* scene)
 	// 	SDL_ShowCursor(SDL_TRUE);
 	// }
 
-
 	IM_ASSERT(io.Fonts->IsBuilt());     // Font atlas needs to be built, call renderer _NewFrame() function e.g. ImGui_ImplOpenGL3_NewFrame()
-										// Setup display size (every frame to accommodate for window resizing)
-	int w, h;
-	int display_w, display_h;
-	// SDL_GetWindowSize(window, &w, &h);
+	
+	// Setup display size (every frame to accommodate for window resizing)
 	ScreenSize screenSize = gEngine->GetRenderingDevice()->GetScreenSize();
-	display_w = w = screenSize.Width;
-	display_h = h = screenSize.Height;
+	io.DisplaySize = ImVec2((float)screenSize.Width, (float)screenSize.Height);
+	io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
 
-	// SDL_GL_GetDrawableSize(window, &display_w, &display_h);
-	io.DisplaySize = ImVec2((float)w, (float)h);
-	io.DisplayFramebufferScale = ImVec2(
-		w > 0 ? ((float)display_w / w) : 0,
-		h > 0 ? ((float)display_h / h) : 0
-	);
-
+	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(scene, Poly::eEngineTimer::GAMEPLAY));
 	io.DeltaTime = deltaTime;
 
-	static bool show_demo_window = true;
-	static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	if (io.WantCaptureMouse || io.WantCaptureKeyboard)
+		inputCmp->SetConsumed();
 
 	ImGui::NewFrame();
 
+	static bool show_demo_window = true;
 	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
 	if (show_demo_window)
 		ImGui::ShowDemoWindow(&show_demo_window);
-
-	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-	{
-		static float f = 0.0f;
-		static int counter = 0;
-
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-		// ImGui::Checkbox("Another Window", &show_another_window);
-
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
-		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-			counter++;
-
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
-
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::End();
-	}
-
-	if (io.WantCaptureMouse)
-	{
-		inputCmp->SetConsumed();
-	}
-
-	// gConsole.LogInfo("ImguiSystem::ImguiUpdatePhase GetCurrentContext: {}, Imgui.io.WantCaptureMouse: {}, Imgui.io.WantCaptureKeyboard: {}",
-	// 	ImGui::GetCurrentContext() != nullptr, io.WantCaptureMouse, io.WantCaptureKeyboard);
 }
