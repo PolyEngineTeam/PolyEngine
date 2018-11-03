@@ -7,7 +7,7 @@
 
 using namespace Poly;
 
-static const char EMPTY = { '\0' };
+static char EMPTY = '\0';
 
 void InputSystem::InputPhase(Scene* world)
 {
@@ -17,7 +17,7 @@ void InputSystem::InputPhase(Scene* world)
 	com->PrevKey = com->CurrKey;
 	com->PrevMouseButton = com->CurrMouseButton;
 
-	com->CharUTF8 = EMPTY;
+	com->CharUTF8 = &EMPTY;
 
 	com->MouseDelta = Vector2i::ZERO;
 	com->PrevWheel = com->CurrWheel;
