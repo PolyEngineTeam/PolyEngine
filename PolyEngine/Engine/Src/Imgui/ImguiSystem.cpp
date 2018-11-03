@@ -7,6 +7,26 @@
 
 using namespace Poly;
 
+eMouseCursorType GetCursorType(ImGuiMouseCursor imguiCursor)
+{
+	switch (imguiCursor)
+	{
+		case (int)ImGuiMouseCursor_None:		return eMouseCursorType::ARROW;
+		case (int)ImGuiMouseCursor_Arrow:		return eMouseCursorType::ARROW;
+		case (int)ImGuiMouseCursor_TextInput:	return eMouseCursorType::TEXTINPUT;
+		case (int)ImGuiMouseCursor_ResizeAll:	return eMouseCursorType::RESIZEALL;
+		case (int)ImGuiMouseCursor_ResizeNS:	return eMouseCursorType::RESIZENS;
+		case (int)ImGuiMouseCursor_ResizeEW:	return eMouseCursorType::RESIZEEW;
+		case (int)ImGuiMouseCursor_ResizeNESW:	return eMouseCursorType::RESIZENESW;
+		case (int)ImGuiMouseCursor_ResizeNWSE:	return eMouseCursorType::RESIZENWSE;
+		case (int)ImGuiMouseCursor_Hand:		return eMouseCursorType::HAND;
+		default:
+			ASSERTE(false, "Invalid ImGuiMouseCursor_!");
+			break;
+	}
+	return eMouseCursorType::_COUNT;
+}
+
 ImguiSystem::ImguiSystem()
 {
 	gConsole.LogInfo("ImguiSystem::ImguiSystem");
@@ -16,6 +36,7 @@ ImguiSystem::ImguiSystem()
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
 
 	ImGui::StyleColorsDark();
 
@@ -35,45 +56,36 @@ ImguiSystem::ImguiSystem()
 	//IM_ASSERT(font != NULL);
 
 
-	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;       // We can honor GetMouseCursor() values (optional)
-	// io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;        // We can honor io.WantSetMousePos requests (optional, rarely used)
+	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;	// We can honor GetMouseCursor() values (optional)
+	io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;	// We can honor io.WantSetMousePos requests (optional, rarely used)
 	// Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
-	io.KeyMap[ImGuiKey_Tab] = (int)eKey::TAB; // SDL_SCANCODE_TAB;
-	io.KeyMap[ImGuiKey_LeftArrow] = (int)eKey::LEFT; // SDL_SCANCODE_LEFT;
-	io.KeyMap[ImGuiKey_RightArrow] = (int)eKey::RIGHT; // SDL_SCANCODE_RIGHT;
-	io.KeyMap[ImGuiKey_UpArrow] = (int)eKey::UP; // SDL_SCANCODE_UP;
-	io.KeyMap[ImGuiKey_DownArrow] = (int)eKey::DOWN; // SDL_SCANCODE_DOWN;
-	io.KeyMap[ImGuiKey_PageUp] = (int)eKey::PAGEUP; // SDL_SCANCODE_PAGEUP;
-	io.KeyMap[ImGuiKey_PageDown] = (int)eKey::PAGEDOWN; // SDL_SCANCODE_PAGEDOWN;
-	io.KeyMap[ImGuiKey_Home] = (int)eKey::HOME; // SDL_SCANCODE_HOME;
-	io.KeyMap[ImGuiKey_End] = (int)eKey::END; // SDL_SCANCODE_END;
-	io.KeyMap[ImGuiKey_Insert] = (int)eKey::INSERT; // SDL_SCANCODE_INSERT;
-	io.KeyMap[ImGuiKey_Delete] = (int)eKey::DEL; // SDL_SCANCODE_DELETE;
-	io.KeyMap[ImGuiKey_Backspace] = (int)eKey::BACKSPACE; // SDL_SCANCODE_BACKSPACE;
-	io.KeyMap[ImGuiKey_Space] = (int)eKey::SPACE; // SDL_SCANCODE_SPACE;
-	io.KeyMap[ImGuiKey_Enter] = (int)eKey::RETURN; // SDL_SCANCODE_RETURN;
-	io.KeyMap[ImGuiKey_Escape] = (int)eKey::ESCAPE; // SDL_SCANCODE_ESCAPE;
-	io.KeyMap[ImGuiKey_A] = (int)eKey::KEY_A; // SDL_SCANCODE_A;
-	io.KeyMap[ImGuiKey_C] = (int)eKey::KEY_C; // SDL_SCANCODE_C;
-	io.KeyMap[ImGuiKey_V] = (int)eKey::KEY_V; // SDL_SCANCODE_V;
-	io.KeyMap[ImGuiKey_X] = (int)eKey::KEY_X; // SDL_SCANCODE_X;
-	io.KeyMap[ImGuiKey_Y] = (int)eKey::KEY_Y; // SDL_SCANCODE_Y;
-	io.KeyMap[ImGuiKey_Z] = (int)eKey::KEY_Z; // SDL_SCANCODE_Z;
-
-	gConsole.LogInfo("ImguiSystem::Ctor GetCurrentContext: {}", ImGui::GetCurrentContext() != nullptr);
+	io.KeyMap[ImGuiKey_Tab] = (int)eKey::TAB;				// SDL_SCANCODE_TAB;
+	io.KeyMap[ImGuiKey_LeftArrow] = (int)eKey::LEFT;		// SDL_SCANCODE_LEFT;
+	io.KeyMap[ImGuiKey_RightArrow] = (int)eKey::RIGHT;		// SDL_SCANCODE_RIGHT;
+	io.KeyMap[ImGuiKey_UpArrow] = (int)eKey::UP;			// SDL_SCANCODE_UP;
+	io.KeyMap[ImGuiKey_DownArrow] = (int)eKey::DOWN;		// SDL_SCANCODE_DOWN;
+	io.KeyMap[ImGuiKey_PageUp] = (int)eKey::PAGEUP;			// SDL_SCANCODE_PAGEUP;
+	io.KeyMap[ImGuiKey_PageDown] = (int)eKey::PAGEDOWN;		// SDL_SCANCODE_PAGEDOWN;
+	io.KeyMap[ImGuiKey_Home] = (int)eKey::HOME;				// SDL_SCANCODE_HOME;
+	io.KeyMap[ImGuiKey_End] = (int)eKey::END;				// SDL_SCANCODE_END;
+	io.KeyMap[ImGuiKey_Insert] = (int)eKey::INSERT;			// SDL_SCANCODE_INSERT;
+	io.KeyMap[ImGuiKey_Delete] = (int)eKey::DEL;			// SDL_SCANCODE_DELETE;
+	io.KeyMap[ImGuiKey_Backspace] = (int)eKey::BACKSPACE;	// SDL_SCANCODE_BACKSPACE;
+	io.KeyMap[ImGuiKey_Space] = (int)eKey::SPACE;			// SDL_SCANCODE_SPACE;
+	io.KeyMap[ImGuiKey_Enter] = (int)eKey::RETURN;			// SDL_SCANCODE_RETURN;
+	io.KeyMap[ImGuiKey_Escape] = (int)eKey::ESCAPE;			// SDL_SCANCODE_ESCAPE;
+	io.KeyMap[ImGuiKey_A] = (int)eKey::KEY_A;				// SDL_SCANCODE_A;
+	io.KeyMap[ImGuiKey_C] = (int)eKey::KEY_C;				// SDL_SCANCODE_C;
+	io.KeyMap[ImGuiKey_V] = (int)eKey::KEY_V;				// SDL_SCANCODE_V;
+	io.KeyMap[ImGuiKey_X] = (int)eKey::KEY_X;				// SDL_SCANCODE_X;
+	io.KeyMap[ImGuiKey_Y] = (int)eKey::KEY_Y;				// SDL_SCANCODE_Y;
+	io.KeyMap[ImGuiKey_Z] = (int)eKey::KEY_Z;				// SDL_SCANCODE_Z;
 
 	io.SetClipboardTextFn = gEngine->SetClipboardTextFunction;
 	io.GetClipboardTextFn = gEngine->GetClipboardTextFunction;
 	io.ClipboardUserData = NULL;
 
-	// g_MouseCursors[ImGuiMouseCursor_Arrow] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-	// g_MouseCursors[ImGuiMouseCursor_TextInput] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
-	// g_MouseCursors[ImGuiMouseCursor_ResizeAll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
-	// g_MouseCursors[ImGuiMouseCursor_ResizeNS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
-	// g_MouseCursors[ImGuiMouseCursor_ResizeEW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
-	// g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
-	// g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
-	// g_MouseCursors[ImGuiMouseCursor_Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+	gConsole.LogInfo("ImguiSystem::Ctor GetCurrentContext: {}", ImGui::GetCurrentContext() != nullptr);
 }
 
 void ImguiSystem::OnUpdate(Scene* scene)
@@ -104,7 +116,7 @@ void ImguiSystem::OnUpdate(Scene* scene)
 		if (inputCmp->IsPressed((eKey)key) || inputCmp->IsReleased((eKey)key))
 		{
 			IM_ASSERT(key >= 0 && key < IM_ARRAYSIZE(io.KeysDown));
-			if (inputCmp->IsPressed((eKey)key)) gConsole.LogInfo("ImguiSystem::OnUpdate key: {}, {}", key, inputCmp->IsPressed((eKey)key));
+			// if (inputCmp->IsPressed((eKey)key)) gConsole.LogInfo("ImguiSystem::OnUpdate key: {}, {}", key, inputCmp->IsPressed((eKey)key));
 			io.KeysDown[key] = inputCmp->IsPressed((eKey)key);
 			io.KeyShift = inputCmp->IsPressed(eKey::LSHIFT) || inputCmp->IsPressed(eKey::RSHIFT);
 			io.KeyCtrl = inputCmp->IsPressed(eKey::LCTRL) || inputCmp->IsPressed(eKey::RCTRL);
@@ -121,39 +133,35 @@ void ImguiSystem::OnUpdate(Scene* scene)
 			io.AddInputCharactersUTF8(inputCmp->GetCharUTF8());
 	}
 
-	// int mx, my;
-	// Uint32 mouse_buttons = SDL_GetMouseState(&mx, &my);
 	// If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
 	io.MouseDown[0] = inputCmp->IsPressed(eMouseButton::LEFT);
 	io.MouseDown[1] = inputCmp->IsPressed(eMouseButton::RIGHT);
 	io.MouseDown[2] = inputCmp->IsPressed(eMouseButton::MIDDLE);
 
-//	Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
-//	if (io.WantSetMousePos)
-//		SDL_WarpMouseInWindow(g_Window, (int)io.MousePos.x, (int)io.MousePos.y);
-//	else
-//		io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
-	io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
+	// Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
+	if (io.WantSetMousePos)
+		gEngine->GetOutputQueue().PushBack({eOutputEventType::MOUSEPOS, Vector2i((int)io.MousePos.x, (int)io.MousePos.y)});
+	else
+		io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
 
 	Vector2i mousePos = inputCmp->GetMousePos();
 	io.MousePos = ImVec2((float)mousePos.X, (float)mousePos.Y);
 
-	if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)
-		return;
-
-	// ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
-	// if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None)
-	// {
-	// 	Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
-	// 	SDL_ShowCursor(SDL_FALSE);
-	// 	inputCmp->SetCursorHidden(); // TODO: input cursor visibility handling
-	// }
-	// else
-	// {
-	// 	Show OS mouse cursor
-	// 	SDL_SetCursor(g_MouseCursors[imgui_cursor] ? g_MouseCursors[imgui_cursor] : g_MouseCursors[ImGuiMouseCursor_Arrow]);
-	// 	SDL_ShowCursor(SDL_TRUE);
-	// }
+	if (!(io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange))
+	{
+		ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
+		if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None)
+		{
+			// Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
+			gEngine->GetOutputQueue().PushBack({ eOutputEventType::CURSORHIDE });
+		}
+		else
+		{
+			// Show OS mouse cursor
+			gEngine->GetOutputQueue().PushBack({ eOutputEventType::CURSORSET, GetCursorType(imgui_cursor) });
+			gEngine->GetOutputQueue().PushBack({ eOutputEventType::CURSORSHOW });
+		}
+	}
 
 	IM_ASSERT(io.Fonts->IsBuilt());     // Font atlas needs to be built, call renderer _NewFrame() function e.g. ImGui_ImplOpenGL3_NewFrame()
 	

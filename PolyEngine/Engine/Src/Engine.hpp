@@ -169,6 +169,10 @@ namespace Poly
 		/// <returns>Reference to InputQueue instance.</returns>
 		InputQueue& GetInputQueue() { return InputEventsQueue; }
 
+		/// <summary>Returns refference to output queue needed by Main.</summary>
+		/// <returns>Reference to OutputQueue instance.</returns>
+		OutputQueue& GetOutputQueue() { return OutputEventsQueue; }
+
 		/// <summary>Makes renderer resizes its context.</summary>
 		/// <param name="size">New screen size</param>
 		void ResizeScreen(const ScreenSize& size);
@@ -207,6 +211,7 @@ namespace Poly
 		IEditor* Editor = nullptr;
 		OpenALDevice AudioDevice;
 		InputQueue InputEventsQueue;
+		OutputQueue OutputEventsQueue;
 
 		EnumArray<Dynarray<std::unique_ptr<ISystem>>, eUpdatePhaseOrder> GameUpdatePhases;
 
