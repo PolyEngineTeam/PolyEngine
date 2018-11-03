@@ -1,18 +1,21 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Input/InputSystem.hpp"
-#include "Input/InputWorldComponent.hpp"
-#include "ECS/Scene.hpp"
-#include "Utils/Optional.hpp"
+#include <Input/InputSystem.hpp>
+#include <Input/InputWorldComponent.hpp>
+#include <ECS/Scene.hpp>
+#include <Utils/Optional.hpp>
 
 using namespace Poly;
 
 void InputSystem::InputPhase(Scene* world)
 {
 	InputWorldComponent* com = world->GetWorldComponent<InputWorldComponent>();
+	com->IsConsumed = false;
 
 	com->PrevKey = com->CurrKey;
 	com->PrevMouseButton = com->CurrMouseButton;
+
+	com->CharUTF8 = nullptr;
 
 	com->MouseDelta = Vector2i::ZERO;
 	com->PrevWheel = com->CurrWheel;
@@ -24,7 +27,6 @@ void InputSystem::InputPhase(Scene* world)
 	}
 
 	InputQueue& InputEventsQueue = gEngine->GetInputQueue();
-
 	while (!InputEventsQueue.IsEmpty())
 	{
 		InputEvent& ev = InputEventsQueue.Front();
@@ -38,6 +40,9 @@ void InputSystem::InputPhase(Scene* world)
 			if(ev.Key < eKey::_COUNT)
 				com->CurrKey[ev.Key] = false;
 			break;
+		case eInputEventType::TEXTCHAR:
+			com->CharUTF8 = ev.CharUTF8;
+			break;
 		case eInputEventType::MOUSEBUTTONDOWN:
 			if(ev.MouseButton < eMouseButton::_COUNT)
 				com->CurrMouseButton[ev.MouseButton] = true;
@@ -47,9 +52,11 @@ void InputSystem::InputPhase(Scene* world)
 				com->CurrMouseButton[ev.MouseButton] = false;
 			break;
 		case eInputEventType::MOUSEMOVE:
-			com->MouseDelta += ev.Pos;
+			com->MousePos += ev.Pos;
+			com->MouseDelta = ev.Pos;
 			break;
 		case eInputEventType::MOUSEPOS:
+			// com->MouseDelta = ev.Pos - com->MousePos;
 			com->MousePos = ev.Pos;
 			break;
 		case eInputEventType::WHEELMOVE:
@@ -102,7 +109,4 @@ void InputSystem::InputPhase(Scene* world)
 		}
 		InputEventsQueue.PopFront();
 	}
-
-
 }
-

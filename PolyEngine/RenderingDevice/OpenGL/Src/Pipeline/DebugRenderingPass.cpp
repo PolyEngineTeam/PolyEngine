@@ -1,7 +1,7 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "Pipeline/DebugRenderingPass.hpp"
-#include "Common/DebugRenderingBuffers.hpp"
+#include <Pipeline/DebugRenderingPass.hpp>
+#include <Common/DebugRenderingBuffers.hpp>
 
 using namespace Poly;
 

@@ -2,8 +2,8 @@
 
 #include <Defines.hpp>
 #include <Math/Vector.hpp>
-#include "Resources/ResourceBase.hpp"
-#include "Resources/TextureResource.hpp"
+#include <Resources/ResourceBase.hpp>
+#include <Resources/TextureResource.hpp>
 
 struct FT_FaceRec_;
 typedef struct FT_FaceRec_* FT_Face;

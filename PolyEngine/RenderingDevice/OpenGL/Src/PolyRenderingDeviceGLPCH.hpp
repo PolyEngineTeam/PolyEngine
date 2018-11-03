@@ -39,7 +39,7 @@
 
 // Other
 #include <Math/Color.hpp>
-#include <FileIO.hpp>
+#include <Utils/FileIO.hpp>
 #include <Utils/Logger.hpp>
 #include <UniqueID.hpp>
 #include <Utils/EnumUtils.hpp>
@@ -90,3 +90,7 @@
 
 // SDL
 #include <SDL.h>
+
+// SILENCE_GCC_WARNING(-Wimplicit-fallthrough=, "Surpressing clang warnings in imstb_truetype")
+#include <imgui.h>
+// UNSILENCE_GCC_WARNING()

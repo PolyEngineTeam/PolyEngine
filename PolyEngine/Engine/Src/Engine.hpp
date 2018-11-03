@@ -2,9 +2,12 @@
 
 #include <Defines.hpp>
 #include <Collections/Dynarray.hpp>
-#include "Rendering/IRenderingDevice.hpp"
-#include "Audio/OpenALDevice.hpp"
-#include "Input/InputSystem.hpp"
+#include <Rendering/IRenderingDevice.hpp>
+#include <Audio/OpenALDevice.hpp>
+#include <Input/InputSystem.hpp>
+#include <ECS/ISystem.hpp>
+#include <Utils/EnumUtils.hpp>
+#include "Editor/IEditor.hpp"
 
 namespace Poly
 {
@@ -26,7 +29,7 @@ namespace Poly
 	{
 	public:
 		/// <summary>Constructs engine instance.</summary>
-		Engine(bool testRun = false);
+		Engine(bool testRun = false, IEditor* editor = nullptr);
 
 		/// <summary>Deletes engine instance.</summary>
 		~Engine();
@@ -36,7 +39,8 @@ namespace Poly
 		enum class eUpdatePhaseOrder
 		{
 			PREUPDATE,
-			UPDATE,
+			EDITOR,
+			UPDATE, //TODO(squares): rename this to GAME?
 			POSTUPDATE,
 			_COUNT
 		};
@@ -47,9 +51,18 @@ namespace Poly
 		/// <param name="device">Pointer to IRenderingDevice instance.</param>
 		void Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice> device);
 
+		void StartGame();
+
+		void EndGame();
+
 		/// <summary>Registers a PhaseUpdateFunction to be executed in the update.</summary>
 		/// <param name="phaseFunction"/>
 		void RegisterGameUpdatePhase(const PhaseUpdateFunction& phaseFunction) { RegisterUpdatePhase(phaseFunction, eUpdatePhaseOrder::UPDATE); }
+		void RegisterEditorUpdatePhase(const PhaseUpdateFunction& phaseFunction) { RegisterUpdatePhase(phaseFunction, eUpdatePhaseOrder::EDITOR); }
+
+		/// <summary>Registers a System's PhaseUpdateFunction to be executed in the update.</summary>
+		/// <param name="system"/>
+		void RegisterGameUpdatePhase(std::unique_ptr<ISystem> system) { RegisterSystem(std::move(system), eUpdatePhaseOrder::UPDATE); }
 
 		/// <summary>Executes update phases functions that were registered in RegisterUpdatePhase().
 		/// Functions are executrd with given order and with given update phase order.</summary>
@@ -57,38 +70,45 @@ namespace Poly
 		/// <see cref="Engine.eUpdatePhaseOrder"/>
 		void Update();
 
+		void Update(Dynarray<eUpdatePhaseOrder> phasesUpdate);
+
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
-		/// One of four functions handling incoming input events.</summary>
+		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="key">Key code</param>
 		void KeyDown(eKey key) { InputEventsQueue.PushBack({eInputEventType::KEYDOWN, key}); }
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
-		/// One of four functions handling incoming input events.</summary>
+		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="key">Key code</param>
 		void KeyUp(eKey key) { InputEventsQueue.PushBack({eInputEventType::KEYUP, key}); }
 
+		/// <summary>Pushes input event to an input queue with specified UTF8 character.
+		/// One of eight functions handling incoming input events.</summary>
+		/// <param name="key">Unicode UTF8 character</param>
+		void AddCharacterUTF8(char* charUTF8) { InputEventsQueue.PushBack({eInputEventType::TEXTCHAR, charUTF8}); }
+
 		/// <summary>Pushes input event to an input queue with specified event type and button code.
-		/// One of four functions handling incoming input events.</summary>
+		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="button">Mouse button code</param>
 		void MouseButtonDown(eMouseButton button) { InputEventsQueue.PushBack({eInputEventType::MOUSEBUTTONDOWN, button}); }
 
 		/// <summary>Pushes input event to an input queue with specified event type and button code.
-		/// One of four functions handling incoming input events.</summary>
+		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="button">Mouse button code</param>
 		void MouseButtonUp(eMouseButton button) { InputEventsQueue.PushBack({eInputEventType::MOUSEBUTTONUP, button}); }
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
-		/// One of four functions handling incoming input events.</summary>
+		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="pos">Mouse delta pos.</param>
 		void UpdateMouseMove(const Vector2i& delta) { InputEventsQueue.PushBack({eInputEventType::MOUSEMOVE, delta }); }
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
-		/// One of four functions handling incoming input events.</summary>
+		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="pos">New mouse position.</param>
 		void UpdateMousePos(const Vector2i& pos) { InputEventsQueue.PushBack({ eInputEventType::MOUSEPOS, pos }); }
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
-		/// One of four functions handling incoming input events.</summary>
+		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="pos">Wheel delta position.</param>
 		void UpdateWheelPos(const Vector2i& deltaPos) { InputEventsQueue.PushBack({eInputEventType::WHEELMOVE, deltaPos}); }
 
@@ -131,6 +151,8 @@ namespace Poly
 		Scene* GetActiveScene() { return ActiveScene.get(); }
 		void LoadDefaultScene();
 
+		IEditor* GetEditor() { return Editor; }
+
 		Scene* GetCurrentlySerializedScene() { return SerializedScene; }
 		void SetCurrentlySerializedScene(Scene* s) { ASSERTE(SerializedScene == nullptr || s == nullptr, "Setting scene again!"); SerializedScene = s; }
 
@@ -147,18 +169,27 @@ namespace Poly
 		/// <returns>Reference to InputQueue instance.</returns>
 		InputQueue& GetInputQueue() { return InputEventsQueue; }
 
+		/// <summary>Returns refference to output queue needed by Main.</summary>
+		/// <returns>Reference to OutputQueue instance.</returns>
+		OutputQueue& GetOutputQueue() { return OutputEventsQueue; }
+
 		/// <summary>Makes renderer resizes its context.</summary>
 		/// <param name="size">New screen size</param>
 		void ResizeScreen(const ScreenSize& size);
+
+		const char* (*GetClipboardTextFunction)(void* user_data);
+		
+		void(*SetClipboardTextFunction)(void* user_data, const char* text);
 
 	private:
 		inline void UpdatePhases(eUpdatePhaseOrder order)
 		{
 			HEAVY_ASSERTE(order != eUpdatePhaseOrder::_COUNT, "_COUNT enum value passed to UpdatePhases(), which is an invalid value");
-			for (auto& update : GameUpdatePhases[static_cast<int>(order)])
-				update(GetActiveScene());
+			for (auto&  update : GameUpdatePhases[order])
+				update->OnUpdate(GetActiveScene());
 		}
 
+		/// @deprecated
 		/// Registers a PhaseUpdateFunction to be executed in the update.
 		/// part of a single frame in the same order as they were passed in.
 		/// @param phaseFunction - void function(Scene*)
@@ -166,14 +197,23 @@ namespace Poly
 		/// @see eUpdatePhaseOrder
 		void RegisterUpdatePhase(const PhaseUpdateFunction& phaseFunction, eUpdatePhaseOrder order);
 
+		/// Registers a ISystem containing PhaseUpdateFunction to be executed in the update.
+		/// part of a single frame in the same order as they were passed in.
+		/// @param system - std::unique_ptr<ISystem> containing void function(Scene*)
+		/// @param order - enum eUpdatePhaseOrder value
+		/// @see eUpdatePhaseOrder
+		void RegisterSystem(std::unique_ptr<ISystem> system, eUpdatePhaseOrder order);
+
 		std::unique_ptr<Scene> ActiveScene;
 		Scene* SerializedScene = nullptr;
 		std::unique_ptr<IGame> Game;
 		std::unique_ptr<IRenderingDevice> RenderingDevice;
+		IEditor* Editor = nullptr;
 		OpenALDevice AudioDevice;
 		InputQueue InputEventsQueue;
+		OutputQueue OutputEventsQueue;
 
-		Dynarray<PhaseUpdateFunction> GameUpdatePhases[static_cast<int>(eUpdatePhaseOrder::_COUNT)];
+		EnumArray<Dynarray<std::unique_ptr<ISystem>>, eUpdatePhaseOrder> GameUpdatePhases;
 
 		bool QuitRequested = false; //stop the game
 		bool MouseCaptureEnabled = false;

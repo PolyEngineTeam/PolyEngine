@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "ECS/ComponentBase.hpp"
-#include "Audio/SoundEmitterComponent.hpp"
+#include <ECS/ComponentBase.hpp>
+#include <Audio/SoundEmitterComponent.hpp>
 
 namespace Poly
 {

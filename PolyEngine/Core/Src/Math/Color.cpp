@@ -1,6 +1,6 @@
-#include "CorePCH.hpp"
+#include <CorePCH.hpp>
 
-#include "Math/Color.hpp"
+#include <Math/Color.hpp>
 
 using namespace Poly;
 

@@ -1,8 +1,8 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Rendering/Camera/CameraComponent.hpp"
-#include "Rendering/MeshRenderingComponent.hpp"
-#include "Resources/ResourceManager.hpp"
+#include <Rendering/Camera/CameraComponent.hpp>
+#include <Rendering/MeshRenderingComponent.hpp>
+#include <Resources/ResourceManager.hpp>
 
 using namespace Poly;
 

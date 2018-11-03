@@ -2,9 +2,9 @@
 
 #include <Defines.hpp>
 #include <Utils/Optional.hpp>
-#include "ECS/Entity.hpp"
-#include "ECS/ComponentIDGenerator.hpp"
-#include "ECS/ComponentIDGeneratorImpl.hpp"
+#include <ECS/Entity.hpp>
+#include <ECS/ComponentIDGenerator.hpp>
+#include <ECS/ComponentIDGeneratorImpl.hpp>
 
 namespace Poly {
 	enum class eComponentBaseFlags

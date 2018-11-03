@@ -1,4 +1,4 @@
-#include "PolyEditorPCH.hpp"
+#include <PolyEditorPCH.hpp>
 
 int main(int argc, char *argv[])
 {

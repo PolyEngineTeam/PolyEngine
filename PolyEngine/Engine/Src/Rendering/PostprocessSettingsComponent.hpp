@@ -1,13 +1,14 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "ECS/ComponentBase.hpp"
-#include "Rendering/Camera/CameraSystem.hpp"
+#include <ECS/ComponentBase.hpp>
+#include <Rendering/Camera/CameraSystem.hpp>
 
 namespace Poly {
 
 	class ENGINE_DLLEXPORT PostprocessSettingsComponent : public ComponentBase
 	{
+		friend void CameraSystem::CameraUpdatePhase(Scene*);
 	public:
 		RTTI_DECLARE_COMPONENT(::Poly::PostprocessSettingsComponent) { NO_RTTI_PROPERTY(); }
 

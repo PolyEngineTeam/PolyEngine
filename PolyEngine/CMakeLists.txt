@@ -5,6 +5,7 @@ project(PolyEngine VERSION 0.1.2 LANGUAGES CXX C) #note(vuko): without C older C
 # Initial setup: C++ standard version, build types, CMake modules
 ##
 set(ENGINE_ROOT_DIR ${CMAKE_SOURCE_DIR})
+set(DIST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Dist")
 
 include(${ENGINE_ROOT_DIR}/CMakeListsCommon.txt)
 
@@ -12,9 +13,9 @@ include(${ENGINE_ROOT_DIR}/CMakeListsCommon.txt)
 # Finally, meat and potatoes
 ##
 add_subdirectory(Core)
-add_subdirectory(Editor)
 add_subdirectory(Engine)
 add_subdirectory(RenderingDevice/OpenGL)
+add_subdirectory(Editor)
 add_subdirectory(Standalone)
 enable_testing()
 add_subdirectory(UnitTests)

@@ -1,8 +1,8 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Physics3D/Physics3DShapes.hpp"
-#include "Physics3D/Physics3DShapesImpl.hpp"
-#include "Resources/ResourceManager.hpp"
+#include <Physics3D/Physics3DShapes.hpp>
+#include <Physics3D/Physics3DShapesImpl.hpp>
+#include <Resources/ResourceManager.hpp>
 
 //------------------------------------------------------------------------------
 Poly::Physics3DShape::~Physics3DShape()

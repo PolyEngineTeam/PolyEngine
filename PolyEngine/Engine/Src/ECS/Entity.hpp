@@ -5,10 +5,10 @@
 #include <Math/AABox.hpp>
 #include <Utils/EnumUtils.hpp>
 #include <RTTI/RTTI.hpp>
-#include "ECS/EntityTransform.hpp"
-#include "ECS/ComponentIDGenerator.hpp"
-#include "Collections/Dynarray.hpp"
-#include "Engine.hpp"
+#include <ECS/EntityTransform.hpp>
+#include <ECS/ComponentIDGenerator.hpp>
+#include <Collections/Dynarray.hpp>
+#include <Engine.hpp>
 
 namespace Poly
 {
@@ -98,6 +98,10 @@ namespace Poly
 		template<class T>
 		const T* GetComponent() const; //defined in ECS/Scene.hpp due to circular inclusion problem; FIXME: circular inclusion
 
+		/// We need these two in editor ehere we have to iterate through all components.
+		ComponentBase* GetComponent(size_t ctypeID) { return Components[ctypeID].get(); }
+		const ComponentBase* GetComponent(size_t ctypeID) const { return Components[ctypeID].get(); }
+
 		/// Returns pointer to parent entity. Returns nullptr if (and only if) this is the root of the scene.
 		/// @return Pointer to parent entity.
 		const Entity* GetParent() const { return Parent; }
@@ -114,6 +118,9 @@ namespace Poly
 		/// Adds new child to this entity. Child cannot be parent of this entity, equal to this entity or nullptr.
 		/// @param Entity* Pointer to new child
 		inline void AddChild(Entity* child) { ASSERTE(child, "Child cannot be null!"); child->SetParent(this); }
+
+		const String& GetName() const { return Name; }
+		void SetName(const String& name) { Name = name; }
 
 		/// Returns transformation data of this entity.
 		/// @return Transformation data of this entity.

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "Audio/SoundSystem.hpp"
+#include <Audio/SoundSystem.hpp>
 
 typedef struct ALCdevice_struct ALCdevice;
 

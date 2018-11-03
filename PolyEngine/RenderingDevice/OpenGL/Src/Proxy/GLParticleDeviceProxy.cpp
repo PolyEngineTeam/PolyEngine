@@ -1,8 +1,8 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "Proxy/GLMeshDeviceProxy.hpp"
-#include "Common/GLUtils.hpp"
-#include "Proxy/GLParticleDeviceProxy.hpp"
+#include <Proxy/GLMeshDeviceProxy.hpp>
+#include <Common/GLUtils.hpp>
+#include <Proxy/GLParticleDeviceProxy.hpp>
 
 using namespace Poly;
 

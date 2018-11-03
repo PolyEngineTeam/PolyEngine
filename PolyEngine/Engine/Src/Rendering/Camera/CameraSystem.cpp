@@ -1,11 +1,11 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Rendering/Camera/CameraSystem.hpp"
-#include "Rendering/IRenderingDevice.hpp"
-#include "Rendering/ViewportWorldComponent.hpp"
-#include "Rendering/Camera/CameraComponent.hpp"
-#include "ECS/Scene.hpp"
-#include "Input/InputWorldComponent.hpp"
+#include <Rendering/Camera/CameraSystem.hpp>
+#include <Rendering/IRenderingDevice.hpp>
+#include <Rendering/ViewportWorldComponent.hpp>
+#include <Rendering/Camera/CameraComponent.hpp>
+#include <ECS/Scene.hpp>
+#include <Input/InputWorldComponent.hpp>
 
 void Poly::CameraSystem::CameraUpdatePhase(Scene* world)
 {

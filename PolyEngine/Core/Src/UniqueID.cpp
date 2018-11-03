@@ -1,9 +1,9 @@
-#include "CorePCH.hpp"
+#include <CorePCH.hpp>
 
-#include "UniqueID.hpp"
-#include "Math/Random.hpp"
-#include "Utils/HexUtils.hpp"
-#include "Collections/StringBuilder.hpp"
+#include <UniqueID.hpp>
+#include <Math/Random.hpp>
+#include <Utils/HexUtils.hpp>
+#include <Collections/StringBuilder.hpp>
 
 using namespace Poly;
 

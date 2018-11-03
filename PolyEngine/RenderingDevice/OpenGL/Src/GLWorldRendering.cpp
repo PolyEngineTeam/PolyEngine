@@ -1,6 +1,6 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "GLRenderingDevice.hpp"
+#include <GLRenderingDevice.hpp>
 
 #include <algorithm>    // std::min
 

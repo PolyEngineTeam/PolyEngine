@@ -1,7 +1,7 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "Proxy/GLTextureDeviceProxy.hpp"
-#include "Common/GLUtils.hpp"
+#include <Proxy/GLTextureDeviceProxy.hpp>
+#include <Common/GLUtils.hpp>
 
 using namespace Poly;
 

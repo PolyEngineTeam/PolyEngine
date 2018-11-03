@@ -1,6 +1,6 @@
-#include "CorePCH.hpp"
+#include <CorePCH.hpp>
 
-#include "RTTITypeInfo.hpp"
+#include <RTTI/RTTITypeInfo.hpp>
 
 namespace Poly {
 	namespace RTTI {

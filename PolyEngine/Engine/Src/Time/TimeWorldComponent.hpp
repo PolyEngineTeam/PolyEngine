@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "Time/TimeSystem.hpp"
-#include "Timer.hpp"
-#include "ECS/ComponentBase.hpp"
+#include <Time/TimeSystem.hpp>
+#include <Time/Timer.hpp>
+#include <ECS/ComponentBase.hpp>
 
 
 namespace Poly

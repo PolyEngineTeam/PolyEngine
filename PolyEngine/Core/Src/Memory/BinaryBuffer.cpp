@@ -1,7 +1,7 @@
-#include "CorePCH.hpp"
+#include <CorePCH.hpp>
 
-#include "Memory/BinaryBuffer.hpp"
-#include "Memory/Allocator.hpp"
+#include <Memory/BinaryBuffer.hpp>
+#include <Memory/Allocator.hpp>
 
 using namespace Poly;
 

@@ -1,12 +1,14 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Resources/ResourceManager.hpp"
-#include "Resources/MeshResource.hpp"
-#include "Resources/SoundResource.hpp"
+#include <Resources/ResourceManager.hpp>
+#include <Resources/MeshResource.hpp>
+#include <Resources/SoundResource.hpp>
 
 SILENCE_CLANG_WARNING(-Wparentheses-equality, "Surpressing clang warnings in stb_image") //@fixme(celeborth) if put in PCH it throws violation of ODR linker error
+SILENCE_GCC_WARNING(-Wimplicit-fallthrough=, "Surpressing clang warnings in stb_image")
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb/stb_image.h"
+#include <stb/stb_image.h>
+UNSILENCE_GCC_WARNING()
 UNSILENCE_CLANG_WARNING()
 
 using namespace Poly;

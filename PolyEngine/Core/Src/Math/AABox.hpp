@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "Math/BasicMath.hpp"
-#include "Math/Vector.hpp"
-#include "Math/Matrix.hpp"
+#include <Defines.hpp>
+#include <Math/BasicMath.hpp>
+#include <Math/Vector.hpp>
+#include <Math/Matrix.hpp>
 
 namespace Poly {
 

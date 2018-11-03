@@ -1,6 +1,6 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Rendering/Lighting/LightSourceComponent.hpp"
+#include <Rendering/Lighting/LightSourceComponent.hpp>
 
 RTTI_DEFINE_COMPONENT(::Poly::AmbientLightWorldComponent)
 RTTI_DEFINE_COMPONENT(::Poly::DirectionalLightComponent)

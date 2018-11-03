@@ -1,7 +1,7 @@
-#include "CorePCH.hpp"
+#include <CorePCH.hpp>
 
-#include "Math/Vector2f.hpp"
-#include "Math/Vector2i.hpp"
+#include <Math/Vector2f.hpp>
+#include <Math/Vector2i.hpp>
 
 using namespace Poly;
 

@@ -1,10 +1,12 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Resources/MeshResource.hpp"
-#include "Resources/ResourceManager.hpp"
-#include "ECS/Scene.hpp"
+#include <Resources/MeshResource.hpp>
+#include <Resources/ResourceManager.hpp>
+#include <ECS/Scene.hpp>
 
 using namespace Poly;
+
+RTTI_DEFINE_TYPE(Poly::MeshResource)
 
 MeshResource::MeshResource(const String& path)
 {

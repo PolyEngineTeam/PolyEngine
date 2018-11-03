@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "Math/BasicMath.hpp"
-#include "Math/Vector.hpp"
-#include "Math/Matrix.hpp"
-#include "Math/AABox.hpp"
+#include <Defines.hpp>
+#include <Math/BasicMath.hpp>
+#include <Math/Vector.hpp>
+#include <Math/Matrix.hpp>
+#include <Math/AABox.hpp>
 
 namespace Poly {
 	/// <summary>Class representing axis aligned box.</summary>
