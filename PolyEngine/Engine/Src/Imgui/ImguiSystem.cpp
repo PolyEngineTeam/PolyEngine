@@ -29,8 +29,6 @@ eMouseCursorType GetCursorType(ImGuiMouseCursor imguiCursor)
 
 ImguiSystem::ImguiSystem()
 {
-	gConsole.LogInfo("ImguiSystem::ImguiSystem");
-
 	// Setup Dear ImGui binding
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -116,7 +114,6 @@ void ImguiSystem::OnUpdate(Scene* scene)
 		if (inputCmp->IsPressed((eKey)key) || inputCmp->IsReleased((eKey)key))
 		{
 			IM_ASSERT(key >= 0 && key < IM_ARRAYSIZE(io.KeysDown));
-			// if (inputCmp->IsPressed((eKey)key)) gConsole.LogInfo("ImguiSystem::OnUpdate key: {}, {}", key, inputCmp->IsPressed((eKey)key));
 			io.KeysDown[key] = inputCmp->IsPressed((eKey)key);
 			io.KeyShift = inputCmp->IsPressed(eKey::LSHIFT) || inputCmp->IsPressed(eKey::RSHIFT);
 			io.KeyCtrl = inputCmp->IsPressed(eKey::LCTRL) || inputCmp->IsPressed(eKey::RCTRL);
@@ -125,6 +122,7 @@ void ImguiSystem::OnUpdate(Scene* scene)
 		}
 	}
 
+	// used to read keyboard and fill text input Widgets
 	if (inputCmp->GetCharUTF8() != nullptr)
 	{
 		const char* charUTF8 = inputCmp->GetCharUTF8();
@@ -178,8 +176,8 @@ void ImguiSystem::OnUpdate(Scene* scene)
 
 	ImGui::NewFrame();
 
-	static bool show_demo_window = true;
 	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-	if (show_demo_window)
-		ImGui::ShowDemoWindow(&show_demo_window);
+	// static bool show_demo_window = true;
+	// if (show_demo_window)
+	// 	ImGui::ShowDemoWindow(&show_demo_window);
 }

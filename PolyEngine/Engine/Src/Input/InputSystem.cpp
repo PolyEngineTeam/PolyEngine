@@ -15,7 +15,7 @@ void InputSystem::InputPhase(Scene* world)
 	com->PrevKey = com->CurrKey;
 	com->PrevMouseButton = com->CurrMouseButton;
 
-	com->CharUTF8 = '\0';
+	com->CharUTF8 = { '\0' };
 
 	com->MouseDelta = Vector2i::ZERO;
 	com->PrevWheel = com->CurrWheel;
