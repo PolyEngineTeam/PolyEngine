@@ -629,7 +629,7 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
 	
 	Vector shadowAABBExtents = dirLightCmp->DebugShadowAABBInWS.GetSize() * 0.5f;
 	Vector shadowAABBCenter = dirLightCmp->DebugShadowAABBInWS.GetCenter();
-	Vector lightDirection = MovementSystem::GetGlobalForward(dirLightCmp->GetTransform());
+	Vector lightDirection = dirLightCmp->GetTransform().GetGlobalForward();
 
 	// Inverse of WorldFromModel of dirLight Entity
 	Matrix lightViewFromModel = Matrix(
@@ -839,7 +839,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 		Color colorIntensity = dirLightCmp->GetColor();
 		colorIntensity.A = dirLightCmp->GetIntensity();
 		LightAccumulationShader.SetUniform(baseName + "ColorIntensity", colorIntensity);
-		LightAccumulationShader.SetUniform(baseName + "Direction", -MovementSystem::GetGlobalForward(transform));
+		LightAccumulationShader.SetUniform(baseName + "Direction", -(transform.GetGlobalForward()));
 
 		++dirLightsCount;
 		if (dirLightsCount == MAX_LIGHT_COUNT_DIRECTIONAL)
@@ -996,7 +996,7 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 		Color colorIntensity = dirLightCmp->GetColor();
 		colorIntensity.A = dirLightCmp->GetIntensity();
 		TranslucentShader.SetUniform(baseName + "ColorIntensity", colorIntensity);
-		TranslucentShader.SetUniform(baseName + "Direction", -MovementSystem::GetGlobalForward(transform));
+		TranslucentShader.SetUniform(baseName + "Direction", -(transform.GetGlobalForward()));
 
 		++dirLightsCount;
 		if (dirLightsCount == MAX_LIGHT_COUNT_DIRECTIONAL)

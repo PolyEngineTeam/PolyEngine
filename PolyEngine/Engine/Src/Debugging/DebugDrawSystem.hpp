@@ -26,7 +26,6 @@ namespace Poly
 		void ENGINE_DLLEXPORT DrawSphere(Scene* world, const Vector& position, float radius, const Color& color = Color::WHITE);
 		void ENGINE_DLLEXPORT DrawArrow(Scene* world, Vector position, Vector directionVector, const Color& color = Color::WHITE);
 
-
 		void ENGINE_DLLEXPORT DrawText2D(Scene* world, const Vector2i& screenPosition, String text, size_t fontSize = 16, const Color& color = Color::WHITE);
 	}
 }
