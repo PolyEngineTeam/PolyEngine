@@ -99,12 +99,12 @@ void EnvCapture::CaptureCubemap(const SkyboxWorldComponent* skyboxCmp)
 
 	Matrix ViewFromModel[] =
 	{
-		Matrix(Vector::ZERO, Vector(1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
+		Matrix(Vector::ZERO, Vector( 1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_X
+		Matrix(Vector::ZERO, Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_NEGATIVE_X
+		Matrix(Vector::ZERO, Vector( 0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_Y
+		Matrix(Vector::ZERO, Vector( 0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
+		Matrix(Vector::ZERO, Vector( 0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_Z
+		Matrix(Vector::ZERO, Vector( 0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 	};
 	gConsole.LogInfo("EnvCapture::CaptureCubemap matrices created");
 
@@ -179,12 +179,12 @@ void EnvCapture::CaptureDiffuseIrradiance()
 
 	Matrix ViewFromModel[] =
 	{
-		Matrix(Vector::ZERO, Vector(1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
+		Matrix(Vector::ZERO, Vector( 1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
 		Matrix(Vector::ZERO, Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
+		Matrix(Vector::ZERO, Vector( 0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
+		Matrix(Vector::ZERO, Vector( 0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
+		Matrix(Vector::ZERO, Vector( 0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
+		Matrix(Vector::ZERO, Vector( 0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
 	};
 	gConsole.LogInfo("EnvCapture::CaptureIrradiance matrices created");
 
@@ -258,12 +258,12 @@ void EnvCapture::CaptureSpecularPrefilteredMap()
 
 	Matrix ViewFromModel[] =
 	{
-		Matrix(Vector::ZERO, Vector(1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
+		Matrix(Vector::ZERO, Vector( 1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
 		Matrix(Vector::ZERO, Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
+		Matrix(Vector::ZERO, Vector( 0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
+		Matrix(Vector::ZERO, Vector( 0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
+		Matrix(Vector::ZERO, Vector( 0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
+		Matrix(Vector::ZERO, Vector( 0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
 	};
 
 	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap capture prefiltered cubemap");

@@ -629,45 +629,45 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
 	
 	Vector shadowAABBExtents = dirLightCmp->DebugShadowAABBInWS.GetSize() * 0.5f;
 	Vector shadowAABBCenter = dirLightCmp->DebugShadowAABBInWS.GetCenter();
-	Vector lightDirection = dirLightCmp->GetTransform().GetGlobalForward();
+	Vector lightForward = dirLightCmp->GetTransform().GetGlobalForward();
+	Vector lightUp = dirLightCmp->GetTransform().GetGlobalUp();
+	
+	Matrix lightViewFromWorld = Matrix(Vector::ZERO, lightForward, lightUp);
 
-	// Inverse of WorldFromModel of dirLight Entity
-	Matrix lightViewFromModel = Matrix(
-		Vector::ZERO,
-		-lightDirection,
-		Vector::UNIT_Y
-	);
+	{
+		Vector axesPivot = Vector::UNIT_Y * 550.0f;
+		DebugDrawSystem::DrawLine(sceneView.SceneData, axesPivot, axesPivot +  dirLightCmp->GetTransform().GetWorldFromModel() * (-Vector::UNIT_Z) * 50.0f, Color::BLACK);
+		DebugDrawSystem::DrawLine(sceneView.SceneData, axesPivot, axesPivot + (dirLightCmp->GetTransform().GetWorldFromModel() * Vector::UNIT_X) * 25.0f, Color::RED);
+		DebugDrawSystem::DrawLine(sceneView.SceneData, axesPivot, axesPivot + (dirLightCmp->GetTransform().GetWorldFromModel() * Vector::UNIT_Y) * 25.0f, Color::GREEN);
+		DebugDrawSystem::DrawLine(sceneView.SceneData, axesPivot, axesPivot + (dirLightCmp->GetTransform().GetWorldFromModel() * Vector::UNIT_Z) * 25.0f, Color::BLUE);
+	}
+	{
+		Vector axesPivot = Vector::UNIT_Y * 650.0f;
+		DebugDrawSystem::DrawLine(sceneView.SceneData, axesPivot, axesPivot + (lightViewFromWorld * (-Vector::UNIT_Z)) * 50.0f, Color::BLACK);
+		DebugDrawSystem::DrawLine(sceneView.SceneData, axesPivot, axesPivot + (lightViewFromWorld * Vector::UNIT_X) * 25.0f, Color::RED);
+		DebugDrawSystem::DrawLine(sceneView.SceneData, axesPivot, axesPivot + (lightViewFromWorld * Vector::UNIT_Y) * 25.0f, Color::GREEN);
+		DebugDrawSystem::DrawLine(sceneView.SceneData, axesPivot, axesPivot + (lightViewFromWorld * Vector::UNIT_Z) * 25.0f, Color::BLUE);
+	}
 
-	// Real-Time Rendering 4th Edition, page 94
-	// "It is important to realize that n > f, because we are looking down the
-	// negative z - axis at this volume of space."
-//	Matrix clipFromLightView;
-// 	clipFromLightView.SetOrthographic(
-// 		-shadowAABBExtents.Y,		// bottom
-// 		shadowAABBExtents.Y,		// top
-// 		-shadowAABBExtents.X,		// left
-// 		shadowAABBExtents.X,		// right
-// 		shadowAABBExtents.Z,		// near
-// 		-shadowAABBExtents.Z			// far
-// 	);
-
+	// Real-Time Rendering 4th Edition, page 94:
+	// "It is important to realize that n > f, because we are looking down the negative z - axis at this volume of space."
 	Matrix clipFromLightView;
 	clipFromLightView.SetOrthographic(
-		-1024.0f,	// bottom
-		 1024.0f,	// top
-		-1024.0f,	// left
-		 1024.0f,	// right
-		-1024.0f,	// near
-		 1024.0f	// far
+		-1024.0f, // bottom
+		 1024.0f, // top
+		-1024.0f, // left
+		 1024.0f, // right
+		 1024.0f, // near
+		-1024.0f  // far
 	);
 
 	Matrix lightModelFromWorld;
 // 	lightModelFromWorld.SetTranslation(-shadowAABBCenter - lightDirection * shadowAABBExtents.Z);
- 	lightModelFromWorld.SetTranslation(-shadowAABBCenter);
+ 	// lightViewFromWorld.SetTranslation(-shadowAABBCenter);
 
-	Matrix clipFromWorld = clipFromLightView * lightViewFromModel * lightModelFromWorld;
+	Matrix clipFromWorld = clipFromLightView * lightViewFromWorld;
 	
-	StablizeShadowProjection(clipFromWorld);
+	// StablizeShadowProjection(clipFromWorld);
 
 	return clipFromWorld;
 }
@@ -839,7 +839,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 		Color colorIntensity = dirLightCmp->GetColor();
 		colorIntensity.A = dirLightCmp->GetIntensity();
 		LightAccumulationShader.SetUniform(baseName + "ColorIntensity", colorIntensity);
-		LightAccumulationShader.SetUniform(baseName + "Direction", -(transform.GetGlobalForward()));
+		LightAccumulationShader.SetUniform(baseName + "Direction", -transform.GetGlobalForward());
 
 		++dirLightsCount;
 		if (dirLightsCount == MAX_LIGHT_COUNT_DIRECTIONAL)
