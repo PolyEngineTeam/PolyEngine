@@ -183,7 +183,7 @@ float calcShadow(vec4 fragPosInDirLight, float NdotL)
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;    
     // check whether current frag pos is in shadow
-	float bias = max(0.05 * (1.0 - NdotL), 0.005);
+	float bias = max(0.01 * (1.0 - NdotL), 0.001);
 	vec2 size = textureSize(uDirShadowMap, 0);
 	
 	// return texture(uDirShadowMap, projCoords.xy).r; // raw depth value for debuging

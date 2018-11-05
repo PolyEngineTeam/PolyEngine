@@ -627,8 +627,8 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
 	ASSERTE(sceneView.DirectionalLights.GetSize() > 0, "GetProjectionForShadowMap has no directional light in scene view");
 	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLights[0];
 	
-	Vector shadowAABBExtents = dirLightCmp->DebugShadowAABBInWS.GetSize() * 0.5f;
-	Vector shadowAABBCenter = dirLightCmp->DebugShadowAABBInWS.GetCenter();
+	Vector shadowAABBExtentsInLS = dirLightCmp->DebugShadowAABBInLS.GetSize() * 0.5f;
+	Vector shadowAABBCenterInWS = dirLightCmp->GetTransform().GetWorldFromModel() * dirLightCmp->DebugShadowAABBInLS.GetCenter();
 	Vector lightForward = dirLightCmp->GetTransform().GetGlobalForward();
 	Vector lightUp = dirLightCmp->GetTransform().GetGlobalUp();
 	

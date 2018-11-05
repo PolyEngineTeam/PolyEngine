@@ -89,8 +89,6 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 
 	for ( auto meshCmp : meshCmps)
 	{
-		// sceneView.DirShadowOpaqueQueue.PushBack(meshCmp);
-
 		if (sceneView.CameraCmp->IsVisibleToCamera(meshCmp->GetOwner()))
 		{
 			if (meshCmp->GetBlendingMode() == eBlendingMode::OPAUQE)
@@ -216,7 +214,7 @@ void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<c
 	for (const auto& kv : meshBoxes)
 	{
 		AABox box = std::get<0>(kv);
-		if (!(box.IntersectsXY(dirLightAABB))) // extend dir light AAbox only in Z based on objects in rect defined on dir light AABob XY plane
+		if (!(box.OverlapsXY(dirLightAABB))) // extend dir light AAbox only in Z based on objects in rect defined on dir light AABob XY plane
 			continue;
 
 		minZ = std::min(minZ, box.GetMin().Z);
