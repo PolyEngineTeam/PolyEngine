@@ -657,15 +657,15 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
 		 1024.0f, // top
 		-1024.0f, // left
 		 1024.0f, // right
-		 1024.0f, // near
-		-1024.0f  // far
+		 0.0f, // near
+		-2048.0f  // far
 	);
 
-	Matrix lightModelFromWorld;
-// 	lightModelFromWorld.SetTranslation(-shadowAABBCenter - lightDirection * shadowAABBExtents.Z);
- 	// lightViewFromWorld.SetTranslation(-shadowAABBCenter);
+	Matrix lightWorldFromModel;
+ 	// lightWorldFromModel.SetTranslation(-lightForward * 1024.0f);
+ 	lightWorldFromModel.SetTranslation(-shadowAABBCenter + lightForward * 1024.0f);
 
-	Matrix clipFromWorld = clipFromLightView * lightViewFromWorld;
+	Matrix clipFromWorld = clipFromLightView * lightViewFromWorld * lightWorldFromModel;
 	
 	// StablizeShadowProjection(clipFromWorld);
 
