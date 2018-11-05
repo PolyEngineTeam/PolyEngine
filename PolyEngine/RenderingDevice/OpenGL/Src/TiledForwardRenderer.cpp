@@ -667,7 +667,7 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
 
 	Matrix clipFromWorld = clipFromLightView * lightViewFromWorld * lightWorldFromModel;
 	
-	// StablizeShadowProjection(clipFromWorld);
+	StablizeShadowProjection(clipFromWorld);
 
 	return clipFromWorld;
 }
