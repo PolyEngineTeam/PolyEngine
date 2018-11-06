@@ -85,7 +85,7 @@ namespace Poly
 		/// <summary>Pushes input event to an input queue with specified UTF8 character.
 		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="key">Unicode UTF8 character</param>
-		void AddCharacterUTF8(char* charUTF8) { InputEventsQueue.PushBack({eInputEventType::TEXTCHAR, charUTF8}); }
+		void AddCharacterUTF8(const char* charUTF8) { InputEventsQueue.PushBack({eInputEventType::TEXTCHAR, charUTF8}); }
 
 		/// <summary>Pushes input event to an input queue with specified event type and button code.
 		/// One of eight functions handling incoming input events.</summary>
