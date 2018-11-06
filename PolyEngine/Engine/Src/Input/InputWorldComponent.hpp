@@ -24,7 +24,10 @@ namespace Poly
 	public:
 		RTTI_DECLARE_COMPONENT(::Poly::InputWorldComponent) { NO_RTTI_PROPERTY(); }
 
-		InputWorldComponent() = default;
+		InputWorldComponent()
+			: IsConsumed(false), CharUTF8(nullptr)
+		{
+		};
 
 		bool IsPressed(eKey key) const { return CurrKey[key]; }
 		bool IsPressed(const std::initializer_list<eKey>& list) const;
