@@ -74,6 +74,11 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 {
 	ShadowMapShader.RegisterUniform("mat4", "uClipFromModel");
 
+	
+	LightAccumulationShader.RegisterUniform("mat4", "uDirLightFromWorld");
+	LightAccumulationShader.RegisterUniform("float", "uShadowBiasMin");
+	LightAccumulationShader.RegisterUniform("float", "uShadowBiasMax");
+
 	LightAccumulationShader.RegisterUniform("float", "uTime");
 	LightAccumulationShader.RegisterUniform("vec4", "uViewPosition");
 	LightAccumulationShader.RegisterUniform("mat4", "uClipFromModel");
@@ -703,7 +708,8 @@ void TiledForwardRenderer::RenderShadowMap(const SceneView& sceneView)
 	glCullFace(GL_FRONT);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowDepthMap);
 	glClear(GL_DEPTH_BUFFER_BIT);
-	
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(sceneView.CameraCmp->PolygonOffset, sceneView.CameraCmp->PolygonUnits);
 	Matrix orthoDirLightFromWorld = GetProjectionForShadowMap(sceneView);
 	
 	ShadowMapShader.BindProgram();
@@ -722,6 +728,7 @@ void TiledForwardRenderer::RenderShadowMap(const SceneView& sceneView)
 		}
 	}
 
+	glDisable(GL_POLYGON_OFFSET_FILL);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glCullFace(GL_BACK);
 }
@@ -819,6 +826,8 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	Matrix projDirLightFromWorld = sceneView.DirectionalLights.IsEmpty() ? Matrix() : GetProjectionForShadowMap(sceneView);
 
 	LightAccumulationShader.SetUniform("uDirLightFromWorld", projDirLightFromWorld);
+	LightAccumulationShader.SetUniform("uShadowBiasMin", sceneView.CameraCmp->BiasMin);
+	LightAccumulationShader.SetUniform("uShadowBiasMax", sceneView.CameraCmp->BiasMax);
 	LightAccumulationShader.BindSampler("uDirShadowMap", 9, DirShadowMap);
 
 	const EntityTransform& cameraTransform = sceneView.CameraCmp->GetTransform();

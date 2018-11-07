@@ -36,9 +36,7 @@ AABox AABox::GetIntersectionVolume(const AABox& rhs) const
 	const float interDown = std::min(r1MaxZ, r2MaxZ);
 
 	if ((interLeft < interRight) && (interTop < interBottom) && (interUp < interDown))
-	{
 		return AABox(Vector(interLeft, interTop, interUp), Vector(interRight - interLeft, interBottom - interTop, interDown - interUp));
-	}
 	else
 		return AABox(Vector::ZERO, Vector::ZERO);
 }

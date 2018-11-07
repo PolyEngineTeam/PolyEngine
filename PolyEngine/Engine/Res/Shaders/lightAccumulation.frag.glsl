@@ -61,6 +61,8 @@ uniform sampler2D uBrdfLUT;
 uniform samplerCube uIrradianceMap;
 uniform samplerCube uPrefilterMap;
 uniform sampler2D uDirShadowMap;
+uniform float uShadowBiasMin;
+uniform float uShadowBiasMax;
 
 uniform sampler2D uEmissiveMap;
 uniform sampler2D uAlbedoMap;
@@ -68,7 +70,6 @@ uniform sampler2D uRoughnessMap;
 uniform sampler2D uMetallicMap;
 uniform sampler2D uNormalMap;
 uniform sampler2D uAmbientOcclusionMap;
-
 
 uniform float uTime;
 uniform Material uMaterial;
@@ -183,7 +184,7 @@ float calcShadow(vec4 fragPosInDirLight, float NdotL)
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;    
     // check whether current frag pos is in shadow
-	float bias = max(0.01 * (1.0 - NdotL), 0.001);
+	float bias = max(uShadowBiasMax * (1.0 - NdotL), uShadowBiasMin);
 	vec2 size = textureSize(uDirShadowMap, 0);
 	
 	// return texture(uDirShadowMap, projCoords.xy).r; // raw depth value for debuging

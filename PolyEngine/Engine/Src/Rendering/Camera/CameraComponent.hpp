@@ -48,6 +48,14 @@ namespace Poly {
 		void UpdateProjection();
 
 		bool IsVisibleToCamera(const Entity* ent) const;
+
+		// debug
+		float BiasMin = 0.01f;
+		float BiasMax = 0.05f;
+		float PolygonOffset = 0.0f;
+		float PolygonUnits = 0.0f;
+		//debug
+
 	private:
 		Matrix ClipFromView;
 		Matrix ViewFromWorld;
