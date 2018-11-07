@@ -57,18 +57,40 @@ namespace Poly {
 		/// <see cref="AABox.Contains()"/>
 		inline bool Intersects(const AABox& rhs) const
 		{	
-			return (abs(Min.X - rhs.Min.X) * 2 < (Size.X + rhs.Size.X))
-				&& (abs(Min.Y - rhs.Min.Y) * 2 < (Size.Y + rhs.Size.Y))
-				&& (abs(Min.Z - rhs.Min.Z) * 2 < (Size.Z + rhs.Size.Z));
+			return (abs(Min.X - rhs.Min.X) * 2.0f < (Size.X + rhs.Size.X))
+				&& (abs(Min.Y - rhs.Min.Y) * 2.0f < (Size.Y + rhs.Size.Y))
+				&& (abs(Min.Z - rhs.Min.Z) * 2.0f < (Size.Z + rhs.Size.Z));
 		}
 
+		inline bool Overlaps(const AABox& rhs) const
+		{
+			return OverlapsX(rhs) && OverlapsY(rhs) && OverlapsZ(rhs);
+		}
+		
 		/// <summary>Checks whether a given AABox is interecting with this AABox on XY plane.</summary>
 		/// <param name="rhs">Other box.</param>
 		/// <see cref="AABox.Contains()"/>
 		inline bool OverlapsXY(const AABox& rhs) const
 		{
-			return (abs(Min.X - rhs.Min.X) * 2 < (Size.X + rhs.Size.X))
-				|| (abs(Min.Y - rhs.Min.Y) * 2 < (Size.Y + rhs.Size.Y));
+			return OverlapsX(rhs) && OverlapsY(rhs);
+		}
+
+		inline bool OverlapsX(const AABox& rhs) const
+		{
+			return (Min.X			< rhs.Min.X + rhs.Size.X)
+				&& (Min.X + Size.X	> rhs.Min.X);
+		}
+
+		inline bool OverlapsY(const AABox& rhs) const
+		{
+			return (Min.Y			< rhs.Min.Y + rhs.Size.Y)
+				&& (Min.Y + Size.Y  > rhs.Min.Y);
+		}
+
+		inline bool OverlapsZ(const AABox& rhs) const
+		{
+			return (Min.Z			< rhs.Min.Z + rhs.Size.Z)
+				&& (Min.Z + Size.Z  > rhs.Min.Z);
 		}
 
 		std::array<Vector, 8> GetVertices() const;

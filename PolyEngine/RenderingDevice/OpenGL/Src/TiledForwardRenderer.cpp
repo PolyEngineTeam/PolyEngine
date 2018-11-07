@@ -653,22 +653,18 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
 	// "It is important to realize that n > f, because we are looking down the negative z - axis at this volume of space."
 	Matrix clipFromLightView;
 	clipFromLightView.SetOrthographicZO(
-		-shadowAABBExtentsInLS.Y, // bottom
-		 shadowAABBExtentsInLS.Y, // top
-		-shadowAABBExtentsInLS.X, // left
-		 shadowAABBExtentsInLS.X, // right
-// 		 shadowAABBExtentsInLS.Z, // near
-//  	-shadowAABBExtentsInLS.Z // far
- 		 0.0f, // near
- 		-shadowAABBExtentsInLS.Z * 2.0f // far
+		-shadowAABBExtentsInLS.Y,		// bottom
+		 shadowAABBExtentsInLS.Y,		// top
+		-shadowAABBExtentsInLS.X,		// left
+		 shadowAABBExtentsInLS.X,		// right
+ 		 0.0f,							// near
+ 		-shadowAABBExtentsInLS.Z * 2.0f	// far
 	);
 
 	Matrix lightWorldFromModel;
-	// lightWorldFromModel.SetTranslation(-shadowAABBCenterInWS);
  	lightWorldFromModel.SetTranslation(-shadowAABBCenterInWS +lightForward * shadowAABBExtentsInLS.Z);
 
-	Matrix clipFromWorld = clipFromLightView * lightViewFromWorld * lightWorldFromModel;
-	
+	Matrix clipFromWorld = clipFromLightView * lightViewFromWorld * lightWorldFromModel;	
 	StablizeShadowProjection(clipFromWorld);
 
 	return clipFromWorld;

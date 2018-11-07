@@ -281,7 +281,7 @@ Matrix& Poly::Matrix::SetPerspective(Angle fov, float aspect, float near, float 
 Matrix& Poly::Matrix::SetOrthographicZO(float bottom, float top, float left, float right, float near, float far)
 {
 	SetIdentity();
-	// orthoRH_ZO: GLM_RIGHT_HANDED && GLM_DEPTH_ZERO_TO_ONE
+													// orthoRH_ZO: GLM_RIGHT_HANDED && GLM_DEPTH_ZERO_TO_ONE
 	Data[0] = 2.0f / (right - left);				// glm[0][0]
 	Data[1] = 0.0f;
 	Data[2] = 0.0f;
