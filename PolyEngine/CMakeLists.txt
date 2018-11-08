@@ -12,6 +12,10 @@ include(${ENGINE_ROOT_DIR}/CMakeListsCommon.txt)
 ##
 # Finally, meat and potatoes
 ##
+add_subdirectory(ThirdParty)
+
+set(ASSIMP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/assimp/include)
+
 add_subdirectory(Core)
 add_subdirectory(Engine)
 add_subdirectory(RenderingDevice/OpenGL)

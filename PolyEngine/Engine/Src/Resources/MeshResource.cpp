@@ -196,17 +196,17 @@ Poly::MeshResource::Animation::Animation(aiAnimation * anim)
 		c.Name = String(anim->mChannels[i]->mNodeName.C_Str());
 		for (size_t j = 0; j < anim->mChannels[i]->mNumPositionKeys; ++j)
 		{
-			Vector vector = { anim->mChannels[i]->mPositionKeys[j].mValue.x, anim->mChannels[i]->mPositionKeys[j].mValue.y, anim->mChannels[i]->mPositionKeys[j].mValue.z };
+			Vector vector = { (float)anim->mChannels[i]->mPositionKeys[j].mValue.x, (float)anim->mChannels[i]->mPositionKeys[j].mValue.y, (float)anim->mChannels[i]->mPositionKeys[j].mValue.z };
 			c.Positions.PushBack({ vector, (float)anim->mChannels[i]->mPositionKeys[j].mTime });
 		}
 		for (size_t j = 0; j < anim->mChannels[i]->mNumRotationKeys; ++j)
 		{
-			Quaternion q = { anim->mChannels[i]->mRotationKeys[j].mValue.x, anim->mChannels[i]->mRotationKeys[j].mValue.y, anim->mChannels[i]->mRotationKeys[j].mValue.z, anim->mChannels[i]->mRotationKeys[j].mValue.w };
+			Quaternion q = { (float)anim->mChannels[i]->mRotationKeys[j].mValue.x, (float)anim->mChannels[i]->mRotationKeys[j].mValue.y, (float)anim->mChannels[i]->mRotationKeys[j].mValue.z, (float)anim->mChannels[i]->mRotationKeys[j].mValue.w };
 			c.Rotations.PushBack({ q, (float)anim->mChannels[i]->mRotationKeys[j].mTime });
 		}
 		for (size_t j = 0; j < anim->mChannels[i]->mNumScalingKeys; ++j)
 		{
-			Vector vector = { anim->mChannels[i]->mScalingKeys[j].mValue.x, anim->mChannels[i]->mScalingKeys[j].mValue.y, anim->mChannels[i]->mScalingKeys[j].mValue.z };
+			Vector vector = { (float)anim->mChannels[i]->mScalingKeys[j].mValue.x, (float)anim->mChannels[i]->mScalingKeys[j].mValue.y, (float)anim->mChannels[i]->mScalingKeys[j].mValue.z };
 			c.Scales.PushBack({ vector, (float)anim->mChannels[i]->mScalingKeys[j].mTime });
 		}
 		channels.PushBack(std::move(c));
