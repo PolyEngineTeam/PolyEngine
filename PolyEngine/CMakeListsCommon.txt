@@ -121,7 +121,7 @@ else()
 endif ()
 
 ##
-# Build switches
+# Build switches, except Werror
 ##
 if(CMAKE_CXX_COMPILER_ID MATCHES "(Clang|^GNU$)")
 	if(CI_BUILD)
@@ -240,5 +240,22 @@ if(WIN32)
     )
 endif()
 
-add_subdirectory("${ENGINE_ROOT_DIR}/ThirdParty/Imgui" "${CMAKE_CURRENT_BINARY_DIR}/Imgui")
-set(IMGUI_INCLUDE_DIRS "${ENGINE_ROOT_DIR}/ThirdParty/Imgui")
+### Thirdparty
+add_subdirectory(ThirdParty)
+set(ASSIMP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/assimp/include)
+
+##
+# Build switches, except Werror
+##
+if(CMAKE_CXX_COMPILER_ID MATCHES "(Clang|^GNU$)")
+	add_compile_options(-Werror)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+	if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
+		add_compile_options(/WX) #treat warnings as errors
+	else()
+		#NOTE(vuko): need to define those variables, otherwise CMake encounters internal errors
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX" )
+	endif()
+else()
+	message(FATAL_ERROR "Unsupported compiler: ${CMAKE_CXX_COMPILER_ID}")
+endif()

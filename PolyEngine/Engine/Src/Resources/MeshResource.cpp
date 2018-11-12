@@ -87,9 +87,9 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 	if (mesh->HasPositions()) {
 		MeshData.Positions.Resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-			MeshData.Positions[i].X = mesh->mVertices[i].x;
-			MeshData.Positions[i].Y = mesh->mVertices[i].y;
-			MeshData.Positions[i].Z = mesh->mVertices[i].z;
+			MeshData.Positions[i].X = (float)mesh->mVertices[i].x;
+			MeshData.Positions[i].Y = (float)mesh->mVertices[i].y;
+			MeshData.Positions[i].Z = (float)mesh->mVertices[i].z;
 
 			min = Vector::Min(min, Vector(MeshData.Positions[i].GetVector()));
 			max = Vector::Max(max, Vector(MeshData.Positions[i].GetVector()));
@@ -101,33 +101,33 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 	if (mesh->HasTextureCoords(0)) {
 		MeshData.TextCoords.Resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-			MeshData.TextCoords[i].U = mesh->mTextureCoords[0][i].x;
-			MeshData.TextCoords[i].V = mesh->mTextureCoords[0][i].y;
+			MeshData.TextCoords[i].U = (float)mesh->mTextureCoords[0][i].x;
+			MeshData.TextCoords[i].V = (float)mesh->mTextureCoords[0][i].y;
 		}
 	}
 
 	if (mesh->HasNormals()) {
 		MeshData.Normals.Resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-			MeshData.Normals[i].X = mesh->mNormals[i].x;
-			MeshData.Normals[i].Y = mesh->mNormals[i].y;
-			MeshData.Normals[i].Z = mesh->mNormals[i].z;
+			MeshData.Normals[i].X = (float)mesh->mNormals[i].x;
+			MeshData.Normals[i].Y = (float)mesh->mNormals[i].y;
+			MeshData.Normals[i].Z = (float)mesh->mNormals[i].z;
 		}
 	}
 
 	if (mesh->HasTangentsAndBitangents()) {
 		MeshData.Tangents.Resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-			MeshData.Tangents[i].X = mesh->mTangents[i].x;
-			MeshData.Tangents[i].Y = mesh->mTangents[i].y;
-			MeshData.Tangents[i].Z = mesh->mTangents[i].z;
+			MeshData.Tangents[i].X = (float)mesh->mTangents[i].x;
+			MeshData.Tangents[i].Y = (float)mesh->mTangents[i].y;
+			MeshData.Tangents[i].Z = (float)mesh->mTangents[i].z;
 		}
 
 		MeshData.Bitangents.Resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-			MeshData.Bitangents[i].X = mesh->mBitangents[i].x;
-			MeshData.Bitangents[i].Y = mesh->mBitangents[i].y;
-			MeshData.Bitangents[i].Z = mesh->mBitangents[i].z;
+			MeshData.Bitangents[i].X = (float)mesh->mBitangents[i].x;
+			MeshData.Bitangents[i].Y = (float)mesh->mBitangents[i].y;
+			MeshData.Bitangents[i].Z = (float)mesh->mBitangents[i].z;
 		}
 	}
 
