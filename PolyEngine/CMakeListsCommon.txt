@@ -244,7 +244,7 @@ add_subdirectory(ThirdParty)
 set(ASSIMP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/assimp/include)
 
 ##
-# Build switches, except Werror
+# Enable Werror for the rest of the build
 ##
 if(CMAKE_CXX_COMPILER_ID MATCHES "(Clang|^GNU$)")
 	add_compile_options(-Werror)
