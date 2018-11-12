@@ -209,7 +209,7 @@ void ViewportInspectorWidget::leaveEvent(QEvent* e)
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::resizeEvent(QResizeEvent* resizeEvent)
 {
-	if (gApp->EngineMgr->GetEngineState() == PolyEditor::eEngineState::NONE)
+	if (!Manager->GetEngine())
 		return;
 
 	Poly::ScreenSize screenSize;
@@ -221,23 +221,25 @@ void ViewportInspectorWidget::resizeEvent(QResizeEvent* resizeEvent)
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::wheelEvent(QWheelEvent* wheelEvent)
 {
-	if (gApp->EngineMgr->GetEngineState() == PolyEditor::eEngineState::NONE)
+	if (!Manager->GetEngine())
 		return;
+
 	Manager->GetEngine()->UpdateWheelPos(Poly::Vector2i(wheelEvent->delta(), 0));
 }
 
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 {
-	if (gApp->EngineMgr->GetEngineState() == PolyEditor::eEngineState::NONE)
+	if (!Manager->GetEngine())
 		return;
+
 	Manager->GetEngine()->UpdateMousePos(Poly::Vector2i(mouseEvent->pos().x(), mouseEvent->pos().y()));
 }
 
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::mousePressEvent(QMouseEvent* mouseEvent)
 {
-	if (gApp->EngineMgr->GetEngineState() == PolyEditor::eEngineState::NONE)
+	if (!Manager->GetEngine())
 		return;
 
 	switch (mouseEvent->button())
@@ -263,8 +265,9 @@ void ViewportInspectorWidget::mousePressEvent(QMouseEvent* mouseEvent)
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 {
-	if (gApp->EngineMgr->GetEngineState() == PolyEditor::eEngineState::NONE)
+	if (!Manager->GetEngine())
 		return;
+
 	switch (mouseEvent->button())
 	{
 	case Qt::LeftButton:
@@ -288,7 +291,7 @@ void ViewportInspectorWidget::mouseReleaseEvent(QMouseEvent* mouseEvent)
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::keyPressEvent(QKeyEvent* keyEvent)
 {
-	if (gApp->EngineMgr->GetEngineState() == PolyEditor::eEngineState::NONE)
+	if (!Manager->GetEngine())
 		return;
 
 	if (keyEvent->isAutoRepeat())
@@ -300,7 +303,7 @@ void ViewportInspectorWidget::keyPressEvent(QKeyEvent* keyEvent)
 //------------------------------------------------------------------------------
 void ViewportInspectorWidget::keyReleaseEvent(QKeyEvent* keyEvent)
 {
-	if (gApp->EngineMgr->GetEngineState() == PolyEditor::eEngineState::NONE)
+	if (!Manager->GetEngine())
 		return;
 
 	if (keyEvent->isAutoRepeat())

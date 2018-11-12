@@ -11,9 +11,13 @@
 class DockManager;
 class CmdManager;
 class ProjectManager;
-class EngineManager;
 class InspectorManager;
 class CommandManager;
+
+namespace editor::controllers
+{
+	class IEngineController;
+}
 
 class EditorApp : public QApplication
 {
@@ -27,9 +31,10 @@ public:
 	DockManager* DockMgr;
 	CmdManager* CmdMgr;
 	ProjectManager* ProjectMgr;
-	EngineManager* EngineMgr;
 	InspectorManager* InspectorMgr;
 	CommandManager* CommandMgr;
+
+	std::unique_ptr<editor::controllers::IEngineController> EngineController;
 
 private:
 	GlobalEventFilter EventFilter;
