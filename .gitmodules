@@ -1,0 +1,3 @@
+[submodule "PolyEngine/ThirdParty/assimp"]
+	path = PolyEngine/ThirdParty/assimp
+	url = https://github.com/assimp/assimp
