@@ -76,3 +76,8 @@ EditorApp::EditorApp(int argc, char *argv[])
 	
 	Poly::gConsole.LogInfo("PolyEditor successfully initialized.");
 }
+
+// ---------------------------------------------------------------------------------------------------------
+EditorApp::~EditorApp()
+{
+}

@@ -5,7 +5,6 @@
 
 #include "EditorUi.hpp"
 #include "GlobalEventFilter.hpp"
-#include "Controllers/IEngineController.hpp"
 
 #include <Engine.hpp>
 
@@ -26,6 +25,7 @@ class EditorApp : public QApplication
 
 public:
 	EditorApp(int argc, char *argv[]);
+	~EditorApp();
 
 	EditorUi Ui;
 
