@@ -155,10 +155,6 @@ void EngineController::OnEngineUpdateTimerTick()
 
 	switch (Editor->GetEngineState())
 	{
-	case PolyEditor::eEngineState::NONE:
-		ASSERTE(false, "Value not supported.");
-		break;
-
 	case PolyEditor::eEngineState::EDIT:
 		updatePhases.PushBack(Engine::eUpdatePhaseOrder::PREUPDATE);
 		updatePhases.PushBack(Engine::eUpdatePhaseOrder::EDITOR);
@@ -176,6 +172,9 @@ void EngineController::OnEngineUpdateTimerTick()
 		updatePhases.PushBack(Engine::eUpdatePhaseOrder::EDITOR);
 		updatePhases.PushBack(Engine::eUpdatePhaseOrder::POSTUPDATE);
 		break;
+
+	default:
+		ASSERTE(false, "Other values not supported.");
 	}
 
 	ControlledEngine->Update(updatePhases);
