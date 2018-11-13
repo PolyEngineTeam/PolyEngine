@@ -24,9 +24,6 @@ namespace editor::controllers::impl
 
 		EngineController();
 
-		void RegisterView() final {}
-		void UnregisterView() final {}
-
 		void SetEngine(std::unique_ptr<Poly::Engine> engineToControl) final;
 		void Edit() final;
 		void Play() final;
