@@ -22,7 +22,7 @@ std::unique_ptr<EngineController> EngineController::Create(const ProjectConfig& 
 	{
 		const Poly::String libGamePath = projectConfig.GetGameDllPath();
 		LoadGame = LoadFunctionFromSharedLibrary<CreateGameFunc>(libGamePath.GetCStr(), "CreateGame");
-		ASSERTE(LoadGame.FunctionValid(), "Library libGame load failed (path: {})", libGamePath);
+		ASSERTE(LoadGame.FunctionValid(), "Library libGame load failed");
 		gConsole.LogDebug("Library libGame loaded from {}.", libGamePath);
 	}
 
