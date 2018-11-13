@@ -66,6 +66,7 @@ void EngineController::Edit()
 	{
 	case PolyEditor::eEngineState::NONE:
 		ControlledEngine->StartGame();
+		break;
 
 	case PolyEditor::eEngineState::EDIT:
 	case PolyEditor::eEngineState::GAMEPLAY:
@@ -94,6 +95,7 @@ void EngineController::Play()
 	{
 	case PolyEditor::eEngineState::NONE:
 		ControlledEngine->StartGame();
+		break;
 
 	case PolyEditor::eEngineState::GAMEPLAY:
 	case PolyEditor::eEngineState::EDIT:
@@ -125,6 +127,7 @@ void EngineController::Pause()
 	{
 	case PolyEditor::eEngineState::NONE:
 		ControlledEngine->StartGame();
+		break;
 
 	case PolyEditor::eEngineState::EDIT:
 		ControlledEngine->EndGame();
