@@ -4,12 +4,14 @@
 ProjectManager::ProjectManager(std::unique_ptr<ProjectConfig> projectCfg)
 	: ProjectCfg(std::move(projectCfg))
 {
-	InitEngine();
 }
 
 //------------------------------------------------------------------------------
 void ProjectManager::Edit()
 {
+	if (!gApp->EngineController)
+		InitEngine();
+
 	gApp->EngineController->Edit();
 
 	emit EngineStateChanged(PolyEditor::eEngineState::EDIT);
@@ -17,7 +19,10 @@ void ProjectManager::Edit()
 
 //------------------------------------------------------------------------------
 void ProjectManager::Play()
-{	
+{
+	if (!gApp->EngineController)
+		InitEngine();
+	
 	// TODO(squares): fix problem with physics; Rigidbody and collider components  are initialized in next frame 
 	//		so when next frame never occur we try to delete empty ImplData
 	gApp->EngineController->Play();

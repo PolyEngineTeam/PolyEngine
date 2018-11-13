@@ -36,10 +36,10 @@ EditorApp::EditorApp(int argc, char *argv[])
 
 	DockMgr = new DockManager();
 	CmdMgr = new CmdManager();
+	ProjectMgr = new ProjectManager(GetProjectConfigFromArgs(argc, argv));
 	InspectorMgr = new InspectorManager(this);
 	CommandMgr = new CommandManager();
 
-	ProjectMgr = new ProjectManager(GetProjectConfigFromArgs(argc, argv));
 
 	Ui.Init();
 	installEventFilter(&EventFilter);

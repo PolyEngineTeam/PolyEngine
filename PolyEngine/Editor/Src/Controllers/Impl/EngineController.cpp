@@ -33,18 +33,17 @@ std::unique_ptr<EngineController> EngineController::Create(const ProjectConfig& 
 	engine->Init(std::move(game), gApp->InspectorMgr->GetRenderingDevice());
 	gConsole.LogDebug("Engine initialized successfully");
 
-	auto result = std::unique_ptr<EngineController>();
+	auto result = std::make_unique<EngineController>();
 	result->SetEngine(std::move(engine));
 
-	return std::unique_ptr<EngineController>();
+	return result;
 }
 
 //------------------------------------------------------------------------------
 EngineController::EngineController()
 {
 	// connect timer to function that will update engine
-	//EngineUpdateTimer.connect(&EngineUpdateTimer, &QTimer::timeout
-	//	, this, &EngineController::OnEngineUpdateTimerTick);
+	EngineUpdateTimer.connect(&EngineUpdateTimer, &QTimer::timeout, [this]() { OnEngineUpdateTimerTick(); });
 }
 
 //------------------------------------------------------------------------------
@@ -52,8 +51,6 @@ void EngineController::SetEngine(std::unique_ptr<Poly::Engine> engineToControl)
 {
 	ControlledEngine = std::move(engineToControl);
 	Editor = static_cast<PolyEditor::IEditor*>(ControlledEngine->GetEditor());
-
-	Edit();
 }
 
 //------------------------------------------------------------------------------
