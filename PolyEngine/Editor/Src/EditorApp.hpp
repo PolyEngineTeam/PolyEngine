@@ -5,6 +5,7 @@
 
 #include "EditorUi.hpp"
 #include "GlobalEventFilter.hpp"
+#include "Controllers/IEngineController.hpp"
 
 #include <Engine.hpp>
 
