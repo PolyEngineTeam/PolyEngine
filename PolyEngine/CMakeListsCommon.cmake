@@ -253,7 +253,6 @@ endif()
 
 ### Thirdparty
 add_subdirectory(ThirdParty)
-set(ASSIMP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/assimp/include)
 
 ##
 # Enable Werror for the rest of the build
