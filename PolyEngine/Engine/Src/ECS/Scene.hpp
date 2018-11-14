@@ -6,6 +6,8 @@
 #include <Audio/SoundWorldComponent.hpp>
 #include <Engine.hpp>
 
+#include "ComponentIterator.hpp"
+
 namespace Poly {
 
 	namespace DeferredTaskSystem
@@ -123,6 +125,57 @@ namespace Poly {
 			return {this};
 		}
 
+		class SceneComponentIteratorHelper : public IEntityIteratorHelper //maybe different name?
+		{
+			public: //should be constructed somehow? from Specific IterablePoolAlllocator
+				explicit SceneComponentIteratorHelper(Entity* entity, Dynarray<size_t> required)
+				{
+					for (auto c : required)
+					{
+						HEAVY_ASSERTE(entity->HasComponent(c), "Entity has to have all required components!");
+					}
+					Match = entity;
+					RequiredComponents = required;
+				}
+				bool operator==(const IEntityIteratorHelper& rhs) const override
+				{
+					return Match == rhs.get();
+				}
+				bool operator!=(const IEntityIteratorHelper& rhs) const override
+				{
+					return Match != rhs.get();
+				}
+				Entity* get() const override
+				{
+					return Match;
+				}
+				void increment() override
+				{
+					//find next entity that has components 
+					//iterate through scene entities
+				}
+
+			private:
+				Entity* Match;
+				Dynarray<size_t> RequiredComponents;
+		};
+
+		//This method must find first entity that fits the template arguments list and create a Helper instance unique ptr
+		template<typename ...T> //maybe change to 2 Template parameters so we can fill in a dynaray of id's and do sibling stuff
+		std::unique_ptr<SceneComponentIteratorHelper> MakeSceneComponentIteratorHelper() //move to protected
+		{
+			Dynarray<size_t> IDs;
+			//fill it with id's from pack expansion
+			//find an entity which contains them all
+			//create a smart pointer and return it
+
+
+
+			//const auto ctypeID = GetComponentID<T>();
+			//IterablePoolAllocatorBase* iter = GetComponentAllocator(ctypeID); //here
+			//return make_unique<SceneComponentIteratorHelper>(SceneComponentIteratorHelper(iter));
+		}
+		/*
 		/// Component iterator.
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		class ComponentIterator : public BaseObject<>,
@@ -195,7 +248,7 @@ namespace Poly {
 			auto end() { return End(); }
 			Scene* const W;
 		};
-
+		*/
 	private:
 		friend class SpawnEntityDeferredTask;
 		friend class DestroyEntityDeferredTask;
