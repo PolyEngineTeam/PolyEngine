@@ -61,8 +61,12 @@ uniform sampler2D uBrdfLUT;
 uniform samplerCube uIrradianceMap;
 uniform samplerCube uPrefilterMap;
 uniform sampler2D uDirShadowMap;
+uniform sampler2D uDirEVSMap;
 uniform float uShadowBiasMin;
 uniform float uShadowBiasMax;
+uniform float uNear;
+uniform float uFar;
+uniform mat4 uDirLightFromWorld;
 
 uniform sampler2D uEmissiveMap;
 uniform sampler2D uAlbedoMap;
@@ -137,6 +141,14 @@ float texture2DCompare(sampler2D depthTex, vec2 uv, float compare)
     return step(compare, depth);
 }
 
+float LinearizeDepth(float depth) {
+	return -uFar * uNear / (depth * (uFar - uNear) - uFar);
+}
+
+float LinearizeDepth01(float depth) {
+	return LinearizeDepth(depth) / uFar;
+}
+
 float texture2DShadowLerp(sampler2D depth, vec2 size, vec2 uv, float compare)
 {
 	vec2 texelSize = 1.0 / size;
@@ -152,6 +164,8 @@ float texture2DShadowLerp(sampler2D depth, vec2 size, vec2 uv, float compare)
     float c = mix(a, b, f.x);
     return c;
 }
+
+#pragma include "evsm.inc.glsl"
 
 // http://codeflow.org/entries/2013/feb/15/soft-shadow-mapping/
 float PCF(sampler2D depthTex, vec2 size, vec2 uv, float compare)
@@ -170,26 +184,37 @@ float PCF(sampler2D depthTex, vec2 size, vec2 uv, float compare)
 
 float calcShadow(vec4 fragPosInDirLight, float NdotL)
 {
-	// perform perspective divide
-    // vec3 projCoords = fragPosInDirLight.xyz / fragPosInDirLight.w;
-    vec3 projCoords = fragPosInDirLight.xyz;
-	// transform to [0,1] range
+	vec4 lightSpacePos = uDirLightFromWorld * vec4(fragment_in.positionInWorld, 1.0);
+	// ClipSpace to NDC
+    vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
+	// NDC to [0, 1]
     projCoords = projCoords * 0.5 + 0.5;
 
-    if (projCoords.z > 1.0)
-        return 1.0;
+	if (projCoords.z > 1.0 || projCoords.x > 1.0 || projCoords.y > 1.0)
+		return 0.5;
+	if (projCoords.z < 0.0 || projCoords.x < 0.0 || projCoords.y < 0.0)
+		return 0.5;
 
-    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    // float closestDepth = texture(uDirShadowMap, projCoords.xy).r;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)  
     // get depth of current fragment from light's perspective
-    float currentDepth = projCoords.z;    
     // check whether current frag pos is in shadow
 	float bias = max(uShadowBiasMax * (1.0 - NdotL), uShadowBiasMin);
-	vec2 size = textureSize(uDirShadowMap, 0);
-	
-	// return texture(uDirShadowMap, projCoords.xy).r; // raw depth value for debuging
+
+	vec4 smSample = textureLod(uDirEVSMap, projCoords.xy, 0.0);
+	float shadowEVSM = calculateShadowEVSM(smSample, projCoords.z - bias);
+	float shadowESM = calculateShadowESM(smSample, projCoords.z - bias);
+	float shadowmap = texture(uDirShadowMap, projCoords.xy).r; // raw depth value for debuging
+	float smSteps = 0.1 * floor(10.0 * shadowmap);
+	float smFracts = fract(10.0 * shadowmap);
+	// return mix(smSteps, smFracts, 0.5);
+	// return shadowmap;
+	// return fract(10.0 * texture(uDirShadowMap, projCoords.xy).r); // raw depth value for debuging
 	// return step(currentDepth - bias, texture(uDirShadowMap, projCoords.xy).r); // raw occlusion value for debugging 
-	return PCF(uDirShadowMap, size, projCoords.xy, currentDepth - bias); // pretty shadow for rendering
+	// return PCF(uDirShadowMap, size, projCoords.xy, currentDepth - bias); // pretty shadow for rendering
+	// return fract(100.0 * projCoords.z);
+	// return fract(100.0 * smSample.x);
+	return shadowEVSM;
+	// return shadowESM;
 }
 
 void main()

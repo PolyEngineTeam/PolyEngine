@@ -74,7 +74,7 @@ namespace Poly {
 		const int MAX_NUM_LIGHTS = 1024;
 		const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 
-		const unsigned int SHADOWMAP_SIZE = 2048;
+		const unsigned int SHADOWMAP_SIZE = 4096;
 
 		// X and Y work group dimension variables for compute shader
 		GLuint WorkGroupsX = 0;
@@ -93,7 +93,10 @@ namespace Poly {
 		GLuint PostColorBuffer1;
 		GLuint PostColorBufferHalfRes;
 		GLuint LinearDepth;
-		GLuint DirShadowMap;
+		GLuint DirShadowMapDepth;
+		GLuint DirShadowMapColor;
+		GLuint EVSMap0;
+		GLuint EVSMap1;
 
 		// IBL textures and cubemaps
 		GLuint PreintegratedBrdfLUT;
@@ -104,6 +107,8 @@ namespace Poly {
 		GLuint FBOpost0;
 		GLuint FBOpost1;
 		GLuint FBOShadowDepthMap;
+		GLuint FBOShadowMapResolve0;
+		GLuint FBOShadowMapResolve1;
 
 		// Render pass for IBL environment
 		EnvCapture SkyboxCapture;
@@ -112,6 +117,8 @@ namespace Poly {
 
 		// Shader programs
 		GLShaderProgram ShadowMapShader;
+		GLShaderProgram EVSMResolveShader;
+		GLShaderProgram EVSMBlurShader;
 		GLShaderProgram DepthShader;
 		GLShaderProgram LightCullingShader;
 		GLShaderProgram LightAccumulationShader;
