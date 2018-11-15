@@ -1,8 +1,8 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "ECS/Entity.hpp"
-#include "ECS/EntityTransform.hpp"
-#include "ECS/Scene.hpp"
+#include <ECS/Entity.hpp>
+#include <ECS/EntityTransform.hpp>
+#include <ECS/Scene.hpp>
 
 using namespace Poly;
 
@@ -122,10 +122,10 @@ const AABox& Poly::Entity::GetLocalBoundingBox(eEntityBoundingChannel channel) c
 {
 	if (BBoxDirty[channel])
 	{
-		LocalBBox[channel].SetPosition(Vector::ZERO);
+		LocalBBox[channel].SetMin(Vector::ZERO);
 		LocalBBox[channel].SetSize(Vector::ZERO);
 
-		// Update bounding box by children boxes
+		// Update bounding box by children boxesd
 		for (auto& child : Children)
 		{
 			AABox childBox = child->GetLocalBoundingBox(channel);

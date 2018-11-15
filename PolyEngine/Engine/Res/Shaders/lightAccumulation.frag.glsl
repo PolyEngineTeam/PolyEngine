@@ -61,6 +61,12 @@ uniform sampler2D uBrdfLUT;
 uniform samplerCube uIrradianceMap;
 uniform samplerCube uPrefilterMap;
 uniform sampler2D uDirShadowMap;
+uniform sampler2D uDirEVSMap;
+uniform float uShadowBiasMin;
+uniform float uShadowBiasMax;
+uniform float uNear;
+uniform float uFar;
+uniform mat4 uDirLightFromWorld;
 
 uniform sampler2D uEmissiveMap;
 uniform sampler2D uAlbedoMap;
@@ -68,7 +74,6 @@ uniform sampler2D uRoughnessMap;
 uniform sampler2D uMetallicMap;
 uniform sampler2D uNormalMap;
 uniform sampler2D uAmbientOcclusionMap;
-
 
 uniform float uTime;
 uniform Material uMaterial;
@@ -84,44 +89,6 @@ layout(location = 0) out vec4 oColor;
 layout(location = 1) out vec4 oNormal;
 
 const float PI = 3.14159265359;
-
-// 64 samples of poisson disk at:
-// https://www.geeks3d.com/20100628/3d-programming-ready-to-use-64-sample-poisson-disc/
-// 32 samples produce similar results on shadow PCF
-uniform vec2 poissonDisk[32] = vec2[] (
-	vec2(-0.613392,  0.617481),
-	vec2( 0.170019, -0.040254),
-	vec2(-0.299417,  0.791925),
-	vec2( 0.645680,  0.493210),
-	vec2(-0.651784,  0.717887),
-	vec2( 0.421003,  0.027070),
-	vec2(-0.817194, -0.271096),
-	vec2(-0.705374, -0.668203),
-	vec2( 0.977050, -0.108615),
-	vec2( 0.063326,  0.142369),
-	vec2( 0.203528,  0.214331),
-	vec2(-0.667531,  0.326090),
-	vec2(-0.098422, -0.295755),
-	vec2(-0.885922,  0.215369),
-	vec2( 0.566637,  0.605213),
-	vec2( 0.039766, -0.396100),
-	vec2( 0.751946,  0.453352),
-	vec2( 0.078707, -0.715323),
-	vec2(-0.075838, -0.529344),
-	vec2( 0.724479, -0.580798),
-	vec2( 0.222999, -0.215125),
-	vec2(-0.467574, -0.405438),
-	vec2(-0.248268, -0.814753),
-	vec2( 0.354411, -0.887570),
-	vec2( 0.175817,  0.382366),
-	vec2( 0.487472, -0.063082),
-	vec2(-0.084078,  0.898312),
-	vec2( 0.488876, -0.783441),
-	vec2( 0.470016,  0.217933),
-	vec2(-0.696890, -0.549791),
-	vec2(-0.149693,  0.605762),
-	vec2( 0.034211,  0.979980)
-);
 
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
@@ -168,40 +135,86 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.001, 1.0), 5.0); // clamp to prevent NaNs
 }
 
-float hash(vec4 seed)
+float texture2DCompare(sampler2D depthTex, vec2 uv, float compare)
 {
-    float dot_product = dot(seed, vec4(12.9898, 78.233, 45.164, 94.673));
-    return fract(sin(dot_product) * 43758.5453);
+    float depth = texture(depthTex, uv).r;
+    return step(compare, depth);
+}
+
+float LinearizeDepth(float depth) {
+	return -uFar * uNear / (depth * (uFar - uNear) - uFar);
+}
+
+float LinearizeDepth01(float depth) {
+	return LinearizeDepth(depth) / uFar;
+}
+
+float texture2DShadowLerp(sampler2D depth, vec2 size, vec2 uv, float compare)
+{
+	vec2 texelSize = 1.0 / size;
+    vec2 f = fract(uv*size+0.5);
+    vec2 centroidUV = floor(uv*size+0.5)/size;
+
+    float lb = texture2DCompare(depth, centroidUV+texelSize*vec2(0.0, 0.0), compare);
+    float lt = texture2DCompare(depth, centroidUV+texelSize*vec2(0.0, 1.0), compare);
+    float rb = texture2DCompare(depth, centroidUV+texelSize*vec2(1.0, 0.0), compare);
+    float rt = texture2DCompare(depth, centroidUV+texelSize*vec2(1.0, 1.0), compare);
+    float a = mix(lb, lt, f.y);
+    float b = mix(rb, rt, f.y);
+    float c = mix(a, b, f.x);
+    return c;
+}
+
+#pragma include "evsm.inc.glsl"
+
+// http://codeflow.org/entries/2013/feb/15/soft-shadow-mapping/
+float PCF(sampler2D depthTex, vec2 size, vec2 uv, float compare)
+{
+    float result = 0.0;
+    for(int x =- 1; x <= 1; x++)
+	{
+        for(int y = -1; y <= 1; y++)
+		{
+            vec2 off = vec2(x,y)/size;
+            result += texture2DShadowLerp(depthTex, size, uv+off, compare);
+        }
+    }
+    return result / 9.0;
 }
 
 float calcShadow(vec4 fragPosInDirLight, float NdotL)
 {
-	// perform perspective divide
-    // vec3 projCoords = fragPosInDirLight.xyz / fragPosInDirLight.w;
-    vec3 projCoords = fragPosInDirLight.xyz;
-	// transform to [0,1] range
+	vec4 lightSpacePos = uDirLightFromWorld * vec4(fragment_in.positionInWorld, 1.0);
+	// ClipSpace to NDC
+    vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
+	// NDC to [0, 1]
     projCoords = projCoords * 0.5 + 0.5;
 
-    if (projCoords.z > 1.0)
-        return 1.0;
+	if (projCoords.z > 1.0 || projCoords.x > 1.0 || projCoords.y > 1.0)
+		return 0.5;
+	if (projCoords.z < 0.0 || projCoords.x < 0.0 || projCoords.y < 0.0)
+		return 0.5;
 
-    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(uDirShadowMap, projCoords.xy).r;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)  
     // get depth of current fragment from light's perspective
-    float currentDepth = projCoords.z;    
     // check whether current frag pos is in shadow
-	float bias = max(0.05 * (1.0 - NdotL), 0.005);
-	
-    float shadow = 0.0;
-    vec2 texelSize = 1.0 / textureSize(uDirShadowMap, 0);
-    for (int i = 0; i <= 5; ++i)
-    {
-        int index = int(32.0 * hash(vec4(gl_FragCoord.xyy, i))) % 32;
-        float pcfDepth = texture(uDirShadowMap, projCoords.xy + poissonDisk[index] * texelSize).r;
-        shadow += currentDepth - bias > pcfDepth ? 0.0 : 0.2;
-    }
+	float bias = max(uShadowBiasMax * (1.0 - NdotL), uShadowBiasMin);
 
-    return shadow;
+	vec4 smSample = textureLod(uDirEVSMap, projCoords.xy, 0.0);
+	float shadowEVSM = calculateShadowEVSM(smSample, projCoords.z - bias);
+	float shadowESM = calculateShadowESM(smSample, projCoords.z - bias);
+	float shadowmap = texture(uDirShadowMap, projCoords.xy).r; // raw depth value for debuging
+	float smSteps = 0.1 * floor(10.0 * shadowmap);
+	float smFracts = fract(10.0 * shadowmap);
+	// return mix(smSteps, smFracts, 0.5);
+	// return shadowmap;
+	// return fract(10.0 * texture(uDirShadowMap, projCoords.xy).r); // raw depth value for debuging
+	// return step(currentDepth - bias, texture(uDirShadowMap, projCoords.xy).r); // raw occlusion value for debugging 
+	// return PCF(uDirShadowMap, size, projCoords.xy, currentDepth - bias); // pretty shadow for rendering
+	// return fract(100.0 * projCoords.z);
+	// return fract(100.0 * smSample.x);
+	return shadowEVSM;
+	// return shadowESM;
 }
 
 void main()

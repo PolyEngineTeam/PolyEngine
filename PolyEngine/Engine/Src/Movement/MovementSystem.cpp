@@ -1,12 +1,12 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Movement/MovementSystem.hpp"
-#include "Movement/FreeFloatMovementComponent.hpp"
-#include "ECS/EntityTransform.hpp"
-#include "ECS/Scene.hpp"
-#include "Time/TimeSystem.hpp"
-#include "Input/InputSystem.hpp"
-#include "Input/InputWorldComponent.hpp"
+#include <Movement/MovementSystem.hpp>
+#include <Movement/FreeFloatMovementComponent.hpp>
+#include <ECS/EntityTransform.hpp>
+#include <ECS/Scene.hpp>
+#include <Time/TimeSystem.hpp>
+#include <Input/InputSystem.hpp>
+#include <Input/InputWorldComponent.hpp>
 
 
 using namespace Poly;
@@ -15,6 +15,9 @@ void MovementSystem::MovementUpdatePhase(Scene* world)
 {
 	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
 	InputWorldComponent* inputCmp = world->GetWorldComponent<InputWorldComponent>();
+	
+	if (inputCmp->GetIsConsumed())
+		return;
 
 	for (auto freeFloatTuple : world->IterateComponents<FreeFloatMovementComponent>())
 	{
@@ -63,34 +66,4 @@ void MovementSystem::MovementUpdatePhase(Scene* world)
 			}
 		}
 	}
-}
-
-Vector MovementSystem::GetLocalForward(const EntityTransform& transform)
-{
-	return transform.GetLocalRotation() * -Vector::UNIT_Z;
-}
-
-Vector MovementSystem::GetLocalRight(const EntityTransform& transform)
-{
-	return transform.GetLocalRotation() * Vector::UNIT_X;
-}
-
-Vector MovementSystem::GetLocalUp(const EntityTransform& transform)
-{
-	return transform.GetLocalRotation() * Vector::UNIT_Y;
-}
-
-Vector MovementSystem::GetGlobalForward(const EntityTransform& transform)
-{
-	return transform.GetGlobalRotation() * -Vector::UNIT_Z;
-}
-
-Vector MovementSystem::GetGlobalRight(const EntityTransform& transform)
-{
-	return transform.GetGlobalRotation() * Vector::UNIT_X;
-}
-
-Vector MovementSystem::GetGlobalUp(const EntityTransform& transform)
-{
-	return transform.GetGlobalRotation() * Vector::UNIT_Y;
 }

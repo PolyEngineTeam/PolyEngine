@@ -1,11 +1,11 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Physics3D/Collider3DImpl.hpp"
-#include "Physics3D/Physics3DShapes.hpp"
-#include "Physics3D/Physics3DShapesImpl.hpp"
-#include "Physics3D/Rigidbody3DComponent.hpp"
+#include <Physics3D/Collider3DImpl.hpp>
+#include <Physics3D/Physics3DShapes.hpp>
+#include <Physics3D/Physics3DShapesImpl.hpp>
+#include <Physics3D/Rigidbody3DComponent.hpp>
 
-RTTI_DEFINE_COMPONENT(::Poly::Collider3DComponent)
+RTTI_DEFINE_COMPONENT(Poly::Collider3DComponent)
 
 //------------------------------------------------------------------------------
 Poly::Collider3DComponent::Collider3DComponent(Scene* world, Collider3DComponentTemplate&& tmp)

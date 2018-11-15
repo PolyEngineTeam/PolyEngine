@@ -1,16 +1,16 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Debugging/DebugDrawComponents.hpp"
-#include "Debugging/DebugDrawSystem.hpp"
-#include "Rendering/ViewportWorldComponent.hpp"
-#include "Rendering/Camera/CameraComponent.hpp"
-#include "Rendering/MeshRenderingComponent.hpp"
-#include "Rendering/Lighting/LightSourceComponent.hpp"
-#include "ECS/Scene.hpp"
-#include "ECS/DeferredTaskSystem.hpp"
-#include "Movement/MovementSystem.hpp"
-#include "UI/ScreenSpaceTextComponent.hpp"
-#include "Physics2D/Rigidbody2DComponent.hpp"
+#include <Debugging/DebugDrawComponents.hpp>
+#include <Debugging/DebugDrawSystem.hpp>
+#include <Rendering/ViewportWorldComponent.hpp>
+#include <Rendering/Camera/CameraComponent.hpp>
+#include <Rendering/MeshRenderingComponent.hpp>
+#include <Rendering/Lighting/LightSourceComponent.hpp>
+#include <ECS/Scene.hpp>
+#include <ECS/DeferredTaskSystem.hpp>
+#include <Movement/MovementSystem.hpp>
+#include <UI/ScreenSpaceTextComponent.hpp>
+#include <Physics2D/Rigidbody2DComponent.hpp>
 
 using namespace Poly;
 
@@ -194,7 +194,7 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* world)
 
 			auto localTrans = transform.GetLocalTranslation();
 			//auto lightDirection = Vector(1.0f, 1.0f, 1.0f);
-			auto directionRotation = MovementSystem::GetGlobalForward(transform);
+			auto directionRotation = transform.GetGlobalForward();
 			auto lightMagnitude = dirLightCmp->GetIntensity() * 2.0f;
 
 			DrawArrow(world, localTrans, directionRotation*lightMagnitude, Color::WHITE);
@@ -298,7 +298,6 @@ void DebugDrawSystem::DrawBox(Scene* world, const Vector& mins, const Vector& ma
 	DebugDrawSystem::DrawLine(world, worldFromSpace * points[4], worldFromSpace * points[7], color);
 	DebugDrawSystem::DrawLine(world, worldFromSpace * points[5], worldFromSpace * points[6], color);
 }
-
 
 void Poly::DebugDrawSystem::DrawBox(Scene * world, const AABox & box, const Color & color)
 {

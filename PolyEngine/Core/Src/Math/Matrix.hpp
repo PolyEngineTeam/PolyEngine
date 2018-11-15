@@ -2,10 +2,10 @@
 
 #include <pmmintrin.h>
 
-#include "Defines.hpp"
-#include "Math/BasicMath.hpp"
-#include "Math/Vector.hpp"
-#include "Math/Angle.hpp"
+#include <Defines.hpp>
+#include <Math/BasicMath.hpp>
+#include <Math/Vector.hpp>
+#include <Math/Angle.hpp>
 
 namespace Poly
 {
@@ -92,6 +92,7 @@ namespace Poly
 		/// <returns>Reference to itself.</returns>
 		Matrix& SetPerspective(Angle fov, float aspect, float near, float far);
 
+		Matrix& SetOrthographicZO(float top, float bottom, float left, float right, float near, float far);
 
 		/// <summary>Initializes matrix with orthographics projection</summary>
 		/// <param name="top">Top dimension.</param>

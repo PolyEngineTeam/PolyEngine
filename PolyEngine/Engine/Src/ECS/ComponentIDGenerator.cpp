@@ -1,5 +1,5 @@
-#include "EnginePCH.hpp"
-#include "ECS/ComponentIDGenerator.hpp"
+#include <EnginePCH.hpp>
+#include <ECS/ComponentIDGenerator.hpp>
 
 using namespace Poly;
 
@@ -42,4 +42,10 @@ IterablePoolAllocatorBase* Poly::ComponentManager::CreateAllocator(size_t id, si
 	if (it == IDToCreatorMap.end())
 		return nullptr;
 	return it->second(componentCount);
+}
+
+size_t Poly::Impl::ComponentIDGenerator::GenerateID() noexcept
+{
+	static size_t value = 0;
+	return value++;
 }

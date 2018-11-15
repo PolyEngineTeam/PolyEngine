@@ -37,8 +37,10 @@ namespace Poly
 		float GetIntensity() const { return Intensity; }
 
 		// Debug only
-		// Frustum DebugFrustum;
-		// Matrix DebugFrustumWorldFromModel;
+		Frustum DebugFrustum;
+		Vector DebugShadowCenter;
+		AABox DebugShadowAABBInLS;
+		Matrix DebugFrustumWorldFromModel;
 		// Debug only end
 
 	private:

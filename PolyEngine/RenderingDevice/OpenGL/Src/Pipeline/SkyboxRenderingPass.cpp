@@ -1,8 +1,8 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "Pipeline/SkyboxRenderingPass.hpp"
-#include "GLRenderingDevice.hpp"
-#include "Proxy/GLCubemapDeviceProxy.hpp"
+#include <Pipeline/SkyboxRenderingPass.hpp>
+#include <GLRenderingDevice.hpp>
+#include <Proxy/GLCubemapDeviceProxy.hpp>
 
 using namespace Poly;
 

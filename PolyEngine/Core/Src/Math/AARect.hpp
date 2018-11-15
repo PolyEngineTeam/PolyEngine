@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "BaseObject.hpp"
-#include "Math/Vector2f.hpp"
+#include <Defines.hpp>
+#include <BaseObject.hpp>
+#include <Math/Vector2f.hpp>
 
 namespace Poly
 {

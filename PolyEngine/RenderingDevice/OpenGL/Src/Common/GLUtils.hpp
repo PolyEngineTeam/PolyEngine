@@ -2,7 +2,7 @@
 
 #if defined(_WIN32)
 	#include <windows.h> //WinAPI is ultra-weird
-#include <SDL.h>
+	#include <SDL.h>
 	#include <epoxy/wgl.h>
 	#include <epoxy/gl.h>
 #elif defined(__linux__)

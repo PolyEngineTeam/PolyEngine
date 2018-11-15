@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "ECS/ComponentBase.hpp"
-#include "Rendering/Camera/CameraSystem.hpp"
-#include "Math/Frustum.hpp"
+#include <ECS/ComponentBase.hpp>
+#include <Rendering/Camera/CameraSystem.hpp>
+#include <Math/Frustum.hpp>
 
 namespace Poly {
 
@@ -48,6 +48,18 @@ namespace Poly {
 		void UpdateProjection();
 
 		bool IsVisibleToCamera(const Entity* ent) const;
+
+		// debug
+		float BiasMin = 0.01f;
+		float BiasMax = 0.05f;
+		float PolygonOffset = 0.0f;
+		float PolygonUnits = 0.0f;
+		float EVSMExponentPositive = 40.0f;
+		float EVSMExponentNegative = 10.0f;
+		float VSMBias = 0.0f;
+		float LightBleedingReduction = 0.0f;
+		//debug
+
 	private:
 		Matrix ClipFromView;
 		Matrix ViewFromWorld;

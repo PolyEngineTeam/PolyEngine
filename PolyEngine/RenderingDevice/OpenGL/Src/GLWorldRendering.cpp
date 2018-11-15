@@ -1,6 +1,6 @@
-#include "PolyRenderingDeviceGLPCH.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "GLRenderingDevice.hpp"
+#include <GLRenderingDevice.hpp>
 
 #include <algorithm>    // std::min
 
@@ -89,8 +89,6 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 
 	for ( auto meshCmp : meshCmps)
 	{
-		// sceneView.DirShadowOpaqueQueue.PushBack(meshCmp);
-
 		if (sceneView.CameraCmp->IsVisibleToCamera(meshCmp->GetOwner()))
 		{
 			if (meshCmp->GetBlendingMode() == eBlendingMode::OPAUQE)
@@ -102,11 +100,11 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 				sceneView.TranslucentQueue.PushBack(meshCmp);
 			}
 		}
-	}
 
-	if (sceneView.DirectionalLights.GetSize() > 0)
-	{
-		FillDirLightQueue(sceneView, meshCmps);
+		if (meshCmp->IsShadowCaster && meshCmp->GetBlendingMode() == eBlendingMode::OPAUQE)
+		{
+			sceneView.DirShadowOpaqueQueue.PushBack(meshCmp);
+		}
 	}
 }
 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "Utils/EnumUtils.hpp"
-#include "Utils/OutputStream.hpp"
-#include "Collections/StringBuilder.hpp"
+#include <Defines.hpp>
+#include <Utils/EnumUtils.hpp>
+#include <Utils/OutputStream.hpp>
+#include <Collections/StringBuilder.hpp>
 
 namespace Poly 
 {
@@ -11,7 +11,7 @@ namespace Poly
 	*  Enum describing possible levels of logging
 	*/
 	enum class eLogLevel { LVL_DEBUG, LVL_INFO, LVL_WARNING, LVL_ERROR, _COUNT };
-	REGISTER_ENUM_NAMES_IN_POLY(eLogLevel, "DEBUG", "INFO", "WARNING", "ERROR");
+	REGISTER_ENUM_NAMES(eLogLevel, "DEBUG", "INFO", "WARNING", "ERROR");
 
 	constexpr eLogLevel LOG_LEVEL_FILTER = eLogLevel::LVL_DEBUG;
 
@@ -84,7 +84,7 @@ namespace Poly
 				static StringBuilder sb;
 				String fullFmt = StringBuilder().AppendFormat("[{}] {}", levelStr, fmt).StealString();
 				sb.AppendFormat(fullFmt.GetCStr(), std::forward<Args>(args)...);
-				*Ostream << sb.GetString() << std::endl;
+				*Ostream << sb.StealString() << std::endl;
 				sb.Clear();
 			}
 		}

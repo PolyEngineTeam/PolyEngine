@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "ECS/ComponentBase.hpp"
-#include "Movement/MovementSystem.hpp"
+#include <ECS/ComponentBase.hpp>
+#include <Movement/MovementSystem.hpp>
 
 namespace Poly {
 

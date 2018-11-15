@@ -35,11 +35,9 @@ init:
 
 before_build:
 - cmd: |-
-    cd C:\projects\PolyEngine\PolyEngine
-    mkdir build
-    cd build
+    cd C:\projects\PolyEngine\PolyEngine\Scripts
     cmake --version
-    cmake .. -G %generator%
+    py ProjectTool.py -p
 
 build:
   project: C:\projects\PolyEngine\PolyEngine\build\PolyEngine.sln
@@ -47,13 +45,15 @@ build:
   parallel: true
   
 # scripts to run before tests
-#before_test:
-#  - echo %CONFIGURATION%
-#  - cd C:\projects\PolyEngine\PolyEngine\build\UnitTests\%CONFIGURATION%
+before_test:
+  - echo %CONFIGURATION%
+  - cd C:\projects\PolyEngine\PolyEngine\Dist\%CONFIGURATION%
 
 # to run your custom scripts instead of automatic tests
-#test_script:
-#  - PolyUnitTests.exe
+# UT disabled as for some reason it throws "Command exited with code -1073741515" error on appveyor
+# @fixme
+test_script:
+  #- .\PolyUnitTests.exe 
   
 notifications:
 - provider: Slack

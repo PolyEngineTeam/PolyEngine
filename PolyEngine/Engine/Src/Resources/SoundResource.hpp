@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "Resources/ResourceBase.hpp"
+#include <Resources/ResourceBase.hpp>
 
 namespace Poly 
 {

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "ECS/ComponentBase.hpp"
-#include "Configs/DebugConfig.hpp"
+#include <Defines.hpp>
+#include <ECS/ComponentBase.hpp>
+#include <Configs/DebugConfig.hpp>
 
 namespace Poly
 {

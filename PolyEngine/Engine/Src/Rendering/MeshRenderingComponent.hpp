@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "ECS/ComponentBase.hpp"
-#include "Rendering/RenderingSystem.hpp"
-#include "Resources/MeshResource.hpp"
+#include <ECS/ComponentBase.hpp>
+#include <Rendering/RenderingSystem.hpp>
+#include <Resources/MeshResource.hpp>
 
 namespace Poly {
 
@@ -60,6 +60,8 @@ namespace Poly {
 		void SetBlendingMode(eBlendingMode value) { BlendingMode = value; }
 
 		Optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) const override;
+
+		bool IsShadowCaster = true;
 
 	private:
 		MeshResource* Mesh = nullptr;

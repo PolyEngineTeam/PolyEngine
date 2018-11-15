@@ -1,10 +1,10 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "IRendererInterface.hpp"
-#include "Proxy/GLShaderProgram.hpp"
-#include "Common/GLUtils.hpp"
-#include "Pipeline/EnvCapture.hpp"
+#include <IRendererInterface.hpp>
+#include <Proxy/GLShaderProgram.hpp>
+#include <Common/GLUtils.hpp>
+#include <Pipeline/EnvCapture.hpp>
 
 namespace Poly {
 
@@ -50,6 +50,8 @@ namespace Poly {
 
 		void Render(const SceneView& sceneView) override;
 
+		void UIImgui();
+
 		void Deinit() override;
 
 	private:
@@ -72,8 +74,7 @@ namespace Poly {
 		const int MAX_NUM_LIGHTS = 1024;
 		const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 
-		const unsigned int SHADOW_WIDTH = 4096;
-		const unsigned int SHADOW_HEIGHT = 4096;
+		const unsigned int SHADOWMAP_SIZE = 4096;
 
 		// X and Y work group dimension variables for compute shader
 		GLuint WorkGroupsX = 0;
@@ -92,7 +93,10 @@ namespace Poly {
 		GLuint PostColorBuffer1;
 		GLuint PostColorBufferHalfRes;
 		GLuint LinearDepth;
-		GLuint DirShadowMap;
+		GLuint DirShadowMapDepth;
+		GLuint DirShadowMapColor;
+		GLuint EVSMap0;
+		GLuint EVSMap1;
 
 		// IBL textures and cubemaps
 		GLuint PreintegratedBrdfLUT;
@@ -103,6 +107,8 @@ namespace Poly {
 		GLuint FBOpost0;
 		GLuint FBOpost1;
 		GLuint FBOShadowDepthMap;
+		GLuint FBOShadowMapResolve0;
+		GLuint FBOShadowMapResolve1;
 
 		// Render pass for IBL environment
 		EnvCapture SkyboxCapture;
@@ -111,12 +117,15 @@ namespace Poly {
 
 		// Shader programs
 		GLShaderProgram ShadowMapShader;
+		GLShaderProgram EVSMResolveShader;
+		GLShaderProgram EVSMBlurShader;
 		GLShaderProgram DepthShader;
 		GLShaderProgram LightCullingShader;
 		GLShaderProgram LightAccumulationShader;
 		GLShaderProgram HDRShader;
 		GLShaderProgram SkyboxShader;
 		GLShaderProgram LinearizeDepthShader;
+		GLShaderProgram FXAAShader;
 		GLShaderProgram GammaShader;
 		GLShaderProgram MotionBlurShader;
 		GLShaderProgram DOFBokehShader;
@@ -163,13 +172,15 @@ namespace Poly {
 
 		Matrix GetProjectionForShadowMap(const SceneView& sceneView) const;
 
+		void StablizeShadowProjection(Poly::Matrix &clipFromWorld) const;
+
 		void RenderEquiCube(const SceneView& sceneView);
 
 		void RenderTranslucentLit(const SceneView& sceneView);
 		
 		void RenderParticleUnlit(Scene* world, const CameraComponent* cameraCmp);
 
-		void LinearizeDepth(const SceneView& sceneView);
+		void PostLinearizeDepth(const SceneView& sceneView);
 
 		void PostDepthOfField(const SceneView& sceneView);
 
@@ -182,6 +193,8 @@ namespace Poly {
 		void EditorDebug(const SceneView& sceneView);
 
 		void UIText2D(const SceneView& sceneView);
+
+		void PostFXAA(const SceneView& sceneView);
 
 		void PostGamma(const SceneView& sceneView);
 		

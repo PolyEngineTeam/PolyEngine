@@ -1,8 +1,8 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "AI/PathfindingSystem.hpp"
-#include "PathfindingComponent.hpp"
-#include "ECS/Scene.hpp"
+#include <AI/PathfindingSystem.hpp>
+#include <AI/PathfindingComponent.hpp>
+#include <ECS/Scene.hpp>
 
 using namespace Poly;
 

@@ -1,43 +1,30 @@
 #pragma once
 
-#include <QMenu>
+#include "Windows/PolyMainWindow.hpp"
+#include "Widgets/LoggerWidget.hpp"
 
-#include "PolyMainWindow.hpp"
+class WorldInspectorWidget;
+class WorldComponentsInspectorWidget;
+class EntityInspectorWidget;
+class ResourceInspectorWidget;
 
 class EditorUi : public QObject
 {
 	friend class DockManager;
 	friend class PolyWindow;
-	Q_OBJECT
+
 public:
 	EditorUi() = default;
 
-	void InitMainWindow();
+	void Init();
+	void AddWindow() { PolyWindow* wnd = new PolyWindow(); Windows.PushBack(wnd); wnd->show(); }
+
+	LoggerWidget* MainLogger;
+	LoggerWidget* CmdLogger;
+
+	PolyMainWindow* MainWindow;
 
 private:
-	PolyMainWindow* MainWindow;
 	Poly::Dynarray<PolyWindow*> Windows;
-
-	QMenuBar* MenuBar;
-		QMenu* FileMenu;
-			QAction* CloseProjectAction;
-			QAction* QuitAction;
-		QMenu* EditMenu;
-			QAction* UndoAction;
-			QAction* RedoAction;
-		QMenu* ViewMenu;
-			QAction* AddWindowAction;
-		QMenu* BuildMenu;
-			QAction* BuildAction;
-		QMenu* HelpMenu;
-			QAction* ContactUsAction;
-
-private slots:
-	void CloseProject();
-	void Quit();
-	void Undo();
-	void Redo();
-	void AddWindow();
-	void Build();
-	void ContactUs();
+	Poly::Dynarray<PolyDockWindow*> DockWindows;
 };

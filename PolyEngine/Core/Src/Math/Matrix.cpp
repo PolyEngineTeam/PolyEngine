@@ -1,8 +1,8 @@
-#include "CorePCH.hpp"
+#include <CorePCH.hpp>
 
-#include "Math/Matrix.hpp"
-#include "Math/SimdMath.hpp"
-#include "Math/Quaternion.hpp"
+#include <Math/Matrix.hpp>
+#include <Math/SimdMath.hpp>
+#include <Math/Quaternion.hpp>
 
 using namespace Poly;
 
@@ -224,25 +224,27 @@ Matrix& Matrix::SetScale(const Vector& scale) {
 //------------------------------------------------------------------------------
 Matrix& Matrix::SetLookAt(const Vector& pos, const Vector& lookAt, const Vector& up)
 {
+	const Vector f((lookAt - pos).GetNormalized());
+	const Vector s(f.Cross(up).GetNormalized());
+	const Vector u(s.Cross(f));
+	
 	SetIdentity();
+								// GLM_FUNC_QUALIFIER mat<4, 4, T, Q> lookAtRH(vec<3, T, Q> const& eye, vec<3, T, Q> const& center, vec<3, T, Q> const& up)
+	Data[0]  = s.X;				// glm[0][0]
+	Data[1]  = s.Y;				// glm[1][0] 
+	Data[2]  = s.Z;				// glm[2][0] 
 
-	Vector zAxis = pos - lookAt;
-	zAxis.Normalize();
-	Vector xAxis = up.Cross(zAxis);
-	xAxis.Normalize();
-	Vector yAxis = zAxis.Cross(xAxis);
+	Data[4]  = u.X;				// glm[0][1]
+	Data[5]  = u.Y;				// glm[1][1]
+	Data[6]  = u.Z;				// glm[2][1]
 
-	Data[0] = xAxis.X;
-	Data[1] = yAxis.X;
-	Data[2] = zAxis.X;
+	Data[8]  = -f.X;			// glm[0][2]
+	Data[9]  = -f.Y;			// glm[1][2]
+	Data[10] = -f.Z;			// glm[2][2]
 
-	Data[4] = xAxis.Y;
-	Data[5] = yAxis.Y;
-	Data[6] = zAxis.Y;
-
-	Data[8] = xAxis.Z;
-	Data[9] = yAxis.Z;
-	Data[10] = zAxis.Z;
+	Data[12] = -(s.Dot(pos));	// glm[3][0]
+	Data[13] = -(u.Dot(pos));	// glm[3][1]
+	Data[14] = f.Dot(pos);		// glm[3][2]
 
 	return *this;
 }
@@ -276,27 +278,47 @@ Matrix& Poly::Matrix::SetPerspective(Angle fov, float aspect, float near, float 
 }
 
 //------------------------------------------------------------------------------
+Matrix& Poly::Matrix::SetOrthographicZO(float bottom, float top, float left, float right, float near, float far)
+{
+	SetIdentity();
+													// orthoRH_ZO: GLM_RIGHT_HANDED && GLM_DEPTH_ZERO_TO_ONE
+	Data[0] = 2.0f / (right - left);				// glm[0][0]
+	Data[1] = 0.0f;
+	Data[2] = 0.0f;
+	Data[3] = -(right + left) / (right - left);		// glm[3][0] 
+
+	Data[4] = 0.0f;
+	Data[5] = 2.0f / (top - bottom);				// glm[1][1]
+	Data[6] = 0.0f;
+	Data[7] = -(top + bottom) / (top - bottom);		// glm[3][1]
+
+	Data[8] = 0.0f;
+	Data[9] = 0.0f;
+	Data[10] = 1.0f / (far - near);					// glm[2][2]
+	Data[11] = near / (far - near);					// glm[3][2]
+
+	return *this;
+}
+
+//------------------------------------------------------------------------------
 Matrix& Poly::Matrix::SetOrthographic(float bottom, float top,  float left, float right, float near, float far)
 {
-	Data[0] = 2.0f / (right - left);
-	Data[1] = 0;
-	Data[2] = 0;
-	Data[3] = -(right + left) / (right - left);
+	SetIdentity();
+													// orthoRH_NO: GLM_RIGHT_HANDED && GLM_DEPTH_NEGATIVE_ONE_TO_ONE
+	Data[0] = 2.0f / (right - left);				// glm[0][0]
+	Data[1] = 0.0f;
+	Data[2] = 0.0f;
+	Data[3] = -(right + left) / (right - left);		// glm[3][0] 
 
-	Data[4] = 0;
-	Data[5] = 2.0f / (top - bottom);
-	Data[6] = 0;
-	Data[7] = -(top + bottom) / (top - bottom);
+	Data[4] = 0.0f;
+	Data[5] = 2.0f / (top - bottom);				// glm[1][1]
+	Data[6] = 0.0f;
+	Data[7] = -(top + bottom) / (top - bottom);		// glm[3][1]
 
-	Data[8] = 0;
-	Data[9] = 0;
-	Data[10] = 2.0f / (far - near);
-	Data[11] = -(far + near) / (far - near);
-
-	Data[12] = 0;
-	Data[13] = 0;
-	Data[14] = 0;
-	Data[15] = 1;
+	Data[8] = 0.0f; 
+	Data[9] = 0.0f;
+	Data[10] = 2.0f / (far - near);					// glm[2][2]
+	Data[11] = -(far + near) / (far - near);		// glm[3][2]
 
 	return *this;
 }

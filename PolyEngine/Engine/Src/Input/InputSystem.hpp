@@ -1,7 +1,8 @@
 #pragma once
 
 #include <Defines.hpp>
-#include "Input/InputQueue.hpp"
+#include <Input/InputQueue.hpp>
+#include <Input/OutputQueue.hpp>
 
 namespace Poly
 {
