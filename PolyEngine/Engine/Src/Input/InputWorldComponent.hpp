@@ -24,10 +24,7 @@ namespace Poly
 	public:
 		RTTI_DECLARE_COMPONENT(::Poly::InputWorldComponent) { NO_RTTI_PROPERTY(); }
 
-		InputWorldComponent()
-			: IsConsumed(false), CharUTF8(nullptr)
-		{
-		};
+		InputWorldComponent() = default;
 
 		bool IsPressed(eKey key) const { return CurrKey[key]; }
 		bool IsPressed(const std::initializer_list<eKey>& list) const;
@@ -73,8 +70,8 @@ namespace Poly
 		std::unordered_map<size_t, ControllerState> Controllers;
 		Dynarray<Optional<size_t>> PlayerIDToJoystickID;
 		std::unordered_map<size_t, size_t> JoystickIDToPlayerID;
-		bool IsConsumed;
-		const char* CharUTF8;
+		bool IsConsumed = false;
+		const char* CharUTF8 = nullptr;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, InputWorldComponent)
