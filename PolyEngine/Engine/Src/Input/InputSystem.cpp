@@ -56,6 +56,9 @@ void InputSystem::InputPhase(Scene* world)
 			com->MouseDelta = ev.Pos;
 			break;
 		case eInputEventType::MOUSEPOS:
+			// MOUSEPOS and MOUSEMOVE are received in pairs.
+			// Setting com->MouseDelta here is (0,0)
+			// and will result in overwriting com->MouseDelta set by MOUSEMOVE
 			com->MousePos = ev.Pos;
 			break;
 		case eInputEventType::WHEELMOVE:
