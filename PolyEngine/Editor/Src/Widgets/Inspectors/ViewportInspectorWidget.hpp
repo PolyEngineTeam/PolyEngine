@@ -52,6 +52,12 @@ public:
 	void SetEngineState(PolyEditor::eEngineState state) override;
 	PolyEditor::eEngineState GetEngineState() override;
 
+public:
+	// handling output events from Engine to SDL
+	void HandleEngineOutputEvents(Poly::OutputQueue& OutputEventsQueue);
+	
+	Qt::CursorShape GetCursorType(Poly::eMouseCursorType cursorType);
+
 public slots:
 	// engine
 	void StateChanged();
