@@ -8,6 +8,9 @@ namespace Poly
 	class Dynarray;
 	class ComponentBase;
 	class Scene;
+	template<typename PrimaryComponent, typename... SecondaryComponents>
+	struct IteratorProxy;
+
 	class IEntityIteratorHelper : public BaseObject<>
 	{
 		public:
@@ -27,17 +30,17 @@ namespace Poly
 				Iter(std::move(iter));
 				FillCache();
 			}
-			bool operator==(const ComponentIterator& rhs) const { return Iter.get() == rhs.get(); }
-			bool operator!=(const ComponentIterator& rhs) const { return !(*this == rhs.get()); }
+			bool operator==(const ComponentIterator& rhs) const { return Iter.get() == rhs.Get(); }
+			bool operator!=(const ComponentIterator& rhs) const { return !(*this == rhs.Get()); }
 
-			std::tuple<typename std::add_pointer<PrimaryComponent>::type, Dynarray<ComponentBase*> > operator*() const
+			std::tuple<typename std::add_pointer<PrimaryComponent>::type, Dynarray<ComponentBase*> > operator*() //canot be const if  change cache
 			{
 				if (bCacheValid)
 					return Cache;
 				FillCache();
 				return Cache;
 			}
-			std::tuple<typename std::add_pointer<PrimaryComponent>::type, Dynarray<ComponentBase*> > operator->() const
+			std::tuple<typename std::add_pointer<PrimaryComponent>::type, Dynarray<ComponentBase*> > operator->()
 			{
 				if (bCacheValid)
 					return Cache;
@@ -47,6 +50,11 @@ namespace Poly
 
 			ComponentIterator& operator++() { Increment(); return *this; }
 			ComponentIterator operator++(int) { ComponentIterator ret(Iter); Increment(); return ret; } //test for double incrementing etc
+
+			std::unique_ptr<IEntityIteratorHelper> Get() const //won't compile operator== without it
+			{
+				return Iter;
+			}
 		private:
 			void Increment()
 			{
@@ -75,11 +83,11 @@ namespace Poly
 		IteratorProxy(Scene* s) : S(s) {}
 		ComponentIterator<PrimaryComponent, SecondaryComponents...> Begin()
 		{
-			return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorHelper<PrimaryComponent, SecondaryComponents...>()); //pass here implementation of IEntityIteratorHelper which operates on IterablePoolAllocatorBaseIterators
+			return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorHelper<PrimaryComponent, SecondaryComponents...>());
 		}
 		ComponentIterator<PrimaryComponent, SecondaryComponents...> End()
 		{
-			return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->GetComponentAllocator<PrimaryComponent>()->End()); //maybe different method from Scene which will provide abstraction on this allocator iterator
+			return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorHelper<PrimaryComponent, SecondaryComponents...>());
 		}
 		auto begin() { return Begin(); }
 		auto end() { return End(); }

@@ -33,6 +33,8 @@ namespace Poly {
 			RTTI_PROPERTY_FACTORY_AUTONAME(RootEntity, &Entity::AllocateEntity, RTTI::ePropertyFlag::NONE);
 		}
 	public:
+		using EntityUniquePtr = std::unique_ptr<Entity, EntityDeleter>;
+
 		/// <summary>Allocates memory for entities, world components and components allocators.</summary>
 		Scene();
 
@@ -106,8 +108,10 @@ namespace Poly {
 			return ComponentsIDGroup::GetComponentTypeID<T>();
 		}
 
-		template<typename PrimaryComponent, typename... SecondaryComponents>
-		struct IteratorProxy;
+		template<typename... T> static Dynarray<size_t> GetWorldComponentID() noexcept
+		{
+			return Dynarray<size_t>(std::initializer_list<size_t>{ GetWorldComponentID<T>()... } );
+		}
 
 		/// <summary>Allows iteration over multiple component types.
 		/// Iterator dereferences to a tuple of component pointers.</summary>
@@ -125,9 +129,9 @@ namespace Poly {
 			return {this};
 		}
 
-		class SceneComponentIteratorHelper : public IEntityIteratorHelper //maybe different name?
+		class SceneComponentIteratorHelper : public IEntityIteratorHelper
 		{
-			public: //should be constructed somehow? from Specific IterablePoolAlllocator
+			public:
 				explicit SceneComponentIteratorHelper(Entity* entity, Dynarray<size_t> required)
 				{
 					for (auto c : required)
@@ -149,32 +153,58 @@ namespace Poly {
 				{
 					return Match;
 				}
-				void increment() override
+				void increment() override //maybe not dynarray but bitmask?
 				{
-					//find next entity that has components 
-					//iterate through scene entities
+					Scene* scene = Match->GetEntityScene();
+					Entity* root = scene->GetRoot();
+					Dynarray<EntityUniquePtr> children = root->GetChildren();
+					for (const EntityUniquePtr& c : children) //O(n^2) :v
+					{
+						int idx = 0;
+						for (auto id : RequiredComponents)
+						{
+							if (!c->GetComponent(id))
+								break;
+							++idx;
+						}
+						if (idx == RequiredComponents.GetSize())
+						{
+							Match = c.get();
+							break;
+						}
+					}
 				}
 
 			private:
 				Entity* Match;
-				Dynarray<size_t> RequiredComponents;
+				Dynarray<size_t> RequiredComponents; //friendship?
 		};
 
 		//This method must find first entity that fits the template arguments list and create a Helper instance unique ptr
-		template<typename ...T> //maybe change to 2 Template parameters so we can fill in a dynaray of id's and do sibling stuff
+		template<typename PrimaryComponent, typename... SecondaryComponents>
 		std::unique_ptr<SceneComponentIteratorHelper> MakeSceneComponentIteratorHelper() //move to protected
 		{
-			Dynarray<size_t> IDs;
-			//fill it with id's from pack expansion
-			//find an entity which contains them all
-			//create a smart pointer and return it
-
-
-
-			//const auto ctypeID = GetComponentID<T>();
-			//IterablePoolAllocatorBase* iter = GetComponentAllocator(ctypeID); //here
-			//return make_unique<SceneComponentIteratorHelper>(SceneComponentIteratorHelper(iter));
+			Dynarray<size_t> requiredComponents(GetWorldComponentID<SecondaryComponents...>());
+			requiredComponents.PushFront(GetComponentID<PrimaryComponent>());
+			Dynarray<EntityUniquePtr> children = GetRoot()->GetChildren();
+			for (const EntityUniquePtr& c : children)
+			{
+				int idx = 0;
+				for (auto id : requiredComponents)
+				{
+					if (!c->GetComponent(id))
+						break;
+					++idx;
+				}
+				if (idx == requiredComponents.GetSize())
+				{
+					return std::make_unique<SceneComponentIteratorHelper>(SceneComponentIteratorHelper(c.get(), requiredComponents));
+				}
+			}
+			//TODO: assert if not found???
+			HEAVY_ASSERTE(false, "Could not find desired entity!!!");
 		}
+
 		/*
 		/// Component iterator.
 		template<typename PrimaryComponent, typename... SecondaryComponents>
