@@ -11,6 +11,17 @@ set(STANDALONE_TARGET PolyStandalone)
 # Prepend our modules dir to the path
 list(INSERT CMAKE_MODULE_PATH 0 "${ENGINE_ROOT_DIR}/CMakeModules")
 
+# Output dirs
+if (DEFINED DIST_DIR)
+	set(FULL_DIST_DIR "${DIST_DIR}/${BUILD_CONFIG_NAME}")
+
+	#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${FULL_DIST_DIR})
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${FULL_DIST_DIR})
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FULL_DIST_DIR})
+else()
+	message(ERROR "DIST_DIR not defined!")
+endif ()
+
 ##C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -188,21 +199,6 @@ function(GenerateSourceGoups Sources)
 		endif()
 		source_group("${SourcePath}" FILES "${Source}")
 	endforeach()
-endfunction()
-
-##
-# Function that copies DLLs to Dist folder
-##
-function(CopyArtifacts TargetName)
-	if (DEFINED DIST_DIR)
-		add_dependencies(${TargetName} Prerequisites)
-		add_custom_command(
-			TARGET ${TargetName} POST_BUILD
-			# Inhouse shared library dependancies
-			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:${TargetName}>" "${DIST_DIR}/${BUILD_CONFIG_NAME}"
-			COMMENT "Copying ${TargetName} artifacts to ${DIST_DIR}/${BUILD_CONFIG_NAME}" VERBATIM
-			)
-	endif ()
 endfunction()
 
 ##
