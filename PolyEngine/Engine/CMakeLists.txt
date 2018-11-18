@@ -4,7 +4,7 @@ find_package(OpenAL REQUIRED)
 find_package(OGG REQUIRED)
 find_package(Vorbis REQUIRED)
 #find_package(Box2D REQUIRED)
-find_package(Bullet REQUIRED)
+#find_package(Bullet REQUIRED)
 find_package(RapidJSON REQUIRED)
 find_package(STB REQUIRED)
 
