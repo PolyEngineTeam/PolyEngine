@@ -122,4 +122,10 @@ file(STRINGS "${CMAKE_CURRENT_LIST_DIR}/bullet3/VERSION" BULLET_VERSION)
 set(BULLET_PHYSICS_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/bullet3/)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/bullet3/src)
 
-
+###
+# Catch include
+###
+add_library(Catch INTERFACE)
+target_include_directories(Catch INTERFACE ${CMAKE_CURRENT_LIST_DIR}/Catch2/single_include/catch2)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/Catch2/contrib)
+include(ParseAndAddCatchTests)

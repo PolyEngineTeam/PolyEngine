@@ -4,13 +4,7 @@ file(GLOB_RECURSE POLYTESTS_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 	${POLYTESTS_INCLUDE}/*.cpp 
 	${POLYTESTS_INCLUDE}/*.hpp
 	${POLYTESTS_INCLUDE}/*.h)
-GenerateSourceGoups("${POLYTESTS_SRCS}")
-
-# Catch include
-add_library(Catch INTERFACE)
-target_include_directories(Catch INTERFACE ${PROJECT_SOURCE_DIR}/ThirdParty/Catch/Include)
-list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/ThirdParty/Catch/contrib)
-include(ParseAndAddCatchTests)                                                            #
+GenerateSourceGoups("${POLYTESTS_SRCS}")                                                          #
 
 add_executable(${UNITTESTS_TARGET} ${POLYTESTS_SRCS})
 add_dependencies(${UNITTESTS_TARGET} Prerequisites)

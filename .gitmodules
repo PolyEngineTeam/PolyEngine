@@ -7,3 +7,6 @@
 [submodule "PolyEngine/ThirdParty/bullet3"]
 	path = PolyEngine/ThirdParty/bullet3
 	url = https://github.com/bulletphysics/bullet3
+[submodule "PolyEngine/ThirdParty/Catch2"]
+	path = PolyEngine/ThirdParty/Catch2
+	url = https://github.com/catchorg/Catch2
