@@ -16,5 +16,3 @@ target_link_libraries(${GLDEVICE_TARGET} PRIVATE ${ENGINE_TARGET} epoxy::gl ${SD
 
 #set_target_properties(${GLDEVICE_TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "Src/${GLDEVICE_TARGET}PCH.hpp")
 cotire(${GLDEVICE_TARGET})
-
-CopyArtifacts(${GLDEVICE_TARGET})
