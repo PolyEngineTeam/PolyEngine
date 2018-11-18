@@ -122,7 +122,11 @@ message("Build configuration name: ${BUILD_CONFIG_NAME}")
 
 # Output dirs
 if (DEFINED DIST_DIR)
-	set(FULL_DIST_DIR "${DIST_DIR}/${BUILD_CONFIG_NAME}")
+	if (WIN32)
+		set(FULL_DIST_DIR "${DIST_DIR}") # Config name is added autmatically on windows
+	else()
+		set(FULL_DIST_DIR "${DIST_DIR}/${BUILD_CONFIG_NAME}")
+	endif()
 
 	#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${FULL_DIST_DIR})
 	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${FULL_DIST_DIR})
@@ -252,7 +256,7 @@ if(WIN32)
 endif()
 
 ### Thirdparty
-add_subdirectory(ThirdParty)
+add_subdirectory(${ENGINE_ROOT_DIR}/ThirdParty ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty)
 
 ##
 # Enable Werror for the rest of the build

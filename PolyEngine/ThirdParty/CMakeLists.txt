@@ -53,3 +53,9 @@ add_subdirectory(assimp/code)
 
 # Export assimp include to the solution
 set(ASSIMP_INCLUDE_DIR ${ASSIMP_INCLUDE_DIR} PARENT_SCOPE)
+
+###
+# ImGui
+###
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Imgui)
+set(IMGUI_INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR}/Imgui PARENT_SCOPE)
