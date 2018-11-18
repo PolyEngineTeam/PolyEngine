@@ -124,6 +124,8 @@ void EngineManager::UpdatePhase()
 	}
 
 	EngineObj->Update(updatePhases);
+
+	gApp->InspectorMgr->GetViewportInspector()->HandleEngineOutputEvents(EngineObj->GetOutputQueue());
 }
 
 //------------------------------------------------------------------------------

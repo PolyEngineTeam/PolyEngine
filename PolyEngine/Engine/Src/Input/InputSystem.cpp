@@ -10,9 +10,12 @@ using namespace Poly;
 void InputSystem::InputPhase(Scene* world)
 {
 	InputWorldComponent* com = world->GetWorldComponent<InputWorldComponent>();
+	com->IsConsumed = false;
 
 	com->PrevKey = com->CurrKey;
 	com->PrevMouseButton = com->CurrMouseButton;
+
+	com->CharUTF8 = nullptr;
 
 	com->MouseDelta = Vector2i::ZERO;
 	com->PrevWheel = com->CurrWheel;
@@ -24,7 +27,6 @@ void InputSystem::InputPhase(Scene* world)
 	}
 
 	InputQueue& InputEventsQueue = gEngine->GetInputQueue();
-
 	while (!InputEventsQueue.IsEmpty())
 	{
 		InputEvent& ev = InputEventsQueue.Front();
@@ -37,6 +39,9 @@ void InputSystem::InputPhase(Scene* world)
 		case eInputEventType::KEYUP:
 			if(ev.Key < eKey::_COUNT)
 				com->CurrKey[ev.Key] = false;
+			break;
+		case eInputEventType::TEXTCHAR:
+			com->CharUTF8 = ev.CharUTF8;
 			break;
 		case eInputEventType::MOUSEBUTTONDOWN:
 			if(ev.MouseButton < eMouseButton::_COUNT)
@@ -51,7 +56,9 @@ void InputSystem::InputPhase(Scene* world)
 			com->MouseDelta = ev.Pos;
 			break;
 		case eInputEventType::MOUSEPOS:
-			com->MouseDelta = ev.Pos - com->MousePos;
+			// MOUSEPOS and MOUSEMOVE are received in pairs.
+			// Setting com->MouseDelta here is (0,0)
+			// and will result in overwriting com->MouseDelta set by MOUSEMOVE
 			com->MousePos = ev.Pos;
 			break;
 		case eInputEventType::WHEELMOVE:
@@ -104,7 +111,4 @@ void InputSystem::InputPhase(Scene* world)
 		}
 		InputEventsQueue.PopFront();
 	}
-
-
 }
-

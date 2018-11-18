@@ -244,3 +244,6 @@ if(WIN32)
         COMMENT "Copying thirdparty dlls..." VERBATIM
     )
 endif()
+
+add_subdirectory("${ENGINE_ROOT_DIR}/ThirdParty/Imgui" "${CMAKE_CURRENT_BINARY_DIR}/Imgui")
+set(IMGUI_INCLUDE_DIRS "${ENGINE_ROOT_DIR}/ThirdParty/Imgui")

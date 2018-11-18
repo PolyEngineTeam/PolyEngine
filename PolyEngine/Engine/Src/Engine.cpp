@@ -12,6 +12,7 @@
 #include <Rendering/RenderingSystem.hpp>
 #include <Rendering/Particles/ParticleUpdateSystem.hpp>
 #include <Time/TimeWorldComponent.hpp>
+#include <Imgui/ImguiSystem.hpp>
 #include <Debugging/DebugWorldComponent.hpp>
 #include <Debugging/DebugDrawComponents.hpp>
 #include <Physics2D/Physics2DWorldComponent.hpp>
@@ -56,6 +57,7 @@ void Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice>
 	// Engine update phases
 	RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(InputSystem::InputPhase, eUpdatePhaseOrder::PREUPDATE);
+	RegisterSystem(std::make_unique<ImguiSystem>(), eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(Physics2DSystem::Physics2DUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(Physics3DSystem::Physics3DUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(MovementSystem::MovementUpdatePhase, eUpdatePhaseOrder::PREUPDATE);

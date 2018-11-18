@@ -36,6 +36,7 @@ public:
 	Dynarray<Entity*> GetSelectedEntities() { return SelectedEntities; }
 	const ProjectConfig* GetConfig() { return Config; }
 	PolyEditor::eEngineState GetEngineState() { return EngineState; }
+	ViewportInspectorWidget* GetViewportInspector() { return ViewportInspector; }
 
 public slots:
 	void ProjectOpenedSlot(const ProjectConfig* config);

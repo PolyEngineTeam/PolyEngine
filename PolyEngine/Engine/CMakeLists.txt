@@ -13,14 +13,15 @@ set(POLYENGINE_INCLUDE Src)
 file(GLOB_RECURSE POLYENGINE_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
 	${POLYENGINE_INCLUDE}/*.cpp 
 	${POLYENGINE_INCLUDE}/*.hpp
-	${POLYENGINE_INCLUDE}/*.h)
+	${POLYENGINE_INCLUDE}/*.h
+)
 GenerateSourceGoups("${POLYENGINE_SRCS}")
 
 
 add_library(${ENGINE_TARGET} SHARED ${POLYENGINE_SRCS})
 target_compile_definitions(${ENGINE_TARGET} PRIVATE _ENGINE)
-target_include_directories(${ENGINE_TARGET} PUBLIC ${POLYENGINE_INCLUDE} ${BULLET_INCLUDE_DIRS} ${STB_INCLUDE_DIRS})
-target_link_libraries(${ENGINE_TARGET} PUBLIC ${CORE_TARGET} PRIVATE ass::imp Freetype::FT2 OpenAL::AL OGG::OGG Vorbis::Vorbis Vorbis::File Box2D::Box2D Rapid::JSON ${BULLET_LIBRARIES})
+target_include_directories(${ENGINE_TARGET} PUBLIC ${POLYENGINE_INCLUDE} ${BULLET_INCLUDE_DIRS} ${STB_INCLUDE_DIRS} ${IMGUI_INCLUDE_DIRS})
+target_link_libraries(${ENGINE_TARGET} PUBLIC ${CORE_TARGET} PRIVATE ass::imp Freetype::FT2 OpenAL::AL OGG::OGG Vorbis::Vorbis Vorbis::File Box2D::Box2D Rapid::JSON ${BULLET_LIBRARIES} Imgui)
 
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	target_compile_options(${ENGINE_TARGET} PRIVATE --coverage -fprofile-arcs -ftest-coverage)
