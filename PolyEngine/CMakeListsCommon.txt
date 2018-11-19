@@ -109,6 +109,17 @@ else()
 endif()
 message("Build configuration name: ${BUILD_CONFIG_NAME}")
 
+# Output dirs
+if (DEFINED DIST_DIR)
+	set(FULL_DIST_DIR "${DIST_DIR}/${BUILD_CONFIG_NAME}")
+
+	#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${FULL_DIST_DIR})
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${FULL_DIST_DIR})
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FULL_DIST_DIR})
+else()
+	message(ERROR "DIST_DIR not defined!")
+endif ()
+
 ##
 # Build switches
 ##
@@ -191,21 +202,6 @@ function(GenerateSourceGoups Sources)
 endfunction()
 
 ##
-# Function that copies DLLs to Dist folder
-##
-function(CopyArtifacts TargetName)
-	if (DEFINED DIST_DIR)
-		add_dependencies(${TargetName} Prerequisites)
-		add_custom_command(
-			TARGET ${TargetName} POST_BUILD
-			# Inhouse shared library dependancies
-			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:${TargetName}>" "${DIST_DIR}/${BUILD_CONFIG_NAME}"
-			COMMENT "Copying ${TargetName} artifacts to ${DIST_DIR}/${BUILD_CONFIG_NAME}" VERBATIM
-			)
-	endif ()
-endfunction()
-
-##
 # Enable CCache if found
 ##
 find_program(CCACHE_FOUND ccache)
@@ -244,3 +240,6 @@ if(WIN32)
         COMMENT "Copying thirdparty dlls..." VERBATIM
     )
 endif()
+
+add_subdirectory("${ENGINE_ROOT_DIR}/ThirdParty/Imgui" "${CMAKE_CURRENT_BINARY_DIR}/Imgui")
+set(IMGUI_INCLUDE_DIRS "${ENGINE_ROOT_DIR}/ThirdParty/Imgui")

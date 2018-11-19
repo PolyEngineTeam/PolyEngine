@@ -274,8 +274,8 @@ def create_update_engine_project(engine_path):
     dist_dir = 'Dist'
     run_cmake(engine_path, 'Build', dist_dir)
     # Patch project proj.user file to contain proper runtime info
-    if os.name == 'nt':
-        patch_usr_proj(engine_path, "UnitTests", dist_dir, True)
+    #if os.name == 'nt':
+    #    patch_usr_proj(engine_path, "UnitTests", dist_dir, True)
 
 #################### SCRIPT START ####################
 if __name__ == "__main__":

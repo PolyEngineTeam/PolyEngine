@@ -1,4 +1,3 @@
-
 set(GAME_INCLUDE Src)
 
 file(GLOB_RECURSE GAME_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
@@ -33,5 +32,3 @@ add_custom_command(
 )
 
 cotire(${GAME_TARGET})
-
-CopyArtifacts(${GAME_TARGET})

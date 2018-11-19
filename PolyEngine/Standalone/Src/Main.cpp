@@ -15,6 +15,8 @@ extern "C"
 	using CreateGameFunc = Poly::IGame* (void);
 }
 
+int main(int argc, char * args[]);
+
 void HandleWindowEvent(const SDL_WindowEvent& windowEvent);
 
 enum eMouseStateChange {
@@ -36,6 +38,21 @@ public:
 		Poly::FileOutputStream::Append(data);
 	}
 };
+
+static char* g_ClipboardTextData = NULL;
+static const char* HandleGetClipboardText(void*)
+{
+	if (g_ClipboardTextData)
+		SDL_free(g_ClipboardTextData);
+	g_ClipboardTextData = SDL_GetClipboardText();
+	return g_ClipboardTextData;
+}
+static void HandleSetClipboardText(void*, const char* text)
+{
+	SDL_SetClipboardText(text);
+}
+
+SDL_SystemCursor GetCursorType(Poly::eMouseCursorType cursorType);
 
 int main(int argc, char* args[])
 {
@@ -98,6 +115,15 @@ int main(int argc, char* args[])
 	Engine->StartGame();
 	Poly::gConsole.LogDebug("Engine initialization and handshake successfull. Starting main loop...");
 
+	Engine->SetClipboardTextFunction = HandleSetClipboardText;
+	Engine->GetClipboardTextFunction = HandleGetClipboardText;
+
+	SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+
+	SDL_Cursor* mouseCursors[(int)SDL_NUM_SYSTEM_CURSORS] = { 0 };
+	for (int i = SDL_NUM_SYSTEM_CURSORS - 1; i >= 0; --i)
+		mouseCursors[i] = SDL_CreateSystemCursor((SDL_SystemCursor)i);
+
 	bool quitRequested = false;
 	while (!quitRequested)
 	{
@@ -115,6 +141,9 @@ int main(int argc, char* args[])
 				break;
 			case SDL_KEYUP:
 				Engine->KeyUp(static_cast<Poly::eKey>(event.key.keysym.scancode));
+				break;
+			case SDL_TEXTINPUT:
+				Engine->AddCharacterUTF8(event.text.text);
 				break;
 			case SDL_MOUSEMOTION:
 			{
@@ -167,6 +196,32 @@ int main(int argc, char* args[])
 
 		// Engine loop
 		Engine->Update();
+
+		Poly::OutputQueue& OutputEventsQueue = Engine->GetOutputQueue();
+		while (!OutputEventsQueue.IsEmpty())
+		{
+			Poly::OutputEvent& ev = OutputEventsQueue.Front();
+			switch (ev.Type)
+			{
+			case Poly::eOutputEventType::MOUSEPOS:
+				SDL_WarpMouseInWindow(window, ev.Pos.X, ev.Pos.Y);
+				break;
+			case Poly::eOutputEventType::CURSORSET:
+				SDL_SetCursor(mouseCursors[(int)GetCursorType(ev.CursorType)]);
+				break;
+			case Poly::eOutputEventType::CURSORSHOW:
+				SDL_ShowCursor(SDL_TRUE);
+				break;
+			case Poly::eOutputEventType::CURSORHIDE:
+				SDL_ShowCursor(SDL_FALSE);
+				break;
+			case Poly::eOutputEventType::_COUNT:
+				HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::Push(), which is an invalid value");
+				break;
+			}
+			OutputEventsQueue.PopFront();
+		}
+
 		quitRequested = quitRequested || Engine->IsQuitRequested();
 	}
 	Poly::gConsole.LogDebug("Closing main loop...");
@@ -233,7 +288,6 @@ void HandleWindowEvent(const SDL_WindowEvent& windowEvent)
 	}
 }
 
-
 void UpdateMouseState(eMouseStateChange change)
 {
 	if (change == eMouseStateChange::BUTTON_CLICK)
@@ -248,5 +302,21 @@ void UpdateMouseState(eMouseStateChange change)
 		SDL_ShowCursor(1);
 		SDL_CaptureMouse(SDL_bool::SDL_FALSE);
 		SDL_SetRelativeMouseMode(SDL_FALSE);
+	}
+}
+
+SDL_SystemCursor GetCursorType(Poly::eMouseCursorType cursorType)
+{
+	switch (cursorType)
+	{
+		case Poly::eMouseCursorType::ARROW:			return SDL_SYSTEM_CURSOR_ARROW;
+		case Poly::eMouseCursorType::TEXTINPUT:		return SDL_SYSTEM_CURSOR_IBEAM;
+		case Poly::eMouseCursorType::RESIZEALL:		return SDL_SYSTEM_CURSOR_SIZEALL;
+		case Poly::eMouseCursorType::RESIZENS:		return SDL_SYSTEM_CURSOR_SIZENS;
+		case Poly::eMouseCursorType::RESIZEEW:		return SDL_SYSTEM_CURSOR_SIZEWE;
+		case Poly::eMouseCursorType::RESIZENESW:	return SDL_SYSTEM_CURSOR_SIZENESW;
+		case Poly::eMouseCursorType::RESIZENWSE:	return SDL_SYSTEM_CURSOR_SIZENWSE;
+		case Poly::eMouseCursorType::HAND:			return SDL_SYSTEM_CURSOR_HAND;
+		default: return SDL_SYSTEM_CURSOR_ARROW;
 	}
 }

@@ -21,7 +21,7 @@ add_executable(${EDITOR_TARGET} ${EDITOR_SRCS} ${AUTOGEN_SOURCE_GROUP})
 target_include_directories(${EDITOR_TARGET} PUBLIC ${EDITOR_INCLUDE} ${SDL2_INCLUDE_DIRS})
 target_link_libraries(${EDITOR_TARGET} ${ENGINE_TARGET} ${CORE_TARGET} ${SDL2_LIBRARIES} ${CMAKE_DL_LIBS})
 target_link_libraries(${EDITOR_TARGET} Qt5::Widgets Qt5::Core)
-add_dependencies(${EDITOR_TARGET} ${GLDEVICE_TARGET}) #dynamically loaded
+add_dependencies(${EDITOR_TARGET} Prerequisites ${GLDEVICE_TARGET}) #dynamically loaded
 qt5_use_modules(${EDITOR_TARGET} Widgets Core)
 
 if(APPLE)
@@ -46,5 +46,3 @@ endif()
 if(NOT APPLE)
     cotire(${EDITOR_TARGET})
 endif()
-
-CopyArtifacts(${EDITOR_TARGET})

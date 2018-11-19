@@ -177,5 +177,7 @@ void EngineController::OnEngineUpdateTimerTick()
 		ASSERTE(false, "Other values not supported.");
 	}
 
+	gApp->InspectorMgr->GetViewportInspector()->HandleEngineOutputEvents(ControlledEngine->GetOutputQueue());
+
 	ControlledEngine->Update(updatePhases);
 }

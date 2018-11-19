@@ -136,7 +136,48 @@ PolyEditor::eEngineState ViewportInspectorWidget::GetEngineState()
 	return Manager->GetEngineState();
 }
 
+void ViewportInspectorWidget::HandleEngineOutputEvents(Poly::OutputQueue& OutputEventsQueue)
+{
+	while (!OutputEventsQueue.IsEmpty())
+	{
+		Poly::OutputEvent& ev = OutputEventsQueue.Front();
+		switch (ev.Type)
+		{
+			case Poly::eOutputEventType::MOUSEPOS:
+				SDLWidget->cursor().setPos(ev.Pos.X, ev.Pos.Y);
+				break;
+			case Poly::eOutputEventType::CURSORSHOW:
+				SDLWidget->setCursor(Qt::ArrowCursor);
+				break;
+			case Poly::eOutputEventType::CURSORSET:
+				SDLWidget->setCursor(QCursor(GetCursorType(ev.CursorType)));
+				break;
+			case Poly::eOutputEventType::CURSORHIDE:
+				SDLWidget->setCursor(Qt::BlankCursor);
+				break;
+			case Poly::eOutputEventType::_COUNT:
+				HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::Push(), which is an invalid value");
+				break;
+		}
+		OutputEventsQueue.PopFront();
+	}
+}
 
+Qt::CursorShape ViewportInspectorWidget::GetCursorType(Poly::eMouseCursorType cursorType)
+{
+	switch (cursorType)
+	{
+		case Poly::eMouseCursorType::ARROW:			return Qt::ArrowCursor;
+		case Poly::eMouseCursorType::TEXTINPUT:		return Qt::IBeamCursor;
+		case Poly::eMouseCursorType::RESIZEALL:		return Qt::SizeAllCursor;
+		case Poly::eMouseCursorType::RESIZENS:		return Qt::SizeVerCursor;
+		case Poly::eMouseCursorType::RESIZEEW:		return Qt::SizeHorCursor;
+		case Poly::eMouseCursorType::RESIZENESW:	return Qt::SizeFDiagCursor;
+		case Poly::eMouseCursorType::RESIZENWSE:	return Qt::SizeBDiagCursor;
+		case Poly::eMouseCursorType::HAND:			return Qt::OpenHandCursor;
+		default: return Qt::CursorShape::ArrowCursor;
+	}
+}
 
 //		slots
 //------------------------------------------------------------------------------
