@@ -26,6 +26,7 @@ public:
 	};
 
 	ProjectConfig(const Poly::String& path, eConfiguration configuration);
+	~ProjectConfig();
 
 	// Path to directory where *.proj.json file is stored
 	const Poly::String& GetProjectPath() const { return ProjectDirPath; }

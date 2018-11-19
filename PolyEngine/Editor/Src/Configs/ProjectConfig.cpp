@@ -28,6 +28,11 @@ ProjectConfig::ProjectConfig(const String& path, eConfiguration configuration)
 }
 
 //------------------------------------------------------------------------------
+ProjectConfig::~ProjectConfig()
+{
+}
+
+//------------------------------------------------------------------------------
 String ProjectConfig::GetGameDllPath() const
 {
 	return AssetsPath->GetGameLibPath();
