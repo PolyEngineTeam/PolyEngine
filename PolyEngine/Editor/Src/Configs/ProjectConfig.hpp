@@ -3,6 +3,11 @@
 #include <Collections/String.hpp>
 #include <Configs/ConfigBase.hpp>
 
+namespace Poly
+{
+	class AssetsPathConfig;
+}
+
 class ProjectConfig : public Poly::ConfigBase
 {
 	RTTI_DECLARE_TYPE_DERIVED(ProjectConfig, Poly::RTTIBase)
@@ -14,6 +19,9 @@ public:
 	enum class eConfiguration
 	{
 		DEBUG,
+		DEBUG_FAST,
+		RELEASE, 
+		TESTING,
 		_COUNT
 	};
 
@@ -32,6 +40,8 @@ public:
 private:
 	Poly::String GetDistDir() const;
 
+	// project name loaded from *.proj.json
+	Poly::String ProjectName;
 	// Path to *.proj.json file
 	Poly::String ProjectPath;
 	// Path to directory where *.proj.json file is stored
@@ -39,6 +49,5 @@ private:
 	// project config configuration
 	eConfiguration ProjectConfiguration;
 
-	// project name loaded from *.proj.json
-	Poly::String ProjectName;
+	std::unique_ptr<Poly::AssetsPathConfig> AssetsPath;
 };

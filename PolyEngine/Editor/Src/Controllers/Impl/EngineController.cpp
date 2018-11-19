@@ -56,7 +56,7 @@ void EngineController::SetEngine(std::unique_ptr<Poly::Engine> engineToControl)
 //------------------------------------------------------------------------------
 void EngineController::Edit()
 {
-	ASSERTE(ControlledEngine, "Engine instance is requuired to perform this operation");
+	ASSERTE(ControlledEngine, "Engine instance is required to perform this operation");
 
 	EngineUpdateTimer.stop();
 	const auto oldEngineState = Editor->GetEngineState();
@@ -85,7 +85,7 @@ void EngineController::Edit()
 //------------------------------------------------------------------------------
 void EngineController::Play()
 {
-	ASSERTE(ControlledEngine, "Engine instance is requuired to perform this operation");
+	ASSERTE(ControlledEngine, "Engine instance is required to perform this operation");
 
 	EngineUpdateTimer.stop();
 	const auto oldEngineState = Editor->GetEngineState();
@@ -117,7 +117,7 @@ void EngineController::Play()
 //------------------------------------------------------------------------------
 void EngineController::Pause()
 {
-	ASSERTE(ControlledEngine, "Engine instance is requuired to perform this operation");
+	ASSERTE(ControlledEngine, "Engine instance is required to perform this operation");
 
 	EngineUpdateTimer.stop();
 	const auto oldEngineState = Editor->GetEngineState();
@@ -149,7 +149,7 @@ void EngineController::Pause()
 //------------------------------------------------------------------------------
 void EngineController::OnEngineUpdateTimerTick()
 {
-	ASSERTE(ControlledEngine, "Engine instance is requuired to perform this operation");
+	ASSERTE(ControlledEngine, "Engine instance is required to perform this operation");
 
 	auto updatePhases = Dynarray<Engine::eUpdatePhaseOrder>();
 

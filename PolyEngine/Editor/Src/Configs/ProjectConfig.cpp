@@ -7,57 +7,36 @@ RTTI_DEFINE_TYPE(ProjectConfig)
 //------------------------------------------------------------------------------
 ProjectConfig::ProjectConfig(const String& path, eConfiguration configuration)
 	: Poly::ConfigBase(path, Poly::eResourceSource::NONE), ProjectPath(path), ProjectConfiguration(configuration)
+	, AssetsPath(std::make_unique<Poly::AssetsPathConfig>())
 {
 	FileName = path;
 
 	// get Project directory path
 	for (size_t i = path.GetLength(); i > 0; --i)
-		if (path[i] == '/')
+		if (path[i] == '/' || path[i] == '\\')
 		{
 			ProjectDirPath = path.Substring(i);
 			break;
 		}
 
 	Load();
+
+	StringBuilder builder;
+	builder.Append(GetDistDir());
+	builder.Append("AssetsPathConfig.json");
+	AssetsPath->DeserializeFromFile(builder.StealString());
 }
 
 //------------------------------------------------------------------------------
 String ProjectConfig::GetGameDllPath() const
 {
-	StringBuilder builder;
-
-#if defined(_WIN32)
-	builder.Append(GetDistDir());
-	builder.Append(ProjectName);
-	builder.Append(".dll");
-#elif defined(__linux__) || defined(__APPLE__)
-	builder.Append(GetDistDir())
-		.Append("lib")
-		.Append(ProjectName)
-		.Append(".so");
-#else
-#error "Unsupported platform :("
-#endif
-
-	return builder.StealString();
+	return AssetsPath->GetGameLibPath();
 }
 
 //------------------------------------------------------------------------------
 String ProjectConfig::GetRenderingDeviceDllPath() const
 {
-	StringBuilder builder;
-
-#if defined(_WIN32)
-	builder.Append(GetDistDir());
-	builder.Append("PolyRenderingDeviceGL.dll");
-#elif defined(__linux__) || defined(__APPLE__)
-	builder.Append(GetDistDir())
-		.Append("libPolyRenderingDeviceGL.so");
-#else
-#error "Unsupported platform :("
-#endif
-
-	return builder.StealString();
+	return AssetsPath->GetRenderingDeviceLibPath();
 }
 
 //------------------------------------------------------------------------------
@@ -72,6 +51,18 @@ Poly::String ProjectConfig::GetDistDir() const
 	{
 	case eConfiguration::DEBUG:
 		builder.Append("Debug/");
+		break;
+
+	case eConfiguration::DEBUG_FAST:
+		builder.Append("DebugFast/");
+		break;
+
+	case eConfiguration::RELEASE:
+		builder.Append("Release/");
+		break;
+
+	case eConfiguration::TESTING:
+		builder.Append("Testing/");
 		break;
 
 	default:

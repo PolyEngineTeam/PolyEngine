@@ -11,9 +11,9 @@ EditorApp* gApp = nullptr;
 std::unique_ptr<ProjectConfig> GetProjectConfigFromArgs(int argc, char *argv[])
 {
 	constexpr unsigned PROJ_JSON_FILE_PATH_INDEX = 1;
-	constexpr unsigned CONFIGURSTION_INDEX = 2;
+	constexpr unsigned CONFIGURATION_INDEX = 2;
 
-	const auto modeName = String(argv[CONFIGURSTION_INDEX]);
+	const auto modeName = String(argv[CONFIGURATION_INDEX]);
 
 	ProjectConfig::eConfiguration configuration;
 	if (modeName == "Debug")
