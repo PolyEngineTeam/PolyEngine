@@ -30,8 +30,8 @@ namespace Poly
 				Iter(std::move(iter));
 				FillCache();
 			}
-			bool operator==(const ComponentIterator& rhs) const { return Iter.get() == rhs.Get(); }
-			bool operator!=(const ComponentIterator& rhs) const { return !(*this == rhs.Get()); }
+			bool operator==(const  ComponentIterator& rhs) const { return Iter.get() == rhs.Get(); }
+			bool operator!=(const  ComponentIterator& rhs) const { return Iter.get() != rhs.Get(); } //cannot find the correct overload
 
 			std::tuple<typename std::add_pointer<PrimaryComponent>::type, Dynarray<ComponentBase*> > operator*() //canot be const if  change cache
 			{
@@ -51,9 +51,9 @@ namespace Poly
 			ComponentIterator& operator++() { Increment(); return *this; }
 			ComponentIterator operator++(int) { ComponentIterator ret(Iter); Increment(); return ret; } //test for double incrementing etc
 
-			std::unique_ptr<IEntityIteratorHelper> Get() const //won't compile operator== without it
+			IEntityIteratorHelper* Get() const
 			{
-				return Iter;
+				return Iter.get();
 			}
 		private:
 			void Increment()
@@ -64,7 +64,7 @@ namespace Poly
 
 			void FillCache()
 			{
-				Entity* ent = Iter.get();
+				Entity* ent = Iter.get()->get();
 				PrimaryComponent* primary = ent->GetComponent<PrimaryComponent>();
 				Cache(std::make_tuple(primary, primary->template GetSibling<SecondaryComponents>()...));
 				bCacheValid = true;
