@@ -699,31 +699,13 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
 	ASSERTE(sceneView.DirectionalLights.GetSize() > 0, "GetProjectionForShadowMap has no directional light in scene view");
 	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLights[0];
 	
-	Vector shadowAABBExtentsInLS = dirLightCmp->DebugShadowAABBInLS.GetSize() * 0.5f;
-	Vector shadowAABBCenterInWS = dirLightCmp->DebugShadowCenter;
 	Vector lightForward = dirLightCmp->GetTransform().GetGlobalForward();
 	Vector lightUp = dirLightCmp->GetTransform().GetGlobalUp();
-	
 	Matrix lightViewFromWorld = Matrix(Vector::ZERO, lightForward, lightUp);
 
-	{
-		Vector axesPivot = Vector::UNIT_Y * 550.0f;
-		DebugDrawSystem::DrawLine(sceneView.SceneData, axesPivot, axesPivot +  dirLightCmp->GetTransform().GetWorldFromModel() * (-Vector::UNIT_Z) * 50.0f, Color::BLACK);
-		DebugDrawSystem::DrawLine(sceneView.SceneData, axesPivot, axesPivot + (dirLightCmp->GetTransform().GetWorldFromModel() * Vector::UNIT_X) * 25.0f, Color::RED);
-		DebugDrawSystem::DrawLine(sceneView.SceneData, axesPivot, axesPivot + (dirLightCmp->GetTransform().GetWorldFromModel() * Vector::UNIT_Y) * 25.0f, Color::GREEN);
-		DebugDrawSystem::DrawLine(sceneView.SceneData, axesPivot, axesPivot + (dirLightCmp->GetTransform().GetWorldFromModel() * Vector::UNIT_Z) * 25.0f, Color::BLUE);
-	}
-	{
-		Vector axesPivot = Vector::UNIT_Y * 650.0f;
-		DebugDrawSystem::DrawLine(sceneView.SceneData, axesPivot, axesPivot + (lightViewFromWorld * (-Vector::UNIT_Z)) * 50.0f, Color::BLACK);
-		DebugDrawSystem::DrawLine(sceneView.SceneData, axesPivot, axesPivot + (lightViewFromWorld * Vector::UNIT_X) * 25.0f, Color::RED);
-		DebugDrawSystem::DrawLine(sceneView.SceneData, axesPivot, axesPivot + (lightViewFromWorld * Vector::UNIT_Y) * 25.0f, Color::GREEN);
-		DebugDrawSystem::DrawLine(sceneView.SceneData, axesPivot, axesPivot + (lightViewFromWorld * Vector::UNIT_Z) * 25.0f, Color::BLUE);
-	}
-
-	// Real-Time Rendering 4th Edition, page 94:
-	// "It is important to realize that n > f, because we are looking down the negative z - axis at this volume of space."
+	Vector shadowAABBExtentsInLS = dirLightCmp->ShadowAABBInLS.GetSize() * 0.5f;
 	Matrix clipFromLightView;
+	// n > f, because we are looking down the negative z - axis at this volume of space
 	clipFromLightView.SetOrthographicZO(
 		-shadowAABBExtentsInLS.Y,	// bottom
 		 shadowAABBExtentsInLS.Y,	// top
@@ -733,10 +715,11 @@ Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneVie
   		-shadowAABBExtentsInLS.Z	// far
 	);
 
-	Matrix lightWorldFromModel;
-	lightWorldFromModel.SetTranslation(-shadowAABBCenterInWS);
+	Matrix lightViewFromModel;
+	Vector shadowAABBCenterInLS = dirLightCmp->ShadowAABBInLS.GetCenter();
+	lightViewFromModel.SetTranslation(-shadowAABBCenterInLS);
 
-	Matrix clipFromWorld = clipFromLightView * lightViewFromWorld * lightWorldFromModel;
+	Matrix clipFromWorld = clipFromLightView * lightViewFromModel * lightViewFromWorld;
 	StablizeShadowProjection(clipFromWorld);
 
 	return clipFromWorld;

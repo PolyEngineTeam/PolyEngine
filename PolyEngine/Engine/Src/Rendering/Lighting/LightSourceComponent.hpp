@@ -38,8 +38,9 @@ namespace Poly
 
 		// Debug only
 		Frustum DebugFrustum;
-		Vector DebugShadowCenter;
-		AABox DebugShadowAABBInLS;
+		Vector DebugShadowCenterInWS;
+		AABox ShadowAABBInLS;
+		AABox ShadowAABBInWS;
 		Matrix DebugFrustumWorldFromModel;
 		// Debug only end
 
