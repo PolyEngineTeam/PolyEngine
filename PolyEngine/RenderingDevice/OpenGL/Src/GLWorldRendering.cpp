@@ -71,23 +71,23 @@ void GLRenderingDevice::RenderWorld(Scene* world)
 
 void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 {
-	for (const auto componentsTuple : sceneView.SceneData->IterateComponents<DirectionalLightComponent>())
+	for (const auto& [dirLightCmp] : sceneView.SceneData->IterateComponents<DirectionalLightComponent>())
 	{
-		sceneView.DirectionalLights.PushBack(std::get<DirectionalLightComponent*>(componentsTuple));
+		sceneView.DirectionalLights.PushBack(dirLightCmp);
 	}
 
-	for (const auto componentsTuple : sceneView.SceneData->IterateComponents<PointLightComponent>())
+	for (const auto& [pointLightCmp] : sceneView.SceneData->IterateComponents<PointLightComponent>())
 	{
-		sceneView.PointLights.PushBack(std::get<PointLightComponent*>(componentsTuple));
+		sceneView.PointLights.PushBack(pointLightCmp);
 	}
 
-	Dynarray<const MeshRenderingComponent*> meshCmps;
-	for (const auto componentsTuple : sceneView.SceneData->IterateComponents<MeshRenderingComponent>())
+	Dynarray<MeshRenderingComponent*> meshCmps;
+	for (const auto& [meshCmp] : sceneView.SceneData->IterateComponents<MeshRenderingComponent>())
 	{
-		meshCmps.PushBack(std::get<MeshRenderingComponent*>(componentsTuple));
+		meshCmps.PushBack(meshCmp);
 	}
 
-	for ( auto meshCmp : meshCmps)
+	for (auto& meshCmp : meshCmps)
 	{
 		if (sceneView.CameraCmp->IsVisibleToCamera(meshCmp->GetOwner()))
 		{
@@ -100,11 +100,14 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 				sceneView.TranslucentQueue.PushBack(meshCmp);
 			}
 		}
+	}
 
-		if (meshCmp->IsShadowCaster && meshCmp->GetBlendingMode() == eBlendingMode::OPAUQE)
-		{
+	FillDirLightQueue(sceneView, meshCmps);
+
+	for (auto& meshCmp : meshCmps)
+	{
+		if (meshCmp->IsShadowCaster)
 			sceneView.DirShadowOpaqueQueue.PushBack(meshCmp);
-		}
 	}
 }
 
@@ -122,12 +125,10 @@ void DrawFrustumPoints(Scene* scene, Dynarray<Vector> &cornersInWorld, Color col
 	}
 }
 
-void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<const MeshRenderingComponent*>& meshCmps)
+void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<MeshRenderingComponent*>& meshCmps)
 {
-	// GameManagerWorldComponent* gameMgrCmp = scene->GetWorldComponent<GameManagerWorldComponent>();
-	// DirectionalLightComponent* dirLight = gameMgrCmp->KeyDirLight.Get()->GetComponent<DirectionalLightComponent>();
 	ASSERTE(sceneView.DirectionalLights.GetSize() > 0, "FillDirLightQueue when scene view has no directional lights");
-	const DirectionalLightComponent* dirLight = sceneView.DirectionalLights[0];
+	DirectionalLightComponent* dirLight = sceneView.DirectionalLights[0];
 	
 	const CameraComponent* cameraCmp = sceneView.CameraCmp;
 	Frustum frustum = cameraCmp->GetCameraFrustum();
@@ -153,95 +154,144 @@ void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<c
 	// Transform frustum corners from NDC to World
 	// could be done in one iteration but we need to do perspective division by W
 	Matrix worldFromClip = clipFromWorld.GetInversed();
-	Dynarray<Vector> cornersInWorld;
+	Dynarray<Vector> cornersInWS;
 	for (Vector posInClip : cornersInNDC)
 	{
-		Vector world = worldFromClip * posInClip;
-		world.X /= world.W;
-		world.Y /= world.W;
-		world.Z /= world.W;
-		cornersInWorld.PushBack(world);
+		Vector posInWS = worldFromClip * posInClip;
+		posInWS.X /= posInWS.W;
+		posInWS.Y /= posInWS.W;
+		posInWS.Z /= posInWS.W;
+		cornersInWS.PushBack(posInWS);
 	}
+	DrawFrustumPoints(sceneView.SceneData, cornersInWS, Color::RED);
 
-	DrawFrustumPoints(sceneView.SceneData, cornersInWorld, Color::RED);
-
-	// Transform frustum corners from World to DirLight
-	Matrix worldFromDirLight = dirLight->GetTransform().GetWorldFromModel();
-	Matrix dirLightFromWorld = worldFromDirLight.GetInversed();
-
-	// find min and max corners and create AABB in DirLightSpace
-	const float maxFloat = std::numeric_limits<float>::max();
-	Vector min(maxFloat, maxFloat, maxFloat);
-	Vector max(-maxFloat, -maxFloat, -maxFloat);
-
-	Dynarray<Vector> cornersInDirLight;
-	for (Vector posInWorld : cornersInWorld)
+	// based on https://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
+	// Stabilize shadow map: calculate sphere bounds around frustum to minimize AABB changes on frustum rotation 
+	// Calculate the centroid of the view frustum slice
+	Vector frustumCenterInWS;
+	for (Vector posInWS : cornersInWS)
 	{
-		Vector posInDirLight = dirLightFromWorld * posInWorld;
-		min = Vector::Min(min, posInDirLight);
-		max = Vector::Max(max, posInDirLight);
+		frustumCenterInWS += posInWS;
 	}
+	frustumCenterInWS *= 1.0f / 8.0f;
 
-	AABox dirLightAABB(min, max - min);
-	// DebugDrawSystem::DrawBox(sceneView.SceneData, min, max, worldFromDirLight, Color::BLUE);
+	float maxRadiusInWS = 0.0f;
+	for (Vector posInWS : cornersInWS)
+	{
+		float radius = (cornersInWS[0] - posInWS).Length();
+		maxRadiusInWS = std::max(maxRadiusInWS, radius);
+	}
+	maxRadiusInWS = std::ceilf(maxRadiusInWS * 16.0f) / 16.0f; // MJP version
 
+	Vector frustumMinInWS = frustumCenterInWS - Vector::ONE * maxRadiusInWS;
+	Vector frustumMaxInWS = frustumCenterInWS + Vector::ONE * maxRadiusInWS;
+	AABox frustumAABBInWS(frustumMinInWS, frustumMaxInWS - frustumMinInWS);
 
+	Vector lightForward = dirLight->GetTransform().GetGlobalForward();
+	Vector lightUp = dirLight->GetTransform().GetGlobalUp();
+	Matrix lightFromWorld = Matrix(Vector::ZERO, lightForward, lightUp);
+	Matrix worldFromLight = lightFromWorld.GetInversed();
+
+	Vector frustumCenterInLS;
+	for (Vector posInWS : cornersInWS)
+	{
+		frustumCenterInLS += lightFromWorld * posInWS;
+	}
+	frustumCenterInLS *= 1.0f / 8.0f;
+
+	float maxRadiusInLS = 0.0f;
+	for (Vector posInWS : cornersInWS)
+	{
+		float radius = (lightFromWorld * cornersInWS[0] - lightFromWorld * posInWS).Length();
+		maxRadiusInLS = std::max(maxRadiusInLS, radius);
+	}
+	maxRadiusInLS = std::ceilf(maxRadiusInLS * 16.0f) / 16.0f; // MJP version
+
+	Vector frustumMinInLS = frustumCenterInLS - Vector::ONE * maxRadiusInLS;
+	Vector frustumMaxInLS = frustumCenterInLS + Vector::ONE * maxRadiusInLS;
+	AABox frustumAABBInLS(frustumMinInLS, frustumMaxInLS - frustumMinInLS);
+
+	// if (frustumShowBounds)
+	// {
+		DebugDrawSystem::DrawSphere(sceneView.SceneData, frustumCenterInWS, maxRadiusInLS, Color::RED);
+		DebugDrawSystem::DrawBox(sceneView.SceneData, frustumMinInWS, frustumMaxInWS, Color::RED*0.5f);
+		DebugDrawSystem::DrawSphere(sceneView.SceneData, frustumCenterInWS, 5.0f, Color::RED*0.25f);
+		DebugDrawSystem::DrawBox(sceneView.SceneData, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), worldFromLight, Color(1.0f, 1.0f, 0.0f));
+	// }
+
+	// if (sunShowAxes)
+	// {
+		DebugDrawSystem::DrawLine(sceneView.SceneData, frustumCenterInWS, frustumCenterInWS + dirLight->GetTransform().GetGlobalForward() * 50.0f, Color::BLACK);
+		DebugDrawSystem::DrawLine(sceneView.SceneData, frustumCenterInWS, frustumCenterInWS + (dirLight->GetTransform().GetWorldFromModel() * Vector::UNIT_X) * 25.0f, Color::RED);
+		DebugDrawSystem::DrawLine(sceneView.SceneData, frustumCenterInWS, frustumCenterInWS + (dirLight->GetTransform().GetWorldFromModel() * Vector::UNIT_Y) * 25.0f, Color::GREEN);
+		DebugDrawSystem::DrawLine(sceneView.SceneData, frustumCenterInWS, frustumCenterInWS + (dirLight->GetTransform().GetWorldFromModel() * Vector::UNIT_Z) * 25.0f, Color::BLUE);
+	// }
+
+	FindShadowCasters(sceneView.SceneData, lightFromWorld, worldFromLight, frustumAABBInLS, true);
+
+	// if (frustumShowBounds)
+	// {
+		DebugDrawSystem::DrawBox(sceneView.SceneData, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), lightFromWorld.GetInversed(), Color(1.0f, 1.0f, 0.0f));
+	// }
+
+	dirLight->DebugShadowCenterInWS = frustumCenterInWS;
+	dirLight->ShadowAABBInWS = frustumAABBInWS;
+	dirLight->ShadowAABBInLS = frustumAABBInLS;
+}
+
+void GLRenderingDevice::FindShadowCasters(Scene* scene, const Matrix& dirLightFromWorld, const Matrix& worldFromDirLight, AABox& frustumAABBInLS, bool drawBounds)
+{
+	const float maxFloat = std::numeric_limits<float>::max();
+
+	Dynarray<MeshRenderingComponent*> meshCmps;
+	for (auto& [meshCmp] : scene->IterateComponents<MeshRenderingComponent>())
+	{
+		meshCmp->IsShadowCaster = false;
+		meshCmps.PushBack(meshCmp);
+	}
 	// transform meshes AABB to DirLightSpace
-	Dynarray<std::tuple<AABox, const MeshRenderingComponent*>> meshBoxes;
+	Dynarray<std::tuple<AABox, MeshRenderingComponent*>> boxMeshes;
 	for (const auto& meshCmp : meshCmps)
 	{
 		const Matrix& dirLightFromModel = dirLightFromWorld * meshCmp->GetTransform().GetWorldFromModel();
-
-		Optional<AABox> boxInLightOptional = meshCmp->GetBoundingBox(eEntityBoundingChannel::RENDERING);
-		if (boxInLightOptional.HasValue())
+		Optional<AABox> boxWSOptional = meshCmp->GetBoundingBox(eEntityBoundingChannel::RENDERING);
+		if (boxWSOptional.HasValue())
 		{
-			AABox boxInLight = boxInLightOptional.Value();
-			boxInLight = boxInLight.GetTransformed(dirLightFromModel);
-			meshBoxes.PushBack(std::tuple(boxInLight, meshCmp));
-			// DebugDrawSystem::DrawBox(sceneView.SceneData, boxInLight.GetMin(), boxInLight.GetMax(), worldFromDirLight, Color::WHITE);
+			AABox boxWS = boxWSOptional.Value();
+			AABox boxLS = boxWS.GetTransformed(dirLightFromModel);
+			boxMeshes.PushBack(std::tuple(boxLS, meshCmp));
+			if (drawBounds) DebugDrawSystem::DrawBox(scene, boxLS.GetMin(), boxLS.GetMax(), worldFromDirLight, Color::WHITE);
 		}
 	}
 
-	// find min Z for near clipping plane and max Z for far clipping plane
-	float minZ = maxFloat;
+	// find min Y for near clipping plane and max Y for far clipping plane
 	float maxZ = -maxFloat;
-	for (const auto& kv : meshBoxes)
+	for (const auto& [boxLS, mesh] : boxMeshes)
 	{
-		AABox box = std::get<0>(kv);
-		if (!(box.OverlapsXY(dirLightAABB))) // extend dir light AAbox only in Z based on objects in rect defined on dir light AABob XY plane
-			continue;
-
-		minZ = std::min(minZ, box.GetMin().Z);
-		maxZ = std::max(maxZ, box.GetMax().Z);
+		// extend dir light AAbox only in Z based on objects in rect defined on dir light AABob XY plane
+		if (boxLS.OverlapsXY(frustumAABBInLS))
+			maxZ = std::max(maxZ, boxLS.GetMax().Z);
 	}
 
-	Vector center = dirLightAABB.GetCenter(); // X and Y should be neutral so AABB expanded only on Z axis
-	dirLightAABB.Expand(Vector(center.X, center.Y, minZ))
-				.Expand(Vector(center.X, center.Y, maxZ));
+	if (maxZ > frustumAABBInLS.GetMax().Z)
+	{
+		Vector center = frustumAABBInLS.GetCenter(); // X and Z should be neutral so AABB expanded only on Y axis
+		frustumAABBInLS.Expand(Vector(center.X, center.Y, maxZ));
+	}
 
-	DebugDrawSystem::DrawBox(sceneView.SceneData, dirLightAABB.GetMin(), dirLightAABB.GetMax(), worldFromDirLight, Color(1.0f, 1.0f, 0.0f));
+	if (drawBounds) DebugDrawSystem::DrawBox(scene, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), worldFromDirLight, Color(0.5f, 0.5f, 0.0f));
 
 	// find all meshes that are inside extended DirLights AABB box
-	// AABox drawCallMeshesAABB(dirLightAABB);
 	int shadowCastersCounter = 0;
-	for (auto kv : meshBoxes)
+	for (auto& [box, meshCmp] : boxMeshes)
 	{
-		AABox box = std::get<0>(kv);
-		const MeshRenderingComponent* meshCmp = std::get<1>(kv);
-
-		// if (box.Intersects(dirLightAABB))
-		if (box.Overlaps(dirLightAABB))
+		if (frustumAABBInLS.Overlaps(box))
 		{
-			sceneView.DirShadowOpaqueQueue.PushBack(meshCmp);
-
-			// drawCallMeshesAABB.Expand(box);
+			meshCmp->IsShadowCaster = true;
 			shadowCastersCounter++;
-
-			DebugDrawSystem::DrawBox(sceneView.SceneData, box.GetMin(), box.GetMax(), worldFromDirLight, Color::GREEN);
+			if (drawBounds) DebugDrawSystem::DrawBox(scene, box.GetMin(), box.GetMax(), worldFromDirLight, Color::GREEN);
 		}
 	}
-
-	sceneView.ShadowAABB = dirLightAABB;
 
 	gConsole.LogInfo("GLRenderingDevice::FillDirLightQueue casters: {}/{}", shadowCastersCounter, meshCmps.GetSize());
 }

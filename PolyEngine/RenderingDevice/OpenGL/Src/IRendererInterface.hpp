@@ -32,7 +32,7 @@ namespace Poly {
 		Dynarray<const MeshRenderingComponent*> OpaqueQueue;
 		Dynarray<const MeshRenderingComponent*> TranslucentQueue;
 
-		Dynarray<const DirectionalLightComponent*> DirectionalLights;
+		Dynarray<DirectionalLightComponent*> DirectionalLights;
 		Dynarray<const PointLightComponent*> PointLights;
 	};
 
