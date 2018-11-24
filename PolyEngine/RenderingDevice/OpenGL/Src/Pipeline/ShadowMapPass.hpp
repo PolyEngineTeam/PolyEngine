@@ -1,0 +1,44 @@
+#pragma once
+
+#include <Defines.hpp>
+#include <Common/GLUtils.hpp>
+#include <Proxy/GLShaderProgram.hpp>
+
+namespace Poly
+{
+	class GLRenderingDevice;;
+	class GLShaderProgram;
+
+	Matrix GetProjectionForShadowMap(const DirectionalLightComponent* dirLightCmp, int shadowmapSize);
+
+	void StablizeShadowProjection(Poly::Matrix& clipFromWorld, int shadowmapSize);
+
+	class ShadowMapPass : public BaseObject<>
+	{
+	public:
+
+		ShadowMapPass(GLRenderingDevice* rdi);
+		~ShadowMapPass();
+
+		void Init();
+		void Render(const SceneView& sceneView);
+		void Deinit();
+
+	private:
+
+		GLRenderingDevice* RDI;
+
+		// shadows
+		const unsigned int SHADOWMAP_SIZE = 4096;
+		GLuint DirShadowMapDepth;
+		GLuint DirShadowMapColor;
+		GLuint EVSMap0;
+		GLuint EVSMap1;
+		GLuint FBOShadowDepthMap;
+		GLuint FBOShadowMapResolve0;
+		GLuint FBOShadowMapResolve1;
+		GLShaderProgram ShadowMapShader;
+		GLShaderProgram EVSMResolveShader;
+		GLShaderProgram EVSMBlurShader;
+	};
+}

@@ -5,6 +5,7 @@
 #include <Proxy/GLShaderProgram.hpp>
 #include <Common/GLUtils.hpp>
 #include <Pipeline/EnvCapture.hpp>
+#include <Pipeline/ShadowMapPass.hpp>
 
 namespace Poly {
 
@@ -68,13 +69,29 @@ namespace Poly {
 			int Index;
 		};
 
+		// shadows
+		const unsigned int SHADOWMAP_SIZE = 4096;
+		GLuint DirShadowMapDepth;
+		GLuint DirShadowMapColor;
+		GLuint EVSMap0;
+		GLuint EVSMap1;
+		GLuint FBOShadowDepthMap;
+		GLuint FBOShadowMapResolve0;
+		GLuint FBOShadowMapResolve1;
+		GLShaderProgram ShadowMapShader;
+		GLShaderProgram EVSMResolveShader;
+		GLShaderProgram EVSMBlurShader;
+		void RenderShadowMap(const SceneView& sceneView);
+		Matrix GetProjectionForShadowMap(const SceneView& sceneView) const;
+		void StablizeShadowProjection(Poly::Matrix &clipFromWorld) const;
+
+
 		Matrix PreviousFrameCameraTransform;
 		Matrix PreviousFrameCameraClipFromWorld;
 
 		const int MAX_NUM_LIGHTS = 1024;
 		const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
 
-		const unsigned int SHADOWMAP_SIZE = 4096;
 
 		// X and Y work group dimension variables for compute shader
 		GLuint WorkGroupsX = 0;
@@ -93,10 +110,6 @@ namespace Poly {
 		GLuint PostColorBuffer1;
 		GLuint PostColorBufferHalfRes;
 		GLuint LinearDepth;
-		GLuint DirShadowMapDepth;
-		GLuint DirShadowMapColor;
-		GLuint EVSMap0;
-		GLuint EVSMap1;
 
 		// IBL textures and cubemaps
 		GLuint PreintegratedBrdfLUT;
@@ -106,19 +119,14 @@ namespace Poly {
 		GLuint FBOhdr;
 		GLuint FBOpost0;
 		GLuint FBOpost1;
-		GLuint FBOShadowDepthMap;
-		GLuint FBOShadowMapResolve0;
-		GLuint FBOShadowMapResolve1;
 
 		// Render pass for IBL environment
+		ShadowMapPass ShadowMap;
 		EnvCapture SkyboxCapture;
 		RenderTargetPingPong RTBloom;
 		TextureResource* Splash;
 
 		// Shader programs
-		GLShaderProgram ShadowMapShader;
-		GLShaderProgram EVSMResolveShader;
-		GLShaderProgram EVSMBlurShader;
 		GLShaderProgram DepthShader;
 		GLShaderProgram LightCullingShader;
 		GLShaderProgram LightAccumulationShader;
@@ -167,12 +175,6 @@ namespace Poly {
 		void RenderOpaqueLit(const SceneView& sceneView);
 
 		void RenderSkybox(const SceneView& sceneView);
-		
-		void RenderShadowMap(const SceneView& sceneView);
-
-		Matrix GetProjectionForShadowMap(const SceneView& sceneView) const;
-
-		void StablizeShadowProjection(Poly::Matrix &clipFromWorld) const;
 
 		void RenderEquiCube(const SceneView& sceneView);
 

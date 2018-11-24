@@ -12,8 +12,8 @@ Poly::AmbientLightWorldComponent::AmbientLightWorldComponent(const Color& color,
 {
 }
 
-Poly::DirectionalLightComponent::DirectionalLightComponent(const Color& color, float intensity)
-	: LightColor(color), Intensity(intensity), DebugFrustum(35_deg, 2.4f, 1.0f, 100.0f)
+Poly::DirectionalLightComponent::DirectionalLightComponent(const Color& color, float intensity, eShadowMethodType shadowMethodType)
+	: LightColor(color), Intensity(intensity), DebugFrustum(35_deg, 2.4f, 1.0f, 100.0f), ShadowMethodType(shadowMethodType)
 {
 }
 

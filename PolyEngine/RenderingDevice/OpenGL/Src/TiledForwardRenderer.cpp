@@ -45,7 +45,9 @@ void RenderTargetPingPong::Deinit()
 
 
 TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
-	: IRendererInterface(rdi), SkyboxCapture(rdi),
+	: IRendererInterface(rdi),
+	SkyboxCapture(rdi),
+	ShadowMap(rdi),
 	ShadowMapShader("Shaders/shadowMap.vert.glsl", "Shaders/shadowMap.frag.glsl"),
 	EVSMResolveShader("Shaders/hdr.vert.glsl", "Shaders/evsm.resolve.frag.glsl"),
 	EVSMBlurShader("Shaders/hdr.vert.glsl", "Shaders/evsm.blur.frag.glsl"),
@@ -238,6 +240,8 @@ void TiledForwardRenderer::Init()
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+
+	ShadowMap.Init();
 }
 
 void TiledForwardRenderer::Resize(const ScreenSize& size)
@@ -257,6 +261,8 @@ void TiledForwardRenderer::Deinit()
 {
 	gConsole.LogInfo("TiledForwardRenderer::Deinit");
 	
+	ShadowMap.Deinit();
+
 	if (ImGui::GetCurrentContext() != nullptr)
 	{
 		// Imgui context is needed to propertly deinit textures.
@@ -604,6 +610,8 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 	UpdateEnvCapture(sceneView);
 
 	RenderShadowMap(sceneView);
+
+	ShadowMap.Render(sceneView);
 	
 	RenderDepthPrePass(sceneView);
 	
