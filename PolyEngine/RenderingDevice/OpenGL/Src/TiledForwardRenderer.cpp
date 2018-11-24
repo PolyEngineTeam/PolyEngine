@@ -609,8 +609,6 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 	
 	UpdateEnvCapture(sceneView);
 
-	RenderShadowMap(sceneView);
-
 	ShadowMap.Render(sceneView);
 	
 	RenderDepthPrePass(sceneView);
@@ -699,137 +697,6 @@ void TiledForwardRenderer::RenderEquiCube(const SceneView& sceneView)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-Matrix TiledForwardRenderer::GetProjectionForShadowMap(const SceneView& sceneView) const
-{
-	ASSERTE(sceneView.DirectionalLights.GetSize() > 0, "GetProjectionForShadowMap has no directional light in scene view");
-	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLights[0];
-	
-	Vector lightForward = dirLightCmp->GetTransform().GetGlobalForward();
-	Vector lightUp = dirLightCmp->GetTransform().GetGlobalUp();
-	Matrix lightViewFromWorld = Matrix(Vector::ZERO, lightForward, lightUp);
-
-	Vector shadowAABBExtentsInLS = dirLightCmp->ShadowAABBInLS.GetSize() * 0.5f;
-	Matrix clipFromLightView;
-	// n > f, because we are looking down the negative z - axis at this volume of space
-	clipFromLightView.SetOrthographicZO(
-		-shadowAABBExtentsInLS.Y,	// bottom
-		 shadowAABBExtentsInLS.Y,	// top
-		-shadowAABBExtentsInLS.X,	// left
-		 shadowAABBExtentsInLS.X,	// right
-  		 0.0f,						// near
-  		-shadowAABBExtentsInLS.Z	// far
-	);
-
-	Matrix lightViewFromModel;
-	Vector shadowAABBCenterInLS = dirLightCmp->ShadowAABBInLS.GetCenter();
-	lightViewFromModel.SetTranslation(-shadowAABBCenterInLS);
-
-	Matrix clipFromWorld = clipFromLightView * lightViewFromModel * lightViewFromWorld;
-	StablizeShadowProjection(clipFromWorld);
-
-	return clipFromWorld;
-}
-
-void TiledForwardRenderer::StablizeShadowProjection(Matrix &clipFromWorld) const
-{
-	// based on https://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
-	// Stabilize shadow map: move in texel size increments
-	// round matrix translation to texel size increments
-	float shadowmapSize = (float)SHADOWMAP_SIZE;
-	Vector shadowOrigin = clipFromWorld * Vector::ZERO;
-	shadowOrigin *= shadowmapSize * 0.5f;
-
-	Vector roundedOrigin = Vector(
-		roundf(shadowOrigin.X),
-		roundf(shadowOrigin.Y),
-		0.0f
-	);
-
-	Vector roundOffset = roundedOrigin - shadowOrigin;
-	roundOffset *= 2.0f / shadowmapSize;
-	roundOffset.Z = 0.0f;
-	roundOffset.W = 0.0f;
-
-	clipFromWorld.Data[3] += roundOffset.X;
-	clipFromWorld.Data[7] += roundOffset.Y;
-}
-
-void TiledForwardRenderer::RenderShadowMap(const SceneView& sceneView)
-{
-	// based on: https://github.com/bartwronski/CSharpRenderer
-
-	if (sceneView.DirectionalLights.GetSize() < 1)
-		return;
-
-	glViewport(0, 0, SHADOWMAP_SIZE, SHADOWMAP_SIZE);
-	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowDepthMap);
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glDisable(GL_BLEND);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_FRONT);
-	glDepthMask(GL_TRUE);
-	// glEnable(GL_POLYGON_OFFSET_FILL);
-	// glPolygonOffset(sceneView.CameraCmp->PolygonOffset, sceneView.CameraCmp->PolygonUnits);
-	
-	Matrix orthoDirLightFromWorld = GetProjectionForShadowMap(sceneView);
-	
-	ShadowMapShader.BindProgram();
-
-	for (const MeshRenderingComponent* meshCmp : sceneView.DirShadowOpaqueQueue)
-	{
-		const Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
-		ShadowMapShader.SetUniform("uClipFromModel", orthoDirLightFromWorld * worldFromModel);
-
-		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
-		{
-			glBindVertexArray(subMesh->GetMeshProxy()->GetResourceID());
-			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glBindVertexArray(0);
-		}
-	}
-
-	// glDisable(GL_POLYGON_OFFSET_FILL);
-	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	glViewport(0, 0, SHADOWMAP_SIZE / 2, SHADOWMAP_SIZE / 2);
-	glDepthMask(GL_FALSE);
-	glDisable(GL_CULL_FACE);
-	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowMapResolve0);
-	
-	EVSMResolveShader.BindProgram();
-	EVSMResolveShader.BindSampler("uDepth", 0, DirShadowMapColor);
-	EVSMResolveShader.SetUniform("uNear", sceneView.CameraCmp->GetClippingPlaneNear());
-	EVSMResolveShader.SetUniform("uFar", sceneView.CameraCmp->GetClippingPlaneFar());
-	EVSMResolveShader.SetUniform("uPositiveExponent", sceneView.CameraCmp->EVSMExponentPositive);
-	EVSMResolveShader.SetUniform("uNegativeExponent", sceneView.CameraCmp->EVSMExponentNegative);
-	 
-	glBindVertexArray(RDI->PrimitivesQuad->VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindVertexArray(0);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowMapResolve1);
-	EVSMBlurShader.BindProgram();
-	EVSMBlurShader.BindSampler("uEVSMap", 0, EVSMap0);
-	EVSMBlurShader.SetUniform("uIsHorizontal", 1);
-	 
-	glBindVertexArray(RDI->PrimitivesQuad->VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindVertexArray(0);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowMapResolve0);
-	EVSMBlurShader.BindProgram();
-	EVSMBlurShader.BindSampler("uEVSMap", 0, EVSMap1);
-	EVSMBlurShader.SetUniform("uIsHorizontal", 0);
-	 
-	glBindVertexArray(RDI->PrimitivesQuad->VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindVertexArray(0);
-	 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -926,15 +793,17 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 	LightAccumulationShader.BindProgram();
 
-	Matrix projDirLightFromWorld = sceneView.DirectionalLights.IsEmpty() ? Matrix() : GetProjectionForShadowMap(sceneView);
+	Matrix projDirLightFromWorld = sceneView.DirectionalLights.IsEmpty()
+		? Matrix()
+		: GetProjectionForShadowMap(sceneView.DirectionalLights[0], SHADOWMAP_SIZE);
 
 	LightAccumulationShader.SetUniform("uDirLightFromWorld", projDirLightFromWorld);
 	LightAccumulationShader.SetUniform("uShadowBiasMin", sceneView.CameraCmp->BiasMin);
 	LightAccumulationShader.SetUniform("uShadowBiasMax", sceneView.CameraCmp->BiasMax);
 	LightAccumulationShader.SetUniform("uNear", sceneView.CameraCmp->GetClippingPlaneNear());
 	LightAccumulationShader.SetUniform("uFar", sceneView.CameraCmp->GetClippingPlaneFar());
-	LightAccumulationShader.BindSampler("uDirShadowMap", 9, DirShadowMapColor);
-	LightAccumulationShader.BindSampler("uDirEVSMap", 10, EVSMap0);
+	LightAccumulationShader.BindSampler("uDirShadowMap", 9, ShadowMap.GetDirShadowMapColor());
+	LightAccumulationShader.BindSampler("uDirEVSMap", 10, ShadowMap.GetEVSMap0());
 	LightAccumulationShader.SetUniform("uPositiveExponent", sceneView.CameraCmp->EVSMExponentPositive);
 	LightAccumulationShader.SetUniform("uNegativeExponent", sceneView.CameraCmp->EVSMExponentNegative);
 	LightAccumulationShader.SetUniform("uVSMBias", sceneView.CameraCmp->VSMBias);

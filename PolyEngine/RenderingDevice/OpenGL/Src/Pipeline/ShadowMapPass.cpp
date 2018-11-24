@@ -82,7 +82,6 @@ ShadowMapPass::~ShadowMapPass()
 {
 }
 
-
 void Poly::ShadowMapPass::Init()
 {
 	float shadowBorderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -166,7 +165,7 @@ void Poly::ShadowMapPass::Deinit()
 
 void ShadowMapPass::Render(const SceneView& sceneView)
 {	
-	gConsole.LogInfo("ShadowMapPass::Redner");
+	gConsole.LogInfo("ShadowMapPass::Render");
 
 	if (sceneView.DirectionalLights.GetSize() < 1)
 		return;

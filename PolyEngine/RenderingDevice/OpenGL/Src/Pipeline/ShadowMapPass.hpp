@@ -24,6 +24,9 @@ namespace Poly
 		void Render(const SceneView& sceneView);
 		void Deinit();
 
+		GLuint GetDirShadowMapColor() const { return DirShadowMapColor; };
+		GLuint GetEVSMap0() const { return EVSMap0; };
+
 	private:
 
 		GLRenderingDevice* RDI;

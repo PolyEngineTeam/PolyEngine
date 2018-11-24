@@ -81,10 +81,6 @@ namespace Poly {
 		GLShaderProgram ShadowMapShader;
 		GLShaderProgram EVSMResolveShader;
 		GLShaderProgram EVSMBlurShader;
-		void RenderShadowMap(const SceneView& sceneView);
-		Matrix GetProjectionForShadowMap(const SceneView& sceneView) const;
-		void StablizeShadowProjection(Poly::Matrix &clipFromWorld) const;
-
 
 		Matrix PreviousFrameCameraTransform;
 		Matrix PreviousFrameCameraClipFromWorld;
