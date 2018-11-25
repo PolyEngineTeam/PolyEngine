@@ -7,9 +7,10 @@ namespace PolyEditor
 {
 	enum class eEngineState
 	{
+		NONE,
 		EDIT,
 		GAMEPLAY,
-		NONE,
+		PAUSED_GAMEPLAY,
 		_COUNT
 	};
 
