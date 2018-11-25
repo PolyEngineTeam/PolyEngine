@@ -2,14 +2,14 @@
 
 #include <Defines.hpp>
 #include <Common/GLUtils.hpp>
+#include <Common/PrimitiveQuad.hpp>
+#include <Common/PrimitiveCube.hpp>
 #include <Proxy/GLShaderProgram.hpp>
 
 struct SDL_Window;
 
 namespace Poly
 {
-	struct PrimitiveQuad;
-	struct PrimitiveCube;
 	struct SceneView;
 	class CameraComponent;
 	class AARect;
