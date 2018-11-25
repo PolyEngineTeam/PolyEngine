@@ -181,7 +181,7 @@ void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<M
 		float radius = (cornersInWS[0] - posInWS).Length();
 		maxRadiusInWS = std::max(maxRadiusInWS, radius);
 	}
-	maxRadiusInWS = std::ceilf(maxRadiusInWS * 16.0f) / 16.0f; // MJP version
+	maxRadiusInWS = std::ceil(maxRadiusInWS * 16.0f) / 16.0f; // MJP version
 
 	Vector frustumMinInWS = frustumCenterInWS - Vector::ONE * maxRadiusInWS;
 	Vector frustumMaxInWS = frustumCenterInWS + Vector::ONE * maxRadiusInWS;
@@ -205,7 +205,7 @@ void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<M
 		float radius = (lightFromWorld * cornersInWS[0] - lightFromWorld * posInWS).Length();
 		maxRadiusInLS = std::max(maxRadiusInLS, radius);
 	}
-	maxRadiusInLS = std::ceilf(maxRadiusInLS * 16.0f) / 16.0f; // MJP version
+	maxRadiusInLS = std::ceil(maxRadiusInLS * 16.0f) / 16.0f; // MJP version
 
 	Vector frustumMinInLS = frustumCenterInLS - Vector::ONE * maxRadiusInLS;
 	Vector frustumMaxInLS = frustumCenterInLS + Vector::ONE * maxRadiusInLS;
