@@ -9,9 +9,9 @@ namespace Poly
 	class RenderingSettingsComponent;
 	class GLRenderingDevice;
 	class GLShaderProgram;
+	struct SceneView;
 
 	Matrix GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize);
-	// Matrix GetProjectionForShadowMap(const DirectionalLightComponent* dirLightCmp, int shadowmapSize);
 
 	void StablizeShadowProjection(Poly::Matrix& clipFromWorld, int shadowmapSize);
 	
