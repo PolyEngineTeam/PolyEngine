@@ -226,24 +226,24 @@ Matrix& Matrix::SetLookAt(const Vector& pos, const Vector& lookAt, const Vector&
 {
 	const Vector front((lookAt - pos).GetNormalized());
 	const Vector side(front.Cross(up).GetNormalized());
-	const Vector up(side.Cross(front));
+	const Vector newUp(side.Cross(front));
 	
 	SetIdentity();
-	// works like GLM_FUNC_QUALIFIER mat<4, 4, T, Q> lookAtRH(vec<3, T, Q> const& eye, vec<3, T, Q> const& center, vec<3, T, Q> const& up)
+									// same as GLM_FUNC_QUALIFIER mat<4, 4, T, Q> lookAtRH(vec<3, T, Q> const& eye, vec<3, T, Q> const& center, vec<3, T, Q> const& up)
 	Data[0]  = side.X;				// glm[0][0]
 	Data[1]  = side.Y;				// glm[1][0] 
 	Data[2]  = side.Z;				// glm[2][0] 
 
-	Data[4]  = up.X;				// glm[0][1]
-	Data[5]  = up.Y;				// glm[1][1]
-	Data[6]  = up.Z;				// glm[2][1]
+	Data[4]  = newUp.X;				// glm[0][1]
+	Data[5]  = newUp.Y;				// glm[1][1]
+	Data[6]  = newUp.Z;				// glm[2][1]
 
 	Data[8]  = -front.X;			// glm[0][2]
 	Data[9]  = -front.Y;			// glm[1][2]
 	Data[10] = -front.Z;			// glm[2][2]
 
 	Data[12] = -(side.Dot(pos));	// glm[3][0]
-	Data[13] = -(up.Dot(pos));		// glm[3][1]
+	Data[13] = -(newUp.Dot(pos));	// glm[3][1]
 	Data[14] = front.Dot(pos);		// glm[3][2]
 
 	return *this;
@@ -281,7 +281,7 @@ Matrix& Poly::Matrix::SetPerspective(Angle fov, float aspect, float near, float 
 Matrix& Poly::Matrix::SetOrthographicZO(float bottom, float top, float left, float right, float near, float far)
 {
 	SetIdentity();
-	// works like orthoRH_ZO: GLM_RIGHT_HANDED && GLM_DEPTH_ZERO_TO_ONE
+													//  same as orthoRH_ZO: GLM_RIGHT_HANDED && GLM_DEPTH_ZERO_TO_ONE
 	Data[0] = 2.0f / (right - left);				// glm[0][0]
 	Data[1] = 0.0f;
 	Data[2] = 0.0f;
@@ -304,7 +304,7 @@ Matrix& Poly::Matrix::SetOrthographicZO(float bottom, float top, float left, flo
 Matrix& Poly::Matrix::SetOrthographic(float bottom, float top,  float left, float right, float near, float far)
 {
 	SetIdentity();
-	// works like orthoRH_NO: GLM_RIGHT_HANDED && GLM_DEPTH_NEGATIVE_ONE_TO_ONE
+													// same as orthoRH_NO: GLM_RIGHT_HANDED && GLM_DEPTH_NEGATIVE_ONE_TO_ONE
 	Data[0] = 2.0f / (right - left);				// glm[0][0]
 	Data[1] = 0.0f;
 	Data[2] = 0.0f;
