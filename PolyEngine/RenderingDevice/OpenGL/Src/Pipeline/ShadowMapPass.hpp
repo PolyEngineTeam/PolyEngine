@@ -6,12 +6,16 @@
 
 namespace Poly
 {
-	class GLRenderingDevice;;
+	class RenderingSettingsComponent;
+	class GLRenderingDevice;
 	class GLShaderProgram;
 
 	Matrix GetProjectionForShadowMap(const DirectionalLightComponent* dirLightCmp, int shadowmapSize);
 
 	void StablizeShadowProjection(Poly::Matrix& clipFromWorld, int shadowmapSize);
+	
+	int GetShadowMapSize(const RenderingSettingsComponent* renderingSettingsCmp);
+
 
 	class ShadowMapPass : public BaseObject<>
 	{
@@ -20,7 +24,7 @@ namespace Poly
 		ShadowMapPass(GLRenderingDevice* rdi);
 		~ShadowMapPass();
 
-		void Init();
+		void Init(const SceneView& sceneView);
 		void Render(const SceneView& sceneView);
 		void Deinit();
 
@@ -32,7 +36,7 @@ namespace Poly
 		GLRenderingDevice* RDI;
 
 		// shadows
-		const unsigned int SHADOWMAP_SIZE = 4096;
+		// const unsigned int SHADOWMAP_SIZE = 4096;
 		GLuint DirShadowMapDepth;
 		GLuint DirShadowMapColor;
 		GLuint EVSMap0;

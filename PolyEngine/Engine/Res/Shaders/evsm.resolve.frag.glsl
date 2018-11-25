@@ -5,8 +5,6 @@
 in vec2 vUV;
 
 uniform sampler2D uDepth;
-uniform float uNear;
-uniform float uFar;
 
 out vec4 oColor;
 
@@ -15,7 +13,6 @@ out vec4 oColor;
 void main()
 {
     vec4 depth = textureGather(uDepth, vUV, 0);
-	// depth = clamp(depth, vec4(0.0), vec4(1.0));
 	
 	vec2 warpedDepth[4];
     warpedDepth[0] = WarpDepth(depth.x);
@@ -32,8 +29,5 @@ void main()
 	vec4 finalOutput = outputEVSM[0] + outputEVSM[1] + outputEVSM[2] + outputEVSM[3];
     finalOutput *= 0.25f;
 	
-    // oColor = depth;
-	// oColor = vec4(warpedDepth[0].x, warpedDepth[1].x, warpedDepth[2].x, warpedDepth[3].x);
-	// oColor = fract(finalOutput);
 	oColor = finalOutput;
 }

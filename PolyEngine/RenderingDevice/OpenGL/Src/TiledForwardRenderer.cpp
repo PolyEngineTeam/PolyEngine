@@ -48,9 +48,9 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	: IRendererInterface(rdi),
 	SkyboxCapture(rdi),
 	ShadowMap(rdi),
-	ShadowMapShader("Shaders/shadowMap.vert.glsl", "Shaders/shadowMap.frag.glsl"),
-	EVSMResolveShader("Shaders/hdr.vert.glsl", "Shaders/evsm.resolve.frag.glsl"),
-	EVSMBlurShader("Shaders/hdr.vert.glsl", "Shaders/evsm.blur.frag.glsl"),
+	// ShadowMapShader("Shaders/shadowMap.vert.glsl", "Shaders/shadowMap.frag.glsl"),
+	// EVSMResolveShader("Shaders/hdr.vert.glsl", "Shaders/evsm.resolve.frag.glsl"),
+	// EVSMBlurShader("Shaders/hdr.vert.glsl", "Shaders/evsm.blur.frag.glsl"),
 	DepthShader("Shaders/depth.vert.glsl", "Shaders/depth.frag.glsl"),
 	LightCullingShader("Shaders/lightCulling.comp.glsl"),
 	LightAccumulationShader("Shaders/lightAccumulation.vert.glsl", "Shaders/lightAccumulation.frag.glsl"),
@@ -76,16 +76,16 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	DebugLightAccumShader("Shaders/debugLightAccum.vert.glsl", "Shaders/debugLightAccum.frag.glsl"),
 	DebugTextureInputsShader("Shaders/lightAccumulation.vert.glsl", "Shaders/lightAccumulationTexDebug.frag.glsl")
 {
-	ShadowMapShader.RegisterUniform("mat4", "uClipFromModel");
-
-	EVSMResolveShader.RegisterUniform("sampler2D", "uDepth");
-	EVSMResolveShader.RegisterUniform("float", "uNear");
-	EVSMResolveShader.RegisterUniform("float", "uFar");
-	EVSMResolveShader.RegisterUniform("float", "uPositiveExponent");
-	EVSMResolveShader.RegisterUniform("float", "uNegativeExponent");
-
-	EVSMBlurShader.RegisterUniform("sampler2D", "uEVSMap");
-	EVSMBlurShader.RegisterUniform("int", "uIsHorizontal");
+	// ShadowMapShader.RegisterUniform("mat4", "uClipFromModel");
+	// 
+	// EVSMResolveShader.RegisterUniform("sampler2D", "uDepth");
+	// EVSMResolveShader.RegisterUniform("float", "uNear");
+	// EVSMResolveShader.RegisterUniform("float", "uFar");
+	// EVSMResolveShader.RegisterUniform("float", "uPositiveExponent");
+	// EVSMResolveShader.RegisterUniform("float", "uNegativeExponent");
+	// 
+	// EVSMBlurShader.RegisterUniform("sampler2D", "uEVSMap");
+	// EVSMBlurShader.RegisterUniform("int", "uIsHorizontal");
 	
 	LightAccumulationShader.RegisterUniform("mat4", "uDirLightFromWorld");
 	LightAccumulationShader.RegisterUniform("float", "uShadowBiasMin");
@@ -116,6 +116,7 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	LightAccumulationShader.RegisterUniform("float", "uNegativeExponent");
 	LightAccumulationShader.RegisterUniform("float", "uVSMBias");
 	LightAccumulationShader.RegisterUniform("float", "uLightBleedingReduction");
+	LightAccumulationShader.RegisterUniform("int", "uShadowType");
 	
 	for (int i = 0; i < 8; ++i)
 	{
@@ -240,8 +241,6 @@ void TiledForwardRenderer::Init()
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-
-	ShadowMap.Init();
 }
 
 void TiledForwardRenderer::Resize(const ScreenSize& size)
@@ -475,68 +474,68 @@ void TiledForwardRenderer::CreateRenderTargets(const ScreenSize& size)
 	// CHECK_GL_ERR();
 	CHECK_FBO_STATUS();
 
-	float shadowBorderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glGenTextures(1, &DirShadowMapDepth);
-	glBindTexture(GL_TEXTURE_2D, DirShadowMapDepth);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOWMAP_SIZE, SHADOWMAP_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, shadowBorderColor);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glGenTextures(1, &DirShadowMapColor);
-	glBindTexture(GL_TEXTURE_2D, DirShadowMapColor);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SHADOWMAP_SIZE, SHADOWMAP_SIZE, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, shadowBorderColor);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glGenFramebuffers(1, &FBOShadowDepthMap);
-	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowDepthMap);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DirShadowMapDepth, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, DirShadowMapColor, 0);
-	// glDrawBuffer(GL_NONE);
+	// float shadowBorderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	// glGenTextures(1, &DirShadowMapDepth);
+	// glBindTexture(GL_TEXTURE_2D, DirShadowMapDepth);
+	// glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOWMAP_SIZE, SHADOWMAP_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	// glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, shadowBorderColor);
+	// glBindTexture(GL_TEXTURE_2D, 0);
+	// 
+	// glGenTextures(1, &DirShadowMapColor);
+	// glBindTexture(GL_TEXTURE_2D, DirShadowMapColor);
+	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SHADOWMAP_SIZE, SHADOWMAP_SIZE, 0, GL_RGB, GL_FLOAT, NULL);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	// glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, shadowBorderColor);
+	// glBindTexture(GL_TEXTURE_2D, 0);
+	// 
+	// glGenFramebuffers(1, &FBOShadowDepthMap);
+	// glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowDepthMap);
+	// glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DirShadowMapDepth, 0);
+	// glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, DirShadowMapColor, 0);
+	// // glDrawBuffer(GL_NONE);
 	// glReadBuffer(GL_NONE);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	
-	// CHECK_GL_ERR();
-	CHECK_FBO_STATUS();
-
-	// Create pair of frame buffers for evsm
-	glGenTextures(1, &EVSMap0);
-	glBindTexture(GL_TEXTURE_2D, EVSMap0);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, SHADOWMAP_SIZE / 2, SHADOWMAP_SIZE / 2, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glGenFramebuffers(1, &FBOShadowMapResolve0);
-	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowMapResolve0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, EVSMap0, 0);
-
-	glGenTextures(1, &EVSMap1);
-	glBindTexture(GL_TEXTURE_2D, EVSMap1);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, SHADOWMAP_SIZE / 2, SHADOWMAP_SIZE / 2, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glGenFramebuffers(1, &FBOShadowMapResolve1);
-	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowMapResolve1);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, EVSMap1, 0);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	
-	CHECK_FBO_STATUS();
+	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// 
+	// // CHECK_GL_ERR();
+	// CHECK_FBO_STATUS();
+	// 
+	// // Create pair of frame buffers for evsm
+	// glGenTextures(1, &EVSMap0);
+	// glBindTexture(GL_TEXTURE_2D, EVSMap0);
+	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, SHADOWMAP_SIZE / 2, SHADOWMAP_SIZE / 2, 0, GL_RGB, GL_FLOAT, NULL);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	// glBindTexture(GL_TEXTURE_2D, 0);
+	// 
+	// glGenFramebuffers(1, &FBOShadowMapResolve0);
+	// glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowMapResolve0);
+	// glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, EVSMap0, 0);
+	// 
+	// glGenTextures(1, &EVSMap1);
+	// glBindTexture(GL_TEXTURE_2D, EVSMap1);
+	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, SHADOWMAP_SIZE / 2, SHADOWMAP_SIZE / 2, 0, GL_RGB, GL_FLOAT, NULL);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	// glBindTexture(GL_TEXTURE_2D, 0);
+	// 
+	// glGenFramebuffers(1, &FBOShadowMapResolve1);
+	// glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowMapResolve1);
+	// glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, EVSMap1, 0);
+	// 
+	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// 
+	// CHECK_FBO_STATUS();
 }
 
 void TiledForwardRenderer::DeleteRenderTargets()
@@ -577,17 +576,17 @@ void TiledForwardRenderer::DeleteRenderTargets()
 	if (FBOpost1 > 0)
 		glDeleteFramebuffers(1, &FBOpost1);
 
-	if (FBOShadowDepthMap > 0)
-		glDeleteFramebuffers(1, &FBOShadowDepthMap);
-
-	if (EVSMap0 > 0)
-		glDeleteTextures(1, &EVSMap0);
-
-	if (FBOShadowMapResolve0 > 0)
-		glDeleteFramebuffers(1, &FBOShadowMapResolve0);
-
-	if (FBOShadowMapResolve1 > 0)
-		glDeleteFramebuffers(1, &FBOShadowMapResolve1);
+	// if (FBOShadowDepthMap > 0)
+	// 	glDeleteFramebuffers(1, &FBOShadowDepthMap);
+	// 
+	// if (EVSMap0 > 0)
+	// 	glDeleteTextures(1, &EVSMap0);
+	// 
+	// if (FBOShadowMapResolve0 > 0)
+	// 	glDeleteFramebuffers(1, &FBOShadowMapResolve0);
+	// 
+	// if (FBOShadowMapResolve1 > 0)
+	// 	glDeleteFramebuffers(1, &FBOShadowMapResolve1);
 
 	RTBloom.Deinit();
 
@@ -605,42 +604,33 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 	// glViewport((int)(sceneView.Rect.GetMin().X * screenSize.Width), (int)(sceneView.Rect.GetMin().Y * screenSize.Height),
 	// 	(int)(sceneView.Rect.GetSize().X * screenSize.Width), (int)(sceneView.Rect.GetSize().Y * screenSize.Height));  
 
+	static bool isInitOnFirstFrame = false;
+
+	if (!isInitOnFirstFrame)
+	{
+		ShadowMap.Init(sceneView);
+		UpdateEnvCapture(sceneView);
+		
+		isInitOnFirstFrame = true;
+	}
+	
 	UpdateLightsBufferFromScene(sceneView);
-	
-	UpdateEnvCapture(sceneView);
-
 	ShadowMap.Render(sceneView);
-	
 	RenderDepthPrePass(sceneView);
-	
 	ComputeLightCulling(sceneView);
-	
 	RenderOpaqueLit(sceneView);
-	
 	RenderSkybox(sceneView);
-
 	RenderTranslucentLit(sceneView);
-
 	RenderParticleUnlit(sceneView.SceneData, sceneView.CameraCmp);
-
 	PostLinearizeDepth(sceneView);
-
 	PostMotionBlur(sceneView);
-
 	PostDepthOfField(sceneView);
-	
 	PostBloom(sceneView);
-	
 	PostTonemapper(sceneView);
-
 	PostFXAA(sceneView);
-	
 	PostGamma(sceneView);
-	
 	EditorDebug(sceneView);
-	
 	UIText2D(sceneView);
-	
 	UIImgui();
 
 	// ensure that copy of matrix is stored
@@ -650,20 +640,11 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 
 void TiledForwardRenderer::UpdateEnvCapture(const SceneView& sceneView)
 {
-	// gConsole.LogInfo("TiledForwardRenderer::UpdateEnvCapture");
-
-	if (SkyboxCapture.GetIsDirty())
-	{
-		const SkyboxWorldComponent* SkyboxWorldCmp = sceneView.SceneData->GetWorldComponent<SkyboxWorldComponent>();
-		if (SkyboxWorldCmp != nullptr)
-		{
-			SkyboxCapture.UpdateEnv(SkyboxWorldCmp);
-		}
-		else
-		{
-			gConsole.LogInfo("TiledForwardRenderer::UpdateEnvCapture SkyboxWorldComponent not found!");
-		}
-	}
+	const SkyboxWorldComponent* SkyboxWorldCmp = sceneView.SceneData->GetWorldComponent<SkyboxWorldComponent>();
+	if (SkyboxWorldCmp != nullptr)
+		SkyboxCapture.UpdateEnv(SkyboxWorldCmp);
+	else
+		gConsole.LogInfo("TiledForwardRenderer::UpdateEnvCapture SkyboxWorldComponent not found!");
 }
 
 void TiledForwardRenderer::RenderEquiCube(const SceneView& sceneView)
@@ -795,19 +776,30 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 	Matrix projDirLightFromWorld = sceneView.DirectionalLights.IsEmpty()
 		? Matrix()
-		: GetProjectionForShadowMap(sceneView.DirectionalLights[0], SHADOWMAP_SIZE);
+		: GetProjectionForShadowMap(sceneView.DirectionalLights[0], GetShadowMapSize(sceneView.SettingsCmp));
 
 	LightAccumulationShader.SetUniform("uDirLightFromWorld", projDirLightFromWorld);
-	LightAccumulationShader.SetUniform("uShadowBiasMin", sceneView.CameraCmp->BiasMin);
-	LightAccumulationShader.SetUniform("uShadowBiasMax", sceneView.CameraCmp->BiasMax);
-	LightAccumulationShader.SetUniform("uNear", sceneView.CameraCmp->GetClippingPlaneNear());
-	LightAccumulationShader.SetUniform("uFar", sceneView.CameraCmp->GetClippingPlaneFar());
-	LightAccumulationShader.BindSampler("uDirShadowMap", 9, ShadowMap.GetDirShadowMapColor());
-	LightAccumulationShader.BindSampler("uDirEVSMap", 10, ShadowMap.GetEVSMap0());
-	LightAccumulationShader.SetUniform("uPositiveExponent", sceneView.CameraCmp->EVSMExponentPositive);
-	LightAccumulationShader.SetUniform("uNegativeExponent", sceneView.CameraCmp->EVSMExponentNegative);
-	LightAccumulationShader.SetUniform("uVSMBias", sceneView.CameraCmp->VSMBias);
-	LightAccumulationShader.SetUniform("uLightBleedingReduction", sceneView.CameraCmp->LightBleedingReduction);
+	LightAccumulationShader.SetUniform("uShadowType", (int)(sceneView.SettingsCmp->ShadowType));
+	switch (sceneView.SettingsCmp->ShadowType)
+	{
+		default:
+		case eShadowType::PCF:
+			
+			LightAccumulationShader.SetUniform("uShadowBiasMin", sceneView.CameraCmp->BiasMin);
+			LightAccumulationShader.SetUniform("uShadowBiasMax", sceneView.CameraCmp->BiasMax);
+			break;
+		case eShadowType::EVSM2:
+		case eShadowType::EVSM4:
+			LightAccumulationShader.SetUniform("uNear", sceneView.CameraCmp->GetClippingPlaneNear());
+			LightAccumulationShader.SetUniform("uFar", sceneView.CameraCmp->GetClippingPlaneFar());
+			LightAccumulationShader.BindSampler("uDirShadowMap", 9, ShadowMap.GetDirShadowMapColor());
+			LightAccumulationShader.BindSampler("uDirEVSMap", 10, ShadowMap.GetEVSMap0());	
+			LightAccumulationShader.SetUniform("uPositiveExponent", sceneView.CameraCmp->EVSMExponentPositive);
+			LightAccumulationShader.SetUniform("uNegativeExponent", sceneView.CameraCmp->EVSMExponentNegative);
+			LightAccumulationShader.SetUniform("uBias", sceneView.CameraCmp->VSMBias);
+			LightAccumulationShader.SetUniform("uLightBleedingReduction", sceneView.CameraCmp->LightBleedingReduction);
+			break;
+	}
 
 	const EntityTransform& cameraTransform = sceneView.CameraCmp->GetTransform();
 

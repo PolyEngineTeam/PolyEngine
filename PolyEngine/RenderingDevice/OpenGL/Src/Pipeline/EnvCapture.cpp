@@ -53,8 +53,6 @@ void EnvCapture::UpdateEnv(const SkyboxWorldComponent* skyboxCmp)
 	CaptureDiffuseIrradiance();
 
 	CaptureSpecularPrefilteredMap();
-
-	IsDirty = false;
 }
 
 void EnvCapture::CaptureCubemap(const SkyboxWorldComponent* skyboxCmp)

@@ -70,17 +70,17 @@ namespace Poly {
 		};
 
 		// shadows
-		const unsigned int SHADOWMAP_SIZE = 4096;
-		GLuint DirShadowMapDepth;
-		GLuint DirShadowMapColor;
-		GLuint EVSMap0;
-		GLuint EVSMap1;
-		GLuint FBOShadowDepthMap;
-		GLuint FBOShadowMapResolve0;
-		GLuint FBOShadowMapResolve1;
-		GLShaderProgram ShadowMapShader;
-		GLShaderProgram EVSMResolveShader;
-		GLShaderProgram EVSMBlurShader;
+		// const unsigned int SHADOWMAP_SIZE = 4096;
+		// GLuint DirShadowMapDepth;
+		// GLuint DirShadowMapColor;
+		// GLuint EVSMap0;
+		// GLuint EVSMap1;
+		// GLuint FBOShadowDepthMap;
+		// GLuint FBOShadowMapResolve0;
+		// GLuint FBOShadowMapResolve1;
+		// GLShaderProgram ShadowMapShader;
+		// GLShaderProgram EVSMResolveShader;
+		// GLShaderProgram EVSMBlurShader;
 
 		Matrix PreviousFrameCameraTransform;
 		Matrix PreviousFrameCameraClipFromWorld;

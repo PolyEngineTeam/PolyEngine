@@ -2,6 +2,7 @@
 
 #include <Pipeline/ShadowMapPass.hpp>
 #include <GLRenderingDevice.hpp>
+#include <Rendering/RenderingSettingsComponent.hpp>
 
 using namespace Poly;
 
@@ -60,6 +61,20 @@ void Poly::StablizeShadowProjection(Poly::Matrix& clipFromWorld, int shadowmapSi
 	clipFromWorld.Data[7] += roundOffset.Y;
 }
 
+int Poly::GetShadowMapSize(const RenderingSettingsComponent* renderingSettingsCmp)
+{
+	switch (renderingSettingsCmp->ShadowMapSize)
+	{
+		case eShadowMapSize::SIZE_512:	return 512;
+		case eShadowMapSize::SIZE_1024:	return 1024;
+		case eShadowMapSize::SIZE_2048:	return 2048;
+		case eShadowMapSize::SIZE_4096:	return 4096;
+		default:
+			ASSERTE(false, "Uknown shadowmap size setting enum");
+			return 512;
+	}
+}
+
 ShadowMapPass::ShadowMapPass(GLRenderingDevice* rdi)
 	: RDI(rdi),
 	ShadowMapShader("Shaders/shadowMap.vert.glsl", "Shaders/shadowMap.frag.glsl"),
@@ -82,12 +97,16 @@ ShadowMapPass::~ShadowMapPass()
 {
 }
 
-void Poly::ShadowMapPass::Init()
+void Poly::ShadowMapPass::Init(const SceneView& sceneView)
 {
+	gConsole.LogInfo("ShadowMapPass::Init");
+
+	int shadowMapSize = GetShadowMapSize(sceneView.SettingsCmp);
+
 	float shadowBorderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	glGenTextures(1, &DirShadowMapDepth);
 	glBindTexture(GL_TEXTURE_2D, DirShadowMapDepth);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOWMAP_SIZE, SHADOWMAP_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowMapSize, shadowMapSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -97,7 +116,7 @@ void Poly::ShadowMapPass::Init()
 
 	glGenTextures(1, &DirShadowMapColor);
 	glBindTexture(GL_TEXTURE_2D, DirShadowMapColor);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SHADOWMAP_SIZE, SHADOWMAP_SIZE, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, shadowMapSize, shadowMapSize, 0, GL_RGB, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -119,7 +138,7 @@ void Poly::ShadowMapPass::Init()
 	// Create pair of frame buffers for evsm
 	glGenTextures(1, &EVSMap0);
 	glBindTexture(GL_TEXTURE_2D, EVSMap0);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, SHADOWMAP_SIZE / 2, SHADOWMAP_SIZE / 2, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, shadowMapSize / 2, shadowMapSize / 2, 0, GL_RGB, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -132,7 +151,7 @@ void Poly::ShadowMapPass::Init()
 
 	glGenTextures(1, &EVSMap1);
 	glBindTexture(GL_TEXTURE_2D, EVSMap1);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, SHADOWMAP_SIZE / 2, SHADOWMAP_SIZE / 2, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, shadowMapSize / 2, shadowMapSize / 2, 0, GL_RGB, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -150,6 +169,8 @@ void Poly::ShadowMapPass::Init()
 
 void Poly::ShadowMapPass::Deinit()
 {
+	gConsole.LogInfo("ShadowMapPass::Deinit");
+
 	if (FBOShadowDepthMap > 0)
 		glDeleteFramebuffers(1, &FBOShadowDepthMap);
 
@@ -169,8 +190,10 @@ void ShadowMapPass::Render(const SceneView& sceneView)
 
 	if (sceneView.DirectionalLights.GetSize() < 1)
 		return;
+	
+	int shadowMapSize = GetShadowMapSize(sceneView.SettingsCmp);
 
-	glViewport(0, 0, SHADOWMAP_SIZE, SHADOWMAP_SIZE);
+	glViewport(0, 0, shadowMapSize, shadowMapSize);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowDepthMap);
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -181,7 +204,7 @@ void ShadowMapPass::Render(const SceneView& sceneView)
 	// glEnable(GL_POLYGON_OFFSET_FILL);
 	// glPolygonOffset(sceneView.CameraCmp->PolygonOffset, sceneView.CameraCmp->PolygonUnits);
 
-	Matrix orthoDirLightFromWorld = GetProjectionForShadowMap(sceneView.DirectionalLights[0], SHADOWMAP_SIZE);
+	Matrix orthoDirLightFromWorld = GetProjectionForShadowMap(sceneView.DirectionalLights[0], shadowMapSize);
 
 	ShadowMapShader.BindProgram();
 
@@ -202,7 +225,7 @@ void ShadowMapPass::Render(const SceneView& sceneView)
 	// glDisable(GL_POLYGON_OFFSET_FILL);
 	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	glViewport(0, 0, SHADOWMAP_SIZE / 2, SHADOWMAP_SIZE / 2);
+	glViewport(0, 0, shadowMapSize / 2, shadowMapSize / 2);
 	glDepthMask(GL_FALSE);
 	glDisable(GL_CULL_FACE);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowMapResolve0);
@@ -211,8 +234,8 @@ void ShadowMapPass::Render(const SceneView& sceneView)
 	EVSMResolveShader.BindSampler("uDepth", 0, DirShadowMapColor);
 	EVSMResolveShader.SetUniform("uNear", sceneView.CameraCmp->GetClippingPlaneNear());
 	EVSMResolveShader.SetUniform("uFar", sceneView.CameraCmp->GetClippingPlaneFar());
-	EVSMResolveShader.SetUniform("uPositiveExponent", sceneView.CameraCmp->EVSMExponentPositive);
-	EVSMResolveShader.SetUniform("uNegativeExponent", sceneView.CameraCmp->EVSMExponentNegative);
+	EVSMResolveShader.SetUniform("uPositiveExponent", sceneView.SettingsCmp->EVSM.PositiveExponent);
+	EVSMResolveShader.SetUniform("uNegativeExponent", sceneView.SettingsCmp->EVSM.NegativeExponent);
 
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);

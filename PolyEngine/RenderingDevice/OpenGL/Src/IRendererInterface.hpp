@@ -3,6 +3,7 @@
 #include <Defines.hpp>
 #include <Rendering/Viewport.hpp>
 #include <Rendering/Lighting/LightSourceComponent.hpp>
+#include <Rendering/RenderingSettingsComponent.hpp>
 
 // TODO: inherit from BaseRenderPass - make multipass RenderPass
 
@@ -19,12 +20,15 @@ namespace Poly {
 	struct SceneView : public BaseObject<> {
 		SceneView(Scene* w, const Viewport& v)
 			: SceneData(w), ViewportData(v), Rect(v.GetRect()), CameraCmp(v.GetCamera())
-		{};
+		{
+			SettingsCmp = CameraCmp->GetSibling<RenderingSettingsComponent>();
+		};
 
 		Scene* SceneData;
 		const Viewport& ViewportData;
 		const AARect& Rect;
 		const CameraComponent* CameraCmp;
+		const RenderingSettingsComponent* SettingsCmp;
 
 		AABox ShadowAABB;
 		

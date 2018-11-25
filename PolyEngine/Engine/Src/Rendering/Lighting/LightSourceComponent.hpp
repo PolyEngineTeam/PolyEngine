@@ -7,14 +7,6 @@
 
 namespace Poly
 {
-	enum class eShadowMethodType
-	{
-		NONE = 0,
-		PCF,
-		EVSM2,
-		EVSM4
-	};
-
 	class ENGINE_DLLEXPORT AmbientLightWorldComponent : public ComponentBase
 	{
 	public:
@@ -39,13 +31,10 @@ namespace Poly
 	public:
 		RTTI_DECLARE_COMPONENT(::Poly::DirectionalLightComponent) { NO_RTTI_PROPERTY(); }
 
-		DirectionalLightComponent(const Color& color = Color::WHITE, float intensity = 1.0f, eShadowMethodType shadowMethodType = eShadowMethodType::NONE);
+		DirectionalLightComponent(const Color& color = Color::WHITE, float intensity = 1.0f);
 
 		const Color& GetColor() const { return LightColor; }
 		float GetIntensity() const { return Intensity; }
-		eShadowMethodType GetShadowMethod() const { return ShadowMethodType; };
-
-		eShadowMethodType ShadowMethodType;
 
 		// Debug only
 		Frustum DebugFrustum;
