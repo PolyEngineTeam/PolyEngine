@@ -36,14 +36,6 @@ namespace Poly
 		const Color& GetColor() const { return LightColor; }
 		float GetIntensity() const { return Intensity; }
 
-		// Debug only
-		Frustum DebugFrustum;
-		Vector DebugShadowCenterInWS;
-		AABox ShadowAABBInLS;
-		AABox ShadowAABBInWS;
-		Matrix DebugFrustumWorldFromModel;
-		// Debug only end
-
 	private:
 		Color LightColor;
 		float Intensity = 1.0f;

@@ -6,16 +6,17 @@
 
 using namespace Poly;
 
-Matrix Poly::GetProjectionForShadowMap(const DirectionalLightComponent* dirLightCmp, int shadowmapSize)
+Matrix Poly::GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize)
 {
-	// ASSERTE(sceneView.DirectionalLights.GetSize() > 0, "GetProjectionForShadowMap has no directional light in scene view");
-	// const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLights[0];
+	ASSERTE(sceneView.DirectionalLights.GetSize() > 0, "GetProjectionForShadowMap has no directional light in scene view");
+	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLights[0];
 
 	Vector lightForward = dirLightCmp->GetTransform().GetGlobalForward();
 	Vector lightUp = dirLightCmp->GetTransform().GetGlobalUp();
 	Matrix lightViewFromWorld = Matrix(Vector::ZERO, lightForward, lightUp);
 
-	Vector shadowAABBExtentsInLS = dirLightCmp->ShadowAABBInLS.GetSize() * 0.5f;
+	// Vector shadowAABBExtentsInLS = dirLightCmp->ShadowAABBInLS.GetSize() * 0.5f;
+	Vector shadowAABBExtentsInLS = sceneView.DirShadowAABBInLS.GetSize() * 0.5f;
 	Matrix clipFromLightView;
 	// n > f, because we are looking down the negative z - axis at this volume of space
 	clipFromLightView.SetOrthographicZO(
@@ -28,7 +29,7 @@ Matrix Poly::GetProjectionForShadowMap(const DirectionalLightComponent* dirLight
 	);
 
 	Matrix lightViewFromModel;
-	Vector shadowAABBCenterInLS = dirLightCmp->ShadowAABBInLS.GetCenter();
+	Vector shadowAABBCenterInLS = sceneView.DirShadowAABBInLS.GetCenter();
 	lightViewFromModel.SetTranslation(-shadowAABBCenterInLS);
 
 	Matrix clipFromWorld = clipFromLightView * lightViewFromModel * lightViewFromWorld;
@@ -217,7 +218,7 @@ void ShadowMapPass::RenderPCF(const SceneView& sceneView)
 	glCullFace(GL_FRONT);
 	glDepthMask(GL_TRUE);
 
-	Matrix orthoDirLightFromWorld = GetProjectionForShadowMap(sceneView.DirectionalLights[0], shadowMapSize);
+	Matrix orthoDirLightFromWorld = GetProjectionForShadowMap(sceneView, shadowMapSize);
 
 	ShadowMapShader.BindProgram();
 
@@ -253,7 +254,7 @@ void ShadowMapPass::RenderEVSM(const SceneView& sceneView)
 	glCullFace(GL_FRONT);
 	glDepthMask(GL_TRUE);
 
-	Matrix orthoDirLightFromWorld = GetProjectionForShadowMap(sceneView.DirectionalLights[0], shadowMapSize);
+	Matrix orthoDirLightFromWorld = GetProjectionForShadowMap(sceneView, shadowMapSize);
 
 	ShadowMapShader.BindProgram();
 

@@ -27,7 +27,9 @@ void Poly::CameraComponent::UpdateProjection()
 		CameraFrustum.Update(Fov, Aspect, Near, Far);
 	}
 	else
+	{
 		ClipFromView.SetOrthographic(Top, Bottom, Left, Right, Near, Far);
+	}
 }
 
 bool Poly::CameraComponent::IsVisibleToCamera(const Entity* ent) const

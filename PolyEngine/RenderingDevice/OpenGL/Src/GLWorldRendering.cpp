@@ -234,9 +234,10 @@ void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<M
 		DebugDrawSystem::DrawBox(sceneView.SceneData, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), lightFromWorld.GetInversed(), Color(1.0f, 1.0f, 0.0f));
 	// }
 
-	dirLight->DebugShadowCenterInWS = frustumCenterInWS;
-	dirLight->ShadowAABBInWS = frustumAABBInWS;
-	dirLight->ShadowAABBInLS = frustumAABBInLS;
+	// dirLight->DebugShadowCenterInWS = frustumCenterInWS;
+	// dirLight->ShadowAABBInWS = frustumAABBInWS;
+	sceneView.DirShadowAABBInLS = frustumAABBInLS;
+	// dirLight->ShadowAABBInLS = frustumAABBInLS;
 }
 
 void GLRenderingDevice::FindShadowCasters(Scene* scene, const Matrix& dirLightFromWorld, const Matrix& worldFromDirLight, AABox& frustumAABBInLS, bool drawBounds)

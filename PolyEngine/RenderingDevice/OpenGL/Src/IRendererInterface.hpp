@@ -29,13 +29,12 @@ namespace Poly {
 		const AARect& Rect;
 		const CameraComponent* CameraCmp;
 		const RenderingSettingsComponent* SettingsCmp;
-
-		AABox ShadowAABB;
 		
 		Dynarray<const MeshRenderingComponent*> DirShadowOpaqueQueue;
 		Dynarray<const MeshRenderingComponent*> OpaqueQueue;
 		Dynarray<const MeshRenderingComponent*> TranslucentQueue;
 
+		AABox DirShadowAABBInLS;
 		Dynarray<DirectionalLightComponent*> DirectionalLights;
 		Dynarray<const PointLightComponent*> PointLights;
 	};

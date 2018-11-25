@@ -777,7 +777,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	// shadownap uniforms
 	Matrix projDirLightFromWorld = sceneView.DirectionalLights.IsEmpty()
 		? Matrix()
-		: GetProjectionForShadowMap(sceneView.DirectionalLights[0], GetShadowMapSize(sceneView.SettingsCmp));
+		: GetProjectionForShadowMap(sceneView, GetShadowMapSize(sceneView.SettingsCmp));
 
 	LightAccumulationShader.SetUniform("uDirLightFromWorld", projDirLightFromWorld);
 	LightAccumulationShader.SetUniform("uShadowType", (int)(sceneView.SettingsCmp->ShadowType));
