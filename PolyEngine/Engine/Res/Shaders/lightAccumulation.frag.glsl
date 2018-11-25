@@ -131,6 +131,8 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 #pragma include "pcf.inc.glsl"
 #pragma include "evsm.inc.glsl"
 
+uniform int uShadowType;
+
 float calculateShadow(vec4 fragPosInDirLight)
 {
     vec3 posInLight = fragPosInDirLight.xyz / fragPosInDirLight.w; // ClipSpace to NDC

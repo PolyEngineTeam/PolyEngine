@@ -24,18 +24,6 @@ namespace Poly {
 		_COUNT
 	};
 
-	struct EVSMSettings : public BaseObject<>
-	{
-		float PositiveExponent = 40.0f;
-		float NegativeExponent = 10.0f;
-	};
-
-	struct PCFSettings : public BaseObject<>
-	{
-		float BiasMin = 0.01f;
-		float BiasMax = 0.05f;
-	};
-	
 	class ENGINE_DLLEXPORT RenderingSettingsComponent : public ComponentBase
 	{
 	public:
@@ -43,8 +31,13 @@ namespace Poly {
 
 		eShadowType ShadowType = eShadowType::EVSM4;
 		eShadowMapSize ShadowMapSize = eShadowMapSize::SIZE_4096;
-		EVSMSettings EVSM;
-		PCFSettings PCF;
+		
+		float EVSMPositiveExponent = 40.0f;
+		float EVSMNegativeExponent = 10.0f;
+		float EVSMBias = 0.01f;
+		float EVSMLghtBleedingReduction = 0.0f;
+
+		float PCFBias = 0.01f;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, RenderingSettingsComponent)

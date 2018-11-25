@@ -774,6 +774,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 	LightAccumulationShader.BindProgram();
 
+	// shadownap uniforms
 	Matrix projDirLightFromWorld = sceneView.DirectionalLights.IsEmpty()
 		? Matrix()
 		: GetProjectionForShadowMap(sceneView.DirectionalLights[0], GetShadowMapSize(sceneView.SettingsCmp));
@@ -784,22 +785,21 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	{
 		default:
 		case eShadowType::PCF:
-			LightAccumulationShader.SetUniform("uShadowBiasMin", sceneView.CameraCmp->BiasMin);
-			LightAccumulationShader.SetUniform("uShadowBiasMax", sceneView.CameraCmp->BiasMax);
+			LightAccumulationShader.BindSampler("uDirShadowMap", 9, ShadowMap.GetDirShadowMapColor());
+			LightAccumulationShader.SetUniform("uShadowBias", sceneView.SettingsCmp->PCFBias);
 			break;
 		case eShadowType::EVSM2:
 		case eShadowType::EVSM4:
-			LightAccumulationShader.BindSampler("uDirShadowMap", 9, ShadowMap.GetDirShadowMapColor());
-			LightAccumulationShader.BindSampler("uDirEVSMap", 10, ShadowMap.GetEVSMap0());	
-			LightAccumulationShader.SetUniform("uPositiveExponent", sceneView.CameraCmp->EVSMExponentPositive);
-			LightAccumulationShader.SetUniform("uNegativeExponent", sceneView.CameraCmp->EVSMExponentNegative);
-			LightAccumulationShader.SetUniform("uBias", sceneView.CameraCmp->VSMBias);
-			LightAccumulationShader.SetUniform("uLightBleedingReduction", sceneView.CameraCmp->LightBleedingReduction);
+			LightAccumulationShader.BindSampler("uDirEVSMap", 10, ShadowMap.GetEVSMap0());
+			LightAccumulationShader.SetUniform("uPositiveExponent", sceneView.SettingsCmp->EVSMPositiveExponent);
+			LightAccumulationShader.SetUniform("uNegativeExponent", sceneView.SettingsCmp->EVSMNegativeExponent);
+			LightAccumulationShader.SetUniform("uEVSMBias", sceneView.SettingsCmp->EVSMBias);
+			LightAccumulationShader.SetUniform("uLightBleedingReduction", sceneView.SettingsCmp->EVSMLghtBleedingReduction);
 			break;
 	}
 
+	// Lighting uniforms
 	const EntityTransform& cameraTransform = sceneView.CameraCmp->GetTransform();
-
 	LightAccumulationShader.SetUniform("uTime", time);
 	LightAccumulationShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
 	LightAccumulationShader.SetUniform("uWorkGroupsX", (int)WorkGroupsX);

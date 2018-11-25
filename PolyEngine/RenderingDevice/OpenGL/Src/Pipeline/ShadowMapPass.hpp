@@ -35,8 +35,6 @@ namespace Poly
 
 		GLRenderingDevice* RDI;
 
-		// shadows
-		// const unsigned int SHADOWMAP_SIZE = 4096;
 		GLuint DirShadowMapDepth;
 		GLuint DirShadowMapColor;
 		GLuint EVSMap0;
@@ -44,8 +42,12 @@ namespace Poly
 		GLuint FBOShadowDepthMap;
 		GLuint FBOShadowMapResolve0;
 		GLuint FBOShadowMapResolve1;
+		
 		GLShaderProgram ShadowMapShader;
 		GLShaderProgram EVSMResolveShader;
 		GLShaderProgram EVSMBlurShader;
+
+		void RenderEVSM(const SceneView& sceneView);
+		void RenderPCF(const SceneView& sceneView);
 	};
 }

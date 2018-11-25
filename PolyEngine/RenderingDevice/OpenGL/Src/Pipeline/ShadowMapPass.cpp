@@ -97,7 +97,7 @@ ShadowMapPass::~ShadowMapPass()
 {
 }
 
-void Poly::ShadowMapPass::Init(const SceneView& sceneView)
+void ShadowMapPass::Init(const SceneView& sceneView)
 {
 	gConsole.LogInfo("ShadowMapPass::Init");
 
@@ -167,7 +167,7 @@ void Poly::ShadowMapPass::Init(const SceneView& sceneView)
 	CHECK_FBO_STATUS();
 }
 
-void Poly::ShadowMapPass::Deinit()
+void ShadowMapPass::Deinit()
 {
 	gConsole.LogInfo("ShadowMapPass::Deinit");
 
@@ -191,6 +191,21 @@ void ShadowMapPass::Render(const SceneView& sceneView)
 	if (sceneView.DirectionalLights.GetSize() < 1)
 		return;
 	
+	switch (sceneView.SettingsCmp->ShadowType)
+	{
+		default:
+		case eShadowType::PCF:
+			RenderPCF(sceneView); 
+			break;
+		case eShadowType::EVSM2:
+		case eShadowType::EVSM4:
+			RenderEVSM(sceneView);
+			break;
+	}
+}
+
+void ShadowMapPass::RenderPCF(const SceneView& sceneView)
+{
 	int shadowMapSize = GetShadowMapSize(sceneView.SettingsCmp);
 
 	glViewport(0, 0, shadowMapSize, shadowMapSize);
@@ -201,8 +216,6 @@ void ShadowMapPass::Render(const SceneView& sceneView)
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);
 	glDepthMask(GL_TRUE);
-	// glEnable(GL_POLYGON_OFFSET_FILL);
-	// glPolygonOffset(sceneView.CameraCmp->PolygonOffset, sceneView.CameraCmp->PolygonUnits);
 
 	Matrix orthoDirLightFromWorld = GetProjectionForShadowMap(sceneView.DirectionalLights[0], shadowMapSize);
 
@@ -222,8 +235,41 @@ void ShadowMapPass::Render(const SceneView& sceneView)
 		}
 	}
 
-	// glDisable(GL_POLYGON_OFFSET_FILL);
-	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glCullFace(GL_BACK);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void ShadowMapPass::RenderEVSM(const SceneView& sceneView)
+{
+	int shadowMapSize = GetShadowMapSize(sceneView.SettingsCmp);
+
+	glViewport(0, 0, shadowMapSize, shadowMapSize);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowDepthMap);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glDisable(GL_BLEND);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
+	glDepthMask(GL_TRUE);
+
+	Matrix orthoDirLightFromWorld = GetProjectionForShadowMap(sceneView.DirectionalLights[0], shadowMapSize);
+
+	ShadowMapShader.BindProgram();
+
+	for (const MeshRenderingComponent* meshCmp : sceneView.DirShadowOpaqueQueue)
+	{
+		const Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
+		ShadowMapShader.SetUniform("uClipFromModel", orthoDirLightFromWorld * worldFromModel);
+
+		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
+		{
+			glBindVertexArray(subMesh->GetMeshProxy()->GetResourceID());
+			glDrawElements(GL_TRIANGLES, (GLsizei)subMesh->GetMeshData().GetTriangleCount() * 3, GL_UNSIGNED_INT, NULL);
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glBindVertexArray(0);
+		}
+	}
 
 	glViewport(0, 0, shadowMapSize / 2, shadowMapSize / 2);
 	glDepthMask(GL_FALSE);
@@ -234,8 +280,8 @@ void ShadowMapPass::Render(const SceneView& sceneView)
 	EVSMResolveShader.BindSampler("uDepth", 0, DirShadowMapColor);
 	EVSMResolveShader.SetUniform("uNear", sceneView.CameraCmp->GetClippingPlaneNear());
 	EVSMResolveShader.SetUniform("uFar", sceneView.CameraCmp->GetClippingPlaneFar());
-	EVSMResolveShader.SetUniform("uPositiveExponent", sceneView.SettingsCmp->EVSM.PositiveExponent);
-	EVSMResolveShader.SetUniform("uNegativeExponent", sceneView.SettingsCmp->EVSM.NegativeExponent);
+	EVSMResolveShader.SetUniform("uPositiveExponent", sceneView.SettingsCmp->EVSMPositiveExponent);
+	EVSMResolveShader.SetUniform("uNegativeExponent", sceneView.SettingsCmp->EVSMNegativeExponent);
 
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);

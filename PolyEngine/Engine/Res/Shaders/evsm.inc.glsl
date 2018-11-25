@@ -1,13 +1,10 @@
 
 // Source of inspiration and code snippets: http://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
 
-uniform int uShadowType;
-uniform mat4 uDirLightFromWorld;
-
 uniform sampler2D uDirEVSMap;
 uniform float uPositiveExponent;
 uniform float uNegativeExponent;
-uniform float uVSMBias;
+uniform float uEVSMBias;
 uniform float uLightBleedingReduction;
 
 vec2 WarpDepth(float depth)
@@ -55,7 +52,7 @@ float calculateShadowEVSM4(vec4 moments, float smSpaceDepth)
     vec2 warpedDepth = WarpDepth(smSpaceDepth);
 
     // Derivative of warping at depth
-    vec2 depthScale = uVSMBias * 0.01 * exponents * warpedDepth;
+    vec2 depthScale = uEVSMBias * 0.01 * exponents * warpedDepth;
     vec2 minVariance = depthScale * depthScale;
 
 	float posContrib = ChebyshevUpperBound(moments.xz, warpedDepth.x, minVariance.x, uLightBleedingReduction);
@@ -69,7 +66,7 @@ float calculateShadowEVSM2(vec4 moments, float smSpaceDepth)
     vec2 warpedDepth = WarpDepth(smSpaceDepth);
 
     // Derivative of warping at depth
-    vec2 depthScale = uVSMBias * 0.01 * exponents * warpedDepth;
+    vec2 depthScale = uEVSMBias * 0.01 * exponents * warpedDepth;
     vec2 minVariance = depthScale * depthScale;
 
 	return ChebyshevUpperBound(moments.xy, warpedDepth.x, minVariance.x, uLightBleedingReduction);
