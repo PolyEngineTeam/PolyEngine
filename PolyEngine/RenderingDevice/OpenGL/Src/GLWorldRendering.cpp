@@ -245,14 +245,14 @@ void GLRenderingDevice::FindShadowCasters(Scene* scene, const Matrix& dirLightFr
 	const float maxFloat = std::numeric_limits<float>::max();
 
 	Dynarray<MeshRenderingComponent*> meshCmps;
-	for (auto& [meshCmp] : scene->IterateComponents<MeshRenderingComponent>())
+	for (auto [meshCmp] : scene->IterateComponents<MeshRenderingComponent>())
 	{
 		meshCmp->IsShadowCaster = false;
 		meshCmps.PushBack(meshCmp);
 	}
 	// transform meshes AABB to DirLightSpace
 	Dynarray<std::tuple<AABox, MeshRenderingComponent*>> boxMeshes;
-	for (const auto& meshCmp : meshCmps)
+	for (const auto meshCmp : meshCmps)
 	{
 		const Matrix& dirLightFromModel = dirLightFromWorld * meshCmp->GetTransform().GetWorldFromModel();
 		Optional<AABox> boxWSOptional = meshCmp->GetBoundingBox(eEntityBoundingChannel::RENDERING);
