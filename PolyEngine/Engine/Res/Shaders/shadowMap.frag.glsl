@@ -1,8 +1,5 @@
 #version 330
 
-uniform float uNear;
-uniform float uFar;
-
 in vec4 vPosition;
 
 out vec4 oColor;

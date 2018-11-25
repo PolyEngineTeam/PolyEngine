@@ -138,9 +138,6 @@ float calculateShadow(vec4 fragPosInDirLight)
     vec3 posInLight = fragPosInDirLight.xyz / fragPosInDirLight.w; // ClipSpace to NDC
     posInLight = posInLight * 0.5 + 0.5; // NDC to [0, 1]
 
-	if (posInLight.z > 1.0 || posInLight.x > 1.0 || posInLight.y > 1.0) return 0.5;		
-	if (posInLight.z < 0.0 || posInLight.x < 0.0 || posInLight.y < 0.0) return 0.5;		
-
 	// TODO: use defines
 	if (uShadowType == 1)
 	{

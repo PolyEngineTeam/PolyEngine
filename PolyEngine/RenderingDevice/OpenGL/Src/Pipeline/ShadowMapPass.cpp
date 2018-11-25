@@ -16,7 +16,6 @@ Matrix Poly::GetProjectionForShadowMap(const SceneView& sceneView, int shadowmap
 	Vector lightUp = dirLightCmp->GetTransform().GetGlobalUp();
 	Matrix lightViewFromWorld = Matrix(Vector::ZERO, lightForward, lightUp);
 
-	// Vector shadowAABBExtentsInLS = dirLightCmp->ShadowAABBInLS.GetSize() * 0.5f;
 	Vector shadowAABBExtentsInLS = sceneView.DirShadowAABBInLS.GetSize() * 0.5f;
 	Matrix clipFromLightView;
 	// n > f, because we are looking down the negative z - axis at this volume of space
@@ -44,7 +43,6 @@ void Poly::StablizeShadowProjection(Poly::Matrix& clipFromWorld, int shadowmapSi
 	// based on https://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
 	// Stabilize shadow map: move in texel size increments
 	// round matrix translation to texel size increments
-	// float shadowmapSize = (float)SHADOWMAP_SIZE;
 	Vector shadowOrigin = clipFromWorld * Vector::ZERO;
 	shadowOrigin *= 0.5f * shadowmapSize;
 
