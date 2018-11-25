@@ -103,8 +103,8 @@ namespace Poly
 		void CreateUtilityTextures();
 
 		void FillSceneView(SceneView& sceneView);
-		void FillDirLightQueue(SceneView& sceneView, const Dynarray<MeshRenderingComponent*>& meshCmp);
-		void FindShadowCasters(SceneView& sceneView, const Matrix& dirLightFromWorld, const Matrix& worldFromDirLight, AABox& frustumAABBInLS);
+		void CullDirLightQueue(SceneView& sceneView, const Dynarray<MeshRenderingComponent*>& meshCmp);
+		void CullShadowCasters(SceneView& sceneView, const Matrix& dirLightFromWorld, const Matrix& worldFromDirLight, AABox& frustumAABBInLS);
 		void EndFrame();
 
 		void CleanUpResources();
