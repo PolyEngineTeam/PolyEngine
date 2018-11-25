@@ -186,7 +186,7 @@ void ShadowMapPass::Deinit()
 
 void ShadowMapPass::Render(const SceneView& sceneView)
 {	
-	gConsole.LogInfo("ShadowMapPass::Render");
+	// gConsole.LogInfo("ShadowMapPass::Render");
 
 	if (sceneView.DirectionalLights.GetSize() < 1)
 		return;

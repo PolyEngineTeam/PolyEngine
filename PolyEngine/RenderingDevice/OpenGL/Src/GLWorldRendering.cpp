@@ -214,7 +214,7 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& di
 	for (const auto& [boxLS, mesh] : boxMeshes)
 	{
 		// extend dir light AAbox only in Z based on objects in rect defined on dir light AABob XY plane
-		if (boxLS.OverlapsXY(frustumAABBInLS))
+		if (boxLS.ContainsXY(frustumAABBInLS))
 			maxZ = std::max(maxZ, boxLS.GetMax().Z);
 	}
 
@@ -231,7 +231,7 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& di
 	int shadowCastersCounter = 0;
 	for (auto& [box, meshCmp] : boxMeshes)
 	{
-		if (frustumAABBInLS.Overlaps(box))
+		if (frustumAABBInLS.Contains(box))
 		{
 			sceneView.DirShadowOpaqueQueue.PushBack(meshCmp);
 			shadowCastersCounter++;
@@ -241,7 +241,7 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& di
 		}
 	}
 
-	gConsole.LogInfo("GLRenderingDevice::FillDirLightQueue casters: {}/{}", shadowCastersCounter, meshCmps.GetSize());
+	// gConsole.LogInfo("GLRenderingDevice::FillDirLightQueue casters: {}/{}", shadowCastersCounter, meshCmps.GetSize());
 }
 
 void GLRenderingDevice::CreateUtilityTextures()

@@ -1,4 +1,4 @@
-// based on: // http://codeflow.org/entries/2013/feb/15/soft-shadow-mapping/
+// based on: http://codeflow.org/entries/2013/feb/15/soft-shadow-mapping/
 
 uniform sampler2D uDirShadowMap;
 uniform float uShadowBias;
