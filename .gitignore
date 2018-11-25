@@ -6,6 +6,7 @@
 
 # Engine specific files
 console.log
+*.dump # shader content dumps for debuging
 
 # Engine local configurations
 AssetsPathConfig.json
@@ -69,5 +70,3 @@ xcuserdata/
 
 # Exculdes from ignore
 !**/ThirdParty/**
-
-*.dump
