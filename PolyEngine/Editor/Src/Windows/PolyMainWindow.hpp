@@ -22,12 +22,8 @@ private:
 	std::unique_ptr<QMenu> FileMenu;
 	std::unique_ptr<QAction> QuitAction;
 	std::unique_ptr<QMenu> ProjectMenu;
-	std::unique_ptr<QAction> CreateProjectAction;
-	std::unique_ptr<QAction> OpenProjectAction;
-	std::unique_ptr<QAction> UpdateProjectFromEngineAction;
 	std::unique_ptr<QAction> EditProjectAction;
 	std::unique_ptr<QAction> PlayProjectAction;
-	std::unique_ptr<QAction> CloseProjectAction;
 	std::unique_ptr<QMenu> ViewMenu;
 	std::unique_ptr<QAction> AddWindowAction;
 
@@ -48,13 +44,8 @@ private slots:
 	void AddWindow();
 
 	// projhect
-	void CreateProject();
-	void OpenProject();
-	void UpdateProject();
-	void BuildProject();
 	void EditProject();
 	void PlayProject();
-	void CloseProject();
 
 	// help
 	void ContactUs();

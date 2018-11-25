@@ -4,55 +4,76 @@
 
 RTTI_DEFINE_TYPE(ProjectConfig)
 
-ProjectConfig::ProjectConfig(const String& path)
-	: Poly::ConfigBase(path, Poly::eResourceSource::NONE), Path(path)
+//------------------------------------------------------------------------------
+ProjectConfig::ProjectConfig(const String& path, eConfiguration configuration)
+	: Poly::ConfigBase(path, Poly::eResourceSource::NONE), ProjectPath(path), ProjectConfiguration(configuration)
+	, AssetsPath(std::make_unique<Poly::AssetsPathConfig>())
 {
 	FileName = path;
 
 	// get Project directory path
 	for (size_t i = path.GetLength(); i > 0; --i)
-		if (path[i] == '/')
+		if (path[i] == '/' || path[i] == '\\')
 		{
-			ProjectPath = path.Substring(i);
+			ProjectDirPath = path.Substring(i);
 			break;
 		}
+
+	Load();
+
+	StringBuilder builder;
+	builder.Append(GetDistDir());
+	builder.Append("AssetsPathConfig.json");
+	AssetsPath->DeserializeFromFile(builder.StealString());
 }
 
+//------------------------------------------------------------------------------
+ProjectConfig::~ProjectConfig()
+{
+}
+
+//------------------------------------------------------------------------------
 String ProjectConfig::GetGameDllPath() const
 {
-	StringBuilder builder;
-
-#if defined(_WIN32)
-	builder.Append(ProjectPath);
-	builder.Append("/Dist/Debug/");
-	builder.Append(ProjectName);
-	builder.Append(".dll");
-#elif defined(__linux__) || defined(__APPLE__)
-	builder.Append(ProjectPath)
-		.Append("/Dist/Debug/")
-		.Append("lib")
-		.Append(ProjectName)
-		.Append(".so");
-#else
-#error "Unsupported platform :("
-#endif
-
-	return builder.StealString();
+	return AssetsPath->GetGameLibPath();
 }
 
+//------------------------------------------------------------------------------
 String ProjectConfig::GetRenderingDeviceDllPath() const
+{
+	return AssetsPath->GetRenderingDeviceLibPath();
+}
+
+//------------------------------------------------------------------------------
+Poly::String ProjectConfig::GetDistDir() const
 {
 	StringBuilder builder;
 
-#if defined(_WIN32)
-	builder.Append(ProjectPath);
-	builder.Append("/Dist/Debug/PolyRenderingDeviceGL.dll");
-#elif defined(__linux__) || defined(__APPLE__)
-	builder.Append(ProjectPath)
-		.Append("/Dist/Debug/libPolyRenderingDeviceGL.so");
-#else
-#error "Unsupported platform :("
-#endif
+	builder.Append(ProjectDirPath);
+	builder.Append("/Dist/");
+
+	switch (ProjectConfiguration)
+	{
+	case eConfiguration::DEBUG:
+		builder.Append("Debug/");
+		break;
+
+	case eConfiguration::DEBUG_FAST:
+		builder.Append("DebugFast/");
+		break;
+
+	case eConfiguration::RELEASE:
+		builder.Append("Release/");
+		break;
+
+	case eConfiguration::TESTING:
+		builder.Append("Testing/");
+		break;
+
+	default:
+		ASSERTE(false, "ERROR");
+		break;
+	}
 
 	return builder.StealString();
 }

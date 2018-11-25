@@ -8,19 +8,38 @@
 
 EditorApp* gApp = nullptr;
 
+std::unique_ptr<ProjectConfig> GetProjectConfigFromArgs(int argc, char *argv[])
+{
+	constexpr unsigned PROJ_JSON_FILE_PATH_INDEX = 1;
+	constexpr unsigned CONFIGURATION_INDEX = 2;
+
+	const auto modeName = String(argv[CONFIGURATION_INDEX]);
+
+	ProjectConfig::eConfiguration configuration;
+	if (modeName == "Debug")
+		configuration = ProjectConfig::eConfiguration::DEBUG;
+	else
+		ASSERTE(false, "Wrong argument passed.");
+
+	return std::make_unique<ProjectConfig>(argv[PROJ_JSON_FILE_PATH_INDEX], configuration);
+}
+
+// C:/Users/pmoscicki/Documents/PolyEngine/PolyEngineExamples/SGJ2018Game\SGJ18.proj.json 
+// Debug
+
 // ---------------------------------------------------------------------------------------------------------
 EditorApp::EditorApp(int argc, char *argv[])
 	: QApplication(argc, argv)
 {
+	ASSERTE(!gApp, "Creating application twice?!");
+	gApp = this;
+
 	DockMgr = new DockManager();
 	CmdMgr = new CmdManager();
-	ProjectMgr = new ProjectManager();
-	EngineMgr = new EngineManager();
+	ProjectMgr = new ProjectManager(GetProjectConfigFromArgs(argc, argv));
 	InspectorMgr = new InspectorManager(this);
 	CommandMgr = new CommandManager();
 
-	ASSERTE(!gApp, "Creating application twice?!");
-	gApp = this;
 
 	Ui.Init();
 	installEventFilter(&EventFilter);
@@ -56,4 +75,9 @@ EditorApp::EditorApp(int argc, char *argv[])
 						 QLineEdit { color: #c0c0c0; background-color: #404040; }");
 	
 	Poly::gConsole.LogInfo("PolyEditor successfully initialized.");
+}
+
+// ---------------------------------------------------------------------------------------------------------
+EditorApp::~EditorApp()
+{
 }

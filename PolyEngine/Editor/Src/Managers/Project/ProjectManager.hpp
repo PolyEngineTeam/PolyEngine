@@ -23,40 +23,21 @@ class ProjectManager : public QObject
 	Q_OBJECT
 
 public:
-	ProjectManager() {}
-	~ProjectManager() = default;
+	ProjectManager(std::unique_ptr<ProjectConfig> projectCfg);
 
-	// creates new project with ProjectTool.py
-	void Create(const String& projectName, const String& projectPath, const String& enginePath);
-	// loads ProjectConfig from *.proj.json file 
-	void Open(const String& projectPath);
-	// updates project from given engine
-	void Update(const String& enginePath);
-	// ordinary save (saves only scene json file) does not update dlls and redistributeblaes
-	void Save();
-	// save current project in given directory with given name ( saves project json and copies game dll)
-	void SaveAs(const String& path, const String& Name);
-	// save current project in given directory with given name ( saves project json and copies game dll)
-	// additionally copies all engine dlls, polyStandalone and all redistributables
-	void SaveAsRelease(const String& path, const String& Name);
-	// builds current project
-	void Build();
 	// go into edit mode
 	void Edit();
 	// run game in editor's viewport
 	void Play(); 
-	// closes current project
-	void Close();
 
 	bool IsOpened() { return Opened; }
 
 	const ProjectConfig& GetProjectConfig() const { return *ProjectCfg; }
 
-	const String& SetProjectName(const String& name) const { return ProjectCfg->ProjectName = name; }
-
 signals:
-	void ProjectOpened(ProjectConfig* config);
-	void ProjectClosed();
+	void EngineInitialized(Engine* engine);
+	void EngineDeinitialized();
+	void EngineStateChanged(PolyEditor::eEngineState state);
 
 private:
 	void InitEngine();
