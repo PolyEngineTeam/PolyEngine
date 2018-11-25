@@ -1,5 +1,4 @@
-
-// Source of inspiration and code snippets: http://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
+// Based on: http://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
 
 uniform sampler2D uDirEVSMap;
 uniform float uPositiveExponent;
@@ -29,8 +28,7 @@ float ReduceLightBleeding(float pMax, float amount)
    return Linstep(amount, 1.0, pMax);
 }
 
-float ChebyshevUpperBound(vec2 moments, float mean, float minVariance,
-                          float lightBleedingReduction)
+float ChebyshevUpperBound(vec2 moments, float mean, float minVariance, float lightBleedingReduction)
 {
     // Compute variance
     float variance = moments.y - (moments.x * moments.x);

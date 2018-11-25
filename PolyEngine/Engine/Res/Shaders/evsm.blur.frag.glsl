@@ -1,4 +1,5 @@
-// Source of inspiration and code snippets: http://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
+// based on: http://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
+// based on: https://github.com/bartwronski/CSharpRenderer
 
 #version 400 core
 
