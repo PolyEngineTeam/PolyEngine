@@ -1,6 +1,10 @@
 
 // Source of inspiration and code snippets: http://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
 
+uniform int uShadowType;
+uniform mat4 uDirLightFromWorld;
+
+uniform sampler2D uDirEVSMap;
 uniform float uPositiveExponent;
 uniform float uNegativeExponent;
 uniform float uVSMBias;
@@ -45,7 +49,7 @@ float ChebyshevUpperBound(vec2 moments, float mean, float minVariance,
     return (mean <= moments.x ? 1.0 : pMax);
 }
 
-float calculateShadowEVSM(vec4 moments, float smSpaceDepth)
+float calculateShadowEVSM4(vec4 moments, float smSpaceDepth)
 {
 	vec2 exponents = vec2(uPositiveExponent, uNegativeExponent);
     vec2 warpedDepth = WarpDepth(smSpaceDepth);
@@ -54,14 +58,21 @@ float calculateShadowEVSM(vec4 moments, float smSpaceDepth)
     vec2 depthScale = uVSMBias * 0.01 * exponents * warpedDepth;
     vec2 minVariance = depthScale * depthScale;
 
-    // #if ShadowMode_ == ShadowModeEVSM4_
-        float posContrib = ChebyshevUpperBound(moments.xz, warpedDepth.x, minVariance.x, uLightBleedingReduction);
-        float negContrib = ChebyshevUpperBound(moments.yw, warpedDepth.y, minVariance.y, uLightBleedingReduction);
-        return min(posContrib, negContrib);
-    // #else
-	// 	// Positive only
-    //     return ChebyshevUpperBound(moments.xy, warpedDepth.x, minVariance.x, uLightBleedingReduction);
-    // #endif
+	float posContrib = ChebyshevUpperBound(moments.xz, warpedDepth.x, minVariance.x, uLightBleedingReduction);
+	float negContrib = ChebyshevUpperBound(moments.yw, warpedDepth.y, minVariance.y, uLightBleedingReduction);
+	return min(posContrib, negContrib);
+}
+
+float calculateShadowEVSM2(vec4 moments, float smSpaceDepth)
+{
+	vec2 exponents = vec2(uPositiveExponent, uNegativeExponent);
+    vec2 warpedDepth = WarpDepth(smSpaceDepth);
+
+    // Derivative of warping at depth
+    vec2 depthScale = uVSMBias * 0.01 * exponents * warpedDepth;
+    vec2 minVariance = depthScale * depthScale;
+
+	return ChebyshevUpperBound(moments.xy, warpedDepth.x, minVariance.x, uLightBleedingReduction);
 }
 
 float calculateShadowESM(vec4 moments, float smSpaceDepth)

@@ -784,14 +784,11 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	{
 		default:
 		case eShadowType::PCF:
-			
 			LightAccumulationShader.SetUniform("uShadowBiasMin", sceneView.CameraCmp->BiasMin);
 			LightAccumulationShader.SetUniform("uShadowBiasMax", sceneView.CameraCmp->BiasMax);
 			break;
 		case eShadowType::EVSM2:
 		case eShadowType::EVSM4:
-			LightAccumulationShader.SetUniform("uNear", sceneView.CameraCmp->GetClippingPlaneNear());
-			LightAccumulationShader.SetUniform("uFar", sceneView.CameraCmp->GetClippingPlaneFar());
 			LightAccumulationShader.BindSampler("uDirShadowMap", 9, ShadowMap.GetDirShadowMapColor());
 			LightAccumulationShader.BindSampler("uDirEVSMap", 10, ShadowMap.GetEVSMap0());	
 			LightAccumulationShader.SetUniform("uPositiveExponent", sceneView.CameraCmp->EVSMExponentPositive);

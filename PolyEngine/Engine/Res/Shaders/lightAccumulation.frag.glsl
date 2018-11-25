@@ -60,13 +60,6 @@ const uint MAX_NUM_LIGHTS = 1024;
 uniform sampler2D uBrdfLUT;
 uniform samplerCube uIrradianceMap;
 uniform samplerCube uPrefilterMap;
-uniform sampler2D uDirShadowMap;
-uniform sampler2D uDirEVSMap;
-uniform float uShadowBiasMin;
-uniform float uShadowBiasMax;
-uniform float uNear;
-uniform float uFar;
-uniform mat4 uDirLightFromWorld;
 
 uniform sampler2D uEmissiveMap;
 uniform sampler2D uAlbedoMap;
@@ -135,86 +128,36 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.001, 1.0), 5.0); // clamp to prevent NaNs
 }
 
-float texture2DCompare(sampler2D depthTex, vec2 uv, float compare)
-{
-    float depth = texture(depthTex, uv).r;
-    return step(compare, depth);
-}
-
-float LinearizeDepth(float depth) {
-	return -uFar * uNear / (depth * (uFar - uNear) - uFar);
-}
-
-float LinearizeDepth01(float depth) {
-	return LinearizeDepth(depth) / uFar;
-}
-
-float texture2DShadowLerp(sampler2D depth, vec2 size, vec2 uv, float compare)
-{
-	vec2 texelSize = 1.0 / size;
-    vec2 f = fract(uv*size+0.5);
-    vec2 centroidUV = floor(uv*size+0.5)/size;
-
-    float lb = texture2DCompare(depth, centroidUV+texelSize*vec2(0.0, 0.0), compare);
-    float lt = texture2DCompare(depth, centroidUV+texelSize*vec2(0.0, 1.0), compare);
-    float rb = texture2DCompare(depth, centroidUV+texelSize*vec2(1.0, 0.0), compare);
-    float rt = texture2DCompare(depth, centroidUV+texelSize*vec2(1.0, 1.0), compare);
-    float a = mix(lb, lt, f.y);
-    float b = mix(rb, rt, f.y);
-    float c = mix(a, b, f.x);
-    return c;
-}
-
+#pragma include "pcf.inc.glsl"
 #pragma include "evsm.inc.glsl"
 
-// http://codeflow.org/entries/2013/feb/15/soft-shadow-mapping/
-float PCF(sampler2D depthTex, vec2 size, vec2 uv, float compare)
+float calculateShadow(vec4 fragPosInDirLight)
 {
-    float result = 0.0;
-    for(int x =- 1; x <= 1; x++)
+    vec3 posInLight = fragPosInDirLight.xyz / fragPosInDirLight.w; // ClipSpace to NDC
+    posInLight = posInLight * 0.5 + 0.5; // NDC to [0, 1]
+
+	if (posInLight.z > 1.0 || posInLight.x > 1.0 || posInLight.y > 1.0) return 0.5;		
+	if (posInLight.z < 0.0 || posInLight.x < 0.0 || posInLight.y < 0.0) return 0.5;		
+
+	// TODO: use defines
+	if (uShadowType == 1)
 	{
-        for(int y = -1; y <= 1; y++)
-		{
-            vec2 off = vec2(x,y)/size;
-            result += texture2DShadowLerp(depthTex, size, uv+off, compare);
-        }
-    }
-    return result / 9.0;
-}
-
-float calcShadow(vec4 fragPosInDirLight, float NdotL)
-{
-	vec4 lightSpacePos = uDirLightFromWorld * vec4(fragment_in.positionInWorld, 1.0);
-	// ClipSpace to NDC
-    vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
-	// NDC to [0, 1]
-    projCoords = projCoords * 0.5 + 0.5;
-
-	if (projCoords.z > 1.0 || projCoords.x > 1.0 || projCoords.y > 1.0)
-		return 0.5;
-	if (projCoords.z < 0.0 || projCoords.x < 0.0 || projCoords.y < 0.0)
-		return 0.5;
-
-    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)  
-    // get depth of current fragment from light's perspective
-    // check whether current frag pos is in shadow
-	float bias = max(uShadowBiasMax * (1.0 - NdotL), uShadowBiasMin);
-
-	vec4 smSample = textureLod(uDirEVSMap, projCoords.xy, 0.0);
-	float shadowEVSM = calculateShadowEVSM(smSample, projCoords.z - bias);
-	float shadowESM = calculateShadowESM(smSample, projCoords.z - bias);
-	float shadowmap = texture(uDirShadowMap, projCoords.xy).r; // raw depth value for debuging
-	float smSteps = 0.1 * floor(10.0 * shadowmap);
-	float smFracts = fract(10.0 * shadowmap);
-	// return mix(smSteps, smFracts, 0.5);
-	// return shadowmap;
-	// return fract(10.0 * texture(uDirShadowMap, projCoords.xy).r); // raw depth value for debuging
-	// return step(currentDepth - bias, texture(uDirShadowMap, projCoords.xy).r); // raw occlusion value for debugging 
-	// return PCF(uDirShadowMap, size, projCoords.xy, currentDepth - bias); // pretty shadow for rendering
-	// return fract(100.0 * projCoords.z);
-	// return fract(100.0 * smSample.x);
-	return shadowEVSM;
-	// return shadowESM;
+		return calculateShadowPCF(posInLight);
+	}
+	else if (uShadowType == 2)
+	{
+		vec4 moments = textureLod(uDirEVSMap, posInLight.xy, 0.0);
+		return calculateShadowEVSM2(moments, posInLight.z);
+	}
+	else if (uShadowType == 3)
+	{
+		vec4 moments = textureLod(uDirEVSMap, posInLight.xy, 0.0);
+		return calculateShadowEVSM4(moments, posInLight.z);
+	}
+	else
+	{
+		return 1.0;
+	}
 }
 
 void main()
@@ -342,7 +285,7 @@ void main()
         float shadow = 1.0;
         if (i == 0)
         {
-            shadow = calcShadow(fragment_in.fragmentPositionInDirLight, NdotL);
+            shadow = calculateShadow(fragment_in.fragmentPositionInDirLight);
         }
 
 		// add to outgoing radiance Lo
