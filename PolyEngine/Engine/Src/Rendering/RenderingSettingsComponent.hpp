@@ -38,6 +38,9 @@ namespace Poly {
 		float EVSMLghtBleedingReduction = 0.0f;
 
 		float PCFBias = 0.01f;
+
+		bool DebugDrawFrustumBounds = false;
+		bool DebugDrawShadowCastersBounds = false;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, RenderingSettingsComponent)
