@@ -32,5 +32,3 @@ add_custom_command(
 )
 
 cotire(${GAME_TARGET})
-
-CopyArtifacts(${GAME_TARGET})

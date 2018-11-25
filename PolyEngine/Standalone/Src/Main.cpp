@@ -115,10 +115,10 @@ int main(int argc, char* args[])
 	Engine->StartGame();
 	Poly::gConsole.LogDebug("Engine initialization and handshake successfull. Starting main loop...");
 
-	SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-
 	Engine->SetClipboardTextFunction = HandleSetClipboardText;
 	Engine->GetClipboardTextFunction = HandleGetClipboardText;
+
+	SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
 
 	SDL_Cursor* mouseCursors[(int)SDL_NUM_SYSTEM_CURSORS] = { 0 };
 	for (int i = SDL_NUM_SYSTEM_CURSORS - 1; i >= 0; --i)

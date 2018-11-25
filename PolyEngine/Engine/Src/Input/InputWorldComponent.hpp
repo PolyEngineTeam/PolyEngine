@@ -70,8 +70,8 @@ namespace Poly
 		std::unordered_map<size_t, ControllerState> Controllers;
 		Dynarray<Optional<size_t>> PlayerIDToJoystickID;
 		std::unordered_map<size_t, size_t> JoystickIDToPlayerID;
-		bool IsConsumed;
-		char* CharUTF8;
+		bool IsConsumed = false;
+		const char* CharUTF8 = nullptr;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, InputWorldComponent)

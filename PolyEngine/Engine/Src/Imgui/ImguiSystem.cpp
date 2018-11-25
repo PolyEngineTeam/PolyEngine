@@ -123,13 +123,9 @@ void ImguiSystem::OnUpdate(Scene* scene)
 	}
 
 	// used to read keyboard and fill text input Widgets
-	if (inputCmp->GetCharUTF8() != nullptr)
-	{
-		const char* charUTF8 = inputCmp->GetCharUTF8();
-		size_t length = StrLen(charUTF8);
-		if (length > 0 && charUTF8[0] != '\0')
-			io.AddInputCharactersUTF8(inputCmp->GetCharUTF8());
-	}
+	const char* charUTF = inputCmp->GetCharUTF8();
+	if (charUTF != nullptr)
+		io.AddInputCharactersUTF8(charUTF);
 
 	// If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
 	io.MouseDown[0] = inputCmp->IsPressed(eMouseButton::LEFT);

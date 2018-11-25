@@ -13,6 +13,7 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/ThirdParty/Catch/contrib)
 include(ParseAndAddCatchTests)                                                            #
 
 add_executable(${UNITTESTS_TARGET} ${POLYTESTS_SRCS})
+add_dependencies(${UNITTESTS_TARGET} Prerequisites)
 target_link_libraries(${UNITTESTS_TARGET} PRIVATE ${CORE_TARGET} ${ENGINE_TARGET} Catch)
 ParseAndAddCatchTests(${UNITTESTS_TARGET})
 
@@ -27,30 +28,4 @@ if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	add_dependencies(coverage coverage_core coverage_engine)
 endif(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 
-add_custom_command(
-		TARGET ${UNITTESTS_TARGET}
-		POST_BUILD
-			# Inhouse shared library dependancies
-			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:${CORE_TARGET}>" "$<TARGET_FILE_DIR:${UNITTESTS_TARGET}>"
-			COMMAND ${CMAKE_COMMAND} -E copy  "$<TARGET_FILE:${ENGINE_TARGET}>" "$<TARGET_FILE_DIR:${UNITTESTS_TARGET}>"
-			
-			COMMENT "Copying Libs..." VERBATIM
-		)
-
-if(WIN32)
-	# Copy all necessary DLL's on Windows
-	add_custom_command(
-		TARGET ${UNITTESTS_TARGET}
-		POST_BUILD
-			# Thirdparty DLL's
-			COMMAND ${CMAKE_COMMAND} -E copy  "${CMAKE_SOURCE_DIR}/ThirdParty/SDL2/lib/x64/SDL2.dll" "$<TARGET_FILE_DIR:${UNITTESTS_TARGET}>"
-			COMMAND ${CMAKE_COMMAND} -E copy  "${CMAKE_SOURCE_DIR}/ThirdParty/Assimp/lib/Release/x64/assimp-vc140-mt.dll" "$<TARGET_FILE_DIR:${UNITTESTS_TARGET}>"
-			COMMAND ${CMAKE_COMMAND} -E copy  "${CMAKE_SOURCE_DIR}/ThirdParty/libepoxy/bin/x64/epoxy-0.dll" "$<TARGET_FILE_DIR:${UNITTESTS_TARGET}>"
-
-			COMMENT "Copying DLLs..." VERBATIM
-		)
-endif()
-
 cotire(${UNITTESTS_TARGET})
-
-CopyArtifacts(${UNITTESTS_TARGET})
