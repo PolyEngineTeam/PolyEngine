@@ -42,16 +42,6 @@ namespace Poly {
 		/// <param name="size">New size</param>
 		void SetSize(const Vector& size) { Size = size; }
 
-		/// <summary>Checks whether this AABox contains a given point.</summary>
-		/// <param name="point">Point to be checked.</param>
-		/// <see cref="AABox.IsCollidingWith()"/>
-		inline bool Contains(const Vector& point) const 
-		{ 
-			return point.X >= Min.X && point.X <= (Min.X + Size.X) 
-				&& point.Y >= Min.Y && point.Y <= (Min.Y + Size.Y) 
-				&& point.Z >= Min.Z && point.Z <= (Min.Z + Size.Z);
-		}
-
 		/// <summary>Checks whether a given AABox is interecting with this AABox.</summary>
 		/// <param name="rhs">Other box.</param>
 		/// <see cref="AABox.Contains()"/>
@@ -62,35 +52,52 @@ namespace Poly {
 				&& (abs(Min.Z - rhs.Min.Z) * 2.0f < (Size.Z + rhs.Size.Z));
 		}
 
-		inline bool Overlaps(const AABox& rhs) const
+		/// <summary>Checks whether this AABox contains a given point.</summary>
+		/// <param name="point">Point to be checked.</param>
+		/// <see cref="AABox.IsCollidingWith()"/>
+		inline bool Contains(const Vector& point) const 
+		{ 
+			return point.X >= Min.X && point.X <= (Min.X + Size.X) 
+				&& point.Y >= Min.Y && point.Y <= (Min.Y + Size.Y) 
+				&& point.Z >= Min.Z && point.Z <= (Min.Z + Size.Z);
+		}
+
+		/// <summary>Checks whether a given AABox contains this AABox on all axes.</summary>
+		/// <param name="rhs">Other box.</param>
+		inline bool Contains(const AABox& rhs) const
 		{
-			return OverlapsX(rhs) && OverlapsY(rhs) && OverlapsZ(rhs);
+			return ContainsX(rhs) && ContainsY(rhs) && ContainsZ(rhs);
 		}
 		
-		/// <summary>Checks whether a given AABox is interecting with this AABox on XY plane.</summary>
+		/// <summary>Checks whether a given AABox contains this AABox on XY plane.</summary>
 		/// <param name="rhs">Other box.</param>
-		/// <see cref="AABox.Contains()"/>
-		inline bool OverlapsXY(const AABox& rhs) const
+		inline bool ContainsXY(const AABox& rhs) const
 		{
-			return OverlapsX(rhs) && OverlapsY(rhs);
+			return ContainsX(rhs) && ContainsY(rhs);
 		}
 
-		inline bool OverlapsX(const AABox& rhs) const
+		/// <summary>Checks whether a given AABox contains this AABox on X axis.</summary>
+		/// <param name="rhs">Other box.</param>
+		inline bool ContainsX(const AABox& rhs) const
 		{
-			return (Min.X			< rhs.Min.X + rhs.Size.X)
-				&& (Min.X + Size.X	> rhs.Min.X);
+			return (Min.X          <= rhs.Min.X + rhs.Size.X)
+				&& (Min.X + Size.X >= rhs.Min.X);
 		}
 
-		inline bool OverlapsY(const AABox& rhs) const
+		/// <summary>Checks whether a given AABox contains this AABox on Y axis.</summary>
+		/// <param name="rhs">Other box.</param>
+		inline bool ContainsY(const AABox& rhs) const
 		{
-			return (Min.Y			< rhs.Min.Y + rhs.Size.Y)
-				&& (Min.Y + Size.Y  > rhs.Min.Y);
+			return (Min.Y          <= rhs.Min.Y + rhs.Size.Y)
+				&& (Min.Y + Size.Y >= rhs.Min.Y);
 		}
 
-		inline bool OverlapsZ(const AABox& rhs) const
+		/// <summary>Checks whether a given AABox contains this AABox on Z axis.</summary>
+		/// <param name="rhs">Other box.</param>
+		inline bool ContainsZ(const AABox& rhs) const
 		{
-			return (Min.Z			< rhs.Min.Z + rhs.Size.Z)
-				&& (Min.Z + Size.Z  > rhs.Min.Z);
+			return (Min.Z          <= rhs.Min.Z + rhs.Size.Z)
+				&& (Min.Z + Size.Z >= rhs.Min.Z);
 		}
 
 		std::array<Vector, 8> GetVertices() const;
