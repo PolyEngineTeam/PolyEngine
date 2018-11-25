@@ -18,8 +18,9 @@ namespace Poly
 		void ENGINE_DLLEXPORT DrawBox(Scene* world, const Vector& mins, const Vector& maxs, const Color& color = Color::WHITE);
 		void ENGINE_DLLEXPORT DrawBox(Scene* world, const Vector& mins, const Vector& maxs, const Matrix& worldFromSpace, const Color& color = Color::WHITE);
 		void ENGINE_DLLEXPORT DrawBox(Scene* world, const AABox& box, const Color& color = Color::WHITE);
-		void ENGINE_DLLEXPORT DrawFrustum(Scene* world, const Frustum& frust, 
-			const Vector& pos = Vector::ZERO, const Quaternion& rot = Quaternion::IDENTITY, const Color& color = Color::WHITE, bool withNormals = false);
+		
+		void ENGINE_DLLEXPORT DrawFrustum(Scene* scene, const Frustum& frustum, const Matrix& viewFromWorld = Matrix(), Color color = Color::WHITE);
+		void ENGINE_DLLEXPORT DrawFrustumPoints(Scene* scene, const Dynarray<Vector>& cornersInWorld, const Color color = Color::WHITE);
 
 		/// Think of orientation as of normal vector
 		void ENGINE_DLLEXPORT DrawCircle(Scene* world, const Vector& position, float radius, Vector orientation, const Color& color = Color::WHITE);

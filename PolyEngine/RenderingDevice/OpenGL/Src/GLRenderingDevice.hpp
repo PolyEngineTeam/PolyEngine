@@ -104,7 +104,7 @@ namespace Poly
 
 		void FillSceneView(SceneView& sceneView);
 		void FillDirLightQueue(SceneView& sceneView, const Dynarray<MeshRenderingComponent*>& meshCmp);
-		void FindShadowCasters(Scene* scene, const Matrix& dirLightFromWorld, const Matrix& worldFromDirLight, AABox& frustumAABBInLS, bool drawBounds);
+		void FindShadowCasters(SceneView& sceneView, const Matrix& dirLightFromWorld, const Matrix& worldFromDirLight, AABox& frustumAABBInLS, bool drawBounds);
 		void EndFrame();
 
 		void CleanUpResources();

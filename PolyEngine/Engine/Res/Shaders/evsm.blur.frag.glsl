@@ -24,19 +24,12 @@ void main()
         
     for (int x = -5; x < 6; ++x)
     {
-        // unoptimal, could exploit bilinear filtering
+        // unoptimal
+		// TDOO: bilinear filtering
         sum += gaussianWeights[abs(x)] * textureLodOffset(uEVSMap, vUV, 0,
 			1 == uIsHorizontal ? ivec2(x, 0) : ivec2(0, x)
         );
     }
-	
-	// for (int x = -2; x <= 2; ++x)
-    // {
-    //     // unoptimal, could exploit bilinear filtering
-    //     sum += 1.0/5.0 * textureLodOffset(uEVSMap, vUV, 0,
-	// 		1 == uIsHorizontal ? ivec2(x, 0) : ivec2(0, x)
-    //     );
-    // }
 
 	oColor = sum;
 }

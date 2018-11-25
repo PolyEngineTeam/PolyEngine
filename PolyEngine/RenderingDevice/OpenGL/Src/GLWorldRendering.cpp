@@ -11,8 +11,8 @@
 #include "Common/GLUtils.hpp"
 #include "Common/PrimitiveCube.hpp"
 #include "Common/PrimitiveQuad.hpp"
-#include "Debugging//DebugDrawSystem.hpp"
-#include "ForwardRenderer.hpp"
+#include "Debugging/DebugDrawSystem.hpp"
+#include "ForwardRenderer.hpp"	
 #include "TiledForwardRenderer.hpp"
 
 using namespace Poly;
@@ -103,26 +103,6 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 	}
 
 	FillDirLightQueue(sceneView, meshCmps);
-
-	for (auto& meshCmp : meshCmps)
-	{
-		if (meshCmp->IsShadowCaster)
-			sceneView.DirShadowOpaqueQueue.PushBack(meshCmp);
-	}
-}
-
-void DrawFrustumPoints(Scene* scene, Dynarray<Vector> &cornersInWorld, Color color)
-{
-	for (size_t i = 0; i < 4; ++i)
-		DebugDrawSystem::DrawLine(scene, cornersInWorld[i], cornersInWorld[i + 4], color);
-
-	for (size_t i = 0; i < 2; ++i)
-	{
-		DebugDrawSystem::DrawLine(scene, cornersInWorld[0 + i * 4], cornersInWorld[1 + i * 4], color);
-		DebugDrawSystem::DrawLine(scene, cornersInWorld[2 + i * 4], cornersInWorld[3 + i * 4], color);
-		DebugDrawSystem::DrawLine(scene, cornersInWorld[0 + i * 4], cornersInWorld[2 + i * 4], color);
-		DebugDrawSystem::DrawLine(scene, cornersInWorld[1 + i * 4], cornersInWorld[3 + i * 4], color);
-	}
 }
 
 void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<MeshRenderingComponent*>& meshCmps)
@@ -135,7 +115,6 @@ void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<M
 
 	Matrix clipFromView;
 	clipFromView.SetPerspective(frustum.GetFov(), frustum.GetAspect(), frustum.GetZNear(), frustum.GetZFar());
-	// Matrix viewFromWorld = dirLight->DebugFrustumWorldFromModel.GetInversed();
 	Matrix viewFromWorld = cameraCmp->GetViewFromWorld();
 	Matrix clipFromWorld = clipFromView * viewFromWorld;
 
@@ -163,30 +142,11 @@ void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<M
 		posInWS.Z /= posInWS.W;
 		cornersInWS.PushBack(posInWS);
 	}
-	DrawFrustumPoints(sceneView.SceneData, cornersInWS, Color::RED);
+	DebugDrawSystem::DrawFrustumPoints(sceneView.SceneData, cornersInWS, Color::RED);
 
-	// based on https://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
-	// Stabilize shadow map: calculate sphere bounds around frustum to minimize AABB changes on frustum rotation 
-	// Calculate the centroid of the view frustum slice
-	Vector frustumCenterInWS;
-	for (Vector posInWS : cornersInWS)
-	{
-		frustumCenterInWS += posInWS;
-	}
-	frustumCenterInWS *= 1.0f / 8.0f;
-
-	float maxRadiusInWS = 0.0f;
-	for (Vector posInWS : cornersInWS)
-	{
-		float radius = (cornersInWS[0] - posInWS).Length();
-		maxRadiusInWS = std::max(maxRadiusInWS, radius);
-	}
-	maxRadiusInWS = std::ceil(maxRadiusInWS * 16.0f) / 16.0f; // MJP version
-
-	Vector frustumMinInWS = frustumCenterInWS - Vector::ONE * maxRadiusInWS;
-	Vector frustumMaxInWS = frustumCenterInWS + Vector::ONE * maxRadiusInWS;
-	AABox frustumAABBInWS(frustumMinInWS, frustumMaxInWS - frustumMinInWS);
-
+	// // based on https://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
+	// // Stabilize shadow map: calculate sphere bounds around frustum to minimize AABB changes on frustum rotation 
+	// // Calculate the centroid of the view frustum slice
 	Vector lightForward = dirLight->GetTransform().GetGlobalForward();
 	Vector lightUp = dirLight->GetTransform().GetGlobalUp();
 	Matrix lightFromWorld = Matrix(Vector::ZERO, lightForward, lightUp);
@@ -213,41 +173,27 @@ void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<M
 
 	// if (frustumShowBounds)
 	// {
-		DebugDrawSystem::DrawSphere(sceneView.SceneData, frustumCenterInWS, maxRadiusInLS, Color::RED);
-		DebugDrawSystem::DrawBox(sceneView.SceneData, frustumMinInWS, frustumMaxInWS, Color::RED*0.5f);
-		DebugDrawSystem::DrawSphere(sceneView.SceneData, frustumCenterInWS, 5.0f, Color::RED*0.25f);
 		DebugDrawSystem::DrawBox(sceneView.SceneData, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), worldFromLight, Color(1.0f, 1.0f, 0.0f));
 	// }
 
-	// if (sunShowAxes)
-	// {
-		DebugDrawSystem::DrawLine(sceneView.SceneData, frustumCenterInWS, frustumCenterInWS + dirLight->GetTransform().GetGlobalForward() * 50.0f, Color::BLACK);
-		DebugDrawSystem::DrawLine(sceneView.SceneData, frustumCenterInWS, frustumCenterInWS + (dirLight->GetTransform().GetWorldFromModel() * Vector::UNIT_X) * 25.0f, Color::RED);
-		DebugDrawSystem::DrawLine(sceneView.SceneData, frustumCenterInWS, frustumCenterInWS + (dirLight->GetTransform().GetWorldFromModel() * Vector::UNIT_Y) * 25.0f, Color::GREEN);
-		DebugDrawSystem::DrawLine(sceneView.SceneData, frustumCenterInWS, frustumCenterInWS + (dirLight->GetTransform().GetWorldFromModel() * Vector::UNIT_Z) * 25.0f, Color::BLUE);
-	// }
-
-	FindShadowCasters(sceneView.SceneData, lightFromWorld, worldFromLight, frustumAABBInLS, true);
+	FindShadowCasters(sceneView, lightFromWorld, worldFromLight, frustumAABBInLS, true);
 
 	// if (frustumShowBounds)
 	// {
 		DebugDrawSystem::DrawBox(sceneView.SceneData, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), lightFromWorld.GetInversed(), Color(1.0f, 1.0f, 0.0f));
 	// }
 
-	// dirLight->DebugShadowCenterInWS = frustumCenterInWS;
-	// dirLight->ShadowAABBInWS = frustumAABBInWS;
 	sceneView.DirShadowAABBInLS = frustumAABBInLS;
-	// dirLight->ShadowAABBInLS = frustumAABBInLS;
 }
 
-void GLRenderingDevice::FindShadowCasters(Scene* scene, const Matrix& dirLightFromWorld, const Matrix& worldFromDirLight, AABox& frustumAABBInLS, bool drawBounds)
+void GLRenderingDevice::FindShadowCasters(SceneView& sceneView, const Matrix& dirLightFromWorld, const Matrix& worldFromDirLight, AABox& frustumAABBInLS, bool drawBounds)
 {
 	const float maxFloat = std::numeric_limits<float>::max();
+	Scene* scene = sceneView.SceneData;
 
 	Dynarray<MeshRenderingComponent*> meshCmps;
 	for (auto [meshCmp] : scene->IterateComponents<MeshRenderingComponent>())
 	{
-		meshCmp->IsShadowCaster = false;
 		meshCmps.PushBack(meshCmp);
 	}
 	// transform meshes AABB to DirLightSpace
@@ -288,7 +234,8 @@ void GLRenderingDevice::FindShadowCasters(Scene* scene, const Matrix& dirLightFr
 	{
 		if (frustumAABBInLS.Overlaps(box))
 		{
-			meshCmp->IsShadowCaster = true;
+			sceneView.DirShadowOpaqueQueue.PushBack(meshCmp);
+
 			shadowCastersCounter++;
 			if (drawBounds) DebugDrawSystem::DrawBox(scene, box.GetMin(), box.GetMax(), worldFromDirLight, Color::GREEN);
 		}
