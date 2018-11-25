@@ -46,11 +46,8 @@ void RenderTargetPingPong::Deinit()
 
 TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	: IRendererInterface(rdi),
-	SkyboxCapture(rdi),
 	ShadowMap(rdi),
-	// ShadowMapShader("Shaders/shadowMap.vert.glsl", "Shaders/shadowMap.frag.glsl"),
-	// EVSMResolveShader("Shaders/hdr.vert.glsl", "Shaders/evsm.resolve.frag.glsl"),
-	// EVSMBlurShader("Shaders/hdr.vert.glsl", "Shaders/evsm.blur.frag.glsl"),
+	SkyboxCapture(rdi),
 	DepthShader("Shaders/depth.vert.glsl", "Shaders/depth.frag.glsl"),
 	LightCullingShader("Shaders/lightCulling.comp.glsl"),
 	LightAccumulationShader("Shaders/lightAccumulation.vert.glsl", "Shaders/lightAccumulation.frag.glsl"),
@@ -76,16 +73,6 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	DebugLightAccumShader("Shaders/debugLightAccum.vert.glsl", "Shaders/debugLightAccum.frag.glsl"),
 	DebugTextureInputsShader("Shaders/lightAccumulation.vert.glsl", "Shaders/lightAccumulationTexDebug.frag.glsl")
 {
-	// ShadowMapShader.RegisterUniform("mat4", "uClipFromModel");
-	// 
-	// EVSMResolveShader.RegisterUniform("sampler2D", "uDepth");
-	// EVSMResolveShader.RegisterUniform("float", "uNear");
-	// EVSMResolveShader.RegisterUniform("float", "uFar");
-	// EVSMResolveShader.RegisterUniform("float", "uPositiveExponent");
-	// EVSMResolveShader.RegisterUniform("float", "uNegativeExponent");
-	// 
-	// EVSMBlurShader.RegisterUniform("sampler2D", "uEVSMap");
-	// EVSMBlurShader.RegisterUniform("int", "uIsHorizontal");
 	
 	LightAccumulationShader.RegisterUniform("mat4", "uDirLightFromWorld");
 	LightAccumulationShader.RegisterUniform("float", "uShadowBiasMin");
