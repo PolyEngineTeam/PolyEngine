@@ -102,10 +102,10 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 		}
 	}
 
-	FillDirLightQueue(sceneView, meshCmps);
+	CullDirLightQueue(sceneView, meshCmps);
 }
 
-void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<MeshRenderingComponent*>& meshCmps)
+void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const Dynarray<MeshRenderingComponent*>& meshCmps)
 {
 	ASSERTE(sceneView.DirectionalLights.GetSize() > 0, "FillDirLightQueue when scene view has no directional lights");
 	DirectionalLightComponent* dirLight = sceneView.DirectionalLights[0];
@@ -174,7 +174,7 @@ void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<M
 	if (sceneView.SettingsCmp->DebugDrawFrustumBounds)
 		DebugDrawSystem::DrawBox(sceneView.SceneData, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), worldFromLight, Color(1.0f, 1.0f, 0.0f));
 
-	FindShadowCasters(sceneView, lightFromWorld, worldFromLight, frustumAABBInLS);
+	CullShadowCasters(sceneView, lightFromWorld, worldFromLight, frustumAABBInLS);
 
 	if (sceneView.SettingsCmp->DebugDrawFrustumBounds)
 		DebugDrawSystem::DrawBox(sceneView.SceneData, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), lightFromWorld.GetInversed(), Color(1.0f, 1.0f, 0.0f));
@@ -182,7 +182,7 @@ void GLRenderingDevice::FillDirLightQueue(SceneView& sceneView, const Dynarray<M
 	sceneView.DirShadowAABBInLS = frustumAABBInLS;
 }
 
-void GLRenderingDevice::FindShadowCasters(SceneView& sceneView, const Matrix& dirLightFromWorld, const Matrix& worldFromDirLight, AABox& frustumAABBInLS)
+void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& dirLightFromWorld, const Matrix& worldFromDirLight, AABox& frustumAABBInLS)
 {
 	const float maxFloat = std::numeric_limits<float>::max();
 	Scene* scene = sceneView.SceneData;

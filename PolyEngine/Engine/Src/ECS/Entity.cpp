@@ -125,7 +125,7 @@ const AABox& Poly::Entity::GetLocalBoundingBox(eEntityBoundingChannel channel) c
 		LocalBBox[channel].SetMin(Vector::ZERO);
 		LocalBBox[channel].SetSize(Vector::ZERO);
 
-		// Update bounding box by children boxesd
+		// Update bounding box by children boxes
 		for (auto& child : Children)
 		{
 			AABox childBox = child->GetLocalBoundingBox(channel);
