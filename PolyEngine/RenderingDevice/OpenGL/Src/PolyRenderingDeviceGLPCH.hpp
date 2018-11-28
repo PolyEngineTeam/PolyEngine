@@ -91,6 +91,4 @@
 // SDL
 #include <SDL.h>
 
-// SILENCE_GCC_WARNING(-Wimplicit-fallthrough=, "Surpressing clang warnings in imstb_truetype")
 #include <imgui.h>
-// UNSILENCE_GCC_WARNING()
