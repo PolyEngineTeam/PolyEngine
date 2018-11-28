@@ -75,4 +75,16 @@ UNSILENCE_MSVC_WARNING()
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 
+
+#ifndef IMGUI_API
+    #if defined(_WIN32)
+        #define IMGUI_API __declspec(dllexport)
+    #elif defined(__GNUC__) || defined(__clang__)
+    //NOTE(vuko): dllexport and dllimport are the same as far as GCC and Clang are concerned
+        #define IMGUI_API __attribute__ ((visibility ("default")))
+    #else
+        #define IMGUI_API
+    #endif
+#endif
+
 #include <imgui.h>

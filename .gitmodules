@@ -13,3 +13,6 @@
 [submodule "PolyEngine/ThirdParty/freetype2"]
 	path = PolyEngine/ThirdParty/freetype2
 	url = http://git.sv.nongnu.org/r/freetype/freetype2.git
+[submodule "PolyEngine/ThirdParty/imgui"]
+	path = PolyEngine/ThirdParty/imgui
+	url = https://github.com/ocornut/imgui

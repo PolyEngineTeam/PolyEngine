@@ -55,12 +55,6 @@ add_subdirectory(assimp/code)
 set(ASSIMP_INCLUDE_DIR ${ASSIMP_INCLUDE_DIR} PARENT_SCOPE)
 
 ###
-# ImGui
-###
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Imgui)
-set(IMGUI_INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR}/Imgui PARENT_SCOPE)
-
-###
 # Box2D
 ###
 set(BOX2D_USE_SHARED OFF)
@@ -375,3 +369,13 @@ if (HARFBUZZ_FOUND)
   target_include_directories(freetype PRIVATE ${HARFBUZZ_INCLUDE_DIRS})
   list(APPEND PKG_CONFIG_REQUIRED_PRIVATE harfbuzz)
 endif ()
+
+###
+# ImGui
+###
+file(GLOB IMGUI_SOURCES ${CMAKE_CURRENT_LIST_DIR}/imgui/*.cpp)
+file(GLOB IMGUI_HEADERS  ${CMAKE_CURRENT_LIST_DIR}/imgui/*.h)
+add_library(Imgui STATIC ${IMGUI_SOURCES} ${IMGUI_HEADERS})
+# GCC complains during linking of shared libraries that use this target (Engine, RenderingDevice)
+set_property(TARGET Imgui PROPERTY POSITION_INDEPENDENT_CODE ON)
+set(IMGUI_INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR}/imgui PARENT_SCOPE)
