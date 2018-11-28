@@ -10,3 +10,6 @@
 [submodule "PolyEngine/ThirdParty/Catch2"]
 	path = PolyEngine/ThirdParty/Catch2
 	url = https://github.com/catchorg/Catch2
+[submodule "PolyEngine/ThirdParty/freetype2"]
+	path = PolyEngine/ThirdParty/freetype2
+	url = http://git.sv.nongnu.org/r/freetype/freetype2.git
