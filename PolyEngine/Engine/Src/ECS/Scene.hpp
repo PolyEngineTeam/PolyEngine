@@ -36,6 +36,8 @@ namespace Poly {
 
 		virtual ~Scene();
 
+		Entity* GetRoot() const { return RootEntity.get(); }
+
 		void BeforeDeserializationCallback() override;
 		void AfterDeserializationCallback() override;
 
@@ -56,12 +58,27 @@ namespace Poly {
 		/// <returns>True when world has component of given ID, false otherwise</returns>
 		bool HasWorldComponent(size_t ID) const;
 
+		template<typename T>
+		bool HasWorldComponent() const
+		{
+			const auto ctypeID = GetWorldComponentID<T>();
+			return HasWorldComponent(ctypeID);
+		}
+
 		/// <summary>Returns world component of given type.</summary>
 		/// <returns>Pointer to world component</returns>
 		template<typename T>
 		T* GetWorldComponent()
 		{
 			return RootEntity->GetComponent<T>();
+		}
+
+		//------------------------------------------------------------------------------
+		ComponentBase* GetWorldComponent(size_t ctypeID)
+		{
+			if (HasWorldComponent(ctypeID))
+				return RootEntity->Components[ctypeID].get();
+			return nullptr;
 		}
 
 		IterablePoolAllocatorBase* GetComponentAllocator(size_t componentID) 

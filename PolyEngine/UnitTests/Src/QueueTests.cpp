@@ -65,10 +65,6 @@ TEST_CASE("Queue tests (with BaseObject)", "[Queue]")
 	public:
 		Test() {}
 		~Test() {}
-
-	private:
-		int i = 0;
-
 	};
 
 	Queue<Test> q;

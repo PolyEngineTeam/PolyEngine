@@ -50,6 +50,8 @@ namespace Poly {
 
 		void Render(const SceneView& sceneView) override;
 
+		void UIImgui();
+
 		void Deinit() override;
 
 	private:
@@ -172,7 +174,7 @@ namespace Poly {
 		
 		void RenderParticleUnlit(Scene* world, const CameraComponent* cameraCmp);
 
-		void LinearizeDepth(const SceneView& sceneView);
+		void PostLinearizeDepth(const SceneView& sceneView);
 
 		void PostDepthOfField(const SceneView& sceneView);
 

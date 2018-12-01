@@ -6,6 +6,8 @@
 
 using namespace Poly;
 
+RTTI_DEFINE_TYPE(Poly::MeshResource)
+
 MeshResource::MeshResource(const String& path)
 {
 	Assimp::Importer importer;

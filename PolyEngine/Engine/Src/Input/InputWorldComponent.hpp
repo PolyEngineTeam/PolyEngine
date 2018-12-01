@@ -7,19 +7,20 @@
 
 namespace Poly
 {
-		struct ControllerState {
+	struct ControllerState 
+	{
 		ControllerState() = default;
 
 		EnumArray<bool, eControllerButton> CurrButton;
 		EnumArray<bool, eControllerButton> PrevButton;
 		EnumArray<float, eControllerAxis> CurrAxis;
 		EnumArray<float, eControllerAxis> PrevAxis;
-		};
+	};
 
 	/// <summary>Scene component that holds input data.</summary>
 	class ENGINE_DLLEXPORT InputWorldComponent : public ComponentBase
 	{
-	friend void InputSystem::InputPhase(Scene*);
+		friend void InputSystem::InputPhase(Scene*);
 	public:
 		RTTI_DECLARE_COMPONENT(::Poly::InputWorldComponent) { NO_RTTI_PROPERTY(); }
 
@@ -52,7 +53,12 @@ namespace Poly
 		Dynarray<size_t> GetConnectedControllersIDs() const;
 		bool IsControllerConnected(size_t idx) const;
 
-		private:
+		bool GetIsConsumed() const { return IsConsumed; }
+		void SetConsumed() { IsConsumed = true; }
+		
+		const char* GetCharUTF8() { return CharUTF8; }
+
+	private:
 		EnumArray<bool, eKey> CurrKey;
 		EnumArray<bool, eKey> PrevKey;
 		EnumArray<bool, eMouseButton> CurrMouseButton;
@@ -64,6 +70,8 @@ namespace Poly
 		std::unordered_map<size_t, ControllerState> Controllers;
 		Dynarray<Optional<size_t>> PlayerIDToJoystickID;
 		std::unordered_map<size_t, size_t> JoystickIDToPlayerID;
+		bool IsConsumed = false;
+		const char* CharUTF8 = nullptr;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, InputWorldComponent)

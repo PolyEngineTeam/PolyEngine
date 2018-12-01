@@ -15,6 +15,9 @@ void MovementSystem::MovementUpdatePhase(Scene* world)
 {
 	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
 	InputWorldComponent* inputCmp = world->GetWorldComponent<InputWorldComponent>();
+	
+	if (inputCmp->GetIsConsumed())
+		return;
 
 	for (auto freeFloatTuple : world->IterateComponents<FreeFloatMovementComponent>())
 	{
