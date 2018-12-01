@@ -8,6 +8,7 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT PostprocessSettingsComponent : public ComponentBase
 	{
+		friend void CameraSystem::CameraUpdatePhase(Scene*);
 	public:
 		RTTI_DECLARE_COMPONENT(::Poly::PostprocessSettingsComponent) { NO_RTTI_PROPERTY(); }
 

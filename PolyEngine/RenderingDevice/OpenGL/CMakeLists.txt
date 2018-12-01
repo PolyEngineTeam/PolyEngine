@@ -9,11 +9,10 @@ file(GLOB_RECURSE POLYGLDEVICE_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 	${POLYGLDEVICE_INCLUDE}/*.h)
 GenerateSourceGoups("${POLYGLDEVICE_SRCS}")
 
-add_library(PolyRenderingDeviceGL SHARED ${POLYGLDEVICE_SRCS})
-target_compile_definitions(PolyRenderingDeviceGL PRIVATE _DEVICE)
-target_include_directories(PolyRenderingDeviceGL PUBLIC ${POLYGLDEVICE_INCLUDE} ${SDL2_INCLUDE_DIRS})
-target_link_libraries(PolyRenderingDeviceGL PRIVATE PolyEngine epoxy::gl ${SDL2_LIBRARIES})
-set_target_properties(PolyRenderingDeviceGL PROPERTIES OUTPUT_NAME polyrenderingdevice)
+add_library(${GLDEVICE_TARGET} SHARED ${POLYGLDEVICE_SRCS})
+target_compile_definitions(${GLDEVICE_TARGET} PRIVATE _DEVICE)
+target_include_directories(${GLDEVICE_TARGET} PUBLIC ${POLYGLDEVICE_INCLUDE} ${SDL2_INCLUDE_DIRS})
+target_link_libraries(${GLDEVICE_TARGET} PRIVATE ${ENGINE_TARGET} epoxy::gl ${SDL2_LIBRARIES})
 
-set_target_properties(PolyRenderingDeviceGL PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "Src/PolyRenderingDeviceGLPCH.hpp")
-cotire(PolyRenderingDeviceGL)
+#set_target_properties(${GLDEVICE_TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "Src/${GLDEVICE_TARGET}PCH.hpp")
+cotire(${GLDEVICE_TARGET})

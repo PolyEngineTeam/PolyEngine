@@ -61,12 +61,15 @@ namespace Poly
 		void RegisterUniform(const String& type, const String& name);
 
 	private:
-		void CompileProgram();
-		void Validate();
+
 		void LoadShader(eShaderUnitType type, const String &shaderName);
+		void CompileShader(GLShaderProgram::eShaderUnitType type);
+		void Validate();
+		void CompileProgram();
 
 		static GLenum GetEnumFromShaderUnitType(eShaderUnitType type);
 
+		void FetchIncludes(eShaderUnitType type);
 		void AnalyzeShaderCode(eShaderUnitType type);
 
 		std::map<String, UniformInfo> Uniforms;

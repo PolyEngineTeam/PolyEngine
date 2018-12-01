@@ -1,14 +1,13 @@
 #pragma once
 
-#include <Core.hpp>
 #include <Engine.hpp>
-#include <ECS/World.hpp>
+#include <ECS/Scene.hpp>
 
 DECLARE_GAME()
 
 class GAME_DLLEXPORT $GAME_CLASS_NAME$ : public Poly::IGame {
 public:
 	void RegisterEngine(Poly::Engine* /*engine*/) override { }
-	void Init() override {}
+	void Init() override;
 	void Deinit() override {}
 };

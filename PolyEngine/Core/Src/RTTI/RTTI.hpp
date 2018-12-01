@@ -17,7 +17,7 @@ namespace Poly {
 	class CORE_DLLEXPORT RTTIBase : public BaseObject<> {
 		RTTI_DECLARE_TYPE(Poly::RTTIBase) 
 		{ 
-			RTTI_PROPERTY_AUTONAME(UUID, Poly::RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(UUID, Poly::RTTI::ePropertyFlag::EDITOR_DEBUG_ONLY);
 		}
 
 		RTTIBase();
