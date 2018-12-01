@@ -56,7 +56,6 @@ namespace Poly
 
 		// constructors and destructor
 
-
 		/// Creates Collider3DComponent from provided template parameters.
 		/// @param world - world where owner entity exists
 		/// @param tmp - template with collider properties
