@@ -46,18 +46,18 @@ namespace Poly {
 			}
 		};
 
-		SceneView(Scene* w, Viewport& v)
-			: SceneData(w), ViewportData(v), Rect(v.GetRect()), CameraCmp(v.GetCamera()),
-			ParticleQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::BACK_TO_FRONT), 0),
-			TranslucentQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::BACK_TO_FRONT), 0),
-			OpaqueQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::FRONT_TO_BACK), 0)
-		{
-		};
+		SceneView(Scene* s, const Viewport& v)
+				: SceneData(s), ViewportData(v), Rect(v.GetRect()), CameraCmp(v.GetCamera()),
+				ParticleQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::BACK_TO_FRONT), 0),
+				TranslucentQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::BACK_TO_FRONT), 0),
+				OpaqueQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::FRONT_TO_BACK), 0)
+			{};
 
 		Scene* SceneData;
-		Viewport ViewportData;
-		AARect Rect;
+		const Viewport& ViewportData;
+		const AARect& Rect;
 		const CameraComponent* CameraCmp;
+
 		
 		Dynarray<const MeshRenderingComponent*> DirShadowOpaqueList;
 		PriorityQueue<const MeshRenderingComponent*, DistanceToCameraComparator> OpaqueQueue;
