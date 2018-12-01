@@ -7,13 +7,11 @@
 InspectorManager::InspectorManager(EditorApp* app)
 	: ConfigRef(Config)
 {
-	connect(app->ProjectMgr, &ProjectManager::ProjectOpened, this, &InspectorManager::ProjectOpenedSlot);
-	connect(app->ProjectMgr, &ProjectManager::ProjectClosed, this, &InspectorManager::ProjectClosedSlot);
-	
-	connect(app->EngineMgr, &EngineManager::Created, this, &InspectorManager::EngineCreatedSlot);
-	connect(app->EngineMgr, &EngineManager::Initialized, this, &InspectorManager::EngineInitializedSlot);
-	connect(app->EngineMgr, &EngineManager::Deinitialized, this, &InspectorManager::EngineDeinitializedSlot);
-	connect(app->EngineMgr, &EngineManager::StateChanged, this, &InspectorManager::StateChangedSlot);
+	Config = &app->ProjectMgr->GetProjectConfig();;
+
+	connect(app->ProjectMgr, &ProjectManager::EngineInitialized, this, &InspectorManager::EngineInitializedSlot);
+	connect(app->ProjectMgr, &ProjectManager::EngineDeinitialized, this, &InspectorManager::EngineDeinitializedSlot);
+	connect(app->ProjectMgr, &ProjectManager::EngineStateChanged, this, &InspectorManager::StateChangedSlot);
 }
 
 //------------------------------------------------------------------------------
@@ -50,38 +48,14 @@ void InspectorManager::InitUi()
 std::unique_ptr<IRenderingDevice> InspectorManager::GetRenderingDevice() { return ViewportInspector->GetRenderingDevice(); }
 PolyEditor::IEditor* InspectorManager::GetEditor() { return ViewportInspector; }
 
-//		project slots
-//------------------------------------------------------------------------------
-void InspectorManager::ProjectOpenedSlot(const ProjectConfig* config)
-{
-	Config = config;
-
-	emit ProjectOpened();
-}
-
-//------------------------------------------------------------------------------
-void InspectorManager::ProjectClosedSlot()
-{
-	Config = nullptr;
-
-	emit ProjectClosed();
-}
-
-
 
 //		engine slots
 //------------------------------------------------------------------------------
-void InspectorManager::EngineCreatedSlot(Engine* engine)
-{
-	EngineObj = engine;
-
-	emit EngineCreated();
-	SceneChangedSlot(EngineObj->GetActiveScene());
-}
 
 //------------------------------------------------------------------------------
-void InspectorManager::EngineInitializedSlot()
+void InspectorManager::EngineInitializedSlot(Engine* engine)
 {
+	EngineObj = engine;
 	emit EngineInitialized();
 	SceneChangedSlot(EngineObj->GetActiveScene());
 }
