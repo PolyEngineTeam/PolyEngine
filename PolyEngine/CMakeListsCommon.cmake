@@ -248,7 +248,6 @@ add_custom_target(
 if(WIN32)
     add_custom_command(
         TARGET Prerequisites POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/SDL2/lib/x64/SDL2.dll" "${DIST_DIR}/${BUILD_CONFIG_NAME}"
         COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/libepoxy/bin/x64/epoxy-0.dll" "${DIST_DIR}/${BUILD_CONFIG_NAME}"
 
         COMMENT "Copying thirdparty dlls..." VERBATIM
