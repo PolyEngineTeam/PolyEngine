@@ -28,7 +28,7 @@ namespace Poly {
 		// Sorts geometry based on distance to camera and sort order type
 		struct DistanceToCameraComparator
 		{
-			DistanceToCameraComparator(Vector cameraPosition, eSortOrderType sortOrder = eSortOrderType::FRONT_TO_BACK) 
+			DistanceToCameraComparator(Vector cameraPosition, eSortOrderType sortOrder = eSortOrderType::FRONT_TO_BACK)
 				: CameraPosition(cameraPosition), SortOrder(sortOrder)
 			{
 			}
@@ -48,9 +48,9 @@ namespace Poly {
 
 		SceneView(Scene* s, const Viewport& v)
 				: SceneData(s), ViewportData(v), Rect(v.GetRect()), CameraCmp(v.GetCamera()),
-				ParticleQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::BACK_TO_FRONT), 0),
+				OpaqueQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::FRONT_TO_BACK), 0),
 				TranslucentQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::BACK_TO_FRONT), 0),
-				OpaqueQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::FRONT_TO_BACK), 0)
+				ParticleQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::BACK_TO_FRONT), 0)
 			{};
 
 		Scene* SceneData;
