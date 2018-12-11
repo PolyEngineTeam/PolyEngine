@@ -44,7 +44,8 @@ void RenderTargetPingPong::Deinit()
 
 
 TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
-	: IRendererInterface(rdi), SkyboxCapture(rdi), LastViewportRect(Vector2f::ZERO, Vector2f::ONE),
+	: IRendererInterface(rdi), LastViewportRect(Vector2f::ZERO, Vector2f::ONE),
+	SkyboxCapture(rdi),
 	ShadowMapShader("Shaders/shadowMap.vert.glsl", "Shaders/shadowMap.frag.glsl"),
 	DepthShader("Shaders/depth.vert.glsl", "Shaders/depth.frag.glsl"),
 	LightCullingShader("Shaders/lightCulling.comp.glsl"),
@@ -1364,7 +1365,6 @@ void TiledForwardRenderer::PostGamma(const SceneView& sceneView)
 	float abberationScale = 0.1f;
 	Color tint = Color::WHITE;
 	Color fogColor = Color::WHITE;
-	float fogDensity = 0.66f;
 	float temperature = 6500.0;
 
 	float gamma = 2.2f;
@@ -1375,7 +1375,6 @@ void TiledForwardRenderer::PostGamma(const SceneView& sceneView)
 		abberationScale	= postCmp->AbberationScale;
 		tint			= postCmp->Tint;
 		fogColor		= postCmp->FogColor;
-		fogDensity		= postCmp->FogDensity;
 		temperature		= postCmp->Temperature;
 		gamma			= postCmp->Gamma;
 	}
