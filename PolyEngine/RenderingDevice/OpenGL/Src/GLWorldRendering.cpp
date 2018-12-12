@@ -102,12 +102,12 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 		}
 	}
 
-	CullDirLightQueue(sceneView, meshCmps);
+	if (sceneView.DirectionalLights.GetSize() > 0)
+		CullDirLightQueue(sceneView, meshCmps);
 }
 
 void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const Dynarray<MeshRenderingComponent*>& meshCmps)
 {
-	ASSERTE(sceneView.DirectionalLights.GetSize() > 0, "FillDirLightQueue when scene view has no directional lights");
 	DirectionalLightComponent* dirLight = sceneView.DirectionalLights[0];
 	
 	const CameraComponent* cameraCmp = sceneView.CameraCmp;
@@ -171,12 +171,12 @@ void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const Dynarray<M
 	Vector frustumMaxInLS = frustumCenterInLS + Vector::ONE * maxRadiusInLS;
 	AABox frustumAABBInLS(frustumMinInLS, frustumMaxInLS - frustumMinInLS);
 
-	if (sceneView.SettingsCmp->DebugDrawFrustumBounds)
+	if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawFrustumBounds)
 		DebugDrawSystem::DrawBox(sceneView.SceneData, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), worldFromLight, Color(1.0f, 1.0f, 0.0f));
 
 	CullShadowCasters(sceneView, lightFromWorld, worldFromLight, frustumAABBInLS);
 
-	if (sceneView.SettingsCmp->DebugDrawFrustumBounds)
+	if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawFrustumBounds)
 		DebugDrawSystem::DrawBox(sceneView.SceneData, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), lightFromWorld.GetInversed(), Color(1.0f, 1.0f, 0.0f));
 
 	sceneView.DirShadowAABBInLS = frustumAABBInLS;
@@ -204,7 +204,7 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& di
 			AABox boxLS = boxWS.GetTransformed(dirLightFromModel);
 			boxMeshes.PushBack(std::tuple(boxLS, meshCmp));
 
-			if (sceneView.SettingsCmp->DebugDrawShadowCastersBounds) 
+			if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawShadowCastersBounds)
 				DebugDrawSystem::DrawBox(scene, boxLS.GetMin(), boxLS.GetMax(), worldFromDirLight, Color::WHITE);
 		}
 	}
@@ -224,7 +224,7 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& di
 		frustumAABBInLS.Expand(Vector(center.X, center.Y, maxZ));
 	}
 
-	if (sceneView.SettingsCmp->DebugDrawShadowCastersBounds)
+	if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawShadowCastersBounds)
 		DebugDrawSystem::DrawBox(scene, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), worldFromDirLight, Color(0.5f, 0.5f, 0.0f));
 
 	// find all meshes that are inside extended DirLights AABB box
@@ -236,7 +236,7 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& di
 			sceneView.DirShadowOpaqueQueue.PushBack(meshCmp);
 			shadowCastersCounter++;
 
-			if (sceneView.SettingsCmp->DebugDrawShadowCastersBounds)
+			if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawShadowCastersBounds)
 				DebugDrawSystem::DrawBox(scene, box.GetMin(), box.GetMax(), worldFromDirLight, Color::GREEN);
 		}
 	}
