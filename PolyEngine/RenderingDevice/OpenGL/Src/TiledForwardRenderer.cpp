@@ -3,17 +3,17 @@
 #include <TiledForwardRenderer.hpp>
 #include <Configs/AssetsPathConfig.hpp>
 
-#include "GLRenderingDevice.hpp"
-#include "Proxy/GLMeshDeviceProxy.hpp"
-#include "Proxy/GLParticleDeviceProxy.hpp"
-#include "Pipeline/RenderingPassBase.hpp"
-#include "Common/DebugRenderingBuffers.hpp"
-#include "Proxy/GLShaderProgram.hpp"
-#include "Common/PrimitiveCube.hpp"
-#include "Common/PrimitiveQuad.hpp"
-#include "Debugging/DebugDrawSystem.hpp"
+#include <GLRenderingDevice.hpp>
+#include <Proxy/GLMeshDeviceProxy.hpp>
+#include <Proxy/GLParticleDeviceProxy.hpp>
+#include <Pipeline/RenderingPassBase.hpp>
+#include <Common/DebugRenderingBuffers.hpp>
+#include <Proxy/GLShaderProgram.hpp>
+#include <Common/PrimitiveCube.hpp>
+#include <Common/PrimitiveQuad.hpp>
+#include <Debugging/DebugDrawSystem.hpp>
 
-#include "Proxy/imgui_impl_opengl3.h"
+#include <Proxy/imgui_impl_opengl3.h>
 
 using namespace Poly;
 

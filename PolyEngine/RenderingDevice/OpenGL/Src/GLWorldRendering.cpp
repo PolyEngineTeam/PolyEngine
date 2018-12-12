@@ -4,16 +4,16 @@
 
 #include <algorithm>    // std::min
 
-#include "Proxy/GLTextFieldBufferDeviceProxy.hpp"
-#include "Proxy/GLTextureDeviceProxy.hpp"
-#include "Pipeline/RenderingPassBase.hpp"
-#include "Proxy/GLMeshDeviceProxy.hpp"
-#include "Common/GLUtils.hpp"
-#include "Common/PrimitiveCube.hpp"
-#include "Common/PrimitiveQuad.hpp"
-#include "Debugging/DebugDrawSystem.hpp"
-#include "ForwardRenderer.hpp"	
-#include "TiledForwardRenderer.hpp"
+#include <Proxy/GLTextFieldBufferDeviceProxy.hpp>
+#include <Proxy/GLTextureDeviceProxy.hpp>
+#include <Pipeline/RenderingPassBase.hpp>
+#include <Proxy/GLMeshDeviceProxy.hpp>
+#include <Common/GLUtils.hpp>
+#include <Common/PrimitiveCube.hpp>
+#include <Common/PrimitiveQuad.hpp>
+#include <Debugging/DebugDrawSystem.hpp>
+#include <ForwardRenderer.hpp>
+#include <TiledForwardRenderer.hpp>
 
 using namespace Poly;
 

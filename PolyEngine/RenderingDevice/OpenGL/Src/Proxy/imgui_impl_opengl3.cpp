@@ -49,7 +49,7 @@
 
 #include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "imgui_impl_opengl3.h"
+#include <Proxy/imgui_impl_opengl3.h>
 #include <Common/GLUtils.hpp>
 
 // OpenGL Data
