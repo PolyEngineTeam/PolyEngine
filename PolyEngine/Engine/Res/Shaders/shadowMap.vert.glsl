@@ -8,5 +8,5 @@ out vec4 vPosition;
 
 void main() {
 	vPosition = uClipFromModel * aPos;
-    gl_Position = vPosition;
+	gl_Position = vPosition;
 }
