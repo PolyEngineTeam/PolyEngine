@@ -18,7 +18,7 @@ namespace Poly
 		
 		Color GetTint() const { return Tint; }
 		void SetTint(Color& value) { Tint = value; }
-		void SetCurrentPanorama(size_t value) { ASSERTE(value >= 0 && value < EquirectPanoramas.GetSize(), "SetCurrentPanorama, value out of range"); current = value; }
+		void SetCurrentPanorama(size_t value) { ASSERTE(value < EquirectPanoramas.GetSize(), "SetCurrentPanorama, value out of range"); current = value; }
 
 		const TextureResource* GetCurrentPanorama() const { return EquirectPanoramas[current]; }
 		const TextureResource* GetPanorama(size_t index) const { return EquirectPanoramas[index]; }
