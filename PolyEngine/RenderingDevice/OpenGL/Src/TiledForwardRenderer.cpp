@@ -667,7 +667,8 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	ScreenSize screenSize = RDI->GetScreenSize();
 	glViewport(0, 0, screenSize.Width, screenSize.Height);
 
-	for (int i = 10; i > 0; --i)
+	const int activeTextures = 10;
+	for (int i = activeTextures; i > 0; --i)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -782,7 +783,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	// Clear bound resources
 	glBindVertexArray(0);
 
-	for (int i = 10; i > 0; --i)
+	for (int i = activeTextures; i > 0; --i)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, 0);
