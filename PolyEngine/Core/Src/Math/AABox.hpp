@@ -80,24 +80,24 @@ namespace Poly {
 		/// <param name="rhs">Other box.</param>
 		inline bool ContainsX(const AABox& rhs) const
 		{
-			return (Min.X          <= rhs.Min.X + rhs.Size.X)
-				&& (Min.X + Size.X >= rhs.Min.X);
+			return (Min.X			<= rhs.Min.X + rhs.Size.X)
+				&& (Min.X + Size.X	>= rhs.Min.X);
 		}
 
 		/// <summary>Checks whether a given AABox contains this AABox on Y axis.</summary>
 		/// <param name="rhs">Other box.</param>
 		inline bool ContainsY(const AABox& rhs) const
 		{
-			return (Min.Y          <= rhs.Min.Y + rhs.Size.Y)
-				&& (Min.Y + Size.Y >= rhs.Min.Y);
+			return (Min.Y			<= rhs.Min.Y + rhs.Size.Y)
+				&& (Min.Y + Size.Y	>= rhs.Min.Y);
 		}
 
 		/// <summary>Checks whether a given AABox contains this AABox on Z axis.</summary>
 		/// <param name="rhs">Other box.</param>
 		inline bool ContainsZ(const AABox& rhs) const
 		{
-			return (Min.Z          <= rhs.Min.Z + rhs.Size.Z)
-				&& (Min.Z + Size.Z >= rhs.Min.Z);
+			return (Min.Z			<= rhs.Min.Z + rhs.Size.Z)
+				&& (Min.Z + Size.Z	>= rhs.Min.Z);
 		}
 
 		std::array<Vector, 8> GetVertices() const;
