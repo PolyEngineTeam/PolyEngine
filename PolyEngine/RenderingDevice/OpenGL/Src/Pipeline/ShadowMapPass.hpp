@@ -15,7 +15,7 @@ namespace Poly
 
 	void StablizeShadowProjection(Poly::Matrix& clipFromWorld, int shadowmapSize);
 	
-	int GetShadowMapSize(const RenderingSettingsComponent* renderingSettingsCmp);
+	int GetShadowMapSize(const eShadowMapSize shadowMapSize);
 
 
 	class ShadowMapPass : public BaseObject<>
@@ -31,10 +31,15 @@ namespace Poly
 
 		GLuint GetDirShadowMapColor() const { return DirShadowMapColor; };
 		GLuint GetEVSMap0() const { return EVSMap0; };
+		int GetShadowMapResolution() const { return ShadowMapResolution; };
+		eShadowType GetShadowType() const { return ShadowType; };
 
 	private:
 
 		GLRenderingDevice* RDI;
+
+		int ShadowMapResolution;
+		eShadowType ShadowType;
 
 		GLuint DirShadowMapDepth;
 		GLuint DirShadowMapColor;

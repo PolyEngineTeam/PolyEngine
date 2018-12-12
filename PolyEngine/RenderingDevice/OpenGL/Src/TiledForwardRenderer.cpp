@@ -756,21 +756,18 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	LightAccumulationShader.BindProgram();
 
 	// shadownap uniforms
 	Matrix projDirLightFromWorld = sceneView.DirectionalLights.IsEmpty()
 		? Matrix()
-		: GetProjectionForShadowMap(sceneView, GetShadowMapSize(sceneView.SettingsCmp));
+		: GetProjectionForShadowMap(sceneView, ShadowMap.GetShadowMapResolution());
 
+	LightAccumulationShader.BindProgram();
 	LightAccumulationShader.SetUniform("uDirLightFromWorld", projDirLightFromWorld);
-	LightAccumulationShader.SetUniform("uShadowType", (int)(sceneView.SettingsCmp->ShadowType));
-	switch (sceneView.SettingsCmp->ShadowType)
+	LightAccumulationShader.SetUniform("uShadowType", (int)(ShadowMap.GetShadowType()));
+	switch (ShadowMap.GetShadowType())
 	{
-		default:
 		case eShadowType::PCF:
 			LightAccumulationShader.BindSampler("uDirShadowMap", 9, ShadowMap.GetDirShadowMapColor());
 			LightAccumulationShader.SetUniform("uShadowBias", sceneView.SettingsCmp->PCFBias);
@@ -782,6 +779,8 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 			LightAccumulationShader.SetUniform("uNegativeExponent", sceneView.SettingsCmp->EVSMNegativeExponent);
 			LightAccumulationShader.SetUniform("uEVSMBias", sceneView.SettingsCmp->EVSMBias);
 			LightAccumulationShader.SetUniform("uLightBleedingReduction", sceneView.SettingsCmp->EVSMLghtBleedingReduction);
+			break;
+		default:
 			break;
 	}
 
