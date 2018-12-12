@@ -332,7 +332,7 @@ void TiledForwardRenderer::CreateLightBuffers(const ScreenSize& size)
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
-	// CHECK_GL_ERR();
+	CHECK_GL_ERR();
 }
 
 void TiledForwardRenderer::DeleteLightBuffers()
@@ -366,7 +366,7 @@ void TiledForwardRenderer::CreateRenderTargets(const ScreenSize& size)
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	// CHECK_GL_ERR();
+	CHECK_GL_ERR();
 	CHECK_FBO_STATUS();
 
 	// Create a floating point HDR frame buffer and a floating point color buffer (as a texture)
@@ -403,7 +403,7 @@ void TiledForwardRenderer::CreateRenderTargets(const ScreenSize& size)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	// CHECK_GL_ERR();
+	CHECK_GL_ERR();
 	CHECK_FBO_STATUS();
 
 	// Create pair of frame buffers for post process to swap
@@ -422,7 +422,7 @@ void TiledForwardRenderer::CreateRenderTargets(const ScreenSize& size)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	// CHECK_GL_ERR();
+	CHECK_GL_ERR();
 	CHECK_FBO_STATUS();
 
 	glGenFramebuffers(1, &FBOpost1);
@@ -458,71 +458,8 @@ void TiledForwardRenderer::CreateRenderTargets(const ScreenSize& size)
 
 	RTBloom.Init(screenSizeX / 2, screenSizeY / 2);
 
-	// CHECK_GL_ERR();
+	CHECK_GL_ERR();
 	CHECK_FBO_STATUS();
-
-	// float shadowBorderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	// glGenTextures(1, &DirShadowMapDepth);
-	// glBindTexture(GL_TEXTURE_2D, DirShadowMapDepth);
-	// glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOWMAP_SIZE, SHADOWMAP_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	// glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, shadowBorderColor);
-	// glBindTexture(GL_TEXTURE_2D, 0);
-	// 
-	// glGenTextures(1, &DirShadowMapColor);
-	// glBindTexture(GL_TEXTURE_2D, DirShadowMapColor);
-	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SHADOWMAP_SIZE, SHADOWMAP_SIZE, 0, GL_RGB, GL_FLOAT, NULL);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	// glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, shadowBorderColor);
-	// glBindTexture(GL_TEXTURE_2D, 0);
-	// 
-	// glGenFramebuffers(1, &FBOShadowDepthMap);
-	// glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowDepthMap);
-	// glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DirShadowMapDepth, 0);
-	// glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, DirShadowMapColor, 0);
-	// // glDrawBuffer(GL_NONE);
-	// glReadBuffer(GL_NONE);
-	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	// 
-	// // CHECK_GL_ERR();
-	// CHECK_FBO_STATUS();
-	// 
-	// // Create pair of frame buffers for evsm
-	// glGenTextures(1, &EVSMap0);
-	// glBindTexture(GL_TEXTURE_2D, EVSMap0);
-	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, SHADOWMAP_SIZE / 2, SHADOWMAP_SIZE / 2, 0, GL_RGB, GL_FLOAT, NULL);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	// glBindTexture(GL_TEXTURE_2D, 0);
-	// 
-	// glGenFramebuffers(1, &FBOShadowMapResolve0);
-	// glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowMapResolve0);
-	// glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, EVSMap0, 0);
-	// 
-	// glGenTextures(1, &EVSMap1);
-	// glBindTexture(GL_TEXTURE_2D, EVSMap1);
-	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, SHADOWMAP_SIZE / 2, SHADOWMAP_SIZE / 2, 0, GL_RGB, GL_FLOAT, NULL);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	// glBindTexture(GL_TEXTURE_2D, 0);
-	// 
-	// glGenFramebuffers(1, &FBOShadowMapResolve1);
-	// glBindFramebuffer(GL_FRAMEBUFFER, FBOShadowMapResolve1);
-	// glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, EVSMap1, 0);
-	// 
-	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	// 
-	// CHECK_FBO_STATUS();
 }
 
 void TiledForwardRenderer::DeleteRenderTargets()
@@ -563,33 +500,14 @@ void TiledForwardRenderer::DeleteRenderTargets()
 	if (FBOpost1 > 0)
 		glDeleteFramebuffers(1, &FBOpost1);
 
-	// if (FBOShadowDepthMap > 0)
-	// 	glDeleteFramebuffers(1, &FBOShadowDepthMap);
-	// 
-	// if (EVSMap0 > 0)
-	// 	glDeleteTextures(1, &EVSMap0);
-	// 
-	// if (FBOShadowMapResolve0 > 0)
-	// 	glDeleteFramebuffers(1, &FBOShadowMapResolve0);
-	// 
-	// if (FBOShadowMapResolve1 > 0)
-	// 	glDeleteFramebuffers(1, &FBOShadowMapResolve1);
-
 	RTBloom.Deinit();
 
-	// CHECK_GL_ERR();
 	CHECK_FBO_STATUS();
 }
 
 void TiledForwardRenderer::Render(const SceneView& sceneView)
 {
 	//gConsole.LogInfo("TiledForwardRenderer::Render");
-
-	// gConsole.LogInfo("TiledForwardRenderer::Render Aspect: {}, IsForcedRatio: {}, FOV: {}",
-	// 	sceneView.CameraCmp->GetAspect(), sceneView.CameraCmp->GetForcedRatio(), sceneView.CameraCmp->GetFOV());
-
-	// glViewport((int)(sceneView.Rect.GetMin().X * screenSize.Width), (int)(sceneView.Rect.GetMin().Y * screenSize.Height),
-	// 	(int)(sceneView.Rect.GetSize().X * screenSize.Width), (int)(sceneView.Rect.GetSize().Y * screenSize.Height));  
 
 	static bool isInitOnFirstFrame = false;
 
