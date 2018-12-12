@@ -3,15 +3,13 @@
 #include <Defines.hpp>
 #include <Common/GLUtils.hpp>
 #include <Proxy/GLShaderProgram.hpp>
+#include <Rendering/RenderingSettingsComponent.hpp>
 
 namespace Poly
 {
-	class RenderingSettingsComponent;
 	class GLRenderingDevice;
 	class GLShaderProgram;
 	struct SceneView;
-	enum eShadowType;
-	enum eShadowMapSize;
 
 	Matrix GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize);
 

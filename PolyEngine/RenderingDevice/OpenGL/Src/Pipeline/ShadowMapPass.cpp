@@ -3,7 +3,6 @@
 #include <Pipeline/ShadowMapPass.hpp>
 #include <GLRenderingDevice.hpp>
 #include <IRendererInterface.hpp>
-#include <Rendering/RenderingSettingsComponent.hpp>
 
 using namespace Poly;
 
