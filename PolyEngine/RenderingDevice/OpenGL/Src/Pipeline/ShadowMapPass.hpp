@@ -10,6 +10,8 @@ namespace Poly
 	class GLRenderingDevice;
 	class GLShaderProgram;
 	struct SceneView;
+	enum eShadowType;
+	enum eShadowMapSize;
 
 	Matrix GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize);
 

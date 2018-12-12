@@ -101,7 +101,7 @@ void ShadowMapPass::Init(const SceneView& sceneView)
 {
 	gConsole.LogInfo("ShadowMapPass::Init");
 
-	if (sceneView.SettingsCmp == nullptr) 
+	if (sceneView.SettingsCmp == nullptr)
 	{
 		ShadowMapResolution = 1; // create dummy resource
 		ShadowType = eShadowType::NONE;
