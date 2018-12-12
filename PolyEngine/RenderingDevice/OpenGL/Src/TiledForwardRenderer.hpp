@@ -69,25 +69,11 @@ namespace Poly {
 			int Index;
 		};
 
-		// shadows
-		// const unsigned int SHADOWMAP_SIZE = 4096;
-		// GLuint DirShadowMapDepth;
-		// GLuint DirShadowMapColor;
-		// GLuint EVSMap0;
-		// GLuint EVSMap1;
-		// GLuint FBOShadowDepthMap;
-		// GLuint FBOShadowMapResolve0;
-		// GLuint FBOShadowMapResolve1;
-		// GLShaderProgram ShadowMapShader;
-		// GLShaderProgram EVSMResolveShader;
-		// GLShaderProgram EVSMBlurShader;
-
 		Matrix PreviousFrameCameraTransform;
 		Matrix PreviousFrameCameraClipFromWorld;
 
 		const int MAX_NUM_LIGHTS = 1024;
 		const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
-
 
 		// X and Y work group dimension variables for compute shader
 		GLuint WorkGroupsX = 0;
