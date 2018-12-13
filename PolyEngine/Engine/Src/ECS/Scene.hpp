@@ -132,14 +132,11 @@ namespace Poly {
 		class SceneComponentIteratorHelper : public IEntityIteratorHelper
 		{
 			public:
-				explicit SceneComponentIteratorHelper(Entity* entity, Dynarray<size_t> required)
-				{
-					for (auto c : required)
-					{
-						HEAVY_ASSERTE(entity->HasComponent(c), "Entity has to have all required components!");
-					}
-					Match = entity;
-					RequiredComponents = required;
+				SceneComponentIteratorHelper(Entity* entity, std::vector<size_t> required)
+				{ 
+					//Match = nullptr; //need to initalize?
+					findMatch(entity, required);
+					//do we want to set our required components even in case of invalidated iterator?
 				}
 				bool operator==(const IEntityIteratorHelper& rhs) const override
 				{
@@ -147,62 +144,67 @@ namespace Poly {
 				}
 				bool operator!=(const IEntityIteratorHelper& rhs) const override
 				{
-					return Match != rhs.get();
+					return !(Match == rhs.get()); // can move to interface after it works
 				}
 				Entity* get() const override
 				{
 					return Match;
 				}
-				void increment() override //maybe not dynarray but bitmask?
+				void increment() override
 				{
-					Scene* scene = Match->GetEntityScene();
-					Entity* root = scene->GetRoot();
-					Dynarray<EntityUniquePtr> children = root->GetChildren();
-					for (const EntityUniquePtr& c : children) //O(n^2) :v
+					findMatch(Match, RequiredComponents);
+				}
+				bool isValid() const override //think where this might be useful for outside world???
+				{
+					return Match != nullptr;
+				}
+			private:
+				void findMatch(Entity* entity, std::vector<size_t> required)
+				{
+					Scene* scene = entity->GetEntityScene(); //later cast to Scene (ISCene comes)
+					for (auto& e : scene->GetEntityAllocator())
 					{
 						int idx = 0;
-						for (auto id : RequiredComponents)
+						for (auto id : required)
 						{
-							if (!c->GetComponent(id))
+							if (!e.GetComponent(id))
 								break;
 							++idx;
 						}
-						if (idx == RequiredComponents.GetSize())
+						if (idx == required.size())
 						{
-							Match = c.get();
-							break;
+							Match = &e;
+							RequiredComponents = required;
+							return;
 						}
 					}
+					Match = &*(scene->GetEntityAllocator().End());//ugly ugly ugly
+					RequiredComponents = required;
 				}
-
-			private:
 				Entity* Match;
-				Dynarray<size_t> RequiredComponents; //friendship?
+				std::vector<size_t> RequiredComponents; //friendship 
 		};
 
 		//This method must find first entity that fits the template arguments list and create a Helper instance unique ptr
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		std::unique_ptr<SceneComponentIteratorHelper> MakeSceneComponentIteratorHelper() //move to protected
 		{
-			Dynarray<size_t> requiredComponents(GetWorldComponentID<SecondaryComponents...>());
-			requiredComponents.PushFront(GetComponentID<PrimaryComponent>());
-			Dynarray<EntityUniquePtr> children = GetRoot()->GetChildren();
-			for (const EntityUniquePtr& c : children)
-			{
-				int idx = 0;
-				for (auto id : requiredComponents)
-				{
-					if (!c->GetComponent(id))
-						break;
-					++idx;
-				}
-				if (idx == requiredComponents.GetSize())
-				{
-					return std::make_unique<SceneComponentIteratorHelper>(SceneComponentIteratorHelper(c.get(), requiredComponents));
-				}
-			}
-			//TODO: assert if not found???
-			HEAVY_ASSERTE(false, "Could not find desired entity!!!");
+			//PROBABLY BULLSHIT COMMENT
+			//create iterator to first component in scene, check if valid if not increment
+			// then iterate for all valid components until last one which is not valid
+			//
+
+
+			//current implementation: we make vector of needed components, pass them to constr of our helper
+			//it loops through allocator of entities until it finds suitable entity or is at end which will in turn
+			//invalidate this iterator
+			//iterator proxy makes use of it for its ranged iteration which will end if begin == end (nullptr)
+			//our original wrapper(ComponentIterator) makes use of this underlying pointer and caches it for future
+			//it has to check  for cache invalidation THOUGH WHY? AND HOW :)
+			std::vector<size_t> requiredComponents(GetWorldComponentID<SecondaryComponents...>());
+			requiredComponents.insert(requiredComponents.begin(), GetWorldComponentID<PrimaryComponent>());
+			return std::make_unique<SceneComponentIteratorHelper>(SceneComponentIteratorHelper(GetRoot(), requiredComponents)); //TODO: information only for now -> we fail gracefully, we return end of our range if not found particular components which is ok
+			//what if we obtain invalid iter? 		
 		}
 
 		/*
