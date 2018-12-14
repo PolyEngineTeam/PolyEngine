@@ -189,13 +189,7 @@ namespace Poly {
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		std::unique_ptr<SceneComponentIteratorHelper> MakeSceneComponentIteratorHelper() //move to protected
 		{
-			//PROBABLY BULLSHIT COMMENT
-			//create iterator to first component in scene, check if valid if not increment
-			// then iterate for all valid components until last one which is not valid
-			//
-
-
-			//current implementation: we make vector of needed components, pass them to constr of our helper
+			//current implementation: we make vector of needed components, pass them to ctr of our helper
 			//it loops through allocator of entities until it finds suitable entity or is at end which will in turn
 			//invalidate this iterator
 			//iterator proxy makes use of it for its ranged iteration which will end if begin == end (nullptr)

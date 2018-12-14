@@ -36,17 +36,11 @@ namespace Poly
 
 			std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... > operator*() const //canot be const if  change cache
 			{
-				if (!bCacheValid)
-					UpdateCache();
-				// assert for all cmp (has all comp we require (primary,secondary))
-				return Cache; //extract
+				return GetCache();
 			}
 			std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... > operator->() const
 			{
-				if (bCacheValid)
-					return Cache;
-				UpdateCache();
-				return Cache;
+				return GetCache();
 			}
 
 			ComponentIterator& operator++() { Increment(); return *this; }
@@ -59,7 +53,8 @@ namespace Poly
 		private:
 			void Increment()
 			{
-				Iter.increment();
+				Iter.get()->increment();
+				ASSERTE(Iter.get()->isValid(), "Next Iterator is not valid!");		
 				bCacheValid = false;
 			}
 
@@ -67,16 +62,44 @@ namespace Poly
 			{
 				Entity* ent = Iter.get()->get();
 				PrimaryComponent* primary = ent->GetComponent<PrimaryComponent>();
-				Cache(std::make_tuple(primary, primary->template GetSibling<SecondaryComponents>()...)); //have to make proper unwrapping of this tuple
+				if (!HasComponents<SecondaryComponents, SecondaryComponents...>(ent))
+				{
+					Cache(std::make_tuple(primary));
+					bCacheValid = true;
+					return;
+				}
+				Cache(std::make_tuple(primary, primary->template GetSibling<SecondaryComponents>()...));
 				bCacheValid = true;
+			}
+
+			std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... > GetCache() const
+			{
+				if (!bCacheValid)
+					UpdateCache();
+				Entity* ent = Iter.get()->get();
+				if (!HasComponents<PrimaryComponent, SecondaryComponents...>(ent))
+					ASSERTE(false, "Updated cache does not contain all needed components!"); //@fixme: celeborth, when put in asserte clause it fails (passing to macro fails template deduction?)
+				return Cache;
+			}
+
+			//------------------------------------------------------------------------------
+			template<int zero = 0>
+			bool HasComponents(const Entity* entity) const { return true; }
+
+			//------------------------------------------------------------------------------
+			template<typename Component, typename... Rest>
+			bool HasComponents(const Entity* entity) const
+			{
+				return entity->template HasComponent<Component>() && HasComponents<Rest...>(entity);
 			}
 
 			friend struct IteratorProxy<PrimaryComponent, SecondaryComponents...>;
 
 			mutable bool bCacheValid;
 			std::unique_ptr<IEntityIteratorHelper> Iter;
-			mutable std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... > Cache; //cast what helper returned to tuples 
+			mutable std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... > Cache;
 	};
+
 	/// Iterator proxy
 	template<typename PrimaryComponent, typename... SecondaryComponents>
 	struct IteratorProxy : BaseObject<>
