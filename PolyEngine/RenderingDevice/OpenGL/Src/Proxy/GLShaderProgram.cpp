@@ -146,6 +146,10 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 	}
 
 	ShaderCode[type] = sb.GetString();
+
+	String compiledPath = EvaluateFullResourcePath(eResourceSource::ENGINE, shaderName + String(".dump"));
+	gConsole.LogInfo("GLShaderProgram::LoadShader debugPath: {}", compiledPath);
+	SaveTextFileRelative(eResourceSource::ENGINE, shaderName + String(".dump"), ShaderCode[type]);
 }
 
 void GLShaderProgram::CompileShader(GLShaderProgram::eShaderUnitType type)
