@@ -242,17 +242,34 @@ add_custom_target(
     Prerequisites ALL
     # Make distribution directory
     COMMAND ${CMAKE_COMMAND} -E make_directory "${DIST_DIR}/${BUILD_CONFIG_NAME}"
-    COMMENT "Ensuring build prerequisites are met..." VERBATIM
+	COMMENT "Ensuring build prerequisites are met..." VERBATIM
+	DEPENDS Galogen
 )
 
-if(WIN32)
-    add_custom_command(
-        TARGET Prerequisites POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy  "${ENGINE_ROOT_DIR}/ThirdParty/libepoxy/bin/x64/epoxy-0.dll" "${DIST_DIR}/${BUILD_CONFIG_NAME}"
+###
+# Galogen generation
+###
+set(GL_XML_PATH ${CMAKE_CURRENT_BINARY_DIR}/galogen/gl.xml)
+set(GL_XML_URL "https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/master/xml/gl.xml")
+file(DOWNLOAD ${GL_XML_URL} ${GL_XML_PATH})
+set(KHR_PLATFORM_URL "https://www.khronos.org/registry/EGL/api/KHR/khrplatform.h")
 
-        COMMENT "Copying thirdparty dlls..." VERBATIM
-    )
-endif()
+macro(GalogenGenerate LibName Api Ver)
+	set(OutputDir "${CMAKE_CURRENT_BINARY_DIR}/${LibName}_${Api}_${Ver}")
+	set(Filename "${OutputDir}/gl")
+
+	file(DOWNLOAD ${KHR_PLATFORM_URL} "${OutputDir}/KHR/khrplatform.h")
+
+	add_custom_command(
+		DEPENDS Galogen ${GL_XML_PATH}
+		OUTPUT "${Filename}.c" "${Filename}.h"
+		COMMAND $<TARGET_FILE:Galogen> ${GL_XML_PATH} --api ${Api} --ver ${Ver} --profile core --filename ${Filename}
+		COMMENT "Generating OpenGL headers API: [${Api}] VER: [${Ver}]\n" VERBATIM )
+
+	add_library(${LibName} STATIC "${Filename}.c")
+	target_include_directories(${LibName} PUBLIC ${OutputDir})
+	set_target_properties(${LibName} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OutputDir} IMPORTED_LOCATION $<TARGET_FILE:${LibName}>)
+endmacro()
 
 ### Thirdparty
 add_subdirectory(${ENGINE_ROOT_DIR}/ThirdParty ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty)

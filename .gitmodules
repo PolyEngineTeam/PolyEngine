@@ -19,3 +19,6 @@
 [submodule "PolyEngine/ThirdParty/SDL2"]
 	path = PolyEngine/ThirdParty/SDL2
 	url = https://github.com/spurious/SDL-mirror
+[submodule "PolyEngine/ThirdParty/galogen"]
+	path = PolyEngine/ThirdParty/galogen
+	url = https://github.com/google/galogen
