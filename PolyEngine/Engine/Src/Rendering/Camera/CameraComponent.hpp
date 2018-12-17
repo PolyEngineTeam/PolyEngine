@@ -27,9 +27,9 @@ namespace Poly {
 		CameraComponent(Angle fov, float zNear, float zFar);
 		CameraComponent(float top, float bottom, float left, float right, float zNear, float zFar);
 
-		const Matrix& GetClipFromView() const { return ScreenFromView; }
+		const Matrix& GetClipFromView() const { return ClipFromView; }
 		const Matrix& GetViewFromWorld() const { return ViewFromWorld; }
-		const Matrix& GetClipFromWorld() const { return ScreenFromWorld; }
+		const Matrix& GetClipFromWorld() const { return ClipFromWorld; }
 
 		const float GetClippingPlaneNear() const { return Near; }
 		const float GetClippingPlaneFar() const { return Far; }
@@ -43,14 +43,16 @@ namespace Poly {
 		void SetForcedRatio(bool value) { IsForcedRatio = value; }
 		eRenderingModeType GetRenderingMode() const { return RenderingMode; }
 		void SetRenderingMode(eRenderingModeType value) { RenderingMode = value; }
+		Frustum GetCameraFrustum() const { return CameraFrustum; };
 
 		void UpdateProjection();
 
 		bool IsVisibleToCamera(const Entity* ent) const;
+
 	private:
-		Matrix ScreenFromView;
+		Matrix ClipFromView;
 		Matrix ViewFromWorld;
-		Matrix ScreenFromWorld;
+		Matrix ClipFromWorld;
 
 		bool IsPerspective = false;
 
@@ -74,7 +76,7 @@ namespace Poly {
 		// RenderingMode
 		eRenderingModeType RenderingMode;
 
-		Optional<Frustum> CameraFrustum;
+		Frustum CameraFrustum;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, CameraComponent)

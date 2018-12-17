@@ -49,6 +49,13 @@ namespace Poly
 		const Matrix& GetParentFromModel() const;
 		const Matrix& GetWorldFromModel() const;
 		void SetParentFromModel(const Matrix& parentFromModel);
+
+		Vector GetLocalForward() const { return GetLocalRotation() * -Vector::UNIT_Z; }
+		Vector GetLocalRight() const { return GetLocalRotation() * Vector::UNIT_X; }
+		Vector GetLocalUp() const { return GetLocalRotation() * Vector::UNIT_Y; }
+		Vector GetGlobalForward() const { return GetGlobalRotation() * -Vector::UNIT_Z; }
+		Vector GetGlobalRight() const { return GetGlobalRotation() * Vector::UNIT_X; }
+		Vector GetGlobalUp() const { return GetGlobalRotation() * Vector::UNIT_Y; }
 		
 	private:
 		void UpdateParentTransform();
