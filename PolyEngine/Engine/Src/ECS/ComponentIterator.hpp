@@ -26,9 +26,8 @@ namespace Poly
 							public std::iterator<std::forward_iterator_tag, std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...>>	
 	{
 		public:
-			explicit ComponentIterator(std::unique_ptr<IEntityIteratorHelper> iter)
+			explicit ComponentIterator(std::unique_ptr<IEntityIteratorHelper> iter) : Iter(std::move(iter))
 			{
-				Iter(std::move(iter));
 				UpdateCache();
 			}
 			bool operator==(const  ComponentIterator& rhs) const { return Iter.get() == rhs.Get(); }
@@ -62,13 +61,13 @@ namespace Poly
 			{
 				Entity* ent = Iter.get()->get();
 				PrimaryComponent* primary = ent->GetComponent<PrimaryComponent>();
-				if (!HasComponents<SecondaryComponents, SecondaryComponents...>(ent))
+				if constexpr (!Trait::IsVariadicEmpty<SecondaryComponents...>::value)
 				{
-					Cache(std::make_tuple(primary));
+					Cache(std::make_tuple(primary, primary->template GetSibling<SecondaryComponents>()...));
 					bCacheValid = true;
 					return;
 				}
-				Cache(std::make_tuple(primary, primary->template GetSibling<SecondaryComponents>()...));
+				Cache(std::make_tuple(primary));
 				bCacheValid = true;
 			}
 
