@@ -68,7 +68,7 @@ void BlinnPhongRenderingPass::OnRun(Scene* world, const CameraComponent* camera,
 	
 	const EntityTransform& cameraTrans = camera->GetTransform();
 	Vector CameraPos = cameraTrans.GetGlobalTranslation();
-	Vector CameraDir = MovementSystem::GetGlobalForward(cameraTrans);
+	Vector CameraDir = cameraTrans.GetGlobalForward();
 	GetProgram().SetUniform("uCameraPosition", CameraPos);
 	GetProgram().SetUniform("uCameraForward", CameraDir);
 
@@ -82,7 +82,7 @@ void BlinnPhongRenderingPass::OnRun(Scene* world, const CameraComponent* camera,
 		DirectionalLightComponent* dirLightCmp = std::get<DirectionalLightComponent*>(componentsTuple);
 		const EntityTransform& transform = dirLightCmp->GetTransform();
 		String baseName = String("uDirectionalLight[") + String::From(dirLightsCount) + String("].");
-		GetProgram().SetUniform(baseName + "Direction", MovementSystem::GetGlobalForward(transform));
+		GetProgram().SetUniform(baseName + "Direction", transform.GetGlobalForward());
 		GetProgram().SetUniform(baseName + "Base.Color", dirLightCmp->GetColor());
 		GetProgram().SetUniform(baseName + "Base.Intensity", dirLightCmp->GetIntensity());
 		
@@ -121,7 +121,7 @@ void BlinnPhongRenderingPass::OnRun(Scene* world, const CameraComponent* camera,
 		GetProgram().SetUniform(baseName + "CutOff", Cos(1.0_deg * spotLightCmp->GetCutOff()));
 		GetProgram().SetUniform(baseName + "OuterCutOff", Cos(1.0_deg * spotLightCmp->GetOuterCutOff()));
 		GetProgram().SetUniform(baseName + "Position", transform.GetGlobalTranslation());
-		GetProgram().SetUniform(baseName + "Direction", MovementSystem::GetGlobalForward(transform));
+		GetProgram().SetUniform(baseName + "Direction", transform.GetGlobalForward());
 		GetProgram().SetUniform(baseName + "Base.Color", spotLightCmp->GetColor());
 		GetProgram().SetUniform(baseName + "Base.Intensity", spotLightCmp->GetIntensity());
 

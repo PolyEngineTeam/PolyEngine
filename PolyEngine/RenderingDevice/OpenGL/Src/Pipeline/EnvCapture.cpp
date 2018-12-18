@@ -6,6 +6,16 @@
 
 using namespace Poly;
 
+static const Matrix ViewFromModel[] =
+{
+	Matrix(Vector::ZERO, Vector( 1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_X
+	Matrix(Vector::ZERO, Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_NEGATIVE_X
+	Matrix(Vector::ZERO, Vector( 0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_Y
+	Matrix(Vector::ZERO, Vector( 0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
+	Matrix(Vector::ZERO, Vector( 0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_Z
+	Matrix(Vector::ZERO, Vector( 0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+};
+
 EnvCapture::EnvCapture(GLRenderingDevice* rdi)
 	: RDI(rdi),
 	EquirectangularToCubemapShader("Shaders/equiToCubemap.vert.glsl", "Shaders/equiToCubemap.frag.glsl"),
@@ -53,8 +63,6 @@ void EnvCapture::UpdateEnv(const SkyboxWorldComponent* skyboxCmp)
 	CaptureDiffuseIrradiance();
 
 	CaptureSpecularPrefilteredMap();
-
-	IsDirty = false;
 }
 
 void EnvCapture::CaptureCubemap(const SkyboxWorldComponent* skyboxCmp)
@@ -97,16 +105,16 @@ void EnvCapture::CaptureCubemap(const SkyboxWorldComponent* skyboxCmp)
 	Matrix uClipFromView;
 	uClipFromView.SetPerspective(90.0_deg, 1.0f, 0.1f, 10.0f);
 
-	Matrix ViewFromModel[] =
-	{
-		Matrix(Vector::ZERO, Vector(1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
-	};
-	gConsole.LogInfo("EnvCapture::CaptureCubemap matrices created");
+	// Matrix ViewFromModel[] =
+	// {
+	// 	Matrix(Vector::ZERO, Vector( 1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_X
+	// 	Matrix(Vector::ZERO, Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_NEGATIVE_X
+	// 	Matrix(Vector::ZERO, Vector( 0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_Y
+	// 	Matrix(Vector::ZERO, Vector( 0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
+	// 	Matrix(Vector::ZERO, Vector( 0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_Z
+	// 	Matrix(Vector::ZERO, Vector( 0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+	// };
+	// gConsole.LogInfo("EnvCapture::CaptureCubemap matrices created");
 
 	// convert HDR equirectangular environment map to cubemap equivalent
 	gConsole.LogInfo("EnvCapture::CaptureCubemap start cubemap rendering loop");
@@ -177,16 +185,16 @@ void EnvCapture::CaptureDiffuseIrradiance()
 	Matrix uClipFromView;
 	uClipFromView.SetPerspective(90.0_deg, 1.0f, 0.1f, 10.0f);
 
-	Matrix ViewFromModel[] =
-	{
-		Matrix(Vector::ZERO, Vector(1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
-	};
-	gConsole.LogInfo("EnvCapture::CaptureIrradiance matrices created");
+	// Matrix ViewFromModel[] =
+	// {
+	// 	Matrix(Vector::ZERO, Vector( 1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
+	// 	Matrix(Vector::ZERO, Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
+	// 	Matrix(Vector::ZERO, Vector( 0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
+	// 	Matrix(Vector::ZERO, Vector( 0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
+	// 	Matrix(Vector::ZERO, Vector( 0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
+	// 	Matrix(Vector::ZERO, Vector( 0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
+	// };
+	// gConsole.LogInfo("EnvCapture::CaptureIrradiance matrices created");
 
 	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
@@ -256,15 +264,15 @@ void EnvCapture::CaptureSpecularPrefilteredMap()
 	Matrix uClipFromView;
 	uClipFromView.SetPerspective(90.0_deg, 1.0f, 0.1f, 10.0f);
 
-	Matrix ViewFromModel[] =
-	{
-		Matrix(Vector::ZERO, Vector(1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
-	};
+	// Matrix ViewFromModel[] =
+	// {
+	// 	Matrix(Vector::ZERO, Vector( 1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
+	// 	Matrix(Vector::ZERO, Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
+	// 	Matrix(Vector::ZERO, Vector( 0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
+	// 	Matrix(Vector::ZERO, Vector( 0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
+	// 	Matrix(Vector::ZERO, Vector( 0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
+	// 	Matrix(Vector::ZERO, Vector( 0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
+	// };
 
 	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap capture prefiltered cubemap");
 	PrefilterCubemapShader.BindProgram();

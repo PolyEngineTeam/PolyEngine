@@ -3,6 +3,7 @@
 #include <Defines.hpp>
 #include <Rendering/Viewport.hpp>
 #include <Rendering/Lighting/LightSourceComponent.hpp>
+#include <Rendering/RenderingSettingsComponent.hpp>
 
 // TODO: inherit from BaseRenderPass - make multipass RenderPass
 
@@ -47,24 +48,27 @@ namespace Poly {
 		};
 
 		SceneView(Scene* s, const Viewport& v)
-				: SceneData(s), ViewportData(v), Rect(v.GetRect()), CameraCmp(v.GetCamera()),
-				OpaqueQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::FRONT_TO_BACK), 0),
-				TranslucentQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::BACK_TO_FRONT), 0),
-				ParticleQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::BACK_TO_FRONT), 0)
-			{};
+			: SceneData(s), ViewportData(v), Rect(v.GetRect()), CameraCmp(v.GetCamera()),
+			OpaqueQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::FRONT_TO_BACK), 0),
+			TranslucentQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::BACK_TO_FRONT), 0),
+			ParticleQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(), eSortOrderType::BACK_TO_FRONT), 0)
+		{
+			SettingsCmp = s->GetWorldComponent<RenderingSettingsComponent>();
+		};
 
 		Scene* SceneData;
 		const Viewport& ViewportData;
 		const AARect& Rect;
 		const CameraComponent* CameraCmp;
-
+		const RenderingSettingsComponent* SettingsCmp;
 		
-		Dynarray<const MeshRenderingComponent*> DirShadowOpaqueList;
+		Dynarray<const MeshRenderingComponent*> DirShadowCasterList;
 		PriorityQueue<const MeshRenderingComponent*, DistanceToCameraComparator> OpaqueQueue;
 		PriorityQueue<const MeshRenderingComponent*, DistanceToCameraComparator> TranslucentQueue;
 		PriorityQueue<const ParticleComponent*, DistanceToCameraComparator> ParticleQueue; // TODO: make translucent and particles one queue with common priority
 
-		Dynarray<const DirectionalLightComponent*> DirectionalLights;
+		AABox DirShadowAABBInLS;
+		Dynarray<const DirectionalLightComponent*> DirectionalLightList;
 		Dynarray<const PointLightComponent*> PointLightList;
 	};
 
