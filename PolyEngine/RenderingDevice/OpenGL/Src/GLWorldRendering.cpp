@@ -16,7 +16,7 @@
 #include <TiledForwardRenderer.hpp>
 
 using namespace Poly;
-using ViewQueue = PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
+using MeshQueue = PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
 
 void GLRenderingDevice::Init()
 {
@@ -57,12 +57,10 @@ IRendererInterface* GLRenderingDevice::CreateRenderer()
 void GLRenderingDevice::RenderWorld(Scene* world)
 {
 	// For each visible viewport draw it
-	for (auto kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
+	for (auto& [id, viewport] : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
 	{
-		SceneView sceneView(world, kv.second);
-		
+		SceneView sceneView(world, viewport);
 		FillSceneView(sceneView);
-
 		Renderer->Render(sceneView);
 	}
 
@@ -72,13 +70,13 @@ void GLRenderingDevice::RenderWorld(Scene* world)
 
 void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 {
-	Dynarray<MeshRenderingComponent*> meshCmps;
+	Dynarray<const MeshRenderingComponent*> meshCmps;
 	for (const auto& [meshCmp] : sceneView.SceneData->IterateComponents<MeshRenderingComponent>())
 	{
 		meshCmps.PushBack(meshCmp);
 	}
 
-	for (auto& meshCmp : meshCmps)
+	for (const auto& meshCmp : meshCmps)
 	{
 		if (sceneView.CameraCmp->IsVisibleToCamera(meshCmp->GetOwner()))
 		{
@@ -93,17 +91,17 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 		}
 	}
 
-	for (const auto [particleCmp] : sceneView.SceneData->IterateComponents<ParticleComponent>())
+	for (const auto& [particleCmp] : sceneView.SceneData->IterateComponents<ParticleComponent>())
 	{
 		sceneView.ParticleQueue.Push(particleCmp);
 	}
 
-	for (const auto [dirLightCmp] : sceneView.SceneData->IterateComponents<DirectionalLightComponent>())
+	for (const auto& [dirLightCmp] : sceneView.SceneData->IterateComponents<DirectionalLightComponent>())
 	{
 		sceneView.DirectionalLightList.PushBack(dirLightCmp);
 	}
 
-	for (const auto [pointLightCmp] : sceneView.SceneData->IterateComponents<PointLightComponent>())
+	for (const auto& [pointLightCmp] : sceneView.SceneData->IterateComponents<PointLightComponent>())
 	{
 		sceneView.PointLightList.PushBack(pointLightCmp);
 	}
@@ -112,7 +110,7 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 		CullDirLightQueue(sceneView, meshCmps);
 }
 
-void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const Dynarray<MeshRenderingComponent*>& meshCmps)
+void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const Dynarray<const MeshRenderingComponent*>& meshCmps)
 {
 	const DirectionalLightComponent* dirLight = sceneView.DirectionalLightList[0];
 	const CameraComponent* cameraCmp = sceneView.CameraCmp;
@@ -235,7 +233,7 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& di
 
 	// find all meshes that are inside extended DirLights AABB box
 	Vector dirLightPos = sceneView.DirectionalLightList[0]->GetTransform().GetGlobalTranslation();
-	ViewQueue shadowCasterQueue(SceneView::DistanceToCameraComparator(dirLightPos, SceneView::eSortOrderType::FRONT_TO_BACK), 0);
+	MeshQueue shadowCasterQueue(SceneView::DistanceToCameraComparator(dirLightPos, SceneView::eSortOrderType::FRONT_TO_BACK), 0);
 	
 	for (auto& [box, meshCmp] : boxMeshes)
 	{

@@ -5,7 +5,7 @@
 #include <IRendererInterface.hpp>
 
 using namespace Poly;
-using ViewQueue = PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
+using MeshQueue = PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
 
 Matrix Poly::GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize)
 {
@@ -233,7 +233,7 @@ void ShadowMapPass::RenderPCF(const SceneView& sceneView)
 
 	ShadowMapShader.BindProgram();
 
-	ViewQueue dirShadowCasterQueue(sceneView.DirShadowCasterQueue);
+	MeshQueue dirShadowCasterQueue(sceneView.DirShadowCasterQueue);
 	while (dirShadowCasterQueue.GetSize() > 0)
 	{
 		const MeshRenderingComponent* meshCmp = dirShadowCasterQueue.Pop();
@@ -269,7 +269,7 @@ void ShadowMapPass::RenderEVSM(const SceneView& sceneView)
 
 	ShadowMapShader.BindProgram();
 
-	ViewQueue dirShadowCasterQueue(sceneView.DirShadowCasterQueue);
+	MeshQueue dirShadowCasterQueue(sceneView.DirShadowCasterQueue);
 	while (dirShadowCasterQueue.GetSize() > 0)
 	{
 		const MeshRenderingComponent* meshCmp = dirShadowCasterQueue.Pop();

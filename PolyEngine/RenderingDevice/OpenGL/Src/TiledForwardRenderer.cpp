@@ -16,7 +16,7 @@
 #include <Proxy/imgui_impl_opengl3.h>
 
 using namespace Poly;
-using ViewQueue = PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
+using MeshQueue = PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
 
 void RenderTargetPingPong::Init(int width, int height)
 {
@@ -596,7 +596,7 @@ void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 	
 	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	
-	ViewQueue drawOpaqueQueue(sceneView.OpaqueQueue);
+	MeshQueue drawOpaqueQueue(sceneView.OpaqueQueue);
 	while(drawOpaqueQueue.GetSize() > 0)
 	{
 		const MeshRenderingComponent* meshCmp = drawOpaqueQueue.Pop();
