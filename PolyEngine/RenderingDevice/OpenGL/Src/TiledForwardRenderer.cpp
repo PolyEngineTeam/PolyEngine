@@ -16,6 +16,7 @@
 #include <Proxy/imgui_impl_opengl3.h>
 
 using namespace Poly;
+using ViewQueue = PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
 
 void RenderTargetPingPong::Init(int width, int height)
 {
@@ -593,14 +594,9 @@ void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 
 	DepthShader.BindProgram();
 	
-//	const ScreenSize screenSize = RDI->GetScreenSize();
-// 	glViewport((int)(sceneView.Rect.GetMin().X * screenSize.Width), (int)(sceneView.Rect.GetMin().Y * screenSize.Height),
-// 		(int)(sceneView.Rect.GetSize().X * screenSize.Width), (int)(sceneView.Rect.GetSize().Y * screenSize.Height));
-
 	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	
-	// for (const MeshRenderingComponent* meshCmp : sceneView.OpaqueQueue)
-	PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator> drawOpaqueQueue(sceneView.OpaqueQueue);
+	ViewQueue drawOpaqueQueue(sceneView.OpaqueQueue);
 	while(drawOpaqueQueue.GetSize() > 0)
 	{
 		const MeshRenderingComponent* meshCmp = drawOpaqueQueue.Pop();
@@ -971,8 +967,15 @@ void TiledForwardRenderer::RenderParticleUnlit(const SceneView& sceneView)
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	glBlendEquation(GL_FUNC_ADD);
 
+	const ScreenSize screenSize = RDI->GetScreenSize();
+	float viewportWidth = sceneView.Rect.GetSize().X * screenSize.Width;
+	float viewportHeight = sceneView.Rect.GetSize().Y * screenSize.Height;
+
 	ParticleShader.BindProgram();
 	ParticleShader.SetUniform("uTime", time);
+	ParticleShader.SetUniform("uScreenSize", Vector(viewportWidth, viewportHeight, 1.0f / viewportWidth, 1.0f / viewportHeight));
+	ParticleShader.SetUniform("uNear", sceneView.CameraCmp->GetClippingPlaneNear());
+	ParticleShader.SetUniform("uFar", sceneView.CameraCmp->GetClippingPlaneFar());
 	ParticleShader.SetUniform("uScreenFromView", screenFromView);
 
 	glBindFragDataLocation((GLuint)TranslucentShader.GetProgramHandle(), 0, "color");
@@ -994,7 +997,10 @@ void TiledForwardRenderer::RenderParticleUnlit(const SceneView& sceneView)
 
 		SpritesheetSettings spriteSettings = emitterSettings.Spritesheet;
 		ParticleShader.SetUniform("uSpriteColor", spriteSettings.SpriteColor);
-		float startFrame = spriteSettings.IsRandomStartFrame ? RandomRange(0.0f, spriteSettings.SubImages.X * spriteSettings.SubImages.Y) : spriteSettings.StartFrame;
+		ParticleShader.SetUniform("uSpriteDepthFade", spriteSettings.SpriteDepthFade);
+		float startFrame = spriteSettings.IsRandomStartFrame
+			? RandomRange(0.0f, spriteSettings.SubImages.X * spriteSettings.SubImages.Y)
+			: spriteSettings.StartFrame;
 		ParticleShader.SetUniform("uSpriteStartFrame", startFrame);
 		ParticleShader.SetUniform("uSpriteSpeed", spriteSettings.Speed);
 		ParticleShader.SetUniform("uSpriteSubImages", spriteSettings.SubImages.X, spriteSettings.SubImages.Y);
@@ -1010,8 +1016,8 @@ void TiledForwardRenderer::RenderParticleUnlit(const SceneView& sceneView)
 
 		ParticleShader.SetUniform("uHasSprite", texture == nullptr ? 0.0f : 1.0f);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureID);
+		ParticleShader.BindSampler("uSpriteMap", 0, textureID);
+		ParticleShader.BindSampler("uLinearDepth", 1, LinearDepth);
 
 		glBindVertexArray(particleVAO);
 		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, partileLen);

@@ -13,7 +13,7 @@ Matrix::Matrix() { SetIdentity(); }
 Matrix::Matrix(const float data[16], bool rowOrder) {
   memmove(Data.data(), data, sizeof(float)*16);
   if(!rowOrder) //TODO this is slow, but good enough for now
-    Transpose();
+	Transpose();
 }
 
 //------------------------------------------------------------------------------
@@ -30,11 +30,11 @@ Matrix& Matrix::operator=(const Matrix& rhs) {
   if (&rhs == this) return *this;
 #if DISABLE_SIMD
   for(int i=0; i<16; ++i) {
-      Data[i] = rhs.Data[i];
+	  Data[i] = rhs.Data[i];
   }
 #else
   for(int i=0; i<4; ++i)
-    SimdRow[i] = rhs.SimdRow[i];
+	SimdRow[i] = rhs.SimdRow[i];
 #endif
   return *this;
 }
@@ -44,7 +44,7 @@ bool Matrix::operator==(const Matrix& rhs) const {
 #if DISABLE_SIMD
   bool result = true;
   for(int i=0; i<16 && result; ++i)
-    result = result && Cmpf(Data[i], rhs.Data[i]);
+	result = result && Cmpf(Data[i], rhs.Data[i]);
   return result;
 #else
   __m128 result0 = _mm_cmpf_ps(SimdRow[0], rhs.SimdRow[0]);
@@ -64,19 +64,19 @@ Matrix Matrix::operator*(const Matrix& rhs) const {
   Matrix ret;
 #if DISABLE_SIMD
   for(int row=0; row<4; ++row) {
-    for(int col=0; col<4; ++col) {
-      ret.Data[4*row + col] = Data[4*row]*rhs.Data[col] + Data[4*row + 1]*rhs.Data[4 + col] + Data[4*row +2]*rhs.Data[8 + col] + Data[4*row + 3]*rhs.Data[12 + col] ;
-    }
+	for(int col=0; col<4; ++col) {
+	  ret.Data[4*row + col] = Data[4*row]*rhs.Data[col] + Data[4*row + 1]*rhs.Data[4 + col] + Data[4*row +2]*rhs.Data[8 + col] + Data[4*row + 3]*rhs.Data[12 + col] ;
+	}
   }
 #else
   Matrix t_rhs = rhs.GetTransposed();
   for (int i = 0; i < 4; ++i) {
-    for (int j = 0; j < 4; ++j) {
-      __m128 c = _mm_mul_ps(SimdRow[i], t_rhs.SimdRow[j]);
-      c = _mm_hadd_ps(c, c);
-      c = _mm_hadd_ps(c, c);
-      _mm_store_ss(&ret.Data[4*i + j], c);
-    }
+	for (int j = 0; j < 4; ++j) {
+	  __m128 c = _mm_mul_ps(SimdRow[i], t_rhs.SimdRow[j]);
+	  c = _mm_hadd_ps(c, c);
+	  c = _mm_hadd_ps(c, c);
+	  _mm_store_ss(&ret.Data[4*i + j], c);
+	}
   }
 #endif
   return ret;
@@ -90,14 +90,14 @@ Vector Matrix::operator*(const Vector& rhs) const {
   Vector ret;
 #if DISABLE_SIMD
   for(int row=0; row<4; ++row) {
-      ret.Data[row] = Data[4*row]*rhs.Data[0] + Data[4*row + 1]*rhs.Data[1] + Data[4*row +2]*rhs.Data[2] + Data[4*row + 3]*rhs.Data[3];
+	  ret.Data[row] = Data[4*row]*rhs.Data[0] + Data[4*row + 1]*rhs.Data[1] + Data[4*row +2]*rhs.Data[2] + Data[4*row + 3]*rhs.Data[3];
   }
 #else
   for (int i = 0; i < 4; ++i) {
-      __m128 c = _mm_mul_ps(SimdRow[i], rhs.SimdData);
-      c = _mm_hadd_ps(c, c);
-      c = _mm_hadd_ps(c, c);
-      _mm_store_ss(&ret.Data[i], c);
+	  __m128 c = _mm_mul_ps(SimdRow[i], rhs.SimdData);
+	  c = _mm_hadd_ps(c, c);
+	  c = _mm_hadd_ps(c, c);
+	  _mm_store_ss(&ret.Data[i], c);
   }
 #endif
   return ret;
@@ -281,7 +281,7 @@ Matrix& Poly::Matrix::SetPerspective(Angle fov, float aspect, float near, float 
 Matrix& Poly::Matrix::SetOrthographicZO(float bottom, float top, float left, float right, float near, float far)
 {
 	SetIdentity();
-													//  same as orthoRH_ZO: GLM_RIGHT_HANDED && GLM_DEPTH_ZERO_TO_ONE
+													// same as orthoRH_ZO: GLM_RIGHT_HANDED && GLM_DEPTH_ZERO_TO_ONE
 	Data[0] = 2.0f / (right - left);				// glm[0][0]
 	Data[1] = 0.0f;
 	Data[2] = 0.0f;
@@ -446,7 +446,7 @@ Matrix& Matrix::Inverse() {
 
   float idet = 1.0f/det;
   for(int i=0; i<16; ++i)
-    Data[i] *= idet;
+	Data[i] *= idet;
 
   return *this;
 }
@@ -460,9 +460,9 @@ Matrix Matrix::GetInversed() const {
 //------------------------------------------------------------------------------
 Matrix& Matrix::Transpose() {
   for (int row = 0; row < 4; ++row) {
-    for (int col = row + 1; col < 4; ++col) {
-      std::swap(Data[4*row + col], Data[4*col + row]);
-    }
+	for (int col = row + 1; col < 4; ++col) {
+	  std::swap(Data[4*row + col], Data[4*col + row]);
+	}
   }
   return *this;
 }

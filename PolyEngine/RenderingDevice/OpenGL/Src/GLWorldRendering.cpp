@@ -16,6 +16,7 @@
 #include <TiledForwardRenderer.hpp>
 
 using namespace Poly;
+using ViewQueue = PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
 
 void GLRenderingDevice::Init()
 {
@@ -230,20 +231,24 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& di
 
 	if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawShadowCastersBounds)
 		DebugDrawSystem::DrawBox(scene, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), worldFromDirLight, Color(0.5f, 0.5f, 0.0f));
+	
 
 	// find all meshes that are inside extended DirLights AABB box
-	int shadowCastersCounter = 0;
+	Vector dirLightPos = sceneView.DirectionalLightList[0]->GetTransform().GetGlobalTranslation();
+	ViewQueue shadowCasterQueue(SceneView::DistanceToCameraComparator(dirLightPos, SceneView::eSortOrderType::FRONT_TO_BACK), 0);
+	
 	for (auto& [box, meshCmp] : boxMeshes)
 	{
 		if (frustumAABBInLS.Contains(box))
 		{
-			sceneView.DirShadowCasterList.PushBack(meshCmp);
-			shadowCastersCounter++;
+			shadowCasterQueue.Push(meshCmp);
 
 			if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawShadowCastersBounds)
 				DebugDrawSystem::DrawBox(scene, box.GetMin(), box.GetMax(), worldFromDirLight, Color::GREEN);
 		}
 	}
+
+	sceneView.DirShadowCasterQueue = std::move(shadowCasterQueue);
 
 	// gConsole.LogInfo("GLRenderingDevice::FillDirLightQueue casters: {}/{}", shadowCastersCounter, meshCmps.GetSize());
 }
