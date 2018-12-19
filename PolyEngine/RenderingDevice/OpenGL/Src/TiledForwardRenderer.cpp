@@ -16,6 +16,7 @@
 #include <Proxy/imgui_impl_opengl3.h>
 
 using namespace Poly;
+using MeshQueue = PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
 
 void RenderTargetPingPong::Init(int width, int height)
 {
@@ -111,11 +112,8 @@ void TiledForwardRenderer::Init()
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 	CreateRenderTargets(screenSize);
-	 
 	CreateLightBuffers(screenSize);
-	 
 	CapturePreintegratedBRDF();
-
 	SetupLightsBufferFromScene();
 
 	Splash = ResourceManager<TextureResource>::Load("Textures/splash_00.png", eResourceSource::ENGINE, eTextureUsageType::ALBEDO);
@@ -130,11 +128,8 @@ void TiledForwardRenderer::Resize(const ScreenSize& size)
 	gConsole.LogInfo("TiledForwardRenderer::Resize ({}, {})", size.Width, size.Height);
 
 	DeleteLightBuffers();
-
 	DeleteRenderTargets();
-
 	CreateLightBuffers(size);
-
 	CreateRenderTargets(size);
 }
 
@@ -494,14 +489,12 @@ void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 
 	DepthShader.BindProgram();
 	
-//	const ScreenSize screenSize = RDI->GetScreenSize();
-// 	glViewport((int)(sceneView.Rect.GetMin().X * screenSize.Width), (int)(sceneView.Rect.GetMin().Y * screenSize.Height),
-// 		(int)(sceneView.Rect.GetSize().X * screenSize.Width), (int)(sceneView.Rect.GetSize().Y * screenSize.Height));
-
 	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	
-	for (const MeshRenderingComponent* meshCmp : sceneView.OpaqueQueue)
+	MeshQueue drawOpaqueQueue(sceneView.OpaqueQueue);
+	while(drawOpaqueQueue.GetSize() > 0)
 	{
+		const MeshRenderingComponent* meshCmp = drawOpaqueQueue.Pop();
 		const Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
 		DepthShader.SetUniform("uScreenFromModel", clipFromWorld * worldFromModel);
 		
@@ -533,7 +526,7 @@ void TiledForwardRenderer::ComputeLightCulling(const SceneView& sceneView)
 	LightCullingShader.SetUniform("uClipFromView",  sceneView.CameraCmp->GetClipFromView());
 	LightCullingShader.SetUniform("uScreenSizeX", RDI->GetScreenSize().Width);
 	LightCullingShader.SetUniform("uScreenSizeY", RDI->GetScreenSize().Height);
-	LightCullingShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
+	LightCullingShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLightList.GetSize(), MAX_NUM_LIGHTS));
 
 	// Bind depth map texture to texture location 4 (which will not be used by any model texture)
 	glActiveTexture(GL_TEXTURE0);
@@ -570,7 +563,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// shadownap uniforms
-	Matrix projDirLightFromWorld = sceneView.DirectionalLights.IsEmpty()
+	Matrix projDirLightFromWorld = sceneView.DirectionalLightList.IsEmpty()
 		? Matrix()
 		: GetProjectionForShadowMap(sceneView, ShadowMap.GetShadowMapResolution());
 
@@ -597,12 +590,12 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 	// Lighting uniforms
 	const EntityTransform& cameraTransform = sceneView.CameraCmp->GetTransform();
-	LightAccumulationShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
+	LightAccumulationShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLightList.GetSize(), MAX_NUM_LIGHTS));
 	LightAccumulationShader.SetUniform("uWorkGroupsX", (int)WorkGroupsX);
 	LightAccumulationShader.SetUniform("uViewPosition", cameraTransform.GetGlobalTranslation());
 
 	int dirLightsCount = 0;
-	for (const DirectionalLightComponent* dirLightCmp : sceneView.DirectionalLights)
+	for (const DirectionalLightComponent* dirLightCmp : sceneView.DirectionalLightList)
 	{		
 		const EntityTransform& transform = dirLightCmp->GetTransform();
 		String baseName = String("uDirectionalLight[") + String::From(dirLightsCount) + String("].");
@@ -628,8 +621,11 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	glBindFragDataLocation((GLuint)LightAccumulationShader.GetProgramHandle(), 1, "oNormal");
 
 	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
-	for (const MeshRenderingComponent* meshCmp : sceneView.OpaqueQueue)
+	// for (const MeshRenderingComponent* meshCmp : sceneView.OpaqueQueue)
+	PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator> drawOpaqueQueue(sceneView.OpaqueQueue);
+	while (drawOpaqueQueue.GetSize() > 0)
 	{
+		const MeshRenderingComponent* meshCmp = drawOpaqueQueue.Pop();
 		const EntityTransform& transform = meshCmp->GetTransform();
 		const Matrix& worldFromModel = transform.GetWorldFromModel();
 		LightAccumulationShader.SetUniform("uClipFromModel", clipFromWorld * worldFromModel);
@@ -737,8 +733,8 @@ void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::RenderTranslucenLit");
-	
-	for (int i = 8; i > 0; --i)
+	const int activeTextures = 8;
+	for (int i = activeTextures; i > 0; --i)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -756,7 +752,7 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 	TranslucentShader.SetUniform("uViewPosition", cameraTransform.GetGlobalTranslation());
 
 	int dirLightsCount = 0;
-	for (const DirectionalLightComponent* dirLightCmp : sceneView.DirectionalLights)
+	for (const DirectionalLightComponent* dirLightCmp : sceneView.DirectionalLightList)
 	{
 		const EntityTransform& transform = dirLightCmp->GetTransform();
 		String baseName = String("uDirectionalLight[") + String::From(dirLightsCount) + String("].");
@@ -779,8 +775,12 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 	glBindFragDataLocation((GLuint)TranslucentShader.GetProgramHandle(), 1, "oNormal");
 
 	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
-	for (const MeshRenderingComponent* meshCmp : sceneView.TranslucentQueue)
+	// for (const MeshRenderingComponent* meshCmp : sceneView.TranslucentQueue)
+	// {
+	PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator> drawTranslucentQueue(sceneView.TranslucentQueue);
+	while (drawTranslucentQueue.GetSize() > 0)
 	{
+		const MeshRenderingComponent* meshCmp = drawTranslucentQueue.Pop();
 		const EntityTransform& transform = meshCmp->GetTransform();
 		const Matrix& worldFromModel = transform.GetWorldFromModel();
 		TranslucentShader.SetUniform("uClipFromModel", clipFromWorld * worldFromModel);
@@ -824,7 +824,7 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 	// Clear bound resources
 	glBindVertexArray(0);
 
-	for (int i = 8; i > 0; --i)
+	for (int i = activeTextures; i > 0; --i)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -868,7 +868,7 @@ void TiledForwardRenderer::RenderParticleUnlit(const SceneView& sceneView)
 	glBindFragDataLocation((GLuint)TranslucentShader.GetProgramHandle(), 0, "color");
 	glBindFragDataLocation((GLuint)TranslucentShader.GetProgramHandle(), 1, "normal");
 
-	for (auto [particleCmp]: sceneView.SceneData->IterateComponents<ParticleComponent>())
+	for (auto [particleCmp] : sceneView.SceneData->IterateComponents<ParticleComponent>())
 	{
 		const EntityTransform& transform = particleCmp->GetTransform();
 		const Matrix& worldFromModel = particleCmp->GetEmitter()->GetSettings().SimulationSpace == ParticleEmitter::eSimulationSpace::LOCAL_SPACE
@@ -1313,7 +1313,7 @@ void TiledForwardRenderer::DebugLightAccum(const SceneView& sceneView)
 	DebugLightAccumShader.SetUniform("uTime", time);
 	DebugLightAccumShader.SetUniform("uWorkGroupsX", (int)WorkGroupsX);
 	DebugLightAccumShader.SetUniform("uWorkGroupsY", (int)WorkGroupsY);
-	DebugLightAccumShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
+	DebugLightAccumShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLightList.GetSize(), MAX_NUM_LIGHTS));
 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, LightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, VisibleLightIndicesBuffer);
@@ -1374,7 +1374,7 @@ void TiledForwardRenderer::UpdateLightsBufferFromScene(const SceneView& sceneVie
 	Dynarray<Vector> rangeIntensity;
 
 	int lightCounter = 0;
-	for (const PointLightComponent* pointLightCmp : sceneView.PointLights)
+	for (const PointLightComponent* pointLightCmp : sceneView.PointLightList)
 	{
 		const EntityTransform& transform = pointLightCmp->GetTransform();
 
