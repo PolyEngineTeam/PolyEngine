@@ -16,6 +16,7 @@
 #include <TiledForwardRenderer.hpp>
 
 using namespace Poly;
+using MeshQueue = PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
 
 void GLRenderingDevice::Init()
 {
@@ -56,12 +57,10 @@ IRendererInterface* GLRenderingDevice::CreateRenderer()
 void GLRenderingDevice::RenderWorld(Scene* world)
 {
 	// For each visible viewport draw it
-	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
+	for (auto& [id, viewport] : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
 	{
-		SceneView sceneView(world, kv.second);
-		
+		SceneView sceneView(world, viewport);
 		FillSceneView(sceneView);
-
 		Renderer->Render(sceneView);
 	}
 
@@ -71,45 +70,49 @@ void GLRenderingDevice::RenderWorld(Scene* world)
 
 void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 {
-	for (const auto& [dirLightCmp] : sceneView.SceneData->IterateComponents<DirectionalLightComponent>())
-	{
-		sceneView.DirectionalLights.PushBack(dirLightCmp);
-	}
-
-	for (const auto& [pointLightCmp] : sceneView.SceneData->IterateComponents<PointLightComponent>())
-	{
-		sceneView.PointLights.PushBack(pointLightCmp);
-	}
-
-	Dynarray<MeshRenderingComponent*> meshCmps;
+	Dynarray<const MeshRenderingComponent*> meshCmps;
 	for (const auto& [meshCmp] : sceneView.SceneData->IterateComponents<MeshRenderingComponent>())
 	{
 		meshCmps.PushBack(meshCmp);
 	}
 
-	for (auto& meshCmp : meshCmps)
+	for (const auto& meshCmp : meshCmps)
 	{
 		if (sceneView.CameraCmp->IsVisibleToCamera(meshCmp->GetOwner()))
 		{
 			if (meshCmp->GetBlendingMode() == eBlendingMode::OPAUQE)
 			{
-				sceneView.OpaqueQueue.PushBack(meshCmp);
+				sceneView.OpaqueQueue.Push(meshCmp);
 			}
 			else if (meshCmp->GetBlendingMode() == eBlendingMode::TRANSLUCENT)
 			{
-				sceneView.TranslucentQueue.PushBack(meshCmp);
+				sceneView.TranslucentQueue.Push(meshCmp);
 			}
 		}
 	}
 
-	if (sceneView.DirectionalLights.GetSize() > 0)
+	for (const auto& [particleCmp] : sceneView.SceneData->IterateComponents<ParticleComponent>())
+	{
+		sceneView.ParticleQueue.Push(particleCmp);
+	}
+
+	for (const auto& [dirLightCmp] : sceneView.SceneData->IterateComponents<DirectionalLightComponent>())
+	{
+		sceneView.DirectionalLightList.PushBack(dirLightCmp);
+	}
+
+	for (const auto& [pointLightCmp] : sceneView.SceneData->IterateComponents<PointLightComponent>())
+	{
+		sceneView.PointLightList.PushBack(pointLightCmp);
+	}
+
+	if (sceneView.DirectionalLightList.GetSize() > 0)
 		CullDirLightQueue(sceneView, meshCmps);
 }
 
-void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const Dynarray<MeshRenderingComponent*>& meshCmps)
+void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const Dynarray<const MeshRenderingComponent*>& meshCmps)
 {
-	DirectionalLightComponent* dirLight = sceneView.DirectionalLights[0];
-	
+	const DirectionalLightComponent* dirLight = sceneView.DirectionalLightList[0];
 	const CameraComponent* cameraCmp = sceneView.CameraCmp;
 	Frustum frustum = cameraCmp->GetCameraFrustum();
 
@@ -144,9 +147,9 @@ void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const Dynarray<M
 	}
 	DebugDrawSystem::DrawFrustumPoints(sceneView.SceneData, cornersInWS, Color::RED);
 
-	// // based on https://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
-	// // Stabilize shadow map: calculate sphere bounds around frustum to minimize AABB changes on frustum rotation 
-	// // Calculate the centroid of the view frustum slice
+	// based on https://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
+	// Stabilize shadow map: calculate sphere bounds around frustum to minimize AABB changes on frustum rotation 
+	// Calculate the centroid of the view frustum slice
 	Vector lightForward = dirLight->GetTransform().GetGlobalForward();
 	Vector lightUp = dirLight->GetTransform().GetGlobalUp();
 	Matrix lightFromWorld = Matrix(Vector::ZERO, lightForward, lightUp);
@@ -226,20 +229,24 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& di
 
 	if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawShadowCastersBounds)
 		DebugDrawSystem::DrawBox(scene, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), worldFromDirLight, Color(0.5f, 0.5f, 0.0f));
+	
 
 	// find all meshes that are inside extended DirLights AABB box
-	int shadowCastersCounter = 0;
+	Vector dirLightPos = sceneView.DirectionalLightList[0]->GetTransform().GetGlobalTranslation();
+	MeshQueue shadowCasterQueue(SceneView::DistanceToCameraComparator(dirLightPos, SceneView::eSortOrderType::FRONT_TO_BACK), 0);
+	
 	for (auto& [box, meshCmp] : boxMeshes)
 	{
 		if (frustumAABBInLS.Contains(box))
 		{
-			sceneView.DirShadowOpaqueQueue.PushBack(meshCmp);
-			shadowCastersCounter++;
+			shadowCasterQueue.Push(meshCmp);
 
 			if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawShadowCastersBounds)
 				DebugDrawSystem::DrawBox(scene, box.GetMin(), box.GetMax(), worldFromDirLight, Color::GREEN);
 		}
 	}
+
+	sceneView.DirShadowCastersQueue = std::move(shadowCasterQueue);
 
 	// gConsole.LogInfo("GLRenderingDevice::FillDirLightQueue casters: {}/{}", shadowCastersCounter, meshCmps.GetSize());
 }

@@ -5,11 +5,12 @@
 #include <IRendererInterface.hpp>
 
 using namespace Poly;
+using MeshQueue = PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
 
 Matrix Poly::GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize)
 {
-	ASSERTE(sceneView.DirectionalLights.GetSize() > 0, "GetProjectionForShadowMap has no directional light in scene view");
-	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLights[0];
+	ASSERTE(sceneView.DirectionalLightList.GetSize() > 0, "GetProjectionForShadowMap has no directional light in scene view");
+	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLightList[0];
 
 	Vector lightForward = dirLightCmp->GetTransform().GetGlobalForward();
 	Vector lightUp = dirLightCmp->GetTransform().GetGlobalUp();
@@ -196,7 +197,7 @@ void ShadowMapPass::Render(const SceneView& sceneView)
 {	
 	// gConsole.LogInfo("ShadowMapPass::Render");
 
-	if (sceneView.DirectionalLights.GetSize() < 1)
+	if (sceneView.DirectionalLightList.GetSize() < 1)
 		return;
 
 	if (sceneView.SettingsCmp == nullptr
@@ -232,8 +233,10 @@ void ShadowMapPass::RenderPCF(const SceneView& sceneView)
 
 	ShadowMapShader.BindProgram();
 
-	for (const MeshRenderingComponent* meshCmp : sceneView.DirShadowOpaqueQueue)
+	MeshQueue dirShadowCasterQueue(sceneView.DirShadowCastersQueue);
+	while (dirShadowCasterQueue.GetSize() > 0)
 	{
+		const MeshRenderingComponent* meshCmp = dirShadowCasterQueue.Pop();
 		const Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
 		ShadowMapShader.SetUniform("uClipFromModel", orthoDirLightFromWorld * worldFromModel);
 
@@ -266,8 +269,10 @@ void ShadowMapPass::RenderEVSM(const SceneView& sceneView)
 
 	ShadowMapShader.BindProgram();
 
-	for (const MeshRenderingComponent* meshCmp : sceneView.DirShadowOpaqueQueue)
+	MeshQueue dirShadowCasterQueue(sceneView.DirShadowCastersQueue);
+	while (dirShadowCasterQueue.GetSize() > 0)
 	{
+		const MeshRenderingComponent* meshCmp = dirShadowCasterQueue.Pop();
 		const Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
 		ShadowMapShader.SetUniform("uClipFromModel", orthoDirLightFromWorld * worldFromModel);
 
