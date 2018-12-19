@@ -246,7 +246,7 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& di
 		}
 	}
 
-	sceneView.DirShadowCasterQueue = std::move(shadowCasterQueue);
+	sceneView.DirShadowCastersQueue = std::move(shadowCasterQueue);
 
 	// gConsole.LogInfo("GLRenderingDevice::FillDirLightQueue casters: {}/{}", shadowCastersCounter, meshCmps.GetSize());
 }
