@@ -73,104 +73,24 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	DebugLightAccumShader("Shaders/debugLightAccum.vert.glsl", "Shaders/debugLightAccum.frag.glsl"),
 	DebugTextureInputsShader("Shaders/lightAccumulation.vert.glsl", "Shaders/lightAccumulationTexDebug.frag.glsl")
 {
-	
-	LightAccumulationShader.RegisterUniform("mat4", "uDirLightFromWorld");
-	LightAccumulationShader.RegisterUniform("float", "uShadowBiasMin");
-	LightAccumulationShader.RegisterUniform("float", "uShadowBiasMax");
-
-	LightAccumulationShader.RegisterUniform("float", "uTime");
-	LightAccumulationShader.RegisterUniform("vec4", "uViewPosition");
-	LightAccumulationShader.RegisterUniform("mat4", "uClipFromModel");
-	LightAccumulationShader.RegisterUniform("mat4", "uWorldFromModel");
 	LightAccumulationShader.RegisterUniform("vec4", "uMaterial.Emissive");
 	LightAccumulationShader.RegisterUniform("vec4", "uMaterial.Albedo");
 	LightAccumulationShader.RegisterUniform("float", "uMaterial.Roughness");
 	LightAccumulationShader.RegisterUniform("float", "uMaterial.Metallic");
-
-	LightAccumulationShader.RegisterUniform("sampler2D", "uBrdfLUT");
-	LightAccumulationShader.RegisterUniform("samplerCube", "uIrradianceMap");
-	LightAccumulationShader.RegisterUniform("samplerCube", "uPrefilterMap");
-
-	LightAccumulationShader.RegisterUniform("sampler2D", "uEmissiveMap");
-	LightAccumulationShader.RegisterUniform("sampler2D", "uAlbedoMap");
-	LightAccumulationShader.RegisterUniform("sampler2D", "uRoughnessMap");
-	LightAccumulationShader.RegisterUniform("sampler2D", "uMetallicMap");
-	LightAccumulationShader.RegisterUniform("sampler2D", "uNormalMap");
-	LightAccumulationShader.RegisterUniform("sampler2D", "uAmbientOcclusionMap");
-	LightAccumulationShader.RegisterUniform("sampler2D", "uDirShadowMap");
-	LightAccumulationShader.RegisterUniform("sampler2D", "uDirEVSMap");
-	LightAccumulationShader.RegisterUniform("float", "uPositiveExponent");
-	LightAccumulationShader.RegisterUniform("float", "uNegativeExponent");
-	LightAccumulationShader.RegisterUniform("float", "uVSMBias");
-	LightAccumulationShader.RegisterUniform("float", "uLightBleedingReduction");
-	LightAccumulationShader.RegisterUniform("int", "uShadowType");
-	
+	LightAccumulationShader.RegisterUniform("float", "uMaterial.OpacityMaskThreshold");
+	  
 	for (int i = 0; i < 8; ++i)
 	{
 		String baseName = String("uDirectionalLight[") + String::From(i) + String("].");
 		LightAccumulationShader.RegisterUniform("vec4", baseName + "ColorIntensity");
 		LightAccumulationShader.RegisterUniform("vec4", baseName + "Direction");
 	}
-	LightAccumulationShader.RegisterUniform("int", "uDirectionalLightCount");
-	LightAccumulationShader.RegisterUniform("int", "uLightCount");
-	LightAccumulationShader.RegisterUniform("int", "uWorkGroupsX");
-	LightAccumulationShader.RegisterUniform("int", "uWorkGroupsY");
-
-	HDRShader.RegisterUniform("sampler2D", "uHdrBuffer");
-	HDRShader.RegisterUniform("float", "uExposure");
 	
-	MotionBlurShader.RegisterUniform("sampler2D", "uImage");
-	MotionBlurShader.RegisterUniform("sampler2D", "uDepth");
-	MotionBlurShader.RegisterUniform("mat4", "uWorldFromView");
-	MotionBlurShader.RegisterUniform("mat4", "uPrevClipFromWorld");
-	MotionBlurShader.RegisterUniform("float", "uScale");
-
-	DOFBokehShader.RegisterUniform("vec4", "uRes");
-	DOFBokehShader.RegisterUniform("sampler2D", "uImage");
-	DOFBokehShader.RegisterUniform("sampler2D", "uDepth");
-	DOFBokehShader.RegisterUniform("float", "uTime");
-	DOFBokehShader.RegisterUniform("float", "uDOFPoint");
-	DOFBokehShader.RegisterUniform("float", "uDOFRange");
-	DOFBokehShader.RegisterUniform("float", "uDOFSize");
-
-	DOFApplyShader.RegisterUniform("sampler2D", "uImage");
-	DOFApplyShader.RegisterUniform("sampler2D", "uDOF");
-	DOFApplyShader.RegisterUniform("float", "uDOFShow");
-	DOFApplyShader.RegisterUniform("float", "uDOFPoint");
-	DOFApplyShader.RegisterUniform("float", "uDOFRange");
-
-	BloomBrightShader.RegisterUniform("sampler2D", "uImage");
-	BloomBrightShader.RegisterUniform("float", "uBrightThreshold");
-
-	BloomBlurShader.RegisterUniform("float", "uIsHorizontal");
-	BloomBlurShader.RegisterUniform("sampler2D", "uImage");
-
-	BloomApplyShader.RegisterUniform("sampler2D", "uImage");
-	BloomApplyShader.RegisterUniform("sampler2D", "uBloom");
-	BloomApplyShader.RegisterUniform("float", "uBloomScale");
-
-	SkyboxShader.RegisterUniform("mat4", "uClipFromWorld");
-	SkyboxShader.RegisterUniform("vec4", "uTint");
-
-	TranslucentShader.RegisterUniform("float", "uTime");
-	TranslucentShader.RegisterUniform("vec4", "uViewPosition");
-	TranslucentShader.RegisterUniform("mat4", "uClipFromModel");
-	TranslucentShader.RegisterUniform("mat4", "uWorldFromModel");
 	TranslucentShader.RegisterUniform("vec4", "uMaterial.Emissive");
 	TranslucentShader.RegisterUniform("vec4", "uMaterial.Albedo");
 	TranslucentShader.RegisterUniform("float", "uMaterial.Roughness");
 	TranslucentShader.RegisterUniform("float", "uMaterial.Metallic");
-
-	TranslucentShader.RegisterUniform("sampler2D", "uBrdfLUT");
-	TranslucentShader.RegisterUniform("samplerCube", "uIrradianceMap");
-	TranslucentShader.RegisterUniform("samplerCube", "uPrefilterMap");
-
-	TranslucentShader.RegisterUniform("sampler2D", "uEmissiveMap");
-	TranslucentShader.RegisterUniform("sampler2D", "uAlbedoMap");
-	TranslucentShader.RegisterUniform("sampler2D", "uRoughnessMap");
-	TranslucentShader.RegisterUniform("sampler2D", "uMetallicMap");
-	TranslucentShader.RegisterUniform("sampler2D", "uNormalMap");
-	TranslucentShader.RegisterUniform("sampler2D", "uAmbientOcclusionMap");	
+	TranslucentShader.RegisterUniform("float", "uMaterial.OpacityMaskThreshold");
 
 	for (int i = 0; i < 8; ++i)
 	{
@@ -178,31 +98,6 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 		TranslucentShader.RegisterUniform("vec4", baseName + "ColorIntensity");
 		TranslucentShader.RegisterUniform("vec4", baseName + "Direction");
 	}
-	TranslucentShader.RegisterUniform("int", "uDirectionalLightCount");
-	TranslucentShader.RegisterUniform("int", "uLightCount");
-	TranslucentShader.RegisterUniform("int", "uWorkGroupsX");
-	TranslucentShader.RegisterUniform("int", "uWorkGroupsY");
-
-	ParticleShader.RegisterUniform("float", "uTime");
-	ParticleShader.RegisterUniform("mat4", "uScreenFromView");
-	ParticleShader.RegisterUniform("mat4", "uViewFromWorld");
-	ParticleShader.RegisterUniform("mat4", "uWorldFromModel");
-	ParticleShader.RegisterUniform("vec4", "uColor");
-
-	LinearizeDepthShader.RegisterUniform("float", "uNear");
-	LinearizeDepthShader.RegisterUniform("float", "uFar");
-
-	EditorDebugShader.RegisterUniform("mat4", "uMVP");
-
-	GammaShader.RegisterUniform("sampler2D", "uSplashImage");
-	GammaShader.RegisterUniform("vec4", "uSplashTint");
-	GammaShader.RegisterUniform("sampler2D", "uImage");
-	GammaShader.RegisterUniform("float", "uTime");
-	GammaShader.RegisterUniform("vec4", "uRes");
-	GammaShader.RegisterUniform("float", "uGrainScale");
-	GammaShader.RegisterUniform("float", "uVignetteScale");
-	GammaShader.RegisterUniform("float", "uAbberationScale");
-	GammaShader.RegisterUniform("float", "uGamma");
 }
 
 void TiledForwardRenderer::Init()
@@ -638,8 +533,6 @@ void TiledForwardRenderer::ComputeLightCulling(const SceneView& sceneView)
 	LightCullingShader.SetUniform("uClipFromView",  sceneView.CameraCmp->GetClipFromView());
 	LightCullingShader.SetUniform("uScreenSizeX", RDI->GetScreenSize().Width);
 	LightCullingShader.SetUniform("uScreenSizeY", RDI->GetScreenSize().Height);
-	LightCullingShader.SetUniform("uWorkGroupsX", (int)WorkGroupsX);
-	LightCullingShader.SetUniform("uWorkGroupsY", (int)WorkGroupsY);
 	LightCullingShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
 
 	// Bind depth map texture to texture location 4 (which will not be used by any model texture)
@@ -705,10 +598,8 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 	// Lighting uniforms
 	const EntityTransform& cameraTransform = sceneView.CameraCmp->GetTransform();
-	LightAccumulationShader.SetUniform("uTime", time);
 	LightAccumulationShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
 	LightAccumulationShader.SetUniform("uWorkGroupsX", (int)WorkGroupsX);
-	LightAccumulationShader.SetUniform("uWorkGroupsY", (int)WorkGroupsY);
 	LightAccumulationShader.SetUniform("uViewPosition", cameraTransform.GetGlobalTranslation());
 
 	int dirLightsCount = 0;
@@ -863,9 +754,6 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 
 	const EntityTransform& cameraTransform = sceneView.CameraCmp->GetTransform();
 	TranslucentShader.BindProgram();
-	TranslucentShader.SetUniform("uLightCount", (int)std::min((int)sceneView.PointLights.GetSize(), MAX_NUM_LIGHTS));
-	TranslucentShader.SetUniform("uWorkGroupsX", (int)WorkGroupsX);
-	TranslucentShader.SetUniform("uWorkGroupsY", (int)WorkGroupsY);
 	TranslucentShader.SetUniform("uViewPosition", cameraTransform.GetGlobalTranslation());
 
 	int dirLightsCount = 0;

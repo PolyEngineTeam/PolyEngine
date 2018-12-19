@@ -68,7 +68,6 @@ uniform sampler2D uMetallicMap;
 uniform sampler2D uNormalMap;
 uniform sampler2D uAmbientOcclusionMap;
 
-uniform float uTime;
 uniform Material uMaterial;
 
 uniform DirectionalLight uDirectionalLight[8];
@@ -77,6 +76,7 @@ uniform int uDirectionalLightCount;
 uniform int uLightCount;
 uniform int uWorkGroupsX;
 uniform int uWorkGroupsY;
+uniform int uWorkGroupsDummy;
 
 layout(location = 0) out vec4 oColor;
 layout(location = 1) out vec4 oNormal;
@@ -198,12 +198,10 @@ void main()
 	// reflectance equation
 	vec3 Lo = vec3(0.0);
 
-	ivec2 WorkGroupSize = ivec2(16, 16);
-	ivec2 NumWorkGroups = ivec2(uWorkGroupsX, uWorkGroupsY);
-	ivec2 WorkGroupID = (ivec2(gl_FragCoord.xy) / WorkGroupSize);
-	uint IndexWorkGroup = WorkGroupID.y * NumWorkGroups.x + WorkGroupID.x;
+	int WorkGroupSize = 16;
+	ivec2 WorkGroupID = ivec2(gl_FragCoord.xy) / WorkGroupSize;
+	uint IndexWorkGroup = WorkGroupID.y * uWorkGroupsX + WorkGroupID.x;
 	uint TileOffset = IndexWorkGroup * MAX_NUM_LIGHTS;
-	
 	
 	uint Count = uint(uLightCount);
 	for (uint i = 0; i < Count; ++i)

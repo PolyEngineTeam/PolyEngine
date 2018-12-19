@@ -31,8 +31,6 @@ uniform mat4 uClipFromWorld;
 uniform mat4 uClipFromView;
 uniform int uScreenSizeX;
 uniform int uScreenSizeY;
-uniform int uWorkGroupsX;
-uniform int uWorkGroupsY;
 uniform int uLightCount;
 
 shared uint sMinDepthInt;
