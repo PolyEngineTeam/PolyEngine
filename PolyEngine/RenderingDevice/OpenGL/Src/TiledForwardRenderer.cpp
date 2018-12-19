@@ -555,7 +555,6 @@ void TiledForwardRenderer::ComputeLightCulling(const SceneView& sceneView)
 void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 {
 	// gConsole.LogInfo("TiledForwardRenderer::AccumulateLights");
-	float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.SceneData, eEngineTimer::GAMEPLAY);
 
 	ScreenSize screenSize = RDI->GetScreenSize();
 	glViewport(0, 0, screenSize.Width, screenSize.Height);
