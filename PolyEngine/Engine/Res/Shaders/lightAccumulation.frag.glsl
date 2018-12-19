@@ -75,8 +75,6 @@ uniform int uDirectionalLightCount;
 
 uniform int uLightCount;
 uniform int uWorkGroupsX;
-uniform int uWorkGroupsY;
-uniform int uWorkGroupsDummy;
 
 layout(location = 0) out vec4 oColor;
 layout(location = 1) out vec4 oNormal;
