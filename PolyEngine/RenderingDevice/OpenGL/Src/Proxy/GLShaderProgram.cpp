@@ -215,7 +215,7 @@ void GLShaderProgram::RegisterUniform(const String& type, const String& name)
 		return;
 
 	GLint location = 0;
-	location = glGetUniformLocation(ProgramHandle, name.GetTrimmed().GetCStr());
+	location = glGetUniformLocation(ProgramHandle, name.GetCStr());
 	if (location == -1)
 	{
 		gConsole.LogError("Invalid uniform location for {}. Probably optimized out.", name);
