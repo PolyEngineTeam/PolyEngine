@@ -49,7 +49,7 @@ namespace Poly {
 
 		SceneView(Scene* s, const Viewport& v)
 			: SceneData(s), ViewportData(v), Rect(v.GetRect()), CameraCmp(v.GetCamera()),
-			DirShadowCasterQueue(DistanceToCameraComparator(Vector::ZERO,										eSortOrderType::FRONT_TO_BACK), 0), // filled by GLRenderingDevice::CullShadowCasters
+			DirShadowCastersQueue(DistanceToCameraComparator(Vector::ZERO,										eSortOrderType::FRONT_TO_BACK), 0), // filled by GLRenderingDevice::CullShadowCasters
 			OpaqueQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(),		eSortOrderType::FRONT_TO_BACK), 0),
 			TranslucentQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(),	eSortOrderType::BACK_TO_FRONT), 0),
 			ParticleQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(),		eSortOrderType::BACK_TO_FRONT), 0)
@@ -63,7 +63,7 @@ namespace Poly {
 		const CameraComponent* CameraCmp;
 		const RenderingSettingsComponent* SettingsCmp;
 		
-		PriorityQueue<const MeshRenderingComponent*, DistanceToCameraComparator> DirShadowCasterQueue;
+		PriorityQueue<const MeshRenderingComponent*, DistanceToCameraComparator> DirShadowCastersQueue;
 		PriorityQueue<const MeshRenderingComponent*, DistanceToCameraComparator> OpaqueQueue;
 		PriorityQueue<const MeshRenderingComponent*, DistanceToCameraComparator> TranslucentQueue;
 		PriorityQueue<const ParticleComponent*, DistanceToCameraComparator> ParticleQueue; // TODO: make translucent and particles one queue with common priority

@@ -233,7 +233,7 @@ void ShadowMapPass::RenderPCF(const SceneView& sceneView)
 
 	ShadowMapShader.BindProgram();
 
-	MeshQueue dirShadowCasterQueue(sceneView.DirShadowCasterQueue);
+	MeshQueue dirShadowCasterQueue(sceneView.DirShadowCastersQueue);
 	while (dirShadowCasterQueue.GetSize() > 0)
 	{
 		const MeshRenderingComponent* meshCmp = dirShadowCasterQueue.Pop();
@@ -269,7 +269,7 @@ void ShadowMapPass::RenderEVSM(const SceneView& sceneView)
 
 	ShadowMapShader.BindProgram();
 
-	MeshQueue dirShadowCasterQueue(sceneView.DirShadowCasterQueue);
+	MeshQueue dirShadowCasterQueue(sceneView.DirShadowCastersQueue);
 	while (dirShadowCasterQueue.GetSize() > 0)
 	{
 		const MeshRenderingComponent* meshCmp = dirShadowCasterQueue.Pop();
