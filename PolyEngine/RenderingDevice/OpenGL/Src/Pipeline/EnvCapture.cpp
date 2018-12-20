@@ -22,15 +22,6 @@ EnvCapture::EnvCapture(GLRenderingDevice* rdi)
 	CubemapIrradianceShader("Shaders/cubemapIrradiance.vert.glsl", "Shaders/cubemapIrradiance.frag.glsl"),
 	PrefilterCubemapShader("Shaders/prefilterCubemap.vert.glsl", "Shaders/prefilterCubemap.frag.glsl")
 {
-	EquirectangularToCubemapShader.RegisterUniform("sampler2D", "uEquirectangularMap");
-	EquirectangularToCubemapShader.RegisterUniform("mat4", "uClipFromModel");
-
-	CubemapIrradianceShader.RegisterUniform("sampler2D", "uEnvCubemap");
-	CubemapIrradianceShader.RegisterUniform("mat4", "uClipFromModel");
-
-	PrefilterCubemapShader.RegisterUniform("sampler2D", "uEnvironmentMap");
-	PrefilterCubemapShader.RegisterUniform("mat4", "uClipFromModel");
-	PrefilterCubemapShader.RegisterUniform("float", "uRoughness");
 }
 
 EnvCapture::~EnvCapture()

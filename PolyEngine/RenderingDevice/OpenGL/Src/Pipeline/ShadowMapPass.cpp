@@ -81,16 +81,6 @@ ShadowMapPass::ShadowMapPass(GLRenderingDevice* rdi)
 	EVSMResolveShader("Shaders/hdr.vert.glsl", "Shaders/evsm.resolve.frag.glsl"),
 	EVSMBlurShader("Shaders/hdr.vert.glsl", "Shaders/evsm.blur.frag.glsl")
 {
-	ShadowMapShader.RegisterUniform("mat4", "uClipFromModel");
-
-	EVSMResolveShader.RegisterUniform("sampler2D", "uDepth");
-	EVSMResolveShader.RegisterUniform("float", "uNear");
-	EVSMResolveShader.RegisterUniform("float", "uFar");
-	EVSMResolveShader.RegisterUniform("float", "uPositiveExponent");
-	EVSMResolveShader.RegisterUniform("float", "uNegativeExponent");
-
-	EVSMBlurShader.RegisterUniform("sampler2D", "uEVSMap");
-	EVSMBlurShader.RegisterUniform("int", "uIsHorizontal");
 }
 
 ShadowMapPass::~ShadowMapPass()
