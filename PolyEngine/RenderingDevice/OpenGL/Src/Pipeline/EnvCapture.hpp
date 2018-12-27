@@ -21,16 +21,12 @@ namespace Poly
 
 		void UpdateEnv(const SkyboxWorldComponent* skyboxCmp);
 
-		bool GetIsDirty() const { return IsDirty; };
-
 		GLuint GetHDRPanorama() const { return HDRPanorama; };
 		GLuint GetEnvCubemap() const { return EnvCubemap; };
 		GLuint GetIrradianceMap() const { return IrradianceMap; };
 		GLuint GetPrefilterMap() const { return PrefilterMap; };
 
 	private:
-
-		bool IsDirty = true;
 
 		GLRenderingDevice* RDI;
 

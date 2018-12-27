@@ -39,11 +39,7 @@ public:
 	ViewportInspectorWidget* GetViewportInspector() { return ViewportInspector; }
 
 public slots:
-	void ProjectOpenedSlot(const ProjectConfig* config);
-	void ProjectClosedSlot();
-
-	void EngineCreatedSlot(Engine* engine);
-	void EngineInitializedSlot();
+	void EngineInitializedSlot(Engine* engine);
 	void EngineDeinitializedSlot();
 	void StateChangedSlot(PolyEditor::eEngineState state);
 

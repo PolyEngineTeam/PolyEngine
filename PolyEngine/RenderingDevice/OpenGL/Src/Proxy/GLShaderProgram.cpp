@@ -30,6 +30,8 @@ GLShaderProgram::GLShaderProgram(const String& compute)
 
 GLShaderProgram::GLShaderProgram(const String& vertex, const String& fragment)
 {
+	FragmentProgramPath = fragment;
+
 	gConsole.LogDebug("Creating shader program {} {}", vertex, fragment);
 	ProgramHandle = glCreateProgram();
 	if (ProgramHandle == 0)
@@ -146,6 +148,10 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 	}
 
 	ShaderCode[type] = sb.GetString();
+
+	String compiledPath = EvaluateFullResourcePath(eResourceSource::ENGINE, shaderName + String(".dump"));
+	gConsole.LogInfo("GLShaderProgram::LoadShader debugPath: {}", compiledPath);
+	SaveTextFileRelative(eResourceSource::ENGINE, shaderName + String(".dump"), ShaderCode[type]);
 }
 
 void GLShaderProgram::CompileShader(GLShaderProgram::eShaderUnitType type)
@@ -213,6 +219,7 @@ void GLShaderProgram::RegisterUniform(const String& type, const String& name)
 	if (location == -1)
 	{
 		gConsole.LogError("Invalid uniform location for {}. Probably optimized out.", name);
+		CHECK_GL_ERR();
 		return;
 	}
 	Uniforms[name] = UniformInfo(type, location);
@@ -232,6 +239,10 @@ void GLShaderProgram::SetUniform(const String& name, int val)
 		HEAVY_ASSERTE(isTypeValid, "Invalid uniform type!");
 		glUniform1i(it->second.Location, val);
 	}
+	else
+	{
+		gConsole.LogError("Not found Uniform {} type int, in {}", name, FragmentProgramPath);
+	}
 }
 
 void GLShaderProgram::SetUniform(const String& name, uint val)
@@ -247,6 +258,10 @@ void GLShaderProgram::SetUniform(const String& name, uint val)
 		HEAVY_ASSERTE(isTypeValid, "Invalid uniform type!");
 		glUniform1i(it->second.Location, val);
 	}
+	else
+	{
+		gConsole.LogError("Not found Uniform {} type uint, in {}", name, FragmentProgramPath);
+	}
 }
 
 void GLShaderProgram::SetUniform(const String& name, float val)
@@ -256,6 +271,10 @@ void GLShaderProgram::SetUniform(const String& name, float val)
 	{
 		HEAVY_ASSERTE(it->second.TypeName == "float", "Invalid uniform type!");
 		glUniform1f(it->second.Location, val);
+	}
+	else
+	{
+		gConsole.LogError("Not found Uniform {} type float, in {}", name, FragmentProgramPath);
 	}
 }
 
@@ -267,6 +286,10 @@ void GLShaderProgram::SetUniform(const String & name, float val1, float val2)
 		HEAVY_ASSERTE(it->second.TypeName == "vec2", "Invalid uniform type!");
 		glUniform2f(it->second.Location, val1, val2);
 	}
+	else
+	{
+		gConsole.LogError("Not found Uniform {} type vec2, in {}", name, FragmentProgramPath);
+	}
 }
 
 void GLShaderProgram::SetUniform(const String& name, const Vector& val)
@@ -276,6 +299,10 @@ void GLShaderProgram::SetUniform(const String& name, const Vector& val)
 	{
 		HEAVY_ASSERTE(it->second.TypeName == "vec4", "Invalid uniform type!");
 		glUniform4f(it->second.Location, val.X, val.Y, val.Z, val.W);
+	}
+	else
+	{
+		gConsole.LogError("Not found Uniform {} type vec4, in {}", name, FragmentProgramPath);
 	}
 }
 
@@ -287,6 +314,10 @@ void GLShaderProgram::SetUniform(const String& name, const Color& val)
 		HEAVY_ASSERTE(it->second.TypeName == "vec4", "Invalid uniform type!");
 		glUniform4f(it->second.Location, val.R, val.G, val.B, val.A);
 	}
+	else
+	{
+		gConsole.LogError("Not found Uniform {} type vec4, in {}", name, FragmentProgramPath);
+	}
 }
 
 void GLShaderProgram::SetUniform(const String& name, const Matrix& val)
@@ -296,6 +327,10 @@ void GLShaderProgram::SetUniform(const String& name, const Matrix& val)
 	{
 		HEAVY_ASSERTE(it->second.TypeName == "mat4", "Invalid uniform type!");
 		glUniformMatrix4fv(it->second.Location, 1, GL_FALSE, val.GetTransposed().GetDataPtr());
+	}
+	else
+	{
+		gConsole.LogError("Not found Uniform {} type mat4, in {}", name, FragmentProgramPath);
 	}
 }
 
