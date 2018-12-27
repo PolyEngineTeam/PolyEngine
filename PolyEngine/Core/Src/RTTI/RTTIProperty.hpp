@@ -8,6 +8,7 @@
 #include <Collections/Dynarray.hpp>
 #include <RTTI/CustomTypeTraits.hpp>
 #include <Utils/Logger.hpp>
+#include <vector>
 
 namespace Poly {
 
@@ -55,7 +56,7 @@ namespace Poly {
 			RAW_PTR, // Only for RTTIBase objects
 			
 			// collections
-			DYNARRAY,
+			LIST,
 			ORDERED_MAP,
 			ENUM_ARRAY,
 
@@ -176,7 +177,26 @@ namespace Poly {
 		template <typename ValueType> Property CreateDynarrayPropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t&& factory_func)
 		{
 			std::shared_ptr<CollectionPropertyImplDataBase> implData = std::shared_ptr<CollectionPropertyImplDataBase>{ new DynarrayPropertyImplData<ValueType>(flags, std::move(factory_func)) };
-			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::DYNARRAY, std::move(implData) };
+			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::LIST, std::move(implData) };
+		}
+		//-----------------------------------------------------------------------------------------------------------------------
+		// std::vector serialization property impl
+
+		template <typename ValueType>
+		struct StdVectorPropertyImplData final : public CollectionPropertyImplDataBase
+		{
+			StdVectorPropertyImplData(ePropertyFlag flags, FactoryFunc_t&& factory_func) { PropertyType = CreatePropertyInfo<ValueType>(0, "value", flags, std::move(factory_func)); }
+
+			void Resize(void* collection, size_t size) const override { reinterpret_cast<std::vector<ValueType>*>(collection)->resize(size); }
+			size_t GetSize(const void* collection) const override { return reinterpret_cast<const std::vector<ValueType>*>(collection)->size(); }
+			void* GetValue(void* collection, size_t idx) const override { return &((*reinterpret_cast<std::vector<ValueType>*>(collection))[idx]); }
+			const void* GetValue(const void* collection, size_t idx) const override { return &((*reinterpret_cast<const std::vector<ValueType>*>(collection))[idx]); }
+		};
+
+		template <typename ValueType> Property CreateStdVectorPropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t&& factory_func)
+		{
+			std::shared_ptr<CollectionPropertyImplDataBase> implData = std::shared_ptr<CollectionPropertyImplDataBase>{ new StdVectorPropertyImplData<ValueType>(flags, std::move(factory_func)) };
+			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::LIST, std::move(implData) };
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------
@@ -485,6 +505,7 @@ namespace Poly {
 			return constexpr_match(
 				std::is_enum<T>{},			[&](auto lazy) { return CreateEnumPropertyInfo<LAZY_TYPE(T)>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsDynarray<T>{},		[&](auto lazy) { return CreateDynarrayPropertyInfo<typename Trait::DynarrayValueType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
+				Trait::IsStdVector<T>{},	[&](auto lazy) { return CreateStdVectorPropertyInfo<typename Trait::StdVectorValueType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsOrderedMap<T>{},	[&](auto lazy) { return CreateOrderedMapPropertyInfo<typename Trait::OrderedMapType<LAZY_TYPE(T)>::keyType, typename Trait::OrderedMapType<LAZY_TYPE(T)>::valueType, Trait::OrderedMapType<LAZY_TYPE(T)>::bFactor>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsEnumArray<T>{},	[&](auto lazy) { return CreateEnumArrayPropertyInfo<typename Trait::EnumArrayType<LAZY_TYPE(T)>::enumType, typename Trait::EnumArrayType<LAZY_TYPE(T)>::valueType>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsEnumFlags<T>{},	[&](auto lazy) { return CreateEnumFlagsPropertyInfo<typename Trait::EnumFlagsType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
