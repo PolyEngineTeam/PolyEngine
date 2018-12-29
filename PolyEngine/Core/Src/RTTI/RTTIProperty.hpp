@@ -8,7 +8,6 @@
 #include <Collections/Dynarray.hpp>
 #include <RTTI/CustomTypeTraits.hpp>
 #include <Utils/Logger.hpp>
-#include <vector>
 
 namespace Poly {
 
