@@ -6,7 +6,7 @@ find_package(Vorbis REQUIRED)
 #find_package(Box2D REQUIRED)
 #find_package(Bullet REQUIRED)
 find_package(RapidJSON REQUIRED)
-find_package(STB REQUIRED)
+#find_package(STB REQUIRED)
 
 set(POLYENGINE_INCLUDE Src)
 

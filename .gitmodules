@@ -22,3 +22,6 @@
 [submodule "PolyEngine/ThirdParty/galogen"]
 	path = PolyEngine/ThirdParty/galogen
 	url = https://github.com/google/galogen
+[submodule "PolyEngine/ThirdParty/stb"]
+	path = PolyEngine/ThirdParty/stb
+	url = https://github.com/nothings/stb
