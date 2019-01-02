@@ -6,7 +6,7 @@ image:
 - Visual Studio 2017
 
 configuration:
-- Release
+# - Release # Disabled for now due to long build times and lack of parallelism
 - Debug
 
 platform:
@@ -17,7 +17,7 @@ environment:
   - arch: Win64
     QTDIR: C:\Qt\5.10.1\msvc2017_64
     PYTHON: C:\Python36
-    PATH: '%PATH%;%QTDIR%\bin;' # Always try to use Python 3.6
+    PATH: '%PATH%;%QTDIR%\bin;'
 
   # - arch: #does not work, Release|x64 not a valid target
 matrix:
