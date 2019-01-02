@@ -1,0 +1,1 @@
+set(RapidJSON_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/rapidjson/include PARENT_SCOPE)
