@@ -15,13 +15,7 @@ target_include_directories(${ENGINE_TARGET}
 			${POLYENGINE_INCLUDE} 
 	PRIVATE 
 			${BULLET_INCLUDE_DIRS}
-			${STB_INCLUDE_DIRS}
-			${ASSIMP_INCLUDE_DIR} 
-			${IMGUI_INCLUDE_DIRS}
-			${BOX2D_INCLUDE_DIRS}
-			${FREETYPE_INCLUDE_DIRS}
-			${OpenAL_INCLUDE_DIRS}
-			${VORBIS_INCLUDE_DIRS} )
+			${STB_INCLUDE_DIRS} )
 
 # Static libraries need to have all symbols exported in the shared library on *NIX systems.
 if(LINUX)

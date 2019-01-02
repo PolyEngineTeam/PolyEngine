@@ -51,8 +51,8 @@ add_subdirectory(assimp/contrib/irrXML)
 add_definitions( -DASSIMP_BUILD_NO_C4D_IMPORTER )
 add_subdirectory(assimp/code)
 
-# Export assimp include to the solution
-set(ASSIMP_INCLUDE_DIR ${ASSIMP_INCLUDE_DIR} PARENT_SCOPE)
+# Export assimp include
+set_target_properties(assimp PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${ASSIMP_INCLUDE_DIR}")
 
 ###
 # Box2D
@@ -78,7 +78,7 @@ set(LIB_INSTALL_DIR lib${LIB_SUFFIX})
 
 # The Box2D library.
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Box2D/Box2D/Box2D)
-set(BOX2D_INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR}/Box2D/Box2D PARENT_SCOPE)
+set_target_properties(Box2D PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_LIST_DIR}/Box2D/Box2D")
 
 ###
 # Bullet3
@@ -302,7 +302,7 @@ add_library(freetype
   ${BASE_SRCS}
 )
 
-set(FREETYPE_INCLUDE_DIRS ${FT2_SRC_DIR}/include PARENT_SCOPE)
+set_target_properties(freetype PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${FT2_SRC_DIR}/include")
 
 set_target_properties(
   freetype PROPERTIES
@@ -377,7 +377,7 @@ file(GLOB IMGUI_HEADERS  ${CMAKE_CURRENT_LIST_DIR}/imgui/*.h)
 add_library(Imgui STATIC ${IMGUI_SOURCES} ${IMGUI_HEADERS})
 # GCC complains during linking of shared libraries that use this target (Engine, RenderingDevice)
 set_property(TARGET Imgui PROPERTY POSITION_INDEPENDENT_CODE ON)
-set(IMGUI_INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR}/imgui PARENT_SCOPE)
+set_target_properties(Imgui PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_LIST_DIR}/imgui")
 
 ###
 # SDL2
@@ -2274,8 +2274,7 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(OGG DEFAULT_MSG OGG_INCLUDE_DIRS OGG_LIBRARIES)
 
 add_subdirectory(${VORBIS_SOURCE_DIR}/lib)
-
-set(VORBIS_INCLUDE_DIRS ${VORBIS_SOURCE_DIR}/include PARENT_SCOPE)
+set_target_properties(vorbis PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${VORBIS_SOURCE_DIR}/include")
 
 ###
 # OpenAL
@@ -3749,4 +3748,4 @@ IF(WIN32 AND MINGW AND ALSOFT_BUILD_IMPORT_LIB AND NOT LIBTYPE STREQUAL "STATIC"
     ENDIF()
 ENDIF()
 
-set(OpenAL_INCLUDE_DIRS ${OpenAL_SOURCE_DIR}/include PARENT_SCOPE)
+set_target_properties(OpenAL PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${OpenAL_SOURCE_DIR}/include")
