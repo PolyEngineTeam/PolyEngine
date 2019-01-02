@@ -25,3 +25,6 @@
 [submodule "PolyEngine/ThirdParty/stb"]
 	path = PolyEngine/ThirdParty/stb
 	url = https://github.com/nothings/stb
+[submodule "PolyEngine/ThirdParty/rapidjson"]
+	path = PolyEngine/ThirdParty/rapidjson
+	url = https://github.com/Tencent/rapidjson

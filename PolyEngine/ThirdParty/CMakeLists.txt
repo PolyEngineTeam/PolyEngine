@@ -2173,3 +2173,8 @@ add_executable(Galogen ${GALOGEN_SRCS})
 # STB
 ###
 set(STB_INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR}/stb PARENT_SCOPE)
+
+###
+# RapidJSON
+###
+set(RapidJSON_INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR}/rapidjson/include PARENT_SCOPE)
