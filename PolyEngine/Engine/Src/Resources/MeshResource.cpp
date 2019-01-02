@@ -13,7 +13,8 @@ MeshResource::MeshResource(const String& path)
 	Assimp::Importer importer;
 	const aiScene *scene = importer.ReadFile(path.GetCStr(), aiProcessPreset_TargetRealtime_Fast);
 
-	if (!scene) {
+	if (!scene)
+	{
 		gConsole.LogError("Error Importing Asset: {}", importer.GetErrorString());
 		throw ResourceLoadFailedException();
 	}
@@ -24,14 +25,16 @@ MeshResource::MeshResource(const String& path)
 	Vector min(maxFloat, maxFloat, maxFloat);
 	Vector max(-maxFloat, -maxFloat, -maxFloat);
 	
-	for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
+	for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
+	{
 		SubMeshes.PushBack(new SubMesh(path, scene->mMeshes[i], scene->mMaterials[scene->mMeshes[i]->mMaterialIndex]));
 
 		min = Vector::Min(min, SubMeshes[i]->GetAABox().GetMin());
 		max = Vector::Max(max, SubMeshes[i]->GetAABox().GetMax());
 	}
 
-	for (size_t i = 0; i < scene->mNumAnimations; ++i) {
+	for (size_t i = 0; i < scene->mNumAnimations; ++i)
+	{
 		Animations.PushBack(new Animation(scene->mAnimations[i]));
 	}
 

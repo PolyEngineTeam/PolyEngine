@@ -45,7 +45,6 @@
 #include <Utils/EnumUtils.hpp>
 #include <Utils/OutputStream.hpp> 
 
-
 // ECS
 #include <ECS/Scene.hpp>
 #include <ECS/Entity.hpp>
@@ -69,10 +68,6 @@
 // UI
 #include <UI/ScreenSpaceTextComponent.hpp>
 
-// Movement
-// @todo remove this include!
-#include <Movement/MovementSystem.hpp>
-
 // Debugging
 #include <Debugging/DebugDrawComponents.hpp>
 
@@ -91,4 +86,5 @@
 // SDL
 #include <SDL.h>
 
+// Imgui
 #include <imgui.h>

@@ -92,6 +92,15 @@ namespace Poly
 		/// <returns>Reference to itself.</returns>
 		Matrix& SetPerspective(Angle fov, float aspect, float near, float far);
 
+		/// <summary>Initializes matrix with orthographics projection in range of [0, 1]</summary>
+		/// <param name="top">Top dimension.</param>
+		/// <param name="bottom">Bottom dimension.</param>
+		/// <param name="left">Left dimension.</param>
+		/// <param name="right">Right dimension</param>
+		/// <param name="near">Near Z plane.</param>
+		/// <param name="far">Far Z plane.</param>
+		/// <returns>Reference to itself.</returns>
+		Matrix& SetOrthographicZO(float top, float bottom, float left, float right, float near, float far);
 
 		/// <summary>Initializes matrix with orthographics projection</summary>
 		/// <param name="top">Top dimension.</param>
