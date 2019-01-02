@@ -52,7 +52,9 @@
 
 // Sound
 #include <ogg/ogg.h>
+SILENCE_GCC_WARNING(-Wunused-variable, "Surpressing gcc vorbis warnings")
 #include <vorbis/vorbisfile.h>
+UNSILENCE_GCC_WARNING()
 
 // Box2D
 #include <Box2D/Box2D.h>

@@ -16,7 +16,8 @@ environment:
   matrix:
   - arch: Win64
     QTDIR: C:\Qt\5.10.1\msvc2017_64
-    PATH: '%PATH%;%QTDIR%\bin;'
+    PYTHON: C:\Python36
+    PATH: '%PATH%;%QTDIR%\bin;' # Always try to use Python 3.6
 
   # - arch: #does not work, Release|x64 not a valid target
 matrix:
@@ -32,12 +33,15 @@ init:
 - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" ( set generator="Visual Studio 15 2017%arch%" )
 - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" ( set generator="Visual Studio 14 2015%arch%" )
 - echo %generator%
+- "%PYTHON%\\python.exe -m pip install gitpython"
 
 before_build:
 - cmd: |-
     cd C:\projects\PolyEngine\PolyEngine\Scripts
     cmake --version
-    py ProjectTool.py -p
+- "%PYTHON%\\python.exe --version"
+- "%PYTHON%\\python.exe .\\InitializeSubmodules.py"
+- "%PYTHON%\\python.exe .\\ProjectTool.py -p"
 
 build:
   project: C:\projects\PolyEngine\PolyEngine\build\PolyEngine.sln

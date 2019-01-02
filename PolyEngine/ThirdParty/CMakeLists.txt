@@ -85,7 +85,7 @@ set(BOX2D_INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR}/Box2D/Box2D PARENT_SCOPE)
 ###
 
 option(BUILD_BULLET3 "Set when you want to build Bullet 3" OFF)
-set(BUILD_SHARED_LIBS ON)
+set(BUILD_SHARED_LIBS OFF)
 
 if(BUILD_BULLET3)
   set(BULLET3_LIBRARIES 
@@ -142,6 +142,7 @@ option(FT_WITH_HARFBUZZ "Improve auto-hinting of OpenType fonts." OFF)
 # Add local cmake modules
 list(APPEND CMAKE_MODULE_PATH ${FT2_SRC_DIR}/builds/cmake)
 
+set(BUILD_SHARED_LIBS ON)
 if (BUILD_FRAMEWORK)
   if (NOT "${CMAKE_GENERATOR}" STREQUAL "Xcode")
     message(FATAL_ERROR
@@ -315,11 +316,9 @@ if (WIN32)
     freetype PRIVATE _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_WARNINGS)
 endif ()
 
-if (BUILD_SHARED_LIBS)
-  set_target_properties(freetype PROPERTIES
-    VERSION ${LIBRARY_VERSION}
-    SOVERSION ${LIBRARY_SOVERSION})
-endif ()
+#if (BUILD_SHARED_LIBS)
+#  set_target_properties(freetype PROPERTIES )
+#endif ()
 
 target_include_directories(
   freetype BEFORE  # Pick up ftconfig.h and ftoption.h generated above.
@@ -2103,13 +2102,9 @@ if(SDL_SHARED)
       OUTPUT_NAME "SDL2-${LT_RELEASE}")
   elseif(UNIX AND NOT ANDROID)
     set_target_properties(SDL2 PROPERTIES
-      VERSION ${LT_VERSION}
-      SOVERSION ${LT_REVISION}
       OUTPUT_NAME "SDL2-${LT_RELEASE}")
   else()
     set_target_properties(SDL2 PROPERTIES
-      VERSION ${SDL_VERSION}
-      SOVERSION ${LT_REVISION}
       OUTPUT_NAME "SDL2")
   endif()
   if(MSVC AND NOT LIBC)
@@ -2197,22 +2192,6 @@ set(PROJECT_VERSION_MINOR ${CMAKE_MATCH_2})
 set(PROJECT_VERSION_PATCH ${CMAKE_MATCH_3})
 set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
 
-# Helper function to get version-info
-function(get_version_info result current_var_name age_var_name revision_var_name)
-    string(REGEX MATCH "${current_var_name}=([0-9]*)" DUMMY ${CONFIGURE_AC_CONTENTS})
-    set(VERSION_INFO_CURRENT ${CMAKE_MATCH_1})
-
-    string(REGEX MATCH "${age_var_name}=([0-9]*)" DUMMY ${CONFIGURE_AC_CONTENTS})
-    set(VERSION_INFO_AGE ${CMAKE_MATCH_1})
-
-    string(REGEX MATCH "${revision_var_name}=([0-9]*)" DUMMY ${CONFIGURE_AC_CONTENTS})
-    set(VERSION_INFO_REVISION ${CMAKE_MATCH_1})
-
-    math(EXPR VERSION_INFO_CURRENT_MINUS_AGE "${VERSION_INFO_CURRENT} - ${VERSION_INFO_AGE}")
-
-    set(${result} "${VERSION_INFO_CURRENT_MINUS_AGE}.${VERSION_INFO_AGE}.${VERSION_INFO_REVISION}" PARENT_SCOPE)
-endfunction()
-
 # Configure config_type.h
 check_include_files(inttypes.h INCLUDE_INTTYPES_H)
 check_include_files(stdint.h INCLUDE_STDINT_H)
@@ -2248,11 +2227,10 @@ endif()
 add_library(ogg ${OGG_HEADERS} ${OGG_SOURCES})
 target_include_directories(ogg PUBLIC ${OGG_SOURCE_DIR}/include ${OGG_BIN_DIR}/include)
 
-get_version_info(OGG_VERSION_INFO "LIB_CURRENT" "LIB_AGE" "LIB_REVISION")
 set_target_properties(
     ogg PROPERTIES
-    SOVERSION ${OGG_VERSION_INFO}
     PUBLIC_HEADER "${OGG_HEADERS}"
+    INTERFACE_INCLUDE_DIRECTORIES "${OGG_SOURCE_DIR}/include;${OGG_BIN_DIR}/include"
 )
 
 
@@ -2290,13 +2268,14 @@ function(get_version_info result current_var_name age_var_name revision_var_name
 endfunction()
 
 # Find ogg dependency
-set(OGG_ROOT ${OGG_SOURCE_DIR})
-find_path(OGG_INCLUDE_DIRS NAMES ogg/ogg.h HINTS ${OGG_ROOT}/include PATH_SUFFIXES ogg)
-find_library(OGG_LIBRARIES NAMES ogg HINTS ${OGG_ROOT}/lib ${OGG_ROOT}/lib64)
+set(OGG_INCLUDE_DIRS ${OGG_SOURCE_DIR}/include)
+set(OGG_LIBRARIES ogg)
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(OGG DEFAULT_MSG OGG_INCLUDE_DIRS OGG_LIBRARIES)
 
 add_subdirectory(${VORBIS_SOURCE_DIR}/lib)
+
+set(VORBIS_INCLUDE_DIRS ${VORBIS_SOURCE_DIR}/include PARENT_SCOPE)
 
 ###
 # OpenAL
@@ -3681,6 +3660,7 @@ CONFIGURE_FILE(
 
 # Add a static library with common functions used by multiple targets
 ADD_LIBRARY(common STATIC ${COMMON_OBJS})
+
 TARGET_COMPILE_DEFINITIONS(common PRIVATE ${CPP_DEFS})
 TARGET_COMPILE_OPTIONS(common PRIVATE ${C_FLAGS})
 
@@ -3733,10 +3713,8 @@ ELSE()
         SET_TARGET_PROPERTIES(${IMPL_TARGET} PROPERTIES PREFIX "")
     ENDIF()
 ENDIF()
-SET_TARGET_PROPERTIES(${IMPL_TARGET} PROPERTIES OUTPUT_NAME ${LIBNAME}
-    VERSION ${LIB_VERSION}
-    SOVERSION ${LIB_MAJOR_VERSION}
-)
+SET_TARGET_PROPERTIES(${IMPL_TARGET} PROPERTIES OUTPUT_NAME ${LIBNAME})
+
 TARGET_COMPILE_DEFINITIONS(${IMPL_TARGET}
     PRIVATE AL_BUILD_LIBRARY AL_ALEXT_PROTOTYPES ${CPP_DEFS})
 TARGET_INCLUDE_DIRECTORIES(${IMPL_TARGET}
@@ -3771,4 +3749,4 @@ IF(WIN32 AND MINGW AND ALSOFT_BUILD_IMPORT_LIB AND NOT LIBTYPE STREQUAL "STATIC"
     ENDIF()
 ENDIF()
 
-set(OpenAL_INCLUDE_DIRS ${OpenAL_SOURCE_DIR}/include PRAENT_DIRECTORY)
+set(OpenAL_INCLUDE_DIRS ${OpenAL_SOURCE_DIR}/include PARENT_SCOPE)

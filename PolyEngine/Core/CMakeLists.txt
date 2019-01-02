@@ -11,7 +11,7 @@ GenerateSourceGoups("${POLYCORE_SRCS}")
 add_library(${CORE_TARGET} SHARED ${POLYCORE_SRCS})
 target_compile_options(${CORE_TARGET} PRIVATE $<$<BOOL:${SIMD}>:${SIMD_FLAGS}>)
 target_compile_definitions(${CORE_TARGET} PRIVATE _CORE DISABLE_SIMD=$<NOT:$<BOOL:${SIMD}>>)
-target_include_directories(${CORE_TARGET} PUBLIC ${POLYCORE_INCLUDE} ${RapidJSON_INCLUDE_DIRS})
+target_include_directories(${CORE_TARGET} PUBLIC ${POLYCORE_INCLUDE} PRIVATE ${RapidJSON_INCLUDE_DIRS})
 
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	target_compile_options(${CORE_TARGET} PRIVATE --coverage -fprofile-arcs -ftest-coverage)
