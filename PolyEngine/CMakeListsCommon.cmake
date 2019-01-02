@@ -11,6 +11,12 @@ OPTION( BUILD_FRAMEWORK
   OFF
 )
 
+if (UNIX AND NOT APPLE)
+   set(LINUX TRUE)
+else()
+   set(LINUX FALSE)
+endif()
+
 # Target names
 set(CORE_TARGET PolyCore)
 set(ENGINE_TARGET PolyEngine)
@@ -141,19 +147,23 @@ endif ()
 if(CMAKE_CXX_COMPILER_ID MATCHES "(Clang|^GNU$)")
 	if(CI_BUILD)
 		add_definitions(-DCI_BUILD)
-	endif()
+   endif()
+   
+   ## CXX only definitions
+   if(CMAKE_CXX_COMPILER_ID MATCHES "GNU") #note(celeborth): this is because as of 09.2018 rapidjson does not provide release which does not raise this errors, and gcc would not accept this as a macro
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-class-memaccess")
+   endif()
+   if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-command-line-argument")
+   endif()
+
+   # Shared compile flags
 	add_compile_options(-pipe)
 	add_compile_options(-Wall)
 	add_compile_options(-Wextra)
 	add_compile_options(-Wno-unused-parameter)
-	add_compile_options(-Wno-ignored-qualifiers)
-	add_compile_options(-Wno-unused-command-line-argument)
-	if(CMAKE_CXX_COMPILER_ID MATCHES "GNU") #note(celeborth): this is because as of 09.2018 rapidjson does not provide release which does not raise this errors, and gcc would not accept this as a macro
-		add_compile_options(-Wno-class-memaccess)
-	endif()
-	add_compile_options(-fvisibility=hidden)
+   add_compile_options(-Wno-ignored-qualifiers)
 	add_compile_options(-fPIC)
-	add_compile_options(-fvisibility-inlines-hidden)
 	add_compile_options($<$<STREQUAL:${CMAKE_GENERATOR},Ninja>:-fdiagnostics-color=always>)
 	add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:-g>)
 	add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:-fno-omit-frame-pointer>)
@@ -258,7 +268,7 @@ macro(GalogenGenerate LibName Api Ver)
 	set(OutputDir "${CMAKE_CURRENT_BINARY_DIR}/${LibName}_${Api}_${Ver}")
 	set(Filename "${OutputDir}/gl")
 
-	file(DOWNLOAD ${KHR_PLATFORM_URL} "${OutputDir}/KHR/khrplatform.h")
+   file(DOWNLOAD ${KHR_PLATFORM_URL} "${OutputDir}/KHR/khrplatform.h")
 
 	add_custom_command(
 		DEPENDS Galogen ${GL_XML_PATH}
@@ -266,7 +276,15 @@ macro(GalogenGenerate LibName Api Ver)
 		COMMAND $<TARGET_FILE:Galogen> ${GL_XML_PATH} --api ${Api} --ver ${Ver} --profile core --filename ${Filename}
 		COMMENT "Generating OpenGL headers API: [${Api}] VER: [${Ver}]\n" VERBATIM )
 
-	add_library(${LibName} STATIC "${Filename}.c")
+   
+   add_library(${LibName} STATIC "${Filename}.c")
+
+   # Link to GLX
+   if (LINUX)
+      find_package(OpenGL REQUIRED)
+      target_link_libraries(${LibName} PUBLIC OpenGL::GLX)
+   endif()
+
 	target_include_directories(${LibName} PUBLIC ${OutputDir})
 	set_target_properties(${LibName} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OutputDir} IMPORTED_LOCATION $<TARGET_FILE:${LibName}>)
 endmacro()
@@ -279,6 +297,8 @@ add_subdirectory(${ENGINE_ROOT_DIR}/ThirdParty ${CMAKE_CURRENT_BINARY_DIR}/Third
 ##
 if(CMAKE_CXX_COMPILER_ID MATCHES "(Clang|^GNU$)")
 	add_compile_options(-Werror)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility-inlines-hidden")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
 		add_compile_options(/WX) #treat warnings as errors

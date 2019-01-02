@@ -85,6 +85,7 @@ TEST_CASE("Optional with non-default-constructible", "[Optional]") {
 			REQUIRE(gCurrentInstances == 1);
 			REQUIRE(opt.Value() == Counting(8));
 			const Counting& possiblyBindingRef = opt.Value();
+         UNUSED(possiblyBindingRef);
 			REQUIRE(gCurrentInstances == 1);
 		}
 		REQUIRE(gCurrentInstances == 0);
