@@ -1,16 +1,6 @@
-#find_package(assimp REQUIRED)
-#find_package(Freetype REQUIRED)
-#find_package(OpenAL REQUIRED)
-#find_package(OGG REQUIRED)
-#find_package(Vorbis REQUIRED)
-#find_package(Box2D REQUIRED)
-#find_package(Bullet REQUIRED)
-#find_package(RapidJSON REQUIRED)
-#find_package(STB REQUIRED)
+set(POLYENGINE_INCLUDE ${CMAKE_CURRENT_LIST_DIR}/Src)
 
-set(POLYENGINE_INCLUDE Src)
-
-file(GLOB_RECURSE POLYENGINE_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
+file(GLOB_RECURSE POLYENGINE_SRCS RELATIVE ${CMAKE_CURRENT_LIST_DIR} 
 	${POLYENGINE_INCLUDE}/*.cpp 
 	${POLYENGINE_INCLUDE}/*.hpp
 	${POLYENGINE_INCLUDE}/*.h
@@ -20,9 +10,20 @@ GenerateSourceGoups("${POLYENGINE_SRCS}")
 add_library(${ENGINE_TARGET} SHARED ${POLYENGINE_SRCS})
 target_compile_definitions(${ENGINE_TARGET} PRIVATE _ENGINE)
 
-target_include_directories(${ENGINE_TARGET} PUBLIC ${POLYENGINE_INCLUDE} PRIVATE ${BULLET_INCLUDE_DIRS} ${STB_INCLUDE_DIRS} ${ASSIMP_INCLUDE_DIR} 
-                        ${IMGUI_INCLUDE_DIRS} ${BOX2D_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} ${OpenAL_INCLUDE_DIRS} ${VORBIS_INCLUDE_DIRS} )
+target_include_directories(${ENGINE_TARGET} 
+	PUBLIC 
+			${POLYENGINE_INCLUDE} 
+	PRIVATE 
+			${BULLET_INCLUDE_DIRS}
+			${STB_INCLUDE_DIRS}
+			${ASSIMP_INCLUDE_DIR} 
+			${IMGUI_INCLUDE_DIRS}
+			${BOX2D_INCLUDE_DIRS}
+			${FREETYPE_INCLUDE_DIRS}
+			${OpenAL_INCLUDE_DIRS}
+			${VORBIS_INCLUDE_DIRS} )
 
+# Static libraries need to have all symbols exported in the shared library on *NIX systems.
 if(LINUX)
 	set(EXPORTED_LIBS -Wl,-whole-archive ${BOX2D_LIBRARIES} ${BULLET_LIBRARIES} -Wl,-no-whole-archive)
 elseif(APPLE)
@@ -33,15 +34,5 @@ endif()
 
 target_link_libraries(${ENGINE_TARGET} PUBLIC ${CORE_TARGET} PRIVATE assimp Imgui freetype OpenAL ogg vorbis vorbisfile ${EXPORTED_LIBS})
 
-if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
-	target_compile_options(${ENGINE_TARGET} PRIVATE --coverage -fprofile-arcs -ftest-coverage)
-	target_link_libraries(${ENGINE_TARGET} PRIVATE -fprofile-arcs -ftest-coverage)
-	add_custom_target(coverage_engine
-	                  COMMAND ${GCOV_COMMAND} -r -o "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${ENGINE_TARGET}.dir/Src" -s ${CMAKE_CURRENT_SOURCE_DIR} ${POLYENGINE_SRCS}
-	                  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-	                  COMMENT "Collecting gcov coverage information for ${ENGINE_TARGET}"
-	)
-endif(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
-
 set_target_properties(${ENGINE_TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "Src/EnginePCH.hpp")
-cotire()
+cotire(${ENGINE_TARGET})

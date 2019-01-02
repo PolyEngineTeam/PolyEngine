@@ -1,6 +1,6 @@
-set(POLYTESTS_INCLUDE Src)
+set(POLYTESTS_INCLUDE ${CMAKE_CURRENT_LIST_DIR}/Src)
 
-file(GLOB_RECURSE POLYTESTS_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
+file(GLOB_RECURSE POLYTESTS_SRCS RELATIVE ${CMAKE_CURRENT_LIST_DIR} 
 	${POLYTESTS_INCLUDE}/*.cpp 
 	${POLYTESTS_INCLUDE}/*.hpp
 	${POLYTESTS_INCLUDE}/*.h)
@@ -13,13 +13,3 @@ ParseAndAddCatchTests(${UNITTESTS_TARGET})
 
 # For calling "make tests"
 add_custom_target(tests COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS ${UNITTESTS_TARGET})
-
-# Coverage generation
-if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
-	add_custom_target(coverage)
-	add_dependencies(coverage_core tests)
-	add_dependencies(coverage_engine tests)
-	add_dependencies(coverage coverage_core coverage_engine)
-endif(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
-
-cotire(${UNITTESTS_TARGET})
