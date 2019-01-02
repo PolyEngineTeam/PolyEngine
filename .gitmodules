@@ -31,3 +31,6 @@
 [submodule "PolyEngine/ThirdParty/ogg"]
 	path = PolyEngine/ThirdParty/ogg
 	url = https://github.com/xiph/ogg
+[submodule "PolyEngine/ThirdParty/vorbis"]
+	path = PolyEngine/ThirdParty/vorbis
+	url = https://github.com/xiph/vorbis
