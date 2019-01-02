@@ -281,8 +281,16 @@ macro(GalogenGenerate LibName Api Ver)
 
    # Link to GLX
    if (LINUX)
-      find_package(OpenGL REQUIRED)
-      target_link_libraries(${LibName} PUBLIC OpenGL::GLX)
+	  find_package(OpenGL REQUIRED)
+	  if (OpenGL_GLX_FOUND)
+		target_link_libraries(${LibName} PUBLIC OpenGL::OpenGL OpenGL::GLX)
+	  else ()
+	  	target_link_libraries(${LibName} PUBLIC OpenGL::GL)
+	  endif()
+   endif()
+
+   if (APPLE) # Workaround for undefined NULL
+   	  target_compile_definitions(${LibName} PRIVATE NULL=0)
    endif()
 
 	target_include_directories(${LibName} PUBLIC ${OutputDir})

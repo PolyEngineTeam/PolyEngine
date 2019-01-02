@@ -22,7 +22,16 @@ target_compile_definitions(${ENGINE_TARGET} PRIVATE _ENGINE)
 
 target_include_directories(${ENGINE_TARGET} PUBLIC ${POLYENGINE_INCLUDE} PRIVATE ${BULLET_INCLUDE_DIRS} ${STB_INCLUDE_DIRS} ${ASSIMP_INCLUDE_DIR} 
                         ${IMGUI_INCLUDE_DIRS} ${BOX2D_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} ${OpenAL_INCLUDE_DIRS} ${VORBIS_INCLUDE_DIRS} )
-target_link_libraries(${ENGINE_TARGET} PUBLIC ${CORE_TARGET} PRIVATE assimp Imgui freetype OpenAL ogg vorbis vorbisfile ${BOX2D_LIBRARIES} ${BULLET_LIBRARIES})
+
+if(LINUX)
+	set(EXPORTED_LIBS -Wl,-whole-archive ${BOX2D_LIBRARIES} ${BULLET_LIBRARIES} -Wl,-no-whole-archive)
+elseif(APPLE)
+	set(EXPORTED_LIBS -Wl,-all_load ${BOX2D_LIBRARIES} ${BULLET_LIBRARIES} -Wl,-noall_load)
+else()
+	set(EXPORTED_LIBS ${BOX2D_LIBRARIES} ${BULLET_LIBRARIES})
+endif()
+
+target_link_libraries(${ENGINE_TARGET} PUBLIC ${CORE_TARGET} PRIVATE assimp Imgui freetype OpenAL ogg vorbis vorbisfile ${EXPORTED_LIBS})
 
 if(GENERATE_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
 	target_compile_options(${ENGINE_TARGET} PRIVATE --coverage -fprofile-arcs -ftest-coverage)
