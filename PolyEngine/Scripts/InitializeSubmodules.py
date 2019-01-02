@@ -14,7 +14,7 @@ patches_folder = os.sep.join([repo_path, 'PolyEngine', 'ThirdParty', 'patches'])
 for submodule in repo_submodules:
     sub_name = os.path.basename(os.path.normpath(submodule.path))
     print('Initializing submodule [{}] in path: {}'.format(sub_name, submodule.path))
-    submodule.update(init=True)
+    submodule.update(init=True, force=True)
     
     patch_name = os.sep.join([patches_folder, '{}.patch'.format(sub_name)])
 

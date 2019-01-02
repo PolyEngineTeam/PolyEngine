@@ -34,3 +34,6 @@
 [submodule "PolyEngine/ThirdParty/vorbis"]
 	path = PolyEngine/ThirdParty/vorbis
 	url = https://github.com/xiph/vorbis
+[submodule "PolyEngine/ThirdParty/openal-soft"]
+	path = PolyEngine/ThirdParty/openal-soft
+	url = https://github.com/kcat/openal-soft

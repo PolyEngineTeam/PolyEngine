@@ -47,8 +47,8 @@
 #include <Utils/OutputStream.hpp> 
 
 // OpenAL
-#include <al.h>
-#include <alc.h>
+#include <AL/al.h>
+#include <AL/alc.h>
 
 // Sound
 #include <ogg/ogg.h>
