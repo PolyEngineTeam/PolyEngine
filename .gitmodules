@@ -16,3 +16,6 @@
 [submodule "PolyEngine/ThirdParty/imgui"]
 	path = PolyEngine/ThirdParty/imgui
 	url = https://github.com/ocornut/imgui
+[submodule "PolyEngine/ThirdParty/SDL2"]
+	path = PolyEngine/ThirdParty/SDL2
+	url = https://github.com/spurious/SDL-mirror

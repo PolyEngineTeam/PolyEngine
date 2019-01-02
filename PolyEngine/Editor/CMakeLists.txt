@@ -1,4 +1,4 @@
-find_package(SDL2 REQUIRED)
+#find_package(SDL2 REQUIRED)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
