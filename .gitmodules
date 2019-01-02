@@ -28,3 +28,6 @@
 [submodule "PolyEngine/ThirdParty/rapidjson"]
 	path = PolyEngine/ThirdParty/rapidjson
 	url = https://github.com/Tencent/rapidjson
+[submodule "PolyEngine/ThirdParty/ogg"]
+	path = PolyEngine/ThirdParty/ogg
+	url = https://github.com/xiph/ogg
