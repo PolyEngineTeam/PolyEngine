@@ -11,5 +11,5 @@ target_compile_options(${CORE_TARGET} PRIVATE $<$<BOOL:${SIMD}>:${SIMD_FLAGS}>)
 target_compile_definitions(${CORE_TARGET} PRIVATE _CORE DISABLE_SIMD=$<NOT:$<BOOL:${SIMD}>>)
 target_include_directories(${CORE_TARGET} PUBLIC ${POLYCORE_INCLUDE} PRIVATE ${RapidJSON_INCLUDE_DIRS})
 
-set_target_properties(${CORE_TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "Src/CorePCH.hpp")
+set_target_properties(${CORE_TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "${CMAKE_CURRENT_LIST_DIR}/Src/CorePCH.hpp")
 cotire(${CORE_TARGET})

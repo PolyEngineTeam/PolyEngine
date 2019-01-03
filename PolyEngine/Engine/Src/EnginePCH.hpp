@@ -1,7 +1,14 @@
 #pragma once
 
-// Core
 #include <Defines.hpp>
+
+// Workaround for not working warning silencing on GCC in PCH (Probably cotire related)
+// @fixme
+#if defined(GCC_COMPILER)
+    #pragma GCC system_header
+#endif
+
+// Core
 #include <RTTI/RTTI.hpp>
 
 // Math
