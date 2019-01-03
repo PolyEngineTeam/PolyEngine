@@ -42,6 +42,8 @@ if(APPLE)
     target_link_libraries(${EDITOR_TARGET} ${Cocoa_LIBRARY})
 endif()
 
+set_target_properties(${EDITOR_TARGET} PROPERTIES FOLDER "Engine" )
+
 # Strange bug in cotire for macOS. Disable it for now. Include paths are not working.
 if(NOT APPLE)
     cotire(${EDITOR_TARGET})

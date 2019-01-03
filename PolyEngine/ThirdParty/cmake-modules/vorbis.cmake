@@ -36,3 +36,7 @@ find_package_handle_standard_args(OGG DEFAULT_MSG OGG_INCLUDE_DIRS OGG_LIBRARIES
 
 add_subdirectory(${VORBIS_SOURCE_DIR}/lib)
 set_target_properties(vorbis PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${VORBIS_SOURCE_DIR}/include")
+
+set_target_properties (vorbis PROPERTIES FOLDER "ThirdParty/vorbis" )
+set_target_properties (vorbisenc PROPERTIES FOLDER "ThirdParty/vorbis" )
+set_target_properties (vorbisfile PROPERTIES FOLDER "ThirdParty/vorbis" )

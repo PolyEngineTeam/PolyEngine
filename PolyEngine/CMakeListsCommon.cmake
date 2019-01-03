@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.2)
 
+# Allow use of folders for projects in some IDEs (VS, Xcode, etc...)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 # Options
 OPTION( BUILD_SHARED_LIBS
   "Build package with shared libraries."
@@ -255,6 +258,8 @@ add_custom_target(
 	COMMENT "Ensuring build prerequisites are met..." VERBATIM
 	DEPENDS Galogen
 )
+
+set_target_properties(Prerequisites PROPERTIES FOLDER "Engine/Misc" )
 
 ###
 # Galogen generation

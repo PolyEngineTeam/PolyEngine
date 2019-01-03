@@ -29,4 +29,5 @@ endif()
 target_link_libraries(${ENGINE_TARGET} PUBLIC ${CORE_TARGET} PRIVATE assimp Imgui freetype OpenAL ogg vorbis vorbisfile ${EXPORTED_LIBS})
 
 set_target_properties(${ENGINE_TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "${CMAKE_CURRENT_LIST_DIR}/Src/EnginePCH.hpp")
+set_target_properties(${ENGINE_TARGET} PROPERTIES FOLDER "Engine" )
 cotire(${ENGINE_TARGET})

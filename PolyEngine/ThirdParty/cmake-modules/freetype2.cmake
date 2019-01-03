@@ -239,3 +239,5 @@ if (HARFBUZZ_FOUND)
   target_include_directories(freetype PRIVATE ${HARFBUZZ_INCLUDE_DIRS})
   list(APPEND PKG_CONFIG_REQUIRED_PRIVATE harfbuzz)
 endif ()
+
+set_target_properties (freetype PROPERTIES FOLDER "ThirdParty" )

@@ -20,3 +20,4 @@ set(LIB_INSTALL_DIR lib${LIB_SUFFIX})
 # The Box2D library.
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Box2D/Box2D/Box2D)
 set_target_properties(Box2D PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/Box2D/Box2D")
+set_target_properties (Box2D PROPERTIES FOLDER "ThirdParty" )

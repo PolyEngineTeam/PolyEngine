@@ -1468,3 +1468,7 @@ IF(WIN32 AND MINGW AND ALSOFT_BUILD_IMPORT_LIB AND NOT LIBTYPE STREQUAL "STATIC"
 ENDIF()
 
 set_target_properties(OpenAL PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${OpenAL_SOURCE_DIR}/include")
+set_target_properties(OpenAL PROPERTIES FOLDER "ThirdParty/OpenAL" )
+set_target_properties(build_version PROPERTIES FOLDER "ThirdParty/OpenAL" )
+set_target_properties(native-tools PROPERTIES FOLDER "ThirdParty/OpenAL" )
+set_target_properties(common PROPERTIES FOLDER "ThirdParty/OpenAL" )

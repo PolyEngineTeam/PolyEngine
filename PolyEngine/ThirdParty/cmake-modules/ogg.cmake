@@ -53,3 +53,4 @@ set_target_properties(
     PUBLIC_HEADER "${OGG_HEADERS}"
     INTERFACE_INCLUDE_DIRECTORIES "${OGG_SOURCE_DIR}/include;${OGG_BIN_DIR}/include"
 )
+set_target_properties (ogg PROPERTIES FOLDER "ThirdParty" )

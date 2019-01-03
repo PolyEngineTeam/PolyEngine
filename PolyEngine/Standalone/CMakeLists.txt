@@ -10,3 +10,5 @@ add_executable(${STANDALONE_TARGET} ${STANDALONE_SRCS})
 target_include_directories(${STANDALONE_TARGET} PRIVATE ${SDL2_INCLUDE_DIRS})
 target_link_libraries(${STANDALONE_TARGET} PRIVATE ${ENGINE_TARGET} ${CORE_TARGET} ${SDL2_LIBRARIES} ${CMAKE_DL_LIBS})
 add_dependencies(${STANDALONE_TARGET} Prerequisites ${GLDEVICE_TARGET})
+
+set_target_properties(${STANDALONE_TARGET} PROPERTIES FOLDER "Engine" )

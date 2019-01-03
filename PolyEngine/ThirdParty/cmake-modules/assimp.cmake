@@ -47,3 +47,7 @@ add_subdirectory(assimp/code)
 
 # Export assimp include
 set_target_properties(assimp PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${ASSIMP_INCLUDE_DIR}")
+set_target_properties (assimp PROPERTIES FOLDER "ThirdParty/assimp" )
+set_target_properties (zlib PROPERTIES FOLDER "ThirdParty/assimp" )
+set_target_properties (zlibstatic PROPERTIES FOLDER "ThirdParty/assimp" )
+set_target_properties (IrrXML PROPERTIES FOLDER "ThirdParty/assimp" )
