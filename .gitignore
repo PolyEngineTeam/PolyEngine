@@ -24,6 +24,7 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Bb]uild/
+[Bb]uild*/
 cmake-build-*
 
 # Windows specific stuff

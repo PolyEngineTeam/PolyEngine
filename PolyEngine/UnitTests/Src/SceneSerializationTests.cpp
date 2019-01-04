@@ -14,7 +14,8 @@ TEST_CASE("Scene serialization tests", "[Scene]")
 {
 	// @todo fix this abomination
 	Engine* engine = new Engine(true);
-	
+   UNUSED(engine);
+
 	{
 		Scene s;
 		DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(&s);
@@ -28,4 +29,7 @@ TEST_CASE("Scene serialization tests", "[Scene]")
 		Scene s;
 		s.DeserializeFromFile("Scene.test");
 	}
+
+   // @fixme this can be uncomented when all issues with engine closing are fixed.
+   //delete engine;
 }

@@ -14,9 +14,6 @@ float maxValue(float zDepth, Angle fov)
 
 std::pair<Vector, bool> RandomBoxPosition(const Vector& size, Angle fov, float aspect, float zNear, float zFar)
 {
-	//const bool
-	const float maxFlt = std::numeric_limits<float>::max();
-
 	Vector position = Poly::RandomVectorRange(-200, 50);
 	if (position.Z != Clamp(position.Z, -zFar, -zNear))
 	{
