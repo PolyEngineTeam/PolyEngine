@@ -80,6 +80,8 @@
 #include <typeindex>
 #include <typeinfo>
 #include <cstdio>
+#include <cfloat>
+#include <cstddef>
 
 // Custom type names
 using u8 = uint8_t;

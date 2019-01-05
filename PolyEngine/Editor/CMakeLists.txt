@@ -1,4 +1,4 @@
-find_package(SDL2 REQUIRED)
+#find_package(SDL2 REQUIRED)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -9,9 +9,9 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
-set(EDITOR_INCLUDE Src)
+set(EDITOR_INCLUDE ${CMAKE_CURRENT_LIST_DIR}/Src)
 
-file(GLOB_RECURSE EDITOR_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
+file(GLOB_RECURSE EDITOR_SRCS RELATIVE ${CMAKE_CURRENT_LIST_DIR} 
     ${EDITOR_INCLUDE}/*.cpp 
     ${EDITOR_INCLUDE}/*.hpp 
     ${EDITOR_INCLUDE}/*.h)
@@ -27,7 +27,7 @@ qt5_use_modules(${EDITOR_TARGET} Widgets Core)
 if(APPLE)
     set(EDITOR_INCLUDE_FOR_APPLE Src-macOS)
 
-    file(GLOB_RECURSE EDITOR_SRCS_FOR_APPLE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
+    file(GLOB_RECURSE EDITOR_SRCS_FOR_APPLE RELATIVE ${CMAKE_CURRENT_LIST_DIR} 
         ${EDITOR_INCLUDE_FOR_APPLE}/*.mm
         ${EDITOR_INCLUDE_FOR_APPLE}/*.cpp
         ${EDITOR_INCLUDE_FOR_APPLE}/*.hpp
@@ -41,6 +41,8 @@ if(APPLE)
     target_include_directories(${EDITOR_TARGET} PRIVATE ${EDITOR_INCLUDE_FOR_APPLE})
     target_link_libraries(${EDITOR_TARGET} ${Cocoa_LIBRARY})
 endif()
+
+set_target_properties(${EDITOR_TARGET} PROPERTIES FOLDER "Engine" )
 
 # Strange bug in cotire for macOS. Disable it for now. Include paths are not working.
 if(NOT APPLE)

@@ -5,7 +5,7 @@ project($PROJECT_NAME$ VERSION 0.1 LANGUAGES CXX C) #note(vuko): without C older
 set(ENGINE_ROOT_DIR $ENGINE_DIR$)
 set(DIST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/$DIST_DIR$")
 
-include(${ENGINE_ROOT_DIR}/CMakeListsCommon.txt)
+include(${ENGINE_ROOT_DIR}/CMakeListsCommon.cmake)
 
 ##
 # Finally, meat and potatoes
