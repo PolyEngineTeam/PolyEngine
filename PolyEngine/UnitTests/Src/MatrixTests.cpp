@@ -256,9 +256,9 @@ TEST_CASE("Matrix set methods","[Matrix]") {
 	  m2.SetLookAt(Vector::ZERO, Vector(0.0f, 0.0f, -1.0f), Vector(0.0f, 1.0f, 0.0f));
 	  REQUIRE(m1 == m2);
 
-	  float data3[] = { 0.0f,  0.0f, -1.0f,  0.0f,
+	  float data3[] = { 0.0f,  0.0f,  1.0f,  0.0f,
 						0.0f,  1.0f,  0.0f,  0.0f,
-					    1.0f,  0.0f,  0.0f,  0.0f,
+					   -1.0f,  0.0f,  0.0f,  0.0f,
 						0.0f,  0.0f,  0.0f,  1.0f };
 	  Matrix m3(data3);
 	  // rotate by 90_deg about Y axis
