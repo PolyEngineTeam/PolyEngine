@@ -15,6 +15,7 @@ Matrix Poly::GetProjectionForShadowMap(const SceneView& sceneView, int shadowmap
 	Vector lightForward = dirLightCmp->GetTransform().GetGlobalForward();
 	Vector lightUp = dirLightCmp->GetTransform().GetGlobalUp();
 	Matrix lightViewFromWorld = Matrix(Vector::ZERO, lightForward, lightUp);
+	lightViewFromWorld.Transpose();
 
 	Vector shadowAABBExtentsInLS = sceneView.DirShadowAABBInLS.GetSize() * 0.5f;
 	Matrix clipFromLightView;

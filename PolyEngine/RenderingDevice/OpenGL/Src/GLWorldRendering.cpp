@@ -153,6 +153,7 @@ void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const Dynarray<c
 	Vector lightForward = dirLight->GetTransform().GetGlobalForward();
 	Vector lightUp = dirLight->GetTransform().GetGlobalUp();
 	Matrix lightFromWorld = Matrix(Vector::ZERO, lightForward, lightUp);
+	lightFromWorld.Transpose();
 	Matrix worldFromLight = lightFromWorld.GetInversed();
 
 	Vector frustumCenterInLS;

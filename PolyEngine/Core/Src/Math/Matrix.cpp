@@ -224,27 +224,25 @@ Matrix& Matrix::SetScale(const Vector& scale) {
 //------------------------------------------------------------------------------
 Matrix& Matrix::SetLookAt(const Vector& pos, const Vector& lookAt, const Vector& up)
 {
-	const Vector front((lookAt - pos).GetNormalized());
-	const Vector side(front.Cross(up).GetNormalized());
-	const Vector newUp(side.Cross(front));
-	
 	SetIdentity();
-									// same as GLM_FUNC_QUALIFIER mat<4, 4, T, Q> lookAtRH(vec<3, T, Q> const& eye, vec<3, T, Q> const& center, vec<3, T, Q> const& up)
-	Data[0]  = side.X;				// glm[0][0]
-	Data[1]  = side.Y;				// glm[1][0] 
-	Data[2]  = side.Z;				// glm[2][0] 
-
-	Data[4]  = newUp.X;				// glm[0][1]
-	Data[5]  = newUp.Y;				// glm[1][1]
-	Data[6]  = newUp.Z;				// glm[2][1]
-
-	Data[8]  = -front.X;			// glm[0][2]
-	Data[9]  = -front.Y;			// glm[1][2]
-	Data[10] = -front.Z;			// glm[2][2]
-
-	Data[12] = -(side.Dot(pos));	// glm[3][0]
-	Data[13] = -(newUp.Dot(pos));	// glm[3][1]
-	Data[14] = front.Dot(pos);		// glm[3][2]
+	
+	Vector zAxis = pos - lookAt;
+	zAxis.Normalize();
+	Vector xAxis = up.Cross(zAxis);
+	xAxis.Normalize();
+	Vector yAxis = zAxis.Cross(xAxis);
+	
+	Data[0] = xAxis.X;
+	Data[1] = yAxis.X;
+	Data[2] = zAxis.X;
+	
+	Data[4] = xAxis.Y;
+	Data[5] = yAxis.Y;
+	Data[6] = zAxis.Y;
+	
+	Data[8] = xAxis.Z;
+	Data[9] = yAxis.Z;
+	Data[10] = zAxis.Z;
 
 	return *this;
 }
