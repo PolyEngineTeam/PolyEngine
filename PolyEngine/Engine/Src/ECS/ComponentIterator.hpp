@@ -57,17 +57,21 @@ namespace Poly
 				bCacheValid = false;
 			}
 
-			void UpdateCache() const
+			void UpdateCache() const 
 			{
 				Entity* ent = Iter.get()->get();
 				PrimaryComponent* primary = ent->GetComponent<PrimaryComponent>();
 				if constexpr (!Trait::IsVariadicEmpty<SecondaryComponents...>::value)
 				{
-					Cache(std::make_tuple(primary, primary->template GetSibling<SecondaryComponents>()...));
+					Cache = std::make_tuple(primary, primary->template GetSibling<SecondaryComponents>()...);
 					bCacheValid = true;
 					return;
 				}
-				Cache(std::make_tuple(primary));
+				else
+				{
+					Cache = std::make_tuple(primary);
+				}
+
 				bCacheValid = true;
 			}
 
