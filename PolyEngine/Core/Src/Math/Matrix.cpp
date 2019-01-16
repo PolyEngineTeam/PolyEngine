@@ -6,6 +6,8 @@
 
 using namespace Poly;
 
+const Matrix Matrix::IDENTITY = Matrix();
+
 //------------------------------------------------------------------------------
 Matrix::Matrix() { SetIdentity(); }
 
