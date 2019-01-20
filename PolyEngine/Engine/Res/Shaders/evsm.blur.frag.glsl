@@ -10,7 +10,7 @@ uniform int uIsHorizontal;
 
 out vec4 oColor;
  
-uniform const float gaussianWeights[6] = float[] (
+const float gaussianWeights[6] = float[] (
 	0.12801535629105684,
 	0.12299580237376932,
 	0.10908749075572069,
