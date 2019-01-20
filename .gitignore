@@ -6,7 +6,8 @@
 
 # Engine specific files
 console.log
-*.dump # shader content dumps for debuging
+# shader content dumps for debuging
+*.dump 
 
 # Engine local configurations
 AssetsPathConfig.json
