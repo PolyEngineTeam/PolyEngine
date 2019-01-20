@@ -17,16 +17,10 @@ target_include_directories(${ENGINE_TARGET}
 			${BULLET_INCLUDE_DIRS}
 			${STB_INCLUDE_DIRS} )
 
-# Static libraries need to have all symbols exported in the shared library on *NIX systems.
-if(LINUX)
-	set(EXPORTED_LIBS -Wl,-whole-archive ${BOX2D_LIBRARIES} ${BULLET_LIBRARIES} -Wl,-no-whole-archive)
-elseif(APPLE)
-	set(EXPORTED_LIBS -Wl,-all_load ${BOX2D_LIBRARIES} ${BULLET_LIBRARIES} -Wl,-noall_load)
-else()
-	set(EXPORTED_LIBS ${BOX2D_LIBRARIES} ${BULLET_LIBRARIES})
-endif()
-
-target_link_libraries(${ENGINE_TARGET} PUBLIC ${CORE_TARGET} PRIVATE assimp Imgui freetype OpenAL ogg vorbis vorbisfile ${EXPORTED_LIBS})
+target_link_libraries(${ENGINE_TARGET} 
+	PUBLIC ${CORE_TARGET} ${BEGIN_EXPORT_ALL_SYMBOLS} Imgui ${END_EXPORT_ALL_SYMBOLS} 
+	PRIVATE assimp freetype OpenAL ogg vorbis vorbisfile 
+		${BEGIN_EXPORT_ALL_SYMBOLS} ${BOX2D_LIBRARIES} ${BULLET_LIBRARIES} ${END_EXPORT_ALL_SYMBOLS})
 
 set_target_properties(${ENGINE_TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "${CMAKE_CURRENT_LIST_DIR}/Src/EnginePCH.hpp")
 set_target_properties(${ENGINE_TARGET} PROPERTIES FOLDER "Engine" )

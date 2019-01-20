@@ -14,6 +14,7 @@
 #include <UniqueID.hpp>
 #include <cstdio>
 #include <Utils/Logger.hpp>
+#include <vector>
 
 using namespace Poly;
 
@@ -96,6 +97,10 @@ class TestConfig : public ConfigBase
 		RTTI_PROPERTY_AUTONAME(PropDynarrayDynarrayInt, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropDynarrayString, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropDynarrayCustom, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropStdVectorInt, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropStdVectorStdVectorInt, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropStdVectorString, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropStdVectorCustom, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropOMapIntInt, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropOMapStrDynarray, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropOMapStrCustom, RTTI::ePropertyFlag::NONE);
@@ -163,6 +168,11 @@ public:
 	Dynarray<String> PropDynarrayString = { "abc", "efg" };
 	Dynarray<TestRTTIClass> PropDynarrayCustom = { 1, 2 };
 
+	std::vector<int> PropStdVectorInt = { 1, 2, 3 };
+	std::vector<std::vector<int>> PropStdVectorStdVectorInt = { {1}, { 2, 3 } };
+	std::vector<String> PropStdVectorString = { "abc", "efg" };
+	std::vector<TestRTTIClass> PropStdVectorCustom = { 1, 2 };
+
 	OrderedMap<int, int> PropOMapIntInt;
 	OrderedMap<String, Dynarray<int>> PropOMapStrDynarray;
 	OrderedMap<String, TestRTTIClass> PropOMapStrCustom;
@@ -225,6 +235,26 @@ void baseValueCheck(const TestConfig& config)
 	REQUIRE(config.PropDynarrayCustom.GetSize() == 2);
 	CHECK(config.PropDynarrayCustom[0].Val1 == 1);
 	CHECK(config.PropDynarrayCustom[1].Val1 == 2);
+
+	REQUIRE(config.PropStdVectorInt.size() == 3);
+	CHECK(config.PropStdVectorInt[0] == 1);
+	CHECK(config.PropStdVectorInt[1] == 2);
+	CHECK(config.PropStdVectorInt[2] == 3);
+
+	REQUIRE(config.PropStdVectorStdVectorInt.size() == 2);
+	REQUIRE(config.PropStdVectorStdVectorInt[0].size() == 1);
+	CHECK(config.PropStdVectorStdVectorInt[0][0] == 1);
+	REQUIRE(config.PropStdVectorStdVectorInt[1].size() == 2);
+	CHECK(config.PropStdVectorStdVectorInt[1][0] == 2);
+	CHECK(config.PropStdVectorStdVectorInt[1][1] == 3);
+
+	REQUIRE(config.PropStdVectorString.size() == 2);
+	CHECK(config.PropStdVectorString[0] == "abc");
+	CHECK(config.PropStdVectorString[1] == "efg");
+
+	REQUIRE(config.PropStdVectorCustom.size() == 2);
+	CHECK(config.PropStdVectorCustom[0].Val1 == 1);
+	CHECK(config.PropStdVectorCustom[1].Val1 == 2);
 
 	REQUIRE(config.PropOMapIntInt.GetSize() == 2);
 	REQUIRE(config.PropOMapIntInt.Get(1).HasValue());
@@ -314,6 +344,11 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		config.PropDynarrayDynarrayInt = { { 1, 2 }, { 3 }, {4, 5, 6} };
 		config.PropDynarrayString = { "123", "456", "789" };
 		config.PropDynarrayCustom = { 3, 4, 5, 6 };
+
+		config.PropStdVectorInt = { 4, 5, 6, 7 };
+		config.PropStdVectorStdVectorInt = { { 1, 2 }, { 3 }, {4, 5, 6} };
+		config.PropStdVectorString = { "123", "456", "789" };
+		config.PropStdVectorCustom = { 3, 4, 5, 6 };
 
 		config.PropOMapIntInt.Remove(1);
 		config.PropOMapIntInt[2] = 4;
@@ -409,6 +444,34 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(config.PropDynarrayCustom[1].Val1 == 4);
 		CHECK(config.PropDynarrayCustom[2].Val1 == 5);
 		CHECK(config.PropDynarrayCustom[3].Val1 == 6);
+
+		REQUIRE(config.PropStdVectorInt.size() == 4);
+		CHECK(config.PropStdVectorInt[0] == 4);
+		CHECK(config.PropStdVectorInt[1] == 5);
+		CHECK(config.PropStdVectorInt[2] == 6);
+		CHECK(config.PropStdVectorInt[3] == 7);
+
+		REQUIRE(config.PropStdVectorStdVectorInt.size() == 3);
+		REQUIRE(config.PropStdVectorStdVectorInt[0].size() == 2);
+		CHECK(config.PropStdVectorStdVectorInt[0][0] == 1);
+		CHECK(config.PropStdVectorStdVectorInt[0][1] == 2);
+		REQUIRE(config.PropStdVectorStdVectorInt[1].size() == 1);
+		CHECK(config.PropStdVectorStdVectorInt[1][0] == 3);
+		REQUIRE(config.PropStdVectorStdVectorInt[2].size() == 3);
+		CHECK(config.PropStdVectorStdVectorInt[2][0] == 4);
+		CHECK(config.PropStdVectorStdVectorInt[2][1] == 5);
+		CHECK(config.PropStdVectorStdVectorInt[2][2] == 6);
+
+		REQUIRE(config.PropStdVectorString.size() == 3);
+		CHECK(config.PropStdVectorString[0] == "123");
+		CHECK(config.PropStdVectorString[1] == "456");
+		CHECK(config.PropStdVectorString[2] == "789");
+
+		REQUIRE(config.PropStdVectorCustom.size() == 4);
+		CHECK(config.PropStdVectorCustom[0].Val1 == 3);
+		CHECK(config.PropStdVectorCustom[1].Val1 == 4);
+		CHECK(config.PropStdVectorCustom[2].Val1 == 5);
+		CHECK(config.PropStdVectorCustom[3].Val1 == 6);
 
 		REQUIRE(config.PropOMapIntInt.GetSize() == 3);
 		CHECK(!config.PropOMapIntInt.Get(1).HasValue());

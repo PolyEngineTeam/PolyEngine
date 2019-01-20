@@ -67,6 +67,18 @@ else(CMAKE_SIZEOF_VOID_P EQUAL "8")
 	set(ARCH_X86 1)
 endif(CMAKE_SIZEOF_VOID_P EQUAL "8")
 
+# Static libraries need to have all symbols exported in the shared library on *NIX systems.
+if(LINUX)
+	set(BEGIN_EXPORT_ALL_SYMBOLS -Wl,-whole-archive)
+	set(END_EXPORT_ALL_SYMBOLS -Wl,-no-whole-archive)
+elseif(APPLE)
+	set(BEGIN_EXPORT_ALL_SYMBOLS -Wl,-all_load)
+	set(END_EXPORT_ALL_SYMBOLS -Wl,-noall_load)
+else()
+	set(BEGIN_EXPORT_ALL_SYMBOLS)
+	set(END_EXPORT_ALL_SYMBOLS)
+endif()
+
 # Make sure qt is defined
 if(DEFINED ENV{QTDIR})
 	list(APPEND CMAKE_PREFIX_PATH $ENV{QTDIR})

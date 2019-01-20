@@ -20,6 +20,13 @@ namespace Poly
 		template <typename> struct DynarrayValueType {};
 		template <typename T> struct DynarrayValueType<Dynarray<T>> { using type = T; };
 
+		// Is std::vector
+		template <typename> struct IsStdVector : public std::false_type {};
+		template <typename T> struct IsStdVector<std::vector<T>> : public std::true_type {};
+
+		template <typename> struct StdVectorValueType {};
+		template <typename T> struct StdVectorValueType<std::vector<T>> { using type = T; };
+
 		// Is Ordered map
 		template <typename> struct IsOrderedMap : public std::false_type {};
 		template <typename K, typename V, size_t Bfactor> struct IsOrderedMap<OrderedMap<K,V, Bfactor>> : public std::true_type {};
