@@ -195,9 +195,12 @@ namespace Poly {
 			//iterator proxy makes use of it for its ranged iteration which will end if begin == end (nullptr)
 			//our original wrapper(ComponentIterator) makes use of this underlying pointer and caches it for future
 			//it has to check  for cache invalidation THOUGH WHY? AND HOW :)
-			std::vector<size_t> requiredComponents(GetWorldComponentID<SecondaryComponents...>());
-			requiredComponents.insert(requiredComponents.begin(), GetWorldComponentID<PrimaryComponent>());
-			return std::make_unique<SceneComponentIteratorHelper>(SceneComponentIteratorHelper(GetRoot(), requiredComponents)); //TODO: information only for now -> we fail gracefully, we return end of our range if not found particular components which is ok
+			Dynarray<size_t> requiredComponents(GetWorldComponentID<SecondaryComponents...>());
+			std::vector<size_t> requiredComponentsVector;
+			size_t primary = GetWorldComponentID<PrimaryComponent>();
+			requiredComponentsVector.assign(requiredComponents.Begin(), requiredComponents.End());
+			requiredComponentsVector.insert(requiredComponentsVector.begin(), primary);
+			return std::make_unique<SceneComponentIteratorHelper>(SceneComponentIteratorHelper(GetRoot(), requiredComponentsVector)); //TODO: information only for now -> we fail gracefully, we return end of our range if not found particular components which is ok
 			//what if we obtain invalid iter? 		
 		}
 
