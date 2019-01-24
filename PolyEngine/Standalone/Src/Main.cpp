@@ -234,6 +234,11 @@ int main(int argc, char* args[])
 	// Quit SDL subsystems
 	SDL_Quit();
 	Poly::gConsole.LogDebug("Exiting...");
+
+	// Clean managers, otherwise their constructors crash due to messed deinitialization order across shared libraries
+	Poly::ComponentManager::Get().Clear();
+	Poly::RTTI::Impl::TypeManager::Get().Clear();
+
 	return 0;
 }
 
