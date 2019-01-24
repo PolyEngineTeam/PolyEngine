@@ -13,5 +13,11 @@ int main(int argc, char *argv[])
 	*/
 
 	EditorApp app(argc, argv);
-	return app.exec();
+	auto exitCode = app.exec();
+
+	// Clean managers, otherwise their constructors crash due to messed deinitialization order across shared libraries
+	Poly::ComponentManager::Get().Clear();
+	Poly::RTTI::Impl::TypeManager::Get().Clear();
+
+	return exitCode;
 }

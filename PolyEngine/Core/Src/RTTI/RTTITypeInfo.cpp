@@ -54,6 +54,15 @@ namespace Poly {
 				return it->second;
 			}
 
+			void TypeManager::Clear()
+			{
+				Counter = 0;
+				NameToTypeMap.clear();
+				TypeToNameMap.clear();
+				InheritanceListMap.clear();
+				ConstructorsMap.clear();
+			}
+
 		} // namespace Impl
 
 		TypeInfo::TypeInfo(long long id) : ID(id) {}

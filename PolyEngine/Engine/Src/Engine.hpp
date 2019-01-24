@@ -7,6 +7,7 @@
 #include <Input/InputSystem.hpp>
 #include <ECS/ISystem.hpp>
 #include <Utils/EnumUtils.hpp>
+#include "ECS/ComponentIDGenerator.hpp"
 #include "Editor/IEditor.hpp"
 
 namespace Poly
