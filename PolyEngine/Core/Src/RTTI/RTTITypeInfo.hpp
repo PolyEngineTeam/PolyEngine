@@ -89,6 +89,8 @@ namespace Poly
 				const char* GetTypeName(const TypeInfo& typeInfo) const;
 				const std::function<void*(void*)>& GetConstructor(const TypeInfo& typeInfo) const;
 				TypeInfo GetTypeByName(const char* name) const;
+
+				void Clear();
 			private:
 				TypeManager() = default;
 				TypeManager(const TypeManager& rhs) = delete;

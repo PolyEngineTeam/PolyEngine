@@ -13,7 +13,8 @@ MeshResource::MeshResource(const String& path)
 	Assimp::Importer importer;
 	const aiScene *scene = importer.ReadFile(path.GetCStr(), aiProcessPreset_TargetRealtime_Fast);
 
-	if (!scene) {
+	if (!scene)
+	{
 		gConsole.LogError("Error Importing Asset: {}", importer.GetErrorString());
 		throw ResourceLoadFailedException();
 	}
@@ -24,14 +25,16 @@ MeshResource::MeshResource(const String& path)
 	Vector min(maxFloat, maxFloat, maxFloat);
 	Vector max(-maxFloat, -maxFloat, -maxFloat);
 	
-	for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
+	for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
+	{
 		SubMeshes.PushBack(new SubMesh(path, scene->mMeshes[i], scene->mMaterials[scene->mMeshes[i]->mMaterialIndex]));
 
 		min = Vector::Min(min, SubMeshes[i]->GetAABox().GetMin());
 		max = Vector::Max(max, SubMeshes[i]->GetAABox().GetMax());
 	}
 
-	for (size_t i = 0; i < scene->mNumAnimations; ++i) {
+	for (size_t i = 0; i < scene->mNumAnimations; ++i)
+	{
 		Animations.PushBack(new Animation(scene->mAnimations[i]));
 	}
 
@@ -87,9 +90,9 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 	if (mesh->HasPositions()) {
 		MeshData.Positions.Resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-			MeshData.Positions[i].X = mesh->mVertices[i].x;
-			MeshData.Positions[i].Y = mesh->mVertices[i].y;
-			MeshData.Positions[i].Z = mesh->mVertices[i].z;
+			MeshData.Positions[i].X = (float)mesh->mVertices[i].x;
+			MeshData.Positions[i].Y = (float)mesh->mVertices[i].y;
+			MeshData.Positions[i].Z = (float)mesh->mVertices[i].z;
 
 			min = Vector::Min(min, Vector(MeshData.Positions[i].GetVector()));
 			max = Vector::Max(max, Vector(MeshData.Positions[i].GetVector()));
@@ -101,33 +104,33 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 	if (mesh->HasTextureCoords(0)) {
 		MeshData.TextCoords.Resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-			MeshData.TextCoords[i].U = mesh->mTextureCoords[0][i].x;
-			MeshData.TextCoords[i].V = mesh->mTextureCoords[0][i].y;
+			MeshData.TextCoords[i].U = (float)mesh->mTextureCoords[0][i].x;
+			MeshData.TextCoords[i].V = (float)mesh->mTextureCoords[0][i].y;
 		}
 	}
 
 	if (mesh->HasNormals()) {
 		MeshData.Normals.Resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-			MeshData.Normals[i].X = mesh->mNormals[i].x;
-			MeshData.Normals[i].Y = mesh->mNormals[i].y;
-			MeshData.Normals[i].Z = mesh->mNormals[i].z;
+			MeshData.Normals[i].X = (float)mesh->mNormals[i].x;
+			MeshData.Normals[i].Y = (float)mesh->mNormals[i].y;
+			MeshData.Normals[i].Z = (float)mesh->mNormals[i].z;
 		}
 	}
 
 	if (mesh->HasTangentsAndBitangents()) {
 		MeshData.Tangents.Resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-			MeshData.Tangents[i].X = mesh->mTangents[i].x;
-			MeshData.Tangents[i].Y = mesh->mTangents[i].y;
-			MeshData.Tangents[i].Z = mesh->mTangents[i].z;
+			MeshData.Tangents[i].X = (float)mesh->mTangents[i].x;
+			MeshData.Tangents[i].Y = (float)mesh->mTangents[i].y;
+			MeshData.Tangents[i].Z = (float)mesh->mTangents[i].z;
 		}
 
 		MeshData.Bitangents.Resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-			MeshData.Bitangents[i].X = mesh->mBitangents[i].x;
-			MeshData.Bitangents[i].Y = mesh->mBitangents[i].y;
-			MeshData.Bitangents[i].Z = mesh->mBitangents[i].z;
+			MeshData.Bitangents[i].X = (float)mesh->mBitangents[i].x;
+			MeshData.Bitangents[i].Y = (float)mesh->mBitangents[i].y;
+			MeshData.Bitangents[i].Z = (float)mesh->mBitangents[i].z;
 		}
 	}
 
@@ -196,17 +199,17 @@ Poly::MeshResource::Animation::Animation(aiAnimation * anim)
 		c.Name = String(anim->mChannels[i]->mNodeName.C_Str());
 		for (size_t j = 0; j < anim->mChannels[i]->mNumPositionKeys; ++j)
 		{
-			Vector vector = { anim->mChannels[i]->mPositionKeys[j].mValue.x, anim->mChannels[i]->mPositionKeys[j].mValue.y, anim->mChannels[i]->mPositionKeys[j].mValue.z };
+			Vector vector = { (float)anim->mChannels[i]->mPositionKeys[j].mValue.x, (float)anim->mChannels[i]->mPositionKeys[j].mValue.y, (float)anim->mChannels[i]->mPositionKeys[j].mValue.z };
 			c.Positions.PushBack({ vector, (float)anim->mChannels[i]->mPositionKeys[j].mTime });
 		}
 		for (size_t j = 0; j < anim->mChannels[i]->mNumRotationKeys; ++j)
 		{
-			Quaternion q = { anim->mChannels[i]->mRotationKeys[j].mValue.x, anim->mChannels[i]->mRotationKeys[j].mValue.y, anim->mChannels[i]->mRotationKeys[j].mValue.z, anim->mChannels[i]->mRotationKeys[j].mValue.w };
+			Quaternion q = { (float)anim->mChannels[i]->mRotationKeys[j].mValue.x, (float)anim->mChannels[i]->mRotationKeys[j].mValue.y, (float)anim->mChannels[i]->mRotationKeys[j].mValue.z, (float)anim->mChannels[i]->mRotationKeys[j].mValue.w };
 			c.Rotations.PushBack({ q, (float)anim->mChannels[i]->mRotationKeys[j].mTime });
 		}
 		for (size_t j = 0; j < anim->mChannels[i]->mNumScalingKeys; ++j)
 		{
-			Vector vector = { anim->mChannels[i]->mScalingKeys[j].mValue.x, anim->mChannels[i]->mScalingKeys[j].mValue.y, anim->mChannels[i]->mScalingKeys[j].mValue.z };
+			Vector vector = { (float)anim->mChannels[i]->mScalingKeys[j].mValue.x, (float)anim->mChannels[i]->mScalingKeys[j].mValue.y, (float)anim->mChannels[i]->mScalingKeys[j].mValue.z };
 			c.Scales.PushBack({ vector, (float)anim->mChannels[i]->mScalingKeys[j].mTime });
 		}
 		channels.PushBack(std::move(c));

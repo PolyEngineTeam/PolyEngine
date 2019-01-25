@@ -6,6 +6,8 @@
 
 using namespace Poly;
 
+const Matrix Matrix::IDENTITY = Matrix();
+
 //------------------------------------------------------------------------------
 Matrix::Matrix() { SetIdentity(); }
 
@@ -13,7 +15,7 @@ Matrix::Matrix() { SetIdentity(); }
 Matrix::Matrix(const float data[16], bool rowOrder) {
   memmove(Data.data(), data, sizeof(float)*16);
   if(!rowOrder) //TODO this is slow, but good enough for now
-    Transpose();
+	Transpose();
 }
 
 //------------------------------------------------------------------------------
@@ -30,11 +32,11 @@ Matrix& Matrix::operator=(const Matrix& rhs) {
   if (&rhs == this) return *this;
 #if DISABLE_SIMD
   for(int i=0; i<16; ++i) {
-      Data[i] = rhs.Data[i];
+	  Data[i] = rhs.Data[i];
   }
 #else
   for(int i=0; i<4; ++i)
-    SimdRow[i] = rhs.SimdRow[i];
+	SimdRow[i] = rhs.SimdRow[i];
 #endif
   return *this;
 }
@@ -44,7 +46,7 @@ bool Matrix::operator==(const Matrix& rhs) const {
 #if DISABLE_SIMD
   bool result = true;
   for(int i=0; i<16 && result; ++i)
-    result = result && Cmpf(Data[i], rhs.Data[i]);
+	result = result && Cmpf(Data[i], rhs.Data[i]);
   return result;
 #else
   __m128 result0 = _mm_cmpf_ps(SimdRow[0], rhs.SimdRow[0]);
@@ -64,19 +66,19 @@ Matrix Matrix::operator*(const Matrix& rhs) const {
   Matrix ret;
 #if DISABLE_SIMD
   for(int row=0; row<4; ++row) {
-    for(int col=0; col<4; ++col) {
-      ret.Data[4*row + col] = Data[4*row]*rhs.Data[col] + Data[4*row + 1]*rhs.Data[4 + col] + Data[4*row +2]*rhs.Data[8 + col] + Data[4*row + 3]*rhs.Data[12 + col] ;
-    }
+	for(int col=0; col<4; ++col) {
+	  ret.Data[4*row + col] = Data[4*row]*rhs.Data[col] + Data[4*row + 1]*rhs.Data[4 + col] + Data[4*row +2]*rhs.Data[8 + col] + Data[4*row + 3]*rhs.Data[12 + col] ;
+	}
   }
 #else
   Matrix t_rhs = rhs.GetTransposed();
   for (int i = 0; i < 4; ++i) {
-    for (int j = 0; j < 4; ++j) {
-      __m128 c = _mm_mul_ps(SimdRow[i], t_rhs.SimdRow[j]);
-      c = _mm_hadd_ps(c, c);
-      c = _mm_hadd_ps(c, c);
-      _mm_store_ss(&ret.Data[4*i + j], c);
-    }
+	for (int j = 0; j < 4; ++j) {
+	  __m128 c = _mm_mul_ps(SimdRow[i], t_rhs.SimdRow[j]);
+	  c = _mm_hadd_ps(c, c);
+	  c = _mm_hadd_ps(c, c);
+	  _mm_store_ss(&ret.Data[4*i + j], c);
+	}
   }
 #endif
   return ret;
@@ -90,14 +92,14 @@ Vector Matrix::operator*(const Vector& rhs) const {
   Vector ret;
 #if DISABLE_SIMD
   for(int row=0; row<4; ++row) {
-      ret.Data[row] = Data[4*row]*rhs.Data[0] + Data[4*row + 1]*rhs.Data[1] + Data[4*row +2]*rhs.Data[2] + Data[4*row + 3]*rhs.Data[3];
+	  ret.Data[row] = Data[4*row]*rhs.Data[0] + Data[4*row + 1]*rhs.Data[1] + Data[4*row +2]*rhs.Data[2] + Data[4*row + 3]*rhs.Data[3];
   }
 #else
   for (int i = 0; i < 4; ++i) {
-      __m128 c = _mm_mul_ps(SimdRow[i], rhs.SimdData);
-      c = _mm_hadd_ps(c, c);
-      c = _mm_hadd_ps(c, c);
-      _mm_store_ss(&ret.Data[i], c);
+	  __m128 c = _mm_mul_ps(SimdRow[i], rhs.SimdData);
+	  c = _mm_hadd_ps(c, c);
+	  c = _mm_hadd_ps(c, c);
+	  _mm_store_ss(&ret.Data[i], c);
   }
 #endif
   return ret;
@@ -225,21 +227,21 @@ Matrix& Matrix::SetScale(const Vector& scale) {
 Matrix& Matrix::SetLookAt(const Vector& pos, const Vector& lookAt, const Vector& up)
 {
 	SetIdentity();
-
+	
 	Vector zAxis = pos - lookAt;
 	zAxis.Normalize();
 	Vector xAxis = up.Cross(zAxis);
 	xAxis.Normalize();
 	Vector yAxis = zAxis.Cross(xAxis);
-
+	
 	Data[0] = xAxis.X;
 	Data[1] = yAxis.X;
 	Data[2] = zAxis.X;
-
+	
 	Data[4] = xAxis.Y;
 	Data[5] = yAxis.Y;
 	Data[6] = zAxis.Y;
-
+	
 	Data[8] = xAxis.Z;
 	Data[9] = yAxis.Z;
 	Data[10] = zAxis.Z;
@@ -276,27 +278,47 @@ Matrix& Poly::Matrix::SetPerspective(Angle fov, float aspect, float near, float 
 }
 
 //------------------------------------------------------------------------------
+Matrix& Poly::Matrix::SetOrthographicZO(float bottom, float top, float left, float right, float near, float far)
+{
+	SetIdentity();
+													// same as orthoRH_ZO: GLM_RIGHT_HANDED && GLM_DEPTH_ZERO_TO_ONE
+	Data[0] = 2.0f / (right - left);				// glm[0][0]
+	Data[1] = 0.0f;
+	Data[2] = 0.0f;
+	Data[3] = -(right + left) / (right - left);		// glm[3][0] 
+
+	Data[4] = 0.0f;
+	Data[5] = 2.0f / (top - bottom);				// glm[1][1]
+	Data[6] = 0.0f;
+	Data[7] = -(top + bottom) / (top - bottom);		// glm[3][1]
+
+	Data[8] = 0.0f;
+	Data[9] = 0.0f;
+	Data[10] = 1.0f / (far - near);					// glm[2][2]
+	Data[11] = near / (far - near);					// glm[3][2]
+
+	return *this;
+}
+
+//------------------------------------------------------------------------------
 Matrix& Poly::Matrix::SetOrthographic(float bottom, float top,  float left, float right, float near, float far)
 {
-	Data[0] = 2.0f / (right - left);
-	Data[1] = 0;
-	Data[2] = 0;
-	Data[3] = -(right + left) / (right - left);
+	SetIdentity();
+													// same as orthoRH_NO: GLM_RIGHT_HANDED && GLM_DEPTH_NEGATIVE_ONE_TO_ONE
+	Data[0] = 2.0f / (right - left);				// glm[0][0]
+	Data[1] = 0.0f;
+	Data[2] = 0.0f;
+	Data[3] = -(right + left) / (right - left);		// glm[3][0] 
 
-	Data[4] = 0;
-	Data[5] = 2.0f / (top - bottom);
-	Data[6] = 0;
-	Data[7] = -(top + bottom) / (top - bottom);
+	Data[4] = 0.0f;
+	Data[5] = 2.0f / (top - bottom);				// glm[1][1]
+	Data[6] = 0.0f;
+	Data[7] = -(top + bottom) / (top - bottom);		// glm[3][1]
 
-	Data[8] = 0;
-	Data[9] = 0;
-	Data[10] = 2.0f / (far - near);
-	Data[11] = -(far + near) / (far - near);
-
-	Data[12] = 0;
-	Data[13] = 0;
-	Data[14] = 0;
-	Data[15] = 1;
+	Data[8] = 0.0f; 
+	Data[9] = 0.0f;
+	Data[10] = 2.0f / (far - near);					// glm[2][2]
+	Data[11] = -(far + near) / (far - near);		// glm[3][2]
 
 	return *this;
 }
@@ -424,7 +446,7 @@ Matrix& Matrix::Inverse() {
 
   float idet = 1.0f/det;
   for(int i=0; i<16; ++i)
-    Data[i] *= idet;
+	Data[i] *= idet;
 
   return *this;
 }
@@ -438,9 +460,9 @@ Matrix Matrix::GetInversed() const {
 //------------------------------------------------------------------------------
 Matrix& Matrix::Transpose() {
   for (int row = 0; row < 4; ++row) {
-    for (int col = row + 1; col < 4; ++col) {
-      std::swap(Data[4*row + col], Data[4*col + row]);
-    }
+	for (int col = row + 1; col < 4; ++col) {
+	  std::swap(Data[4*row + col], Data[4*col + row]);
+	}
   }
   return *this;
 }

@@ -19,35 +19,34 @@ namespace Poly
 		EnvCapture(GLRenderingDevice* rdi);
 		~EnvCapture();
 
-		void UpdateEnv(const SkyboxWorldComponent* skyboxCmp);
+		void PrecalculateResourcesIBL(const SkyboxWorldComponent* skyboxCmp);
 
-		bool GetIsDirty() const { return IsDirty; };
-
-		GLuint GetHDRPanorama() const { return HDRPanorama; };
-		GLuint GetEnvCubemap() const { return EnvCubemap; };
-		GLuint GetIrradianceMap() const { return IrradianceMap; };
-		GLuint GetPrefilterMap() const { return PrefilterMap; };
+		GLuint GetCurrentHDRPanorama() const { return HDRPanoramas[CurrentEnviroment]; };
+		GLuint GetCurrentEnvCubemap() const { return EnvCubemaps[CurrentEnviroment]; };
+		GLuint GetCurrentIrradianceMap() const { return IrradianceMaps[CurrentEnviroment]; };
+		GLuint GetCurrentPrefilterMap() const { return PrefilterMaps[CurrentEnviroment]; };
 
 	private:
 
 		bool IsDirty = true;
 
+		size_t CurrentEnviroment;
+
 		GLRenderingDevice* RDI;
 
-		// IBL textures and cubemaps
-		GLuint HDRPanorama = 0;
-		GLuint EnvCubemap = 0;
-		GLuint IrradianceMap = 0;
-		GLuint PrefilterMap = 0;
+		Dynarray<GLuint> HDRPanoramas;
+		Dynarray<GLuint> EnvCubemaps;
+		Dynarray<GLuint> IrradianceMaps;
+		Dynarray<GLuint> PrefilterMaps;
 
 		GLShaderProgram EquirectangularToCubemapShader;
 		GLShaderProgram CubemapIrradianceShader;
 		GLShaderProgram PrefilterCubemapShader;
 
-		void CaptureCubemap(const SkyboxWorldComponent* skyboxCmp);
+		GLuint CaptureCubemap(const GLuint equiPanorama);
 
-		void CaptureDiffuseIrradiance();
+		GLuint CaptureDiffuseIrradiance(const GLuint envCubemap);
 
-		void CaptureSpecularPrefilteredMap();
+		GLuint CaptureSpecularPrefilteredMap(const GLuint envCubemap);
 	};
 }

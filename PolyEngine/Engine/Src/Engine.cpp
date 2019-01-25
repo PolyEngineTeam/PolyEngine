@@ -169,7 +169,6 @@ void Poly::Engine::LoadDefaultScene()
 	DeferredTaskSystem::AddWorldComponentImmediate<Physics2DWorldComponent>(GetActiveScene(), physicsConfig);
 	Physics3DConfig physics3DConfig;
 	DeferredTaskSystem::AddWorldComponentImmediate<Physics3DWorldComponent>(GetActiveScene(), physics3DConfig);
-	DeferredTaskSystem::AddWorldComponentImmediate<AmbientLightWorldComponent>(GetActiveScene(), Color(1, 1, 1, 1), 0.2f);
 	DeferredTaskSystem::AddWorldComponentImmediate<DebugDrawStateWorldComponent>(GetActiveScene());
 }
 

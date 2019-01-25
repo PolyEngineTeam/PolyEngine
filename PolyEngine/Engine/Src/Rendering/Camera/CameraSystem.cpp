@@ -48,7 +48,11 @@ void Poly::CameraSystem::CameraUpdatePhase(Scene* world)
 
 		EntityTransform& transform = cameraCmp->GetTransform();
 		cameraCmp->ViewFromWorld = transform.GetWorldFromModel().GetInversed();
-		cameraCmp->ScreenFromWorld = cameraCmp->ScreenFromView * cameraCmp->ViewFromWorld;
+// <<<<<<< HEAD
+// 		cameraCmp->ScreenFromWorld = cameraCmp->ScreenFromView * cameraCmp->ViewFromWorld;
+// =======
+		cameraCmp->ClipFromWorld = cameraCmp->ClipFromView * cameraCmp->ViewFromWorld;
+// >>>>>>> dev
 
 		InputWorldComponent* inputCmp = world->GetWorldComponent<InputWorldComponent>();
 		if (inputCmp->IsPressed(eKey::F5))
