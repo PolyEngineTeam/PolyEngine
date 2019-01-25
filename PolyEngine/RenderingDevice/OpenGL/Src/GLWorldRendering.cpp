@@ -153,6 +153,9 @@ void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const Dynarray<c
 	Vector lightForward = dirLight->GetTransform().GetGlobalForward();
 	Vector lightUp = dirLight->GetTransform().GetGlobalUp();
 	Matrix lightFromWorld = Matrix(Vector::ZERO, lightForward, lightUp);
+	// @fixme: Transpose is needed to correctly multiply light rotation
+	// (created with look at) with rest of light projection matrices.
+	// Same rotation is created when inverted axes are passed to look at constructor
 	lightFromWorld.Transpose();
 	Matrix worldFromLight = lightFromWorld.GetInversed();
 
