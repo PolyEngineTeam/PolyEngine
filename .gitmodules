@@ -1,0 +1,39 @@
+[submodule "PolyEngine/ThirdParty/assimp"]
+	path = PolyEngine/ThirdParty/assimp
+	url = https://github.com/assimp/assimp
+[submodule "PolyEngine/ThirdParty/Box2D"]
+	path = PolyEngine/ThirdParty/Box2D
+	url = https://github.com/erincatto/Box2D
+[submodule "PolyEngine/ThirdParty/bullet3"]
+	path = PolyEngine/ThirdParty/bullet3
+	url = https://github.com/bulletphysics/bullet3
+[submodule "PolyEngine/ThirdParty/Catch2"]
+	path = PolyEngine/ThirdParty/Catch2
+	url = https://github.com/catchorg/Catch2
+[submodule "PolyEngine/ThirdParty/freetype2"]
+	path = PolyEngine/ThirdParty/freetype2
+	url = http://git.sv.nongnu.org/r/freetype/freetype2.git
+[submodule "PolyEngine/ThirdParty/imgui"]
+	path = PolyEngine/ThirdParty/imgui
+	url = https://github.com/ocornut/imgui
+[submodule "PolyEngine/ThirdParty/SDL2"]
+	path = PolyEngine/ThirdParty/SDL2
+	url = https://github.com/spurious/SDL-mirror
+[submodule "PolyEngine/ThirdParty/galogen"]
+	path = PolyEngine/ThirdParty/galogen
+	url = https://github.com/google/galogen
+[submodule "PolyEngine/ThirdParty/stb"]
+	path = PolyEngine/ThirdParty/stb
+	url = https://github.com/nothings/stb
+[submodule "PolyEngine/ThirdParty/rapidjson"]
+	path = PolyEngine/ThirdParty/rapidjson
+	url = https://github.com/Tencent/rapidjson
+[submodule "PolyEngine/ThirdParty/ogg"]
+	path = PolyEngine/ThirdParty/ogg
+	url = https://github.com/xiph/ogg
+[submodule "PolyEngine/ThirdParty/vorbis"]
+	path = PolyEngine/ThirdParty/vorbis
+	url = https://github.com/xiph/vorbis
+[submodule "PolyEngine/ThirdParty/openal-soft"]
+	path = PolyEngine/ThirdParty/openal-soft
+	url = https://github.com/kcat/openal-soft

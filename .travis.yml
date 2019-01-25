@@ -1,5 +1,5 @@
 sudo: required
-dist: trusty
+dist: xenial
 
 notifications:
   email: false
@@ -27,7 +27,7 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-5.0
+            - llvm-toolchain-xenial-5.0
           packages:
             - clang-5.0
             - g++-8 # Need g++-8 alongside clang for libstdc++
@@ -41,54 +41,17 @@ before_install:
   - eval "${MATRIX_EVAL}"
   - |
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      # Add Qt 5.9.2 ppa
-      sudo add-apt-repository --yes ppa:beineri/opt-qt592-trusty
+      # Add Qt 5.10.1 ppa
+      sudo add-apt-repository --yes ppa:beineri/opt-qt-5.10.1-xenial
       sudo apt-get update -qq
-      sudo apt-get install -qq mesa-common-dev libx11-dev
-      sudo apt-get install -qq libepoxy-dev libsoil-dev libassimp-dev libfreetype6-dev libopenal-dev libogg-dev libvorbis-dev libbox2d-dev libbullet-dev
-      sudo apt-get -y install qt59base
+      sudo apt-get install -qq mesa-common-dev libgl1-mesa-dev python3 python3-pip
+      sudo apt-get -y install qt510base
     else
       brew update && brew bundle --file=.Brewfile
     fi
+  - sudo pip3 install gitpython
 
-  - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
-  - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
-  # Workaround for not working `sudo apt-get install -qq libsdl2-dev` https://github.com/travis-ci/travis-ci/issues/8317
-  - (wget https://www.libsdl.org/release/SDL2-2.0.7.tar.gz -O SDL2-2.0.7.tar.gz && tar -xzf SDL2-2.0.7.tar.gz)
-  - (wget https://github.com/erincatto/Box2D/archive/v2.3.1.tar.gz -O Box2D-2.3.1.tar.gz && tar -xzf Box2D-2.3.1.tar.gz)
-  - git clone https://github.com/kbranigan/Simple-OpenGL-Image-Library SOIL
-
-install:
-  - cd ${DEPS_DIR}
-  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then (cd SDL2-2.0.7 && ./configure && make && sudo make install && cd ${DEPS_DIR}); fi
-  - |
-    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      cd Box2D-2.3.1/Box2D/Build
-      cmake -DBOX2D_INSTALL=ON -DBOX2D_BUILD_SHARED=ON -DBOX2D_BUILD_EXAMPLES=OFF ..
-      make && sudo make install
-      cd ${DEPS_DIR}
-    fi
-  - |
-    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      cd SOIL
-      make && sudo make install
-      sudo mkdir /usr/local/include/SOIL
-      sudo mv /usr/local/include/SOIL.h /usr/local/include/SOIL/SOIL.h
-      cd ${DEPS_DIR}
-    fi
-  ############################################################################
-  # Install a recent CMake
-  ############################################################################
-  # - |
-  #   if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-  #     CMAKE_URL="https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.tar.gz"
-  #     mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
-  #     export PATH=${DEPS_DIR}/cmake/bin:${PATH}
-  #   else
-  #     brew upgrade cmake || brew install cmake
-  #   fi
-  - cmake --version
-
+#install:
 
 before_script:
   ############################################################################
@@ -97,10 +60,12 @@ before_script:
   - cd ${TRAVIS_BUILD_DIR}
   - |
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      source /opt/qt59/bin/qt59-env.sh
+      source /opt/qt510/bin/qt510-env.sh
     fi
-  - mkdir -p PolyEngine/build
-  - cd PolyEngine/build
+  - cd PolyEngine/Scripts
+  - python3 ./InitializeSubmodules.py
+  - python3 ./ProjectTool.py -p
+  - cd ../Build
 
 # TODO move to using ProjectTool.py
 script:

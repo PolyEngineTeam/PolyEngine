@@ -28,8 +28,8 @@ TEST_CASE("Generation of pesudorandom numbers", "Random") {
 		float rnd01 = RandomRange(-1.0f, 1.0f);
 	
 		RandomSetSeed(0);
-		float rnd10 = Random();
-		float rnd11 = RandomRange(-1.0f, 1.0f);
+		Random();
+		RandomRange(-1.0f, 1.0f);
 	
 		RandomSetSeed(42);
 		float rnd20 = Random();

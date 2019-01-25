@@ -1,7 +1,14 @@
 #pragma once
 
-// Core
 #include <Defines.hpp>
+
+// Workaround for not working warning silencing on GCC in PCH (Probably cotire related)
+// @fixme
+#if defined(GCC_COMPILER)
+    #pragma GCC system_header
+#endif
+
+// Core
 #include <RTTI/RTTI.hpp>
 
 // Math
@@ -47,12 +54,14 @@
 #include <Utils/OutputStream.hpp> 
 
 // OpenAL
-#include <al.h>
-#include <alc.h>
+#include <AL/al.h>
+#include <AL/alc.h>
 
 // Sound
 #include <ogg/ogg.h>
+SILENCE_GCC_WARNING(-Wunused-variable, "Surpressing gcc vorbis warnings")
 #include <vorbis/vorbisfile.h>
+UNSILENCE_GCC_WARNING()
 
 // Box2D
 #include <Box2D/Box2D.h>

@@ -69,7 +69,6 @@ namespace Poly
 
 		static GLenum GetEnumFromShaderUnitType(eShaderUnitType type);
 
-		void FetchIncludes(eShaderUnitType type);
 		void AnalyzeShaderCode(eShaderUnitType type);
 
 		std::map<String, UniformInfo> Uniforms;

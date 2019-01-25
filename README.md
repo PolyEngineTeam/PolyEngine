@@ -15,27 +15,35 @@ Currently it is in an early stage of development, thus backwards compatibility i
 
 ## Supported platforms
 * Windows 7+ with MSVC compiler (Visual Studio 2017, toolset v141 with SDK 8.1)
-* Linux with both GCC and Clang compilers (editor unsupported)
+* Linux with both GCC and/or Clang compilers (editor unsupported)
 * macOS with Clang compiler (rendering unsupported until we switch to Vulkan)
 
 PolyEngine currently uses OpenGL 4.3+ only, but might gain support for other graphic  
 APIs (DirectX, Vulkan, Metal) in the future.
 
 ## Dependencies
-* Assimp 3 - model loading
-* Box2D 2.3 - 2D physics backend
+Alomost all dependancies are provided by submodules and are placed in `PolyEngine/ThirdParty` folder. Only Qt needs to be installed separately. They are:
+* Assimp - model loading
+* Box2D - 2D physics backend
 * Bullet - 3D physics backend
-* Catch 2.0.1 - unit tests
-* Freetype 2 - font loading and rendering
-* OGG Vorbis 1.3 - audio files loading
-* OpenAL 1.1 - audio playback
-* OpenGL 4.3, Epoxy 1.1 - rendering backend
-* RapidJSON 1.0 - JSON parser
-* SDL 2 - window management
-* stb_image 2.19 - texture loading
-* Qt 5.10 - editor frontend
+* Catch - unit tests framework
+* Freetype - font loading and rendering
+* OGG Vorbis - audio files loading
+* OpenAL - audio playback
+* OpenGL 4.3 - rendering backend
+* RapidJSON - JSON parser
+* SDL2 - window management
+* stb - texture loading (stb_image)
+* Qt 5.10.1 - editor frontend
 
-Precompiled Windows libraries are available in the repository to ease the compilation process.
+## Getting started
+Our wiki contains guides on how to setup the engine. Each OS is a bit different:
+* [Windows quick start guide](https://github.com/KNTGPolygon/PolyEngine/wiki/Windows-quick-start-guide)
+* [Linux quick start guide](https://github.com/KNTGPolygon/PolyEngine/wiki/Linux-quick-start-guide)
+* [macOS quick start guide](https://github.com/KNTGPolygon/PolyEngine/wiki/macOS-quick-start-guide)
+
+## Example projects
+Example projects are available in [the examples repository](https://github.com/KNTGPolygon/PolyEngineExamples).
 
 ## Documentation
 Documentation in Doxygen HTML format is available [here](https://kntgpolygon.github.io/PolyEngine/Docs/html/index.html "PolyEngine docs").
