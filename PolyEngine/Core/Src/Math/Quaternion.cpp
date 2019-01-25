@@ -64,7 +64,10 @@ Quaternion Poly::Quaternion::LookAt(const Vector& pos, const Vector& target, con
 {
  	Vector v, s;
  	Quaternion rot;
-	Matrix(pos, target, oldUp).Decompose(v, rot, s);
+	Matrix m(pos, target, oldUp);
+	m.Decompose(v, rot, s);
+	ASSERTE(v == Vector::ZERO, "Non zero translation!");
+	ASSERTE(s == Vector::ONE, "Non one scale!");
  	return rot;
 }
 
