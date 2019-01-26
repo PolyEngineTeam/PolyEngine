@@ -39,7 +39,7 @@ namespace Poly
 		~SkeletalAnimationComponent() override;
 
 		std::map<String, SkeletalAnimationState> ActiveAnimations;
-		std::vector<Matrix> BonesTransformation;
+		std::map<String, Matrix> ModelFromBone;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, SkeletalAnimationComponent)
