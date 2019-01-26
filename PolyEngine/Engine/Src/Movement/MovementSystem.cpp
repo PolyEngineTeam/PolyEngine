@@ -67,3 +67,33 @@ void MovementSystem::MovementUpdatePhase(Scene* world)
 		}
 	}
 }
+
+Vector MovementSystem::GetLocalForward(const EntityTransform& transform)
+{
+	return transform.GetLocalRotation() * -Vector::UNIT_Z;
+}
+
+Vector MovementSystem::GetLocalRight(const EntityTransform& transform)
+{
+	return transform.GetLocalRotation() * Vector::UNIT_X;
+}
+
+Vector MovementSystem::GetLocalUp(const EntityTransform& transform)
+{
+	return transform.GetLocalRotation() * Vector::UNIT_Y;
+}
+
+Vector MovementSystem::GetGlobalForward(const EntityTransform& transform)
+{
+	return transform.GetGlobalRotation() * -Vector::UNIT_Z;
+}
+
+Vector MovementSystem::GetGlobalRight(const EntityTransform& transform)
+{
+	return transform.GetGlobalRotation() * Vector::UNIT_X;
+}
+
+Vector MovementSystem::GetGlobalUp(const EntityTransform& transform)
+{
+	return transform.GetGlobalRotation() * Vector::UNIT_Y;
+}
