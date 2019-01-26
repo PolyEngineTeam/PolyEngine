@@ -47,7 +47,7 @@ namespace Poly {
 			}
 		};
 
-		SceneView(Scene* s, const Viewport& v)
+		SceneView(Scene* s, Viewport& v)
 			: SceneData(s), ViewportData(v), Rect(v.GetRect()), CameraCmp(v.GetCamera()),
 			DirShadowCastersQueue(DistanceToCameraComparator(Vector::ZERO,										eSortOrderType::FRONT_TO_BACK), 0), // filled by GLRenderingDevice::CullShadowCasters
 			OpaqueQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(),		eSortOrderType::FRONT_TO_BACK), 0),
