@@ -20,7 +20,7 @@ String Sequence::GetName() const
 //------------------------------------------------------------------------------
 bool Sequence::IsActive()
 {
-	bool result = true;
+	bool result = false;
 
 	for (auto& track : Tracks)
 		if (track.IsActive())
@@ -29,7 +29,7 @@ bool Sequence::IsActive()
 			break;
 		}
 
-	return false;
+	return result;
 }
 
 //------------------------------------------------------------------------------

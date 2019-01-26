@@ -8,6 +8,14 @@ using namespace Poly;
 
 RTTI_DEFINE_TYPE(Poly::MeshResource)
 
+Matrix MatFromAiMat(const aiMatrix4x4& m)
+{
+	Matrix ret;
+	for (int k = 0; k < 16; ++k)
+		ret.Data[k] = m[k / 4][k % 4];
+	return ret;
+}
+
 MeshResource::MeshResource(const String& path)
 {
 	Assimp::Importer importer;
@@ -27,7 +35,7 @@ MeshResource::MeshResource(const String& path)
 	
 	for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
 	{
-		SubMeshes.PushBack(new SubMesh(path, scene->mMeshes[i], scene->mMaterials[scene->mMeshes[i]->mMaterialIndex]));
+		SubMeshes.PushBack(new SubMesh(path, scene->mMeshes[i], scene->mRootNode, scene->mMaterials[scene->mMeshes[i]->mMaterialIndex]));
 
 		min = Vector::Min(min, SubMeshes[i]->GetAABox().GetMin());
 		max = Vector::Max(max, SubMeshes[i]->GetAABox().GetMax());
@@ -53,10 +61,10 @@ MeshResource::~MeshResource()
 	}
 }
 
-MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* material)
+MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiNode* rootNode, aiMaterial* material)
 {
 	LoadGeometry(mesh);
-	LoadBones(mesh);
+	LoadBones(mesh, rootNode);
 	
 	MeshData.EmissiveMap			= LoadTexture(material, path, (unsigned int)aiTextureType_EMISSIVE,		eTextureUsageType::EMISSIVE);
 	MeshData.AlbedoMap				= LoadTexture(material, path, (unsigned int)aiTextureType_DIFFUSE,		eTextureUsageType::ALBEDO);
@@ -66,7 +74,45 @@ MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* mat
 	MeshData.AmbientOcclusionMap	= LoadTexture(material, path, (unsigned int)aiTextureType_AMBIENT,		eTextureUsageType::AMBIENT_OCCLUSION);
 }
 
-void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
+void MeshResource::SubMesh::PopulateBoneReferences(const std::map<String, size_t>& nameToBoneIdx, aiNode* node, const Matrix& localTransform)
+{
+	String nodeName = node->mName.C_Str();
+	if (nodeName.IsEmpty() || nameToBoneIdx.find(nodeName) == nameToBoneIdx.end())
+	{
+		for (size_t k = 0; k < node->mNumChildren; ++k)
+			PopulateBoneReferences(nameToBoneIdx, node->mChildren[k], localTransform * MatFromAiMat(node->mTransformation));
+	}
+	else
+	{
+		size_t idx = nameToBoneIdx.at(nodeName);
+		
+		if (node->mParent)
+		{
+			aiNode* parent = node->mParent;
+			String parentName = parent->mName.C_Str();
+			while (nameToBoneIdx.find(parentName) == nameToBoneIdx.end() && parent->mParent)
+			{
+				parent = parent->mParent;
+				parentName = parent->mName.C_Str();
+			} 
+			
+			auto it = nameToBoneIdx.find(parentName);
+			if (it != nameToBoneIdx.end())
+			{
+				size_t parentIdx = nameToBoneIdx.at(parentName);
+				Bones[parentIdx].childrenIdx.push_back(idx);
+				Bones[idx].parentBoneIdx = parentIdx;
+			}
+		}
+
+		Bones[idx].boneFromParentBone = localTransform * MatFromAiMat(node->mTransformation);
+
+		for (size_t k = 0; k < node->mNumChildren; ++k)
+			PopulateBoneReferences(nameToBoneIdx, node->mChildren[k], Matrix::IDENTITY);
+	}
+}
+
+void MeshResource::SubMesh::LoadBones(aiMesh* mesh, aiNode* rootNode)
 {
 	if (mesh->HasBones())
 	{
@@ -75,14 +121,17 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
 		std::vector<PriorityQueue<std::pair<u8, float>, std::function<bool(const std::pair<u8, float>&, const std::pair<u8, float>&)>>> tmpBonesList;
 		tmpBonesList.resize(mesh->mNumVertices, { [](const std::pair<u8, float>& v1, const std::pair<u8, float>& v2) { return v1.second < v2.second; } });
 
+		std::map<String, size_t> nameToBoneIdx;
+
 		for (u8 boneId = 0; boneId < mesh->mNumBones; ++boneId)
 		{
 			const auto& bone = mesh->mBones[boneId];
-			Matrix offset;
-			for (int k = 0; k < 16; ++k)
-				offset.Data[k] = bone->mOffsetMatrix[k / 4][k % 4];
-
-			Bones.PushBack({ String(bone->mName.C_Str()), offset });
+			
+			Bone b(String(bone->mName.C_Str()));
+			b.boneFromModel = MatFromAiMat(bone->mOffsetMatrix);
+			nameToBoneIdx[b.name] = Bones.GetSize();
+			Bones.PushBack(b);
+			
 
 			if (mesh->HasPositions())
 			{
@@ -106,13 +155,25 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
 			for (size_t vertId = 0; vertId < mesh->mNumVertices; ++vertId)
 			{
 				auto& boneQueue = tmpBonesList[vertId];
+				float sum = 0.f;
 				for (size_t k = 0; k < 4 && boneQueue.GetSize() > 0; ++k)
 				{
 					auto entry = boneQueue.Pop();
+					sum += entry.second;
 					MeshData.BoneIds[vertId].Data[k] = entry.first;
 					MeshData.BoneWeights[vertId].Data[k] = entry.second;
 				}
+				ASSERTE(sum >= 0.90f, "Detected >10% animation inaccuracy (too many weights for one vertex)");
 			}
+		}
+
+		PopulateBoneReferences(nameToBoneIdx, rootNode, Matrix::IDENTITY);
+
+		int idx = 0;
+		for (auto& bone : Bones)
+		{
+			gConsole.LogDebug("[{}] Bone [{}] info: parent = {}, t1 = {}, t2 = {}", idx, bone.name, bone.parentBoneIdx, bone.boneFromModel, bone.boneFromParentBone );
+			++idx;
 		}
 
 		gConsole.LogDebug("{} bones loaded", mesh->mNumBones);

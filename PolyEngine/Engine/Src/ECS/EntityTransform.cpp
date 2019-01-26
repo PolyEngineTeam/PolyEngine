@@ -133,12 +133,7 @@ bool EntityTransform::UpdateLocalTransformationCache() const
 {
 	if (LocalDirty)
 	{
-		Matrix translation;
-		Matrix rotation = LocalRotation.ToRotationMatrix();
-		Matrix scale;
-		translation.SetTranslation(LocalTranslation);
-		scale.SetScale(LocalScale);
-		ParentFromModel = translation * rotation * scale;
+		ParentFromModel = Matrix::Compose(LocalTranslation, LocalRotation, LocalScale);
 		LocalDirty = false;
 		return true;
 	}
