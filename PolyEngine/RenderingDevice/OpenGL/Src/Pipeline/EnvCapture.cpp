@@ -6,6 +6,16 @@
 
 using namespace Poly;
 
+static const Matrix ViewFromModel[] =
+{
+	Matrix(Vector::ZERO, Vector( 1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_X
+	Matrix(Vector::ZERO, Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_NEGATIVE_X
+	Matrix(Vector::ZERO, Vector( 0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_Y
+	Matrix(Vector::ZERO, Vector( 0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
+	Matrix(Vector::ZERO, Vector( 0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_Z
+	Matrix(Vector::ZERO, Vector( 0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+};
+
 EnvCapture::EnvCapture(GLRenderingDevice* rdi)
 	: RDI(rdi),
 	EquirectangularToCubemapShader("Shaders/equiToCubemap.vert.glsl", "Shaders/equiToCubemap.frag.glsl"),
@@ -25,41 +35,67 @@ EnvCapture::EnvCapture(GLRenderingDevice* rdi)
 
 EnvCapture::~EnvCapture()
 {
-	if (HDRPanorama > 0)
-		glDeleteTextures(1, &HDRPanorama);
-
-	if (EnvCubemap > 0)
-		glDeleteTextures(1, &EnvCubemap);
-
-	if (IrradianceMap > 0)
-		glDeleteTextures(1, &IrradianceMap);
-
-	if (PrefilterMap > 0)
-		glDeleteTextures(1, &PrefilterMap);
-}
-
-void EnvCapture::UpdateEnv(const SkyboxWorldComponent* skyboxCmp)
-{
-	if (skyboxCmp->GetPanorama() == nullptr)
+	for (auto p : HDRPanoramas)
 	{
-		gConsole.LogInfo("EnvCapture::UpdateEnv SkyboxWorldComponent panorama is null! Abording!");
-		return;
+		if (p > 0)
+			glDeleteTextures(1, &p);
 	}
 
-	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	for (auto c : EnvCubemaps)
+	{
+		if (c > 0)
+			glDeleteTextures(1, &c);
+	}
 
-	CaptureCubemap(skyboxCmp);
+	for (auto i : IrradianceMaps)
+	{
+		if (i > 0)
+			glDeleteTextures(1, &i);
+	}
 
-	CaptureDiffuseIrradiance();
-
-	CaptureSpecularPrefilteredMap();
-
-	IsDirty = false;
+	for (auto p : PrefilterMaps)
+	{
+		if (p > 0)
+			glDeleteTextures(1, &p);
+	}
 }
 
-void EnvCapture::CaptureCubemap(const SkyboxWorldComponent* skyboxCmp)
+void EnvCapture::PrecalculateResourcesIBL(const SkyboxWorldComponent* skyboxCmp)
+{
+	CurrentEnviroment = skyboxCmp->GetCurrentIndex();
+
+	if (IsDirty)
+	{
+		size_t envCount = skyboxCmp->GetPanoramasCount();
+		if (envCount <= 0)
+		{
+			gConsole.LogInfo("EnvCapture::PrecalculateResourcesIBL SkyboxWorldComponent has no panoramas! Abording!");
+			return;
+		}
+
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+		HDRPanoramas.Resize(envCount);
+		EnvCubemaps.Resize(envCount);
+		IrradianceMaps.Resize(envCount);
+		PrefilterMaps.Resize(envCount);
+
+		for(size_t i = 0; i < envCount; ++i)
+		{
+			HDRPanoramas[i] = (GLuint)(skyboxCmp->GetPanorama(i)->GetTextureProxy()->GetResourceID());
+			EnvCubemaps[i] = CaptureCubemap(HDRPanoramas[i]);
+			IrradianceMaps[i] = CaptureDiffuseIrradiance(EnvCubemaps[i]);
+			PrefilterMaps[i] = CaptureSpecularPrefilteredMap(EnvCubemaps[i]);
+		}
+
+		IsDirty = false;
+	}
+}
+
+GLuint EnvCapture::CaptureCubemap(const GLuint equiPanorama) 
 {
 	// create cube map resource for capture
+	GLuint EnvCubemap = 0;
 	gConsole.LogInfo("EnvCapture::CaptureCubemap create cubemap resource");
 	glGenTextures(1, &EnvCubemap);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, EnvCubemap);
@@ -113,8 +149,7 @@ void EnvCapture::CaptureCubemap(const SkyboxWorldComponent* skyboxCmp)
 	EquirectangularToCubemapShader.BindProgram();
 	EquirectangularToCubemapShader.SetUniform("uEquirectangularMap", 0);
 	glActiveTexture(GL_TEXTURE0);
-	HDRPanorama = (GLuint)(skyboxCmp->GetPanorama()->GetTextureProxy()->GetResourceID());
-	glBindTexture(GL_TEXTURE_2D, HDRPanorama);
+	glBindTexture(GL_TEXTURE_2D, equiPanorama);
 
 	glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
 	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
@@ -143,12 +178,15 @@ void EnvCapture::CaptureCubemap(const SkyboxWorldComponent* skyboxCmp)
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	CHECK_GL_ERR();
+
+	return EnvCubemap;
 }
 
-void EnvCapture::CaptureDiffuseIrradiance()
+GLuint EnvCapture::CaptureDiffuseIrradiance(const GLuint envCubemap)
 {
-	glGenTextures(1, &IrradianceMap);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, IrradianceMap);
+	GLuint irradianceMap = 0;
+	glGenTextures(1, &irradianceMap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
 	for (unsigned int i = 0; i < 6; ++i)
 	{
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 32, 32, 0, GL_RGB, GL_FLOAT, nullptr);
@@ -195,14 +233,14 @@ void EnvCapture::CaptureDiffuseIrradiance()
 	CubemapIrradianceShader.BindProgram();
 	CubemapIrradianceShader.SetUniform("uEnvCubemap", 0);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, EnvCubemap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
 
 	glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
 	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 	for (unsigned int i = 0; i < 6; ++i)
 	{
 		CubemapIrradianceShader.SetUniform("uClipFromModel", uClipFromView * ViewFromModel[i]);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, IrradianceMap, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMap, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glBindVertexArray(RDI->PrimitivesCube->VAO);
@@ -215,16 +253,19 @@ void EnvCapture::CaptureDiffuseIrradiance()
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	CHECK_GL_ERR();
+
+	return irradianceMap;
 }
 
-void EnvCapture::CaptureSpecularPrefilteredMap()
+GLuint EnvCapture::CaptureSpecularPrefilteredMap(const GLuint envCubemap) 
 {
 	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap create cubemap resource");
 
 	int maxCaptureSize = 512;
 
-	glGenTextures(1, &PrefilterMap);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, PrefilterMap);
+	GLuint prefilterMap = 0;
+	glGenTextures(1, &prefilterMap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
 	for (unsigned int i = 0; i < 6; ++i)
 	{
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, maxCaptureSize, maxCaptureSize, 0, GL_RGB, GL_FLOAT, nullptr);
@@ -270,7 +311,7 @@ void EnvCapture::CaptureSpecularPrefilteredMap()
 	PrefilterCubemapShader.BindProgram();
 	PrefilterCubemapShader.SetUniform("uEnvironmentMap", 0);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, EnvCubemap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 	unsigned int maxMipLevels = 5;
@@ -289,7 +330,7 @@ void EnvCapture::CaptureSpecularPrefilteredMap()
 		for (unsigned int i = 0; i < 6; ++i)
 		{
 			PrefilterCubemapShader.SetUniform("uClipFromModel", uClipFromView * ViewFromModel[i]);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, PrefilterMap, mip);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			glBindVertexArray(RDI->PrimitivesCube->VAO);
@@ -305,4 +346,6 @@ void EnvCapture::CaptureSpecularPrefilteredMap()
 	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap prefiltered cubemap captured");
 
 	CHECK_GL_ERR();
+
+	return prefilterMap;
 }

@@ -1,5 +1,0 @@
-file(GLOB IMGUI_SOURCES "${ENGINE_ROOT_DIR}/ThirdParty/Imgui/*.cpp")
-file(GLOB IMGUI_HEADERS "${ENGINE_ROOT_DIR}/ThirdParty/Imgui/*.h")
-add_library(Imgui STATIC ${IMGUI_SOURCES} ${IMGUI_HEADERS})
-# GCC complains during linking of shared libraries that use this target (Engine, RenderingDevice)
-set_property(TARGET Imgui PROPERTY POSITION_INDEPENDENT_CODE ON)

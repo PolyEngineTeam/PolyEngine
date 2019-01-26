@@ -236,7 +236,7 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 		currentValue.SetString(implData->EnumInfo->GetEnumName(val), alloc);
 		break;
 	}
-	case eCorePropertyType::DYNARRAY:
+	case eCorePropertyType::LIST:
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid dynarray impl data!");
 		const CollectionPropertyImplDataBase* implData = static_cast<const CollectionPropertyImplDataBase*>(prop.ImplData.get());
@@ -430,7 +430,7 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj,
 			ASSERTE(false, "Unhandled value size!");
 		break;
 	}
-	case eCorePropertyType::DYNARRAY:
+	case eCorePropertyType::LIST:
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid enum impl data!");
 		const CollectionPropertyImplDataBase* implData = static_cast<const CollectionPropertyImplDataBase*>(prop.ImplData.get());

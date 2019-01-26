@@ -7,7 +7,7 @@ project(PolyEngine VERSION 0.1.2 LANGUAGES CXX C) #note(vuko): without C older C
 set(ENGINE_ROOT_DIR ${CMAKE_SOURCE_DIR})
 set(DIST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Dist")
 
-include(${ENGINE_ROOT_DIR}/CMakeListsCommon.txt)
+include(${ENGINE_ROOT_DIR}/CMakeListsCommon.cmake)
 
 ##
 # Finally, meat and potatoes

@@ -122,7 +122,7 @@ const AABox& Poly::Entity::GetLocalBoundingBox(eEntityBoundingChannel channel) c
 {
 	if (BBoxDirty[channel])
 	{
-		LocalBBox[channel].SetPosition(Vector::ZERO);
+		LocalBBox[channel].SetMin(Vector::ZERO);
 		LocalBBox[channel].SetSize(Vector::ZERO);
 
 		// Update bounding box by children boxes

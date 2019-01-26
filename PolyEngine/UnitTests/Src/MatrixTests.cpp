@@ -32,9 +32,13 @@ TEST_CASE("Matrix constructors", "[Matrix]") {
     REQUIRE(m1.Data[i] == i);
 
   // look at contructor
-  Matrix m4(Vector::ZERO, Vector(0.0f, 0.0f, -1.0f), Vector(0.0f, 1.0f, 0.0f));
-  for (int i = 0; i<16; ++i)
-	  REQUIRE(m4.Data[i] == (i % 5 == 0 ? 1 : 0));
+  float data4[] = { 1.0f, 0.0f, 0.0f, 0.0f,
+					0.0f, 1.0f, 0.0f, 0.0f,
+					0.0f, 0.0f, 1.0f, 0.0f,
+					0.0f, 0.0f, 0.0f, 1.0f };
+  Matrix m4(data4);
+  Matrix mLa_NZ_PY(Vector::ZERO, Vector( 0.0f,  0.0f, -1.0f), Vector( 0.0f,  1.0f,  0.0f));
+  REQUIRE(m4 == mLa_NZ_PY);
 }
 
 TEST_CASE("Matrix comparison operators", "[Matrix]") {
@@ -242,23 +246,24 @@ TEST_CASE("Matrix set methods","[Matrix]") {
   }
   
   SECTION("Set rotation with look at method") {
-	  float data2[] = { 1, 0, 0, 0,
-						0, 1, 0, 0,
-						0, 0, 1, 0,
-						0, 0, 0, 1 };
-	  Matrix m2(data2);
+	  float data1[] = { 1.0f, 0.0f, 0.0f, 0.0f,
+						0.0f, 1.0f, 0.0f, 0.0f,
+						0.0f, 0.0f, 1.0f, 0.0f,
+						0.0f, 0.0f, 0.0f, 1.0f };
+	  Matrix m1(data1);
 	  // by default we look at -Z with +Y as up axis
-	  m1.SetLookAt(Vector::ZERO, Vector(0.0f, 0.0f, -1.0f), Vector(0.0f, 1.0f, 0.0f));
+	  Matrix m2;
+	  m2.SetLookAt(Vector::ZERO, Vector(0.0f, 0.0f, -1.0f), Vector(0.0f, 1.0f, 0.0f));
 	  REQUIRE(m1 == m2);
 
-	  float data3[] = { 0, 0, 1, 0,
-						0, 1, 0, 0,
-					   -1, 0, 0, 0,
-						0, 0, 0, 1 };
+	  float data3[] = { 0.0f,  0.0f,  1.0f,  0.0f,
+						0.0f,  1.0f,  0.0f,  0.0f,
+					   -1.0f,  0.0f,  0.0f,  0.0f,
+						0.0f,  0.0f,  0.0f,  1.0f };
 	  Matrix m3(data3);
 	  // rotate by 90_deg about Y axis
-	  m1.SetLookAt(Vector::ZERO, Vector(-1.0f, 0.0f, 0.0f), Vector(0.0f, 1.0f, 0.0f));
-	  REQUIRE(m1 == m3);
+	  m2.SetLookAt(Vector::ZERO, Vector(-1.0f, 0.0f, 0.0f), Vector(0.0f, 1.0f, 0.0f));
+	  REQUIRE(m3 == m2);
   }
 }
 

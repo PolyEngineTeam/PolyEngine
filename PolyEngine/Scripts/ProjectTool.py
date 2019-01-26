@@ -82,8 +82,8 @@ def xml_indent(elem, level=0):
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
 
-def patch_usr_proj(path, proj_name, dist_dir, is_engine_proj):
-    usr_proj_path = os.sep.join([path, 'Build', proj_name, proj_name + '.vcxproj.user'])
+def patch_usr_proj(path, proj_folder, proj_name, dist_dir, is_engine_proj):
+    usr_proj_path = os.sep.join([path, 'Build', proj_folder, proj_name + '.vcxproj.user'])
     xml_namespace = { 'ns' : 'http://schemas.microsoft.com/developer/msbuild/2003' }
     namespace_str = '{' + xml_namespace['ns'] + '}'
     ET.register_namespace('', xml_namespace['ns'])
@@ -246,7 +246,7 @@ def create_project(name, path, engine_path):
 
     # Patch project proj.user file to contain proper runtime info
     if os.name == 'nt':
-        patch_usr_proj(path, name, dist_dir, False)
+        patch_usr_proj(path, name, name, dist_dir, False)
 
 def update_project(path, engine_path):
     print('Updating project at', path, 'with engine at', engine_path)
@@ -263,7 +263,7 @@ def update_project(path, engine_path):
     run_cmake(path, 'Build', dist_dir)
     # Patch project proj.user file to contain proper runtime info
     if os.name == 'nt':
-        patch_usr_proj(path, name, dist_dir, False)
+        patch_usr_proj(path, name, name, dist_dir, False)
 
 def create_update_engine_project(engine_path):
     print('Updating engine project at', engine_path)

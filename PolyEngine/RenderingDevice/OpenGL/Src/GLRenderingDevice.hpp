@@ -2,14 +2,14 @@
 
 #include <Defines.hpp>
 #include <Common/GLUtils.hpp>
+#include <Common/PrimitiveQuad.hpp>
+#include <Common/PrimitiveCube.hpp>
 #include <Proxy/GLShaderProgram.hpp>
 
 struct SDL_Window;
 
 namespace Poly
 {
-	struct PrimitiveQuad;
-	struct PrimitiveCube;
 	struct SceneView;
 	class CameraComponent;
 	class AARect;
@@ -103,6 +103,8 @@ namespace Poly
 		void CreateUtilityTextures();
 
 		void FillSceneView(SceneView& sceneView);
+		void CullDirLightQueue(SceneView& sceneView, const Dynarray<const MeshRenderingComponent*>& meshCmp);
+		void CullShadowCasters(SceneView& sceneView, const Matrix& dirLightFromWorld, const Matrix& worldFromDirLight, AABox& frustumAABBInLS);
 		void EndFrame();
 
 		void CleanUpResources();

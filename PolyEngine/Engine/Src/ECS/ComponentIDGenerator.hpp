@@ -2,6 +2,7 @@
 
 #include <Defines.hpp>
 #include <Memory/IterablePoolAllocator.hpp>
+#include <RTTI/RTTI.hpp>
 
 #if defined(_ENGINE)
 #    define EXPORT_TEMPLATE
@@ -63,12 +64,16 @@ namespace Poly
 		return ComponentsIDGroup::GetComponentTypeID<T>();
 	}
 
-	class ENGINE_DLLEXPORT ComponentManager
+	class ENGINE_DLLEXPORT ComponentManager : public BaseObject<>
 	{
 	public:
 		static ComponentManager& Get();
 
 		ComponentManager() = default;
+		~ComponentManager() override
+		{
+			IDToCreatorMap.clear();
+		}
 
 		ComponentManager(const ComponentManager&) = delete;
 		ComponentManager(ComponentManager&&) = delete;
@@ -82,8 +87,8 @@ namespace Poly
 			RTTI::TypeInfo typeinfo = RTTI::TypeInfo::Get<T>();
 			TypeToIDMap.insert({ typeinfo, id });
 			IDToTypeMap.insert({ id, typeinfo});
-			IDToCreatorMap.insert({id,
-				[](size_t count) { return static_cast<IterablePoolAllocatorBase*>(new IterablePoolAllocator<T>(count)); } });
+			std::function<IterablePoolAllocatorBase*(size_t)> allocator = [](size_t count) { return static_cast<IterablePoolAllocatorBase*>(new IterablePoolAllocator<T>(count)); };
+			IDToCreatorMap.insert({ id, allocator });
 		}
 
 		Optional<size_t> GetComponentID(const RTTI::TypeInfo& typeinfo) const;
@@ -91,6 +96,8 @@ namespace Poly
 		Dynarray<std::pair<RTTI::TypeInfo, size_t>> GetComponentTypesList() const;
 
 		IterablePoolAllocatorBase* CreateAllocator(size_t id, size_t componentCount) const;
+
+		void Clear();
 	private:
 		std::map<RTTI::TypeInfo, size_t> TypeToIDMap;
 		std::map < size_t, RTTI::TypeInfo> IDToTypeMap;

@@ -23,12 +23,12 @@ TEST_CASE("String.From", "[String]") {
 
 	String s4Float = String("-23.5800");
 	float f4 = -23.58f;
-	String s4Float2 = String::From(f, 4);
+	String s4Float2 = String::From(f4, 4);
 	REQUIRE(s4Float == s4Float2);
 
 	String s5Double = String("-23.580");
 	double d5 = -23.58;
-	String s5Double2 = String::From(d, 3);
+	String s5Double2 = String::From(d5, 3);
 	REQUIRE(s5Double == s5Double2);
 
 	String sChar = String("c");
