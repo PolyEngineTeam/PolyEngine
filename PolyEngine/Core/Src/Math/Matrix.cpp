@@ -652,6 +652,40 @@ bool Poly::Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& 
 	return true;
 }
 
+Matrix Matrix::Blend(std::vector<Matrix> matrices, std::vector<float> weights)
+{
+	ASSERTE(matrices.size() > 0, "Szie should be > 0");
+	ASSERTE(matrices.size() == weights.size(), "Mismatch in vector sizes");
+
+	Vector translation;
+	Vector scale;
+	Quaternion rotation;
+
+	for (size_t i = 0; i < matrices.size(); ++i)
+	{
+		Vector tmpTranslation;
+		Vector tmpScale;
+		Quaternion tmpRotation;
+		matrices[i].Decompose(tmpTranslation, tmpRotation, tmpScale);
+
+		translation += tmpTranslation * weights[i];
+		scale += tmpScale * weights[i];
+		rotation *= Quaternion::Slerp(Quaternion::IDENTITY, tmpRotation, weights[i]);
+	}
+
+	return Compose(translation, rotation, scale);
+}
+
+Matrix Matrix::Compose(const Vector& translation, const Quaternion& rotation, const Vector& scale)
+{
+	return Compose(Matrix().SetTranslation(translation), rotation.ToRotationMatrix(), Matrix().SetScale(scale));
+}
+
+Matrix Matrix::Compose(const Matrix& translation, const Matrix& rotation, const Matrix& scale)
+{
+	return translation * rotation * scale;
+}
+
 namespace Poly {
 	//------------------------------------------------------------------------------
 	std::ostream& operator<< (std::ostream& stream, const Matrix& mat) {

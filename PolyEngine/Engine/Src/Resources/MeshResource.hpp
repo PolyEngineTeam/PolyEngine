@@ -11,6 +11,7 @@
 struct aiMesh;
 struct aiMaterial;
 struct aiAnimation;
+struct aiNode;
 
 typedef unsigned int GLuint;
  
@@ -26,21 +27,29 @@ namespace Poly
 		class ENGINE_DLLEXPORT SubMesh : public BaseObject<>
 		{
 		public:
-			SubMesh(const String& path, aiMesh* mesh, aiMaterial* material);
+			SubMesh(const String& path, aiMesh* mesh, aiNode* rootNode, aiMaterial* material);
 
 			struct ENGINE_DLLEXPORT Bone {
+				Bone(String name) : name(name) {}
+
 				String name;
-				Matrix offset;
+				Matrix boneFromModel;
+				Matrix boneFromParentBone;
+				Optional<size_t> parentBoneIdx;
+				std::vector<size_t> childrenIdx;
 			};
 
 			void LoadGeometry(aiMesh* mesh);
-			void LoadBones(aiMesh* mesh);
+			void LoadBones(aiMesh* mesh, aiNode* rootNode);
 			TextureResource* LoadTexture(const aiMaterial* material, const String& path, const unsigned int aiType, const eTextureUsageType textureType);
 
 			const Mesh& GetMeshData() const { return MeshData; }
 			const IMeshDeviceProxy* GetMeshProxy() const { return MeshProxy.get(); }
 			const AABox& GetAABox() const { return AxisAlignedBoundingBox; }
 		private:
+			void PopulateBoneReferences(const std::map<String, size_t>& nameToBoneIdx, aiNode* node, const Matrix& localTransform);
+
+
 			AABox AxisAlignedBoundingBox;
 			Mesh MeshData;
 			Dynarray<Bone> Bones;
