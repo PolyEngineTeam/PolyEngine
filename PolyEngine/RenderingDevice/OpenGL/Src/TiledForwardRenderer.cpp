@@ -717,6 +717,7 @@ void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 		if (skyboxCmp)
 		{
 			tint = skyboxCmp->GetTint();
+			EnvironmentCapture.SetCurrentEnviroment(skyboxCmp->GetCurrentIndex());
 		}
 
 		const Matrix clipFromView = sceneView.CameraCmp->GetClipFromView();

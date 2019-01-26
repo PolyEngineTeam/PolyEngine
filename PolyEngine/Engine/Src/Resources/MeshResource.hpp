@@ -28,7 +28,7 @@ namespace Poly
 		{
 		public:
 			struct ENGINE_DLLEXPORT Bone {
-				Bone(String name, Matrix boneFromModel) : name(name) {}
+				Bone(String name, Matrix boneFromModel) : name(name), boneFromModel(boneFromModel) {}
 
 				String name;
 				Matrix boneFromModel;
@@ -79,7 +79,8 @@ namespace Poly
 			Bone(String name) : name(name) {}
 
 			String name;
-			Matrix boneFromParentBone;
+			Matrix prevBoneFromBone;
+			Matrix boneFromModel;
 			Optional<size_t> parentBoneIdx = {};
 			std::vector<size_t> childrenIdx;
 		};
@@ -101,10 +102,13 @@ namespace Poly
 		}
 		const AABox& GetAABox() const { return AxisAlignedBoundingBox; }
 		const Dynarray<Bone>& GetBones() const { return Bones; }
+
+		const Matrix& GetModelFromSkeletonRoot() const { return ModelFromSkeletonRoot; }
 	private:
 		void LoadBones(aiNode* node);
 		void PopulateBoneReferences(const std::map<String, size_t>& nameToBoneIdx, aiNode* node, const Matrix& localTransform);
 
+		Matrix ModelFromSkeletonRoot;
 		Dynarray<Bone> Bones;
 		Dynarray<Animation*> Animations;
 		Dynarray<SubMesh*> SubMeshes;
