@@ -21,7 +21,6 @@ namespace Poly
 		void AddActiveSequence(const Dynarray<String>& sequencesNames);
 
 		const Dynarray<String>& GetActiveSequencesNames() const;
-
 	private:
 		Dynarray<String> Names;
 
