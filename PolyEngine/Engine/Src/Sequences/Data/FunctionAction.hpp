@@ -11,7 +11,7 @@ namespace Poly
     class FunctionAction : public IAction
     {
         public:
-            FunctionAction(ExecutedFunction passedFunction, RTTIBase* passedBase) : containedFunction(passedFunction), storedBase(passedBase) {};
+            FunctionAction(ExecutedFunction passedFunction, RTTIBase* passedBase) : storedFunction(passedFunction), storedBase(passedBase) {};
             void OnUpdate(TimeDuration deltaTime)
             {
                 storedFunction(deltaTime, storedBase);
