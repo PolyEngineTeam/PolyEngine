@@ -7,65 +7,58 @@ RTTI_DEFINE_TYPE(::Poly::SequenceTrack)
 
 //------------------------------------------------------------------------------
 SequenceTrack::SequenceTrack(std::vector<RegisteredAction>&& actions)
-	: Actions(actions), NextAction(Actions.begin())
+	: Actions(actions)
 {
 }
 
 //------------------------------------------------------------------------------
 bool SequenceTrack::IsActive()
 {
-	return ActiveActions.size() > 0 && NextAction == Actions.end();
+	return ActiveAction != nullptr || NextActionIndex != Actions.size();
 }
 
 //------------------------------------------------------------------------------
 void SequenceTrack::OnBegin(Entity* entity)
 {
-	Time = 0;
 	EntityObj = entity;
-	NextAction = Actions.begin();
+	NextActionIndex = 0;
+	ActiveAction = nullptr;
 }
 
 //------------------------------------------------------------------------------
-void SequenceTrack::OnUpdate(const float deltaTime)
+void SequenceTrack::OnUpdate(const TimeDuration deltaTime)
 {
-	TryActivateNextAction(deltaTime);
-	UpdateActiveActions(deltaTime);
+	const TimePoint thisTimePoint = std::chrono::steady_clock::now();
+
+	// if there is any action active
+	if (ActiveAction)
+	{
+		ActiveAction->OnUpdate(deltaTime);
+
+		// if action should finish now
+		if (thisTimePoint - Actions[NextActionIndex - 1].StartTime >= ActiveAction->GetTotalTime())
+			ActiveAction = nullptr;
+	}
+
+	// if there is no active action and next action should start now
+	if (Actions[NextActionIndex].StartTime <= thisTimePoint)
+	{
+		ASSERTE(ActiveAction == nullptr, "Previous action hasn't finished yet.");
+		ActiveAction = Actions[NextActionIndex].Action.get();
+		ActiveAction->OnBegin(EntityObj);
+		++NextActionIndex;
+	}
 }
 
 //------------------------------------------------------------------------------
 void SequenceTrack::OnAbort()
 {
-	// abort all active actions
-	for (auto* action : ActiveActions)
-		action->OnAbort();
-}
+	EntityObj = nullptr;
+	NextActionIndex = 0;
 
-//------------------------------------------------------------------------------
-void SequenceTrack::UpdateActiveActions(const float deltaTime)
-{
-	// update actions
-	size_t idx = 0;
-	std::vector<size_t> indcesToRemove;
-	for (auto* action : ActiveActions)
+	if (ActiveAction)
 	{
-		action->OnUpdate(deltaTime);
-
-		if (!action->IsActive())
-			indcesToRemove.insert(indcesToRemove.begin(), idx);
-	}
-
-	// remove inactive actions
-	for (auto idx : indcesToRemove)
-		ActiveActions.erase(ActiveActions.begin() + idx);
-}
-
-//------------------------------------------------------------------------------
-void SequenceTrack::TryActivateNextAction(const float deltaTime)
-{
-	// add next actions to active actions if necessary
-	while (NextAction != Actions.end() && NextAction->StartTime <= Time)
-	{
-		NextAction->Action->OnBegin(EntityObj);
-		ActiveActions.insert(ActiveActions.end(), NextAction->Action.get());
+		ActiveAction->OnAbort();
+		ActiveAction = nullptr;
 	}
 }

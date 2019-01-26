@@ -15,7 +15,7 @@ using namespace Poly;
 //------------------------------------------------------------------------------
 void SequenceSystem::OnUpdate(Scene* scene)
 {
-	const float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(scene, Poly::eEngineTimer::GAMEPLAY));
+	const TimeDuration deltaTime = TimeDuration((TimeSystem::GetTimerDeltaTime(scene, Poly::eEngineTimer::GAMEPLAY)));
 
 	for (auto[activeSequenceComponent, sequenceComponent] : scene->IterateComponents<ActiveSequenceComponent, SequenceComponent>())
 	{

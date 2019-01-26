@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include <Defines.hpp>
 #include <RTTI/RTTI.hpp>
 
@@ -19,7 +21,7 @@ namespace Poly
 	public:
 		struct RegisteredAction
 		{
-			float StartTime;
+			TimePoint StartTime;
 			std::shared_ptr<IAction> Action;
 		};
 
@@ -28,19 +30,15 @@ namespace Poly
 		bool IsActive();
 
 		void OnBegin(Entity* entity);
-		void OnUpdate(float deltaTime);
+		void OnUpdate(TimeDuration deltaTime);
 		void OnAbort();
 
 	private:
-		void UpdateActiveActions(const float deltaTime);
-		void TryActivateNextAction(const float deltaTime);
-
-		float Time = 0;
 		Entity* EntityObj = nullptr;
 
 		std::vector<RegisteredAction> Actions;
-		std::vector<IAction*> ActiveActions;
-		std::vector<RegisteredAction>::iterator NextAction;
+		size_t NextActionIndex = 0;
+		IAction* ActiveAction = nullptr;
 
 	}; // class SequenceTrack
 } // namespace Poly

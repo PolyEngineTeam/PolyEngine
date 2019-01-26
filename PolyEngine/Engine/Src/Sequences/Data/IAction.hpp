@@ -15,10 +15,10 @@ namespace Poly
 		}
 
 	public:
-		virtual bool IsActive() const = 0;
+		virtual TimeDuration GetTotalTime() const = 0;
 
 		virtual void OnBegin(Entity* entity) {};
-		virtual void OnUpdate(float dt) = 0;
+		virtual void OnUpdate(TimeDuration dt) = 0;
 		virtual void OnAbort() {};
 		virtual void OnFinish() {};
 
