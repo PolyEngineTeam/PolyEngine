@@ -21,6 +21,8 @@ namespace Poly
 	class ALIGN_16 CORE_DLLEXPORT Matrix final : public BaseObjectLiteralType<>
 	{
 	public:
+		static const Matrix IDENTITY;
+
 		Matrix();
 		Matrix(const float data[16], bool rowOrder = true);
 		Matrix(const Matrix& rhs);

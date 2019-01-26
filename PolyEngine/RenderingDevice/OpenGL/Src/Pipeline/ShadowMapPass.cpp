@@ -15,6 +15,10 @@ Matrix Poly::GetProjectionForShadowMap(const SceneView& sceneView, int shadowmap
 	Vector lightForward = dirLightCmp->GetTransform().GetGlobalForward();
 	Vector lightUp = dirLightCmp->GetTransform().GetGlobalUp();
 	Matrix lightViewFromWorld = Matrix(Vector::ZERO, lightForward, lightUp);
+	// @fixme: Transpose is needed to correctly multiply light rotation
+	// (created with look at) with rest of light projection matrices.
+	// Same rotation is created when inverted axes are passed to look at constructor
+	lightViewFromWorld.Transpose();
 
 	Vector shadowAABBExtentsInLS = sceneView.DirShadowAABBInLS.GetSize() * 0.5f;
 	Matrix clipFromLightView;

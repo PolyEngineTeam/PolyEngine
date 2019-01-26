@@ -34,7 +34,7 @@ void SkyboxRenderingPass::RenderSkybox(const CameraComponent* camera, const Skyb
 	GetProgram().SetUniform("uClipFromWorld", mvp);
 
 	// Deprecated: SkyboxWorldComponent has now only HDR Texture2D panorama, Cubemap is baked at start in EnvCapture pass
-	GLuint CubemapID = SkyboxWorldCmp->GetPanorama()->GetTextureProxy()->GetResourceID();
+	GLuint CubemapID = SkyboxWorldCmp->GetCurrentPanorama()->GetTextureProxy()->GetResourceID();
 
 	glDepthMask(GL_FALSE);
 	glEnable(GL_DEPTH_TEST);
