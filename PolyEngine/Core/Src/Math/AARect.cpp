@@ -36,6 +36,11 @@ AARect Poly::AARect::GetIntersectionVolume(const AARect& rhs) const
 		return AARect(Vector2f::ZERO, Vector2f::ZERO);
 }
 
+bool AARect::operator==(const AARect& rhs) const
+{
+	return Pos == rhs.Pos && Size == rhs.Size;
+}
+
 //------------------------------------------------------------------------------
 namespace Poly {
 	std::ostream& operator<<(std::ostream& stream, const AARect& rect)
