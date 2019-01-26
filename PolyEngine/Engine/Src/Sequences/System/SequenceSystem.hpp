@@ -19,7 +19,7 @@ namespace Poly
 		//void ResumeSequence(Entity* entity, String name);
 		//void PauseSequence(Entity* entity, String name);
 		//void StopSequence(Entity* entity, String name);
-		//void ResmeAllSequences(Entity* entity);
+		//void ResumeAllSequences(Entity* entity);
 		//void PauseAllSequences(Entity* entity);
 		//void StopAllSequences(Entity* entity);
 		
