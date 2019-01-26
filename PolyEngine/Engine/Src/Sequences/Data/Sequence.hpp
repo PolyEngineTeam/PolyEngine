@@ -27,8 +27,8 @@ namespace Poly
 		void OnAbort();
 
 	private:
-		std::vector<SequenceTrack> Tracks;
 		String Name;
+		std::vector<SequenceTrack> Tracks;
 
 	}; // class Sequence
 } // namespace Poly
