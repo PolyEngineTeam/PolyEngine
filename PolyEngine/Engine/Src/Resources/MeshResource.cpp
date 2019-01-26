@@ -126,9 +126,6 @@ void MeshResource::PopulateBoneReferences(const std::map<String, size_t>& nameTo
 				size_t parentIdx = nameToBoneIdx.at(parentName);
 				Bones[parentIdx].childrenIdx.push_back(idx);
 				Bones[idx].parentBoneIdx = parentIdx;
-
-				gConsole.LogDebug("[{}] Bone [{}] info: parent = {}", idx, Bones[idx].name, Bones[idx].parentBoneIdx.ValueOr(9999999));
-				gConsole.LogDebug("[{}] ParentBone [{}] info: parent = {}", parentIdx, Bones[parentIdx].name, Bones[parentIdx].parentBoneIdx.ValueOr(9999999));
 			}
 		}
 
