@@ -1,41 +1,41 @@
 #include <EnginePCH.hpp>
-#include <Sequences/Components/ActiveSequenceComponent.hpp>
+#include <Sequences/Components/StartSequenceComponent.hpp>
 
 using namespace Poly;
 
-RTTI_DEFINE_COMPONENT(::Poly::ActiveSequenceComponent)
+RTTI_DEFINE_COMPONENT(::Poly::StartSequenceComponent)
 
 //------------------------------------------------------------------------------
-Poly::ActiveSequenceComponent::ActiveSequenceComponent(String sequenceName)
+StartSequenceComponent::StartSequenceComponent(String sequenceName)
 	: Names({ std::move(sequenceName) })
 {
 }
 
 //------------------------------------------------------------------------------
-Poly::ActiveSequenceComponent::ActiveSequenceComponent(Dynarray<String> sequencesNames)
+StartSequenceComponent::StartSequenceComponent(Dynarray<String> sequencesNames)
 	: Names(sequencesNames)
 {
 }
 
 //------------------------------------------------------------------------------
-void Poly::ActiveSequenceComponent::AddActiveSequence(String sequenceName)
+void StartSequenceComponent::AddSequenceToStart(String sequenceName)
 {
 	ASSERTE(!Names.Contains(sequenceName), "ActiveSequenceComponent already contains given sequenceName");
 	Names.PushBack(std::move(sequenceName));
 }
 
 //------------------------------------------------------------------------------
-void Poly::ActiveSequenceComponent::AddActiveSequences(const Dynarray<String>& sequencesNames)
+void StartSequenceComponent::AddSequencesToStart(const Dynarray<String>& sequencesNames)
 {
 	for (const auto& name : sequencesNames)
 	{
 		ASSERTE(!Names.Contains(name), "ActiveSequenceComponent already contains given sequenceName");
 		Names.PushBack(std::move(name));
-	}	
+	}
 }
 
 //------------------------------------------------------------------------------
-const Dynarray<String>& ActiveSequenceComponent::GetActiveSequencesNames() const
+const Dynarray<String>& StartSequenceComponent::GetSequencesToStart() const
 {
 	return Names;
 }

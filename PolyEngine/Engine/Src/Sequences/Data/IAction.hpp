@@ -7,13 +7,8 @@ namespace Poly
 {
 	class Entity;
 
-	class IAction : public RTTIBase
+	class IAction
 	{
-		RTTI_DECLARE_TYPE_DERIVED(::Poly::IAction, ::Poly::RTTIBase)
-		{
-			NO_RTTI_PROPERTY();
-		}
-
 	public:
 		virtual TimeDuration GetTotalTime() const = 0;
 

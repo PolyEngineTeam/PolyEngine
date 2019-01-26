@@ -1,23 +1,30 @@
 #pragma once
 
 #include <Defines.hpp>
-#include <IAction.hpp>
+#include <Sequences/Data/IAction.hpp>
 
 namespace Poly
 {
     class Scene;
-    using ExecutedFunction = std::function<void(TimeDuration, RTTIBase*)>;
+    using ExecutedFunction = std::function<void(TimeDuration, TimeDuration, Entity*)>;
 
     class FunctionAction : public IAction
     {
         public:
-            FunctionAction(ExecutedFunction passedFunction, RTTIBase* passedBase) : containedFunction(passedFunction), storedBase(passedBase) {};
-            void OnUpdate(TimeDuration deltaTime)
+            FunctionAction(ExecutedFunction passedFunction, Entity* entity)
+				: storedFunction(passedFunction), EntityObj(entity) {};
+
+			TimeDuration GetTotalTime() const override { return TimeDuration(5); }
+
+			void OnUpdate(TimeDuration deltaTime) override
             {
-                storedFunction(deltaTime, storedBase);
+				TotalDuration += deltaTime;
+                storedFunction(TotalDuration, deltaTime, EntityObj);
             }
+
         private:
+			TimeDuration TotalDuration = TimeDuration(0);
             ExecutedFunction storedFunction;
-            RTTIBase* storedBase;
+			Entity* EntityObj;
     }; 
 } //namespace Poly

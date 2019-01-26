@@ -18,11 +18,13 @@ namespace Poly
 		explicit ActiveSequenceComponent(Dynarray<String> sequencesNames);
 
 		void AddActiveSequence(String sequenceName);
-		void AddActiveSequence(const Dynarray<String>& sequencesNames);
+		void AddActiveSequences(const Dynarray<String>& sequencesNames);
 
 		const Dynarray<String>& GetActiveSequencesNames() const;
 	private:
 		Dynarray<String> Names;
 
-	}; // class ActiveSequenceComponent
+	};
+
+	REGISTER_COMPONENT(ComponentsIDGroup, ActiveSequenceComponent)
 } // namespace Poly

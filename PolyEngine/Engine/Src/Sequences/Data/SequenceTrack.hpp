@@ -11,21 +11,16 @@ namespace Poly
 {
 	class Entity;
 
-	class SequenceTrack : public RTTIBase
+	class ENGINE_DLLEXPORT SequenceTrack
 	{
-		RTTI_DECLARE_TYPE_DERIVED(::Poly::SequenceTrack, ::Poly::RTTIBase)
-		{
-			NO_RTTI_PROPERTY();
-		}
-
 	public:
 		struct RegisteredAction
 		{
-			TimePoint StartTime;
+			TimeDuration StartTime;
 			std::shared_ptr<IAction> Action;
 		};
 
-		explicit SequenceTrack(std::vector<RegisteredAction>&& actions);
+		void AddAction(RegisteredAction action);
 
 		bool IsActive();
 
@@ -35,6 +30,7 @@ namespace Poly
 
 	private:
 		Entity* EntityObj = nullptr;
+		TimePoint TrackStartTime;
 
 		std::vector<RegisteredAction> Actions;
 		size_t NextActionIndex = 0;

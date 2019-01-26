@@ -3,12 +3,16 @@
 
 using namespace Poly;
 
-RTTI_DEFINE_TYPE(::Poly::Sequence)
+//------------------------------------------------------------------------------
+Sequence::Sequence(String name)
+	: Name(std::move(name))
+{
+}
 
 //------------------------------------------------------------------------------
-Sequence::Sequence(String name, std::vector<SequenceTrack>&& tracks)
-	: Name(std::move(name)), Tracks(std::move(tracks))
+void Poly::Sequence::AddTrack(SequenceTrack track)
 {
+	Tracks.push_back(std::move(track));
 }
 
 //------------------------------------------------------------------------------
