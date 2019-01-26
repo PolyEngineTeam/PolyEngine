@@ -37,6 +37,9 @@ TextureResource::TextureResource(const String& path, eTextureUsageType usage)
 	if (usage == eTextureUsageType::HDR) 
 	{
 		float* Image = LoadImageHDR(path.GetCStr(), &Width, &Height, &Channels);
+
+		if (!Image)
+			throw ResourceLoadFailedException();
 	
 		gConsole.LogInfo("TextureResource::TextureResource loaded width: {}, height: {}, channels: {}", Width, Height, Channels);
 
@@ -47,6 +50,9 @@ TextureResource::TextureResource(const String& path, eTextureUsageType usage)
 	else
 	{
 		unsigned char* Image = LoadImage(path.GetCStr(), &Width, &Height, &Channels, desiredChannels);
+
+		if (!Image)
+			throw ResourceLoadFailedException();
 
 		gConsole.LogInfo("TextureResource::TextureResource loaded width: {}, height: {}, channels: {}, desiredChannels: {}",
 			Width, Height, Channels, desiredChannels);

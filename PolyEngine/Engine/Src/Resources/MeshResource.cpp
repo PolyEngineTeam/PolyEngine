@@ -80,12 +80,16 @@ void Poly::MeshResource::LoadBones(aiNode* node)
 {
 	std::map<String, size_t> boneNameToIdx;
 
+	ModelFromSkeletonRoot = MatFromAiMat(node->mTransformation).Inverse();
+
 	for (const SubMesh* subMesh : SubMeshes)
 	{
 		for (const MeshResource::SubMesh::Bone& bone : subMesh->GetBones())
 		{
 			boneNameToIdx.insert({ bone.name , Bones.GetSize()});
-			Bones.PushBack(Bone(bone.name));
+			Bone b(bone.name);
+			b.boneFromModel = bone.boneFromModel;
+			Bones.PushBack(b);
 		}
 	}
 
@@ -93,18 +97,19 @@ void Poly::MeshResource::LoadBones(aiNode* node)
 	int idx = 0;
 	for (auto& bone : Bones)
 	{
-		gConsole.LogDebug("[{}] Bone [{}] info: parent = {}, t = {}", idx, bone.name, bone.parentBoneIdx, bone.boneFromParentBone);
+		gConsole.LogDebug("[{}] Bone [{}] info:\n parent = {},\n prevBoneFromBone = {},\n boneFromModel = {}", idx, bone.name, bone.parentBoneIdx, bone.prevBoneFromBone, bone.boneFromModel);
 		++idx;
 	}
 }
 
-void MeshResource::PopulateBoneReferences(const std::map<String, size_t>& nameToBoneIdx, aiNode* node, const Matrix& localTransform)
+void MeshResource::PopulateBoneReferences(const std::map<String, size_t>& nameToBoneIdx, aiNode* node, const Matrix& prevBoneFromParent)
 {
 	String nodeName = node->mName.C_Str();
+	Matrix parentFromBone = MatFromAiMat(node->mTransformation);
 	if (nodeName.IsEmpty() || nameToBoneIdx.find(nodeName) == nameToBoneIdx.end())
 	{
 		for (size_t k = 0; k < node->mNumChildren; ++k)
-			PopulateBoneReferences(nameToBoneIdx, node->mChildren[k], localTransform * MatFromAiMat(node->mTransformation));
+			PopulateBoneReferences(nameToBoneIdx, node->mChildren[k], prevBoneFromParent * parentFromBone);
 	}
 	else
 	{
@@ -129,7 +134,7 @@ void MeshResource::PopulateBoneReferences(const std::map<String, size_t>& nameTo
 			}
 		}
 
-		Bones[idx].boneFromParentBone = localTransform * MatFromAiMat(node->mTransformation);
+		Bones[idx].prevBoneFromBone = prevBoneFromParent * parentFromBone;
 
 		for (size_t k = 0; k < node->mNumChildren; ++k)
 			PopulateBoneReferences(nameToBoneIdx, node->mChildren[k], Matrix::IDENTITY);
@@ -182,7 +187,7 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
 					MeshData.BoneIds[vertId].Data[k] = entry.first;
 					MeshData.BoneWeights[vertId].Data[k] = entry.second;
 				}
-				ASSERTE(sum >= 0.90f, "Detected >10% animation inaccuracy (too many weights for one vertex)");
+				//ASSERTE(sum >= 0.90f, "Detected >10% animation inaccuracy (too many weights for one vertex)");
 			}
 		}
 
