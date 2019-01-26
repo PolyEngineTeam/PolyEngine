@@ -30,6 +30,7 @@ namespace Poly
 
 			struct ENGINE_DLLEXPORT Bone {
 				String name;
+				Matrix offset;
 			};
 
 			void LoadGeometry(aiMesh* mesh);
@@ -64,6 +65,7 @@ namespace Poly
 				Dynarray<KeyValue<Vector>> Scales;
 			};
 
+			String Name;
 			float Duration;
 			float TicksPerSecond;
 			Dynarray<Channel> channels;
@@ -75,6 +77,15 @@ namespace Poly
 
 		const Dynarray<SubMesh*>& GetSubMeshes() const { return SubMeshes; }
 		const Dynarray<Animation*>& GetAnimations() const { return Animations; }
+		const Animation* GetAnimation(const String& name) const
+		{
+			for (Animation* anim : Animations)
+			{
+				if (anim->Name == name)
+					return anim;
+			}
+			return nullptr;
+		}
 		const AABox& GetAABox() const { return AxisAlignedBoundingBox; }
 	private:
 		Dynarray<Animation*> Animations;

@@ -20,9 +20,10 @@ namespace Poly
 		Sequence(String name, std::vector<SequenceTrack>&& tracks);
 
 		String GetName() const;
+		bool IsActive();
 
 		void OnBegin(Entity* entity);
-		void OnUpdate(float deltaTime);
+		void OnUpdate(TimeDuration deltaTime);
 		void OnAbort();
 
 	private:

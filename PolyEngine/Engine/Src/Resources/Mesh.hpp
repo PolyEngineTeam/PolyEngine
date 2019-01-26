@@ -3,6 +3,7 @@
 #include <Defines.hpp>
 #include <Collections/Dynarray.hpp>
 #include <Math/Vector3f.hpp>
+#include <Math/VectorT.hpp>
 
 namespace Poly
 {
@@ -30,6 +31,8 @@ namespace Poly
 		const Dynarray<Vector3f>& GetBitangents() const { return Bitangents; }
 		const Dynarray<TextCoord>& GetTextCoords() const { return TextCoords; }
 		const Dynarray<uint32_t>& GetIndicies() const { return Indices; }
+		const Dynarray<VectorT<u8, 4>>& GetBoneIds() const { return BoneIds; }
+		const Dynarray<VectorT<float, 4>>& GetBoneWeights() const { return BoneWeights; }
 
 		bool HasVertices() const { return Positions.GetSize() != 0; }
 		bool HasNormals() const { return Normals.GetSize() != 0; }
@@ -37,6 +40,7 @@ namespace Poly
 		bool HasBitangents() const { return Bitangents.GetSize() != 0; }
 		bool HasTextCoords() const { return TextCoords.GetSize() != 0; }
 		bool HasIndicies() const { return Indices.GetSize() != 0; }
+		bool HasBones() const { return BoneIds.GetSize() != 0 && BoneWeights.GetSize(); }
 
 	private:
 		TextureResource* AlbedoMap;
@@ -51,7 +55,8 @@ namespace Poly
 		Dynarray<Vector3f> Bitangents;
 		Dynarray<TextCoord> TextCoords;
 		Dynarray<uint32_t> Indices;
-
+		Dynarray<VectorT<u8, 4>> BoneIds; // Max 4 bones
+		Dynarray<VectorT<float, 4>> BoneWeights;
 		friend class MeshResource;
 		friend class SubMesh;
 	};

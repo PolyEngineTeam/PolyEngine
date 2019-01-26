@@ -104,7 +104,8 @@ namespace Poly {
 
 		// Render pass for IBL environment
 		ShadowMapPass ShadowMap;
-		EnvCapture SkyboxCapture;
+		EnvCapture EnvironmentCapture;
+
 		RenderTargetPingPong RTBloom;
 		TextureResource* Splash;
 

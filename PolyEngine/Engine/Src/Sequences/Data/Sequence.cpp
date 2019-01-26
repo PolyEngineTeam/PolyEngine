@@ -18,6 +18,21 @@ String Sequence::GetName() const
 }
 
 //------------------------------------------------------------------------------
+bool Sequence::IsActive()
+{
+	bool result = true;
+
+	for (auto& track : Tracks)
+		if (track.IsActive())
+		{
+			result = true;
+			break;
+		}
+
+	return false;
+}
+
+//------------------------------------------------------------------------------
 void Sequence::OnBegin(Entity* entity)
 {
 	for (auto& track : Tracks)
@@ -25,7 +40,7 @@ void Sequence::OnBegin(Entity* entity)
 }
 
 //------------------------------------------------------------------------------
-void Sequence::OnUpdate(const float deltaTime)
+void Sequence::OnUpdate(const TimeDuration deltaTime)
 {
 	for (auto& track : Tracks)
 		track.OnUpdate(deltaTime);
