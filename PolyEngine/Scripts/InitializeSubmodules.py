@@ -3,7 +3,8 @@ import os
 import git
 from enum import Enum
 
-script_location = os.path.dirname(__file__)
+script_location = os.path.dirname(os.path.abspath(__file__))
+print('script_location:', script_location)
 repo_path = os.path.abspath(os.sep.join([script_location, '..', '..']))
 print('Using git repository location {}'.format(repo_path))
 repo = git.Repo(repo_path)

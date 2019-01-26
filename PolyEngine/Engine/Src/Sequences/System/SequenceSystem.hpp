@@ -12,8 +12,6 @@ namespace Poly
 	class SequenceSystem final : public ISystem
 	{
 	public:
-		SequenceSystem();
-
 		void OnUpdate(Scene* scene) final;
 
 		void StartSequence(Entity* entity, String name);
