@@ -543,10 +543,6 @@ void TiledForwardRenderer::ComputeLightCulling(const SceneView& sceneView)
 	// 	Time, workGroupsX, workGroupsY
 	// );
 
-	const ScreenSize screenSize = RDI->GetScreenSize();
-	int viewportWidth = (int)(sceneView.Rect.GetSize().X * screenSize.Width);
-	int viewportHeight = (int)(sceneView.Rect.GetSize().Y * screenSize.Height);
-
 	LightCullingShader.BindProgram();
 	LightCullingShader.SetUniform("uViewFromWorld", sceneView.CameraCmp->GetViewFromWorld());
 	LightCullingShader.SetUniform("uClipFromWorld", sceneView.CameraCmp->GetClipFromWorld());
