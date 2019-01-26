@@ -45,7 +45,8 @@ MeshResource::MeshResource(const String& path)
 
 	for (size_t i = 0; i < scene->mNumAnimations; ++i)
 	{
-		Animations.PushBack(new Animation(scene->mAnimations[i]));
+		Animation* a = new Animation(scene->mAnimations[i]);
+		Animations.insert({ a->Name, a });
 	}
 
 	AxisAlignedBoundingBox = AABox(min, max - min);
@@ -57,9 +58,9 @@ MeshResource::~MeshResource()
 	{
 		delete subMesh;
 	}
-	for (Animation* animation : Animations)
+	for (auto& kv : Animations)
 	{
-		delete animation;
+		delete kv.second;
 	}
 }
 
@@ -333,4 +334,44 @@ Poly::MeshResource::Animation::Animation(aiAnimation * anim)
 		}
 		channels.PushBack(std::move(c));
 	}
+}
+
+Poly::MeshResource::Animation::Channel::ChannelLerpData Poly::MeshResource::Animation::Channel::GetLerpData(float time) const
+{
+	ChannelLerpData data;
+
+	for (auto& pos : Positions)
+	{
+		if (pos.Time <= time)
+			data.pos[0] = pos;
+		if (pos.Time >= time)
+		{
+			data.pos[1] = pos;
+			break;
+		}
+	}
+
+	for (auto& scale : Scales)
+	{
+		if (scale.Time <= time)
+			data.scale[0] = scale;
+		if (scale.Time >= time)
+		{
+			data.scale[1] = scale;
+			break;
+		}
+	}
+
+	for (auto& rot : Rotations)
+	{
+		if (rot.Time <= time)
+			data.rot[0] = rot;
+		if (rot.Time >= time)
+		{
+			data.rot[1] = rot;
+			break;
+		}
+	}
+
+	return data;
 }

@@ -12,6 +12,8 @@
 
 using namespace Poly;
 
+
+
 void AnimationSystem::OnUpdate(Scene* scene)
 {
 	for (auto&[boneCmp] : scene->IterateComponents<BoneComponent>())
@@ -27,9 +29,12 @@ void AnimationSystem::OnUpdate(Scene* scene)
 		if (animCmp->CheckFlags(eComponentBaseFlags::NEWLY_CREATED))
 			CreateBoneStructure(animCmp, meshCmp);
 
+		std::map<String, std::vector<std::pair<Matrix, float>>> boneMatrices;
+
 		for (auto& animKV : animCmp->ActiveAnimations)
 		{
 			const String& animName = animKV.first;
+
 			SkeletalAnimationState& animState = animKV.second;
 			const MeshResource::Animation* anim = meshCmp->GetMesh()->GetAnimation(animName);
 
@@ -39,8 +44,80 @@ void AnimationSystem::OnUpdate(Scene* scene)
 				continue;
 			}
 
-			const double dt = TimeSystem::GetTimerDeltaTime(scene, animState.Params.Timer);
+			float dt = (float)TimeSystem::GetTimerDeltaTime(scene, animState.Params.Timer);
+
+			if (animState.DelayTime + dt < animState.Params.Delay)
+			{
+				animState.DelayTime += dt;
+				continue;
+			}
+			else if (animState.DelayTime < animState.Params.Delay)
+			{
+				// update dt
+				dt = animState.DelayTime + dt - animState.Params.Delay;
+				animState.DelayTime = animState.Params.Delay;
+			}
+
+			animState.Time = fmodf(animState.Time + dt, anim->Duration);
+			//ASSERTE(anim->TicksPerSecond == 0.f, "Unhandled tics per sec.");
+
+			for (auto& channel : anim->channels)
+			{
+				auto lerpData = channel.GetLerpData(animState.Time);
+				
+				Vector pos = Vector::ZERO;
+				Vector scale = Vector::ONE;
+				Quaternion rot = Quaternion::IDENTITY;
+
+				if (lerpData.pos[0].HasValue())
+				{
+					auto posKey = lerpData.pos[0].Value();
+					pos = posKey.Value;
+					if (lerpData.pos[1].HasValue())
+					{
+						pos = ::Poly::Lerp(pos, lerpData.pos[1].Value().Value, animState.Time - posKey.Time);
+					}
+				}
+					
+				if (lerpData.scale[0].HasValue())
+				{
+					auto scaleKey = lerpData.scale[0].Value();
+					scale = scaleKey.Value;
+					if (lerpData.scale[1].HasValue())
+					{
+						scale = ::Poly::Lerp(scale, lerpData.scale[1].Value().Value, animState.Time - scaleKey.Time);
+					}
+				}
+
+				if (lerpData.rot[0].HasValue())
+				{
+					auto rotKey = lerpData.rot[0].Value();
+					rot = rotKey.Value;
+					if (lerpData.rot[1].HasValue())
+					{
+						const float t = std::min(animState.Time - rotKey.Time, 1.0f);
+						rot = Quaternion::Slerp(rot, lerpData.rot[1].Value().Value, t);
+					}
+				}
+
+				Matrix parentFromBone = Matrix::Compose(pos, rot, scale);
+				boneMatrices[channel.Name].push_back({ parentFromBone, animState.Params.Weight });
+			}
 		}
+
+		if (!boneMatrices.empty())
+		{
+			for (auto& bone : animCmp->Bones)
+			{
+				auto& it = boneMatrices.find(bone->GetName());
+				if(it != boneMatrices.end())
+					bone->GetTransform().SetParentFromModel(Matrix::Blend(it->second));
+			}
+		}
+
+		animCmp->ModelFromBone.clear();
+		for (auto& bone : animCmp->Bones)
+			animCmp->ModelFromBone[bone->GetName()] = bone->GetTransform().GetWorldFromModel();
 	}
 }
 
@@ -52,7 +129,7 @@ void Poly::AnimationSystem::StartAnimation(SkeletalAnimationComponent* cmp, cons
 		gConsole.LogWarning("Starting animation [{}] when it's already running.");
 	} 
 
-	it->second = SkeletalAnimationState(params);
+	cmp->ActiveAnimations[animationName] = SkeletalAnimationState(params);
 }
 
 void Poly::AnimationSystem::StopAnimation(SkeletalAnimationComponent* cmp, const String&  animationName, bool immediate)
@@ -92,24 +169,23 @@ void Poly::AnimationSystem::CreateBoneStructure(SkeletalAnimationComponent* anim
 	skeleton->SetName("Mesh_Skeleton");
 
 	// Create bones
-	std::vector<Entity*> bonesEnt;
 	const auto& bones = meshCmp->GetMesh()->GetBones();
 	for (const auto& bone : bones)
 	{
 		Entity* ent = DeferredTaskSystem::SpawnEntityImmediate(scene);
 		ent->SetName(bone.name);
 		DeferredTaskSystem::AddComponentImmediate<BoneComponent>(scene, ent);
-		bonesEnt.push_back(ent);
+		animCmp->Bones.push_back(ent);
 	}
 
 	// Initialize bone hierarchy
 	for (size_t i = 0; i < bones.GetSize(); ++i)
 	{
 		if (bones[i].parentBoneIdx.HasValue())
-			bonesEnt[i]->SetParent(bonesEnt[bones[i].parentBoneIdx.Value()]);
+			animCmp->Bones[i]->SetParent(animCmp->Bones[bones[i].parentBoneIdx.Value()].Get());
 		else
-			bonesEnt[i]->SetParent(skeleton);
-		bonesEnt[i]->GetTransform().SetParentFromModel(bones[i].prevBoneFromBone);
+			animCmp->Bones[i]->SetParent(skeleton);
+		animCmp->Bones[i]->GetTransform().SetParentFromModel(bones[i].prevBoneFromBone);
 	}
 }
 
