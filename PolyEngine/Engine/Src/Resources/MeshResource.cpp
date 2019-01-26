@@ -35,11 +35,13 @@ MeshResource::MeshResource(const String& path)
 	
 	for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
 	{
-		SubMeshes.PushBack(new SubMesh(path, scene->mMeshes[i], scene->mRootNode, scene->mMaterials[scene->mMeshes[i]->mMaterialIndex]));
+		SubMeshes.PushBack(new SubMesh(path, scene->mMeshes[i], scene->mMaterials[scene->mMeshes[i]->mMaterialIndex]));
 
 		min = Vector::Min(min, SubMeshes[i]->GetAABox().GetMin());
 		max = Vector::Max(max, SubMeshes[i]->GetAABox().GetMax());
 	}
+
+	LoadBones(scene->mRootNode);
 
 	for (size_t i = 0; i < scene->mNumAnimations; ++i)
 	{
@@ -61,10 +63,10 @@ MeshResource::~MeshResource()
 	}
 }
 
-MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiNode* rootNode, aiMaterial* material)
+MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* material)
 {
 	LoadGeometry(mesh);
-	LoadBones(mesh, rootNode);
+	LoadBones(mesh);
 	
 	MeshData.EmissiveMap			= LoadTexture(material, path, (unsigned int)aiTextureType_EMISSIVE,		eTextureUsageType::EMISSIVE);
 	MeshData.AlbedoMap				= LoadTexture(material, path, (unsigned int)aiTextureType_DIFFUSE,		eTextureUsageType::ALBEDO);
@@ -74,7 +76,29 @@ MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiNode* rootNod
 	MeshData.AmbientOcclusionMap	= LoadTexture(material, path, (unsigned int)aiTextureType_AMBIENT,		eTextureUsageType::AMBIENT_OCCLUSION);
 }
 
-void MeshResource::SubMesh::PopulateBoneReferences(const std::map<String, size_t>& nameToBoneIdx, aiNode* node, const Matrix& localTransform)
+void Poly::MeshResource::LoadBones(aiNode* node)
+{
+	std::map<String, size_t> boneNameToIdx;
+
+	for (const SubMesh* subMesh : SubMeshes)
+	{
+		for (const MeshResource::SubMesh::Bone& bone : subMesh->GetBones())
+		{
+			boneNameToIdx.insert({ bone.name , Bones.GetSize()});
+			Bones.PushBack(Bone(bone.name));
+		}
+	}
+
+	PopulateBoneReferences(boneNameToIdx, node, Matrix::IDENTITY);
+	int idx = 0;
+	for (auto& bone : Bones)
+	{
+		gConsole.LogDebug("[{}] Bone [{}] info: parent = {}, t = {}", idx, bone.name, bone.parentBoneIdx, bone.boneFromParentBone);
+		++idx;
+	}
+}
+
+void MeshResource::PopulateBoneReferences(const std::map<String, size_t>& nameToBoneIdx, aiNode* node, const Matrix& localTransform)
 {
 	String nodeName = node->mName.C_Str();
 	if (nodeName.IsEmpty() || nameToBoneIdx.find(nodeName) == nameToBoneIdx.end())
@@ -102,6 +126,9 @@ void MeshResource::SubMesh::PopulateBoneReferences(const std::map<String, size_t
 				size_t parentIdx = nameToBoneIdx.at(parentName);
 				Bones[parentIdx].childrenIdx.push_back(idx);
 				Bones[idx].parentBoneIdx = parentIdx;
+
+				gConsole.LogDebug("[{}] Bone [{}] info: parent = {}", idx, Bones[idx].name, Bones[idx].parentBoneIdx.ValueOr(9999999));
+				gConsole.LogDebug("[{}] ParentBone [{}] info: parent = {}", parentIdx, Bones[parentIdx].name, Bones[parentIdx].parentBoneIdx.ValueOr(9999999));
 			}
 		}
 
@@ -112,7 +139,7 @@ void MeshResource::SubMesh::PopulateBoneReferences(const std::map<String, size_t
 	}
 }
 
-void MeshResource::SubMesh::LoadBones(aiMesh* mesh, aiNode* rootNode)
+void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
 {
 	if (mesh->HasBones())
 	{
@@ -126,13 +153,8 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh, aiNode* rootNode)
 		for (u8 boneId = 0; boneId < mesh->mNumBones; ++boneId)
 		{
 			const auto& bone = mesh->mBones[boneId];
+			Bones.push_back(Bone(String(bone->mName.C_Str()), MatFromAiMat(bone->mOffsetMatrix)));
 			
-			Bone b(String(bone->mName.C_Str()));
-			b.boneFromModel = MatFromAiMat(bone->mOffsetMatrix);
-			nameToBoneIdx[b.name] = Bones.GetSize();
-			Bones.PushBack(b);
-			
-
 			if (mesh->HasPositions())
 			{
 				// First pass, gather bones
@@ -165,15 +187,6 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh, aiNode* rootNode)
 				}
 				ASSERTE(sum >= 0.90f, "Detected >10% animation inaccuracy (too many weights for one vertex)");
 			}
-		}
-
-		PopulateBoneReferences(nameToBoneIdx, rootNode, Matrix::IDENTITY);
-
-		int idx = 0;
-		for (auto& bone : Bones)
-		{
-			gConsole.LogDebug("[{}] Bone [{}] info: parent = {}, t1 = {}, t2 = {}", idx, bone.name, bone.parentBoneIdx, bone.boneFromModel, bone.boneFromParentBone );
-			++idx;
 		}
 
 		gConsole.LogDebug("{} bones loaded", mesh->mNumBones);

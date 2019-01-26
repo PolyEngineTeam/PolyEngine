@@ -27,32 +27,27 @@ namespace Poly
 		class ENGINE_DLLEXPORT SubMesh : public BaseObject<>
 		{
 		public:
-			SubMesh(const String& path, aiMesh* mesh, aiNode* rootNode, aiMaterial* material);
-
 			struct ENGINE_DLLEXPORT Bone {
-				Bone(String name) : name(name) {}
+				Bone(String name, Matrix boneFromModel) : name(name) {}
 
 				String name;
 				Matrix boneFromModel;
-				Matrix boneFromParentBone;
-				Optional<size_t> parentBoneIdx;
-				std::vector<size_t> childrenIdx;
 			};
 
+			SubMesh(const String& path, aiMesh* mesh, aiMaterial* material);
+
 			void LoadGeometry(aiMesh* mesh);
-			void LoadBones(aiMesh* mesh, aiNode* rootNode);
+			void LoadBones(aiMesh* mesh);
 			TextureResource* LoadTexture(const aiMaterial* material, const String& path, const unsigned int aiType, const eTextureUsageType textureType);
 
 			const Mesh& GetMeshData() const { return MeshData; }
 			const IMeshDeviceProxy* GetMeshProxy() const { return MeshProxy.get(); }
 			const AABox& GetAABox() const { return AxisAlignedBoundingBox; }
+			std::vector<Bone> GetBones() const { return Bones; }
 		private:
-			void PopulateBoneReferences(const std::map<String, size_t>& nameToBoneIdx, aiNode* node, const Matrix& localTransform);
-
-
+			std::vector<Bone> Bones;
 			AABox AxisAlignedBoundingBox;
 			Mesh MeshData;
-			Dynarray<Bone> Bones;
 			std::unique_ptr<IMeshDeviceProxy> MeshProxy;
 		};
 
@@ -80,6 +75,15 @@ namespace Poly
 			Dynarray<Channel> channels;
 		};
 
+		struct ENGINE_DLLEXPORT Bone {
+			Bone(String name) : name(name) {}
+
+			String name;
+			Matrix boneFromParentBone;
+			Optional<size_t> parentBoneIdx = {};
+			std::vector<size_t> childrenIdx;
+		};
+
 		MeshResource(const String& path);
 		virtual ~MeshResource();
 
@@ -96,7 +100,12 @@ namespace Poly
 			return nullptr;
 		}
 		const AABox& GetAABox() const { return AxisAlignedBoundingBox; }
+		const Dynarray<Bone>& GetBones() const { return Bones; }
 	private:
+		void LoadBones(aiNode* node);
+		void PopulateBoneReferences(const std::map<String, size_t>& nameToBoneIdx, aiNode* node, const Matrix& localTransform);
+
+		Dynarray<Bone> Bones;
 		Dynarray<Animation*> Animations;
 		Dynarray<SubMesh*> SubMeshes;
 		AABox AxisAlignedBoundingBox;
