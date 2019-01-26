@@ -76,7 +76,7 @@ namespace Poly
 		GLRenderingDevice(const GLRenderingDevice&) = delete;
 		void operator=(const GLRenderingDevice&) = delete;
 
-		bool CreateContextHighend();
+		bool CreateContext();
 
 		void Init() override;
 		void Resize(const ScreenSize& size) override;
