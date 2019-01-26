@@ -12,7 +12,7 @@ Poly::ActiveSequenceComponent::ActiveSequenceComponent(String sequenceName)
 }
 
 //------------------------------------------------------------------------------
-Poly::ActiveSequenceComponent::ActiveSequenceComponent(Dynarray<String> sequencesNames)
+Poly::ActiveSequenceComponent::ActiveSequenceComponent(std::vector<String> sequencesNames)
 	: Names(sequencesNames)
 {
 }
@@ -20,22 +20,35 @@ Poly::ActiveSequenceComponent::ActiveSequenceComponent(Dynarray<String> sequence
 //------------------------------------------------------------------------------
 void Poly::ActiveSequenceComponent::AddActiveSequence(String sequenceName)
 {
-	ASSERTE(!Names.Contains(sequenceName), "ActiveSequenceComponent already contains given sequenceName");
-	Names.PushBack(std::move(sequenceName));
+	ASSERTE(std::find(Names.begin(), Names.end(), sequenceName) == Names.end(), "ActiveSequenceComponent already contains given sequenceName");
+	Names.push_back(std::move(sequenceName));
 }
 
 //------------------------------------------------------------------------------
-void Poly::ActiveSequenceComponent::AddActiveSequences(const Dynarray<String>& sequencesNames)
+void Poly::ActiveSequenceComponent::AddActiveSequences(const std::vector<String>& sequencesNames)
 {
 	for (const auto& name : sequencesNames)
 	{
-		ASSERTE(!Names.Contains(name), "ActiveSequenceComponent already contains given sequenceName");
-		Names.PushBack(std::move(name));
+		ASSERTE(std::find(Names.begin(), Names.end(), name) == Names.end(), "ActiveSequenceComponent already contains given sequenceName");
+		Names.push_back(std::move(name));
 	}	
 }
 
 //------------------------------------------------------------------------------
-const Dynarray<String>& ActiveSequenceComponent::GetActiveSequencesNames() const
+void ActiveSequenceComponent::RemoveActiveSequence(String sequenceName)
+{
+	Names.erase(std::remove(Names.begin(), Names.end(), sequenceName), Names.end());
+}
+
+//------------------------------------------------------------------------------
+void Poly::ActiveSequenceComponent::RemoveActiveSequences(const std::vector<String>& sequencesNames)
+{
+	for (const auto& name : sequencesNames)
+		Names.erase(std::remove(Names.begin(), Names.end(), name), Names.end());
+}
+
+//------------------------------------------------------------------------------
+const std::vector<String>& ActiveSequenceComponent::GetActiveSequencesNames() const
 {
 	return Names;
 }

@@ -10,7 +10,7 @@ namespace Poly
 	class IAction
 	{
 	public:
-		virtual TimeDuration GetTotalTime() const = 0;
+		virtual TimeDuration GetDuration() const = 0;
 
 		virtual void OnBegin(Entity* entity) {};
 		virtual void OnUpdate(TimeDuration dt) = 0;

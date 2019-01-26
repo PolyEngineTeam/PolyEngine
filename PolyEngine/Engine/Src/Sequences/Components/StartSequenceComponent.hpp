@@ -14,15 +14,12 @@ namespace Poly
 		}
 
 	public:
-		explicit StartSequenceComponent(String sequenceName);
-		explicit StartSequenceComponent(Dynarray<String> sequencesNames);
-
 		void AddSequenceToStart(String sequenceName);
-		void AddSequencesToStart(const Dynarray<String>& sequencesNames);
+		void AddSequencesToStart(const std::vector<String>& sequencesNames);
 
-		const Dynarray<String>& GetSequencesToStart() const;
+		const std::vector<String>& GetSequencesToStart() const;
 	private:
-		Dynarray<String> Names;
+		std::vector<String> Names;
 
 	};
 

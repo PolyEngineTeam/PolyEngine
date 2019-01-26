@@ -15,14 +15,17 @@ namespace Poly
 
 	public:
 		explicit ActiveSequenceComponent(String sequenceName);
-		explicit ActiveSequenceComponent(Dynarray<String> sequencesNames);
+		explicit ActiveSequenceComponent(std::vector<String> sequencesNames);
 
 		void AddActiveSequence(String sequenceName);
-		void AddActiveSequences(const Dynarray<String>& sequencesNames);
+		void AddActiveSequences(const std::vector<String>& sequencesNames);
 
-		const Dynarray<String>& GetActiveSequencesNames() const;
+		void RemoveActiveSequence(String sequenceName);
+		void RemoveActiveSequences(const std::vector<String>& sequencesNames);
+
+		const std::vector<String>& GetActiveSequencesNames() const;
 	private:
-		Dynarray<String> Names;
+		std::vector<String> Names;
 
 	};
 

@@ -6,36 +6,24 @@ using namespace Poly;
 RTTI_DEFINE_COMPONENT(::Poly::StartSequenceComponent)
 
 //------------------------------------------------------------------------------
-StartSequenceComponent::StartSequenceComponent(String sequenceName)
-	: Names({ std::move(sequenceName) })
-{
-}
-
-//------------------------------------------------------------------------------
-StartSequenceComponent::StartSequenceComponent(Dynarray<String> sequencesNames)
-	: Names(sequencesNames)
-{
-}
-
-//------------------------------------------------------------------------------
 void StartSequenceComponent::AddSequenceToStart(String sequenceName)
 {
-	ASSERTE(!Names.Contains(sequenceName), "ActiveSequenceComponent already contains given sequenceName");
-	Names.PushBack(std::move(sequenceName));
+	ASSERTE(std::find(Names.begin(), Names.end(), sequenceName) == Names.end(), "ActiveSequenceComponent already contains given sequenceName");
+	Names.push_back(std::move(sequenceName));
 }
 
 //------------------------------------------------------------------------------
-void StartSequenceComponent::AddSequencesToStart(const Dynarray<String>& sequencesNames)
+void StartSequenceComponent::AddSequencesToStart(const std::vector<String>& sequencesNames)
 {
 	for (const auto& name : sequencesNames)
 	{
-		ASSERTE(!Names.Contains(name), "ActiveSequenceComponent already contains given sequenceName");
-		Names.PushBack(std::move(name));
+		ASSERTE(std::find(Names.begin(), Names.end(), name) == Names.end(), "ActiveSequenceComponent already contains given sequenceName");
+		Names.push_back(std::move(name));
 	}
 }
 
 //------------------------------------------------------------------------------
-const Dynarray<String>& StartSequenceComponent::GetSequencesToStart() const
+const std::vector<String>& StartSequenceComponent::GetSequencesToStart() const
 {
 	return Names;
 }

@@ -27,8 +27,7 @@ void SequenceTrack::OnBegin(Entity* entity)
 //------------------------------------------------------------------------------
 void SequenceTrack::OnUpdate(const TimeDuration deltaTime)
 {
-	const TimePoint thisTimePoint = std::chrono::steady_clock::now();
-	const TimeDuration trackDuration = thisTimePoint - TrackStartTime;
+	const TimeDuration trackDuration = std::chrono::steady_clock::now() - TrackStartTime;
 
 	// if there is any action active
 	if (ActiveAction)
@@ -36,12 +35,12 @@ void SequenceTrack::OnUpdate(const TimeDuration deltaTime)
 		ActiveAction->OnUpdate(deltaTime);
 
 		// if action should finish now
-		if (trackDuration - Actions[NextActionIndex - 1].StartTime >= ActiveAction->GetTotalTime())
+		if (trackDuration - Actions[NextActionIndex - 1].StartTime >= ActiveAction->GetDuration())
 			ActiveAction = nullptr;
 	}
 
 	// if there is no active action and next action should start now
-	if (Actions[NextActionIndex].StartTime <= trackDuration)
+	if (NextActionIndex < Actions.size() && Actions[NextActionIndex].StartTime <= trackDuration)
 	{
 		ASSERTE(ActiveAction == nullptr, "Previous action hasn't finished yet.");
 		ActiveAction = Actions[NextActionIndex].Action.get();

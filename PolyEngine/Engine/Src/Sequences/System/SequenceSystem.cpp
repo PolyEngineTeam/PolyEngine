@@ -18,7 +18,8 @@ void SequenceSystem::OnUpdate(Scene* scene)
 {
 	const TimeDuration deltaTime = TimeDuration((TimeSystem::GetTimerDeltaTime(scene, Poly::eEngineTimer::GAMEPLAY)));
 
-	for (auto[startSequenceComponent, sequenceComponent] : scene->IterateComponents<StartSequenceComponent, SequenceComponent>())
+	// startrequested sequences
+	for (auto&[startSequenceComponent, sequenceComponent] : scene->IterateComponents<StartSequenceComponent, SequenceComponent>())
 	{
 		Entity* entity = startSequenceComponent->GetOwner();
 
@@ -39,10 +40,29 @@ void SequenceSystem::OnUpdate(Scene* scene)
 		DeferredTaskSystem::RemoveComponent<StartSequenceComponent>(scene, entity);
 	}
 
+	std::vector<Entity*> entitiesWithFinishedSequences;
+
 	// update all active sequences
-	for (auto[activeSequenceComponent, sequenceComponent] : scene->IterateComponents<ActiveSequenceComponent, SequenceComponent>())
+	for (auto&[activeSequenceComponent, sequenceComponent] : scene->IterateComponents<ActiveSequenceComponent, SequenceComponent>())
 	{
+		std::vector<String> sequencesToStop;
+
 		for (const auto& sequenceName : activeSequenceComponent->GetActiveSequencesNames())
-			sequenceComponent->GetSequence(sequenceName).OnUpdate(deltaTime);
+		{
+			auto& sequence = sequenceComponent->GetSequence(sequenceName);
+			sequence.OnUpdate(deltaTime);
+
+			if (!sequence.IsActive())
+				sequencesToStop.push_back(sequenceName);
+		}
+
+		activeSequenceComponent->RemoveActiveSequences(sequencesToStop);
+
+		if (activeSequenceComponent->GetActiveSequencesNames().size() == 0)
+			entitiesWithFinishedSequences.push_back(activeSequenceComponent->GetOwner());
 	}
+
+	// remove unnecessary components
+	for (auto* entity : entitiesWithFinishedSequences)
+		DeferredTaskSystem::RemoveComponent<ActiveSequenceComponent>(scene, entity);
 }

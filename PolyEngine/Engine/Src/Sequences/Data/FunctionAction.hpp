@@ -11,19 +11,20 @@ namespace Poly
     class FunctionAction : public IAction
     {
         public:
-            FunctionAction(ExecutedFunction passedFunction, Entity* entity)
-				: storedFunction(passedFunction), EntityObj(entity) {};
+            FunctionAction(TimeDuration duration, ExecutedFunction passedFunction, Entity* entity)
+				: Duration(duration), storedFunction(passedFunction), EntityObj(entity) {};
 
-			TimeDuration GetTotalTime() const override { return TimeDuration(5); }
+			TimeDuration GetDuration() const override { return Duration; }
 
 			void OnUpdate(TimeDuration deltaTime) override
             {
-				TotalDuration += deltaTime;
-                storedFunction(TotalDuration, deltaTime, EntityObj);
+				TotalTime += deltaTime;
+                storedFunction(TotalTime, deltaTime, EntityObj);
             }
 
         private:
-			TimeDuration TotalDuration = TimeDuration(0);
+			TimeDuration Duration = TimeDuration(0);
+			TimeDuration TotalTime = TimeDuration(0);
             ExecutedFunction storedFunction;
 			Entity* EntityObj;
     }; 
