@@ -12,6 +12,7 @@ namespace Poly
 	{
 	public:
 		static const Vector2f ZERO;
+		static const Vector2f ONE;
 		static const Vector2f UNIT_X;
 		static const Vector2f UNIT_Y;
 
@@ -43,6 +44,11 @@ namespace Poly
 		Vector2f operator-(const Vector2f& rhs) const;
 		Vector2f& operator+=(const Vector2f& rhs);
 		Vector2f& operator-=(const Vector2f& rhs);
+
+		Vector2f operator*(const Vector2f& rhs) const;
+		Vector2f operator/(const Vector2f& rhs) const;
+		Vector2f& operator*=(const Vector2f& rhs);
+		Vector2f& operator/=(const Vector2f& rhs);
 
 		// Operators with floats
 		Vector2f operator*(float rhs) const;

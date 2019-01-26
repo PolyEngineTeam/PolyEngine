@@ -17,6 +17,7 @@ uniform float uPlaneNear;
 uniform float uGrainScale;
 uniform float uVignetteScale;
 uniform float uAbberationScale;
+uniform float uTemperature;
 uniform float uGamma;
 
 out vec4 oColor;
@@ -171,7 +172,7 @@ void main()
     // result.rgb = vec3(splash.a);
     result = mix(result.rgb, uSplashTint.rgb, splash.r * maskX * maskY);
 
-    vec3 blended = result.rgb * ColorTemperatureToRGB(7500.0);
+    vec3 blended = result.rgb * ColorTemperatureToRGB(12500.0);
     vec3 resultHSL = RGBtoHSL(blended);
     float originalLuminance = Luminance(result.rgb);
     vec3 luminancePreservedRGB = HSLtoRGB(vec3(resultHSL.x, resultHSL.y, originalLuminance));
