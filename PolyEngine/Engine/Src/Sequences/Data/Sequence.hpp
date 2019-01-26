@@ -3,8 +3,12 @@
 #include <Defines.hpp>
 #include <RTTI/RTTI.hpp>
 
+#include <Sequences/Data/SequenceTrack.hpp>
+
 namespace Poly
 {
+	class Entity;
+
 	class Sequence : public RTTIBase
 	{
 		RTTI_DECLARE_TYPE_DERIVED(::Poly::Sequence, ::Poly::RTTIBase)
@@ -13,13 +17,17 @@ namespace Poly
 		}
 
 	public:
-		virtual String GetName() const = 0;
+		Sequence(String name, std::vector<SequenceTrack>&& tracks);
 
-		virtual void OnUpdate(float dt) = 0;
+		String GetName() const;
 
-		virtual void OnBegin() = 0;
-		virtual void OnStop() = 0;
-		virtual void OnFinish() = 0;
+		void OnBegin(Entity* entity);
+		void OnUpdate(float deltaTime);
+		void OnAbort();
+
+	private:
+		std::vector<SequenceTrack> Tracks;
+		String Name;
 
 	}; // class Sequence
 } // namespace Poly

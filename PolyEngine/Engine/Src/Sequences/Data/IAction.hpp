@@ -15,10 +15,12 @@ namespace Poly
 		}
 
 	public:
+		virtual bool IsActive() const = 0;
+
 		virtual void OnBegin(Entity* entity) {};
-		virtual void OnUpdate(Entity* entity, float dt) = 0;
-		virtual void OnAbort(Entity* entity) {};
-		virtual void OnFinish(Entity* entity) {};
+		virtual void OnUpdate(float dt) = 0;
+		virtual void OnAbort() {};
+		virtual void OnFinish() {};
 
 	}; // class IAction
 } // namespace Poly
