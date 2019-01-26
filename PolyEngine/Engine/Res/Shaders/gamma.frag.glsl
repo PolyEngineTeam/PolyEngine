@@ -4,14 +4,20 @@
 in vec2 vUV;
 
 uniform sampler2D uImage;
+uniform sampler2D uDepth;
 uniform sampler2D uSplashImage;
 uniform vec4 uSplashTint;
 uniform float uTime;
 uniform vec4 uRes;
 uniform vec4 uTint;
+uniform vec4 uFogColor;
+uniform float uFogDensity;
+uniform float uPlaneFar;
+uniform float uPlaneNear;
 uniform float uGrainScale;
 uniform float uVignetteScale;
 uniform float uAbberationScale;
+uniform float uTemperature;
 uniform float uGamma;
 
 out vec4 oColor;
@@ -149,7 +155,12 @@ void main()
     vec4 splash = texture(uSplashImage, splashUV);
     // vec4 splash = texture(uSplashImage, vUV);
 	vec3 color = ca(uImage, vUV, image, uAbberationScale);
-    
+
+	// exponential fog
+    float fogDist = (texture(uDepth, vUV).g - uPlaneNear) / (uPlaneFar - uPlaneNear);
+    float fogFalloff = 1.0 / exp(uFogDensity * fogDist);
+	color = mix(uFogColor.rgb, color, clamp(fogFalloff, 0.0, 1.0));
+
 	float vignette = 1.25 / (1.1 + 1.1 * dot(p, p));
     vignette *= vignette;
     vignette = mix(1.0, smoothstep(0.1, 1.1, vignette), 0.25);
@@ -161,10 +172,10 @@ void main()
     // result.rgb = vec3(splash.a);
     result = mix(result.rgb, uSplashTint.rgb, splash.r * maskX * maskY);
 
-    vec3 blended = result.rgb * ColorTemperatureToRGB(7500.0);
+    vec3 blended = result.rgb * ColorTemperatureToRGB(12500.0);
     vec3 resultHSL = RGBtoHSL(blended);
     float originalLuminance = Luminance(result.rgb);
     vec3 luminancePreservedRGB = HSLtoRGB(vec3(resultHSL.x, resultHSL.y, originalLuminance));
-
+	
     oColor = vec4(luminancePreservedRGB, 1.0);
 }
