@@ -30,6 +30,7 @@ void AnimationSystem::OnUpdate(Scene* scene)
 			CreateBoneStructure(animCmp, meshCmp);
 
 		std::map<String, std::vector<std::pair<Matrix, float>>> boneMatrices;
+		std::vector<String> animsToremove;
 
 		for (auto& animKV : animCmp->ActiveAnimations)
 		{
@@ -46,6 +47,8 @@ void AnimationSystem::OnUpdate(Scene* scene)
 
 			float dt = (float)TimeSystem::GetTimerDeltaTime(scene, animState.Params.Timer);
 
+			dt *= animState.Params.PlaybackSpeed;
+
 			if (animState.DelayTime + dt < animState.Params.Delay)
 			{
 				animState.DelayTime += dt;
@@ -58,12 +61,35 @@ void AnimationSystem::OnUpdate(Scene* scene)
 				animState.DelayTime = animState.Params.Delay;
 			}
 
-			animState.Time = fmodf(animState.Time + dt, anim->Duration);
+			// If animation finished
+			animState.StopRequested = animState.StopRequested || (!animState.Params.Loop && animState.Time + dt > anim->Duration);
+			// If looped animation finished
+			animState.StopRequested = animState.StopRequested || (animState.Params.Loop && animState.Params.LoopCount.HasValue() 
+				&& animState.LoopCount >= animState.Params.LoopCount.Value());
+
+			if (animState.StopRequested && animState.Time + dt > anim->Duration)
+			{
+				// animation finished, set time to duration
+				animState.Time = anim->Duration;
+			}
+			else
+			{
+				animState.Time = animState.Time + dt;
+				if (animState.Time >= anim->Duration && !animState.StopRequested)
+				{
+					animState.Time = fmodf(animState.Time, anim->Duration);
+					animState.LoopCount += 1;
+				}
+			}
+
+			
+			
 			//ASSERTE(anim->TicksPerSecond == 0.f, "Unhandled tics per sec.");
 
 			for (auto& channel : anim->channels)
 			{
-				auto lerpData = channel.GetLerpData(animState.Time);
+				const String& channelName = channel.first;
+				auto lerpData = anim->GetLerpData(channelName, animState.Time);
 				
 				Vector pos = Vector::ZERO;
 				Vector scale = Vector::ONE;
@@ -101,8 +127,16 @@ void AnimationSystem::OnUpdate(Scene* scene)
 				}
 
 				Matrix parentFromBone = Matrix::Compose(pos, rot, scale);
-				boneMatrices[channel.Name].push_back({ parentFromBone, animState.Params.Weight });
+				boneMatrices[channelName].push_back({ parentFromBone, animState.Params.Weight });
 			}
+
+			if (animState.StopRequested && animState.Time >= anim->Duration)
+				animsToremove.push_back(animName);
+		}
+
+		for (const String& animName : animsToremove)
+		{
+			animCmp->ActiveAnimations.erase(animName);
 		}
 
 		if (!boneMatrices.empty())
@@ -141,7 +175,7 @@ void Poly::AnimationSystem::StopAnimation(SkeletalAnimationComponent* cmp, const
 	}
 	else
 	{
-		cmp->ActiveAnimations.erase(it);
+		it->second.StopRequested = true;
 	}
 }
 

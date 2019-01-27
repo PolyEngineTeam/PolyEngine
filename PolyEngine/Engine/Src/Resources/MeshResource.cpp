@@ -332,16 +332,23 @@ Poly::MeshResource::Animation::Animation(aiAnimation * anim)
 			Vector vector = { (float)anim->mChannels[i]->mScalingKeys[j].mValue.x, (float)anim->mChannels[i]->mScalingKeys[j].mValue.y, (float)anim->mChannels[i]->mScalingKeys[j].mValue.z };
 			c.Scales.PushBack({ vector, (float)anim->mChannels[i]->mScalingKeys[j].mTime });
 		}
-		channels.PushBack(std::move(c));
+		String nameCpy = c.Name;
+		channels.insert({ nameCpy, std::move(c) });
 	}
 }
 
-Poly::MeshResource::Animation::Channel::ChannelLerpData Poly::MeshResource::Animation::Channel::GetLerpData(float time) const
+Poly::MeshResource::Animation::ChannelLerpData Poly::MeshResource::Animation::GetLerpData(String channelName, float time) const
 {
 	ChannelLerpData data;
 
-	for (auto& pos : Positions)
+	// @todo(muniu) investigate TicksPerSecond usage.
+	size_t hintIdx = 0;// (size_t)(TicksPerSecond * time);
+
+	const auto& channel = channels.at(channelName);
+
+	for (size_t i = hintIdx; i < channel.Positions.GetSize(); ++i)
 	{
+		auto& pos = channel.Positions[i];
 		if (pos.Time <= time)
 			data.pos[0] = pos;
 		if (pos.Time >= time)
@@ -351,8 +358,9 @@ Poly::MeshResource::Animation::Channel::ChannelLerpData Poly::MeshResource::Anim
 		}
 	}
 
-	for (auto& scale : Scales)
+	for (size_t i = hintIdx; i < channel.Positions.GetSize(); ++i)
 	{
+		auto& scale = channel.Scales[i];
 		if (scale.Time <= time)
 			data.scale[0] = scale;
 		if (scale.Time >= time)
@@ -362,8 +370,9 @@ Poly::MeshResource::Animation::Channel::ChannelLerpData Poly::MeshResource::Anim
 		}
 	}
 
-	for (auto& rot : Rotations)
+	for (size_t i = hintIdx; i < channel.Positions.GetSize(); ++i)
 	{
+		auto& rot = channel.Rotations[i];
 		if (rot.Time <= time)
 			data.rot[0] = rot;
 		if (rot.Time >= time)
