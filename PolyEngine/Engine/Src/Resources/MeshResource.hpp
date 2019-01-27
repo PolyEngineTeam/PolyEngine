@@ -63,27 +63,25 @@ namespace Poly
 					float Time;
 				};
 
-				struct ChannelLerpData
-				{
-					Optional<KeyValue<Vector>> pos[2];
-					Optional < KeyValue<Vector>> scale[2];
-					Optional < KeyValue<Quaternion>> rot[2];
-				};
-
-				ChannelLerpData GetLerpData(float time) const;
-
 				String Name;
 				Dynarray<KeyValue<Vector>> Positions;
 				Dynarray<KeyValue<Quaternion>> Rotations;
 				Dynarray<KeyValue<Vector>> Scales;
-
-
 			};
+
+			struct ChannelLerpData
+			{
+				Optional<Channel::KeyValue<Vector>> pos[2];
+				Optional<Channel::KeyValue<Vector>> scale[2];
+				Optional<Channel::KeyValue<Quaternion>> rot[2];
+			};
+
+			ChannelLerpData GetLerpData(String channel, float time) const;
 
 			String Name;
 			float Duration;
 			float TicksPerSecond;
-			Dynarray<Channel> channels;
+			std::map<String, Channel> channels;
 		};
 
 		struct ENGINE_DLLEXPORT Bone {

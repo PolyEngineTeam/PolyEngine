@@ -9,15 +9,12 @@ namespace Poly
 {
 	class Entity;
 
-	class Sequence : public RTTIBase
+	class ENGINE_DLLEXPORT Sequence
 	{
-		RTTI_DECLARE_TYPE_DERIVED(::Poly::Sequence, ::Poly::RTTIBase)
-		{
-			NO_RTTI_PROPERTY();
-		}
-
 	public:
-		Sequence(String name, std::vector<SequenceTrack>&& tracks);
+		Sequence(String name);
+
+		void AddTrack(SequenceTrack track);
 
 		String GetName() const;
 		bool IsActive();

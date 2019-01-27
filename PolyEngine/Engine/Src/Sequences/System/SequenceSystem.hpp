@@ -14,7 +14,7 @@ namespace Poly
 	public:
 		void OnUpdate(Scene* scene) final;
 
-		void StartSequence(Entity* entity, String name);
+		//void StartSequence(Entity* entity, String name);
 		// TODO(squares): implement this
 		//void ResumeSequence(Entity* entity, String name);
 		//void PauseSequence(Entity* entity, String name);
