@@ -12,6 +12,7 @@ namespace Poly
 		eEngineTimer Timer = eEngineTimer::GAMEPLAY;
 		float PlaybackSpeed = 1.0f;
 		bool Loop = false;
+		float Weight = 1.0f;
 		Optional<uint> LoopCount;
 	};
 
@@ -40,6 +41,7 @@ namespace Poly
 
 		std::map<String, SkeletalAnimationState> ActiveAnimations;
 		std::map<String, Matrix> ModelFromBone;
+		std::vector<SafePtr<Entity>> Bones;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, SkeletalAnimationComponent)

@@ -9,7 +9,7 @@ namespace Poly
 	class SkeletalAnimationComponent;
 	struct SkeletalAnimationParams;
 
-	class AnimationSystem : public ISystem
+	class ENGINE_DLLEXPORT AnimationSystem : public ISystem
 	{
 	public:
 		virtual void OnUpdate(Scene* scene) override;

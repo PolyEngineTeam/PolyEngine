@@ -5,7 +5,7 @@
 namespace Poly
 {
 	class Scene;
-	class ISystem : public BaseObject<>
+	class ENGINE_DLLEXPORT ISystem : public BaseObject<>
 	{
 	public:
 		virtual void OnUpdate(Scene* scene) = 0;
