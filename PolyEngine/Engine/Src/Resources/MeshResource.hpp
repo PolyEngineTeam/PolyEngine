@@ -56,17 +56,28 @@ namespace Poly
 			Animation(aiAnimation* anim);
 
 			struct ENGINE_DLLEXPORT Channel {
-
 				template<typename T>
 				struct KeyValue
 				{
 					T Value;
 					float Time;
 				};
+
+				struct ChannelLerpData
+				{
+					Optional<KeyValue<Vector>> pos[2];
+					Optional < KeyValue<Vector>> scale[2];
+					Optional < KeyValue<Quaternion>> rot[2];
+				};
+
+				ChannelLerpData GetLerpData(float time) const;
+
 				String Name;
 				Dynarray<KeyValue<Vector>> Positions;
 				Dynarray<KeyValue<Quaternion>> Rotations;
 				Dynarray<KeyValue<Vector>> Scales;
+
+
 			};
 
 			String Name;
@@ -90,15 +101,12 @@ namespace Poly
 
 
 		const Dynarray<SubMesh*>& GetSubMeshes() const { return SubMeshes; }
-		const Dynarray<Animation*>& GetAnimations() const { return Animations; }
 		const Animation* GetAnimation(const String& name) const
 		{
-			for (Animation* anim : Animations)
-			{
-				if (anim->Name == name)
-					return anim;
-			}
-			return nullptr;
+			auto it = Animations.find(name);
+			if (it == Animations.end())
+				return nullptr;
+			return it->second;
 		}
 		const AABox& GetAABox() const { return AxisAlignedBoundingBox; }
 		const Dynarray<Bone>& GetBones() const { return Bones; }
@@ -110,7 +118,7 @@ namespace Poly
 
 		Matrix ModelFromSkeletonRoot;
 		Dynarray<Bone> Bones;
-		Dynarray<Animation*> Animations;
+		std::map<String, Animation*> Animations;
 		Dynarray<SubMesh*> SubMeshes;
 		AABox AxisAlignedBoundingBox;
 	};
