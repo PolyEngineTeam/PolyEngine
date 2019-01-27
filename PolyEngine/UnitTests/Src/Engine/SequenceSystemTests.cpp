@@ -2,6 +2,7 @@
 #include <Math/BasicMath.hpp>
 #include <catch.hpp>
 
+#include <ECS/Entity.hpp>
 #include <Sequences/Data/IAction.hpp>
 #include <Sequences/Data/SequenceTrack.hpp>
 
@@ -72,7 +73,7 @@ TEST_CASE("Single action.", "[SequenceTrack]")
 	{
 		SECTION("OnFinish")
 		{
-			track.AppendAction(TimeDuration(0), std::move(action));
+			track.AppendAction(TimeDuration(0), action);
 			CHECK(track.IsActive() == false);
 			CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 			CHECK(action->GetOnBeginCalls() == 0);
@@ -80,7 +81,7 @@ TEST_CASE("Single action.", "[SequenceTrack]")
 			CHECK(action->GetOnAbortCalls() == 0);
 			CHECK(action->GetOnFinishCalls() == 0);
 
-			track.OnBegin(nullptr);
+			track.OnBegin(new Poly::Entity());
 			CHECK(track.IsActive() == true);
 			CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 			CHECK(action->GetOnBeginCalls() == 0);
@@ -115,7 +116,7 @@ TEST_CASE("Single action.", "[SequenceTrack]")
 
 		SECTION("OnAbort")
 		{
-			track.AppendAction(TimeDuration(1), std::move(action));
+			track.AppendAction(TimeDuration(1), action);
 			CHECK(track.IsActive() == false);
 			CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 			CHECK(action->GetOnBeginCalls() == 0);
@@ -123,7 +124,7 @@ TEST_CASE("Single action.", "[SequenceTrack]")
 			CHECK(action->GetOnAbortCalls() == 0);
 			CHECK(action->GetOnFinishCalls() == 0);
 
-			track.OnBegin(nullptr);
+			track.OnBegin(new Poly::Entity());
 			CHECK(track.IsActive() == true);
 			CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 			CHECK(action->GetOnBeginCalls() == 0);
@@ -161,7 +162,7 @@ TEST_CASE("Single action.", "[SequenceTrack]")
 	{
 		SECTION("OnFinish")
 		{
-			track.AppendAction(TimeDuration(1), std::move(action));
+			track.AppendAction(TimeDuration(1), action);
 			CHECK(track.IsActive() == false);
 			CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 			CHECK(action->GetOnBeginCalls() == 0);
@@ -169,7 +170,7 @@ TEST_CASE("Single action.", "[SequenceTrack]")
 			CHECK(action->GetOnAbortCalls() == 0);
 			CHECK(action->GetOnFinishCalls() == 0);
 
-			track.OnBegin(nullptr);
+			track.OnBegin(new Poly::Entity());
 			CHECK(track.IsActive() == true);
 			CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 			CHECK(action->GetOnBeginCalls() == 0);
@@ -220,7 +221,7 @@ TEST_CASE("Single action.", "[SequenceTrack]")
 
 		SECTION("OnAbort")
 		{
-			track.AppendAction(TimeDuration(1), std::move(action));
+			track.AppendAction(TimeDuration(1), action);
 			CHECK(track.IsActive() == false);
 			CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 			CHECK(action->GetOnBeginCalls() == 0);
@@ -228,7 +229,7 @@ TEST_CASE("Single action.", "[SequenceTrack]")
 			CHECK(action->GetOnAbortCalls() == 0);
 			CHECK(action->GetOnFinishCalls() == 0);
 
-			track.OnBegin(nullptr);
+			track.OnBegin(new Poly::Entity());
 			CHECK(track.IsActive() == true);
 			CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 			CHECK(action->GetOnBeginCalls() == 0);
@@ -295,8 +296,8 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 		{
 			SECTION("OnFinish")
 			{
-				track.AppendAction(TimeDuration(0), std::move(firstAction));
-				track.AppendAction(TimeDuration(2), std::move(secondAction));
+				track.AppendAction(TimeDuration(0), firstAction);
+				track.AppendAction(TimeDuration(2), secondAction);
 				CHECK(track.IsActive() == false);
 				CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(firstAction->GetOnBeginCalls() == 0);
@@ -309,7 +310,7 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 				CHECK(secondAction->GetOnAbortCalls() == 0);
 				CHECK(secondAction->GetOnFinishCalls() == 0);
 
-				track.OnBegin(nullptr);
+				track.OnBegin(new Poly::Entity());
 				CHECK(track.IsActive() == true);
 				CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(firstAction->GetOnBeginCalls() == 0);
@@ -429,8 +430,8 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 
 			SECTION("OnAbort first action")
 			{
-				track.AppendAction(TimeDuration(0), std::move(firstAction));
-				track.AppendAction(TimeDuration(2), std::move(secondAction));
+				track.AppendAction(TimeDuration(0), firstAction);
+				track.AppendAction(TimeDuration(2), secondAction);
 				CHECK(track.IsActive() == false);
 				CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(firstAction->GetOnBeginCalls() == 0);
@@ -443,7 +444,7 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 				CHECK(secondAction->GetOnAbortCalls() == 0);
 				CHECK(secondAction->GetOnFinishCalls() == 0);
 
-				track.OnBegin(nullptr);
+				track.OnBegin(new Poly::Entity());
 				CHECK(track.IsActive() == true);
 				CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(firstAction->GetOnBeginCalls() == 0);
@@ -524,8 +525,8 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 
 			SECTION("OnAbort second action")
 			{
-				track.AppendAction(TimeDuration(0), std::move(firstAction));
-				track.AppendAction(TimeDuration(2), std::move(secondAction));
+				track.AppendAction(TimeDuration(0), firstAction);
+				track.AppendAction(TimeDuration(2), secondAction);
 				CHECK(track.IsActive() == false);
 				CHECK(Poly::CmpfFast((float)firstAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(firstAction->GetOnBeginCalls() == 0);
@@ -538,7 +539,7 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 				CHECK(secondAction->GetOnAbortCalls() == 0);
 				CHECK(secondAction->GetOnFinishCalls() == 0);
 
-				track.OnBegin(nullptr);
+				track.OnBegin(new Poly::Entity());
 				CHECK(track.IsActive() == true);
 				CHECK(Poly::CmpfFast((float)firstAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(firstAction->GetOnBeginCalls() == 0);
@@ -663,14 +664,14 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 		{
 			SECTION("OnFinish")
 			{
-				track.AppendAction(TimeDuration(0), std::move(action));
+				track.AppendAction(TimeDuration(0), action);
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
 				CHECK(action->GetOnAbortCalls() == 0);
 				CHECK(action->GetOnFinishCalls() == 0);
 
-				track.OnBegin(nullptr);
+				track.OnBegin(new Poly::Entity());
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
@@ -701,14 +702,14 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 
 			SECTION("OnAbort first action")
 			{
-				track.AppendAction(TimeDuration(1), std::move(action));
+				track.AppendAction(TimeDuration(1), action);
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
 				CHECK(action->GetOnAbortCalls() == 0);
 				CHECK(action->GetOnFinishCalls() == 0);
 
-				track.OnBegin(nullptr);
+				track.OnBegin(new Poly::Entity());
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
@@ -739,14 +740,14 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 
 			SECTION("OnAbort second action")
 			{
-				track.AppendAction(TimeDuration(1), std::move(action));
+				track.AppendAction(TimeDuration(1), action);
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
 				CHECK(action->GetOnAbortCalls() == 0);
 				CHECK(action->GetOnFinishCalls() == 0);
 
-				track.OnBegin(nullptr);
+				track.OnBegin(new Poly::Entity());
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
@@ -783,14 +784,14 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 		{
 			SECTION("OnFinish")
 			{
-				track.AppendAction(TimeDuration(0), std::move(action));
+				track.AppendAction(TimeDuration(0), action);
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
 				CHECK(action->GetOnAbortCalls() == 0);
 				CHECK(action->GetOnFinishCalls() == 0);
 
-				track.OnBegin(nullptr);
+				track.OnBegin(new Poly::Entity());
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
@@ -821,14 +822,14 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 
 			SECTION("OnAbort first action")
 			{
-				track.AppendAction(TimeDuration(1), std::move(action));
+				track.AppendAction(TimeDuration(1), action);
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
 				CHECK(action->GetOnAbortCalls() == 0);
 				CHECK(action->GetOnFinishCalls() == 0);
 
-				track.OnBegin(nullptr);
+				track.OnBegin(new Poly::Entity());
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
@@ -859,14 +860,14 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 
 			SECTION("OnAbort second action")
 			{
-				track.AppendAction(TimeDuration(1), std::move(action));
+				track.AppendAction(TimeDuration(1), action);
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
 				CHECK(action->GetOnAbortCalls() == 0);
 				CHECK(action->GetOnFinishCalls() == 0);
 
-				track.OnBegin(nullptr);
+				track.OnBegin(new Poly::Entity());
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
@@ -900,14 +901,14 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 		{
 			SECTION("OnFinish")
 			{
-				track.AppendAction(TimeDuration(0), std::move(action));
+				track.AppendAction(TimeDuration(0), action);
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
 				CHECK(action->GetOnAbortCalls() == 0);
 				CHECK(action->GetOnFinishCalls() == 0);
 
-				track.OnBegin(nullptr);
+				track.OnBegin(new Poly::Entity());
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
@@ -938,14 +939,14 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 
 			SECTION("OnAbort first action")
 			{
-				track.AppendAction(TimeDuration(1), std::move(action));
+				track.AppendAction(TimeDuration(1), action);
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
 				CHECK(action->GetOnAbortCalls() == 0);
 				CHECK(action->GetOnFinishCalls() == 0);
 
-				track.OnBegin(nullptr);
+				track.OnBegin(new Poly::Entity());
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
@@ -976,14 +977,14 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 
 			SECTION("OnAbort second action")
 			{
-				track.AppendAction(TimeDuration(1), std::move(action));
+				track.AppendAction(TimeDuration(1), action);
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
 				CHECK(action->GetOnAbortCalls() == 0);
 				CHECK(action->GetOnFinishCalls() == 0);
 
-				track.OnBegin(nullptr);
+				track.OnBegin(new Poly::Entity());
 				CHECK(Poly::CmpfFast((float)action->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(action->GetOnBeginCalls() == 0);
 				CHECK(action->GetOnUpdateCalls() == 0);
