@@ -39,6 +39,9 @@ void SequenceTrack::OnUpdate(const TimeDuration deltaTime)
 
 	const TimeDuration trackDuration = std::chrono::steady_clock::now() - TrackStartTime;
 
+	if (!ActiveAction)
+		TryStartNextAction(trackDuration, deltaTime);
+
 	TryUpdateActiveAction(trackDuration, deltaTime);
 	TryStartNextAction(trackDuration, deltaTime);
 	TryFinishTrack();
