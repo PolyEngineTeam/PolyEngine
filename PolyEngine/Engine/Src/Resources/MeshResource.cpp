@@ -76,7 +76,7 @@ MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* mat
 	MeshData.AlbedoMap				= LoadTexture(material, path, (unsigned int)aiTextureType_DIFFUSE,		eTextureUsageType::ALBEDO);
 	MeshData.MetallicMap			= LoadTexture(material, path, (unsigned int)aiTextureType_SPECULAR,		eTextureUsageType::METALLIC);
 	MeshData.RoughnessMap			= LoadTexture(material, path, (unsigned int)aiTextureType_SHININESS,	eTextureUsageType::ROUGHNESS);
-	MeshData.NormalMap				= LoadTexture(material, path, (unsigned int)aiTextureType_HEIGHT,		eTextureUsageType::NORMAL);
+	MeshData.NormalMap				= LoadTexture(material, path, (unsigned int)aiTextureType_NORMALS,		eTextureUsageType::NORMAL);
 	MeshData.AmbientOcclusionMap	= LoadTexture(material, path, (unsigned int)aiTextureType_AMBIENT,		eTextureUsageType::AMBIENT_OCCLUSION);
 }
 

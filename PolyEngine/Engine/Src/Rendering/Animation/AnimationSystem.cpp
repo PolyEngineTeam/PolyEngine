@@ -12,7 +12,7 @@
 
 using namespace Poly;
 
-
+static const float MIN_TO_SEC = 60.f;
 
 void AnimationSystem::OnUpdate(Scene* scene)
 {
@@ -47,7 +47,7 @@ void AnimationSystem::OnUpdate(Scene* scene)
 
 			float dt = (float)TimeSystem::GetTimerDeltaTime(scene, animState.Params.Timer);
 
-			dt *= animState.Params.PlaybackSpeed;
+			dt *= animState.Params.PlaybackSpeed * MIN_TO_SEC;
 
 			if (animState.DelayTime + dt < animState.Params.Delay)
 			{
