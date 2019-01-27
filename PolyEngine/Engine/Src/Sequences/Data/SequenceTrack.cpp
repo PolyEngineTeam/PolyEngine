@@ -23,7 +23,7 @@ bool SequenceTrack::IsActive()
 //------------------------------------------------------------------------------
 void SequenceTrack::OnBegin(Entity* entity)
 {
-	ASSERTE(!Active, "To update track you must call OnAbort first or this must be the first call for this instance.");
+	ASSERTE(!Active, "Track must be inactive to begin.");
 
 	EntityObj = entity;
 	NextActionIndex = 0;
@@ -35,7 +35,7 @@ void SequenceTrack::OnBegin(Entity* entity)
 //------------------------------------------------------------------------------
 void SequenceTrack::OnUpdate(const TimeDuration deltaTime)
 {
-	ASSERTE(Active, "To update track you must call OnBegin first.");
+	ASSERTE(Active, "Trackmust be active to update.");
 
 	TrackElapsedTime += deltaTime;
 
@@ -57,7 +57,7 @@ void SequenceTrack::OnUpdate(const TimeDuration deltaTime)
 //------------------------------------------------------------------------------
 void SequenceTrack::OnAbort()
 {
-	ASSERTE(Active, "To abort track you must call OnBegin first.");
+	ASSERTE(Active, "Track must be active to abort.");
 
 	if (ActiveAction)
 		ActiveAction->OnAbort();
@@ -82,7 +82,7 @@ TimeDuration SequenceTrack::TryUpdateActiveAction(TimeDuration deltaTime)
 		}
 		// if ends in this frame
 		else if (const TimeDuration timeToCompleteAction = ActiveAction->GetDuration() - actionElapsedTime;
-			timeToCompleteAction < deltaTime)
+			timeToCompleteAction <= deltaTime)
 		{
 			ActiveAction->OnUpdate(timeToCompleteAction);
 
