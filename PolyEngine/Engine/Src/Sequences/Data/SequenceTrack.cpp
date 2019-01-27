@@ -3,12 +3,10 @@
 
 using namespace Poly;
 
-RTTI_DEFINE_TYPE(::Poly::SequenceTrack)
-
 //------------------------------------------------------------------------------
-SequenceTrack::SequenceTrack(std::vector<RegisteredAction>&& actions)
-	: Actions(actions)
+void Poly::SequenceTrack::AddAction(RegisteredAction action)
 {
+	Actions.push_back(std::move(action));
 }
 
 //------------------------------------------------------------------------------
@@ -23,12 +21,13 @@ void SequenceTrack::OnBegin(Entity* entity)
 	EntityObj = entity;
 	NextActionIndex = 0;
 	ActiveAction = nullptr;
+	TrackStartTime = std::chrono::steady_clock::now();
 }
 
 //------------------------------------------------------------------------------
 void SequenceTrack::OnUpdate(const TimeDuration deltaTime)
 {
-	const TimePoint thisTimePoint = std::chrono::steady_clock::now();
+	const TimeDuration trackDuration = std::chrono::steady_clock::now() - TrackStartTime;
 
 	// if there is any action active
 	if (ActiveAction)
@@ -36,12 +35,12 @@ void SequenceTrack::OnUpdate(const TimeDuration deltaTime)
 		ActiveAction->OnUpdate(deltaTime);
 
 		// if action should finish now
-		if (thisTimePoint - Actions[NextActionIndex - 1].StartTime >= ActiveAction->GetTotalTime())
+		if (trackDuration - Actions[NextActionIndex - 1].StartTime >= ActiveAction->GetDuration())
 			ActiveAction = nullptr;
 	}
 
 	// if there is no active action and next action should start now
-	if (Actions[NextActionIndex].StartTime <= thisTimePoint)
+	if (NextActionIndex < Actions.size() && Actions[NextActionIndex].StartTime <= trackDuration)
 	{
 		ASSERTE(ActiveAction == nullptr, "Previous action hasn't finished yet.");
 		ActiveAction = Actions[NextActionIndex].Action.get();

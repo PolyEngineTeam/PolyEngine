@@ -40,7 +40,9 @@ namespace Poly
 		bool HasBitangents() const { return Bitangents.GetSize() != 0; }
 		bool HasTextCoords() const { return TextCoords.GetSize() != 0; }
 		bool HasIndicies() const { return Indices.GetSize() != 0; }
-		bool HasBones() const { return BoneIds.GetSize() != 0 && BoneWeights.GetSize(); }
+		bool HasBones() const { return BoneIds.GetSize() != 0 && BoneWeights.GetSize() != 0; }
+		bool HasBoneWeights() const { return BoneWeights.GetSize() != 0; }
+		bool HasBoneIds() const { return BoneIds.GetSize() != 0; }
 
 	private:
 		TextureResource* AlbedoMap;

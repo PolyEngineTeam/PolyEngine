@@ -6,9 +6,9 @@ using namespace Poly;
 RTTI_DEFINE_COMPONENT(::Poly::SequenceComponent)
 
 //------------------------------------------------------------------------------
-SequenceComponent::SequenceComponent(std::map<String, Sequence>&& sequneces)
-	: Sequences(sequneces)
+void SequenceComponent::AddSequence(Sequence sequenceToAdd)
 {
+	Sequences.insert({ sequenceToAdd.GetName(), std::move(sequenceToAdd) });
 }
 
 //------------------------------------------------------------------------------
