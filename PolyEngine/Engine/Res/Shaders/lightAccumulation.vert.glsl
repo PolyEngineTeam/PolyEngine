@@ -13,6 +13,7 @@ uniform mat4 uClipFromModel;
 uniform mat4 uWorldFromModel;
 uniform vec4 uViewPosition;
 uniform mat4 uDirLightFromWorld;
+uniform float uHasBones;
 
 uniform float uTime;
 
@@ -52,8 +53,7 @@ void main()
 	if(sum == 0.0f)
 		vertInModel = vertexInBone;
 	
-	gl_Position = uClipFromModel * vertInModel;
-	
+	gl_Position = uClipFromModel * mix(vertexInBone, vertInModel, uHasBones);
 	// gl_Position = uClipFromModel * vertexInBone;
 	vertex_out.positionInWorld = (uWorldFromModel * vertInModel).xyz;
 
