@@ -5,7 +5,7 @@ layout(location = 2) in	vec3 aNormal;
 layout(location = 3) in vec3 aTangent;
 layout(location = 4) in vec3 aBitangent;
 layout(location = 5) in vec4 aBoneWeight;
-layout(location = 6) in vec4 aBoneIds;
+layout(location = 6) in ivec4 aBoneIds;
 
 const int MAX_BONES = 64;
 
@@ -38,10 +38,10 @@ void main()
 	
 	vec4 vertexInModel = vec4(aPosition.xyz, 1.0);
 	
-	vec4 pos1 = uBones[int(aBoneIds.x)] * vertexInModel;
-	vec4 pos2 = uBones[int(aBoneIds.y)] * vertexInModel;
-	vec4 pos3 = uBones[int(aBoneIds.z)] * vertexInModel;
-	vec4 pos4 = uBones[int(aBoneIds.w)] * vertexInModel;
+	vec4 pos1 = uBones[aBoneIds.x] * vertexInModel;
+	vec4 pos2 = uBones[aBoneIds.y] * vertexInModel;
+	vec4 pos3 = uBones[aBoneIds.z] * vertexInModel;
+	vec4 pos4 = uBones[aBoneIds.w] * vertexInModel;
 	
 	vec4 vertexInAnimModel = vec4(pos1.xyz, 1.0) *  aBoneWeight.x/sum;				
         vertexInAnimModel += vec4(pos2.xyz, 1.0) * aBoneWeight.y/sum;

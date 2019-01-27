@@ -31,7 +31,7 @@ namespace Poly
 		const Dynarray<Vector3f>& GetBitangents() const { return Bitangents; }
 		const Dynarray<TextCoord>& GetTextCoords() const { return TextCoords; }
 		const Dynarray<uint32_t>& GetIndicies() const { return Indices; }
-		const Dynarray<VectorT<u8, 4>>& GetBoneIds() const { return BoneIds; }
+		const Dynarray<VectorT<i8, 4>>& GetBoneIds() const { return BoneIds; }
 		const Dynarray<VectorT<float, 4>>& GetBoneWeights() const { return BoneWeights; }
 
 		bool HasVertices() const { return Positions.GetSize() != 0; }
@@ -57,7 +57,7 @@ namespace Poly
 		Dynarray<Vector3f> Bitangents;
 		Dynarray<TextCoord> TextCoords;
 		Dynarray<uint32_t> Indices;
-		Dynarray<VectorT<u8, 4>> BoneIds; // Max 4 bones
+		Dynarray<VectorT<i8, 4>> BoneIds; // Max 4 bones
 		Dynarray<VectorT<float, 4>> BoneWeights;
 		friend class MeshResource;
 		friend class SubMesh;

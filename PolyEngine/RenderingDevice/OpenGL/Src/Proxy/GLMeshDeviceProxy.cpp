@@ -118,11 +118,11 @@ void GLMeshDeviceProxy::SetContent(const Mesh& mesh)
 		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 0, NULL);
 		glEnableVertexAttribArray(5);
 
-		float* w = (float*)mesh.GetBoneWeights().GetData();
-		for (size_t i = 0; i < mesh.GetBoneWeights().GetSize() * 4; i+=4)
-		{
-			gConsole.LogError("W= ({}) {} {} {} {}", i/4, w[i], w[i + 1], w[i + 2], w[i + 3]);
-		}
+		// float* w = (float*)mesh.GetBoneWeights().GetData();
+		// for (size_t i = 0; i < mesh.GetBoneWeights().GetSize() * 4; i+=4)
+		// {
+		// 	gConsole.LogError("W= ({}) {} {} {} {}", i/4, w[i], w[i + 1], w[i + 2], w[i + 3]);
+		// }
 	
 		CHECK_GL_ERR();
 	}
@@ -132,8 +132,8 @@ void GLMeshDeviceProxy::SetContent(const Mesh& mesh)
 		EnsureVBOCreated(eBufferType::BONE_INDEX_BUFFER);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO[eBufferType::BONE_INDEX_BUFFER]);
 		// glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.GetBoneIds().GetSize() * sizeof(VectorT<u8, 4>), mesh.GetBoneIds().GetData(), GL_STATIC_DRAW);
-		glBufferData(GL_ARRAY_BUFFER, mesh.GetBoneIds().GetSize() * sizeof(u8) * 4, mesh.GetBoneIds().GetData(), GL_STATIC_DRAW);
-		glVertexAttribPointer(6, 4, GL_UNSIGNED_BYTE, GL_FALSE, 0, NULL);
+		glBufferData(GL_ARRAY_BUFFER, mesh.GetBoneIds().GetSize() * sizeof(i8) * 4, mesh.GetBoneIds().GetData(), GL_STATIC_DRAW);
+		glVertexAttribIPointer(6, 4, GL_BYTE, 0, NULL);
 		glEnableVertexAttribArray(6);
 		CHECK_GL_ERR();
 	}
