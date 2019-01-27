@@ -26,7 +26,7 @@ namespace Poly
 		GLuint GetCurrentIrradianceMap() const { return IrradianceMaps[CurrentEnviroment]; };
 		GLuint GetCurrentPrefilterMap() const { return PrefilterMaps[CurrentEnviroment]; };
 
-		void SetCurrentEnviroment(size_t value) { ASSERTE(value >= 0, "Wrong CurrentEnviroment index"); CurrentEnviroment = value; };
+		void SetCurrentEnviroment(size_t value) { CurrentEnviroment = value; };
 
 	private:
 

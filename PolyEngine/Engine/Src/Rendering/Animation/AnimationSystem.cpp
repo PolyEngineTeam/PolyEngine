@@ -16,7 +16,7 @@ using namespace Poly;
 
 void AnimationSystem::OnUpdate(Scene* scene)
 {
-	for (auto&[boneCmp] : scene->IterateComponents<BoneComponent>())
+	for (auto&&[boneCmp] : scene->IterateComponents<BoneComponent>())
 	{
 		Vector parentPos = boneCmp->GetOwner()->GetParent()->GetTransform().GetGlobalTranslation();
 		Vector myPos = boneCmp->GetOwner()->GetTransform().GetGlobalTranslation();
@@ -24,7 +24,7 @@ void AnimationSystem::OnUpdate(Scene* scene)
 		//DebugDrawSystem::DrawArrow(scene, myPos, boneCmp->GetOwner()->GetTransform().GetGlobalForward(), Color::RED);
 	}
 
-	for (auto& [animCmp, meshCmp] : scene->IterateComponents<SkeletalAnimationComponent, MeshRenderingComponent>())
+	for (auto&& [animCmp, meshCmp] : scene->IterateComponents<SkeletalAnimationComponent, MeshRenderingComponent>())
 	{
 		if (animCmp->CheckFlags(eComponentBaseFlags::NEWLY_CREATED))
 			CreateBoneStructure(animCmp, meshCmp);
@@ -143,7 +143,7 @@ void AnimationSystem::OnUpdate(Scene* scene)
 		{
 			for (auto& bone : animCmp->Bones)
 			{
-				auto& it = boneMatrices.find(bone->GetName());
+				auto&& it = boneMatrices.find(bone->GetName());
 				if(it != boneMatrices.end())
 					bone->GetTransform().SetParentFromModel(Matrix::Blend(it->second));
 			}
@@ -172,7 +172,7 @@ void AnimationSystem::OnUpdate(Scene* scene)
 
 void Poly::AnimationSystem::StartAnimation(SkeletalAnimationComponent* cmp, const String&  animationName, const SkeletalAnimationParams& params)
 {
-	auto& it = cmp->ActiveAnimations.find(animationName);
+	auto&& it = cmp->ActiveAnimations.find(animationName);
 	if (it != cmp->ActiveAnimations.end())
 	{
 		gConsole.LogWarning("Starting animation [{}] when it's already running.");
@@ -183,7 +183,7 @@ void Poly::AnimationSystem::StartAnimation(SkeletalAnimationComponent* cmp, cons
 
 void Poly::AnimationSystem::StopAnimation(SkeletalAnimationComponent* cmp, const String&  animationName, bool immediate)
 {
-	auto& it = cmp->ActiveAnimations.find(animationName);
+	auto&& it = cmp->ActiveAnimations.find(animationName);
 	if (it != cmp->ActiveAnimations.end())
 	{
 		gConsole.LogError("Stopping animation [{}] when it's not running.");
@@ -196,7 +196,7 @@ void Poly::AnimationSystem::StopAnimation(SkeletalAnimationComponent* cmp, const
 
 bool Poly::AnimationSystem::IsAnimationActive(SkeletalAnimationComponent * cmp, const String&  animationName)
 {
-	auto& it = cmp->ActiveAnimations.find(animationName);
+	auto&& it = cmp->ActiveAnimations.find(animationName);
 	return it != cmp->ActiveAnimations.end();
 }
 
