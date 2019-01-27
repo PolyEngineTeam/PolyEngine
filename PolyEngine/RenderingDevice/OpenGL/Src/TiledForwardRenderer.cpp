@@ -595,9 +595,9 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.SceneData, eEngineTimer::GAMEPLAY);
-	LightAccumulationShader.SetUniform("uTime", time);
-	gConsole.LogInfo("TiledForwardRenderer::RenderOpaqueLit uTime: {}", time);
+	// float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.SceneData, eEngineTimer::GAMEPLAY);
+	// LightAccumulationShader.SetUniform("uTime", time);
+	// gConsole.LogInfo("TiledForwardRenderer::RenderOpaqueLit uTime: {}", time);
 
 	// shadownap uniforms
 	Matrix projDirLightFromWorld = sceneView.DirectionalLightList.IsEmpty()
