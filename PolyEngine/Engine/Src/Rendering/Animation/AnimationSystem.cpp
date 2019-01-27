@@ -16,13 +16,13 @@ using namespace Poly;
 
 void AnimationSystem::OnUpdate(Scene* scene)
 {
-	for (auto&&[boneCmp] : scene->IterateComponents<BoneComponent>())
-	{
-		Vector parentPos = boneCmp->GetOwner()->GetParent()->GetTransform().GetGlobalTranslation();
-		Vector myPos = boneCmp->GetOwner()->GetTransform().GetGlobalTranslation();
-		//DebugDrawSystem::DrawLine(scene, myPos, parentPos, Color::GREEN);
-		//DebugDrawSystem::DrawArrow(scene, myPos, boneCmp->GetOwner()->GetTransform().GetGlobalForward(), Color::RED);
-	}
+	// for (auto&&[boneCmp] : scene->IterateComponents<BoneComponent>())
+	// {
+	// 	//Vector parentPos = boneCmp->GetOwner()->GetParent()->GetTransform().GetGlobalTranslation();
+	// 	//Vector myPos = boneCmp->GetOwner()->GetTransform().GetGlobalTranslation();
+	// 	//DebugDrawSystem::DrawLine(scene, myPos, parentPos, Color::GREEN);
+	// 	//DebugDrawSystem::DrawArrow(scene, myPos, boneCmp->GetOwner()->GetTransform().GetGlobalForward(), Color::RED);
+	// }
 
 	for (auto&& [animCmp, meshCmp] : scene->IterateComponents<SkeletalAnimationComponent, MeshRenderingComponent>())
 	{
