@@ -7,10 +7,16 @@ layout (location = 4) in vec3 aBitangent;
 layout (location = 5) in vec4 aBoneWeight;
 layout (location = 6) in ivec4 aBoneIds;
 
+const int MAX_BONES = 64;
+
 uniform mat4 uClipFromModel;
 uniform mat4 uWorldFromModel;
 uniform vec4 uViewPosition;
 uniform mat4 uDirLightFromWorld;
+
+uniform float uTime;
+
+uniform mat4 uBones[MAX_BONES];
 
 out VERTEX_OUT
 {
@@ -26,10 +32,30 @@ out VERTEX_OUT
 void main()
 {
 	vertex_out.uv = aUV;
-
-	vec4 vertexInModel = vec4(aPosition.xyz, 1.0);
-	gl_Position = uClipFromModel * vertexInModel;
-	vertex_out.positionInWorld = (uWorldFromModel * vertexInModel).xyz;
+	
+	float sum =  aBoneWeight.x +  aBoneWeight.y +  aBoneWeight.z +  aBoneWeight.w;
+	
+	vec4 vertexInBone = vec4(aPosition.xyz, 1.0);
+	
+	vec4 pos1 = uBones[aBoneIds.x] * vertexInBone;
+	vec4 pos2 = uBones[aBoneIds.y] * vertexInBone;
+	vec4 pos3 = uBones[aBoneIds.z] * vertexInBone;
+	vec4 pos4 = uBones[aBoneIds.w] * vertexInBone;
+	
+	vec4 vertInModel = vec4(pos1.xyz, 1.0) *  aBoneWeight.x/sum;				
+        vertInModel += vec4(pos2.xyz, 1.0) * aBoneWeight.y/sum;
+        vertInModel += vec4(pos3.xyz, 1.0) * aBoneWeight.z/sum;
+        vertInModel += vec4(pos4.xyz, 1.0) * aBoneWeight.w/sum;
+	
+	vertInModel.w = 1.0f;
+	
+	if(sum == 0.0f)
+		vertInModel = vertexInBone;
+	
+	gl_Position = uClipFromModel * vertInModel;
+	
+	// gl_Position = uClipFromModel * vertexInBone;
+	vertex_out.positionInWorld = (uWorldFromModel * vertInModel).xyz;
 
 	mat3 transposedModelFromWorld = transpose(inverse(mat3(uWorldFromModel)));
 	vertex_out.normalInModel = normalize(transposedModelFromWorld * aNormal /*InModel*/);
