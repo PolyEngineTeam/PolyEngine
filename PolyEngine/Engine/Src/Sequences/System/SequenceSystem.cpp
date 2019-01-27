@@ -19,7 +19,7 @@ void SequenceSystem::OnUpdate(Scene* scene)
 	const TimeDuration deltaTime = TimeDuration((TimeSystem::GetTimerDeltaTime(scene, Poly::eEngineTimer::GAMEPLAY)));
 
 	// startrequested sequences
-	for (auto&[startSequenceComponent, sequenceComponent] : scene->IterateComponents<StartSequenceComponent, SequenceComponent>())
+	for (auto&&[startSequenceComponent, sequenceComponent] : scene->IterateComponents<StartSequenceComponent, SequenceComponent>())
 	{
 		Entity* entity = startSequenceComponent->GetOwner();
 
@@ -32,7 +32,7 @@ void SequenceSystem::OnUpdate(Scene* scene)
 		}
 
 		// call OnBegin for all just started sequences
-		auto* sequenceComponent = entity->GetComponent<SequenceComponent>();
+		sequenceComponent = entity->GetComponent<SequenceComponent>();
 		for (auto& sequenceName : startSequenceComponent->GetSequencesToStart())
 			sequenceComponent->GetSequence(sequenceName).OnBegin(entity);
 
@@ -43,7 +43,7 @@ void SequenceSystem::OnUpdate(Scene* scene)
 	std::vector<Entity*> entitiesWithFinishedSequences;
 
 	// update all active sequences
-	for (auto&[activeSequenceComponent, sequenceComponent] : scene->IterateComponents<ActiveSequenceComponent, SequenceComponent>())
+	for (auto&&[activeSequenceComponent, sequenceComponent] : scene->IterateComponents<ActiveSequenceComponent, SequenceComponent>())
 	{
 		std::vector<String> sequencesToStop;
 
