@@ -11,6 +11,7 @@
 #include <Rendering/Lighting/LightSourceComponent.hpp>
 #include <Rendering/RenderingSystem.hpp>
 #include <Rendering/Particles/ParticleUpdateSystem.hpp>
+#include <Rendering/Animation/AnimationSystem.hpp>
 #include <Time/TimeWorldComponent.hpp>
 #include <Imgui/ImguiSystem.hpp>
 #include <Debugging/DebugWorldComponent.hpp>
@@ -19,6 +20,7 @@
 #include <Physics3D/Physics3DWorldComponent.hpp>
 #include <Debugging/DebugDrawSystem.hpp>
 #include <ECS/LambdaSystem.hpp>
+#include <Sequences/System/SequenceSystem.hpp>
 
 using namespace Poly;
 
@@ -62,10 +64,12 @@ void Engine::Init(std::unique_ptr<IGame> game, std::unique_ptr<IRenderingDevice>
 	RegisterUpdatePhase(Physics3DSystem::Physics3DUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 	RegisterUpdatePhase(MovementSystem::MovementUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
 
+	RegisterSystem(std::make_unique<SequenceSystem>(), eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(PathfindingSystem::UpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(CameraSystem::CameraUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(DebugDrawSystem::DebugRenderingUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(ParticleUpdateSystem::ParticleUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
+	RegisterSystem(std::make_unique<AnimationSystem>(), eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(RenderingSystem::RenderingPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(SoundSystem::SoundPhase, eUpdatePhaseOrder::POSTUPDATE);
 	RegisterUpdatePhase(DeferredTaskSystem::DeferredTaskPhase, eUpdatePhaseOrder::POSTUPDATE);

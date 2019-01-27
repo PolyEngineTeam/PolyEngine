@@ -35,15 +35,18 @@ MeshResource::MeshResource(const String& path)
 	
 	for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
 	{
-		SubMeshes.PushBack(new SubMesh(path, scene->mMeshes[i], scene->mRootNode, scene->mMaterials[scene->mMeshes[i]->mMaterialIndex]));
+		SubMeshes.PushBack(new SubMesh(path, scene->mMeshes[i], scene->mMaterials[scene->mMeshes[i]->mMaterialIndex]));
 
 		min = Vector::Min(min, SubMeshes[i]->GetAABox().GetMin());
 		max = Vector::Max(max, SubMeshes[i]->GetAABox().GetMax());
 	}
 
+	LoadBones(scene->mRootNode);
+
 	for (size_t i = 0; i < scene->mNumAnimations; ++i)
 	{
-		Animations.PushBack(new Animation(scene->mAnimations[i]));
+		Animation* a = new Animation(scene->mAnimations[i]);
+		Animations.insert({ a->Name, a });
 	}
 
 	AxisAlignedBoundingBox = AABox(min, max - min);
@@ -55,16 +58,19 @@ MeshResource::~MeshResource()
 	{
 		delete subMesh;
 	}
-	for (Animation* animation : Animations)
+	for (auto& kv : Animations)
 	{
-		delete animation;
+		delete kv.second;
 	}
 }
 
-MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiNode* rootNode, aiMaterial* material)
+MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* material)
 {
 	LoadGeometry(mesh);
-	LoadBones(mesh, rootNode);
+	LoadBones(mesh);
+
+	MeshProxy = gEngine->GetRenderingDevice()->CreateMesh();
+	MeshProxy->SetContent(MeshData);
 	
 	MeshData.EmissiveMap			= LoadTexture(material, path, (unsigned int)aiTextureType_EMISSIVE,		eTextureUsageType::EMISSIVE);
 	MeshData.AlbedoMap				= LoadTexture(material, path, (unsigned int)aiTextureType_DIFFUSE,		eTextureUsageType::ALBEDO);
@@ -74,13 +80,40 @@ MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiNode* rootNod
 	MeshData.AmbientOcclusionMap	= LoadTexture(material, path, (unsigned int)aiTextureType_AMBIENT,		eTextureUsageType::AMBIENT_OCCLUSION);
 }
 
-void MeshResource::SubMesh::PopulateBoneReferences(const std::map<String, size_t>& nameToBoneIdx, aiNode* node, const Matrix& localTransform)
+void Poly::MeshResource::LoadBones(aiNode* node)
+{
+	std::map<String, size_t> boneNameToIdx;
+
+	ModelFromSkeletonRoot = MatFromAiMat(node->mTransformation).Inverse();
+
+	for (const SubMesh* subMesh : SubMeshes)
+	{
+		for (const MeshResource::SubMesh::Bone& bone : subMesh->GetBones())
+		{
+			boneNameToIdx.insert({ bone.name , Bones.GetSize()});
+			Bone b(bone.name);
+			b.boneFromModel = bone.boneFromModel;
+			Bones.PushBack(b);
+		}
+	}
+
+	PopulateBoneReferences(boneNameToIdx, node, Matrix::IDENTITY);
+	int idx = 0;
+	for (auto& bone : Bones)
+	{
+		gConsole.LogDebug("[{}] Bone [{}] info:\n parent = {},\n prevBoneFromBone = {},\n boneFromModel = {}", idx, bone.name, bone.parentBoneIdx, bone.prevBoneFromBone, bone.boneFromModel);
+		++idx;
+	}
+}
+
+void MeshResource::PopulateBoneReferences(const std::map<String, size_t>& nameToBoneIdx, aiNode* node, const Matrix& prevBoneFromParent)
 {
 	String nodeName = node->mName.C_Str();
+	Matrix parentFromBone = MatFromAiMat(node->mTransformation);
 	if (nodeName.IsEmpty() || nameToBoneIdx.find(nodeName) == nameToBoneIdx.end())
 	{
 		for (size_t k = 0; k < node->mNumChildren; ++k)
-			PopulateBoneReferences(nameToBoneIdx, node->mChildren[k], localTransform * MatFromAiMat(node->mTransformation));
+			PopulateBoneReferences(nameToBoneIdx, node->mChildren[k], prevBoneFromParent * parentFromBone);
 	}
 	else
 	{
@@ -105,14 +138,14 @@ void MeshResource::SubMesh::PopulateBoneReferences(const std::map<String, size_t
 			}
 		}
 
-		Bones[idx].boneFromParentBone = localTransform * MatFromAiMat(node->mTransformation);
+		Bones[idx].prevBoneFromBone = prevBoneFromParent * parentFromBone;
 
 		for (size_t k = 0; k < node->mNumChildren; ++k)
 			PopulateBoneReferences(nameToBoneIdx, node->mChildren[k], Matrix::IDENTITY);
 	}
 }
 
-void MeshResource::SubMesh::LoadBones(aiMesh* mesh, aiNode* rootNode)
+void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
 {
 	if (mesh->HasBones())
 	{
@@ -126,13 +159,8 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh, aiNode* rootNode)
 		for (u8 boneId = 0; boneId < mesh->mNumBones; ++boneId)
 		{
 			const auto& bone = mesh->mBones[boneId];
+			Bones.push_back(Bone(String(bone->mName.C_Str()), MatFromAiMat(bone->mOffsetMatrix)));
 			
-			Bone b(String(bone->mName.C_Str()));
-			b.boneFromModel = MatFromAiMat(bone->mOffsetMatrix);
-			nameToBoneIdx[b.name] = Bones.GetSize();
-			Bones.PushBack(b);
-			
-
 			if (mesh->HasPositions())
 			{
 				// First pass, gather bones
@@ -163,17 +191,8 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh, aiNode* rootNode)
 					MeshData.BoneIds[vertId].Data[k] = entry.first;
 					MeshData.BoneWeights[vertId].Data[k] = entry.second;
 				}
-				ASSERTE(sum >= 0.90f, "Detected >10% animation inaccuracy (too many weights for one vertex)");
+				//ASSERTE(sum >= 0.90f, "Detected >10% animation inaccuracy (too many weights for one vertex)");
 			}
-		}
-
-		PopulateBoneReferences(nameToBoneIdx, rootNode, Matrix::IDENTITY);
-
-		int idx = 0;
-		for (auto& bone : Bones)
-		{
-			gConsole.LogDebug("[{}] Bone [{}] info: parent = {}, t1 = {}, t2 = {}", idx, bone.name, bone.parentBoneIdx, bone.boneFromModel, bone.boneFromParentBone );
-			++idx;
 		}
 
 		gConsole.LogDebug("{} bones loaded", mesh->mNumBones);
@@ -245,10 +264,7 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 			MeshData.Indices[i * 3 + 2] = mesh->mFaces[i].mIndices[2];
 		}
 	}
-
-	MeshProxy = gEngine->GetRenderingDevice()->CreateMesh();
-	MeshProxy->SetContent(MeshData);
-
+	
 	gConsole.LogDebug(
 		"Loaded mesh entry: {} with {} vertices, {} faces and parameters: "
 		"pos[{}], tex_coord[{}], norm[{}], faces[{}]",
@@ -316,6 +332,55 @@ Poly::MeshResource::Animation::Animation(aiAnimation * anim)
 			Vector vector = { (float)anim->mChannels[i]->mScalingKeys[j].mValue.x, (float)anim->mChannels[i]->mScalingKeys[j].mValue.y, (float)anim->mChannels[i]->mScalingKeys[j].mValue.z };
 			c.Scales.PushBack({ vector, (float)anim->mChannels[i]->mScalingKeys[j].mTime });
 		}
-		channels.PushBack(std::move(c));
+		String nameCpy = c.Name;
+		channels.insert({ nameCpy, std::move(c) });
 	}
+}
+
+Poly::MeshResource::Animation::ChannelLerpData Poly::MeshResource::Animation::GetLerpData(String channelName, float time) const
+{
+	ChannelLerpData data;
+
+	// @todo(muniu) investigate TicksPerSecond usage.
+	size_t hintIdx = 0;// (size_t)(TicksPerSecond * time);
+
+	const auto& channel = channels.at(channelName);
+
+	for (size_t i = hintIdx; i < channel.Positions.GetSize(); ++i)
+	{
+		auto& pos = channel.Positions[i];
+		if (pos.Time <= time)
+			data.pos[0] = pos;
+		if (pos.Time >= time)
+		{
+			data.pos[1] = pos;
+			break;
+		}
+	}
+
+	for (size_t i = hintIdx; i < channel.Positions.GetSize(); ++i)
+	{
+		auto& scale = channel.Scales[i];
+		if (scale.Time <= time)
+			data.scale[0] = scale;
+		if (scale.Time >= time)
+		{
+			data.scale[1] = scale;
+			break;
+		}
+	}
+
+	for (size_t i = hintIdx; i < channel.Positions.GetSize(); ++i)
+	{
+		auto& rot = channel.Rotations[i];
+		if (rot.Time <= time)
+			data.rot[0] = rot;
+		if (rot.Time >= time)
+		{
+			data.rot[1] = rot;
+			break;
+		}
+	}
+
+	return data;
 }

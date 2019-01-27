@@ -16,7 +16,7 @@ namespace Poly
 		}
 
 	public:
-		SequenceComponent(std::map<String, Sequence>&& sequneces);
+		void AddSequence(Sequence sequenceToAdd);
 
 		const std::map<String, Sequence>& GetSequences() const;
 		Sequence& GetSequence(const String& sequenceName);
@@ -24,5 +24,7 @@ namespace Poly
 	private:
 		std::map<String, Sequence> Sequences;
 
-	}; // class SequenceComponent
+	};
+
+	REGISTER_COMPONENT(ComponentsIDGroup, SequenceComponent)
 } // namespace Poly

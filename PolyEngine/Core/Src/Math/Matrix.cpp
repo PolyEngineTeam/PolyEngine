@@ -1,5 +1,6 @@
 #include <CorePCH.hpp>
 
+#include <Math/BasicMath.hpp>
 #include <Math/Matrix.hpp>
 #include <Math/SimdMath.hpp>
 #include <Math/Quaternion.hpp>
@@ -652,25 +653,40 @@ bool Poly::Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& 
 	return true;
 }
 
-Matrix Matrix::Blend(std::vector<Matrix> matrices, std::vector<float> weights)
+Matrix Poly::Matrix::Lerp(const Matrix & a, const Matrix & b, float t)
 {
-	ASSERTE(matrices.size() > 0, "Szie should be > 0");
-	ASSERTE(matrices.size() == weights.size(), "Mismatch in vector sizes");
+	Vector aTrans, bTrans;
+	Vector aScale, bScale;
+	Quaternion aRot, bRot;
+
+	a.Decompose(aTrans, aRot, aScale);
+	b.Decompose(bTrans, bRot, bScale);
+
+	Vector trans = ::Poly::Lerp(aTrans, bTrans, t);
+	Vector scale = ::Poly::Lerp(aScale, bScale, t);
+	Quaternion rot = Quaternion::Slerp(aRot, bRot, t);
+
+	return Matrix::Compose(trans, rot, scale);
+}
+
+Matrix Matrix::Blend(const std::vector<std::pair<Matrix, float>>& matsAntWeights)
+{
+	ASSERTE(matsAntWeights.size() > 0, "Size should be > 0");
 
 	Vector translation;
 	Vector scale;
 	Quaternion rotation;
 
-	for (size_t i = 0; i < matrices.size(); ++i)
+	for (auto& [mat, weight] : matsAntWeights)
 	{
 		Vector tmpTranslation;
 		Vector tmpScale;
 		Quaternion tmpRotation;
-		matrices[i].Decompose(tmpTranslation, tmpRotation, tmpScale);
+		mat.Decompose(tmpTranslation, tmpRotation, tmpScale);
 
-		translation += tmpTranslation * weights[i];
-		scale += tmpScale * weights[i];
-		rotation *= Quaternion::Slerp(Quaternion::IDENTITY, tmpRotation, weights[i]);
+		translation += tmpTranslation * weight;
+		scale += tmpScale * weight;
+		rotation *= Quaternion::Slerp(Quaternion::IDENTITY, tmpRotation, weight);
 	}
 
 	return Compose(translation, rotation, scale);

@@ -4,6 +4,8 @@ layout(location = 1) in	vec2 aUV;
 layout(location = 2) in	vec3 aNormal;
 layout (location = 3) in vec3 aTangent;
 layout (location = 4) in vec3 aBitangent;
+layout (location = 5) in vec4 aBoneWeight;
+layout (location = 6) in ivec4 aBoneIds;
 
 uniform mat4 uClipFromModel;
 uniform mat4 uWorldFromModel;

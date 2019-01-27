@@ -3,45 +3,82 @@
 
 using namespace Poly;
 
-RTTI_DEFINE_TYPE(::Poly::SequenceTrack)
-
 //------------------------------------------------------------------------------
-SequenceTrack::SequenceTrack(std::vector<RegisteredAction>&& actions)
-	: Actions(actions)
+void Poly::SequenceTrack::AppendAction(TimeDuration startTime, std::shared_ptr<IAction> action)
 {
+	ASSERTE(startTime >= TimeDuration(0), "Start time must be greater or equal 0.");
+
+	if (Actions.size() > 0 && startTime < Actions[Actions.size() - 1].StartTime)
+		gConsole.LogError("Can't add action starting earlier than previous actions in this track.");
+	else
+		Actions.push_back({ startTime, std::move(action) });
 }
 
 //------------------------------------------------------------------------------
 bool SequenceTrack::IsActive()
 {
-	return ActiveAction != nullptr || NextActionIndex != Actions.size();
+	return Active;
 }
 
 //------------------------------------------------------------------------------
 void SequenceTrack::OnBegin(Entity* entity)
 {
+	ASSERTE(!Active, "To update track you must call OnAbort first or this must be the first call for this instance.");
+
 	EntityObj = entity;
 	NextActionIndex = 0;
 	ActiveAction = nullptr;
+	Active = true;
+	TrackStartTime = std::chrono::steady_clock::now();
 }
 
 //------------------------------------------------------------------------------
 void SequenceTrack::OnUpdate(const TimeDuration deltaTime)
 {
-	const TimePoint thisTimePoint = std::chrono::steady_clock::now();
+	ASSERTE(Active, "To update track you must call OnBegin first.");
 
-	// if there is any action active
+	const TimeDuration trackDuration = std::chrono::steady_clock::now() - TrackStartTime;
+
+	if (!ActiveAction)
+		TryStartNextAction(trackDuration, deltaTime);
+
+	TryUpdateActiveAction(trackDuration, deltaTime);
+	TryStartNextAction(trackDuration, deltaTime);
+	TryFinishTrack();
+}
+
+//------------------------------------------------------------------------------
+void SequenceTrack::OnAbort()
+{
+	ASSERTE(Active, "To abort track you must call OnBegin first.");
+
+	Active = false;
+}
+
+//------------------------------------------------------------------------------
+void SequenceTrack::TryUpdateActiveAction(TimeDuration trackDuration, TimeDuration deltaTime)
+{
 	if (ActiveAction)
 	{
 		ActiveAction->OnUpdate(deltaTime);
-
-		// if action should finish now
-		if (thisTimePoint - Actions[NextActionIndex - 1].StartTime >= ActiveAction->GetTotalTime())
-			ActiveAction = nullptr;
+		TryFinishActiveAction(trackDuration, deltaTime);
 	}
+}
 
-	// if there is no active action and next action should start now
-	if (Actions[NextActionIndex].StartTime <= thisTimePoint)
+//------------------------------------------------------------------------------
+void SequenceTrack::TryFinishActiveAction(TimeDuration trackDuration, TimeDuration deltaTime)
+{
+	if (trackDuration - Actions[NextActionIndex - 1].StartTime >= ActiveAction->GetDuration())
+	{
+		ActiveAction->OnFinish();
+		ActiveAction = nullptr;
+	}
+}
+
+//------------------------------------------------------------------------------
+void SequenceTrack::TryStartNextAction(TimeDuration trackDuration, TimeDuration deltaTime)
+{
+	if (NextActionIndex < Actions.size() && Actions[NextActionIndex].StartTime <= trackDuration)
 	{
 		ASSERTE(ActiveAction == nullptr, "Previous action hasn't finished yet.");
 		ActiveAction = Actions[NextActionIndex].Action.get();
@@ -51,14 +88,8 @@ void SequenceTrack::OnUpdate(const TimeDuration deltaTime)
 }
 
 //------------------------------------------------------------------------------
-void SequenceTrack::OnAbort()
+void SequenceTrack::TryFinishTrack()
 {
-	EntityObj = nullptr;
-	NextActionIndex = 0;
-
-	if (ActiveAction)
-	{
-		ActiveAction->OnAbort();
-		ActiveAction = nullptr;
-	}
+	if (NextActionIndex == Actions.size() && ActiveAction == nullptr)
+		Active = false;
 }
