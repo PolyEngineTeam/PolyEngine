@@ -20,8 +20,8 @@ void AnimationSystem::OnUpdate(Scene* scene)
 	{
 		Vector parentPos = boneCmp->GetOwner()->GetParent()->GetTransform().GetGlobalTranslation();
 		Vector myPos = boneCmp->GetOwner()->GetTransform().GetGlobalTranslation();
-		DebugDrawSystem::DrawLine(scene, myPos, parentPos, Color::GREEN);
-		DebugDrawSystem::DrawArrow(scene, myPos, boneCmp->GetOwner()->GetTransform().GetGlobalForward(), Color::RED);
+		//DebugDrawSystem::DrawLine(scene, myPos, parentPos, Color::GREEN);
+		//DebugDrawSystem::DrawArrow(scene, myPos, boneCmp->GetOwner()->GetTransform().GetGlobalForward(), Color::RED);
 	}
 
 	for (auto&& [animCmp, meshCmp] : scene->IterateComponents<SkeletalAnimationComponent, MeshRenderingComponent>())
@@ -150,8 +150,23 @@ void AnimationSystem::OnUpdate(Scene* scene)
 		}
 
 		animCmp->ModelFromBone.clear();
+		Matrix ModelFromWorld = animCmp->GetTransform().GetWorldFromModel().GetInversed();
 		for (auto& bone : animCmp->Bones)
-			animCmp->ModelFromBone[bone->GetName()] = bone->GetTransform().GetWorldFromModel();
+			animCmp->ModelFromBone[bone->GetName()] = ModelFromWorld * bone->GetTransform().GetWorldFromModel();
+
+		for (auto& modelfrombone : animCmp->ModelFromBone)
+		{
+			auto worldFromModel = animCmp->GetTransform().GetWorldFromModel();
+			auto worldfrombone = worldFromModel * modelfrombone.second;
+
+			Vector globalbonePos = worldfrombone * Vector::ZERO;
+			Vector a, b;
+			Quaternion rot;
+			worldfrombone.Decompose(a, rot, b);
+			Vector fwd = rot * -Vector::UNIT_Z;
+
+			DebugDrawSystem::DrawArrow(scene, globalbonePos, fwd, Color::RED);
+		}
 	}
 }
 

@@ -395,22 +395,9 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 				CHECK(firstAction->GetOnUpdateCalls() == 5);
 				CHECK(firstAction->GetOnAbortCalls() == 0);
 				CHECK(firstAction->GetOnFinishCalls() == 1);
-				CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(0.1).count()));
-				CHECK(secondAction->GetOnBeginCalls() == 1);
-				CHECK(secondAction->GetOnUpdateCalls() == 1);
-				CHECK(secondAction->GetOnAbortCalls() == 0);
-				CHECK(secondAction->GetOnFinishCalls() == 0);
-
-				track.OnUpdate(TimeDuration(0.5));
-				CHECK(track.IsActive() == true);
-				CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(2.).count()));
-				CHECK(firstAction->GetOnBeginCalls() == 1);
-				CHECK(firstAction->GetOnUpdateCalls() == 5);
-				CHECK(firstAction->GetOnAbortCalls() == 0);
-				CHECK(firstAction->GetOnFinishCalls() == 1);
 				CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(0.6).count()));
 				CHECK(secondAction->GetOnBeginCalls() == 1);
-				CHECK(secondAction->GetOnUpdateCalls() == 2);
+				CHECK(secondAction->GetOnUpdateCalls() == 1);
 				CHECK(secondAction->GetOnAbortCalls() == 0);
 				CHECK(secondAction->GetOnFinishCalls() == 0);
 
@@ -423,7 +410,7 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 				CHECK(firstAction->GetOnFinishCalls() == 1);
 				CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(1.).count()));
 				CHECK(secondAction->GetOnBeginCalls() == 1);
-				CHECK(secondAction->GetOnUpdateCalls() == 3);
+				CHECK(secondAction->GetOnUpdateCalls() == 2);
 				CHECK(secondAction->GetOnAbortCalls() == 0);
 				CHECK(secondAction->GetOnFinishCalls() == 1);
 			}
@@ -601,19 +588,6 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 				CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
 				CHECK(secondAction->GetOnBeginCalls() == 0);
 				CHECK(secondAction->GetOnUpdateCalls() == 0);
-				CHECK(secondAction->GetOnAbortCalls() == 0);
-				CHECK(secondAction->GetOnFinishCalls() == 0);
-
-				track.OnUpdate(TimeDuration(0.5));
-				CHECK(track.IsActive() == true);
-				CHECK(Poly::CmpfFast((float)firstAction->GetTimeElapsed().count(), (float)TimeDuration(2.).count()));
-				CHECK(firstAction->GetOnBeginCalls() == 1);
-				CHECK(firstAction->GetOnUpdateCalls() == 5);
-				CHECK(firstAction->GetOnAbortCalls() == 0);
-				CHECK(firstAction->GetOnFinishCalls() == 1);
-				CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(0.1).count()));
-				CHECK(secondAction->GetOnBeginCalls() == 1);
-				CHECK(secondAction->GetOnUpdateCalls() == 1);
 				CHECK(secondAction->GetOnAbortCalls() == 0);
 				CHECK(secondAction->GetOnFinishCalls() == 0);
 

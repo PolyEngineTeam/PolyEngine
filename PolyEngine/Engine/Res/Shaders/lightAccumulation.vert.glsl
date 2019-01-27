@@ -2,15 +2,22 @@
 layout(location = 0) in vec4 aPosition;
 layout(location = 1) in	vec2 aUV;
 layout(location = 2) in	vec3 aNormal;
-layout (location = 3) in vec3 aTangent;
-layout (location = 4) in vec3 aBitangent;
-layout (location = 5) in vec4 aBoneWeight;
-layout (location = 6) in ivec4 aBoneIds;
+layout(location = 3) in vec3 aTangent;
+layout(location = 4) in vec3 aBitangent;
+layout(location = 5) in vec4 aBoneWeight;
+layout(location = 6) in vec4 aBoneIds;
+
+const int MAX_BONES = 64;
 
 uniform mat4 uClipFromModel;
 uniform mat4 uWorldFromModel;
 uniform vec4 uViewPosition;
 uniform mat4 uDirLightFromWorld;
+uniform float uHasBones;
+
+uniform float uTime;
+
+uniform mat4 uBones[MAX_BONES];
 
 out VERTEX_OUT
 {
@@ -26,10 +33,32 @@ out VERTEX_OUT
 void main()
 {
 	vertex_out.uv = aUV;
-
+	
+	float sum =  aBoneWeight.x +  aBoneWeight.y +  aBoneWeight.z +  aBoneWeight.w;
+	
 	vec4 vertexInModel = vec4(aPosition.xyz, 1.0);
-	gl_Position = uClipFromModel * vertexInModel;
-	vertex_out.positionInWorld = (uWorldFromModel * vertexInModel).xyz;
+	
+	vec4 pos1 = uBones[int(aBoneIds.x)] * vertexInModel;
+	vec4 pos2 = uBones[int(aBoneIds.y)] * vertexInModel;
+	vec4 pos3 = uBones[int(aBoneIds.z)] * vertexInModel;
+	vec4 pos4 = uBones[int(aBoneIds.w)] * vertexInModel;
+	
+	vec4 vertexInAnimModel = vec4(pos1.xyz, 1.0) *  aBoneWeight.x/sum;				
+        vertexInAnimModel += vec4(pos2.xyz, 1.0) * aBoneWeight.y/sum;
+        vertexInAnimModel += vec4(pos3.xyz, 1.0) * aBoneWeight.z/sum;
+        vertexInAnimModel += vec4(pos4.xyz, 1.0) * aBoneWeight.w/sum;
+	
+	// vec4 vertexInModel = vec4(aPosition.xyz, 1.0);
+	// vec4 vertexInAnimModel = uBones[0] * vertexInModel;
+	// 	
+	// vertexInAnimModel.w = 1.0f;
+	
+	if(sum == 0.0f)
+		vertexInAnimModel = vertexInModel;
+	
+	gl_Position = uClipFromModel * mix(vertexInModel, vertexInAnimModel, uHasBones);
+	// gl_Position = uClipFromModel * vertexInModel;
+	vertex_out.positionInWorld = (uWorldFromModel * vertexInAnimModel).xyz;
 
 	mat3 transposedModelFromWorld = transpose(inverse(mat3(uWorldFromModel)));
 	vertex_out.normalInModel = normalize(transposedModelFromWorld * aNormal /*InModel*/);

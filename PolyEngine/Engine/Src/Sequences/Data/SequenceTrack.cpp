@@ -29,7 +29,7 @@ void SequenceTrack::OnBegin(Entity* entity)
 	NextActionIndex = 0;
 	ActiveAction = nullptr;
 	Active = true;
-	TrackStartTime = std::chrono::steady_clock::now();
+	TrackElapsedTime = TimeDuration(0);
 }
 
 //------------------------------------------------------------------------------
@@ -37,13 +37,13 @@ void SequenceTrack::OnUpdate(const TimeDuration deltaTime)
 {
 	ASSERTE(Active, "To update track you must call OnBegin first.");
 
-	const TimeDuration trackDuration = std::chrono::steady_clock::now() - TrackStartTime;
+	TrackElapsedTime += deltaTime;
 
 	if (!ActiveAction)
-		TryStartNextAction(trackDuration, deltaTime);
+		TryStartNextAction(deltaTime);
 
-	TryUpdateActiveAction(trackDuration, deltaTime);
-	TryStartNextAction(trackDuration, deltaTime);
+	TryUpdateActiveAction(deltaTime);
+	TryStartNextAction(deltaTime);
 	TryFinishTrack();
 }
 
@@ -56,19 +56,19 @@ void SequenceTrack::OnAbort()
 }
 
 //------------------------------------------------------------------------------
-void SequenceTrack::TryUpdateActiveAction(TimeDuration trackDuration, TimeDuration deltaTime)
+void SequenceTrack::TryUpdateActiveAction(TimeDuration deltaTime)
 {
 	if (ActiveAction)
 	{
 		ActiveAction->OnUpdate(deltaTime);
-		TryFinishActiveAction(trackDuration, deltaTime);
+		TryFinishActiveAction(deltaTime);
 	}
 }
 
 //------------------------------------------------------------------------------
-void SequenceTrack::TryFinishActiveAction(TimeDuration trackDuration, TimeDuration deltaTime)
+void SequenceTrack::TryFinishActiveAction(TimeDuration deltaTime)
 {
-	if (trackDuration - Actions[NextActionIndex - 1].StartTime >= ActiveAction->GetDuration())
+	if (TrackElapsedTime - Actions[NextActionIndex - 1].StartTime >= ActiveAction->GetDuration())
 	{
 		ActiveAction->OnFinish();
 		ActiveAction = nullptr;
@@ -76,9 +76,9 @@ void SequenceTrack::TryFinishActiveAction(TimeDuration trackDuration, TimeDurati
 }
 
 //------------------------------------------------------------------------------
-void SequenceTrack::TryStartNextAction(TimeDuration trackDuration, TimeDuration deltaTime)
+void SequenceTrack::TryStartNextAction(TimeDuration deltaTime)
 {
-	if (NextActionIndex < Actions.size() && Actions[NextActionIndex].StartTime <= trackDuration)
+	if (NextActionIndex < Actions.size() && Actions[NextActionIndex].StartTime <= TrackElapsedTime)
 	{
 		ASSERTE(ActiveAction == nullptr, "Previous action hasn't finished yet.");
 		ActiveAction = Actions[NextActionIndex].Action.get();
