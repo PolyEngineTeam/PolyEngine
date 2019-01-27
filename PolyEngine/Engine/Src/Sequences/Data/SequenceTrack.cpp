@@ -39,11 +39,18 @@ void SequenceTrack::OnUpdate(const TimeDuration deltaTime)
 
 	TrackElapsedTime += deltaTime;
 
+	// if there is no active action
 	if (!ActiveAction)
-		TryStartNextAction(deltaTime);
+		TryStartNextAction();
+	
+	// if there is active action 
+	TimeDuration restOfDeltaTime = TryUpdateActiveAction(deltaTime);
 
-	TryUpdateActiveAction(deltaTime);
-	TryStartNextAction(deltaTime);
+	while (TryStartNextAction())
+	{
+		restOfDeltaTime = TryUpdateActiveAction(restOfDeltaTime);
+	}
+
 	TryFinishTrack();
 }
 
@@ -52,39 +59,61 @@ void SequenceTrack::OnAbort()
 {
 	ASSERTE(Active, "To abort track you must call OnBegin first.");
 
+	if (ActiveAction)
+		ActiveAction->OnAbort();
+
 	Active = false;
 }
 
 //------------------------------------------------------------------------------
-void SequenceTrack::TryUpdateActiveAction(TimeDuration deltaTime)
+TimeDuration SequenceTrack::TryUpdateActiveAction(TimeDuration deltaTime)
 {
+	TimeDuration restOfDeltaTime = TimeDuration(0);
+
 	if (ActiveAction)
 	{
-		ActiveAction->OnUpdate(deltaTime);
-		TryFinishActiveAction(deltaTime);
+		TimeDuration actionElapsedTime = TrackElapsedTime - deltaTime - Actions[NextActionIndex - 1].StartTime;
+
+		// if starts during this frame
+		if (actionElapsedTime < TimeDuration(0))
+		{
+			actionElapsedTime += deltaTime;
+			ActiveAction->OnUpdate(actionElapsedTime);
+		}
+		// if ends in this frame
+		else if (const TimeDuration timeToCompleteAction = ActiveAction->GetDuration() - actionElapsedTime;
+			timeToCompleteAction < deltaTime)
+		{
+			ActiveAction->OnUpdate(timeToCompleteAction);
+
+			restOfDeltaTime = deltaTime - timeToCompleteAction;
+
+			ActiveAction->OnFinish();
+			ActiveAction = nullptr;
+		}
+		else
+			ActiveAction->OnUpdate(deltaTime);
+
 	}
+
+	return restOfDeltaTime;
 }
 
 //------------------------------------------------------------------------------
-void SequenceTrack::TryFinishActiveAction(TimeDuration deltaTime)
+bool SequenceTrack::TryStartNextAction()
 {
-	if (TrackElapsedTime - Actions[NextActionIndex - 1].StartTime >= ActiveAction->GetDuration())
-	{
-		ActiveAction->OnFinish();
-		ActiveAction = nullptr;
-	}
-}
+	bool result = false;
 
-//------------------------------------------------------------------------------
-void SequenceTrack::TryStartNextAction(TimeDuration deltaTime)
-{
 	if (NextActionIndex < Actions.size() && Actions[NextActionIndex].StartTime <= TrackElapsedTime)
 	{
 		ASSERTE(ActiveAction == nullptr, "Previous action hasn't finished yet.");
 		ActiveAction = Actions[NextActionIndex].Action.get();
 		ActiveAction->OnBegin(EntityObj);
 		++NextActionIndex;
+		result = true;
 	}
+
+	return result;
 }
 
 //------------------------------------------------------------------------------
