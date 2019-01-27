@@ -14,13 +14,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT SequenceTrack
 	{
 	public:
-		struct RegisteredAction
-		{
-			TimeDuration StartTime;
-			std::shared_ptr<IAction> Action;
-		};
-
-		void AddAction(RegisteredAction action);
+		void AppendAction(TimeDuration startTime, std::shared_ptr<IAction> action);
 
 		bool IsActive();
 
@@ -29,6 +23,12 @@ namespace Poly
 		void OnAbort();
 
 	private:
+		struct RegisteredAction
+		{
+			TimeDuration StartTime;
+			std::shared_ptr<IAction> Action;
+		};
+
 		Entity* EntityObj = nullptr;
 		TimePoint TrackStartTime;
 

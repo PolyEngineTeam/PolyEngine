@@ -4,9 +4,14 @@
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-void Poly::SequenceTrack::AddAction(RegisteredAction action)
+void Poly::SequenceTrack::AppendAction(TimeDuration startTime, std::shared_ptr<IAction> action)
 {
-	Actions.push_back(std::move(action));
+	ASSERTE(startTime >= TimeDuration(0), "Start time must be greater or equal 0.");
+
+	if (Actions.size() > 0 && startTime < Actions[Actions.size() - 1].StartTime)
+		gConsole.LogError("Can't add action starting earlier than previous actions in this track.");
+	else
+		Actions.push_back({ startTime, std::move(action) });
 }
 
 //------------------------------------------------------------------------------
@@ -18,6 +23,8 @@ bool SequenceTrack::IsActive()
 //------------------------------------------------------------------------------
 void SequenceTrack::OnBegin(Entity* entity)
 {
+	ASSERTE(EntityObj == nullptr, "To update track you must call OnAbort first or this must be the first call for this instance.");
+
 	EntityObj = entity;
 	NextActionIndex = 0;
 	ActiveAction = nullptr;
@@ -27,6 +34,8 @@ void SequenceTrack::OnBegin(Entity* entity)
 //------------------------------------------------------------------------------
 void SequenceTrack::OnUpdate(const TimeDuration deltaTime)
 {
+	ASSERTE(EntityObj != nullptr, "To update track you must call OnBegin first.");
+
 	const TimeDuration trackDuration = std::chrono::steady_clock::now() - TrackStartTime;
 
 	// if there is any action active
@@ -52,6 +61,8 @@ void SequenceTrack::OnUpdate(const TimeDuration deltaTime)
 //------------------------------------------------------------------------------
 void SequenceTrack::OnAbort()
 {
+	ASSERTE(EntityObj != nullptr, "To abort track you must call OnBegin first.");
+
 	EntityObj = nullptr;
 	NextActionIndex = 0;
 
