@@ -717,5 +717,120 @@ TEST_CASE("Two actions.", "[SequenceTrack]")
 			CHECK(secondAction->GetOnAbortCalls() == 1);
 			CHECK(secondAction->GetOnFinishCalls() == 0);
 		}
+
+		SECTION("OnAbort")
+		{
+			track.AppendAction(TimeDuration(0), firstAction);
+			track.AppendAction(TimeDuration(0.2), secondAction);
+			CHECK(track.IsActive() == false);
+			CHECK(Poly::CmpfFast((float)firstAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
+			CHECK(firstAction->GetOnBeginCalls() == 0);
+			CHECK(firstAction->GetOnUpdateCalls() == 0);
+			CHECK(firstAction->GetOnAbortCalls() == 0);
+			CHECK(firstAction->GetOnFinishCalls() == 0);
+			CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
+			CHECK(secondAction->GetOnBeginCalls() == 0);
+			CHECK(secondAction->GetOnUpdateCalls() == 0);
+			CHECK(secondAction->GetOnAbortCalls() == 0);
+			CHECK(secondAction->GetOnFinishCalls() == 0);
+
+			track.OnBegin(new Poly::Entity());
+			CHECK(track.IsActive() == true);
+			CHECK(Poly::CmpfFast((float)firstAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
+			CHECK(firstAction->GetOnBeginCalls() == 0);
+			CHECK(firstAction->GetOnUpdateCalls() == 0);
+			CHECK(firstAction->GetOnAbortCalls() == 0);
+			CHECK(firstAction->GetOnFinishCalls() == 0);
+			CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
+			CHECK(secondAction->GetOnBeginCalls() == 0);
+			CHECK(secondAction->GetOnUpdateCalls() == 0);
+			CHECK(secondAction->GetOnAbortCalls() == 0);
+			CHECK(secondAction->GetOnFinishCalls() == 0);
+
+			track.OnUpdate(TimeDuration(0.1));
+			CHECK(track.IsActive() == true);
+			CHECK(Poly::CmpfFast((float)firstAction->GetTimeElapsed().count(), (float)TimeDuration(0.1).count()));
+			CHECK(firstAction->GetOnBeginCalls() == 1);
+			CHECK(firstAction->GetOnUpdateCalls() == 1);
+			CHECK(firstAction->GetOnAbortCalls() == 0);
+			CHECK(firstAction->GetOnFinishCalls() == 0);
+			CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
+			CHECK(secondAction->GetOnBeginCalls() == 0);
+			CHECK(secondAction->GetOnUpdateCalls() == 0);
+			CHECK(secondAction->GetOnAbortCalls() == 0);
+			CHECK(secondAction->GetOnFinishCalls() == 0);
+
+			track.OnAbort();
+			CHECK(track.IsActive() == false);
+			CHECK(Poly::CmpfFast((float)firstAction->GetTimeElapsed().count(), (float)TimeDuration(0.1).count()));
+			CHECK(firstAction->GetOnBeginCalls() == 1);
+			CHECK(firstAction->GetOnUpdateCalls() == 1);
+			CHECK(firstAction->GetOnAbortCalls() == 1);
+			CHECK(firstAction->GetOnFinishCalls() == 0);
+			CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(0.0).count()));
+			CHECK(secondAction->GetOnBeginCalls() == 0);
+			CHECK(secondAction->GetOnUpdateCalls() == 0);
+			CHECK(secondAction->GetOnAbortCalls() == 0);
+			CHECK(secondAction->GetOnFinishCalls() == 0);
+
+			CHECK(track.IsActive() == false);
+		}
+		SECTION("Assert hit!")
+		{
+			track.AppendAction(TimeDuration(0), firstAction);
+			track.AppendAction(TimeDuration(0.2), secondAction);
+			CHECK(track.IsActive() == false);
+			CHECK(Poly::CmpfFast((float)firstAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
+			CHECK(firstAction->GetOnBeginCalls() == 0);
+			CHECK(firstAction->GetOnUpdateCalls() == 0);
+			CHECK(firstAction->GetOnAbortCalls() == 0);
+			CHECK(firstAction->GetOnFinishCalls() == 0);
+			CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
+			CHECK(secondAction->GetOnBeginCalls() == 0);
+			CHECK(secondAction->GetOnUpdateCalls() == 0);
+			CHECK(secondAction->GetOnAbortCalls() == 0);
+			CHECK(secondAction->GetOnFinishCalls() == 0);
+
+			track.OnBegin(new Poly::Entity());
+			CHECK(track.IsActive() == true);
+			CHECK(Poly::CmpfFast((float)firstAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
+			CHECK(firstAction->GetOnBeginCalls() == 0);
+			CHECK(firstAction->GetOnUpdateCalls() == 0);
+			CHECK(firstAction->GetOnAbortCalls() == 0);
+			CHECK(firstAction->GetOnFinishCalls() == 0);
+			CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
+			CHECK(secondAction->GetOnBeginCalls() == 0);
+			CHECK(secondAction->GetOnUpdateCalls() == 0);
+			CHECK(secondAction->GetOnAbortCalls() == 0);
+			CHECK(secondAction->GetOnFinishCalls() == 0);
+
+			track.OnUpdate(TimeDuration(0.3));
+			CHECK(track.IsActive() == true);
+			CHECK(Poly::CmpfFast((float)firstAction->GetTimeElapsed().count(), (float)TimeDuration(0.1).count()));
+			CHECK(firstAction->GetOnBeginCalls() == 1);
+			CHECK(firstAction->GetOnUpdateCalls() == 1);
+			CHECK(firstAction->GetOnAbortCalls() == 0);
+			CHECK(firstAction->GetOnFinishCalls() == 0);
+			CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(0.).count()));
+			CHECK(secondAction->GetOnBeginCalls() == 0);
+			CHECK(secondAction->GetOnUpdateCalls() == 0);
+			CHECK(secondAction->GetOnAbortCalls() == 0);
+			CHECK(secondAction->GetOnFinishCalls() == 0);
+
+			track.OnAbort();
+			CHECK(track.IsActive() == false);
+			CHECK(Poly::CmpfFast((float)firstAction->GetTimeElapsed().count(), (float)TimeDuration(0.1).count()));
+			CHECK(firstAction->GetOnBeginCalls() == 1);
+			CHECK(firstAction->GetOnUpdateCalls() == 1);
+			CHECK(firstAction->GetOnAbortCalls() == 1);
+			CHECK(firstAction->GetOnFinishCalls() == 0);
+			CHECK(Poly::CmpfFast((float)secondAction->GetTimeElapsed().count(), (float)TimeDuration(0.0).count()));
+			CHECK(secondAction->GetOnBeginCalls() == 0);
+			CHECK(secondAction->GetOnUpdateCalls() == 0);
+			CHECK(secondAction->GetOnAbortCalls() == 0);
+			CHECK(secondAction->GetOnFinishCalls() == 0);
+
+			CHECK(track.IsActive() == false);
+		}
 	}
 }
