@@ -152,7 +152,7 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
 		ASSERTE(mesh->mNumBones <= std::numeric_limits<typename decltype(MeshData.BoneIds)::ValueType::ValueType>::max(), "Model has too many bones!");
 
 		std::vector<PriorityQueue<std::pair<u8, float>, std::function<bool(const std::pair<u8, float>&, const std::pair<u8, float>&)>>> tmpBonesList;
-		tmpBonesList.resize(mesh->mNumVertices, { [](const std::pair<u8, float>& v1, const std::pair<u8, float>& v2) { return v1.second < v2.second; } });
+		tmpBonesList.resize(mesh->mNumVertices, { [](const std::pair<u8, float>& v1, const std::pair<u8, float>& v2) { return v1.second > v2.second; } });
 
 		std::map<String, size_t> nameToBoneIdx;
 
