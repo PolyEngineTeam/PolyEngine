@@ -67,6 +67,9 @@ MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* mat
 {
 	LoadGeometry(mesh);
 	LoadBones(mesh);
+
+	MeshProxy = gEngine->GetRenderingDevice()->CreateMesh();
+	MeshProxy->SetContent(MeshData);
 	
 	MeshData.EmissiveMap			= LoadTexture(material, path, (unsigned int)aiTextureType_EMISSIVE,		eTextureUsageType::EMISSIVE);
 	MeshData.AlbedoMap				= LoadTexture(material, path, (unsigned int)aiTextureType_DIFFUSE,		eTextureUsageType::ALBEDO);
@@ -260,10 +263,7 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 			MeshData.Indices[i * 3 + 2] = mesh->mFaces[i].mIndices[2];
 		}
 	}
-
-	MeshProxy = gEngine->GetRenderingDevice()->CreateMesh();
-	MeshProxy->SetContent(MeshData);
-
+	
 	gConsole.LogDebug(
 		"Loaded mesh entry: {} with {} vertices, {} faces and parameters: "
 		"pos[{}], tex_coord[{}], norm[{}], faces[{}]",
