@@ -671,22 +671,31 @@ Matrix Poly::Matrix::Lerp(const Matrix & a, const Matrix & b, float t)
 
 Matrix Matrix::Blend(const std::vector<std::pair<Matrix, float>>& matsAntWeights)
 {
-	ASSERTE(matsAntWeights.size() > 0, "Size should be > 0");
+	HEAVY_ASSERTE(matsAntWeights.size() > 0, "Size should be > 0");
 
 	Vector translation;
 	Vector scale;
 	Quaternion rotation;
 
+	float weightSum = 0.f;
+	for (auto&[_, weight] : matsAntWeights)
+		weightSum += weight;
+
+	HEAVY_ASSERTE(weightSum > 0, "Weights cannot sum to 0!");
+
 	for (auto& [mat, weight] : matsAntWeights)
 	{
+		HEAVY_ASSERTE(weight >= 0, "Weights cannot be lower than 0!");
 		Vector tmpTranslation;
 		Vector tmpScale;
 		Quaternion tmpRotation;
 		mat.Decompose(tmpTranslation, tmpRotation, tmpScale);
 
-		translation += tmpTranslation * weight;
-		scale += tmpScale * weight;
-		rotation *= Quaternion::Slerp(Quaternion::IDENTITY, tmpRotation, weight);
+		const float normalizedWeight = weight / weightSum;
+
+		translation += tmpTranslation * normalizedWeight;
+		scale += tmpScale * normalizedWeight;
+		rotation *= Quaternion::Slerp(Quaternion::IDENTITY, tmpRotation, normalizedWeight);
 	}
 
 	return Compose(translation, rotation, scale);
