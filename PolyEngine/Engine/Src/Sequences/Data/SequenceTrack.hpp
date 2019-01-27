@@ -23,6 +23,11 @@ namespace Poly
 		void OnAbort();
 
 	private:
+		void TryUpdateActiveAction(TimeDuration trackDuration, TimeDuration deltaTime);
+		void TryFinishActiveAction(TimeDuration trackDuration, TimeDuration deltaTime);
+		void TryStartNextAction(TimeDuration trackDuration, TimeDuration deltaTime);
+		void TryFinishTrack();
+
 		struct RegisteredAction
 		{
 			TimeDuration StartTime;
@@ -35,6 +40,7 @@ namespace Poly
 		std::vector<RegisteredAction> Actions;
 		size_t NextActionIndex = 0;
 		IAction* ActiveAction = nullptr;
+		bool Active = false;
 
 	}; // class SequenceTrack
 } // namespace Poly
