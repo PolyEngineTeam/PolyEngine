@@ -13,6 +13,7 @@ uniform mat4 uClipFromModel;
 uniform mat4 uWorldFromModel;
 uniform vec4 uViewPosition;
 uniform mat4 uDirLightFromWorld;
+uniform float uHasBones;
 
 uniform float uTime;
 
@@ -33,29 +34,31 @@ void main()
 {
 	vertex_out.uv = aUV;
 	
-	float sum =  aBoneWeight.x +  aBoneWeight.y +  aBoneWeight.z +  aBoneWeight.w;
+	// float sum =  aBoneWeight.x +  aBoneWeight.y +  aBoneWeight.z +  aBoneWeight.w;
+	// 
+	// vec4 vertexInModel = vec4(aPosition.xyz, 1.0);
+	// 
+	// vec4 pos1 = uBones[aBoneIds.x] * vertexInModel;
+	// vec4 pos2 = uBones[aBoneIds.y] * vertexInModel;
+	// vec4 pos3 = uBones[aBoneIds.z] * vertexInModel;
+	// vec4 pos4 = uBones[aBoneIds.w] * vertexInModel;
+	// 
+	// vec4 vertexInAnimModel = vec4(pos1.xyz, 1.0) *  aBoneWeight.x/sum;				
+    //     vertexInAnimModel += vec4(pos2.xyz, 1.0) * aBoneWeight.y/sum;
+    //     vertexInAnimModel += vec4(pos3.xyz, 1.0) * aBoneWeight.z/sum;
+    //     vertexInAnimModel += vec4(pos4.xyz, 1.0) * aBoneWeight.w/sum;
 	
-	vec4 vertexInBone = vec4(aPosition.xyz, 1.0);
+	vec4 vertexInModel = vec4(aPosition.xyz, 1.0);
+	vec4 vertexInAnimModel = uBones[aBoneIds.x] * vertexInModel;
+		
+	vertexInAnimModel.w = 1.0f;
 	
-	vec4 pos1 = uBones[aBoneIds.x] * vertexInBone;
-	vec4 pos2 = uBones[aBoneIds.y] * vertexInBone;
-	vec4 pos3 = uBones[aBoneIds.z] * vertexInBone;
-	vec4 pos4 = uBones[aBoneIds.w] * vertexInBone;
+	// if(sum == 0.0f)
+	// 	vertexInAnimModel = vertexInModel;
 	
-	vec4 vertInModel = vec4(pos1.xyz, 1.0) *  aBoneWeight.x/sum;				
-        vertInModel += vec4(pos2.xyz, 1.0) * aBoneWeight.y/sum;
-        vertInModel += vec4(pos3.xyz, 1.0) * aBoneWeight.z/sum;
-        vertInModel += vec4(pos4.xyz, 1.0) * aBoneWeight.w/sum;
-	
-	vertInModel.w = 1.0f;
-	
-	if(sum == 0.0f)
-		vertInModel = vertexInBone;
-	
-	gl_Position = uClipFromModel * vertInModel;
-	
-	// gl_Position = uClipFromModel * vertexInBone;
-	vertex_out.positionInWorld = (uWorldFromModel * vertInModel).xyz;
+	gl_Position = uClipFromModel * mix(vertexInModel, vertexInAnimModel, uHasBones);
+	// gl_Position = uClipFromModel * vertexInModel;
+	vertex_out.positionInWorld = (uWorldFromModel * vertexInAnimModel).xyz;
 
 	mat3 transposedModelFromWorld = transpose(inverse(mat3(uWorldFromModel)));
 	vertex_out.normalInModel = normalize(transposedModelFromWorld * aNormal /*InModel*/);

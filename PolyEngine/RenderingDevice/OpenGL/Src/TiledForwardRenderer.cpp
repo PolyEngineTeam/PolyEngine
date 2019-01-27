@@ -673,6 +673,8 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
+			LightAccumulationShader.SetUniform("uHasBones", (subMesh->GetBones().size() != 0) ? 1.0f : 0.0f );
+
 			 for (int i = 0; i < 64; ++i)
 			 {
 			 	String baseName = String("uBones[") + String::From(i) + String("]");
@@ -686,7 +688,8 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 			 	{
 			 		Matrix animFromModel = animCmp->ModelFromBone.at(b.name) * b.boneFromModel;
 			 		String baseName = String("uBones[") + String::From(count) + String("]");
-			 		LightAccumulationShader.SetUniform(baseName, animFromModel);
+			 		// LightAccumulationShader.SetUniform(baseName, animFromModel);
+					LightAccumulationShader.SetUniform(baseName, Matrix::IDENTITY);
 			 		if (count >= 64) break;
 			 		count++;
 			 	}
