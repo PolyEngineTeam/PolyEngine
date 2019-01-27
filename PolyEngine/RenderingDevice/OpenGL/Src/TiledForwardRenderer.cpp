@@ -688,7 +688,8 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 			 	{
 			 		Matrix animFromModel = animCmp->ModelFromBone.at(b.name) * b.boneFromModel;
 			 		String baseName = String("uBones[") + String::From(count) + String("]");
-			 		LightAccumulationShader.SetUniform(baseName, animFromModel);
+			 		// LightAccumulationShader.SetUniform(baseName, animFromModel);
+					LightAccumulationShader.SetUniform(baseName, Matrix::IDENTITY);
 			 		if (count >= 64) break;
 			 		count++;
 			 	}
