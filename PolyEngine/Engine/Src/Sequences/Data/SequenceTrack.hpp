@@ -23,9 +23,9 @@ namespace Poly
 		void OnAbort();
 
 	private:
-		void TryUpdateActiveAction(TimeDuration deltaTime);
+		TimeDuration TryUpdateActiveAction(TimeDuration deltaTime);
 		void TryFinishActiveAction(TimeDuration deltaTime);
-		void TryStartNextAction(TimeDuration deltaTime);
+		bool TryStartNextAction();
 		void TryFinishTrack();
 
 		struct RegisteredAction
