@@ -8,8 +8,8 @@ void Poly::SequenceTrack::AppendAction(TimeDuration startTime, std::shared_ptr<I
 {
 	ASSERTE(startTime >= TimeDuration(0), "Start time must be greater or equal 0.");
 
-	if (Actions.size() > 0 && startTime < Actions[Actions.size() - 1].StartTime)
-		gConsole.LogError("Can't add action starting earlier than previous actions in this track.");
+	if (Actions.size() > 0 && startTime < Actions[Actions.size() - 1].StartTime + Actions[Actions.size() - 1].Action->GetDuration())
+		gConsole.LogError("Actions can't overlap each other.");
 	else
 		Actions.push_back({ startTime, std::move(action) });
 }
