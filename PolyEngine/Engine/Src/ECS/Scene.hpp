@@ -3,10 +3,10 @@
 #include <Defines.hpp>
 #include <ECS/Entity.hpp>
 #include <ECS/ComponentBase.hpp>
+#include <ECS/ComponentIterator.hpp>
 #include <Audio/SoundWorldComponent.hpp>
 #include <Engine.hpp>
 
-#include "ComponentIterator.hpp"
 
 namespace Poly {
 
@@ -107,11 +107,29 @@ namespace Poly {
 		{
 			return ComponentsIDGroup::GetComponentTypeID<T>();
 		}
-
-		template<typename... T> static Dynarray<size_t> GetWorldComponentID() noexcept
+//typename std::enable_if<Trait::IsVariadicEmpty<T>::value, T>::type
+		template<typename... T, typename std::enable_if_t<std::negation<Trait::IsVariadicEmpty<T...>>::value>* = nullptr> static Dynarray<size_t> GetWorldComponentID() noexcept
 		{
 			return Dynarray<size_t>(std::initializer_list<size_t>{ GetWorldComponentID<T>()... } );
 		}
+
+		/// Iterator proxy
+		template<typename PrimaryComponent, typename... SecondaryComponents>
+		struct IteratorProxy : BaseObject<>
+		{
+			IteratorProxy(Scene* s) : S(s) {}
+			ComponentIterator<PrimaryComponent, SecondaryComponents...> Begin()
+			{
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorHelper<PrimaryComponent, SecondaryComponents...>());
+			}
+			ComponentIterator<PrimaryComponent, SecondaryComponents...> End() //better pass scene and move this method inside component (13.12. need to be sure about h
+			{
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorHelper<PrimaryComponent, SecondaryComponents...>());
+			}
+			auto begin() { return Begin(); }
+			auto end() { return End(); }
+			Scene* const S;
+		};
 
 		/// <summary>Allows iteration over multiple component types.
 		/// Iterator dereferences to a tuple of component pointers.</summary>
@@ -164,7 +182,7 @@ namespace Poly {
 					Scene* scene = entity->GetEntityScene(); //later cast to Scene (ISCene comes)
 					for (auto& e : scene->GetEntityAllocator())
 					{
-						int idx = 0;
+						size_t idx = 0;
 						for (auto id : required)
 						{
 							if (!e.GetComponent(id))

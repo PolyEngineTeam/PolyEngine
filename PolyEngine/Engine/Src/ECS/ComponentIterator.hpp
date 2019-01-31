@@ -7,7 +7,6 @@ namespace Poly
 	template<typename T>
 	class Dynarray;
 	class ComponentBase;
-	class Scene;
 	template<typename PrimaryComponent, typename... SecondaryComponents>
 	struct IteratorProxy;
 
@@ -101,23 +100,5 @@ namespace Poly
 			mutable bool bCacheValid;
 			std::unique_ptr<IEntityIteratorHelper> Iter;
 			mutable std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... > Cache;
-	};
-
-	/// Iterator proxy
-	template<typename PrimaryComponent, typename... SecondaryComponents>
-	struct IteratorProxy : BaseObject<>
-	{
-		IteratorProxy(Scene* s) : S(s) {}
-		ComponentIterator<PrimaryComponent, SecondaryComponents...> Begin()
-		{
-			return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorHelper<PrimaryComponent, SecondaryComponents...>());
-		}
-		ComponentIterator<PrimaryComponent, SecondaryComponents...> End() //better pass scene and move this method inside component (13.12. need to be sure about h
-		{
-			return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorHelper<PrimaryComponent, SecondaryComponents...>());
-		}
-		auto begin() { return Begin(); }
-		auto end() { return End(); }
-		Scene* const S;
 	};
 }
