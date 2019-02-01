@@ -16,14 +16,15 @@ static const float MIN_TO_SEC = 60.f;
 
 void AnimationSystem::OnUpdate(Scene* scene)
 {
-	// for (auto&&[boneCmp] : scene->IterateComponents<BoneComponent>())
-	// {
-	// 	//Vector parentPos = boneCmp->GetOwner()->GetParent()->GetTransform().GetGlobalTranslation();
-	// 	//Vector myPos = boneCmp->GetOwner()->GetTransform().GetGlobalTranslation();
-	// 	//DebugDrawSystem::DrawLine(scene, myPos, parentPos, Color::GREEN);
-	// 	//DebugDrawSystem::DrawArrow(scene, myPos, boneCmp->GetOwner()->GetTransform().GetGlobalForward(), Color::RED);
-	// }
+	for (auto&& [boneCmp] : scene->IterateComponents<BoneComponent>())
+	{
+		Vector parentPos = boneCmp->GetOwner()->GetParent()->GetTransform().GetGlobalTranslation();
+		Vector myPos = boneCmp->GetOwner()->GetTransform().GetGlobalTranslation();
+		DebugDrawSystem::DrawLine(scene, myPos, parentPos, Color::GREEN);
+		DebugDrawSystem::DrawArrow(scene, myPos, boneCmp->GetOwner()->GetTransform().GetGlobalForward(), Color::RED);
+	}
 
+	// Iterate all skeletal meshes
 	for (auto&& [animCmp, meshCmp] : scene->IterateComponents<SkeletalAnimationComponent, MeshRenderingComponent>())
 	{
 		if (animCmp->CheckFlags(eComponentBaseFlags::NEWLY_CREATED))
@@ -34,8 +35,8 @@ void AnimationSystem::OnUpdate(Scene* scene)
 
 		for (auto& animKV : animCmp->ActiveAnimations)
 		{
+			// Store basic info
 			const String& animName = animKV.first;
-
 			SkeletalAnimationState& animState = animKV.second;
 			const MeshResource::Animation* anim = meshCmp->GetMesh()->GetAnimation(animName);
 
@@ -44,48 +45,42 @@ void AnimationSystem::OnUpdate(Scene* scene)
 				gConsole.LogError("Animation with name {} not found!", animName);
 				continue;
 			}
+			
+			// Calculate correct dt
+			float dt = (float)TimeSystem::GetTimerDeltaTime(scene, animState.Params.Timer) * animState.Params.PlaybackSpeed * MIN_TO_SEC;
 
-			float dt = (float)TimeSystem::GetTimerDeltaTime(scene, animState.Params.Timer);
-
-			dt *= animState.Params.PlaybackSpeed * MIN_TO_SEC;
-
+			// Apply delay
 			if (animState.DelayTime + dt < animState.Params.Delay)
 			{
+				// Still in delay, continue loop
 				animState.DelayTime += dt;
 				continue;
 			}
 			else if (animState.DelayTime < animState.Params.Delay)
 			{
-				// update dt
+				// Reached delay end, correct the dt
 				dt = animState.DelayTime + dt - animState.Params.Delay;
 				animState.DelayTime = animState.Params.Delay;
 			}
 
-			// If animation finished
-			animState.StopRequested = animState.StopRequested || (!animState.Params.Loop && animState.Time + dt > anim->Duration);
-			// If looped animation finished
-			animState.StopRequested = animState.StopRequested || (animState.Params.Loop && animState.Params.LoopCount.HasValue() 
-				&& animState.LoopCount >= animState.Params.LoopCount.Value());
+			// Set current time
+			animState.Time = animState.Time + dt;
 
-			if (animState.StopRequested && animState.Time + dt > anim->Duration)
+			// Check stop conditions
+			animState.StopRequested = animState.StopRequested
+				|| (!animState.Params.Loop && animState.Time > anim->Duration)
+				|| (animState.Params.Loop && animState.Params.LoopCount.HasValue() && animState.LoopCount >= animState.Params.LoopCount.Value());
+
+			// Correct time if stop condition occured or loop finished
+			if (animState.Time >= anim->Duration)
 			{
-				// animation finished, set time to duration
-				animState.Time = anim->Duration;
-			}
-			else
-			{
-				animState.Time = animState.Time + dt;
-				if (animState.Time >= anim->Duration && !animState.StopRequested)
-				{
-					animState.Time = fmodf(animState.Time, anim->Duration);
-					animState.LoopCount += 1;
-				}
+				// Animation loop finished, correct time value
+				ASSERTE(anim->Duration > 0, "Invalid anim duration!");
+				animState.LoopCount += (size_t)(animState.Time / anim->Duration);
+				animState.Time = animState.StopRequested ? anim->Duration : fmodf(animState.Time, anim->Duration);
 			}
 
-			
-			
-			//ASSERTE(anim->TicksPerSecond == 0.f, "Unhandled tics per sec.");
-
+			// Update bone positions, channel == bone
 			for (auto& channel : anim->channels)
 			{
 				const String& channelName = channel.first;
@@ -95,6 +90,7 @@ void AnimationSystem::OnUpdate(Scene* scene)
 				Vector scale = Vector::ONE;
 				Quaternion rot = Quaternion::IDENTITY;
 
+				// Extract position value
 				if (lerpData.pos[0].HasValue())
 				{
 					auto posKey = lerpData.pos[0].Value();
@@ -104,7 +100,8 @@ void AnimationSystem::OnUpdate(Scene* scene)
 						pos = ::Poly::Lerp(pos, lerpData.pos[1].Value().Value, animState.Time - posKey.Time);
 					}
 				}
-					
+				
+				// Extract scale value
 				if (lerpData.scale[0].HasValue())
 				{
 					auto scaleKey = lerpData.scale[0].Value();
@@ -115,6 +112,7 @@ void AnimationSystem::OnUpdate(Scene* scene)
 					}
 				}
 
+				// Extract rotation value
 				if (lerpData.rot[0].HasValue())
 				{
 					auto rotKey = lerpData.rot[0].Value();
@@ -126,46 +124,35 @@ void AnimationSystem::OnUpdate(Scene* scene)
 					}
 				}
 
+				// Push to the bone matrix blend list
 				Matrix parentFromBone = Matrix::Compose(pos, rot, scale);
 				boneMatrices[channelName].push_back({ parentFromBone, animState.Params.Weight });
 			}
 
+			// Prepare list of animation to remove
 			if (animState.StopRequested && animState.Time >= anim->Duration)
 				animsToremove.push_back(animName);
 		}
 
+		// Remove inactive animations
 		for (const String& animName : animsToremove)
-		{
 			animCmp->ActiveAnimations.erase(animName);
-		}
 
 		if (!boneMatrices.empty())
 		{
+			// Apply blended transformations to bone entities
 			for (auto& bone : animCmp->Bones)
 			{
 				auto&& it = boneMatrices.find(bone->GetName());
 				if(it != boneMatrices.end())
 					bone->GetTransform().SetParentFromModel(Matrix::Blend(it->second));
 			}
-		}
 
-		animCmp->ModelFromBone.clear();
-		Matrix ModelFromWorld = animCmp->GetTransform().GetWorldFromModel().GetInversed();
-		for (auto& bone : animCmp->Bones)
-			animCmp->ModelFromBone[bone->GetName()] = ModelFromWorld * bone->GetTransform().GetWorldFromModel();
-
-		for (auto& modelfrombone : animCmp->ModelFromBone)
-		{
-			auto worldFromModel = animCmp->GetTransform().GetWorldFromModel();
-			auto worldfrombone = worldFromModel * modelfrombone.second;
-
-			Vector globalbonePos = worldfrombone * Vector::ZERO;
-			Vector a, b;
-			Quaternion rot;
-			worldfrombone.Decompose(a, rot, b);
-			Vector fwd = rot * -Vector::UNIT_Z;
-
-			DebugDrawSystem::DrawArrow(scene, globalbonePos, fwd, Color::RED);
+			// Populate ModelFromBone matrices.
+			animCmp->ModelFromBone.clear();
+			Matrix ModelFromWorld = animCmp->GetTransform().GetWorldFromModel().GetInversed();
+			for (auto& bone : animCmp->Bones)
+				animCmp->ModelFromBone[bone->GetName()] = ModelFromWorld * bone->GetTransform().GetWorldFromModel();
 		}
 	}
 }
