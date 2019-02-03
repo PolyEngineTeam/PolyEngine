@@ -107,8 +107,8 @@ namespace Poly {
 		{
 			return ComponentsIDGroup::GetComponentTypeID<T>();
 		}
-//typename std::enable_if<Trait::IsVariadicEmpty<T>::value, T>::type
-		template<typename... T, typename std::enable_if_t<std::negation<Trait::IsVariadicEmpty<T...>>::value>* = nullptr> static Dynarray<size_t> GetWorldComponentID() noexcept
+
+		template<typename... T> static Dynarray<size_t> GetWorldComponentIDs() noexcept
 		{
 			return Dynarray<size_t>(std::initializer_list<size_t>{ GetWorldComponentID<T>()... } );
 		}
@@ -213,7 +213,12 @@ namespace Poly {
 			//iterator proxy makes use of it for its ranged iteration which will end if begin == end (nullptr)
 			//our original wrapper(ComponentIterator) makes use of this underlying pointer and caches it for future
 			//it has to check  for cache invalidation THOUGH WHY? AND HOW :)
-			Dynarray<size_t> requiredComponents(GetWorldComponentID<SecondaryComponents...>());
+			Dynarray<size_t> requiredComponents;
+			if constexpr (!Trait::IsVariadicEmpty<SecondaryComponents...>::value)
+			{
+				requiredComponents = GetWorldComponentIDs<SecondaryComponents...>();
+			}
+
 			std::vector<size_t> requiredComponentsVector;
 			size_t primary = GetWorldComponentID<PrimaryComponent>();
 			requiredComponentsVector.assign(requiredComponents.Begin(), requiredComponents.End());
