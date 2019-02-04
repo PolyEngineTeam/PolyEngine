@@ -122,7 +122,7 @@ namespace Poly {
 			{
 				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorHelper<PrimaryComponent, SecondaryComponents...>());
 			}
-			ComponentIterator<PrimaryComponent, SecondaryComponents...> End() //better pass scene and move this method inside component (13.12. need to be sure about h
+			ComponentIterator<PrimaryComponent, SecondaryComponents...> End()
 			{
 				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorHelper<PrimaryComponent, SecondaryComponents...>());
 			}
@@ -170,7 +170,7 @@ namespace Poly {
 				}
 				void increment() override
 				{
-					findMatch(Match, RequiredComponents);
+					findNextMatch();
 				}
 				bool isValid() const override //think where this might be useful for outside world???
 				{
@@ -198,6 +198,32 @@ namespace Poly {
 					}
 					Match = &*(scene->GetEntityAllocator().End());//ugly ugly ugly
 					RequiredComponents = required;
+				}
+				void findNextMatch()
+				{
+					ASSERTE(Match, "Tried incrementing an empty range!");
+					Scene* scene = Match->GetEntityScene();
+					auto& allocator = scene->GetEntityAllocator();
+					auto it = std::find_if(allocator.Begin(), allocator.End(), [&](auto& ent){
+						return &ent == Match;
+					});
+					for (++it; it != allocator.End(); ++it)
+					{
+						Entity& e = *it;
+						size_t idx = 0;
+						for (auto id : RequiredComponents)
+						{
+							if (!e.GetComponent(id))
+								break;
+							++idx;
+						}
+						if (idx == RequiredComponents.size())
+						{
+							Match = &e;
+							return;
+						}
+					}
+					Match = &*(scene->GetEntityAllocator().End());
 				}
 				Entity* Match;
 				std::vector<size_t> RequiredComponents; //friendship 
@@ -237,12 +263,12 @@ namespace Poly {
 			bool operator==(const ComponentIterator& rhs) const { return primary_iter == rhs.primary_iter; }
 			bool operator!=(const ComponentIterator& rhs) const { return !(*this == rhs); }
 
-			std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...> operator*() const
-			{
-				PrimaryComponent* primary = &*primary_iter;
-				return std::make_tuple(primary, primary->template GetSibling<SecondaryComponents>()...);
-			}
-			std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...> operator->() const
+			std::tuple<typename std::add_pointer<PrimaryComponent>:{...}:type, typename std::add_pointer<SecondaryComponents>::type...> operator*() const
+			{{...}
+				PrimaryComponent* primary = &*primary_iter;{...}
+				return std::make_tuple(primary, primary->template G{...}etSibling<SecondaryComponents>()...);
+			}{...}
+			std::tuple<typename std::add_pointer<PrimaryComponent>:{...}:type, typename std::add_pointer<SecondaryComponents>::type...> operator->() const
 			{
 				return **this;
 			}

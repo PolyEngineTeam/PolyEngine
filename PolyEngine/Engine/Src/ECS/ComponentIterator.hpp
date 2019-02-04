@@ -51,8 +51,8 @@ namespace Poly
 		private:
 			void Increment()
 			{
-				Iter.get()->increment();
-				ASSERTE(Iter.get()->isValid(), "Next Iterator is not valid!");		
+				//ASSERTE(Iter.get()->isValid(), "Next Iterator is not valid!");	//currently not working as we never set it to nullptr?
+				Iter.get()->increment();	
 				bCacheValid = false;
 			}
 
