@@ -12,10 +12,17 @@ include(${ENGINE_ROOT_DIR}/CMakeListsCommon.txt)
 # Finally, meat and potatoes
 ##
 add_subdirectory(Core)
-add_subdirectory(Editor)
 add_subdirectory(Engine)
 add_subdirectory(RenderingDevice/OpenGL)
 add_subdirectory(Standalone)
+
+option(INCLUDE_EDITOR_AND_QT "Adds Editor and QT to the build" ON)
+#    INCLUDE_EDITOR_AND_QT (Default ON)
+#    -- adds Editor and QT to the build
+if(INCLUDE_EDITOR_AND_QT)
+    add_subdirectory(Editor)
+endif()
+
 enable_testing()
 add_subdirectory(UnitTests)
 

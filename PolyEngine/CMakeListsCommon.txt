@@ -53,14 +53,12 @@ if(DEFINED ENV{QTDIR})
 	list(APPEND CMAKE_PREFIX_PATH $ENV{QTDIR})
 elseif(APPLE)
 	list(APPEND CMAKE_PREFIX_PATH /usr/local/opt/qt)
-else()
+elseif(NOT INCLUDE_EDITOR_AND_QT)
 	message(FATAL_ERROR "Please setup QTDIR environment variable to point to Qt5 toolchain instalation")
 endif()
-
 if (WIN32)
 	set(BULLET_ROOT "${ENGINE_ROOT_DIR}/ThirdParty/Bullet")
 endif()
-
 
 ##
 # Options and whatnot
@@ -167,7 +165,6 @@ function(GenerateSourceGoups Sources)
 		source_group("${SourcePath}" FILES "${Source}")
 	endforeach()
 endfunction()
-
 ##
 # Enable CCache if found
 ##
