@@ -29,8 +29,8 @@ namespace Poly
 			{
 				UpdateCache();
 			}
-			bool operator==(const  ComponentIterator& rhs) const { return Iter.get() == rhs.Get(); }
-			bool operator!=(const  ComponentIterator& rhs) const { return !(Iter.get() == rhs.Get()); }
+			bool operator==(const  ComponentIterator& rhs) const { return Iter.get()->get() == rhs.Get()->get(); } //they never  trigger underlying overload, pointer comparison ongoing
+			bool operator!=(const  ComponentIterator& rhs) const { return !(Iter.get()->get() == rhs.Get()->get()); }
 
 			std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... > operator*() const //canot be const if  change cache
 			{
@@ -60,6 +60,11 @@ namespace Poly
 			{
 				Entity* ent = Iter.get()->get();
 				PrimaryComponent* primary = ent->GetComponent<PrimaryComponent>();
+				if (!primary)
+				{
+					bCacheValid = false;
+					return;
+				}
 				if constexpr (!Trait::IsVariadicEmpty<SecondaryComponents...>::value)
 				{
 					Cache = std::make_tuple(primary, primary->template GetSibling<SecondaryComponents>()...);
@@ -78,9 +83,9 @@ namespace Poly
 			{
 				if (!bCacheValid)
 					UpdateCache();
-				Entity* ent = Iter.get()->get();
-				if (!HasComponents<PrimaryComponent, SecondaryComponents...>(ent))
-					ASSERTE(false, "Updated cache does not contain all needed components!"); //@fixme: celeborth, when put in asserte clause it fails (passing to macro fails template deduction?)
+				// Entity* ent = Iter.get()->get();
+				// if (!HasComponents<PrimaryComponent, SecondaryComponents...>(ent))
+				// 	ASSERTE(false, "Updated cache does not contain all needed components!"); //@fixme: celeborth, when put in asserte clause it fails (passing to macro fails template deduction?)
 				return Cache;
 			}
 

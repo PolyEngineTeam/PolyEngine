@@ -124,7 +124,7 @@ namespace Poly {
 			}
 			ComponentIterator<PrimaryComponent, SecondaryComponents...> End()
 			{
-				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorHelper<PrimaryComponent, SecondaryComponents...>());
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorHelper<PrimaryComponent, SecondaryComponents...>(true));
 			}
 			auto begin() { return Begin(); }
 			auto end() { return End(); }
@@ -152,15 +152,19 @@ namespace Poly {
 			public:
 				SceneComponentIteratorHelper(Entity* entity, std::vector<size_t> required)
 				{ 
-					//Match = nullptr; //need to initalize?
 					findMatch(entity, required);
 					//do we want to set our required components even in case of invalidated iterator?
+				}
+				SceneComponentIteratorHelper(IterablePoolAllocator<Entity>& allocator, std::vector<size_t> required) // no need to store any required in end iterator, just take care in original componentiterator in ex updatecache when iterator is nu
+				{
+					Match = &*allocator.End();
+					RequiredComponents = required; //think about different approach? This is not robust at all, but otherwise have to introduce special handling for end iterator everywhere in componentIt
 				}
 				bool operator==(const IEntityIteratorHelper& rhs) const override
 				{
 					return Match == rhs.get();
 				}
-				bool operator!=(const IEntityIteratorHelper& rhs) const override
+				bool operator!=(const IEntityIteratorHelper& rhs) const override //currently not called!!!
 				{
 					return !(Match == rhs.get()); // can move to interface after it works
 				}
@@ -226,19 +230,19 @@ namespace Poly {
 					Match = &*(scene->GetEntityAllocator().End());
 				}
 				Entity* Match;
-				std::vector<size_t> RequiredComponents; //friendship 
+				std::vector<size_t> RequiredComponents;
 		};
 
 		//This method must find first entity that fits the template arguments list and create a Helper instance unique ptr
 		template<typename PrimaryComponent, typename... SecondaryComponents>
-		std::unique_ptr<SceneComponentIteratorHelper> MakeSceneComponentIteratorHelper() //move to protected
+		std::unique_ptr<SceneComponentIteratorHelper> MakeSceneComponentIteratorHelper(bool isEndIterator = false) //move to protected
 		{
 			//current implementation: we make vector of needed components, pass them to ctr of our helper
 			//it loops through allocator of entities until it finds suitable entity or is at end which will in turn
 			//invalidate this iterator
 			//iterator proxy makes use of it for its ranged iteration which will end if begin == end (nullptr)
 			//our original wrapper(ComponentIterator) makes use of this underlying pointer and caches it for future
-			//it has to check  for cache invalidation THOUGH WHY? AND HOW :)
+			//it has to check  for cache invalidation
 			Dynarray<size_t> requiredComponents;
 			if constexpr (!Trait::IsVariadicEmpty<SecondaryComponents...>::value)
 			{
@@ -249,9 +253,12 @@ namespace Poly {
 			size_t primary = GetWorldComponentID<PrimaryComponent>();
 			requiredComponentsVector.assign(requiredComponents.Begin(), requiredComponents.End());
 			requiredComponentsVector.insert(requiredComponentsVector.begin(), primary);
-			return std::make_unique<SceneComponentIteratorHelper>(SceneComponentIteratorHelper(GetRoot(), requiredComponentsVector)); //TODO: information only for now -> we fail gracefully, we return end of our range if not found particular components which is ok
+			return isEndIterator ? std::make_unique<SceneComponentIteratorHelper>(SceneComponentIteratorHelper(GetRoot()->GetEntityScene()->GetEntityAllocator(), requiredComponentsVector))
+			: std::make_unique<SceneComponentIteratorHelper>(SceneComponentIteratorHelper(GetRoot(), requiredComponentsVector)); //TODO: information only for now -> we fail gracefully, we return end of our range if not found particular components which is ok
 			//what if we obtain invalid iter? 		
 		}
+
+		//How to ensure we create our end of range properly?
 
 		/*
 		/// Component iterator.
