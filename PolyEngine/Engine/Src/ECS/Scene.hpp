@@ -155,10 +155,9 @@ namespace Poly {
 					findMatch(entity, required);
 					//do we want to set our required components even in case of invalidated iterator?
 				}
-				SceneComponentIteratorHelper(IterablePoolAllocator<Entity>& allocator, std::vector<size_t> required) // no need to store any required in end iterator, just take care in original componentiterator in ex updatecache when iterator is nu
+				SceneComponentIteratorHelper(Entity* entity)
 				{
-					Match = &*allocator.End();
-					RequiredComponents = required; //think about different approach? This is not robust at all, but otherwise have to introduce special handling for end iterator everywhere in componentIt
+					Match = &*entity->GetEntityScene()->GetEntityAllocator().End();
 				}
 				bool operator==(const IEntityIteratorHelper& rhs) const override
 				{
@@ -237,6 +236,10 @@ namespace Poly {
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		std::unique_ptr<SceneComponentIteratorHelper> MakeSceneComponentIteratorHelper(bool isEndIterator = false) //move to protected
 		{
+			if (isEndIterator)
+			{
+				return std::make_unique<SceneComponentIteratorHelper>(SceneComponentIteratorHelper(GetRoot()));
+			}
 			//current implementation: we make vector of needed components, pass them to ctr of our helper
 			//it loops through allocator of entities until it finds suitable entity or is at end which will in turn
 			//invalidate this iterator
@@ -253,8 +256,7 @@ namespace Poly {
 			size_t primary = GetWorldComponentID<PrimaryComponent>();
 			requiredComponentsVector.assign(requiredComponents.Begin(), requiredComponents.End());
 			requiredComponentsVector.insert(requiredComponentsVector.begin(), primary);
-			return isEndIterator ? std::make_unique<SceneComponentIteratorHelper>(SceneComponentIteratorHelper(GetRoot()->GetEntityScene()->GetEntityAllocator(), requiredComponentsVector))
-			: std::make_unique<SceneComponentIteratorHelper>(SceneComponentIteratorHelper(GetRoot(), requiredComponentsVector)); //TODO: information only for now -> we fail gracefully, we return end of our range if not found particular components which is ok
+			return std::make_unique<SceneComponentIteratorHelper>(SceneComponentIteratorHelper(GetRoot(), requiredComponentsVector)); //TODO: information only for now -> we fail gracefully, we return end of our range if not found particular components which is ok
 			//what if we obtain invalid iter? 		
 		}
 
