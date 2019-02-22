@@ -64,3 +64,8 @@ include(cmake-modules/vorbis.cmake)
 # OpenAL
 ###
 include(cmake-modules/openal-soft.cmake)
+
+###
+# Khronos
+###
+include(cmake-modules/khronos.cmake)

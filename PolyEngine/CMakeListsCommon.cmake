@@ -276,19 +276,14 @@ set_target_properties(Prerequisites PROPERTIES FOLDER "Engine/Misc" )
 ###
 # Galogen generation
 ###
-set(GL_XML_PATH ${CMAKE_CURRENT_BINARY_DIR}/galogen/gl.xml)
-set(GL_XML_URL "https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/master/xml/gl.xml")
-file(DOWNLOAD ${GL_XML_URL} ${GL_XML_PATH})
-set(KHR_PLATFORM_URL "https://www.khronos.org/registry/EGL/api/KHR/khrplatform.h")
-
 macro(GalogenGenerate LibName Api Ver)
 	set(OutputDir "${CMAKE_CURRENT_BINARY_DIR}/${LibName}_${Api}_${Ver}")
 	set(Filename "${OutputDir}/gl")
 
-   file(DOWNLOAD ${KHR_PLATFORM_URL} "${OutputDir}/KHR/khrplatform.h")
+    file(COPY ${KHR_PLATFORM_PATH} DESTINATION "${OutputDir}/KHR/")
 
 	add_custom_command(
-		DEPENDS Galogen ${GL_XML_PATH}
+		DEPENDS Galogen ${GL_XML_PATH} "${OutputDir}/KHR/khrplatform.h"
 		OUTPUT "${Filename}.c" "${Filename}.h"
 		COMMAND $<TARGET_FILE:Galogen> ${GL_XML_PATH} --api ${Api} --ver ${Ver} --profile core --filename ${Filename}
 		COMMENT "Generating OpenGL headers API: [${Api}] VER: [${Ver}]\n" VERBATIM )
