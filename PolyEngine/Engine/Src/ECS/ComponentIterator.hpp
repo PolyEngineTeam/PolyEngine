@@ -27,16 +27,16 @@ namespace Poly
 		public:
 			explicit ComponentIterator(std::unique_ptr<IEntityIteratorHelper> iter) : Iter(std::move(iter))
 			{
-				UpdateCache();
+				bCacheValid = false;
 			}
-			bool operator==(const  ComponentIterator& rhs) const { return Iter.get()->get() == rhs.Get()->get(); } //they never  trigger underlying overload, pointer comparison ongoing
-			bool operator!=(const  ComponentIterator& rhs) const { return !(Iter.get()->get() == rhs.Get()->get()); }
+			bool operator==(const  ComponentIterator& rhs) const { return GetIteratorHelper()->get() == rhs.GetIteratorHelper()->get(); } //they never  trigger underlying overload, pointer comparison ongoing
+			bool operator!=(const  ComponentIterator& rhs) const { return !(GetIteratorHelper()->get() == rhs.GetIteratorHelper()->get()); }
 
-			std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... > operator*() const //canot be const if  change cache
+			const std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... >& operator*() const //canot be const if  change cache
 			{
 				return GetCache();
 			}
-			std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... > operator->() const
+			const std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... >& operator->() const
 			{
 				return GetCache();
 			}
@@ -44,32 +44,29 @@ namespace Poly
 			ComponentIterator& operator++() { Increment(); return *this; }
 			ComponentIterator operator++(int) { ComponentIterator ret(Iter); Increment(); return ret; } //test for double incrementing etc
 
-			IEntityIteratorHelper* Get() const
+		protected:
+			IEntityIteratorHelper* GetIteratorHelper() const
 			{
 				return Iter.get();
 			}
+
 		private:
 			void Increment()
 			{
 				//ASSERTE(Iter.get()->isValid(), "Next Iterator is not valid!");	//currently not working as we never set it to nullptr?
-				Iter.get()->increment();	
+				GetIteratorHelper()->increment();	
 				bCacheValid = false;
 			}
 
 			void UpdateCache() const 
 			{
-				Entity* ent = Iter.get()->get();
+				Entity* ent = GetIteratorHelper()->get();
 				PrimaryComponent* primary = ent->GetComponent<PrimaryComponent>();
-				if (!primary)
-				{
-					bCacheValid = false;
-					return;
-				}
+				ASSERTE(primary, "Primary component is nullptr!");
+
 				if constexpr (!Trait::IsVariadicEmpty<SecondaryComponents...>::value)
 				{
 					Cache = std::make_tuple(primary, primary->template GetSibling<SecondaryComponents>()...);
-					bCacheValid = true;
-					return;
 				}
 				else
 				{
@@ -79,25 +76,11 @@ namespace Poly
 				bCacheValid = true;
 			}
 
-			std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... > GetCache() const
+			const std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... >& GetCache() const
 			{
 				if (!bCacheValid)
 					UpdateCache();
-				// Entity* ent = Iter.get()->get();
-				// if (!HasComponents<PrimaryComponent, SecondaryComponents...>(ent))
-				// 	ASSERTE(false, "Updated cache does not contain all needed components!"); //@fixme: celeborth, when put in asserte clause it fails (passing to macro fails template deduction?)
 				return Cache;
-			}
-
-			//------------------------------------------------------------------------------
-			template<int zero = 0>
-			bool HasComponents(const Entity* entity) const { return true; }
-
-			//------------------------------------------------------------------------------
-			template<typename Component, typename... Rest>
-			bool HasComponents(const Entity* entity) const
-			{
-				return entity->template HasComponent<Component>() && HasComponents<Rest...>(entity);
 			}
 
 			friend struct IteratorProxy<PrimaryComponent, SecondaryComponents...>;
