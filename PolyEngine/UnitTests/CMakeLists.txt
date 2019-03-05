@@ -8,7 +8,7 @@ GenerateSourceGoups("${POLYTESTS_SRCS}")                                        
 
 add_executable(${UNITTESTS_TARGET} ${POLYTESTS_SRCS})
 add_dependencies(${UNITTESTS_TARGET} Prerequisites)
-target_link_libraries(${UNITTESTS_TARGET} PRIVATE ${CORE_TARGET} ${ENGINE_TARGET} Catch)
+target_link_libraries(${UNITTESTS_TARGET} PRIVATE ${CORE_TARGET} ${ENGINE_TARGET} ${ENGINEAPI_TARGET} Catch)
 ParseAndAddCatchTests(${UNITTESTS_TARGET})
 
 set_target_properties(${UNITTESTS_TARGET} PROPERTIES FOLDER "Engine" )

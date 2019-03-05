@@ -27,6 +27,7 @@ set(GLDEVICE_TARGET PolyRenderingDeviceGL)
 set(EDITOR_TARGET PolyEditor)
 set(UNITTESTS_TARGET PolyUnitTests)
 set(STANDALONE_TARGET PolyStandalone)
+set(ENGINEAPI_TARGET PolyEngineAPI)
 
 # Prepend our modules dir to the path
 list(INSERT CMAKE_MODULE_PATH 0 "${ENGINE_ROOT_DIR}/CMakeModules")

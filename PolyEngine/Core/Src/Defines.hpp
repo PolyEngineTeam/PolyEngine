@@ -83,6 +83,7 @@
 #include <cfloat>
 #include <cstddef>
 #include <vector>
+#include <future>
 
 // Custom type names
 using u8 = uint8_t;

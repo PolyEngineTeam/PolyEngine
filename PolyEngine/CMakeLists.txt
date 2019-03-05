@@ -14,6 +14,7 @@ include(${ENGINE_ROOT_DIR}/CMakeListsCommon.cmake)
 ##
 add_subdirectory(Core)
 add_subdirectory(Engine)
+add_subdirectory(EngineAPI)
 add_subdirectory(RenderingDevice/OpenGL)
 add_subdirectory(Editor)
 add_subdirectory(Standalone)
