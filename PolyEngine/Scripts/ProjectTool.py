@@ -25,15 +25,15 @@ class Tag:
     def __init__(self, version_string):
         try:
             splitted = version_string.split('.')
-            self.revision = int(splitted[0])
+            self.version = int(splitted[0])
             self.major = int(splitted[1])
             self.minor = int(splitted[2])
-            self.fix = int(splitted[3])
+            self.patch = int(splitted[3])
         except ValueError:
             raise RuntimeError('Invalid tag found in repository: {}'.format(version_string))
 
     def __str__(self):
-        return '{}.{}.{}.{}'.format(self.revision, self.major, self.minor, self.fix)
+        return '{}.{}.{}.{}'.format(self.version, self.major, self.minor, self.patch)
 
 
 # Custom action for project creation
@@ -68,7 +68,7 @@ class BumpVersionAction(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, ActionType.BUMP)
-        setattr(namespace, self.metavar, values[0])
+        setattr(namespace, self.metavar[0], values[0])
 
 # Functions
 # Create project function
@@ -192,8 +192,7 @@ def run_cmake(path, build_dir_name, proj_name):
 def create_project_file(path, proj_name, tag):
     data = {
         'ProjectName': proj_name,
-        'EngineRevision': tag.revision,
-        'EngineMajorVersion': tag.major
+        'EngineVersion': '{}'.format(tag)
     }
     with open(os.sep.join([path, proj_name + '.proj.json']), 'w') as outfile:
         json.dump(data, outfile)
@@ -259,8 +258,9 @@ def create_fast_update_script(engine_path, proj_path):
 def create_project(name, path, engine_path):
     print('Creating project', name, 'in', path, 'with engine at', engine_path)
 
-    tag = get_current_tag(engine_path)
-    checkout(engine_path, tag) #or maybe checkout latest major version instead?
+    current_tag = get_current_tag(engine_path)
+    tags = get_tags(engine_path)
+    required_tag = get_latest_tag(tags, current_tag.version, current_tag.major, current_tag.minor)
 
     if os.path.exists(path):
         raise Exception('Path', path, 'already exists. Cannot create project there!')
@@ -278,21 +278,22 @@ def create_project(name, path, engine_path):
 
     update_config_files(path, name, engine_path, True)
 
-    create_project_file(path, name, tag)
+    create_project_file(path, name, required_tag)
     run_cmake(path, 'Build', name)
 
 
-def update_project(path, engine_path, checkout_required):
+def update_project(path, engine_path):
     project_file = read_project_file(path)
-    if checkout_required:
-        revision = project_file.get('EngineRevision', None)
-        major_version = project_file.get('EngineMajorVersion', None)
-        if major_version is not None and revision is not None:
-            tags = get_tags(engine_path)
-            tag = get_latest_tag_with_revision_and_major(tags, revision, major_version)
-            checkout(engine_path, tag)
-        else:
-            raise RuntimeError("There is no 'EngineMajorVersion' defined in game project file")
+
+    current_tag = project_file.get('EngineVersion', None)
+    if current_tag is None:
+        raise RuntimeError('EngineVersion in project file is not defined')
+    available_tags = get_tags(engine_path)
+    required_tag = get_latest_tag(available_tags, current_tag.version, current_tag.major, current_tag.minor)
+    if current_tag.__str__() != required_tag.__str__():
+        print('Found patched engine version: {}'.format(required_tag))
+        git_checkout(engine_path, required_tag)
+
     print('Updating project at', path, 'with engine at', engine_path)
 
     if not os.path.exists(path):
@@ -306,27 +307,46 @@ def update_project(path, engine_path, checkout_required):
     run_cmake(path, 'Build', name)
 
 
-def get_latest_tag_with_revision_and_major(tags, revision, major):
-    tags = [tag for tag in tags if tag.revision == revision]
+def get_latest_tag(tags, version, major=None, minor=None):
+    '''args 'major' and 'minor' acts as tag constraints.
+    if not given, highest available values will be selected'''
+    tags = [tag for tag in tags if tag.version == version]
+
+    if major is None:
+        major = max(tags, key=attrgetter('major')).major
     tags = [tag for tag in tags if tag.major == major]
-    minor = max(tags, key=attrgetter('minor')).minor
+
+    if minor is None:
+        minor = max(tags, key=attrgetter('minor')).minor
     tags = [tag for tag in tags if tag.minor == minor]
-    fix = max(tags, key=attrgetter('fix')).fix
-    return Tag('{}.{}.{}'.format(major, minor, fix))
+
+    patch = max(tags, key=attrgetter('patch')).patch
+
+    return Tag('{}.{}.{}.{}'.format(version, major, minor, patch))
 
 
 def get_tags(engine_path):
-    checkout(engine_path, DEFAULT_BRANCH)
+    git_fetch_tags(engine_path)
     tags_raw = subprocess.check_output('cd {} && git -c pager.tag=false tag'.format(engine_path), shell=True)\
         .decode('utf-8')
     print('Available engine versions: {}'.format(tags_raw))
     return [Tag(tag_raw.strip()) for tag_raw in tags_raw.split('\n') if tag_raw]
 
 
-def bump_version(path, engine_path):
+def bump_version(path, engine_path, required_tag_str):
     project_file = read_project_file(path)
     name = project_file['ProjectName']
-    tag = get_current_tag(engine_path)
+
+    if required_tag_str is None:
+        current_tag = get_current_tag(engine_path)
+        splitted = [current_tag.version, current_tag.major]
+    else:
+        splitted = required_tag_str.split('.')
+        splitted = [int(s) for s in splitted]
+
+    tags = get_tags(engine_path)
+    tag = get_latest_tag(tags, *splitted)
+
     create_project_file(path, name, tag)
 
 
@@ -337,9 +357,14 @@ def get_current_tag(engine_path):
     return Tag(tag_raw)
 
 
-def checkout(engine_path, identifier):
+def git_checkout(engine_path, identifier):
     print('Checking out engine from branch/tag: {}'.format(identifier))
-    os.system('cd {} && git stash && git checkout {} && git fetch --tags'.format(engine_path, identifier))
+    os.system('cd {} && git stash && git checkout {}'.format(engine_path, identifier))
+
+
+def git_fetch_tags(engine_path):
+    print('Fetching engine')
+    os.system('cd {} && git fetch --tags'.format(engine_path))
 
 
 if __name__ == "__main__":
@@ -349,8 +374,6 @@ if __name__ == "__main__":
                         default='..',
                         metavar='engine_path',
                         help='provide custom engine path')
-    PARSER.add_argument('-co', '--checkout', action='store_true', dest='checkout',
-                        help='TODO help')
 
     MTX = PARSER.add_mutually_exclusive_group()
     MTX.add_argument('-c', '--create', action=CreateProjectAction, dest='action_to_perform',
@@ -358,17 +381,16 @@ if __name__ == "__main__":
                      help='create project of given name at provided path')
     MTX.add_argument('-u', '--update', action=UpdateProjectAction, dest='action_to_perform',
                      nargs=1, metavar='project_path',
-                     help='update project at given path')
+                     help='update project at given path and checks out given engine version if needed')
     MTX.add_argument('-b', '--bump-version', action=BumpVersionAction, dest='action_to_perform',
                      nargs=1, metavar='project_path',
-                     help='sets engine version in game project file to latest')
+                     help='sets engine version in game project file')
 
     ARGS = PARSER.parse_args()
 
     if ARGS.action_to_perform == ActionType.CREATE:
         create_project(ARGS.project_name, ARGS.project_path, ARGS.engine_path)
     elif ARGS.action_to_perform == ActionType.UPDATE:
-        update_project(ARGS.project_path, ARGS.engine_path, ARGS.checkout)
+        update_project(ARGS.project_path, ARGS.engine_path)
     elif ARGS.action_to_perform == ActionType.BUMP:
         bump_version(ARGS.project_path, ARGS.engine_path)
-        update_project(ARGS.project_path, ARGS.engine_path, True)
