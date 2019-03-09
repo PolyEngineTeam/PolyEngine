@@ -15,7 +15,8 @@ DEFAULT_BRANCH = 'dev'
 class ActionType(Enum):
     CREATE = 'Create',
     UPDATE = 'Update',
-    BUMP = 'Bump'
+    BUMP = 'Bump',
+    LIST = 'List'
 
     def __str__(self):
         return self.name
@@ -70,6 +71,16 @@ class BumpVersionAction(argparse.Action):
         setattr(namespace, self.dest, ActionType.BUMP)
         setattr(namespace, self.metavar[0], values[0])
 
+
+class ListVersionAction(argparse.Action):
+    def __init__(self, option_strings, dest, nargs, **kwargs):
+        if nargs != 0:
+            raise ValueError("Nargs must be 0 !")
+        super(ListVersionAction, self).__init__(option_strings, dest, nargs, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, ActionType.LIST)
+        
 # Functions
 # Create project function
 
@@ -187,6 +198,12 @@ def run_cmake(path, build_dir_name, proj_name):
     # Patch project proj.user file to contain proper runtime info
     if os.name == 'nt':
         patch_usr_proj(path, proj_name)
+
+def list(engine_path):
+    tags = get_tags(engine_path)
+    message = ['{}\n'.format(tag) for tag in tags]
+    print('Available engine versions:')
+    print(message)
 
 
 def create_project_file(path, proj_name, tag):
@@ -385,6 +402,8 @@ if __name__ == "__main__":
     MTX.add_argument('-b', '--bump-version', action=BumpVersionAction, dest='action_to_perform',
                      nargs=1, metavar='project_path',
                      help='sets engine version in game project file')
+    MTX.add_argument('-l', '--list', action=ListVersionAction, dest='action_to_perform', nargs=0,
+                     help='sets engine version in game project file')
 
     ARGS = PARSER.parse_args()
 
@@ -394,3 +413,5 @@ if __name__ == "__main__":
         update_project(ARGS.project_path, ARGS.engine_path)
     elif ARGS.action_to_perform == ActionType.BUMP:
         bump_version(ARGS.project_path, ARGS.engine_path)
+    elif ARGS.action_to_perform == ActionType.LIST:
+        list(ARGS.engine_path)
