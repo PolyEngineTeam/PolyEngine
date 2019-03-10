@@ -120,11 +120,11 @@ namespace Poly {
 			IteratorProxy(Scene* s) : S(s) {}
 			ComponentIterator<PrimaryComponent, SecondaryComponents...> Begin()
 			{
-				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorHelper<PrimaryComponent, SecondaryComponents...>());
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorPolicy<PrimaryComponent, SecondaryComponents...>());
 			}
 			ComponentIterator<PrimaryComponent, SecondaryComponents...> End()
 			{
-				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorHelper<PrimaryComponent, SecondaryComponents...>(true));
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorPolicy<PrimaryComponent, SecondaryComponents...>(true));
 			}
 			auto begin() { return Begin(); }
 			auto end() { return End(); }
@@ -147,23 +147,23 @@ namespace Poly {
 			return {this};
 		}
 
-		class SceneComponentIteratorHelper : public IEntityIteratorHelper
+		class SceneComponentIteratorPolicy : public IEntityIteratorPolicy
 		{
 			public:
-				SceneComponentIteratorHelper(Entity* entity, std::vector<size_t> required)
+				SceneComponentIteratorPolicy(Entity* entity, size_t primary)
 				{ 
-					findMatch(entity, required);
-					//do we want to set our required components even in case of invalidated iterator?
+					findMatch(entity, primary);
 				}
-				SceneComponentIteratorHelper(Entity* entity)
+				SceneComponentIteratorPolicy(Entity* entity)
 				{
 					Match = &*entity->GetEntityScene()->GetEntityAllocator().End();
+					End = Match;
 				}
-				bool operator==(const IEntityIteratorHelper& rhs) const override
+				bool operator==(const IEntityIteratorPolicy& rhs) const override
 				{
 					return Match == rhs.get();
 				}
-				bool operator!=(const IEntityIteratorHelper& rhs) const override //currently not called!!!
+				bool operator!=(const IEntityIteratorPolicy& rhs) const override 
 				{
 					return !(Match == rhs.get()); // can move to interface after it works
 				}
@@ -175,32 +175,27 @@ namespace Poly {
 				{
 					findNextMatch();
 				}
-				bool isValid() const override //think where this might be useful for outside world???
+				bool isValid() const override 
 				{
-					return Match != nullptr;
+					return Match != End;
 				}
 			private:
-				void findMatch(Entity* entity, std::vector<size_t> required)
+				void findMatch(Entity* entity, size_t primary)
 				{
 					Scene* scene = entity->GetEntityScene(); //later cast to Scene (ISCene comes)
 					for (auto& e : scene->GetEntityAllocator())
 					{
-						size_t idx = 0;
-						for (auto id : required)
-						{
-							if (!e.GetComponent(id))
-								break;
-							++idx;
-						}
-						if (idx == required.size())
+						if (e.GetComponent(primary))
 						{
 							Match = &e;
-							RequiredComponents = required;
+							Primary = primary;
+							End = &*(scene->GetEntityAllocator().End());
 							return;
 						}
 					}
-					Match = &*(scene->GetEntityAllocator().End());//ugly ugly ugly
-					RequiredComponents = required;
+					Match = &*(scene->GetEntityAllocator().End());
+					End = Match;
+					Primary = primary;
 				}
 				void findNextMatch()
 				{
@@ -213,14 +208,7 @@ namespace Poly {
 					for (++it; it != allocator.End(); ++it)
 					{
 						Entity& e = *it;
-						size_t idx = 0;
-						for (auto id : RequiredComponents)
-						{
-							if (!e.GetComponent(id))
-								break;
-							++idx;
-						}
-						if (idx == RequiredComponents.size())
+						if (e.GetComponent(Primary))
 						{
 							Match = &e;
 							return;
@@ -229,113 +217,22 @@ namespace Poly {
 					Match = &*(scene->GetEntityAllocator().End());
 				}
 				Entity* Match;
-				std::vector<size_t> RequiredComponents;
+				Entity* End;
+				size_t Primary;
 		};
-
-		//This method must find first entity that fits the template arguments list and create a Helper instance unique ptr
+	
+	protected:
+		
 		template<typename PrimaryComponent, typename... SecondaryComponents>
-		std::unique_ptr<SceneComponentIteratorHelper> MakeSceneComponentIteratorHelper(bool isEndIterator = false) //move to protected
+		std::unique_ptr<SceneComponentIteratorPolicy> MakeSceneComponentIteratorPolicy(bool isEndIterator = false) 
 		{
 			if (isEndIterator)
-			{
-				return std::make_unique<SceneComponentIteratorHelper>(SceneComponentIteratorHelper(GetRoot()));
-			}
-			//current implementation: we make vector of needed components, pass them to ctr of our helper
-			//it loops through allocator of entities until it finds suitable entity or is at end which will in turn
-			//invalidate this iterator
-			//iterator proxy makes use of it for its ranged iteration which will end if begin == end (nullptr)
-			//our original wrapper(ComponentIterator) makes use of this underlying pointer and caches it for future
-			//it has to check  for cache invalidation
-			Dynarray<size_t> requiredComponents;
-			if constexpr (!Trait::IsVariadicEmpty<SecondaryComponents...>::value)
-			{
-				requiredComponents = GetWorldComponentIDs<SecondaryComponents...>();
-			}
+				return std::make_unique<SceneComponentIteratorPolicy>(SceneComponentIteratorPolicy(GetRoot()));
 
-			std::vector<size_t> requiredComponentsVector;
 			size_t primary = GetWorldComponentID<PrimaryComponent>();
-			requiredComponentsVector.assign(requiredComponents.Begin(), requiredComponents.End());
-			requiredComponentsVector.insert(requiredComponentsVector.begin(), primary);
-			return std::make_unique<SceneComponentIteratorHelper>(SceneComponentIteratorHelper(GetRoot(), requiredComponentsVector)); //TODO: information only for now -> we fail gracefully, we return end of our range if not found particular components which is ok
-			//what if we obtain invalid iter? 		
+			return std::make_unique<SceneComponentIteratorPolicy>(SceneComponentIteratorPolicy(GetRoot(), primary)); 
 		}
 
-		//How to ensure we create our end of range properly?
-
-		/*
-		/// Component iterator.
-		template<typename PrimaryComponent, typename... SecondaryComponents>
-		class ComponentIterator : public BaseObject<>,
-		                          public std::iterator<std::forward_iterator_tag, std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...>>
-		{
-			public:
-			bool operator==(const ComponentIterator& rhs) const { return primary_iter == rhs.primary_iter; }
-			bool operator!=(const ComponentIterator& rhs) const { return !(*this == rhs); }
-
-			std::tuple<typename std::add_pointer<PrimaryComponent>:{...}:type, typename std::add_pointer<SecondaryComponents>::type...> operator*() const
-			{{...}
-				PrimaryComponent* primary = &*primary_iter;{...}
-				return std::make_tuple(primary, primary->template G{...}etSibling<SecondaryComponents>()...);
-			}{...}
-			std::tuple<typename std::add_pointer<PrimaryComponent>:{...}:type, typename std::add_pointer<SecondaryComponents>::type...> operator->() const
-			{
-				return **this;
-			}
-
-			ComponentIterator& operator++() { Increment(); return *this; }
-			ComponentIterator operator++(int) { ComponentIterator ret(primary_iter); Increment(); return ret; }
-
-		private:
-			//------------------------------------------------------------------------------
-			template<int zero = 0>
-			bool HasComponents(const Entity* entity) const { return true; }
-
-			//------------------------------------------------------------------------------
-			template<typename Component, typename... Rest>
-			bool HasComponents(const Entity* entity) const
-			{
-				return entity->template HasComponent<Component>() && HasComponents<Rest...>(entity);
-			}
-
-			//------------------------------------------------------------------------------
-			void Increment()
-			{
-				do { ++primary_iter; } 
-				while (primary_iter != End && !HasComponents<SecondaryComponents...>(primary_iter->GetOwner()));
-			}
-
-			explicit ComponentIterator(typename IterablePoolAllocator<PrimaryComponent>::Iterator parent, Scene* const w) : primary_iter(parent), 
-				Begin(w->GetComponentAllocator<PrimaryComponent>()->Begin()),
-				End(w->GetComponentAllocator<PrimaryComponent>()->End())
-			{
-				if (primary_iter != End && !HasComponents<SecondaryComponents...>(primary_iter->GetOwner()))
-					Increment();
-			}
-			friend struct IteratorProxy<PrimaryComponent, SecondaryComponents...>;
-
-			typename IterablePoolAllocator<PrimaryComponent>::Iterator primary_iter;
-			typename IterablePoolAllocator<PrimaryComponent>::Iterator Begin;
-			typename IterablePoolAllocator<PrimaryComponent>::Iterator End;
-		};
-
-		/// Iterator proxy
-		template<typename PrimaryComponent, typename... SecondaryComponents>
-		struct IteratorProxy : BaseObject<>
-		{
-			IteratorProxy(Scene* w) : W(w) {}
-			Scene::ComponentIterator<PrimaryComponent, SecondaryComponents...> Begin()
-			{
-				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(W->GetComponentAllocator<PrimaryComponent>()->Begin(), W);
-			}
-			Scene::ComponentIterator<PrimaryComponent, SecondaryComponents...> End()
-			{
-				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(W->GetComponentAllocator<PrimaryComponent>()->End(), W);
-			}
-			auto begin() { return Begin(); }
-			auto end() { return End(); }
-			Scene* const W;
-		};
-		*/
 	private:
 		friend class SpawnEntityDeferredTask;
 		friend class DestroyEntityDeferredTask;

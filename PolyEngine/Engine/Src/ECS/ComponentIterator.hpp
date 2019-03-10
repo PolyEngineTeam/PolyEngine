@@ -10,11 +10,11 @@ namespace Poly
 	template<typename PrimaryComponent, typename... SecondaryComponents>
 	struct IteratorProxy;
 
-	class IEntityIteratorHelper : public BaseObject<>
+	class IEntityIteratorPolicy : public BaseObject<>
 	{
 		public:
-			virtual bool operator==(const IEntityIteratorHelper&) const = 0;
-			virtual bool operator!=(const IEntityIteratorHelper&) const = 0;
+			virtual bool operator==(const IEntityIteratorPolicy&) const = 0;
+			virtual bool operator!=(const IEntityIteratorPolicy&) const = 0;
 			virtual Entity* get() const = 0;
 			virtual void increment() = 0;
 			virtual bool isValid() const = 0;
@@ -25,27 +25,30 @@ namespace Poly
 							public std::iterator<std::forward_iterator_tag, std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...>>	
 	{
 		public:
-			explicit ComponentIterator(std::unique_ptr<IEntityIteratorHelper> iter) : Iter(std::move(iter))
+			explicit ComponentIterator(std::unique_ptr<IEntityIteratorPolicy> iter) : Iter(std::move(iter))
 			{
-				bCacheValid = false;
+				UpdateIterator();
 			}
-			bool operator==(const  ComponentIterator& rhs) const { return GetIteratorHelper()->get() == rhs.GetIteratorHelper()->get(); } //they never  trigger underlying overload, pointer comparison ongoing
-			bool operator!=(const  ComponentIterator& rhs) const { return !(GetIteratorHelper()->get() == rhs.GetIteratorHelper()->get()); }
 
-			const std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... >& operator*() const //canot be const if  change cache
+			bool operator==(const  ComponentIterator& rhs) const { return GetIteratorPolicy()->get() == rhs.GetIteratorPolicy()->get(); } 
+			bool operator!=(const  ComponentIterator& rhs) const { return !(GetIteratorPolicy()->get() == rhs.GetIteratorPolicy()->get()); }
+
+			const std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... > operator*() const 
 			{
-				return GetCache();
+				Entity* ent = GetIteratorPolicy()->get();
+				PrimaryComponent* primary = ent->GetComponent<PrimaryComponent>();
+				return std::make_tuple(primary, primary->template GetSibling<SecondaryComponents>()...);
 			}
-			const std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... >& operator->() const
+			const std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... > operator->() const
 			{
-				return GetCache();
+				return **this;
 			}
 
 			ComponentIterator& operator++() { Increment(); return *this; }
-			ComponentIterator operator++(int) { ComponentIterator ret(Iter); Increment(); return ret; } //test for double incrementing etc
+			ComponentIterator operator++(int) { ComponentIterator ret(Iter); Increment(); return ret; } 
 
 		protected:
-			IEntityIteratorHelper* GetIteratorHelper() const
+			IEntityIteratorPolicy* GetIteratorPolicy() const
 			{
 				return Iter.get();
 			}
@@ -53,40 +56,35 @@ namespace Poly
 		private:
 			void Increment()
 			{
-				//ASSERTE(Iter.get()->isValid(), "Next Iterator is not valid!");	//currently not working as we never set it to nullptr?
-				GetIteratorHelper()->increment();	
-				bCacheValid = false;
-			}
-
-			void UpdateCache() const 
-			{
-				Entity* ent = GetIteratorHelper()->get();
+				Entity* ent = GetIteratorPolicy()->get();
 				PrimaryComponent* primary = ent->GetComponent<PrimaryComponent>();
 				ASSERTE(primary, "Primary component is nullptr!");
 
-				if constexpr (!Trait::IsVariadicEmpty<SecondaryComponents...>::value)
+				GetIteratorPolicy()->increment();
+				UpdateIterator();
+			}
+			
+			void UpdateIterator()
+			{
+				Entity* ent = GetIteratorPolicy()->get();
+				while ( GetIteratorPolicy()->isValid() && !HasComponents<PrimaryComponent, SecondaryComponents...>(ent) )
 				{
-					Cache = std::make_tuple(primary, primary->template GetSibling<SecondaryComponents>()...);
+					GetIteratorPolicy()->increment();
+					ent = GetIteratorPolicy()->get();					
 				}
-				else
-				{
-					Cache = std::make_tuple(primary);
-				}
-
-				bCacheValid = true;
 			}
 
-			const std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... >& GetCache() const
+			template<int zero = 0>
+			bool HasComponents(const Entity* entity) const { return true; }
+
+			template<typename Component, typename... Rest>
+			bool HasComponents(const Entity* entity) const 
 			{
-				if (!bCacheValid)
-					UpdateCache();
-				return Cache;
+				return entity->template HasComponent<Component>() && HasComponents<Rest...>(entity);
 			}
 
 			friend struct IteratorProxy<PrimaryComponent, SecondaryComponents...>;
 
-			mutable bool bCacheValid;
-			std::unique_ptr<IEntityIteratorHelper> Iter;
-			mutable std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... > Cache;
+			std::unique_ptr<IEntityIteratorPolicy> Iter;
 	};
 }
