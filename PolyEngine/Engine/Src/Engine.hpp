@@ -10,6 +10,8 @@
 #include "ECS/ComponentIDGenerator.hpp"
 #include "Editor/IEditor.hpp"
 
+#include <pe/api/IEngine.hpp>
+
 namespace Poly
 {
 	class Scene;
@@ -17,7 +19,7 @@ namespace Poly
 	typedef std::function<void(Scene*)> PhaseUpdateFunction;
 
 	/// <summary>Abstract class that every game has to inherit from.</summary>
-	class ENGINE_DLLEXPORT IGame : public BaseObject<>
+	class ENGINE_DLLEXPORT IGame : public pe::api::IEngine
 	{
 	public:
 		virtual void RegisterEngine(Engine* engine) = 0;
