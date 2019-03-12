@@ -1,10 +1,8 @@
 #pragma once
 
 #include <Defines.hpp>
-#include <Collections/String.hpp>
-#include <map>
-#include "Common/GLUtils.hpp"
-#include "Proxy/GLShaderProgram.hpp"
+#include <Common/GLUtils.hpp>
+#include <Proxy/GLShaderProgram.hpp>
 
 namespace Poly
 {

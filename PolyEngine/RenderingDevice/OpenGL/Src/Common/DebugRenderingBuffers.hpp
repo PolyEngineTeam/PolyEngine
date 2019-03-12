@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Common/GLUtils.hpp"
-#include <Collections/Dynarray.hpp>
+#include <Defines.hpp>
+#include <Common/GLUtils.hpp>
 
 namespace Poly
 {

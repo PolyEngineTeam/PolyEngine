@@ -1,6 +1,8 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Input/InputWorldComponent.hpp"
+#include <Input/InputWorldComponent.hpp>
+
+RTTI_DEFINE_COMPONENT(::Poly::InputWorldComponent)
 
 bool Poly::InputWorldComponent::IsPressed(const std::initializer_list<eKey>& list) const
 {

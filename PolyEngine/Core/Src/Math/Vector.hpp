@@ -1,10 +1,9 @@
 #pragma once
 
-#include <pmmintrin.h>
-
-#include "Defines.hpp"
-#include "Math/BasicMath.hpp"
-#include "Math/Color.hpp"
+#include <Defines.hpp>
+#include <Math/BasicMath.hpp>
+#include <Math/Color.hpp>
+#include <pmmintrin.h> //SIMD library
 
 namespace Poly
 {

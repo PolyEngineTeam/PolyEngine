@@ -1,6 +1,9 @@
 #pragma once
 
-#include <Core.hpp>
+#include <Defines.hpp>
+#include <RTTI/RTTI.hpp>
+#include <Math/Vector.hpp>
+#include <Math/Quaternion.hpp>
 
 namespace Poly 
 {
@@ -10,8 +13,7 @@ namespace Poly
 	{
 		RTTI_DECLARE_TYPE_DERIVED(::Poly::EntityTransform, ::Poly::RTTIBase)
 		{
-			//@todo(muniu) rttibase pointers serialization
-			//RTTI_PROPERTY_AUTONAME(Owner, RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(Owner, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(LocalTranslation, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(LocalRotation, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(LocalScale, RTTI::ePropertyFlag::NONE);
@@ -47,6 +49,13 @@ namespace Poly
 		const Matrix& GetParentFromModel() const;
 		const Matrix& GetWorldFromModel() const;
 		void SetParentFromModel(const Matrix& parentFromModel);
+
+		Vector GetLocalForward() const { return GetLocalRotation() * -Vector::UNIT_Z; }
+		Vector GetLocalRight() const { return GetLocalRotation() * Vector::UNIT_X; }
+		Vector GetLocalUp() const { return GetLocalRotation() * Vector::UNIT_Y; }
+		Vector GetGlobalForward() const { return GetGlobalRotation() * -Vector::UNIT_Z; }
+		Vector GetGlobalRight() const { return GetGlobalRotation() * Vector::UNIT_X; }
+		Vector GetGlobalUp() const { return GetGlobalRotation() * Vector::UNIT_Y; }
 		
 	private:
 		void UpdateParentTransform();

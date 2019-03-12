@@ -1,5 +1,6 @@
-#include "CorePCH.hpp"
-#include "Math/Plane.hpp"
+#include <CorePCH.hpp>
+
+#include <Math/Plane.hpp>
 
 using namespace Poly;
 

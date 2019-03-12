@@ -1,10 +1,8 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "Dynarray.hpp"
-#include "Utils/Optional.hpp"
-
-#include <functional>
+#include <Defines.hpp>
+#include <Collections/Dynarray.hpp>
+#include <Utils/Optional.hpp>
 
 namespace Poly
 {

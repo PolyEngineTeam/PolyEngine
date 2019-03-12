@@ -1,18 +1,19 @@
-find_package(SDL2 REQUIRED)
-find_package(epoxy REQUIRED)
+GalogenGenerate(OpenGLBindings43 "gl" "4.3")
 
-set(POLYGLDEVICE_INCLUDE Src)
+set(POLYGLDEVICE_INCLUDE ${CMAKE_CURRENT_LIST_DIR}/Src)
 
-file(GLOB_RECURSE POLYGLDEVICE_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
+file(GLOB_RECURSE POLYGLDEVICE_SRCS RELATIVE ${CMAKE_CURRENT_LIST_DIR} 
 	${POLYGLDEVICE_INCLUDE}/*.cpp 
 	${POLYGLDEVICE_INCLUDE}/*.hpp
 	${POLYGLDEVICE_INCLUDE}/*.h)
 GenerateSourceGoups("${POLYGLDEVICE_SRCS}")
 
-add_library(PolyRenderingDeviceGL SHARED ${POLYGLDEVICE_SRCS})
-target_compile_definitions(PolyRenderingDeviceGL PRIVATE _DEVICE)
-target_include_directories(PolyRenderingDeviceGL PUBLIC ${POLYGLDEVICE_INCLUDE} ${SDL2_INCLUDE_DIRS})
-target_link_libraries(PolyRenderingDeviceGL PRIVATE PolyEngine epoxy::gl ${SDL2_LIBRARIES})
-set_target_properties(PolyRenderingDeviceGL PROPERTIES OUTPUT_NAME polyrenderingdevice)
+add_library(${GLDEVICE_TARGET} SHARED ${POLYGLDEVICE_SRCS})
+target_compile_definitions(${GLDEVICE_TARGET} PRIVATE _DEVICE)
+target_include_directories(${GLDEVICE_TARGET} PUBLIC ${POLYGLDEVICE_INCLUDE} ${SDL2_INCLUDE_DIRS})
+target_link_libraries(${GLDEVICE_TARGET} PRIVATE ${ENGINE_TARGET} ${SDL2_LIBRARIES} OpenGLBindings43)
 
-cotire(PolyRenderingDeviceGL)
+set_target_properties(${GLDEVICE_TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "${CMAKE_CURRENT_LIST_DIR}/Src/PolyRenderingDeviceGLPCH.hpp")
+set_target_properties(${GLDEVICE_TARGET} PROPERTIES FOLDER "Engine" )
+set_target_properties(OpenGLBindings43 PROPERTIES FOLDER "Engine/Misc" )
+cotire(${GLDEVICE_TARGET})

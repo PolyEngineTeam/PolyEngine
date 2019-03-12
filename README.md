@@ -14,25 +14,36 @@ Game engine study project developed by [**KNTG Polygon**](http://polygon.pw.edu.
 Currently it is in an early stage of development, thus backwards compatibility is not guaranteed.
 
 ## Supported platforms
-* Windows 7+ with MSVC compiler (Visual Studio 2015, toolset v140 with SDK 8.1)
-* Linux with both GCC and Clang compilers (X11 with GLX 1.4 extension additionally required)
-* macOS with Clang compiler and Cocoa as backend (provided with Xcode, tested on macOS High Sierra)
+* Windows 7+ with MSVC compiler (Visual Studio 2017, toolset v141 with SDK 8.1)
+* Linux with both GCC and/or Clang compilers (editor unsupported)
+* macOS with Clang compiler (rendering unsupported until we switch to Vulkan)
 
-PolyEngine currently uses OpenGL 3.3+ only, but might gain support for other graphic  
+PolyEngine currently uses OpenGL 4.3+ only, but might gain support for other graphic  
 APIs (DirectX, Vulkan, Metal) in the future.
 
 ## Dependencies
-* OpenGL 3.3, libepoxy 1.1 - rendering
-* Freetype 2 - font loading and rendering
-* Assimp 3 - model loading
-* SOIL - texture loading
-* Catch 1.8.2 - unit tests
-* OpenAL 1.1 - audio playback
-* OGG Vorbis 1.3 - audio files loading
-* Box2D 2.3 - physics engine
-* RapidJSON 1.0 - JSON parsing
+Alomost all dependancies are provided by submodules and are placed in `PolyEngine/ThirdParty` folder. Only Qt needs to be installed separately. They are:
+* Assimp - model loading
+* Box2D - 2D physics backend
+* Bullet - 3D physics backend
+* Catch - unit tests framework
+* Freetype - font loading and rendering
+* OGG Vorbis - audio files loading
+* OpenAL - audio playback
+* OpenGL 4.3 - rendering backend
+* RapidJSON - JSON parser
+* SDL2 - window management
+* stb - texture loading (stb_image)
+* Qt 5.10.1 - editor frontend
 
-Precompiled Windows libraries are available in the repository to ease the compilation process.
+## Getting started
+Our wiki contains guides on how to setup the engine. Each OS is a bit different:
+* [Windows quick start guide](https://github.com/KNTGPolygon/PolyEngine/wiki/Windows-quick-start-guide)
+* [Linux quick start guide](https://github.com/KNTGPolygon/PolyEngine/wiki/Linux-quick-start-guide)
+* [macOS quick start guide](https://github.com/KNTGPolygon/PolyEngine/wiki/macOS-quick-start-guide)
+
+## Example projects
+Example projects are available in [the examples repository](https://github.com/KNTGPolygon/PolyEngineExamples).
 
 ## Documentation
 Documentation in Doxygen HTML format is available [here](https://kntgpolygon.github.io/PolyEngine/Docs/html/index.html "PolyEngine docs").

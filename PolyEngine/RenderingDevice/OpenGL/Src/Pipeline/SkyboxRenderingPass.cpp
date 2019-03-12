@@ -1,14 +1,8 @@
-#include "Pipeline/SkyboxRenderingPass.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "GLRenderingDevice.hpp"
-#include "Proxy/GLCubemapDeviceProxy.hpp"
-
-#include <Math/AABox.hpp>
-#include <Math/AARect.hpp>
-#include <ECS/World.hpp>
-#include <Rendering/Camera/CameraComponent.hpp>
-#include <Rendering/SkyboxWorldComponent.hpp>
-#include <Resources/TextureResource.hpp>
+#include <Pipeline/SkyboxRenderingPass.hpp>
+#include <GLRenderingDevice.hpp>
+#include <Proxy/GLCubemapDeviceProxy.hpp>
 
 using namespace Poly;
 
@@ -40,7 +34,7 @@ void SkyboxRenderingPass::RenderSkybox(const CameraComponent* camera, const Skyb
 	GetProgram().SetUniform("uClipFromWorld", mvp);
 
 	// Deprecated: SkyboxWorldComponent has now only HDR Texture2D panorama, Cubemap is baked at start in EnvCapture pass
-	GLuint CubemapID = SkyboxWorldCmp->GetPanorama()->GetTextureProxy()->GetResourceID();
+	GLuint CubemapID = SkyboxWorldCmp->GetCurrentPanorama()->GetTextureProxy()->GetResourceID();
 
 	glDepthMask(GL_FALSE);
 	glEnable(GL_DEPTH_TEST);

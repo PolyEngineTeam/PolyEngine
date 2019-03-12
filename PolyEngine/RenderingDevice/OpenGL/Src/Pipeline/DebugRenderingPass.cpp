@@ -1,10 +1,7 @@
-#include "Pipeline/DebugRenderingPass.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "Common/DebugRenderingBuffers.hpp"
-
-#include <ECS/World.hpp>
-#include <Rendering/Camera/CameraComponent.hpp>
-#include <Debugging/DebugDrawComponents.hpp>
+#include <Pipeline/DebugRenderingPass.hpp>
+#include <Common/DebugRenderingBuffers.hpp>
 
 using namespace Poly;
 

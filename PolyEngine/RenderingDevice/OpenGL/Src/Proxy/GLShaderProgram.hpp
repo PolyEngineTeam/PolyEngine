@@ -1,7 +1,6 @@
 #pragma once
 
-#include <map>
-#include <Core.hpp>
+#include <Defines.hpp>
 
 typedef unsigned int GLuint;
 typedef unsigned int GLenum;
@@ -62,9 +61,11 @@ namespace Poly
 		void RegisterUniform(const String& type, const String& name);
 
 	private:
-		void CompileProgram();
-		void Validate();
+
 		void LoadShader(eShaderUnitType type, const String &shaderName);
+		void CompileShader(GLShaderProgram::eShaderUnitType type);
+		void Validate();
+		void CompileProgram();
 
 		static GLenum GetEnumFromShaderUnitType(eShaderUnitType type);
 

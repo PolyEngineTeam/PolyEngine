@@ -1,8 +1,16 @@
-#include "EnginePCH.hpp"
-#include <cmath>
+#include <EnginePCH.hpp>
 
-#include "Debugging/DebugDrawComponents.hpp"
-#include "Debugging/DebugDrawSystem.hpp"
+#include <Debugging/DebugDrawComponents.hpp>
+#include <Debugging/DebugDrawSystem.hpp>
+#include <Rendering/ViewportWorldComponent.hpp>
+#include <Rendering/Camera/CameraComponent.hpp>
+#include <Rendering/MeshRenderingComponent.hpp>
+#include <Rendering/Lighting/LightSourceComponent.hpp>
+#include <ECS/Scene.hpp>
+#include <ECS/DeferredTaskSystem.hpp>
+#include <Movement/MovementSystem.hpp>
+#include <UI/ScreenSpaceTextComponent.hpp>
+#include <Physics2D/Rigidbody2DComponent.hpp>
 
 using namespace Poly;
 
@@ -40,17 +48,17 @@ namespace Util
 	}
 }
 
-void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* world)
+void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* scene)
 {
 	gDebugConfig.DebugRender = false;
-	for (auto& kv : world->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
+	for (auto& kv : scene->GetWorldComponent<ViewportWorldComponent>()->GetViewports())
 	{
 		CameraComponent* cameraCmp = kv.second.GetCamera();
 		if (cameraCmp->GetRenderingMode() == eRenderingModeType::IMMEDIATE_DEBUG)
 			gDebugConfig.DebugRender = true;
 	}
 
-	auto debugDrawWorldCmp = world->GetWorldComponent<DebugDrawStateWorldComponent>();
+	auto debugDrawWorldCmp = scene->GetWorldComponent<DebugDrawStateWorldComponent>();
 	if (!gDebugConfig.DebugRender)
 	{
 		debugDrawWorldCmp->Clear();
@@ -77,8 +85,8 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* world)
 
 			if (!entToUse)
 			{
-				entToUse = DeferredTaskSystem::SpawnEntityImmediate(world);
-				DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(world, entToUse, Vector2i::ZERO, "Fonts/Raleway/Raleway-Regular.ttf", eResourceSource::ENGINE, 0);
+				entToUse = DeferredTaskSystem::SpawnEntityImmediate(scene);
+				DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(scene, entToUse, Vector2i::ZERO, "Fonts/Raleway/Raleway-Regular.ttf", eResourceSource::ENGINE, 0);
 				debugDrawWorldCmp->Text2DEntityPool.PushBack(entToUse);
 				++usedTextEntites;
 			}
@@ -118,7 +126,7 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* world)
 	// iterate RenderMode::_COUNT times to create shapes defining debug primitives
 	for(int renderMode = static_cast<int>(RenderMode::LINE); renderMode < static_cast<int>(RenderMode::_COUNT); ++renderMode)
 	{
-		for(auto componentsTuple : world->IterateComponents<MeshRenderingComponent, DebugDrawableComponent>())
+		for(auto componentsTuple : scene->IterateComponents<MeshRenderingComponent, DebugDrawableComponent>())
 		{
 			const auto ddrawCmp = std::get<DebugDrawableComponent*>(componentsTuple);
 			const auto meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
@@ -144,13 +152,13 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* world)
 				minVector -= boundingOffset;
 				maxVector += boundingOffset;
 				
-				DrawBox(world, minVector, maxVector, Color::GREEN);
+				DrawBox(scene, minVector, maxVector, Color::GREEN);
 			}
 		}
 
 		// @fixme
 		// move iteration over RigidBody2DComponent to different debug-system (f.ex. PhysicsDebugDrawSystem)
-		for(auto componentsTuple : world->IterateComponents<RigidBody2DComponent, DebugDrawableComponent>())
+		for(auto componentsTuple : scene->IterateComponents<RigidBody2DComponent, DebugDrawableComponent>())
 		{
 			const auto rigidbodyCmp = std::get<RigidBody2DComponent*>(componentsTuple);
 			const auto ddrawCmp = std::get<DebugDrawableComponent*>(componentsTuple);
@@ -168,11 +176,11 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* world)
 			if(velocity.LengthSquared() == 0.0f)
 				continue;
 
-			DrawArrow(world, localTrans, velocity, Color::RED);
+			DrawArrow(scene, localTrans, velocity, Color::RED);
 		}
 
 
-		for(auto componentsTuple : world->IterateComponents<DirectionalLightComponent, DebugDrawableComponent>())
+		for(auto componentsTuple : scene->IterateComponents<DirectionalLightComponent, DebugDrawableComponent>())
 		{
 			const auto dirLightCmp = std::get<DirectionalLightComponent*>(componentsTuple);
 			const auto ddrawCmp = std::get<DebugDrawableComponent*>(componentsTuple);
@@ -186,26 +194,26 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* world)
 
 			auto localTrans = transform.GetLocalTranslation();
 			//auto lightDirection = Vector(1.0f, 1.0f, 1.0f);
-			auto directionRotation = MovementSystem::GetGlobalForward(transform);
+			auto directionRotation = transform.GetGlobalForward();
 			auto lightMagnitude = dirLightCmp->GetIntensity() * 2.0f;
 
-			DrawArrow(world, localTrans, directionRotation*lightMagnitude, Color::WHITE);
+			DrawArrow(scene, localTrans, directionRotation*lightMagnitude, Color::WHITE);
 		}
 	}
 }
 
-void Poly::DebugDrawSystem::DrawLine(Scene* world, const Vector& begin, const Vector& end, const Color& color)
+void Poly::DebugDrawSystem::DrawLine(Scene* scene, const Vector& begin, const Vector& end, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
 
 	Vector3f meshvecBegin(begin.X, begin.Y, begin.Z), meshvecEnd(end.X, end.Y, end.Z);
-	auto debugLinesComponent = world->GetWorldComponent<DebugDrawStateWorldComponent>();
+	auto debugLinesComponent = scene->GetWorldComponent<DebugDrawStateWorldComponent>();
 	debugLinesComponent->DebugLines.PushBack(DebugDrawStateWorldComponent::DebugLine{ meshvecBegin, meshvecEnd });
 	debugLinesComponent->DebugLinesColors.PushBack(DebugDrawStateWorldComponent::DebugLineColor{ color, color });
 }
 
-void Poly::DebugDrawSystem::DrawBox(Scene* world, const Vector& mins, const Vector& maxs, const Color& color)
+void Poly::DebugDrawSystem::DrawBox(Scene* scene, const Vector& mins, const Vector& maxs, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
@@ -230,79 +238,133 @@ void Poly::DebugDrawSystem::DrawBox(Scene* world, const Vector& mins, const Vect
 	// 7: 0 1 1
 
 	// bottom
-	DrawLine(world, points[0], points[4], color);
-	DrawLine(world, points[0], points[1], color);
-	DrawLine(world, points[5], points[4], color);
-	DrawLine(world, points[5], points[1], color);
+	DrawLine(scene, points[0], points[4], color);
+	DrawLine(scene, points[0], points[1], color);
+	DrawLine(scene, points[5], points[4], color);
+	DrawLine(scene, points[5], points[1], color);
 
 	// top
-	DrawLine(world, points[3], points[7], color);
-	DrawLine(world, points[3], points[2], color);
-	DrawLine(world, points[6], points[7], color);
-	DrawLine(world, points[6], points[2], color);
+	DrawLine(scene, points[3], points[7], color);
+	DrawLine(scene, points[3], points[2], color);
+	DrawLine(scene, points[6], points[7], color);
+	DrawLine(scene, points[6], points[2], color);
 
 	// top-bottom lines
-	DrawLine(world, points[0], points[3], color);
-	DrawLine(world, points[1], points[2], color);
-	DrawLine(world, points[4], points[7], color);
-	DrawLine(world, points[5], points[6], color);
+	DrawLine(scene, points[0], points[3], color);
+	DrawLine(scene, points[1], points[2], color);
+	DrawLine(scene, points[4], points[7], color);
+	DrawLine(scene, points[5], points[6], color);
 }
 
-void Poly::DebugDrawSystem::DrawBox(Scene * world, const AABox & box, const Color & color)
+void DebugDrawSystem::DrawBox(Scene* scene, const Vector& mins, const Vector& maxs, const Matrix& worldFromSpace, const Color& color)
 {
-	DrawBox(world, box.GetMin(), box.GetMax(), color);
-}
+	if (!gDebugConfig.DebugRender)
+		return;
 
-void Poly::DebugDrawSystem::DrawFrustum(Scene* world, const Frustum& frust, const Vector& pos, const Quaternion& rot, const Color& color, bool withNormals)
-{
-	const Quaternion rY = Quaternion(Vector::UNIT_Y, (frust.GetFov() / 2) * frust.GetAspect());
-	const Quaternion rX = Quaternion(Vector::UNIT_X, (frust.GetFov() / 2));
+	std::array<Vector, 8> points;
+	std::array<Vector, 2> minmaxVector = { { mins, maxs } };
 
-	const Vector origin = pos;
-	const Vector lookDir = rot * -Vector::UNIT_Z;
-
-	std::array<Vector, 4> v;
-	v[0] = rY * rX * lookDir;
-	v[1] = rY * rX.GetConjugated() * lookDir;
-	v[2] = rY.GetConjugated() * rX.GetConjugated() * lookDir;
-	v[3] = rY.GetConjugated() * rX * lookDir;
-
-	const float cosHalfFovW = Cos(frust.GetFov() / 2 * frust.GetAspect());
-	const float cosHalfFovH = Cos(frust.GetFov() / 2);
-
-	const float nDist = frust.GetZNear() / (cosHalfFovW * cosHalfFovH);
-	std::array<Vector, 4> n;
-	for (size_t i = 0; i < 4; ++i)
-		n[i] = origin + v[i] * nDist;
-
-	const float fDist = frust.GetZFar() / (cosHalfFovW * cosHalfFovH);
-	std::array<Vector, 4> f;
-	for (size_t i = 0; i < 4; ++i)
-		f[i] = origin + v[i] * fDist;
-
-	for (size_t i = 0; i < 4; ++i)
+	for (unsigned int i = 0; i < points.size(); ++i)
 	{
-		size_t nextI = (i + 1) % 4;
+		points[i].X = minmaxVector[(i ^ (i >> 1)) & 1].X;
+		points[i].Y = minmaxVector[(i >> 1) & 1].Y;
+		points[i].Z = minmaxVector[(i >> 2) & 1].Z;
+	}
+	// i: X Y Z
+	// 0: 0 0 0
+	// 1: 1 0 0
+	// 2: 1 1 0
+	// 3: 0 1 0
+	// 4: 0 0 1
+	// 5: 1 0 1
+	// 6: 1 1 1
+	// 7: 0 1 1
 
-		DrawLine(world, origin, n[i], color);
-		DrawLine(world, n[i], f[i], color);
+	// bottom
+	DebugDrawSystem::DrawLine(scene, worldFromSpace * points[0], worldFromSpace * points[4], color);
+	DebugDrawSystem::DrawLine(scene, worldFromSpace * points[0], worldFromSpace * points[1], color);
+	DebugDrawSystem::DrawLine(scene, worldFromSpace * points[5], worldFromSpace * points[4], color);
+	DebugDrawSystem::DrawLine(scene, worldFromSpace * points[5], worldFromSpace * points[1], color);
 
-		DrawLine(world, n[i], n[nextI], color);
-		DrawLine(world, f[i], f[nextI], color);
+	// top
+	DebugDrawSystem::DrawLine(scene, worldFromSpace * points[3], worldFromSpace * points[2], color);
+	DebugDrawSystem::DrawLine(scene, worldFromSpace * points[3], worldFromSpace * points[7], color);
+	DebugDrawSystem::DrawLine(scene, worldFromSpace * points[6], worldFromSpace * points[7], color);
+	DebugDrawSystem::DrawLine(scene, worldFromSpace * points[6], worldFromSpace * points[2], color);
+
+	// top-bottom lines
+	DebugDrawSystem::DrawLine(scene, worldFromSpace * points[0], worldFromSpace * points[3], color);
+	DebugDrawSystem::DrawLine(scene, worldFromSpace * points[1], worldFromSpace * points[2], color);
+	DebugDrawSystem::DrawLine(scene, worldFromSpace * points[4], worldFromSpace * points[7], color);
+	DebugDrawSystem::DrawLine(scene, worldFromSpace * points[5], worldFromSpace * points[6], color);
+}
+
+void Poly::DebugDrawSystem::DrawBox(Scene* scene, const AABox & box, const Color & color)
+{
+	DrawBox(scene, box.GetMin(), box.GetMax(), color);
+}
+
+void Poly::DebugDrawSystem::DrawFrustum(Scene* scene, const Frustum& frustum, const Matrix& viewFromWorld, const Color color)
+{
+	Matrix clipFromView;
+	clipFromView.SetPerspective(frustum.GetFov(), frustum.GetAspect(), frustum.GetZNear(), frustum.GetZFar());
+	Matrix clipFromWorld = clipFromView * viewFromWorld;
+
+	// Transform frustum corners to DirLightSpace
+	Dynarray<Vector> cornersInNDC{
+		Vector(-1.0f,  1.0f, -1.0f), // back  left	top
+		Vector( 1.0f,  1.0f, -1.0f), // back  right top
+		Vector(-1.0f, -1.0f, -1.0f), // back  left  bot
+		Vector( 1.0f, -1.0f, -1.0f), // back  right bot
+		Vector(-1.0f,  1.0f,  1.0f), // front left	top
+		Vector( 1.0f,  1.0f,  1.0f), // front right top
+		Vector(-1.0f, -1.0f,  1.0f), // front left  bot
+		Vector( 1.0f, -1.0f,  1.0f)  // front right bot
+	};
+
+	// Transform frustum corners from NDC to World
+	// could be done in one iteration but we need to do perspective division by W
+	Matrix worldFromClip = clipFromWorld.GetInversed();
+	Dynarray<Vector> cornersInWS;
+	for (Vector posInClip : cornersInNDC)
+	{
+		Vector posInWS = worldFromClip * posInClip;
+		posInWS.X /= posInWS.W;
+		posInWS.Y /= posInWS.W;
+		posInWS.Z /= posInWS.W;
+		cornersInWS.PushBack(posInWS);
 	}
 
-	if (withNormals)
+	DrawFrustumPoints(scene, cornersInWS, color);
+}
+
+void Poly::DebugDrawSystem::DrawFrustumPoints(Scene* scene, const Dynarray<Vector>& cornersInWorld, const Color color)
+{
+	// Vertives should be in order:
+	// back  left  top
+	// back  right top
+	// back  left  bot
+	// back  right bot
+	// front left  top
+	// front right top
+	// front left  bot
+	// front right bot
+
+	ASSERTE(cornersInWorld.GetSize() == 8, "Wrong number of frustum corners to draw");
+
+	for (size_t i = 0; i < 4; ++i)
+		DebugDrawSystem::DrawLine(scene, cornersInWorld[i], cornersInWorld[i + 4], color);
+
+	for (size_t i = 0; i < 2; ++i)
 	{
-		DrawArrow(world, (n[0] + n[1] + f[0] + f[1]) / 4, rot * frust.GetPlanes()[eFrustumPlane::LEFT].GetNormal(), color);
-		DrawArrow(world, (n[1] + n[2] + f[1] + f[2]) / 4, rot * frust.GetPlanes()[eFrustumPlane::UP].GetNormal(), color);
-		DrawArrow(world, (n[2] + n[3] + f[2] + f[3]) / 4, rot * frust.GetPlanes()[eFrustumPlane::RIGHT].GetNormal(), color);
-		DrawArrow(world, (n[3] + n[0] + f[3] + f[0]) / 4, rot * frust.GetPlanes()[eFrustumPlane::DOWN].GetNormal(), color);
-		DrawArrow(world, origin + lookDir * frust.GetZNear(), rot * frust.GetPlanes()[eFrustumPlane::ZNEAR].GetNormal(), color);
-		DrawArrow(world, origin + lookDir * frust.GetZFar(), rot * frust.GetPlanes()[eFrustumPlane::ZFAR].GetNormal(), color);
+		DebugDrawSystem::DrawLine(scene, cornersInWorld[0 + i * 4], cornersInWorld[1 + i * 4], color);
+		DebugDrawSystem::DrawLine(scene, cornersInWorld[2 + i * 4], cornersInWorld[3 + i * 4], color);
+		DebugDrawSystem::DrawLine(scene, cornersInWorld[0 + i * 4], cornersInWorld[2 + i * 4], color);
+		DebugDrawSystem::DrawLine(scene, cornersInWorld[1 + i * 4], cornersInWorld[3 + i * 4], color);
 	}
 }
 
-void Poly::DebugDrawSystem::DrawCircle(Scene* world, const Vector& position, float radius, Vector orientation, const Color& color)
+void Poly::DebugDrawSystem::DrawCircle(Scene* scene, const Vector& position, float radius, Vector orientation, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
@@ -323,23 +385,23 @@ void Poly::DebugDrawSystem::DrawCircle(Scene* world, const Vector& position, flo
 	{
 		Vector previousSegmentPoint = right;
 		right = rotAroundCircle*right;
-		DrawLine(world, position + previousSegmentPoint, position + right, color);
+		DrawLine(scene, position + previousSegmentPoint, position + right, color);
 	}
 
-	DrawArrow(world, position, right, color);
+	DrawArrow(scene, position, right, color);
 }
 
-void Poly::DebugDrawSystem::DrawSphere(Scene* world, const Vector& position, float radius, const Color& color)
+void Poly::DebugDrawSystem::DrawSphere(Scene* scene, const Vector& position, float radius, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
 
-	DrawCircle(world, position, radius, Vector(1.0f, 0.0f, 0.0f), color);
-	DrawCircle(world, position, radius, Vector(0.0f, 1.0f, 0.0f), color);
-	DrawCircle(world, position, radius, Vector(0.0f, 0.0f, 1.0f), color);
+	DrawCircle(scene, position, radius, Vector(1.0f, 0.0f, 0.0f), color);
+	DrawCircle(scene, position, radius, Vector(0.0f, 1.0f, 0.0f), color);
+	DrawCircle(scene, position, radius, Vector(0.0f, 0.0f, 1.0f), color);
 }
 
-void Poly::DebugDrawSystem::DrawArrow(Scene* world, Vector position, Vector directionVector, const Color& color)
+void Poly::DebugDrawSystem::DrawArrow(Scene* scene, Vector position, Vector directionVector, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
@@ -349,7 +411,7 @@ void Poly::DebugDrawSystem::DrawArrow(Scene* world, Vector position, Vector dire
 	
 	// body line
 	auto arrowTip = position + directionVector*arrowLengthScale;
-	DrawLine(world, position, arrowTip, color);
+	DrawLine(scene, position, arrowTip, color);
 	directionVector.Normalize();
 
 	// arrowhead
@@ -373,17 +435,17 @@ void Poly::DebugDrawSystem::DrawArrow(Scene* world, Vector position, Vector dire
 
 	for (float degrees = 0.0f; degrees < 360.0f; degrees += rotationStep.AsDegrees())
 	{
-		DrawLine(world, arrowTip, arrowTip + perpendicularVector, color);
-		DrawLine(world, arrowTip + perpendicularVector, arrowTip + directionVector*arrowheadScale, color);
+		DrawLine(scene, arrowTip, arrowTip + perpendicularVector, color);
+		DrawLine(scene, arrowTip + perpendicularVector, arrowTip + directionVector*arrowheadScale, color);
 		perpendicularVector = rotAroundDirectionVector* perpendicularVector;
 	}
 }
 
-void Poly::DebugDrawSystem::DrawText2D(Scene* world, const Vector2i& screenPosition, String text, size_t fontSize, const Color& color)
+void Poly::DebugDrawSystem::DrawText2D(Scene* scene, const Vector2i& screenPosition, String text, size_t fontSize, const Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
 
-	auto debugLinesComponent = world->GetWorldComponent<DebugDrawStateWorldComponent>();
+	auto debugLinesComponent = scene->GetWorldComponent<DebugDrawStateWorldComponent>();
 	debugLinesComponent->DebugTexts2D.PushBack({ std::move(text), screenPosition , fontSize, color });
 }

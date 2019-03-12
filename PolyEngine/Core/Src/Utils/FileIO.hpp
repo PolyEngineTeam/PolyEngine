@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "Containers/String.hpp"
-#include "Containers/BinaryBuffer.hpp"
-
+#include <Defines.hpp>
+#include <Collections/String.hpp>
+#include <Memory/BinaryBuffer.hpp>
 
 namespace Poly {
 
@@ -18,7 +17,8 @@ namespace Poly {
 #endif
 
 	//------------------------------------------------------------------------------
-	class ENGINE_DLLEXPORT FileIOException : public BaseObject<>, public std::exception
+	SILENCE_MSVC_WARNING(4275, "Exporting stl may cause incompatibility. We use same CRT so it's ok.")
+	class FileIOException : public BaseObject<>, public std::exception
 	{
 	public:
 		FileIOException(const String& msg) : Msg(msg) {}
@@ -26,6 +26,7 @@ namespace Poly {
 	protected:
 		String Msg;
 	};
+	UNSILENCE_MSVC_WARNING()
 
 	//------------------------------------------------------------------------------
 	inline String LoadTextFile(const String& path)

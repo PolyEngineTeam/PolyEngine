@@ -1,15 +1,19 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Rendering/Camera/CameraComponent.hpp"
-#include "Rendering/MeshRenderingComponent.hpp"
-#include "Resources/ResourceManager.hpp"
+#include <Rendering/Camera/CameraComponent.hpp>
+#include <Rendering/MeshRenderingComponent.hpp>
+#include <Resources/ResourceManager.hpp>
 
 using namespace Poly;
+
+RTTI_DEFINE_COMPONENT(::Poly::MeshRenderingComponent)
 
 MeshRenderingComponent::MeshRenderingComponent(const String& meshPath, eResourceSource source)
 {
 	Mesh = ResourceManager<MeshResource>::Load(meshPath, source);
-	if (Mesh) {
+	
+	if (Mesh)
+	{
 		size_t materialsNum = GetMesh()->GetSubMeshes().GetSize();
 		Materials.Resize(materialsNum);
 		for (size_t i = 0; i < materialsNum; ++i)
@@ -25,7 +29,7 @@ Poly::MeshRenderingComponent::~MeshRenderingComponent()
 		ResourceManager<MeshResource>::Release(Mesh);
 }
 
-Optional<AABox> Poly::MeshRenderingComponent::GetBoundingBox(eEntityBoundingChannel channel)
+Optional<AABox> Poly::MeshRenderingComponent::GetBoundingBox(eEntityBoundingChannel channel) const
 {
 	if (channel != eEntityBoundingChannel::RENDERING || !Mesh)
 		return {};

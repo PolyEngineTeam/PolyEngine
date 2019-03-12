@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Dynarray.hpp"
-#include "Defines.hpp"
+#include <Defines.hpp>
+#include <Collections/Dynarray.hpp>
 
 namespace Poly {
 
-	size_t StrLen(const char* str);
+	CORE_DLLEXPORT size_t StrLen(const char* str);
 
 	class CORE_DLLEXPORT String final : public BaseObjectLiteralType<>
 	{
@@ -195,6 +195,7 @@ namespace Poly {
 		/*CORE_DLLEXPORT*/ friend std::ostream& operator<< (std::ostream& stream, const String& rhs) { return stream << rhs.GetCStr(); }
 
 	private:
+
 		String(Dynarray<char> rawData) : Data(std::move(rawData)) { Data.PushBack('\0'); }
 
 		Dynarray<char> Data;

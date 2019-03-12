@@ -1,9 +1,8 @@
 #pragma once
-#include "ECS/ComponentBase.hpp"
-#include "Configs/DebugConfig.hpp"
-#include <Collections/Dynarray.hpp>
-#include <Math/Color.hpp>
-#include <Math/Vector3f.hpp>
+
+#include <Defines.hpp>
+#include <ECS/ComponentBase.hpp>
+#include <Configs/DebugConfig.hpp>
 
 namespace Poly
 {
@@ -12,6 +11,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT DebugDrawableComponent : public ComponentBase
 	{
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::DebugDrawableComponent) { NO_RTTI_PROPERTY(); }
 		DebugDrawableComponent(eDebugDrawPreset preset) : entityPreset(preset) { };
 
 		const eDebugDrawPreset entityPreset;
@@ -22,6 +22,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT DebugDrawStateWorldComponent : public ComponentBase
 	{
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::DebugDrawStateWorldComponent) { NO_RTTI_PROPERTY(); }
 		DebugDrawStateWorldComponent()
 		{ }
 

@@ -1,9 +1,11 @@
 #pragma once
 
-#include "IRendererInterface.hpp"
-#include "Proxy/GLShaderProgram.hpp"
-#include "Common/GLUtils.hpp"
-#include "Pipeline/EnvCapture.hpp"
+#include <Defines.hpp>
+#include <IRendererInterface.hpp>
+#include <Proxy/GLShaderProgram.hpp>
+#include <Common/GLUtils.hpp>
+#include <Pipeline/EnvCapture.hpp>
+#include <Pipeline/ShadowMapPass.hpp>
 
 namespace Poly {
 
@@ -49,6 +51,8 @@ namespace Poly {
 
 		void Render(const SceneView& sceneView) override;
 
+		void UIImgui();
+
 		void Deinit() override;
 
 	private:
@@ -67,6 +71,8 @@ namespace Poly {
 
 		Matrix PreviousFrameCameraTransform;
 		Matrix PreviousFrameCameraClipFromWorld;
+
+		AARect LastViewportRect;
 
 		const int MAX_NUM_LIGHTS = 1024;
 		const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;
@@ -88,7 +94,7 @@ namespace Poly {
 		GLuint PostColorBuffer1;
 		GLuint PostColorBufferHalfRes;
 		GLuint LinearDepth;
-		
+
 		// IBL textures and cubemaps
 		GLuint PreintegratedBrdfLUT;
 
@@ -99,7 +105,9 @@ namespace Poly {
 		GLuint FBOpost1;
 
 		// Render pass for IBL environment
-		EnvCapture SkyboxCapture;
+		ShadowMapPass ShadowMap;
+		EnvCapture EnvironmentCapture;
+
 		RenderTargetPingPong RTBloom;
 		TextureResource* Splash;
 
@@ -110,6 +118,7 @@ namespace Poly {
 		GLShaderProgram HDRShader;
 		GLShaderProgram SkyboxShader;
 		GLShaderProgram LinearizeDepthShader;
+		GLShaderProgram FXAAShader;
 		GLShaderProgram GammaShader;
 		GLShaderProgram MotionBlurShader;
 		GLShaderProgram DOFBokehShader;
@@ -156,9 +165,9 @@ namespace Poly {
 
 		void RenderTranslucentLit(const SceneView& sceneView);
 		
-		void RenderParticleUnlit(Scene* world, const CameraComponent* cameraCmp);
+		void RenderParticleUnlit(const SceneView& sceneView);
 
-		void LinearizeDepth(const SceneView& sceneView);
+		void PostLinearizeDepth(const SceneView& sceneView);
 
 		void PostDepthOfField(const SceneView& sceneView);
 
@@ -171,6 +180,8 @@ namespace Poly {
 		void EditorDebug(const SceneView& sceneView);
 
 		void UIText2D(const SceneView& sceneView);
+
+		void PostFXAA(const SceneView& sceneView);
 
 		void PostGamma(const SceneView& sceneView);
 		

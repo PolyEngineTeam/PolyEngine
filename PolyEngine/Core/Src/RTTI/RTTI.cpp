@@ -1,10 +1,8 @@
-#include "CorePCH.hpp"
-#include "RTTI/RTTI.hpp"
+#include <CorePCH.hpp>
 
+#include <RTTI/RTTI.hpp>
 #include <RTTI/RTTISerialization.hpp>
-#include <sstream>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/prettywriter.h>
+#include <Utils/FileIO.hpp>
 
 RTTI_DEFINE_TYPE(Poly::RTTIBase)
 
@@ -72,11 +70,16 @@ void Poly::RTTIObjectsManager::Unregister(const UniqueID& id)
 	DeserializedObjectsById.erase(id);
 }
 
-RTTIBase* Poly::RTTIObjectsManager::GetObjectByID(const UniqueID& id)
+RTTIBase* Poly::RTTIObjectsManager::TryGetObjectByID(const UniqueID& id)
 {
-	HEAVY_ASSERTE(id.IsValid(), "Invalid UUID!");
 	const auto it = DeserializedObjectsById.find(id);
 	if (it == DeserializedObjectsById.end())
 		return nullptr;
 	return it->second;
+}
+
+RTTIBase* Poly::RTTIObjectsManager::GetObjectByID(const UniqueID& id)
+{
+	HEAVY_ASSERTE(id.IsValid(), "Invalid UUID!");
+	return TryGetObjectByID(id);
 }

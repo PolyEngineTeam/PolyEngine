@@ -2,10 +2,10 @@
 
 #include <pmmintrin.h>
 
-#include "Defines.hpp"
-#include "Math/BasicMath.hpp"
-#include "Math/Vector.hpp"
-#include "Math/Angle.hpp"
+#include <Defines.hpp>
+#include <Math/BasicMath.hpp>
+#include <Math/Vector.hpp>
+#include <Math/Angle.hpp>
 
 namespace Poly
 {
@@ -21,6 +21,8 @@ namespace Poly
 	class ALIGN_16 CORE_DLLEXPORT Matrix final : public BaseObjectLiteralType<>
 	{
 	public:
+		static const Matrix IDENTITY;
+
 		Matrix();
 		Matrix(const float data[16], bool rowOrder = true);
 		Matrix(const Matrix& rhs);
@@ -92,6 +94,15 @@ namespace Poly
 		/// <returns>Reference to itself.</returns>
 		Matrix& SetPerspective(Angle fov, float aspect, float near, float far);
 
+		/// <summary>Initializes matrix with orthographics projection in range of [0, 1]</summary>
+		/// <param name="top">Top dimension.</param>
+		/// <param name="bottom">Bottom dimension.</param>
+		/// <param name="left">Left dimension.</param>
+		/// <param name="right">Right dimension</param>
+		/// <param name="near">Near Z plane.</param>
+		/// <param name="far">Far Z plane.</param>
+		/// <returns>Reference to itself.</returns>
+		Matrix& SetOrthographicZO(float top, float bottom, float left, float right, float near, float far);
 
 		/// <summary>Initializes matrix with orthographics projection</summary>
 		/// <param name="top">Top dimension.</param>

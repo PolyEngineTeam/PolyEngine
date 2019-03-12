@@ -1,32 +1,30 @@
-#include "GLRenderingDevice.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include <memory>
+#include <GLRenderingDevice.hpp>
 
-#include <Utils/Logger.hpp>
+#include <Common/GLUtils.hpp>
+#include <Common/PrimitiveQuad.hpp>
+#include <Common/PrimitiveCube.hpp>
 
-#include "Common/GLUtils.hpp"
-#include "Common/PrimitiveQuad.hpp"
-#include "Common/PrimitiveCube.hpp"
+#include <Proxy/GLTextureDeviceProxy.hpp>
+#include <Proxy/GLCubemapDeviceProxy.hpp>
+#include <Proxy/GLParticleDeviceProxy.hpp>
+#include <Proxy/GLTextFieldBufferDeviceProxy.hpp>
+#include <Proxy/GLMeshDeviceProxy.hpp>
 
-#include "Proxy/GLTextureDeviceProxy.hpp"
-#include "Proxy/GLCubemapDeviceProxy.hpp"
-#include "Proxy/GLParticleDeviceProxy.hpp"
-#include "Proxy/GLTextFieldBufferDeviceProxy.hpp"
-#include "Proxy/GLMeshDeviceProxy.hpp"
+#include <Pipeline/UnlitRenderingPass.hpp>
+#include <Pipeline/BlinnPhongRenderingPass.hpp>
+#include <Pipeline/Text2DRenderingPass.hpp>
+#include <Pipeline/DebugNormalsRenderingPass.hpp>
+#include <Pipeline/DebugNormalsWireframeRenderingPass.hpp>
+#include <Pipeline/DebugRenderingPass.hpp>
+#include <Pipeline/ParticlesRenderingPass.hpp>
+#include <Pipeline/PostprocessRenderingPass.hpp>
+#include <Pipeline/TransparentRenderingPass.hpp>
+#include <Pipeline/SpritesheetRenderingPass.hpp>
+#include <Pipeline/SkyboxRenderingPass.hpp>
 
-#include "Pipeline/UnlitRenderingPass.hpp"
-#include "Pipeline/BlinnPhongRenderingPass.hpp"
-#include "Pipeline/Text2DRenderingPass.hpp"
-#include "Pipeline/DebugNormalsRenderingPass.hpp"
-#include "Pipeline/DebugNormalsWireframeRenderingPass.hpp"
-#include "Pipeline/DebugRenderingPass.hpp"
-#include "Pipeline/ParticlesRenderingPass.hpp"
-#include "Pipeline/PostprocessRenderingPass.hpp"
-#include "Pipeline/TransparentRenderingPass.hpp"
-#include "Pipeline/SpritesheetRenderingPass.hpp"
-#include "Pipeline/SkyboxRenderingPass.hpp"
-
-#include "IRendererInterface.hpp"
+#include <IRendererInterface.hpp>
 
 using namespace Poly;
 
@@ -34,14 +32,14 @@ GLRenderingDevice* Poly::gRenderingDevice = nullptr;
 
 IRenderingDevice* POLY_STDCALL PolyCreateRenderingDevice(SDL_Window* window, const Poly::ScreenSize& size) { return new GLRenderingDevice(window, size); }
 
-GLRenderingDevice::GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize& size)
+GLRenderingDevice::GLRenderingDevice(SDL_Window* window, const ScreenSize& size)
 : Window(window), ScreenDim(size)
 {
 	ASSERTE(window, "Invalid window passed to rendering device.");
 	ASSERTE(gRenderingDevice == nullptr, "Creating device twice?");
 	gRenderingDevice = this;
 	
-	if (!CreateContextHighend()) {
+	if (!CreateContext()) {
 		ASSERTE(Context, "Context creation failed! OpenGL 4.3 is required! Sorry we probably do not support your GPU and Mac OS.");
 	}
 
@@ -51,13 +49,13 @@ GLRenderingDevice::GLRenderingDevice(SDL_Window* window, const Poly::ScreenSize&
 	gConsole.LogInfo("GL Renderer: {}", glGetString(GL_RENDERER));
 	gConsole.LogInfo("GL Version: {}", glGetString(GL_VERSION));
 	gConsole.LogInfo("GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
-	gConsole.LogInfo("Fitting renderer (0 - Fallback, 1 - Highend): {}", (int)RendererType);
+	// gConsole.LogInfo("Fitting renderer (0 - Fallback, 1 - Highend): {}", (int)RendererType);
 
 	// Setup V-Sync
 	SDL_GL_SetSwapInterval(1);
 }
 
-bool GLRenderingDevice::CreateContextHighend()
+bool GLRenderingDevice::CreateContext()
 {
 	bool isSuccessfull = false;
 
@@ -73,12 +71,12 @@ bool GLRenderingDevice::CreateContextHighend()
 	if (Context)
 	{
 		RendererType = eRendererType::TILED_FORWARD;
-		gConsole.LogInfo("HighEnd context created");
+		gConsole.LogInfo("Context created");
 	}
 
 	if (!Context)
 	{
-		gConsole.LogInfo("HighEnd context setup failed, err: {}", SDL_GetError());
+		gConsole.LogInfo("Context setup failed, err: {}", SDL_GetError());
 	}
 
 	return isSuccessfull;
@@ -96,13 +94,11 @@ GLRenderingDevice::~GLRenderingDevice()
 	gRenderingDevice = nullptr;
 }
 
-
 void GLRenderingDevice::EndFrame()
 {
 	if(Window && Context)
 		SDL_GL_SwapWindow(Window);
 }
-
 
 void GLRenderingDevice::Resize(const ScreenSize& size)
 {
@@ -129,22 +125,20 @@ void GLRenderingDevice::GetExtensions()
 	OpenGLExtensions.Clear();
 	OpenGLExtensions.Reserve(extensionsSize);
 
-	gConsole.LogInfo("OpenGL supported extensions:");
+	// gConsole.LogInfo("OpenGL supported extensions:");
 	for (int i = 0; i<extensionsSize; i++)
 	{
 		String extension = String((const char*)glGetStringi(GL_EXTENSIONS, i));
 		OpenGLExtensions.PushBack(extension);
-		gConsole.LogInfo("Ext {}: {}", i, extension);
+		// gConsole.LogInfo("Ext {}: {}", i, extension);
 	}
 }
-
 
 template<typename T>
 inline void GLRenderingDevice::RegisterGeometryPass(eGeometryRenderPassType type, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
 {
 	RegisterGeometryPassWithArgs<T>(type, inputs, outputs);
 }
-
 
 template<typename T, class... Args_t>
 inline void GLRenderingDevice::RegisterGeometryPassWithArgs(eGeometryRenderPassType type, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs, Args_t&&... args)
@@ -160,7 +154,6 @@ inline void GLRenderingDevice::RegisterGeometryPassWithArgs(eGeometryRenderPassT
 	GeometryRenderingPasses[type]->Finalize();
 }
 
-
 template<typename T, typename... Args>
 T* Poly::GLRenderingDevice::CreateRenderingTarget(eRenderTargetId type, Args&&... args)
 {
@@ -168,7 +161,6 @@ T* Poly::GLRenderingDevice::CreateRenderingTarget(eRenderTargetId type, Args&&..
 	RenderingTargets[type].reset(target);
 	return target;
 }
-
 
 void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
 {
@@ -182,7 +174,6 @@ void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType
 
 	PostprocessRenderingPasses[type]->Finalize();
 }
-
 
 void Poly::GLRenderingDevice::CleanUpResources()
 {
@@ -199,7 +190,6 @@ void Poly::GLRenderingDevice::CleanUpResources()
 	PrimitivesCube.reset();
 }
 
-
 std::unique_ptr<ITextureDeviceProxy> GLRenderingDevice::CreateTexture(size_t width, size_t height, size_t channels, eTextureUsageType usage)
 {
 	return std::make_unique<GLTextureDeviceProxy>(width, height, channels, usage);
@@ -210,12 +200,10 @@ std::unique_ptr<ICubemapDeviceProxy> Poly::GLRenderingDevice::CreateCubemap(size
 	return std::make_unique<GLCubemapDeviceProxy>(width, height);
 }
 
-
 std::unique_ptr<ITextFieldBufferDeviceProxy> GLRenderingDevice::CreateTextFieldBuffer()
 {
 	return std::make_unique<GLTextFieldBufferDeviceProxy>();
 }
-
 
 std::unique_ptr<IMeshDeviceProxy> GLRenderingDevice::CreateMesh()
 {

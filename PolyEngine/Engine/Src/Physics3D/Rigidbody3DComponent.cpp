@@ -1,8 +1,9 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "BulletIncludesCommon.hpp"
+#include <Physics3D/Rigidbody3DComponent.hpp>
+#include <Physics3D/Rigidbody3DImpl.hpp>
 
-#include "Rigidbody3DImpl.hpp"
+RTTI_DEFINE_COMPONENT(::Poly::Rigidbody3DComponent)
 
 //------------------------------------------------------------------------------
 Poly::Rigidbody3DComponent::Rigidbody3DComponent(Scene* world, const Rigidbody3DComponentTemplate& tmp)

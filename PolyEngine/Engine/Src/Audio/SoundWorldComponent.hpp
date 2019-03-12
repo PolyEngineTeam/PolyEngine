@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ECS/ComponentBase.hpp"
-#include "Audio/SoundSystem.hpp"
-#include <Collections/Dynarray.hpp>
-#include "Audio/SoundListenerComponent.hpp"
+#include <Defines.hpp>
+#include <ECS/ComponentBase.hpp>
+#include <Audio/SoundSystem.hpp>
+#include <Audio/SoundListenerComponent.hpp>
 
 typedef struct ALCcontext_struct ALCcontext;
 
@@ -19,6 +19,7 @@ namespace Poly
 	{
 	friend void SoundSystem::SetWorldCurrent(Scene* world);
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::SoundWorldComponent) { NO_RTTI_PROPERTY(); }
 		/// Creates context from current device (stored in engine).
 		/// @param world - world which will  be associated with just created context.
 		/// @see OpenALDevice

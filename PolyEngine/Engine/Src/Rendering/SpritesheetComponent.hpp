@@ -1,10 +1,9 @@
 #pragma once
 
-#include "ECS/ComponentBase.hpp"
-#include "RenderingSystem.hpp"
-
-#include <Math/Vector2f.hpp>
-#include <Resources/ResourceManager.hpp>
+#include <Defines.hpp>
+#include <ECS/ComponentBase.hpp>
+#include <Rendering/RenderingSystem.hpp>
+#include <Configs/ConfigBase.hpp>
 
 namespace Poly {
 
@@ -14,6 +13,7 @@ namespace Poly {
 		eResourceSource Source = eResourceSource::GAME;
 		Vector2f SubImages = Vector2f(4.0, 4.0);
 		Color SpriteColor = Color::WHITE;
+		float SpriteDepthFade = 0.0f;
 		float StartFrame = 0.0f;
 		float Speed = 1.0f;
 		bool IsRandomStartFrame = false;
@@ -21,6 +21,7 @@ namespace Poly {
 
 	class ENGINE_DLLEXPORT SpritesheetComponent : public ComponentBase
 	{
+		RTTI_DECLARE_COMPONENT(::Poly::SpritesheetComponent) { NO_RTTI_PROPERTY(); }
 	public:
 		friend void RenderingSystem::RenderingPhase(Scene*);
 	public:

@@ -1,4 +1,7 @@
 #pragma once
+#include <Defines.hpp>
+
+#include <ECS/Scene.hpp>
 
 namespace Poly
 {

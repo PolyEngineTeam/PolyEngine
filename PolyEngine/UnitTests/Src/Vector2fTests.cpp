@@ -80,6 +80,20 @@ TEST_CASE("Vector2f-Vector2f operators", "[Vector2f]") {
 		v3 -= v1;
 		REQUIRE(v3 == v2 - v1);
 	}
+
+	SECTION("Vector2f multiplication operator") {
+		REQUIRE(v1*v1 == Vector2f(9, 16));
+		v3 = v2;
+		v3 *= v2;
+		REQUIRE(v3 == v2 * v2);
+	}
+
+	SECTION("Vector2f division operator") {
+		REQUIRE(v1 / v2 == Vector2f(3.0f, 2.0f));
+		v3 = v1;
+		v3 /= v2;
+		REQUIRE(v3 == v1 / v2);
+	}
 }
 
 TEST_CASE("Vector2f-scalar operators", "[Vector2f]") {

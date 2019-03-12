@@ -1,10 +1,8 @@
 #pragma once
 
-#include <unordered_map>
-
-#include "Defines.hpp"
-#include "Collections/Dynarray.hpp"
-#include "RTTI/RTTI.hpp"
+#include <Defines.hpp>
+#include <Collections/Dynarray.hpp>
+#include <RTTI/RTTI.hpp>
 
 namespace Poly {
 	/// <summary>Base class for all objects which require safe pointer</summary>

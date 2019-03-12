@@ -2,19 +2,19 @@
 
 #if defined(_WIN32)
 	#include <windows.h> //WinAPI is ultra-weird
-#include <SDL.h>
-	#include <epoxy/wgl.h>
-	#include <epoxy/gl.h>
+	#include <SDL.h>
+	//#include <wgl.h> // Do we need this header?
+	#include <gl.h>
 #elif defined(__linux__)
-	#include <epoxy/glx.h>
-	#include <epoxy/gl.h>
+	//#include <glx.h> // Do we need this header?
+	#include <gl.h>
 #elif defined(__APPLE__)
-	#include <epoxy/gl.h>
+	#include <gl.h>
 #else
 	#error "Unsupported platform :("
 #endif
 
-#include <Utils/Logger.hpp>
+#include <Defines.hpp>
 
 namespace Poly {
 	//---------------------------------------------------------------

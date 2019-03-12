@@ -1,12 +1,12 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include <al.h>
-
-#include "Audio/SoundEmitterComponent.hpp"
-#include "Resources/ResourceManager.hpp"
-#include "Resources/SoundResource.hpp"
+#include <Audio/SoundEmitterComponent.hpp>
+#include <Resources/ResourceManager.hpp>
+#include <Resources/SoundResource.hpp>
 
 using namespace Poly;
+
+RTTI_DEFINE_COMPONENT(::Poly::SoundEmitterComponent)
 
 SoundEmitterComponent::SoundEmitterComponent(const String& path, eResourceSource source, bool relative) :
 	Background(relative)

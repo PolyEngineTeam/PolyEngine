@@ -1,9 +1,8 @@
 #pragma once
 
-#include <map>
-
-#include "ECS/ComponentBase.hpp"
-#include "Physics3D/Physics3DSystem.hpp"
+#include <Defines.hpp>
+#include <ECS/ComponentBase.hpp>
+#include <Physics3D/Physics3DSystem.hpp>
 
 	// FIXME(squares): this shouldn't be declared here
 class btDiscreteDynamicsWorld;
@@ -42,6 +41,8 @@ namespace Poly
 		friend RaycastResult Physics3DSystem::AllHitsRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 		friend RaycastResult Physics3DSystem::ClosestHitRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::Physics3DWorldComponent) { NO_RTTI_PROPERTY(); }
+
 		Physics3DWorldComponent(Physics3DConfig config);
 		~Physics3DWorldComponent();
 

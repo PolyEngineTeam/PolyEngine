@@ -1,7 +1,8 @@
 #pragma once
 
-#include "BaseObject.hpp"
-#include "Math/Vector2f.hpp"
+#include <Defines.hpp>
+#include <BaseObject.hpp>
+#include <Math/Vector2f.hpp>
 
 namespace Poly
 {
@@ -26,7 +27,7 @@ namespace Poly
 		/// <returns>Max point of the box.</returns>
 		Vector2f GetMax() const { return Pos + Size; }
 
-		/// <summary>Returns Size of the box in all three dimensions.</summary>
+		/// <summary>Returns Size of the box in all two dimensions.</summary>
 		/// <returns>Size of the box. (extent)</returns>
 		const Vector2f& GetSize() const { return Size; }
 
@@ -62,7 +63,12 @@ namespace Poly
 		/// <see cref="AARect.Intersects()"/>
 		AARect GetIntersectionVolume(const AARect& rhs) const;
 
+		bool operator==(const AARect& rhs) const;
+
+		inline bool operator!=(const AARect& rhs) const { return !(*this == rhs); }
+
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const AARect& color);
+
 	private:
 		Vector2f Pos;
 		Vector2f Size;

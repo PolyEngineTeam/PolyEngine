@@ -1,20 +1,37 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Rendering/SkyboxWorldComponent.hpp"
-#include "Resources/ResourceManager.hpp"
-#include "Resources/TextureResource.hpp"
+#include <Rendering/SkyboxWorldComponent.hpp>
+#include <Resources/ResourceManager.hpp>
+#include <Resources/TextureResource.hpp>
 
 using namespace Poly;
+
+RTTI_DEFINE_COMPONENT(::Poly::SkyboxWorldComponent)
 
 SkyboxWorldComponent::SkyboxWorldComponent(const String& panoramaPath, const eResourceSource source)
 	: Tint(Color::WHITE)
 {
-	EquirectPanorama = ResourceManager<TextureResource>::Load(panoramaPath, source, eTextureUsageType::HDR);
+	Init( {panoramaPath}, source);
+}
 
-	gConsole.LogInfo("SkyboxWorldComponent::SkyboxWorldComponent panoramaPath: {}", panoramaPath);
+SkyboxWorldComponent::SkyboxWorldComponent(const Dynarray<String>& panoramaPaths, const eResourceSource source)
+	: Tint(Color::WHITE)
+{
+	Init(panoramaPaths, source);
 }
 
 SkyboxWorldComponent::~SkyboxWorldComponent()
 {
-	ResourceManager<TextureResource>::Release(EquirectPanorama);
+	for (auto p : EquirectPanoramas)
+		ResourceManager<TextureResource>::Release(p);
+}
+
+void SkyboxWorldComponent::Init(const Dynarray<String>& panoramaPaths, const eResourceSource source)
+{
+	for (auto p : panoramaPaths)
+	{
+		TextureResource* texture = ResourceManager<TextureResource>::Load(p, source, eTextureUsageType::HDR);
+		EquirectPanoramas.PushBack(texture);
+		gConsole.LogInfo("SkyboxWorldComponent::SkyboxWorldComponent panoramaPath: {}", p);
+	}
 }

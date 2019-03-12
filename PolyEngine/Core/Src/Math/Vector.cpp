@@ -1,6 +1,8 @@
-﻿#include "CorePCH.hpp"
+﻿#include <CorePCH.hpp>
 
-#include "Math/Vector.hpp"
+#include <Math/Vector.hpp>
+#include <Math/BasicMath.hpp>
+#include <Math/SimdMath.hpp>
 
 using namespace Poly;
 

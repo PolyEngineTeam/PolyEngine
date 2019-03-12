@@ -1,9 +1,8 @@
 #pragma once
 
-#include "ECS/ComponentBase.hpp"
-#include <Math/Vector.hpp>
-#include <Collections/Dynarray.hpp>
-#include "Audio/SoundEmitterComponent.hpp"
+#include <Defines.hpp>
+#include <ECS/ComponentBase.hpp>
+#include <Audio/SoundEmitterComponent.hpp>
 
 namespace Poly
 {
@@ -16,6 +15,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT SoundListenerComponent : public ComponentBase
 	{
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::SoundListenerComponent) { NO_RTTI_PROPERTY(); }
 		/// Sets everything to 0 and copies SourcesArray from SoundWorldComponent
 		SoundListenerComponent(SoundWorldComponent* worldComponent = nullptr);
 		~SoundListenerComponent();
@@ -29,4 +29,5 @@ namespace Poly
 		Dynarray<SoundEmitterComponent*> Emitters;
 	};
 
+	REGISTER_COMPONENT(ComponentsIDGroup, SoundListenerComponent)
 } // namespace Poly

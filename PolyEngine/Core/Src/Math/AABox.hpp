@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "Math/BasicMath.hpp"
-#include "Math/Vector.hpp"
-#include "Math/Matrix.hpp"
+#include <Defines.hpp>
+#include <Math/BasicMath.hpp>
+#include <Math/Vector.hpp>
+#include <Math/Matrix.hpp>
 
 namespace Poly {
 
@@ -12,23 +12,23 @@ namespace Poly {
 	{
 	public:
 
-		/// <summary>Constructor from position and size.</summary>
-		/// <param name="position">Position of the min point of the box.</param>
+		/// <summary>Constructor from min and size.</summary>
+		/// <param name="min">Position of the min point of the box.</param>
 		/// <param name="size">Size (extent) of the box in each of the directions.</param>
-		AABox(const Vector& position, const Vector& size);
+		AABox(const Vector& min, const Vector& size);
 		AABox() = default;
 
 		/// <summary>Calculates center of the box.</summary>
 		/// <returns>Center of the box.</returns>
-		Vector GetCenter() const { return Pos + (Size * 0.5f); }
+		Vector GetCenter() const { return Min + (Size * 0.5f); }
 		
 		/// <summary>Returns the min point of the box. (posiiton)</summary>
 		/// <returns>Min point of the box.</returns>
-		const Vector& GetMin() const { return Pos; }
+		const Vector& GetMin() const { return Min; }
 
 		/// <summary>Returns the max point of the box.</summary>
 		/// <returns>Max point of the box.</returns>
-		Vector GetMax() const { return Pos + Size; }
+		Vector GetMax() const { return Min + Size; }
 		
 		/// <summary>Returns Size of the box in all three dimensions.</summary>
 		/// <returns>Size of the box. (extent)</returns>
@@ -36,30 +36,68 @@ namespace Poly {
 
 		/// <summary>Sets position of the box.</summary>
 		/// <param name="pos">New position</param>
-		void SetPosition(const Vector& pos) { Pos = pos; }
+		void SetMin(const Vector& pos) { Min = pos; }
 
 		/// <summary>Sets size of the box.</summary>
 		/// <param name="size">New size</param>
 		void SetSize(const Vector& size) { Size = size; }
-
-		/// <summary>Checks whether this AABox contains a given point.</summary>
-		/// <param name="point">Point to be checked.</param>
-		/// <see cref="AABox.IsCollidingWith()"/>
-		inline bool Contains(const Vector& point) const 
-		{ 
-			return point.X >= Pos.X && point.X <= (Pos.X + Size.X) 
-			&& point.Y >= Pos.Y && point.Y <= (Pos.Y + Size.Y) 
-			&& point.Z >= Pos.Z && point.Z <= (Pos.Z + Size.Z);
-		}
 
 		/// <summary>Checks whether a given AABox is interecting with this AABox.</summary>
 		/// <param name="rhs">Other box.</param>
 		/// <see cref="AABox.Contains()"/>
 		inline bool Intersects(const AABox& rhs) const
 		{	
-			return (abs(Pos.X - rhs.Pos.X) * 2 < (Size.X + rhs.Size.X))
-			&& (abs(Pos.Y - rhs.Pos.Y) * 2 < (Size.Y + rhs.Size.Y))
-			&& (abs(Pos.Z - rhs.Pos.Z) * 2 < (Size.Z + rhs.Size.Z));
+			return (abs(Min.X - rhs.Min.X) * 2.0f < (Size.X + rhs.Size.X))
+				&& (abs(Min.Y - rhs.Min.Y) * 2.0f < (Size.Y + rhs.Size.Y))
+				&& (abs(Min.Z - rhs.Min.Z) * 2.0f < (Size.Z + rhs.Size.Z));
+		}
+
+		/// <summary>Checks whether this AABox contains a given point.</summary>
+		/// <param name="point">Point to be checked.</param>
+		/// <see cref="AABox.IsCollidingWith()"/>
+		inline bool Contains(const Vector& point) const 
+		{ 
+			return point.X >= Min.X && point.X <= (Min.X + Size.X) 
+				&& point.Y >= Min.Y && point.Y <= (Min.Y + Size.Y) 
+				&& point.Z >= Min.Z && point.Z <= (Min.Z + Size.Z);
+		}
+
+		/// <summary>Checks whether a given AABox contains this AABox on all axes.</summary>
+		/// <param name="rhs">Other box.</param>
+		inline bool Contains(const AABox& rhs) const
+		{
+			return ContainsX(rhs) && ContainsY(rhs) && ContainsZ(rhs);
+		}
+		
+		/// <summary>Checks whether a given AABox contains this AABox on XY plane.</summary>
+		/// <param name="rhs">Other box.</param>
+		inline bool ContainsXY(const AABox& rhs) const
+		{
+			return ContainsX(rhs) && ContainsY(rhs);
+		}
+
+		/// <summary>Checks whether a given AABox contains this AABox on X axis.</summary>
+		/// <param name="rhs">Other box.</param>
+		inline bool ContainsX(const AABox& rhs) const
+		{
+			return (Min.X			<= rhs.Min.X + rhs.Size.X)
+				&& (Min.X + Size.X	>= rhs.Min.X);
+		}
+
+		/// <summary>Checks whether a given AABox contains this AABox on Y axis.</summary>
+		/// <param name="rhs">Other box.</param>
+		inline bool ContainsY(const AABox& rhs) const
+		{
+			return (Min.Y			<= rhs.Min.Y + rhs.Size.Y)
+				&& (Min.Y + Size.Y	>= rhs.Min.Y);
+		}
+
+		/// <summary>Checks whether a given AABox contains this AABox on Z axis.</summary>
+		/// <param name="rhs">Other box.</param>
+		inline bool ContainsZ(const AABox& rhs) const
+		{
+			return (Min.Z			<= rhs.Min.Z + rhs.Size.Z)
+				&& (Min.Z + Size.Z	>= rhs.Min.Z);
 		}
 
 		std::array<Vector, 8> GetVertices() const;
@@ -74,9 +112,11 @@ namespace Poly {
 
 		AABox& Expand(const AABox& rhs);
 
+		AABox& Expand(const Vector& rhs);
+
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const AABox& color);
 	private:
-		Vector Pos;
+		Vector Min;
 		Vector Size;
 	};
 }

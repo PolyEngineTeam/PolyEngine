@@ -1,9 +1,10 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Physics2D/Physics2DWorldComponent.hpp"
-#include <Box2D/Box2D.h>
+#include <Physics2D/Physics2DWorldComponent.hpp>
 
 using namespace Poly;
+
+RTTI_DEFINE_COMPONENT(::Poly::Physics2DWorldComponent)
 
 namespace Poly {
 	class Physics2DContactListener : public b2ContactListener

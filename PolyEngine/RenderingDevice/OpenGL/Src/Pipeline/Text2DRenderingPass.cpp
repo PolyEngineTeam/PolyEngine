@@ -1,25 +1,10 @@
-#include "Pipeline/Text2DRenderingPass.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "Proxy/GLMeshDeviceProxy.hpp"
-#include "Proxy/GLTextureDeviceProxy.hpp"
-
-#include <ECS/World.hpp>
-#include <Rendering/Camera/CameraComponent.hpp>
-#include <Rendering/MeshRenderingComponent.hpp>
-
-#include <ECS/World.hpp>
-#include <Configs/AssetsPathConfig.hpp>
-#include <Rendering/Viewport.hpp>
-
-#include <Rendering/Camera/CameraComponent.hpp>
-#include <Rendering/MeshRenderingComponent.hpp>
-#include <UI/ScreenSpaceTextComponent.hpp>
-#include <Rendering/ViewportWorldComponent.hpp>
-
-#include "Proxy/GLTextFieldBufferDeviceProxy.hpp"
-#include "Proxy/GLTextureDeviceProxy.hpp"
-#include "Proxy/GLMeshDeviceProxy.hpp"
-#include "Common/GLUtils.hpp"
+#include <Pipeline/Text2DRenderingPass.hpp>
+#include <Proxy/GLTextFieldBufferDeviceProxy.hpp>
+#include <Proxy/GLTextureDeviceProxy.hpp>
+#include <Proxy/GLMeshDeviceProxy.hpp>
+#include <Common/GLUtils.hpp>
 
 using namespace Poly;
 

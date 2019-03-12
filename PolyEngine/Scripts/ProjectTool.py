@@ -4,6 +4,7 @@ import shutil
 import fileinput
 import json
 import subprocess
+import re
 from enum import Enum
 from operator import attrgetter
 import xml.etree.ElementTree as ET
@@ -16,7 +17,8 @@ class ActionType(Enum):
     CREATE = 'Create',
     UPDATE = 'Update',
     BUMP = 'Bump',
-    LIST = 'List'
+    LIST = 'List',
+    ENGINE_PROJ = "Engine Proj"
 
     def __str__(self):
         return self.name
@@ -80,11 +82,21 @@ class ListVersionAction(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, ActionType.LIST)
+
         
+class UpdateEngineProjectAction(argparse.Action):
+    def __init__(self, option_strings, dest, nargs, **kwargs):
+        if nargs is not 0:
+            raise ValueError("Nargs must be 0 !")
+        super(UpdateEngineProjectAction, self).__init__(option_strings, dest, nargs, **kwargs)
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, ActionType.ENGINE_PROJ)
+
 # Functions
 # Create project function
 
 # Setup:
+# $DIST_DIR$ - distribution directory for artifacts copying
 # $PROJECT_NAME$ - name of the project
 # $PROJECT_PATH$ - relative path of the project (game) directory (relative to root project dir)
 # $GAME_CLASS_NAME$ - name of the game class
@@ -123,8 +135,8 @@ def xml_indent(elem, level=0):
             elem.tail = i
 
 
-def patch_usr_proj(path, proj_name):
-    usr_proj_path = os.sep.join([path, 'Build', proj_name, proj_name + '.vcxproj.user'])
+def patch_usr_proj(path, proj_folder, proj_name, dist_dir, is_engine_proj):
+    usr_proj_path = os.sep.join([path, 'Build', proj_folder, proj_name + '.vcxproj.user'])
     xml_namespace = { 'ns' : 'http://schemas.microsoft.com/developer/msbuild/2003' }
     namespace_str = '{' + xml_namespace['ns'] + '}'
     ET.register_namespace('', xml_namespace['ns'])
@@ -159,18 +171,29 @@ def patch_usr_proj(path, proj_name):
 
     # patch all property groups info
     for project_property_group in root.findall('ns:PropertyGroup', xml_namespace):
-        print('Patching property group:', project_property_group.attrib['Condition'])
-        
-        dbg_cmd = project_property_group.find('ns:LocalDebuggerCommand', xml_namespace)
-        if dbg_cmd is None:
-            dbg_cmd = ET.SubElement(project_property_group, namespace_str + 'LocalDebuggerCommand')
-        dbg_cmd.text = 'PolyStandalone.exe'
-        print('\tset LocalDebuggerCommand to', dbg_cmd.text)
+        property_group_name = project_property_group.attrib['Condition']
+        m = re.search("'\$\(Configuration\)\|\$\(Platform\)'=='(.*)\|(.*)'", property_group_name)
+        dbg_config_type = m.group(1) # Release, debug, etc.
+        dbg_config_platform = m.group(2) # x64, etc.
+        print('Patching property group, type: {}, platform: {}'.format(dbg_config_type, dbg_config_platform))
+       
+        if not is_engine_proj:
+            dbg_cmd = project_property_group.find('ns:LocalDebuggerCommand', xml_namespace)
+            if dbg_cmd == None:
+                dbg_cmd = ET.SubElement(project_property_group, namespace_str + 'LocalDebuggerCommand')
+            dbg_cmd.text = 'PolyStandalone.exe'
+            print('\tset LocalDebuggerCommand to', dbg_cmd.text)
+
+            dbg_args = project_property_group.find('ns:LocalDebuggerCommandArguments', xml_namespace)
+            if dbg_args == None:
+                dbg_args = ET.SubElement(project_property_group, namespace_str + 'LocalDebuggerCommandArguments')
+            dbg_args.text = os.sep.join([path, proj_name + '.proj.json']) + ' ' + dbg_config_type
+            print('\tset LocalDebuggerCommandArguments to', dbg_args.text)
         
         dbg_work_dir = project_property_group.find('ns:LocalDebuggerWorkingDirectory', xml_namespace)
         if dbg_work_dir is None:
             dbg_work_dir = ET.SubElement(project_property_group, namespace_str + 'LocalDebuggerWorkingDirectory')
-        dbg_work_dir.text = '$(OutputPath)'
+        dbg_work_dir.text = os.sep.join(['$(SolutionDir)..', dist_dir, '$(Configuration)', ''])
         print('\tset LocalDebuggerWorkingDirectory to', dbg_work_dir.text)
 
         dbg_flavor = project_property_group.find('ns:DebuggerFlavor', xml_namespace)
@@ -183,7 +206,7 @@ def patch_usr_proj(path, proj_name):
     xml_data.write(usr_proj_path, encoding='utf-8', xml_declaration=True)
 
 
-def run_cmake(path, build_dir_name, proj_name):
+def run_cmake(path, build_dir_name, dist_dir):
     build_dir_path = os.sep.join([path, build_dir_name])
     if not os.path.exists(build_dir_path):
         os.makedirs(build_dir_path)
@@ -194,12 +217,8 @@ def run_cmake(path, build_dir_name, proj_name):
         os.system('cmake -A x64 -H{} -B{}'.format(get_cmake_path(path), get_cmake_path(build_dir_path)))
     else:
         os.system('cmake -H{} -B{}'.format(get_cmake_path(path), get_cmake_path(build_dir_path)))
-    
-    # Patch project proj.user file to contain proper runtime info
-    if os.name == 'nt':
-        patch_usr_proj(path, proj_name)
 
-def list(engine_path):
+def list_versions(engine_path):
     tags = get_tags(engine_path)
     message = ['{}\n'.format(tag) for tag in tags]
     print('Available engine versions:')
@@ -223,7 +242,7 @@ def read_project_file(path):
             return data
 
 
-def update_config_files(path, name, engine_path, is_new_config):
+def update_config_files(path, name, engine_path, is_new_config, dist_dir):
     project_path = os.sep.join([path, name])
     project_sources_path = os.sep.join([project_path, 'Src'])
 
@@ -243,12 +262,7 @@ def update_config_files(path, name, engine_path, is_new_config):
         replace_tags_in_file(game_hpp_output_path, [('$GAME_CLASS_NAME$', 'Game')])
         replace_tags_in_file(game_cpp_output_path, [('$GAME_CLASS_NAME$', 'Game')])
     # Cmake needs paths with '/' (instead of '\') regardles of platform
-    cmake_sln_output_path_tuples = [
-        ('$PROJECT_PATH$', name),
-        ('$PROJECT_NAME$', name),
-        ('$ENGINE_DIR$', get_cmake_path(os.path.abspath(engine_path)))
-    ]
-    replace_tags_in_file(cmake_sln_output_path, cmake_sln_output_path_tuples)
+    replace_tags_in_file(cmake_sln_output_path, [('$PROJECT_PATH$', name), ('$PROJECT_NAME$', name), ('$DIST_DIR$', dist_dir), ('$ENGINE_DIR$', get_cmake_path(os.path.abspath(engine_path)))]) 
     replace_tags_in_file(cmake_proj_output_path, [('$PROJECT_NAME$', name)])
 
     create_fast_update_script(engine_path, path)
@@ -293,10 +307,15 @@ def create_project(name, path, engine_path):
     project_sources_path = os.sep.join([project_path, 'Src'])
     os.makedirs(project_sources_path)
 
-    update_config_files(path, name, engine_path, True)
+    dist_dir = 'Dist'
+    update_config_files(path, name, engine_path, True, dist_dir)
 
     create_project_file(path, name, required_tag)
-    run_cmake(path, 'Build', name)
+    run_cmake(path, 'Build', dist_dir)
+
+    # Patch project proj.user file to contain proper runtime info
+    if os.name == 'nt':
+        patch_usr_proj(path, name, name, dist_dir, False)
 
 
 def update_project(path, engine_path):
@@ -319,9 +338,26 @@ def update_project(path, engine_path):
     name = project_file['ProjectName']
     print('Project name:', name)
 
-    update_config_files(path, name, engine_path, False)
+    dist_dir = 'Dist'
+    update_config_files(path, name, engine_path, False, dist_dir)
 
-    run_cmake(path, 'Build', name)
+    run_cmake(path, 'Build', dist_dir)
+    # Patch project proj.user file to contain proper runtime info
+    if os.name == 'nt':
+        patch_usr_proj(path, name, name, dist_dir, False)
+
+
+def create_update_engine_project(engine_path):
+    print('Updating engine project at', engine_path)
+
+    if not os.path.exists(engine_path):
+        raise Exception('Path', engine_path, 'does not exists. Cannot update engine project there!')
+
+    dist_dir = 'Dist'
+    run_cmake(engine_path, 'Build', dist_dir)
+    # Patch project proj.user file to contain proper runtime info
+    #if os.name == 'nt':
+    #    patch_usr_proj(engine_path, "UnitTests", dist_dir, True)
 
 
 def get_latest_tag(tags, version, major=None, minor=None):
@@ -404,6 +440,9 @@ if __name__ == "__main__":
                      help='sets engine version in game project file')
     MTX.add_argument('-l', '--list', action=ListVersionAction, dest='action_to_perform', nargs=0,
                      help='sets engine version in game project file')
+    MTX.add_argument('-p', '--engine_proj', action=UpdateEngineProjectAction, dest='action_to_perform',
+                        nargs=0,
+                        help='create and/or update engine project')
 
     ARGS = PARSER.parse_args()
 
@@ -414,4 +453,6 @@ if __name__ == "__main__":
     elif ARGS.action_to_perform == ActionType.BUMP:
         bump_version(ARGS.project_path, ARGS.engine_path)
     elif ARGS.action_to_perform == ActionType.LIST:
-        list(ARGS.engine_path)
+        list_versions(ARGS.engine_path)
+    elif ARGS.action_to_perform == ActionType.ENGINE_PROJ:
+        create_update_engine_project(ARGS.enginePath)

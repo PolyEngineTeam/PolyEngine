@@ -1,7 +1,5 @@
 #pragma once
 
-#include <exception>
-
 #include <Defines.hpp>
 #include <Collections/String.hpp>
 #include <Memory/RefCountedBase.hpp>
@@ -18,7 +16,7 @@ namespace Poly
 	UNSILENCE_MSVC_WARNING()
 
 	//------------------------------------------------------------------------------
-	class ENGINE_DLLEXPORT ResourceBase : public RefCountedBase
+	class ENGINE_DLLEXPORT ResourceBase : public RefCountedBase, public RTTIBase
 	{
 	public:
 		const String& GetPath() const { return Path; }

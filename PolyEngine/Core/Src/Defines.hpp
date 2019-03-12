@@ -17,6 +17,9 @@
 	// according to https://msdn.microsoft.com/en-US/library/esew7y1w.aspx it can be ignored since we use same CRT within project
 	#pragma warning(disable: 4251)
 
+	// Push changes to prevent others from discarding them easily.
+	#pragma warning(push)
+
 	
 	#define SILENCE_MSVC_WARNING(warning_id, reason) \
 		__pragma(warning(push))                      \
@@ -54,10 +57,11 @@
 // STL
 // This is only legal place for STL includes
 #include <ostream>
+#include <sstream>
 #include <cmath>
+#include <bitset>
 #include <cassert>
 #include <cstring>
-#include <type_traits>
 #include <limits>
 #include <array>
 #include <cstddef>
@@ -66,6 +70,19 @@
 #include <iostream>
 #include <string>
 #include <functional>
+#include <type_traits>
+#include <map>
+#include <vector>
+#include <iomanip>
+#include <unordered_map>
+#include <initializer_list>
+#include <chrono>
+#include <typeindex>
+#include <typeinfo>
+#include <cstdio>
+#include <cfloat>
+#include <cstddef>
+#include <vector>
 
 // Custom type names
 using u8 = uint8_t;
@@ -136,6 +153,8 @@ using uint = unsigned int;
 	#define DEVICE_DLLEXPORT
 #endif
 
+#define DECLARE_STD_HASHER(Type) namespace std { template <> struct hash<Type> { std::size_t operator()(const Type& obj) const { return obj.GetHash(); } }; }
+
 #if defined(_WIN32)
 #define POLY_STDCALL __stdcall
 #else
@@ -203,4 +222,4 @@ auto constexpr_match(C1, T1&& t1, C2, T2&& t2, Args&&... tail)
 }
 
 //-----------------------------------------------------------------------------------------------------
-#include "BaseObject.hpp"
+#include <BaseObject.hpp>

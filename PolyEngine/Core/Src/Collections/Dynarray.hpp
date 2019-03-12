@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Memory/ObjectLifetimeHelpers.hpp"
-#include "Defines.hpp"
-#include "Memory/Allocator.hpp"
+#include <Defines.hpp>
+#include <Memory/ObjectLifetimeHelpers.hpp>
+#include <Memory/Allocator.hpp>
 
 namespace Poly
 {
@@ -14,6 +14,8 @@ namespace Poly
 	class Dynarray final : public BaseObjectLiteralType<>
 	{
 	public:
+
+		using FindPred = std::function<bool(const T&)>;
 
 		/// <summary>Dynarray's Iterator class provides basic random access mutable iterator API for traversing dynarray memory</summary>
 		class Iterator final : public BaseObjectLiteralType<>, public std::iterator<std::random_access_iterator_tag, T>
@@ -228,6 +230,43 @@ namespace Poly
 			++Size;
 		}
 
+
+		/// <summary>
+		/// Copies provided array of objects to the specified location in the dynarray.
+		/// Objects already present that are in position >= idx will be moved to the right by number of elements in array.
+		/// Insertion with idx > size results in undefined behaviour.
+		/// </summary>
+		/// <param name="idx">Index in which object should be created.</param>
+		/// <param name="arr">Const reference to array of objects that should be copied to the container.</param>
+		void Insert(size_t idx, const Dynarray<T>& arr)
+		{
+			HEAVY_ASSERTE(idx <= GetSize(), "Index out of bounds!");
+			if (Size + arr.GetSize() >= GetCapacity())
+				Reserve(Size + arr.GetSize());
+			MoveDataRight(idx, Size, arr.GetSize());
+			for (size_t i = 0; i < arr.GetSize(); ++i)
+				ObjectLifetimeHelper::CopyCreate(Data + idx + i, arr[i]);
+			Size += arr.GetSize();
+		}
+
+		/// <summary>
+		/// Copies provided array of objects to the specified location in the dynarray.
+		/// Objects already present that are in position >= idx will be moved to the right by number of elements in array.
+		/// Insertion with idx > size results in undefined behaviour.
+		/// </summary>
+		/// <param name="idx">Index in which object should be created.</param>
+		/// <param name="arr">R-value reference to array of objects that should be copied to the container.</param>
+		void Insert(size_t idx, Dynarray<T>&& arr)
+		{
+			HEAVY_ASSERTE(idx <= GetSize(), "Index out of bounds!");
+			if (Size + arr.GetSize() >= GetCapacity())
+				Reserve(Size + arr.GetSize());
+			MoveDataRight(idx, Size, arr.GetSize());
+			for (size_t i = 0; i < arr.GetSize(); ++i)
+				ObjectLifetimeHelper::MoveCreate(Data + idx + i, std::move(arr[i]));
+			Size += arr.GetSize();
+		}
+
 		/// <summary>
 		/// Removes element from the collection with specified index.
 		/// Objects in position > idx will be moved one position to the left.
@@ -239,7 +278,6 @@ namespace Poly
 			HEAVY_ASSERTE(idx < GetSize(), "Index out of bounds!");
 			ObjectLifetimeHelper::Destroy(Data + idx);
 			MoveDataLeft(idx + 1, Size, 1);
-			//std::move(Begin() + idx + 1, End(), Begin() + idx);
 			--Size;
 		}
 
@@ -256,6 +294,16 @@ namespace Poly
 			return GetSize();
 		}
 
+		size_t FindIdx(const FindPred& pred) const
+		{
+			for (size_t idx = 0; idx < GetSize(); ++idx)
+			{
+				if (pred(Data[idx]))
+					return idx;
+			}
+			return GetSize();
+		}
+
 		/// <summary>Finds indexes of all encountered objects from the cointainer that are equal to provided object.</summary>
 		/// <param name="rhs">Searched object.</param>
 		/// <returns>DynArray of indexes of searched objects or empty DynArray if object was not found.</returns>
@@ -265,6 +313,17 @@ namespace Poly
 			for (size_t idx = 0; idx < GetSize(); ++idx)
 			{
 				if (Data[idx] == rhs)
+					r.PushBack(idx);
+			}
+			return r;
+		}
+
+		Dynarray<size_t> FindAllIdx(const FindPred& pred) const
+		{
+			Dynarray<size_t> r;
+			for (size_t idx = 0; idx < GetSize(); ++idx)
+			{
+				if (pred(Data[idx]))
 					r.PushBack(idx);
 			}
 			return r;
@@ -346,16 +405,19 @@ namespace Poly
 		/// <param name="rhs">Searched object.</param>
 		/// <returns>Iterator Iterator to the searched object or End().</returns>
 		Iterator Find(const T& rhs) { return Iterator(Data, FindIdx(rhs)); }
+		Iterator Find(const FindPred& pred) { return Iterator(Data, FindIdx(pred)); }
 
 		/// <summary>Getter for the const iterator that points to the first encountered searched element in collection.</summary>
 		/// <param name="rhs">Searched object.</param>
 		/// <returns>ConstIterator Const iterator to the searched object or End().</returns>
 		ConstIterator Find(const T& rhs) const { return ConstIterator(Data, FindIdx(rhs)); }
+		ConstIterator Find(const FindPred& pred) const { return ConstIterator(Data, FindIdx(pred)); }
 
 		/// <summary>Checks whether provided object is present in the collection at least once.</summary>
 		/// <param name="rhs">Searched object.</param>
 		/// <returns>True if present, false otherwise.</returns>
 		bool Contains(const T& rhs) const { return FindIdx(rhs) < GetSize(); }
+		bool Contains(const FindPred& pred) const { return FindIdx(pred) < GetSize(); }
 
 		/// <summary>
 		/// Remove the first encountered object of provided value from the collection.
@@ -364,6 +426,7 @@ namespace Poly
 		/// </summary>
 		/// <param name="rhs">Object to be removed.</param>
 		void Remove(const T& rhs) { RemoveByIdx(FindIdx(rhs)); }
+		void Remove(const FindPred& pred) { RemoveByIdx(FindIdx(pred)); }
 
 		/// <summary>
 		/// Try to remove the first encountered object of provided value from the collection.
@@ -374,6 +437,17 @@ namespace Poly
 		bool TryRemove(const T& rhs)
 		{
 			size_t idx = FindIdx(rhs);
+			if (idx < GetSize())
+			{
+				RemoveByIdx(idx);
+				return true;
+			}
+			return false;
+		}
+
+		bool TryRemove(const FindPred& pred)
+		{
+			size_t idx = FindIdx(pred);
 			if (idx < GetSize())
 			{
 				RemoveByIdx(idx);
@@ -434,14 +508,14 @@ namespace Poly
 		void MoveDataRight(size_t start, size_t end, size_t size)
 		{
 			for (size_t currPos = end; currPos > start; --currPos)
-				Data[currPos + size - 1] = std::move(Data[currPos - 1]);
+				ObjectLifetimeHelper::MoveCreate(Data + currPos + size - 1, std::move(Data[currPos - 1]));
 		}
 
 		//------------------------------------------------------------------------------
 		void MoveDataLeft(size_t start, size_t end, size_t size)
 		{
 			for (size_t currPos = start; currPos < end; ++currPos)
-				Data[currPos - size] = std::move(Data[currPos]);
+				ObjectLifetimeHelper::MoveCreate(Data + currPos - size, std::move(Data[currPos]));
 		}
 
 		//------------------------------------------------------------------------------

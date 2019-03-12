@@ -12,6 +12,7 @@ in VERTEX_OUT
 	mat3 tangentFromWorld;
 	vec3 viewPositionInTangent;
 	vec3 fragmentPositionInTangent;
+	vec4 fragmentPositionInDirLight;
 } fragment_in;
 
 
@@ -42,7 +43,7 @@ layout(std430, binding = 0) readonly buffer LightBuffer
 
 layout(std430, binding = 1) readonly buffer VisibleLightIndicesBuffer
 {
-    VisibleIndex bVisibleIndicies[];
+	VisibleIndex bVisibleIndicies[];
 };
 
 struct Material
@@ -67,7 +68,6 @@ uniform sampler2D uMetallicMap;
 uniform sampler2D uNormalMap;
 uniform sampler2D uAmbientOcclusionMap;
 
-uniform float uTime;
 uniform Material uMaterial;
 
 uniform DirectionalLight uDirectionalLight[8];
@@ -75,7 +75,6 @@ uniform int uDirectionalLightCount;
 
 uniform int uLightCount;
 uniform int uWorkGroupsX;
-uniform int uWorkGroupsY;
 
 layout(location = 0) out vec4 oColor;
 layout(location = 1) out vec4 oNormal;
@@ -119,17 +118,52 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
-    return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.001, 1.0), 5.0); // clamp to prevent NaNs
+	return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.001, 1.0), 5.0); // clamp to prevent NaNs
 }
 
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 {
-    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.001, 1.0), 5.0); // clamp to prevent NaNs
+	return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.001, 1.0), 5.0); // clamp to prevent NaNs
+}
+
+#pragma include "pcf.inc.glsl"
+#pragma include "evsm.inc.glsl"
+
+uniform int uShadowType;
+// TODO: use defines
+const int _ShadowType_NONE = 0;
+const int _ShadowType_PCF = 1;
+const int _ShadowType_EVSM2 = 2;
+const int _ShadowType_EVSM4 = 3;
+
+float calculateShadow(vec4 fragPosInDirLight)
+{
+	vec3 posInLight = fragPosInDirLight.xyz / fragPosInDirLight.w; // ClipSpace to NDC
+	posInLight = posInLight * 0.5 + 0.5; // NDC to [0, 1]
+
+	if (uShadowType == _ShadowType_PCF)
+	{
+		return calculateShadowPCF(posInLight);
+	}
+	else if (uShadowType == _ShadowType_EVSM2)
+	{
+		vec4 moments = textureLod(uDirEVSMap, posInLight.xy, 0.0);
+		return calculateShadowEVSM2(moments, posInLight.z);
+	}
+	else if (uShadowType == _ShadowType_EVSM4)
+	{
+		vec4 moments = textureLod(uDirEVSMap, posInLight.xy, 0.0);
+		return calculateShadowEVSM4(moments, posInLight.z);
+	}
+	else
+	{
+		return 1.0;
+	}
 }
 
 void main()
 {
-    float debugLightCount = 0.0;
+	float debugLightCount = 0.0;
 
 	vec4 emissive = uMaterial.Emissive * texture(uEmissiveMap, fragment_in.uv);
 	vec4 albedo = uMaterial.Albedo * texture(uAlbedoMap, fragment_in.uv);
@@ -138,10 +172,10 @@ void main()
 	vec3 normal = normalize(texture(uNormalMap, fragment_in.uv).rgb * 2.0 - 1.0);
 	float ao = texture(uAmbientOcclusionMap, fragment_in.uv).r;
 
-    albedo = clamp(albedo, vec4(0.0), vec4(1.0));
-    roughness = clamp(roughness, 0.0, 1.0);
-    metallic = clamp(metallic, 0.0, 1.0);
-    ao = clamp(ao, 0.0, 1.0);
+	albedo = clamp(albedo, vec4(0.0), vec4(1.0));
+	roughness = clamp(roughness, 0.0, 1.0);
+	metallic = clamp(metallic, 0.0, 1.0);
+	ao = clamp(ao, 0.0, 1.0);
 
 	if (albedo.a < uMaterial.OpacityMaskThreshold)
 	{
@@ -162,12 +196,10 @@ void main()
 	// reflectance equation
 	vec3 Lo = vec3(0.0);
 
-	ivec2 WorkGroupSize = ivec2(16, 16);
-	ivec2 NumWorkGroups = ivec2(uWorkGroupsX, uWorkGroupsY);
-	ivec2 WorkGroupID = (ivec2(gl_FragCoord.xy) / WorkGroupSize);
-	uint IndexWorkGroup = WorkGroupID.y * NumWorkGroups.x + WorkGroupID.x;
+	int WorkGroupSize = 16;
+	ivec2 WorkGroupID = ivec2(gl_FragCoord.xy) / WorkGroupSize;
+	uint IndexWorkGroup = WorkGroupID.y * uWorkGroupsX + WorkGroupID.x;
 	uint TileOffset = IndexWorkGroup * MAX_NUM_LIGHTS;
-	
 	
 	uint Count = uint(uLightCount);
 	for (uint i = 0; i < Count; ++i)
@@ -192,7 +224,7 @@ void main()
 		float G = GeometrySmith(N, V, L, roughness);
 		vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
 
-        vec3 nominator = clamp(NDF * G * F, 0.0, 1000.0); // clamp to prevent NaN from fireflies
+		vec3 nominator = clamp(NDF * G * F, 0.0, 1000.0); // clamp to prevent NaN from fireflies
 		float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001; // 0.001 to prevent divide by zero.
 		vec3 specular = nominator / denominator;
 
@@ -231,7 +263,7 @@ void main()
 		float G = GeometrySmith(N, V, L, roughness);
 		vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
 
-        vec3 nominator = min(NDF * G * F, 1000.0); // clamp to prevent NaN from fireflies
+		vec3 nominator = min(NDF * G * F, 1000.0); // clamp to prevent NaN from fireflies
 		float denominator = 4 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001; // 0.001 to prevent divide by zero.
 		vec3 specular = nominator / denominator;
 
@@ -248,16 +280,22 @@ void main()
 
 		// scale light by NdotL
 		float NdotL = max(dot(N, L), 0.0);
+		
+		float shadow = 1.0;
+		if (i == 0)
+		{
+			shadow = calculateShadow(fragment_in.fragmentPositionInDirLight);
+		}
 
 		// add to outgoing radiance Lo
-		Lo += (kD * albedo.rgb / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
-	}    
+		Lo += shadow * (kD * albedo.rgb / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+	}
 
 	vec3 amF = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
 
 	// ambient lighting (note that the next IBL tutorial will replace 
 	// this ambient lighting with environment lighting).
-    vec3 amkS = amF;
+	vec3 amkS = amF;
 	vec3 amkD = 1.0 - amkS;
 	vec3 irradiance = texture(uIrradianceMap, N).rgb;
 	vec3 diffuse = irradiance * albedo.rgb;
@@ -265,10 +303,10 @@ void main()
 	const float MAX_REFLECTION_LOD = 4.0;
 	vec3 prefilteredColor = textureLod(uPrefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
 	vec2 envBRDF = texture(uBrdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
-    vec3 specular = prefilteredColor * (amF * envBRDF.x + envBRDF.y);
+	vec3 specular = prefilteredColor * (amF * envBRDF.x + envBRDF.y);
 	
 	vec3 ambient = (amkD * diffuse + specular) * ao;
-
 	oColor.rgb = ambient + emissive.rgb + Lo;
+
 	oNormal.rgb = (WorldFromTangent * normal) * 0.5 + 0.5;
 }

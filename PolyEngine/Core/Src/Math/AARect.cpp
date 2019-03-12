@@ -1,5 +1,6 @@
-#include "CorePCH.hpp"
-#include "Math/AARect.hpp"
+#include <CorePCH.hpp>
+
+#include <Math/AARect.hpp>
 
 using namespace Poly;
 
@@ -33,6 +34,11 @@ AARect Poly::AARect::GetIntersectionVolume(const AARect& rhs) const
 	}
 	else
 		return AARect(Vector2f::ZERO, Vector2f::ZERO);
+}
+
+bool AARect::operator==(const AARect& rhs) const
+{
+	return Pos == rhs.Pos && Size == rhs.Size;
 }
 
 //------------------------------------------------------------------------------

@@ -1,10 +1,8 @@
 #pragma once
 
-#include <Math/Vector.hpp>
-#include <Utils/Optional.hpp>
-
-#include "ECS/ComponentBase.hpp"
-#include "Physics3D/Physics3DSystem.hpp"
+#include <Defines.hpp>
+#include <ECS/ComponentBase.hpp>
+#include <Physics3D/Physics3DSystem.hpp>
 
 namespace Poly
 {
@@ -61,6 +59,7 @@ namespace Poly
 	/// @see Rigidbody3DComponentTemplate
 	class ENGINE_DLLEXPORT Rigidbody3DComponent : public ComponentBase
 	{
+
 		// friendship declarations
 
 
@@ -70,8 +69,9 @@ namespace Poly
 		friend void Physics3DSystem::UnregisterComponent(Scene * world, Entity* entity);
 
 	public:
-		// constructors and destructor
+		RTTI_DECLARE_COMPONENT(::Poly::Rigidbody3DComponent) { NO_RTTI_PROPERTY(); }
 
+		// constructors and destructor
 
 		/// Creates Rigidbody3DComponent from provided template parameters.
 		/// @param world - world where owner entity exists

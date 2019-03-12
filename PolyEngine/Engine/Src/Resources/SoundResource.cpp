@@ -1,12 +1,6 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include <al.h>
-#include <ogg/ogg.h>
-#include <vorbis/vorbisfile.h>
-#include <fstream>
-
-#include "Resources/SoundResource.hpp"
-#include <Memory/BinaryBuffer.hpp>
+#include <Resources/SoundResource.hpp>
 
 using namespace Poly;
 

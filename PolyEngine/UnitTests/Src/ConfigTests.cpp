@@ -14,6 +14,7 @@
 #include <UniqueID.hpp>
 #include <cstdio>
 #include <Utils/Logger.hpp>
+#include <vector>
 
 using namespace Poly;
 
@@ -61,6 +62,20 @@ public:
 };
 RTTI_DEFINE_TYPE(TestRTTIClass)
 
+class TestRTTIClassPolymorphic : public TestRTTIClass
+{
+	RTTI_DECLARE_TYPE_DERIVED(TestRTTIClassPolymorphic, TestRTTIClass)
+	{
+		RTTI_PROPERTY_AUTONAME(Val2, RTTI::ePropertyFlag::NONE);
+	}
+public:
+	TestRTTIClassPolymorphic() {}
+	TestRTTIClassPolymorphic(int val, float val2) : TestRTTIClass(val), Val2(val2) {}
+
+	float Val2 = 0.f;
+};
+RTTI_DEFINE_TYPE(TestRTTIClassPolymorphic)
+
 class TestConfig : public ConfigBase
 {
 	RTTI_DECLARE_TYPE_DERIVED(TestConfig, ConfigBase)
@@ -82,6 +97,10 @@ class TestConfig : public ConfigBase
 		RTTI_PROPERTY_AUTONAME(PropDynarrayDynarrayInt, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropDynarrayString, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropDynarrayCustom, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropStdVectorInt, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropStdVectorStdVectorInt, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropStdVectorString, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropStdVectorCustom, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropOMapIntInt, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropOMapStrDynarray, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropOMapStrCustom, RTTI::ePropertyFlag::NONE);
@@ -103,6 +122,7 @@ class TestConfig : public ConfigBase
 		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrInt, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterInt; return new int; }, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrDynarrayInt, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterDynarrayInt; return new Dynarray<int>; }, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrCustom, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterCustom; return info.CreateInstance(); }, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropUniquePtrPolymorphicCustom, RTTI::ePropertyFlag::NONE);
 
 		RTTI_PROPERTY_AUTONAME(PropRawPtrCustom, RTTI::ePropertyFlag::NONE);
 	}
@@ -123,6 +143,7 @@ public:
 		PropUniquePtrInt = std::make_unique<int>(5);
 		PropUniquePtrDynarrayInt = std::make_unique<Dynarray<int>>(Dynarray<int>{ 1,2,3 });
 		PropUniquePtrCustom = std::make_unique<TestRTTIClass>(3);
+		PropUniquePtrPolymorphicCustom = std::make_unique<TestRTTIClass>(12);
 
 		PropRawPtrCustom = PropUniquePtrCustom.get();
 	}
@@ -147,6 +168,11 @@ public:
 	Dynarray<String> PropDynarrayString = { "abc", "efg" };
 	Dynarray<TestRTTIClass> PropDynarrayCustom = { 1, 2 };
 
+	std::vector<int> PropStdVectorInt = { 1, 2, 3 };
+	std::vector<std::vector<int>> PropStdVectorStdVectorInt = { {1}, { 2, 3 } };
+	std::vector<String> PropStdVectorString = { "abc", "efg" };
+	std::vector<TestRTTIClass> PropStdVectorCustom = { 1, 2 };
+
 	OrderedMap<int, int> PropOMapIntInt;
 	OrderedMap<String, Dynarray<int>> PropOMapStrDynarray;
 	OrderedMap<String, TestRTTIClass> PropOMapStrCustom;
@@ -169,6 +195,7 @@ public:
 	std::unique_ptr<int> PropUniquePtrInt;
 	std::unique_ptr<Dynarray<int>> PropUniquePtrDynarrayInt;
 	std::unique_ptr<TestRTTIClass> PropUniquePtrCustom;
+	std::unique_ptr<RTTIBase> PropUniquePtrPolymorphicCustom;
 
 	TestRTTIClass* PropRawPtrCustom;
 };
@@ -208,6 +235,26 @@ void baseValueCheck(const TestConfig& config)
 	REQUIRE(config.PropDynarrayCustom.GetSize() == 2);
 	CHECK(config.PropDynarrayCustom[0].Val1 == 1);
 	CHECK(config.PropDynarrayCustom[1].Val1 == 2);
+
+	REQUIRE(config.PropStdVectorInt.size() == 3);
+	CHECK(config.PropStdVectorInt[0] == 1);
+	CHECK(config.PropStdVectorInt[1] == 2);
+	CHECK(config.PropStdVectorInt[2] == 3);
+
+	REQUIRE(config.PropStdVectorStdVectorInt.size() == 2);
+	REQUIRE(config.PropStdVectorStdVectorInt[0].size() == 1);
+	CHECK(config.PropStdVectorStdVectorInt[0][0] == 1);
+	REQUIRE(config.PropStdVectorStdVectorInt[1].size() == 2);
+	CHECK(config.PropStdVectorStdVectorInt[1][0] == 2);
+	CHECK(config.PropStdVectorStdVectorInt[1][1] == 3);
+
+	REQUIRE(config.PropStdVectorString.size() == 2);
+	CHECK(config.PropStdVectorString[0] == "abc");
+	CHECK(config.PropStdVectorString[1] == "efg");
+
+	REQUIRE(config.PropStdVectorCustom.size() == 2);
+	CHECK(config.PropStdVectorCustom[0].Val1 == 1);
+	CHECK(config.PropStdVectorCustom[1].Val1 == 2);
 
 	REQUIRE(config.PropOMapIntInt.GetSize() == 2);
 	REQUIRE(config.PropOMapIntInt.Get(1).HasValue());
@@ -253,6 +300,9 @@ void baseValueCheck(const TestConfig& config)
 	CHECK(*config.PropUniquePtrInt == 5);
 	CHECK(*config.PropUniquePtrDynarrayInt == Dynarray<int>{1,2,3});
 	CHECK(config.PropUniquePtrCustom->Val1 == 3);
+	TestRTTIClass* ptr = rtti_cast<TestRTTIClass*>(config.PropUniquePtrPolymorphicCustom.get());
+	REQUIRE(ptr != nullptr);
+	CHECK(ptr->Val1 == 12);
 
 	CHECK(config.PropRawPtrCustom == config.PropUniquePtrCustom.get());
 }
@@ -295,6 +345,11 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		config.PropDynarrayString = { "123", "456", "789" };
 		config.PropDynarrayCustom = { 3, 4, 5, 6 };
 
+		config.PropStdVectorInt = { 4, 5, 6, 7 };
+		config.PropStdVectorStdVectorInt = { { 1, 2 }, { 3 }, {4, 5, 6} };
+		config.PropStdVectorString = { "123", "456", "789" };
+		config.PropStdVectorCustom = { 3, 4, 5, 6 };
+
 		config.PropOMapIntInt.Remove(1);
 		config.PropOMapIntInt[2] = 4;
 		config.PropOMapIntInt.Insert(3, 5);
@@ -327,6 +382,7 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		config.PropUniquePtrInt = std::make_unique<int>(7);
 		config.PropUniquePtrDynarrayInt = std::make_unique<Dynarray<int>>(Dynarray<int>{ 4, 5, 6 });
 		config.PropUniquePtrCustom = std::make_unique<TestRTTIClass>(8);
+		config.PropUniquePtrPolymorphicCustom = std::make_unique<TestRTTIClassPolymorphic>(17, 1.5f);
 
 		config.PropRawPtrCustom = config.PropUniquePtrCustom.get();
 
@@ -389,6 +445,34 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(config.PropDynarrayCustom[2].Val1 == 5);
 		CHECK(config.PropDynarrayCustom[3].Val1 == 6);
 
+		REQUIRE(config.PropStdVectorInt.size() == 4);
+		CHECK(config.PropStdVectorInt[0] == 4);
+		CHECK(config.PropStdVectorInt[1] == 5);
+		CHECK(config.PropStdVectorInt[2] == 6);
+		CHECK(config.PropStdVectorInt[3] == 7);
+
+		REQUIRE(config.PropStdVectorStdVectorInt.size() == 3);
+		REQUIRE(config.PropStdVectorStdVectorInt[0].size() == 2);
+		CHECK(config.PropStdVectorStdVectorInt[0][0] == 1);
+		CHECK(config.PropStdVectorStdVectorInt[0][1] == 2);
+		REQUIRE(config.PropStdVectorStdVectorInt[1].size() == 1);
+		CHECK(config.PropStdVectorStdVectorInt[1][0] == 3);
+		REQUIRE(config.PropStdVectorStdVectorInt[2].size() == 3);
+		CHECK(config.PropStdVectorStdVectorInt[2][0] == 4);
+		CHECK(config.PropStdVectorStdVectorInt[2][1] == 5);
+		CHECK(config.PropStdVectorStdVectorInt[2][2] == 6);
+
+		REQUIRE(config.PropStdVectorString.size() == 3);
+		CHECK(config.PropStdVectorString[0] == "123");
+		CHECK(config.PropStdVectorString[1] == "456");
+		CHECK(config.PropStdVectorString[2] == "789");
+
+		REQUIRE(config.PropStdVectorCustom.size() == 4);
+		CHECK(config.PropStdVectorCustom[0].Val1 == 3);
+		CHECK(config.PropStdVectorCustom[1].Val1 == 4);
+		CHECK(config.PropStdVectorCustom[2].Val1 == 5);
+		CHECK(config.PropStdVectorCustom[3].Val1 == 6);
+
 		REQUIRE(config.PropOMapIntInt.GetSize() == 3);
 		CHECK(!config.PropOMapIntInt.Get(1).HasValue());
 		REQUIRE(config.PropOMapIntInt.Get(2).HasValue());
@@ -440,6 +524,10 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(*config.PropUniquePtrInt == 7);
 		CHECK(*config.PropUniquePtrDynarrayInt == Dynarray<int>{4,5,6});
 		CHECK(config.PropUniquePtrCustom->Val1 == 8);
+		TestRTTIClassPolymorphic* ptr = rtti_cast<TestRTTIClassPolymorphic*>(config.PropUniquePtrPolymorphicCustom.get());
+		REQUIRE(ptr != nullptr);
+		CHECK(ptr->Val1 == 17);
+		CHECK(ptr->Val2 == 1.5f);
 
 		CHECK(config.PropRawPtrCustom == config.PropUniquePtrCustom.get());
 	}

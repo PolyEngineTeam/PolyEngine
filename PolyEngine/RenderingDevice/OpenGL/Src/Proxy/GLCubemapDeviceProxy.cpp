@@ -1,6 +1,8 @@
-#include "Proxy/GLCubemapDeviceProxy.hpp"
-#include "Proxy/GLTextureDeviceProxy.hpp"
-#include "Common/GLUtils.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
+
+#include <Proxy/GLCubemapDeviceProxy.hpp>
+#include <Proxy/GLTextureDeviceProxy.hpp>
+#include <Common/GLUtils.hpp>
 
 using namespace Poly;
 

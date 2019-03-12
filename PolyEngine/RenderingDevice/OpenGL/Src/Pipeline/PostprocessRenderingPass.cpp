@@ -1,17 +1,9 @@
-#include "Pipeline/PostprocessRenderingPass.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "GLRenderingDevice.hpp"
-#include "Proxy/GLMeshDeviceProxy.hpp"
-#include "Proxy/GLTextureDeviceProxy.hpp"
-
-#include <Math/AARect.hpp>
-#include <ECS/World.hpp>
-#include <Time/TimeSystem.hpp>
-#include <Rendering/Camera/CameraComponent.hpp>
-#include <Movement/MovementSystem.hpp>
-#include <Rendering/MeshRenderingComponent.hpp>
-#include <Rendering/PostprocessSettingsComponent.hpp>
-
+#include <Pipeline/PostprocessRenderingPass.hpp>
+#include <GLRenderingDevice.hpp>
+#include <Proxy/GLMeshDeviceProxy.hpp>
+#include <Proxy/GLTextureDeviceProxy.hpp>
 
 using namespace Poly;
 

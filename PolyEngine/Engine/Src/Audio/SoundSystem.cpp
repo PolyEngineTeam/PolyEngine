@@ -1,9 +1,12 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Audio/SoundSystem.hpp"
-
-#include <al.h>
-#include <alc.h>
+#include <Audio/SoundSystem.hpp>
+#include <Audio/SoundEmitterComponent.hpp>
+#include <Audio/SoundWorldComponent.hpp>
+#include <ECS/Scene.hpp>
+#include <Resources/ResourceBase.hpp>
+#include <Resources/SoundResource.hpp>
+#include <Resources/ResourceManager.hpp>
 
 using namespace Poly;
 

@@ -1,10 +1,8 @@
-#include "ForwardRenderer.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
 
-#include "GLRenderingDevice.hpp"
-#include "Pipeline/RenderingPassBase.hpp"
-
-#include <Rendering/Camera/CameraComponent.hpp>
-#include <Math/AARect.hpp>
+#include <ForwardRenderer.hpp>
+#include <GLRenderingDevice.hpp>
+#include <Pipeline/RenderingPassBase.hpp>
 
 using namespace Poly;
 
@@ -38,30 +36,30 @@ void ForwardRenderer::Render(const SceneView& sceneView)
 	switch (renderingMode)
 	{
 		case eRenderingModeType::LIT:
-			RenderLit(sceneView.WorldData, sceneView.Rect, sceneView.CameraCmp);
+			RenderLit(sceneView.SceneData, sceneView.Rect, sceneView.CameraCmp);
 			break;
 
 		case eRenderingModeType::UNLIT:
-			RenderUnlit(sceneView.WorldData, sceneView.Rect, sceneView.CameraCmp);
+			RenderUnlit(sceneView.SceneData, sceneView.Rect, sceneView.CameraCmp);
 			break;
 
 		case eRenderingModeType::WIREFRAME:
-			RenderWireframe(sceneView.WorldData, sceneView.Rect, sceneView.CameraCmp);
+			RenderWireframe(sceneView.SceneData, sceneView.Rect, sceneView.CameraCmp);
 			break;
 
 		case eRenderingModeType::DEBUG_NORMALS:
-			RenderNormals(sceneView.WorldData, sceneView.Rect, sceneView.CameraCmp);
+			RenderNormals(sceneView.SceneData, sceneView.Rect, sceneView.CameraCmp);
 			break;
 
 		case eRenderingModeType::DEBUG_NORMALS_WIREFRAME:
-			RenderNormalsWireframe(sceneView.WorldData, sceneView.Rect, sceneView.CameraCmp);
+			RenderNormalsWireframe(sceneView.SceneData, sceneView.Rect, sceneView.CameraCmp);
 			break;
 
 		default:
 			ASSERTE(false, "Uknown eRenderingModeType");
 	}
 
-	PostRender(sceneView.WorldData, sceneView.CameraCmp, sceneView.Rect);
+	PostRender(sceneView.SceneData, sceneView.CameraCmp, sceneView.Rect);
 }
 
 void ForwardRenderer::PostRender(Scene* world, const CameraComponent* cameraCmp, const AARect& rect)

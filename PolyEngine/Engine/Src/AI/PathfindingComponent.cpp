@@ -1,8 +1,10 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "PathfindingComponent.hpp"
+#include <AI/PathfindingComponent.hpp>
 
 using namespace Poly;
+
+RTTI_DEFINE_COMPONENT(::Poly::PathfindingComponent)
 
 void Poly::PathfindingComponent::SetDestination(const Vector& pos)
 {

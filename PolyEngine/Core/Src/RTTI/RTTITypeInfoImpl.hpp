@@ -1,7 +1,7 @@
 #pragma once
 
-#include <type_traits>
-#include "RTTI/CustomTypeTraits.hpp"
+#include <Defines.hpp>
+#include <RTTI/CustomTypeTraits.hpp>
 
 
 namespace Poly {

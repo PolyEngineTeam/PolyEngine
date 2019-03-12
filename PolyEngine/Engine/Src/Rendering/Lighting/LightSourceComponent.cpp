@@ -1,6 +1,11 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Rendering/Lighting/LightSourceComponent.hpp"
+#include <Rendering/Lighting/LightSourceComponent.hpp>
+
+RTTI_DEFINE_COMPONENT(::Poly::AmbientLightWorldComponent)
+RTTI_DEFINE_COMPONENT(::Poly::DirectionalLightComponent)
+RTTI_DEFINE_COMPONENT(::Poly::PointLightComponent)
+RTTI_DEFINE_COMPONENT(::Poly::SpotLightComponent)
 
 Poly::AmbientLightWorldComponent::AmbientLightWorldComponent(const Color& color, float intensity)
 	: LightColor(color), Intensity(intensity)

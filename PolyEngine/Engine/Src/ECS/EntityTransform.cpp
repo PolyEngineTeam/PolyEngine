@@ -1,4 +1,7 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
+
+#include <ECS/EntityTransform.hpp>
+#include <ECS/Entity.hpp>
 
 using namespace Poly;
 
@@ -166,7 +169,7 @@ void EntityTransform::SetGlobalDirty() const
 {
 	GlobalDirty = true;
 	const auto& children = Owner->GetChildren();
-	for (Entity* c : children)
+	for (const Entity::EntityUniquePtr& c : children)
 	{
 		c->GetTransform().SetGlobalDirty();
 	}

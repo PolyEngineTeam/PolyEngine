@@ -1,5 +1,7 @@
-#include "Proxy/GLTextFieldBufferDeviceProxy.hpp"
-#include "Common/GLUtils.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
+
+#include <Proxy/GLTextFieldBufferDeviceProxy.hpp>
+#include <Common/GLUtils.hpp>
 
 using namespace Poly;
 
@@ -73,5 +75,5 @@ void GLTextFieldBufferDeviceProxy::SetContent(size_t count, const TextFieldLette
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vboData.GetSize(), vboData.GetData(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	CHECK_GL_ERR();
+	// CHECK_GL_ERR(); // spams errors
 }

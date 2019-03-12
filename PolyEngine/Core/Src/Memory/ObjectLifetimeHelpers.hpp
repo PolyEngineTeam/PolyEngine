@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Defines.hpp"
+#include <Defines.hpp>
 
 namespace Poly
 {
@@ -25,20 +25,20 @@ namespace Poly
 
 		//wondering(vuko): proposed names: CopyCreateAt, ???
 		template<class T>
-		void CopyCreate(T* ptr, const T& obj, typename std::enable_if<std::is_trivially_copy_constructible<T>::value>::type* = 0)
+		void CopyCreate(T* ptr, const T& obj, typename std::enable_if<std::is_copy_constructible<T>::value && std::is_trivially_copy_constructible<T>::value>::type* = 0)
 		{
 			::new(ptr) T(obj);
 		}
 
 		template<class T>
-		void CopyCreate(T* ptr, const T& obj, typename std::enable_if<!std::is_trivially_copy_constructible<T>::value>::type* = 0)
+		void CopyCreate(T* ptr, const T& obj, typename std::enable_if<std::is_copy_constructible<T>::value && !std::is_trivially_copy_constructible<T>::value>::type* = 0)
 		{
 			::new(ptr) T(obj);
 		}
 
 		//wondering(vuko): proposed names: MoveCreateAt, MoveCreating, ???
 		template<class T>
-		void MoveCreate(T* ptr, T&& obj, typename std::enable_if<std::is_trivially_move_constructible<T>::value>::type* = 0)
+		void MoveCreate(T* ptr, T&& obj, typename std::enable_if<std::is_move_constructible<T>::value && std::is_trivially_move_constructible<T>::value>::type* = 0)
 		{
 			//wondering(vuko): since `move` is in the name, we could take the source object by
 			//                 lvalue-ref, which would give us a nicer call syntax:
@@ -47,7 +47,7 @@ namespace Poly
 		}
 
 		template<class T>
-		void MoveCreate(T* ptr, T&& obj, typename std::enable_if<!std::is_trivially_move_constructible<T>::value>::type* = 0)
+		void MoveCreate(T* ptr, T&& obj, typename std::enable_if<std::is_move_constructible<T>::value && !std::is_trivially_move_constructible<T>::value>::type* = 0)
 		{
 			::new(ptr) T(std::move(obj));
 		}

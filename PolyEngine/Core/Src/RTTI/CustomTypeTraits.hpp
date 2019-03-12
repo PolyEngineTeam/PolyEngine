@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "BaseObject.hpp"
+#include <Defines.hpp>
+#include <BaseObject.hpp>
 
 namespace Poly
 {
@@ -19,6 +19,13 @@ namespace Poly
 
 		template <typename> struct DynarrayValueType {};
 		template <typename T> struct DynarrayValueType<Dynarray<T>> { using type = T; };
+
+		// Is std::vector
+		template <typename> struct IsStdVector : public std::false_type {};
+		template <typename T> struct IsStdVector<std::vector<T>> : public std::true_type {};
+
+		template <typename> struct StdVectorValueType {};
+		template <typename T> struct StdVectorValueType<std::vector<T>> { using type = T; };
 
 		// Is Ordered map
 		template <typename> struct IsOrderedMap : public std::false_type {};
@@ -50,10 +57,10 @@ namespace Poly
 
 		// Is unique ptr
 		template <typename> struct IsUniquePtr : public std::false_type {};
-		template <typename T> struct IsUniquePtr<std::unique_ptr<T>> : public std::true_type {};
+		template <typename T, typename D> struct IsUniquePtr<std::unique_ptr<T, D>> : public std::true_type {};
 
 		template <typename> struct UniquePtrType {};
-		template <typename T> struct UniquePtrType<std::unique_ptr<T>> { using type = T; };
+		template <typename T, typename D> struct UniquePtrType<std::unique_ptr<T, D>> { using type = T; using deleter = D; };
 
 		template <class T> using RawType = std::remove_pointer<typename std::decay<typename std::remove_cv<T>::type >::type>;
 	}

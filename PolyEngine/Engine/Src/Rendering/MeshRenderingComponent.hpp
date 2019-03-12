@@ -1,8 +1,9 @@
 #pragma once
 
-#include "ECS/ComponentBase.hpp"
-#include "RenderingSystem.hpp"
-#include "Resources/MeshResource.hpp"
+#include <Defines.hpp>
+#include <ECS/ComponentBase.hpp>
+#include <Rendering/RenderingSystem.hpp>
+#include <Resources/MeshResource.hpp>
 
 namespace Poly {
 
@@ -42,6 +43,8 @@ namespace Poly {
 	class ENGINE_DLLEXPORT MeshRenderingComponent : public ComponentBase
 	{
 	public:
+		RTTI_DECLARE_COMPONENT(::Poly::MeshRenderingComponent) { NO_RTTI_PROPERTY(); }
+
 		MeshRenderingComponent(const String& meshPath, eResourceSource source);
 		virtual ~MeshRenderingComponent();
 
@@ -56,8 +59,8 @@ namespace Poly {
 		void SetShadingModel(eShadingMode value) { ShadingMode = value; }
 		void SetBlendingMode(eBlendingMode value) { BlendingMode = value; }
 
+		Optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) const override;
 
-		Optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) override;
 	private:
 		MeshResource* Mesh = nullptr;
 		Dynarray<Material> Materials;

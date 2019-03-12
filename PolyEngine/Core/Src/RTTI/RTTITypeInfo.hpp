@@ -1,12 +1,9 @@
 #pragma once
 
-#include "Defines.hpp"
+#include <Defines.hpp>
 
-#include <type_traits>
-#include <map>
-#include <vector>
-
-#include "Memory/ObjectLifetimeHelpers.hpp"
+#include <Memory/ObjectLifetimeHelpers.hpp>
+#include <Collections/Dynarray.hpp>
 
 namespace Poly 
 {
@@ -48,8 +45,8 @@ namespace Poly
 
 			const char* GetTypeName() const;
 
-			void* CreateInstance();
-			void* CreateInstanceInPlace(void* ptr);
+			void* CreateInstance() const;
+			void* CreateInstanceInPlace(void* ptr) const;
 
 			CORE_DLLEXPORT friend std::ostream& operator<<(std::ostream& stream, const TypeInfo& typeInfo);
 
@@ -91,13 +88,16 @@ namespace Poly
 
 				const char* GetTypeName(const TypeInfo& typeInfo) const;
 				const std::function<void*(void*)>& GetConstructor(const TypeInfo& typeInfo) const;
+				TypeInfo GetTypeByName(const char* name) const;
+
+				void Clear();
 			private:
 				TypeManager() = default;
 				TypeManager(const TypeManager& rhs) = delete;
 				TypeManager& operator=(const TypeManager& rhs) = delete;
 
 				long long Counter = 0;
-				std::map<const char*, TypeInfo> NameToTypeMap;
+				std::map<std::string, TypeInfo> NameToTypeMap;
 				std::map<TypeInfo, const char*> TypeToNameMap;
 				std::map<TypeInfo, Dynarray<TypeInfo>> InheritanceListMap;
 				std::map<TypeInfo, std::function<void*(void*)>> ConstructorsMap;
@@ -114,4 +114,4 @@ namespace Poly
 	} // namespace RTTI
 } // namespace Poly
 
-#include "RTTITypeInfoImpl.hpp"
+#include <RTTI/RTTITypeInfoImpl.hpp>

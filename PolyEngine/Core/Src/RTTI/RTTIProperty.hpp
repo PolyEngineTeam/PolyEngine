@@ -1,16 +1,13 @@
 #pragma once
 
-#include "Defines.hpp"
-#include "Utils/EnumUtils.hpp"
-#include "RTTI/RTTITypeInfo.hpp"
-#include "RTTI/RTTICast.hpp"
-#include "Collections/String.hpp"
-#include "Collections/Dynarray.hpp"
-#include "RTTI/CustomTypeTraits.hpp"
-
-#include <functional>
-#include <initializer_list>
-#include <unordered_map>
+#include <Defines.hpp>
+#include <Utils/EnumUtils.hpp>
+#include <RTTI/RTTITypeInfo.hpp>
+#include <RTTI/RTTICast.hpp>
+#include <Collections/String.hpp>
+#include <Collections/Dynarray.hpp>
+#include <RTTI/CustomTypeTraits.hpp>
+#include <Utils/Logger.hpp>
 
 namespace Poly {
 
@@ -58,7 +55,7 @@ namespace Poly {
 			RAW_PTR, // Only for RTTIBase objects
 			
 			// collections
-			DYNARRAY,
+			LIST,
 			ORDERED_MAP,
 			ENUM_ARRAY,
 
@@ -102,6 +99,7 @@ namespace Poly {
 		//-----------------------------------------------------------------------------------------------------------------------
 		enum class ePropertyFlag {
 			NONE = 0,
+			EDITOR_DEBUG_ONLY,
 			DONT_SERIALIZE = BIT(1)
 		};
 
@@ -115,7 +113,7 @@ namespace Poly {
 			Property(TypeInfo typeInfo, size_t offset, const char* name, ePropertyFlag flags, eCorePropertyType coreType, std::shared_ptr<PropertyImplData>&& implData = nullptr, FactoryFunc_t&& factory_func = nullptr)
 				: Type(typeInfo), Offset(offset), Name(name), Flags(flags), CoreType(coreType), ImplData(std::move(implData)), FactoryFunc(std::move(factory_func))
 			{
-				HEAVY_ASSERTE(CoreType != eCorePropertyType::UNHANDLED, "Unhandled property type!");
+				HEAVY_ASSERTE(CoreType != eCorePropertyType::UNHANDLED || EnumFlags<ePropertyFlag>(Flags).IsSet(ePropertyFlag::DONT_SERIALIZE), "Unhandled property type!");
 			}
 			TypeInfo Type;
 			size_t Offset;
@@ -178,7 +176,26 @@ namespace Poly {
 		template <typename ValueType> Property CreateDynarrayPropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t&& factory_func)
 		{
 			std::shared_ptr<CollectionPropertyImplDataBase> implData = std::shared_ptr<CollectionPropertyImplDataBase>{ new DynarrayPropertyImplData<ValueType>(flags, std::move(factory_func)) };
-			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::DYNARRAY, std::move(implData) };
+			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::LIST, std::move(implData) };
+		}
+		//-----------------------------------------------------------------------------------------------------------------------
+		// std::vector serialization property impl
+
+		template <typename ValueType>
+		struct StdVectorPropertyImplData final : public CollectionPropertyImplDataBase
+		{
+			StdVectorPropertyImplData(ePropertyFlag flags, FactoryFunc_t&& factory_func) { PropertyType = CreatePropertyInfo<ValueType>(0, "value", flags, std::move(factory_func)); }
+
+			void Resize(void* collection, size_t size) const override { reinterpret_cast<std::vector<ValueType>*>(collection)->resize(size); }
+			size_t GetSize(const void* collection) const override { return reinterpret_cast<const std::vector<ValueType>*>(collection)->size(); }
+			void* GetValue(void* collection, size_t idx) const override { return &((*reinterpret_cast<std::vector<ValueType>*>(collection))[idx]); }
+			const void* GetValue(const void* collection, size_t idx) const override { return &((*reinterpret_cast<const std::vector<ValueType>*>(collection))[idx]); }
+		};
+
+		template <typename ValueType> Property CreateStdVectorPropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t&& factory_func)
+		{
+			std::shared_ptr<CollectionPropertyImplDataBase> implData = std::shared_ptr<CollectionPropertyImplDataBase>{ new StdVectorPropertyImplData<ValueType>(flags, std::move(factory_func)) };
+			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::LIST, std::move(implData) };
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------
@@ -387,11 +404,13 @@ namespace Poly {
 			Property PropertyType;
 
 			virtual void Create(void* ptr) const = 0;
+			virtual void CreatePolymorphic(void* ptr, const char* typeName) const = 0;
+			virtual void Clear(void* ptr) const = 0;
 			virtual void* Get(void* ptr) const = 0;
 			virtual const void* Get(const void* ptr) const = 0;
 		};
 
-		template<typename T>
+		template<typename T, typename D>
 		struct UniquePtrPropertyImplData final : public UniquePtrPropertyImplDataBase
 		{
 			UniquePtrPropertyImplData(ePropertyFlag flags, FactoryFunc_t&& factory_func)
@@ -402,19 +421,38 @@ namespace Poly {
 			}
 
 			void Create(void* ptr) const override { 
-				std::unique_ptr<T>& uptr = *reinterpret_cast<std::unique_ptr<T>*>(ptr);
+				std::unique_ptr<T,D>& uptr = *reinterpret_cast<std::unique_ptr<T,D>*>(ptr);
+
 				if (PropertyType.FactoryFunc)
 					uptr.reset((T*)PropertyType.FactoryFunc(PropertyType.Type));
 				else
-					uptr = std::make_unique<T>();
+					uptr.reset(new T());
 			}
-			void* Get(void* ptr) const override { return reinterpret_cast<std::unique_ptr<T>*>(ptr)->get(); }
-			const void* Get(const void* ptr) const override { return reinterpret_cast<const std::unique_ptr<T>*>(ptr)->get(); }
+
+			void CreatePolymorphic(void* ptr, const char* typeName) const override {
+				std::unique_ptr<T, D>& uptr = *reinterpret_cast<std::unique_ptr<T, D>*>(ptr);
+
+				TypeInfo type = RTTI::Impl::TypeManager::Get().GetTypeByName(typeName);
+				if (type.IsValid())
+				{
+					if (PropertyType.FactoryFunc)
+						uptr.reset((T*)PropertyType.FactoryFunc(type));
+					else
+						uptr.reset((T*)type.CreateInstance());
+				}
+				else
+					gConsole.LogError("Failed to create instance of type {}. Probably not registered!", typeName);
+
+			}
+
+			void Clear(void* ptr) const override { return (*reinterpret_cast<std::unique_ptr<T, D>*>(ptr)).reset(); }
+			void* Get(void* ptr) const override { return (*reinterpret_cast<std::unique_ptr<T,D>*>(ptr)).get(); }
+			const void* Get(const void* ptr) const override { return (*reinterpret_cast<const std::unique_ptr<T,D>*>(ptr)).get(); }
 		};
 
-		template <typename T> Property CreateUniquePtrPropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t&& factory_func)
+		template <typename T, typename D> Property CreateUniquePtrPropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t&& factory_func)
 		{
-			std::shared_ptr<UniquePtrPropertyImplData<T>> implData = std::make_shared<UniquePtrPropertyImplData<T>>(flags, std::move(factory_func));
+			std::shared_ptr<UniquePtrPropertyImplData<T, D>> implData = std::make_shared<UniquePtrPropertyImplData<T, D>>(flags, std::move(factory_func));
 
 			// Register unique ptr object pointer to property
 			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::UNIQUE_PTR, std::move(implData)};
@@ -466,11 +504,12 @@ namespace Poly {
 			return constexpr_match(
 				std::is_enum<T>{},			[&](auto lazy) { return CreateEnumPropertyInfo<LAZY_TYPE(T)>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsDynarray<T>{},		[&](auto lazy) { return CreateDynarrayPropertyInfo<typename Trait::DynarrayValueType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
+				Trait::IsStdVector<T>{},	[&](auto lazy) { return CreateStdVectorPropertyInfo<typename Trait::StdVectorValueType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsOrderedMap<T>{},	[&](auto lazy) { return CreateOrderedMapPropertyInfo<typename Trait::OrderedMapType<LAZY_TYPE(T)>::keyType, typename Trait::OrderedMapType<LAZY_TYPE(T)>::valueType, Trait::OrderedMapType<LAZY_TYPE(T)>::bFactor>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsEnumArray<T>{},	[&](auto lazy) { return CreateEnumArrayPropertyInfo<typename Trait::EnumArrayType<LAZY_TYPE(T)>::enumType, typename Trait::EnumArrayType<LAZY_TYPE(T)>::valueType>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsEnumFlags<T>{},	[&](auto lazy) { return CreateEnumFlagsPropertyInfo<typename Trait::EnumFlagsType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsIterablePoolAllocator<T>{}, [&](auto lazy) { return CreateIterablePoolAllocatorPropertyInfo<typename Trait::IterablePoolAllocatorType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
-				Trait::IsUniquePtr<T>{},	[&](auto lazy) { return CreateUniquePtrPropertyInfo<typename Trait::UniquePtrType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
+				Trait::IsUniquePtr<T>{},	[&](auto lazy) { return CreateUniquePtrPropertyInfo<typename Trait::UniquePtrType<LAZY_TYPE(T)>::type, typename Trait::UniquePtrType<LAZY_TYPE(T)>::deleter>(offset, name, flags, std::move(factory_func)); },
 				std::is_pointer<T>{},		[&](auto lazy) { return CreateRawPtrPropertyInfo<typename std::remove_pointer<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
 				std::is_base_of<RTTIBase, T>{}, [&](auto lazy) { return Property{ TypeInfo::Get<LAZY_TYPE(T)>(), offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>(), nullptr, std::move(factory_func) }; },
 				//TODO add RTTIBase specialization!
@@ -525,8 +564,8 @@ namespace Poly {
 
 
 #define RTTI_GENERATE_PROPERTY_LIST_BASE(Type)\
-	friend class Poly::RTTI::PropertyManager<Type>; \
-	virtual Poly::RTTI::PropertyManagerBase* GetPropertyManager() const; \
+	friend class ::Poly::RTTI::PropertyManager<Type>; \
+	virtual ::Poly::RTTI::PropertyManagerBase* GetPropertyManager() const; \
 	template <class T> \
 	static void InitPropertiesBase(Poly::RTTI::PropertyManager<T>*) {} \
 	template <class T> \
@@ -541,7 +580,7 @@ namespace Poly {
 	static void InitProperties(Poly::RTTI::PropertyManager<T>* mgr)
 
 #define RTTI_PROPERTY_MANAGER_IMPL(Type)\
-	Poly::RTTI::PropertyManagerBase* Type::GetPropertyManager() const { static Poly::RTTI::PropertyManager<Type> instance; return &instance; }
+	::Poly::RTTI::PropertyManagerBase* Type::GetPropertyManager() const { static ::Poly::RTTI::PropertyManager<Type> instance; return &instance; }
 
 #define NO_RTTI_PROPERTY() UNUSED(mgr)
 

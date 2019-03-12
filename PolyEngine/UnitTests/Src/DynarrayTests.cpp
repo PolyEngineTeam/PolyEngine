@@ -2,6 +2,7 @@
 #include <catch.hpp>
 
 #include <Collections/Dynarray.hpp>
+#include <Collections/String.hpp>
 //TODO implement
 
 using namespace Poly;
@@ -180,10 +181,6 @@ TEST_CASE("Dynarray with BaseObject", "[Dynarray]")
 	public:
 		Test() {}
 		~Test() {}
-
-	private:
-		int i = 0;
-
 	};
 
 	Dynarray<Test> q;
@@ -221,4 +218,83 @@ TEST_CASE("Dynarray find all idx", "[Dynarray]")
 	result = a.FindAllIdx(10);
 	REQUIRE(result[0] == 0);
 	REQUIRE(result[1] == 2);
+}
+
+TEST_CASE("Dynarray insert operations", "[Dynarray]")
+{
+	SECTION("Insert single element at index")
+	{
+		Dynarray<int> a{ 2, 3, 4 };
+		Dynarray<int> b{ 1, 3, 4 };
+		Dynarray<int> c{ 1, 2, 3 };
+		Dynarray<int> d{ 1, 2, 3, 4 };
+
+		a.Insert(0, 1);
+		REQUIRE(a == d);
+
+		b.Insert(1, 2);
+		REQUIRE(b == d);
+
+		c.Insert(3, 4);
+		REQUIRE(c == d);
+	}
+
+	SECTION("Insert single object at index")
+	{
+		Dynarray<String> a{ "bar", "asdf", "lorem ipsum" };
+		Dynarray<String> b{ "foo", "asdf", "lorem ipsum" };
+		Dynarray<String> c{ "foo", "bar", "asdf" };
+		Dynarray<String> d{ "foo", "bar", "asdf", "lorem ipsum" };
+
+		a.Insert(0, "foo");
+		for(size_t i = 0; i < d.GetSize(); ++i)
+			REQUIRE(a[i] == d[i]);
+
+		b.Insert(1, "bar");
+		for (size_t i = 0; i < d.GetSize(); ++i)
+			REQUIRE(b[i] == d[i]);
+
+		c.Insert(3, "lorem ipsum");
+		for (size_t i = 0; i < d.GetSize(); ++i)
+			REQUIRE(c[i] == d[i]);
+	}
+
+	SECTION("Insert array of elements at index")
+	{
+		Dynarray<int> a{ 1, 2, 6 };
+		Dynarray<int> b{ 3, 4, 5 };
+		Dynarray<int> c{ 1, 2, 3 };
+		Dynarray<int> d{ 1, 2, 3 };
+		Dynarray<int> e{ 4, 5, 6 };
+		Dynarray<int> f{ 1, 2, 3, 4, 5, 6 };
+
+		a.Insert(2, b);
+		REQUIRE(a == f);
+
+		c.Insert(3, e);
+		REQUIRE(c == f);
+
+		e.Insert(0, d);
+		REQUIRE(e == f);
+	}
+
+	SECTION("Insert rvalue array of elements at index")
+	{
+		Dynarray<String> a{ "foo", "bar", "consectetur, adipisci velit" };
+		Dynarray<String> b{ "foo", "bar", "asdf" };
+		Dynarray<String> c{ "lorem ipsum", "dolor sit amet", "consectetur, adipisci velit" };
+		Dynarray<String> d{ "foo", "bar", "asdf", "lorem ipsum", "dolor sit amet", "consectetur, adipisci velit" };
+
+		a.Insert(2, { "asdf", "lorem ipsum", "dolor sit amet" });
+		for (size_t i = 0; i < d.GetSize(); ++i)
+			REQUIRE(a[i] == d[i]);
+
+		b.Insert(3, { "lorem ipsum", "dolor sit amet", "consectetur, adipisci velit" });
+		for (size_t i = 0; i < d.GetSize(); ++i)
+			REQUIRE(b[i] == d[i]);
+
+		c.Insert(0, { "foo", "bar", "asdf" });
+		for (size_t i = 0; i < d.GetSize(); ++i)
+			REQUIRE(c[i] == d[i]);
+	}
 }

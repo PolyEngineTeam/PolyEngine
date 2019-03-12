@@ -1,8 +1,9 @@
 #pragma once
 
-#include "ECS/ComponentBase.hpp"
-#include "FPSSystem.hpp"
-#include "Time/TimeSystem.hpp"
+#include <Defines.hpp>
+#include <ECS/ComponentBase.hpp>
+#include <Debugging/FPSSystem.hpp>
+#include <Time/TimeSystem.hpp>
 
 namespace Poly
 {
@@ -11,8 +12,10 @@ namespace Poly
 	/// <summary>WorldComponent that holds data for debug system.</summary>
 	class ENGINE_DLLEXPORT DebugWorldComponent : public ComponentBase
 	{
-	friend void FPSSystem::FPSUpdatePhase(Scene*);
-	friend float FPSSystem::GetFPS(Scene*);
+		RTTI_DECLARE_COMPONENT(::Poly::DebugWorldComponent) { NO_RTTI_PROPERTY(); }
+
+		friend void FPSSystem::FPSUpdatePhase(Scene*);
+		friend float FPSSystem::GetFPS(Scene*);
 
 	private:
 		FPSSystem::FPSData FPSData;

@@ -1,16 +1,15 @@
 #pragma once
 
-#include "Common/GLUtils.hpp"
-#include <Rendering/IRenderingDevice.hpp>
-#include "Proxy/GLShaderProgram.hpp"
-#include <SDL.h>
+#include <Defines.hpp>
+#include <Common/GLUtils.hpp>
+#include <Common/PrimitiveQuad.hpp>
+#include <Common/PrimitiveCube.hpp>
+#include <Proxy/GLShaderProgram.hpp>
 
 struct SDL_Window;
 
 namespace Poly
 {
-	struct PrimitiveQuad;
-	struct PrimitiveCube;
 	struct SceneView;
 	class CameraComponent;
 	class AARect;
@@ -77,7 +76,7 @@ namespace Poly
 		GLRenderingDevice(const GLRenderingDevice&) = delete;
 		void operator=(const GLRenderingDevice&) = delete;
 
-		bool CreateContextHighend();
+		bool CreateContext();
 
 		void Init() override;
 		void Resize(const ScreenSize& size) override;
@@ -104,6 +103,8 @@ namespace Poly
 		void CreateUtilityTextures();
 
 		void FillSceneView(SceneView& sceneView);
+		void CullDirLightQueue(SceneView& sceneView, const Dynarray<const MeshRenderingComponent*>& meshCmp);
+		void CullShadowCasters(SceneView& sceneView, const Matrix& dirLightFromWorld, const Matrix& worldFromDirLight, AABox& frustumAABBInLS);
 		void EndFrame();
 
 		void CleanUpResources();

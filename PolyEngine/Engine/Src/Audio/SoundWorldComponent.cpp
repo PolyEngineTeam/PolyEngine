@@ -1,10 +1,10 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Audio/SoundWorldComponent.hpp"
-
-#include <alc.h>
+#include <Audio/SoundWorldComponent.hpp>
 
 using namespace Poly;
+
+RTTI_DEFINE_COMPONENT(::Poly::SoundWorldComponent)
 
 SoundWorldComponent::SoundWorldComponent(Scene* /*world*/)
 {

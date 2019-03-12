@@ -1,8 +1,9 @@
 #pragma once
 
-#include "RTTI/RTTI.hpp"
-#include "RTTIProperty.hpp"
-#include <rapidjson/document.h>
+#include <Defines.hpp>
+#include <RTTI/RTTI.hpp>
+#include <RTTI/RTTIProperty.hpp>
+
 
 namespace Poly
 {

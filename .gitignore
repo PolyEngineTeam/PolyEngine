@@ -6,6 +6,8 @@
 
 # Engine specific files
 console.log
+# shader content dumps for debuging
+*.dump 
 
 # Engine local configurations
 AssetsPathConfig.json
@@ -19,9 +21,11 @@ x64/
 x86/
 bld/
 [Bb]in/
+[Dd]ist/
 [Oo]bj/
 [Ll]og/
 [Bb]uild/
+[Bb]uild*/
 cmake-build-*
 
 # Windows specific stuff
@@ -68,4 +72,3 @@ xcuserdata/
 
 # Exculdes from ignore
 !**/ThirdParty/**
-

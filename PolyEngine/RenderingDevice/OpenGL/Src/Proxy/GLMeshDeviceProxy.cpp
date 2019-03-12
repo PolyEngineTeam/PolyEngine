@@ -1,6 +1,7 @@
-#include "Proxy/GLMeshDeviceProxy.hpp"
-#include "Math/Vector3f.hpp"
-#include "Common/GLUtils.hpp"
+#include <PolyRenderingDeviceGLPCH.hpp>
+
+#include <Proxy/GLMeshDeviceProxy.hpp>
+#include <Common/GLUtils.hpp>
 
 using namespace Poly;
 

@@ -1,11 +1,10 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Physics2D/Physics2DSystem.hpp"
-
-#include "Time/TimeSystem.hpp"
-#include "RigidBody2DImpl.hpp"
-
-#include <Box2D/Box2D.h>
+#include <Physics2D/Physics2DSystem.hpp>
+#include <Physics2D/Physics2DWorldComponent.hpp>
+#include <Time/TimeSystem.hpp>
+#include <Physics2D/RigidBody2DImpl.hpp>
+#include <Physics2D/Rigidbody2DComponent.hpp>
 
 using namespace Poly;
 

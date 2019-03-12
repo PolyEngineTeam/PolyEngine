@@ -1,7 +1,10 @@
 #pragma once
 
-#include "DeferredTaskBase.hpp"
-#include "ECS/World.hpp"
+#include <Defines.hpp>
+#include <Memory/SafePtr.hpp>
+#include <ECS/DeferredTaskSystem.hpp>
+#include <ECS/DeferredTaskBase.hpp>
+#include <ECS/Scene.hpp>
 
 namespace Poly
 {

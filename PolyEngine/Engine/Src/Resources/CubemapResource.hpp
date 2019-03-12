@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Resources/ResourceBase.hpp"
+#include <Defines.hpp>
+#include <Resources/ResourceBase.hpp>
+#include <Rendering/IRenderingDevice.hpp>
 
 typedef unsigned int GLuint;
 

@@ -1,9 +1,6 @@
-#include "EnginePCH.hpp"
+#include <EnginePCH.hpp>
 
-#include "Audio/OpenALDevice.hpp"
-
-#include <alc.h>
-#include <al.h>
+#include <Audio/OpenALDevice.hpp>
 
 using namespace Poly;
 
