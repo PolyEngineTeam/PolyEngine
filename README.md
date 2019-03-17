@@ -1,4 +1,4 @@
-<h1> <img src="Media/PolyEngine_logo_black.png" width="960"> PolyEngine </h1>
+<img src="Media/PolyEngine_logo_black.png" height="336">
 
 [![license](https://img.shields.io/github/license/KNTGPolygon/PolyEngine.svg)](LICENSE)
 
