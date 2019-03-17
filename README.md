@@ -1,4 +1,4 @@
-<img src="Media/PolyEngine_logo_black.png" height="336">
+<img src="Media/PolyEngine_logo_black.png" height="200">
 
 [![license](https://img.shields.io/github/license/KNTGPolygon/PolyEngine.svg)](LICENSE)
 
