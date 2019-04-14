@@ -5,11 +5,24 @@
 
 namespace Poly {
 
+	class IAllocatorIterator : public BaseObject<>
+	{
+	public:
+	//	virtual bool operator==(const IAllocatorIterator& rhs) const = 0;
+	//	virtual bool operator!=(const IAllocatorIterator& rhs) const = 0;
+		virtual void increment() = 0;
+		virtual void* data() = 0;
+	//	virtual IAllocatorIterator& operator++() = 0;
+		//virtual IAllocatorIterator& operator--() = 0;
+	};
+
 	class IterablePoolAllocatorBase : public BaseObject<>
 	{
 	public:
 		virtual void* GenericAlloc() = 0;
 		virtual void GenericFree(void* ptr) = 0;
+		virtual std::unique_ptr<IAllocatorIterator> GetAllocatorBegin() = 0;
+		virtual std::unique_ptr<IAllocatorIterator> GetAllocatorEnd() = 0;
 	};
 
 	/// <summary>Fast pool allocator, that enables iteration.</summary>
@@ -27,14 +40,25 @@ namespace Poly {
 		STATIC_ASSERTE(offsetof(Cell, Data) == 0, "Data has to be the first member of Cell struct. It must have no offset.");
 	public:
 		//------------------------------------------------------------------------------
-		class Iterator : public BaseObject<>, public std::iterator<std::bidirectional_iterator_tag, T>
+		class Iterator : public IAllocatorIterator, public std::iterator<std::bidirectional_iterator_tag, T>
 		{
 		public:
+			// should use here templated template to allow for passing a templated type into the method argument
+			// pass the IAllocatorIterator<T> into the template
+
+			//cannot overload with this operator because it is template and no virtual calls can be dispatched,
+			//have to define either two operators? or 	 
 			bool operator==(const Iterator& rhs) const { return CurrentCell == rhs.CurrentCell; }
 			bool operator!=(const Iterator& rhs) const { return !(*this == rhs); }
+			
+			//template<typename T2>
+    //        bool compare(const typename IterablePoolAllocator<T2>::Iterator& rhs, typename std::enable_if_t<std::is_same_v<T,T2>>* = 0) const { return CurrentCell == rhs.CurrentCell; }
+			//bool compare(const IT<T2>& rhs, typename std::enable_if_t<std::is_same_v<T,T2>>* = 0) const { return CurrentCell == rhs.CurrentCell; }
 
 			T& operator*() const { return *reinterpret_cast<T*>(CurrentCell->Data); }
 			T* operator->() const { return reinterpret_cast<T*>(CurrentCell->Data); }
+			void* data() override { return reinterpret_cast<void*>(CurrentCell->Data); }
+			void increment() override { CurrentCell = CurrentCell->Next; }
 
 			Iterator& operator++() { CurrentCell = CurrentCell->Next; return *this; }
 			Iterator operator++(int) { Iterator ret(CurrentCell); CurrentCell = CurrentCell->Next; return ret; }
@@ -76,7 +100,7 @@ namespace Poly {
 		ConstIterator Begin() const { return ConstIterator(Head); }
 		ConstIterator End() const { return ConstIterator(Tail); }
 
-		/// <summary>Constuctor that allocates memory for provided amount of objects. </summary>
+		/// <summary>Constuctor that allocates memory for provided amount of objects. </summary>0x7ffff31bf230
 		/// <param name="count"></param>
 		explicit IterablePoolAllocator(size_t count)
 			: Capacity(count), FreeBlockCount(count)
@@ -173,7 +197,7 @@ namespace Poly {
 		/// <param name="p">Pointer to memory to free.</param>
 		void Free(T* p)
 		{
-			// get cell addr
+			// get cell address
 			Cell* cell = reinterpret_cast<Cell*>(p);
 
 			// keep the linked list valid
@@ -215,6 +239,10 @@ namespace Poly {
 		size_t GetSize() const { return Capacity - FreeBlockCount; }
 
 		size_t GetFreeBlockCount() const { return FreeBlockCount; }
+		
+		std::unique_ptr<IAllocatorIterator> GetAllocatorBegin() override { return std::make_unique<Iterator>(Begin()); }
+
+		std::unique_ptr<IAllocatorIterator> GetAllocatorEnd() override { return std::make_unique<Iterator>(End()); }
 
 	private:
 		Cell* AddrFromIndex(size_t i) const { return Data + i; }

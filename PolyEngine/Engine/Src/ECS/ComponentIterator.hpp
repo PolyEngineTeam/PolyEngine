@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Defines.hpp"
+#include <ECS/Entity.hpp>
 
 namespace Poly
 {
@@ -15,9 +16,9 @@ namespace Poly
 		public:
 			virtual bool operator==(const IEntityIteratorPolicy&) const = 0;
 			virtual bool operator!=(const IEntityIteratorPolicy&) const = 0;
-			virtual Entity* get() const = 0;
-			virtual void increment() = 0;
-			virtual bool isValid() const = 0;
+			virtual Entity* Get() const = 0;
+			virtual void Increment() = 0;
+			virtual bool IsValid() const = 0;
 	};
 
 	template<typename PrimaryComponent, typename... SecondaryComponents>
@@ -30,12 +31,12 @@ namespace Poly
 				UpdateIterator();
 			}
 
-			bool operator==(const  ComponentIterator& rhs) const { return GetIteratorPolicy()->get() == rhs.GetIteratorPolicy()->get(); } 
-			bool operator!=(const  ComponentIterator& rhs) const { return !(GetIteratorPolicy()->get() == rhs.GetIteratorPolicy()->get()); }
+			bool operator==(const  ComponentIterator& rhs) const { return GetIteratorPolicy()->Get() == rhs.GetIteratorPolicy()->Get(); } 
+			bool operator!=(const  ComponentIterator& rhs) const { return !(GetIteratorPolicy()->Get() == rhs.GetIteratorPolicy()->Get()); }
 
 			const std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... > operator*() const 
 			{
-				Entity* ent = GetIteratorPolicy()->get();
+				Entity* ent = GetIteratorPolicy()->Get();
 				PrimaryComponent* primary = ent->GetComponent<PrimaryComponent>();
 				return std::make_tuple(primary, primary->template GetSibling<SecondaryComponents>()...);
 			}
@@ -56,21 +57,21 @@ namespace Poly
 		private:
 			void Increment()
 			{
-				Entity* ent = GetIteratorPolicy()->get();
+				Entity* ent = GetIteratorPolicy()->Get();
 				PrimaryComponent* primary = ent->GetComponent<PrimaryComponent>();
 				ASSERTE(primary, "Primary component is nullptr!");
 
-				GetIteratorPolicy()->increment();
+				GetIteratorPolicy()->Increment();
 				UpdateIterator();
 			}
 			
 			void UpdateIterator()
 			{
-				Entity* ent = GetIteratorPolicy()->get();
-				while ( GetIteratorPolicy()->isValid() && !HasComponents<PrimaryComponent, SecondaryComponents...>(ent) )
+				Entity* ent = GetIteratorPolicy()->Get();
+				while ( GetIteratorPolicy()->IsValid() && !HasComponents<PrimaryComponent, SecondaryComponents...>(ent) )
 				{
-					GetIteratorPolicy()->increment();
-					ent = GetIteratorPolicy()->get();					
+					GetIteratorPolicy()->Increment();
+					ent = GetIteratorPolicy()->Get();					
 				}
 			}
 

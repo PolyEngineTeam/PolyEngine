@@ -4,6 +4,7 @@
 #include <ECS/Entity.hpp>
 #include <ECS/ComponentBase.hpp>
 #include <ECS/ComponentIterator.hpp>
+#include <ECS/SceneComponentIteratorPolicy.hpp>
 #include <Audio/SoundWorldComponent.hpp>
 #include <Engine.hpp>
 
@@ -124,7 +125,7 @@ namespace Poly {
 			}
 			ComponentIterator<PrimaryComponent, SecondaryComponents...> End()
 			{
-				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorPolicy<PrimaryComponent, SecondaryComponents...>(true));
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorPolicy<PrimaryComponent, SecondaryComponents...>());
 			}
 			auto begin() { return Begin(); }
 			auto end() { return End(); }
@@ -147,88 +148,12 @@ namespace Poly {
 			return {this};
 		}
 
-		class SceneComponentIteratorPolicy : public IEntityIteratorPolicy
-		{
-			public:
-				SceneComponentIteratorPolicy(Entity* entity, size_t primary)
-				{ 
-					findMatch(entity, primary);
-				}
-				SceneComponentIteratorPolicy(Entity* entity)
-				{
-					Match = &*entity->GetEntityScene()->GetEntityAllocator().End();
-					End = Match;
-				}
-				bool operator==(const IEntityIteratorPolicy& rhs) const override
-				{
-					return Match == rhs.get();
-				}
-				bool operator!=(const IEntityIteratorPolicy& rhs) const override 
-				{
-					return !(Match == rhs.get()); // can move to interface after it works
-				}
-				Entity* get() const override
-				{
-					return Match;
-				}
-				void increment() override
-				{
-					findNextMatch();
-				}
-				bool isValid() const override 
-				{
-					return Match != End;
-				}
-			private:
-				void findMatch(Entity* entity, size_t primary)
-				{
-					Scene* scene = entity->GetEntityScene(); //later cast to Scene (ISCene comes)
-					for (auto& e : scene->GetEntityAllocator())
-					{
-						if (e.GetComponent(primary))
-						{
-							Match = &e;
-							Primary = primary;
-							End = &*(scene->GetEntityAllocator().End());
-							return;
-						}
-					}
-					Match = &*(scene->GetEntityAllocator().End());
-					End = Match;
-					Primary = primary;
-				}
-				void findNextMatch()
-				{
-					ASSERTE(Match, "Tried incrementing an empty range!");
-					Scene* scene = Match->GetEntityScene();
-					auto& allocator = scene->GetEntityAllocator();
-					auto it = std::find_if(allocator.Begin(), allocator.End(), [&](auto& ent){
-						return &ent == Match;
-					});
-					for (++it; it != allocator.End(); ++it)
-					{
-						Entity& e = *it;
-						if (e.GetComponent(Primary))
-						{
-							Match = &e;
-							return;
-						}
-					}
-					Match = &*(scene->GetEntityAllocator().End());
-				}
-				Entity* Match;
-				Entity* End;
-				size_t Primary;
-		};
 	
 	protected:
 		
 		template<typename PrimaryComponent, typename... SecondaryComponents>
-		std::unique_ptr<SceneComponentIteratorPolicy> MakeSceneComponentIteratorPolicy(bool isEndIterator = false) 
+		std::unique_ptr<SceneComponentIteratorPolicy> MakeSceneComponentIteratorPolicy() 
 		{
-			if (isEndIterator)
-				return std::make_unique<SceneComponentIteratorPolicy>(SceneComponentIteratorPolicy(GetRoot()));
-
 			size_t primary = GetWorldComponentID<PrimaryComponent>();
 			return std::make_unique<SceneComponentIteratorPolicy>(SceneComponentIteratorPolicy(GetRoot(), primary)); 
 		}
