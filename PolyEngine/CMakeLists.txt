@@ -13,6 +13,7 @@ include(${ENGINE_ROOT_DIR}/CMakeListsCommon.cmake)
 # Finally, meat and potatoes
 ##
 add_subdirectory(Core)
+add_subdirectory(API)
 add_subdirectory(Engine)
 add_subdirectory(RenderingDevice/OpenGL)
 add_subdirectory(Editor)
