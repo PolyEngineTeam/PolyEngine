@@ -82,8 +82,8 @@ def xml_indent(elem, level=0):
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
 
-def patch_usr_proj(path, proj_folder, proj_name, dist_dir, is_engine_proj):
-    usr_proj_path = os.sep.join([path, 'Build', proj_folder, proj_name + '.vcxproj.user'])
+def patch_usr_proj(build_dir_name, path, proj_folder, proj_name, dist_dir, is_engine_proj):
+    usr_proj_path = os.sep.join([path, build_dir_name, proj_folder, proj_name + '.vcxproj.user'])
     xml_namespace = { 'ns' : 'http://schemas.microsoft.com/developer/msbuild/2003' }
     namespace_str = '{' + xml_namespace['ns'] + '}'
     ET.register_namespace('', xml_namespace['ns'])
@@ -221,7 +221,7 @@ def create_fast_update_script(engine_path, proj_path):
         os.system("chmod +x {}".format(fileName))
         
 
-def create_project(name, path, engine_path):
+def create_project(build_dir_name, name, path, engine_path):
     print('Creating project', name, 'in', path, 'with engine at', engine_path)
 
     if os.path.exists(path):
@@ -242,13 +242,13 @@ def create_project(name, path, engine_path):
     update_config_files(path, name, engine_path, True, dist_dir)
 
     create_project_file(path, name)
-    run_cmake(path, 'Build', dist_dir)
+    run_cmake(path, build_dir_name, dist_dir)
 
     # Patch project proj.user file to contain proper runtime info
     if os.name == 'nt':
-        patch_usr_proj(path, name, name, dist_dir, False)
+        patch_usr_proj(build_dir_name, path, name, name, dist_dir, False)
 
-def update_project(path, engine_path):
+def update_project(build_dir_name, path, engine_path):
     print('Updating project at', path, 'with engine at', engine_path)
 
     if not os.path.exists(path):
@@ -260,22 +260,22 @@ def update_project(path, engine_path):
     dist_dir = 'Dist'
     update_config_files(path, name, engine_path, False, dist_dir)
 
-    run_cmake(path, 'Build', dist_dir)
+    run_cmake(path, build_dir_name, dist_dir)
     # Patch project proj.user file to contain proper runtime info
     if os.name == 'nt':
-        patch_usr_proj(path, name, name, dist_dir, False)
+        patch_usr_proj(build_dir_name, path, name, name, dist_dir, False)
 
-def create_update_engine_project(engine_path):
+def create_update_engine_project(build_dir_name, engine_path):
     print('Updating engine project at', engine_path)
 
     if not os.path.exists(engine_path):
         raise Exception('Path', engine_path, 'does not exists. Cannot update engine project there!')
 
     dist_dir = 'Dist'
-    run_cmake(engine_path, 'Build', dist_dir)
+    run_cmake(engine_path, build_dir_name, dist_dir)
     # Patch project proj.user file to contain proper runtime info
     #if os.name == 'nt':
-    #    patch_usr_proj(engine_path, "UnitTests", dist_dir, True)
+    #    patch_usr_proj(build_dir_name, engine_path, "UnitTests", dist_dir, True)
 
 #################### SCRIPT START ####################
 if __name__ == "__main__":
@@ -283,8 +283,11 @@ if __name__ == "__main__":
 
     PARSER.add_argument("-e", "--engine", action='store', dest='enginePath',
                         default='..',
-                        metavar='engine_path',
                         help='provide custom engine path')
+
+    PARSER.add_argument("-b", "--build-dir-name", action='store', dest='buildDirName',
+                        default='Build',
+                        help='name of the build folder')
 
     MTX = PARSER.add_mutually_exclusive_group()
     MTX.add_argument('-c', '--create', action=CreateProjectAction, dest='action_to_perform',
@@ -302,8 +305,8 @@ if __name__ == "__main__":
     ARGS = PARSER.parse_args()
 
     if ARGS.action_to_perform == ActionType.CREATE:
-        create_project(ARGS.project_name, ARGS.project_path, ARGS.enginePath)
+        create_project(ARGS.buildDirName, ARGS.project_name, ARGS.project_path, ARGS.enginePath)
     elif ARGS.action_to_perform == ActionType.UPDATE:
-        update_project(ARGS.project_path, ARGS.enginePath)
+        update_project(ARGS.buildDirName, ARGS.project_path, ARGS.enginePath)
     elif ARGS.action_to_perform == ActionType.ENGINE_PROJ:
-        create_update_engine_project(ARGS.enginePath)
+        create_update_engine_project(ARGS.buildDirName, ARGS.enginePath)
