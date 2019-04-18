@@ -28,7 +28,7 @@ namespace Poly
 		public:
 			explicit ComponentIterator(std::unique_ptr<IEntityIteratorPolicy> iter) : Iter(std::move(iter))
 			{
-				UpdateIterator();
+				//UpdateIterator();
 			}
 
 			bool operator==(const  ComponentIterator& rhs) const { return GetIteratorPolicy()->Get() == rhs.GetIteratorPolicy()->Get(); } 

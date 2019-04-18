@@ -6,12 +6,24 @@
 
 using namespace Poly;
 
-SceneComponentIteratorPolicy::SceneComponentIteratorPolicy(Entity* entity, size_t primaryComponentID)
+
+SceneComponentIteratorPolicy::SceneComponentIteratorPolicy(Entity* entity, std::unique_ptr<IAllocatorIterator> begin, std::unique_ptr<IAllocatorIterator> end) 
+{
+    Iterator = std::move(begin);
+    End = std::move(end);
+    Match = entity;
+}
+
+SceneComponentIteratorPolicy SceneComponentIteratorPolicy::ConstructBegin(Entity* entity, size_t primaryComponentID)
 {
     auto componentAllocator = entity->GetEntityScene()->GetComponentAllocator(primaryComponentID);
-    Iterator = componentAllocator->GetAllocatorBegin();
-    End = componentAllocator->GetAllocatorEnd();
-    Match = entity;
+    return SceneComponentIteratorPolicy(entity, std::move(componentAllocator->GetAllocatorBegin()), std::move(componentAllocator->GetAllocatorEnd()));
+}
+
+SceneComponentIteratorPolicy SceneComponentIteratorPolicy::ConstructEnd(Entity* entity, size_t primaryComponentID)
+{
+    auto componentAllocator = entity->GetEntityScene()->GetComponentAllocator(primaryComponentID);
+    return SceneComponentIteratorPolicy(entity, std::move(componentAllocator->GetAllocatorEnd()), std::move(componentAllocator->GetAllocatorEnd()));
 }
 
 bool SceneComponentIteratorPolicy::operator==(const IEntityIteratorPolicy& rhs) const

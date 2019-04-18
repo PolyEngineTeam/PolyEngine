@@ -121,11 +121,11 @@ namespace Poly {
 			IteratorProxy(Scene* s) : S(s) {}
 			ComponentIterator<PrimaryComponent, SecondaryComponents...> Begin()
 			{
-				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorPolicy<PrimaryComponent, SecondaryComponents...>());
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorPolicy<PrimaryComponent, SecondaryComponents...>(false));
 			}
 			ComponentIterator<PrimaryComponent, SecondaryComponents...> End()
 			{
-				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorPolicy<PrimaryComponent, SecondaryComponents...>());
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorPolicy<PrimaryComponent, SecondaryComponents...>(true));
 			}
 			auto begin() { return Begin(); }
 			auto end() { return End(); }
@@ -152,10 +152,12 @@ namespace Poly {
 	protected:
 		
 		template<typename PrimaryComponent, typename... SecondaryComponents>
-		std::unique_ptr<SceneComponentIteratorPolicy> MakeSceneComponentIteratorPolicy() 
+		std::unique_ptr<SceneComponentIteratorPolicy> MakeSceneComponentIteratorPolicy(bool isEnd) 
 		{
 			size_t primary = GetWorldComponentID<PrimaryComponent>();
-			return std::make_unique<SceneComponentIteratorPolicy>(SceneComponentIteratorPolicy(GetRoot(), primary)); 
+			if(!isEnd)
+				return std::make_unique<SceneComponentIteratorPolicy>(SceneComponentIteratorPolicy::ConstructBegin(GetRoot(), primary)); 
+			return std::make_unique<SceneComponentIteratorPolicy>(SceneComponentIteratorPolicy::ConstructEnd(GetRoot(), primary)); 
 		}
 
 	private:
