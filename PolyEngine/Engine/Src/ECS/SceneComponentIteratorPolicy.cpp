@@ -6,45 +6,42 @@
 
 using namespace Poly;
 
-
-SceneComponentIteratorPolicy::SceneComponentIteratorPolicy(Entity* entity, std::unique_ptr<IAllocatorIterator> begin, std::unique_ptr<IAllocatorIterator> end) 
+SceneComponentIteratorPolicy::SceneComponentIteratorPolicy(std::unique_ptr<IAllocatorIterator> begin, std::unique_ptr<IAllocatorIterator> end) 
 {
     Iterator = std::move(begin);
     End = std::move(end);
-    Match = entity;
 }
 
 SceneComponentIteratorPolicy SceneComponentIteratorPolicy::ConstructBegin(Entity* entity, size_t primaryComponentID)
 {
     auto componentAllocator = entity->GetEntityScene()->GetComponentAllocator(primaryComponentID);
-    return SceneComponentIteratorPolicy(entity, std::move(componentAllocator->GetAllocatorBegin()), std::move(componentAllocator->GetAllocatorEnd()));
+    return SceneComponentIteratorPolicy(std::move(componentAllocator->GetAllocatorBegin()), std::move(componentAllocator->GetAllocatorEnd()));
 }
 
 SceneComponentIteratorPolicy SceneComponentIteratorPolicy::ConstructEnd(Entity* entity, size_t primaryComponentID)
 {
     auto componentAllocator = entity->GetEntityScene()->GetComponentAllocator(primaryComponentID);
-    return SceneComponentIteratorPolicy(entity, std::move(componentAllocator->GetAllocatorEnd()), std::move(componentAllocator->GetAllocatorEnd()));
+    return SceneComponentIteratorPolicy(std::move(componentAllocator->GetAllocatorEnd()), std::move(componentAllocator->GetAllocatorEnd()));
 }
 
 bool SceneComponentIteratorPolicy::operator==(const IEntityIteratorPolicy& rhs) const
 {
-    return Match == rhs.Get();
+    return Get() == rhs.Get();
 }
 
 bool SceneComponentIteratorPolicy::operator!=(const IEntityIteratorPolicy& rhs) const
 {
-    return !(Match == rhs.Get()); // can move to interface after it works
+    return !(*this == rhs); // can move to interface after it works
 }
 
-Entity* SceneComponentIteratorPolicy::Get() const
+ComponentBase* SceneComponentIteratorPolicy::Get() const
 {
-    return Match;
+    return reinterpret_cast<ComponentBase*>(Iterator->data());
 }
 
 void SceneComponentIteratorPolicy::Increment()
 {
     Iterator->increment();
-    Match = reinterpret_cast<ComponentBase*>(Iterator->data())->GetOwner();
 }
 
 bool SceneComponentIteratorPolicy::IsValid() const 
