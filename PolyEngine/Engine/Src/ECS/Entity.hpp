@@ -98,7 +98,7 @@ namespace Poly
 		template<class T>
 		const T* GetComponent() const; //defined in ECS/Scene.hpp due to circular inclusion problem; FIXME: circular inclusion
 
-		/// We need these two in editor ehere we have to iterate through all components.
+		/// We need these two in editor where we have to iterate through all components.
 		ComponentBase* GetComponent(size_t ctypeID) { return Components[ctypeID].get(); }
 		const ComponentBase* GetComponent(size_t ctypeID) const { return Components[ctypeID].get(); }
 

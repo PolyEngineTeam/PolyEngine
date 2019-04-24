@@ -3,8 +3,11 @@
 #include <Defines.hpp>
 #include <ECS/Entity.hpp>
 #include <ECS/ComponentBase.hpp>
+#include <ECS/ComponentIterator.hpp>
+#include <ECS/SceneComponentIteratorPolicy.hpp>
 #include <Audio/SoundWorldComponent.hpp>
 #include <Engine.hpp>
+
 
 namespace Poly {
 
@@ -31,6 +34,8 @@ namespace Poly {
 			RTTI_PROPERTY_FACTORY_AUTONAME(RootEntity, &Entity::AllocateEntity, RTTI::ePropertyFlag::NONE);
 		}
 	public:
+		using EntityUniquePtr = std::unique_ptr<Entity, EntityDeleter>;
+
 		/// <summary>Allocates memory for entities, world components and components allocators.</summary>
 		Scene();
 
@@ -104,8 +109,28 @@ namespace Poly {
 			return ComponentsIDGroup::GetComponentTypeID<T>();
 		}
 
+		template<typename... T> static Dynarray<size_t> GetWorldComponentIDs() noexcept
+		{
+			return Dynarray<size_t>(std::initializer_list<size_t>{ GetWorldComponentID<T>()... } );
+		}
+
+		/// Iterator proxy
 		template<typename PrimaryComponent, typename... SecondaryComponents>
-		struct IteratorProxy;
+		struct IteratorProxy : BaseObject<>
+		{
+			IteratorProxy(Scene* s) : S(s) {}
+			ComponentIterator<PrimaryComponent, SecondaryComponents...> Begin()
+			{
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorPolicy<PrimaryComponent, SecondaryComponents...>(false));
+			}
+			ComponentIterator<PrimaryComponent, SecondaryComponents...> End()
+			{
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorPolicy<PrimaryComponent, SecondaryComponents...>(true));
+			}
+			auto begin() { return Begin(); }
+			auto end() { return End(); }
+			Scene* const S;
+		};
 
 		/// <summary>Allows iteration over multiple component types.
 		/// Iterator dereferences to a tuple of component pointers.</summary>
@@ -123,78 +148,17 @@ namespace Poly {
 			return {this};
 		}
 
-		/// Component iterator.
+	
+	protected:
+		
 		template<typename PrimaryComponent, typename... SecondaryComponents>
-		class ComponentIterator : public BaseObject<>,
-		                          public std::iterator<std::forward_iterator_tag, std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...>>
+		std::unique_ptr<SceneComponentIteratorPolicy> MakeSceneComponentIteratorPolicy(bool isEnd) 
 		{
-			public:
-			bool operator==(const ComponentIterator& rhs) const { return primary_iter == rhs.primary_iter; }
-			bool operator!=(const ComponentIterator& rhs) const { return !(*this == rhs); }
-
-			std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...> operator*() const
-			{
-				PrimaryComponent* primary = &*primary_iter;
-				return std::make_tuple(primary, primary->template GetSibling<SecondaryComponents>()...);
-			}
-			std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...> operator->() const
-			{
-				return **this;
-			}
-
-			ComponentIterator& operator++() { Increment(); return *this; }
-			ComponentIterator operator++(int) { ComponentIterator ret(primary_iter); Increment(); return ret; }
-
-		private:
-			//------------------------------------------------------------------------------
-			template<int zero = 0>
-			bool HasComponents(const Entity* entity) const { return true; }
-
-			//------------------------------------------------------------------------------
-			template<typename Component, typename... Rest>
-			bool HasComponents(const Entity* entity) const
-			{
-				return entity->template HasComponent<Component>() && HasComponents<Rest...>(entity);
-			}
-
-			//------------------------------------------------------------------------------
-			void Increment()
-			{
-				do { ++primary_iter; } 
-				while (primary_iter != End && !HasComponents<SecondaryComponents...>(primary_iter->GetOwner()));
-			}
-
-			explicit ComponentIterator(typename IterablePoolAllocator<PrimaryComponent>::Iterator parent, Scene* const w) : primary_iter(parent), 
-				Begin(w->GetComponentAllocator<PrimaryComponent>()->Begin()),
-				End(w->GetComponentAllocator<PrimaryComponent>()->End())
-			{
-				if (primary_iter != End && !HasComponents<SecondaryComponents...>(primary_iter->GetOwner()))
-					Increment();
-			}
-			friend struct IteratorProxy<PrimaryComponent, SecondaryComponents...>;
-
-			typename IterablePoolAllocator<PrimaryComponent>::Iterator primary_iter;
-			typename IterablePoolAllocator<PrimaryComponent>::Iterator Begin;
-			typename IterablePoolAllocator<PrimaryComponent>::Iterator End;
-		};
-
-		/// Iterator proxy
-		template<typename PrimaryComponent, typename... SecondaryComponents>
-		struct IteratorProxy : BaseObject<>
-		{
-			IteratorProxy(Scene* w) : W(w) {}
-			Scene::ComponentIterator<PrimaryComponent, SecondaryComponents...> Begin()
-			{
-				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(W->GetComponentAllocator<PrimaryComponent>()->Begin(), W);
-			}
-			Scene::ComponentIterator<PrimaryComponent, SecondaryComponents...> End()
-			{
-				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(W->GetComponentAllocator<PrimaryComponent>()->End(), W);
-			}
-			auto begin() { return Begin(); }
-			auto end() { return End(); }
-			Scene* const W;
-		};
+			size_t primary = GetWorldComponentID<PrimaryComponent>();
+			if(!isEnd)
+				return std::make_unique<SceneComponentIteratorPolicy>(SceneComponentIteratorPolicy::ConstructBegin(GetRoot(), primary)); 
+			return std::make_unique<SceneComponentIteratorPolicy>(SceneComponentIteratorPolicy::ConstructEnd(GetRoot(), primary)); 
+		}
 
 	private:
 		friend class SpawnEntityDeferredTask;
