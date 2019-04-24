@@ -34,3 +34,6 @@
 [submodule "PolyEngine/ThirdParty/openal-soft"]
 	path = PolyEngine/ThirdParty/openal-soft
 	url = https://github.com/kcat/openal-soft
+[submodule "PolyEngine/ThirdParty/assimp"]
+	path = PolyEngine/ThirdParty/assimp
+	url = https://github.com/assimp/assimp
