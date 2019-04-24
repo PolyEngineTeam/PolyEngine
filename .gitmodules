@@ -1,6 +1,3 @@
-[submodule "PolyEngine/ThirdParty/assimp"]
-	path = PolyEngine/ThirdParty/assimp
-	url = https://github.com/assimp/assimp
 [submodule "PolyEngine/ThirdParty/Box2D"]
 	path = PolyEngine/ThirdParty/Box2D
 	url = https://github.com/erincatto/Box2D
