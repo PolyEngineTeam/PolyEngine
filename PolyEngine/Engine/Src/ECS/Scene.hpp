@@ -4,7 +4,7 @@
 #include <ECS/Entity.hpp>
 #include <ECS/ComponentBase.hpp>
 #include <ECS/ComponentIterator.hpp>
-#include <ECS/SceneComponentIteratorPolicy.hpp>
+#include <ECS/SceneComponentIteratorImpl.hpp>
 #include <Audio/SoundWorldComponent.hpp>
 #include <Engine.hpp>
 
@@ -121,11 +121,11 @@ namespace Poly {
 			IteratorProxy(Scene* s) : S(s) {}
 			ComponentIterator<PrimaryComponent, SecondaryComponents...> Begin()
 			{
-				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorPolicy<PrimaryComponent, SecondaryComponents...>(false));
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorImpl<PrimaryComponent, SecondaryComponents...>(S, false));
 			}
 			ComponentIterator<PrimaryComponent, SecondaryComponents...> End()
 			{
-				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorPolicy<PrimaryComponent, SecondaryComponents...>(true));
+				return ComponentIterator<PrimaryComponent, SecondaryComponents...>(S->MakeSceneComponentIteratorImpl<PrimaryComponent, SecondaryComponents...>(S, true));
 			}
 			auto begin() { return Begin(); }
 			auto end() { return End(); }
@@ -152,12 +152,12 @@ namespace Poly {
 	protected:
 		
 		template<typename PrimaryComponent, typename... SecondaryComponents>
-		std::unique_ptr<SceneComponentIteratorPolicy> MakeSceneComponentIteratorPolicy(bool isEnd) 
+		std::unique_ptr<SceneComponentIteratorImpl> MakeSceneComponentIteratorImpl(Scene* scene, bool isEnd) 
 		{
 			size_t primary = GetWorldComponentID<PrimaryComponent>();
 			if(!isEnd)
-				return std::make_unique<SceneComponentIteratorPolicy>(SceneComponentIteratorPolicy::ConstructBegin(GetRoot(), primary)); 
-			return std::make_unique<SceneComponentIteratorPolicy>(SceneComponentIteratorPolicy::ConstructEnd(GetRoot(), primary)); 
+				return std::make_unique<SceneComponentIteratorImpl>(SceneComponentIteratorImpl::ConstructBegin(scene, primary)); 
+			return std::make_unique<SceneComponentIteratorImpl>(SceneComponentIteratorImpl::ConstructEnd(scene, primary)); 
 		}
 
 	private:
