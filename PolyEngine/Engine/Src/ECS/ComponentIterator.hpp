@@ -8,11 +8,11 @@ namespace Poly
 	template<typename PrimaryComponent, typename... SecondaryComponents>
 	struct IteratorProxy;
 
-	class IEntityIteratorPolicy : public BaseObject<>
+	class ENGINE_DLLEXPORT IComponentIteratorImpl : public BaseObject<>
 	{
 		public:
-			virtual bool operator==(const IEntityIteratorPolicy&) const = 0;
-			virtual bool operator!=(const IEntityIteratorPolicy&) const = 0;
+			virtual bool operator==(const IComponentIteratorImpl&) const = 0;
+			virtual bool operator!=(const IComponentIteratorImpl&) const = 0;
 			virtual ComponentBase* Get() const = 0;
 			virtual void Increment() = 0;
 			virtual bool IsValid() const = 0;
@@ -23,17 +23,17 @@ namespace Poly
 							public std::iterator<std::forward_iterator_tag, std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...>>	
 	{
 		public:
-			explicit ComponentIterator(std::unique_ptr<IEntityIteratorPolicy> iter) : Iter(std::move(iter))
+			explicit ComponentIterator(std::unique_ptr<IComponentIteratorImpl> iter) : Iter(std::move(iter))
 			{
 				UpdateIterator();
 			}
 
-			bool operator==(const ComponentIterator& rhs) const { return *GetIteratorPolicy() == *rhs.GetIteratorPolicy(); } 
+			bool operator==(const ComponentIterator& rhs) const { return *GetIteratorImpl() == *rhs.GetIteratorImpl(); } 
 			bool operator!=(const ComponentIterator& rhs) const { return !(*this == rhs); }
 
 			const std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type... > operator*() const 
 			{
-				ComponentBase* base = GetIteratorPolicy()->Get();
+				ComponentBase* base = GetIteratorImpl()->Get();
 				PrimaryComponent* primary = base->GetSibling<PrimaryComponent>();
 				return std::make_tuple(primary, primary->template GetSibling<SecondaryComponents>()...);
 			}
@@ -46,7 +46,7 @@ namespace Poly
 			ComponentIterator operator++(int) { ComponentIterator ret(Iter); Increment(); return ret; } 
 
 		protected:
-			IEntityIteratorPolicy* GetIteratorPolicy() const
+			IComponentIteratorImpl* GetIteratorImpl() const
 			{
 				return Iter.get();
 			}
@@ -54,21 +54,21 @@ namespace Poly
 		private:
 			void Increment()
 			{
-				ComponentBase* base = GetIteratorPolicy()->Get();
+				ComponentBase* base = GetIteratorImpl()->Get();
 				PrimaryComponent* primary = base->GetSibling<PrimaryComponent>();
 				ASSERTE(primary, "Primary component is nullptr!");
 
-				GetIteratorPolicy()->Increment();
+				GetIteratorImpl()->Increment();
 				UpdateIterator();
 			}
 			
 			void UpdateIterator()
 			{
-				ComponentBase* component = GetIteratorPolicy()->Get();
-				while( GetIteratorPolicy()->IsValid() && !HasSiblings<PrimaryComponent, SecondaryComponents...>(component))
+				ComponentBase* component = GetIteratorImpl()->Get();
+				while( GetIteratorImpl()->IsValid() && !HasSiblings<PrimaryComponent, SecondaryComponents...>(component))
 				{
-					GetIteratorPolicy()->Increment();
-					component = GetIteratorPolicy()->Get();
+					GetIteratorImpl()->Increment();
+					component = GetIteratorImpl()->Get();
 				}
 			}
 
@@ -83,6 +83,6 @@ namespace Poly
 
 			friend struct IteratorProxy<PrimaryComponent, SecondaryComponents...>;
 
-			std::unique_ptr<IEntityIteratorPolicy> Iter;
+			std::unique_ptr<IComponentIteratorImpl> Iter;
 	};
 }
