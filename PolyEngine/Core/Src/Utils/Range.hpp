@@ -34,8 +34,8 @@ namespace Poly {
         const Iterator_t EndIt;
 	};
 
-    template <typename IT> typename const Poly::Range<IT>::Iterator_t& begin(const Poly::Range<IT>& rhs) noexcept { return rhs.Begin(); }
-	template <typename IT> typename const Poly::Range<IT>::Iterator_t& end(const Poly::Range<IT>& rhs) noexcept { return rhs.End(); }
+    template <typename IT> const typename Poly::Range<IT>::Iterator_t& begin(const Poly::Range<IT>& rhs) noexcept { return rhs.Begin(); }
+	template <typename IT> const typename Poly::Range<IT>::Iterator_t& end(const Poly::Range<IT>& rhs) noexcept { return rhs.End(); }
 
 	/// @brief Create range from iterable object.
 	/// @param[in] iterable Reference to the iterable object
