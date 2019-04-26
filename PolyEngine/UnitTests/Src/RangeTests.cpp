@@ -6,6 +6,60 @@
 
 using namespace Poly;
 
+template<typename T>
+void ValidateVectorRangeHelper(const Range<T>& range, int expectedValueAtEnd)
+{
+	int counter = 0;
+	for (int val : range)
+	{
+		++counter;
+		CHECK(val == counter);
+	}
+	CHECK(counter == expectedValueAtEnd);
+}
+
+template<typename T>
+void ValidateVectorRangeReversedHelper(const Range<T>& range, int startValue)
+{
+	int counter = startValue;
+	for (int val : range)
+	{
+		CHECK(val == counter);
+		--counter;
+	}
+	CHECK(counter == 0);
+}
+
+template<typename T>
+void ValidateMapRangeHelper(const Range<T>& range, int expectedValueAtEnd)
+{
+	int counter = 0;
+	char keyCounter = 'a';
+	for (auto val : range)
+	{
+		++counter;
+		CHECK(val.second == counter);
+		CHECK(val.first == keyCounter);
+		++keyCounter;
+	}
+	CHECK(counter == expectedValueAtEnd);
+}
+
+template<typename T>
+void ValidateMapRangeReversedHelper(const Range<T>& range, int startVal, char startKey)
+{
+	int counter = startVal;
+	char keyCounter = startKey;
+	for (auto val : range)
+	{
+		CHECK(val.second == counter);
+		CHECK(val.first == keyCounter);
+		--keyCounter;
+		--counter;
+	}
+	CHECK(counter == 0);
+}
+
 TEST_CASE("Iterator pair constructors", "Range")
 {
     std::vector<int> testVec = {1, 2, 3, 4};
@@ -16,126 +70,42 @@ TEST_CASE("Iterator pair constructors", "Range")
     SECTION("Mutable vector iterator pair constructor")
     {
 	    auto range = Range(testVec.begin(), testVec.end());
-      
-        int counter = 0;
-        for(auto val : range)
-        {
-            ++counter;
-            CHECK(val == counter);
-        }
-        CHECK(counter == 4);
+		ValidateVectorRangeHelper(range, 4);
 	}
 
     SECTION("Const vector iterator pair constructor")
     {
 	    auto range = Range(constTestVec.begin(), constTestVec.end());
-      
-        int counter = 0;
-        for(auto val : range)
-        {
-            ++counter;
-            CHECK(val == counter);
-        }
-        CHECK(counter == 4);
+		ValidateVectorRangeHelper(range, 4);
 	}
 
     SECTION("Mutable map iterator pair constructor")
     {
 		auto range = Range(testMap.begin(), testMap.end());
-      
-        int counter = 0;
-        char keyCounter = 'a';
-        for(auto val : range)
-        {
-            ++counter;
-            CHECK(val.second == counter);
-            CHECK(val.first == keyCounter);
-            ++keyCounter;
-        }
-        CHECK(counter == 3);
+		ValidateMapRangeHelper(range, 3);
 	}
 
     SECTION("Const map iterator pair constructor")
     {
 		auto range = Range(constTestMap.begin(), constTestMap.end());
-      
-        int counter = 0;
-        char keyCounter = 'a';
-        for(auto val : range)
-        {
-            ++counter;
-            CHECK(val.second == counter);
-            CHECK(val.first == keyCounter);
-            ++keyCounter;
-        }
-        CHECK(counter == 3);
+		ValidateMapRangeHelper(range, 3);
 	}
 }
 
-TEST_CASE("Collection constructors", "Range")
+TEST_CASE("Range comparison operators", "Range")
 {
-    std::vector<int> testVec = {1, 2, 3, 4};
-    std::map<char, int> testMap = { {'a', 1}, {'b', 2}, {'c', 3} };
-    const std::vector<int>& constTestVec = testVec;
-    const std::map<char, int>& constTestMap = testMap;
+	std::vector<int> testVec = { 1, 2, 3, 4 };
 
-	SECTION("Mutable vector collection constructor")
-    {
-		auto range = Range<std::vector<int>::iterator>(testVec);
-      
-        int counter = 0;
-        for(auto val : range)
-        {
-            ++counter;
-            CHECK(val == counter);
-        }
-        CHECK(counter == 4);
-	}
-
-    SECTION("Const vector collection constructor")
-    {
-		auto range = Range<std::vector<int>::const_iterator>(constTestVec);
-      
-        int counter = 0;
-        for(auto val : range)
-        {
-            ++counter;
-            CHECK(val == counter);
-        }
-        CHECK(counter == 4);
-	}
-
-    SECTION("Mutable map collection constructor")
-    {
-		auto range = Range<std::map<char, int>::iterator>(testMap);
-      
-        int counter = 0;
-        char keyCounter = 'a';
-        for(auto val : range)
-        {
-            ++counter;
-            CHECK(val.second == counter);
-            CHECK(val.first == keyCounter);
-            ++keyCounter;
-        }
-        CHECK(counter == 3);
-	}
-
-    SECTION("Const map collection constructor")
-    {
-		auto range = Range<std::map<char, int>::const_iterator>(constTestMap);
-      
-        int counter = 0;
-        char keyCounter = 'a';
-        for(auto val : range)
-        {
-            ++counter;
-            CHECK(val.second == counter);
-            CHECK(val.first == keyCounter);
-            ++keyCounter;
-        }
-        CHECK(counter == 3);
-	}
+	auto range1 = Range(testVec.begin(), testVec.end());
+	auto range2 = Range(testVec.begin() + 1, testVec.end());
+	
+	CHECK(range1 == range1);
+	CHECK(range2 == range2);
+	
+	CHECK_FALSE(range1 != range1);
+	CHECK_FALSE(range2 != range2);
+	
+	CHECK(range1 != range2);
 }
 
 TEST_CASE("MakeRange", "Range")
@@ -148,58 +118,72 @@ TEST_CASE("MakeRange", "Range")
 	SECTION("Mutable vector MakeRange")
     {
 		auto range = MakeRange(testVec);
-      
-        int counter = 0;
-        for(auto val : range)
-        {
-            ++counter;
-            CHECK(val == counter);
-        }
-        CHECK(counter == 4);
+		ValidateVectorRangeHelper(range, 4);
     }
 
     SECTION("Const vector MakeRange")
     {
 		auto range = MakeRange(constTestVec);
-      
-        int counter = 0;
-        for(auto val : range)
-        {
-            ++counter;
-            CHECK(val == counter);
-        }
-        CHECK(counter == 4);
+		ValidateVectorRangeHelper(range, 4);
+	}
+
+	SECTION("Const vector MakeRangeConst")
+	{
+		auto range = MakeRangeConst(constTestVec);
+		ValidateVectorRangeHelper(range, 4);
+	}
+
+	SECTION("Mutable vector MakeRangeReversed")
+	{
+		auto range = MakeRangeReversed(testVec);
+		ValidateVectorRangeReversedHelper(range, 4);
+	}
+
+	SECTION("Const vector MakeRangeReversed")
+	{
+		auto range = MakeRangeReversed(constTestVec);
+		ValidateVectorRangeReversedHelper(range, 4);
+	}
+
+	SECTION("Const vector MakeRangeReversedConst")
+	{
+		auto range = MakeRangeReversedConst(constTestVec);
+		ValidateVectorRangeReversedHelper(range, 4);
 	}
 
     SECTION("Mutable map MakeRange")
     {
 		auto range = MakeRange(testMap);
-      
-        int counter = 0;
-        char keyCounter = 'a';
-        for(auto val : range)
-        {
-            ++counter;
-            CHECK(val.second == counter);
-            CHECK(val.first == keyCounter);
-            ++keyCounter;
-        }
-        CHECK(counter == 3);
+		ValidateMapRangeHelper(range, 3);
 	}
 
     SECTION("Const map MakeRange")
     {
 		auto range = MakeRange(constTestMap);
-      
-        int counter = 0;
-        char keyCounter = 'a';
-        for(auto val : range)
-        {
-            ++counter;
-            CHECK(val.second == counter);
-            CHECK(val.first == keyCounter);
-            ++keyCounter;
-        }
-        CHECK(counter == 3);
+		ValidateMapRangeHelper(range, 3);
+	}
+
+	SECTION("Const map MakeRangeConst")
+	{
+		auto range = MakeRangeConst(constTestMap);
+		ValidateMapRangeHelper(range, 3);
+	}
+
+	SECTION("Mutable map MakeRangeReversed")
+	{
+		auto range = MakeRangeReversed(testMap);
+		ValidateMapRangeReversedHelper(range, 3, 'c');
+	}
+
+	SECTION("Const map MakeRangeReversed")
+	{
+		auto range = MakeRangeReversed(constTestMap);
+		ValidateMapRangeReversedHelper(range, 3, 'c');
+	}
+
+	SECTION("Const map MakeRangeReversedConst")
+	{
+		auto range = MakeRangeReversedConst(constTestMap);
+		ValidateMapRangeReversedHelper(range, 3, 'c');
 	}
 }
