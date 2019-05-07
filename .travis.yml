@@ -63,8 +63,8 @@ before_script:
       source /opt/qt510/bin/qt510-env.sh
     fi
   - cd PolyEngine/Scripts
-  - python3 ./InitializeSubmodules.py
-  - python3 ./ProjectTool.py -p
+  - python3 ./poly_tools.py initialize_submodules
+  - python3 ./poly_tools.py project_tool -p
   - cd ../Build
 
 # TODO move to using ProjectTool.py

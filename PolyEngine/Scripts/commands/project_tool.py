@@ -1,11 +1,20 @@
 import argparse
 import os
+import sys
 import shutil
 import fileinput
 import json
 import re
 from enum import Enum
 import xml.etree.ElementTree as ET
+
+try:
+    from .common import script_env
+except:
+    try:
+        import common
+    except:
+        raise ImportError("Cannot import common lib!")
 
 class ActionType(Enum):
     CREATE = 'Create',
@@ -180,7 +189,7 @@ def update_config_files(path, name, engine_path, is_new_config, dist_dir):
     project_path = os.sep.join([path, name])
     project_sources_path = os.sep.join([project_path, 'Src'])
 
-    scripts_data_path = os.sep.join([engine_path, 'Scripts'])
+    scripts_data_path = os.sep.join([engine_path, 'Scripts', 'resources', 'project-init'])
     game_hpp_output_path = os.sep.join([project_sources_path, 'Game.hpp'])
     game_cpp_output_path = os.sep.join([project_sources_path, 'Game.cpp'])
     cmake_sln_output_path = os.sep.join([path, 'CMakeLists.txt'])
@@ -278,11 +287,11 @@ def create_update_engine_project(build_dir_name, engine_path):
     #    patch_usr_proj(build_dir_name, engine_path, "UnitTests", dist_dir, True)
 
 #################### SCRIPT START ####################
-if __name__ == "__main__":
+def execute(script_env, *args):
     PARSER = argparse.ArgumentParser(description='PolyEngine project management tool')
 
     PARSER.add_argument("-e", "--engine", action='store', dest='enginePath',
-                        default='..',
+                        default=script_env.engine_path,
                         help='provide custom engine path')
 
     PARSER.add_argument("-b", "--build-dir-name", action='store', dest='buildDirName',
@@ -301,8 +310,7 @@ if __name__ == "__main__":
                         nargs=0,
                         help='create and/or update engine project')
 
-
-    ARGS = PARSER.parse_args()
+    ARGS = PARSER.parse_args([*args])
 
     if ARGS.action_to_perform == ActionType.CREATE:
         create_project(ARGS.buildDirName, ARGS.project_name, ARGS.project_path, ARGS.enginePath)
@@ -310,3 +318,9 @@ if __name__ == "__main__":
         update_project(ARGS.buildDirName, ARGS.project_path, ARGS.enginePath)
     elif ARGS.action_to_perform == ActionType.ENGINE_PROJ:
         create_update_engine_project(ARGS.buildDirName, ARGS.enginePath)
+
+if __name__ == '__main__':
+    this_script_location = os.path.dirname(os.path.realpath(__file__))
+    scripts_path = os.path.abspath(os.path.join(this_script_location, os.pardir))
+    script_env = common.ScriptEnv(scripts_path)
+    execute(script_env, *sys.argv[1:])

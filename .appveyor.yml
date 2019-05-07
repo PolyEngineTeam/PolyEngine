@@ -40,8 +40,8 @@ before_build:
     cd C:\projects\PolyEngine\PolyEngine\Scripts
     cmake --version
 - "%PYTHON%\\python.exe --version"
-- "%PYTHON%\\python.exe .\\InitializeSubmodules.py"
-- "%PYTHON%\\python.exe .\\ProjectTool.py -p"
+- "%PYTHON%\\python.exe .\\poly_tools.py initialize_submodules"
+- "%PYTHON%\\python.exe .\\poly_tools.py project_tool -p"
 
 build:
   project: C:\projects\PolyEngine\PolyEngine\build\PolyEngine.sln
