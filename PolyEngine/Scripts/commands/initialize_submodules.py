@@ -20,14 +20,14 @@ def initialize_submodules(script_env):
     repo = git.Repo(script_env.repo_path)
     repo_submodules = repo.submodules
 
-    patches_folder = os.sep.join([script_env.repo_path, 'PolyEngine', 'ThirdParty', 'patches'])
+    patches_folder = os.path.join(script_env.repo_path, 'PolyEngine', 'ThirdParty', 'patches')
 
     for submodule in repo_submodules:
         sub_name = os.path.basename(os.path.normpath(submodule.path))
         logger.info('Initializing submodule [{}] in path: {}'.format(sub_name, submodule.path))
         submodule.update(init=True, force=True)
         
-        patch_name = os.sep.join([patches_folder, '{}.patch'.format(sub_name)])
+        patch_name = os.path.join(patches_folder, '{}.patch'.format(sub_name))
 
         # Apply patch if needed
         if os.path.isfile(patch_name):
@@ -44,4 +44,4 @@ if __name__ == '__main__':
     this_script_location = os.path.dirname(os.path.realpath(__file__))
     scripts_path = os.path.abspath(os.path.join(this_script_location, os.pardir))
     script_env = common.ScriptEnv(scripts_path)
-    execute(script_env, sys.argv[1:])
+    execute(script_env, *sys.argv[1:])

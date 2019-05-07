@@ -2,14 +2,19 @@ import argparse
 import os
 import subprocess
 import time
-
+import sys
 import docker
+
+try:
+    from .common import script_env
+except:
+    try:
+        import common
+    except:
+        raise ImportError("Cannot import common lib!")
 
 SUPPORTED_OS = ['ubuntu18']
 SUPPORTED_COMPILER = ['gcc8', 'clang5']
-SCRIPT_LOCATION = os.path.dirname(__file__)
-REPO_PATH = os.path.abspath(os.sep.join([SCRIPT_LOCATION, '..', '..']))
-DOCKER_FILES_ROOT = os.path.abspath(os.sep.join([SCRIPT_LOCATION, 'Docker']))
 
 def get_image(image_name):
     client = docker.from_env()
@@ -19,32 +24,35 @@ def get_image(image_name):
             return img
     return None
 
-def run_image(system, compiler, repo_root):
+def run_image(script_env, system, compiler):
+    docker_files_path = os.path.join(script_env.script_resources_path, 'dockerfiles')
+
     base_image_name = '{}-base'.format(system)
     image_name = '{}-{}'.format(system, compiler)
-    base_dockerfile_path = os.sep.join([DOCKER_FILES_ROOT, base_image_name + '.dockerfile'])
-    dockerfile_path = os.sep.join([DOCKER_FILES_ROOT, image_name + '.dockerfile'])
+    base_dockerfile_path = os.path.join(docker_files_path, base_image_name + '.dockerfile')
+    dockerfile_path = os.path.join(docker_files_path, image_name + '.dockerfile')
 
     client = docker.from_env()
 
     if not os.path.isfile(base_dockerfile_path):
         raise FileNotFoundError('Dockerfile {}.dockerfile not found.'.format(base_image_name))
     print('Building base image: {}:latest. This may take a while...'.format(base_image_name))
-    client.images.build(path=DOCKER_FILES_ROOT, dockerfile=base_dockerfile_path, tag=base_image_name, rm=True)[0]
+    client.images.build(path=docker_files_path, dockerfile=base_dockerfile_path, tag=base_image_name, rm=True)[0]
     
     if not os.path.isfile(dockerfile_path):
         raise FileNotFoundError('Dockerfile {}.dockerfile not found.'.format(image_name))
     print('Building image: {}:latest.'.format(image_name))
-    img = client.images.build(path=DOCKER_FILES_ROOT, dockerfile=dockerfile_path, tag=image_name, rm=True)[0]
+    img = client.images.build(path=docker_files_path, dockerfile=dockerfile_path, tag=image_name, rm=True)[0]
 
     time.sleep(2) # Docker somtimes fails when run is called right after build. Just wait for 2s.
 
     print('Starting docker image {}:latest ...'.format(image_name))
     #client.containers.run(image_name, command='/bin/bash', tty=True, stdin_open=True, auto_remove=True, remove=True, detach=False)
-    subprocess.run("docker container run -it --rm -w /root/workspace -v {}:/root/workspace {}".format(REPO_PATH, image_name + ':latest'), shell=True, check=True)
+    subprocess.run("docker container run -it --rm -w /root/workspace -v {}:/root/workspace {}".format(script_env.repo_path, image_name + ':latest'), shell=True, check=True)
 
-if __name__ == "__main__":
 
+def execute(script_env, *args):
+    print('Using execute!')
     parser = argparse.ArgumentParser(description='PolyEngine project management tool')
     parser.add_argument("--os", action='store',
                         default=SUPPORTED_OS[0],
@@ -54,8 +62,16 @@ if __name__ == "__main__":
                         default=SUPPORTED_COMPILER[0],
                         choices=SUPPORTED_COMPILER,
                         help='Compiler')
-    args = parser.parse_args()
+    args = parser.parse_args([*args])
 
-    run_image(args.os, args.compiler, REPO_PATH)
+    run_image(script_env, args.os, args.compiler)
+
+if __name__ == '__main__':
+    this_script_location = os.path.dirname(os.path.realpath(__file__))
+    scripts_path = os.path.abspath(os.path.join(this_script_location, os.pardir))
+    script_env = common.ScriptEnv(scripts_path)
+    execute(script_env, *sys.argv[1:])
+
+    
 
     
