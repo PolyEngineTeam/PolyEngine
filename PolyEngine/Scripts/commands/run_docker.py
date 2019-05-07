@@ -6,7 +6,7 @@ import sys
 import docker
 
 try:
-    from .common import script_env
+    import commands.common as common
 except:
     try:
         import common
@@ -67,10 +67,7 @@ def execute(script_env, *args):
     run_image(script_env, args.os, args.compiler)
 
 if __name__ == '__main__':
-    this_script_location = os.path.dirname(os.path.realpath(__file__))
-    scripts_path = os.path.abspath(os.path.join(this_script_location, os.pardir))
-    script_env = common.ScriptEnv(scripts_path)
-    execute(script_env, *sys.argv[1:])
+    execute(common.SCRIPT_ENV, *sys.argv[1:])
 
     
 

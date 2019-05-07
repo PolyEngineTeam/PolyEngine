@@ -23,12 +23,8 @@ BRIEF_TAG = '@brief'
 MISSING_DOCSTRING_MSG = '[missing module docstring]'
 MISSING_BRIEF_MSG = '[missing "{}" tag in module docstring]'.format(BRIEF_TAG)
 
-# Automatic constants
-SCRIPT_ENV = common.ScriptEnv(os.path.dirname(os.path.realpath(__file__)))
-
 # Global variables
-logging.basicConfig(format=common.LOGGER_FORMAT)
-logger = SCRIPT_ENV.get_logger(name='poly_tools')
+logger = common.SCRIPT_ENV.get_logger(name='poly_tools')
 
 ### SCRIPT START ###
 if __name__ != '__main__':
@@ -39,14 +35,14 @@ if len(sys.argv) <= 1:
     logger.error('No arguments provided. To display help use -h or --help.')
     sys.exit(1)
 
-logger.info('Script Environment:\n{}'.format(SCRIPT_ENV))
+logger.info('Script Environment:\n{}'.format(common.SCRIPT_ENV))
 
 # Gather commands
 available_commands = []
 CommandTuple = namedtuple('Command', 'name description')
 max_command_length = 0
 
-for file in glob.glob(os.path.join(SCRIPT_ENV.script_commands_path, '*.py'), recursive=False):
+for file in glob.glob(os.path.join(common.SCRIPT_ENV.script_commands_path, '*.py'), recursive=False):
     command_name = os.path.splitext(os.path.basename(file))[0]
     command_descripton = MISSING_DOCSTRING_MSG
     max_command_length = max(max_command_length, len(command_name))
@@ -77,8 +73,8 @@ parsed_args = parser.parse_args()
 
 if parsed_args.command_name == RUN_TESTS_CMD:
     # Run all tests
-    test_files = glob.glob(os.path.join(SCRIPT_ENV.script_tests_path, '**', TEST_SCRIPT_NAME_PATTERN), recursive=True)
-    test_module_names = [test_file[len(SCRIPT_ENV.scripts_path)+1:len(test_file)-3].replace(os.sep, '.') for test_file in test_files]
+    test_files = glob.glob(os.path.join(common.SCRIPT_ENV.script_tests_path, '**', TEST_SCRIPT_NAME_PATTERN), recursive=True)
+    test_module_names = [test_file[len(common.SCRIPT_ENV.scripts_path)+1:len(test_file)-3].replace(os.sep, '.') for test_file in test_files]
     suites = [ unittest.defaultTestLoader.loadTestsFromName(name) for name in test_module_names]
     
     logger.info('Running all tests:')
@@ -90,14 +86,6 @@ else:
     imported_module = importlib.import_module('commands.' + parsed_args.command_name)
     if hasattr(imported_module, 'execute'):
         logger.info('Executing {} with args {}'.format(parsed_args.command_name, parsed_args.command_args))
-        imported_module.execute(SCRIPT_ENV, *parsed_args.command_args)
+        imported_module.execute(common.SCRIPT_ENV, *parsed_args.command_args)
     else:
-        logger.warning('Command does not provide "execute(..)" function, will be called as regular script!')
-        logger.info('Calling {} with args {}'.format(parsed_args.command_name, parsed_args.command_args))
-
-        script_file_path = os.path.join(SCRIPT_ENV.script_commands_path, parsed_args.command_name + '.py')
-        script_call = [ sys.executable, script_file_path ] + parsed_args.command_args
-
-        env = os.environ.copy()
-        env['PYTHONPATH'] = ':'.join(sys.path + [ SCRIPT_ENV.scripts_path ])
-        subprocess.run(args=script_call, cwd=SCRIPT_ENV.scripts_path, env=env)
+        raise AttributeError('Commands should provide "execute(...)" symbol.')

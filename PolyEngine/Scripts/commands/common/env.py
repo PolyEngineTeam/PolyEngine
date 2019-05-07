@@ -2,12 +2,17 @@ import os
 import logging
 import sys
 
+# Parameters
 _COMMANDS_DIR_NAME = 'commands'
 _RESOURCES_DIR_NAME = 'resources'
 _TESTS_DIR_NAME = 'tests'
 _LOG_LEVEL = 'DEBUG'
 
-LOGGER_FORMAT = '[%(asctime)s] [%(levelname)s] [%(name)s]\t %(message)s'
+_LOGGER_FORMAT = '[%(asctime)s] [%(levelname)s] [%(name)s]\t %(message)s'
+
+# Constants
+_FILE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+_SCRIPTS_ROOT = os.path.join(_FILE_DIR_PATH, os.pardir, os.pardir)
 
 class ScriptEnv():
     def __init__(self, scripts_root_path, log_level_name=_LOG_LEVEL):
@@ -60,12 +65,19 @@ class ScriptEnv():
 
     def __str__(self):
         return '[ENGINE_PATH]\t{}\n\
+                \r[REPO_PATH]\t{}\n\
                 \r[SCRIPTS_PATH]\t{}\n\
                 \r[SCRIPT_COMMANDS_PATH]\t{}\n\
                 \r[SCRIPT_RESOURCES_PATH]\t{}\n\
                 \r[SCRIPT_TESTS_PATH]\t{}'.format(
                 self.engine_path,
+                self.repo_path,
                 self.scripts_path,
                 self.script_commands_path,
                 self.script_resources_path,
                 self.script_tests_path)
+
+
+### ENV SETUP ###
+logging.basicConfig(format=_LOGGER_FORMAT)
+SCRIPT_ENV = ScriptEnv(_SCRIPTS_ROOT)
