@@ -11,7 +11,7 @@ import commands
 from collections import namedtuple
 
 # Own imports
-import commands.common as common
+import common
 
 # Manual constants
 RUN_TESTS_CMD = 'run_tests'
@@ -40,8 +40,8 @@ logger.info('Script Environment:\n{}'.format(common.SCRIPT_ENV))
 # Gather commands
 available_commands = []
 CommandTuple = namedtuple('Command', 'name description')
-max_command_length = 0
-
+max_command_length = len(RUN_TESTS_CMD)
+print(common.SCRIPT_ENV.script_commands_path)
 for file in glob.glob(os.path.join(common.SCRIPT_ENV.script_commands_path, '*.py'), recursive=False):
     command_name = os.path.splitext(os.path.basename(file))[0]
     command_descripton = MISSING_DOCSTRING_MSG

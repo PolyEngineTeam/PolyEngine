@@ -5,13 +5,7 @@ import logging
 import sys
 from enum import Enum
 
-try:
-    import commands.common as common
-except:
-    try:
-        import common
-    except:
-        raise ImportError("Cannot import common lib!")
+import common
 
 def initialize_submodules(script_env):
     logger = script_env.get_logger(name='initialize_submodules')    

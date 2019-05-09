@@ -5,66 +5,37 @@ import time
 import sys
 import docker
 
-try:
-    import commands.common as common
-except:
-    try:
-        import common
-    except:
-        raise ImportError("Cannot import common lib!")
+import common
 
-SUPPORTED_OS = ['ubuntu18']
-SUPPORTED_COMPILER = ['gcc8', 'clang5']
-
-def get_image(image_name):
-    client = docker.from_env()
-    available_images = client.images.list()
-    for img in available_images:
-        if image_name + ':latest' in img.tags:
-            return img
-    return None
-
-def run_image(script_env, system, compiler):
-    docker_files_path = os.path.join(script_env.script_resources_path, 'dockerfiles')
-
-    base_image_name = '{}-base'.format(system)
-    image_name = '{}-{}'.format(system, compiler)
-    base_dockerfile_path = os.path.join(docker_files_path, base_image_name + '.dockerfile')
-    dockerfile_path = os.path.join(docker_files_path, image_name + '.dockerfile')
-
-    client = docker.from_env()
-
-    if not os.path.isfile(base_dockerfile_path):
-        raise FileNotFoundError('Dockerfile {}.dockerfile not found.'.format(base_image_name))
-    print('Building base image: {}:latest. This may take a while...'.format(base_image_name))
-    client.images.build(path=docker_files_path, dockerfile=base_dockerfile_path, tag=base_image_name, rm=True)[0]
-    
-    if not os.path.isfile(dockerfile_path):
-        raise FileNotFoundError('Dockerfile {}.dockerfile not found.'.format(image_name))
-    print('Building image: {}:latest.'.format(image_name))
-    img = client.images.build(path=docker_files_path, dockerfile=dockerfile_path, tag=image_name, rm=True)[0]
-
-    time.sleep(2) # Docker somtimes fails when run is called right after build. Just wait for 2s.
-
-    print('Starting docker image {}:latest ...'.format(image_name))
-    #client.containers.run(image_name, command='/bin/bash', tty=True, stdin_open=True, auto_remove=True, remove=True, detach=False)
-    subprocess.run("docker container run -it --rm -w /root/workspace -v {}:/root/workspace {}".format(script_env.repo_path, image_name + ':latest'), shell=True, check=True)
-
+DOCKERFILES_FOLDER = 'dockerfiles'
+DOCKERFILES_PATH = os.path.join(common.SCRIPT_ENV.script_resources_path, DOCKERFILES_FOLDER)
 
 def execute(script_env, *args):
-    print('Using execute!')
+    mgr = common.DockerManager(dockerfile_dir=DOCKERFILES_PATH)
+    supported_os = []
+    supported_variant = []
+    for key, values in mgr.supported_configurations.items():
+        supported_os.append(key)
+        for value in values:
+            supported_variant.append(value)
+
     parser = argparse.ArgumentParser(description='PolyEngine project management tool')
     parser.add_argument("--os", action='store',
-                        default=SUPPORTED_OS[0],
-                        choices=SUPPORTED_OS,
+                        default=supported_os[0],
+                        choices=supported_os,
                         help='Operating system')
-    parser.add_argument("--compiler", action='store',
-                        default=SUPPORTED_COMPILER[0],
-                        choices=SUPPORTED_COMPILER,
-                        help='Compiler')
+    parser.add_argument("--variant", action='store',
+                        default=supported_variant[0],
+                        choices=supported_variant,
+                        help='Variant')
     args = parser.parse_args([*args])
 
-    run_image(script_env, args.os, args.compiler)
+    if args.variant not in mgr.supported_configurations[args.os]:
+        raise ValueError('Unsupported configuration {}-{}! Supported configurations: {}'.format(
+            args.os, args.variant, mgr.supported_configurations
+        ))
+
+    mgr.get_image(args.os, args.variant).start_shell()
 
 if __name__ == '__main__':
     execute(common.SCRIPT_ENV, *sys.argv[1:])

@@ -8,13 +8,7 @@ import re
 from enum import Enum
 import xml.etree.ElementTree as ET
 
-try:
-    import commands.common as common
-except:
-    try:
-        import common
-    except:
-        raise ImportError("Cannot import common lib!")
+import common
 
 class ActionType(Enum):
     CREATE = 'Create',

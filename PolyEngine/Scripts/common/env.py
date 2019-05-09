@@ -12,16 +12,16 @@ _LOGGER_FORMAT = '[%(asctime)s] [%(levelname)s] [%(name)s]\t %(message)s'
 
 # Constants
 _FILE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-_SCRIPTS_ROOT = os.path.join(_FILE_DIR_PATH, os.pardir, os.pardir)
+_SCRIPTS_ROOT = os.path.join(_FILE_DIR_PATH, os.pardir)
 
 class ScriptEnv():
     def __init__(self, scripts_root_path, log_level_name=_LOG_LEVEL):
-        self._scripts_path = scripts_root_path
-        self._script_commands_path = os.path.join(self._scripts_path, _COMMANDS_DIR_NAME)
+        self._scripts_path = os.path.abspath(scripts_root_path)
+        self._script_commands_path = os.path.abspath(os.path.join(self._scripts_path, _COMMANDS_DIR_NAME))
         self._engine_path = os.path.abspath(os.path.join(self._scripts_path, os.pardir))
         self._repo_path = os.path.abspath(os.path.join(self._engine_path, os.pardir))
-        self._script_resources_path = os.path.join(self._scripts_path, _RESOURCES_DIR_NAME)
-        self._script_tests_path = os.path.join(self._scripts_path, _TESTS_DIR_NAME)
+        self._script_resources_path = os.path.abspath(os.path.join(self._scripts_path, _RESOURCES_DIR_NAME))
+        self._script_tests_path = os.path.abspath(os.path.join(self._scripts_path, _TESTS_DIR_NAME))
         self._log_level_name = log_level_name.upper()
         self._log_level = getattr(logging, self._log_level_name, None)
         if not isinstance(self._log_level, int):
@@ -58,18 +58,18 @@ class ScriptEnv():
         # Force flush
         if force_flush:
             h = logging.StreamHandler(sys.stdout)
-            h.flush = sys.stdout.flush
-            logger.addHandler(h)
+            #h.flush = sys.stdout.flush
+            #logger.addHandler(h)
 
         return logger
 
     def __str__(self):
-        return '[ENGINE_PATH]\t{}\n\
-                \r[REPO_PATH]\t{}\n\
-                \r[SCRIPTS_PATH]\t{}\n\
-                \r[SCRIPT_COMMANDS_PATH]\t{}\n\
-                \r[SCRIPT_RESOURCES_PATH]\t{}\n\
-                \r[SCRIPT_TESTS_PATH]\t{}'.format(
+        return '\t[ENGINE_PATH]\t{}\n\
+                \r\t[REPO_PATH]\t{}\n\
+                \r\t[SCRIPTS_PATH]\t{}\n\
+                \r\t[SCRIPT_COMMANDS_PATH]\t{}\n\
+                \r\t[SCRIPT_RESOURCES_PATH]\t{}\n\
+                \r\t[SCRIPT_TESTS_PATH]\t{}'.format(
                 self.engine_path,
                 self.repo_path,
                 self.scripts_path,
