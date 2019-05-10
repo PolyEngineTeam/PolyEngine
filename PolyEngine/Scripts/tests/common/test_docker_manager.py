@@ -2,13 +2,14 @@ import os
 import unittest
 
 import common
+import common.docker_manager as docker_mgr
 
 
 class Test(unittest.TestCase):
     def setUp(self):
         import sys
         print(sys.path)
-        self.mgr = common.DockerManager(dockerfile_dir=os.path.join(common.SCRIPT_ENV.script_resources_path, 'dockerfiles'))
+        self.mgr = docker_mgr.DockerManager(dockerfile_dir=os.path.join(common.SCRIPT_ENV.script_resources_path, 'dockerfiles'))
 
     def tearDown(self):
         pass

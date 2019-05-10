@@ -6,12 +6,13 @@ import sys
 import docker
 
 import common
+import common.docker_manager as docker_mgr
 
 DOCKERFILES_FOLDER = 'dockerfiles'
 DOCKERFILES_PATH = os.path.join(common.SCRIPT_ENV.script_resources_path, DOCKERFILES_FOLDER)
 
 def execute(script_env, *args):
-    mgr = common.DockerManager(dockerfile_dir=DOCKERFILES_PATH)
+    mgr = docker_mgr.DockerManager(dockerfile_dir=DOCKERFILES_PATH)
     supported_os = []
     supported_variant = []
     for key, values in mgr.supported_configurations.items():
