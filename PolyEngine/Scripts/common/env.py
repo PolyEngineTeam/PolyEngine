@@ -1,6 +1,11 @@
 import os
 import logging
 import sys
+import json
+
+from collections import namedtuple
+
+import common.serialization
 
 # Parameters
 _COMMANDS_DIR_NAME = 'commands'
@@ -14,6 +19,37 @@ _LOGGER_FORMAT = '[%(asctime)s] [%(levelname)s] [%(name)s]\t %(message)s'
 # Constants
 _FILE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 _SCRIPTS_ROOT = os.path.join(_FILE_DIR_PATH, os.pardir)
+
+#EngineVersion = namedtuple('EngineVersion', ['major', 'minor', 'fix'])
+
+def version_serializer(obj):
+    return {
+        'Major' : obj.major,
+        'Minor' : obj.minor,
+        'Fix' : obj.fix
+    }
+
+def version_deserializer(dct):
+    return Version(dct['Major'], dct['Minor'], dct['Fix'])
+
+@common.serialization.serializable(version_serializer, version_deserializer)
+class Version():
+    def __init__(self, major, minor, fix):
+        self.major = major
+        self.minor = minor
+        self.fix = fix
+
+    def __repr__(self):
+        return 'Version(major={}, minor={}, fix={})'.format(self.major, self.minor, self.fix)
+
+    def __str__(self):
+        return '{}.{}.{}'.format(self.major, self.minor, self.fix)
+
+    def __eq__(self, other):
+        if not isinstance(other, Version):
+            raise ValueError('Cannot compare version with object of type: {}'.format(type(other)))
+        return self.major == other.major and self.minor == other.minor and self.fix == other.fix
+
 
 class ScriptEnv():
     def __init__(self, scripts_root_path, log_level_name=_LOG_LEVEL):
