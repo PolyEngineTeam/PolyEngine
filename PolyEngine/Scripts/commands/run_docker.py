@@ -1,9 +1,6 @@
 import argparse
 import os
-import subprocess
-import time
 import sys
-import docker
 
 import common
 import common.docker_manager as docker_mgr
@@ -11,7 +8,7 @@ import common.docker_manager as docker_mgr
 DOCKERFILES_FOLDER = 'dockerfiles'
 DOCKERFILES_PATH = os.path.join(common.SCRIPT_ENV.script_resources_path, DOCKERFILES_FOLDER)
 
-def execute(script_env, *args):
+def execute(*args):
     mgr = docker_mgr.DockerManager(dockerfile_dir=DOCKERFILES_PATH)
     supported_os = []
     supported_variant = []
@@ -39,7 +36,7 @@ def execute(script_env, *args):
     mgr.get_image(args.os, args.variant).start_shell()
 
 if __name__ == '__main__':
-    execute(common.SCRIPT_ENV, *sys.argv[1:])
+    execute(*sys.argv[1:])
 
     
 

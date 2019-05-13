@@ -281,11 +281,11 @@ def create_update_engine_project(build_dir_name, engine_path):
     #    patch_usr_proj(build_dir_name, engine_path, "UnitTests", dist_dir, True)
 
 #################### SCRIPT START ####################
-def execute(script_env, *args):
+def execute(*args):
     PARSER = argparse.ArgumentParser(description='PolyEngine project management tool')
 
     PARSER.add_argument("-e", "--engine", action='store', dest='enginePath',
-                        default=script_env.engine_path,
+                        default=common.SCRIPT_ENV.engine_path,
                         help='provide custom engine path')
 
     PARSER.add_argument("-b", "--build-dir-name", action='store', dest='buildDirName',
@@ -314,4 +314,4 @@ def execute(script_env, *args):
         create_update_engine_project(ARGS.buildDirName, ARGS.enginePath)
 
 if __name__ == '__main__':
-    execute(common.SCRIPT_ENV, *sys.argv[1:])
+    execute(*sys.argv[1:])

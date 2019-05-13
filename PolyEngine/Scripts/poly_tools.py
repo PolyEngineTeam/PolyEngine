@@ -86,6 +86,6 @@ else:
     imported_module = importlib.import_module('commands.' + parsed_args.command_name)
     if hasattr(imported_module, 'execute'):
         logger.info('Executing {} with args {}'.format(parsed_args.command_name, parsed_args.command_args))
-        imported_module.execute(common.SCRIPT_ENV, *parsed_args.command_args)
+        imported_module.execute(*parsed_args.command_args)
     else:
         raise AttributeError('Commands should provide "execute(...)" symbol.')

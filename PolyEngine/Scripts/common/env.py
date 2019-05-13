@@ -6,6 +6,7 @@ import sys
 _COMMANDS_DIR_NAME = 'commands'
 _RESOURCES_DIR_NAME = 'resources'
 _TESTS_DIR_NAME = 'tests'
+_THIRDPARTY_DIR_NAME = 'ThirdParty'
 _LOG_LEVEL = 'DEBUG'
 
 _LOGGER_FORMAT = '[%(asctime)s] [%(levelname)s] [%(name)s]\t %(message)s'
@@ -22,6 +23,7 @@ class ScriptEnv():
         self._repo_path = os.path.abspath(os.path.join(self._engine_path, os.pardir))
         self._script_resources_path = os.path.abspath(os.path.join(self._scripts_path, _RESOURCES_DIR_NAME))
         self._script_tests_path = os.path.abspath(os.path.join(self._scripts_path, _TESTS_DIR_NAME))
+        self._thirdparty_path = os.path.abspath(os.path.join(self._engine_path, _THIRDPARTY_DIR_NAME))
         self._log_level_name = log_level_name.upper()
         self._log_level = getattr(logging, self._log_level_name, None)
         if not isinstance(self._log_level, int):
