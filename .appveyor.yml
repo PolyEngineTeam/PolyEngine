@@ -13,11 +13,11 @@ platform:
 - x64
 
 environment:
+  QTDIR: C:\Qt\5.10.1\msvc2017_64
+  PYTHON: C:\Python36
+  PATH: '%PATH%;%QTDIR%\bin;'
   matrix:
   - arch: Win64
-    QTDIR: C:\Qt\5.10.1\msvc2017_64
-    PYTHON: C:\Python36
-    PATH: '%PATH%;%QTDIR%\bin;'
 
   # - arch: #does not work, Release|x64 not a valid target
 matrix:
@@ -42,11 +42,16 @@ before_build:
 - "%PYTHON%\\python.exe --version"
 - "%PYTHON%\\python.exe .\\poly_tools.py initialize_submodules"
 - "%PYTHON%\\python.exe .\\poly_tools.py project_tool -p"
+- "%PYTHON%\\python.exe .\\poly_tools.py project_tool -c C:/projects/TestGame TestGame"
 
-build:
-  project: C:\projects\PolyEngine\PolyEngine\build\PolyEngine.sln
-  verbosity: minimal
-  parallel: true
+build_script:
+  - msbuild C:\projects\PolyEngine\PolyEngine\Build\PolyEngine.sln
+  - msbuild C:\projects\TestGame\Build\TestGame.sln
+
+#build:
+#  project: C:\projects\PolyEngine\PolyEngine\Build\PolyEngine.sln
+#  verbosity: minimal
+#  parallel: true
   
 # scripts to run before tests
 before_test:
