@@ -311,7 +311,7 @@ macro(GalogenGenerate LibName Api Ver)
 endmacro()
 
 ### Thirdparty
-add_subdirectory(${ENGINE_ROOT_DIR}/ThirdParty ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty)
+add_subdirectory(${ENGINE_ROOT_DIR}/ThirdParty ${ENGINE_ROOT_DIR}/CommonBuild/ThirdParty)
 
 ##
 # Enable Werror for the rest of the build

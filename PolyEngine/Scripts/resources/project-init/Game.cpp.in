@@ -1,4 +1,4 @@
-#include <Game.hpp>
+#include <$GAME_CLASS_NAME$.hpp>
 #include <ECS/DeferredTaskSystem.hpp>
 #include <Rendering/SkyboxWorldComponent.hpp>
 #include <Resources/ResourceManager.hpp>
