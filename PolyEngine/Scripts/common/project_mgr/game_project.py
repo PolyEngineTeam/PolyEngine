@@ -200,6 +200,11 @@ class GameProject(ProjectBase):
             print('\tset DebuggerFlavor to', dbg_flavor.text)
 
         xml_indent(root)
+
+        print('Files in {}: {}'.format(self._build_path, os.listdir(self._build_path)))
+        p = os.path.join(self._build_path, self._project_name)
+        print('Files in {}: {}'.format(p, os.listdir(p)))
+
         xml_data.write(usr_proj_path, encoding='utf-8', xml_declaration=True)
 
     def _create_fast_update_script(self):

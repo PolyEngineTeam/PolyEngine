@@ -44,7 +44,7 @@ endif()
 
 set_target_properties(${EDITOR_TARGET} PROPERTIES FOLDER "Engine" )
 
-# Strange bug in cotire for macOS. Disable it for now. Include paths are not working.
-if(NOT APPLE)
+# Strange bug in cotire for *nix. Disable it for now. Include paths are not working.
+if(WIN32)
     cotire(${EDITOR_TARGET})
 endif()

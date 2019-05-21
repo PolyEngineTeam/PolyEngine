@@ -4,16 +4,11 @@ project($PROJECT_NAME$ VERSION 0.1 LANGUAGES CXX C) #note(vuko): without C older
 ## Need to setup $ENGINE_DIR$ and $PROJECT_PATH$
 set(ENGINE_ROOT_DIR $ENGINE_DIR$)
 set(DIST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/$DIST_DIR$")
+set(COMMON_BUILD_DIR "${ENGINE_ROOT_DIR}/CommonBuild")
 
 include(${ENGINE_ROOT_DIR}/CMakeListsCommon.cmake)
 
 ##
 # Finally, meat and potatoes
 ##
-add_subdirectory(${ENGINE_ROOT_DIR}/Editor "${ENGINE_ROOT_DIR}/CommonBuild/Editor")
-add_subdirectory(${ENGINE_ROOT_DIR}/Core "${ENGINE_ROOT_DIR}/CommonBuild/Core")
-add_subdirectory(${ENGINE_ROOT_DIR}/Engine "${ENGINE_ROOT_DIR}/CommonBuild/Engine")
-add_subdirectory(${ENGINE_ROOT_DIR}/API "${ENGINE_ROOT_DIR}/CommonBuild/API")
-add_subdirectory(${ENGINE_ROOT_DIR}/RenderingDevice/OpenGL "${ENGINE_ROOT_DIR}/CommonBuild/RenderingDevice/OpenGL")
-add_subdirectory(${ENGINE_ROOT_DIR}/Standalone "${ENGINE_ROOT_DIR}/CommonBuild/Standalone")
 add_subdirectory($PROJECT_PATH$)

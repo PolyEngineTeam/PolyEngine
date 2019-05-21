@@ -83,12 +83,16 @@ endif()
 # Make sure qt is defined
 if(DEFINED ENV{QTDIR})
 	list(APPEND CMAKE_PREFIX_PATH $ENV{QTDIR})
+    set(Qt5_DIR $ENV{QTDIR})
 elseif(APPLE)
 	list(APPEND CMAKE_PREFIX_PATH /usr/local/opt/qt)
+    set(Qt5_DIR $ENV{QTDIR})
 endif()
 
+message("QT DIR = ${Qt5_DIR}")
+
 find_package(Qt5 COMPONENTS Core Widgets)
-if(NOT DEFINED Qt5_FOUND)
+if(NOT DEFINED Qt5_FOUND OR NOT Qt5_FOUND)
 	message(FATAL_ERROR "Qt5 not found. When using a standalone Qt5 toolchain, please setup QTDIR environment variable to point to it.")
 endif()
 
@@ -278,7 +282,7 @@ set_target_properties(Prerequisites PROPERTIES FOLDER "Engine/Misc" )
 # Galogen generation
 ###
 macro(GalogenGenerate LibName Api Ver)
-	set(OutputDir "${CMAKE_CURRENT_BINARY_DIR}/${LibName}_${Api}_${Ver}")
+	set(OutputDir "${COMMON_BUILD_DIR}/${LibName}_${Api}_${Ver}")
 	set(Filename "${OutputDir}/gl")
 
     file(COPY ${KHR_PLATFORM_PATH} DESTINATION "${OutputDir}/KHR/")
@@ -330,3 +334,13 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 else()
 	message(FATAL_ERROR "Unsupported compiler: ${CMAKE_CXX_COMPILER_ID}")
 endif()
+
+###
+# Define common dirrectories
+###
+add_subdirectory(${ENGINE_ROOT_DIR}/Core ${COMMON_BUILD_DIR}/Core)
+add_subdirectory(${ENGINE_ROOT_DIR}/API ${COMMON_BUILD_DIR}/API)
+add_subdirectory(${ENGINE_ROOT_DIR}/Engine ${COMMON_BUILD_DIR}/Engine)
+add_subdirectory(${ENGINE_ROOT_DIR}/RenderingDevice/OpenGL ${COMMON_BUILD_DIR}/RenderingDevice/OpenGL)
+add_subdirectory(${ENGINE_ROOT_DIR}/Editor ${COMMON_BUILD_DIR}/Editor)
+add_subdirectory(${ENGINE_ROOT_DIR}/Standalone ${COMMON_BUILD_DIR}/Standalone)
