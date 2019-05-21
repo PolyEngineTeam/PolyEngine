@@ -64,8 +64,8 @@ before_script:
     fi
   - cd PolyEngine/Scripts
   - python3 ./poly_tools.py initialize_submodules
-  - python3 ./poly_tools.py project_tool -p
-  - python3 ./poly_tools.py project_tool -c ${TRAVIS_BUILD_DIR}/TestGame TestGame
+  - python3 ./poly_tools.py update_engine_project
+  - python3 ./poly_tools.py create_game_project ${TRAVIS_BUILD_DIR}/TestGame TestGame
   
 script:
   - cd ${TRAVIS_BUILD_DIR}/PolyEngine/Build

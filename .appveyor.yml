@@ -41,8 +41,8 @@ before_build:
     cmake --version
 - "%PYTHON%\\python.exe --version"
 - "%PYTHON%\\python.exe .\\poly_tools.py initialize_submodules"
-- "%PYTHON%\\python.exe .\\poly_tools.py project_tool -p"
-- "%PYTHON%\\python.exe .\\poly_tools.py project_tool -c C:/projects/TestGame TestGame"
+- "%PYTHON%\\python.exe .\\poly_tools.py update_engine_project"
+- "%PYTHON%\\python.exe .\\poly_tools.py create_game_project C:/projects/TestGame TestGame"
 
 build_script:
   - msbuild C:\projects\PolyEngine\PolyEngine\Build\PolyEngine.sln

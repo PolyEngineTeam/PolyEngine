@@ -1,6 +1,7 @@
 import os
 import logging
 import sys
+import platform
 
 # Parameters
 _COMMANDS_DIR_NAME = 'commands'
@@ -28,6 +29,21 @@ class ScriptEnv():
         self._log_level = getattr(logging, self._log_level_name, None)
         if not isinstance(self._log_level, int):
             raise ValueError('Invalid log level: {}'.format(self._log_level_name))
+
+    def is_windows(self):
+        return sys.platform.startswith('win32')
+
+    def is_linux(self):
+        return sys.platform.startswith('linux')
+
+    def is_macos(self):
+        return sys.platform.startswith('darwin')
+
+    def is_cygwin(self):
+        return sys.platform.startswith('cygwin')
+
+    def is_posix(self):
+        return self.is_linux() or self.is_macos() or self.is_cygwin()
 
     @property
     def scripts_path(self):
