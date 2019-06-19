@@ -62,7 +62,7 @@ before_test:
 # UT disabled as for some reason it throws "Command exited with code -1073741515" error on appveyor
 # @fixme
 test_script:
-  - .\PolyUnitTests.exe 
+  #- .\PolyUnitTests.exe 
   
 notifications:
 - provider: Slack

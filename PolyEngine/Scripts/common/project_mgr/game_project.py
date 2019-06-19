@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 
 
 import common
-from .project_base import ProjectBase, DIST_DIR_NAME, BUILD_DIR_NAME
+from .project_base import ProjectBase, DIST_DIR_NAME
 
 PROJ_FILE_EXTENSION = '.proj.json'
 PROJ_FILE_GLOB = '*' + PROJ_FILE_EXTENSION
@@ -34,7 +34,7 @@ PROJECT_INIT_RESOURCES_PATH = os.path.join(common.SCRIPT_ENV.script_resources_pa
 # $ENGINE_DIR$ - absolute path to engine root directory
 
 class GameProject(ProjectBase):
-    def __init__(self, project_root_path, project_name=None, create_if_absent=False, build_dir_name=BUILD_DIR_NAME):
+    def __init__(self, project_root_path, project_name=None, create_if_absent=False, build_postfix=None):
         # Create logger
         self._logger = common.SCRIPT_ENV.get_logger(name='GameProject')
 
@@ -64,7 +64,7 @@ class GameProject(ProjectBase):
             self._logger.info('Deduced project name to be: [{}]'.format(self._project_name))
 
         # Initialize base
-        ProjectBase.__init__(self, project_root_path, self._project_name, common.Version(0, 0, 1), build_dir_name)
+        ProjectBase.__init__(self, project_root_path, self._project_name, common.Version(0, 0, 1), build_postfix)
 
         self._project_path = os.path.join(self._root_path, self._project_name)
         self._project_resources_path = os.path.join(self._project_path, PROJECT_RESOURCES_DIR_NAME)
@@ -104,8 +104,6 @@ class GameProject(ProjectBase):
             
             shutil.copy(game_src_file_path, out_src_file_path)
             self._replace_tags_in_file(out_src_file_path, { '$GAME_CLASS_NAME$':  self._project_name})
-
-        self.update()
 
     def _before_cmake_gen(self):
         self._update_cmake_files()

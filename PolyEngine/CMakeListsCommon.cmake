@@ -20,6 +20,12 @@ else()
    set(LINUX FALSE)
 endif()
 
+# Add build postfix
+if (DEFINED BUILD_POSTFIX)
+    set(COMMON_BUILD_DIR "${COMMON_BUILD_DIR}_${BUILD_POSTFIX}")
+    set(DIST_DIR "${DIST_DIR}_${BUILD_POSTFIX}")
+endif()
+
 # Target names
 set(CORE_TARGET PolyCore)
 set(ENGINE_TARGET PolyEngine)
@@ -315,7 +321,7 @@ macro(GalogenGenerate LibName Api Ver)
 endmacro()
 
 ### Thirdparty
-add_subdirectory(${ENGINE_ROOT_DIR}/ThirdParty ${ENGINE_ROOT_DIR}/CommonBuild/ThirdParty)
+add_subdirectory(${ENGINE_ROOT_DIR}/ThirdParty ${COMMON_BUILD_DIR}/ThirdParty)
 
 ##
 # Enable Werror for the rest of the build
