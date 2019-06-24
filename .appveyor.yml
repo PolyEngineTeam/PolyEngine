@@ -62,6 +62,7 @@ before_test:
 # UT disabled as for some reason it throws "Command exited with code -1073741515" error on appveyor
 # @fixme
 test_script:
+  - "%PYTHON%\\python.exe C:\\projects\\PolyEngine\\PolyEngine\\Scripts\\poly_tools.py run_tests"
   #- .\PolyUnitTests.exe 
   
 notifications:
