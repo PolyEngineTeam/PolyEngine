@@ -15,10 +15,23 @@ class Test(unittest.TestCase):
         pass
 
     def test_build_image(self):
-        img = self.mgr.get_image('ubuntu18', 'gcc8')
-        print(img)
-        
         try:
-            img.run_cmd('echo Hello')
+            img = self.mgr.get_image('ubuntu18', 'gcc8')
+            self.assertIsNotNone(img)
+        except:
+            self.fail('get_image has raised exception!')
+
+    def test_run_cmd(self):
+        TEST_FILE = 'test.tmp'
+        self.assertFalse(os.path.isfile(TEST_FILE))
+        
+        img = self.mgr.get_image('ubuntu18', 'gcc8')
+
+        try:
+            img.run_cmd('touch test.tmp')
         except:
             self.fail('run_cmd has raised exception!')
+
+        self.assertTrue(os.path.isfile(TEST_FILE))
+        os.remove(TEST_FILE)
+        self.assertFalse(os.path.isfile(TEST_FILE))
