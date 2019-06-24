@@ -74,6 +74,7 @@ script:
   - cd ${TRAVIS_BUILD_DIR}/TestGame/Build
   - cmake -D CMAKE_C_COMPILER=$CC -D CMAKE_CXX_COMPILER=$CXX ..
   - make
+  - ls ${TRAVIS_BUILD_DIR}
   - ${TRAVIS_BUILD_DIR}/PolyEngine/Dist/Debug/PolyUnitTests
-  - python3 ${TRAVIS_BUILD_DIR}/PolyEngine/PolyEngine/Scripts/poly_tools.py run_tests"
+  - python3 ${TRAVIS_BUILD_DIR}/PolyEngine/Scripts/poly_tools.py run_tests"
 
