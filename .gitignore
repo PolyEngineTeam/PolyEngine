@@ -26,6 +26,8 @@ bld/
 [Ll]og/
 [Bb]uild/
 [Bb]uild*/
+CommonBuild/
+CommonBuild*/
 cmake-build-*
 
 # Windows specific stuff
@@ -72,3 +74,6 @@ xcuserdata/
 
 # Exculdes from ignore
 !**/ThirdParty/**
+
+# Python
+__pycache__/

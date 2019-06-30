@@ -49,7 +49,7 @@ before_install:
     else
       brew update && brew bundle --file=.Brewfile
     fi
-  - sudo pip3 install gitpython
+  - sudo pip3 install gitpython appdirs
 
 #install:
 
@@ -63,12 +63,18 @@ before_script:
       source /opt/qt510/bin/qt510-env.sh
     fi
   - cd PolyEngine/Scripts
-  - python3 ./InitializeSubmodules.py
-  - python3 ./ProjectTool.py -p
-  - cd ../Build
-
-# TODO move to using ProjectTool.py
+  - python3 ./poly_tools.py initialize_submodules
+  - python3 ./poly_tools.py update_engine_project
+  - python3 ./poly_tools.py create_game_project ${TRAVIS_BUILD_DIR}/TestGame TestGame
+  
 script:
+  - cd ${TRAVIS_BUILD_DIR}/PolyEngine/Build
   - cmake -D CMAKE_C_COMPILER=$CC -D CMAKE_CXX_COMPILER=$CXX ..
   - make
+  - cd ${TRAVIS_BUILD_DIR}/TestGame/Build
+  - cmake -D CMAKE_C_COMPILER=$CC -D CMAKE_CXX_COMPILER=$CXX ..
+  - make
+  - ls ${TRAVIS_BUILD_DIR}
   - ${TRAVIS_BUILD_DIR}/PolyEngine/Dist/Debug/PolyUnitTests
+  - python3 ${TRAVIS_BUILD_DIR}/PolyEngine/Scripts/poly_tools.py run_tests
+
