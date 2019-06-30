@@ -38,3 +38,14 @@ class Version():
         if not isinstance(other, Version):
             raise TypeError('Cannot check for backwards compatibility with object of type: {}'.format(type(other)))
         return self.major == other.major and self.minor <= other.minor
+
+    def __lt__(self, other):
+        if self.major < other.major:
+            return True
+        elif self.major == other.major:
+            if self.minor < other.minor:
+                return True
+            elif self.minor == other.minor and self.fix < other.fix:
+                return True
+        return False
+        

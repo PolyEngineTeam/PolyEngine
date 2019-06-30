@@ -2,6 +2,8 @@ import os
 import logging
 import sys
 import platform
+import json
+import common.serialization
 
 # Parameters
 _COMMANDS_DIR_NAME = 'commands'
@@ -9,7 +11,7 @@ _RESOURCES_DIR_NAME = 'resources'
 _TESTS_DIR_NAME = 'tests'
 _THIRDPARTY_DIR_NAME = 'ThirdParty'
 _LOG_LEVEL = 'DEBUG'
-
+_ENGINE_VER_FILENAME = 'version.json'
 _LOGGER_FORMAT = '[%(asctime)s] [%(levelname)s] [%(name)s]\t %(message)s'
 
 # Constants
@@ -45,6 +47,12 @@ class ScriptEnv():
     def is_posix(self):
         return self.is_linux() or self.is_macos() or self.is_cygwin()
 
+    def engine_ver(self):
+        with open(os.path.join(self.engine_path, _ENGINE_VER_FILENAME), 'r') as file:
+            version_obj = json.load(file, cls=common.serialization.JSONDecoder)
+            assert(isinstance(version_obj, common.version.Version))
+            return version_obj
+        
     @property
     def scripts_path(self):
         return self._scripts_path
