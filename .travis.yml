@@ -76,5 +76,5 @@ script:
   - make
   - ls ${TRAVIS_BUILD_DIR}
   - ${TRAVIS_BUILD_DIR}/PolyEngine/Dist/Debug/PolyUnitTests
-  - python3 ${TRAVIS_BUILD_DIR}/PolyEngine/Scripts/poly_tools.py run_tests"
+  - python3 ${TRAVIS_BUILD_DIR}/PolyEngine/Scripts/poly_tools.py run_tests
 
