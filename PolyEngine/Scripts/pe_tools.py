@@ -24,7 +24,7 @@ MISSING_DOCSTRING_MSG = '[missing module docstring]'
 MISSING_BRIEF_MSG = '[missing "{}" tag in module docstring]'.format(BRIEF_TAG)
 
 # Global variables
-logger = common.SCRIPT_ENV.get_logger(name='poly_tools')
+logger = common.SCRIPT_ENV.get_logger(name='pe_tools')
 
 ### SCRIPT START ###
 if __name__ != '__main__':
