@@ -40,9 +40,9 @@ before_build:
     cd C:\projects\PolyEngine\PolyEngine\Scripts
     cmake --version
 - "%PYTHON%\\python.exe --version"
-- "%PYTHON%\\python.exe .\\poly_tools.py initialize_submodules"
-- "%PYTHON%\\python.exe .\\poly_tools.py update_engine_project"
-- "%PYTHON%\\python.exe .\\poly_tools.py create_game_project C:/projects/TestGame TestGame"
+- "%PYTHON%\\python.exe .\\pe_tools.py initialize_submodules"
+- "%PYTHON%\\python.exe .\\pe_tools.py update_engine_project"
+- "%PYTHON%\\python.exe .\\pe_tools.py create_game_project C:/projects/TestGame TestGame"
 
 build_script:
   - msbuild C:\projects\PolyEngine\PolyEngine\Build\PolyEngine.sln
@@ -62,7 +62,7 @@ before_test:
 # UT disabled as for some reason it throws "Command exited with code -1073741515" error on appveyor
 # @fixme
 test_script:
-  - "%PYTHON%\\python.exe C:\\projects\\PolyEngine\\PolyEngine\\Scripts\\poly_tools.py run_tests"
+  - "%PYTHON%\\python.exe C:\\projects\\PolyEngine\\PolyEngine\\Scripts\\pe_tools.py run_tests"
   #- .\PolyUnitTests.exe 
   
 notifications:

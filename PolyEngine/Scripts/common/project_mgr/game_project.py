@@ -206,7 +206,7 @@ class GameProject(ProjectBase):
         xml_data.write(usr_proj_path, encoding='utf-8', xml_declaration=True)
 
     def _create_fast_update_script(self):
-        script_path = os.path.join(common.SCRIPT_ENV.scripts_path, 'poly_tools.py')
+        script_path = os.path.join(common.SCRIPT_ENV.scripts_path, 'pe_tools.py')
         command = 'update_game_project'
 
         fileString = 'py {} {} {}'.format(script_path, command, self._as_cmake_path(self._root_path))
