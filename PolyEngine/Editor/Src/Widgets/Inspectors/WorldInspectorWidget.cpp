@@ -154,7 +154,7 @@ void WorldInspectorWidget::EntitiesSelectionChanged()
 		for (auto i : ItemToEntity)
 			if (i.second == e)
 			{
-				Tree->setItemSelected(i.first, true);
+				i.first->setSelected(true);
 				break;
 			}
 

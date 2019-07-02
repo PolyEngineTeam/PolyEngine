@@ -118,7 +118,6 @@ TEST_CASE("Matrx-Vector multiplication operator", "[Matrix]") {
   Matrix m2(data2);
   Matrix m3(data3);
   Vector v1(1,2,3);
-  Vector v2(4,6,5);
 
   REQUIRE(m1*v1 == Vector(1,3,-2));
   REQUIRE(m2*v1 == Vector(4,5,6));

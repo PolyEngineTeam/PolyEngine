@@ -133,8 +133,8 @@ TEST_CASE("Optional with non-default-constructible", "[Optional]") {
 			REQUIRE(some.ValueOr(Counting(16)) == Counting(8));
 		}
 		REQUIRE(gCurrentInstances == 0);
-		REQUIRE(gCopiesEver == 2); //todo(vuko): implementation of ValueOr() was based on the official C++17 optional; can we do better?
-		REQUIRE(gMovesEver  == 1); //one into the optional
+		REQUIRE(gCopiesEver == 1);
+		REQUIRE(gMovesEver  == 2);
 	}
 
 	SECTION("Move constructor") {
