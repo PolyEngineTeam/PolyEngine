@@ -36,7 +36,7 @@ class DockerContainer():
 
     def run_cmd(self, cmd):
         subprocess.run("docker container run --rm -w /root/workspace -v {}:/root/workspace {} {}"\
-        .format(SCRIPT_ENV.repo_path, self._image_name, cmd), shell=False, check=True)
+        .format(SCRIPT_ENV.repo_path, self._image_name, cmd), shell=True, check=True)
 
 class DockerFile():
     def __init__(self, path):
