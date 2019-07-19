@@ -177,6 +177,11 @@ void TiledForwardRenderer::Deinit()
 	{
 		ResourceManager<TextureResource>::Release(Splash);
 	}
+
+	if (Flower)
+	{
+		ResourceManager<TextureResource>::Release(Flower);
+	}
 }
 
 void TiledForwardRenderer::CapturePreintegratedBRDF()
