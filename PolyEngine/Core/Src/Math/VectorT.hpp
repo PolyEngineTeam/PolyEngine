@@ -26,21 +26,21 @@ namespace Poly
 		explicit constexpr VectorT(T x, T y,
 			typename std::enable_if<isVecEq_v<U, 2>>::type* = 0)
 		{
-			Data = { x, y };
+			Data = { {x, y} };
 		}
 
 		template<typename U = T>
 		explicit constexpr VectorT(T x, T y, T z,
 			typename std::enable_if<isVecEq_v<U, 3>>::type* = 0)
 		{
-			Data = { x, y, z };
+			Data = { {x, y, z} };
 		}
 
 		template<typename U = T>
 		explicit constexpr VectorT(T x, T y, T z, T w,
 			typename std::enable_if<isVecEq_v<U, 4>>::type* = 0)
 		{
-			Data = { x, y, z, w };
+			Data = { {x, y, z, w} };
 		}
 
 		template<typename U = T>
