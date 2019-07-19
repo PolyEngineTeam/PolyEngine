@@ -84,6 +84,7 @@
 #include <cstddef>
 #include <vector>
 #include <deque>
+#include <future>
 
 // Custom type names
 using u8 = uint8_t;
@@ -127,6 +128,12 @@ using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
 		#define CORE_DLLEXPORT __declspec(dllimport)
 	#endif
 
+	#if defined(_WINDLL) && defined(_API)
+		#define API_DLLEXPORT __declspec(dllexport)
+	#else
+		#define API_DLLEXPORT __declspec(dllimport)
+	#endif
+
 	#if defined(_WINDLL) && defined(_ENGINE)
 		#define ENGINE_DLLEXPORT __declspec(dllexport)
 	#else
@@ -147,11 +154,13 @@ using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
 #elif defined(__GNUC__) || defined(__clang__)
 	//NOTE(vuko): dllexport and dllimport are the same as far as GCC and Clang are concerned
 	#define CORE_DLLEXPORT __attribute__ ((visibility ("default")))
+	#define API_DLLEXPORT __attribute__ ((visibility ("default")))
 	#define ENGINE_DLLEXPORT __attribute__ ((visibility ("default")))
 	#define GAME_DLLEXPORT __attribute__ ((visibility ("default")))
 	#define DEVICE_DLLEXPORT __attribute__ ((visibility ("default")))
 #else
 	#define CORE_DLLEXPORT
+	#define API_DLLEXPORT
 	#define ENGINE_DLLEXPORT
 	#define GAME_DLLEXPORT
 	#define DEVICE_DLLEXPORT

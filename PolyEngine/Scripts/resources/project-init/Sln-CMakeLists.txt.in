@@ -1,0 +1,14 @@
+cmake_minimum_required(VERSION 3.2)
+project($PROJECT_NAME$ VERSION 0.1 LANGUAGES CXX C) #note(vuko): without C older CMake versions fail to process FindX11 the first time
+
+## Need to setup $ENGINE_DIR$ and $PROJECT_PATH$
+set(ENGINE_ROOT_DIR $ENGINE_DIR$)
+set(DIST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/$DIST_DIR$")
+set(COMMON_BUILD_DIR "${ENGINE_ROOT_DIR}/CommonBuild")
+
+include(${ENGINE_ROOT_DIR}/CMakeListsCommon.cmake)
+
+##
+# Finally, meat and potatoes
+##
+add_subdirectory($PROJECT_PATH$)

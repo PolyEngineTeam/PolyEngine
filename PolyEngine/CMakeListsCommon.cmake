@@ -20,6 +20,12 @@ else()
    set(LINUX FALSE)
 endif()
 
+# Add build postfix
+if (DEFINED BUILD_POSTFIX)
+    set(COMMON_BUILD_DIR "${COMMON_BUILD_DIR}_${BUILD_POSTFIX}")
+    set(DIST_DIR "${DIST_DIR}_${BUILD_POSTFIX}")
+endif()
+
 # Target names
 set(CORE_TARGET PolyCore)
 set(ENGINE_TARGET PolyEngine)
@@ -27,6 +33,7 @@ set(GLDEVICE_TARGET PolyRenderingDeviceGL)
 set(EDITOR_TARGET PolyEditor)
 set(UNITTESTS_TARGET PolyUnitTests)
 set(STANDALONE_TARGET PolyStandalone)
+set(API_TARGET PolyAPI)
 
 # Prepend our modules dir to the path
 list(INSERT CMAKE_MODULE_PATH 0 "${ENGINE_ROOT_DIR}/CMakeModules")
@@ -82,12 +89,16 @@ endif()
 # Make sure qt is defined
 if(DEFINED ENV{QTDIR})
 	list(APPEND CMAKE_PREFIX_PATH $ENV{QTDIR})
+    set(Qt5_DIR $ENV{QTDIR})
 elseif(APPLE)
 	list(APPEND CMAKE_PREFIX_PATH /usr/local/opt/qt)
+    set(Qt5_DIR $ENV{QTDIR})
 endif()
 
+message("QT DIR = ${Qt5_DIR}")
+
 find_package(Qt5 COMPONENTS Core Widgets)
-if(NOT DEFINED Qt5_FOUND)
+if(NOT DEFINED Qt5_FOUND OR NOT Qt5_FOUND)
 	message(FATAL_ERROR "Qt5 not found. When using a standalone Qt5 toolchain, please setup QTDIR environment variable to point to it.")
 endif()
 
@@ -276,19 +287,14 @@ set_target_properties(Prerequisites PROPERTIES FOLDER "Engine/Misc" )
 ###
 # Galogen generation
 ###
-set(GL_XML_PATH ${CMAKE_CURRENT_BINARY_DIR}/galogen/gl.xml)
-set(GL_XML_URL "https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/master/xml/gl.xml")
-file(DOWNLOAD ${GL_XML_URL} ${GL_XML_PATH})
-set(KHR_PLATFORM_URL "https://www.khronos.org/registry/EGL/api/KHR/khrplatform.h")
-
 macro(GalogenGenerate LibName Api Ver)
-	set(OutputDir "${CMAKE_CURRENT_BINARY_DIR}/${LibName}_${Api}_${Ver}")
+	set(OutputDir "${COMMON_BUILD_DIR}/${LibName}_${Api}_${Ver}")
 	set(Filename "${OutputDir}/gl")
 
-   file(DOWNLOAD ${KHR_PLATFORM_URL} "${OutputDir}/KHR/khrplatform.h")
+    file(COPY ${KHR_PLATFORM_PATH} DESTINATION "${OutputDir}/KHR/")
 
 	add_custom_command(
-		DEPENDS Galogen ${GL_XML_PATH}
+		DEPENDS Galogen ${GL_XML_PATH} "${OutputDir}/KHR/khrplatform.h"
 		OUTPUT "${Filename}.c" "${Filename}.h"
 		COMMAND $<TARGET_FILE:Galogen> ${GL_XML_PATH} --api ${Api} --ver ${Ver} --profile core --filename ${Filename}
 		COMMENT "Generating OpenGL headers API: [${Api}] VER: [${Ver}]\n" VERBATIM )
@@ -315,7 +321,7 @@ macro(GalogenGenerate LibName Api Ver)
 endmacro()
 
 ### Thirdparty
-add_subdirectory(${ENGINE_ROOT_DIR}/ThirdParty ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty)
+add_subdirectory(${ENGINE_ROOT_DIR}/ThirdParty ${COMMON_BUILD_DIR}/ThirdParty)
 
 ##
 # Enable Werror for the rest of the build
@@ -334,3 +340,13 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 else()
 	message(FATAL_ERROR "Unsupported compiler: ${CMAKE_CXX_COMPILER_ID}")
 endif()
+
+###
+# Define common dirrectories
+###
+add_subdirectory(${ENGINE_ROOT_DIR}/Core ${COMMON_BUILD_DIR}/Core)
+add_subdirectory(${ENGINE_ROOT_DIR}/API ${COMMON_BUILD_DIR}/API)
+add_subdirectory(${ENGINE_ROOT_DIR}/Engine ${COMMON_BUILD_DIR}/Engine)
+add_subdirectory(${ENGINE_ROOT_DIR}/RenderingDevice/OpenGL ${COMMON_BUILD_DIR}/RenderingDevice/OpenGL)
+add_subdirectory(${ENGINE_ROOT_DIR}/Editor ${COMMON_BUILD_DIR}/Editor)
+add_subdirectory(${ENGINE_ROOT_DIR}/Standalone ${COMMON_BUILD_DIR}/Standalone)
