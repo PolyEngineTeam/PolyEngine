@@ -83,6 +83,7 @@
 #include <cfloat>
 #include <cstddef>
 #include <vector>
+#include <deque>
 #include <future>
 
 // Custom type names
@@ -98,6 +99,9 @@ using f32 = float;
 using f64 = double;
 
 using uint = unsigned int;
+
+using TimeDuration = std::chrono::duration<double>;
+using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846

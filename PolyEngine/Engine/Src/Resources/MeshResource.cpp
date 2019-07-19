@@ -8,6 +8,14 @@ using namespace Poly;
 
 RTTI_DEFINE_TYPE(Poly::MeshResource)
 
+Matrix MatFromAiMat(const aiMatrix4x4& m)
+{
+	Matrix ret;
+	for (int k = 0; k < 16; ++k)
+		ret.Data[k] = m[k / 4][k % 4];
+	return ret;
+}
+
 MeshResource::MeshResource(const String& path)
 {
 	Assimp::Importer importer;
@@ -33,9 +41,12 @@ MeshResource::MeshResource(const String& path)
 		max = Vector::Max(max, SubMeshes[i]->GetAABox().GetMax());
 	}
 
+	LoadBones(scene->mRootNode);
+
 	for (size_t i = 0; i < scene->mNumAnimations; ++i)
 	{
-		Animations.PushBack(new Animation(scene->mAnimations[i]));
+		Animation* a = new Animation(scene->mAnimations[i]);
+		Animations.insert({ a->Name, a });
 	}
 
 	AxisAlignedBoundingBox = AABox(min, max - min);
@@ -47,9 +58,9 @@ MeshResource::~MeshResource()
 	{
 		delete subMesh;
 	}
-	for (Animation* animation : Animations)
+	for (auto& kv : Animations)
 	{
-		delete animation;
+		delete kv.second;
 	}
 }
 
@@ -57,23 +68,134 @@ MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* mat
 {
 	LoadGeometry(mesh);
 	LoadBones(mesh);
+
+	MeshProxy = gEngine->GetRenderingDevice()->CreateMesh();
+	MeshProxy->SetContent(MeshData);
 	
 	MeshData.EmissiveMap			= LoadTexture(material, path, (unsigned int)aiTextureType_EMISSIVE,		eTextureUsageType::EMISSIVE);
 	MeshData.AlbedoMap				= LoadTexture(material, path, (unsigned int)aiTextureType_DIFFUSE,		eTextureUsageType::ALBEDO);
 	MeshData.MetallicMap			= LoadTexture(material, path, (unsigned int)aiTextureType_SPECULAR,		eTextureUsageType::METALLIC);
 	MeshData.RoughnessMap			= LoadTexture(material, path, (unsigned int)aiTextureType_SHININESS,	eTextureUsageType::ROUGHNESS);
-	MeshData.NormalMap				= LoadTexture(material, path, (unsigned int)aiTextureType_HEIGHT,		eTextureUsageType::NORMAL);
+	MeshData.NormalMap				= LoadTexture(material, path, (unsigned int)aiTextureType_NORMALS,		eTextureUsageType::NORMAL);
 	MeshData.AmbientOcclusionMap	= LoadTexture(material, path, (unsigned int)aiTextureType_AMBIENT,		eTextureUsageType::AMBIENT_OCCLUSION);
+}
+
+void Poly::MeshResource::LoadBones(aiNode* node)
+{
+	std::map<String, size_t> boneNameToIdx;
+
+	ModelFromSkeletonRoot = MatFromAiMat(node->mTransformation).Inverse();
+
+	for (const SubMesh* subMesh : SubMeshes)
+	{
+		for (const MeshResource::SubMesh::Bone& bone : subMesh->GetBones())
+		{
+			boneNameToIdx.insert({ bone.name , Bones.GetSize()});
+			Bone b(bone.name);
+			b.boneFromModel = bone.boneFromModel;
+			Bones.PushBack(b);
+		}
+	}
+
+	PopulateBoneReferences(boneNameToIdx, node, Matrix::IDENTITY);
+	int idx = 0;
+	for (auto& bone : Bones)
+	{
+		gConsole.LogDebug("[{}] Bone [{}] info:\n parent = {},\n prevBoneFromBone = {},\n boneFromModel = {}", idx, bone.name, bone.parentBoneIdx, bone.prevBoneFromBone, bone.boneFromModel);
+		++idx;
+	}
+}
+
+void MeshResource::PopulateBoneReferences(const std::map<String, size_t>& nameToBoneIdx, aiNode* node, const Matrix& prevBoneFromParent)
+{
+	String nodeName = node->mName.C_Str();
+	Matrix parentFromBone = MatFromAiMat(node->mTransformation);
+	if (nodeName.IsEmpty() || nameToBoneIdx.find(nodeName) == nameToBoneIdx.end())
+	{
+		for (size_t k = 0; k < node->mNumChildren; ++k)
+			PopulateBoneReferences(nameToBoneIdx, node->mChildren[k], prevBoneFromParent * parentFromBone);
+	}
+	else
+	{
+		size_t idx = nameToBoneIdx.at(nodeName);
+		
+		if (node->mParent)
+		{
+			aiNode* parent = node->mParent;
+			String parentName = parent->mName.C_Str();
+			while (nameToBoneIdx.find(parentName) == nameToBoneIdx.end() && parent->mParent)
+			{
+				parent = parent->mParent;
+				parentName = parent->mName.C_Str();
+			} 
+			
+			auto it = nameToBoneIdx.find(parentName);
+			if (it != nameToBoneIdx.end())
+			{
+				size_t parentIdx = nameToBoneIdx.at(parentName);
+				Bones[parentIdx].childrenIdx.push_back(idx);
+				Bones[idx].parentBoneIdx = parentIdx;
+			}
+		}
+
+		Bones[idx].prevBoneFromBone = prevBoneFromParent * parentFromBone;
+
+		for (size_t k = 0; k < node->mNumChildren; ++k)
+			PopulateBoneReferences(nameToBoneIdx, node->mChildren[k], Matrix::IDENTITY);
+	}
 }
 
 void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
 {
 	if (mesh->HasBones())
 	{
-		for (size_t i = 0; i < mesh->mNumBones; ++i)
+		ASSERTE((i8)mesh->mNumBones <= std::numeric_limits<typename decltype(MeshData.BoneIds)::ValueType::ValueType>::max(), "Model has too many bones!");
+
+		std::vector<PriorityQueue<std::pair<u8, float>, std::function<bool(const std::pair<u8, float>&, const std::pair<u8, float>&)>>> tmpBonesList;
+		tmpBonesList.resize(mesh->mNumVertices, { [](const std::pair<u8, float>& v1, const std::pair<u8, float>& v2) { return v1.second > v2.second; } });
+
+		std::map<String, size_t> nameToBoneIdx;
+
+		for (u8 boneId = 0; boneId < mesh->mNumBones; ++boneId)
 		{
-			Bones.PushBack({ String(mesh->mBones[i]->mName.C_Str()) });
+			const auto& bone = mesh->mBones[boneId];
+			Bones.push_back(Bone(String(bone->mName.C_Str()), MatFromAiMat(bone->mOffsetMatrix)));
+			
+			if (mesh->HasPositions())
+			{
+				// First pass, gather bones
+				for (size_t j = 0; j < bone->mNumWeights; ++j)
+				{
+					const auto& vertWeight = bone->mWeights[j];
+					size_t vertId = vertWeight.mVertexId;
+					float weight = vertWeight.mWeight;
+					tmpBonesList[vertId].Push({ boneId, weight });
+				}
+			}
 		}
+
+		if (mesh->HasPositions())
+		{
+			// Apply bones
+			MeshData.BoneIds.Resize(mesh->mNumVertices);
+			MeshData.BoneWeights.Resize(mesh->mNumVertices);
+
+			for (size_t vertId = 0; vertId < mesh->mNumVertices; ++vertId)
+			{
+				auto& boneQueue = tmpBonesList[vertId];
+				float sum = 0.f;
+				for (size_t k = 0; k < 4 && boneQueue.GetSize() > 0; ++k)
+				{
+					auto entry = boneQueue.Pop();
+					sum += entry.second;
+					MeshData.BoneIds[vertId].Data[k] = entry.first;
+					MeshData.BoneWeights[vertId].Data[k] = entry.second;
+				}
+				//ASSERTE(sum >= 0.90f, "Detected >10% animation inaccuracy (too many weights for one vertex)");
+			}
+		}
+
+		gConsole.LogDebug("{} bones loaded", mesh->mNumBones);
 	}
 	else
 	{
@@ -142,10 +264,7 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 			MeshData.Indices[i * 3 + 2] = mesh->mFaces[i].mIndices[2];
 		}
 	}
-
-	MeshProxy = gEngine->GetRenderingDevice()->CreateMesh();
-	MeshProxy->SetContent(MeshData);
-
+	
 	gConsole.LogDebug(
 		"Loaded mesh entry: {} with {} vertices, {} faces and parameters: "
 		"pos[{}], tex_coord[{}], norm[{}], faces[{}]",
@@ -192,6 +311,7 @@ Poly::MeshResource::Animation::Animation(aiAnimation * anim)
 {
 	Duration = (float)anim->mDuration;
 	TicksPerSecond = (float)anim->mTicksPerSecond;
+	Name = String(anim->mName.C_Str());
 
 	for (size_t i = 0; i < anim->mNumChannels; ++i)
 	{
@@ -212,6 +332,55 @@ Poly::MeshResource::Animation::Animation(aiAnimation * anim)
 			Vector vector = { (float)anim->mChannels[i]->mScalingKeys[j].mValue.x, (float)anim->mChannels[i]->mScalingKeys[j].mValue.y, (float)anim->mChannels[i]->mScalingKeys[j].mValue.z };
 			c.Scales.PushBack({ vector, (float)anim->mChannels[i]->mScalingKeys[j].mTime });
 		}
-		channels.PushBack(std::move(c));
+		String nameCpy = c.Name;
+		channels.insert({ nameCpy, std::move(c) });
 	}
+}
+
+Poly::MeshResource::Animation::ChannelLerpData Poly::MeshResource::Animation::GetLerpData(String channelName, float time) const
+{
+	ChannelLerpData data;
+
+	// @todo(muniu) investigate TicksPerSecond usage.
+	size_t hintIdx = 0;// (size_t)(TicksPerSecond * time);
+
+	const auto& channel = channels.at(channelName);
+
+	for (size_t i = hintIdx; i < channel.Positions.GetSize(); ++i)
+	{
+		auto& pos = channel.Positions[i];
+		if (pos.Time <= time)
+			data.pos[0] = pos;
+		if (pos.Time >= time)
+		{
+			data.pos[1] = pos;
+			break;
+		}
+	}
+
+	for (size_t i = hintIdx; i < channel.Positions.GetSize(); ++i)
+	{
+		auto& scale = channel.Scales[i];
+		if (scale.Time <= time)
+			data.scale[0] = scale;
+		if (scale.Time >= time)
+		{
+			data.scale[1] = scale;
+			break;
+		}
+	}
+
+	for (size_t i = hintIdx; i < channel.Positions.GetSize(); ++i)
+	{
+		auto& rot = channel.Rotations[i];
+		if (rot.Time <= time)
+			data.rot[0] = rot;
+		if (rot.Time >= time)
+		{
+			data.rot[1] = rot;
+			break;
+		}
+	}
+
+	return data;
 }

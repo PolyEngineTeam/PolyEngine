@@ -1,5 +1,6 @@
 #include <CorePCH.hpp>
 
+#include <Math/BasicMath.hpp>
 #include <Math/Matrix.hpp>
 #include <Math/SimdMath.hpp>
 #include <Math/Quaternion.hpp>
@@ -650,6 +651,64 @@ bool Poly::Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& 
 	rotation.W = w;
 
 	return true;
+}
+
+Matrix Poly::Matrix::Lerp(const Matrix & a, const Matrix & b, float t)
+{
+	Vector aTrans, bTrans;
+	Vector aScale, bScale;
+	Quaternion aRot, bRot;
+
+	a.Decompose(aTrans, aRot, aScale);
+	b.Decompose(bTrans, bRot, bScale);
+
+	Vector trans = ::Poly::Lerp(aTrans, bTrans, t);
+	Vector scale = ::Poly::Lerp(aScale, bScale, t);
+	Quaternion rot = Quaternion::Slerp(aRot, bRot, t);
+
+	return Matrix::Compose(trans, rot, scale);
+}
+
+Matrix Matrix::Blend(const std::vector<std::pair<Matrix, float>>& matsAntWeights)
+{
+	HEAVY_ASSERTE(matsAntWeights.size() > 0, "Size should be > 0");
+
+	Vector translation;
+	Vector scale;
+	Quaternion rotation;
+
+	float weightSum = 0.f;
+	for (auto&[_, weight] : matsAntWeights)
+		weightSum += weight;
+
+	HEAVY_ASSERTE(weightSum > 0, "Weights cannot sum to 0!");
+
+	for (auto& [mat, weight] : matsAntWeights)
+	{
+		HEAVY_ASSERTE(weight >= 0, "Weights cannot be lower than 0!");
+		Vector tmpTranslation;
+		Vector tmpScale;
+		Quaternion tmpRotation;
+		mat.Decompose(tmpTranslation, tmpRotation, tmpScale);
+
+		const float normalizedWeight = weight / weightSum;
+
+		translation += tmpTranslation * normalizedWeight;
+		scale += tmpScale * normalizedWeight;
+		rotation *= Quaternion::Slerp(Quaternion::IDENTITY, tmpRotation, normalizedWeight);
+	}
+
+	return Compose(translation, rotation, scale);
+}
+
+Matrix Matrix::Compose(const Vector& translation, const Quaternion& rotation, const Vector& scale)
+{
+	return Compose(Matrix().SetTranslation(translation), rotation.ToRotationMatrix(), Matrix().SetScale(scale));
+}
+
+Matrix Matrix::Compose(const Matrix& translation, const Matrix& rotation, const Matrix& scale)
+{
+	return translation * rotation * scale;
 }
 
 namespace Poly {

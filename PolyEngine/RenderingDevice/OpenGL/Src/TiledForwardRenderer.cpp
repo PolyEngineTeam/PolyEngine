@@ -2,6 +2,7 @@
 
 #include <TiledForwardRenderer.hpp>
 #include <Configs/AssetsPathConfig.hpp>
+#include <Rendering/Animation/SkeletalAnimationComponent.hpp>
 
 #include <GLRenderingDevice.hpp>
 #include <Proxy/GLMeshDeviceProxy.hpp>
@@ -88,6 +89,13 @@ TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 		LightAccumulationShader.RegisterUniform("vec4", baseName + "Direction");
 	}
 	
+	int maxBones = 64;
+	for (int i = 0; i < maxBones; ++i)
+	{
+		String baseName = String("uBones[") + String::From(i) + String("]");
+		LightAccumulationShader.RegisterUniform("mat4", baseName);
+	}
+
 	TranslucentShader.RegisterUniform("vec4", "uMaterial.Emissive");
 	TranslucentShader.RegisterUniform("vec4", "uMaterial.Albedo");
 	TranslucentShader.RegisterUniform("float", "uMaterial.Roughness");
@@ -123,6 +131,7 @@ void TiledForwardRenderer::Init()
 	SetupLightsBufferFromScene();
 
 	Splash = ResourceManager<TextureResource>::Load("Textures/splash_00.png", eResourceSource::ENGINE, eTextureUsageType::ALBEDO);
+	Flower = ResourceManager<TextureResource>::Load("Textures/flowers.jpg", eResourceSource::ENGINE, eTextureUsageType::ALBEDO);
 
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
@@ -167,6 +176,11 @@ void TiledForwardRenderer::Deinit()
 	if (Splash)
 	{
 		ResourceManager<TextureResource>::Release(Splash);
+	}
+
+	if (Flower)
+	{
+		ResourceManager<TextureResource>::Release(Flower);
 	}
 }
 
@@ -587,6 +601,10 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOhdr);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	// float time = (float)TimeSystem::GetTimerElapsedTime(sceneView.SceneData, eEngineTimer::GAMEPLAY);
+	// LightAccumulationShader.SetUniform("uTime", time);
+	// gConsole.LogInfo("TiledForwardRenderer::RenderOpaqueLit uTime: {}", time);
+
 	// shadownap uniforms
 	Matrix projDirLightFromWorld = sceneView.DirectionalLightList.IsEmpty()
 		? Matrix()
@@ -646,19 +664,43 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	glBindFragDataLocation((GLuint)LightAccumulationShader.GetProgramHandle(), 1, "oNormal");
 
 	const Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
-	// for (const MeshRenderingComponent* meshCmp : sceneView.OpaqueQueue)
+	
 	PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator> drawOpaqueQueue(sceneView.OpaqueQueue);
 	while (drawOpaqueQueue.GetSize() > 0)
 	{
 		const MeshRenderingComponent* meshCmp = drawOpaqueQueue.Pop();
+		const SkeletalAnimationComponent* animCmp = meshCmp->GetSibling<SkeletalAnimationComponent>();
+
 		const EntityTransform& transform = meshCmp->GetTransform();
 		const Matrix& worldFromModel = transform.GetWorldFromModel();
 		LightAccumulationShader.SetUniform("uClipFromModel", clipFromWorld * worldFromModel);
 		LightAccumulationShader.SetUniform("uWorldFromModel", worldFromModel);
-		
+
 		int i = 0;
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
+			LightAccumulationShader.SetUniform("uHasBones", (subMesh->GetBones().size() != 0) ? 1.0f : 0.0f );
+
+			 for (int i = 0; i < 64; ++i)
+			 {
+			 	String baseName = String("uBones[") + String::From(i) + String("]");
+			 	LightAccumulationShader.SetUniform(baseName, Matrix());
+			 }
+			 
+			 if (animCmp)
+			 {
+			 	int count = 0;
+			 	for (auto& b : subMesh->GetBones())
+			 	{
+			 		Matrix animFromModel = animCmp->ModelFromBone.at(b.name) * b.boneFromModel;
+			 		String baseName = String("uBones[") + String::From(count) + String("]");
+			 		LightAccumulationShader.SetUniform(baseName, animFromModel);
+					// LightAccumulationShader.SetUniform(baseName, Matrix::IDENTITY);
+			 		if (count >= 64) break;
+			 		count++;
+			 	}
+			 }
+
 			Material material = meshCmp->GetMaterial(i);
 			LightAccumulationShader.SetUniform("uMaterial.Emissive", material.Emissive);
 			LightAccumulationShader.SetUniform("uMaterial.Albedo", material.Albedo);
@@ -675,9 +717,9 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 			// Material textures
 			LightAccumulationShader.BindSampler("uEmissiveMap",			3, emissiveMap			? emissiveMap->GetTextureProxy()->GetResourceID()			: RDI->FallbackWhiteTexture);
-			LightAccumulationShader.BindSampler("uAlbedoMap",			4, albedoMap			? albedoMap->GetTextureProxy()->GetResourceID()				: RDI->FallbackWhiteTexture);
-			LightAccumulationShader.BindSampler("uRoughnessMap",		5, roughnessMap			? roughnessMap->GetTextureProxy()->GetResourceID()			: RDI->FallbackWhiteTexture);
-			LightAccumulationShader.BindSampler("uMetallicMap",			6, metallicMap			? metallicMap->GetTextureProxy()->GetResourceID()			: RDI->FallbackWhiteTexture);
+			LightAccumulationShader.BindSampler("uAlbedoMap",			4, albedoMap			? albedoMap->GetTextureProxy()->GetResourceID()				: Flower->GetTextureProxy()->GetResourceID());
+			LightAccumulationShader.BindSampler("uRoughnessMap",		5, roughnessMap			? roughnessMap->GetTextureProxy()->GetResourceID()			: Flower->GetTextureProxy()->GetResourceID());
+			LightAccumulationShader.BindSampler("uMetallicMap",			6, metallicMap			? metallicMap->GetTextureProxy()->GetResourceID()			: Flower->GetTextureProxy()->GetResourceID());
 			LightAccumulationShader.BindSampler("uNormalMap",			7, normalMap			? normalMap->GetTextureProxy()->GetResourceID()				: RDI->FallbackNormalMap);
 			LightAccumulationShader.BindSampler("uAmbientOcclusionMap",	8, ambientOcclusionMap	? ambientOcclusionMap->GetTextureProxy()->GetResourceID()	: RDI->FallbackWhiteTexture);
 
@@ -717,6 +759,7 @@ void TiledForwardRenderer::RenderSkybox(const SceneView& sceneView)
 		if (skyboxCmp)
 		{
 			tint = skyboxCmp->GetTint();
+			EnvironmentCapture.SetCurrentEnviroment(skyboxCmp->GetCurrentIndex());
 		}
 
 		const Matrix clipFromView = sceneView.CameraCmp->GetClipFromView();
@@ -1194,7 +1237,7 @@ void TiledForwardRenderer::PostGamma(const SceneView& sceneView)
 	Color tint = Color::WHITE;
 	Color fogColor = Color::WHITE;
 	float fogDensity = 0.66f;
-	float temperature = 6500.0;
+	// float temperature = 6500.0;
 	float gamma = 2.2f;
 
 	const PostprocessSettingsComponent* postCmp = sceneView.CameraCmp->GetSibling<PostprocessSettingsComponent>();
@@ -1205,7 +1248,7 @@ void TiledForwardRenderer::PostGamma(const SceneView& sceneView)
 		tint			= postCmp->Tint;
 		fogColor		= postCmp->FogColor;
 		fogDensity		= postCmp->FogDensity;
-		temperature		= postCmp->Temperature;
+		// temperature		= postCmp->Temperature;
 		gamma			= postCmp->Gamma;
 	}
 
@@ -1213,7 +1256,7 @@ void TiledForwardRenderer::PostGamma(const SceneView& sceneView)
 	GammaShader.BindSampler("uImage", 0, PostColorBuffer1);
 	GammaShader.BindSampler("uDepth", 1, LinearDepth);
 	GammaShader.BindSampler("uSplashImage", 2, Splash->GetTextureProxy()->GetResourceID());
-	GammaShader.SetUniform("uSplashTint", Color(1.0f, 0.0f, 0.0f, 1.0f) * 0.8f);
+	GammaShader.SetUniform("uSplashTint", Color(1.0f, 1.0f, 1.0f, 1.0f) * 0.7f);
 	GammaShader.SetUniform("uTime", time);
 	GammaShader.SetUniform("uRes", Vector(viewportWidth, viewportHeight, 1.0f / viewportWidth, 1.0f / viewportHeight));
 	GammaShader.SetUniform("uTint", tint);
@@ -1224,7 +1267,7 @@ void TiledForwardRenderer::PostGamma(const SceneView& sceneView)
 	GammaShader.SetUniform("uGrainScale", grainScale);
 	GammaShader.SetUniform("uVignetteScale", vignetteScale);
 	GammaShader.SetUniform("uAbberationScale", abberationScale);
-	GammaShader.SetUniform("uTemperature", temperature);
+	// GammaShader.SetUniform("uTemperature", temperature);
 	GammaShader.SetUniform("uGamma", gamma);
 
 	glViewport(

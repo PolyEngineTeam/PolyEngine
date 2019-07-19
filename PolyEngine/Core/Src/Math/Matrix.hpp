@@ -151,6 +151,11 @@ namespace Poly
 		/// <returns>True if decomposition was sucesfull, false otherwise.</returns>
 		bool Decompose(Vector& translation, Quaternion& rotation, Vector& scale, MatrixSkew& skew, Vector& perspectivePoint) const;
 
+		static Matrix Lerp(const Matrix& a, const Matrix& b, float t);
+		static Matrix Blend(const std::vector<std::pair<Matrix, float>>& matsAntWeights);
+		static Matrix Compose(const Vector& translation, const Quaternion& rotation, const Vector& scale);
+		static Matrix Compose(const Matrix& translation, const Matrix& rotation, const Matrix& scale);
+
 	  CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Matrix& mat);
 
 	  // This structure allows to access vector elements by index or name.

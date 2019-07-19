@@ -63,6 +63,13 @@ namespace Poly {
 			V ValueOr(V&& fallback) const &  { if (HasValue()) { return Value(); } return std::move(fallback); }
 			V ValueOr(V&& fallback) const && { if (HasValue()) { return std::move(Value()); } return std::move(fallback); }
 
+			friend std::ostream& operator<< (std::ostream& stream, const OptionalBase& opt)
+			{
+				if(opt.HasValue())
+					return stream << opt.Value();
+				else
+					return stream << "<empty optional>";
+			}
 		protected:
 			bool initialized;
 			union {

@@ -11,6 +11,7 @@
 struct aiMesh;
 struct aiMaterial;
 struct aiAnimation;
+struct aiNode;
 
 typedef unsigned int GLuint;
  
@@ -26,11 +27,14 @@ namespace Poly
 		class ENGINE_DLLEXPORT SubMesh : public BaseObject<>
 		{
 		public:
-			SubMesh(const String& path, aiMesh* mesh, aiMaterial* material);
-
 			struct ENGINE_DLLEXPORT Bone {
+				Bone(String name, Matrix boneFromModel) : name(name), boneFromModel(boneFromModel) {}
+
 				String name;
+				Matrix boneFromModel;
 			};
+
+			SubMesh(const String& path, aiMesh* mesh, aiMaterial* material);
 
 			void LoadGeometry(aiMesh* mesh);
 			void LoadBones(aiMesh* mesh);
@@ -39,10 +43,11 @@ namespace Poly
 			const Mesh& GetMeshData() const { return MeshData; }
 			const IMeshDeviceProxy* GetMeshProxy() const { return MeshProxy.get(); }
 			const AABox& GetAABox() const { return AxisAlignedBoundingBox; }
+			std::vector<Bone> GetBones() const { return Bones; }
 		private:
+			std::vector<Bone> Bones;
 			AABox AxisAlignedBoundingBox;
 			Mesh MeshData;
-			Dynarray<Bone> Bones;
 			std::unique_ptr<IMeshDeviceProxy> MeshProxy;
 		};
 
@@ -51,22 +56,42 @@ namespace Poly
 			Animation(aiAnimation* anim);
 
 			struct ENGINE_DLLEXPORT Channel {
-
 				template<typename T>
 				struct KeyValue
 				{
 					T Value;
 					float Time;
 				};
+
 				String Name;
 				Dynarray<KeyValue<Vector>> Positions;
 				Dynarray<KeyValue<Quaternion>> Rotations;
 				Dynarray<KeyValue<Vector>> Scales;
 			};
 
+			struct ChannelLerpData
+			{
+				Optional<Channel::KeyValue<Vector>> pos[2];
+				Optional<Channel::KeyValue<Vector>> scale[2];
+				Optional<Channel::KeyValue<Quaternion>> rot[2];
+			};
+
+			ChannelLerpData GetLerpData(String channel, float time) const;
+
+			String Name;
 			float Duration;
 			float TicksPerSecond;
-			Dynarray<Channel> channels;
+			std::map<String, Channel> channels;
+		};
+
+		struct ENGINE_DLLEXPORT Bone {
+			Bone(String name) : name(name) {}
+
+			String name;
+			Matrix prevBoneFromBone;
+			Matrix boneFromModel;
+			Optional<size_t> parentBoneIdx = {};
+			std::vector<size_t> childrenIdx;
 		};
 
 		MeshResource(const String& path);
@@ -74,10 +99,24 @@ namespace Poly
 
 
 		const Dynarray<SubMesh*>& GetSubMeshes() const { return SubMeshes; }
-		const Dynarray<Animation*>& GetAnimations() const { return Animations; }
+		const Animation* GetAnimation(const String& name) const
+		{
+			auto it = Animations.find(name);
+			if (it == Animations.end())
+				return nullptr;
+			return it->second;
+		}
 		const AABox& GetAABox() const { return AxisAlignedBoundingBox; }
+		const Dynarray<Bone>& GetBones() const { return Bones; }
+
+		const Matrix& GetModelFromSkeletonRoot() const { return ModelFromSkeletonRoot; }
 	private:
-		Dynarray<Animation*> Animations;
+		void LoadBones(aiNode* node);
+		void PopulateBoneReferences(const std::map<String, size_t>& nameToBoneIdx, aiNode* node, const Matrix& localTransform);
+
+		Matrix ModelFromSkeletonRoot;
+		Dynarray<Bone> Bones;
+		std::map<String, Animation*> Animations;
 		Dynarray<SubMesh*> SubMeshes;
 		AABox AxisAlignedBoundingBox;
 	};

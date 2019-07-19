@@ -26,11 +26,13 @@ namespace Poly
 		GLuint GetCurrentIrradianceMap() const { return IrradianceMaps[CurrentEnviroment]; };
 		GLuint GetCurrentPrefilterMap() const { return PrefilterMaps[CurrentEnviroment]; };
 
+		void SetCurrentEnviroment(size_t value) { CurrentEnviroment = value; };
+
 	private:
 
 		bool IsDirty = true;
 
-		size_t CurrentEnviroment;
+		size_t CurrentEnviroment = 0;
 
 		GLRenderingDevice* RDI;
 

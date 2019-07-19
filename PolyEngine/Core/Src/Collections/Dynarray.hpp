@@ -14,7 +14,7 @@ namespace Poly
 	class Dynarray final : public BaseObjectLiteralType<>
 	{
 	public:
-
+		using ValueType = T;
 		using FindPred = std::function<bool(const T&)>;
 
 		/// <summary>Dynarray's Iterator class provides basic random access mutable iterator API for traversing dynarray memory</summary>

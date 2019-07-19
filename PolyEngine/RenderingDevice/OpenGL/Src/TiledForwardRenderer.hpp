@@ -110,6 +110,7 @@ namespace Poly {
 
 		RenderTargetPingPong RTBloom;
 		TextureResource* Splash;
+		TextureResource* Flower;
 
 		// Shader programs
 		GLShaderProgram DepthShader;
