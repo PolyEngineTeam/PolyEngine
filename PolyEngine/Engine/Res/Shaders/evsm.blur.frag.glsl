@@ -31,11 +31,11 @@ void main()
 		sum += gaussianWeights[2] * textureLodOffset(uEVSMap, vUV, 0, ivec2(2, 0));
 		sum += gaussianWeights[1] * textureLodOffset(uEVSMap, vUV, 0, ivec2(1, 0));
 		sum += gaussianWeights[0] * textureLodOffset(uEVSMap, vUV, 0, ivec2(0, 0));
-		sum += gaussianWeights[1] * textureLodOffset(uEVSMap, vUV, 0, ivec2(1, 0));
-		sum += gaussianWeights[2] * textureLodOffset(uEVSMap, vUV, 0, ivec2(2, 0));
-		sum += gaussianWeights[3] * textureLodOffset(uEVSMap, vUV, 0, ivec2(3, 0));
-		sum += gaussianWeights[4] * textureLodOffset(uEVSMap, vUV, 0, ivec2(4, 0));
-		sum += gaussianWeights[5] * textureLodOffset(uEVSMap, vUV, 0, ivec2(5, 0));
+		sum += gaussianWeights[1] * textureLodOffset(uEVSMap, vUV, 0, ivec2(-1, 0));
+		sum += gaussianWeights[2] * textureLodOffset(uEVSMap, vUV, 0, ivec2(-2, 0));
+		sum += gaussianWeights[3] * textureLodOffset(uEVSMap, vUV, 0, ivec2(-3, 0));
+		sum += gaussianWeights[4] * textureLodOffset(uEVSMap, vUV, 0, ivec2(-4, 0));
+		sum += gaussianWeights[5] * textureLodOffset(uEVSMap, vUV, 0, ivec2(-5, 0));
 	}
 	else
 	{
@@ -45,11 +45,11 @@ void main()
 		sum += gaussianWeights[2] * textureLodOffset(uEVSMap, vUV, 0, ivec2(0, 2));
 		sum += gaussianWeights[1] * textureLodOffset(uEVSMap, vUV, 0, ivec2(0, 1));
 		sum += gaussianWeights[0] * textureLodOffset(uEVSMap, vUV, 0, ivec2(0, 0));
-		sum += gaussianWeights[1] * textureLodOffset(uEVSMap, vUV, 0, ivec2(0, 1));
-		sum += gaussianWeights[2] * textureLodOffset(uEVSMap, vUV, 0, ivec2(0, 2));
-		sum += gaussianWeights[3] * textureLodOffset(uEVSMap, vUV, 0, ivec2(0, 3));
-		sum += gaussianWeights[4] * textureLodOffset(uEVSMap, vUV, 0, ivec2(0, 4));
-		sum += gaussianWeights[5] * textureLodOffset(uEVSMap, vUV, 0, ivec2(0, 5));
+		sum += gaussianWeights[1] * textureLodOffset(uEVSMap, vUV, 0, ivec2(0, -1));
+		sum += gaussianWeights[2] * textureLodOffset(uEVSMap, vUV, 0, ivec2(0, -2));
+		sum += gaussianWeights[3] * textureLodOffset(uEVSMap, vUV, 0, ivec2(0, -3));
+		sum += gaussianWeights[4] * textureLodOffset(uEVSMap, vUV, 0, ivec2(0, -4));
+		sum += gaussianWeights[5] * textureLodOffset(uEVSMap, vUV, 0, ivec2(0, -5));
 	}
 
 
