@@ -5,6 +5,8 @@
 #include <Math/SimdMath.hpp>
 #include <Math/Quaternion.hpp>
 
+#include <Utils/Logger.hpp>
+
 using namespace Poly;
 
 const Matrix Matrix::IDENTITY = Matrix();
@@ -484,8 +486,15 @@ bool Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& scale)
 	Vector perspPoint;
 	//TODO optimize this!
 	bool result = Decompose(translation, rotation, scale, skew, perspPoint);
-	ASSERTE(!result || (Cmpf(skew.XY, 0, 1e-2f) && Cmpf(skew.XZ, 0, 1e-2f) && Cmpf(skew.YZ, 0, 1e-2f)), "Non zero skew, use the other overload of the method!");
-	ASSERTE(!result || perspPoint == Vector(0,0,0), "Non zero perspective, use the other overload of the method!");
+	
+	if (result)
+	{
+		if (!Cmpf(skew.XY, 0, 1e-2f) || !Cmpf(skew.XZ, 0, 1e-2f) || !Cmpf(skew.YZ, 0, 1e-2f))
+			gConsole.LogError("Non zero skew in Matrix::Decompose, skew = [{}, {}, {}]", skew.XY, skew.XZ, skew.YZ);
+		if (perspPoint != Vector(0, 0, 0))
+			gConsole.LogError("Non zero perspective in Matrix::Decompose, perspective = [{}]", perspPoint);
+	}
+
 	return result;
 }
 
