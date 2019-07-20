@@ -12,7 +12,9 @@ from .project_base import ProjectBase, DIST_DIR_NAME
 
 PROJ_FILE_EXTENSION = '.proj.json'
 PROJ_FILE_GLOB = '*' + PROJ_FILE_EXTENSION
-PROJ_FILE_REGEX = r'.*\\(\S+)' + r'\.'.join(PROJ_FILE_EXTENSION.split('.'))
+PROJ_FILE_REGEX = r'.*[\\\/](\S+)' + r'\.'.join(PROJ_FILE_EXTENSION.split('.'))
+
+print(PROJ_FILE_REGEX)
 
 PROJECT_RESOURCES_DIR_NAME = 'Res'
 PROJECT_SOURCES_DIR_NAME = 'Src'
