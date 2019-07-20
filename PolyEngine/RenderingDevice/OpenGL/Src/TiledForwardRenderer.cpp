@@ -131,7 +131,6 @@ void TiledForwardRenderer::Init()
 	SetupLightsBufferFromScene();
 
 	Splash = ResourceManager<TextureResource>::Load("Textures/splash_00.png", eResourceSource::ENGINE, eTextureUsageType::ALBEDO);
-	Flower = ResourceManager<TextureResource>::Load("Textures/flowers.jpg", eResourceSource::ENGINE, eTextureUsageType::ALBEDO);
 
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
@@ -176,11 +175,6 @@ void TiledForwardRenderer::Deinit()
 	if (Splash)
 	{
 		ResourceManager<TextureResource>::Release(Splash);
-	}
-
-	if (Flower)
-	{
-		ResourceManager<TextureResource>::Release(Flower);
 	}
 }
 
@@ -717,9 +711,9 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 			// Material textures
 			LightAccumulationShader.BindSampler("uEmissiveMap",			3, emissiveMap			? emissiveMap->GetTextureProxy()->GetResourceID()			: RDI->FallbackWhiteTexture);
-			LightAccumulationShader.BindSampler("uAlbedoMap",			4, albedoMap			? albedoMap->GetTextureProxy()->GetResourceID()				: Flower->GetTextureProxy()->GetResourceID());
-			LightAccumulationShader.BindSampler("uRoughnessMap",		5, roughnessMap			? roughnessMap->GetTextureProxy()->GetResourceID()			: Flower->GetTextureProxy()->GetResourceID());
-			LightAccumulationShader.BindSampler("uMetallicMap",			6, metallicMap			? metallicMap->GetTextureProxy()->GetResourceID()			: Flower->GetTextureProxy()->GetResourceID());
+			LightAccumulationShader.BindSampler("uAlbedoMap",			4, albedoMap			? albedoMap->GetTextureProxy()->GetResourceID()				: RDI->FallbackWhiteTexture);
+			LightAccumulationShader.BindSampler("uRoughnessMap",		5, roughnessMap			? roughnessMap->GetTextureProxy()->GetResourceID()			: RDI->FallbackWhiteTexture);
+			LightAccumulationShader.BindSampler("uMetallicMap",			6, metallicMap			? metallicMap->GetTextureProxy()->GetResourceID()			: RDI->FallbackWhiteTexture);
 			LightAccumulationShader.BindSampler("uNormalMap",			7, normalMap			? normalMap->GetTextureProxy()->GetResourceID()				: RDI->FallbackNormalMap);
 			LightAccumulationShader.BindSampler("uAmbientOcclusionMap",	8, ambientOcclusionMap	? ambientOcclusionMap->GetTextureProxy()->GetResourceID()	: RDI->FallbackWhiteTexture);
 
