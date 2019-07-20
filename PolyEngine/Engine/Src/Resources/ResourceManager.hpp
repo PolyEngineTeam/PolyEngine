@@ -56,12 +56,12 @@ namespace Poly
 	public:
 		static T* LoadEngineAsset(const String& path)
 		{
-			return Load(path, true, eResourceSource::ENGINE);
+			return Load(path, eResourceSource::ENGINE);
 		}
 
 		static T* LoadGameAsset(const String& path)
 		{
-			return Load(path, true, eResourceSource::GAME);
+			return Load(path, eResourceSource::GAME);
 		}
 
 		template<typename... Args>
