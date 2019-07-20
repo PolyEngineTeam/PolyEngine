@@ -119,23 +119,23 @@ namespace Poly
 
 		/// <summary>Performs insertion to the back of the queue.</summary>
 		/// <param name="obj">Const reference to object that should be copied to the queue.</param>
-		void PushBack(const T& obj)
+		void PushBack(T obj)
 		{
 			if (GetSize() >= GetCapacity())
 				Enlarge();
-			ObjectLifetimeHelper::CopyCreate(Data + Tail, obj);
+			ObjectLifetimeHelper::MoveCreate(Data + Tail, std::move(obj));
 			AdvanceIdx(Tail);
 			Size++;
 		}
 
 		/// <summary>Performs insertion to the front of the queue.</summary>
 		/// <param name="obj">Const reference to object that should be copied to the queue.</param>
-		void PushFront(const T& obj)
+		void PushFront(T obj)
 		{
 			if (GetSize() >= GetCapacity())
 				Enlarge();
 			DecreaseIdx(Head);
-			ObjectLifetimeHelper::CopyCreate(Data + Head, obj);
+			ObjectLifetimeHelper::MoveCreate(Data + Head, std::move(obj));
 			Size++;
 		}
 
