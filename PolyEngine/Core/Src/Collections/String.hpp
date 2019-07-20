@@ -205,3 +205,21 @@ namespace Poly {
 		friend class StringBuilder;
 	};
 }
+
+
+namespace std
+{
+	template<> struct hash<Poly::String>
+	{
+		std::size_t operator()(Poly::String const& s) const noexcept
+		{	
+			unsigned long hash = 5381;
+
+			size_t length = s.GetLength();
+			for (size_t i = 0; i < length; ++i)
+				hash = ((hash << 5) + hash) + s[i];
+
+			return hash;
+		}
+	};
+}

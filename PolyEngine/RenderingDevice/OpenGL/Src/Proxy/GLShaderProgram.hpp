@@ -55,8 +55,8 @@ namespace Poly
 		void BindSampler(const String& name, int samplerID, int textureID);
 		void BindSamplerCube(const String& name, int samplerID, int cubemapID);
 
-		const std::map<String, OutputInfo>& GetOutputsInfo() const { return Outputs; }
-		const std::map<String, UniformInfo>& GetUniformsInfo() const { return Uniforms; }
+		const std::unordered_map<String, OutputInfo>& GetOutputsInfo() const { return Outputs; }
+		const std::unordered_map<String, UniformInfo>& GetUniformsInfo() const { return Uniforms; }
 
 		void RegisterUniform(const String& type, const String& name);
 
@@ -71,8 +71,8 @@ namespace Poly
 
 		void AnalyzeShaderCode(eShaderUnitType type);
 
-		std::map<String, UniformInfo> Uniforms;
-		std::map<String, OutputInfo> Outputs;
+		std::unordered_map<String, UniformInfo> Uniforms;
+		std::unordered_map<String, OutputInfo> Outputs;
 		GLuint ProgramHandle;
 		EnumArray<String, eShaderUnitType> ShaderCode;
 
