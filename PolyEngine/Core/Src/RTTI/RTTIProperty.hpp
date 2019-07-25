@@ -262,6 +262,56 @@ namespace Poly {
 			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::MAP, std::move(implData) };
 		}
 
+				//-----------------------------------------------------------------------------------------------------------------------
+		// std::map serialization property impl
+		template <typename KeyType, typename ValueType>
+		struct StdUnorderedMapPropertyImplData final : public DictionaryPropertyImplDataBase
+		{
+			mutable KeyType TempKey;
+			mutable ValueType TempValue;
+
+			using MapType = std::unordered_map<KeyType, ValueType>;
+
+			StdUnorderedMapPropertyImplData(ePropertyFlag flags, FactoryFunc_t&& factory_func)
+			{
+				KeyPropertyType = CreatePropertyInfo<KeyType>(0, "key", flags);
+				ValuePropertyType = CreatePropertyInfo<ValueType>(0, "value", flags, std::move(factory_func));
+			}
+
+			void Clear(void* collection) const override { reinterpret_cast<MapType*>(collection)->clear(); }
+			void* GetKeyTemporaryStorage() const override { return reinterpret_cast<void*>(&TempKey); }
+			void* GetValueTemporaryStorage() const override { return reinterpret_cast<void*>(&TempValue); }
+
+			Dynarray<const void*> GetKeys(const void* collection) const override
+			{
+				Dynarray<const void*> ret;
+				const MapType& map = *reinterpret_cast<const MapType*>(collection);
+				for (const auto& kv : map)
+					ret.PushBack((const void*)&(kv.first));
+				return ret;
+			}
+
+			void SetValue(void* collection, void* key, void* value) const override
+			{
+				KeyType& keyRef = *reinterpret_cast<KeyType*>(key);
+				ValueType& valueRef = *reinterpret_cast<ValueType*>(value);
+				(*reinterpret_cast<MapType*>(collection))[std::move(keyRef)] = std::move(valueRef);
+			}
+
+			const void* GetValue(const void* collection, const void* key) const override
+			{
+				const KeyType& keyRef = *reinterpret_cast<const KeyType*>(key);
+				const ValueType& valueRef = reinterpret_cast<const MapType*>(collection)->at(keyRef);
+				return reinterpret_cast<const void*>(&valueRef);
+			}
+		};
+
+		template <typename KeyType, typename ValueType> Property CreateStdUnorderedMapPropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t&& factory_func)
+		{
+			std::shared_ptr<DictionaryPropertyImplDataBase> implData = std::shared_ptr<DictionaryPropertyImplDataBase>{ new StdUnorderedMapPropertyImplData<KeyType, ValueType>(flags, std::move(factory_func)) };
+			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::MAP, std::move(implData) };
+		}
+
 		//-----------------------------------------------------------------------------------------------------------------------
 		// OrderedMap serialization property impl
 		template <typename EnumType, typename ValueType>
@@ -502,18 +552,19 @@ namespace Poly {
 		template <typename T> inline Property CreatePropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t factory_func)
 		{ 
 			return constexpr_match(
-				std::is_enum<T>{},			[&](auto lazy) { return CreateEnumPropertyInfo<LAZY_TYPE(T)>(offset, name, flags, std::move(factory_func)); },
-				Trait::IsDynarray<T>{},		[&](auto lazy) { return CreateDynarrayPropertyInfo<typename Trait::DynarrayValueType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
-				Trait::IsStdVector<T>{},	[&](auto lazy) { return CreateStdVectorPropertyInfo<typename Trait::StdVectorValueType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
-				Trait::IsStdMap<T>{},		[&](auto lazy) { return CreateStdMapPropertyInfo<typename Trait::StdMapType<LAZY_TYPE(T)>::keyType, typename Trait::StdMapType<LAZY_TYPE(T)>::valueType>(offset, name, flags, std::move(factory_func)); },
-				Trait::IsEnumArray<T>{},	[&](auto lazy) { return CreateEnumArrayPropertyInfo<typename Trait::EnumArrayType<LAZY_TYPE(T)>::enumType, typename Trait::EnumArrayType<LAZY_TYPE(T)>::valueType>(offset, name, flags, std::move(factory_func)); },
-				Trait::IsEnumFlags<T>{},	[&](auto lazy) { return CreateEnumFlagsPropertyInfo<typename Trait::EnumFlagsType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
-				Trait::IsIterablePoolAllocator<T>{}, [&](auto lazy) { return CreateIterablePoolAllocatorPropertyInfo<typename Trait::IterablePoolAllocatorType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
-				Trait::IsUniquePtr<T>{},	[&](auto lazy) { return CreateUniquePtrPropertyInfo<typename Trait::UniquePtrType<LAZY_TYPE(T)>::type, typename Trait::UniquePtrType<LAZY_TYPE(T)>::deleter>(offset, name, flags, std::move(factory_func)); },
-				std::is_pointer<T>{},		[&](auto lazy) { return CreateRawPtrPropertyInfo<typename std::remove_pointer<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
-				std::is_base_of<RTTIBase, T>{}, [&](auto lazy) { return Property{ TypeInfo::Get<LAZY_TYPE(T)>(), offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>(), nullptr, std::move(factory_func) }; },
+				std::is_enum<T>{},						[&](auto lazy) { return CreateEnumPropertyInfo<LAZY_TYPE(T)>(offset, name, flags, std::move(factory_func)); },
+				Trait::IsDynarray<T>{},					[&](auto lazy) { return CreateDynarrayPropertyInfo<typename Trait::DynarrayValueType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
+				Trait::IsStdVector<T>{},				[&](auto lazy) { return CreateStdVectorPropertyInfo<typename Trait::StdVectorValueType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
+				Trait::IsStdMap<T>{},					[&](auto lazy) { return CreateStdMapPropertyInfo<typename Trait::StdMapType<LAZY_TYPE(T)>::keyType, typename Trait::StdMapType<LAZY_TYPE(T)>::valueType>(offset, name, flags, std::move(factory_func)); },
+				Trait::IsStdUnorderedMap<T>{},			[&](auto lazy) { return CreateStdUnorderedMapPropertyInfo<typename Trait::StdUnorderedMapType<LAZY_TYPE(T)>::keyType, typename Trait::StdUnorderedMapType<LAZY_TYPE(T)>::valueType>(offset, name, flags, std::move(factory_func)); },
+				Trait::IsEnumArray<T>{},				[&](auto lazy) { return CreateEnumArrayPropertyInfo<typename Trait::EnumArrayType<LAZY_TYPE(T)>::enumType, typename Trait::EnumArrayType<LAZY_TYPE(T)>::valueType>(offset, name, flags, std::move(factory_func)); },
+				Trait::IsEnumFlags<T>{},				[&](auto lazy) { return CreateEnumFlagsPropertyInfo<typename Trait::EnumFlagsType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
+				Trait::IsIterablePoolAllocator<T>{},	[&](auto lazy) { return CreateIterablePoolAllocatorPropertyInfo<typename Trait::IterablePoolAllocatorType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
+				Trait::IsUniquePtr<T>{},				[&](auto lazy) { return CreateUniquePtrPropertyInfo<typename Trait::UniquePtrType<LAZY_TYPE(T)>::type, typename Trait::UniquePtrType<LAZY_TYPE(T)>::deleter>(offset, name, flags, std::move(factory_func)); },
+				std::is_pointer<T>{},					[&](auto lazy) { return CreateRawPtrPropertyInfo<typename std::remove_pointer<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
+				std::is_base_of<RTTIBase, T>{}, 		[&](auto lazy) { return Property{ TypeInfo::Get<LAZY_TYPE(T)>(), offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>(), nullptr, std::move(factory_func) }; },
 				//TODO add RTTIBase specialization!
-				/*default*/					[&](auto lazy) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>(), nullptr, std::move(factory_func) }; }
+				/*default*/								[&](auto lazy) { return Property{ TypeInfo::INVALID, offset, name, flags, GetCorePropertyType<LAZY_TYPE(T)>(), nullptr, std::move(factory_func) }; }
 			);
 		}
 

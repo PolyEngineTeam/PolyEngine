@@ -34,6 +34,13 @@ namespace Poly
 		template <typename> struct StdMapType {};
 		template <typename K, typename V> struct StdMapType<std::map<K, V>> { using keyType = K; using valueType = V; };
 
+		// Is std::unordered_map
+		template <typename> struct IsStdUnorderedMap : public std::false_type {};
+		template <typename K, typename V> struct IsStdUnorderedMap<std::unordered_map<K,V>> : public std::true_type {};
+
+		template <typename> struct StdUnorderedMapType {};
+		template <typename K, typename V> struct StdUnorderedMapType<std::unordered_map<K, V>> { using keyType = K; using valueType = V; };
+
 		// Is enum array
 		template <typename> struct IsEnumArray : public std::false_type {};
 		template <typename T, typename E> struct IsEnumArray<EnumArray<T, E>> : public std::true_type {};
