@@ -27,12 +27,12 @@ namespace Poly
 		template <typename> struct StdVectorValueType {};
 		template <typename T> struct StdVectorValueType<std::vector<T>> { using type = T; };
 
-		// Is Ordered map
-		template <typename> struct IsOrderedMap : public std::false_type {};
-		template <typename K, typename V, size_t Bfactor> struct IsOrderedMap<OrderedMap<K,V, Bfactor>> : public std::true_type {};
+		// Is std::map
+		template <typename> struct IsStdMap : public std::false_type {};
+		template <typename K, typename V> struct IsStdMap<std::map<K,V>> : public std::true_type {};
 
-		template <typename> struct OrderedMapType {};
-		template <typename K, typename V, size_t Bfactor> struct OrderedMapType<OrderedMap<K, V, Bfactor>> { using keyType = K; using valueType = V; static const size_t bFactor = Bfactor; };
+		template <typename> struct StdMapType {};
+		template <typename K, typename V> struct StdMapType<std::map<K, V>> { using keyType = K; using valueType = V; };
 
 		// Is enum array
 		template <typename> struct IsEnumArray : public std::false_type {};
