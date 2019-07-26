@@ -4,7 +4,6 @@
 #include <RTTI/RTTI.hpp>
 #include <Configs/ConfigBase.hpp>
 #include <Math/BasicMath.hpp>
-#include <Collections/OrderedMap.hpp>
 #include <Math/Vector.hpp>
 #include <Math/Vector2f.hpp>
 #include <Math/Vector2i.hpp>
@@ -101,9 +100,12 @@ class TestConfig : public ConfigBase
 		RTTI_PROPERTY_AUTONAME(PropStdVectorStdVectorInt, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropStdVectorString, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropStdVectorCustom, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropOMapIntInt, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropOMapStrDynarray, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropOMapStrCustom, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropMapIntInt, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropMapStrDynarray, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropMapStrCustom, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropUnorderedMapIntInt, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropUnorderedMapStrDynarray, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropUnorderedMapStrCustom, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropVector, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropVector2f, RTTI::ePropertyFlag::NONE);
 		RTTI_PROPERTY_AUTONAME(PropVector2i, RTTI::ePropertyFlag::NONE);
@@ -129,14 +131,23 @@ class TestConfig : public ConfigBase
 public:
 	TestConfig() : ConfigBase("Test", eResourceSource::NONE) 
 	{
-		PropOMapIntInt.Insert(1, 2);
-		PropOMapIntInt.Insert(2, 3);
+		PropMapIntInt.insert({1, 2});
+		PropMapIntInt.insert({2, 3});
 
-		PropOMapStrDynarray.Insert("Val1", { 1, 2, 3 });
-		PropOMapStrDynarray.Insert("Val2", { 4, 5, 6 });
+		PropMapStrDynarray.insert({"Val1", { 1, 2, 3 }});
+		PropMapStrDynarray.insert({"Val2", { 4, 5, 6 }});
 
-		PropOMapStrCustom.Insert("Val1", 1);
-		PropOMapStrCustom.Insert("Val2", 2);
+		PropMapStrCustom.insert({"Val1", 1});
+		PropMapStrCustom.insert({"Val2", 2});
+
+		PropUnorderedMapIntInt.insert({1, 4});
+		PropUnorderedMapIntInt.insert({2, 6});
+
+		PropUnorderedMapStrDynarray.insert({"Val1", { 2, 4, 6 }});
+		PropUnorderedMapStrDynarray.insert({"Val2", { 8, 10, 12 }});
+
+		PropUnorderedMapStrCustom.insert({"Val1", 2});
+		PropUnorderedMapStrCustom.insert({"Val2", 4});
 
 		PropMatrix.SetRotationZ(60_deg);
 
@@ -173,9 +184,13 @@ public:
 	std::vector<String> PropStdVectorString = { "abc", "efg" };
 	std::vector<TestRTTIClass> PropStdVectorCustom = { 1, 2 };
 
-	OrderedMap<int, int> PropOMapIntInt;
-	OrderedMap<String, Dynarray<int>> PropOMapStrDynarray;
-	OrderedMap<String, TestRTTIClass> PropOMapStrCustom;
+	std::map<int, int> PropMapIntInt;
+	std::map<String, Dynarray<int>> PropMapStrDynarray;
+	std::map<String, TestRTTIClass> PropMapStrCustom;
+
+	std::unordered_map<int, int> PropUnorderedMapIntInt;
+	std::unordered_map<String, Dynarray<int>> PropUnorderedMapStrDynarray;
+	std::unordered_map<String, TestRTTIClass> PropUnorderedMapStrCustom;
 
 	Vector PropVector = Vector(1,2,3);
 	Vector2f PropVector2f = Vector2f(1, 2);
@@ -256,29 +271,53 @@ void baseValueCheck(const TestConfig& config)
 	CHECK(config.PropStdVectorCustom[0].Val1 == 1);
 	CHECK(config.PropStdVectorCustom[1].Val1 == 2);
 
-	REQUIRE(config.PropOMapIntInt.GetSize() == 2);
-	REQUIRE(config.PropOMapIntInt.Get(1).HasValue());
-	CHECK(config.PropOMapIntInt.Get(1).Value() == 2);
-	REQUIRE(config.PropOMapIntInt.Get(2).HasValue());
-	CHECK(config.PropOMapIntInt.Get(2).Value() == 3);
+	REQUIRE(config.PropMapIntInt.size() == 2);
+	REQUIRE(config.PropMapIntInt.find(1) != config.PropMapIntInt.end());
+	CHECK(config.PropMapIntInt.at(1) == 2);
+	REQUIRE(config.PropMapIntInt.find(2) != config.PropMapIntInt.end());
+	CHECK(config.PropMapIntInt.at(2) == 3);
 
-	REQUIRE(config.PropOMapStrDynarray.GetSize() == 2);
-	REQUIRE(config.PropOMapStrDynarray.Get("Val1").HasValue());
-	REQUIRE(config.PropOMapStrDynarray.Get("Val1").Value().GetSize() == 3);
-	CHECK(config.PropOMapStrDynarray.Get("Val1").Value()[0] == 1);
-	CHECK(config.PropOMapStrDynarray.Get("Val1").Value()[1] == 2);
-	CHECK(config.PropOMapStrDynarray.Get("Val1").Value()[2] == 3);
-	REQUIRE(config.PropOMapStrDynarray.Get("Val2").HasValue());
-	REQUIRE(config.PropOMapStrDynarray.Get("Val2").Value().GetSize() == 3);
-	CHECK(config.PropOMapStrDynarray.Get("Val2").Value()[0] == 4);
-	CHECK(config.PropOMapStrDynarray.Get("Val2").Value()[1] == 5);
-	CHECK(config.PropOMapStrDynarray.Get("Val2").Value()[2] == 6);
+	REQUIRE(config.PropMapStrDynarray.size() == 2);
+	REQUIRE(config.PropMapStrDynarray.find("Val1") != config.PropMapStrDynarray.end());
+	REQUIRE(config.PropMapStrDynarray.at("Val1").GetSize() == 3);
+	CHECK(config.PropMapStrDynarray.at("Val1")[0] == 1);
+	CHECK(config.PropMapStrDynarray.at("Val1")[1] == 2);
+	CHECK(config.PropMapStrDynarray.at("Val1")[2] == 3);
+	REQUIRE(config.PropMapStrDynarray.find("Val2") != config.PropMapStrDynarray.end());
+	REQUIRE(config.PropMapStrDynarray.at("Val2").GetSize() == 3);
+	CHECK(config.PropMapStrDynarray.at("Val2")[0] == 4);
+	CHECK(config.PropMapStrDynarray.at("Val2")[1] == 5);
+	CHECK(config.PropMapStrDynarray.at("Val2")[2] == 6);
 
-	REQUIRE(config.PropOMapStrCustom.GetSize() == 2);
-	REQUIRE(config.PropOMapStrCustom.Get("Val1").HasValue());
-	CHECK(config.PropOMapStrCustom.Get("Val1").Value().Val1 == 1);
-	REQUIRE(config.PropOMapStrCustom.Get("Val2").HasValue());
-	CHECK(config.PropOMapStrCustom.Get("Val2").Value().Val1 == 2);
+	REQUIRE(config.PropMapStrCustom.size() == 2);
+	REQUIRE(config.PropMapStrCustom.find("Val1") != config.PropMapStrCustom.end());
+	CHECK(config.PropMapStrCustom.at("Val1").Val1 == 1);
+	REQUIRE(config.PropMapStrCustom.find("Val2") != config.PropMapStrCustom.end());
+	CHECK(config.PropMapStrCustom.at("Val2").Val1 == 2);
+
+	REQUIRE(config.PropUnorderedMapIntInt.size() == 2);
+	REQUIRE(config.PropUnorderedMapIntInt.find(1) != config.PropUnorderedMapIntInt.end());
+	CHECK(config.PropUnorderedMapIntInt.at(1) == 4);
+	REQUIRE(config.PropUnorderedMapIntInt.find(2) != config.PropUnorderedMapIntInt.end());
+	CHECK(config.PropUnorderedMapIntInt.at(2) == 6);
+
+	REQUIRE(config.PropUnorderedMapStrDynarray.size() == 2);
+	REQUIRE(config.PropUnorderedMapStrDynarray.find("Val1") != config.PropUnorderedMapStrDynarray.end());
+	REQUIRE(config.PropUnorderedMapStrDynarray.at("Val1").GetSize() == 3);
+	CHECK(config.PropUnorderedMapStrDynarray.at("Val1")[0] == 2);
+	CHECK(config.PropUnorderedMapStrDynarray.at("Val1")[1] == 4);
+	CHECK(config.PropUnorderedMapStrDynarray.at("Val1")[2] == 6);
+	REQUIRE(config.PropUnorderedMapStrDynarray.find("Val2") != config.PropUnorderedMapStrDynarray.end());
+	REQUIRE(config.PropUnorderedMapStrDynarray.at("Val2").GetSize() == 3);
+	CHECK(config.PropUnorderedMapStrDynarray.at("Val2")[0] == 8);
+	CHECK(config.PropUnorderedMapStrDynarray.at("Val2")[1] == 10);
+	CHECK(config.PropUnorderedMapStrDynarray.at("Val2")[2] == 12);
+
+	REQUIRE(config.PropUnorderedMapStrCustom.size() == 2);
+	REQUIRE(config.PropUnorderedMapStrCustom.find("Val1") != config.PropUnorderedMapStrCustom.end());
+	CHECK(config.PropUnorderedMapStrCustom.at("Val1").Val1 == 2);
+	REQUIRE(config.PropUnorderedMapStrCustom.find("Val2") != config.PropUnorderedMapStrCustom.end());
+	CHECK(config.PropUnorderedMapStrCustom.at("Val2").Val1 == 4);
 
 	CHECK(config.PropVector == Vector(1, 2, 3));
 	CHECK(config.PropVector2f == Vector2f(1, 2));
@@ -350,19 +389,33 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		config.PropStdVectorString = { "123", "456", "789" };
 		config.PropStdVectorCustom = { 3, 4, 5, 6 };
 
-		config.PropOMapIntInt.Remove(1);
-		config.PropOMapIntInt[2] = 4;
-		config.PropOMapIntInt.Insert(3, 5);
-		config.PropOMapIntInt.Insert(4, 6);
+		config.PropMapIntInt.erase(1);
+		config.PropMapIntInt[2] = 4;
+		config.PropMapIntInt.insert({3, 5});
+		config.PropMapIntInt.insert({4, 6});
 
-		config.PropOMapStrDynarray.Remove("Val1");
-		config.PropOMapStrDynarray.Get("Val2").Value().PushBack(9);
-		config.PropOMapStrDynarray.Insert("Val3", { 7,8 });
+		config.PropMapStrDynarray.erase("Val1");
+		config.PropMapStrDynarray.at("Val2").PushBack(9);
+		config.PropMapStrDynarray.insert({"Val3", { 7,8 }});
 
-		config.PropOMapStrCustom.Remove("Val1");
-		config.PropOMapStrCustom.Get("Val2").Value().Val1 = 5;
-		config.PropOMapStrCustom.Insert("Val3", 3);
-		config.PropOMapStrCustom.Insert("Val4", 4);
+		config.PropMapStrCustom.erase("Val1");
+		config.PropMapStrCustom.at("Val2").Val1 = 5;
+		config.PropMapStrCustom.insert({"Val3", 3});
+		config.PropMapStrCustom.insert({"Val4", 4});
+
+		config.PropUnorderedMapIntInt.erase(1);
+		config.PropUnorderedMapIntInt[2] = 8;
+		config.PropUnorderedMapIntInt.insert({3, 10});
+		config.PropUnorderedMapIntInt.insert({4, 12});
+
+		config.PropUnorderedMapStrDynarray.erase("Val1");
+		config.PropUnorderedMapStrDynarray.at("Val2").PushBack(18);
+		config.PropUnorderedMapStrDynarray.insert({"Val3", { 14, 16 }});
+
+		config.PropUnorderedMapStrCustom.erase("Val1");
+		config.PropUnorderedMapStrCustom.at("Val2").Val1 = 10;
+		config.PropUnorderedMapStrCustom.insert({"Val3", 6});
+		config.PropUnorderedMapStrCustom.insert({"Val4", 8});
 
 		config.PropVector = Vector(4, 5, 6);
 		config.PropVector2f = Vector2f(3, 4);
@@ -473,36 +526,67 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(config.PropStdVectorCustom[2].Val1 == 5);
 		CHECK(config.PropStdVectorCustom[3].Val1 == 6);
 
-		REQUIRE(config.PropOMapIntInt.GetSize() == 3);
-		CHECK(!config.PropOMapIntInt.Get(1).HasValue());
-		REQUIRE(config.PropOMapIntInt.Get(2).HasValue());
-		CHECK(config.PropOMapIntInt.Get(2).Value() == 4);
-		REQUIRE(config.PropOMapIntInt.Get(3).HasValue());
-		CHECK(config.PropOMapIntInt.Get(3).Value() == 5);
-		REQUIRE(config.PropOMapIntInt.Get(4).HasValue());
-		CHECK(config.PropOMapIntInt.Get(4).Value() == 6);
+		REQUIRE(config.PropMapIntInt.size() == 3);
+		CHECK(config.PropMapIntInt.find(1) == config.PropMapIntInt.end());
+		REQUIRE(config.PropMapIntInt.find(2) != config.PropMapIntInt.end());
+		CHECK(config.PropMapIntInt.at(2) == 4);
+		REQUIRE(config.PropMapIntInt.find(3) != config.PropMapIntInt.end());
+		CHECK(config.PropMapIntInt.at(3) == 5);
+		REQUIRE(config.PropMapIntInt.find(4) != config.PropMapIntInt.end());
+		CHECK(config.PropMapIntInt.at(4) == 6);
 
-		REQUIRE(config.PropOMapStrDynarray.GetSize() == 2);
-		CHECK(!config.PropOMapStrDynarray.Get("Val1").HasValue());
-		REQUIRE(config.PropOMapStrDynarray.Get("Val2").HasValue());
-		REQUIRE(config.PropOMapStrDynarray.Get("Val2").Value().GetSize() == 4);
-		CHECK(config.PropOMapStrDynarray.Get("Val2").Value()[0] == 4);
-		CHECK(config.PropOMapStrDynarray.Get("Val2").Value()[1] == 5);
-		CHECK(config.PropOMapStrDynarray.Get("Val2").Value()[2] == 6);
-		CHECK(config.PropOMapStrDynarray.Get("Val2").Value()[3] == 9);
-		REQUIRE(config.PropOMapStrDynarray.Get("Val3").HasValue());
-		REQUIRE(config.PropOMapStrDynarray.Get("Val3").Value().GetSize() == 2);
-		CHECK(config.PropOMapStrDynarray.Get("Val3").Value()[0] == 7);
-		CHECK(config.PropOMapStrDynarray.Get("Val3").Value()[1] == 8);
+		REQUIRE(config.PropMapStrDynarray.size() == 2);
+		CHECK(config.PropMapStrDynarray.find("Val1") == config.PropMapStrDynarray.end());
+		REQUIRE(config.PropMapStrDynarray.find("Val2") != config.PropMapStrDynarray.end());
+		REQUIRE(config.PropMapStrDynarray.at("Val2").GetSize() == 4);
+		CHECK(config.PropMapStrDynarray.at("Val2")[0] == 4);
+		CHECK(config.PropMapStrDynarray.at("Val2")[1] == 5);
+		CHECK(config.PropMapStrDynarray.at("Val2")[2] == 6);
+		CHECK(config.PropMapStrDynarray.at("Val2")[3] == 9);
+		REQUIRE(config.PropMapStrDynarray.find("Val3") != config.PropMapStrDynarray.end());
+		REQUIRE(config.PropMapStrDynarray.at("Val3").GetSize() == 2);
+		CHECK(config.PropMapStrDynarray.at("Val3")[0] == 7);
+		CHECK(config.PropMapStrDynarray.at("Val3")[1] == 8);
 
-		REQUIRE(config.PropOMapStrCustom.GetSize() == 3);
-		CHECK(!config.PropOMapStrCustom.Get("Val1").HasValue());
-		REQUIRE(config.PropOMapStrCustom.Get("Val2").HasValue());
-		CHECK(config.PropOMapStrCustom.Get("Val2").Value().Val1 == 5);
-		REQUIRE(config.PropOMapStrCustom.Get("Val3").HasValue());
-		CHECK(config.PropOMapStrCustom.Get("Val3").Value().Val1 == 3);
-		REQUIRE(config.PropOMapStrCustom.Get("Val4").HasValue());
-		CHECK(config.PropOMapStrCustom.Get("Val4").Value().Val1 == 4);
+		REQUIRE(config.PropMapStrCustom.size() == 3);
+		CHECK(config.PropMapStrCustom.find("Val1") == config.PropMapStrCustom.end());
+		REQUIRE(config.PropMapStrCustom.find("Val2") != config.PropMapStrCustom.end());
+		CHECK(config.PropMapStrCustom.at("Val2").Val1 == 5);
+		REQUIRE(config.PropMapStrCustom.find("Val3") != config.PropMapStrCustom.end());
+		CHECK(config.PropMapStrCustom.at("Val3").Val1 == 3);
+		REQUIRE(config.PropMapStrCustom.find("Val4") != config.PropMapStrCustom.end());
+		CHECK(config.PropMapStrCustom.at("Val4").Val1 == 4);
+
+		REQUIRE(config.PropUnorderedMapIntInt.size() == 3);
+		CHECK(config.PropUnorderedMapIntInt.find(1) == config.PropUnorderedMapIntInt.end());
+		REQUIRE(config.PropUnorderedMapIntInt.find(2) != config.PropUnorderedMapIntInt.end());
+		CHECK(config.PropUnorderedMapIntInt.at(2) == 8);
+		REQUIRE(config.PropUnorderedMapIntInt.find(3) != config.PropUnorderedMapIntInt.end());
+		CHECK(config.PropUnorderedMapIntInt.at(3) == 10);
+		REQUIRE(config.PropUnorderedMapIntInt.find(4) != config.PropUnorderedMapIntInt.end());
+		CHECK(config.PropUnorderedMapIntInt.at(4) == 12);
+
+		REQUIRE(config.PropUnorderedMapStrDynarray.size() == 2);
+		CHECK(config.PropUnorderedMapStrDynarray.find("Val1") == config.PropUnorderedMapStrDynarray.end());
+		REQUIRE(config.PropUnorderedMapStrDynarray.find("Val2") != config.PropUnorderedMapStrDynarray.end());
+		REQUIRE(config.PropUnorderedMapStrDynarray.at("Val2").GetSize() == 4);
+		CHECK(config.PropUnorderedMapStrDynarray.at("Val2")[0] == 8);
+		CHECK(config.PropUnorderedMapStrDynarray.at("Val2")[1] == 10);
+		CHECK(config.PropUnorderedMapStrDynarray.at("Val2")[2] == 12);
+		CHECK(config.PropUnorderedMapStrDynarray.at("Val2")[3] == 18);
+		REQUIRE(config.PropUnorderedMapStrDynarray.find("Val3") != config.PropUnorderedMapStrDynarray.end());
+		REQUIRE(config.PropUnorderedMapStrDynarray.at("Val3").GetSize() == 2);
+		CHECK(config.PropUnorderedMapStrDynarray.at("Val3")[0] == 14);
+		CHECK(config.PropUnorderedMapStrDynarray.at("Val3")[1] == 16);
+
+		REQUIRE(config.PropUnorderedMapStrCustom.size() == 3);
+		CHECK(config.PropUnorderedMapStrCustom.find("Val1") == config.PropUnorderedMapStrCustom.end());
+		REQUIRE(config.PropUnorderedMapStrCustom.find("Val2") != config.PropUnorderedMapStrCustom.end());
+		CHECK(config.PropUnorderedMapStrCustom.at("Val2").Val1 == 10);
+		REQUIRE(config.PropUnorderedMapStrCustom.find("Val3") != config.PropUnorderedMapStrCustom.end());
+		CHECK(config.PropUnorderedMapStrCustom.at("Val3").Val1 == 6);
+		REQUIRE(config.PropUnorderedMapStrCustom.find("Val4") != config.PropUnorderedMapStrCustom.end());
+		CHECK(config.PropUnorderedMapStrCustom.at("Val4").Val1 == 8);
 
 		CHECK(config.PropVector == Vector(4, 5, 6));
 		CHECK(config.PropVector2f == Vector2f(3, 4));

@@ -37,11 +37,11 @@ Optional<Dynarray<Vector>> CalculateNewPath(const NavGraph* graph, const Vector&
 	Dynarray<PathNode> AllNodes;
 
 	PriorityQueue<std::pair<i64, float>, PathNodeCmp> openList, closedList;
-	OrderedMap<const NavNode*, float> minCosts;
+	std::map<const NavNode*, float> minCosts;
 
 	AllNodes.PushBack(PathNode(startNode, 0, graph->GetHeuristicCost(startNode, destNode) ));
 	openList.Push(std::make_pair(AllNodes.GetSize() - 1, graph->GetHeuristicCost(startNode, destNode)));
-	minCosts.Insert(startNode, 0.f);
+	minCosts.insert({startNode, 0.f});
 
 	i64 bestNodeIdx = -1;
 	Dynarray<const NavNode*> connections(8);
@@ -65,17 +65,13 @@ Optional<Dynarray<Vector>> CalculateNewPath(const NavGraph* graph, const Vector&
 			const float moveCost = graph->GetTravelCost(connection, q.Node);
 			PathNode s{ connection, q.Cost + moveCost, graph->GetHeuristicCost(connection, destNode), qIdx };
 
-			const auto& valOpt = minCosts.Get(s.Node);
-			if (valOpt.HasValue() && valOpt.Value() < s.Cost)
+			const auto& valIt = minCosts.find(s.Node);
+			if (valIt != minCosts.end() && valIt->second < s.Cost)
 				continue; // node has worse base cost than other (in the same pos) we visited before, skip it
 
 			AllNodes.PushBack(s);
 			openList.Push(std::make_pair(AllNodes.GetSize() - 1, s.TotalCost()));
-			auto entry = minCosts.Entry(s.Node);
-			if (entry.IsVacant())
-				entry.VacantInsert(s.Cost);
-			else
-				entry.OccupiedReplace(s.Cost);
+			minCosts[s.Node] = s.Cost;
 		}
 
 		closedList.Push(std::make_pair(qIdx, AllNodes[qIdx].TotalCost()));

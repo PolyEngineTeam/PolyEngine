@@ -246,7 +246,7 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	}
 		break;
 	case eCorePropertyType::ENUM_ARRAY:
-	case eCorePropertyType::ORDERED_MAP:
+	case eCorePropertyType::MAP:
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid ordered map impl data!");
 		const DictionaryPropertyImplDataBase* implData = static_cast<const DictionaryPropertyImplDataBase*>(prop.ImplData.get());
@@ -442,7 +442,7 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj,
 	}
 	break;
 	case eCorePropertyType::ENUM_ARRAY:
-	case eCorePropertyType::ORDERED_MAP:
+	case eCorePropertyType::MAP:
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid ordered map impl data!");
 		const DictionaryPropertyImplDataBase* implData = static_cast<const DictionaryPropertyImplDataBase*>(prop.ImplData.get());
