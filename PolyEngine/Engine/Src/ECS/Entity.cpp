@@ -53,7 +53,7 @@ void Poly::Entity::ReleaseFromParent()
 			if (child.get() == this)
 				child.release();
 		}
-		std::remove_if(Parent->Children.begin(), Parent->Children.end(), [](const EntityUniquePtr& p) { return p.get() == nullptr; });
+		DISCARD std::remove_if(Parent->Children.begin(), Parent->Children.end(), [](const EntityUniquePtr& p) { return p.get() == nullptr; });
 		Parent = nullptr;
 		Transform.UpdateParentTransform();
 	}

@@ -65,6 +65,7 @@ bool String::Contains(char var) const
 String String::ToLower() const
 {
 	String ret;
+	ret.Data.clear();
 	ret.Data.reserve(Data.size());
 	std::transform(Data.begin(), Data.end(), std::back_inserter(ret.Data), tolower);
 	return ret;
@@ -74,6 +75,7 @@ String String::ToLower() const
 String String::ToUpper() const
 {
 	String ret;
+	ret.Data.clear();
 	ret.Data.reserve(Data.size());
 	std::transform(Data.begin(), Data.end(), std::back_inserter(ret.Data), toupper);
 	return ret;
@@ -86,6 +88,7 @@ bool String::IsEmpty() const {
 String String::Replace(char what, char with) const
 {
 	String ret;
+	ret.Data.clear();
 	ret.Data.reserve(Data.size());
 	std::transform(Data.begin(), Data.end(), std::back_inserter(ret.Data), 
 		[what, with](char c) { return what == c ? with : c; });

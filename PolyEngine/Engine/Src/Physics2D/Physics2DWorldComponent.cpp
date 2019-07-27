@@ -31,9 +31,9 @@ namespace Poly {
 			RigidBody2DComponent* rb1 = static_cast<RigidBody2DComponent*>(contact->GetFixtureA()->GetUserData());
 			RigidBody2DComponent* rb2 = static_cast<RigidBody2DComponent*>(contact->GetFixtureB()->GetUserData());
 
-			std::remove_if(Component->OverlapingBodies[rb1].begin(), Component->OverlapingBodies[rb1].end(),
+			DISCARD std::remove_if(Component->OverlapingBodies[rb1].begin(), Component->OverlapingBodies[rb1].end(),
 				[rb2](const Physics2DWorldComponent::Collision& col){ return col.rb == rb2; });
-			std::remove_if(Component->OverlapingBodies[rb2].begin(), Component->OverlapingBodies[rb2].end(),
+			DISCARD std::remove_if(Component->OverlapingBodies[rb2].begin(), Component->OverlapingBodies[rb2].end(),
 				[rb1](const Physics2DWorldComponent::Collision& col){ return col.rb == rb1; });
 		}
 
