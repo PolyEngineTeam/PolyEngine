@@ -5,7 +5,7 @@
 
 void GizmoSystem::Update(Scene* scene)
 {
-	Dynarray<Entity*> entities = static_cast<PolyEditor::IEditor*>(gEngine->GetEditor())->GetSelectedEntities();
+	std::vector<Entity*> entities = static_cast<PolyEditor::IEditor*>(gEngine->GetEditor())->GetSelectedEntities();
 	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(scene, Poly::eEngineTimer::GAMEPLAY));
 	InputWorldComponent* inputCmp = scene->GetWorldComponent<InputWorldComponent>();
 	float delta = (float)inputCmp->GetMousePosDelta().Y;

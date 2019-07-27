@@ -13,25 +13,25 @@ namespace Poly
 		RTTI_DECLARE_COMPONENT(::Poly::SkyboxWorldComponent) { NO_RTTI_PROPERTY(); }
 
 		SkyboxWorldComponent(const String& panoramaPath, const eResourceSource source);
-		SkyboxWorldComponent(const Dynarray<String>& panoramaPaths, const eResourceSource source);
+		SkyboxWorldComponent(const std::vector<String>& panoramaPaths, const eResourceSource source);
 		~SkyboxWorldComponent();
 		
 		Color GetTint() const { return Tint; }
 		void SetTint(Color& value) { Tint = value; }
-		void SetCurrentPanorama(size_t value) { ASSERTE(value < EquirectPanoramas.GetSize(), "SetCurrentPanorama, value out of range"); current = value; }
+		void SetCurrentPanorama(size_t value) { ASSERTE(value < EquirectPanoramas.size(), "SetCurrentPanorama, value out of range"); current = value; }
 
 		const TextureResource* GetCurrentPanorama() const { return EquirectPanoramas[current]; }
 		const TextureResource* GetPanorama(size_t index) const { return EquirectPanoramas[index]; }
 		size_t GetCurrentIndex() const { return current; }
-		size_t GetPanoramasCount() const { return EquirectPanoramas.GetSize(); }
+		size_t GetPanoramasCount() const { return EquirectPanoramas.size(); }
 
 	private:
-		Dynarray<TextureResource*> EquirectPanoramas;
+		std::vector<TextureResource*> EquirectPanoramas;
 
 		Color Tint;
 		size_t current = 0;
 
-		void Init(const Dynarray<String>& panoramaPaths, const eResourceSource source);
+		void Init(const std::vector<String>& panoramaPaths, const eResourceSource source);
 
 	};
 

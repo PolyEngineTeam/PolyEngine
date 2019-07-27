@@ -41,8 +41,8 @@ public:
 		Manager->EntitiesSelectionChanged();
 	}
 
-	Dynarray<Entity*> OldEntities;
-	Dynarray<Entity*> NewEntities;
+	std::vector<Entity*> OldEntities;
+	std::vector<Entity*> NewEntities;
 	InspectorManager* Manager;
 };
 

@@ -66,8 +66,8 @@ void Poly::FontResource::LoadFace(size_t height) const
 	};
 
 	// Establish sizes of all glyphs
-	Dynarray<GlyphSize> glyphSizes;
-	glyphSizes.Reserve(128);
+	std::vector<GlyphSize> glyphSizes;
+	glyphSizes.reserve(128);
 	for (size_t c = 0; c < 128; c++)
 	{
 		// Load character glyph
@@ -79,11 +79,11 @@ void Poly::FontResource::LoadFace(size_t height) const
 		}
 
 		//if(face.FTFace->glyph->bitmap.width > 0 && face.FTFace->glyph->bitmap.rows > 0)
-			glyphSizes.PushBack(GlyphSize{(char)c, face.FTFace->glyph->bitmap.width, face.FTFace->glyph->bitmap.rows });
+			glyphSizes.push_back(GlyphSize{(char)c, face.FTFace->glyph->bitmap.width, face.FTFace->glyph->bitmap.rows });
 	}
 
 	// sort them by their area
-	std::sort(glyphSizes.Begin(), glyphSizes.End(), [](const GlyphSize& g1, const GlyphSize& g2) { return g1.height * g1.width > g2.height * g2.width; });
+	std::sort(glyphSizes.begin(), glyphSizes.end(), [](const GlyphSize& g1, const GlyphSize& g2) { return g1.height * g1.width > g2.height * g2.width; });
 
 	// Estimate texture height for constant width
 	const size_t TEXTURE_WIDTH = 512;

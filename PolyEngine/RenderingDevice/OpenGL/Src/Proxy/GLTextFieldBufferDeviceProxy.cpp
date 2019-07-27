@@ -46,7 +46,7 @@ void GLTextFieldBufferDeviceProxy::SetContent(size_t count, const TextFieldLette
 
 	Size = count;
 
-	Dynarray<float> vboData(count * 36);
+	std::vector<float> vboData(count * 36);
 	for (size_t i = 0; i < count; ++i)
 	{
 		GLfloat xpos = letters[i].PosX;
@@ -69,11 +69,11 @@ void GLTextFieldBufferDeviceProxy::SetContent(size_t count, const TextFieldLette
 		};
 
 		for (int k = 0; k < 36; ++k)
-			vboData.PushBack(vertices[k]);
+			vboData.push_back(vertices[k]);
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vboData.GetSize(), vboData.GetData(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vboData.size(), vboData.data(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	// CHECK_GL_ERR(); // spams errors
 }

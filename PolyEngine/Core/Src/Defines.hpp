@@ -62,6 +62,7 @@
 #include <bitset>
 #include <cassert>
 #include <cstring>
+#include <cctype>
 #include <limits>
 #include <array>
 #include <cstddef>
@@ -200,6 +201,7 @@ constexpr auto MIN_FLOAT = (std::numeric_limits<float>::min)();
 #define BIT(x) (1u<<x)
 
 #define UNUSED(expr) do { (void)(expr); } while (false)
+#define DISCARD (void)
 
 // Hack for clang compilation, should be used in every lambda in constexpr_match everywhere where T is required.
 // required lambda argument to be "auto lazy"

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Defines.hpp>
-#include <Collections/Dynarray.hpp>
 #include <Math/Vector3f.hpp>
 #include <Math/VectorT.hpp>
 
@@ -22,27 +21,27 @@ namespace Poly
 		const TextureResource* GetAmbientOcclusionMap() const { return AmbientOcclusionMap; }
 		const TextureResource* GetNormalMap() const { return NormalMap; }
 		const TextureResource* GetEmissiveMap() const { return EmissiveMap; }
-		size_t GetVertexCount() const { return Positions.GetSize(); }
-		size_t GetTriangleCount() const { return Indices.GetSize() / 3; }
+		size_t GetVertexCount() const { return Positions.size(); }
+		size_t GetTriangleCount() const { return Indices.size() / 3; }
 
-		const Dynarray<Vector3f>& GetPositions() const { return Positions; }
-		const Dynarray<Vector3f>& GetNormals() const { return Normals; }
-		const Dynarray<Vector3f>& GetTangents() const { return Tangents; }
-		const Dynarray<Vector3f>& GetBitangents() const { return Bitangents; }
-		const Dynarray<TextCoord>& GetTextCoords() const { return TextCoords; }
-		const Dynarray<uint32_t>& GetIndicies() const { return Indices; }
-		const Dynarray<VectorT<i8, 4>>& GetBoneIds() const { return BoneIds; }
-		const Dynarray<VectorT<float, 4>>& GetBoneWeights() const { return BoneWeights; }
+		const std::vector<Vector3f>& GetPositions() const { return Positions; }
+		const std::vector<Vector3f>& GetNormals() const { return Normals; }
+		const std::vector<Vector3f>& GetTangents() const { return Tangents; }
+		const std::vector<Vector3f>& GetBitangents() const { return Bitangents; }
+		const std::vector<TextCoord>& GetTextCoords() const { return TextCoords; }
+		const std::vector<uint32_t>& GetIndicies() const { return Indices; }
+		const std::vector<VectorT<i8, 4>>& GetBoneIds() const { return BoneIds; }
+		const std::vector<VectorT<float, 4>>& GetBoneWeights() const { return BoneWeights; }
 
-		bool HasVertices() const { return Positions.GetSize() != 0; }
-		bool HasNormals() const { return Normals.GetSize() != 0; }
-		bool HasTangents() const { return Tangents.GetSize() != 0; }
-		bool HasBitangents() const { return Bitangents.GetSize() != 0; }
-		bool HasTextCoords() const { return TextCoords.GetSize() != 0; }
-		bool HasIndicies() const { return Indices.GetSize() != 0; }
-		bool HasBones() const { return BoneIds.GetSize() != 0 && BoneWeights.GetSize() != 0; }
-		bool HasBoneWeights() const { return BoneWeights.GetSize() != 0; }
-		bool HasBoneIds() const { return BoneIds.GetSize() != 0; }
+		bool HasVertices() const { return Positions.size() != 0; }
+		bool HasNormals() const { return Normals.size() != 0; }
+		bool HasTangents() const { return Tangents.size() != 0; }
+		bool HasBitangents() const { return Bitangents.size() != 0; }
+		bool HasTextCoords() const { return TextCoords.size() != 0; }
+		bool HasIndicies() const { return Indices.size() != 0; }
+		bool HasBones() const { return BoneIds.size() != 0 && BoneWeights.size() != 0; }
+		bool HasBoneWeights() const { return BoneWeights.size() != 0; }
+		bool HasBoneIds() const { return BoneIds.size() != 0; }
 
 	private:
 		TextureResource* AlbedoMap;
@@ -51,14 +50,14 @@ namespace Poly
 		TextureResource* AmbientOcclusionMap;
 		TextureResource* NormalMap;
 		TextureResource* EmissiveMap;
-		Dynarray<Vector3f> Positions;
-		Dynarray<Vector3f> Normals;
-		Dynarray<Vector3f> Tangents;
-		Dynarray<Vector3f> Bitangents;
-		Dynarray<TextCoord> TextCoords;
-		Dynarray<uint32_t> Indices;
-		Dynarray<VectorT<i8, 4>> BoneIds; // Max 4 bones
-		Dynarray<VectorT<float, 4>> BoneWeights;
+		std::vector<Vector3f> Positions;
+		std::vector<Vector3f> Normals;
+		std::vector<Vector3f> Tangents;
+		std::vector<Vector3f> Bitangents;
+		std::vector<TextCoord> TextCoords;
+		std::vector<uint32_t> Indices;
+		std::vector<VectorT<i8, 4>> BoneIds; // Max 4 bones
+		std::vector<VectorT<float, 4>> BoneWeights;
 		friend class MeshResource;
 		friend class SubMesh;
 	};

@@ -28,11 +28,11 @@ namespace Poly
 		/// Releases stored context.
 		~SoundWorldComponent();
 
-		const Dynarray<SoundListenerComponent>& GetListeners() const { return Listeners; };
+		const std::vector<SoundListenerComponent>& GetListeners() const { return Listeners; };
 
 	private:
 		ALCcontext* Context;
-		Dynarray<SoundListenerComponent> Listeners;
+		std::vector<SoundListenerComponent> Listeners;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, SoundWorldComponent)

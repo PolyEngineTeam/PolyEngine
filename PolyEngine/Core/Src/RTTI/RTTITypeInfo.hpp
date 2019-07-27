@@ -3,7 +3,6 @@
 #include <Defines.hpp>
 
 #include <Memory/ObjectLifetimeHelpers.hpp>
-#include <Collections/Dynarray.hpp>
 
 namespace Poly 
 {
@@ -67,7 +66,7 @@ namespace Poly
 				static TypeManager& Get();
 
 				template <typename T>
-				TypeInfo RegisterOrGetType(const char* name, const Dynarray<TypeInfo>& baseClassList)
+				TypeInfo RegisterOrGetType(const char* name, const std::vector<TypeInfo>& baseClassList)
 				{
 					if (NameToTypeMap.find(name) != NameToTypeMap.end())
 						return NameToTypeMap[name];
@@ -99,7 +98,7 @@ namespace Poly
 				long long Counter = 0;
 				std::map<std::string, TypeInfo> NameToTypeMap;
 				std::map<TypeInfo, const char*> TypeToNameMap;
-				std::map<TypeInfo, Dynarray<TypeInfo>> InheritanceListMap;
+				std::map<TypeInfo, std::vector<TypeInfo>> InheritanceListMap;
 				std::map<TypeInfo, std::function<void*(void*)>> ConstructorsMap;
 			};
 

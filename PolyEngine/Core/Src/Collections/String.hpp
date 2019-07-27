@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Defines.hpp>
-#include <Collections/Dynarray.hpp>
 
 namespace Poly {
 
@@ -107,12 +106,12 @@ namespace Poly {
 		/// <summary>Splits String by given delimite to array of Strings</summary>
 		/// <param name="delimiter">Char used as token to split String with</param>
 		/// <returns>String array</returns>
-		Dynarray<String> Split(char delimiter) const;
+		std::vector<String> Split(char delimiter) const;
 
 		/// <summary>Splits String by given delimiter to array of Strings</summary>
 		/// <param name="delimiter">String used as token to split String with</param>
 		/// <returns>String array</returns>
-		Dynarray<String> Split(const String& delimiter) const;
+		std::vector<String> Split(const String& delimiter) const;
 
 		/// <summary>Merges String array to single String instance, separating them with given separator</summary>
 		/// <param name="vars">String array to be merged</param>
@@ -190,15 +189,15 @@ namespace Poly {
 		char operator[](size_t idx) const;
 
 		size_t GetLength() const;
-		const char* GetCStr() const { return Data.GetData(); }
+		const char* GetCStr() const { return Data.data(); }
 
 		/*CORE_DLLEXPORT*/ friend std::ostream& operator<< (std::ostream& stream, const String& rhs) { return stream << rhs.GetCStr(); }
 
 	private:
 
-		String(Dynarray<char> rawData) : Data(std::move(rawData)) { Data.PushBack('\0'); }
+		String(std::vector<char> rawData) : Data(std::move(rawData)) { Data.push_back('\0'); }
 
-		Dynarray<char> Data;
+		std::vector<char> Data;
 
 		size_t FindSubstrFromPoint(size_t startPoint, const String& str) const;
 

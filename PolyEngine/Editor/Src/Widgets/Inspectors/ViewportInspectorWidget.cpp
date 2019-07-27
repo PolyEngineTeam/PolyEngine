@@ -107,13 +107,13 @@ void ViewportInspectorWidget::OnGameDeinit()
 }
 
 //------------------------------------------------------------------------------
-Dynarray<Entity*> ViewportInspectorWidget::GetSelectedEntities()
+std::vector<Entity*> ViewportInspectorWidget::GetSelectedEntities()
 {
 	return Manager->GetSelectedEntities();
 }
 
 //------------------------------------------------------------------------------
-void ViewportInspectorWidget::SetSelectedEntities(Dynarray<Entity*> entities)
+void ViewportInspectorWidget::SetSelectedEntities(std::vector<Entity*> entities)
 {
 	Manager->EntitiesSelectionChangedSlot(std::move(entities));
 }

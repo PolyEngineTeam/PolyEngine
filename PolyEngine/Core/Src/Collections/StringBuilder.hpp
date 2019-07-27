@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Defines.hpp>
-#include <Collections/Dynarray.hpp>
 #include <Collections/String.hpp>
 
 namespace Poly
@@ -11,12 +10,12 @@ namespace Poly
 	{
 	public:
 		StringBuilder() : Ostream(this) {}
-		inline explicit StringBuilder(size_t preallocateSize) : StringBuilder() { Buffer.Reserve(preallocateSize); }
+		inline explicit StringBuilder(size_t preallocateSize) : StringBuilder() { Buffer.reserve(preallocateSize); }
 
 		/// @name Appends string representation of value to string buffer
 		///	@param val Value to append
 		///	@return Instance reference for chainlinking
-		inline StringBuilder& Append(char val) { Buffer.PushBack(val); return *this; }
+		inline StringBuilder& Append(char val) { Buffer.push_back(val); return *this; }
 		inline StringBuilder& Append(const char* val) { return Append(val, strlen(val)); }
 		inline StringBuilder& Append(const std::string& val) { return Append(val.c_str(), val.length()); }
 		inline StringBuilder& Append(const String& val) { return Append(val.GetCStr(), val.GetLength()); }
@@ -80,7 +79,7 @@ namespace Poly
 		inline String StealString() { return String(std::move(Buffer)); }
 
 		/// Clears data in the string buffer. This does not release held memory
-		inline void Clear() { Buffer.Resize(0); }
+		inline void Clear() { Buffer.resize(0); }
 	private:
 		std::streamsize xsputn(const char_type* s, std::streamsize n) override final { Append(s, n); return n; }
 		int_type overflow(int_type c) override final { Append((char)c); return c; }
@@ -108,14 +107,14 @@ namespace Poly
 		void FillBufferWithFormat(T val, const char* fmt)
 		{
 			size_t length = snprintf(nullptr, 0, fmt, val);
-			size_t oldLength = Buffer.GetSize();
-			Buffer.Resize(oldLength + length + 1);
-			snprintf(Buffer.GetData() + oldLength, length+1, fmt, val);
-			Buffer.Resize(oldLength + length);
+			size_t oldLength = Buffer.size();
+			Buffer.resize(oldLength + length + 1);
+			snprintf(Buffer.data() + oldLength, length+1, fmt, val);
+			Buffer.resize(oldLength + length);
 		}
 
 		std::ostream Ostream;
-		Dynarray<char> Buffer;
+		std::vector<char> Buffer;
 
 		static constexpr size_t DEFAULT_FLT_PRECISION = 6;
 	};

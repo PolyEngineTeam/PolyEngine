@@ -55,7 +55,7 @@ namespace Poly
 			w->AddComponent<T>(entity, std::forward<Args>(args)...);
 			DeferredTaskWorldComponent* cmp = w->GetWorldComponent<DeferredTaskWorldComponent>();
 			T* newCmp = w->GetComponent<T>(entity);
-			cmp->NewlyCreatedComponents.PushBack(newCmp);
+			cmp->NewlyCreatedComponents.push_back(newCmp);
 			newCmp->SetFlags(eComponentBaseFlags::NEWLY_CREATED);
 			return newCmp;
 		}

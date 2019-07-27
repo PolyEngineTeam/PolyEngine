@@ -215,7 +215,7 @@ void Poly::AnimationSystem::CreateBoneStructure(SkeletalAnimationComponent* anim
 	}
 
 	// Initialize bone hierarchy
-	for (size_t i = 0; i < bones.GetSize(); ++i)
+	for (size_t i = 0; i < bones.size(); ++i)
 	{
 		if (bones[i].parentBoneIdx.HasValue())
 			animCmp->Bones[i]->SetParent(animCmp->Bones[bones[i].parentBoneIdx.Value()].Get());

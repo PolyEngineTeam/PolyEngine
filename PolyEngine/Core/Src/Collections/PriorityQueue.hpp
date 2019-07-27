@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Defines.hpp>
-#include <Collections/Dynarray.hpp>
 #include <Utils/Optional.hpp>
 
 namespace Poly
@@ -19,16 +18,16 @@ namespace Poly
 	public:
 		PriorityQueue(size_t prealocatedSize = 0) : Data(prealocatedSize) {}
 		PriorityQueue(Less lessCmp, size_t prealocatedSize = 0) : LessCmp(std::move(lessCmp)), Data(prealocatedSize) {}
-		PriorityQueue(Dynarray<T> data) : Data(std::move(data))
+		PriorityQueue(std::vector<T> data) : Data(std::move(data))
 		{
-			for (size_t idx = Data.GetSize() / 2; idx > 0; --idx)
+			for (size_t idx = Data.size() / 2; idx > 0; --idx)
 				SiftDown(idx - 1);
 		}
 
 		void Push(T val)
 		{
-			Data.PushBack(std::move(val));
-			SiftUp(Data.GetSize() - 1);
+			Data.push_back(std::move(val));
+			SiftUp(Data.size() - 1);
 		}
 
 		T Pop()
@@ -37,13 +36,13 @@ namespace Poly
 			T& last = Data[GetSize() - 1];
 			T tmp = std::move(first);
 			Swap(first, last);
-			Data.PopBack();
+			Data.pop_back();
 			SiftDown(0);
 			return tmp;
 		}
 
 		const T& Head() const { return Data[0]; }
-		size_t GetSize() const { return Data.GetSize(); }
+		size_t GetSize() const { return Data.size(); }
 		void Reserve(size_t size) { Data.Reserve(size); }
 	private:
 		void SiftUp(size_t idx)
@@ -104,6 +103,6 @@ namespace Poly
 		inline size_t GetRightChild(size_t node) { return 2 * node + 2; }
 
 		Less LessCmp;
-		Dynarray<T> Data;
+		std::vector<T> Data;
 	};
 } //namespace Poly

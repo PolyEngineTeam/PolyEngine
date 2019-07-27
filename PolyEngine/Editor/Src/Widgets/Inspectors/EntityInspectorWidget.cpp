@@ -113,8 +113,8 @@ void EntityInspectorWidget::Reset()
 		MainLayout->removeWidget(cmp);
 		delete cmp;
 	}
-	ComponentSections.Clear();
-	ComponentInspectors.Clear();
+	ComponentSections.clear();
+	ComponentInspectors.clear();
 
 	NameField->Reset();
 	NameField->SetDisableEdit(true);
@@ -137,7 +137,7 @@ void EntityInspectorWidget::Reset()
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::EntitiesSelectionChanged()
 {
-	Dynarray<Entity*> selectedEntities = Manager->GetSelectedEntities();
+	std::vector<Entity*> selectedEntities = Manager->GetSelectedEntities();
 
 	// remove all old entity component sections
 	for (auto cmp : ComponentSections)
@@ -145,11 +145,11 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		MainLayout->removeWidget(cmp);
 		delete cmp;
 	}
-	ComponentSections.Clear();
-	ComponentInspectors.Clear();
+	ComponentSections.clear();
+	ComponentInspectors.clear();
 
 	// no entity selected
-	if (selectedEntities.GetSize() == 0)
+	if (selectedEntities.size() == 0)
 	{
 		NameField->Reset();
 		NameField->SetText("");
@@ -166,7 +166,7 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 		Transform->Reset();
 		TransformSection->hide();
 	}
-	else if (selectedEntities.GetSize() > 1)
+	else if (selectedEntities.size() > 1)
 	{
 		NameField->Reset();
 		NameField->SetText("< multiple selection >");
@@ -247,7 +247,7 @@ void EntityInspectorWidget::EntitiesSelectionChanged()
 			ss << "> ";
 			ChildrenIdNameField->addItem(&ss.str()[0]);
 		}
-		if ((int)selectedEntities[0]->GetChildren().GetSize() > 0)
+		if ((int)selectedEntities[0]->GetChildren().size() > 0)
 			ChildrenSelectButton->show();
 		else
 			ChildrenSelectButton->hide();
@@ -285,9 +285,9 @@ void EntityInspectorWidget::ComponentsRemoved()
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::Update()
 {
-	Dynarray<Entity*> selectedEntities = Manager->GetSelectedEntities();
+	std::vector<Entity*> selectedEntities = Manager->GetSelectedEntities();
 
-	if (selectedEntities.GetSize() == 1)
+	if (selectedEntities.size() == 1)
 	{
 		std::stringstream ss;
 
@@ -322,7 +322,7 @@ void EntityInspectorWidget::Update()
 		if (!selectedEntities[0]->IsRoot())
 			Transform->UpdateControl();
 	}
-	else if (selectedEntities.GetSize() > 1)
+	else if (selectedEntities.size() > 1)
 	{
 		bool sameParent = true;
 		Entity* parent = selectedEntities[0]->GetParent();
@@ -371,8 +371,8 @@ void EntityInspectorWidget::ReloadComponentSections()
 		MainLayout->removeWidget(cmp);
 		delete cmp;
 	}
-	ComponentSections.Clear();
-	ComponentInspectors.Clear();
+	ComponentSections.clear();
+	ComponentInspectors.clear();
 
 	// add component sections
 	for (size_t i = 0, row = 5; i < MAX_COMPONENTS_COUNT; ++i)
@@ -390,8 +390,8 @@ void EntityInspectorWidget::ReloadComponentSections()
 		connect(viewer, &RTTIInspectorWidget::ControlObjectUpdated,
 			this, &EntityInspectorWidget::ControlObjectUpdated);
 
-		ComponentSections.PushBack(section);
-		ComponentInspectors.PushBack(viewer);
+		ComponentSections.push_back(section);
+		ComponentInspectors.push_back(viewer);
 
 		section->SetWidget(viewer);
 		MainLayout->addWidget(section, (int)row, 0, 1, 3);
@@ -402,7 +402,7 @@ void EntityInspectorWidget::ReloadComponentSections()
 //------------------------------------------------------------------------------
 void EntityInspectorWidget::SpawnContextMenu(QPoint pos)
 {
-	if (Manager->GetSelectedEntities().GetSize() == 1)
+	if (Manager->GetSelectedEntities().size() == 1)
 		ContextMenu->popup(this->mapToGlobal(pos));
 }
 

@@ -7,7 +7,7 @@
 #include <RTTI/RTTI.hpp>
 #include <ECS/EntityTransform.hpp>
 #include <ECS/ComponentIDGenerator.hpp>
-#include <Collections/Dynarray.hpp>
+
 #include <Engine.hpp>
 
 namespace Poly
@@ -109,7 +109,7 @@ namespace Poly
 
 		/// Returns collection of children of this entity.
 		/// @return Collection of children.
-		const Dynarray<EntityUniquePtr>& GetChildren() const { return Children; }
+		const std::vector<EntityUniquePtr>& GetChildren() const { return Children; }
 
 		/// Reparents this entity. Entity cannot be parented to his children, to himself or to nothing (with exception to scene root).
 		/// @param Entity* Pointer to new parent
@@ -142,7 +142,7 @@ namespace Poly
 		void SetBBoxDirty();
 
 		Entity* Parent = nullptr;
-		Dynarray<EntityUniquePtr> Children;
+		std::vector<EntityUniquePtr> Children;
 
 		String NameTemplate;
 		String Name;
@@ -153,7 +153,7 @@ namespace Poly
 		mutable EnumArray<bool, eEntityBoundingChannel> BBoxDirty;
 
 		std::bitset<MAX_COMPONENTS_COUNT> ComponentPosessionFlags;
-		Dynarray<ComponentUniquePtr> Components;
+		std::vector<ComponentUniquePtr> Components;
 
 		friend class Scene;
 	};

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Defines.hpp>
-#include <Collections/Dynarray.hpp>
+
 #include <Collections/String.hpp>
 #include <Resources/ResourceBase.hpp>
 #include <Resources/TextureResource.hpp>
@@ -64,9 +64,9 @@ namespace Poly
 				};
 
 				String Name;
-				Dynarray<KeyValue<Vector>> Positions;
-				Dynarray<KeyValue<Quaternion>> Rotations;
-				Dynarray<KeyValue<Vector>> Scales;
+				std::vector<KeyValue<Vector>> Positions;
+				std::vector<KeyValue<Quaternion>> Rotations;
+				std::vector<KeyValue<Vector>> Scales;
 			};
 
 			struct ChannelLerpData
@@ -98,7 +98,7 @@ namespace Poly
 		virtual ~MeshResource();
 
 
-		const Dynarray<SubMesh*>& GetSubMeshes() const { return SubMeshes; }
+		const std::vector<SubMesh*>& GetSubMeshes() const { return SubMeshes; }
 		const Animation* GetAnimation(const String& name) const
 		{
 			auto it = Animations.find(name);
@@ -107,7 +107,7 @@ namespace Poly
 			return it->second;
 		}
 		const AABox& GetAABox() const { return AxisAlignedBoundingBox; }
-		const Dynarray<Bone>& GetBones() const { return Bones; }
+		const std::vector<Bone>& GetBones() const { return Bones; }
 
 		const Matrix& GetModelFromSkeletonRoot() const { return ModelFromSkeletonRoot; }
 	private:
@@ -115,9 +115,9 @@ namespace Poly
 		void PopulateBoneReferences(const std::map<String, size_t>& nameToBoneIdx, aiNode* node, const Matrix& localTransform);
 
 		Matrix ModelFromSkeletonRoot;
-		Dynarray<Bone> Bones;
+		std::vector<Bone> Bones;
 		std::map<String, Animation*> Animations;
-		Dynarray<SubMesh*> SubMeshes;
+		std::vector<SubMesh*> SubMeshes;
 		AABox AxisAlignedBoundingBox;
 	};
 }

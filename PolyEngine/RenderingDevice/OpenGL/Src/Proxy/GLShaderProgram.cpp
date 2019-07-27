@@ -88,8 +88,8 @@ void GLShaderProgram::Validate()
 	if (status == 0) {
 		GLint infoLogLength = 0;
 		glGetProgramiv(ProgramHandle, GL_INFO_LOG_LENGTH, &infoLogLength);
-		Dynarray<char> errorMessage;
-		errorMessage.Resize(static_cast<size_t>(infoLogLength + 1));
+		std::vector<char> errorMessage;
+		errorMessage.resize(static_cast<size_t>(infoLogLength + 1));
 		glGetProgramInfoLog(ProgramHandle, infoLogLength, NULL, &errorMessage[0]);
 		gConsole.LogError("Program validation: {}", std::string(&errorMessage[0]));
 		ASSERTE(false, "Program validation failed!");
@@ -104,11 +104,11 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 		return;
 	
 	// @fixme optimize this, spliting lines of every opened file is not fastest way to do it
-	Dynarray<String> includedFiles;
-	Dynarray<String> linesToProcess = rawCode.Split("\n");
+	std::vector<String> includedFiles;
+	std::vector<String> linesToProcess = rawCode.Split("\n");
 	StringBuilder sb;
 	size_t lineCounter = 0;
-	while(lineCounter < linesToProcess.GetSize())
+	while(lineCounter < linesToProcess.size())
 	{
 		String currLine = linesToProcess[lineCounter].GetTrimmed();
 
@@ -123,13 +123,14 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 				const std::cmatch& match = *i;
 
 				String includePath = SHADERS_INCLUDE_DIR + String(match[1].str().c_str());
-				ASSERTE(!includedFiles.Contains(includePath), "LoadShader failed, found recursive includes!");
-				includedFiles.PushBack(includePath);
+				ASSERTE(std::find(includedFiles.begin(), includedFiles.end(), includePath) == includedFiles.end(), "LoadShader failed, found recursive includes!");
+				includedFiles.push_back(includePath);
 					
 				try
 				{
 					String rawInclude = LoadTextFileRelative(eResourceSource::ENGINE, includePath);
-					linesToProcess.Insert(lineCounter + 1, rawInclude.Split('\n'));
+					auto splitedInclude = rawInclude.Split('\n');
+					linesToProcess.insert(linesToProcess.begin() + lineCounter + 1, splitedInclude.begin(), splitedInclude.end());
 				}
 				catch(FileIOException& ex)
 				{
@@ -174,8 +175,8 @@ void GLShaderProgram::CompileShader(GLShaderProgram::eShaderUnitType type)
 	{
 		int infoLogLength = 0;
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
-		Dynarray<char> errorMessage;
-		errorMessage.Resize(static_cast<size_t>(infoLogLength + 1));
+		std::vector<char> errorMessage;
+		errorMessage.resize(static_cast<size_t>(infoLogLength + 1));
 		glGetShaderInfoLog(shader, infoLogLength, NULL, &errorMessage[0]);
 		gConsole.LogError("Shader compilation: {}", std::string(&errorMessage[0]));
 		ASSERTE(false, "Shader compilation failed!");
@@ -196,8 +197,8 @@ void GLShaderProgram::CompileProgram()
 	if (linkStatus == 0) {
 		GLint infoLogLength = 0;
 		glGetProgramiv(ProgramHandle, GL_INFO_LOG_LENGTH, &infoLogLength);
-		Dynarray<char> errorMessage;
-		errorMessage.Resize(static_cast<size_t>(infoLogLength + 1));
+		std::vector<char> errorMessage;
+		errorMessage.resize(static_cast<size_t>(infoLogLength + 1));
 		glGetProgramInfoLog(ProgramHandle, infoLogLength, NULL, &errorMessage[0]);
 		gConsole.LogError("Program linking: {}", std::string(&errorMessage[0]));
 		ASSERTE(false, "Program linking failed!");

@@ -70,10 +70,10 @@ void GLRenderingDevice::RenderWorld(Scene* world)
 
 void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 {
-	Dynarray<const MeshRenderingComponent*> meshCmps;
+	std::vector<const MeshRenderingComponent*> meshCmps;
 	for (const auto& [meshCmp] : sceneView.SceneData->IterateComponents<MeshRenderingComponent>())
 	{
-		meshCmps.PushBack(meshCmp);
+		meshCmps.push_back(meshCmp);
 	}
 
 	for (const auto& meshCmp : meshCmps)
@@ -98,19 +98,19 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 
 	for (const auto& [dirLightCmp] : sceneView.SceneData->IterateComponents<DirectionalLightComponent>())
 	{
-		sceneView.DirectionalLightList.PushBack(dirLightCmp);
+		sceneView.DirectionalLightList.push_back(dirLightCmp);
 	}
 
 	for (const auto& [pointLightCmp] : sceneView.SceneData->IterateComponents<PointLightComponent>())
 	{
-		sceneView.PointLightList.PushBack(pointLightCmp);
+		sceneView.PointLightList.push_back(pointLightCmp);
 	}
 
-	if (sceneView.DirectionalLightList.GetSize() > 0)
+	if (sceneView.DirectionalLightList.size() > 0)
 		CullDirLightQueue(sceneView, meshCmps);
 }
 
-void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const Dynarray<const MeshRenderingComponent*>& meshCmps)
+void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const std::vector<const MeshRenderingComponent*>& meshCmps)
 {
 	const DirectionalLightComponent* dirLight = sceneView.DirectionalLightList[0];
 	const CameraComponent* cameraCmp = sceneView.CameraCmp;
@@ -122,7 +122,7 @@ void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const Dynarray<c
 	Matrix clipFromWorld = clipFromView * viewFromWorld;
 
 	// Transform frustum corners to DirLightSpace
-	Dynarray<Vector> cornersInNDC {
+	std::vector<Vector> cornersInNDC {
 		Vector(-1.0f,  1.0f, -1.0f), // back  left	top
 		Vector( 1.0f,  1.0f, -1.0f), // back  right top
 		Vector(-1.0f, -1.0f, -1.0f), // back  left  bot
@@ -136,14 +136,14 @@ void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const Dynarray<c
 	// Transform frustum corners from NDC to World
 	// could be done in one iteration but we need to do perspective division by W
 	Matrix worldFromClip = clipFromWorld.GetInversed();
-	Dynarray<Vector> cornersInWS;
+	std::vector<Vector> cornersInWS;
 	for (Vector posInClip : cornersInNDC)
 	{
 		Vector posInWS = worldFromClip * posInClip;
 		posInWS.X /= posInWS.W;
 		posInWS.Y /= posInWS.W;
 		posInWS.Z /= posInWS.W;
-		cornersInWS.PushBack(posInWS);
+		cornersInWS.push_back(posInWS);
 	}
 	DebugDrawSystem::DrawFrustumPoints(sceneView.SceneData, cornersInWS, Color::RED);
 
@@ -194,13 +194,13 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& di
 	const float maxFloat = std::numeric_limits<float>::max();
 	Scene* scene = sceneView.SceneData;
 
-	Dynarray<MeshRenderingComponent*> meshCmps;
+	std::vector<MeshRenderingComponent*> meshCmps;
 	for (auto [meshCmp] : scene->IterateComponents<MeshRenderingComponent>())
 	{
-		meshCmps.PushBack(meshCmp);
+		meshCmps.push_back(meshCmp);
 	}
 	// transform meshes AABB to DirLightSpace
-	Dynarray<std::tuple<AABox, MeshRenderingComponent*>> boxMeshes;
+	std::vector<std::tuple<AABox, MeshRenderingComponent*>> boxMeshes;
 	for (const auto meshCmp : meshCmps)
 	{
 		const Matrix& dirLightFromModel = dirLightFromWorld * meshCmp->GetTransform().GetWorldFromModel();
@@ -209,7 +209,7 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& di
 		{
 			AABox boxWS = boxWSOptional.Value();
 			AABox boxLS = boxWS.GetTransformed(dirLightFromModel);
-			boxMeshes.PushBack(std::tuple(boxLS, meshCmp));
+			boxMeshes.push_back(std::tuple(boxLS, meshCmp));
 
 			if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawShadowCastersBounds)
 				DebugDrawSystem::DrawBox(scene, boxLS.GetMin(), boxLS.GetMax(), worldFromDirLight, Color::WHITE);

@@ -22,8 +22,8 @@ namespace Poly {
 			contact->GetWorldManifold(&manifold);
 
 			Vector normal(manifold.normal.x, manifold.normal.y, 0);
-			Component->OverlapingBodies[rb1].PushBack(Physics2DWorldComponent::Collision{ rb2, normal });
-			Component->OverlapingBodies[rb2].PushBack(Physics2DWorldComponent::Collision{ rb1, -normal });
+			Component->OverlapingBodies[rb1].push_back(Physics2DWorldComponent::Collision{ rb2, normal });
+			Component->OverlapingBodies[rb2].push_back(Physics2DWorldComponent::Collision{ rb1, -normal });
 		}
 
 		void EndContact(b2Contact* contact)
@@ -31,17 +31,10 @@ namespace Poly {
 			RigidBody2DComponent* rb1 = static_cast<RigidBody2DComponent*>(contact->GetFixtureA()->GetUserData());
 			RigidBody2DComponent* rb2 = static_cast<RigidBody2DComponent*>(contact->GetFixtureB()->GetUserData());
 
-			for (size_t i = 0; i < Component->OverlapingBodies[rb1].GetSize(); ++i)
-			{
-				if (Component->OverlapingBodies[rb1][i].rb == rb2)
-					Component->OverlapingBodies[rb1].RemoveByIdx(i);
-			}
-
-			for (size_t i = 0; i < Component->OverlapingBodies[rb2].GetSize(); ++i)
-			{
-				if (Component->OverlapingBodies[rb2][i].rb == rb1)
-					Component->OverlapingBodies[rb2].RemoveByIdx(i);
-			}
+			DISCARD std::remove_if(Component->OverlapingBodies[rb1].begin(), Component->OverlapingBodies[rb1].end(),
+				[rb2](const Physics2DWorldComponent::Collision& col){ return col.rb == rb2; });
+			DISCARD std::remove_if(Component->OverlapingBodies[rb2].begin(), Component->OverlapingBodies[rb2].end(),
+				[rb1](const Physics2DWorldComponent::Collision& col){ return col.rb == rb1; });
 		}
 
 		Physics2DWorldComponent* Component;
@@ -59,9 +52,9 @@ Poly::Physics2DWorldComponent::~Physics2DWorldComponent()
 {
 }
 
-const Dynarray<Physics2DWorldComponent::Collision>& Poly::Physics2DWorldComponent::GetCollidingBodies(RigidBody2DComponent* rb) const
+const std::vector<Physics2DWorldComponent::Collision>& Poly::Physics2DWorldComponent::GetCollidingBodies(RigidBody2DComponent* rb) const
 {
-	static Dynarray<Physics2DWorldComponent::Collision> EMPTY;
+	static std::vector<Physics2DWorldComponent::Collision> EMPTY;
 	auto it = OverlapingBodies.find(rb);
 	if (it == OverlapingBodies.end())
 		return EMPTY;

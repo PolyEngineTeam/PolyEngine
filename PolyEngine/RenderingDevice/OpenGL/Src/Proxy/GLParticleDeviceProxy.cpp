@@ -74,10 +74,10 @@ GLParticleDeviceProxy::~GLParticleDeviceProxy()
 
 void GLParticleDeviceProxy::SetContent(const ParticleEmitter& emitter)
 {
-	InstancesTransform.Clear();
-	InstancesTransform.Resize(16 * emitter.GetInstancesCount());
+	InstancesTransform.clear();
+	InstancesTransform.resize(16 * emitter.GetInstancesCount());
 	
-	for (size_t i = 0; i < InstancesTransform.GetSize(); ++i)
+	for (size_t i = 0; i < InstancesTransform.size(); ++i)
 	{
 		InstancesTransform[i] = 0.0f;
 	}
@@ -98,6 +98,6 @@ void GLParticleDeviceProxy::SetContent(const ParticleEmitter& emitter)
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * InstancesTransform.GetSize(), InstancesTransform.GetData(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * InstancesTransform.size(), InstancesTransform.data(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

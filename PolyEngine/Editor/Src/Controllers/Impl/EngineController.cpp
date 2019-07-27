@@ -151,26 +151,26 @@ void EngineController::OnEngineUpdateTimerTick()
 {
 	ASSERTE(ControlledEngine, "Engine instance is required to perform this operation");
 
-	auto updatePhases = Dynarray<Engine::eUpdatePhaseOrder>();
+	auto updatePhases = std::vector<Engine::eUpdatePhaseOrder>();
 
 	switch (Editor->GetEngineState())
 	{
 	case PolyEditor::eEngineState::EDIT:
-		updatePhases.PushBack(Engine::eUpdatePhaseOrder::PREUPDATE);
-		updatePhases.PushBack(Engine::eUpdatePhaseOrder::EDITOR);
-		updatePhases.PushBack(Engine::eUpdatePhaseOrder::POSTUPDATE);
+		updatePhases.push_back(Engine::eUpdatePhaseOrder::PREUPDATE);
+		updatePhases.push_back(Engine::eUpdatePhaseOrder::EDITOR);
+		updatePhases.push_back(Engine::eUpdatePhaseOrder::POSTUPDATE);
 		break;
 
 	case PolyEditor::eEngineState::GAMEPLAY:
-		updatePhases.PushBack(Engine::eUpdatePhaseOrder::PREUPDATE);
-		updatePhases.PushBack(Engine::eUpdatePhaseOrder::UPDATE);
-		updatePhases.PushBack(Engine::eUpdatePhaseOrder::POSTUPDATE);
+		updatePhases.push_back(Engine::eUpdatePhaseOrder::PREUPDATE);
+		updatePhases.push_back(Engine::eUpdatePhaseOrder::UPDATE);
+		updatePhases.push_back(Engine::eUpdatePhaseOrder::POSTUPDATE);
 		break;
 
 	case PolyEditor::eEngineState::PAUSED_GAMEPLAY:
-		updatePhases.PushBack(Engine::eUpdatePhaseOrder::PREUPDATE);
-		updatePhases.PushBack(Engine::eUpdatePhaseOrder::EDITOR);
-		updatePhases.PushBack(Engine::eUpdatePhaseOrder::POSTUPDATE);
+		updatePhases.push_back(Engine::eUpdatePhaseOrder::PREUPDATE);
+		updatePhases.push_back(Engine::eUpdatePhaseOrder::EDITOR);
+		updatePhases.push_back(Engine::eUpdatePhaseOrder::POSTUPDATE);
 		break;
 
 	default:

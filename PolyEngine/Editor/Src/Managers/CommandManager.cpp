@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------------
 CommandManager::CommandManager()
 {
-	Commands.PushBack(new VoidCommand());
+	Commands.push_back(new VoidCommand());
 }
 
 //------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ CommandManager::~CommandManager()
 	for (Command* cmd : Commands)
 		delete cmd;
 
-	Commands.Clear();
+	Commands.clear();
 }
 
 //------------------------------------------------------------------------------
@@ -87,13 +87,13 @@ void CommandManager::AddCommand(Command* cmd)
 	if (Commands[CurrentCommand] == cmd)
 		return;
 
-	for (int i = (int)CurrentCommand + 1; i < (int)Commands.GetSize();)
+	for (int i = (int)CurrentCommand + 1; i < (int)Commands.size();)
 	{
-		delete Commands[Commands.GetSize() - 1];
-		Commands.PopBack();
+		delete Commands[Commands.size() - 1];
+		Commands.pop_back();
 	}
 
-	Commands.PushBack(cmd);
+	Commands.push_back(cmd);
 
 	++CurrentCommand;
 }
@@ -113,7 +113,7 @@ void CommandManager::Undo()
 //------------------------------------------------------------------------------
 void CommandManager::Redo()
 {
-	if (CurrentCommand == Commands.GetSize() - 1)
+	if (CurrentCommand == Commands.size() - 1)
 		return;
 
 	++CurrentCommand;

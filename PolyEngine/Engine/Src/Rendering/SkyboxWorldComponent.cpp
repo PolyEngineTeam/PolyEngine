@@ -14,7 +14,7 @@ SkyboxWorldComponent::SkyboxWorldComponent(const String& panoramaPath, const eRe
 	Init( {panoramaPath}, source);
 }
 
-SkyboxWorldComponent::SkyboxWorldComponent(const Dynarray<String>& panoramaPaths, const eResourceSource source)
+SkyboxWorldComponent::SkyboxWorldComponent(const std::vector<String>& panoramaPaths, const eResourceSource source)
 	: Tint(Color::WHITE)
 {
 	Init(panoramaPaths, source);
@@ -26,12 +26,12 @@ SkyboxWorldComponent::~SkyboxWorldComponent()
 		ResourceManager<TextureResource>::Release(p);
 }
 
-void SkyboxWorldComponent::Init(const Dynarray<String>& panoramaPaths, const eResourceSource source)
+void SkyboxWorldComponent::Init(const std::vector<String>& panoramaPaths, const eResourceSource source)
 {
 	for (auto p : panoramaPaths)
 	{
 		TextureResource* texture = ResourceManager<TextureResource>::Load(p, source, eTextureUsageType::HDR);
-		EquirectPanoramas.PushBack(texture);
+		EquirectPanoramas.push_back(texture);
 		gConsole.LogInfo("SkyboxWorldComponent::SkyboxWorldComponent panoramaPath: {}", p);
 	}
 }

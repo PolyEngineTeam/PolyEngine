@@ -29,8 +29,8 @@ void Poly::ComponentDeleter::operator()(ComponentBase* c)
 Entity::Entity(Scene* world, Entity* parent)
 	: Transform(this), EntityScene(world), ComponentPosessionFlags(0)
 {
-	Components.Resize(MAX_COMPONENTS_COUNT);
-	std::fill(Components.Begin(), Components.End(), nullptr);
+	Components.resize(MAX_COMPONENTS_COUNT);
+	std::fill(Components.begin(), Components.end(), nullptr);
 
 	if (parent)
 		SetParent(parent);
@@ -53,7 +53,7 @@ void Poly::Entity::ReleaseFromParent()
 			if (child.get() == this)
 				child.release();
 		}
-		Parent->Children.Remove([](const EntityUniquePtr& p) { return p.get() == nullptr; });
+		DISCARD std::remove_if(Parent->Children.begin(), Parent->Children.end(), [](const EntityUniquePtr& p) { return p.get() == nullptr; });
 		Parent = nullptr;
 		Transform.UpdateParentTransform();
 	}
@@ -62,15 +62,15 @@ void Poly::Entity::ReleaseFromParent()
 Poly::Entity::Entity()
  : Transform(this)
 {
-	Components.Resize(MAX_COMPONENTS_COUNT);
-	std::fill(Components.Begin(), Components.End(), nullptr);
+	Components.resize(MAX_COMPONENTS_COUNT);
+	std::fill(Components.begin(), Components.end(), nullptr);
 }
 
 Poly::Entity::~Entity()
 {
 	//ReleaseFromParent();
-	Children.Clear();
-	Components.Clear();
+	Children.clear();
+	Components.clear();
 }
 
 void* Poly::Entity::AllocateEntity(RTTI::TypeInfo t)
@@ -100,7 +100,7 @@ void Poly::Entity::SetParent(Entity* parent)
 	ReleaseFromParent();
 
 	Parent = parent;
-	Parent->Children.PushBack(EntityUniquePtr(this, EntityScene->GetEntityDeleter()));
+	Parent->Children.push_back(EntityUniquePtr(this, EntityScene->GetEntityDeleter()));
 	Parent->SetBBoxDirty();
 
 	Transform.UpdateParentTransform();
@@ -108,7 +108,7 @@ void Poly::Entity::SetParent(Entity* parent)
 
 bool Poly::Entity::ContainsChildRecursive(Entity* child) const
 {
-	if (Children.Contains([child](const EntityUniquePtr& p) { return p.get() == child; }))
+	if (std::find_if(Children.begin(), Children.end(), [child](const EntityUniquePtr& p) { return p.get() == child; }) != Children.end())
 		return true;
 
 	for (const EntityUniquePtr& myChild : Children)

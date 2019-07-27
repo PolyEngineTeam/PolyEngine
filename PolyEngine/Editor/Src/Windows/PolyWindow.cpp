@@ -19,12 +19,12 @@ void PolyWindow::AddDockWindow(Qt::DockWidgetArea area, PolyDockWindow* wnd, boo
 		QTimer::singleShot(1, this, [a = area, w = wnd, object = this]() 
 			{ object->addDockWidget(a, w); w->show(); });
 
-	DockWindows.PushBack(wnd);
+	DockWindows.push_back(wnd);
 }
 
 void PolyWindow::RemoveDockWindow(PolyDockWindow* wnd)
 {
-	DockWindows.Remove(wnd);
+	std::remove(DockWindows.begin(), DockWindows.end(), wnd);
 	removeDockWidget(wnd);
 }
 
@@ -32,10 +32,10 @@ void PolyWindow::closeEvent(QCloseEvent* event)
 {
 	UNUSED(event);
 
-	Poly::Dynarray<PolyDockWindow*> windows = DockWindows;
+	std::vector<PolyDockWindow*> windows = DockWindows;
 
 	for (auto wnd : windows)
 		gApp->Ui.MainWindow->AddDockWindow(Qt::DockWidgetArea::LeftDockWidgetArea, wnd);
 
-	gApp->Ui.Windows.Remove(this);
+	std::remove(gApp->Ui.Windows.begin(), gApp->Ui.Windows.end(), this);
 }

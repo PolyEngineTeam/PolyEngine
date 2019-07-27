@@ -36,10 +36,10 @@ namespace Poly
 
 		GLRenderingDevice* RDI;
 
-		Dynarray<GLuint> HDRPanoramas;
-		Dynarray<GLuint> EnvCubemaps;
-		Dynarray<GLuint> IrradianceMaps;
-		Dynarray<GLuint> PrefilterMaps;
+		std::vector<GLuint> HDRPanoramas;
+		std::vector<GLuint> EnvCubemaps;
+		std::vector<GLuint> IrradianceMaps;
+		std::vector<GLuint> PrefilterMaps;
 
 		GLShaderProgram EquirectangularToCubemapShader;
 		GLShaderProgram CubemapIrradianceShader;

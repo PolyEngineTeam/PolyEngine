@@ -16,7 +16,7 @@ namespace Poly
 		virtual float GetHeuristicCost(const Poly::NavNode* from, const Poly::NavNode* to) const = 0;
 		virtual Vector GetNodeWorldPosition(const Poly::NavNode* node) const = 0;
 		virtual const NavNode* GetNodeFromWorldPosition(const Vector& pos) const = 0;
-		virtual void GetConnections(const Poly::NavNode* node, Dynarray<const NavNode*>& connections) const = 0;
+		virtual void GetConnections(const Poly::NavNode* node, std::vector<const NavNode*>& connections) const = 0;
 		virtual bool CanConnectDirectly(const NavNode* n1, const NavNode* n2) const = 0;
 	};
 
@@ -30,10 +30,10 @@ namespace Poly
 		void SetDestination(const Vector& pos);
 		void ResetDestination();
 
-		inline const Dynarray<Vector>& GetPath() const { return CalculatedPath; }
+		inline const std::vector<Vector>& GetPath() const { return CalculatedPath; }
 	private:
 		const NavGraph* NavigationGraph = nullptr;
-		Dynarray<Vector> CalculatedPath;
+		std::vector<Vector> CalculatedPath;
 		Optional<Vector> CurentDestination;
 		bool RecalculateRequested = false;
 		bool LastPathSearchFailed = false;

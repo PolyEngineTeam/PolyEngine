@@ -41,7 +41,7 @@ void Text2D::UpdateDeviceBuffers() const
 	float x = 0;
 	float y = 0;
 	float scale = 1;
-	Dynarray<ITextFieldBufferDeviceProxy::TextFieldLetter> letters(Text.GetLength());
+	std::vector<ITextFieldBufferDeviceProxy::TextFieldLetter> letters(Text.GetLength());
 	for (size_t i = 0; i < Text.GetLength(); ++i)
 	{
 		ITextFieldBufferDeviceProxy::TextFieldLetter letter;
@@ -63,14 +63,14 @@ void Text2D::UpdateDeviceBuffers() const
 		letter.MaxV = ch.TextureUV[1].Y;
 
 		if(letter.SizeX > 0&& letter.SizeY > 0)
-			letters.PushBack(letter);
+			letters.push_back(letter);
 
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 		x += ch.Advance * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
 
-	if(letters.GetSize() > 0)
-		TextFieldBufferProxy->SetContent(letters.GetSize(), letters.GetData());
+	if(letters.size() > 0)
+		TextFieldBufferProxy->SetContent(letters.size(), letters.data());
 }
 
 const ITextureDeviceProxy* Poly::Text2D::GetFontTextureProxy() const

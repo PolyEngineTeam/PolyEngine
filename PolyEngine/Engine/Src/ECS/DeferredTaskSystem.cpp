@@ -32,7 +32,7 @@ void DeferredTaskSystem::DeferredTaskPhase(Scene* w)
 	// clear newly created flags after one tic.
 	for (ComponentBase* cmp : worldCmp->NewlyCreatedComponents)
 		cmp->ResetFlags(eComponentBaseFlags::NEWLY_CREATED);
-	worldCmp->NewlyCreatedComponents.Clear();
+	worldCmp->NewlyCreatedComponents.clear();
 
 	// execute tasks from queue
 	while (!worldCmp->TasksQueue.IsEmpty())

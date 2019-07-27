@@ -15,7 +15,7 @@ namespace Poly {
 	friend class SoundWorldComponent;
 	friend void SoundSystem::SetDevice(const String&);
 	friend const String& SoundSystem::GetDeviceName();
-	friend const Dynarray<String>& SoundSystem::GetAvailableDevices();
+	friend const std::vector<String>& SoundSystem::GetAvailableDevices();
 	public:
 		/// Creates and saves default device.
 		/// Also loads available device names for device creation.
@@ -26,7 +26,7 @@ namespace Poly {
 
 	private:
 		ALCdevice* Device;
-		Dynarray<String> AvailableDevices;
+		std::vector<String> AvailableDevices;
 	};
 
 } // namespace Poly

@@ -21,7 +21,7 @@ void DockManager::WidgetMoveEvent(QEvent* event)
 	QPoint mousePos = ((QMouseEvent*)event)->pos() + DraggedWidget->pos();
 	MouseOver = nullptr;
 
-	for (size_t i = 0; i < gApp->Ui.Windows.GetSize(); i++)
+	for (size_t i = 0; i < gApp->Ui.Windows.size(); i++)
 	{
 		QPoint diff = mousePos - gApp->Ui.Windows[i]->pos();
 
@@ -75,7 +75,7 @@ void DockManager::WidgetDropEvent()
 		wnd->move(DraggedWidget->pos());
 		wnd->AddDockWindow(Qt::DockWidgetArea::TopDockWidgetArea, DraggedWidget);
 		wnd->show();
-		gApp->Ui.Windows.PushBack(std::move(wnd));
+		gApp->Ui.Windows.push_back(std::move(wnd));
 	}
 
 	DraggedWidget = nullptr;

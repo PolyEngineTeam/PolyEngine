@@ -33,7 +33,7 @@ public:
 
 	Engine* GetEngine() { return EngineObj; }
 	Scene* GetScene() { return SceneObj; }
-	Dynarray<Entity*> GetSelectedEntities() { return SelectedEntities; }
+	std::vector<Entity*> GetSelectedEntities() { return SelectedEntities; }
 	const ProjectConfig* GetConfig() { return Config; }
 	PolyEditor::eEngineState GetEngineState() { return EngineState; }
 	ViewportInspectorWidget* GetViewportInspector() { return ViewportInspector; }
@@ -49,10 +49,10 @@ public slots:
 	void EntitiesDestroyedSlot();
 	void EntitiesModifiedSlot(Command* cmd);
 	void EntitiesReparentedSlot();
-	void EntitiesSelectionChangedSlot(Dynarray<Entity*> entities);
+	void EntitiesSelectionChangedSlot(std::vector<Entity*> entities);
 
-	void ComponentsAddedSlot(Dynarray<ComponentBase*> components);
-	void ComponentsRemovedSlot(Dynarray<ComponentBase*> components);
+	void ComponentsAddedSlot(std::vector<ComponentBase*> components);
+	void ComponentsRemovedSlot(std::vector<ComponentBase*> components);
 
 signals:
 	//		project signals
@@ -91,7 +91,7 @@ signals:
 private:
 	Engine* EngineObj = nullptr;
 	Scene* SceneObj = nullptr;
-	Dynarray<Entity*> SelectedEntities;
+	std::vector<Entity*> SelectedEntities;
 	const ProjectConfig* Config = nullptr;
 	PolyEditor::eEngineState EngineState = PolyEditor::eEngineState::NONE;
 

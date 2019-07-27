@@ -26,15 +26,15 @@ public:
 	}
 
 signals:
-	void Dropped(Dynarray<QTreeWidgetItem*> droppedItems);
+	void Dropped(std::vector<QTreeWidgetItem*> droppedItems);
 
 private:
 	void dropEvent(QDropEvent* e) override 
 	{ 
-		Dynarray<QTreeWidgetItem*> droppedItems;
+		std::vector<QTreeWidgetItem*> droppedItems;
 
 		for (QTreeWidgetItem* i : selectedItems())
-			droppedItems.PushBack(i);
+			droppedItems.push_back(i);
 
 		QTreeWidget::dropEvent(e);  
 
@@ -96,7 +96,7 @@ private:
 
 private slots:
 	void SelectionChanged();
-	void Drop(Dynarray<QTreeWidgetItem*> droppedItems);
+	void Drop(std::vector<QTreeWidgetItem*> droppedItems);
 
 	void SpawnContextMenu(QPoint pos);
 		void SpawnEntities();

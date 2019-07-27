@@ -25,13 +25,13 @@ Poly::RTTI::TypeInfo Poly::ComponentManager::GetComponentType(size_t id) const
 	return it->second;
 }
 
-Dynarray<std::pair<RTTI::TypeInfo, size_t>> Poly::ComponentManager::GetComponentTypesList() const
+std::vector<std::pair<RTTI::TypeInfo, size_t>> Poly::ComponentManager::GetComponentTypesList() const
 {
-	Dynarray<std::pair<RTTI::TypeInfo, size_t>> ret;
-	ret.Reserve(TypeToIDMap.size());
+	std::vector<std::pair<RTTI::TypeInfo, size_t>> ret;
+	ret.reserve(TypeToIDMap.size());
 
 	for (const auto& kv : TypeToIDMap)
-		ret.PushBack({kv.first, kv.second});
+		ret.push_back({kv.first, kv.second});
 
 	return ret;
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Defines.hpp>
-#include <Collections/Dynarray.hpp>
+
 #include <Rendering/IRenderingDevice.hpp>
 #include <Audio/OpenALDevice.hpp>
 #include <Input/InputSystem.hpp>
@@ -73,7 +73,7 @@ namespace Poly
 		/// <see cref="Engine.eUpdatePhaseOrder"/>
 		void Update();
 
-		void Update(Dynarray<eUpdatePhaseOrder> phasesUpdate);
+		void Update(std::vector<eUpdatePhaseOrder> phasesUpdate);
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of eight functions handling incoming input events.</summary>
@@ -216,7 +216,7 @@ namespace Poly
 		InputQueue InputEventsQueue;
 		OutputQueue OutputEventsQueue;
 
-		EnumArray<Dynarray<std::unique_ptr<ISystem>>, eUpdatePhaseOrder> GameUpdatePhases;
+		EnumArray<std::vector<std::unique_ptr<ISystem>>, eUpdatePhaseOrder> GameUpdatePhases;
 
 		bool QuitRequested = false; //stop the game
 		bool MouseCaptureEnabled = false;

@@ -37,11 +37,11 @@ void RTTIInspectorWidget::UpdateInspector()
 //------------------------------------------------------------------------------
 void RTTIInspectorWidget::ReloadInspector(bool debug)
 {
-	Fields.Clear();
-	Labels.Clear();
+	Fields.clear();
+	Labels.clear();
 	for (SectionContainer* s : Sections)
 		delete s;
-	Sections.Clear();
+	Sections.clear();
 
 	int row = 0;
 
@@ -73,7 +73,7 @@ void RTTIInspectorWidget::ControlObjectUpdatedSlot(Command* c)
 SectionContainer* RTTIInspectorWidget::AddChild(RTTIBase* obj, const RTTI::Property& prop, bool debug)
 {
 	SectionContainer* section = new SectionContainer(prop.Name.GetCStr(), this);
-	Sections.PushBack(section);
+	Sections.push_back(section);
 
 	int row = 0;
 
@@ -117,5 +117,5 @@ void RTTIInspectorWidget::AddItem(QGridLayout* parent, int row, void* ptr, const
 
 	connect(control, &RTTIRegisteredControl::ObjectUpdated, this, &RTTIInspectorWidget::ControlObjectUpdatedSlot);
 
-	Fields.PushBack(control);
+	Fields.push_back(control);
 }

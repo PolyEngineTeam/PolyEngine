@@ -23,7 +23,7 @@ struct PathNodeCmp
 	bool operator()(const std::pair<i64, float>& a, const std::pair<i64, float>& b) const { return a.second < b.second; }
 };
 
-Optional<Dynarray<Vector>> CalculateNewPath(const NavGraph* graph, const Vector& start, const Vector& dest, size_t depthLimit)
+Optional<std::vector<Vector>> CalculateNewPath(const NavGraph* graph, const Vector& start, const Vector& dest, size_t depthLimit)
 {
 	// Swap start and dest to better handle path parsing later
 	Vector startInternal = dest;
@@ -32,24 +32,24 @@ Optional<Dynarray<Vector>> CalculateNewPath(const NavGraph* graph, const Vector&
 	const NavNode* startNode = graph->GetNodeFromWorldPosition(startInternal);
 	const NavNode* destNode = graph->GetNodeFromWorldPosition(destInternal);
 	if(!startNode || !destNode)
-		return Optional<Dynarray<Vector>>();
+		return Optional<std::vector<Vector>>();
 
-	Dynarray<PathNode> AllNodes;
+	std::vector<PathNode> AllNodes;
 
 	PriorityQueue<std::pair<i64, float>, PathNodeCmp> openList, closedList;
 	std::map<const NavNode*, float> minCosts;
 
-	AllNodes.PushBack(PathNode(startNode, 0, graph->GetHeuristicCost(startNode, destNode) ));
-	openList.Push(std::make_pair(AllNodes.GetSize() - 1, graph->GetHeuristicCost(startNode, destNode)));
+	AllNodes.push_back(PathNode(startNode, 0, graph->GetHeuristicCost(startNode, destNode) ));
+	openList.Push(std::make_pair(AllNodes.size() - 1, graph->GetHeuristicCost(startNode, destNode)));
 	minCosts.insert({startNode, 0.f});
 
 	i64 bestNodeIdx = -1;
-	Dynarray<const NavNode*> connections(8);
+	std::vector<const NavNode*> connections(8);
 	while (openList.GetSize() > 0 && bestNodeIdx < 0)
 	{
 		i64 qIdx = openList.Pop().first;
 		
-		connections.Clear();
+		connections.clear();
 		graph->GetConnections(AllNodes[qIdx].Node, connections);
 		for (const NavNode* connection : connections)
 		{
@@ -69,8 +69,8 @@ Optional<Dynarray<Vector>> CalculateNewPath(const NavGraph* graph, const Vector&
 			if (valIt != minCosts.end() && valIt->second < s.Cost)
 				continue; // node has worse base cost than other (in the same pos) we visited before, skip it
 
-			AllNodes.PushBack(s);
-			openList.Push(std::make_pair(AllNodes.GetSize() - 1, s.TotalCost()));
+			AllNodes.push_back(s);
+			openList.Push(std::make_pair(AllNodes.size() - 1, s.TotalCost()));
 			minCosts[s.Node] = s.Cost;
 		}
 
@@ -79,30 +79,30 @@ Optional<Dynarray<Vector>> CalculateNewPath(const NavGraph* graph, const Vector&
 	}
 
 	if (bestNodeIdx < 0)
-		return Optional<Dynarray<Vector>>();
+		return Optional<std::vector<Vector>>();
 
-	Dynarray<Vector> path;
-	path.PushBack(start);
+	std::vector<Vector> path;
+	path.push_back(start);
 	i64 currNodeIdx = bestNodeIdx;
 	do
 	{
 		const PathNode& q = AllNodes[currNodeIdx];
-		path.PushBack(graph->GetNodeWorldPosition(q.Node));
+		path.push_back(graph->GetNodeWorldPosition(q.Node));
 		currNodeIdx = q.PrevNode;
 	} while (currNodeIdx >= 0);
 	
-	path.PushBack(dest);
+	path.push_back(dest);
 	return path;
 }
 
-void SmoothPath(const NavGraph* graph, Dynarray<Vector>& path)
+void SmoothPath(const NavGraph* graph, std::vector<Vector>& path)
 {
 	size_t currIdx = 0;
-	while (currIdx < path.GetSize() - 1)
+	while (currIdx < path.size() - 1)
 	{
 
 		size_t stillVisibleIdx = currIdx;
-		for (size_t idx = path.GetSize() - 1; idx > currIdx; --idx)
+		for (size_t idx = path.size() - 1; idx > currIdx; --idx)
 		{
 			if (graph->CanConnectDirectly(graph->GetNodeFromWorldPosition(path[currIdx]), graph->GetNodeFromWorldPosition(path[idx])))
 			{
@@ -112,7 +112,7 @@ void SmoothPath(const NavGraph* graph, Dynarray<Vector>& path)
 		}
 
 		for (size_t idx = currIdx + 1; idx < stillVisibleIdx; ++idx)
-			path.RemoveByIdx(currIdx + 1);
+			path.erase(path.begin() + currIdx + 1);
 
 		++currIdx;
 	}
@@ -128,7 +128,7 @@ ENGINE_DLLEXPORT void Poly::PathfindingSystem::UpdatePhase(Scene* world)
 		{
 			pathfindingCmp->RecalculateRequested = false;
 			Vector trans = pathfindingCmp->GetOwner()->GetTransform().GetGlobalTranslation();
-			Optional<Dynarray<Vector>> path = CalculateNewPath(pathfindingCmp->NavigationGraph,
+			Optional<std::vector<Vector>> path = CalculateNewPath(pathfindingCmp->NavigationGraph,
 				trans, pathfindingCmp->CurentDestination.Value(), 16);
 
 			if (!path.HasValue())

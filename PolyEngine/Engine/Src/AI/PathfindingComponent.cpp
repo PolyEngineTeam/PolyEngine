@@ -17,7 +17,7 @@ void Poly::PathfindingComponent::SetDestination(const Vector& pos)
 void Poly::PathfindingComponent::ResetDestination()
 {
 	CurentDestination = Optional<Vector>();
-	CalculatedPath.Clear();
+	CalculatedPath.clear();
 	RecalculateRequested = false;
 }
 

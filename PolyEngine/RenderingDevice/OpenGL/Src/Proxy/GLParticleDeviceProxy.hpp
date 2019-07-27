@@ -28,6 +28,6 @@ namespace Poly
 		GLuint VBO = 0;
 		unsigned int instanceVBO;
 
-		Dynarray<float> InstancesTransform;
+		std::vector<float> InstancesTransform;
 	};
 }

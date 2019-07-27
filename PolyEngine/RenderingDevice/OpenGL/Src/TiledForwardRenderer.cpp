@@ -424,7 +424,7 @@ void TiledForwardRenderer::Render(const SceneView& sceneView)
 	static bool isInitOnFirstFrame = false;
 
 	// glViewport((int)(sceneView.Rect.GetMin().X * screenSize.Width), (int)(sceneView.Rect.GetMin().Y * screenSize.Height),
-	// 	(int)(sceneView.Rect.GetSize().X * screenSize.Width), (int)(sceneView.Rect.GetSize().Y * screenSize.Height));
+	// 	(int)(sceneView.Rect.size().X * screenSize.Width), (int)(sceneView.Rect.size().Y * screenSize.Height));
 
 	if (!isInitOnFirstFrame)
 	{
@@ -566,7 +566,7 @@ void TiledForwardRenderer::ComputeLightCulling(const SceneView& sceneView)
 	static const String uScreenSizeY("uScreenSizeY");
 	LightCullingShader.SetUniform(uScreenSizeY, RDI->GetScreenSize().Height);
 	static const String uLightCount("uLightCount");
-	LightCullingShader.SetUniform(uLightCount, (int)std::min((int)sceneView.PointLightList.GetSize(), MAX_NUM_LIGHTS));
+	LightCullingShader.SetUniform(uLightCount, (int)std::min((int)sceneView.PointLightList.size(), MAX_NUM_LIGHTS));
 
 	// Bind depth map texture to texture location 4 (which will not be used by any model texture)
 	glActiveTexture(GL_TEXTURE0);
@@ -609,7 +609,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	// gConsole.LogInfo("TiledForwardRenderer::RenderOpaqueLit uTime: {}", time);
 
 	// shadownap uniforms
-	Matrix projDirLightFromWorld = sceneView.DirectionalLightList.IsEmpty()
+	Matrix projDirLightFromWorld = sceneView.DirectionalLightList.empty()
 		? Matrix()
 		: GetProjectionForShadowMap(sceneView, ShadowMap.GetShadowMapResolution());
 
@@ -650,7 +650,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	// Lighting uniforms
 	const EntityTransform& cameraTransform = sceneView.CameraCmp->GetTransform();
 	static const String uLightCount("uLightCount");
-	LightAccumulationShader.SetUniform(uLightCount, (int)std::min((int)sceneView.PointLightList.GetSize(), MAX_NUM_LIGHTS));
+	LightAccumulationShader.SetUniform(uLightCount, (int)std::min((int)sceneView.PointLightList.size(), MAX_NUM_LIGHTS));
 	static const String uWorkGroupsX("uWorkGroupsX");
 	LightAccumulationShader.SetUniform(uWorkGroupsX, (int)WorkGroupsX);
 	static const String uViewPosition("uViewPosition");
@@ -1439,21 +1439,21 @@ void TiledForwardRenderer::EditorDebug(const SceneView& sceneView)
 												 // set up buffer
 		glBindVertexArray(debugLinesBuffers.VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, debugLinesBuffers.VBO);
-		glBufferData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLine)
-			+ debugLinesColors.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLineColor), NULL, GL_STATIC_DRAW);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, debugLines.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLine), (GLvoid*)debugLines.GetData());
-		glBufferSubData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLine), debugLinesColors.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLineColor), (GLvoid*)debugLinesColors.GetData());
+		glBufferData(GL_ARRAY_BUFFER, debugLines.size() * sizeof(DebugDrawStateWorldComponent::DebugLine)
+			+ debugLinesColors.size() * sizeof(DebugDrawStateWorldComponent::DebugLineColor), NULL, GL_STATIC_DRAW);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, debugLines.size() * sizeof(DebugDrawStateWorldComponent::DebugLine), (GLvoid*)debugLines.data());
+		glBufferSubData(GL_ARRAY_BUFFER, debugLines.size() * sizeof(DebugDrawStateWorldComponent::DebugLine), debugLinesColors.size() * sizeof(DebugDrawStateWorldComponent::DebugLineColor), (GLvoid*)debugLinesColors.data());
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), NULL);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Color), (GLvoid*)(debugLines.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLine)));
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Color), (GLvoid*)(debugLines.size() * sizeof(DebugDrawStateWorldComponent::DebugLine)));
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		glDrawArrays(GL_LINES, 0, (GLsizei)debugLines.GetSize() * 2);
+		glDrawArrays(GL_LINES, 0, (GLsizei)debugLines.size() * 2);
 		glBindVertexArray(0);
 
-		debugLines.Clear();
-		debugLinesColors.Clear();
+		debugLines.clear();
+		debugLinesColors.clear();
 	}
 
 	glEnable(GL_DEPTH_TEST);
@@ -1566,7 +1566,7 @@ void TiledForwardRenderer::DebugLightAccum(const SceneView& sceneView)
 	static const String uWorkGroupsY("uWorkGroupsY");
 	DebugLightAccumShader.SetUniform(uWorkGroupsY, (int)WorkGroupsY);
 	static const String uLightCount("uLightCount");
-	DebugLightAccumShader.SetUniform(uLightCount, (int)std::min((int)sceneView.PointLightList.GetSize(), MAX_NUM_LIGHTS));
+	DebugLightAccumShader.SetUniform(uLightCount, (int)std::min((int)sceneView.PointLightList.size(), MAX_NUM_LIGHTS));
 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, LightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, VisibleLightIndicesBuffer);
@@ -1624,18 +1624,18 @@ void TiledForwardRenderer::SetupLightsBufferFromScene()
 
 void TiledForwardRenderer::UpdateLightsBufferFromScene(const SceneView& sceneView)
 {
-	Dynarray<Vector> positions;
-	Dynarray<Vector> color;
-	Dynarray<Vector> rangeIntensity;
+	std::vector<Vector> positions;
+	std::vector<Vector> color;
+	std::vector<Vector> rangeIntensity;
 
 	int lightCounter = 0;
 	for (const PointLightComponent* pointLightCmp : sceneView.PointLightList)
 	{
 		const EntityTransform& transform = pointLightCmp->GetTransform();
 
-		positions.PushBack(transform.GetGlobalTranslation());
-		color.PushBack(Vector(pointLightCmp->GetColor()));
-		rangeIntensity.PushBack(Vector(pointLightCmp->GetRange(), pointLightCmp->GetIntensity(), 0.0f));
+		positions.push_back(transform.GetGlobalTranslation());
+		color.push_back(Vector(pointLightCmp->GetColor()));
+		rangeIntensity.push_back(Vector(pointLightCmp->GetRange(), pointLightCmp->GetIntensity(), 0.0f));
 
 		++lightCounter;
 

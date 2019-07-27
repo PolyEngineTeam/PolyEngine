@@ -17,7 +17,7 @@ public:
 	EditorUi() = default;
 
 	void Init();
-	void AddWindow() { PolyWindow* wnd = new PolyWindow(); Windows.PushBack(wnd); wnd->show(); }
+	void AddWindow() { PolyWindow* wnd = new PolyWindow(); Windows.push_back(wnd); wnd->show(); }
 
 	LoggerWidget* MainLogger;
 	LoggerWidget* CmdLogger;
@@ -25,6 +25,6 @@ public:
 	PolyMainWindow* MainWindow;
 
 private:
-	Poly::Dynarray<PolyWindow*> Windows;
-	Poly::Dynarray<PolyDockWindow*> DockWindows;
+	std::vector<PolyWindow*> Windows;
+	std::vector<PolyDockWindow*> DockWindows;
 };

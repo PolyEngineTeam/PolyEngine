@@ -85,9 +85,9 @@ TEST_CASE("PriorityQueue heap sort", "[PriorityQueue]")
 {
 	const size_t testSize = 100;
 
-	Dynarray<int> table(testSize);
+	std::vector<int> table(testSize);
 	for (size_t i = 0; i < testSize; ++i)
-		table.PushBack(rand());
+		table.push_back(rand());
 
 	PriorityQueue<int> q(std::move(table));
 

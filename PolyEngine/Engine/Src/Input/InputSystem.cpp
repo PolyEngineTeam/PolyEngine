@@ -68,7 +68,7 @@ void InputSystem::InputPhase(Scene* world)
 		{
 			com->Controllers[ev.JoystickID] = ControllerState();
 			bool controllerAssigned = false;
-			for (size_t i = 0; i < com->PlayerIDToJoystickID.GetSize(); ++i)
+			for (size_t i = 0; i < com->PlayerIDToJoystickID.size(); ++i)
 			{
 				if (!com->PlayerIDToJoystickID[i].HasValue())
 				{
@@ -81,8 +81,8 @@ void InputSystem::InputPhase(Scene* world)
 			}
 			if (!controllerAssigned)
 			{
-				size_t newPlayerID = com->PlayerIDToJoystickID.GetSize();
-				com->PlayerIDToJoystickID.PushBack(Optional<size_t>{ev.JoystickID});
+				size_t newPlayerID = com->PlayerIDToJoystickID.size();
+				com->PlayerIDToJoystickID.push_back(Optional<size_t>{ev.JoystickID});
 				com->JoystickIDToPlayerID[ev.JoystickID] = newPlayerID;
 				Poly::gConsole.LogDebug("Controller added in new place");
 			}

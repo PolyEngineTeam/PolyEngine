@@ -69,7 +69,7 @@ TEST_CASE("RTTI property", "[RTTI]") {
 	REQUIRE(propMgr != nullptr);
 	
 	const auto& properties = propMgr->GetPropertyList();
-	REQUIRE(properties.GetSize() == 2+1); // Val1, Val2 + UUID
+	REQUIRE(properties.size() == 2+1); // Val1, Val2 + UUID
 	
 	CHECK(properties[0].Type == RTTI::TypeInfo::INVALID);
 	CHECK(properties[0].Name == "UUID");

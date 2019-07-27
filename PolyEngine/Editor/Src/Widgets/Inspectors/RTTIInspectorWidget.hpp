@@ -46,7 +46,7 @@ private:
 
 	QGridLayout* Layout;
 
-	Dynarray<RTTIRegisteredControl*> Fields;
-	Dynarray<QLabel*> Labels;
-	Dynarray<SectionContainer*> Sections;
+	std::vector<RTTIRegisteredControl*> Fields;
+	std::vector<QLabel*> Labels;
+	std::vector<SectionContainer*> Sections;
 };
