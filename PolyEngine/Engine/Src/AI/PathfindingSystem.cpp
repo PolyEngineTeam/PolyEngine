@@ -23,7 +23,7 @@ struct PathNodeCmp
 	bool operator()(const std::pair<i64, float>& a, const std::pair<i64, float>& b) const { return a.second < b.second; }
 };
 
-Optional<std::vector<Vector>> CalculateNewPath(const NavGraph* graph, const Vector& start, const Vector& dest, size_t depthLimit)
+std::optional<std::vector<Vector>> CalculateNewPath(const NavGraph* graph, const Vector& start, const Vector& dest, size_t depthLimit)
 {
 	// Swap start and dest to better handle path parsing later
 	Vector startInternal = dest;
@@ -32,7 +32,7 @@ Optional<std::vector<Vector>> CalculateNewPath(const NavGraph* graph, const Vect
 	const NavNode* startNode = graph->GetNodeFromWorldPosition(startInternal);
 	const NavNode* destNode = graph->GetNodeFromWorldPosition(destInternal);
 	if(!startNode || !destNode)
-		return Optional<std::vector<Vector>>();
+		return {};
 
 	std::vector<PathNode> AllNodes;
 
@@ -79,7 +79,7 @@ Optional<std::vector<Vector>> CalculateNewPath(const NavGraph* graph, const Vect
 	}
 
 	if (bestNodeIdx < 0)
-		return Optional<std::vector<Vector>>();
+		return {};
 
 	std::vector<Vector> path;
 	path.push_back(start);
@@ -128,17 +128,17 @@ ENGINE_DLLEXPORT void Poly::PathfindingSystem::UpdatePhase(Scene* world)
 		{
 			pathfindingCmp->RecalculateRequested = false;
 			Vector trans = pathfindingCmp->GetOwner()->GetTransform().GetGlobalTranslation();
-			Optional<std::vector<Vector>> path = CalculateNewPath(pathfindingCmp->NavigationGraph,
-				trans, pathfindingCmp->CurentDestination.Value(), 16);
+			std::optional<std::vector<Vector>> path = CalculateNewPath(pathfindingCmp->NavigationGraph,
+				trans, pathfindingCmp->CurentDestination.value(), 16);
 
-			if (!path.HasValue())
+			if (!path.has_value())
 			{
 				pathfindingCmp->LastPathSearchFailed = true;
 				continue;
 			}
 
-			SmoothPath(pathfindingCmp->NavigationGraph, path.Value());
-			pathfindingCmp->CalculatedPath = path.TakeValue();
+			SmoothPath(pathfindingCmp->NavigationGraph, path.value());
+			pathfindingCmp->CalculatedPath = std::move(path.value());
 		}
 	}
 }

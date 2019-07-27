@@ -9,7 +9,7 @@ Poly::ComponentManager& Poly::ComponentManager::Get()
 	return instance;
 }
 
-Optional<size_t> Poly::ComponentManager::GetComponentID(const RTTI::TypeInfo& typeinfo) const
+std::optional<size_t> Poly::ComponentManager::GetComponentID(const RTTI::TypeInfo& typeinfo) const
 {
 	const auto& it = TypeToIDMap.find(typeinfo);
 	if (it == TypeToIDMap.end())

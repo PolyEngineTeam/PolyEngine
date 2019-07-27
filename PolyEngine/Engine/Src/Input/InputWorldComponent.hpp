@@ -68,7 +68,7 @@ namespace Poly
 		Vector2i CurrWheel;
 		Vector2i PrevWheel;
 		std::unordered_map<size_t, ControllerState> Controllers;
-		std::vector<Optional<size_t>> PlayerIDToJoystickID;
+		std::vector<std::optional<size_t>> PlayerIDToJoystickID;
 		std::unordered_map<size_t, size_t> JoystickIDToPlayerID;
 		bool IsConsumed = false;
 		const char* CharUTF8 = nullptr;

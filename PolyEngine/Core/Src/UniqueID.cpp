@@ -70,7 +70,7 @@ String Poly::UniqueID::ToString() const
 	return sb.StealString();
 }
 
-Optional<UniqueID> Poly::UniqueID::FromString(const String& str)
+std::optional<UniqueID> Poly::UniqueID::FromString(const String& str)
 {
 	if (str.GetLength() != 36)
 		return {};

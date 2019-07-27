@@ -34,10 +34,10 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(Scene* world)
 				Rigidbody3DComponentTemplate& tmp = rigidbody->Template;
 				Vector v, u;
 
-				v = tmp.Inertia.Value();
+				v = tmp.Inertia.value();
 				bulletRigidbody->setMassProps(tmp.Mass, btVector3(v.X, v.Y, v.Z));
 
-				v = tmp.Gravity.Value();
+				v = tmp.Gravity.value();
 				bulletRigidbody->setGravity(btVector3(v.X, v.Y, v.Z));
 				bulletRigidbody->setRestitution(tmp.Restitution);
 				bulletRigidbody->setFriction(tmp.Friction);
@@ -50,34 +50,34 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(Scene* world)
 				v = tmp.AngularFactor;
 				bulletRigidbody->setAngularFactor(btVector3(v.X, v.Y, v.Z));
 
-				if (tmp.LinearVelocity.HasValue())
+				if (tmp.LinearVelocity.has_value())
 				{
-					v = tmp.LinearVelocity.TakeValue();
+					v = std::move(tmp.LinearVelocity.value());
 					bulletRigidbody->setLinearVelocity(btVector3(v.X, v.Y, v.Z));
 				}
 
-				if (tmp.AngularVelocity.HasValue())
+				if (tmp.AngularVelocity.has_value())
 				{
-					v = tmp.AngularVelocity.TakeValue();
+					v = std::move(tmp.AngularVelocity.value());
 					bulletRigidbody->setAngularVelocity(btVector3(v.X, v.Y, v.Z));
 				}
 
-				if (rigidbody->ImpulseToCenter.HasValue())
+				if (rigidbody->ImpulseToCenter.has_value())
 				{
-					v = rigidbody->ImpulseToCenter.TakeValue();
+					v = std::move(rigidbody->ImpulseToCenter.value());
 					bulletRigidbody->applyCentralImpulse(btVector3(v.X, v.Y, v.Z));
 				}
 
-				if (rigidbody->Impulse.HasValue())
+				if (rigidbody->Impulse.has_value())
 				{
-					v = rigidbody->Impulse.TakeValue();
-					u = rigidbody->ImpulsePos.TakeValue();
+					v = std::move(rigidbody->Impulse.value());
+					u = std::move(rigidbody->ImpulsePos.value());
 					bulletRigidbody->applyImpulse(btVector3(v.X, v.Y, v.Z), btVector3(u.X, u.Y, u.Z));
 				}
 
-				if (rigidbody->TorqueImpulse.HasValue())
+				if (rigidbody->TorqueImpulse.has_value())
 				{
-					v = rigidbody->TorqueImpulse.TakeValue();
+					v = std::move(rigidbody->TorqueImpulse.value());
 					bulletRigidbody->applyTorqueImpulse(btVector3(v.X, v.Y, v.Z));
 				}
 
@@ -211,10 +211,10 @@ void Poly::Physics3DSystem::EnsureInit(Scene* world, Entity* entity)
 
 		case eRigidBody3DType::DYNAMIC:
 			ASSERTE(!Cmpf(rigidbody->Template.Mass, 0), "Can't create dynamic body with zero mass.");
-			if (rigidbody->Template.Inertia.HasValue())
+			if (rigidbody->Template.Inertia.has_value())
 			{
 				// if user has set inertia use provided
-				Vector i = rigidbody->Template.Inertia.Value();
+				Vector i = rigidbody->Template.Inertia.value();
 				inertia = btVector3(i.X, i.Y, i.Z);
 			}
 			else
@@ -229,7 +229,7 @@ void Poly::Physics3DSystem::EnsureInit(Scene* world, Entity* entity)
 		}
 
 		// if gravity for this body was not set then set it as it is in the world
-		if (!rigidbody->Template.Gravity.HasValue())
+		if (!rigidbody->Template.Gravity.has_value())
 			rigidbody->Template.Gravity = world->GetWorldComponent<Physics2DWorldComponent>()->GetGravity();
 
 		// create construction info

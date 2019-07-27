@@ -71,9 +71,9 @@ namespace Poly
 
 			struct ChannelLerpData
 			{
-				Optional<Channel::KeyValue<Vector>> pos[2];
-				Optional<Channel::KeyValue<Vector>> scale[2];
-				Optional<Channel::KeyValue<Quaternion>> rot[2];
+				std::optional<Channel::KeyValue<Vector>> pos[2];
+				std::optional<Channel::KeyValue<Vector>> scale[2];
+				std::optional<Channel::KeyValue<Quaternion>> rot[2];
 			};
 
 			ChannelLerpData GetLerpData(String channel, float time) const;
@@ -90,7 +90,7 @@ namespace Poly
 			String name;
 			Matrix prevBoneFromBone;
 			Matrix boneFromModel;
-			Optional<size_t> parentBoneIdx = {};
+			std::optional<size_t> parentBoneIdx = {};
 			std::vector<size_t> childrenIdx;
 		};
 

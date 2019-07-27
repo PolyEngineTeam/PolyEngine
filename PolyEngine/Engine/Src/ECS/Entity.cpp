@@ -84,7 +84,7 @@ void* Poly::Entity::AllocateEntity(RTTI::TypeInfo t)
 void* Poly::Entity::AllocateComponent(RTTI::TypeInfo t)
 {
 	Scene* s = gEngine->GetCurrentlySerializedScene();
-	const size_t id = ComponentManager::Get().GetComponentID(t).Value();
+	const size_t id = ComponentManager::Get().GetComponentID(t).value();
 	gConsole.LogInfo("Allocationg component: {} with ID {} and typeID {}", t.GetTypeName(), id, t);
 	void* ptr = s->GetComponentAllocator(id)->GenericAlloc();
 	t.CreateInstanceInPlace(ptr);
@@ -139,8 +139,8 @@ const AABox& Poly::Entity::GetLocalBoundingBox(eEntityBoundingChannel channel) c
 				continue;
 
 			auto bboxOpt = component->GetBoundingBox(channel);
-			if (bboxOpt.HasValue())
-				LocalBBox[channel].Expand(bboxOpt.Value());
+			if (bboxOpt.has_value())
+				LocalBBox[channel].Expand(bboxOpt.value());
 		}
 		BBoxDirty[channel] = false;
 	}

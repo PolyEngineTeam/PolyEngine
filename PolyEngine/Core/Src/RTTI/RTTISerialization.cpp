@@ -513,7 +513,7 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj,
 	case eCorePropertyType::UUID:
 	{
 		Poly::UniqueID& uuid = *reinterpret_cast<Poly::UniqueID*>(obj);
-		uuid = UniqueID::FromString(String(value.GetString())).Value();
+		uuid = UniqueID::FromString(String(value.GetString())).value();
 		HEAVY_ASSERTE(uuid.IsValid(), "UniqueID deserialization failed");
 	}
 	break;
@@ -547,7 +547,7 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj,
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid unique ptr impl data!");
 		UninitializedPointerEntry entry;
-		entry.UUID = value.IsNull() ? UniqueID::INVALID : UniqueID::FromString(String(value.GetString())).Value();
+		entry.UUID = value.IsNull() ? UniqueID::INVALID : UniqueID::FromString(String(value.GetString())).value();
 		HEAVY_ASSERTE(value.IsNull() || entry.UUID, "UniqueID deserialization failed");
 		entry.Ptr = (RTTIBase**)obj;
 		entry.Property = prop;

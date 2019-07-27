@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Defines.hpp>
-#include <Utils/Optional.hpp>
+
 #include <ECS/Entity.hpp>
 #include <ECS/ComponentIDGenerator.hpp>
 #include <ECS/ComponentIDGeneratorImpl.hpp>
@@ -65,7 +65,7 @@ namespace Poly {
 		const EnumFlags<eComponentBaseFlags>& GetFlags() { return Flags; }
 		bool CheckFlags(const EnumFlags<eComponentBaseFlags>& rhs) const { return (Flags & rhs) == rhs; }
 
-		virtual Optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) const { return {}; }
+		virtual std::optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) const { return {}; }
 
 	private:
 		Entity* Owner = nullptr;
