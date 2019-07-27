@@ -6,7 +6,7 @@
 #include <QtWidgets/qmessagebox.h>
 
 //------------------------------------------------------------------------------
-Dynarray<Entity*> EntityDialog::SpawnEntities(Scene* scene, Dynarray<Entity*> parents)
+std::vector<Entity*> EntityDialog::SpawnEntities(Scene* scene, std::vector<Entity*> parents)
 {
 	setModal(true);
 	Canceled = true;
@@ -55,7 +55,7 @@ Dynarray<Entity*> EntityDialog::SpawnEntities(Scene* scene, Dynarray<Entity*> pa
 	// input from user
 	exec();
 
-	Dynarray<Entity*> result;
+	std::vector<Entity*> result;
 
 	// apply
 	if (!Canceled)
@@ -66,7 +66,7 @@ Dynarray<Entity*> EntityDialog::SpawnEntities(Scene* scene, Dynarray<Entity*> pa
 				{
 					Entity* e = DeferredTaskSystem::SpawnEntityImmediate(scene);
 					e->SetParent(ItemToEntity[i]);
-					result.PushBack(e);
+					result.push_back(e);
 				}
 				else
 				{
@@ -81,7 +81,7 @@ Dynarray<Entity*> EntityDialog::SpawnEntities(Scene* scene, Dynarray<Entity*> pa
 }
 
 //------------------------------------------------------------------------------
-Dynarray<Entity*> EntityDialog::GetEntitiesToDestroy(Scene* scene, Dynarray<Entity*> entities)
+std::vector<Entity*> EntityDialog::GetEntitiesToDestroy(Scene* scene, std::vector<Entity*> entities)
 {
 	setModal(true);
 	Canceled = true;
@@ -120,22 +120,22 @@ Dynarray<Entity*> EntityDialog::GetEntitiesToDestroy(Scene* scene, Dynarray<Enti
 	// input from user
 	exec();
 
-	Dynarray<Entity*> result;
+	std::vector<Entity*> result;
 
 	// apply
 	if (!Canceled)
 		for (auto i : EntitiesTree->selectedItems())
-			result.PushBack(ItemToEntity[i]);
+			result.push_back(ItemToEntity[i]);
 
 	return result;
 }
 
 //------------------------------------------------------------------------------
-Dynarray<Entity*> EntityDialog::ReparentEntities(Scene* scene, Dynarray<Entity*> entities, Entity* parent)
+std::vector<Entity*> EntityDialog::ReparentEntities(Scene* scene, std::vector<Entity*> entities, Entity* parent)
 {
 	setModal(true);
 	Canceled = true;
-	PredefinedEntities.PushBack(parent);
+	PredefinedEntities.push_back(parent);
 
 	// create main layout
 	MainLayout = new QGridLayout(this);
@@ -186,7 +186,7 @@ Dynarray<Entity*> EntityDialog::ReparentEntities(Scene* scene, Dynarray<Entity*>
 	// input from user
 	exec();
 
-	Dynarray<Entity*> result;
+	std::vector<Entity*> result;
 
 	// apply
 	if (!Canceled)
@@ -208,7 +208,7 @@ Dynarray<Entity*> EntityDialog::ReparentEntities(Scene* scene, Dynarray<Entity*>
 		for (auto i : EntitiesTree->selectedItems())
 		{
 			Entity* child = ItemToEntity[i];
-			result.PushBack(child);
+			result.push_back(child);
 
 			if (parent == child)
 			{

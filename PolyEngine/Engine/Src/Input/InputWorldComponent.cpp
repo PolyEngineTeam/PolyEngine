@@ -58,15 +58,15 @@ float Poly::InputWorldComponent::GetControllerAxisDelta(size_t playerID, eContro
 	return controller.CurrAxis[axis] && !controller.PrevAxis[axis];
 }
 
-Poly::Dynarray<size_t> Poly::InputWorldComponent::GetConnectedControllersIDs() const
+std::vector<size_t> Poly::InputWorldComponent::GetConnectedControllersIDs() const
 {
 	size_t arraySize = GetConnectedControllersCount();
-	Poly::Dynarray<size_t> controllersIDs(arraySize);
-	for(size_t i = 0; i < PlayerIDToJoystickID.GetSize(); ++i)
+	std::vector<size_t> controllersIDs(arraySize);
+	for(size_t i = 0; i < PlayerIDToJoystickID.size(); ++i)
 	{
 		if(PlayerIDToJoystickID[i].HasValue())
 		{
-			controllersIDs.PushBack(i);
+			controllersIDs.push_back(i);
 		}
 	}
 	return controllersIDs;
@@ -74,5 +74,5 @@ Poly::Dynarray<size_t> Poly::InputWorldComponent::GetConnectedControllersIDs() c
 
 bool Poly::InputWorldComponent::IsControllerConnected(size_t idx) const
 {
-	return PlayerIDToJoystickID.GetSize() > idx && PlayerIDToJoystickID[idx].HasValue();
+	return PlayerIDToJoystickID.size() > idx && PlayerIDToJoystickID[idx].HasValue();
 }

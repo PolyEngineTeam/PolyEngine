@@ -27,7 +27,7 @@ namespace Poly
 		}
 	private:
 		Queue<DeferredTaskBase*> TasksQueue;
-		Dynarray<ComponentBase*> NewlyCreatedComponents;
+		std::vector<ComponentBase*> NewlyCreatedComponents;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, DeferredTaskWorldComponent)

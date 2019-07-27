@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Defines.hpp>
-#include <Collections/Dynarray.hpp>
 #include <RTTI/RTTITypeInfo.hpp>
 
 
@@ -25,15 +24,15 @@ namespace Poly {
 			template<>
 			struct TypeInfoFromBaseClassList<Typelist<nil_t>>
 			{
-				static void Fill(Dynarray<TypeInfo>& v) { UNUSED(v); }
+				static void Fill(std::vector<TypeInfo>& v) { UNUSED(v); }
 			};
 
 			template<class T, class U>
 			struct TypeInfoFromBaseClassList<Typelist<T, U>>
 			{
-				static void Fill(Dynarray<TypeInfo>& v)
+				static void Fill(std::vector<TypeInfo>& v)
 				{
-					v.PushBack(TypeInfo::Get<T>());
+					v.push_back(TypeInfo::Get<T>());
 					TypeInfoFromBaseClassList<typename T::baseClassList>::Fill(v);
 					TypeInfoFromBaseClassList<U>::Fill(v);
 				}
@@ -45,21 +44,21 @@ namespace Poly {
 		template<class T>
 		struct BaseClasses {
 		private:
-			// Returns dynarray of TypeInfo if class T has baseClassList, that is filled with TypeInfos of base types for type T
+			// Returns std::vector of TypeInfo if class T has baseClassList, that is filled with TypeInfos of base types for type T
 			template<typename C, typename std::enable_if<std::is_fundamental<C>::value>::type* = nullptr>
-			static auto RetrieveImpl(int) -> decltype(C::baseClassList, Dynarray<TypeInfo>{}) {
-				Dynarray<TypeInfo> result;
+			static auto RetrieveImpl(int) -> decltype(C::baseClassList, std::vector<TypeInfo>{}) {
+				std::vector<TypeInfo> result;
 				Impl::TypeInfoFromBaseClassList<typename C::baseClassList>::Fill(result);
 				return result;
 			}
 
-			// Returns dynarray of TypeInfo if class T has no baseClassList, that is empty
+			// Returns std::vector of TypeInfo if class T has no baseClassList, that is empty
 			template<typename>
-			static auto RetrieveImpl(...) -> decltype(Dynarray<TypeInfo>{}) {
-				return Dynarray<TypeInfo>();
+			static auto RetrieveImpl(...) -> decltype(std::vector<TypeInfo>{}) {
+				return std::vector<TypeInfo>();
 			}
 		public:
-			static Dynarray<TypeInfo> Retrieve() { return RetrieveImpl<T>(0); }
+			static std::vector<TypeInfo> Retrieve() { return RetrieveImpl<T>(0); }
 		};
 
 	} // namespace RTTI

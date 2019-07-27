@@ -3,6 +3,7 @@
 #include <Defines.hpp>
 #include <Collections/String.hpp>
 #include <Memory/BinaryBuffer.hpp>
+#include <Memory/Allocator.hpp>
 
 namespace Poly {
 

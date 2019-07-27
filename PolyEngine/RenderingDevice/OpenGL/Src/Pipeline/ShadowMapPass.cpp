@@ -9,7 +9,7 @@ using MeshQueue = PriorityQueue<const MeshRenderingComponent*, SceneView::Distan
 
 Matrix Poly::GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize)
 {
-	ASSERTE(sceneView.DirectionalLightList.GetSize() > 0, "GetProjectionForShadowMap has no directional light in scene view");
+	ASSERTE(sceneView.DirectionalLightList.size() > 0, "GetProjectionForShadowMap has no directional light in scene view");
 	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLightList[0];
 
 	Vector lightForward = dirLightCmp->GetTransform().GetGlobalForward();
@@ -191,7 +191,7 @@ void ShadowMapPass::Render(const SceneView& sceneView)
 {	
 	// gConsole.LogInfo("ShadowMapPass::Render");
 
-	if (sceneView.DirectionalLightList.GetSize() < 1)
+	if (sceneView.DirectionalLightList.size() < 1)
 		return;
 
 	if (sceneView.SettingsCmp == nullptr

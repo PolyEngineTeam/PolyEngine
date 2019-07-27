@@ -35,7 +35,7 @@ MeshResource::MeshResource(const String& path)
 	
 	for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
 	{
-		SubMeshes.PushBack(new SubMesh(path, scene->mMeshes[i], scene->mMaterials[scene->mMeshes[i]->mMaterialIndex]));
+		SubMeshes.push_back(new SubMesh(path, scene->mMeshes[i], scene->mMaterials[scene->mMeshes[i]->mMaterialIndex]));
 
 		min = Vector::Min(min, SubMeshes[i]->GetAABox().GetMin());
 		max = Vector::Max(max, SubMeshes[i]->GetAABox().GetMax());
@@ -90,10 +90,10 @@ void Poly::MeshResource::LoadBones(aiNode* node)
 	{
 		for (const MeshResource::SubMesh::Bone& bone : subMesh->GetBones())
 		{
-			boneNameToIdx.insert({ bone.name , Bones.GetSize()});
+			boneNameToIdx.insert({ bone.name , Bones.size()});
 			Bone b(bone.name);
 			b.boneFromModel = bone.boneFromModel;
-			Bones.PushBack(b);
+			Bones.push_back(b);
 		}
 	}
 
@@ -149,7 +149,7 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
 {
 	if (mesh->HasBones())
 	{
-		ASSERTE((i8)mesh->mNumBones <= std::numeric_limits<typename decltype(MeshData.BoneIds)::ValueType::ValueType>::max(), "Model has too many bones!");
+		ASSERTE((i8)mesh->mNumBones <= std::numeric_limits<typename decltype(MeshData.BoneIds)::value_type::ValueType>::max(), "Model has too many bones!");
 
 		std::vector<PriorityQueue<std::pair<u8, float>, std::function<bool(const std::pair<u8, float>&, const std::pair<u8, float>&)>>> tmpBonesList;
 		tmpBonesList.resize(mesh->mNumVertices, { [](const std::pair<u8, float>& v1, const std::pair<u8, float>& v2) { return v1.second > v2.second; } });
@@ -177,8 +177,8 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
 		if (mesh->HasPositions())
 		{
 			// Apply bones
-			MeshData.BoneIds.Resize(mesh->mNumVertices);
-			MeshData.BoneWeights.Resize(mesh->mNumVertices);
+			MeshData.BoneIds.resize(mesh->mNumVertices);
+			MeshData.BoneWeights.resize(mesh->mNumVertices);
 
 			for (size_t vertId = 0; vertId < mesh->mNumVertices; ++vertId)
 			{
@@ -210,7 +210,7 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 	Vector max(-maxFloat, -maxFloat, -maxFloat);
 
 	if (mesh->HasPositions()) {
-		MeshData.Positions.Resize(mesh->mNumVertices);
+		MeshData.Positions.resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 			MeshData.Positions[i].X = (float)mesh->mVertices[i].x;
 			MeshData.Positions[i].Y = (float)mesh->mVertices[i].y;
@@ -224,7 +224,7 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 	AxisAlignedBoundingBox = AABox(min, max - min);
 
 	if (mesh->HasTextureCoords(0)) {
-		MeshData.TextCoords.Resize(mesh->mNumVertices);
+		MeshData.TextCoords.resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 			MeshData.TextCoords[i].U = (float)mesh->mTextureCoords[0][i].x;
 			MeshData.TextCoords[i].V = (float)mesh->mTextureCoords[0][i].y;
@@ -232,7 +232,7 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 	}
 
 	if (mesh->HasNormals()) {
-		MeshData.Normals.Resize(mesh->mNumVertices);
+		MeshData.Normals.resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 			MeshData.Normals[i].X = (float)mesh->mNormals[i].x;
 			MeshData.Normals[i].Y = (float)mesh->mNormals[i].y;
@@ -241,14 +241,14 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 	}
 
 	if (mesh->HasTangentsAndBitangents()) {
-		MeshData.Tangents.Resize(mesh->mNumVertices);
+		MeshData.Tangents.resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 			MeshData.Tangents[i].X = (float)mesh->mTangents[i].x;
 			MeshData.Tangents[i].Y = (float)mesh->mTangents[i].y;
 			MeshData.Tangents[i].Z = (float)mesh->mTangents[i].z;
 		}
 
-		MeshData.Bitangents.Resize(mesh->mNumVertices);
+		MeshData.Bitangents.resize(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 			MeshData.Bitangents[i].X = (float)mesh->mBitangents[i].x;
 			MeshData.Bitangents[i].Y = (float)mesh->mBitangents[i].y;
@@ -257,7 +257,7 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 	}
 
 	if (mesh->HasFaces()) {
-		MeshData.Indices.Resize(mesh->mNumFaces * 3);
+		MeshData.Indices.resize(mesh->mNumFaces * 3);
 		for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
 			MeshData.Indices[i * 3] = mesh->mFaces[i].mIndices[0];
 			MeshData.Indices[i * 3 + 1] = mesh->mFaces[i].mIndices[1];
@@ -268,7 +268,7 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 	gConsole.LogDebug(
 		"Loaded mesh entry: {} with {} vertices, {} faces and parameters: "
 		"pos[{}], tex_coord[{}], norm[{}], faces[{}]",
-		mesh->mName.C_Str(), MeshData.Positions.GetSize(), mesh->mNumFaces,
+		mesh->mName.C_Str(), MeshData.Positions.size(), mesh->mNumFaces,
 		mesh->HasPositions() ? "on" : "off",
 		mesh->HasTextureCoords(0) ? "on" : "off",
 		mesh->HasNormals() ? "on" : "off",
@@ -320,17 +320,17 @@ Poly::MeshResource::Animation::Animation(aiAnimation * anim)
 		for (size_t j = 0; j < anim->mChannels[i]->mNumPositionKeys; ++j)
 		{
 			Vector vector = { (float)anim->mChannels[i]->mPositionKeys[j].mValue.x, (float)anim->mChannels[i]->mPositionKeys[j].mValue.y, (float)anim->mChannels[i]->mPositionKeys[j].mValue.z };
-			c.Positions.PushBack({ vector, (float)anim->mChannels[i]->mPositionKeys[j].mTime });
+			c.Positions.push_back({ vector, (float)anim->mChannels[i]->mPositionKeys[j].mTime });
 		}
 		for (size_t j = 0; j < anim->mChannels[i]->mNumRotationKeys; ++j)
 		{
 			Quaternion q = { (float)anim->mChannels[i]->mRotationKeys[j].mValue.x, (float)anim->mChannels[i]->mRotationKeys[j].mValue.y, (float)anim->mChannels[i]->mRotationKeys[j].mValue.z, (float)anim->mChannels[i]->mRotationKeys[j].mValue.w };
-			c.Rotations.PushBack({ q, (float)anim->mChannels[i]->mRotationKeys[j].mTime });
+			c.Rotations.push_back({ q, (float)anim->mChannels[i]->mRotationKeys[j].mTime });
 		}
 		for (size_t j = 0; j < anim->mChannels[i]->mNumScalingKeys; ++j)
 		{
 			Vector vector = { (float)anim->mChannels[i]->mScalingKeys[j].mValue.x, (float)anim->mChannels[i]->mScalingKeys[j].mValue.y, (float)anim->mChannels[i]->mScalingKeys[j].mValue.z };
-			c.Scales.PushBack({ vector, (float)anim->mChannels[i]->mScalingKeys[j].mTime });
+			c.Scales.push_back({ vector, (float)anim->mChannels[i]->mScalingKeys[j].mTime });
 		}
 		String nameCpy = c.Name;
 		channels.insert({ nameCpy, std::move(c) });
@@ -346,7 +346,7 @@ Poly::MeshResource::Animation::ChannelLerpData Poly::MeshResource::Animation::Ge
 
 	const auto& channel = channels.at(channelName);
 
-	for (size_t i = hintIdx; i < channel.Positions.GetSize(); ++i)
+	for (size_t i = hintIdx; i < channel.Positions.size(); ++i)
 	{
 		auto& pos = channel.Positions[i];
 		if (pos.Time <= time)
@@ -358,7 +358,7 @@ Poly::MeshResource::Animation::ChannelLerpData Poly::MeshResource::Animation::Ge
 		}
 	}
 
-	for (size_t i = hintIdx; i < channel.Positions.GetSize(); ++i)
+	for (size_t i = hintIdx; i < channel.Positions.size(); ++i)
 	{
 		auto& scale = channel.Scales[i];
 		if (scale.Time <= time)
@@ -370,7 +370,7 @@ Poly::MeshResource::Animation::ChannelLerpData Poly::MeshResource::Animation::Ge
 		}
 	}
 
-	for (size_t i = hintIdx; i < channel.Positions.GetSize(); ++i)
+	for (size_t i = hintIdx; i < channel.Positions.size(); ++i)
 	{
 		auto& rot = channel.Rotations[i];
 		if (rot.Time <= time)

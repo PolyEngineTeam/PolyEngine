@@ -34,11 +34,11 @@ namespace Poly
 			Vector Normal;
 		};
 
-		Dynarray<ContactPair> ContactPairs;
+		std::vector<ContactPair> ContactPairs;
 	};
 
 	/// Contains dynarray of contacts. 
-	/// Dynarray has size 0 when none contact has been encountered.
+	/// std::vector has size 0 when none contact has been encountered.
 	struct ENGINE_DLLEXPORT ContactResult
 	{
 		struct Contact
@@ -49,11 +49,11 @@ namespace Poly
 			float HitFraction;
 		};
 
-		Dynarray<Contact> Contacts;
+		std::vector<Contact> Contacts;
 	};
 
 	/// Contains dynarray of hits. 
-	/// Dynarray has size 0 when none hit has been encountered.
+	/// std::vector has size 0 when none hit has been encountered.
 	struct ENGINE_DLLEXPORT RaycastResult
 	{
 		struct RaycastHit
@@ -64,7 +64,7 @@ namespace Poly
 			float HitFraction;
 		};
 
-		Dynarray<RaycastHit> Hits;
+		std::vector<RaycastHit> Hits;
 	};
 
 

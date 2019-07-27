@@ -375,7 +375,7 @@ Poly::ContactPairResults Poly::Physics3DSystem::GetAllContactPairs(Scene* world)
 		pair.SecondEntity = (Entity*) contactManifold->getBody1()->getUserPointer();
 		pair.Normal = normAvg;
 
-		results.ContactPairs.PushBack(pair);
+		results.ContactPairs.push_back(pair);
 	}
 
 	return results;
@@ -411,7 +411,7 @@ Poly::RaycastResult Poly::Physics3DSystem::AllHitsRaycast(Scene* world, const Ve
 		hit.WorldHitPoint = Vector(n.x(), n.y(), n.z());
 
 		// push hit
-		result.Hits.PushBack(hit);
+		result.Hits.push_back(hit);
 	}
 
 	return result;
@@ -445,7 +445,7 @@ Poly::RaycastResult Poly::Physics3DSystem::ClosestHitRaycast(Scene* world, const
 		hit.WorldHitPoint = Vector(r.m_hitPointWorld.x(), r.m_hitPointWorld.y(), r.m_hitPointWorld.z());
 
 		// push hit
-		result.Hits.PushBack(hit);
+		result.Hits.push_back(hit);
 	}
 
 	return result;

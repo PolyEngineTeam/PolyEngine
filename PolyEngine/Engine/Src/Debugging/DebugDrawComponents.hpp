@@ -28,9 +28,9 @@ namespace Poly
 
 		void Clear()
 		{
-			DebugLines.Clear();
-			DebugLinesColors.Clear();
-			DebugTexts2D.Clear();
+			DebugLines.clear();
+			DebugLinesColors.clear();
+			DebugTexts2D.clear();
 		}
 
 		struct DebugLine final : public BaseObjectLiteralType<>
@@ -57,11 +57,11 @@ namespace Poly
 			Color FontColor;
 		};
 
-		Dynarray<DebugLine> DebugLines;
-		Dynarray<DebugLineColor> DebugLinesColors;
-		Dynarray<DebugText2D> DebugTexts2D;
+		std::vector<DebugLine> DebugLines;
+		std::vector<DebugLineColor> DebugLinesColors;
+		std::vector<DebugText2D> DebugTexts2D;
 
-		Dynarray<SafePtr<Entity>> Text2DEntityPool;
+		std::vector<SafePtr<Entity>> Text2DEntityPool;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, DebugDrawStateWorldComponent)

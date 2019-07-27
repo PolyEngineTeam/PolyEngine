@@ -74,14 +74,14 @@ void ParticleUpdateSystem::EmitterUpdate(Scene* world, ParticleEmitter* emitter)
 		}
 	}
 
-	Dynarray<ParticleEmitter::Particle*> ParticleToDelete;
+	std::vector<ParticleEmitter::Particle*> ParticleToDelete;
 
 	for (ParticleEmitter::Particle& p : emitter->ParticlesPool)
 	{
 		p.Age += deltaTime;
 		if (p.Age > p.LifeTime)
 		{
-			ParticleToDelete.PushBack(&p);
+			ParticleToDelete.push_back(&p);
 		}
 	}
 

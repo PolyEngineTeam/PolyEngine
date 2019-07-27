@@ -214,26 +214,26 @@ void WorldInspectorWidget::SelectionChanged()
 	if (DisableSelectionChangedSlot)
 		return;
 
-	Dynarray<Entity*> entities;
+	std::vector<Entity*> entities;
 
 	for (QTreeWidgetItem* i : Tree->selectedItems())
-		entities.PushBack(ItemToEntity[i]);
+		entities.push_back(ItemToEntity[i]);
 
 	Manager->EntitiesSelectionChangedSlot(entities);
 }
 
 //------------------------------------------------------------------------------
-void WorldInspectorWidget::Drop(Dynarray<QTreeWidgetItem*> droppedItems)
+void WorldInspectorWidget::Drop(std::vector<QTreeWidgetItem*> droppedItems)
 {
 	Entity* parent = ItemToEntity[droppedItems[0]->parent()];
 
-	Dynarray<Entity*> ents;
+	std::vector<Entity*> ents;
 
 	for (QTreeWidgetItem* i : droppedItems)
 	{
 		Entity* e = ItemToEntity[i];
 		e->SetParent(parent);
-		ents.PushBack(e);
+		ents.push_back(e);
 	}
 
 	Manager->EntitiesSelectionChangedSlot(ents);
@@ -253,7 +253,7 @@ void WorldInspectorWidget::SpawnEntities()
 	}
 
 	EntityDialog dialog;
-	Dynarray<Entity*> result = dialog.SpawnEntities(Manager->GetScene(), Manager->GetSelectedEntities());
+	std::vector<Entity*> result = dialog.SpawnEntities(Manager->GetScene(), Manager->GetSelectedEntities());
 
 	if (!dialog.OperationCanceled()) 
 	{
@@ -278,7 +278,7 @@ void WorldInspectorWidget::GetEntitiesToDestroy()
 	}
 
 	EntityDialog dialog;
-	Dynarray<Entity*> result = dialog.GetEntitiesToDestroy(Manager->GetScene(), Manager->GetSelectedEntities());
+	std::vector<Entity*> result = dialog.GetEntitiesToDestroy(Manager->GetScene(), Manager->GetSelectedEntities());
 
 	if (!dialog.OperationCanceled())
 	{
@@ -301,7 +301,7 @@ void WorldInspectorWidget::ReparentEntities()
 	}
 
 	EntityDialog dialog;
-	Dynarray<Entity*> result = dialog.ReparentEntities(Manager->GetScene(), Manager->GetSelectedEntities());
+	std::vector<Entity*> result = dialog.ReparentEntities(Manager->GetScene(), Manager->GetSelectedEntities());
 
 	if (!dialog.OperationCanceled())
 	{

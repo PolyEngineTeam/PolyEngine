@@ -30,11 +30,11 @@ namespace Poly
 			const rapidjson::Document& doc);
 		CORE_DLLEXPORT void DeserializeObject(RTTIBase* obj, 
 			const rapidjson::GenericObject<true, rapidjson::Value> currentValue,
-			Dynarray<UninitializedPointerEntry>& uninitializedPointers);
+			std::vector<UninitializedPointerEntry>& uninitializedPointers);
 		CORE_DLLEXPORT void SetCorePropertyValue(void* obj, 
 			const RTTI::Property& prop, 
 			const rapidjson::Value& value,
-			Dynarray<UninitializedPointerEntry>& uninitializedPointers);
+			std::vector<UninitializedPointerEntry>& uninitializedPointers);
 
 		CORE_DLLEXPORT void TraverseAndCall(RTTIBase* obj, const std::function<void(RTTIBase*)>& func);
 	}

@@ -7,7 +7,7 @@ using namespace Poly;
 
 const String String::EMPTY = String();
 
-static const Dynarray<char> WHITESPACES { ' ', '\t', '\r', '\n', '\0' };
+static const std::vector<char> WHITESPACES { ' ', '\t', '\r', '\n', '\0' };
 
 size_t Poly::StrLen(const char* str) {
 	size_t len = 0;
@@ -18,8 +18,8 @@ size_t Poly::StrLen(const char* str) {
 
 String::String(const char* data) {
 	size_t length = StrLen(data);
-	Data.Resize(length + 1);
-	std::memcpy(Data.GetData(), data, sizeof(char) * length);
+	Data.resize(length + 1);
+	std::memcpy(Data.data(), data, sizeof(char) * length);
 	Data[length] = 0;
 }
 
@@ -40,7 +40,8 @@ String String::From(char var) { return StringBuilder().Append(var).StealString()
 String String::From(const char* var) { return StringBuilder().Append(var).StealString(); }
 String String::From(const std::string& var) { return StringBuilder().Append(var).StealString(); }
 
-bool String::Contains(const String& var) const {
+bool String::Contains(const String& var) const
+{
 	size_t idx2 = 0;
 	for (size_t idx1 = 0; idx1 < GetLength(); idx1++)
 	{
@@ -55,72 +56,59 @@ bool String::Contains(const String& var) const {
 	return false;
 }
 
-bool String::Contains(char var) const {
-	return this->Data.FindIdx(var) != this->Data.GetSize();
+bool String::Contains(char var) const
+{
+	return std::find(Data.begin(), Data.end(), var) != Data.end();
 }
 
 //note: ASCII only
-String String::ToLower() const {
-	String s = String();
-	s.Data.Resize(this->Data.GetSize());
-
-	for (size_t i = 0; i < this->Data.GetSize(); i++) {
-		char c = this->Data[i];
-		if (c >= 'A' && c <= 'Z') {
-			c += ('a' - 'A');
-		}
-		s.Data[i] = c;
-	}
-	return s;
+String String::ToLower() const
+{
+	String ret;
+	ret.Data.reserve(Data.size());
+	std::transform(Data.begin(), Data.end(), std::back_inserter(ret.Data), tolower);
+	return ret;
 }
 
 //note: ASCII only
-String String::ToUpper() const {
-	String s = String();
-	s.Data.Resize(this->Data.GetSize());
-
-	for (size_t i = 0; i < this->Data.GetSize(); i++) {
-		char c = this->Data[i];
-		if (c >= 'a' && c <= 'z') {
-			c -= ('a' - 'A');
-		}
-		s.Data[i] = c;
-	}
-	return s;
+String String::ToUpper() const
+{
+	String ret;
+	ret.Data.reserve(Data.size());
+	std::transform(Data.begin(), Data.end(), std::back_inserter(ret.Data), toupper);
+	return ret;
 }
 
 bool String::IsEmpty() const {
 	return GetLength() == 0;
 }
 
-String String::Replace(char what, char with) const {
-	String s = String(*this);
-	s.Data.Resize(this->Data.GetSize());
-	for (size_t i = 0; i < this->Data.GetSize(); i++) {
-		if (this->Data[i] == what) {
-			s.Data[i] = with;
-		}
-	}
-	return s;
+String String::Replace(char what, char with) const
+{
+	String ret;
+	ret.Data.reserve(Data.size());
+	std::transform(Data.begin(), Data.end(), std::back_inserter(ret.Data), 
+		[what, with](char c) { return what == c ? with : c; });
+	return ret;
 }
 
 String String::Replace(const String& what, const String& with) const {
 	
-	Dynarray<String> splitted = Split(what);
-	return Join(splitted.GetData(), splitted.GetSize(), with);
+	std::vector<String> splitted = Split(what);
+	return Join(splitted.data(), splitted.size(), with);
 }
 
-Dynarray<String> String::Split(char delimiter) const {
+std::vector<String> String::Split(char delimiter) const {
 	return Split(String::From(delimiter));
 }
 
-Dynarray<String> String::Split(const String& delimiter) const {
-	Dynarray<String> elements;
+std::vector<String> String::Split(const String& delimiter) const {
+	std::vector<String> elements;
 	size_t idx = 0;
 	while (idx < GetLength())
 	{
 		size_t delimiterStart = FindSubstrFromPoint(idx, delimiter);
-		elements.PushBack(Substring(idx, delimiterStart));
+		elements.push_back(Substring(idx, delimiterStart));
 		idx = delimiterStart + delimiter.GetLength();
 	}
 	return elements;
@@ -155,7 +143,7 @@ bool String::StartsWith(char var) const {
 }
 
 bool String::EndsWith(char var) const {
-	return (Data[Data.GetSize()-2] == var);
+	return (Data[Data.size()-2] == var);
 }
 
 String String::Substring(size_t end) const {
@@ -163,9 +151,9 @@ String String::Substring(size_t end) const {
 }
 
 String String::Substring(size_t start, size_t end) const {
-	ASSERTE(start <= end && end <= this->Data.GetSize(), "Invalid start or end parameter");
+	ASSERTE(start <= end && end <= this->Data.size(), "Invalid start or end parameter");
 	String s = String();
-	s.Data.Resize(end - start + 1);
+	s.Data.resize(end - start + 1);
 	for (size_t i = start; i < end; i++) {
 		s.Data[i-start] = this->Data[i];
 	}
@@ -177,12 +165,12 @@ String String::GetTrimmed() const {
 	size_t start = 0;
 	size_t end = GetLength();
 
-	while (start < Data.GetSize() && WHITESPACES.Contains(Data[start]))
+	while (start < Data.size() && std::find(WHITESPACES.begin(), WHITESPACES.end(), Data[start]) != WHITESPACES.end())
 	{
 		++start;
 	}
 
-	while (end > start && WHITESPACES.Contains(Data[end]))
+	while (end > start && std::find(WHITESPACES.begin(), WHITESPACES.end(), Data[end]) != WHITESPACES.end())
 	{
 		--end;
 	}
@@ -192,7 +180,8 @@ String String::GetTrimmed() const {
 
 size_t String::Find(char c) const
 {
-	return Data.FindIdx(c);
+	auto it = std::find(Data.begin(), Data.end(), c);
+	return it - Data.begin();
 }
 
 String& String::operator=(const String& rhs) {
@@ -237,9 +226,9 @@ bool String::operator<(const String& rhs) const {
 String String::operator+(const String& rhs) const {
 	String ret;
 	size_t totalLength = GetLength() + rhs.GetLength();
-	ret.Data.Resize(totalLength + 1);
-	memcpy(ret.Data.GetData(), Data.GetData(), sizeof(char) * GetLength());
-	memcpy(ret.Data.GetData() + GetLength(), rhs.Data.GetData(), sizeof(char) * rhs.GetLength());
+	ret.Data.resize(totalLength + 1);
+	memcpy(ret.Data.data(), Data.data(), sizeof(char) * GetLength());
+	memcpy(ret.Data.data() + GetLength(), rhs.Data.data(), sizeof(char) * rhs.GetLength());
 	ret.Data[totalLength] = 0;
 	return ret;
 }
@@ -247,9 +236,9 @@ String String::operator+(const String& rhs) const {
 String String::operator+(char rhs) const {
 	String ret;
 	size_t totalLength = GetLength() + 1;
-	ret.Data.Resize(totalLength + 1);
-	memcpy(ret.Data.GetData(), Data.GetData(), sizeof(char) * GetLength());
-	memcpy(ret.Data.GetData() + GetLength(), &rhs, sizeof(char));
+	ret.Data.resize(totalLength + 1);
+	memcpy(ret.Data.data(), Data.data(), sizeof(char) * GetLength());
+	memcpy(ret.Data.data() + GetLength(), &rhs, sizeof(char));
 	ret.Data[totalLength] = 0;
 	return ret;
 }
@@ -261,7 +250,7 @@ char String::operator[](size_t idx) const {
 
 size_t String::GetLength() const
 {
-	return Data.GetSize() - 1;
+	return Data.size() - 1;
 }
 
 size_t String::FindSubstrFromPoint(size_t startPoint, const String& str) const

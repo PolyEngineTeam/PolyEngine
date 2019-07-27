@@ -2,7 +2,6 @@
 
 #include <RTTI/RTTISerialization.hpp>
 #include <Collections/String.hpp>
-#include <Collections/Dynarray.hpp>
 #include <UniqueID.hpp>
 #include <Math/Quaternion.hpp>
 #include <Math/Vector.hpp>
@@ -13,7 +12,7 @@ using namespace Poly;
 
 static const char* JSON_TYPE_ANNOTATION = "@type";
 
-void ResolveUninitializedPointers(const Dynarray<RTTI::UninitializedPointerEntry>& uninitializedPointers)
+void ResolveUninitializedPointers(const std::vector<RTTI::UninitializedPointerEntry>& uninitializedPointers)
 {
 	size_t initCount = 0;
 	for (const auto& entry : uninitializedPointers)
@@ -26,7 +25,7 @@ void ResolveUninitializedPointers(const Dynarray<RTTI::UninitializedPointerEntry
 		else
 			gConsole.LogError("Pointer [{}] of RTTIBase object with UUID: {} was not properly deserialized!", entry.Property.Name, entry.UUID);
 	}
-	ASSERTE(initCount == uninitializedPointers.GetSize(), "Not all raw pointers were initialized!");
+	ASSERTE(initCount == uninitializedPointers.size(), "Not all raw pointers were initialized!");
 }
 
 void Poly::RTTI::SerializeObject(RTTIBase* obj, rapidjson::Document& doc)
@@ -238,7 +237,7 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	}
 	case eCorePropertyType::LIST:
 	{
-		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid dynarray impl data!");
+		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid list impl data!");
 		const CollectionPropertyImplDataBase* implData = static_cast<const CollectionPropertyImplDataBase*>(prop.ImplData.get());
 		currentValue.SetArray();
 		for (size_t i = 0; i < implData->GetSize(value); ++i)
@@ -358,7 +357,7 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const rapidjson::Document& doc)
 {
 	TraverseAndCall(obj, [](RTTIBase* obj) { obj->BeforeDeserializationCallback(); });
-	Dynarray<UninitializedPointerEntry> uninitializedPointers;
+	std::vector<UninitializedPointerEntry> uninitializedPointers;
 	RTTI::DeserializeObject(obj, doc.GetObject(), uninitializedPointers);
 	ResolveUninitializedPointers(uninitializedPointers);
 	TraverseAndCall(obj, [](RTTIBase* obj) { obj->AfterDeserializationCallback(); });
@@ -366,7 +365,7 @@ CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, const rapidjson
 
 CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj, 
 	const rapidjson::GenericObject<true, rapidjson::Value> currentValue, 
-	Dynarray<RTTI::UninitializedPointerEntry>& uninitializedPointers)
+	std::vector<RTTI::UninitializedPointerEntry>& uninitializedPointers)
 {
 	UniqueID oldId = obj->GetUUID();
 
@@ -392,7 +391,7 @@ CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj,
 CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, 
 	const RTTI::Property& prop, 
 	const rapidjson::Value& value, 
-	Dynarray<RTTI::UninitializedPointerEntry>& uninitializedPointers)
+	std::vector<RTTI::UninitializedPointerEntry>& uninitializedPointers)
 {
 	switch (prop.CoreType)
 	{
@@ -552,7 +551,7 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj,
 		HEAVY_ASSERTE(value.IsNull() || entry.UUID, "UniqueID deserialization failed");
 		entry.Ptr = (RTTIBase**)obj;
 		entry.Property = prop;
-		uninitializedPointers.PushBack(std::move(entry));
+		uninitializedPointers.push_back(std::move(entry));
 	}
 	break;
 	case eCorePropertyType::CUSTOM:

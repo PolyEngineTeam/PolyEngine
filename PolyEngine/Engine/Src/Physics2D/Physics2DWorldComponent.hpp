@@ -37,7 +37,7 @@ namespace Poly
 		Physics2DWorldComponent(const Physics2DConfig& config);
 		~Physics2DWorldComponent();
 
-		const Dynarray<Collision>& GetCollidingBodies(RigidBody2DComponent* rb) const;
+		const std::vector<Collision>& GetCollidingBodies(RigidBody2DComponent* rb) const;
 
 		void SetGravity(const Vector& gravity) const;
 		const Vector& GetGravity() const { return Config.Gravity; }
@@ -48,7 +48,7 @@ namespace Poly
 		std::unique_ptr<b2World> Scene;
 		std::unique_ptr<Physics2DContactListener> ContactListener;
 
-		std::unordered_map<RigidBody2DComponent*, Dynarray<Collision>> OverlapingBodies;
+		std::unordered_map<RigidBody2DComponent*, std::vector<Collision>> OverlapingBodies;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, Physics2DWorldComponent)

@@ -14,8 +14,8 @@ MeshRenderingComponent::MeshRenderingComponent(const String& meshPath, eResource
 	
 	if (Mesh)
 	{
-		size_t materialsNum = GetMesh()->GetSubMeshes().GetSize();
-		Materials.Resize(materialsNum);
+		size_t materialsNum = GetMesh()->GetSubMeshes().size();
+		Materials.resize(materialsNum);
 		for (size_t i = 0; i < materialsNum; ++i)
 		{
 			SetMaterial(i, Material());

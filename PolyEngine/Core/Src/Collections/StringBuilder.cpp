@@ -7,7 +7,7 @@ using namespace Poly;
 //----------------------------------------------------------------------------
 StringBuilder& StringBuilder::Append(const char* str, const size_t length)
 {
-	Buffer.Reserve(Buffer.GetSize() + length);
+	Buffer.reserve(Buffer.size() + length);
 	for (size_t i = 0; i < length; ++i)
 		Append(str[i]);
 	return *this;

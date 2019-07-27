@@ -41,10 +41,10 @@ public:
 	void OnGameDeinit() override;
 
 	// If any system needs currently selected entities list it should use this function.
-	Dynarray<Entity*> GetSelectedEntities() override;
+	std::vector<Entity*> GetSelectedEntities() override;
 
 	// If system wants to set new list of selected entities it hould call this one.
-	void SetSelectedEntities(Dynarray<Entity*> entities) override;
+	void SetSelectedEntities(std::vector<Entity*> entities) override;
 
 	// Can be called from systems to update inspectors content 
 	void UpdateInspectors() override;

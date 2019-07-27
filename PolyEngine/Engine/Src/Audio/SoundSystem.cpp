@@ -36,11 +36,11 @@ void SoundSystem::SetDevice(const String& name)
 //---------------------------------------------------------------------------------------------------
 const String& SoundSystem::GetDeviceName()
 {
-	return *(gEngine->GetAudioDevice().AvailableDevices.Begin());
+	return *(gEngine->GetAudioDevice().AvailableDevices.begin());
 }
 
 //---------------------------------------------------------------------------------------------------
-const Dynarray<String>& SoundSystem::GetAvailableDevices()
+const std::vector<String>& SoundSystem::GetAvailableDevices()
 {
 	return gEngine->GetAudioDevice().AvailableDevices;
 }

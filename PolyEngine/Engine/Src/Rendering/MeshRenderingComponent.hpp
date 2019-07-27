@@ -63,7 +63,7 @@ namespace Poly {
 
 	private:
 		MeshResource* Mesh = nullptr;
-		Dynarray<Material> Materials;
+		std::vector<Material> Materials;
 		eShadingMode ShadingMode = eShadingMode::PBR;
 		eBlendingMode BlendingMode = eBlendingMode::OPAUQE;
 		bool IsWireframe = false;

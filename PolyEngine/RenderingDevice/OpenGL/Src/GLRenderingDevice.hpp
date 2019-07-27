@@ -103,7 +103,7 @@ namespace Poly
 		void CreateUtilityTextures();
 
 		void FillSceneView(SceneView& sceneView);
-		void CullDirLightQueue(SceneView& sceneView, const Dynarray<const MeshRenderingComponent*>& meshCmp);
+		void CullDirLightQueue(SceneView& sceneView, const std::vector<const MeshRenderingComponent*>& meshCmp);
 		void CullShadowCasters(SceneView& sceneView, const Matrix& dirLightFromWorld, const Matrix& worldFromDirLight, AABox& frustumAABBInLS);
 		void EndFrame();
 
@@ -129,7 +129,7 @@ namespace Poly
 		SDL_Window* Window;
 		SDL_GLContext Context;
 		ScreenSize ScreenDim;
-		Dynarray<String> OpenGLExtensions;
+		std::vector<String> OpenGLExtensions;
 
 		eRendererType RendererType;
 		IRendererInterface* Renderer;

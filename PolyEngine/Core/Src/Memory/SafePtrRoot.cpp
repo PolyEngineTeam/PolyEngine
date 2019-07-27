@@ -8,7 +8,7 @@ using namespace Poly;
 
 //------------------------------------------------------------------------------
 std::unordered_map<SafePtrRoot*, size_t> SafePtrRoot::PointersMap;
-Dynarray<SafePtrRoot*> SafePtrRoot::Pointers;
+std::vector<SafePtrRoot*> SafePtrRoot::Pointers;
 
 //------------------------------------------------------------------------------
 SafePtrRoot::~SafePtrRoot()
@@ -23,8 +23,8 @@ size_t SafePtrRoot::RegisterPointer(SafePtrRoot *pointer)
 		return it->second;
 	else
 	{
-		SafePtrRoot::Pointers.PushBack(pointer);
-		size_t idx = SafePtrRoot::Pointers.GetSize() - 1;
+		SafePtrRoot::Pointers.push_back(pointer);
+		size_t idx = SafePtrRoot::Pointers.size() - 1;
 		SafePtrRoot::PointersMap[pointer] = idx;
 		return idx;
 	}

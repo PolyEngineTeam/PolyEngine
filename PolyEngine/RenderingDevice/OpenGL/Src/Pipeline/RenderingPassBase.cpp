@@ -163,7 +163,7 @@ void RenderingPassBase::Finalize()
 
 	bool foundDepth = false;
 
-	Dynarray<GLenum> colorAttachements;
+	std::vector<GLenum> colorAttachements;
 	for (auto& kv : GetOutputs())
 	{
 		const String& name = kv.first;
@@ -178,7 +178,7 @@ void RenderingPassBase::Finalize()
 			GLenum attachementIdx = GL_COLOR_ATTACHMENT0 + (uint32_t)idx;
 			glBindTexture(GL_TEXTURE_2D, textureID);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, attachementIdx, GL_TEXTURE_2D, textureID, 0);
-			colorAttachements.PushBack(attachementIdx);
+			colorAttachements.push_back(attachementIdx);
 			CHECK_FBO_STATUS();
 			break;
 		}
@@ -197,7 +197,7 @@ void RenderingPassBase::Finalize()
 	}
 	ASSERTE(foundDepth, "Depth buffer not present when constructing FBO!");
 	CHECK_GL_ERR();
-	glDrawBuffers((GLsizei)colorAttachements.GetSize(), colorAttachements.GetData());
+	glDrawBuffers((GLsizei)colorAttachements.size(), colorAttachements.data());
 	CHECK_GL_ERR();
 	CHECK_FBO_STATUS();
 

@@ -70,8 +70,8 @@ namespace Poly {
 		PriorityQueue<const ParticleComponent*, DistanceToCameraComparator> ParticleQueue; // TODO: make translucent and particles one queue with common priority
 
 		AABox DirShadowAABBInLS;
-		Dynarray<const DirectionalLightComponent*> DirectionalLightList;
-		Dynarray<const PointLightComponent*> PointLightList;
+		std::vector<const DirectionalLightComponent*> DirectionalLightList;
+		std::vector<const PointLightComponent*> PointLightList;
 	};
 
 	class IRendererInterface : public BaseObject<>

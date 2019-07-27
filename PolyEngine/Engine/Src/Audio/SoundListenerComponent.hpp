@@ -26,7 +26,7 @@ namespace Poly
 		float Gain = 1;
 		Vector Position;
 		Vector Velocity;
-		Dynarray<SoundEmitterComponent*> Emitters;
+		std::vector<SoundEmitterComponent*> Emitters;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, SoundListenerComponent)

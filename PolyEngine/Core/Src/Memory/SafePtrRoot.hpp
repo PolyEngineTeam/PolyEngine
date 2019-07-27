@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Defines.hpp>
-#include <Collections/Dynarray.hpp>
 #include <RTTI/RTTI.hpp>
 
 namespace Poly {
@@ -27,7 +26,7 @@ namespace Poly {
 	private:
 		static void ClearPointer(SafePtrRoot *pointer);
 
-		static Dynarray<SafePtrRoot*> Pointers;
+		static std::vector<SafePtrRoot*> Pointers;
 		static std::unordered_map<SafePtrRoot*, size_t> PointersMap;
 	};
 }

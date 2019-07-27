@@ -122,14 +122,14 @@ void GLRenderingDevice::GetExtensions()
 {
 	int extensionsSize = 0;
 	glGetIntegerv(GL_NUM_EXTENSIONS, &extensionsSize);
-	OpenGLExtensions.Clear();
-	OpenGLExtensions.Reserve(extensionsSize);
+	OpenGLExtensions.clear();
+	OpenGLExtensions.reserve(extensionsSize);
 
 	// gConsole.LogInfo("OpenGL supported extensions:");
 	for (int i = 0; i<extensionsSize; i++)
 	{
 		String extension = String((const char*)glGetStringi(GL_EXTENSIONS, i));
-		OpenGLExtensions.PushBack(extension);
+		OpenGLExtensions.push_back(extension);
 		// gConsole.LogInfo("Ext {}: {}", i, extension);
 	}
 }

@@ -5,7 +5,6 @@
 #include <RTTI/RTTITypeInfo.hpp>
 #include <RTTI/RTTICast.hpp>
 #include <Collections/String.hpp>
-#include <Collections/Dynarray.hpp>
 #include <RTTI/CustomTypeTraits.hpp>
 #include <Utils/Logger.hpp>
 
@@ -161,24 +160,6 @@ namespace Poly {
 		};
 
 		//-----------------------------------------------------------------------------------------------------------------------
-		// Dynarray serialization property impl
-		template <typename ValueType>
-		struct DynarrayPropertyImplData final : public CollectionPropertyImplDataBase
-		{
-			DynarrayPropertyImplData(ePropertyFlag flags, FactoryFunc_t&& factory_func) { PropertyType = CreatePropertyInfo<ValueType>(0, "value", flags, std::move(factory_func)); }
-
-			void Resize(void* collection, size_t size) const override { reinterpret_cast<Dynarray<ValueType>*>(collection)->Resize(size); }
-			size_t GetSize(const void* collection) const override { return reinterpret_cast<const Dynarray<ValueType>*>(collection)->GetSize(); }
-			void* GetValue(void* collection, size_t idx) const override { return &((*reinterpret_cast<Dynarray<ValueType>*>(collection))[idx]); }
-			const void* GetValue(const void* collection, size_t idx) const override { return &((*reinterpret_cast<const Dynarray<ValueType>*>(collection))[idx]); }
-		};
-
-		template <typename ValueType> Property CreateDynarrayPropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t&& factory_func)
-		{
-			std::shared_ptr<CollectionPropertyImplDataBase> implData = std::shared_ptr<CollectionPropertyImplDataBase>{ new DynarrayPropertyImplData<ValueType>(flags, std::move(factory_func)) };
-			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::LIST, std::move(implData) };
-		}
-		//-----------------------------------------------------------------------------------------------------------------------
 		// std::vector serialization property impl
 
 		template <typename ValueType>
@@ -206,7 +187,7 @@ namespace Poly {
 
 			virtual void* GetKeyTemporaryStorage() const = 0;
 			virtual void* GetValueTemporaryStorage() const = 0;
-			virtual Dynarray<const void*> GetKeys(const void* collection) const = 0;
+			virtual std::vector<const void*> GetKeys(const void* collection) const = 0;
 			virtual void Clear(void* collection) const = 0;
 			virtual void SetValue(void* collection, void* key, void* value) const = 0;
 			virtual const void* GetValue(const void* collection, const void* key) const = 0;
@@ -232,12 +213,12 @@ namespace Poly {
 			void* GetKeyTemporaryStorage() const override { return reinterpret_cast<void*>(&TempKey); }
 			void* GetValueTemporaryStorage() const override { return reinterpret_cast<void*>(&TempValue); }
 
-			Dynarray<const void*> GetKeys(const void* collection) const override
+			std::vector<const void*> GetKeys(const void* collection) const override
 			{
-				Dynarray<const void*> ret;
+				std::vector<const void*> ret;
 				const MapType& map = *reinterpret_cast<const MapType*>(collection);
 				for (const auto& kv : map)
-					ret.PushBack((const void*)&(kv.first));
+					ret.push_back((const void*)&(kv.first));
 				return ret;
 			}
 
@@ -282,12 +263,12 @@ namespace Poly {
 			void* GetKeyTemporaryStorage() const override { return reinterpret_cast<void*>(&TempKey); }
 			void* GetValueTemporaryStorage() const override { return reinterpret_cast<void*>(&TempValue); }
 
-			Dynarray<const void*> GetKeys(const void* collection) const override
+			std::vector<const void*> GetKeys(const void* collection) const override
 			{
-				Dynarray<const void*> ret;
+				std::vector<const void*> ret;
 				const MapType& map = *reinterpret_cast<const MapType*>(collection);
 				for (const auto& kv : map)
-					ret.PushBack((const void*)&(kv.first));
+					ret.push_back((const void*)&(kv.first));
 				return ret;
 			}
 
@@ -319,7 +300,7 @@ namespace Poly {
 		{
 			mutable EnumType TempKey;
 			mutable ValueType TempValue;
-			mutable Dynarray<EnumType> EnumValues;
+			mutable std::vector<EnumType> EnumValues;
 
 			using EnumArrayType = EnumArray<ValueType, EnumType>;
 
@@ -338,18 +319,18 @@ namespace Poly {
 			void* GetKeyTemporaryStorage() const override { return reinterpret_cast<void*>(&TempKey); }
 			void* GetValueTemporaryStorage() const override { return reinterpret_cast<void*>(&TempValue); }
 
-			Dynarray<const void*> GetKeys(const void* collection) const override
+			std::vector<const void*> GetKeys(const void* collection) const override
 			{
 				UNUSED(collection);
-				if (EnumValues.GetSize() == 0)
+				if (EnumValues.size() == 0)
 				{
 					for (EnumType e : IterateEnum<EnumType>())
-						EnumValues.PushBack(e);
+						EnumValues.push_back(e);
 				}
 
-				Dynarray<const void*> ret;
+				std::vector<const void*> ret;
 				for (const EnumType& key : EnumValues)
-					ret.PushBack((const void*)&key);
+					ret.push_back((const void*)&key);
 				return ret;
 			}
 
@@ -553,7 +534,6 @@ namespace Poly {
 		{ 
 			return constexpr_match(
 				std::is_enum<T>{},						[&](auto lazy) { return CreateEnumPropertyInfo<LAZY_TYPE(T)>(offset, name, flags, std::move(factory_func)); },
-				Trait::IsDynarray<T>{},					[&](auto lazy) { return CreateDynarrayPropertyInfo<typename Trait::DynarrayValueType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsStdVector<T>{},				[&](auto lazy) { return CreateStdVectorPropertyInfo<typename Trait::StdVectorValueType<LAZY_TYPE(T)>::type>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsStdMap<T>{},					[&](auto lazy) { return CreateStdMapPropertyInfo<typename Trait::StdMapType<LAZY_TYPE(T)>::keyType, typename Trait::StdMapType<LAZY_TYPE(T)>::valueType>(offset, name, flags, std::move(factory_func)); },
 				Trait::IsStdUnorderedMap<T>{},			[&](auto lazy) { return CreateStdUnorderedMapPropertyInfo<typename Trait::StdUnorderedMapType<LAZY_TYPE(T)>::keyType, typename Trait::StdUnorderedMapType<LAZY_TYPE(T)>::valueType>(offset, name, flags, std::move(factory_func)); },
@@ -571,11 +551,11 @@ namespace Poly {
 		//-----------------------------------------------------------------------------------------------------------------------
 		class CORE_DLLEXPORT PropertyManagerBase : public BaseObject<> {
 		public:
-			void AddProperty(Property&& property) { Properties.PushBack(std::move(property)); }
-			const Dynarray<Property>& GetPropertyList() const { return Properties; };
+			void AddProperty(Property&& property) { Properties.push_back(std::move(property)); }
+			const std::vector<Property>& GetPropertyList() const { return Properties; };
 
 		protected:
-			Dynarray<Property> Properties;
+			std::vector<Property> Properties;
 		};
 
 		template<class T>

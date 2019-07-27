@@ -50,7 +50,7 @@ namespace Poly
 		float GetControllerAxisDelta(size_t playerID, eControllerAxis axis) const;
 
 		size_t GetConnectedControllersCount() const { return JoystickIDToPlayerID.size(); }
-		Dynarray<size_t> GetConnectedControllersIDs() const;
+		std::vector<size_t> GetConnectedControllersIDs() const;
 		bool IsControllerConnected(size_t idx) const;
 
 		bool GetIsConsumed() const { return IsConsumed; }
@@ -68,7 +68,7 @@ namespace Poly
 		Vector2i CurrWheel;
 		Vector2i PrevWheel;
 		std::unordered_map<size_t, ControllerState> Controllers;
-		Dynarray<Optional<size_t>> PlayerIDToJoystickID;
+		std::vector<Optional<size_t>> PlayerIDToJoystickID;
 		std::unordered_map<size_t, size_t> JoystickIDToPlayerID;
 		bool IsConsumed = false;
 		const char* CharUTF8 = nullptr;

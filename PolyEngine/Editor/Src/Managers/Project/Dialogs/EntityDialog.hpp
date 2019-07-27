@@ -17,9 +17,9 @@ class EntityDialog : public QDialog
 public:
 	EntityDialog() {}
 
-	Dynarray<Entity*> SpawnEntities(Scene* scene, Dynarray<Entity*> parents);
-	Dynarray<Entity*> GetEntitiesToDestroy(Scene* scene, Dynarray<Entity*> entities);
-	Dynarray<Entity*> ReparentEntities(Scene* scene, Dynarray<Entity*> entities, Entity* parent = nullptr);
+	std::vector<Entity*> SpawnEntities(Scene* scene, std::vector<Entity*> parents);
+	std::vector<Entity*> GetEntitiesToDestroy(Scene* scene, std::vector<Entity*> entities);
+	std::vector<Entity*> ReparentEntities(Scene* scene, std::vector<Entity*> entities, Entity* parent = nullptr);
 
 	bool OperationCanceled() { return Canceled; }
 
@@ -28,7 +28,7 @@ private:
 	void AddPrefab(QString prefabName);
 
 	bool Canceled = true;
-	Dynarray<Entity*> PredefinedEntities;
+	std::vector<Entity*> PredefinedEntities;
 	std::map<QTreeWidgetItem*, Entity*> ItemToEntity;
 
 	QGridLayout* MainLayout;

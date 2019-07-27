@@ -22,7 +22,7 @@ private:
 	void Undo();
 	void Redo();
 
-	Dynarray<Command*> Commands;
+	std::vector<Command*> Commands;
 	size_t CurrentCommand = 0;
 
 	bool CtrlPressed = false;

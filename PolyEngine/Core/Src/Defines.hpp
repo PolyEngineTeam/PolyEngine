@@ -62,6 +62,7 @@
 #include <bitset>
 #include <cassert>
 #include <cstring>
+#include <cctype>
 #include <limits>
 #include <array>
 #include <cstddef>

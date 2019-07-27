@@ -18,9 +18,9 @@ namespace Util
 {
 	/// <summary>Get vector with minimum/maximum/else (depends on comparison function) values
 	/// on each axis in given set of vectors.</summary>
-	Vector3f FindExtremum(const Dynarray<Vector3f>& dynarray, std::function< bool(const float, const float) > comp)
+	Vector3f FindExtremum(const std::vector<Vector3f>& dynarray, std::function< bool(const float, const float) > comp)
 	{
-		ASSERTE(dynarray.GetSize() > 0, "SubMesh vertex data is empty.");
+		ASSERTE(dynarray.size() > 0, "SubMesh vertex data is empty.");
 
 		Vector3f result = dynarray[0];
 		for (auto const & vec : dynarray)
@@ -71,7 +71,7 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* scene)
 		for (const auto& text2D : debugDrawWorldCmp->DebugTexts2D)
 		{
 			Entity* entToUse = nullptr;
-			while (usedTextEntites < debugDrawWorldCmp->Text2DEntityPool.GetSize())
+			while (usedTextEntites < debugDrawWorldCmp->Text2DEntityPool.size())
 			{
 				if (debugDrawWorldCmp->Text2DEntityPool[usedTextEntites])
 				{
@@ -80,14 +80,14 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* scene)
 					break;
 				}
 				else
-					debugDrawWorldCmp->Text2DEntityPool.RemoveByIdx(usedTextEntites);
+					debugDrawWorldCmp->Text2DEntityPool.erase(debugDrawWorldCmp->Text2DEntityPool.begin() + usedTextEntites);
 			}
 
 			if (!entToUse)
 			{
 				entToUse = DeferredTaskSystem::SpawnEntityImmediate(scene);
 				DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(scene, entToUse, Vector2i::ZERO, "Fonts/Raleway/Raleway-Regular.ttf", eResourceSource::ENGINE, 0);
-				debugDrawWorldCmp->Text2DEntityPool.PushBack(entToUse);
+				debugDrawWorldCmp->Text2DEntityPool.push_back(entToUse);
 				++usedTextEntites;
 			}
 
@@ -100,7 +100,7 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* scene)
 
 
 		// Clear rest of the text entities
-		for (size_t i = usedTextEntites; i < debugDrawWorldCmp->Text2DEntityPool.GetSize(); ++i)
+		for (size_t i = usedTextEntites; i < debugDrawWorldCmp->Text2DEntityPool.size(); ++i)
 		{
 			Entity* ent = debugDrawWorldCmp->Text2DEntityPool[i].Get();
 			if (ent)
@@ -113,12 +113,12 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* scene)
 			}
 			else
 			{
-				debugDrawWorldCmp->Text2DEntityPool.RemoveByIdx(i);
+				debugDrawWorldCmp->Text2DEntityPool.erase(debugDrawWorldCmp->Text2DEntityPool.begin() + i);
 				--i;
 			}
 		}
 
-		debugDrawWorldCmp->DebugTexts2D.Clear();
+		debugDrawWorldCmp->DebugTexts2D.clear();
 	}
 
 	enum class RenderMode : int { /*POINT = 1,*/ LINE = 1, /*STRING,*/ _COUNT };
@@ -209,8 +209,8 @@ void Poly::DebugDrawSystem::DrawLine(Scene* scene, const Vector& begin, const Ve
 
 	Vector3f meshvecBegin(begin.X, begin.Y, begin.Z), meshvecEnd(end.X, end.Y, end.Z);
 	auto debugLinesComponent = scene->GetWorldComponent<DebugDrawStateWorldComponent>();
-	debugLinesComponent->DebugLines.PushBack(DebugDrawStateWorldComponent::DebugLine{ meshvecBegin, meshvecEnd });
-	debugLinesComponent->DebugLinesColors.PushBack(DebugDrawStateWorldComponent::DebugLineColor{ color, color });
+	debugLinesComponent->DebugLines.push_back(DebugDrawStateWorldComponent::DebugLine{ meshvecBegin, meshvecEnd });
+	debugLinesComponent->DebugLinesColors.push_back(DebugDrawStateWorldComponent::DebugLineColor{ color, color });
 }
 
 void Poly::DebugDrawSystem::DrawBox(Scene* scene, const Vector& mins, const Vector& maxs, const Color& color)
@@ -311,7 +311,7 @@ void Poly::DebugDrawSystem::DrawFrustum(Scene* scene, const Frustum& frustum, co
 	Matrix clipFromWorld = clipFromView * viewFromWorld;
 
 	// Transform frustum corners to DirLightSpace
-	Dynarray<Vector> cornersInNDC{
+	std::vector<Vector> cornersInNDC{
 		Vector(-1.0f,  1.0f, -1.0f), // back  left	top
 		Vector( 1.0f,  1.0f, -1.0f), // back  right top
 		Vector(-1.0f, -1.0f, -1.0f), // back  left  bot
@@ -325,20 +325,20 @@ void Poly::DebugDrawSystem::DrawFrustum(Scene* scene, const Frustum& frustum, co
 	// Transform frustum corners from NDC to World
 	// could be done in one iteration but we need to do perspective division by W
 	Matrix worldFromClip = clipFromWorld.GetInversed();
-	Dynarray<Vector> cornersInWS;
+	std::vector<Vector> cornersInWS;
 	for (Vector posInClip : cornersInNDC)
 	{
 		Vector posInWS = worldFromClip * posInClip;
 		posInWS.X /= posInWS.W;
 		posInWS.Y /= posInWS.W;
 		posInWS.Z /= posInWS.W;
-		cornersInWS.PushBack(posInWS);
+		cornersInWS.push_back(posInWS);
 	}
 
 	DrawFrustumPoints(scene, cornersInWS, color);
 }
 
-void Poly::DebugDrawSystem::DrawFrustumPoints(Scene* scene, const Dynarray<Vector>& cornersInWorld, const Color color)
+void Poly::DebugDrawSystem::DrawFrustumPoints(Scene* scene, const std::vector<Vector>& cornersInWorld, const Color color)
 {
 	// Vertives should be in order:
 	// back  left  top
@@ -350,7 +350,7 @@ void Poly::DebugDrawSystem::DrawFrustumPoints(Scene* scene, const Dynarray<Vecto
 	// front left  bot
 	// front right bot
 
-	ASSERTE(cornersInWorld.GetSize() == 8, "Wrong number of frustum corners to draw");
+	ASSERTE(cornersInWorld.size() == 8, "Wrong number of frustum corners to draw");
 
 	for (size_t i = 0; i < 4; ++i)
 		DebugDrawSystem::DrawLine(scene, cornersInWorld[i], cornersInWorld[i + 4], color);
@@ -447,5 +447,5 @@ void Poly::DebugDrawSystem::DrawText2D(Scene* scene, const Vector2i& screenPosit
 		return;
 
 	auto debugLinesComponent = scene->GetWorldComponent<DebugDrawStateWorldComponent>();
-	debugLinesComponent->DebugTexts2D.PushBack({ std::move(text), screenPosition , fontSize, color });
+	debugLinesComponent->DebugTexts2D.push_back({ std::move(text), screenPosition , fontSize, color });
 }

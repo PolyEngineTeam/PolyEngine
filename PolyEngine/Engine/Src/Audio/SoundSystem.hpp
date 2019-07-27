@@ -1,7 +1,7 @@
 #pragma once
 #include <Defines.hpp>
 #include <Collections/String.hpp>
-#include <Collections/Dynarray.hpp>
+
 
 namespace Poly
 {
@@ -19,7 +19,7 @@ namespace Poly
 		// Device
 		void ENGINE_DLLEXPORT SetDevice(const String&);
 		const ENGINE_DLLEXPORT String& GetDeviceName();
-		const ENGINE_DLLEXPORT Dynarray<String>& GetAvailableDevices();
+		const ENGINE_DLLEXPORT std::vector<String>& GetAvailableDevices();
 
 		// Context
 		void ENGINE_DLLEXPORT SetWorldCurrent(Scene*);

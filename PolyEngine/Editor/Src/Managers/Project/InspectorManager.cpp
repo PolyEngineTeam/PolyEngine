@@ -127,7 +127,7 @@ void InspectorManager::EntitiesReparentedSlot()
 }
 
 //------------------------------------------------------------------------------
-void InspectorManager::EntitiesSelectionChangedSlot(Dynarray<Entity*> entities)
+void InspectorManager::EntitiesSelectionChangedSlot(std::vector<Entity*> entities)
 {
 	EntitiesSelectionChangedCommand* c = new EntitiesSelectionChangedCommand();
 	c->OldEntities = SelectedEntities;
@@ -143,13 +143,13 @@ void InspectorManager::EntitiesSelectionChangedSlot(Dynarray<Entity*> entities)
 
 //		components slots
 //------------------------------------------------------------------------------
-void InspectorManager::ComponentsAddedSlot(Dynarray<ComponentBase*> components)
+void InspectorManager::ComponentsAddedSlot(std::vector<ComponentBase*> components)
 {
 	emit ComponentsAdded();
 }
 
 //------------------------------------------------------------------------------
-void InspectorManager::ComponentsRemovedSlot(Dynarray<ComponentBase*> components)
+void InspectorManager::ComponentsRemovedSlot(std::vector<ComponentBase*> components)
 {
 	emit ComponentsRemoved();
 }

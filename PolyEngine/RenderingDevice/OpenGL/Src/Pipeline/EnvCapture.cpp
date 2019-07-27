@@ -75,10 +75,10 @@ void EnvCapture::PrecalculateResourcesIBL(const SkyboxWorldComponent* skyboxCmp)
 
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-		HDRPanoramas.Resize(envCount);
-		EnvCubemaps.Resize(envCount);
-		IrradianceMaps.Resize(envCount);
-		PrefilterMaps.Resize(envCount);
+		HDRPanoramas.resize(envCount);
+		EnvCubemaps.resize(envCount);
+		IrradianceMaps.resize(envCount);
+		PrefilterMaps.resize(envCount);
 
 		for(size_t i = 0; i < envCount; ++i)
 		{

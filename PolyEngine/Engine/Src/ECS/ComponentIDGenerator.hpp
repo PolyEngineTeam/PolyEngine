@@ -93,7 +93,7 @@ namespace Poly
 
 		Optional<size_t> GetComponentID(const RTTI::TypeInfo& typeinfo) const;
 		RTTI::TypeInfo GetComponentType(size_t id) const;
-		Dynarray<std::pair<RTTI::TypeInfo, size_t>> GetComponentTypesList() const;
+		std::vector<std::pair<RTTI::TypeInfo, size_t>> GetComponentTypesList() const;
 
 		IterablePoolAllocatorBase* CreateAllocator(size_t id, size_t componentCount) const;
 

@@ -68,8 +68,8 @@ private:
 	TransformControl* Transform;
 
 	// Component sections
-	Dynarray<SectionContainer*> ComponentSections;
-	Dynarray<RTTIInspectorWidget*> ComponentInspectors;
+	std::vector<SectionContainer*> ComponentSections;
+	std::vector<RTTIInspectorWidget*> ComponentInspectors;
 
 private slots:
 	void ControlObjectUpdated(Command* c);

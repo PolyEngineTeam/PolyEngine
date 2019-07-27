@@ -5,7 +5,6 @@
 
 namespace Poly
 {
-	template<typename T> class Dynarray;
 	template<typename K, typename V, size_t Bfactor> class OrderedMap;
 	template<typename T, typename E> class EnumArray;
 	template<typename E> class EnumFlags;
@@ -13,13 +12,6 @@ namespace Poly
 
 	namespace Trait
 	{
-		// Is dynarray
-		template <typename> struct IsDynarray : public std::false_type {};
-		template <typename T> struct IsDynarray<Dynarray<T>> : public std::true_type {};
-
-		template <typename> struct DynarrayValueType {};
-		template <typename T> struct DynarrayValueType<Dynarray<T>> { using type = T; };
-
 		// Is std::vector
 		template <typename> struct IsStdVector : public std::false_type {};
 		template <typename T> struct IsStdVector<std::vector<T>> : public std::true_type {};

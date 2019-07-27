@@ -11,7 +11,7 @@ SoundResource::SoundResource(const String& path)
 	// Declarations and loading file to buffer.
 
 	BinaryBuffer* data = LoadBinaryFile(path);
-	Dynarray<char> rawData;
+	std::vector<char> rawData;
 
 	ogg_sync_state   syncState;		/* sync and verify incoming physical bitstream */
 	ogg_stream_state streamState;	/* take physical pages, weld into a logicalstream of packets */
@@ -197,14 +197,14 @@ SoundResource::SoundResource(const String& path)
 									//	gConsole.LogDebug("Clipping in frame {}", (long)(vorbisDSPState.sequence));
 
 									const size_t newBlocksize = 2 * vorbisInfo.channels * bout;
-									const size_t oldDataSize = rawData.GetSize();
-									if(oldDataSize + newBlocksize > rawData.GetCapacity())
+									const size_t oldDataSize = rawData.size();
+									if(oldDataSize + newBlocksize > rawData.capacity())
 									{
-										const size_t newCap = std::max(rawData.GetCapacity(), newBlocksize);
-										rawData.Reserve(newCap * 2);
+										const size_t newCap = std::max(rawData.capacity(), newBlocksize);
+										rawData.reserve(newCap * 2);
 									}
-									rawData.Resize(oldDataSize + newBlocksize);
-									memcpy(rawData.GetData() + oldDataSize, convbuffer, newBlocksize);
+									rawData.resize(oldDataSize + newBlocksize);
+									memcpy(rawData.data() + oldDataSize, convbuffer, newBlocksize);
 
 									vorbis_synthesis_read(&vorbisDSPState, bout);
 								}
@@ -240,7 +240,7 @@ SoundResource::SoundResource(const String& path)
 		else gConsole.LogDebug("Error: Corrupt header during playback initialization.");
 
 		// TODO: loading chained sounds;
-		alBufferData(BufferID, AL_FORMAT_STEREO16, rawData.GetData(), (ALsizei)rawData.GetSize(), vorbisInfo.rate);
+		alBufferData(BufferID, AL_FORMAT_STEREO16, rawData.data(), (ALsizei)rawData.size(), vorbisInfo.rate);
 
 		ogg_stream_clear(&streamState);
 		vorbis_comment_clear(&vorbisComment);

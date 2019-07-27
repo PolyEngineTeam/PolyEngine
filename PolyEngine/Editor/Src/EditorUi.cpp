@@ -9,7 +9,7 @@
 void EditorUi::Init()
 {
 	MainWindow = new PolyMainWindow();
-	Windows.PushBack(std::move(MainWindow));
+	Windows.push_back(std::move(MainWindow));
 
 	// main logger
 	MainLogger = new LoggerWidget(eLoggerType::CONSOLE);

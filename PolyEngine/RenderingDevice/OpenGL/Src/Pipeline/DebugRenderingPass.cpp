@@ -27,22 +27,23 @@ void DebugRenderingPass::OnRun(Scene* world, const CameraComponent* camera, cons
 		// set up buffer
 		glBindVertexArray(debugLinesBuffers.VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, debugLinesBuffers.VBO);
-		glBufferData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLine)
-									+ debugLinesColors.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLineColor), NULL, GL_STATIC_DRAW);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, debugLines.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLine), (GLvoid*)debugLines.GetData());
-		glBufferSubData(GL_ARRAY_BUFFER, debugLines.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLine), debugLinesColors.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLineColor), (GLvoid*)debugLinesColors.GetData());
+		glBufferData(GL_ARRAY_BUFFER, debugLines.size() * sizeof(DebugDrawStateWorldComponent::DebugLine)
+									+ debugLinesColors.size() * sizeof(DebugDrawStateWorldComponent::DebugLineColor), NULL, GL_STATIC_DRAW);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, debugLines.size() * sizeof(DebugDrawStateWorldComponent::DebugLine), (GLvoid*)debugLines.data());
+		glBufferSubData(GL_ARRAY_BUFFER, debugLines.size() * sizeof(DebugDrawStateWorldComponent::DebugLine), 
+						debugLinesColors.size() * sizeof(DebugDrawStateWorldComponent::DebugLineColor), (GLvoid*)debugLinesColors.data());
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), NULL);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Color), (GLvoid*)(debugLines.GetSize() * sizeof(DebugDrawStateWorldComponent::DebugLine)));
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Color), (GLvoid*)(debugLines.size() * sizeof(DebugDrawStateWorldComponent::DebugLine)));
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		GetProgram().SetUniform("uMVP", MVP);
 
-		glDrawArrays(GL_LINES, 0, (GLsizei)debugLines.GetSize() * 2);
+		glDrawArrays(GL_LINES, 0, (GLsizei)debugLines.size() * 2);
 		glBindVertexArray(0);
 
-		debugLines.Clear();
-		debugLinesColors.Clear();
+		debugLines.clear();
+		debugLinesColors.clear();
 	}
 }
