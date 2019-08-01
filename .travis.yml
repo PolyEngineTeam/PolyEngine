@@ -50,7 +50,7 @@ before_install:
       brew update && brew bundle --file=.Brewfile
     fi
   - sudo pip3 install --upgrade pip
-  - sudo pip3 install gitpython appdirs
+  - sudo pip3 install gitpython appdirs docker
 
 #install:
 

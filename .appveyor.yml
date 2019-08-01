@@ -33,7 +33,7 @@ init:
 - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" ( set generator="Visual Studio 15 2017%arch%" )
 - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" ( set generator="Visual Studio 14 2015%arch%" )
 - echo %generator%
-- "%PYTHON%\\python.exe -m pip install gitpython appdirs"
+- "%PYTHON%\\python.exe -m pip install gitpython appdirs docker"
 
 before_build:
 - cmd: |-
