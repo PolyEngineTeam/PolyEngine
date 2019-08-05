@@ -86,6 +86,7 @@
 #include <vector>
 #include <deque>
 #include <future>
+#include <optional>
 
 // Custom type names
 using u8 = uint8_t;
@@ -234,6 +235,29 @@ template<typename C1, typename T1, typename C2, typename T2, typename... Args>
 auto constexpr_match(C1, T1&& t1, C2, T2&& t2, Args&&... tail)
 {
 	return select(C1{}, std::forward<T1>(t1), [&, tail ...](auto lazy) { return constexpr_match(C2{}, std::forward<LAZY_TYPE(T2)>(t2), tail...); });
+}
+
+// Custom stream operators for STL
+namespace std
+{
+    template<typename T>
+	std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
+    {
+		os << "[ ";
+        for (const auto& val : v)
+			os << val << " ";
+        os << "]";
+		return os;
+	}
+
+    template<typename T>
+	std::ostream& operator<<(std::ostream& os, const std::optional<T>& v)
+    {
+		if(v.has_value())
+            return os << v.value();
+        else
+		    return os << "<EMPTY>";
+	}
 }
 
 //-----------------------------------------------------------------------------------------------------

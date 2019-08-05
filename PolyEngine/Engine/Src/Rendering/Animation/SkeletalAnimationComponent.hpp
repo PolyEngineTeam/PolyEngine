@@ -13,7 +13,7 @@ namespace Poly
 		float PlaybackSpeed = 1.0f;
 		bool Loop = false;
 		float Weight = 1.0f;
-		Optional<uint> LoopCount;
+		std::optional<uint> LoopCount;
 	};
 
 	struct SkeletalAnimationState final : public BaseObjectLiteralType<>

@@ -204,10 +204,10 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& di
 	for (const auto meshCmp : meshCmps)
 	{
 		const Matrix& dirLightFromModel = dirLightFromWorld * meshCmp->GetTransform().GetWorldFromModel();
-		Optional<AABox> boxWSOptional = meshCmp->GetBoundingBox(eEntityBoundingChannel::RENDERING);
-		if (boxWSOptional.HasValue())
+		std::optional<AABox> boxWSOptional = meshCmp->GetBoundingBox(eEntityBoundingChannel::RENDERING);
+		if (boxWSOptional.has_value())
 		{
-			AABox boxWS = boxWSOptional.Value();
+			AABox boxWS = boxWSOptional.value();
 			AABox boxLS = boxWS.GetTransformed(dirLightFromModel);
 			boxMeshes.push_back(std::tuple(boxLS, meshCmp));
 

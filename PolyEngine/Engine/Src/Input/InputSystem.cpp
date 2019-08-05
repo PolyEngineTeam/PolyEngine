@@ -3,7 +3,7 @@
 #include <Input/InputSystem.hpp>
 #include <Input/InputWorldComponent.hpp>
 #include <ECS/Scene.hpp>
-#include <Utils/Optional.hpp>
+
 
 using namespace Poly;
 
@@ -70,9 +70,9 @@ void InputSystem::InputPhase(Scene* world)
 			bool controllerAssigned = false;
 			for (size_t i = 0; i < com->PlayerIDToJoystickID.size(); ++i)
 			{
-				if (!com->PlayerIDToJoystickID[i].HasValue())
+				if (!com->PlayerIDToJoystickID[i].has_value())
 				{
-					com->PlayerIDToJoystickID[i] = Optional<size_t>{ev.JoystickID};
+					com->PlayerIDToJoystickID[i] = ev.JoystickID;
 					com->JoystickIDToPlayerID[ev.JoystickID] = i;
 					controllerAssigned = true;
 					Poly::gConsole.LogDebug("Controller added in existing place");
@@ -82,7 +82,7 @@ void InputSystem::InputPhase(Scene* world)
 			if (!controllerAssigned)
 			{
 				size_t newPlayerID = com->PlayerIDToJoystickID.size();
-				com->PlayerIDToJoystickID.push_back(Optional<size_t>{ev.JoystickID});
+				com->PlayerIDToJoystickID.push_back(ev.JoystickID);
 				com->JoystickIDToPlayerID[ev.JoystickID] = newPlayerID;
 				Poly::gConsole.LogDebug("Controller added in new place");
 			}
@@ -92,7 +92,7 @@ void InputSystem::InputPhase(Scene* world)
 		{
 			size_t playerID = com->JoystickIDToPlayerID.at(ev.JoystickID);
 			com->Controllers.erase(ev.JoystickID);
-			com->PlayerIDToJoystickID[playerID] = Optional<size_t>{};
+			com->PlayerIDToJoystickID[playerID] = {};
 			com->JoystickIDToPlayerID.erase(ev.JoystickID);
 			break;
 		}

@@ -29,8 +29,8 @@ namespace Poly
 	{
 		float Mass = 0;
 		/// If inertia isn't set then it will be computed from mass and shape
-		Optional<Vector> Inertia;
-		Optional<Vector> Gravity;
+		std::optional<Vector> Inertia;
+		std::optional<Vector> Gravity;
 		/// Restitution is in fact a bounciness.
 		float Restitution = 0.5f;
 		float Friction = 0.5f;
@@ -39,8 +39,8 @@ namespace Poly
 		float AngularDamping = 0.5f;
 		Vector LinearFactor = Vector(1.f, 1.f, 1.f);
 		Vector AngularFactor = Vector(1.f, 1.f, 1.f);
-		Optional<Vector> LinearVelocity = Vector(0.f, 0.f, 0.f);
-		Optional<Vector> AngularVelocity = Vector(0.f, 0.f, 0.f);
+		std::optional<Vector> LinearVelocity = Vector(0.f, 0.f, 0.f);
+		std::optional<Vector> AngularVelocity = Vector(0.f, 0.f, 0.f);
 
 		/// Due to optimalization rigidbodies are deactivated after some time of idleness.
 		bool Deactivatable = false;
@@ -103,7 +103,7 @@ namespace Poly
 
 
 		float GetMass() const { return Template.Mass; }
-		const Vector& GetInertia() const { return Template.Inertia.Value(); }
+		const Vector& GetInertia() const { return Template.Inertia.value(); }
 		float GetRestitution() const { return Template.Restitution; }
 		float GetFriction() const { return Template.Friction; }
 		float GetRollingFriction() const { return Template.RollingFriction; }
@@ -141,10 +141,10 @@ namespace Poly
 		bool TemplateChanged = true;
 		Rigidbody3DComponentTemplate Template;
 
-		Optional<Vector> ImpulseToCenter;
-		Optional<Vector> Impulse;
-		Optional<Vector> ImpulsePos;
-		Optional<Vector> TorqueImpulse;
+		std::optional<Vector> ImpulseToCenter;
+		std::optional<Vector> Impulse;
+		std::optional<Vector> ImpulsePos;
+		std::optional<Vector> TorqueImpulse;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, Rigidbody3DComponent)

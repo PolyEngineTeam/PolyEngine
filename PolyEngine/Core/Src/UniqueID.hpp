@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Defines.hpp>
-#include <Utils/Optional.hpp>
 #include <Collections/String.hpp>
 
 namespace Poly
@@ -22,7 +21,7 @@ namespace Poly
 
 		size_t GetHash() const;
 		String ToString() const;
-		static Optional<UniqueID> FromString(const String& str);
+		static std::optional<UniqueID> FromString(const String& str);
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const UniqueID& uuid);
 	private:
 		// 128-bit RFC4122 compliant uuid

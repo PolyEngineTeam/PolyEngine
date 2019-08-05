@@ -34,7 +34,7 @@ namespace Poly
 	private:
 		const NavGraph* NavigationGraph = nullptr;
 		std::vector<Vector> CalculatedPath;
-		Optional<Vector> CurentDestination;
+		std::optional<Vector> CurentDestination;
 		bool RecalculateRequested = false;
 		bool LastPathSearchFailed = false;
 

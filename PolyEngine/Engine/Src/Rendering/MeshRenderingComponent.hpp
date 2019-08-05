@@ -59,7 +59,7 @@ namespace Poly {
 		void SetShadingModel(eShadingMode value) { ShadingMode = value; }
 		void SetBlendingMode(eBlendingMode value) { BlendingMode = value; }
 
-		Optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) const override;
+		std::optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) const override;
 
 	private:
 		MeshResource* Mesh = nullptr;

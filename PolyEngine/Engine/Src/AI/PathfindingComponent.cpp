@@ -8,7 +8,7 @@ RTTI_DEFINE_COMPONENT(::Poly::PathfindingComponent)
 
 void Poly::PathfindingComponent::SetDestination(const Vector& pos)
 {
-	if(!CurentDestination.HasValue() || CurentDestination.Value() != pos)
+	if(!CurentDestination.has_value() || CurentDestination.value() != pos)
 		RecalculateRequested = true;
 
 	CurentDestination = pos;
@@ -16,7 +16,7 @@ void Poly::PathfindingComponent::SetDestination(const Vector& pos)
 
 void Poly::PathfindingComponent::ResetDestination()
 {
-	CurentDestination = Optional<Vector>();
+	CurentDestination = {};
 	CalculatedPath.clear();
 	RecalculateRequested = false;
 }

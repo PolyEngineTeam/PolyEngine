@@ -91,7 +91,7 @@ namespace Poly
 			IDToCreatorMap.insert({ id, allocator });
 		}
 
-		Optional<size_t> GetComponentID(const RTTI::TypeInfo& typeinfo) const;
+		std::optional<size_t> GetComponentID(const RTTI::TypeInfo& typeinfo) const;
 		RTTI::TypeInfo GetComponentType(size_t id) const;
 		std::vector<std::pair<RTTI::TypeInfo, size_t>> GetComponentTypesList() const;
 

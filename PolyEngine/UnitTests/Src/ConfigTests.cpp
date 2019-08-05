@@ -17,15 +17,6 @@
 
 using namespace Poly;
 
-namespace std {
-	template<typename T>
-	std::ostream &operator <<(std::ostream &os, const std::vector<T> &v) {
-		for (const auto& val : v)
-			os << val << " ";
-		return os;
-	}
-}
-
 enum class eConfigTest
 {
 	VAL_1,
@@ -205,7 +196,7 @@ public:
 	EnumArray<TestRTTIClass, eConfigTest> PropEnumArrayCustom = { { eConfigTest::VAL_1, 1}, { eConfigTest::VAL_2, 2} };
 	EnumFlags<eConfigFlagsTest> PropEnumFlags = (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_3 | eConfigFlagsTest::VAL_5);
 
-	UniqueID PropUUID = UniqueID::FromString("01234567-89ab-cdef-0123-456789abcdef").Value();
+	UniqueID PropUUID = UniqueID::FromString("01234567-89ab-cdef-0123-456789abcdef").value();
 
 	std::unique_ptr<int> PropUniquePtrInt;
 	std::unique_ptr<std::vector<int>> PropUniquePtrStdVectorInt;
@@ -315,7 +306,7 @@ void baseValueCheck(const TestConfig& config)
 	CHECK(config.PropEnumArrayCustom == EnumArray<TestRTTIClass, eConfigTest>{ { eConfigTest::VAL_1, 1 },{ eConfigTest::VAL_2, 2 } });
 	CHECK(config.PropEnumFlags == (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_3 | eConfigFlagsTest::VAL_5));
 
-	CHECK(config.PropUUID == UniqueID::FromString("01234567-89ab-cdef-0123-456789abcdef").Value());
+	CHECK(config.PropUUID == UniqueID::FromString("01234567-89ab-cdef-0123-456789abcdef").value());
 
 	CHECK(*config.PropUniquePtrInt == 5);
 	CHECK(*config.PropUniquePtrStdVectorInt == std::vector<int>{1,2,3});
@@ -407,7 +398,7 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		config.PropEnumArrayCustom = { { eConfigTest::VAL_1, 3 },{ eConfigTest::VAL_2, 4 } };
 		config.PropEnumFlags = (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_2 | eConfigFlagsTest::VAL_4);
 
-		config.PropUUID = UniqueID::FromString("abcdef01-2345-6789-abcd-ef0123456789").Value();
+		config.PropUUID = UniqueID::FromString("abcdef01-2345-6789-abcd-ef0123456789").value();
 
 		config.PropUniquePtrInt = std::make_unique<int>(7);
 		config.PropUniquePtrStdVectorInt = std::make_unique<std::vector<int>>(std::vector<int>{ 4, 5, 6 });
@@ -553,7 +544,7 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		CHECK(config.PropEnumArrayCustom == EnumArray<TestRTTIClass, eConfigTest>{ { eConfigTest::VAL_1, 3 }, { eConfigTest::VAL_2, 4 } });
 		CHECK(config.PropEnumFlags == (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_2 | eConfigFlagsTest::VAL_4));
 
-		CHECK(config.PropUUID == UniqueID::FromString("abcdef01-2345-6789-abcd-ef0123456789").Value());
+		CHECK(config.PropUUID == UniqueID::FromString("abcdef01-2345-6789-abcd-ef0123456789").value());
 
 		CHECK(*config.PropUniquePtrInt == 7);
 		CHECK(*config.PropUniquePtrStdVectorInt == std::vector<int>{4,5,6});

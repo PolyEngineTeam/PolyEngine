@@ -69,7 +69,7 @@ void AnimationSystem::OnUpdate(Scene* scene)
 			// Check stop conditions
 			animState.StopRequested = animState.StopRequested
 				|| (!animState.Params.Loop && animState.Time > anim->Duration)
-				|| (animState.Params.Loop && animState.Params.LoopCount.HasValue() && animState.LoopCount >= animState.Params.LoopCount.Value());
+				|| (animState.Params.Loop && animState.Params.LoopCount.has_value() && animState.LoopCount >= animState.Params.LoopCount.value());
 
 			// Correct time if stop condition occured or loop finished
 			if (animState.Time >= anim->Duration)
@@ -91,36 +91,36 @@ void AnimationSystem::OnUpdate(Scene* scene)
 				Quaternion rot = Quaternion::IDENTITY;
 
 				// Extract position value
-				if (lerpData.pos[0].HasValue())
+				if (lerpData.pos[0].has_value())
 				{
-					auto posKey = lerpData.pos[0].Value();
+					auto posKey = lerpData.pos[0].value();
 					pos = posKey.Value;
-					if (lerpData.pos[1].HasValue())
+					if (lerpData.pos[1].has_value())
 					{
-						pos = ::Poly::Lerp(pos, lerpData.pos[1].Value().Value, animState.Time - posKey.Time);
+						pos = ::Poly::Lerp(pos, lerpData.pos[1].value().Value, animState.Time - posKey.Time);
 					}
 				}
 				
 				// Extract scale value
-				if (lerpData.scale[0].HasValue())
+				if (lerpData.scale[0].has_value())
 				{
-					auto scaleKey = lerpData.scale[0].Value();
+					auto scaleKey = lerpData.scale[0].value();
 					scale = scaleKey.Value;
-					if (lerpData.scale[1].HasValue())
+					if (lerpData.scale[1].has_value())
 					{
-						scale = ::Poly::Lerp(scale, lerpData.scale[1].Value().Value, animState.Time - scaleKey.Time);
+						scale = ::Poly::Lerp(scale, lerpData.scale[1].value().Value, animState.Time - scaleKey.Time);
 					}
 				}
 
 				// Extract rotation value
-				if (lerpData.rot[0].HasValue())
+				if (lerpData.rot[0].has_value())
 				{
-					auto rotKey = lerpData.rot[0].Value();
+					auto rotKey = lerpData.rot[0].value();
 					rot = rotKey.Value;
-					if (lerpData.rot[1].HasValue())
+					if (lerpData.rot[1].has_value())
 					{
 						const float t = std::min(animState.Time - rotKey.Time, 1.0f);
-						rot = Quaternion::Slerp(rot, lerpData.rot[1].Value().Value, t);
+						rot = Quaternion::Slerp(rot, lerpData.rot[1].value().Value, t);
 					}
 				}
 
@@ -217,8 +217,8 @@ void Poly::AnimationSystem::CreateBoneStructure(SkeletalAnimationComponent* anim
 	// Initialize bone hierarchy
 	for (size_t i = 0; i < bones.size(); ++i)
 	{
-		if (bones[i].parentBoneIdx.HasValue())
-			animCmp->Bones[i]->SetParent(animCmp->Bones[bones[i].parentBoneIdx.Value()].Get());
+		if (bones[i].parentBoneIdx.has_value())
+			animCmp->Bones[i]->SetParent(animCmp->Bones[bones[i].parentBoneIdx.value()].Get());
 		else
 			animCmp->Bones[i]->SetParent(skeleton);
 		animCmp->Bones[i]->GetTransform().SetParentFromModel(bones[i].prevBoneFromBone);
