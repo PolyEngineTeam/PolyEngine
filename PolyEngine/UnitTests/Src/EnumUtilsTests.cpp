@@ -1,7 +1,7 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
 
-#include <Utils/EnumUtils.hpp>
+#include <pe/core/utils/EnumUtils.hpp>
 
 using namespace Poly;
 

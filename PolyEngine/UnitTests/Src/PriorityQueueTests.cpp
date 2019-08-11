@@ -1,6 +1,6 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
-#include <Collections/PriorityQueue.hpp>
+#include <pe/core/storage/PriorityQueue.hpp>
 
 using namespace Poly;
 

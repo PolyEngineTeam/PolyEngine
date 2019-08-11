@@ -1,0 +1,53 @@
+#include <pe/core/CorePCH.hpp>
+
+#include <pe/core/memory/SafePtrRoot.hpp>
+
+RTTI_DEFINE_TYPE(::pe::core::memory::SafePtrRoot);
+
+using namespace pe::core::memory;
+
+//------------------------------------------------------------------------------
+std::unordered_map<SafePtrRoot*, size_t> SafePtrRoot::PointersMap;
+std::vector<SafePtrRoot*> SafePtrRoot::Pointers;
+
+//------------------------------------------------------------------------------
+SafePtrRoot::~SafePtrRoot()
+{
+	SafePtrRoot::ClearPointer(this);
+}
+
+size_t SafePtrRoot::RegisterPointer(SafePtrRoot *pointer)
+{
+	const auto it = PointersMap.find(pointer);
+	if (it != PointersMap.end())
+		return it->second;
+	else
+	{
+		SafePtrRoot::Pointers.push_back(pointer);
+		size_t idx = SafePtrRoot::Pointers.size() - 1;
+		SafePtrRoot::PointersMap[pointer] = idx;
+		return idx;
+	}
+}
+
+/// <summary>Registers pointer in array and map</summary>
+/// <param name="pointer">Pointer to be registered</param>
+/// <returns>Index of given pointer in array</returns>
+void SafePtrRoot::ClearPointer(SafePtrRoot *pointer)
+{
+	HEAVY_ASSERTE(pointer != nullptr, "Cannot unregister nullptr");
+
+	const auto it = SafePtrRoot::PointersMap.find(pointer);
+	if (it != SafePtrRoot::PointersMap.end())
+	{
+		SafePtrRoot::Pointers[it->second] = nullptr;
+		SafePtrRoot::PointersMap.erase(it);
+	}
+}
+
+//------------------------------------------------------------------------------
+SafePtrRoot *SafePtrRoot::GetPointer(size_t idx)
+{
+	return SafePtrRoot::Pointers[idx];
+}
+

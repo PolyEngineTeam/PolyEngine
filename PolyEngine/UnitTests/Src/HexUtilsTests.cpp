@@ -1,7 +1,7 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
 
-#include <Utils/HexUtils.hpp>
+#include <pe/core/utils/HexUtils.hpp>
 
 using namespace Poly;
 

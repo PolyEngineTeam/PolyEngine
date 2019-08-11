@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Defines.hpp>
-#include <Math/Vector2f.hpp>
-#include <Math/Vector2i.hpp>
-#include <Collections/Queue.hpp>
+#include <pe/Defines.hpp>
+#include <pe/core/math/Vector2f.hpp>
+#include <pe/core/math/Vector2i.hpp>
+#include <pe/core/storage/Queue.hpp>
 #include <Input/KeyBindings.hpp>
 
 namespace Poly

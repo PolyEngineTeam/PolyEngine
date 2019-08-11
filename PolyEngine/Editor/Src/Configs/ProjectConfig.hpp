@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Collections/String.hpp>
+#include <pe/core/storage/String.hpp>
 #include <Configs/ConfigBase.hpp>
 
 namespace Poly

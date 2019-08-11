@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 
-#include <Collections/String.hpp>
+#include <pe/core/storage/String.hpp>
 #include <Resources/ResourceBase.hpp>
 #include <Resources/TextureResource.hpp>
 #include <Resources/Mesh.hpp>

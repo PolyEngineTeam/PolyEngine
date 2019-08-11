@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Defines.hpp>
-#include <Math/Vector3f.hpp>
-#include <Math/VectorT.hpp>
+#include <pe/Defines.hpp>
+#include <pe/core/math/Vector3f.hpp>
+#include <pe/core/math/VectorT.hpp>
 
 namespace Poly
 {

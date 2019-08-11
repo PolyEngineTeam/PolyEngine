@@ -1,9 +1,9 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
 
-#include <Defines.hpp>
-#include <Memory/SafePtrRoot.hpp>
-#include <Memory/SafePtr.hpp>
+#include <pe/Defines.hpp>
+#include <pe/core/memory/SafePtrRoot.hpp>
+#include <pe/core/memory/SafePtr.hpp>
 
 using namespace Poly;
 

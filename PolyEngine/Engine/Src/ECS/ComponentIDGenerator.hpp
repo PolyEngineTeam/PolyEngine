@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Defines.hpp>
-#include <Memory/IterablePoolAllocator.hpp>
-#include <RTTI/RTTI.hpp>
+#include <pe/Defines.hpp>
+#include <pe/core/memory/IterablePoolAllocator.hpp>
+#include <pe/core/rtti/RTTI.hpp>
 
 #if defined(_ENGINE)
 #    define EXPORT_TEMPLATE

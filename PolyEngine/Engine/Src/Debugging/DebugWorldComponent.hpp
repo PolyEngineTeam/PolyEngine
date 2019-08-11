@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <ECS/ComponentBase.hpp>
 #include <Debugging/FPSSystem.hpp>
 #include <Time/TimeSystem.hpp>

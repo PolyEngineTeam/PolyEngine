@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Defines.hpp>
-#include <Math/Vector.hpp>
-#include <Math/AABox.hpp>
-#include <Math/Frustum.hpp>
+#include <pe/Defines.hpp>
+#include <pe/core/math/Vector.hpp>
+#include <pe/core/math/AABox.hpp>
+#include <pe/core/math/Frustum.hpp>
 
 namespace Poly
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <Pipeline/RenderingPassBase.hpp>
 #include <Proxy/GLShaderProgram.hpp>
 #include <Common/PrimitiveCube.hpp>

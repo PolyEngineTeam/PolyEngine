@@ -1,8 +1,8 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
 
-#include <Math/Matrix.hpp>
-#include <Math/Quaternion.hpp>
+#include <pe/core/math/Matrix.hpp>
+#include <pe/core/math/Quaternion.hpp>
 
 using namespace Poly;
 

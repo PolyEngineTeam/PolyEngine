@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 
 #include <Rendering/IRenderingDevice.hpp>
 #include <Audio/OpenALDevice.hpp>
 #include <Input/InputSystem.hpp>
 #include <ECS/ISystem.hpp>
-#include <Utils/EnumUtils.hpp>
+#include <pe/core/utils/EnumUtils.hpp>
 #include "ECS/ComponentIDGenerator.hpp"
 #include "Editor/IEditor.hpp"
 

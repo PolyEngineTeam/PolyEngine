@@ -1,7 +1,7 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
 
-#include <Collections/String.hpp>
+#include <pe/core/storage/String.hpp>
 
 using namespace Poly;
 

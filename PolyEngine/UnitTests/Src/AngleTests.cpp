@@ -1,7 +1,7 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
 
-#include <Math/Angle.hpp>
+#include <pe/core/math/Angle.hpp>
 //TODO implement
 
 using namespace Poly;

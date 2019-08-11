@@ -1,0 +1,122 @@
+#pragma once
+
+#include <pe/Defines.hpp>
+#include <pe/core/math/BasicMath.hpp>
+#include <pe/core/math/Vector.hpp>
+#include <pe/core/math/Matrix.hpp>
+
+namespace pe::core::math {
+
+	/// <summary>Class representing axis aligned box.</summary>
+	class CORE_DLLEXPORT AABox : public BaseObject<>
+	{
+	public:
+
+		/// <summary>Constructor from min and size.</summary>
+		/// <param name="min">Position of the min point of the box.</param>
+		/// <param name="size">Size (extent) of the box in each of the directions.</param>
+		AABox(const Vector& min, const Vector& size);
+		AABox() = default;
+
+		/// <summary>Calculates center of the box.</summary>
+		/// <returns>Center of the box.</returns>
+		Vector GetCenter() const { return Min + (Size * 0.5f); }
+		
+		/// <summary>Returns the min point of the box. (posiiton)</summary>
+		/// <returns>Min point of the box.</returns>
+		const Vector& GetMin() const { return Min; }
+
+		/// <summary>Returns the max point of the box.</summary>
+		/// <returns>Max point of the box.</returns>
+		Vector GetMax() const { return Min + Size; }
+		
+		/// <summary>Returns Size of the box in all three dimensions.</summary>
+		/// <returns>Size of the box. (extent)</returns>
+		const Vector& GetSize() const { return Size; }
+
+		/// <summary>Sets position of the box.</summary>
+		/// <param name="pos">New position</param>
+		void SetMin(const Vector& pos) { Min = pos; }
+
+		/// <summary>Sets size of the box.</summary>
+		/// <param name="size">New size</param>
+		void SetSize(const Vector& size) { Size = size; }
+
+		/// <summary>Checks whether a given AABox is interecting with this AABox.</summary>
+		/// <param name="rhs">Other box.</param>
+		/// <see cref="AABox.Contains()"/>
+		inline bool Intersects(const AABox& rhs) const
+		{	
+			return (abs(Min.X - rhs.Min.X) * 2.0f < (Size.X + rhs.Size.X))
+				&& (abs(Min.Y - rhs.Min.Y) * 2.0f < (Size.Y + rhs.Size.Y))
+				&& (abs(Min.Z - rhs.Min.Z) * 2.0f < (Size.Z + rhs.Size.Z));
+		}
+
+		/// <summary>Checks whether this AABox contains a given point.</summary>
+		/// <param name="point">Point to be checked.</param>
+		/// <see cref="AABox.IsCollidingWith()"/>
+		inline bool Contains(const Vector& point) const 
+		{ 
+			return point.X >= Min.X && point.X <= (Min.X + Size.X) 
+				&& point.Y >= Min.Y && point.Y <= (Min.Y + Size.Y) 
+				&& point.Z >= Min.Z && point.Z <= (Min.Z + Size.Z);
+		}
+
+		/// <summary>Checks whether a given AABox contains this AABox on all axes.</summary>
+		/// <param name="rhs">Other box.</param>
+		inline bool Contains(const AABox& rhs) const
+		{
+			return ContainsX(rhs) && ContainsY(rhs) && ContainsZ(rhs);
+		}
+		
+		/// <summary>Checks whether a given AABox contains this AABox on XY plane.</summary>
+		/// <param name="rhs">Other box.</param>
+		inline bool ContainsXY(const AABox& rhs) const
+		{
+			return ContainsX(rhs) && ContainsY(rhs);
+		}
+
+		/// <summary>Checks whether a given AABox contains this AABox on X axis.</summary>
+		/// <param name="rhs">Other box.</param>
+		inline bool ContainsX(const AABox& rhs) const
+		{
+			return (Min.X			<= rhs.Min.X + rhs.Size.X)
+				&& (Min.X + Size.X	>= rhs.Min.X);
+		}
+
+		/// <summary>Checks whether a given AABox contains this AABox on Y axis.</summary>
+		/// <param name="rhs">Other box.</param>
+		inline bool ContainsY(const AABox& rhs) const
+		{
+			return (Min.Y			<= rhs.Min.Y + rhs.Size.Y)
+				&& (Min.Y + Size.Y	>= rhs.Min.Y);
+		}
+
+		/// <summary>Checks whether a given AABox contains this AABox on Z axis.</summary>
+		/// <param name="rhs">Other box.</param>
+		inline bool ContainsZ(const AABox& rhs) const
+		{
+			return (Min.Z			<= rhs.Min.Z + rhs.Size.Z)
+				&& (Min.Z + Size.Z	>= rhs.Min.Z);
+		}
+
+		std::array<Vector, 8> GetVertices() const;
+
+		/// <summary>Calculates the intersection volume of 2 AABoxes.</summary>
+		/// <param name="rhs">Other box to calculate intersection with.</param>
+		/// <returns>Box representing the intersection volume.</returns>
+		/// <see cref="AABox.Intersects()"/>
+		AABox GetIntersectionVolume(const AABox& rhs) const;
+
+		AABox GetTransformed(const Matrix& transform) const;
+
+		AABox& Expand(const AABox& rhs);
+
+		AABox& Expand(const Vector& rhs);
+
+		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const AABox& color);
+	private:
+		Vector Min;
+		Vector Size;
+	};
+}

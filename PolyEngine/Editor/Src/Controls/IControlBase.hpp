@@ -3,8 +3,8 @@
 #include <QtWidgets/qwidget.h>
 #include <QtCore/qtimer.h>
 
-#include <RTTI/RTTI.hpp>
-#include <Utils/Logger.hpp>
+#include <pe/core/rtti/RTTI.hpp>
+#include <pe/core/utils/Logger.hpp>
 
 using namespace Poly;
 

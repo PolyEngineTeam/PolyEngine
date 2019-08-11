@@ -3,11 +3,11 @@
 
 #include <Engine.hpp>
 #include <Rendering/IRenderingDevice.hpp>
-#include <Utils/LibraryLoader.hpp>
+#include <pe/core/utils/LibraryLoader.hpp>
 #include <Configs/AssetsPathConfig.hpp>
-#include <Utils/OutputStream.hpp>
-#include <Utils/Logger.hpp>
-#include <Math/Vector2i.hpp>
+#include <pe/core/utils/OutputStream.hpp>
+#include <pe/core/utils/Logger.hpp>
+#include <pe/core/math/Vector2i.hpp>
 
 extern "C"
 {

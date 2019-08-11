@@ -1,7 +1,7 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
 
-#include <Math/Vector2f.hpp>
+#include <pe/core/math/Vector2f.hpp>
 
 using namespace Poly;
 

@@ -1,8 +1,8 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
 
-#include <Memory/PoolAllocator.hpp>
-#include <Memory/IterablePoolAllocator.hpp>
+#include <pe/core/memory/PoolAllocator.hpp>
+#include <pe/core/memory/IterablePoolAllocator.hpp>
 
 using namespace Poly;
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Defines.hpp>
-#include <Math/Vector.hpp>
+#include <pe/Defines.hpp>
+#include <pe/core/math/Vector.hpp>
 #include <Resources/ResourceBase.hpp>
 #include <Resources/TextureResource.hpp>
 

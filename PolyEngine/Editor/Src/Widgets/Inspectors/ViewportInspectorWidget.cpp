@@ -1,7 +1,7 @@
 #include "PolyEditorPCH.hpp"
 
 #include <Engine.hpp>
-#include <Utils/LibraryLoader.hpp>
+#include <pe/core/utils/LibraryLoader.hpp>
 #include <Configs/AssetsPathConfig.hpp>
 #include <Movement/FreeFloatMovementComponent.hpp>
 #include <Rendering/Camera/CameraComponent.hpp>

@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Defines.hpp>
-#include <Memory/SafePtrRoot.hpp>
-#include <Math/AABox.hpp>
-#include <Utils/EnumUtils.hpp>
-#include <RTTI/RTTI.hpp>
+#include <pe/Defines.hpp>
+#include <pe/core/memory/SafePtrRoot.hpp>
+#include <pe/core/math/AABox.hpp>
+#include <pe/core/utils/EnumUtils.hpp>
+#include <pe/core/rtti/RTTI.hpp>
 #include <ECS/EntityTransform.hpp>
 #include <ECS/ComponentIDGenerator.hpp>
 

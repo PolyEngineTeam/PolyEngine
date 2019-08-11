@@ -1,7 +1,7 @@
 #include <PolyEditorPCH.hpp>
 
 #include <Editor/IEditor.hpp>
-#include <Utils/LibraryLoader.hpp>
+#include <pe/core/utils/LibraryLoader.hpp>
 
 using namespace editor::controllers::impl;
 

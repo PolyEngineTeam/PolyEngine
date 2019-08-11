@@ -1,6 +1,6 @@
 #pragma once
-#include <Defines.hpp>
-#include <Collections/String.hpp>
+#include <pe/Defines.hpp>
+#include <pe/core/storage/String.hpp>
 
 
 namespace Poly

@@ -1,9 +1,9 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
-#include <Math/Frustum.hpp>
-#include <Math/Quaternion.hpp>
-#include <Math/Random.hpp>
-#include <Utils/Logger.hpp>
+#include <pe/core/math/Frustum.hpp>
+#include <pe/core/math/Quaternion.hpp>
+#include <pe/core/math/Random.hpp>
+#include <pe/core/utils/Logger.hpp>
 
 using namespace Poly;
 

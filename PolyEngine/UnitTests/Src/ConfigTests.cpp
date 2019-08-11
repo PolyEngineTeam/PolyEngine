@@ -1,18 +1,18 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
 
-#include <RTTI/RTTI.hpp>
+#include <pe/core/rtti/RTTI.hpp>
 #include <Configs/ConfigBase.hpp>
-#include <Math/BasicMath.hpp>
-#include <Math/Vector.hpp>
-#include <Math/Vector2f.hpp>
-#include <Math/Vector2i.hpp>
-#include <Math/Matrix.hpp>
-#include <Math/Color.hpp>
-#include <Math/Quaternion.hpp>
+#include <pe/core/math/BasicMath.hpp>
+#include <pe/core/math/Vector.hpp>
+#include <pe/core/math/Vector2f.hpp>
+#include <pe/core/math/Vector2i.hpp>
+#include <pe/core/math/Matrix.hpp>
+#include <pe/core/math/Color.hpp>
+#include <pe/core/math/Quaternion.hpp>
 #include <UniqueID.hpp>
 #include <cstdio>
-#include <Utils/Logger.hpp>
+#include <pe/core/utils/Logger.hpp>
 #include <vector>
 
 using namespace Poly;

@@ -1,7 +1,7 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
-#include <Math/AABox.hpp>
-#include <Math/Quaternion.hpp>
+#include <pe/core/math/AABox.hpp>
+#include <pe/core/math/Quaternion.hpp>
 
 using namespace Poly;
 

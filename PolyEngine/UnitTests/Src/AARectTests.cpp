@@ -1,7 +1,7 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
 
-#include <Math/AARect.hpp>
+#include <pe/core/math/AARect.hpp>
 
 using namespace Poly;
 

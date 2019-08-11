@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Defines.hpp>
-#include <Memory/SafePtr.hpp>
+#include <pe/Defines.hpp>
+#include <pe/core/memory/SafePtr.hpp>
 #include <ECS/DeferredTaskSystem.hpp>
 #include <ECS/DeferredTaskBase.hpp>
 #include <ECS/Scene.hpp>
