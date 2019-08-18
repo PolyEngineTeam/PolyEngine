@@ -5,7 +5,10 @@
 #include <pe/core/utils/HexUtils.hpp>
 #include <pe/core/storage/StringBuilder.hpp>
 
-using namespace pe::core;
+using namespace ::pe::core;
+
+using ::pe::core::storage::String;
+using ::pe::core::storage::StringBuilder;
 
 const UniqueID UniqueID::INVALID;
 
@@ -20,7 +23,7 @@ UniqueID UniqueID::Generate()
 
 	// 1. Generate 16 random bytes = 128 bits
 	for (size_t i = 0; i < ret.UUID.size(); ++i)
-		ret.UUID[i] = RandomRange(0x00, 0xFF);
+		ret.UUID[i] = math::RandomRange(0x00, 0xFF);
 
 	// 2. Adjust certain bits according to RFC 4122 section 4.4.
 	// This just means do the following
@@ -70,7 +73,7 @@ String UniqueID::ToString() const
 	return sb.StealString();
 }
 
-std::optional<UniqueID> UniqueID::FromString(const String& str)
+std::optional<UniqueID> UniqueID::FromString(const storage::String& str)
 {
 	if (str.GetLength() != 36)
 		return {};
@@ -84,10 +87,10 @@ std::optional<UniqueID> UniqueID::FromString(const String& str)
 		if (str[i + 1] == '-') ++i;
 		auto b = str[i + 1];
 
-		if(!IsValidHex(a) || !IsValidHex(b))
+		if(!utils::IsValidHex(a) || !utils::IsValidHex(b))
 			return {};
 
-		uuid.UUID[count] = (HexCharToValue(a) << 4) | HexCharToValue(b);
+		uuid.UUID[count] = (utils::HexCharToValue(a) << 4) | utils::HexCharToValue(b);
 		++count;
 	}
 	

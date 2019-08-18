@@ -5,7 +5,7 @@
 #include <pe/core/math/Color.hpp>
 #include <pmmintrin.h> //SIMD library
 
-namespace Poly
+namespace pe::core::math
 {
 	/// <summary>Class representing 3D vector that takes advantage of SIMD (if possible).</summary>
 	class ALIGN_16 CORE_DLLEXPORT Vector final : public BaseObjectLiteralType<>

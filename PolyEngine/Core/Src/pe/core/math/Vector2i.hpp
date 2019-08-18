@@ -3,7 +3,7 @@
 #include <pe/Defines.hpp>
 #include <pe/core/math/BasicMath.hpp>
 
-namespace Poly
+namespace pe::core::math
 {
 	class Vector2f;
 	using VectorIntType = int32_t;

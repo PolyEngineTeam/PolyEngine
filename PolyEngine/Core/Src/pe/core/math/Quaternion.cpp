@@ -3,7 +3,7 @@
 #include <pe/core/math/Quaternion.hpp>
 #include <pe/core/math/SimdMath.hpp>
 
-using namespace Poly;
+using namespace ::pe::core::math;
 
 const Quaternion Quaternion::IDENTITY = Quaternion();
 
@@ -60,7 +60,7 @@ Vector Quaternion::operator*(const Vector& rhs) const {
 }
 
 //------------------------------------------------------------------------------
-Quaternion Poly::Quaternion::LookAt(const Vector& pos, const Vector& target, const Vector& oldUp)
+Quaternion Quaternion::LookAt(const Vector& pos, const Vector& target, const Vector& oldUp)
 {
  	Vector v, s;
  	Quaternion rot;
@@ -72,13 +72,13 @@ Quaternion Poly::Quaternion::LookAt(const Vector& pos, const Vector& target, con
 }
 
 //------------------------------------------------------------------------------
-Quaternion Poly::Quaternion::Lerp(const Quaternion& q1, const Quaternion& q2, float t)
+Quaternion Quaternion::Lerp(const Quaternion& q1, const Quaternion& q2, float t)
 {
 	return Quaternion(::Lerp(q1.X,q2.X,t), ::Lerp(q1.Y, q2.Y, t), ::Lerp(q1.Z, q2.Z, t), ::Lerp(q1.W, q2.W, t));
 }
 
 //------------------------------------------------------------------------------
-Quaternion Poly::Quaternion::Slerp(const Quaternion& q1, const Quaternion& q2, float t)
+Quaternion Quaternion::Slerp(const Quaternion& q1, const Quaternion& q2, float t)
 {
 	HEAVY_ASSERTE(t >= 0.f && t <= 1.f, "Invalid slerp time!");
 
@@ -165,7 +165,7 @@ Quaternion::operator Matrix() const {
   return ret;
 }
 
-Quaternion & Poly::Quaternion::SetRotation(const Vector & axis, const Angle & angle)
+Quaternion & Quaternion::SetRotation(const Vector & axis, const Angle & angle)
 {
 	Angle halfAngle = angle * 0.5f;
 	float s = Sin(halfAngle);
@@ -188,7 +188,7 @@ EulerAngles Quaternion::ToEulerAngles() const {
            Atan2(2 * (W * Z + X * Y), 1 - 2 * (Y * Y + Z * Z)) };
 }
 
-namespace Poly {
+namespace pe::core::math {
 
 	std::ostream& operator<<(std::ostream& stream, const EulerAngles& angles)
 	{

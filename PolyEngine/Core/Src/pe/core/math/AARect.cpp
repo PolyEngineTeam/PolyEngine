@@ -5,13 +5,13 @@
 using namespace pe::core::math;
 
 //------------------------------------------------------------------------------
-Poly::AARect::AARect(const Vector2f& position, const Vector2f& size)
+AARect::AARect(const Vector2f& position, const Vector2f& size)
 	: Pos(position), Size(size)
 {
 }
 
 //------------------------------------------------------------------------------
-AARect Poly::AARect::GetIntersectionVolume(const AARect& rhs) const
+AARect AARect::GetIntersectionVolume(const AARect& rhs) const
 {
 	const float r1MinX = std::min(Pos.X, Pos.X + Size.X);
 	const float r1MaxX = std::max(Pos.X, Pos.X + Size.X);
@@ -42,7 +42,7 @@ bool AARect::operator==(const AARect& rhs) const
 }
 
 //------------------------------------------------------------------------------
-namespace Poly {
+namespace pe::core::math {
 	std::ostream& operator<<(std::ostream& stream, const AARect& rect)
 	{
 		return stream << "AARect[Pos: " << rect.Pos << " Size: " << rect.Size << " ]";

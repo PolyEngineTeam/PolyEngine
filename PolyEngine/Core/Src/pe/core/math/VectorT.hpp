@@ -2,7 +2,7 @@
 
 #include <pe/Defines.hpp>
 
-namespace Poly
+namespace pe::core::math
 {
 	/// Class representing 3D float vector.
 	template<typename T, size_t S>

@@ -2,13 +2,17 @@
 
 #include <pe/core/rtti/RTTISerialization.hpp>
 #include <pe/core/storage/String.hpp>
-#include <UniqueID.hpp>
+#include <pe/core/UniqueID.hpp>
 #include <pe/core/math/Quaternion.hpp>
 #include <pe/core/math/Vector.hpp>
 #include <pe/core/math/Vector2f.hpp>
 #include <pe/core/math/Vector2i.hpp>
 
 using namespace Poly;
+
+using namespace ::pe::core;
+using namespace ::pe::core::storage;
+using namespace ::pe::core::math;
 
 static const char* JSON_TYPE_ANNOTATION = "@type";
 
@@ -23,7 +27,7 @@ void ResolveUninitializedPointers(const std::vector<RTTI::UninitializedPointerEn
 		if (implData->GetPtr(*entry.Ptr) != nullptr || !entry.UUID.IsValid())
 			++initCount;
 		else
-			gConsole.LogError("Pointer [{}] of RTTIBase object with UUID: {} was not properly deserialized!", entry.Property.Name, entry.UUID);
+			::pe::core::utils::gConsole.LogError("Pointer [{}] of RTTIBase object with UUID: {} was not properly deserialized!", entry.Property.Name, entry.UUID);
 	}
 	ASSERTE(initCount == uninitializedPointers.size(), "Not all raw pointers were initialized!");
 }
@@ -316,7 +320,7 @@ rapidjson::Value RTTI::GetCorePropertyValue(const void* value, const RTTI::Prope
 	}
 	break;
 	case eCorePropertyType::UUID:
-		currentValue.SetString(reinterpret_cast<const Poly::UniqueID*>(value)->ToString().GetCStr(), alloc);
+		currentValue.SetString(reinterpret_cast<const UniqueID*>(value)->ToString().GetCStr(), alloc);
 		break;
 	case eCorePropertyType::UNIQUE_PTR:
 	{
@@ -512,7 +516,7 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj,
 	break;
 	case eCorePropertyType::UUID:
 	{
-		Poly::UniqueID& uuid = *reinterpret_cast<Poly::UniqueID*>(obj);
+		UniqueID& uuid = *reinterpret_cast<UniqueID*>(obj);
 		uuid = UniqueID::FromString(String(value.GetString())).value();
 		HEAVY_ASSERTE(uuid.IsValid(), "UniqueID deserialization failed");
 	}

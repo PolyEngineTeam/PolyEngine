@@ -2,7 +2,7 @@
 
 #include <pe/Defines.hpp>
 
-namespace Poly {
+namespace pe::core::utils {
 
 	class CORE_DLLEXPORT OutputStream : public BaseObject<>, public std::streambuf
 	{

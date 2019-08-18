@@ -3,7 +3,7 @@
 #include <pe/core/math/SimdMath.hpp>
 #include <pe/core/math/BasicMath.hpp>
 
-using namespace Poly;
+using namespace pe::core::math;
 
 #if !DISABLE_SIMD
 

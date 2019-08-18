@@ -7,7 +7,7 @@
 
 #include <pe/core/utils/Logger.hpp>
 
-using namespace Poly;
+using namespace ::pe::core::math;
 
 const Matrix Matrix::IDENTITY = Matrix();
 
@@ -253,7 +253,7 @@ Matrix& Matrix::SetLookAt(const Vector& pos, const Vector& lookAt, const Vector&
 }
 
 //------------------------------------------------------------------------------
-Matrix& Poly::Matrix::SetPerspective(Angle fov, float aspect, float near, float far)
+Matrix& Matrix::SetPerspective(Angle fov, float aspect, float near, float far)
 {
 	float tanHalfFOV = Tan(fov / 2);
 
@@ -281,7 +281,7 @@ Matrix& Poly::Matrix::SetPerspective(Angle fov, float aspect, float near, float 
 }
 
 //------------------------------------------------------------------------------
-Matrix& Poly::Matrix::SetOrthographicZO(float bottom, float top, float left, float right, float near, float far)
+Matrix& Matrix::SetOrthographicZO(float bottom, float top, float left, float right, float near, float far)
 {
 	SetIdentity();
 													// same as orthoRH_ZO: GLM_RIGHT_HANDED && GLM_DEPTH_ZERO_TO_ONE
@@ -304,7 +304,7 @@ Matrix& Poly::Matrix::SetOrthographicZO(float bottom, float top, float left, flo
 }
 
 //------------------------------------------------------------------------------
-Matrix& Poly::Matrix::SetOrthographic(float bottom, float top,  float left, float right, float near, float far)
+Matrix& Matrix::SetOrthographic(float bottom, float top,  float left, float right, float near, float far)
 {
 	SetIdentity();
 													// same as orthoRH_NO: GLM_RIGHT_HANDED && GLM_DEPTH_NEGATIVE_ONE_TO_ONE
@@ -490,16 +490,16 @@ bool Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& scale)
 	if (result)
 	{
 		if (!Cmpf(skew.XY, 0, 1e-2f) || !Cmpf(skew.XZ, 0, 1e-2f) || !Cmpf(skew.YZ, 0, 1e-2f))
-			gConsole.LogError("Non zero skew in Matrix::Decompose, skew = [{}, {}, {}]", skew.XY, skew.XZ, skew.YZ);
+			utils::gConsole.LogError("Non zero skew in Matrix::Decompose, skew = [{}, {}, {}]", skew.XY, skew.XZ, skew.YZ);
 		if (perspPoint != Vector(0, 0, 0))
-			gConsole.LogError("Non zero perspective in Matrix::Decompose, perspective = [{}]", perspPoint);
+			utils::gConsole.LogError("Non zero perspective in Matrix::Decompose, perspective = [{}]", perspPoint);
 	}
 
 	return result;
 }
 
 //------------------------------------------------------------------------------
-bool Poly::Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& scale, MatrixSkew& skew, Vector& perspectivePoint) const
+bool Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& scale, MatrixSkew& skew, Vector& perspectivePoint) const
 {
 	if (m33 == 0)
 	{
@@ -662,7 +662,7 @@ bool Poly::Matrix::Decompose(Vector& translation, Quaternion& rotation, Vector& 
 	return true;
 }
 
-Matrix Poly::Matrix::Lerp(const Matrix & a, const Matrix & b, float t)
+Matrix Matrix::Lerp(const Matrix & a, const Matrix & b, float t)
 {
 	Vector aTrans, bTrans;
 	Vector aScale, bScale;
@@ -671,8 +671,8 @@ Matrix Poly::Matrix::Lerp(const Matrix & a, const Matrix & b, float t)
 	a.Decompose(aTrans, aRot, aScale);
 	b.Decompose(bTrans, bRot, bScale);
 
-	Vector trans = ::Poly::Lerp(aTrans, bTrans, t);
-	Vector scale = ::Poly::Lerp(aScale, bScale, t);
+	Vector trans = ::Lerp(aTrans, bTrans, t);
+	Vector scale = ::Lerp(aScale, bScale, t);
 	Quaternion rot = Quaternion::Slerp(aRot, bRot, t);
 
 	return Matrix::Compose(trans, rot, scale);

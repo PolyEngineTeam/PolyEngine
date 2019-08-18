@@ -2,7 +2,7 @@
 
 #include <pe/core/math/Plane.hpp>
 
-using namespace Poly;
+using namespace ::pe::core::math;
 
 Plane::eObjectLocation Plane::GetAABoxLocation(const AABox& box) const
 {
@@ -34,7 +34,7 @@ Plane::eObjectLocation Plane::GetPointLocation(const Vector& point) const
 }
 
 //------------------------------------------------------------------------------
-namespace Poly {
+namespace pe::core::math {
 	std::ostream & operator<<(std::ostream& stream, const Plane& rect)
 	{
 		return stream << "Plane[Point: " << rect.Point << " Normal: " << rect.Normal << " ]";

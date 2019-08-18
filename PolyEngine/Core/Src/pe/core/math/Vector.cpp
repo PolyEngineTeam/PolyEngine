@@ -4,7 +4,7 @@
 #include <pe/core/math/BasicMath.hpp>
 #include <pe/core/math/SimdMath.hpp>
 
-using namespace Poly;
+using namespace ::pe::core::math;
 
 const Vector Vector::ZERO = Vector(0.0f, 0.0f, 0.0f);
 const Vector Vector::ONE = Vector(1.0f, 1.0f, 1.0f);
@@ -247,7 +247,7 @@ Vector Vector::Min(const Vector& a, const Vector& b)
 #endif
 }
 
-namespace Poly {
+namespace pe::core::math {
 	//------------------------------------------------------------------------------
 	std::ostream& operator<< (std::ostream& stream, const Vector& vec) {
 		return stream << "Vec[ " << vec.X << " " << vec.Y << " " << vec.Z << " ]";

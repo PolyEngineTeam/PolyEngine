@@ -4,7 +4,7 @@
 #include <pe/core/BaseObject.hpp>
 #include <pe/core/rtti/RTTICast.hpp>
 #include <pe/core/rtti/RTTIProperty.hpp>
-#include <UniqueID.hpp>
+#include <pe/core/UniqueID.hpp>
 
 namespace Poly {
 	enum eSerializationType
@@ -14,7 +14,7 @@ namespace Poly {
 		_COUNT
 	};
 
-	class CORE_DLLEXPORT RTTIBase : public BaseObject<> {
+	class CORE_DLLEXPORT RTTIBase : public ::pe::core::BaseObject<> {
 		RTTI_DECLARE_TYPE(Poly::RTTIBase) 
 		{ 
 			RTTI_PROPERTY_AUTONAME(UUID, Poly::RTTI::ePropertyFlag::EDITOR_DEBUG_ONLY);
@@ -23,8 +23,8 @@ namespace Poly {
 		RTTIBase();
 		~RTTIBase() override;
 
-		void SerializeToFile(const String& fileName, eSerializationType type = eSerializationType::JSON);
-		void DeserializeFromFile(const String& fileName, eSerializationType type = eSerializationType::JSON);
+		void SerializeToFile(const ::pe::core::storage::String& fileName, eSerializationType type = eSerializationType::JSON);
+		void DeserializeFromFile(const ::pe::core::storage::String& fileName, eSerializationType type = eSerializationType::JSON);
 
 		virtual void BeforeSerializationCallback() {}
 		virtual void AfterSerializationCallback() {}
@@ -32,26 +32,26 @@ namespace Poly {
 		virtual void BeforeDeserializationCallback() {}
 		virtual void AfterDeserializationCallback() {}
 
-		inline const UniqueID& GetUUID() const { return UUID; }
+		inline const ::pe::core::UniqueID& GetUUID() const { return UUID; }
 	private:
-		UniqueID UUID;
+		::pe::core::UniqueID UUID;
 	};
 
-	class CORE_DLLEXPORT RTTIObjectsManager : public BaseObject<>
+	class CORE_DLLEXPORT RTTIObjectsManager : public ::pe::core::BaseObject<>
 	{
 	public:
 		static RTTIObjectsManager& Get();
 
 		void Register(RTTIBase* obj);
-		void Unregister(const UniqueID& id);
-		void FixMapingAfterDeserialization(RTTIBase* obj, const UniqueID& oldID)
+		void Unregister(const ::pe::core::UniqueID& id);
+		void FixMapingAfterDeserialization(RTTIBase* obj, const ::pe::core::UniqueID& oldID)
 		{
 			Unregister(oldID);
 			Register(obj);
 		}
 
-		RTTIBase* TryGetObjectByID(const UniqueID& id);
-		RTTIBase* GetObjectByID(const UniqueID& id);
+		RTTIBase* TryGetObjectByID(const ::pe::core::UniqueID& id);
+		RTTIBase* GetObjectByID(const ::pe::core::UniqueID& id);
 	private:
 		RTTIObjectsManager() = default;
 		RTTIObjectsManager(const RTTIObjectsManager&) = delete;
@@ -59,6 +59,6 @@ namespace Poly {
 		RTTIObjectsManager operator=(const RTTIObjectsManager&) = delete;
 		RTTIObjectsManager operator=(RTTIObjectsManager&&) = delete;
 
-		std::unordered_map<UniqueID, RTTIBase*> DeserializedObjectsById;
+		std::unordered_map<::pe::core::UniqueID, RTTIBase*> DeserializedObjectsById;
 	};
 }

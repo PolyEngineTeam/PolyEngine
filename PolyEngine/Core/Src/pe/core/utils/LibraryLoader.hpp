@@ -11,7 +11,7 @@
 #error "Unsupported platform :("
 #endif
 
-namespace Poly
+namespace pe::core::utils
 {
 	template<typename Function> class LibraryFunctionHandle;
 	template<typename Function> LibraryFunctionHandle<Function> LoadFunctionFromSharedLibrary(const char* libraryName, const char* functionSymbol);

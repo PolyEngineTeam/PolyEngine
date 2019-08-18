@@ -2,7 +2,7 @@
 
 #include <pe/Defines.hpp>
 
-namespace Poly {
+namespace pe::core::utils {
 
 	/// Immutable iterable class that represents a range of objects
 	/// starting at the begin iterator and finishing at the end iterator.

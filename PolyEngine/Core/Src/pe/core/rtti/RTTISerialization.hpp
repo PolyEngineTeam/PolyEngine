@@ -9,9 +9,9 @@ namespace Poly
 {
 	namespace RTTI
 	{
-		struct CORE_DLLEXPORT UninitializedPointerEntry : public BaseObjectLiteralType<>
+		struct CORE_DLLEXPORT UninitializedPointerEntry : public ::pe::core::BaseObjectLiteralType<>
 		{
-			UniqueID UUID;
+			::pe::core::UniqueID UUID;
 			RTTIBase** Ptr = nullptr;
 			RTTI::Property Property;
 		};

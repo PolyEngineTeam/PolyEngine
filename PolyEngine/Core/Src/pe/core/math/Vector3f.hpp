@@ -3,7 +3,7 @@
 #include <pe/Defines.hpp>
 #include <pe/core/math/Vector.hpp>
 
-namespace Poly
+namespace pe::core::math
 {
 	/// Class representing 3D float vector.
 	class CORE_DLLEXPORT Vector3f final : public BaseObjectLiteralType<>

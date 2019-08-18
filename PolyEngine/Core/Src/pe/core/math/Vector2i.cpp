@@ -3,7 +3,7 @@
 #include <pe/core/math/Vector2i.hpp>
 #include <pe/core/math/Vector2f.hpp>
 
-using namespace Poly;
+using namespace ::pe::core::math;
 
 const Vector2i Vector2i::ZERO = Vector2i(0, 0);
 const Vector2i Vector2i::UNIT_X = Vector2i(1, 0);
@@ -79,7 +79,7 @@ Vector2i::operator Vector2f() const
 }
 
 //------------------------------------------------------------------------------
-namespace Poly
+namespace pe::core::math
 {
 	//------------------------------------------------------------------------------
 	std::ostream& operator<< (std::ostream& stream, const Vector2i& vec)

@@ -6,7 +6,7 @@
 #include <pe/core/math/Vector.hpp>
 #include <pe/core/math/Matrix.hpp>
 
-namespace Poly {
+namespace pe::core::math {
 
 	/// <summary>Represents simple rotation in 3D space.</summary>
 	struct CORE_DLLEXPORT EulerAngles final : public BaseObjectLiteralType<>

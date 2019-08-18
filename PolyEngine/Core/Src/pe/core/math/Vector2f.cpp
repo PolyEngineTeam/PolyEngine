@@ -3,7 +3,7 @@
 #include <pe/core/math/Vector2f.hpp>
 #include <pe/core/math/Vector2i.hpp>
 
-using namespace Poly;
+using namespace ::pe::core::math;
 
 const Vector2f Vector2f::ZERO = Vector2f(0.f, 0.f);
 const Vector2f Vector2f::ONE = Vector2f(1.f, 1.f);
@@ -132,7 +132,7 @@ Vector2f Vector2f::Clamp(const Vector2f& v1, const Vector2f& min, const Vector2f
 	return Vector2f(::Clamp(v1.X, min.X, max.X), ::Clamp(v1.Y, min.Y, max.Y));
 }
 
-namespace Poly
+namespace pe::core::math
 {
 	
 	std::ostream& operator<< (std::ostream& stream, const Vector2f& vec)

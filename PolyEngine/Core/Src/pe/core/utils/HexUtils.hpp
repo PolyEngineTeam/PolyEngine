@@ -2,7 +2,7 @@
 
 #include <pe/Defines.hpp>
 
-namespace Poly {
+namespace pe::core::utils {
 
 	constexpr u8 HexCharToValue(char c)
 	{

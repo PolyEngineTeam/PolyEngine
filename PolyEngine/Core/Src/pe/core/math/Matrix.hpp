@@ -7,7 +7,7 @@
 #include <pe/core/math/Vector.hpp>
 #include <pe/core/math/Angle.hpp>
 
-namespace Poly
+namespace pe::core::math
 {
 	class Quaternion;
 

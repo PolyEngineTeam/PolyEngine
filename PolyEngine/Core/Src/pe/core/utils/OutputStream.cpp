@@ -3,7 +3,7 @@
 #include <pe/core/utils/OutputStream.hpp>
 #include <pe/core/utils/FileIO.hpp>
 
-using namespace Poly;
+using namespace ::pe::core::utils;
 
 std::streamsize OutputStream::xsputn(const char_type* s, std::streamsize n)
 {

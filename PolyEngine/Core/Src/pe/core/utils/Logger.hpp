@@ -5,7 +5,7 @@
 #include <pe/core/utils/OutputStream.hpp>
 #include <pe/core/storage/StringBuilder.hpp>
 
-namespace Poly 
+namespace pe::core::utils 
 {
 	/**
 	*  Enum describing possible levels of logging
@@ -48,22 +48,22 @@ namespace Poly
 		*  - Other arguments are optional, each provided optional argument must
 		* override stream << operator.
 		*  - For each optional argument {} marker should be placed in main message
-		* string similarly to C-style printf.
+		* storage::String similarly to C-style printf.
 		*  - Markers that do not have coresponding arguments will be treated as normal
-		* string.
+		* storage::String.
 		*  - Arguments that do not have coresponding markers will be ignored.
 		*/
 		template <typename... Args>
-		void Log(eLogLevel lvl, const String& fmt, Args&&... args) { LogImpl(lvl, GetEnumName(lvl), fmt, std::forward<Args>(args)...); }
+		void Log(eLogLevel lvl, const storage::String& fmt, Args&&... args) { LogImpl(lvl, GetEnumName(lvl), fmt, std::forward<Args>(args)...); }
 
 		template <typename... Args>
-		void LogDebug(const String& fmt, Args&&... args) { Log(eLogLevel::LVL_DEBUG, fmt, std::forward<Args>(args)...); }
+		void LogDebug(const storage::String& fmt, Args&&... args) { Log(eLogLevel::LVL_DEBUG, fmt, std::forward<Args>(args)...); }
 		template <typename... Args>
-		void LogInfo(const String& fmt, Args&&... args) { Log(eLogLevel::LVL_INFO, fmt, std::forward<Args>(args)...); }
+		void LogInfo(const storage::String& fmt, Args&&... args) { Log(eLogLevel::LVL_INFO, fmt, std::forward<Args>(args)...); }
 		template <typename... Args>
-		void LogWarning(const String& fmt, Args&&... args) { Log(eLogLevel::LVL_WARNING, fmt, std::forward<Args>(args)...); }
+		void LogWarning(const storage::String& fmt, Args&&... args) { Log(eLogLevel::LVL_WARNING, fmt, std::forward<Args>(args)...); }
 		template <typename... Args>
-		void LogError(const String& fmt, Args&&... args) { Log(eLogLevel::LVL_ERROR, fmt, std::forward<Args>(args)...); }
+		void LogError(const storage::String& fmt, Args&&... args) { Log(eLogLevel::LVL_ERROR, fmt, std::forward<Args>(args)...); }
 
 	private:
 
@@ -72,17 +72,17 @@ namespace Poly
 		* IT!
 		*
 		*  @param[in] level Level of logging.
-		*  @param[in] levelStr String with logging level name.
-		*  @param[in] fmt Format string.
+		*  @param[in] levelStr storage::String with logging level name.
+		*  @param[in] fmt Format storage::String.
 		*  @param[in] args Variadic template argument list.
 		*/
 		template <typename... Args>
-		void LogImpl(eLogLevel level, const String& levelStr, const String& fmt, Args&&... args) 
+		void LogImpl(eLogLevel level, const storage::String& levelStr, const storage::String& fmt, Args&&... args) 
 		{
 			if (level >= LOG_LEVEL_FILTER)
 			{
-				static StringBuilder sb;
-				String fullFmt = StringBuilder().AppendFormat("[{}] {}", levelStr, fmt).StealString();
+				static storage::StringBuilder sb;
+				storage::String fullFmt = storage::StringBuilder().AppendFormat("[{}] {}", levelStr, fmt).StealString();
 				sb.AppendFormat(fullFmt.GetCStr(), std::forward<Args>(args)...);
 				*Ostream << sb.StealString() << std::endl;
 				sb.Clear();

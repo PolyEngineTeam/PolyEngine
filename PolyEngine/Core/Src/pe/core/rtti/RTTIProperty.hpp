@@ -8,17 +8,24 @@
 #include <pe/core/rtti/CustomTypeTraits.hpp>
 #include <pe/core/utils/Logger.hpp>
 
-namespace Poly {
-
-	// Fwd declarations
-	class Vector;
-	class Vector2f;
-	class Vector2i;
-	class Quaternion;
-	class Angle;
-	class Color;
-	class Matrix;
+// Fwd declarations
+namespace pe::core
+{
 	class UniqueID;
+
+	namespace math
+	{
+		class Vector;
+		class Vector2f;
+		class Vector2i;
+		class Quaternion;
+		class Angle;
+		class Color;
+		class Matrix;
+	}
+}
+
+namespace Poly {
 	class RTTIBase;
 
 	namespace RTTI {
@@ -83,17 +90,19 @@ namespace Poly {
 		template <> inline eCorePropertyType GetCorePropertyType<u64>() { return eCorePropertyType::UINT64; };
 		template <> inline eCorePropertyType GetCorePropertyType<float>() { return eCorePropertyType::FLOAT; };
 		template <> inline eCorePropertyType GetCorePropertyType<double>() { return eCorePropertyType::DOUBLE; };
-		
-		template <> inline eCorePropertyType GetCorePropertyType<String>() { return eCorePropertyType::STRING; };
 
-		template <> inline eCorePropertyType GetCorePropertyType<Vector>() { return eCorePropertyType::VECTOR; };
-		template <> inline eCorePropertyType GetCorePropertyType<Vector2f>() { return eCorePropertyType::VECTOR_2F; };
-		template <> inline eCorePropertyType GetCorePropertyType<Vector2i>() { return eCorePropertyType::VECTOR_2I; };
-		template <> inline eCorePropertyType GetCorePropertyType<Quaternion>() { return eCorePropertyType::QUATERNION; };
-		template <> inline eCorePropertyType GetCorePropertyType<Angle>() { return eCorePropertyType::ANGLE; };
-		template <> inline eCorePropertyType GetCorePropertyType<Color>() { return eCorePropertyType::COLOR; };
-		template <> inline eCorePropertyType GetCorePropertyType<Matrix>() { return eCorePropertyType::MATRIX; };
-		template <> inline eCorePropertyType GetCorePropertyType<UniqueID>() { return eCorePropertyType::UUID; };
+		template <> inline eCorePropertyType GetCorePropertyType<::pe::core::UniqueID>() { return eCorePropertyType::UUID; };
+		
+		template <> inline eCorePropertyType GetCorePropertyType<::pe::core::storage::String>() { return eCorePropertyType::STRING; };
+
+		template <> inline eCorePropertyType GetCorePropertyType<::pe::core::math::Vector>() { return eCorePropertyType::VECTOR; };
+		template <> inline eCorePropertyType GetCorePropertyType<::pe::core::math::Vector2f>() { return eCorePropertyType::VECTOR_2F; };
+		template <> inline eCorePropertyType GetCorePropertyType<::pe::core::math::Vector2i>() { return eCorePropertyType::VECTOR_2I; };
+		template <> inline eCorePropertyType GetCorePropertyType<::pe::core::math::Quaternion>() { return eCorePropertyType::QUATERNION; };
+		template <> inline eCorePropertyType GetCorePropertyType<::pe::core::math::Angle>() { return eCorePropertyType::ANGLE; };
+		template <> inline eCorePropertyType GetCorePropertyType<::pe::core::math::Color>() { return eCorePropertyType::COLOR; };
+		template <> inline eCorePropertyType GetCorePropertyType<::pe::core::math::Matrix>() { return eCorePropertyType::MATRIX; };
+		
 
 		//-----------------------------------------------------------------------------------------------------------------------
 		enum class ePropertyFlag {
@@ -102,22 +111,22 @@ namespace Poly {
 			DONT_SERIALIZE = BIT(1)
 		};
 
-		struct PropertyImplData : public BaseObjectLiteralType<> {};
+		struct PropertyImplData : public ::pe::core::BaseObjectLiteralType<> {};
 
 		using FactoryFunc_t = std::function<void*(TypeInfo)>;
 
-		struct Property final : public BaseObjectLiteralType<>
+		struct Property final : public ::pe::core::BaseObjectLiteralType<>
 		{
 			Property() = default;
 			Property(TypeInfo typeInfo, size_t offset, const char* name, ePropertyFlag flags, eCorePropertyType coreType, std::shared_ptr<PropertyImplData>&& implData = nullptr, FactoryFunc_t&& factory_func = nullptr)
 				: Type(typeInfo), Offset(offset), Name(name), Flags(flags), CoreType(coreType), ImplData(std::move(implData)), FactoryFunc(std::move(factory_func))
 			{
-				HEAVY_ASSERTE(CoreType != eCorePropertyType::UNHANDLED || EnumFlags<ePropertyFlag>(Flags).IsSet(ePropertyFlag::DONT_SERIALIZE), "Unhandled property type!");
+				HEAVY_ASSERTE(CoreType != eCorePropertyType::UNHANDLED || ::pe::core::utils::EnumFlags<ePropertyFlag>(Flags).IsSet(ePropertyFlag::DONT_SERIALIZE), "Unhandled property type!");
 			}
 			TypeInfo Type;
 			size_t Offset;
-			String Name;
-			EnumFlags<ePropertyFlag> Flags;
+			::pe::core::storage::String Name;
+			::pe::core::utils::EnumFlags<ePropertyFlag> Flags;
 			eCorePropertyType CoreType = eCorePropertyType::CUSTOM;
 			std::shared_ptr<PropertyImplData> ImplData; // @fixme ugly hack for not working Two-phase lookup in MSVC, should use unique_ptr
 			FactoryFunc_t FactoryFunc;
@@ -131,7 +140,7 @@ namespace Poly {
 		// Enum serialization property impl
 		struct EnumPropertyImplData final : public PropertyImplData
 		{
-			const ::Poly::Impl::EnumInfoBase* EnumInfo = nullptr;
+			const ::pe::core::utils::impl::EnumInfoBase* EnumInfo = nullptr;
 		};
 
 		template <typename E> Property CreateEnumPropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t&& factory_func)
@@ -144,7 +153,7 @@ namespace Poly {
 			std::shared_ptr<EnumPropertyImplData> implData = std::make_shared<EnumPropertyImplData>();
 
 			// Register EnumInfo object pointer to property
-			implData->EnumInfo = &::Poly::Impl::EnumInfo<E>::Get();
+			implData->EnumInfo = &::pe::core::utils::impl::EnumInfo<E>::Get();
 			return Property{ TypeInfo::INVALID, offset, name, flags, eCorePropertyType::ENUM, std::move(implData), std::move(factory_func)};
 		}
 
@@ -313,7 +322,7 @@ namespace Poly {
 			void Clear(void* collection) const override 
 			{ 
 				EnumArrayType& col = *reinterpret_cast<EnumArrayType*>(collection);
-				for (EnumType e : IterateEnum<EnumType>())
+				for (EnumType e : ::pe::core::utils::IterateEnum<EnumType>())
 					col[e] = ValueType{};
 			}
 			void* GetKeyTemporaryStorage() const override { return reinterpret_cast<void*>(&TempKey); }
@@ -324,7 +333,7 @@ namespace Poly {
 				UNUSED(collection);
 				if (EnumValues.size() == 0)
 				{
-					for (EnumType e : IterateEnum<EnumType>())
+					for (EnumType e : ::pe::core::utils::IterateEnum<EnumType>())
 						EnumValues.push_back(e);
 				}
 
@@ -472,7 +481,7 @@ namespace Poly {
 						uptr.reset((T*)type.CreateInstance());
 				}
 				else
-					gConsole.LogError("Failed to create instance of type {}. Probably not registered!", typeName);
+					::pe::core::utils::gConsole.LogError("Failed to create instance of type {}. Probably not registered!", typeName);
 
 			}
 
@@ -549,7 +558,7 @@ namespace Poly {
 		}
 
 		//-----------------------------------------------------------------------------------------------------------------------
-		class CORE_DLLEXPORT PropertyManagerBase : public BaseObject<> {
+		class CORE_DLLEXPORT PropertyManagerBase : public ::pe::core::BaseObject<> {
 		public:
 			void AddProperty(Property&& property) { Properties.push_back(std::move(property)); }
 			const std::vector<Property>& GetPropertyList() const { return Properties; };
@@ -621,7 +630,7 @@ namespace Poly::RTTI::Impl {
 	void RegisterProperty(PropertyManagerBase* mgr, size_t offset, const char* var_name, FactoryFunc_t factory_func, ePropertyFlag flags)
 	{
 		ASSERTE((!std::is_pointer<T>::value 
-			|| EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE) 
+			|| ::pe::core::utils::EnumFlags<Poly::RTTI::ePropertyFlag>(flags).IsSet(Poly::RTTI::ePropertyFlag::DONT_SERIALIZE) 
 			|| std::is_base_of<RTTIBase, typename std::remove_pointer<T>::type>::value), "Serializable variable cannot be a pointer of not RTTIBase deriving type.");
 		mgr->AddProperty(Poly::RTTI::CreatePropertyInfo<T>(offset, var_name, flags, factory_func));
 	}

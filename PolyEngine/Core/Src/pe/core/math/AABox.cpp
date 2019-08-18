@@ -41,7 +41,7 @@ AABox AABox::GetIntersectionVolume(const AABox& rhs) const
 		return AABox(Vector::ZERO, Vector::ZERO);
 }
 
-std::array<Vector, 8> Poly::AABox::GetVertices() const
+std::array<Vector, 8> AABox::GetVertices() const
 {
     SILENCE_CLANG_WARNING(-Wmissing-braces, "Everything is ok here.");
 	return std::array<Vector, 8>{
@@ -57,7 +57,7 @@ std::array<Vector, 8> Poly::AABox::GetVertices() const
     UNSILENCE_CLANG_WARNING();
 }
 
-AABox Poly::AABox::GetTransformed(const Matrix& transform) const
+AABox AABox::GetTransformed(const Matrix& transform) const
 {
 	Vector min = transform * Min;
 	Vector max = min;
@@ -87,7 +87,7 @@ AABox Poly::AABox::GetTransformed(const Matrix& transform) const
 	return AABox(min, max - min);
 }
 
-Poly::AABox& Poly::AABox::Expand(const AABox& rhs)
+AABox& AABox::Expand(const AABox& rhs)
 {
 	Vector min = Vector::Min(GetMin(), rhs.GetMin());
 	Vector max = Vector::Max(GetMax(), rhs.GetMax());
@@ -96,7 +96,7 @@ Poly::AABox& Poly::AABox::Expand(const AABox& rhs)
 	return *this;
 }
 
-Poly::AABox& Poly::AABox::Expand(const Vector& rhs)
+AABox& AABox::Expand(const Vector& rhs)
 {
 	Vector min = Vector::Min(GetMin(), rhs);
 	Vector max = Vector::Max(GetMax(), rhs);
@@ -106,7 +106,7 @@ Poly::AABox& Poly::AABox::Expand(const Vector& rhs)
 }
 
 //------------------------------------------------------------------------------
-namespace Poly {
+namespace pe::core::math {
 	std::ostream & operator<<(std::ostream& stream, const AABox& rect)
 	{
 		return stream << "AABox[Pos: " << rect.Min << " Size: " << rect.Size << " ]";

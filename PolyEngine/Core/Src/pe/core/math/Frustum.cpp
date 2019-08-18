@@ -47,7 +47,7 @@ Frustum::eObjectLocation Frustum::GetObjectLocation(const AABox& box, const Matr
 {
 	AABox transformedBox = box.GetTransformed(boxToFrustumTransformation);
 	bool atLeastOneIntersects = false;
-	for (eFrustumPlane type : IterateEnum<eFrustumPlane>())
+	for (eFrustumPlane type : utils::IterateEnum<eFrustumPlane>())
 	{
 		const Plane& plane = Planes[type];
 		Plane::eObjectLocation loc = plane.GetAABoxLocation(transformedBox);
@@ -62,7 +62,7 @@ Frustum::eObjectLocation Frustum::GetObjectLocation(const AABox& box, const Matr
 }
 
 //------------------------------------------------------------------------------
-namespace Poly {
+namespace pe::core::math {
 	std::ostream & operator<<(std::ostream& stream, const Frustum& frust)
 	{
 		return stream << "Frustum[Fov: " << frust.FOV << " Aspect: " << frust.Aspect 

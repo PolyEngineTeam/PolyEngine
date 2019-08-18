@@ -20,8 +20,8 @@ namespace pe::core
 		explicit operator bool() const;
 
 		size_t GetHash() const;
-		String ToString() const;
-		static std::optional<UniqueID> FromString(const String& str);
+		storage::String ToString() const;
+		static std::optional<UniqueID> FromString(const storage::String& str);
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const UniqueID& uuid);
 	private:
 		// 128-bit RFC4122 compliant uuid
@@ -29,4 +29,4 @@ namespace pe::core
 	};
 }
 
-DECLARE_STD_HASHER(Poly::UniqueID)
+DECLARE_STD_HASHER(pe::core::UniqueID)

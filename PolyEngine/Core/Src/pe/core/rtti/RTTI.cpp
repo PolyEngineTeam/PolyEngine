@@ -8,6 +8,8 @@ RTTI_DEFINE_TYPE(Poly::RTTIBase)
 
 using namespace Poly;
 
+using ::pe::core::UniqueID;
+using ::pe::core::storage::String;
 
 Poly::RTTIBase::RTTIBase()
 	: UUID(UniqueID::Generate())
@@ -31,7 +33,7 @@ void RTTIBase::SerializeToFile(const String& fileName, eSerializationType type)
 	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
 	DOMObject.Accept(writer);
 
-	SaveTextFile(fileName, String(buffer.GetString()));
+	::pe::core::utils::SaveTextFile(fileName, String(buffer.GetString()));
 }
 
 void RTTIBase::DeserializeFromFile(const String& fileName, eSerializationType type)
@@ -39,11 +41,11 @@ void RTTIBase::DeserializeFromFile(const String& fileName, eSerializationType ty
 	String json;
 	try
 	{
-		json = LoadTextFile(fileName);
+		json = ::pe::core::utils::LoadTextFile(fileName);
 	}
 	catch (const std::exception&)
 	{
-		gConsole.LogError("No file {} found for {}.", fileName, GetTypeInfo().GetTypeName());
+		::pe::core::utils::gConsole.LogError("No file {} found for {}.", fileName, GetTypeInfo().GetTypeName());
 		return;
 	}
 

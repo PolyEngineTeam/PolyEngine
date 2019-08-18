@@ -19,7 +19,7 @@ BinaryBuffer::~BinaryBuffer()
 		Deallocate(Data);
 }
 
-BinaryBuffer& Poly::BinaryBuffer::operator=(const BinaryBuffer& rhs)
+BinaryBuffer& BinaryBuffer::operator=(const BinaryBuffer& rhs)
 {
 	if(Data)
 		Deallocate(Data);
@@ -29,7 +29,7 @@ BinaryBuffer& Poly::BinaryBuffer::operator=(const BinaryBuffer& rhs)
 	return *this;
 }
 
-BinaryBuffer& Poly::BinaryBuffer::operator=(BinaryBuffer&& rhs)
+BinaryBuffer& BinaryBuffer::operator=(BinaryBuffer&& rhs)
 {
 	if (Data)
 		Deallocate(Data);

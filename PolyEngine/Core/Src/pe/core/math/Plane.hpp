@@ -6,7 +6,7 @@
 #include <pe/core/math/Matrix.hpp>
 #include <pe/core/math/AABox.hpp>
 
-namespace Poly {
+namespace pe::core::math {
 	/// <summary>Class representing axis aligned box.</summary>
 	class CORE_DLLEXPORT Plane final : public BaseObjectLiteralType<>
 	{

@@ -3,7 +3,7 @@
 #include <pe/Defines.hpp>
 #include <pe/core/storage/String.hpp>
 
-namespace Poly {
+namespace pe::core::utils {
 
 	/// <summary> Class that enables creation of arrays that are indexed by enum.</summary>
 	template<typename T, typename E>
@@ -243,15 +243,15 @@ namespace Poly {
 
 	/// <summary>Function that allows foreach call with enum.</summary>
 	template <typename E> EnumIteratorProxy<E> IterateEnum() { return EnumIteratorProxy<E>{}; }
-	template <typename E> typename Poly::EnumIterator<E> begin(const Poly::EnumIteratorProxy<E>& rhs) { return rhs.Begin(); }
-	template <typename E> typename Poly::EnumIterator<E> end(const Poly::EnumIteratorProxy<E>& rhs) { return rhs.End(); }
+	template <typename E> typename ::pe::core::utils::EnumIterator<E> begin(const EnumIteratorProxy<E>& rhs) { return rhs.Begin(); }
+	template <typename E> typename ::pe::core::utils::EnumIterator<E> end(const EnumIteratorProxy<E>& rhs) { return rhs.End(); }
 
 	//------------------------------------------------------------------------------
-	namespace Impl {
+	namespace impl {
 		struct EnumInfoBase : public BaseObjectLiteralType<>
 		{
 			virtual const char* GetEnumName(i64 value) const = 0;
-			virtual i64 GetEnumValue(const String& name) const = 0;
+			virtual i64 GetEnumValue(const storage::String& name) const = 0;
 			virtual size_t GetUnderlyingValueSize() const = 0;
 		};
 
@@ -259,7 +259,7 @@ namespace Poly {
 		struct EnumInfo final : public EnumInfoBase 
 		{
 			const char* GetEnumName(i64 value) const override { UNUSED(value); ASSERTE(false, "This should never be called"); return nullptr; }
-			i64 GetEnumValue(const String& name) const override { UNUSED(name); ASSERTE(false, "This should never be called"); return 0; }
+			i64 GetEnumValue(const storage::String& name) const override { UNUSED(name); ASSERTE(false, "This should never be called"); return 0; }
 			size_t GetUnderlyingValueSize() const override { ASSERTE(false, "This should never be called"); return 0; }
 		};
 	}
@@ -267,33 +267,33 @@ namespace Poly {
 	template<typename T>
 	const char* GetEnumName(T val)
 	{
-		return Impl::EnumInfo<T>::Get().GetEnumName((i64)val);
+		return impl::EnumInfo<T>::Get().GetEnumName((i64)val);
 	}
 }
 
 #define REGISTER_ENUM_NAMES(Type, ...)                                            			\
-template<> struct Poly::Impl::EnumInfo<Type> : public EnumInfoBase														\
+template<> struct ::pe::core::utils::impl::EnumInfo<Type> : public ::pe::core::utils::impl::EnumInfoBase														\
 {                                                    										\
 	STATIC_ASSERTE(std::is_enum<Type>::value, "Enum type is required");\
 	using ValueType = typename std::underlying_type<Type>::type;\
 	STATIC_ASSERTE(std::is_integral<ValueType>::value, "Only enums with integral underlying types are supported");\
 	STATIC_ASSERTE(std::is_signed<ValueType>::value, "Only enums with signed underlying types are supported");\
 	STATIC_ASSERTE(sizeof(ValueType) <= sizeof(i64), "Only enums with max 64 bit underlying types are supported");\
-	static EnumInfo<Type>& Get() { static EnumInfo<Type> instance({__VA_ARGS__}); return instance; } 		\
+	static ::pe::core::utils::impl::EnumInfo<Type>& Get() { static ::pe::core::utils::impl::EnumInfo<Type> instance({__VA_ARGS__}); return instance; } 		\
 	EnumInfo(std::initializer_list<const char*> namesList)	\
 	{\
 		int idx = 0;	\
 		for(const char* name : namesList)	\
 		{	\
 			ValueToNameMap[(Type)idx] = name;\
-			NameToValueMap[String(name)] = (Type)idx;\
+			NameToValueMap[::pe::core::storage::String(name)] = (Type)idx;\
 			++idx;\
 		}	\
 	}\
 	const char* GetEnumName(i64 value) const override { return ValueToNameMap[(Type)value]; }	\
-	i64 GetEnumValue(const String& name) const override { return (i64)NameToValueMap.at(name); }	\
+	i64 GetEnumValue(const ::pe::core::storage::String& name) const override { return (i64)NameToValueMap.at(name); }	\
 	size_t GetUnderlyingValueSize() const override { return sizeof(Type); }\
 	private: \
-		EnumArray<const char*, Type> ValueToNameMap;\
-		std::map<String, Type> NameToValueMap;\
+		::pe::core::utils::EnumArray<const char*, Type> ValueToNameMap;\
+		std::map<::pe::core::storage::String, Type> NameToValueMap;\
 };

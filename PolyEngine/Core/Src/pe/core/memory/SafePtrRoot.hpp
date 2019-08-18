@@ -6,9 +6,9 @@
 namespace pe::core::memory
 {
 	/// <summary>Base class for all objects which require safe pointer</summary>
-	class CORE_DLLEXPORT SafePtrRoot : public RTTIBase
+	class CORE_DLLEXPORT SafePtrRoot : public ::Poly::RTTIBase
 	{
-		RTTI_DECLARE_TYPE_DERIVED(::Poly::SafePtrRoot, ::Poly::RTTIBase) 
+		RTTI_DECLARE_TYPE_DERIVED(::pe::core::memory::SafePtrRoot, ::Poly::RTTIBase) 
 		{ NO_RTTI_PROPERTY(); }
 	public:
 		/// <summary>Registers given pointer</summary>

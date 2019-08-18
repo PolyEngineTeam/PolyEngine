@@ -42,13 +42,13 @@ namespace pe::core::math
 
 		CORE_DLLEXPORT friend std::ostream& operator<< (std::ostream& stream, const Frustum& color);
 
-		const EnumArray<Plane, eFrustumPlane>& GetPlanes() const { return Planes; }
+		const utils::EnumArray<Plane, eFrustumPlane>& GetPlanes() const { return Planes; }
 		const Angle& GetFov() const { return FOV; }
 		const float GetAspect() const { return Aspect; }
 		const float GetZNear() const { return ZNear; }
 		const float GetZFar() const { return ZFar; }
 	private:
-		EnumArray<Plane, eFrustumPlane> Planes;
+		utils::EnumArray<Plane, eFrustumPlane> Planes;
 		Angle FOV;
 		float Aspect;
 		float ZNear;

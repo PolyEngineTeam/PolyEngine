@@ -4,7 +4,7 @@
 #include <pe/core/math/BasicMath.hpp>
 #include <pe/core/math/Vector.hpp>
 
-namespace Poly {
+namespace pe::core::math {
 
 	inline void RandomSetSeed(int value)
 	{

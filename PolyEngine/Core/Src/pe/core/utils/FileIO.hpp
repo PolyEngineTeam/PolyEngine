@@ -5,7 +5,7 @@
 #include <pe/core/memory/BinaryBuffer.hpp>
 #include <pe/core/memory/Allocator.hpp>
 
-namespace Poly {
+namespace pe::core::utils {
 
 	//TODO add creation of folders if necessary
 
@@ -22,15 +22,15 @@ namespace Poly {
 	class FileIOException : public BaseObject<>, public std::exception
 	{
 	public:
-		FileIOException(const String& msg) : Msg(msg) {}
+		FileIOException(const storage::String& msg) : Msg(msg) {}
 		const char* what() const noexcept override { return Msg.GetCStr(); }
 	protected:
-		String Msg;
+		storage::String Msg;
 	};
 	UNSILENCE_MSVC_WARNING()
 
 	//------------------------------------------------------------------------------
-	inline String LoadTextFile(const String& path)
+	inline storage::String LoadTextFile(const storage::String& path)
 	{
 		FILE *f;
 		fopen_s(&f, path.GetCStr(), "rb");
@@ -40,16 +40,16 @@ namespace Poly {
 			long fsize = ftell(f);
 			fseek(f, 0, SEEK_SET);  //same as rewind(f);
 
-			char* chars = AllocateSlab(fsize + 1);
+			char* chars = memory::AllocateSlab(fsize + 1);
 
-			fread(chars, fsize, 1, f); //todo: would be nice if we could read directly into the string
+			fread(chars, fsize, 1, f); //todo: would be nice if we could read directly into the storage::String
 			fclose(f);
 			chars[fsize] = '\0';
 
-			String string(chars);
-			Deallocate(chars);
+			storage::String retString(chars);
+			memory::Deallocate(chars);
 
-			return string;
+			return retString;
 		}
 		else
 		{
@@ -58,7 +58,7 @@ namespace Poly {
 	}
 
 	//------------------------------------------------------------------------------
-	inline void SaveTextFile(const String& path, const String& data)
+	inline void SaveTextFile(const storage::String& path, const storage::String& data)
 	{
 		FILE *f;
 		fopen_s(&f, path.GetCStr(), "w");
@@ -74,7 +74,7 @@ namespace Poly {
 	}
 
 	//------------------------------------------------------------------------------
-	inline bool FileExists(const String& path)
+	inline bool FileExists(const storage::String& path)
 	{
 		FILE *f;
 		fopen_s(&f, path.GetCStr(), "r");
@@ -90,7 +90,7 @@ namespace Poly {
 	}
 
 	//------------------------------------------------------------------------------
-	inline BinaryBuffer* LoadBinaryFile(const String& path)
+	inline memory::BinaryBuffer* LoadBinaryFile(const storage::String& path)
 	{
 		FILE* f;
 		fopen_s(&f, path.GetCStr(), "rb");
@@ -100,7 +100,7 @@ namespace Poly {
 			long fsize = ftell(f);
 			fseek(f, 0, SEEK_SET);
 
-			BinaryBuffer* data = new BinaryBuffer(fsize);
+			memory::BinaryBuffer* data = new memory::BinaryBuffer(fsize);
 			fread(data->GetData(), fsize, 1, f);
 			fclose(f);
 

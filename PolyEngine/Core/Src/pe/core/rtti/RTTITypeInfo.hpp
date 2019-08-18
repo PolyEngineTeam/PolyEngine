@@ -13,7 +13,7 @@ namespace Poly
 		}
 
 		  //--------------------------------------------------------------------------
-		class CORE_DLLEXPORT TypeInfo final : public BaseObjectLiteralType<> {
+		class CORE_DLLEXPORT TypeInfo final : public ::pe::core::BaseObjectLiteralType<> {
 		public:
 			static const TypeInfo INVALID;
 
@@ -61,7 +61,7 @@ namespace Poly
 		namespace Impl {
 
 			//--------------------------------------------------------------------------
-			class CORE_DLLEXPORT TypeManager final : public BaseObjectLiteralType<>{
+			class CORE_DLLEXPORT TypeManager final : public ::pe::core::BaseObjectLiteralType<>{
 			public:
 				static TypeManager& Get();
 
@@ -77,7 +77,7 @@ namespace Poly
 
 						ConstructorsMap.insert(std::make_pair(ti, [](void* memory)
 						{
-							return (void*)ObjectLifetimeHelper::DefaultAllocateAndCreate<T>((T*)memory);
+							return (void*)::pe::core::memory::ObjectLifetimeHelper::DefaultAllocateAndCreate<T>((T*)memory);
 						}));
 						InheritanceListMap[ti] = baseClassList;
 						return ti;

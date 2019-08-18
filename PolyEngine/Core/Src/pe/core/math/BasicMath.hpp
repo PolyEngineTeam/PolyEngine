@@ -29,8 +29,8 @@ namespace pe::core::math
 #ifdef _MSC_VER //WORKAROUND(vuko): MSVC does not support extended constexpr yet
 	constexpr bool Cmpf(const float a, const float b, const float epsilon = CMPF_EPS, const bool handle_infinities = false) {
 		return (handle_infinities && a == b) ||
-			((Poly::abs(a - b) < MIN_FLOAT || Poly::abs(a) == 0.0f || Poly::abs(b) == 0.0f) && (Poly::abs(a - b) <= epsilon)) ||
-			(!(Poly::abs(a - b) < MIN_FLOAT || Poly::abs(a) == 0.0f || Poly::abs(b) == 0.0f) && (Poly::abs(a - b) < (std::max)(Poly::abs(a), Poly::abs(b)) * epsilon));
+			((abs(a - b) < MIN_FLOAT || abs(a) == 0.0f || abs(b) == 0.0f) && (abs(a - b) <= epsilon)) ||
+			(!(abs(a - b) < MIN_FLOAT || abs(a) == 0.0f || abs(b) == 0.0f) && (abs(a - b) < (std::max)(abs(a), abs(b)) * epsilon));
 	}
 #else
 	constexpr bool Cmpf(const float a, const float b, const float epsilon = CMPF_EPS, const bool handle_infinities = false) {
@@ -38,9 +38,9 @@ namespace pe::core::math
 			return true;
 		}
 
-		const float absA = Poly::abs(a);
-		const float absB = Poly::abs(b);
-		const float diff = Poly::abs(a - b);
+		const float absA = abs(a);
+		const float absB = abs(b);
+		const float diff = abs(a - b);
 		if (diff < MIN_FLOAT || absA == 0.0f || absB == 0.0f) {
 			//a or b are extremely close to zero
 			//absolute comparison
@@ -57,7 +57,7 @@ namespace pe::core::math
 	 * Fast version of @see[Cmpf] for when you don't need to handle all the cases
 	 */
 	inline constexpr bool CmpfFast(const float a, const float b, const float epsilon = CMPF_EPS) {
-		return Poly::abs(a - b) <= (epsilon * Poly::max3(1.0f, Poly::abs(a), Poly::abs(b)));
+		return abs(a - b) <= (epsilon * max3(1.0f, abs(a), abs(b)));
 	}
 
 	/**
@@ -65,7 +65,7 @@ namespace pe::core::math
 	 * Uses absolute difference
 	 */
 	inline constexpr bool CmpfNearZero(const float a, const float b, const float epsilon = CMPF_EPS) {
-		return Poly::abs(a - b) < epsilon; //absolute
+		return abs(a - b) < epsilon; //absolute
 	}
 
 	/**
@@ -73,7 +73,7 @@ namespace pe::core::math
 	 * Uses relative difference
 	 */
 	inline constexpr bool CmpfBig(const float a, const float b, const float epsilon = CMPF_EPS) {
-		return Poly::abs(a - b) < epsilon * (std::max)(Poly::abs(a), Poly::abs(b)); //relative
+		return abs(a - b) < epsilon * (std::max)(abs(a), abs(b)); //relative
 	}
 
 	// Range checking functions
@@ -85,7 +85,7 @@ namespace pe::core::math
 
 	// Basic math operations
 	template <typename T> inline constexpr T Abs(T val) {
-		return Poly::abs(val);
+		return abs(val);
 	}
 
 	template <typename T> inline T Clamp(const T& val, const T& min, const T& max) {
