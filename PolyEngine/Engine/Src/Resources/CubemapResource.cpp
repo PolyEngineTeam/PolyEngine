@@ -6,7 +6,7 @@
 
 using namespace Poly;
 
-CubemapResource::CubemapResource(const core::utils::EnumArray<core::storage::String, eCubemapSide> paths)
+CubemapResource::CubemapResource(const core::utils::EnumArray<::pe::core::storage::String, eCubemapSide> paths)
 {
 	ASSERTE(paths.GetSize() == 6, "CubemapResource::CubemapResource parths need to have 6 elements");
 	core::utils::gConsole.LogInfo("CubemapResource::CubemapResource path:{}", paths[eCubemapSide::LEFT]);

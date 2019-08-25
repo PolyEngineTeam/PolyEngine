@@ -11,11 +11,11 @@ using namespace Poly;
 class CmdManagerException : public std::exception
 {
 public:
-	CmdManagerException(const core::storage::String& msg) : Msg((const char*)msg.GetCStr()) {}
+	CmdManagerException(const ::pe::core::storage::String& msg) : Msg((const char*)msg.GetCStr()) {}
 	const char* what() const noexcept override { return Msg.GetCStr(); }
 
 protected:
-	core::storage::String Msg;
+	::pe::core::storage::String Msg;
 };
 
 class CmdManager : public QObject
@@ -35,18 +35,18 @@ public:
 		Ostream = std::make_unique<std::ostream>(CurrentStream.get());
 	}
 
-	void RunCommand(const core::storage::String& cmd);
+	void RunCommand(const ::pe::core::storage::String& cmd);
 
 private:
 	bool Running = false;
 
-	core::storage::String Command;
+	::pe::core::storage::String Command;
 
 	std::unique_ptr<QTimer> Timer = nullptr;
 	FILE* Stream = nullptr;
 	static const size_t MaxBuffer = 256;
 	char Buffer[MaxBuffer];
-	std::unique_ptr<core::utils::OutputStream> CurrentStream;
+	std::unique_ptr<::pe::core::utils::OutputStream> CurrentStream;
 	std::unique_ptr<std::ostream> Ostream;
 
 private slots:

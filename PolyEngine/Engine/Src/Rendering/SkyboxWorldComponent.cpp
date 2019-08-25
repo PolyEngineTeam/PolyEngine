@@ -9,13 +9,13 @@ using namespace Poly;
 RTTI_DEFINE_COMPONENT(::Poly::SkyboxWorldComponent)
 
 SkyboxWorldComponent::SkyboxWorldComponent(const core::storage::String& panoramaPath, const eResourceSource source)
-	: Tint(core::math::Color::WHITE)
+	: Tint(::pe::core::math::Color::WHITE)
 {
 	Init( {panoramaPath}, source);
 }
 
-SkyboxWorldComponent::SkyboxWorldComponent(const std::vector<core::storage::String>& panoramaPaths, const eResourceSource source)
-	: Tint(core::math::Color::WHITE)
+SkyboxWorldComponent::SkyboxWorldComponent(const std::vector<::pe::core::storage::String>& panoramaPaths, const eResourceSource source)
+	: Tint(::pe::core::math::Color::WHITE)
 {
 	Init(panoramaPaths, source);
 }
@@ -26,7 +26,7 @@ SkyboxWorldComponent::~SkyboxWorldComponent()
 		ResourceManager<TextureResource>::Release(p);
 }
 
-void SkyboxWorldComponent::Init(const std::vector<core::storage::String>& panoramaPaths, const eResourceSource source)
+void SkyboxWorldComponent::Init(const std::vector<::pe::core::storage::String>& panoramaPaths, const eResourceSource source)
 {
 	for (auto p : panoramaPaths)
 	{

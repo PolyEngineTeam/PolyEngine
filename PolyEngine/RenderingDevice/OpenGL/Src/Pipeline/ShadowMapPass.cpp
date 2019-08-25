@@ -14,7 +14,7 @@ core::math::Matrix Poly::GetProjectionForShadowMap(const SceneView& sceneView, i
 
 	core::math::Vector lightForward = dirLightCmp->GetTransform().GetGlobalForward();
 	core::math::Vector lightUp = dirLightCmp->GetTransform().GetGlobalUp();
-	core::math::Matrix lightViewFromWorld = core::math::Matrix(core::math::Vector::ZERO, lightForward, lightUp);
+	core::math::Matrix lightViewFromWorld = core::math::Matrix(::pe::core::math::Vector::ZERO, lightForward, lightUp);
 	// @fixme: Transpose is needed to correctly multiply light rotation
 	// (created with look at) with rest of light projection matrices.
 	// Same rotation is created when inverted axes are passed to look at constructor
@@ -42,7 +42,7 @@ core::math::Matrix Poly::GetProjectionForShadowMap(const SceneView& sceneView, i
 	return clipFromWorld;
 }
 
-void Poly::StablizeShadowProjection(core::math::Matrix& clipFromWorld, int shadowmapSize)
+void Poly::StablizeShadowProjection(::pe::core::math::Matrix& clipFromWorld, int shadowmapSize)
 {
 	// based on https://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
 	// Stabilize shadow map: move in texel size increments

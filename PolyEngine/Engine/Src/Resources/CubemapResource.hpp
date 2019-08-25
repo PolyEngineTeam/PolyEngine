@@ -13,7 +13,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT CubemapResource : public ResourceBase
 	{
 	public:
-		CubemapResource(const core::utils::EnumArray<core::storage::String, eCubemapSide> paths);
+		CubemapResource(const ::pe::core::utils::EnumArray<::pe::core::storage::String, eCubemapSide> paths);
 		~CubemapResource() override;
 		
 		float* GetImage(const eCubemapSide side) const { return Images[side]; }
@@ -24,7 +24,7 @@ namespace Poly
 		const ICubemapDeviceProxy* GetTextureProxy() const { return TextureProxy.get(); }
 	private:
 		std::unique_ptr<ICubemapDeviceProxy> TextureProxy;
-		core::utils::EnumArray<float*, eCubemapSide> Images;
+		::pe::core::utils::EnumArray<float*, eCubemapSide> Images;
 		int Width;
 		int Height;
 		int Channels;

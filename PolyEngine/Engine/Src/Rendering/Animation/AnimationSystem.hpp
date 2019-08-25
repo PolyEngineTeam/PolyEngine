@@ -14,9 +14,9 @@ namespace Poly
 	public:
 		virtual void OnUpdate(Scene* scene) override;
 
-		static void StartAnimation(SkeletalAnimationComponent* cmp, const core::storage::String& animationName, const SkeletalAnimationParams& params);
-		static void StopAnimation(SkeletalAnimationComponent* cmp, const core::storage::String&  animationName, bool immediate = false);
-		static bool IsAnimationActive(SkeletalAnimationComponent* cmp, const core::storage::String&  animationName);
+		static void StartAnimation(SkeletalAnimationComponent* cmp, const ::pe::core::storage::String& animationName, const SkeletalAnimationParams& params);
+		static void StopAnimation(SkeletalAnimationComponent* cmp, const ::pe::core::storage::String&  animationName, bool immediate = false);
+		static bool IsAnimationActive(SkeletalAnimationComponent* cmp, const ::pe::core::storage::String&  animationName);
 		static void OnComponentRemoved(SkeletalAnimationComponent* cmp);
 
 	private:

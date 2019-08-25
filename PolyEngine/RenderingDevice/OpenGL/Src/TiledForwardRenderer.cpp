@@ -48,7 +48,7 @@ void RenderTargetPingPong::Deinit()
 
 TiledForwardRenderer::TiledForwardRenderer(GLRenderingDevice* rdi)
 	: IRendererInterface(rdi),
-	LastViewportRect(core::math::Vector2f::ZERO, core::math::Vector2f::ONE),
+	LastViewportRect(::pe::core::math::Vector2f::ZERO, core::math::Vector2f::ONE),
 	ShadowMap(rdi),
 	EnvironmentCapture(rdi),
 	DepthShader("Shaders/depth.vert.glsl", "Shaders/depth.frag.glsl"),
@@ -1443,9 +1443,9 @@ void TiledForwardRenderer::EditorDebug(const SceneView& sceneView)
 			+ debugLinesColors.size() * sizeof(DebugDrawStateWorldComponent::DebugLineColor), NULL, GL_STATIC_DRAW);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, debugLines.size() * sizeof(DebugDrawStateWorldComponent::DebugLine), (GLvoid*)debugLines.data());
 		glBufferSubData(GL_ARRAY_BUFFER, debugLines.size() * sizeof(DebugDrawStateWorldComponent::DebugLine), debugLinesColors.size() * sizeof(DebugDrawStateWorldComponent::DebugLineColor), (GLvoid*)debugLinesColors.data());
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(core::math::Vector3f), NULL);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(::pe::core::math::Vector3f), NULL);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(core::math::Color), (GLvoid*)(debugLines.size() * sizeof(DebugDrawStateWorldComponent::DebugLine)));
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(::pe::core::math::Color), (GLvoid*)(debugLines.size() * sizeof(DebugDrawStateWorldComponent::DebugLine)));
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -1624,9 +1624,9 @@ void TiledForwardRenderer::SetupLightsBufferFromScene()
 
 void TiledForwardRenderer::UpdateLightsBufferFromScene(const SceneView& sceneView)
 {
-	std::vector<core::math::Vector> positions;
-	std::vector<core::math::Vector> color;
-	std::vector<core::math::Vector> rangeIntensity;
+	std::vector<::pe::core::math::Vector> positions;
+	std::vector<::pe::core::math::Vector> color;
+	std::vector<::pe::core::math::Vector> rangeIntensity;
 
 	int lightCounter = 0;
 	for (const PointLightComponent* pointLightCmp : sceneView.PointLightList)
@@ -1634,8 +1634,8 @@ void TiledForwardRenderer::UpdateLightsBufferFromScene(const SceneView& sceneVie
 		const EntityTransform& transform = pointLightCmp->GetTransform();
 
 		positions.push_back(transform.GetGlobalTranslation());
-		color.push_back(core::math::Vector(pointLightCmp->GetColor()));
-		rangeIntensity.push_back(core::math::Vector(pointLightCmp->GetRange(), pointLightCmp->GetIntensity(), 0.0f));
+		color.push_back(::pe::core::math::Vector(pointLightCmp->GetColor()));
+		rangeIntensity.push_back(::pe::core::math::Vector(pointLightCmp->GetRange(), pointLightCmp->GetIntensity(), 0.0f));
 
 		++lightCounter;
 

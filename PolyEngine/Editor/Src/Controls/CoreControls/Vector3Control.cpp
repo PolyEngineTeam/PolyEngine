@@ -24,7 +24,7 @@ Vector3Control::Vector3Control(QWidget* parent) : ControlBase(parent)
 //------------------------------------------------------------------------------
 void Vector3Control::Reset() 
 {
-	ControlBase<core::math::Vector>::Reset();
+	ControlBase<::pe::core::math::Vector>::Reset();
 
 	Field[0]->setText("");
 	Field[1]->setText("");
@@ -37,7 +37,7 @@ void Vector3Control::UpdateControl()
 	if (Field[0]->hasFocus() || Field[1]->hasFocus() || Field[2]->hasFocus())
 		return;
 
-	core::math::Vector* vector = static_cast<core::math::Vector*>(Object);
+	core::math::Vector* vector = static_cast<::pe::core::math::Vector*>(Object);
 	Field[0]->setText(QString::number(vector->X));
 	Field[1]->setText(QString::number(vector->Y));
 	Field[2]->setText(QString::number(vector->Z));
@@ -53,7 +53,7 @@ void Vector3Control::UpdateObject()
 	if (DisableEdit || *Object == val)
 		return;
 
-	ControlCommand<core::math::Vector>* cmd = new ControlCommand<core::math::Vector>(); 
+	ControlCommand<::pe::core::math::Vector>* cmd = new ControlCommand<::pe::core::math::Vector>(); 
 	cmd->Object = Object; 
 	cmd->Control = this; 
 	

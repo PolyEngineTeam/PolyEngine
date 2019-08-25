@@ -10,7 +10,7 @@ RTTI_DEFINE_TYPE(::Poly::Scene);
 Scene::Scene()
 	: EntitiesAllocator(MAX_ENTITY_COUNT), ComponentDel(), EntityDel(), RootEntity(nullptr, EntityDel)
 {
-	memset(ComponentAllocators, 0, sizeof(core::memory::IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
+	memset(ComponentAllocators, 0, sizeof(::pe::core::memory::IterablePoolAllocatorBase*) * MAX_COMPONENTS_COUNT);
 
 	RootEntity.reset(SpawnEntityInternal());
 }

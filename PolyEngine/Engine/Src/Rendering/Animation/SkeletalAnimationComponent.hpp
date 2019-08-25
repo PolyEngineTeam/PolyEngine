@@ -39,9 +39,9 @@ namespace Poly
 
 		~SkeletalAnimationComponent() override;
 
-		std::map<core::storage::String, SkeletalAnimationState> ActiveAnimations;
-		std::map<core::storage::String, core::math::Matrix> ModelFromBone;
-		std::vector<core::memory::SafePtr<Entity>> Bones;
+		std::map<::pe::core::storage::String, SkeletalAnimationState> ActiveAnimations;
+		std::map<::pe::core::storage::String, ::pe::core::math::Matrix> ModelFromBone;
+		std::vector<::pe::core::memory::SafePtr<Entity>> Bones;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, SkeletalAnimationComponent)

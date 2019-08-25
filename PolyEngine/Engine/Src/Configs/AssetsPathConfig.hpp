@@ -17,15 +17,15 @@ namespace Poly
 	public:
 		AssetsPathConfig();
 
-		const core::storage::String& GetAssetsPath(eResourceSource Source) const;
+		const ::pe::core::storage::String& GetAssetsPath(eResourceSource Source) const;
 
-		const core::storage::String& GetGameLibPath() const { return GameLibPath; }
-		const core::storage::String& GetRenderingDeviceLibPath() const { return RenderingDeviceLibPath; }
+		const ::pe::core::storage::String& GetGameLibPath() const { return GameLibPath; }
+		const ::pe::core::storage::String& GetRenderingDeviceLibPath() const { return RenderingDeviceLibPath; }
 	private:
-		core::storage::String EngineAssetsPath;
-		core::storage::String GameAssetsPath;
-		core::storage::String RenderingDeviceLibPath;
-		core::storage::String GameLibPath;
+		::pe::core::storage::String EngineAssetsPath;
+		::pe::core::storage::String GameAssetsPath;
+		::pe::core::storage::String RenderingDeviceLibPath;
+		::pe::core::storage::String GameLibPath;
 	};
 
 	ENGINE_DLLEXPORT extern AssetsPathConfig gAssetsPathConfig;

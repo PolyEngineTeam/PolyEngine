@@ -184,11 +184,6 @@ namespace pe::core::utils {
 		FlagType Flags = 0;
 	};
 
-	//------------------------------------------------------------------------------
-	template <typename E, typename = std::enable_if_t<std::is_enum<E>::value> > constexpr E operator|(E lhs, E rhs) { return static_cast<E>(EnumFlags<E>(lhs) | EnumFlags<E>(rhs)); }
-	template <typename E, typename = std::enable_if_t<std::is_enum<E>::value> > constexpr E operator&(E lhs, E rhs) { return static_cast<E>(EnumFlags<E>(lhs) & EnumFlags<E>(rhs)); }
-	template <typename E, typename = std::enable_if_t<std::is_enum<E>::value> > constexpr E operator~(E rhs) { return static_cast<E>(~EnumFlags<E>(rhs)); }
-
 	/// <summary>Class that enables iteration of enum values.</summary>
 	template <typename E>
 	class EnumIterator final : public BaseObjectLiteralType<>, public std::iterator<std::random_access_iterator_tag, E>
@@ -270,6 +265,11 @@ namespace pe::core::utils {
 		return impl::EnumInfo<T>::Get().GetEnumName((i64)val);
 	}
 }
+
+	//------------------------------------------------------------------------------
+	template <typename E, typename = std::enable_if_t<std::is_enum<E>::value> > constexpr E operator|(E lhs, E rhs) { return static_cast<E>(::pe::core::utils::EnumFlags<E>(lhs) | ::pe::core::utils::EnumFlags<E>(rhs)); }
+	template <typename E, typename = std::enable_if_t<std::is_enum<E>::value> > constexpr E operator&(E lhs, E rhs) { return static_cast<E>(::pe::core::utils::EnumFlags<E>(lhs) & ::pe::core::utils::EnumFlags<E>(rhs)); }
+	template <typename E, typename = std::enable_if_t<std::is_enum<E>::value> > constexpr E operator~(E rhs) { return static_cast<E>(~::pe::core::utils::EnumFlags<E>(rhs)); }
 
 #define REGISTER_ENUM_NAMES(Type, ...)                                            			\
 template<> struct ::pe::core::utils::impl::EnumInfo<Type> : public ::pe::core::utils::impl::EnumInfoBase														\

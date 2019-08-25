@@ -3,8 +3,6 @@
 
 #include <pe/core/storage/StringBuilder.hpp>
 
-using namespace Poly;
-
 struct CustomPrintTextClass
 {
 	friend std::ostream& operator<< (std::ostream& stream, const CustomPrintTextClass& val);
@@ -17,7 +15,7 @@ std::ostream& operator<< (std::ostream& stream, const CustomPrintTextClass& vec)
 
 TEST_CASE("Basic", "[StringBuilder]")
 {
-	core::storage::StringBuilder sb;
+	::pe::core::storage::StringBuilder sb;
 	CHECK(sb.StealString() == "");
 
 	sb.Append('a');
@@ -26,7 +24,7 @@ TEST_CASE("Basic", "[StringBuilder]")
 	sb.Append("abc");
 	CHECK(sb.StealString() == "abc");
 
-	sb.Append(core::storage::String("abc"));
+	sb.Append(::pe::core::storage::String("abc"));
 	CHECK(sb.StealString() == "abc");
 
 	sb.Append(123);

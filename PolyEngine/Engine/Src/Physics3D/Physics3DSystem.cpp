@@ -205,7 +205,7 @@ void Poly::Physics3DSystem::EnsureInit(Scene* world, Entity* entity)
 		switch (rigidbody->Template.RigidbodyType)
 		{
 		case eRigidBody3DType::STATIC:
-			ASSERTE(core::math::Cmpf(rigidbody->Template.Mass, 0), "Can't create static body wit non zero mass");
+			ASSERTE(::pe::core::math::Cmpf(rigidbody->Template.Mass, 0), "Can't create static body wit non zero mass");
 			rigidbody->Template.Inertia = core::math::Vector(0, 0, 0);
 			break;
 

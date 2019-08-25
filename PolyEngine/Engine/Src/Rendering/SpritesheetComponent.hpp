@@ -9,10 +9,10 @@ namespace Poly {
 
 	struct ENGINE_DLLEXPORT SpritesheetSettings
 	{
-		core::storage::String SpritePath;
+		::pe::core::storage::String SpritePath;
 		eResourceSource Source = eResourceSource::GAME;
-		core::math::Vector2f SubImages = core::math::Vector2f(4.0, 4.0);
-		core::math::Color SpriteColor = core::math::Color::WHITE;
+		::pe::core::math::Vector2f SubImages = ::pe::core::math::Vector2f(4.0, 4.0);
+		::pe::core::math::Color SpriteColor = ::pe::core::math::Color::WHITE;
 		float SpriteDepthFade = 0.0f;
 		float StartFrame = 0.0f;
 		float Speed = 1.0f;

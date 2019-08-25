@@ -4,7 +4,7 @@
 
 #include "Controls/ControlBase.hpp"
 
-class StringControl : public ControlBase<core::storage::String>
+class StringControl : public ControlBase<::pe::core::storage::String>
 {
 public:
 	StringControl(QWidget* parent);
@@ -12,7 +12,7 @@ public:
 	void Reset() override;
 	void UpdateControl() override;
 
-	void SetText(core::storage::String text) { Field->setText(text.GetCStr()); }
+	void SetText(::pe::core::storage::String text) { Field->setText(text.GetCStr()); }
 
 private:
 	void UpdateObject();

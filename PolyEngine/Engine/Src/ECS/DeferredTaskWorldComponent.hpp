@@ -26,7 +26,7 @@ namespace Poly
 			//gConsole.LogDebug("New task scheduled: {}", task->GetDescription());
 		}
 	private:
-		core::storage::Queue<DeferredTaskBase*> TasksQueue;
+		::pe::core::storage::Queue<DeferredTaskBase*> TasksQueue;
 		std::vector<ComponentBase*> NewlyCreatedComponents;
 	};
 

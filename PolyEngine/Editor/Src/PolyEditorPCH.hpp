@@ -16,9 +16,6 @@ SILENCE_MSVC_WARNING(4800, "")
 UNSILENCE_MSVC_WARNING()
 UNSILENCE_MSVC_WARNING()
 
-// Temporary namespace usings
-using namespace pe;
-
 // application
 #include "EditorApp.hpp"
 #include "EditorUi.hpp"
@@ -85,3 +82,6 @@ using namespace pe;
 
 // engine
 #include <Engine.hpp>
+
+// Temporary namespace usings
+using namespace pe;

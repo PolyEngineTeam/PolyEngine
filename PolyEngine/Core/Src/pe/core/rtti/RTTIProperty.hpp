@@ -311,7 +311,7 @@ namespace Poly {
 			mutable ValueType TempValue;
 			mutable std::vector<EnumType> EnumValues;
 
-			using EnumArrayType = EnumArray<ValueType, EnumType>;
+			using EnumArrayType = ::pe::core::utils::EnumArray<ValueType, EnumType>;
 
 			EnumArrayPropertyImplData(ePropertyFlag flags, FactoryFunc_t&& factory_func)
 			{
@@ -378,8 +378,8 @@ namespace Poly {
 		template<typename E>
 		struct EnumFlagsPropertyImplData final : public EnumFlagsPropertyImplDataBase
 		{
-			i64 GetValue(const void* collection) const override { return (typename EnumFlags<E>::FlagType)*reinterpret_cast<const EnumFlags<E>*>(collection); }
-			void SetValue(void* collection, i64 value) const override { *reinterpret_cast<EnumFlags<E>*>(collection) = EnumFlags<E>((E)value); }
+			i64 GetValue(const void* collection) const override { return (typename ::pe::core::utils::EnumFlags<E>::FlagType)*reinterpret_cast<const ::pe::core::utils::EnumFlags<E>*>(collection); }
+			void SetValue(void* collection, i64 value) const override { *reinterpret_cast<::pe::core::utils::EnumFlags<E>*>(collection) = ::pe::core::utils::EnumFlags<E>((E)value); }
 		};
 
 		template <typename E> Property CreateEnumFlagsPropertyInfo(size_t offset, const char* name, ePropertyFlag flags, FactoryFunc_t&& factory_func)
@@ -410,21 +410,21 @@ namespace Poly {
 		{
 			const void* GetNextValue(const void* collection, const void* obj) const override
 			{
-				const IterablePoolAllocator<T>& allocator = *reinterpret_cast<const IterablePoolAllocator<T>*>(collection);
+				const ::pe::core::memory::IterablePoolAllocator<T>& allocator = *reinterpret_cast<const ::pe::core::memory::IterablePoolAllocator<T>*>(collection);
 				//@todo(muniu) implement
 				return nullptr;
 			}
 
 			const void* Begin(const void* collection) const override
 			{
-				const IterablePoolAllocator<T>& allocator = *reinterpret_cast<const IterablePoolAllocator<T>*>(collection);
+				const ::pe::core::memory::IterablePoolAllocator<T>& allocator = *reinterpret_cast<const ::pe::core::memory::IterablePoolAllocator<T>*>(collection);
 				//@todo(muniu) implement
 				return nullptr;// allocator.Begin();
 			}
 
 			void* Alloc(void* collection) const override
 			{
-				IterablePoolAllocator<T>& allocator = *reinterpret_cast<IterablePoolAllocator<T>*>(collection);
+				::pe::core::memory::IterablePoolAllocator<T>& allocator = *reinterpret_cast<::pe::core::memory::IterablePoolAllocator<T>*>(collection);
 				return allocator.Alloc();
 			}
 		};

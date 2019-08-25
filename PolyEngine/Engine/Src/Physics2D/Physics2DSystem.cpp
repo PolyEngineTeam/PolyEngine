@@ -45,6 +45,6 @@ void Poly::Physics2DSystem::Physics2DUpdatePhase(Scene* world)
 		localrot.Z = core::math::Angle::FromRadians(rot);
 
 		transform.SetGlobalTranslation(localTrans);
-		transform.SetGlobalRotation(core::math::Quaternion(localrot));
+		transform.SetGlobalRotation(::pe::core::math::Quaternion(localrot));
 	}
 }

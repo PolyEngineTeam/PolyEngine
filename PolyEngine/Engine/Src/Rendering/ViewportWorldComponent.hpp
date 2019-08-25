@@ -21,9 +21,9 @@ namespace Poly
 	public:
 		ViewportWorldComponent();
 
-		ViewportID AddViewport(const core::math::AARect&);
+		ViewportID AddViewport(const ::pe::core::math::AARect&);
 		void RemoveViewport(ViewportID);
-		void ResizeViewport(ViewportID, const core::math::AARect&);
+		void ResizeViewport(ViewportID, const ::pe::core::math::AARect&);
 		void SetCamera(ViewportID, CameraComponent*);
 
 		std::unordered_map<size_t, Viewport>& GetViewports() { return Viewports; }

@@ -45,9 +45,9 @@ void EditorCameraMovementSystem::Update(Scene* scene)
 		{
 			core::math::Vector2i delta = inputCmp->GetMousePosDelta();
 
-			core::math::Quaternion rot = core::math::Quaternion(core::math::Vector::UNIT_Y, core::math::Angle::FromRadians(-delta.X * freeFloatMovementCmp->GetAngularVelocity()));
+			core::math::Quaternion rot = core::math::Quaternion(::pe::core::math::Vector::UNIT_Y, core::math::Angle::FromRadians(-delta.X * freeFloatMovementCmp->GetAngularVelocity()));
 			rot *= trans.GetLocalRotation();
-			rot *= core::math::Quaternion(core::math::Vector::UNIT_X, core::math::Angle::FromRadians(-delta.Y * freeFloatMovementCmp->GetAngularVelocity()));
+			rot *= core::math::Quaternion(::pe::core::math::Vector::UNIT_X, core::math::Angle::FromRadians(-delta.Y * freeFloatMovementCmp->GetAngularVelocity()));
 
 			if (rot != core::math::Quaternion()) {
 				rot.Normalize();

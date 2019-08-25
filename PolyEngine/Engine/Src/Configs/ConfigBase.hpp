@@ -20,15 +20,15 @@ namespace Poly
 	{
 		RTTI_DECLARE_TYPE_DERIVED(ConfigBase, RTTIBase) { NO_RTTI_PROPERTY(); }
 	public:
-		ConfigBase(const core::storage::String& displayName, eResourceSource location);
+		ConfigBase(const ::pe::core::storage::String& displayName, eResourceSource location);
 
 		void Save();
 		void Load();
 		
-		const core::storage::String& GetFileName() const;
+		const ::pe::core::storage::String& GetFileName() const;
 	protected:
-		mutable core::storage::String FileName;
-		core::storage::String DisplayName;
+		mutable ::pe::core::storage::String FileName;
+		::pe::core::storage::String DisplayName;
 		eResourceSource Location;
 	};
 }

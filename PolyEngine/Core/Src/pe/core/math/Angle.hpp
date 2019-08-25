@@ -3,8 +3,7 @@
 #include <pe/Defines.hpp>
 #include <pe/core/math/BasicMath.hpp>
 
-namespace pe {
-namespace core::math {
+namespace pe::core::math {
 
 	/// <summary>
 	/// Wrapper class for angle expressed in any unit of measurement.
@@ -84,10 +83,8 @@ namespace core::math {
 
 }
 
-	// User defined literals for angles
-	constexpr core::math::Angle operator""_rad(long double value) { return core::math::Angle::FromRadians(static_cast<float>(value)); }
-	constexpr core::math::Angle operator""_rad(unsigned long long int value) { return core::math::Angle::FromRadians(static_cast<float>(value)); }
-	constexpr core::math::Angle operator""_deg(long double value) { return core::math::Angle::FromDegrees(static_cast<float>(value)); }
-	constexpr core::math::Angle operator""_deg(unsigned long long int value) { return core::math::Angle::FromDegrees(static_cast<float>(value)); }
-
-}
+// User defined literals for angles
+	constexpr ::pe::core::math::Angle operator""_rad(long double value) { return ::pe::core::math::Angle::FromRadians(static_cast<float>(value)); }
+	constexpr ::pe::core::math::Angle operator""_rad(unsigned long long int value) { return ::pe::core::math::Angle::FromRadians(static_cast<float>(value)); }
+	constexpr ::pe::core::math::Angle operator""_deg(long double value) { return ::pe::core::math::Angle::FromDegrees(static_cast<float>(value)); }
+	constexpr ::pe::core::math::Angle operator""_deg(unsigned long long int value) { return ::pe::core::math::Angle::FromDegrees(static_cast<float>(value)); }

@@ -1,9 +1,5 @@
 #pragma once
 
-// Temporary namespace usings
-namespace pe{}
-using namespace pe;
-
 #include <pe/Defines.hpp>
 #include <ECS/Entity.hpp>
 #include "Managers/Project/InspectorManager.hpp"

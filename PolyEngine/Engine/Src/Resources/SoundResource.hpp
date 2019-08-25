@@ -19,7 +19,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT SoundResource : public ResourceBase
 	{
 	public:
-		SoundResource(const core::storage::String& path);
+		SoundResource(const ::pe::core::storage::String& path);
 		~SoundResource();
 
 		unsigned int GetBufferID() const { return BufferID; }

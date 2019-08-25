@@ -20,6 +20,6 @@ namespace Poly
 		DebugRenderingPass(const GLRenderingDevice* rdi);
 
 	protected:
-		void OnRun(Scene* world, const CameraComponent* camera, const core::math::AARect& rect, ePassType passType) override final;
+		void OnRun(Scene* world, const CameraComponent* camera, const ::pe::core::math::AARect& rect, ePassType passType) override final;
 	};
 }

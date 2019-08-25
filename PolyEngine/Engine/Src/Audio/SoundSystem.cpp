@@ -40,7 +40,7 @@ const core::storage::String& SoundSystem::GetDeviceName()
 }
 
 //---------------------------------------------------------------------------------------------------
-const std::vector<core::storage::String>& SoundSystem::GetAvailableDevices()
+const std::vector<::pe::core::storage::String>& SoundSystem::GetAvailableDevices()
 {
 	return gEngine->GetAudioDevice().AvailableDevices;
 }
@@ -159,7 +159,7 @@ void SoundSystem::DeactivateListener(Scene* /*world*/, Entity* /*entity*/)
 {
 }
 
-void SoundSystem::SetListenerPosition(core::math::Vector vec)
+void SoundSystem::SetListenerPosition(::pe::core::math::Vector vec)
 {
 	alListener3f(AL_POSITION, vec.X, vec.Y, vec.Z);
 }

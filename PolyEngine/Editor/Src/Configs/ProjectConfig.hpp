@@ -25,28 +25,28 @@ public:
 		_COUNT
 	};
 
-	ProjectConfig(const core::storage::String& path, eConfiguration configuration);
+	ProjectConfig(const ::pe::core::storage::String& path, eConfiguration configuration);
 	~ProjectConfig();
 
 	// Path to directory where *.proj.json file is stored
-	const core::storage::String& GetProjectPath() const { return ProjectDirPath; }
+	const ::pe::core::storage::String& GetProjectPath() const { return ProjectDirPath; }
 
 	// project name loaded from *.proj.json
-	const core::storage::String& GetProjectName() const { return ProjectName; }
+	const ::pe::core::storage::String& GetProjectName() const { return ProjectName; }
 
 	// for now these functions always return Debug configuration output files
-	core::storage::String GetGameDllPath() const;
-	core::storage::String GetRenderingDeviceDllPath() const;
+	::pe::core::storage::String GetGameDllPath() const;
+	::pe::core::storage::String GetRenderingDeviceDllPath() const;
 
 private:
-	core::storage::String GetDistDir() const;
+	::pe::core::storage::String GetDistDir() const;
 
 	// project name loaded from *.proj.json
-	core::storage::String ProjectName;
+	::pe::core::storage::String ProjectName;
 	// Path to *.proj.json file
-	core::storage::String ProjectPath;
+	::pe::core::storage::String ProjectPath;
 	// Path to directory where *.proj.json file is stored
-	core::storage::String ProjectDirPath;
+	::pe::core::storage::String ProjectDirPath;
 	// project config configuration
 	eConfiguration ProjectConfiguration;
 

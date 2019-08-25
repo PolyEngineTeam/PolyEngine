@@ -30,8 +30,8 @@ void AnimationSystem::OnUpdate(Scene* scene)
 		if (animCmp->CheckFlags(eComponentBaseFlags::NEWLY_CREATED))
 			CreateBoneStructure(animCmp, meshCmp);
 
-		std::map<core::storage::String, std::vector<std::pair<core::math::Matrix, float>>> boneMatrices;
-		std::vector<core::storage::String> animsToremove;
+		std::map<::pe::core::storage::String, std::vector<std::pair<::pe::core::math::Matrix, float>>> boneMatrices;
+		std::vector<::pe::core::storage::String> animsToremove;
 
 		for (auto& animKV : animCmp->ActiveAnimations)
 		{
@@ -145,7 +145,7 @@ void AnimationSystem::OnUpdate(Scene* scene)
 			{
 				auto&& it = boneMatrices.find(bone->GetName());
 				if(it != boneMatrices.end())
-					bone->GetTransform().SetParentFromModel(core::math::Matrix::Blend(it->second));
+					bone->GetTransform().SetParentFromModel(::pe::core::math::Matrix::Blend(it->second));
 			}
 
 			// Populate ModelFromBone matrices.

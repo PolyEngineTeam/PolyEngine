@@ -122,8 +122,8 @@ const core::math::AABox& Poly::Entity::GetLocalBoundingBox(eEntityBoundingChanne
 {
 	if (BBoxDirty[channel])
 	{
-		LocalBBox[channel].SetMin(core::math::Vector::ZERO);
-		LocalBBox[channel].SetSize(core::math::Vector::ZERO);
+		LocalBBox[channel].SetMin(::pe::core::math::Vector::ZERO);
+		LocalBBox[channel].SetSize(::pe::core::math::Vector::ZERO);
 
 		// Update bounding box by children boxes
 		for (auto& child : Children)

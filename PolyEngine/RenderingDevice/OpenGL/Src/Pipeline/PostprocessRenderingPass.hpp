@@ -20,10 +20,10 @@ namespace Poly
 	class PostprocessRenderingPass : public RenderingPassBase
 	{
 	public:
-		PostprocessRenderingPass(const GLRenderingDevice* rdi, const core::storage::String& fragment);
-		PostprocessRenderingPass(const GLRenderingDevice* rdi, const core::storage::String& geometry, const core::storage::String& fragment);
+		PostprocessRenderingPass(const GLRenderingDevice* rdi, const ::pe::core::storage::String& fragment);
+		PostprocessRenderingPass(const GLRenderingDevice* rdi, const ::pe::core::storage::String& geometry, const ::pe::core::storage::String& fragment);
 	
 	protected:
-		virtual void OnRun(Scene* world, const CameraComponent* camera, const core::math::AARect& rect, ePassType passType) override;
+		virtual void OnRun(Scene* world, const CameraComponent* camera, const ::pe::core::math::AARect& rect, ePassType passType) override;
 	};
 }

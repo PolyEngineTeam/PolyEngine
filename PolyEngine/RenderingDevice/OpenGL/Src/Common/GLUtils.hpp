@@ -37,7 +37,7 @@ namespace Poly {
 	{
 		GLenum err = GL_NO_ERROR;
 		while ((err = glGetError()) != GL_NO_ERROR)
-			core::utils::gConsole.LogError("{}:{} OpenGL error: [{}] {}", file, line, err, OpenGLErrorStr(err));
+			::pe::core::utils::gConsole.LogError("{}:{} OpenGL error: [{}] {}", file, line, err, OpenGLErrorStr(err));
 	}
 
 	inline void CheckFBOStatus(const char* /*file*/, int /*line*/)
@@ -52,7 +52,7 @@ namespace Poly {
 			case GL_FRAMEBUFFER_UNSUPPORTED: text = "GL_FRAMEBUFFER_UNSUPPORTED"; break;
 			default: text = "NO DESCRIPTION"; break;
 			}
-			core::utils::gConsole.LogError("FrameBuffer error, status: [{}] {}", status, text);
+			::pe::core::utils::gConsole.LogError("FrameBuffer error, status: [{}] {}", status, text);
 		}
 	}
 }

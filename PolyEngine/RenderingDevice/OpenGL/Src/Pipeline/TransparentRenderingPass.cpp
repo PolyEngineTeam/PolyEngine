@@ -46,7 +46,7 @@ void TransparentRenderingPass::OnRun(Scene* world, const CameraComponent* camera
 				continue;
 
 			core::math::Matrix objScale;
-			objScale.SetScale(core::math::Vector(1.0f, 1.0f, 1.0f));
+			objScale.SetScale(::pe::core::math::Vector(1.0f, 1.0f, 1.0f));
 
 			core::math::Matrix objTransform; // = transCmp->GetGlobalTransformationMatrix();
 			objTransform.SetTranslation(trans.GetGlobalTranslation() + core::math::Vector(0.0f, 0.0f, 0.5f));

@@ -18,7 +18,7 @@ namespace Util
 {
 	/// <summary>Get vector with minimum/maximum/else (depends on comparison function) values
 	/// on each axis in given set of vectors.</summary>
-	core::math::Vector3f FindExtremum(const std::vector<core::math::Vector3f>& dynarray, std::function< bool(const float, const float) > comp)
+	core::math::Vector3f FindExtremum(const std::vector<::pe::core::math::Vector3f>& dynarray, std::function< bool(const float, const float) > comp)
 	{
 		ASSERTE(dynarray.size() > 0, "SubMesh vertex data is empty.");
 
@@ -108,8 +108,8 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* scene)
 				ScreenSpaceTextComponent* textCmp = ent->GetComponent<ScreenSpaceTextComponent>();
 				textCmp->SetText("");
 				textCmp->GetText().SetFontSize(0);
-				textCmp->GetText().SetFontColor(core::math::Color::WHITE);
-				textCmp->SetScreenPosition(core::math::Vector2i::ZERO);
+				textCmp->GetText().SetFontColor(::pe::core::math::Color::WHITE);
+				textCmp->SetScreenPosition(::pe::core::math::Vector2i::ZERO);
 			}
 			else
 			{
@@ -218,8 +218,8 @@ void Poly::DebugDrawSystem::DrawBox(Scene* scene, const core::math::Vector& mins
 	if (!gDebugConfig.DebugRender)
 		return;
 
-	std::array<core::math::Vector, 8> points;
-	std::array<core::math::Vector, 2> minmaxVector = { {mins, maxs} };
+	std::array<::pe::core::math::Vector, 8> points;
+	std::array<::pe::core::math::Vector, 2> minmaxVector = { {mins, maxs} };
 
 	for (unsigned int i = 0; i < points.size(); ++i)
 	{
@@ -261,8 +261,8 @@ void DebugDrawSystem::DrawBox(Scene* scene, const core::math::Vector& mins, cons
 	if (!gDebugConfig.DebugRender)
 		return;
 
-	std::array<core::math::Vector, 8> points;
-	std::array<core::math::Vector, 2> minmaxVector = { { mins, maxs } };
+	std::array<::pe::core::math::Vector, 8> points;
+	std::array<::pe::core::math::Vector, 2> minmaxVector = { { mins, maxs } };
 
 	for (unsigned int i = 0; i < points.size(); ++i)
 	{
@@ -311,7 +311,7 @@ void Poly::DebugDrawSystem::DrawFrustum(Scene* scene, const core::math::Frustum&
 	core::math::Matrix clipFromWorld = clipFromView * viewFromWorld;
 
 	// Transform frustum corners to DirLightSpace
-	std::vector<core::math::Vector> cornersInNDC{
+	std::vector<::pe::core::math::Vector> cornersInNDC{
 		core::math::Vector(-1.0f,  1.0f, -1.0f), // back  left	top
 		core::math::Vector( 1.0f,  1.0f, -1.0f), // back  right top
 		core::math::Vector(-1.0f, -1.0f, -1.0f), // back  left  bot
@@ -325,8 +325,8 @@ void Poly::DebugDrawSystem::DrawFrustum(Scene* scene, const core::math::Frustum&
 	// Transform frustum corners from NDC to World
 	// could be done in one iteration but we need to do perspective division by W
 	core::math::Matrix worldFromClip = clipFromWorld.GetInversed();
-	std::vector<core::math::Vector> cornersInWS;
-	for (core::math::Vector posInClip : cornersInNDC)
+	std::vector<::pe::core::math::Vector> cornersInWS;
+	for (::pe::core::math::Vector posInClip : cornersInNDC)
 	{
 		core::math::Vector posInWS = worldFromClip * posInClip;
 		posInWS.X /= posInWS.W;
@@ -338,7 +338,7 @@ void Poly::DebugDrawSystem::DrawFrustum(Scene* scene, const core::math::Frustum&
 	DrawFrustumPoints(scene, cornersInWS, color);
 }
 
-void Poly::DebugDrawSystem::DrawFrustumPoints(Scene* scene, const std::vector<core::math::Vector>& cornersInWorld, const core::math::Color color)
+void Poly::DebugDrawSystem::DrawFrustumPoints(Scene* scene, const std::vector<::pe::core::math::Vector>& cornersInWorld, const core::math::Color color)
 {
 	// Vertives should be in order:
 	// back  left  top

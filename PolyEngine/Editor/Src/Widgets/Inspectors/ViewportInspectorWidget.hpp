@@ -1,8 +1,5 @@
 #pragma once
 
-// Temporary namespace usings
-using namespace pe;
-
 #include <pe/Defines.hpp>
 #include <ECS/Scene.hpp>
 
@@ -35,7 +32,7 @@ public:
 	//		IEditor functions
 	// When engine checks if there is iEditor object registered it will obtain assets path from here.
 	// It is important because when we run a game it is executed from engine folder not game folder.
-	core::storage::String GetAssetsPathConfigPath() override;
+	::pe::core::storage::String GetAssetsPathConfigPath() override;
 
 	// This function is similar to iGame::Init function; it is called after game initialization.
 	void OnGameInit() override;

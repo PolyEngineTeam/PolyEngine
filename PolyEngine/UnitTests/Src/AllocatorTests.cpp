@@ -4,10 +4,8 @@
 #include <pe/core/memory/PoolAllocator.hpp>
 #include <pe/core/memory/IterablePoolAllocator.hpp>
 
-using namespace Poly;
-
 TEST_CASE("Pool allocator", "[Allocator]") {
-	PoolAllocator<size_t> allocator(10);
+	::pe::core::memory::PoolAllocator<size_t> allocator(10);
 	REQUIRE(allocator.GetSize() == 0);
 	
 	size_t* a = allocator.Alloc();
@@ -35,7 +33,7 @@ TEST_CASE("Pool allocator", "[Allocator]") {
 TEST_CASE("Iterable pool allocator", "[Allocator]") {
 	
 	// test allocation
-	core::memory::IterablePoolAllocator<size_t> allocator(10);
+	::pe::core::memory::IterablePoolAllocator<size_t> allocator(10);
 	REQUIRE(allocator.GetSize() == 0);
 
 	size_t* a = allocator.Alloc();
@@ -66,13 +64,13 @@ TEST_CASE("Iterable pool allocator", "[Allocator]") {
 	for (size_t val : allocator)
 		REQUIRE(val == ++i);
 
-	core::memory::IterablePoolAllocator<size_t> empty_allocator(10);
+	::pe::core::memory::IterablePoolAllocator<size_t> empty_allocator(10);
 	REQUIRE(empty_allocator.Begin() == empty_allocator.End());
 }
 
 TEST_CASE("Iterable pool allocator corner case test", "[Allocator]") {
 	// test allocation
-	core::memory::IterablePoolAllocator<size_t> allocator(3);
+	::pe::core::memory::IterablePoolAllocator<size_t> allocator(3);
 
 	size_t* a = allocator.Alloc();
 	REQUIRE(a != nullptr);

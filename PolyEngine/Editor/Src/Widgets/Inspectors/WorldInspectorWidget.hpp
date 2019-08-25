@@ -1,8 +1,5 @@
 #pragma once
 
-// Temporary namespace usings
-using namespace pe;
-
 #include <ECS/Scene.hpp>
 #include <ECS/Entity.hpp>
 #include <pe/core/UniqueID.hpp>

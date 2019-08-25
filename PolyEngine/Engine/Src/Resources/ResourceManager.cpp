@@ -29,7 +29,7 @@ core::storage::String Poly::LoadTextFileRelative(eResourceSource Source, const c
 
 	core::storage::String FileContent;
 	core::storage::String AbsolutePath = EvaluateFullResourcePath(Source, path);
-	if (core::utils::FileExists(AbsolutePath))
+	if (::pe::core::utils::FileExists(AbsolutePath))
 	{
 		FileContent = core::utils::LoadTextFile(AbsolutePath);
 		IsNotLoaded = false;

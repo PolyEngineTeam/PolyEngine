@@ -82,7 +82,7 @@ MeshResource::SubMesh::SubMesh(const core::storage::String& path, aiMesh* mesh, 
 
 void Poly::MeshResource::LoadBones(aiNode* node)
 {
-	std::map<core::storage::String, size_t> boneNameToIdx;
+	std::map<::pe::core::storage::String, size_t> boneNameToIdx;
 
 	ModelFromSkeletonRoot = MatFromAiMat(node->mTransformation).Inverse();
 
@@ -106,7 +106,7 @@ void Poly::MeshResource::LoadBones(aiNode* node)
 	}
 }
 
-void MeshResource::PopulateBoneReferences(const std::map<core::storage::String, size_t>& nameToBoneIdx, aiNode* node, const core::math::Matrix& prevBoneFromParent)
+void MeshResource::PopulateBoneReferences(const std::map<::pe::core::storage::String, size_t>& nameToBoneIdx, aiNode* node, const core::math::Matrix& prevBoneFromParent)
 {
 	core::storage::String nodeName = node->mName.C_Str();
 	core::math::Matrix parentFromBone = MatFromAiMat(node->mTransformation);
@@ -151,15 +151,15 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
 	{
 		ASSERTE((i8)mesh->mNumBones <= std::numeric_limits<typename decltype(MeshData.BoneIds)::value_type::ValueType>::max(), "Model has too many bones!");
 
-		std::vector<core::storage::PriorityQueue<std::pair<u8, float>, std::function<bool(const std::pair<u8, float>&, const std::pair<u8, float>&)>>> tmpBonesList;
+		std::vector<::pe::core::storage::PriorityQueue<std::pair<u8, float>, std::function<bool(const std::pair<u8, float>&, const std::pair<u8, float>&)>>> tmpBonesList;
 		tmpBonesList.resize(mesh->mNumVertices, { [](const std::pair<u8, float>& v1, const std::pair<u8, float>& v2) { return v1.second > v2.second; } });
 
-		std::map<core::storage::String, size_t> nameToBoneIdx;
+		std::map<::pe::core::storage::String, size_t> nameToBoneIdx;
 
 		for (u8 boneId = 0; boneId < mesh->mNumBones; ++boneId)
 		{
 			const auto& bone = mesh->mBones[boneId];
-			Bones.push_back(Bone(core::storage::String(bone->mName.C_Str()), MatFromAiMat(bone->mOffsetMatrix)));
+			Bones.push_back(Bone(::pe::core::storage::String(bone->mName.C_Str()), MatFromAiMat(bone->mOffsetMatrix)));
 			
 			if (mesh->HasPositions())
 			{
@@ -337,7 +337,7 @@ Poly::MeshResource::Animation::Animation(aiAnimation * anim)
 	}
 }
 
-Poly::MeshResource::Animation::ChannelLerpData Poly::MeshResource::Animation::GetLerpData(core::storage::String channelName, float time) const
+Poly::MeshResource::Animation::ChannelLerpData Poly::MeshResource::Animation::GetLerpData(::pe::core::storage::String channelName, float time) const
 {
 	ChannelLerpData data;
 

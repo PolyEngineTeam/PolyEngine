@@ -11,13 +11,13 @@ namespace Poly
 	class Viewport : public ::pe::core::BaseObject<>
 	{
 	public:
-		Viewport(const core::math::AARect& rect) : Rect(rect) {}
-		void Resize(const core::math::AARect& rect) {Rect = rect; }
-		core::math::AARect& GetRect() { return Rect; }
+		Viewport(const ::pe::core::math::AARect& rect) : Rect(rect) {}
+		void Resize(const ::pe::core::math::AARect& rect) {Rect = rect; }
+		::pe::core::math::AARect& GetRect() { return Rect; }
 		void SetCamera(CameraComponent* cam) { ASSERTE(cam, "Null camera is not allowed."); Camera = cam; }
 		CameraComponent* GetCamera() const { return Camera; }
 	private:
 		CameraComponent *Camera = nullptr;
-		core::math::AARect Rect;
+		::pe::core::math::AARect Rect;
 	};
 }

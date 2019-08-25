@@ -122,7 +122,7 @@ void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const std::vecto
 	core::math::Matrix clipFromWorld = clipFromView * viewFromWorld;
 
 	// Transform frustum corners to DirLightSpace
-	std::vector<core::math::Vector> cornersInNDC {
+	std::vector<::pe::core::math::Vector> cornersInNDC {
 		core::math::Vector(-1.0f,  1.0f, -1.0f), // back  left	top
 		core::math::Vector( 1.0f,  1.0f, -1.0f), // back  right top
 		core::math::Vector(-1.0f, -1.0f, -1.0f), // back  left  bot
@@ -136,8 +136,8 @@ void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const std::vecto
 	// Transform frustum corners from NDC to World
 	// could be done in one iteration but we need to do perspective division by W
 	core::math::Matrix worldFromClip = clipFromWorld.GetInversed();
-	std::vector<core::math::Vector> cornersInWS;
-	for (core::math::Vector posInClip : cornersInNDC)
+	std::vector<::pe::core::math::Vector> cornersInWS;
+	for (::pe::core::math::Vector posInClip : cornersInNDC)
 	{
 		core::math::Vector posInWS = worldFromClip * posInClip;
 		posInWS.X /= posInWS.W;
@@ -152,7 +152,7 @@ void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const std::vecto
 	// Calculate the centroid of the view frustum slice
 	core::math::Vector lightForward = dirLight->GetTransform().GetGlobalForward();
 	core::math::Vector lightUp = dirLight->GetTransform().GetGlobalUp();
-	core::math::Matrix lightFromWorld = core::math::Matrix(core::math::Vector::ZERO, lightForward, lightUp);
+	core::math::Matrix lightFromWorld = core::math::Matrix(::pe::core::math::Vector::ZERO, lightForward, lightUp);
 	// @fixme: Transpose is needed to correctly multiply light rotation
 	// (created with look at) with rest of light projection matrices.
 	// Same rotation is created when inverted axes are passed to look at constructor
@@ -160,14 +160,14 @@ void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const std::vecto
 	core::math::Matrix worldFromLight = lightFromWorld.GetInversed();
 
 	core::math::Vector frustumCenterInLS;
-	for (core::math::Vector posInWS : cornersInWS)
+	for (::pe::core::math::Vector posInWS : cornersInWS)
 	{
 		frustumCenterInLS += lightFromWorld * posInWS;
 	}
 	frustumCenterInLS *= 1.0f / 8.0f;
 
 	float maxRadiusInLS = 0.0f;
-	for (core::math::Vector posInWS : cornersInWS)
+	for (::pe::core::math::Vector posInWS : cornersInWS)
 	{
 		float radius = (lightFromWorld * cornersInWS[0] - lightFromWorld * posInWS).Length();
 		maxRadiusInLS = std::max(maxRadiusInLS, radius);
@@ -200,11 +200,11 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const core::math
 		meshCmps.push_back(meshCmp);
 	}
 	// transform meshes AABB to DirLightSpace
-	std::vector<std::tuple<core::math::AABox, MeshRenderingComponent*>> boxMeshes;
+	std::vector<std::tuple<::pe::core::math::AABox, MeshRenderingComponent*>> boxMeshes;
 	for (const auto meshCmp : meshCmps)
 	{
 		const core::math::Matrix& dirLightFromModel = dirLightFromWorld * meshCmp->GetTransform().GetWorldFromModel();
-		std::optional<core::math::AABox> boxWSOptional = meshCmp->GetBoundingBox(eEntityBoundingChannel::RENDERING);
+		std::optional<::pe::core::math::AABox> boxWSOptional = meshCmp->GetBoundingBox(eEntityBoundingChannel::RENDERING);
 		if (boxWSOptional.has_value())
 		{
 			core::math::AABox boxWS = boxWSOptional.value();
@@ -228,7 +228,7 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const core::math
 	if (maxZ > frustumAABBInLS.GetMax().Z)
 	{
 		core::math::Vector center = frustumAABBInLS.GetCenter(); // X and Z should be neutral so AABB expanded only on Y axis
-		frustumAABBInLS.Expand(core::math::Vector(center.X, center.Y, maxZ));
+		frustumAABBInLS.Expand(::pe::core::math::Vector(center.X, center.Y, maxZ));
 	}
 
 	if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawShadowCastersBounds)

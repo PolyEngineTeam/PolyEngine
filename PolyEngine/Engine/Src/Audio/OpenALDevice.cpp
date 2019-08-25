@@ -15,7 +15,7 @@ OpenALDevice::OpenALDevice()
 		int i = 0;
 		while (true)
 		{
-			AvailableDevices.push_back(core::storage::String(&devices[i]));
+			AvailableDevices.push_back(::pe::core::storage::String(&devices[i]));
 
 			while (devices[i] != 0) ++i;
 			if (devices[i] == 0 && devices[i + 1] == 0) break;
@@ -24,7 +24,7 @@ OpenALDevice::OpenALDevice()
 	}
 	else
 	{
-		AvailableDevices.push_back(core::storage::String(alcGetString(Device, ALC_DEVICE_SPECIFIER)));
+		AvailableDevices.push_back(::pe::core::storage::String(alcGetString(Device, ALC_DEVICE_SPECIFIER)));
 	}
 }
 

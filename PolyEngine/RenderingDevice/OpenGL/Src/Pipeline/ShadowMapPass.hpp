@@ -11,9 +11,9 @@ namespace Poly
 	class GLShaderProgram;
 	struct SceneView;
 
-	core::math::Matrix GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize);
+	::pe::core::math::Matrix GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize);
 
-	void StablizeShadowProjection(core::math::Matrix& clipFromWorld, int shadowmapSize);
+	void StablizeShadowProjection(::pe::core::math::Matrix& clipFromWorld, int shadowmapSize);
 	
 	int GetShadowMapSize(const eShadowMapSize shadowMapSize);
 

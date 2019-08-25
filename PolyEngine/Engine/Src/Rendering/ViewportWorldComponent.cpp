@@ -8,7 +8,7 @@ RTTI_DEFINE_COMPONENT(::Poly::ViewportWorldComponent)
 
 ViewportWorldComponent::ViewportWorldComponent()
 {
-	AddViewport(core::math::AARect(core::math::Vector2f(0, 0), core::math::Vector2f(1, 1)));
+	AddViewport(::pe::core::math::AARect(::pe::core::math::Vector2f(0, 0), core::math::Vector2f(1, 1)));
 }
 
 ViewportID ViewportWorldComponent::AddViewport(const core::math::AARect& rect)

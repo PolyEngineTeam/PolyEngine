@@ -40,12 +40,12 @@ public:
 		SetDisableEdit(false);
 	}
 
-	virtual void SetName(core::storage::String name) override
+	virtual void SetName(::pe::core::storage::String name) override
 	{
 		Label->setText(name.GetCStr());
 	}
 
-	virtual void SetToolTip(core::storage::String type) override
+	virtual void SetToolTip(::pe::core::storage::String type) override
 	{
 		setToolTip(type.GetCStr());
 	}

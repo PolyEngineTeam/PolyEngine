@@ -24,9 +24,9 @@ namespace Poly
 		/// If this flag is set during Trigger3DComponent::EnsureInit() that collider will be immidiately registered.
 		bool Registered = true;
 		/// Determines in which collision group is currently collider.
-		core::utils::EnumFlags<eCollisionGroup> CollisionGroup = eCollisionGroup::TRIGGER;
+		::pe::core::utils::EnumFlags<eCollisionGroup> CollisionGroup = eCollisionGroup::TRIGGER;
 		/// Determines whith which collision groups this collider will collide.
-		core::utils::EnumFlags<eCollisionGroup> CollisionMask = eCollisionGroup::TRIGGER;
+		::pe::core::utils::EnumFlags<eCollisionGroup> CollisionMask = eCollisionGroup::TRIGGER;
 	};
 
 
@@ -46,8 +46,8 @@ namespace Poly
 		friend class Rigidbody3DComponent;
 		friend void Physics3DSystem::Physics3DUpdatePhase(Scene* world);
 		friend void Physics3DSystem::EnsureInit(Scene* world, Entity* entity);
-		friend void Physics3DSystem::SetCollisionGroup(Scene* world, Entity* entity, core::utils::EnumFlags<eCollisionGroup> group);
-		friend void Physics3DSystem::SetCollisionMask(Scene* world, Entity* entity, core::utils::EnumFlags<eCollisionGroup> mask);
+		friend void Physics3DSystem::SetCollisionGroup(Scene* world, Entity* entity, ::pe::core::utils::EnumFlags<eCollisionGroup> group);
+		friend void Physics3DSystem::SetCollisionMask(Scene* world, Entity* entity, ::pe::core::utils::EnumFlags<eCollisionGroup> mask);
 		friend void Physics3DSystem::RegisterComponent(Scene* world, Entity* entity, bool enablePhysics);
 		friend void Physics3DSystem::UnregisterComponent(Scene * world, Entity* entity);
 
@@ -108,13 +108,13 @@ namespace Poly
 		/// @return collision group of this collider
 		/// @see Collider3DComponent::GetCollisionMask
 		/// @see Physics3DSystem::SetCollisionGroup
-		core::utils::EnumFlags<eCollisionGroup> GetCollisionGroup() const { return Template.CollisionGroup; }
+		::pe::core::utils::EnumFlags<eCollisionGroup> GetCollisionGroup() const { return Template.CollisionGroup; }
 
 		/// Collision mask determines whith which collision groups this collider will collide.
 		/// @return collision mask of this collider
 		/// @see Collider3DComponent::GetCollisionGroup
 		/// @see Physics3DSystem::SetCollisionMask
-		core::utils::EnumFlags<eCollisionGroup> GetCollisionMask() const { return Template.CollisionMask; }
+		::pe::core::utils::EnumFlags<eCollisionGroup> GetCollisionMask() const { return Template.CollisionMask; }
 
 	private:
 		/// This method updates Bullet collider position from entity transform.

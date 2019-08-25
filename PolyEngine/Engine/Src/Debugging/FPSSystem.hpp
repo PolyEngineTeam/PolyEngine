@@ -13,7 +13,7 @@ namespace Poly
 			int FPS;
 			double ElapsedTime;
 			int LastFPS;
-			core::storage::String DisplayedFPSText;
+			::pe::core::storage::String DisplayedFPSText;
 		};
 
 		float ENGINE_DLLEXPORT GetFPS(Scene* world);

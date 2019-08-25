@@ -33,20 +33,20 @@ namespace Poly
 		struct IOBind
 		{
 			RenderingTargetBase* Target = nullptr;
-			core::storage::String IOName;
+			::pe::core::storage::String IOName;
 		};
 
 	public:
-		RenderingPassBase(const GLRenderingDevice* RDI, const core::storage::String& vertex, const core::storage::String& fragment);
-		RenderingPassBase(const GLRenderingDevice* RDI, const core::storage::String& vertex, const core::storage::String& geometry, const core::storage::String& fragment);
+		RenderingPassBase(const GLRenderingDevice* RDI, const ::pe::core::storage::String& vertex, const ::pe::core::storage::String& fragment);
+		RenderingPassBase(const GLRenderingDevice* RDI, const ::pe::core::storage::String& vertex, const ::pe::core::storage::String& geometry, const ::pe::core::storage::String& fragment);
 
 		virtual ~RenderingPassBase();
 
-		void Run(Scene* world, const CameraComponent* camera, const core::math::AARect& rect, ePassType passType = ePassType::BY_MATERIAL);
+		void Run(Scene* world, const CameraComponent* camera, const ::pe::core::math::AARect& rect, ePassType passType = ePassType::BY_MATERIAL);
 		void Finalize();
 
-		void BindOutput(const core::storage::String& outputName, RenderingTargetBase* target);
-		void BindInput(const core::storage::String& inputName, RenderingTargetBase* target);
+		void BindOutput(const ::pe::core::storage::String& outputName, RenderingTargetBase* target);
+		void BindInput(const ::pe::core::storage::String& inputName, RenderingTargetBase* target);
 
 		void DebugDraw();
 
@@ -54,20 +54,20 @@ namespace Poly
 	
 	protected:
 
-		virtual void OnRun(Scene* world, const CameraComponent* camera, const core::math::AARect& rect, ePassType passType) = 0;
+		virtual void OnRun(Scene* world, const CameraComponent* camera, const ::pe::core::math::AARect& rect, ePassType passType) = 0;
 
-		RenderingTargetBase* GetInputTarget(const core::storage::String& name);
-		RenderingTargetBase* GetOutputTarget(const core::storage::String& name);
+		RenderingTargetBase* GetInputTarget(const ::pe::core::storage::String& name);
+		RenderingTargetBase* GetOutputTarget(const ::pe::core::storage::String& name);
 
-		const std::map<core::storage::String, RenderingTargetBase*>& GetInputs() const { return Inputs; }
-		const std::map<core::storage::String, RenderingTargetBase*>& GetOutputs() const { return Outputs; }
+		const std::map<::pe::core::storage::String, RenderingTargetBase*>& GetInputs() const { return Inputs; }
+		const std::map<::pe::core::storage::String, RenderingTargetBase*>& GetOutputs() const { return Outputs; }
 		GLShaderProgram& GetProgram() { return Program; }
 
 		const GLRenderingDevice* RDI;
 
 	private:
-		std::map<core::storage::String, RenderingTargetBase*> Inputs;
-		std::map<core::storage::String, RenderingTargetBase*> Outputs;
+		std::map<::pe::core::storage::String, RenderingTargetBase*> Inputs;
+		std::map<::pe::core::storage::String, RenderingTargetBase*> Outputs;
 
 		GLShaderProgram Program;
 		GLuint FBO = 0;
@@ -121,7 +121,7 @@ namespace Poly
 	class Texture2DInputTarget : public RenderingTargetBase
 	{
 	public:
-		Texture2DInputTarget(const core::storage::String& path);
+		Texture2DInputTarget(const ::pe::core::storage::String& path);
 		~Texture2DInputTarget();
 
 		GLuint GetTextureID() const;

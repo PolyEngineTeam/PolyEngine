@@ -1,9 +1,5 @@
 #pragma once
 
-// Temporary namespace usings
-namespace pe {}
-using namespace pe;
-
 #include <ECS/Entity.hpp>
 #include <pe/Defines.hpp>
 

@@ -1,8 +1,5 @@
 #pragma once
 
-// Temporary namespace usings
-using namespace pe;
-
 #include <QFormLayout>
 #include <QTreeView>
 #include <QFileSystemModel>

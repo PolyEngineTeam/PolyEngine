@@ -79,25 +79,25 @@ void TransformControl::UpdateControl()
 	if (!(TranslationField[0]->hasFocus() || TranslationField[1]->hasFocus() || TranslationField[2]->hasFocus()))
 	{
 		core::math::Vector translation = transform->GetLocalTranslation();
-		TranslationField[0]->setText(QString(core::storage::String::From(translation.X).GetCStr()));
-		TranslationField[1]->setText(QString(core::storage::String::From(translation.Y).GetCStr()));
-		TranslationField[2]->setText(QString(core::storage::String::From(translation.Z).GetCStr()));
+		TranslationField[0]->setText(QString(::pe::core::storage::String::From(translation.X).GetCStr()));
+		TranslationField[1]->setText(QString(::pe::core::storage::String::From(translation.Y).GetCStr()));
+		TranslationField[2]->setText(QString(::pe::core::storage::String::From(translation.Z).GetCStr()));
 	}
 
 	if (!(RotationField[0]->hasFocus() || RotationField[1]->hasFocus() || RotationField[2]->hasFocus()))
 	{
 		core::math::EulerAngles rotation = transform->GetLocalRotation().ToEulerAngles();
-		RotationField[0]->setText(QString(core::storage::String::From(rotation.X.AsDegrees()).GetCStr()));
-		RotationField[1]->setText(QString(core::storage::String::From(rotation.Y.AsDegrees()).GetCStr()));
-		RotationField[2]->setText(QString(core::storage::String::From(rotation.Z.AsDegrees()).GetCStr()));
+		RotationField[0]->setText(QString(::pe::core::storage::String::From(rotation.X.AsDegrees()).GetCStr()));
+		RotationField[1]->setText(QString(::pe::core::storage::String::From(rotation.Y.AsDegrees()).GetCStr()));
+		RotationField[2]->setText(QString(::pe::core::storage::String::From(rotation.Z.AsDegrees()).GetCStr()));
 	}
 
 	if (!(ScaleField[0]->hasFocus() || ScaleField[1]->hasFocus() || ScaleField[2]->hasFocus()))
 	{
 		core::math::Vector scale = transform->GetLocalScale();
-		ScaleField[0]->setText(QString(core::storage::String::From(scale.X).GetCStr()));
-		ScaleField[1]->setText(QString(core::storage::String::From(scale.Y).GetCStr()));
-		ScaleField[2]->setText(QString(core::storage::String::From(scale.Z).GetCStr()));
+		ScaleField[0]->setText(QString(::pe::core::storage::String::From(scale.X).GetCStr()));
+		ScaleField[1]->setText(QString(::pe::core::storage::String::From(scale.Y).GetCStr()));
+		ScaleField[2]->setText(QString(::pe::core::storage::String::From(scale.Z).GetCStr()));
 	}
 }
 
@@ -120,7 +120,7 @@ void TransformControl::UodateRotation()
 	rotation.X = core::math::Angle::FromDegrees(RotationField[0]->text().toFloat());
 	rotation.Y = core::math::Angle::FromDegrees(RotationField[1]->text().toFloat());
 	rotation.Z = core::math::Angle::FromDegrees(RotationField[2]->text().toFloat());
-	transform->SetLocalRotation(core::math::Quaternion(rotation));
+	transform->SetLocalRotation(::pe::core::math::Quaternion(rotation));
 }
 
 void TransformControl::UodateScale()

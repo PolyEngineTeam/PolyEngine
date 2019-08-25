@@ -68,8 +68,8 @@ namespace Poly
 
 		struct InputOutputBind
 		{
-			InputOutputBind(const core::storage::String& name, RenderingTargetBase* target) : Name(name), Target(target) {}
-			core::storage::String Name;
+			InputOutputBind(const ::pe::core::storage::String& name, RenderingTargetBase* target) : Name(name), Target(target) {}
+			::pe::core::storage::String Name;
 			RenderingTargetBase* Target;
 		};
 
@@ -108,7 +108,7 @@ namespace Poly
 
 		void FillSceneView(SceneView& sceneView);
 		void CullDirLightQueue(SceneView& sceneView, const std::vector<const MeshRenderingComponent*>& meshCmp);
-		void CullShadowCasters(SceneView& sceneView, const core::math::Matrix& dirLightFromWorld, const core::math::Matrix& worldFromDirLight, core::math::AABox& frustumAABBInLS);
+		void CullShadowCasters(SceneView& sceneView, const ::pe::core::math::Matrix& dirLightFromWorld, const ::pe::core::math::Matrix& worldFromDirLight, ::pe::core::math::AABox& frustumAABBInLS);
 		void EndFrame();
 
 		void CleanUpResources();
@@ -123,7 +123,7 @@ namespace Poly
 			const std::initializer_list<InputOutputBind>& inputs,
 			const std::initializer_list<InputOutputBind>& outputs, Args_t&&... args);
 
-		void RegisterPostprocessPass(ePostprocessRenderPassType type, const core::storage::String& fragShaderName,
+		void RegisterPostprocessPass(ePostprocessRenderPassType type, const ::pe::core::storage::String& fragShaderName,
 			const std::initializer_list<InputOutputBind>& inputs = {},
 			const std::initializer_list<InputOutputBind>& outputs = {});
 
@@ -133,14 +133,14 @@ namespace Poly
 		SDL_Window* Window;
 		SDL_GLContext Context;
 		ScreenSize ScreenDim;
-		std::vector<core::storage::String> OpenGLExtensions;
+		std::vector<::pe::core::storage::String> OpenGLExtensions;
 
 		eRendererType RendererType;
 		IRendererInterface* Renderer;
 
-		core::utils::EnumArray<std::unique_ptr<RenderingPassBase>, eGeometryRenderPassType> GeometryRenderingPasses;
-		core::utils::EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
-		core::utils::EnumArray<std::unique_ptr<RenderingTargetBase>, eRenderTargetId> RenderingTargets;
+		::pe::core::utils::EnumArray<std::unique_ptr<RenderingPassBase>, eGeometryRenderPassType> GeometryRenderingPasses;
+		::pe::core::utils::EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
+		::pe::core::utils::EnumArray<std::unique_ptr<RenderingTargetBase>, eRenderTargetId> RenderingTargets;
 	};
 
 	extern GLRenderingDevice* gRenderingDevice;

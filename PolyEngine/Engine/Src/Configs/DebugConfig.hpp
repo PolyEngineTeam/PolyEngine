@@ -31,7 +31,7 @@ namespace Poly
 		}
 
 		// Debug rendering
-		core::utils::EnumFlags<eDebugDrawPreset> DebugDrawPresets;
+		::pe::core::utils::EnumFlags<eDebugDrawPreset> DebugDrawPresets;
 		bool DebugRender = true;
 		// Rendering
 		bool DisplayFPS = true;

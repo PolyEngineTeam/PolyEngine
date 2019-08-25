@@ -29,7 +29,7 @@ Poly::MeshRenderingComponent::~MeshRenderingComponent()
 		ResourceManager<MeshResource>::Release(Mesh);
 }
 
-std::optional<core::math::AABox> Poly::MeshRenderingComponent::GetBoundingBox(eEntityBoundingChannel channel) const
+std::optional<::pe::core::math::AABox> Poly::MeshRenderingComponent::GetBoundingBox(eEntityBoundingChannel channel) const
 {
 	if (channel != eEntityBoundingChannel::RENDERING || !Mesh)
 		return {};

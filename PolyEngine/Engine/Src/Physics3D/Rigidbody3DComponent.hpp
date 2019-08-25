@@ -29,18 +29,18 @@ namespace Poly
 	{
 		float Mass = 0;
 		/// If inertia isn't set then it will be computed from mass and shape
-		std::optional<core::math::Vector> Inertia;
-		std::optional<core::math::Vector> Gravity;
+		std::optional<::pe::core::math::Vector> Inertia;
+		std::optional<::pe::core::math::Vector> Gravity;
 		/// Restitution is in fact a bounciness.
 		float Restitution = 0.5f;
 		float Friction = 0.5f;
 		float RollingFriction = 0.5f;
 		float LinearDamping = 0.5f;
 		float AngularDamping = 0.5f;
-		core::math::Vector LinearFactor = core::math::Vector(1.f, 1.f, 1.f);
-		core::math::Vector AngularFactor = core::math::Vector(1.f, 1.f, 1.f);
-		std::optional<core::math::Vector> LinearVelocity = core::math::Vector(0.f, 0.f, 0.f);
-		std::optional<core::math::Vector> AngularVelocity = core::math::Vector(0.f, 0.f, 0.f);
+		::pe::core::math::Vector LinearFactor = ::pe::core::math::Vector(1.f, 1.f, 1.f);
+		::pe::core::math::Vector AngularFactor = ::pe::core::math::Vector(1.f, 1.f, 1.f);
+		std::optional<::pe::core::math::Vector> LinearVelocity = ::pe::core::math::Vector(0.f, 0.f, 0.f);
+		std::optional<::pe::core::math::Vector> AngularVelocity = ::pe::core::math::Vector(0.f, 0.f, 0.f);
 
 		/// Due to optimalization rigidbodies are deactivated after some time of idleness.
 		bool Deactivatable = false;
@@ -86,35 +86,35 @@ namespace Poly
 		// setters
 
 
-		void SetMassProps(float mass, const core::math::Vector& inertia);
+		void SetMassProps(float mass, const ::pe::core::math::Vector& inertia);
 		void SetRestitution(float restitution);
 		void SetFriction(float friction);
 		void SetRollingFriction(float rollingFriction);
 		void SetDamping(float linearDamping, float angularDamping);
 
-		void SetLinearFactor(const core::math::Vector& linearFactor);
-		void SetAngularFactor(const core::math::Vector& angularFactor);
+		void SetLinearFactor(const ::pe::core::math::Vector& linearFactor);
+		void SetAngularFactor(const ::pe::core::math::Vector& angularFactor);
 
-		void SetLinearVelocity(const core::math::Vector& velocity);
-		void SetAngularVelocity(const core::math::Vector& velocity);
+		void SetLinearVelocity(const ::pe::core::math::Vector& velocity);
+		void SetAngularVelocity(const ::pe::core::math::Vector& velocity);
 
 
 		// getters
 
 
 		float GetMass() const { return Template.Mass; }
-		const core::math::Vector& GetInertia() const { return Template.Inertia.value(); }
+		const ::pe::core::math::Vector& GetInertia() const { return Template.Inertia.value(); }
 		float GetRestitution() const { return Template.Restitution; }
 		float GetFriction() const { return Template.Friction; }
 		float GetRollingFriction() const { return Template.RollingFriction; }
 		float GetLinearDamping() const { return Template.LinearDamping; }
 		float GetAngularDamping() const { return Template.AngularDamping; }
 
-		const core::math::Vector& GetLinearFactor() const { return Template.LinearFactor; }
-		const core::math::Vector& GetAngularFactor() const { return Template.AngularFactor; }
+		const ::pe::core::math::Vector& GetLinearFactor() const { return Template.LinearFactor; }
+		const ::pe::core::math::Vector& GetAngularFactor() const { return Template.AngularFactor; }
 
-		core::math::Vector GetLinearVelocity();
-		core::math::Vector GetAngularVelocity();
+		::pe::core::math::Vector GetLinearVelocity();
+		::pe::core::math::Vector GetAngularVelocity();
 
 
 		bool IsRegistered() const { return Template.Registered; }
@@ -124,12 +124,12 @@ namespace Poly
 
 		// other
 
-		void ApplyImpulseToCenter(const core::math::Vector& impulse);
-		void ApplyImpulse(const core::math::Vector& impulse, const core::math::Vector& relPos);
-		void ApplyTorqueImpulse(const core::math::Vector& torque);
+		void ApplyImpulseToCenter(const ::pe::core::math::Vector& impulse);
+		void ApplyImpulse(const ::pe::core::math::Vector& impulse, const ::pe::core::math::Vector& relPos);
+		void ApplyTorqueImpulse(const ::pe::core::math::Vector& torque);
 
-		void SetGravity(const core::math::Vector& gravity);
-		core::math::Vector GetGravity() const;
+		void SetGravity(const ::pe::core::math::Vector& gravity);
+		::pe::core::math::Vector GetGravity() const;
 
 	private:
 		void UpdatePosition();
@@ -141,10 +141,10 @@ namespace Poly
 		bool TemplateChanged = true;
 		Rigidbody3DComponentTemplate Template;
 
-		std::optional<core::math::Vector> ImpulseToCenter;
-		std::optional<core::math::Vector> Impulse;
-		std::optional<core::math::Vector> ImpulsePos;
-		std::optional<core::math::Vector> TorqueImpulse;
+		std::optional<::pe::core::math::Vector> ImpulseToCenter;
+		std::optional<::pe::core::math::Vector> Impulse;
+		std::optional<::pe::core::math::Vector> ImpulsePos;
+		std::optional<::pe::core::math::Vector> TorqueImpulse;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, Rigidbody3DComponent)

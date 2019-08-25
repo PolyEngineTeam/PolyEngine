@@ -8,12 +8,12 @@ using namespace Poly;
 
 static const core::math::Matrix ViewFromModel[] =
 {
-	core::math::Matrix(core::math::Vector::ZERO, core::math::Vector( 1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_X
-	core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(-1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_NEGATIVE_X
-	core::math::Matrix(core::math::Vector::ZERO, core::math::Vector( 0.0f, -1.0f,  0.0f), core::math::Vector(0.0f,  0.0f, -1.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_Y
-	core::math::Matrix(core::math::Vector::ZERO, core::math::Vector( 0.0f,  1.0f,  0.0f), core::math::Vector(0.0f,  0.0f,  1.0f)),	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
-	core::math::Matrix(core::math::Vector::ZERO, core::math::Vector( 0.0f,  0.0f,  1.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_Z
-	core::math::Matrix(core::math::Vector::ZERO, core::math::Vector( 0.0f,  0.0f, -1.0f), core::math::Vector(0.0f, -1.0f,  0.0f))	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+	core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector( 1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_X
+	core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(-1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_NEGATIVE_X
+	core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector( 0.0f, -1.0f,  0.0f), core::math::Vector(0.0f,  0.0f, -1.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_Y
+	core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector( 0.0f,  1.0f,  0.0f), core::math::Vector(0.0f,  0.0f,  1.0f)),	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
+	core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector( 0.0f,  0.0f,  1.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_Z
+	core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector( 0.0f,  0.0f, -1.0f), core::math::Vector(0.0f, -1.0f,  0.0f))	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 };
 
 EnvCapture::EnvCapture(GLRenderingDevice* rdi)
@@ -135,12 +135,12 @@ GLuint EnvCapture::CaptureCubemap(const GLuint equiPanorama)
 
 	core::math::Matrix ViewFromModel[] =
 	{
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(-1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f, -1.0f,  0.0f), core::math::Vector(0.0f,  0.0f, -1.0f)),
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  1.0f,  0.0f), core::math::Vector(0.0f,  0.0f,  1.0f)),
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f,  1.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f, -1.0f), core::math::Vector(0.0f, -1.0f,  0.0f))
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(-1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(0.0f, -1.0f,  0.0f), core::math::Vector(0.0f,  0.0f, -1.0f)),
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(0.0f,  1.0f,  0.0f), core::math::Vector(0.0f,  0.0f,  1.0f)),
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f,  1.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f, -1.0f), core::math::Vector(0.0f, -1.0f,  0.0f))
 	};
 	core::utils::gConsole.LogInfo("EnvCapture::CaptureCubemap matrices created");
 
@@ -217,12 +217,12 @@ GLuint EnvCapture::CaptureDiffuseIrradiance(const GLuint envCubemap)
 
 	core::math::Matrix ViewFromModel[] =
 	{
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(-1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f, -1.0f,  0.0f), core::math::Vector(0.0f,  0.0f, -1.0f)),
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  1.0f,  0.0f), core::math::Vector(0.0f,  0.0f,  1.0f)),
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f,  1.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f, -1.0f), core::math::Vector(0.0f, -1.0f,  0.0f))
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(-1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(0.0f, -1.0f,  0.0f), core::math::Vector(0.0f,  0.0f, -1.0f)),
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(0.0f,  1.0f,  0.0f), core::math::Vector(0.0f,  0.0f,  1.0f)),
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f,  1.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f, -1.0f), core::math::Vector(0.0f, -1.0f,  0.0f))
 	};
 	core::utils::gConsole.LogInfo("EnvCapture::CaptureIrradiance matrices created");
 
@@ -299,12 +299,12 @@ GLuint EnvCapture::CaptureSpecularPrefilteredMap(const GLuint envCubemap)
 
 	core::math::Matrix ViewFromModel[] =
 	{
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(-1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f, -1.0f,  0.0f), core::math::Vector(0.0f,  0.0f, -1.0f)),
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  1.0f,  0.0f), core::math::Vector(0.0f,  0.0f,  1.0f)),
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f,  1.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
-		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f, -1.0f), core::math::Vector(0.0f, -1.0f,  0.0f))
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(-1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(0.0f, -1.0f,  0.0f), core::math::Vector(0.0f,  0.0f, -1.0f)),
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(0.0f,  1.0f,  0.0f), core::math::Vector(0.0f,  0.0f,  1.0f)),
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f,  1.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(::pe::core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f, -1.0f), core::math::Vector(0.0f, -1.0f,  0.0f))
 	};
 
 	core::utils::gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap capture prefiltered cubemap");

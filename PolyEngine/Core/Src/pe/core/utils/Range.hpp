@@ -21,11 +21,11 @@ namespace pe::core::utils {
 
 		/// @brief Returns const reference to the iterator pointing to the begining of the range.
 		/// @return Iterator pointing to the begining of the range.
-        const Iterator_t& Begin() const noexcept { return BeginIt; }
+        const Iterator_t& begin() const noexcept { return BeginIt; }
 
 		/// @brief Returns const reference to the iterator pointing to the end of the range.
 		/// @return Iterator pointing to the end of the range.
-        const Iterator_t& End() const noexcept { return EndIt; }
+        const Iterator_t& end() const noexcept { return EndIt; }
 
 		inline bool operator==(const Range& rhs) const { return BeginIt == rhs.BeginIt && EndIt == rhs.EndIt; }
 		inline bool operator!=(const Range& rhs) const { return !(*this == rhs); }
@@ -33,9 +33,6 @@ namespace pe::core::utils {
         const Iterator_t BeginIt;
         const Iterator_t EndIt;
 	};
-
-    template <typename IT> const typename Poly::Range<IT>::Iterator_t& begin(const Poly::Range<IT>& rhs) noexcept { return rhs.Begin(); }
-	template <typename IT> const typename Poly::Range<IT>::Iterator_t& end(const Poly::Range<IT>& rhs) noexcept { return rhs.End(); }
 
 	/// @brief Create range from iterable object.
 	/// @param[in] iterable Reference to the iterable object

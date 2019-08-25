@@ -25,8 +25,8 @@ TEST_CASE("Registering and comparing pointers", "[SafePtr]") {
 	Test obj1 = Test(1);
 	Test obj2 = Test(2);
 
-	core::memory::SafePtr<Test> p1 = core::memory::SafePtr<Test>(&obj1);
-	core::memory::SafePtr<Test> p2 = core::memory::SafePtr<Test>(&obj2);
+	::pe::core::memory::SafePtr<Test> p1 = ::pe::core::memory::SafePtr<Test>(&obj1);
+	::pe::core::memory::SafePtr<Test> p2 = ::pe::core::memory::SafePtr<Test>(&obj2);
 
 	REQUIRE(p1 == &obj1);
 	REQUIRE(p2 == &obj2);
@@ -40,15 +40,15 @@ TEST_CASE("Registering and comparing pointers", "[SafePtr]") {
 TEST_CASE("Double pointer registration", "[SafePtr]") {
 	Test obj = Test(1);
 
-	core::memory::SafePtr<Test> p1 = core::memory::SafePtr<Test>(&obj);
-	core::memory::SafePtr<Test> p2 = core::memory::SafePtr<Test>(&obj);
+	::pe::core::memory::SafePtr<Test> p1 = ::pe::core::memory::SafePtr<Test>(&obj);
+	::pe::core::memory::SafePtr<Test> p2 = ::pe::core::memory::SafePtr<Test>(&obj);
 
 	REQUIRE(p1 == p2);
 }
 
 TEST_CASE("Object deletation", "[SafePtr]") {
 	Test *obj = new Test(1);
-	core::memory::SafePtr<Test> p = core::memory::SafePtr<Test>(obj);
+	::pe::core::memory::SafePtr<Test> p = ::pe::core::memory::SafePtr<Test>(obj);
 
 	delete obj;
 
@@ -57,15 +57,15 @@ TEST_CASE("Object deletation", "[SafePtr]") {
 
 TEST_CASE("* and -> operators", "[SafePtr]") {
 	Test obj = Test(1);
-	core::memory::SafePtr<Test> p = core::memory::SafePtr<Test>(&obj);
+	::pe::core::memory::SafePtr<Test> p = ::pe::core::memory::SafePtr<Test>(&obj);
 
 	REQUIRE(p->Debug == obj.Debug);
 	REQUIRE(*p == &obj);
 }
 
-TEST_CASE("Initializing core::memory::SafePtr with nullptr", "[SafePtr]") {
+TEST_CASE("Initializing ::pe::core::memory::SafePtr with nullptr", "[SafePtr]") {
 	Test *ptr = nullptr;
-	core::memory::SafePtr<Test> p = core::memory::SafePtr<Test>(ptr);
+	::pe::core::memory::SafePtr<Test> p = ::pe::core::memory::SafePtr<Test>(ptr);
 
 	REQUIRE(p == nullptr);
 }

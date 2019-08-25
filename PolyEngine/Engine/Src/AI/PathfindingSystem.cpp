@@ -23,7 +23,7 @@ struct PathNodeCmp
 	bool operator()(const std::pair<i64, float>& a, const std::pair<i64, float>& b) const { return a.second < b.second; }
 };
 
-std::optional<std::vector<core::math::Vector>> CalculateNewPath(const NavGraph* graph, const core::math::Vector& start, const core::math::Vector& dest, size_t depthLimit)
+std::optional<std::vector<::pe::core::math::Vector>> CalculateNewPath(const NavGraph* graph, const core::math::Vector& start, const core::math::Vector& dest, size_t depthLimit)
 {
 	// Swap start and dest to better handle path parsing later
 	core::math::Vector startInternal = dest;
@@ -81,7 +81,7 @@ std::optional<std::vector<core::math::Vector>> CalculateNewPath(const NavGraph* 
 	if (bestNodeIdx < 0)
 		return {};
 
-	std::vector<core::math::Vector> path;
+	std::vector<::pe::core::math::Vector> path;
 	path.push_back(start);
 	i64 currNodeIdx = bestNodeIdx;
 	do
@@ -95,7 +95,7 @@ std::optional<std::vector<core::math::Vector>> CalculateNewPath(const NavGraph* 
 	return path;
 }
 
-void SmoothPath(const NavGraph* graph, std::vector<core::math::Vector>& path)
+void SmoothPath(const NavGraph* graph, std::vector<::pe::core::math::Vector>& path)
 {
 	size_t currIdx = 0;
 	while (currIdx < path.size() - 1)
@@ -128,7 +128,7 @@ ENGINE_DLLEXPORT void Poly::PathfindingSystem::UpdatePhase(Scene* world)
 		{
 			pathfindingCmp->RecalculateRequested = false;
 			core::math::Vector trans = pathfindingCmp->GetOwner()->GetTransform().GetGlobalTranslation();
-			std::optional<std::vector<core::math::Vector>> path = CalculateNewPath(pathfindingCmp->NavigationGraph,
+			std::optional<std::vector<::pe::core::math::Vector>> path = CalculateNewPath(pathfindingCmp->NavigationGraph,
 				trans, pathfindingCmp->CurentDestination.value(), 16);
 
 			if (!path.has_value())

@@ -119,8 +119,8 @@ namespace Poly
 		/// @param Entity* Pointer to new child
 		inline void AddChild(Entity* child) { ASSERTE(child, "Child cannot be null!"); child->SetParent(this); }
 
-		const core::storage::String& GetName() const { return Name; }
-		void SetName(const core::storage::String& name) { Name = name; }
+		const ::pe::core::storage::String& GetName() const { return Name; }
+		void SetName(const ::pe::core::storage::String& name) { Name = name; }
 
 		/// Returns transformation data of this entity.
 		/// @return Transformation data of this entity.
@@ -132,8 +132,8 @@ namespace Poly
 		bool ContainsChildRecursive(Entity* child) const;
 	
 	
-		const core::math::AABox& GetLocalBoundingBox(eEntityBoundingChannel channel) const;
-		core::math::AABox GetGlobalBoundingBox(eEntityBoundingChannel channel) const;
+		const ::pe::core::math::AABox& GetLocalBoundingBox(eEntityBoundingChannel channel) const;
+		::pe::core::math::AABox GetGlobalBoundingBox(eEntityBoundingChannel channel) const;
 
 	private:
 		Entity(Scene* world, Entity* parent = nullptr);
@@ -144,13 +144,13 @@ namespace Poly
 		Entity* Parent = nullptr;
 		std::vector<EntityUniquePtr> Children;
 
-		core::storage::String NameTemplate;
-		core::storage::String Name;
+		::pe::core::storage::String NameTemplate;
+		::pe::core::storage::String Name;
 		EntityTransform Transform;
 		Scene* EntityScene = nullptr;
 
-		mutable core::utils::EnumArray<core::math::AABox, eEntityBoundingChannel> LocalBBox;
-		mutable core::utils::EnumArray<bool, eEntityBoundingChannel> BBoxDirty;
+		mutable ::pe::core::utils::EnumArray<::pe::core::math::AABox, eEntityBoundingChannel> LocalBBox;
+		mutable ::pe::core::utils::EnumArray<bool, eEntityBoundingChannel> BBoxDirty;
 
 		std::bitset<MAX_COMPONENTS_COUNT> ComponentPosessionFlags;
 		std::vector<ComponentUniquePtr> Components;

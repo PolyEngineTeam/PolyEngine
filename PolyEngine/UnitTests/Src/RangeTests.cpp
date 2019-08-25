@@ -4,10 +4,8 @@
 #include <vector>
 #include <map>
 
-using namespace Poly;
-
 template<typename T>
-void ValidateVectorRangeHelper(const Range<T>& range, int expectedValueAtEnd)
+void ValidateVectorRangeHelper(const ::pe::core::utils::Range<T>& range, int expectedValueAtEnd)
 {
 	int counter = 0;
 	for (int val : range)
@@ -19,7 +17,7 @@ void ValidateVectorRangeHelper(const Range<T>& range, int expectedValueAtEnd)
 }
 
 template<typename T>
-void ValidateVectorRangeReversedHelper(const Range<T>& range, int startValue)
+void ValidateVectorRangeReversedHelper(const ::pe::core::utils::Range<T>& range, int startValue)
 {
 	int counter = startValue;
 	for (int val : range)
@@ -31,7 +29,7 @@ void ValidateVectorRangeReversedHelper(const Range<T>& range, int startValue)
 }
 
 template<typename T>
-void ValidateMapRangeHelper(const Range<T>& range, int expectedValueAtEnd)
+void ValidateMapRangeHelper(const ::pe::core::utils::Range<T>& range, int expectedValueAtEnd)
 {
 	int counter = 0;
 	char keyCounter = 'a';
@@ -46,7 +44,7 @@ void ValidateMapRangeHelper(const Range<T>& range, int expectedValueAtEnd)
 }
 
 template<typename T>
-void ValidateMapRangeReversedHelper(const Range<T>& range, int startVal, char startKey)
+void ValidateMapRangeReversedHelper(const ::pe::core::utils::Range<T>& range, int startVal, char startKey)
 {
 	int counter = startVal;
 	char keyCounter = startKey;
@@ -69,25 +67,25 @@ TEST_CASE("Iterator pair constructors", "Range")
 
     SECTION("Mutable vector iterator pair constructor")
     {
-	    auto range = Range(testVec.begin(), testVec.end());
+	    auto range = ::pe::core::utils::Range(testVec.begin(), testVec.end());
 		ValidateVectorRangeHelper(range, 4);
 	}
 
     SECTION("Const vector iterator pair constructor")
     {
-	    auto range = Range(constTestVec.begin(), constTestVec.end());
+	    auto range = ::pe::core::utils::Range(constTestVec.begin(), constTestVec.end());
 		ValidateVectorRangeHelper(range, 4);
 	}
 
     SECTION("Mutable map iterator pair constructor")
     {
-		auto range = Range(testMap.begin(), testMap.end());
+		auto range = ::pe::core::utils::Range(testMap.begin(), testMap.end());
 		ValidateMapRangeHelper(range, 3);
 	}
 
     SECTION("Const map iterator pair constructor")
     {
-		auto range = Range(constTestMap.begin(), constTestMap.end());
+		auto range = ::pe::core::utils::Range(constTestMap.begin(), constTestMap.end());
 		ValidateMapRangeHelper(range, 3);
 	}
 }
@@ -96,8 +94,8 @@ TEST_CASE("Range comparison operators", "Range")
 {
 	std::vector<int> testVec = { 1, 2, 3, 4 };
 
-	auto range1 = Range(testVec.begin(), testVec.end());
-	auto range2 = Range(testVec.begin() + 1, testVec.end());
+	auto range1 = ::pe::core::utils::Range(testVec.begin(), testVec.end());
+	auto range2 = ::pe::core::utils::Range(testVec.begin() + 1, testVec.end());
 	
 	CHECK(range1 == range1);
 	CHECK(range2 == range2);
@@ -117,73 +115,73 @@ TEST_CASE("MakeRange", "Range")
 
 	SECTION("Mutable vector MakeRange")
     {
-		auto range = MakeRange(testVec);
+		auto range = ::pe::core::utils::MakeRange(testVec);
 		ValidateVectorRangeHelper(range, 4);
     }
 
     SECTION("Const vector MakeRange")
     {
-		auto range = MakeRange(constTestVec);
+		auto range = ::pe::core::utils::MakeRange(constTestVec);
 		ValidateVectorRangeHelper(range, 4);
 	}
 
-	SECTION("Const vector MakeRangeConst")
+	SECTION("Const vector ::pe::core::utils::MakeRangeConst")
 	{
-		auto range = MakeRangeConst(constTestVec);
+		auto range = ::pe::core::utils::MakeRangeConst(constTestVec);
 		ValidateVectorRangeHelper(range, 4);
 	}
 
 	SECTION("Mutable vector MakeRangeReversed")
 	{
-		auto range = MakeRangeReversed(testVec);
+		auto range = ::pe::core::utils::MakeRangeReversed(testVec);
 		ValidateVectorRangeReversedHelper(range, 4);
 	}
 
 	SECTION("Const vector MakeRangeReversed")
 	{
-		auto range = MakeRangeReversed(constTestVec);
+		auto range = ::pe::core::utils::MakeRangeReversed(constTestVec);
 		ValidateVectorRangeReversedHelper(range, 4);
 	}
 
 	SECTION("Const vector MakeRangeReversedConst")
 	{
-		auto range = MakeRangeReversedConst(constTestVec);
+		auto range = ::pe::core::utils::MakeRangeReversedConst(constTestVec);
 		ValidateVectorRangeReversedHelper(range, 4);
 	}
 
     SECTION("Mutable map MakeRange")
     {
-		auto range = MakeRange(testMap);
+		auto range = ::pe::core::utils::MakeRange(testMap);
 		ValidateMapRangeHelper(range, 3);
 	}
 
     SECTION("Const map MakeRange")
     {
-		auto range = MakeRange(constTestMap);
+		auto range = ::pe::core::utils::MakeRange(constTestMap);
 		ValidateMapRangeHelper(range, 3);
 	}
 
 	SECTION("Const map MakeRangeConst")
 	{
-		auto range = MakeRangeConst(constTestMap);
+		auto range = ::pe::core::utils::MakeRangeConst(constTestMap);
 		ValidateMapRangeHelper(range, 3);
 	}
 
 	SECTION("Mutable map MakeRangeReversed")
 	{
-		auto range = MakeRangeReversed(testMap);
+		auto range = ::pe::core::utils::MakeRangeReversed(testMap);
 		ValidateMapRangeReversedHelper(range, 3, 'c');
 	}
 
 	SECTION("Const map MakeRangeReversed")
 	{
-		auto range = MakeRangeReversed(constTestMap);
+		auto range = ::pe::core::utils::MakeRangeReversed(constTestMap);
 		ValidateMapRangeReversedHelper(range, 3, 'c');
 	}
 
 	SECTION("Const map MakeRangeReversedConst")
 	{
-		auto range = MakeRangeReversedConst(constTestMap);
+		auto range = ::pe::core::utils::MakeRangeReversedConst(constTestMap);
 		ValidateMapRangeReversedHelper(range, 3, 'c');
 	}
 }

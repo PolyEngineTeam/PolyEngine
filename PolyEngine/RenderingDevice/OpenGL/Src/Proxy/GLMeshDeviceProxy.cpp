@@ -63,7 +63,7 @@ void GLMeshDeviceProxy::SetContent(const Mesh& mesh)
 	{
 		EnsureVBOCreated(eBufferType::VERTEX_BUFFER);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO[eBufferType::VERTEX_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, mesh.GetPositions().size() * sizeof(core::math::Vector3f), mesh.GetPositions().data(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, mesh.GetPositions().size() * sizeof(::pe::core::math::Vector3f), mesh.GetPositions().data(), GL_STATIC_DRAW);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 		glEnableVertexAttribArray(0);
 		CHECK_GL_ERR();
@@ -83,7 +83,7 @@ void GLMeshDeviceProxy::SetContent(const Mesh& mesh)
 	{
 		EnsureVBOCreated(eBufferType::NORMAL_BUFFER);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO[eBufferType::NORMAL_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, mesh.GetNormals().size() * sizeof(core::math::Vector3f), mesh.GetNormals().data(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, mesh.GetNormals().size() * sizeof(::pe::core::math::Vector3f), mesh.GetNormals().data(), GL_STATIC_DRAW);
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 		glEnableVertexAttribArray(2);
 		CHECK_GL_ERR();
@@ -93,7 +93,7 @@ void GLMeshDeviceProxy::SetContent(const Mesh& mesh)
 	{
 		EnsureVBOCreated(eBufferType::TANGENT_BUFFER);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO[eBufferType::TANGENT_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, mesh.GetTangents().size() * sizeof(core::math::Vector3f), mesh.GetTangents().data(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, mesh.GetTangents().size() * sizeof(::pe::core::math::Vector3f), mesh.GetTangents().data(), GL_STATIC_DRAW);
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 		glEnableVertexAttribArray(3);
 		CHECK_GL_ERR();
@@ -103,7 +103,7 @@ void GLMeshDeviceProxy::SetContent(const Mesh& mesh)
 	{
 		EnsureVBOCreated(eBufferType::BITANGENT_BUFFER);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO[eBufferType::BITANGENT_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, mesh.GetBitangents().size() * sizeof(core::math::Vector3f), mesh.GetBitangents().data(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, mesh.GetBitangents().size() * sizeof(::pe::core::math::Vector3f), mesh.GetBitangents().data(), GL_STATIC_DRAW);
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 		glEnableVertexAttribArray(4);
 		CHECK_GL_ERR();
@@ -131,7 +131,7 @@ void GLMeshDeviceProxy::SetContent(const Mesh& mesh)
 	{
 		EnsureVBOCreated(eBufferType::BONE_INDEX_BUFFER);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO[eBufferType::BONE_INDEX_BUFFER]);
-		// glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.GetBoneIds().size() * sizeof(core::math::VectorT<u8, 4>), mesh.GetBoneIds().data(), GL_STATIC_DRAW);
+		// glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.GetBoneIds().size() * sizeof(::pe::core::math::VectorT<u8, 4>), mesh.GetBoneIds().data(), GL_STATIC_DRAW);
 		glBufferData(GL_ARRAY_BUFFER, mesh.GetBoneIds().size() * sizeof(i8) * 4, mesh.GetBoneIds().data(), GL_STATIC_DRAW);
 		glVertexAttribIPointer(6, 4, GL_BYTE, 0, NULL);
 		glEnableVertexAttribArray(6);

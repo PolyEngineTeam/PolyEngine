@@ -44,9 +44,6 @@
 #include <pe/core/utils/EnumUtils.hpp>
 #include <pe/core/utils/OutputStream.hpp>
 
-// Temporary namespace usings
-using namespace pe;
-
 // ECS
 #include <ECS/Scene.hpp>
 #include <ECS/Entity.hpp>
@@ -90,3 +87,6 @@ using namespace pe;
 
 // Imgui
 #include <imgui.h>
+
+// Temporary namespace usings
+using namespace pe;

@@ -265,7 +265,7 @@ void ViewportInspectorWidget::wheelEvent(QWheelEvent* wheelEvent)
 	if (!Manager->GetEngine())
 		return;
 
-	Manager->GetEngine()->UpdateWheelPos(core::math::Vector2i(wheelEvent->delta(), 0));
+	Manager->GetEngine()->UpdateWheelPos(::pe::core::math::Vector2i(wheelEvent->delta(), 0));
 }
 
 //------------------------------------------------------------------------------
@@ -274,7 +274,7 @@ void ViewportInspectorWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 	if (!Manager->GetEngine())
 		return;
 
-	Manager->GetEngine()->UpdateMousePos(core::math::Vector2i(mouseEvent->pos().x(), mouseEvent->pos().y()));
+	Manager->GetEngine()->UpdateMousePos(::pe::core::math::Vector2i(mouseEvent->pos().x(), mouseEvent->pos().y()));
 }
 
 //------------------------------------------------------------------------------

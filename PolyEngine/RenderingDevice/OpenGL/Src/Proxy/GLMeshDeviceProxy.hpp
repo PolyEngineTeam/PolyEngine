@@ -33,6 +33,6 @@ namespace Poly
 		void EnsureVBOCreated(eBufferType type);
 
 		GLuint VAO = 0;
-		core::utils::EnumArray<GLuint, eBufferType> VBO;
+		::pe::core::utils::EnumArray<GLuint, eBufferType> VBO;
 	};
 }

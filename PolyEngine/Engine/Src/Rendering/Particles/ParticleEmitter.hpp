@@ -28,10 +28,10 @@ namespace Poly
 
 		struct ENGINE_DLLEXPORT Particle
 		{
-			core::math::Vector Position;
-			core::math::Vector Scale;
-			core::math::Vector Velocity;
-			core::math::Vector Acceleration;
+			::pe::core::math::Vector Position;
+			::pe::core::math::Vector Scale;
+			::pe::core::math::Vector Velocity;
+			::pe::core::math::Vector Acceleration;
 			float Age;
 			float LifeTime;
 		};
@@ -48,8 +48,8 @@ namespace Poly
 			// TODO: move to material
 			SpritesheetSettings Spritesheet;
 			float Speed = 1.0f;
-			core::math::Color Albedo = core::math::Color::WHITE;
-			core::math::Color Emissive = core::math::Color::BLACK;
+			::pe::core::math::Color Albedo = ::pe::core::math::Color::WHITE;
+			::pe::core::math::Color Emissive = ::pe::core::math::Color::BLACK;
 			// TODO end
 			std::function<void(Particle*)> ParticleInitFunc		= [](ParticleEmitter::Particle* p) {};
 			std::function<void(Particle*)> ParticleUpdateFunc	= [](ParticleEmitter::Particle* p) {};
@@ -63,7 +63,7 @@ namespace Poly
 		const IParticleDeviceProxy* GetParticleProxy() const { return ParticleProxy.get(); }
 		bool GetIsBurstEnabled() { return IsBurstEnabled; }
 		void SetBurstEnabled(bool value) { IsBurstEnabled = value; }
-		const core::memory::IterablePoolAllocator<Particle>& GetParticlesPool() const { return ParticlesPool; }
+		const ::pe::core::memory::IterablePoolAllocator<Particle>& GetParticlesPool() const { return ParticlesPool; }
 		bool HasInstances() const { return ParticlesPool.GetSize() != 0; }
 		size_t GetInstancesCount() const { return ParticlesPool.GetSize(); }
 		
@@ -76,6 +76,6 @@ namespace Poly
 		bool IsBurstEnabled = true;
 		float NextBurstTime = -1.0;
 		size_t ToEmit = 0;
-		core::memory::IterablePoolAllocator<Particle> ParticlesPool;
+		::pe::core::memory::IterablePoolAllocator<Particle> ParticlesPool;
 	};
 }

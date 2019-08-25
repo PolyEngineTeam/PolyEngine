@@ -2,11 +2,9 @@
 #include <catch.hpp>
 #include <pe/core/storage/PriorityQueue.hpp>
 
-using namespace Poly;
-
 TEST_CASE("PriorityQueue sorted push test", "[PriorityQueue]")
 {
-	core::storage::PriorityQueue<int> q;
+	::pe::core::storage::PriorityQueue<int> q;
 	const int testSize = 10;
 
 	for (int i = 0; i < testSize; ++i)
@@ -24,7 +22,7 @@ TEST_CASE("PriorityQueue sorted push test", "[PriorityQueue]")
 
 TEST_CASE("PriorityQueue reverrse sorted push test", "[PriorityQueue]")
 {
-	core::storage::PriorityQueue<int> q;
+	::pe::core::storage::PriorityQueue<int> q;
 	const int testSize = 100;
 
 	for (int i = 0; i < testSize; ++i)
@@ -42,7 +40,7 @@ TEST_CASE("PriorityQueue reverrse sorted push test", "[PriorityQueue]")
 
 TEST_CASE("PriorityQueue random push test", "[PriorityQueue]")
 {
-	core::storage::PriorityQueue<int> q;
+	::pe::core::storage::PriorityQueue<int> q;
 	const size_t testSize = 100;
 
 	for (size_t i = 0; i < testSize; ++i)
@@ -65,7 +63,7 @@ struct CustomTestComparator
 
 TEST_CASE("PriorityQueue custom comparator test", "[PriorityQueue]")
 {
-	core::storage::PriorityQueue<int, CustomTestComparator> q;
+	::pe::core::storage::PriorityQueue<int, CustomTestComparator> q;
 	const size_t testSize = 100;
 
 	for (size_t i = 0; i < testSize; ++i)
@@ -89,7 +87,7 @@ TEST_CASE("PriorityQueue heap sort", "[PriorityQueue]")
 	for (size_t i = 0; i < testSize; ++i)
 		table.push_back(rand());
 
-	core::storage::PriorityQueue<int> q(std::move(table));
+	::pe::core::storage::PriorityQueue<int> q(std::move(table));
 
 	for (size_t i = 0; i < testSize - 1; ++i)
 	{

@@ -104,8 +104,8 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const core::storage::Stri
 		return;
 	
 	// @fixme optimize this, spliting lines of every opened file is not fastest way to do it
-	std::vector<core::storage::String> includedFiles;
-	std::vector<core::storage::String> linesToProcess = rawCode.Split("\n");
+	std::vector<::pe::core::storage::String> includedFiles;
+	std::vector<::pe::core::storage::String> linesToProcess = rawCode.Split("\n");
 	core::storage::StringBuilder sb;
 	size_t lineCounter = 0;
 	while(lineCounter < linesToProcess.size())
@@ -132,7 +132,7 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const core::storage::Stri
 					auto splitedInclude = rawInclude.Split('\n');
 					linesToProcess.insert(linesToProcess.begin() + lineCounter + 1, splitedInclude.begin(), splitedInclude.end());
 				}
-				catch(core::utils::FileIOException& ex)
+				catch(::pe::core::utils::FileIOException& ex)
 				{
 					core::utils::gConsole.LogError("GLShaderProgram::LoadShader shaderName: {}, type: {}, failed loading include: {}", shaderName, (size_t)type, includePath);
 					core::utils::gConsole.LogError("GLShaderProgram::LoadShader Exception Message: {}", ex.what());
@@ -391,7 +391,7 @@ void GLShaderProgram::AnalyzeShaderCode(eShaderUnitType type)
 			core::utils::gConsole.LogDebug("Uniform {} of type {} found.", match[2].str(), match[1].str());
 
 			//TODO remove unnecessary string copy
-			RegisterUniform(core::storage::String(match[1].str().c_str()), core::storage::String(match[2].str().c_str()));
+			RegisterUniform(::pe::core::storage::String(match[1].str().c_str()), core::storage::String(match[2].str().c_str()));
 		}
 	}
 
@@ -409,7 +409,7 @@ void GLShaderProgram::AnalyzeShaderCode(eShaderUnitType type)
 			core::utils::gConsole.LogDebug("Out {} of type {} found.", match[2].str(), match[1].str());
 
 			//TODO remove unnecessary string copy
-			Outputs.insert(std::make_pair(core::storage::String(match[2].str().c_str()), OutputInfo(core::storage::String(match[1].str().c_str()), index++)));
+			Outputs.insert(std::make_pair(::pe::core::storage::String(match[2].str().c_str()), OutputInfo(::pe::core::storage::String(match[1].str().c_str()), index++)));
 		}
 	}
 }

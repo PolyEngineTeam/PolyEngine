@@ -19,7 +19,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT ResourceBase : public ::pe::core::memory::RefCountedBase, public RTTIBase
 	{
 	public:
-		const core::storage::String& GetPath() const { return Path; }
+		const ::pe::core::storage::String& GetPath() const { return Path; }
 
 		ResourceBase() = default;
 		ResourceBase(const ResourceBase&) = delete;
@@ -29,7 +29,7 @@ namespace Poly
 		virtual ~ResourceBase() {}
 
 	private:
-		core::storage::String Path;
+		::pe::core::storage::String Path;
 
 		template<typename T> friend class ResourceManager;
 	};

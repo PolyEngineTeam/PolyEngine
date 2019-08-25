@@ -26,14 +26,14 @@ void Poly::CameraSystem::CameraUpdatePhase(Scene* world)
 			float scaleHeight = aspectWindow / aspectCamera;
 			if (scaleHeight < 1.0f)
 			{
-				rect.SetSize(core::math::Vector2f(1.0f, scaleHeight));
-				rect.SetPosition(core::math::Vector2f(0.0f, (1.0f - scaleHeight) / 2.0f));
+				rect.SetSize(::pe::core::math::Vector2f(1.0f, scaleHeight));
+				rect.SetPosition(::pe::core::math::Vector2f(0.0f, (1.0f - scaleHeight) / 2.0f));
 			}
 			else // add pillarbox
 			{
 				float scaleWidth = 1.0f / scaleHeight;
-				rect.SetSize(core::math::Vector2f(scaleWidth, 1.0f));
-				rect.SetPosition(core::math::Vector2f((1.0f - scaleWidth) / 2.0f, 0.0f));
+				rect.SetSize(::pe::core::math::Vector2f(scaleWidth, 1.0f));
+				rect.SetPosition(::pe::core::math::Vector2f((1.0f - scaleWidth) / 2.0f, 0.0f));
 			}
 		}
 		else

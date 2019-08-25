@@ -32,9 +32,9 @@ void DebugRenderingPass::OnRun(Scene* world, const CameraComponent* camera, cons
 		glBufferSubData(GL_ARRAY_BUFFER, 0, debugLines.size() * sizeof(DebugDrawStateWorldComponent::DebugLine), (GLvoid*)debugLines.data());
 		glBufferSubData(GL_ARRAY_BUFFER, debugLines.size() * sizeof(DebugDrawStateWorldComponent::DebugLine), 
 						debugLinesColors.size() * sizeof(DebugDrawStateWorldComponent::DebugLineColor), (GLvoid*)debugLinesColors.data());
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(core::math::Vector3f), NULL);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(::pe::core::math::Vector3f), NULL);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(core::math::Color), (GLvoid*)(debugLines.size() * sizeof(DebugDrawStateWorldComponent::DebugLine)));
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(::pe::core::math::Color), (GLvoid*)(debugLines.size() * sizeof(DebugDrawStateWorldComponent::DebugLine)));
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 

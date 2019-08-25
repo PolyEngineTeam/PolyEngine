@@ -11,10 +11,10 @@ namespace Poly
 	{
 		ControllerState() = default;
 
-		core::utils::EnumArray<bool, eControllerButton> CurrButton;
-		core::utils::EnumArray<bool, eControllerButton> PrevButton;
-		core::utils::EnumArray<float, eControllerAxis> CurrAxis;
-		core::utils::EnumArray<float, eControllerAxis> PrevAxis;
+		::pe::core::utils::EnumArray<bool, eControllerButton> CurrButton;
+		::pe::core::utils::EnumArray<bool, eControllerButton> PrevButton;
+		::pe::core::utils::EnumArray<float, eControllerAxis> CurrAxis;
+		::pe::core::utils::EnumArray<float, eControllerAxis> PrevAxis;
 	};
 
 	/// <summary>Scene component that holds input data.</summary>
@@ -36,11 +36,11 @@ namespace Poly
 		bool IsClicked(eMouseButton button) const { return (CurrMouseButton[button] && !PrevMouseButton[button]); }
 		bool IsReleased(eMouseButton button) const { return (!CurrMouseButton[button] && PrevMouseButton[button]); }
 
-		const core::math::Vector2i& GetMousePos() const { return MousePos; }
-		const core::math::Vector2i& GetMousePosDelta() const  { return MouseDelta; }
+		const ::pe::core::math::Vector2i& GetMousePos() const { return MousePos; }
+		const ::pe::core::math::Vector2i& GetMousePosDelta() const  { return MouseDelta; }
 
-		const core::math::Vector2i& GetWheelPos() const { return CurrWheel; }
-		core::math::Vector2i GetWheelPosDelta() const { return CurrWheel - PrevWheel; }
+		const ::pe::core::math::Vector2i& GetWheelPos() const { return CurrWheel; }
+		::pe::core::math::Vector2i GetWheelPosDelta() const { return CurrWheel - PrevWheel; }
 
 		bool IsPressed(size_t playerID, eControllerButton button) const;
 		bool IsClicked(size_t playerID, eControllerButton button) const;
@@ -59,14 +59,14 @@ namespace Poly
 		const char* GetCharUTF8() { return CharUTF8; }
 
 	private:
-		core::utils::EnumArray<bool, eKey> CurrKey;
-		core::utils::EnumArray<bool, eKey> PrevKey;
-		core::utils::EnumArray<bool, eMouseButton> CurrMouseButton;
-		core::utils::EnumArray<bool, eMouseButton> PrevMouseButton;
-		core::math::Vector2i MousePos;
-		core::math::Vector2i MouseDelta;
-		core::math::Vector2i CurrWheel;
-		core::math::Vector2i PrevWheel;
+		::pe::core::utils::EnumArray<bool, eKey> CurrKey;
+		::pe::core::utils::EnumArray<bool, eKey> PrevKey;
+		::pe::core::utils::EnumArray<bool, eMouseButton> CurrMouseButton;
+		::pe::core::utils::EnumArray<bool, eMouseButton> PrevMouseButton;
+		::pe::core::math::Vector2i MousePos;
+		::pe::core::math::Vector2i MouseDelta;
+		::pe::core::math::Vector2i CurrWheel;
+		::pe::core::math::Vector2i PrevWheel;
 		std::unordered_map<size_t, ControllerState> Controllers;
 		std::vector<std::optional<size_t>> PlayerIDToJoystickID;
 		std::unordered_map<size_t, size_t> JoystickIDToPlayerID;

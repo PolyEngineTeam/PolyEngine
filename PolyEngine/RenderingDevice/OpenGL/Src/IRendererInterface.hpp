@@ -34,12 +34,12 @@ namespace Poly {
 		// Sorts geometry based on distance to camera and sort order type
 		struct DistanceToCameraComparator
 		{
-			DistanceToCameraComparator(core::math::Vector cameraPosition, eSortOrderType sortOrder = eSortOrderType::FRONT_TO_BACK)
+			DistanceToCameraComparator(::pe::core::math::Vector cameraPosition, eSortOrderType sortOrder = eSortOrderType::FRONT_TO_BACK)
 				: CameraPosition(cameraPosition), SortOrder(sortOrder)
 			{
 			}
 
-			core::math::Vector CameraPosition;
+			::pe::core::math::Vector CameraPosition;
 			eSortOrderType SortOrder;
 
 			bool operator()(const ComponentBase* a, const ComponentBase* b) const
@@ -54,7 +54,7 @@ namespace Poly {
 
 		SceneView(Scene* s, Viewport& v)
 			: SceneData(s), ViewportData(v), Rect(v.GetRect()), CameraCmp(v.GetCamera()),
-			DirShadowCastersQueue(DistanceToCameraComparator(core::math::Vector::ZERO,										eSortOrderType::FRONT_TO_BACK), 0), // filled by GLRenderingDevice::CullShadowCasters
+			DirShadowCastersQueue(DistanceToCameraComparator(::pe::core::math::Vector::ZERO,										eSortOrderType::FRONT_TO_BACK), 0), // filled by GLRenderingDevice::CullShadowCasters
 			OpaqueQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(),		eSortOrderType::FRONT_TO_BACK), 0),
 			TranslucentQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(),	eSortOrderType::BACK_TO_FRONT), 0),
 			ParticleQueue(DistanceToCameraComparator(v.GetCamera()->GetTransform().GetGlobalTranslation(),		eSortOrderType::BACK_TO_FRONT), 0)
@@ -64,17 +64,17 @@ namespace Poly {
 
 		Scene* SceneData;
 		const Viewport& ViewportData;
-		const core::math::AARect& Rect;
+		const ::pe::core::math::AARect& Rect;
 
 		const CameraComponent* CameraCmp;
 		const RenderingSettingsComponent* SettingsCmp;
 		
-		core::storage::PriorityQueue<const MeshRenderingComponent*, DistanceToCameraComparator> DirShadowCastersQueue;
-		core::storage::PriorityQueue<const MeshRenderingComponent*, DistanceToCameraComparator> OpaqueQueue;
-		core::storage::PriorityQueue<const MeshRenderingComponent*, DistanceToCameraComparator> TranslucentQueue;
-		core::storage::PriorityQueue<const ParticleComponent*, DistanceToCameraComparator> ParticleQueue; // TODO: make translucent and particles one queue with common priority
+		::pe::core::storage::PriorityQueue<const MeshRenderingComponent*, DistanceToCameraComparator> DirShadowCastersQueue;
+		::pe::core::storage::PriorityQueue<const MeshRenderingComponent*, DistanceToCameraComparator> OpaqueQueue;
+		::pe::core::storage::PriorityQueue<const MeshRenderingComponent*, DistanceToCameraComparator> TranslucentQueue;
+		::pe::core::storage::PriorityQueue<const ParticleComponent*, DistanceToCameraComparator> ParticleQueue; // TODO: make translucent and particles one queue with common priority
 
-		core::math::AABox DirShadowAABBInLS;
+		::pe::core::math::AABox DirShadowAABBInLS;
 		std::vector<const DirectionalLightComponent*> DirectionalLightList;
 		std::vector<const PointLightComponent*> PointLightList;
 	};

@@ -4,25 +4,23 @@
 #include <pe/core/math/Quaternion.hpp>
 //TODO implement
 
-using namespace Poly;
-
 TEST_CASE("Quaternion constructors", "[Quaternion]") {
 	// empty constructor
-	core::math::Quaternion q1;
+	::pe::core::math::Quaternion q1;
 	REQUIRE(q1.X == Approx(0));
 	REQUIRE(q1.Y == Approx(0));
 	REQUIRE(q1.Z == Approx(0));
 	REQUIRE(q1.W == Approx(1));
 
 	// axis angle constructor
-	core::math::Quaternion q2(core::math::Vector(1, 0, 0), 180_deg);
+	::pe::core::math::Quaternion q2(::pe::core::math::Vector(1, 0, 0), 180_deg);
 	REQUIRE(q2.X == Approx(1));
 	REQUIRE(q2.Y == Approx(0));
 	REQUIRE(q2.Z == Approx(0));
 	REQUIRE(q2.W == Approx(0).margin(1e-6)); //Litle numerical error workaround
 
 	// copy constructor
-	core::math::Quaternion q3(q2);
+	::pe::core::math::Quaternion q3(q2);
 	REQUIRE(q3.X == Approx(1));
 	REQUIRE(q3.Y == Approx(0));
 	REQUIRE(q3.Z == Approx(0));
@@ -37,8 +35,8 @@ TEST_CASE("Quaternion constructors", "[Quaternion]") {
 }
 
 TEST_CASE("Quaternion comparison operators", "[Quaternion]") {
-	core::math::Quaternion q1, q2;
-	core::math::Quaternion q3(core::math::Vector(1, 0, 0), 180_deg);
+	::pe::core::math::Quaternion q1, q2;
+	::pe::core::math::Quaternion q3(::pe::core::math::Vector(1, 0, 0), 180_deg);
 
 	SECTION("Positive comparison") {
 		REQUIRE(q1 == q1);
@@ -54,32 +52,32 @@ TEST_CASE("Quaternion comparison operators", "[Quaternion]") {
 }
 
 TEST_CASE("Quaternion-Quaternion multiplication operator", "[Quaternion]") {
-	core::math::Quaternion q1, q2;
+	::pe::core::math::Quaternion q1, q2;
 
 	SECTION("Multiplication operator") {
 		// basic rotations about one axis
-		REQUIRE(q1*q2 == core::math::Quaternion());
-		q1 = core::math::Quaternion(core::math::Vector(1, 0, 0), 180_deg);
-		q2 = core::math::Quaternion(core::math::Vector(1, 0, 0), -180_deg);
-		REQUIRE(q1*q2 == core::math::Quaternion(core::math::Vector(1, 0, 0), 0_deg));
-		REQUIRE(q1*q1 == core::math::Quaternion(core::math::Vector(1, 0, 0), 360_deg));
-		REQUIRE(q1*q1*q1 == core::math::Quaternion(core::math::Vector(1, 0, 0), 540_deg));
+		REQUIRE(q1*q2 == ::pe::core::math::Quaternion());
+		q1 = ::pe::core::math::Quaternion(::pe::core::math::Vector(1, 0, 0), 180_deg);
+		q2 = ::pe::core::math::Quaternion(::pe::core::math::Vector(1, 0, 0), -180_deg);
+		REQUIRE(q1*q2 == ::pe::core::math::Quaternion(::pe::core::math::Vector(1, 0, 0), 0_deg));
+		REQUIRE(q1*q1 == ::pe::core::math::Quaternion(::pe::core::math::Vector(1, 0, 0), 360_deg));
+		REQUIRE(q1*q1*q1 == ::pe::core::math::Quaternion(::pe::core::math::Vector(1, 0, 0), 540_deg));
 		q1 *= q2;
-		REQUIRE(q1 == core::math::Quaternion(core::math::Vector(1, 0, 0), 0_deg));
+		REQUIRE(q1 == ::pe::core::math::Quaternion(::pe::core::math::Vector(1, 0, 0), 0_deg));
 
 		// simple rotation about two different axes
-		q1 = core::math::Quaternion(core::math::Vector(1, 0, 0), 180_deg);
-		q2 = core::math::Quaternion(core::math::Vector(0, 1, 0), 180_deg);
-		REQUIRE(q1*q2 == core::math::Quaternion(core::math::Vector(0, 0, 1), 180_deg));
-		REQUIRE(q2*q1 == core::math::Quaternion(core::math::Vector(0, 0, 1), 180_deg));
+		q1 = ::pe::core::math::Quaternion(::pe::core::math::Vector(1, 0, 0), 180_deg);
+		q2 = ::pe::core::math::Quaternion(::pe::core::math::Vector(0, 1, 0), 180_deg);
+		REQUIRE(q1*q2 == ::pe::core::math::Quaternion(::pe::core::math::Vector(0, 0, 1), 180_deg));
+		REQUIRE(q2*q1 == ::pe::core::math::Quaternion(::pe::core::math::Vector(0, 0, 1), 180_deg));
 
 		q1 *= q2;
-		REQUIRE(q1 == core::math::Quaternion(core::math::Vector(0, 0, 1), 180_deg));
+		REQUIRE(q1 == ::pe::core::math::Quaternion(::pe::core::math::Vector(0, 0, 1), 180_deg));
 
 		// more complicated rotation
-		q1 = core::math::Quaternion(core::math::Vector(1, 0, 0), 90_deg);
-		q2 = core::math::Quaternion(core::math::Vector(0, 1, 0), 60_deg);
-		core::math::Quaternion q3;
+		q1 = ::pe::core::math::Quaternion(::pe::core::math::Vector(1, 0, 0), 90_deg);
+		q2 = ::pe::core::math::Quaternion(::pe::core::math::Vector(0, 1, 0), 60_deg);
+		::pe::core::math::Quaternion q3;
 		q3.X = sqrt(1.5f) / 2.0f;
 		q3.Y = 1.0f / (2.0f*sqrt(2.0f));
 		q3.Z = 1.0f / (2.0f*sqrt(2.0f));
@@ -95,14 +93,14 @@ TEST_CASE("Quaternion-Quaternion multiplication operator", "[Quaternion]") {
 }
 
 TEST_CASE("Quaternion algerbraic methods", "[Quaternion]") {
-	core::math::Quaternion q1;
-	core::math::Quaternion q2(core::math::Vector(1, 0, 0), 90_deg);
-	core::math::Vector axis1(1, 1, 1);
+	::pe::core::math::Quaternion q1;
+	::pe::core::math::Quaternion q2(::pe::core::math::Vector(1, 0, 0), 90_deg);
+	::pe::core::math::Vector axis1(1, 1, 1);
 	axis1.Normalize();
-	core::math::Quaternion q3(axis1, 90_deg);
+	::pe::core::math::Quaternion q3(axis1, 90_deg);
 
 	SECTION("Set rotation method") {
-		q1.SetRotation(core::math::Vector(1, 0, 0), 90_deg);
+		q1.SetRotation(::pe::core::math::Vector(1, 0, 0), 90_deg);
 		REQUIRE(q1 == q2);
 		q1.SetRotation(axis1, 90_deg);
 		REQUIRE(q1 == q3);
@@ -123,9 +121,9 @@ TEST_CASE("Quaternion algerbraic methods", "[Quaternion]") {
 	}
 
 	SECTION("Conjugate method") {
-		core::math::Quaternion q4 = q2;
+		::pe::core::math::Quaternion q4 = q2;
 		q4.Conjugate();
-		q1.SetRotation(core::math::Vector(-1, 0, 0), 90_deg);
+		q1.SetRotation(::pe::core::math::Vector(-1, 0, 0), 90_deg);
 		REQUIRE(q1 == q4);
 		REQUIRE(q4 == q2.GetConjugated());
 
@@ -141,9 +139,9 @@ TEST_CASE("Quaternion algerbraic methods", "[Quaternion]") {
 		q2.Y *= 2;
 		q2.Z *= 2;
 		q2.W *= 2;
-		core::math::Quaternion q4 = q2;
+		::pe::core::math::Quaternion q4 = q2;
 		q4.Normalize();
-		q1.SetRotation(core::math::Vector(1, 0, 0), 90_deg);
+		q1.SetRotation(::pe::core::math::Vector(1, 0, 0), 90_deg);
 		REQUIRE(q1 == q4);
 		REQUIRE(q4 == q2.GetNormalized());
 
@@ -159,25 +157,25 @@ TEST_CASE("Quaternion algerbraic methods", "[Quaternion]") {
 	}
 
 	SECTION("Get rotation matrix") {
-		core::math::Matrix m1;
+		::pe::core::math::Matrix m1;
 		m1.SetRotationX(90_deg);
 		REQUIRE(m1 == q2.ToRotationMatrix());
 
 		m1.SetRotationZ(35_deg);
-		q2.SetRotation(core::math::Vector(0, 0, 1), 35_deg);
+		q2.SetRotation(::pe::core::math::Vector(0, 0, 1), 35_deg);
 		REQUIRE(m1 == q2.ToRotationMatrix());
 
-		core::math::Matrix m2;
+		::pe::core::math::Matrix m2;
 		m2.SetRotationY(25_deg);
 		m1 *= m2;
-		q3.SetRotation(core::math::Vector(0, 1, 0), 25_deg);
+		q3.SetRotation(::pe::core::math::Vector(0, 1, 0), 25_deg);
 		q2 *= q3;
 		REQUIRE(m1 == q2.ToRotationMatrix());
 	}
 
 	SECTION("Vector rotate method") {
-		core::math::Vector v1(1, 2, 3);
-		core::math::Matrix m1 = q1.ToRotationMatrix();
+		::pe::core::math::Vector v1(1, 2, 3);
+		::pe::core::math::Matrix m1 = q1.ToRotationMatrix();
 		REQUIRE(m1*v1 == q1*v1);
 
 		m1 = q2.ToRotationMatrix();

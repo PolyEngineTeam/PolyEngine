@@ -48,7 +48,7 @@ void Poly::Physics3DStaticMeshSource::LoadMesh(const MeshResource::SubMesh& subM
 {
 	const Mesh& mesh = subMesh.GetMeshData();
 
-	const std::vector<core::math::Vector3f>& positions = mesh.GetPositions();
+	const std::vector<::pe::core::math::Vector3f>& positions = mesh.GetPositions();
 	const std::vector<uint32_t>& indices = mesh.GetIndicies();
 
 	for (size_t i = 0; i < indices.size();)
@@ -77,7 +77,7 @@ Poly::Physics3DStaticMeshShape::Physics3DStaticMeshShape(const Physics3DStaticMe
 }
 
 //------------------------------------------------------------------------------
-Poly::Physics3DPlaneShape::Physics3DPlaneShape(core::math::Vector normal, float halfExtent) 
+Poly::Physics3DPlaneShape::Physics3DPlaneShape(::pe::core::math::Vector normal, float halfExtent) 
 	: Physics3DShape(ePhysics3DShape::PLANE), 
 	Normal(normal), 
 	HalfExtent(halfExtent)
@@ -87,7 +87,7 @@ Poly::Physics3DPlaneShape::Physics3DPlaneShape(core::math::Vector normal, float 
 }
 
 //------------------------------------------------------------------------------
-Poly::Physics3DBoxShape::Physics3DBoxShape(core::math::Vector halfExtents)
+Poly::Physics3DBoxShape::Physics3DBoxShape(::pe::core::math::Vector halfExtents)
 	: Physics3DShape(ePhysics3DShape::BOX),
 	HalfExtents(halfExtents)
 {
