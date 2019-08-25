@@ -5,12 +5,16 @@
 #include <Proxy/GLShaderProgram.hpp>
 #include <Common/PrimitiveQuad.hpp>
 
+namespace pe::core::math
+{
+	class AARect;
+}
+
 namespace Poly
 {
 	class Scene;
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
-	class AARect;
 
 	//------------------------------------------------------------------------------
 	class TransparentRenderingPass : public RenderingPassBase
@@ -20,6 +24,6 @@ namespace Poly
 
 	protected:
 
-		void OnRun(Scene* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;
+		void OnRun(Scene* world, const CameraComponent* camera, const core::math::AARect& rect, ePassType passType) override;
 	};
 }

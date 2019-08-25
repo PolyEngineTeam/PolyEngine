@@ -1,8 +1,11 @@
 #pragma once
 
+// Temporary namespace usings
+using namespace pe;
+
 #include <ECS/Scene.hpp>
 #include <ECS/Entity.hpp>
-#include <UniqueID.hpp>
+#include <pe/core/UniqueID.hpp>
 
 #include <QtWidgets/qcombobox.h>
 #include <QtWidgets/qtreewidget.h>

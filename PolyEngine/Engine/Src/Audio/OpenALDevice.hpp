@@ -10,12 +10,12 @@ namespace Poly {
 
 	/// Class containing device used to render sound.
 	/// Device is available to change by SoundSystem functions but there can be only one active device.
-	class ENGINE_DLLEXPORT OpenALDevice : public BaseObject<>  
+	class ENGINE_DLLEXPORT OpenALDevice : public ::pe::core::BaseObject<>  
 	{
 	friend class SoundWorldComponent;
-	friend void SoundSystem::SetDevice(const String&);
-	friend const String& SoundSystem::GetDeviceName();
-	friend const std::vector<String>& SoundSystem::GetAvailableDevices();
+	friend void SoundSystem::SetDevice(const core::storage::String&);
+	friend const core::storage::String& SoundSystem::GetDeviceName();
+	friend const std::vector<core::storage::String>& SoundSystem::GetAvailableDevices();
 	public:
 		/// Creates and saves default device.
 		/// Also loads available device names for device creation.
@@ -26,7 +26,7 @@ namespace Poly {
 
 	private:
 		ALCdevice* Device;
-		std::vector<String> AvailableDevices;
+		std::vector<core::storage::String> AvailableDevices;
 	};
 
 } // namespace Poly

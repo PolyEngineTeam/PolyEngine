@@ -89,7 +89,7 @@ void Poly::RigidBody2DComponent::EnsureInit()
 			ASSERTE(ImplData->Fixture, "Fixture failed to create!");
 		}
 		else
-			gConsole.LogError("There is no collider on rigidbody!");
+			core::utils::gConsole.LogError("There is no collider on rigidbody!");
 	}
 }
 
@@ -97,16 +97,16 @@ void Poly::RigidBody2DComponent::DebugPrintInfo() const
 {
 	b2Vec2 position = ImplData->Body->GetPosition();
 	float32 angle = ImplData->Body->GetAngle();
-	gConsole.LogInfo("{} {} {}", position.x, position.y, angle);
+	core::utils::gConsole.LogInfo("{} {} {}", position.x, position.y, angle);
 }
 
-void Poly::RigidBody2DComponent::ApplyForceToCenter(const Vector& force)
+void Poly::RigidBody2DComponent::ApplyForceToCenter(const core::math::Vector& force)
 {
 	const b2Vec2& center = ImplData->Body->GetWorldCenter();
 	ImplData->Body->ApplyForce(b2Vec2(force.X, force.Y),center, true);
 }
 
-void Poly::RigidBody2DComponent::ApplyImpulseToCenter(const Vector& impulse)
+void Poly::RigidBody2DComponent::ApplyImpulseToCenter(const core::math::Vector& impulse)
 {
 	const b2Vec2& center = ImplData->Body->GetWorldCenter();
 	ImplData->Body->ApplyLinearImpulse(b2Vec2(impulse.X, impulse.Y), center, true);
@@ -132,13 +132,13 @@ float Poly::RigidBody2DComponent::GetDensity() const
 	return ImplData->Fixture->GetDensity();
 }
 
-Vector Poly::RigidBody2DComponent::GetLinearVelocity() const
+core::math::Vector Poly::RigidBody2DComponent::GetLinearVelocity() const
 {
 	b2Vec2 v = ImplData->Body->GetLinearVelocity();
-	return Vector(v.x, v.y, 0);
+	return core::math::Vector(v.x, v.y, 0);
 }
 
-void Poly::RigidBody2DComponent::SetLinearVelocity(const Vector& speed)
+void Poly::RigidBody2DComponent::SetLinearVelocity(const core::math::Vector& speed)
 {
 	ImplData->Body->SetLinearVelocity(b2Vec2(speed.X, speed.Y));
 }
@@ -157,8 +157,8 @@ void Poly::RigidBody2DComponent::UpdatePosition()
 {
 	EntityTransform& transform = GetTransform();
 	ASSERTE(GetOwner()->IsChildOfRoot(), "Physics cannot be applied to child entity");
-	Vector localTrans = transform.GetGlobalTranslation();
-	EulerAngles localRot = transform.GetGlobalRotation().ToEulerAngles();
+	core::math::Vector localTrans = transform.GetGlobalTranslation();
+	core::math::EulerAngles localRot = transform.GetGlobalRotation().ToEulerAngles();
 
 	// Set correct starting pos!
 	ImplData->Body->SetTransform(b2Vec2(localTrans.X, localTrans.Y), localRot.Z.AsRadians());

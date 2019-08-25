@@ -32,28 +32,28 @@ TEST_CASE("Checking equality of transforms after applying global and local trans
 	SECTION("Translation.")
 	{
 		e[1]->GetTransform().SetLocalTranslation({ 5, 7, 8 });
-		REQUIRE(e[1]->GetTransform().GetLocalTranslation() == Vector{ 5, 7, 8 });
-		REQUIRE(e[1]->GetTransform().GetGlobalTranslation() == Vector{ 5, 7, 8 });
-		REQUIRE(e[2]->GetTransform().GetLocalTranslation() == Vector{ 0, 0, 0 });
-		REQUIRE(e[2]->GetTransform().GetGlobalTranslation() == Vector{ 5, 7, 8 });
+		REQUIRE(e[1]->GetTransform().GetLocalTranslation() == core::math::Vector{ 5, 7, 8 });
+		REQUIRE(e[1]->GetTransform().GetGlobalTranslation() == core::math::Vector{ 5, 7, 8 });
+		REQUIRE(e[2]->GetTransform().GetLocalTranslation() == core::math::Vector{ 0, 0, 0 });
+		REQUIRE(e[2]->GetTransform().GetGlobalTranslation() == core::math::Vector{ 5, 7, 8 });
 
 		e[1]->GetTransform().SetGlobalTranslation({ 56, 34, 98 });
-		REQUIRE(e[1]->GetTransform().GetLocalTranslation() == Vector{ 56, 34, 98 });
-		REQUIRE(e[1]->GetTransform().GetGlobalTranslation() == Vector{ 56, 34, 98 });
-		REQUIRE(e[2]->GetTransform().GetLocalTranslation() == Vector{ 0, 0, 0 });
-		REQUIRE(e[2]->GetTransform().GetGlobalTranslation() == Vector{ 56, 34, 98 });
+		REQUIRE(e[1]->GetTransform().GetLocalTranslation() == core::math::Vector{ 56, 34, 98 });
+		REQUIRE(e[1]->GetTransform().GetGlobalTranslation() == core::math::Vector{ 56, 34, 98 });
+		REQUIRE(e[2]->GetTransform().GetLocalTranslation() == core::math::Vector{ 0, 0, 0 });
+		REQUIRE(e[2]->GetTransform().GetGlobalTranslation() == core::math::Vector{ 56, 34, 98 });
 
 		e[2]->GetTransform().SetLocalTranslation({ 1, 2, 3 });
-		REQUIRE(e[1]->GetTransform().GetLocalTranslation() == Vector{ 56, 34, 98 });
-		REQUIRE(e[1]->GetTransform().GetGlobalTranslation() == Vector{ 56, 34, 98 });
-		REQUIRE(e[2]->GetTransform().GetLocalTranslation() == Vector{ 1, 2, 3 });
-		REQUIRE(e[2]->GetTransform().GetGlobalTranslation() == Vector{ 57, 36, 101 });
+		REQUIRE(e[1]->GetTransform().GetLocalTranslation() == core::math::Vector{ 56, 34, 98 });
+		REQUIRE(e[1]->GetTransform().GetGlobalTranslation() == core::math::Vector{ 56, 34, 98 });
+		REQUIRE(e[2]->GetTransform().GetLocalTranslation() == core::math::Vector{ 1, 2, 3 });
+		REQUIRE(e[2]->GetTransform().GetGlobalTranslation() == core::math::Vector{ 57, 36, 101 });
 
 		e[2]->GetTransform().SetGlobalTranslation({ 20, 50, 80 });
-		REQUIRE(e[1]->GetTransform().GetLocalTranslation() == Vector{ 56, 34, 98 });
-		REQUIRE(e[1]->GetTransform().GetGlobalTranslation() == Vector{ 56, 34, 98 });
-		REQUIRE(e[2]->GetTransform().GetLocalTranslation() == Vector{ -36, 16, -18 });
-		REQUIRE(e[2]->GetTransform().GetGlobalTranslation() == Vector{ 20, 50, 80 });
+		REQUIRE(e[1]->GetTransform().GetLocalTranslation() == core::math::Vector{ 56, 34, 98 });
+		REQUIRE(e[1]->GetTransform().GetGlobalTranslation() == core::math::Vector{ 56, 34, 98 });
+		REQUIRE(e[2]->GetTransform().GetLocalTranslation() == core::math::Vector{ -36, 16, -18 });
+		REQUIRE(e[2]->GetTransform().GetGlobalTranslation() == core::math::Vector{ 20, 50, 80 });
 	}
 
 	SECTION("Rotation.")

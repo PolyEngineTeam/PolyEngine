@@ -32,7 +32,7 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(Scene* world)
 			{
 				btRigidBody* bulletRigidbody = rigidbody->ImplData->BulletRigidBody;
 				Rigidbody3DComponentTemplate& tmp = rigidbody->Template;
-				Vector v, u;
+				core::math::Vector v, u;
 
 				v = tmp.Inertia.value();
 				bulletRigidbody->setMassProps(tmp.Mass, btVector3(v.X, v.Y, v.Z));
@@ -109,8 +109,8 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(Scene* world)
 		btTransform trans;
 		rigidbody->ImplData->BulletMotionState->getWorldTransform(trans);
 
-		Vector localTrans;
-		Quaternion localrot;
+		core::math::Vector localTrans;
+		core::math::Quaternion localrot;
 
 		localTrans.X = trans.getOrigin().getX();
 		localTrans.Y = trans.getOrigin().getY();
@@ -128,16 +128,16 @@ void Poly::Physics3DSystem::Physics3DUpdatePhase(Scene* world)
 }
 
 //------------------------------------------------------------------------------
-Poly::Vector Poly::Physics3DSystem::CalculateInertia(const Physics3DShape* shape, float mass)
+core::math::Vector Poly::Physics3DSystem::CalculateInertia(const Physics3DShape* shape, float mass)
 {
 	btVector3 i;
 	shape->ImplData->BulletShape->calculateLocalInertia(mass, i);
 
-	return Vector(i.x(), i.y(), i.z());
+	return core::math::Vector(i.x(), i.y(), i.z());
 }
 
 //------------------------------------------------------------------------------
-void Poly::Physics3DSystem::SetCollisionGroup(Scene* world, Entity* entity, EnumFlags<eCollisionGroup> group)
+void Poly::Physics3DSystem::SetCollisionGroup(Scene* world, Entity* entity, core::utils::EnumFlags<eCollisionGroup> group)
 {
 	// get template
 	Collider3DComponent* cmp = world->GetComponent<Collider3DComponent>(entity);
@@ -157,7 +157,7 @@ void Poly::Physics3DSystem::SetCollisionGroup(Scene* world, Entity* entity, Enum
 }
 
 //------------------------------------------------------------------------------
-void Poly::Physics3DSystem::SetCollisionMask(Scene* world, Entity* entity, EnumFlags<eCollisionGroup> mask)
+void Poly::Physics3DSystem::SetCollisionMask(Scene* world, Entity* entity, core::utils::EnumFlags<eCollisionGroup> mask)
 {
 	// get template
 	Collider3DComponent* cmp = world->GetComponent<Collider3DComponent>(entity);
@@ -205,23 +205,23 @@ void Poly::Physics3DSystem::EnsureInit(Scene* world, Entity* entity)
 		switch (rigidbody->Template.RigidbodyType)
 		{
 		case eRigidBody3DType::STATIC:
-			ASSERTE(Cmpf(rigidbody->Template.Mass, 0), "Can't create static body wit non zero mass");
-			rigidbody->Template.Inertia = Vector(0, 0, 0);
+			ASSERTE(core::math::Cmpf(rigidbody->Template.Mass, 0), "Can't create static body wit non zero mass");
+			rigidbody->Template.Inertia = core::math::Vector(0, 0, 0);
 			break;
 
 		case eRigidBody3DType::DYNAMIC:
-			ASSERTE(!Cmpf(rigidbody->Template.Mass, 0), "Can't create dynamic body with zero mass.");
+			ASSERTE(!core::math::Cmpf(rigidbody->Template.Mass, 0), "Can't create dynamic body with zero mass.");
 			if (rigidbody->Template.Inertia.has_value())
 			{
 				// if user has set inertia use provided
-				Vector i = rigidbody->Template.Inertia.value();
+				core::math::Vector i = rigidbody->Template.Inertia.value();
 				inertia = btVector3(i.X, i.Y, i.Z);
 			}
 			else
 			{
 				// if inertia was not set then compute it from shape and mass and save it as current inertia
 				shape->calculateLocalInertia(rigidbody->Template.Mass, inertia);
-				rigidbody->Template.Inertia = Vector(inertia.x(), inertia.y(), inertia.z());
+				rigidbody->Template.Inertia = core::math::Vector(inertia.x(), inertia.y(), inertia.z());
 			}
 			break;
 		default:
@@ -352,7 +352,7 @@ Poly::ContactPairResults Poly::Physics3DSystem::GetAllContactPairs(Scene* world)
 	{
 		btPersistentManifold* contactManifold = worldCmp->Dispatcher->getManifoldByIndexInternal(i);
 
-		Vector normAvg;
+		core::math::Vector normAvg;
 		int numContacts = contactManifold->getNumContacts();
 		for (int j = 0; j<numContacts; j++)
 		{
@@ -360,7 +360,7 @@ Poly::ContactPairResults Poly::Physics3DSystem::GetAllContactPairs(Scene* world)
 
 			btVector3 ptA = pt.getPositionWorldOnA();
 			btVector3 ptB = pt.getPositionWorldOnB();
-			Vector norm = Vector(ptA.x(), ptA.y(), ptA.z()) - Vector(ptB.x(), ptB.y(), ptB.z());
+			core::math::Vector norm = core::math::Vector(ptA.x(), ptA.y(), ptA.z()) - core::math::Vector(ptB.x(), ptB.y(), ptB.z());
 			normAvg += norm;
 		}
 		if (numContacts > 0)
@@ -382,7 +382,7 @@ Poly::ContactPairResults Poly::Physics3DSystem::GetAllContactPairs(Scene* world)
 }
 
 //------------------------------------------------------------------------------
-Poly::RaycastResult Poly::Physics3DSystem::AllHitsRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith)
+Poly::RaycastResult Poly::Physics3DSystem::AllHitsRaycast(Scene* world, const core::math::Vector& from, const core::math::Vector& to, core::utils::EnumFlags<eCollisionGroup> collisionGroup, core::utils::EnumFlags<eCollisionGroup> collidesWith)
 {
 	RaycastResult result;
 
@@ -399,16 +399,16 @@ Poly::RaycastResult Poly::Physics3DSystem::AllHitsRaycast(Scene* world, const Ve
 		RaycastResult::RaycastHit hit;
 
 			// FIXME(squares): try catch something?
-		// get UniqueID
+		// get core::UniqueID
 		hit.HitEntity = (Entity*)r.m_collisionObjects[i]->getUserPointer();
 		// get fraction
 		hit.HitFraction = r.m_hitFractions[i];
 		// get normal
 		btVector3 n = r.m_hitNormalWorld[i];
-		hit.WorldHitNormal = Vector(n.x(), n.y(), n.z());
+		hit.WorldHitNormal = core::math::Vector(n.x(), n.y(), n.z());
 		// get point
 		n = r.m_hitPointWorld[i];
-		hit.WorldHitPoint = Vector(n.x(), n.y(), n.z());
+		hit.WorldHitPoint = core::math::Vector(n.x(), n.y(), n.z());
 
 		// push hit
 		result.Hits.push_back(hit);
@@ -418,7 +418,7 @@ Poly::RaycastResult Poly::Physics3DSystem::AllHitsRaycast(Scene* world, const Ve
 }
 
 //------------------------------------------------------------------------------
-Poly::RaycastResult Poly::Physics3DSystem::ClosestHitRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith)
+Poly::RaycastResult Poly::Physics3DSystem::ClosestHitRaycast(Scene* world, const core::math::Vector& from, const core::math::Vector& to, core::utils::EnumFlags<eCollisionGroup> collisionGroup, core::utils::EnumFlags<eCollisionGroup> collidesWith)
 {
 	RaycastResult result;
 
@@ -435,14 +435,14 @@ Poly::RaycastResult Poly::Physics3DSystem::ClosestHitRaycast(Scene* world, const
 		RaycastResult::RaycastHit hit;
 
 			// FIXME(squares): try catch something?
-		// get UniqueID
+		// get core::UniqueID
 		hit.HitEntity = (Entity*)r.m_collisionObject->getUserPointer();
 		// get fraction
 		hit.HitFraction = r.m_closestHitFraction;
 		// get normal
-		hit.WorldHitNormal = Vector(r.m_hitNormalWorld.x(), r.m_hitNormalWorld.y(), r.m_hitNormalWorld.z());
+		hit.WorldHitNormal = core::math::Vector(r.m_hitNormalWorld.x(), r.m_hitNormalWorld.y(), r.m_hitNormalWorld.z());
 		// get point
-		hit.WorldHitPoint = Vector(r.m_hitPointWorld.x(), r.m_hitPointWorld.y(), r.m_hitPointWorld.z());
+		hit.WorldHitPoint = core::math::Vector(r.m_hitPointWorld.x(), r.m_hitPointWorld.y(), r.m_hitPointWorld.z());
 
 		// push hit
 		result.Hits.push_back(hit);

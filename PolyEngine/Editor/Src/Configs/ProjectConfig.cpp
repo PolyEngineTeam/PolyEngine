@@ -5,7 +5,7 @@
 RTTI_DEFINE_TYPE(ProjectConfig)
 
 //------------------------------------------------------------------------------
-ProjectConfig::ProjectConfig(const String& path, eConfiguration configuration)
+ProjectConfig::ProjectConfig(const core::storage::String& path, eConfiguration configuration)
 	: Poly::ConfigBase(path, Poly::eResourceSource::NONE), ProjectPath(path), ProjectConfiguration(configuration)
 	, AssetsPath(std::make_unique<Poly::AssetsPathConfig>())
 {
@@ -21,7 +21,7 @@ ProjectConfig::ProjectConfig(const String& path, eConfiguration configuration)
 
 	Load();
 
-	StringBuilder builder;
+	core::storage::StringBuilder builder;
 	builder.Append(GetDistDir());
 	builder.Append("AssetsPathConfig.json");
 	AssetsPath->DeserializeFromFile(builder.StealString());
@@ -33,21 +33,21 @@ ProjectConfig::~ProjectConfig()
 }
 
 //------------------------------------------------------------------------------
-String ProjectConfig::GetGameDllPath() const
+core::storage::String ProjectConfig::GetGameDllPath() const
 {
 	return AssetsPath->GetGameLibPath();
 }
 
 //------------------------------------------------------------------------------
-String ProjectConfig::GetRenderingDeviceDllPath() const
+core::storage::String ProjectConfig::GetRenderingDeviceDllPath() const
 {
 	return AssetsPath->GetRenderingDeviceLibPath();
 }
 
 //------------------------------------------------------------------------------
-Poly::String ProjectConfig::GetDistDir() const
+core::storage::String ProjectConfig::GetDistDir() const
 {
-	StringBuilder builder;
+	core::storage::StringBuilder builder;
 
 	builder.Append(ProjectDirPath);
 	builder.Append("/Dist/");

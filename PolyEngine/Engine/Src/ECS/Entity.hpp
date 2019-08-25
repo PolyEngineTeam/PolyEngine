@@ -15,12 +15,12 @@ namespace Poly
 	class ComponentBase;
 	constexpr unsigned int MAX_COMPONENTS_COUNT = 64;
 
-	struct ENGINE_DLLEXPORT ComponentDeleter final : public BaseObjectLiteralType<>
+	struct ENGINE_DLLEXPORT ComponentDeleter final : public ::pe::core::BaseObjectLiteralType<>
 	{
 		void operator()(ComponentBase* c);
 	};
 
-	struct ENGINE_DLLEXPORT EntityDeleter final : public BaseObjectLiteralType<>
+	struct ENGINE_DLLEXPORT EntityDeleter final : public ::pe::core::BaseObjectLiteralType<>
 	{
 		void operator()(Entity*);
 	};
@@ -32,9 +32,9 @@ namespace Poly
 	};
 
 	/// <summary>Class that represent entity inside core engine systems. Should not be used anywhere else.</summary>
-	class ENGINE_DLLEXPORT Entity : public SafePtrRoot
+	class ENGINE_DLLEXPORT Entity : public ::pe::core::memory::SafePtrRoot
 	{
-		RTTI_DECLARE_TYPE_DERIVED(::Poly::Entity, ::Poly::SafePtrRoot)
+		RTTI_DECLARE_TYPE_DERIVED(::Poly::Entity, ::pe::core::memory::SafePtrRoot)
 		{
 			RTTI_PROPERTY_AUTONAME(NameTemplate, RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(Name, RTTI::ePropertyFlag::NONE);
@@ -119,8 +119,8 @@ namespace Poly
 		/// @param Entity* Pointer to new child
 		inline void AddChild(Entity* child) { ASSERTE(child, "Child cannot be null!"); child->SetParent(this); }
 
-		const String& GetName() const { return Name; }
-		void SetName(const String& name) { Name = name; }
+		const core::storage::String& GetName() const { return Name; }
+		void SetName(const core::storage::String& name) { Name = name; }
 
 		/// Returns transformation data of this entity.
 		/// @return Transformation data of this entity.
@@ -132,8 +132,8 @@ namespace Poly
 		bool ContainsChildRecursive(Entity* child) const;
 	
 	
-		const AABox& GetLocalBoundingBox(eEntityBoundingChannel channel) const;
-		AABox GetGlobalBoundingBox(eEntityBoundingChannel channel) const;
+		const core::math::AABox& GetLocalBoundingBox(eEntityBoundingChannel channel) const;
+		core::math::AABox GetGlobalBoundingBox(eEntityBoundingChannel channel) const;
 
 	private:
 		Entity(Scene* world, Entity* parent = nullptr);
@@ -144,13 +144,13 @@ namespace Poly
 		Entity* Parent = nullptr;
 		std::vector<EntityUniquePtr> Children;
 
-		String NameTemplate;
-		String Name;
+		core::storage::String NameTemplate;
+		core::storage::String Name;
 		EntityTransform Transform;
 		Scene* EntityScene = nullptr;
 
-		mutable EnumArray<AABox, eEntityBoundingChannel> LocalBBox;
-		mutable EnumArray<bool, eEntityBoundingChannel> BBoxDirty;
+		mutable core::utils::EnumArray<core::math::AABox, eEntityBoundingChannel> LocalBBox;
+		mutable core::utils::EnumArray<bool, eEntityBoundingChannel> BBoxDirty;
 
 		std::bitset<MAX_COMPONENTS_COUNT> ComponentPosessionFlags;
 		std::vector<ComponentUniquePtr> Components;

@@ -28,7 +28,7 @@ namespace Poly
 
 		virtual const char* GetDescription() const { return "Destroy entity"; }
 	private:
-		SafePtr<Entity> Ent;
+		core::memory::SafePtr<Entity> Ent;
 	};
 
 	//---------------------------------------------------------------
@@ -45,7 +45,7 @@ namespace Poly
 		template <typename... ARG, std::size_t... Is> void func(Scene* w, std::tuple<ARG...>& tup, index<Is...>) { if(Ent) DeferredTaskSystem::AddComponentImmediate<T>(w, Ent.Get(), std::get<Is>(tup)...); }
 		template <typename... ARG> void func(Scene* w, std::tuple<ARG...>& tup) { func(w, tup, gen_seq<sizeof...(ARG)>{}); }
 	private:
-		SafePtr<Entity> Ent;
+		core::memory::SafePtr<Entity> Ent;
 		std::tuple<Args...> arguments;
 	};
 
@@ -60,6 +60,6 @@ namespace Poly
 
 		virtual const char* GetDescription() const { return "Remove component"; }
 	private:
-		SafePtr<Entity> Ent;
+		core::memory::SafePtr<Entity> Ent;
 	};
 }

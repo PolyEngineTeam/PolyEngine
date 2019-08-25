@@ -10,7 +10,7 @@ using namespace Poly;
 class DummyResource : public Poly::ResourceBase
 {
 public:
-	DummyResource(const String& /*path*/) {}
+	DummyResource(const core::storage::String& /*path*/) {}
 };
 
 namespace Poly {

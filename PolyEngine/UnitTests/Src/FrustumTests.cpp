@@ -7,14 +7,14 @@
 
 using namespace Poly;
 
-float maxValue(float zDepth, Angle fov)
+float maxValue(float zDepth, core::math::Angle fov)
 {
 	return -zDepth * Tan(fov / 2);
 }
 
-std::pair<Vector, bool> RandomBoxPosition(const Vector& size, Angle fov, float aspect, float zNear, float zFar)
+std::pair<core::math::Vector, bool> RandomBoxPosition(const core::math::Vector& size, core::math::Angle fov, float aspect, float zNear, float zFar)
 {
-	Vector position = Poly::RandomVectorRange(-200, 50);
+	core::math::Vector position = Poly::RandomVectorRange(-200, 50);
 	if (position.Z != Clamp(position.Z, -zFar, -zNear))
 	{
 		return { position, false }; //not correct
@@ -29,22 +29,22 @@ std::pair<Vector, bool> RandomBoxPosition(const Vector& size, Angle fov, float a
 }
 
 TEST_CASE("Frustum position tests", "[Frustum]") {
-	const Angle fov = 60_deg;
+	const core::math::Angle fov = 60_deg;
 	const float aspect = 4.f / 3.f;
 	const float zNear = 1.f;
 	const float zFar = 1000.f;
 	const size_t testCount = 10000;
 	
-	Frustum f(fov, aspect, zNear, zFar);
-	Vector size(1, 1, 1);
+	core::math::Frustum f(fov, aspect, zNear, zFar);
+	core::math::Vector size(1, 1, 1);
 
 	for (size_t i = 0; i < testCount; ++i)
 	{
 		auto[pos, correct] = RandomBoxPosition(size, fov, aspect, zNear, zFar);
-		AABox box(pos, size);
-		Frustum::eObjectLocation loc = f.GetObjectLocation(box, Matrix());
+		core::math::AABox box(pos, size);
+		core::math::Frustum::eObjectLocation loc = f.GetObjectLocation(box, core::math::Matrix());
 		
-		const bool match = correct == (loc == Frustum::eObjectLocation::INSIDE || loc == Frustum::eObjectLocation::PARTIALY_INSIDE);
+		const bool match = correct == (loc == core::math::Frustum::eObjectLocation::INSIDE || loc == core::math::Frustum::eObjectLocation::PARTIALY_INSIDE);
 		CHECK(match);
 	}
 	

@@ -37,14 +37,14 @@ void Poly::Physics2DSystem::Physics2DUpdatePhase(Scene* world)
 
 		b2Vec2 pos = rigidBody->ImplData->Body->GetPosition();
 		float rot = rigidBody->ImplData->Body->GetAngle();
-		Vector localTrans = transform.GetGlobalTranslation();
-		EulerAngles localrot = transform.GetGlobalRotation().ToEulerAngles();
+		core::math::Vector localTrans = transform.GetGlobalTranslation();
+		core::math::EulerAngles localrot = transform.GetGlobalRotation().ToEulerAngles();
 
 		localTrans.X = pos.x;
 		localTrans.Y = pos.y;
-		localrot.Z = Angle::FromRadians(rot);
+		localrot.Z = core::math::Angle::FromRadians(rot);
 
 		transform.SetGlobalTranslation(localTrans);
-		transform.SetGlobalRotation(Quaternion(localrot));
+		transform.SetGlobalRotation(core::math::Quaternion(localrot));
 	}
 }

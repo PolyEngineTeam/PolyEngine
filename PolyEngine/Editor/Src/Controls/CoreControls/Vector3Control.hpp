@@ -4,7 +4,7 @@
 
 #include <QtWidgets/qlineedit.h>
 
-class Vector3Control : public ControlBase<Poly::Vector>
+class Vector3Control : public ControlBase<core::math::Vector>
 {
 public:
 	Vector3Control(QWidget* parent);

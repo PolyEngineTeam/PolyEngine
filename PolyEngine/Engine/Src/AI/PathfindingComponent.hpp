@@ -6,16 +6,16 @@
 
 namespace Poly
 {
-	class ENGINE_DLLEXPORT NavNode : public BaseObject<>
+	class ENGINE_DLLEXPORT NavNode : public ::pe::core::BaseObject<>
 	{};
 
-	class ENGINE_DLLEXPORT NavGraph : public BaseObject<>
+	class ENGINE_DLLEXPORT NavGraph : public ::pe::core::BaseObject<>
 	{
 	public:
 		virtual float GetTravelCost(const Poly::NavNode* from, const Poly::NavNode* to) const = 0;
 		virtual float GetHeuristicCost(const Poly::NavNode* from, const Poly::NavNode* to) const = 0;
-		virtual Vector GetNodeWorldPosition(const Poly::NavNode* node) const = 0;
-		virtual const NavNode* GetNodeFromWorldPosition(const Vector& pos) const = 0;
+		virtual core::math::Vector GetNodeWorldPosition(const Poly::NavNode* node) const = 0;
+		virtual const NavNode* GetNodeFromWorldPosition(const core::math::Vector& pos) const = 0;
 		virtual void GetConnections(const Poly::NavNode* node, std::vector<const NavNode*>& connections) const = 0;
 		virtual bool CanConnectDirectly(const NavNode* n1, const NavNode* n2) const = 0;
 	};
@@ -27,14 +27,14 @@ namespace Poly
 
 		PathfindingComponent(const NavGraph* navGraphs) : NavigationGraph(navGraphs) {}
 
-		void SetDestination(const Vector& pos);
+		void SetDestination(const core::math::Vector& pos);
 		void ResetDestination();
 
-		inline const std::vector<Vector>& GetPath() const { return CalculatedPath; }
+		inline const std::vector<core::math::Vector>& GetPath() const { return CalculatedPath; }
 	private:
 		const NavGraph* NavigationGraph = nullptr;
-		std::vector<Vector> CalculatedPath;
-		std::optional<Vector> CurentDestination;
+		std::vector<core::math::Vector> CalculatedPath;
+		std::optional<core::math::Vector> CurentDestination;
 		bool RecalculateRequested = false;
 		bool LastPathSearchFailed = false;
 

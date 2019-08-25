@@ -8,7 +8,7 @@ using namespace Poly;
 
 RTTI_DEFINE_COMPONENT(::Poly::MeshRenderingComponent)
 
-MeshRenderingComponent::MeshRenderingComponent(const String& meshPath, eResourceSource source)
+MeshRenderingComponent::MeshRenderingComponent(const core::storage::String& meshPath, eResourceSource source)
 {
 	Mesh = ResourceManager<MeshResource>::Load(meshPath, source);
 	
@@ -29,7 +29,7 @@ Poly::MeshRenderingComponent::~MeshRenderingComponent()
 		ResourceManager<MeshResource>::Release(Mesh);
 }
 
-std::optional<AABox> Poly::MeshRenderingComponent::GetBoundingBox(eEntityBoundingChannel channel) const
+std::optional<core::math::AABox> Poly::MeshRenderingComponent::GetBoundingBox(eEntityBoundingChannel channel) const
 {
 	if (channel != eEntityBoundingChannel::RENDERING || !Mesh)
 		return {};

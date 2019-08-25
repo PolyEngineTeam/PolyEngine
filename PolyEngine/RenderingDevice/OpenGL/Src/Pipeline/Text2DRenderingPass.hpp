@@ -4,12 +4,16 @@
 #include <Pipeline/RenderingPassBase.hpp>
 #include <Proxy/GLShaderProgram.hpp>
 
+namespace pe::core::math
+{
+	class AARect;
+}
+
 namespace Poly
 {
 	class Scene;
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
-	class AARect;
 
 	//------------------------------------------------------------------------------
 	class Text2DRenderingPass : public RenderingPassBase
@@ -18,6 +22,6 @@ namespace Poly
 		Text2DRenderingPass(const GLRenderingDevice* rdi);
 
 	protected:
-		void OnRun(Scene* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override;
+		void OnRun(Scene* world, const CameraComponent* camera, const core::math::AARect& rect, ePassType passType) override;
 	};
 }

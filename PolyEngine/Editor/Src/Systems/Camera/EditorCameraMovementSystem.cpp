@@ -15,24 +15,24 @@ void EditorCameraMovementSystem::Update(Scene* scene)
 
 		float wheelDelta = freeFloatMovementCmp->GetWheelSensitivity() * inputCmp->GetWheelPosDelta().Y;
 		float currSpeed = freeFloatMovementCmp->GetMovementSpeed();
-		float newSpeed = Clamp(currSpeed + wheelDelta, 0.001f, 10000.0f);
+		float newSpeed = core::math::Clamp(currSpeed + wheelDelta, 0.001f, 10000.0f);
 		freeFloatMovementCmp->SetMovementSpeed(newSpeed);
 
-		Vector move;
+		core::math::Vector move;
 		if (inputCmp->IsPressed(eKey::KEY_W))
-			move -= Vector::UNIT_Z;
+			move -= core::math::Vector::UNIT_Z;
 		else if (inputCmp->IsPressed(eKey::KEY_S))
-			move += Vector::UNIT_Z;
+			move += core::math::Vector::UNIT_Z;
 
 		if (inputCmp->IsPressed(eKey::KEY_A))
-			move -= Vector::UNIT_X;
+			move -= core::math::Vector::UNIT_X;
 		else if (inputCmp->IsPressed(eKey::KEY_D))
-			move += Vector::UNIT_X;
+			move += core::math::Vector::UNIT_X;
 
 		if (inputCmp->IsPressed(eKey::KEY_Q))
-			move -= Vector::UNIT_Y;
+			move -= core::math::Vector::UNIT_Y;
 		else if (inputCmp->IsPressed(eKey::KEY_E))
-			move += Vector::UNIT_Y;
+			move += core::math::Vector::UNIT_Y;
 
 		if (move.LengthSquared() > 0)
 			move.Normalize();
@@ -43,13 +43,13 @@ void EditorCameraMovementSystem::Update(Scene* scene)
 
 		if (inputCmp->IsPressed(eMouseButton::MIDDLE))
 		{
-			Vector2i delta = inputCmp->GetMousePosDelta();
+			core::math::Vector2i delta = inputCmp->GetMousePosDelta();
 
-			Quaternion rot = Quaternion(Vector::UNIT_Y, Angle::FromRadians(-delta.X * freeFloatMovementCmp->GetAngularVelocity()));
+			core::math::Quaternion rot = core::math::Quaternion(core::math::Vector::UNIT_Y, core::math::Angle::FromRadians(-delta.X * freeFloatMovementCmp->GetAngularVelocity()));
 			rot *= trans.GetLocalRotation();
-			rot *= Quaternion(Vector::UNIT_X, Angle::FromRadians(-delta.Y * freeFloatMovementCmp->GetAngularVelocity()));
+			rot *= core::math::Quaternion(core::math::Vector::UNIT_X, core::math::Angle::FromRadians(-delta.Y * freeFloatMovementCmp->GetAngularVelocity()));
 
-			if (rot != Quaternion()) {
+			if (rot != core::math::Quaternion()) {
 				rot.Normalize();
 				trans.SetLocalRotation(rot);
 			}
@@ -57,32 +57,32 @@ void EditorCameraMovementSystem::Update(Scene* scene)
 	}
 }
 
-Vector EditorCameraMovementSystem::GetLocalForward(const EntityTransform& transform)
+core::math::Vector EditorCameraMovementSystem::GetLocalForward(const EntityTransform& transform)
 {
-	return transform.GetLocalRotation() * -Vector::UNIT_Z;
+	return transform.GetLocalRotation() * -core::math::Vector::UNIT_Z;
 }
 
-Vector EditorCameraMovementSystem::GetLocalRight(const EntityTransform& transform)
+core::math::Vector EditorCameraMovementSystem::GetLocalRight(const EntityTransform& transform)
 {
-	return transform.GetLocalRotation() * Vector::UNIT_X;
+	return transform.GetLocalRotation() * core::math::Vector::UNIT_X;
 }
 
-Vector EditorCameraMovementSystem::GetLocalUp(const EntityTransform& transform)
+core::math::Vector EditorCameraMovementSystem::GetLocalUp(const EntityTransform& transform)
 {
-	return transform.GetLocalRotation() * Vector::UNIT_Y;
+	return transform.GetLocalRotation() * core::math::Vector::UNIT_Y;
 }
 
-Vector EditorCameraMovementSystem::GetGlobalForward(const EntityTransform& transform)
+core::math::Vector EditorCameraMovementSystem::GetGlobalForward(const EntityTransform& transform)
 {
-	return transform.GetGlobalRotation() * -Vector::UNIT_Z;
+	return transform.GetGlobalRotation() * -core::math::Vector::UNIT_Z;
 }
 
-Vector EditorCameraMovementSystem::GetGlobalRight(const EntityTransform& transform)
+core::math::Vector EditorCameraMovementSystem::GetGlobalRight(const EntityTransform& transform)
 {
-	return transform.GetGlobalRotation() * Vector::UNIT_X;
+	return transform.GetGlobalRotation() * core::math::Vector::UNIT_X;
 }
 
-Vector EditorCameraMovementSystem::GetGlobalUp(const EntityTransform& transform)
+core::math::Vector EditorCameraMovementSystem::GetGlobalUp(const EntityTransform& transform)
 {
-	return transform.GetGlobalRotation() * Vector::UNIT_Y;
+	return transform.GetGlobalRotation() * core::math::Vector::UNIT_Y;
 }

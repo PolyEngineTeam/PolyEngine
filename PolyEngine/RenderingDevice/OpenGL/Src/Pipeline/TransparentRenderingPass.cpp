@@ -12,7 +12,7 @@ TransparentRenderingPass::TransparentRenderingPass(const GLRenderingDevice* rdi)
 {
 }
 
-void TransparentRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
+void TransparentRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const core::math::AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
 {
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	//const TransformComponent* CameraTransform = camera->GetSibling<TransformComponent>();
@@ -26,7 +26,7 @@ void TransparentRenderingPass::OnRun(Scene* world, const CameraComponent* camera
 	const float cameraHeight = 16.f + 1.f;
 	float verticalSpan = cameraHeight / 2.0f;
 	float horizontalSpan = (cameraHeight * camera->GetAspect()) / 2.0f;
-	Vector cameraPos = camera->GetTransform().GetGlobalTranslation();
+	core::math::Vector cameraPos = camera->GetTransform().GetGlobalTranslation();
 
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
@@ -36,7 +36,7 @@ void TransparentRenderingPass::OnRun(Scene* world, const CameraComponent* camera
 
 		if (meshCmp->GetBlendingMode() == eBlendingMode::TRANSLUCENT)
 		{
-			Vector objPos = trans.GetGlobalTranslation();
+			core::math::Vector objPos = trans.GetGlobalTranslation();
 
 			bool shouldCull = objPos.Y > cameraPos.Y + verticalSpan;
 			shouldCull = shouldCull || objPos.Y < cameraPos.Y - verticalSpan;
@@ -45,13 +45,13 @@ void TransparentRenderingPass::OnRun(Scene* world, const CameraComponent* camera
 			if (shouldCull)
 				continue;
 
-			Matrix objScale;
-			objScale.SetScale(Vector(1.0f, 1.0f, 1.0f));
+			core::math::Matrix objScale;
+			objScale.SetScale(core::math::Vector(1.0f, 1.0f, 1.0f));
 
-			Matrix objTransform; // = transCmp->GetGlobalTransformationMatrix();
-			objTransform.SetTranslation(trans.GetGlobalTranslation() + Vector(0.0f, 0.0f, 0.5f));
+			core::math::Matrix objTransform; // = transCmp->GetGlobalTransformationMatrix();
+			objTransform.SetTranslation(trans.GetGlobalTranslation() + core::math::Vector(0.0f, 0.0f, 0.5f));
 
-			Matrix screenTransform = camera->GetClipFromWorld() * objTransform * objScale;
+			core::math::Matrix screenTransform = camera->GetClipFromWorld() * objTransform * objScale;
 			GetProgram().SetUniform("uTransform", objTransform * objScale);
 			GetProgram().SetUniform("uMVPTransform", screenTransform);
 		

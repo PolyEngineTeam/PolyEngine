@@ -35,7 +35,7 @@ TEST_CASE("Pool allocator", "[Allocator]") {
 TEST_CASE("Iterable pool allocator", "[Allocator]") {
 	
 	// test allocation
-	IterablePoolAllocator<size_t> allocator(10);
+	core::memory::IterablePoolAllocator<size_t> allocator(10);
 	REQUIRE(allocator.GetSize() == 0);
 
 	size_t* a = allocator.Alloc();
@@ -66,13 +66,13 @@ TEST_CASE("Iterable pool allocator", "[Allocator]") {
 	for (size_t val : allocator)
 		REQUIRE(val == ++i);
 
-	IterablePoolAllocator<size_t> empty_allocator(10);
+	core::memory::IterablePoolAllocator<size_t> empty_allocator(10);
 	REQUIRE(empty_allocator.Begin() == empty_allocator.End());
 }
 
 TEST_CASE("Iterable pool allocator corner case test", "[Allocator]") {
 	// test allocation
-	IterablePoolAllocator<size_t> allocator(3);
+	core::memory::IterablePoolAllocator<size_t> allocator(3);
 
 	size_t* a = allocator.Alloc();
 	REQUIRE(a != nullptr);

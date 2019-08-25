@@ -26,7 +26,7 @@ void SoundSystem::SoundPhase(Scene* world)
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::SetDevice(const String& name)
+void SoundSystem::SetDevice(const core::storage::String& name)
 {
 	alcCloseDevice(gEngine->GetAudioDevice().Device);
 	gEngine->GetAudioDevice().Device = alcOpenDevice(name.GetCStr());
@@ -34,13 +34,13 @@ void SoundSystem::SetDevice(const String& name)
 }
 
 //---------------------------------------------------------------------------------------------------
-const String& SoundSystem::GetDeviceName()
+const core::storage::String& SoundSystem::GetDeviceName()
 {
 	return *(gEngine->GetAudioDevice().AvailableDevices.begin());
 }
 
 //---------------------------------------------------------------------------------------------------
-const std::vector<String>& SoundSystem::GetAvailableDevices()
+const std::vector<core::storage::String>& SoundSystem::GetAvailableDevices()
 {
 	return gEngine->GetAudioDevice().AvailableDevices;
 }
@@ -122,7 +122,7 @@ void SoundSystem::SetEmitterOffsetInBytes(Scene* world, Entity* entity, size_t o
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::SetEmitterSource(Scene* world, Entity* entity, const String& path, eResourceSource source)
+void SoundSystem::SetEmitterSource(Scene* world, Entity* entity, const core::storage::String& path, eResourceSource source)
 {
 	UNUSED(world);
 	SoundEmitterComponent* emitter = entity->GetComponent<SoundEmitterComponent>();
@@ -137,12 +137,12 @@ void SoundSystem::SetEmitterSource(Scene* world, Entity* entity, const String& p
 }
 
 //---------------------------------------------------------------------------------------------------
-/*void SoundSystem::QueueEmitterSource(Scene* world, Entity* entity, const String&)
+/*void SoundSystem::QueueEmitterSource(Scene* world, Entity* entity, const core::storage::String&)
 {
 }
 
 //---------------------------------------------------------------------------------------------------
-void SoundSystem::DequeueEmitterSource(Scene* world, Entity* entity, const String&)
+void SoundSystem::DequeueEmitterSource(Scene* world, Entity* entity, const core::storage::String&)
 {
 }
 
@@ -159,7 +159,7 @@ void SoundSystem::DeactivateListener(Scene* /*world*/, Entity* /*entity*/)
 {
 }
 
-void SoundSystem::SetListenerPosition(Vector vec)
+void SoundSystem::SetListenerPosition(core::math::Vector vec)
 {
 	alListener3f(AL_POSITION, vec.X, vec.Y, vec.Z);
 }

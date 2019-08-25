@@ -20,9 +20,9 @@ namespace Poly
 		public:
 			struct FontGlyph
 			{
-				Vector TextureUV[2];  // texture uv-s
-				Vector Size;		  // Size of glyph
-				Vector Bearing;       // Offset from baseline to left/top of glyph
+				core::math::Vector TextureUV[2];  // texture uv-s
+				core::math::Vector Size;		  // Size of glyph
+				core::math::Vector Bearing;       // Offset from baseline to left/top of glyph
 				float Advance;       // Offset to advance to next glyph
 			};
 			
@@ -31,7 +31,7 @@ namespace Poly
 			std::map<char, FontGlyph> Characters;
 		};
 
-		FontResource(const String& path);
+		FontResource(const core::storage::String& path);
 		virtual ~FontResource();
 
 		const FontFace& GetFace(size_t height) const;
@@ -43,7 +43,7 @@ namespace Poly
 				LoadFace(height);
 		}
 	private:
-		String FontPath;
+		core::storage::String FontPath;
 		mutable std::unordered_map<size_t, FontFace> Faces;
 	};
 }

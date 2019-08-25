@@ -15,18 +15,18 @@ UnlitRenderingPass::UnlitRenderingPass(const GLRenderingDevice* rdi)
 	GetProgram().RegisterUniform("vec4", "Color");
 }
 
-void UnlitRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
+void UnlitRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const core::math::AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
 	GetProgram().BindProgram();
-	const Matrix& ScreenFromWorld = camera->GetClipFromWorld();
+	const core::math::Matrix& ScreenFromWorld = camera->GetClipFromWorld();
 	
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
 	{
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 
 		const EntityTransform& transform = meshCmp->GetTransform();
-		const Matrix& WorldFromModel = transform.GetWorldFromModel();
-		Matrix ScreenFromModel = ScreenFromWorld * WorldFromModel;
+		const core::math::Matrix& WorldFromModel = transform.GetWorldFromModel();
+		core::math::Matrix ScreenFromModel = ScreenFromWorld * WorldFromModel;
 		GetProgram().SetUniform("uTransform", WorldFromModel);
 		GetProgram().SetUniform("uMVPTransform", ScreenFromModel);
 		

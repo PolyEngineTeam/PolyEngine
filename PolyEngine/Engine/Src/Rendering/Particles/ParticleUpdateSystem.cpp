@@ -27,15 +27,15 @@ void ParticleUpdateSystem::EmitterEmit(Scene* world, ParticleEmitter* emitter, P
 	size_t sizeLeft = emitter->ParticlesPool.GetFreeBlockCount();
 	if (size > sizeLeft)
 	{
-		gConsole.LogInfo("ParticleEmitter::Emit not enough memory in room (1000)");
+		core::utils::gConsole.LogInfo("ParticleEmitter::Emit not enough memory in room (1000)");
 	}
 
-	size_t amount = Clamp(size, (size_t)0, sizeLeft);
+	size_t amount = core::math::Clamp(size, (size_t)0, sizeLeft);
 
-	// gConsole.LogInfo("ParticleEmitter::Emit emitLen: {}", amount);
-	Vector PositionInModel = emitter->GetSettings().SimulationSpace == ParticleEmitter::eSimulationSpace::WORLD_SPACE
+	// core::utils::gConsole.LogInfo("ParticleEmitter::Emit emitLen: {}", amount);
+	core::math::Vector PositionInModel = emitter->GetSettings().SimulationSpace == ParticleEmitter::eSimulationSpace::WORLD_SPACE
 		? particleCmp->GetTransform().GetGlobalTranslation()
-		: Vector::ZERO;
+		: core::math::Vector::ZERO;
 
 	while (amount > 0)
 	{
@@ -43,9 +43,9 @@ void ParticleUpdateSystem::EmitterEmit(Scene* world, ParticleEmitter* emitter, P
 		::new(p) ParticleEmitter::Particle();
 		
 		p->Position = PositionInModel;
-		p->Scale = Vector::ONE;
-		p->Velocity = Vector::ZERO;
-		p->Acceleration = Vector::ZERO;
+		p->Scale = core::math::Vector::ONE;
+		p->Velocity = core::math::Vector::ZERO;
+		p->Acceleration = core::math::Vector::ZERO;
 		p->Age = 0.0f;
 		p->LifeTime = 1.0f;
 
@@ -57,7 +57,7 @@ void ParticleUpdateSystem::EmitterEmit(Scene* world, ParticleEmitter* emitter, P
 
 void ParticleUpdateSystem::EmitterUpdate(Scene* world, ParticleEmitter* emitter)
 {
-	// gConsole.LogInfo("ParticleEmitter::Update {}/{}", emitter->ParticlesPool.GetSize(), emitter->settings.MaxSize);
+	// core::utils::gConsole.LogInfo("ParticleEmitter::Update {}/{}", emitter->ParticlesPool.GetSize(), emitter->settings.MaxSize);
 
 	float deltaTime = (float)(TimeSystem::GetTimerDeltaTime(world, Poly::eEngineTimer::GAMEPLAY));
 
@@ -65,8 +65,8 @@ void ParticleUpdateSystem::EmitterUpdate(Scene* world, ParticleEmitter* emitter)
 	{
 		if (emitter->NextBurstTime < 0.0f)
 		{
-			emitter->NextBurstTime = RandomRange(emitter->settings.BurstTimeMin, emitter->settings.BurstTimeMax);
-			emitter->Emit((size_t)RandomRange(emitter->settings.BurstSizeMin, emitter->settings.BurstSizeMax));
+			emitter->NextBurstTime = core::math::RandomRange(emitter->settings.BurstTimeMin, emitter->settings.BurstTimeMax);
+			emitter->Emit((size_t)core::math::RandomRange(emitter->settings.BurstSizeMin, emitter->settings.BurstSizeMax));
 		}
 		else
 		{
@@ -87,7 +87,7 @@ void ParticleUpdateSystem::EmitterUpdate(Scene* world, ParticleEmitter* emitter)
 
 	// if (ParticleToDelete.GetSize() > 0)
 	// {
-	// 	gConsole.LogInfo("ParticleEmitter::Update toDeleteLen: {}", ParticleToDelete.GetSize());
+	// 	core::utils::gConsole.LogInfo("ParticleEmitter::Update toDeleteLen: {}", ParticleToDelete.GetSize());
 	// }
 
 	for (ParticleEmitter::Particle* p : ParticleToDelete)

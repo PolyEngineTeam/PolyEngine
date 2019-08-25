@@ -5,7 +5,7 @@
 
 namespace Poly
 {
-	struct PrimitiveCube : public BaseObject<>
+	struct PrimitiveCube : public ::pe::core::BaseObject<>
 	{
 		PrimitiveCube();
 		~PrimitiveCube();

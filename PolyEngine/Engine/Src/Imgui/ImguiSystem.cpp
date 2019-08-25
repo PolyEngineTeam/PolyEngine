@@ -83,7 +83,7 @@ ImguiSystem::ImguiSystem()
 	io.GetClipboardTextFn = gEngine->GetClipboardTextFunction;
 	io.ClipboardUserData = NULL;
 
-	gConsole.LogInfo("ImguiSystem::Ctor GetCurrentContext: {}", ImGui::GetCurrentContext() != nullptr);
+	core::utils::gConsole.LogInfo("ImguiSystem::Ctor GetCurrentContext: {}", ImGui::GetCurrentContext() != nullptr);
 }
 
 void ImguiSystem::OnUpdate(Scene* scene)
@@ -99,7 +99,7 @@ void ImguiSystem::OnUpdate(Scene* scene)
 	ImGuiIO& io = ImGui::GetIO();
 	if (!io.Fonts->IsBuilt())
 	{
-		gConsole.LogInfo("ImguiSystem::ImguiUpdatePhase fonts are not build yet, returning");
+		core::utils::gConsole.LogInfo("ImguiSystem::ImguiUpdatePhase fonts are not build yet, returning");
 		return;
 	}
 
@@ -134,11 +134,11 @@ void ImguiSystem::OnUpdate(Scene* scene)
 
 	// Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
 	if (io.WantSetMousePos)
-		gEngine->GetOutputQueue().PushBack({eOutputEventType::MOUSEPOS, Vector2i((int)io.MousePos.x, (int)io.MousePos.y)});
+		gEngine->GetOutputQueue().PushBack({eOutputEventType::MOUSEPOS, core::math::Vector2i((int)io.MousePos.x, (int)io.MousePos.y)});
 	else
 		io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
 
-	Vector2i mousePos = inputCmp->GetMousePos();
+	core::math::Vector2i mousePos = inputCmp->GetMousePos();
 	io.MousePos = ImVec2((float)mousePos.X, (float)mousePos.Y);
 
 	if (!(io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange))

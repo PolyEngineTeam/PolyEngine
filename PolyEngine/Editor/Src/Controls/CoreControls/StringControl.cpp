@@ -17,7 +17,7 @@ StringControl::StringControl(QWidget* parent)
 //------------------------------------------------------------------------------
 void StringControl::Reset()
 {
-	ControlBase<Poly::String>::Reset();
+	ControlBase<core::storage::String>::Reset();
 
 	Field->setText("");
 }
@@ -37,11 +37,11 @@ void StringControl::UpdateObject()
 	if (DisableEdit || *Object == Field->text().toLatin1().data())
 		return;
 
-	ControlCommand<String>* cmd = new ControlCommand<String>();
+	ControlCommand<core::storage::String>* cmd = new ControlCommand<core::storage::String>();
 	cmd->Object = Object;
 	cmd->Control = this;
-	cmd->UndoValue = new String(*Object);
-	cmd->RedoValue = new String(Field->text().toLatin1().data());
+	cmd->UndoValue = new core::storage::String(*Object);
+	cmd->RedoValue = new core::storage::String(Field->text().toLatin1().data());
 
 	*Object = Field->text().toLatin1().data();
 

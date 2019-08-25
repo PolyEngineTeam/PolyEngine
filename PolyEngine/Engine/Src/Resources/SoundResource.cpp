@@ -4,13 +4,13 @@
 
 using namespace Poly;
 
-SoundResource::SoundResource(const String& path)
+SoundResource::SoundResource(const core::storage::String& path)
 {
 	alGenBuffers(1, &BufferID);
 
 	// Declarations and loading file to buffer.
 
-	BinaryBuffer* data = LoadBinaryFile(path);
+	core::memory::BinaryBuffer* data = core::utils::LoadBinaryFile(path);
 	std::vector<char> rawData;
 
 	ogg_sync_state   syncState;		/* sync and verify incoming physical bitstream */
@@ -45,7 +45,7 @@ SoundResource::SoundResource(const String& path)
 
 		if (ogg_sync_pageout(&syncState, &page) != 1)
 		{
-			gConsole.LogDebug("Input does not appear to be an Ogg bitstream.");
+			core::utils::gConsole.LogDebug("Input does not appear to be an Ogg bitstream.");
 			throw OggDecoderException();
 		}
 
@@ -55,19 +55,19 @@ SoundResource::SoundResource(const String& path)
 		vorbis_comment_init(&vorbisComment);
 		if (ogg_stream_pagein(&streamState, &page) < 0)
 		{
-			gConsole.LogDebug("Error reading first page of Ogg bitstream data.");
+			core::utils::gConsole.LogDebug("Error reading first page of Ogg bitstream data.");
 			throw OggDecoderException();
 		}
 
 		if (ogg_stream_packetout(&streamState, &packet) != 1)
 		{
-			gConsole.LogDebug("Error reading initial header packet.");
+			core::utils::gConsole.LogDebug("Error reading initial header packet.");
 			throw OggDecoderException();
 		}
 
 		if (vorbis_synthesis_headerin(&vorbisInfo, &vorbisComment, &packet) < 0)
 		{
-			gConsole.LogDebug("This Ogg bitstream does not contain Vorbis audio data.");
+			core::utils::gConsole.LogDebug("This Ogg bitstream does not contain Vorbis audio data.");
 			throw OggDecoderException();
 		}
 
@@ -86,14 +86,14 @@ SoundResource::SoundResource(const String& path)
 						if (result == 0) break;
 						if (result < 0)
 						{
-							gConsole.LogDebug("Corrupt secondary header.  Exiting.");
+							core::utils::gConsole.LogDebug("Corrupt secondary header.  Exiting.");
 							throw OggDecoderException();
 						}
 
 						result = vorbis_synthesis_headerin(&vorbisInfo, &vorbisComment, &packet);
 						if (result < 0)
 						{
-							gConsole.LogDebug("Corrupt secondary header.  Exiting.");
+							core::utils::gConsole.LogDebug("Corrupt secondary header.  Exiting.");
 							throw OggDecoderException();
 						}
 
@@ -108,7 +108,7 @@ SoundResource::SoundResource(const String& path)
 			bytesRead += increase;
 			if (bytesRead >= data->GetSize() && i < 2)
 			{
-				gConsole.LogDebug("End of file before finding all Vorbis headers!");
+				core::utils::gConsole.LogDebug("End of file before finding all Vorbis headers!");
 				throw OggDecoderException();
 			}
 			else ogg_sync_wrote(&syncState, increase);
@@ -119,14 +119,14 @@ SoundResource::SoundResource(const String& path)
 			char** ptr = vorbisComment.user_comments;
 			while(*ptr)
 			{
-				gConsole.LogDebug("{}", *ptr);
+				core::utils::gConsole.LogDebug("{}", *ptr);
 				++ptr;
 			}
-			gConsole.LogDebug("Bitstream is {} channel, {}Hz", vorbisInfo.channels, vorbisInfo.rate);
-			gConsole.LogDebug("Encoded by: {}", vorbisComment.vendor);
+			core::utils::gConsole.LogDebug("Bitstream is {} channel, {}Hz", vorbisInfo.channels, vorbisInfo.rate);
+			core::utils::gConsole.LogDebug("Encoded by: {}", vorbisComment.vendor);
 		}
 
-		gConsole.LogDebug("blocksize: {}", vorbis_info_blocksize(&vorbisInfo, 1));
+		core::utils::gConsole.LogDebug("blocksize: {}", vorbis_info_blocksize(&vorbisInfo, 1));
 
 		// vorbis headers checked; time to initialize "vorbis data -> PCM" decoder
 
@@ -144,7 +144,7 @@ SoundResource::SoundResource(const String& path)
 				{
 					int result = ogg_sync_pageout(&syncState, &page);
 					if (result == 0) break;
-					if (result< 0) gConsole.LogDebug("Corrupt or missing data in bitstream; continuing...");
+					if (result< 0) core::utils::gConsole.LogDebug("Corrupt or missing data in bitstream; continuing...");
 					else
 					{
 						ogg_stream_pagein(&streamState, &page);
@@ -194,7 +194,7 @@ SoundResource::SoundResource(const String& path)
 									}
 
 									//if (clipflag)
-									//	gConsole.LogDebug("Clipping in frame {}", (long)(vorbisDSPState.sequence));
+									//	core::utils::gConsole.LogDebug("Clipping in frame {}", (long)(vorbisDSPState.sequence));
 
 									const size_t newBlocksize = 2 * vorbisInfo.channels * bout;
 									const size_t oldDataSize = rawData.size();
@@ -237,7 +237,7 @@ SoundResource::SoundResource(const String& path)
 			vorbis_block_clear(&vorbisBlock);
 			vorbis_dsp_clear(&vorbisDSPState);
 		}
-		else gConsole.LogDebug("Error: Corrupt header during playback initialization.");
+		else core::utils::gConsole.LogDebug("Error: Corrupt header during playback initialization.");
 
 		// TODO: loading chained sounds;
 		alBufferData(BufferID, AL_FORMAT_STEREO16, rawData.data(), (ALsizei)rawData.size(), vorbisInfo.rate);

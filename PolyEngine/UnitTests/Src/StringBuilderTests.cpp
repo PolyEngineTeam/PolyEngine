@@ -17,7 +17,7 @@ std::ostream& operator<< (std::ostream& stream, const CustomPrintTextClass& vec)
 
 TEST_CASE("Basic", "[StringBuilder]")
 {
-	StringBuilder sb;
+	core::storage::StringBuilder sb;
 	CHECK(sb.StealString() == "");
 
 	sb.Append('a');
@@ -26,7 +26,7 @@ TEST_CASE("Basic", "[StringBuilder]")
 	sb.Append("abc");
 	CHECK(sb.StealString() == "abc");
 
-	sb.Append(String("abc"));
+	sb.Append(core::storage::String("abc"));
 	CHECK(sb.StealString() == "abc");
 
 	sb.Append(123);

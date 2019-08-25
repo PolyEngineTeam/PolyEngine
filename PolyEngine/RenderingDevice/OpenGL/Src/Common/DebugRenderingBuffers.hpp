@@ -5,7 +5,7 @@
 
 namespace Poly
 {
-	struct DebugRenderingBuffers : public BaseObject<>
+	struct DebugRenderingBuffers : public ::pe::core::BaseObject<>
 	{
 		DebugRenderingBuffers();
 		~DebugRenderingBuffers();

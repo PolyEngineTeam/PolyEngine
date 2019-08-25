@@ -11,11 +11,11 @@ using namespace Poly;
 class ProjectManagerException : public std::exception
 {
 public:
-	ProjectManagerException(const String& msg) : Msg((const char*)msg.GetCStr()) {}
+	ProjectManagerException(const core::storage::String& msg) : Msg((const char*)msg.GetCStr()) {}
 	const char* what() const noexcept override { return Msg.GetCStr(); }
 
 protected:
-	String Msg;
+	core::storage::String Msg;
 };
 
 class ProjectManager : public QObject

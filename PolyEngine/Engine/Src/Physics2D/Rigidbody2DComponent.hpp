@@ -32,8 +32,8 @@ namespace Poly
 
 		void DebugPrintInfo() const;
 
-		void ApplyForceToCenter(const Vector& force);
-		void ApplyImpulseToCenter(const Vector& impulse);
+		void ApplyForceToCenter(const core::math::Vector& force);
+		void ApplyImpulseToCenter(const core::math::Vector& impulse);
 
 		void SetLinearDamping(float dampfactor);
 		void SetAngularDamping(float dampfactor);
@@ -42,8 +42,8 @@ namespace Poly
 		void SetDensity(float density);
 		float GetDensity() const;
 
-		Vector GetLinearVelocity() const;
-		void SetLinearVelocity(const Vector& speed);
+		core::math::Vector GetLinearVelocity() const;
+		void SetLinearVelocity(const core::math::Vector& speed);
 		float GetAngularVelocity() const;
 		void SetAngularVelocity(float speed);
 

@@ -40,9 +40,12 @@
 #include <pe/core/math/Color.hpp>
 #include <pe/core/utils/FileIO.hpp>
 #include <pe/core/utils/Logger.hpp>
-#include <UniqueID.hpp>
+#include <pe/core/UniqueID.hpp>
 #include <pe/core/utils/EnumUtils.hpp>
-#include <pe/core/utils/OutputStream.hpp> 
+#include <pe/core/utils/OutputStream.hpp>
+
+// Temporary namespace usings
+using namespace pe;
 
 // ECS
 #include <ECS/Scene.hpp>

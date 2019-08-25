@@ -3,7 +3,8 @@
 #include <pe/Defines.hpp>
 #include <pe/core/math/BasicMath.hpp>
 
-namespace pe::core::math {
+namespace pe {
+namespace core::math {
 
 	/// <summary>
 	/// Wrapper class for angle expressed in any unit of measurement.
@@ -68,12 +69,6 @@ namespace pe::core::math {
 		float Radians;
 	};
 
-	// User defined literals for angles
-	constexpr Angle operator""_rad(long double value) { return Angle::FromRadians(static_cast<float>(value)); }
-	constexpr Angle operator""_rad(unsigned long long int value) { return Angle::FromRadians(static_cast<float>(value)); }
-	constexpr Angle operator""_deg(long double value) { return Angle::FromDegrees(static_cast<float>(value)); }
-	constexpr Angle operator""_deg(unsigned long long int value) { return Angle::FromDegrees(static_cast<float>(value)); }
-
 	// Trigonometry with Angle
 	inline float Sin(Angle angle) { return std::sin(angle.AsRadians()); }
 	inline float Cos(Angle angle) { return std::cos(angle.AsRadians()); }
@@ -86,5 +81,13 @@ namespace pe::core::math {
 	inline Angle Atan2(float val1, float val2) { return Angle::FromRadians(std::atan2(val1, val2)); }
 	inline Angle Actan(float val) { HEAVY_ASSERTE(!Cmpf(val, 0), "Value cannot be 0."); return Angle::FromRadians(std::atan(1.0f / val)); }
 	inline Angle Actan2(float val1, float val2) { return Angle::FromRadians(std::atan2(val2, val1)); }
+
+}
+
+	// User defined literals for angles
+	constexpr core::math::Angle operator""_rad(long double value) { return core::math::Angle::FromRadians(static_cast<float>(value)); }
+	constexpr core::math::Angle operator""_rad(unsigned long long int value) { return core::math::Angle::FromRadians(static_cast<float>(value)); }
+	constexpr core::math::Angle operator""_deg(long double value) { return core::math::Angle::FromDegrees(static_cast<float>(value)); }
+	constexpr core::math::Angle operator""_deg(unsigned long long int value) { return core::math::Angle::FromDegrees(static_cast<float>(value)); }
 
 }

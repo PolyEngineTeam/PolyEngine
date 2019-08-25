@@ -11,14 +11,14 @@ namespace Poly
 	class GLShaderProgram;
 	struct SceneView;
 
-	Matrix GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize);
+	core::math::Matrix GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize);
 
-	void StablizeShadowProjection(Poly::Matrix& clipFromWorld, int shadowmapSize);
+	void StablizeShadowProjection(core::math::Matrix& clipFromWorld, int shadowmapSize);
 	
 	int GetShadowMapSize(const eShadowMapSize shadowMapSize);
 
 
-	class ShadowMapPass : public BaseObject<>
+	class ShadowMapPass : public ::pe::core::BaseObject<>
 	{
 	public:
 

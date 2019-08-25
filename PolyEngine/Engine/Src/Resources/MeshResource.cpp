@@ -8,37 +8,37 @@ using namespace Poly;
 
 RTTI_DEFINE_TYPE(Poly::MeshResource)
 
-Matrix MatFromAiMat(const aiMatrix4x4& m)
+core::math::Matrix MatFromAiMat(const aiMatrix4x4& m)
 {
-	Matrix ret;
+	core::math::Matrix ret;
 	for (int k = 0; k < 16; ++k)
 		ret.Data[k] = m[k / 4][k % 4];
 	return ret;
 }
 
-MeshResource::MeshResource(const String& path)
+MeshResource::MeshResource(const core::storage::String& path)
 {
 	Assimp::Importer importer;
 	const aiScene *scene = importer.ReadFile(path.GetCStr(), aiProcessPreset_TargetRealtime_Fast);
 
 	if (!scene)
 	{
-		gConsole.LogError("Error Importing Asset: {}", importer.GetErrorString());
+		core::utils::gConsole.LogError("Error Importing Asset: {}", importer.GetErrorString());
 		throw ResourceLoadFailedException();
 	}
 
-	gConsole.LogDebug("Loading model {} sucessfull.", path);
+	core::utils::gConsole.LogDebug("Loading model {} sucessfull.", path);
 
 	const float maxFloat = std::numeric_limits<float>::max();
-	Vector min(maxFloat, maxFloat, maxFloat);
-	Vector max(-maxFloat, -maxFloat, -maxFloat);
+	core::math::Vector min(maxFloat, maxFloat, maxFloat);
+	core::math::Vector max(-maxFloat, -maxFloat, -maxFloat);
 	
 	for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
 	{
 		SubMeshes.push_back(new SubMesh(path, scene->mMeshes[i], scene->mMaterials[scene->mMeshes[i]->mMaterialIndex]));
 
-		min = Vector::Min(min, SubMeshes[i]->GetAABox().GetMin());
-		max = Vector::Max(max, SubMeshes[i]->GetAABox().GetMax());
+		min = core::math::Vector::Min(min, SubMeshes[i]->GetAABox().GetMin());
+		max = core::math::Vector::Max(max, SubMeshes[i]->GetAABox().GetMax());
 	}
 
 	LoadBones(scene->mRootNode);
@@ -49,7 +49,7 @@ MeshResource::MeshResource(const String& path)
 		Animations.insert({ a->Name, a });
 	}
 
-	AxisAlignedBoundingBox = AABox(min, max - min);
+	AxisAlignedBoundingBox = core::math::AABox(min, max - min);
 }
 
 MeshResource::~MeshResource()
@@ -64,7 +64,7 @@ MeshResource::~MeshResource()
 	}
 }
 
-MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* material)
+MeshResource::SubMesh::SubMesh(const core::storage::String& path, aiMesh* mesh, aiMaterial* material)
 {
 	LoadGeometry(mesh);
 	LoadBones(mesh);
@@ -82,7 +82,7 @@ MeshResource::SubMesh::SubMesh(const String& path, aiMesh* mesh, aiMaterial* mat
 
 void Poly::MeshResource::LoadBones(aiNode* node)
 {
-	std::map<String, size_t> boneNameToIdx;
+	std::map<core::storage::String, size_t> boneNameToIdx;
 
 	ModelFromSkeletonRoot = MatFromAiMat(node->mTransformation).Inverse();
 
@@ -97,19 +97,19 @@ void Poly::MeshResource::LoadBones(aiNode* node)
 		}
 	}
 
-	PopulateBoneReferences(boneNameToIdx, node, Matrix::IDENTITY);
+	PopulateBoneReferences(boneNameToIdx, node, core::math::Matrix::IDENTITY);
 	int idx = 0;
 	for (auto& bone : Bones)
 	{
-		gConsole.LogDebug("[{}] Bone [{}] info:\n parent = {},\n prevBoneFromBone = {},\n boneFromModel = {}", idx, bone.name, bone.parentBoneIdx, bone.prevBoneFromBone, bone.boneFromModel);
+		core::utils::gConsole.LogDebug("[{}] Bone [{}] info:\n parent = {},\n prevBoneFromBone = {},\n boneFromModel = {}", idx, bone.name, bone.parentBoneIdx, bone.prevBoneFromBone, bone.boneFromModel);
 		++idx;
 	}
 }
 
-void MeshResource::PopulateBoneReferences(const std::map<String, size_t>& nameToBoneIdx, aiNode* node, const Matrix& prevBoneFromParent)
+void MeshResource::PopulateBoneReferences(const std::map<core::storage::String, size_t>& nameToBoneIdx, aiNode* node, const core::math::Matrix& prevBoneFromParent)
 {
-	String nodeName = node->mName.C_Str();
-	Matrix parentFromBone = MatFromAiMat(node->mTransformation);
+	core::storage::String nodeName = node->mName.C_Str();
+	core::math::Matrix parentFromBone = MatFromAiMat(node->mTransformation);
 	if (nodeName.IsEmpty() || nameToBoneIdx.find(nodeName) == nameToBoneIdx.end())
 	{
 		for (size_t k = 0; k < node->mNumChildren; ++k)
@@ -122,7 +122,7 @@ void MeshResource::PopulateBoneReferences(const std::map<String, size_t>& nameTo
 		if (node->mParent)
 		{
 			aiNode* parent = node->mParent;
-			String parentName = parent->mName.C_Str();
+			core::storage::String parentName = parent->mName.C_Str();
 			while (nameToBoneIdx.find(parentName) == nameToBoneIdx.end() && parent->mParent)
 			{
 				parent = parent->mParent;
@@ -141,7 +141,7 @@ void MeshResource::PopulateBoneReferences(const std::map<String, size_t>& nameTo
 		Bones[idx].prevBoneFromBone = prevBoneFromParent * parentFromBone;
 
 		for (size_t k = 0; k < node->mNumChildren; ++k)
-			PopulateBoneReferences(nameToBoneIdx, node->mChildren[k], Matrix::IDENTITY);
+			PopulateBoneReferences(nameToBoneIdx, node->mChildren[k], core::math::Matrix::IDENTITY);
 	}
 }
 
@@ -151,15 +151,15 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
 	{
 		ASSERTE((i8)mesh->mNumBones <= std::numeric_limits<typename decltype(MeshData.BoneIds)::value_type::ValueType>::max(), "Model has too many bones!");
 
-		std::vector<PriorityQueue<std::pair<u8, float>, std::function<bool(const std::pair<u8, float>&, const std::pair<u8, float>&)>>> tmpBonesList;
+		std::vector<core::storage::PriorityQueue<std::pair<u8, float>, std::function<bool(const std::pair<u8, float>&, const std::pair<u8, float>&)>>> tmpBonesList;
 		tmpBonesList.resize(mesh->mNumVertices, { [](const std::pair<u8, float>& v1, const std::pair<u8, float>& v2) { return v1.second > v2.second; } });
 
-		std::map<String, size_t> nameToBoneIdx;
+		std::map<core::storage::String, size_t> nameToBoneIdx;
 
 		for (u8 boneId = 0; boneId < mesh->mNumBones; ++boneId)
 		{
 			const auto& bone = mesh->mBones[boneId];
-			Bones.push_back(Bone(String(bone->mName.C_Str()), MatFromAiMat(bone->mOffsetMatrix)));
+			Bones.push_back(Bone(core::storage::String(bone->mName.C_Str()), MatFromAiMat(bone->mOffsetMatrix)));
 			
 			if (mesh->HasPositions())
 			{
@@ -195,19 +195,19 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
 			}
 		}
 
-		gConsole.LogDebug("{} bones loaded", mesh->mNumBones);
+		core::utils::gConsole.LogDebug("{} bones loaded", mesh->mNumBones);
 	}
 	else
 	{
-		gConsole.LogWarning("No bones");
+		core::utils::gConsole.LogWarning("No bones");
 	}
 }
 
 void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 {
 	const float maxFloat = std::numeric_limits<float>::max();
-	Vector min(maxFloat, maxFloat, maxFloat);
-	Vector max(-maxFloat, -maxFloat, -maxFloat);
+	core::math::Vector min(maxFloat, maxFloat, maxFloat);
+	core::math::Vector max(-maxFloat, -maxFloat, -maxFloat);
 
 	if (mesh->HasPositions()) {
 		MeshData.Positions.resize(mesh->mNumVertices);
@@ -216,12 +216,12 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 			MeshData.Positions[i].Y = (float)mesh->mVertices[i].y;
 			MeshData.Positions[i].Z = (float)mesh->mVertices[i].z;
 
-			min = Vector::Min(min, Vector(MeshData.Positions[i].GetVector()));
-			max = Vector::Max(max, Vector(MeshData.Positions[i].GetVector()));
+			min = core::math::Vector::Min(min, core::math::Vector(MeshData.Positions[i].GetVector()));
+			max = core::math::Vector::Max(max, core::math::Vector(MeshData.Positions[i].GetVector()));
 		}
 	}
 	// Set bounding box for sub mesh
-	AxisAlignedBoundingBox = AABox(min, max - min);
+	AxisAlignedBoundingBox = core::math::AABox(min, max - min);
 
 	if (mesh->HasTextureCoords(0)) {
 		MeshData.TextCoords.resize(mesh->mNumVertices);
@@ -265,7 +265,7 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 		}
 	}
 	
-	gConsole.LogDebug(
+	core::utils::gConsole.LogDebug(
 		"Loaded mesh entry: {} with {} vertices, {} faces and parameters: "
 		"pos[{}], tex_coord[{}], norm[{}], faces[{}]",
 		mesh->mName.C_Str(), MeshData.Positions.size(), mesh->mNumFaces,
@@ -275,7 +275,7 @@ void MeshResource::SubMesh::LoadGeometry(aiMesh* mesh)
 		mesh->HasFaces() ? "on" : "off");
 }
 
-TextureResource* MeshResource::SubMesh::LoadTexture(const aiMaterial* material, const String& path, const unsigned int aiType, const eTextureUsageType textureType)
+TextureResource* MeshResource::SubMesh::LoadTexture(const aiMaterial* material, const core::storage::String& path, const unsigned int aiType, const eTextureUsageType textureType)
 {
 	TextureResource* texture = nullptr;
 
@@ -289,19 +289,19 @@ TextureResource* MeshResource::SubMesh::LoadTexture(const aiMaterial* material, 
 		std::replace(tmpPath.begin(), tmpPath.end(), '\\', '/'); // replace all '\' to '/', fix for linux machines
 		std::string fullPath = tmpPath.substr(0, tmpPath.rfind('/') + 1) + std::string(texturePath.C_Str());
 		std::replace(fullPath.begin(), fullPath.end(), '\\', '/'); // replace all '\' to '/', fix for linux machines
-		String textPath(fullPath.c_str());
+		core::storage::String textPath(fullPath.c_str());
 		// end temporary code for extracting path
 
 		texture = ResourceManager<TextureResource>::Load(textPath, eResourceSource::NONE, textureType);
 		if (!texture) {
-			gConsole.LogError("Failed to load texture: {}", textPath);
+			core::utils::gConsole.LogError("Failed to load texture: {}", textPath);
 		}
 		else {
-			gConsole.LogDebug("Succeded to load texture: {}", textPath);
+			core::utils::gConsole.LogDebug("Succeded to load texture: {}", textPath);
 		}
 	}
 	else {
-		gConsole.LogError("Failed to load texture for material: {}", path);
+		core::utils::gConsole.LogError("Failed to load texture for material: {}", path);
 	}
 
 	return texture;
@@ -311,33 +311,33 @@ Poly::MeshResource::Animation::Animation(aiAnimation * anim)
 {
 	Duration = (float)anim->mDuration;
 	TicksPerSecond = (float)anim->mTicksPerSecond;
-	Name = String(anim->mName.C_Str());
+	Name = core::storage::String(anim->mName.C_Str());
 
 	for (size_t i = 0; i < anim->mNumChannels; ++i)
 	{
 		Channel c;
-		c.Name = String(anim->mChannels[i]->mNodeName.C_Str());
+		c.Name = core::storage::String(anim->mChannels[i]->mNodeName.C_Str());
 		for (size_t j = 0; j < anim->mChannels[i]->mNumPositionKeys; ++j)
 		{
-			Vector vector = { (float)anim->mChannels[i]->mPositionKeys[j].mValue.x, (float)anim->mChannels[i]->mPositionKeys[j].mValue.y, (float)anim->mChannels[i]->mPositionKeys[j].mValue.z };
+			core::math::Vector vector = { (float)anim->mChannels[i]->mPositionKeys[j].mValue.x, (float)anim->mChannels[i]->mPositionKeys[j].mValue.y, (float)anim->mChannels[i]->mPositionKeys[j].mValue.z };
 			c.Positions.push_back({ vector, (float)anim->mChannels[i]->mPositionKeys[j].mTime });
 		}
 		for (size_t j = 0; j < anim->mChannels[i]->mNumRotationKeys; ++j)
 		{
-			Quaternion q = { (float)anim->mChannels[i]->mRotationKeys[j].mValue.x, (float)anim->mChannels[i]->mRotationKeys[j].mValue.y, (float)anim->mChannels[i]->mRotationKeys[j].mValue.z, (float)anim->mChannels[i]->mRotationKeys[j].mValue.w };
+			core::math::Quaternion q = { (float)anim->mChannels[i]->mRotationKeys[j].mValue.x, (float)anim->mChannels[i]->mRotationKeys[j].mValue.y, (float)anim->mChannels[i]->mRotationKeys[j].mValue.z, (float)anim->mChannels[i]->mRotationKeys[j].mValue.w };
 			c.Rotations.push_back({ q, (float)anim->mChannels[i]->mRotationKeys[j].mTime });
 		}
 		for (size_t j = 0; j < anim->mChannels[i]->mNumScalingKeys; ++j)
 		{
-			Vector vector = { (float)anim->mChannels[i]->mScalingKeys[j].mValue.x, (float)anim->mChannels[i]->mScalingKeys[j].mValue.y, (float)anim->mChannels[i]->mScalingKeys[j].mValue.z };
+			core::math::Vector vector = { (float)anim->mChannels[i]->mScalingKeys[j].mValue.x, (float)anim->mChannels[i]->mScalingKeys[j].mValue.y, (float)anim->mChannels[i]->mScalingKeys[j].mValue.z };
 			c.Scales.push_back({ vector, (float)anim->mChannels[i]->mScalingKeys[j].mTime });
 		}
-		String nameCpy = c.Name;
+		core::storage::String nameCpy = c.Name;
 		channels.insert({ nameCpy, std::move(c) });
 	}
 }
 
-Poly::MeshResource::Animation::ChannelLerpData Poly::MeshResource::Animation::GetLerpData(String channelName, float time) const
+Poly::MeshResource::Animation::ChannelLerpData Poly::MeshResource::Animation::GetLerpData(core::storage::String channelName, float time) const
 {
 	ChannelLerpData data;
 

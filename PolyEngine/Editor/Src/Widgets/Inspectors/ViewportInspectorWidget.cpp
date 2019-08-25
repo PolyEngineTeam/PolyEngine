@@ -16,14 +16,14 @@ extern "C"
 	using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (SDL_Window*, const Poly::ScreenSize&);
 }
 
-static Poly::LibraryFunctionHandle<CreateRenderingDeviceFunc> LoadRenderingDevice;
+static ::pe::core::utils::LibraryFunctionHandle<CreateRenderingDeviceFunc> LoadRenderingDevice;
 
 using namespace Poly;
 
 // unused variables
 //const static float PLAYER_CAMERA_NEAR = 0.1f;
 //const static float PLAYER_CAMERA_FAR = 300.f;
-//const static Angle PLAYER_CAMERA_FOV = 60_deg;
+//const static core::math::Angle PLAYER_CAMERA_FOV = 60_deg;
 
 
 
@@ -40,7 +40,7 @@ ViewportInspectorWidget::ViewportInspectorWidget(QWidget* parent, InspectorManag
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		ASSERTE(false, "SDL initialization failed!");
 
-	Poly::gConsole.LogDebug("SDL initialized.");
+	core::utils::gConsole.LogDebug("SDL initialized.");
 
 	new QGridLayout(this);
 	SDLWidget = new QWidget(this);
@@ -70,10 +70,10 @@ std::unique_ptr<Poly::IRenderingDevice> ViewportInspectorWidget::GetRenderingDev
 	if (!LoadRenderingDevice.FunctionValid())
 	{
 		// Load rendering device library
-		LoadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>(
+		LoadRenderingDevice = ::pe::core::utils::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>(
 			gApp->ProjectMgr->GetProjectConfig().GetRenderingDeviceDllPath().GetCStr(), "PolyCreateRenderingDevice");
 		ASSERTE(LoadRenderingDevice.FunctionValid(), "Library libRenderingDevice load failed");
-		Poly::gConsole.LogDebug("Library libRenderingDevice loaded.");
+		core::utils::gConsole.LogDebug("Library libRenderingDevice loaded.");
 	}
 
 	Poly::ScreenSize viewportRect;
@@ -87,9 +87,9 @@ std::unique_ptr<Poly::IRenderingDevice> ViewportInspectorWidget::GetRenderingDev
 
 //		iEditor
 //------------------------------------------------------------------------------
-String ViewportInspectorWidget::GetAssetsPathConfigPath()
+core::storage::String ViewportInspectorWidget::GetAssetsPathConfigPath()
 {
-	StringBuilder builder;
+	core::storage::StringBuilder builder;
 	builder.Append(Manager->GetConfig()->GetProjectPath());
 	builder.Append("/Dist/Debug/AssetsPathConfig.json");
 
@@ -265,7 +265,7 @@ void ViewportInspectorWidget::wheelEvent(QWheelEvent* wheelEvent)
 	if (!Manager->GetEngine())
 		return;
 
-	Manager->GetEngine()->UpdateWheelPos(Poly::Vector2i(wheelEvent->delta(), 0));
+	Manager->GetEngine()->UpdateWheelPos(core::math::Vector2i(wheelEvent->delta(), 0));
 }
 
 //------------------------------------------------------------------------------
@@ -274,7 +274,7 @@ void ViewportInspectorWidget::mouseMoveEvent(QMouseEvent* mouseEvent)
 	if (!Manager->GetEngine())
 		return;
 
-	Manager->GetEngine()->UpdateMousePos(Poly::Vector2i(mouseEvent->pos().x(), mouseEvent->pos().y()));
+	Manager->GetEngine()->UpdateMousePos(core::math::Vector2i(mouseEvent->pos().x(), mouseEvent->pos().y()));
 }
 
 //------------------------------------------------------------------------------

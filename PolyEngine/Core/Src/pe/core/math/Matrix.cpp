@@ -720,7 +720,7 @@ Matrix Matrix::Compose(const Matrix& translation, const Matrix& rotation, const 
 	return translation * rotation * scale;
 }
 
-namespace Poly {
+namespace pe::core::math {
 	//------------------------------------------------------------------------------
 	std::ostream& operator<< (std::ostream& stream, const Matrix& mat) {
 		stream << "Mat[ ";

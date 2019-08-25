@@ -231,8 +231,8 @@ namespace pe::core::memory
 	};
 
 	// std library for each enablers
-	template <typename T> typename Poly::IterablePoolAllocator<T>::Iterator begin(Poly::IterablePoolAllocator<T>& rhs) { return rhs.Begin(); }
-	template <typename T> typename Poly::IterablePoolAllocator<T>::Iterator end(Poly::IterablePoolAllocator<T>& rhs) { return rhs.End(); }
-	template <typename T> typename Poly::IterablePoolAllocator<T>::ConstIterator begin(const Poly::IterablePoolAllocator<T>& rhs) { return rhs.Begin(); }
-	template <typename T> typename Poly::IterablePoolAllocator<T>::ConstIterator end(const Poly::IterablePoolAllocator<T>& rhs) { return rhs.End(); }
+	template <typename T> typename ::pe::core::memory::IterablePoolAllocator<T>::Iterator begin(::pe::core::memory::IterablePoolAllocator<T>& rhs) { return rhs.Begin(); }
+	template <typename T> typename ::pe::core::memory::IterablePoolAllocator<T>::Iterator end(::pe::core::memory::IterablePoolAllocator<T>& rhs) { return rhs.End(); }
+	template <typename T> typename ::pe::core::memory::IterablePoolAllocator<T>::ConstIterator begin(const ::pe::core::memory::IterablePoolAllocator<T>& rhs) { return rhs.Begin(); }
+	template <typename T> typename ::pe::core::memory::IterablePoolAllocator<T>::ConstIterator end(const ::pe::core::memory::IterablePoolAllocator<T>& rhs) { return rhs.End(); }
 }

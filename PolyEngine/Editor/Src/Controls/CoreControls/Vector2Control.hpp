@@ -47,7 +47,7 @@ public:
 private:
 	void UpdateObject()
 	{
-		auto val = T(Vector2f(Field[0]->text().toFloat(), Field[1]->text().toFloat()));
+		auto val = T(core::math::Vector2f(Field[0]->text().toFloat(), Field[1]->text().toFloat()));
 
 		if (Base::DisableEdit || *Base::Object == val)
 			return; 

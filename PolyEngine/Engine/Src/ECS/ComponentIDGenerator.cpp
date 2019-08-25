@@ -36,7 +36,7 @@ std::vector<std::pair<RTTI::TypeInfo, size_t>> Poly::ComponentManager::GetCompon
 	return ret;
 }
 
-IterablePoolAllocatorBase* Poly::ComponentManager::CreateAllocator(size_t id, size_t componentCount) const
+core::memory::IterablePoolAllocatorBase* Poly::ComponentManager::CreateAllocator(size_t id, size_t componentCount) const
 {
 	const auto& it = IDToCreatorMap.find(id);
 	if (it == IDToCreatorMap.end())

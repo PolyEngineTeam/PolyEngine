@@ -45,8 +45,8 @@ void Poly::Collider3DComponent::UpdatePosition()
 {
 	const EntityTransform& transform = GetTransform();
 
-	Vector localTrans = transform.GetGlobalTranslation();
-	Quaternion localRot = transform.GetGlobalRotation();
+	core::math::Vector localTrans = transform.GetGlobalTranslation();
+	core::math::Quaternion localRot = transform.GetGlobalRotation();
 
 	btVector3 position(localTrans.X, localTrans.Y, localTrans.Z);
 	btQuaternion orientation(localRot.X, localRot.Y, localRot.Z, localRot.W);

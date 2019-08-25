@@ -16,6 +16,9 @@ SILENCE_MSVC_WARNING(4800, "")
 UNSILENCE_MSVC_WARNING()
 UNSILENCE_MSVC_WARNING()
 
+// Temporary namespace usings
+using namespace pe;
+
 // application
 #include "EditorApp.hpp"
 #include "EditorUi.hpp"
@@ -76,9 +79,9 @@ UNSILENCE_MSVC_WARNING()
 #include "Systems/Camera/EditorCameraMovementSystem.hpp"
 #include "Systems/Camera/EditorCameraMovementComponent.hpp"
 
-// engine
-#include <Engine.hpp>
-
 // controllers
 #include <Controllers/IEngineController.hpp>
 #include <Controllers/Impl/EngineController.hpp>
+
+// engine
+#include <Engine.hpp>

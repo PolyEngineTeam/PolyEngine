@@ -111,7 +111,7 @@ namespace pe::core::storage
 		void Clear()
 		{
 			for (size_t i = 0; i < Size; ++i)
-				ObjectLifetimeHelper::Destroy(Data + GetNthIdx(i));
+				::pe::core::memory::ObjectLifetimeHelper::Destroy(Data + GetNthIdx(i));
 			Size = 0;
 			Head = 0;
 			Tail = 0;
@@ -123,7 +123,7 @@ namespace pe::core::storage
 		{
 			if (GetSize() >= GetCapacity())
 				Enlarge();
-			ObjectLifetimeHelper::MoveCreate(Data + Tail, std::move(obj));
+			::pe::core::memory::ObjectLifetimeHelper::MoveCreate(Data + Tail, std::move(obj));
 			AdvanceIdx(Tail);
 			Size++;
 		}
@@ -135,7 +135,7 @@ namespace pe::core::storage
 			if (GetSize() >= GetCapacity())
 				Enlarge();
 			DecreaseIdx(Head);
-			ObjectLifetimeHelper::MoveCreate(Data + Head, std::move(obj));
+			::pe::core::memory::ObjectLifetimeHelper::MoveCreate(Data + Head, std::move(obj));
 			Size++;
 		}
 
@@ -144,7 +144,7 @@ namespace pe::core::storage
 		{
 			HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!");
 			DecreaseIdx(Tail);
-			ObjectLifetimeHelper::Destroy(Data + Tail);
+			::pe::core::memory::ObjectLifetimeHelper::Destroy(Data + Tail);
 			--Size;
 		}
 
@@ -152,7 +152,7 @@ namespace pe::core::storage
 		void PopFront()
 		{
 			HEAVY_ASSERTE(!IsEmpty(), "Trying to access empty queue!");
-			ObjectLifetimeHelper::Destroy(Data + Head);
+			::pe::core::memory::ObjectLifetimeHelper::Destroy(Data + Head);
 			AdvanceIdx(Head);
 			--Size;
 		}
@@ -212,24 +212,24 @@ namespace pe::core::storage
 		void Realloc(size_t capacity)
 		{
 			HEAVY_ASSERTE(Size <= capacity, "Invalid resize capacity!");
-			T* newData = Allocate<T>(capacity);
+			T* newData = ::pe::core::memory::Allocate<T>(capacity);
 
 			// move all elements
 			for (size_t i = 0; i < Size; ++i)
 			{
 				size_t oldIdx = GetNthIdx(i);
-				ObjectLifetimeHelper::MoveCreate(newData + i, std::move(Data[oldIdx]));
-				ObjectLifetimeHelper::Destroy(Data + oldIdx);
+				::pe::core::memory::ObjectLifetimeHelper::MoveCreate(newData + i, std::move(Data[oldIdx]));
+				::pe::core::memory::ObjectLifetimeHelper::Destroy(Data + oldIdx);
 			}
 
-			Deallocate(Data);
+			::pe::core::memory::Deallocate(Data);
 			Data = newData;
 			Capacity = capacity;
 			Head = 0;
 			Tail = Size;
 		}
 
-		void Free() { if (Data) Deallocate(Data); }
+		void Free() { if (Data) ::pe::core::memory::Deallocate(Data); }
 
 		//------------------------------------------------------------------------------
 		void Copy(const Queue<T>& rhs)

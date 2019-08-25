@@ -5,9 +5,13 @@
 #include <Rendering/Camera/CameraSystem.hpp>
 #include <Rendering/Viewport.hpp>
 
+namespace pe::core::math
+{
+class AARect;
+}
+
 namespace Poly
 {
-	class AARect;
 	typedef size_t ViewportID;
 
 	class ENGINE_DLLEXPORT ViewportWorldComponent : public ComponentBase
@@ -17,9 +21,9 @@ namespace Poly
 	public:
 		ViewportWorldComponent();
 
-		ViewportID AddViewport(const AARect&);
+		ViewportID AddViewport(const core::math::AARect&);
 		void RemoveViewport(ViewportID);
-		void ResizeViewport(ViewportID, const AARect&);
+		void ResizeViewport(ViewportID, const core::math::AARect&);
 		void SetCamera(ViewportID, CameraComponent*);
 
 		std::unordered_map<size_t, Viewport>& GetViewports() { return Viewports; }

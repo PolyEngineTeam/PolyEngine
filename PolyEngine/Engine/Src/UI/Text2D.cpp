@@ -13,7 +13,7 @@ Text2D::~Text2D()
 		ResourceManager<FontResource>::Release(Font);
 }
 
-void Text2D::SetFont(const String& fontName, eResourceSource source)
+void Text2D::SetFont(const core::storage::String& fontName, eResourceSource source)
 {
 	FontName = fontName;
 	ResSource = source;

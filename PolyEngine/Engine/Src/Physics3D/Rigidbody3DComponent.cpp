@@ -20,7 +20,7 @@ Poly::Rigidbody3DComponent::~Rigidbody3DComponent()
 }
 
 //------------------------------------------------------------------------------
-void Poly::Rigidbody3DComponent::SetMassProps(float mass, const Vector& inertia)
+void Poly::Rigidbody3DComponent::SetMassProps(float mass, const core::math::Vector& inertia)
 {
 	Template.Mass = mass;
 	Template.Inertia = inertia;
@@ -62,7 +62,7 @@ void Poly::Rigidbody3DComponent::SetDamping(float linearDamping, float angularDa
 }
 
 //------------------------------------------------------------------------------
-void Poly::Rigidbody3DComponent::SetLinearFactor(const Vector& linearFactor)
+void Poly::Rigidbody3DComponent::SetLinearFactor(const core::math::Vector& linearFactor)
 {
 	Template.LinearFactor = linearFactor;
 
@@ -70,7 +70,7 @@ void Poly::Rigidbody3DComponent::SetLinearFactor(const Vector& linearFactor)
 }
 
 //------------------------------------------------------------------------------
-void Poly::Rigidbody3DComponent::SetAngularFactor(const Vector& angularFactor)
+void Poly::Rigidbody3DComponent::SetAngularFactor(const core::math::Vector& angularFactor)
 {
 	Template.AngularFactor = angularFactor;
 
@@ -78,7 +78,7 @@ void Poly::Rigidbody3DComponent::SetAngularFactor(const Vector& angularFactor)
 }
 
 //------------------------------------------------------------------------------
-void Poly::Rigidbody3DComponent::SetLinearVelocity(const Vector& velocity)
+void Poly::Rigidbody3DComponent::SetLinearVelocity(const core::math::Vector& velocity)
 {
 	Template.LinearVelocity = velocity;
 
@@ -86,7 +86,7 @@ void Poly::Rigidbody3DComponent::SetLinearVelocity(const Vector& velocity)
 }
 
 //------------------------------------------------------------------------------
-void Poly::Rigidbody3DComponent::SetAngularVelocity(const Vector& velocity)
+void Poly::Rigidbody3DComponent::SetAngularVelocity(const core::math::Vector& velocity)
 {
 	Template.AngularVelocity = velocity;
 
@@ -94,17 +94,17 @@ void Poly::Rigidbody3DComponent::SetAngularVelocity(const Vector& velocity)
 }
 
 //------------------------------------------------------------------------------
-Poly::Vector Poly::Rigidbody3DComponent::GetLinearVelocity()
+core::math::Vector Poly::Rigidbody3DComponent::GetLinearVelocity()
 {
 	const btVector3& v = ImplData->BulletRigidBody->getLinearVelocity();
-	return Vector(v.x(), v.y(), v.z());
+	return core::math::Vector(v.x(), v.y(), v.z());
 }
 
 //------------------------------------------------------------------------------
-Poly::Vector Poly::Rigidbody3DComponent::GetAngularVelocity()
+core::math::Vector Poly::Rigidbody3DComponent::GetAngularVelocity()
 {
 	const btVector3& v = ImplData->BulletRigidBody->getAngularVelocity();
-	return Vector(v.x(), v.y(), v.z());
+	return core::math::Vector(v.x(), v.y(), v.z());
 }
 
 //------------------------------------------------------------------------------
@@ -112,8 +112,8 @@ void Poly::Rigidbody3DComponent::UpdatePosition()
 {
 	const EntityTransform& transform = GetTransform();
 
-	Vector localTrans = transform.GetGlobalTranslation();
-	Quaternion localRot = transform.GetGlobalRotation();
+	core::math::Vector localTrans = transform.GetGlobalTranslation();
+	core::math::Quaternion localRot = transform.GetGlobalRotation();
 
 	btVector3 position(localTrans.X, localTrans.Y, localTrans.Z);
 	btQuaternion orientation(localRot.X, localRot.Y, localRot.Z, localRot.W);
@@ -127,7 +127,7 @@ void Poly::Rigidbody3DComponent::UpdatePosition()
 }
 
 //------------------------------------------------------------------------------
-void Poly::Rigidbody3DComponent::ApplyImpulseToCenter(const Vector& impulse)
+void Poly::Rigidbody3DComponent::ApplyImpulseToCenter(const core::math::Vector& impulse)
 {
 	ImpulseToCenter = impulse;
 
@@ -135,7 +135,7 @@ void Poly::Rigidbody3DComponent::ApplyImpulseToCenter(const Vector& impulse)
 }
 
 //------------------------------------------------------------------------------
-void Poly::Rigidbody3DComponent::ApplyImpulse(const Vector& impulse, const Vector& relPos)
+void Poly::Rigidbody3DComponent::ApplyImpulse(const core::math::Vector& impulse, const core::math::Vector& relPos)
 {
 	Impulse = impulse;
 	ImpulsePos = relPos;
@@ -144,7 +144,7 @@ void Poly::Rigidbody3DComponent::ApplyImpulse(const Vector& impulse, const Vecto
 }
 
 //------------------------------------------------------------------------------
-void Poly::Rigidbody3DComponent::ApplyTorqueImpulse(const Vector& torque)
+void Poly::Rigidbody3DComponent::ApplyTorqueImpulse(const core::math::Vector& torque)
 {
 	TorqueImpulse = torque;
 
@@ -152,7 +152,7 @@ void Poly::Rigidbody3DComponent::ApplyTorqueImpulse(const Vector& torque)
 }
 
 //------------------------------------------------------------------------------
-void Poly::Rigidbody3DComponent::SetGravity(const Vector& gravity)
+void Poly::Rigidbody3DComponent::SetGravity(const core::math::Vector& gravity)
 {
 	Template.Gravity = gravity;
 
@@ -160,8 +160,8 @@ void Poly::Rigidbody3DComponent::SetGravity(const Vector& gravity)
 }
 
 //------------------------------------------------------------------------------
-Poly::Vector Poly::Rigidbody3DComponent::GetGravity() const
+core::math::Vector Poly::Rigidbody3DComponent::GetGravity() const
 {
 	const btVector3& g = ImplData->BulletRigidBody->getGravity();
-	return Vector(g.x(), g.y(), g.z());
+	return core::math::Vector(g.x(), g.y(), g.z());
 }

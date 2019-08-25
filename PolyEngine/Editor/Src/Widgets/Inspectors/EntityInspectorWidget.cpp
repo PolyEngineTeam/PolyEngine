@@ -41,7 +41,7 @@ EntityInspectorWidget::EntityInspectorWidget(QWidget* parent, InspectorManager* 
 	MainLayout->addWidget(NameField, 0, 0, 1, 2);
 	connect(NameField, &StringControl::ObjectUpdated, this, &EntityInspectorWidget::ControlObjectUpdated);
 	
-	// UniqueID
+	// core::UniqueID
 	UniqueIdText = new QLabel(this);
 	UniqueIdText->setText("UniqueID");
 	MainLayout->addWidget(UniqueIdText, 1, 0);

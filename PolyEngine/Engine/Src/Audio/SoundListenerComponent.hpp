@@ -24,8 +24,8 @@ namespace Poly
 
 	private:
 		float Gain = 1;
-		Vector Position;
-		Vector Velocity;
+		core::math::Vector Position;
+		core::math::Vector Velocity;
 		std::vector<SoundEmitterComponent*> Emitters;
 	};
 

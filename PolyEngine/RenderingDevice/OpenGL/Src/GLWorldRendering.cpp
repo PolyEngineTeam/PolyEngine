@@ -16,11 +16,11 @@
 #include <TiledForwardRenderer.hpp>
 
 using namespace Poly;
-using MeshQueue = PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
+using MeshQueue = core::storage::PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
 
 void GLRenderingDevice::Init()
 {
-	gConsole.LogInfo("GLRenderingDevice::Init");
+	core::utils::gConsole.LogInfo("GLRenderingDevice::Init");
 
 	GetExtensions();
 	
@@ -114,82 +114,82 @@ void GLRenderingDevice::CullDirLightQueue(SceneView& sceneView, const std::vecto
 {
 	const DirectionalLightComponent* dirLight = sceneView.DirectionalLightList[0];
 	const CameraComponent* cameraCmp = sceneView.CameraCmp;
-	Frustum frustum = cameraCmp->GetCameraFrustum();
+	core::math::Frustum frustum = cameraCmp->GetCameraFrustum();
 
-	Matrix clipFromView;
+	core::math::Matrix clipFromView;
 	clipFromView.SetPerspective(frustum.GetFov(), frustum.GetAspect(), frustum.GetZNear(), frustum.GetZFar());
-	Matrix viewFromWorld = cameraCmp->GetViewFromWorld();
-	Matrix clipFromWorld = clipFromView * viewFromWorld;
+	core::math::Matrix viewFromWorld = cameraCmp->GetViewFromWorld();
+	core::math::Matrix clipFromWorld = clipFromView * viewFromWorld;
 
 	// Transform frustum corners to DirLightSpace
-	std::vector<Vector> cornersInNDC {
-		Vector(-1.0f,  1.0f, -1.0f), // back  left	top
-		Vector( 1.0f,  1.0f, -1.0f), // back  right top
-		Vector(-1.0f, -1.0f, -1.0f), // back  left  bot
-		Vector( 1.0f, -1.0f, -1.0f), // back  right bot
-		Vector(-1.0f,  1.0f,  1.0f), // front left	top
-		Vector( 1.0f,  1.0f,  1.0f), // front right top
-		Vector(-1.0f, -1.0f,  1.0f), // front left  bot
-		Vector( 1.0f, -1.0f,  1.0f)	 // front right bot
+	std::vector<core::math::Vector> cornersInNDC {
+		core::math::Vector(-1.0f,  1.0f, -1.0f), // back  left	top
+		core::math::Vector( 1.0f,  1.0f, -1.0f), // back  right top
+		core::math::Vector(-1.0f, -1.0f, -1.0f), // back  left  bot
+		core::math::Vector( 1.0f, -1.0f, -1.0f), // back  right bot
+		core::math::Vector(-1.0f,  1.0f,  1.0f), // front left	top
+		core::math::Vector( 1.0f,  1.0f,  1.0f), // front right top
+		core::math::Vector(-1.0f, -1.0f,  1.0f), // front left  bot
+		core::math::Vector( 1.0f, -1.0f,  1.0f)	 // front right bot
 	};
 
 	// Transform frustum corners from NDC to World
 	// could be done in one iteration but we need to do perspective division by W
-	Matrix worldFromClip = clipFromWorld.GetInversed();
-	std::vector<Vector> cornersInWS;
-	for (Vector posInClip : cornersInNDC)
+	core::math::Matrix worldFromClip = clipFromWorld.GetInversed();
+	std::vector<core::math::Vector> cornersInWS;
+	for (core::math::Vector posInClip : cornersInNDC)
 	{
-		Vector posInWS = worldFromClip * posInClip;
+		core::math::Vector posInWS = worldFromClip * posInClip;
 		posInWS.X /= posInWS.W;
 		posInWS.Y /= posInWS.W;
 		posInWS.Z /= posInWS.W;
 		cornersInWS.push_back(posInWS);
 	}
-	DebugDrawSystem::DrawFrustumPoints(sceneView.SceneData, cornersInWS, Color::RED);
+	DebugDrawSystem::DrawFrustumPoints(sceneView.SceneData, cornersInWS, core::math::Color::RED);
 
 	// based on https://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
 	// Stabilize shadow map: calculate sphere bounds around frustum to minimize AABB changes on frustum rotation 
 	// Calculate the centroid of the view frustum slice
-	Vector lightForward = dirLight->GetTransform().GetGlobalForward();
-	Vector lightUp = dirLight->GetTransform().GetGlobalUp();
-	Matrix lightFromWorld = Matrix(Vector::ZERO, lightForward, lightUp);
+	core::math::Vector lightForward = dirLight->GetTransform().GetGlobalForward();
+	core::math::Vector lightUp = dirLight->GetTransform().GetGlobalUp();
+	core::math::Matrix lightFromWorld = core::math::Matrix(core::math::Vector::ZERO, lightForward, lightUp);
 	// @fixme: Transpose is needed to correctly multiply light rotation
 	// (created with look at) with rest of light projection matrices.
 	// Same rotation is created when inverted axes are passed to look at constructor
 	lightFromWorld.Transpose();
-	Matrix worldFromLight = lightFromWorld.GetInversed();
+	core::math::Matrix worldFromLight = lightFromWorld.GetInversed();
 
-	Vector frustumCenterInLS;
-	for (Vector posInWS : cornersInWS)
+	core::math::Vector frustumCenterInLS;
+	for (core::math::Vector posInWS : cornersInWS)
 	{
 		frustumCenterInLS += lightFromWorld * posInWS;
 	}
 	frustumCenterInLS *= 1.0f / 8.0f;
 
 	float maxRadiusInLS = 0.0f;
-	for (Vector posInWS : cornersInWS)
+	for (core::math::Vector posInWS : cornersInWS)
 	{
 		float radius = (lightFromWorld * cornersInWS[0] - lightFromWorld * posInWS).Length();
 		maxRadiusInLS = std::max(maxRadiusInLS, radius);
 	}
 	maxRadiusInLS = std::ceil(maxRadiusInLS * 16.0f) / 16.0f; // MJP version
 
-	Vector frustumMinInLS = frustumCenterInLS - Vector::ONE * maxRadiusInLS;
-	Vector frustumMaxInLS = frustumCenterInLS + Vector::ONE * maxRadiusInLS;
-	AABox frustumAABBInLS(frustumMinInLS, frustumMaxInLS - frustumMinInLS);
+	core::math::Vector frustumMinInLS = frustumCenterInLS - core::math::Vector::ONE * maxRadiusInLS;
+	core::math::Vector frustumMaxInLS = frustumCenterInLS + core::math::Vector::ONE * maxRadiusInLS;
+	core::math::AABox frustumAABBInLS(frustumMinInLS, frustumMaxInLS - frustumMinInLS);
 
 	if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawFrustumBounds)
-		DebugDrawSystem::DrawBox(sceneView.SceneData, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), worldFromLight, Color(1.0f, 1.0f, 0.0f));
+		DebugDrawSystem::DrawBox(sceneView.SceneData, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), worldFromLight, core::math::Color(1.0f, 1.0f, 0.0f));
 
 	CullShadowCasters(sceneView, lightFromWorld, worldFromLight, frustumAABBInLS);
 
 	if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawFrustumBounds)
-		DebugDrawSystem::DrawBox(sceneView.SceneData, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), lightFromWorld.GetInversed(), Color(1.0f, 1.0f, 0.0f));
+		DebugDrawSystem::DrawBox(sceneView.SceneData, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), lightFromWorld.GetInversed(), core::math::Color(1.0f, 1.0f, 0.0f));
 
 	sceneView.DirShadowAABBInLS = frustumAABBInLS;
 }
 
-void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& dirLightFromWorld, const Matrix& worldFromDirLight, AABox& frustumAABBInLS)
+void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const core::math::Matrix& dirLightFromWorld, const core::math::Matrix& worldFromDirLight, core::math::AABox& frustumAABBInLS)
 {
 	const float maxFloat = std::numeric_limits<float>::max();
 	Scene* scene = sceneView.SceneData;
@@ -200,19 +200,19 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& di
 		meshCmps.push_back(meshCmp);
 	}
 	// transform meshes AABB to DirLightSpace
-	std::vector<std::tuple<AABox, MeshRenderingComponent*>> boxMeshes;
+	std::vector<std::tuple<core::math::AABox, MeshRenderingComponent*>> boxMeshes;
 	for (const auto meshCmp : meshCmps)
 	{
-		const Matrix& dirLightFromModel = dirLightFromWorld * meshCmp->GetTransform().GetWorldFromModel();
-		std::optional<AABox> boxWSOptional = meshCmp->GetBoundingBox(eEntityBoundingChannel::RENDERING);
+		const core::math::Matrix& dirLightFromModel = dirLightFromWorld * meshCmp->GetTransform().GetWorldFromModel();
+		std::optional<core::math::AABox> boxWSOptional = meshCmp->GetBoundingBox(eEntityBoundingChannel::RENDERING);
 		if (boxWSOptional.has_value())
 		{
-			AABox boxWS = boxWSOptional.value();
-			AABox boxLS = boxWS.GetTransformed(dirLightFromModel);
+			core::math::AABox boxWS = boxWSOptional.value();
+			core::math::AABox boxLS = boxWS.GetTransformed(dirLightFromModel);
 			boxMeshes.push_back(std::tuple(boxLS, meshCmp));
 
 			if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawShadowCastersBounds)
-				DebugDrawSystem::DrawBox(scene, boxLS.GetMin(), boxLS.GetMax(), worldFromDirLight, Color::WHITE);
+				DebugDrawSystem::DrawBox(scene, boxLS.GetMin(), boxLS.GetMax(), worldFromDirLight, core::math::Color::WHITE);
 		}
 	}
 
@@ -227,16 +227,16 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& di
 
 	if (maxZ > frustumAABBInLS.GetMax().Z)
 	{
-		Vector center = frustumAABBInLS.GetCenter(); // X and Z should be neutral so AABB expanded only on Y axis
-		frustumAABBInLS.Expand(Vector(center.X, center.Y, maxZ));
+		core::math::Vector center = frustumAABBInLS.GetCenter(); // X and Z should be neutral so AABB expanded only on Y axis
+		frustumAABBInLS.Expand(core::math::Vector(center.X, center.Y, maxZ));
 	}
 
 	if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawShadowCastersBounds)
-		DebugDrawSystem::DrawBox(scene, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), worldFromDirLight, Color(0.5f, 0.5f, 0.0f));
+		DebugDrawSystem::DrawBox(scene, frustumAABBInLS.GetMin(), frustumAABBInLS.GetMax(), worldFromDirLight, core::math::Color(0.5f, 0.5f, 0.0f));
 	
 
 	// find all meshes that are inside extended DirLights AABB box
-	Vector dirLightPos = sceneView.DirectionalLightList[0]->GetTransform().GetGlobalTranslation();
+	core::math::Vector dirLightPos = sceneView.DirectionalLightList[0]->GetTransform().GetGlobalTranslation();
 	MeshQueue shadowCasterQueue(SceneView::DistanceToCameraComparator(dirLightPos, SceneView::eSortOrderType::FRONT_TO_BACK), 0);
 	
 	for (auto& [box, meshCmp] : boxMeshes)
@@ -246,18 +246,18 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const Matrix& di
 			shadowCasterQueue.Push(meshCmp);
 
 			if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawShadowCastersBounds)
-				DebugDrawSystem::DrawBox(scene, box.GetMin(), box.GetMax(), worldFromDirLight, Color::GREEN);
+				DebugDrawSystem::DrawBox(scene, box.GetMin(), box.GetMax(), worldFromDirLight, core::math::Color::GREEN);
 		}
 	}
 
 	sceneView.DirShadowCastersQueue = std::move(shadowCasterQueue);
 
-	// gConsole.LogInfo("GLRenderingDevice::FillDirLightQueue casters: {}/{}", shadowCastersCounter, meshCmps.GetSize());
+	// core::utils::gConsole.LogInfo("GLRenderingDevice::FillDirLightQueue casters: {}/{}", shadowCastersCounter, meshCmps.GetSize());
 }
 
 void GLRenderingDevice::CreateUtilityTextures()
 {
-	gConsole.LogInfo("GLRenderingDevice::CreateUtilityTextures");
+	core::utils::gConsole.LogInfo("GLRenderingDevice::CreateUtilityTextures");
 
 	GLubyte dataWhite[] = { 255, 255, 255, 255 };
 	glGenTextures(1, &FallbackWhiteTexture);
@@ -289,11 +289,11 @@ void GLRenderingDevice::CreateUtilityTextures()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, dataDefaultNormal);
 	CHECK_GL_ERR();
 
-	Vector noise[16];
+	core::math::Vector noise[16];
 	for (int i = 0; i < 16; ++i) {
-		noise[i] = Vector(
-			RandomRange(-1.0f, 1.0f),
-			RandomRange(-1.0f, 1.0f),
+		noise[i] = core::math::Vector(
+			core::math::RandomRange(-1.0f, 1.0f),
+			core::math::RandomRange(-1.0f, 1.0f),
 			0.0f
 		);
 		noise[i].Normalize();
@@ -301,10 +301,10 @@ void GLRenderingDevice::CreateUtilityTextures()
 
 	GLubyte dataSSAONoise[16 * 3];
 	for (int i = 0; i < 16; i += 3) {
-		Vector positive = noise[i] * 0.5f + 0.5f;
-		dataSSAONoise[i + 0] = (GLbyte)Clamp((int)(positive.X * 255.0f), 0, 255);
-		dataSSAONoise[i + 1] = (GLbyte)Clamp((int)(positive.Y * 255.0f), 0, 255);
-		dataSSAONoise[i + 2] = (GLbyte)Clamp((int)(positive.Z * 255.0f), 0, 255);
+		core::math::Vector positive = noise[i] * 0.5f + 0.5f;
+		dataSSAONoise[i + 0] = (GLbyte)core::math::Clamp((int)(positive.X * 255.0f), 0, 255);
+		dataSSAONoise[i + 1] = (GLbyte)core::math::Clamp((int)(positive.Y * 255.0f), 0, 255);
+		dataSSAONoise[i + 2] = (GLbyte)core::math::Clamp((int)(positive.Z * 255.0f), 0, 255);
 	}
 
 	glGenTextures(1, &SSAONoiseMap);

@@ -6,7 +6,7 @@
 RTTI_DEFINE_COMPONENT(::Poly::Box2DColliderComponent)
 RTTI_DEFINE_COMPONENT(::Poly::Circle2DColliderComponent)
 
-Poly::Box2DColliderComponent::Box2DColliderComponent(const Vector& size)
+Poly::Box2DColliderComponent::Box2DColliderComponent(const core::math::Vector& size)
 {
 	Shape = std::make_unique<b2PolygonShape>();
 	Shape->SetAsBox(size.X / 2, size.Y / 2);
@@ -16,7 +16,7 @@ Poly::Box2DColliderComponent::~Box2DColliderComponent()
 {
 }
 
-void Poly::Box2DColliderComponent::SetSize(const Vector& size)
+void Poly::Box2DColliderComponent::SetSize(const core::math::Vector& size)
 {
 	Shape->SetAsBox(size.X / 2, size.Y / 2);
 }

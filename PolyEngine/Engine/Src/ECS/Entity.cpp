@@ -38,7 +38,7 @@ Entity::Entity(Scene* world, Entity* parent)
 
 void Poly::Entity::SetBBoxDirty()
 {
-	for (eEntityBoundingChannel channel : IterateEnum<eEntityBoundingChannel>())
+	for (eEntityBoundingChannel channel : core::utils::IterateEnum<eEntityBoundingChannel>())
 		BBoxDirty[channel] = true;
 	if (Parent)
 		Parent->SetBBoxDirty();
@@ -85,7 +85,7 @@ void* Poly::Entity::AllocateComponent(RTTI::TypeInfo t)
 {
 	Scene* s = gEngine->GetCurrentlySerializedScene();
 	const size_t id = ComponentManager::Get().GetComponentID(t).value();
-	gConsole.LogInfo("Allocationg component: {} with ID {} and typeID {}", t.GetTypeName(), id, t);
+	core::utils::gConsole.LogInfo("Allocationg component: {} with ID {} and typeID {}", t.GetTypeName(), id, t);
 	void* ptr = s->GetComponentAllocator(id)->GenericAlloc();
 	t.CreateInstanceInPlace(ptr);
 	return ptr;
@@ -118,17 +118,17 @@ bool Poly::Entity::ContainsChildRecursive(Entity* child) const
 	return false;
 }
 
-const AABox& Poly::Entity::GetLocalBoundingBox(eEntityBoundingChannel channel) const
+const core::math::AABox& Poly::Entity::GetLocalBoundingBox(eEntityBoundingChannel channel) const
 {
 	if (BBoxDirty[channel])
 	{
-		LocalBBox[channel].SetMin(Vector::ZERO);
-		LocalBBox[channel].SetSize(Vector::ZERO);
+		LocalBBox[channel].SetMin(core::math::Vector::ZERO);
+		LocalBBox[channel].SetSize(core::math::Vector::ZERO);
 
 		// Update bounding box by children boxes
 		for (auto& child : Children)
 		{
-			AABox childBox = child->GetLocalBoundingBox(channel);
+			core::math::AABox childBox = child->GetLocalBoundingBox(channel);
 			LocalBBox[channel].Expand(childBox.GetTransformed(child->GetTransform().GetParentFromModel()));
 		}
 
@@ -147,7 +147,7 @@ const AABox& Poly::Entity::GetLocalBoundingBox(eEntityBoundingChannel channel) c
 	return LocalBBox[channel];
 }
 
-AABox Poly::Entity::GetGlobalBoundingBox(eEntityBoundingChannel channel) const
+core::math::AABox Poly::Entity::GetGlobalBoundingBox(eEntityBoundingChannel channel) const
 {
 	return GetLocalBoundingBox(channel).GetTransformed(GetTransform().GetWorldFromModel());
 }

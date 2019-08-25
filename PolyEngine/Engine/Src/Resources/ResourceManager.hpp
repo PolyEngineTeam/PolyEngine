@@ -12,38 +12,38 @@ namespace Poly
 	class FontResource;
 	class SoundResource;
 
-	ENGINE_DLLEXPORT String EvaluateFullResourcePath(eResourceSource Source, const String& path);
+	ENGINE_DLLEXPORT core::storage::String EvaluateFullResourcePath(eResourceSource Source, const core::storage::String& path);
 
-	ENGINE_DLLEXPORT String LoadTextFileRelative(eResourceSource Source, const String& path);
-	ENGINE_DLLEXPORT void SaveTextFileRelative(eResourceSource Source, const String& path, const String& text);
+	ENGINE_DLLEXPORT core::storage::String LoadTextFileRelative(eResourceSource Source, const core::storage::String& path);
+	ENGINE_DLLEXPORT void SaveTextFileRelative(eResourceSource Source, const core::storage::String& path, const core::storage::String& text);
 
-	ENGINE_DLLEXPORT float* LoadImageHDR(const String& path, int* width, int* height, int* fileChannels);
+	ENGINE_DLLEXPORT float* LoadImageHDR(const core::storage::String& path, int* width, int* height, int* fileChannels);
 	ENGINE_DLLEXPORT void FreeImageHDR(float* data);
-	ENGINE_DLLEXPORT unsigned char* LoadImage(const String& path, int* width, int* height, int* fileChannels, int desiredChannels = 0);
+	ENGINE_DLLEXPORT unsigned char* LoadImage(const core::storage::String& path, int* width, int* height, int* fileChannels, int desiredChannels = 0);
 	ENGINE_DLLEXPORT void FreeImage(unsigned char* data);
 
 
-	namespace Impl { template<typename T> std::map<String, std::unique_ptr<T>>& GetResources(); }
+	namespace Impl { template<typename T> std::map<core::storage::String, std::unique_ptr<T>>& GetResources(); }
 
 #define ENGINE_DECLARE_RESOURCE(type, map_name) \
 	namespace Impl { \
-		ENGINE_DLLEXPORT extern std::map<String, std::unique_ptr<type>> map_name; \
-		template<> inline std::map<String, std::unique_ptr<type>>& GetResources<type>() { return map_name; } \
+		ENGINE_DLLEXPORT extern std::map<core::storage::String, std::unique_ptr<type>> map_name; \
+		template<> inline std::map<core::storage::String, std::unique_ptr<type>>& GetResources<type>() { return map_name; } \
 	}
 
 #define DECLARE_RESOURCE(type, map_name) \
 	namespace Impl { \
-		GAME_DLLEXPORT extern std::map<String, std::unique_ptr<type>> map_name; \
-		template<> inline std::map<String, std::unique_ptr<type>>& GetResources<type>() { return map_name; } \
+		GAME_DLLEXPORT extern std::map<core::storage::String, std::unique_ptr<type>> map_name; \
+		template<> inline std::map<core::storage::String, std::unique_ptr<type>>& GetResources<type>() { return map_name; } \
 	}
 
 #define TEST_DECLARE_RESOURCE(type, map_name) \
 	namespace Impl { \
-		extern std::map<String, std::unique_ptr<type>> map_name; \
-		template<> inline std::map<String, std::unique_ptr<type>>& GetResources<type>() { return map_name; } \
+		extern std::map<core::storage::String, std::unique_ptr<type>> map_name; \
+		template<> inline std::map<core::storage::String, std::unique_ptr<type>>& GetResources<type>() { return map_name; } \
 	}
 
-#define DEFINE_RESOURCE(type, map_name) namespace Poly { namespace Impl { std::map<String, std::unique_ptr<type>> map_name = {}; }}
+#define DEFINE_RESOURCE(type, map_name) namespace Poly { namespace Impl { std::map<core::storage::String, std::unique_ptr<type>> map_name = {}; }}
 
 	ENGINE_DECLARE_RESOURCE(MeshResource, gMeshResourcesMap)
 	ENGINE_DECLARE_RESOURCE(TextureResource, gTextureResourcesMap)
@@ -54,18 +54,18 @@ namespace Poly
 	class ResourceManager
 	{
 	public:
-		static T* LoadEngineAsset(const String& path)
+		static T* LoadEngineAsset(const core::storage::String& path)
 		{
 			return Load(path, eResourceSource::ENGINE);
 		}
 
-		static T* LoadGameAsset(const String& path)
+		static T* LoadGameAsset(const core::storage::String& path)
 		{
 			return Load(path, eResourceSource::GAME);
 		}
 
 		template<typename... Args>
-		static T* Load(const String& path, eResourceSource source, Args&&... args)
+		static T* Load(const core::storage::String& path, eResourceSource source, Args&&... args)
 		{
 			auto it = Impl::GetResources<T>().find(path);
 
@@ -79,8 +79,8 @@ namespace Poly
 
 			// Load the resource
 			T* resource = nullptr;
-			String absolutePath = gAssetsPathConfig.GetAssetsPath(source) + path;
-			gConsole.LogInfo("ResourceManager: Loading: {}", absolutePath);
+			core::storage::String absolutePath = gAssetsPathConfig.GetAssetsPath(source) + path;
+			core::utils::gConsole.LogInfo("ResourceManager: Loading: {}", absolutePath);
 
 			try
 			{
@@ -95,7 +95,7 @@ namespace Poly
 
 			if (!resource)
 			{
-				gConsole.LogError("Resource loading failed! {}", path);
+				core::utils::gConsole.LogError("Resource loading failed! {}", path);
 				return nullptr;
 			}
 

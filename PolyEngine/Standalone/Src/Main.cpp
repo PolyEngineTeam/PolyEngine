@@ -1,6 +1,9 @@
 // include the basic windows header file
 #include <SDL.h>
 
+namespace pe{}
+using namespace pe;
+
 #include <Engine.hpp>
 #include <Rendering/IRenderingDevice.hpp>
 #include <pe/core/utils/LibraryLoader.hpp>
@@ -28,14 +31,14 @@ enum eMouseStateChange {
 
 void UpdateMouseState(eMouseStateChange change);
 
-class FileAndCoutStream : public Poly::FileOutputStream
+class FileAndCoutStream : public ::pe::core::utils::FileOutputStream
 {
 public:
-	FileAndCoutStream(const char* name) : Poly::FileOutputStream(name) {}
+	FileAndCoutStream(const char* name) : ::pe::core::utils::FileOutputStream(name) {}
 	void Append(const char* data) override {
 		std::cout << data;
 		std::cout.flush();
-		Poly::FileOutputStream::Append(data);
+		::pe::core::utils::FileOutputStream::Append(data);
 	}
 };
 
@@ -58,10 +61,10 @@ int main(int argc, char* args[])
 {
 	for(int i=0; i<argc; ++i)
 	{
-		Poly::gConsole.LogDebug("Runtime arg[{}] = {}", i, args[i]);
+		core::utils::gConsole.LogDebug("Runtime arg[{}] = {}", i, args[i]);
 	}
 
-	Poly::gConsole.RegisterStream<FileAndCoutStream>("console.log");
+	core::utils::gConsole.RegisterStream<FileAndCoutStream>("console.log");
 	UNUSED(argc);
 	UNUSED(args);
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0)
@@ -69,7 +72,7 @@ int main(int argc, char* args[])
 		ASSERTE(false, "SDL initialization failed!");
 		return 1;
 	}
-	Poly::gConsole.LogDebug("SDL initialized.");
+	core::utils::gConsole.LogDebug("SDL initialized.");
 
 	// Initial screen size
 	Poly::ScreenSize screenSize;
@@ -87,33 +90,33 @@ int main(int argc, char* args[])
 	);
 
 	ASSERTE(window, "Failed to create standalone window!");
-	Poly::gConsole.LogDebug("Window created.");
+	core::utils::gConsole.LogDebug("Window created.");
 	
 	std::unique_ptr<Poly::Engine> Engine = std::make_unique<Poly::Engine>();
-	Poly::gConsole.LogDebug("Engine created.");
+	core::utils::gConsole.LogDebug("Engine created.");
 
 	// Load rendering device library
-	Poly::String p = Poly::gAssetsPathConfig.GetRenderingDeviceLibPath();
-	auto loadRenderingDevice = Poly::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>(p.GetCStr(), "PolyCreateRenderingDevice");
+	core::storage::String p = Poly::gAssetsPathConfig.GetRenderingDeviceLibPath();
+	auto loadRenderingDevice = ::pe::core::utils::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>(p.GetCStr(), "PolyCreateRenderingDevice");
 	if (!loadRenderingDevice.FunctionValid())
 		return 1;
-	Poly::gConsole.LogDebug("Library libRenderingDevice loaded.");
+	core::utils::gConsole.LogDebug("Library libRenderingDevice loaded.");
 
 	// Load game library
-	auto loadGame = Poly::LoadFunctionFromSharedLibrary<CreateGameFunc>(Poly::gAssetsPathConfig.GetGameLibPath().GetCStr(), "CreateGame");
+	auto loadGame = ::pe::core::utils::LoadFunctionFromSharedLibrary<CreateGameFunc>(Poly::gAssetsPathConfig.GetGameLibPath().GetCStr(), "CreateGame");
 	if (!loadGame.FunctionValid())
 		return 1;
-	Poly::gConsole.LogDebug("Library libGame loaded.");
+	core::utils::gConsole.LogDebug("Library libGame loaded.");
 		
 	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(loadGame());
-	Poly::gConsole.LogDebug("Game created");
+	core::utils::gConsole.LogDebug("Game created");
 
 	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(loadRenderingDevice(window, screenSize));
-	Poly::gConsole.LogDebug("Device created.");
+	core::utils::gConsole.LogDebug("Device created.");
 
 	Engine->Init(std::move(game), std::move(device));
 	Engine->StartGame();
-	Poly::gConsole.LogDebug("Engine initialization and handshake successfull. Starting main loop...");
+	core::utils::gConsole.LogDebug("Engine initialization and handshake successfull. Starting main loop...");
 
 	Engine->SetClipboardTextFunction = HandleSetClipboardText;
 	Engine->GetClipboardTextFunction = HandleGetClipboardText;
@@ -147,8 +150,8 @@ int main(int argc, char* args[])
 				break;
 			case SDL_MOUSEMOTION:
 			{
-				Engine->UpdateMouseMove(Poly::Vector2i(event.motion.xrel, event.motion.yrel));
-				Engine->UpdateMousePos(Poly::Vector2i(event.motion.x, event.motion.y));
+				Engine->UpdateMouseMove(::pe::core::math::Vector2i(event.motion.xrel, event.motion.yrel));
+				Engine->UpdateMousePos(::pe::core::math::Vector2i(event.motion.x, event.motion.y));
 				break;
 			}
 			case SDL_MOUSEBUTTONDOWN:
@@ -160,7 +163,7 @@ int main(int argc, char* args[])
 				break;
 			case SDL_MOUSEWHEEL:
 				// Not sure if this is correct.
-				Engine->UpdateWheelPos(Poly::Vector2i(event.wheel.x, event.wheel.y));
+				Engine->UpdateWheelPos(::pe::core::math::Vector2i(event.wheel.x, event.wheel.y));
 				break;
 			case SDL_CONTROLLERBUTTONDOWN:
 				Engine->ControllerButtonDown(event.cbutton.which, static_cast<Poly::eControllerButton>(event.cbutton.button));
@@ -224,7 +227,7 @@ int main(int argc, char* args[])
 
 		quitRequested = quitRequested || Engine->IsQuitRequested();
 	}
-	Poly::gConsole.LogDebug("Closing main loop...");
+	core::utils::gConsole.LogDebug("Closing main loop...");
 	
 	Engine.reset();
 
@@ -233,7 +236,7 @@ int main(int argc, char* args[])
 
 	// Quit SDL subsystems
 	SDL_Quit();
-	Poly::gConsole.LogDebug("Exiting...");
+	core::utils::gConsole.LogDebug("Exiting...");
 
 	// Clean managers, otherwise their constructors crash due to messed deinitialization order across shared libraries
 	Poly::ComponentManager::Get().Clear();
@@ -288,7 +291,7 @@ void HandleWindowEvent(const SDL_WindowEvent& windowEvent)
 		UpdateMouseState(eMouseStateChange::WINDOW_ENTER);
 		break;
 	default:
-		Poly::gConsole.LogDebug("Not handled SDL window event, code: {}", GetWindowEventName(windowEvent));
+		core::utils::gConsole.LogDebug("Not handled SDL window event, code: {}", GetWindowEventName(windowEvent));
 		break;
 	}
 }

@@ -52,14 +52,14 @@ namespace Poly
 
 	SILENCE_MSVC_WARNING(4275, "Exporting stl may cause incompatibility. We use same CRT so it's ok.")
 	//------------------------------------------------------------------------------
-	class ENGINE_DLLEXPORT RenderingDeviceSetupFailedException : public BaseObject<>, public std::exception
+	class ENGINE_DLLEXPORT RenderingDeviceSetupFailedException : public ::pe::core::BaseObject<>, public std::exception
 	{
 	public:
 		RenderingDeviceSetupFailedException() {}
 	};
 
 	//------------------------------------------------------------------------------
-	class ENGINE_DLLEXPORT RenderingDeviceProxyCreationFailedException : public BaseObject<>, public std::exception
+	class ENGINE_DLLEXPORT RenderingDeviceProxyCreationFailedException : public ::pe::core::BaseObject<>, public std::exception
 	{
 	public:
 		RenderingDeviceProxyCreationFailedException() {}
@@ -67,7 +67,7 @@ namespace Poly
 	UNSILENCE_MSVC_WARNING()
 
 	//------------------------------------------------------------------------------
-	class ENGINE_DLLEXPORT ITextureDeviceProxy : public BaseObject<>
+	class ENGINE_DLLEXPORT ITextureDeviceProxy : public ::pe::core::BaseObject<>
 	{
 	public:
 		virtual void SetContent(const unsigned char* data) = 0;
@@ -76,14 +76,14 @@ namespace Poly
 		virtual unsigned int GetResourceID() const = 0;
 	};
 
-	class ENGINE_DLLEXPORT ICubemapDeviceProxy : public BaseObject<>
+	class ENGINE_DLLEXPORT ICubemapDeviceProxy : public ::pe::core::BaseObject<>
 	{
 	public:
 		virtual void SetContentHDR(const eCubemapSide side, const float* data) = 0;
 	};
 
 	//------------------------------------------------------------------------------
-	class ENGINE_DLLEXPORT ITextFieldBufferDeviceProxy : public BaseObject<>
+	class ENGINE_DLLEXPORT ITextFieldBufferDeviceProxy : public ::pe::core::BaseObject<>
 	{
 	public:
 		struct ENGINE_DLLEXPORT TextFieldLetter
@@ -100,21 +100,21 @@ namespace Poly
 	};
 
 	//------------------------------------------------------------------------------
-	class ENGINE_DLLEXPORT IMeshDeviceProxy : public BaseObject<>
+	class ENGINE_DLLEXPORT IMeshDeviceProxy : public ::pe::core::BaseObject<>
 	{
 	public:
 		virtual void SetContent(const Mesh& mesh) = 0;
 		virtual unsigned int GetResourceID() const = 0;
 	};
 
-	class ENGINE_DLLEXPORT IParticleDeviceProxy : public BaseObject<>
+	class ENGINE_DLLEXPORT IParticleDeviceProxy : public ::pe::core::BaseObject<>
 	{
 	public:
 		virtual void SetContent(const ParticleEmitter& particles) = 0;
 	};
 
 	//------------------------------------------------------------------------------
-	class ENGINE_DLLEXPORT IRenderingDevice : public BaseObject<>
+	class ENGINE_DLLEXPORT IRenderingDevice : public ::pe::core::BaseObject<>
 	{
 	public:
 		virtual void Resize(const ScreenSize& size) = 0;

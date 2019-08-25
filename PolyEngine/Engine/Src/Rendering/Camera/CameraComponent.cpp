@@ -6,7 +6,7 @@ using namespace Poly;
 
 RTTI_DEFINE_COMPONENT(::Poly::CameraComponent)
 
-CameraComponent::CameraComponent(Angle fov,  float zNear, float zFar)
+CameraComponent::CameraComponent(core::math::Angle fov,  float zNear, float zFar)
 	: IsPerspective(true), Fov(fov), Near(zNear), Far(zFar),
 	RenderingMode(eRenderingModeType::LIT), CameraFrustum(fov, 1.f, zNear, zFar )
 {
@@ -36,13 +36,13 @@ bool Poly::CameraComponent::IsVisibleToCamera(const Entity* ent) const
 {
 	if (IsPerspective)
 	{
-		const Frustum::eObjectLocation loc = CameraFrustum.GetObjectLocation(
+		const core::math::Frustum::eObjectLocation loc = CameraFrustum.GetObjectLocation(
 			ent->GetGlobalBoundingBox(eEntityBoundingChannel::RENDERING), GetViewFromWorld());
-		return loc != Frustum::eObjectLocation::OUTSIDE;
+		return loc != core::math::Frustum::eObjectLocation::OUTSIDE;
 	}
 	else
 	{
-		const AABox box({ Left , Bottom, Near }, { Right , Top, Far });
+		const core::math::AABox box({ Left , Bottom, Near }, { Right , Top, Far });
 		return box.GetTransformed(GetTransform().GetWorldFromModel())
 			.Intersects(ent->GetGlobalBoundingBox(eEntityBoundingChannel::RENDERING));
 	}

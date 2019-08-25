@@ -6,14 +6,14 @@
 
 using namespace Poly;
 
-static const Matrix ViewFromModel[] =
+static const core::math::Matrix ViewFromModel[] =
 {
-	Matrix(Vector::ZERO, Vector( 1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_X
-	Matrix(Vector::ZERO, Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_NEGATIVE_X
-	Matrix(Vector::ZERO, Vector( 0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_Y
-	Matrix(Vector::ZERO, Vector( 0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
-	Matrix(Vector::ZERO, Vector( 0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_Z
-	Matrix(Vector::ZERO, Vector( 0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+	core::math::Matrix(core::math::Vector::ZERO, core::math::Vector( 1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_X
+	core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(-1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_NEGATIVE_X
+	core::math::Matrix(core::math::Vector::ZERO, core::math::Vector( 0.0f, -1.0f,  0.0f), core::math::Vector(0.0f,  0.0f, -1.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_Y
+	core::math::Matrix(core::math::Vector::ZERO, core::math::Vector( 0.0f,  1.0f,  0.0f), core::math::Vector(0.0f,  0.0f,  1.0f)),	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
+	core::math::Matrix(core::math::Vector::ZERO, core::math::Vector( 0.0f,  0.0f,  1.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),	// GL_TEXTURE_CUBE_MAP_POSITIVE_Z
+	core::math::Matrix(core::math::Vector::ZERO, core::math::Vector( 0.0f,  0.0f, -1.0f), core::math::Vector(0.0f, -1.0f,  0.0f))	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 };
 
 EnvCapture::EnvCapture(GLRenderingDevice* rdi)
@@ -69,7 +69,7 @@ void EnvCapture::PrecalculateResourcesIBL(const SkyboxWorldComponent* skyboxCmp)
 		size_t envCount = skyboxCmp->GetPanoramasCount();
 		if (envCount <= 0)
 		{
-			gConsole.LogInfo("EnvCapture::PrecalculateResourcesIBL SkyboxWorldComponent has no panoramas! Abording!");
+			core::utils::gConsole.LogInfo("EnvCapture::PrecalculateResourcesIBL SkyboxWorldComponent has no panoramas! Abording!");
 			return;
 		}
 
@@ -96,7 +96,7 @@ GLuint EnvCapture::CaptureCubemap(const GLuint equiPanorama)
 {
 	// create cube map resource for capture
 	GLuint EnvCubemap = 0;
-	gConsole.LogInfo("EnvCapture::CaptureCubemap create cubemap resource");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureCubemap create cubemap resource");
 	glGenTextures(1, &EnvCubemap);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, EnvCubemap);
 	for (GLuint i = 0; i < 6; ++i)
@@ -110,12 +110,12 @@ GLuint EnvCapture::CaptureCubemap(const GLuint equiPanorama)
 	// glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	gConsole.LogInfo("EnvCapture::CaptureCubemap cubemap resource created");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureCubemap cubemap resource created");
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	CHECK_GL_ERR();
 
 	// Create FBO for HDR capture
-	gConsole.LogInfo("EnvCapture::CaptureCubemap Create capture FBO");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureCubemap Create capture FBO");
 	GLuint captureFBO;
 	GLuint captureRBO;
 	glGenFramebuffers(1, &captureFBO);
@@ -125,27 +125,27 @@ GLuint EnvCapture::CaptureCubemap(const GLuint equiPanorama)
 	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-	gConsole.LogInfo("EnvCapture::CaptureCubemap Capture FBO created");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureCubemap Capture FBO created");
 	CHECK_GL_ERR();
 
 	// Projection
-	gConsole.LogInfo("EnvCapture::CaptureCubemap create matrices");
-	Matrix uClipFromView;
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureCubemap create matrices");
+	core::math::Matrix uClipFromView;
 	uClipFromView.SetPerspective(90.0_deg, 1.0f, 0.1f, 10.0f);
 
-	Matrix ViewFromModel[] =
+	core::math::Matrix ViewFromModel[] =
 	{
-		Matrix(Vector::ZERO, Vector(1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(-1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f, -1.0f,  0.0f), core::math::Vector(0.0f,  0.0f, -1.0f)),
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  1.0f,  0.0f), core::math::Vector(0.0f,  0.0f,  1.0f)),
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f,  1.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f, -1.0f), core::math::Vector(0.0f, -1.0f,  0.0f))
 	};
-	gConsole.LogInfo("EnvCapture::CaptureCubemap matrices created");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureCubemap matrices created");
 
 	// convert HDR equirectangular environment map to cubemap equivalent
-	gConsole.LogInfo("EnvCapture::CaptureCubemap start cubemap rendering loop");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureCubemap start cubemap rendering loop");
 	EquirectangularToCubemapShader.BindProgram();
 	EquirectangularToCubemapShader.SetUniform("uEquirectangularMap", 0);
 	glActiveTexture(GL_TEXTURE0);
@@ -155,7 +155,7 @@ GLuint EnvCapture::CaptureCubemap(const GLuint equiPanorama)
 	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 	for (unsigned int i = 0; i < 6; ++i)
 	{
-		gConsole.LogInfo("EnvCapture::CaptureCubemap cubemap rendering: {}", i);
+		core::utils::gConsole.LogInfo("EnvCapture::CaptureCubemap cubemap rendering: {}", i);
 		EquirectangularToCubemapShader.SetUniform("uClipFromModel", uClipFromView * ViewFromModel[i]);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, EnvCubemap, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -166,12 +166,12 @@ GLuint EnvCapture::CaptureCubemap(const GLuint equiPanorama)
 		glBindVertexArray(0);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	gConsole.LogInfo("EnvCapture::CaptureCubemap cubemap rendered");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureCubemap cubemap rendered");
 
-	gConsole.LogInfo("EnvCapture::CaptureCubemap generate env cubemap mipmaps");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureCubemap generate env cubemap mipmaps");
 	glBindTexture(GL_TEXTURE_CUBE_MAP, EnvCubemap);
 	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-	gConsole.LogInfo("EnvCapture::CaptureCubemap env cubemap mipmaps generated");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureCubemap env cubemap mipmaps generated");
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -198,7 +198,7 @@ GLuint EnvCapture::CaptureDiffuseIrradiance(const GLuint envCubemap)
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// Create FBO for HDR capture
-	gConsole.LogInfo("EnvCapture::CaptureIrradiance Create capture FBO");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureIrradiance Create capture FBO");
 	GLuint captureFBO;
 	GLuint captureRBO;
 	glGenFramebuffers(1, &captureFBO);
@@ -208,23 +208,23 @@ GLuint EnvCapture::CaptureDiffuseIrradiance(const GLuint envCubemap)
 	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-	gConsole.LogInfo("EnvCapture::CaptureIrradiance Capture FBO created");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureIrradiance Capture FBO created");
 
 	// Projection
-	gConsole.LogInfo("EnvCapture::CaptureIrradiance create matrices");
-	Matrix uClipFromView;
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureIrradiance create matrices");
+	core::math::Matrix uClipFromView;
 	uClipFromView.SetPerspective(90.0_deg, 1.0f, 0.1f, 10.0f);
 
-	Matrix ViewFromModel[] =
+	core::math::Matrix ViewFromModel[] =
 	{
-		Matrix(Vector::ZERO, Vector(1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(-1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f, -1.0f,  0.0f), core::math::Vector(0.0f,  0.0f, -1.0f)),
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  1.0f,  0.0f), core::math::Vector(0.0f,  0.0f,  1.0f)),
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f,  1.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f, -1.0f), core::math::Vector(0.0f, -1.0f,  0.0f))
 	};
-	gConsole.LogInfo("EnvCapture::CaptureIrradiance matrices created");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureIrradiance matrices created");
 
 	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
@@ -259,7 +259,7 @@ GLuint EnvCapture::CaptureDiffuseIrradiance(const GLuint envCubemap)
 
 GLuint EnvCapture::CaptureSpecularPrefilteredMap(const GLuint envCubemap) 
 {
-	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap create cubemap resource");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap create cubemap resource");
 
 	int maxCaptureSize = 512;
 
@@ -277,10 +277,10 @@ GLuint EnvCapture::CaptureSpecularPrefilteredMap(const GLuint envCubemap)
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap cubemap resource created");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap cubemap resource created");
 
 	// Create FBO for HDR capture
-	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap Create capture FBO");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap Create capture FBO");
 	GLuint captureFBO;
 	GLuint captureRBO;
 	glGenFramebuffers(1, &captureFBO);
@@ -290,24 +290,24 @@ GLuint EnvCapture::CaptureSpecularPrefilteredMap(const GLuint envCubemap)
 	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, maxCaptureSize, maxCaptureSize);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap Capture FBO created");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap Capture FBO created");
 
 	// Projection
-	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap create matrices");
-	Matrix uClipFromView;
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap create matrices");
+	core::math::Matrix uClipFromView;
 	uClipFromView.SetPerspective(90.0_deg, 1.0f, 0.1f, 10.0f);
 
-	Matrix ViewFromModel[] =
+	core::math::Matrix ViewFromModel[] =
 	{
-		Matrix(Vector::ZERO, Vector(1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(-1.0f,  0.0f,  0.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f, -1.0f,  0.0f), Vector(0.0f,  0.0f, -1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  1.0f,  0.0f), Vector(0.0f,  0.0f,  1.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f,  1.0f), Vector(0.0f, -1.0f,  0.0f)),
-		Matrix(Vector::ZERO, Vector(0.0f,  0.0f, -1.0f), Vector(0.0f, -1.0f,  0.0f))
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(-1.0f,  0.0f,  0.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f, -1.0f,  0.0f), core::math::Vector(0.0f,  0.0f, -1.0f)),
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  1.0f,  0.0f), core::math::Vector(0.0f,  0.0f,  1.0f)),
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f,  1.0f), core::math::Vector(0.0f, -1.0f,  0.0f)),
+		core::math::Matrix(core::math::Vector::ZERO, core::math::Vector(0.0f,  0.0f, -1.0f), core::math::Vector(0.0f, -1.0f,  0.0f))
 	};
 
-	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap capture prefiltered cubemap");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap capture prefiltered cubemap");
 	PrefilterCubemapShader.BindProgram();
 	PrefilterCubemapShader.SetUniform("uEnvironmentMap", 0);
 	glActiveTexture(GL_TEXTURE0);
@@ -320,7 +320,7 @@ GLuint EnvCapture::CaptureSpecularPrefilteredMap(const GLuint envCubemap)
 		// reisze framebuffer according to mip-level size.
 		unsigned int mipWidth = (unsigned int)((float)maxCaptureSize * std::pow(0.5f, mip)); // why not bitshift?
 		unsigned int mipHeight = (unsigned int)((float)maxCaptureSize * std::pow(0.5f, mip));
-		gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap capture prefiltered cubemap mip: {}, width: {}, height: {}", mip, mipWidth, mipHeight);
+		core::utils::gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap capture prefiltered cubemap mip: {}, width: {}, height: {}", mip, mipWidth, mipHeight);
 		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
 		glViewport(0, 0, mipWidth, mipHeight);
@@ -343,7 +343,7 @@ GLuint EnvCapture::CaptureSpecularPrefilteredMap(const GLuint envCubemap)
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap prefiltered cubemap captured");
+	core::utils::gConsole.LogInfo("EnvCapture::CaptureSpecularPrefilteredMap prefiltered cubemap captured");
 
 	CHECK_GL_ERR();
 

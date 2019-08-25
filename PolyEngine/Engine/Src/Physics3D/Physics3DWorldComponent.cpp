@@ -29,7 +29,7 @@ Poly::Physics3DWorldComponent::~Physics3DWorldComponent()
 }
 
 //------------------------------------------------------------------------------
-void Poly::Physics3DWorldComponent::SetGravity(const Vector& g)
+void Poly::Physics3DWorldComponent::SetGravity(const core::math::Vector& g)
 {
 	Config.Gravity = g;
 	DynamicsWorld->setGravity(btVector3(g.X, g.Y, g.Z));

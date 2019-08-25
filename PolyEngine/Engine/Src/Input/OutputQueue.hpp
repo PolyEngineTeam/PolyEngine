@@ -28,17 +28,17 @@ namespace Poly
 		_COUNT
 	};
 
-	struct OutputEvent : public BaseObject<>
+	struct OutputEvent : public ::pe::core::BaseObject<>
 	{
 		OutputEvent() = default;
 		OutputEvent(eOutputEventType type) : Type(type) {}
-		OutputEvent(eOutputEventType type, const Vector2i& pos) : Type(type), Pos(pos) {}
+		OutputEvent(eOutputEventType type, const core::math::Vector2i& pos) : Type(type), Pos(pos) {}
 		OutputEvent(eOutputEventType type, eMouseCursorType cursorType) : Type(type), CursorType(cursorType) {}
 
 		eOutputEventType Type = eOutputEventType::_COUNT;
-		Vector2i Pos;
+		core::math::Vector2i Pos;
 		eMouseCursorType CursorType = eMouseCursorType::_COUNT;
     };
 
-	using OutputQueue = Queue<OutputEvent>;
+	using OutputQueue = core::storage::Queue<OutputEvent>;
 }

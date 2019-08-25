@@ -6,7 +6,7 @@
 
 enum class eLoggerType
 {
-	CONSOLE, // gConsole output
+	CONSOLE, // core::utils::gConsole output
 	CMD, // command manager output
 	_COUNT
 };

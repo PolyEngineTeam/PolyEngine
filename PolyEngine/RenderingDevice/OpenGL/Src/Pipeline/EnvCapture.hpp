@@ -10,7 +10,7 @@ namespace Poly
 	class GLRenderingDevice;;
 	class GLShaderProgram;
 
-	class EnvCapture : public BaseObject<>
+	class EnvCapture : public ::pe::core::BaseObject<>
 	{
 		// TODO: inherit from multipass RenderingPass, need access to RDI
 

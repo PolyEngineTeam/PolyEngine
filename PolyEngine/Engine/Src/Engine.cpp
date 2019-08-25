@@ -34,7 +34,7 @@ Engine::Engine(bool testRun, IEditor* editor)
 
 	if (!testRun)
 	{
-		RandomSetSeed((int)time(nullptr));
+		core::math::RandomSetSeed((int)time(nullptr));
 
 		if (Editor)
 			gAssetsPathConfig.DeserializeFromFile(Editor->GetAssetsPathConfigPath());
@@ -145,7 +145,7 @@ void Engine::Update(std::vector<eUpdatePhaseOrder> phasesToUpdate)
 //------------------------------------------------------------------------------
 void Engine::ResizeScreen(const ScreenSize & size)
 {
-	gConsole.LogDebug("Screen resize: {} {}", size.Width, size.Height);
+	core::utils::gConsole.LogDebug("Screen resize: {} {}", size.Width, size.Height);
 	GetRenderingDevice()->Resize(size);
 }
 

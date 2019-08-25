@@ -15,7 +15,7 @@ namespace Poly
 		const float TimeStep = 1.0f / 60.0f;
 		const int32_t VelocityIterations = 8;
 		const int32_t PositionIterations = 3;
-		const Vector Gravity = Vector(0.f, -9.81f, 0.f);
+		const core::math::Vector Gravity = core::math::Vector(0.f, -9.81f, 0.f);
 	};
 
 	class Physics2DContactListener;
@@ -31,7 +31,7 @@ namespace Poly
 		struct Collision
 		{
 			RigidBody2DComponent* rb;
-			Vector Normal;
+			core::math::Vector Normal;
 		};
 
 		Physics2DWorldComponent(const Physics2DConfig& config);
@@ -39,8 +39,8 @@ namespace Poly
 
 		const std::vector<Collision>& GetCollidingBodies(RigidBody2DComponent* rb) const;
 
-		void SetGravity(const Vector& gravity) const;
-		const Vector& GetGravity() const { return Config.Gravity; }
+		void SetGravity(const core::math::Vector& gravity) const;
+		const core::math::Vector& GetGravity() const { return Config.Gravity; }
 	private:
 		float LastDeltaOverflow = 0.f;
 

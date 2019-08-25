@@ -17,7 +17,7 @@ void FPSSystem::FPSUpdatePhase(Scene* world)
 	{
 		com->FPSData.ElapsedTime = TimeSystem::GetTimerElapsedTime(world, eEngineTimer::SYSTEM);
 
-		StringBuilder sb;
+		core::storage::StringBuilder sb;
 		sb.AppendFormat("FPS: {}", com->FPSData.FPS);
 		com->FPSData.DisplayedFPSText = sb.StealString();
 		com->FPSData.LastFPS = com->FPSData.FPS;
@@ -26,7 +26,7 @@ void FPSSystem::FPSUpdatePhase(Scene* world)
 
 	com->FPSData.FPS++;
 
-	DebugDrawSystem::DrawText2D(world, Vector2i(50, 50), com->FPSData.DisplayedFPSText, 32);
+	DebugDrawSystem::DrawText2D(world, core::math::Vector2i(50, 50), com->FPSData.DisplayedFPSText, 32);
 }
 
 float FPSSystem::GetFPS(Scene * world)

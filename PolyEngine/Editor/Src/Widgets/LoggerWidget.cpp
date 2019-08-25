@@ -2,7 +2,7 @@
 
 class LoggerWidget;
 
-class EditorOutputStream : public Poly::FileOutputStream
+class EditorOutputStream : public core::utils::FileOutputStream
 {
 public:
 	EditorOutputStream(const char* name, LoggerWidget* widget)
@@ -14,7 +14,7 @@ public:
 	void Append(const char* data) override
 	{
 		Logger->AppendLog(data);
-		Poly::FileOutputStream::Append(data);
+		core::utils::FileOutputStream::Append(data);
 	}
 private:
 	LoggerWidget* Logger = nullptr;
@@ -31,7 +31,7 @@ LoggerWidget::LoggerWidget(eLoggerType type)
 	switch (type)
 	{
 	case eLoggerType::CONSOLE:
-		Poly::gConsole.RegisterStream<EditorOutputStream>("console.log", this);
+		core::utils::gConsole.RegisterStream<EditorOutputStream>("console.log", this);
 		break;
 	case eLoggerType::CMD:
 		gApp->CmdMgr->RegisterStream<EditorOutputStream>("cmd.log", this);
@@ -43,7 +43,7 @@ LoggerWidget::LoggerWidget(eLoggerType type)
 
 LoggerWidget::~LoggerWidget()
 {
-	Poly::gConsole.RegisterDefaultStream();
+	core::utils::gConsole.RegisterDefaultStream();
 }
 
 void LoggerWidget::AppendLog(const char * data)

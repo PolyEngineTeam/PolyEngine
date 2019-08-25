@@ -20,11 +20,11 @@ SpritesheetRenderingPass::SpritesheetRenderingPass(const GLRenderingDevice* rdi)
 	GetProgram().RegisterUniform("vec4", "uColor");
 }
 
-void SpritesheetRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
+void SpritesheetRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const core::math::AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
 {
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
-	const Matrix& mv = camera->GetViewFromWorld();
-	const Matrix& p = camera->GetClipFromView();
+	const core::math::Matrix& mv = camera->GetViewFromWorld();
+	const core::math::Matrix& p = camera->GetClipFromView();
 
 	glDisable(GL_CULL_FACE);
 
@@ -36,11 +36,11 @@ void SpritesheetRenderingPass::OnRun(Scene* world, const CameraComponent* camera
 	{
 		const SpritesheetComponent* spritesheetCmp = std::get<SpritesheetComponent*>(componentsTuple);
 		const EntityTransform& transform = spritesheetCmp->GetTransform();
-		const Matrix& objTransform = transform.GetWorldFromModel();
-		Matrix screenTransform = mv * objTransform;
+		const core::math::Matrix& objTransform = transform.GetWorldFromModel();
+		core::math::Matrix screenTransform = mv * objTransform;
 
 		const SpritesheetSettings settings = spritesheetCmp->GetSettings();
-		float startFrame = settings.IsRandomStartFrame ? RandomRange(0.0f, settings.SubImages.X * settings.SubImages.Y) : settings.StartFrame;
+		float startFrame = settings.IsRandomStartFrame ? core::math::RandomRange(0.0f, settings.SubImages.X * settings.SubImages.Y) : settings.StartFrame;
 
 		GetProgram().SetUniform("uMV", screenTransform);
 		GetProgram().SetUniform("uScale", objTransform.m00, objTransform.m11);

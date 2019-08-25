@@ -30,7 +30,7 @@ Poly::Physics3DStaticMeshSource::~Physics3DStaticMeshSource()
 }
 
 //------------------------------------------------------------------------------
-void Poly::Physics3DStaticMeshSource::LoadMesh(const String& meshPath, eResourceSource source)
+void Poly::Physics3DStaticMeshSource::LoadMesh(const core::storage::String& meshPath, eResourceSource source)
 {
 	MeshResource* resource = ResourceManager<MeshResource>::Load(meshPath, source);
 	const std::vector<MeshResource::SubMesh*>& subMeshes = resource->GetSubMeshes();
@@ -48,14 +48,14 @@ void Poly::Physics3DStaticMeshSource::LoadMesh(const MeshResource::SubMesh& subM
 {
 	const Mesh& mesh = subMesh.GetMeshData();
 
-	const std::vector<Vector3f>& positions = mesh.GetPositions();
+	const std::vector<core::math::Vector3f>& positions = mesh.GetPositions();
 	const std::vector<uint32_t>& indices = mesh.GetIndicies();
 
 	for (size_t i = 0; i < indices.size();)
 	{
-		Vector a = positions[indices[i]].GetVector();
-		Vector b = positions[indices[++i]].GetVector();
-		Vector c = positions[indices[++i]].GetVector();
+		core::math::Vector a = positions[indices[i]].GetVector();
+		core::math::Vector b = positions[indices[++i]].GetVector();
+		core::math::Vector c = positions[indices[++i]].GetVector();
 		++i;
 
 		AddTriangle(a, b, c);
@@ -63,7 +63,7 @@ void Poly::Physics3DStaticMeshSource::LoadMesh(const MeshResource::SubMesh& subM
 }
 
 //------------------------------------------------------------------------------
-void Poly::Physics3DStaticMeshSource::AddTriangle(const Vector& a, const Vector& b, const Vector& c)
+void Poly::Physics3DStaticMeshSource::AddTriangle(const core::math::Vector& a, const core::math::Vector& b, const core::math::Vector& c)
 {
 	ImplData->BulletMesh->addTriangle({ a.X, a.Y, a.Z }, { b.X, b.Y, b.Z }, { c.X, c.Y, c.Z }, true);
 }
@@ -77,7 +77,7 @@ Poly::Physics3DStaticMeshShape::Physics3DStaticMeshShape(const Physics3DStaticMe
 }
 
 //------------------------------------------------------------------------------
-Poly::Physics3DPlaneShape::Physics3DPlaneShape(Vector normal, float halfExtent) 
+Poly::Physics3DPlaneShape::Physics3DPlaneShape(core::math::Vector normal, float halfExtent) 
 	: Physics3DShape(ePhysics3DShape::PLANE), 
 	Normal(normal), 
 	HalfExtent(halfExtent)
@@ -87,7 +87,7 @@ Poly::Physics3DPlaneShape::Physics3DPlaneShape(Vector normal, float halfExtent)
 }
 
 //------------------------------------------------------------------------------
-Poly::Physics3DBoxShape::Physics3DBoxShape(Vector halfExtents)
+Poly::Physics3DBoxShape::Physics3DBoxShape(core::math::Vector halfExtents)
 	: Physics3DShape(ePhysics3DShape::BOX),
 	HalfExtents(halfExtents)
 {

@@ -7,15 +7,15 @@ using namespace Poly;
 
 TEST_CASE("Queue tests", "[Queue]")
 {
-	Queue<int> q;
-	Queue<int> r(q);
+	core::math::Queue<int> q;
+	core::math::Queue<int> r(q);
 
 	REQUIRE(q.IsEmpty() == true);
 	REQUIRE(r.IsEmpty() == true);
 
 	q.PushBack(5);
 	REQUIRE(q.IsEmpty() == false);
-	Queue<int> s(q);
+	core::math::Queue<int> s(q);
 
 	REQUIRE(r.IsEmpty() == true);
 	REQUIRE(q.IsEmpty() == false);
@@ -26,7 +26,7 @@ TEST_CASE("Queue tests", "[Queue]")
 	REQUIRE(s.Front() == 5);
 
 	q.PushBack(8);
-	Queue<int> t(q);
+	core::math::Queue<int> t(q);
 
 	REQUIRE(t.IsEmpty() == false);
 	REQUIRE(q.Back() == 8);
@@ -67,8 +67,8 @@ TEST_CASE("Queue tests (with BaseObject)", "[Queue]")
 		~Test() {}
 	};
 
-	Queue<Test> q;
-	Queue<Test> r(q);
+	core::math::Queue<Test> q;
+	core::math::Queue<Test> r(q);
 
 	REQUIRE(q.IsEmpty() == true);
 	REQUIRE(r.IsEmpty() == true);

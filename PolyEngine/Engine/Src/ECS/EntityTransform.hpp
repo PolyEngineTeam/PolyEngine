@@ -30,46 +30,46 @@ namespace Poly
 		EntityTransform(Entity* owner = nullptr) : Owner(owner) {};
 		~EntityTransform();
 
-		const Vector& GetGlobalTranslation() const;
-		const Vector& GetLocalTranslation() const { return LocalTranslation; };
-		void SetLocalTranslation(const Vector& position);
-		void SetGlobalTranslation(const Vector& position);
+		const core::math::Vector& GetGlobalTranslation() const;
+		const core::math::Vector& GetLocalTranslation() const { return LocalTranslation; };
+		void SetLocalTranslation(const core::math::Vector& position);
+		void SetGlobalTranslation(const core::math::Vector& position);
 
-		const Quaternion& GetGlobalRotation() const;
-		const Quaternion& GetLocalRotation() const { return LocalRotation; };
-		void SetLocalRotation(const Quaternion& quaternion);
-		void SetGlobalRotation(const Quaternion& quaternion);
+		const core::math::Quaternion& GetGlobalRotation() const;
+		const core::math::Quaternion& GetLocalRotation() const { return LocalRotation; };
+		void SetLocalRotation(const core::math::Quaternion& quaternion);
+		void SetGlobalRotation(const core::math::Quaternion& quaternion);
 
-		const Vector& GetGlobalScale() const;
-		const Vector& GetLocalScale() const { return LocalScale; };
-		void SetLocalScale(const Vector& scale);
-		void SetLocalScale(float scale) { SetLocalScale(Vector(scale, scale, scale)); };
-		void SetGlobalScale(const Vector& scale);
+		const core::math::Vector& GetGlobalScale() const;
+		const core::math::Vector& GetLocalScale() const { return LocalScale; };
+		void SetLocalScale(const core::math::Vector& scale);
+		void SetLocalScale(float scale) { SetLocalScale(core::math::Vector(scale, scale, scale)); };
+		void SetGlobalScale(const core::math::Vector& scale);
 
-		const Matrix& GetParentFromModel() const;
-		const Matrix& GetWorldFromModel() const;
-		void SetParentFromModel(const Matrix& parentFromModel);
+		const core::math::Matrix& GetParentFromModel() const;
+		const core::math::Matrix& GetWorldFromModel() const;
+		void SetParentFromModel(const core::math::Matrix& parentFromModel);
 
-		Vector GetLocalForward() const { return GetLocalRotation() * -Vector::UNIT_Z; }
-		Vector GetLocalRight() const { return GetLocalRotation() * Vector::UNIT_X; }
-		Vector GetLocalUp() const { return GetLocalRotation() * Vector::UNIT_Y; }
-		Vector GetGlobalForward() const { return GetGlobalRotation() * -Vector::UNIT_Z; }
-		Vector GetGlobalRight() const { return GetGlobalRotation() * Vector::UNIT_X; }
-		Vector GetGlobalUp() const { return GetGlobalRotation() * Vector::UNIT_Y; }
+		core::math::Vector GetLocalForward() const { return GetLocalRotation() * -core::math::Vector::UNIT_Z; }
+		core::math::Vector GetLocalRight() const { return GetLocalRotation() * core::math::Vector::UNIT_X; }
+		core::math::Vector GetLocalUp() const { return GetLocalRotation() * core::math::Vector::UNIT_Y; }
+		core::math::Vector GetGlobalForward() const { return GetGlobalRotation() * -core::math::Vector::UNIT_Z; }
+		core::math::Vector GetGlobalRight() const { return GetGlobalRotation() * core::math::Vector::UNIT_X; }
+		core::math::Vector GetGlobalUp() const { return GetGlobalRotation() * core::math::Vector::UNIT_Y; }
 		
 	private:
 		void UpdateParentTransform();
 
 		Entity* Owner = nullptr;
-		Vector LocalTranslation;
-		mutable Vector GlobalTranslation;
-		Quaternion LocalRotation;
-		mutable Quaternion GlobalRotation;
-		Vector LocalScale = Vector(1.f, 1.f, 1.f);
-		mutable Vector GlobalScale = Vector(1.f, 1.f, 1.f);
+		core::math::Vector LocalTranslation;
+		mutable core::math::Vector GlobalTranslation;
+		core::math::Quaternion LocalRotation;
+		mutable core::math::Quaternion GlobalRotation;
+		core::math::Vector LocalScale = core::math::Vector(1.f, 1.f, 1.f);
+		mutable core::math::Vector GlobalScale = core::math::Vector(1.f, 1.f, 1.f);
 
-		mutable Matrix ParentFromModel;
-		mutable Matrix WorldFromModel;
+		mutable core::math::Matrix ParentFromModel;
+		mutable core::math::Matrix WorldFromModel;
 		mutable bool LocalDirty = true;
 		mutable bool GlobalDirty = true;
 

@@ -7,7 +7,7 @@ using namespace Poly;
 
 RTTI_DEFINE_TYPE(Poly::ConfigBase)
 
-ConfigBase::ConfigBase(const String& displayName, eResourceSource location)
+ConfigBase::ConfigBase(const core::storage::String& displayName, eResourceSource location)
 	: DisplayName(displayName), Location(location)
 {
 }
@@ -24,14 +24,14 @@ void ConfigBase::Load()
 	Save(); 
 }
 
-const String& ConfigBase::GetFileName() const
+const core::storage::String& ConfigBase::GetFileName() const
 {
 	if (FileName.GetLength() == 0)
 	{
 		if(Location == eResourceSource::NONE)
-			FileName = String(GetTypeInfo().GetTypeName()) + String(".json");
+			FileName = core::storage::String(GetTypeInfo().GetTypeName()) + core::storage::String(".json");
 		else
-			FileName = String("Configs/") + String(GetTypeInfo().GetTypeName()) + String(".json");
+			FileName = core::storage::String("Configs/") + core::storage::String(GetTypeInfo().GetTypeName()) + core::storage::String(".json");
 	}
 		
 	return FileName;

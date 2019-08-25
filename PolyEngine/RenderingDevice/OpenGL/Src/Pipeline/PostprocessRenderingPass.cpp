@@ -7,24 +7,24 @@
 
 using namespace Poly;
 
-PostprocessRenderingPass::PostprocessRenderingPass(const GLRenderingDevice* rdi, const String& fragment)
+PostprocessRenderingPass::PostprocessRenderingPass(const GLRenderingDevice* rdi, const core::storage::String& fragment)
 	: RenderingPassBase(rdi, "Shaders/postprocessCommon.vert.glsl", fragment)
 {
 }
 
-PostprocessRenderingPass::PostprocessRenderingPass(const GLRenderingDevice* rdi, const String& geometry, const String& fragment)
+PostprocessRenderingPass::PostprocessRenderingPass(const GLRenderingDevice* rdi, const core::storage::String& geometry, const core::storage::String& fragment)
 	: RenderingPassBase(rdi, "Shaders/postprocessCommon.vert.glsl", geometry, fragment)
 {
 }
 
-void PostprocessRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& rect, ePassType /*passType = ePassType::GLOBAL*/)
+void PostprocessRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const core::math::AARect& rect, ePassType /*passType = ePassType::GLOBAL*/)
 {
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
 	float ResolutionX = rect.GetSize().X * gRenderingDevice->GetScreenSize().Width;
 	float ResolutionY = rect.GetSize().Y * gRenderingDevice->GetScreenSize().Height;
 	const EntityTransform& cameraTransform = camera->GetTransform();
-	Vector CameraPosition = cameraTransform.GetGlobalTranslation();
-	Matrix CameraRotation = cameraTransform.GetGlobalRotation().ToRotationMatrix();
+	core::math::Vector CameraPosition = cameraTransform.GetGlobalTranslation();
+	core::math::Matrix CameraRotation = cameraTransform.GetGlobalRotation().ToRotationMatrix();
 
 	GetProgram().BindProgram();
 
@@ -37,7 +37,7 @@ void PostprocessRenderingPass::OnRun(Scene* world, const CameraComponent* camera
 	const PostprocessSettingsComponent* PostprocessSettings = camera->GetSibling<PostprocessSettingsComponent>();
 	if (PostprocessSettings == nullptr)
 	{
-		gConsole.LogInfo("void PostprocessRenderingPass::OnRun: PostprocessSettings is NULL");
+		core::utils::gConsole.LogInfo("void PostprocessRenderingPass::OnRun: PostprocessSettings is NULL");
 	}
 
 	glBindVertexArray(RDI->PrimitivesQuad->VAO);

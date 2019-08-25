@@ -14,7 +14,7 @@ Text2DRenderingPass::Text2DRenderingPass(const GLRenderingDevice* rdi)
 
 }
 
-void Text2DRenderingPass::OnRun(Scene* world, const CameraComponent* /*camera*/, const AARect& rect, ePassType /*passType = ePassType::GLOBAL*/ )
+void Text2DRenderingPass::OnRun(Scene* world, const CameraComponent* /*camera*/, const core::math::AARect& rect, ePassType /*passType = ePassType::GLOBAL*/ )
 {
 	// Text drawing
 	glEnable(GL_BLEND);
@@ -22,7 +22,7 @@ void Text2DRenderingPass::OnRun(Scene* world, const CameraComponent* /*camera*/,
 
 	ScreenSize screen = gEngine->GetRenderingDevice()->GetScreenSize();
 
-	Matrix ortho;
+	core::math::Matrix ortho;
 	ortho.SetOrthographic(rect.GetMin().Y * screen.Height, rect.GetMax().Y * screen.Height, rect.GetMin().X * screen.Width, rect.GetMax().X * screen.Width, -1, 1);
 	GetProgram().BindProgram();
 	GetProgram().SetUniform("u_projection", ortho);
@@ -32,7 +32,7 @@ void Text2DRenderingPass::OnRun(Scene* world, const CameraComponent* /*camera*/,
 		ScreenSpaceTextComponent* textCmp = std::get<ScreenSpaceTextComponent*>(componentsTuple);
 		Text2D& text = textCmp->GetText();
 		GetProgram().SetUniform("u_textColor", text.GetFontColor());
-		GetProgram().SetUniform("u_position", Vector((float)textCmp->GetScreenPosition().X, (float)textCmp->GetScreenPosition().Y, 0));
+		GetProgram().SetUniform("u_position", core::math::Vector((float)textCmp->GetScreenPosition().X, (float)textCmp->GetScreenPosition().Y, 0));
 		text.UpdateDeviceBuffers();
 
 		const GLTextFieldBufferDeviceProxy* textFieldBuffer = static_cast<const GLTextFieldBufferDeviceProxy*>(text.GetTextFieldBuffer());

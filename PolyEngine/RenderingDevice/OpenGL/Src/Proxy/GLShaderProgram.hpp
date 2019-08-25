@@ -7,7 +7,7 @@ typedef unsigned int GLenum;
 
 namespace Poly
 {
-	class GLShaderProgram : public BaseObject<>
+	class GLShaderProgram : public ::pe::core::BaseObject<>
 	{
 		enum class eShaderUnitType
 		{
@@ -21,48 +21,48 @@ namespace Poly
 		struct UniformInfo
 		{
 			UniformInfo() {}
-			UniformInfo(const String& type, int location) : TypeName(type), Location(location) {}
+			UniformInfo(const core::storage::String& type, int location) : TypeName(type), Location(location) {}
 
-			String TypeName;
+			core::storage::String TypeName;
 			int Location = 0;
 		};
 
 		struct OutputInfo
 		{
 			OutputInfo() {}
-			OutputInfo(const String& type, size_t index) : TypeName(type), Index(index) {}
+			OutputInfo(const core::storage::String& type, size_t index) : TypeName(type), Index(index) {}
 
-			String TypeName;
+			core::storage::String TypeName;
 			size_t Index = 0;
 		};
 
 	public:
-		GLShaderProgram(const String& compute);
-		GLShaderProgram(const String& vertex, const String& fragment);
-		GLShaderProgram(const String& vertex, const String& geometry, const String& fragment);
+		GLShaderProgram(const core::storage::String& compute);
+		GLShaderProgram(const core::storage::String& vertex, const core::storage::String& fragment);
+		GLShaderProgram(const core::storage::String& vertex, const core::storage::String& geometry, const core::storage::String& fragment);
 
 		void BindProgram() const;
 
 		unsigned int GetProgramHandle() const;
 
-		void SetUniform(const String& name, int val);
-		void SetUniform(const String& name, uint val);
-		void SetUniform(const String& name, float val);
-		void SetUniform(const String& name, float val1, float val2);
-		void SetUniform(const String& name, const Vector& val);
-		void SetUniform(const String& name, const Color& val);
-		void SetUniform(const String& name, const Matrix& val);
-		void BindSampler(const String& name, int samplerID, int textureID);
-		void BindSamplerCube(const String& name, int samplerID, int cubemapID);
+		void SetUniform(const core::storage::String& name, int val);
+		void SetUniform(const core::storage::String& name, uint val);
+		void SetUniform(const core::storage::String& name, float val);
+		void SetUniform(const core::storage::String& name, float val1, float val2);
+		void SetUniform(const core::storage::String& name, const core::math::Vector& val);
+		void SetUniform(const core::storage::String& name, const core::math::Color& val);
+		void SetUniform(const core::storage::String& name, const core::math::Matrix& val);
+		void BindSampler(const core::storage::String& name, int samplerID, int textureID);
+		void BindSamplerCube(const core::storage::String& name, int samplerID, int cubemapID);
 
-		const std::unordered_map<String, OutputInfo>& GetOutputsInfo() const { return Outputs; }
-		const std::unordered_map<String, UniformInfo>& GetUniformsInfo() const { return Uniforms; }
+		const std::unordered_map<core::storage::String, OutputInfo>& GetOutputsInfo() const { return Outputs; }
+		const std::unordered_map<core::storage::String, UniformInfo>& GetUniformsInfo() const { return Uniforms; }
 
-		void RegisterUniform(const String& type, const String& name);
+		void RegisterUniform(const core::storage::String& type, const core::storage::String& name);
 
 	private:
 
-		void LoadShader(eShaderUnitType type, const String &shaderName);
+		void LoadShader(eShaderUnitType type, const core::storage::String &shaderName);
 		void CompileShader(GLShaderProgram::eShaderUnitType type);
 		void Validate();
 		void CompileProgram();
@@ -71,13 +71,13 @@ namespace Poly
 
 		void AnalyzeShaderCode(eShaderUnitType type);
 
-		std::unordered_map<String, UniformInfo> Uniforms;
-		std::unordered_map<String, OutputInfo> Outputs;
+		std::unordered_map<core::storage::String, UniformInfo> Uniforms;
+		std::unordered_map<core::storage::String, OutputInfo> Outputs;
 		GLuint ProgramHandle;
-		EnumArray<String, eShaderUnitType> ShaderCode;
+		core::utils::EnumArray<core::storage::String, eShaderUnitType> ShaderCode;
 
-		String VertexProgramPath;
-		String GeometryProgramPath;
-		String FragmentProgramPath;
+		core::storage::String VertexProgramPath;
+		core::storage::String GeometryProgramPath;
+		core::storage::String FragmentProgramPath;
 	};
 }

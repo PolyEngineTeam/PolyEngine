@@ -9,11 +9,11 @@ UNSILENCE_MSVC_WARNING()
 
 using namespace Poly;
 
-const String SHADERS_INCLUDE_DIR = "Shaders/";
+const core::storage::String SHADERS_INCLUDE_DIR = "Shaders/";
 
-GLShaderProgram::GLShaderProgram(const String& compute)
+GLShaderProgram::GLShaderProgram(const core::storage::String& compute)
 {
-	gConsole.LogDebug("Creating shader program {}", compute);
+	core::utils::gConsole.LogDebug("Creating shader program {}", compute);
 	ProgramHandle = glCreateProgram();
 	if (ProgramHandle == 0) {
 		ASSERTE(false, "Creation of shader program failed! Exiting...");
@@ -24,15 +24,15 @@ GLShaderProgram::GLShaderProgram(const String& compute)
 	
 	CompileProgram();
 
-	for (eShaderUnitType type : IterateEnum<eShaderUnitType>())
+	for (eShaderUnitType type : core::utils::IterateEnum<eShaderUnitType>())
 		AnalyzeShaderCode(type);
 }
 
-GLShaderProgram::GLShaderProgram(const String& vertex, const String& fragment)
+GLShaderProgram::GLShaderProgram(const core::storage::String& vertex, const core::storage::String& fragment)
 {
 	FragmentProgramPath = fragment;
 
-	gConsole.LogDebug("Creating shader program {} {}", vertex, fragment);
+	core::utils::gConsole.LogDebug("Creating shader program {} {}", vertex, fragment);
 	ProgramHandle = glCreateProgram();
 	if (ProgramHandle == 0)
 	{
@@ -47,13 +47,13 @@ GLShaderProgram::GLShaderProgram(const String& vertex, const String& fragment)
 	
 	CompileProgram();
 
-	for (eShaderUnitType type : IterateEnum<eShaderUnitType>())
+	for (eShaderUnitType type : core::utils::IterateEnum<eShaderUnitType>())
 		AnalyzeShaderCode(type);
 }
 
-GLShaderProgram::GLShaderProgram(const String& vertex, const String& geometry, const String& fragment)
+GLShaderProgram::GLShaderProgram(const core::storage::String& vertex, const core::storage::String& geometry, const core::storage::String& fragment)
 {
-	gConsole.LogDebug("Creating shader program {} {} {}", vertex, geometry, fragment);
+	core::utils::gConsole.LogDebug("Creating shader program {} {} {}", vertex, geometry, fragment);
 	ProgramHandle = glCreateProgram();
 	if (ProgramHandle == 0) {
 		ASSERTE(false, "Creation of shader program failed! Exiting...");
@@ -70,7 +70,7 @@ GLShaderProgram::GLShaderProgram(const String& vertex, const String& geometry, c
 
 	CompileProgram();
 
-	for(eShaderUnitType type : IterateEnum<eShaderUnitType>())
+	for(eShaderUnitType type : core::utils::IterateEnum<eShaderUnitType>())
 			AnalyzeShaderCode(type);
 }
 
@@ -91,26 +91,26 @@ void GLShaderProgram::Validate()
 		std::vector<char> errorMessage;
 		errorMessage.resize(static_cast<size_t>(infoLogLength + 1));
 		glGetProgramInfoLog(ProgramHandle, infoLogLength, NULL, &errorMessage[0]);
-		gConsole.LogError("Program validation: {}", std::string(&errorMessage[0]));
+		core::utils::gConsole.LogError("Program validation: {}", std::string(&errorMessage[0]));
 		ASSERTE(false, "Program validation failed!");
 	}
 }
 
-void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
+void GLShaderProgram::LoadShader(eShaderUnitType type, const core::storage::String& shaderName)
 {
-	String rawCode = LoadTextFileRelative(eResourceSource::ENGINE, shaderName);
+	core::storage::String rawCode = LoadTextFileRelative(eResourceSource::ENGINE, shaderName);
 
 	if (rawCode.IsEmpty())
 		return;
 	
 	// @fixme optimize this, spliting lines of every opened file is not fastest way to do it
-	std::vector<String> includedFiles;
-	std::vector<String> linesToProcess = rawCode.Split("\n");
-	StringBuilder sb;
+	std::vector<core::storage::String> includedFiles;
+	std::vector<core::storage::String> linesToProcess = rawCode.Split("\n");
+	core::storage::StringBuilder sb;
 	size_t lineCounter = 0;
 	while(lineCounter < linesToProcess.size())
 	{
-		String currLine = linesToProcess[lineCounter].GetTrimmed();
+		core::storage::String currLine = linesToProcess[lineCounter].GetTrimmed();
 
 		std::regex includeRegex(R"(^#pragma include\s*\"(\w.*)\")", std::regex::ECMAScript); // regex: ^#pragma include\s*"(\w.*)"
 		auto regex_begin = std::cregex_iterator(currLine.GetCStr(), currLine.GetCStr() + currLine.GetLength(), includeRegex);
@@ -122,20 +122,20 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 			{
 				const std::cmatch& match = *i;
 
-				String includePath = SHADERS_INCLUDE_DIR + String(match[1].str().c_str());
+				core::storage::String includePath = SHADERS_INCLUDE_DIR + core::storage::String(match[1].str().c_str());
 				ASSERTE(std::find(includedFiles.begin(), includedFiles.end(), includePath) == includedFiles.end(), "LoadShader failed, found recursive includes!");
 				includedFiles.push_back(includePath);
 					
 				try
 				{
-					String rawInclude = LoadTextFileRelative(eResourceSource::ENGINE, includePath);
+					core::storage::String rawInclude = LoadTextFileRelative(eResourceSource::ENGINE, includePath);
 					auto splitedInclude = rawInclude.Split('\n');
 					linesToProcess.insert(linesToProcess.begin() + lineCounter + 1, splitedInclude.begin(), splitedInclude.end());
 				}
-				catch(FileIOException& ex)
+				catch(core::utils::FileIOException& ex)
 				{
-					gConsole.LogError("GLShaderProgram::LoadShader shaderName: {}, type: {}, failed loading include: {}", shaderName, (size_t)type, includePath);
-					gConsole.LogError("GLShaderProgram::LoadShader Exception Message: {}", ex.what());
+					core::utils::gConsole.LogError("GLShaderProgram::LoadShader shaderName: {}, type: {}, failed loading include: {}", shaderName, (size_t)type, includePath);
+					core::utils::gConsole.LogError("GLShaderProgram::LoadShader Exception Message: {}", ex.what());
 					throw ex;
 				}
 			}
@@ -150,9 +150,9 @@ void GLShaderProgram::LoadShader(eShaderUnitType type, const String& shaderName)
 
 	ShaderCode[type] = sb.GetString();
 
-	String compiledPath = EvaluateFullResourcePath(eResourceSource::ENGINE, shaderName + String(".dump"));
-	gConsole.LogInfo("GLShaderProgram::LoadShader debugPath: {}", compiledPath);
-	SaveTextFileRelative(eResourceSource::ENGINE, shaderName + String(".dump"), ShaderCode[type]);
+	core::storage::String compiledPath = EvaluateFullResourcePath(eResourceSource::ENGINE, shaderName + core::storage::String(".dump"));
+	core::utils::gConsole.LogInfo("GLShaderProgram::LoadShader debugPath: {}", compiledPath);
+	SaveTextFileRelative(eResourceSource::ENGINE, shaderName + core::storage::String(".dump"), ShaderCode[type]);
 }
 
 void GLShaderProgram::CompileShader(GLShaderProgram::eShaderUnitType type)
@@ -178,7 +178,7 @@ void GLShaderProgram::CompileShader(GLShaderProgram::eShaderUnitType type)
 		std::vector<char> errorMessage;
 		errorMessage.resize(static_cast<size_t>(infoLogLength + 1));
 		glGetShaderInfoLog(shader, infoLogLength, NULL, &errorMessage[0]);
-		gConsole.LogError("Shader compilation: {}", std::string(&errorMessage[0]));
+		core::utils::gConsole.LogError("Shader compilation: {}", std::string(&errorMessage[0]));
 		ASSERTE(false, "Shader compilation failed!");
 	}
 
@@ -200,7 +200,7 @@ void GLShaderProgram::CompileProgram()
 		std::vector<char> errorMessage;
 		errorMessage.resize(static_cast<size_t>(infoLogLength + 1));
 		glGetProgramInfoLog(ProgramHandle, infoLogLength, NULL, &errorMessage[0]);
-		gConsole.LogError("Program linking: {}", std::string(&errorMessage[0]));
+		core::utils::gConsole.LogError("Program linking: {}", std::string(&errorMessage[0]));
 		ASSERTE(false, "Program linking failed!");
 	}
 }
@@ -210,7 +210,7 @@ unsigned int GLShaderProgram::GetProgramHandle() const
 	return ProgramHandle;
 }
 
-void GLShaderProgram::RegisterUniform(const String& type, const String& name)
+void GLShaderProgram::RegisterUniform(const core::storage::String& type, const core::storage::String& name)
 {
 	if (Uniforms.find(name) != Uniforms.end())
 		return;
@@ -219,7 +219,7 @@ void GLShaderProgram::RegisterUniform(const String& type, const String& name)
 	location = glGetUniformLocation(ProgramHandle, name.GetCStr());
 	if (location == -1)
 	{
-		gConsole.LogError("Invalid uniform location for {}. Probably optimized out.", name);
+		core::utils::gConsole.LogError("Invalid uniform location for {}. Probably optimized out.", name);
 		CHECK_GL_ERR();
 		return;
 	}
@@ -227,7 +227,7 @@ void GLShaderProgram::RegisterUniform(const String& type, const String& name)
 	CHECK_GL_ERR();
 }
 
-void GLShaderProgram::SetUniform(const String& name, int val)
+void GLShaderProgram::SetUniform(const core::storage::String& name, int val)
 {
 	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
@@ -235,18 +235,18 @@ void GLShaderProgram::SetUniform(const String& name, int val)
 		bool isTypeValid = it->second.TypeName == "int" || it->second.TypeName == "sampler2D" || it->second.TypeName == "samplerCube";
 		if (!isTypeValid)
 		{
-			gConsole.LogError("Invalid uniform type int for {}", name);
+			core::utils::gConsole.LogError("Invalid uniform type int for {}", name);
 		}
 		HEAVY_ASSERTE(isTypeValid, "Invalid uniform type!");
 		glUniform1i(it->second.Location, val);
 	}
 	else
 	{
-		gConsole.LogError("Not found Uniform {} type int, in {}", name, FragmentProgramPath);
+		core::utils::gConsole.LogError("Not found Uniform {} type int, in {}", name, FragmentProgramPath);
 	}
 }
 
-void GLShaderProgram::SetUniform(const String& name, uint val)
+void GLShaderProgram::SetUniform(const core::storage::String& name, uint val)
 {
 	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
@@ -254,18 +254,18 @@ void GLShaderProgram::SetUniform(const String& name, uint val)
 		bool isTypeValid = it->second.TypeName == "uint";
 		if (!isTypeValid)
 		{
-			gConsole.LogError("Invalid uniform type uint for {}", name);
+			core::utils::gConsole.LogError("Invalid uniform type uint for {}", name);
 		}
 		HEAVY_ASSERTE(isTypeValid, "Invalid uniform type!");
 		glUniform1i(it->second.Location, val);
 	}
 	else
 	{
-		gConsole.LogError("Not found Uniform {} type uint, in {}", name, FragmentProgramPath);
+		core::utils::gConsole.LogError("Not found Uniform {} type uint, in {}", name, FragmentProgramPath);
 	}
 }
 
-void GLShaderProgram::SetUniform(const String& name, float val)
+void GLShaderProgram::SetUniform(const core::storage::String& name, float val)
 {
 	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
@@ -275,11 +275,11 @@ void GLShaderProgram::SetUniform(const String& name, float val)
 	}
 	else
 	{
-		gConsole.LogError("Not found Uniform {} type float, in {}", name, FragmentProgramPath);
+		core::utils::gConsole.LogError("Not found Uniform {} type float, in {}", name, FragmentProgramPath);
 	}
 }
 
-void GLShaderProgram::SetUniform(const String & name, float val1, float val2)
+void GLShaderProgram::SetUniform(const core::storage::String & name, float val1, float val2)
 {
 	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
@@ -289,11 +289,11 @@ void GLShaderProgram::SetUniform(const String & name, float val1, float val2)
 	}
 	else
 	{
-		gConsole.LogError("Not found Uniform {} type vec2, in {}", name, FragmentProgramPath);
+		core::utils::gConsole.LogError("Not found Uniform {} type vec2, in {}", name, FragmentProgramPath);
 	}
 }
 
-void GLShaderProgram::SetUniform(const String& name, const Vector& val)
+void GLShaderProgram::SetUniform(const core::storage::String& name, const core::math::Vector& val)
 {
 	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
@@ -303,11 +303,11 @@ void GLShaderProgram::SetUniform(const String& name, const Vector& val)
 	}
 	else
 	{
-		gConsole.LogError("Not found Uniform {} type vec4, in {}", name, FragmentProgramPath);
+		core::utils::gConsole.LogError("Not found Uniform {} type vec4, in {}", name, FragmentProgramPath);
 	}
 }
 
-void GLShaderProgram::SetUniform(const String& name, const Color& val)
+void GLShaderProgram::SetUniform(const core::storage::String& name, const core::math::Color& val)
 {
 	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
@@ -317,11 +317,11 @@ void GLShaderProgram::SetUniform(const String& name, const Color& val)
 	}
 	else
 	{
-		gConsole.LogError("Not found Uniform {} type vec4, in {}", name, FragmentProgramPath);
+		core::utils::gConsole.LogError("Not found Uniform {} type vec4, in {}", name, FragmentProgramPath);
 	}
 }
 
-void GLShaderProgram::SetUniform(const String& name, const Matrix& val)
+void GLShaderProgram::SetUniform(const core::storage::String& name, const core::math::Matrix& val)
 {
 	auto it = Uniforms.find(name);
 	if (it != Uniforms.end())
@@ -331,11 +331,11 @@ void GLShaderProgram::SetUniform(const String& name, const Matrix& val)
 	}
 	else
 	{
-		gConsole.LogError("Not found Uniform {} type mat4, in {}", name, FragmentProgramPath);
+		core::utils::gConsole.LogError("Not found Uniform {} type mat4, in {}", name, FragmentProgramPath);
 	}
 }
 
-void GLShaderProgram::BindSampler(const String& name, int samplerID, int textureID)
+void GLShaderProgram::BindSampler(const core::storage::String& name, int samplerID, int textureID)
 {
 	HEAVY_ASSERTE(samplerID >= 0, "Invalid sampler ID!");
 	HEAVY_ASSERTE(textureID > 0, "Invalid texture resource ID!");
@@ -345,7 +345,7 @@ void GLShaderProgram::BindSampler(const String& name, int samplerID, int texture
 	SetUniform(name, samplerID);
 }
 
-void GLShaderProgram::BindSamplerCube(const String& name, int samplerID, int cubemapID)
+void GLShaderProgram::BindSamplerCube(const core::storage::String& name, int samplerID, int cubemapID)
 {
 	HEAVY_ASSERTE(samplerID >= 0, "Invalid sampler ID!");
 	HEAVY_ASSERTE(cubemapID > 0, "Invalid cubemap resource ID!");
@@ -388,10 +388,10 @@ void GLShaderProgram::AnalyzeShaderCode(eShaderUnitType type)
 		{
 			const std::cmatch& match = *i;
 			ASSERTE(match.size() == 3, "Invalid regex result when parsing uniforms!");
-			gConsole.LogDebug("Uniform {} of type {} found.", match[2].str(), match[1].str());
+			core::utils::gConsole.LogDebug("Uniform {} of type {} found.", match[2].str(), match[1].str());
 
 			//TODO remove unnecessary string copy
-			RegisterUniform(String(match[1].str().c_str()), String(match[2].str().c_str()));
+			RegisterUniform(core::storage::String(match[1].str().c_str()), core::storage::String(match[2].str().c_str()));
 		}
 	}
 
@@ -406,10 +406,10 @@ void GLShaderProgram::AnalyzeShaderCode(eShaderUnitType type)
 		{
 			const std::cmatch& match = *i;
 			ASSERTE(match.size() == 3, "Invalid regex result when parsing outs!");
-			gConsole.LogDebug("Out {} of type {} found.", match[2].str(), match[1].str());
+			core::utils::gConsole.LogDebug("Out {} of type {} found.", match[2].str(), match[1].str());
 
 			//TODO remove unnecessary string copy
-			Outputs.insert(std::make_pair(String(match[2].str().c_str()), OutputInfo(String(match[1].str().c_str()), index++)));
+			Outputs.insert(std::make_pair(core::storage::String(match[2].str().c_str()), OutputInfo(core::storage::String(match[1].str().c_str()), index++)));
 		}
 	}
 }

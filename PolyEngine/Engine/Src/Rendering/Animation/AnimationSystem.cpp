@@ -18,10 +18,10 @@ void AnimationSystem::OnUpdate(Scene* scene)
 {
 	for (auto&& [boneCmp] : scene->IterateComponents<BoneComponent>())
 	{
-		Vector parentPos = boneCmp->GetOwner()->GetParent()->GetTransform().GetGlobalTranslation();
-		Vector myPos = boneCmp->GetOwner()->GetTransform().GetGlobalTranslation();
-		DebugDrawSystem::DrawLine(scene, myPos, parentPos, Color::GREEN);
-		DebugDrawSystem::DrawArrow(scene, myPos, boneCmp->GetOwner()->GetTransform().GetGlobalForward(), Color::RED);
+		core::math::Vector parentPos = boneCmp->GetOwner()->GetParent()->GetTransform().GetGlobalTranslation();
+		core::math::Vector myPos = boneCmp->GetOwner()->GetTransform().GetGlobalTranslation();
+		DebugDrawSystem::DrawLine(scene, myPos, parentPos, core::math::Color::GREEN);
+		DebugDrawSystem::DrawArrow(scene, myPos, boneCmp->GetOwner()->GetTransform().GetGlobalForward(), core::math::Color::RED);
 	}
 
 	// Iterate all skeletal meshes
@@ -30,19 +30,19 @@ void AnimationSystem::OnUpdate(Scene* scene)
 		if (animCmp->CheckFlags(eComponentBaseFlags::NEWLY_CREATED))
 			CreateBoneStructure(animCmp, meshCmp);
 
-		std::map<String, std::vector<std::pair<Matrix, float>>> boneMatrices;
-		std::vector<String> animsToremove;
+		std::map<core::storage::String, std::vector<std::pair<core::math::Matrix, float>>> boneMatrices;
+		std::vector<core::storage::String> animsToremove;
 
 		for (auto& animKV : animCmp->ActiveAnimations)
 		{
 			// Store basic info
-			const String& animName = animKV.first;
+			const core::storage::String& animName = animKV.first;
 			SkeletalAnimationState& animState = animKV.second;
 			const MeshResource::Animation* anim = meshCmp->GetMesh()->GetAnimation(animName);
 
 			if (!anim)
 			{
-				gConsole.LogError("Animation with name {} not found!", animName);
+				core::utils::gConsole.LogError("Animation with name {} not found!", animName);
 				continue;
 			}
 			
@@ -83,12 +83,12 @@ void AnimationSystem::OnUpdate(Scene* scene)
 			// Update bone positions, channel == bone
 			for (auto& channel : anim->channels)
 			{
-				const String& channelName = channel.first;
+				const core::storage::String& channelName = channel.first;
 				auto lerpData = anim->GetLerpData(channelName, animState.Time);
 				
-				Vector pos = Vector::ZERO;
-				Vector scale = Vector::ONE;
-				Quaternion rot = Quaternion::IDENTITY;
+				core::math::Vector pos = core::math::Vector::ZERO;
+				core::math::Vector scale = core::math::Vector::ONE;
+				core::math::Quaternion rot = core::math::Quaternion::IDENTITY;
 
 				// Extract position value
 				if (lerpData.pos[0].has_value())
@@ -97,7 +97,7 @@ void AnimationSystem::OnUpdate(Scene* scene)
 					pos = posKey.Value;
 					if (lerpData.pos[1].has_value())
 					{
-						pos = ::Poly::Lerp(pos, lerpData.pos[1].value().Value, animState.Time - posKey.Time);
+						pos = core::math::Lerp(pos, lerpData.pos[1].value().Value, animState.Time - posKey.Time);
 					}
 				}
 				
@@ -108,7 +108,7 @@ void AnimationSystem::OnUpdate(Scene* scene)
 					scale = scaleKey.Value;
 					if (lerpData.scale[1].has_value())
 					{
-						scale = ::Poly::Lerp(scale, lerpData.scale[1].value().Value, animState.Time - scaleKey.Time);
+						scale = core::math::Lerp(scale, lerpData.scale[1].value().Value, animState.Time - scaleKey.Time);
 					}
 				}
 
@@ -120,12 +120,12 @@ void AnimationSystem::OnUpdate(Scene* scene)
 					if (lerpData.rot[1].has_value())
 					{
 						const float t = std::min(animState.Time - rotKey.Time, 1.0f);
-						rot = Quaternion::Slerp(rot, lerpData.rot[1].value().Value, t);
+						rot = core::math::Quaternion::Slerp(rot, lerpData.rot[1].value().Value, t);
 					}
 				}
 
 				// Push to the bone matrix blend list
-				Matrix parentFromBone = Matrix::Compose(pos, rot, scale);
+				core::math::Matrix parentFromBone = core::math::Matrix::Compose(pos, rot, scale);
 				boneMatrices[channelName].push_back({ parentFromBone, animState.Params.Weight });
 			}
 
@@ -135,7 +135,7 @@ void AnimationSystem::OnUpdate(Scene* scene)
 		}
 
 		// Remove inactive animations
-		for (const String& animName : animsToremove)
+		for (const core::storage::String& animName : animsToremove)
 			animCmp->ActiveAnimations.erase(animName);
 
 		if (!boneMatrices.empty())
@@ -145,35 +145,35 @@ void AnimationSystem::OnUpdate(Scene* scene)
 			{
 				auto&& it = boneMatrices.find(bone->GetName());
 				if(it != boneMatrices.end())
-					bone->GetTransform().SetParentFromModel(Matrix::Blend(it->second));
+					bone->GetTransform().SetParentFromModel(core::math::Matrix::Blend(it->second));
 			}
 
 			// Populate ModelFromBone matrices.
 			animCmp->ModelFromBone.clear();
-			Matrix ModelFromWorld = animCmp->GetTransform().GetWorldFromModel().GetInversed();
+			core::math::Matrix ModelFromWorld = animCmp->GetTransform().GetWorldFromModel().GetInversed();
 			for (auto& bone : animCmp->Bones)
 				animCmp->ModelFromBone[bone->GetName()] = ModelFromWorld * bone->GetTransform().GetWorldFromModel();
 		}
 	}
 }
 
-void Poly::AnimationSystem::StartAnimation(SkeletalAnimationComponent* cmp, const String&  animationName, const SkeletalAnimationParams& params)
+void Poly::AnimationSystem::StartAnimation(SkeletalAnimationComponent* cmp, const core::storage::String&  animationName, const SkeletalAnimationParams& params)
 {
 	auto&& it = cmp->ActiveAnimations.find(animationName);
 	if (it != cmp->ActiveAnimations.end())
 	{
-		gConsole.LogWarning("Starting animation [{}] when it's already running.");
+		core::utils::gConsole.LogWarning("Starting animation [{}] when it's already running.");
 	} 
 
 	cmp->ActiveAnimations[animationName] = SkeletalAnimationState(params);
 }
 
-void Poly::AnimationSystem::StopAnimation(SkeletalAnimationComponent* cmp, const String&  animationName, bool immediate)
+void Poly::AnimationSystem::StopAnimation(SkeletalAnimationComponent* cmp, const core::storage::String&  animationName, bool immediate)
 {
 	auto&& it = cmp->ActiveAnimations.find(animationName);
 	if (it != cmp->ActiveAnimations.end())
 	{
-		gConsole.LogError("Stopping animation [{}] when it's not running.");
+		core::utils::gConsole.LogError("Stopping animation [{}] when it's not running.");
 	}
 	else
 	{
@@ -181,7 +181,7 @@ void Poly::AnimationSystem::StopAnimation(SkeletalAnimationComponent* cmp, const
 	}
 }
 
-bool Poly::AnimationSystem::IsAnimationActive(SkeletalAnimationComponent * cmp, const String&  animationName)
+bool Poly::AnimationSystem::IsAnimationActive(SkeletalAnimationComponent * cmp, const core::storage::String&  animationName)
 {
 	auto&& it = cmp->ActiveAnimations.find(animationName);
 	return it != cmp->ActiveAnimations.end();
@@ -190,7 +190,7 @@ bool Poly::AnimationSystem::IsAnimationActive(SkeletalAnimationComponent * cmp, 
 void Poly::AnimationSystem::OnComponentRemoved(SkeletalAnimationComponent* cmp)
 {
 	RemoveBoneStructure(cmp, cmp->GetSibling< MeshRenderingComponent>());
-	gConsole.LogDebug("SkeletalAnimationComponent removed successfully in AnimationSystem");
+	core::utils::gConsole.LogDebug("SkeletalAnimationComponent removed successfully in AnimationSystem");
 }
 
 void Poly::AnimationSystem::CreateBoneStructure(SkeletalAnimationComponent* animCmp, MeshRenderingComponent* meshCmp)

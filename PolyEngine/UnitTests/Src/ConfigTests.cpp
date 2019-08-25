@@ -10,7 +10,7 @@
 #include <pe/core/math/Matrix.hpp>
 #include <pe/core/math/Color.hpp>
 #include <pe/core/math/Quaternion.hpp>
-#include <UniqueID.hpp>
+#include <core::UniqueID.hpp>
 #include <cstdio>
 #include <pe/core/utils/Logger.hpp>
 #include <vector>
@@ -167,36 +167,36 @@ public:
 	u64 PropU64 = 4;
 	float Propf32 = 0.32f;
 	double Propf64 = 0.32;
-	String PropStr = "Test string";
+	core::storage::String PropStr = "Test string";
 	eConfigTest PropEnum = eConfigTest::VAL_2;
 
 	std::vector<int> PropStdVectorInt = { 1, 2, 3 };
 	std::vector<std::vector<int>> PropStdVectorStdVectorInt = { {1}, { 2, 3 } };
-	std::vector<String> PropStdVectorString = { "abc", "efg" };
+	std::vector<core::storage::String> PropStdVectorString = { "abc", "efg" };
 	std::vector<TestRTTIClass> PropStdVectorCustom = { 1, 2 };
 
 	std::map<int, int> PropMapIntInt;
-	std::map<String, std::vector<int>> PropMapStrStdVector;
-	std::map<String, TestRTTIClass> PropMapStrCustom;
+	std::map<core::storage::String, std::vector<int>> PropMapStrStdVector;
+	std::map<core::storage::String, TestRTTIClass> PropMapStrCustom;
 
 	std::unordered_map<int, int> PropUnorderedMapIntInt;
-	std::unordered_map<String, std::vector<int>> PropUnorderedMapStrStdVector;
-	std::unordered_map<String, TestRTTIClass> PropUnorderedMapStrCustom;
+	std::unordered_map<core::storage::String, std::vector<int>> PropUnorderedMapStrStdVector;
+	std::unordered_map<core::storage::String, TestRTTIClass> PropUnorderedMapStrCustom;
 
-	Vector PropVector = Vector(1,2,3);
-	Vector2f PropVector2f = Vector2f(1, 2);
-	Vector2i PropVector2i = Vector2i(1, 2);
-	Quaternion PropQuat = Quaternion(Vector::UNIT_Z, 60_deg);
-	Angle PropAngle = 60_deg;
-	Color PropColor = Color(1, 0.5f, 0.3f, 1);
-	Matrix PropMatrix;
+	core::math::Vector PropVector = core::math::Vector(1,2,3);
+	core::math::Vector2f PropVector2f = core::math::Vector2f(1, 2);
+	core::math::Vector2i PropVector2i = core::math::Vector2i(1, 2);
+	core::math::Quaternion PropQuat = core::math::Quaternion(core::math::Vector::UNIT_Z, 60_deg);
+	core::math::Angle PropAngle = 60_deg;
+	core::math::Color PropColor = core::math::Color(1, 0.5f, 0.3f, 1);
+	core::math::Matrix PropMatrix;
 
-	EnumArray<int, eConfigTest> PropEnumArrayInt = { { eConfigTest::VAL_1, 1 },{ eConfigTest::VAL_2, 2 } };
-	EnumArray<std::vector<int>, eConfigTest> PropEnumArrayStdVector = { { eConfigTest::VAL_1, {1, 2} },{ eConfigTest::VAL_2, {2, 3} } };
-	EnumArray<TestRTTIClass, eConfigTest> PropEnumArrayCustom = { { eConfigTest::VAL_1, 1}, { eConfigTest::VAL_2, 2} };
-	EnumFlags<eConfigFlagsTest> PropEnumFlags = (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_3 | eConfigFlagsTest::VAL_5);
+	core::utils::EnumArray<int, eConfigTest> PropEnumArrayInt = { { eConfigTest::VAL_1, 1 },{ eConfigTest::VAL_2, 2 } };
+	core::utils::EnumArray<std::vector<int>, eConfigTest> PropEnumArrayStdVector = { { eConfigTest::VAL_1, {1, 2} },{ eConfigTest::VAL_2, {2, 3} } };
+	core::utils::EnumArray<TestRTTIClass, eConfigTest> PropEnumArrayCustom = { { eConfigTest::VAL_1, 1}, { eConfigTest::VAL_2, 2} };
+	core::utils::EnumFlags<eConfigFlagsTest> PropEnumFlags = (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_3 | eConfigFlagsTest::VAL_5);
 
-	UniqueID PropUUID = UniqueID::FromString("01234567-89ab-cdef-0123-456789abcdef").value();
+	core::UniqueID PropUUID = core::UniqueID::FromString("01234567-89ab-cdef-0123-456789abcdef").value();
 
 	std::unique_ptr<int> PropUniquePtrInt;
 	std::unique_ptr<std::vector<int>> PropUniquePtrStdVectorInt;
@@ -291,22 +291,22 @@ void baseValueCheck(const TestConfig& config)
 	REQUIRE(config.PropUnorderedMapStrCustom.find("Val2") != config.PropUnorderedMapStrCustom.end());
 	CHECK(config.PropUnorderedMapStrCustom.at("Val2").Val1 == 4);
 
-	CHECK(config.PropVector == Vector(1, 2, 3));
-	CHECK(config.PropVector2f == Vector2f(1, 2));
-	CHECK(config.PropVector2i == Vector2i(1, 2));
-	CHECK(config.PropQuat == Quaternion(Vector::UNIT_Z, 60_deg));
+	CHECK(config.PropVector == core::math::Vector(1, 2, 3));
+	CHECK(config.PropVector2f == core::math::Vector2f(1, 2));
+	CHECK(config.PropVector2i == core::math::Vector2i(1, 2));
+	CHECK(config.PropQuat == core::math::Quaternion(core::math::Vector::UNIT_Z, 60_deg));
 	CHECK(config.PropAngle == 60_deg);
-	CHECK(config.PropColor == Color(1, 0.5f, 0.3f, 1));
-	Matrix testMat;
+	CHECK(config.PropColor == core::math::Color(1, 0.5f, 0.3f, 1));
+	core::math::Matrix testMat;
 	testMat.SetRotationZ(60_deg);
 	CHECK(config.PropMatrix == testMat);
 
-	CHECK(config.PropEnumArrayInt == EnumArray<int, eConfigTest>{ { eConfigTest::VAL_1, 1 },{ eConfigTest::VAL_2, 2 } });
-	CHECK(config.PropEnumArrayStdVector == EnumArray<std::vector<int>, eConfigTest>{ { eConfigTest::VAL_1,{ 1, 2 } },{ eConfigTest::VAL_2,{ 2, 3 } } });
-	CHECK(config.PropEnumArrayCustom == EnumArray<TestRTTIClass, eConfigTest>{ { eConfigTest::VAL_1, 1 },{ eConfigTest::VAL_2, 2 } });
+	CHECK(config.PropEnumArrayInt == core::utils::EnumArray<int, eConfigTest>{ { eConfigTest::VAL_1, 1 },{ eConfigTest::VAL_2, 2 } });
+	CHECK(config.PropEnumArrayStdVector == core::utils::EnumArray<std::vector<int>, eConfigTest>{ { eConfigTest::VAL_1,{ 1, 2 } },{ eConfigTest::VAL_2,{ 2, 3 } } });
+	CHECK(config.PropEnumArrayCustom == core::utils::EnumArray<TestRTTIClass, eConfigTest>{ { eConfigTest::VAL_1, 1 },{ eConfigTest::VAL_2, 2 } });
 	CHECK(config.PropEnumFlags == (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_3 | eConfigFlagsTest::VAL_5));
 
-	CHECK(config.PropUUID == UniqueID::FromString("01234567-89ab-cdef-0123-456789abcdef").value());
+	CHECK(config.PropUUID == core::UniqueID::FromString("01234567-89ab-cdef-0123-456789abcdef").value());
 
 	CHECK(*config.PropUniquePtrInt == 5);
 	CHECK(*config.PropUniquePtrStdVectorInt == std::vector<int>{1,2,3});
@@ -385,12 +385,12 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		config.PropUnorderedMapStrCustom.insert({"Val3", 6});
 		config.PropUnorderedMapStrCustom.insert({"Val4", 8});
 
-		config.PropVector = Vector(4, 5, 6);
-		config.PropVector2f = Vector2f(3, 4);
-		config.PropVector2i = Vector2i(3, 4);
-		config.PropQuat = Quaternion(Vector::UNIT_X, 75_deg);
+		config.PropVector = core::math::Vector(4, 5, 6);
+		config.PropVector2f = core::math::Vector2f(3, 4);
+		config.PropVector2i = core::math::Vector2i(3, 4);
+		config.PropQuat = core::math::Quaternion(core::math::Vector::UNIT_X, 75_deg);
 		config.PropAngle = 75_deg;
-		config.PropColor = Color(0.5f, 1, 0.8f, 1);
+		config.PropColor = core::math::Color(0.5f, 1, 0.8f, 1);
 		config.PropMatrix.SetRotationX(75_deg);
 
 		config.PropEnumArrayInt = { { eConfigTest::VAL_1, 3 },{ eConfigTest::VAL_2, 4 } };
@@ -398,7 +398,7 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		config.PropEnumArrayCustom = { { eConfigTest::VAL_1, 3 },{ eConfigTest::VAL_2, 4 } };
 		config.PropEnumFlags = (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_2 | eConfigFlagsTest::VAL_4);
 
-		config.PropUUID = UniqueID::FromString("abcdef01-2345-6789-abcd-ef0123456789").value();
+		config.PropUUID = core::UniqueID::FromString("abcdef01-2345-6789-abcd-ef0123456789").value();
 
 		config.PropUniquePtrInt = std::make_unique<int>(7);
 		config.PropUniquePtrStdVectorInt = std::make_unique<std::vector<int>>(std::vector<int>{ 4, 5, 6 });
@@ -529,22 +529,22 @@ TEST_CASE("Config serialization tests", "[ConfigBase]")
 		REQUIRE(config.PropUnorderedMapStrCustom.find("Val4") != config.PropUnorderedMapStrCustom.end());
 		CHECK(config.PropUnorderedMapStrCustom.at("Val4").Val1 == 8);
 
-		CHECK(config.PropVector == Vector(4, 5, 6));
-		CHECK(config.PropVector2f == Vector2f(3, 4));
-		CHECK(config.PropVector2i == Vector2i(3, 4));
-		CHECK(config.PropQuat == Quaternion(Vector::UNIT_X, 75_deg));
+		CHECK(config.PropVector == core::math::Vector(4, 5, 6));
+		CHECK(config.PropVector2f == core::math::Vector2f(3, 4));
+		CHECK(config.PropVector2i == core::math::Vector2i(3, 4));
+		CHECK(config.PropQuat == core::math::Quaternion(core::math::Vector::UNIT_X, 75_deg));
 		CHECK(config.PropAngle == 75_deg);
-		CHECK(config.PropColor == Color(0.5f, 1, 0.8f, 1));
-		Matrix testMat;
+		CHECK(config.PropColor == core::math::Color(0.5f, 1, 0.8f, 1));
+		core::math::Matrix testMat;
 		testMat.SetRotationX(75_deg);
 		CHECK(config.PropMatrix == testMat);
 
-		CHECK(config.PropEnumArrayInt == EnumArray<int, eConfigTest>{ { eConfigTest::VAL_1, 3 }, { eConfigTest::VAL_2, 4 } });
-		CHECK(config.PropEnumArrayStdVector == EnumArray<std::vector<int>, eConfigTest>{ { eConfigTest::VAL_1, { 3, 4 } }, { eConfigTest::VAL_2,{ 4, 5 } } });
-		CHECK(config.PropEnumArrayCustom == EnumArray<TestRTTIClass, eConfigTest>{ { eConfigTest::VAL_1, 3 }, { eConfigTest::VAL_2, 4 } });
+		CHECK(config.PropEnumArrayInt == core::utils::EnumArray<int, eConfigTest>{ { eConfigTest::VAL_1, 3 }, { eConfigTest::VAL_2, 4 } });
+		CHECK(config.PropEnumArrayStdVector == core::utils::EnumArray<std::vector<int>, eConfigTest>{ { eConfigTest::VAL_1, { 3, 4 } }, { eConfigTest::VAL_2,{ 4, 5 } } });
+		CHECK(config.PropEnumArrayCustom == core::utils::EnumArray<TestRTTIClass, eConfigTest>{ { eConfigTest::VAL_1, 3 }, { eConfigTest::VAL_2, 4 } });
 		CHECK(config.PropEnumFlags == (eConfigFlagsTest::VAL_1 | eConfigFlagsTest::VAL_2 | eConfigFlagsTest::VAL_4));
 
-		CHECK(config.PropUUID == UniqueID::FromString("abcdef01-2345-6789-abcd-ef0123456789").value());
+		CHECK(config.PropUUID == core::UniqueID::FromString("abcdef01-2345-6789-abcd-ef0123456789").value());
 
 		CHECK(*config.PropUniquePtrInt == 7);
 		CHECK(*config.PropUniquePtrStdVectorInt == std::vector<int>{4,5,6});

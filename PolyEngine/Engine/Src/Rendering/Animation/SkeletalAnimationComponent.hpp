@@ -6,7 +6,7 @@
 
 namespace Poly
 {
-	struct SkeletalAnimationParams final : public BaseObjectLiteralType<>
+	struct SkeletalAnimationParams final : public ::pe::core::BaseObjectLiteralType<>
 	{
 		float Delay = 0.f;
 		eEngineTimer Timer = eEngineTimer::GAMEPLAY;
@@ -16,7 +16,7 @@ namespace Poly
 		std::optional<uint> LoopCount;
 	};
 
-	struct SkeletalAnimationState final : public BaseObjectLiteralType<>
+	struct SkeletalAnimationState final : public ::pe::core::BaseObjectLiteralType<>
 	{
 		SkeletalAnimationState() {};
 
@@ -39,9 +39,9 @@ namespace Poly
 
 		~SkeletalAnimationComponent() override;
 
-		std::map<String, SkeletalAnimationState> ActiveAnimations;
-		std::map<String, Matrix> ModelFromBone;
-		std::vector<SafePtr<Entity>> Bones;
+		std::map<core::storage::String, SkeletalAnimationState> ActiveAnimations;
+		std::map<core::storage::String, core::math::Matrix> ModelFromBone;
+		std::vector<core::memory::SafePtr<Entity>> Bones;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, SkeletalAnimationComponent)

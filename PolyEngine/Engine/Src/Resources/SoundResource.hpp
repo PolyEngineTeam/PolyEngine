@@ -7,7 +7,7 @@ namespace Poly
 {
 
 	SILENCE_MSVC_WARNING(4275, "Exporting stl may cause incompatibility. We use same CRT so it's ok.")
-	class ENGINE_DLLEXPORT OggDecoderException : public BaseObject<>, public std::exception
+	class ENGINE_DLLEXPORT OggDecoderException : public ::pe::core::BaseObject<>, public std::exception
 	{
 	public:
 		OggDecoderException() {}
@@ -19,7 +19,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT SoundResource : public ResourceBase
 	{
 	public:
-		SoundResource(const String& path);
+		SoundResource(const core::storage::String& path);
 		~SoundResource();
 
 		unsigned int GetBufferID() const { return BufferID; }

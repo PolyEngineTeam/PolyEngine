@@ -28,7 +28,7 @@ namespace Poly
 	};
 
 	/// <summary>Central part of engine. It can be obtained vis gEngine global variable.</summary>
-	class ENGINE_DLLEXPORT Engine : public BaseObject<>
+	class ENGINE_DLLEXPORT Engine : public ::pe::core::BaseObject<>
 	{
 	public:
 		/// <summary>Constructs engine instance.</summary>
@@ -103,17 +103,17 @@ namespace Poly
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="pos">Mouse delta pos.</param>
-		void UpdateMouseMove(const Vector2i& delta) { InputEventsQueue.PushBack({eInputEventType::MOUSEMOVE, delta }); }
+		void UpdateMouseMove(const core::math::Vector2i& delta) { InputEventsQueue.PushBack({eInputEventType::MOUSEMOVE, delta }); }
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="pos">New mouse position.</param>
-		void UpdateMousePos(const Vector2i& pos) { InputEventsQueue.PushBack({ eInputEventType::MOUSEPOS, pos }); }
+		void UpdateMousePos(const core::math::Vector2i& pos) { InputEventsQueue.PushBack({ eInputEventType::MOUSEPOS, pos }); }
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="pos">Wheel delta position.</param>
-		void UpdateWheelPos(const Vector2i& deltaPos) { InputEventsQueue.PushBack({eInputEventType::WHEELMOVE, deltaPos}); }
+		void UpdateWheelPos(const core::math::Vector2i& deltaPos) { InputEventsQueue.PushBack({eInputEventType::WHEELMOVE, deltaPos}); }
 
         /// <summary>Pushes adding input controller event to an input queue with specified SDL_GameController id</summary>
         /// <param name="id">SDL Joystick Instance id</param>
@@ -216,7 +216,7 @@ namespace Poly
 		InputQueue InputEventsQueue;
 		OutputQueue OutputEventsQueue;
 
-		EnumArray<std::vector<std::unique_ptr<ISystem>>, eUpdatePhaseOrder> GameUpdatePhases;
+		core::utils::EnumArray<std::vector<std::unique_ptr<ISystem>>, eUpdatePhaseOrder> GameUpdatePhases;
 
 		bool QuitRequested = false; //stop the game
 		bool MouseCaptureEnabled = false;

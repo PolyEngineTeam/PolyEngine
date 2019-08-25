@@ -21,7 +21,7 @@ namespace Poly {
 			b2WorldManifold manifold;
 			contact->GetWorldManifold(&manifold);
 
-			Vector normal(manifold.normal.x, manifold.normal.y, 0);
+			core::math::Vector normal(manifold.normal.x, manifold.normal.y, 0);
 			Component->OverlapingBodies[rb1].push_back(Physics2DWorldComponent::Collision{ rb2, normal });
 			Component->OverlapingBodies[rb2].push_back(Physics2DWorldComponent::Collision{ rb1, -normal });
 		}
@@ -61,7 +61,7 @@ const std::vector<Physics2DWorldComponent::Collision>& Poly::Physics2DWorldCompo
 	return it->second;
 }
 
-void Poly::Physics2DWorldComponent::SetGravity(const Vector& gravity) const
+void Poly::Physics2DWorldComponent::SetGravity(const core::math::Vector& gravity) const
 {
 	Scene->SetGravity(b2Vec2(gravity.X, gravity.Y));
 }

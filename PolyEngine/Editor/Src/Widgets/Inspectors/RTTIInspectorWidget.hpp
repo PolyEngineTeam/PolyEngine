@@ -1,5 +1,8 @@
 #pragma once
 
+// Temporary namespace usings
+using namespace pe;
+
 #include <pe/core/rtti/RTTI.hpp>
 #include <QFormLayout>
 

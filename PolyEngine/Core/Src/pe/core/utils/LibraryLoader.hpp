@@ -85,7 +85,7 @@ namespace pe::core::utils
 		if (!libHandle)
 		{
 			DWORD err = GetLastError();
-			Poly::gConsole.LogError("Shared library [{}] load failed. Error code: {}", libraryName, err);
+			core::utils::gConsole.LogError("Shared library [{}] load failed. Error code: {}", libraryName, err);
 			return LibraryFunctionHandle<Function>{ nullptr, nullptr };
 		}
 
@@ -93,21 +93,21 @@ namespace pe::core::utils
 		if (!funcHandle)
 		{
 			DWORD err = GetLastError();
-			Poly::gConsole.LogError("Function [{}] from shared library [{}] load failed. Error code: {}", functionSymbol, libraryName, err);
+			core::utils::gConsole.LogError("Function [{}] from shared library [{}] load failed. Error code: {}", functionSymbol, libraryName, err);
 			return LibraryFunctionHandle<Function>{ nullptr, nullptr };
 		}
 #elif defined(__linux__) || defined(__APPLE__)
 		void* libHandle = dlopen(libraryName, RTLD_NOW /*| RTLD_GLOBAL*/); //don't be lazy in resolving symbols /*and allow subsequently loaded libs to use them*/
 		if (const char* err = dlerror()) 
 		{ //we could simply check if the handle is null, but using dlerror() doubles as clearing error flags
-			Poly::gConsole.LogError("Shared library [{}] load failed. Error: {}", libraryName, err);
+			core::utils::gConsole.LogError("Shared library [{}] load failed. Error: {}", libraryName, err);
 			return LibraryFunctionHandle<Function>{ nullptr, nullptr };
 		}
 
 		void* funcHandle = dlsym(libHandle, functionSymbol);
 		if (const char* err = dlerror())
 		{ //symbols can be legally null, so we need to check for errors instead
-			Poly::gConsole.LogError("Function [{}] from shared library [{}] load failed. Error: {}", functionSymbol, libraryName, err);
+			core::utils::gConsole.LogError("Function [{}] from shared library [{}] load failed. Error: {}", functionSymbol, libraryName, err);
 			dlclose(libHandle);
 			return LibraryFunctionHandle<Function>{ nullptr, nullptr };
 		}
@@ -115,7 +115,7 @@ namespace pe::core::utils
 #error "Unsupported platform :("
 #endif
 
-		Poly::gConsole.LogError("Function [{}] from shared library [{}] loaded succesfully!", functionSymbol, libraryName);
+		core::utils::gConsole.LogError("Function [{}] from shared library [{}] loaded succesfully!", functionSymbol, libraryName);
 		return LibraryFunctionHandle<Function>{ libHandle, reinterpret_cast<Function*>(funcHandle) };
 	}
 }

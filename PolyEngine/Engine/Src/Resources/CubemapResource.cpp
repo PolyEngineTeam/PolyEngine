@@ -6,14 +6,14 @@
 
 using namespace Poly;
 
-CubemapResource::CubemapResource(const EnumArray<String, eCubemapSide> paths)
+CubemapResource::CubemapResource(const core::utils::EnumArray<core::storage::String, eCubemapSide> paths)
 {
 	ASSERTE(paths.GetSize() == 6, "CubemapResource::CubemapResource parths need to have 6 elements");
-	gConsole.LogInfo("CubemapResource::CubemapResource path:{}", paths[eCubemapSide::LEFT]);
+	core::utils::gConsole.LogInfo("CubemapResource::CubemapResource path:{}", paths[eCubemapSide::LEFT]);
 
-	for (auto side : IterateEnum<eCubemapSide>())
+	for (auto side : core::utils::IterateEnum<eCubemapSide>())
 	{
-		String absolutePath = gAssetsPathConfig.GetAssetsPath(eResourceSource::ENGINE) + paths[side];
+		core::storage::String absolutePath = gAssetsPathConfig.GetAssetsPath(eResourceSource::ENGINE) + paths[side];
 		
 		int fileChannels;
 		int fileWidth;
@@ -27,12 +27,12 @@ CubemapResource::CubemapResource(const EnumArray<String, eCubemapSide> paths)
 
 	TextureProxy = gEngine->GetRenderingDevice()->CreateCubemap(Width, Height);
 
-	for (auto side : IterateEnum<eCubemapSide>())
+	for (auto side : core::utils::IterateEnum<eCubemapSide>())
 	{
 		TextureProxy->SetContentHDR(side, Images[side]);
 	}
 
-	for (auto side : IterateEnum<eCubemapSide>())
+	for (auto side : core::utils::IterateEnum<eCubemapSide>())
 	{
 		FreeImageHDR(Images[side]);
 	}

@@ -47,7 +47,7 @@
 #include <pe/core/math/Color.hpp>
 #include <pe/core/utils/FileIO.hpp>
 #include <pe/core/utils/Logger.hpp>
-#include <UniqueID.hpp>
+#include <pe/core/UniqueID.hpp>
 #include <pe/core/utils/EnumUtils.hpp>
 #include <pe/core/utils/OutputStream.hpp> 
 
@@ -83,3 +83,6 @@ UNSILENCE_MSVC_WARNING()
 #include <assimp/Importer.hpp>
 
 #include <imgui.h>
+
+// Temporary namespace usings
+using namespace pe;

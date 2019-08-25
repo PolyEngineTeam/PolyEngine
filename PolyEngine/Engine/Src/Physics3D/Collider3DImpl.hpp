@@ -6,7 +6,7 @@ class btCollisionObject;
 
 namespace Poly
 {
-	struct Trigger3DImpl : BaseObject<>
+	struct Trigger3DImpl : public ::pe::core::BaseObject<>
 	{
 		btCollisionObject* BulletTrigger = nullptr;
 	};

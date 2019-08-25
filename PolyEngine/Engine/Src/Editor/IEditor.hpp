@@ -10,7 +10,7 @@ namespace Poly
 	{
 	public:
 		// Returns path to config file with assets paths (serialized AssetsPathConfig).
-		virtual Poly::String GetAssetsPathConfigPath() = 0;
+		virtual ::pe::core::storage::String GetAssetsPathConfigPath() = 0;
 
 		// Initialize editor systems and components here.
 		virtual void OnGameInit() = 0;

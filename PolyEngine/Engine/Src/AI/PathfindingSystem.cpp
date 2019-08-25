@@ -23,11 +23,11 @@ struct PathNodeCmp
 	bool operator()(const std::pair<i64, float>& a, const std::pair<i64, float>& b) const { return a.second < b.second; }
 };
 
-std::optional<std::vector<Vector>> CalculateNewPath(const NavGraph* graph, const Vector& start, const Vector& dest, size_t depthLimit)
+std::optional<std::vector<core::math::Vector>> CalculateNewPath(const NavGraph* graph, const core::math::Vector& start, const core::math::Vector& dest, size_t depthLimit)
 {
 	// Swap start and dest to better handle path parsing later
-	Vector startInternal = dest;
-	Vector destInternal = start;
+	core::math::Vector startInternal = dest;
+	core::math::Vector destInternal = start;
 
 	const NavNode* startNode = graph->GetNodeFromWorldPosition(startInternal);
 	const NavNode* destNode = graph->GetNodeFromWorldPosition(destInternal);
@@ -36,7 +36,7 @@ std::optional<std::vector<Vector>> CalculateNewPath(const NavGraph* graph, const
 
 	std::vector<PathNode> AllNodes;
 
-	PriorityQueue<std::pair<i64, float>, PathNodeCmp> openList, closedList;
+	core::storage::PriorityQueue<std::pair<i64, float>, PathNodeCmp> openList, closedList;
 	std::map<const NavNode*, float> minCosts;
 
 	AllNodes.push_back(PathNode(startNode, 0, graph->GetHeuristicCost(startNode, destNode) ));
@@ -81,7 +81,7 @@ std::optional<std::vector<Vector>> CalculateNewPath(const NavGraph* graph, const
 	if (bestNodeIdx < 0)
 		return {};
 
-	std::vector<Vector> path;
+	std::vector<core::math::Vector> path;
 	path.push_back(start);
 	i64 currNodeIdx = bestNodeIdx;
 	do
@@ -95,7 +95,7 @@ std::optional<std::vector<Vector>> CalculateNewPath(const NavGraph* graph, const
 	return path;
 }
 
-void SmoothPath(const NavGraph* graph, std::vector<Vector>& path)
+void SmoothPath(const NavGraph* graph, std::vector<core::math::Vector>& path)
 {
 	size_t currIdx = 0;
 	while (currIdx < path.size() - 1)
@@ -127,8 +127,8 @@ ENGINE_DLLEXPORT void Poly::PathfindingSystem::UpdatePhase(Scene* world)
 		if (pathfindingCmp->RecalculateRequested)
 		{
 			pathfindingCmp->RecalculateRequested = false;
-			Vector trans = pathfindingCmp->GetOwner()->GetTransform().GetGlobalTranslation();
-			std::optional<std::vector<Vector>> path = CalculateNewPath(pathfindingCmp->NavigationGraph,
+			core::math::Vector trans = pathfindingCmp->GetOwner()->GetTransform().GetGlobalTranslation();
+			std::optional<std::vector<core::math::Vector>> path = CalculateNewPath(pathfindingCmp->NavigationGraph,
 				trans, pathfindingCmp->CurentDestination.value(), 16);
 
 			if (!path.has_value())

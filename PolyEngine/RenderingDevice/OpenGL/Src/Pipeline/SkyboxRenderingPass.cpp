@@ -12,7 +12,7 @@ SkyboxRenderingPass::SkyboxRenderingPass(const GLRenderingDevice* rdi)
 	GetProgram().RegisterUniform("mat4", "uClipFromWorld");
 }
 
-void SkyboxRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
+void SkyboxRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const core::math::AARect& /*rect*/, ePassType /*passType = ePassType::GLOBAL*/ )
 {
 	const SkyboxWorldComponent* SkyboxWorldCmp = world->GetWorldComponent<SkyboxWorldComponent>();
 	if (SkyboxWorldCmp != nullptr)
@@ -21,14 +21,14 @@ void SkyboxRenderingPass::OnRun(Scene* world, const CameraComponent* camera, con
 
 void SkyboxRenderingPass::RenderSkybox(const CameraComponent* camera, const SkyboxWorldComponent* SkyboxWorldCmp)
 {
-	const Matrix projection = camera->GetClipFromView();
-	Matrix modelView = Matrix(camera->GetViewFromWorld());
-	// center cube in view space by setting translation to 0 for x, y and z. SetTranslation resets Matrix to identity
+	const core::math::Matrix projection = camera->GetClipFromView();
+	core::math::Matrix modelView = core::math::Matrix(camera->GetViewFromWorld());
+	// center cube in view space by setting translation to 0 for x, y and z. SetTranslation resets core::math::Matrix to identity
 	modelView.Data[3] = 0.0f;
 	modelView.Data[7] = 0.0f;
 	modelView.Data[11] = 0.0f;
 
-	Matrix mvp = projection * modelView;
+	core::math::Matrix mvp = projection * modelView;
 
 	GetProgram().BindProgram();
 	GetProgram().SetUniform("uClipFromWorld", mvp);

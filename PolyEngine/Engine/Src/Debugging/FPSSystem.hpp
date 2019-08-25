@@ -8,12 +8,12 @@ namespace Poly
 
 	namespace FPSSystem
 	{
-		struct FPSData : public BaseObject<>
+		struct FPSData : public ::pe::core::BaseObject<>
 		{
 			int FPS;
 			double ElapsedTime;
 			int LastFPS;
-			String DisplayedFPSText;
+			core::storage::String DisplayedFPSText;
 		};
 
 		float ENGINE_DLLEXPORT GetFPS(Scene* world);

@@ -41,7 +41,7 @@ namespace Poly {
 		void BeforeDeserializationCallback() override;
 		void AfterDeserializationCallback() override;
 
-		/// <summary>Gets a component of a specified type from entity with given UniqueID.</summary>
+		/// <summary>Gets a component of a specified type from entity with given core::UniqueID.</summary>
 		/// <param name="entityId">UniqueID of the entity.</param>
 		/// <returns>Pointer to a specified component or a nullptr, if none was found.</returns>
 		/// <see cref="Scene.AddComponent()">
@@ -81,7 +81,7 @@ namespace Poly {
 			return nullptr;
 		}
 
-		IterablePoolAllocatorBase* GetComponentAllocator(size_t componentID) 
+		core::memory::IterablePoolAllocatorBase* GetComponentAllocator(size_t componentID) 
 		{
 			HEAVY_ASSERTE(componentID < MAX_COMPONENTS_COUNT, "Invalid component ID");
 			if (ComponentAllocators[componentID] == nullptr)
@@ -91,7 +91,7 @@ namespace Poly {
 		}
 		ComponentDeleter& GetComponentDeleter() { return ComponentDel; }
 
-		IterablePoolAllocator<Entity>& GetEntityAllocator() { return EntitiesAllocator; }
+		core::memory::IterablePoolAllocator<Entity>& GetEntityAllocator() { return EntitiesAllocator; }
 		EntityDeleter& GetEntityDeleter() { return EntityDel; }
 
 
@@ -125,7 +125,7 @@ namespace Poly {
 
 		/// Component iterator.
 		template<typename PrimaryComponent, typename... SecondaryComponents>
-		class ComponentIterator : public BaseObject<>,
+		class ComponentIterator : public ::pe::core::BaseObject<>,
 		                          public std::iterator<std::forward_iterator_tag, std::tuple<typename std::add_pointer<PrimaryComponent>::type, typename std::add_pointer<SecondaryComponents>::type...>>
 		{
 			public:
@@ -164,7 +164,7 @@ namespace Poly {
 				while (primary_iter != End && !HasComponents<SecondaryComponents...>(primary_iter->GetOwner()));
 			}
 
-			explicit ComponentIterator(typename IterablePoolAllocator<PrimaryComponent>::Iterator parent, Scene* const w) : primary_iter(parent), 
+			explicit ComponentIterator(typename core::memory::IterablePoolAllocator<PrimaryComponent>::Iterator parent, Scene* const w) : primary_iter(parent), 
 				Begin(w->GetComponentAllocator<PrimaryComponent>()->Begin()),
 				End(w->GetComponentAllocator<PrimaryComponent>()->End())
 			{
@@ -173,9 +173,9 @@ namespace Poly {
 			}
 			friend struct IteratorProxy<PrimaryComponent, SecondaryComponents...>;
 
-			typename IterablePoolAllocator<PrimaryComponent>::Iterator primary_iter;
-			typename IterablePoolAllocator<PrimaryComponent>::Iterator Begin;
-			typename IterablePoolAllocator<PrimaryComponent>::Iterator End;
+			typename core::memory::IterablePoolAllocator<PrimaryComponent>::Iterator primary_iter;
+			typename core::memory::IterablePoolAllocator<PrimaryComponent>::Iterator Begin;
+			typename core::memory::IterablePoolAllocator<PrimaryComponent>::Iterator End;
 		};
 
 		/// Iterator proxy
@@ -225,7 +225,7 @@ namespace Poly {
 			T* ptr = GetComponentAllocator<T>()->Alloc();
 			::new(ptr) T(std::forward<Args>(args)...);
 			HEAVY_ASSERTE(entity, "Invalid entity ID");
-			HEAVY_ASSERTE(!entity->HasComponent(ctypeID), "Failed at AddComponent() - a component of a given UniqueID already exists!");
+			HEAVY_ASSERTE(!entity->HasComponent(ctypeID), "Failed at AddComponent() - a component of a given core::UniqueID already exists!");
 			entity->ComponentPosessionFlags.set(ctypeID, true);
 			entity->Components[ctypeID].reset(ptr);
 			ptr->Owner = entity;
@@ -239,7 +239,7 @@ namespace Poly {
 		{
 			const auto ctypeID = GetComponentID<T>();
 			HEAVY_ASSERTE(entity, "Invalid entity ID");
-			HEAVY_ASSERTE(entity->HasComponent(ctypeID), "Failed at RemoveComponent() - a component of a given UniqueID does not exist!");
+			HEAVY_ASSERTE(entity->HasComponent(ctypeID), "Failed at RemoveComponent() - a component of a given core::UniqueID does not exist!");
 			entity->ComponentPosessionFlags.set(ctypeID, false);
 			entity->Components[ctypeID].reset(nullptr);
 			HEAVY_ASSERTE(!entity->HasComponent(ctypeID), "Failed at AddComponent() - the component was not removed!");
@@ -248,10 +248,10 @@ namespace Poly {
 
 		//------------------------------------------------------------------------------
 		template<typename T>
-		IterablePoolAllocator<T>* GetComponentAllocator()
+		core::memory::IterablePoolAllocator<T>* GetComponentAllocator()
 		{
 			const auto ctypeID = GetComponentID<T>();
-			return static_cast<IterablePoolAllocator<T>*>(GetComponentAllocator(ctypeID));
+			return static_cast<core::memory::IterablePoolAllocator<T>*>(GetComponentAllocator(ctypeID));
 		}
 
 		//------------------------------------------------------------------------------
@@ -271,8 +271,8 @@ namespace Poly {
 		void RemoveComponentById(Entity* ent, size_t id);
 
 		// Allocators
-		IterablePoolAllocator<Entity> EntitiesAllocator;
-		IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
+		core::memory::IterablePoolAllocator<Entity> EntitiesAllocator;
+		core::memory::IterablePoolAllocatorBase* ComponentAllocators[MAX_COMPONENTS_COUNT];
 
 		ComponentDeleter ComponentDel;
 		EntityDeleter EntityDel;

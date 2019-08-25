@@ -17,9 +17,9 @@ namespace Poly
 		void ENGINE_DLLEXPORT SoundPhase(Scene*);
 
 		// Device
-		void ENGINE_DLLEXPORT SetDevice(const String&);
-		const ENGINE_DLLEXPORT String& GetDeviceName();
-		const ENGINE_DLLEXPORT std::vector<String>& GetAvailableDevices();
+		void ENGINE_DLLEXPORT SetDevice(const core::storage::String&);
+		const ENGINE_DLLEXPORT core::storage::String& GetDeviceName();
+		const ENGINE_DLLEXPORT std::vector<core::storage::String>& GetAvailableDevices();
 
 		// Context
 		void ENGINE_DLLEXPORT SetWorldCurrent(Scene*);
@@ -36,15 +36,15 @@ namespace Poly
 		void ENGINE_DLLEXPORT SetEmitterOffsetInSeconds(Scene*, Entity*, float);
 		void ENGINE_DLLEXPORT SetEmitterOffsetInSamples(Scene*, Entity*, size_t);
 		void ENGINE_DLLEXPORT SetEmitterOffsetInBytes(Scene*, Entity*, size_t);
-		void ENGINE_DLLEXPORT SetEmitterSource(Scene*, Entity*, const String&, eResourceSource);
-		/*void ENGINE_DLLEXPORT QueueEmitterSource(Scene*, Entity*, const String&);
-		void ENGINE_DLLEXPORT DequeueEmitterSource(Scene*, Entity*, const String&);
+		void ENGINE_DLLEXPORT SetEmitterSource(Scene*, Entity*, const core::storage::String&, eResourceSource);
+		/*void ENGINE_DLLEXPORT QueueEmitterSource(Scene*, Entity*, const core::storage::String&);
+		void ENGINE_DLLEXPORT DequeueEmitterSource(Scene*, Entity*, const core::storage::String&);
 		void ENGINE_DLLEXPORT SetEmitterDistanceModel(Scene*, Entity*, void(*fun)(SoundEmitterComponent, SoundListenerComponent));
 		*/
 		// Listener
 		void ENGINE_DLLEXPORT ActivateListener(Scene*, Entity*);
 		void ENGINE_DLLEXPORT DeactivateListener(Scene*, Entity*);
-		void ENGINE_DLLEXPORT SetListenerPosition(Vector);
+		void ENGINE_DLLEXPORT SetListenerPosition(core::math::Vector);
 		bool ENGINE_DLLEXPORT IsEmmiterActive(Scene*, Entity*);
 	}
 } // namespace Poly

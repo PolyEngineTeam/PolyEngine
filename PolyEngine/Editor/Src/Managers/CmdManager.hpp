@@ -11,11 +11,11 @@ using namespace Poly;
 class CmdManagerException : public std::exception
 {
 public:
-	CmdManagerException(const String& msg) : Msg((const char*)msg.GetCStr()) {}
+	CmdManagerException(const core::storage::String& msg) : Msg((const char*)msg.GetCStr()) {}
 	const char* what() const noexcept override { return Msg.GetCStr(); }
 
 protected:
-	String Msg;
+	core::storage::String Msg;
 };
 
 class CmdManager : public QObject
@@ -27,7 +27,7 @@ public:
 	template <typename S, typename... Args>
 	void RegisterStream(Args&&... args)
 	{
-		constexpr bool isStream = std::is_base_of<Poly::OutputStream, S>::value; // Strange workaround to STATIC_ASSERTE macro on MSVC
+		constexpr bool isStream = std::is_base_of<pe::core::utils::OutputStream, S>::value; // Strange workaround to STATIC_ASSERTE macro on MSVC
 		STATIC_ASSERTE(isStream, "Provided value is not stream!");
 		if (CurrentStream)
 			CurrentStream->OnUnregister();
@@ -35,18 +35,18 @@ public:
 		Ostream = std::make_unique<std::ostream>(CurrentStream.get());
 	}
 
-	void RunCommand(const String& cmd);
+	void RunCommand(const core::storage::String& cmd);
 
 private:
 	bool Running = false;
 
-	String Command;
+	core::storage::String Command;
 
 	std::unique_ptr<QTimer> Timer = nullptr;
 	FILE* Stream = nullptr;
 	static const size_t MaxBuffer = 256;
 	char Buffer[MaxBuffer];
-	std::unique_ptr<OutputStream> CurrentStream;
+	std::unique_ptr<core::utils::OutputStream> CurrentStream;
 	std::unique_ptr<std::ostream> Ostream;
 
 private slots:

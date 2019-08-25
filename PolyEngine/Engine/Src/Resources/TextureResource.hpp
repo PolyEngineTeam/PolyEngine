@@ -13,7 +13,7 @@ namespace Poly
 	class ENGINE_DLLEXPORT TextureResource : public ResourceBase
 	{
 	public:
-		TextureResource(const String& path, eTextureUsageType textureUsageType);
+		TextureResource(const core::storage::String& path, eTextureUsageType textureUsageType);
 		~TextureResource() override;
 
 		int GetWidth() const { return Width; }

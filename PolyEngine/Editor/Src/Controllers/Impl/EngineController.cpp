@@ -11,7 +11,7 @@ extern "C"
 	using CreateGameFunc = IGame * (void);
 }
 
-static LibraryFunctionHandle<CreateGameFunc> LoadGame;
+static core::utils::LibraryFunctionHandle<CreateGameFunc> LoadGame;
 
 //------------------------------------------------------------------------------
 std::unique_ptr<EngineController> EngineController::Create(const ProjectConfig& projectConfig)
@@ -20,10 +20,10 @@ std::unique_ptr<EngineController> EngineController::Create(const ProjectConfig& 
 	// load game
 	if (!LoadGame.FunctionValid())
 	{
-		const Poly::String libGamePath = projectConfig.GetGameDllPath();
-		LoadGame = LoadFunctionFromSharedLibrary<CreateGameFunc>(libGamePath.GetCStr(), "CreateGame");
+		const core::storage::String libGamePath = projectConfig.GetGameDllPath();
+		LoadGame = core::utils::LoadFunctionFromSharedLibrary<CreateGameFunc>(libGamePath.GetCStr(), "CreateGame");
 		ASSERTE(LoadGame.FunctionValid(), "Library libGame load failed");
-		gConsole.LogDebug("Library libGame loaded from {}.", libGamePath);
+		core::utils::gConsole.LogDebug("Library libGame loaded from {}.", libGamePath);
 	}
 
 	std::unique_ptr<IGame> game = std::unique_ptr<IGame>(LoadGame());
@@ -31,7 +31,7 @@ std::unique_ptr<EngineController> EngineController::Create(const ProjectConfig& 
 	auto engine = std::make_unique<Poly::Engine>(false, gApp->InspectorMgr->GetEditor());
 
 	engine->Init(std::move(game), gApp->InspectorMgr->GetRenderingDevice());
-	gConsole.LogDebug("Engine initialized successfully");
+	core::utils::gConsole.LogDebug("Engine initialized successfully");
 
 	auto result = std::make_unique<EngineController>();
 	result->SetEngine(std::move(engine));

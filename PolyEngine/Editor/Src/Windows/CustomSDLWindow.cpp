@@ -234,7 +234,7 @@ SDL_Keycode QtKeyEventToSDLKeycode(Qt::Key key)
 	case Qt::Key::Key_Mode_switch: return SDLK_MODE;
 
 	default:
-		Poly::gConsole.LogDebug("Unhandled key: {}", key);
+		core::utils::gConsole.LogDebug("Unhandled key: {}", key);
 		return SDLK_UNKNOWN;
 	}
 }
