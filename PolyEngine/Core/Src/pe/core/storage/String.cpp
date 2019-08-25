@@ -9,11 +9,16 @@ const String String::EMPTY = String();
 
 static const std::vector<char> WHITESPACES { ' ', '\t', '\r', '\n', '\0' };
 
+namespace pe::core::storage
+{
+
 size_t StrLen(const char* str) {
 	size_t len = 0;
 	while (str[len] != 0)
 		++len;
 	return len;
+}
+
 }
 
 String::String(const char* data) {

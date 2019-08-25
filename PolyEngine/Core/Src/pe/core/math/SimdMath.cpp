@@ -7,6 +7,9 @@ using namespace pe::core::math;
 
 #if !DISABLE_SIMD
 
+namespace pe::core::math
+{
+
 //------------------------------------------------------------------------------
 __m128 _mm_dot_ps(__m128 a, __m128 b) {
   __m128 mult = _mm_mul_ps(a, b); //multiply x,y,z
@@ -26,4 +29,5 @@ __m128 _mm_cmpf_ps(__m128 a, __m128 b) {
   return _mm_and_ps(lower, greater);
 }
 
+}
 #endif
