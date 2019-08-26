@@ -271,8 +271,11 @@ namespace pe::core::utils {
 	template <typename E, typename = std::enable_if_t<std::is_enum<E>::value> > constexpr E operator&(E lhs, E rhs) { return static_cast<E>(::pe::core::utils::EnumFlags<E>(lhs) & ::pe::core::utils::EnumFlags<E>(rhs)); }
 	template <typename E, typename = std::enable_if_t<std::is_enum<E>::value> > constexpr E operator~(E rhs) { return static_cast<E>(~::pe::core::utils::EnumFlags<E>(rhs)); }
 
+// Workaround for stupid GCC behaviour: https://stackoverflow.com/questions/2781339/global-qualification-in-a-class-declarations-class-head
+namespace _pe = ::pe;
+
 #define REGISTER_ENUM_NAMES(Type, ...)                                            			\
-template<> struct ::pe::core::utils::impl::EnumInfo<Type> : public ::pe::core::utils::impl::EnumInfoBase														\
+template<> struct _pe::core::utils::impl::EnumInfo<Type> : public ::pe::core::utils::impl::EnumInfoBase														\
 {                                                    										\
 	STATIC_ASSERTE(std::is_enum<Type>::value, "Enum type is required");\
 	using ValueType = typename std::underlying_type<Type>::type;\
