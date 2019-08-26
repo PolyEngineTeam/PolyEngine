@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <ECS/ComponentBase.hpp>
 
 class b2PolygonShape;
@@ -13,10 +13,10 @@ namespace Poly
 	public:
 		RTTI_DECLARE_COMPONENT(::Poly::Box2DColliderComponent) { NO_RTTI_PROPERTY(); }
 
-		Box2DColliderComponent(const Vector& size);
+		Box2DColliderComponent(const ::pe::core::math::Vector& size);
 		~Box2DColliderComponent();
 
-		void SetSize(const Vector& size);
+		void SetSize(const ::pe::core::math::Vector& size);
 
 		const b2PolygonShape* GetShape() const { return Shape.get(); }
 	private:

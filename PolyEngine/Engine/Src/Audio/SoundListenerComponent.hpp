@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <ECS/ComponentBase.hpp>
 #include <Audio/SoundEmitterComponent.hpp>
 
@@ -24,8 +24,8 @@ namespace Poly
 
 	private:
 		float Gain = 1;
-		Vector Position;
-		Vector Velocity;
+		::pe::core::math::Vector Position;
+		::pe::core::math::Vector Velocity;
 		std::vector<SoundEmitterComponent*> Emitters;
 	};
 

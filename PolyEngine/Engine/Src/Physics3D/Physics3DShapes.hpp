@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <Resources/MeshResource.hpp>
 #include <Physics3D/Physics3DSystem.hpp>
 #include <Physics3D/Collider3DComponent.hpp>
@@ -24,15 +24,15 @@ namespace Poly
 	//------------------------------------------------------------------------------
 
 
-	class ENGINE_DLLEXPORT Physics3DStaticMeshSource : public BaseObject<>
+	class ENGINE_DLLEXPORT Physics3DStaticMeshSource : public ::pe::core::BaseObject<>
 	{
 		friend class Physics3DStaticMeshShape;
 	public:
 		Physics3DStaticMeshSource();
 		~Physics3DStaticMeshSource();
-		void LoadMesh(const String& meshPath, eResourceSource source);
+		void LoadMesh(const ::pe::core::storage::String& meshPath, eResourceSource source);
 		void LoadMesh(const MeshResource::SubMesh& subMesh);
-		void AddTriangle(const Vector& a, const Vector& b, const Vector& c);
+		void AddTriangle(const ::pe::core::math::Vector& a, const ::pe::core::math::Vector& b, const ::pe::core::math::Vector& c);
 
 	private:
 		std::unique_ptr<Physics3DStaticMeshSourceImpl> ImplData;
@@ -42,10 +42,10 @@ namespace Poly
 	//------------------------------------------------------------------------------
 
 
-	class ENGINE_DLLEXPORT Physics3DShape : public BaseObject<>
+	class ENGINE_DLLEXPORT Physics3DShape : public ::pe::core::BaseObject<>
 	{
 		friend void Physics3DSystem::EnsureInit(Scene* world, Entity* entity);
-		friend Vector Physics3DSystem::CalculateInertia(const Physics3DShape* shape, float mass);
+		friend ::pe::core::math::Vector Physics3DSystem::CalculateInertia(const Physics3DShape* shape, float mass);
 		friend void Collider3DComponent::SetShape(const Physics3DShape* shape);
 	public:
 		Physics3DShape(ePhysics3DShape type) : ShapeType(type) {}
@@ -70,8 +70,8 @@ namespace Poly
 	class ENGINE_DLLEXPORT Physics3DPlaneShape : public Physics3DShape
 	{
 	public:
-		Physics3DPlaneShape(Vector normal, float halfExtent);
-		const Vector Normal;
+		Physics3DPlaneShape(::pe::core::math::Vector normal, float halfExtent);
+		const ::pe::core::math::Vector Normal;
 		const float HalfExtent;
 	};
 
@@ -80,8 +80,8 @@ namespace Poly
 	class ENGINE_DLLEXPORT Physics3DBoxShape : public Physics3DShape
 	{
 	public:
-		Physics3DBoxShape(Vector halfExtents);
-		const Vector HalfExtents;
+		Physics3DBoxShape(::pe::core::math::Vector halfExtents);
+		const ::pe::core::math::Vector HalfExtents;
 	};
 
 	//------------------------------------------------------------------------------

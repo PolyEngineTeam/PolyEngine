@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <IRendererInterface.hpp>
 
 namespace Poly {
@@ -15,13 +15,13 @@ namespace Poly {
 		void Render(const SceneView& sceneView) override;
 		void Deinit() override;
 
-		void PostRender(Scene* world, const CameraComponent* cameraCmp, const AARect& rect);
+		void PostRender(Scene* world, const CameraComponent* cameraCmp, const ::pe::core::math::AARect& rect);
 
 	private:
-		void RenderLit(Scene* world, const AARect& rect, const CameraComponent* cameraCmp) const;
-		void RenderUnlit(Scene* world, const AARect& rect, const CameraComponent* cameraCmp) const;
-		void RenderWireframe(Scene* world, const AARect& rect, const CameraComponent* cameraCmp) const;
-		void RenderNormals(Scene* world, const AARect& rect, const CameraComponent* cameraCmp) const;
-		void RenderNormalsWireframe(Scene* world, const AARect& rect, const CameraComponent* cameraCmp) const;
+		void RenderLit(Scene* world, const ::pe::core::math::AARect& rect, const CameraComponent* cameraCmp) const;
+		void RenderUnlit(Scene* world, const ::pe::core::math::AARect& rect, const CameraComponent* cameraCmp) const;
+		void RenderWireframe(Scene* world, const ::pe::core::math::AARect& rect, const CameraComponent* cameraCmp) const;
+		void RenderNormals(Scene* world, const ::pe::core::math::AARect& rect, const CameraComponent* cameraCmp) const;
+		void RenderNormalsWireframe(Scene* world, const ::pe::core::math::AARect& rect, const CameraComponent* cameraCmp) const;
 	};
 }

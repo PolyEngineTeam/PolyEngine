@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <ECS/ComponentBase.hpp>
 #include <Configs/DebugConfig.hpp>
 
@@ -33,35 +33,35 @@ namespace Poly
 			DebugTexts2D.clear();
 		}
 
-		struct DebugLine final : public BaseObjectLiteralType<>
+		struct DebugLine final : public ::pe::core::BaseObjectLiteralType<>
 		{
-			DebugLine(const Vector3f& begin, const Vector3f& end) : Begin(begin), End(end) {}
-			Vector3f Begin;
-			Vector3f End;
+			DebugLine(const ::pe::core::math::Vector3f& begin, const ::pe::core::math::Vector3f& end) : Begin(begin), End(end) {}
+			::pe::core::math::Vector3f Begin;
+			::pe::core::math::Vector3f End;
 		};
 
-		struct DebugLineColor final : public BaseObjectLiteralType<>
+		struct DebugLineColor final : public ::pe::core::BaseObjectLiteralType<>
 		{
-			DebugLineColor(const Color& begin, const Color& end) : Begin(begin), End(end) {}
-			Color Begin;
-			Color End;
+			DebugLineColor(const ::pe::core::math::Color& begin, const ::pe::core::math::Color& end) : Begin(begin), End(end) {}
+			::pe::core::math::Color Begin;
+			::pe::core::math::Color End;
 		};
 
-		struct DebugText2D final : public BaseObjectLiteralType<>
+		struct DebugText2D final : public ::pe::core::BaseObjectLiteralType<>
 		{
-			DebugText2D(String text, const Vector2i& pos, size_t fontSize, Color fontColor) 
+			DebugText2D(::pe::core::storage::String text, const ::pe::core::math::Vector2i& pos, size_t fontSize, ::pe::core::math::Color fontColor) 
 				: Text(std::move(text)), Position(pos), FontSize(fontSize), FontColor(fontColor) {}
-			String Text;
-			Vector2i Position;
+			::pe::core::storage::String Text;
+			::pe::core::math::Vector2i Position;
 			size_t FontSize;
-			Color FontColor;
+			::pe::core::math::Color FontColor;
 		};
 
 		std::vector<DebugLine> DebugLines;
 		std::vector<DebugLineColor> DebugLinesColors;
 		std::vector<DebugText2D> DebugTexts2D;
 
-		std::vector<SafePtr<Entity>> Text2DEntityPool;
+		std::vector<::pe::core::memory::SafePtr<Entity>> Text2DEntityPool;
 	};
 
 	REGISTER_COMPONENT(ComponentsIDGroup, DebugDrawStateWorldComponent)

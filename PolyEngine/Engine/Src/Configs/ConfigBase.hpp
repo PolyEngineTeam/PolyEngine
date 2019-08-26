@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Defines.hpp>
-#include <RTTI/RTTI.hpp>
-#include <Collections/String.hpp>
+#include <pe/Defines.hpp>
+#include <pe/core/rtti/RTTI.hpp>
+#include <pe/core/storage/String.hpp>
 
 namespace Poly
 {
@@ -20,15 +20,15 @@ namespace Poly
 	{
 		RTTI_DECLARE_TYPE_DERIVED(ConfigBase, RTTIBase) { NO_RTTI_PROPERTY(); }
 	public:
-		ConfigBase(const String& displayName, eResourceSource location);
+		ConfigBase(const ::pe::core::storage::String& displayName, eResourceSource location);
 
 		void Save();
 		void Load();
 		
-		const String& GetFileName() const;
+		const ::pe::core::storage::String& GetFileName() const;
 	protected:
-		mutable String FileName;
-		String DisplayName;
+		mutable ::pe::core::storage::String FileName;
+		::pe::core::storage::String DisplayName;
 		eResourceSource Location;
 	};
 }

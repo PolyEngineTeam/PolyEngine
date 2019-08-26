@@ -1,11 +1,11 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <Common/GLUtils.hpp>
 
 namespace Poly
 {
-	struct DebugRenderingBuffers : public BaseObject<>
+	struct DebugRenderingBuffers : public ::pe::core::BaseObject<>
 	{
 		DebugRenderingBuffers();
 		~DebugRenderingBuffers();

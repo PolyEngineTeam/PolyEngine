@@ -119,7 +119,7 @@ void GLTextureDeviceProxy::InitTextureParams()
 		return;
 	}
 
-	// gConsole.LogInfo("GLTextureDeviceProxy::InitTextureParams usage: {}", (int)Usage);
+	// core::utils::gConsole.LogInfo("GLTextureDeviceProxy::InitTextureParams usage: {}", (int)Usage);
 
 	switch (Usage)
 	{

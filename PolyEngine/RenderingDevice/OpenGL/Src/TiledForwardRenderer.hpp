@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <IRendererInterface.hpp>
 #include <Proxy/GLShaderProgram.hpp>
 #include <Common/GLUtils.hpp>
@@ -9,7 +9,7 @@
 
 namespace Poly {
 
-	class RenderTargetPingPong : public BaseObject<>
+	class RenderTargetPingPong : public ::pe::core::BaseObject<>
 	{
 	public:
 		void Init(int width, int height);
@@ -23,7 +23,7 @@ namespace Poly {
 
 		void Flip()
 		{
-			// gConsole.LogInfo("RenderTargetPingPong::Flip Uses: {}, Write: {}, Read: {}",
+			// ::pe::core::utils::gConsole.LogInfo("RenderTargetPingPong::Flip Uses: {}, Write: {}, Read: {}",
 			//	Uses, (Uses % 2), (Uses + 1) % 2);
 
 			Uses++;
@@ -59,9 +59,9 @@ namespace Poly {
 		// structures defining the data of OpenGL buffers
 		struct Light
 		{
-			Vector Position;
-			Vector Color;
-			Vector RangeIntensity;
+			::pe::core::math::Vector Position;
+			::pe::core::math::Vector Color;
+			::pe::core::math::Vector RangeIntensity;
 		};
 
 		struct VisibleIndex
@@ -69,10 +69,10 @@ namespace Poly {
 			int Index;
 		};
 
-		Matrix PreviousFrameCameraTransform;
-		Matrix PreviousFrameCameraClipFromWorld;
+		::pe::core::math::Matrix PreviousFrameCameraTransform;
+		::pe::core::math::Matrix PreviousFrameCameraClipFromWorld;
 
-		AARect LastViewportRect;
+		::pe::core::math::AARect LastViewportRect;
 
 		const int MAX_NUM_LIGHTS = 1024;
 		const int MAX_LIGHT_COUNT_DIRECTIONAL = 8;

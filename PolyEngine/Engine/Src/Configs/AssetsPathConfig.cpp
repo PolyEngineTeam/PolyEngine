@@ -6,8 +6,8 @@ RTTI_DEFINE_TYPE(Poly::AssetsPathConfig)
 
 namespace Poly
 {
-	static const String DEFAULT_ENGINE_ASSETS_PATH = String("../Engine/Res/");
-	static const String DEFAULT_GAME_ASSETS_PATH = String("../Games/SGJGame/Res/");
+	static const core::storage::String DEFAULT_ENGINE_ASSETS_PATH = core::storage::String("../Engine/Res/");
+	static const core::storage::String DEFAULT_GAME_ASSETS_PATH = core::storage::String("../Games/SGJGame/Res/");
 
 	AssetsPathConfig gAssetsPathConfig;
 
@@ -18,7 +18,7 @@ namespace Poly
 		GameAssetsPath = DEFAULT_GAME_ASSETS_PATH;
 	}
 
-	const String& AssetsPathConfig::GetAssetsPath(eResourceSource source) const
+	const core::storage::String& AssetsPathConfig::GetAssetsPath(eResourceSource source) const
 	{
 		switch (source)
 		{
@@ -28,10 +28,10 @@ namespace Poly
 			return GameAssetsPath;
 		case eResourceSource::NONE:
 		case eResourceSource::USR_LOCAL: //TODO implement usr local directory
-			return String::EMPTY;
+			return core::storage::String::EMPTY;
 		default:
 			ASSERTE(false, "Invalid resource source!");
-			return String::EMPTY;
+			return core::storage::String::EMPTY;
 		}
 	}
 }

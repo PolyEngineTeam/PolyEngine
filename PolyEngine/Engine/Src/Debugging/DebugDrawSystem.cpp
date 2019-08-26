@@ -18,11 +18,11 @@ namespace Util
 {
 	/// <summary>Get vector with minimum/maximum/else (depends on comparison function) values
 	/// on each axis in given set of vectors.</summary>
-	Vector3f FindExtremum(const std::vector<Vector3f>& dynarray, std::function< bool(const float, const float) > comp)
+	core::math::Vector3f FindExtremum(const std::vector<::pe::core::math::Vector3f>& dynarray, std::function< bool(const float, const float) > comp)
 	{
 		ASSERTE(dynarray.size() > 0, "SubMesh vertex data is empty.");
 
-		Vector3f result = dynarray[0];
+		core::math::Vector3f result = dynarray[0];
 		for (auto const & vec : dynarray)
 		{
 			if (comp(vec.X, result.X))
@@ -38,13 +38,13 @@ namespace Util
 
 	/// <summary>Produces two orthonormal vectors from a single normal vector.</summary>
 	/// Building an Orthonormal Basis, Revisited; http://jcgt.org/published/0006/01/01/
-	void BranchlessONB(const Vector & n, Vector & b1, Vector & b2)
+	void BranchlessONB(const core::math::Vector & n, core::math::Vector & b1, core::math::Vector & b2)
 	{
 		float sign = std::copysignf(1.0f, n.Z);
 		const float a = -1.0f / (sign + n.Z);
 		const float b = n.X * n.Y * a;
-		b1 = Vector(1.0f + sign * n.X * n.X * a, sign * b, -sign * n.X);
-		b2 = Vector(b, sign + n.Y * n.Y * a, -n.Y);
+		b1 = core::math::Vector(1.0f + sign * n.X * n.X * a, sign * b, -sign * n.X);
+		b2 = core::math::Vector(b, sign + n.Y * n.Y * a, -n.Y);
 	}
 }
 
@@ -86,7 +86,7 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* scene)
 			if (!entToUse)
 			{
 				entToUse = DeferredTaskSystem::SpawnEntityImmediate(scene);
-				DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(scene, entToUse, Vector2i::ZERO, "Fonts/Raleway/Raleway-Regular.ttf", eResourceSource::ENGINE, 0);
+				DeferredTaskSystem::AddComponentImmediate<ScreenSpaceTextComponent>(scene, entToUse, core::math::Vector2i::ZERO, "Fonts/Raleway/Raleway-Regular.ttf", eResourceSource::ENGINE, 0);
 				debugDrawWorldCmp->Text2DEntityPool.push_back(entToUse);
 				++usedTextEntites;
 			}
@@ -108,8 +108,8 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* scene)
 				ScreenSpaceTextComponent* textCmp = ent->GetComponent<ScreenSpaceTextComponent>();
 				textCmp->SetText("");
 				textCmp->GetText().SetFontSize(0);
-				textCmp->GetText().SetFontColor(Color::WHITE);
-				textCmp->SetScreenPosition(Vector2i::ZERO);
+				textCmp->GetText().SetFontColor(::pe::core::math::Color::WHITE);
+				textCmp->SetScreenPosition(::pe::core::math::Vector2i::ZERO);
 			}
 			else
 			{
@@ -138,21 +138,21 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* scene)
 			if(!gDebugConfig.DebugDrawPresets.IsSet(ddrawCmp->entityPreset))
 				continue;
 
-			const Matrix& objTransform = transform.GetWorldFromModel();
+			const core::math::Matrix& objTransform = transform.GetWorldFromModel();
 
 			// spawn a box for every mesh, in correct size
 			for(const auto subMesh : meshCmp->GetMesh()->GetSubMeshes())
 			{
-				AABox box = subMesh->GetAABox();
-				Vector minVector = objTransform * box.GetMin();
-				Vector maxVector = objTransform * box.GetMax();
+				core::math::AABox box = subMesh->GetAABox();
+				core::math::Vector minVector = objTransform * box.GetMin();
+				core::math::Vector maxVector = objTransform * box.GetMax();
 
-				const auto boundingOffset = Vector(0.04f, 0.04f, 0.04f);
+				const auto boundingOffset = core::math::Vector(0.04f, 0.04f, 0.04f);
 				// move vector away a little bit from a mesh
 				minVector -= boundingOffset;
 				maxVector += boundingOffset;
 				
-				DrawBox(scene, minVector, maxVector, Color::GREEN);
+				DrawBox(scene, minVector, maxVector, core::math::Color::GREEN);
 			}
 		}
 
@@ -176,7 +176,7 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* scene)
 			if(velocity.LengthSquared() == 0.0f)
 				continue;
 
-			DrawArrow(scene, localTrans, velocity, Color::RED);
+			DrawArrow(scene, localTrans, velocity, core::math::Color::RED);
 		}
 
 
@@ -193,33 +193,33 @@ void DebugDrawSystem::DebugRenderingUpdatePhase(Scene* scene)
 				continue;
 
 			auto localTrans = transform.GetLocalTranslation();
-			//auto lightDirection = Vector(1.0f, 1.0f, 1.0f);
+			//auto lightDirection = core::math::Vector(1.0f, 1.0f, 1.0f);
 			auto directionRotation = transform.GetGlobalForward();
 			auto lightMagnitude = dirLightCmp->GetIntensity() * 2.0f;
 
-			DrawArrow(scene, localTrans, directionRotation*lightMagnitude, Color::WHITE);
+			DrawArrow(scene, localTrans, directionRotation*lightMagnitude, core::math::Color::WHITE);
 		}
 	}
 }
 
-void Poly::DebugDrawSystem::DrawLine(Scene* scene, const Vector& begin, const Vector& end, const Color& color)
+void Poly::DebugDrawSystem::DrawLine(Scene* scene, const core::math::Vector& begin, const core::math::Vector& end, const core::math::Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
 
-	Vector3f meshvecBegin(begin.X, begin.Y, begin.Z), meshvecEnd(end.X, end.Y, end.Z);
+	core::math::Vector3f meshvecBegin(begin.X, begin.Y, begin.Z), meshvecEnd(end.X, end.Y, end.Z);
 	auto debugLinesComponent = scene->GetWorldComponent<DebugDrawStateWorldComponent>();
 	debugLinesComponent->DebugLines.push_back(DebugDrawStateWorldComponent::DebugLine{ meshvecBegin, meshvecEnd });
 	debugLinesComponent->DebugLinesColors.push_back(DebugDrawStateWorldComponent::DebugLineColor{ color, color });
 }
 
-void Poly::DebugDrawSystem::DrawBox(Scene* scene, const Vector& mins, const Vector& maxs, const Color& color)
+void Poly::DebugDrawSystem::DrawBox(Scene* scene, const core::math::Vector& mins, const core::math::Vector& maxs, const core::math::Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
 
-	std::array<Vector, 8> points;
-	std::array<Vector, 2> minmaxVector = { {mins, maxs} };
+	std::array<::pe::core::math::Vector, 8> points;
+	std::array<::pe::core::math::Vector, 2> minmaxVector = { {mins, maxs} };
 
 	for (unsigned int i = 0; i < points.size(); ++i)
 	{
@@ -256,13 +256,13 @@ void Poly::DebugDrawSystem::DrawBox(Scene* scene, const Vector& mins, const Vect
 	DrawLine(scene, points[5], points[6], color);
 }
 
-void DebugDrawSystem::DrawBox(Scene* scene, const Vector& mins, const Vector& maxs, const Matrix& worldFromSpace, const Color& color)
+void DebugDrawSystem::DrawBox(Scene* scene, const core::math::Vector& mins, const core::math::Vector& maxs, const core::math::Matrix& worldFromSpace, const core::math::Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
 
-	std::array<Vector, 8> points;
-	std::array<Vector, 2> minmaxVector = { { mins, maxs } };
+	std::array<::pe::core::math::Vector, 8> points;
+	std::array<::pe::core::math::Vector, 2> minmaxVector = { { mins, maxs } };
 
 	for (unsigned int i = 0; i < points.size(); ++i)
 	{
@@ -299,36 +299,36 @@ void DebugDrawSystem::DrawBox(Scene* scene, const Vector& mins, const Vector& ma
 	DebugDrawSystem::DrawLine(scene, worldFromSpace * points[5], worldFromSpace * points[6], color);
 }
 
-void Poly::DebugDrawSystem::DrawBox(Scene* scene, const AABox & box, const Color & color)
+void Poly::DebugDrawSystem::DrawBox(Scene* scene, const core::math::AABox & box, const core::math::Color & color)
 {
 	DrawBox(scene, box.GetMin(), box.GetMax(), color);
 }
 
-void Poly::DebugDrawSystem::DrawFrustum(Scene* scene, const Frustum& frustum, const Matrix& viewFromWorld, const Color color)
+void Poly::DebugDrawSystem::DrawFrustum(Scene* scene, const core::math::Frustum& frustum, const core::math::Matrix& viewFromWorld, const core::math::Color color)
 {
-	Matrix clipFromView;
+	core::math::Matrix clipFromView;
 	clipFromView.SetPerspective(frustum.GetFov(), frustum.GetAspect(), frustum.GetZNear(), frustum.GetZFar());
-	Matrix clipFromWorld = clipFromView * viewFromWorld;
+	core::math::Matrix clipFromWorld = clipFromView * viewFromWorld;
 
 	// Transform frustum corners to DirLightSpace
-	std::vector<Vector> cornersInNDC{
-		Vector(-1.0f,  1.0f, -1.0f), // back  left	top
-		Vector( 1.0f,  1.0f, -1.0f), // back  right top
-		Vector(-1.0f, -1.0f, -1.0f), // back  left  bot
-		Vector( 1.0f, -1.0f, -1.0f), // back  right bot
-		Vector(-1.0f,  1.0f,  1.0f), // front left	top
-		Vector( 1.0f,  1.0f,  1.0f), // front right top
-		Vector(-1.0f, -1.0f,  1.0f), // front left  bot
-		Vector( 1.0f, -1.0f,  1.0f)  // front right bot
+	std::vector<::pe::core::math::Vector> cornersInNDC{
+		core::math::Vector(-1.0f,  1.0f, -1.0f), // back  left	top
+		core::math::Vector( 1.0f,  1.0f, -1.0f), // back  right top
+		core::math::Vector(-1.0f, -1.0f, -1.0f), // back  left  bot
+		core::math::Vector( 1.0f, -1.0f, -1.0f), // back  right bot
+		core::math::Vector(-1.0f,  1.0f,  1.0f), // front left	top
+		core::math::Vector( 1.0f,  1.0f,  1.0f), // front right top
+		core::math::Vector(-1.0f, -1.0f,  1.0f), // front left  bot
+		core::math::Vector( 1.0f, -1.0f,  1.0f)  // front right bot
 	};
 
 	// Transform frustum corners from NDC to World
 	// could be done in one iteration but we need to do perspective division by W
-	Matrix worldFromClip = clipFromWorld.GetInversed();
-	std::vector<Vector> cornersInWS;
-	for (Vector posInClip : cornersInNDC)
+	core::math::Matrix worldFromClip = clipFromWorld.GetInversed();
+	std::vector<::pe::core::math::Vector> cornersInWS;
+	for (::pe::core::math::Vector posInClip : cornersInNDC)
 	{
-		Vector posInWS = worldFromClip * posInClip;
+		core::math::Vector posInWS = worldFromClip * posInClip;
 		posInWS.X /= posInWS.W;
 		posInWS.Y /= posInWS.W;
 		posInWS.Z /= posInWS.W;
@@ -338,7 +338,7 @@ void Poly::DebugDrawSystem::DrawFrustum(Scene* scene, const Frustum& frustum, co
 	DrawFrustumPoints(scene, cornersInWS, color);
 }
 
-void Poly::DebugDrawSystem::DrawFrustumPoints(Scene* scene, const std::vector<Vector>& cornersInWorld, const Color color)
+void Poly::DebugDrawSystem::DrawFrustumPoints(Scene* scene, const std::vector<::pe::core::math::Vector>& cornersInWorld, const core::math::Color color)
 {
 	// Vertives should be in order:
 	// back  left  top
@@ -364,26 +364,26 @@ void Poly::DebugDrawSystem::DrawFrustumPoints(Scene* scene, const std::vector<Ve
 	}
 }
 
-void Poly::DebugDrawSystem::DrawCircle(Scene* scene, const Vector& position, float radius, Vector orientation, const Color& color)
+void Poly::DebugDrawSystem::DrawCircle(Scene* scene, const core::math::Vector& position, float radius, core::math::Vector orientation, const core::math::Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
 
-	const auto circleSegmentStep = Angle::FromDegrees(15.0f);
+	const auto circleSegmentStep = core::math::Angle::FromDegrees(15.0f);
 	orientation.Normalize();
 
-	Quaternion rotAroundCircle;
+	core::math::Quaternion rotAroundCircle;
 	rotAroundCircle.SetRotation(orientation, circleSegmentStep);
 
 	// get a vector perpendicular to orientation
-	Vector right, forward; // forward is unused
+	core::math::Vector right, forward; // forward is unused
 	Util::BranchlessONB(orientation, right, forward);
 
 	right *= radius;
 
 	for(float degrees = 0.0f; degrees < 360.0f; degrees += circleSegmentStep.AsDegrees())
 	{
-		Vector previousSegmentPoint = right;
+		core::math::Vector previousSegmentPoint = right;
 		right = rotAroundCircle*right;
 		DrawLine(scene, position + previousSegmentPoint, position + right, color);
 	}
@@ -391,17 +391,17 @@ void Poly::DebugDrawSystem::DrawCircle(Scene* scene, const Vector& position, flo
 	DrawArrow(scene, position, right, color);
 }
 
-void Poly::DebugDrawSystem::DrawSphere(Scene* scene, const Vector& position, float radius, const Color& color)
+void Poly::DebugDrawSystem::DrawSphere(Scene* scene, const core::math::Vector& position, float radius, const core::math::Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
 
-	DrawCircle(scene, position, radius, Vector(1.0f, 0.0f, 0.0f), color);
-	DrawCircle(scene, position, radius, Vector(0.0f, 1.0f, 0.0f), color);
-	DrawCircle(scene, position, radius, Vector(0.0f, 0.0f, 1.0f), color);
+	DrawCircle(scene, position, radius, core::math::Vector(1.0f, 0.0f, 0.0f), color);
+	DrawCircle(scene, position, radius, core::math::Vector(0.0f, 1.0f, 0.0f), color);
+	DrawCircle(scene, position, radius, core::math::Vector(0.0f, 0.0f, 1.0f), color);
 }
 
-void Poly::DebugDrawSystem::DrawArrow(Scene* scene, Vector position, Vector directionVector, const Color& color)
+void Poly::DebugDrawSystem::DrawArrow(Scene* scene, core::math::Vector position, core::math::Vector directionVector, const core::math::Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;
@@ -415,8 +415,8 @@ void Poly::DebugDrawSystem::DrawArrow(Scene* scene, Vector position, Vector dire
 	directionVector.Normalize();
 
 	// arrowhead
-	const auto rotationStep = Angle::FromDegrees(60.0f);
-	Quaternion rotAroundDirectionVector;
+	const auto rotationStep = core::math::Angle::FromDegrees(60.0f);
+	core::math::Quaternion rotAroundDirectionVector;
 	rotAroundDirectionVector.SetRotation(directionVector, rotationStep);
 
 	if(position.X == 0.0f && position.Y == 0.0f && position.Z == 0.0f) {
@@ -424,11 +424,11 @@ void Poly::DebugDrawSystem::DrawArrow(Scene* scene, Vector position, Vector dire
 	}
 
 	// calculate point which sets edge points around the arrowhead
-	Vector perp[2];
-	perp[0] = Vector(directionVector.Z, directionVector.Z, -directionVector.X - directionVector.Y);
-	perp[1] = Vector(-directionVector.Y - directionVector.Z, directionVector.X, directionVector.X);
+	core::math::Vector perp[2];
+	perp[0] = core::math::Vector(directionVector.Z, directionVector.Z, -directionVector.X - directionVector.Y);
+	perp[1] = core::math::Vector(-directionVector.Y - directionVector.Z, directionVector.X, directionVector.X);
 	int selectIndex = ((directionVector.Z != 0) && (-directionVector.X != directionVector.Y)); // this is not a branch
-	Vector perpendicularVector = perp[selectIndex];
+	core::math::Vector perpendicularVector = perp[selectIndex];
 
 	perpendicularVector.Normalize();
 	perpendicularVector *= arrowheadScale; // scale the arrowhead (cone base diameter)
@@ -441,7 +441,7 @@ void Poly::DebugDrawSystem::DrawArrow(Scene* scene, Vector position, Vector dire
 	}
 }
 
-void Poly::DebugDrawSystem::DrawText2D(Scene* scene, const Vector2i& screenPosition, String text, size_t fontSize, const Color& color)
+void Poly::DebugDrawSystem::DrawText2D(Scene* scene, const core::math::Vector2i& screenPosition, core::storage::String text, size_t fontSize, const core::math::Color& color)
 {
 	if (!gDebugConfig.DebugRender)
 		return;

@@ -1,21 +1,19 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
 
-#include <Collections/Queue.hpp>
-
-using namespace Poly;
+#include <pe/core/storage/Queue.hpp>
 
 TEST_CASE("Queue tests", "[Queue]")
 {
-	Queue<int> q;
-	Queue<int> r(q);
+	::pe::core::storage::Queue<int> q;
+	::pe::core::storage::Queue<int> r(q);
 
 	REQUIRE(q.IsEmpty() == true);
 	REQUIRE(r.IsEmpty() == true);
 
 	q.PushBack(5);
 	REQUIRE(q.IsEmpty() == false);
-	Queue<int> s(q);
+	::pe::core::storage::Queue<int> s(q);
 
 	REQUIRE(r.IsEmpty() == true);
 	REQUIRE(q.IsEmpty() == false);
@@ -26,7 +24,7 @@ TEST_CASE("Queue tests", "[Queue]")
 	REQUIRE(s.Front() == 5);
 
 	q.PushBack(8);
-	Queue<int> t(q);
+	::pe::core::storage::Queue<int> t(q);
 
 	REQUIRE(t.IsEmpty() == false);
 	REQUIRE(q.Back() == 8);
@@ -60,15 +58,15 @@ TEST_CASE("Queue tests", "[Queue]")
 TEST_CASE("Queue tests (with BaseObject)", "[Queue]")
 {
 
-	class Test : BaseObject<>
+	class Test : ::pe::core::BaseObject<>
 	{
 	public:
 		Test() {}
 		~Test() {}
 	};
 
-	Queue<Test> q;
-	Queue<Test> r(q);
+	::pe::core::storage::Queue<Test> q;
+	::pe::core::storage::Queue<Test> r(q);
 
 	REQUIRE(q.IsEmpty() == true);
 	REQUIRE(r.IsEmpty() == true);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <Common/GLUtils.hpp>
 
 namespace Poly
@@ -33,6 +33,6 @@ namespace Poly
 		void EnsureVBOCreated(eBufferType type);
 
 		GLuint VAO = 0;
-		EnumArray<GLuint, eBufferType> VBO;
+		::pe::core::utils::EnumArray<GLuint, eBufferType> VBO;
 	};
 }

@@ -31,14 +31,14 @@ void GizmoSystem::Update(Scene* scene)
 		// move
 		else if (inputCmp->IsPressed(eMouseButton::RIGHT))
 		{
-			Vector move;
+			core::math::Vector move;
 
 			if (inputCmp->IsPressed(eKey::KEY_1))
-				move += Vector::UNIT_X;
+				move += core::math::Vector::UNIT_X;
 			else if (inputCmp->IsPressed(eKey::KEY_2))
-				move -= Vector::UNIT_Y;
+				move -= core::math::Vector::UNIT_Y;
 			else if (inputCmp->IsPressed(eKey::KEY_3))
-				move += Vector::UNIT_Z;
+				move += core::math::Vector::UNIT_Z;
 
 			move *= delta * deltaTime;
 		

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <ECS/ComponentBase.hpp>
 #include <Rendering/RenderingSystem.hpp>
 #include <Resources/MeshResource.hpp>
@@ -29,12 +29,12 @@ namespace Poly {
 			: Emissive(0.0f, 0.0f, 0.0f), Albedo(1.0f, 1.0f, 1.0f), Roughness(1.0f), Metallic(1.0f), OpacityMaskThreshold(0.5f)
 		{}
 
-		Material(const Color& emissive, const Color& albedo, float roughness, float metallic, float opacityMaskThreshold)
+		Material(const ::pe::core::math::Color& emissive, const ::pe::core::math::Color& albedo, float roughness, float metallic, float opacityMaskThreshold)
 			: Emissive(emissive), Albedo(albedo), Roughness(roughness), Metallic(metallic), OpacityMaskThreshold(opacityMaskThreshold)
 		{}
 
-		Color Emissive;
-		Color Albedo;
+		::pe::core::math::Color Emissive;
+		::pe::core::math::Color Albedo;
 		float Roughness;
 		float Metallic;
 		float OpacityMaskThreshold;
@@ -45,7 +45,7 @@ namespace Poly {
 	public:
 		RTTI_DECLARE_COMPONENT(::Poly::MeshRenderingComponent) { NO_RTTI_PROPERTY(); }
 
-		MeshRenderingComponent(const String& meshPath, eResourceSource source);
+		MeshRenderingComponent(const ::pe::core::storage::String& meshPath, eResourceSource source);
 		virtual ~MeshRenderingComponent();
 
 		const MeshResource* GetMesh() const { return Mesh; }
@@ -59,7 +59,7 @@ namespace Poly {
 		void SetShadingModel(eShadingMode value) { ShadingMode = value; }
 		void SetBlendingMode(eBlendingMode value) { BlendingMode = value; }
 
-		std::optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) const override;
+		std::optional<::pe::core::math::AABox> GetBoundingBox(eEntityBoundingChannel channel) const override;
 
 	private:
 		MeshResource* Mesh = nullptr;

@@ -11,10 +11,10 @@ DebugNormalsRenderingPass::DebugNormalsRenderingPass(const GLRenderingDevice* rd
 {
 }
 
-void DebugNormalsRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
+void DebugNormalsRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const core::math::AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
 	GetProgram().BindProgram();
-	const Matrix& mvp = camera->GetClipFromWorld();
+	const core::math::Matrix& mvp = camera->GetClipFromWorld();
 	
 	// Render meshes
 	for (auto componentsTuple : world->IterateComponents<MeshRenderingComponent>())
@@ -28,8 +28,8 @@ void DebugNormalsRenderingPass::OnRun(Scene* world, const CameraComponent* camer
 		 	continue;
 		}
 
-		const Matrix& objTransform = trans.GetWorldFromModel();
-		Matrix screenTransform = mvp * objTransform;
+		const core::math::Matrix& objTransform = trans.GetWorldFromModel();
+		core::math::Matrix screenTransform = mvp * objTransform;
 		GetProgram().SetUniform("uTransform", objTransform);
 		GetProgram().SetUniform("uMVPTransform", screenTransform);
 		

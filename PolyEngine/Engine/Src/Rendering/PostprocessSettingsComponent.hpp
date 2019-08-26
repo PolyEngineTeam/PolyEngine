@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <ECS/ComponentBase.hpp>
 #include <Rendering/Camera/CameraSystem.hpp>
 
@@ -42,12 +42,12 @@ namespace Poly {
 		float BloomScale = 0.1f;
 		float BloomBlurScaleX = 1.0f;
 		float BloomBlurScaleY = 1.0f;
-		Color FogColor = Color::WHITE;
+		::pe::core::math::Color FogColor = ::pe::core::math::Color::WHITE;
 		float FogDensity = 0.66f;
 		float GrainScale = 0.01f;
 		float VignetteScale = 0.1f;
 		float AbberationScale = 0.1f;
-		Color Tint = Color::WHITE;
+		::pe::core::math::Color Tint = ::pe::core::math::Color::WHITE;
 		float Temperature = 6500.0f;
 		float Gamma = 2.2f;
 	};

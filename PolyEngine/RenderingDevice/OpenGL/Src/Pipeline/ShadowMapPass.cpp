@@ -5,23 +5,23 @@
 #include <IRendererInterface.hpp>
 
 using namespace Poly;
-using MeshQueue = PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
+using MeshQueue = core::storage::PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
 
-Matrix Poly::GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize)
+core::math::Matrix Poly::GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize)
 {
 	ASSERTE(sceneView.DirectionalLightList.size() > 0, "GetProjectionForShadowMap has no directional light in scene view");
 	const DirectionalLightComponent* dirLightCmp = sceneView.DirectionalLightList[0];
 
-	Vector lightForward = dirLightCmp->GetTransform().GetGlobalForward();
-	Vector lightUp = dirLightCmp->GetTransform().GetGlobalUp();
-	Matrix lightViewFromWorld = Matrix(Vector::ZERO, lightForward, lightUp);
+	core::math::Vector lightForward = dirLightCmp->GetTransform().GetGlobalForward();
+	core::math::Vector lightUp = dirLightCmp->GetTransform().GetGlobalUp();
+	core::math::Matrix lightViewFromWorld = core::math::Matrix(::pe::core::math::Vector::ZERO, lightForward, lightUp);
 	// @fixme: Transpose is needed to correctly multiply light rotation
 	// (created with look at) with rest of light projection matrices.
 	// Same rotation is created when inverted axes are passed to look at constructor
 	lightViewFromWorld.Transpose();
 
-	Vector shadowAABBExtentsInLS = sceneView.DirShadowAABBInLS.GetSize() * 0.5f;
-	Matrix clipFromLightView;
+	core::math::Vector shadowAABBExtentsInLS = sceneView.DirShadowAABBInLS.GetSize() * 0.5f;
+	core::math::Matrix clipFromLightView;
 	// n > f, because we are looking down the negative z - axis at this volume of space
 	clipFromLightView.SetOrthographicZO(
 		-shadowAABBExtentsInLS.Y,	// bottom
@@ -32,31 +32,31 @@ Matrix Poly::GetProjectionForShadowMap(const SceneView& sceneView, int shadowmap
 		-shadowAABBExtentsInLS.Z	// far
 	);
 
-	Matrix lightViewFromModel;
-	Vector shadowAABBCenterInLS = sceneView.DirShadowAABBInLS.GetCenter();
+	core::math::Matrix lightViewFromModel;
+	core::math::Vector shadowAABBCenterInLS = sceneView.DirShadowAABBInLS.GetCenter();
 	lightViewFromModel.SetTranslation(-shadowAABBCenterInLS);
 
-	Matrix clipFromWorld = clipFromLightView * lightViewFromModel * lightViewFromWorld;
+	core::math::Matrix clipFromWorld = clipFromLightView * lightViewFromModel * lightViewFromWorld;
 	StablizeShadowProjection(clipFromWorld, shadowmapSize);
 
 	return clipFromWorld;
 }
 
-void Poly::StablizeShadowProjection(Poly::Matrix& clipFromWorld, int shadowmapSize)
+void Poly::StablizeShadowProjection(::pe::core::math::Matrix& clipFromWorld, int shadowmapSize)
 {
 	// based on https://mynameismjp.wordpress.com/2013/09/10/shadow-maps/
 	// Stabilize shadow map: move in texel size increments
 	// round matrix translation to texel size increments
-	Vector shadowOrigin = clipFromWorld * Vector::ZERO;
+	core::math::Vector shadowOrigin = clipFromWorld * core::math::Vector::ZERO;
 	shadowOrigin *= 0.5f * shadowmapSize;
 
-	Vector roundedOrigin = Vector(
+	core::math::Vector roundedOrigin = core::math::Vector(
 		roundf(shadowOrigin.X),
 		roundf(shadowOrigin.Y),
 		0.0f
 	);
 
-	Vector roundOffset = roundedOrigin - shadowOrigin;
+	core::math::Vector roundOffset = roundedOrigin - shadowOrigin;
 	roundOffset *= 2.0f / shadowmapSize;
 	roundOffset.Z = 0.0f;
 	roundOffset.W = 0.0f;
@@ -93,7 +93,7 @@ ShadowMapPass::~ShadowMapPass()
 
 void ShadowMapPass::Init(const SceneView& sceneView)
 {
-	gConsole.LogInfo("ShadowMapPass::Init");
+	core::utils::gConsole.LogInfo("ShadowMapPass::Init");
 
 	if (sceneView.SettingsCmp == nullptr)
 	{
@@ -172,7 +172,7 @@ void ShadowMapPass::Init(const SceneView& sceneView)
 
 void ShadowMapPass::Deinit()
 {
-	gConsole.LogInfo("ShadowMapPass::Deinit");
+	core::utils::gConsole.LogInfo("ShadowMapPass::Deinit");
 
 	if (FBOShadowDepthMap > 0)
 		glDeleteFramebuffers(1, &FBOShadowDepthMap);
@@ -189,7 +189,7 @@ void ShadowMapPass::Deinit()
 
 void ShadowMapPass::Render(const SceneView& sceneView)
 {	
-	// gConsole.LogInfo("ShadowMapPass::Render");
+	// core::utils::gConsole.LogInfo("ShadowMapPass::Render");
 
 	if (sceneView.DirectionalLightList.size() < 1)
 		return;
@@ -223,7 +223,7 @@ void ShadowMapPass::RenderPCF(const SceneView& sceneView)
 	glCullFace(GL_FRONT);
 	glDepthMask(GL_TRUE);
 
-	Matrix orthoDirLightFromWorld = GetProjectionForShadowMap(sceneView, ShadowMapResolution);
+	core::math::Matrix orthoDirLightFromWorld = GetProjectionForShadowMap(sceneView, ShadowMapResolution);
 
 	ShadowMapShader.BindProgram();
 
@@ -231,7 +231,7 @@ void ShadowMapPass::RenderPCF(const SceneView& sceneView)
 	while (dirShadowCasterQueue.GetSize() > 0)
 	{
 		const MeshRenderingComponent* meshCmp = dirShadowCasterQueue.Pop();
-		const Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
+		const core::math::Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
 		ShadowMapShader.SetUniform("uClipFromModel", orthoDirLightFromWorld * worldFromModel);
 
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
@@ -259,7 +259,7 @@ void ShadowMapPass::RenderEVSM(const SceneView& sceneView)
 	glCullFace(GL_FRONT);
 	glDepthMask(GL_TRUE);
 
-	Matrix orthoDirLightFromWorld = GetProjectionForShadowMap(sceneView, ShadowMapResolution);
+	core::math::Matrix orthoDirLightFromWorld = GetProjectionForShadowMap(sceneView, ShadowMapResolution);
 
 	ShadowMapShader.BindProgram();
 
@@ -267,7 +267,7 @@ void ShadowMapPass::RenderEVSM(const SceneView& sceneView)
 	while (dirShadowCasterQueue.GetSize() > 0)
 	{
 		const MeshRenderingComponent* meshCmp = dirShadowCasterQueue.Pop();
-		const Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
+		const core::math::Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
 		ShadowMapShader.SetUniform("uClipFromModel", orthoDirLightFromWorld * worldFromModel);
 
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())

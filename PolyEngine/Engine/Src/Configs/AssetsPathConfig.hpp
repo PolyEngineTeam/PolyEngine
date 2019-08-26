@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <Configs/ConfigBase.hpp>
 
 namespace Poly
@@ -17,15 +17,15 @@ namespace Poly
 	public:
 		AssetsPathConfig();
 
-		const String& GetAssetsPath(eResourceSource Source) const;
+		const ::pe::core::storage::String& GetAssetsPath(eResourceSource Source) const;
 
-		const String& GetGameLibPath() const { return GameLibPath; }
-		const String& GetRenderingDeviceLibPath() const { return RenderingDeviceLibPath; }
+		const ::pe::core::storage::String& GetGameLibPath() const { return GameLibPath; }
+		const ::pe::core::storage::String& GetRenderingDeviceLibPath() const { return RenderingDeviceLibPath; }
 	private:
-		String EngineAssetsPath;
-		String GameAssetsPath;
-		String RenderingDeviceLibPath;
-		String GameLibPath;
+		::pe::core::storage::String EngineAssetsPath;
+		::pe::core::storage::String GameAssetsPath;
+		::pe::core::storage::String RenderingDeviceLibPath;
+		::pe::core::storage::String GameLibPath;
 	};
 
 	ENGINE_DLLEXPORT extern AssetsPathConfig gAssetsPathConfig;

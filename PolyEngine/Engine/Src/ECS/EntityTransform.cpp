@@ -4,6 +4,7 @@
 #include <ECS/Entity.hpp>
 
 using namespace Poly;
+using namespace ::pe::core::math;
 
 RTTI_DEFINE_TYPE(::Poly::EntityTransform);
 
@@ -21,7 +22,7 @@ void EntityTransform::UpdateParentTransform()
 		parentTransform.UpdateGlobalTransformationCache();
 		LocalTranslation = LocalTranslation - parentTransform.GlobalTranslation;
 		LocalRotation = LocalRotation * parentTransform.GlobalRotation.GetConjugated();
-		Vector parentGlobalScale = parentTransform.GlobalScale;
+		core::math::Vector parentGlobalScale = parentTransform.GlobalScale;
 		LocalScale.X = LocalScale.X / parentGlobalScale.X;
 		LocalScale.Y = LocalScale.Y / parentGlobalScale.Y;
 		LocalScale.Z = LocalScale.Z / parentGlobalScale.Z;
@@ -30,20 +31,20 @@ void EntityTransform::UpdateParentTransform()
 	else
 	{
 		// Reset parenting
-		Matrix globalTransform = GetWorldFromModel();
+		core::math::Matrix globalTransform = GetWorldFromModel();
 		SetParentFromModel(globalTransform);
 	}
 }
 
 //------------------------------------------------------------------------------
-const Vector& EntityTransform::GetGlobalTranslation() const
+const core::math::Vector& EntityTransform::GetGlobalTranslation() const
 {
 	UpdateGlobalTransformationCache();
 	return GlobalTranslation;
 }
 
 //------------------------------------------------------------------------------
-void EntityTransform::SetLocalTranslation(const Vector& position)
+void EntityTransform::SetLocalTranslation(const core::math::Vector& position)
 {
 	LocalTranslation = position;
 	LocalDirty = true;
@@ -51,42 +52,42 @@ void EntityTransform::SetLocalTranslation(const Vector& position)
 }
 
 //------------------------------------------------------------------------------
-void Poly::EntityTransform::SetGlobalTranslation(const Vector& position)
+void Poly::EntityTransform::SetGlobalTranslation(const core::math::Vector& position)
 {
-	Vector currentGlobal = GetGlobalTranslation();
+	core::math::Vector currentGlobal = GetGlobalTranslation();
 	SetLocalTranslation(GetLocalTranslation() + (position - currentGlobal));
 }
 
 //------------------------------------------------------------------------------
-const Quaternion& EntityTransform::GetGlobalRotation() const
+const core::math::Quaternion& EntityTransform::GetGlobalRotation() const
 {
 	UpdateGlobalTransformationCache();
 	return GlobalRotation;
 }
 
 //------------------------------------------------------------------------------
-void EntityTransform::SetLocalRotation(const Quaternion& quaternion)
+void EntityTransform::SetLocalRotation(const core::math::Quaternion& quaternion)
 {
 	LocalRotation = quaternion;
 	LocalDirty = true;
 	SetGlobalDirty();
 }
 
-void Poly::EntityTransform::SetGlobalRotation(const Quaternion& quaternion)
+void Poly::EntityTransform::SetGlobalRotation(const core::math::Quaternion& quaternion)
 {
-	Quaternion currentGlobal = GetGlobalRotation();
+	core::math::Quaternion currentGlobal = GetGlobalRotation();
 	SetLocalRotation(GetLocalRotation() * (currentGlobal.Conjugate() * quaternion));
 }
 
 //------------------------------------------------------------------------------
-const Vector& EntityTransform::GetGlobalScale() const
+const core::math::Vector& EntityTransform::GetGlobalScale() const
 {
 	UpdateGlobalTransformationCache();
 	return GlobalScale;
 }
 
 //------------------------------------------------------------------------------
-void EntityTransform::SetLocalScale(const Vector& scale)
+void EntityTransform::SetLocalScale(const core::math::Vector& scale)
 {
 	LocalScale = scale;
 	LocalDirty = true;
@@ -94,11 +95,11 @@ void EntityTransform::SetLocalScale(const Vector& scale)
 }
 
 //------------------------------------------------------------------------------
-void Poly::EntityTransform::SetGlobalScale(const Vector& scale)
+void Poly::EntityTransform::SetGlobalScale(const core::math::Vector& scale)
 {
-	Vector currentGlobal = GetGlobalScale();
-	Vector currLocal = GetLocalScale();
-	Vector mul;
+	core::math::Vector currentGlobal = GetGlobalScale();
+	core::math::Vector currLocal = GetLocalScale();
+	core::math::Vector mul;
 	mul.X = currLocal.X * (scale.X / currentGlobal.X);
 	mul.Y = currLocal.Y * (scale.Y / currentGlobal.Y);
 	mul.Z = currLocal.Z * (scale.Z / currentGlobal.Z);
@@ -106,21 +107,21 @@ void Poly::EntityTransform::SetGlobalScale(const Vector& scale)
 }
 
 //------------------------------------------------------------------------------
-const Matrix& EntityTransform::GetParentFromModel() const
+const core::math::Matrix& EntityTransform::GetParentFromModel() const
 {
 	UpdateLocalTransformationCache();
 	return ParentFromModel;
 }
 
 //------------------------------------------------------------------------------
-const Matrix& EntityTransform::GetWorldFromModel() const
+const core::math::Matrix& EntityTransform::GetWorldFromModel() const
 {
 	UpdateGlobalTransformationCache();
 	return WorldFromModel;
 }
 
 //------------------------------------------------------------------------------
-void EntityTransform::SetParentFromModel(const Matrix& parentFromModel)
+void EntityTransform::SetParentFromModel(const core::math::Matrix& parentFromModel)
 {
 	ParentFromModel = parentFromModel;
 	parentFromModel.Decompose(LocalTranslation, LocalRotation, LocalScale);
@@ -133,7 +134,7 @@ bool EntityTransform::UpdateLocalTransformationCache() const
 {
 	if (LocalDirty)
 	{
-		ParentFromModel = Matrix::Compose(LocalTranslation, LocalRotation, LocalScale);
+		ParentFromModel = core::math::Matrix::Compose(LocalTranslation, LocalRotation, LocalScale);
 		LocalDirty = false;
 		return true;
 	}
@@ -152,7 +153,7 @@ void EntityTransform::UpdateGlobalTransformationCache() const
 	}
 	else
 	{
-		Matrix WorldFromParent = parent->GetTransform().GetWorldFromModel();
+		core::math::Matrix WorldFromParent = parent->GetTransform().GetWorldFromModel();
 		WorldFromModel = WorldFromParent * GetParentFromModel();
 	}
 	WorldFromModel.Decompose(GlobalTranslation, GlobalRotation, GlobalScale);

@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <Time/TimeSystem.hpp>
 
 namespace Poly
 {
 
-	class ENGINE_DLLEXPORT Timer : public BaseObject<>
+	class ENGINE_DLLEXPORT Timer : public ::pe::core::BaseObject<>
 	{
 		friend void TimeSystem::TimeUpdatePhase(Scene * world);
 	public:

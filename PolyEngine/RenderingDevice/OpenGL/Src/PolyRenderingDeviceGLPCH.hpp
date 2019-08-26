@@ -1,48 +1,48 @@
 #pragma once
 
 // Core
-#include <Defines.hpp>
-#include <RTTI/RTTI.hpp>
+#include <pe/Defines.hpp>
+#include <pe/core/rtti/RTTI.hpp>
 
 // Math
-#include <Math/BasicMath.hpp>
-#include <Math/Angle.hpp>
-#include <Math/Vector.hpp>
-#include <Math/Vector2f.hpp>
-#include <Math/Vector2i.hpp>
-#include <Math/Vector3f.hpp>
-#include <Math/Matrix.hpp>
-#include <Math/Quaternion.hpp>
-#include <Math/Frustum.hpp>
-#include <Math/Random.hpp>
+#include <pe/core/math/BasicMath.hpp>
+#include <pe/core/math/Angle.hpp>
+#include <pe/core/math/Vector.hpp>
+#include <pe/core/math/Vector2f.hpp>
+#include <pe/core/math/Vector2i.hpp>
+#include <pe/core/math/Vector3f.hpp>
+#include <pe/core/math/Matrix.hpp>
+#include <pe/core/math/Quaternion.hpp>
+#include <pe/core/math/Frustum.hpp>
+#include <pe/core/math/Random.hpp>
 
 // Geometry
-#include <Math/AABox.hpp>
-#include <Math/AARect.hpp>
+#include <pe/core/math/AABox.hpp>
+#include <pe/core/math/AARect.hpp>
 
 // Memory
-#include <BaseObject.hpp>
-#include <Memory/Allocator.hpp>
-#include <Memory/PoolAllocator.hpp>
-#include <Memory/IterablePoolAllocator.hpp>
-#include <Memory/RefCountedBase.hpp>
-#include <Memory/SafePtr.hpp>
-#include <Memory/SafePtrRoot.hpp>
+#include <pe/core/BaseObject.hpp>
+#include <pe/core/memory/Allocator.hpp>
+#include <pe/core/memory/PoolAllocator.hpp>
+#include <pe/core/memory/IterablePoolAllocator.hpp>
+#include <pe/core/memory/RefCountedBase.hpp>
+#include <pe/core/memory/SafePtr.hpp>
+#include <pe/core/memory/SafePtrRoot.hpp>
 
 // Containers
-#include <Collections/String.hpp>
-#include <Collections/StringBuilder.hpp>
+#include <pe/core/storage/String.hpp>
+#include <pe/core/storage/StringBuilder.hpp>
 
-#include <Collections/Queue.hpp>
-#include <Collections/PriorityQueue.hpp>
+#include <pe/core/storage/Queue.hpp>
+#include <pe/core/storage/PriorityQueue.hpp>
 
 // Other
-#include <Math/Color.hpp>
-#include <Utils/FileIO.hpp>
-#include <Utils/Logger.hpp>
-#include <UniqueID.hpp>
-#include <Utils/EnumUtils.hpp>
-#include <Utils/OutputStream.hpp> 
+#include <pe/core/math/Color.hpp>
+#include <pe/core/utils/FileIO.hpp>
+#include <pe/core/utils/Logger.hpp>
+#include <pe/core/UniqueID.hpp>
+#include <pe/core/utils/EnumUtils.hpp>
+#include <pe/core/utils/OutputStream.hpp>
 
 // ECS
 #include <ECS/Scene.hpp>
@@ -87,3 +87,6 @@
 
 // Imgui
 #include <imgui.h>
+
+// Temporary namespace usings
+using namespace pe;

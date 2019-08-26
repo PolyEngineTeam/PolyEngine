@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <ECS/ComponentBase.hpp>
 #include <ECS/DeferredTaskBase.hpp>
 
@@ -26,7 +26,7 @@ namespace Poly
 			//gConsole.LogDebug("New task scheduled: {}", task->GetDescription());
 		}
 	private:
-		Queue<DeferredTaskBase*> TasksQueue;
+		::pe::core::storage::Queue<DeferredTaskBase*> TasksQueue;
 		std::vector<ComponentBase*> NewlyCreatedComponents;
 	};
 

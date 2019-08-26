@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 
 namespace Poly
 {
@@ -11,11 +11,11 @@ namespace EditorCameraMovementSystem
 {
 	void Update(Poly::Scene* scene);
 
-	Vector GetLocalForward(const Poly::EntityTransform& transform);
-	Vector GetLocalRight(const Poly::EntityTransform& transform);
-	Vector GetLocalUp(const Poly::EntityTransform& transform);
+	::pe::core::math::Vector GetLocalForward(const Poly::EntityTransform& transform);
+	::pe::core::math::Vector GetLocalRight(const Poly::EntityTransform& transform);
+	::pe::core::math::Vector GetLocalUp(const Poly::EntityTransform& transform);
 
-	Vector GetGlobalForward(const Poly::EntityTransform& transform);
-	Vector GetGlobalRight(const Poly::EntityTransform& transform);
-	Vector GetGlobalUp(const Poly::EntityTransform& transform);
+	::pe::core::math::Vector GetGlobalForward(const Poly::EntityTransform& transform);
+	::pe::core::math::Vector GetGlobalRight(const Poly::EntityTransform& transform);
+	::pe::core::math::Vector GetGlobalUp(const Poly::EntityTransform& transform);
 }

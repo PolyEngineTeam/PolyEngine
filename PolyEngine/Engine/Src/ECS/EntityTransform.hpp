@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Defines.hpp>
-#include <RTTI/RTTI.hpp>
-#include <Math/Vector.hpp>
-#include <Math/Quaternion.hpp>
+#include <pe/Defines.hpp>
+#include <pe/core/rtti/RTTI.hpp>
+#include <pe/core/math/Vector.hpp>
+#include <pe/core/math/Quaternion.hpp>
 
 namespace Poly 
 {
@@ -30,46 +30,46 @@ namespace Poly
 		EntityTransform(Entity* owner = nullptr) : Owner(owner) {};
 		~EntityTransform();
 
-		const Vector& GetGlobalTranslation() const;
-		const Vector& GetLocalTranslation() const { return LocalTranslation; };
-		void SetLocalTranslation(const Vector& position);
-		void SetGlobalTranslation(const Vector& position);
+		const ::pe::core::math::Vector& GetGlobalTranslation() const;
+		const ::pe::core::math::Vector& GetLocalTranslation() const { return LocalTranslation; };
+		void SetLocalTranslation(const ::pe::core::math::Vector& position);
+		void SetGlobalTranslation(const ::pe::core::math::Vector& position);
 
-		const Quaternion& GetGlobalRotation() const;
-		const Quaternion& GetLocalRotation() const { return LocalRotation; };
-		void SetLocalRotation(const Quaternion& quaternion);
-		void SetGlobalRotation(const Quaternion& quaternion);
+		const ::pe::core::math::Quaternion& GetGlobalRotation() const;
+		const ::pe::core::math::Quaternion& GetLocalRotation() const { return LocalRotation; };
+		void SetLocalRotation(const ::pe::core::math::Quaternion& quaternion);
+		void SetGlobalRotation(const ::pe::core::math::Quaternion& quaternion);
 
-		const Vector& GetGlobalScale() const;
-		const Vector& GetLocalScale() const { return LocalScale; };
-		void SetLocalScale(const Vector& scale);
-		void SetLocalScale(float scale) { SetLocalScale(Vector(scale, scale, scale)); };
-		void SetGlobalScale(const Vector& scale);
+		const ::pe::core::math::Vector& GetGlobalScale() const;
+		const ::pe::core::math::Vector& GetLocalScale() const { return LocalScale; };
+		void SetLocalScale(const ::pe::core::math::Vector& scale);
+		void SetLocalScale(float scale) { SetLocalScale(::pe::core::math::Vector(scale, scale, scale)); };
+		void SetGlobalScale(const ::pe::core::math::Vector& scale);
 
-		const Matrix& GetParentFromModel() const;
-		const Matrix& GetWorldFromModel() const;
-		void SetParentFromModel(const Matrix& parentFromModel);
+		const ::pe::core::math::Matrix& GetParentFromModel() const;
+		const ::pe::core::math::Matrix& GetWorldFromModel() const;
+		void SetParentFromModel(const ::pe::core::math::Matrix& parentFromModel);
 
-		Vector GetLocalForward() const { return GetLocalRotation() * -Vector::UNIT_Z; }
-		Vector GetLocalRight() const { return GetLocalRotation() * Vector::UNIT_X; }
-		Vector GetLocalUp() const { return GetLocalRotation() * Vector::UNIT_Y; }
-		Vector GetGlobalForward() const { return GetGlobalRotation() * -Vector::UNIT_Z; }
-		Vector GetGlobalRight() const { return GetGlobalRotation() * Vector::UNIT_X; }
-		Vector GetGlobalUp() const { return GetGlobalRotation() * Vector::UNIT_Y; }
+		::pe::core::math::Vector GetLocalForward() const { return GetLocalRotation() * -::pe::core::math::Vector::UNIT_Z; }
+		::pe::core::math::Vector GetLocalRight() const { return GetLocalRotation() * ::pe::core::math::Vector::UNIT_X; }
+		::pe::core::math::Vector GetLocalUp() const { return GetLocalRotation() * ::pe::core::math::Vector::UNIT_Y; }
+		::pe::core::math::Vector GetGlobalForward() const { return GetGlobalRotation() * -::pe::core::math::Vector::UNIT_Z; }
+		::pe::core::math::Vector GetGlobalRight() const { return GetGlobalRotation() * ::pe::core::math::Vector::UNIT_X; }
+		::pe::core::math::Vector GetGlobalUp() const { return GetGlobalRotation() * ::pe::core::math::Vector::UNIT_Y; }
 		
 	private:
 		void UpdateParentTransform();
 
 		Entity* Owner = nullptr;
-		Vector LocalTranslation;
-		mutable Vector GlobalTranslation;
-		Quaternion LocalRotation;
-		mutable Quaternion GlobalRotation;
-		Vector LocalScale = Vector(1.f, 1.f, 1.f);
-		mutable Vector GlobalScale = Vector(1.f, 1.f, 1.f);
+		::pe::core::math::Vector LocalTranslation;
+		mutable ::pe::core::math::Vector GlobalTranslation;
+		::pe::core::math::Quaternion LocalRotation;
+		mutable ::pe::core::math::Quaternion GlobalRotation;
+		::pe::core::math::Vector LocalScale = ::pe::core::math::Vector(1.f, 1.f, 1.f);
+		mutable ::pe::core::math::Vector GlobalScale = ::pe::core::math::Vector(1.f, 1.f, 1.f);
 
-		mutable Matrix ParentFromModel;
-		mutable Matrix WorldFromModel;
+		mutable ::pe::core::math::Matrix ParentFromModel;
+		mutable ::pe::core::math::Matrix WorldFromModel;
 		mutable bool LocalDirty = true;
 		mutable bool GlobalDirty = true;
 

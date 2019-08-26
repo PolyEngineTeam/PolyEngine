@@ -8,14 +8,14 @@ using namespace Poly;
 
 RTTI_DEFINE_COMPONENT(::Poly::SkyboxWorldComponent)
 
-SkyboxWorldComponent::SkyboxWorldComponent(const String& panoramaPath, const eResourceSource source)
-	: Tint(Color::WHITE)
+SkyboxWorldComponent::SkyboxWorldComponent(const core::storage::String& panoramaPath, const eResourceSource source)
+	: Tint(::pe::core::math::Color::WHITE)
 {
 	Init( {panoramaPath}, source);
 }
 
-SkyboxWorldComponent::SkyboxWorldComponent(const std::vector<String>& panoramaPaths, const eResourceSource source)
-	: Tint(Color::WHITE)
+SkyboxWorldComponent::SkyboxWorldComponent(const std::vector<::pe::core::storage::String>& panoramaPaths, const eResourceSource source)
+	: Tint(::pe::core::math::Color::WHITE)
 {
 	Init(panoramaPaths, source);
 }
@@ -26,12 +26,12 @@ SkyboxWorldComponent::~SkyboxWorldComponent()
 		ResourceManager<TextureResource>::Release(p);
 }
 
-void SkyboxWorldComponent::Init(const std::vector<String>& panoramaPaths, const eResourceSource source)
+void SkyboxWorldComponent::Init(const std::vector<::pe::core::storage::String>& panoramaPaths, const eResourceSource source)
 {
 	for (auto p : panoramaPaths)
 	{
 		TextureResource* texture = ResourceManager<TextureResource>::Load(p, source, eTextureUsageType::HDR);
 		EquirectPanoramas.push_back(texture);
-		gConsole.LogInfo("SkyboxWorldComponent::SkyboxWorldComponent panoramaPath: {}", p);
+		core::utils::gConsole.LogInfo("SkyboxWorldComponent::SkyboxWorldComponent panoramaPath: {}", p);
 	}
 }

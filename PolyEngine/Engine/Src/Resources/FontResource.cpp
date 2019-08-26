@@ -9,7 +9,7 @@ static FT_Library gFreeTypeLibrary = nullptr;
 
 static const size_t GLYPH_PADDING = 8;
 
-FontResource::FontResource(const String& path)
+FontResource::FontResource(const core::storage::String& path)
 {
 	if (!gFreeTypeLibrary)
 	{
@@ -18,7 +18,7 @@ FontResource::FontResource(const String& path)
 	}
 	FontPath = path;
 
-	gConsole.LogDebug("Font: {} loaded sucesfully!", path);
+	core::utils::gConsole.LogDebug("Font: {} loaded sucesfully!", path);
 }
 
 FontResource::~FontResource()
@@ -74,7 +74,7 @@ void Poly::FontResource::LoadFace(size_t height) const
 		FT_Error err = FT_Load_Char(face.FTFace, (FT_ULong)c, FT_LOAD_RENDER);
 		if (err != FT_Err_Ok)
 		{
-			gConsole.LogError("Glyph {} of size {} failed to load", (char)c, height);
+			core::utils::gConsole.LogError("Glyph {} of size {} failed to load", (char)c, height);
 			continue;
 		}
 
@@ -153,10 +153,10 @@ void Poly::FontResource::LoadFace(size_t height) const
 		yoffset = currTextureHeight;
 
 		FontFace::FontGlyph glyph;
-		glyph.TextureUV[0] = Vector((float)xoffset / (float)TEXTURE_WIDTH, (float)yoffset / (float)estimatedTextureHeight, 0);
-		glyph.TextureUV[1] = Vector((float)(xoffset + glyphSize.width) / (float)TEXTURE_WIDTH, (float)(yoffset + glyphSize.height) / (float)estimatedTextureHeight, 0);
-		glyph.Size = Vector((float)glyphSize.width, (float)glyphSize.height, 0.f);
-		glyph.Bearing = Vector((float)face.FTFace->glyph->bitmap_left, (float)face.FTFace->glyph->bitmap_top, 0.f);
+		glyph.TextureUV[0] = core::math::Vector((float)xoffset / (float)TEXTURE_WIDTH, (float)yoffset / (float)estimatedTextureHeight, 0);
+		glyph.TextureUV[1] = core::math::Vector((float)(xoffset + glyphSize.width) / (float)TEXTURE_WIDTH, (float)(yoffset + glyphSize.height) / (float)estimatedTextureHeight, 0);
+		glyph.Size = core::math::Vector((float)glyphSize.width, (float)glyphSize.height, 0.f);
+		glyph.Bearing = core::math::Vector((float)face.FTFace->glyph->bitmap_left, (float)face.FTFace->glyph->bitmap_top, 0.f);
 		glyph.Advance = (float)face.FTFace->glyph->advance.x / 64.0f;
 
 		if (face.FTFace->glyph->format != FT_GLYPH_FORMAT_BITMAP)
@@ -172,5 +172,5 @@ void Poly::FontResource::LoadFace(size_t height) const
 			face.TextureProxy->SetSubContent(glyphSize.width, glyphSize.height, xoffset, yoffset, face.FTFace->glyph->bitmap.buffer);
 	}
 
-	gConsole.LogDebug("Face of size {} for font {} loaded sucessfully! Texture size: {} x {}", height, FontPath, TEXTURE_WIDTH, estimatedTextureHeight);
+	core::utils::gConsole.LogDebug("Face of size {} for font {} loaded sucessfully! Texture size: {} x {}", height, FontPath, TEXTURE_WIDTH, estimatedTextureHeight);
 }

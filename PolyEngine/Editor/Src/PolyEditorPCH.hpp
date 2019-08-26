@@ -1,4 +1,4 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 
 // Qt includes
 SILENCE_MSVC_WARNING(4244, "")
@@ -76,9 +76,12 @@ UNSILENCE_MSVC_WARNING()
 #include "Systems/Camera/EditorCameraMovementSystem.hpp"
 #include "Systems/Camera/EditorCameraMovementComponent.hpp"
 
-// engine
-#include <Engine.hpp>
-
 // controllers
 #include <Controllers/IEngineController.hpp>
 #include <Controllers/Impl/EngineController.hpp>
+
+// engine
+#include <Engine.hpp>
+
+// Temporary namespace usings
+using namespace pe;

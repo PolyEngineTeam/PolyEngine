@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <Configs/ConfigBase.hpp>
 
 namespace Poly
@@ -31,7 +31,7 @@ namespace Poly
 		}
 
 		// Debug rendering
-		EnumFlags<eDebugDrawPreset> DebugDrawPresets;
+		::pe::core::utils::EnumFlags<eDebugDrawPreset> DebugDrawPresets;
 		bool DebugRender = true;
 		// Rendering
 		bool DisplayFPS = true;

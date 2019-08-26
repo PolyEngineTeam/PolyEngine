@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <ECS/ComponentBase.hpp>
 #include <Rendering/RenderingSystem.hpp>
 #include <Rendering/Particles/ParticleEmitter.hpp>

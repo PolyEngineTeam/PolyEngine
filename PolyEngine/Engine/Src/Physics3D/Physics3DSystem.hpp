@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <ECS/Scene.hpp>
 
 namespace Poly
@@ -31,7 +31,7 @@ namespace Poly
 		{
 			Entity* FirstEntity;
 			Entity* SecondEntity;
-			Vector Normal;
+			::pe::core::math::Vector Normal;
 		};
 
 		std::vector<ContactPair> ContactPairs;
@@ -43,9 +43,9 @@ namespace Poly
 	{
 		struct Contact
 		{
-			UniqueID HitEntityID;
-			Vector WorldHitNormal;
-			Vector WorldHitPoint;
+			::pe::core::UniqueID HitEntityID;
+			::pe::core::math::Vector WorldHitNormal;
+			::pe::core::math::Vector WorldHitPoint;
 			float HitFraction;
 		};
 
@@ -59,8 +59,8 @@ namespace Poly
 		struct RaycastHit
 		{
 			Entity* HitEntity;
-			Vector WorldHitNormal;
-			Vector WorldHitPoint;
+			::pe::core::math::Vector WorldHitNormal;
+			::pe::core::math::Vector WorldHitPoint;
 			float HitFraction;
 		};
 
@@ -87,7 +87,7 @@ namespace Poly
 		/// @param mass - mass of object with given shape
 		/// @return three dimensional vector containing intertia for given shape with mass
 		/// @see Rigidbody3DComponentTemplate
-		Vector ENGINE_DLLEXPORT CalculateInertia(const Physics3DShape* shape, float mass);
+		::pe::core::math::Vector ENGINE_DLLEXPORT CalculateInertia(const Physics3DShape* shape, float mass);
 
 
 		// collision groups administration
@@ -98,14 +98,14 @@ namespace Poly
 		/// @param group - new collision group
 		/// @see Trigger3DComponent::GetCollisionGroup
 		/// @see Trigger3DComponent::SetCollisionMask
-		void ENGINE_DLLEXPORT SetCollisionGroup(Scene* world, Entity* entity, EnumFlags<eCollisionGroup> group);
+		void ENGINE_DLLEXPORT SetCollisionGroup(Scene* world, Entity* entity, ::pe::core::utils::EnumFlags<eCollisionGroup> group);
 
 		/// Use to change collider collision mask.
 		/// Collision mask determines whith which collision groups this collider will collide.
 		/// @param mask - new collision mask
 		/// @see Trigger3DComponent::GetCollisionMask
 		/// @see Trigger3DComponent::SetCollisionGroup
-		void ENGINE_DLLEXPORT SetCollisionMask(Scene* world, Entity* entity, EnumFlags<eCollisionGroup> mask);
+		void ENGINE_DLLEXPORT SetCollisionMask(Scene* world, Entity* entity, ::pe::core::utils::EnumFlags<eCollisionGroup> mask);
 
 
 		// deferred administration
@@ -153,7 +153,7 @@ namespace Poly
 		/// @param to - cast destination
 		/// @return result - instance of @see[RaycastResult]
 		/// @see ClosestHitRaycast
-		ENGINE_DLLEXPORT RaycastResult AllHitsRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
+		ENGINE_DLLEXPORT RaycastResult AllHitsRaycast(Scene* world, const ::pe::core::math::Vector& from, const ::pe::core::math::Vector& to, ::pe::core::utils::EnumFlags<eCollisionGroup> collisionGroup, ::pe::core::utils::EnumFlags<eCollisionGroup> collidesWith);
 
 		/// This function returns only first hit encountered within one raycast.
 		/// Only entities with @see[Trigger3DComponent] or @see[Rigidbody3DComponent] will be considered.
@@ -162,6 +162,6 @@ namespace Poly
 		/// @param to - cast destination
 		/// @return result - instance of @see[RaycastResult]
 		/// @see AllHitsRaycast
-		ENGINE_DLLEXPORT RaycastResult ClosestHitRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
+		ENGINE_DLLEXPORT RaycastResult ClosestHitRaycast(Scene* world, const ::pe::core::math::Vector& from, const ::pe::core::math::Vector& to, ::pe::core::utils::EnumFlags<eCollisionGroup> collisionGroup, ::pe::core::utils::EnumFlags<eCollisionGroup> collidesWith);
 	}
 } // namespace poly

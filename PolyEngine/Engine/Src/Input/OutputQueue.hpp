@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Defines.hpp>
-#include <Math/Vector2i.hpp>
-#include <Collections/Queue.hpp>
+#include <pe/Defines.hpp>
+#include <pe/core/math/Vector2i.hpp>
+#include <pe/core/storage/Queue.hpp>
 
 namespace Poly
 {
@@ -28,17 +28,17 @@ namespace Poly
 		_COUNT
 	};
 
-	struct OutputEvent : public BaseObject<>
+	struct OutputEvent : public ::pe::core::BaseObject<>
 	{
 		OutputEvent() = default;
 		OutputEvent(eOutputEventType type) : Type(type) {}
-		OutputEvent(eOutputEventType type, const Vector2i& pos) : Type(type), Pos(pos) {}
+		OutputEvent(eOutputEventType type, const ::pe::core::math::Vector2i& pos) : Type(type), Pos(pos) {}
 		OutputEvent(eOutputEventType type, eMouseCursorType cursorType) : Type(type), CursorType(cursorType) {}
 
 		eOutputEventType Type = eOutputEventType::_COUNT;
-		Vector2i Pos;
+		::pe::core::math::Vector2i Pos;
 		eMouseCursorType CursorType = eMouseCursorType::_COUNT;
     };
 
-	using OutputQueue = Queue<OutputEvent>;
+	using OutputQueue = ::pe::core::storage::Queue<OutputEvent>;
 }

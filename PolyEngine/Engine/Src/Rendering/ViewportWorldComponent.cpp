@@ -8,10 +8,10 @@ RTTI_DEFINE_COMPONENT(::Poly::ViewportWorldComponent)
 
 ViewportWorldComponent::ViewportWorldComponent()
 {
-	AddViewport(AARect(Vector2f(0, 0), Vector2f(1, 1)));
+	AddViewport(::pe::core::math::AARect(::pe::core::math::Vector2f(0, 0), core::math::Vector2f(1, 1)));
 }
 
-ViewportID ViewportWorldComponent::AddViewport(const AARect& rect)
+ViewportID ViewportWorldComponent::AddViewport(const core::math::AARect& rect)
 {
 	ViewportID id = IDCounter++;
 	Viewport view(rect);
@@ -27,7 +27,7 @@ void ViewportWorldComponent::RemoveViewport(ViewportID id)
 	Viewports.erase(it);
 }
 
-void ViewportWorldComponent::ResizeViewport(ViewportID id, const AARect& rect)
+void ViewportWorldComponent::ResizeViewport(ViewportID id, const core::math::AARect& rect)
 {
 	auto it = Viewports.find(id);
 	ASSERTE(it != Viewports.end(), "Viewport doesn't exist.");

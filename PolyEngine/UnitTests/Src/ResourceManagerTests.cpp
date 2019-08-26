@@ -1,4 +1,4 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
 
 #define _WINDLL
@@ -10,7 +10,7 @@ using namespace Poly;
 class DummyResource : public Poly::ResourceBase
 {
 public:
-	DummyResource(const String& /*path*/) {}
+	DummyResource(const ::pe::core::storage::String& /*path*/) {}
 };
 
 namespace Poly {

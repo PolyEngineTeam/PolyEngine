@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 
 namespace Poly
 {
@@ -11,12 +11,12 @@ namespace Poly
 	{
 		void MovementUpdatePhase(Scene* world);
 
-		Vector ENGINE_DLLEXPORT GetLocalForward(const EntityTransform& transform);
-		Vector ENGINE_DLLEXPORT GetLocalRight(const EntityTransform& transform);
-		Vector ENGINE_DLLEXPORT GetLocalUp(const EntityTransform& transform);
+		::pe::core::math::Vector ENGINE_DLLEXPORT GetLocalForward(const EntityTransform& transform);
+		::pe::core::math::Vector ENGINE_DLLEXPORT GetLocalRight(const EntityTransform& transform);
+		::pe::core::math::Vector ENGINE_DLLEXPORT GetLocalUp(const EntityTransform& transform);
 
-		Vector ENGINE_DLLEXPORT GetGlobalForward(const EntityTransform& transform);
-		Vector ENGINE_DLLEXPORT GetGlobalRight(const EntityTransform& transform);
-		Vector ENGINE_DLLEXPORT GetGlobalUp(const EntityTransform& transform);
+		::pe::core::math::Vector ENGINE_DLLEXPORT GetGlobalForward(const EntityTransform& transform);
+		::pe::core::math::Vector ENGINE_DLLEXPORT GetGlobalRight(const EntityTransform& transform);
+		::pe::core::math::Vector ENGINE_DLLEXPORT GetGlobalUp(const EntityTransform& transform);
 	}
 }

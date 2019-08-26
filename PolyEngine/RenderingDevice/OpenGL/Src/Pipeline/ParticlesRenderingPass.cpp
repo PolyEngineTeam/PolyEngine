@@ -18,11 +18,11 @@ ParticlesRenderingPass::ParticlesRenderingPass(const GLRenderingDevice* rdi)
 	GetProgram().RegisterUniform("vec4", "uColor");
 }
 
-void ParticlesRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
+void ParticlesRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const core::math::AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
 	float Time = (float)TimeSystem::GetTimerElapsedTime(world, eEngineTimer::GAMEPLAY);
-	const Matrix& ViewFromWorld = camera->GetViewFromWorld();
-	const Matrix& ScreenFromView = camera->GetClipFromView();
+	const core::math::Matrix& ViewFromWorld = camera->GetViewFromWorld();
+	const core::math::Matrix& ScreenFromView = camera->GetClipFromView();
 
 	glDisable(GL_CULL_FACE);
 
@@ -34,9 +34,9 @@ void ParticlesRenderingPass::OnRun(Scene* world, const CameraComponent* camera, 
 	{
 		const ParticleComponent* particleCmp = std::get<ParticleComponent*>(componentsTuple);
 		const EntityTransform& transform = particleCmp->GetTransform();
-		const Matrix& WorldFromModel = particleCmp->GetEmitter()->GetSettings().SimulationSpace == ParticleEmitter::eSimulationSpace::LOCAL_SPACE
+		const core::math::Matrix& WorldFromModel = particleCmp->GetEmitter()->GetSettings().SimulationSpace == ParticleEmitter::eSimulationSpace::LOCAL_SPACE
 			? transform.GetWorldFromModel()
-			: Matrix();
+			: core::math::Matrix();
 		
 		GetProgram().SetUniform("uViewFromWorld", ViewFromWorld);
 		GetProgram().SetUniform("uWorldFromModel", WorldFromModel);
@@ -46,7 +46,7 @@ void ParticlesRenderingPass::OnRun(Scene* world, const CameraComponent* camera, 
 		
 		SpritesheetSettings spriteSettings = emitterSettings.Spritesheet;
 		GetProgram().SetUniform("uSpriteColor", spriteSettings.SpriteColor);
-		float startFrame = spriteSettings.IsRandomStartFrame ? RandomRange(0.0f, spriteSettings.SubImages.X * spriteSettings.SubImages.Y) : spriteSettings.StartFrame;
+		float startFrame = spriteSettings.IsRandomStartFrame ? core::math::RandomRange(0.0f, spriteSettings.SubImages.X * spriteSettings.SubImages.Y) : spriteSettings.StartFrame;
 		GetProgram().SetUniform("uSpriteStartFrame", startFrame);
 		GetProgram().SetUniform("uSpriteSpeed", spriteSettings.Speed);
 		GetProgram().SetUniform("uSpriteSubImages", spriteSettings.SubImages.X, spriteSettings.SubImages.Y);

@@ -21,6 +21,6 @@ RUN apt-get install -y \
     libgl1-mesa-dev \
     qt5-default
 
-RUN pip3 install gitpython
+RUN pip3 install gitpython appdirs
 
 RUN mkdir -p /root/workspace

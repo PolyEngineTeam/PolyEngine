@@ -1,0 +1,41 @@
+#pragma once
+
+#include <pe/Defines.hpp>
+#include <pe/core/rtti/RTTI.hpp>
+#include <pe/core/rtti/RTTIProperty.hpp>
+
+
+namespace Poly
+{
+	namespace RTTI
+	{
+		struct CORE_DLLEXPORT UninitializedPointerEntry : public ::pe::core::BaseObjectLiteralType<>
+		{
+			::pe::core::UniqueID UUID;
+			RTTIBase** Ptr = nullptr;
+			RTTI::Property Property;
+		};
+
+
+		CORE_DLLEXPORT void SerializeObject(RTTIBase* obj, 
+			rapidjson::Document& doc);
+		CORE_DLLEXPORT void SerializeObject(const RTTIBase* obj, 
+			rapidjson::GenericObject<false, rapidjson::Value> currentValue, 
+			rapidjson::Document::AllocatorType& alloc);
+		CORE_DLLEXPORT rapidjson::Value GetCorePropertyValue(const void* value, 
+			const RTTI::Property& prop, 
+			rapidjson::Document::AllocatorType& alloc);
+
+		CORE_DLLEXPORT void DeserializeObject(RTTIBase* obj,  
+			const rapidjson::Document& doc);
+		CORE_DLLEXPORT void DeserializeObject(RTTIBase* obj, 
+			const rapidjson::GenericObject<true, rapidjson::Value> currentValue,
+			std::vector<UninitializedPointerEntry>& uninitializedPointers);
+		CORE_DLLEXPORT void SetCorePropertyValue(void* obj, 
+			const RTTI::Property& prop, 
+			const rapidjson::Value& value,
+			std::vector<UninitializedPointerEntry>& uninitializedPointers);
+
+		CORE_DLLEXPORT void TraverseAndCall(RTTIBase* obj, const std::function<void(RTTIBase*)>& func);
+	}
+}

@@ -1,13 +1,17 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <Pipeline/RenderingPassBase.hpp>
 #include <Proxy/GLShaderProgram.hpp>
+
+namespace pe::core::math
+{
+	class AARect;
+}
 
 namespace Poly
 {
 	class Scene;
-	class AARect;
 
 	//------------------------------------------------------------------------------
 	class DebugRenderingPass : public RenderingPassBase
@@ -16,6 +20,6 @@ namespace Poly
 		DebugRenderingPass(const GLRenderingDevice* rdi);
 
 	protected:
-		void OnRun(Scene* world, const CameraComponent* camera, const AARect& rect, ePassType passType) override final;
+		void OnRun(Scene* world, const CameraComponent* camera, const ::pe::core::math::AARect& rect, ePassType passType) override final;
 	};
 }

@@ -27,7 +27,7 @@ BlinnPhongRenderingPass::BlinnPhongRenderingPass(const GLRenderingDevice* rdi)
 
 	for (size_t i = 0; i < MAX_LIGHT_COUNT_DIRECTIONAL; ++i)
 	{
-		String baseName = String("uDirectionalLight[") + String::From(static_cast<int>(i)) + String("].");
+		core::storage::String baseName = core::storage::String("uDirectionalLight[") + core::storage::String::From(static_cast<int>(i)) + core::storage::String("].");
 		GetProgram().RegisterUniform("vec4", baseName + "Base.Color");
 		GetProgram().RegisterUniform("float", baseName + "Base.Intensity");
 		GetProgram().RegisterUniform("vec4", baseName + "Direction");
@@ -37,7 +37,7 @@ BlinnPhongRenderingPass::BlinnPhongRenderingPass(const GLRenderingDevice* rdi)
 
 	for (size_t i = 0; i < MAX_LIGHT_COUNT_POINT; ++i)
 	{
-		String baseName = String("uPointLight[") + String::From(static_cast<int>(i)) + String("].");
+		core::storage::String baseName = core::storage::String("uPointLight[") + core::storage::String::From(static_cast<int>(i)) + core::storage::String("].");
 		GetProgram().RegisterUniform("vec4", baseName + "Base.Color");
 		GetProgram().RegisterUniform("float", baseName + "Base.Intensity");
 		GetProgram().RegisterUniform("vec4", baseName + "Position");
@@ -47,7 +47,7 @@ BlinnPhongRenderingPass::BlinnPhongRenderingPass(const GLRenderingDevice* rdi)
 
 	for (size_t i = 0; i < MAX_LIGHT_COUNT_SPOT; ++i)
 	{
-		String baseName = String("uSpotLight[") + String::From(static_cast<int>(i)) + String("].");
+		core::storage::String baseName = core::storage::String("uSpotLight[") + core::storage::String::From(static_cast<int>(i)) + core::storage::String("].");
 		GetProgram().RegisterUniform("vec4", baseName + "Base.Color");
 		GetProgram().RegisterUniform("float", baseName + "Base.Intensity");
 		GetProgram().RegisterUniform("vec4", baseName + "Position");
@@ -60,15 +60,15 @@ BlinnPhongRenderingPass::BlinnPhongRenderingPass(const GLRenderingDevice* rdi)
 	GetProgram().RegisterUniform("int", "uSpotLightCount");
 }
 
-void BlinnPhongRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
+void BlinnPhongRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const core::math::AARect& /*rect*/, ePassType passType = ePassType::GLOBAL)
 {
 
 	GetProgram().BindProgram();
-	const Matrix& mvp = camera->GetClipFromWorld();
+	const core::math::Matrix& mvp = camera->GetClipFromWorld();
 	
 	const EntityTransform& cameraTrans = camera->GetTransform();
-	Vector CameraPos = cameraTrans.GetGlobalTranslation();
-	Vector CameraDir = cameraTrans.GetGlobalForward();
+	core::math::Vector CameraPos = cameraTrans.GetGlobalTranslation();
+	core::math::Vector CameraDir = cameraTrans.GetGlobalForward();
 	GetProgram().SetUniform("uCameraPosition", CameraPos);
 	GetProgram().SetUniform("uCameraForward", CameraDir);
 
@@ -81,7 +81,7 @@ void BlinnPhongRenderingPass::OnRun(Scene* world, const CameraComponent* camera,
 	{
 		DirectionalLightComponent* dirLightCmp = std::get<DirectionalLightComponent*>(componentsTuple);
 		const EntityTransform& transform = dirLightCmp->GetTransform();
-		String baseName = String("uDirectionalLight[") + String::From(dirLightsCount) + String("].");
+		core::storage::String baseName = core::storage::String("uDirectionalLight[") + core::storage::String::From(dirLightsCount) + core::storage::String("].");
 		GetProgram().SetUniform(baseName + "Direction", transform.GetGlobalForward());
 		GetProgram().SetUniform(baseName + "Base.Color", dirLightCmp->GetColor());
 		GetProgram().SetUniform(baseName + "Base.Intensity", dirLightCmp->GetIntensity());
@@ -98,7 +98,7 @@ void BlinnPhongRenderingPass::OnRun(Scene* world, const CameraComponent* camera,
 		PointLightComponent* pointLightCmp = std::get<PointLightComponent*>(componentsTuple);
 		const EntityTransform& transform = pointLightCmp->GetTransform();
 	
-		String baseName = String("uPointLight[") + String::From(pointLightsCount) + String("].");
+		core::storage::String baseName = core::storage::String("uPointLight[") + core::storage::String::From(pointLightsCount) + core::storage::String("].");
 		GetProgram().SetUniform(baseName + "Range", pointLightCmp->GetRange());
 		GetProgram().SetUniform(baseName + "Position", transform.GetGlobalTranslation());
 		GetProgram().SetUniform(baseName + "Base.Color", pointLightCmp->GetColor());
@@ -116,7 +116,7 @@ void BlinnPhongRenderingPass::OnRun(Scene* world, const CameraComponent* camera,
 		SpotLightComponent* spotLightCmp = std::get<SpotLightComponent*>(componentsTuple);
 		const EntityTransform& transform = spotLightCmp->GetTransform();
 
-		String baseName = String("uSpotLight[") + String::From(spotLightsCount) + String("].");
+		core::storage::String baseName = core::storage::String("uSpotLight[") + core::storage::String::From(spotLightsCount) + core::storage::String("].");
 		GetProgram().SetUniform(baseName + "Range", spotLightCmp->GetRange());
 		GetProgram().SetUniform(baseName + "CutOff", Cos(1.0_deg * spotLightCmp->GetCutOff()));
 		GetProgram().SetUniform(baseName + "OuterCutOff", Cos(1.0_deg * spotLightCmp->GetOuterCutOff()));
@@ -143,9 +143,9 @@ void BlinnPhongRenderingPass::OnRun(Scene* world, const CameraComponent* camera,
 			continue;
 		}
 
-		const Matrix& objTransform = transform.GetWorldFromModel();
-		const Matrix& localTransform = transform.GetParentFromModel();
-		Matrix screenTransform = mvp * objTransform;
+		const core::math::Matrix& objTransform = transform.GetWorldFromModel();
+		const core::math::Matrix& localTransform = transform.GetParentFromModel();
+		core::math::Matrix screenTransform = mvp * objTransform;
 		GetProgram().SetUniform("uTransform", objTransform);
 		GetProgram().SetUniform("uLocalTransform", localTransform);
 		GetProgram().SetUniform("uMVPTransform", screenTransform);
@@ -156,7 +156,7 @@ void BlinnPhongRenderingPass::OnRun(Scene* world, const CameraComponent* camera,
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())
 		{
 			Material material = meshCmp->GetMaterial(i);
-			GetProgram().SetUniform("uMaterial.Ambient", Color::BLACK);
+			GetProgram().SetUniform("uMaterial.Ambient", core::math::Color::BLACK);
 			GetProgram().SetUniform("uMaterial.Diffuse", material.Albedo);
 			GetProgram().SetUniform("uMaterial.Specular", material.Albedo);
 			GetProgram().SetUniform("uMaterial.Shininess", 16.0f);

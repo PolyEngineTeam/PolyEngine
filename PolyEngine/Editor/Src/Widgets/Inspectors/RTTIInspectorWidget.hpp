@@ -1,6 +1,6 @@
 #pragma once
 
-#include <RTTI/RTTI.hpp>
+#include <pe/core/rtti/RTTI.hpp>
 #include <QFormLayout>
 
 #include "Widgets/PolyWidget.hpp"

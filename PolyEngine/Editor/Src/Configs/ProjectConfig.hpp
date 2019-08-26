@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Collections/String.hpp>
+#include <pe/core/storage/String.hpp>
 #include <Configs/ConfigBase.hpp>
 
 namespace Poly
@@ -25,28 +25,28 @@ public:
 		_COUNT
 	};
 
-	ProjectConfig(const Poly::String& path, eConfiguration configuration);
+	ProjectConfig(const ::pe::core::storage::String& path, eConfiguration configuration);
 	~ProjectConfig();
 
 	// Path to directory where *.proj.json file is stored
-	const Poly::String& GetProjectPath() const { return ProjectDirPath; }
+	const ::pe::core::storage::String& GetProjectPath() const { return ProjectDirPath; }
 
 	// project name loaded from *.proj.json
-	const Poly::String& GetProjectName() const { return ProjectName; }
+	const ::pe::core::storage::String& GetProjectName() const { return ProjectName; }
 
 	// for now these functions always return Debug configuration output files
-	Poly::String GetGameDllPath() const;
-	Poly::String GetRenderingDeviceDllPath() const;
+	::pe::core::storage::String GetGameDllPath() const;
+	::pe::core::storage::String GetRenderingDeviceDllPath() const;
 
 private:
-	Poly::String GetDistDir() const;
+	::pe::core::storage::String GetDistDir() const;
 
 	// project name loaded from *.proj.json
-	Poly::String ProjectName;
+	::pe::core::storage::String ProjectName;
 	// Path to *.proj.json file
-	Poly::String ProjectPath;
+	::pe::core::storage::String ProjectPath;
 	// Path to directory where *.proj.json file is stored
-	Poly::String ProjectDirPath;
+	::pe::core::storage::String ProjectDirPath;
 	// project config configuration
 	eConfiguration ProjectConfiguration;
 

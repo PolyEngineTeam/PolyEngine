@@ -18,49 +18,49 @@ DEFINE_RESOURCE(TextureResource, gTextureResourcesMap)
 DEFINE_RESOURCE(FontResource, gFontResourcesMap)
 DEFINE_RESOURCE(SoundResource, gALSoundResourcesMap)
 
-String Poly::EvaluateFullResourcePath(eResourceSource Source, const String& path)
+core::storage::String Poly::EvaluateFullResourcePath(eResourceSource Source, const core::storage::String& path)
 {
 	return gAssetsPathConfig.GetAssetsPath(Source) + path;
 }
 
-String Poly::LoadTextFileRelative(eResourceSource Source, const String & path)
+core::storage::String Poly::LoadTextFileRelative(eResourceSource Source, const core::storage::String & path)
 {
 	bool IsNotLoaded = true;
 
-	String FileContent;
-	String AbsolutePath = EvaluateFullResourcePath(Source, path);
-	if (FileExists(AbsolutePath))
+	core::storage::String FileContent;
+	core::storage::String AbsolutePath = EvaluateFullResourcePath(Source, path);
+	if (::pe::core::utils::FileExists(AbsolutePath))
 	{
-		FileContent = LoadTextFile(AbsolutePath);
+		FileContent = core::utils::LoadTextFile(AbsolutePath);
 		IsNotLoaded = false;
 	}
 
 	if (IsNotLoaded)
 	{
-		throw FileIOException("File load failed from all sources, check config");
+		throw core::utils::FileIOException("File load failed from all sources, check config");
 	}
 
 	return FileContent;
 }
 
-void Poly::SaveTextFileRelative(eResourceSource Source, const String& path, const String& data)
+void Poly::SaveTextFileRelative(eResourceSource Source, const core::storage::String& path, const core::storage::String& data)
 {
-	String absolutePath = EvaluateFullResourcePath(Source, path);
-	SaveTextFile(absolutePath, data);
+	core::storage::String absolutePath = EvaluateFullResourcePath(Source, path);
+	core::utils::SaveTextFile(absolutePath, data);
 }
 
-float* Poly::LoadImageHDR(const String& path, int* width, int* height, int* fileChannels)
+float* Poly::LoadImageHDR(const core::storage::String& path, int* width, int* height, int* fileChannels)
 {
 	if (!stbi_is_hdr(path.GetCStr()))
 	{
-		gConsole.LogWarning("Poly::LoadImageHDR LDR file spotted, scalling to HDR and gamma change may appear!");
+		core::utils::gConsole.LogWarning("Poly::LoadImageHDR LDR file spotted, scalling to HDR and gamma change may appear!");
 	}
 
 	stbi_set_flip_vertically_on_load(true);
 	float *data = stbi_loadf(path.GetCStr(), width, height, fileChannels, 0);
 	if (!data)
 	{
-		gConsole.LogInfo("Poly::LoadImageHDR Failed to load: {}, reason: {}", path, stbi_failure_reason());
+		core::utils::gConsole.LogInfo("Poly::LoadImageHDR Failed to load: {}, reason: {}", path, stbi_failure_reason());
 	}
 	
 	return data;
@@ -71,18 +71,18 @@ void Poly::FreeImageHDR(float* data)
 	stbi_image_free(data);
 }
 
-unsigned char* Poly::LoadImage(const String& path, int* width, int* height, int* fileChannels, int desiredChannels)
+unsigned char* Poly::LoadImage(const core::storage::String& path, int* width, int* height, int* fileChannels, int desiredChannels)
 {
 	if (stbi_is_hdr(path.GetCStr()))
 	{
-		gConsole.LogWarning("Poly::LoadImageHDR HDR file spotted, scalling to LDR and gamma change may appear!");
+		core::utils::gConsole.LogWarning("Poly::LoadImageHDR HDR file spotted, scalling to LDR and gamma change may appear!");
 	}
 
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char *data = stbi_load(path.GetCStr(), width, height, fileChannels, desiredChannels);
 	if (!data)
 	{
-	 gConsole.LogInfo("Poly::LoadImage Failed to load: {}, reason: {}", path, stbi_failure_reason());
+	 core::utils::gConsole.LogInfo("Poly::LoadImage Failed to load: {}, reason: {}", path, stbi_failure_reason());
 	}
 	
 	return data;

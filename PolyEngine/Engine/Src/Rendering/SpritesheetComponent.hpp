@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <ECS/ComponentBase.hpp>
 #include <Rendering/RenderingSystem.hpp>
 #include <Configs/ConfigBase.hpp>
@@ -9,10 +9,10 @@ namespace Poly {
 
 	struct ENGINE_DLLEXPORT SpritesheetSettings
 	{
-		String SpritePath;
+		::pe::core::storage::String SpritePath;
 		eResourceSource Source = eResourceSource::GAME;
-		Vector2f SubImages = Vector2f(4.0, 4.0);
-		Color SpriteColor = Color::WHITE;
+		::pe::core::math::Vector2f SubImages = ::pe::core::math::Vector2f(4.0, 4.0);
+		::pe::core::math::Color SpriteColor = ::pe::core::math::Color::WHITE;
 		float SpriteDepthFade = 0.0f;
 		float StartFrame = 0.0f;
 		float Speed = 1.0f;

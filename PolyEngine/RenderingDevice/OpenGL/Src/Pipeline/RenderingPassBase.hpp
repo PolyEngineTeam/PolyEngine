@@ -1,8 +1,13 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <Common/GLUtils.hpp>
 #include <Proxy/GLShaderProgram.hpp>
+
+namespace pe::core::math
+{
+	class AARect;
+}
 
 namespace Poly
 {
@@ -10,7 +15,6 @@ namespace Poly
 	class CameraComponent;
 	class RenderingTargetBase;
 	class GLTextureDeviceProxy;
-	class AARect;
 	class TextureResource;
 	struct ScreenSize;
 	class GLRenderingDevice;
@@ -24,25 +28,25 @@ namespace Poly
 	};
 
 	//------------------------------------------------------------------------------
-	class RenderingPassBase : public BaseObject<>
+	class RenderingPassBase : public ::pe::core::BaseObject<>
 	{
 		struct IOBind
 		{
 			RenderingTargetBase* Target = nullptr;
-			String IOName;
+			::pe::core::storage::String IOName;
 		};
 
 	public:
-		RenderingPassBase(const GLRenderingDevice* RDI, const String& vertex, const String& fragment);
-		RenderingPassBase(const GLRenderingDevice* RDI, const String& vertex, const String& geometry, const String& fragment);
+		RenderingPassBase(const GLRenderingDevice* RDI, const ::pe::core::storage::String& vertex, const ::pe::core::storage::String& fragment);
+		RenderingPassBase(const GLRenderingDevice* RDI, const ::pe::core::storage::String& vertex, const ::pe::core::storage::String& geometry, const ::pe::core::storage::String& fragment);
 
 		virtual ~RenderingPassBase();
 
-		void Run(Scene* world, const CameraComponent* camera, const AARect& rect, ePassType passType = ePassType::BY_MATERIAL);
+		void Run(Scene* world, const CameraComponent* camera, const ::pe::core::math::AARect& rect, ePassType passType = ePassType::BY_MATERIAL);
 		void Finalize();
 
-		void BindOutput(const String& outputName, RenderingTargetBase* target);
-		void BindInput(const String& inputName, RenderingTargetBase* target);
+		void BindOutput(const ::pe::core::storage::String& outputName, RenderingTargetBase* target);
+		void BindInput(const ::pe::core::storage::String& inputName, RenderingTargetBase* target);
 
 		void DebugDraw();
 
@@ -50,20 +54,20 @@ namespace Poly
 	
 	protected:
 
-		virtual void OnRun(Scene* world, const CameraComponent* camera, const AARect& rect, ePassType passType) = 0;
+		virtual void OnRun(Scene* world, const CameraComponent* camera, const ::pe::core::math::AARect& rect, ePassType passType) = 0;
 
-		RenderingTargetBase* GetInputTarget(const String& name);
-		RenderingTargetBase* GetOutputTarget(const String& name);
+		RenderingTargetBase* GetInputTarget(const ::pe::core::storage::String& name);
+		RenderingTargetBase* GetOutputTarget(const ::pe::core::storage::String& name);
 
-		const std::map<String, RenderingTargetBase*>& GetInputs() const { return Inputs; }
-		const std::map<String, RenderingTargetBase*>& GetOutputs() const { return Outputs; }
+		const std::map<::pe::core::storage::String, RenderingTargetBase*>& GetInputs() const { return Inputs; }
+		const std::map<::pe::core::storage::String, RenderingTargetBase*>& GetOutputs() const { return Outputs; }
 		GLShaderProgram& GetProgram() { return Program; }
 
 		const GLRenderingDevice* RDI;
 
 	private:
-		std::map<String, RenderingTargetBase*> Inputs;
-		std::map<String, RenderingTargetBase*> Outputs;
+		std::map<::pe::core::storage::String, RenderingTargetBase*> Inputs;
+		std::map<::pe::core::storage::String, RenderingTargetBase*> Outputs;
 
 		GLShaderProgram Program;
 		GLuint FBO = 0;
@@ -79,7 +83,7 @@ namespace Poly
 	};
 
 	//------------------------------------------------------------------------------
-	class RenderingTargetBase : public BaseObject<>
+	class RenderingTargetBase : public ::pe::core::BaseObject<>
 	{
 
 	public:
@@ -117,7 +121,7 @@ namespace Poly
 	class Texture2DInputTarget : public RenderingTargetBase
 	{
 	public:
-		Texture2DInputTarget(const String& path);
+		Texture2DInputTarget(const ::pe::core::storage::String& path);
 		~Texture2DInputTarget();
 
 		GLuint GetTextureID() const;

@@ -1,17 +1,15 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
 
-#include <Defines.hpp>
-#include <Math/BasicMath.hpp>
+#include <pe/Defines.hpp>
+#include <pe/core/math/BasicMath.hpp>
 
 constexpr auto INF_FLOAT = std::numeric_limits<float>::infinity();
 constexpr auto NAN_FLOAT = std::numeric_limits<float>::quiet_NaN();
 constexpr auto LOW_FLOAT = std::numeric_limits<float>::denorm_min();
 
-using namespace Poly;
-
 constexpr bool Cmpft(float a, float b, float epsilon = 0.00001f) {
-	return Cmpf(a, b, epsilon, true);
+	return ::pe::core::math::Cmpf(a, b, epsilon, true);
 }
 
 TEST_CASE("Floating-point equality comparisons", "[FloatCmp]") {

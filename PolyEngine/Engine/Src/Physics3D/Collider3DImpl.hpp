@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 
 class btCollisionObject;
 
 namespace Poly
 {
-	struct Trigger3DImpl : BaseObject<>
+	struct Trigger3DImpl : public ::pe::core::BaseObject<>
 	{
 		btCollisionObject* BulletTrigger = nullptr;
 	};

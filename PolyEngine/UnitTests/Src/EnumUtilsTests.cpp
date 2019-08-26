@@ -1,9 +1,7 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
 
-#include <Utils/EnumUtils.hpp>
-
-using namespace Poly;
+#include <pe/core/utils/EnumUtils.hpp>
 
 enum class eTestEnum
 {
@@ -17,21 +15,21 @@ REGISTER_ENUM_NAMES(eTestEnum, "Val1", "Val2", "Val3");
 
 TEST_CASE("EnumArray tests", "[EnumArray]")
 {
-	EnumArray<int, eTestEnum> a1;
+	::pe::core::utils::EnumArray<int, eTestEnum> a1;
 	REQUIRE(a1.GetSize() == (int)eTestEnum::_COUNT);
 
 	a1[eTestEnum::VAL_1] = 4;
 	a1[eTestEnum::VAL_2] = 48;
 	a1[eTestEnum::VAL_3] = 3;
 
-	EnumArray<int, eTestEnum> a3;
+	::pe::core::utils::EnumArray<int, eTestEnum> a3;
 	a3 = a1;
 
 	REQUIRE(a3[eTestEnum::VAL_1] == 4);
 	REQUIRE(a3[eTestEnum::VAL_2] == 48);
 	REQUIRE(a3[eTestEnum::VAL_3] == 3);
 
-	EnumArray<int, eTestEnum> a4{ { eTestEnum::VAL_2, 1 },{ eTestEnum::VAL_1, 2 },{ eTestEnum::VAL_3, 3 } };
+	::pe::core::utils::EnumArray<int, eTestEnum> a4{ { eTestEnum::VAL_2, 1 },{ eTestEnum::VAL_1, 2 },{ eTestEnum::VAL_3, 3 } };
 	REQUIRE(a4.GetSize() == (int)eTestEnum::_COUNT);
 	REQUIRE(a4[eTestEnum::VAL_1] == 2);
 	REQUIRE(a4[eTestEnum::VAL_2] == 1);
@@ -44,9 +42,9 @@ TEST_CASE("EnumArray tests", "[EnumArray]")
 	a1[eTestEnum::VAL_3] = 3;
 	REQUIRE(a1 == a4);
 
-	REQUIRE(strcmp(GetEnumName(eTestEnum::VAL_1), "Val1") == 0);
-	REQUIRE(strcmp(GetEnumName(eTestEnum::VAL_2), "Val2") == 0);
-	REQUIRE(strcmp(GetEnumName(eTestEnum::VAL_3), "Val3") == 0);
+	REQUIRE(strcmp(::pe::core::utils::GetEnumName(eTestEnum::VAL_1), "Val1") == 0);
+	REQUIRE(strcmp(::pe::core::utils::GetEnumName(eTestEnum::VAL_2), "Val2") == 0);
+	REQUIRE(strcmp(::pe::core::utils::GetEnumName(eTestEnum::VAL_3), "Val3") == 0);
 }
 
 // **********************************************************************************************************************************************************
@@ -61,13 +59,13 @@ enum class eTestFlagsEnum
 
 TEST_CASE("EnumFlags tests", "[EnumFlags]")
 {
-	EnumFlags<eTestFlagsEnum> a1;
+	::pe::core::utils::EnumFlags<eTestFlagsEnum> a1;
 	REQUIRE(a1.IsSet(eTestFlagsEnum::FLAG_1) == false);
 	REQUIRE(a1.IsSet(eTestFlagsEnum::FLAG_2) == false);
 	REQUIRE(a1.IsSet(eTestFlagsEnum::FLAG_3) == false);
 	REQUIRE(a1.IsSet(eTestFlagsEnum::FLAG_1 | eTestFlagsEnum::FLAG_2 | eTestFlagsEnum::FLAG_3) == false);
 
-	EnumFlags<eTestFlagsEnum> a2 = eTestFlagsEnum::FLAG_1 | eTestFlagsEnum::FLAG_2;
+	::pe::core::utils::EnumFlags<eTestFlagsEnum> a2 = eTestFlagsEnum::FLAG_1 | eTestFlagsEnum::FLAG_2;
 	REQUIRE(a2.IsSet(eTestFlagsEnum::FLAG_1) == true);
 	REQUIRE(a2.IsSet(eTestFlagsEnum::FLAG_2) == true);
 	REQUIRE(a2.IsSet(eTestFlagsEnum::FLAG_3) == false);
@@ -85,7 +83,7 @@ TEST_CASE("EnumFlags tests", "[EnumFlags]")
 TEST_CASE("EnumIterator tests", "[EnumIterator]")
 {
 	int i = 0;
-	for (auto e : IterateEnum<eTestEnum>())
+	for (auto e : ::pe::core::utils::IterateEnum<eTestEnum>())
 	{
 		REQUIRE(i++ == (int)e);
 	}

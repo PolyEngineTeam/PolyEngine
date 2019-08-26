@@ -35,7 +35,7 @@ void ResourceInspectorWidget::Reset()
 //------------------------------------------------------------------------------
 void ResourceInspectorWidget::ProjectOpened()
 {
-	StringBuilder b;
+	core::storage::StringBuilder b;
 
 	b.Append(Manager->GetConfig()->GetProjectPath());
 	b.Append("/");

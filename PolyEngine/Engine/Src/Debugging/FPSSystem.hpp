@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 
 namespace Poly
 {
@@ -8,12 +8,12 @@ namespace Poly
 
 	namespace FPSSystem
 	{
-		struct FPSData : public BaseObject<>
+		struct FPSData : public ::pe::core::BaseObject<>
 		{
 			int FPS;
 			double ElapsedTime;
 			int LastFPS;
-			String DisplayedFPSText;
+			::pe::core::storage::String DisplayedFPSText;
 		};
 
 		float ENGINE_DLLEXPORT GetFPS(Scene* world);

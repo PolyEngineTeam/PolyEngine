@@ -1,14 +1,14 @@
 #pragma once
 
-#include <Defines.hpp>
-#include <Math/Vector3f.hpp>
-#include <Math/VectorT.hpp>
+#include <pe/Defines.hpp>
+#include <pe/core/math/Vector3f.hpp>
+#include <pe/core/math/VectorT.hpp>
 
 namespace Poly
 {
 	class TextureResource;
 
-	class ENGINE_DLLEXPORT Mesh : public BaseObject<>
+	class ENGINE_DLLEXPORT Mesh : public ::pe::core::BaseObject<>
 	{
 	public:
 		virtual ~Mesh();
@@ -24,14 +24,14 @@ namespace Poly
 		size_t GetVertexCount() const { return Positions.size(); }
 		size_t GetTriangleCount() const { return Indices.size() / 3; }
 
-		const std::vector<Vector3f>& GetPositions() const { return Positions; }
-		const std::vector<Vector3f>& GetNormals() const { return Normals; }
-		const std::vector<Vector3f>& GetTangents() const { return Tangents; }
-		const std::vector<Vector3f>& GetBitangents() const { return Bitangents; }
+		const std::vector<::pe::core::math::Vector3f>& GetPositions() const { return Positions; }
+		const std::vector<::pe::core::math::Vector3f>& GetNormals() const { return Normals; }
+		const std::vector<::pe::core::math::Vector3f>& GetTangents() const { return Tangents; }
+		const std::vector<::pe::core::math::Vector3f>& GetBitangents() const { return Bitangents; }
 		const std::vector<TextCoord>& GetTextCoords() const { return TextCoords; }
 		const std::vector<uint32_t>& GetIndicies() const { return Indices; }
-		const std::vector<VectorT<i8, 4>>& GetBoneIds() const { return BoneIds; }
-		const std::vector<VectorT<float, 4>>& GetBoneWeights() const { return BoneWeights; }
+		const std::vector<::pe::core::math::VectorT<i8, 4>>& GetBoneIds() const { return BoneIds; }
+		const std::vector<::pe::core::math::VectorT<float, 4>>& GetBoneWeights() const { return BoneWeights; }
 
 		bool HasVertices() const { return Positions.size() != 0; }
 		bool HasNormals() const { return Normals.size() != 0; }
@@ -50,14 +50,14 @@ namespace Poly
 		TextureResource* AmbientOcclusionMap;
 		TextureResource* NormalMap;
 		TextureResource* EmissiveMap;
-		std::vector<Vector3f> Positions;
-		std::vector<Vector3f> Normals;
-		std::vector<Vector3f> Tangents;
-		std::vector<Vector3f> Bitangents;
+		std::vector<::pe::core::math::Vector3f> Positions;
+		std::vector<::pe::core::math::Vector3f> Normals;
+		std::vector<::pe::core::math::Vector3f> Tangents;
+		std::vector<::pe::core::math::Vector3f> Bitangents;
 		std::vector<TextCoord> TextCoords;
 		std::vector<uint32_t> Indices;
-		std::vector<VectorT<i8, 4>> BoneIds; // Max 4 bones
-		std::vector<VectorT<float, 4>> BoneWeights;
+		std::vector<::pe::core::math::VectorT<i8, 4>> BoneIds; // Max 4 bones
+		std::vector<::pe::core::math::VectorT<float, 4>> BoneWeights;
 		friend class MeshResource;
 		friend class SubMesh;
 	};

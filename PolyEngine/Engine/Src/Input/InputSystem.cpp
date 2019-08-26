@@ -17,7 +17,7 @@ void InputSystem::InputPhase(Scene* world)
 
 	com->CharUTF8 = nullptr;
 
-	com->MouseDelta = Vector2i::ZERO;
+	com->MouseDelta = core::math::Vector2i::ZERO;
 	com->PrevWheel = com->CurrWheel;
 
 	for (auto& pair : com->Controllers)
@@ -75,7 +75,7 @@ void InputSystem::InputPhase(Scene* world)
 					com->PlayerIDToJoystickID[i] = ev.JoystickID;
 					com->JoystickIDToPlayerID[ev.JoystickID] = i;
 					controllerAssigned = true;
-					Poly::gConsole.LogDebug("Controller added in existing place");
+					core::utils::gConsole.LogDebug("Controller added in existing place");
 					break;
 				}
 			}
@@ -84,7 +84,7 @@ void InputSystem::InputPhase(Scene* world)
 				size_t newPlayerID = com->PlayerIDToJoystickID.size();
 				com->PlayerIDToJoystickID.push_back(ev.JoystickID);
 				com->JoystickIDToPlayerID[ev.JoystickID] = newPlayerID;
-				Poly::gConsole.LogDebug("Controller added in new place");
+				core::utils::gConsole.LogDebug("Controller added in new place");
 			}
 			break;
 		}

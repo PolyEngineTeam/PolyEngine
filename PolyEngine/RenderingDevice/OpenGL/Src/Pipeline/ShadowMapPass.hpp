@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <Common/GLUtils.hpp>
 #include <Proxy/GLShaderProgram.hpp>
 #include <Rendering/RenderingSettingsComponent.hpp>
@@ -11,14 +11,14 @@ namespace Poly
 	class GLShaderProgram;
 	struct SceneView;
 
-	Matrix GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize);
+	::pe::core::math::Matrix GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize);
 
-	void StablizeShadowProjection(Poly::Matrix& clipFromWorld, int shadowmapSize);
+	void StablizeShadowProjection(::pe::core::math::Matrix& clipFromWorld, int shadowmapSize);
 	
 	int GetShadowMapSize(const eShadowMapSize shadowMapSize);
 
 
-	class ShadowMapPass : public BaseObject<>
+	class ShadowMapPass : public ::pe::core::BaseObject<>
 	{
 	public:
 

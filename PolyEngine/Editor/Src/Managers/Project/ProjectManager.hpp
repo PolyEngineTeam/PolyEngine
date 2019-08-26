@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <QtCore/qobject.h>
 #include <QtCore/qtimer.h>
 
@@ -11,11 +11,11 @@ using namespace Poly;
 class ProjectManagerException : public std::exception
 {
 public:
-	ProjectManagerException(const String& msg) : Msg((const char*)msg.GetCStr()) {}
+	ProjectManagerException(const ::pe::core::storage::String& msg) : Msg((const char*)msg.GetCStr()) {}
 	const char* what() const noexcept override { return Msg.GetCStr(); }
 
 protected:
-	String Msg;
+	::pe::core::storage::String Msg;
 };
 
 class ProjectManager : public QObject

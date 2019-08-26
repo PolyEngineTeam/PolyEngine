@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include "ECS/ComponentBase.hpp"
-#include "Math/Frustum.hpp"
-#include "Math/Matrix.hpp"
+#include "pe/core/math/Frustum.hpp"
+#include "pe/core/math/Matrix.hpp"
 
 namespace Poly
 {
@@ -12,15 +12,15 @@ namespace Poly
 	public:
 		RTTI_DECLARE_COMPONENT(::Poly::AmbientLightWorldComponent) { NO_RTTI_PROPERTY(); }
 
-		AmbientLightWorldComponent(const Color& color = Color::WHITE, float intensity = 1.0f);
+		AmbientLightWorldComponent(const ::pe::core::math::Color& color = ::pe::core::math::Color::WHITE, float intensity = 1.0f);
 
-		const Color& GetColor() const { return LightColor; }
-		void SetColor(const Color& value) { LightColor = value; }
+		const ::pe::core::math::Color& GetColor() const { return LightColor; }
+		void SetColor(const ::pe::core::math::Color& value) { LightColor = value; }
 		float GetIntensity() const { return Intensity; }
 		void SetIntensity(float value) { Intensity = value; }
 
 	private:
-		Color LightColor;
+		::pe::core::math::Color LightColor;
 		float Intensity = 1.0f;
 	};
 
@@ -31,13 +31,13 @@ namespace Poly
 	public:
 		RTTI_DECLARE_COMPONENT(::Poly::DirectionalLightComponent) { NO_RTTI_PROPERTY(); }
 
-		DirectionalLightComponent(const Color& color = Color::WHITE, float intensity = 1.0f);
+		DirectionalLightComponent(const ::pe::core::math::Color& color = ::pe::core::math::Color::WHITE, float intensity = 1.0f);
 
-		const Color& GetColor() const { return LightColor; }
+		const ::pe::core::math::Color& GetColor() const { return LightColor; }
 		float GetIntensity() const { return Intensity; }
 
 	private:
-		Color LightColor;
+		::pe::core::math::Color LightColor;
 		float Intensity = 1.0f;
 	};
 
@@ -48,15 +48,15 @@ namespace Poly
 	public:
 		RTTI_DECLARE_COMPONENT(::Poly::PointLightComponent) { NO_RTTI_PROPERTY(); }
 
-		PointLightComponent(const Color& color = Color::WHITE, float intensity = 1.0f, float range = 10.0f);
+		PointLightComponent(const ::pe::core::math::Color& color = ::pe::core::math::Color::WHITE, float intensity = 1.0f, float range = 10.0f);
 
-		const Color& GetColor() const { return LightColor; }
+		const ::pe::core::math::Color& GetColor() const { return LightColor; }
 		float GetIntensity() const { return Intensity; }
 		void SetIntensity(float value) { Intensity = value; }
 		void SetRange(float value) { Range = value; }
 		float GetRange() const { return Range; }
 	private:
-		Color LightColor;
+		::pe::core::math::Color LightColor;
 		float Intensity = 1.0f;
 		float Range = 1.0f;
 	};
@@ -68,8 +68,8 @@ namespace Poly
 	public:
 		RTTI_DECLARE_COMPONENT(::Poly::SpotLightComponent) { NO_RTTI_PROPERTY(); }
 
-		SpotLightComponent(const Color& color = Color::WHITE, float intensity = 1.0f, float range = 10.0f, float cutoff = 12.0f, float outerCutOff = 17.0f);
-		const Color& GetColor() const { return LightColor; }
+		SpotLightComponent(const ::pe::core::math::Color& color = ::pe::core::math::Color::WHITE, float intensity = 1.0f, float range = 10.0f, float cutoff = 12.0f, float outerCutOff = 17.0f);
+		const ::pe::core::math::Color& GetColor() const { return LightColor; }
 		float GetIntensity() const { return Intensity; }
 		void SetRange(float value) { Range = value; }
 		float GetRange() const { return Range; }
@@ -78,7 +78,7 @@ namespace Poly
 		void SetOuterCutOff(float value) { OuterCutOff = value; }
 		float GetOuterCutOff() const { return OuterCutOff; }
 	private:
-		Color LightColor;
+		::pe::core::math::Color LightColor;
 		float Intensity = 1.0f;
 		float Range = 1.0f;
 		float CutOff = 15.0f;

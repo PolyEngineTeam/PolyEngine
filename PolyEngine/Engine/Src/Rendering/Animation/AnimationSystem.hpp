@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <ECS/ISystem.hpp>
 
 namespace Poly
@@ -14,9 +14,9 @@ namespace Poly
 	public:
 		virtual void OnUpdate(Scene* scene) override;
 
-		static void StartAnimation(SkeletalAnimationComponent* cmp, const String& animationName, const SkeletalAnimationParams& params);
-		static void StopAnimation(SkeletalAnimationComponent* cmp, const String&  animationName, bool immediate = false);
-		static bool IsAnimationActive(SkeletalAnimationComponent* cmp, const String&  animationName);
+		static void StartAnimation(SkeletalAnimationComponent* cmp, const ::pe::core::storage::String& animationName, const SkeletalAnimationParams& params);
+		static void StopAnimation(SkeletalAnimationComponent* cmp, const ::pe::core::storage::String&  animationName, bool immediate = false);
+		static bool IsAnimationActive(SkeletalAnimationComponent* cmp, const ::pe::core::storage::String&  animationName);
 		static void OnComponentRemoved(SkeletalAnimationComponent* cmp);
 
 	private:

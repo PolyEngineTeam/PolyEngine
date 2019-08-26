@@ -12,10 +12,10 @@ DebugNormalsWireframeRenderingPass::DebugNormalsWireframeRenderingPass(const GLR
 
 }
 
-void DebugNormalsWireframeRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const AARect& /*rect*/, ePassType /*passType = ePassType::BY_MATERIAL*/)
+void DebugNormalsWireframeRenderingPass::OnRun(Scene* world, const CameraComponent* camera, const core::math::AARect& /*rect*/, ePassType /*passType = ePassType::BY_MATERIAL*/)
 {
-	const Matrix& mModelView = camera->GetClipFromWorld();
-	const Matrix& mProjection = camera->GetClipFromView();
+	const core::math::Matrix& mModelView = camera->GetClipFromWorld();
+	const core::math::Matrix& mProjection = camera->GetClipFromView();
 
 	GetProgram().BindProgram();
 	GetProgram().SetUniform("u_projection", mProjection);
@@ -25,9 +25,9 @@ void DebugNormalsWireframeRenderingPass::OnRun(Scene* world, const CameraCompone
 		const MeshRenderingComponent* meshCmp = std::get<MeshRenderingComponent*>(componentsTuple);
 		const EntityTransform& trans = meshCmp->GetTransform();
 
-		const Matrix& objTransform = trans.GetWorldFromModel();
-		Matrix MVPTransform = mModelView * objTransform;
-		Matrix mNormalMatrix = (mModelView * objTransform).GetInversed().GetTransposed();
+		const core::math::Matrix& objTransform = trans.GetWorldFromModel();
+		core::math::Matrix MVPTransform = mModelView * objTransform;
+		core::math::Matrix mNormalMatrix = (mModelView * objTransform).GetInversed().GetTransposed();
 		GetProgram().SetUniform("u_MVP", MVPTransform);
 		GetProgram().SetUniform("u_normalMatrix4x4", mNormalMatrix);
 		for (const MeshResource::SubMesh* subMesh : meshCmp->GetMesh()->GetSubMeshes())

@@ -1,11 +1,11 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <Common/GLUtils.hpp>
 
 namespace Poly
 {
-	struct PrimitiveCube : public BaseObject<>
+	struct PrimitiveCube : public ::pe::core::BaseObject<>
 	{
 		PrimitiveCube();
 		~PrimitiveCube();

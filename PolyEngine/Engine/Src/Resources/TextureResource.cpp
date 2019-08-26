@@ -28,9 +28,9 @@ static int GetDesiredChannel(eTextureUsageType usage) noexcept
 	return 0;
 }
 
-TextureResource::TextureResource(const String& path, eTextureUsageType usage)
+TextureResource::TextureResource(const core::storage::String& path, eTextureUsageType usage)
 {
-	gConsole.LogInfo("TextureResource::TextureResource path: {} usage: {}", path, (int)usage);
+	core::utils::gConsole.LogInfo("TextureResource::TextureResource path: {} usage: {}", path, (int)usage);
 
 	int desiredChannels = GetDesiredChannel(usage);
 
@@ -41,7 +41,7 @@ TextureResource::TextureResource(const String& path, eTextureUsageType usage)
 		if (!Image)
 			throw ResourceLoadFailedException();
 	
-		gConsole.LogInfo("TextureResource::TextureResource loaded width: {}, height: {}, channels: {}", Width, Height, Channels);
+		core::utils::gConsole.LogInfo("TextureResource::TextureResource loaded width: {}, height: {}, channels: {}", Width, Height, Channels);
 
 		TextureProxy = gEngine->GetRenderingDevice()->CreateTexture(Width, Height, desiredChannels, usage);
 		TextureProxy->SetContentHDR(Image);
@@ -54,7 +54,7 @@ TextureResource::TextureResource(const String& path, eTextureUsageType usage)
 		if (!Image)
 			throw ResourceLoadFailedException();
 
-		gConsole.LogInfo("TextureResource::TextureResource loaded width: {}, height: {}, channels: {}, desiredChannels: {}",
+		core::utils::gConsole.LogInfo("TextureResource::TextureResource loaded width: {}, height: {}, channels: {}, desiredChannels: {}",
 			Width, Height, Channels, desiredChannels);
 
 		TextureProxy = gEngine->GetRenderingDevice()->CreateTexture(Width, Height, desiredChannels, usage);

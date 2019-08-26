@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <ECS/ComponentBase.hpp>
 #include <Physics3D/Physics3DSystem.hpp>
 
@@ -22,7 +22,7 @@ namespace Poly
 	{
 	public:
 		float TimeStep = 1.f / 60.f;
-		Vector Gravity = Vector(0.f, -9.81f, 0.f);
+		::pe::core::math::Vector Gravity = ::pe::core::math::Vector(0.f, -9.81f, 0.f);
 	};
 
 	/// Scene component contains configuration for physics simulation and 
@@ -38,18 +38,18 @@ namespace Poly
 		friend void Physics3DSystem::UnregisterComponent(Scene * world, Entity* entity);
 		friend ContactPairResults GetAllContactPairs(Scene* world);
 		friend ContactResult Physics3DSystem::ContactPair(Scene* world, Entity* firstEntity, Entity* secondEntity);
-		friend RaycastResult Physics3DSystem::AllHitsRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
-		friend RaycastResult Physics3DSystem::ClosestHitRaycast(Scene* world, const Vector& from, const Vector& to, EnumFlags<eCollisionGroup> collisionGroup, EnumFlags<eCollisionGroup> collidesWith);
+		friend RaycastResult Physics3DSystem::AllHitsRaycast(Scene* world, const ::pe::core::math::Vector& from, const ::pe::core::math::Vector& to, ::pe::core::utils::EnumFlags<eCollisionGroup> collisionGroup, ::pe::core::utils::EnumFlags<eCollisionGroup> collidesWith);
+		friend RaycastResult Physics3DSystem::ClosestHitRaycast(Scene* world, const ::pe::core::math::Vector& from, const ::pe::core::math::Vector& to, ::pe::core::utils::EnumFlags<eCollisionGroup> collisionGroup, ::pe::core::utils::EnumFlags<eCollisionGroup> collidesWith);
 	public:
 		RTTI_DECLARE_COMPONENT(::Poly::Physics3DWorldComponent) { NO_RTTI_PROPERTY(); }
 
 		Physics3DWorldComponent(Physics3DConfig config);
 		~Physics3DWorldComponent();
 
-		void SetGravity(const Vector& g);
+		void SetGravity(const ::pe::core::math::Vector& g);
 		void SetTimeStep(float timestep);
 
-		const Vector& GetGravity() const { return Config.Gravity; }
+		const ::pe::core::math::Vector& GetGravity() const { return Config.Gravity; }
 		float GetTimeStep() const { return Config.TimeStep; }
 
 		// FIXME(squares): friendship problems

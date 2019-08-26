@@ -1,23 +1,21 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
 
-#include <Math/Vector2f.hpp>
-
-using namespace Poly;
+#include <pe/core/math/Vector2f.hpp>
 
 TEST_CASE("Vector2f constructors", "[Vector2f]") {
 	// empty constructor
-	Vector2f v1;
+	::pe::core::math::Vector2f v1;
 	REQUIRE(v1.X == 0);
 	REQUIRE(v1.Y == 0);
 
 	// basic constructor
-	Vector2f v2(1, 2);
+	::pe::core::math::Vector2f v2(1, 2);
 	REQUIRE(v2.X == 1);
 	REQUIRE(v2.Y == 2);
 
 	// copy constructor
-	Vector2f v3(v2);
+	::pe::core::math::Vector2f v3(v2);
 	REQUIRE(v3.X == 1);
 	REQUIRE(v3.Y == 2);
 
@@ -28,8 +26,8 @@ TEST_CASE("Vector2f constructors", "[Vector2f]") {
 }
 
 TEST_CASE("Vector2f comparison operators", "[Vector2f]") {
-	Vector2f v1(1, 2);
-	Vector2f v2(1, 2);
+	::pe::core::math::Vector2f v1(1, 2);
+	::pe::core::math::Vector2f v2(1, 2);
 
 	SECTION("Positive comparison operator") {
 		REQUIRE(v1 == v2);
@@ -44,18 +42,18 @@ TEST_CASE("Vector2f comparison operators", "[Vector2f]") {
 	}
 
 	SECTION("Vector2f negation operator") {
-		REQUIRE(-v1 == Vector2f(-1, -2));
+		REQUIRE(-v1 == ::pe::core::math::Vector2f(-1, -2));
 		REQUIRE(-(-v1) == v1);
 	}
 }
 
 TEST_CASE("Vector2f-Vector2f operators", "[Vector2f]") {
-	Vector2f v1(3, 4);
-	Vector2f v2(1, 2);
-	Vector2f v3;
+	::pe::core::math::Vector2f v1(3, 4);
+	::pe::core::math::Vector2f v2(1, 2);
+	::pe::core::math::Vector2f v3;
 
 	SECTION("Vector2f sum operator") {
-		Vector2f v4(4, 6);
+		::pe::core::math::Vector2f v4(4, 6);
 		REQUIRE(v1 + v2 == v4);
 		REQUIRE(v2 + v1 == v4);
 
@@ -69,8 +67,8 @@ TEST_CASE("Vector2f-Vector2f operators", "[Vector2f]") {
 	}
 
 	SECTION("Vector2f subtraction operator") {
-		REQUIRE(v1 - v2 == Vector2f(2, 2));
-		REQUIRE(v2 - v1 == Vector2f(-2, -2));
+		REQUIRE(v1 - v2 == ::pe::core::math::Vector2f(2, 2));
+		REQUIRE(v2 - v1 == ::pe::core::math::Vector2f(-2, -2));
 
 		v3 = v1;
 		v3 -= v2;
@@ -82,14 +80,14 @@ TEST_CASE("Vector2f-Vector2f operators", "[Vector2f]") {
 	}
 
 	SECTION("Vector2f multiplication operator") {
-		REQUIRE(v1*v1 == Vector2f(9, 16));
+		REQUIRE(v1*v1 == ::pe::core::math::Vector2f(9, 16));
 		v3 = v2;
 		v3 *= v2;
 		REQUIRE(v3 == v2 * v2);
 	}
 
 	SECTION("Vector2f division operator") {
-		REQUIRE(v1 / v2 == Vector2f(3.0f, 2.0f));
+		REQUIRE(v1 / v2 == ::pe::core::math::Vector2f(3.0f, 2.0f));
 		v3 = v1;
 		v3 /= v2;
 		REQUIRE(v3 == v1 / v2);
@@ -97,26 +95,26 @@ TEST_CASE("Vector2f-Vector2f operators", "[Vector2f]") {
 }
 
 TEST_CASE("Vector2f-scalar operators", "[Vector2f]") {
-	Vector2f v1(1, 2);
-	Vector2f v2(v1);
+	::pe::core::math::Vector2f v1(1, 2);
+	::pe::core::math::Vector2f v2(v1);
 	float s1 = 2;
 
 	SECTION("Multiplication operator") {
-		REQUIRE(v1*s1 == Vector2f(2, 4));
+		REQUIRE(v1*s1 == ::pe::core::math::Vector2f(2, 4));
 		v2 *= s1;
 		REQUIRE(v2 == v1*s1);
 	}
 
 	SECTION("Division operator") {
-		REQUIRE(v1 / s1 == Vector2f(0.5f, 1.0f));
+		REQUIRE(v1 / s1 == ::pe::core::math::Vector2f(0.5f, 1.0f));
 		v2 /= s1;
 		REQUIRE(v2 == v1 / s1);
 	}
 }
 
 TEST_CASE("Vector2f algebraic methods", "[Vector2f]") {
-	Vector2f v1(1, 2);
-	Vector2f v2(3, 4);
+	::pe::core::math::Vector2f v1(1, 2);
+	::pe::core::math::Vector2f v2(3, 4);
 
 	SECTION("Vector2f dot product") {
 		REQUIRE(v1.Dot(v2) == 11);
@@ -137,11 +135,11 @@ TEST_CASE("Vector2f algebraic methods", "[Vector2f]") {
 	}
 
 	SECTION("Normalization") {
-		Vector2f v3 = v1;
+		::pe::core::math::Vector2f v3 = v1;
 		v3.Normalize();
 		float l = v1.Length();
 		REQUIRE(v3 == v1 / l);
-		Vector2f v4 = v1.GetNormalized();
+		::pe::core::math::Vector2f v4 = v1.GetNormalized();
 		REQUIRE(v4 == v3);
 
 		v3 = v2;

@@ -7,15 +7,15 @@ CmdManager::CmdManager()
 	connect(Timer.get(), &QTimer::timeout, this, &CmdManager::ReadStdout);
 }
 
-void CmdManager::RunCommand(const String& cmd)
+void CmdManager::RunCommand(const core::storage::String& cmd)
 {
 	Command = cmd;
 
 	// execute command and return output stream
 #ifdef _WIN32
-	Stream = _popen((Command + String(" 2>&1")).GetCStr(), "r");
+	Stream = _popen((Command + core::storage::String(" 2>&1")).GetCStr(), "r");
 #else
-	Stream = popen((Command + String(" 2>&1")).GetCStr(), "r");
+	Stream = popen((Command + core::storage::String(" 2>&1")).GetCStr(), "r");
 #endif
 
 	// display some nice info

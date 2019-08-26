@@ -1,7 +1,7 @@
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <catch.hpp>
 
-#include <RTTI/RTTI.hpp>
+#include <pe/core/rtti/RTTI.hpp>
 #include <ECS/Scene.hpp>
 #include <cstdio>
 

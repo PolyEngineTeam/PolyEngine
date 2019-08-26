@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 #include <Common/GLUtils.hpp>
 #include <Common/PrimitiveQuad.hpp>
 #include <Common/PrimitiveCube.hpp>
@@ -8,11 +8,15 @@
 
 struct SDL_Window;
 
+namespace pe::core::math
+{
+	class AARect;
+}
+
 namespace Poly
 {
 	struct SceneView;
 	class CameraComponent;
-	class AARect;
 	class Scene;
 	class RenderingPassBase;
 	class RenderingTargetBase;
@@ -64,8 +68,8 @@ namespace Poly
 
 		struct InputOutputBind
 		{
-			InputOutputBind(const String& name, RenderingTargetBase* target) : Name(name), Target(target) {}
-			String Name;
+			InputOutputBind(const ::pe::core::storage::String& name, RenderingTargetBase* target) : Name(name), Target(target) {}
+			::pe::core::storage::String Name;
 			RenderingTargetBase* Target;
 		};
 
@@ -104,7 +108,7 @@ namespace Poly
 
 		void FillSceneView(SceneView& sceneView);
 		void CullDirLightQueue(SceneView& sceneView, const std::vector<const MeshRenderingComponent*>& meshCmp);
-		void CullShadowCasters(SceneView& sceneView, const Matrix& dirLightFromWorld, const Matrix& worldFromDirLight, AABox& frustumAABBInLS);
+		void CullShadowCasters(SceneView& sceneView, const ::pe::core::math::Matrix& dirLightFromWorld, const ::pe::core::math::Matrix& worldFromDirLight, ::pe::core::math::AABox& frustumAABBInLS);
 		void EndFrame();
 
 		void CleanUpResources();
@@ -119,7 +123,7 @@ namespace Poly
 			const std::initializer_list<InputOutputBind>& inputs,
 			const std::initializer_list<InputOutputBind>& outputs, Args_t&&... args);
 
-		void RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName,
+		void RegisterPostprocessPass(ePostprocessRenderPassType type, const ::pe::core::storage::String& fragShaderName,
 			const std::initializer_list<InputOutputBind>& inputs = {},
 			const std::initializer_list<InputOutputBind>& outputs = {});
 
@@ -129,14 +133,14 @@ namespace Poly
 		SDL_Window* Window;
 		SDL_GLContext Context;
 		ScreenSize ScreenDim;
-		std::vector<String> OpenGLExtensions;
+		std::vector<::pe::core::storage::String> OpenGLExtensions;
 
 		eRendererType RendererType;
 		IRendererInterface* Renderer;
 
-		EnumArray<std::unique_ptr<RenderingPassBase>, eGeometryRenderPassType> GeometryRenderingPasses;
-		EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
-		EnumArray<std::unique_ptr<RenderingTargetBase>, eRenderTargetId> RenderingTargets;
+		::pe::core::utils::EnumArray<std::unique_ptr<RenderingPassBase>, eGeometryRenderPassType> GeometryRenderingPasses;
+		::pe::core::utils::EnumArray<std::unique_ptr<RenderingPassBase>, ePostprocessRenderPassType> PostprocessRenderingPasses;
+		::pe::core::utils::EnumArray<std::unique_ptr<RenderingTargetBase>, eRenderTargetId> RenderingTargets;
 	};
 
 	extern GLRenderingDevice* gRenderingDevice;

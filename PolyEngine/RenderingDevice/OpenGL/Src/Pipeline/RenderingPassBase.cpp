@@ -7,7 +7,7 @@
 using namespace Poly;
 
 //------------------------------------------------------------------------------
-void RenderingPassBase::BindOutput(const String& outputName, RenderingTargetBase* target)
+void RenderingPassBase::BindOutput(const core::storage::String& outputName, RenderingTargetBase* target)
 {
 	if (target)
 	{
@@ -22,7 +22,7 @@ void RenderingPassBase::BindOutput(const String& outputName, RenderingTargetBase
 }
 
 //------------------------------------------------------------------------------
-void RenderingPassBase::BindInput(const String& inputName, RenderingTargetBase* target)
+void RenderingPassBase::BindInput(const core::storage::String& inputName, RenderingTargetBase* target)
 {
 	if (target)
 	{
@@ -85,13 +85,13 @@ void Poly::RenderingPassBase::ClearFBO(GLenum flags)
 }
 
 //------------------------------------------------------------------------------
-Poly::RenderingPassBase::RenderingPassBase(const GLRenderingDevice* rdi, const String& vertex, const String& fragment)
+Poly::RenderingPassBase::RenderingPassBase(const GLRenderingDevice* rdi, const core::storage::String& vertex, const core::storage::String& fragment)
 	: RDI(rdi), Program(vertex, fragment)
 {
 }
 
 //------------------------------------------------------------------------------
-Poly::RenderingPassBase::RenderingPassBase(const GLRenderingDevice* rdi, const String& vertex, const String& geometry, const String& fragment)
+Poly::RenderingPassBase::RenderingPassBase(const GLRenderingDevice* rdi, const core::storage::String& vertex, const core::storage::String& geometry, const core::storage::String& fragment)
 	: RDI(rdi), Program(vertex, geometry, fragment)
 {
 }
@@ -104,14 +104,14 @@ Poly::RenderingPassBase::~RenderingPassBase()
 }
 
 //------------------------------------------------------------------------------
-void RenderingPassBase::Run(Scene* world, const CameraComponent* camera, const AARect& rect, ePassType passType)
+void RenderingPassBase::Run(Scene* world, const CameraComponent* camera, const core::math::AARect& rect, ePassType passType)
 {
 	// Bind inputs
 	Program.BindProgram();
 	uint32_t samplerCount = 0;
 	for (auto& kv : GetInputs())
 	{
-		const String& name = kv.first;
+		const core::storage::String& name = kv.first;
 		RenderingTargetBase* target = kv.second;
 
 		switch (target->GetType())
@@ -166,7 +166,7 @@ void RenderingPassBase::Finalize()
 	std::vector<GLenum> colorAttachements;
 	for (auto& kv : GetOutputs())
 	{
-		const String& name = kv.first;
+		const core::storage::String& name = kv.first;
 		RenderingTargetBase* target = kv.second;
 
 		switch (target->GetType())
@@ -206,7 +206,7 @@ void RenderingPassBase::Finalize()
 }
 
 //------------------------------------------------------------------------------
-RenderingTargetBase* RenderingPassBase::GetInputTarget(const String& name)
+RenderingTargetBase* RenderingPassBase::GetInputTarget(const core::storage::String& name)
 {
 	auto it = Inputs.find(name);
 	if (it != Inputs.end())
@@ -215,7 +215,7 @@ RenderingTargetBase* RenderingPassBase::GetInputTarget(const String& name)
 }
 
 //------------------------------------------------------------------------------
-RenderingTargetBase* RenderingPassBase::GetOutputTarget(const String& name)
+RenderingTargetBase* RenderingPassBase::GetOutputTarget(const core::storage::String& name)
 {
 	auto it = Outputs.find(name);
 	if (it != Outputs.end())
@@ -250,7 +250,7 @@ Poly::DepthRenderingTarget::DepthRenderingTarget()
 {
 }
 
-Poly::Texture2DInputTarget::Texture2DInputTarget(const String & path)
+Poly::Texture2DInputTarget::Texture2DInputTarget(const core::storage::String & path)
 {
 	Texture = ResourceManager<TextureResource>::Load(path, eResourceSource::ENGINE, eTextureUsageType::ALBEDO);
 }

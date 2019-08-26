@@ -45,11 +45,11 @@ GLRenderingDevice::GLRenderingDevice(SDL_Window* window, const ScreenSize& size)
 
 	ASSERTE(Context, "OpenGL context creation failed!");
 
-	gConsole.LogInfo("OpenGL context set up successfully");
-	gConsole.LogInfo("GL Renderer: {}", glGetString(GL_RENDERER));
-	gConsole.LogInfo("GL Version: {}", glGetString(GL_VERSION));
-	gConsole.LogInfo("GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
-	// gConsole.LogInfo("Fitting renderer (0 - Fallback, 1 - Highend): {}", (int)RendererType);
+	core::utils::gConsole.LogInfo("OpenGL context set up successfully");
+	core::utils::gConsole.LogInfo("GL Renderer: {}", glGetString(GL_RENDERER));
+	core::utils::gConsole.LogInfo("GL Version: {}", glGetString(GL_VERSION));
+	core::utils::gConsole.LogInfo("GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	// core::utils::gConsole.LogInfo("Fitting renderer (0 - Fallback, 1 - Highend): {}", (int)RendererType);
 
 	// Setup V-Sync
 	SDL_GL_SetSwapInterval(1);
@@ -71,12 +71,12 @@ bool GLRenderingDevice::CreateContext()
 	if (Context)
 	{
 		RendererType = eRendererType::TILED_FORWARD;
-		gConsole.LogInfo("Context created");
+		core::utils::gConsole.LogInfo("Context created");
 	}
 
 	if (!Context)
 	{
-		gConsole.LogInfo("Context setup failed, err: {}", SDL_GetError());
+		core::utils::gConsole.LogInfo("Context setup failed, err: {}", SDL_GetError());
 	}
 
 	return isSuccessfull;
@@ -104,7 +104,7 @@ void GLRenderingDevice::Resize(const ScreenSize& size)
 {
 	ScreenDim = size;
 
-	for (eRenderTargetId targetType : IterateEnum<eRenderTargetId>())
+	for (eRenderTargetId targetType : core::utils::IterateEnum<eRenderTargetId>())
 	{
 		if (RenderingTargets[targetType])
 		{
@@ -125,12 +125,12 @@ void GLRenderingDevice::GetExtensions()
 	OpenGLExtensions.clear();
 	OpenGLExtensions.reserve(extensionsSize);
 
-	// gConsole.LogInfo("OpenGL supported extensions:");
+	// core::utils::gConsole.LogInfo("OpenGL supported extensions:");
 	for (int i = 0; i<extensionsSize; i++)
 	{
-		String extension = String((const char*)glGetStringi(GL_EXTENSIONS, i));
+		core::storage::String extension = core::storage::String((const char*)glGetStringi(GL_EXTENSIONS, i));
 		OpenGLExtensions.push_back(extension);
-		// gConsole.LogInfo("Ext {}: {}", i, extension);
+		// core::utils::gConsole.LogInfo("Ext {}: {}", i, extension);
 	}
 }
 
@@ -162,7 +162,7 @@ T* Poly::GLRenderingDevice::CreateRenderingTarget(eRenderTargetId type, Args&&..
 	return target;
 }
 
-void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType type, const String& fragShaderName, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
+void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType type, const core::storage::String& fragShaderName, const std::initializer_list<InputOutputBind>& inputs, const std::initializer_list<InputOutputBind>& outputs)
 {
 	PostprocessRenderingPasses[type] = std::make_unique<PostprocessRenderingPass>(this, fragShaderName);
 
@@ -177,13 +177,13 @@ void Poly::GLRenderingDevice::RegisterPostprocessPass(ePostprocessRenderPassType
 
 void Poly::GLRenderingDevice::CleanUpResources()
 {
-	for (eRenderTargetId targetType : IterateEnum<eRenderTargetId>())
+	for (eRenderTargetId targetType : core::utils::IterateEnum<eRenderTargetId>())
 		RenderingTargets[targetType].reset();
 
-	for (eGeometryRenderPassType passType : IterateEnum<eGeometryRenderPassType>())
+	for (eGeometryRenderPassType passType : core::utils::IterateEnum<eGeometryRenderPassType>())
 		GeometryRenderingPasses[passType].reset();
 
-	for (ePostprocessRenderPassType passType : IterateEnum<ePostprocessRenderPassType>())
+	for (ePostprocessRenderPassType passType : core::utils::IterateEnum<ePostprocessRenderPassType>())
 		PostprocessRenderingPasses[passType].reset();
 
 	PrimitivesQuad.reset();

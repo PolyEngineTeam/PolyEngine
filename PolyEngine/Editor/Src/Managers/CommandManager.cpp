@@ -101,7 +101,7 @@ void CommandManager::AddCommand(Command* cmd)
 //------------------------------------------------------------------------------
 void CommandManager::Undo()
 {
-	gConsole.LogDebug("Undo: {}", CurrentCommand);
+	core::utils::gConsole.LogDebug("Undo: {}", CurrentCommand);
 
 	if (CurrentCommand == 0)
 		return;

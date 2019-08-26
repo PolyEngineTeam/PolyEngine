@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ECS/Entity.hpp>
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 
 #include <QtWidgets/qlabel.h>
 #include <QtWidgets/qcombobox.h>

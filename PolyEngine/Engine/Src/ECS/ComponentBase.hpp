@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 
 #include <ECS/Entity.hpp>
 #include <ECS/ComponentIDGenerator.hpp>
@@ -27,7 +27,7 @@ namespace Poly {
 		virtual size_t GetComponentID() const { ASSERTE(false, "This shouldn't be called!"); return 0; };
 
 
-		/// <summary>Getter for a component of a specified type that shares UniqueID with this one.</summary>
+		/// <summary>Getter for a component of a specified type that shares ::pe::core::UniqueID with this one.</summary>
 		/// <returns>Pointer to a component of a specified type or a nullptr, if it does not exist.</returns>
 		template<typename T>
 		T* GetSibling()
@@ -36,7 +36,7 @@ namespace Poly {
 			return Owner->GetComponent<T>();
 		}
 
-		/// <summary>Getter for a component of a specified type that shares UniqueID with this one.</summary>
+		/// <summary>Getter for a component of a specified type that shares ::pe::core::UniqueID with this one.</summary>
 		/// <returns>Pointer to a component of a specified type or a nullptr, if it does not exist.</returns>
 		template<typename T>
 		const T* GetSibling() const
@@ -60,16 +60,16 @@ namespace Poly {
 		inline EntityTransform& GetTransform() { return Owner->GetTransform(); }
 		inline const EntityTransform& GetTransform() const { return Owner->GetTransform(); }
 
-		void SetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags |= rhs; }
-		void ResetFlags(const EnumFlags<eComponentBaseFlags>& rhs) { Flags &= ~rhs; }
-		const EnumFlags<eComponentBaseFlags>& GetFlags() { return Flags; }
-		bool CheckFlags(const EnumFlags<eComponentBaseFlags>& rhs) const { return (Flags & rhs) == rhs; }
+		void SetFlags(const ::pe::core::utils::EnumFlags<eComponentBaseFlags>& rhs) { Flags |= rhs; }
+		void ResetFlags(const ::pe::core::utils::EnumFlags<eComponentBaseFlags>& rhs) { Flags &= ~rhs; }
+		const ::pe::core::utils::EnumFlags<eComponentBaseFlags>& GetFlags() { return Flags; }
+		bool CheckFlags(const ::pe::core::utils::EnumFlags<eComponentBaseFlags>& rhs) const { return (Flags & rhs) == rhs; }
 
-		virtual std::optional<AABox> GetBoundingBox(eEntityBoundingChannel channel) const { return {}; }
+		virtual std::optional<::pe::core::math::AABox> GetBoundingBox(eEntityBoundingChannel channel) const { return {}; }
 
 	private:
 		Entity* Owner = nullptr;
 
-		EnumFlags<eComponentBaseFlags> Flags;
+		::pe::core::utils::EnumFlags<eComponentBaseFlags> Flags;
 	};
 }

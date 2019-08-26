@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Defines.hpp>
+#include <pe/Defines.hpp>
 
-#include <Collections/String.hpp>
+#include <pe/core/storage/String.hpp>
 #include <Resources/ResourceBase.hpp>
 #include <Resources/TextureResource.hpp>
 #include <Resources/Mesh.hpp>
@@ -24,29 +24,29 @@ namespace Poly
 			//RTTI_PROPERTY_AUTONAME(SubMeshes, RTTI::ePropertyFlag::NONE);
 		}
 	public:
-		class ENGINE_DLLEXPORT SubMesh : public BaseObject<>
+		class ENGINE_DLLEXPORT SubMesh : public ::pe::core::BaseObject<>
 		{
 		public:
 			struct ENGINE_DLLEXPORT Bone {
-				Bone(String name, Matrix boneFromModel) : name(name), boneFromModel(boneFromModel) {}
+				Bone(::pe::core::storage::String name, ::pe::core::math::Matrix boneFromModel) : name(name), boneFromModel(boneFromModel) {}
 
-				String name;
-				Matrix boneFromModel;
+				::pe::core::storage::String name;
+				::pe::core::math::Matrix boneFromModel;
 			};
 
-			SubMesh(const String& path, aiMesh* mesh, aiMaterial* material);
+			SubMesh(const ::pe::core::storage::String& path, aiMesh* mesh, aiMaterial* material);
 
 			void LoadGeometry(aiMesh* mesh);
 			void LoadBones(aiMesh* mesh);
-			TextureResource* LoadTexture(const aiMaterial* material, const String& path, const unsigned int aiType, const eTextureUsageType textureType);
+			TextureResource* LoadTexture(const aiMaterial* material, const ::pe::core::storage::String& path, const unsigned int aiType, const eTextureUsageType textureType);
 
 			const Mesh& GetMeshData() const { return MeshData; }
 			const IMeshDeviceProxy* GetMeshProxy() const { return MeshProxy.get(); }
-			const AABox& GetAABox() const { return AxisAlignedBoundingBox; }
+			const ::pe::core::math::AABox& GetAABox() const { return AxisAlignedBoundingBox; }
 			std::vector<Bone> GetBones() const { return Bones; }
 		private:
 			std::vector<Bone> Bones;
-			AABox AxisAlignedBoundingBox;
+			::pe::core::math::AABox AxisAlignedBoundingBox;
 			Mesh MeshData;
 			std::unique_ptr<IMeshDeviceProxy> MeshProxy;
 		};
@@ -63,61 +63,61 @@ namespace Poly
 					float Time;
 				};
 
-				String Name;
-				std::vector<KeyValue<Vector>> Positions;
-				std::vector<KeyValue<Quaternion>> Rotations;
-				std::vector<KeyValue<Vector>> Scales;
+				::pe::core::storage::String Name;
+				std::vector<KeyValue<::pe::core::math::Vector>> Positions;
+				std::vector<KeyValue<::pe::core::math::Quaternion>> Rotations;
+				std::vector<KeyValue<::pe::core::math::Vector>> Scales;
 			};
 
 			struct ChannelLerpData
 			{
-				std::optional<Channel::KeyValue<Vector>> pos[2];
-				std::optional<Channel::KeyValue<Vector>> scale[2];
-				std::optional<Channel::KeyValue<Quaternion>> rot[2];
+				std::optional<Channel::KeyValue<::pe::core::math::Vector>> pos[2];
+				std::optional<Channel::KeyValue<::pe::core::math::Vector>> scale[2];
+				std::optional<Channel::KeyValue<::pe::core::math::Quaternion>> rot[2];
 			};
 
-			ChannelLerpData GetLerpData(String channel, float time) const;
+			ChannelLerpData GetLerpData(::pe::core::storage::String channel, float time) const;
 
-			String Name;
+			::pe::core::storage::String Name;
 			float Duration;
 			float TicksPerSecond;
-			std::map<String, Channel> channels;
+			std::map<::pe::core::storage::String, Channel> channels;
 		};
 
 		struct ENGINE_DLLEXPORT Bone {
-			Bone(String name) : name(name) {}
+			Bone(::pe::core::storage::String name) : name(name) {}
 
-			String name;
-			Matrix prevBoneFromBone;
-			Matrix boneFromModel;
+			::pe::core::storage::String name;
+			::pe::core::math::Matrix prevBoneFromBone;
+			::pe::core::math::Matrix boneFromModel;
 			std::optional<size_t> parentBoneIdx = {};
 			std::vector<size_t> childrenIdx;
 		};
 
-		MeshResource(const String& path);
+		MeshResource(const ::pe::core::storage::String& path);
 		virtual ~MeshResource();
 
 
 		const std::vector<SubMesh*>& GetSubMeshes() const { return SubMeshes; }
-		const Animation* GetAnimation(const String& name) const
+		const Animation* GetAnimation(const ::pe::core::storage::String& name) const
 		{
 			auto it = Animations.find(name);
 			if (it == Animations.end())
 				return nullptr;
 			return it->second;
 		}
-		const AABox& GetAABox() const { return AxisAlignedBoundingBox; }
+		const ::pe::core::math::AABox& GetAABox() const { return AxisAlignedBoundingBox; }
 		const std::vector<Bone>& GetBones() const { return Bones; }
 
-		const Matrix& GetModelFromSkeletonRoot() const { return ModelFromSkeletonRoot; }
+		const ::pe::core::math::Matrix& GetModelFromSkeletonRoot() const { return ModelFromSkeletonRoot; }
 	private:
 		void LoadBones(aiNode* node);
-		void PopulateBoneReferences(const std::map<String, size_t>& nameToBoneIdx, aiNode* node, const Matrix& localTransform);
+		void PopulateBoneReferences(const std::map<::pe::core::storage::String, size_t>& nameToBoneIdx, aiNode* node, const ::pe::core::math::Matrix& localTransform);
 
-		Matrix ModelFromSkeletonRoot;
+		::pe::core::math::Matrix ModelFromSkeletonRoot;
 		std::vector<Bone> Bones;
-		std::map<String, Animation*> Animations;
+		std::map<::pe::core::storage::String, Animation*> Animations;
 		std::vector<SubMesh*> SubMeshes;
-		AABox AxisAlignedBoundingBox;
+		::pe::core::math::AABox AxisAlignedBoundingBox;
 	};
 }

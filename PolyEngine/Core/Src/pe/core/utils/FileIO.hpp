@@ -1,0 +1,112 @@
+#pragma once
+
+#include <pe/Defines.hpp>
+#include <pe/core/storage/String.hpp>
+#include <pe/core/memory/BinaryBuffer.hpp>
+#include <pe/core/memory/Allocator.hpp>
+
+namespace pe::core::utils {
+
+	//TODO add creation of folders if necessary
+
+#if defined(__GNUC__) || defined(__clang__)
+	inline int fopen_s(FILE *__restrict__ *__restrict__ streamptr, const char *__restrict__ filename, const char *__restrict__ mode) {
+		FILE* f = fopen(filename, mode);
+		*streamptr = f;
+		return f == nullptr ? errno : 0;
+	}
+#endif
+
+	//------------------------------------------------------------------------------
+	SILENCE_MSVC_WARNING(4275, "Exporting stl may cause incompatibility. We use same CRT so it's ok.")
+	class FileIOException : public BaseObject<>, public std::exception
+	{
+	public:
+		FileIOException(const storage::String& msg) : Msg(msg) {}
+		const char* what() const noexcept override { return Msg.GetCStr(); }
+	protected:
+		storage::String Msg;
+	};
+	UNSILENCE_MSVC_WARNING()
+
+	//------------------------------------------------------------------------------
+	inline storage::String LoadTextFile(const storage::String& path)
+	{
+		FILE *f;
+		fopen_s(&f, path.GetCStr(), "rb");
+		if (f)
+		{
+			fseek(f, 0, SEEK_END);
+			long fsize = ftell(f);
+			fseek(f, 0, SEEK_SET);  //same as rewind(f);
+
+			char* chars = memory::AllocateSlab(fsize + 1);
+
+			fread(chars, fsize, 1, f); //todo: would be nice if we could read directly into the storage::String
+			fclose(f);
+			chars[fsize] = '\0';
+
+			storage::String retString(chars);
+			memory::Deallocate(chars);
+
+			return retString;
+		}
+		else
+		{
+			throw FileIOException("File open failed!");
+		}
+	}
+
+	//------------------------------------------------------------------------------
+	inline void SaveTextFile(const storage::String& path, const storage::String& data)
+	{
+		FILE *f;
+		fopen_s(&f, path.GetCStr(), "w");
+		if (f)
+		{
+			fprintf(f, "%s", data.GetCStr());
+			fclose(f);
+		}
+		else
+		{
+			throw FileIOException("File save failed");
+		}
+	}
+
+	//------------------------------------------------------------------------------
+	inline bool FileExists(const storage::String& path)
+	{
+		FILE *f;
+		fopen_s(&f, path.GetCStr(), "r");
+		if (f)
+		{
+			fclose(f);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	//------------------------------------------------------------------------------
+	inline memory::BinaryBuffer* LoadBinaryFile(const storage::String& path)
+	{
+		FILE* f;
+		fopen_s(&f, path.GetCStr(), "rb");
+		if (f)
+		{
+			fseek(f, 0, SEEK_END);
+			long fsize = ftell(f);
+			fseek(f, 0, SEEK_SET);
+
+			memory::BinaryBuffer* data = new memory::BinaryBuffer(fsize);
+			fread(data->GetData(), fsize, 1, f);
+			fclose(f);
+
+			return data;
+		}
+		else
+			throw FileIOException(path);
+	}
+}
