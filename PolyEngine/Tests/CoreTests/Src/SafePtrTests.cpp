@@ -6,20 +6,16 @@
 #include <pe/core/memory/SafePtr.hpp>
 
 
-
-namespace Poly
+class Test : public ::pe::core::memory::SafePtrRoot
 {
-	class Test : public ::pe::core::memory::SafePtrRoot
+public:
+	Test(int a)
 	{
-	public:
-		Test(int a)
-		{
-			Debug = a;
-		}
+		Debug = a;
+	}
 
-		int Debug;
-	};
-}
+	int Debug;
+};
 
 TEST_CASE("Registering and comparing pointers", "[SafePtr]") {
 	Test obj1 = Test(1);

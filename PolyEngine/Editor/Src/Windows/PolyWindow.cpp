@@ -24,7 +24,7 @@ void PolyWindow::AddDockWindow(Qt::DockWidgetArea area, PolyDockWindow* wnd, boo
 
 void PolyWindow::RemoveDockWindow(PolyDockWindow* wnd)
 {
-	std::remove(DockWindows.begin(), DockWindows.end(), wnd);
+	DISCARD std::remove(DockWindows.begin(), DockWindows.end(), wnd);
 	removeDockWidget(wnd);
 }
 
@@ -37,5 +37,5 @@ void PolyWindow::closeEvent(QCloseEvent* event)
 	for (auto wnd : windows)
 		gApp->Ui.MainWindow->AddDockWindow(Qt::DockWidgetArea::LeftDockWidgetArea, wnd);
 
-	std::remove(gApp->Ui.Windows.begin(), gApp->Ui.Windows.end(), this);
+	DISCARD std::remove(gApp->Ui.Windows.begin(), gApp->Ui.Windows.end(), this);
 }

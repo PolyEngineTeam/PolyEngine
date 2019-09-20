@@ -3,7 +3,7 @@
 
 #include <pe/core/rtti/RTTI.hpp>
 
-
+using namespace Poly;
 
 enum class eRTTITestEnum
 {
