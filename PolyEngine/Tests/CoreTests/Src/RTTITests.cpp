@@ -2,9 +2,8 @@
 #include <catch.hpp>
 
 #include <pe/core/rtti/RTTI.hpp>
-#include <Configs/DebugConfig.hpp>
 
-using namespace Poly;
+
 
 enum class eRTTITestEnum
 {

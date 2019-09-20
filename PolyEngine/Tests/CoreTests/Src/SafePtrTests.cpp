@@ -5,7 +5,7 @@
 #include <pe/core/memory/SafePtrRoot.hpp>
 #include <pe/core/memory/SafePtr.hpp>
 
-using namespace Poly;
+
 
 namespace Poly
 {

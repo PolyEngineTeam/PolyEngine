@@ -76,6 +76,8 @@ script:
   - cmake -D CMAKE_C_COMPILER=$CC -D CMAKE_CXX_COMPILER=$CXX ..
   - make
   - ls ${TRAVIS_BUILD_DIR}
-  - ${TRAVIS_BUILD_DIR}/PolyEngine/Dist/Debug/PolyUnitTests
+  - ${TRAVIS_BUILD_DIR}/PolyEngine/Dist/Debug/PolyCoreTests
+  - ${TRAVIS_BUILD_DIR}/PolyEngine/Dist/Debug/PolyAPITests
+  - ${TRAVIS_BUILD_DIR}/PolyEngine/Dist/Debug/PolyEngineTests
   - python3 ${TRAVIS_BUILD_DIR}/PolyEngine/Scripts/pe_tools.py run_tests
 

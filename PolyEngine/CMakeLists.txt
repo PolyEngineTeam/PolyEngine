@@ -14,7 +14,7 @@ include(${ENGINE_ROOT_DIR}/CMakeListsCommon.cmake)
 # Finally, meat and potatoes
 ##
 enable_testing()
-add_subdirectory(UnitTests)
+add_subdirectory(Tests)
 
 ##
 # Doxygen
