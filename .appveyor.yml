@@ -65,7 +65,7 @@ test_script:
   - "%PYTHON%\\python.exe C:\\projects\\PolyEngine\\PolyEngine\\Scripts\\pe_tools.py run_tests"
   #- .\PolyCoreTests.exe
   - .\PolyAPITests.exe 
-  #- .\PolyEngineTests.exe 
+  - .\PolyEngineTests.exe 
   
 notifications:
 - provider: Slack
