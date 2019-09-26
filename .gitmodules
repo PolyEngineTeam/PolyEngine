@@ -37,3 +37,6 @@
 [submodule "PolyEngine/ThirdParty/openal-soft"]
 	path = PolyEngine/ThirdParty/openal-soft
 	url = https://github.com/kcat/openal-soft
+[submodule "PolyEngine/ThirdParty/FakeIt"]
+	path = PolyEngine/ThirdParty/FakeIt
+	url = https://github.com/eranpeer/FakeIt

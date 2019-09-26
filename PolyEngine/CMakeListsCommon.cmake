@@ -221,15 +221,15 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	set(SIMD_FLAGS "") #doesn't seem we need them
 	if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
 		add_compile_options(/W3 /Zc:__cplusplus) #warning level 3 (includes lower levels), treat warnings as errors
-		add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:/Zi>) #debug symbols
+		add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:DebugFast>>:/ZI>) #debug symbols
 		add_compile_options($<$<CONFIG:Debug>:/Od>)
 		add_compile_options($<$<CONFIG:DebugFast>:/O1>)
 		add_compile_options($<$<OR:$<CONFIG:Testing>,$<CONFIG:Release>>:/Ox>) #max optimizations
 	else()
 		#NOTE(vuko): need to define those variables, otherwise CMake encounters internal errors
 		set(CMAKE_CXX_FLAGS  "/W3 /Zc:__cplusplus")
-		set(CMAKE_CXX_FLAGS_DEBUG "/Zi /Od")
-		set(CMAKE_CXX_FLAGS_DEBUGFAST "/Zi /O1")
+		set(CMAKE_CXX_FLAGS_DEBUG "/ZI /Od")
+		set(CMAKE_CXX_FLAGS_DEBUGFAST "/ZI /O1")
 		set(CMAKE_CXX_FLAGS_TESTING "/Ox")
 		set(CMAKE_CXX_FLAGS_RELEASE "/Ox")
 		set(CMAKE_SHARED_LINKER_FLAGS_DEBUGFAST "")

@@ -21,6 +21,11 @@ include(cmake-modules/bullet3.cmake)
 include(cmake-modules/catch2.cmake)
 
 ###
+# FakeIt include
+###
+include(cmake-modules/fakeit.cmake)
+
+###
 # freetype2
 ###
 include(cmake-modules/freetype2.cmake)

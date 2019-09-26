@@ -8,7 +8,7 @@ GenerateSourceGoups("${API_TESTS_SRCS}")                                        
 
 add_executable(${API_TESTS_TARGET} ${API_TESTS_SRCS})
 add_dependencies(${API_TESTS_TARGET} Prerequisites)
-target_link_libraries(${API_TESTS_TARGET} PRIVATE ${API_TARGET} Catch)
+target_link_libraries(${API_TESTS_TARGET} PRIVATE ${API_TARGET} Catch FakeIt)
 ParseAndAddCatchTests(${API_TESTS_TARGET})
 
 set_target_properties(${API_TESTS_TARGET} PROPERTIES FOLDER "Engine" )

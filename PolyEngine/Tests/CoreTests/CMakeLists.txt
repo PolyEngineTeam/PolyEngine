@@ -8,7 +8,7 @@ GenerateSourceGoups("${CORE_TESTS_SRCS}")                                       
 
 add_executable(${CORE_TESTS_TARGET} ${CORE_TESTS_SRCS})
 add_dependencies(${CORE_TESTS_TARGET} Prerequisites)
-target_link_libraries(${CORE_TESTS_TARGET} PRIVATE ${CORE_TARGET} Catch)
+target_link_libraries(${CORE_TESTS_TARGET} PRIVATE ${CORE_TARGET} Catch FakeIt)
 ParseAndAddCatchTests(${CORE_TESTS_TARGET})
 
 set_target_properties(${CORE_TESTS_TARGET} PROPERTIES FOLDER "Engine" )
