@@ -41,7 +41,7 @@ std::optional<std::vector<::pe::core::math::Vector>> CalculateNewPath(const NavG
 
 	AllNodes.push_back(PathNode(startNode, 0, graph->GetHeuristicCost(startNode, destNode) ));
 	openList.Push(std::make_pair(AllNodes.size() - 1, graph->GetHeuristicCost(startNode, destNode)));
-	minCosts.insert({startNode, 0.f});
+	minCosts.emplace(std::make_pair(startNode, 0.f));
 
 	i64 bestNodeIdx = -1;
 	std::vector<const NavNode*> connections(8);
