@@ -1,5 +1,6 @@
 #pragma once
 #include <any>
+#include <functional>
 #include <typeindex>
 #include <vector>
 #include <memory>
@@ -7,7 +8,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-namespace Poly
+namespace pe::core::rtti
 {
     constexpr auto List = [](auto ...xs) {
         return [=](auto access) { return access(xs...); };
@@ -67,8 +68,8 @@ namespace Poly
             using container = T;
             static void add(AttrMap& m, T x)
             {
-				if (!m.try_emplace(typeid(T), x).second) {}
-                    //throw std::runtime_error("inserting second UniqueAttribute");
+				if (!m.try_emplace(typeid(T), x).second)
+					throw std::runtime_error("inserting second UniqueAttribute");
             }
         };
 

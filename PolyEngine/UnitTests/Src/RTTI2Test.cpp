@@ -1,10 +1,10 @@
-#include <Defines.hpp>
+//#include <pe/Defines.hpp>
 #include <catch.hpp>
-#include <RTTI/RTTI2.hpp>
+#include <pe/core/rtti/RTTI2.hpp>
 
-using namespace Poly;
+using namespace pe::core::rtti;
 
-struct TestAttr {} testAttr;
+struct TestAttr {} constexpr testAttr;
 
 struct TestClass : public virtual RTTI2::RTTIBase {
 	TestClass() : RTTI2::RTTIBase(RTTI2::TypeManager::get().registerOrGetType<TestClass>()) {}
@@ -25,7 +25,7 @@ TEST_CASE("RTTI2 simple attribute", "[RTTI2]") {
 	CHECK(std::string("testname") == x->name);
 }
 
-struct TestAttrUniq {} testAttrUniq;
+struct TestAttrUniq {} constexpr testAttrUniq;
 template <> struct RTTI2::AttrType<TestAttrUniq> {
 	using type = RTTI2::UniqueAttribute<TestAttrUniq>;
 };
@@ -36,11 +36,9 @@ template <> struct RTTI2::RTTIinfo<TestClass2> {
 	constexpr static auto info = List(testAttrUniq, testAttrUniq);
 };
 
-TEST_CASE("RTTI2 uniq attribute", "[RTTI2]") {
-	bool except = false;
-	try { TestClass2{}; }
-	catch (std::runtime_error) { except = true; }
-	CHECK(except);
+TEST_CASE("RTTI2 uniq attribute", "[RTTI2]")
+{
+	REQUIRE_THROWS(TestClass2{});
 }
 
 struct TestAttrBase { const char* foo; };
