@@ -22,6 +22,7 @@ x86/
 bld/
 [Bb]in/
 [Dd]ist/
+[Dd]ist*/
 [Oo]bj/
 [Ll]og/
 [Bb]uild/

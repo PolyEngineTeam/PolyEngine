@@ -31,9 +31,6 @@ set(CORE_TARGET PolyCore)
 set(ENGINE_TARGET PolyEngine)
 set(GLDEVICE_TARGET PolyRenderingDeviceGL)
 set(EDITOR_TARGET PolyEditor)
-set(CORE_TESTS_TARGET PolyCoreTests)
-set(ENGINE_TESTS_TARGET PolyEngineTests)
-set(API_TESTS_TARGET PolyAPITests)
 set(STANDALONE_TARGET PolyStandalone)
 set(API_TARGET PolyAPI)
 
@@ -320,6 +317,20 @@ macro(GalogenGenerate LibName Api Ver)
 
 	target_include_directories(${LibName} PUBLIC ${OutputDir})
 	set_target_properties(${LibName} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${OutputDir} IMPORTED_LOCATION $<TARGET_FILE:${LibName}>)
+endmacro()
+
+###
+# Declare tests macro
+###
+macro(DeclareTests TestsTargetName TestedTarget Sources)
+	GenerateSourceGoups("${Sources}")                                                          #
+
+	add_executable(${TestsTargetName} "${Sources}")
+	add_dependencies(${TestsTargetName} Prerequisites)
+	target_link_libraries(${TestsTargetName} PRIVATE ${TestedTarget} Catch FakeIt)
+	ParseAndAddCatchTests(${TestsTargetName})
+
+	set_target_properties(${TestsTargetName} PROPERTIES FOLDER "Engine/Tests" )
 endmacro()
 
 ### Thirdparty
