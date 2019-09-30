@@ -85,14 +85,14 @@ namespace Poly
 		{
 			size_t id = ::Poly::GetComponentID<T>();
 			RTTI::TypeInfo typeinfo = RTTI::TypeInfo::Get<T>();
-			TypeToIDMap.insert({ typeinfo, id });
-			IDToTypeMap.insert({ id, typeinfo});
+			TypeToIDMap.emplace( typeinfo, id );
+			IDToTypeMap.emplace( id, typeinfo );
 			std::function<::pe::core::memory::IterablePoolAllocatorBase*(size_t)> allocator = [](size_t count)
 			{
 				return static_cast<::pe::core::memory::IterablePoolAllocatorBase*>(
 					new ::pe::core::memory::IterablePoolAllocator<T>(count));
 			};
-			IDToCreatorMap.insert({ id, allocator });
+			IDToCreatorMap.emplace( id, allocator );
 		}
 
 		std::optional<size_t> GetComponentID(const RTTI::TypeInfo& typeinfo) const;

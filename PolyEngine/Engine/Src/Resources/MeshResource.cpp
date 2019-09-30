@@ -46,7 +46,7 @@ MeshResource::MeshResource(const core::storage::String& path)
 	for (size_t i = 0; i < scene->mNumAnimations; ++i)
 	{
 		Animation* a = new Animation(scene->mAnimations[i]);
-		Animations.insert({ a->Name, a });
+		Animations.emplace( a->Name, a );
 	}
 
 	AxisAlignedBoundingBox = core::math::AABox(min, max - min);
@@ -90,7 +90,7 @@ void Poly::MeshResource::LoadBones(aiNode* node)
 	{
 		for (const MeshResource::SubMesh::Bone& bone : subMesh->GetBones())
 		{
-			boneNameToIdx.insert({ bone.name , Bones.size()});
+			boneNameToIdx.emplace( bone.name , Bones.size());
 			Bone b(bone.name);
 			b.boneFromModel = bone.boneFromModel;
 			Bones.push_back(b);
@@ -333,7 +333,7 @@ Poly::MeshResource::Animation::Animation(aiAnimation * anim)
 			c.Scales.push_back({ vector, (float)anim->mChannels[i]->mScalingKeys[j].mTime });
 		}
 		core::storage::String nameCpy = c.Name;
-		channels.insert({ nameCpy, std::move(c) });
+		channels.emplace( nameCpy, std::move(c) );
 	}
 }
 
