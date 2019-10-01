@@ -7,25 +7,26 @@
 #include <unordered_map>
 #include <algorithm>
 #include <stdexcept>
+#include <pe/Defines.hpp>
 
 namespace pe::core::rtti
 {
     constexpr auto List = [](auto ...xs) {
         return [=](auto access) { return access(xs...); };
     };
+	namespace impl {
+		template <typename F, typename X, typename ... XS>
+		void runList(F f, X x, XS... xs)
+		{
+			f(x);
+			runList(f, xs...);
+		}
 
-    template <typename F, typename X, typename ... XS>
-    void _runList(F f, X x, XS... xs)
-    {
-        f(x);
-        _runList(f, xs...);
-    }
-
-    template <typename F, typename X>
-        void _runList(F f, X x) { f(x); }
-
+		template <typename F, typename X>
+		void runList(F f, X x) { f(x); }
+	}
     constexpr auto runList = [](auto list, auto f) {
-        list([f](auto... xs){ _runList(f, xs...); });
+        list([f](auto... xs){ impl::runList(f, xs...); });
     };
     namespace RTTI2
     {
@@ -52,13 +53,13 @@ namespace pe::core::rtti
             using container = std::vector<std::shared_ptr<T>>;
             template <typename TT> static void add(AttrMap& m, TT x)
             {
-                static_assert(std::is_base_of<T,TT>::value, "invalid type");
+                STATIC_ASSERTE(std::is_base_of<T,TT>::value, "invalid type");
                 auto i = m.find(typeid(T));
                 if(i == m.end())
                     i = m.emplace(typeid(T), container{}).first;
 				std::any_cast<container>(&i->second)->emplace_back(std::shared_ptr<T>{
 					new TT{ x },
-						[](T* p) { delete static_cast<TT*>(p); }
+					[](T* p) { delete static_cast<TT*>(p); }
 				});
             }
         };
@@ -91,8 +92,8 @@ namespace pe::core::rtti
                 return instance;
             }
             template <typename T> const TypeInfo& registerOrGetType();
-            std::unordered_map<std::string, std::shared_ptr<TypeInfo>> byName;
-            std::unordered_map<std::type_index, std::shared_ptr<TypeInfo>> byId;
+            std::unordered_map<std::string, std::shared_ptr<TypeInfo>> nameToTypeInfo;
+            std::unordered_map<std::type_index, std::shared_ptr<TypeInfo>> idToTypeInfo;
 			TypeManager(const TypeManager& rhs) = delete;
 			TypeManager& operator=(const TypeManager& rhs) = delete;
             private:
@@ -149,8 +150,8 @@ namespace pe::core::rtti
         template <typename T> const TypeInfo& TypeManager::registerOrGetType()
         {
             const static TypeInfo& ti = [this](){
-                if(byId.count(typeid(T))) {
-                    TypeInfo& ti = *byId.at(typeid(T));
+                if(idToTypeInfo.count(typeid(T))) {
+                    TypeInfo& ti = *idToTypeInfo.at(typeid(T));
                     // not sure if this is possible to happen
                     if(ti.listId != std::type_index{typeid(RTTIinfo<T>::info)})
                         throw std::runtime_error("attempting to register list with different list");
@@ -161,16 +162,16 @@ namespace pe::core::rtti
                 //insert into byName only if name exists
                 runList(RTTIinfo<T>::info, [&, this](auto x) {
                     if constexpr (std::is_same<classname, decltype(x)>::value) {
-                        if(byName.count(x.name)) {
+                        if(nameToTypeInfo.count(x.name)) {
                             std::string s = "different class with name ";
                             s += x.name;
                             s += " is alredy registered";
                             throw std::runtime_error(s);
                         }
-                        byName.insert_or_assign(x.name, p);
+                        nameToTypeInfo.insert_or_assign(x.name, p);
                     }
                 });
-                byId.insert_or_assign(p->id, p);
+                idToTypeInfo.insert_or_assign(p->id, p);
 				return *p;
             }();
             return ti;
@@ -200,10 +201,5 @@ namespace pe::core::rtti
             template <typename T> bool isOfType() { return isDerivedOrSame<T>(typeInfo); }
 			~RTTIBase() {}
         };
-		
-		//for some reason this doesn't work, maybe someone will enlighten me why
-		template <typename T> struct RTTIBaseT : public virtual RTTIBase {
-			RTTIBaseT() : RTTIBase(TypeManager::get().registerOrGetType<T>()) {}
-		};
     }
 }
