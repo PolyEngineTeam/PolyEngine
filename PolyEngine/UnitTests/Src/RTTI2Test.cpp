@@ -15,12 +15,12 @@ template <> struct RTTI2::RTTIinfo<TestClass> {
 
 TEST_CASE("RTTI2 simple attribute", "[RTTI2]") {
 	TestClass tc{};
-	CHECK(tc.typeInfo.id != std::type_index{ typeid(void) });
-	auto ta = tc.typeInfo.get<TestAttr>();
+	CHECK(tc.typeInfo().id != std::type_index{ typeid(void) });
+	auto ta = tc.typeInfo().get<TestAttr>();
 	CHECK(ta);
 	CHECK(ta->size() == 2);
-	CHECK(tc.typeInfo.get<int>() == nullptr);
-	auto x = tc.typeInfo.get<RTTI2::classname>();
+	CHECK(tc.typeInfo().get<int>() == nullptr);
+	auto x = tc.typeInfo().get<RTTI2::classname>();
 	CHECK(x);
 	CHECK(std::string("testname") == x->name);
 }
@@ -66,11 +66,11 @@ template <> struct RTTI2::RTTIinfo<TestClassB> {
 
 TEST_CASE("RTTI2 derived", "[RTTI2]") {
 	TestClassA tca{};
-	auto attr = tca.typeInfo.get<TestAttrBase>();
+	auto attr = tca.typeInfo().get<TestAttrBase>();
 	CHECK(attr);
 	CHECK(std::string("foo") == attr->at(0)->foo);
 	TestClassB tcb{};
-	CHECK(tcb.typeInfo.bases[0].get().id == tca.typeInfo.id);
-	CHECK(RTTI2::isSame<TestClassA>(tca.typeInfo));
-	CHECK(RTTI2::isDerived<TestClassA>(tcb.typeInfo));
+	CHECK(tcb.typeInfo().bases[0].get().id == tca.typeInfo().id);
+	CHECK(RTTI2::isSame<TestClassA>(tca.typeInfo()));
+	CHECK(RTTI2::isDerived<TestClassA>(tcb.typeInfo()));
 }
