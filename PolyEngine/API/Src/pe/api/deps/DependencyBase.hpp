@@ -1,17 +1,27 @@
 #pragma once
 
 #include <pe/Defines.hpp>
-#include <pe/core/storage/String.hpp>
+#include <pe/api/deps/IDependency.hpp>
+#include <pe/api/deps/DependencyManager.hpp>
+
 
 namespace pe::api::deps {
 
-class API_DLLEXPORT DependencyBase : public ::pe::core::BaseObject<>
+template<typename T>
+class DependencyBase : public IDependency
 {   
 public:
-    DependencyBase();
-    virtual ~DependencyBase();
+    DependencyBase()
+    {
+        DependencyManager::get().registerDependency(this);
+    }
 
-    virtual std::type_index getType() const = 0;
+    virtual ~DependencyBase()
+    {
+        DependencyManager::get().unregisterDependency(this);
+    }
+
+	std::type_index getType() const override { return typeid(T); }
 };
 
 }

@@ -14,12 +14,12 @@ public:
     DependencyPtr() { DependencyManager::get().registerDependencyPtr(this); }
     ~DependencyPtr() { DependencyManager::get().unregisterDependencyPtr(this); }
 
-    virtual DependencyBase* getMutable() const
+    virtual IDependency* getMutable() const
     { 
         STATIC_ASSERTE(!std::is_const<T>::value, "Cannot cast const to mutable.");
         return m_ptr;
     }
-    virtual const DependencyBase* get() const { return m_ptr; }
+    virtual const IDependency* get() const { return m_ptr; }
 
     T& operator*() const noexcept { return m_ptr; }
     T* operator->() const noexcept { return m_ptr; }
@@ -35,13 +35,11 @@ public:
         return stream << "DependencyPtr[" << ptr.get() << "]";
     }
 protected:
-    virtual void inject(DependencyBase* dep)
+    virtual void inject(IDependency* dep)
     {
-        // @todo(muniu) consider switching to rtti_cast
-        // this is not a performance sensitive piece of code, so we may be ok with dynamic_cast
         ASSERTE(dep, "Cannot inject nullptr!");
-        m_ptr = dynamic_cast<T*>(dep);
-        ASSERTE(m_ptr, "Dependency injection failed while upcasting!");
+		ASSERTE(dep->getType() == getType(), "Invalid type!");
+        m_ptr = static_cast<T*>(dep);
     }
 
     virtual void reset() { m_ptr = nullptr; }

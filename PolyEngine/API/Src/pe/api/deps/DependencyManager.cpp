@@ -20,7 +20,7 @@ DependencyManager::~DependencyManager()
     
 }
 
-void DependencyManager::registerDependency(DependencyBase* dependency)
+void DependencyManager::registerDependency(IDependency* dependency)
 {
     ASSERTE(dependency, "Cannot register nullptr");
 	auto type = dependency->getType();
@@ -30,10 +30,11 @@ void DependencyManager::registerDependency(DependencyBase* dependency)
     InjectAll(dependency);
 }
 
-void DependencyManager::unregisterDependency(DependencyBase* dependency)
+void DependencyManager::unregisterDependency(IDependency* dependency)
 {
     ASSERTE(dependency, "Cannot unregister nullptr");
-    auto it = m_dependencyMap.find(dependency->getType());
+	auto type = dependency->getType();
+    auto it = m_dependencyMap.find(type);
     ASSERTE(it != m_dependencyMap.end(), "Cannot unregister non-registered dependency!");
     ASSERTE(it->second == dependency, "Cannot unregister different dependency!");
     m_dependencyMap.erase(it);
@@ -85,7 +86,7 @@ void DependencyManager::Reset(IDependencyPtr* ptr)
     ptr->reset();
 }
 
-void DependencyManager::InjectAll(DependencyBase* dependency)
+void DependencyManager::InjectAll(IDependency* dependency)
 {
     auto&& [it, end_it] = m_dependencyPtrMap.equal_range(dependency->getType());
     for(; it != end_it; ++it)

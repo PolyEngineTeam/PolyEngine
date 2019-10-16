@@ -3,13 +3,10 @@
 
 #include <pe/api/deps/DependencyManager.hpp>
 #include <pe/api/deps/DependencyPtr.hpp>
+#include <pe/api/deps/DependencyBase.hpp>
 
-class TestDependency : public pe::api::deps::DependencyBase
+struct TestDependency : public pe::api::deps::DependencyBase<TestDependency>
 {
-	std::type_index getType() const override
-	{
-		return typeid(TestDependency);
-	}
 };
 
 
