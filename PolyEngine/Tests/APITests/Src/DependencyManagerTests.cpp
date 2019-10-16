@@ -33,7 +33,7 @@ TEST_CASE("Reversed injection", "[DependencyPtr]")
 TEST_CASE("Cleanup", "[DependencyPtr]")
 {
 	pe::api::deps::DependencyPtr<TestDependency> ptr;
-	
+		
 	{
 		TestDependency dep;
 		CHECK(ptr == &dep);
