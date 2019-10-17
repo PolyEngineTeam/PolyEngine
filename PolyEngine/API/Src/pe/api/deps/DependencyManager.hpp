@@ -19,10 +19,10 @@ public:
 	void unregisterDependencyPtr(IDependencyPtr* ptr);
 
 private:
-	void Inject(IDependencyPtr* ptr);
-	void Reset(IDependencyPtr* ptr);
-	void InjectAll(IDependency* dependency);
-	void ResetAll(std::type_index dependencyType);
+	void inject(IDependencyPtr* ptr);
+	void reset(IDependencyPtr* ptr);
+	void injectAll(IDependency* dependency);
+	void resetAll(std::type_index dependencyType);
 
 	DependencyManager();
 	~DependencyManager();

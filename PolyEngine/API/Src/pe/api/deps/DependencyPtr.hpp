@@ -7,19 +7,31 @@
 
 namespace pe::api::deps {
 
+/// @brief Non-owning smart pointer that holds pointer to the dependency.
+/// Dependencies get injected into the instance of this class based on
+/// the type provided via template argument.
+/// @tparam T Type of the high-level interface of the held dependency instance.
 template <typename T>
 class DependencyPtr final : public IDependencyPtr
 {
 public:
+	/// Default and only constructor of DependencyPtr
+	/// It registers the pointer instance in the DependencyManager.
 	DependencyPtr() { DependencyManager::get().registerDependencyPtr(this); }
+
+	/// Destructor of DependencyPtr
+	/// It unregisters the pointer instance from the DependencyManager.
 	~DependencyPtr() { DependencyManager::get().unregisterDependencyPtr(this); }
 
-	virtual IDependency* getMutable() const
+	/// @see IDependencyPtr::getMutable()
+	IDependency* getMutable() const override
 	{ 
 		STATIC_ASSERTE(!std::is_const<T>::value, "Cannot cast const to mutable.");
 		return m_ptr;
 	}
-	virtual const IDependency* get() const { return m_ptr; }
+
+	/// @see IDependencyPtr::get()
+	const IDependency* get() const override { return m_ptr; }
 
 	T& operator*() const noexcept { return m_ptr; }
 	T* operator->() const noexcept { return m_ptr; }
@@ -35,7 +47,7 @@ public:
 		return stream << "DependencyPtr[" << ptr.get() << "]";
 	}
 protected:
-	virtual void inject(IDependency* dep)
+	void inject(IDependency* dep) override
 	{
 		ASSERTE(dep, "Cannot inject nullptr!");
 		ASSERTE(dep->getType() == getType(), "Invalid type!");
@@ -44,9 +56,8 @@ protected:
 		m_ptr = static_cast<T*>(dep);
 	}
 
-	virtual void reset() { m_ptr = nullptr; }
-
-	virtual std::type_index getType() const { return typeid(T); }
+	void reset() override { m_ptr = nullptr; }
+	std::type_index getType() const override { return typeid(T); }
 
 private:
 	// Not copyable object, must be managed by DependencyManager

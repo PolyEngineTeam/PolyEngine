@@ -7,6 +7,16 @@
 
 struct TestDependency : public pe::api::deps::DependencyBase<TestDependency>
 {
+	using Base = pe::api::deps::DependencyBase<TestDependency>;
+
+	TestDependency() : Base("TestDependency") {}
+};
+
+struct OtherTestDependency : public pe::api::deps::DependencyBase<OtherTestDependency>
+{
+	using Base = pe::api::deps::DependencyBase<OtherTestDependency>;
+
+	OtherTestDependency() : Base("OtherTestDependency") {}
 };
 
 
@@ -39,4 +49,23 @@ TEST_CASE("Cleanup", "[DependencyPtr]")
 		CHECK(ptr == &dep);
 	}
 	REQUIRE(ptr == nullptr);
+}
+
+TEST_CASE("Multi injection", "[DependencyPtr]")
+{
+	pe::api::deps::DependencyPtr<TestDependency> ptr1;
+	
+	TestDependency dep;
+	OtherTestDependency otherDep;
+
+	pe::api::deps::DependencyPtr<TestDependency> ptr2;
+	
+	pe::api::deps::DependencyPtr<OtherTestDependency> otherPtr1;
+	pe::api::deps::DependencyPtr<OtherTestDependency> otherPtr2;
+
+	REQUIRE(ptr1 == &dep);
+	REQUIRE(ptr2 == &dep);
+
+	REQUIRE(otherPtr1 == &otherDep);
+	REQUIRE(otherPtr2 == &otherDep);
 }
