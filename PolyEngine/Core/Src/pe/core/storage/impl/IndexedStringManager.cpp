@@ -11,14 +11,16 @@ IndexedStringManager& IndexedStringManager::get()
 
 const IndexedStringEntry* IndexedStringManager::registerString(const char* str)
 {
-	CString cstr(str);
 	IndexedStringEntry* ret = nullptr;
 
-	auto it = m_entries.find(cstr);
+	auto it = m_entries.find(CString(str));
 	if (it == m_entries.end())
 	{
 		auto entry = std::make_unique<IndexedStringEntry>(str);
 		ret = entry.get();
+		// We need to create a new cstring, which points to the string with the same lifetime as entry.
+		// Otherwise we could have some memory issues.
+		CString cstr(entry.get()->get().GetCStr());
 		m_entries.emplace(cstr, std::move(entry));
 	}
 	else
@@ -51,9 +53,7 @@ void IndexedStringManager::scheduleErase(const IndexedStringEntry* entry)
 
 void IndexedStringManager::erase(const IndexedStringEntry* entry)
 {
-	CString cstr(entry->get().GetCStr());
-
-	auto it = m_entries.find(cstr);
+	auto it = m_entries.find(CString(entry->get().GetCStr()));
 	ASSERTE(it != m_entries.end(), "Couldn't find indexed string entry for given string!");
 	m_entries.erase(it);
 }
