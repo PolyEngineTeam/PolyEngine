@@ -20,10 +20,9 @@ namespace impl
 class CORE_DLLEXPORT IndexedString final : public core::BaseObjectLiteralType<>
 {
 public:
-
 	/// @brief IndexedString constructor. Registers the string in the IndexedStringManager.
 	/// @param[in] str String to be represented by the IndexedString instance.
-	IndexedString(const char* str);
+	explicit IndexedString(const char* str);
 
 	/// @brief IndexedString destructor. Unregisters the string from the IndexedStringManager.
 	~IndexedString();
