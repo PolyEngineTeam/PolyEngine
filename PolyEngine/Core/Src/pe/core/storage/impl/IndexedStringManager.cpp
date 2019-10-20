@@ -16,6 +16,8 @@ const IndexedStringEntry* IndexedStringManager::registerString(const char* str)
 	auto it = m_entries.find(CString(str));
 	if (it == m_entries.end())
 	{
+		// @todo(muniu) There are two allocations happening here.
+		// Consider fixing it if the performace is affected by this.
 		auto entry = std::make_unique<IndexedStringEntry>(str);
 		ret = entry.get();
 		// We need to create a new cstring, which points to the string with the same lifetime as entry.
