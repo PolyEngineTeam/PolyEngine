@@ -27,9 +27,9 @@ void InputSystem::InputPhase(Scene* world)
 	}
 
 	InputQueue& InputEventsQueue = gEngine->GetInputQueue();
-	while (!InputEventsQueue.IsEmpty())
+	while (!InputEventsQueue.isEmpty())
 	{
-		InputEvent& ev = InputEventsQueue.Front();
+		InputEvent& ev = InputEventsQueue.front();
 		switch (ev.Type)
 		{
 		case eInputEventType::KEYDOWN:
@@ -106,9 +106,9 @@ void InputSystem::InputPhase(Scene* world)
 			com->Controllers.at(ev.JoystickID).CurrAxis[ev.ControllerAxis] = ev.AxisValue;
 			break;
 		case eInputEventType::_COUNT:
-			HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::Push(), which is an invalid value");
+			HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::push(), which is an invalid value");
 			break;
 		}
-		InputEventsQueue.PopFront();
+		InputEventsQueue.popFront();
 	}
 }

@@ -8,51 +8,135 @@ TEST_CASE("Queue tests", "[Queue]")
 	::pe::core::storage::Queue<int> q;
 	::pe::core::storage::Queue<int> r(q);
 
-	REQUIRE(q.IsEmpty() == true);
-	REQUIRE(r.IsEmpty() == true);
+	REQUIRE(q.isEmpty() == true);
+	REQUIRE(r.isEmpty() == true);
 
-	q.PushBack(5);
-	REQUIRE(q.IsEmpty() == false);
+	q.pushBack(5);
+	REQUIRE(q.isEmpty() == false);
 	::pe::core::storage::Queue<int> s(q);
 
-	REQUIRE(r.IsEmpty() == true);
-	REQUIRE(q.IsEmpty() == false);
-	REQUIRE(s.IsEmpty() == false);
-	REQUIRE(q.Back() == 5);
-	REQUIRE(s.Back() == 5);
-	REQUIRE(q.Front() == 5);
-	REQUIRE(s.Front() == 5);
+	REQUIRE(r.isEmpty() == true);
+	REQUIRE(q.isEmpty() == false);
+	REQUIRE(s.isEmpty() == false);
+	REQUIRE(q.back() == 5);
+	REQUIRE(s.back() == 5);
+	REQUIRE(q.front() == 5);
+	REQUIRE(s.front() == 5);
 
-	q.PushBack(8);
+	q.pushBack(8);
 	::pe::core::storage::Queue<int> t(q);
 
-	REQUIRE(t.IsEmpty() == false);
-	REQUIRE(q.Back() == 8);
-	REQUIRE(t.Back() == 8);
-	REQUIRE(s.Back() == 5);
-	REQUIRE(q.Front() == 5);
-	REQUIRE(t.Front() == 5);
-	REQUIRE(s.Front() == 5);
+	REQUIRE(t.isEmpty() == false);
+	REQUIRE(q.back() == 8);
+	REQUIRE(t.back() == 8);
+	REQUIRE(s.back() == 5);
+	REQUIRE(q.front() == 5);
+	REQUIRE(t.front() == 5);
+	REQUIRE(s.front() == 5);
 
-	q.PopBack();
-	q.PopBack();
-	REQUIRE(q.IsEmpty() == true);
+	q.popBack();
+	q.popBack();
+	REQUIRE(q.isEmpty() == true);
 
-	q.PushBack(1);
-	q.PushBack(2);
-	q.PushBack(3);
-	q.PushBack(4);
-	q.PushBack(5);
+	q.pushBack(1);
+	q.pushBack(2);
+	q.pushBack(3);
+	q.pushBack(4);
+	q.pushBack(5);
 
-	REQUIRE(q.Back() == 5);
-	REQUIRE(q.Front() == 1);
+	REQUIRE(q.back() == 5);
+	REQUIRE(q.front() == 1);
 
-	q.PopBack();
-	q.PopFront();
+	q.popBack();
+	q.popFront();
 
-	REQUIRE(q.Back() == 4);
-	REQUIRE(q.Front() == 2);
+	REQUIRE(q.back() == 4);
+	REQUIRE(q.front() == 2);
 
+}
+
+TEST_CASE("Queue tests for STL forward iterators", "[Queue]")
+{
+	::pe::core::storage::Queue<int> q;
+
+	q.pushBack(1);
+	q.pushBack(2);
+	q.pushBack(3);
+	q.pushBack(4);
+	q.pushBack(5);
+
+	size_t idx = 0;
+	for(auto& e : q)
+	{
+		++idx;
+		REQUIRE(e == idx);
+		if(idx == 2)
+			e = 20;
+	}
+
+	REQUIRE(idx == q.getSize());
+	REQUIRE(q.contains(20));
+
+	idx = 0;
+	for(auto e : q)
+	{
+		++idx;
+		e = -idx;
+		REQUIRE(!q.contains(e));
+	}
+
+	auto it = std::find(q.begin(), q.end(), 20);
+	REQUIRE(it != q.end());
+	*it = 30;
+	REQUIRE(q.contains(30));
+	*it = 2;
+	q.popBack();
+	q.popBack();
+	q.popFront();
+	q.popFront();
+	for(auto e : q)
+	{
+		REQUIRE(e == 3);
+	}
+	q.pushBack(4);
+	q.pushBack(5);
+	q.pushFront(2);
+	q.pushFront(1);
+	q.pushBack(6);
+	q.pushBack(7);
+	q.pushBack(8);
+	idx = 0;
+	for(auto& e : q)
+	{
+		++idx;
+		REQUIRE(e == idx);
+	}
+}
+
+TEST_CASE("Queue tests for STL reverse iterators", "[Queue]")
+{
+	::pe::core::storage::Queue<int> q;
+
+	q.pushBack(1);
+	q.pushBack(2);
+	q.pushBack(3);
+	q.pushBack(4);
+	q.pushBack(5);
+
+	size_t idx = q.getSize();
+	
+	for(auto it = q.rbegin(); it != q.rend(); ++it)
+	{
+		REQUIRE(*it == idx);
+		--idx;
+	}
+	REQUIRE(idx == 0);
+	q.popFront();
+	q.popFront();
+	q.popFront();
+	q.popBack();
+	for(auto it = q.rbegin(); it != q.rend(); ++it)
+		REQUIRE(*it == 4);
 }
 
 TEST_CASE("Queue tests (with BaseObject)", "[Queue]")
@@ -68,14 +152,14 @@ TEST_CASE("Queue tests (with BaseObject)", "[Queue]")
 	::pe::core::storage::Queue<Test> q;
 	::pe::core::storage::Queue<Test> r(q);
 
-	REQUIRE(q.IsEmpty() == true);
-	REQUIRE(r.IsEmpty() == true);
+	REQUIRE(q.isEmpty() == true);
+	REQUIRE(r.isEmpty() == true);
 
 	Test a = Test();
-	q.PushBack(a);
-	q.PushBack(a);
-	q.PushBack(a);
-	q.PushBack(Test());
-	q.PopBack();
+	q.pushBack(a);
+	q.pushBack(a);
+	q.pushBack(a);
+	q.pushBack(Test());
+	q.popBack();
 
 }
