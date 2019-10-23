@@ -208,6 +208,7 @@ namespace pe::core::storage
 
 			bool operator==(const Iterator& rhs) const { return idx == rhs.idx; }
 			bool operator!=(const Iterator& rhs) const { return idx != rhs.idx; }
+			Iterator& operator=(const Iterator& rhs) = default;
 
 			T& operator*() const { return ref.m_data.at(idx); }
 
@@ -365,10 +366,9 @@ namespace pe::core::storage
 		{
 			m_size = rhs.m_size;
 			m_capacity = rhs.m_capacity;
-			m_data = rhs.m_data;
+			m_data = std::move(rhs.m_data);
 			m_head = rhs.m_head;
 			m_tail = rhs.m_tail;
-			rhs.Data = nullptr;
 			rhs.m_size = 0;
 			rhs.m_capacity = 0;
 			rhs.m_head = 0;
