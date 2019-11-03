@@ -3,7 +3,7 @@
 
 #include <pe/core/storage/Queue.hpp>
 
-TEST_CASE("Queue basic tests", "[Queue]")
+TEST_CASE("Queue constructor and basic operations tests", "[Queue]")
 {
 	::pe::core::storage::Queue<int> q;
 	::pe::core::storage::Queue<int> r(q);
@@ -38,20 +38,19 @@ TEST_CASE("Queue basic tests", "[Queue]")
 	q.popBack();
 	REQUIRE(q.isEmpty() == true);
 
+	::pe::core::storage::Queue<int> u(std:move(q));
+	REQUIRE(u.isEmpty() == false);
+	REQUIRE(q.isEmpty() == true);
+}
+
+TEST_CASE("Queue assignment operator tests", "[Queue]"
+{
+	::pe::core::storage::Queue<int> q;
 	q.pushBack(1);
 	q.pushBack(2);
 	q.pushBack(3);
 	q.pushBack(4);
 	q.pushBack(5);
-
-	REQUIRE(q.back() == 5);
-	REQUIRE(q.front() == 1);
-
-	q.popBack();
-	q.popFront();
-
-	REQUIRE(q.back() == 4);
-	REQUIRE(q.front() == 2);
 
 	::pe::core::storage::Queue<int> u = q;
 	REQUIRE(u.back() == 4);
@@ -63,7 +62,10 @@ TEST_CASE("Queue basic tests", "[Queue]")
 	REQUIRE(u.isEmpty() == true);
 	v.clear();
 	REQUIRE(v.isEmpty() == true);
+}
 
+TEST_CASE("Queue initializer list tests", "[Queue]")
+{
 	::pe::core::storage::Queue<int> x = { 1, 2, 3 };
 	REQUIRE(x.getSize() == 3);
 	
