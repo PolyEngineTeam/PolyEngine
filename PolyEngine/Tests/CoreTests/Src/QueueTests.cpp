@@ -3,7 +3,7 @@
 
 #include <pe/core/storage/Queue.hpp>
 
-TEST_CASE("Queue tests", "[Queue]")
+TEST_CASE("Queue basic tests", "[Queue]")
 {
 	::pe::core::storage::Queue<int> q;
 	::pe::core::storage::Queue<int> r(q);
@@ -53,6 +53,32 @@ TEST_CASE("Queue tests", "[Queue]")
 	REQUIRE(q.back() == 4);
 	REQUIRE(q.front() == 2);
 
+	::pe::core::storage::Queue<int> u = q;
+	REQUIRE(u.back() == 4);
+	REQUIRE(u.front() == 2);
+
+	::pe::core::storage::Queue<int> v = std::move(u);
+	REQUIRE(v.back() == 4);
+	REQUIRE(v.front() == 2);
+	REQUIRE(u.isEmpty() == true);
+	v.clear();
+	REQUIRE(v.isEmpty() == true);
+
+	::pe::core::storage::Queue<int> x = { 1, 2, 3 };
+	REQUIRE(x.getSize() == 3);
+	
+	::pe::core::storage::Queue<int> z;
+	z = std::move(x);
+	REQUIRE(z.getSize() == 3);
+	REQUIRE(x.isEmpty() == true);
+
+	int i1 = z.popBack();
+	REQUIRE(i1 == 3);
+	int i2 = z.popFront();
+	REQUIRE(i2 == 1);
+	int i3 = z.popFront();
+	REQUIRE(i3 == 2);
+	REQUIRE(z.isEmpty() == true);
 }
 
 TEST_CASE("Queue tests for STL forward iterators", "[Queue]")
@@ -65,7 +91,7 @@ TEST_CASE("Queue tests for STL forward iterators", "[Queue]")
 	q.pushBack(4);
 	q.pushBack(5);
 
-	size_t idx = 0;
+	int idx = 0;
 	for(auto& e : q)
 	{
 		++idx;
@@ -114,6 +140,32 @@ TEST_CASE("Queue tests for STL forward iterators", "[Queue]")
 	}
 }
 
+TEST_CASE("Queue tests for STL const forward iterators", "[Queue]")
+{
+	::pe::core::storage::Queue<int> q;
+
+	q.pushBack(1);
+	q.pushBack(2);
+	q.pushBack(3);
+	q.pushBack(4);
+	q.pushBack(5);
+	
+	int idx = 1;
+	for(auto it = q.cbegin(); it != q.cend(); ++it)
+	{
+		REQUIRE(*it == idx);
+		++idx;
+	}
+
+	q.clear();
+	idx = 0;
+	for(auto it = q.cbegin(); it != q.cend(); ++it)
+	{
+		++idx;
+	}
+	REQUIRE(idx == 0);
+}
+
 TEST_CASE("Queue tests for STL reverse iterators", "[Queue]")
 {
 	::pe::core::storage::Queue<int> q;
@@ -138,6 +190,48 @@ TEST_CASE("Queue tests for STL reverse iterators", "[Queue]")
 	q.popBack();
 	for(auto it = q.rbegin(); it != q.rend(); ++it)
 		REQUIRE(*it == 4);
+
+	q.clear();
+	idx = 0;
+	for(auto it = q.rbegin(); it != q.rend(); ++it)
+	{
+		--idx;
+	}
+	REQUIRE(idx == 0);
+}
+
+TEST_CASE("Queue tests for STL const reverse iterators", "[Queue]")
+{
+	::pe::core::storage::Queue<int> q;
+
+	q.pushBack(1);
+	q.pushBack(2);
+	q.pushBack(3);
+	q.pushBack(4);
+	q.pushBack(5);
+	
+	int idx = q.getSize();
+	for(auto it = q.crbegin(); it != q.crend(); ++it)
+	{
+		REQUIRE(*it == idx);
+		--idx;
+	}
+
+	q.clear();
+	idx = 0;
+	for(auto it = q.crbegin(); it != q.crend(); ++it)
+	{
+		--idx;
+	}
+	REQUIRE(idx == 0);
+
+	q.pushBack(1);
+	idx = q.getSize();
+	for(auto it = q.crbegin(); it != q.crend(); ++it)
+	{
+		--idx;
+	}
+	REQUIRE(idx == 0);
 }
 
 TEST_CASE("Queue tests (with BaseObject)", "[Queue]")
@@ -162,5 +256,4 @@ TEST_CASE("Queue tests (with BaseObject)", "[Queue]")
 	q.pushBack(a);
 	q.pushBack(Test());
 	q.popBack();
-
 }

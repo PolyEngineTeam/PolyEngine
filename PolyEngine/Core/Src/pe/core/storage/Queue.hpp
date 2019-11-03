@@ -251,7 +251,6 @@ namespace pe::core::storage
 			ConstIterator(const Queue<T>* queue, size_t index) : q(queue), idx(index) {};
 			const Queue<T>* q;
 			size_t idx;
-
 		};
 
 		class ReverseIterator final : public BaseObjectLiteralType<>
@@ -324,9 +323,9 @@ namespace pe::core::storage
 		Iterator end() { return Iterator(this, m_tail); }
 		ConstIterator cbegin() const { return ConstIterator(this, m_head); }
 		ConstIterator cend() const { return ConstIterator(this, m_tail); }
-		ReverseIterator rbegin() { return ReverseIterator(this, m_tail - 1); }
+		ReverseIterator rbegin() { return ReverseIterator(this, m_tail ? m_tail - 1 : m_tail); }
 		ReverseIterator rend() { return ReverseIterator(this, m_tail); }
-		ConstReverseIterator crbegin() const { return ConstReverseIterator(this, m_tail - 1); }
+		ConstReverseIterator crbegin() const { return ConstReverseIterator(this, m_tail ? m_tail - 1 : m_tail); }
 		ConstReverseIterator crend() const { return ConstReverseIterator(this, m_tail); }
 
 	private:
