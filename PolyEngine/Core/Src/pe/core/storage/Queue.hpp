@@ -1,18 +1,19 @@
 #pragma once
 
 #include <pe/Defines.hpp>
+#include <pe/core/memory/Allocator.hpp>
 #include <pe/core/memory/ObjectLifetimeHelpers.hpp>
 
 namespace pe::core::storage
 {
 	/// <summary>
-	/// Queue is a container basing on type passed as argument
-	/// provides API that is very fast when instering/popping from back/front.
+	/// Queue is a vector based container thet allocates its memory in one, continous block and provides
+	/// API that is very fast when instering/popping from back/front.
 	/// <para>This should be the goto container for any queueing purposes, like FIFO or LIFO.
 	/// It does not provide API for insertion in any position.</para>
 	/// </summary>
-    template<class T>
-    class Queue : public BaseObject<>
+    template<typename T>
+    class Queue : public BaseObjectLiteralType<>
     {
     public:
         /// <summary>Base queue constructor that creates empty object with capacity == 0.</summary>
@@ -20,7 +21,7 @@ namespace pe::core::storage
 
         /// <summary>Creates queue instance with provided capacity.</summary>
 		/// <param name="capacity"></param>
-		explicit Queue(size_t capacity) { m_data.reserve(capacity); }
+		explicit Queue(size_t capacity) { reserve(capacity); }
 
 		/// <summary>Basic copy constructor</summary>
 		/// <param name="rhs">Reference to Queue instance which state should be copied.</param>
@@ -37,6 +38,8 @@ namespace pe::core::storage
 		/// <summary>Basic destructor.</summary>
 		~Queue()
 		{
+			clear();
+			free();
 		}
 
 		/// <summary>Basic copy operator</summary>
@@ -53,6 +56,7 @@ namespace pe::core::storage
 		Queue<T>& operator=(Queue<T>&& rhs)
 		{
 			clear();
+			free();
 			move(std::forward<Queue<T>>(rhs));
 			return *this;
 		}
@@ -77,18 +81,18 @@ namespace pe::core::storage
 				return false;
 
 			for (size_t n = 0; n < getSize(); ++n) // maybe just normal vector comparison for equality suffices?
-				if (m_data.at(getNthIdx(n)) != rhs.m_data.at(rhs.getNthIdx(n)))
+				if (m_data[getNthIdx(n)]!= rhs.m_data[rhs.getNthIdx(n)])
 					return false;
 
 			return true;
 		}
 
 		/// <summary>Not-equal comparison operator with other queue</summary>
-		/// @<returns>True when equal operator returns false, false otherwise.</returns>
+		/// <returns>True when equal operator returns false, false otherwise.</returns>
 		bool operator!=(const Queue<T>& rhs) const { return !(*this == rhs); };
 
-		/// <summary>Checks whether queue is empty</summary>
-		/// <returns>True if is empty, false otherwise.</returns>
+		/// <summary>Checks whether queue is empty</summa()y>
+		/// <returns>True if is empty, false otherwise.</()eturns>
 		bool isEmpty() const { return getSize() == 0; }
 
 		/// <summary>Returns current size of the queue</summary>
@@ -105,7 +109,8 @@ namespace pe::core::storage
 		/// <summary>Clears contents of the queue. </summary>
 		void clear()
 		{
-			m_data.clear();
+			for (size_t i = 0; i < m_size; ++i)
+				::pe::core::memory::ObjectLifetimeHelper::Destroy(m_data + getNthIdx(i));
 			m_size = 0;
 			m_head = 0;
 			m_tail = 0;
@@ -117,7 +122,7 @@ namespace pe::core::storage
 		{
 			if (getSize() >= getCapacity())
 				enlarge();
-			::pe::core::memory::ObjectLifetimeHelper::MoveCreate(m_data.data() + m_tail, std::move(obj));
+			::pe::core::memory::ObjectLifetimeHelper::MoveCreate(m_data + m_tail, std::move(obj));
 			advanceIdx(m_tail);
 			m_size++;
 		}
@@ -129,7 +134,7 @@ namespace pe::core::storage
 			if (getSize() >= getCapacity())
 				enlarge();
 			decreaseIdx(m_head);
-			::pe::core::memory::ObjectLifetimeHelper::MoveCreate(m_data.data() + m_head, std::move(obj));
+			::pe::core::memory::ObjectLifetimeHelper::MoveCreate(m_data + m_head, std::move(obj));
 			m_size++;
 		}
 
@@ -146,23 +151,28 @@ namespace pe::core::storage
 		}
 	*/
 		/// <summary>Performs removal from the back of the queue.</summary>
-		void popBack()
+		/// <returns>The last element in queue.</returns>
+		T popBack()
 		{
 			HEAVY_ASSERTE(!isEmpty(), "Trying to access empty queue!");
 			decreaseIdx(m_tail);
-			::pe::core::memory::ObjectLifetimeHelper::Destroy(m_data.data() + m_tail);
+			T val = m_data[m_tail];
+			::pe::core::memory::ObjectLifetimeHelper::Destroy(m_data + m_tail);
 			--m_size;
+			return val;	
 		}
 
 		/// <summary>Performs removal from the front of the queue.</summary>
-		void popFront()
+		/// <returns>The first element in queue.</returns>
+		T popFront()
 		{
 			HEAVY_ASSERTE(!isEmpty(), "Trying to access empty queue!");
-			::pe::core::memory::ObjectLifetimeHelper::Destroy(m_data.data() + m_head);
+			T val = m_data[m_head];
+			::pe::core::memory::ObjectLifetimeHelper::Destroy(m_data + m_head);
 			advanceIdx(m_head);
 			--m_size;
+			return val;
 		}
-
 
 		/// <summary>Returns reference to the first element in queue.</summary>
 		/// <returns>Reference to the first element in queue.</returns>
@@ -191,12 +201,7 @@ namespace pe::core::storage
 			realloc(capacity);
 		}
 
-		/// <summary>Checks whether provided object is present in the queue at least once.</summary>
-		/// <param name="rhs">Searched object.</param>
-		/// <returns>True if present, false otherwise.</returns>
-		bool contains(const T& rhs) const { return findIdx(rhs) < getSize(); }
-		
-		class Iterator : public BaseObject<>
+		class Iterator final : public BaseObjectLiteralType<>
 		{
 			friend class Queue<T>;
 		public:
@@ -208,21 +213,21 @@ namespace pe::core::storage
 
 			bool operator==(const Iterator& rhs) const { return idx == rhs.idx; }
 			bool operator!=(const Iterator& rhs) const { return idx != rhs.idx; }
-			Iterator& operator=(const Iterator& rhs) = default;
 
-			T& operator*() const { return ref.m_data.at(idx); }
+			T& operator*() const { return q->m_data[idx]; }
+			T* operator->() const { return &q->m_data[idx]; }
 
-			Iterator& operator++() { idx = ref.getNextIdx(idx); return *this; }
-			Iterator operator++(int) { Iterator ret(ref, idx); idx = ref.getNextIdx(idx); return ret; }
-			Iterator& operator--() { idx = ref.getNextIdx(idx); return *this; }
-			Iterator operator--(int) { Iterator ret(ref, idx); idx = ref.getNextIdx(idx); return ret; }
+			Iterator& operator++() { idx = q->getNextIdx(idx); return *this; }
+			Iterator operator++(int) { Iterator ret(q, idx); idx = q->getNextIdx(idx); return ret; }
+			Iterator& operator--() { idx = q->getPrevIdx(idx); return *this; }
+			Iterator operator--(int) { Iterator ret(q, idx); idx = q->getPrevIdx(idx); return ret; }
 		private:
-			Iterator(Queue<T>& queue, size_t index) : ref(queue), idx(index) {};
-			Queue<T>& ref;
+			Iterator(Queue<T>* queue, size_t index) : q(queue), idx(index) {};
+			Queue<T>* q;
 			size_t idx;
 		};
 
-		class ConstIterator : public BaseObject<>
+		class ConstIterator final : public BaseObjectLiteralType<>
 		{
 			friend class Queue<T>;
 		public:
@@ -235,20 +240,21 @@ namespace pe::core::storage
 			bool operator==(const ConstIterator& rhs) const { return idx == rhs.idx; }
 			bool operator!=(const ConstIterator& rhs) const { return idx != rhs.idx; }
 
-			const T& operator*() const { return ref.m_data.at(idx); }
+			const T& operator*() const { return q->m_data[idx]; }
+			const T* operator->() const { return &q->m_data[idx]; }
 
-			ConstIterator& operator++() { idx = ref.getNextIdx(idx); return *this; }
-			ConstIterator operator++(int) { ConstIterator ret(ref, idx); idx = ref.getNextIdx(idx); return ret; }
-			ConstIterator& operator--() { idx = ref.getNextIdx(idx); return *this; }
-			ConstIterator operator--(int) { ConstIterator ret(ref, idx); idx = ref.getNextIdx(idx); return ret; }
+			ConstIterator& operator++() { idx = q->getNextIdx(idx); return *this; }
+			ConstIterator operator++(int) { ConstIterator ret(q, idx); idx = q->getNextIdx(idx); return ret; }
+			ConstIterator& operator--() { idx = q->getPrevIdx(idx); return *this; }
+			ConstIterator operator--(int) { ConstIterator ret(q, idx); idx = q->getPrevIdx(idx); return ret; }
 		private:
-			ConstIterator(const Queue<T>& queue, size_t index) : ref(queue), idx(index) {};
-			const Queue<T>& ref;
+			ConstIterator(const Queue<T>* queue, size_t index) : q(queue), idx(index) {};
+			const Queue<T>* q;
 			size_t idx;
 
 		};
 
-		class ReverseIterator : public BaseObject<>
+		class ReverseIterator final : public BaseObjectLiteralType<>
 		{
 			friend class Queue<T>;
 		public:
@@ -261,26 +267,27 @@ namespace pe::core::storage
 			bool operator==(const ReverseIterator& rhs) const { return idx == rhs.idx; }
 			bool operator!=(const ReverseIterator& rhs) const { return idx != rhs.idx; }
 
-			T& operator*() const { return ref.m_data.at(idx); }
+			T& operator*() const { return q->m_data[idx]; }
+			T* operator->() const { return &q->m_data[idx]; }
 
 			ReverseIterator& operator++() { increment(); return *this; }
-			ReverseIterator operator++(int) { ReverseIterator ret(ref, idx); increment(); return ret; }
-			ReverseIterator& operator--() { idx = ref.getPrevIdx(idx); return *this; }
-			ReverseIterator operator--(int) { ReverseIterator ret(ref, idx); idx = ref.getPrevIdx(idx); return ret; }
+			ReverseIterator operator++(int) { ReverseIterator ret(q, idx); increment(); return ret; }
+			ReverseIterator& operator--() { idx = q->getNextIdx(idx); return *this; }
+			ReverseIterator operator--(int) { ReverseIterator ret(q, idx); idx = q->getNextIdx(idx); return ret; }
 		private:
-			ReverseIterator(Queue<T>& queue, size_t index) : ref(queue), idx(index) {};
+			ReverseIterator(Queue<T>* queue, size_t index) : q(queue), idx(index) {};
 			void increment()
 			{
-				if(idx == ref.m_head)
-					idx = ref.m_tail;
+				if(idx == q->m_head)
+					idx = q->m_tail;
 				else 
-					idx = ref.getPrevIdx(idx);
+					idx = q->getPrevIdx(idx);
 			}
-			Queue<T>& ref;
+			Queue<T>* q;
 			size_t idx;
 		};
 
-		class ConstReverseIterator : public BaseObject<>
+		class ConstReverseIterator final : public BaseObjectLiteralType<>
 		{
 			friend class Queue<T>;
 		public:
@@ -288,77 +295,78 @@ namespace pe::core::storage
 			using value_type = T;
 			using difference_type = std::ptrdiff_t;
 			using pointer = T*;
-			using reference = T&;
+			using erence = T&;
 
 			bool operator==(const ConstReverseIterator& rhs) const { return idx == rhs.idx; }
 			bool operator!=(const ConstReverseIterator& rhs) const { return idx != rhs.idx; }
 
-			const T& operator*() const { return ref.m_data.at(idx); }
+			const T& operator*() const { return q->m_data[idx]; }
+			const T* operator->() const { return &q->m_data[idx]; }
 
 			ConstReverseIterator& operator++() { increment(); return *this; }
-			ConstReverseIterator operator++(int) { ConstReverseIterator ret(ref, idx); increment(); return ret; }
-			ConstReverseIterator& operator--() { idx = ref.getPrevIdx(idx); return *this; }
-			ConstReverseIterator operator--(int) { ConstReverseIterator ret(ref, idx); idx = ref.getPrevIdx(idx); return ret; }
+			ConstReverseIterator operator++(int) { ConstReverseIterator ret(q, idx); increment(); return ret; }
+			ConstReverseIterator& operator--() { idx = q->getNextIdx(idx); return *this; }
+			ConstReverseIterator operator--(int) { ConstReverseIterator ret(q, idx); idx = q->getNextIdx(idx); return ret; }
 		private:
-			ConstReverseIterator(const Queue<T>& queue, size_t index) : ref(queue), idx(index) {};
+			ConstReverseIterator(const Queue<T>* queue, size_t index) : q(queue), idx(index) {};
 			void increment()
 			{
-				if(idx == ref.m_head)
-					idx = ref.m_tail;
+				if(idx == q->m_head)
+					idx = q->m_tail;
 				else 
-					idx = ref.getPrevIdx(idx);
+					idx = q->getPrevIdx(idx);
 			}
-			const Queue<T>& ref;
+			const Queue<T>* q;
 			size_t idx;
 		};
 
-		Iterator begin() { return Iterator(*this, m_head); }
-		Iterator end() { return Iterator(*this, m_tail); }
-		ConstIterator cbegin() const { return ConstIterator(*this, m_head); }
-		ConstIterator cend() const { return ConstIterator(*this, m_tail); }
-		ReverseIterator rbegin() { return ReverseIterator(*this, m_tail - 1); }
-		ReverseIterator rend() { return ReverseIterator(*this, m_tail); }
-		ConstReverseIterator crbegin() const { return ConstReverseIterator(*this, m_tail - 1); }
-		ConstReverseIterator crend() const { return ConstReverseIterator(*this, m_tail); }
+		Iterator begin() { return Iterator(this, m_head); }
+		Iterator end() { return Iterator(this, m_tail); }
+		ConstIterator cbegin() const { return ConstIterator(this, m_head); }
+		ConstIterator cend() const { return ConstIterator(this, m_tail); }
+		ReverseIterator rbegin() { return ReverseIterator(this, m_tail - 1); }
+		ReverseIterator rend() { return ReverseIterator(this, m_tail); }
+		ConstReverseIterator crbegin() const { return ConstReverseIterator(this, m_tail - 1); }
+		ConstReverseIterator crend() const { return ConstReverseIterator(this, m_tail); }
 
 	private:
 		//------------------------------------------------------------------------------
-		size_t getPrevIdx(size_t idx) const { return (idx == 0) ? m_capacity - 1 : idx - 1; }
+		size_t getPrevIdx(size_t idx) const { return (m_capacity + idx - 1) % m_capacity; }
 		size_t getNextIdx(size_t idx) const { return (idx + 1) % m_capacity; }
 		void decreaseIdx(size_t& idx) const { idx = getPrevIdx(idx); }
 		void advanceIdx(size_t& idx) const { idx = getNextIdx(idx); }
 		size_t getNthIdx(size_t& n)	const { return (m_head + n) % m_capacity; }
-
-		//------------------------------------------------------------------------------
-		size_t findIdx(const T& rhs) const
-		{
-			for (size_t i = 0; i < m_size; ++i)
-				if (m_data.at(getNthIdx(i)) == rhs)
-					return getNthIdx(i);
-
-			return getSize();
-		}
-
+		
 		//------------------------------------------------------------------------------
 		void realloc(size_t capacity)
 		{
 			HEAVY_ASSERTE(m_size <= capacity, "Invalid resize capacity!");
-			m_data.resize(capacity);
+			T* newData = ::pe::core::memory::Allocate<T>(capacity);
 
+			// move all elements
+			for (size_t i = 0; i < m_size; ++i)
+			{
+				size_t oldIdx = getNthIdx(i);
+				::pe::core::memory::ObjectLifetimeHelper::MoveCreate(newData + i, std::move(m_data[oldIdx]));
+				::pe::core::memory::ObjectLifetimeHelper::Destroy(m_data + oldIdx);
+			}
+
+			::pe::core::memory::Deallocate(m_data);
+			m_data = newData;
 			m_capacity = capacity;
 			m_head = 0;
 			m_tail = m_size;
 		}
 
 		//------------------------------------------------------------------------------
+		void free() { if (m_data) ::pe::core::memory::Deallocate(m_data); }
+
+		//------------------------------------------------------------------------------
 		void copy(const Queue<T>& rhs)
 		{
 			reserve(rhs.getSize());
-			m_data = rhs.m_data;
-			m_size = rhs.m_size;
-			m_head = rhs.m_head;
-			m_tail = rhs.m_tail;
-			m_capacity = rhs.m_capacity;
+			for (size_t i = 0; i < rhs.m_size; ++i)
+				pushBack(rhs.m_data[rhs.getNthIdx(i)]);
 		}
 
 		//------------------------------------------------------------------------------
@@ -366,9 +374,10 @@ namespace pe::core::storage
 		{
 			m_size = rhs.m_size;
 			m_capacity = rhs.m_capacity;
-			m_data = std::move(rhs.m_data);
+			m_data = rhs.m_data;
 			m_head = rhs.m_head;
 			m_tail = rhs.m_tail;
+			rhs.m_data = nullptr;
 			rhs.m_size = 0;
 			rhs.m_capacity = 0;
 			rhs.m_head = 0;
@@ -390,9 +399,6 @@ namespace pe::core::storage
 		size_t m_tail = 0;
 		size_t m_size = 0;
 		size_t m_capacity = 0;
-		std::vector<T> m_data;
+		T* m_data = nullptr;
     };
-	
-	template<typename T> typename ::pe::core::storage::Queue<T>::Iterator begin(::pe::core::storage::Queue<T>& rhs) { return rhs.begin(); }
-	template<typename T> typename ::pe::core::storage::Queue<T>::Iterator end(::pe::core::storage::Queue<T>& rhs) { return rhs.end(); }
 }

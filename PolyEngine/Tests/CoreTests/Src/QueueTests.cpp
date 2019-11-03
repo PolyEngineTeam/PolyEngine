@@ -75,21 +75,22 @@ TEST_CASE("Queue tests for STL forward iterators", "[Queue]")
 	}
 
 	REQUIRE(idx == q.getSize());
-	REQUIRE(q.contains(20));
 
 	idx = 0;
 	for(auto e : q)
 	{
 		++idx;
 		e = -idx;
-		REQUIRE(!q.contains(e));
+		auto it = std::find(q.begin(), q.end(), e);
+		REQUIRE(it == q.end());
 	}
 
 	auto it = std::find(q.begin(), q.end(), 20);
 	REQUIRE(it != q.end());
 	*it = 30;
-	REQUIRE(q.contains(30));
-	*it = 2;
+	auto it2 = std::find(q.begin(), q.end(), 30);
+	REQUIRE(it2 != q.end());
+	*it2 = 2;
 	q.popBack();
 	q.popBack();
 	q.popFront();
