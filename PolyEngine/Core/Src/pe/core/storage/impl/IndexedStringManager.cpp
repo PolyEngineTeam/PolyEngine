@@ -13,7 +13,7 @@ const IndexedStringEntry* IndexedStringManager::registerString(const char* str)
 {
 	IndexedStringEntry* ret = nullptr;
 
-	auto it = m_entries.find(CString(str));
+	auto it = m_entries.find(str);
 	if (it == m_entries.end())
 	{
 		// @todo(muniu) There are two allocations happening here.
@@ -22,8 +22,8 @@ const IndexedStringEntry* IndexedStringManager::registerString(const char* str)
 		ret = entry.get();
 		// We need to create a new cstring, which points to the string with the same lifetime as entry.
 		// Otherwise we could have some memory issues.
-		CString cstr(entry.get()->get().GetCStr());
-		m_entries.emplace(cstr, std::move(entry));
+		std::string_view strView(entry.get()->get().GetCStr());
+		m_entries.emplace(strView, std::move(entry));
 	}
 	else
 	{
@@ -55,7 +55,7 @@ void IndexedStringManager::scheduleErase(const IndexedStringEntry* entry)
 
 void IndexedStringManager::erase(const IndexedStringEntry* entry)
 {
-	auto it = m_entries.find(CString(entry->get().GetCStr()));
+	auto it = m_entries.find(entry->get().GetCStr());
 	ASSERTE(it != m_entries.end(), "Couldn't find indexed string entry for given string!");
 	m_entries.erase(it);
 }

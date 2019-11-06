@@ -2,7 +2,6 @@
 
 #include <pe/Defines.hpp>
 #include <pe/core/storage/impl/IndexedStringEntry.hpp>
-#include <pe/core/storage/CString.hpp>
 
 namespace pe::core::storage::impl
 {
@@ -29,7 +28,7 @@ private:
 	void erase(const IndexedStringEntry* entry);
 	void scheduleErase(const IndexedStringEntry* entry);
 
-	std::unordered_map<CString, std::unique_ptr<IndexedStringEntry>> m_entries;
+	std::unordered_map<std::string_view, std::unique_ptr<IndexedStringEntry>> m_entries;
 	bool m_ttlEnabled = false;
 };
 
