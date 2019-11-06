@@ -3,6 +3,8 @@
 namespace pe::core::storage::impl
 {
 
+constexpr size_t TIME_TO_LIVE = 100;
+
 IndexedStringManager& IndexedStringManager::get()
 {
 	static IndexedStringManager instance;
@@ -20,7 +22,7 @@ const IndexedStringEntry* IndexedStringManager::registerString(const char* str)
 		// Consider fixing it if the performace is affected by this.
 		auto entry = std::make_unique<IndexedStringEntry>(str);
 		ret = entry.get();
-		// We need to create a new cstring, which points to the string with the same lifetime as entry.
+		// We need to create a new string_view, which points to the string with the same lifetime as entry.
 		// Otherwise we could have some memory issues.
 		std::string_view strView(entry.get()->get().GetCStr());
 		m_entries.emplace(strView, std::move(entry));
@@ -31,6 +33,7 @@ const IndexedStringEntry* IndexedStringManager::registerString(const char* str)
 	}
 	
 	ret->incrementRefCount();
+	ret->resetRemovalTimePoint();
 	return ret;
 }
 
@@ -49,8 +52,11 @@ void IndexedStringManager::unregisterString(const IndexedStringEntry* entry)
 
 void IndexedStringManager::scheduleErase(const IndexedStringEntry* entry)
 {
-	ASSERTE(false, "TTL not yet implemented!");
-	// @todo(muniu) implement
+	size_t removalTimePoint = m_tickCount + TIME_TO_LIVE;
+	HEAVY_ASSERTE(entry->getRemovalTimePoint().value_or(0) <= removalTimePoint,
+		"Cannot set removal time point to a previous one than already set!");
+	entry->setRemovalTimePoint(removalTimePoint);
+	m_ttlEntries.Push(TTLEntry{removalTimePoint, entry});
 }
 
 void IndexedStringManager::erase(const IndexedStringEntry* entry)
@@ -62,7 +68,17 @@ void IndexedStringManager::erase(const IndexedStringEntry* entry)
 
 void IndexedStringManager::setTTLMode(bool enabled)
 {
+	if(m_ttlEnabled && !enabled)
+	{
+		m_ttlEntries.Clear();
+	}
 	m_ttlEnabled = enabled;
+}
+
+bool IndexedStringManager::isRegistered(const char* str) const
+{
+	auto it = m_entries.find(str);
+	return it != m_entries.end();
 }
 
 void IndexedStringManager::tickTTL(size_t ttlTickCount)
@@ -70,8 +86,17 @@ void IndexedStringManager::tickTTL(size_t ttlTickCount)
 	if (!m_ttlEnabled)
 		return;
 
-	ASSERTE(false, "TTL not yet implemented!");
-	// @todo(muniu) implement
+	m_tickCount += ttlTickCount;
+
+	while(m_ttlEntries.GetSize() > 0 && m_ttlEntries.Head().m_scheduledTimePoint <= m_tickCount)
+	{
+		auto entry = m_ttlEntries.Pop().m_entry;
+		auto realRemovalTimePoint = entry->getRemovalTimePoint();
+		if (realRemovalTimePoint.value_or(m_tickCount+1) <= m_tickCount)
+		{
+			erase(entry);
+		}
+	}
 }
 
 }

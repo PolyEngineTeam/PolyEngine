@@ -18,10 +18,14 @@ public:
 
 	const String& get() const { return m_str; }
 	size_t getRefCount() const { return m_refCount; }
+
+	std::optional<size_t> getRemovalTimePoint() const { return m_removalTimepoint; }
+	void setRemovalTimePoint(size_t timePoint) const { m_removalTimepoint = timePoint; }
+	void resetRemovalTimePoint() const { m_removalTimepoint = {}; }
 private:
 	const String m_str;
 	mutable size_t m_refCount = 0;
-	std::optional<size_t> m_ttl;
+	mutable std::optional<size_t> m_removalTimepoint;
 };
 
 }
