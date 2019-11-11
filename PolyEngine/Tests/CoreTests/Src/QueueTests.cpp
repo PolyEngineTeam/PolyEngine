@@ -34,16 +34,12 @@ TEST_CASE("Queue constructor and basic operations tests", "[Queue]")
 	REQUIRE(t.front() == 5);
 	REQUIRE(s.front() == 5);
 
-	q.popBack();
-	q.popBack();
-	REQUIRE(q.isEmpty() == true);
-
-	::pe::core::storage::Queue<int> u(std:move(q));
+	::pe::core::storage::Queue<int> u(std::move(q));
 	REQUIRE(u.isEmpty() == false);
 	REQUIRE(q.isEmpty() == true);
 }
 
-TEST_CASE("Queue assignment operator tests", "[Queue]"
+TEST_CASE("Queue assignment operator tests", "[Queue]")
 {
 	::pe::core::storage::Queue<int> q;
 	q.pushBack(1);
@@ -53,12 +49,12 @@ TEST_CASE("Queue assignment operator tests", "[Queue]"
 	q.pushBack(5);
 
 	::pe::core::storage::Queue<int> u = q;
-	REQUIRE(u.back() == 4);
-	REQUIRE(u.front() == 2);
+	REQUIRE(u.back() == 5);
+	REQUIRE(u.front() == 1);
 
 	::pe::core::storage::Queue<int> v = std::move(u);
-	REQUIRE(v.back() == 4);
-	REQUIRE(v.front() == 2);
+	REQUIRE(v.back() == 5);
+	REQUIRE(v.front() == 1);
 	REQUIRE(u.isEmpty() == true);
 	v.clear();
 	REQUIRE(v.isEmpty() == true);
@@ -193,6 +189,9 @@ TEST_CASE("Queue tests for STL reverse iterators", "[Queue]")
 	for(auto it = q.rbegin(); it != q.rend(); ++it)
 		REQUIRE(*it == 4);
 
+	q.popBack();
+	REQUIRE(q.isEmpty() == true);
+
 	q.clear();
 	idx = 0;
 	for(auto it = q.rbegin(); it != q.rend(); ++it)
@@ -212,7 +211,7 @@ TEST_CASE("Queue tests for STL const reverse iterators", "[Queue]")
 	q.pushBack(4);
 	q.pushBack(5);
 	
-	int idx = q.getSize();
+	int idx = static_cast<int>(q.getSize());
 	for(auto it = q.crbegin(); it != q.crend(); ++it)
 	{
 		REQUIRE(*it == idx);
