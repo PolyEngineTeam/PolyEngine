@@ -235,6 +235,31 @@ TEST_CASE("Queue tests for STL const reverse iterators", "[Queue]")
 	REQUIRE(idx == 0);
 }
 
+TEST_CASE("Queue test for wrapping coherency", "[Queue]")
+{
+	::pe::core::storage::Queue<int> q;
+	q.reserve(6);
+	q.pushBack(5);
+	q.pushBack(4);
+	q.pushBack(3);
+	q.pushBack(2);
+	q.pushBack(1);
+	q.pushBack(0);
+	REQUIRE(q.getSize() == 6);
+
+	q.popFront();
+	q.popFront();
+
+	REQUIRE(q.getSize() == 4);
+	REQUIRE(q.front() == 3);
+	REQUIRE(q.back() == 0);
+
+	q.pushBack(10);
+	REQUIRE(q.getSize() == 5);
+	REQUIRE(q.front() == 3);
+	REQUIRE(q.back() == 10);
+}
+
 TEST_CASE("Queue tests (with BaseObject)", "[Queue]")
 {
 
