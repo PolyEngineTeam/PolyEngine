@@ -41,7 +41,6 @@
 #include <pe/core/storage/String.hpp>
 #include <pe/core/storage/StringBuilder.hpp>
 #include <pe/core/storage/Queue.hpp>
-#include <pe/core/storage/PriorityQueue.hpp>
 
 // Other
 #include <pe/core/math/Color.hpp>

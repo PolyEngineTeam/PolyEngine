@@ -17,7 +17,7 @@
 #include <Proxy/imgui_impl_opengl3.h>
 
 using namespace Poly;
-using MeshQueue = core::storage::PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
+using MeshQueue = std::priority_queue<const MeshRenderingComponent*,std::vector<const MeshRenderingComponent*>, SceneView::DistanceToCameraComparator>;
 
 void RenderTargetPingPong::Init(int width, int height)
 {
@@ -525,9 +525,10 @@ void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 	const core::math::Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	
 	MeshQueue drawOpaqueQueue(sceneView.OpaqueQueue);
-	while(drawOpaqueQueue.GetSize() > 0)
+	while(drawOpaqueQueue.size() > 0)
 	{
-		const MeshRenderingComponent* meshCmp = drawOpaqueQueue.Pop();
+		const MeshRenderingComponent* meshCmp = drawOpaqueQueue.top();
+		drawOpaqueQueue.pop();
 		const core::math::Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
 		static const core::storage::String uScreenFromModel("uScreenFromModel");
 		DepthShader.SetUniform(uScreenFromModel, clipFromWorld * worldFromModel);
@@ -690,10 +691,11 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 	const core::math::Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	
-	core::storage::PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator> drawOpaqueQueue(sceneView.OpaqueQueue);
-	while (drawOpaqueQueue.GetSize() > 0)
+	std::priority_queue<const MeshRenderingComponent*, std::vector<const MeshRenderingComponent*>, SceneView::DistanceToCameraComparator> drawOpaqueQueue(sceneView.OpaqueQueue);
+	while (drawOpaqueQueue.size() > 0)
 	{
-		const MeshRenderingComponent* meshCmp = drawOpaqueQueue.Pop();
+		const MeshRenderingComponent* meshCmp = drawOpaqueQueue.top();
+		drawOpaqueQueue.pop();
 		const SkeletalAnimationComponent* animCmp = meshCmp->GetSibling<SkeletalAnimationComponent>();
 
 		const EntityTransform& transform = meshCmp->GetTransform();
@@ -901,10 +903,11 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 	const core::math::Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	// for (const MeshRenderingComponent* meshCmp : sceneView.TranslucentQueue)
 	// {
-	core::storage::PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator> drawTranslucentQueue(sceneView.TranslucentQueue);
-	while (drawTranslucentQueue.GetSize() > 0)
+	std::priority_queue<const MeshRenderingComponent*, std::vector<const MeshRenderingComponent*>, SceneView::DistanceToCameraComparator> drawTranslucentQueue(sceneView.TranslucentQueue);
+	while (drawTranslucentQueue.size() > 0)
 	{
-		const MeshRenderingComponent* meshCmp = drawTranslucentQueue.Pop();
+		const MeshRenderingComponent* meshCmp = drawTranslucentQueue.top();
+		drawTranslucentQueue.pop();
 		const EntityTransform& transform = meshCmp->GetTransform();
 		const core::math::Matrix& worldFromModel = transform.GetWorldFromModel();
 		static const core::storage::String uClipFromModel("uClipFromModel");

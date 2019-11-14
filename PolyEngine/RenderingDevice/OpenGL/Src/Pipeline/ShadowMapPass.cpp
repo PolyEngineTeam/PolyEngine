@@ -5,7 +5,7 @@
 #include <IRendererInterface.hpp>
 
 using namespace Poly;
-using MeshQueue = core::storage::PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
+using MeshQueue = std::priority_queue<const MeshRenderingComponent*,std::vector<const MeshRenderingComponent*>, SceneView::DistanceToCameraComparator>;
 
 core::math::Matrix Poly::GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize)
 {
@@ -228,9 +228,10 @@ void ShadowMapPass::RenderPCF(const SceneView& sceneView)
 	ShadowMapShader.BindProgram();
 
 	MeshQueue dirShadowCasterQueue(sceneView.DirShadowCastersQueue);
-	while (dirShadowCasterQueue.GetSize() > 0)
+	while (dirShadowCasterQueue.size() > 0)
 	{
-		const MeshRenderingComponent* meshCmp = dirShadowCasterQueue.Pop();
+		const MeshRenderingComponent* meshCmp = dirShadowCasterQueue.top();
+		dirShadowCasterQueue.pop();
 		const core::math::Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
 		ShadowMapShader.SetUniform("uClipFromModel", orthoDirLightFromWorld * worldFromModel);
 
@@ -264,9 +265,10 @@ void ShadowMapPass::RenderEVSM(const SceneView& sceneView)
 	ShadowMapShader.BindProgram();
 
 	MeshQueue dirShadowCasterQueue(sceneView.DirShadowCastersQueue);
-	while (dirShadowCasterQueue.GetSize() > 0)
+	while (dirShadowCasterQueue.size() > 0)
 	{
-		const MeshRenderingComponent* meshCmp = dirShadowCasterQueue.Pop();
+		const MeshRenderingComponent* meshCmp = dirShadowCasterQueue.top();
+		dirShadowCasterQueue.pop();
 		const core::math::Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
 		ShadowMapShader.SetUniform("uClipFromModel", orthoDirLightFromWorld * worldFromModel);
 

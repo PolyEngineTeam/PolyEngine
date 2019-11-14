@@ -13,7 +13,10 @@ namespace pe::core::storage
 
 
 	template <typename T, typename Less = DefaultCmp<T>>
-	class PriorityQueue final : BaseObjectLiteralType<>
+	class 
+		
+		
+		final : BaseObjectLiteralType<>
 	{
 	public:
 		PriorityQueue(size_t prealocatedSize = 0) : Data(prealocatedSize) {}

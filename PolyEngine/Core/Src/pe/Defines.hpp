@@ -85,6 +85,7 @@
 #include <cstddef>
 #include <vector>
 #include <deque>
+#include <queue>
 #include <future>
 #include <optional>
 
