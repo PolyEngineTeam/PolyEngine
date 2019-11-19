@@ -373,7 +373,7 @@ namespace pe::core::storage
 		//------------------------------------------------------------------------------
 		void copy(const Queue<T>& rhs)
 		{
-			reserve(rhs.getCapacity());
+			reserve(rhs.getSize());
 			for (size_t i = 0; i < rhs.m_size; ++i)
 				pushBack(rhs.m_data[rhs.getNthIdx(i)]);
 		}

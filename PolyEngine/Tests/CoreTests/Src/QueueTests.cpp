@@ -64,6 +64,9 @@ TEST_CASE("Queue initializer list tests", "[Queue]")
 {
 	::pe::core::storage::Queue<int> x = { 1, 2, 3 };
 	REQUIRE(x.getSize() == 3);
+
+	::pe::core::storage::Queue<int> y { 1, 2, 3 };
+	REQUIRE(y.getSize() == 3);
 	
 	::pe::core::storage::Queue<int> z;
 	z = std::move(x);
@@ -77,6 +80,38 @@ TEST_CASE("Queue initializer list tests", "[Queue]")
 	int i3 = z.popFront();
 	REQUIRE(i3 == 2);
 	REQUIRE(z.isEmpty() == true);
+}
+
+TEST_CASE("Queue tests for equality operators", "[Queue")
+{
+	bool eval = false;
+	::pe::core::storage::Queue<int> q;
+	q.pushBack(1);
+	q.pushBack(2);
+	q.pushBack(3);
+	q.pushBack(4);
+	
+	::pe::core::storage::Queue<int> r;
+	r.pushBack(1);
+	r.pushBack(2);
+	r.pushBack(3);
+	r.pushBack(4);
+
+	eval = (q == r);
+	REQUIRE(eval == true);
+
+	r.pushBack(5);
+	eval = (q != r);
+	REQUIRE(eval == true);
+
+	q.pushBack(5);
+	eval = (q == r);
+	REQUIRE(eval == true);
+
+	q.pushFront(6);
+	r.pushBack(6);
+	eval = (q == r);
+	REQUIRE(eval == false);
 }
 
 TEST_CASE("Queue tests for STL forward iterators", "[Queue]")
@@ -136,6 +171,14 @@ TEST_CASE("Queue tests for STL forward iterators", "[Queue]")
 		++idx;
 		REQUIRE(e == idx);
 	}
+
+	idx = q.getSize();
+	for(auto it = std::prev(q.end()); it != q.begin(); --it)
+	{
+		REQUIRE(*it == idx);
+		--idx;
+	}
+	REQUIRE(idx == 1);
 }
 
 TEST_CASE("Queue tests for STL const forward iterators", "[Queue]")
@@ -162,6 +205,20 @@ TEST_CASE("Queue tests for STL const forward iterators", "[Queue]")
 		++idx;
 	}
 	REQUIRE(idx == 0);
+
+	q.pushBack(1);
+	q.pushBack(2);
+	q.pushBack(3);
+	q.pushBack(4);
+	q.pushBack(5);
+
+	idx = q.getSize();
+	for(auto it = std::prev(q.cend()); it != q.cbegin(); --it)
+	{
+		REQUIRE(*it == idx);
+		--idx;
+	}
+	REQUIRE(idx == 1);
 }
 
 TEST_CASE("Queue tests for STL reverse iterators", "[Queue]")
@@ -199,6 +256,20 @@ TEST_CASE("Queue tests for STL reverse iterators", "[Queue]")
 		--idx;
 	}
 	REQUIRE(idx == 0);
+
+	q.pushBack(1);
+	q.pushBack(2);
+	q.pushBack(3);
+	q.pushBack(4);
+	q.pushBack(5);
+
+	idx = 1;
+	for(auto it = std::prev(q.rend()); it != q.rbegin(); --it)
+	{
+		REQUIRE(*it == idx);
+		++idx;
+	}
+	REQUIRE(idx == q.getSize());
 }
 
 TEST_CASE("Queue tests for STL const reverse iterators", "[Queue]")
@@ -233,6 +304,21 @@ TEST_CASE("Queue tests for STL const reverse iterators", "[Queue]")
 		--idx;
 	}
 	REQUIRE(idx == 0);
+	q.clear();
+
+	q.pushBack(1);
+	q.pushBack(2);
+	q.pushBack(3);
+	q.pushBack(4);
+	q.pushBack(5);
+
+	idx = 1;
+	for(auto it = std::prev(q.crend()); it != q.crbegin(); --it)
+	{
+		REQUIRE(*it == idx);
+		++idx;
+	}
+	REQUIRE(idx == q.getSize());
 }
 
 TEST_CASE("Queue test for wrapping coherency", "[Queue]")
