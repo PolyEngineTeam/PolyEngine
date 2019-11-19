@@ -170,7 +170,7 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
 					const auto& vertWeight = bone->mWeights[j];
 					size_t vertId = vertWeight.mVertexId;
 					float weight = vertWeight.mWeight;
-					tmpBonesList[vertId].push({ boneId, weight });
+					tmpBonesList[vertId].emplace(std::pair<u8, float>( boneId, weight ));
 				}
 			}
 		}

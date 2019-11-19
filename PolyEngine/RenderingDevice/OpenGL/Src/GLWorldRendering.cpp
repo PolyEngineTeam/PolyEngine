@@ -82,18 +82,18 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 		{
 			if (meshCmp->GetBlendingMode() == eBlendingMode::OPAUQE)
 			{
-				sceneView.OpaqueQueue.push(meshCmp);
+				sceneView.OpaqueQueue.emplace(meshCmp);
 			}
 			else if (meshCmp->GetBlendingMode() == eBlendingMode::TRANSLUCENT)
 			{
-				sceneView.TranslucentQueue.push(meshCmp);
+				sceneView.TranslucentQueue.emplace(meshCmp);
 			}
 		}
 	}
 
 	for (const auto& [particleCmp] : sceneView.SceneData->IterateComponents<ParticleComponent>())
 	{
-		sceneView.ParticleQueue.push(particleCmp);
+		sceneView.ParticleQueue.emplace(particleCmp);
 	}
 
 	for (const auto& [dirLightCmp] : sceneView.SceneData->IterateComponents<DirectionalLightComponent>())
@@ -243,7 +243,7 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const core::math
 	{
 		if (frustumAABBInLS.Contains(box))
 		{
-			shadowCasterQueue.push(meshCmp);
+			shadowCasterQueue.emplace(meshCmp);
 
 			if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawShadowCastersBounds)
 				DebugDrawSystem::DrawBox(scene, box.GetMin(), box.GetMax(), worldFromDirLight, core::math::Color::GREEN);
