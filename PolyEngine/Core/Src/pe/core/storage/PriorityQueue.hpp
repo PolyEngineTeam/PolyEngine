@@ -16,8 +16,8 @@ namespace pe::core::storage
 	class PriorityQueue final : BaseObjectLiteralType<>
 	{
 	public:
-		PriorityQueue(size_t prealocatedSize = 0) : Data(prealocatedSize) {}
-		PriorityQueue(Less lessCmp, size_t prealocatedSize = 0) : LessCmp(std::move(lessCmp)), Data(prealocatedSize) {}
+		PriorityQueue(size_t prealocatedSize = 0) { Data.reserve(prealocatedSize); }
+		PriorityQueue(Less lessCmp, size_t prealocatedSize = 0) : LessCmp(std::move(lessCmp)) { Data.reserve(prealocatedSize);}
 		PriorityQueue(std::vector<T> data) : Data(std::move(data))
 		{
 			for (size_t idx = Data.size() / 2; idx > 0; --idx)
@@ -41,9 +41,11 @@ namespace pe::core::storage
 			return tmp;
 		}
 
+		void Clear() { Data.clear(); }
+
 		const T& Head() const { return Data[0]; }
 		size_t GetSize() const { return Data.size(); }
-		void Reserve(size_t size) { Data.Reserve(size); }
+		void Reserve(size_t size) { Data.reserve(size); }
 	private:
 		void SiftUp(size_t idx)
 		{
