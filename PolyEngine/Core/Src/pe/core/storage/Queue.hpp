@@ -29,7 +29,7 @@ namespace pe::core::storage
 
 		/// <summary>Basic move constructor</summary>
 		/// <param name="rhs">R-value reference to Queue instance which state should be moved.</param>
-		Queue(Queue<T>&& rhs) { move(std::forward<Queue<T>>(rhs)); }
+		Queue(Queue<T>&& rhs) { move(std::move(rhs)); }
 		
 		/// <summary>Creates queue instance from initializer list.</summary>
 		/// <param name="list"></param>
@@ -317,33 +317,29 @@ namespace pe::core::storage
 	private:
 		//------------------------------------------------------------------------------
 		size_t getPrevIdx(size_t idx) const
-		{ 
+		{
+			// PhysicalSize takes guard cell into account
 			const size_t physicalSize = m_size + 1;
-			idx -= m_head;
-			idx = (idx + physicalSize - 1) % physicalSize;
+			idx = (idx + physicalSize - 1 - m_head) % physicalSize;
 			return idx + m_head;
 		}
 		
 		size_t getNextIdx(size_t idx) const
-		{ 
+		{
+			// PhysicalSize takes guard cell into account
 			const size_t physicalSize = m_size + 1;
-			idx -= m_head; //overflows when m_tail < m_head
-			idx = (idx + 1) % physicalSize;
+			idx = (idx + 1 - m_head) % physicalSize;
 			return idx + m_head;
 		}
 
 		size_t getPrevCellIdx(size_t idx) const
 		{
-			idx -= m_head;
-			idx = (idx + m_capacity - 1) % m_capacity;
-			return idx + m_head;
+			return (idx + m_capacity - 1) % m_capacity;
 		}	
 		
 		size_t getNextCellIdx(size_t idx) const
 		{
-			idx -= m_head;
-			idx = (idx + 1) % m_capacity;
-			return idx + m_head;
+			return (idx + 1) % m_capacity;
 		}	
 
 		void decreaseIdx(size_t& idx) const { idx = getPrevCellIdx(idx); }
