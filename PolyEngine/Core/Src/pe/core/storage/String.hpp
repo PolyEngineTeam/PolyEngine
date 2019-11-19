@@ -172,6 +172,9 @@ namespace pe::core::storage
 		/// <param name="str">String to be compared with</param>
 		bool operator==(const String& str) const;
 
+		bool operator!=(const char* str) const { return !(*this == str); }
+		bool operator!=(const String& str) const { return !(*this == str); }
+
 		bool operator<(const String& rhs) const;
 
 		/// <summary>Appends one String to another</summary>
@@ -192,7 +195,7 @@ namespace pe::core::storage
 		size_t GetLength() const;
 		const char* GetCStr() const { return Data.data(); }
 
-		/*CORE_DLLEXPORT*/ friend std::ostream& operator<< (std::ostream& stream, const String& rhs) { return stream << rhs.GetCStr(); }
+		friend std::ostream& operator<< (std::ostream& stream, const String& rhs) { return stream << rhs.GetCStr(); }
 
 	private:
 
