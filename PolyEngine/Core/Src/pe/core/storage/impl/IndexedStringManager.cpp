@@ -70,7 +70,7 @@ void IndexedStringManager::setTTLMode(bool enabled)
 {
 	if(m_ttlEnabled && !enabled)
 	{
-		bool bResult = m_ttlEntries.empty();
+		DISCARD m_ttlEntries.empty();
 	}
 	m_ttlEnabled = enabled;
 }
