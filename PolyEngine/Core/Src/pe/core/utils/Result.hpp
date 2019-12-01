@@ -6,21 +6,41 @@
 namespace pe::core::utils
 {
 	template <typename T, typename E>
-	class Result final : public BaseObjectLiteralType<>
+	class Result
 	{
-		// if T == void then result can't have value but we can't pass 
-		// void as type template parameter to variant so we need to use
-		// optional instead of variant
-		static constexpr bool CanHaveValue = std::negation<std::is_same<T, void>>::value;
-
 	public:
-		template <typename Dummy = void, typename Dummy2 = std::enable_if_t<CanHaveValue, Dummy>>
-		Result(T okVal)
-		{
-
-		}
-
+		Result() = delete;
+		Result(Result&) = delete;
+		Result& operator=(Result&) = delete;
+		Result(T okVal) : m_value(std::move(okVal)) {}
+		Result(E errVal) : m_value(std::move(errVal)) {}
+		
+		bool IsOk() const { return m_value.index() == 0; }
+		bool IsErr() const { return !IsOk(); }
+		T& GetValue() { return std::get<T>(m_value); }
+		E& GetError() { return std::get<E>(m_value); }
+		const T& GetValue() const { return std::get<T>(m_value); }
+		const E& GetError() const { return std::get<E>(m_value); }
+	
 	private:
-		const std::conditional_t<CanHaveValue, std::variant<T, E>, std::optional<E>> m_value;
+		std::variant<T, E> m_value;
+	};
+	
+	template <typename E>
+	class Result<void, E> final : public BaseObjectLiteralType<>
+	{
+	public:
+		Result() = default;
+		Result(Result&) = delete;
+		Result& operator=(Result&) = delete;
+		Result(E errVal) : m_value(std::move(errVal)) {}
+	
+		bool IsOk() const { return m_value.has_value() == 0; }
+		bool IsErr() const { return !IsOk(); }
+		E& GetError() { return m_value.value(); }
+		const E& GetError() const { return m_value.value(); }
+	
+	private:
+		std::optional<E> m_value;
 	};
 }
