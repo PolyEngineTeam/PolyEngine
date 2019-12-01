@@ -7,7 +7,7 @@
 #include <Rendering/Camera/CameraComponent.hpp>
 #include <Rendering/ViewportWorldComponent.hpp>
 #include <Rendering/PostprocessSettingsComponent.hpp>
-#include <ECS/DeferredTaskSystem.hpp>
+#include <pe/api/ecs/DeferredTaskSystem.hpp>
 #include <SDL.h>
 
 //------------------------------------------------------------------------------

@@ -25,7 +25,7 @@
 #include "Rendering/SkyboxWorldComponent.hpp"
 #include "Rendering/ViewportWorldComponent.hpp"
 #include "Time/TimeWorldComponent.hpp"
-#include <ECS/DeferredTaskSystem.hpp>
+#include <pe/api/ecs/DeferredTaskSystem.hpp>
 
 #include <sstream>
 

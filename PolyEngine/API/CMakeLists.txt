@@ -14,7 +14,7 @@ target_include_directories(${API_TARGET} PUBLIC ${POLYENGINEAPI_INCLUDE})
 
 target_link_libraries(${API_TARGET} PUBLIC ${CORE_TARGET} )
 
-#set_target_properties(${API_TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "${CMAKE_CURRENT_LIST_DIR}/Src/CorePCH.hpp")
+set_target_properties(${API_TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "${CMAKE_CURRENT_LIST_DIR}/Src/pe/api/APIPCH.hpp")
 set_target_properties(${API_TARGET} PROPERTIES FOLDER "Engine" )
 
-#cotire(${API_TARGET})
+cotire(${API_TARGET})

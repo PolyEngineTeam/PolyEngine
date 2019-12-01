@@ -1,7 +1,7 @@
 #pragma once
 
 #include <pe/Defines.hpp>
-#include <ECS/Entity.hpp>
+#include <pe/api/ecs/Entity.hpp>
 #include "Managers/Project/InspectorManager.hpp"
 
 using namespace Poly;

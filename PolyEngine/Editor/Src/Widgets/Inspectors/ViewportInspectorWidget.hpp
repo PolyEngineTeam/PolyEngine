@@ -1,7 +1,7 @@
 #pragma once
 
 #include <pe/Defines.hpp>
-#include <ECS/Scene.hpp>
+#include <pe/api/ecs/Scene.hpp>
 
 #include "Windows/CustomSDLWindow.hpp"
 #include "Rendering/IRenderingDevice.hpp"

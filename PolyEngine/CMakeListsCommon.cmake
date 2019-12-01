@@ -361,5 +361,5 @@ add_subdirectory(${ENGINE_ROOT_DIR}/Core ${COMMON_BUILD_DIR}/Core)
 add_subdirectory(${ENGINE_ROOT_DIR}/API ${COMMON_BUILD_DIR}/API)
 add_subdirectory(${ENGINE_ROOT_DIR}/Engine ${COMMON_BUILD_DIR}/Engine)
 add_subdirectory(${ENGINE_ROOT_DIR}/RenderingDevice/OpenGL ${COMMON_BUILD_DIR}/RenderingDevice/OpenGL)
-add_subdirectory(${ENGINE_ROOT_DIR}/Editor ${COMMON_BUILD_DIR}/Editor)
+#add_subdirectory(${ENGINE_ROOT_DIR}/Editor ${COMMON_BUILD_DIR}/Editor) # Editor disabled for now
 add_subdirectory(${ENGINE_ROOT_DIR}/Standalone ${COMMON_BUILD_DIR}/Standalone)

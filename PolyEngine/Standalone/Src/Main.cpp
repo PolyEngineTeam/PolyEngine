@@ -4,19 +4,29 @@
 namespace pe{}
 using namespace pe;
 
-#include <Engine.hpp>
-#include <Rendering/IRenderingDevice.hpp>
+#include <pe/engine/Engine.hpp>
+#include <pe/api/rendering/IRenderingDevice.hpp>
+#include <pe/api/input/KeyBindings.hpp>
+#include <pe/api/input/OutputQueue.hpp>
+#include <pe/api/input/InputQueue.hpp>
 #include <pe/core/utils/LibraryLoader.hpp>
-#include <Configs/AssetsPathConfig.hpp>
+#include <pe/engine/config/AssetsPathConfig.hpp>
 #include <pe/core/utils/OutputStream.hpp>
 #include <pe/core/utils/Logger.hpp>
 #include <pe/core/math/Vector2i.hpp>
+#include <pe/api/app/App.hpp>
+#include <pe/api/app/IAppBackend.hpp>
 
 extern "C"
 {
-	using CreateRenderingDeviceFunc = Poly::IRenderingDevice* (SDL_Window*, const Poly::ScreenSize&);
-	using CreateGameFunc = Poly::IGame* (void);
+	using CreateRenderingDeviceFunc = pe::api::rendering::IRenderingDevice* (SDL_Window*, const ::pe::core::math::Vector2i&);
+	using CreateGameFunc = pe::api::IGame* (void);
 }
+
+class AppBackend : public  pe::api::app::IAppBackend
+{
+
+};
 
 int main(int argc, char * args[]);
 
@@ -55,7 +65,7 @@ static void HandleSetClipboardText(void*, const char* text)
 	SDL_SetClipboardText(text);
 }
 
-SDL_SystemCursor GetCursorType(Poly::eMouseCursorType cursorType);
+SDL_SystemCursor GetCursorType(pe::api::input::eMouseCursorType cursorType);
 
 int main(int argc, char* args[])
 {
@@ -75,51 +85,54 @@ int main(int argc, char* args[])
 	core::utils::gConsole.LogDebug("SDL initialized.");
 
 	// Initial screen size
-	Poly::ScreenSize screenSize;
-	screenSize.Width = 1280;
-	screenSize.Height = 720;
+	pe::core::math::Vector2i screenSize;
+	screenSize.X = 1280;
+	screenSize.Y = 720;
 
 	// Main standalone window
 	SDL_Window* window = SDL_CreateWindow(
 		"PolyEngine standalone",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		screenSize.Width,
-		screenSize.Height,
+		screenSize.X,
+		screenSize.Y,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
 	);
 
 	ASSERTE(window, "Failed to create standalone window!");
 	core::utils::gConsole.LogDebug("Window created.");
+
+	std::unique_ptr<pe::api::app::App> application = std::make_unique<pe::api::app::App>(std::make_unique<AppBackend>());
 	
-	std::unique_ptr<Poly::Engine> Engine = std::make_unique<Poly::Engine>();
+	application->registerEngine(std::make_unique<pe::engine::Engine>());
 	core::utils::gConsole.LogDebug("Engine created.");
 
 	// Load rendering device library
-	core::storage::String p = Poly::gAssetsPathConfig.GetRenderingDeviceLibPath();
+	core::storage::String p = pe::engine::config::gAssetsPathConfig.GetRenderingDeviceLibPath();
 	auto loadRenderingDevice = ::pe::core::utils::LoadFunctionFromSharedLibrary<CreateRenderingDeviceFunc>(p.GetCStr(), "PolyCreateRenderingDevice");
 	if (!loadRenderingDevice.FunctionValid())
 		return 1;
 	core::utils::gConsole.LogDebug("Library libRenderingDevice loaded.");
 
 	// Load game library
-	auto loadGame = ::pe::core::utils::LoadFunctionFromSharedLibrary<CreateGameFunc>(Poly::gAssetsPathConfig.GetGameLibPath().GetCStr(), "CreateGame");
+	auto loadGame = ::pe::core::utils::LoadFunctionFromSharedLibrary<CreateGameFunc>(pe::engine::config::gAssetsPathConfig.GetGameLibPath().GetCStr(), "CreateGame");
 	if (!loadGame.FunctionValid())
 		return 1;
 	core::utils::gConsole.LogDebug("Library libGame loaded.");
 		
-	std::unique_ptr<Poly::IGame> game = std::unique_ptr<Poly::IGame>(loadGame());
+	application->registerGame(std::unique_ptr<pe::api::IGame>(loadGame()));
 	core::utils::gConsole.LogDebug("Game created");
 
-	std::unique_ptr<Poly::IRenderingDevice> device = std::unique_ptr<Poly::IRenderingDevice>(loadRenderingDevice(window, screenSize));
+	application->registerRenderingDevice(std::unique_ptr<pe::api::rendering::IRenderingDevice>(loadRenderingDevice(window, screenSize)));
 	core::utils::gConsole.LogDebug("Device created.");
 
-	Engine->Init(std::move(game), std::move(device));
-	Engine->StartGame();
+	//Engine->init(std::move(game), std::move(device));
+	application->getEngine()->startGame();
 	core::utils::gConsole.LogDebug("Engine initialization and handshake successfull. Starting main loop...");
 
-	Engine->SetClipboardTextFunction = HandleSetClipboardText;
-	Engine->GetClipboardTextFunction = HandleGetClipboardText;
+	pe::engine::Engine* tmpEnginePtr = static_cast<pe::engine::Engine*>(application->getEngine());
+	tmpEnginePtr->SetClipboardTextFunction = HandleSetClipboardText;
+	tmpEnginePtr->GetClipboardTextFunction = HandleGetClipboardText;
 
 	SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
 
@@ -140,53 +153,53 @@ int main(int argc, char* args[])
 				quitRequested = true;
 				break;
 			case SDL_KEYDOWN:
-				Engine->KeyDown(static_cast<Poly::eKey>(event.key.keysym.scancode));
+				application->KeyDown(static_cast<pe::api::input::eKey>(event.key.keysym.scancode));
 				break;
 			case SDL_KEYUP:
-				Engine->KeyUp(static_cast<Poly::eKey>(event.key.keysym.scancode));
+				application->KeyUp(static_cast<pe::api::input::eKey>(event.key.keysym.scancode));
 				break;
 			case SDL_TEXTINPUT:
-				Engine->AddCharacterUTF8(event.text.text);
+				application->AddCharacterUTF8(event.text.text);
 				break;
 			case SDL_MOUSEMOTION:
 			{
-				Engine->UpdateMouseMove(::pe::core::math::Vector2i(event.motion.xrel, event.motion.yrel));
-				Engine->UpdateMousePos(::pe::core::math::Vector2i(event.motion.x, event.motion.y));
+				application->UpdateMouseMove(::pe::core::math::Vector2i(event.motion.xrel, event.motion.yrel));
+				application->UpdateMousePos(::pe::core::math::Vector2i(event.motion.x, event.motion.y));
 				break;
 			}
 			case SDL_MOUSEBUTTONDOWN:
-				Engine->MouseButtonDown(static_cast<Poly::eMouseButton>(event.button.button));
+				application->MouseButtonDown(static_cast<pe::api::input::eMouseButton>(event.button.button));
 				UpdateMouseState(eMouseStateChange::BUTTON_CLICK);
 				break;
 			case SDL_MOUSEBUTTONUP:
-				Engine->MouseButtonUp(static_cast<Poly::eMouseButton>(event.button.button));
+				application->MouseButtonUp(static_cast<pe::api::input::eMouseButton>(event.button.button));
 				break;
 			case SDL_MOUSEWHEEL:
 				// Not sure if this is correct.
-				Engine->UpdateWheelPos(::pe::core::math::Vector2i(event.wheel.x, event.wheel.y));
+				application->UpdateWheelPos(::pe::core::math::Vector2i(event.wheel.x, event.wheel.y));
 				break;
 			case SDL_CONTROLLERBUTTONDOWN:
-				Engine->ControllerButtonDown(event.cbutton.which, static_cast<Poly::eControllerButton>(event.cbutton.button));
+				application->ControllerButtonDown(event.cbutton.which, static_cast<pe::api::input::eControllerButton>(event.cbutton.button));
 				break;
 			case SDL_CONTROLLERBUTTONUP:
-				Engine->ControllerButtonUp(event.cbutton.which, static_cast<Poly::eControllerButton>(event.cbutton.button));
+				application->ControllerButtonUp(event.cbutton.which, static_cast<pe::api::input::eControllerButton>(event.cbutton.button));
 				break;
 			case SDL_CONTROLLERAXISMOTION:
-				Engine->ControllerAxisMotion(event.caxis.which, static_cast<Poly::eControllerAxis>(event.caxis.axis), event.caxis.value);
+				application->ControllerAxisMotion(event.caxis.which, static_cast<pe::api::input::eControllerAxis>(event.caxis.axis), event.caxis.value);
 				break;
 			case SDL_CONTROLLERDEVICEADDED:
 			{
 				SDL_GameController* controller = SDL_GameControllerOpen(event.cdevice.which);
 				SDL_Joystick* joystickPtr = SDL_GameControllerGetJoystick(controller);
 				i32 joystickID = SDL_JoystickInstanceID(joystickPtr);
-				Engine->AddController(joystickID);
+				application->AddController(joystickID);
 				break;
 			}
 			case SDL_CONTROLLERDEVICEREMOVED:
 			{
 				SDL_GameController* controller = SDL_GameControllerFromInstanceID(event.cdevice.which);
 				SDL_GameControllerClose(controller);
-				Engine->RemoveController(event.cdevice.which);
+				application->RemoveController(event.cdevice.which);
 				break;
 			}
 			case SDL_WINDOWEVENT:
@@ -198,38 +211,38 @@ int main(int argc, char* args[])
 		}
 
 		// Engine loop
-		Engine->Update();
+		application->getEngine()->update(std::chrono::duration<double>(0.16));
 
-		Poly::OutputQueue& OutputEventsQueue = Engine->GetOutputQueue();
+		pe::api::input::OutputQueue& OutputEventsQueue = application->GetOutputQueue();
 		while (!OutputEventsQueue.isEmpty())
 		{
-			Poly::OutputEvent& ev = OutputEventsQueue.front();
+			pe::api::input::OutputEvent& ev = OutputEventsQueue.front();
 			switch (ev.Type)
 			{
-			case Poly::eOutputEventType::MOUSEPOS:
+			case pe::api::input::eOutputEventType::MOUSEPOS:
 				SDL_WarpMouseInWindow(window, ev.Pos.X, ev.Pos.Y);
 				break;
-			case Poly::eOutputEventType::CURSORSET:
+			case pe::api::input::eOutputEventType::CURSORSET:
 				SDL_SetCursor(mouseCursors[(int)GetCursorType(ev.CursorType)]);
 				break;
-			case Poly::eOutputEventType::CURSORSHOW:
+			case pe::api::input::eOutputEventType::CURSORSHOW:
 				SDL_ShowCursor(SDL_TRUE);
 				break;
-			case Poly::eOutputEventType::CURSORHIDE:
+			case pe::api::input::eOutputEventType::CURSORHIDE:
 				SDL_ShowCursor(SDL_FALSE);
 				break;
-			case Poly::eOutputEventType::_COUNT:
+			case pe::api::input::eOutputEventType::_COUNT:
 				HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::push(), which is an invalid value");
 				break;
 			}
 			OutputEventsQueue.popFront();
 		}
 
-		quitRequested = quitRequested || Engine->IsQuitRequested();
+		quitRequested = quitRequested || application->getEngine()->IsQuitRequested();
 	}
 	core::utils::gConsole.LogDebug("Closing main loop...");
 	
-	Engine.reset();
+	application.reset();
 
 	// Destroy window
 	SDL_DestroyWindow(window);
@@ -239,7 +252,7 @@ int main(int argc, char* args[])
 	core::utils::gConsole.LogDebug("Exiting...");
 
 	// Clean managers, otherwise their constructors crash due to messed deinitialization order across shared libraries
-	Poly::ComponentManager::Get().Clear();
+	pe::api::ecs::ComponentManager::Get().Clear();
 	Poly::RTTI::Impl::TypeManager::Get().Clear();
 
 	return 0;
@@ -276,10 +289,10 @@ void HandleWindowEvent(const SDL_WindowEvent& windowEvent)
 	case SDL_WINDOWEVENT_RESIZED:
 	case SDL_WINDOWEVENT_SIZE_CHANGED:
 	{
-		Poly::ScreenSize screenSize;
-		screenSize.Width = windowEvent.data1;
-		screenSize.Height = windowEvent.data2;
-		Poly::gEngine->ResizeScreen(screenSize);
+		::pe::core::math::Vector2i screenSize;
+		screenSize.X = windowEvent.data1;
+		screenSize.Y = windowEvent.data2;
+		//Poly::gEngine->ResizeScreen(screenSize);
 		break;
 	}
 	case SDL_WINDOWEVENT_LEAVE:
@@ -298,33 +311,33 @@ void HandleWindowEvent(const SDL_WindowEvent& windowEvent)
 
 void UpdateMouseState(eMouseStateChange change)
 {
-	if (change == eMouseStateChange::BUTTON_CLICK)
-	{
-		SDL_ShowCursor(Poly::gEngine->ShouldMouseBeVisible());
-		SDL_CaptureMouse(Poly::gEngine->ShouldCaptureMouse() ? SDL_bool::SDL_TRUE : SDL_bool::SDL_FALSE);
-		SDL_SetRelativeMouseMode(Poly::gEngine->ShouldCaptureMouse() ? SDL_bool::SDL_TRUE : SDL_bool::SDL_FALSE);
-	}
+	// if (change == eMouseStateChange::BUTTON_CLICK)
+	// {
+	// 	SDL_ShowCursor(Poly::gEngine->ShouldMouseBeVisible());
+	// 	SDL_CaptureMouse(Poly::gEngine->ShouldCaptureMouse() ? SDL_bool::SDL_TRUE : SDL_bool::SDL_FALSE);
+	// 	SDL_SetRelativeMouseMode(Poly::gEngine->ShouldCaptureMouse() ? SDL_bool::SDL_TRUE : SDL_bool::SDL_FALSE);
+	// }
 
-	if(change == eMouseStateChange::WINDOW_LEAVE || change == eMouseStateChange::WINDOW_ENTER)
-	{
-		SDL_ShowCursor(1);
-		SDL_CaptureMouse(SDL_bool::SDL_FALSE);
-		SDL_SetRelativeMouseMode(SDL_FALSE);
-	}
+	// if(change == eMouseStateChange::WINDOW_LEAVE || change == eMouseStateChange::WINDOW_ENTER)
+	// {
+	// 	SDL_ShowCursor(1);
+	// 	SDL_CaptureMouse(SDL_bool::SDL_FALSE);
+	// 	SDL_SetRelativeMouseMode(SDL_FALSE);
+	// }
 }
 
-SDL_SystemCursor GetCursorType(Poly::eMouseCursorType cursorType)
+SDL_SystemCursor GetCursorType(pe::api::input::eMouseCursorType cursorType)
 {
 	switch (cursorType)
 	{
-		case Poly::eMouseCursorType::ARROW:			return SDL_SYSTEM_CURSOR_ARROW;
-		case Poly::eMouseCursorType::TEXTINPUT:		return SDL_SYSTEM_CURSOR_IBEAM;
-		case Poly::eMouseCursorType::RESIZEALL:		return SDL_SYSTEM_CURSOR_SIZEALL;
-		case Poly::eMouseCursorType::RESIZENS:		return SDL_SYSTEM_CURSOR_SIZENS;
-		case Poly::eMouseCursorType::RESIZEEW:		return SDL_SYSTEM_CURSOR_SIZEWE;
-		case Poly::eMouseCursorType::RESIZENESW:	return SDL_SYSTEM_CURSOR_SIZENESW;
-		case Poly::eMouseCursorType::RESIZENWSE:	return SDL_SYSTEM_CURSOR_SIZENWSE;
-		case Poly::eMouseCursorType::HAND:			return SDL_SYSTEM_CURSOR_HAND;
+		case pe::api::input::eMouseCursorType::ARROW:			return SDL_SYSTEM_CURSOR_ARROW;
+		case pe::api::input::eMouseCursorType::TEXTINPUT:		return SDL_SYSTEM_CURSOR_IBEAM;
+		case pe::api::input::eMouseCursorType::RESIZEALL:		return SDL_SYSTEM_CURSOR_SIZEALL;
+		case pe::api::input::eMouseCursorType::RESIZENS:		return SDL_SYSTEM_CURSOR_SIZENS;
+		case pe::api::input::eMouseCursorType::RESIZEEW:		return SDL_SYSTEM_CURSOR_SIZEWE;
+		case pe::api::input::eMouseCursorType::RESIZENESW:	return SDL_SYSTEM_CURSOR_SIZENESW;
+		case pe::api::input::eMouseCursorType::RESIZENWSE:	return SDL_SYSTEM_CURSOR_SIZENWSE;
+		case pe::api::input::eMouseCursorType::HAND:			return SDL_SYSTEM_CURSOR_HAND;
 		default: return SDL_SYSTEM_CURSOR_ARROW;
 	}
 }

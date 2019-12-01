@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ECS/Entity.hpp>
+#include <pe/api/ecs/Entity.hpp>
 #include <pe/Defines.hpp>
 
 #include <QtWidgets/qlabel.h>

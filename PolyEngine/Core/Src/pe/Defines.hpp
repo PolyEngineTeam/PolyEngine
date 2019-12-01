@@ -17,6 +17,9 @@
 	// according to https://msdn.microsoft.com/en-US/library/esew7y1w.aspx it can be ignored since we use same CRT within project
 	#pragma warning(disable: 4251)
 
+	// This must be disabled as it blocks exporting header only classes (i.e. interfaces) to be properly imported.
+	#pragma warning(disable: 4275)
+
 	// Push changes to prevent others from discarding them easily.
 	#pragma warning(push)
 
@@ -208,6 +211,13 @@ constexpr auto MIN_FLOAT = (std::numeric_limits<float>::min)();
 // Hack for clang compilation, should be used in every lambda in constexpr_match everywhere where T is required.
 // required lambda argument to be "auto lazy"
 #define LAZY_TYPE(T) decltype(lazy(std::declval<T>()))
+
+#define ITERATOR(TAG, TYPE) \
+	using iterator_category = TAG; \
+    using value_type = TYPE; \
+    using difference_type = std::ptrdiff_t; \
+    using pointer = TYPE*; \
+    using reference = TYPE&;
 
 template<bool B>
 struct identity : std::integral_constant<bool, B> {
