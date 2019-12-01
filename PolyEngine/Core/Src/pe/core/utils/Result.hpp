@@ -11,7 +11,9 @@ namespace pe::core::utils
 	public:
 		Result() = delete;
 		Result(Result&) = delete;
+		Result(Result&&) = default;
 		Result& operator=(Result&) = delete;
+		Result& operator=(Result&&) = default;
 		Result(T okVal) : m_value(std::move(okVal)) {}
 		Result(E errVal) : m_value(std::move(errVal)) {}
 		
@@ -32,7 +34,9 @@ namespace pe::core::utils
 	public:
 		Result() = default;
 		Result(Result&) = delete;
+		Result(Result&&) = default;
 		Result& operator=(Result&) = delete;
+		Result& operator=(Result&&) = default;
 		Result(E errVal) : m_value(std::move(errVal)) {}
 	
 		bool IsOk() const { return m_value.has_value() == 0; }
