@@ -40,7 +40,7 @@ std::optional<std::vector<::pe::core::math::Vector>> CalculateNewPath(const NavG
 	std::map<const NavNode*, float> minCosts;
 
 	AllNodes.push_back(PathNode(startNode, 0, graph->GetHeuristicCost(startNode, destNode) ));
-	openList.emplace(std::make_pair(AllNodes.size() - 1, graph->GetHeuristicCost(startNode, destNode)));
+	openList.emplace(AllNodes.size() - 1, graph->GetHeuristicCost(startNode, destNode));
 	minCosts.emplace(startNode, 0.f);
 
 	i64 bestNodeIdx = -1;
@@ -71,11 +71,11 @@ std::optional<std::vector<::pe::core::math::Vector>> CalculateNewPath(const NavG
 				continue; // node has worse base cost than other (in the same pos) we visited before, skip it
 
 			AllNodes.push_back(s);
-			openList.emplace(std::make_pair(AllNodes.size() - 1, s.TotalCost()));
+			openList.emplace(AllNodes.size() - 1, s.TotalCost());
 			minCosts[s.Node] = s.Cost;
 		}
 
-		closedList.emplace(std::make_pair(qIdx, AllNodes[qIdx].TotalCost()));
+		closedList.emplace(qIdx, AllNodes[qIdx].TotalCost());
 		minCosts[AllNodes[qIdx].Node] = AllNodes[qIdx].Cost;
 	}
 
