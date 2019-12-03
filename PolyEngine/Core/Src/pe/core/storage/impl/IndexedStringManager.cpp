@@ -70,7 +70,7 @@ void IndexedStringManager::setTTLMode(bool enabled)
 {
 	if(m_ttlEnabled && !enabled)
 	{
-		DISCARD m_ttlEntries.empty();
+		std::swap(m_ttlEntries, std::priority_queue<TTLEntry>());
 	}
 	m_ttlEnabled = enabled;
 }
