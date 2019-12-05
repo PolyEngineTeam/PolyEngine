@@ -17,13 +17,22 @@ namespace pe::core::utils
 		Result(T okVal) : m_value(std::move(okVal)) {}
 		Result(E errVal) : m_value(std::move(errVal)) {}
 		
-		bool IsOk() const { return m_value.index() == 0; }
-		bool IsErr() const { return !IsOk(); }
-		T& GetValue() { return std::get<T>(m_value); }
-		E& GetError() { return std::get<E>(m_value); }
-		const T& GetValue() const { return std::get<T>(m_value); }
-		const E& GetError() const { return std::get<E>(m_value); }
+		bool isOk() const { return m_value.index() == 0; }
+		bool isErr() const { return !isOk(); }
+		
+		T& getValue() { return std::get<T>(m_value); }
+		E& getError() { return std::get<E>(m_value); }
+		const T& getValue() const { return std::get<T>(m_value); }
+		const E& getError() const { return std::get<E>(m_value); }
 	
+		Result<T, E> join(Result<Result<T, E>, E> res) 
+		{ 
+			if (res.isOk())
+				return res.getValue() 
+			else 
+				return res.getError(); 
+		}
+
 	private:
 		std::variant<T, E> m_value;
 	};
@@ -38,11 +47,12 @@ namespace pe::core::utils
 		Result& operator=(Result&) = delete;
 		Result& operator=(Result&&) = default;
 		Result(E errVal) : m_value(std::move(errVal)) {}
-	
-		bool IsOk() const { return m_value.has_value() == 0; }
-		bool IsErr() const { return !IsOk(); }
-		E& GetError() { return m_value.value(); }
-		const E& GetError() const { return m_value.value(); }
+
+		bool isOk() const { return m_value.has_value() == false; }
+		bool isErr() const { return !isOk(); }
+
+		E& getError() { return m_value.value(); }
+		const E& getError() const { return m_value.value(); }
 	
 	private:
 		std::optional<E> m_value;
