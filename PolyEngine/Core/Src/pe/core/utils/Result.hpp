@@ -26,7 +26,16 @@ namespace pe::core::utils
 		const E& getError() const { return std::get<E>(m_value); }
 
 		template <typename U>
-		Result<U, E> first(Result<U, E> res)
+		Result<U, E> and(Result<U, E> res)
+		{
+			if (isOk())
+				return res;
+			else
+				return getError();
+		}
+
+		template <typename U>
+		Result<U, E> or(Result<U, E> res)
 		{
 			if (isOk())
 				return res;
