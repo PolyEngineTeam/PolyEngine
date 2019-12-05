@@ -154,3 +154,41 @@ TEST_CASE("Result.and", "[Result]")
 		REQUIRE(result7.and(result8).getError() == eTestErrorType::ERROR_TYPE_1);
 	}
 }
+
+TEST_CASE("Result.or", "[Result]")
+{
+	{
+		Result<int, eTestErrorType> result1 = 2;
+		Result<int, eTestErrorType> result2 = true;
+		REQUIRE(result1.or(result2).getValue() == 2);
+
+		Result<int, eTestErrorType> result3 = eTestErrorType::ERROR_TYPE_1;
+		Result<int, eTestErrorType> result4 = 3;
+		REQUIRE(result3.or(result4).getValue() == 3);
+	
+		Result<int, eTestErrorType> result5 = 4;
+		Result<int, eTestErrorType> result6 = eTestErrorType::ERROR_TYPE_2;
+		REQUIRE(result5.or(result6).getValue() == 4);
+	
+		Result<int, eTestErrorType> result7 = eTestErrorType::ERROR_TYPE_1;
+		Result<int, eTestErrorType> result8 = eTestErrorType::ERROR_TYPE_2;
+		REQUIRE(result7.or(result8).getError() == eTestErrorType::ERROR_TYPE_2);
+	}
+	{
+		Result<void, eTestErrorType> result1;
+		Result<void, eTestErrorType> result2;
+		REQUIRE(result1.or(result2).isOk() == true);
+	
+		Result<void, eTestErrorType> result3 = eTestErrorType::ERROR_TYPE_1;
+		Result<void, eTestErrorType> result4;
+		REQUIRE(result3.or(result4).isOk() == true);
+	
+		Result<void, eTestErrorType> result5;
+		Result<void, eTestErrorType> result6 = eTestErrorType::ERROR_TYPE_2;
+		REQUIRE(result5.or(result6).isOk() == true);
+		
+		Result<void, eTestErrorType> result7 = eTestErrorType::ERROR_TYPE_1;
+		Result<void, eTestErrorType> result8 = eTestErrorType::ERROR_TYPE_2;
+		REQUIRE(result7.or(result8).getError() == eTestErrorType::ERROR_TYPE_2);
+	}
+}

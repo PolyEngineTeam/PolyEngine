@@ -34,13 +34,13 @@ namespace pe::core::utils
 				return getError();
 		}
 
-		template <typename U>
-		Result<U, E> or(Result<U, E> res)
+		template <typename F>
+		Result<T, F> or(Result<T, F> res)
 		{
 			if (isOk())
-				return res;
+				return getValue();
 			else
-				return getError();
+				return res;
 		}
 
 	private:
@@ -65,12 +65,21 @@ namespace pe::core::utils
 		const E& getError() const { return m_value.value(); }
 
 		template <typename U>
-		Result<U, E> first(Result<U, E> res)
+		Result<U, E> and(Result<U, E> res)
 		{
 			if (isOk())
 				return res;
 			else
 				return getError();
+		}
+
+		template <typename F>
+		Result<void, F> or (Result<void, F> res)
+		{
+			if (isOk())
+				return Result<void, F>();
+			else
+				return res;
 		}
 
 	private:
