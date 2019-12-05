@@ -12,6 +12,14 @@ namespace
 		ERROR_TYPE_1,
 		ERROR_TYPE_2
 	};
+
+	Result<bool, eTestErrorType> func(int in)
+	{
+		if (in < 10)
+			return in > 5;
+		else
+			return eTestErrorType::ERROR_TYPE_1;
+	}
 }
 
 TEST_CASE("Result.isOk", "[Result]") 
@@ -75,4 +83,21 @@ TEST_CASE("Result.join", "[Result]")
 
 	Result<Result<void, eTestErrorType>, eTestErrorType> result5 = eTestErrorType::ERROR_TYPE_1;
 	REQUIRE(join(result4).getError() == eTestErrorType::ERROR_TYPE_1);
+}
+
+
+
+TEST_CASE("Result.bind", "[Result]")
+{
+	Result<int, eTestErrorType> result1 = 2;
+	REQUIRE(bind(result1, func).getValue() == false);
+
+	Result<int, eTestErrorType> result2 = 7;
+	REQUIRE(bind(result2, func).getValue() == true);
+
+	Result<int, eTestErrorType> result3 = 11;
+	REQUIRE(bind(result3, func).getError() == eTestErrorType::ERROR_TYPE_1);
+
+	Result<int, eTestErrorType> result4 = eTestErrorType::ERROR_TYPE_2;
+	REQUIRE(bind(result4, func).getError() == eTestErrorType::ERROR_TYPE_2);
 }

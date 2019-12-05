@@ -68,4 +68,15 @@ namespace pe::core::utils
 			return res.getError();
 	}
 
+	using aaa = void(*)();
+
+	template <typename T1, typename T2, typename E>
+	Result<T2, E> bind(Result<T1, E> res, Result<T2, E> (*func)(T1))
+	{
+		if (res.isOk())
+			return func(res.getValue());
+		else
+			return res.getError();
+	}
+
 }
