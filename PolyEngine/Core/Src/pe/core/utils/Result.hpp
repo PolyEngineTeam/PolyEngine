@@ -25,6 +25,15 @@ namespace pe::core::utils
 		const T& getValue() const { return std::get<T>(m_value); }
 		const E& getError() const { return std::get<E>(m_value); }
 
+		template <typename U>
+		Result<U, E> first(Result<U, E> res)
+		{
+			if (isOk())
+				return res;
+			else
+				return getError();
+		}
+
 	private:
 		std::variant<T, E> m_value;
 	};
@@ -45,6 +54,15 @@ namespace pe::core::utils
 
 		E& getError() { return m_value.value(); }
 		const E& getError() const { return m_value.value(); }
+
+		template <typename U>
+		Result<U, E> first(Result<U, E> res)
+		{
+			if (isOk())
+				return res;
+			else
+				return getError();
+		}
 
 	private:
 		std::optional<E> m_value;
