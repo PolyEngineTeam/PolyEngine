@@ -5,6 +5,7 @@
 
 namespace pe::core::utils
 {
+	// 
 	template <typename T, typename E>
 	class Result
 	{
@@ -103,8 +104,6 @@ namespace pe::core::utils
 		else
 			return res.getError();
 	}
-
-	using aaa = void(*)();
 
 	template <typename T1, typename T2, typename E>
 	Result<T2, E> bind(Result<T1, E> res, Result<T2, E> (*func)(T1))
