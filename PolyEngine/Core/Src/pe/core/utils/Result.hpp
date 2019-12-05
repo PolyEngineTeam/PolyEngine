@@ -10,9 +10,9 @@ namespace pe::core::utils
 	{
 	public:
 		Result() = delete;
-		Result(Result&) = delete;
+		Result(Result&) = default;
 		Result(Result&&) = default;
-		Result& operator=(Result&) = delete;
+		Result& operator=(Result&) = default;
 		Result& operator=(Result&&) = default;
 		Result(T okVal) : m_value(std::move(okVal)) {}
 		Result(E errVal) : m_value(std::move(errVal)) {}
@@ -24,14 +24,6 @@ namespace pe::core::utils
 		E& getError() { return std::get<E>(m_value); }
 		const T& getValue() const { return std::get<T>(m_value); }
 		const E& getError() const { return std::get<E>(m_value); }
-	
-		Result<T, E> join(Result<Result<T, E>, E> res) 
-		{ 
-			if (res.isOk())
-				return res.getValue() 
-			else 
-				return res.getError(); 
-		}
 
 	private:
 		std::variant<T, E> m_value;
@@ -42,9 +34,9 @@ namespace pe::core::utils
 	{
 	public:
 		Result() = default;
-		Result(Result&) = delete;
+		Result(Result&) = default;
 		Result(Result&&) = default;
-		Result& operator=(Result&) = delete;
+		Result& operator=(Result&) = default;
 		Result& operator=(Result&&) = default;
 		Result(E errVal) : m_value(std::move(errVal)) {}
 
@@ -53,8 +45,27 @@ namespace pe::core::utils
 
 		E& getError() { return m_value.value(); }
 		const E& getError() const { return m_value.value(); }
-	
+
 	private:
 		std::optional<E> m_value;
 	};
+
+	template <typename T, typename E>
+	Result<T, E> join(Result<Result<T, E>, E> res)
+	{
+		if (res.isOk())
+			return res.getValue();
+		else
+			return res.getError();
+	}
+
+	template <typename E>
+	Result<void, E> join(Result<Result<void, E>, E> res)
+	{
+		if (res.isOk())
+			return Result<void, E>();
+		else
+			return res.getError();
+	}
+
 }
