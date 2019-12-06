@@ -116,26 +116,12 @@ namespace pe::core::utils
 		}
 
 		template <typename E, typename Res, typename... Args>
-		class Lifted
+		auto lift(Res(*srcFunc)(Args...))
 		{
-		public:
-			using InFuncType = Res(*)(Args...);
-
-			Lifted(InFuncType inFunc) : InFunc(inFunc) {}
-
-			Result<Res, E> operator()(Result<Args, E>... args)
+			return [srcFunc] (Result<Args, E>... args)
 			{
-				return InFunc(args.getValue()...);
-			}
-
-		private:
-			InFuncType InFunc = nullptr;
-		};
-
-		template <typename E, typename Res, typename... Args>
-		Lifted<E, Res, Args...> lift(Res(*srcFunc)(Args...))
-		{
-			return Lifted<E, Res, Args...>(srcFunc);
+				return srcFunc(args.getValue()...);
+			};
 		}
 	}
 }
