@@ -110,96 +110,96 @@ TEST_CASE("Result.bind", "[Result]")
 	REQUIRE(result::bind(result4, func).getError() == eTestErrorType::ERROR_TYPE_2);
 }
 
-TEST_CASE("Result.and", "[Result]")
+TEST_CASE("Result.first", "[Result]")
 {
 	{
 		Result<int, eTestErrorType> result1 = 2;
 		Result<bool, eTestErrorType> result2 = true;
-		REQUIRE(result1.and(result2).getValue() == true);
+		REQUIRE(result1.first(result2).getValue() == true);
 
 		Result<int, eTestErrorType> result3 = eTestErrorType::ERROR_TYPE_1;
 		Result<bool, eTestErrorType> result4 = true;
-		REQUIRE(result3.and(result4).getError() == eTestErrorType::ERROR_TYPE_1);
+		REQUIRE(result3.first(result4).getError() == eTestErrorType::ERROR_TYPE_1);
 
 		Result<bool, eTestErrorType> result5 = true;
 		Result<int, eTestErrorType> result6 = eTestErrorType::ERROR_TYPE_2;
-		REQUIRE(result5.and(result6).getError() == eTestErrorType::ERROR_TYPE_2);
+		REQUIRE(result5.first(result6).getError() == eTestErrorType::ERROR_TYPE_2);
 
 		Result<bool, eTestErrorType> result7 = eTestErrorType::ERROR_TYPE_1;
 		Result<int, eTestErrorType> result8 = eTestErrorType::ERROR_TYPE_2;
-		REQUIRE(result7.and(result8).getError() == eTestErrorType::ERROR_TYPE_1);
+		REQUIRE(result7.first(result8).getError() == eTestErrorType::ERROR_TYPE_1);
 	}
 	{
 		Result<void, eTestErrorType> result1;
 		Result<bool, eTestErrorType> result2 = true;
-		REQUIRE(result1.and(result2).getValue() == true);
+		REQUIRE(result1.first(result2).getValue() == true);
 
 		Result<void, eTestErrorType> result3 = eTestErrorType::ERROR_TYPE_1;
 		Result<bool, eTestErrorType> result4 = true;
-		REQUIRE(result3.and(result4).getError() == eTestErrorType::ERROR_TYPE_1);
+		REQUIRE(result3.first(result4).getError() == eTestErrorType::ERROR_TYPE_1);
 
 		Result<void, eTestErrorType> result5;
 		Result<int, eTestErrorType> result6 = eTestErrorType::ERROR_TYPE_2;
-		REQUIRE(result5.and(result6).getError() == eTestErrorType::ERROR_TYPE_2);
+		REQUIRE(result5.first(result6).getError() == eTestErrorType::ERROR_TYPE_2);
 
 		Result<void, eTestErrorType> result7 = eTestErrorType::ERROR_TYPE_1;
 		Result<int, eTestErrorType> result8 = eTestErrorType::ERROR_TYPE_2;
-		REQUIRE(result7.and(result8).getError() == eTestErrorType::ERROR_TYPE_1);
+		REQUIRE(result7.first(result8).getError() == eTestErrorType::ERROR_TYPE_1);
 	}
 	{
 		Result<int, eTestErrorType> result1 = 2;
 		Result<void, eTestErrorType> result2;
-		REQUIRE(result1.and(result2).isOk() == true);
+		REQUIRE(result1.first(result2).isOk() == true);
 
 		Result<int, eTestErrorType> result3 = eTestErrorType::ERROR_TYPE_1;
 		Result<void, eTestErrorType> result4;
-		REQUIRE(result3.and(result4).getError() == eTestErrorType::ERROR_TYPE_1);
+		REQUIRE(result3.first(result4).getError() == eTestErrorType::ERROR_TYPE_1);
 
 		Result<bool, eTestErrorType> result5 = true;
 		Result<void, eTestErrorType> result6 = eTestErrorType::ERROR_TYPE_2;
-		REQUIRE(result5.and(result6).getError() == eTestErrorType::ERROR_TYPE_2);
+		REQUIRE(result5.first(result6).getError() == eTestErrorType::ERROR_TYPE_2);
 
 		Result<bool, eTestErrorType> result7 = eTestErrorType::ERROR_TYPE_1;
 		Result<void, eTestErrorType> result8 = eTestErrorType::ERROR_TYPE_2;
-		REQUIRE(result7.and(result8).getError() == eTestErrorType::ERROR_TYPE_1);
+		REQUIRE(result7.first(result8).getError() == eTestErrorType::ERROR_TYPE_1);
 	}
 }
 
-TEST_CASE("Result.or", "[Result]")
+TEST_CASE("Result.last", "[Result]")
 {
 	{
 		Result<int, eTestErrorType> result1 = 2;
 		Result<int, eTestErrorType> result2 = true;
-		REQUIRE(result1.or(result2).getValue() == 2);
+		REQUIRE(result1.last(result2).getValue() == 2);
 
 		Result<int, eTestErrorType> result3 = eTestErrorType::ERROR_TYPE_1;
 		Result<int, eTestErrorType> result4 = 3;
-		REQUIRE(result3.or(result4).getValue() == 3);
+		REQUIRE(result3.last(result4).getValue() == 3);
 	
 		Result<int, eTestErrorType> result5 = 4;
 		Result<int, eTestErrorType> result6 = eTestErrorType::ERROR_TYPE_2;
-		REQUIRE(result5.or(result6).getValue() == 4);
+		REQUIRE(result5.last(result6).getValue() == 4);
 	
 		Result<int, eTestErrorType> result7 = eTestErrorType::ERROR_TYPE_1;
 		Result<int, eTestErrorType> result8 = eTestErrorType::ERROR_TYPE_2;
-		REQUIRE(result7.or(result8).getError() == eTestErrorType::ERROR_TYPE_2);
+		REQUIRE(result7.last(result8).getError() == eTestErrorType::ERROR_TYPE_2);
 	}
 	{
 		Result<void, eTestErrorType> result1;
 		Result<void, eTestErrorType> result2;
-		REQUIRE(result1.or(result2).isOk() == true);
+		REQUIRE(result1.last(result2).isOk() == true);
 	
 		Result<void, eTestErrorType> result3 = eTestErrorType::ERROR_TYPE_1;
 		Result<void, eTestErrorType> result4;
-		REQUIRE(result3.or(result4).isOk() == true);
+		REQUIRE(result3.last(result4).isOk() == true);
 	
 		Result<void, eTestErrorType> result5;
 		Result<void, eTestErrorType> result6 = eTestErrorType::ERROR_TYPE_2;
-		REQUIRE(result5.or(result6).isOk() == true);
+		REQUIRE(result5.last(result6).isOk() == true);
 		
 		Result<void, eTestErrorType> result7 = eTestErrorType::ERROR_TYPE_1;
 		Result<void, eTestErrorType> result8 = eTestErrorType::ERROR_TYPE_2;
-		REQUIRE(result7.or(result8).getError() == eTestErrorType::ERROR_TYPE_2);
+		REQUIRE(result7.last(result8).getError() == eTestErrorType::ERROR_TYPE_2);
 	}
 }
 

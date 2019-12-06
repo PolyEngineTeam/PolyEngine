@@ -26,7 +26,7 @@ namespace pe::core::utils
 		const E& getError() const { return std::get<E>(m_value); }
 
 		template <typename U>
-		Result<U, E> and(Result<U, E> res)
+		Result<U, E> first(Result<U, E> res)
 		{
 			if (isOk())
 				return res;
@@ -35,7 +35,7 @@ namespace pe::core::utils
 		}
 
 		template <typename F>
-		Result<T, F> or(Result<T, F> res)
+		Result<T, F> last(Result<T, F> res)
 		{
 			if (isOk())
 				return getValue();
@@ -65,7 +65,7 @@ namespace pe::core::utils
 		const E& getError() const { return m_value.value(); }
 
 		template <typename U>
-		Result<U, E> and(Result<U, E> res)
+		Result<U, E> first(Result<U, E> res)
 		{
 			if (isOk())
 				return res;
@@ -74,7 +74,7 @@ namespace pe::core::utils
 		}
 
 		template <typename F>
-		Result<void, F> or (Result<void, F> res)
+		Result<void, F> last(Result<void, F> res)
 		{
 			if (isOk())
 				return Result<void, F>();
