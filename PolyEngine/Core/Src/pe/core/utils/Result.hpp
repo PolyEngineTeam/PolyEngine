@@ -5,7 +5,6 @@
 
 namespace pe::core::utils
 {
-	// 
 	template <typename T, typename E>
 	class Result
 	{
@@ -87,31 +86,56 @@ namespace pe::core::utils
 		std::optional<E> m_value;
 	};
 
-	template <typename T, typename E>
-	Result<T, E> join(Result<Result<T, E>, E> res)
+	namespace result
 	{
-		if (res.isOk())
-			return res.getValue();
-		else
-			return res.getError();
-	}
+		template <typename T, typename E>
+		Result<T, E> join(Result<Result<T, E>, E> res)
+		{
+			if (res.isOk())
+				return res.getValue();
+			else
+				return res.getError();
+		}
 
-	template <typename E>
-	Result<void, E> join(Result<Result<void, E>, E> res)
-	{
-		if (res.isOk())
-			return Result<void, E>();
-		else
-			return res.getError();
-	}
+		template <typename E>
+		Result<void, E> join(Result<Result<void, E>, E> res)
+		{
+			if (res.isOk())
+				return Result<void, E>();
+			else
+				return res.getError();
+		}
 
-	template <typename T1, typename T2, typename E>
-	Result<T2, E> bind(Result<T1, E> res, Result<T2, E> (*func)(T1))
-	{
-		if (res.isOk())
-			return func(res.getValue());
-		else
-			return res.getError();
-	}
+		template <typename T1, typename T2, typename E>
+		Result<T2, E> bind(Result<T1, E> res, Result<T2, E>(*func)(T1))
+		{
+			if (res.isOk())
+				return func(res.getValue());
+			else
+				return res.getError();
+		}
 
+		template <typename E, typename Res, typename... Args>
+		class Lifted
+		{
+		public:
+			using InFuncType = Res(*)(Args...);
+
+			Lifted(InFuncType inFunc) : InFunc(inFunc) {}
+
+			Result<Res, E> operator()(Result<Args, E>... args)
+			{
+				return InFunc(args.getValue()...);
+			}
+
+		private:
+			InFuncType InFunc = nullptr;
+		};
+
+		template <typename E, typename Res, typename... Args>
+		Lifted<E, Res, Args...> lift(Res(*srcFunc)(Args...))
+		{
+			return Lifted<E, Res, Args...>(srcFunc);
+		}
+	}
 }

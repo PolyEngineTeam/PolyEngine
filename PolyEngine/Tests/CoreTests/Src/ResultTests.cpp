@@ -13,12 +13,22 @@ namespace
 		ERROR_TYPE_2
 	};
 
+	int simpleFunc()
+	{
+		return 0;
+	}
+
 	Result<bool, eTestErrorType> func(int in)
 	{
 		if (in < 10)
 			return in > 5;
 		else
 			return eTestErrorType::ERROR_TYPE_1;
+	}
+
+	int func5(int a, float b, Result<bool, eTestErrorType> c, float d, std::string e)
+	{
+		return 0;
 	}
 }
 
@@ -70,34 +80,34 @@ TEST_CASE("Result.getError", "[Result]")
 TEST_CASE("Result.join", "[Result]")
 {
 	Result<Result<int, eTestErrorType>, eTestErrorType> result1 = 43;
-	REQUIRE(join(result1).getValue() == 43);
+	REQUIRE(result::join(result1).getValue() == 43);
 
 	Result<Result<int, eTestErrorType>, eTestErrorType> result2 = Result<int, eTestErrorType>(eTestErrorType::ERROR_TYPE_1);
-	REQUIRE(join(result2).getError() == eTestErrorType::ERROR_TYPE_1);
+	REQUIRE(result::join(result2).getError() == eTestErrorType::ERROR_TYPE_1);
 	
 	Result<Result<void, eTestErrorType>, eTestErrorType> result3 = Result<void, eTestErrorType>();
-	REQUIRE(join(result3).isOk() == true);
+	REQUIRE(result::join(result3).isOk() == true);
 	
 	Result<Result<void, eTestErrorType>, eTestErrorType> result4 = eTestErrorType::ERROR_TYPE_1;
-	REQUIRE(join(result4).isOk() == false);
+	REQUIRE(result::join(result4).isOk() == false);
 
 	Result<Result<void, eTestErrorType>, eTestErrorType> result5 = eTestErrorType::ERROR_TYPE_1;
-	REQUIRE(join(result4).getError() == eTestErrorType::ERROR_TYPE_1);
+	REQUIRE(result::join(result4).getError() == eTestErrorType::ERROR_TYPE_1);
 }
 
 TEST_CASE("Result.bind", "[Result]")
 {
 	Result<int, eTestErrorType> result1 = 2;
-	REQUIRE(bind(result1, func).getValue() == false);
+	REQUIRE(result::bind(result1, func).getValue() == false);
 
 	Result<int, eTestErrorType> result2 = 7;
-	REQUIRE(bind(result2, func).getValue() == true);
+	REQUIRE(result::bind(result2, func).getValue() == true);
 
 	Result<int, eTestErrorType> result3 = 11;
-	REQUIRE(bind(result3, func).getError() == eTestErrorType::ERROR_TYPE_1);
+	REQUIRE(result::bind(result3, func).getError() == eTestErrorType::ERROR_TYPE_1);
 
 	Result<int, eTestErrorType> result4 = eTestErrorType::ERROR_TYPE_2;
-	REQUIRE(bind(result4, func).getError() == eTestErrorType::ERROR_TYPE_2);
+	REQUIRE(result::bind(result4, func).getError() == eTestErrorType::ERROR_TYPE_2);
 }
 
 TEST_CASE("Result.and", "[Result]")
@@ -191,4 +201,15 @@ TEST_CASE("Result.or", "[Result]")
 		Result<void, eTestErrorType> result8 = eTestErrorType::ERROR_TYPE_2;
 		REQUIRE(result7.or(result8).getError() == eTestErrorType::ERROR_TYPE_2);
 	}
+}
+
+TEST_CASE("Result.lift", "[Result]")
+{
+	//LiftedFuncFactory::
+	auto method = result::lift<eTestErrorType>(&simpleFunc);
+	auto method2 = result::lift<eTestErrorType>(&func);
+	auto method3 = result::lift<eTestErrorType>(&func5);
+	method();
+	method2(3);
+	method3(1, 2.f, Result<bool, eTestErrorType>(false), 4.f, std::string("a"));
 }
