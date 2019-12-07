@@ -5,7 +5,7 @@ COMMON_BUILD_DIR_NAME = 'CommonBuild'
 DIST_DIR_NAME = 'Dist'
 
 class ProjectBase():
-    def __init__(self, project_root_path, project_name, engine_ver, build_postfix=None):
+    def __init__(self, project_root_path, project_name, build_postfix=None):
         self._root_path = project_root_path
 
         build_dir_fullname = BUILD_DIR_NAME + '_' + build_postfix if build_postfix else BUILD_DIR_NAME
@@ -15,7 +15,6 @@ class ProjectBase():
         self._build_postfix = build_postfix
         self._dist_path = os.path.join(project_root_path, dist_dir_fullname)
         self._project_name = project_name
-        self._engine_ver = engine_ver
     
 
     def update(self):
@@ -33,10 +32,6 @@ class ProjectBase():
     @property
     def name(self):
         return self._project_name
-
-    @property
-    def engine_ver(self):
-        return self._engine_ver
 
     # Abstract API
     def _before_cmake_gen(self):
