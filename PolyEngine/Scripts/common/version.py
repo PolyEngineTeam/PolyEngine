@@ -23,6 +23,15 @@ class Version():
         self.minor = minor
         self.fix = fix
 
+    def supports(self, other):
+        '''
+        This method returns true when self is a newer version that is backwards compatible with other
+        '''
+        
+        if not isinstance(other, Version):
+            raise TypeError('Cannot check for backwards compatibility with object of type: {}'.format(type(other)))
+        return self.major == other.major and self.minor >= other.minor
+
     def __repr__(self):
         return 'Version(major={}, minor={}, fix={})'.format(self.major, self.minor, self.fix)
 
@@ -34,7 +43,29 @@ class Version():
             raise TypeError('Cannot compare version with object of type: {}'.format(type(other)))
         return self.major == other.major and self.minor == other.minor and self.fix == other.fix
 
-    def is_backwards_compatible_with(self, other):
-        if not isinstance(other, Version):
-            raise TypeError('Cannot check for backwards compatibility with object of type: {}'.format(type(other)))
-        return self.major == other.major and self.minor <= other.minor
+    def __lt__(self, other):
+        if self.major < other.major:
+            return True
+        elif self.major == other.major:
+            if self.minor < other.minor:
+                return True
+            elif self.minor == other.minor and self.fix < other.fix:
+                return True
+        return False
+
+    def __gt__(self, other):
+        if self.major > other.major:
+            return True
+        elif self.major == other.major:
+            if self.minor > other.minor:
+                return True
+            elif self.minor == other.minor and self.fix > other.fix:
+                return True
+        return False
+
+    def __le__(self, other):
+        return self == other or self < other
+    
+    def __ge__(self, other):
+        return self == other or self > other
+        
