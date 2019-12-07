@@ -172,7 +172,7 @@ TEST_CASE("Queue tests for STL forward iterators", "[Queue]")
 		REQUIRE(e == idx);
 	}
 
-	idx = q.getSize();
+	idx = static_cast<int>(q.getSize());
 	for(auto it = std::prev(q.end()); it != q.begin(); --it)
 	{
 		REQUIRE(*it == idx);
@@ -212,7 +212,7 @@ TEST_CASE("Queue tests for STL const forward iterators", "[Queue]")
 	q.pushBack(4);
 	q.pushBack(5);
 
-	idx = q.getSize();
+	idx = static_cast<int>(q.getSize());
 	for(auto it = std::prev(q.cend()); it != q.cbegin(); --it)
 	{
 		REQUIRE(*it == idx);
@@ -298,7 +298,7 @@ TEST_CASE("Queue tests for STL const reverse iterators", "[Queue]")
 	REQUIRE(idx == 0);
 
 	q.pushBack(1);
-	idx = q.getSize();
+	idx = static_cast<int>(q.getSize());
 	for(auto it = q.crbegin(); it != q.crend(); ++it)
 	{
 		--idx;
