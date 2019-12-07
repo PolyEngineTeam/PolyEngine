@@ -145,7 +145,7 @@ namespace pe::core::storage
 		{
 			if (getSize() >= getCapacity())
 				enlarge();
-			::pe::core::memory::ObjectLifetimeHelper::moveEmplace(m_data.data() + m_tail, std::forward<Args>(args)...);
+			::pe::core::memory::ObjectLifetimeHelper::moveEmplace((m_data + m_tail), std::forward<Args>(args)...);
 			advanceIdx(m_tail);
 			m_size++;
 		}
@@ -158,7 +158,7 @@ namespace pe::core::storage
 			if (getSize() >= getCapacity())
 				enlarge();
 			decreaseIdx(m_head);
-			::pe::core::memory::ObjectLifetimeHelper::moveEmplace(m_data.data() + m_head, std::forward<Args>(args)...);
+			::pe::core::memory::ObjectLifetimeHelper::moveEmplace((m_data + m_head), std::forward<Args>(args)...);
 			m_size++;
 		}
 
