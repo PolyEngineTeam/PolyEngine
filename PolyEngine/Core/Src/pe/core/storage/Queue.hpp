@@ -318,18 +318,18 @@ namespace pe::core::storage
 		//------------------------------------------------------------------------------
 		size_t getPrevIdx(size_t idx) const
 		{
-			// PhysicalSize takes guard cell into account
-			const size_t physicalSize = m_size + 1;
-			idx = (idx + physicalSize - 1 - m_head) % physicalSize;
-			return idx + m_head;
+			const size_t sizeWithGuard = m_size + 1;
+			const size_t prevOffset = (idx + m_capacity - 1 - m_head) % m_capacity;
+			const size_t sizeCorrectedPrevOffset = prevOffset % sizeWithGuard;
+			return (m_head + sizeCorrectedPrevOffset) % m_capacity;
 		}
 		
 		size_t getNextIdx(size_t idx) const
 		{
-			// PhysicalSize takes guard cell into account
-			const size_t physicalSize = m_size + 1;
-			idx = (idx + 1 - m_head) % physicalSize;
-			return idx + m_head;
+			const size_t sizeWithGuard = m_size + 1;
+			const size_t nextOffset = (idx + m_capacity + 1 - m_head) % m_capacity;
+			const size_t sizeCorrectedNextOffset = nextOffset % sizeWithGuard;
+			return (m_head + sizeCorrectedNextOffset) % m_capacity;
 		}
 
 		size_t getPrevCellIdx(size_t idx) const
