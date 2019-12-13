@@ -1,6 +1,9 @@
 sudo: required
 dist: xenial
 
+services:
+    - docker
+
 notifications:
   email: false
   slack: polyengine:Fah16tvbyOphIl7FGHAVVhaB
