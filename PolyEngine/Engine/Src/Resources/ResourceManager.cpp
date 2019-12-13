@@ -6,8 +6,10 @@
 
 SILENCE_CLANG_WARNING(-Wparentheses-equality, "Surpressing clang warnings in stb_image") //@fixme(celeborth) if put in PCH it throws violation of ODR linker error
 SILENCE_GCC_WARNING(-Wimplicit-fallthrough=, "Surpressing clang warnings in stb_image")
+SILENCE_GCC_WARNING(-Wtype-limits, "Surpressing clang warnings in stb_image, part2")
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+UNSILENCE_GCC_WARNING()
 UNSILENCE_GCC_WARNING()
 UNSILENCE_CLANG_WARNING()
 
