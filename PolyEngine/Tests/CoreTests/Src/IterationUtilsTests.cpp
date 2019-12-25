@@ -45,7 +45,6 @@ TEST_CASE("Distant head and tail, unwrapped", "[IterationUtils]")
 	CHECK(prevIdxCircularBuffer(head, size, capacity, 9) == slowPrevIdxCircularBuffer(head, tail, size, capacity, 9));
 	CHECK(prevIdxCircularBuffer(head, size, capacity, 8) == slowPrevIdxCircularBuffer(head, tail, size, capacity, 8));
 	CHECK(prevIdxCircularBuffer(head, size, capacity, 7) == slowPrevIdxCircularBuffer(head, tail, size, capacity, 7));
-	CHECK(prevIdxCircularBuffer(head, size, capacity, 6) == 1);
 	CHECK(prevIdxCircularBuffer(head, size, capacity, 6) == slowPrevIdxCircularBuffer(head, tail, size, capacity, 6));
 }
 
@@ -67,7 +66,6 @@ TEST_CASE("Two elements of distance between head and tail, wrapped", "[Iteration
 	CHECK(prevIdxCircularBuffer(head, size, capacity, 5) == slowPrevIdxCircularBuffer(head, tail, size, capacity, 5));
 	CHECK(prevIdxCircularBuffer(head, size, capacity, 4) == slowPrevIdxCircularBuffer(head, tail, size, capacity, 4));
 	CHECK(prevIdxCircularBuffer(head, size, capacity, 3) == slowPrevIdxCircularBuffer(head, tail, size, capacity, 3));
-	CHECK(prevIdxCircularBuffer(head, size, capacity, 2) == 0);
 	CHECK(prevIdxCircularBuffer(head, size, capacity, 2) == slowPrevIdxCircularBuffer(head, tail, size, capacity, 2));
 }
 
@@ -89,7 +87,6 @@ TEST_CASE("One element of distance between head and tail, wrapped", "[IterationU
 	CHECK(prevIdxCircularBuffer(head, size, capacity, 5) == slowPrevIdxCircularBuffer(head, tail, size, capacity, 5));
 	CHECK(prevIdxCircularBuffer(head, size, capacity, 4) == slowPrevIdxCircularBuffer(head, tail, size, capacity, 4));
 	CHECK(prevIdxCircularBuffer(head, size, capacity, 3) == slowPrevIdxCircularBuffer(head, tail, size, capacity, 3));
-	CHECK(prevIdxCircularBuffer(head, size, capacity, 2) == 1);
 	CHECK(prevIdxCircularBuffer(head, size, capacity, 2) == slowPrevIdxCircularBuffer(head, tail, size, capacity, 2));
 }
 
@@ -111,7 +108,6 @@ TEST_CASE("Head at 0th index, unwrapped", "[IterationUtils]")
 	CHECK(prevIdxCircularBuffer(head, size, capacity, 3) == slowPrevIdxCircularBuffer(head, tail, size, capacity, 3));
 	CHECK(prevIdxCircularBuffer(head, size, capacity, 2) == slowPrevIdxCircularBuffer(head, tail, size, capacity, 2));
 	CHECK(prevIdxCircularBuffer(head, size, capacity, 1) == slowPrevIdxCircularBuffer(head, tail, size, capacity, 1));
-	CHECK(prevIdxCircularBuffer(head, size, capacity, 0) == 5);
 	CHECK(prevIdxCircularBuffer(head, size, capacity, 0) == slowPrevIdxCircularBuffer(head, tail, size, capacity, 0));
 }
 
