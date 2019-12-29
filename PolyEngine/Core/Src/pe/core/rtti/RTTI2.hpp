@@ -17,19 +17,19 @@ namespace pe::core::rtti
 	
 	namespace impl
 	{
+		template <typename F, typename X>
+		void runListImpl(F f, X x) { f(x); }
+
 		template <typename F, typename X, typename ... XS>
-		void runList(F f, X x, XS... xs)
+		void runListImpl(F f, X x, XS... xs)
 		{
 			f(x);
-			runList(f, xs...);
+			runListImpl(f, xs...);
 		}
-
-		template <typename F, typename X>
-		void runList(F f, X x) { f(x); }
 	}
 
 	constexpr auto runList = [](auto list, auto f) {
-		list([f](auto... xs){ impl::runList(f, xs...); });
+		list([f](auto... xs){ impl::runListImpl(f, xs...); });
 	};
 
 	namespace RTTI2

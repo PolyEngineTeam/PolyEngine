@@ -4,7 +4,7 @@ namespace pe::core::rtti
 {
 	namespace RTTI2
 	{
-		TypeManager& get()
+		TypeManager& TypeManager::get()
 		{
 			static TypeManager instance{};
 			return instance;

@@ -10,7 +10,7 @@ struct TestClass : public virtual RTTI2::RTTIBase {
 	TestClass() : RTTI2::RTTIBase(RTTI2::TypeManager::get().registerOrGetType<TestClass>()) {}
 };
 template <> struct RTTI2::RTTIinfo<TestClass> {
-	constexpr static auto info = List(testAttr, testAttr, RTTI2::classname{ "testname" });
+	constexpr static auto info = List(testAttr, testAttr, RTTI2::ClassName{ "testname" });
 };
 
 TEST_CASE("RTTI2 simple attribute", "[RTTI2]") {
@@ -20,7 +20,7 @@ TEST_CASE("RTTI2 simple attribute", "[RTTI2]") {
 	CHECK(ta);
 	CHECK(ta->size() == 2);
 	CHECK(tc.typeInfo().get<int>() == nullptr);
-	auto x = tc.typeInfo().get<RTTI2::classname>();
+	auto x = tc.typeInfo().get<RTTI2::ClassName>();
 	CHECK(x);
 	CHECK(std::string("testname") == x->name);
 }
