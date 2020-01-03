@@ -5,6 +5,7 @@
 
 namespace pe::core::utils
 {
+	//------------------------------------------------------------------------------
 	template <typename T, typename E>
 	class Result
 	{
@@ -46,7 +47,8 @@ namespace pe::core::utils
 	private:
 		std::variant<T, E> m_value;
 	};
-	
+
+	//------------------------------------------------------------------------------
 	template <typename E>
 	class Result<void, E> final : public BaseObjectLiteralType<>
 	{
