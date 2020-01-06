@@ -66,7 +66,7 @@ class GameProject(ProjectBase):
             self._logger.info('Deduced project name to be: [{}]'.format(self._project_name))
 
         # Initialize base
-        ProjectBase.__init__(self, project_root_path, self._project_name, common.Version(0, 0, 1), build_postfix)
+        ProjectBase.__init__(self, project_root_path, self._project_name, build_postfix)
 
         self._project_path = os.path.join(self._root_path, self._project_name)
         self._project_resources_path = os.path.join(self._project_path, PROJECT_RESOURCES_DIR_NAME)
@@ -78,10 +78,22 @@ class GameProject(ProjectBase):
                 raise ValueError('Project [{}] cannot be created when create_if_absent=False.'.format(self._project_name))
             self._create()
 
-        assert(os.path.isfile(self._project_file_path))
+        if os.path.isfile(self._project_file_path):
+            self._parse_proj_file()
 
+        assert(os.path.isfile(self._project_file_path))
+        assert(self._engine_ver is not None)
+
+    def bump_ver(self, version):
+        if version <= self._engine_ver:
+            raise ValueError('Engine version can only go up! Current: [{}] Requested: [{}]'.format(self._engine_ver, version))
+        self._engine_ver = version
+        self._save()
 
     def _create(self):
+        # Setup engine version
+        self._engine_ver = common.SCRIPT_ENV.engine_ver()
+
         # Ensure all necessary folders are present
         os.makedirs(self._root_path, exist_ok=True)
         os.makedirs(self._project_path, exist_ok=True)
