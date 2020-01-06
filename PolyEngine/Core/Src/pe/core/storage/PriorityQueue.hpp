@@ -43,28 +43,28 @@ namespace pe::core::storage
 		}
 
 		template<class _Alloc,
-			class = enable_if_t<uses_allocator_v<_Container, _Alloc>>>
+			class = std::enable_if_t<std::uses_allocator_v<_Container, _Alloc>>>
 			explicit PriorityQueue(const _Alloc& _Al)
 			: priority_queue(_All)
 		{	
 		}
 
 		template<class _Alloc,
-			class = enable_if_t<uses_allocator_v<_Container, _Alloc>>>
+			class = std::enable_if_t<std::uses_allocator_v<_Container, _Alloc>>>
 			PriorityQueue(const _Pr& _Pred, const _Alloc& _Al)
 			: priority_queue(_Pred,_Al)
 		{	
 		}
 
 		template<class _Alloc,
-			class = enable_if_t<uses_allocator_v<_Container, _Alloc>>>
+			class = std::enable_if_t<std::uses_allocator_v<_Container, _Alloc>>>
 			PriorityQueue(const _Pr& _Pred, const _Container& _Cont, const _Alloc& _Al)
 			: priority_queue(_Pred,_Cont,_Al)
 		{	
 		}
 
 		template<class _Alloc,
-			class = enable_if_t<uses_allocator_v<_Container, _Alloc>>>
+			class = std::enable_if_t<std::uses_allocator_v<_Container, _Alloc>>>
 			PriorityQueue(const priority_queue& _Right, const _Alloc& _Al)
 			: priority_queue(_Right,_Al)
 		{	
@@ -80,16 +80,16 @@ namespace pe::core::storage
 			: priority_queue(_First,_Last,_Pred,_Cont)
 		{	
 		}
-
+		
 		template<class _Alloc,
-			class = enable_if_t<uses_allocator_v<_Container, _Alloc>>>
+			class = std::enable_if_t<std::uses_allocator_v<_Container, _Alloc>>>
 			PriorityQueue(const _Pr& _Pred, _Container&& _Cont, const _Alloc& _Al)
 			: priority_queue(_Pred,_Cont,_Al)
 		{	
 		}
 
 		template<class _Alloc,
-			class = enable_if_t<uses_allocator_v<_Container, _Alloc>>>
+			class = std::enable_if_t<std::uses_allocator_v<_Container, _Alloc>>>
 			PriorityQueue(priority_queue&& _Right, const _Alloc& _Al)
 			: priority_queue(_Right,_Al)
 		{	
