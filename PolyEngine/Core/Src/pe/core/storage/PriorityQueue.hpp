@@ -45,7 +45,7 @@ namespace pe::core::storage
 		template<class _Alloc,
 			class = std::enable_if_t<std::uses_allocator_v<_Container, _Alloc>>>
 			explicit PriorityQueue(const _Alloc& _Al)
-			: std::priority_queue<_Ty, _Container, _Pr>(_All)
+			: std::priority_queue<_Ty, _Container, _Pr>(_Al)
 		{	
 		}
 
@@ -65,7 +65,7 @@ namespace pe::core::storage
 
 		template<class _Alloc,
 			class = std::enable_if_t<std::uses_allocator_v<_Container, _Alloc>>>
-			PriorityQueue(const priority_queue& _Right, const _Alloc& _Al)
+			PriorityQueue(const std::priority_queue<_Ty, _Container, _Pr>& _Right, const _Alloc& _Al)
 			: std::priority_queue<_Ty, _Container, _Pr>(_Right,_Al)
 		{	
 		}
@@ -90,7 +90,7 @@ namespace pe::core::storage
 
 		template<class _Alloc,
 			class = std::enable_if_t<std::uses_allocator_v<_Container, _Alloc>>>
-			PriorityQueue(priority_queue&& _Right, const _Alloc& _Al)
+			PriorityQueue(priority_queue& _Right, const _Alloc& _Al)
 			: std::priority_queue<_Ty, _Container, _Pr>(_Right,_Al)
 		{	
 		}
