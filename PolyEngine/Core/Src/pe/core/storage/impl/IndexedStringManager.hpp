@@ -2,6 +2,7 @@
 
 #include <pe/Defines.hpp>
 #include <pe/core/storage/impl/IndexedStringEntry.hpp>
+#include <pe/core/storage/PriorityQueue.hpp>
 
 namespace pe::core::storage::impl
 {
@@ -39,7 +40,7 @@ private:
 	void scheduleErase(const IndexedStringEntry* entry);
 
 	std::unordered_map<std::string_view, std::unique_ptr<IndexedStringEntry>> m_entries;
-	std::priority_queue<TTLEntry> m_ttlEntries;
+	PriorityQueue<TTLEntry> m_ttlEntries;
 	bool m_ttlEnabled = false;
 	size_t m_tickCount = 0;
 };

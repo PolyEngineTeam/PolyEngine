@@ -3,7 +3,7 @@
 #include <GLRenderingDevice.hpp>
 
 #include <algorithm>    // std::min
-
+#include <pe/core/storage/PriorityQueue.hpp>
 #include <Proxy/GLTextFieldBufferDeviceProxy.hpp>
 #include <Proxy/GLTextureDeviceProxy.hpp>
 #include <Pipeline/RenderingPassBase.hpp>
@@ -16,7 +16,7 @@
 #include <TiledForwardRenderer.hpp>
 
 using namespace Poly;
-using MeshQueue = std::priority_queue<const MeshRenderingComponent*, std::vector<const MeshRenderingComponent*>, SceneView::DistanceToCameraComparator>;
+using MeshQueue = core::storage::PriorityQueue<const MeshRenderingComponent*, std::vector<const MeshRenderingComponent*>, SceneView::DistanceToCameraComparator>;
 
 void GLRenderingDevice::Init()
 {
@@ -238,7 +238,6 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const core::math
 	// find all meshes that are inside extended DirLights AABB box
 	core::math::Vector dirLightPos = sceneView.DirectionalLightList[0]->GetTransform().GetGlobalTranslation();
 	MeshQueue shadowCasterQueue(SceneView::DistanceToCameraComparator(dirLightPos, SceneView::eSortOrderType::FRONT_TO_BACK));
-	
 	for (auto& [box, meshCmp] : boxMeshes)
 	{
 		if (frustumAABBInLS.Contains(box))

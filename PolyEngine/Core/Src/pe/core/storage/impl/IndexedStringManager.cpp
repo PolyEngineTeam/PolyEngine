@@ -1,5 +1,6 @@
 #include <pe/core/storage/impl/IndexedStringManager.hpp>
 
+
 namespace pe::core::storage::impl
 {
 
@@ -70,8 +71,7 @@ void IndexedStringManager::setTTLMode(bool enabled)
 {
 	if(m_ttlEnabled && !enabled)
 	{
-		std::priority_queue<TTLEntry> new_queue;
-		std::swap(m_ttlEntries,new_queue);
+		m_ttlEntries.clear();
 	}
 	m_ttlEnabled = enabled;
 }

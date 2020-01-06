@@ -1,11 +1,11 @@
 #include <PolyRenderingDeviceGLPCH.hpp>
-
+#include <pe/core/storage/PriorityQueue.hpp>
 #include <Pipeline/ShadowMapPass.hpp>
 #include <GLRenderingDevice.hpp>
 #include <IRendererInterface.hpp>
 
 using namespace Poly;
-using MeshQueue = std::priority_queue<const MeshRenderingComponent*,std::vector<const MeshRenderingComponent*>, SceneView::DistanceToCameraComparator>;
+using MeshQueue = core::storage::PriorityQueue<const MeshRenderingComponent*,std::vector<const MeshRenderingComponent*>, SceneView::DistanceToCameraComparator>;
 
 core::math::Matrix Poly::GetProjectionForShadowMap(const SceneView& sceneView, int shadowmapSize)
 {
