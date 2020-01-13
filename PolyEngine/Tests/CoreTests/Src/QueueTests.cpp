@@ -354,6 +354,30 @@ TEST_CASE("Queue test for wrapping coherency", "[Queue]")
 	REQUIRE(q.getSize() == 5);
 	REQUIRE(q.front() == 3);
 	REQUIRE(q.back() == 10);
+
+	int i = 0;
+	for(auto it = q.begin(); it != q.end(); ++it)
+	{
+		UNUSED(it);
+		++i;
+	}
+	REQUIRE(i == 5);
+	
+	i = 0;
+	for(auto& e : q)
+	{
+		UNUSED(e);
+		++i;
+	}
+	REQUIRE(i == 5);
+
+	i = 0;
+	for(auto it = q.rbegin(); it != q.rend(); ++it)
+	{
+		UNUSED(it);
+		++i;
+	}
+	REQUIRE(i == 5);
 }
 
 TEST_CASE("Queue tests (with BaseObject)", "[Queue]")
