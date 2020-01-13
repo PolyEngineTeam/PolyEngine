@@ -134,7 +134,7 @@ void ImguiSystem::OnUpdate(Scene* scene)
 
 	// Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
 	if (io.WantSetMousePos)
-		gEngine->GetOutputQueue().PushBack({eOutputEventType::MOUSEPOS, core::math::Vector2i((int)io.MousePos.x, (int)io.MousePos.y)});
+		gEngine->GetOutputQueue().pushBack({eOutputEventType::MOUSEPOS, core::math::Vector2i((int)io.MousePos.x, (int)io.MousePos.y)});
 	else
 		io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
 
@@ -147,13 +147,13 @@ void ImguiSystem::OnUpdate(Scene* scene)
 		if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None)
 		{
 			// Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
-			gEngine->GetOutputQueue().PushBack({ eOutputEventType::CURSORHIDE });
+			gEngine->GetOutputQueue().pushBack({ eOutputEventType::CURSORHIDE });
 		}
 		else
 		{
 			// Show OS mouse cursor
-			gEngine->GetOutputQueue().PushBack({ eOutputEventType::CURSORSET, GetCursorType(imgui_cursor) });
-			gEngine->GetOutputQueue().PushBack({ eOutputEventType::CURSORSHOW });
+			gEngine->GetOutputQueue().pushBack({ eOutputEventType::CURSORSET, GetCursorType(imgui_cursor) });
+			gEngine->GetOutputQueue().pushBack({ eOutputEventType::CURSORSHOW });
 		}
 	}
 

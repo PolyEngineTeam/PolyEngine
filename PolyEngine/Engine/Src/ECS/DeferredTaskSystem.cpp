@@ -35,15 +35,15 @@ void DeferredTaskSystem::DeferredTaskPhase(Scene* w)
 	worldCmp->NewlyCreatedComponents.clear();
 
 	// execute tasks from queue
-	while (!worldCmp->TasksQueue.IsEmpty())
+	while (!worldCmp->TasksQueue.isEmpty())
 	{
-		DeferredTaskBase *task = worldCmp->TasksQueue.Front();
+		DeferredTaskBase *task = worldCmp->TasksQueue.front();
 		ASSERTE(task, "The task doesn't exist!");
 
 		//gConsole.LogDebug("Executing task: {}", task->GetDescription());
 		task->Execute(w);
 
-		worldCmp->TasksQueue.PopFront();
+		worldCmp->TasksQueue.popFront();
 		delete task;
 	}
 }
