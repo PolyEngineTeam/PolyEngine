@@ -3,6 +3,7 @@
 #include <pe/Defines.hpp>
 #include <pe/core/memory/Allocator.hpp>
 #include <pe/core/memory/ObjectLifetimeHelpers.hpp>
+#include <pe/core/utils/IterationUtils.hpp>
 
 namespace pe::core::storage
 {
@@ -318,18 +319,12 @@ namespace pe::core::storage
 		//------------------------------------------------------------------------------
 		size_t getPrevIdx(size_t idx) const
 		{
-			const size_t sizeWithGuard = m_size + 1;
-			const size_t prevOffset = (idx + m_capacity - 1 - m_head) % m_capacity;
-			const size_t sizeCorrectedPrevOffset = prevOffset % sizeWithGuard;
-			return (m_head + sizeCorrectedPrevOffset) % m_capacity;
+			return ::pe::core::utils::prevIdxCircularBuffer(m_head, m_size, m_capacity, idx);
 		}
 		
 		size_t getNextIdx(size_t idx) const
 		{
-			const size_t sizeWithGuard = m_size + 1;
-			const size_t nextOffset = (idx + m_capacity + 1 - m_head) % m_capacity;
-			const size_t sizeCorrectedNextOffset = nextOffset % sizeWithGuard;
-			return (m_head + sizeCorrectedNextOffset) % m_capacity;
+			return ::pe::core::utils::nextIdxCircularBuffer(m_head, m_size, m_capacity, idx);
 		}
 
 		size_t getPrevCellIdx(size_t idx) const
