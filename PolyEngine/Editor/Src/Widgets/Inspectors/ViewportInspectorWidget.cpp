@@ -138,9 +138,9 @@ PolyEditor::eEngineState ViewportInspectorWidget::GetEngineState()
 
 void ViewportInspectorWidget::HandleEngineOutputEvents(Poly::OutputQueue& OutputEventsQueue)
 {
-	while (!OutputEventsQueue.IsEmpty())
+	while (!OutputEventsQueue.isEmpty())
 	{
-		Poly::OutputEvent& ev = OutputEventsQueue.Front();
+		Poly::OutputEvent& ev = OutputEventsQueue.front();
 		switch (ev.Type)
 		{
 			case Poly::eOutputEventType::MOUSEPOS:
@@ -156,10 +156,10 @@ void ViewportInspectorWidget::HandleEngineOutputEvents(Poly::OutputQueue& Output
 				SDLWidget->setCursor(Qt::BlankCursor);
 				break;
 			case Poly::eOutputEventType::_COUNT:
-				HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::Push(), which is an invalid value");
+				HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::push(), which is an invalid value");
 				break;
 		}
-		OutputEventsQueue.PopFront();
+		OutputEventsQueue.popFront();
 	}
 }
 

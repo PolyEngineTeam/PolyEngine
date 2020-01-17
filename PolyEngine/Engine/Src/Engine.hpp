@@ -78,66 +78,66 @@ namespace Poly
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="key">Key code</param>
-		void KeyDown(eKey key) { InputEventsQueue.PushBack({eInputEventType::KEYDOWN, key}); }
+		void KeyDown(eKey key) { InputEventsQueue.pushBack({eInputEventType::KEYDOWN, key}); }
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="key">Key code</param>
-		void KeyUp(eKey key) { InputEventsQueue.PushBack({eInputEventType::KEYUP, key}); }
+		void KeyUp(eKey key) { InputEventsQueue.pushBack({eInputEventType::KEYUP, key}); }
 
 		/// <summary>Pushes input event to an input queue with specified UTF8 character.
 		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="key">Unicode UTF8 character</param>
-		void AddCharacterUTF8(const char* charUTF8) { InputEventsQueue.PushBack({eInputEventType::TEXTCHAR, charUTF8}); }
+		void AddCharacterUTF8(const char* charUTF8) { InputEventsQueue.pushBack({eInputEventType::TEXTCHAR, charUTF8}); }
 
 		/// <summary>Pushes input event to an input queue with specified event type and button code.
 		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="button">Mouse button code</param>
-		void MouseButtonDown(eMouseButton button) { InputEventsQueue.PushBack({eInputEventType::MOUSEBUTTONDOWN, button}); }
+		void MouseButtonDown(eMouseButton button) { InputEventsQueue.pushBack({eInputEventType::MOUSEBUTTONDOWN, button}); }
 
 		/// <summary>Pushes input event to an input queue with specified event type and button code.
 		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="button">Mouse button code</param>
-		void MouseButtonUp(eMouseButton button) { InputEventsQueue.PushBack({eInputEventType::MOUSEBUTTONUP, button}); }
+		void MouseButtonUp(eMouseButton button) { InputEventsQueue.pushBack({eInputEventType::MOUSEBUTTONUP, button}); }
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="pos">Mouse delta pos.</param>
-		void UpdateMouseMove(const ::pe::core::math::Vector2i& delta) { InputEventsQueue.PushBack({eInputEventType::MOUSEMOVE, delta }); }
+		void UpdateMouseMove(const ::pe::core::math::Vector2i& delta) { InputEventsQueue.pushBack({eInputEventType::MOUSEMOVE, delta }); }
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="pos">New mouse position.</param>
-		void UpdateMousePos(const ::pe::core::math::Vector2i& pos) { InputEventsQueue.PushBack({ eInputEventType::MOUSEPOS, pos }); }
+		void UpdateMousePos(const ::pe::core::math::Vector2i& pos) { InputEventsQueue.pushBack({ eInputEventType::MOUSEPOS, pos }); }
 
 		/// <summary>Pushes input event to an input queue with specified event type and key code.
 		/// One of eight functions handling incoming input events.</summary>
 		/// <param name="pos">Wheel delta position.</param>
-		void UpdateWheelPos(const ::pe::core::math::Vector2i& deltaPos) { InputEventsQueue.PushBack({eInputEventType::WHEELMOVE, deltaPos}); }
+		void UpdateWheelPos(const ::pe::core::math::Vector2i& deltaPos) { InputEventsQueue.pushBack({eInputEventType::WHEELMOVE, deltaPos}); }
 
         /// <summary>Pushes adding input controller event to an input queue with specified SDL_GameController id</summary>
         /// <param name="id">SDL Joystick Instance id</param>
-        void AddController(size_t id) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_ADDED, id}); };
+        void AddController(size_t id) { InputEventsQueue.pushBack({eInputEventType::CONTROLLER_ADDED, id}); };
 
         /// <summary>Pushes removing input controller event to an input queue with specified SDL_Joystick instance id</summary>
         /// <param name="id">SDL Joystick instance id</param>
-        void RemoveController(size_t id) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_REMOVED, id}); };
+        void RemoveController(size_t id) { InputEventsQueue.pushBack({eInputEventType::CONTROLLER_REMOVED, id}); };
 
         /// <summary>Pushes controller button down event to an input queue</summary>
         /// <param name="id">SDL Joystick instance id</param>
         /// <param name="button">Button pressed enum instance</param>
-        void ControllerButtonDown(size_t id, eControllerButton button) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_BUTTON_DOWN, id, button}); };
+        void ControllerButtonDown(size_t id, eControllerButton button) { InputEventsQueue.pushBack({eInputEventType::CONTROLLER_BUTTON_DOWN, id, button}); };
 
         /// <summary>Pushes controller button up event to an input queue</summary>
         /// <param name="id">SDL Joystick instance id</param>
         /// <param name="button">Button released enum instance</param>
-        void ControllerButtonUp(size_t id, eControllerButton button) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_BUTTON_UP, id, button}); };
+        void ControllerButtonUp(size_t id, eControllerButton button) { InputEventsQueue.pushBack({eInputEventType::CONTROLLER_BUTTON_UP, id, button}); };
 
         /// <summary>Pushes controller axis motion event to an input queue</summary>
         /// <param name="id">SDL Joystick instance id</param>
         /// <param name="axis">Axis enum instance</param>
         /// <param name="value">New axis position (SDL raw, not normalized)</param>
-        void ControllerAxisMotion(size_t id, eControllerAxis axis, i16 value) { InputEventsQueue.PushBack({eInputEventType::CONTROLLER_AXIS_MOTION, id, axis, value/35768.0f}); };
+        void ControllerAxisMotion(size_t id, eControllerAxis axis, i16 value) { InputEventsQueue.pushBack({eInputEventType::CONTROLLER_AXIS_MOTION, id, axis, value/35768.0f}); };
 
 		///functions for closing the game
 		bool IsQuitRequested() const;
