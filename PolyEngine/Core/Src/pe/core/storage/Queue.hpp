@@ -139,18 +139,30 @@ namespace pe::core::storage
 			m_size++;
 		}
 
-	/*
-		//TODO(celeb): implement MoveEmplace in ObjectLifetimeHelper
+		/// <summary>Performs emplacement to the front of the queue.</summary>
+		/// <param name="args">Arguments for the constructor of emplaced object</param>
 		template<typename... Args>
 		void emplaceBack(Args&&... args)
 		{
+			if (getSize() >= getCapacity())
+				enlarge();
+			::pe::core::memory::ObjectLifetimeHelper::moveEmplace((m_data + m_tail), std::forward<Args>(args)...);
+			advanceIdx(m_tail);
+			m_size++;
 		}
 
+		/// <summary>Performs emplacement to the back of the queue.</summary>
+		/// <param name="args">Arguments for the constructor of emplaced object</param>
 		template<typename... Args>
 		void emplaceFront(Args&&... args)
 		{
+			if (getSize() >= getCapacity())
+				enlarge();
+			decreaseIdx(m_head);
+			::pe::core::memory::ObjectLifetimeHelper::moveEmplace((m_data + m_head), std::forward<Args>(args)...);
+			m_size++;
 		}
-	*/
+
 		/// <summary>Performs removal from the back of the queue.</summary>
 		/// <returns>The last element in queue.</returns>
 		T popBack()
