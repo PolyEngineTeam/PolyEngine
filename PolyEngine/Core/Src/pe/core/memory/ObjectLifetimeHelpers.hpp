@@ -36,13 +36,9 @@ namespace pe::core::memory
 			::new(ptr) T(obj);
 		}
 
-		//wondering(vuko): proposed names: MoveCreateAt, MoveCreating, ???
 		template<class T>
 		void MoveCreate(T* ptr, T&& obj, typename std::enable_if<std::is_move_constructible<T>::value && std::is_trivially_move_constructible<T>::value>::type* = 0)
 		{
-			//wondering(vuko): since `move` is in the name, we could take the source object by
-			//                 lvalue-ref, which would give us a nicer call syntax:
-			//                 `MoveCreate(dest, source)` instead of `MoveCreate(dest, std::move(source))`
 			::new(ptr) T(std::move(obj));
 		}
 
@@ -50,6 +46,12 @@ namespace pe::core::memory
 		void MoveCreate(T* ptr, T&& obj, typename std::enable_if<std::is_move_constructible<T>::value && !std::is_trivially_move_constructible<T>::value>::type* = 0)
 		{
 			::new(ptr) T(std::move(obj));
+		}
+
+		template<class T, typename... Args>
+		void moveEmplace(T* ptr, Args&&... args)
+		{
+			::new(ptr) T(std::forward<Args>(args)...);
 		}
 
 		//wondering(vuko): missing CopyInto, MoveInto, ForwardCreate

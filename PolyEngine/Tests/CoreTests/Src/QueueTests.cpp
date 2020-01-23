@@ -114,6 +114,16 @@ TEST_CASE("Queue tests for equality operators", "[Queue")
 	REQUIRE(eval == false);
 }
 
+TEST_CASE("Queue tests for emplace", "[Queue]")
+{
+	::pe::core::storage::Queue<std::tuple<int, int ,int>> q;
+	q.emplaceBack(1, 10, 100);
+	q.emplaceFront(2, 20, 200);
+	q.popFront();
+	q.popFront();
+	REQUIRE(q.getSize() == 0);
+}
+
 TEST_CASE("Queue tests for STL forward iterators", "[Queue]")
 {
 	::pe::core::storage::Queue<int> q;
