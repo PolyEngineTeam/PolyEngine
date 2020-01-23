@@ -6,7 +6,7 @@
 
 using namespace Poly;
 
-using PairQueue = core::storage::PriorityQueue<std::pair<u8, float>,std::vector<std::pair<u8, float>>,std::function<bool(const std::pair<u8, float>&, const std::pair<u8, float>&)>>;
+using PairQueue = core::storage::PriorityQueue<std::pair<u8, float>,std::function<bool(const std::pair<u8, float>&, const std::pair<u8, float>&)>>;
 
 RTTI_DEFINE_TYPE(Poly::MeshResource)
 

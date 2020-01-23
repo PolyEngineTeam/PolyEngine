@@ -36,7 +36,7 @@ std::optional<std::vector<::pe::core::math::Vector>> CalculateNewPath(const NavG
 
 	std::vector<PathNode> AllNodes;
 
-	core::storage::PriorityQueue<std::pair<i64, float>,std::vector< std::pair<i64, float> >, PathNodeCmp> openList, closedList;
+	core::storage::PriorityQueue<std::pair<i64, float>, PathNodeCmp> openList, closedList;
 	std::map<const NavNode*, float> minCosts;
 
 	AllNodes.push_back(PathNode(startNode, 0, graph->GetHeuristicCost(startNode, destNode) ));

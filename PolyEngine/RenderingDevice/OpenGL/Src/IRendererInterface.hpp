@@ -70,10 +70,10 @@ namespace Poly {
 		const CameraComponent* CameraCmp;
 		const RenderingSettingsComponent* SettingsCmp;
 		
-		core::storage::PriorityQueue<const MeshRenderingComponent*, std::vector<const MeshRenderingComponent*>, DistanceToCameraComparator> DirShadowCastersQueue;
-		core::storage::PriorityQueue<const MeshRenderingComponent*, std::vector<const MeshRenderingComponent*>, DistanceToCameraComparator> OpaqueQueue;
-		core::storage::PriorityQueue<const MeshRenderingComponent*, std::vector<const MeshRenderingComponent*>, DistanceToCameraComparator> TranslucentQueue;
-		core::storage::PriorityQueue<const ParticleComponent*, std::vector<const ParticleComponent*>, DistanceToCameraComparator> ParticleQueue; // TODO: make translucent and particles one queue with common priority
+		core::storage::PriorityQueue<const MeshRenderingComponent*, DistanceToCameraComparator> DirShadowCastersQueue;
+		core::storage::PriorityQueue<const MeshRenderingComponent*, DistanceToCameraComparator> OpaqueQueue;
+		core::storage::PriorityQueue<const MeshRenderingComponent*, DistanceToCameraComparator> TranslucentQueue;
+		core::storage::PriorityQueue<const ParticleComponent*, DistanceToCameraComparator> ParticleQueue; // TODO: make translucent and particles one queue with common priority
 
 		::pe::core::math::AABox DirShadowAABBInLS;
 		std::vector<const DirectionalLightComponent*> DirectionalLightList;

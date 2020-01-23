@@ -4,94 +4,61 @@
 
 namespace pe::core::storage
 {
-	template<class _Ty,class _Container = std::vector<_Ty>,class _Pr = std::less<typename _Container::value_type> >
-	class PriorityQueue final : public std::priority_queue<_Ty,_Container,_Pr>
+	template<class _Ty,class _Pr = std::less<typename std::vector<_Ty>::value_type> >
+	class PriorityQueue final : public std::priority_queue<_Ty,std::vector<_Ty>,_Pr>
 	{
 	public:
 		
 		PriorityQueue()
-			: std::priority_queue<_Ty, _Container, _Pr>()
+			: std::priority_queue<_Ty, std::vector<_Ty>, _Pr>()
 		{
 		}
 
 		explicit PriorityQueue(const _Pr& _Pred)
-			: std::priority_queue<_Ty, _Container, _Pr>(_Pred)
+			: std::priority_queue<_Ty, std::vector<_Ty>, _Pr>(_Pred)
 		{
 		}
 
-		PriorityQueue(const _Pr& _Pred, const _Container& _Cont)
-			: std::priority_queue<_Ty, _Container, _Pr>(_Pred,_Cont)
-		{
-		}
 
 		template<class _InIt>
 		PriorityQueue(_InIt _First, _InIt _Last)
-			: std::priority_queue<_Ty, _Container, _Pr>(_First,_Last)
+			: std::priority_queue<_Ty, std::vector<_Ty>, _Pr>(_First,_Last)
 		{	
 		}
 
 		template<class _InIt>
 		PriorityQueue(_InIt _First, _InIt _Last, const _Pr& _Pred)
-			: std::priority_queue<_Ty, _Container, _Pr>(_First,_Last,_Pred)
+			: std::priority_queue<_Ty, std::vector<_Ty>, _Pr>(_First,_Last,_Pred)
 		{	
 		}
 
-		template<class _InIt>
-		PriorityQueue(_InIt _First, _InIt _Last, const _Pr& _Pred, const _Container& _Cont)
-			: std::priority_queue<_Ty, _Container, _Pr>(_First,_Last,_Pred,_Cont)
-		{	
-		}
-
+	
 		template<class _Alloc,
-			class = std::enable_if_t<std::uses_allocator_v<_Container, _Alloc>>>
+			class = std::enable_if_t<std::uses_allocator_v<std::vector<_Ty>, _Alloc>>>
 			explicit PriorityQueue(const _Alloc& _Al)
-			: std::priority_queue<_Ty, _Container, _Pr>(_Al)
+			: std::priority_queue<_Ty, std::vector<_Ty>, _Pr>(_Al)
 		{	
 		}
 
 		template<class _Alloc,
-			class = std::enable_if_t<std::uses_allocator_v<_Container, _Alloc>>>
+			class = std::enable_if_t<std::uses_allocator_v<std::vector<_Ty>, _Alloc>>>
 			PriorityQueue(const _Pr& _Pred, const _Alloc& _Al)
-			: std::priority_queue<_Ty, _Container, _Pr>(_Pred,_Al)
+			: std::priority_queue<_Ty, std::vector<_Ty>, _Pr>(_Pred,_Al)
 		{	
 		}
 
 		template<class _Alloc,
-			class = std::enable_if_t<std::uses_allocator_v<_Container, _Alloc>>>
-			PriorityQueue(const _Pr& _Pred, const _Container& _Cont, const _Alloc& _Al)
-			: std::priority_queue<_Ty, _Container, _Pr>(_Pred,_Cont,_Al)
+			class = std::enable_if_t<std::uses_allocator_v<std::vector<_Ty>, _Alloc>>>
+			PriorityQueue(const std::priority_queue<_Ty, std::vector<_Ty>, _Pr>& _Right, const _Alloc& _Al)
+			: std::priority_queue<_Ty, std::vector<_Ty>, _Pr>(_Right,_Al)
 		{	
 		}
 
+	
 		template<class _Alloc,
-			class = std::enable_if_t<std::uses_allocator_v<_Container, _Alloc>>>
-			PriorityQueue(const std::priority_queue<_Ty, _Container, _Pr>& _Right, const _Alloc& _Al)
-			: std::priority_queue<_Ty, _Container, _Pr>(_Right,_Al)
-		{	
-		}
-
-		PriorityQueue(const _Pr& _Pred, _Container&& _Cont)
-			: std::priority_queue<_Ty, _Container, _Pr>(_Pred,_Cont)
-		{
-		}
-
-		template<class _InIt>
-		PriorityQueue(_InIt _First, _InIt _Last, const _Pr& _Pred, _Container&& _Cont)
-			: std::priority_queue<_Ty, _Container, _Pr>(_First,_Last,_Pred,_Cont)
-		{	
-		}
-		
-		template<class _Alloc,
-			class = std::enable_if_t<std::uses_allocator_v<_Container, _Alloc>>>
-			PriorityQueue(const _Pr& _Pred, _Container&& _Cont, const _Alloc& _Al)
-			: std::priority_queue<_Ty, _Container, _Pr>(_Pred,_Cont,_Al)
-		{	
-		}
-
-		template<class _Alloc,
-			class = std::enable_if_t<std::uses_allocator_v<_Container, _Alloc>>>
-			PriorityQueue(std::priority_queue<_Ty, _Container, _Pr>&& _Right, const _Alloc& _Al)
-			: std::priority_queue<_Ty, _Container, _Pr>(_Right,_Al)
+			class = std::enable_if_t<std::uses_allocator_v<std::vector<_Ty>, _Alloc>>>
+			PriorityQueue(std::priority_queue<_Ty, std::vector<_Ty>, _Pr>&& _Right, const _Alloc& _Al)
+			: std::priority_queue<_Ty, std::vector<_Ty>, _Pr>(_Right,_Al)
 		{	
 		}
 

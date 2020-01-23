@@ -16,7 +16,7 @@
 #include <TiledForwardRenderer.hpp>
 
 using namespace Poly;
-using MeshQueue = core::storage::PriorityQueue<const MeshRenderingComponent*, std::vector<const MeshRenderingComponent*>, SceneView::DistanceToCameraComparator>;
+using MeshQueue = core::storage::PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
 
 void GLRenderingDevice::Init()
 {

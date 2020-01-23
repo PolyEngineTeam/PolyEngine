@@ -17,7 +17,7 @@
 #include <Proxy/imgui_impl_opengl3.h>
 
 using namespace Poly;
-using MeshQueue = core::storage::PriorityQueue<const MeshRenderingComponent*,std::vector<const MeshRenderingComponent*>, SceneView::DistanceToCameraComparator>;
+using MeshQueue = core::storage::PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator>;
 
 void RenderTargetPingPong::Init(int width, int height)
 {
@@ -691,7 +691,7 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 
 	const core::math::Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	
-	core::storage::PriorityQueue<const MeshRenderingComponent*, std::vector<const MeshRenderingComponent*>, SceneView::DistanceToCameraComparator> drawOpaqueQueue(sceneView.OpaqueQueue);
+	core::storage::PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator> drawOpaqueQueue(sceneView.OpaqueQueue);
 	while (drawOpaqueQueue.size() > 0)
 	{
 		const MeshRenderingComponent* meshCmp = drawOpaqueQueue.top();
@@ -903,7 +903,7 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 	const core::math::Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	// for (const MeshRenderingComponent* meshCmp : sceneView.TranslucentQueue)
 	// {
-	core::storage::PriorityQueue<const MeshRenderingComponent*, std::vector<const MeshRenderingComponent*>, SceneView::DistanceToCameraComparator> drawTranslucentQueue(sceneView.TranslucentQueue);
+	core::storage::PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator> drawTranslucentQueue(sceneView.TranslucentQueue);
 	while (drawTranslucentQueue.size() > 0)
 	{
 		const MeshRenderingComponent* meshCmp = drawTranslucentQueue.top();
