@@ -201,9 +201,9 @@ int main(int argc, char* args[])
 		Engine->Update();
 
 		Poly::OutputQueue& OutputEventsQueue = Engine->GetOutputQueue();
-		while (!OutputEventsQueue.IsEmpty())
+		while (!OutputEventsQueue.isEmpty())
 		{
-			Poly::OutputEvent& ev = OutputEventsQueue.Front();
+			Poly::OutputEvent& ev = OutputEventsQueue.front();
 			switch (ev.Type)
 			{
 			case Poly::eOutputEventType::MOUSEPOS:
@@ -219,10 +219,10 @@ int main(int argc, char* args[])
 				SDL_ShowCursor(SDL_FALSE);
 				break;
 			case Poly::eOutputEventType::_COUNT:
-				HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::Push(), which is an invalid value");
+				HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::push(), which is an invalid value");
 				break;
 			}
-			OutputEventsQueue.PopFront();
+			OutputEventsQueue.popFront();
 		}
 
 		quitRequested = quitRequested || Engine->IsQuitRequested();
