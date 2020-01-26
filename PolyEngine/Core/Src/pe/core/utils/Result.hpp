@@ -55,7 +55,7 @@ namespace pe::core::utils
 	// instance without explicitly creating new instance of Result.
 	// @tparam E - error type, must match error type of Result instance
 	//		to which error should be assigned
-	template <typename E>
+	template <typename E = const char*>
 	class Err
 	{
 	public:
@@ -79,6 +79,36 @@ namespace pe::core::utils
 	};
 
 	//------------------------------------------------------------------------------
+	// const char* is treated as default error msg. If you don't know yet 
+	// which errors will you retutn or you don't care about error being 
+	// descriptive you can use this feature
+	template <>
+	class Err<const char*>
+	{
+	public:
+		static constexpr const char* DEFAULT_ERROR_MESSAGE = "Unknown error";
+
+		// You can create default versiton of error with error message 
+		// unchanged.
+		constexpr Err() = default;
+		Err(Err&) = delete;
+		constexpr Err(Err&&) = default;
+		Err& operator=(Err&) = delete;
+		Err& operator=(Err&&) = delete;
+
+		// You can store error message in this class until someone (Result 
+		// ctor) takes this value out of it.
+		// @param val - error message
+		explicit constexpr Err(const char* val) : m_value(val) {}
+
+		// @returns stored error message
+		constexpr const char* get() && { return m_value; }
+
+	private:
+		const char* m_value = DEFAULT_ERROR_MESSAGE;
+	};
+
+	//------------------------------------------------------------------------------
 	// Result is an utility class that can be used when function can
 	// return result or error code. Its main purpose is to enable 
 	// writing exception free code. You can't call getError when Result
@@ -87,7 +117,7 @@ namespace pe::core::utils
 	// @tparam T - type of correct value (value returned by method if 
 	//		its execution was successful
 	// @tparam E - type of error
-	template <typename T, typename E>
+	template <typename T, typename E = const char*>
 	class Result
 	{
 	public:
@@ -152,7 +182,7 @@ namespace pe::core::utils
 		constexpr T valueOr(U&& alt) const&
 		{
 			if (isOk())
-				return getValue();
+				return value();
 			else
 				return static_cast<T>(std::forward<U>(alt));
 
@@ -171,7 +201,7 @@ namespace pe::core::utils
 		constexpr T valueOr(U&& alt) &&
 		{ 
 			if (isOk())
-				return std::move(getValue());
+				return std::move(value());
 			else
 				return static_cast<T>(std::forward<U>(alt));
 		}
@@ -234,24 +264,6 @@ namespace pe::core::utils
 
 	/*namespace result
 	{
-		template <typename T, typename E>
-		Result<T, E> join(Result<Result<T, E>, E> res)
-		{
-			if (res.isOk())
-				return res.getValue();
-			else
-				return res.getError();
-		}
-
-		template <typename E>
-		Result<void, E> join(Result<Result<void, E>, E> res)
-		{
-			if (res.isOk())
-				return Result<void, E>();
-			else
-				return res.getError();
-		}
-
 		template <typename T1, typename T2, typename E>
 		Result<T2, E> bind(Result<T1, E> res, Result<T2, E>(*func)(T1))
 		{
