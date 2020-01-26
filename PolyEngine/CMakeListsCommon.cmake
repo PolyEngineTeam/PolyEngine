@@ -86,19 +86,19 @@ else()
 endif()
 
 # Make sure qt is defined
-if(DEFINED ENV{POLY_QTDIR})
-	list(APPEND CMAKE_PREFIX_PATH $ENV{POLY_QTDIR})
-    set(Qt5_DIR $ENV{POLY_QTDIR})
+if(DEFINED ENV{QTDIR})
+	list(APPEND CMAKE_PREFIX_PATH $ENV{QTDIR})
+    set(Qt5_DIR $ENV{QTDIR})
 elseif(APPLE)
 	list(APPEND CMAKE_PREFIX_PATH /usr/local/opt/qt)
-    set(Qt5_DIR $ENV{POLY_QTDIR})
+    set(Qt5_DIR $ENV{QTDIR})
 endif()
 
 message("QT DIR = ${Qt5_DIR}")
 
 find_package(Qt5 COMPONENTS Core Widgets)
 if(NOT DEFINED Qt5_FOUND OR NOT Qt5_FOUND)
-	message(FATAL_ERROR "Qt5 not found. When using a standalone Qt5 toolchain, please setup POLY_QTDIR environment variable to point to it.")
+	message(FATAL_ERROR "Qt5 not found. When using a standalone Qt5 toolchain, please setup QTDIR environment variable to point to it.")
 endif()
 
 if (WIN32)
