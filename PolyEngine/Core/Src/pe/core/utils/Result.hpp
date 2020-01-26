@@ -12,7 +12,7 @@ namespace pe::core::utils
 	// @tparam T - valid value type, must match value type of Result 
 	//		instance to which error should be assigned
 	template <typename T = void>
-	class Ok
+	class Ok final
 	{
 	public:
 		Ok() = delete;
@@ -39,7 +39,7 @@ namespace pe::core::utils
 	// Specialization of Ok utility class to allow usere explicitly set 
 	// Result value which valid value type (T) is void to ok value.
 	template <>
-	class Ok<void>
+	class Ok<void> final
 	{
 	public:
 		constexpr Ok() = default;
@@ -56,7 +56,7 @@ namespace pe::core::utils
 	// @tparam E - error type, must match error type of Result instance
 	//		to which error should be assigned
 	template <typename E = const char*>
-	class Err
+	class Err final
 	{
 	public:
 		Err() = delete;
@@ -83,7 +83,7 @@ namespace pe::core::utils
 	// which errors will you retutn or you don't care about error being 
 	// descriptive you can use this feature
 	template <>
-	class Err<const char*>
+	class Err<const char*> final
 	{
 	public:
 		static constexpr const char* DEFAULT_ERROR_MESSAGE = "Unknown error";
@@ -118,7 +118,7 @@ namespace pe::core::utils
 	//		its execution was successful
 	// @tparam E - type of error
 	template <typename T, typename E = const char*>
-	class Result
+	class Result final
 	{
 	public:
 		// You can't create empty Result. Result must always store valid 
@@ -217,6 +217,8 @@ namespace pe::core::utils
 	};
 
 	//------------------------------------------------------------------------------
+	// Specialized result class for results where there is no result but
+	// there can be an error message.
 	template <typename E>
 	class Result<void, E> final : public BaseObjectLiteralType<>
 	{
@@ -261,25 +263,4 @@ namespace pe::core::utils
 	private:
 		std::optional<E> m_value;
 	};
-
-	/*namespace result
-	{
-		template <typename T1, typename T2, typename E>
-		Result<T2, E> bind(Result<T1, E> res, Result<T2, E>(*func)(T1))
-		{
-			if (res.isOk())
-				return func(res.getValue());
-			else
-				return res.getError();
-		}
-
-		template <typename E, typename Res, typename... Args>
-		auto lift(Res(*srcFunc)(Args...))
-		{
-			return [srcFunc] (Result<Args, E>... args)
-			{
-				return srcFunc(args.getValue()...);
-			};
-		}
-	}*/
 }
