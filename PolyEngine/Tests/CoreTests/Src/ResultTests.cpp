@@ -7,6 +7,62 @@ using namespace pe::core::utils;
 
 namespace
 {
+	class CounterClass
+	{
+	public:
+		constexpr CounterClass() { ++m_ctor; }
+		constexpr CounterClass(CounterClass& other)
+		{
+			m_ctor = other.m_ctor;
+			m_copyCtor = other.m_copyCtor;
+			m_moveCtor = other.m_moveCtor;
+			m_copyOp = other.m_copyOp;
+			m_moveOp = other.m_moveOp;
+
+			++m_copyCtor;
+		}
+		constexpr CounterClass(CounterClass&& other)
+		{
+			m_ctor = other.m_ctor;
+			m_copyCtor = other.m_copyCtor;
+			m_moveCtor = other.m_moveCtor;
+			m_copyOp = other.m_copyOp;
+			m_moveOp = other.m_moveOp;
+
+			++m_moveCtor;
+		}
+		constexpr CounterClass& operator=(CounterClass& other)
+		{
+			m_ctor = other.m_ctor;
+			m_copyCtor = other.m_copyCtor;
+			m_moveCtor = other.m_moveCtor;
+			m_copyOp = other.m_copyOp;
+			m_moveOp = other.m_moveOp;
+
+			++m_copyOp;
+
+			return *this;
+		}
+		constexpr CounterClass& operator=(CounterClass&& other)
+		{
+			m_ctor = other.m_ctor;
+			m_copyCtor = other.m_copyCtor;
+			m_moveCtor = other.m_moveCtor;
+			m_copyOp = other.m_copyOp;
+			m_moveOp = other.m_moveOp;
+
+			++m_moveOp;
+
+			return *this;
+		}
+
+		int m_ctor = 0;
+		int m_copyCtor = 0;
+		int m_moveCtor = 0;
+		int m_copyOp = 0;
+		int m_moveOp = 0;
+	};
+
 	enum class eTestErrorType
 	{
 		ERROR_TYPE_1,
@@ -32,50 +88,96 @@ namespace
 	}
 }
 
-TEST_CASE("Result.isOk", "[Result]") 
+TEST_CASE("Result.isOk", "[Result]")
 {
-	Result<int, eTestErrorType> result1 = Ok(43);
-	REQUIRE(result1.isOk() == true);
+	constexpr Result<CounterClass, eTestErrorType> res1 = Ok(CounterClass());
+	constexpr bool isOk1 = res1.isOk();
+	REQUIRE(isOk1 == true);
 
-	Result<int, eTestErrorType> result2 = Err(eTestErrorType::ERROR_TYPE_1);
-	REQUIRE(result2.isOk() == false);
+	constexpr Result<CounterClass, eTestErrorType> res2 = Err(eTestErrorType::ERROR_TYPE_1);
+	constexpr bool isOk2 = res2.isOk();
+	REQUIRE(isOk2 == false);
 
-	Result<void, eTestErrorType> result3;
-	REQUIRE(result3.isOk() == true);
+	constexpr Result<void, eTestErrorType> res3 = Ok();
+	constexpr bool isOk3 = res3.isOk();
+	REQUIRE(isOk3 == true);
 
-	Result<void, eTestErrorType> result4 = eTestErrorType::ERROR_TYPE_1;
-	REQUIRE(result4.isOk() == false);
+	constexpr Result<void, eTestErrorType> res4 = Err(eTestErrorType::ERROR_TYPE_1);
+	constexpr bool isOk4 = res4.isOk();
+	REQUIRE(isOk4 == false);
 }
 
 TEST_CASE("Result.isErr", "[Result]")
 {
-	Result<int, eTestErrorType> result1 = Ok(43);
-	REQUIRE(result1.isErr() == false);
+	constexpr Result<CounterClass, eTestErrorType> res1 = Ok(CounterClass());
+	constexpr bool isErr1 = res1.isErr();
+	REQUIRE(isErr1 == false);
 
-	Result<int, eTestErrorType> result2 = Err(eTestErrorType::ERROR_TYPE_1);
-	REQUIRE(result2.isErr() == true);
+	constexpr Result<CounterClass, eTestErrorType> res2 = Err(eTestErrorType::ERROR_TYPE_1);
+	constexpr bool isErr2 = res2.isErr();
+	REQUIRE(isErr2 == true);
 
-	Result<void, eTestErrorType> result3;
-	REQUIRE(result3.isErr() == false);
+	constexpr Result<void, eTestErrorType> res3 = Ok();
+	constexpr bool isErr3 = res3.isErr();
+	REQUIRE(isErr3 == false);
 
-	Result<void, eTestErrorType> result4 = eTestErrorType::ERROR_TYPE_1;
-	REQUIRE(result4.isErr() == true);
+	constexpr Result<void, eTestErrorType> res4 = Err(eTestErrorType::ERROR_TYPE_1);
+	constexpr bool isErr4 = res4.isErr();
+	REQUIRE(isErr4 == true);
 }
 
-TEST_CASE("Result.getValue", "[Result]")
+TEST_CASE("Result.value", "[Result]")
 {
-	Result<int, eTestErrorType> result1 = Ok(43);
-	REQUIRE(result1.getValue() == 43);
+	constexpr Result<CounterClass, eTestErrorType> res1 = Ok(CounterClass());
+	constexpr const CounterClass& val1 = res1.value();
+	REQUIRE(val1.m_ctor == 1);
+	REQUIRE(val1.m_copyCtor == 0);
+	REQUIRE(val1.m_moveCtor == 2);
+	REQUIRE(val1.m_copyOp == 0);
+	REQUIRE(val1.m_moveOp == 0);
+
+	constexpr Result<CounterClass, eTestErrorType> res2 = Result<CounterClass, eTestErrorType>(CounterClass());
+	constexpr const CounterClass & val2 = res2.value();
+	REQUIRE(val2.m_ctor == 1);
+	REQUIRE(val2.m_copyCtor == 0);
+	REQUIRE(val2.m_moveCtor == 1);
+	REQUIRE(val2.m_copyOp == 0);
+	REQUIRE(val2.m_moveOp == 0);
 }
 
-TEST_CASE("Result.getError", "[Result]")
+TEST_CASE("Result.valueOr", "[Result]")
 {
-	Result<int, eTestErrorType> result2 = Err(eTestErrorType::ERROR_TYPE_1);
-	REQUIRE(result2.getError() == eTestErrorType::ERROR_TYPE_1);
+	constexpr Result<CounterClass, eTestErrorType> res1 = Ok(CounterClass());
+	constexpr const CounterClass& val1 = res1.value();
+	REQUIRE(val1.m_ctor == 1);
+	REQUIRE(val1.m_copyCtor == 0);
+	REQUIRE(val1.m_moveCtor == 2);
+	REQUIRE(val1.m_copyOp == 0);
+	REQUIRE(val1.m_moveOp == 0);
 
-	Result<void, eTestErrorType> result4 = eTestErrorType::ERROR_TYPE_1;
-	REQUIRE(result4.getError() == eTestErrorType::ERROR_TYPE_1);
+	constexpr Result<CounterClass, eTestErrorType> res2 = Result<CounterClass, eTestErrorType>(CounterClass());
+	constexpr const CounterClass & val2 = res2.value();
+	REQUIRE(val2.m_ctor == 1);
+	REQUIRE(val2.m_copyCtor == 0);
+	REQUIRE(val2.m_moveCtor == 1);
+	REQUIRE(val2.m_copyOp == 0);
+	REQUIRE(val2.m_moveOp == 0);
 }
+
+//TEST_CASE("Result.getValue", "[Result]")
+//{
+//	Result<int, eTestErrorType> result1 = Ok(43);
+//	REQUIRE(result1.getValue() == 43);
+//}
+//
+//TEST_CASE("Result.getError", "[Result]")
+//{
+//	Result<int, eTestErrorType> result2 = Err(eTestErrorType::ERROR_TYPE_1);
+//	REQUIRE(result2.getError() == eTestErrorType::ERROR_TYPE_1);
+//
+//	Result<void, eTestErrorType> result4 = eTestErrorType::ERROR_TYPE_1;
+//	REQUIRE(result4.getError() == eTestErrorType::ERROR_TYPE_1);
+//}
 //
 //TEST_CASE("Result.join", "[Result]")
 //{
