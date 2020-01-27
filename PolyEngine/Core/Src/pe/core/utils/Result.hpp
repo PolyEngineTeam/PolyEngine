@@ -49,6 +49,8 @@ namespace pe::core::utils
 		Ok& operator=(Ok&&) = delete;
 	};
 
+	Ok()->Ok<void>;
+
 	//------------------------------------------------------------------------------
 	// Utility class to use Result class safely and conveniently. Allows 
 	// user to explicitly convert to error value and assign it to Result 
@@ -107,6 +109,8 @@ namespace pe::core::utils
 	private:
 		const char* m_value = DEFAULT_ERROR_MESSAGE;
 	};
+
+	Err()->Err<const char*>;
 
 	//------------------------------------------------------------------------------
 	// Result is an utility class that can be used when function can
