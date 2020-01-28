@@ -14,6 +14,17 @@ namespace pe::core::storage
 		{
 		}
 
+		PriorityQueue(const std::vector<_Ty>& _Cont)
+			: std::priority_queue<_Ty, std::vector<_Ty>, _Pr>(_Pr(), _Cont)
+		{	
+		}
+
+		PriorityQueue(const _Pr& _Pred, const std::vector<_Ty>& _Cont)
+			: std::priority_queue<_Ty, std::vector<_Ty>, _Pr>(_Pred,_Cont)
+		{	
+		}
+
+
 		explicit PriorityQueue(const _Pr& _Pred)
 			: std::priority_queue<_Ty, std::vector<_Ty>, _Pr>(_Pred)
 		{
