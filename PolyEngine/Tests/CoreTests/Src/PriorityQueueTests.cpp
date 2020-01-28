@@ -13,7 +13,7 @@ TEST_CASE("PriorityQueue sorted push test", "[PriorityQueue]")
 		CHECK(q.size() == i+1);
 	}
 		
-	for (int i = 0; i < testSize; ++i)
+	for (int i = testSize-1; i >= 0; --i)
 	{
 		CHECK(q.top() == i);
 		q.pop();
@@ -31,7 +31,7 @@ TEST_CASE("PriorityQueue reverrse sorted push test", "[PriorityQueue]")
 		CHECK(q.size() == i + 1);
 	}
 
-	for (int i = 0; i < testSize; ++i)
+	for (int i = testSize - 1; i >= 0; --i)
 	{
 		CHECK(q.top() == i);
 		q.pop();
@@ -49,11 +49,11 @@ TEST_CASE("PriorityQueue random push test", "[PriorityQueue]")
 		CHECK(q.size() == i + 1);
 	}
 
-	for (size_t i = 0; i < testSize - 1; ++i)
+	for (int i = testSize - 2; i >= 0; --i)
 	{
 		size_t v1 = q.top();
 		q.pop();
-		CHECK(v1 <= q.top());
+		CHECK(v1 >= q.top());
 	}
 }
 
@@ -73,11 +73,11 @@ TEST_CASE("PriorityQueue custom comparator test", "[PriorityQueue]")
 		CHECK(q.size() == i + 1);
 	}
 
-	for (size_t i = 0; i < testSize - 1; ++i)
+	for (int i = testSize - 2; i >= 0; --i)
 	{
 		size_t v1 = q.top();
 		q.pop();
-		CHECK(v1 >= q.top());
+		CHECK(v1 <= q.top());
 	}
 }
 
@@ -91,10 +91,10 @@ TEST_CASE("PriorityQueue heap sort", "[PriorityQueue]")
 
 	::pe::core::storage::PriorityQueue<int> q(std::move(table));
 
-	for (size_t i = 0; i < testSize - 1; ++i)
+	for (int i = testSize - 2; i >= 0; --i)
 	{
 		size_t v1 = q.top();
 		q.pop();
-		CHECK(v1 <= q.top());
+		CHECK(v1 >= q.top());
 	}
 }
