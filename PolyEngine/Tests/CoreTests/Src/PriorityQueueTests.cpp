@@ -13,14 +13,14 @@ TEST_CASE("PriorityQueue sorted push test", "[PriorityQueue]")
 		CHECK(q.size() == i+1);
 	}
 		
-	for (int i = testSize-1; i >= 0; --i)
+	for (int i = testSize - 1; i >= 0; --i)
 	{
 		CHECK(q.top() == i);
 		q.pop();
 	}
 }
 
-TEST_CASE("PriorityQueue reverrse sorted push test", "[PriorityQueue]")
+TEST_CASE("PriorityQueue reverse sorted push test", "[PriorityQueue]")
 {
 	::pe::core::storage::PriorityQueue<int> q;
 	const int testSize = 100;

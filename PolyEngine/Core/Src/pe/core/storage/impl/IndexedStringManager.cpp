@@ -1,6 +1,5 @@
 #include <pe/core/storage/impl/IndexedStringManager.hpp>
 
-
 namespace pe::core::storage::impl
 {
 
