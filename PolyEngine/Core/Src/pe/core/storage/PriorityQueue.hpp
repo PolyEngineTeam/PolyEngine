@@ -45,21 +45,21 @@ namespace pe::core::storage
 
 	
 		template<class Alloc,
-			class = std::enable_if_t<std::usesAllocator_v<std::vector<Ty>, Alloc>>>
+			class = std::enable_if_t<std::uses_allocator_v<std::vector<Ty>, Alloc>>>
 			explicit PriorityQueue(const Alloc& _Al)
 			: std::priority_queue<Ty, std::vector<Ty>, Pr>(_Al)
 		{	
 		}
 
 		template<class Alloc,
-			class = std::enable_if_t<std::usesAllocator_v<std::vector<Ty>, Alloc>>>
+			class = std::enable_if_t<std::uses_allocator_v<std::vector<Ty>, Alloc>>>
 			PriorityQueue(const Pr& Pred, const Alloc& _Al)
 			: std::priority_queue<Ty, std::vector<Ty>, Pr>(Pred,_Al)
 		{	
 		}
 
 		template<class Alloc,
-			class = std::enable_if_t<std::usesAllocator_v<std::vector<Ty>, Alloc>>>
+			class = std::enable_if_t<std::uses_allocator_v<std::vector<Ty>, Alloc>>>
 			PriorityQueue(const std::priority_queue<Ty, std::vector<Ty>, Pr>& _Right, const Alloc& _Al)
 			: std::priority_queue<Ty, std::vector<Ty>, Pr>(_Right,_Al)
 		{	
@@ -67,7 +67,7 @@ namespace pe::core::storage
 
 	
 		template<class Alloc,
-			class = std::enable_if_t<std::usesAllocator_v<std::vector<Ty>, Alloc>>>
+			class = std::enable_if_t<std::uses_allocator_v<std::vector<Ty>, Alloc>>>
 			PriorityQueue(std::priority_queue<Ty, std::vector<Ty>, Pr>&& _Right, const Alloc& _Al)
 			: std::priority_queue<Ty, std::vector<Ty>, Pr>(_Right,_Al)
 		{	
