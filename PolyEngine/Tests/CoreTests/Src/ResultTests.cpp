@@ -253,3 +253,16 @@ TEST_CASE("Result.error", "[Result]")
 	constexpr const char* err6 = res6.error();
 	REQUIRE(strcmp(err6, CUSTOM_ERROR_MESSAGE) == 0);
 }
+
+TEST_CASE("Result.bind", "[Result]")
+{
+	std::function okFunc = [] (int i) -> Result<CounterClass, eTestErrorType> { return Ok(CounterClass()); };
+
+	Result<CounterClass, eTestErrorType> res = bind(okFunc, Result<int, eTestErrorType>(5));
+
+	//REQUIRE(val5.m_ctor == 1);
+	//REQUIRE(val5.m_copyCtor == 1);
+	//REQUIRE(val5.m_moveCtor == 2);
+	//REQUIRE(val5.m_copyOp == 0);
+	//REQUIRE(val5.m_moveOp == 0);
+}
