@@ -277,13 +277,4 @@ namespace pe::core::utils
 		else
 			return Result<O, E>(std::move(in.error()));
 	}
-
-	//template <typename E, typename Res, typename... Args>
-	//auto lift(Res(*srcFunc)(Args...))
-	//{
-	//	return [srcFunc] (Result<Args, E>... args)
-	//	{
-	//		return srcFunc(args.getValue()...);
-	//	};
-	//}
 }
