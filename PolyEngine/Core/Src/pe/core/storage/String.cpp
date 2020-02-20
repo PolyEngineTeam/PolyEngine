@@ -12,13 +12,48 @@ static const std::vector<char> WHITESPACES { ' ', '\t', '\r', '\n', '\0' };
 namespace pe::core::storage
 {
 
-size_t StrLen(const char* str) {
+size_t StrLen(const char* str)
+{
 	size_t len = 0;
 	while (str[len] != 0)
 		++len;
 	return len;
 }
 
+bool isValidASCIIString(const char* str) 
+{
+	size_t pos = 0;
+	unsigned char c = 0;
+	while (c = str[pos], c != 0)
+		if (c > 0x7f)
+			return false;
+		else
+			++pos;
+	return true;
+}
+
+}
+
+String String::fromASCII(const char* data) // can still be invalid but better than nothing
+{
+	ASSERTE(isValidASCIIString(data), "Passed string is not valid ASCII, please use fromUTF8 factory method instead!");
+	return String(data);
+}
+
+String String::fromUTF8(const char* data)
+{
+	String str{};
+	size_t length = StrLen(data);
+	str.Data.resize(length);
+	UErrorCode errorCode = UErrorCode::U_ZERO_ERROR;
+	auto unormalizer = unorm2_getNFCInstance(&errorCode);
+	unorm2_normalize(unormalizer, reinterpret_cast<const UChar*>(data), -1, reinterpret_cast<UChar*>(str.Data.data()), length, &errorCode);
+	return str;
+}
+
+String String::fromCodePoint(const char* data)
+{
+	return String();
 }
 
 String::String(const char* data) {
@@ -202,7 +237,8 @@ String& String::operator=(String&& rhs) {
 	return *this;
 }
 
-bool String::operator==(const char* str) const {
+bool String::CmpBytes(const char* str) const
+{
 	if (GetLength() != StrLen(str))
 		return false;
 	for (size_t k = 0; k < GetLength(); ++k)
@@ -211,8 +247,23 @@ bool String::operator==(const char* str) const {
 	return true;
 }
 
-bool String::operator==(const String& str) const {
+bool String::CmpBytes(const String& str) const
+{
 	return Data == str.Data;
+}
+
+bool String::operator==(const char* str) const
+{
+	UErrorCode success = U_ZERO_ERROR;
+	icu::Collator* coll = icu::Collator::createInstance(success);
+	return coll->compareUTF8(Data.data(), str, success) == UCOL_EQUAL;
+}
+
+bool String::operator==(const String& str) const
+{
+	UErrorCode success = U_ZERO_ERROR;
+	icu::Collator* coll = icu::Collator::createInstance(success);
+	return coll->compareUTF8(Data.data(), str.Data.data(), success) == UCOL_EQUAL; // there is implicit construction of StringPiece involved, do we want it? (alternative: use C-api) OR NOT? read docs
 }
 
 bool String::operator<(const String& rhs) const {

@@ -6,7 +6,10 @@ file(GLOB_RECURSE POLYCORE_SRCS RELATIVE ${CMAKE_CURRENT_LIST_DIR}
 	${POLYCORE_INCLUDE}/*.h)
 GenerateSourceGoups("${POLYCORE_SRCS}")
 
+find_package(ICU 65.1 COMPONENTS uc i18n REQUIRED)
+
 add_library(${CORE_TARGET} SHARED ${POLYCORE_SRCS})
+target_link_libraries(${CORE_TARGET} PUBLIC ICU::uc ICU::i18n)
 target_compile_options(${CORE_TARGET} PRIVATE $<$<BOOL:${SIMD}>:${SIMD_FLAGS}>)
 target_compile_definitions(${CORE_TARGET} PRIVATE _CORE DISABLE_SIMD=$<NOT:$<BOOL:${SIMD}>>)
 target_include_directories(${CORE_TARGET} PUBLIC ${POLYCORE_INCLUDE} PRIVATE ${RapidJSON_INCLUDE_DIRS})

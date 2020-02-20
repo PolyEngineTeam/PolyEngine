@@ -12,6 +12,12 @@ namespace pe::core::storage
 	public:
 		static const String EMPTY;
 
+		static String fromASCII(const char* data);
+
+		static String fromUTF8(const char* data);
+
+		static String fromCodePoint(const char* data);
+
 		/// <summary>Basic String costructor that creates empty String</summary>
 		String() : String("") {};
 
@@ -26,7 +32,6 @@ namespace pe::core::storage
 		/// <summary>String move constructor</summary>
 		/// <param name="rhs">Reference to String instance which state should be moved</param>
 		String(String&& rhs);
-
 
 		/// <summary>Casts int to String</summary>
 		/// <param name="var">Integer value which should be used to make String instance</param>
@@ -71,7 +76,6 @@ namespace pe::core::storage
 		/// <param name="var">std::string reference which should be used to make String instance</param>
 		/// <returns>String containing given std::string</returns>
 		static String From(const std::string& var);
-
 
 		/// <summary>Checks if String instance contains another String instance</summary>
 		/// <param name="var">String reference which should be contained in another String instance</param>
@@ -164,6 +168,10 @@ namespace pe::core::storage
 		/// <returns>Moved String reference</returns>
 		String& operator=(String&& rhs);
 
+		bool CmpBytes(const char* str) const;
+
+		bool CmpBytes(const String& str) const;
+
 		/// <summary>Compares String with Cstring</summary>
 		/// <param name="str">Cstring to be compared with</param>
 		bool operator==(const char* str) const;
@@ -193,6 +201,7 @@ namespace pe::core::storage
 		char operator[](size_t idx) const;
 
 		size_t GetLength() const;
+
 		const char* GetCStr() const { return Data.data(); }
 
 		friend std::ostream& operator<< (std::ostream& stream, const String& rhs) { return stream << rhs.GetCStr(); }

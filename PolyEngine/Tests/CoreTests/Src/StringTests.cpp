@@ -105,3 +105,23 @@ TEST_CASE("String operations", "[String]") {
 	::pe::core::storage::String notContainsTest = ::pe::core::storage::String("Z[allz'/");
 	REQUIRE(test.Contains(notContainsTest) == false);
 }
+
+TEST_CASE("UTF-8 string normalization and collation tests", "[String]")
+{
+	::pe::core::storage::String utf8Literal("śląsk");
+	::pe::core::storage::String uft8Escaped("\xC5\x9B\x6C\xC4\x85\x73\x6B");
+	REQUIRE(utf8Literal == uft8Escaped);
+
+	auto normalizedUTF8One = ::pe::core::storage::String::fromUTF8("\xC3\xA4\x00");
+	auto normalizedUTF8Two = ::pe::core::storage::String::fromUTF8("\x61\xCC\x88\x00");
+	REQUIRE(normalizedUTF8One == normalizedUTF8Two);
+	REQUIRE(normalizedUTF8One.CmpBytes(normalizedUTF8Two) == false);
+
+
+	::pe::core::storage::String regularStringOne("\xC3\xA4\x00");
+	::pe::core::storage::String regularStringTwo("\x61\xCC\x88\x00");
+	REQUIRE(regularStringTwo == regularStringTwo);
+	REQUIRE(regularStringOne.CmpBytes(regularStringTwo) == false);
+
+	//auto invalidASCII = ::pe::core::storage::String::fromASCII("\xC3\xA4\x00");
+}
