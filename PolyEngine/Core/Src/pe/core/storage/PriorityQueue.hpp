@@ -4,7 +4,7 @@
 
 namespace pe::core::storage
 {
-	template<class Ty,class Pr = std::less<typename std::vector<Ty>::value_type> >
+	template<class Ty,class Pr = std::greater<typename std::vector<Ty>::value_type> >
 	class PriorityQueue final : public std::priority_queue<Ty,std::vector<Ty>,Pr>
 	{
 	public:
