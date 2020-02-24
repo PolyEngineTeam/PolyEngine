@@ -13,6 +13,7 @@ struct TTLEntry
 	const IndexedStringEntry* m_entry;
 
 	bool operator<(const TTLEntry& rhs) const { return m_scheduledTimePoint < rhs.m_scheduledTimePoint; }
+	bool operator>(const TTLEntry& rhs) const { return m_scheduledTimePoint > rhs.m_scheduledTimePoint; }
 };
 
 class CORE_DLLEXPORT IndexedStringManager final : public core::BaseObjectLiteralType<>
