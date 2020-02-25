@@ -42,13 +42,15 @@ String String::fromASCII(const char* data) // can still be invalid but better th
 
 String String::fromUTF8(const char* data)
 {
-	String str{};
-	size_t length = StrLen(data);
-	str.Data.resize(length);
+	String ret{};
+	const size_t len = StrLen(data);
 	UErrorCode errorCode = UErrorCode::U_ZERO_ERROR;
-	auto unormalizer = unorm2_getNFCInstance(&errorCode);
-	unorm2_normalize(unormalizer, reinterpret_cast<const UChar*>(data), -1, reinterpret_cast<UChar*>(str.Data.data()), length, &errorCode);
-	return str;
+	icu::UnicodeString dst, src(data, len);
+	auto normalizer = icu::Normalizer2::getNFCInstance(errorCode);
+	normalizer->normalize(src, dst, errorCode);
+	ret.Data.reserve(dst.length());
+	dst.extract(0, dst.length(), ret.Data.data(), dst.length());
+	return ret;
 }
 
 String String::fromCodePoint(const char* data)
@@ -118,6 +120,19 @@ String String::ToUpper() const
 	ret.Data.clear();
 	ret.Data.reserve(Data.size());
 	std::transform(Data.begin(), Data.end(), std::back_inserter(ret.Data), toupper);
+	return ret;
+}
+
+String String::toASCII() const // C-api is very unwieldy for this one, copying and duplicating is unavoidable
+{
+	String ret{};
+	ret.Data.reserve(Data.size());
+	icu::UnicodeString str(GetCStr(), Data.size());
+	UErrorCode errorCode = UErrorCode::U_ZERO_ERROR;
+	UParseError parseError;
+	auto trans = icu::Transliterator::createInstance("Any-Latin; Latin-ASCII", UTRANS_FORWARD, parseError, errorCode);
+	trans->transliterate(str);
+	str.extract(0, str.length(), ret.Data.data(), Data.size());
 	return ret;
 }
 
@@ -263,7 +278,7 @@ bool String::operator==(const String& str) const
 {
 	UErrorCode success = U_ZERO_ERROR;
 	icu::Collator* coll = icu::Collator::createInstance(success);
-	return coll->compareUTF8(Data.data(), str.Data.data(), success) == UCOL_EQUAL; // there is implicit construction of StringPiece involved, do we want it? (alternative: use C-api) OR NOT? read docs
+	return coll->compareUTF8(Data.data(), str.Data.data(), success) == UCOL_EQUAL;
 }
 
 bool String::operator<(const String& rhs) const {

@@ -112,16 +112,43 @@ TEST_CASE("UTF-8 string normalization and collation tests", "[String]")
 	::pe::core::storage::String uft8Escaped("\xC5\x9B\x6C\xC4\x85\x73\x6B");
 	REQUIRE(utf8Literal == uft8Escaped);
 
+	auto codepointUTF8One = ::pe::core::storage::String::fromUTF8("\u4eba\u53e3\u3058\u3093\u3053\u3046\u306b\u81be\u7099\u304b\u3044\u3057\u3083\u3059\u308b");
+	auto codepointUTF8Two = ::pe::core::storage::String::fromUTF8("\u4eba\u53e3\u3058\u3093\u3053\u3046\u306b\u81be\uf9fb\u304b\u3044\u3057\u3083\u3059\u308b");
+	REQUIRE(codepointUTF8One == codepointUTF8Two);
+	REQUIRE(codepointUTF8One.CmpBytes(codepointUTF8Two) == true);
+
 	auto normalizedUTF8One = ::pe::core::storage::String::fromUTF8("\xC3\xA4\x00");
 	auto normalizedUTF8Two = ::pe::core::storage::String::fromUTF8("\x61\xCC\x88\x00");
 	REQUIRE(normalizedUTF8One == normalizedUTF8Two);
-	REQUIRE(normalizedUTF8One.CmpBytes(normalizedUTF8Two) == false);
+	REQUIRE(normalizedUTF8One.CmpBytes(normalizedUTF8Two) == true);
 
-
-	::pe::core::storage::String regularStringOne("\xC3\xA4\x00");
+	::pe::core::storage::String regularStringOne("\xC3\xA4\x00"); // from regular string they will not have proper representation as bytes, no normalization
 	::pe::core::storage::String regularStringTwo("\x61\xCC\x88\x00");
 	REQUIRE(regularStringTwo == regularStringTwo);
 	REQUIRE(regularStringOne.CmpBytes(regularStringTwo) == false);
 
 	//auto invalidASCII = ::pe::core::storage::String::fromASCII("\xC3\xA4\x00");
+}
+
+TEST_CASE("UTF-8 string conversion tests", "[String]")
+{
+	::pe::core::storage::String utf8polish("śląsk");
+	auto asciiConverted = utf8polish.toASCII();
+	REQUIRE(asciiConverted == "slask");
+
+	::pe::core::storage::String utf8capital("ŚPIĄC");
+	asciiConverted = utf8capital.toASCII();
+	REQUIRE(asciiConverted == "SPIAC");
+
+	::pe::core::storage::String hangulTest("김, 국삼");
+	asciiConverted = hangulTest.toASCII();
+	REQUIRE(asciiConverted == "gim, gugsam"); // does not preserve capital letters
+	
+	::pe::core::storage::String kanjiTest("たけだ, まさゆき");
+	asciiConverted = kanjiTest.toASCII();
+	REQUIRE(asciiConverted == "takeda, masayuki"); // does not preserve capital letters
+
+	::pe::core::storage::String cyrilicTest("Θεοδωράτου, Ελένη");
+	asciiConverted = cyrilicTest.toASCII();
+	REQUIRE(asciiConverted == "Theodoratou, Elene"); // this preserves it somehow
 }

@@ -93,6 +93,8 @@ namespace pe::core::storage
 		/// <returns>Upper-case String instance</returns>
 		String ToUpper() const;
 
+		String toASCII() const;
+
 		/// <summary>Checks if String is empty</summary>
 		bool IsEmpty() const;
 
