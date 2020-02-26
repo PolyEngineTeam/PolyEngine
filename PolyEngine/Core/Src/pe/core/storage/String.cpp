@@ -44,10 +44,10 @@ String String::fromUTF8(const char* data)
 {
 	String ret{};
 	const size_t len = StrLen(data);
-	UErrorCode errorCode = UErrorCode::U_ZERO_ERROR;
+	UErrorCode success = UErrorCode::U_ZERO_ERROR;
 	icu::UnicodeString dst, src(data, len);
-	auto normalizer = icu::Normalizer2::getNFCInstance(errorCode);
-	normalizer->normalize(src, dst, errorCode);
+	auto normalizer = icu::Normalizer2::getNFCInstance(success);
+	normalizer->normalize(src, dst, success);
 	ret.Data.reserve(dst.length());
 	dst.extract(0, dst.length(), ret.Data.data(), dst.length());
 	return ret;
@@ -128,9 +128,9 @@ String String::toASCII() const // C-api is very unwieldy for this one, copying a
 	String ret{};
 	ret.Data.reserve(Data.size());
 	icu::UnicodeString str(GetCStr(), Data.size());
-	UErrorCode errorCode = UErrorCode::U_ZERO_ERROR;
+	UErrorCode success = UErrorCode::U_ZERO_ERROR;
 	UParseError parseError;
-	auto trans = icu::Transliterator::createInstance("Any-Latin; Latin-ASCII", UTRANS_FORWARD, parseError, errorCode);
+	auto trans = icu::Transliterator::createInstance("Any-Latin; Latin-ASCII", UTRANS_FORWARD, parseError, success);
 	trans->transliterate(str);
 	str.extract(0, str.length(), ret.Data.data(), Data.size());
 	return ret;
@@ -150,8 +150,8 @@ String String::Replace(char what, char with) const
 	return ret;
 }
 
-String String::Replace(const String& what, const String& with) const {
-	
+String String::Replace(const String& what, const String& with) const
+{
 	std::vector<String> splitted = Split(what);
 	return Join(splitted.data(), splitted.size(), with);
 }
@@ -172,28 +172,28 @@ std::vector<String> String::Split(const String& delimiter) const {
 	return elements;
 }
 
-String String::Join(const String* vars, size_t size, const String& separator) {
-	//TODO replace using stringbuilder
-	String s = String("");
-	for (size_t i = 0; i < size; i++) {
-		s = s + vars[i];
-		if (i != size - 1) {
-			s = s + separator;
-		}
+String String::Join(const String* vars, size_t size, const String& separator)
+{
+	StringBuilder sb;
+	for (size_t i = 0; i < size; ++i) 
+	{
+		sb.Append(vars[i]);
+		if (i != size - 1)
+			sb.Append(separator);
 	}
-	return s;
+	return sb.StealString();
 }
 
-String String::Join(const String* vars, size_t size, char separator) {
-	//TODO replace using stringbuilder
-	String s = String("");
-	for (size_t i = 0; i < size; i++) {
-		s = s + vars[i];
-		if (i != size - 1) {
-			s = s + separator;
-		}
+String String::Join(const String* vars, size_t size, char separator)
+{
+	StringBuilder sb;
+	for (size_t i = 0; i < size; ++i) 
+	{
+		sb.Append(vars[i]);
+		if (i != size - 1)
+			sb.Append(separator);
 	}
-	return s;
+	return sb.StealString();
 }
 
 bool String::StartsWith(char var) const {
@@ -270,14 +270,14 @@ bool String::CmpBytes(const String& str) const
 bool String::operator==(const char* str) const
 {
 	UErrorCode success = U_ZERO_ERROR;
-	icu::Collator* coll = icu::Collator::createInstance(success);
+	auto coll = icu::Collator::createInstance(success);
 	return coll->compareUTF8(Data.data(), str, success) == UCOL_EQUAL;
 }
 
 bool String::operator==(const String& str) const
 {
 	UErrorCode success = U_ZERO_ERROR;
-	icu::Collator* coll = icu::Collator::createInstance(success);
+	auto coll = icu::Collator::createInstance(success);
 	return coll->compareUTF8(Data.data(), str.Data.data(), success) == UCOL_EQUAL;
 }
 

@@ -54,6 +54,8 @@ TEST_CASE("String operations", "[String]") {
 	::pe::core::storage::String empty = ::pe::core::storage::String("");
 	REQUIRE(!test.IsEmpty());
 	REQUIRE(empty.IsEmpty());
+	REQUIRE(!empty.StartsWith('?'));
+	REQUIRE(!empty.EndsWith('?'));
 
 	::pe::core::storage::String replace = ::pe::core::storage::String("@ALZ[aWWzD{");
 	::pe::core::storage::String replaced = test.Replace('l', 'W').Replace('\'', 'D');
