@@ -15,7 +15,7 @@ TEST_CASE("PriorityQueue sorted push test", "[PriorityQueue]")
 		
 	for (int i = 0; i < testSize; ++i)
 	{
-		CHECK(q.top() == i);
+		CHECK(q.top() == testSize - i - 1);
 		q.pop();
 	}
 }
@@ -33,7 +33,7 @@ TEST_CASE("PriorityQueue reverse sorted push test", "[PriorityQueue]")
 
 	for (int i = 0; i < testSize; ++i)
 	{
-		CHECK(q.top() == i);
+		CHECK(q.top() == testSize - i - 1);
 		q.pop();
 	}
 }
@@ -53,13 +53,13 @@ TEST_CASE("PriorityQueue random push test", "[PriorityQueue]")
 	{
 		size_t v1 = q.top();
 		q.pop();
-		CHECK(v1 <= q.top());
+		CHECK(v1 >= q.top());
 	}
 }
 
 struct CustomTestComparator
 {
-	bool operator()(int a, int b) const { return a < b; }
+	bool operator()(int a, int b) const { return a > b; }
 };
 
 TEST_CASE("PriorityQueue custom comparator test", "[PriorityQueue]")
@@ -77,7 +77,7 @@ TEST_CASE("PriorityQueue custom comparator test", "[PriorityQueue]")
 	{
 		size_t v1 = q.top();
 		q.pop();
-		CHECK(v1 >= q.top());
+		CHECK(v1 <= q.top());
 	}
 }
 
@@ -95,6 +95,6 @@ TEST_CASE("PriorityQueue heap sort", "[PriorityQueue]")
 	{
 		size_t v1 = q.top();
 		q.pop();
-		CHECK(v1 <= q.top());
+		CHECK(v1 >= q.top());
 	}
 }
