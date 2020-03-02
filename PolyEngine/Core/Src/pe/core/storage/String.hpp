@@ -1,6 +1,7 @@
 #pragma once
 
 #include <pe/Defines.hpp>
+#include <pe/core/utils/Range.hpp>
 
 namespace pe::core::storage
 {
@@ -204,9 +205,83 @@ namespace pe::core::storage
 
 		size_t GetLength() const;
 
+		size_t GetLogicalLength() const;
+
 		const char* GetCStr() const { return Data.data(); }
 
 		friend std::ostream& operator<< (std::ostream& stream, const String& rhs) { return stream << rhs.GetCStr(); }
+
+		class StringIteratorMemory final : public BaseObjectLiteralType<>
+		{
+			friend class String;
+		public:
+			using iterator_category = std::bidirectional_iterator_tag;
+			using value_type = char;
+			using difference_type = std::ptrdiff_t;
+			using pointer = char*;
+			using reference = char&;
+
+			bool operator==(const StringIteratorMemory& rhs) const { return idx == rhs.idx; }
+			bool operator!=(const StringIteratorMemory& rhs) const { return idx != rhs.idx; }
+			
+			const char& operator*() const { return s->Data.at(idx); }
+			//const char* operator->() const { return s->Data.data() + idx * sizeof(char); } //are they even useful?
+
+			StringIteratorMemory& operator++() { ++idx; return *this; }
+			StringIteratorMemory operator++(int) { StringIteratorMemory ret(s, idx); ++idx; return ret; }
+			StringIteratorMemory& operator--() { ASSERTE(idx > 0, "Index cannot be negative"); --idx; return *this; }
+			StringIteratorMemory operator--(int) { ASSERTE(idx > 0, "Index cannot be negative"); StringIteratorMemory ret(s, idx); --idx; return ret; }
+		private:
+			StringIteratorMemory(const String* string, size_t index) : s(string), idx(index) {};
+			const String* s;
+			size_t idx;
+		};
+
+		class StringIteratorGlyph final : public BaseObjectLiteralType<>// add implementation from numeria
+		{
+			friend class String;
+		public:
+			using iterator_category = std::bidirectional_iterator_tag;
+			using value_type = char;
+			using difference_type = std::ptrdiff_t;
+			using pointer = char*;
+			using reference = char&;
+
+			bool operator==(const StringIteratorGlyph& rhs) const { return idx == rhs.idx; }
+			bool operator!=(const StringIteratorGlyph& rhs) const { return idx != rhs.idx; }
+			
+			const char& operator*() const { return s->Data.at(idx); }
+			//const char* operator->() const { return s->Data.data() + idx * sizeof(char); }
+
+			StringIteratorGlyph& operator++() { ++idx; return *this; }
+			StringIteratorGlyph operator++(int) { StringIteratorGlyph ret(s, idx); ++idx; return ret; }
+			StringIteratorGlyph& operator--() { ASSERTE(idx > 0, "Index cannot be negative"); --idx; return *this; }
+			StringIteratorGlyph operator--(int) { ASSERTE(idx > 0, "Index cannot be negative"); StringIteratorGlyph ret(s, idx); --idx; return ret; }
+		private:
+			StringIteratorGlyph(const String* string, size_t index) : s(string), idx(index) {};
+			const String* s;
+			size_t idx;
+		};
+
+		// FIXME: default begin and end are memory for now, please scrutinize this, const added as well, they are const anyway, should user only use const ones? disallow mutating?
+		StringIteratorMemory begin() { return StringIteratorMemory(this, 0); }
+		StringIteratorMemory end() { return StringIteratorMemory(this, Data.size()); }
+		StringIteratorMemory cbegin() const { return StringIteratorMemory(this, 0); }
+		StringIteratorMemory cend() const { return StringIteratorMemory(this, Data.size()); }
+		StringIteratorGlyph beginGlyph() { return StringIteratorGlyph(this, 0); }
+		StringIteratorGlyph endGlyph() { return StringIteratorGlyph(this, Data.size()); }
+
+		//iteratememory
+		::pe::core::utils::Range<StringIteratorMemory> IterateMemory()
+		{
+			return ::pe::core::utils::Range<StringIteratorMemory>(begin(), end());
+		}
+
+		// iterateglyph
+		::pe::core::utils::Range<StringIteratorGlyph> IterateGlyphs()
+		{
+			return ::pe::core::utils::Range<StringIteratorGlyph>(beginGlyph(), endGlyph());
+		}
 
 	private:
 

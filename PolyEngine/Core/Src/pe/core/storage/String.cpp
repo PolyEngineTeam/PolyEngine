@@ -327,6 +327,11 @@ size_t String::GetLength() const
 	return Data.size() - 1;
 }
 
+size_t String::GetLogicalLength() const
+{
+	return 0; // TODO: count it on demand?
+}
+
 size_t String::FindSubstrFromPoint(size_t startPoint, const String& str) const
 {
 	for (size_t idx = startPoint; idx < GetLength(); ++idx)

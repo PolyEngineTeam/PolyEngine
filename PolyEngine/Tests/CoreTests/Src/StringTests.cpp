@@ -154,3 +154,73 @@ TEST_CASE("UTF-8 string conversion tests", "[String]")
 	asciiConverted = cyrilicTest.toASCII();
 	REQUIRE(asciiConverted == "Theodoratou, Elene"); // this preserves it somehow
 }
+
+TEST_CASE("STL iterator tests", "[String]")
+{
+	::pe::core::storage::String s1("regular string");
+	::pe::core::storage::String s2;
+
+	size_t i = 0;
+	for(auto c : s1)
+	{
+		UNUSED(c);
+		++i;
+	}
+	REQUIRE(i == s1.GetLength() + 1);// +1 for the \0
+
+	i = 0;
+	for(auto c : s2)
+	{
+		UNUSED(c);
+		++i;
+	}
+	REQUIRE(i == s2.GetLength() + 1);
+}
+
+TEST_CASE("Memory iterator tests", "[String]")
+{
+	::pe::core::storage::String s1("regular string");
+	::pe::core::storage::String s2;
+
+	size_t i = 0;
+	for(auto c : s1.IterateMemory())
+	{
+		UNUSED(c);
+		++i;
+	}
+	REQUIRE(i == s1.GetLength() + 1);
+
+	i = 0;
+	for(auto c : s2.IterateMemory())
+	{
+		UNUSED(c);
+		++i;
+	}
+	REQUIRE(i == s2.GetLength() + 1);
+
+	auto it = s1.begin();
+	auto it2 = s1.end();
+	//--it;
+	++it;
+	--it2;
+	REQUIRE(*it == 'e');
+	REQUIRE(*it2 == '\0');
+	it++;
+	REQUIRE(*it == 'g');
+	--it;
+	REQUIRE(*it == 'e');
+	it--;
+	REQUIRE(*it == 'r');
+	it2 = s1.begin();
+	REQUIRE(it == it2);
+	++it2;
+	REQUIRE(it != it2);
+}
+
+TEST_CASE("Glyph iterator tests", "[String]")
+{
+	//::pe::core::storage::String s1("regular string");
+//	::pe::core::storage::String s2("");
+
+
+}
