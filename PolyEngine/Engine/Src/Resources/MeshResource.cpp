@@ -6,6 +6,8 @@
 
 using namespace Poly;
 
+using PairQueue = core::storage::PriorityQueue<std::pair<u8, float>,std::function<bool(const std::pair<u8, float>&, const std::pair<u8, float>&)>>;
+
 RTTI_DEFINE_TYPE(Poly::MeshResource)
 
 core::math::Matrix MatFromAiMat(const aiMatrix4x4& m)
@@ -150,9 +152,9 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
 	if (mesh->HasBones())
 	{
 		ASSERTE((i8)mesh->mNumBones <= std::numeric_limits<typename decltype(MeshData.BoneIds)::value_type::ValueType>::max(), "Model has too many bones!");
-
-		std::vector<::pe::core::storage::PriorityQueue<std::pair<u8, float>, std::function<bool(const std::pair<u8, float>&, const std::pair<u8, float>&)>>> tmpBonesList;
-		tmpBonesList.resize(mesh->mNumVertices, { [](const std::pair<u8, float>& v1, const std::pair<u8, float>& v2) { return v1.second > v2.second; } });
+	
+		std::vector<PairQueue> tmpBonesList;
+		tmpBonesList.resize(mesh->mNumVertices, { PairQueue([](const std::pair<u8, float>& v1, const std::pair<u8, float>& v2) { return v1.second > v2.second; })});
 
 		std::map<::pe::core::storage::String, size_t> nameToBoneIdx;
 
@@ -169,7 +171,7 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
 					const auto& vertWeight = bone->mWeights[j];
 					size_t vertId = vertWeight.mVertexId;
 					float weight = vertWeight.mWeight;
-					tmpBonesList[vertId].Push({ boneId, weight });
+					tmpBonesList[vertId].emplace( boneId, weight );
 				}
 			}
 		}
@@ -182,11 +184,12 @@ void MeshResource::SubMesh::LoadBones(aiMesh* mesh)
 
 			for (size_t vertId = 0; vertId < mesh->mNumVertices; ++vertId)
 			{
-				auto& boneQueue = tmpBonesList[vertId];
+				PairQueue& boneQueue = tmpBonesList[vertId];
 				float sum = 0.f;
-				for (size_t k = 0; k < 4 && boneQueue.GetSize() > 0; ++k)
+				for (size_t k = 0; k < 4 && boneQueue.size() > 0; ++k)
 				{
-					auto entry = boneQueue.Pop();
+					auto entry = boneQueue.top();
+					boneQueue.pop();
 					sum += entry.second;
 					MeshData.BoneIds[vertId].Data[k] = entry.first;
 					MeshData.BoneWeights[vertId].Data[k] = entry.second;

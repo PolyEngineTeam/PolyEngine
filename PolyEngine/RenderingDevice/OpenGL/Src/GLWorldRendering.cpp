@@ -3,7 +3,7 @@
 #include <GLRenderingDevice.hpp>
 
 #include <algorithm>    // std::min
-
+#include <pe/core/storage/PriorityQueue.hpp>
 #include <Proxy/GLTextFieldBufferDeviceProxy.hpp>
 #include <Proxy/GLTextureDeviceProxy.hpp>
 #include <Pipeline/RenderingPassBase.hpp>
@@ -82,18 +82,18 @@ void GLRenderingDevice::FillSceneView(SceneView& sceneView)
 		{
 			if (meshCmp->GetBlendingMode() == eBlendingMode::OPAUQE)
 			{
-				sceneView.OpaqueQueue.Push(meshCmp);
+				sceneView.OpaqueQueue.push(meshCmp);
 			}
 			else if (meshCmp->GetBlendingMode() == eBlendingMode::TRANSLUCENT)
 			{
-				sceneView.TranslucentQueue.Push(meshCmp);
+				sceneView.TranslucentQueue.push(meshCmp);
 			}
 		}
 	}
 
 	for (const auto& [particleCmp] : sceneView.SceneData->IterateComponents<ParticleComponent>())
 	{
-		sceneView.ParticleQueue.Push(particleCmp);
+		sceneView.ParticleQueue.push(particleCmp);
 	}
 
 	for (const auto& [dirLightCmp] : sceneView.SceneData->IterateComponents<DirectionalLightComponent>())
@@ -237,13 +237,12 @@ void GLRenderingDevice::CullShadowCasters(SceneView& sceneView, const core::math
 
 	// find all meshes that are inside extended DirLights AABB box
 	core::math::Vector dirLightPos = sceneView.DirectionalLightList[0]->GetTransform().GetGlobalTranslation();
-	MeshQueue shadowCasterQueue(SceneView::DistanceToCameraComparator(dirLightPos, SceneView::eSortOrderType::FRONT_TO_BACK), 0);
-	
+	MeshQueue shadowCasterQueue(SceneView::DistanceToCameraComparator(dirLightPos, SceneView::eSortOrderType::FRONT_TO_BACK));
 	for (auto& [box, meshCmp] : boxMeshes)
 	{
 		if (frustumAABBInLS.Contains(box))
 		{
-			shadowCasterQueue.Push(meshCmp);
+			shadowCasterQueue.push(meshCmp);
 
 			if (sceneView.SettingsCmp && sceneView.SettingsCmp->DebugDrawShadowCastersBounds)
 				DebugDrawSystem::DrawBox(scene, box.GetMin(), box.GetMax(), worldFromDirLight, core::math::Color::GREEN);

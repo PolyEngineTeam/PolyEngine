@@ -56,7 +56,7 @@ void IndexedStringManager::scheduleErase(const IndexedStringEntry* entry)
 	HEAVY_ASSERTE(entry->getRemovalTimePoint().value_or(0) <= removalTimePoint,
 		"Cannot set removal time point to a previous one than already set!");
 	entry->setRemovalTimePoint(removalTimePoint);
-	m_ttlEntries.Push(TTLEntry{removalTimePoint, entry});
+	m_ttlEntries.emplace(TTLEntry{removalTimePoint, entry});
 }
 
 void IndexedStringManager::erase(const IndexedStringEntry* entry)
@@ -70,7 +70,7 @@ void IndexedStringManager::setTTLMode(bool enabled)
 {
 	if(m_ttlEnabled && !enabled)
 	{
-		m_ttlEntries.Clear();
+		m_ttlEntries.clear();
 	}
 	m_ttlEnabled = enabled;
 }
@@ -88,9 +88,10 @@ void IndexedStringManager::tickTTL(size_t ttlTickCount)
 
 	m_tickCount += ttlTickCount;
 
-	while(m_ttlEntries.GetSize() > 0 && m_ttlEntries.Head().m_scheduledTimePoint <= m_tickCount)
+	while(m_ttlEntries.size() > 0 && m_ttlEntries.top().m_scheduledTimePoint <= m_tickCount)
 	{
-		auto entry = m_ttlEntries.Pop().m_entry;
+		auto entry = m_ttlEntries.top().m_entry;
+		m_ttlEntries.pop();
 		auto realRemovalTimePoint = entry->getRemovalTimePoint();
 		if (realRemovalTimePoint.value_or(m_tickCount+1) <= m_tickCount)
 		{

@@ -9,32 +9,32 @@ TEST_CASE("PriorityQueue sorted push test", "[PriorityQueue]")
 
 	for (int i = 0; i < testSize; ++i)
 	{
-		q.Push(i);
-		CHECK(q.GetSize() == i+1);
+		q.push(i);
+		CHECK(q.size() == i+1);
 	}
 		
 	for (int i = 0; i < testSize; ++i)
 	{
-		CHECK(q.Head() == i);
-		CHECK(q.Pop() == i);
+		CHECK(q.top() == i);
+		q.pop();
 	}
 }
 
-TEST_CASE("PriorityQueue reverrse sorted push test", "[PriorityQueue]")
+TEST_CASE("PriorityQueue reverse sorted push test", "[PriorityQueue]")
 {
 	::pe::core::storage::PriorityQueue<int> q;
 	const int testSize = 100;
 
 	for (int i = 0; i < testSize; ++i)
 	{
-		q.Push(testSize - i - 1);
-		CHECK(q.GetSize() == i + 1);
+		q.push(testSize - i - 1);
+		CHECK(q.size() == i + 1);
 	}
 
 	for (int i = 0; i < testSize; ++i)
 	{
-		CHECK(q.Head() == i);
-		CHECK(q.Pop() == i);
+		CHECK(q.top() == i);
+		q.pop();
 	}
 }
 
@@ -45,20 +45,21 @@ TEST_CASE("PriorityQueue random push test", "[PriorityQueue]")
 
 	for (size_t i = 0; i < testSize; ++i)
 	{
-		q.Push(rand());
-		CHECK(q.GetSize() == i + 1);
+		q.push(rand());
+		CHECK(q.size() == i + 1);
 	}
 
 	for (size_t i = 0; i < testSize - 1; ++i)
 	{
-		size_t v1 = q.Pop();
-		CHECK(v1 <= q.Head());
+		size_t v1 = q.top();
+		q.pop();
+		CHECK(v1 <= q.top());
 	}
 }
 
 struct CustomTestComparator
 {
-	bool operator()(int a, int b) const { return a > b; }
+	bool operator()(int a, int b) const { return a < b; }
 };
 
 TEST_CASE("PriorityQueue custom comparator test", "[PriorityQueue]")
@@ -68,14 +69,15 @@ TEST_CASE("PriorityQueue custom comparator test", "[PriorityQueue]")
 
 	for (size_t i = 0; i < testSize; ++i)
 	{
-		q.Push(rand());
-		CHECK(q.GetSize() == i + 1);
+		q.push(rand());
+		CHECK(q.size() == i + 1);
 	}
 
 	for (size_t i = 0; i < testSize - 1; ++i)
 	{
-		size_t v1 = q.Pop();
-		CHECK(v1 >= q.Head());
+		size_t v1 = q.top();
+		q.pop();
+		CHECK(v1 >= q.top());
 	}
 }
 
@@ -91,7 +93,8 @@ TEST_CASE("PriorityQueue heap sort", "[PriorityQueue]")
 
 	for (size_t i = 0; i < testSize - 1; ++i)
 	{
-		size_t v1 = q.Pop();
-		CHECK(v1 <= q.Head());
+		size_t v1 = q.top();
+		q.pop();
+		CHECK(v1 <= q.top());
 	}
 }

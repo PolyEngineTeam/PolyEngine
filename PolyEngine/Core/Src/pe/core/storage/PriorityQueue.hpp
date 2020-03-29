@@ -2,109 +2,82 @@
 
 #include <pe/Defines.hpp>
 
-
 namespace pe::core::storage
 {
-	template<typename T>
-	struct DefaultCmp
-	{
-		bool operator()(const T& a, const T& b) const { return a < b; }
-	};
-
-
-	template <typename T, typename Less = DefaultCmp<T>>
-	class PriorityQueue final : BaseObjectLiteralType<>
+	template<class Ty,class Pr = std::greater<typename std::vector<Ty>::value_type> >
+	class PriorityQueue final : public std::priority_queue<Ty,std::vector<Ty>,Pr>
 	{
 	public:
-		PriorityQueue(size_t prealocatedSize = 0) { Data.reserve(prealocatedSize); }
-		PriorityQueue(Less lessCmp, size_t prealocatedSize = 0) : LessCmp(std::move(lessCmp)) { Data.reserve(prealocatedSize);}
-		PriorityQueue(std::vector<T> data) : Data(std::move(data))
+		
+		PriorityQueue()
+			: std::priority_queue<Ty, std::vector<Ty>, Pr>()
 		{
-			for (size_t idx = Data.size() / 2; idx > 0; --idx)
-				SiftDown(idx - 1);
 		}
 
-		void Push(T val)
-		{
-			Data.push_back(std::move(val));
-			SiftUp(Data.size() - 1);
+		PriorityQueue(const std::vector<Ty>& _Cont)
+			: std::priority_queue<Ty, std::vector<Ty>, Pr>(Pr(), _Cont)
+		{	
 		}
 
-		T Pop()
-		{
-			T& first = Data[0];
-			T& last = Data[GetSize() - 1];
-			T tmp = std::move(first);
-			Swap(first, last);
-			Data.pop_back();
-			SiftDown(0);
-			return tmp;
+		PriorityQueue(const Pr& Pred, const std::vector<Ty>& _Cont)
+			: std::priority_queue<Ty, std::vector<Ty>, Pr>(Pred,_Cont)
+		{	
 		}
 
-		void Clear() { Data.clear(); }
 
-		const T& Head() const { return Data[0]; }
-		size_t GetSize() const { return Data.size(); }
-		void Reserve(size_t size) { Data.reserve(size); }
-	private:
-		void SiftUp(size_t idx)
+		explicit PriorityQueue(const Pr& Pred)
+			: std::priority_queue<Ty, std::vector<Ty>, Pr>(Pred)
 		{
-			while (idx > 0)
-			{
-				T& val = Data[idx];
-				const size_t parentIdx = GetParent(idx);
-				T& parent = Data[parentIdx];
-				if (!LessCmp(val, parent))
-					break;
-				
-				Swap(val, parent);
-				idx = parentIdx;
-			}
 		}
 
-		void SiftDown(size_t idx)
-		{
-			while (idx < GetSize())
-			{
-				const size_t leftChild = GetLeftChild(idx);
-				const size_t rightChild = GetRightChild(idx);
 
-				const bool leftOk = leftChild < GetSize();
-				const bool rightOk = rightChild < GetSize();
-
-				if (!leftOk && !rightOk)
-					return;
-
-				T& val = Data[idx];
-				// assign val, simple trick to bypass null reference limitations
-				T* left = leftOk ? &Data[leftChild] : nullptr;
-				T* right = rightOk ? &Data[rightChild] : nullptr;
-
-				const bool rightBetter = !leftOk || (rightOk && LessCmp(*right, *left));
-				T* candidate = rightBetter ? right : left;
-
-				if (candidate && LessCmp(*candidate, val))
-				{
-					Swap(val, *candidate);
-					idx = rightBetter ? rightChild : leftChild;
-				}
-				else
-					return;
-			}
+		template<class InIt>
+		PriorityQueue(InIt _First, InIt _Last)
+			: std::priority_queue<Ty, std::vector<Ty>, Pr>(_First,_Last)
+		{	
 		}
 
-		inline void Swap(T& a, T& b)
-		{
-			T tmp = std::move(a);
-			a = std::move(b);
-			b = std::move(tmp);
+		template<class InIt>
+		PriorityQueue(InIt _First, InIt _Last, const Pr& Pred)
+			: std::priority_queue<Ty, std::vector<Ty>, Pr>(_First,_Last,Pred)
+		{	
 		}
 
-		inline size_t GetParent(size_t node) { return (node - 1) / 2; }
-		inline size_t GetLeftChild(size_t node) { return 2 * node + 1; }
-		inline size_t GetRightChild(size_t node) { return 2 * node + 2; }
+	
+		template<class Alloc,
+			class = std::enable_if_t<std::uses_allocator_v<std::vector<Ty>, Alloc>>>
+			explicit PriorityQueue(const Alloc& _Al)
+			: std::priority_queue<Ty, std::vector<Ty>, Pr>(_Al)
+		{	
+		}
 
-		Less LessCmp;
-		std::vector<T> Data;
+		template<class Alloc,
+			class = std::enable_if_t<std::uses_allocator_v<std::vector<Ty>, Alloc>>>
+			PriorityQueue(const Pr& Pred, const Alloc& _Al)
+			: std::priority_queue<Ty, std::vector<Ty>, Pr>(Pred,_Al)
+		{	
+		}
+
+		template<class Alloc,
+			class = std::enable_if_t<std::uses_allocator_v<std::vector<Ty>, Alloc>>>
+			PriorityQueue(const std::priority_queue<Ty, std::vector<Ty>, Pr>& _Right, const Alloc& _Al)
+			: std::priority_queue<Ty, std::vector<Ty>, Pr>(_Right,_Al)
+		{	
+		}
+
+	
+		template<class Alloc,
+			class = std::enable_if_t<std::uses_allocator_v<std::vector<Ty>, Alloc>>>
+			PriorityQueue(std::priority_queue<Ty, std::vector<Ty>, Pr>&& _Right, const Alloc& _Al)
+			: std::priority_queue<Ty, std::vector<Ty>, Pr>(_Right,_Al)
+		{	
+		}
+
+
+		void clear()
+		{
+			this->c.clear();
+		}
 	};
-} //namespace Poly
+} 
+

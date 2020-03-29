@@ -3,7 +3,7 @@
 #include <TiledForwardRenderer.hpp>
 #include <Configs/AssetsPathConfig.hpp>
 #include <Rendering/Animation/SkeletalAnimationComponent.hpp>
-
+#include <pe/core/storage/PriorityQueue.hpp>
 #include <GLRenderingDevice.hpp>
 #include <Proxy/GLMeshDeviceProxy.hpp>
 #include <Proxy/GLParticleDeviceProxy.hpp>
@@ -525,9 +525,10 @@ void TiledForwardRenderer::RenderDepthPrePass(const SceneView& sceneView)
 	const core::math::Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	
 	MeshQueue drawOpaqueQueue(sceneView.OpaqueQueue);
-	while(drawOpaqueQueue.GetSize() > 0)
+	while(drawOpaqueQueue.size() > 0)
 	{
-		const MeshRenderingComponent* meshCmp = drawOpaqueQueue.Pop();
+		const MeshRenderingComponent* meshCmp = drawOpaqueQueue.top();
+		drawOpaqueQueue.pop();
 		const core::math::Matrix& worldFromModel = meshCmp->GetTransform().GetWorldFromModel();
 		static const core::storage::String uScreenFromModel("uScreenFromModel");
 		DepthShader.SetUniform(uScreenFromModel, clipFromWorld * worldFromModel);
@@ -691,9 +692,10 @@ void TiledForwardRenderer::RenderOpaqueLit(const SceneView& sceneView)
 	const core::math::Matrix& clipFromWorld = sceneView.CameraCmp->GetClipFromWorld();
 	
 	core::storage::PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator> drawOpaqueQueue(sceneView.OpaqueQueue);
-	while (drawOpaqueQueue.GetSize() > 0)
+	while (drawOpaqueQueue.size() > 0)
 	{
-		const MeshRenderingComponent* meshCmp = drawOpaqueQueue.Pop();
+		const MeshRenderingComponent* meshCmp = drawOpaqueQueue.top();
+		drawOpaqueQueue.pop();
 		const SkeletalAnimationComponent* animCmp = meshCmp->GetSibling<SkeletalAnimationComponent>();
 
 		const EntityTransform& transform = meshCmp->GetTransform();
@@ -902,9 +904,10 @@ void TiledForwardRenderer::RenderTranslucentLit(const SceneView& sceneView)
 	// for (const MeshRenderingComponent* meshCmp : sceneView.TranslucentQueue)
 	// {
 	core::storage::PriorityQueue<const MeshRenderingComponent*, SceneView::DistanceToCameraComparator> drawTranslucentQueue(sceneView.TranslucentQueue);
-	while (drawTranslucentQueue.GetSize() > 0)
+	while (drawTranslucentQueue.size() > 0)
 	{
-		const MeshRenderingComponent* meshCmp = drawTranslucentQueue.Pop();
+		const MeshRenderingComponent* meshCmp = drawTranslucentQueue.top();
+		drawTranslucentQueue.pop();
 		const EntityTransform& transform = meshCmp->GetTransform();
 		const core::math::Matrix& worldFromModel = transform.GetWorldFromModel();
 		static const core::storage::String uClipFromModel("uClipFromModel");
