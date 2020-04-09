@@ -2,9 +2,9 @@
 #include <catch.hpp>
 
 #include <pe/core/rtti/RTTI.hpp>
-/*
-using namespace Poly;
 
+using namespace Poly;
+/*
 enum class eRTTITestEnum
 {
 	VAL_1,
