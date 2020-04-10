@@ -143,20 +143,28 @@ TEST_CASE("Result.isErr", "[Result]")
 TEST_CASE("Result.value", "[Result]")
 {
 	constexpr Result res1 = Ok(CounterClass());
-	constexpr const CounterClass& val1 = res1.value();
+	constexpr const CounterClass val1 = res1.value();
 	REQUIRE(val1.m_ctor == 1);
-	REQUIRE(val1.m_copyCtor == 0);
+	REQUIRE(val1.m_copyCtor == 1);
 	REQUIRE(val1.m_moveCtor == 2);
 	REQUIRE(val1.m_copyOp == 0);
 	REQUIRE(val1.m_moveOp == 0);
 
 	constexpr Result res2 = Result<CounterClass>(CounterClass());
-	constexpr const CounterClass& val2 = res2.value();
+	constexpr const CounterClass val2 = res2.value();
 	REQUIRE(val2.m_ctor == 1);
-	REQUIRE(val2.m_copyCtor == 0);
+	REQUIRE(val2.m_copyCtor == 1);
 	REQUIRE(val2.m_moveCtor == 1);
 	REQUIRE(val2.m_copyOp == 0);
 	REQUIRE(val2.m_moveOp == 0);
+
+	Result res3 = Result<CounterClass>(CounterClass());
+	const CounterClass val3 = std::move(res3.valueRef());
+	REQUIRE(val3.m_ctor == 1);
+	REQUIRE(val3.m_copyCtor == 0);
+	REQUIRE(val3.m_moveCtor == 2);
+	REQUIRE(val3.m_copyOp == 0);
+	REQUIRE(val3.m_moveOp == 0);
 }
 
 TEST_CASE("Result.valueOr", "[Result]")
@@ -178,7 +186,7 @@ TEST_CASE("Result.valueOr", "[Result]")
 	REQUIRE(val4 == 40);
 	
 	constexpr Result res5 = Ok(CounterClass());
-	constexpr const CounterClass& val5 = res5.valueOr(CounterClass());
+	constexpr const CounterClass val5 = res5.valueOr(CounterClass());
 	REQUIRE(val5.m_ctor == 1);
 	REQUIRE(val5.m_copyCtor == 1);
 	REQUIRE(val5.m_moveCtor == 2);
@@ -186,7 +194,7 @@ TEST_CASE("Result.valueOr", "[Result]")
 	REQUIRE(val5.m_moveOp == 0);
 
 	constexpr Result<CounterClass> res6 = Err();
-	constexpr const CounterClass& val6 = res6.valueOr(CounterClass());
+	constexpr const CounterClass val6 = res6.valueOr(CounterClass());
 	REQUIRE(val6.m_ctor == 1);
 	REQUIRE(val6.m_copyCtor == 0);
 	REQUIRE(val6.m_moveCtor == 1);
@@ -194,7 +202,7 @@ TEST_CASE("Result.valueOr", "[Result]")
 	REQUIRE(val6.m_moveOp == 0);
 	
 	constexpr Result<CounterClass, eTestErrorType> res7 = Result<CounterClass, eTestErrorType>(CounterClass());
-	constexpr const CounterClass& val7 = res7.valueOr(CounterClass());
+	constexpr const CounterClass val7 = res7.valueOr(CounterClass());
 	REQUIRE(val7.m_ctor == 1);
 	REQUIRE(val7.m_copyCtor == 1);
 	REQUIRE(val7.m_moveCtor == 1);
