@@ -10,57 +10,26 @@ namespace
 	class CounterClass
 	{
 	public:
-		constexpr CounterClass() { ++m_ctor; }
-		constexpr CounterClass(const CounterClass& other)
+		constexpr CounterClass() : m_ctor(1) {}
+		constexpr CounterClass(const CounterClass& other) :
+			m_ctor(other.m_ctor),
+			m_copyCtor(other.m_copyCtor + 1),
+			m_moveCtor(other.m_moveCtor)
 		{
-			m_ctor = other.m_ctor;
-			m_copyCtor = other.m_copyCtor;
-			m_moveCtor = other.m_moveCtor;
-			m_copyOp = other.m_copyOp;
-			m_moveOp = other.m_moveOp;
-
-			++m_copyCtor;
-		}
-		constexpr CounterClass(const CounterClass&& other)
-		{
-			m_ctor = other.m_ctor;
-			m_copyCtor = other.m_copyCtor;
-			m_moveCtor = other.m_moveCtor;
-			m_copyOp = other.m_copyOp;
-			m_moveOp = other.m_moveOp;
-
-			++m_moveCtor;
-		}
-		constexpr CounterClass& operator=(const CounterClass& other)
-		{
-			m_ctor = other.m_ctor;
-			m_copyCtor = other.m_copyCtor;
-			m_moveCtor = other.m_moveCtor;
-			m_copyOp = other.m_copyOp;
-			m_moveOp = other.m_moveOp;
-
-			++m_copyOp;
-
-			return *this;
-		}
-		constexpr CounterClass& operator=(const CounterClass&& other)
-		{
-			m_ctor = other.m_ctor;
-			m_copyCtor = other.m_copyCtor;
-			m_moveCtor = other.m_moveCtor;
-			m_copyOp = other.m_copyOp;
-			m_moveOp = other.m_moveOp;
-
-			++m_moveOp;
-
-			return *this;
 		}
 
-		int m_ctor = 0;
-		int m_copyCtor = 0;
-		int m_moveCtor = 0;
-		int m_copyOp = 0;
-		int m_moveOp = 0;
+		constexpr CounterClass(const CounterClass&& other) :
+			m_ctor(other.m_ctor),
+			m_copyCtor(other.m_copyCtor),
+			m_moveCtor(other.m_moveCtor + 1)
+		{
+		}
+		constexpr CounterClass& operator=(const CounterClass& other) = delete;
+		constexpr CounterClass& operator=(const CounterClass&& other) = delete;
+
+		const int m_ctor = 0;
+		const int m_copyCtor = 0;
+		const int m_moveCtor = 0;
 	};
 
 	enum class eTestErrorType
@@ -147,8 +116,6 @@ TEST_CASE("Result.value", "[Result]")
 	REQUIRE(val1.m_ctor == 1);
 	REQUIRE(val1.m_copyCtor == 1);
 	REQUIRE(val1.m_moveCtor == 2);
-	REQUIRE(val1.m_copyOp == 0);
-	REQUIRE(val1.m_moveOp == 0);
 
 	constexpr Result res2 = Result<CounterClass>(CounterClass());
 	constexpr const CounterClass val2 = res2.value();
@@ -190,48 +157,36 @@ TEST_CASE("Result.valueOr", "[Result]")
 	REQUIRE(val5.m_ctor == 1);
 	REQUIRE(val5.m_copyCtor == 1);
 	REQUIRE(val5.m_moveCtor == 2);
-	REQUIRE(val5.m_copyOp == 0);
-	REQUIRE(val5.m_moveOp == 0);
 
 	constexpr Result<CounterClass> res6 = Err();
 	constexpr const CounterClass val6 = res6.valueOr(CounterClass());
 	REQUIRE(val6.m_ctor == 1);
 	REQUIRE(val6.m_copyCtor == 0);
 	REQUIRE(val6.m_moveCtor == 1);
-	REQUIRE(val6.m_copyOp == 0);
-	REQUIRE(val6.m_moveOp == 0);
 	
 	constexpr Result<CounterClass, eTestErrorType> res7 = Result<CounterClass, eTestErrorType>(CounterClass());
 	constexpr const CounterClass val7 = res7.valueOr(CounterClass());
 	REQUIRE(val7.m_ctor == 1);
 	REQUIRE(val7.m_copyCtor == 1);
 	REQUIRE(val7.m_moveCtor == 1);
-	REQUIRE(val7.m_copyOp == 0);
-	REQUIRE(val7.m_moveOp == 0);
 
 	Result res8 = Ok(CounterClass());
 	const CounterClass& val8 = std::move(res8).valueOr(CounterClass());
 	REQUIRE(val8.m_ctor == 1);
 	REQUIRE(val8.m_copyCtor == 0);
 	REQUIRE(val8.m_moveCtor == 3);
-	REQUIRE(val8.m_copyOp == 0);
-	REQUIRE(val8.m_moveOp == 0);
 
 	Result<CounterClass> res9 = Err();
 	const CounterClass& val9 = std::move(res9).valueOr(CounterClass());
 	REQUIRE(val9.m_ctor == 1);
 	REQUIRE(val9.m_copyCtor == 0);
 	REQUIRE(val9.m_moveCtor == 1);
-	REQUIRE(val9.m_copyOp == 0);
-	REQUIRE(val9.m_moveOp == 0);
 
 	Result<CounterClass, eTestErrorType> res10 = Result<CounterClass, eTestErrorType>(CounterClass());
 	const CounterClass& val10 = std::move(res10).valueOr(CounterClass());
 	REQUIRE(val10.m_ctor == 1);
 	REQUIRE(val10.m_copyCtor == 0);
 	REQUIRE(val10.m_moveCtor == 2);
-	REQUIRE(val10.m_copyOp == 0);
-	REQUIRE(val10.m_moveOp == 0);
 }
 
 TEST_CASE("Result.error", "[Result]")
@@ -260,4 +215,19 @@ TEST_CASE("Result.error", "[Result]")
 	constexpr Result<void> res6 = Err(CUSTOM_ERROR_MESSAGE);
 	constexpr const char* err6 = res6.error();
 	REQUIRE(strcmp(err6, CUSTOM_ERROR_MESSAGE) == 0);
+}
+
+TEST_CASE("Result.bind", "[Result]")
+{
+	std::function okFunc = [] (CounterClass i) -> Result<int, eTestErrorType> { return Ok(1); };
+	std::function errFunc = [] (CounterClass i) -> Result<int, eTestErrorType> { return Err(eTestErrorType::ERROR_TYPE_2); };
+
+	Result<int, eTestErrorType> okRes = bind(okFunc, Result<CounterClass, eTestErrorType>(CounterClass()));
+	REQUIRE(okRes.value() == 1);
+
+	Result<int, eTestErrorType> err1Res = bind(okFunc, Result<CounterClass, eTestErrorType>(eTestErrorType::ERROR_TYPE_1));
+	REQUIRE(err1Res.error() == eTestErrorType::ERROR_TYPE_1);
+
+	Result<int, eTestErrorType> err2Res = bind(errFunc, Result<CounterClass, eTestErrorType>(CounterClass()));
+	REQUIRE(err2Res.error() == eTestErrorType::ERROR_TYPE_2);
 }

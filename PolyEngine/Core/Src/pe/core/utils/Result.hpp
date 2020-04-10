@@ -36,7 +36,7 @@ namespace pe::core::utils
 	};
 
 	//------------------------------------------------------------------------------
-	// Specialization of Ok utility class to allow usere explicitly set 
+	// Specialization of Ok utility class to allow user explicitly set 
 	// Result value which valid value type (T) is void to ok value.
 	template <>
 	class Ok<void> final
@@ -82,7 +82,7 @@ namespace pe::core::utils
 
 	//------------------------------------------------------------------------------
 	// const char* is treated as default error msg. If you don't know yet 
-	// which errors will you retutn or you don't care about error being 
+	// which errors will you return or you don't care about error being 
 	// descriptive you can use this feature
 	template <>
 	class Err<const char*> final
@@ -279,4 +279,14 @@ namespace pe::core::utils
 	private:
 		std::optional<E> m_value;
 	};
+
+	//------------------------------------------------------------------------------
+	template <typename O, typename E, typename I>
+	Result<O, E> bind(std::function<Result<O, E>(I)> func, Result<I, E> in)
+	{
+		if (in.isOk())
+			return func(std::move(in.value()));
+		else
+			return Result<O, E>(std::move(in.error()));
+	}
 }
