@@ -171,13 +171,9 @@ namespace pe::core::utils
 
 
 		// @returns valid value if has valid value, crashes otherwise :(
-		T& valueRef() { return std::get<T>(m_value); }
-
-		// @returns valid value if has valid value, crashes otherwise :(
-		const T& valueRef() const { return std::get<T>(m_value); }
-
-		// @returns valid value if has valid value, crashes otherwise :(
-		constexpr T value() const { return std::get<T>(m_value); }
+		constexpr T& value() & { return std::get<T>(m_value); }
+		constexpr const T& value() const & { return std::get<T>(m_value); }
+		constexpr T&& value() && { return std::get<T>(std::move(m_value)); }
 
 		// Version of valueOr which can be called for almost every instance
 		// of Result except from instance where correct value type (T) is not
@@ -208,10 +204,10 @@ namespace pe::core::utils
 		// @returns valid value if has valid value or given alternative value
 		//		if has error
 		template <typename U>
-		T valueOr(U&& alt) &&
+		constexpr T valueOr(U&& alt) &&
 		{ 
 			if (isOk())
-				return std::move(valueRef());
+				return std::move(value());
 			else
 				return static_cast<T>(std::forward<U>(alt));
 		}
@@ -220,13 +216,9 @@ namespace pe::core::utils
 
 
 		// returns error if this stores an error, crashes otherwise :(
-		E& errorRef() { return std::get<E>(m_value); }
-
-		// returns error if this stores an error, crashes otherwise :(
-		const E& errorRef() const { return std::get<E>(m_value); }
-
-		// returns error if this stores an error, crashes otherwise :(
-		constexpr E error() const& { return std::get<E>(m_value); }
+		constexpr E& error() & { return std::get<E>(m_value); }
+		constexpr const E& error() const & { return std::get<E>(m_value); }
+		constexpr E&& error() && { return std::get<E>(std::move(m_value)); }
 
 	private:
 		std::variant<T, E> m_value;

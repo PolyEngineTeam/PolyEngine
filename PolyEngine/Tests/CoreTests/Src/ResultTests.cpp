@@ -122,16 +122,12 @@ TEST_CASE("Result.value", "[Result]")
 	REQUIRE(val2.m_ctor == 1);
 	REQUIRE(val2.m_copyCtor == 1);
 	REQUIRE(val2.m_moveCtor == 1);
-	REQUIRE(val2.m_copyOp == 0);
-	REQUIRE(val2.m_moveOp == 0);
 
 	Result res3 = Result<CounterClass>(CounterClass());
-	const CounterClass val3 = std::move(res3.valueRef());
+	const CounterClass val3 = std::move(res3.value());
 	REQUIRE(val3.m_ctor == 1);
 	REQUIRE(val3.m_copyCtor == 0);
 	REQUIRE(val3.m_moveCtor == 2);
-	REQUIRE(val3.m_copyOp == 0);
-	REQUIRE(val3.m_moveOp == 0);
 }
 
 TEST_CASE("Result.valueOr", "[Result]")
