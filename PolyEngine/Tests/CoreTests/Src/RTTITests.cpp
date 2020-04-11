@@ -4,7 +4,7 @@
 #include <pe/core/rtti/RTTI.hpp>
 
 using namespace Poly;
-
+/*
 enum class eRTTITestEnum
 {
 	VAL_1,
@@ -80,4 +80,4 @@ TEST_CASE("RTTI property", "[RTTI]") {
 	CHECK(properties[2].Type == RTTI::TypeInfo::INVALID);
 	CHECK(properties[2].Name == "Val2");
 	CHECK((char*)b + properties[2].Offset == (char*)&(a->val2));
-}
+} */
