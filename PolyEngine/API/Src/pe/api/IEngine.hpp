@@ -31,19 +31,20 @@ public:
     virtual void loadDefaultScene() = 0;
 
     //#################### LEGACY API #######################
-	bool IsQuitRequested() const;
-	void RequestGameQuit();
+	// @todo Move this functionality to App.
+    bool isQuitRequested() const;
+	void requestGameQuit();
     
-	bool ShouldCaptureMouse() const;
-	void SetMouseCapture(bool enabled);
+	bool shouldCaptureMouse() const;
+	void setMouseCapture(bool enabled);
 
-	bool ShouldMouseBeVisible() const;
-	void SetMouseVisible(bool visible);
+	bool shouldMouseBeVisible() const;
+	void setMouseVisible(bool visible);
 
 private:
-    bool QuitRequested = false; //stop the game
-    bool MouseCaptureEnabled = false;
-    bool MouseVisible = true;
+    bool m_quitRequested = false; //stop the game
+    bool m_mouseCaptureEnabled = false;
+    bool m_mouseVisible = true;
 };
 
 }

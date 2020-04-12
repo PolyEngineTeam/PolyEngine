@@ -4,13 +4,13 @@
 
 namespace pe::api {
 
-bool IEngine::IsQuitRequested() const { return QuitRequested; }
-void IEngine::RequestGameQuit() { QuitRequested = true; }
+bool IEngine::isQuitRequested() const { return m_quitRequested; }
+void IEngine::requestGameQuit() { m_quitRequested = true; }
 
-bool IEngine::ShouldCaptureMouse() const { return MouseCaptureEnabled; }
-void IEngine::SetMouseCapture(bool enabled) { MouseCaptureEnabled = enabled; }
+bool IEngine::shouldCaptureMouse() const { return m_mouseCaptureEnabled; }
+void IEngine::setMouseCapture(bool enabled) { m_mouseCaptureEnabled = enabled; }
 
-bool IEngine::ShouldMouseBeVisible() const { return MouseVisible; }
-void IEngine::SetMouseVisible(bool visible) { MouseVisible = visible; }
+bool IEngine::shouldMouseBeVisible() const { return m_mouseVisible; }
+void IEngine::setMouseVisible(bool visible) { m_mouseVisible = visible; }
 
 }

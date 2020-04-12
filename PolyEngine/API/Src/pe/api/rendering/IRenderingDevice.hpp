@@ -3,10 +3,10 @@
 #include <pe/Defines.hpp>
 
 namespace pe::engine::res { class Mesh; }
+namespace pe::api {
+namespace ecs { class Scene; }
 
-namespace pe::api
-{
-namespace ecs{ class Scene; }
+// @todo Redesign this from scratch.
 
 namespace rendering {
 	

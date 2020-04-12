@@ -7,8 +7,7 @@
 #include <pe/api/input/InputQueue.hpp>
 #include <pe/api/input/OutputQueue.hpp>
 
-namespace pe::api
-{
+namespace pe::api {
 class IEngine;
 class IGame;
 namespace rendering { class IRenderingDevice; }
@@ -27,22 +26,24 @@ public:
     IGame* getGame() { return m_game.get(); }
     rendering::IRenderingDevice* getRenderingDevice() { return m_renderingDevice.get(); }
 
-	void KeyDown(input::eKey key) { InputEventsQueue.pushBack({input::eInputEventType::KEYDOWN, key}); }
-	void KeyUp(input::eKey key) { InputEventsQueue.pushBack({input::eInputEventType::KEYUP, key}); }
-	void AddCharacterUTF8(const char* charUTF8) { InputEventsQueue.pushBack({input::eInputEventType::TEXTCHAR, charUTF8}); }
-	void MouseButtonDown(input::eMouseButton button) { InputEventsQueue.pushBack({input::eInputEventType::MOUSEBUTTONDOWN, button}); }
-	void MouseButtonUp(input::eMouseButton button) { InputEventsQueue.pushBack({input::eInputEventType::MOUSEBUTTONUP, button}); }
-	void UpdateMouseMove(const ::pe::core::math::Vector2i& delta) { InputEventsQueue.pushBack({input::eInputEventType::MOUSEMOVE, delta }); }
-	void UpdateMousePos(const ::pe::core::math::Vector2i& pos) { InputEventsQueue.pushBack({ input::eInputEventType::MOUSEPOS, pos }); }
-	void UpdateWheelPos(const ::pe::core::math::Vector2i& deltaPos) { InputEventsQueue.pushBack({input::eInputEventType::WHEELMOVE, deltaPos}); }
-	void AddController(size_t id) { InputEventsQueue.pushBack({input::eInputEventType::CONTROLLER_ADDED, id}); };
-	void RemoveController(size_t id) { InputEventsQueue.pushBack({input::eInputEventType::CONTROLLER_REMOVED, id}); };
-	void ControllerButtonDown(size_t id, input::eControllerButton button) { InputEventsQueue.pushBack({input::eInputEventType::CONTROLLER_BUTTON_DOWN, id, button}); };
-	void ControllerButtonUp(size_t id, input::eControllerButton button) { InputEventsQueue.pushBack({input::eInputEventType::CONTROLLER_BUTTON_UP, id, button}); };
-	void ControllerAxisMotion(size_t id, input::eControllerAxis axis, i16 value) { InputEventsQueue.pushBack({input::eInputEventType::CONTROLLER_AXIS_MOTION, id, axis, value/35768.0f}); };
+	// Input
+	// @todo Move this to specific i/o interface.
+	void keyDown(input::eKey key) { m_inputEventsQueue.pushBack({input::eInputEventType::KEYDOWN, key}); }
+	void keyUp(input::eKey key) { m_inputEventsQueue.pushBack({input::eInputEventType::KEYUP, key}); }
+	void addCharacterUTF8(const char* charUTF8) { m_inputEventsQueue.pushBack({input::eInputEventType::TEXTCHAR, charUTF8}); }
+	void mouseButtonDown(input::eMouseButton button) { m_inputEventsQueue.pushBack({input::eInputEventType::MOUSEBUTTONDOWN, button}); }
+	void mouseButtonUp(input::eMouseButton button) { m_inputEventsQueue.pushBack({input::eInputEventType::MOUSEBUTTONUP, button}); }
+	void updateMouseMove(const ::pe::core::math::Vector2i& delta) { m_inputEventsQueue.pushBack({input::eInputEventType::MOUSEMOVE, delta }); }
+	void updateMousePos(const ::pe::core::math::Vector2i& pos) { m_inputEventsQueue.pushBack({ input::eInputEventType::MOUSEPOS, pos }); }
+	void updateWheelPos(const ::pe::core::math::Vector2i& deltaPos) { m_inputEventsQueue.pushBack({input::eInputEventType::WHEELMOVE, deltaPos}); }
+	void addController(size_t id) { m_inputEventsQueue.pushBack({input::eInputEventType::CONTROLLER_ADDED, id}); };
+	void removeController(size_t id) { m_inputEventsQueue.pushBack({input::eInputEventType::CONTROLLER_REMOVED, id}); };
+	void controllerButtonDown(size_t id, input::eControllerButton button) { m_inputEventsQueue.pushBack({input::eInputEventType::CONTROLLER_BUTTON_DOWN, id, button}); };
+	void controllerButtonUp(size_t id, input::eControllerButton button) { m_inputEventsQueue.pushBack({input::eInputEventType::CONTROLLER_BUTTON_UP, id, button}); };
+	void controllerAxisMotion(size_t id, input::eControllerAxis axis, i16 value) { m_inputEventsQueue.pushBack({input::eInputEventType::CONTROLLER_AXIS_MOTION, id, axis, value/35768.0f}); };
 
-    input::InputQueue& GetInputQueue() { return InputEventsQueue; }
-    input::OutputQueue& GetOutputQueue() { return OutputEventsQueue; }
+    input::InputQueue& getInputQueue() { return m_inputEventsQueue; }
+    input::OutputQueue& getOutputQueue() { return m_outputEventsQueue; }
 
 
 	void registerEngine(std::unique_ptr<IEngine>&& engine) { m_engine = std::move(engine); }
@@ -57,8 +58,8 @@ private:
     std::unique_ptr<rendering::IRenderingDevice> m_renderingDevice;
 	std::unique_ptr<IGame> m_game;
     
-    input::InputQueue InputEventsQueue;
-	input::OutputQueue OutputEventsQueue;
+    input::InputQueue m_inputEventsQueue;
+	input::OutputQueue m_outputEventsQueue;
 };
 
 }

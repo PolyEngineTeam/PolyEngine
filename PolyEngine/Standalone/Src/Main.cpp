@@ -153,53 +153,53 @@ int main(int argc, char* args[])
 				quitRequested = true;
 				break;
 			case SDL_KEYDOWN:
-				application->KeyDown(static_cast<pe::api::input::eKey>(event.key.keysym.scancode));
+				application->keyDown(static_cast<pe::api::input::eKey>(event.key.keysym.scancode));
 				break;
 			case SDL_KEYUP:
-				application->KeyUp(static_cast<pe::api::input::eKey>(event.key.keysym.scancode));
+				application->keyUp(static_cast<pe::api::input::eKey>(event.key.keysym.scancode));
 				break;
 			case SDL_TEXTINPUT:
-				application->AddCharacterUTF8(event.text.text);
+				application->addCharacterUTF8(event.text.text);
 				break;
 			case SDL_MOUSEMOTION:
 			{
-				application->UpdateMouseMove(::pe::core::math::Vector2i(event.motion.xrel, event.motion.yrel));
-				application->UpdateMousePos(::pe::core::math::Vector2i(event.motion.x, event.motion.y));
+				application->updateMouseMove(::pe::core::math::Vector2i(event.motion.xrel, event.motion.yrel));
+				application->updateMousePos(::pe::core::math::Vector2i(event.motion.x, event.motion.y));
 				break;
 			}
 			case SDL_MOUSEBUTTONDOWN:
-				application->MouseButtonDown(static_cast<pe::api::input::eMouseButton>(event.button.button));
+				application->mouseButtonDown(static_cast<pe::api::input::eMouseButton>(event.button.button));
 				UpdateMouseState(eMouseStateChange::BUTTON_CLICK);
 				break;
 			case SDL_MOUSEBUTTONUP:
-				application->MouseButtonUp(static_cast<pe::api::input::eMouseButton>(event.button.button));
+				application->mouseButtonUp(static_cast<pe::api::input::eMouseButton>(event.button.button));
 				break;
 			case SDL_MOUSEWHEEL:
 				// Not sure if this is correct.
-				application->UpdateWheelPos(::pe::core::math::Vector2i(event.wheel.x, event.wheel.y));
+				application->updateWheelPos(::pe::core::math::Vector2i(event.wheel.x, event.wheel.y));
 				break;
 			case SDL_CONTROLLERBUTTONDOWN:
-				application->ControllerButtonDown(event.cbutton.which, static_cast<pe::api::input::eControllerButton>(event.cbutton.button));
+				application->controllerButtonDown(event.cbutton.which, static_cast<pe::api::input::eControllerButton>(event.cbutton.button));
 				break;
 			case SDL_CONTROLLERBUTTONUP:
-				application->ControllerButtonUp(event.cbutton.which, static_cast<pe::api::input::eControllerButton>(event.cbutton.button));
+				application->controllerButtonUp(event.cbutton.which, static_cast<pe::api::input::eControllerButton>(event.cbutton.button));
 				break;
 			case SDL_CONTROLLERAXISMOTION:
-				application->ControllerAxisMotion(event.caxis.which, static_cast<pe::api::input::eControllerAxis>(event.caxis.axis), event.caxis.value);
+				application->controllerAxisMotion(event.caxis.which, static_cast<pe::api::input::eControllerAxis>(event.caxis.axis), event.caxis.value);
 				break;
 			case SDL_CONTROLLERDEVICEADDED:
 			{
 				SDL_GameController* controller = SDL_GameControllerOpen(event.cdevice.which);
 				SDL_Joystick* joystickPtr = SDL_GameControllerGetJoystick(controller);
 				i32 joystickID = SDL_JoystickInstanceID(joystickPtr);
-				application->AddController(joystickID);
+				application->addController(joystickID);
 				break;
 			}
 			case SDL_CONTROLLERDEVICEREMOVED:
 			{
 				SDL_GameController* controller = SDL_GameControllerFromInstanceID(event.cdevice.which);
 				SDL_GameControllerClose(controller);
-				application->RemoveController(event.cdevice.which);
+				application->removeController(event.cdevice.which);
 				break;
 			}
 			case SDL_WINDOWEVENT:
@@ -213,17 +213,17 @@ int main(int argc, char* args[])
 		// Engine loop
 		application->getEngine()->update(std::chrono::duration<double>(0.16));
 
-		pe::api::input::OutputQueue& OutputEventsQueue = application->GetOutputQueue();
+		pe::api::input::OutputQueue& OutputEventsQueue = application->getOutputQueue();
 		while (!OutputEventsQueue.isEmpty())
 		{
 			pe::api::input::OutputEvent& ev = OutputEventsQueue.front();
-			switch (ev.Type)
+			switch (ev.type)
 			{
 			case pe::api::input::eOutputEventType::MOUSEPOS:
-				SDL_WarpMouseInWindow(window, ev.Pos.X, ev.Pos.Y);
+				SDL_WarpMouseInWindow(window, ev.pos.X, ev.pos.Y);
 				break;
 			case pe::api::input::eOutputEventType::CURSORSET:
-				SDL_SetCursor(mouseCursors[(int)GetCursorType(ev.CursorType)]);
+				SDL_SetCursor(mouseCursors[(int)GetCursorType(ev.cursorType)]);
 				break;
 			case pe::api::input::eOutputEventType::CURSORSHOW:
 				SDL_ShowCursor(SDL_TRUE);
@@ -238,7 +238,7 @@ int main(int argc, char* args[])
 			OutputEventsQueue.popFront();
 		}
 
-		quitRequested = quitRequested || application->getEngine()->IsQuitRequested();
+		quitRequested = quitRequested || application->getEngine()->isQuitRequested();
 	}
 	core::utils::gConsole.LogDebug("Closing main loop...");
 	

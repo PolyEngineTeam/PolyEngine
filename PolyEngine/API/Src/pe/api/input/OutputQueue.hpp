@@ -31,13 +31,13 @@ namespace pe::api::input
 	struct OutputEvent : public ::pe::core::BaseObject<>
 	{
 		OutputEvent() = default;
-		OutputEvent(eOutputEventType type) : Type(type) {}
-		OutputEvent(eOutputEventType type, const ::pe::core::math::Vector2i& pos) : Type(type), Pos(pos) {}
-		OutputEvent(eOutputEventType type, eMouseCursorType cursorType) : Type(type), CursorType(cursorType) {}
+		OutputEvent(eOutputEventType type) : type(type) {}
+		OutputEvent(eOutputEventType type, const ::pe::core::math::Vector2i& pos) : type(type), pos(pos) {}
+		OutputEvent(eOutputEventType type, eMouseCursorType cursorType) : type(type), cursorType(cursorType) {}
 
-		eOutputEventType Type = eOutputEventType::_COUNT;
-		::pe::core::math::Vector2i Pos;
-		eMouseCursorType CursorType = eMouseCursorType::_COUNT;
+		eOutputEventType type = eOutputEventType::_COUNT;
+		::pe::core::math::Vector2i pos;
+		eMouseCursorType cursorType = eMouseCursorType::_COUNT;
     };
 
 	using OutputQueue = ::pe::core::storage::Queue<OutputEvent>;
