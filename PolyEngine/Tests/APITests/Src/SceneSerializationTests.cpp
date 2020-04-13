@@ -16,7 +16,7 @@ TEST_CASE("Scene serialization tests", "[Scene]")
 		Scene s;
 		//DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(&s);
 
-		DISCARD s.SpawnEntity();
+		DISCARD s.spawnEntity();
 		//DeferredTaskSystem::AddComponentImmediate<Poly::FreeFloatMovementComponent>(&s, e);
 
 		s.SerializeToFile("Scene.test");

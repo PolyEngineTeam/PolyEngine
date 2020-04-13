@@ -8,6 +8,6 @@ namespace pe::api::ecs
 	class ISystem : public ::pe::core::BaseObject<>
 	{
 	public:
-		virtual void OnUpdate(Scene* scene) = 0;
+		virtual void onUpdate(Scene* scene) = 0;
 	};
 }

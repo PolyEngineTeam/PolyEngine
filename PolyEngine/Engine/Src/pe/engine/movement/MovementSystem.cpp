@@ -11,90 +11,63 @@
 
 namespace pe::engine::movement {
 
-void MovementSystem::MovementUpdatePhase(api::ecs::Scene* world)
+void MovementSystem::onUpdate(api::ecs::Scene* scene)
 {
-	float deltaTime = (float)(time::TimeSystem::GetTimerDeltaTime(world, time::eEngineTimer::GAMEPLAY));
-	input::InputWorldComponent* inputCmp = world->GetComponent<input::InputWorldComponent>();
+	float deltaTime = (float)(time::TimeSystem::GetTimerDeltaTime(scene, time::eEngineTimer::GAMEPLAY));
+	input::InputWorldComponent* inputCmp = scene->getComponent<input::InputWorldComponent>();
 	
-	if (inputCmp->GetIsConsumed())
+	if (inputCmp->getIsConsumed())
 		return;
 
-	for (auto freeFloatTuple : world->IterateComponents<FreeFloatMovementComponent>())
+	for (auto freeFloatTuple : scene->iterateComponents<FreeFloatMovementComponent>())
 	{
 		FreeFloatMovementComponent* freeFloatMovementCmp = std::get<FreeFloatMovementComponent*>(freeFloatTuple);
-		api::ecs::EntityTransform& trans = freeFloatMovementCmp->GetOwner()->GetTransform();
+		api::ecs::EntityTransform& trans = freeFloatMovementCmp->getOwner()->getTransform();
 
-		float wheelDelta = freeFloatMovementCmp->GetWheelSensitivity() * inputCmp->GetWheelPosDelta().Y;
-		float currSpeed = freeFloatMovementCmp->GetMovementSpeed();
+		float wheelDelta = freeFloatMovementCmp->getWheelSensitivity() * inputCmp->getWheelPosDelta().Y;
+		float currSpeed = freeFloatMovementCmp->getMovementSpeed();
 		float newSpeed = core::math::Clamp(currSpeed + wheelDelta, 0.001f, 10000.0f);
-		freeFloatMovementCmp->SetMovementSpeed(newSpeed);
+		freeFloatMovementCmp->setMovementSpeed(newSpeed);
 		
 		core::math::Vector move;
-		if (inputCmp->IsPressed(api::input::eKey::KEY_W))
+		if (inputCmp->isPressed(api::input::eKey::KEY_W))
 			move -= core::math::Vector::UNIT_Z;
-		else if (inputCmp->IsPressed(api::input::eKey::KEY_S))
+		else if (inputCmp->isPressed(api::input::eKey::KEY_S))
 			move += core::math::Vector::UNIT_Z;
 
-		if (inputCmp->IsPressed(api::input::eKey::KEY_A))
+		if (inputCmp->isPressed(api::input::eKey::KEY_A))
 			move -= core::math::Vector::UNIT_X;
-		else if (inputCmp->IsPressed(api::input::eKey::KEY_D))
+		else if (inputCmp->isPressed(api::input::eKey::KEY_D))
 			move += core::math::Vector::UNIT_X;
 
-		if (inputCmp->IsPressed(api::input::eKey::KEY_Q))
+		if (inputCmp->isPressed(api::input::eKey::KEY_Q))
 			move -= core::math::Vector::UNIT_Y;
-		else if (inputCmp->IsPressed(api::input::eKey::KEY_E))
+		else if (inputCmp->isPressed(api::input::eKey::KEY_E))
 			move += core::math::Vector::UNIT_Y;
 
 		if (move.LengthSquared() > 0)
 			move.Normalize();
 
-		move *= freeFloatMovementCmp->GetMovementSpeed() * deltaTime;
+		move *= freeFloatMovementCmp->getMovementSpeed() * deltaTime;
 
-		trans.SetLocalTranslation(trans.GetLocalTranslation() + trans.GetLocalRotation() * move);
+		trans.setLocalTranslation(trans.getLocalTranslation() + trans.getLocalRotation() * move);
 		
-		if (inputCmp->IsPressed(api::input::eMouseButton::LEFT))
+		if (inputCmp->isPressed(api::input::eMouseButton::LEFT))
 		{
-			core::math::Vector2i delta = inputCmp->GetMousePosDelta();
+			core::math::Vector2i delta = inputCmp->getMousePosDelta();
 
-			core::math::Quaternion rot = core::math::Quaternion(::pe::core::math::Vector::UNIT_Y, core::math::Angle::FromRadians(-delta.X * freeFloatMovementCmp->GetAngularVelocity()));
-			rot *= trans.GetLocalRotation();
-			rot *= core::math::Quaternion(::pe::core::math::Vector::UNIT_X, core::math::Angle::FromRadians(-delta.Y * freeFloatMovementCmp->GetAngularVelocity()));
+			core::math::Quaternion rot = core::math::Quaternion(::pe::core::math::Vector::UNIT_Y, 
+				core::math::Angle::FromRadians(-delta.X * freeFloatMovementCmp->getAngularVelocity()));
+			rot *= trans.getLocalRotation();
+			rot *= core::math::Quaternion(::pe::core::math::Vector::UNIT_X, 
+				core::math::Angle::FromRadians(-delta.Y * freeFloatMovementCmp->getAngularVelocity()));
 
 			if (rot != core::math::Quaternion()) {
 				rot.Normalize();
-				trans.SetLocalRotation(rot);
+				trans.setLocalRotation(rot);
 			}
 		}
 	}
 }
 
-core::math::Vector MovementSystem::GetLocalForward(const api::ecs::EntityTransform& transform)
-{
-	return transform.GetLocalRotation() * -core::math::Vector::UNIT_Z;
-}
-
-core::math::Vector MovementSystem::GetLocalRight(const api::ecs::EntityTransform& transform)
-{
-	return transform.GetLocalRotation() * core::math::Vector::UNIT_X;
-}
-
-core::math::Vector MovementSystem::GetLocalUp(const api::ecs::EntityTransform& transform)
-{
-	return transform.GetLocalRotation() * core::math::Vector::UNIT_Y;
-}
-
-core::math::Vector MovementSystem::GetGlobalForward(const api::ecs::EntityTransform& transform)
-{
-	return transform.GetGlobalRotation() * -core::math::Vector::UNIT_Z;
-}
-
-core::math::Vector MovementSystem::GetGlobalRight(const api::ecs::EntityTransform& transform)
-{
-	return transform.GetGlobalRotation() * core::math::Vector::UNIT_X;
-}
-
-core::math::Vector MovementSystem::GetGlobalUp(const api::ecs::EntityTransform& transform)
-{
-	return transform.GetGlobalRotation() * core::math::Vector::UNIT_Y;
-}
 }

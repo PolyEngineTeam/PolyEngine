@@ -57,7 +57,7 @@ private:
 
 	bool shouldIncrement() const
 	{
-		return m_iter != m_end && !hasComponents<SecondaryComponents...>(m_iter->GetOwner());
+		return m_iter != m_end && !hasComponents<SecondaryComponents...>(m_iter->getOwner());
 	}
 
 	PrimaryCmpIt_t m_iter;

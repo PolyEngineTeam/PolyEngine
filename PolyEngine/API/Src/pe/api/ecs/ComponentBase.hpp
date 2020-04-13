@@ -22,48 +22,48 @@ namespace pe::api::ecs {
 	{
 		RTTI_DECLARE_TYPE_DERIVED(::pe::api::ecs::ComponentBase, ::Poly::RTTIBase) 
 		{ 
-			RTTI_PROPERTY_AUTONAME(Owner, ::Poly::RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(m_owner, ::Poly::RTTI::ePropertyFlag::NONE);
 		}
-	friend class Entity;
 	public:
 		// @todo change to pure virtual
-		virtual size_t GetComponentID() const { ASSERTE(false, "This shouldn't be called!"); return 0; };
+		virtual size_t getComponentID() const { ASSERTE(false, "This shouldn't be called!"); return 0; };
 
 
 		/// <summary>Getter for a component of a specified type that shares ::pe::core::UniqueID with this one.</summary>
 		/// <returns>Pointer to a component of a specified type or a nullptr, if it does not exist.</returns>
 		template<typename T>
-		T* GetSibling() { return static_cast<T*>(GetSibling(::pe::api::ecs::GetComponentID<T>())); }
-		ComponentBase* GetSibling(size_t componentID);
+		T* getSibling() { return static_cast<T*>(getSibling(::pe::api::ecs::GetComponentID<T>())); }
+		ComponentBase* getSibling(size_t componentID);
 
 		/// <summary>Getter for a component of a specified type that shares ::pe::core::UniqueID with this one.</summary>
 		/// <returns>Pointer to a component of a specified type or a nullptr, if it does not exist.</returns>
 		template<typename T>
-		const T* GetSibling() const { return static_cast<const T*>(GetSibling(::pe::api::ecs::GetComponentID<T>())); }
-		const ComponentBase* GetSibling(size_t componentID) const;
+		const T* getSibling() const { return static_cast<const T*>(getSibling(::pe::api::ecs::GetComponentID<T>())); }
+		const ComponentBase* getSibling(size_t componentID) const;
 
-		inline const Entity* GetOwner() const
+		inline const Entity* getOwner() const
 		{
-			HEAVY_ASSERTE(Owner, "Component was not properly initialized.");
-			return Owner;
+			HEAVY_ASSERTE(m_owner, "Component was not properly initialized.");
+			return m_owner;
 		}
 
-		inline Entity* GetOwner()
+		inline Entity* getOwner()
 		{
-			HEAVY_ASSERTE(Owner, "Component was not properly initialized.");
-			return Owner;
+			HEAVY_ASSERTE(m_owner, "Component was not properly initialized.");
+			return m_owner;
 		}
 
-		void SetFlags(const ::pe::core::utils::EnumFlags<eComponentBaseFlags>& rhs) { Flags |= rhs; }
-		void ResetFlags(const ::pe::core::utils::EnumFlags<eComponentBaseFlags>& rhs) { Flags &= ~rhs; }
-		const ::pe::core::utils::EnumFlags<eComponentBaseFlags>& GetFlags() { return Flags; }
-		bool CheckFlags(const ::pe::core::utils::EnumFlags<eComponentBaseFlags>& rhs) const { return (Flags & rhs) == rhs; }
+		void setFlags(const ::pe::core::utils::EnumFlags<eComponentBaseFlags>& rhs) { m_flags |= rhs; }
+		void resetFlags(const ::pe::core::utils::EnumFlags<eComponentBaseFlags>& rhs) { m_flags &= ~rhs; }
+		const ::pe::core::utils::EnumFlags<eComponentBaseFlags>& getFlags() { return m_flags; }
+		bool checkFlags(const ::pe::core::utils::EnumFlags<eComponentBaseFlags>& rhs) const { return (m_flags & rhs) == rhs; }
 
-		virtual std::optional<::pe::core::math::AABox> GetBoundingBox(eEntityBoundingChannel channel) const { return {}; }
+		virtual std::optional<::pe::core::math::AABox> getBoundingBox(eEntityBoundingChannel channel) const { return {}; }
 
 	private:
-		Entity* Owner = nullptr;
+		friend class Entity;
 
-		::pe::core::utils::EnumFlags<eComponentBaseFlags> Flags;
+		Entity* m_owner = nullptr;
+		::pe::core::utils::EnumFlags<eComponentBaseFlags> m_flags;
 	};
 }

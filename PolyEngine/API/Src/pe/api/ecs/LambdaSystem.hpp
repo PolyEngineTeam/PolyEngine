@@ -12,7 +12,7 @@ namespace pe::api::ecs
 	{
 	public:
 		explicit LambdaSystem(PhaseUpdateFunction func) { UpdateFunctionObject = std::move(func); }
-		void OnUpdate(Scene* scene) override { UpdateFunctionObject(scene); }
+		void onUpdate(Scene* scene) override { UpdateFunctionObject(scene); }
 	private:
 		PhaseUpdateFunction UpdateFunctionObject;
 	};

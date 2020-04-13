@@ -2,29 +2,28 @@
 
 #include <pe/Defines.hpp>
 #include <pe/api/ecs/ComponentBase.hpp>
-#include <pe/engine/movement/MovementSystem.hpp>
 
 namespace pe::engine::movement {
 
 	class ENGINE_DLLEXPORT FreeFloatMovementComponent : public ::pe::api::ecs::ComponentBase
 	{
-		friend void MovementSystem::MovementUpdatePhase(api::ecs::Scene*);
+		friend class MovementSystem;
 	public:
 		RTTI_DECLARE_COMPONENT(::pe::engine::movement::FreeFloatMovementComponent) { NO_RTTI_PROPERTY(); }
 
 		FreeFloatMovementComponent(float movementSpeed = 1.0f, float rotationSpeed = 1.0f, float wheelSensitivity = 1.0f);
 
-		float GetMovementSpeed() const { return MovementSpeed; }
-		void SetMovementSpeed(float value) { MovementSpeed = value; }
-		float GetAngularVelocity() const { return RotationSpeed; }
-		void SetAngularVelocity(float value) { RotationSpeed = value; }
-		float GetWheelSensitivity() const { return WheelSensitivity; }
-		void SetWheelSensitivity(float value) { WheelSensitivity = value; }
+		float getMovementSpeed() const { return m_movementSpeed; }
+		void setMovementSpeed(float value) { m_movementSpeed = value; }
+		float getAngularVelocity() const { return m_rotationSpeed; }
+		void setAngularVelocity(float value) { m_rotationSpeed = value; }
+		float getWheelSensitivity() const { return m_wheelSensitivity; }
+		void setWheelSensitivity(float value) { m_wheelSensitivity = value; }
 
 	private:
-		float MovementSpeed = 1.0f;
-		float RotationSpeed = 1.0f;
-		float WheelSensitivity = 1.0f;
+		float m_movementSpeed = 1.0f;
+		float m_rotationSpeed = 1.0f;
+		float m_wheelSensitivity = 1.0f;
 	};
 }
 

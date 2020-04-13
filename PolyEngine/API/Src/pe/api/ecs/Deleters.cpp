@@ -7,12 +7,12 @@ namespace pe::api::ecs {
 
 void EntityDeleter::operator()(Entity* e)
 {
-	m_sceneAllocator->DeleteEntity(e);
+	m_sceneAllocator->deleteEntity(e);
 }
 
 void ComponentDeleter::operator()(ComponentBase* c)
 {
-	m_sceneAllocator->DeleteComponent(c);
+	m_sceneAllocator->deleteComponent(c);
 }
 
 }

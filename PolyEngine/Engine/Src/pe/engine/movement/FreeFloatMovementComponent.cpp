@@ -8,7 +8,7 @@ RTTI_DEFINE_COMPONENT(::pe::engine::movement::FreeFloatMovementComponent)
 namespace pe::engine::movement {
 
 FreeFloatMovementComponent::FreeFloatMovementComponent(float movementSpeed, float rotationSpeed, float wheelSensitivity)
-	: MovementSpeed(movementSpeed), RotationSpeed(rotationSpeed), WheelSensitivity(wheelSensitivity)
+	: m_movementSpeed(movementSpeed), m_rotationSpeed(rotationSpeed), m_wheelSensitivity(wheelSensitivity)
 {
 }
 

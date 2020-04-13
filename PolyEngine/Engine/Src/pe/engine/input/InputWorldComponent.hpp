@@ -3,7 +3,6 @@
 #include <pe/Defines.hpp>
 #include <pe/api/ecs/ComponentBase.hpp>
 #include <pe/api/input/KeyBindings.hpp>
-#include <pe/engine/input/InputSystem.hpp>
 
 namespace pe::api::ecs
 {
@@ -12,71 +11,72 @@ namespace pe::api::ecs
 
 namespace pe::engine::input
 {
-	struct ControllerState 
-	{
-		ControllerState() = default;
-
-		::pe::core::utils::EnumArray<bool, api::input::eControllerButton> CurrButton;
-		::pe::core::utils::EnumArray<bool, api::input::eControllerButton> PrevButton;
-		::pe::core::utils::EnumArray<float, api::input::eControllerAxis> CurrAxis;
-		::pe::core::utils::EnumArray<float, api::input::eControllerAxis> PrevAxis;
-	};
-
 	/// <summary>Scene component that holds input data.</summary>
 	class ENGINE_DLLEXPORT InputWorldComponent : public api::ecs::ComponentBase
 	{
-		friend void InputSystem::InputPhase(api::ecs::Scene*);
+		friend class InputSystem;
+
+		struct ControllerState
+		{
+			ControllerState() = default;
+
+			::pe::core::utils::EnumArray<bool, api::input::eControllerButton> currButton;
+			::pe::core::utils::EnumArray<bool, api::input::eControllerButton> prevButton;
+			::pe::core::utils::EnumArray<float, api::input::eControllerAxis> currAxis;
+			::pe::core::utils::EnumArray<float, api::input::eControllerAxis> prevAxis;
+		};
+
 	public:
 		RTTI_DECLARE_COMPONENT(::pe::engine::input::InputWorldComponent) { NO_RTTI_PROPERTY(); }
 
 		InputWorldComponent() = default;
 
-		bool IsPressed(api::input::eKey key) const { return CurrKey[key]; }
-		bool IsPressed(const std::initializer_list<api::input::eKey>& list) const;
-		bool IsClicked(api::input::eKey key) const { return (CurrKey[key] && !PrevKey[key]); }
-		bool IsReleased(api::input::eKey key) const { return (!CurrKey[key] && PrevKey[key]); }
+		bool isPressed(api::input::eKey key) const { return m_currKey[key]; }
+		bool isPressed(const std::initializer_list<api::input::eKey>& list) const;
+		bool isClicked(api::input::eKey key) const { return (m_currKey[key] && !m_prevKey[key]); }
+		bool isReleased(api::input::eKey key) const { return (!m_currKey[key] && m_prevKey[key]); }
 
-		bool IsPressed(api::input::eMouseButton button) const { return CurrMouseButton[button]; }
-		bool IsPressed(const std::initializer_list<api::input::eMouseButton>& list) const;
-		bool IsClicked(api::input::eMouseButton button) const { return (CurrMouseButton[button] && !PrevMouseButton[button]); }
-		bool IsReleased(api::input::eMouseButton button) const { return (!CurrMouseButton[button] && PrevMouseButton[button]); }
+		bool isPressed(api::input::eMouseButton button) const { return m_currMouseButton[button]; }
+		bool isPressed(const std::initializer_list<api::input::eMouseButton>& list) const;
+		bool isClicked(api::input::eMouseButton button) const { return (m_currMouseButton[button] && !m_prevMouseButton[button]); }
+		bool isReleased(api::input::eMouseButton button) const { return (!m_currMouseButton[button] && m_prevMouseButton[button]); }
 
-		const ::pe::core::math::Vector2i& GetMousePos() const { return MousePos; }
-		const ::pe::core::math::Vector2i& GetMousePosDelta() const  { return MouseDelta; }
+		const ::pe::core::math::Vector2i& getMousePos() const { return m_mousePos; }
+		const ::pe::core::math::Vector2i& getMousePosDelta() const  { return m_mouseDelta; }
 
-		const ::pe::core::math::Vector2i& GetWheelPos() const { return CurrWheel; }
-		::pe::core::math::Vector2i GetWheelPosDelta() const { return CurrWheel - PrevWheel; }
+		const ::pe::core::math::Vector2i& getWheelPos() const { return m_currWheel; }
+		::pe::core::math::Vector2i getWheelPosDelta() const { return m_currWheel - m_prevWheel; }
 
-		bool IsPressed(size_t playerID, api::input::eControllerButton button) const;
-		bool IsClicked(size_t playerID, api::input::eControllerButton button) const;
-		bool IsReleased(size_t playerID, api::input::eControllerButton button) const;
+		bool isPressed(size_t playerID, api::input::eControllerButton button) const;
+		bool isClicked(size_t playerID, api::input::eControllerButton button) const;
+		bool isReleased(size_t playerID, api::input::eControllerButton button) const;
 
-		float GetControllerAxis(size_t playerID, api::input::eControllerAxis axis) const;
-		float GetControllerAxisDelta(size_t playerID, api::input::eControllerAxis axis) const;
+		float getControllerAxis(size_t playerID, api::input::eControllerAxis axis) const;
+		float getControllerAxisDelta(size_t playerID, api::input::eControllerAxis axis) const;
 
-		size_t GetConnectedControllersCount() const { return JoystickIDToPlayerID.size(); }
-		std::vector<size_t> GetConnectedControllersIDs() const;
-		bool IsControllerConnected(size_t idx) const;
+		size_t getConnectedControllersCount() const { return m_joystickIDToPlayerID.size(); }
+		std::vector<size_t> getConnectedControllersIDs() const;
+		bool isControllerConnected(size_t idx) const;
 
-		bool GetIsConsumed() const { return IsConsumed; }
-		void SetConsumed() { IsConsumed = true; }
+		bool getIsConsumed() const { return m_isConsumed; }
+		void setConsumed() { m_isConsumed = true; }
 		
-		const char* GetCharUTF8() { return CharUTF8; }
+		const char* getCharUTF8() { return m_charUTF8; }
 
 	private:
-		::pe::core::utils::EnumArray<bool, api::input::eKey> CurrKey;
-		::pe::core::utils::EnumArray<bool, api::input::eKey> PrevKey;
-		::pe::core::utils::EnumArray<bool, api::input::eMouseButton> CurrMouseButton;
-		::pe::core::utils::EnumArray<bool, api::input::eMouseButton> PrevMouseButton;
-		::pe::core::math::Vector2i MousePos;
-		::pe::core::math::Vector2i MouseDelta;
-		::pe::core::math::Vector2i CurrWheel;
-		::pe::core::math::Vector2i PrevWheel;
-		std::unordered_map<size_t, ControllerState> Controllers;
-		std::vector<std::optional<size_t>> PlayerIDToJoystickID;
-		std::unordered_map<size_t, size_t> JoystickIDToPlayerID;
-		bool IsConsumed = false;
-		const char* CharUTF8 = nullptr;
+		::pe::core::utils::EnumArray<bool, api::input::eKey> m_currKey;
+		::pe::core::utils::EnumArray<bool, api::input::eKey> m_prevKey;
+		::pe::core::utils::EnumArray<bool, api::input::eMouseButton> m_currMouseButton;
+		::pe::core::utils::EnumArray<bool, api::input::eMouseButton> m_prevMouseButton;
+		::pe::core::math::Vector2i m_mousePos;
+		::pe::core::math::Vector2i m_mouseDelta;
+		::pe::core::math::Vector2i m_currWheel;
+		::pe::core::math::Vector2i m_prevWheel;
+		std::unordered_map<size_t, ControllerState> m_controllers;
+		std::vector<std::optional<size_t>> m_playerIDToJoystickID;
+		std::unordered_map<size_t, size_t> m_joystickIDToPlayerID;
+		bool m_isConsumed = false;
+		const char* m_charUTF8 = nullptr;
 	};
 }
 

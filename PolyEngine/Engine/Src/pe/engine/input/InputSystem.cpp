@@ -7,73 +7,80 @@
 
 namespace pe::engine::input {
 
-void InputSystem::InputPhase(api::ecs::Scene* scene)
+using ::pe::api::input::eInputEventType;
+using ::pe::api::input::eKey;
+using ::pe::api::input::eMouseButton;
+
+void InputSystem::onUpdate(api::ecs::Scene* scene)
 {
-	InputWorldComponent* com = scene->GetComponent<InputWorldComponent>();
-	com->IsConsumed = false;
+	if (!m_app)
+		return;
+	
+	InputWorldComponent* com = scene->getComponent<InputWorldComponent>();
+	com->m_isConsumed = false;
 
-	com->PrevKey = com->CurrKey;
-	com->PrevMouseButton = com->CurrMouseButton;
+	com->m_prevKey = com->m_currKey;
+	com->m_prevMouseButton = com->m_currMouseButton;
 
-	com->CharUTF8 = nullptr;
+	com->m_charUTF8 = nullptr;
 
-	com->MouseDelta = core::math::Vector2i::ZERO;
-	com->PrevWheel = com->CurrWheel;
+	com->m_mouseDelta = core::math::Vector2i::ZERO;
+	com->m_prevWheel = com->m_currWheel;
 
-	for (auto& pair : com->Controllers)
+	for (auto& pair : com->m_controllers)
 	{
-		pair.second.PrevButton = pair.second.CurrButton;
-		pair.second.PrevAxis = pair.second.CurrAxis;
+		pair.second.prevButton = pair.second.currButton;
+		pair.second.prevAxis = pair.second.currAxis;
 	}
 
-	/*InputQueue& InputEventsQueue = gEngine->GetInputQueue();
+	api::input::InputQueue& InputEventsQueue = m_app->getInputQueue();
 	while (!InputEventsQueue.isEmpty())
 	{
-		InputEvent& ev = InputEventsQueue.front();
-		switch (ev.Type)
+		api::input::InputEvent& ev = InputEventsQueue.front();
+		switch (ev.type)
 		{
 		case eInputEventType::KEYDOWN:
-			if(ev.Key < eKey::_COUNT)
-				com->CurrKey[ev.Key] = true;
+			if(ev.key < eKey::_COUNT)
+				com->m_currKey[ev.key] = true;
 			break;
 		case eInputEventType::KEYUP:
-			if(ev.Key < eKey::_COUNT)
-				com->CurrKey[ev.Key] = false;
+			if(ev.key < eKey::_COUNT)
+				com->m_currKey[ev.key] = false;
 			break;
 		case eInputEventType::TEXTCHAR:
-			com->CharUTF8 = ev.CharUTF8;
+			com->m_charUTF8 = ev.charUTF8;
 			break;
 		case eInputEventType::MOUSEBUTTONDOWN:
-			if(ev.MouseButton < eMouseButton::_COUNT)
-				com->CurrMouseButton[ev.MouseButton] = true;
+			if(ev.mouseButton < eMouseButton::_COUNT)
+				com->m_currMouseButton[ev.mouseButton] = true;
 			break;
 		case eInputEventType::MOUSEBUTTONUP:
-			if(ev.MouseButton < eMouseButton::_COUNT)
-				com->CurrMouseButton[ev.MouseButton] = false;
+			if(ev.mouseButton < eMouseButton::_COUNT)
+				com->m_currMouseButton[ev.mouseButton] = false;
 			break;
 		case eInputEventType::MOUSEMOVE:
-			com->MousePos += ev.Pos;
-			com->MouseDelta = ev.Pos;
+			com->m_mousePos += ev.pos;
+			com->m_mouseDelta = ev.pos;
 			break;
 		case eInputEventType::MOUSEPOS:
 			// MOUSEPOS and MOUSEMOVE are received in pairs.
 			// Setting com->MouseDelta here is (0,0)
 			// and will result in overwriting com->MouseDelta set by MOUSEMOVE
-			com->MousePos = ev.Pos;
+			com->m_mousePos = ev.pos;
 			break;
 		case eInputEventType::WHEELMOVE:
-			com->CurrWheel += ev.Pos;
+			com->m_currWheel += ev.pos;
 			break;
 		case eInputEventType::CONTROLLER_ADDED:
 		{
-			com->Controllers[ev.JoystickID] = ControllerState();
+			com->m_controllers[ev.joystickID] = InputWorldComponent::ControllerState{};
 			bool controllerAssigned = false;
-			for (size_t i = 0; i < com->PlayerIDToJoystickID.size(); ++i)
+			for (size_t i = 0; i < com->m_playerIDToJoystickID.size(); ++i)
 			{
-				if (!com->PlayerIDToJoystickID[i].has_value())
+				if (!com->m_playerIDToJoystickID[i].has_value())
 				{
-					com->PlayerIDToJoystickID[i] = ev.JoystickID;
-					com->JoystickIDToPlayerID[ev.JoystickID] = i;
+					com->m_playerIDToJoystickID[i] = ev.joystickID;
+					com->m_joystickIDToPlayerID[ev.joystickID] = i;
 					controllerAssigned = true;
 					core::utils::gConsole.LogDebug("Controller added in existing place");
 					break;
@@ -81,35 +88,35 @@ void InputSystem::InputPhase(api::ecs::Scene* scene)
 			}
 			if (!controllerAssigned)
 			{
-				size_t newPlayerID = com->PlayerIDToJoystickID.size();
-				com->PlayerIDToJoystickID.push_back(ev.JoystickID);
-				com->JoystickIDToPlayerID[ev.JoystickID] = newPlayerID;
+				size_t newPlayerID = com->m_playerIDToJoystickID.size();
+				com->m_playerIDToJoystickID.push_back(ev.joystickID);
+				com->m_joystickIDToPlayerID[ev.joystickID] = newPlayerID;
 				core::utils::gConsole.LogDebug("Controller added in new place");
 			}
 			break;
 		}
 		case eInputEventType::CONTROLLER_REMOVED:
 		{
-			size_t playerID = com->JoystickIDToPlayerID.at(ev.JoystickID);
-			com->Controllers.erase(ev.JoystickID);
-			com->PlayerIDToJoystickID[playerID] = {};
-			com->JoystickIDToPlayerID.erase(ev.JoystickID);
+			size_t playerID = com->m_joystickIDToPlayerID.at(ev.joystickID);
+			com->m_controllers.erase(ev.joystickID);
+			com->m_playerIDToJoystickID[playerID] = {};
+			com->m_joystickIDToPlayerID.erase(ev.joystickID);
 			break;
 		}
 		case eInputEventType::CONTROLLER_BUTTON_DOWN:
-			com->Controllers.at(ev.JoystickID).CurrButton[ev.ControllerButton] = true;
+			com->m_controllers.at(ev.joystickID).currButton[ev.controllerButton] = true;
 			break;
 		case eInputEventType::CONTROLLER_BUTTON_UP:
-			com->Controllers.at(ev.JoystickID).CurrButton[ev.ControllerButton] = false;
+			com->m_controllers.at(ev.joystickID).currButton[ev.controllerButton] = false;
 			break;
 		case eInputEventType::CONTROLLER_AXIS_MOTION:
-			com->Controllers.at(ev.JoystickID).CurrAxis[ev.ControllerAxis] = ev.AxisValue;
+			com->m_controllers.at(ev.joystickID).currAxis[ev.controllerAxis] = ev.axisValue;
 			break;
 		case eInputEventType::_COUNT:
 			HEAVY_ASSERTE(false, "_COUNT enum value passed to InputEventQueue::push(), which is an invalid value");
 			break;
 		}
 		InputEventsQueue.popFront();
-	}*/
+	}
 }
 }

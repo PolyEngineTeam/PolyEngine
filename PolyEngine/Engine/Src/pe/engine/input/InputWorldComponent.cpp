@@ -7,67 +7,67 @@ RTTI_DEFINE_COMPONENT(::pe::engine::input::InputWorldComponent)
 
 namespace pe::engine::input {
 
-bool InputWorldComponent::IsPressed(const std::initializer_list<api::input::eKey>& list) const
+bool InputWorldComponent::isPressed(const std::initializer_list<api::input::eKey>& list) const
 {
 	bool result = true;
 	for (const api::input::eKey& i : list)
-		result = result && CurrKey[i];
+		result = result && m_currKey[i];
 	return result;
 }
 
-bool InputWorldComponent::IsPressed(const std::initializer_list<api::input::eMouseButton >& list) const
+bool InputWorldComponent::isPressed(const std::initializer_list<api::input::eMouseButton >& list) const
 {
 	bool result = true;
 	for (const api::input::eMouseButton& i : list)
-		result = result && CurrMouseButton[i];
+		result = result && m_currMouseButton[i];
 	return result;
 }
 
-bool InputWorldComponent::IsPressed(size_t playerID, api::input::eControllerButton button) const
+bool InputWorldComponent::isPressed(size_t playerID, api::input::eControllerButton button) const
 {
-	ASSERTE(IsControllerConnected(playerID), "Controller not connected!");
-	size_t joystickID = PlayerIDToJoystickID[playerID].value();
-	return Controllers.at(joystickID).CurrButton[button];
+	ASSERTE(isControllerConnected(playerID), "Controller not connected!");
+	size_t joystickID = m_playerIDToJoystickID[playerID].value();
+	return m_controllers.at(joystickID).currButton[button];
 }
 
-bool InputWorldComponent::IsClicked(size_t playerID, api::input::eControllerButton button) const
+bool InputWorldComponent::isClicked(size_t playerID, api::input::eControllerButton button) const
 {
-	ASSERTE(IsControllerConnected(playerID), "Controller not connected!");
-	size_t joystickID = PlayerIDToJoystickID[playerID].value();
-	const ControllerState& controller = Controllers.at(joystickID);
-	return controller.CurrButton[button] && !controller.PrevButton[button];
+	ASSERTE(isControllerConnected(playerID), "Controller not connected!");
+	size_t joystickID = m_playerIDToJoystickID[playerID].value();
+	const ControllerState& controller = m_controllers.at(joystickID);
+	return controller.currButton[button] && !controller.prevButton[button];
 }
 
-bool InputWorldComponent::IsReleased(size_t playerID, api::input::eControllerButton button) const
+bool InputWorldComponent::isReleased(size_t playerID, api::input::eControllerButton button) const
 {
-	ASSERTE(IsControllerConnected(playerID), "Controller not connected!");
-	size_t joystickID = PlayerIDToJoystickID[playerID].value();
-	const ControllerState& controller = Controllers.at(joystickID);
-	return !controller.CurrButton[button] && controller.PrevButton[button];
+	ASSERTE(isControllerConnected(playerID), "Controller not connected!");
+	size_t joystickID = m_playerIDToJoystickID[playerID].value();
+	const ControllerState& controller = m_controllers.at(joystickID);
+	return !controller.currButton[button] && controller.prevButton[button];
 }
 
-float InputWorldComponent::GetControllerAxis(size_t playerID, api::input::eControllerAxis axis) const
+float InputWorldComponent::getControllerAxis(size_t playerID, api::input::eControllerAxis axis) const
 {
-	ASSERTE(IsControllerConnected(playerID), "Controller not connected!");
-	size_t joystickID = PlayerIDToJoystickID[playerID].value();
-	return Controllers.at(joystickID).CurrAxis[axis];
+	ASSERTE(isControllerConnected(playerID), "Controller not connected!");
+	size_t joystickID = m_playerIDToJoystickID[playerID].value();
+	return m_controllers.at(joystickID).currAxis[axis];
 }
 
-float InputWorldComponent::GetControllerAxisDelta(size_t playerID, api::input::eControllerAxis axis) const
+float InputWorldComponent::getControllerAxisDelta(size_t playerID, api::input::eControllerAxis axis) const
 {
-	ASSERTE(IsControllerConnected(playerID), "Controller not connected!");
-	size_t joystickID = PlayerIDToJoystickID[playerID].value();
-	const ControllerState& controller = Controllers.at(joystickID);
-	return controller.CurrAxis[axis] && !controller.PrevAxis[axis];
+	ASSERTE(isControllerConnected(playerID), "Controller not connected!");
+	size_t joystickID = m_playerIDToJoystickID[playerID].value();
+	const ControllerState& controller = m_controllers.at(joystickID);
+	return controller.currAxis[axis] && !controller.prevAxis[axis];
 }
 
-std::vector<size_t> InputWorldComponent::GetConnectedControllersIDs() const
+std::vector<size_t> InputWorldComponent::getConnectedControllersIDs() const
 {
-	size_t arraySize = GetConnectedControllersCount();
+	size_t arraySize = getConnectedControllersCount();
 	std::vector<size_t> controllersIDs(arraySize);
-	for(size_t i = 0; i < PlayerIDToJoystickID.size(); ++i)
+	for(size_t i = 0; i < m_playerIDToJoystickID.size(); ++i)
 	{
-		if(PlayerIDToJoystickID[i].has_value())
+		if(m_playerIDToJoystickID[i].has_value())
 		{
 			controllersIDs.push_back(i);
 		}
@@ -75,9 +75,9 @@ std::vector<size_t> InputWorldComponent::GetConnectedControllersIDs() const
 	return controllersIDs;
 }
 
-bool InputWorldComponent::IsControllerConnected(size_t idx) const
+bool InputWorldComponent::isControllerConnected(size_t idx) const
 {
-	return PlayerIDToJoystickID.size() > idx && PlayerIDToJoystickID[idx].has_value();
+	return m_playerIDToJoystickID.size() > idx && m_playerIDToJoystickID[idx].has_value();
 }
 
 }

@@ -12,9 +12,9 @@ namespace pe::engine::time
 {
 
 //------------------------------------------------------------------------------
-void TimeSystem::OnUpdate(::pe::api::ecs::Scene* scene)
+void TimeSystem::onUpdate(::pe::api::ecs::Scene* scene)
 {
-	TimeWorldComponent* timeComponent = scene->GetComponent<TimeWorldComponent>();
+	TimeWorldComponent* timeComponent = scene->getComponent<TimeWorldComponent>();
 
 	//Get new delta time
 	std::chrono::steady_clock::time_point frameTime = steady_clock::now();
@@ -43,7 +43,7 @@ void TimeSystem::OnUpdate(::pe::api::ecs::Scene* scene)
 //------------------------------------------------------------------------------
 void TimeSystem::RegisterTimer(api::ecs::Scene* scene, size_t id, bool isPausable, double multiplier)
 {
-	TimeWorldComponent* timeComponent = scene->GetComponent<TimeWorldComponent>();
+	TimeWorldComponent* timeComponent = scene->getComponent<TimeWorldComponent>();
 	ASSERTE(timeComponent->Timers.count(id) == 0, "Same timer id provided twice!");
 	timeComponent->Timers[id] = Timer(isPausable, multiplier);
 }
@@ -51,7 +51,7 @@ void TimeSystem::RegisterTimer(api::ecs::Scene* scene, size_t id, bool isPausabl
 //------------------------------------------------------------------------------
 double TimeSystem::GetTimerDeltaTime(api::ecs::Scene* scene, size_t id)
 {
-	TimeWorldComponent* timeComponent = scene->GetComponent<TimeWorldComponent>();
+	TimeWorldComponent* timeComponent = scene->getComponent<TimeWorldComponent>();
 	if(timeComponent->Timers.count(id) == 0)
 		throw std::invalid_argument("Timer with given id does not exist.");
 	else 
@@ -61,13 +61,13 @@ double TimeSystem::GetTimerDeltaTime(api::ecs::Scene* scene, size_t id)
 //------------------------------------------------------------------------------
 double TimeSystem::GetTimerDeltaTime(api::ecs::Scene* scene, eEngineTimer timerType)
 {
-	return scene->GetComponent<TimeWorldComponent>()->Timers.at((size_t)timerType).GetDeltaTime();
+	return scene->getComponent<TimeWorldComponent>()->Timers.at((size_t)timerType).GetDeltaTime();
 }
 
 //------------------------------------------------------------------------------
 double TimeSystem::GetTimerElapsedTime(api::ecs::Scene* scene, size_t id)
 {
-	TimeWorldComponent* timeComponent = scene->GetComponent<TimeWorldComponent>();
+	TimeWorldComponent* timeComponent = scene->getComponent<TimeWorldComponent>();
 	if(timeComponent->Timers.count(id) == 0)
 		throw std::invalid_argument("Timer with given id does not exist.");
 	else 
@@ -77,13 +77,13 @@ double TimeSystem::GetTimerElapsedTime(api::ecs::Scene* scene, size_t id)
 //------------------------------------------------------------------------------
 double TimeSystem::GetTimerElapsedTime(api::ecs::Scene* scene, eEngineTimer timerType)
 {
-	return scene->GetComponent<TimeWorldComponent>()->Timers.at((size_t)timerType).GetTime();
+	return scene->getComponent<TimeWorldComponent>()->Timers.at((size_t)timerType).GetTime();
 }
 
 //------------------------------------------------------------------------------
 double TimeSystem::GetTimerMultiplier(api::ecs::Scene* scene, size_t id)
 {
-	TimeWorldComponent* timeComponent = scene->GetComponent<TimeWorldComponent>();
+	TimeWorldComponent* timeComponent = scene->getComponent<TimeWorldComponent>();
 	if(timeComponent->Timers.count(id) == 0)
 		throw std::invalid_argument("Timer with given id does not exist.");
 	else 
@@ -93,7 +93,7 @@ double TimeSystem::GetTimerMultiplier(api::ecs::Scene* scene, size_t id)
 //------------------------------------------------------------------------------
 double TimeSystem::GetTimerMultiplier(api::ecs::Scene* scene, eEngineTimer timerType)
 {
-	return scene->GetComponent<TimeWorldComponent>()->Timers.at((size_t)timerType).GetMultiplier();
+	return scene->getComponent<TimeWorldComponent>()->Timers.at((size_t)timerType).GetMultiplier();
 }
 
 }

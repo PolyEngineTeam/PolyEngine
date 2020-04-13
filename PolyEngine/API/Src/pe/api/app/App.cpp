@@ -22,4 +22,24 @@ App::~App()
 	m_engine.reset();
 }
 
+void App::registerEngine(std::unique_ptr<IEngine>&& engine)
+{
+	m_engine = std::move(engine);
+}
+
+void App::registerEditor(std::unique_ptr<editor::IEditor>&& editor)
+{
+	m_editor = std::move(editor);
+
+}
+void App::registerRenderingDevice(std::unique_ptr<rendering::IRenderingDevice>&& dev)
+{ 
+	m_renderingDevice = std::move(dev);
+}
+
+void App::registerGame(std::unique_ptr<IGame>&& game)
+{
+	m_game = std::move(game);
+}
+
 }

@@ -19,28 +19,28 @@ SceneAllocator::~SceneAllocator()
 {
 }
 
-EntityUniquePtr SceneAllocator::NewEntity()
+EntityUniquePtr SceneAllocator::newEntity()
 {
 	Entity* ent = (Entity*)m_entitiesAllocator->GenericAlloc();
 	::new(ent) Entity(m_scene);
 	return EntityUniquePtr(ent, m_entityDeleter);
 }
 
-void SceneAllocator::DeleteEntity(Entity* e)
+void SceneAllocator::deleteEntity(Entity* e)
 {
 	e->~Entity();
 	m_entitiesAllocator->GenericFree(e);
 }
 
-void SceneAllocator::DeleteComponent(ComponentBase* c)
+void SceneAllocator::deleteComponent(ComponentBase* c)
 {
-	const size_t componentID = c->GetComponentID();
+	const size_t componentID = c->getComponentID();
 	c->~ComponentBase();
-	GetComponentAllocator(componentID).GenericFree(c);
+	getComponentAllocator(componentID).GenericFree(c);
 }
 
 SceneAllocator::IterablePoolAllocatorBase& 
-SceneAllocator::GetComponentAllocator(size_t componentID) 
+SceneAllocator::getComponentAllocator(size_t componentID) 
 {
 	HEAVY_ASSERTE(componentID < MAX_COMPONENTS_COUNT, "Invalid component ID");
 	if (!m_componentAllocators[componentID])

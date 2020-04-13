@@ -19,6 +19,9 @@ namespace pe::engine
 	class ENGINE_DLLEXPORT Engine : public ::pe::api::IEngine
 	{
 	public:
+		Engine();
+		~Engine();
+
 		void startGame() override;
 		void endGame() override;
 
@@ -31,27 +34,23 @@ namespace pe::engine
 		::pe::api::ecs::Scene* getActiveScene() override { return m_activeScene.get(); }
 		void loadDefaultScene() override;
 		
-		Engine();
-		~Engine();
-
-		api::rendering::IRenderingDevice* GetRenderingDevice() const { return RenderingDevice.get(); }
-
-		void ResizeScreen(const core::math::Vector2i& size);
+		api::rendering::IRenderingDevice* getRenderingDevice() const { return m_renderingDevice.get(); }
+		void resizeScreen(const core::math::Vector2i& size);
 
 		const char* (*GetClipboardTextFunction)(void* user_data);
 		void(*SetClipboardTextFunction)(void* user_data, const char* text);
+	
 	private:
-		inline void UpdatePhases(std::chrono::duration<double> dt, api::eEngineUpdatePhase order)
+		inline void updatePhases(std::chrono::duration<double> dt, api::eEngineUpdatePhase order)
 		{
 			HEAVY_ASSERTE(order != api::eEngineUpdatePhase::_COUNT, "_COUNT enum value passed to UpdatePhases(), which is an invalid value");
-			for (auto&  update : GameUpdatePhases[order])
-				update->OnUpdate(getActiveScene());
+			for (auto&  update : m_updatePhases[order])
+				update->onUpdate(getActiveScene());
 		}
-
-		
+	
 		api::deps::DependencyPtr<api::app::App> m_app;
 		std::unique_ptr<::pe::api::ecs::Scene> m_activeScene;
-		std::unique_ptr<api::rendering::IRenderingDevice> RenderingDevice;
-		::pe::core::utils::EnumArray<std::vector<std::unique_ptr<api::ecs::ISystem>>, api::eEngineUpdatePhase> GameUpdatePhases;
+		std::unique_ptr<api::rendering::IRenderingDevice> m_renderingDevice;
+		::pe::core::utils::EnumArray<std::vector<std::unique_ptr<api::ecs::ISystem>>, api::eEngineUpdatePhase> m_updatePhases;
 	};
 }

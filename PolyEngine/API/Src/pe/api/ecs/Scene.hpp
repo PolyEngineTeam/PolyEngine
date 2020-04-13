@@ -14,36 +14,36 @@ namespace pe::api::ecs {
 	{
 		RTTI_DECLARE_TYPE_DERIVED(::pe::api::ecs::Scene, ::Poly::RTTIBase)
 		{
-			RTTI_PROPERTY_FACTORY_AUTONAME(m_rootEntity, &EntityFactory, ::Poly::RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_FACTORY_AUTONAME(m_rootEntity, entityFactory, ::Poly::RTTI::ePropertyFlag::NONE);
 		}
 	public:
 		Scene();
 		virtual ~Scene();
 
 		// ########## Entity management ##########
-		[[nodiscard]] Entity* SpawnEntity(Entity* parent = nullptr);
-		void DestroyEntity(Entity* entity);
+		[[nodiscard]] Entity* spawnEntity(Entity* parent = nullptr);
+		void destroyEntity(Entity* entity);
 		
 		// ########## Scene components management ##########
 		template<typename T, typename... Args>
-		void AddComponent(Args&&... args)
+		void addComponent(Args&&... args)
 		{ 
-			auto component = m_sceneAllocator.template NewComponent<T>(std::forward<Args>(args)...);
-			AddComponentImpl(std::move(component));
+			auto component = m_sceneAllocator.template newComponent<T>(std::forward<Args>(args)...);
+			addComponentImpl(std::move(component));
 		}
 
 		template<typename T>
-		void RemoveComponent() { RemoveComponent(GetComponentID<T>()); }
-		void RemoveComponent(size_t componentID);
+		void removeComponent() { removeComponent(GetComponentID<T>()); }
+		void removeComponent(size_t componentID);
 
 		// ########## Scene components queries ##########
 		template<typename T>
-		[[nodiscard]] bool HasComponent() const { return HasComponent(GetComponentID<T>()); }
-		[[nodiscard]] bool HasComponent(size_t componentID) const;
+		[[nodiscard]] bool hasComponent() const { return hasComponent(GetComponentID<T>()); }
+		[[nodiscard]] bool hasComponent(size_t componentID) const;
 
 		template<typename T>
-		[[nodiscard]] T* GetComponent() { return static_cast<T*>(GetComponent(GetComponentID<T>())); }
-		[[nodiscard]] ComponentBase* GetComponent(size_t componentID);
+		[[nodiscard]] T* getComponent() { return static_cast<T*>(getComponent(GetComponentID<T>())); }
+		[[nodiscard]] ComponentBase* getComponent(size_t componentID);
 
 		/// <summary>Allows iteration over multiple component types.
 		/// Iterator dereferences to a tuple of component pointers.</summary>
@@ -57,13 +57,13 @@ namespace pe::api::ecs {
 		/// <see cref="Scene.ComponentIterator"/>
 		template<typename PrimaryComponent, typename... SecondaryComponents>
 		[[nodiscard]] SceneIterationContext<PrimaryComponent, SecondaryComponents...>
-		IterateComponents() { return { &m_sceneAllocator }; }
+		iterateComponents() { return { &m_sceneAllocator }; }
 
 		// ########## Getters ##########
-		[[nodiscard]] Entity* GetRoot() const { return m_rootEntity.get(); }
-		[[nodiscard]] SceneAllocator& GetSceneAllocator() { return m_sceneAllocator; }
+		[[nodiscard]] Entity* getRoot() const { return m_rootEntity.get(); }
+		[[nodiscard]] SceneAllocator& getSceneAllocator() { return m_sceneAllocator; }
 	private:
-		void AddComponentImpl(ComponentBase* c);
+		void addComponentImpl(ComponentUniquePtr<ComponentBase>&& component);
 		
 		friend class EntityDeleter;
 		friend class ComponentDeleter;

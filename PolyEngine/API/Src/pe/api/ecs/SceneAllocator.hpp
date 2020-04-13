@@ -30,46 +30,46 @@ public:
 	~SceneAllocator();
 
 	// ########## Entity memory management ##########
-	[[nodiscard]] EntityUniquePtr NewEntity();
-	void DeleteEntity(Entity* e);
-	EntityDeleter& GetEntityDeleter() { return m_entityDeleter; }
+	[[nodiscard]] EntityUniquePtr newEntity();
+	void deleteEntity(Entity* e);
+	EntityDeleter& getEntityDeleter() { return m_entityDeleter; }
 	
 	// ########## Component memory management ##########
 	template<typename T, typename... Args>
-	[[nodiscard]] ComponentUniquePtr<T> NewComponent(Args&&... args)
+	[[nodiscard]] ComponentUniquePtr<T> newComponent(Args&&... args)
 	{
-		T* ptr = GetComponentAllocator<T>().Alloc();
+		T* ptr = getComponentAllocator<T>().Alloc();
 		::new(ptr) T(std::forward<Args>(args)...);
 		return ComponentUniquePtr<T>(ptr, m_componentDeleter);
 	}
-	void DeleteComponent(ComponentBase* c);
-	ComponentDeleter& GetComponentDeleter() { return m_componentDeleter; }
+	void deleteComponent(ComponentBase* c);
+	ComponentDeleter& getComponentDeleter() { return m_componentDeleter; }
 
 	// ########## Component iteration ##########
 	template<typename T>
 	[[nodiscard]] typename IterablePoolAllocator<T>::Iterator componentsBegin()
 	{
-		return GetComponentAllocator<T>().Begin();
+		return getComponentAllocator<T>().Begin();
 	}
 	template<typename T>
 	[[nodiscard]] typename IterablePoolAllocator<T>::Iterator componentsEnd()
 	{
-		return GetComponentAllocator<T>().End();
+		return getComponentAllocator<T>().End();
 	}
 
 	// ########## Special component allocation case for RTTI ##########
 	// @todo(muniu) get rid of this case
-	[[nodiscard]] ComponentBase* AllocateComponentMemory(size_t componentID)
+	[[nodiscard]] ComponentBase* allocateComponentMemory(size_t componentID)
 	{
-		return reinterpret_cast<ComponentBase*>(GetComponentAllocator(componentID).GenericAlloc());
+		return reinterpret_cast<ComponentBase*>(getComponentAllocator(componentID).GenericAlloc());
 	}
 private:
 	template <typename T>
-	IterablePoolAllocator<T>& GetComponentAllocator()
+	IterablePoolAllocator<T>& getComponentAllocator()
 	{
-		return static_cast<IterablePoolAllocator<T>&>(GetComponentAllocator(GetComponentID<T>()));
+		return static_cast<IterablePoolAllocator<T>&>(getComponentAllocator(GetComponentID<T>()));
 	}
-	IterablePoolAllocatorBase& GetComponentAllocator(size_t componentID);
+	IterablePoolAllocatorBase& getComponentAllocator(size_t componentID);
 
 	Scene* m_scene;
 	

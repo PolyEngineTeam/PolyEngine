@@ -7,16 +7,16 @@ RTTI_DEFINE_TYPE(::pe::api::ecs::ComponentBase);
 
 namespace pe::api::ecs {
 
-ComponentBase* ComponentBase::GetSibling(size_t componentID)
+ComponentBase* ComponentBase::getSibling(size_t componentID)
 {
-	HEAVY_ASSERTE(Owner, "Component was not properly initialized.");
-	return Owner->GetComponent(componentID);
+	HEAVY_ASSERTE(m_owner, "Component was not properly initialized.");
+	return m_owner->getComponent(componentID);
 }
 
-const ComponentBase* ComponentBase::GetSibling(size_t componentID) const
+const ComponentBase* ComponentBase::getSibling(size_t componentID) const
 {
-	HEAVY_ASSERTE(Owner, "Component was not properly initialized.");
-	return Owner->GetComponent(componentID);
+	HEAVY_ASSERTE(m_owner, "Component was not properly initialized.");
+	return m_owner->getComponent(componentID);
 }
 
 }

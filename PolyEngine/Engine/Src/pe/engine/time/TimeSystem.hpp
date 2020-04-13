@@ -10,7 +10,7 @@ namespace pe::engine::time
 	class ENGINE_DLLEXPORT TimeSystem : public ::pe::api::ecs::ISystem
 	{
 	public:
-		void OnUpdate(::pe::api::ecs::Scene* scene) override;
+		void onUpdate(::pe::api::ecs::Scene* scene) override;
 
 		static void  RegisterTimer(::pe::api::ecs::Scene* scene, size_t id, bool isPausable = false, double multiplier = 1);
 

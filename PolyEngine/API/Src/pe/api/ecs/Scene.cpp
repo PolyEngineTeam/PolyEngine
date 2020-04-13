@@ -9,7 +9,7 @@ namespace pe::api::ecs {
 
 Scene::Scene()
 	: m_sceneAllocator(this)
-	, m_rootEntity(m_sceneAllocator.NewEntity())
+	, m_rootEntity(m_sceneAllocator.newEntity())
 {
 }
 
@@ -18,32 +18,37 @@ Scene::~Scene()
 	m_rootEntity.reset();
 }
 
-Entity* Scene::SpawnEntity(Entity* parent)
+Entity* Scene::spawnEntity(Entity* parent)
 {
-	EntityUniquePtr ent = m_sceneAllocator.NewEntity();
-	ent->SetParent(parent ? parent : m_rootEntity.get());
+	EntityUniquePtr ent = m_sceneAllocator.newEntity();
+	ent->setParent(parent ? parent : m_rootEntity.get());
 	return ent.release();
 }
 
-void Scene::DestroyEntity(Entity* entity)
+void Scene::destroyEntity(Entity* entity)
 {
 	HEAVY_ASSERTE(entity, "Invalid entity ID");
-	m_sceneAllocator.DeleteEntity(entity);
+	m_sceneAllocator.deleteEntity(entity);
 }
 
-[[nodiscard]] bool Scene::HasComponent(size_t componentID) const
+[[nodiscard]] bool Scene::hasComponent(size_t componentID) const
 {
-	return m_rootEntity->HasComponent(componentID);
+	return m_rootEntity->hasComponent(componentID);
 }
 
-[[nodiscard]] ComponentBase* Scene::GetComponent(size_t componentID)
+[[nodiscard]] ComponentBase* Scene::getComponent(size_t componentID)
 {
-	return m_rootEntity->GetComponent(componentID);
+	return m_rootEntity->getComponent(componentID);
 }
 
-void Scene::RemoveComponent(size_t componentID)
+void Scene::removeComponent(size_t componentID)
 {
-	return m_rootEntity->RemoveComponent(componentID);
+	m_rootEntity->removeComponent(componentID);
+}
+
+void Scene::addComponentImpl(ComponentUniquePtr<ComponentBase>&& component)
+{
+	m_rootEntity->addComponentImpl(std::move(component));
 }
 
 }

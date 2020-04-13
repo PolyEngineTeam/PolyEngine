@@ -8,142 +8,142 @@ RTTI_DEFINE_TYPE(::pe::api::ecs::Entity);
 namespace pe::api::ecs {
 
 Entity::Entity(Scene* scene, Entity* parent)
-	: Transform(this), m_scene(scene), ComponentPosessionFlags(0)
+	: m_transform(this), m_scene(scene), m_componentPosessionFlags(0)
 {
-	Components.reserve(MAX_COMPONENTS_COUNT);
+	m_components.reserve(MAX_COMPONENTS_COUNT);
 	for(size_t i=0; i<MAX_COMPONENTS_COUNT; ++i)
- 		Components.emplace_back(nullptr, GetSceneAllocator().GetComponentDeleter());
+ 		m_components.emplace_back(nullptr, getSceneAllocator().getComponentDeleter());
 
 	if (parent)
-		SetParent(parent);
+		setParent(parent);
 }
 
-void Entity::SetBBoxDirty()
+void Entity::setBBoxDirty()
 {
 	for (eEntityBoundingChannel channel : core::utils::IterateEnum<eEntityBoundingChannel>())
-		BBoxDirty[channel] = true;
-	if (Parent)
-		Parent->SetBBoxDirty();
+		m_bboxDirty[channel] = true;
+	if (m_parent)
+		m_parent->setBBoxDirty();
 }
 
-void Entity::ReleaseFromParent()
+void Entity::releaseFromParent()
 {
-	if (Parent != nullptr && !Parent->m_destructorActive)
+	if (m_parent != nullptr && !m_parent->m_destructorActive)
 	{
-		for (auto& child : Parent->Children)
+		for (auto& child : m_parent->m_children)
 		{
 			if (child.get() == this)
 				child.release();
 		}
-		DISCARD std::remove_if(Parent->Children.begin(), Parent->Children.end(), [](const EntityUniquePtr& p) { return p.get() == nullptr; });
-		Parent = nullptr;
-		Transform.UpdateParentTransform();
+		DISCARD std::remove_if(m_parent->m_children.begin(), m_parent->m_children.end(), [](const EntityUniquePtr& p) { return p.get() == nullptr; });
+		m_parent = nullptr;
+		m_transform.updateParentTransform();
 	}
 }
 
 Entity::~Entity()
 {
 	m_destructorActive = true;
-	ReleaseFromParent();
-	Children.clear();
-	Components.clear();
+	releaseFromParent();
+	m_children.clear();
+	m_components.clear();
 }
 
-void Entity::SetParent(Entity* parent)
+void Entity::setParent(Entity* parent)
 {
 	ASSERTE(parent, "New parent cannot be null");
 	ASSERTE(parent != this, "Cannot parent myself!");
-	HEAVY_ASSERTE(!ContainsChildRecursive(parent), "Detected parenting cycle!");
+	HEAVY_ASSERTE(!containsChildRecursive(parent), "Detected parenting cycle!");
 
-	ReleaseFromParent();
+	releaseFromParent();
 
-	Parent = parent;
-	Parent->Children.push_back(EntityUniquePtr(this, GetSceneAllocator().GetEntityDeleter()));
-	Parent->SetBBoxDirty();
+	m_parent = parent;
+	m_parent->m_children.push_back(EntityUniquePtr(this, getSceneAllocator().getEntityDeleter()));
+	m_parent->setBBoxDirty();
 
-	Transform.UpdateParentTransform();
+	m_transform.updateParentTransform();
 }
 
-SceneAllocator& Entity::GetSceneAllocator() { return m_scene->GetSceneAllocator(); }
+SceneAllocator& Entity::getSceneAllocator() { return m_scene->getSceneAllocator(); }
 
-bool Entity::ContainsChildRecursive(Entity* child) const
+bool Entity::containsChildRecursive(Entity* child) const
 {
-	if (std::find_if(Children.begin(), Children.end(), [child](const EntityUniquePtr& p) { return p.get() == child; }) != Children.end())
+	if (std::find_if(m_children.begin(), m_children.end(), [child](const EntityUniquePtr& p) { return p.get() == child; }) != m_children.end())
 		return true;
 
-	for (const EntityUniquePtr& myChild : Children)
-		if (myChild->ContainsChildRecursive(child))
+	for (const EntityUniquePtr& myChild : m_children)
+		if (myChild->containsChildRecursive(child))
 			return true;
 
 	return false;
 }
 
-const core::math::AABox& Entity::GetLocalBoundingBox(eEntityBoundingChannel channel) const
+const core::math::AABox& Entity::getLocalBoundingBox(eEntityBoundingChannel channel) const
 {
-	if (BBoxDirty[channel])
+	if (m_bboxDirty[channel])
 	{
-		LocalBBox[channel].SetMin(::pe::core::math::Vector::ZERO);
-		LocalBBox[channel].SetSize(::pe::core::math::Vector::ZERO);
+		m_localBBox[channel].SetMin(::pe::core::math::Vector::ZERO);
+		m_localBBox[channel].SetSize(::pe::core::math::Vector::ZERO);
 
 		// Update bounding box by children boxes
-		for (auto& child : Children)
+		for (auto& child : m_children)
 		{
-			core::math::AABox childBox = child->GetLocalBoundingBox(channel);
-			LocalBBox[channel].Expand(childBox.GetTransformed(child->GetTransform().GetParentFromModel()));
+			core::math::AABox childBox = child->getLocalBoundingBox(channel);
+			m_localBBox[channel].Expand(childBox.GetTransformed(child->getTransform().getParentFromModel()));
 		}
 
-		// Components that affect bounding box
-		for (auto& component : Components)
+		// m_components that affect bounding box
+		for (auto& component : m_components)
 		{
 			if (!component)
 				continue;
 
-			auto bboxOpt = component->GetBoundingBox(channel);
+			auto bboxOpt = component->getBoundingBox(channel);
 			if (bboxOpt.has_value())
-				LocalBBox[channel].Expand(bboxOpt.value());
+				m_localBBox[channel].Expand(bboxOpt.value());
 		}
-		BBoxDirty[channel] = false;
+		m_bboxDirty[channel] = false;
 	}
-	return LocalBBox[channel];
+	return m_localBBox[channel];
 }
 
-core::math::AABox Entity::GetGlobalBoundingBox(eEntityBoundingChannel channel) const
+core::math::AABox Entity::getGlobalBoundingBox(eEntityBoundingChannel channel) const
 {
-	return GetLocalBoundingBox(channel).GetTransformed(GetTransform().GetWorldFromModel());
+	return getLocalBoundingBox(channel).GetTransformed(getTransform().getWorldFromModel());
 }
 
-bool Entity::HasComponent(size_t ID) const
+bool Entity::hasComponent(size_t ID) const
 {
 	HEAVY_ASSERTE(ID < MAX_COMPONENTS_COUNT, "Invalid component ID - greater than MAX_COMPONENTS_COUNT.");
-	return ComponentPosessionFlags[ID];
+	return m_componentPosessionFlags[ID];
 }
 
-void Entity::AddComponentImpl(ComponentUniquePtr<ComponentBase>&& component)
+void Entity::addComponentImpl(ComponentUniquePtr<ComponentBase>&& component)
 {
-	size_t ctypeID = component->GetComponentID();
-	HEAVY_ASSERTE(!HasComponent(ctypeID), "Failed at AttachComponent() - a component of the given type already attached!");
+	size_t ctypeID = component->getComponentID();
+	HEAVY_ASSERTE(!hasComponent(ctypeID), "Failed at AttachComponent() - a component of the given type already attached!");
 
-	component->Owner = this;
-	ComponentPosessionFlags.set(ctypeID, true);
-	Components[ctypeID] = std::move(component);
-	HEAVY_ASSERTE(HasComponent(ctypeID), "Failed at AttachComponent() - the component was not attached!");
+	component->m_owner = this;
+	m_componentPosessionFlags.set(ctypeID, true);
+	m_components[ctypeID] = std::move(component);
+	HEAVY_ASSERTE(hasComponent(ctypeID), "Failed at AttachComponent() - the component was not attached!");
 
-	SetBBoxDirty();
+	setBBoxDirty();
 }
 
-void Entity::RemoveComponent(size_t componentID)
+void Entity::removeComponent(size_t componentID)
 {
-	HEAVY_ASSERTE(HasComponent(componentID), "Failed at RemoveComponent() - a component of the given type is not attached!");
-	ComponentPosessionFlags.set(componentID, false);
-	ComponentUniquePtr<ComponentBase> component = std::move(Components[componentID]);
-	HEAVY_ASSERTE(!HasComponent(componentID), "Failed at RemoveComponent() - the component was not detached!");
+	HEAVY_ASSERTE(hasComponent(componentID), "Failed at RemoveComponent() - a component of the given type is not attached!");
+	m_componentPosessionFlags.set(componentID, false);
+	ComponentUniquePtr<ComponentBase> component = std::move(m_components[componentID]);
+	HEAVY_ASSERTE(!hasComponent(componentID), "Failed at RemoveComponent() - the component was not detached!");
 	
-	SetBBoxDirty();
+	setBBoxDirty();
 }
 
-[[nodiscard]] bool Entity::HasComponents(unsigned long int IDs) const
+[[nodiscard]] bool Entity::hasComponents(unsigned long int IDs) const
 {
-	return (ComponentPosessionFlags.to_ullong() & IDs) == IDs;
+	return (m_componentPosessionFlags.to_ullong() & IDs) == IDs;
 }
 
 }

@@ -6,7 +6,7 @@
 
 namespace pe::api::ecs {
 
-	API_DLLEXPORT EntityUniquePtr EntityFactory(::Poly::RTTIBase* parent, ::Poly::RTTI::TypeInfo t);
-	API_DLLEXPORT ComponentUniquePtr<ComponentBase> ComponentFactory(::Poly::RTTIBase* parent, ::Poly::RTTI::TypeInfo t);
+	API_DLLEXPORT EntityUniquePtr entityFactory(::Poly::RTTIBase* parent, ::Poly::RTTI::TypeInfo t);
+	API_DLLEXPORT ComponentUniquePtr<ComponentBase> componentFactory(::Poly::RTTIBase* parent, ::Poly::RTTI::TypeInfo t);
 
 }

@@ -12,6 +12,10 @@
 #include <pe/engine/time/TimeWorldComponent.hpp>
 //#include <Imgui/ImguiSystem.hpp>
 
+#include <pe/engine/time/TimeSystem.hpp>
+#include <pe/engine/input/InputSystem.hpp>
+#include <pe/engine/movement/MovementSystem.hpp>
+
 #include <pe/api/app/App.hpp>
 #include <pe/api/ecs/Scene.hpp>
 
@@ -22,20 +26,11 @@ Engine::Engine()
 {
 	core::math::RandomSetSeed((int)::time(nullptr));
 	config::gAssetsPathConfig.Load();
-}
 
-//------------------------------------------------------------------------------
-/*void Engine::registerApp(api::app::App* app) //init(std::unique_ptr<api::IGame> game, std::unique_ptr<api::rendering::IRenderingDevice> device)
-{
-	m_app = app;
-	m_app->getRenderingDevice()->Init();
+	registerSystem(std::make_unique<time::TimeSystem>(), api::eEngineUpdatePhase::PREUPDATE);
+	registerSystem(std::make_unique<input::InputSystem>(), api::eEngineUpdatePhase::PREUPDATE);
+	registerSystem(std::make_unique<movement::MovementSystem>(), api::eEngineUpdatePhase::PREUPDATE);
 
-	// Engine update phases
-	// New seystems, TODO restore them
-	//RegisterUpdatePhase(TimeSystem::TimeUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
-	//RegisterUpdatePhase(InputSystem::InputPhase, eUpdatePhaseOrder::PREUPDATE);
-	//RegisterUpdatePhase(MovementSystem::MovementUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
-	
 	// Old systems
 	//RegisterSystem(std::make_unique<ImguiSystem>(), eUpdatePhaseOrder::PREUPDATE);
 	//RegisterUpdatePhase(Physics2DSystem::Physics2DUpdatePhase, eUpdatePhaseOrder::PREUPDATE);
@@ -49,11 +44,7 @@ Engine::Engine()
 	//RegisterUpdatePhase(SoundSystem::SoundPhase, eUpdatePhaseOrder::POSTUPDATE);
 	//RegisterUpdatePhase(DeferredTaskSystem::DeferredTaskPhase, eUpdatePhaseOrder::POSTUPDATE);
 	//RegisterUpdatePhase(FPSSystem::FPSUpdatePhase, eUpdatePhaseOrder::POSTUPDATE);
-
-	loadDefaultScene();
-
-	m_app->getGame()->registerEngine(this);
-}*/
+}
 
 //------------------------------------------------------------------------------
 void Engine::startGame()
@@ -73,7 +64,7 @@ void Engine::endGame()
 {
 	//if (Editor)
 	//	Editor->OnGameDeinit();
-	//m_app->getGame()->onEnd();
+	m_app->getGame()->onEnd();
 }
 
 //------------------------------------------------------------------------------
@@ -87,7 +78,7 @@ Engine::~Engine()
 void Engine::registerSystem(std::unique_ptr<::pe::api::ecs::ISystem>&& system, api::eEngineUpdatePhase order)
 {
 	HEAVY_ASSERTE(order != api::eEngineUpdatePhase::_COUNT, "_COUNT enum value passed to RegisterUpdatePhase(), which is an invalid value");
-	std::vector<std::unique_ptr<::pe::api::ecs::ISystem>>& UpdatePhases = GameUpdatePhases[order];
+	std::vector<std::unique_ptr<::pe::api::ecs::ISystem>>& UpdatePhases = m_updatePhases[order];
 	UpdatePhases.push_back(std::move(system));
 }
 
@@ -95,22 +86,23 @@ void Engine::registerSystem(std::unique_ptr<::pe::api::ecs::ISystem>&& system, a
 //------------------------------------------------------------------------------
 void Engine::update(std::chrono::duration<double> dt)
 {
-	UpdatePhases(dt, api::eEngineUpdatePhase::PREUPDATE);
-	UpdatePhases(dt, api::eEngineUpdatePhase::GAME);
-	UpdatePhases(dt, api::eEngineUpdatePhase::POSTUPDATE);
+	for (api::eEngineUpdatePhase phase : core::utils::IterateEnum<api::eEngineUpdatePhase>())
+	{
+		updatePhases(dt, phase);
+	}
 }
 
 void Engine::selectiveUpdate(std::chrono::duration<double> dt, const std::vector<api::eEngineUpdatePhase>& phases)
 {
 	for (auto phase : phases)
-		UpdatePhases(dt, phase);
+		updatePhases(dt, phase);
 }
 
 //------------------------------------------------------------------------------
-void Engine::ResizeScreen(const core::math::Vector2i& size)
+void Engine::resizeScreen(const core::math::Vector2i& size)
 {
 	core::utils::gConsole.LogDebug("Screen resize: {} {}", size.X, size.Y);
-	GetRenderingDevice()->Resize(size);
+	getRenderingDevice()->Resize(size);
 }
 
 void Engine::loadDefaultScene()
@@ -119,10 +111,11 @@ void Engine::loadDefaultScene()
 	//@todo(muniu) implement loading custom scenes.
 	m_activeScene = std::make_unique<api::ecs::Scene>();
 
-	// Add WorldComponents
-	// DeferredTaskSystem::AddWorldComponentImmediate<InputWorldComponent>(GetActiveScene());
+	m_activeScene->addComponent<input::InputWorldComponent>();
+	m_activeScene->addComponent<time::TimeWorldComponent>();
+
+	// Old WorldComponents
 	// DeferredTaskSystem::AddWorldComponentImmediate<ViewportWorldComponent>(GetActiveScene());
-	// DeferredTaskSystem::AddWorldComponentImmediate<TimeWorldComponent>(GetActiveScene());
 	// DeferredTaskSystem::AddWorldComponentImmediate<DebugWorldComponent>(GetActiveScene());
 	// DeferredTaskSystem::AddWorldComponentImmediate<SoundWorldComponent>(GetActiveScene(), GetActiveScene());
 	// DeferredTaskSystem::AddWorldComponentImmediate<DeferredTaskWorldComponent>(GetActiveScene());

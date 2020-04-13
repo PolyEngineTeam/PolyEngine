@@ -12,119 +12,119 @@ TEST_CASE("Checking equality of transforms after applying global and local trans
 	const int entitiesCount = 6;
 	Entity* e[entitiesCount];
 
-	e[0] = s.SpawnEntity();	// root
-		e[1] = s.SpawnEntity(e[0]);
-			e[2] = s.SpawnEntity(e[1]);
-		e[3] = s.SpawnEntity(e[1]);
-		e[4] = s.SpawnEntity(e[1]);
-		e[5] = s.SpawnEntity(e[1]);
+	e[0] = s.spawnEntity();	// root
+		e[1] = s.spawnEntity(e[0]);
+			e[2] = s.spawnEntity(e[1]);
+		e[3] = s.spawnEntity(e[1]);
+		e[4] = s.spawnEntity(e[1]);
+		e[5] = s.spawnEntity(e[1]);
 
 	for (int a = 0; a < entitiesCount; ++a)
 		for (int b = 0; b < entitiesCount; ++b)
 		{
-			REQUIRE(e[a]->GetTransform().GetGlobalTranslation() == e[b]->GetTransform().GetGlobalTranslation());
-			REQUIRE(e[a]->GetTransform().GetGlobalRotation() == e[b]->GetTransform().GetGlobalRotation());
-			REQUIRE(e[a]->GetTransform().GetGlobalScale() == e[b]->GetTransform().GetGlobalScale());
+			REQUIRE(e[a]->getTransform().getGlobalTranslation() == e[b]->getTransform().getGlobalTranslation());
+			REQUIRE(e[a]->getTransform().getGlobalRotation() == e[b]->getTransform().getGlobalRotation());
+			REQUIRE(e[a]->getTransform().getGlobalScale() == e[b]->getTransform().getGlobalScale());
 
-			REQUIRE(e[a]->GetTransform().GetLocalTranslation() == e[b]->GetTransform().GetLocalTranslation());
-			REQUIRE(e[a]->GetTransform().GetLocalRotation() == e[b]->GetTransform().GetLocalRotation());
-			REQUIRE(e[a]->GetTransform().GetLocalScale() == e[b]->GetTransform().GetLocalScale());
+			REQUIRE(e[a]->getTransform().getLocalTranslation() == e[b]->getTransform().getLocalTranslation());
+			REQUIRE(e[a]->getTransform().getLocalRotation() == e[b]->getTransform().getLocalRotation());
+			REQUIRE(e[a]->getTransform().getLocalScale() == e[b]->getTransform().getLocalScale());
 		}
 
 	SECTION("Translation.")
 	{
-		e[1]->GetTransform().SetLocalTranslation({ 5, 7, 8 });
-		REQUIRE(e[1]->GetTransform().GetLocalTranslation() == ::pe::core::math::Vector{ 5, 7, 8 });
-		REQUIRE(e[1]->GetTransform().GetGlobalTranslation() == ::pe::core::math::Vector{ 5, 7, 8 });
-		REQUIRE(e[2]->GetTransform().GetLocalTranslation() == ::pe::core::math::Vector{ 0, 0, 0 });
-		REQUIRE(e[2]->GetTransform().GetGlobalTranslation() == ::pe::core::math::Vector{ 5, 7, 8 });
+		e[1]->getTransform().setLocalTranslation({ 5, 7, 8 });
+		REQUIRE(e[1]->getTransform().getLocalTranslation() == ::pe::core::math::Vector{ 5, 7, 8 });
+		REQUIRE(e[1]->getTransform().getGlobalTranslation() == ::pe::core::math::Vector{ 5, 7, 8 });
+		REQUIRE(e[2]->getTransform().getLocalTranslation() == ::pe::core::math::Vector{ 0, 0, 0 });
+		REQUIRE(e[2]->getTransform().getGlobalTranslation() == ::pe::core::math::Vector{ 5, 7, 8 });
 
-		e[1]->GetTransform().SetGlobalTranslation({ 56, 34, 98 });
-		REQUIRE(e[1]->GetTransform().GetLocalTranslation() == ::pe::core::math::Vector{ 56, 34, 98 });
-		REQUIRE(e[1]->GetTransform().GetGlobalTranslation() == ::pe::core::math::Vector{ 56, 34, 98 });
-		REQUIRE(e[2]->GetTransform().GetLocalTranslation() == ::pe::core::math::Vector{ 0, 0, 0 });
-		REQUIRE(e[2]->GetTransform().GetGlobalTranslation() == ::pe::core::math::Vector{ 56, 34, 98 });
+		e[1]->getTransform().setGlobalTranslation({ 56, 34, 98 });
+		REQUIRE(e[1]->getTransform().getLocalTranslation() == ::pe::core::math::Vector{ 56, 34, 98 });
+		REQUIRE(e[1]->getTransform().getGlobalTranslation() == ::pe::core::math::Vector{ 56, 34, 98 });
+		REQUIRE(e[2]->getTransform().getLocalTranslation() == ::pe::core::math::Vector{ 0, 0, 0 });
+		REQUIRE(e[2]->getTransform().getGlobalTranslation() == ::pe::core::math::Vector{ 56, 34, 98 });
 
-		e[2]->GetTransform().SetLocalTranslation({ 1, 2, 3 });
-		REQUIRE(e[1]->GetTransform().GetLocalTranslation() == ::pe::core::math::Vector{ 56, 34, 98 });
-		REQUIRE(e[1]->GetTransform().GetGlobalTranslation() == ::pe::core::math::Vector{ 56, 34, 98 });
-		REQUIRE(e[2]->GetTransform().GetLocalTranslation() == ::pe::core::math::Vector{ 1, 2, 3 });
-		REQUIRE(e[2]->GetTransform().GetGlobalTranslation() == ::pe::core::math::Vector{ 57, 36, 101 });
+		e[2]->getTransform().setLocalTranslation({ 1, 2, 3 });
+		REQUIRE(e[1]->getTransform().getLocalTranslation() == ::pe::core::math::Vector{ 56, 34, 98 });
+		REQUIRE(e[1]->getTransform().getGlobalTranslation() == ::pe::core::math::Vector{ 56, 34, 98 });
+		REQUIRE(e[2]->getTransform().getLocalTranslation() == ::pe::core::math::Vector{ 1, 2, 3 });
+		REQUIRE(e[2]->getTransform().getGlobalTranslation() == ::pe::core::math::Vector{ 57, 36, 101 });
 
-		e[2]->GetTransform().SetGlobalTranslation({ 20, 50, 80 });
-		REQUIRE(e[1]->GetTransform().GetLocalTranslation() == ::pe::core::math::Vector{ 56, 34, 98 });
-		REQUIRE(e[1]->GetTransform().GetGlobalTranslation() == ::pe::core::math::Vector{ 56, 34, 98 });
-		REQUIRE(e[2]->GetTransform().GetLocalTranslation() == ::pe::core::math::Vector{ -36, 16, -18 });
-		REQUIRE(e[2]->GetTransform().GetGlobalTranslation() == ::pe::core::math::Vector{ 20, 50, 80 });
+		e[2]->getTransform().setGlobalTranslation({ 20, 50, 80 });
+		REQUIRE(e[1]->getTransform().getLocalTranslation() == ::pe::core::math::Vector{ 56, 34, 98 });
+		REQUIRE(e[1]->getTransform().getGlobalTranslation() == ::pe::core::math::Vector{ 56, 34, 98 });
+		REQUIRE(e[2]->getTransform().getLocalTranslation() == ::pe::core::math::Vector{ -36, 16, -18 });
+		REQUIRE(e[2]->getTransform().getGlobalTranslation() == ::pe::core::math::Vector{ 20, 50, 80 });
 	}
 
 	SECTION("Rotation.")
 	{
-		e[1]->GetTransform().SetLocalRotation(::pe::core::math::EulerAngles{ 5_deg, 7_deg, 8_deg });
-		REQUIRE(e[1]->GetTransform().GetLocalRotation() == ::pe::core::math::EulerAngles{ 5_deg, 7_deg, 8_deg });
-		REQUIRE(e[1]->GetTransform().GetGlobalRotation() == ::pe::core::math::EulerAngles{ 5_deg, 7_deg, 8_deg });
-		REQUIRE(e[2]->GetTransform().GetLocalRotation() == ::pe::core::math::EulerAngles{ 0_deg, 0_deg, 0_deg });
-		REQUIRE(e[2]->GetTransform().GetGlobalRotation() == ::pe::core::math::EulerAngles{ 5_deg, 7_deg, 8_deg });
+		e[1]->getTransform().setLocalRotation(::pe::core::math::EulerAngles{ 5_deg, 7_deg, 8_deg });
+		REQUIRE(e[1]->getTransform().getLocalRotation() == ::pe::core::math::EulerAngles{ 5_deg, 7_deg, 8_deg });
+		REQUIRE(e[1]->getTransform().getGlobalRotation() == ::pe::core::math::EulerAngles{ 5_deg, 7_deg, 8_deg });
+		REQUIRE(e[2]->getTransform().getLocalRotation() == ::pe::core::math::EulerAngles{ 0_deg, 0_deg, 0_deg });
+		REQUIRE(e[2]->getTransform().getGlobalRotation() == ::pe::core::math::EulerAngles{ 5_deg, 7_deg, 8_deg });
 
-		e[1]->GetTransform().SetGlobalRotation(::pe::core::math::EulerAngles{ 56_deg, 34_deg, 98_deg });
-		REQUIRE(e[1]->GetTransform().GetLocalRotation() == ::pe::core::math::EulerAngles{ 56_deg, 34_deg, 98_deg });
-		REQUIRE(e[1]->GetTransform().GetGlobalRotation() == ::pe::core::math::EulerAngles{ 56_deg, 34_deg, 98_deg });
-		REQUIRE(e[2]->GetTransform().GetLocalRotation() == ::pe::core::math::EulerAngles{ 0_deg, 0_deg, 0_deg });
-		REQUIRE(e[2]->GetTransform().GetGlobalRotation() == ::pe::core::math::EulerAngles{ 56_deg, 34_deg, 98_deg });
+		e[1]->getTransform().setGlobalRotation(::pe::core::math::EulerAngles{ 56_deg, 34_deg, 98_deg });
+		REQUIRE(e[1]->getTransform().getLocalRotation() == ::pe::core::math::EulerAngles{ 56_deg, 34_deg, 98_deg });
+		REQUIRE(e[1]->getTransform().getGlobalRotation() == ::pe::core::math::EulerAngles{ 56_deg, 34_deg, 98_deg });
+		REQUIRE(e[2]->getTransform().getLocalRotation() == ::pe::core::math::EulerAngles{ 0_deg, 0_deg, 0_deg });
+		REQUIRE(e[2]->getTransform().getGlobalRotation() == ::pe::core::math::EulerAngles{ 56_deg, 34_deg, 98_deg });
 		
-		e[2]->GetTransform().SetLocalRotation(::pe::core::math::EulerAngles{ 1_deg, 2_deg, 3_deg });
-		REQUIRE(e[1]->GetTransform().GetLocalRotation() == ::pe::core::math::EulerAngles{ 56_deg, 34_deg, 98_deg });
-		REQUIRE(e[1]->GetTransform().GetGlobalRotation() == ::pe::core::math::EulerAngles{ 56_deg, 34_deg, 98_deg });
-		REQUIRE(e[2]->GetTransform().GetLocalRotation() == ::pe::core::math::EulerAngles{ 1_deg, 2_deg, 3_deg });
+		e[2]->getTransform().setLocalRotation(::pe::core::math::EulerAngles{ 1_deg, 2_deg, 3_deg });
+		REQUIRE(e[1]->getTransform().getLocalRotation() == ::pe::core::math::EulerAngles{ 56_deg, 34_deg, 98_deg });
+		REQUIRE(e[1]->getTransform().getGlobalRotation() == ::pe::core::math::EulerAngles{ 56_deg, 34_deg, 98_deg });
+		REQUIRE(e[2]->getTransform().getLocalRotation() == ::pe::core::math::EulerAngles{ 1_deg, 2_deg, 3_deg });
 
-		e[2]->GetTransform().SetGlobalRotation(::pe::core::math::EulerAngles{ 20_deg, 50_deg, 80_deg });
-		REQUIRE(e[1]->GetTransform().GetLocalRotation() == ::pe::core::math::EulerAngles{ 56_deg, 34_deg, 98_deg });
-		REQUIRE(e[1]->GetTransform().GetGlobalRotation() == ::pe::core::math::EulerAngles{ 56_deg, 34_deg, 98_deg });
-		REQUIRE(e[2]->GetTransform().GetGlobalRotation() == ::pe::core::math::EulerAngles{ 20_deg, 50_deg, 80_deg });
+		e[2]->getTransform().setGlobalRotation(::pe::core::math::EulerAngles{ 20_deg, 50_deg, 80_deg });
+		REQUIRE(e[1]->getTransform().getLocalRotation() == ::pe::core::math::EulerAngles{ 56_deg, 34_deg, 98_deg });
+		REQUIRE(e[1]->getTransform().getGlobalRotation() == ::pe::core::math::EulerAngles{ 56_deg, 34_deg, 98_deg });
+		REQUIRE(e[2]->getTransform().getGlobalRotation() == ::pe::core::math::EulerAngles{ 20_deg, 50_deg, 80_deg });
 	}
 
 	SECTION("Local and global set translation with the same pareint in {0, 0, 0}.")
 	{
-		e[1]->GetTransform().SetLocalTranslation({ 5, 7, 8 });
-		e[3]->GetTransform().SetGlobalTranslation({ 5, 7, 8 });
-		REQUIRE(e[1]->GetTransform().GetGlobalTranslation() == e[3]->GetTransform().GetGlobalTranslation());
-		REQUIRE(e[1]->GetTransform().GetGlobalRotation() == e[3]->GetTransform().GetGlobalRotation());
-		REQUIRE(e[1]->GetTransform().GetGlobalScale() == e[3]->GetTransform().GetGlobalScale());
+		e[1]->getTransform().setLocalTranslation({ 5, 7, 8 });
+		e[3]->getTransform().setGlobalTranslation({ 5, 7, 8 });
+		REQUIRE(e[1]->getTransform().getGlobalTranslation() == e[3]->getTransform().getGlobalTranslation());
+		REQUIRE(e[1]->getTransform().getGlobalRotation() == e[3]->getTransform().getGlobalRotation());
+		REQUIRE(e[1]->getTransform().getGlobalScale() == e[3]->getTransform().getGlobalScale());
 	
-		e[4]->GetTransform().SetLocalTranslation({ 5, 7, 5 });
-		e[5]->GetTransform().SetGlobalTranslation({ 5, 7, 8 });
-		REQUIRE(e[4]->GetTransform().GetGlobalTranslation() != e[5]->GetTransform().GetGlobalTranslation());
-		REQUIRE(e[4]->GetTransform().GetGlobalRotation() == e[5]->GetTransform().GetGlobalRotation());
-		REQUIRE(e[4]->GetTransform().GetGlobalScale() == e[5]->GetTransform().GetGlobalScale());
+		e[4]->getTransform().setLocalTranslation({ 5, 7, 5 });
+		e[5]->getTransform().setGlobalTranslation({ 5, 7, 8 });
+		REQUIRE(e[4]->getTransform().getGlobalTranslation() != e[5]->getTransform().getGlobalTranslation());
+		REQUIRE(e[4]->getTransform().getGlobalRotation() == e[5]->getTransform().getGlobalRotation());
+		REQUIRE(e[4]->getTransform().getGlobalScale() == e[5]->getTransform().getGlobalScale());
 	}
 	
 	SECTION("Local and global set rotation with the same pareint in {0, 0, 0}.")
 	{
-		e[1]->GetTransform().SetLocalRotation(::pe::core::math::EulerAngles{ 5_deg, 7_deg, 8_deg });
-		e[3]->GetTransform().SetGlobalRotation(::pe::core::math::EulerAngles{ 5_deg, 7_deg, 8_deg });
-		REQUIRE(e[1]->GetTransform().GetGlobalTranslation() == e[3]->GetTransform().GetGlobalTranslation());
-		REQUIRE(e[1]->GetTransform().GetGlobalRotation() == e[3]->GetTransform().GetGlobalRotation());
-		REQUIRE(e[1]->GetTransform().GetGlobalScale() == e[3]->GetTransform().GetGlobalScale());
+		e[1]->getTransform().setLocalRotation(::pe::core::math::EulerAngles{ 5_deg, 7_deg, 8_deg });
+		e[3]->getTransform().setGlobalRotation(::pe::core::math::EulerAngles{ 5_deg, 7_deg, 8_deg });
+		REQUIRE(e[1]->getTransform().getGlobalTranslation() == e[3]->getTransform().getGlobalTranslation());
+		REQUIRE(e[1]->getTransform().getGlobalRotation() == e[3]->getTransform().getGlobalRotation());
+		REQUIRE(e[1]->getTransform().getGlobalScale() == e[3]->getTransform().getGlobalScale());
 	
-		e[4]->GetTransform().SetLocalRotation(::pe::core::math::EulerAngles{ 5_deg, 7_deg, 5_deg });
-		e[5]->GetTransform().SetGlobalRotation(::pe::core::math::EulerAngles{ 5_deg, 7_deg, 8_deg });
-		REQUIRE(e[4]->GetTransform().GetGlobalTranslation() == e[5]->GetTransform().GetGlobalTranslation());
-		REQUIRE(e[4]->GetTransform().GetGlobalRotation() != e[5]->GetTransform().GetGlobalRotation());
-		REQUIRE(e[4]->GetTransform().GetGlobalScale() == e[5]->GetTransform().GetGlobalScale());
+		e[4]->getTransform().setLocalRotation(::pe::core::math::EulerAngles{ 5_deg, 7_deg, 5_deg });
+		e[5]->getTransform().setGlobalRotation(::pe::core::math::EulerAngles{ 5_deg, 7_deg, 8_deg });
+		REQUIRE(e[4]->getTransform().getGlobalTranslation() == e[5]->getTransform().getGlobalTranslation());
+		REQUIRE(e[4]->getTransform().getGlobalRotation() != e[5]->getTransform().getGlobalRotation());
+		REQUIRE(e[4]->getTransform().getGlobalScale() == e[5]->getTransform().getGlobalScale());
 	}
 	
 	SECTION("Local and global set scale with the same pareint in {0, 0, 0}.")
 	{
-		e[1]->GetTransform().SetLocalScale({ 5, 7, 8 });
-		e[3]->GetTransform().SetGlobalScale({ 5, 7, 8 });
-		REQUIRE(e[1]->GetTransform().GetGlobalTranslation() == e[3]->GetTransform().GetGlobalTranslation());
-		REQUIRE(e[1]->GetTransform().GetGlobalRotation() == e[3]->GetTransform().GetGlobalRotation());
-		REQUIRE(e[1]->GetTransform().GetGlobalScale() == e[3]->GetTransform().GetGlobalScale());
+		e[1]->getTransform().setLocalScale({ 5, 7, 8 });
+		e[3]->getTransform().setGlobalScale({ 5, 7, 8 });
+		REQUIRE(e[1]->getTransform().getGlobalTranslation() == e[3]->getTransform().getGlobalTranslation());
+		REQUIRE(e[1]->getTransform().getGlobalRotation() == e[3]->getTransform().getGlobalRotation());
+		REQUIRE(e[1]->getTransform().getGlobalScale() == e[3]->getTransform().getGlobalScale());
 	
-		e[4]->GetTransform().SetLocalScale({ 5, 7, 5 });
-		e[5]->GetTransform().SetGlobalScale({ 5, 7, 8 });
-		REQUIRE(e[4]->GetTransform().GetGlobalTranslation() == e[5]->GetTransform().GetGlobalTranslation());
-		REQUIRE(e[4]->GetTransform().GetGlobalRotation() == e[5]->GetTransform().GetGlobalRotation());
-		REQUIRE(e[4]->GetTransform().GetGlobalScale() != e[5]->GetTransform().GetGlobalScale());
+		e[4]->getTransform().setLocalScale({ 5, 7, 5 });
+		e[5]->getTransform().setGlobalScale({ 5, 7, 8 });
+		REQUIRE(e[4]->getTransform().getGlobalTranslation() == e[5]->getTransform().getGlobalTranslation());
+		REQUIRE(e[4]->getTransform().getGlobalRotation() == e[5]->getTransform().getGlobalRotation());
+		REQUIRE(e[4]->getTransform().getGlobalScale() != e[5]->getTransform().getGlobalScale());
 	}
 }

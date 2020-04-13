@@ -125,7 +125,7 @@ struct AutoRegisterComponent {
 
 #define RTTI_DECLARE_COMPONENT(TYPE) \
 	public: \
-	size_t GetComponentID() const override { return ::pe::api::ecs::GetComponentID<TYPE>(); }	\
+	size_t getComponentID() const override { return ::pe::api::ecs::GetComponentID<TYPE>(); }	\
 	RTTI_DECLARE_TYPE_DERIVED(TYPE, ::pe::api::ecs::ComponentBase)
 
 #define RTTI_DEFINE_COMPONENT(TYPE) \

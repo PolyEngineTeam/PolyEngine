@@ -45,11 +45,11 @@ public:
     input::InputQueue& getInputQueue() { return m_inputEventsQueue; }
     input::OutputQueue& getOutputQueue() { return m_outputEventsQueue; }
 
+	void registerEngine(std::unique_ptr<IEngine>&& engine);
+	void registerEditor(std::unique_ptr<editor::IEditor>&& editor);
+	void registerRenderingDevice(std::unique_ptr<rendering::IRenderingDevice>&& dev);
+	void registerGame(std::unique_ptr<IGame>&& game);
 
-	void registerEngine(std::unique_ptr<IEngine>&& engine) { m_engine = std::move(engine); }
-	void registerEditor(std::unique_ptr<editor::IEditor>&& editor) { m_editor = std::move(editor); }
-	void registerRenderingDevice(std::unique_ptr<rendering::IRenderingDevice>&& dev) { m_renderingDevice = std::move(dev); }
-	void registerGame(std::unique_ptr<IGame>&& game) { m_game = std::move(game); }
 private:
     std::unique_ptr<IAppBackend> m_backend;
 

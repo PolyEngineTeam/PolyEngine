@@ -2,6 +2,10 @@
 
 #include <pe/Defines.hpp>
 
+#include <pe/api/app/App.hpp>
+#include <pe/api/ecs/ISystem.hpp>
+#include <pe/api/deps/DependencyPtr.hpp>
+
 namespace pe::api::ecs
 {
 	class Scene;
@@ -9,8 +13,11 @@ namespace pe::api::ecs
 
 namespace pe::engine::input
 {
-	namespace InputSystem
+	class InputSystem : public api::ecs::ISystem
 	{
-		void InputPhase(api::ecs::Scene*);
-	}
+		void onUpdate(api::ecs::Scene* scene) override;
+
+	private:
+		api::deps::DependencyPtr<pe::api::app::App> m_app;
+	};
 }

@@ -22,13 +22,12 @@ namespace pe::api::ecs
 	{
 		RTTI_DECLARE_TYPE_DERIVED(::pe::api::ecs::Entity, ::pe::core::memory::SafePtrRoot)
 		{
-			RTTI_PROPERTY_AUTONAME(NameTemplate, ::Poly::RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(Name, ::Poly::RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(Transform, ::Poly::RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(m_name, ::Poly::RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(m_transform, ::Poly::RTTI::ePropertyFlag::NONE);
 			RTTI_PROPERTY_AUTONAME(m_scene, ::Poly::RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_AUTONAME(Parent, ::Poly::RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_FACTORY_AUTONAME(Children, EntityFactory, ::Poly::RTTI::ePropertyFlag::NONE);
-			RTTI_PROPERTY_FACTORY_AUTONAME(Components, ComponentFactory, ::Poly::RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_AUTONAME(m_parent, ::Poly::RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_FACTORY_AUTONAME(m_children, entityFactory, ::Poly::RTTI::ePropertyFlag::NONE);
+			RTTI_PROPERTY_FACTORY_AUTONAME(m_components, componentFactory, ::Poly::RTTI::ePropertyFlag::NONE);
 		}
 	public:
 		Entity() = delete;
@@ -41,108 +40,108 @@ namespace pe::api::ecs
 
 		// ########## Component queries ##########
 		template<class T >
-		[[nodiscard]] bool HasComponent() const { return HasComponent(GetComponentID<T>()); }
-		[[nodiscard]] bool HasComponent(size_t ID) const;
+		[[nodiscard]] bool hasComponent() const { return HasComponent(GetComponentID<T>()); }
+		[[nodiscard]] bool hasComponent(size_t ID) const;
 
 		/// <summary>Checks whether there are all of the specified components under this Entity's ID.</summary>
 		/// <param name="IDs">IDs is a bit field of component IDs to be checked for, see macro BIT()</param> 
 		/// <returns>True if has queried components, false otherwise.</summary>
 		/// <seealso cref="Entity.GetComponent()"/>
 		/// <seealso cref="Entity.HasComponent()"/>
-		[[nodiscard]] bool HasComponents(unsigned long int IDs) const;
+		[[nodiscard]] bool hasComponents(unsigned long int IDs) const;
 
 		/// <summary>Gets a pointer to a component of a given ID.</summary>
 		/// <returns>A pointer to a component or nullptr if it does not exist.</returns>
 		template<typename T>
-		[[nodiscard]] T* GetComponent() { return static_cast<T*>(GetComponent(GetComponentID<T>())); }
-		[[nodiscard]] ComponentBase* GetComponent(size_t ctypeID) { return Components[ctypeID].get(); }
+		[[nodiscard]] T* getComponent() { return static_cast<T*>(GetComponent(GetComponentID<T>())); }
+		[[nodiscard]] ComponentBase* getComponent(size_t ctypeID) { return m_components[ctypeID].get(); }
 
 		/// <summary>Gets a pointer to a component of a given ID.</summary>
 		/// <returns>A pointer to a component or nullptr if it does not exist.</returns>
 		template<typename T>
-		[[nodiscard]] const T* GetComponent() const { return static_cast<const T*>(GetComponent(GetComponentID<T>())); }
-		[[nodiscard]] const ComponentBase* GetComponent(size_t ctypeID) const { return Components[ctypeID].get(); }
+		[[nodiscard]] const T* getComponent() const { return static_cast<const T*>(GetComponent(GetComponentID<T>())); }
+		[[nodiscard]] const ComponentBase* getComponent(size_t ctypeID) const { return m_components[ctypeID].get(); }
 
 		// ########## Component management ##########
 		template<typename T, typename... Args>
-		void AddComponent(Args&&... args)
+		void addComponent(Args&&... args)
 		{ 
 			auto component = GetSceneAllocator().template NewComponent<T>(std::forward<Args>(args)...);
-			AddComponentImpl(std::move(component));
+			addComponentImpl(std::move(component));
 		}
 
 		template<typename T>
-		void RemoveComponent() { RemoveComponent(GetComponentID<T>()); }
-		void RemoveComponent(size_t componentID);
+		void removeComponent() { RemoveComponent(GetComponentID<T>()); }
+		void removeComponent(size_t componentID);
 
 		// ########## Hierarchy queries ##########
 		/// Returns pointer to parent entity. Returns nullptr if (and only if) this is the root of the scene.
 		/// @return Pointer to parent entity.
-		const Entity* GetParent() const { return Parent; }
-		Entity* GetParent() { return Parent; }
+		const Entity* getParent() const { return m_parent; }
+		Entity* getParent() { return m_parent; }
 
 		/// Returns collection of children of this entity.
 		/// @return Collection of children.
-		const std::vector<EntityUniquePtr>& GetChildren() const { return Children; }
+		const std::vector<EntityUniquePtr>& getChildren() const { return m_children; }
 
-		bool IsRoot() const { return Parent == nullptr; }
-		bool IsChildOfRoot() const { return Parent ? Parent->IsRoot() : false; }
-		bool ContainsChildRecursive(Entity* child) const;
+		bool isRoot() const { return m_parent == nullptr; }
+		bool isChildOfRoot() const { return m_parent ? m_parent->isRoot() : false; }
+		bool containsChildRecursive(Entity* child) const;
 
-		const Scene* GetScene() const { HEAVY_ASSERTE(GetUUID(), "Entity was not properly initialized");  return m_scene; }
-		Scene* GetScene() { HEAVY_ASSERTE(GetUUID(), "Entity was not properly initialized");  return m_scene; }
+		const Scene* getScene() const { HEAVY_ASSERTE(GetUUID(), "Entity was not properly initialized");  return m_scene; }
+		Scene* getScene() { HEAVY_ASSERTE(GetUUID(), "Entity was not properly initialized");  return m_scene; }
 
 		// ########## Hierarchy management ##########
 		/// Reparents this entity. Entity cannot be parented to his children, to himself or to nothing (with exception to scene root).
 		/// @param Entity* Pointer to new parent
-		void SetParent(Entity* parent);
+		void setParent(Entity* parent);
 
 		/// Adds new child to this entity. Child cannot be parent of this entity, equal to this entity or nullptr.
 		/// @param Entity* Pointer to new child
-		inline void AddChild(Entity* child) { ASSERTE(child, "Child cannot be null!"); child->SetParent(this); }
+		inline void addChild(Entity* child) { ASSERTE(child, "Child cannot be null!"); child->setParent(this); }
 
 		// ########## Properties queries & management ##########
-		const ::pe::core::storage::String& GetName() const { return Name; }
-		void SetName(const ::pe::core::storage::String& name) { Name = name; }
+		const ::pe::core::storage::String& getName() const { return m_name; }
+		void setName(const ::pe::core::storage::String& name) { m_name = name; }
 
 		/// Returns transformation data of this entity.
 		/// @return Transformation data of this entity.
-		EntityTransform& GetTransform() { return Transform; }
-		const EntityTransform& GetTransform() const { return Transform; }
+		EntityTransform& getTransform() { return m_transform; }
+		const EntityTransform& getTransform() const { return m_transform; }
 	
-		const ::pe::core::math::AABox& GetLocalBoundingBox(eEntityBoundingChannel channel) const;
-		::pe::core::math::AABox GetGlobalBoundingBox(eEntityBoundingChannel channel) const;
+		const ::pe::core::math::AABox& getLocalBoundingBox(eEntityBoundingChannel channel) const;
+		::pe::core::math::AABox getGlobalBoundingBox(eEntityBoundingChannel channel) const;
 
 	private:
 		Entity(Scene* scene, Entity* parent = nullptr);
 
-		void ReleaseFromParent();
-		void SetBBoxDirty();
+		void releaseFromParent();
+		void setBBoxDirty();
 
-		void AddComponentImpl(ComponentUniquePtr<ComponentBase>&& component);
+		void addComponentImpl(ComponentUniquePtr<ComponentBase>&& component);
 
-		SceneAllocator& GetSceneAllocator();
+		SceneAllocator& getSceneAllocator();
 
-		Entity* Parent = nullptr;
-		std::vector<EntityUniquePtr> Children;
+		Entity* m_parent = nullptr;
+		std::vector<EntityUniquePtr> m_children;
 
-		::pe::core::storage::String NameTemplate;
-		::pe::core::storage::String Name;
-		EntityTransform Transform;
+		::pe::core::storage::String m_name;
+		EntityTransform m_transform;
 		Scene* m_scene = nullptr;
 
-		mutable ::pe::core::utils::EnumArray<::pe::core::math::AABox, eEntityBoundingChannel> LocalBBox;
-		mutable ::pe::core::utils::EnumArray<bool, eEntityBoundingChannel> BBoxDirty;
+		mutable ::pe::core::utils::EnumArray<::pe::core::math::AABox, eEntityBoundingChannel> m_localBBox;
+		mutable ::pe::core::utils::EnumArray<bool, eEntityBoundingChannel> m_bboxDirty;
 
 		// @todo(muniu) Fix the components flags and remove this assertion.
 		STATIC_ASSERTE(MAX_COMPONENTS_COUNT <= 64, 
 			"ComponentPosessionFlags will work only for MAX_COMPONENTS_COUNT<=64");
-		std::bitset<MAX_COMPONENTS_COUNT> ComponentPosessionFlags;
+		std::bitset<MAX_COMPONENTS_COUNT> m_componentPosessionFlags;
 		
-		std::vector<ComponentUniquePtr<ComponentBase>> Components;
+		std::vector<ComponentUniquePtr<ComponentBase>> m_components;
 
 		bool m_destructorActive = false;
 
 		friend class SceneAllocator;
+		friend class Scene;
 	};
 } //namespace Poly
