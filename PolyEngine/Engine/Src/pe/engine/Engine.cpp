@@ -70,7 +70,8 @@ void Engine::endGame()
 //------------------------------------------------------------------------------
 Engine::~Engine()
 {
-	endGame();
+	if(m_app->getGame())
+		endGame();
 	m_activeScene.reset();
 }
 
