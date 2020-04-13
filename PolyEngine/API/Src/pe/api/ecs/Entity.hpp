@@ -53,25 +53,25 @@ namespace pe::api::ecs
 		/// <summary>Gets a pointer to a component of a given ID.</summary>
 		/// <returns>A pointer to a component or nullptr if it does not exist.</returns>
 		template<typename T>
-		[[nodiscard]] T* getComponent() { return static_cast<T*>(GetComponent(GetComponentID<T>())); }
+		[[nodiscard]] T* getComponent() { return static_cast<T*>(getComponent(GetComponentID<T>())); }
 		[[nodiscard]] ComponentBase* getComponent(size_t ctypeID) { return m_components[ctypeID].get(); }
 
 		/// <summary>Gets a pointer to a component of a given ID.</summary>
 		/// <returns>A pointer to a component or nullptr if it does not exist.</returns>
 		template<typename T>
-		[[nodiscard]] const T* getComponent() const { return static_cast<const T*>(GetComponent(GetComponentID<T>())); }
+		[[nodiscard]] const T* getComponent() const { return static_cast<const T*>(getComponent(GetComponentID<T>())); }
 		[[nodiscard]] const ComponentBase* getComponent(size_t ctypeID) const { return m_components[ctypeID].get(); }
 
 		// ########## Component management ##########
 		template<typename T, typename... Args>
 		void addComponent(Args&&... args)
 		{ 
-			auto component = GetSceneAllocator().template NewComponent<T>(std::forward<Args>(args)...);
+			auto component = getSceneAllocator().template newComponent<T>(std::forward<Args>(args)...);
 			addComponentImpl(std::move(component));
 		}
 
 		template<typename T>
-		void removeComponent() { RemoveComponent(GetComponentID<T>()); }
+		void removeComponent() { removeComponent(GetComponentID<T>()); }
 		void removeComponent(size_t componentID);
 
 		// ########## Hierarchy queries ##########

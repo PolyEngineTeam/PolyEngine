@@ -46,7 +46,7 @@ private:
 	template<typename Head, typename... Tail>
 	bool hasComponents(const Entity* entity) const
 	{
-		return entity->template HasComponent<Head>() && hasComponents<Tail...>(entity);
+		return entity->template hasComponent<Head>() && hasComponents<Tail...>(entity);
 	}
 
 	void increment()
