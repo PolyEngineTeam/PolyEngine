@@ -385,14 +385,16 @@ CORE_DLLEXPORT void Poly::RTTI::DeserializeObject(RTTIBase* obj,
 		const auto& it = currentValue.FindMember(child.Name.GetCStr());
 		if (it != currentValue.MemberEnd())
 		{
-			SetCorePropertyValue(ptr, child, it->value, uninitializedPointers);
+			SetCorePropertyValue(obj, ptr, child, it->value, uninitializedPointers);
 		}
 	}
 
 	RTTIObjectsManager::Get().FixMapingAfterDeserialization(obj, oldId);
 }
 
-CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj, 
+CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(
+	RTTIBase* parent,
+	void* obj, 
 	const RTTI::Property& prop, 
 	const rapidjson::Value& value, 
 	std::vector<RTTI::UninitializedPointerEntry>& uninitializedPointers)
@@ -437,10 +439,10 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj,
 	{
 		HEAVY_ASSERTE(prop.ImplData.get() != nullptr, "Invalid enum impl data!");
 		const CollectionPropertyImplDataBase* implData = static_cast<const CollectionPropertyImplDataBase*>(prop.ImplData.get());
-		implData->Resize(obj, value.GetArray().Size());
+		implData->Resize(parent, obj, value.GetArray().Size());
 		for (size_t i = 0; i < value.GetArray().Size(); ++i)
 		{
-			SetCorePropertyValue(implData->GetValue(obj, i), implData->PropertyType, value.GetArray()[(rapidjson::SizeType)i], uninitializedPointers);
+			SetCorePropertyValue(parent, implData->GetValue(obj, i), implData->PropertyType, value.GetArray()[(rapidjson::SizeType)i], uninitializedPointers);
 		}
 	}
 	break;
@@ -455,8 +457,8 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj,
 			const rapidjson::Value& pair = value.GetArray()[(rapidjson::SizeType)i];
 			const auto& key = pair.GetObject().FindMember("Key")->value;
 			const auto& val = pair.GetObject().FindMember("Value")->value;
-			SetCorePropertyValue(implData->GetKeyTemporaryStorage(), implData->KeyPropertyType, key, uninitializedPointers);
-			SetCorePropertyValue(implData->GetValueTemporaryStorage(), implData->ValuePropertyType, val, uninitializedPointers);
+			SetCorePropertyValue(parent, implData->GetKeyTemporaryStorage(), implData->KeyPropertyType, key, uninitializedPointers);
+			SetCorePropertyValue(parent, implData->GetValueTemporaryStorage(), implData->ValuePropertyType, val, uninitializedPointers);
 			implData->SetValue(obj, implData->GetKeyTemporaryStorage(), implData->GetValueTemporaryStorage());
 		}
 	}
@@ -539,12 +541,12 @@ CORE_DLLEXPORT void Poly::RTTI::SetCorePropertyValue(void* obj,
 				typeName = value.GetObject().FindMember(JSON_TYPE_ANNOTATION)->value.GetString();
 			else
 				typeName = implData->PropertyType.Type.GetTypeName();
-			implData->CreatePolymorphic(obj, typeName.GetCStr());
+			implData->CreatePolymorphic(parent, obj, typeName.GetCStr());
 		}
 		else // Fundamental
-			implData->Create(obj);
+			implData->Create(parent, obj);
 		
-		SetCorePropertyValue(implData->Get(obj), implData->PropertyType, value, uninitializedPointers);
+		SetCorePropertyValue(parent, implData->Get(obj), implData->PropertyType, value, uninitializedPointers);
 	}
 	break;
 	case eCorePropertyType::RAW_PTR:

@@ -31,7 +31,8 @@ namespace Poly
 		CORE_DLLEXPORT void DeserializeObject(RTTIBase* obj, 
 			const rapidjson::GenericObject<true, rapidjson::Value> currentValue,
 			std::vector<UninitializedPointerEntry>& uninitializedPointers);
-		CORE_DLLEXPORT void SetCorePropertyValue(void* obj, 
+		CORE_DLLEXPORT void SetCorePropertyValue(RTTIBase* parent,
+			void* obj, 
 			const RTTI::Property& prop, 
 			const rapidjson::Value& value,
 			std::vector<UninitializedPointerEntry>& uninitializedPointers);

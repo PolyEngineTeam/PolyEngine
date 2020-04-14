@@ -12,7 +12,7 @@ add_library(${GAME_TARGET} SHARED ${GAME_SRCS})
 target_compile_definitions(${GAME_TARGET} PRIVATE _GAME)
 target_include_directories(${GAME_TARGET} PRIVATE ${GAME_INCLUDE})
 target_link_libraries(${GAME_TARGET} PRIVATE ${API_TARGET} ${ENGINE_TARGET} ${CORE_TARGET})
-add_dependencies(${GAME_TARGET} ${STANDALONE_TARGET} ${GLDEVICE_TARGET} ${EDITOR_TARGET})
+add_dependencies(${GAME_TARGET} ${STANDALONE_TARGET} ${GLDEVICE_TARGET}) # ${EDITOR_TARGET})
 
 #note(vuko): we can't use configure_file() directly because there is no reliable way to get an output artifact location at configure-time
 find_file(CMAKE_TEMPLATE_PROCESSOR_SCRIPT process_template.cmake  PATHS ${CMAKE_MODULE_PATH}  NO_DEFAULT_PATH)

@@ -22,6 +22,6 @@ target_link_libraries(${ENGINE_TARGET}
 	PRIVATE assimp freetype OpenAL ogg vorbis vorbisfile 
 		${BEGIN_EXPORT_ALL_SYMBOLS} ${BOX2D_LIBRARIES} ${BULLET_LIBRARIES} ${END_EXPORT_ALL_SYMBOLS})
 
-set_target_properties(${ENGINE_TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "${CMAKE_CURRENT_LIST_DIR}/Src/EnginePCH.hpp")
+set_target_properties(${ENGINE_TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "${CMAKE_CURRENT_LIST_DIR}/Src/pe/engine/EnginePCH.hpp")
 set_target_properties(${ENGINE_TARGET} PROPERTIES FOLDER "Engine" )
 cotire(${ENGINE_TARGET})

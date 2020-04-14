@@ -2,7 +2,7 @@
 #include <catch.hpp>
 
 #include <pe/core/rtti/RTTI.hpp>
-#include <Configs/ConfigBase.hpp>
+#include <pe/engine/config/ConfigBase.hpp>
 #include <pe/core/math/BasicMath.hpp>
 #include <pe/core/math/Vector.hpp>
 #include <pe/core/math/Vector2f.hpp>
@@ -15,7 +15,7 @@
 #include <pe/core/utils/Logger.hpp>
 #include <vector>
 
-using namespace Poly;
+using namespace pe::engine;
 
 enum class eConfigTest
 {
@@ -39,11 +39,11 @@ static size_t gFactoryCounterStdVectorInt = 0;
 static size_t gFactoryCounterCustom = 0;
 
 
-class TestRTTIClass : public RTTIBase
+class TestRTTIClass : public Poly::RTTIBase
 {
 	RTTI_DECLARE_TYPE_DERIVED(TestRTTIClass, RTTIBase)
 	{
-		RTTI_PROPERTY_AUTONAME(Val1, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(Val1, Poly::RTTI::ePropertyFlag::NONE);
 	}
 public:
 	TestRTTIClass() {}
@@ -65,7 +65,7 @@ class TestRTTIClassPolymorphic : public TestRTTIClass
 {
 	RTTI_DECLARE_TYPE_DERIVED(TestRTTIClassPolymorphic, TestRTTIClass)
 	{
-		RTTI_PROPERTY_AUTONAME(Val2, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(Val2, Poly::RTTI::ePropertyFlag::NONE);
 	}
 public:
 	TestRTTIClassPolymorphic() {}
@@ -75,57 +75,57 @@ public:
 };
 RTTI_DEFINE_TYPE(TestRTTIClassPolymorphic)
 
-class TestConfig : public ConfigBase
+class TestConfig : public config::ConfigBase
 {
 	RTTI_DECLARE_TYPE_DERIVED(TestConfig, ConfigBase)
 	{
-		RTTI_PROPERTY_AUTONAME(PropBool, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropI8, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropI16, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropI32, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropI64, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropU8, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropU16, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropU32, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropU64, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(Propf32, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(Propf64, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropStr, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropEnum, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropStdVectorInt, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropStdVectorStdVectorInt, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropStdVectorString, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropStdVectorCustom, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropMapIntInt, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropMapStrStdVector, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropMapStrCustom, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropUnorderedMapIntInt, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropUnorderedMapStrStdVector, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropUnorderedMapStrCustom, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropVector, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropVector2f, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropVector2i, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropQuat, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropAngle, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropColor, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropMatrix, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropBool, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropI8, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropI16, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropI32, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropI64, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropU8, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropU16, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropU32, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropU64, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(Propf32, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(Propf64, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropStr, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropEnum, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropStdVectorInt, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropStdVectorStdVectorInt, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropStdVectorString, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropStdVectorCustom, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropMapIntInt, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropMapStrStdVector, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropMapStrCustom, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropUnorderedMapIntInt, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropUnorderedMapStrStdVector, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropUnorderedMapStrCustom, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropVector, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropVector2f, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropVector2i, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropQuat, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropAngle, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropColor, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropMatrix, Poly::RTTI::ePropertyFlag::NONE);
 
-		RTTI_PROPERTY_AUTONAME(PropEnumArrayInt, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropEnumArrayStdVector, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropEnumArrayCustom, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropEnumFlags, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropEnumArrayInt, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropEnumArrayStdVector, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropEnumArrayCustom, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropEnumFlags, Poly::RTTI::ePropertyFlag::NONE);
 
-		RTTI_PROPERTY_AUTONAME(PropUUID, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropUUID, Poly::RTTI::ePropertyFlag::NONE);
 
-		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrInt, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterInt; return new int; }, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrStdVectorInt, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterStdVectorInt; return new std::vector<int>; }, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrCustom, [](Poly::RTTI::TypeInfo info) { ++gFactoryCounterCustom; return info.CreateInstance(); }, RTTI::ePropertyFlag::NONE);
-		RTTI_PROPERTY_AUTONAME(PropUniquePtrPolymorphicCustom, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrInt, [](Poly::RTTIBase* base, Poly::RTTI::TypeInfo info) { ++gFactoryCounterInt; return std::make_unique<int>(); }, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrStdVectorInt, [](Poly::RTTIBase* base, Poly::RTTI::TypeInfo info) { ++gFactoryCounterStdVectorInt; return std::make_unique<std::vector<int>>(); }, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_FACTORY_AUTONAME(PropUniquePtrCustom, [](Poly::RTTIBase* base, Poly::RTTI::TypeInfo info) { ++gFactoryCounterCustom; return std::unique_ptr<TestRTTIClass>((TestRTTIClass*)info.CreateInstance()); }, Poly::RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropUniquePtrPolymorphicCustom, Poly::RTTI::ePropertyFlag::NONE);
 
-		RTTI_PROPERTY_AUTONAME(PropRawPtrCustom, RTTI::ePropertyFlag::NONE);
+		RTTI_PROPERTY_AUTONAME(PropRawPtrCustom, Poly::RTTI::ePropertyFlag::NONE);
 	}
 public:
-	TestConfig() : ConfigBase("Test", eResourceSource::NONE) 
+	TestConfig() : ConfigBase("Test", config::eResourceSource::NONE) 
 	{
 		PropMapIntInt.insert({1, 2});
 		PropMapIntInt.insert({2, 3});

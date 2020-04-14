@@ -1,3 +1,5 @@
+#include <pe/api/APIPCH.hpp>
+
 #include <pe/api/IEngine.hpp>
 
 #include <pe/api/deps/DependencyManager.hpp>

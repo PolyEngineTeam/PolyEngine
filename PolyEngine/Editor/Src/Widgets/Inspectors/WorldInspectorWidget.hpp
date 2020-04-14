@@ -1,7 +1,7 @@
 #pragma once
 
-#include <ECS/Scene.hpp>
-#include <ECS/Entity.hpp>
+#include <pe/api/ecs/Scene.hpp>
+#include <pe/api/ecs/Entity.hpp>
 #include <pe/core/UniqueID.hpp>
 
 #include <QtWidgets/qcombobox.h>

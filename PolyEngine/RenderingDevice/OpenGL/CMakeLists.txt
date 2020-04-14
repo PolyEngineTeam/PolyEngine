@@ -13,7 +13,7 @@ target_compile_definitions(${GLDEVICE_TARGET} PRIVATE _DEVICE)
 target_include_directories(${GLDEVICE_TARGET} PUBLIC ${POLYGLDEVICE_INCLUDE} ${SDL2_INCLUDE_DIRS})
 target_link_libraries(${GLDEVICE_TARGET} PRIVATE ${API_TARGET} ${ENGINE_TARGET} ${SDL2_LIBRARIES} OpenGLBindings43)
 
-set_target_properties(${GLDEVICE_TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "${CMAKE_CURRENT_LIST_DIR}/Src/PolyRenderingDeviceGLPCH.hpp")
+set_target_properties(${GLDEVICE_TARGET} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "${CMAKE_CURRENT_LIST_DIR}/Src/pe/rd/PolyRenderingDeviceGLPCH.hpp")
 set_target_properties(${GLDEVICE_TARGET} PROPERTIES FOLDER "Engine" )
 set_target_properties(OpenGLBindings43 PROPERTIES FOLDER "Engine/Misc" )
 cotire(${GLDEVICE_TARGET})
