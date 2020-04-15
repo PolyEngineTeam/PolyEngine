@@ -1,4 +1,5 @@
 import os
+import shutil
 
 BUILD_DIR_NAME = 'Build'
 COMMON_BUILD_DIR_NAME = 'CommonBuild'
@@ -13,6 +14,7 @@ class ProjectBase():
 
         self._build_path = os.path.join(project_root_path, build_dir_fullname)
         self._build_postfix = build_postfix
+        self._common_build_path = os.path.join(project_root_path, COMMON_BUILD_DIR_NAME)
         self._dist_path = os.path.join(project_root_path, dist_dir_fullname)
         self._project_name = project_name
     
@@ -28,6 +30,11 @@ class ProjectBase():
 
     def save(self):
         self._save()
+
+    def clean_build(self):
+        shutil.rmtree(self._build_path)
+        shutil.rmtree(self._dist_path)
+        shutil.rmtree(self._common_build_path)
 
     @property
     def name(self):
