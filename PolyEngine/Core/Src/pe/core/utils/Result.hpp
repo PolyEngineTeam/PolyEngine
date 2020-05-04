@@ -167,9 +167,6 @@ namespace pe::core::utils
 		//		value
 		constexpr bool isErr() const { return !isOk(); }
 
-
-
-
 		// @returns valid value if has valid value, crashes otherwise :(
 		constexpr T& value() & { return std::get<T>(m_value); }
 		constexpr const T& value() const & { return std::get<T>(m_value); }
@@ -211,9 +208,6 @@ namespace pe::core::utils
 			else
 				return static_cast<T>(std::forward<U>(alt));
 		}
-
-
-
 
 		// returns error if this stores an error, crashes otherwise :(
 		constexpr E& error() & { return std::get<E>(m_value); }
@@ -261,8 +255,6 @@ namespace pe::core::utils
 		// @returns false if result stores valid value, true if stores error
 		//		value
 		constexpr bool isErr() const { return !isOk(); }
-
-
 
 		// returns error if this stores an error, crashes otherwise :(
 		constexpr E& error() & { return m_value.value(); }
