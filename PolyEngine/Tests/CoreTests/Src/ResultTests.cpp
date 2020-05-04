@@ -49,7 +49,7 @@ TEST_CASE("Result.isOk", "[Result]")
 	constexpr bool isOk2 = res2.isOk();
 	REQUIRE(isOk2 == false);
 
-	constexpr Result<void, eTestErrorType> res3 = Ok();
+	constexpr Result<void, eTestErrorType> res3 = Ok{};
 	constexpr bool isOk3 = res3.isOk();
 	REQUIRE(isOk3 == true);
 
@@ -61,15 +61,15 @@ TEST_CASE("Result.isOk", "[Result]")
 	constexpr bool isOk5 = res5.isOk();
 	REQUIRE(isOk5 == true);
 
-	constexpr Result<CounterClass> res6 = Err();
+	constexpr Result<CounterClass> res6 = Err{};
 	constexpr bool isOk6 = res6.isOk();
 	REQUIRE(isOk6 == false);
 
-	constexpr Result res7 = Ok();
+	constexpr Result res7 = Ok{};
 	constexpr bool isOk7 = res7.isOk();
 	REQUIRE(isOk7 == true);
 
-	constexpr Result<void> res8 = Err();
+	constexpr Result<void> res8 = Err{};
 	constexpr bool isOk8 = res8.isOk();
 	REQUIRE(isOk8 == false);
 }
@@ -84,7 +84,7 @@ TEST_CASE("Result.isErr", "[Result]")
 	constexpr bool isErr2 = res2.isErr();
 	REQUIRE(isErr2 == true);
 
-	constexpr Result<void, eTestErrorType> res3 = Ok();
+	constexpr Result<void, eTestErrorType> res3 = Ok{};
 	constexpr bool isErr3 = res3.isErr();
 	REQUIRE(isErr3 == false);
 
@@ -96,15 +96,15 @@ TEST_CASE("Result.isErr", "[Result]")
 	constexpr bool isErr5 = res5.isErr();
 	REQUIRE(isErr5 == false);
 
-	constexpr Result<CounterClass> res6 = Err();
+	constexpr Result<CounterClass> res6 = Err{};
 	constexpr bool isErr6 = res6.isErr();
 	REQUIRE(isErr6 == true);
 
-	constexpr Result res7 = Ok();
+	constexpr Result res7 = Ok{};
 	constexpr bool isErr7 = res7.isErr();
 	REQUIRE(isErr7 == false);
 
-	constexpr Result<void> res8 = Err();
+	constexpr Result<void> res8 = Err{};
 	constexpr bool isErr8 = res8.isErr();
 	REQUIRE(isErr8 == true);
 }
@@ -136,7 +136,7 @@ TEST_CASE("Result.valueOr", "[Result]")
 	constexpr int val1 = res1.valueOr(10);
 	REQUIRE(val1 == 1);
 
-	constexpr Result<int> res2 = Err();
+	constexpr Result<int> res2 = Err{};
 	constexpr int val2 = res2.valueOr(20);
 	REQUIRE(val2 == 20);
 
@@ -144,7 +144,7 @@ TEST_CASE("Result.valueOr", "[Result]")
 	constexpr int val3 = std::move(res3).valueOr(30);
 	REQUIRE(val3 == 3);
 
-	constexpr Result<int> res4 = Err();
+	constexpr Result<int> res4 = Err{};
 	constexpr int val4 = res4.valueOr(40);
 	REQUIRE(val4 == 40);
 	
@@ -154,7 +154,7 @@ TEST_CASE("Result.valueOr", "[Result]")
 	REQUIRE(val5.m_copyCtor == 1);
 	REQUIRE(val5.m_moveCtor == 2);
 
-	constexpr Result<CounterClass> res6 = Err();
+	constexpr Result<CounterClass> res6 = Err{};
 	constexpr const CounterClass val6 = res6.valueOr(CounterClass());
 	REQUIRE(val6.m_ctor == 1);
 	REQUIRE(val6.m_copyCtor == 0);
@@ -172,7 +172,7 @@ TEST_CASE("Result.valueOr", "[Result]")
 	REQUIRE(val8.m_copyCtor == 0);
 	REQUIRE(val8.m_moveCtor == 3);
 
-	Result<CounterClass> res9 = Err();
+	Result<CounterClass> res9 = Err{};
 	const CounterClass& val9 = std::move(res9).valueOr(CounterClass());
 	REQUIRE(val9.m_ctor == 1);
 	REQUIRE(val9.m_copyCtor == 0);
@@ -195,11 +195,11 @@ TEST_CASE("Result.error", "[Result]")
 	constexpr eTestErrorType err2 = res2.error();
 	REQUIRE(err2 == eTestErrorType::ERROR_TYPE_1);
 
-	constexpr Result<CounterClass> res3 = Err();
+	constexpr Result<CounterClass> res3 = Err{};
 	constexpr const char* err3 = res3.error();
 	REQUIRE(strcmp(err3, Err<>::DEFAULT_ERROR_MESSAGE) == 0);
 
-	constexpr Result<void> res4 = Err();
+	constexpr Result<void> res4 = Err{};
 	constexpr const char* err4 = res4.error();
 	REQUIRE(strcmp(err4, Err<>::DEFAULT_ERROR_MESSAGE) == 0);
 
