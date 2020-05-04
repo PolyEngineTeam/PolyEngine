@@ -262,11 +262,12 @@ namespace pe::core::utils
 		//		value
 		constexpr bool isErr() const { return !isOk(); }
 
-		// returns error if this stores an error, crashes otherwise :(
-		constexpr E& error() { return m_value.value(); }
+
 
 		// returns error if this stores an error, crashes otherwise :(
-		constexpr const E& error() const { return m_value.value(); }
+		constexpr E& error() & { return m_value.value(); }
+		constexpr const E& error() const & { return m_value.value(); }
+		constexpr E&& error() && { return std::move(m_value).value(); }
 
 	private:
 		std::optional<E> m_value;

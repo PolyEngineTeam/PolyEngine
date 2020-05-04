@@ -215,8 +215,10 @@ TEST_CASE("Result.error", "[Result]")
 
 TEST_CASE("Result.bind", "[Result]")
 {
-	std::function okFunc = [] (CounterClass i) -> Result<int, eTestErrorType> { return Ok(1); };
-	std::function errFunc = [] (CounterClass i) -> Result<int, eTestErrorType> { return Err(eTestErrorType::ERROR_TYPE_2); };
+	std::function<Result<int, eTestErrorType>(CounterClass)> okFunc = 
+		[] (CounterClass i) -> Result<int, eTestErrorType> { return Ok(1); };
+	std::function<Result<int, eTestErrorType>(CounterClass)> errFunc = 
+		[] (CounterClass i) -> Result<int, eTestErrorType> { return Err(eTestErrorType::ERROR_TYPE_2); };
 
 	Result<int, eTestErrorType> okRes = bind(okFunc, Result<CounterClass, eTestErrorType>(CounterClass()));
 	REQUIRE(okRes.value() == 1);
