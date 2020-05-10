@@ -14,6 +14,7 @@ class Test(unittest.TestCase):
     def tearDown(self):
         pass
 
+    @unittest.skipIf(common.SCRIPT_ENV.is_ci(), "CI build")
     def test_build_image(self):
         try:
             img = self.mgr.get_image('ubuntu18', 'gcc')
@@ -21,10 +22,10 @@ class Test(unittest.TestCase):
         except:
             self.fail('get_image has raised exception!')
 
+    @unittest.skipIf(common.SCRIPT_ENV.is_ci(), "CI build")
     def test_run_cmd(self):
         # Disabling this test for now. Don't know what is causing issues with docker and non interactive commands.
         return
-        
         
         TEST_FILE = 'test.tmp'
         if os.path.isfile(TEST_FILE):

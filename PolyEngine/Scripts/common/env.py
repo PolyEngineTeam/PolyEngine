@@ -52,7 +52,12 @@ class ScriptEnv():
             version_obj = json.load(file, cls=common.serialization.JSONDecoder)
             assert(isinstance(version_obj, common.version.Version))
             return version_obj
-        
+
+    def is_ci(self):
+        is_travis = os.environ.get('TRAVIS') is not None
+        is_appveyor = os.environ.get('APPVEYOR') is not None
+        return is_travis or is_appveyor
+
     @property
     def scripts_path(self):
         return self._scripts_path
