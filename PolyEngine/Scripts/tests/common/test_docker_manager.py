@@ -14,23 +14,24 @@ class Test(unittest.TestCase):
     def tearDown(self):
         pass
 
+    @unittest.skipIf(common.SCRIPT_ENV.is_ci(), "CI build")
     def test_build_image(self):
         try:
-            img = self.mgr.get_image('ubuntu18', 'gcc8')
+            img = self.mgr.get_image('ubuntu18', 'gcc')
             self.assertIsNotNone(img)
         except:
             self.fail('get_image has raised exception!')
 
+    @unittest.skipIf(common.SCRIPT_ENV.is_ci(), "CI build")
     def test_run_cmd(self):
         # Disabling this test for now. Don't know what is causing issues with docker and non interactive commands.
         return
-        
         
         TEST_FILE = 'test.tmp'
         if os.path.isfile(TEST_FILE):
             os.remove(TEST_FILE)
         
-        img = self.mgr.get_image('ubuntu18', 'gcc8')
+        img = self.mgr.get_image('ubuntu18', 'gcc')
 
         try:
             img.run_cmd('touch {}'.format(TEST_FILE))

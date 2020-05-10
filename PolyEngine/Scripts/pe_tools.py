@@ -81,7 +81,9 @@ if parsed_args.command_name == RUN_TESTS_CMD:
     logger.debug('List of test modules: {}'.format(test_module_names))
     
     test_suite = unittest.TestSuite(suites)
-    unittest.TextTestRunner().run(test_suite)
+    result = unittest.TextTestRunner().run(test_suite)
+
+    sys.exit(0 if result.wasSuccessful() else 1)
 else:
     imported_module = importlib.import_module('commands.' + parsed_args.command_name)
     if hasattr(imported_module, 'execute'):

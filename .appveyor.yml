@@ -3,7 +3,7 @@ version: 1.0.{build}
 clone_folder: C:\projects\PolyEngine
 
 image:
-- Visual Studio 2017
+- Visual Studio 2019
 
 configuration:
 # - Release # Disabled for now due to long build times and lack of parallelism
@@ -13,8 +13,8 @@ platform:
 - x64
 
 environment:
-  QTDIR: C:/Qt/5.10.1/msvc2017_64
-  PYTHON: C:\Python36
+  QTDIR: C:/Qt/5.14/msvc2017_64
+  PYTHON: C:\Python38-x64
   PATH: '%PATH%;%QTDIR%\bin;'
   matrix:
   - arch: Win64
@@ -30,6 +30,7 @@ init:
 - echo %arch%
 - echo %QTDIR%
 - echo %APPVEYOR_BUILD_WORKER_IMAGE%
+- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2019" ( set generator="Visual Studio 15 2019%arch%" )
 - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" ( set generator="Visual Studio 15 2017%arch%" )
 - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" ( set generator="Visual Studio 14 2015%arch%" )
 - echo %generator%
