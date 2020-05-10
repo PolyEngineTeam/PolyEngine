@@ -1,5 +1,5 @@
 sudo: required
-dist: xenial
+dist: bionic
 
 notifications:
   email: false
@@ -17,36 +17,43 @@ matrix:
       addons:
         apt:
           sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-8
+            - jonathonf/gcc-9.2
+		  packages:
+			- make
+			- cmake
+			- python3
+			- python3-pip
+			- mesa-common-dev
+			- libgl1-mesa-dev
+			- qt5-default
+			- g++-9
       env:
-        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+        - MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
     - os: linux
       addons:
         apt:
           sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial-5.0
-          packages:
-            - clang-5.0
-            - g++-8 # Need g++-8 alongside clang for libstdc++
+            - jonathonf/gcc-9.2
+		  packages:
+			- make
+			- cmake
+			- python3
+			- python3-pip
+			- mesa-common-dev
+			- libgl1-mesa-dev
+			- qt5-default
+            - clang-9
+            - g++-9 # Need g++-8 alongside clang for libstdc++
       env:
-        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+        - MATRIX_EVAL="CC=clang-9 && CXX=clang++-9"
     - os: osx
-      osx_image: xcode10.2
+      osx_image: xcode11.4
 
  
 before_install:
   - eval "${MATRIX_EVAL}"
   - |
-    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      # Add Qt 5.10.1 ppa
-      sudo add-apt-repository --yes ppa:beineri/opt-qt-5.10.1-xenial
-      sudo apt-get update -qq
-      sudo apt-get install -qq mesa-common-dev libgl1-mesa-dev python3 python3-pip python3-setuptools
-      sudo apt-get -y install qt510base
-    else
+    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       brew unlink python@2
       brew update && brew bundle --file=.Brewfile
     fi
@@ -60,10 +67,6 @@ before_script:
   # Go back to the root of the project and setup the build directory
   ############################################################################
   - cd ${TRAVIS_BUILD_DIR}
-  - |
-    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      source /opt/qt510/bin/qt510-env.sh
-    fi
   - cd PolyEngine/Scripts
   - python3 ./pe_tools.py initialize_submodules
   - python3 ./pe_tools.py update_engine_project
