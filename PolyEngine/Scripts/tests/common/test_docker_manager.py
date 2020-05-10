@@ -16,7 +16,7 @@ class Test(unittest.TestCase):
 
     def test_build_image(self):
         try:
-            img = self.mgr.get_image('ubuntu18', 'gcc8')
+            img = self.mgr.get_image('ubuntu18', 'gcc')
             self.assertIsNotNone(img)
         except:
             self.fail('get_image has raised exception!')
@@ -30,7 +30,7 @@ class Test(unittest.TestCase):
         if os.path.isfile(TEST_FILE):
             os.remove(TEST_FILE)
         
-        img = self.mgr.get_image('ubuntu18', 'gcc8')
+        img = self.mgr.get_image('ubuntu18', 'gcc')
 
         try:
             img.run_cmd('touch {}'.format(TEST_FILE))
