@@ -43,6 +43,8 @@
 #include <pe/core/storage/Queue.hpp>
 #include <pe/core/storage/PriorityQueue.hpp>
 
+// IO
+#include <pe/core/io/IProtocolSAX.hpp>
 
 // Other
 #include <pe/core/math/Color.hpp>
@@ -50,7 +52,8 @@
 #include <pe/core/utils/Logger.hpp>
 #include <pe/core/UniqueID.hpp>
 #include <pe/core/utils/EnumUtils.hpp>
-#include <pe/core/utils/OutputStream.hpp> 
+#include <pe/core/utils/OutputStream.hpp>
+#include <pe/core/utils/Result.hpp> 
 
 // OpenAL
 #include <AL/al.h>
