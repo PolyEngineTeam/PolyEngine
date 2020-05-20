@@ -21,13 +21,14 @@ class CORE_DLLEXPORT IndexedStringManager final : public core::BaseObjectLiteral
 public:
 	static IndexedStringManager& get();
 
-	const IndexedStringEntry* registerString(const char* str);
+	const IndexedStringEntry* registerString(std::string_view str);
+	const IndexedStringEntry* registerString(core::storage::String&& str);
 	void unregisterString(const IndexedStringEntry* entry);
 
 	void setTTLMode(bool enabled);
 	void tickTTL(size_t ttlTickCount = 1);
 
-	bool isRegistered(const char* str) const;
+	bool isRegistered(std::string_view str) const;
 private:
 	IndexedStringManager() = default;
 
@@ -39,6 +40,9 @@ private:
 
 	void erase(const IndexedStringEntry* entry);
 	void scheduleErase(const IndexedStringEntry* entry);
+
+	const IndexedStringEntry* createEntry(core::storage::String&& str);
+	const IndexedStringEntry* shareEntry(const IndexedStringEntry* entry);
 
 	std::unordered_map<std::string_view, std::unique_ptr<IndexedStringEntry>> m_entries;
 	PriorityQueue<TTLEntry> m_ttlEntries;

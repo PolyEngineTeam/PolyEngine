@@ -6,10 +6,21 @@
 namespace pe::core::storage
 {
 
-IndexedString::IndexedString(const char* str)
+IndexedString::IndexedString(std::string_view str)
 : m_entry(impl::IndexedStringManager::get().registerString(str))
 {
 	ASSERTE(m_entry, "Entry is null after string creation!");
+}
+
+IndexedString::IndexedString(const impl::IndexedStringEntry* entry)
+	: m_entry(entry)
+{
+	ASSERTE(m_entry, "Entry is null after string creation!");
+}
+
+IndexedString IndexedString::FromRString(core::storage::String&& str)
+{
+	return IndexedString(impl::IndexedStringManager::get().registerString(std::move(str)));
 }
 
 IndexedString::~IndexedString()

@@ -12,6 +12,7 @@ class IndexedStringEntry final : public core::BaseObjectLiteralType<>
 {
 public:
 	IndexedStringEntry(const char* str) : m_str(str) {}
+	IndexedStringEntry(core::storage::String&& str) : m_str(std::move(str)) {}
 
 	void incrementRefCount() const { ++m_refCount; }
 	void decrementRefCount() const { --m_refCount; }

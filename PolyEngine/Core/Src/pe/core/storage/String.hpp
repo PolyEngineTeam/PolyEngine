@@ -4,9 +4,6 @@
 
 namespace pe::core::storage
 {
-
-	CORE_DLLEXPORT size_t StrLen(const char* str);
-
 	class CORE_DLLEXPORT String final : public BaseObjectLiteralType<>
 	{
 	public:
@@ -17,16 +14,19 @@ namespace pe::core::storage
 
 		/// <summary>String constructor that creates String based on provided Cstring</summary>
 		/// <param name="data"></param>
-		String(const char* data);
+		String(const char* str) : String(std::string_view(str)) {}
+
+		/// <summary>String constructor that creates String based on provided string_view</summary>
+		/// <param name="data"></param>
+		explicit String(std::string_view str);
 
 		/// <summary>String copy constructor</summary>
 		/// <param name="rhs">Reference to String instance which state should be copied</param>
-		String(const String& rhs);
+		explicit String(const String& rhs);
 
 		/// <summary>String move constructor</summary>
 		/// <param name="rhs">Reference to String instance which state should be moved</param>
 		String(String&& rhs);
-
 
 		/// <summary>Casts int to String</summary>
 		/// <param name="var">Integer value which should be used to make String instance</param>
@@ -62,15 +62,10 @@ namespace pe::core::storage
 		/// <returns>String conaining only one char</returns>
 		static String From(char var);
 
-		/// <summary>Casts Cstring to String</summary>
-		/// <param name="var">Cstring value which should be used to make String instance</param>
-		/// <returns>String containing given Cstring</returns>
-		static String From(const char* var);
-
-		/// <summary>Casts std::string to String</summary>
-		/// <param name="var">std::string reference which should be used to make String instance</param>
-		/// <returns>String containing given std::string</returns>
-		static String From(const std::string& var);
+		/// <summary>Casts string_view to String</summary>
+		/// <param name="var">string_view value which should be used to make String instance</param>
+		/// <returns>String containing given content</returns>
+		static String From(std::string_view str);
 
 
 		/// <summary>Checks if String instance contains another String instance</summary>
@@ -164,18 +159,12 @@ namespace pe::core::storage
 		/// <returns>Moved String reference</returns>
 		String& operator=(String&& rhs);
 
-		/// <summary>Compares String with Cstring</summary>
-		/// <param name="str">Cstring to be compared with</param>
-		bool operator==(const char* str) const;
+		/// <summary>Compares String with string_view</summary>
+		/// <param name="str">string_view to be compared with</param>
+		bool operator==(std::string_view str) const;
+		bool operator!=(std::string_view str) const { return !(*this == str); }
 
-		/// <summary>Compares two String references</summary>
-		/// <param name="str">String to be compared with</param>
-		bool operator==(const String& str) const;
-
-		bool operator!=(const char* str) const { return !(*this == str); }
-		bool operator!=(const String& str) const { return !(*this == str); }
-
-		bool operator<(const String& rhs) const;
+		bool operator<(std::string_view rhs) const;
 
 		/// <summary>Appends one String to another</summary>
 		/// <param name="rhs">String instance to be appended to source String</param>
@@ -197,6 +186,7 @@ namespace pe::core::storage
 
 		friend std::ostream& operator<< (std::ostream& stream, const String& rhs) { return stream << rhs.GetCStr(); }
 
+		operator std::string_view() const { return std::string_view(GetCStr()); }
 	private:
 
 		String(std::vector<char> rawData) : Data(std::move(rawData)) { Data.push_back('\0'); }
