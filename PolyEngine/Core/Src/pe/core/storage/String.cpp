@@ -9,22 +9,10 @@ const String String::EMPTY = String();
 
 static const std::vector<char> WHITESPACES { ' ', '\t', '\r', '\n', '\0' };
 
-namespace pe::core::storage
-{
-
-size_t StrLen(const char* str) {
-	size_t len = 0;
-	while (str[len] != 0)
-		++len;
-	return len;
-}
-
-}
-
-String::String(const char* data) {
-	size_t length = StrLen(data);
+String::String(std::string_view str) {
+	size_t length = str.length();
 	Data.resize(length + 1);
-	std::memcpy(Data.data(), data, sizeof(char) * length);
+	std::memcpy(Data.data(), str.data(), sizeof(char) * length);
 	Data[length] = 0;
 }
 
@@ -42,8 +30,7 @@ String String::From(float var, size_t precision) { return StringBuilder().Append
 String String::From(double var) { return StringBuilder().Append(var).StealString(); }
 String String::From(double var, size_t precision) { return StringBuilder().Append(var, precision).StealString(); }
 String String::From(char var) { return StringBuilder().Append(var).StealString(); }
-String String::From(const char* var) { return StringBuilder().Append(var).StealString(); }
-String String::From(const std::string& var) { return StringBuilder().Append(var).StealString(); }
+String String::From(std::string_view var) { return StringBuilder().Append(var).StealString(); }
 
 bool String::Contains(const String& var) const
 {
@@ -202,8 +189,8 @@ String& String::operator=(String&& rhs) {
 	return *this;
 }
 
-bool String::operator==(const char* str) const {
-	if (GetLength() != StrLen(str))
+bool String::operator==(std::string_view str) const {
+	if (GetLength() != str.length())
 		return false;
 	for (size_t k = 0; k < GetLength(); ++k)
 		if (Data[k] != str[k])
@@ -211,21 +198,17 @@ bool String::operator==(const char* str) const {
 	return true;
 }
 
-bool String::operator==(const String& str) const {
-	return Data == str.Data;
-}
-
-bool String::operator<(const String& rhs) const {
-	if (GetLength() < rhs.GetLength())
+bool String::operator<(std::string_view rhs) const {
+	if (GetLength() < rhs.length())
 		return true;
-	else if (GetLength() > rhs.GetLength())
+	else if (GetLength() > rhs.length())
 		return false;
 
 	for (size_t i = 0; i < GetLength(); ++i)
 	{
-		if (Data[i] < rhs.Data[i])
+		if (Data[i] < rhs[i])
 			return true;
-		else if (Data[i] > rhs.Data[i])
+		else if (Data[i] > rhs[i])
 			return false;
 	}
 	return false;

@@ -16,17 +16,15 @@ namespace pe::core::storage
 		///	@param val Value to append
 		///	@return Instance reference for chainlinking
 		inline StringBuilder& Append(char val) { Buffer.push_back(val); return *this; }
-		inline StringBuilder& Append(const char* val) { return Append(val, strlen(val)); }
-		inline StringBuilder& Append(const std::string& val) { return Append(val.c_str(), val.length()); }
-		inline StringBuilder& Append(const String& val) { return Append(val.GetCStr(), val.GetLength()); }
 		inline StringBuilder& Append(int val) { FillBufferWithFormat(val, "%d"); return *this; }
 		inline StringBuilder& Append(long long val) { FillBufferWithFormat(val, "%lld"); return *this; }
 		inline StringBuilder& Append(unsigned val) { FillBufferWithFormat(val, "%u"); return *this; }
 		inline StringBuilder& Append(unsigned long long val) { FillBufferWithFormat(val, "%llu"); return *this; }
 		inline StringBuilder& Append(long val) { return Append((long long)val); }
 		inline StringBuilder& Append(unsigned long val) { return Append((unsigned long long)val); }
+		inline StringBuilder& Append(std::string_view str) { return Append(str.data(), str.length()); }
 
-		StringBuilder& Append(const char* str, const size_t length);
+		StringBuilder& Append(const char* str, size_t length);
 		StringBuilder& Append(f32 val, size_t precission = DEFAULT_FLT_PRECISION);
 		StringBuilder& Append(f64 val, size_t precission = DEFAULT_FLT_PRECISION);
 

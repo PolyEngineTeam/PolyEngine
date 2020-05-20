@@ -22,7 +22,12 @@ class CORE_DLLEXPORT IndexedString final : public core::BaseObjectLiteralType<>
 public:
 	/// @brief IndexedString constructor. Registers the string in the IndexedStringManager.
 	/// @param[in] str String to be represented by the IndexedString instance.
-	explicit IndexedString(const char* str);
+	explicit IndexedString(std::string_view str);
+
+	/// @brief IndexedString factory function. Registers the string in the IndexedStringManager.
+	/// @note If the string is not registered yet, the memory is reused.
+	/// @param[in] str String to be represented by the IndexedString instance.
+	static IndexedString FromRString(core::storage::String&& str);
 
 	/// @brief IndexedString destructor. Unregisters the string from the IndexedStringManager.
 	~IndexedString();
@@ -59,6 +64,8 @@ public:
 
 	friend std::ostream& operator<< (std::ostream& stream, const IndexedString& rhs) { return stream << rhs.get(); }
 private:
+	explicit IndexedString(const impl::IndexedStringEntry* entry);
+
 	const impl::IndexedStringEntry* m_entry = nullptr;
 
 	friend struct std::hash<::pe::core::storage::IndexedString>;

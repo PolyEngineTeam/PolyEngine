@@ -5,7 +5,7 @@
 using namespace pe::core::storage;
 
 //----------------------------------------------------------------------------
-StringBuilder& StringBuilder::Append(const char* str, const size_t length)
+StringBuilder& StringBuilder::Append(const char* str, size_t length)
 {
 	Buffer.reserve(Buffer.size() + length);
 	for (size_t i = 0; i < length; ++i)
