@@ -23,7 +23,7 @@ GAME_SRC_IN_FILES = [ GAME_NAME_FILE + '.hpp.in', GAME_NAME_FILE + '.cpp.in']
 SLN_CMAKE_IN_FILE = 'Sln-CMakeLists.txt.in'
 PROJ_CMAKE_IN_FILE = 'Proj-CMakeLists.txt.in'
 IN_FILE_REGEX = r'(\S+)\.(\S+)\.in'
-CMKAE_LISTS_FILE_NAME = 'CMakeLists.txt'
+CMAKE_LISTS_FILE_NAME = 'CMakeLists.txt'
 
 PROJECT_INIT_RESOURCES_DIR_NAME = 'project-init'
 PROJECT_INIT_RESOURCES_PATH = os.path.join(common.SCRIPT_ENV.script_resources_path, PROJECT_INIT_RESOURCES_DIR_NAME)
@@ -241,8 +241,8 @@ class GameProject(ProjectBase):
     def _update_cmake_files(self):
         sln_cmake_in_file_path = os.path.join(PROJECT_INIT_RESOURCES_PATH, SLN_CMAKE_IN_FILE)
         proj_cmake_in_file_path = os.path.join(PROJECT_INIT_RESOURCES_PATH, PROJ_CMAKE_IN_FILE)
-        sln_cmake_out_file_path = os.path.join(self._root_path, CMKAE_LISTS_FILE_NAME)
-        proj_cmake_out_file_path = os.path.join(self._project_path, CMKAE_LISTS_FILE_NAME)
+        sln_cmake_out_file_path = os.path.join(self._root_path, CMAKE_LISTS_FILE_NAME)
+        proj_cmake_out_file_path = os.path.join(self._project_path, CMAKE_LISTS_FILE_NAME)
 
         shutil.copy(sln_cmake_in_file_path, sln_cmake_out_file_path)
         shutil.copy(proj_cmake_in_file_path, proj_cmake_out_file_path)
