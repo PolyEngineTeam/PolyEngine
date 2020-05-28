@@ -1,4 +1,5 @@
 import os
+import shutil
 
 BUILD_DIR_NAME = 'Build'
 COMMON_BUILD_DIR_NAME = 'CommonBuild'
@@ -13,6 +14,7 @@ class ProjectBase():
 
         self._build_path = os.path.join(project_root_path, build_dir_fullname)
         self._build_postfix = build_postfix
+        self._common_build_path = os.path.join(project_root_path, COMMON_BUILD_DIR_NAME)
         self._dist_path = os.path.join(project_root_path, dist_dir_fullname)
         self._project_name = project_name
     
@@ -28,6 +30,19 @@ class ProjectBase():
 
     def save(self):
         self._save()
+
+    def clean_build(self):
+        print(f"Cleaning build files in {self._project_name}")
+        if os.path.exists(self._build_path):
+            print(f"Removing Build directory in {self._project_name}")
+            shutil.rmtree(self._build_path)
+        # CommonBuild is not present in games
+        if os.path.exists(self._common_build_path):
+            print(f"Removing CommonBuild directory in {self._project_name}")
+            shutil.rmtree(self._common_build_path)
+        if os.path.exists(self._dist_path):
+            print(f"Removing Dist directory in {self._project_name}")
+            shutil.rmtree(self._dist_path)
 
     @property
     def name(self):
