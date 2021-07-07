@@ -12,13 +12,50 @@ static const std::vector<char> WHITESPACES { ' ', '\t', '\r', '\n', '\0' };
 namespace pe::core::storage
 {
 
-size_t StrLen(const char* str) {
+size_t StrLen(const char* str)
+{
 	size_t len = 0;
 	while (str[len] != 0)
 		++len;
 	return len;
 }
 
+bool isValidASCIIString(const char* str) 
+{
+	size_t pos = 0;
+	unsigned char c = 0;
+	while (c = str[pos], c != 0)
+		if (c > 0x7f)
+			return false;
+		else
+			++pos;
+	return true;
+}
+
+}
+
+String String::fromASCII(const char* data) // can still be invalid but better than nothing
+{
+	ASSERTE(isValidASCIIString(data), "Passed string is not valid ASCII, please use fromUTF8 factory method instead!");
+	return String(data);
+}
+
+String String::fromUTF8(const char* data)
+{
+	String ret{};
+	const size_t len = StrLen(data);
+	UErrorCode success = UErrorCode::U_ZERO_ERROR;
+	icu::UnicodeString dst, src(data, len);
+	auto normalizer = icu::Normalizer2::getNFCInstance(success);
+	normalizer->normalize(src, dst, success);
+	ret.Data.reserve(dst.length());
+	dst.extract(0, dst.length(), ret.Data.data(), dst.length());
+	return ret;
+}
+
+String String::fromCodePoint(const char* data)
+{
+	return String();
 }
 
 String::String(const char* data) {
@@ -86,6 +123,19 @@ String String::ToUpper() const
 	return ret;
 }
 
+String String::toASCII() const // C-api is very unwieldy for this one, copying and duplicating is unavoidable
+{
+	String ret{};
+	ret.Data.reserve(Data.size());
+	icu::UnicodeString str(GetCStr(), Data.size());
+	UErrorCode success = UErrorCode::U_ZERO_ERROR;
+	UParseError parseError;
+	auto trans = icu::Transliterator::createInstance("Any-Latin; Latin-ASCII", UTRANS_FORWARD, parseError, success);
+	trans->transliterate(str);
+	str.extract(0, str.length(), ret.Data.data(), Data.size());
+	return ret;
+}
+
 bool String::IsEmpty() const {
 	return GetLength() == 0;
 }
@@ -100,8 +150,8 @@ String String::Replace(char what, char with) const
 	return ret;
 }
 
-String String::Replace(const String& what, const String& with) const {
-	
+String String::Replace(const String& what, const String& with) const
+{
 	std::vector<String> splitted = Split(what);
 	return Join(splitted.data(), splitted.size(), with);
 }
@@ -122,28 +172,28 @@ std::vector<String> String::Split(const String& delimiter) const {
 	return elements;
 }
 
-String String::Join(const String* vars, size_t size, const String& separator) {
-	//TODO replace using stringbuilder
-	String s = String("");
-	for (size_t i = 0; i < size; i++) {
-		s = s + vars[i];
-		if (i != size - 1) {
-			s = s + separator;
-		}
+String String::Join(const String* vars, size_t size, const String& separator)
+{
+	StringBuilder sb;
+	for (size_t i = 0; i < size; ++i) 
+	{
+		sb.Append(vars[i]);
+		if (i != size - 1)
+			sb.Append(separator);
 	}
-	return s;
+	return sb.StealString();
 }
 
-String String::Join(const String* vars, size_t size, char separator) {
-	//TODO replace using stringbuilder
-	String s = String("");
-	for (size_t i = 0; i < size; i++) {
-		s = s + vars[i];
-		if (i != size - 1) {
-			s = s + separator;
-		}
+String String::Join(const String* vars, size_t size, char separator)
+{
+	StringBuilder sb;
+	for (size_t i = 0; i < size; ++i) 
+	{
+		sb.Append(vars[i]);
+		if (i != size - 1)
+			sb.Append(separator);
 	}
-	return s;
+	return sb.StealString();
 }
 
 bool String::StartsWith(char var) const {
@@ -202,7 +252,8 @@ String& String::operator=(String&& rhs) {
 	return *this;
 }
 
-bool String::operator==(const char* str) const {
+bool String::CmpBytes(const char* str) const
+{
 	if (GetLength() != StrLen(str))
 		return false;
 	for (size_t k = 0; k < GetLength(); ++k)
@@ -211,8 +262,23 @@ bool String::operator==(const char* str) const {
 	return true;
 }
 
-bool String::operator==(const String& str) const {
+bool String::CmpBytes(const String& str) const
+{
 	return Data == str.Data;
+}
+
+bool String::operator==(const char* str) const
+{
+	UErrorCode success = U_ZERO_ERROR;
+	auto coll = icu::Collator::createInstance(success);
+	return coll->compareUTF8(Data.data(), str, success) == UCOL_EQUAL;
+}
+
+bool String::operator==(const String& str) const
+{
+	UErrorCode success = U_ZERO_ERROR;
+	auto coll = icu::Collator::createInstance(success);
+	return coll->compareUTF8(Data.data(), str.Data.data(), success) == UCOL_EQUAL;
 }
 
 bool String::operator<(const String& rhs) const {
@@ -259,6 +325,11 @@ char String::operator[](size_t idx) const {
 size_t String::GetLength() const
 {
 	return Data.size() - 1;
+}
+
+size_t String::GetLogicalLength() const
+{
+	return 0; // TODO: count it on demand?
 }
 
 size_t String::FindSubstrFromPoint(size_t startPoint, const String& str) const
